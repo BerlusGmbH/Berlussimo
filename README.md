@@ -4,7 +4,7 @@ Berlussimo - Software für Hausverwaltungen (php/mysql)
 
  * BERLUSSIMO
  *
- * Hausverwaltungssoftware
+ * Hausverwaltung Software
  *
  *
  * @copyright    Copyright (c) 2010, Berlus GmbH, Eichkampstraße 161, 14055 Berlin
