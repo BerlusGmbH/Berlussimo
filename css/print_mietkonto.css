@@ -1,0 +1,93 @@
+@page{size: A4 portrait;}
+
+
+body {
+background-color: transparent;
+font-size: 10pt;
+font-family:'Arial';
+color:#000000;
+}
+
+.navi_leiste1{
+display: none;
+}
+
+form, fieldset{
+border:0;
+}
+
+.willkommen{
+display: none;
+}
+
+h2{
+margin:0;
+padding:0;
+}
+
+
+
+hr{
+margin:0;
+padding:0;
+border: 0px;
+border-top: solid 1px #000;
+}
+
+table.aktuelle_buchungen{
+	border-collapse:collapse;
+	padding: 2px;
+	font-family: verdana;
+		font-size: 10pt;
+		color: #000;		
+		background-color: #fff;
+		-moz-border-radius-topright: 2em;
+		-moz-border-radius-bottomleft: 2em;
+		position: relative;
+		width: 800px;
+		height: auto;
+		text-align: right;
+		page-break-inside: avoid;
+		
+}
+
+h2.saldo_vv{font: bold 12px "Arial";
+	color: #000;
+	}
+
+th {
+	border-bottom: 1px solid #000;
+	font: bold 12px "Arial";
+	color: #000;
+	border-top: 0px solid #000;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	padding: 2px 2px 2px 0px;
+	}
+
+thead {
+ 	
+ 	    display:table-header-group;
+ 		
+ 	} 
+
+tbody {
+ 	    display:table-row-group;
+	
+	} 
+
+tr {page-break-inside: avoid; }
+
+td{
+font: 11px Verdana, Arial, Helvetica,sans-serif;
+padding:0;
+spacing:0;
+
+}
+
+
+#logo {
+       }
+    #logo img{
+    margin-left: 600px;
+    }

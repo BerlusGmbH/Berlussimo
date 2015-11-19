@@ -1,0 +1,86 @@
+/*
+ *  PieGraph.css
+ *
+ *	This file is the default stylesheet for Pie Graphs. It is used if no other stylesheet is specified.
+ *	To specify own stylesheets, use the setStylesheetUrl() method
+ */
+
+/* ****************** */
+/* ** PIE-SEGMENTS ** */
+/* ****************** */
+
+/* settings for the whole circle */ 
+#circle {
+	fill: none; /* important! */
+	stroke: #000;
+	stroke-width: 3px;
+}
+
+/* settings for all segments */
+#segments, #legend rect
+{
+	fill: #ddd; /* if no other color is specified */
+	opacity: 0.75;
+}
+
+/* text for values displayed in segments */
+#rects text {
+	font: 10px Arial, sans-serif;
+	fill: #fff;
+}
+
+/* settings for each segment (0..n) */
+#segment0, #legend .segment0 {fill: rgb(0,0,0);}
+#segment1, #legend .segment1 {fill: rgb(128,185,219);}
+#segment2, #legend .segment2 {fill: rgb(179,213,233);}
+#segment3, #legend .segment3 {fill: rgb(213,233,253);}
+
+/* ********** */
+/* ** TEXT ** */
+/* ********** */
+ 
+#graphTitle {
+	font: bold 25px "Trebuchet MS", Arial, sans-serif;
+	text-rendering: auto;
+}
+#timestamp {
+	font: 10px Arial, sans-serif;
+	fill: #aaa;
+}
+#segments text {
+	font: 10px Arial, sans-serif;
+	fill: #000;
+}
+
+/* settings for the key legend (displayed on hover of the info button) */
+#legend text {
+	font: 11px Arial, sans-serif;
+}
+#legend .background {
+	fill: none;
+}
+#legend .heading {
+	font: 20px "Trebuchet MS", Arial, sans-serif;
+	text-rendering: auto;
+}
+
+/* ***************** */
+/* ** BACKGROUNDS ** */
+/* ***************** */
+ 
+#graphBackground {
+	fill: #fff;
+}
+#canvasBackground {
+	fill: #fff;
+}
+
+/* ******************** */
+/* ** OTHER SETTINGS ** */
+/* ******************** */
+
+.bold {
+	font-weight: bold !important;
+}
+
+text {text-rendering: optimizeLegibility;}

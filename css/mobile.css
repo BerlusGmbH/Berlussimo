@@ -1,0 +1,34 @@
+@CHARSET "ISO-8859-1";
+body{
+	background-color:#fff;
+	}
+	
+input.rot{
+	width:100%;
+	height:100px;
+	background:red;
+	font-size:90px;
+	}
+
+input.gruen {
+	width:100%;
+	height:100px;
+	background:green;
+	font-size:90px;
+	}
+	
+#arbeit{
+	width:100%;
+	font-color:red;
+	font-size:40px;
+	font-weight:bold;
+	text-align:center;
+	}
+p.aufgabe{
+	margin-left:10%;
+	width:80%;
+	font-color:red;
+	font-size:40px;
+	font-weight:bold;
+	text-align:center;
+	}			
