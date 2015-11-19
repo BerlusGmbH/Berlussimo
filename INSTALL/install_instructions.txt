@@ -1,0 +1,31 @@
+Instructions for installation of Berlussimo.
+
+Version for install on own webserver.
+
+
+
+1. copy all files in subfolder berlussimo
+
+2.  In folder INSTALL/DB-Version-0.4.0 you can find the MYSQL Database of Berlussimo 
+	Load this file as new mysql-database and create an new user with password for your database.
+
+3. Change file berlussimo/classes/config.inc.php an enter your USERNAME and PASSWORD for your own Mysql-Database.
+
+
+
+Open http://your.server/berlussimo_path/index.php in your browser and login with
+
+Login: admin
+Password: password
+
+
+
+
+In index.php you can change following if you not install berlussimo in folder berlussimo:
+
+define ("BERLUS_PATH", 'berlussimo'); 
+to
+define ("BERLUS_PATH", 'your_install_path');
+
+
+Sanel Sivac, Berlin-Germany 18.11.2015 
