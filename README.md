@@ -11,5 +11,5 @@ Berlussimo - Software für Hausverwaltungen (php/mysql)
  * @link         http://www.hausverwaltung.de
  * @link         http://www.berlus.de
  * @author       Sanel Sivac & Wolfgang Wehrheim
- * @contact		software(@)hausverwaltung.de
+ * @contactsoftware(@)hausverwaltung.de
  * @license     http://www.gnu.org/licenses/agpl.html AGPL Version 3
