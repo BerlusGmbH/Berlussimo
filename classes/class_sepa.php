@@ -3269,7 +3269,7 @@ function form_excel_ds($umsatz_id_temp=0){
 	
 	}
 	
-	echo "<br><hr><u>Buchungstext:</u><hr>";
+	echo "<br><hr><u>Buchungstext: </u><hr>";
 	
 	
 	#echo "</td><td>";
@@ -3279,11 +3279,14 @@ function form_excel_ds($umsatz_id_temp=0){
 	echo "</td><td>";*/
 	
 	$vzweck = mysql_real_escape_string($_SESSION['umsaetze_ok'][$umsatz_id_temp][14]);
+	#echo $vzweck; 
+	#echo '<pre>'; 
+	#print_r($_SESSION);
 	
 	
 	#echo $vzweck;
-	
-	if(ltrim(rtrim($art))=='ABSCHLUSS'  or $art=='SEPA-UEBERWEIS.HABEN EINZEL' or $art=='SEPA-CT HABEN EINZELBUCHUNG' or $art=='SEPA-DD EINZELB.-SOLL B2B' or $art=='SEPA-DD EINZELB. SOLL CORE' or $art=='SEPA Dauerauftragsgutschrift' or $art=='SEPA-LS EINZELBUCHUNG SOLL' or $art=='SEPA-UEBERWEIS.HABEN RETOUR' or $art=='ZAHLEINGUEBELEKTRMEDIEN' or $art=='SCHECKKARTE' or $art=='ZAHLUNG UEB ELEKTR MEDIEN'){
+	$art = ltrim(rtrim($art));
+	if(ltrim(rtrim($art))=='ABSCHLUSS'  or $art=='SEPA-UEBERWEIS.HABEN EINZEL' or $art=='SEPA-CT HABEN EINZELBUCHUNG' or $art=='SEPA-DD EINZELB.-SOLL B2B' or $art=='SEPA-DD EINZELB.SOLL B2B' or $art=='SEPA-DD EINZELB. SOLL CORE' or $art=='SEPA-DD EINZELB.SOLL CORE' or $art=='SEPA Dauerauftragsgutschrift' or $art=='SEPA DAUERAUFTRAGSGUTSCHR'  or $art=='SEPA-LS EINZELBUCHUNG SOLL' or $art=='SEPA-UEBERWEIS.HABEN RETOUR' or $art=='SEPA-CT HABEN RETOUR' or $art=='ZAHLEINGUEBELEKTRMEDIEN' or $art=='SCHECKKARTE' or $art=='ZAHLUNG UEB ELEKTR MEDIEN' or $art=='LASTSCHRIFT EINZUGSERM'){
 		#echo "$art $vzweck";
 		$treffer = array();
 		#$pos_svwz = strpos(strtoupper($vzweck), 'ABZR:');
@@ -3293,6 +3296,7 @@ function form_excel_ds($umsatz_id_temp=0){
 		#	$vzweck_kurz = $vzweck;
 		#}
 		$vzweck_kurz = $vzweck;
+		echo $vzweck;
 		$laenge = strlen($vzweck_kurz);
 		#$f->text_feld('Buchungstext', 'text', "$zahler, $vzweck_kurz", 20, 'text', null);
 		#echo "<input type=\"text\" id=\"text\" name=\"text\" value=\"$zahler, $vzweck_kurz\" size=\"$laenge\" >";

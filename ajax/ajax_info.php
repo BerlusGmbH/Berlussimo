@@ -49,6 +49,7 @@ include_once(HAUPT_PATH.'/'.BERLUS_PATH."/classes/class_formular.php");
 include_once(HAUPT_PATH.'/'.BERLUS_PATH."/classes/class_benutzer.php");
 include_once(HAUPT_PATH.'/'.BERLUS_PATH."/classes/class_mietentwicklung.php");
 include_once(HAUPT_PATH.'/'.BERLUS_PATH."/classes/class_geldkonten.php");
+include_once(HAUPT_PATH.'/'.BERLUS_PATH."/classes/class_kautionen.php");
 
 
 
@@ -1473,6 +1474,24 @@ $r = new rechnungen();
 $r->back2pool($pp_dat);
 }
 break;
+
+case "change_kautionsfeld":
+	$feld = $_REQUEST['feld'];
+	$wert = $_REQUEST['wert'];
+	$mv_id = $_REQUEST['mv_id'];
+	$k = new kautionen;
+	$k->feld_wert_speichern($mv_id, $feld, $wert);		
+break;
+
+case "change_hk_wert_et":
+	$eig_id = $_REQUEST['et_id'];
+	$betrag = $_REQUEST['wert'];
+	$p_id = $_REQUEST['profil_id'];
+	
+	$w = new weg;
+	$w->hk_verbrauch_eintragen($p_id, $eig_id, $betrag);
+	break;
+
 
 
 

@@ -151,7 +151,9 @@ $e_id = $weg->eigentuemer_id;
 echo "<div class=\"div balken1\"><span class=\"font_balken_uberschrift\">EINHEIT</span><hr />";
 echo "<span class=\"font_balken_uberschrift\">$e->einheit_kurzname</span><hr/>";
 echo "<p class=\"warnung\">WEG-ET:<br>$miteigentuemer_namen</p><hr>";
+if(isset($betreuer_str)){
 echo "<p style=\"color:green;font-size:10px;\"><u><b>BETREUER</b></u>:<br>$betreuer_str</p><hr>";
+}
 echo "$e->haus_strasse $e->haus_nummer<br/>";
 echo "$e->haus_plz $e->haus_stadt<br/>";
 echo "<hr><a href=\"?index.php&daten=todo&option=auftrag_haus&haus_id=$e->haus_id&einheit_id=$einheit_id\">Aufträge an Haus</a><hr>";
@@ -167,7 +169,13 @@ $einheit_details_arr = $details_info->get_details('EINHEIT', $einheit_id);
 		echo "<b>AUSSTATTUNG</b><hr>";
 	for($i=0;$i<count($einheit_details_arr);$i++)
 	{
-	echo "<b>".$einheit_details_arr[$i]['DETAIL_NAME']."</b>:<br>".$einheit_details_arr[$i]['DETAIL_INHALT']."<br>";	
+		/*Expose bzw. Vermietungsdetails filtern*/
+		if(stripos($einheit_details_arr[$i]['DETAIL_NAME'], 'Vermietung') === false){
+			if(stripos($einheit_details_arr[$i]['DETAIL_NAME'], 'Expose') === false){
+				echo "<b>".$einheit_details_arr[$i]['DETAIL_NAME']."</b>:<br>".$einheit_details_arr[$i]['DETAIL_INHALT']."<br>";
+			}
+		}
+		
 	}
 	}else{
 		echo "k.A zur Ausstattung";
@@ -191,7 +199,8 @@ echo "</div>";
 
 
 ######### balken 2 MIETER
-echo "<div class=\"div balken2\"><span class=\"font_balken_uberschrift\">MIETER<br> ($mv->personen_name_string_u2)</span><hr />";
+$mv->personen_name_string_u3 = str_replace(',', '', $mv->personen_name_string_u2);
+echo "<div class=\"div balken2\"><span class=\"font_balken_uberschrift\">MIETER<br> ($mv->personen_name_string_u3)</span><hr />";
 #echo "Personen im MV: $anzahl_personen_im_mv";
 if($mv->anzahl_personen < 1){
 	echo "leer";
@@ -210,7 +219,7 @@ $person_geburtstag = $person_info->person_geburtstag;
 #$person_anzahl_mietvertraege_alt = $person_info->person_anzahl_mietvertraege_alt;
 $person_mv_id_array = $person_info->get_vertrags_ids_von_person($mv->personen_ids[$i]['PERSON_MIETVERTRAG_PERSON_ID']);
 $zeile = $i+1;
-$mieternamen_str = "<b>$zeile. $person_nachname $person_vorname</b><br> geb. am: $person_geburtstag<br>";
+$mieternamen_str = "<b>$zeile. $person_nachname, $person_vorname</b><br> geb. am: $person_geburtstag<br>";
 $aktuelle_einheit_link = "";
 $alte_einheit_link = "";
 #####DETAILS VOM MIETER

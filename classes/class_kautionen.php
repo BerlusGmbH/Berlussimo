@@ -838,5 +838,158 @@ function mieter_ohne_kaution_anzeigen($geldkonto_id, $kostenkonto){
 	}
 }
 
+
+function kautions_uebersicht($objekt_id, $alle=null){
+	$o = new objekt();
+	$ein_arr = $o->einheiten_objekt_arr($objekt_id);
+	#echo '<pre>';
+	#print_r($ein_arr);
+	if(!is_array($ein_arr)){
+		fehlermeldung_ausgeben("Keine Einheiten im Objekt");
+	}else
+	
+	{
+		$anz_e = count($ein_arr);
+		echo "<table>";
+		echo "<tr><th>EINHEIT</th><th>TYP</th><th>MIETER</th><th>VON</th><th>BIS</th><th>DAUER</th>";
+		$felder_arr = $this->get_felder_arr();
+		if(is_array($felder_arr)){
+			$anz_felder = count($felder_arr);
+			$cols = $anz_felder+6;
+			for($a=0;$a<$anz_felder;$a++){
+				$feld = $felder_arr[$a]['FELD'];
+				echo "<th>$feld</th>";
+			}
+		}
+		echo "</tr>";
+		for($a=0;$a<$anz_e;$a++){
+			$einheit_id = $ein_arr[$a]['EINHEIT_ID'];
+			$einheit_kn = $ein_arr[$a]['EINHEIT_KURZNAME'];
+			$typ = $ein_arr[$a]['TYP'];
+			$e = new einheit();
+			/*aktuelle Mieter nur*/
+			if($alle==null){
+				$mv_id = $e->get_last_mietvertrag_id($einheit_id);
+				$mv_arr[]['MIETVERTRAG_ID'] = $mv_id; 
+			}else{
+				
+					/*alle Mieter */
+				$mv_arr = $e->get_mietvertrag_ids($einheit_id);
+			}
+			
+			$anz_mv = count($mv_arr);
+			#print_r($mv_arr);
+			/*Jeden MV durchlaufen*/
+			for($m=0;$m<$anz_mv;$m++){
+				$mv_id = $mv_arr[$m]['MIETVERTRAG_ID'];
+				if(!empty($mv_id)){
+				$mv = new mietvertraege();
+				$mv->get_mietvertrag_infos_aktuell($mv_id);
+				//echo "$mv->einheit_kurzname | $typ | $mv->personen_name_string_u2<br>";
+					if($mv->mietvertrag_aktuell=='1'){
+					echo "<tr style=\"background-color:#d5ffe5;\">";
+					}else{
+					echo "<tr>";
+					}
+					$d1=new DateTime($mv->mietvertrag_von_d);
+					if($mv->mietvertrag_bis_d == "00.00.0000"){
+					$d2=new DateTime(date("d.m.Y"));
+					}else{
+						$d2=new DateTime($mv->mietvertrag_bis_d);
+					}
+					$diff=$d2->diff($d1);
+					// "$diff->y";
+					echo "<td>$einheit_kn</td><td>$typ</td><td>$mv->personen_name_string</td><td>$mv->mietvertrag_von_d</td><td>$mv->mietvertrag_bis_d</td><td>$diff->y J/$diff->m M";
+					
+						for($f=0;$f<$anz_felder;$f++){
+							$feld = $felder_arr[$f]['FELD'];
+							$wert = $this->get_feld_wert($mv_id, $feld);
+								if(empty($wert)){
+								$wert = "----";
+								}
+							$link_wert = "<a class=\"details\" onclick=\"change_kautionsfeld('$feld', '$wert', '$mv_id')\">$wert</a>";
+							//change_kautionsfeld(feld, wert, mv_id)
+							echo "<td>$link_wert</td>";
+						}
+					echo "</tr>";
+				
+				}else{
+				echo "<tr style=\"background-color:#f88b8b;\"><td>$einheit_kn</td><td>$typ</td><td colspan=\"$cols\">IMMER LEER</td></tr>";
+				}
+			unset($mv_id);
+				}
+				unset($mv_arr);
+		
+				echo "<tr><td colspan=\"$cols\" style=\"background-color:#faffc4;\"></td></tr>";     
+		}
+		echo "</table>";
+		
+	
+	
+			}
+}
+
+
+function get_felder_arr(){
+	$result = mysql_query ("SELECT * FROM  `KAUTION_FELD` WHERE AKTUELL='1' ORDER BY DAT ASC");
+	$numrows = mysql_numrows($result);
+	if($numrows){
+		while ($row = mysql_fetch_assoc($result)) $my_arr[] = $row;
+		return $my_arr;
+	}else{
+		return false;
+	}
+}
+
+function feld_speichern($feld){
+	$db_abfrage = "INSERT INTO KAUTION_FELD VALUES (NULL, '$feld',  '1')";
+	$resultat = mysql_query($db_abfrage) or
+	die(mysql_error());
+	//protokollieren
+	$last_dat = mysql_insert_id();
+	protokollieren('KAUTION_FELD', $last_dat, $last_dat);
+}
+
+function feld_del($dat){
+	$db_abfrage = "UPDATE KAUTION_FELD SET AKTUELL='0' WHERE DAT='$dat'";
+	$resultat = mysql_query($db_abfrage) or
+	die(mysql_error());
+	//protokollieren
+	$last_dat = mysql_insert_id();
+	protokollieren('KAUTION_FELD', $dat, $dat);
+
+}
+
+function feld_wert_speichern($mv_id, $feld, $wert){
+	$db_abfrage = "UPDATE KAUTION_DATEN SET AKTUELL='0' WHERE MV_ID='$mv_id' && FELD='$feld'";
+	$resultat = mysql_query($db_abfrage) or
+	die(mysql_error());
+	
+	$db_abfrage = "INSERT INTO KAUTION_DATEN VALUES (NULL, '$mv_id', '$feld', '$wert', '1')";
+	$resultat = mysql_query($db_abfrage) or
+	die(mysql_error());
+	
+	
+	//protokollieren
+	$last_dat = mysql_insert_id();
+	protokollieren('KAUTION_DATEN', $last_dat, $last_dat);
+}
+
+
+
+
+function get_feld_wert($mv_id, $feld){
+	$result = mysql_query ("SELECT * FROM  `KAUTION_DATEN` WHERE  `MV_ID` = '$mv_id' AND  `FELD` ='$feld' AND  `AKTUELL` =  '1' ORDER BY DAT DESC LIMIT 0,1");
+	$numrows = mysql_numrows($result);
+		if($numrows){
+		$row = mysql_fetch_assoc($result);
+		return $row['WERT'];
+		}else{
+			return "";
+		}
+
+}
+
+
 }//end class
 ?>

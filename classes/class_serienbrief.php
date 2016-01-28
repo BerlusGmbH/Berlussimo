@@ -187,10 +187,15 @@ function erstelle_brief_vorlage($v_dat, $empf_typ, $empf_id_arr, $option='0'){
 		#die();
 		ob_clean(); //ausgabepuffer leeren
 		header("Content-type: application/pdf");  // wird von MSIE ignoriert
-		$pdf->ezStream();
+		$dateiname = "$datum_heute - Serie - $bpdf->v_kurztext.pdf";
+		$pdf_opt['Content-Disposition'] = $dateiname;
+		$pdf->ezStream($pdf_opt);
+		//$pdf->ezStream();
 		}
 		
-		
+		//
+		///SERIENBRIEF AN  PARTNER
+		//
 		
 		if($empf_typ=='Partner'){
 		
@@ -244,7 +249,7 @@ function erstelle_brief_vorlage($v_dat, $empf_typ, $empf_id_arr, $option='0'){
 				$p = new partners;
 				$p->get_partner_info($_SESSION['partner_id']);
 		
-		$pdf->ezText("$p->partner_ort, $datum_heute",10, array('justification'=>'right'));
+				$pdf->ezText("$p->partner_ort, $datum_heute",10, array('justification'=>'right'));
 					#	$pdf->ezText("<b>Objekt: $weg->haus_strasse $weg->haus_nummer, $weg->haus_plz $weg->haus_stadt</b>",10);
 		
 						#$pdf->ezText("<b>Einheit: $weg->einheit_kurzname</b>",10);
@@ -268,7 +273,10 @@ function erstelle_brief_vorlage($v_dat, $empf_typ, $empf_id_arr, $option='0'){
 						#die();
 						ob_clean(); //ausgabepuffer leeren
 						header("Content-type: application/pdf");  // wird von MSIE ignoriert
-						$pdf->ezStream();
+						$dateiname = "$datum_heute - Serie - $bpdf->v_kurztext.pdf";
+						$pdf_opt['Content-Disposition'] = $dateiname;
+						$pdf->ezStream($pdf_opt);
+						//$pdf->ezStream();
 		}
 		
 		

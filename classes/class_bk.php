@@ -951,10 +951,10 @@ function dropdown_gen_keys(){
 	
 	$numrows = mysql_numrows($result);
 		if($numrows>0){
-		echo "<label for=\"genkeys\">Generalschlüssel für das Konto $_SESSION[bk_konto] auswählen</label><select id=\"genkeys\" name=\"genkey\" size=\"1\">"; 
+		echo "<label for=\"genkeys\">Generalschlüssel für das Konto wählen</label><select id=\"genkeys\" name=\"genkey\" size=\"1\">"; 
 		while ($row = mysql_fetch_assoc($result)){
-		$keyid = $row[GKEY_ID];
-		$keyname = $row[GKEY_NAME];
+		$keyid = $row['GKEY_ID'];
+		$keyname = $row['GKEY_NAME'];
 		
 		echo "<option value=\"$keyid\">$keyname</option>"; 	
 		}
@@ -3775,7 +3775,10 @@ for($a=0;$a<$anz_ene;$a++){
 		/*Ausgabe*/
 		ob_clean(); //ausgabepuffer leeren
 		header("Content-type: application/pdf");  // wird von MSIE ignoriert
-		$pdf->ezStream();
+		$dateiname = "$this->bk_berechnungs_datum $this->bk_bezeichnung - $this->bk_jahr";
+		$pdf_opt['Content-Disposition'] = $dateiname;
+		$pdf->ezStream($pdf_opt);
+		//$pdf->ezStream();
 }
 
 
@@ -4513,10 +4516,7 @@ function pdf_einzel_tab(&$pdf,$bk_arr, $label, $kontroll_tab_druck){
 	$pdf->ergebnis_tab["$mieternummer - $empf"] ['N_MIETE']= $n_km;
 
 
-	if($empf_kos_id == '1367'){
-		#die('Szimansky');
-		}
-
+	
 
 		$cols = array('KOSTENKAT'=>"","AKTUELL"=>"Derzeitige Miete",'ANPASSUNG'=>"Anpassungsbetrag",'NEU'=>"Neue Miete ab $this->bk_verrechnungs_datum_d");
 	$pdf->ezTable($anp_tab,$cols,"",
@@ -4533,7 +4533,7 @@ $pdf->ezSetDy(-15);
 
 		/*Anschreiben nur für Mietverträge*/
 		if($empf_kos_typ == 'MIETVERTRAG'){
-		$mv = new mietvertraege;
+			$mv = new mietvertraege;
 			$mv->get_mietvertrag_infos_aktuell($empf_kos_id);
 			/*Wenn Mietvertrag aktuell anpassen, sonst nicht (d.h. Mieter wohnt noch in der Einheit)*/
 
@@ -4543,7 +4543,10 @@ $pdf->ezSetDy(-15);
 			$p = new partners;
 		$p->get_partner_info($_SESSION[partner_id]);
 
+		
 		$pdf->ezNewPage();
+		
+		
 		$pdf->addText(480,697,8,"$p->partner_ort, $this->bk_berechnungs_datum_d");
 		/*echo '<pre>';
 			print_r($mv);
@@ -4552,12 +4555,12 @@ $pdf->ezSetDy(-15);
 			/*Wennn ausgezogen*/
 
 			$pap = $mv->postanschrift[0]['anschrift'];
-		if(!empty($pap)){
-		$pdf->ezText("$pap",10);
-		$pap = '';
-		}else{
-		$pdf->ezText("$mv->personen_name_string_u\n$mv->haus_strasse $mv->haus_nr\n\n$mv->haus_plz $mv->haus_stadt",10);
-		}
+			if(!empty($pap)){
+			$pdf->ezText("$pap",10);
+			$pap = '';
+			}else{
+			$pdf->ezText("$mv->personen_name_string_u\n$mv->haus_strasse $mv->haus_nr\n\n$mv->haus_plz $mv->haus_stadt",10);
+			}
 		/*
 		if($mv->mietvertrag_aktuell=='0'){
 		$anschrift_xx = $mv->postanschrift[0]['anschrift'];

@@ -227,8 +227,9 @@ function erstelle_brief_vorlage($v_dat, $empf_typ, $empf_id_arr, $option='0'){
 			#}
 		
 			
-		
-		
+		/*echo '<pre>';
+		print_r($mv);
+		die();*/
 		
 		###############################################################
 		/*Normale Mieter ohne Verzug und Zustell*/
@@ -244,12 +245,15 @@ function erstelle_brief_vorlage($v_dat, $empf_typ, $empf_id_arr, $option='0'){
 		}
 	 	/*Mieter mit Verzug oder Zustell*/
 		if(count($mv->postanschrift)==1){
-		$pa = $mv->postanschrift[0]['adresse'];
-		#$pdf->ezText("$pa",11);
-		#$pdf_einzeln->ezText("$pa",11);
+		//OK$pa = $mv->postanschrift[0]['adresse'];
+		$key_arr = array_keys($mv->postanschrift);
+		$key = $key_arr[0];
+		$pa = $mv->postanschrift[$key]['adresse'];
+		
 		$pa_arr[$add]['anschrift'] = $pa;
 		$pa_arr[$add]['mv_id'] = $mv_id;
 		$add++;
+		
 		}
 		
 		if(count($mv->postanschrift)>1){
@@ -414,7 +418,13 @@ $message =	"--PHP-mixed-".$random_hash."\n".
 		/*das Raus*/
 		ob_clean(); //ausgabepuffer leeren
 		header("Content-type: application/pdf");  // wird von MSIE ignoriert
-		$pdf->ezStream();
+		//$pdf->ezStream();
+		
+		$dateiname = "$datum_heute - Serie - $this->v_kurztext.pdf";
+		$pdf_opt['Content-Disposition'] = $dateiname;
+		$pdf->ezStream($pdf_opt);
+		
+		
 		
 		}//emalsend
 	else{
@@ -422,7 +432,10 @@ $message =	"--PHP-mixed-".$random_hash."\n".
 		/*Ausgabe*/
 		ob_clean(); //ausgabepuffer leeren
 		header("Content-type: application/pdf");  // wird von MSIE ignoriert
-		$pdf->ezStream();
+		//$pdf->ezStream();
+		$dateiname = "$datum_heute - Serie - $this->v_kurztext.pdf";
+		$pdf_opt['Content-Disposition'] = $dateiname;
+		$pdf->ezStream($pdf_opt);
 	}
 	}else{
 		die('Keine Empfänger gewählt');
@@ -805,11 +818,12 @@ function pdf_heizungabnahmeprotokoll($pdf, $mv_id, $einzug=null){
 	$tabw[0]['RAUM'] = 'Kaltwasser Bad';
 	$tabw[1]['RAUM'] = 'Warmwasser Bad';
 	$tabw[2]['RAUM'] = 'Kaltwasser Küche';
-	$tabw[3]['RAUM'] = 'Kaltwasser Küche';
+	$tabw[3]['RAUM'] = 'Warmwasser Küche';
 	$tabw[4]['RAUM'] = '';
 	$tabw[5]['RAUM'] = '';
 	$tabw[6]['RAUM'] = '';
 	$tabw[7]['RAUM'] = '';
+	$tabw[8]['RAUM'] = '';
 	
 	
 	
@@ -840,11 +854,15 @@ function pdf_heizungabnahmeprotokoll($pdf, $mv_id, $einzug=null){
 
 	/*Footer*/
 	$pdf->ezSetDy(-20);//Abstand
-	$pdf->ezText("$mv->haus_stadt, __________________      __________________________________      ___________________________________",9, array('justification'=>'left'));
-	$pdf->ezSetDy(-6);//Abstand
-	$pdf->addText(105,$pdf->y,6,"Datum");
-	$pdf->addText(250,$pdf->y,6,"Mieter");
-	$pdf->addText(430,$pdf->y,6,"Vermieter");
+	$pdf->ezText("$mv->haus_stadt, __________________",9, array('justification'=>'left'));
+	$pdf->ezSetDy(-8);//Abstand
+	$pdf->addText(125,$pdf->y,6,"Datum");
+	
+	$pdf->ezSetDy(-20);//Abstand
+	$pdf->ezText("____________________________________________      _____________________________________________",9, array('justification'=>'left'));
+	$pdf->ezSetDy(-8);//Abstand
+	$pdf->addText(150,$pdf->y,6,"Mieter");
+	$pdf->addText(400,$pdf->y,6,"Vermieter");
 
 }
 
@@ -1100,13 +1118,13 @@ function pdf_abnahmeprotokoll($pdf, $mv_id, $einzug=null){
 	$pdf->addText(350,$pdf->y+3,10,"Mieter");
 	$pdf->addText(490,$pdf->y+3,10,"Vermieter");
 	$pdf->setLineStyle(1);
-	$pdf->ezSetDy(-20);//Abstand
+	$pdf->ezSetDy(-18);//Abstand
 	$pdf->line(42,$pdf->y,550,$pdf->y);
-	$pdf->ezSetDy(-20);//Abstand
+	$pdf->ezSetDy(-18);//Abstand
 	$pdf->line(42,$pdf->y,550,$pdf->y);
-	$pdf->ezSetDy(-20);//Abstand
+	$pdf->ezSetDy(-18);//Abstand
 	$pdf->line(42,$pdf->y,550,$pdf->y);
-	$pdf->ezSetDy(-20);//Abstand
+	$pdf->ezSetDy(-18);//Abstand
 	$pdf->line(42,$pdf->y,550,$pdf->y);
 	
 	$pdf->ezText("Folgende Schlüssel wurden übergeben:",9, array('justification'=>'left'));
@@ -1138,12 +1156,16 @@ function pdf_abnahmeprotokoll($pdf, $mv_id, $einzug=null){
 	}else{
 		$pdf->addText(65,$pdf->y+2,9,"<b>Der Mieter hat die Auszugsbestätigung erhalten.</b>");
 	}
-	$pdf->ezSetDy(-20);//Abstand
-	$pdf->ezText("$mv->haus_stadt, __________________      __________________________________      ___________________________________",9, array('justification'=>'left'));
-	$pdf->ezSetDy(-8);//Abstand
-	$pdf->addText(105,$pdf->y,6,"Datum");
-	$pdf->addText(250,$pdf->y,6,"Mieter");
-	$pdf->addText(430,$pdf->y,6,"Vermieter");
+	$pdf->ezSetDy(-10);//Abstand
+	$pdf->ezText("$mv->haus_stadt, __________________",9, array('justification'=>'left'));
+	$pdf->ezSetDy(-7);//Abstand
+	$pdf->addText(125,$pdf->y,6,"Datum");
+	
+	$pdf->ezSetDy(-14);//Abstand
+	$pdf->ezText("____________________________________________      _____________________________________________",9, array('justification'=>'left'));
+	$pdf->ezSetDy(-7);//Abstand
+	$pdf->addText(150,$pdf->y,6,"Mieter");
+	$pdf->addText(400,$pdf->y,6,"Vermieter");
 	
 	
 	
@@ -1156,7 +1178,10 @@ function pdf_einauszugsbestaetigung($pdf, $mv_id, $einzug=0){
 	$pdf->ezSetMargins(135,70,50,50);
 	$mv = new mietvertraege();
 	$mv->get_mietvertrag_infos_aktuell($mv_id);
+	$oo  = new objekt;
+	$oo->get_objekt_infos($mv->objekt_id);
 	#echo '<pre>';
+	#print_r($oo);
 	#print_r($mv);
 	#die();
 	if($mv->anzahl_personen>1){
@@ -1172,10 +1197,11 @@ function pdf_einauszugsbestaetigung($pdf, $mv_id, $einzug=0){
 	$pdf->ezText("<b>Auszugsbestätigung</b>",18, array('justification'=>'left'));
 	$pdf->ezText("$mv->einheit_kurzname",10, array('justification'=>'right'));
 	}
+	$pdf->ezText("<b>Wohnungsgeberbescheinigung gemäß § 19 des Bundesmeldegesetzes (BMG)</b>",11, array('justification'=>'left'));
 	$pdf->ezSetDy(-35);//Abstand
-	$pdf->ezText("Hiermit bestätige(n) ich/wir als Vermieter,",10);
+	$pdf->ezText("Hiermit bestätige(n) ich/wir als Wohnungsgeber/Vermieter, dass",10);
 	$pdf->ezSetDy(-15);//Abstand
-	$pdf->ezText("dass\n$mv->personen_name_string_u",10);
+	$pdf->ezText("$mv->personen_name_string_u",10);
 	
 	$pdf->ezSetDy(-15);//Abstand
 	if($einzug=='0'){
@@ -1192,14 +1218,60 @@ function pdf_einauszugsbestaetigung($pdf, $mv_id, $einzug=0){
 	$pdf->ezText("am _______________________  ausgezogen $ist_sind.",10);
 	}
 	
-	$pdf->ezSetDy(-30);//Abstand
-	/*Footer*/
 	$pdf->ezSetDy(-20);//Abstand
-	$pdf->ezText("$mv->haus_stadt, __________________      __________________________________ ",9, array('justification'=>'left'));
-	$pdf->ezSetDy(-6);//Abstand
-	$pdf->addText(105,$pdf->y,6,"Datum");
-	$pdf->addText(250,$pdf->y,6,"Vermieter");
 	
+	//unset($oo->objekt_eigentuemer);
+	
+	if(empty($oo->objekt_eigentuemer)){
+		$pdf->ezSetDy(-30);//Abstand
+		$this->kasten($pdf, 1, 50, 10, 10);
+		$pdf->addText(70,$pdf->y+1,10,'Der Wohnungsgeber/Vermieter ist gleichzeitig <b>Eigentümer</b> der Wohnung oder');
+		
+		$pdf->ezSetDy(-20);//Abstand
+		
+		$this->kasten($pdf, 1, 50, 10, 10);
+				
+		$pdf->addText(70,$pdf->y+1,10,"Der Wohnungsgeber/Vermieter ist <b>nicht</b> Eigentümer der Wohnung");
+		$pdf->ezSetDy(-15);//Abstand
+		
+	
+		$pdf->ezSetDy(-25);//Abstand
+		$pdf->line(50,$pdf->y,550,$pdf->y);
+		$pdf->ezSetDy(-25);//Abstand
+		$pdf->line(50,$pdf->y,550,$pdf->y);
+	}else{
+		$this->kasten($pdf, 1, 50, 10, 10);
+		$pdf->addText(50,$pdf->y+2,10,'X');
+		
+		$pdf->addText(70,$pdf->y+1,10,"Der Wohnungsgeber ist <b>nicht</b> Eigentümer der Wohnung");
+		$pdf->ezSetDy(-15);//Abstand
+		
+		$pdf->eztext("Name und Anschrift des <b>Eigentümers</b> lauten:",10);
+		
+		$pdf->eztext("$oo->objekt_eigentuemer",10);
+		$pp = new partners;
+		$pp->get_partner_info($oo->objekt_eigentuemer_id);
+		$pdf->eztext("$pp->partner_strasse $pp->partner_hausnr, $pp->partner_plz $pp->partner_ort",10);
+	}
+	
+	
+	
+	$pdf->ezSetDy(-25);//Abstand
+	
+	
+	$pdf->ezText("Ich bestätige mit meiner Unterschrift den Ein- bzw. Auszug der oben genannten Person(en) in die näher bezeichnete Wohnung und dass ich als Wohnungsgeber oder als beauftragte Person diese Bescheinigung ausstellen darf. Ich habe davon Kenntnis genommen, da ich ordnungswidrig handele, wenn ich hierzu nicht berechtigt bin und dass es verboten ist, eine Wohnanschrift für eine Anmeldung eines Wohnsitzes einem Dritten anzubieten oder zur Verfügung zu stellen, obwohl ein tatsächlicher Bezug der Wohnung durch einen Dritten weder stattfindet noch beabsichtigt ist. Ein Verstoß gegen das Verbot stellt auch einen Ordnungswidrigkeit dar.",8);
+	
+	
+	/*Footer*/
+	$pdf->ezSetDy(-25);//Abstand
+	$pdf->ezText("$mv->haus_stadt, __________________",9, array('justification'=>'left'));
+	$pdf->ezSetDy(-7);//Abstand
+	$pdf->addText(125,$pdf->y,6,"Datum");
+	
+	$pdf->ezSetDy(-30);//Abstand
+	$pdf->ezText("____________________________________________",9, array('justification'=>'left'));
+	$pdf->ezSetDy(-8);//Abstand
+	$pdf->addText(57,$pdf->y,6,"Unterschrift des Wohnungsgebers/Vermieters oder der beauftragten Person");
 	
 	
 	

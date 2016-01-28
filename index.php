@@ -17,9 +17,8 @@
  * @lastmodified $Date: 2011-07-07 10:41:33 +0200 (Do, 07 Jul 2011) $
  * 
  */
-//ini_set('display_errors','On'); 
-//error_reporting(E_ALL|E_STRICT);
-
+#ini_set('display_errors','On'); 
+#error_reporting(E_ALL|E_STRICT);
 #ini_set('allow_url_include', 1);
 #ini_set("auto_detect_line_endings", true);
 
@@ -91,6 +90,10 @@ ob_start(); //Ausgabepuffer Starten
 
 echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
 echo "<head>";
+//echo "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js\"></script>";
+echo "<link href=\"css/lightbox.css\" rel=\"stylesheet\">";
+//echo "<script type=\"text/javascript\" src=\"js/lightbox.js\"></script>";
+
 echo "<script type=\"text/javascript\" src=\"ajax/ajax.js\"></script>\n";
 echo "<script type=\"text/javascript\" src=\"ajax/dd_kostenkonto.js\"></script>\n";
 echo "<script type=\"text/javascript\" src=\"js/javascript.js\"></script>\n";
@@ -98,6 +101,8 @@ echo "<script type=\"text/javascript\" src=\"js/sorttable.js\"></script>\n";
 echo "<link rel=\"stylesheet\" type=\"text/css\"  href=\"css/uebersicht.css\" media=\"screen\">\n";
 echo "<link rel=\"stylesheet\" type=\"text/css\"  href=\"css/berlussimo.css\"  media=\"screen\">\n";
 echo "<link href=\"css/demo.css\"       rel=\"stylesheet\" type=\"text/css\" /  media=\"screen\">";
+
+
 
 //echo "<script src=\"js/lightbox-plus-jquery.min.js\"></script>";
 
@@ -167,7 +172,7 @@ $p = new partners;
 		if(isset($_SESSION['partner_id'])){
 		$link_partner = "<a href=\"?daten=rechnungen&option=eingangsbuch&partner_wechseln\">Partner wechseln: <b>$p->partner_name</b></a>&nbsp;&nbsp;";
 		}else{
-			$link_partner = "<a href=\"?daten=rechnungen&option=eingangsbuch&partner_wechseln\">Partner wechseln</b></a>&nbsp;&nbsp;";
+			$link_partner = "<a href=\"?daten=rechnungen&option=eingangsbuch&partner_wechseln\">Partner w�hlen</b></a>&nbsp;&nbsp;";
 		}
 		}else{
 	$link_partner ='';	
@@ -183,7 +188,7 @@ $p = new partners;
 		if(isset($_SESSION['geldkonto_id'])){
 		$link_geldkonto = "<a href=\"?daten=buchen&option=geldkonto_aendern\">Geldkonto: $g->geldkonto_bezeichnung_kurz</a>&nbsp;&nbsp;";
 		}else{
-				$link_geldkonto = "<a href=\"?daten=buchen&option=geldkonto_aendern\">Geldkonto wechseln</a>&nbsp;&nbsp;";	
+				$link_geldkonto = "<a href=\"?daten=buchen&option=geldkonto_aendern\">Geldkonto w�hlen</a>&nbsp;&nbsp;";	
 		}
 	}else{
 	$link_geldkonto = '';
@@ -200,10 +205,9 @@ include_options();
 
 
 }
-
 echo "<div  id=\"aus\"><center><b>Berlussimo</b> wurde von der <a target=\"_new\"  href=\"http://www.berlus.de\">Berlus GmbH</a> - Hausverwaltung zur Verf�gung gestellt.</center></div>";
-echo "</body></html>";
 
+echo "</body></html>";
 
 
 function include_options(){

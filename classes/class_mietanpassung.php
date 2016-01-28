@@ -1528,7 +1528,12 @@ function form_mietanpassung($einheit_id, $ms_jahr){
 		echo "<tr><td>Formel</td><td>x = Miete nach Mittelwert - Gesamtminderung</td></tr>";
 		echo "<tr><td>Berechnung</td><td>$neue_miete_m_wert_nach_abzug = $neue_miete_m_wert - $gesamt_abzug</td></tr>";
 		$neue_miete_m_wert_nach_abzug_a = nummer_punkt2komma($neue_miete_m_wert_nach_abzug);
-		echo "<tr><td>Mietspiegelmiete nach Minderug</td><td>$neue_miete_m_wert_nach_abzug_a</td></tr>";
+		echo "<tr><td>Mietspiegelmiete nach Minderung</td><td>$neue_miete_m_wert_nach_abzug_a<br>$neue_miete_m_wert_nach_abzug_a < $miete_aktuell_a</td></tr>";
+		
+		if($neue_miete_m_wert_nach_abzug<$miete_aktuell){
+			die("<tr><td style=\"background-color:red\">Erhöhung nicht möglich, da Miete abzüglich Minderung kleiner als aktuelle Miete $neue_miete_m_wert_nach_abzug_a € < $miete_aktuell_a €</td></tr>");
+		}
+		
 		
 		echo "<tr><th colspan=\"2\">Neue angemessene Miete kalt ab $anstiegs_datum</th></tr>";
 		echo "<tr><td>Miete kalt aktuell</td><td>$miete_aktuell_a €</td></tr>";
@@ -1642,7 +1647,11 @@ function form_mietanpassung($einheit_id, $ms_jahr){
 		echo "<tr><td>Formel</td><td>x = Miete nach Mittelwert - Gesamtminderung</td></tr>";
 		echo "<tr><td>Berechnung</td><td>$neue_miete_m_wert_nach_abzug = $neue_miete_m_wert - $gesamt_abzug</td></tr>";
 		$neue_miete_m_wert_nach_abzug_a = nummer_punkt2komma($neue_miete_m_wert_nach_abzug);
-		echo "<tr><td>Mietspiegelmiete nach Minderug</td><td>$neue_miete_m_wert_nach_abzug_a</td></tr>";
+		echo "<tr><td>Mietspiegelmiete nach Minderung</td><td>$neue_miete_m_wert_nach_abzug_a <br>$neue_miete_m_wert_nach_abzug<$miete_aktuell</td></tr>";
+		
+		if($neue_miete_m_wert_nach_abzug<$miete_aktuell){
+			die("Erhöhung nicht möglich, da Miete abzüglich Minderung kleiner als aktuelle Miete $neue_miete_m_wert_nach_abzug_a € < $miete_aktuell_a €");
+		}
 		
 		echo "<tr><th colspan=\"2\">Neue angemessene Miete kalt ab $anstiegs_datum</th></tr>";
 		echo "<tr><td>Miete kalt aktuell</td><td>$miete_aktuell_a €</td></tr>";
@@ -1863,7 +1872,7 @@ $cols = array('BEZ'=>"BEZ",  'BETRAG'=>"BETRAG");
 $pdf->ezTable($tab_arr,$cols,"",
 array('showHeadings'=>0,'shaded'=>0, 'showLines'=>0, 'titleFontSize' => 11, 'fontSize' => 11, 'xPos'=>55,'xOrientation'=>'right',  'width'=>400,'cols'=>array('BEZ'=>array('justification'=>'left','width'=>350),'BETRAG'=>array('justification'=>'right','width'=>50))));
 $pdf->ezSetDy(-10);
-$brief_text = "Gemäß § 558 BGB kann der Vermieter die Zustimmung zur Mieterhöhung von Ihnen verlangen, wenn der Mietzins, zu dem die Erhöhung eintretet soll, seit 15 Monaten unverändert und mindestens 1 Jahr nach der letzten Mieterhöhung verstrichen ist. Weiterhin darf sich der Mietzins innerhalb von 3 Jahren um nicht mehr als 15 % erhöhen.";
+$brief_text = "Gemäß § 558 BGB kann der Vermieter die Zustimmung zur Mieterhöhung von Ihnen verlangen, wenn der Mietzins, zu dem die Erhöhung eintreten soll, seit 15 Monaten unverändert und mindestens 1 Jahr nach der letzten Mieterhöhung verstrichen ist. Weiterhin darf sich der Mietzins innerhalb von 3 Jahren um nicht mehr als 15 % erhöhen.";
 $pdf->ezText("$brief_text",11, array('justification'=>'full'));
 $pdf->ezSetDy(-10);
 $brief_text = "Die mietvertraglich vereinbarte Fläche Ihrer Wohnung beträgt $ber->EINHEIT_QM_A m². Sie zahlen gegenwärtig eine Netto-Kaltmiete in Höhe von $ber->MIETE_AKTUELL_A €. Hieraus errechnet sich eine Miete netto kalt je qm in Höhe von $ber->M2_AKTUELL_A €.";
@@ -2281,7 +2290,7 @@ function pdf_anschreiben_MW($ber_array, $datum){
 	$pdf->ezTable($tab_arr,$cols,"",
 			array('showHeadings'=>0,'shaded'=>0, 'showLines'=>0, 'titleFontSize' => 11, 'fontSize' => 11, 'xPos'=>55,'xOrientation'=>'right',  'width'=>400,'cols'=>array('BEZ'=>array('justification'=>'left','width'=>350),'BETRAG'=>array('justification'=>'right','width'=>50))));
 	$pdf->ezSetDy(-10);
-	$brief_text = "Gemäß § 558 BGB kann der Vermieter die Zustimmung zur Mieterhöhung von Ihnen verlangen, wenn der Mietzins, zu dem die Erhöhung eintretet soll, seit 15 Monaten unverändert und mindestens 1 Jahr nach der letzten Mieterhöhung verstrichen ist. Weiterhin darf sich der Mietzins innerhalb von 3 Jahren um nicht mehr als 15 % erhöhen.";
+	$brief_text = "Gemäß § 558 BGB kann der Vermieter die Zustimmung zur Mieterhöhung von Ihnen verlangen, wenn der Mietzins, zu dem die Erhöhung eintreten soll, seit 15 Monaten unverändert und mindestens 1 Jahr nach der letzten Mieterhöhung verstrichen ist. Weiterhin darf sich der Mietzins innerhalb von 3 Jahren um nicht mehr als 15 % erhöhen.";
 	$pdf->ezText("$brief_text",11, array('justification'=>'full'));
 	$pdf->ezSetDy(-10);
 	$brief_text = "Die mietvertraglich vereinbarte Fläche Ihrer Wohnung beträgt $ber->EINHEIT_QM_A m². Sie zahlen gegenwärtig eine Netto-Kaltmiete in Höhe von $ber->MIETE_AKTUELL_A €. Hieraus errechnet sich eine Miete netto kalt je qm in Höhe von $ber->M2_AKTUELL_A €.";
@@ -2859,7 +2868,7 @@ function pdf_anschreiben($ber_array, $datum){
 	$pdf->ezTable($tab_arr,$cols,"",
 			array('showHeadings'=>0,'shaded'=>0, 'showLines'=>0, 'titleFontSize' => 11, 'fontSize' => 11, 'xPos'=>55,'xOrientation'=>'right',  'width'=>400,'cols'=>array('BEZ'=>array('justification'=>'left','width'=>350),'BETRAG'=>array('justification'=>'right','width'=>50))));
 	$pdf->ezSetDy(-10);
-	$brief_text = "Gemäß § 558 BGB kann der Vermieter die Zustimmung zur Mieterhöhung von Ihnen verlangen, wenn der Mietzins, zu dem die Erhöhung eintretet soll, seit 15 Monaten unverändert und mindestens 1 Jahr nach der letzten Mieterhöhung verstrichen ist. Weiterhin darf sich der Mietzins innerhalb von 3 Jahren um nicht mehr als 15 % erhöhen.";
+	$brief_text = "Gemäß § 558 BGB kann der Vermieter die Zustimmung zur Mieterhöhung von Ihnen verlangen, wenn der Mietzins, zu dem die Erhöhung eintreten soll, seit 15 Monaten unverändert und mindestens 1 Jahr nach der letzten Mieterhöhung verstrichen ist. Weiterhin darf sich der Mietzins innerhalb von 3 Jahren um nicht mehr als 15 % erhöhen.";
 	$pdf->ezText("$brief_text",11, array('justification'=>'full'));
 	$pdf->ezSetDy(-10);
 	$brief_text = "Die mietvertraglich vereinbarte Fläche Ihrer Wohnung beträgt $ber->EINHEIT_QM_A m². Sie zahlen gegenwärtig eine Netto-Kaltmiete in Höhe von $ber->MIETE_AKTUELL_A €. Hieraus errechnet sich eine Miete netto kalt je qm in Höhe von $ber->M2_AKTUELL_A €.";
@@ -3009,9 +3018,9 @@ function pdf_anschreiben($ber_array, $datum){
 	}//end wenn Sondermerkmale vorhanden
 
 	if(is_array($abzuege_arr)){
-		$brief_text = "\nBei Ihrer Wohnung wurden bei der Berechnung folgende wertmindernde Faktoren berücksichtigt:\n";
+		$this->abzug_wert_a = nummer_punkt2komma($this->abzug_wert);
+		$brief_text = "\n<b>Bei Ihrer Wohnung wurden bei der Berechnung folgende wertmindernde Faktoren berücksichtigt:</b>\n";
 		$pdf->ezText("$brief_text",11, array('justification'=>'full'));
-
 		$anz = count($abzuege_arr);
 		for ($i = 0; $i < $anz; $i++) {
 			$merkm = $abzuege_arr[$i]['MERKMAL'];
@@ -3021,7 +3030,18 @@ function pdf_anschreiben($ber_array, $datum){
 			$pdf->ezText("$merkm          $merkmw_a €/m²",11);
 		}
 		$ber->GESAMT_ABZUG_A = nummer_punkt2komma($ber->GESAMT_ABZUG);
-		$pdf->ezText("<b>Gesamtminderung              $ber->GESAMT_ABZUG_A €/monatlich</b>",11);
+		$pdf->ezText("<b>Gesamtminderung              $ber->GESAMT_ABZUG_A €/monatlich</b> (Ihre Fläche: $ber->EINHEIT_QM_A m² X Abzug pro m²: $this->abzug_wert_a €)",11);
+		$neuer_mw = nummer_komma2punkt($ber->M_WERT_A) + $this->abzug_wert;
+		$neuer_mw_a = nummer_punkt2komma($neuer_mw);
+		
+		$pdf->ezText("Berechnung des Mietspiegelmittelwertes für Ihre Wohnung: $ber->M_WERT_A € $this->abzug_wert_a € = <b>$neuer_mw_a € pro m²</b>",11, array('justification'=>'full'));
+	}
+	
+	if($neuer_mw<$ber->M2_PREIS_NEU2){
+		$pdf->ezText("MIETERHÖHUNG NICHT MÖGLICH: $neuer_mw_a < $ber->M2_PREIS_NEU2_A", 35);
+		echo '<pre>';
+		print_r($ber);
+		die();
 	}
 
 		
@@ -3030,7 +3050,7 @@ function pdf_anschreiben($ber_array, $datum){
 	$brief_text = "\nGemäß § 558 Absatz 3 BGB wird hiermit die Miete um $ber->PROZ_ERH2_A %, ausgehend vom Netto-Kaltmietzins, also um insgesamt $ber->MONATLICH_MEHR2_A €, erhöht.";
 	$pdf->ezText("$brief_text",11, array('justification'=>'full'));
 	$ber->M2_PREIS_NEU_A = nummer_punkt2komma($ber->M2_PREIS_NEU);
-	$brief_text = "\nNach der Erhöhung beträgt die Nettokaltmiete $ber->M2_PREIS_NEU2_A €/m². Unter Berücksichtigung der wohnungsbezogenen Merkmale ist der geforderte Mietzins ortsüblich.";
+	$brief_text = "\nNach der Erhöhung beträgt die Nettokaltmiete <b>$ber->M2_PREIS_NEU2_A €/m²</b>. Unter Berücksichtigung der wohnungsbezogenen Merkmale ist der geforderte Mietzins ortsüblich.";
 	$pdf->ezText("$brief_text",11, array('justification'=>'full'));
 	#$brief_text = "\n<b>Ihre Neue Gesamtmiete beträgt ab dem $ber->N_ANSTIEG_DATUM insgesamt $ber->B_NEUE_ENDMIETE €.</b>";
 	#$pdf->ezText("$brief_text",11, array('justification'=>'full'));
@@ -3476,21 +3496,24 @@ $ber->M_WERT_A = nummer_punkt2komma($ber->M_WERT);
 		}//end wenn Sondermerkmale vorhanden
 
 if(is_array($abzuege_arr)){
-			$brief_text = "\nBei Ihrer Wohnung wurden bei der Berechnung folgende wertmindernde Faktoren berücksichtigt:\n";
-			$pdf->ezText("$brief_text",11, array('justification'=>'full'));
-	
-			$anz = count($abzuege_arr);
-			for ($i = 0; $i < $anz; $i++) {
+		$this->abzug_wert_a = nummer_punkt2komma($this->abzug_wert);
+		$brief_text = "\n<b>Bei Ihrer Wohnung wurden bei der Berechnung folgende wertmindernde Faktoren berücksichtigt:</b>\n";
+		$pdf->ezText("$brief_text",11, array('justification'=>'full'));
+		$anz = count($abzuege_arr);
+		for ($i = 0; $i < $anz; $i++) {
 			$merkm = $abzuege_arr[$i]['MERKMAL'];
 			$merkmw = $abzuege_arr[$i]['MERKMAL_WERT'];
 			$merkmw_a = nummer_punkt2komma($merkmw);
 			#echo "<tr><td>$merkm</td><td>$merkmw</td></tr>";
 			$pdf->ezText("$merkm          $merkmw_a €/m²",11);
-			}
-			$ber->GESAMT_ABZUG_A = nummer_punkt2komma($ber->GESAMT_ABZUG);
-			$pdf->ezText("<b>Gesamtminderung              $ber->GESAMT_ABZUG_A €/monatlich</b>",11);		
-			}
-
+		}
+		$ber->GESAMT_ABZUG_A = nummer_punkt2komma($ber->GESAMT_ABZUG);
+		$pdf->ezText("<b>Gesamtminderung              $ber->GESAMT_ABZUG_A €/monatlich</b> (Ihre Fläche: $ber->EINHEIT_QM_A m² X Abzug pro m²: $this->abzug_wert_a €)",11);
+		$neuer_mw = nummer_komma2punkt($ber->M_WERT_A) + $this->abzug_wert;
+		$neuer_mw_a = nummer_punkt2komma($neuer_mw);
+		
+		$pdf->ezText("Berechnung des Mietspiegelmittelwertes für Ihre Wohnung: $ber->M_WERT_A € $this->abzug_wert_a € = <b>$neuer_mw_a € pro m²</b>",11, array('justification'=>'full'));
+	}
 			
 $ber->ANSTIEG_UM_PROZENT_A = nummer_punkt2komma($ber->ANSTIEG_UM_PROZENT);
 $ber->MONATLICH_MEHR_A = nummer_punkt2komma($ber->MONATLICH_MEHR);
@@ -3736,7 +3759,7 @@ $cols = array('BEZ'=>"BEZ",  'BETRAG'=>"BETRAG");
 $pdf->ezTable($tab_arr,$cols,"",
 array('showHeadings'=>0,'shaded'=>0, 'showLines'=>0, 'titleFontSize' => 11, 'fontSize' => 11, 'xPos'=>55,'xOrientation'=>'right',  'width'=>400,'cols'=>array('BEZ'=>array('justification'=>'left','width'=>350),'BETRAG'=>array('justification'=>'right','width'=>50))));
 $pdf->ezSetDy(-10);
-$brief_text = "Gemäß § 558 BGB kann der Vermieter die Zustimmung zur Mieterhöhung von Ihnen verlangen, wenn der Mietzins, zu dem die Erhöhung eintretet soll, seit 15 Monaten unverändert und mindestens 1 Jahr nach der letzten Mieterhöhung verstrichen ist. Weiterhin darf sich der Mietzins innerhalb von 3 Jahren um nicht mehr als 15 % erhöhen.";
+$brief_text = "Gemäß § 558 BGB kann der Vermieter die Zustimmung zur Mieterhöhung von Ihnen verlangen, wenn der Mietzins, zu dem die Erhöhung eintreten soll, seit 15 Monaten unverändert und mindestens 1 Jahr nach der letzten Mieterhöhung verstrichen ist. Weiterhin darf sich der Mietzins innerhalb von 3 Jahren um nicht mehr als 15 % erhöhen.";
 $pdf->ezText("$brief_text",11, array('justification'=>'full'));
 $pdf->ezSetDy(-10);
 $brief_text = "Die mietvertraglich vereinbarte Fläche Ihrer Wohnung beträgt $ber->EINHEIT_QM_A m². Sie zahlen gegenwärtig eine Netto-Kaltmiete in Höhe von $ber->MIETE_AKTUELL_A €. Hieraus errechnet sich eine Miete netto kalt je qm in Höhe von $ber->M2_AKTUELL_A €.";
@@ -3838,22 +3861,25 @@ $ber->M_WERT_A = nummer_punkt2komma($ber->M_WERT);
 	  		}//end for
 		}//end wenn Sondermerkmale vorhanden
 
-if(is_array($abzuege_arr)){
-			$brief_text = "\nBei Ihrer Wohnung wurden bei der Berechnung folgende wertmindernde Faktoren berücksichtigt:\n";
-			$pdf->ezText("$brief_text",11, array('justification'=>'full'));
-	
-			$anz = count($abzuege_arr);
-			for ($i = 0; $i < $anz; $i++) {
+	if(is_array($abzuege_arr)){
+		$this->abzug_wert_a = nummer_punkt2komma($this->abzug_wert);
+		$brief_text = "\n<b>Bei Ihrer Wohnung wurden bei der Berechnung folgende wertmindernde Faktoren berücksichtigt:</b>\n";
+		$pdf->ezText("$brief_text",11, array('justification'=>'full'));
+		$anz = count($abzuege_arr);
+		for ($i = 0; $i < $anz; $i++) {
 			$merkm = $abzuege_arr[$i]['MERKMAL'];
 			$merkmw = $abzuege_arr[$i]['MERKMAL_WERT'];
 			$merkmw_a = nummer_punkt2komma($merkmw);
 			#echo "<tr><td>$merkm</td><td>$merkmw</td></tr>";
 			$pdf->ezText("$merkm          $merkmw_a €/m²",11);
-			}
-			$ber->GESAMT_ABZUG_A = nummer_punkt2komma($ber->GESAMT_ABZUG);
-			#$pdf->ezText("<b>Gesamtminderung              $ber->GESAMT_ABZUG_A €/monatlich</b>",11);		
-			}
-
+		}
+		$ber->GESAMT_ABZUG_A = nummer_punkt2komma($ber->GESAMT_ABZUG);
+		$pdf->ezText("<b>Gesamtminderung              $ber->GESAMT_ABZUG_A €/monatlich</b> (Ihre Fläche: $ber->EINHEIT_QM_A m² X Abzug pro m²: $this->abzug_wert_a €)",11);
+		$neuer_mw = nummer_komma2punkt($ber->M_WERT_A) + $this->abzug_wert;
+		$neuer_mw_a = nummer_punkt2komma($neuer_mw);
+		
+		$pdf->ezText("Berechnung des Mietspiegelmittelwertes für Ihre Wohnung: $ber->M_WERT_A € $this->abzug_wert_a € = <b>$neuer_mw_a € pro m²</b>",11, array('justification'=>'full'));
+	}
 			
 $ber->ANSTIEG_UM_PROZENT_A = nummer_punkt2komma($ber->ANSTIEG_UM_PROZENT);
 $ber->MONATLICH_MEHR_A = nummer_punkt2komma($ber->MONATLICH_MEHR);

@@ -490,8 +490,8 @@ switch($option) {
      	#print_r($arr);
      	#die();
      	#$li->pdf_auszug1($et_id, $arr);
-     	$saldo = $li->auszugtest($einheit_id,$et_id, '0.00',2013);
-     	$li->auszugtest3($einheit_id,$et_id, $saldo, 2014);
+     	#$saldo = $li->auszugtest($einheit_id,$et_id, '0.00',2013);
+     	#$li->auszugtest($einheit_id,$et_id, $saldo, 2014);
         
      break;
      
