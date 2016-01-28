@@ -22,7 +22,7 @@
 include_once("includes/allgemeine_funktionen.php");
 
 /*Überprüfen ob Benutzer Zugriff auf das Modul hat*/
-if(!check_user_mod($_SESSION[benutzer_id], 'kautionen')){
+if(!check_user_mod($_SESSION['benutzer_id'], 'kautionen')){
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
 	echo '</script>';	
@@ -37,7 +37,12 @@ include_once("classes/class_formular.php");
 include_once("options/links/links.kautionen.php");
 include_once("classes/class_kautionen.php");
 
+if(isset($_REQUEST['option']) && !empty($_REQUEST['option'])){
 $option = $_REQUEST["option"];
+}else{
+	$option = 'default';
+}
+
 
 /*Optionsschalter*/
 switch($option) {
@@ -134,6 +139,91 @@ if(!empty($_SESSION[geldkonto_id])){
 }else{
 hinweis_ausgeben('Kautionskonto wählen');	
 }
+break;
+
+
+case "kautionsuebersicht":
+	$bk = new berlussimo_global();
+	$link= "?daten=kautionen&option=kautionsuebersicht";
+	$bk->objekt_auswahl_liste($link);
+	
+	if(isset($_SESSION['ansicht_k'])){
+		unset($_SESSION['ansicht_k']);
+	}
+	
+if(isset($_REQUEST['ansicht_k'])){
+$_SESSION['ansicht_k'] = 'alle';
+}
+
+
+
+$k = new kautionen;
+$f = new formular();
+
+if(isset($_SESSION['ansicht_k'])){
+	$k->kautions_uebersicht($_SESSION['objekt_id'], $_SESSION['ansicht_k']);
+}else{
+	$js = "onclick=\"window.location.href += '&ansicht_k=alle'\"";
+	$f->button_js('BtN_alle', 'Alle Altmieter anzeigen', $js);
+		
+	$k->kautions_uebersicht($_SESSION['objekt_id'], null);
+}	
+break;
+
+
+case "kautionsfelder":
+$k = new kautionen;
+$arr = $k->get_felder_arr();
+$f = new formular;
+$f->erstelle_formular("Neues Feld",null);
+$f->text_feld("Feld/Spaltenbezeichnung", 'feld', '', 50, 'feld', null);
+$f->hidden_feld("option", "feld_hinzu");
+$f->send_button("submit", "Feld hinzufügen");
+$f->ende_formular();
+if(is_array($arr)){
+	#echo '<pre>';
+	#print_r($arr);
+	$anz = count($arr);
+	
+	
+	
+	$f->fieldset("Kautionsfelder", null);
+	echo "<table>";
+	echo "<tr><th>FELD</th></th><th>OPTION</th></tr>";
+	$z = 0;
+	
+	for($a=0;$a<$anz;$a++){
+		$z++;
+		$feld = $arr[$a]['FELD'];
+		$dat = $arr[$a]['DAT'];
+		$link_del = "<a href=\"?daten=kautionen&option=feld_del&dat=$dat\">Löschen</a>";
+		echo "<tr><td>$z. $feld</td>";
+		echo "<td>$link_del</td>";
+		echo "</tr>";
+	}
+	$f->fieldset_ende();
+	
+}	else{
+	fehlermeldung_ausgeben("Keine Kautionsfelder in der Datenbank vorhanden!");
+}
+break;
+
+case "feld_hinzu":
+#	print_req();
+	if(!empty($_REQUEST['feld'])){
+		$k = new kautionen;
+		$k->feld_speichern($_REQUEST['feld']);
+	}
+weiterleiten("?daten=kautionen&option=kautionsfelder");	
+break;
+
+case "feld_del":
+	if(!empty($_REQUEST['dat'])){
+	$k = new kautionen;
+	$k->feld_del($_REQUEST['dat']);
+	weiterleiten("?daten=kautionen&option=kautionsfelder");
+	}
+	
 break;
 
 	

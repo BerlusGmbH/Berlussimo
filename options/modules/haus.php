@@ -39,11 +39,56 @@ $objekt_id = $_REQUEST["objekt_id"];
 include_once("options/links/links.form_haus.php");
 switch($haus_raus) {
 
-    case "haus_kurz":
+    /*Liste der H‰user anzeigen*/
+	case "haus_kurz":
     $form = new mietkonto;
     $form->erstelle_formular("H‰userliste", NULL);
     haus_kurz($objekt_id);
     $form->ende_formular();
+    break;
+    
+    /*Formular zum ƒndern des Hauses aufrufen*/
+    case "haus_aendern":
+    $f = new formular();
+    
+    $bk = new berlussimo_global();
+    $link= "?daten=haus_raus&haus_raus=haus_aendern";
+    $bk->objekt_auswahl_liste($link);
+    if(!isset($_REQUEST['haus_id'])){
+    	if(isset($_SESSION['objekt_id'])){
+    	$f->fieldset('H‰user zum ƒndern w‰hlen', 'hww');
+    	haus_kurz($_SESSION['objekt_id']);
+    	$f->fieldset_ende();
+    	}
+    }else{
+    	$h = new haus;
+    	$haus_id = $_REQUEST['haus_id'];
+    	$h->form_haus_aendern($haus_id);
+    }
+
+    break;
+    
+    /*ƒnderungen des Hauses speichern*/
+    case "haus_aend_speichern":
+    	//print_req();
+    	if(isset($_REQUEST['haus_id']) && !empty($_REQUEST['haus_id']) && isset($_REQUEST['strasse']) && !empty($_REQUEST['strasse']) && isset($_REQUEST['haus_nr']) && !empty($_REQUEST['haus_nr']) && isset($_REQUEST['ort']) && !empty($_REQUEST['ort']) && isset($_REQUEST['plz']) && !empty($_REQUEST['plz']) && isset($_REQUEST['qm']) && !empty($_REQUEST['qm']) && isset($_REQUEST['Objekt']) && !empty($_REQUEST['Objekt'])){
+    	$haus_id = $_REQUEST['haus_id'];
+    	$strasse = $_REQUEST['strasse']; 
+    	$haus_nr = $_REQUEST['haus_nr'];
+    	$ort=$_REQUEST['ort'];
+    	$plz = $_REQUEST['plz'];
+    	$qm=nummer_komma2punkt($_REQUEST['qm']);
+    	$objekt_id=$_REQUEST['Objekt'];	
+    	
+    	$h = new haus;
+    	$h->haus_aenderung_in_db($strasse,$haus_nr,$ort,$plz,$qm,$objekt_id, $haus_id);
+    	fehlermeldung_ausgeben("Haus ge‰ndert!");
+    	weiterleiten_in_sec("?daten=haus_raus&haus_raus=haus_kurz&objekt_id=$objekt_id", 3);
+    	}else{
+    		fehlermeldung_ausgeben("Eingegebene Daten unvollst‰ndig, erneut versuchen bitte!");
+    		$haus_id = $_REQUEST['haus_id'];
+    		weiterleiten_in_sec("?daten=haus_raus&haus_raus=haus_aendern&haus_id=$haus_id", 3);
+    	}
     break;
     
     
@@ -74,7 +119,7 @@ iframe_start();
 echo "<table class=\"sortable\">\n";
 #echo "<tr class=\"feldernamen\"><td colspan=8>$title</td></tr>\n";
 #echo "<tr class=\"feldernamen\"><td width=155>Straﬂe</td><td width=60>Nr.</td><td width=60>PLZ</td><td width=60>H m≤</td><td width=100>E m≤</td><td colspan=2>Zusatzinfo</td></tr>\n";
-echo "<tr><th>Strasse</th><th>Nr.</th><th>PLZ</th><th>m≤</th><th>Em≤</th><th>Einheiten</th><th>INFOS</th></tr>";
+echo "<tr><th>Strasse</th><th>Nr.</th><th>PLZ</th><th>m≤</th><th>Em≤</th><th>Einheiten</th><th>INFOS</th><th>OPTION</th></tr>";
 
 
 
@@ -93,12 +138,14 @@ $counter = 0;
 			$gesammtflaeche_einheiten = "0";
 		}
 	$counter++;
-		
+
+	$link_haus_aendern = "<a href=\"?daten=haus_raus&haus_raus=haus_aendern&haus_id=$HAUS_ID\">Haus ‰ndern</th>";
+	
 	if($counter == 1){
-	echo "<tr class=\"zeile1\"><td width=150>$HAUS_STRASSE</td><td width=60>$HAUS_NUMMER</td><td width=60>$HAUS_PLZ</td><td width=60>$HAUS_QM m≤</td><td width=100>$gesammtflaeche_einheiten m≤</td><td><a class=\"table_links\" href=\"?daten=einheit_raus&einheit_raus=einheit_kurz&haus_id=$HAUS_ID\">Einheiten (<b>$einheiten_im_haus</b>)</a></td><td>$detail_link</td></tr>";  
+	echo "<tr class=\"zeile1\"><td width=150>$HAUS_STRASSE</td><td width=60>$HAUS_NUMMER</td><td width=60>$HAUS_PLZ</td><td width=60>$HAUS_QM m≤</td><td width=100>$gesammtflaeche_einheiten m≤</td><td><a class=\"table_links\" href=\"?daten=einheit_raus&einheit_raus=einheit_kurz&haus_id=$HAUS_ID\">Einheiten (<b>$einheiten_im_haus</b>)</a></td><td>$detail_link</td><td>$link_haus_aendern</td></tr>";  
 	}
 	if($counter == 2){
-	echo "<tr class=\"zeile2\"><td width=150>$HAUS_STRASSE</td><td width=60>$HAUS_NUMMER</td><td width=60>$HAUS_PLZ</td><td width=60>$HAUS_QM m≤</td><td width=60>$gesammtflaeche_einheiten m≤</td><td><a class=\"table_links\" href=\"?daten=einheit_raus&einheit_raus=einheit_kurz&haus_id=$HAUS_ID\">Einheiten (<b>$einheiten_im_haus</b>)</a></td><td>$detail_link</td></tr>";
+	echo "<tr class=\"zeile2\"><td width=150>$HAUS_STRASSE</td><td width=60>$HAUS_NUMMER</td><td width=60>$HAUS_PLZ</td><td width=60>$HAUS_QM m≤</td><td width=60>$gesammtflaeche_einheiten m≤</td><td><a class=\"table_links\" href=\"?daten=einheit_raus&einheit_raus=einheit_kurz&haus_id=$HAUS_ID\">Einheiten (<b>$einheiten_im_haus</b>)</a></td><td>$detail_link</td><td>$link_haus_aendern</td></tr>";
 	$counter = 0;
 	} 
 		

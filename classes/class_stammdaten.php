@@ -34,9 +34,9 @@ class stammdaten {
 		$o->anzahl_haeuser_objekt($objekt_id);
 		$anz_einheiten = $o->anzahl_einheiten_objekt($objekt_id);
 		
-		//echo '<pre>';
+		echo '<pre>';
 		#print_r($o);
-		//echo "<hr>";
+		echo "<hr>";
 		
 		
 		$pdf_tab[0]['BEZ'] = 'Objekt Kurzname';

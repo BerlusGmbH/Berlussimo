@@ -5,7 +5,7 @@
  * Hausverwaltungssoftware
  *
  *
- * @copyright    Copyright (c) 2010, Berlus GmbH, Eichkampstra�e 161, 14055 Berlin
+ * @copyright    Copyright (c) 2010, Berlus GmbH, Eichkampstraße 161, 14055 Berlin
  * @link         http://www.berlus.de
  * @author       Sanel Sivac & Wolfgang Wehrheim
  * @contact		 software(@)berlus.de
@@ -74,15 +74,15 @@ function objekt_auswahl_liste($link){
 	}
 		
 	$mieten = new mietkonto;
-	#$mieten->erstelle_formular("Objekt ausw�hlen...", NULL);
+	#$mieten->erstelle_formular("Objekt auswählen...", NULL);
 	$fo = new formular();
-	$fo->fieldset('Objekt w�hlen', 'obw');
+	$fo->fieldset('Objekt wählen', 'obw');
 	if(isset($_SESSION["objekt_id"])){
  	$objekt_kurzname = new objekt;
  	$objekt_kurzname->get_objekt_name($_SESSION["objekt_id"]);
- 	echo "<p>&nbsp;<b>Ausgew�hltes Objekt</b> -> $objekt_kurzname->objekt_name ->";
+ 	echo "<p>&nbsp;<b>Ausgewähltes Objekt</b> -> $objekt_kurzname->objekt_name ->";
 	}else{
- 	echo "<p>&nbsp;<b>Objekt ausw�hlen</b>";
+ 	echo "<p>&nbsp;<b>Objekt auswählen</b>";
 	}
 	echo "<div class=\"objekt_auswahl\"  style=\"text-align: justify;width=auto;\">";	
 	$objekte = new objekt;
@@ -126,7 +126,7 @@ $f->fieldset_ende();
 
 function jahres_links($jahr, $link){
 $f = new formular;
-$f->fieldset("Jahr w�hlen", 'monate_jahre');
+$f->fieldset("Jahr wählen", 'monate_jahre');
 $vorjahr = $jahr - 1;
 $nachjahr = $jahr + 1;
 $link_vorjahr = "&nbsp;<a href=\"$link&jahr=$vorjahr\"><b>$vorjahr</b></a>&nbsp;";
@@ -1096,14 +1096,17 @@ function pdf_checkliste($objekt_id){
 		return $objekte_array;		
 		}
 		
-		function dropdown_objekte($name, $id){
+		function dropdown_objekte($name, $id, $vorwahl=null){
 		$objekte_arr = $this->liste_aller_objekte();
 		echo "<select name=\"$name\" size=1 id=\"$id\">\n";
 		for($a=0;$a<count($objekte_arr);$a++){
 		$objekt_name = $objekte_arr[$a]['OBJEKT_KURZNAME'];
 		$objekt_id = $objekte_arr[$a]['OBJEKT_ID'];
-					
-		echo "<option value=\"$objekt_id\">$objekt_name</option>\n";
+		if($vorwahl==$objekt_name){			
+		echo "<option value=\"$objekt_id\" selected>$objekt_name</option>\n";
+		}else{
+			echo "<option value=\"$objekt_id\">$objekt_name</option>\n";
+		}
 		}
 		echo "</select>\n";	
 		}
@@ -1182,7 +1185,7 @@ function pdf_checkliste($objekt_id){
 		function einheiten_objekt_arr($objekt_id){
 		$result = mysql_query ("SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT_LAGE, EINHEIT_QM,  HAUS_STRASSE, HAUS_NUMMER, HAUS_PLZ, HAUS_STADT, TYP FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT
 ) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID = '$objekt_id' )
-WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC");
+WHERE EINHEIT_AKTUELL='1' && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC");
 
 		
 		/*echo "SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT_LAGE, EINHEIT_QM,  HAUS_STRASSE, HAUS_NUMMER, TYP FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT
@@ -1296,6 +1299,7 @@ class haus extends objekt{
 		$this->haus_nummer = $row['HAUS_NUMMER'];
 		$this->haus_plz = $row['HAUS_PLZ'];
 		$this->haus_stadt = $row['HAUS_STADT'];
+		$this->haus_qm = $row['HAUS_QM'];
 		}
 		
 		function liste_aller_haeuser(){
@@ -1304,6 +1308,29 @@ class haus extends objekt{
 		return $haeuser_array;		
 		}
 		
+		
+		function form_haus_aendern($haus_id){
+			$this->get_haus_info($haus_id);
+			#print_r($this);
+			$f = new formular;
+			$f->erstelle_formular("Haus �ndern - $this->objekt_name $this->haus_strasse $this->haus_nummer", NULL);
+			
+			$f->text_feld("Strasse", "strasse", "$this->haus_strasse", "50", 'strasse','');
+			$f->text_feld("Hausnummer", "haus_nr", "$this->haus_nummer", "10", 'hausnr','');
+			$f->text_feld("Ort", "ort", "$this->haus_stadt", "50", 'ort','');
+			$f->text_feld("Plz", "plz", "$this->haus_plz", "10", 'plz','');
+			$this->haus_qm_a = nummer_punkt2komma($this->haus_qm);
+			$f->text_feld("Gr�sse in qm", "qm", "$this->haus_qm_a", "10", 'qm','');
+			
+			$o = new objekt;
+			$o->dropdown_objekte('Objekt', objekt_id, $this->objekt_name);
+			
+			$f->hidden_feld("haus_id", "$haus_id");
+			$f->hidden_feld("haus_raus", "haus_aend_speichern");
+			$f->send_button("submit_haus", "�nderungen speichern");
+			
+			$f->ende_formular();
+		}
 		
 		function form_haus_neu($objekt_id=''){
 		$f = new formular;
@@ -1352,6 +1379,33 @@ class haus extends objekt{
 		protokollieren('HAUS', $last_dat, '0');	
 		return $last_id;
 		}
+		
+		function haus_deaktivieren($haus_id){
+			$db_abfrage ="UPDATE HAUS SET HAUS_AKTUELL='0' WHERE HAUS_ID='$haus_id'";
+			$resultat = mysql_query($db_abfrage) or
+			die(mysql_error());
+			return true;
+		}
+		
+		function haus_aenderung_in_db($strasse,$haus_nr,$ort,$plz,$qm,$objekt_id, $haus_id){
+			if($this->haus_deaktivieren($haus_id)==true){
+				
+				/*Speichern*/
+				$db_abfrage ="INSERT INTO HAUS VALUES(NULL, '$haus_id', '$strasse', '$haus_nr','$ort', '$plz', '$qm', '1', '$objekt_id')";
+				$resultat = mysql_query($db_abfrage) or
+				die(mysql_error());
+				
+				/*Protokollieren*/
+				$last_dat = mysql_insert_id();
+				protokollieren('HAUS', $last_dat, '0');
+				return $last_id;
+			}else{
+				fehlermeldung_ausgeben("Haus konnte nicht ge�ndert werden");
+			}
+		}
+		
+		
+		
 		
 		function get_qm_gesamt_gewerbe($haus_id){
 		$result = mysql_query("SELECT SUM(EINHEIT_QM) AS GESAMT_QM FROM `EINHEIT` WHERE `HAUS_ID` = '$haus_id' AND `EINHEIT_AKTUELL` ='1' && TYP='Gewerbe'");
@@ -1690,6 +1744,7 @@ $numrows = mysql_numrows($resultat);
 		$d = new detail;
 		$this->aufzug_prozent_d = $d->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-Aufzugprozent');
 		$this->aufzug_prozent = nummer_komma2punkt($this->aufzug_prozent_d);
+		
 }
 		
 		function get_mietvertrag_id($einheit_id){
@@ -5610,16 +5665,6 @@ $result = mysql_query ("SELECT SUM( MENGE ) AS KONTIERTE_MENGE FROM `KONTIERUNG_
 		return $kontierte_menge;
 }
 
-function check_kontierung_rg($beleg_nr, $kos_typ, $kos_id){
-$result = mysql_query ("SELECT * FROM `KONTIERUNG_POSITIONEN` WHERE BELEG_NR = '$beleg_nr' && KOSTENTRAEGER_TYP = '$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && AKTUELL='1'");
-$numrows = mysql_numrows($result);
-if($numrows){
-	return true;
-}else{
-	return false;
-}		
-}
-
 function position_kontierung_anzeigen($beleg_nr, $position){
 $result = mysql_query ("SELECT KONTIERUNG_DAT, KONTIERUNG_ID, MENGE, EINZEL_PREIS, GESAMT_SUMME, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM `KONTIERUNG_POSITIONEN` WHERE BELEG_NR = '$beleg_nr' && POSITION = '$position' && AKTUELL='1'");
 		$numrows = mysql_numrows($result);
@@ -7000,9 +7045,6 @@ echo "</table>";
 
 
 
-
-
-
 function rechnungsbuch_anzeigen_ein($arr){
 if(isset($_REQUEST['xls'])){
 ob_clean(); //ausgabepuffer leeren
@@ -7035,6 +7077,14 @@ $r = new rechnung;
 
 $anzahl = count($arr);
 $sum_weiterberechnet = 0;
+
+$g_brutto_r = 0;
+$g_brutto_g = 0;
+$g_netto = 0;
+$g_skonto = 0;
+$g_mwst = 0;
+
+
 if($anzahl>0){
 for($a=0;$a<$anzahl;$a++){
 
@@ -7065,7 +7115,7 @@ if($status_kontierung=='vollstaendig'){
 }
 
 echo "<td id=\"td_ansehen\">$beleg_link<br>$pdf_link $pdf_link1</td><td>$r->empfaenger_eingangs_rnr</td><td>$r->rechnungsdatum</td>";
-/*Prüfen ob die rechnung temporär zur Buchungszwecken an Rechnungsausstellr kontiert*/
+/*Pr�fen ob die rechnung tempor�r zur Buchungszwecken an Rechnungsausstellr kontiert*/
 if($this->check_kontierung_rg($belegnr, $r->rechnungs_aussteller_typ, $r->rechnungs_aussteller_id) == true){
 echo "<td style=\"background-color:#f8ffbb\">$r->rechnungs_aussteller_name</td>";
 }else{
@@ -7088,7 +7138,7 @@ $g_brutto_r += $r->rechnungs_brutto;
 if($r->rechnungstyp == 'Gutschrift' OR $r->rechnungstyp == 'Stornorechnung'){
 $r->rechnungs_brutto_a = nummer_punkt2komma($r->rechnungs_brutto);
 echo "<td></td><td align=\"right\" valign=\"top\">$r->rechnungs_skontoabzug_a</td><td align=\"right\" valign=\"top\">$r->rechnungs_brutto_a </td>";	
-$g_brutto_g = $g_brutto_g + $r->rechnungs_brutto;
+$g_brutto_g += $r->rechnungs_brutto;
 #$g_brutto_g= sprintf("%01.2f", $g_brutto_g);
 
 }
@@ -7121,10 +7171,10 @@ echo "</tr>";
 
 $g_netto += $r->rechnungs_netto;
 #$g_netto= sprintf("%01.2f", $g_netto);
-$g_mwst = $g_mwst + $r->rechnungs_mwst;
+$g_mwst += $r->rechnungs_mwst;
 #$g_mwst= sprintf("%01.2f", $g_mwst);
 
-$g_skonto = $g_skonto + $r->rechnungs_skontoabzug;
+$g_skonto += $r->rechnungs_skontoabzug;
 #$g_skonto= sprintf("%01.2f", $g_skonto);
 }
 #echo "<tr><td colspan=\"9\"><hr></td></tr>";
@@ -7133,6 +7183,111 @@ $g_brutto_g = nummer_punkt2komma_t($g_brutto_g);
 $g_skonto = nummer_punkt2komma_t($g_skonto);
 $sum_weiterberechnet_a = nummer_punkt2komma_t($sum_weiterberechnet);
 echo "<tfoot><tr><td id=\"td_ansehen\"></td><td></td><td></td><td></td><td></td><td></td><td align=\"right\"><b>$g_brutto_r</b></td><td align=\"right\"><b>$g_skonto</b></td><td><b>$g_brutto_g</b></td><td><b>$sum_weiterberechnet_a</b></td><td align=\"right\"></td></tr></tfoot>";
+
+}else{
+echo "<tr><td colspan=9>Keine Rechnungen in diesem Monat</td></tr>";	
+}
+echo "</table>";
+}
+
+function check_kontierung_rg($beleg_nr, $kos_typ, $kos_id){
+	$result = mysql_query ("SELECT * FROM `KONTIERUNG_POSITIONEN` WHERE BELEG_NR = '$beleg_nr' && KOSTENTRAEGER_TYP = '$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && AKTUELL='1'");
+	$numrows = mysql_numrows($result);
+	if($numrows){
+		return true;
+	}else{
+		return false;
+	}
+}
+
+function get_weiterbelastung($belegnr){
+	$result = mysql_query ("SELECT SUM((GESAMT_NETTO/100)*(100+MWST_SATZ)) AS SUMME FROM `RECHNUNGEN_POSITIONEN` WHERE `U_BELEG_NR`!=`BELEG_NR` && `U_BELEG_NR` = '$belegnr' AND `AKTUELL` = '1'");
+	$row = mysql_fetch_assoc($result);
+	return $row['SUMME'];
+
+}
+
+
+function rechnungsbuch_anzeigen_ein_ALTOK($arr){
+if(isset($_REQUEST['xls'])){
+ob_clean(); //ausgabepuffer leeren
+$fileName = 'rechnungseingangsbuch'.date("d-m-Y").'.xls';
+header("Content-type: application/vnd.ms-excel");
+header("Content-Disposition: attachment; filename=$fileName");
+$beleg_link ='';
+}
+echo "<table class=\"sortable\">";
+echo "<thead>";
+echo "<tr>";
+echo "<th id=\"tr_ansehen\">Ansehen</th>";
+echo "<th >LFDNR</th>";
+echo "<th >Rechnungssteller</th>";
+echo "<th >Leistung/Ware</th>";
+echo "<th >Brutto</th>";
+echo "<th >Gutschriften und Returen</th>";
+echo "<th >RECHUNGSNR</th>";
+echo "<th >R-Datum</th>";
+echo "<th >Skonto</th>";
+echo "</tr>";
+echo "</thead>";
+
+$r = new rechnung;
+
+$anzahl = count($arr);
+if($anzahl>0){
+for($a=0;$a<$anzahl;$a++){
+
+$belegnr= $arr[$a]['BELEG_NR'];
+/*if(!isset($fileName)){
+$beleg_link = "<a href=\"?daten=rechnungen&option=rechnungs_uebersicht&belegnr=$belegnr\">Ansehen</>\n";
+}*/
+
+	if(!isset($fileName)){
+	$beleg_link = "<a href=\"?daten=rechnungen&option=rechnungs_uebersicht&belegnr=$belegnr\">Ansehen</a>";
+	$pdf_link = "<a href=\"?daten=rechnungen&option=anzeigen_pdf&belegnr=$belegnr\"><img src=\"css/pdf.png\"></a>";
+	$pdf_link1 = "<a href=\"?daten=rechnungen&option=anzeigen_pdf&belegnr=$belegnr&no_logo\"><img src=\"css/pdf2.png\"></a>";
+	}
+
+
+
+$r->rechnung_grunddaten_holen($belegnr);
+$r->rechnungs_aussteller_name = substr($r->rechnungs_aussteller_name,0,48);
+echo "<tr><td id=\"td_ansehen\">$beleg_link $pdf_link $pdf_link1</td><td valign=\"top\">$r->empfaenger_eingangs_rnr</td><td valign=\"top\">$r->rechnungs_aussteller_name</td>";
+echo "<td valign=\"top\">$r->kurzbeschreibung</td>";
+if($r->rechnungstyp == 'Rechnung' OR $r->rechnungstyp == 'Teilrechnung' OR $r->rechnungstyp == 'Schlussrechnung'){
+$r->rechnungs_brutto_a = nummer_punkt2komma($r->rechnungs_brutto);
+echo "<td align=\"right\" valign=\"top\">$r->rechnungs_brutto_a </td><td></td>";	
+$g_brutto_r += $r->rechnungs_brutto;
+#$g_brutto_r= sprintf("%01.2f", $g_brutto_r);
+
+}
+if($r->rechnungstyp == 'Gutschrift' OR $r->rechnungstyp == 'Stornorechnung'){
+$r->rechnungs_brutto_a = nummer_punkt2komma($r->rechnungs_brutto);
+echo "<td></td><td align=\"right\" valign=\"top\">$r->rechnungs_brutto_a �</td>";	
+$g_brutto_g = $g_brutto_g + $r->rechnungs_brutto;
+#$g_brutto_g= sprintf("%01.2f", $g_brutto_g);
+
+}
+
+
+
+
+
+$r->rechnungs_skontoabzug_a = nummer_punkt2komma($r->rechnungs_skontoabzug);
+echo "<td valign=\"top\"><b>$r->rechnungsnummer</b></td><td valign=\"top\">$r->rechnungsdatum</td><td align=\"right\" valign=\"top\">$r->rechnungs_skontoabzug_a</td></tr>";
+$g_netto += $r->rechnungs_netto;
+#$g_netto= sprintf("%01.2f", $g_netto);
+$g_mwst = $g_mwst + $r->rechnungs_mwst;
+#$g_mwst= sprintf("%01.2f", $g_mwst);
+
+$g_skonto = $g_skonto + $r->rechnungs_skontoabzug;
+#$g_skonto= sprintf("%01.2f", $g_skonto);
+}
+#echo "<tr><td colspan=\"9\"><hr></td></tr>";
+$g_brutto_r = nummer_punkt2komma($g_brutto_r);
+$g_brutto_g = nummer_punkt2komma($g_brutto_g);
+$g_skonto = nummer_punkt2komma($g_skonto);
+echo "<tfoot><tr><td id=\"td_ansehen\"></td><td></td><td></td><td></td><td align=\"right\"><b>$g_brutto_r</b></td><td align=\"right\"><b>$g_brutto_g</b></td><td><b></b></td><td></td><td align=\"right\"><b>$g_skonto</b></td></tr></tfoot>";
 
 }else{
 echo "<tr><td colspan=9>Keine Rechnungen in diesem Monat</td></tr>";	
@@ -7192,12 +7347,7 @@ return $my_array;
 	
 }
 
-function get_weiterbelastung($belegnr){
-	$result = mysql_query ("SELECT SUM((GESAMT_NETTO/100)*(100+MWST_SATZ)) AS SUMME FROM `RECHNUNGEN_POSITIONEN` WHERE `U_BELEG_NR`!=`BELEG_NR` && `U_BELEG_NR` = '$belegnr' AND `AKTUELL` = '1'");
-		$row = mysql_fetch_assoc($result);
-		return $row['SUMME'];	
-	
-}
+
 
 
 function r_eingang_monate_links($monat, $jahr){

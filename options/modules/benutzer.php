@@ -26,7 +26,7 @@ include_once("classes/class_werkzeug.php");
 /*Allgemeine Funktionsdatei laden*/
 include_once("includes/allgemeine_funktionen.php");
 
-/*ï¿½berprï¿½fen ob Benutzer Zugriff auf das Modul hat*/
+/*Überprüfen ob Benutzer Zugriff auf das Modul hat*/
 if(!check_user_mod($_SESSION['benutzer_id'], 'benutzer')){
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -36,24 +36,28 @@ if(!check_user_mod($_SESSION['benutzer_id'], 'benutzer')){
 
 
 
-/*Klasse "formular" fï¿½r Formularerstellung laden*/
+/*Klasse "formular" für Formularerstellung laden*/
 include_once("classes/class_formular.php");
 
-/*Modulabhï¿½ngige Dateien d.h. Links und eigene Klasse*/
+/*Modulabhängige Dateien d.h. Links und eigene Klasse*/
 include_once("options/links/links.benutzer.php");
 include_once("classes/class_benutzer.php");
 
 
+if(isset($_REQUEST["option"]) && !empty($_REQUEST["option"])){
 $option = $_REQUEST["option"];
+}else{
+	$option = 'default';
+}
 
 /*Optionsschalter*/
 switch($option) {
 
 
 default;
-//echo "BENUTZERVERWALTUNG";
 $b = new benutzer;
-$b->benutzer_anzeigen('benutzername', SORT_ASC);
+$b->benutzer_anzeigen();
+//$b->benutzer_anzeigen('benutzername', 'SORT_ASC');
 break;
 
 
@@ -63,31 +67,56 @@ $b_id =$_REQUEST['b_id'];
 $b = new benutzer;
 $b->berechtigungen($b_id);
 }else{
-	echo "Benutzer/Mitarbeiter wï¿½hlen";
+	echo "Benutzer/Mitarbeiter wählen";
 }
 break;
 
 case "aendern";
-if(!empty($_REQUEST[b_id])){
-$b_id =$_REQUEST[b_id];
+if(!empty($_REQUEST['b_id'])){
+$b_id =$_REQUEST['b_id'];
 $b = new benutzer;
 $b->form_benutzer_aendern($b_id);
 }else{
-	echo "Benutzer/Mitarbeiter wï¿½hlen";
+	echo "Benutzer/Mitarbeiter wählen";
 }
+break;
+
+case "benutzer_aendern_send":
+//print_req();
+if(isset($_REQUEST['b_id']) && !empty($_REQUEST['b_id'])){
+	$benutzer_name = $_REQUEST['benutzername'];
+	$b_id = $_REQUEST['b_id'];
+	$passwort = $_REQUEST['passwort'];
+	$partner_id = $_REQUEST['partner_id'];
+	$gewerk_id = $_REQUEST['gewerk_id'];
+	$geburtstag = $_REQUEST['geburtstag'];
+	$eintritt = $_REQUEST['eintritt'];
+	$austritt = $_REQUEST['austritt'];
+	
+	$urlaub = $_REQUEST['urlaub'];
+	$stunden_pw = $_REQUEST['stunden_pw'];
+	$stundensatz = $_REQUEST['stundensatz'];
+	$be = new benutzer;
+	$be->benutzer_aenderungen_speichern($b_id, $benutzer_name, $passwort, $partner_id,$stundensatz, $geburtstag, $gewerk_id, $eintritt, $austritt, $urlaub, $stunden_pw);
+	fehlermeldung_ausgeben("Bitte warten...");
+	weiterleiten_in_sec("?daten=benutzer&option=aendern&b_id=$b_id", 2);
+	
+}else{
+	fehlermeldung_ausgeben("Benutzerdaten unvollständig");
+}		
 break;
 
 
 case "zugriff_send":
-if(!empty($_POST[b_id]) && !empty($_POST[modul_name])){
-	$b_id =$_POST[b_id];
-	$modul_name =$_POST[modul_name];
+if(!empty($_POST['b_id']) && !empty($_POST['modul_name'])){
+	$b_id =$_POST['b_id'];
+	$modul_name =$_POST['modul_name'];
 	
 	$b= new benutzer;
-	if(isset($_POST[submit_ja])){
+	if(isset($_POST['submit_ja'])){
 		$b->berechtigungen_speichern($b_id,$modul_name);
 	}
-	if(isset($_POST[submit_no])){
+	if(isset($_POST['submit_no'])){
 	$b->berechtigungen_entziehen($b_id,$modul_name);
 	}
 weiterleiten("index.php?daten=benutzer&option=berechtigungen&b_id=$b_id");
@@ -103,20 +132,20 @@ break;
 
 case "benutzer_send":
 if($_POST){
-if(!empty($_POST[benutzername]) && !empty($_POST[passwort]) && !empty($_POST[partner_id]) && !empty($_POST[geburtstag]) && !empty($_POST[eintritt]) && !empty($_POST[urlaub]) && !empty($_POST[stunden_pw])){
+if(!empty($_POST['benutzername']) && !empty($_POST['passwort']) && !empty($_POST['partner_id']) && !empty($_POST['geburtstag']) && !empty($_POST['eintritt']) && !empty($_POST['urlaub']) && !empty($_POST['stunden_pw'])){
 #echo '<pre>';
 #print_r($_POST);
  $b = new benutzer;
- $benutzername = $_POST[benutzername];
- $passwort = $_POST[passwort];
- $partner_id = $_POST[partner_id];
- $stundensatz = $_POST[stundensatz];
- $geb_dat = $_POST[geburtstag];
- $gewerk_id = $_POST[gewerk_id];
- $eintritt = $_POST[eintritt];
- $austritt = $_POST[austritt];
- $urlaub = $_POST[urlaub];
- $stunden_pw = $_POST[stunden_pw];
+ $benutzername = $_POST['benutzername'];
+ $passwort = $_POST['passwort'];
+ $partner_id = $_POST['partner_id'];
+ $stundensatz = $_POST['stundensatz'];
+ $geb_dat = $_POST['geburtstag'];
+ $gewerk_id = $_POST['gewerk_id'];
+ $eintritt = $_POST['eintritt'];
+ $austritt = $_POST['austritt'];
+ $urlaub = $_POST['urlaub'];
+ $stunden_pw = $_POST['stunden_pw'];
  if(check_datum ($geb_dat) && check_datum ($eintritt)){
  $geb_dat = date_german2mysql($geb_dat);
  $eintritt = date_german2mysql($eintritt);
@@ -132,18 +161,13 @@ if(!empty($_POST[benutzername]) && !empty($_POST[passwort]) && !empty($_POST[par
  
  	
 }else{
-	die('Fehler xg763663 - Daten unvollstï¿½ndig');
+	die('Fehler xg763663 - Daten unvollständig');
 }
 }else{
 	die('Fehler xg763664');
 }
 break;
 
-case "mkb2pdf":
-$m = new miete;
-#$m->mkb2pdf(2, '','');
-$m->mkb2pdf_mahnung(530);
-break;
 
 
 case "werkzeuge":
@@ -163,7 +187,7 @@ $w = new werkzeug();
 	$b_id = $_REQUEST['b_id'];
 	$w->werkzeugliste($b_id);
 	}else{
-	echo "Mitarbeiter wï¿½hlen!";
+	echo "Mitarbeiter wählen!";
 	$w->werkzeugliste();
 }
 
@@ -175,9 +199,9 @@ case "werkzeug_rueckgabe_alle_pdf":
 	if(!empty($_REQUEST['b_id'])){
 	$b_id = $_REQUEST['b_id'];
 $w = new werkzeug();
-$w->pdf_rueckgabeschein_alle($b_id, 'Werkzeugrï¿½ckgabeschein ');
+$w->pdf_rueckgabeschein_alle($b_id, 'Werkzeugrückgabeschein ');
 }else{
-	fehlermeldung_ausgeben('Mitarbeiter wï¿½hlen');
+	fehlermeldung_ausgeben('Mitarbeiter wählen');
 }	
 break;
 
@@ -187,7 +211,7 @@ case "werkzeug_ausgabe_alle_pdf":
 $w = new werkzeug();
 $w->pdf_rueckgabeschein_alle($b_id, 'Werkzeugausgabegabeschein ');
 }else{
-	fehlermeldung_ausgeben('Mitarbeiter wï¿½hlen');
+	fehlermeldung_ausgeben('Mitarbeiter wählen');
 }	
 break;
 
@@ -198,9 +222,9 @@ error_reporting(E_ALL|E_STRICT);
 	$b_id = $_REQUEST['b_id'];
 $w = new werkzeug();
 #$w->pdf_rueckgabeschein_alle($b_id);
-$w->werkzeug_rueckgabe_alle($b_id); // ï¿½nderung der DB
+$w->werkzeug_rueckgabe_alle($b_id); // Änderung der DB
 }else{
-	fehlermeldung_ausgeben('Mitarbeiter wï¿½hlen');
+	fehlermeldung_ausgeben('Mitarbeiter wählen');
 }	
 break;
 
@@ -211,9 +235,9 @@ if(!empty($_REQUEST['w_id'])){
 $w_id = $_REQUEST['w_id'];
 $w = new werkzeug();
 #$w->pdf_rueckgabeschein_alle($b_id);
-$w->form_werkzeug_zuweisen($w_id); // ï¿½nderung der DB
+$w->form_werkzeug_zuweisen($w_id); // Änderung der DB
 }else{
-	fehlermeldung_ausgeben('Werkzeug wï¿½hlen');
+	fehlermeldung_ausgeben('Werkzeug wählen');
 }	
 break;
 
@@ -227,7 +251,7 @@ $b_id = $_REQUEST['b_id'];
  echo "Zugewiesen";
  weiterleiten_in_sec("?daten=benutzer&option=werkzeuge",1);
 }else{
-	fehlermeldung_ausgeben("Mitarbeiter und Werkzeug wï¿½hlen!");
+	fehlermeldung_ausgeben("Mitarbeiter und Werkzeug wählen!");
 }
 break;
 

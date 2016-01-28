@@ -1814,6 +1814,39 @@ function change_detail(anzeige_text, wert, detail_dat, kos_typ, kos_id){
 	}
 }
 
+function change_kautionsfeld(feld, wert, mv_id){
+	var wert_neu = prompt(feld, wert);
+	
+	if(wert_neu != null){
+		//alert(feld + wert_neu);
+		//var ziel = "pool_tab";
+	daj3('ajax/ajax_info.php?option=change_kautionsfeld&feld='+feld+'&wert='+wert_neu+'&mv_id='+mv_id,null);
+		//alert(anzeige_text+wert_neu+detail_dat);
+	setTimeout("reload_me();",1000);
+	}
+}
+
+function change_hk_wert_et(bez, et_id, wert, profil_id){
+	var wert_neu = prompt(bez, wert);
+	
+	if(wert_neu != null){
+		//alert(feld + wert_neu);
+		//var ziel = "pool_tab";
+	daj3('ajax/ajax_info.php?option=change_hk_wert_et&et_id='+et_id+'&wert='+wert_neu+'&profil_id='+profil_id,null);
+		//alert(anzeige_text+wert_neu+detail_dat);
+	setTimeout("reload_me();",1000);
+	}
+}
+
+function change_detail_no_prompt(anzeige_text, wert, detail_dat, kos_typ, kos_id){
+	if(wert != null){
+	//var ziel = "pool_tab";
+	daj3('ajax/ajax_info.php?option=change_details&dat='+detail_dat+'&wert='+wert+'&kos_typ='+kos_typ+'&kos_id='+kos_id+'&det_name='+anzeige_text,null);
+		//alert(anzeige_text+wert_neu+detail_dat);
+	//setTimeout("reload_me();",500);
+	}
+}
+
 function change_detail_dd(anzeige_text, wert, detail_dat, kos_typ, kos_id){
 	//alert(anzeige_text+wert+detail_dat+kos_typ+kos_id);
 	//alert('ajax/ajax_info.php?option=change_details&dat='+detail_dat+'&wert='+wert+'&kos_typ='+kos_typ+'&kos_id='+kos_id+'&det_name='+anzeige_text);

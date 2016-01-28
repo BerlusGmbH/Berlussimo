@@ -172,6 +172,12 @@ if(check_user_links($_SESSION['benutzer_id'], 'kundenweb')){
 }
 
 
+if(check_user_links($_SESSION['benutzer_id'], 'mietspiegel')){
+	echo "&nbsp;<a class=\"WEG\" href=\"?daten=mietspiegel\">Mietspiegel</a>&nbsp;<b>| </b>&nbsp;";
+}
+
+
+
 
 echo "<a href=\"?logout\">Abmelden</a>&nbsp;<b>| </b>&nbsp;";
 echo "<a target=\"_new\" href=\"http://www.hausverwaltung.de/software/schnelleinstieg.html\">Handbuch</a>&nbsp;<b>| </b>&nbsp;";
