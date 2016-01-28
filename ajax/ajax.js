@@ -1838,7 +1838,14 @@ function change_hk_wert_et(bez, et_id, wert, profil_id){
 	}
 }
 
-
+function change_detail_no_prompt(anzeige_text, wert, detail_dat, kos_typ, kos_id){
+	if(wert != null){
+	//var ziel = "pool_tab";
+	daj3('ajax/ajax_info.php?option=change_details&dat='+detail_dat+'&wert='+wert+'&kos_typ='+kos_typ+'&kos_id='+kos_id+'&det_name='+anzeige_text,null);
+		//alert(anzeige_text+wert_neu+detail_dat);
+	//setTimeout("reload_me();",500);
+	}
+}
 
 function change_detail_dd(anzeige_text, wert, detail_dat, kos_typ, kos_id){
 	//alert(anzeige_text+wert+detail_dat+kos_typ+kos_id);
