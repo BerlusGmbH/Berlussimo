@@ -20,7 +20,7 @@
  
 include_once("includes/allgemeine_funktionen.php");
 
-/*ï¿½berprï¿½fen ob Benutzer Zugriff auf das Modul hat*/
+/*Überprüfen ob Benutzer Zugriff auf das Modul hat*/
 if(!check_user_mod($_SESSION['benutzer_id'], 'details')){
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -31,20 +31,16 @@ if(!check_user_mod($_SESSION['benutzer_id'], 'details')){
 
 include_once("includes/formular_funktionen.php");
 
-/*Klasse "formular" fï¿½r Formularerstellung laden*/
+/*Klasse "formular" für Formularerstellung laden*/
 include_once("classes/class_formular.php");
 
-/*Modulabhï¿½ngige Dateien d.h. Links und eigene Klasse*/
+/*Modulabhängige Dateien d.h. Links und eigene Klasse*/
 include_once("classes/class_details.php");
 include_once("options/links/links.details.php");
 
 $option = $_REQUEST["option"];
-if(isset($_REQUEST["detail_tabelle"])){
 $detail_tabelle = $_REQUEST["detail_tabelle"];
-}
-if(isset($_REQUEST["detail_id"])){
 $detail_id = $_REQUEST["detail_id"];
-}
 
 /*Optionsschalter*/
 switch($option) {
@@ -60,7 +56,7 @@ switch($option) {
     
     case "details_hinzu":
     $f = new formular;
-    $f->fieldset("Details hinzufï¿½gen", 'details');
+    $f->fieldset("Details hinzufügen", 'details');
     $d = new detail; //class details neue, nicht berlussimo
     $vorauswahl = $_REQUEST['vorauswahl'];
     $d->form_detail_hinzu($detail_tabelle, $detail_id, $vorauswahl);
@@ -70,7 +66,7 @@ switch($option) {
     
     case "detail_gesendet":
     $f = new formular;
-    $f->fieldset("Details hinzufï¿½gen", 'details');
+    $f->fieldset("Details hinzufügen", 'details');
     $d = new detail; //class details neue, nicht berlussimo
     /*echo "<pre>";
     print_r($_POST);
@@ -104,7 +100,7 @@ switch($option) {
     
     case "detail_loeschen":
     $f = new formular;
-    $f->fieldset("Detail lï¿½schen", 'details');
+    $f->fieldset("Detail löschen", 'details');
     $d = new detail; //class details neue, nicht berlussimo
     if(!empty($_REQUEST['detail_dat'])){
     $detail_dat = $_REQUEST['detail_dat'];

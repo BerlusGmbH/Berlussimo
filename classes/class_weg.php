@@ -1448,7 +1448,7 @@ function get_einheiten_et($person_id){
 }
 	
 	
-function dropdown_weg_objekte($label, $name, $id){
+function dropdown_weg_objekte($label, $name, $id, $vorwahl=null){
 		$arr = $this->weg_objekte_arr();
 		if(is_array($arr)){
 		echo "<label for=\"weg_objekte\">$label</label>\n<select name=\"$name\" id=\"$id\" size=\"1\" >\n";
@@ -1457,7 +1457,11 @@ function dropdown_weg_objekte($label, $name, $id){
 				$objekt_id = $arr[$a];
 				$o = new objekt;
 				$o->get_objekt_infos($objekt_id);
-				echo "<option value=\"$objekt_id\" >$o->objekt_kurzname</option>\n";
+				if($vorwahl==$objekt_id){
+				echo "<option value=\"$objekt_id\" selected>$o->objekt_kurzname</option>\n";
+				}else{
+					echo "<option value=\"$objekt_id\" >$o->objekt_kurzname</option>\n";
+				}
 			}
 
 		echo "</select>\n";
@@ -1498,6 +1502,7 @@ function dropdown_weg_objekte($label, $name, $id){
 			for($a=0;$a<$anz;$a++){
 			$haus_id = $haus_id_arr_uni[$a];
 			$h->get_haus_info($haus_id);
+			//print_r($h);
 			$objekt_arr[]= $h->objekt_id;
 			}
 		$objekt_id_arr_uni = array_values(array_unique($objekt_arr));	
@@ -1722,7 +1727,7 @@ if(is_array($arr)){
 		}	
 }
 
-function dropdown_wps_alle($label, $name, $id, $js){
+function dropdown_wps_alle($label, $name, $id, $js, $vorwahl=null){
 $arr = $this->get_wps_alle_arr();
 
 if(is_array($arr)){
@@ -1736,7 +1741,11 @@ if(is_array($arr)){
 			$jahr = $arr[$a]['JAHR'];
 			$o = new objekt();
 			$o->get_objekt_name($objekt_id);
-			echo "<option value=\"$plan_id\">WP $jahr $o->objekt_name ($plan_id.)</option>\n";
+			if($plan_id==$vorwahl){
+			echo "<option value=\"$plan_id\" selected>WP $jahr $o->objekt_name ($plan_id.)</option>\n";
+			}else{
+				echo "<option value=\"$plan_id\">WP $jahr $o->objekt_name ($plan_id.)</option>\n";
+			}
 			}
 		echo "</select>\n";
 		}else{
@@ -3789,6 +3798,7 @@ protokollieren('WEG_WPLAN', '0', $last_dat);
 	die("Wirtschaftsplan $wjahr für $objekt_name existiert bereits!");
 }	
 }
+
 
 
 function wp_zeile_speichern($wp_id, $kostenkonto, $betrag, $betrag_vj, $formel, $wirt_id){
@@ -8201,10 +8211,10 @@ function assistent(){
 		}
 		$p_id = $_SESSION['hga_profil_id'];
 		$gk_id = $_SESSION['geldkonto_id'];
-		echo "Schritt 2 Profil_ID: $p_id GKONTO $gk_id";
+		echo "<h1>Schritt 2</h1>";
 		$gk_info = new geldkonto_info();
 		$gk_info->geld_konto_details($gk_id);
-		echo "<br>$gk_info->kredit_institut";
+		//echo "<br>$gk_info->kredit_institut";
 		$this->get_hga_profil_infos($p_id);
 		$this->tab_konten_auswahl_summen_arr($gk_id, $this->p_jahr);
 		break;
@@ -8278,14 +8288,16 @@ function tab_konten_auswahl_summen_arr($gk_id, $jahr){
 		$this->summe_hndl_a  =nummer_punkt2komma($this->summe_hndl);
 		$summe_g_u += $this->summe_zeilen;
 		$summe_g_hndl_u += $this->summe_hndl;
+		$link_del = "<a href=\"?daten=weg&option=konto_del&konto=$konto&profil_id=$_SESSION[hga_profil_id]\">Löschen</a>";
 		if($summe > $this->summe_zeilen ){
 		$link_u = "<a href=\"?daten=weg&option=konto_hinzu&schritt=2&konto=$konto\">Übernehmen</a>";
+		
 		}else{
 			$link_u = "";
 		}
 		echo "<tr><td>$konto $link_u</td><td>$k->konto_bezeichnung</td><td>$k->konto_art_bezeichnung | $k->konto_gruppen_bezeichnung</td><td>$summe_a</td><td>$this->summe_zeilen_a</td><td>$this->summe_hndl_a</td><td>";
 		
-		if($summe_a!=$this->summe_zeilen_a && $this->summe_zeilen<0){
+		if($summe<>$this->summe_zeilen && $this->summe_zeilen<>0){
 			$f = new formular;
 			$f->erstelle_formular('Autokorr',null);
 			$f->hidden_feld('profil_id', $_SESSION['hga_profil_id']);
@@ -8294,6 +8306,9 @@ function tab_konten_auswahl_summen_arr($gk_id, $jahr){
 			$f->hidden_feld('option', 'autokorrkto');
 			$f->send_button('SndBtn', 'Korrigieren');
 			$f->ende_formular();
+		}
+		if($this->summe_zeilen <> 0){
+		echo "<br>$link_del";
 		}
 		echo "</td></tr>";
 		} // end for
@@ -8306,6 +8321,12 @@ function tab_konten_auswahl_summen_arr($gk_id, $jahr){
 	}
 }
 
+
+function konto_loeschen($profil_id, $konto){
+	$db_abfrage = "UPDATE WEG_HGA_ZEILEN SET AKTUELL='0' WHERE KONTO='$konto' && WEG_HG_P_ID='$profil_id'";
+	$resultat = mysql_query($db_abfrage) or
+	die(mysql_error());
+}
 
 function autokorr_hga($profil_id, $konto, $betrag){
 	mysql_query ("UPDATE WEG_HGA_ZEILEN SET BETRAG='$betrag' WHERE AKTUELL='1' && WEG_HG_P_ID='$profil_id' && KONTO='$konto'") OR mysql_error();
@@ -8359,7 +8380,8 @@ function tab_profile(){
 			$link_del = "<a href=\"?daten=weg&option=hga_profile_del&profil_id=$id\">Löschen</a>";
 			#$link_auswahl = "<a href=\"?daten=weg&option=hga_profile_wahl&profil_id=$id\">Bearbeiten</a>";
 			$link_s2 = "<a href=\"?daten=weg&option=assistent&schritt=2&profil_id=$id\">Bearbeiten</a>";
-			echo "<tr><td>$bez</td><td>$jahr</td><td>$o->objekt_kurzname</td><td>$link_s2 | $link_del</td></tr>";
+			$link_gd = "<a href=\"?daten=weg&option=grunddaten_profil&profil_id=$id\">Grunddaten des Profils ändern</a>";
+			echo "<tr><td>$bez</td><td>$jahr</td><td>$o->objekt_kurzname</td><td>$link_s2 | $link_del | $link_gd</td></tr>";
 			}
 		echo "<table>";
 		}else{
@@ -8405,10 +8427,10 @@ function form_hk_verbrauch($p_id){
 	for($a=0;$a<$anz_e;$a++){
 	
 		$einheit_id = $einheiten_arr[$a]['EINHEIT_ID'];
-	$einheit_kn = $einheiten_arr[$a]['EINHEIT_KURZNAME'];
-	$eig_arr = $this->get_eigentuemer_arr_jahr($einheit_id, $this->p_jahr);
-	#echo "<pre>";
-	#print_r($eig_arr);	
+		$einheit_kn = $einheiten_arr[$a]['EINHEIT_KURZNAME'];
+		$eig_arr = $this->get_eigentuemer_arr_jahr($einheit_id, $this->p_jahr);
+		#echo "<pre>";
+		#print_r($eig_arr);	
 	
 		$anz_eig = count($eig_arr);	
 		#print_r($eig_arr);
@@ -8485,6 +8507,12 @@ function form_hg_zahlungen($p_id){
 
 
 function hk_verbrauch_eintragen($p_id, $eig_id, $betrag){
+
+	$db_abfrage = "UPDATE WEG_HGA_HK SET AKTUELL='0' WHERE WEG_HGA_ID='$p_id' && KOS_ID='$eig_id'";
+	$resultat = mysql_query($db_abfrage) or
+	die(mysql_error());
+	
+	
 $id = last_id2('WEG_HGA_HK', 'ID') +1 ;
 $betrag_a = nummer_komma2punkt($betrag);
 $db_abfrage = "INSERT INTO WEG_HGA_HK VALUES (NULL, '$id', '$betrag_a', 'Eigentuemer','$eig_id', '$p_id', '1')";	
@@ -8498,34 +8526,64 @@ protokollieren('WEG_HGA_HK', '0', $last_dat);
 
 
 function tab_hk_verbrauch($p_id){
-$db_abfrage = "SELECT * FROM WEG_HGA_HK WHERE WEG_HGA_ID='$p_id' && AKTUELL='1'";	
-$resultat = mysql_query($db_abfrage) or
-           die(mysql_error());
-$numrows = mysql_numrows($resultat);
-if($numrows){
-	echo "<table class=\"sortable\">";
-	echo "<tr><th>EIGENTÜMER</th><th>HK VERBRAUCH €</th></tr>";
-	$g_verbrauch = 0;
-	while($row = mysql_fetch_assoc($resultat)){
-	$kos_typ = $row['KOS_TYP'];
-	$kos_id = $row['KOS_ID'];
-	$r = new rechnung();
-	$kos_bez = 	$r->kostentraeger_ermitteln($kos_typ, $kos_id);
-	$betrag = $row['BETRAG'];
-	$betrag_a = nummer_punkt2komma($betrag);
-	$g_verbrauch +=$betrag;
-	echo "<tr><td>$kos_bez</td><td>$betrag_a €</td></tr>";
-	}
-	$g_verbrauch_a = nummer_punkt2komma($g_verbrauch);
-	echo "<tfoot><tr><th>GESAMT</th><th>$g_verbrauch_a €</th></tr></tfoot>";
-	echo "</table>";
-}else{
-	fehlermeldung_ausgeben("<b>Kein Heizkostenverbrauch aus der Heizkostenabrechnung eingegeben!");
-	hinweis_ausgeben("Sie werden zur Eingabemaske weitergeleitet!");
+$this->get_hga_profil_infos($p_id);
 	
-	weiterleiten_in_sec('?daten=weg&option=assistent&schritt=3', 3);
+	$o = new objekt;
+	$einheiten_arr = $o->einheiten_objekt_arr($this->p_objekt_id);
+	$anz_e = count($einheiten_arr);
+	$f = new formular();
+	$f->fieldset("Heizkostenverbrauch / Heizkostenabrechnung - $this->p_bez", 'f_hk');
+	echo "<table>";
+	echo "<tr><th>EINHEIT</th><th>EIGENTUEMER</th><th>VON</th><th>BIS</th><th>TAGE</th><th>HK VERBRAUCH X</th></tr>";
+	$z = 1;
+	$sum = 0;
+	for($a=0;$a<$anz_e;$a++){
+	
+		$einheit_id = $einheiten_arr[$a]['EINHEIT_ID'];
+		$einheit_kn = $einheiten_arr[$a]['EINHEIT_KURZNAME'];
+		$eig_arr = $this->get_eigentuemer_arr_jahr($einheit_id, $this->p_jahr);
+		#echo "<pre>";
+		#print_r($eig_arr);	
+	
+		$anz_eig = count($eig_arr);	
+		#print_r($eig_arr);
+		for($b=0;$b<$anz_eig;$b++){
+		$eig_id = $eig_arr[$b]['ID'];
+		$von = date_mysql2german($eig_arr[$b]['VON']);
+		$bis = date_mysql2german($eig_arr[$b]['BIS']);	
+		$tage = $eig_arr[$b]['TAGE'];
+		$this->get_eigentumer_id_infos2($eig_id);
+		$betrag_a = nummer_punkt2komma($this->get_hga_hk_betrag($p_id, $eig_id));
+		$sum += nummer_komma2punkt($betrag_a);
+		echo "<tr><td>$z.) $einheit_kn</td><td>$this->eigentuemer_name_str</td><td>$von</td><td>$bis</td><td>$tage</td><td>";
+		//$f->text_feld('Heizkostenverbrauch in €', 'hk_verbrauch[]', '', 10, 'hk_verbrauch', '');
+		$link_wert = "<a class=\"details\" onclick=\"change_hk_wert_et('Heizungsveerbrauch', '$eig_id', '$betrag_a', '$p_id')\">$betrag_a</a>";
+		echo $link_wert;
+		echo "</td></tr>";
+		$f->hidden_feld('eig_id[]', $eig_id);
+		$z++;
+		}
+	
+	}
+	$sum_a = nummer_punkt2komma($sum);
+	echo "<tr><td colspan=\"5\">SUMME</td><td>$sum_a<td></tr>";
+	echo "</table>";
+	$f->fieldset_ende();
+
 }
+
+function get_hga_hk_betrag($p_id, $et_id){
+	$result = mysql_query ("SELECT BETRAG FROM `WEG_HGA_HK` WHERE KOS_TYP='Eigentuemer' && `KOS_ID` ='$et_id' AND  `WEG_HGA_ID` ='$p_id' AND  `AKTUELL` =  '1' ORDER BY DAT DESC LIMIT 0,1");
+	$numrows = mysql_numrows($result);
+	
+	if($numrows){
+		$row = mysql_fetch_assoc($result);
+		return $row['BETRAG'];
+	}else{
+		return '0.00';
+	}
 }
+
 
 function get_summe_zeilen($konto, $profil_id){
 	$result = mysql_query ("SELECT SUM(BETRAG) AS SUMME, SUM(HNDL_BETRAG) AS SUMME_HNDL FROM WEG_HGA_ZEILEN WHERE AKTUELL='1' && WEG_HG_P_ID='$profil_id' && KONTO='$konto'");
@@ -8548,12 +8606,12 @@ function form_konto_hinzu($konto){
 	$f->erstelle_formular('Schritt 2', '');
 	$f->text_feld('Konto', 'konto', $konto, 10, 'konto', '');
 	$b = new buchen();
-	$b->summe_kontobuchungen_jahr($_SESSION['geldkonto_id'], $konto, $_SESSION[jahr]);
+	$b->summe_kontobuchungen_jahr($_SESSION['geldkonto_id'], $konto, $_SESSION['jahr']);
 	$summe = nummer_punkt2komma($b->summe_konto_buchungen);
 	$f->text_feld('Summe', 'summe', $summe, 10, 'summe', '');
 	$f->text_feld('Summe HNDL', 'summe_hndl', '0,00', 10, 'summe_hndl', '');
 	$k = new kontenrahmen();
-	$k->konto_informationen2($konto, $_SESSION[kontenrahmen_id]);
+	$k->konto_informationen2($konto, $_SESSION['kontenrahmen_id']);
 	$f->text_feld_inaktiv('Kontobezeichnung', 'kontobez', $k->konto_bezeichnung, 100, 'kontobez', '');
 	$f->text_feld('Zeilentext für PDF', 'textbez', $k->konto_bezeichnung, 100, 'textbez', '');
 	$this->dropdown_art('Kostenkontoart', 'art', 'art');
@@ -8622,6 +8680,30 @@ $_SESSION['jahr'] = $jahr;
 
 }
 
+function hga_profil_aendern($profil_id, $objekt_id, $gk_id, $jahr, $bez, $gk_id_ihr, $wp_id, $hg_konto, $hk_konto, $ihr_konto, $von, $bis){
+	$db_abfrage = "UPDATE WEG_HGA_PROFIL SET AKTUELL='0' WHERE ID='$profil_id'";
+	$resultat = mysql_query($db_abfrage) or
+	die(mysql_error());
+	/*Protokollieren*/
+	protokollieren('WEG_HGA_PROFIL', $profil_id, $profil_id);
+	
+	$von = date_german2mysql($von);
+	$bis = date_german2mysql($bis);
+	
+	$db_abfrage = "INSERT INTO WEG_HGA_PROFIL VALUES (NULL, '$profil_id', '$bez', '$jahr','$von','$bis', '$objekt_id', '$gk_id', '$gk_id_ihr', '$wp_id', '$hg_konto', '$hk_konto', '$ihr_konto', '1')";
+	$resultat = mysql_query($db_abfrage) or
+	die(mysql_error());
+	/*Protokollieren*/
+	$last_dat = mysql_insert_id();
+	protokollieren('WEG_HGA_PROFIL', '0', $last_dat);
+	
+	
+	
+	$_SESSION['hga_profil_id'] = $profil_id;
+	$_SESSION['jahr'] = $jahr;
+	
+	
+}
 
 function form_kontostand_erfassen(){
 if(empty($_SESSION['geldkonto_id'])){
@@ -9356,6 +9438,35 @@ function pdf_hausgelder($objekt_id, $jahr){
 	
 }
 
+function form_hga_profil_grunddaten($profil_id){
+	$this->get_hga_profil_infos($profil_id);
+	//echo "<pre>";
+	//print_r($this);
+	$f = new formular();
+	$f->erstelle_formular("Grunddaten des HGA-Profils ändern $this->p_bez", null);
+	$f->text_feld('Profilbezeichnung eingeben', 'profilbez', $this->p_bez, '50', 'profilbez', '');
+	$o = new objekt();
+	#$o->dropdown_objekte('Verwaltungsobjekt wählen', 'objekt_id');
+	$this->dropdown_weg_objekte('WEG-Verwaltungsobjekt wählen', 'objekt_id', 'objekt_id', $this->p_objekt_id);
+	$f->text_feld('Jahr eingeben', 'jahr', $this->p_jahr, 5, 'jahr', '');
+	$f->datum_feld('Berechnung von', 'p_von', $this->p_von_d, 'p_von');
+	$f->datum_feld('Berechnung bis', 'p_bis', $this->p_bis_d, 'p_bis');
+	
+	$gk = new gk();
+	$gk->dropdown_geldkonten_alle_vorwahl('Hausgeldkonto wählen', 'geldkonto_id', 'geldkonto_id', $this->p_gk_id, null);
+	$gk->dropdown_geldkonten_alle_vorwahl('Geldkonto für die IHR wählen', 'gk_id_ihr', 'gk_id_ihr', $this->p_ihr_gk_id, null);
+	//$gk->dropdown_geldkonten_alle('Geldkonto für die IHR wählen', 'gk_id_ihr', 'gk_ihr_id');
+	//$f->hidden_feld('geldkonto_id', $_SESSION['geldkonto_id']);
+	$this->dropdown_wps_alle('Dazugehörigen Wirtschaftsplan wählen', 'wp_id', 'wp_id', '', $this->p_wplan_id);
+	$kk = new kontenrahmen();
+	$kk->dropdown_kontorahmenkonten_vorwahl('Konto für Hausgeldeinnahmen für Kosten wählen', 'hg_konto', 'hg_konto', 'Geldkonto', $this->p_gk_id, '', $this->hg_konto);
+	$kk->dropdown_kontorahmenkonten_vorwahl('Konto für Hausgeldeinnahmen für Heizkostenkosten wählen', 'hk_konto', 'hk_konto', 'Geldkonto', $this->p_gk_id, '', $this->hk_konto);
+	$kk->dropdown_kontorahmenkonten_vorwahl('Konto für Hausgeldeinnahmen für die IHR wählen', 'ihr_konto', 'ihr_konto', 'Geldkonto', $this->p_gk_id, '', $this->ihr_konto);
+	$f->hidden_feld('option', 'profil_send_gaendert');
+	$f->hidden_feld('profil_id', $profil_id);
+	$f->send_button('send', 'Änderungen speichern');
+	$f->ende_formular();
+}
 
 } //end class
 ?>

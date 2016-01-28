@@ -26,10 +26,7 @@ $f = new formular;
 echo "<div class=\"navi_leiste2\">"; 
 $f->erstelle_formular("Hauptmenü -> Mietanpassung...", NULL);
 echo "<a href=\"?daten=mietanpassung&option=uebersicht\">Übersichtstabelle</a>&nbsp;";
-echo "<a href=\"?daten=mietanpassung&option=uebersicht_mw_netto\">Netto Stapel MW</a>&nbsp;";
 echo "<a href=\"?daten=mietanpassung&option=ak4\">AK4-TEST</a>&nbsp;";
-
-
 $f->ende_formular();
 echo "</div>";
 

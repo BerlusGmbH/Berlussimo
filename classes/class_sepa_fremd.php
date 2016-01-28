@@ -1,17 +1,9 @@
 <?php
- //!!!!!!!!!!!!!!!!FREMDKLASSE!!!!!!!!!!!!!!!!!!
+ 
 // Einfache PHP-Klasse zur Erzeugung von SEPA-XML-Dateien mit Gutschriften oder Lastschriften
 // Es findet keinerlei Fehlerkontrolle und/oder Plausi-Check statt!!!
 // Version 1.1 - unterschiedliche Funktionsparameter zu Version 1.0!!!
 // Alles weitere auf http://www.kontopruef.de/ktosepasimple.shtml
-
- 
- /*Sie können die PHP-Klasse KtoSepaSimple kostenlos von dieser Seite herunterladen und ausprobieren. 
-Wenn Sie sie ernst- und dauerhaft einsetzen, kostet die Benutzung einmalig eine Schutzgebühr in Höhe von 11,90 EUR inkl. 19% Mwst. 
-Sie können die SEPA-XML-Datei zur Überweisung dieses Betrags gleich mit dieser Klasse erzeugen! 
-Falls Sie eine Quittung benötigen, können Sie sie hier anzeigen. Vorab-Rechnungen stellen wir für diesen geringen Betrag nicht aus.*/
-
-
 
 class PmtInf {
   public $FCtgyPurp, $FDatum, $FSeqTp;

@@ -712,7 +712,6 @@ $pdf->ezStream();
 	break;
 	
 	case "buchung_suchen_1":
-	
 	$f = new formular;
     $b = new buchen;
     $b->form_buchung_suchen();
@@ -721,8 +720,6 @@ $pdf->ezStream();
    	#print_r($_POST);
    	$geld_konto_id = $_POST['geld_konto'];
    	$betrag = $_POST['betrag'];
-   	
-   	#die($betrag);
    	$ausdruck = $_POST['ausdruck'];
    	$anfangsdatum = $_POST['anfangsdatum'];
    	$enddatum = $_POST['enddatum'];
@@ -744,28 +741,8 @@ $pdf->ezStream();
 		} 	
    		
    		if($betrag) {
-   			
-   			if (strpos($betrag, ">") == "true") {
-   				$betrag = nummer_komma2punkt(substr($betrag,1));		
-   				$betrag_minus = $betrag*-1;
-   				$where[] = " BETRAG>='$betrag' ";
-   			$err = true;
-   			}
-   			
-   			if (strpos($betrag, "<") == "true") {
-   				$betrag = nummer_komma2punkt(substr($betrag,1));
-   				$betrag_minus = $betrag*-1;
-   				$where[] = " BETRAG<='$betrag' ";
-   				$err = true;
-   			}
-
-   			if(!isset($err)){
-   			$betrag = nummer_komma2punkt($betrag);
-   			$betrag_minus = $betrag*-1;
-   			$where[] = " BETRAG='$betrag' or BETRAG='$betrag_minus' or BETRAG LIKE '%S$betrag%S' "; 
-   			}
-   			
-   			
+   		$betrag = nummer_komma2punkt($betrag);
+   		$where[] = " BETRAG='$betrag' "; 
    		}
 		   	
    		if($ausdruck) {
@@ -853,7 +830,7 @@ $pdf->ezStream();
    		#echo $abfrage;	
    		#die();
    		/*Monitorausgabe*/
-   		if(isset($_POST['submit_php'])){
+   		if(isset($_POST[submit_php])){
    			if($ausdruck!='' OR $betrag!='' OR $kostenkonto!=''){
    			$b->finde_buchungen($abfrage);
    			}else{
