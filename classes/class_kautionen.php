@@ -717,7 +717,7 @@ $bg->monate_jahres_links($jahr, $link);
 				
 		
 		
-		$summe_kos_id_a = nummer_punkt2komma($summe_kos_id);		
+		$summe_kos_id_a = nummer_punkt2komma($summe_kos_id);		
 		
 		
 		#if($kostentraeger_typ == 'MIETVERTRAG' or $kostentraeger_typ == 'Mietvertrag'){
