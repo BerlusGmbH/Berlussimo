@@ -3040,12 +3040,7 @@ function pdf_anschreiben($ber_array, $datum){
 	if($neuer_mw >= $ber->M2_PREIS_NEU2){
 		$pdf->ezText("MIETERH�HUNG NICHT M�GLICH: $neuer_mw_a < $ber->M2_PREIS_NEU2_A", 35);
 		echo '<pre>';
-            ob_clean(); //ausgabepuffer leeren
-    header("Content-type: application/pdf");  // wird von MSIE ignoriert
-    $dateiname = $mv->einheit_kurzname."_MHG_zum_".$ber->N_ANSTIEG_DATUM."_vom_".$datum.".pdf";
-    $pdf_opt['Content-Disposition'] = $dateiname;
-    $pdf->ezStream($pdf_opt);
-		//print_r($ber);
+		print_r($ber);
 		die();
 	}
 
