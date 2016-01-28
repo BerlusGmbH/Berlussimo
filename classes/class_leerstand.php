@@ -21,7 +21,7 @@
 /*Allgemeine Funktionsdatei laden*/
 include_once("includes/allgemeine_funktionen.php");
 
-/*Klasse "formular" für Formularerstellung laden*/
+/*Klasse "formular" fÃ¯Â¿Â½r Formularerstellung laden*/
 include_once("classes/class_formular.php");
 include_once("classes/class_mietanpassung.php");
 
@@ -42,13 +42,13 @@ function leerstand_objekt_pdf($objekt_id, $monat, $jahr){
 		$datum_ger = date_mysql2german($datum);
 		$table_arr = $this->leerstand_finden_monat($objekt_id, $datum);
 		
-		$cols = array('OBJEKT_KURZNAME'=>"Objekt", 'EINHEIT_KURZNAME'=>'Einheit','HAUS_STRASSE'=>'Strasse','EINHEIT_QM'=>'Fläche m²','EINHEIT_LAGE'=>'Lage/Typ',);
+		$cols = array('OBJEKT_KURZNAME'=>"Objekt", 'EINHEIT_KURZNAME'=>'Einheit','HAUS_STRASSE'=>'Strasse','EINHEIT_QM'=>'FlÃ¯Â¿Â½che mÃ¯Â¿Â½','EINHEIT_LAGE'=>'Lage/Typ',);
 		
 		$o = new objekt;
 		$objekt_name = $o->get_objekt_name($objekt_id);
 		$anzahl_leer = count($table_arr);
 		
-		$pdf->ezTable($table_arr,$cols,"<b>Leerstandübersicht $monatsname $jahr im $objekt_name,  Leerstand: $anzahl_leer</b>",
+		$pdf->ezTable($table_arr,$cols,"<b>LeerstandÃ¯Â¿Â½bersicht $monatsname $jahr im $objekt_name,  Leerstand: $anzahl_leer</b>",
 array('showHeadings'=>1,'shaded'=>0, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right',  'width'=>500,'cols'=>array('DATUM'=>array('justification'=>'right', 'width'=>65),'G_BUCHUNGSNUMMER'=>array('justification'=>'right', 'width'=>30), 'BETRAG'=>array('justification'=>'right','width'=>75))));
 	
 	
@@ -119,11 +119,11 @@ function pdf_projekt($einheit_id){
 		
 		
 		$pdf->ezSetMargins(0, 0, 50, 0);
-		$pdf->ezText("FLÄCHE:", 14);
+		$pdf->ezText("FLÃ¯Â¿Â½CHE:", 14);
 		$pdf->ezSetMargins(0, 0, 150, 0);
 		$pdf->ezSetDy(16);
 		$einheit_qm = nummer_punkt2komma($e->einheit_qm);
-		$pdf->ezText("$einheit_qm m²", 14);
+		$pdf->ezText("$einheit_qm mÃ¯Â¿Â½", 14);
 		
 		
 				
@@ -131,7 +131,7 @@ function pdf_projekt($einheit_id){
 		$pdf->ezSetMargins(0, 0, 100, 0);
 		
 		$pdf->ellipse(60,$pdf->y-10,10);
-		$pdf->ezText("EMTRÜMPELUNG", 12);
+		$pdf->ezText("EMTRÃ¯Â¿Â½MPELUNG", 12);
 		
 		$pdf->ezSetDy(-20);
 		$pdf->ellipse(60,$pdf->y-10,10);
@@ -139,11 +139,11 @@ function pdf_projekt($einheit_id){
 		
 		$pdf->ezSetDy(-20);
 		$pdf->ellipse(60,$pdf->y-10,10);
-		$pdf->ezText("SANITÄRROHINSTALLATION", 12);
+		$pdf->ezText("SANITÃ¯Â¿Â½RROHINSTALLATION", 12);
 		
 		$pdf->ezSetDy(-20);
 		$pdf->ellipse(60,$pdf->y-10,10);
-		$pdf->ezText("SANITÄR - ENDMONTAGE", 12);
+		$pdf->ezText("SANITÃ¯Â¿Â½R - ENDMONTAGE", 12);
 		
 		
 		$pdf->ezSetDy(-20);
@@ -160,7 +160,7 @@ function pdf_projekt($einheit_id){
 
 		$pdf->ezSetDy(-20);
 		$pdf->ellipse(60,$pdf->y-10,10);
-		$pdf->ezText("TÜRE / BESCHLÄGE", 12);
+		$pdf->ezText("TÃ¯Â¿Â½RE / BESCHLÃ¯Â¿Â½GE", 12);
 			
 		$pdf->ezSetDy(-20);
 		$pdf->ellipse(60,$pdf->y-10,10);
@@ -180,7 +180,7 @@ function pdf_projekt($einheit_id){
 		
 		$pdf->ezSetDy(-20);
 		$pdf->ellipse(60,$pdf->y-10,10);
-		$pdf->ezText("SPÜLE MONTIEREN:     JA  |  NEIN", 12);
+		$pdf->ezText("SPÃ¯Â¿Â½LE MONTIEREN:     JA  |  NEIN", 12);
 		
 		$pdf->ezSetDy(-20);
 		$pdf->ellipse(60,$pdf->y-10,10);
@@ -345,9 +345,9 @@ function pdf_expose($einheit_id, $return=0){
 		$pdf->addText(420, 670, 12, "$e->haus_plz $e->haus_stadt");
 		$pdf->addText(420, 655, 12, "Lage:");
 		$pdf->addText(510, 655, 12, "$e->einheit_lage");
-		$pdf->addText(420, 640, 12, "Fläche:");
+		$pdf->addText(420, 640, 12, "Flaeche:");
 		$e->einheit_qm_d = nummer_punkt2komma($e->einheit_qm);
-		$pdf->addText(510, 640, 12, "$e->einheit_qm_d m²");
+		$pdf->addText(510, 640, 12, "$e->einheit_qm_d qm");
 		$d = new detail();
 		$zimmer = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Zimmeranzahl'))));
 		$pdf->addText(420, 620, 12, "Zimmer:");
@@ -389,56 +389,52 @@ function pdf_expose($einheit_id, $return=0){
 		$pdf->addText(420, 515, 12, "Miete brutto:");
 		$pdf->addText(510, 515, 12, "$brutto_miete EUR");
 		
-		$pdf->ezSetY(450);// braucht man nicht
+		//$pdf->ezSetY(450);// braucht man nicht
 		//$pdf->setColor(64/255,42/255,27/255);
-		$pdf->addText(30, 425, 12, "Zustand:");
-		$pdf->addText(130, 425, 12, "Erstbezug nach Sanierung");
-		$pdf->addText(30, 410, 12, "Baujahr:");
+		#$pdf->addText(420, 500, 12, "Zustand:");
+		#$pdf->addText(510, 500, 12, "Erstbezug nach Sanierung");
+		$pdf->addText(420, 500, 12, "Baujahr:");
 		$baujahr = $d->finde_detail_inhalt('OBJEKT', $e->objekt_id, 'Baujahr');
-		$pdf->addText(130, 410, 12, "$baujahr");
+		$pdf->addText(510, 500, 12, "$baujahr");
 			
 		$expose_frei = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Expose frei ab'))));
 		if(!$expose_frei){
 			$expose_frei = 'sofort';
 		}
-		$pdf->addText(30, 395, 12, "Bezugsfrei ab:");
-		$pdf->addText(130, 395, 12, "$expose_frei");
+		$pdf->addText(420, 485, 12, "Bezugsfrei ab:");
+		$pdf->addText(510, 485, 12, "$expose_frei");
 		
-		$pdf->addText(30, 380, 12, "Kaution:");
-		$pdf->addText(130, 380, 12, "3 Kaltmieten");
-		$pdf->addText(30, 365, 12, "Provision:");
-		$pdf->addText(130, 365, 12, "keine");
+		$pdf->addText(420, 470, 12, "Kaution:");
+		$pdf->addText(510, 470, 12, "3 Kaltmieten");
+		$pdf->addText(420, 455, 12, "Provision:");
+		$pdf->addText(510, 455, 12, "keine");
 		
 				
 		
 		
 		$termin = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Besichtigungstermin'))));
 				
-		$pdf->ezSetDy(-50);
+		
+		
+		
 		$pdf->setColor(255/255,0/255,0/255);
 		if($termin){
-		//$pdf->ezText("<b>Besichtigungstermin: $termin</b>", 11);
-		$pdf->addText(300, 422, 14, "<b>Besichtigungstermin: $termin</b>");
+		
+		$pdf->addText(420, 440, 11, "<b>Besichtigungstermin: $termin</b>");
 		}
 		$pdf->setColor(0/255,0/255,0/255);
-		/*$termin_uhrzeit = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Expose Besichtigungsuhrzeit'))));
-				
-		#$pdf->ezSetDy(-30);
-		$pdf->setColor(255/255,0/255,0/255);
-		if($termin_uhrzeit && $termin){
-		$pdf->ezText("<b>Uhrzeit: $termin_uhrzeit</b>", 11);
-		}else{
-		$pdf->ezText("Expose Besichtigungsuhrzeit fehlt", 11);	
-		}*/
-		/*$pdf->setColor(0/255,0/255,0/255);
-		#$pdf->setColor(64/255,42/255,27/255);
-		$pdf->filledRectangle(389,359,202,135);
-		$pdf->addJpegFromFile("FOTOS/visitenkarte.jpg", 390, 360, 200, 133, 100);*/
 		
-		//$pdf->setColor(255/255,0/255,0/255);
+		$pdf->ezSetDy(-275);
 		
+		/*ExposeText*/
+		//$pdf->ezSetMargins(135,430,50,50);
+		$exposetext = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Exposetext'))));
+		$pdf->ezText($exposetext, 10, array('justification'=>'full'));
+		
+		
+		$pdf->ezNewPage();
 		$start = 50;
-		$start_hoehe = 210;
+		$start_hoehe = 530;
 		$anz_bild = 0;
 		$akt_bild = 0;
 		$seite = 1;
@@ -458,7 +454,7 @@ function pdf_expose($einheit_id, $return=0){
 			$akt_bild = 0;
 			
 		}
-		if($anz_bild==4*$seite){
+		if($anz_bild==8){
 			$seite++;
 			$anz_bild = 0;
 			/*Footer*/
@@ -507,34 +503,38 @@ function pdf_expose($einheit_id, $return=0){
 				}*/
 		$pdf->setStrokeColor(0/255,0/255,0/255);
 		$pdf->addText(150, 710, 8, "Sprechzeiten:         Dienstag 9:00 - 12:00 Uhr und Donnerstag 14:00 - 17:00 Uhr");
-		$pdf->addText(45, 660, 14, "Fragebogen zur Wohnungsbewerbung                    Wohnungs-Nr.: <b>$e->einheit_kurzname</b>");
+		$pdf->addText(45, 660, 14, "<b>Fragebogen zur Wohnungsbewerbung</b>                    Wohnungs-Nr.: <b>$e->einheit_kurzname</b>");
 		$pdf->addText(45, 620, 10, "Vor- und Zuname des Bewerbers     _______________________________________________________________");
 		$pdf->ezSetDy(-100);
-		$pdf->ezText("Ich/Wir sind bereit, nachstehende Wohnung in der $e->haus_strasse $e->haus_nummer ($e->einheit_lage), $e->haus_plz $e->haus_stadt\nab sofort/ab _________________________________ Wohngröße ca. $e->einheit_qm_d m² zu mieten.", 10);
+		$pdf->ezText("Ich/Wir sind bereit, nachstehende Wohnung in der $e->haus_strasse $e->haus_nummer ($e->einheit_lage), $e->haus_plz $e->haus_stadt\nab sofort/ab _________________________________ Wohngrï¿½ï¿½e ca. $e->einheit_qm_d mï¿½ zu mieten.", 10);
 		$pdf->ezSetDy(-10);
-		$pdf->ezText("Die Miete beträgt voraussichtlich monatlich:",10);
+		$pdf->ezText("Die Miete betrï¿½gt voraussichtlich monatlich:",10);
 		
 		$pdf->addText(300, 562, 10, "Kaltmiete");
-		$pdf->addText(450, 562, 10, "$expose_km €");
+		$pdf->addText(450, 562, 10, "$expose_km ï¿½");
 		$pdf->addText(300, 542, 10, "Betriebskostenvorauszahlungen");
-		$pdf->addText(450, 542, 10, "$expose_bk €");
+		$pdf->addText(450, 542, 10, "$expose_bk ï¿½");
 		$pdf->addText(300, 522, 10, "Heizkostenvorauszahlungen");
-		$pdf->addText(450, 522, 10, "$expose_hk €");
+		$pdf->addText(450, 522, 10, "$expose_hk ï¿½");
 		$kaution = nummer_punkt2komma_t(3*nummer_komma2punkt($expose_km));
 		$pdf->ezSetDy(-50);
-		$pdf->ezText("Bei Anmietung wird eine Kaution in Höhe von $kaution € (3 Kaltmieten) fällig.", 10);
+		$pdf->ezText("Bei Anmietung wird eine Kaution in Hï¿½he von $kaution ï¿½ (3 Kaltmieten) fï¿½llig.", 10);
 		$pdf->ezSetDy(-10);
-		$pdf->ezText("Ich/Wir geben nachstehende Selbstauskunft:",10);
+		$pdf->ezText("<b>Ich/Wir geben nachstehende Selbstauskunft:</b>",10);
 		$pdf->ezSetDy(-10);
 		$pdf->ezText("1.) Vor- und Zuname: _______________________________________ Geburtsdatum: ___________________",10);
 		$pdf->ezSetDy(-10);
-		$pdf->ezText("Derzeitige Anschrift: _____________________________________________ Telefon: __________________",10);
+		$pdf->ezText("Derzeitige Anschrift: ________________________________________________________________________",10);
+		$pdf->ezSetDy(-10);
+		$pdf->ezText("E-Mail: _______________________________________ Telefon: ____________________________________",10);
 		$pdf->ezSetDy(-10);
 		$pdf->ezText("2.) Vor- und Zuname: _______________________________________ Geburtsdatum: ___________________",10);
 		$pdf->ezSetDy(-10);
-		$pdf->ezText("Derzeitige Anschrift: _____________________________________________ Telefon: __________________",10);
-		$pdf->ezSetDy(-20);
-		$pdf->ezText("Folgende Personen gehören außerdem zum Haushalt:",10);
+		$pdf->ezText("Derzeitige Anschrift: ________________________________________________________________________",10);
+		$pdf->ezSetDy(-10);
+		$pdf->ezText("E-Mail: _______________________________________ Telefon: ____________________________________",10);
+		$pdf->ezSetDy(-10);
+		$pdf->ezText("<b>Folgende Personen gehï¿½ren auï¿½erdem zum Haushalt:</b>",10);
 		$pdf->ezSetDy(-10);
 		$pdf->ezText("_______________________________ geb. am ___________________ Familienstand __________________",10);
 		$pdf->ezSetDy(-10);
@@ -543,20 +543,20 @@ function pdf_expose($einheit_id, $return=0){
 		$pdf->ezText("_______________________________ geb. am ___________________ Familienstand __________________",10);
 		
 		$pdf->ezSetDy(-20);
-		$pdf->ezText("Zu 1. ausgeübter Beruf: _____________________________________________________________________",10);
+		$pdf->ezText("Zu 1. ausgeï¿½bter Beruf: _____________________________________________________________________",10);
 		$pdf->ezSetDy(-10);
-		$pdf->ezText("Arbeitgeber: ___________________________________________ dort tätig seit ________________________",10);
+		$pdf->ezText("Arbeitgeber: ___________________________________________ dort tï¿½tig seit ________________________",10);
 		$pdf->ezSetDy(-10);
-		$pdf->ezText("mtl. Netto-Einkommen: ______________________ €, Verdienstbescheinigungen bitte beifügen",10);
+		$pdf->ezText("mtl. Netto-Einkommen: ______________________ ï¿½, Verdienstbescheinigungen bitte beifï¿½gen",10);
 		
 		$pdf->ezSetDy(-20);
-		$pdf->ezText("Zu 2. ausgeübter Beruf: _____________________________________________________________________",10);
+		$pdf->ezText("Zu 2. ausgeï¿½bter Beruf: _____________________________________________________________________",10);
 		$pdf->ezSetDy(-10);
-		$pdf->ezText("Arbeitgeber: ___________________________________________ dort tätig seit ________________________",10);
+		$pdf->ezText("Arbeitgeber: ___________________________________________ dort tï¿½tig seit ________________________",10);
 		$pdf->ezSetDy(-10);
-		$pdf->ezText("mtl. Netto-Einkommen: ______________________ €, Verdienstbescheinigungen bitte beifügen",10);
+		$pdf->ezText("mtl. Netto-Einkommen: ______________________ ï¿½, Verdienstbescheinigungen bitte beifï¿½gen",10);
 		$pdf->ezSetDy(-30);
-		$pdf->ezText("Beziehen Sie eine Rente/Pension/Sozialunterstützung? ____________________ Höhe ________________ €",10);
+		$pdf->ezText("Beziehen Sie eine Rente/Pension/Sozialunterstï¿½tzung? ____________________ Hï¿½he ________________ ï¿½",10);
 		
 		/*$bpdf->footer_info('Partner',$_SESSION['partner_id']);
 		
@@ -578,46 +578,46 @@ function pdf_expose($einheit_id, $return=0){
 		$pdf->ezSetDy(-10);
 		$pdf->ezText("Bewohnt seit: ________________________________ als Hauptmieter/Untermieter ______________________",10);
 		$pdf->ezSetDy(-10);
-		$pdf->ezText("Monatliche Miete _______________________ €",10);
+		$pdf->ezText("Monatliche Miete _______________________ ï¿½",10);
 		$pdf->ezSetDy(-20);
-		$pdf->ezText("Name und Anschrift des bisherigen Hauseigentümers/Hausverwalters:
+		$pdf->ezText("Name und Anschrift des bisherigen Hauseigentï¿½mers/Hausverwalters:
 ________________________________________________________________________________________\n
 ________________________________________________________________________________________",10);
 		$pdf->ezSetDy(-20);
-		$pdf->ezText("Ich/Wir wünsche(n) die Wohnung zu wechseln, weil:
+		$pdf->ezText("Ich/Wir wï¿½nsche(n) die Wohnung zu wechseln, weil:
 ________________________________________________________________________________________\n
 ________________________________________________________________________________________",10);
 		$pdf->ezSetDy(-10);
-		$pdf->ezText("Ist die Miete für die letzten 12 Monate regelmäßig bezahlt worden ? __________________________________",10);
+		$pdf->ezText("Ist die Miete fï¿½r die letzten 12 Monate regelmï¿½ig bezahlt worden ? __________________________________",10);
 		$pdf->ezSetDy(-10);
-		$pdf->ezText("Bestehen überfällige Verpflichtungen aus dem jetzigen oder früheren Mietverhältnissen ? _________________",10);
+		$pdf->ezText("Bestehen ï¿½berfï¿½llige Verpflichtungen aus dem jetzigen oder frï¿½heren Mietverhï¿½ltnissen ? _________________",10);
 		$pdf->ezSetDy(-10);
-		$pdf->ezText("z.B. Eigentumsvorbehalten an der Einrichtung, Pfändung o.ä. _______________________________________",10);
+		$pdf->ezText("z.B. Eigentumsvorbehalten an der Einrichtung, Pfï¿½ndung o.ï¿½. _______________________________________",10);
 		$pdf->ezSetDy(-10);
 		$pdf->ezText("Bestehen Verpflichtungen aus Unterhaltszahlungen an Dritte oder Zahlungsverpflichtungen aus Kredit- oder
 Darlehenstilgungen? _______________________________________________________________________",10);
 		$pdf->ezSetDy(-10);
-		$pdf->ezText("Beabsichtigen Sie in der Wohnung ein Gewerbe oder eine freiberufliche Tätigkeit auszuüben ? Ja / Nein",10);
+		$pdf->ezText("Beabsichtigen Sie in der Wohnung ein Gewerbe oder eine freiberufliche Tï¿½tigkeit auszuï¿½ben ? Ja / Nein",10);
 		$pdf->ezSetDy(-10);
 		$pdf->ezText("Wenn ja: ________________________________________________________________________________",10);
 		$pdf->ezSetDy(-10);
-		$pdf->ezText("Die Kosten für Kabelanschluss werde ich übernehmen: Ja / Nein",10);
+		$pdf->ezText("Die Kosten fï¿½r Kabelanschluss werde ich ï¿½bernehmen: Ja / Nein",10);
 		$pdf->ezSetDy(-10);
 		$pdf->ezText("Welche Haustiere wollen Sie in der Wohnung halten ? _____________________________________________",10);
 		$pdf->ezSetDy(-10);
-		$pdf->ezText("Bitte folgende Unterlagen beilegen:",10);
+		$pdf->ezText("<b>Bitte folgende Unterlagen beilegen:",10);
 		
 		$pdf->ezSetMargins(135,70,200,50);
 		$pdf->ezText("- letzten 3 Gehaltsbescheinigungen
-- Bescheinigung des Arbeitgebers über ungekündigte Stellung
+- Bescheinigung des Arbeitgebers ï¿½ber ungekï¿½ndigte Stellung
 - Personalausweis/Reisepass in Kopie
-- Mietschuldenfreiheitsbestätigung des jetzigen Vermieters
-- Schufa-Auskunft",10);
+- Mietschuldenfreiheitsbestï¿½tigung des jetzigen Vermieters
+- Schufa-Auskunft</b>",10);
 		$pdf->ezSetMargins(135,70,50,50);
 		$pdf->ezSetDy(-10);
-		$pdf->ezText("Ich/Wir versichere(n) ausdrücklich die Richtigkeit der vorstehend gemachten Angaben.
-Mit einer Auskunftseinholung über mich/uns durch den Vermieter beim bisherigen Vermieter bin/sind ich/wir
-einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundesdatenschutzgesetzes hiermit als erfüllt an.",10);
+		$pdf->ezText("Ich/Wir versichere(n) ausdrï¿½cklich die Richtigkeit der vorstehend gemachten Angaben.
+Mit einer Auskunftseinholung ï¿½ber mich/uns durch den Vermieter beim bisherigen Vermieter bin/sind ich/wir
+einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach ï¿½ 26 Bundesdatenschutzgesetzes hiermit als erfï¿½llt an.",10);
 		$pdf->ezSetDy(-10);
 		$pdf->ezText("Der Vermieter verpflichtet sich, die von ihm erfragten Daten des/der Bewerber(s) vertraulich zu behandeln.",10);
 		$pdf->ezSetDy(-30);
@@ -683,7 +683,7 @@ function liste_wohnungen_mit_termin($vor_nach='>'){
 					$balkon = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Balkon'))));
 					$e->get_einheit_info($einheit_id);
 					$link_einladen = "<a href=\"?daten=leerstand&option=einladungen&einheit_id=$einheit_id\">Einladen</a>";
-					echo "<tr><td>$e->einheit_kurzname $e->haus_strasse $e->haus_nummer, $e->einheit_lage</td><td>$termin</td><td>$e->einheit_qm m²</td><td>$zimmer</td><td>$balkon</td>";
+					echo "<tr><td>$e->einheit_kurzname $e->haus_strasse $e->haus_nummer, $e->einheit_lage</td><td>$termin</td><td>$e->einheit_qm mÃ¯Â¿Â½</td><td>$zimmer</td><td>$balkon</td>";
 					if($vor_nach=='>'){
 						echo "<td>$link_einladen</td>";
 					}else{
@@ -780,7 +780,7 @@ function form_exposedaten($einheit_id){
 	
 	$d = new detail();
 	$f = new formular();
-	$f->erstelle_formular("Exposeeinstellungen für $e->einheit_kurzname vornehmen", '');
+	$f->erstelle_formular("Exposeeinstellungen fÃ¯Â¿Â½r $e->einheit_kurzname vornehmen", '');
 	fehlermeldung_ausgeben("Ausstattungsklasse $ma->ausstattungsklasse");
 	$f->hidden_feld('einheit_id', $einheit_id);
 	$zimmer = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Zimmeranzahl'))));
@@ -799,7 +799,7 @@ function form_exposedaten($einheit_id){
 	$brutto_miete = nummer_punkt2komma_t(nummer_komma2punkt($expose_km) + nummer_komma2punkt($expose_bk) + nummer_komma2punkt($expose_hk));
 	
 	
-	$f->text_feld("Miete kalt | MSM:$miete_nach_ms € | MAX:$miete_nach_ms_max € | MS-FELD:$ms_feld, U:$ma->u_wert, M:$ma->m_wert, O:$ma->o_wert", 'expose_km', $expose_km, 8, 'expose_km', '');
+	$f->text_feld("Miete kalt | MSM:$miete_nach_ms Ã¯Â¿Â½ | MAX:$miete_nach_ms_max Ã¯Â¿Â½ | MS-FELD:$ms_feld, U:$ma->u_wert, M:$ma->m_wert, O:$ma->o_wert", 'expose_km', $expose_km, 8, 'expose_km', '');
 	$f->text_feld('BK', 'expose_bk', $expose_bk, 8, 'expose_bk', '');
 	
 	$heizungsart = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Heizungsart'))));
@@ -931,7 +931,7 @@ $this->hinweis = $row['HINWEIS'];
     
 function form_edit_interessent($id){
 	$f = new formular();
-	$f->erstelle_formular('Daten ändern', '');
+	$f->erstelle_formular('Daten Ã¯Â¿Â½ndern', '');
 	$this->get_interessenten_infos($id);
 	$f->text_feld('Name', 'name', $this->name, 50, 'name', '');
 	$f->text_feld('Anschrift', 'anschrift', $this->anschrift, 50, 'anschrift', '');
@@ -940,10 +940,10 @@ function form_edit_interessent($id){
 	$f->text_feld('zimmer', 'zimmer', $this->zimmer, 8, 'zimmer', '');
 	$f->datum_feld('Wunscheinzug', 'einzug', $this->einzug_d, 'einzug');
 	$f->text_bereich('Hinweis', 'hinweis', $this->hinweis, 20,10, 'hinweis');
-	$f->check_box_js('delete', $id, 'Interessenten löschen', '', '');
+	$f->check_box_js('delete', $id, 'Interessenten lÃ¯Â¿Â½schen', '', '');
 	$f->hidden_feld('option', 'interessenten_update');
 	$f->hidden_feld('id', $id);
-	$f->send_button('btn_snd', 'Änderungen vornehmen');
+	$f->send_button('btn_snd', 'Ã¯Â¿Â½nderungen vornehmen');
 	$f->ende_formular();
 }   
 
@@ -966,7 +966,7 @@ return true;
 function form_foto_upload($einheit_id){
 echo '<form name="upload_form" method="post" enctype="multipart/form-data" action="">';
 echo '<table>';
-echo '<tr><td>Großfoto<input type="file" name="expose[]"></td></tr>';
+echo '<tr><td>GroÃ¯Â¿Â½foto<input type="file" name="expose[]"></td></tr>';
 echo '<tr><td>1. Kleinfoto<input type="file" name="expose[]"></td></tr>';
 echo '<tr><td>2. Kleinfoto<input type="file" name="expose[]"></td></tr>';
 echo '<tr><td>3. Kleinfoto<input type="file" name="expose[]"></td></tr>';
@@ -986,13 +986,13 @@ echo '</form>';
 
 function sanierungsliste($objekt_id=null, $monate=null, $w=250,$h=200){
 	if($objekt_id==null){
-		fehlermeldung_ausgeben("Objekt wählen");
+		fehlermeldung_ausgeben("Objekt wï¿½hlen");
 	}else{
 
 		//echo "<script src=\"js/lightbox-plus-jquery.min.js\"></script>";
-		echo "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js\"></script>";
+		/*echo "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js\"></script>";
 		echo "<link href=\"css/lightbox.css\" rel=\"stylesheet\">";
-		echo "<script src=\"js/lightbox.js\"></script>";
+		echo "<script src=\"js/lightbox.js\"></script>";*/
 		
 		
 		$f = new formular;
@@ -1017,7 +1017,7 @@ function sanierungsliste($objekt_id=null, $monate=null, $w=250,$h=200){
 		$datum_d = date_mysql2german($datum);
 		
 		$arr = $this->leerstand_finden_monat($objekt_id, $datum);
-		/*Array vervollständigen*/
+		/*Array vervollstÃ¯Â¿Â½ndigen*/
 			$anz_e = count($arr);
 			for($a=0;$a<$anz_e;$a++){
 			$einheit_id = $arr[$a]['EINHEIT_ID'];
@@ -1078,7 +1078,7 @@ function sanierungsliste($objekt_id=null, $monate=null, $w=250,$h=200){
 			}
 			unset($arr_details);
 			
-			/*Energieausweis Gültigkeit aus Details vom Haus*/
+			/*Energieausweis GÃ¯Â¿Â½ltigkeit aus Details vom Haus*/
 			$arr_details = $d->finde_detail_inhalt_last_arr('Haus', $arr[$a]['HAUS_ID'], 'Energieausweis bis');
 			if(is_array($arr_details)){
 				$arr[$a]['ENERGIEAUS_BIS'] = 	$arr_details[0]['DETAIL_INHALT'];
@@ -1117,7 +1117,19 @@ function sanierungsliste($objekt_id=null, $monate=null, $w=250,$h=200){
 			}
 			unset($arr_details);
 			
-			
+			/*Notiz*/
+			$arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Sanierung Notiz');
+			if(is_array($arr_details)){
+				$arr[$a]['NOTIZ'] = 	$arr_details[0]['DETAIL_INHALT'];
+				$arr[$a]['NOTIZ_DAT'] = $arr_details[0]['DETAIL_DAT'];
+				$arr[$a]['NOTIZ_BEM'] = $arr_details[0]['DETAIL_BEMERKUNG'];
+			}else{
+				$arr[$a]['NOTIZ'] = '';
+				$arr[$a]['NOTIZ_DAT'] = 0;
+				$arr[$a]['NOTIZ_BEM'] = '';
+			}
+			unset($arr_details);
+                        
 			/*Gereinigt am*/
 			$arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Gereinigt am');
 			if(is_array($arr_details)){
@@ -1195,7 +1207,7 @@ function sanierungsliste($objekt_id=null, $monate=null, $w=250,$h=200){
 		
 		$f->fieldset('Sanierungsliste','sani');
 		
-		//echo "<h2>SANIERUNGSLISTE $oo->objekt_kurzname - Leerstände bis $datum_d (heute + $monate Monate)</h2>";
+		//echo "<h2>SANIERUNGSLISTE $oo->objekt_kurzname - LeerstÃ¯Â¿Â½nde bis $datum_d (heute + $monate Monate)</h2>";
 		echo "<table class=\"sortable\">";
 		echo "<tr><th>EINHEITEN BIS bis $datum_d</th><th>AUSSTATTUNG</th><th>SANIER-<br>VERLAUF</th><th>JAHR DER<br>LETZTEN<br>SANIERUNG</th><th>ENERGIE<br>AUSWEIS</th><th>ENERGIE<br>AUSWEIS<br>BIS</th><th>REINIGEN<br>FOTOS</th></tr>";
 		$anz_e = count($arr);
@@ -1253,7 +1265,7 @@ function sanierungsliste($objekt_id=null, $monate=null, $w=250,$h=200){
 		echo "<td><table class=\"details\">";
 		echo "<tr><td width=\"125px\">Einheit:</td><td><label>$einheit_kurzname</label></td></tr>";
 		echo "<tr><td>Anschrift:</td><td>$anschrift</td></tr>";
-		echo "<tr><td>Fläche:</td><td>$einheit_qm m²</td></tr>";
+		echo "<tr><td>Flï¿½che:</td><td>$einheit_qm mï¿½</td></tr>";
 		echo "<tr><td>Lage:</td><td>$einheit_lage</td></tr>";
 		echo "<tr><td>Typ:</td><td>$einheit_typ</td></tr>";
 		echo "<tr><td>Letzter Mieter:</td><td>$l_mieter</td></tr>";
@@ -1283,7 +1295,7 @@ function sanierungsliste($objekt_id=null, $monate=null, $w=250,$h=200){
 		 
 		echo "<tr><td>Mietdauer:</td><td><progress max=\"$max\" value=\"$l_jahr\"></progress> $l_jahr"."J:$l_monate"."M</td></tr>";
 		
-		//echo "Fläche: $einheit_qm m²<br>Lage:$einheit_lage<br>Typ:$einheit_typ<br>Energieausweis vorhanden: $energieausweis<br>Energieausweis bis: $energieausweis_bis</td>";
+		//echo "FlÃ¯Â¿Â½che: $einheit_qm mÃ¯Â¿Â½<br>Lage:$einheit_lage<br>Typ:$einheit_typ<br>Energieausweis vorhanden: $energieausweis<br>Energieausweis bis: $energieausweis_bis</td>";
 		//echo "<td>Balkon: $balkon</td>";
 		//echo "<td>Heizungsart: $heizart</td>";
 		echo "</table></td>";
@@ -1311,9 +1323,18 @@ function sanierungsliste($objekt_id=null, $monate=null, $w=250,$h=200){
 		echo "</td>";
 		//change_detail(anzeige_text, wert, detail_dat)*/
 		$fertig_bau_dat = $arr[$a]['FERTIG_BAU_DAT'];
-		echo "<td width=\"165px\"><progress onclick=\"change_detail('Fertigstellung in Prozent', '$fertig_bau', '$fertig_bau_dat', 'EINHEIT', '$einheit_id')\" max=\"100\" value=\"";
+                $notiz_dat = $arr[$a]['NOTIZ_DAT'];
+                $notiz = $arr[$a]['NOTIZ'];
+		echo "<td width=\"165px\"><div style=\"height: 100%;><div style=\"height: 16px;\">"
+                . "<progress onclick=\"change_detail('Fertigstellung in Prozent', '$fertig_bau', '$fertig_bau_dat', 'EINHEIT', '$einheit_id')\" max=\"100\" value=\"";
 		echo $fertig_bau;
-		echo "\"></progress> $fertig_bau %</td>";
+		echo "\"></progress> $fertig_bau</div>";
+                echo "<div style=\"height: 16px;\">Notiz</div>";
+                echo "<div style=\"height: 100px;\">"
+                . "<textarea class=\"formular_tabelle\" "
+                        . "onchange=\"change_detail_no_prompt('Sanierung Notiz', this.value, '$notiz_dat', 'EINHEIT', '$einheit_id')\" "
+                        . "style=\"width: 100%; height: 90%;\">" . $notiz . "</textarea></div></div>";
+                echo "</td>";
 		
 		
 		$sanierungs_jahr = $arr[$a]['JAHR_S'];
@@ -1447,8 +1468,8 @@ function vermietungsliste($objekt_id=null, $monate=null, $w=250,$h=200){
 		
 		
 		
-		//$f->fieldset("Mögliche Filterung", 'filter');
-		$f->erstelle_formular("Mögliche Filterung", null);
+		//$f->fieldset("MÃ¯Â¿Â½gliche Filterung", 'filter');
+		$f->erstelle_formular("Mï¿½gliche Filterung", null);
 		/*Filter bereinigen*/
 		if(isset($_SESSION['filter']['zimmer'])){
 		$filter_zimmer  = array_unique($_SESSION['filter']['zimmer']);
@@ -1553,7 +1574,7 @@ function vermietungsliste($objekt_id=null, $monate=null, $w=250,$h=200){
 		$f->fieldset('Suchergebnis', 'se');
 		
 		echo "<table class=\"sortable\">";
-		echo "<tr><th>EINHEIT</th><th>TYP</th><th>ANSCHRIFT</th><th>LAGE</th><th>ZI-<br>MM.</th><th>QM</th><th>BAL<br>KON</th><th>HEI-<br>ZUNG</th><th>LETZE\nSAN-<br>IERUNG</th><th>FERTIG</th><th>REIN-<br>IGUNG</th><th>BK<br>SCHN.</th><th>BK</th><th>HK<br>SCHN.</th><th>HK</th><th>KALT<br>€</th><th>BRU-<br>TTO<br>€</th><th>TER-<br>MIN</th></tr>";
+		echo "<tr><th>EINHEIT</th><th>TYP</th><th>ANSCHRIFT</th><th>LAGE</th><th>ZI-<br>MM.</th><th>QM</th><th>BAL<br>KON</th><th>HEI-<br>ZUNG</th><th>LETZE\nSAN-<br>IERUNG</th><th>FERTIG</th><th>REIN-<br>IGUNG</th><th>BK<br>SCHN.</th><th>BK</th><th>HK<br>SCHN.</th><th>HK</th><th>KALT<br>mï¿½</th><th>BRU-<br>TTO</th><th>TER-<br>MIN</th></tr>";
 		for($a=0;$a<$anz;$a++){
 		$einheit_id = $arr[$a]['EINHEIT_ID'];
 		$ma = new mietanpassung;
@@ -1594,14 +1615,14 @@ function vermietungsliste($objekt_id=null, $monate=null, $w=250,$h=200){
 		$kaltmiete_dat = $arr[$a]['KALTMIETE_DAT'];
 		$kaltmiete_bem = $arr[$a]['KALTMIETE_BEM'];
 		
-		/*BK für vermietung aus Details*/
+		/*BK fÃ¯Â¿Â½r vermietung aus Details*/
 		$bk = $arr[$a]['BK'];
 		$bk_dat = $arr[$a]['BK_DAT'];
 		$bk_bem = $arr[$a]['BK_BEM'];
 		/*NK SCHNITT*/
 		$nk = $arr[$a]['NK_D'];
 		
-		/*HK für vermietung aus Details*/
+		/*HK fÃ¯Â¿Â½r vermietung aus Details*/
 		$hk = $arr[$a]['HK'];
 		$hk_dat = $arr[$a]['HK_DAT'];
 		$hk_bem = $arr[$a]['HK_BEM'];
@@ -1614,10 +1635,19 @@ function vermietungsliste($objekt_id=null, $monate=null, $w=250,$h=200){
 		$netto_miete_20 = $einheit_qm*$ms_20proz;
 		$anz_fotos = $arr[$a]['FOTO_ANZ'];
 		
-		/*Besichtigungstermin für Vermietung aus Details*/
+		/*Besichtigungstermin fÃ¯Â¿Â½r Vermietung aus Details*/
 		$b_termin = $arr[$a]['B_TERMIN'];
 		$b_termin_dat = $arr[$a]['B_TERMIN_DAT'];
 		$b_termin_bem = $arr[$a]['B_TERMIN_BEM'];
+		
+		
+		
+		/*Reservierung aus Details*/
+		$b_reservierung = $arr[$a]['B_RESERVIERUNG'];
+		$b_reservierung_dat = $arr[$a]['B_RESERVIERUNG_DAT'];
+		$b_reservierung_bem = $arr[$a]['B_RESERVIERUNG_BEM'];
+		
+		
 	
 		$anzeigen_zimmer = false;
 		$anzeigen_balkon = false;
@@ -1654,10 +1684,24 @@ function vermietungsliste($objekt_id=null, $monate=null, $w=250,$h=200){
 		$link_bk = "<a class=\"details\" onclick=\"change_detail('Vermietung-BK', '$bk', '$bk_dat', 'EINHEIT', '$einheit_id')\">$bk</a>";
 		$link_hk = "<a class=\"details\" onclick=\"change_detail('Vermietung-HK', '$hk', '$hk_dat', 'EINHEIT', '$einheit_id')\">$hk</a>";
 		$link_termin = "<a class=\"details\" onclick=\"change_detail('Besichtigungstermin', '$b_termin', '$b_termin_dat', 'EINHEIT', '$einheit_id')\">$b_termin</a>";
-		$link_fotos = "<a href=\"?daten=leerstand&option=fotos_upload&einheit_id=$einheit_id\" style=\"color:#ffed88;\">Fotos: $anz_fotos</a>";	
-		echo "<tr><td>$link_einheit<br>Ex:$l_mieter<br>$link_fotos<br>$link_expose_pdf</td><td>$typ</td><td>$str</td><td>$einheit_lage</td><td sorttable_customkey=\"$zimmer_p\">$zimmer</td><td>$einheit_qm_a</td><td>$balkon</td><td>$heizungsart</td><td>$jahr_s</td><td>$fertig_bau_bem</td><td>$gereinigt<hr>$gereinigt_bem</td><td>$nk</td><td>$link_bk</td><td>$hk_s</td><td>$link_hk</td><td><b>$link_kaltmiete<hr>m²-Kalt:$kalt_qm<br>(MAX20:$netto_miete_20)</b><hr>MSM-$ms_feld:$ma->m_wert<br>MSO-$ms_feld:$ma->o_wert<br>MSO20%:$ms_20proz<hr>$kaltmiete_bem</td><td><b>$brutto_miete</b></td><td>$link_termin</td></tr>";
+		$link_fotos = "<a href=\"?daten=leerstand&option=fotos_upload&einheit_id=$einheit_id\" style=\"color:#ff778c;\">Fotos: $anz_fotos</a>";	
+		$link_expose_text = "<a href=\"?daten=details&option=details_hinzu&detail_tabelle=EINHEIT&detail_id=$einheit_id&vorauswahl=Exposetext\">Exposetext</a>";
+		
+		if($b_reservierung!=''){
+		$link_reservierung = "<a class=\"details\" onclick=\"change_detail('Vermietung-Reserviert', '$b_reservierung', '$b_reservierung_dat', 'EINHEIT', '$einheit_id')\">$b_reservierung<hr>$b_reservierung_bem</a>";
+		}else{
+		$link_reservierung = "<a class=\"details\" onclick=\"change_detail('Vermietung-Reserviert', '$b_reservierung', '$b_reservierung_dat', 'EINHEIT', '$einheit_id')\">Reservieren</a>";
 		}
-		//echo "$einheit_kn - $l_mieter ($typ) $str $einheit_lage Zimmer: $zimmer Balkon:$balkon Heizart:$heizungsart EA: $energieausweis JS:$jahr_s BAU:$fertig_bau ($fertig_bau_bem) REIN:$gereinigt ($gereinigt_bem) $nk € $hk €<br>";
+		
+		if($b_reservierung==''){
+		//#bcd59f
+			echo "<tr style=\"background-color:#bcd59f\">";
+		}else{
+			echo "<tr style=\"background-color:#ff778c\">";
+		}
+		echo "<td>$link_einheit<br>Ex:$l_mieter<br>$link_fotos<hr>$link_expose_pdf<hr>$link_expose_text<hr>$link_reservierung</td><td>$typ</td><td>$str</td><td>$einheit_lage</td><td sorttable_customkey=\"$zimmer_p\">$zimmer</td><td>$einheit_qm_a</td><td>$balkon</td><td>$heizungsart</td><td>$jahr_s</td><td>$fertig_bau_bem</td><td>$gereinigt<hr>$gereinigt_bem</td><td>$nk</td><td>$link_bk</td><td>$hk_s</td><td>$link_hk</td><td><b>$link_kaltmiete<hr>mï¿½-Kalt:$kalt_qm<br>(MAX20:$netto_miete_20)</b><hr>MSM-$ms_feld:$ma->m_wert<br>MSO-$ms_feld:$ma->o_wert<br>MSO20%:$ms_20proz<hr>$kaltmiete_bem</td><td><b>$brutto_miete</b></td><td>$link_termin</td></tr>";
+		}
+		//echo "$einheit_kn - $l_mieter ($typ) $str $einheit_lage Zimmer: $zimmer Balkon:$balkon Heizart:$heizungsart EA: $energieausweis JS:$jahr_s BAU:$fertig_bau ($fertig_bau_bem) REIN:$gereinigt ($gereinigt_bem) $nk Ã¯Â¿Â½ $hk Ã¯Â¿Â½<br>";
 		
 		}
 	}else{
@@ -1672,7 +1716,7 @@ function vermietungsliste($objekt_id=null, $monate=null, $w=250,$h=200){
 /*Liefert den Leerstands-array, wenn Baustellenfortschritt mehr als 99%*/
 function vermietungsliste_arr($objekt_id=null, $monate=null){
 	if($objekt_id==null){
-		fehlermeldung_ausgeben("Objekt wählen");
+		fehlermeldung_ausgeben("Objekt wÃ¯Â¿Â½hlen");
 	}else{
 
 		
@@ -1699,7 +1743,7 @@ function vermietungsliste_arr($objekt_id=null, $monate=null){
 		$datum_d = date_mysql2german($datum);
 
 		$arr = $this->leerstand_finden_monat($objekt_id, $datum);
-		/*Array vervollständigen*/
+		/*Array vervollstÃ¯Â¿Â½ndigen*/
 		$anz_e = count($arr);
 		for($a=0;$a<$anz_e;$a++){
 			$einheit_id = $arr[$a]['EINHEIT_ID'];
@@ -1773,7 +1817,7 @@ function vermietungsliste_arr($objekt_id=null, $monate=null){
 			}
 			unset($arr_details);
 				
-			/*Energieausweis Gültigkeit aus Details vom Haus*/
+			/*Energieausweis GÃ¯Â¿Â½ltigkeit aus Details vom Haus*/
 			$arr_details = $d->finde_detail_inhalt_last_arr('Haus', $arr[$a]['HAUS_ID'], 'Energieausweis bis');
 			if(is_array($arr_details)){
 				$arr[$a]['ENERGIEAUS_BIS'] = 	$arr_details[0]['DETAIL_INHALT'];
@@ -1878,9 +1922,20 @@ function vermietungsliste_arr($objekt_id=null, $monate=null){
 				$arr[$a]['B_TERMIN_BEM'] = '';
 			}
 			unset($arr_details);
-				
 			
-				
+			
+			/*Reservierung*/
+			$arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Vermietung-Reserviert');
+			if(is_array($arr_details)){
+				$arr[$a]['B_RESERVIERUNG'] = $arr_details[0]['DETAIL_INHALT'];
+				$arr[$a]['B_RESERVIERUNG_DAT'] = $arr_details[0]['DETAIL_DAT'];
+				$arr[$a]['B_RESERVIERUNG_BEM'] = $arr_details[0]['DETAIL_BEMERKUNG'];
+			}else{
+				$arr[$a]['B_RESERVIERUNG'] = '';
+				$arr[$a]['B_RESERVIERUNG_DAT'] = 0;
+				$arr[$a]['B_RESERVIERUNG_BEM'] = '';
+			}
+			unset($arr_details);
 				
 				
 			$arr[$a]['EINHEIT_LAGE'] = ltrim(rtrim($arr[$a]['EINHEIT_LAGE']));
@@ -2051,13 +2106,13 @@ function fotos_anzeigen_wohnung($einheit_id, $unterordner='ANZEIGE', $anz_pro_ze
 	
 function stat_sanierung($objekt_id=null, $monate=null, $w=300,$h=500){
 		if($objekt_id==null){
-			fehlermeldung_ausgeben("Objekt wählen");
+			fehlermeldung_ausgeben("Objekt wÃ¯Â¿Â½hlen");
 		}else{
 			$li = new listen();
 			$f = new formular;
 			$oo = new objekt();
 			$oo->get_objekt_infos($objekt_id);
-			$f->fieldset("LEERSTANDSÜBERSICHT $oo->objekt_kurzname", 'vue');
+			$f->fieldset("LEERSTANDSï¿½BERSICHT $oo->objekt_kurzname", 'vue');
 			
 			
 			
@@ -2357,7 +2412,7 @@ function kontrolle_preise(){
 	}else{
 		$anz = count($arr);
 		echo "<table class=\"sortable\">";
-		echo "<tr><th>Einheit</th><th>SOLL KM</th><th>EINTRAG</th><th>SOLL KM m²</th><th>IST KM m²</th><th>EINZUG</th><th>IST KM</th></tr>";
+		echo "<tr><th>Einheit</th><th>SOLL KM</th><th>EINTRAG</th><th>SOLL KM mï¿½</th><th>IST KM mï¿½</th><th>EINZUG</th><th>IST KM</th></tr>";
 		for($a=0;$a<$anz;$a++){
 			$kos_typ = $arr[$a]['DETAIL_ZUORDNUNG_TABELLE'];
 			$kos_id = $arr[$a]['DETAIL_ZUORDNUNG_ID'];
@@ -2381,12 +2436,24 @@ function kontrolle_preise(){
 					$monat = $einzugsdatum_arr[1];
 					$tag = $einzugsdatum_arr[2];
 					
+					
 					$mk = new mietkonto;
 					$mk->kaltmiete_monatlich($mv_id,$monat,$jahr);
 					
+					if($tag>1){
+						$ltm = letzter_tag_im_monat($monat, $jahr);
+						
+					//	$qm_preis = nummer_punkt2komma(nummer_komma2punkt($kaltmiete_soll)/$mvs->einheit_qm/$tag*$ltm);
+						//$qm_preis_ist = nummer_punkt2komma($mk->ausgangs_kaltmiete/$mvs->einheit_qm/$tag*$ltm);
+						$qm_preis = nummer_punkt2komma(nummer_komma2punkt($kaltmiete_soll)/$mvs->einheit_qm);
+						
+						$qm_preis_ist = nummer_punkt2komma($mk->ausgangs_kaltmiete/$mvs->einheit_qm/$tag*30);
+					}else{
+					
 					$qm_preis = nummer_punkt2komma(nummer_komma2punkt($kaltmiete_soll)/$mvs->einheit_qm);
 					$qm_preis_ist = nummer_punkt2komma($mk->ausgangs_kaltmiete/$mvs->einheit_qm);
-					echo "<td>$qm_preis</td>";
+					}
+					echo "<td><b>$qm_preis</b></td>";
 					if(nummer_komma2punkt($qm_preis)>nummer_komma2punkt($qm_preis_ist)){
 					echo "<td style=\"color:red;\">$qm_preis_ist</td>";
 					}else{

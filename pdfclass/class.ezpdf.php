@@ -558,13 +558,7 @@ function ezPrvtTableColumnHeadings($cols,$pos,$maxWidth,$height,$decender,$gap,$
       } else {
         $justification = 'left';
       }
-      if(!isset($this->options['titleCol'])){
       $this->ezText($colHeading,$size,array('aleft'=> $pos[$colName],'aright'=>($maxWidth[$colName]+$pos[$colName]),'justification'=>$justification));
-      }else{
-      	$this->setColor($this->options['titleCol']);
-      	$this->ezText($colHeading,$size,array('aleft'=> $pos[$colName],'aright'=>($maxWidth[$colName]+$pos[$colName]),'justification'=>$justification));
-      	$this->setColor($this->options['textCol']);
-      }
       $dy = $y-$this->y;
       if ($dy>$mx){
         $mx=$dy;

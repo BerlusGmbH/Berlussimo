@@ -67,7 +67,7 @@ $f->fieldset('Mahnungen und Zahlungserinnerungen', 'mze');
 	 echo "<table>";
 	echo "<tr><th>";
 	$f->check_box_js_alle('mahnliste', 'mahnliste', '', 'Alle', '', '', 'mahnliste');
-	echo "</th><th>MIETER</th><th>SALDO</th><th>1. FRIST</th><th>2. FRIST</th><th>OPTIONEN</th>";
+	echo "</th><th></th><th>MIETER</th><th>SALDO</th><th>1. FRIST</th><th>2. FRIST</th><th>OPTIONEN</th>";
 	if($schulder_typ == 'aktuelle'){
 	$akt_mvs = $this->finde_aktuelle_mvs();	
 	}
@@ -117,15 +117,22 @@ $f->fieldset('Mahnungen und Zahlungserinnerungen', 'mze');
 		/*Mahnsperre*/
 		$dd = new detail();
 		$mahnsperre = $dd->finde_detail_inhalt('MIETVERTRAG', $mv_id, 'Mahnsperre');
+		$link_mkb = "<a href=\"?daten=mietkonten_blatt&anzeigen=mk_pdf&mietvertrag_id=$mv_id\">Mietkonto</a>";
+		$link_ue = "<a href=\"?daten=uebersicht&anzeigen=einheit&einheit_id=$mvs->einheit_id&mietvertrag_id=$mv_id\">Übersicht</a>";
+		
 		if(empty($mahnsperre)){
+		
 		$f->check_box_js1('mahnliste[]', 'mahnliste', $mv_id, "&nbsp;$mvs->einheit_kurzname&nbsp;", '', '');
+				
+		
 		$link_erinnerung = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=zahlungserinnerung&mietvertrag_id=$mv_id\">Erinnerung PDF</a>";
 		$link_mahnung = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mahnung&mietvertrag_id=$mv_id\">Mahnung PDF</a>";
 		}else{
-		$link_erinnerung ='';
-		$link_mahnung = "<p class=\"warnung\">Mahnsperre: $mahnsperre</p>";
+		$mahnsperre = "<p style=\"color:red;\"><b>Mahnsperre:</b> $mahnsperre</p>";
+			$link_erinnerung ='';
+		$link_mahnung = "<b>Mahnsperre:</b> $mahnsperre";
 		}
-		echo "</td><td>$mvs->personen_name_string</td>";
+		echo "</td><td>$link_mkb<hr>$link_ue</td><td>$mvs->personen_name_string<br>$mahnsperre</td>";
 		
 		
 		/*Regel für Mietschuldenfilter / Höhe

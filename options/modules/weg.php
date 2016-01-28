@@ -556,6 +556,29 @@ if(!empty($_REQUEST['dat'])){
  $w->hga_profil_wahl($_REQUEST['profil_id']);
  break;
  
+ case "grunddaten_profil":
+ if(isset($_REQUEST['profil_id']) && !empty($_REQUEST['profil_id'])){
+ $_SESSION['hga_profil_id'] = $_REQUEST['profil_id'];
+ $weg = new weg;
+ $weg->form_hga_profil_grunddaten($_REQUEST['profil_id']);	
+ }else{
+ 	fehlermeldung_ausgeben("HGA Profil wählen!");
+ }
+ break;
+ 
+ case "profil_send_gaendert":
+ //print_req();
+ if(!empty($_REQUEST['profil_id']) && !empty($_REQUEST['profilbez']) && !empty($_REQUEST['objekt_id']) && !empty($_REQUEST['jahr']) && !empty($_REQUEST['geldkonto_id']) && !empty($_REQUEST['gk_id_ihr']) && !empty($_REQUEST['wp_id']) && !empty($_REQUEST['hg_konto']) && !empty($_REQUEST['hk_konto']) && !empty($_REQUEST['ihr_konto']) ){
+ 	$weg = new weg;
+ 	$weg->hga_profil_aendern($_REQUEST['profil_id'], $_REQUEST['objekt_id'], $_REQUEST['geldkonto_id'], $_REQUEST['jahr'], $_REQUEST['profilbez'], $_REQUEST['gk_id_ihr'], $_REQUEST['wp_id'], $_REQUEST['hg_konto'], $_REQUEST['hk_konto'], $_REQUEST['ihr_konto'], $_REQUEST['p_von'], $_REQUEST['p_bis']);
+ 	fehlermeldung_ausgeben("Profil geändert, bitte warten!!!!");
+ 	$profil_id = $_REQUEST['profil_id'];
+ 	weiterleiten_in_sec("?daten=weg&option=grunddaten_profil&profil_id=$profil_id", 2);
+ }else{
+ 	fehlermeldung_ausgeben("Profil nicht geändert, Daten unvollständig!!!!");
+ }
+ break;
+ 
  
  
  case "hga_einzeln":
@@ -591,10 +614,10 @@ if(!empty($_REQUEST['dat'])){
  break;
  
  case "profil_send":
- print_req();
+ //print_req();
  if(!empty($_REQUEST['profilbez']) && !empty($_REQUEST['objekt_id']) && !empty($_REQUEST['jahr']) && !empty($_REQUEST['geldkonto_id']) && !empty($_REQUEST['gk_id_ihr']) && !empty($_REQUEST['wp_id']) && !empty($_REQUEST['hg_konto']) && !empty($_REQUEST['hk_konto']) && !empty($_REQUEST['ihr_konto']) ){
  $w = new weg;
- $w->hga_profil_speichern($_REQUEST[objekt_id], $_REQUEST[geldkonto_id], $_REQUEST[jahr], $_REQUEST[profilbez], $_REQUEST[gk_id_ihr], $_REQUEST[wp_id], $_REQUEST[hg_konto], $_REQUEST[hk_konto], $_REQUEST[ihr_konto]);
+ $w->hga_profil_speichern($_REQUEST['objekt_id'], $_REQUEST['geldkonto_id'], $_REQUEST['jahr'], $_REQUEST['profilbez'], $_REQUEST['gk_id_ihr'], $_REQUEST['wp_id'], $_REQUEST['hg_konto'], $_REQUEST['hk_konto'], $_REQUEST['ihr_konto']);
  #weiterleiten('?daten=weg&option=assistent&schritt=2');
  }else{
  	echo "Daten unvollständig";
@@ -605,7 +628,18 @@ if(!empty($_REQUEST['dat'])){
  case "konto_hinzu":
  #print_req();
  $w = new weg();
- $w->form_konto_hinzu($_REQUEST[konto]);
+ $w->form_konto_hinzu($_REQUEST['konto']);
+ break;	
+ 
+ /*Konto aus einem Profil entfernen*/
+ case "konto_del":
+ //print_req();
+ if(isset($_REQUEST['profil_id']) && !empty($_REQUEST['profil_id']) && isset($_REQUEST['konto']) && !empty($_REQUEST['konto'])){
+ 	$weg = new weg;
+ 	$weg->konto_loeschen($_REQUEST['profil_id'], $_REQUEST['konto']);
+ 	fehlermeldung_ausgeben("Konto $konto wurde gelöscht!");
+ }
+ weiterleiten_in_sec('?daten=weg&option=assistent&schritt=2',2);
  break;	
  
  case "konto_zu_zeilen":
@@ -633,7 +667,7 @@ if(!empty($_REQUEST['dat'])){
  case "hk_verbrauch_tab":
  $w = new weg();
  	if($_SESSION['hga_profil_id']){
- 	$w->tab_hk_verbrauch($_SESSION[hga_profil_id]);
+ 	$w->tab_hk_verbrauch($_SESSION['hga_profil_id']);
  	}else{
  		echo "Hausgeldabrechnungsprofil wählen!";
  	}

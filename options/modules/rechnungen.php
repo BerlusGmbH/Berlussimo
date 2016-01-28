@@ -20,7 +20,7 @@
 
 include_once("includes/allgemeine_funktionen.php");
 
-/*ï¿½berprï¿½fen ob Benutzer Zugriff auf das Modul hat*/
+/*Überprüfen ob Benutzer Zugriff auf das Modul hat*/
 if(!isset($_SESSION['benutzer_id']) OR !check_user_mod($_SESSION['benutzer_id'], 'rechnungen')){
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -66,7 +66,7 @@ switch($option) {
     
     case "rechnung_erfassen1":
    	$form = new mietkonto;
-   	$form->erstelle_formular("Rechnungsdaten ï¿½berprï¿½fen", NULL);
+   	$form->erstelle_formular("Rechnungsdaten überprüfen", NULL);
    	echo "<p><b>Eingegebene Rechnungsdaten:</b></p>";
    	$clean_arr = post_array_bereinigen();
    	#$form->array_anzeigen($clean_arr);
@@ -79,7 +79,7 @@ switch($option) {
    	}
    	if($clean_arr['aussteller_id'] == $clean_arr['empfaenger_id'] ){
    		#$fehler = true;
-   		fehlermeldung_ausgeben("Rechnungsaussteller- und Empfï¿½nger sind identisch.<br>");
+   		fehlermeldung_ausgeben("Rechnungsaussteller- und Empfänger sind identisch.<br>");
    	}
    	
    	if(!isset($fehler)){
@@ -111,9 +111,9 @@ switch($option) {
    		$netto_betrag_komma =   nummer_punkt2komma($clean_arr['nettobetrag']); 		
    		$brutto_betrag_komma =   nummer_punkt2komma($clean_arr['bruttobetrag']);
    		
-   		#echo "Nettobetrag: $netto_betrag_komma ï¿½<br>";
-   		#echo "Bruttobetrag: $brutto_betrag_komma ï¿½<br>";
-   		echo "Fï¿½llig am: $clean_arr[faellig_am] <br>";
+   		#echo "Nettobetrag: $netto_betrag_komma €<br>";
+   		#echo "Bruttobetrag: $brutto_betrag_komma €<br>";
+   		echo "Fällig am: $clean_arr[faellig_am] <br>";
    		echo "Kurzbeschreibung: $clean_arr[kurzbeschreibung] <br>";
    		$geld_konto_info = new geldkonto_info;
    		$geld_konto_info->dropdown_geldkonten('Partner', $clean_arr['aussteller_id']);
@@ -152,7 +152,7 @@ switch($option) {
     
     case "vollstaendige_rechnungen":
    	$form = new mietkonto;
-    $form->erstelle_formular("Vollstï¿½ndig erfasste Rechnungen", NULL);
+    $form->erstelle_formular("Vollständig erfasste Rechnungen", NULL);
    	$rechnung = new rechnung;
     $rechnung->vollstaendig_erfasste_rechungen_anzeigen();
     $form->ende_formular();
@@ -160,7 +160,7 @@ switch($option) {
     
     case "unvollstaendige_rechnungen":
    	$form = new mietkonto;
-    $form->erstelle_formular("Unvollstï¿½ndig erfasste Rechnungen", NULL);
+    $form->erstelle_formular("Unvollständig erfasste Rechnungen", NULL);
    	$rechnung = new rechnung;
     $rechnung->unvollstaendig_erfasste_rechungen_anzeigen();
     $form->ende_formular();
@@ -168,7 +168,7 @@ switch($option) {
     
     case "kontierte_rechnungen":
    	$form = new mietkonto;
-    $form->erstelle_formular("Vollstï¿½ndig kontierte Rechnungen", NULL);
+    $form->erstelle_formular("Vollständig kontierte Rechnungen", NULL);
    	$rechnung = new rechnung;
     $rechnung->vollstaendig_kontierte_rechungen_anzeigen();
     $form->ende_formular();
@@ -176,7 +176,7 @@ switch($option) {
     
     case "nicht_kontierte_rechnungen":
    	$form = new mietkonto;
-    $form->erstelle_formular("Unvollstï¿½ndig oder nocht nicht kontierte Rechnungen", NULL);
+    $form->erstelle_formular("Unvollständig oder nocht nicht kontierte Rechnungen", NULL);
    	$rechnung = new rechnung;
     $rechnung->unvollstaendig_kontierte_rechungen_anzeigen();
     $form->ende_formular();
@@ -268,15 +268,15 @@ switch($option) {
     }
     echo "<hr><h3>$objekt_name</h3>";
 	echo "<b>Objektbezogene Kosten vom $objekt_name</b><br>";
-	echo "<b>|-</b>Gesamtrechnung fï¿½r Objekt $objekt_name (inkl Hï¿½user / Einheiten) $objekt_link_rechnung<br>";
-    echo "<b>|-</b>Objektkostenrechnung fï¿½r Objekt $objekt_name $objektkosten_link<br>";
+	echo "<b>|-</b>Gesamtrechnung für Objekt $objekt_name (inkl Häuser / Einheiten) $objekt_link_rechnung<br>";
+    echo "<b>|-</b>Objektkostenrechnung für Objekt $objekt_name $objektkosten_link<br>";
     $haeuser_ids = $elemente_aus_pool['HAUS'];
     
     if(is_array($haeuser_ids)){
       
-    	echo "<b>&nbsp;&nbsp;&nbsp;Hï¿½userbezogene Kosten vom $objekt_name</b><br>";
-    	#echo "<b>&nbsp;&nbsp;&nbsp;|-</b>Gesamtrechnung fï¿½r alle Hï¿½user vom $objekt_name</b> <br>";
-    	echo "<b>&nbsp;&nbsp;&nbsp;Rechnungen pro Haus - Haus wï¿½hlen bitte</b><br>";
+    	echo "<b>&nbsp;&nbsp;&nbsp;Häuserbezogene Kosten vom $objekt_name</b><br>";
+    	#echo "<b>&nbsp;&nbsp;&nbsp;|-</b>Gesamtrechnung für alle Häuser vom $objekt_name</b> <br>";
+    	echo "<b>&nbsp;&nbsp;&nbsp;Rechnungen pro Haus - Haus wählen bitte</b><br>";
     	for($g=0;$g<count($haeuser_ids);$g++){
     	$haus_id = $haeuser_ids[$g];
     	
@@ -299,8 +299,8 @@ switch($option) {
     $einheiten_ids = $elemente_aus_pool['EINHEITEN'];
     if(is_array($einheiten_ids)){
     	echo "<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| Einheitsbezogene Kosten vom $objekt_name</b><br>";
-    	#echo "<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-</b>Gesamtrechnung fï¿½r alle Einheiten vom $objekt_name</b> <br>";
-    	echo "<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| Rechnungen pro Einheit - Einheit wï¿½hlen bitte</b><br>";
+    	#echo "<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-</b>Gesamtrechnung für alle Einheiten vom $objekt_name</b> <br>";
+    	echo "<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| Rechnungen pro Einheit - Einheit wählen bitte</b><br>";
     	for($e=0;$e<count($einheiten_ids);$e++){
     		$einheit_id = $einheiten_ids[$e];
     		$einheit_info->get_einheit_haus($einheit_id);
@@ -333,7 +333,7 @@ switch($option) {
     $lager_ids = $elemente_aus_pool['LAGER'];
     if(is_array($lager_ids)){
     	echo "<b>| Lagerbezogene Kosten</b><br>";
-    	echo "<b>&nbsp;&nbsp;&nbsp;| Rechnungen pro Lager - Lager wï¿½hlen bitte</b><br>";
+    	echo "<b>&nbsp;&nbsp;&nbsp;| Rechnungen pro Lager - Lager wählen bitte</b><br>";
     	for($f=0;$f<count($lager_ids);$f++){
     		$lager_id = $lager_ids[$f];
     		$lager_bezeichnung = $lager_info->lager_bezeichnung($lager_id);
@@ -360,7 +360,7 @@ switch($option) {
     #print_r($partner_ids);
     if(is_array($partner_ids)){
     	echo "<b>| Partnerbezogene Kosten</b><br>";
-    	echo "<b>&nbsp;&nbsp;&nbsp;| Rechnungen an Partner - Partner wï¿½hlen bitte</b><br>";
+    	echo "<b>&nbsp;&nbsp;&nbsp;| Rechnungen an Partner - Partner wählen bitte</b><br>";
     	$r = new rechnung;
     	for($f=0;$f<count($partner_ids);$f++){
     		$partner_id = $partner_ids[$f];
@@ -400,7 +400,7 @@ switch($option) {
     if(isset($_REQUEST['objekt_id']) && !empty($_REQUEST['objekt_id']) && empty($_REQUEST['aussteller_id'])){
     $kontierung_id_arr = $rechnung->rechnung_an_objekt_zusammenstellen($_REQUEST['objekt_id']);
     #print_r($kontierung_id_arr);
-    /*Feldernamen definieren - ï¿½berschrift Tabelle*/
+    /*Feldernamen definieren - Überschrift Tabelle*/
 	if(is_array($kontierung_id_arr)){
 	foreach($kontierung_id_arr[0] as $key => $value){
 		$ueberschrift_felder_arr[] = $key;
@@ -411,7 +411,7 @@ switch($option) {
     for($a=0;$a<count($kontierung_id_arr);$a++){
     $beleg_nr = $kontierung_id_arr[$a]['BELEG_NR'];
 	$rechnung->rechnung_grunddaten_holen($beleg_nr);	
-    /*Empfï¿½nger der Rechnung wird zum Austeller der Auto...Rechnung*/ 
+    /*Empfänger der Rechnung wird zum Austeller der Auto...Rechnung*/ 
     	
     	if($rechnung->rechnungs_empfaenger_typ != 'Kasse'){
     	#echo "PARTNER $a<br>";
@@ -440,7 +440,7 @@ switch($option) {
    /*Ausgabe der Links mit Rechnungsausteller namen*/
    #print_r($aussteller_arr);
    echo "<table>";
-   echo "<tr><td>Wï¿½hlen Sie bitte den Rechnungsaussteller aus!</td></tr>";
+   echo "<tr><td>Wählen Sie bitte den Rechnungsaussteller aus!</td></tr>";
    if(isset($aussteller_arr_sortiert) && is_array($aussteller_arr_sortiert)){
    #print_r($aussteller_arr_sortiert);
    for($a=0;$a<count($aussteller_arr_sortiert);$a++){ 		
@@ -489,7 +489,7 @@ switch($option) {
     if($kontierung_id_arr == false){
     	echo "Keine Objektkosten";
     }
-    /*Feldernamen definieren - ï¿½berschrift Tabelle*/
+    /*Feldernamen definieren - Überschrift Tabelle*/
 	if(is_array($kontierung_id_arr)){
 	foreach($kontierung_id_arr[0] as $key => $value){
 		$ueberschrift_felder_arr[] = $key;
@@ -501,7 +501,7 @@ switch($option) {
     for($a=0;$a<count($kontierung_id_arr);$a++){
     $beleg_nr = $kontierung_id_arr[$a][BELEG_NR];
 	$rechnung->rechnung_grunddaten_holen($beleg_nr);	
-    /*Empfï¿½nger der Rechnung wird zum Austeller der Auto...Rechnung*/ 
+    /*Empfänger der Rechnung wird zum Austeller der Auto...Rechnung*/ 
     	
     	if($rechnung->rechnungs_empfaenger_typ != 'Kasse'){
     	#echo "PARTNER $a<br>";
@@ -530,7 +530,7 @@ switch($option) {
    /*Ausgabe der Links mit Rechnungsausteller namen*/
    #print_r($aussteller_arr);
    echo "<table>";
-   echo "<tr><td>Wï¿½hlen Sie bitte den Rechnungsaussteller aus!</td></tr>";
+   echo "<tr><td>Wählen Sie bitte den Rechnungsaussteller aus!</td></tr>";
    if(is_array($aussteller_arr_sortiert)){
    #print_r($aussteller_arr_sortiert);
    for($a=0;$a<count($aussteller_arr_sortiert);$a++){ 		
@@ -569,14 +569,14 @@ switch($option) {
     
     case "rechnung_an_einheit":
    	$form = new mietkonto;
-    $form->erstelle_formular("Rechnung fï¿½r eine Einheit erstellen", NULL);
+    $form->erstelle_formular("Rechnung für eine Einheit erstellen", NULL);
    	$rechnung = new rechnung;
     if(isset($_REQUEST['einheit_id']) && !empty($_REQUEST['einheit_id'])){
     $kontierung_id_arr = $rechnung->rechnung_aus_pool_zusammenstellen('Einheit', $_REQUEST['einheit_id']);    
     if($kontierung_id_arr == false){
     	echo "Keine einheitsbezogene Kosten";
     }
-    /*Feldernamen definieren - ï¿½berschrift Tabelle*/
+    /*Feldernamen definieren - Überschrift Tabelle*/
 	if(is_array($kontierung_id_arr)){
 	foreach($kontierung_id_arr[0] as $key => $value){
 		$ueberschrift_felder_arr[] = $key;
@@ -588,7 +588,7 @@ switch($option) {
     for($a=0;$a<count($kontierung_id_arr);$a++){
     $beleg_nr = $kontierung_id_arr[$a]['BELEG_NR'];
 	$rechnung->rechnung_grunddaten_holen($beleg_nr);	
-    /*Empfï¿½nger der Rechnung wird zum Austeller der Auto...Rechnung*/ 
+    /*Empfänger der Rechnung wird zum Austeller der Auto...Rechnung*/ 
     	
     	if($rechnung->rechnungs_empfaenger_typ != 'Kasse'){
     	#echo "PARTNER $a<br>";
@@ -618,7 +618,7 @@ switch($option) {
    /*Ausgabe der Links mit Rechnungsausteller namen*/
    #print_r($aussteller_arr);
    echo "<table>";
-   echo "<tr><td>Wï¿½hlen Sie bitte den Rechnungsaussteller aus!</td></tr>";
+   echo "<tr><td>Wählen Sie bitte den Rechnungsaussteller aus!</td></tr>";
    if(is_array($aussteller_arr_sortiert)){
    #print_r($aussteller_arr_sortiert);
    for($a=0;$a<count($aussteller_arr_sortiert);$a++){ 		
@@ -668,7 +668,7 @@ switch($option) {
     	echo "Keine hausbezogenen Kosten";
     }
     
-    /*Feldernamen definieren - ï¿½berschrift Tabelle*/
+    /*Feldernamen definieren - Überschrift Tabelle*/
 	if(is_array($kontierung_id_arr)){
 	foreach($kontierung_id_arr[0] as $key => $value){
 		$ueberschrift_felder_arr[] = $key;
@@ -680,7 +680,7 @@ switch($option) {
     for($a=0;$a<count($kontierung_id_arr);$a++){
     $beleg_nr = $kontierung_id_arr[$a][BELEG_NR];
 	$rechnung->rechnung_grunddaten_holen($beleg_nr);	
-    /*Empfï¿½nger der Rechnung wird zum Austeller der Auto...Rechnung*/ 
+    /*Empfänger der Rechnung wird zum Austeller der Auto...Rechnung*/ 
     	
     	if($rechnung->rechnungs_empfaenger_typ != 'Kasse'){
     	#echo "PARTNER $a<br>";
@@ -710,7 +710,7 @@ switch($option) {
    	 /*Ausgabe der Links mit Rechnungsausteller namen*/
    #print_r($aussteller_arr);
    echo "<table>";
-   echo "<tr><td>Wï¿½hlen Sie bitte den Rechnungsaussteller aus!</td></tr>";
+   echo "<tr><td>Wählen Sie bitte den Rechnungsaussteller aus!</td></tr>";
    if(is_array($aussteller_arr_sortiert)){
    #print_r($aussteller_arr_sortiert);
    for($a=0;$a<count($aussteller_arr_sortiert);$a++){ 		
@@ -754,7 +754,7 @@ switch($option) {
     if($kontierung_id_arr == false){
     	echo "Keine Hauskosten";
     }
-    /*Feldernamen definieren - ï¿½berschrift Tabelle*/
+    /*Feldernamen definieren - Überschrift Tabelle*/
 	if(is_array($kontierung_id_arr)){
 	foreach($kontierung_id_arr[0] as $key => $value){
 		$ueberschrift_felder_arr[] = $key;
@@ -774,7 +774,7 @@ switch($option) {
     if(isset($_REQUEST['einheit_id']) && !empty($_REQUEST['einheit_id'])){
     $kontierung_id_arr = $rechnung->rechnung_aus_pool_zusammenstellen('Einheit', $_REQUEST[einheit_id]);    
     
-    /*Feldernamen definieren - ï¿½berschrift Tabelle*/
+    /*Feldernamen definieren - Überschrift Tabelle*/
 	if(is_array($kontierung_id_arr)){
 	foreach($kontierung_id_arr[0] as $key => $value){
 		$ueberschrift_felder_arr[] = $key;
@@ -793,7 +793,7 @@ switch($option) {
     if(isset($_REQUEST['lager_id']) && !empty($_REQUEST['lager_id'])){
     $kontierung_id_arr = $rechnung->rechnung_aus_pool_zusammenstellen('Lager', $_REQUEST['lager_id']);    
     
-    /*Feldernamen definieren - ï¿½berschrift Tabelle*/
+    /*Feldernamen definieren - Überschrift Tabelle*/
 	if(is_array($kontierung_id_arr)){
 	foreach($kontierung_id_arr[0] as $key => $value){
 		$ueberschrift_felder_arr[] = $key;
@@ -806,7 +806,7 @@ switch($option) {
     for($a=0;$a<count($kontierung_id_arr);$a++){
     $beleg_nr = $kontierung_id_arr[$a]['BELEG_NR'];
 	$rechnung->rechnung_grunddaten_holen($beleg_nr);	
-    /*Empfï¿½nger der Rechnung wird zum Austeller der Auto...Rechnung*/ 
+    /*Empfänger der Rechnung wird zum Austeller der Auto...Rechnung*/ 
     	
     	if($rechnung->rechnungs_empfaenger_typ != 'Kasse'){
     	#echo "PARTNER $a<br>";
@@ -834,7 +834,7 @@ switch($option) {
     		
    /*Ausgabe der Links mit Rechnungsausteller namen*/
    echo "<table>";
-   echo "<tr><td>Wï¿½hlen Sie bitte den Rechnungsaussteller aus!</td></tr>";
+   echo "<tr><td>Wählen Sie bitte den Rechnungsaussteller aus!</td></tr>";
    #print_r($aussteller_arr);
    if(is_array($aussteller_arr_sortiert)){
    print_r($aussteller_arr_sortiert);
@@ -887,7 +887,7 @@ switch($option) {
     if(isset($_REQUEST[partner_id]) && !empty($_REQUEST[partner_id])){
     $kontierung_id_arr = $rechnung->rechnung_aus_pool_zusammenstellen('Partner', $_REQUEST[partner_id]);    
     
-    /*Feldernamen definieren - ï¿½berschrift Tabelle*/
+    /*Feldernamen definieren - Überschrift Tabelle*/
 	if(is_array($kontierung_id_arr)){
 	foreach($kontierung_id_arr[0] as $key => $value){
 		$ueberschrift_felder_arr[] = $key;
@@ -900,7 +900,7 @@ switch($option) {
     for($a=0;$a<count($kontierung_id_arr);$a++){
     $beleg_nr = $kontierung_id_arr[$a][BELEG_NR];
 	$rechnung->rechnung_grunddaten_holen($beleg_nr);	
-    /*Empfï¿½nger der Rechnung wird zum Austeller der Auto...Rechnung*/ 
+    /*Empfänger der Rechnung wird zum Austeller der Auto...Rechnung*/ 
     	
     	if($rechnung->rechnungs_empfaenger_typ != 'Kasse'){
     	#echo "PARTNER $a<br>";
@@ -928,7 +928,7 @@ switch($option) {
     		
    /*Ausgabe der Links mit Rechnungsausteller namen*/
    echo "<table>";
-   echo "<tr><td>Wï¿½hlen Sie bitte den Rechnungsaussteller aus!</td></tr>";
+   echo "<tr><td>Wählen Sie bitte den Rechnungsaussteller aus!</td></tr>";
    #print_r($aussteller_arr);
    if(is_array($aussteller_arr_sortiert)){
    #print_r($aussteller_arr_sortiert);
@@ -982,7 +982,7 @@ switch($option) {
     
     case "rechnungs_uebersicht":
    	$form = new mietkonto;
-    $form->erstelle_formular("Rechnungsï¿½bersicht", NULL);
+    $form->erstelle_formular("Rechnungsübersicht", NULL);
    	$rechnung = new rechnung;
         
     if(isset($_REQUEST['belegnr']) && !empty($_REQUEST['belegnr'])){
@@ -1012,8 +1012,8 @@ switch($option) {
    	$partner_form = new partner;
    	$partner_form->partner_rechts_anzeigen();
    	$form = new mietkonto;
-   	$form->erstelle_formular("Partnerdaten ï¿½berprï¿½fen", NULL);
-   	echo "<p><b>ï¿½bermittelte Partnerdaten:</b></p>";
+   	$form->erstelle_formular("Partnerdaten überprüfen", NULL);
+   	echo "<p><b>Übermittelte Partnerdaten:</b></p>";
    	#$form->array_anzeigen($_POST);
    	$clean_arr = post_array_bereinigen();
     #$form->array_anzeigen($clean_arr);
@@ -1052,7 +1052,7 @@ switch($option) {
    	$rechnung = new rechnung;
    	
    	$form = new mietkonto;
-   	$form->erstelle_formular("Rechnung vervollstï¿½ndigen", NULL);
+   	$form->erstelle_formular("Rechnung vervollständigen", NULL);
    	if(isset($_REQUEST[belegnr]) && !empty($_REQUEST[belegnr])){
     #$rechnung->rechnung_grunddaten_holen($_REQUEST[rechnung_id]);
   	$rechnung->rechnungs_kopf($_REQUEST[belegnr]);
@@ -1098,7 +1098,7 @@ switch($option) {
     $rechnung->rechnung_footer_tabelle_anzeigen();
     $form->ende_formular();
     }else{
-    fehlermeldung_ausgeben("Bitte Rechnung auswï¿½hlen!");
+    fehlermeldung_ausgeben("Bitte Rechnung auswählen!");
     weiterleiten_in_sec("?daten=rechnungen&option=erfasste_rechnungen", 2);
     }
    	break;
@@ -1109,13 +1109,13 @@ switch($option) {
    	#$clean_positionen_arr = post_unterarray_bereinigen('positionen');
    	$rechnung = new rechnung;
    	$form = new mietkonto;
-   	$form->erstelle_formular("Rechnung vervollstï¿½ndigen", NULL);
+   	$form->erstelle_formular("Rechnung vervollständigen", NULL);
    	if(isset($_REQUEST[belegnr]) && !empty($_REQUEST[belegnr])){
     $rechnung->rechnungs_kopf($_REQUEST[belegnr]);
     #$rechnung->rechnungsdaten_anzeigen($_REQUEST[belegnr]);
   	#print_r($clean_positionen_arr);
   	
-  	/*Prï¿½fen ob Bezeichnung, Preis, Menge eingetragen worden sind*/
+  	/*Prüfen ob Bezeichnung, Preis, Menge eingetragen worden sind*/
   	 for($b=1;$b<=count($_POST[positionen]);$b++){
     	foreach ($_POST[positionen][$b] as $key1 => $value1) {
     	/*if($key1=='bezeichnung' && empty($value1)){
@@ -1144,7 +1144,7 @@ switch($option) {
 			$geld_konto_info = new geldkonto_info;
 			
 			if($rechnung->rechnungs_empfaenger_typ != 'Kasse'){
-			echo "<b>Diese Rechnung wird/wurde ï¿½berwiesen an $rechnung->rechnungs_aussteller_name .</b>";
+			echo "<b>Diese Rechnung wird/wurde überwiesen an $rechnung->rechnungs_aussteller_name .</b>";
 			$geld_konto_info->dropdown_geldkonten($rechnung->rechnungs_aussteller_typ, $rechnung->rechnungs_aussteller_id);
 			}else{
 				echo "<b>Diese Rechnung wird/wurde in BAR an $rechnung->rechnungs_aussteller_name gezaht.</b>";
@@ -1160,11 +1160,11 @@ switch($option) {
  	echo "<td>";
  	$form->text_feld("Pos.", "positionen[$a]", "$a", "1");
  	echo "</td><td>";
- 	/*Artikelinfos als Array verfï¿½gbar machen*/
+ 	/*Artikelinfos als Array verfügbar machen*/
  	$artikel_info_arr = $rechnung->artikel_info($_POST[partner_id], "".$_POST[positionen][$a]['artikel_nr']."");
  	
  	
- 	/*Prï¿½fen ob Artikelinfos als Array verfï¿½gbar sind*/
+ 	/*Prüfen ob Artikelinfos als Array verfügbar sind*/
  	if(is_array($artikel_info_arr)){
  	$bezeichnung = $artikel_info_arr[0]['BEZEICHNUNG'];
  	$listenpreis = $artikel_info_arr[0]['LISTENPREIS'];
@@ -1184,7 +1184,7 @@ switch($option) {
  		$art_nr = $rechnung->artikel_leistung_speichern($_POST[partner_id], $_POST[positionen][$a]['bezeichnung'], $listenpreis_neuer_artikel, $_POST[positionen][$a]['rabatt_satz']);
  		}
  	}
- 	/*Artikelinfos als Array verfï¿½gbar machen*/
+ 	/*Artikelinfos als Array verfügbar machen*/
  	$artikel_info_arr = $rechnung->artikel_info($_POST[partner_id], $art_nr);
  	$bezeichnung = $artikel_info_arr[0]['BEZEICHNUNG'];
  	$listenpreis = $artikel_info_arr[0]['LISTENPREIS'];
@@ -1239,7 +1239,7 @@ switch($option) {
     
     $form->ende_formular();
     }else{
-    fehlermeldung_ausgeben("Bitte Rechnung auswï¿½hlen!");
+    fehlermeldung_ausgeben("Bitte Rechnung auswählen!");
     weiterleiten_in_sec("?daten=rechnungen&option=erfasste_rechnungen", 2);
     }
    	/*Block mit Artikeln und Leistungen des Rechnungsaustellers*/
@@ -1328,7 +1328,7 @@ switch($option) {
    		if(count($ergebnis)>0){
    		$rechnung->rechnungen_aus_arr_anzeigen($ergebnis);
    		}else{
-   			echo "Keine Rechnungen fï¿½r den Empfï¿½nger ($clean_arr[empfaenger])";
+   			echo "Keine Rechnungen für den Empfänger ($clean_arr[empfaenger])";
    		}
    	
    	}
@@ -1338,7 +1338,7 @@ switch($option) {
    		if(count($ergebnis)>0){
    		$rechnung->rechnungen_aus_arr_anzeigen($ergebnis);
    		}else{
-   			echo "Keine Rechnungen fï¿½r das Partnerpaar";
+   			echo "Keine Rechnungen für das Partnerpaar";
    		}
    	}
    	$form->ende_formular();
@@ -1347,7 +1347,7 @@ switch($option) {
     case "rechnung_kontieren":
    	#echo "<header><link rel=\"stylesheet\" type=\"text/css\"  href=\"css/print_rechnungen.css\" media=\"print\"></header>";
    	$form = new mietkonto;
-    $form->erstelle_formular("Rechnungsï¿½bersicht", NULL);
+    $form->erstelle_formular("Rechnungsübersicht", NULL);
    	if(!isset($_POST['positionen_list'])){
    	   	$rechnung = new rechnung;
         if(isset($_REQUEST['belegnr']) && !empty($_REQUEST['belegnr'])){
@@ -1370,7 +1370,7 @@ switch($option) {
     		weiterleiten("?daten=rechnungen&option=rechnung_kontieren&belegnr=$belegnr");
     	}
     }else{
-    	fehlermeldung_ausgeben("Rechnunt wï¿½hlen x777");
+    	fehlermeldung_ausgeben("Rechnunt wählen x777");
     }    	
     break;
     
@@ -1437,7 +1437,7 @@ switch($option) {
 		 $kassen_info->get_kassen_info($uebernahme_arr[RECHNUNG_AUSSTELLER_ID]);
 		 $rechnung_von = $kassen_info->kassen_name;
 		 }
-   echo "<table><tr><td>Rechnung von <b>$rechnung_von</b> an $rechnung_an<br> fï¿½r das Objekt ".$objekt_info->objekt_name."</td></tr></table>";
+   echo "<table><tr><td>Rechnung von <b>$rechnung_von</b> an $rechnung_an<br> für das Objekt ".$objekt_info->objekt_name."</td></tr></table>";
    /*echo "<pre>";
    print_r($uebernahme_arr);
    echo "</pre>"; 
@@ -1460,16 +1460,16 @@ switch($option) {
    
    
    if($clean_arr[Empfaenger_typ] == 'Objekt'){
-   $clean_arr[kurzbeschreibung]= "Rechnung fï¿½r $objekt_info->objekt_name<br>$kurzbeschreibung";
+   $clean_arr[kurzbeschreibung]= "Rechnung für $objekt_info->objekt_name<br>$kurzbeschreibung";
    }
    if($clean_arr[Empfaenger_typ] == 'Haus'){
-   $clean_arr[kurzbeschreibung]= "Rechnung fï¿½r Haus im $objekt_info->objekt_name<br>$kurzbeschreibung";
+   $clean_arr[kurzbeschreibung]= "Rechnung für Haus im $objekt_info->objekt_name<br>$kurzbeschreibung";
    }
    if($clean_arr[Empfaenger_typ] == 'Einheit'){
    
    $r = new rechnung;
    $einheit = $r->kostentraeger_ermitteln('Einheit', $uebernahme_arr[RECHNUNG_KOSTENTRAEGER_ID]);
-   $clean_arr[kurzbeschreibung]= "Rechnung fï¿½r Einheit $einheit<br>$kurzbeschreibung";
+   $clean_arr[kurzbeschreibung]= "Rechnung für Einheit $einheit<br>$kurzbeschreibung";
    }
    if($clean_arr[Empfaenger_typ] == 'Lager'){
    $lager_info = new lager;
@@ -1559,15 +1559,15 @@ switch($option) {
    if($clean_arr[RECHNUNG_EMPFAENGER_TYP] == 'Objekt'){
    $objekt_info->get_objekt_name($clean_arr[RECHNUNG_EMPFAENGER_ID]);
    $objekt_info->get_objekt_eigentuemer_partner($clean_arr[RECHNUNG_EMPFAENGER_ID]);
-   $clean_arr[kurzbeschreibung]= "Rechnung fï¿½r $objekt_info->objekt_name<br>$kurzbeschreibung";
+   $clean_arr[kurzbeschreibung]= "Rechnung für $objekt_info->objekt_name<br>$kurzbeschreibung";
    }
    if($clean_arr[RECHNUNG_EMPFAENGER_TYP] == 'Haus'){
    $haus_info = $r->kostentraeger_ermitteln('Haus', $clean_arr['RECHNUNG_EMPFAENGER_ID']);
-   $clean_arr[kurzbeschreibung]= "Rechnung fï¿½r Haus $haus_info<br>$kurzbeschreibung";
+   $clean_arr[kurzbeschreibung]= "Rechnung für Haus $haus_info<br>$kurzbeschreibung";
    }
    if($clean_arr[RECHNUNG_EMPFAENGER_TYP] == 'Einheit'){
    $einheit = $r->kostentraeger_ermitteln('Einheit', $clean_arr['RECHNUNG_EMPFAENGER_ID']);
-   $clean_arr[kurzbeschreibung]= "Rechnung fï¿½r Einheit $einheit<br>$kurzbeschreibung";
+   $clean_arr[kurzbeschreibung]= "Rechnung für Einheit $einheit<br>$kurzbeschreibung";
    }
    if($clean_arr[RECHNUNG_EMPFAENGER_TYP] == 'Lager'){
    $lager_info = new lager;
@@ -1689,7 +1689,7 @@ switch($option) {
    	echo "<header><link rel=\"stylesheet\" type=\"text/css\"  href=\"css/print_rechnungen.css\" media=\"print\"></header>";	
    	}
   #  $r->rechnungseingangsbuch('Partner', $partner_id, $monat, $jahr, 'Rechnung');
-  	if(!empty($_SESSION['partner_id']) && empty($_SESSION['lager_id'])){
+  if(!empty($_SESSION['partner_id']) && empty($_SESSION['lager_id'])){
     $r->rechnungseingangsbuch('Partner', $partner_id, $monat, $jahr, 'Rechnung');	
     }
     if(!empty($_SESSION['partner_id']) && !empty($_SESSION['lager_id'])){
@@ -1699,7 +1699,7 @@ switch($option) {
     $r->rechnungseingangsbuch('Lager', $_SESSION['lager_id'], $monat, $jahr, 'Rechnung');	
     }
     if(empty($_SESSION['partner_id']) && empty($_SESSION['lager_id'])){
-    echo "Fï¿½r Eingangsrechungen einen Partner oder ein Lager wï¿½hlen";	
+    echo "Für Eingangsrechungen einen Partner oder ein Lager wählen";	
     }
   
     }
@@ -1760,7 +1760,7 @@ switch($option) {
     $r->rechnungsausgangsbuch('Lager', $_SESSION['lager_id'], $monat, $jahr, 'Rechnung');	
     }
     if(empty($_SESSION['partner_id']) && empty($_SESSION['lager_id'])){
-    echo "Fï¿½r Ausgangsrechungen einen Partner oder ein Lager wï¿½hlen";	
+    echo "Für Ausgangsrechungen einen Partner oder ein Lager wählen";	
     }
     
     }
@@ -1776,7 +1776,7 @@ switch($option) {
     }
    	break;
    	
-   	/*Rechnungspositionen erfassen Version 2 mit Autovervollstï¿½ndigen*/
+   	/*Rechnungspositionen erfassen Version 2 mit Autovervollständigen*/
    	case "positionen_erfassen":
    	$r = new rechnungen;
     $belegnr =$_REQUEST['belegnr']; 
@@ -1786,7 +1786,7 @@ switch($option) {
    	break;
    	
    	
-   	/*Rechnungsposition ï¿½ndern */
+   	/*Rechnungsposition ändern */
    	case "position_aendern":
    	$r = new rechnungen;
     $pos = $_REQUEST['pos'];
@@ -1796,14 +1796,14 @@ switch($option) {
     }
    	break;
    	
-   	/*Rechnungsposition ï¿½ndern */
+   	/*Rechnungsposition ändern */
    	case "position_loeschen":
    	$r = new rechnung;
     $pos = $_REQUEST['pos'];
     $belegnr = $_REQUEST['belegnr']; 
     if(!empty($belegnr) && !empty($pos)){
     $r->position_deaktivieren($pos,$belegnr);
-    echo "POSITION GELï¿½SCHT";
+    echo "POSITION GELÖSCHT";
     weiterleiten_in_sec("?daten=rechnungen&option=positionen_erfassen&belegnr=$belegnr", 1);
     }
     break;
@@ -1816,7 +1816,7 @@ switch($option) {
     if(!empty($belegnr)){
     $r->form_rechnung_buchen($belegnr);
     }else{
-    hinweis_ausgeben('Keine Rechung gewï¿½hlt!');	
+    hinweis_ausgeben('Keine Rechung gewählt!');	
     }
    	break;
    	
@@ -1831,12 +1831,12 @@ switch($option) {
    	$r1->rechnung_als_freigegeben($belegnr);
     $r->form_rechnung_zahlung_buchen($belegnr);
     }else{
-    hinweis_ausgeben('Keine Rechung gewï¿½hlt!');	
+    hinweis_ausgeben('Keine Rechung gewählt!');	
     }
    	break;
    	
    	
-   	/*Rechnung durch Kontoauszug bestï¿½tigen und buchen*/
+   	/*Rechnung durch Kontoauszug bestätigen und buchen*/
    	case "rechnung_empfang_buchen":
    	$r = new rechnungen;
     $belegnr =$_REQUEST['belegnr']; 
@@ -1847,7 +1847,7 @@ switch($option) {
    # print_r($_SESSION);
     $r->form_rechnung_empfang_buchen($belegnr);
     }else{
-    hinweis_ausgeben('Keine Rechung gewï¿½hlt!');	
+    hinweis_ausgeben('Keine Rechung gewählt!');	
     }
    	break;
    	
@@ -1908,7 +1908,7 @@ switch($option) {
     }
     }    
     
-    /*Falls mehrere Betrï¿½ge zu buchen sind, d.h wie kontiert*/
+    /*Falls mehrere Beträge zu buchen sind, d.h wie kontiert*/
     if($buchungs_art == 'Teilbetraege'){
     $r->beleg_kontierungs_arr($datum, $kto_auszugsnr, $belegnr, $vorzeichen, $buchungsbetrag, $vzweck, $geldkonto_id);
     }	
@@ -2098,7 +2098,7 @@ switch($option) {
    	$r = new rechnungen;
 	$r->rechnung_anzeigen($_REQUEST['belegnr']);
    	}else{
-   		echo "Rechnung wï¿½hlen $_REQUEST[belegnr]";
+   		echo "Rechnung wählen $_REQUEST[belegnr]";
    	}
    	break;   	
 
@@ -2111,7 +2111,7 @@ switch($option) {
 		if(!empty($_SESSION['lager_id'])){
 		$r->rechnungsausgangsbuch_pdf('Lager',$_SESSION['lager_id'], $_REQUEST['monat'], $_REQUEST['jahr'], $_REQUEST[r_typ],$_REQUEST[sort]);
 		}else{
-			echo "Fï¿½r Lagerrechnungen Lager wï¿½hlen und fï¿½r Partnerrechnungen den Partner";
+			echo "Für Lagerrechnungen Lager wählen und für Partnerrechnungen den Partner";
 		}
 	}
 	break;
@@ -2126,7 +2126,7 @@ switch($option) {
 		if(!empty($_SESSION['lager_id'])){
 		$r->rechnungseingangsbuch_pdf('Lager',$_SESSION['lager_id'], $_REQUEST['monat'], $_REQUEST['jahr'], $_REQUEST[r_typ],$_REQUEST[sort]);
 		}else{
-			echo "Fï¿½r Lagerrechnungen Lager wï¿½hlen und fï¿½r Partnerrechnungen den Partner";
+			echo "Für Lagerrechnungen Lager wählen und für Partnerrechnungen den Partner";
 		}
 	}
 	
@@ -2173,7 +2173,7 @@ if(!empty($_REQUEST[buchart]) && !empty($_REQUEST[r_inhaber_t]) && !empty($_REQU
 	}
 	
 }else{
-	echo "Eingabe unvollstï¿½ndig";
+	echo "Eingabe unvollständig";
 print_req();
 }
 break;
@@ -2191,7 +2191,7 @@ if(!empty($_REQUEST['aussteller_typ']) && !empty($_REQUEST['aussteller_id']) && 
 $r->angebot_speichern($_REQUEST['aussteller_typ'],$_REQUEST['aussteller_id'],$_REQUEST['empfaenger_typ'], $_REQUEST['empfaenger_id'], $_REQUEST['kurzbeschreibung']);
 #weiterleiten('?daten=rechnungen&option=meine_angebote');
 }else{
-	fehlermeldung_ausgeben("Daten unvollstï¿½ndig");
+	fehlermeldung_ausgeben("Daten unvollständig");
 }
 	break;
 
@@ -2207,7 +2207,7 @@ if(!empty($_REQUEST['ang_id'])){
 $r = new rechnungen();
 $r->form_angebot_bearbeiten($_REQUEST['ang_id']);
 }else{
-	echo "Angebot wï¿½hlen";
+	echo "Angebot wählen";
 	}
 
 break;		
@@ -2217,21 +2217,21 @@ break;
 		$r = new rechnungen();
 		$r->angebot2beleg($_REQUEST['belegnr']);
 	}else{
-		fehlermeldung_ausgeben("Angebot wï¿½hlen!");
+		fehlermeldung_ausgeben("Angebot wählen!");
 	}
 	break;
 
 
 	/*Aus noch unbekanntem Grund, tauchen 99.99% Rabatt oder 9.99% Skonti in neuen
-	 * Rechnungen auf. Beim ï¿½ffnen der Rechnung wird es erkannt und eine Option fï¿½r die Autokorrektur angeboten
-	 *Bei der Korrektur wird aus der Ursprungsrechnung der Rabatt und Skonti ï¿½bernommen 
+	 * Rechnungen auf. Beim Öffnen der Rechnung wird es erkannt und eine Option für die Autokorrektur angeboten
+	 *Bei der Korrektur wird aus der Ursprungsrechnung der Rabatt und Skonti übernommen 
 	 */
 	case "autokorrektur_pos":
 	if(!empty($_REQUEST['belegnr'])){
 	$r = new rechnungen;
 	$r->autokorrektur_pos($_REQUEST['belegnr']);
 	}else{
-		fehlermeldung_ausgeben('Bitte Rechnung wï¿½hlen!');
+		fehlermeldung_ausgeben('Bitte Rechnung wählen!');
 	}
 	break;
 	
@@ -2248,7 +2248,7 @@ break;
 	
 	case "u_pool_liste":
 	$f = new formular();
-	$f->fieldset('Kostentraeger wï¿½hlen', 'pool_tab2');
+	$f->fieldset('Kostentraeger wählen', 'pool_tab2');
 		$r = new rechnungen();
 	$r->pool_liste_wahl();
 	$f->fieldset_ende();	
@@ -2261,7 +2261,7 @@ break;
 	if(!empty($_REQUEST['kos_typ']) && !empty($_REQUEST['kos_id'])){
 	$r->u_pool_edit($_REQUEST['kos_typ'],$_REQUEST['kos_id'], $_REQUEST['aussteller_typ'],$_REQUEST['aussteller_id']);
 	}else{
-	echo "Rechnungsempfï¿½nger wï¿½hlen";	
+	echo "Rechnungsempfänger wählen";	
 	}	
 	$f->fieldset_ende();
 	break;
@@ -2316,8 +2316,8 @@ break;
 	$r = new rechnungen();
 	$tmp_datei = $_FILES['Datei']['tmp_name'];
 	$arr = $r->get_ugl_arr($tmp_datei);
-	echo '<pre>';
-	print_r($arr);
+	#echo '<pre>';
+	#print_r($arr);
 	
 	if(is_array($arr)){
 	@unlink($tmp_datei);
@@ -2337,15 +2337,15 @@ break;
 	$kurzinfo .= '\n '.$kurzinfo_ugl;
 	
 	echo "<b>$kurzinfo</b>";
-	if($arr['a_art'] != 'PA' && $arr['a_art'] != 'AB' && $arr['a_art'] != 'RG'){
+	if($arr['a_art'] != 'PA' && $arr['a_art'] != 'AB' && $arr['a_art'] != 'RG' && $arr['a_art'] != 'BE'){
 	$aart= $arr['a_art'];
 		die("Abbruch!<br>Die Datei ist kein Angebot, sowie keine Rechnung!!! <b>TYP:$aart</b>");
 	}
 	if($arr['a_art']=='PA'){//Preisangebot
 	$r_typ = 'Angebot'; 
 	}
-	if($arr['a_art']=='AB' or $arr['a_art']=='RG'){
-	$r_typ = 'Rechnung'; // Auftragsbestï¿½tigung
+	if($arr['a_art']=='AB' or $arr['a_art']=='RG' or $arr['a_art']=='BE'){
+	$r_typ = 'Rechnung'; // Auftragsbestätigung
 	}
 
 	$beleg_nr = $r->rechnung_erstellen_ugl($rnr, $r_typ, $r_datum, $eingangsdatum, $aussteller_typ, $aussteller_id, $empfaenger_typ, $empfaenger_id, $faellig, $kurzinfo,0,0,0);
@@ -2512,7 +2512,7 @@ break;
 		
 	}else{
 	#	print_req();
-		echo "Kostentraeger Koniertung wï¿½hlen";
+		echo "Kostentraeger Koniertung wählen";
 	}
 	break;
 	
@@ -2522,7 +2522,7 @@ break;
 	$beleg_id = $_REQUEST['beleg_id'];
 	$r->form_teil_rg_hinzu($beleg_id);
 	}else{
-		echo "Schlussrechnung wï¿½hlen";
+		echo "Schlussrechnung wählen";
 	}
 	break;
 	
@@ -2533,7 +2533,7 @@ break;
 	$beleg_id = $_POST['beleg_id'];
 	weiterleiten("?daten=rechnungen&option=teil_rg_hinzu&beleg_id=$beleg_id");
 	}else{
-	echo "Auswahl unvollstï¿½ndig err:RGSJH2000";
+	echo "Auswahl unvollständig err:RGSJH2000";
 	}	
 	break;
 	
@@ -2544,7 +2544,7 @@ break;
 	$beleg_id = $_REQUEST['beleg_id'];
 	weiterleiten("?daten=rechnungen&option=teil_rg_hinzu&beleg_id=$beleg_id");
 	}else{
-	echo "Auswahl unvollstï¿½ndig err:RGSJH3000";
+	echo "Auswahl unvollständig err:RGSJH3000";
 	}	
 	break;
 	
@@ -2556,7 +2556,7 @@ break;
 	
 	case "vg_rechnungen":
 	if(!isset($_SESSION['objekt_id']) or !isset($_SESSION['partner_id'])){
-		die(fehlermeldung_ausgeben("Partner (Hausverwalter) und Objekt wï¿½hlen"));
+		die(fehlermeldung_ausgeben("Partner (Hausverwalter) und Objekt wählen"));
 	}
 	$rr = new rechnungen();
 	/*echo $_SESSION['objekt_id'];
@@ -2566,14 +2566,14 @@ break;
 	
 	case "rgg":
 		if(!isset($_POST['check'])){
-			die(fehlermeldung_ausgeben("Einheiten wï¿½hlen!!!"));
+			die(fehlermeldung_ausgeben("Einheiten wählen!!!"));
 		}
 		$einheiten = $_POST['check'];
 		
 		if(!empty($_POST['kostenkonto'])){
 		$kostenkonto = $_POST['kostenkonto'];
 		}else{
-			die(fehlermeldung_ausgeben("Kostenkonto wï¿½hlen"));
+			die(fehlermeldung_ausgeben("Kostenkonto wählen"));
 		}
 		
 		$anz_e = count($einheiten);
@@ -2616,7 +2616,7 @@ break;
            
 /*Positionen erfassen*/
             $art_nr = "VG-".$einheit_id;
-            $r->artikel_leistung_mit_artikelnr_speichern($_SESSION['partner_id'], "Verwaltergebï¿½hr $e->einheit_kurzname", '14.99', "$art_nr", '0', 'Stk', '19', '0');
+            $r->artikel_leistung_mit_artikelnr_speichern($_SESSION['partner_id'], "Verwaltergebühr $e->einheit_kurzname", '14.99', "$art_nr", '0', 'Stk', '19', '0');
 			$letzte_rech_pos_id = $r->get_last_rechnung_pos_id()+1;
 			$p_id = $_SESSION['partner_id'];
 			$db_abfrage = "INSERT INTO RECHNUNGEN_POSITIONEN VALUES (NULL, '$letzte_rech_pos_id', '1', '$letzte_belegnr', '$letzte_belegnr','$p_id', '$art_nr', '1','$netto_betrag','19', '0','0', '$netto_betrag','1')";
@@ -2639,17 +2639,17 @@ break;
 		protokollieren('KONTIERUNG_POSITIONEN', $last_dat, '0');
 		
 		
-		/*In SEPA ï¿½BERWEISUNGEN bei Hï¿½ckchen*/
+		/*In SEPA ÜBERWEISUNGEN bei Häckchen*/
 		if(isset($_POST['sepa'])){
 		$r->rechnung_grunddaten_holen($letzte_belegnr);
 		$vzweck = "$r->rechnungs_aussteller_name, Rg. $r->rechnungsnummer ".bereinige_string($kurztext);	
 			
 		$sep = new sepa();
 		if($sep->sepa_ueberweisung_speichern($_SESSION['geldkonto_id'], $gk->geldkonto_id, $vzweck, 'Verwaltergebuehr', $empf_typ, $empf_id, $kostenkonto, $brutto_betrag)==false){
-    		fehlermeldung_ausgeben("ï¿½BERWEISUNG KONNTE NICHT GESPEICHERT WERDEN!");
+    		fehlermeldung_ausgeben("ÜBERWEISUNG KONNTE NICHT GESPEICHERT WERDEN!");
     	}
 		}else{
-			fehlermeldung_ausgeben("KEINE SEPA-ï¿½BERWEISUNG GEWï¿½NSCHT!");
+			fehlermeldung_ausgeben("KEINE SEPA-ÜBERWEISUNG GEWÜNSCHT!");
 		}
 		}//END FOR
 		#print_req($_POST);
@@ -2661,7 +2661,7 @@ break;
 	if(!empty($_POST['kostenkonto'])){
 		$kostenkonto = $_POST['kostenkonto'];
 		}else{
-			die(fehlermeldung_ausgeben("Kostenkonto wï¿½hlen"));
+			die(fehlermeldung_ausgeben("Kostenkonto wählen"));
 		}
 		
 		$empf_typ = $_POST['empf_typ'];
@@ -2715,7 +2715,7 @@ break;
 		$g_netto = $netto_betrag*$menge;
 		/*Positionen erfassen*/
             $art_nr = "$o->objekt_kurzname-$typ_bez";
-            $r->artikel_leistung_mit_artikelnr_speichern($_SESSION['partner_id'], "Verwaltergebï¿½hr $typ_bez", $brutto_bet, "$art_nr", '0', 'Stk', '19', '0');
+            $r->artikel_leistung_mit_artikelnr_speichern($_SESSION['partner_id'], "Verwaltergebühr $typ_bez", $brutto_bet, "$art_nr", '0', 'Stk', '19', '0');
 			$letzte_rech_pos_id = $r->get_last_rechnung_pos_id()+1;
 			$p_id = $_SESSION['partner_id'];
 			$db_abfrage = "INSERT INTO RECHNUNGEN_POSITIONEN VALUES (NULL, '$letzte_rech_pos_id', '$pos', '$letzte_belegnr', '$letzte_belegnr','$p_id', '$art_nr', $menge,'$netto_betrag','19', '0','0', '$g_netto','1')";
@@ -2737,16 +2737,16 @@ break;
 		
 		}
 		
-		/*In SEPA ï¿½BERWEISUNGEN bei Hï¿½ckchen*/
+		/*In SEPA ÜBERWEISUNGEN bei Häckchen*/
 		if(isset($_POST['sepa'])){
 		$r->rechnung_grunddaten_holen($letzte_belegnr);
 		$vzweck = "$r->rechnungs_aussteller_name, Rg. $r->rechnungsnummer ".bereinige_string($kurztext_neu);	
 		$sep = new sepa();
 		if($sep->sepa_ueberweisung_speichern($_SESSION['geldkonto_id'], $gk->geldkonto_id, $vzweck, 'Verwaltergebuehr', $empf_typ, $empf_id, $kostenkonto, $g_sum)==false){
-    		fehlermeldung_ausgeben("ï¿½BERWEISUNG KONNTE NICHT GESPEICHERT WERDEN!");
+    		fehlermeldung_ausgeben("ÜBERWEISUNG KONNTE NICHT GESPEICHERT WERDEN!");
     	}
 		}else{
-			fehlermeldung_ausgeben("KEINE SEPA-ï¿½BERWEISUNG GEWï¿½NSCHT!");
+			fehlermeldung_ausgeben("KEINE SEPA-ÜBERWEISUNG GEWÜNSCHT!");
 		}
 		
 		
@@ -2754,10 +2754,10 @@ break;
 	
 	case "rg_aus_beleg":
 	if(!isset($_SESSION['partner_id'])){
-		die(fehlermeldung_ausgeben("Partner (Rechnungssteller) wï¿½hlen!"));
+		die(fehlermeldung_ausgeben("Partner (Rechnungssteller) wählen!"));
 	}
 		echo "<hr>";
-		$link_add = "<a href=\"?daten=rechnungen&option=beleg2pool\">Beleg hinzufï¿½gen</a>";
+		$link_add = "<a href=\"?daten=rechnungen&option=beleg2pool\">Beleg hinzufügen</a>";
 		echo $link_add;
 		echo "<hr>";
 		$r = new rechnungen();
@@ -2790,7 +2790,7 @@ break;
 	
 	case "pdf_druckpool":
 	if(!isset($_SESSION['partner_id'])){
-		fehlermeldung_ausgeben("Partner fï¿½r das RA-Buch wï¿½hlen!!!");
+		fehlermeldung_ausgeben("Partner für das RA-Buch wählen!!!");
 	die();
 	}
 	$re = new rechnungen();
@@ -2853,12 +2853,12 @@ break;
 	
 	case "sepa_druckpool":
 		if(!isset($_SESSION['partner_id'])){
-			fehlermeldung_ausgeben("Partner fï¿½r das RE-Buch wï¿½hlen!!!");
+			fehlermeldung_ausgeben("Partner für das RE-Buch wählen!!!");
 			die();
 		}
 		
 		if(!isset($_SESSION['geldkonto_id'])){
-			fehlermeldung_ausgeben("Abgangsgeldkonto fï¿½r SEPA Zahlungen wï¿½hlen!!!");
+			fehlermeldung_ausgeben("Abgangsgeldkonto für SEPA Zahlungen wählen!!!");
 			die();
 		}
 		
@@ -2885,7 +2885,7 @@ break;
 		}else{
 			$anz = count($arr);
 			$f = new formular;
-			$f->erstelle_formular("Rg zahlen ï¿½ber SEPA $monat/$jahr", null);
+			$f->erstelle_formular("Rg zahlen über SEPA $monat/$jahr", null);
 			echo "<table>";
 			echo "<tr><td>";
 			$f->check_box_js_alle('uebernahme_alle[]', 'ue', '', 'Alle', '', '', 'uebernahme');
@@ -2917,7 +2917,7 @@ break;
 			echo "</tr>";
 					echo "</table>";
 					$f->hidden_feld('option', 'rg2sep');
-					$f->send_button('RG2SEP', 'Rechnungen in SEPA-Sammler ï¿½bernehmen');
+					$f->send_button('RG2SEP', 'Rechnungen in SEPA-Sammler übernehmen');
 					$f->ende_formular();
 		}
 	
@@ -2927,7 +2927,7 @@ break;
 		case "rg2sep":
 		
 			if(!is_array($_POST['uebernahme'])){
-				fehlermeldung_ausgeben("rechnungen wï¿½hlen!");
+				fehlermeldung_ausgeben("rechnungen wählen!");
 				die();
 			}else{
 				#echo '<pre>';
@@ -2969,7 +2969,7 @@ break;
 	case "rg2pdf":
 	
 	if(!is_array($_POST['uebernahme'])){
-		fehlermeldung_ausgeben("rechnungen wï¿½hlen!");
+		fehlermeldung_ausgeben("rechnungen wählen!");
 		die();
 	}else{
 		#echo '<pre>';

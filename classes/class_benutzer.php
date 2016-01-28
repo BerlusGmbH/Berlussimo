@@ -23,7 +23,7 @@ if(file_exists("includes/allgemeine_funktionen.php")){
 include_once("includes/allgemeine_funktionen.php");
 }
 
-/*Klasse "formular" für Formularerstellung laden*/
+/*Klasse "formular" fÃ¼r Formularerstellung laden*/
 if(file_exists("classes/class_formular.php")){
 include_once("classes/class_formular.php");
 }
@@ -90,8 +90,9 @@ $result = mysql_query ("SELECT benutzer_id FROM BENUTZER WHERE benutzername='$be
  	return $row['benutzer_id'];		
 }
 
-function benutzer_anzeigen($sort=benutzername, $reihenfolge=SORT_ASC, $anzahl=''){
+function benutzer_anzeigen($sort='benutzername', $reihenfolge='SORT_DESC', $anzahl=''){
 	$usr_arr_db = $this->get_all_users_arr();
+	//print_r($usr_arr_db);
 	$anz = count($usr_arr_db);
 	if($anz){
 	/*Wenn z.B. Top 5 anzeigen, */
@@ -99,8 +100,8 @@ function benutzer_anzeigen($sort=benutzername, $reihenfolge=SORT_ASC, $anzahl=''
 		$anz = $anzahl;
 	}
 		// array_sortByIndex($array, $index, $order = SORT_ASC, $natsort = FALSE, $case_sensitive = FALSE) {
-		$usr_arr = array_sortByIndex($usr_arr_db,$sort, $reihenfolge);
-		
+		//$usr_arr = array_sortByIndex($usr_arr_db, $sort, $reihenfolge);
+		$usr_arr = $usr_arr_db;
 		echo "<table class=\"sortable\">";
 		#	echo "<tr class=\"feldernamen\"><td>Benutzername</td><td>Geburtstag</td><td>Eintritt</td><td>Firma</td><td>Option</td></tr>";
 		echo "<thead>";
@@ -135,7 +136,7 @@ function benutzer_anzeigen($sort=benutzername, $reihenfolge=SORT_ASC, $anzahl=''
 			$p->get_partner_name($partner_id);
 			}
 			$link_ber = "<a href=\"index.php?daten=benutzer&option=berechtigungen&b_id=$b_id\">Berechtigungen</a>";
-			$link_aendern = "<a href=\"index.php?daten=benutzer&option=aendern&b_id=$b_id\">Ändern</a>";
+			$link_aendern = "<a href=\"index.php?daten=benutzer&option=aendern&b_id=$b_id\">Ã„ndern</a>";
 			$link_details = "<a href=\"?daten=details&option=details_anzeigen&detail_tabelle=BENUTZER&detail_id=$b_id\">Details</a>";
 			echo "<tr class=\"zeile$z\"><td>$benutzername</td><td sorttable_customkey=\"$geb_j$geb_m$geb_t\">$geb_dat</td><td sorttable_customkey=\"$ein_j$ein_m$ein_t\">$eintritt</td><td>$p->partner_name</td><td>$link_ber $link_aendern $link_details</td></tr>";
 			
@@ -152,16 +153,29 @@ function benutzer_anzeigen($sort=benutzername, $reihenfolge=SORT_ASC, $anzahl=''
 
 
 function form_benutzer_aendern($b_id){
-	$z = new zeiterfassung;
-	$benutzername = $z->get_benutzer_name($b_id);
+	$this->get_benutzer_infos($b_id);
+	$z =  new zeiterfassung;
+	$partner_id =  $z->get_partner_id_benutzer($b_id);
+	
+	
 	$f = new formular;
-	$f->erstelle_formular("Benutzerdaten von Benutzer $benutzername ändern", NULL);
-    $f->hidden_feld("b_id", "$b_id");
-     
-    $f->hidden_feld("option", "zugriff_send");
-	echo "NICHT ZU ENDE PROGRAMMIERT";
-    #$f->send_button("submit_ja", "Gewähren");
-	#$f->send_button("submit_no", "Entziehen");
+	$f->erstelle_formular("Benutzerdaten von Benutzer $this->benutzername Ã¤ndern", NULL);
+    $f->text_feld("Benutzername", "benutzername", "$this->benutzername", "20", 'benutzername','');
+	//$f->text_feld("Passwort", "passwort", "$this->passwort", "20", 'passwort','');
+	$f->passwort_feld("Passwort", "passwort", "$this->passwort", "20", 'passwort','');
+	$p = new partners;
+	$p->partner_dropdown('Mitarbeiter von', 'partner_id', 'partner_id', $partner_id);
+	$p->gewerke_dropdown('Gewerk/Abteilung', 'gewerk_id', 'gewerk_id', $this->gewerk_id);
+	#$f->datum_feld("Datum:", "datum", "", "10", 'datum','');
+	$f->datum_feld("Geb. am", "geburtstag", date_mysql2german($this->geb_datum), "10", 'geburtstag','');
+	$f->datum_feld("Eintritt", "eintritt", date_mysql2german($this->datum_eintritt), "10", 'eintritt','');
+	$f->datum_feld("Austritt", "austritt", date_mysql2german($this->datum_austritt), "10", 'austritt','');
+	$f->text_feld("urlaubstage im Jahr", "urlaub", "$this->urlaub", "5", 'urlaub','');
+	$f->text_feld("Stunden/Wochen", "stunden_pw", nummer_punkt2komma($this->stunden_wo), "5", 'stunden_pw','');
+	$f->text_feld("Stundensatz", "stundensatz", nummer_punkt2komma($this->stundensatz), "5", 'stundensatz','');
+	$f->hidden_feld("b_id", "$b_id");
+    $f->hidden_feld("option", "benutzer_aendern_send");
+	$f->send_button("submit_bae", "Ã„nderungen speichern");
 	$f->ende_formular();
 }
 
@@ -252,10 +266,10 @@ function module_arr(){
 
 
 function dropdown_benutzer($vorwahl=null){
-	$benutzer_arr = $this->get_all_users_arr();
+	$benutzer_arr = $this->get_all_users_arr2(0);
 	$anz = count($benutzer_arr);
 	if($anz){
-		echo "<label for=\"benutzer_id\">Mitarbeiter wählen</label><select id=\"benutzer_id\" name=\"benutzer_id\" size=\"1\">";
+		echo "<label for=\"benutzer_id\">Mitarbeiter wÃ¤hlen</label><select id=\"benutzer_id\" name=\"benutzer_id\" size=\"1\">";
 			for($a=0;$a<$anz;$a++){
 			$benutzername = $benutzer_arr[$a]['benutzername'];
 			$benutzer_id = $benutzer_arr[$a]['benutzer_id'];
@@ -277,7 +291,7 @@ function dropdown_benutzer($vorwahl=null){
 			}
 		echo "</select>";
 	}else{
-		echo "Keine Mitarbeiter, bitte mitarbeiter unter Menüpunkt -> Benutzer anlegen";
+		echo "Keine Mitarbeiter, bitte mitarbeiter unter MenÃ¼punkt -> Benutzer anlegen";
 	}
 }
 
@@ -300,7 +314,7 @@ function dropdown_benutzer2($label, $name, $id, $js){
 			}
 		echo "</select>";
 	}else{
-		echo "Keine Mitarbeiter, bitte mitarbeiter unter Menüpunkt -> Benutzer anlegen";
+		echo "Keine Mitarbeiter, bitte mitarbeiter unter MenÃ¼punkt -> Benutzer anlegen";
 	}
 }
 
@@ -311,7 +325,19 @@ function get_benutzer_infos($b_id){
 	$this->benutzername = '';
 	if(is_array($b_arr)){
 		$this->benutzername = $b_arr[0]['benutzername'];
-		$this->benutzer_id = $b_arr[0]['benutzer_id'];
+		$this->benutzer_id = $b_id;
+		$this->passwort  = $b_arr[0]['passwort'];
+		
+		$this->stundensatz =$b_arr[0]['STUNDENSATZ'];
+		$this->geb_datum =$b_arr[0]['GEB_DAT'];
+		$this->gewerk_id =$b_arr[0]['GEWERK_ID'];
+		$this->datum_eintritt =$b_arr[0]['EINTRITT'];
+		$this->datum_austritt =$b_arr[0]['AUSTRITT'];
+		
+		$this->urlaub =$b_arr[0]['URLAUB'];
+		$this->stunden_wo =$b_arr[0]['STUNDEN_PW'];
+		
+		
 		if(isset($b_arr[0]['EMAIL'])){
 		$this->benutzer_email = $b_arr[0]['EMAIL'];
 		}else{
@@ -324,7 +350,7 @@ function dropdown_module($b_id){
 	$module_arr = $this->module_arr();
 	$anz = count($module_arr);
 	if($anz){
-		echo "<label for=\"modul_name\">Modul wählen</label><select id=\"modul_name\" name=\"modul_name\" size=\"1\">";
+		echo "<label for=\"modul_name\">Modul wÃ¤hlen</label><select id=\"modul_name\" name=\"modul_name\" size=\"1\">";
 			echo "<option value=\"*\">Vollzugriff</option>";
 			for($a=0;$a<$anz;$a++){
 			$modul_name = $module_arr[$a];
@@ -342,7 +368,7 @@ function checkboxen_anzeigen($b_id){
 	$module_arr = $this->module_arr();
 	$anz = count($module_arr);
 	if($anz){
-		echo "<label for=\"modul_tab\">Modul wählen</label>";
+		echo "<label for=\"modul_tab\">Modul wÃ¤hlen</label>";
 		echo "<table id=\"mod_tab\">";
 		echo "<tr>";
 		echo "<td>";
@@ -382,12 +408,12 @@ function form_mberechtigungen_setzen($b_id){
 	$z = new zeiterfassung;
 	$benutzername = $z->get_benutzer_name($b_id);
 	$f = new formular;
-	$f->erstelle_formular("Zugriffsberechtigung für Benutzer $benutzername", NULL);
+	$f->erstelle_formular("Zugriffsberechtigung fÃ¼r Benutzer $benutzername", NULL);
     $f->hidden_feld("b_id", "$b_id");
     #$this->dropdown_module($b_id);
     $this->checkboxen_anzeigen($b_id);
     $f->hidden_feld("option", "zugriff_send");
-	$f->send_button("submit_ja", "Gewähren");
+	$f->send_button("submit_ja", "GewÃ¤hren");
 	#$f->send_button("submit_no", "Entziehen");
 	$f->ende_formular();
 }
@@ -425,8 +451,25 @@ $result = mysql_query($db_abfrage) or
 $db_abfrage = "INSERT INTO BENUTZER_PARTNER VALUES (NULL, '$last_id', '$partner_id', '1')";
 $result = mysql_query($db_abfrage) or
            die(mysql_error());	
-/*Benutzer ID zurückgeben*/
+/*Benutzer ID zurÃ¼ckgeben*/
 return $last_id;
+}
+
+
+function benutzer_aenderungen_speichern($b_id, $benutzername, $passwort, $partner_id,$stundensatz, $geb_dat, $gewerk_id, $eintritt, $austritt, $urlaub, $stunden_pw){
+$geb_dat = date_german2mysql($geb_dat);
+$eintritt = date_german2mysql($eintritt);
+$austritt = date_german2mysql($austritt);
+	
+	/*Updaten*/
+	$db_abfrage = "UPDATE BENUTZER SET benutzername='$benutzername', passwort='$passwort', STUNDENSATZ='$stundensatz', GEB_DAT='$geb_dat', GEWERK_ID='$gewerk_id', EINTRITT='$eintritt', AUSTRITT='$austritt', URLAUB='$urlaub', STUNDEN_PW='$stunden_pw' WHERE benutzer_id='$b_id'";
+	$result = mysql_query($db_abfrage) or
+	die(mysql_error());
+	
+	$db_abfrage = "UPDATE BENUTZER_PARTNER SET BP_PARTNER_ID='$partner_id' WHERE BP_BENUTZER_ID='$b_id'";
+	$result = mysql_query($db_abfrage) or
+	die(mysql_error());
+	
 }
 
 function berechtigungen_speichern($b_id,$modul_name){
@@ -456,7 +499,7 @@ function berechtigungen_speichern($b_id,$modul_name){
 	
 	/*Dropdown auswahl*/
 	if($modul_name == '*'){
-	//erst bisherige  Module löschen	
+	//erst bisherige  Module lÃ¶schen	
 	$db_abfrage = "DELETE  FROM BENUTZER_MODULE WHERE BENUTZER_ID='$b_id'";
 $result = mysql_query($db_abfrage) or
            die(mysql_error());	

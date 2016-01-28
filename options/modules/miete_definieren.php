@@ -54,7 +54,7 @@ $schritt = $_REQUEST["option"];
 if(isset($_REQUEST['mietvertrag_id']) && !empty($_REQUEST['mietvertrag_id'])) {
 $mieter_info = new mietkonto;
 $mieter_info->erstelle_formular("Mieterinformationen", NULL);
-#$mieter_info->mieter_informationen_anzeigen($_REQUEST['mietvertrag_id']);
+$mieter_info->mieter_informationen_anzeigen($_REQUEST['mietvertrag_id']);
 $mieter_info->ende_formular();
 }
 
@@ -207,16 +207,6 @@ $me->mieterlisten_kostenkat($_REQUEST['kostenkat']);
 	echo "Kostenkat eingeben";
 }
 break;
-
-case "staffel_eingabe":
-if(isset($_REQUEST['mv_id']) && !empty($_REQUEST['mv_id'])){
-$m = new mietentwicklung();
-$m->form_staffel($_REQUEST['mv_id']);
-}else{
-	fehlermeldung_ausgeben('MV wählen');
-}
-break;
-
 
 }//end switch
 
