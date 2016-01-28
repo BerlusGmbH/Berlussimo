@@ -1,4 +1,4 @@
 .project
 .settings
 FOTOS
-config.inc.php
+classes/config.inc.php
