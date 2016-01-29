@@ -17,9 +17,8 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
-
-$form = new formular;
-$form->fieldset("Leerstände", 'leerstand');
+$form = new formular ();
+$form->fieldset ( "Leerstï¿½nde", 'leerstand' );
 echo "<div class=\"navi_leiste2\">&nbsp;&nbsp;";
 echo "<a href=\"?daten=leerstand&option=form_interessenten\">Interessenten eingeben</a>&nbsp;";
 echo "<a href=\"?daten=leerstand&option=interessentenliste\">Interessenten</a>&nbsp;";
@@ -30,7 +29,6 @@ echo "<a href=\"?daten=leerstand&option=vermietung_wedding\"><b>VERMIETUNGSLISTE
 echo "<a href=\"?daten=leerstand&option=sanierung\"><b>SANIERUNGSLISTE</a>&nbsp;";
 echo "<a href=\"?daten=leerstand&option=sanierung_wedding\"><b>SANIERUNGSLISTE WEDDING</a>&nbsp;";
 echo "</div>";
-$form->fieldset_ende();
-
+$form->fieldset_ende ();
 
 ?>

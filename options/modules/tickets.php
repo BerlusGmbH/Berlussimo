@@ -18,70 +18,64 @@
  * 
  */
 
-
-/*WICHTIGE INFOS
- * Tabelle benutzer erhält spalte Email
- * 
- * 
+/*
+ * WICHTIGE INFOS
+ * Tabelle benutzer erhï¿½lt spalte Email
+ *
+ *
  */
 
+/* Allgemeine Funktionsdatei laden */
+include_once ("includes/allgemeine_funktionen.php");
 
-/*Allgemeine Funktionsdatei laden*/
-include_once("includes/allgemeine_funktionen.php");
-
-/*Überprüfen ob Benutzer Zugriff auf das Modul hat*/
-if(!isset($_SESSION['benutzer_id']) or !check_user_mod($_SESSION['benutzer_id'], 'tickets')){
+/* ï¿½berprï¿½fen ob Benutzer Zugriff auf das Modul hat */
+if (! isset ( $_SESSION ['benutzer_id'] ) or ! check_user_mod ( $_SESSION ['benutzer_id'], 'tickets' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
-	echo '</script>';	
-	die();
+	echo '</script>';
+	die ();
 }
 
-/*Modulabhängige Dateien d.h. Links und eigene Klasse*/
-include_once("options/links/links.tickets.php");
+/* Modulabhï¿½ngige Dateien d.h. Links und eigene Klasse */
+include_once ("options/links/links.tickets.php");
 
+$b = new benutzer ();
+$b->get_benutzer_infos ( $_SESSION ['benutzer_id'] );
+$_SESSION ['benutzer_email'] = $b->benutzer_email;
 
-$b = new benutzer;
-$b->get_benutzer_infos($_SESSION['benutzer_id']);
-$_SESSION['benutzer_email'] = $b->benutzer_email;
-
-if(!empty($_REQUEST["option"])){
-	$option = $_REQUEST["option"];
-}else{
+if (! empty ( $_REQUEST ["option"] )) {
+	$option = $_REQUEST ["option"];
+} else {
 	$option = 'default';
 }
 
-$email = $_SESSION['benutzer_email'];
+$email = $_SESSION ['benutzer_email'];
 $url = "http://192.168.2.16/ticket/api/tickets.api.php?option=find_my_user_id&email=$email";
-$user_id = file($url);
-#print_r($user_id);
+$user_id = file ( $url );
+// print_r($user_id);
 
-if(empty($user_id) or $user_id=='0'){
-	die('Konnte Sie als Benutzer im Ticketsystem nicht finden!!!!');
-}else{
-	$_SESSION['ticket_user_id'] = $user_id[0];
+if (empty ( $user_id ) or $user_id == '0') {
+	die ( 'Konnte Sie als Benutzer im Ticketsystem nicht finden!!!!' );
+} else {
+	$_SESSION ['ticket_user_id'] = $user_id [0];
 }
 
-
-/*Optionsschalter*/
-switch($option) {
-
+/* Optionsschalter */
+switch ($option) {
 	
-	case "meine_tickets":
-	echo "MEINE TICKETS";
-	$url = "http://192.168.2.16/ticket/api/tickets.api.php?option=meine_tickets&user_id=".$_SESSION['ticket_user_id'];
-	$ant = file_get_contents($url);
-	echo $ant;
+	case "meine_tickets" :
+		echo "MEINE TICKETS";
+		$url = "http://192.168.2.16/ticket/api/tickets.api.php?option=meine_tickets&user_id=" . $_SESSION ['ticket_user_id'];
+		$ant = file_get_contents ( $url );
+		echo $ant;
+		
+		break;
 	
-	
-	break;
-	
-	default:
-	echo "TICKETS";
-	echo '<pre>';
-	print_r($_SESSION);
-	break;
-	
+	default :
+		echo "TICKETS";
+		echo '<pre>';
+		print_r ( $_SESSION );
+		break;
 }
 
 ?>

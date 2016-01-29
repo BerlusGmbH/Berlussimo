@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * BERLUSSIMO
  *
@@ -17,11 +17,9 @@
  * @lastmodified $Date$
  * 
  */
-
-
-$mieten = new mietkonto;
-echo "<div class=\"navi_leiste2\">"; 
-$mieten->erstelle_formular("Hauptmenü -> Listen...", NULL);
+$mieten = new mietkonto ();
+echo "<div class=\"navi_leiste2\">";
+$mieten->erstelle_formular ( "Hauptmenï¿½ -> Listen...", NULL );
 echo "<a href=\"?daten=listen&option=mieterliste_aktuell&objekt_id=1\">Mieterliste Block II</a>&nbsp;";
 echo "<a href=\"?daten=listen&option=mieterliste_aktuell&objekt_id=2\">Mieterliste Block III</a>&nbsp;";
 echo "<a href=\"?daten=listen&option=mieterliste_aktuell&objekt_id=3\">Mieterliste Block V</a>&nbsp;";
@@ -30,8 +28,8 @@ echo "<a href=\"?daten=listen&option=income_report\">Income report</a>&nbsp;";
 echo "<a href=\"?daten=listen&option=inspiration_sepa\">Inspiration SEPA</a>&nbsp;";
 echo "<a href=\"?daten=listen&option=sammler_anzeigen\">SEPA-Sammler</a>&nbsp;";
 echo "<a href=\"?daten=listen&option=profil_neu\">Profil NEU</a>&nbsp;";
-echo "<a href=\"?daten=listen&option=profil_liste\">Profil wählen</a>&nbsp;";
-$mieten->ende_formular();
+echo "<a href=\"?daten=listen&option=profil_liste\">Profil wï¿½hlen</a>&nbsp;";
+$mieten->ende_formular ();
 
 echo "</div>";
 

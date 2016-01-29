@@ -17,13 +17,13 @@
  * @lastmodified $Date: 2011-07-07 10:41:33 +0200 (Do, 07 Jul 2011) $
  * 
  */
-if(isset($_REQUEST['formular'])){
-$formular = $_REQUEST['formular'];
-switch($formular) {
-
-    case "objekte":
-    include("options/formulare/form_objekte.php");
-    break;
-    }
+if (isset ( $_REQUEST ['formular'] )) {
+	$formular = $_REQUEST ['formular'];
+	switch ($formular) {
+		
+		case "objekte" :
+			include ("options/formulare/form_objekte.php");
+			break;
+	}
 }
 ?>
