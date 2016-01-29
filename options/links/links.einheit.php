@@ -19,10 +19,10 @@
  */
 echo "<div class=\"navi_leiste2\">";
 echo "<a href=\"?daten=einheit_raus&einheit_raus=einheit_kurz\">Alle Einheiten</a>&nbsp;";
-#echo "<a href=\"?daten=einheit_raus&einheit_raus=miterliste_aktuell\">Aktuelle Mieterliste PDF</a>&nbsp;";
-#echo "<a href=\"?daten=einheit_raus&einheit_raus=miterliste_verzogen\">Mieterliste Verzogen PDF</a>&nbsp;";
-#echo "<a href=\"?daten=einheit_raus&einheit_raus=einheit_kurz\">Alle Einheiten</a>&nbsp;";
+// echo "<a href=\"?daten=einheit_raus&einheit_raus=miterliste_aktuell\">Aktuelle Mieterliste PDF</a>&nbsp;";
+// echo "<a href=\"?daten=einheit_raus&einheit_raus=miterliste_verzogen\">Mieterliste Verzogen PDF</a>&nbsp;";
+// echo "<a href=\"?daten=einheit_raus&einheit_raus=einheit_kurz\">Alle Einheiten</a>&nbsp;";
 
 echo "<br><hr>";
- echo "</div>";
+echo "</div>";
 ?>

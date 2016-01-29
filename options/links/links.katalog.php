@@ -17,19 +17,18 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
-
-$f = new formular;
-echo "<div class=\"navi_leiste2\">"; 
-$f->erstelle_formular("Hauptmenü -> Artikel- und Leistungskatalog...", NULL);
+$f = new formular ();
+echo "<div class=\"navi_leiste2\">";
+$f->erstelle_formular ( "Hauptmenï¿½ -> Artikel- und Leistungskatalog...", NULL );
 
 echo "<a href=\"?daten=katalog&option=katalog_anzeigen\">Artikel & Leistungen</a>&nbsp;";
 echo "<a href=\"?daten=katalog&option=preisentwicklung\">Preisentwicklung</a>&nbsp;";
-#echo "<a href=\"?daten=buchen&option=zahlbetrag_buchen\">Kosten buchen</a>&nbsp;";
+// echo "<a href=\"?daten=buchen&option=zahlbetrag_buchen\">Kosten buchen</a>&nbsp;";
 echo "<a href=\"?daten=katalog&option=artikelsuche\">Artikelsuche</a>&nbsp;<b>|</b>&nbsp;";
 echo "<a href=\"?daten=katalog&option=artikelsuche_freitext\">Artikelsuche Freitext</a>&nbsp;<b>|</b>&nbsp;";
 echo "<a href=\"?daten=katalog&option=meist_gekauft\">Meistgekauft</a>&nbsp;<b>|</b>&nbsp;";
 echo "<a href=\"?daten=katalog&option=zuletzt_gekauft\">Zuletzt gekauft</a>&nbsp;<b>|</b>&nbsp;";
-$f->ende_formular();
+$f->ende_formular ();
 
 echo "</div>";
 

@@ -1,72 +1,75 @@
 /* (en) Avoid page breaks right after headings */
-/* (de) Vermeidung von Seitenumbrüchen direkt nach einer Überschrift */
+/* (de) Vermeidung von Seitenumbrï¿½chen direkt nach einer ï¿½berschrift */
+h1, h2, h3, h4, h5, h6 {
+	page-break-after: avoid;
+}
 
-h1,h2,h3,h4,h5,h6 { page-break-after:avoid; }
-html {  margin-bottom: 0; }
+html {
+	margin-bottom: 0;
+}
+
 body {
 	background-color: #000;
 }
 
-form{
-float: inline;
-page-break-inside: auto;
+form {
+	float: inline;
+	page-break-inside: auto;
 }
 
-fieldset{
-padding:0px;
-page-break-inside: auto;
+fieldset {
+	padding: 0px;
+	page-break-inside: auto;
 }
+
 .div.ueberschrift {
 	border-style: 1;
 	padding: 10px;
 	margin: 0px;
 	font-family: verdana;
-		font-size: small;
-		background-color: #d7e9c1;
-		-moz-border-radius: 2em 0;
-		position: absolute;
-		width: 100%x;
-		height: auto;
-		top: auto;
-		left:15px;
-		right:25px;
+	font-size: small;
+	background-color: #d7e9c1;
+	-moz-border-radius: 2em 0;
+	position: absolute;
+	width: 100% x;
+	height: auto;
+	top: auto;
+	left: 15px;
+	right: 25px;
 }
-
 
 .div.balken1 {
 	border-style: 1;
-	border:2px;
+	border: 2px;
 	padding: 10px;
 	margin-right: 0px;
 	margin-left: 0px;
 	font-family: verdana;
-		font-size: small;
-		background-color: #d7e9c1;
-		
-		position: relative;
-		width: 250px;
-		left:10px;
-		top: 0px;
-		float:left;
-		display:inline;
+	font-size: small;
+	background-color: #d7e9c1;
+	position: relative;
+	width: 250px;
+	left: 10px;
+	top: 0px;
+	float: left;
+	display: inline;
 }
+
 .div.balken2 {
 	border-style: 1;
-	border:2px;
+	border: 2px;
 	padding: 10px;
 	margin-right: 0px;
 	margin-left: 12px;
 	font-family: verdana;
-		font-size: small;
-		background-color: #d7e9c1;
-		
-		position: relative;
-		width: 250px;
-		
-		top: 0px;
-		border:2px;
-		float:left;
-display:inline;
+	font-size: small;
+	background-color: #d7e9c1;
+	position: relative;
+	width: 250px;
+	top: 0px;
+	border: 2px;
+	float: left;
+	display: inline;
 }
 
 .div.balken3 {
@@ -75,16 +78,14 @@ display:inline;
 	margin-right: 0px;
 	margin-left: 2px;
 	font-family: verdana;
-		font-size: small;
-		background-color: #d7e9c1;
-		
-		position: relative;
-		width: 250px;
-		
-		top: 0px;
-		float:left;
-		display:inline;
-		}
+	font-size: small;
+	background-color: #d7e9c1;
+	position: relative;
+	width: 250px;
+	top: 0px;
+	float: left;
+	display: inline;
+}
 
 .div.balken4 {
 	border-style: 1;
@@ -92,33 +93,29 @@ display:inline;
 	margin-right: 0px;
 	margin-left: 0px;
 	font-family: verdana;
-		font-size: small;
-		background-color: #d8b9c1;
-		
-		position: relative;
-		width: 600px;
-		
-		top: 0px;
-		display:inline;
-		float:left;
-		}
-
+	font-size: small;
+	background-color: #d8b9c1;
+	position: relative;
+	width: 600px;
+	top: 0px;
+	display: inline;
+	float: left;
+}
 
 .div.balken5 {
 	border-style: 1;
 	padding: 10px;
 	margin: 0px;
 	font-family: verdana;
-		font-size: small;
-		background-color: #d8b9c1;
-		-moz-border-radius: 2em 0;
-		position: absolute;
-		width: 90%;
-		height: auto;
-		top: 125px;
-		right:25px;
+	font-size: small;
+	background-color: #d8b9c1;
+	-moz-border-radius: 2em 0;
+	position: absolute;
+	width: 90%;
+	height: auto;
+	top: 125px;
+	right: 25px;
 }
-
 
 .font_balken_uberschrift {
 	font-family: verdana;
@@ -127,17 +124,17 @@ display:inline;
 }
 
 p.auszug_bald {
-		font-family:verdana, sans-serif; 
-		font-weight: bold; 
-		font-size: 12pt; 
-		color: #FF0000;
+	font-family: verdana, sans-serif;
+	font-weight: bold;
+	font-size: 12pt;
+	color: #FF0000;
 }
 
 p.rot {
-		font-family:verdana, sans-serif; 
-		font-weight: bold; 
-		font-size: 10pt; 
-		color: #FF0000;
+	font-family: verdana, sans-serif;
+	font-weight: bold;
+	font-size: 10pt;
+	color: #FF0000;
 }
 
 .div.balken_detail_kat_form {
@@ -145,421 +142,451 @@ p.rot {
 	padding: 20px;
 	margin: 0px;
 	font-family: verdana;
-		font-size: small;
-		background-color: #d7e9c1;
-		-moz-border-radius-topright: 2em;
-		-moz-border-radius-bottomleft: 2em;
-		position: absolute;
-		width: auto;
-		height: auto;
-		left:20%;
-		top: 125px;
+	font-size: small;
+	background-color: #d7e9c1;
+	-moz-border-radius-topright: 2em;
+	-moz-border-radius-bottomleft: 2em;
+	position: absolute;
+	width: auto;
+	height: auto;
+	left: 20%;
+	top: 125px;
 }
 
-div.aktuelle_buchungen{
-border-style: 1;
+div.aktuelle_buchungen {
+	border-style: 1;
 	padding: 10px;
 	margin: 0px;
 	font-family: verdana;
-		font-size: small;
-		color: #000;		
-		background-color: #d7e9c1;
-		-moz-border-radius-topright: 2em;
-		-moz-border-radius-bottomleft: 2em;
-		position: absolute;
-		width: 800px;
-		height: auto;
-		left:10px;
-		top: 100px;
-		text-align: left;
+	font-size: small;
+	color: #000;
+	background-color: #d7e9c1;
+	-moz-border-radius-topright: 2em;
+	-moz-border-radius-bottomleft: 2em;
+	position: absolute;
+	width: 800px;
+	height: auto;
+	left: 10px;
+	top: 100px;
+	text-align: left;
 }
 
-table.aktuelle_buchungen{
-border-style: 1;
+table.aktuelle_buchungen {
+	border-style: 1;
 	padding: 5px;
 	font-family: verdana;
-		font-size: small;
-		color: #000;		
-		background-color: #fff;
-		-moz-border-radius-topright: 2em;
-		-moz-border-radius-bottomleft: 2em;
-		position: relative;
-		width: 800px;
-		height: auto;
-		text-align: right;
+	font-size: small;
+	color: #000;
+	background-color: #fff;
+	-moz-border-radius-topright: 2em;
+	-moz-border-radius-bottomleft: 2em;
+	position: relative;
+	width: 800px;
+	height: auto;
+	text-align: right;
 }
-div.aktuelle_forderungen{
-border-style: 1;
+
+div.aktuelle_forderungen {
+	border-style: 1;
 	padding: 10px;
 	margin: 0px;
 	font-family: verdana;
-		font-size: small;
-		background-color: #d7e9c1;
-		-moz-border-radius-topright: 2em;
-		-moz-border-radius-bottomleft: 2em;
-		position: absolute;
-		width: auto;
-		height: auto;
-		left:585px;
-		top: 100px;
-		text-align: center;
+	font-size: small;
+	background-color: #d7e9c1;
+	-moz-border-radius-topright: 2em;
+	-moz-border-radius-bottomleft: 2em;
+	position: absolute;
+	width: auto;
+	height: auto;
+	left: 585px;
+	top: 100px;
+	text-align: center;
 }
 
-tr.tabelle_ueberschrift{
-font-family: verdana;
-		font-size: small;
-font-weight: bold;
+tr.tabelle_ueberschrift {
+	font-family: verdana;
+	font-size: small;
+	font-weight: bold;
 }
-tr.tabelle_ueberschrift_mietkontenblatt{
-font-family: verdana;
-		font-size: 8pt;
-font-weight: bold;
+
+tr.tabelle_ueberschrift_mietkontenblatt {
+	font-family: verdana;
+	font-size: 8pt;
+	font-weight: bold;
 }
 
 /*.navi_leiste2 form{
 background-color: #fff;
 }*/
-table.aktuelle_forderungen{
-border-style: 1;
+table.aktuelle_forderungen {
+	border-style: 1;
 	padding: 5px;
 	font-family: verdana;
-		font-size: small;
-		background-color: #fff;
-		-moz-border-radius-topright: 2em;
-		-moz-border-radius-bottomleft: 2em;
-		position: relative;
-		width: auto;
-		height: auto;
-		text-align: right;
+	font-size: small;
+	background-color: #fff;
+	-moz-border-radius-topright: 2em;
+	-moz-border-radius-bottomleft: 2em;
+	position: relative;
+	width: auto;
+	height: auto;
+	text-align: right;
 }
 
-.buchungs_formular{
-border-style: 1;
+.buchungs_formular {
+	border-style: 1;
 	padding: 10px;
 	margin: 0px;
 	font-family: verdana;
-		font-size: small;
-		background-color: #fff;
-		-moz-border-radius-topright: 2em;
-		-moz-border-radius-bottomleft: 2em;
-		position: absolute;
-		width: 90%;
-		height: auto;
-		left:10px;
-		top: 300px;
-		text-align: left;
+	font-size: small;
+	background-color: #fff;
+	-moz-border-radius-topright: 2em;
+	-moz-border-radius-bottomleft: 2em;
+	position: absolute;
+	width: 90%;
+	height: auto;
+	left: 10px;
+	top: 300px;
+	text-align: left;
 }
 
 #logo {
-    display:none;
-    }
-    
-#zahlungshinweis{display:none;}
-    
-#rechnungs_netto{display:none}
-#rechnungs_brutto{display:none}
-#firmen_name{display:none}
-#rechnung_linie_oben{display:none}
-#rechnung_footer_zeilen{display:none}
-input[type=submit]{margin-bottom:20px;}
+	display: none;
+}
 
-#pos_kontierung{
- color:#ff0000;
- padding:0px; 
- margin:0px;
+#zahlungshinweis {
+	display: none;
+}
+
+#rechnungs_netto {
+	display: none
+}
+
+#rechnungs_brutto {
+	display: none
+}
+
+#firmen_name {
+	display: none
+}
+
+#rechnung_linie_oben {
+	display: none
+}
+
+#rechnung_footer_zeilen {
+	display: none
+}
+
+input[type=submit] {
+	margin-bottom: 20px;
+}
+
+#pos_kontierung {
+	color: #ff0000;
+	padding: 0px;
+	margin: 0px;
 }
 
 /*DRUCKENSACHEN AUSBLENDEN*/
-/* 1. Div für LOGO*/
-#div_logo{
-display:none;
+/* 1. Div fï¿½r LOGO*/
+#div_logo {
+	display: none;
 }
 
-#div_logo img{
-display:none;}
-
-
-/* 2. Div für Firmenname*/
-#div_firma{
-display:none;
-}
-/* 3. Div für Empfänger Adressfeld*/
-#div_adressfeld{
-display:none;
-}
-/* 4. Div für Rechnungsdaten*/
-#div_rechnungsdaten{
-display:none;
-}
-#rechnungsdaten_links{
-display:none;
-}
-#rechnungsdaten_rechts{
-display:none;
+#div_logo img {
+	display: none;
 }
 
-#div_z_hinweis{
-display:none;
+/* 2. Div fï¿½r Firmenname*/
+#div_firma {
+	display: none;
+}
+/* 3. Div fï¿½r Empfï¿½nger Adressfeld*/
+#div_adressfeld {
+	display: none;
+}
+/* 4. Div fï¿½r Rechnungsdaten*/
+#div_rechnungsdaten {
+	display: none;
 }
 
-#beschreibung_u{
-display:none
+#rechnungsdaten_links {
+	display: none;
 }
 
-#div_faltlinie{
-display:none
+#rechnungsdaten_rechts {
+	display: none;
 }
 
-#info_feld_kostentraeger{
-background: #fff;
-position:absolute;
-color:#f40b0b;
-top:400px;
-right:200px;
-width:400px;
+#div_z_hinweis {
+	display: none;
 }
 
-#status_neutral{
-color:#fff;
-}
-#status_positiv{
-color:#000;
-}
-#status_negativ{
-color:#ff0000;
+#beschreibung_u {
+	display: none
 }
 
-#link_rechnung_gross{
-color:#000;
-font-size:20px;
+#div_faltlinie {
+	display: none
 }
 
-a#link_rechnung_gross_sw{
-color:#000;
-font-size:2em;
+#info_feld_kostentraeger {
+	background: #fff;
+	position: absolute;
+	color: #f40b0b;
+	top: 400px;
+	right: 200px;
+	width: 400px;
 }
 
-#link_rechnung_gross_we{
-color:#fff;
-font-size:2em;
+#status_neutral {
+	color: #fff;
 }
 
-#link_rechnung_gross_gr{
-color:#06722c;
-font-size:2em;
+#status_positiv {
+	color: #000;
 }
 
-#link_rechnung_gross_bl{
-color:#0672ee;
-font-size:2em;
+#status_negativ {
+	color: #ff0000;
 }
 
-a#link_rechnung_klein_sw{
-color:#000;
+#link_rechnung_gross {
+	color: #000;
+	font-size: 20px;
 }
 
-#link_rechnung_klein_we{
-color:#fff;
+a#link_rechnung_gross_sw {
+	color: #000;
+	font-size: 2em;
 }
 
-#link_rechnung_klein_gr{
-color:#06722c;
+#link_rechnung_gross_we {
+	color: #fff;
+	font-size: 2em;
 }
 
-#link_rechnung_klein_bl{
-color:#0672ee;
+#link_rechnung_gross_gr {
+	color: #06722c;
+	font-size: 2em;
 }
 
-#link_rot_fett{
-color:#ff0000;
-font-weight:bold;
+#link_rechnung_gross_bl {
+	color: #0672ee;
+	font-size: 2em;
 }
 
-
-p{
-padding:0;
-margin:0;
+a#link_rechnung_klein_sw {
+	color: #000;
 }
 
+#link_rechnung_klein_we {
+	color: #fff;
+}
+
+#link_rechnung_klein_gr {
+	color: #06722c;
+}
+
+#link_rechnung_klein_bl {
+	color: #0672ee;
+}
+
+#link_rot_fett {
+	color: #ff0000;
+	font-weight: bold;
+}
+
+p {
+	padding: 0;
+	margin: 0;
+}
 
 #artikel_vorhanden {
-    text-align:left;
-    position: relative;
-    left: 150px;
-    margin: 10px 0px 0px 0px;
-    width: 650px;
-    background-color: #212427;
-    -moz-border-radius: 7px;
-    -webkit-border-radius: 7px;
-    border: 2px solid #000;
-    color: #fff;
-    float: left;
-    
-
+	text-align: left;
+	position: relative;
+	left: 150px;
+	margin: 10px 0px 0px 0px;
+	width: 650px;
+	background-color: #212427;
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px;
+	border: 2px solid #000;
+	color: #fff;
+	float: left;
 }
 
-#artikel_vorhanden a:hover{
-background-color: #659CD8;
+#artikel_vorhanden a:hover {
+	background-color: #659CD8;
 }
 
-#artikel_vorhanden a{
-color:#fff;
+#artikel_vorhanden a {
+	color: #fff;
 }
 
 .suggestionList {
-    margin: 0px;
-    padding: 0px;
+	margin: 0px;
+	padding: 0px;
 }
 
 .suggestionList li {
-    margin: 0px 0px 3px 0px;
-    padding: 3px;
-    cursor: pointer;
+	margin: 0px 0px 3px 0px;
+	padding: 3px;
+	cursor: pointer;
 }
 
 .suggestionList li:hover {
-    
-}
-
-/*Betriebskostenabrechnung*/
-
-.zeile_rot img{
-vertical-align:middle;
-width:30px;
-border:none;
-}
-
-.zeile_gruen img{
-vertical-align:middle;
-width:30px;
-border:none;
-}
-
-
-.bk_beschreibung_auswahl{
-background-color: #f46b6b;
-height:20px;
-padding-left:30px;
-}
-
-.auswahl{
-background-color: #B2B7B3;
-border: 2px #000;
-}
-
-.bk_beschreibung_ausgewaehlt{
-background-color: #3e945c;
-height:20px;
-padding-left:30px;
-}
-
-.ausgewaehlt{
-background-color: #84b894;
-}
-
-table.bk_table{
-	border-color: #600;
-    border-width: 0px;
-    border-style: solid;
-
-}
-
-tr.zeilebk_1_g {
-background-color:#73a682;font-family:verdana;  font-size: auto; color: #000;
-}
-
-tr.zeilebk_2_g {
-background-color:#84b894;font-family:verdana;  font-size: auto; color: #000;
-}
-
-tr.zeilebk_1_r {
-background-color:#ef7079;font-family:verdana;  font-size: auto; color: #000;
-}
-
-tr.zeilebk_2_r {
-background-color:#d7565f;font-family:verdana;  font-size: auto; color: #000;
-}
-
-tr.zeilebk_1_gg {
-background-color:#ffed88;font-family:verdana;  font-size: auto; color: #000;
-}
-
-tr.zeilebk_2_gg {
-background-color:#ffed88;font-family:verdana;  font-size: auto; color: #000;
-}
-
-
-table.sortable a.details:hover { 
-    background-color: #a2bbe6;
-}
-
-table.sortable a.einheit{
-	background-color:#a2bbe6;font-family:verdana;  font-size: 20px; color: #000;
-}
-
-
-table.sortable a.details{
-	background-color:#ffed88;font-family:verdana;  font-size: auto; color: #ff0000;
-	display: inline-block; width: 7em;
 	
 }
 
+/*Betriebskostenabrechnung*/
+.zeile_rot img {
+	vertical-align: middle;
+	width: 30px;
+	border: none;
+}
 
-table.sortable label{
+.zeile_gruen img {
+	vertical-align: middle;
+	width: 30px;
+	border: none;
+}
+
+.bk_beschreibung_auswahl {
+	background-color: #f46b6b;
+	height: 20px;
+	padding-left: 30px;
+}
+
+.auswahl {
+	background-color: #B2B7B3;
+	border: 2px #000;
+}
+
+.bk_beschreibung_ausgewaehlt {
+	background-color: #3e945c;
+	height: 20px;
+	padding-left: 30px;
+}
+
+.ausgewaehlt {
+	background-color: #84b894;
+}
+
+table.bk_table {
+	border-color: #600;
+	border-width: 0px;
+	border-style: solid;
+}
+
+tr.zeilebk_1_g {
+	background-color: #73a682;
+	font-family: verdana;
+	font-size: auto;
+	color: #000;
+}
+
+tr.zeilebk_2_g {
+	background-color: #84b894;
+	font-family: verdana;
+	font-size: auto;
+	color: #000;
+}
+
+tr.zeilebk_1_r {
+	background-color: #ef7079;
+	font-family: verdana;
+	font-size: auto;
+	color: #000;
+}
+
+tr.zeilebk_2_r {
+	background-color: #d7565f;
+	font-family: verdana;
+	font-size: auto;
+	color: #000;
+}
+
+tr.zeilebk_1_gg {
+	background-color: #ffed88;
+	font-family: verdana;
+	font-size: auto;
+	color: #000;
+}
+
+tr.zeilebk_2_gg {
+	background-color: #ffed88;
+	font-family: verdana;
+	font-size: auto;
+	color: #000;
+}
+
+table.sortable a.details:hover {
+	background-color: #a2bbe6;
+}
+
+table.sortable a.einheit {
+	background-color: #a2bbe6;
+	font-family: verdana;
+	font-size: 20px;
+	color: #000;
+}
+
+table.sortable a.details {
+	background-color: #ffed88;
+	font-family: verdana;
+	font-size: auto;
+	color: #ff0000;
+	display: inline-block;
+	width: 7em;
+}
+
+table.sortable label {
 	/*background-color:#ffed88; font-family:verdana;  font-size: 12px; color: #000;
 	display: inline-block; width: 7em;*/
 	float: left;
 	width: auto;
 	margin-right: 1em;
 	text-align: left;
-	background-color:#a2bbe6;
-	
+	background-color: #a2bbe6;
 }
 
-table.sortable input, a, button, progress{
-	cursor:pointer;
-	padding:0px;
-	margin:0px;
-	
-}
-table.sortable tr, td, table{
+table.sortable input, a, button, progress {
+	cursor: pointer;
 	padding: 0px;
 	margin: 0px;
-	vertical-align:top;
-	align:justify;
-	padding:0px;
-	margin:0px;
-	
-	}
-
-table.details tr td{
-	padding:0px;
-	margin:0px;
-	font-size:11px;
-	
-	
-}
-table.sortable select, label{
-	padding:0px;
-	margin:0px;
-	font-size:11px;
-	
 }
 
+table.sortable tr, td, table {
+	padding: 0px;
+	margin: 0px;
+	vertical-align: top;
+	align: justify;
+	padding: 0px;
+	margin: 0px;
+}
 
-/*AJAX GALLERY HTML5 UPLOAD FOTOS FÜR EINHEITEN*/
-     
-		
-		#gallery .thumbnail{
-            width:200px;
-            height: 150px;
-            float:left;
-            margin:2px;
-        }
-        #gallery .thumbnail img{
-            width:200px;
-            height: 150px;
-        }
+table.details tr td {
+	padding: 0px;
+	margin: 0px;
+	font-size: 11px;
+}
 
+table.sortable select, label {
+	padding: 0px;
+	margin: 0px;
+	font-size: 11px;
+}
 
+/*AJAX GALLERY HTML5 UPLOAD FOTOS Fï¿½R EINHEITEN*/
+#gallery .thumbnail {
+	width: 200px;
+	height: 150px;
+	float: left;
+	margin: 2px;
+}
 
+#gallery .thumbnail img {
+	width: 200px;
+	height: 150px;
+}

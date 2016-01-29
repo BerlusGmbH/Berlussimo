@@ -17,14 +17,13 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
- 
-$mieten = new mietkonto;
-echo "<div class=\"navi_leiste2\">"; 
-$mieten->erstelle_formular("Hauptmenü -> Miethöhe definieren...", NULL);
+$mieten = new mietkonto ();
+echo "<div class=\"navi_leiste2\">";
+$mieten->erstelle_formular ( "Hauptmenï¿½ -> Miethï¿½he definieren...", NULL );
 
 echo "<a href=\"?daten=miete_definieren&option=miethoehe\">Miete definieren</a>&nbsp;";
 
-$mieten->ende_formular();
+$mieten->ende_formular ();
 
 echo "</div>";
 

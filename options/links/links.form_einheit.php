@@ -17,15 +17,14 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
-
-$mieten = new mietkonto;
-echo "<div class=\"navi_leiste2\">"; 
-$mieten->erstelle_formular("Hauptmenü -> Einheiten...", NULL);
+$mieten = new mietkonto ();
+echo "<div class=\"navi_leiste2\">";
+$mieten->erstelle_formular ( "Hauptmenï¿½ -> Einheiten...", NULL );
 echo "<a href=\"?daten=einheit_raus&einheit_raus=einheit_kurz\">Einheitenliste</a>&nbsp;";
- echo "<a href=\"?daten=einheit_raus&einheit_raus=einheit_neu\">Einheit anlegen</a>&nbsp;";
- #alt echo "<a href=\"?formular=einheit&daten_rein=anlegen\">Einheit anlegen</a>&nbsp;";
- #echo "<a href=\"?formular=einheit&daten_rein=aendern\">Einheit ändern</a>&nbsp;";
- echo "<a href=\"?daten=einheit_raus&einheit_raus=mieterliste_aktuell\">Aktuelle Mieterliste</a>&nbsp;";
-$mieten->ende_formular();
+echo "<a href=\"?daten=einheit_raus&einheit_raus=einheit_neu\">Einheit anlegen</a>&nbsp;";
+// alt echo "<a href=\"?formular=einheit&daten_rein=anlegen\">Einheit anlegen</a>&nbsp;";
+// echo "<a href=\"?formular=einheit&daten_rein=aendern\">Einheit ï¿½ndern</a>&nbsp;";
+echo "<a href=\"?daten=einheit_raus&einheit_raus=mieterliste_aktuell\">Aktuelle Mieterliste</a>&nbsp;";
+$mieten->ende_formular ();
 echo "</div>";
 ?>

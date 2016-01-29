@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * BERLUSSIMO
  *
@@ -17,16 +17,13 @@
  * @lastmodified $Date$
  * 
  */
-
-
-
-if(isset($_REQUEST["daten"])){ 
-$daten = $_REQUEST["daten"];
-switch($daten) {
-
-    case "listen":
-    include("options/modules/listen.php");
-    break;
-    }
+if (isset ( $_REQUEST ["daten"] )) {
+	$daten = $_REQUEST ["daten"];
+	switch ($daten) {
+		
+		case "listen" :
+			include ("options/modules/listen.php");
+			break;
+	}
 }
 ?>

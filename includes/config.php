@@ -17,13 +17,11 @@
  * @lastmodified $Date: 2011-07-07 10:41:33 +0200 (Do, 07 Jul 2011) $
  * 
  */
+function connect() {
+	$con = mysql_connect ( DB_HOST, DB_USER, DB_PASS ) or die ( mysql_error () );
+	mysql_select_db ( DB_NAME, $con ) or die ( mysql_error () );
+}
 
-function connect() 
-{ 
-$con= mysql_connect(DB_HOST,DB_USER,DB_PASS) or die(mysql_error());
-      mysql_select_db(DB_NAME,$con) or die(mysql_error());
-} 
-
-connect();
+connect ();
 
 ?>

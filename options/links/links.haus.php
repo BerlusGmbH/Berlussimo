@@ -17,10 +17,9 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
-
 echo "<div class=\"navi_leiste2\">";
-echo "<a href=\"?daten=haus_raus&haus_raus=haus_kurz\">Alle Häuser kurz</a>&nbsp;";
-echo "<a href=\"?daten=haus_raus&haus_raus=haus_detailiert\">Häuser im Detail</a>&nbsp;";
+echo "<a href=\"?daten=haus_raus&haus_raus=haus_kurz\">Alle Hï¿½user kurz</a>&nbsp;";
+echo "<a href=\"?daten=haus_raus&haus_raus=haus_detailiert\">Hï¿½user im Detail</a>&nbsp;";
 echo "<br><hr>";
 echo "</div>";
 ?>

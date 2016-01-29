@@ -17,10 +17,9 @@
  * @lastmodified $Date: 2011-07-07 10:41:33 +0200 (Do, 07 Jul 2011) $
  * 
  */
-
-$mieten = new mietkonto;
-echo "<div class=\"navi_leiste2\">"; 
-$mieten->erstelle_formular("Hauptmenü -> Rechnungen...", NULL);
+$mieten = new mietkonto ();
+echo "<div class=\"navi_leiste2\">";
+$mieten->erstelle_formular ( "Hauptmenï¿½ -> Rechnungen...", NULL );
 
 echo "<a href=\"?daten=rechnungen&option=erfasste_rechnungen\">Rechnungsliste</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=eingangsbuch\">Eingangsbuch</a>&nbsp;";
@@ -30,14 +29,14 @@ echo "<a href=\"?daten=rechnungen&option=gutschrift_erfassen\">Gutschrift</a>&nb
 echo "<a href=\"?daten=rechnungen&option=pool_rechnungen\">Rechnung aus Pool erstellen</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=rechnung_suchen\"><b>Rechnung suchen</b></a>&nbsp;";
 echo "<hr>";
-echo "<a href=\"?daten=rechnungen&option=vollstaendige_rechnungen\">Vollständige Rechnungen</a>&nbsp;";
-echo "<a href=\"?daten=rechnungen&option=unvollstaendige_rechnungen\">Unvollständige Rechnungen</a>&nbsp;";
-#echo "<a href=\"?daten=rechnungen&option=gutschrift_erfassen\">Gutschrift schreiben</a>&nbsp;";
+echo "<a href=\"?daten=rechnungen&option=vollstaendige_rechnungen\">Vollstï¿½ndige Rechnungen</a>&nbsp;";
+echo "<a href=\"?daten=rechnungen&option=unvollstaendige_rechnungen\">Unvollstï¿½ndige Rechnungen</a>&nbsp;";
+// echo "<a href=\"?daten=rechnungen&option=gutschrift_erfassen\">Gutschrift schreiben</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=kontierte_rechnungen\">Kontierte Rechnungen</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=nicht_kontierte_rechnungen\">Nicht kontierte Rechnungen</a>&nbsp;";
 echo "<a href=\"?daten=zeiterfassung&option=stundennachweise\"><b>Stundennachweise</b></a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=buchungsbelege\">Buchungsbelege</a>&nbsp;";
-echo "<a href=\"?daten=rechnungen&option=rechnungsbuch_suche\">Rechnungsbücher PDF</a>&nbsp;";
+echo "<a href=\"?daten=rechnungen&option=rechnungsbuch_suche\">Rechnungsbï¿½cher PDF</a>&nbsp;";
 echo "<hr><a href=\"?daten=rechnungen&option=meine_angebote\">Angebote</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=angebot_erfassen\">Angebot erfassen</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=u_pool_erstellen\">Unterpool erstellen</a>&nbsp;";
@@ -49,19 +48,17 @@ echo "<a href=\"?daten=rechnungen&option=form_ugl\">UGL-Import</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=import_csv\">CSV-Import</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=kosten_einkauf\">Kosten Einkauf</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=seb\">SEB</a>&nbsp;";
-echo "<a href=\"?daten=rechnungen&option=vg_rechnungen\">Verwaltergebühren</a>&nbsp;";
+echo "<a href=\"?daten=rechnungen&option=vg_rechnungen\">Verwaltergebï¿½hren</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=rg_aus_beleg\">RG aus Beleg</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=pdf_druckpool&no_logo\">PDF-Druckpool</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=sepa_druckpool\">SEPA RG-Pool</a>&nbsp;";
 
-#echo "<a href=\"?daten=rechnungen&option=bezahlte_rechnungen\">Bezahlte Rechnungen</a>&nbsp;";
-#echo "<a href=\"?daten=rechnungen&option=unbezahlte_rechnungen\">Unbezahlte Rechnungen</a>&nbsp;";
-#echo "<a href=\"?daten=rechnungen&option=bestaetigte_rechnungen\">Bestätigte Rechnungen</a>&nbsp;";
-#echo "<a href=\"?daten=rechnungen&option=unbestaetigte_rechnungen\">Unbestätigte Rechnungen</a>&nbsp;";
+// echo "<a href=\"?daten=rechnungen&option=bezahlte_rechnungen\">Bezahlte Rechnungen</a>&nbsp;";
+// echo "<a href=\"?daten=rechnungen&option=unbezahlte_rechnungen\">Unbezahlte Rechnungen</a>&nbsp;";
+// echo "<a href=\"?daten=rechnungen&option=bestaetigte_rechnungen\">Bestï¿½tigte Rechnungen</a>&nbsp;";
+// echo "<a href=\"?daten=rechnungen&option=unbestaetigte_rechnungen\">Unbestï¿½tigte Rechnungen</a>&nbsp;";
 
-
-
-$mieten->ende_formular();
+$mieten->ende_formular ();
 
 echo "</div>";
 ?>

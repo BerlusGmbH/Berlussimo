@@ -17,13 +17,11 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
- 
-$mieten = new mietkonto;
-echo "<div class=\"navi_leiste2\">"; 
-$mieten->erstelle_formular("Hauptmenü -> Kontenrahmen...", NULL);
+$mieten = new mietkonto ();
+echo "<div class=\"navi_leiste2\">";
+$mieten->erstelle_formular ( "Hauptmenï¿½ -> Kontenrahmen...", NULL );
 
-
-echo "<a href=\"?daten=kontenrahmen&option=kontenrahmen_uebersicht\">Kontenrahmenübersicht</a>&nbsp;";
+echo "<a href=\"?daten=kontenrahmen&option=kontenrahmen_uebersicht\">Kontenrahmenï¿½bersicht</a>&nbsp;";
 echo "<a href=\"?daten=kontenrahmen&option=kontenrahmen_neu\">Kontenrahmen erstellen</a>&nbsp;";
 echo "<a href=\"?daten=kontenrahmen&option=kostenkonto_neu\">Buchungskonto erstellen</a>&nbsp;";
 echo "<a href=\"?daten=kontenrahmen&option=gruppen\">Gruppen anzeigen</a>&nbsp;";
@@ -32,8 +30,7 @@ echo "<a href=\"?daten=kontenrahmen&option=kontoarten\">Kontoarten anzeigen</a>&
 echo "<a href=\"?daten=kontenrahmen&option=kontoart_neu\">Kontoart erstellen</a>&nbsp;";
 echo "<a href=\"?daten=kontenrahmen&option=kontenrahmen_zuweisen\">Kontenrahmen zuweisen</a>&nbsp;";
 
-
-$mieten->ende_formular();
+$mieten->ende_formular ();
 
 echo "</div>";
 ?>
