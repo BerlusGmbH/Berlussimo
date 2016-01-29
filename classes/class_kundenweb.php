@@ -27,7 +27,7 @@ class kundenweb {
 			$f = new formular ();
 			$f->fieldset ( "Kunden mit Zugriff auf Kundenweb", 'kp' );
 			$anz = count ( $arr );
-			echo "<table class=\"sortable\"><tr><th>PERSON</th><th>FIRMA</th><th>BENUTZERNAME</th><th>EMAIL</th><th>BERECHTIGUNG</th><th>L�SCHEN</th></tr>";
+			echo "<table class=\"sortable\"><tr><th>PERSON</th><th>FIRMA</th><th>BENUTZERNAME</th><th>EMAIL</th><th>BERECHTIGUNG</th><th>LÖSCHEN</th></tr>";
 			for($a = 0; $a < $anz; $a ++) {
 				$kunden_id = $arr [$a] ['ID'];
 				$username = $arr [$a] ['USERNAME'];
@@ -52,7 +52,7 @@ class kundenweb {
 				 * $this->partner_land = $row['LAND'];
 				 */
 				$link_ber = "<a href=\"?daten=kundenweb&option=berechtigung&kunden_id=$kunden_id\">Berechtigung</a>";
-				$link_deakt = "<a href=\"?daten=kundenweb&option=deaktivieren&kunden_id=$kunden_id\">Deaktivieren/L�schen</a>";
+				$link_deakt = "<a href=\"?daten=kundenweb&option=deaktivieren&kunden_id=$kunden_id\">Deaktivieren/Löschen</a>";
 				echo "<tr><td>$p->person_nachname $p->person_vorname</td><td>$pa->partner_name</td><td>$username</td><td>$email</td><td>$link_ber</td><td>$link_deakt</td></tr>";
 			}
 			echo "</table>";
@@ -96,13 +96,13 @@ class kundenweb {
 			}
 			echo "</table>";
 			
-			/* Formular f�r Neue berechtigungen */
+			/* Formular für Neue berechtigungen */
 			$this->form_berechtigung ( $kunden_id );
 			
 			/* Berechtigungen */
 			$arr_ber = $this->kunden_berr_arr ( $kunden_id );
 			if (! is_array ( $arr_ber )) {
-				die ( 'Keine Berechtigung f�r den Kunden' );
+				die ( 'Keine Berechtigung für den Kunden' );
 			} else {
 				// echo '<pre>';
 				// print_r($arr_ber);
@@ -115,7 +115,7 @@ class kundenweb {
 					$ber_id = $arr_ber [$a] ['ZUGRIFF_ID'];
 					$r = new rechnung ();
 					$kos_bez = $r->kostentraeger_ermitteln ( $ber_obj, $ber_id );
-					$link_loeschen = "<a href=\"?daten=kundenweb&option=berechtigung_del&kunden_id=$kunden_id&ber_obj=$ber_obj&ber_id=$ber_id\">L�schen</a>";
+					$link_loeschen = "<a href=\"?daten=kundenweb&option=berechtigung_del&kunden_id=$kunden_id&ber_obj=$ber_obj&ber_id=$ber_id\">Löschen</a>";
 					echo "<tr><td>$z</td><td>$ber_obj</td><td>$kos_bez</td><td>$link_loeschen</td></tr>";
 				}
 				echo "</table>";
@@ -175,16 +175,16 @@ class kundenweb {
 	}
 	function form_neuer_benutzer() {
 		$f = new formular ();
-		$f->erstelle_formular ( "Neuen Kundenweb-Benutzer hinzuf�gen", null );
+		$f->erstelle_formular ( "Neuen Kundenweb-Benutzer hinzufügen", null );
 		$p = new personen ();
-		$p->dropdown_personen ( "Person w�hlen", 'person_id', 'person_id', null );
+		$p->dropdown_personen ( "Person wählen", 'person_id', 'person_id', null );
 		$pa = new partners ();
-		$pa->partner_dropdown ( "Partner der Person w�hlen - Logo im PDF", 'partner_id', 'partner_id', null );
+		$pa->partner_dropdown ( "Partner der Person wählen - Logo im PDF", 'partner_id', 'partner_id', null );
 		$f->text_feld ( "Benutzername (20 Zeichen)", "username", "", 40, 'username', null );
 		$f->text_feld ( "Passwort (20 Zeichen)", "password", "", 40, 'password', null );
 		$f->text_feld ( "Email (50 Zeichen)", "email", "", 40, 'email', null );
 		$f->hidden_feld ( 'option', 'benutzer_hinzu' );
-		$f->send_button ( 'BTN_ben', 'Benutzer hinzuf�gen' );
+		$f->send_button ( 'BTN_ben', 'Benutzer hinzufügen' );
 		$f->ende_formular ();
 	}
 	function form_berechtigung($kunden_id) {
@@ -194,15 +194,15 @@ class kundenweb {
 			$p = new person ();
 			$p->get_person_infos ( $person_id );
 			$f = new formular ();
-			$f->erstelle_formular ( "Berechtigungen f�r $p->person_nachname $p->person_vorname hinzuf�gen", null );
+			$f->erstelle_formular ( "Berechtigungen für $p->person_nachname $p->person_vorname hinzufügen", null );
 			$bu = new buchen ();
 			$js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
-			$bu->dropdown_kostentreager_typen ( 'Kostentr�gertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
+			$bu->dropdown_kostentreager_typen ( 'Kostenträgertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
 			$js_id = "";
-			$bu->dropdown_kostentreager_ids ( 'Kostentr�ger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
+			$bu->dropdown_kostentreager_ids ( 'Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
 			$f->hidden_feld ( 'option', 'ber_hinzu' );
 			$f->hidden_feld ( 'person_id', $person_id );
-			$f->send_button ( 'BTN_ber', 'Berechtigung hinzuf�gen' );
+			$f->send_button ( 'BTN_ber', 'Berechtigung hinzufügen' );
 			$f->ende_formular ();
 		}
 	}
@@ -217,7 +217,7 @@ class kundenweb {
 		}
 	}
 	function berechtigung_speichern($person_id, $ber_obj, $ber_id) {
-		/* Pr�fen ob Berechtigung bereits vorhanden, wenn nicht, dann speichen */
+		/* Prüfen ob Berechtigung bereits vorhanden, wenn nicht, dann speichen */
 		if ($this->check_ber ( $person_id, $ber_obj, $ber_id ) == false) {
 			$last_id = last_id2 ( 'KUNDEN_LOG_BER', 'ID' ) + 1;
 			$sql = "INSERT INTO `KUNDEN_LOG_BER` VALUES (NULL, '$last_id', '$person_id', '$ber_obj', '$ber_id', '1');";

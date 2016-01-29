@@ -45,7 +45,7 @@ class katalog {
 		
 		$anzahl_artikel = mysql_numrows ( $result );
 		if ($anzahl_artikel) {
-			/* Katalogartikel und Leistungen �berschrift */
+			/* Katalogartikel und Leistungen Überschrift */
 			echo "<div id=\"div_katalog\">";
 			echo "<table id=\"katalog_tab\" class=\"sortable\">\n";
 			echo "<thead>";
@@ -65,7 +65,7 @@ class katalog {
 				$lp = nummer_punkt2komma ( $row ['LISTENPREIS'] );
 				$rabatt = nummer_punkt2komma ( $row ['RABATT_SATZ'] );
 				$unser_preis = nummer_punkt2komma ( ($lp / 100) * (100 - $rabatt) );
-				$ve = $row ['EINHEIT']; // ve steht f�r verpackungseinheit
+				$ve = $row ['EINHEIT']; // ve steht für verpackungseinheit
 				                       // echo "<b>$artnr</b><br>$bez $lp $rabatt $ve<br>";
 				$link_pe = "<a href=\"?daten=katalog&option=preisentwicklung&artikel_nr=$artnr\">$artnr</a>";
 				
@@ -112,13 +112,13 @@ class katalog {
 			}
 			echo "<hr>";
 			if ($erst_preis > $last_preis) {
-				// echo "<b>Preis f�r $bez ist gesunken ($erst_preis>$last_preis)</b>";
-				echo "<tr><td colspan=\"9\">Preis f�r $bez ist <b>gesunken</b> ($erst_preis>$last_preis)</td></tr>";
+				// echo "<b>Preis für $bez ist gesunken ($erst_preis>$last_preis)</b>";
+				echo "<tr><td colspan=\"9\">Preis für $bez ist <b>gesunken</b> ($erst_preis>$last_preis)</td></tr>";
 			}
 			
 			if ($erst_preis < $last_preis) {
-				// echo "<b>Preis f�r $bez ist gestiegen ($erst_preis<$last_preis)</b>";
-				echo "<tr><td colspan=\"9\">Preis f�r $bez ist <b>gestiegen</b>  ($erst_preis<$last_preis)</td></tr>";
+				// echo "<b>Preis für $bez ist gestiegen ($erst_preis<$last_preis)</b>";
+				echo "<tr><td colspan=\"9\">Preis für $bez ist <b>gestiegen</b>  ($erst_preis<$last_preis)</td></tr>";
 				$erst_preis_p = nummer_komma2punkt ( $erst_preis );
 				$last_preis_p = nummer_komma2punkt ( $last_preis );
 				$preis_diff = Nummer_punkt2komma ( ($last_preis_p / ($erst_preis_p / 100)) - 100 );
@@ -126,8 +126,8 @@ class katalog {
 			}
 			
 			if ($erst_preis == $last_preis) {
-				// echo "<b>Preis f�r $bez ist unver�ndert ($erst_preis=$last_preis)</b>";
-				echo "<tfoot><tr><td colspan=\"9\">Preis f�r $bez ist unver�ndert  ($erst_preis=$last_preis)</td></tr></tfoot>";
+				// echo "<b>Preis für $bez ist unverändert ($erst_preis=$last_preis)</b>";
+				echo "<tfoot><tr><td colspan=\"9\">Preis für $bez ist unverändert  ($erst_preis=$last_preis)</td></tr></tfoot>";
 			}
 			echo "</table>";
 		} else {
@@ -179,23 +179,23 @@ class katalog {
 				
 				// echo "<hr>";
 				if ($this->erst_preis > $this->last_preis) {
-					// echo "<b>Preis f�r $bez ist gesunken ($erst_preis>$last_preis)</b>";
+					// echo "<b>Preis für $bez ist gesunken ($erst_preis>$last_preis)</b>";
 					$this->vorzeichen = "-";
-					// echo "<tr><td colspan=\"9\">Preis f�r $bez ist <b>gesunken</b> ($erst_preis>$last_preis)</td></tr>";
+					// echo "<tr><td colspan=\"9\">Preis für $bez ist <b>gesunken</b> ($erst_preis>$last_preis)</td></tr>";
 					$this->preis_diff = '0.00';
 				}
 				
 				if ($this->erst_preis < $this->last_preis) {
 					$this->vorzeichen = "+";
-					// echo "<b>Preis f�r $bez ist gestiegen ($erst_preis<$last_preis)</b>";
-					// echo "<tr><td colspan=\"9\">Preis f�r $bez ist <b>gestiegen</b> ($erst_preis<$last_preis)</td></tr>";
+					// echo "<b>Preis für $bez ist gestiegen ($erst_preis<$last_preis)</b>";
+					// echo "<tr><td colspan=\"9\">Preis für $bez ist <b>gestiegen</b> ($erst_preis<$last_preis)</td></tr>";
 					$this->preis_diff = nummer_punkt2komma ( ($this->last_preis / ($this->erst_preis / 100)) - 100 );
 					// echo "<tr><td colspan=\"9\" style=\"color:red\">ANSTIEG IN PROZENT $this->preis_diff %</td></tr>";
 				}
 				
 				if ($this->erst_preis == $this->last_preis) {
-					// echo "<b>Preis f�r $bez ist unver�ndert ($erst_preis=$last_preis)</b>";
-					// echo "<tfoot><tr><td colspan=\"9\">Preis f�r $bez ist unver�ndert ($erst_preis=$last_preis)</td></tr></tfoot>";
+					// echo "<b>Preis für $bez ist unverändert ($erst_preis=$last_preis)</b>";
+					// echo "<tfoot><tr><td colspan=\"9\">Preis für $bez ist unverändert ($erst_preis=$last_preis)</td></tr></tfoot>";
 					$this->vorzeichen = "+";
 					$this->preis_diff = '0.00';
 				}

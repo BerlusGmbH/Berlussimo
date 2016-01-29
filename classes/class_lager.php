@@ -22,7 +22,7 @@
  *         
  */
 
-/* Klasse f�r die Lagerverwaltung */
+/* Klasse für die Lagerverwaltung */
 class lager_v {
 	
 	/* Formular zum Erfassen von neuen Lieferscheinen */
@@ -31,7 +31,7 @@ class lager_v {
 		$f->erstelle_formular ( "Lieferschein erfassen", NULL );
 		$p = new partners ();
 		$p->partner_dropdown ( 'Lieferant', 'lieferant_id', 'lieferant_id' );
-		$p->partner_dropdown ( 'Empf�nger', 'empfaenger_id', 'empfaenger_id' );
+		$p->partner_dropdown ( 'Empfänger', 'empfaenger_id', 'empfaenger_id' );
 		$f->text_feld ( "Lieferscheinnr", 'l_nr', '', 20, 'l_nr', '' );
 		$f->datum_feld ( 'Lieferdatum', 'l_datum', '', 'l_datum' );
 		$f->hidden_feld ( "option", "lieferschein_send" );
@@ -110,7 +110,7 @@ class lager_v {
 					if ($rest_menge != '0,00') {
 						
 						$gesamt_lager_wert = $gesamt_lager_wert + $waren_wert;
-						// echo "<tr class=\"zeile1\" align=\"right\"><td>$datum</td><td>$pp->partner_name</td><td>$beleg_link</td><td>$link_artikel_suche</td><td>$bezeichnung</td><td>$menge</td><td>$rest_menge</td><td>$preis �</td><td>$pos_mwst_satz %</td><td>$waren_wert_a �</td></tr>";
+						// echo "<tr class=\"zeile1\" align=\"right\"><td>$datum</td><td>$pp->partner_name</td><td>$beleg_link</td><td>$link_artikel_suche</td><td>$bezeichnung</td><td>$menge</td><td>$rest_menge</td><td>$preis €</td><td>$pos_mwst_satz %</td><td>$waren_wert_a €</td></tr>";
 						$tab_arr [$zaehler] ['DATUM'] = $datum;
 						$tab_arr [$zaehler] ['LIEFERANT'] = $pp->partner_name;
 						$tab_arr [$zaehler] ['RNR'] = $rechnungsnummer;
@@ -126,7 +126,7 @@ class lager_v {
 				} // end for
 				
 				$gesamt_lager_wert_a = nummer_punkt2komma ( $gesamt_lager_wert );
-				// echo "<tr align=\"right\"><td colspan=9>Restwarenwert gesamt</td><td>$gesamt_lager_wert_a �</td></tr>";
+				// echo "<tr align=\"right\"><td colspan=9>Restwarenwert gesamt</td><td>$gesamt_lager_wert_a €</td></tr>";
 				// echo "</table>";
 				$tab_arr [$zaehler] ['PREIS'] = "<b>SUMME</b>";
 				$tab_arr [$zaehler] ['MWST'] = '<b>' . date_mysql2german ( $datum_bis ) . '</b>';
@@ -156,7 +156,7 @@ class lager_v {
 				$pdf->ezSetDy ( - 6 );
 				$lager_bez = $ll->lager_bezeichnung ( $_SESSION [lager_id] );
 				$dbis = date_mysql2german ( $datum_bis );
-				$pdf->ezText ( "<b>Stand am: $dbis | Lager: $lager_bez | Warenwert: $gesamt_lager_wert_a �</b>" );
+				$pdf->ezText ( "<b>Stand am: $dbis | Lager: $lager_bez | Warenwert: $gesamt_lager_wert_a €</b>" );
 				$pdf->ezSetDy ( - 6 );
 				$pdf->ezTable ( $tab_arr, $cols, "", array (
 						'showHeadings' => 1,
@@ -201,7 +201,7 @@ class lager_v {
 				return false;
 			}
 		} else {
-			warnung_ausgeben ( "Bitte Lager w�hlen" );
+			warnung_ausgeben ( "Bitte Lager wählen" );
 		}
 	}
 	function lagerbestand_anzeigen_bis($datum) {
@@ -262,12 +262,12 @@ class lager_v {
 						
 						if ($zaehler == '1') {
 							$beleg_link = "<a href=\"?daten=rechnungen&option=rechnung_kontieren&belegnr=$beleg_nr\">Rechnung</a>";
-							echo "<tr class=\"zeile1\" align=\"right\"><td>$datum</td><td>$pp->partner_name</td><td>$beleg_link</td><td>$link_artikel_suche</td><td>$bezeichnung</td><td>$menge</td><td>$rest_menge</td><td>$preis �</td><td>$pos_mwst_satz %</td><td>$waren_wert_a �</td></tr>";
+							echo "<tr class=\"zeile1\" align=\"right\"><td>$datum</td><td>$pp->partner_name</td><td>$beleg_link</td><td>$link_artikel_suche</td><td>$bezeichnung</td><td>$menge</td><td>$rest_menge</td><td>$preis €</td><td>$pos_mwst_satz %</td><td>$waren_wert_a €</td></tr>";
 						}
 						
 						if ($zaehler == '2') {
 							$beleg_link = "<a href=\"?daten=rechnungen&option=rechnung_kontieren&belegnr=$beleg_nr\">Rechnung</a>";
-							echo "<tr class=\"zeile2\" align=\"right\"><td>$datum</td><td>$pp->partner_name</td><td>$beleg_link</td><td>$link_artikel_suche</td><td>$bezeichnung</td><td>$menge</td><td>$rest_menge</td><td>$preis �</td><td>$pos_mwst_satz %</td><td>$waren_wert_a �</td></tr>";
+							echo "<tr class=\"zeile2\" align=\"right\"><td>$datum</td><td>$pp->partner_name</td><td>$beleg_link</td><td>$link_artikel_suche</td><td>$bezeichnung</td><td>$menge</td><td>$rest_menge</td><td>$preis €</td><td>$pos_mwst_satz %</td><td>$waren_wert_a €</td></tr>";
 						}
 					}
 					
@@ -277,13 +277,13 @@ class lager_v {
 				} // end for
 				
 				$gesamt_lager_wert_a = nummer_punkt2komma ( $gesamt_lager_wert );
-				echo "<tr align=\"right\"><td colspan=9>Restwarenwert gesamt</td><td>$gesamt_lager_wert_a �</td></tr>";
+				echo "<tr align=\"right\"><td colspan=9>Restwarenwert gesamt</td><td>$gesamt_lager_wert_a €</td></tr>";
 				echo "</table>";
 			} else {
 				return false;
 			}
 		} else {
-			warnung_ausgeben ( "Bitte Lager w�hlen" );
+			warnung_ausgeben ( "Bitte Lager wählen" );
 		}
 	}
 	function reparatur_kontierungsdatum() {

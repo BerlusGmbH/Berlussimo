@@ -21,7 +21,7 @@
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
 
 include_once ("classes/class_geldkonten.php");
@@ -45,7 +45,7 @@ class k_rahmen {
 				$id = $row ['TYP_ID'];
 				$r = new rechnung ();
 				$kos_bez = $r->kostentraeger_ermitteln ( $typ, $id );
-				$link_zuweis_loeschen = "<a href=\"?daten=kontenrahmen&option=zuweisung_del&dat=$dat\">Zuweisung l�schen</a>";
+				$link_zuweis_loeschen = "<a href=\"?daten=kontenrahmen&option=zuweisung_del&dat=$dat\">Zuweisung löschen</a>";
 				echo "<br><b>$typ: $kos_bez</b> - $link_zuweis_loeschen";
 			}
 		} else {
@@ -104,7 +104,7 @@ ORDER BY KONTO ASC" );
 				$kontoart_id = $arr [$a] ['KONTOART_ID'];
 				$kontoart = $arr [$a] ['KONTOART'];
 				
-				$link = "<a href=\"?daten=kontenrahmen&option=kostenkonto_ae&k_dat=$dat\">KONTO �NDERN</a>";
+				$link = "<a href=\"?daten=kontenrahmen&option=kostenkonto_ae&k_dat=$dat\">KONTO ÄNDERN</a>";
 				echo "<tr><td>$konto</td><td>$bez</td><td>$gruppe</td><td>$kontoart</td><td>$link</td></tr>";
 			}
 			echo "</TABLE>";
@@ -347,7 +347,7 @@ ORDER BY KONTO ASC" );
 		$_SESSION [k_kontoart_id] = $this->kontoart_id;
 		$_SESSION [k_gruppen_id] = $this->gruppen_id;
 		$f = new formular ();
-		$f->erstelle_formular ( "Kostenkonto �ndern", NULL );
+		$f->erstelle_formular ( "Kostenkonto ändern", NULL );
 		$this->dropdown_kontenrahmen ( 'Kontenrahmen', 'kontenrahmen_id', 'kontenrahmen_id' );
 		$f->text_feld ( "Kostenkonto", "konto", "$this->konto", "10", 'konto', '' );
 		$f->text_feld ( "Kostenkontobezeichnung", "bez", "$this->konto_bez", "50", 'bez', '' );
@@ -355,7 +355,7 @@ ORDER BY KONTO ASC" );
 		$this->dropdown_k_gruppen ( 'Gruppe', 'k_gruppe', 'k_gruppe' );
 		$f->hidden_feld ( "dat", "$konto_dat" );
 		$f->hidden_feld ( "option", "konto_ae_send" );
-		$f->send_button ( "submit_konto", "�nderung speichern" );
+		$f->send_button ( "submit_konto", "Änderung speichern" );
 		$f->ende_formular ();
 	}
 	function kostenkonto_aendern($dat, $kontenrahmen_id, $konto, $bez, $kontoart_id, $k_gruppe_id) {
@@ -479,14 +479,14 @@ ORDER BY KONTO ASC" );
 	function form_kontenrahmen_zuweisen() {
 		$f = new formular ();
 		$f->erstelle_formular ( "Kontenrahmen  zuweisen", NULL );
-		$this->dropdown_kontenrahmen ( 'Kontenrahmen w�hlen', 'kontenrahmen_id', 'kontenrahmen_id' );
+		$this->dropdown_kontenrahmen ( 'Kontenrahmen wählen', 'kontenrahmen_id', 'kontenrahmen_id' );
 		$b = new buchen ();
 		$js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
 		// $js_typ='';
-		$b->dropdown_kostentreager_typen ( 'Kostentr�gertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
+		$b->dropdown_kostentreager_typen ( 'Kostenträgertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
 		$js_id = "";
-		$b->dropdown_kostentreager_ids ( 'Kostentr�ger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
-		// $this->dropdown_geldkonten_alle('Geldkonto w�hlen', 'geldkonto_id', 'geldkonto_id');
+		$b->dropdown_kostentreager_ids ( 'Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
+		// $this->dropdown_geldkonten_alle('Geldkonto wählen', 'geldkonto_id', 'geldkonto_id');
 		$f->hidden_feld ( "option", "zuweisen_kr" );
 		$f->send_button ( "submit_kr", "Zuweisen" );
 		$f->ende_formular ();

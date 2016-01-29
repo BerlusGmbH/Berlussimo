@@ -2,7 +2,7 @@
 class import {
 	function form_import_gfad($file = null) {
 		if (! isset ( $_SESSION ['objekt_id'] )) {
-			fehlermeldung_ausgeben ( "Objekt w�hlen" );
+			fehlermeldung_ausgeben ( "Objekt wählen" );
 			$bg = new berlussimo_global ();
 			$bg->objekt_auswahl_liste ( '?daten=objekte_raus&objekte_raus=import' );
 		} else {
@@ -78,18 +78,18 @@ class import {
 					$new_arr [$we] ['ET'] ['BIC'] = $sep->BIC;
 					
 					if ($anrede == 'Herr' or $anrede == 'Herrn') {
-						$new_arr [$we] ['ET'] ['GES'] [] = 'm�nnlich';
+						$new_arr [$we] ['ET'] ['GES'] [] = 'männlich';
 					}
 					if ($anrede == 'Herren') {
-						$new_arr [$we] ['ET'] ['GES'] [] = 'm�nnlich';
-						$new_arr [$we] ['ET'] ['GES'] [] = 'm�nnlich';
+						$new_arr [$we] ['ET'] ['GES'] [] = 'männlich';
+						$new_arr [$we] ['ET'] ['GES'] [] = 'männlich';
 					}
 					
 					if ($anrede == 'Frau') {
 						$new_arr [$we] ['ET'] ['GES'] [] = 'weiblich';
 					}
 					if ($anrede == 'Herr und Frau') {
-						$new_arr [$we] ['ET'] ['GES'] [] = 'm�nnlich';
+						$new_arr [$we] ['ET'] ['GES'] [] = 'männlich';
 						$new_arr [$we] ['ET'] ['GES'] [] = 'weiblich';
 					}
 					if (empty ( $anrede )) {
@@ -127,17 +127,17 @@ class import {
 					$new_arr [$we] ['MIETER'] ['BIC'] = $sep->BIC;
 					
 					if ($anrede == 'Herr' or $anrede == 'Herrn') {
-						$new_arr [$we] ['MIETER'] ['GES'] [] = 'm�nnlich';
+						$new_arr [$we] ['MIETER'] ['GES'] [] = 'männlich';
 					}
 					if ($anrede == 'Herren') {
-						$new_arr [$we] ['MIETER'] ['GES'] [] = 'm�nnlich';
-						$new_arr [$we] ['MIETER'] ['GES'] [] = 'm�nnlich';
+						$new_arr [$we] ['MIETER'] ['GES'] [] = 'männlich';
+						$new_arr [$we] ['MIETER'] ['GES'] [] = 'männlich';
 					}
 					if ($anrede == 'Frau') {
 						$new_arr [$we] ['MIETER'] ['GES'] [] = 'weiblich';
 					}
 					if ($anrede == 'Herr und Frau') {
-						$new_arr [$we] ['MIETER'] ['GES'] [] = 'm�nnlich';
+						$new_arr [$we] ['MIETER'] ['GES'] [] = 'männlich';
 						$new_arr [$we] ['MIETER'] ['GES'] [] = 'weiblich';
 					}
 					if (empty ( $anrede )) {
@@ -175,17 +175,17 @@ class import {
 					$new_arr [$we] ['SMIETER'] ['BIC'] = $sep->BIC;
 					
 					if ($anrede == 'Herr' or $anrede == 'Herrn') {
-						$new_arr [$we] ['SMIETER'] ['GES'] [] = 'm�nnlich';
+						$new_arr [$we] ['SMIETER'] ['GES'] [] = 'männlich';
 					}
 					if ($anrede == 'Herren') {
-						$new_arr [$we] ['SMIETER'] ['GES'] [] = 'm�nnlich';
-						$new_arr [$we] ['SMIETER'] ['GES'] [] = 'm�nnlich';
+						$new_arr [$we] ['SMIETER'] ['GES'] [] = 'männlich';
+						$new_arr [$we] ['SMIETER'] ['GES'] [] = 'männlich';
 					}
 					if ($anrede == 'Frau') {
 						$new_arr [$we] ['SMIETER'] ['GES'] [] = 'weiblich';
 					}
 					if ($anrede == 'Herr und Frau') {
-						$new_arr [$we] ['SMIETER'] ['GES'] [] = 'm�nnlich';
+						$new_arr [$we] ['SMIETER'] ['GES'] [] = 'männlich';
 						$new_arr [$we] ['SMIETER'] ['GES'] [] = 'weiblich';
 					}
 					if (empty ( $anrede )) {
@@ -388,7 +388,7 @@ class import {
 	}
 	function import_arr($file = null) {
 		if (! isset ( $_SESSION ['objekt_id'] )) {
-			fehlermeldung_ausgeben ( "Objekt w�hlen" );
+			fehlermeldung_ausgeben ( "Objekt wählen" );
 			$bg = new berlussimo_global ();
 			$bg->objekt_auswahl_liste ( '?daten=objekte_raus&objekte_raus=import' );
 		} else {
@@ -425,7 +425,7 @@ class import {
 		// echo '<pre>';
 		// print_r($arr[$this->akt_z]);
 		
-		/* Pr�fen ob Einheit angelegt */
+		/* Prüfen ob Einheit angelegt */
 		$bez_new = $arr [$this->akt_z] ['EINHEIT'] ['BEZ_NEW'];
 		$ee = new einheit ();
 		$ee->get_einheit_id ( "$bez_new (Ap$this->akt_z)" );
@@ -466,7 +466,7 @@ class import {
 		$f->text_feld ( "Kurzname (Alt:$alt_bez)", "kurzname", "$bez_new (Ap$this->akt_z)", "50", 'kurzname', '' );
 		$f->text_feld ( "Lage $lage", "lage", "$lage", "10", 'lage', '' );
 		$f->text_feld ( "qm", "qm", "$qm", "10", 'qm', '' );
-		$f->text_feld ( "Eigent�mer QM", "weg_qm", "", "10", 'weg_qm', '' );
+		$f->text_feld ( "Eigentümer m²", "weg_qm", "", "10", 'weg_qm', '' );
 		$f->text_feld ( "WEG MAE", "weg_mea", "", "10", 'weg_mae', '' );
 		$h = new haus ();
 		$o->dropdown_haeuser_objekt ( $o->objekt_id, 'Haus', 'haus_id', 'haus_id', '' );
@@ -477,12 +477,12 @@ class import {
 		$f->ende_formular ();
 		
 		$f->erstelle_formular ( 'Weiter', '?daten=objekte_raus&objekte_raus=import&vor' );
-		$f->send_button ( "sbmW", "Zur�ck" );
+		$f->send_button ( "sbmW", "Zurück" );
 		$f->ende_formular ();
 		// print_r($arr);
 	}
 	function step1_1($arr, $einheit_id) {
-		echo "<h2>STEP 2 - PERSONEN MIETER UND EIGENT�MER</h2>";
+		echo "<h2>STEP 2 - PERSONEN MIETER UND EIGENTÜMER</h2>";
 		// echo '<pre>';
 		// print_r($arr);
 		$anz_mvs = count ( $arr ['MVZ'] );
@@ -507,18 +507,18 @@ class import {
 				$new_arr [$a] ['MIETER'] ['ZUSTELL'] = $zustell_ans;
 				
 				if ($anrede == 'Herr' or $anrede == 'Herrn') {
-					$new_arr [$a] ['MIETER'] ['GES'] [] = 'm�nnlich';
+					$new_arr [$a] ['MIETER'] ['GES'] [] = 'männlich';
 					// echo "$anrede<br>";
 				}
 				if ($anrede == 'Herren') {
-					$new_arr [$a] ['MIETER'] ['GES'] [] = 'm�nnlich';
-					$new_arr [$a] ['MIETER'] ['GES'] [] = 'm�nnlich';
+					$new_arr [$a] ['MIETER'] ['GES'] [] = 'männlich';
+					$new_arr [$a] ['MIETER'] ['GES'] [] = 'männlich';
 				}
 				if ($anrede == 'Frau') {
 					$new_arr [$a] ['MIETER'] ['GES'] [] = 'weiblich';
 				}
 				if ($anrede == 'Herr und Frau' or $anrede == 'Familie') {
-					$new_arr [$a] ['MIETER'] ['GES'] [] = 'm�nnlich';
+					$new_arr [$a] ['MIETER'] ['GES'] [] = 'männlich';
 					$new_arr [$a] ['MIETER'] ['GES'] [] = 'weiblich';
 				}
 				if (! is_array ( $new_arr [$a] ['MIETER'] ['GES'] )) {
@@ -551,18 +551,18 @@ class import {
 			$new_arr [$a] ['MIETER'] ['ZUSTELL'] = $zustell_ans;
 			
 			if ($anrede == 'Herr' or $anrede == 'Herrn') {
-				$new_arr [$a] ['MIETER'] ['GES'] [] = 'm�nnlich';
+				$new_arr [$a] ['MIETER'] ['GES'] [] = 'männlich';
 				// echo "$anrede<br>";
 			}
 			if ($anrede == 'Herren') {
-				$new_arr [$a] ['MIETER'] ['GES'] [] = 'm�nnlich';
-				$new_arr [$a] ['MIETER'] ['GES'] [] = 'm�nnlich';
+				$new_arr [$a] ['MIETER'] ['GES'] [] = 'männlich';
+				$new_arr [$a] ['MIETER'] ['GES'] [] = 'männlich';
 			}
 			if ($anrede == 'Frau') {
 				$new_arr [$a] ['MIETER'] ['GES'] [] = 'weiblich';
 			}
 			if ($anrede == 'Herr und Frau' or $anrede == 'Familie') {
-				$new_arr [$a] ['MIETER'] ['GES'] [] = 'm�nnlich';
+				$new_arr [$a] ['MIETER'] ['GES'] [] = 'männlich';
 				$new_arr [$a] ['MIETER'] ['GES'] [] = 'weiblich';
 			}
 			if (! is_array ( $new_arr [$a] ['MIETER'] ['GES'] )) {
@@ -585,7 +585,7 @@ class import {
 			if ($a == $anz_mvs - 1) {
 				$f = new formular ();
 				// $f->fieldset_ende();
-				$f->fieldset ( 'EIGENT�MER', 'ett' );
+				$f->fieldset ( 'EIGENTÜMER', 'ett' );
 			} else {
 				$f = new formular ();
 				$f->fieldset ( 'MIETER', 'miet' );
@@ -622,7 +622,7 @@ class import {
 						$f->text_feld ( "Email", "email", "$email_m", "50", 'email', '' );
 						if ($a == $anz_mvs - 1) {
 							// $f->text_feld("TYP", "p_typ", "ET", "50", 'p_typ','');
-							$f->datum_feld ( 'Eigent�mer seit', 'et_seit', '01.01.2014', 'et_seit' );
+							$f->datum_feld ( 'Eigentümer seit', 'et_seit', '01.01.2014', 'et_seit' );
 							$f->hidden_feld ( "p_typ", "ET" );
 						} else {
 							$f->hidden_feld ( "p_typ", "MIETER" );
@@ -640,10 +640,10 @@ class import {
 					}
 					if ($a == $anz_mvs - 1 && $this->check_person_et ( $person_id, $einheit_id ) == false) {
 						$f->hidden_feld ( "einheit_id", "$einheit_id" );
-						$f->datum_feld ( 'Eigent�mer seit', 'et_seit', '01.01.2014', 'et_seit' );
+						$f->datum_feld ( 'Eigentümer seit', 'et_seit', '01.01.2014', 'et_seit' );
 						$f->hidden_feld ( "p_typ", "ET" );
 						$f->hidden_feld ( "objekte_raus", "person_et" );
-						$f->send_button ( "submit_pers", "ET �bernehmen" );
+						$f->send_button ( "submit_pers", "ET übernehmen" );
 					}
 					
 					$f->ende_formular ();
@@ -680,18 +680,18 @@ class import {
 				$new_arr [$a] ['MIETER'] ['ZUSTELL'] = $zustell_ans;
 				
 				if ($anrede == 'Herr' or $anrede == 'Herrn') {
-					$new_arr [$a] ['MIETER'] ['GES'] [] = 'm�nnlich';
+					$new_arr [$a] ['MIETER'] ['GES'] [] = 'männlich';
 					// echo "$anrede<br>";
 				}
 				if ($anrede == 'Herren') {
-					$new_arr [$a] ['MIETER'] ['GES'] [] = 'm�nnlich';
-					$new_arr [$a] ['MIETER'] ['GES'] [] = 'm�nnlich';
+					$new_arr [$a] ['MIETER'] ['GES'] [] = 'männlich';
+					$new_arr [$a] ['MIETER'] ['GES'] [] = 'männlich';
 				}
 				if ($anrede == 'Frau') {
 					$new_arr [$a] ['MIETER'] ['GES'] [] = 'weiblich';
 				}
 				if ($anrede == 'Herr und Frau' or $anrede == 'Familie') {
-					$new_arr [$a] ['MIETER'] ['GES'] [] = 'm�nnlich';
+					$new_arr [$a] ['MIETER'] ['GES'] [] = 'männlich';
 					$new_arr [$a] ['MIETER'] ['GES'] [] = 'weiblich';
 				}
 				if (! is_array ( $new_arr [$a] ['MIETER'] ['GES'] )) {
@@ -782,18 +782,18 @@ class import {
 				$new_arr [$a] ['MIETER'] ['ZUSTELL'] = $zustell_ans;
 				
 				if ($anrede == 'Herr' or $anrede == 'Herrn') {
-					$new_arr [$a] ['MIETER'] ['GES'] [] = 'm�nnlich';
+					$new_arr [$a] ['MIETER'] ['GES'] [] = 'männlich';
 					// echo "$anrede<br>";
 				}
 				if ($anrede == 'Herren') {
-					$new_arr [$a] ['MIETER'] ['GES'] [] = 'm�nnlich';
-					$new_arr [$a] ['MIETER'] ['GES'] [] = 'm�nnlich';
+					$new_arr [$a] ['MIETER'] ['GES'] [] = 'männlich';
+					$new_arr [$a] ['MIETER'] ['GES'] [] = 'männlich';
 				}
 				if ($anrede == 'Frau') {
 					$new_arr [$a] ['MIETER'] ['GES'] [] = 'weiblich';
 				}
 				if ($anrede == 'Herr und Frau' or $anrede == 'Familie') {
-					$new_arr [$a] ['MIETER'] ['GES'] [] = 'm�nnlich';
+					$new_arr [$a] ['MIETER'] ['GES'] [] = 'männlich';
 					$new_arr [$a] ['MIETER'] ['GES'] [] = 'weiblich';
 				}
 				if (! is_array ( $new_arr [$a] ['MIETER'] ['GES'] )) {
@@ -944,7 +944,7 @@ class import {
 		 */
 	}
 	function euro_entferen($string) {
-		return str_replace ( '�', '', $string );
+		return str_replace ( '€', '', $string );
 	}
 	function get_import_arr($file = null) {
 		if (! file_exists ( HAUPT_PATH . '/' . BERLUS_PATH . '/' . $file )) {
@@ -957,7 +957,7 @@ class import {
 		// echo '<pre>';
 		// print_r($arr);
 		
-		/* �berschriften */
+		/* Überschriften */
 		// $ue_arr = explode(';', $arr[0]);
 		// print_r($ue_arr);
 		$anz_a = count ( $arr );
@@ -1072,7 +1072,7 @@ class import {
 		}
 	}
 	function et_erstellen($einheit_id, $von, $bis = '0000-00-00') {
-		/* Neue Eigent�mer eintragen */
+		/* Neue Eigentümer eintragen */
 		$id = last_id2 ( 'WEG_MITEIGENTUEMER', 'ID' ) + 1;
 		$db_abfrage = "INSERT INTO WEG_MITEIGENTUEMER VALUES (NULL, '$id', '$einheit_id', '$von', '$bis', '1')";
 		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );

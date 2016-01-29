@@ -25,7 +25,7 @@ class gk {
 		$f = new formular ();
 		$f->erstelle_formular ( "Neues Geldkonto erstellen", NULL );
 		$f->text_feld ( "Geldkontobezeichnung", "g_bez", "", "50", 'g_bez', '' );
-		$f->text_feld ( "Beg�nstigter", "beguenstigter", "", "50", 'beguenstigter', '' );
+		$f->text_feld ( "Begünstigter", "beguenstigter", "", "50", 'beguenstigter', '' );
 		$f->text_feld ( "Kontonummer", "kontonummer", "", "50", 'kontonummer', '' );
 		$f->text_feld ( "BLZ", "blz", "", "50", 'blz', '' );
 		$js_iban_bic = "onclick=\"get_iban_bic('kontonummer', 'blz')\"";
@@ -39,7 +39,7 @@ class gk {
 		// $js_typ='';
 		$b->dropdown_kostentreager_typen ( 'Geldkonto zuweisen an', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
 		$js_id = "";
-		$b->dropdown_kostentreager_ids ( 'Bitte Zuweisung w�hlen', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
+		$b->dropdown_kostentreager_ids ( 'Bitte Zuweisung wählen', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
 		
 		$f->hidden_feld ( "option", "new_gk" );
 		$f->send_button ( "submit_gk", "Erstellen" );
@@ -50,9 +50,9 @@ class gk {
 		$gkk->geld_konto_details ( $gk_id );
 		
 		$f = new formular ();
-		$f->erstelle_formular ( "Geldkonto �ndern", NULL );
+		$f->erstelle_formular ( "Geldkonto ändern", NULL );
 		$f->text_feld ( "Geldkontobezeichnung", "g_bez", "$gkk->geldkonto_bez", "50", 'g_bez', '' );
-		$f->text_feld ( "Beg�nstigter", "beguenstigter", "$gkk->beguenstigter", "50", 'beguenstigter', '' );
+		$f->text_feld ( "Begünstigter", "beguenstigter", "$gkk->beguenstigter", "50", 'beguenstigter', '' );
 		$f->text_feld ( "Kontonummer", "kontonummer", "$gkk->kontonummer", "50", 'kontonummer', '' );
 		$f->text_feld ( "BLZ", "blz", "$gkk->blz", "50", 'blz', '' );
 		$js_iban_bic = "onclick=\"get_iban_bic('kontonummer', 'blz')\"";
@@ -66,11 +66,11 @@ class gk {
 		 * #$js_typ='';
 		 * $b->dropdown_kostentreager_typen('Geldkonto zuweisen an', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ);
 		 * $js_id = "";
-		 * $b->dropdown_kostentreager_ids('Bitte Zuweisung w�hlen', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id);
+		 * $b->dropdown_kostentreager_ids('Bitte Zuweisung wählen', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id);
 		 */
 		
 		$f->hidden_feld ( "option", "gk_update" );
-		$f->send_button ( "submit_gk", "�ndern" );
+		$f->send_button ( "submit_gk", "ändern" );
 		$f->ende_formular ();
 	}
 	function geldkonto_update($gk_id, $g_bez, $beguenstigter, $kontonummer, $blz, $institut, $iban, $bic) {
@@ -112,14 +112,14 @@ class gk {
 	function form_geldkonto_zuweisen() {
 		$f = new formular ();
 		$f->erstelle_formular ( "Geldkonto zuweisen", NULL );
-		$this->dropdown_geldkonten_alle ( 'Geldkonto w�hlen', 'geldkonto_id', 'geldkonto_id' );
+		$this->dropdown_geldkonten_alle ( 'Geldkonto wählen', 'geldkonto_id', 'geldkonto_id' );
 		
 		$b = new buchen ();
 		$js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
 		// $js_typ='';
 		$b->dropdown_kostentreager_typen ( 'Geldkonto zuweisen an', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
 		$js_id = "";
-		$b->dropdown_kostentreager_ids ( 'Bitte Zuweisung w�hlen', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
+		$b->dropdown_kostentreager_ids ( 'Bitte Zuweisung wählen', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
 		
 		$f->hidden_feld ( "option", "zuweisen_gk" );
 		$f->send_button ( "submit_gk", "Zuweisen" );
