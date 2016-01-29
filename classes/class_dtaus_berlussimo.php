@@ -21,10 +21,10 @@
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
 
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
 class dtaus_berlus {
 	function dtaus_datei_speichern($folder, $filename, $string) {
 		$doc_root = $_SERVER ['DOCUMENT_ROOT'];
@@ -61,9 +61,9 @@ class dtaus_berlus {
 		}
 		
 		$filename_neu = "$ordner_temp$filename";
-		/* wenn datei existiert l�schen */
+		/* wenn datei existiert löschen */
 		if (file_exists ( $filename_neu )) {
-			unlink ( $filename_neu ); // Datei l�schen
+			unlink ( $filename_neu ); // Datei löschen
 		}
 		if (! file_exists ( $filename_neu )) {
 			$fhandle = fopen ( $filename_neu, "w" );
@@ -71,7 +71,7 @@ class dtaus_berlus {
 			fclose ( $fhandle );
 			echo "<br>$filename_neu erstellt";
 			chmod ( $filename_neu, 0644 );
-			// system("rm $dir -R"); //ordner abrechnungsjahr l�schen
+			// system("rm $dir -R"); //ordner abrechnungsjahr löschen
 			echo "<table  border=3>";
 			echo "<tr class=\"feldernamen\"><td><a href=\"$_SERVER[SCRIPT_ROOT]$filename_neu\"><b>DOWNLOAD ALS DTA-DATEI</a></b></td></tr>";
 			echo "<tr><td>$string</td></tr>";

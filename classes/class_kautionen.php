@@ -27,7 +27,7 @@ class kautionen {
 		if ($this->kautions_betrag == '') {
 			$this->kautions_betrag = 'Keine Kautionsdaten';
 		} else {
-			$this->kautions_betrag = $this->kautions_betrag . ' �';
+			$this->kautions_betrag = $this->kautions_betrag . ' €';
 		}
 		return $this->kautions_betrag;
 	}
@@ -54,7 +54,7 @@ class kautionen {
 	function kautionszahlungen_alle_arr($konto) {
 		// $result = mysql_query ("SELECT DATUM, BETRAG, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM KAUTIONS_BUCHUNGEN ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, DATUM ASC");
 		if (empty ( $_SESSION [geldkonto_id] )) {
-			die ( "Kautionskonto w�hlen" );
+			die ( "Kautionskonto wählen" );
 		} else {
 			
 			$gk_id = $_SESSION [geldkonto_id];
@@ -72,7 +72,7 @@ class kautionen {
 	function kautionszahlungen_alle_arr_bis($datum_bis) {
 		// $result = mysql_query ("SELECT DATUM, BETRAG, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM KAUTIONS_BUCHUNGEN ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, DATUM ASC");
 		if (empty ( $_SESSION [geldkonto_id] )) {
-			die ( "Kautionskonto w�hlen" );
+			die ( "Kautionskonto wählen" );
 		} else {
 			
 			$gk_id = $_SESSION [geldkonto_id];
@@ -93,7 +93,7 @@ class kautionen {
 		
 		$f = new formular ();
 		$f->erstelle_formular ( "Kautionshochrechnung $mv->einheit_kurzname $mv->personen_name_string", NULL );
-		$f->datum_feld ( 'Gew�nschtes Auszahlungsdatum', 'datum_bis', "", 'datum_bis' );
+		$f->datum_feld ( 'Gewünschtes Auszahlungsdatum', 'datum_bis', "", 'datum_bis' );
 		$f->hidden_feld ( "mietvertrag_id", "$mietvertrag_id" );
 		$f->hidden_feld ( "option", "hochrechnung_mv" );
 		$f->send_button ( "submit", "Berechnen" );
@@ -105,7 +105,7 @@ class kautionen {
 		$mietekalt_1 = $this->summe_mietekalt ( $mietvertrag_id );
 		$kaution = nummer_punkt2komma ( $mietekalt_1 * 3 );
 		$f = new formular ();
-		$f->erstelle_formular ( "Kautionen buchen f�r $mv->einheit_kurzname $mv->personen_name_string", NULL );
+		$f->erstelle_formular ( "Kautionen buchen für $mv->einheit_kurzname $mv->personen_name_string", NULL );
 		$f->datum_feld ( 'Datum', 'datum', "", 'datum' );
 		$f->text_feld ( 'Betrag', 'betrag', "$kaution", '10', 'betrag', '' );
 		$f->text_bereich ( 'Buchungstext', 'text', "", '10', 'text', '' );
@@ -119,7 +119,7 @@ class kautionen {
 		if (! empty ( $_SESSION [geldkonto_id] )) {
 			$zahlungen_arr = $this->kautionszahlungen_arr ( $kostentraeger_typ, $kostentraeger_id, $_SESSION [geldkonto_id] );
 		} else {
-			die ( "Kautionskonto w�hlen" );
+			die ( "Kautionskonto wählen" );
 		}
 		$summe = 0.00;
 		$summe_verzinst = 0.00;
@@ -220,7 +220,7 @@ class kautionen {
 		if (! empty ( $_SESSION [geldkonto_id] )) {
 			$zahlungen_arr = $this->kautionszahlungen_arr ( $kostentraeger_typ, $kostentraeger_id, $_SESSION [geldkonto_id] );
 		} else {
-			die ( "Kautionskonto w�hlen" );
+			die ( "Kautionskonto wählen" );
 		}
 		$summe = 0.00;
 		$summe_verzinst = 0.00;
@@ -487,7 +487,7 @@ class kautionen {
 		}
 		
 		return $betrag_ende_monat;
-		/* Beispiel: Kaution Euro 1000 bei Mietdauer 1 Jahr und 14 Tagen: 1000 : 100 : 1 Jahr x Zins 3 x 1 Jahr = Euro 30. Folgejahr: 1030 : 100 : 360 x 3 x 14 Tage = 0,40 Euro - Der Mieter erh�lt mit Zinseszinses vom Vermieter Euro 1.030,40 zur�ck! */
+		/* Beispiel: Kaution Euro 1000 bei Mietdauer 1 Jahr und 14 Tagen: 1000 : 100 : 1 Jahr x Zins 3 x 1 Jahr = Euro 30. Folgejahr: 1030 : 100 : 360 x 3 x 14 Tage = 0,40 Euro - Der Mieter erhält mit Zinseszinses vom Vermieter Euro 1.030,40 zurück! */
 	}
 	function zins_tage_alt($datum_von, $datum_bis) {
 		include_once ('classes/class_urlaub.php');
@@ -543,7 +543,7 @@ class kautionen {
 			}
 		}
 		
-		/* N�chstes Jahr */
+		/* Nächstes Jahr */
 		if ($datum_von_jahr < $datum_bis_jahr) {
 			$jahre = $datum_bis_jahr - $datum_von_jahr;
 			if ($jahre == 1) {

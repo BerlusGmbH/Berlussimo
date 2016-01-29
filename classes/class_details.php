@@ -18,14 +18,14 @@
  * 
  */
 
-/* Modul DETAILS f�r Anzeigen/erfassung aller DETAILS bezogen auf OBJEKTE, H�USER, MIETER, EINHEITEN USW */
+/* Modul DETAILS für Anzeigen/erfassung aller DETAILS bezogen auf OBJEKTE, HÄUSER, MIETER, EINHEITEN USW */
 
 /* Allgemeine Funktionsdatei laden */
 if (file_exists ( "includes/allgemeine_funktionen.php" )) {
 	include_once ("includes/allgemeine_funktionen.php");
 }
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 if (file_exists ( "classes/class_formular.php" )) {
 	include_once ("classes/class_formular.php");
 }
@@ -37,9 +37,9 @@ if (file_exists ( "classes/berlussimo_class.php" )) {
 class detail {
 	function detailsanzeigen($detail_tabelle, $detail_id) {
 		$f = new formular ();
-		$f->fieldset ( "Details men�", 'details_menue' );
+		$f->fieldset ( "Details menü", 'details_menue' );
 		$link = "?daten=details&option=details_hinzu&detail_tabelle=$detail_tabelle&detail_id=$detail_id";
-		echo "<a href=\"$link\">Neues Detail hinzuf�gen</a>&nbsp;";
+		echo "<a href=\"$link\">Neues Detail hinzufügen</a>&nbsp;";
 		$f->fieldset_ende ();
 		
 		$db_abfrage = "SELECT DETAIL_DAT, DETAIL_ID, DETAIL_NAME, DETAIL_INHALT, DETAIL_BEMERKUNG FROM DETAIL WHERE DETAIL_AKTUELL='1' && DETAIL_ZUORDNUNG_TABELLE = '$detail_tabelle' && DETAIL_ZUORDNUNG_ID = '$detail_id' ORDER BY DETAIL_NAME ASC";
@@ -50,13 +50,13 @@ class detail {
 		if ($numrows) {
 			echo "<table>\n";
 			$kurzinfo = $this->get_info_detail ( $detail_tabelle, $detail_id );
-			echo "<tr class=\"feldernamen\"><td colspan=4>Details �ber $kurzinfo</td></tr>\n";
+			echo "<tr class=\"feldernamen\"><td colspan=4>Details über $kurzinfo</td></tr>\n";
 			echo "<tr class=\"feldernamen\"><td>Beschreibung</td><td>Inhalt</td><td>Bemerkung</td><td>Optionen</td></tr>\n";
 			
 			$counter = 0;
 			while ( list ( $DETAIL_DAT, $DETAIL_ID, $DETAIL_NAME, $DETAIL_INHALT, $DETAIL_BEMERKUNG ) = mysql_fetch_row ( $resultat ) ) {
 				$counter ++;
-				$loeschen_link = "<a href=\"?daten=details&option=detail_loeschen&detail_dat=$DETAIL_DAT\">L�schen</a>";
+				$loeschen_link = "<a href=\"?daten=details&option=detail_loeschen&detail_dat=$DETAIL_DAT\">Löschen</a>";
 				
 				if ($counter == 1) {
 					// echo "$DETAIL_NAME $DETAIL_INHALT<br>\n";
@@ -147,7 +147,7 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC" );
 			 * print_r($arr);
 			 */
 			echo "<label for=\"$id\">$label</label><select name=\"$name\" id=\"$id\" size=1 $js>\n";
-			echo "<option value=\"0\">Bitte w�hlen</option>\n";
+			echo "<option value=\"0\">Bitte wählen</option>\n";
 			$anz = count ( $arr );
 			
 			for($a = 0; $a < $anz; $a ++) {
@@ -169,7 +169,7 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC" );
 			echo "<label for=\"$id\">$beschreibung</label>\n";
 			echo "<select name=\"$name\" id=\"$id\" $js>\n";
 			$anzahl = count ( $arr );
-			echo "<option value=\"nooption\">Bitte w�hlen</option>\n";
+			echo "<option value=\"nooption\">Bitte wählen</option>\n";
 			for($a = 0; $a < $anzahl; $a ++) {
 				$kat_id = $arr [$a] ['DETAIL_KAT_ID'];
 				$kat_name = $arr [$a] ['DETAIL_KAT_NAME'];
@@ -214,18 +214,18 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC" );
 		$form = new formular ();
 		$link = '';
 		if ($tab == 'EINHEIT') {
-			$link = "<a href=\"index.php?daten=uebersicht&anzeigen=einheit&einheit_id=$id\">Zur�ck zu Einheit</a>";
+			$link = "<a href=\"index.php?daten=uebersicht&anzeigen=einheit&einheit_id=$id\">Zurück zu Einheit</a>";
 		}
-		$form->erstelle_formular ( 'Detail hinzuf�gen', '' );
+		$form->erstelle_formular ( 'Detail hinzufügen', '' );
 		echo "$link<br>";
 		$form->hidden_feld ( "tabelle", "$tab" );
 		$form->hidden_feld ( "id", "$id" );
 		$det_kat_arr = $this->get_detail_kat_arr ( $tab );
 		// $det_ukat_arr = $this->get_detail_ukat_arr(1);
 		$js = "onchange=\"get_detail_ukats(this.value)\" onload=\"get_detail_ukats(this.value)\"";
-		$this->select_hauptkats_arr ( "Detail ausw�hlen zu $kurzinfo", 'detail_kat', 'detail_kat', $js, $vorauswahl, $det_kat_arr );
+		$this->select_hauptkats_arr ( "Detail auswählen zu $kurzinfo", 'detail_kat', 'detail_kat', $js, $vorauswahl, $det_kat_arr );
 		
-		$this->select_unterkats ( 'Detailoption ausw�hlen', 'detail_ukat', 'detail_ukat', '' );
+		$this->select_unterkats ( 'Detailoption auswählen', 'detail_ukat', 'detail_ukat', '' );
 		$hinw = ' Text als Warnung eingeben: <p class="warnung"> INHALT </p>';
 		
 		$form->text_bereich ( 'Detail Inhalt', 'inhalt', '', 20, 10, 'inhalt' );
@@ -296,9 +296,9 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC" );
 		$db_abfrage = "UPDATE DETAIL SET DETAIL_AKTUELL='0' WHERE DETAIL_DAT='$detail_dat'";
 		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 		if ($resultat) {
-			echo "<br>Detail wurde gel�scht";
+			echo "<br>Detail wurde gelöscht";
 		} else {
-			echo "<br>FEHLER: Detail wurde NICHT gel�scht";
+			echo "<br>FEHLER: Detail wurde NICHT gelöscht";
 		}
 		$this->finde_tab_id ( $detail_dat );
 		$link = "?daten=details&option=details_anzeigen&detail_tabelle=$this->dat_tabelle&detail_id=$this->dat_id";
@@ -436,7 +436,7 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC" );
 		$arr = $this->get_det_arr ();
 		
 		echo "<label for=\"$id\">$label</label><select name=\"$name\" id=\"$id\" size=1 >\n";
-		echo "<option value=\"\">Bitte w�hlen</option>\n";
+		echo "<option value=\"\">Bitte wählen</option>\n";
 		if (is_array ( $arr )) {
 			$anz = count ( $arr );
 			

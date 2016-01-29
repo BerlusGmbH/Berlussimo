@@ -34,7 +34,7 @@ class listen {
 		echo '<pre>';
 		print_r ( $gk );
 		if (! $gk->geldkonto_id) {
-			// die("$objekt_id Geldkonto zum Objekt hinzuf�gen!!!");
+			// die("$objekt_id Geldkonto zum Objekt hinzufügen!!!");
 		}
 		
 		$db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT_ID`,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
@@ -50,7 +50,7 @@ ORDER BY EINHEIT_KURZNAME";
 				$einheit_id = $row ['EINHEIT_ID'];
 				$e = new einheit ();
 				$det = new detail ();
-				$my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt ( 'EINHEIT', $einheit_id, 'WEG-Fl�che' ); // kommt als Kommazahl
+				$my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt ( 'EINHEIT', $einheit_id, 'WEG-Fläche' ); // kommt als Kommazahl
 				$my_arr [$z] ['WEG-FLAECHE'] = nummer_komma2punkt ( $my_arr [$z] ['WEG-FLAECHE_A'] );
 				$weg = new weg ();
 				$weg->get_last_eigentuemer ( $einheit_id );
@@ -93,7 +93,7 @@ ORDER BY EINHEIT_KURZNAME";
 			for($a = 0; $a < $anz; $a ++) {
 				if (isset ( $my_arr [$a] ['EIGENTUEMER_ID'] )) {
 					$my_arr [$a] ['ABGABEN'] [] ['ABGABE_IHR'] = $my_arr [$a] ['WEG-FLAECHE'] * 0.4;
-					$my_arr [$a] ['ABGABEN'] [] ['VG'] = '30.00'; // Verwaltergeb�hr
+					$my_arr [$a] ['ABGABEN'] [] ['VG'] = '30.00'; // Verwaltergebühr
 					
 					/* Kosten 1023 Reparatur Einheit */
 					$my_arr [$a] ['AUSGABEN'] = $this->get_kosten_arr ( 'EINHEIT', $my_arr [$a] ['EINHEIT_ID'], $monat, $jahr, $gk->geldkonto_id, 1023 );
@@ -166,7 +166,7 @@ ORDER BY EINHEIT_KURZNAME";
 								'EIGENTUEMER_NAMEN' => "owner",
 								'EINHEIT_KURZNAME' => "apart.No",
 								'MIETER' => 'tenant',
-								'WEG-FLAECHE_A' => 'size m�',
+								'WEG-FLAECHE_A' => 'size m²',
 								'BRUTTO_SOLL_A' => 'to cash g.',
 								'BRUTTO_IST_A' => 'paid g.',
 								'DIFF_A' => 'diff.',
@@ -197,10 +197,10 @@ ORDER BY EINHEIT_KURZNAME";
 						) );
 					} else {
 						$cols = array (
-								'EIGENTUEMER_NAMEN' => "Eigent�mer",
+								'EIGENTUEMER_NAMEN' => "Eigentümer",
 								'EINHEIT_KURZNAME' => "EINHEIT",
 								'MIETER' => 'Mieter',
-								'WEG-FLAECHE_A' => 'Eig. m�',
+								'WEG-FLAECHE_A' => 'Eig. m²',
 								'BRUTTO_SOLL_A' => 'Warm SOLL',
 								'BRUTTO_IST_A' => 'Warm IST',
 								'DIFF_A' => 'DIFF',
@@ -210,7 +210,7 @@ ORDER BY EINHEIT_KURZNAME";
 								'SUMME_REP_A' => 'Rep.',
 								'ENDSUMME_A' => 'AUSZAHLUNG' 
 						);
-						$pdf->ezTable ( $pdf_tab, $cols, "<b>$monat_name $jahr - Gesamt�bersicht - $ein_nam</b>", array (
+						$pdf->ezTable ( $pdf_tab, $cols, "<b>$monat_name $jahr - Gesamtübersicht - $ein_nam</b>", array (
 								'showHeadings' => 1,
 								'shaded' => 1,
 								'titleFontSize' => 8,
@@ -237,7 +237,7 @@ ORDER BY EINHEIT_KURZNAME";
 						if ($lang == 'en') {
 							$pdf->ezText ( "payout not possible!", 12 );
 						} else {
-							$pdf->ezText ( "Keine Auszahlung m�glich!", 12 );
+							$pdf->ezText ( "Keine Auszahlung möglich!", 12 );
 						}
 					}
 					
@@ -358,7 +358,7 @@ ORDER BY EINHEIT_KURZNAME";
 					}
 					
 					// $cols = array('DATUM'=>"Datum",'VERWENDUNGSZWECK'=>"Buchungstext", 'BETRAG'=>"Betrag");
-					// $pdf->ezTable($pdf_tab[$a]['EIG_AUSZAHLUNG'], $cols, "<b>$monat_name $jahr - Auszahlung an Eigent�mer 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
+					// $pdf->ezTable($pdf_tab[$a]['EIG_AUSZAHLUNG'], $cols, "<b>$monat_name $jahr - Auszahlung an Eigentümer 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
 					
 					if ($my_arr [$a] ['MIETVERTRAG_ID']) {
 						$pdf->ezNewPage ();
@@ -397,7 +397,7 @@ ORDER BY EINHEIT_KURZNAME";
 		echo '<pre>';
 		print_r ( $gk );
 		if (! $gk->geldkonto_id) {
-			die ( 'Geldkonto zum Objekt hinzuf�gen!!!' );
+			die ( 'Geldkonto zum Objekt hinzufügen!!!' );
 		}
 		$db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT_ID`,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
 WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.OBJEKT_ID='$objekt_id' 
@@ -412,7 +412,7 @@ ORDER BY EINHEIT_KURZNAME";
 				$einheit_id = $row ['EINHEIT_ID'];
 				$e = new einheit ();
 				$det = new detail ();
-				$my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt ( 'EINHEIT', $einheit_id, 'WEG-Fl�che' ); // kommt als Kommazahl
+				$my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt ( 'EINHEIT', $einheit_id, 'WEG-Fläche' ); // kommt als Kommazahl
 				$my_arr [$z] ['WEG-FLAECHE'] = nummer_komma2punkt ( $my_arr [$z] ['WEG-FLAECHE_A'] );
 				
 				$my_arr [$z] ['WG_NR'] = $det->finde_detail_inhalt ( 'EINHEIT', $einheit_id, 'Alte Nr' ); // kommt als Kommazahl
@@ -460,7 +460,7 @@ ORDER BY EINHEIT_KURZNAME";
 					// echo $my_arr[$a]['EIGENTUEMER_ID'];
 					// die();
 					// $my_arr[$a]['ABGABEN'][]['ABGABE_IHR'] = $my_arr[$a]['WEG-FLAECHE'] * 0.4;
-					// $my_arr[$a]['ABGABEN'][]['VG'] = '30.00'; //Verwaltergeb�hr
+					// $my_arr[$a]['ABGABEN'][]['VG'] = '30.00'; //Verwaltergebühr
 					
 					$weg1 = new weg ();
 					$ihr_hg = $weg1->get_summe_kostenkat_monat ( $monat, $jahr, 'Einheit', $einheit_id, '6030' );
@@ -588,7 +588,7 @@ ORDER BY EINHEIT_KURZNAME";
 					$e_nam = $pdf_tab [$a] ['EIGENTUEMER_NAMEN'];
 					$ein_nam = $pdf_tab [$a] ['EINHEIT_KURZNAME'];
 					
-					/* �bersichtstabelle */
+					/* Übersichtstabelle */
 					$uebersicht [$a] ['EINHEIT_KURZNAME'] = $ein_nam;
 					$uebersicht [$a] ['EIGENTUEMER_NAMEN'] = $e_nam;
 					$uebersicht [$a] ['MIETER'] = $pdf_tab [$a] ['MIETER'];
@@ -616,7 +616,7 @@ ORDER BY EINHEIT_KURZNAME";
 								'EIGENTUEMER_NAMEN' => "owner",
 								'EINHEIT_KURZNAME' => "apart.No",
 								'MIETER' => 'tenant',
-								'WEG-FLAECHE_A' => 'size m�',
+								'WEG-FLAECHE_A' => 'size m²',
 								'NETTO_SOLL_A' => 'net rent',
 								'ABGABE_IHR_A' => 'for maint.',
 								'ABGABE_HV_A' => 'mng. fee',
@@ -644,10 +644,10 @@ ORDER BY EINHEIT_KURZNAME";
 						) );
 					} else {
 						$cols = array (
-								'EIGENTUEMER_NAMEN' => "Eigent�mer",
+								'EIGENTUEMER_NAMEN' => "Eigentümer",
 								'EINHEIT_KURZNAME' => "EINHEIT",
 								'MIETER' => 'Mieter',
-								'WEG-FLAECHE_A' => 'Eig. m�',
+								'WEG-FLAECHE_A' => 'Eig. m²',
 								'BRUTTO_SOLL_A' => 'Warm SOLL',
 								'BRUTTO_IST_A' => 'Warm IST',
 								'DIFF_A' => 'DIFF',
@@ -657,7 +657,7 @@ ORDER BY EINHEIT_KURZNAME";
 								'SUMME_REP_A' => 'Rep.',
 								'ENDSUMME_A' => 'AUSZAHLUNG' 
 						);
-						$pdf->ezTable ( $pdf_tab, $cols, "<b>$monat_name $jahr - Gesamt�bersicht - $ein_nam</b>", array (
+						$pdf->ezTable ( $pdf_tab, $cols, "<b>$monat_name $jahr - Gesamtübersicht - $ein_nam</b>", array (
 								'showHeadings' => 1,
 								'shaded' => 1,
 								'titleFontSize' => 8,
@@ -685,7 +685,7 @@ ORDER BY EINHEIT_KURZNAME";
 					 * if($lang=='en'){
 					 * $pdf->ezText("no payout possible!", 12);
 					 * }else{
-					 * $pdf->ezText("Keine Auszahlung m�glich!", 12);
+					 * $pdf->ezText("Keine Auszahlung möglich!", 12);
 					 * }
 					 * }
 					 */
@@ -750,7 +750,7 @@ ORDER BY EINHEIT_KURZNAME";
 						$pdf->ezText ( "Keine Reparaturen", 12 );
 					}
 					$pdf->ezSetDy ( - 20 ); // abstand
-					/* TAbelle Auszahlung an Eigent�mer */
+					/* TAbelle Auszahlung an Eigentümer */
 					// print_r($my_arr[$a]['AUSZAHLUNG_ET']);
 					// die();
 					if (is_array ( $my_arr [$a] ['AUSZAHLUNG_ET'] )) {
@@ -768,7 +768,7 @@ ORDER BY EINHEIT_KURZNAME";
 									'VERWENDUNGSZWECK' => "Buchungstext",
 									'BETRAG' => "Betrag" 
 							);
-							// $pdf->ezTable($my_arr[$a]['AUSZAHLUNG_ET'], $cols, "<b>$monat_name $jahr - �berweisung 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
+							// $pdf->ezTable($my_arr[$a]['AUSZAHLUNG_ET'], $cols, "<b>$monat_name $jahr - Überweisung 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
 						}
 					}
 					/*
@@ -787,7 +787,7 @@ ORDER BY EINHEIT_KURZNAME";
 					 */
 					
 					// $cols = array('DATUM'=>"Datum",'VERWENDUNGSZWECK'=>"Buchungstext", 'BETRAG'=>"Betrag");
-					// $pdf->ezTable($pdf_tab[$a]['EIG_AUSZAHLUNG'], $cols, "<b>$monat_name $jahr - Auszahlung an Eigent�mer 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
+					// $pdf->ezTable($pdf_tab[$a]['EIG_AUSZAHLUNG'], $cols, "<b>$monat_name $jahr - Auszahlung an Eigentümer 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
 					
 					if ($pdf_tab [$a] ['MIETER_SALDO'] < 0) {
 						$tmp_minus = substr ( $pdf_tab [$a] ['MIETER_SALDO'], 1 );
@@ -864,7 +864,7 @@ ORDER BY EINHEIT_KURZNAME";
 		echo '<pre>';
 		print_r ( $gk );
 		if (! $gk->geldkonto_id) {
-			die ( 'Geldkonto zum Objekt hinzuf�gen!!!' );
+			die ( 'Geldkonto zum Objekt hinzufügen!!!' );
 		}
 		$db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT_ID`,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
 WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.OBJEKT_ID='$objekt_id' 
@@ -880,7 +880,7 @@ ORDER BY EINHEIT_KURZNAME";
 				$einheit_qm = $row ['EINHEIT_QM'];
 				$e = new einheit ();
 				$det = new detail ();
-				$my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt ( 'EINHEIT', $einheit_id, 'WEG-Fl�che' ); // kommt als Kommazahl
+				$my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt ( 'EINHEIT', $einheit_id, 'WEG-Fläche' ); // kommt als Kommazahl
 				if (empty ( $my_arr [$z] ['WEG-FLAECHE_A'] )) {
 					$my_arr [$z] ['WEG-FLAECHE_A'] = nummer_punkt2komma ( $einheit_qm );
 				}
@@ -936,7 +936,7 @@ ORDER BY EINHEIT_KURZNAME";
 					if (empty ( $my_arr [$a] ['WEG-FLAECHE'] )) {
 						$my_arr [$a] ['ABGABEN'] [] ['ABGABE_IHR'] = $einheit_qm * - 0.4;
 					}
-					$my_arr [$a] ['ABGABEN'] [] ['VG'] = '30.00'; // Verwaltergeb�hr
+					$my_arr [$a] ['ABGABEN'] [] ['VG'] = '30.00'; // Verwaltergebähr
 					
 					/* Kosten 1023 Reparatur Einheit */
 					$my_arr [$a] ['AUSGABEN'] = $this->get_kosten_arr ( 'EINHEIT', $my_arr [$a] ['EINHEIT_ID'], $monat, $jahr, $gk->geldkonto_id, 1023 );
@@ -1041,7 +1041,7 @@ ORDER BY EINHEIT_KURZNAME";
 					$e_nam = $pdf_tab [$a] ['EIGENTUEMER_NAMEN'];
 					$ein_nam = $pdf_tab [$a] ['EINHEIT_KURZNAME'];
 					
-					/* �bersichtstabelle */
+					/* Übersichtstabelle */
 					$uebersicht [$a] ['EINHEIT_KURZNAME'] = $ein_nam;
 					$uebersicht [$a] ['EIGENTUEMER_NAMEN'] = $e_nam;
 					$uebersicht [$a] ['MIETER'] = $pdf_tab [$a] ['MIETER'];
@@ -1075,7 +1075,7 @@ ORDER BY EINHEIT_KURZNAME";
 								'EIGENTUEMER_NAMEN' => "owner",
 								'EINHEIT_KURZNAME' => "apart.No",
 								'MIETER' => 'tenant',
-								'WEG-FLAECHE_A' => 'size m�',
+								'WEG-FLAECHE_A' => 'size m²',
 								'NETTO_SOLL_A' => 'net rent',
 								'ABGABE_IHR_A' => 'for maint.',
 								'ABGABE_HV_A' => 'mng. fee',
@@ -1102,10 +1102,10 @@ ORDER BY EINHEIT_KURZNAME";
 						) );
 					} else {
 						$cols = array (
-								'EIGENTUEMER_NAMEN' => "Eigent�mer",
+								'EIGENTUEMER_NAMEN' => "Eigentümer",
 								'EINHEIT_KURZNAME' => "EINHEIT",
 								'MIETER' => 'Mieter',
-								'WEG-FLAECHE_A' => 'Eig. m�',
+								'WEG-FLAECHE_A' => 'Eig. m²',
 								'BRUTTO_SOLL_A' => 'Warm SOLL',
 								'BRUTTO_IST_A' => 'Warm IST',
 								'DIFF_A' => 'DIFF',
@@ -1115,7 +1115,7 @@ ORDER BY EINHEIT_KURZNAME";
 								'SUMME_REP_A' => 'Rep.',
 								'ENDSUMME_A' => 'AUSZAHLUNG' 
 						);
-						$pdf->ezTable ( $pdf_tab, $cols, "<b>$monat_name $jahr - Gesamt�bersicht - $ein_nam</b>", array (
+						$pdf->ezTable ( $pdf_tab, $cols, "<b>$monat_name $jahr - Gesamtübersicht - $ein_nam</b>", array (
 								'showHeadings' => 1,
 								'shaded' => 1,
 								'titleFontSize' => 8,
@@ -1143,7 +1143,7 @@ ORDER BY EINHEIT_KURZNAME";
 					 * if($lang=='en'){
 					 * $pdf->ezText("no payout possible!", 12);
 					 * }else{
-					 * $pdf->ezText("Keine Auszahlung m�glich!", 12);
+					 * $pdf->ezText("Keine Auszahlung möglich!", 12);
 					 * }
 					 * }
 					 */
@@ -1190,7 +1190,7 @@ ORDER BY EINHEIT_KURZNAME";
 						$pdf->ezText ( "Keine Reparaturen", 12 );
 					}
 					$pdf->ezSetDy ( - 20 ); // abstand
-					/* TAbelle Auszahlung an Eigent�mer */
+					/* TAbelle Auszahlung an Eigentümer */
 					// print_r($my_arr[$a]['AUSZAHLUNG_ET']);
 					// die();
 					if (is_array ( $my_arr [$a] ['AUSZAHLUNG_ET'] )) {
@@ -1208,7 +1208,7 @@ ORDER BY EINHEIT_KURZNAME";
 									'VERWENDUNGSZWECK' => "Buchungstext",
 									'BETRAG' => "Betrag" 
 							);
-							$pdf->ezTable ( $my_arr [$a] ['AUSZAHLUNG_ET'], $cols, "<b>$monat_name $jahr - �berweisung 80001 - $ein_nam</b>", array (
+							$pdf->ezTable ( $my_arr [$a] ['AUSZAHLUNG_ET'], $cols, "<b>$monat_name $jahr - Überweisung 80001 - $ein_nam</b>", array (
 									'showHeadings' => 1,
 									'shaded' => 1,
 									'titleFontSize' => 8,
@@ -1245,7 +1245,7 @@ ORDER BY EINHEIT_KURZNAME";
 					 */
 					
 					// $cols = array('DATUM'=>"Datum",'VERWENDUNGSZWECK'=>"Buchungstext", 'BETRAG'=>"Betrag");
-					// $pdf->ezTable($pdf_tab[$a]['EIG_AUSZAHLUNG'], $cols, "<b>$monat_name $jahr - Auszahlung an Eigent�mer 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
+					// $pdf->ezTable($pdf_tab[$a]['EIG_AUSZAHLUNG'], $cols, "<b>$monat_name $jahr - Auszahlung an Eigentümer 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
 					
 					$pdf->ezNewPage ();
 					unset ( $pdf_tab );
@@ -1259,8 +1259,8 @@ ORDER BY EINHEIT_KURZNAME";
 			if ($lang == 'en') {
 				$cols = array (
 						'EINHEIT_KURZNAME' => "Apt",
-						'EINHEIT_QM_A' => 'MVm�',
-						'WEG-FLAECHE_A' => 'm�',
+						'EINHEIT_QM_A' => 'MVm²',
+						'WEG-FLAECHE_A' => 'm²',
 						'EIGENTUEMER_NAMEN' => "Own",
 						'MIETER' => "Tenant",
 						'MIETER_SALDO_A' => 'current',
@@ -1313,7 +1313,7 @@ ORDER BY EINHEIT_KURZNAME";
 		if (is_array ( $arr )) {
 			$anz = count ( $arr );
 			echo "<table class=\"sortable\">";
-			echo "<tr><th>EINHEIT</th><th>EIGENT�MER</th><th>Mieter</th><th>SALDO AKT</th><th>KALTM</th><th>INS DIFF</th><th>HV</th><th>IHR</th><th>REP</th><th>TRANSFER</th><th>OPT</th><th>OPT2</th></tr>";
+			echo "<tr><th>EINHEIT</th><th>EIGENTÜMER</th><th>Mieter</th><th>SALDO AKT</th><th>KALTM</th><th>INS DIFF</th><th>HV</th><th>IHR</th><th>REP</th><th>TRANSFER</th><th>OPT</th><th>OPT2</th></tr>";
 			for($a = 0; $a < $anz; $a ++) {
 				$e_kn = $arr [$a] ['EINHEIT_KURZNAME'];
 				$et = $arr [$a] ['EIGENTUEMER_NAMEN'];
@@ -1337,7 +1337,7 @@ ORDER BY EINHEIT_KURZNAME";
 				if ($betrag_in_sepa < $transfer) {
 					// echo "<br>$betrag_in_sepa< $transfer";
 					// die();
-					$link_sepa_ueberweisen = "<a href=\"?daten=listen&option=sepa_ueberweisen&eig_et=$eig_id&betrag=$transfer\">SEPA-�</a>";
+					$link_sepa_ueberweisen = "<a href=\"?daten=listen&option=sepa_ueberweisen&eig_et=$eig_id&betrag=$transfer\">SEPA-Ü</a>";
 					/* Form */
 					echo "<form name=\"sepa_lg\" method=\"post\" action=\"\">";
 					
@@ -1360,7 +1360,7 @@ ORDER BY EINHEIT_KURZNAME";
 					/* Wenn Geldkontenvorhanden */
 					$sep = new sepa ();
 					echo "<td>";
-					if ($sep->dropdown_sepa_geldkonten ( '�berweisen an', 'empf_sepa_gk_id', 'empf_sepa_gk_id', 'Eigentuemer', $eig_id ) == true) {
+					if ($sep->dropdown_sepa_geldkonten ( 'Überweisen an', 'empf_sepa_gk_id', 'empf_sepa_gk_id', 'Eigentuemer', $eig_id ) == true) {
 						// $f->text_feld('VERWENDUNG', 'vzweck', "Eigentuemerentnahme $weg->einheit_kurzname Auszahlung $monat.$jahr", 100, 'vzweck', '');
 						$f->hidden_feld ( 'option', 'sepa_sammler_hinzu' );
 						$f->hidden_feld ( 'vzweck', "$weg->einheit_kurzname $monat.$jahr / Transfer to owner / Auszahlung" );
@@ -1370,7 +1370,7 @@ ORDER BY EINHEIT_KURZNAME";
 						$f->hidden_feld ( 'kos_id', $eig_id );
 						$f->hidden_feld ( 'konto', 5020 );
 						if ($eig_id == '133' or $eig_id == '139' or $eig_id == '200') {
-							$f->send_button ( 'btn_Sepa', 'Zahn�rzte Aufpassen!!!!' );
+							$f->send_button ( 'btn_Sepa', 'Zahnärzte Aufpassen!!!!' );
 						} else {
 							$f->send_button ( 'btn_Sepa', 'inSEPA' );
 						}
@@ -1392,7 +1392,7 @@ ORDER BY EINHEIT_KURZNAME";
 		if (is_array ( $arr )) {
 			$anz = count ( $arr );
 			echo "<table class=\"sortable\">";
-			echo "<tr><th>EINHEIT</th><th>EIGENT�MER</th><th>Mieter</th><th>SALDO AKT</th><th>KALTM</th><th>INS DIFF</th><th>HV</th><th>IHR</th><th>REP</th><th>TRANSFER</th><th>OPT</th></tr>";
+			echo "<tr><th>EINHEIT</th><th>EIGENTÜMER</th><th>Mieter</th><th>SALDO AKT</th><th>KALTM</th><th>INS DIFF</th><th>HV</th><th>IHR</th><th>REP</th><th>TRANSFER</th><th>OPT</th></tr>";
 			for($a = 0; $a < $anz; $a ++) {
 				$e_kn = $arr [$a] ['EINHEIT_KURZNAME'];
 				$et = $arr [$a] ['EIGENTUEMER_NAMEN'];
@@ -1405,7 +1405,7 @@ ORDER BY EINHEIT_KURZNAME";
 				$ihr = $arr [$a] ['ABGABE_IHR'];
 				$rep = $arr [$a] ['SUMME_REP'];
 				$transfer = nummer_komma2punkt ( nummer_punkt2komma ( $arr [$a] ['TRANSFER'] ) );
-				$link_sepa_ueberweisen = "<a href=\"?daten=listen&option=sepa_ueberweisen&eig_et=$eig_id&betrag=$transfer\">SEPA-�</a>";
+				$link_sepa_ueberweisen = "<a href=\"?daten=listen&option=sepa_ueberweisen&eig_et=$eig_id&betrag=$transfer\">SEPA-Ü</a>";
 				if ($mieter == 'Leerstand') {
 					echo "<tr class=\"zeile2\"><td>$e_kn</td><td>$et</td><td>$mieter</td><td>$ms</td><td>$nkm</td><td><b>$diff</b></td><td>$hv</td><td>$ihr</td><td>$rep</td><td style=\"color:white;\"><b>$transfer</b></td><td>$link_sepa_ueberweisen</td></tr>";
 				} else {
@@ -1438,7 +1438,7 @@ ORDER BY EINHEIT_KURZNAME";
 		echo '<pre>';
 		// print_r($gk);
 		if (! $gk->geldkonto_id) {
-			die ( 'Geldkonto zum Objekt hinzuf�gen!!!' );
+			die ( 'Geldkonto zum Objekt hinzufügen!!!' );
 		}
 		$db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT_ID`,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
 WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.OBJEKT_ID='$objekt_id' 
@@ -1454,7 +1454,7 @@ ORDER BY EINHEIT_KURZNAME";
 				$einheit_qm = $row ['EINHEIT_QM'];
 				$e = new einheit ();
 				$det = new detail ();
-				$my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt ( 'EINHEIT', $einheit_id, 'WEG-Fl�che' ); // kommt als Kommazahl
+				$my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt ( 'EINHEIT', $einheit_id, 'WEG-Fläche' ); // kommt als Kommazahl
 				if (empty ( $my_arr [$z] ['WEG-FLAECHE_A'] )) {
 					$my_arr [$z] ['WEG-FLAECHE_A'] = nummer_punkt2komma ( $einheit_qm );
 				}
@@ -1510,7 +1510,7 @@ ORDER BY EINHEIT_KURZNAME";
 					if (empty ( $my_arr [$a] ['WEG-FLAECHE'] )) {
 						$my_arr [$a] ['ABGABEN'] [] ['ABGABE_IHR'] = $einheit_qm * - 0.4;
 					}
-					$my_arr [$a] ['ABGABEN'] [] ['VG'] = '30.00'; // Verwaltergeb�hr
+					$my_arr [$a] ['ABGABEN'] [] ['VG'] = '30.00'; // Verwaltergebühr
 					
 					/* Kosten 1023 Reparatur Einheit */
 					$my_arr [$a] ['AUSGABEN'] = $this->get_kosten_arr ( 'EINHEIT', $my_arr [$a] ['EINHEIT_ID'], $monat, $jahr, $gk->geldkonto_id, 1023 );
@@ -1615,7 +1615,7 @@ ORDER BY EINHEIT_KURZNAME";
 					$e_nam = $pdf_tab [$a] ['EIGENTUEMER_NAMEN'];
 					$ein_nam = $pdf_tab [$a] ['EINHEIT_KURZNAME'];
 					
-					/* �bersichtstabelle */
+					/* Übersichtstabelle */
 					$uebersicht [$a] ['EINHEIT_KURZNAME'] = $ein_nam;
 					$uebersicht [$a] ['EIGENTUEMER_NAMEN'] = $e_nam;
 					$uebersicht [$a] ['MIETER'] = $pdf_tab [$a] ['MIETER'];
@@ -1669,11 +1669,11 @@ ORDER BY EINHEIT_KURZNAME";
 								'EIGENTUEMER_NAMEN' => "<b>owner</b>",
 								'EINHEIT_KURZNAME' => "<b>apart.No</b>",
 								'MIETER' => "<b>tenant</b>",
-								'WEG-FLAECHE_A' => "<b>size [m�]</b>",
-								'NETTO_SOLL_A' => "<b>net rent [�]</b>",
-								'ABGABE_IHR_A' => "<b>for maint. [�]</b>",
-								'ABGABE_HV_A' => "<b>mng. fee [�]</b>",
-								'ENDSUMME_A' => "<b>Amount [�]</b>" 
+								'WEG-FLAECHE_A' => "<b>size [m²]</b>",
+								'NETTO_SOLL_A' => "<b>net rent [€]</b>",
+								'ABGABE_IHR_A' => "<b>for maint. [€]</b>",
+								'ABGABE_HV_A' => "<b>mng. fee [€]</b>",
+								'ENDSUMME_A' => "<b>Amount [€]</b>" 
 						);
 						$pdf->ezTable ( $pdf_tab, $cols, "<b>Monthly report $monat/$jahr    $ein_nam</b>", array (
 								'showHeadings' => 1,
@@ -1696,16 +1696,16 @@ ORDER BY EINHEIT_KURZNAME";
 						) );
 					} else {
 						$cols = array (
-								'EIGENTUEMER_NAMEN' => "<b>Eigent�mer</b>",
+								'EIGENTUEMER_NAMEN' => "<b>Eigentümer</b>",
 								'EINHEIT_KURZNAME' => "<b>apart.No</b>",
 								'MIETER' => "<b>tenant</b>",
-								'WEG-FLAECHE_A' => "<b>size [m�]</b>",
-								'NETTO_SOLL_A' => "<b>net rent [�]</b>",
-								'ABGABE_IHR_A' => "<b>for maint. [�]</b>",
-								'ABGABE_HV_A' => "<b>mng. fee [�]</b>",
-								'ENDSUMME_A' => "<b>Amount [�]</b>" 
+								'WEG-FLAECHE_A' => "<b>size [m²]</b>",
+								'NETTO_SOLL_A' => "<b>net rent [€]</b>",
+								'ABGABE_IHR_A' => "<b>for maint. [€]</b>",
+								'ABGABE_HV_A' => "<b>mng. fee [€]</b>",
+								'ENDSUMME_A' => "<b>Amount [€]</b>" 
 						);
-						$pdf->ezTable ( $pdf_tab, $cols, "<b>$monat_name $jahr - Gesamt�bersicht - $ein_nam</b>", array (
+						$pdf->ezTable ( $pdf_tab, $cols, "<b>$monat_name $jahr - Gesamtübersicht - $ein_nam</b>", array (
 								'showHeadings' => 1,
 								'shaded' => 1,
 								'titleFontSize' => 8,
@@ -1733,7 +1733,7 @@ ORDER BY EINHEIT_KURZNAME";
 					 * if($lang=='en'){
 					 * $pdf->ezText("no payout possible!", 12);
 					 * }else{
-					 * $pdf->ezText("Keine Auszahlung m�glich!", 12);
+					 * $pdf->ezText("Keine Auszahlung möglich!", 12);
 					 * }
 					 * }
 					 */
@@ -1758,7 +1758,7 @@ ORDER BY EINHEIT_KURZNAME";
 							$cols = array (
 									'DATUM' => "<b>Date</b>",
 									'VERWENDUNGSZWECK' => "<b>Description</b>",
-									'BETRAG' => "<b>Amount [�]</b>" 
+									'BETRAG' => "<b>Amount [€]</b>" 
 							);
 							$pdf->ezTable ( $my_arr [$a] ['AUSGABEN'], $cols, "<b>Maintenance bills | cost account: [1023]</b>", array (
 									'showHeadings' => 1,
@@ -1812,18 +1812,18 @@ ORDER BY EINHEIT_KURZNAME";
 					                    // $cols = array('ENDSUMME_A'=>"Amount1", 'SUMME_REP_A'=>"Amount", 'TRANSFER_A'=>"Transfer");
 					                    // $pdf->ezTable($trans_tab, $cols);
 					                    // unset($trans_tab);
-					$trans_tab [0] ['TEXT'] = "Amount [�]";
+					$trans_tab [0] ['TEXT'] = "Amount [€]";
 					$trans_tab [0] ['AM'] = $uebersicht [$a] ['ENDSUMME_A'];
-					$trans_tab [1] ['TEXT'] = "Bills [�]";
+					$trans_tab [1] ['TEXT'] = "Bills [€]";
 					$trans_tab [1] ['AM'] = $uebersicht [$a] ['SUMME_REP_A'];
-					$trans_tab [2] ['TEXT'] = "<b>Transfer [�]</b>";
+					$trans_tab [2] ['TEXT'] = "<b>Transfer [€]</b>";
 					if ($uebersicht [$a] ['TRANSFER'] > 0) {
-						$trans_tab [2] ['TEXT'] = "<b>Transfer [�]</b>";
+						$trans_tab [2] ['TEXT'] = "<b>Transfer [€]</b>";
 						$trans_tab [2] ['AM'] = "<b>" . $uebersicht [$a] ['TRANSFER_A'] . "</b>";
 					} else {
-						$trans_tab [2] ['TEXT'] = "<b>Summary [�]</b>";
+						$trans_tab [2] ['TEXT'] = "<b>Summary [€]</b>";
 						$trans_tab [2] ['AM'] = "<b>" . $uebersicht [$a] ['TRANSFER_A'] . "</b>";
-						$trans_tab [3] ['TEXT'] = "<b>Transfer [�]</b>";
+						$trans_tab [3] ['TEXT'] = "<b>Transfer [€]</b>";
 						$trans_tab [3] ['AM'] = "<b>0,00</b>";
 					}
 					
@@ -1852,7 +1852,7 @@ ORDER BY EINHEIT_KURZNAME";
 					) );
 					unset ( $trans_tab );
 					
-					/* TAbelle Auszahlung an Eigent�mer */
+					/* TAbelle Auszahlung an Eigentümer */
 					// print_r($my_arr[$a]['AUSZAHLUNG_ET']);
 					// die();
 					if (is_array ( $my_arr [$a] ['AUSZAHLUNG_ET'] )) {
@@ -1862,7 +1862,7 @@ ORDER BY EINHEIT_KURZNAME";
 							// $pdf->ezTable($my_arr[$a]['AUSZAHLUNG_ET'], $cols, "<b>$monat_name $jahr - transfer 5020 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
 						} else {
 							// $cols = array('DATUM'=>"Datum", 'VERWENDUNGSZWECK'=>"Buchungstext", 'BETRAG'=>"Betrag");
-							// $pdf->ezTable($my_arr[$a]['AUSZAHLUNG_ET'], $cols, "<b>$monat_name $jahr - �berweisung 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
+							// $pdf->ezTable($my_arr[$a]['AUSZAHLUNG_ET'], $cols, "<b>$monat_name $jahr - Überweisung 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
 						}
 					}
 					/*
@@ -1881,7 +1881,7 @@ ORDER BY EINHEIT_KURZNAME";
 					 */
 					
 					// $cols = array('DATUM'=>"Datum",'VERWENDUNGSZWECK'=>"Buchungstext", 'BETRAG'=>"Betrag");
-					// $pdf->ezTable($pdf_tab[$a]['EIG_AUSZAHLUNG'], $cols, "<b>$monat_name $jahr - Auszahlung an Eigent�mer 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
+					// $pdf->ezTable($pdf_tab[$a]['EIG_AUSZAHLUNG'], $cols, "<b>$monat_name $jahr - Auszahlung an Eigentümer 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
 					// $pdf->Cezpdf('a4','landscape');
 					$pdf->ezNewPage ();
 					
@@ -1909,8 +1909,8 @@ ORDER BY EINHEIT_KURZNAME";
 			if ($lang == 'en') {
 				$cols = array (
 						'EINHEIT_KURZNAME' => "Apt",
-						'EINHEIT_QM_A' => 'MVm�',
-						'WEG-FLAECHE_A' => 'm�',
+						'EINHEIT_QM_A' => 'MVm²',
+						'WEG-FLAECHE_A' => 'm²',
 						'EIGENTUEMER_NAMEN' => "Own",
 						'MIETER' => "Tenant",
 						'MIETER_SALDO_A' => 'current',
@@ -1951,7 +1951,7 @@ ORDER BY EINHEIT_KURZNAME";
 	function inspiration_pdf_kurz_6($ausgezogene = 0, $objekt_id, $monat, $jahr, $lang = 'de') {
 		/* Eingrenzung Kostenabragen */
 		if (! isset ( $_REQUEST ['von'] ) or ! isset ( $_REQUEST ['bis'] )) {
-			die ( 'Abfragedatum VON BIS in die URL hinzuf�gen' );
+			die ( 'Abfragedatum VON BIS in die URL hinzufügen' );
 		}
 		$von = date_german2mysql ( $_REQUEST ['von'] );
 		$bis = date_german2mysql ( $_REQUEST ['bis'] );
@@ -1966,7 +1966,7 @@ ORDER BY EINHEIT_KURZNAME";
 		echo '<pre>';
 		// print_r($gk);
 		if (! $gk->geldkonto_id) {
-			die ( 'Geldkonto zum Objekt hinzuf�gen!!!' );
+			die ( 'Geldkonto zum Objekt hinzufügen!!!' );
 		}
 		$db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT_ID`,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
 WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.OBJEKT_ID='$objekt_id' 
@@ -1984,7 +1984,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 				$e->get_einheit_info ( $einheit_id );
 				$my_arr [$z] ['ANSCHRIFT'] = "$e->haus_strasse $e->haus_nummer, $e->haus_plz $e->haus_stadt";
 				$det = new detail ();
-				$my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt ( 'EINHEIT', $einheit_id, 'WEG-Fl�che' ); // kommt als Kommazahl
+				$my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt ( 'EINHEIT', $einheit_id, 'WEG-Fläche' ); // kommt als Kommazahl
 				if (empty ( $my_arr [$z] ['WEG-FLAECHE_A'] )) {
 					$my_arr [$z] ['WEG-FLAECHE_A'] = nummer_punkt2komma ( $einheit_qm );
 				}
@@ -2002,7 +2002,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 					$my_arr [$z] ['EIGENTUEMER_NAMEN'] = $weg->eigentuemer_name_str_u;
 					$my_arr [$z] ['EIGENTUEMER_ID'] = $weg->eigentuemer_id;
 					
-					/* Personenkontaktdaten Eigent�mer */
+					/* Personenkontaktdaten Eigentümer */
 					$et_p_id = $weg->get_person_id_eigentuemer_arr ( $weg->eigentuemer_id );
 					if (is_array ( $et_p_id )) {
 						$anz_pp = count ( $et_p_id );
@@ -2020,7 +2020,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 							}
 						}
 					} else {
-						die ( "Personen/Eigent�mer unbekannt! ET_ID: $weg->eigentuemer_id" );
+						die ( "Personen/Eigentümer unbekannt! ET_ID: $weg->eigentuemer_id" );
 					}
 				} else {
 					$my_arr [$z] ['EIGENTUEMER'] = 'Unbekannt';
@@ -2073,12 +2073,12 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 					$vg = $weg1->get_summe_kostenkat_monat ( $monat, $jahr, 'Einheit', $einheit_id, '6060' );
 					if ($vg) {
 						// die("SSSS $vg");
-						$my_arr [$a] ['ABGABEN'] [] ['VG'] = $vg; // Verwaltergeb�hr
+						$my_arr [$a] ['ABGABEN'] [] ['VG'] = $vg; // Verwaltergebühr
 					} else {
-						$my_arr [$a] ['ABGABEN'] [] ['VG'] = '30.00'; // Verwaltergeb�hr
+						$my_arr [$a] ['ABGABEN'] [] ['VG'] = '30.00'; // Verwaltergebühr
 					}
-					// $my_arr[$a]['ABGABEN'][]['VG'] = '30.00'; //Verwaltergeb�hr
-					// $my_arr[$a]['ABGABEN'][]['VG'] = $vg; //Verwaltergeb�hr
+					// $my_arr[$a]['ABGABEN'][]['VG'] = '30.00'; //Verwaltergebühr
+					// $my_arr[$a]['ABGABEN'][]['VG'] = $vg; //Verwaltergebühr
 					
 					/* Kosten 1023 Reparatur Einheit */
 					// $my_arr[$a]['AUSGABEN'] = $this->get_kosten_arr('EINHEIT', $my_arr[$a]['EINHEIT_ID'], $monat, $jahr, $gk->geldkonto_id,1023);
@@ -2116,7 +2116,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 					$my_arr [$a] ['AUSZAHLUNG_ET'] = $this->get_kosten_arr ( 'Eigentuemer', $eige_id, $monat, $jahr, $gk->geldkonto_id, 5020 );
 					
 					/* Andere Kosten */
-					/* INS MAKLERGEB�HR */
+					/* INS MAKLERGEBÜHR */
 					$my_arr [$a] ['5500'] = $this->get_kosten_von_bis ( 'Einheit', $einheit_id, $von, $bis, $gk->geldkonto_id, 5500 );
 					/* Andere Kosten */
 					$my_arr [$a] ['4180'] = $this->get_kosten_von_bis ( 'Einheit', $einheit_id, $von, $bis, $gk->geldkonto_id, 4180 );
@@ -2201,8 +2201,8 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 					$vg = $weg1->get_summe_kostenkat_monat ( $monat, $jahr, 'Einheit', $einheit_id, '6060' );
 					if (! empty ( $vg )) {
 						// die("SSSS $vg");
-						$pdf_tab [$a] ['ABGABE_HV'] = - $vg; // Verwaltergeb�hr
-						$pdf_tab [$a] ['ABGABE_HV_A'] = nummer_punkt2komma ( - $vg ); // Verwaltergeb�hr
+						$pdf_tab [$a] ['ABGABE_HV'] = - $vg; // Verwaltergebühr
+						$pdf_tab [$a] ['ABGABE_HV_A'] = nummer_punkt2komma ( - $vg ); // Verwaltergebühr
 					} else {
 						$pdf_tab [$a] ['ABGABE_HV'] = '-30.00';
 						$pdf_tab [$a] ['ABGABE_HV_A'] = '-30,00';
@@ -2297,7 +2297,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 					$e_nam = $pdf_tab [$a] ['EIGENTUEMER_NAMEN'];
 					$ein_nam = $pdf_tab [$a] ['EINHEIT_KURZNAME'];
 					
-					/* �bersichtstabelle */
+					/* Übersichtstabelle */
 					$uebersicht [$a] ['EINHEIT_KURZNAME'] = $ein_nam;
 					$uebersicht [$a] ['EIGENTUEMER_NAMEN'] = $e_nam;
 					$uebersicht [$a] ['MIETER'] = $pdf_tab [$a] ['MIETER'];
@@ -2382,11 +2382,11 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 								'EIGENTUEMER_NAMEN' => "<b>owner</b>",
 								'EINHEIT_KURZNAME' => "<b>apart.No</b>",
 								'MIETER' => "<b>tenant</b>",
-								'WEG-FLAECHE_A' => "<b>size [m�]</b>",
-								'NETTO_SOLL_A' => "<b>net rent [�]</b>",
-								'ABGABE_IHR_A' => "<b>for maint. [�]</b>",
-								'ABGABE_HV_A' => "<b>mng. fee [�]</b>",
-								'ENDSUMME_A' => "<b>Amount [�]</b>" 
+								'WEG-FLAECHE_A' => "<b>size [m²]</b>",
+								'NETTO_SOLL_A' => "<b>net rent [€]</b>",
+								'ABGABE_IHR_A' => "<b>for maint. [€]</b>",
+								'ABGABE_HV_A' => "<b>mng. fee [€]</b>",
+								'ENDSUMME_A' => "<b>Amount [€]</b>" 
 						);
 						$pdf->ezTable ( $pdf_tab, $cols, "<b>Monthly report $w_monat/$w_jahr    $ein_nam, $anschrift</b>", array (
 								'showHeadings' => 1,
@@ -2411,16 +2411,16 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 						// $pdf->ezText($pdf_tab[$a]['ANSCHRIFT'], 11);
 						$anschrift = $pdf_tab [$a] ['ANSCHRIFT'];
 						$cols = array (
-								'EIGENTUEMER_NAMEN' => "<b>Eigent�mer</b>",
+								'EIGENTUEMER_NAMEN' => "<b>Eigentümer</b>",
 								'EINHEIT_KURZNAME' => "<b>apart.No</b>",
 								'MIETER' => "<b>tenant</b>",
-								'WEG-FLAECHE_A' => "<b>size [m�]</b>",
-								'NETTO_SOLL_A' => "<b>net rent [�]</b>",
-								'ABGABE_IHR_A' => "<b>for maint. [�]</b>",
-								'ABGABE_HV_A' => "<b>mng. fee [�]</b>",
-								'ENDSUMME_A' => "<b>Amount [�]</b>" 
+								'WEG-FLAECHE_A' => "<b>size [m²]</b>",
+								'NETTO_SOLL_A' => "<b>net rent [€]</b>",
+								'ABGABE_IHR_A' => "<b>for maint. [€]</b>",
+								'ABGABE_HV_A' => "<b>mng. fee [€]</b>",
+								'ENDSUMME_A' => "<b>Amount [€]</b>" 
 						);
-						$pdf->ezTable ( $pdf_tab, $cols, "<b>$monat_name $jahr - Gesamt�bersicht - $ein_nam, $anschrift</b>", array (
+						$pdf->ezTable ( $pdf_tab, $cols, "<b>$monat_name $jahr - Gesamtübersicht - $ein_nam, $anschrift</b>", array (
 								'showHeadings' => 1,
 								'shaded' => 1,
 								'titleFontSize' => 8,
@@ -2448,7 +2448,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 					 * if($lang=='en'){
 					 * $pdf->ezText("no payout possible!", 12);
 					 * }else{
-					 * $pdf->ezText("Keine Auszahlung m�glich!", 12);
+					 * $pdf->ezText("Keine Auszahlung möglich!", 12);
 					 * }
 					 * }
 					 */
@@ -2473,7 +2473,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 							$cols = array (
 									'DATUM' => "<b>Date</b>",
 									'VERWENDUNGSZWECK' => "<b>Description</b>",
-									'BETRAG' => "<b>Amount [�]</b>" 
+									'BETRAG' => "<b>Amount [€]</b>" 
 							);
 							$pdf->ezTable ( $my_arr [$a] ['AUSGABEN'], $cols, "<b>Maintenance bills | cost account: [1023]</b>", array (
 									'showHeadings' => 1,
@@ -2674,23 +2674,23 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 					                    // $cols = array('ENDSUMME_A'=>"Amount1", 'SUMME_REP_A'=>"Amount", 'TRANSFER_A'=>"Transfer");
 					                    // $pdf->ezTable($trans_tab, $cols);
 					                    // unset($trans_tab);
-					$trans_tab [0] ['TEXT'] = "Amount [�]";
+					$trans_tab [0] ['TEXT'] = "Amount [€]";
 					$trans_tab [0] ['AM'] = $uebersicht [$a] ['ENDSUMME_A'];
-					$trans_tab [1] ['TEXT'] = "Bills [�]";
+					$trans_tab [1] ['TEXT'] = "Bills [€]";
 					$trans_tab [1] ['AM'] = $uebersicht [$a] ['SUMME_REP_A'];
-					$trans_tab [2] ['TEXT'] = "<b>To transfer [�]</b>";
+					$trans_tab [2] ['TEXT'] = "<b>To transfer [€]</b>";
 					if ($uebersicht [$a] ['TRANSFER'] > 0) {
-						$trans_tab [2] ['TEXT'] = "<b>To transfer [�]</b>";
+						$trans_tab [2] ['TEXT'] = "<b>To transfer [€]</b>";
 						$trans_tab [2] ['AM'] = "<b>" . $uebersicht [$a] ['TRANSFER_A'] . "</b>";
 					} else {
-						$trans_tab [2] ['TEXT'] = "<b>Summary [�]</b>";
+						$trans_tab [2] ['TEXT'] = "<b>Summary [€]</b>";
 						$trans_tab [2] ['AM'] = "<b>" . $uebersicht [$a] ['TRANSFER_A'] . "</b>";
-						$trans_tab [3] ['TEXT'] = "<b>To transfer [�]</b>";
+						$trans_tab [3] ['TEXT'] = "<b>To transfer [€]</b>";
 						$trans_tab [3] ['AM'] = "<b>0,00</b>";
 					}
-					/* Gebuchte �berweisung Kto: 5020 */
+					/* Gebuchte Überweisung Kto: 5020 */
 					/*
-					 * $trans_tab[3]['TEXT'] = "<b>Current Transfer [�]</b>";
+					 * $trans_tab[3]['TEXT'] = "<b>Current Transfer [€]</b>";
 					 * $trans_tab[3]['AM'] = "<b>xxx</b>";
 					 */
 					
@@ -2727,7 +2727,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 					$cols = array (
 							'DATUM' => "<b>Date</b>",
 							'VERWENDUNGSZWECK' => "<b>Description</b>",
-							'BETRAG' => "<b>Amount [�]</b>" 
+							'BETRAG' => "<b>Amount [€]</b>" 
 					);
 					
 					// $pdf->setColor(1.0,0.0,0.0);
@@ -2820,7 +2820,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 					
 					unset ( $trans_tab );
 					
-					/* TAbelle Auszahlung an Eigent�mer */
+					/* TAbelle Auszahlung an Eigentümer */
 					// print_r($my_arr[$a]['AUSZAHLUNG_ET']);
 					// die();
 					if (is_array ( $my_arr [$a] ['AUSZAHLUNG_ET'] )) {
@@ -2830,7 +2830,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 							// $pdf->ezTable($my_arr[$a]['AUSZAHLUNG_ET'], $cols, "<b>$monat_name $jahr - transfer 5020 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
 						} else {
 							// $cols = array('DATUM'=>"Datum", 'VERWENDUNGSZWECK'=>"Buchungstext", 'BETRAG'=>"Betrag");
-							// $pdf->ezTable($my_arr[$a]['AUSZAHLUNG_ET'], $cols, "<b>$monat_name $jahr - �berweisung 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
+							// $pdf->ezTable($my_arr[$a]['AUSZAHLUNG_ET'], $cols, "<b>$monat_name $jahr - Überweisung 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
 						}
 					}
 					/*
@@ -2849,7 +2849,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 					 */
 					
 					// $cols = array('DATUM'=>"Datum",'VERWENDUNGSZWECK'=>"Buchungstext", 'BETRAG'=>"Betrag");
-					// $pdf->ezTable($pdf_tab[$a]['EIG_AUSZAHLUNG'], $cols, "<b>$monat_name $jahr - Auszahlung an Eigent�mer 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
+					// $pdf->ezTable($pdf_tab[$a]['EIG_AUSZAHLUNG'], $cols, "<b>$monat_name $jahr - Auszahlung an Eigentümer 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
 					// $pdf->Cezpdf('a4','landscape');
 					$pdf->ezNewPage ();
 					
@@ -2877,7 +2877,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 			if ($lang == 'en') {
 				$cols = array (
 						'EINHEIT_KURZNAME' => "Apt",
-						'WEG-FLAECHE_A' => 'm�',
+						'WEG-FLAECHE_A' => 'm²',
 						'EIGENTUEMER_NAMEN' => "Own",
 						'MIETER' => "Tenant",
 						'MIETER_SALDO_VM' => 'VM',
@@ -2894,7 +2894,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 			} else {
 				$cols = array (
 						'EINHEIT_KURZNAME' => "Apt",
-						'WEG-FLAECHE_A' => 'm�',
+						'WEG-FLAECHE_A' => 'm²',
 						'EIGENTUEMER_NAMEN' => "Own",
 						'MIETER' => "Tenant",
 						'MIETER_SALDO_A' => 'current',
@@ -3248,7 +3248,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 	function inspiration_pdf_kurz_7($ausgezogene = 0, $objekt_id, $monat, $jahr, $lang = 'de') {
 		/* Eingrenzung Kostenabragen */
 		if (! isset ( $_REQUEST ['von'] ) or ! isset ( $_REQUEST ['bis'] )) {
-			die ( 'Abfragedatum VON BIS in die URL hinzuf�gen' );
+			die ( 'Abfragedatum VON BIS in die URL hinzufügen' );
 		}
 		$von = date_german2mysql ( $_REQUEST ['von'] );
 		$bis = date_german2mysql ( $_REQUEST ['bis'] );
@@ -3263,7 +3263,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 		echo '<pre>';
 		// print_r($gk);
 		if (! $gk->geldkonto_id) {
-			die ( 'Geldkonto zum Objekt hinzuf�gen!!!' );
+			die ( 'Geldkonto zum Objekt hinzufügen!!!' );
 		}
 		$db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT_ID`,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
 	WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.OBJEKT_ID='$objekt_id'
@@ -3281,7 +3281,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 				$e->get_einheit_info ( $einheit_id );
 				$my_arr [$z] ['ANSCHRIFT'] = "$e->haus_strasse $e->haus_nummer, $e->haus_plz $e->haus_stadt";
 				$det = new detail ();
-				$my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt ( 'EINHEIT', $einheit_id, 'WEG-Fl�che' ); // kommt als Kommazahl
+				$my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt ( 'EINHEIT', $einheit_id, 'WEG-Fläche' ); // kommt als Kommazahl
 				if (empty ( $my_arr [$z] ['WEG-FLAECHE_A'] )) {
 					$my_arr [$z] ['WEG-FLAECHE_A'] = nummer_punkt2komma ( $einheit_qm );
 				}
@@ -3299,7 +3299,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 					$my_arr [$z] ['EIGENTUEMER_NAMEN'] = $weg->eigentuemer_name_str_u;
 					$my_arr [$z] ['EIGENTUEMER_ID'] = $weg->eigentuemer_id;
 					
-					/* Personenkontaktdaten Eigent�mer */
+					/* Personenkontaktdaten Eigentümer */
 					$et_p_id = $weg->get_person_id_eigentuemer_arr ( $weg->eigentuemer_id );
 					if (is_array ( $et_p_id )) {
 						$anz_pp = count ( $et_p_id );
@@ -3317,7 +3317,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 							}
 						}
 					} else {
-						die ( "Personen/Eigent�mer unbekannt! ET_ID: $weg->eigentuemer_id" );
+						die ( "Personen/Eigentümer unbekannt! ET_ID: $weg->eigentuemer_id" );
 					}
 				} else {
 					$my_arr [$z] ['EIGENTUEMER'] = 'Unbekannt';
@@ -3372,12 +3372,12 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 					$vg = $weg1->get_summe_kostenkat_monat ( $monat, $jahr, 'Einheit', $einheit_id, '6060' );
 					if ($vg) {
 						// die("SSSS $vg");
-						$my_arr [$a] ['ABGABEN'] [] ['VG'] = $vg; // Verwaltergeb�hr
+						$my_arr [$a] ['ABGABEN'] [] ['VG'] = $vg; // Verwaltergebühr
 					} else {
-						$my_arr [$a] ['ABGABEN'] [] ['VG'] = '30.00'; // Verwaltergeb�hr
+						$my_arr [$a] ['ABGABEN'] [] ['VG'] = '30.00'; // Verwaltergebühr
 					}
-					// $my_arr[$a]['ABGABEN'][]['VG'] = '30.00'; //Verwaltergeb�hr
-					// $my_arr[$a]['ABGABEN'][]['VG'] = $vg; //Verwaltergeb�hr
+					// $my_arr[$a]['ABGABEN'][]['VG'] = '30.00'; //Verwaltergebühr
+					// $my_arr[$a]['ABGABEN'][]['VG'] = $vg; //Verwaltergebühr
 					
 					/* Kosten 1023 Reparatur Einheit */
 					// $my_arr[$a]['AUSGABEN'] = $this->get_kosten_arr('EINHEIT', $my_arr[$a]['EINHEIT_ID'], $monat, $jahr, $gk->geldkonto_id,1023);
@@ -3418,7 +3418,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 					$my_arr [$a] ['AUSZAHLUNG_ET'] = $this->get_kosten_arr ( 'Eigentuemer', $eige_id, $monat, $jahr, $gk->geldkonto_id, 5020 );
 					
 					/* Andere Kosten */
-					/* INS MAKLERGEB�HR */
+					/* INS MAKLERGEBÜHR */
 					$my_arr [$a] ['5500'] = $this->get_kosten_von_bis ( 'Einheit', $einheit_id, $von, $bis, $gk->geldkonto_id, 5500 );
 					/* Andere Kosten */
 					$my_arr [$a] ['4180'] = $this->get_kosten_von_bis ( 'Einheit', $einheit_id, $von, $bis, $gk->geldkonto_id, 4180 );
@@ -3503,8 +3503,8 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 					$vg = $weg1->get_summe_kostenkat_monat ( $monat, $jahr, 'Einheit', $einheit_id, '6060' );
 					if (! empty ( $vg )) {
 						// die("SSSS $vg");
-						$pdf_tab [$a] ['ABGABE_HV'] = - $vg; // Verwaltergeb�hr
-						$pdf_tab [$a] ['ABGABE_HV_A'] = nummer_punkt2komma ( - $vg ); // Verwaltergeb�hr
+						$pdf_tab [$a] ['ABGABE_HV'] = - $vg; // Verwaltergebühr
+						$pdf_tab [$a] ['ABGABE_HV_A'] = nummer_punkt2komma ( - $vg ); // Verwaltergebühr
 					} else {
 						$pdf_tab [$a] ['ABGABE_HV'] = '-30.00';
 						$pdf_tab [$a] ['ABGABE_HV_A'] = '-30,00';
@@ -3599,7 +3599,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 					$e_nam = $pdf_tab [$a] ['EIGENTUEMER_NAMEN'];
 					$ein_nam = $pdf_tab [$a] ['EINHEIT_KURZNAME'];
 					
-					/* �bersichtstabelle */
+					/* Übersichtstabelle */
 					$uebersicht [$a] ['EINHEIT_KURZNAME'] = $ein_nam;
 					$uebersicht [$a] ['EIGENTUEMER_NAMEN'] = $e_nam;
 					$uebersicht [$a] ['MIETER'] = $pdf_tab [$a] ['MIETER'];
@@ -3684,11 +3684,11 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 								'EIGENTUEMER_NAMEN' => "<b>owner</b>",
 								'EINHEIT_KURZNAME' => "<b>apart.No</b>",
 								'MIETER' => "<b>tenant</b>",
-								'WEG-FLAECHE_A' => "<b>size [m�]</b>",
-								'NETTO_SOLL_A' => "<b>rent [�]</b>",
-								'ABGABE_IHR_A' => "<b>for maint. [�]</b>",
-								'ABGABE_HV_A' => "<b>mng. fee [�]</b>",
-								'ENDSUMME_A' => "<b>Amount [�]</b>" 
+								'WEG-FLAECHE_A' => "<b>size [m²]</b>",
+								'NETTO_SOLL_A' => "<b>rent [€]</b>",
+								'ABGABE_IHR_A' => "<b>for maint. [€]</b>",
+								'ABGABE_HV_A' => "<b>mng. fee [€]</b>",
+								'ENDSUMME_A' => "<b>Amount [€]</b>" 
 						);
 						$pdf->ezTable ( $pdf_tab, $cols, "<b>Monthly report $w_monat/$w_jahr    $ein_nam, $anschrift</b>", array (
 								'showHeadings' => 1,
@@ -3713,16 +3713,16 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 						// $pdf->ezText($pdf_tab[$a]['ANSCHRIFT'], 11);
 						$anschrift = $pdf_tab [$a] ['ANSCHRIFT'];
 						$cols = array (
-								'EIGENTUEMER_NAMEN' => "<b>Eigent�mer</b>",
+								'EIGENTUEMER_NAMEN' => "<b>Eigentümer</b>",
 								'EINHEIT_KURZNAME' => "<b>apart.No</b>",
 								'MIETER' => "<b>tenant</b>",
-								'WEG-FLAECHE_A' => "<b>size [m�]</b>",
-								'NETTO_SOLL_A' => "<b>rent [�]</b>",
-								'ABGABE_IHR_A' => "<b>for maint. [�]</b>",
-								'ABGABE_HV_A' => "<b>mng. fee [�]</b>",
-								'ENDSUMME_A' => "<b>Amount [�]</b>" 
+								'WEG-FLAECHE_A' => "<b>size [m²]</b>",
+								'NETTO_SOLL_A' => "<b>rent [€]</b>",
+								'ABGABE_IHR_A' => "<b>for maint. [€]</b>",
+								'ABGABE_HV_A' => "<b>mng. fee [€]</b>",
+								'ENDSUMME_A' => "<b>Amount [€]</b>" 
 						);
-						$pdf->ezTable ( $pdf_tab, $cols, "<b>$monat_name $jahr - Gesamt�bersicht - $ein_nam, $anschrift</b>", array (
+						$pdf->ezTable ( $pdf_tab, $cols, "<b>$monat_name $jahr - Gesamtübersicht - $ein_nam, $anschrift</b>", array (
 								'showHeadings' => 1,
 								'shaded' => 1,
 								'titleFontSize' => 8,
@@ -3750,7 +3750,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 					 * if($lang=='en'){
 					 * $pdf->ezText("no payout possible!", 12);
 					 * }else{
-					 * $pdf->ezText("Keine Auszahlung m�glich!", 12);
+					 * $pdf->ezText("Keine Auszahlung möglich!", 12);
 					 * }
 					 * }
 					 */
@@ -3775,7 +3775,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 							$cols = array (
 									'DATUM' => "<b>Date</b>",
 									'VERWENDUNGSZWECK' => "<b>Description</b>",
-									'BETRAG' => "<b>Amount [�]</b>" 
+									'BETRAG' => "<b>Amount [€]</b>" 
 							);
 							$pdf->ezTable ( $my_arr [$a] ['AUSGABEN'], $cols, "<b>Maintenance bills | cost account: [1023]</b>", array (
 									'showHeadings' => 1,
@@ -3976,23 +3976,23 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 					                    // $cols = array('ENDSUMME_A'=>"Amount1", 'SUMME_REP_A'=>"Amount", 'TRANSFER_A'=>"Transfer");
 					                    // $pdf->ezTable($trans_tab, $cols);
 					                    // unset($trans_tab);
-					$trans_tab [0] ['TEXT'] = "Amount [�]";
+					$trans_tab [0] ['TEXT'] = "Amount [€]";
 					$trans_tab [0] ['AM'] = $uebersicht [$a] ['ENDSUMME_A'];
-					$trans_tab [1] ['TEXT'] = "Bills [�]";
+					$trans_tab [1] ['TEXT'] = "Bills [€]";
 					$trans_tab [1] ['AM'] = $uebersicht [$a] ['SUMME_REP_A'];
-					$trans_tab [2] ['TEXT'] = "<b>To transfer [�]</b>";
+					$trans_tab [2] ['TEXT'] = "<b>To transfer [€]</b>";
 					if ($uebersicht [$a] ['TRANSFER'] > 0) {
-						$trans_tab [2] ['TEXT'] = "<b>To transfer [�]</b>";
+						$trans_tab [2] ['TEXT'] = "<b>To transfer [€]</b>";
 						$trans_tab [2] ['AM'] = "<b>" . $uebersicht [$a] ['TRANSFER_A'] . "</b>";
 					} else {
-						$trans_tab [2] ['TEXT'] = "<b>Summary [�]</b>";
+						$trans_tab [2] ['TEXT'] = "<b>Summary [€]</b>";
 						$trans_tab [2] ['AM'] = "<b>" . $uebersicht [$a] ['TRANSFER_A'] . "</b>";
-						$trans_tab [3] ['TEXT'] = "<b>To transfer [�]</b>";
+						$trans_tab [3] ['TEXT'] = "<b>To transfer [€]</b>";
 						$trans_tab [3] ['AM'] = "<b>0,00</b>";
 					}
-					/* Gebuchte �berweisung Kto: 5020 */
+					/* Gebuchte Überweisung Kto: 5020 */
 					/*
-					 * $trans_tab[3]['TEXT'] = "<b>Current Transfer [�]</b>";
+					 * $trans_tab[3]['TEXT'] = "<b>Current Transfer [€]</b>";
 					 * $trans_tab[3]['AM'] = "<b>xxx</b>";
 					 */
 					
@@ -4029,7 +4029,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 					$cols = array (
 							'DATUM' => "<b>Date</b>",
 							'VERWENDUNGSZWECK' => "<b>Description</b>",
-							'BETRAG' => "<b>Amount [�]</b>" 
+							'BETRAG' => "<b>Amount [€]</b>" 
 					);
 					
 					// $pdf->setColor(1.0,0.0,0.0);
@@ -4122,7 +4122,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 					
 					unset ( $trans_tab );
 					
-					/* TAbelle Auszahlung an Eigent�mer */
+					/* TAbelle Auszahlung an Eigentümer */
 					// print_r($my_arr[$a]['AUSZAHLUNG_ET']);
 					// die();
 					if (is_array ( $my_arr [$a] ['AUSZAHLUNG_ET'] )) {
@@ -4132,7 +4132,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 							// $pdf->ezTable($my_arr[$a]['AUSZAHLUNG_ET'], $cols, "<b>$monat_name $jahr - transfer 5020 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
 						} else {
 							// $cols = array('DATUM'=>"Datum", 'VERWENDUNGSZWECK'=>"Buchungstext", 'BETRAG'=>"Betrag");
-							// $pdf->ezTable($my_arr[$a]['AUSZAHLUNG_ET'], $cols, "<b>$monat_name $jahr - �berweisung 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
+							// $pdf->ezTable($my_arr[$a]['AUSZAHLUNG_ET'], $cols, "<b>$monat_name $jahr - Überweisung 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
 						}
 					}
 					/*
@@ -4151,7 +4151,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 					 */
 					
 					// $cols = array('DATUM'=>"Datum",'VERWENDUNGSZWECK'=>"Buchungstext", 'BETRAG'=>"Betrag");
-					// $pdf->ezTable($pdf_tab[$a]['EIG_AUSZAHLUNG'], $cols, "<b>$monat_name $jahr - Auszahlung an Eigent�mer 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
+					// $pdf->ezTable($pdf_tab[$a]['EIG_AUSZAHLUNG'], $cols, "<b>$monat_name $jahr - Auszahlung an Eigentümer 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
 					// $pdf->Cezpdf('a4','landscape');
 					$pdf->ezNewPage ();
 					
@@ -4180,7 +4180,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 			if ($lang == 'en') {
 				$cols = array (
 						'EINHEIT_KURZNAME' => "Apt",
-						'WEG-FLAECHE_A' => 'm�',
+						'WEG-FLAECHE_A' => 'm²',
 						'EIGENTUEMER_NAMEN' => "Own",
 						'MIETER' => "Tenant",
 						'MIETER_SALDO_VM' => 'VM',
@@ -4197,7 +4197,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 			} else {
 				$cols = array (
 						'EINHEIT_KURZNAME' => "Apt",
-						'WEG-FLAECHE_A' => 'm�',
+						'WEG-FLAECHE_A' => 'm²',
 						'EIGENTUEMER_NAMEN' => "Own",
 						'MIETER' => "Tenant",
 						'MIETER_SALDO_A' => 'current',
@@ -4559,7 +4559,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 		$gk = new geldkonto_info ();
 		$gk->geld_konto_ermitteln ( 'OBJEKT', $objekt_id );
 		if (! $gk->geldkonto_id) {
-			die ( 'Geldkonto zum Objekt hinzuf�gen!!!' );
+			die ( 'Geldkonto zum Objekt hinzufügen!!!' );
 		}
 		$db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT_ID`,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
 WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.OBJEKT_ID='$objekt_id' 
@@ -4575,7 +4575,7 @@ ORDER BY EINHEIT_KURZNAME";
 				$einheit_qm = $row ['EINHEIT_QM'];
 				$e = new einheit ();
 				$det = new detail ();
-				$my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt ( 'EINHEIT', $einheit_id, 'WEG-Fl�che' ); // kommt als Kommazahl
+				$my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt ( 'EINHEIT', $einheit_id, 'WEG-Fläche' ); // kommt als Kommazahl
 				if (empty ( $my_arr [$z] ['WEG-FLAECHE_A'] )) {
 					$my_arr [$z] ['WEG-FLAECHE_A'] = nummer_punkt2komma ( $einheit_qm );
 				}
@@ -4631,7 +4631,7 @@ ORDER BY EINHEIT_KURZNAME";
 					if (empty ( $my_arr [$a] ['WEG-FLAECHE'] )) {
 						$my_arr [$a] ['ABGABEN'] [] ['ABGABE_IHR'] = $einheit_qm * - 0.4;
 					}
-					$my_arr [$a] ['ABGABEN'] [] ['VG'] = '30.00'; // Verwaltergeb�hr
+					$my_arr [$a] ['ABGABEN'] [] ['VG'] = '30.00'; // Verwaltergebühr
 					
 					/* Kosten 1023 Reparatur Einheit */
 					$my_arr [$a] ['AUSGABEN'] = $this->get_kosten_arr ( 'EINHEIT', $my_arr [$a] ['EINHEIT_ID'], $monat, $jahr, $gk->geldkonto_id, 1023 );
@@ -4737,7 +4737,7 @@ ORDER BY EINHEIT_KURZNAME";
 					$e_nam = $pdf_tab [$a] ['EIGENTUEMER_NAMEN'];
 					$ein_nam = $pdf_tab [$a] ['EINHEIT_KURZNAME'];
 					
-					/* �bersichtstabelle */
+					/* Übersichtstabelle */
 					$uebersicht [$a] ['EINHEIT_KURZNAME'] = $ein_nam;
 					$uebersicht [$a] ['EIGENTUEMER_NAMEN'] = $e_nam;
 					$uebersicht [$a] ['EIG_ID'] = $eige_id;
@@ -4793,18 +4793,18 @@ ORDER BY EINHEIT_KURZNAME";
 					// $cols = array('ENDSUMME_A'=>"Amount1", 'SUMME_REP_A'=>"Amount", 'TRANSFER_A'=>"Transfer");
 					// $pdf->ezTable($trans_tab, $cols);
 					// unset($trans_tab);
-					$trans_tab [0] ['TEXT'] = "Amount [�]";
+					$trans_tab [0] ['TEXT'] = "Amount [€]";
 					$trans_tab [0] ['AM'] = $uebersicht [$a] ['ENDSUMME_A'];
-					$trans_tab [1] ['TEXT'] = "Bills [�]";
+					$trans_tab [1] ['TEXT'] = "Bills [€]";
 					$trans_tab [1] ['AM'] = $uebersicht [$a] ['SUMME_REP_A'];
-					$trans_tab [2] ['TEXT'] = "<b>Transfer [�]</b>";
+					$trans_tab [2] ['TEXT'] = "<b>Transfer [€]</b>";
 					if ($uebersicht [$a] ['TRANSFER'] > 0) {
-						$trans_tab [2] ['TEXT'] = "<b>Transfer [�]</b>";
+						$trans_tab [2] ['TEXT'] = "<b>Transfer [€]</b>";
 						$trans_tab [2] ['AM'] = "<b>" . $uebersicht [$a] ['TRANSFER_A'] . "</b>";
 					} else {
-						$trans_tab [2] ['TEXT'] = "<b>Summary [�]</b>";
+						$trans_tab [2] ['TEXT'] = "<b>Summary [€]</b>";
 						$trans_tab [2] ['AM'] = "<b>" . $uebersicht [$a] ['TRANSFER_A'] . "</b>";
-						$trans_tab [3] ['TEXT'] = "<b>Transfer [�]</b>";
+						$trans_tab [3] ['TEXT'] = "<b>Transfer [€]</b>";
 						$trans_tab [3] ['AM'] = "<b>0,00</b>";
 					}
 					
@@ -4966,7 +4966,7 @@ ORDER BY EINHEIT_KURZNAME";
 				$einheit_id = $row ['EINHEIT_ID'];
 				$e = new einheit ();
 				$det = new detail ();
-				$my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt ( 'EINHEIT', $einheit_id, 'WEG-Fl�che' ); // kommt als Kommazahl
+				$my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt ( 'EINHEIT', $einheit_id, 'WEG-Fläche' ); // kommt als Kommazahl
 				$my_arr [$z] ['WEG-FLAECHE'] = nummer_komma2punkt ( $my_arr [$z] ['WEG-FLAECHE_A'] );
 				
 				/* IHR */
@@ -5050,7 +5050,7 @@ ORDER BY EINHEIT_KURZNAME";
 			$end_m = $datum_bis_arr [1];
 			$end_j = $datum_bis_arr [0];
 			
-			/* Schleife f�r jeden Monat */
+			/* Schleife für jeden Monat */
 			$monat = $start_m;
 			$jahr = $start_j;
 			$summe_g = 0.00;
@@ -5068,7 +5068,7 @@ ORDER BY EINHEIT_KURZNAME";
 					
 					$einheit_qm = $mv->einheit_qm;
 					$det = new detail ();
-					$weg_qm = $det->finde_detail_inhalt ( 'EINHEIT', $mv->einheit_id, 'WEG-Fl�che' ); // kommt als Kommazahl
+					$weg_qm = $det->finde_detail_inhalt ( 'EINHEIT', $mv->einheit_id, 'WEG-Fläche' ); // kommt als Kommazahl
 					if (! empty ( $weg_qm )) {
 						$einheit_qm = nummer_komma2punkt ( $weg_qm );
 					}
@@ -5154,7 +5154,7 @@ ORDER BY EINHEIT_KURZNAME";
 			
 			$cols1 ['SUMME_A'] = 'BETRAG';
 			
-			// $pdf->ezTable($n_arr,$cols1,"Nebenkostenhochrechnung f�r das Jahr $jahr vom $datum_h",array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500,'cols'=>array('EINHEIT'=>array('justification'=>'left', 'width'=>75),'MIETER'=>array('justification'=>'left', 'width'=>175), 'EINZUG'=>array('justification'=>'right','width'=>50),'AUSZUG'=>array('justification'=>'right','width'=>50),'BETRIEBSKOSTEN'=>array('justification'=>'right','width'=>75), 'HEIZKOSTEN'=>array('justification'=>'right','width'=>75))));
+			// $pdf->ezTable($n_arr,$cols1,"Nebenkostenhochrechnung für das Jahr $jahr vom $datum_h",array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500,'cols'=>array('EINHEIT'=>array('justification'=>'left', 'width'=>75),'MIETER'=>array('justification'=>'left', 'width'=>175), 'EINZUG'=>array('justification'=>'right','width'=>50),'AUSZUG'=>array('justification'=>'right','width'=>50),'BETRIEBSKOSTEN'=>array('justification'=>'right','width'=>75), 'HEIZKOSTEN'=>array('justification'=>'right','width'=>75))));
 			$datum_von_d = date_mysql2german ( $datum_von );
 			$datum_bis_d = date_mysql2german ( $datum_bis );
 			// $pdf->ezTable($n_arr, $cols1, "Vereinbarte Sollkaltmieten im Zeitraum: $datum_von_d - $datum_bis_d", array('showHeadings'=>1,'shaded'=>1, 'width'=>500, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'cols'=>array('SUMME_A'=>array('justification'=>'right'))));
@@ -5199,7 +5199,7 @@ ORDER BY EINHEIT_KURZNAME";
 		 * [EINHEIT_KURZNAME] => MS7-211 (apt. 12)
 		 * [EINHEIT_LAGE] => V4R
 		 * [EINHEIT_QM] => 125.00
-		 * [HAUS_STRASSE] => M�ggelstr.
+		 * [HAUS_STRASSE] => Müggelstr.
 		 * [HAUS_NUMMER] => 7
 		 */
 		
@@ -5245,21 +5245,21 @@ ORDER BY EINHEIT_KURZNAME";
 		
 		/* Nutzenlastenwechsel */
 		$nl_datum = $d->finde_detail_inhalt ( 'Objekt', $e->objekt_id, 'Nutzen-Lastenwechsel' );
-		/* Verwaltungs�bernahme */
-		$vu_datum = $d->finde_detail_inhalt ( 'Objekt', $e->objekt_id, 'Verwaltungs�bernahme' );
+		/* Verwaltungsübernahme */
+		$vu_datum = $d->finde_detail_inhalt ( 'Objekt', $e->objekt_id, 'Verwaltungsübernahme' );
 		echo "GMU: $garantie_mon_obj NLW: $nl_datum VU: $vu_datum<br>";
 		
-		/* Alle Eigent�mer */
+		/* Alle Eigentümer */
 		$weg = new weg ();
 		$et_arr = $weg->get_eigentuemer_arr ( $einheit_id );
 		
 		if (! is_array ( $et_arr )) {
-			fehlermeldung_ausgeben ( "Keine Eigent�mer zu $e->einheit_kurzname" );
+			fehlermeldung_ausgeben ( "Keine Eigentümer zu $e->einheit_kurzname" );
 		} else {
 			// print_r($et_arr);
 			$anz_et = count ( $et_arr );
-			echo "Eigent�meranzahl : $anz_et<hr>";
-			/* Schleife f�r die ET */
+			echo "Eigentümeranzahl : $anz_et<hr>";
+			/* Schleife für die ET */
 			for($a = 0; $a < $anz_et; $a ++) {
 				$et_id = $et_arr [$a] ['ID'];
 				$weg->get_eigentumer_id_infos4 ( $et_id );
@@ -5273,7 +5273,7 @@ ORDER BY EINHEIT_KURZNAME";
 				
 				/* Objekt WEG to ARRAY */
 				$this->tab [$a] = ( array ) $weg;
-				/* Monate f�r den ET */
+				/* Monate für den ET */
 				$monats_arr = $this->monats_array ( $weg->eigentuemer_von, $datum_bis );
 				$this->tab [$a] ['MONATE'] = $monats_arr;
 				
@@ -5359,7 +5359,7 @@ ORDER BY EINHEIT_KURZNAME";
 						$this->pdf_tab [$a] [$zeile] ['G_MIETE'] = $this->tab ['G_MIETE'];
 						$sum_km_gm += $this->tab ['G_MIETE'];
 					}
-					/* Schleife Mietvertr�ge */
+					/* Schleife Mietvertrüge */
 					for($mvs = 0; $mvs < $anz_mvs; $mvs ++) {
 						$mv_id = $this->tab [$a] ['MVS'] [$mvs] ['MIETVERTRAG_ID'];
 						
@@ -5500,7 +5500,7 @@ ORDER BY EINHEIT_KURZNAME";
 										} else {
 											/* Wenn der Mieter noch mehr Schulden mach, keine AUSZ */
 											
-											/* Wenn �berhaupt was gezahlt und h�he als umlagen */
+											/* Wenn überhaupt was gezahlt und höhe als umlagen */
 											if ($mz->geleistete_zahlungen > 0 && $mz->geleistete_zahlungen > $mz->davon_umlagen) {
 												// $pdf_tab[$pdf_z]['KM_IST'] = $mi_arr['zb'] - $nk;
 												$this->pdf_tab [$a] [$zeile] ['SOLL_AUSZ_R'] = $mz->geleistete_zahlungen + $ins_diff_monat - $mz->davon_umlagen + $mz->erg + ($mz->saldo_vormonat_stand * - 1);
@@ -5768,8 +5768,8 @@ ORDER BY EINHEIT_KURZNAME";
 		$nl_monat = $nl_datum_arr [1];
 		$nl_jahr = $nl_datum_arr [2];
 		
-		/* Verwaltungs�bernahme */
-		$vu_datum = $d->finde_detail_inhalt ( 'Objekt', $e->objekt_id, 'Verwaltungs�bernahme' );
+		/* Verwaltungsübernahme */
+		$vu_datum = $d->finde_detail_inhalt ( 'Objekt', $e->objekt_id, 'Verwaltungsübernahme' );
 		$vu_datum_arr = explode ( '.', $vu_datum );
 		$vu_tag = $vu_datum_arr [0];
 		$vu_monat = $vu_datum_arr [1];
@@ -5777,18 +5777,18 @@ ORDER BY EINHEIT_KURZNAME";
 		
 		echo "<h2>GMU: $garantie_mon_obj NLW: $nl_datum VU: $vu_datum</h2>";
 		
-		/* Alle Eigent�mer */
+		/* Alle Eigentümer */
 		$weg = new weg ();
 		$et_arr = $weg->get_eigentuemer_arr ( $einheit_id );
 		
 		if (! is_array ( $et_arr )) {
-			fehlermeldung_ausgeben ( "Keine Eigent�mer zu $e->einheit_kurzname" );
+			fehlermeldung_ausgeben ( "Keine Eigentümer zu $e->einheit_kurzname" );
 		} else {
 			// print_r($et_arr);
 			$anz_et = count ( $et_arr );
-			echo "Eigent�meranzahl : $anz_et<hr>";
+			echo "Eigentümeranzahl : $anz_et<hr>";
 			
-			/* Schleife f�r die ET */
+			/* Schleife für die ET */
 			for($a = 0; $a < $anz_et; $a ++) {
 				$et_id = $et_arr [$a] ['ID'];
 				$weg->get_eigentumer_id_infos4 ( $et_id );
@@ -5806,13 +5806,13 @@ ORDER BY EINHEIT_KURZNAME";
 				/* Garantiemonate Eigentuemer */
 				$d_et = new detail ();
 				$garantie_mon_et = $d_et->finde_detail_inhalt ( 'Eigentuemer', $et_id, 'INS-Garantiemonate' );
-				/* Wenn Garantie f�r den ET hinterlegt, dann Anzahl GMONATE AUS DB */
+				/* Wenn Garantie für den ET hinterlegt, dann Anzahl GMONATE AUS DB */
 				if ($garantie_mon_et != '') {
 					if ($garantie_mon_et != '0') {
 						$this->gmon_et = $garantie_mon_et;
 					}
 				} else {
-					/* Wenn keine Garantie f�r den ET hinterlegt, dann objekt garantie */
+					/* Wenn keine Garantie für den ET hinterlegt, dann objekt garantie */
 					if (! empty ( $this->gmon_obj )) {
 						$this->gmon_et = $this->gmon_obj;
 					}
@@ -5837,7 +5837,7 @@ ORDER BY EINHEIT_KURZNAME";
 					}
 				}
 				
-				/* Monate f�r den ET */
+				/* Monate für den ET */
 				$monats_arr = $this->monats_array ( $weg->eigentuemer_von, $datum_bis );
 				
 				/* Monate durchlaufen und Tage bestimmen */
@@ -5886,13 +5886,13 @@ ORDER BY EINHEIT_KURZNAME";
 				/* Garantiemonate Eigentuemer */
 				$d_et = new detail ();
 				$garantie_mon_et = $d_et->finde_detail_inhalt ( 'Eigentuemer', $et_id, 'INS-Garantiemonate' );
-				/* Wenn Garantie f�r den ET hinterlegt, dann Anzahl GMONATE AUS DB */
+				/* Wenn Garantie für den ET hinterlegt, dann Anzahl GMONATE AUS DB */
 				if ($garantie_mon_et != '') {
 					if ($garantie_mon_et != '0') {
 						$this->gmon_et = $garantie_mon_et;
 					}
 				} else {
-					/* Wenn keine Garantie f�r den ET hinterlegt, dann objekt garantie */
+					/* Wenn keine Garantie für den ET hinterlegt, dann objekt garantie */
 					if (! empty ( $this->gmon_obj )) {
 						$this->gmon_et = $this->gmon_obj;
 					}
@@ -5947,7 +5947,7 @@ ORDER BY EINHEIT_KURZNAME";
 					/* Garantiemiete */
 					$this->pdf_tab_g [$a] [$zeile] ['GM'] = nummer_komma2punkt ( nummer_punkt2komma ( $garantie_miete / $this->pdf_tab_g [$a] [$zeile] ['TAGE'] * $this->pdf_tab_g [$a] [$zeile] ['N_TAG'] ) );
 					
-					/* 1. Et 1. pr�fung ob leer, wegen Garantie */
+					/* 1. Et 1. prüfung ob leer, wegen Garantie */
 					// if($a==0 && $m==0){
 					$ltm = letzter_tag_im_monat ( $monat, $jahr );
 					// die($ltm);
@@ -6242,7 +6242,7 @@ ORDER BY EINHEIT_KURZNAME";
 							if ($this->pdf_tab_g [$et] [$z] ['M_ZB'] > 0 && $this->pdf_tab_g [$et] [$z] ['M_ERG'] < 0) {
 								$this->pdf_tab_g [$et] [$z] ['INS_ANT'] = '-';
 								$this->pdf_tab_g [$et] [$z] ['HINWEIS'] = 'CODE_NGBMa';
-								/* Saldo ver�ndert sich zum Vormonat */
+								/* Saldo verändert sich zum Vormonat */
 								if ($this->pdf_tab_g [$et] [$z] ['M_SVM'] != $this->pdf_tab_g [$et] [$z] ['M_ERG']) {
 									$this->pdf_tab_g [$et] [$z] ['KM_I'] = $this->pdf_tab_g [$et] [$z] ['M_ZB'] + $this->pdf_tab_g [$et] [$z] ['M_SVM'] - $this->pdf_tab_g [$et] [$z] ['NK'];
 									$this->pdf_tab_g [$et] [$z] ['HINWEIS'] = 'CODE_NGBMx';
@@ -6278,7 +6278,7 @@ ORDER BY EINHEIT_KURZNAME";
 				// print_r($this);
 				// die();
 				
-				/* Nach Schl�ssel sortieren wegen PDF */
+				/* Nach Schlüssel sortieren wegen PDF */
 				ksort ( $this->pdf_tab_g [$et] );
 				
 				// unset($this);
@@ -6381,8 +6381,8 @@ ORDER BY EINHEIT_KURZNAME";
 		$nl_monat = $nl_datum_arr [1];
 		$nl_jahr = $nl_datum_arr [2];
 		
-		/* Verwaltungs�bernahme */
-		$vu_datum = $d->finde_detail_inhalt ( 'Objekt', $e->objekt_id, 'Verwaltungs�bernahme' );
+		/* Verwaltungsübernahme */
+		$vu_datum = $d->finde_detail_inhalt ( 'Objekt', $e->objekt_id, 'Verwaltungsübernahme' );
 		$vu_datum_arr = explode ( '.', $vu_datum );
 		$vu_tag = $vu_datum_arr [0];
 		$vu_monat = $vu_datum_arr [1];
@@ -6390,18 +6390,18 @@ ORDER BY EINHEIT_KURZNAME";
 		
 		echo "<h2>GMU: $garantie_mon_obj NLW: $nl_datum VU: $vu_datum</h2>";
 		
-		/* Alle Eigent�mer */
+		/* Alle Eigentümer */
 		$weg = new weg ();
 		$et_arr = $weg->get_eigentuemer_arr ( $einheit_id );
 		
 		if (! is_array ( $et_arr )) {
-			fehlermeldung_ausgeben ( "Keine Eigent�mer zu $e->einheit_kurzname" );
+			fehlermeldung_ausgeben ( "Keine Eigentümer zu $e->einheit_kurzname" );
 		} else {
 			// print_r($et_arr);
 			$anz_et = count ( $et_arr );
-			echo "Eigent�meranzahl : $anz_et<hr>";
+			echo "Eigentümeranzahl : $anz_et<hr>";
 			
-			/* Schleife f�r die ET */
+			/* Schleife für die ET */
 			for($a = 0; $a < $anz_et; $a ++) {
 				$et_id = $et_arr [$a] ['ID'];
 				$weg->get_eigentumer_id_infos4 ( $et_id );
@@ -6419,13 +6419,13 @@ ORDER BY EINHEIT_KURZNAME";
 				/* Garantiemonate Eigentuemer */
 				$d_et = new detail ();
 				$garantie_mon_et = $d_et->finde_detail_inhalt ( 'Eigentuemer', $et_id, 'INS-Garantiemonate' );
-				/* Wenn Garantie f�r den ET hinterlegt, dann Anzahl GMONATE AUS DB */
+				/* Wenn Garantie für den ET hinterlegt, dann Anzahl GMONATE AUS DB */
 				if ($garantie_mon_et != '') {
 					if ($garantie_mon_et != '0') {
 						$this->gmon_et = $garantie_mon_et;
 					}
 				} else {
-					/* Wenn keine Garantie f�r den ET hinterlegt, dann objekt garantie */
+					/* Wenn keine Garantie für den ET hinterlegt, dann objekt garantie */
 					if (! empty ( $this->gmon_obj )) {
 						$this->gmon_et = $this->gmon_obj;
 					}
@@ -6450,7 +6450,7 @@ ORDER BY EINHEIT_KURZNAME";
 					}
 				}
 				
-				/* Monate f�r den ET */
+				/* Monate für den ET */
 				$monats_arr = $this->monats_array ( $weg->eigentuemer_von, $datum_bis );
 				
 				/* Monate durchlaufen und Tage bestimmen */
@@ -6498,13 +6498,13 @@ ORDER BY EINHEIT_KURZNAME";
 				/* Garantiemonate Eigentuemer */
 				$d_et = new detail ();
 				$garantie_mon_et = $d_et->finde_detail_inhalt ( 'Eigentuemer', $et_id, 'INS-Garantiemonate' );
-				/* Wenn Garantie f�r den ET hinterlegt, dann Anzahl GMONATE AUS DB */
+				/* Wenn Garantie für den ET hinterlegt, dann Anzahl GMONATE AUS DB */
 				if ($garantie_mon_et != '') {
 					if ($garantie_mon_et != '0') {
 						$this->gmon_et = $garantie_mon_et;
 					}
 				} else {
-					/* Wenn keine Garantie f�r den ET hinterlegt, dann objekt garantie */
+					/* Wenn keine Garantie für den ET hinterlegt, dann objekt garantie */
 					if (! empty ( $this->gmon_obj )) {
 						$this->gmon_et = $this->gmon_obj;
 					}
@@ -6551,7 +6551,7 @@ ORDER BY EINHEIT_KURZNAME";
 					/* Garantiemiete */
 					$this->pdf_tab_g [$a] [$zeile] ['GM'] = nummer_komma2punkt ( nummer_punkt2komma ( $garantie_miete / $this->pdf_tab_g [$a] [$zeile] ['TAGE'] * $this->pdf_tab_g [$a] [$zeile] ['N_TAG'] ) );
 					
-					/* 1. Et 1. pr�fung ob leer, wegen Garantie */
+					/* 1. Et 1. prüfung ob leer, wegen Garantie */
 					// if($a==0 && $m==0){
 					$ltm = letzter_tag_im_monat ( $monat, $jahr );
 					// die($ltm);
@@ -6855,7 +6855,7 @@ ORDER BY EINHEIT_KURZNAME";
 						}
 					} // ##ende garantiemonate
 				}
-				/* Nach Schl�ssel sortieren wegen PDF */
+				/* Nach Schlüssel sortieren wegen PDF */
 				ksort ( $this->pdf_tab_g [$et] );
 			}
 			
@@ -6960,21 +6960,21 @@ ORDER BY EINHEIT_KURZNAME";
 		
 		/* Nutzenlastenwechsel */
 		$nl_datum = $d->finde_detail_inhalt ( 'Objekt', $e->objekt_id, 'Nutzen-Lastenwechsel' );
-		/* Verwaltungs�bernahme */
-		$vu_datum = $d->finde_detail_inhalt ( 'Objekt', $e->objekt_id, 'Verwaltungs�bernahme' );
+		/* Verwaltungsübernahme */
+		$vu_datum = $d->finde_detail_inhalt ( 'Objekt', $e->objekt_id, 'Verwaltungsübernahme' );
 		// echo "GMU: $garantie_mon_obj NLW: $nl_datum VU: $vu_datum<br>";
 		
-		/* Alle Eigent�mer */
+		/* Alle Eigentümer */
 		$weg = new weg ();
 		$et_arr = $weg->get_eigentuemer_arr ( $einheit_id );
 		
 		if (! is_array ( $et_arr )) {
-			fehlermeldung_ausgeben ( "Keine Eigent�mer zu $e->einheit_kurzname" );
+			fehlermeldung_ausgeben ( "Keine Eigentümer zu $e->einheit_kurzname" );
 		} else {
 			// print_r($et_arr);
 			$anz_et = count ( $et_arr );
-			// echo "Eigent�meranzahl : $anz_et<hr>";
-			/* Schleife f�r die ET */
+			// echo "Eigentümeranzahl : $anz_et<hr>";
+			/* Schleife für die ET */
 			for($a = 0; $a < $anz_et; $a ++) {
 				$et_id = $et_arr [$a] ['ID'];
 				$weg->get_eigentumer_id_infos4 ( $et_id );
@@ -6988,7 +6988,7 @@ ORDER BY EINHEIT_KURZNAME";
 				
 				/* Objekt WEG to ARRAY */
 				$this->tab [$a] = ( array ) $weg;
-				/* Monate f�r den ET */
+				/* Monate für den ET */
 				$monats_arr = $this->monats_array ( $weg->eigentuemer_von, $datum_bis );
 				$this->tab [$a] ['MONATE'] = $monats_arr;
 				
@@ -7074,7 +7074,7 @@ ORDER BY EINHEIT_KURZNAME";
 						$this->pdf_tab [$a] [$zeile] ['G_MIETE'] = $this->tab ['G_MIETE'];
 						$sum_km_gm += $this->tab ['G_MIETE'];
 					}
-					/* Schleife Mietvertr�ge */
+					/* Schleife Mietverträge */
 					for($mvs = 0; $mvs < $anz_mvs; $mvs ++) {
 						$mv_id = $this->tab [$a] ['MVS'] [$mvs] ['MIETVERTRAG_ID'];
 						
@@ -7156,7 +7156,7 @@ ORDER BY EINHEIT_KURZNAME";
 							} else {
 								// #######################
 								/* Nach der Garantiezeit */
-								/* Wenn Differenzen versprochene Miete und tats�chliche Miete */
+								/* Wenn Differenzen versprochene Miete und tatsächliche Miete */
 								// if($this->pdf_tab[$a][$zeile]['G_DIFF_KM']>0){
 								// $this->pdf_tab[$a][$zeile]['SOLL_AUSZ_R'] = $this->pdf_tab[$a][$zeile]['G_MIETE'];
 								// $this->pdf_tab[$a][$zeile]['SOLL_AUSZ_B'] = $this->pdf_tab[$a][$zeile]['G_MIETE'] - $this->pdf_tab[$a][$zeile]['HG'] - $this->pdf_tab[$a][$zeile]['K_SUM'];
@@ -7205,7 +7205,7 @@ ORDER BY EINHEIT_KURZNAME";
 										$this->pdf_tab [$a] [$zeile] ['SOLL_AUSZ_B'] = $mk->ausgangs_kaltmiete + $ins_diff_monat + $mz->erg - $this->pdf_tab [$a] [$zeile] ['HG'] - $this->pdf_tab [$a] [$zeile] ['K_SUM'];
 										/* Schulden auch im letzten Monat */
 									} else {
-										// ##################PR�FEN##############################
+										// ##################PRÜFEN##############################
 										/* Wenn MK abgezahlt, diff auszahlen */
 										if (($mz->erg >= $mz->saldo_vormonat_stand)) {
 											
@@ -7218,7 +7218,7 @@ ORDER BY EINHEIT_KURZNAME";
 										} else {
 											/* Wenn der Mieter noch mehr Schulden mach, keine AUSZ */
 											
-											/* Wenn �berhaupt was gezahlt und h�he als umlagen */
+											/* Wenn überhaupt was gezahlt und höhe als umlagen */
 											if ($mz->geleistete_zahlungen > 0 && $mz->geleistete_zahlungen > $mz->davon_umlagen) {
 												// $pdf_tab[$pdf_z]['KM_IST'] = $mi_arr['zb'] - $nk;
 												$this->pdf_tab [$a] [$zeile] ['SOLL_AUSZ_R'] = $mz->geleistete_zahlungen + $ins_diff_monat - $mz->davon_umlagen + $mz->erg + ($mz->saldo_vormonat_stand * - 1);
@@ -7469,7 +7469,7 @@ ORDER BY EINHEIT_KURZNAME";
 		/* Nutzenlastenwechsel */
 		$d = new detail ();
 		$nl_datum = $d->finde_detail_inhalt ( 'Objekt', $objekt_id, 'Nutzen-Lastenwechsel' );
-		$vu_datum = $d->finde_detail_inhalt ( 'Objekt', $objekt_id, 'Verwaltungs�bernahme' );
+		$vu_datum = $d->finde_detail_inhalt ( 'Objekt', $objekt_id, 'Verwaltungsübernahme' );
 		
 		if (! empty ( $vu_datum )) {
 			$vu_datum_arr = explode ( '.', $vu_datum );
@@ -7520,29 +7520,29 @@ ORDER BY EINHEIT_KURZNAME";
 			define ( "TYP", "Type" );
 			define ( "FLAECHE", "Living space" );
 			
-			define ( "SUMMEN", "sum [�]" );
+			define ( "SUMMEN", "sum [€]" );
 			define ( "MONAT2", "month" );
-			define ( "IHR", "for maintenance [0,40�*m�]" );
-			define ( "HV", "managing fee [�]" );
-			define ( "REP", "repairs [�]" );
-			define ( "AUSZAHLUNG", "actual transfer [�]" );
+			define ( "IHR", "for maintenance [0,40€*m²]" );
+			define ( "HV", "managing fee [€]" );
+			define ( "REP", "repairs [€]" );
+			define ( "AUSZAHLUNG", "actual transfer [€]" );
 			$lang = 'en';
 		} else {
-			define ( "EINNAHMEN_REPORT", "Einnahmen�bersicht" );
+			define ( "EINNAHMEN_REPORT", "Einnahmenübersicht" );
 			define ( "OBJEKT", "Objekt" );
 			define ( "WOHNUNG", "Wohnung" );
-			define ( "EIGENTUEMER", "Eigent�mer" );
+			define ( "EIGENTUEMER", "Eigentümer" );
 			define ( "LAGE", "Lage" );
 			define ( "TYP", "Typ" );
-			define ( "FLAECHE", "Fl�che" );
+			define ( "FLAECHE", "Fläche" );
 			
-			define ( "SUMMEN", "Summen [�]" );
+			define ( "SUMMEN", "Summen [€]" );
 			define ( "MONAT2", "Monat" );
-			define ( "KALTMIETE", "NET RENT [�]" );
-			define ( "IHR", "Instadh. [0,40�*m�]" );
-			define ( "HV", "HV-Geb�hr [�]" );
-			define ( "REP", "Reparaturen [�]" );
-			define ( "AUSZAHLUNG", "Auszahlung [�]" );
+			define ( "KALTMIETE", "NET RENT [€]" );
+			define ( "IHR", "Instadh. [0,40€*m²]" );
+			define ( "HV", "HV-Gebühr [€]" );
+			define ( "REP", "Reparaturen [€]" );
+			define ( "AUSZAHLUNG", "Auszahlung [€]" );
 			// $cols = array('MONAT2'=>MONAT, 'IHR'=>IHR, 'HV'=>HV,'REP'=>REP,'AUSZAHLUNG'=>AUSZAHLUNG);
 			$lang = 'de';
 		}
@@ -7593,7 +7593,7 @@ ORDER BY EINHEIT_KURZNAME";
 					$pdf->ezText ( OBJEKT . ": $weg_et->haus_strasse $weg_et->haus_nummer, $weg_et->haus_plz  $weg_et->haus_stadt", 11 );
 					$pdf->ezSetDy ( - 7 );
 					$pdf->ezText ( WOHNUNG . ": $weg_et->einheit_kurzname " . LAGE . ": $weg_et->einheit_lage", 11 );
-					$pdf->ezText ( FLAECHE . ": $weg_et->einheit_qm_weg m�", 11 );
+					$pdf->ezText ( FLAECHE . ": $weg_et->einheit_qm_weg m²", 11 );
 					$pdf->ezSetDy ( - 10 );
 					$pdf->ezText ( EIGENTUEMER . ":\n$weg_et->empf_namen_u", 11 );
 					$pdf->ezText ( NUTZENLASTENWECHSEL . ": <b>$nl_datum</b>", 11 );
@@ -7639,7 +7639,7 @@ ORDER BY EINHEIT_KURZNAME";
 						$sum_garantie_miete += $garantie_miete;
 						
 						$summe_ins_mg = $this->get_kosten_summe_monat ( 'Einheit', $einheit_id, $gk->geldkonto_id, $jahr, $monat, 5500 );
-						/* INS MAKLER GEB�HR */
+						/* INS MAKLER GEBÜHR */
 						$pdf_tab [$pdf_z] ['INSMG'] = nummer_punkt2komma ( $summe_ins_mg );
 						
 						/* Andere Kosten */
@@ -7765,7 +7765,7 @@ ORDER BY EINHEIT_KURZNAME";
 									} else {
 										/* Wenn der Mieter noch mehr Schulden mach, keine AUSZ */
 										
-										/* Wenn �berhaupt was gezahlt */
+										/* Wenn überhaupt was gezahlt */
 										if ($mi_arr ['zb'] > 0) {
 											$pdf_tab [$pdf_z] ['KM_IST'] = $mi_arr ['zb'] - $nk;
 										} else {
@@ -7977,21 +7977,21 @@ ORDER BY EINHEIT_KURZNAME";
 		
 		/* Abzufragende Konten */
 		$kokonten [] = '1023'; // Kosten zu Einheit
-		$kokonten [] = '4180'; // Gew�hrte Minderungen
+		$kokonten [] = '4180'; // Gewährte Minderungen
 		$kokonten [] = '4280'; // Gerichtskosten
 		$kokonten [] = '4281'; // Anwaltskosten MEA
 		$kokonten [] = '4282'; // Gerichtsvollzieher
-		$kokonten [] = '5010'; // Eigent�mereinlagen
+		$kokonten [] = '5010'; // Eigentümereinlagen
 		$kokonten [] = '5020'; // ET Entnahmen TRANSFER
 		                      // $kokonten[] = '5021'; // Hausgeld
 		                      // $kokonten[] = '5400'; // Durch INS zu Erstatten
-		$kokonten [] = '5500'; // INS Maklergeb�hr
+		$kokonten [] = '5500'; // INS Maklergebühr
 		$kokonten [] = '5600'; // Mietaufhegungsvereinbarungen
 		                      // $kokonten[] = '6000'; // Hausgeldzahlungen
 		                      // $kokonten[] = '6010'; // Heizkosten
 		                      // $kokonten[] = '6020'; // Nebenkosten / Hausgeld
 		                      // $kokonten[] = '6030'; // IHR
-		                      // $kokonten[] = '6060'; // Verwaltergeb�hr
+		                      // $kokonten[] = '6060'; // Verwaltergebühr
 		
 		$kokonten [] = '80001'; // Mieteinnahme
 		
@@ -8003,12 +8003,12 @@ ORDER BY EINHEIT_KURZNAME";
 		define ( "TYP", "type" );
 		define ( "FLAECHE", "living space" );
 		
-		define ( "SUMMEN", "sum [�]" );
+		define ( "SUMMEN", "sum [€]" );
 		define ( "MONAT2", "month" );
-		define ( "IHR", "for maintenance [0,40�*m�]" );
-		define ( "HV", "managing fee [�]" );
-		define ( "REP", "repairs [�]" );
-		define ( "AUSZAHLUNG", "actual transfer [�]" );
+		define ( "IHR", "for maintenance [0,40€*m²]" );
+		define ( "HV", "managing fee [€]" );
+		define ( "REP", "repairs [€]" );
+		define ( "AUSZAHLUNG", "actual transfer [€]" );
 		define ( "DATUM", "Date" );
 		
 		$oo = new objekt ();
@@ -8037,8 +8037,8 @@ ORDER BY EINHEIT_KURZNAME";
 		$nl_monat = $nl_datum_arr [1];
 		$nl_jahr = $nl_datum_arr [2];
 		
-		/* Verwaltungs�bernahme */
-		$vu_datum = $d->finde_detail_inhalt ( 'Objekt', $objekt_id, 'Verwaltungs�bernahme' );
+		/* Verwaltungsübernahme */
+		$vu_datum = $d->finde_detail_inhalt ( 'Objekt', $objekt_id, 'Verwaltungsübernahme' );
 		$vu_datum_arr = explode ( '.', $vu_datum );
 		$vu_tag = $vu_datum_arr [0];
 		$vu_monat = $vu_datum_arr [1];
@@ -8075,7 +8075,7 @@ ORDER BY EINHEIT_KURZNAME";
 			$et_arr = $weg->get_eigentuemer_arr ( $einheit_id );
 			// echo "$einheit_id ";
 			$anz_et = count ( $et_arr );
-			/* Schleife f�r ET */
+			/* Schleife für ET */
 			
 			$sum_hv = 0;
 			$sum_ihr = 0;
@@ -8091,7 +8091,7 @@ ORDER BY EINHEIT_KURZNAME";
 				// print_r($et_arr);
 				$et_id = $et_arr [$et] ['ID'];
 				
-				/* Personenkontaktdaten Eigent�mer */
+				/* Personenkontaktdaten Eigentümer */
 				$weg_nn = new weg ();
 				$et_p_id = $weg_nn->get_person_id_eigentuemer_arr ( $et_id );
 				$email_arr_a = array ();
@@ -8155,7 +8155,7 @@ ORDER BY EINHEIT_KURZNAME";
 				// print_r($et_mon_arr);
 				// die();
 				
-				/* Datum zur�cksetzen auf Jahresanfang bzw. Ganzjahr */
+				/* Datum zurücksetzen auf Jahresanfang bzw. Ganzjahr */
 				$datum_von = "$jahr-01-01";
 				$datum_bis = "$jahr-12-31";
 				
@@ -8224,7 +8224,7 @@ ORDER BY EINHEIT_KURZNAME";
 							// die();
 							$pdf_tab [$e] [$et] [$zeile] ['LEER'] = 'N';
 							$anz_mv = count ( $mv_arr );
-							// #########MIETVERTR�GE IM MONAT###########
+							// #########MIETVERTRÄGE IM MONAT###########
 							for($mva = 0; $mva < $anz_mv; $mva ++) {
 								$mv_id = $mv_arr [$mva] ['MIETVERTRAG_ID'];
 								$mvv = new mietvertraege ();
@@ -8253,7 +8253,7 @@ ORDER BY EINHEIT_KURZNAME";
 								$sum_km_s += $pdf_tab [$e] [$et] [$zeile] ['KM_S'];
 								$pdf_tab [$e] [$et] [$zeile] ['KM_SA'] = nummer_komma2punkt ( nummer_punkt2komma ( $mk->ausgangs_kaltmiete / $tage * $n_tage ) );
 								$sum_km_ant += $pdf_tab [$e] [$et] [$zeile] ['KM_SA'];
-								/* Saldoberechnung wegen SALDO VV nicht m�glich */
+								/* Saldoberechnung wegen SALDO VV nicht möglich */
 								$mz = new miete ();
 								// $mz->mietkonto_berechnung($mv_id);
 								$mz->mietkonto_berechnung_monatsgenau ( $mv_id, $et_jahr, $et_monat );
@@ -8682,7 +8682,7 @@ ORDER BY EINHEIT_KURZNAME";
 		$cols_num ['1023'] ['TXT'] = 'Repairs';
 		$cols_num ['1023'] ['TXT1'] = 'Repairs and general expenses';
 		
-		$kokonten [] = '4180'; // Gew�hrte Minderungen
+		$kokonten [] = '4180'; // Gewährte Minderungen
 		$cols_num ['4180'] ['TXT'] = 'Rent decrease';
 		$cols_num ['4180'] ['TXT1'] = '';
 		
@@ -8698,7 +8698,7 @@ ORDER BY EINHEIT_KURZNAME";
 		$cols_num ['4282'] ['TXT'] = 'Legal';
 		$cols_num ['4282'] ['TXT1'] = 'Legal costs - court fees, lawyers, execution';
 		
-		$kokonten [] = '5010'; // Eigent�mereinlagen
+		$kokonten [] = '5010'; // Eigentümereinlagen
 		$cols_num ['5010'] ['TXT'] = 'Payment by owner';
 		$cols_num ['5010'] ['TXT1'] = 'Money received by the owner';
 		
@@ -8712,7 +8712,7 @@ ORDER BY EINHEIT_KURZNAME";
 		
 		// $kokonten[] = '5021'; // Hausgeld
 		// $kokonten[] = '5400'; // Durch INS zu Erstatten
-		$kokonten [] = '5500'; // INS Maklergeb�hr
+		$kokonten [] = '5500'; // INS Maklergebühr
 		$cols_num ['5500'] ['TXT'] = 'Brokerage fee';
 		$cols_num ['5500'] ['TXT1'] = '';
 		
@@ -8723,7 +8723,7 @@ ORDER BY EINHEIT_KURZNAME";
 		// $kokonten[] = '6010'; // Heizkosten
 		// $kokonten[] = '6020'; // Nebenkosten / Hausgeld
 		// $kokonten[] = '6030'; // IHR
-		// $kokonten[] = '6060'; // Verwaltergeb�hr
+		// $kokonten[] = '6060'; // Verwaltergebühr
 		
 		$kokonten [] = '80001'; // Mieteinnahme
 		$cols_num ['80001'] ['TXT'] = 'Rental Income';
@@ -8737,12 +8737,12 @@ ORDER BY EINHEIT_KURZNAME";
 		define ( "TYP", "Type" );
 		define ( "FLAECHE", "Living space" );
 		
-		define ( "SUMMEN", "sum [�]" );
+		define ( "SUMMEN", "sum [€]" );
 		define ( "MONAT2", "month" );
-		define ( "IHR", "for maintenance [0,40�*m�]" );
-		define ( "HV", "managing fee [�]" );
-		define ( "REP", "repairs [�]" );
-		define ( "AUSZAHLUNG", "actual transfer [�]" );
+		define ( "IHR", "for maintenance [0,40€*m²]" );
+		define ( "HV", "managing fee [€]" );
+		define ( "REP", "repairs [€]" );
+		define ( "AUSZAHLUNG", "actual transfer [€]" );
 		define ( "DATUM", "Date" );
 		
 		$oo = new objekt ();
@@ -8771,8 +8771,8 @@ ORDER BY EINHEIT_KURZNAME";
 		$nl_monat = $nl_datum_arr [1];
 		$nl_jahr = $nl_datum_arr [2];
 		
-		/* Verwaltungs�bernahme */
-		$vu_datum = $d->finde_detail_inhalt ( 'Objekt', $objekt_id, 'Verwaltungs�bernahme' );
+		/* Verwaltungsübernahme */
+		$vu_datum = $d->finde_detail_inhalt ( 'Objekt', $objekt_id, 'Verwaltungsübernahme' );
 		$vu_datum_arr = explode ( '.', $vu_datum );
 		$vu_tag = $vu_datum_arr [0];
 		$vu_monat = $vu_datum_arr [1];
@@ -8812,7 +8812,7 @@ ORDER BY EINHEIT_KURZNAME";
 			// print_r($et_arr);
 			// die();
 			$anz_et = count ( $et_arr );
-			/* Schleife f�r ET */
+			/* Schleife für ET */
 			
 			$sum_hv = 0;
 			$sum_ihr = 0;
@@ -8828,7 +8828,7 @@ ORDER BY EINHEIT_KURZNAME";
 				// print_r($et_arr);
 				$et_id = $et_arr [$et] ['ID'];
 				
-				/* Personenkontaktdaten Eigent�mer */
+				/* Personenkontaktdaten Eigentümer */
 				$weg_nn = new weg ();
 				$et_p_id = $weg_nn->get_person_id_eigentuemer_arr ( $et_id );
 				$email_arr_a = array ();
@@ -8892,7 +8892,7 @@ ORDER BY EINHEIT_KURZNAME";
 				// print_r($et_mon_arr);
 				// die();
 				
-				/* Datum zur�cksetzen auf Jahresanfang bzw. Ganzjahr */
+				/* Datum zurücksetzen auf Jahresanfang bzw. Ganzjahr */
 				$datum_von = "$jahr-01-01";
 				$datum_bis = "$jahr-12-31";
 				
@@ -8970,7 +8970,7 @@ ORDER BY EINHEIT_KURZNAME";
 							// die();
 							$pdf_tab [$e] [$et] [$monat] ['LEER'] = 'N';
 							$anz_mv = count ( $mv_arr );
-							// #########MIETVERTR�GE IM MONAT###########
+							// #########MIETVERTRÄGE IM MONAT###########
 							for($mva = 0; $mva < $anz_mv; $mva ++) {
 								$mv_id = $mv_arr [$mva] ['MIETVERTRAG_ID'];
 								$mvv = new mietvertraege ();
@@ -9001,7 +9001,7 @@ ORDER BY EINHEIT_KURZNAME";
 								$sum_km_s += $pdf_tab [$e] [$et] [$monat] ['KM_S'];
 								$pdf_tab [$e] [$et] [$monat] ['KM_SA'] = nummer_komma2punkt ( nummer_punkt2komma ( $mk->ausgangs_kaltmiete / $tage * $n_tage ) );
 								$sum_km_ant += $pdf_tab [$e] [$et] [$monat] ['KM_SA'];
-								/* Saldoberechnung wegen SALDO VV nicht m�glich */
+								/* Saldoberechnung wegen SALDO VV nicht möglich */
 								$mz = new miete ();
 								// $mz->mietkonto_berechnung($mv_id);
 								$mz->mietkonto_berechnung_monatsgenau ( $mv_id, $et_jahr, $et_monat );
@@ -9536,8 +9536,8 @@ ORDER BY EINHEIT_KURZNAME";
 		$nl_monat = $nl_datum_arr [1];
 		$nl_jahr = $nl_datum_arr [2];
 		
-		/* Verwaltungs�bernahme */
-		$vu_datum = $d->finde_detail_inhalt ( 'Objekt', $objekt_id, 'Verwaltungs�bernahme' );
+		/* Verwaltungsübernahme */
+		$vu_datum = $d->finde_detail_inhalt ( 'Objekt', $objekt_id, 'Verwaltungsübernahme' );
 		$vu_datum_arr = explode ( '.', $vu_datum );
 		$vu_tag = $vu_datum_arr [0];
 		$vu_monat = $vu_datum_arr [1];
@@ -9574,7 +9574,7 @@ ORDER BY EINHEIT_KURZNAME";
 			$et_arr = $weg->get_eigentuemer_arr ( $einheit_id );
 			// echo "$einheit_id ";
 			$anz_et = count ( $et_arr );
-			/* Schleife f�r ET */
+			/* Schleife für ET */
 			
 			$sum_hv = 0;
 			$sum_ihr = 0;
@@ -9632,7 +9632,7 @@ ORDER BY EINHEIT_KURZNAME";
 				// print_r($et_mon_arr);
 				// die();
 				
-				/* Datum zur�cksetzen auf Jahresanfang bzw. Ganzjahr */
+				/* Datum zurücksetzen auf Jahresanfang bzw. Ganzjahr */
 				$datum_von = "$jahr-01-01";
 				$datum_bis = "$jahr-12-31";
 				
@@ -9701,7 +9701,7 @@ ORDER BY EINHEIT_KURZNAME";
 							// die();
 							$pdf_tab [$e] [$et] [$zeile] ['LEER'] = 'N';
 							$anz_mv = count ( $mv_arr );
-							// #########MIETVERTR�GE IM MONAT###########
+							// #########MIETVERTRÄGE IM MONAT###########
 							for($mva = 0; $mva < $anz_mv; $mva ++) {
 								$mv_id = $mv_arr [$mva] ['MIETVERTRAG_ID'];
 								$mvv = new mietvertraege ();
@@ -9730,7 +9730,7 @@ ORDER BY EINHEIT_KURZNAME";
 								$sum_km_s += $pdf_tab [$e] [$et] [$zeile] ['KM_S'];
 								$pdf_tab [$e] [$et] [$zeile] ['KM_SA'] = nummer_komma2punkt ( nummer_punkt2komma ( $mk->ausgangs_kaltmiete / $tage * $n_tage ) );
 								$sum_km_ant += $pdf_tab [$e] [$et] [$zeile] ['KM_SA'];
-								/* Saldoberechnung wegen SALDO VV nicht m�glich */
+								/* Saldoberechnung wegen SALDO VV nicht möglich */
 								$mz = new miete ();
 								// $mz->mietkonto_berechnung($mv_id);
 								$mz->mietkonto_berechnung_monatsgenau ( $mv_id, $et_jahr, $et_monat );
@@ -10000,29 +10000,29 @@ ORDER BY EINHEIT_KURZNAME";
 			define ( "TYP", "type" );
 			define ( "FLAECHE", "living space" );
 			
-			define ( "SUMMEN", "sum [�]" );
+			define ( "SUMMEN", "sum [€]" );
 			define ( "MONAT2", "month" );
-			define ( "IHR", "for maintenance [0,40�*m�]" );
-			define ( "HV", "managing fee [�]" );
-			define ( "REP", "repairs [�]" );
-			define ( "AUSZAHLUNG", "actual transfer [�]" );
+			define ( "IHR", "for maintenance [0,40€*m²]" );
+			define ( "HV", "managing fee [€]" );
+			define ( "REP", "repairs [€]" );
+			define ( "AUSZAHLUNG", "actual transfer [€]" );
 			define ( "DATUM", "Date" );
 			$lang = 'en';
 		} else {
-			define ( "EINNAHMEN_REPORT", "Einnahmen�bersicht" );
+			define ( "EINNAHMEN_REPORT", "Einnahmenübersicht" );
 			define ( "OBJEKT", "Objekt" );
 			define ( "WOHNUNG", "Wohnung" );
-			define ( "EIGENTUEMER", "Eigent�mer" );
+			define ( "EIGENTUEMER", "Eigentümer" );
 			define ( "LAGE", "Lage" );
 			define ( "TYP", "Typ" );
-			define ( "FLAECHE", "Fl�che" );
+			define ( "FLAECHE", "Fläche" );
 			
-			define ( "SUMMEN", "Summen [�]" );
+			define ( "SUMMEN", "Summen [€]" );
 			define ( "MONAT2", "Monat" );
-			define ( "IHR", "Instadh. [0,40�*m�]" );
-			define ( "HV", "HV-Geb�hr [�]" );
-			define ( "REP", "Reparaturen [�]" );
-			define ( "AUSZAHLUNG", "Auszahlung [�]" );
+			define ( "IHR", "Instadh. [0,40€*m²]" );
+			define ( "HV", "HV-Gebühr [€]" );
+			define ( "REP", "Reparaturen [€]" );
+			define ( "AUSZAHLUNG", "Auszahlung [€]" );
 			define ( "DATUM", "Datum" );
 			// $cols = array('MONAT2'=>MONAT, 'IHR'=>IHR, 'HV'=>HV,'REP'=>REP,'AUSZAHLUNG'=>AUSZAHLUNG);
 			$lang = 'de';
@@ -10036,8 +10036,8 @@ ORDER BY EINHEIT_KURZNAME";
 		$nl_monat = $nl_datum_arr [1];
 		$nl_jahr = $nl_datum_arr [2];
 		
-		/* Verwaltungs�bernahme */
-		$vu_datum = $d->finde_detail_inhalt ( 'Objekt', $objekt_id, 'Verwaltungs�bernahme' );
+		/* Verwaltungsübernahme */
+		$vu_datum = $d->finde_detail_inhalt ( 'Objekt', $objekt_id, 'Verwaltungsübernahme' );
 		$vu_datum_arr = explode ( '.', $vu_datum );
 		$vu_tag = $vu_datum_arr [0];
 		$vu_monat = $vu_datum_arr [1];
@@ -10089,7 +10089,7 @@ ORDER BY EINHEIT_KURZNAME";
 					$pdf->ezSetDy ( - 7 );
 					$pdf->ezText ( DATUM . ": NL: $nl_datum VU: $vu_datum", 11 );
 					$pdf->ezText ( WOHNUNG . ": $weg_et->einheit_kurzname " . LAGE . ": $weg_et->einheit_lage", 11 );
-					$pdf->ezText ( FLAECHE . ": $weg_et->einheit_qm_weg m�", 11 );
+					$pdf->ezText ( FLAECHE . ": $weg_et->einheit_qm_weg m²", 11 );
 					$pdf->ezSetDy ( - 10 );
 					$pdf->ezText ( EIGENTUEMER . ":\n$weg_et->empf_namen_u", 11 );
 					$pdf->ezText ( EIGENTUEMER . ":\n$weg_et->eigentuemer_von $weg_et->eigentuemer_bis", 11 );
@@ -10247,28 +10247,28 @@ ORDER BY EINHEIT_KURZNAME";
 			define ( "TYP", "type" );
 			define ( "FLAECHE", "living space" );
 			
-			define ( "SUMMEN", "sum [�]" );
+			define ( "SUMMEN", "sum [€]" );
 			define ( "MONAT2", "month" );
-			define ( "IHR", "for maintenance [0,40�*m�]" );
-			define ( "HV", "managing fee [�]" );
-			define ( "REP", "repairs [�]" );
-			define ( "AUSZAHLUNG", "actual transfer [�]" );
+			define ( "IHR", "for maintenance [0,40€*m²]" );
+			define ( "HV", "managing fee [€]" );
+			define ( "REP", "repairs [€]" );
+			define ( "AUSZAHLUNG", "actual transfer [€]" );
 			$lang = 'en';
 		} else {
-			define ( "EINNAHMEN_REPORT", "Einnahmen�bersicht" );
+			define ( "EINNAHMEN_REPORT", "Einnahmenübersicht" );
 			define ( "OBJEKT", "Objekt" );
 			define ( "WOHNUNG", "Wohnung" );
-			define ( "EIGENTUEMER", "Eigent�mer" );
+			define ( "EIGENTUEMER", "Eigentümer" );
 			define ( "LAGE", "Lage" );
 			define ( "TYP", "Typ" );
-			define ( "FLAECHE", "Fl�che" );
+			define ( "FLAECHE", "Fläche" );
 			
-			define ( "SUMMEN", "Summen [�]" );
+			define ( "SUMMEN", "Summen [€]" );
 			define ( "MONAT2", "Monat" );
-			define ( "IHR", "Instadh. [0,40�*m�]" );
-			define ( "HV", "HV-Geb�hr [�]" );
-			define ( "REP", "Reparaturen [�]" );
-			define ( "AUSZAHLUNG", "Auszahlung [�]" );
+			define ( "IHR", "Instadh. [0,40€*m²]" );
+			define ( "HV", "HV-Gebühr [€]" );
+			define ( "REP", "Reparaturen [€]" );
+			define ( "AUSZAHLUNG", "Auszahlung [€]" );
 			// $cols = array('MONAT2'=>MONAT, 'IHR'=>IHR, 'HV'=>HV,'REP'=>REP,'AUSZAHLUNG'=>AUSZAHLUNG);
 			$lang = 'de';
 		}
@@ -10309,7 +10309,7 @@ ORDER BY EINHEIT_KURZNAME";
 					$pdf->ezText ( OBJEKT . ": $weg_et->haus_strasse $weg_et->haus_nummer, $weg_et->haus_plz  $weg_et->haus_stadt", 11 );
 					$pdf->ezSetDy ( - 7 );
 					$pdf->ezText ( WOHNUNG . ": $weg_et->einheit_kurzname " . LAGE . ": $weg_et->einheit_lage", 11 );
-					$pdf->ezText ( FLAECHE . ": $weg_et->einheit_qm_weg m�", 11 );
+					$pdf->ezText ( FLAECHE . ": $weg_et->einheit_qm_weg m²", 11 );
 					$pdf->ezSetDy ( - 10 );
 					$pdf->ezText ( EIGENTUEMER . ":\n$weg_et->empf_namen_u", 11 );
 					
@@ -10425,17 +10425,17 @@ ORDER BY EINHEIT_KURZNAME";
 		// print_r($weg);
 		
 		$f = new formular ();
-		$f->erstelle_formular ( 'SEPA �BERWEISUNG', null );
+		$f->erstelle_formular ( 'SEPA ÜBERWEISUNG', null );
 		$f->text_feld_inaktiv ( 'KONTO', 'kto', $gk->bez, 100, 'kto' );
 		$f->text_feld_inaktiv ( 'EINHEIT', 'eig', "$weg->einheit_kurzname", 25, 'eig' );
-		$f->text_feld_inaktiv ( "EIGENT�MER ($weg->anz_personen)", 'eig', "$weg->empf_namen", 100, 'eig' );
+		$f->text_feld_inaktiv ( "EIGENTÜMER ($weg->anz_personen)", 'eig', "$weg->empf_namen", 100, 'eig' );
 		$monat = date ( "m" );
 		$jahr = date ( "Y" );
 		
 		$f->text_feld ( 'VERWENDUNG', 'vzweck', "$weg->einheit_kurzname $monat.$jahr / Transfer to owner / Auszahlung", 100, 'vzweck', '' );
 		$f->text_feld ( 'BETRAG', 'betrag', $betrag, 20, 'betrag', '' );
 		$sep = new sepa ();
-		if ($sep->dropdown_sepa_geldkonten ( 'Empf�ngerkonto', 'empf_sepa_gk_id', 'empf_sepa_gk_id', 'Eigentuemer', $e_id ) != false) {
+		if ($sep->dropdown_sepa_geldkonten ( 'Empfängerkonto', 'empf_sepa_gk_id', 'empf_sepa_gk_id', 'Eigentuemer', $e_id ) != false) {
 			// if($gk->dropdown_geldkonten_k('GKONTO', 'empf_sepa_gk_id', 'empf_sepa_gk_id', 'Eigentuemer', $e_id)){
 			$f->hidden_feld ( 'option', 'sepa_sammler_hinzu' );
 			$f->hidden_feld ( 'kat', 'ET-AUSZAHLUNG' );
@@ -10446,14 +10446,14 @@ ORDER BY EINHEIT_KURZNAME";
 			$kk = new kontenrahmen ();
 			$kk->dropdown_kontorahmenkonten_vorwahl ( 'Buchungskonto', 'konto', 'konto', 'GELDKONTO', $_SESSION ['geldkonto_id'], '', '5020' );
 			// $kk->dropdown_kontorahmenkonten_vorwahl('Buchungskonto', 'konto', 'konto', 'Partner', $_SESSION['partner_id'], '', 4000);
-			$f->send_button ( 'sndBtn', 'Hinzuf�gen' );
+			$f->send_button ( 'sndBtn', 'Hinzufügen' );
 		}
 		$f->ende_formular ();
 	}
 	function pdf_bericht_se($objekt_id, $monat, $jahr, $lang = 'de') {
 		echo "PDF-Bericht SE";
 		if (! isset ( $_SESSION ['geldkonto_id'] )) {
-			fehlermeldung_ausgeben ( "Geldkonto w�hlen" );
+			fehlermeldung_ausgeben ( "Geldkonto wählen" );
 		}
 		$weg = new weg ();
 		$ein_arr = $weg->einheiten_weg_tabelle_arr ( $objekt_id );
@@ -10743,7 +10743,7 @@ ORDER BY EINHEIT_KURZNAME";
 	}
 	function form_profil_neu() {
 		$f = new formular ();
-		$f->erstelle_formular ( 'Neues Profil f�r die Berichte erstellen', null );
+		$f->erstelle_formular ( 'Neues Profil für die Berichte erstellen', null );
 		$f->text_feld ( 'Kurzbeschreibung', 'kurz_b', '', 50, 'kurz_b', null );
 		$o = new objekt ();
 		$o->dropdown_objekte ( 'objekt_id', 'objekt_id' );
@@ -10755,9 +10755,9 @@ ORDER BY EINHEIT_KURZNAME";
 		} else {
 			$filter_bez = '';
 		}
-		$sep->dropdown_sepa_geldkonten_filter ( 'Geldkonto w�hlen', 'gk_id', 'gk_id', $filter_bez );
+		$sep->dropdown_sepa_geldkonten_filter ( 'Geldkonto wählen', 'gk_id', 'gk_id', $filter_bez );
 		$p = new partner ();
-		$p->partner_dropdown ( 'Hausverwaltung w�hlen', 'p_id', 'p_id' );
+		$p->partner_dropdown ( 'Hausverwaltung wählen', 'p_id', 'p_id' );
 		$f->hidden_feld ( 'option', 'step2' );
 		$f->send_button ( 'snd_listenProf', 'Weiter zu Schritt 2' );
 		$f->ende_formular ();
@@ -10774,7 +10774,7 @@ ORDER BY EINHEIT_KURZNAME";
 	function form_profil_step2($profil_id) {
 		$this->get_r_profil_infos ( $profil_id );
 		$f = new formular ();
-		$f->erstelle_formular ( 'Buchungskonten f�r das Profil w�hlen', null );
+		$f->erstelle_formular ( 'Buchungskonten für das Profil wählen', null );
 		$kr = new kontenrahmen ();
 		$kr_id = $kr->get_kontenrahmen ( 'GELDKONTO', $this->gk_id );
 		// echo "$this->kurz_b $kr_id";
@@ -10866,7 +10866,7 @@ ORDER BY EINHEIT_KURZNAME";
 				$oo = new objekt ();
 				$objekt_name = $oo->get_objekt_name ( $objekt_id );
 				$link_profil_wahl = "<a href=\"?daten=listen&option=profil_wahl&profil_id=$profil_id\">$text</a>";
-				$link_profil_edit = "<a href=\"?daten=listen&option=profil_edit&profil_id=$profil_id\">Konten �ndern</a>";
+				$link_profil_edit = "<a href=\"?daten=listen&option=profil_edit&profil_id=$profil_id\">Konten ändern</a>";
 				$link_bericht = "<a href=\"?daten=listen&option=pruefung_bericht&profil_id=$profil_id\">Bericht erstellen</a>";
 				if (isset ( $_SESSION ['r_profil_id'] ) && $_SESSION ['r_profil_id'] == $profil_id) {
 					echo "<tr class=\"zeile2\"><td>$profil_id</td><td>$link_profil_wahl</td><td>$objekt_name</td><td>$gk_info->geldkonto_bezeichnung_kurz</td><td>$partner_name</td><td>$link_profil_edit $link_bericht</td></tr>";
@@ -10890,7 +10890,7 @@ ORDER BY EINHEIT_KURZNAME";
 			$this->gk_id = $row ['GK_ID'];
 			$this->partner_id = $row ['PARTNER_ID'];
 		} else {
-			fehlermeldung_ausgeben ( "Profilinfos f�r Profil $profil_id unbekannt!" );
+			fehlermeldung_ausgeben ( "Profilinfos für Profil $profil_id unbekannt!" );
 		}
 	}
 	function b_konten_edit($profil_id, $arr, $bez_arr) {
@@ -10938,7 +10938,7 @@ ORDER BY EINHEIT_KURZNAME";
 			echo "<pre>";
 			print_r ( $email_err );
 			$anz_e = count ( $email_err );
-			fehlermeldung_ausgeben ( "FOlgende Eigent�mer haben keine Emailadresse!!!" );
+			fehlermeldung_ausgeben ( "FOlgende Eigentümer haben keine Emailadresse!!!" );
 			echo "<table>";
 			for($e = 0; $e < $anz_e; $e ++) {
 				$weg = new weg ();
@@ -10952,7 +10952,7 @@ ORDER BY EINHEIT_KURZNAME";
 			fehlermeldung_ausgeben ( "Keine Email fehler!" );
 			$bk_konten_arr = $this->bk_konten_arr ( $profil_id );
 			if (! is_array ( $bk_konten_arr )) {
-				fehlermeldung_ausgeben ( "Keine Kostenkonten gew�hlt!!!" );
+				fehlermeldung_ausgeben ( "Keine Kostenkonten gewählt!!!" );
 			} else {
 				// print_r($bk_konten_arr);
 				$anz_k = count ( $bk_konten_arr );
@@ -11027,7 +11027,7 @@ ORDER BY EINHEIT_KURZNAME";
 		$this->report_bis = $row ['BIS'];
 	}
 	function pruefen_emails($objekt_id) {
-		// echo "PR�FE EMAILS!!!";
+		// echo "PRÜFE EMAILS!!!";
 		// echo $objekt_id;
 		$weg = new weg ();
 		$ein_arr = $weg->einheiten_weg_tabelle_arr ( $objekt_id );
@@ -11073,7 +11073,7 @@ ORDER BY EINHEIT_KURZNAME";
 		
 		/* Eingrenzung Kostenabragen */
 		if (! isset ( $_REQUEST ['von'] ) or ! isset ( $_REQUEST ['bis'] )) {
-			// die('Abfragedatum VON BIS in die URL hinzuf�gen');
+			// die('Abfragedatum VON BIS in die URL hinzufügen');
 			$von = "01.$monat.$jahr";
 			$lt = letzter_tag_im_monat ( $monat, $jahr );
 			$bis = "$lt.$monat.$jahr";
@@ -11091,10 +11091,10 @@ ORDER BY EINHEIT_KURZNAME";
 		                           // echo '<pre>';
 		                           // print_r($gk);
 		                           // if(!$gk->#geldkonto_id){
-		                           // die('Geldkonto zum Objekt hinzuf�gen!!!');
+		                           // die('Geldkonto zum Objekt hinzufügen!!!');
 		                           // }
 		
-		/* Schleife f�r jede Einheit */
+		/* Schleife für jede Einheit */
 		$weg = new weg ();
 		$ein_arr = $weg->einheiten_weg_tabelle_arr ( $objekt_id );
 		$anz_e = count ( $ein_arr );
@@ -11194,7 +11194,7 @@ ORDER BY EINHEIT_KURZNAME";
 					// $pdf->ezTable($ein_arr[$e]['KONTEN'][$b_key]);
 					$this->get_b_konto_bez ( $profil_id, $b_key );
 					
-					/* Tabellen f�r Konten */
+					/* Tabellen für Konten */
 					// $tmp_b_arr = $ein_arr[$e]['KONTEN'][$b_key];
 					$tmp_b_arr = $this->summieren_arr ( $ein_arr [$e] ['KONTEN'] [$b_key] );
 					$anz_tmp = count ( $tmp_b_arr );
@@ -11202,7 +11202,7 @@ ORDER BY EINHEIT_KURZNAME";
 						$cols = array (
 								'DATUM' => "<b>Date</b>",
 								'VERWENDUNGSZWECK' => "<b>Description</b>",
-								'BETRAG' => "<b>Amount [�]</b>" 
+								'BETRAG' => "<b>Amount [€]</b>" 
 						);
 						$b_von = date_german2mysql ( $ein_arr [$e] ['KONTEN_VB'] [$b_key] ['VON'] );
 						$b_bis = date_german2mysql ( $ein_arr [$e] ['KONTEN_VB'] [$b_key] ['BIS'] );
@@ -11215,7 +11215,7 @@ ORDER BY EINHEIT_KURZNAME";
 						$cols = array (
 								'DATUM' => "<b>Datum</b>",
 								'VERWENDUNGSZWECK' => "<b>Beschreibung</b>",
-								'BETRAG' => "<b>Betrag [�]</b>" 
+								'BETRAG' => "<b>Betrag [€]</b>" 
 						);
 						$b_von = $ein_arr [$e] ['KONTEN_VB'] [$b_key] ['VON'];
 						$b_bis = $ein_arr [$e] ['KONTEN_VB'] [$b_key] ['BIS'];
@@ -11405,7 +11405,7 @@ ORDER BY EINHEIT_KURZNAME";
 			}
 			
 			/* Buchungen zu ET */
-			echo "<tr><th colspan=\"6\">EIGENT�MER</th><th></th></tr>";
+			echo "<tr><th colspan=\"6\">EIGENTÜMER</th><th></th></tr>";
 			$anz_buchungen = count ( $my_arr1 [0] );
 			for($k = 0; $k < $anz_buchungen - 1; $k ++) {
 				$txt = $my_arr1 [0] [$k] ['VERWENDUNGSZWECK'];
@@ -11573,7 +11573,7 @@ ORDER BY EINHEIT_KURZNAME";
 				/*
 				 * if($this->check_vg($gk->geldkonto_id, $monat, $jahr, $et_id,'-14.99', null, null)=='0'){
 				 * $zeit_arr[$m]['ET'][$k]['DATUM'] ="$jahr-$monat-01";
-				 * $zeit_arr[$m]['ET'][$k]['TXT'] = 'Verwaltergeb�hr SR';
+				 * $zeit_arr[$m]['ET'][$k]['TXT'] = 'Verwaltergebühr SR';
 				 * $zeit_arr[$m]['ET'][$k]['BETRAG'] = '-14.99';
 				 * $this->saldo_et+=-14.99;
 				 * $zeit_arr[$m]['SALDO_MONAT'] = $this->saldo_et;
@@ -11913,21 +11913,21 @@ ORDER BY EINHEIT_KURZNAME";
 				
 				/* Abzufragende Konten */
 				$kokonten [] = '1023'; // Kosten zu Einheit
-				$kokonten [] = '4180'; // Gew�hrte Minderungen
+				$kokonten [] = '4180'; // Gewährte Minderungen
 				$kokonten [] = '4280'; // Gerichtskosten
 				$kokonten [] = '4281'; // Anwaltskosten MEA
 				$kokonten [] = '4282'; // Gerichtsvollzieher
-				$kokonten [] = '5010'; // Eigent�mereinlagen
+				$kokonten [] = '5010'; // Eigentümereinlagen
 				$kokonten [] = '5020'; // ET Entnahmen
 				$kokonten [] = '5021'; // Hausgeld
 				$kokonten [] = '5400'; // Durch INS zu Erstatten
-				$kokonten [] = '5500'; // INS Maklergeb�hr
+				$kokonten [] = '5500'; // INS Maklergebühr
 				$kokonten [] = '5600'; // Mietaufhegungsvereinbarungen
 				$kokonten [] = '6000'; // Hausgeldzahlungen
 				$kokonten [] = '6010'; // Heizkosten
 				$kokonten [] = '6020'; // Nebenkosten / Hausgeld
 				$kokonten [] = '6030'; // IHR
-				$kokonten [] = '6060'; // Verwaltergeb�hr
+				$kokonten [] = '6060'; // Verwaltergebühr
 				
 				/* Buchungen zu Einheit */
 				$kosten_arr = $this->get_kosten_von_bis ( 'Einheit', $einheit_id, $m_von, $m_bis, $gk->geldkonto_id );
@@ -12127,7 +12127,7 @@ ORDER BY EINHEIT_KURZNAME";
 		/*
 		 * echo '
 		 * <details>
-		 * <summary>�bungen zu Kapitel 1</summary>
+		 * <summary>Übungen zu Kapitel 1</summary>
 		 * <ul>
 		 * <li><a href="/?exercise=A1E1">Grammar: simple past tense</a></li>
 		 * <li><a href="/?exercise=A1E2">Vocabulary: things to eat</a></li>
@@ -12135,7 +12135,7 @@ ORDER BY EINHEIT_KURZNAME";
 		 * </ul>
 		 * </details>
 		 * <details>
-		 * <summary>�bungen zu Kapitel 2</summary>
+		 * <summary>Übungen zu Kapitel 2</summary>
 		 * <ul>
 		 * <li><a href="/?exercise=A2E1">Story: to be the first one</a></li>
 		 * <li><a href="/?exercise=A2E2">Grammar: would</a></li>
@@ -12453,7 +12453,7 @@ ORDER BY EINHEIT_KURZNAME";
 				$anz_hg = count ( $arr [$m] ['ET'] );
 				$hg_keys = array_keys ( $arr [$m] ['ET'] );
 				$pdf->ezSetDy ( - 5 ); // abstand);
-				$pdf->ezText ( "<u><b>Eigent�mer</b></u>" );
+				$pdf->ezText ( "<u><b>Eigentümer</b></u>" );
 				for($hg = 0; $hg < $anz_hg; $hg ++) {
 					$hg_key = $hg_keys [$hg];
 					$hg_txt = $arr [$m] ['ET'] [$hg_key] ['TXT'];
@@ -12585,7 +12585,7 @@ ORDER BY EINHEIT_KURZNAME";
 		$arr = $o->liste_aller_objekte_kurz ();
 		$anz = count ( $arr );
 		$f = new formular ();
-		$f->erstelle_formular ( 'Objekte f�r Export w�hlen', null );
+		$f->erstelle_formular ( 'Objekte für Export wählen', null );
 		$f->hidden_feld ( 'option', 'exp_obj' );
 		$f->send_button ( 'sndBtn', 'ALS CSV EXPORTIEREN' );
 		echo "<table>";

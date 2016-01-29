@@ -19,24 +19,24 @@
  */
 
 /*
- * Klasse Buchen ist f�r die Buchung von Zahlbetr�gen zu Geldkonten verantwortlich
- * Aufgaben: Buchungsformulare, Speichern von Datens�tzen
+ * Klasse Buchen ist für die Buchung von Zahlbeträgen zu Geldkonten verantwortlich
+ * Aufgaben: Buchungsformulare, Speichern von Datensätzen
  */
 include_once ("config.inc.php");
 if (file_exists ( "classes/kasse_class.php" )) {
 	include_once ("classes/kasse_class.php");
 }
 if (file_exists ( "classes/class_statistik.php" )) {
-	include_once ("classes/class_statistik.php"); /* Erforderlich f�r den Monatsabschluss */
+	include_once ("classes/class_statistik.php"); /* Erforderlich für den Monatsabschluss */
 }
 if (file_exists ( "classes/mietkonto_class.php" )) {
-	include_once ("classes/mietkonto_class.php"); /* Erforderlich f�r den Monatsabschluss */
+	include_once ("classes/mietkonto_class.php"); /* Erforderlich für den Monatsabschluss */
 }
 if (file_exists ( "classes/class_mietvertrag.php" )) {
-	include_once ("classes/class_mietvertrag.php"); /* Erforderlich f�r den Monatsabschluss */
+	include_once ("classes/class_mietvertrag.php"); /* Erforderlich für den Monatsabschluss */
 }
 if (file_exists ( "classes/class_geldkonten.php" )) {
-	include_once ("classes/class_geldkonten.php"); /* Erforderlich f�r den Monatsabschluss */
+	include_once ("classes/class_geldkonten.php"); /* Erforderlich für den Monatsabschluss */
 }
 if (file_exists ( "classes/class_weg.php" )) {
 	include_once ("classes/class_weg.php");
@@ -47,7 +47,7 @@ class buchen {
 		if (isset ( $_REQUEST ['geldkonto_id'] )) {
 			$_SESSION ['geldkonto_id'] = $_REQUEST ['geldkonto_id'];
 			
-			/* Passendes Objekt w�hlen */
+			/* Passendes Objekt wühlen */
 			$gkk = new gk ();
 			$temp_objekt_id = $gkk->get_objekt_id ( $_SESSION ['geldkonto_id'] );
 			$_SESSION ['objekt_id'] = $temp_objekt_id;
@@ -63,28 +63,28 @@ class buchen {
 		if (isset ( $_SESSION ['geldkonto_id'] )) {
 			$link_kontoauszug = "<a href=\"?daten=buchen&option=kontoauszug_form\">Kontrolldaten zum Kontoauszug eingeben</a>";
 			$link_sepa_ls = "<a href=\"index.php?daten=sepa&option=ls_auto_buchen\">LS-Autobuchen</a>";
-			$aendern_link = "<a href=\"?daten=buchen&option=geldkonto_aendern\">Geldkonto �ndern</a>";
+			$aendern_link = "<a href=\"?daten=buchen&option=geldkonto_aendern\">Geldkonto ändern</a>";
 			$this->akt_konto_bezeichnung = $this->geld_konto_bezeichung ( $_SESSION ['geldkonto_id'] );
-			echo "Ausgew�hltes Geldkonto -> $this->akt_konto_bezeichnung $aendern_link $link_kontoauszug $link_sepa_ls<br>";
+			echo "Ausgewähltes Geldkonto -> $this->akt_konto_bezeichnung $aendern_link $link_kontoauszug $link_sepa_ls<br>";
 			$geld = new geldkonto_info ();
 			$kontostand_aktuell = nummer_punkt2komma ( $geld->geld_konto_stand ( $_SESSION ['geldkonto_id'] ) );
-			// echo "<h3>Kontostand aktuell: $kontostand_aktuell �</h3>";
+			// echo "<h3>Kontostand aktuell: $kontostand_aktuell €</h3>";
 			if (isset ( $_SESSION ['temp_kontostand'] ) && isset ( $_SESSION ['temp_kontoauszugsnummer'] )) {
 				$kontostand_temp = nummer_punkt2komma ( $_SESSION ['temp_kontostand'] );
-				echo "<h3>Kontostand am $_SESSION[temp_datum] laut Kontoauszug $_SESSION[temp_kontoauszugsnummer] war $kontostand_temp �</h3>";
+				echo "<h3>Kontostand am $_SESSION[temp_datum] laut Kontoauszug $_SESSION[temp_kontoauszugsnummer] war $kontostand_temp €</h3>";
 			} else {
 				echo "<h3 style=\"color:red\">Kontrolldaten zum Kontoauszug fehlen</h3>";
 				echo "<h3 style=\"color:red\">Weiterleitung erfolgt</h3>";
 				weiterleiten_in_sec ( "?daten=buchen&option=kontoauszug_form", 2 );
 			}
 			if ($kontostand_aktuell == $kontostand_temp) {
-				echo "<h3>Kontostand aktuell: $kontostand_aktuell �</h3>";
+				echo "<h3>Kontostand aktuell: $kontostand_aktuell €</h3>";
 			} else {
-				echo "<h3 style=\"color:red\">Kontostand aktuell: $kontostand_aktuell �</h3>";
+				echo "<h3 style=\"color:red\">Kontostand aktuell: $kontostand_aktuell €</h3>";
 			}
 		}
 		if (! isset ( $_SESSION ['geldkonto_id'] )) {
-			// echo "Geldkonto w�hlen<br>";
+			// echo "Geldkonto wählen<br>";
 			$geld_konten_arr = $this->alle_geldkonten_arr ();
 			// print_r($geld_konten_arr);
 			$anzahl_objekte = count ( $geld_konten_arr );
@@ -181,14 +181,14 @@ class buchen {
 		}
 		
 		if (isset ( $_SESSION ['geldkonto_id'] )) {
-			$aendern_link = "<a href=\"?daten=buchen&option=geldkonto_aendern\">Geldkonto �ndern</a>";
+			$aendern_link = "<a href=\"?daten=buchen&option=geldkonto_aendern\">Geldkonto ändern</a>";
 			$this->akt_konto_bezeichnung = $this->geld_konto_bezeichung ( $_SESSION [geldkonto_id] );
-			echo "Ausgew�hltes Geldkonto -> $this->akt_konto_bezeichnung $aendern_link<br>";
+			echo "Ausgewähltes Geldkonto -> $this->akt_konto_bezeichnung $aendern_link<br>";
 			$geld = new geldkonto_info ();
 			$kontostand_aktuell = nummer_punkt2komma ( $geld->geld_konto_stand ( $_SESSION [geldkonto_id] ) );
 		}
 		if (! isset ( $_SESSION ['geldkonto_id'] )) {
-			echo "Geldkonto w�hlen<br>";
+			echo "Geldkonto wählen<br>";
 			$geld_konten_arr = $this->alle_geldkonten_arr ();
 			$anzahl_objekte = count ( $geld_konten_arr );
 			if (is_array ( $geld_konten_arr )) {
@@ -324,9 +324,9 @@ class buchen {
 		// $form->text_feld_inaktiv("Kostengruppe", "kostengruppe", "", "20", 'kostengruppe');
 		$js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
 		// $js_typ='';
-		$this->dropdown_kostentreager_typen ( 'Kostentr�gertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
+		$this->dropdown_kostentreager_typen ( 'Kostenträgertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
 		$js_id = "";
-		$this->dropdown_kostentreager_ids ( 'Kostentr�ger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
+		$this->dropdown_kostentreager_ids ( 'Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
 		$form->text_bereich ( 'Buchungstext', 'vzweck', '', 15, 20, 'v_zweck_buchungstext' );
 		
 		$form->send_button ( "submit_zb_buchen", "Buchen" );
@@ -375,7 +375,7 @@ class buchen {
 			$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 			protokollieren ( 'GELD_KONTO_BUCHUNGEN_DAT', $alt_dat, $alt_dat );
 			echo "Alter Eintrag Aktiviert<br>";
-			die ( fehlermeldung_ausgeben ( "Fehler mit Kostentr�gern, keine �nderung gespeichert!!!!" ) );
+			die ( fehlermeldung_ausgeben ( "Fehler mit Kostenträgern, keine Änderung gespeichert!!!!" ) );
 		}
 		
 		$datum = date_german2mysql ( $datum );
@@ -392,13 +392,13 @@ class buchen {
 		$mwst1 = nummer_komma2punkt ( $mwst );
 		$db_abfrage = "INSERT INTO GELD_KONTO_BUCHUNGEN VALUES (NULL, '$geldbuchung_id', '$g_buchungsnummer', '$kontoauszugsnr', '$erfass_nr','$betrag1', '$mwst1', '$vzweck', '$geldkonto_id', '$kostenkonto', '$datum', '$kostentraeger_typ', '$kostentraeger_id', '1')";
 		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-		echo "Buchungsnr $geldbuchung_id wurde ge�ndert!<br>";
+		echo "Buchungsnr $geldbuchung_id wurde geändert!<br>";
 		echo "Sie werden zum Buchungsjournal weitergeleitet!";
 		weiterleiten_in_sec ( "?daten=buchen&option=buchungs_journal_druckansicht&monat=$t_monat&jahr=$t_jahr", 2 );
 	}
 	function buchungsmaske_buchung_aendern($buchungs_dat) {
 		$form = new formular ();
-		$form->erstelle_formular ( "Buchung �ndern", NULL );
+		$form->erstelle_formular ( "Buchung ändern", NULL );
 		
 		echo '<pre>';
 		$this->geldbuchungs_dat_infos ( $buchungs_dat );
@@ -417,7 +417,7 @@ class buchen {
 		$form->text_feld ( 'Betrag', 'betrag', $this->akt_betrag_komma, '10', 'betrag', '' );
 		$js_mwst = "onclick=\"mwst_rechnen('betrag','mwst', '19')\" ondblclick=\"mwst_rechnen('betrag','mwst', '7')\"";
 		$form->text_feld ( "MwSt-Anteil:", "mwst", "$this->akt_mwst_anteil_komma", "10", 'mwst', $js_mwst );
-		$form->text_feld_inaktiv ( 'Kostentr�ger & Kontierung', 'info', "$this->kostentraeger_typ $this->kostentraeger_id | Kostenkonto: $this->kostenkonto", '50', '' );
+		$form->text_feld_inaktiv ( 'Kostenträger & Kontierung', 'info', "$this->kostentraeger_typ $this->kostentraeger_id | Kostenkonto: $this->kostenkonto", '50', '' );
 		$this->dropdown_kostenrahmen_nr ( 'Kostenbkonto', 'kostenkonto', 'GELDKONTO', $this->geldkonto_id, $this->kostenkonto );
 		$form->text_bereich ( 'Verwendungszweck', 'vzweck', $this->akt_vzweck, 10, 5, 'vzweck' );
 		// $k = new kasse;
@@ -431,12 +431,12 @@ class buchen {
 		if ($this->kostentraeger_typ != 'Rechnung') {
 			$buchung = new buchen ();
 			$js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
-			$buchung->dropdown_kostentreager_typen_vw ( 'Kostentr�gertyp w�hlen', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, $this->kostentraeger_typ );
+			$buchung->dropdown_kostentreager_typen_vw ( 'Kostenträgertyp wählen', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, $this->kostentraeger_typ );
 			
 			$js_id = "";
 			
-			// $buchung->dropdown_kostentreager_ids('Kostentr�ger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id);
-			$buchung->dropdown_kostentraeger_bez_vw ( "Kostentr�ger $akt_kostentraeger_bez", 'kostentraeger_id', 'dd_kostentraeger_id', $js_id, $this->kostentraeger_typ, $this->kostentraeger_id );
+			// $buchung->dropdown_kostentreager_ids('Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id);
+			$buchung->dropdown_kostentraeger_bez_vw ( "Kostenträger $akt_kostentraeger_bez", 'kostentraeger_id', 'dd_kostentraeger_id', $js_id, $this->kostentraeger_typ, $this->kostentraeger_id );
 			
 			// die('TEST');
 		} else {
@@ -445,11 +445,11 @@ class buchen {
 		}
 		
 		$form->hidden_feld ( "option", "geldbuchung_aendern1" );
-		$form->send_button ( "submit", "�nderungen speichern" );
+		$form->send_button ( "submit", "Änderungen speichern" );
 		$form->ende_formular ();
 	}
 	
-	/* Funktion zur Ermittlung der Geldkonten und R�ckgabe als Array */
+	/* Funktion zur Ermittlung der Geldkonten und Rückgabe als Array */
 	function alle_geldkonten_arr() {
 		$result = mysql_query ( "SELECT GELD_KONTEN.KONTO_ID,GELD_KONTEN.BEZEICHNUNG, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' GROUP BY GELD_KONTEN.KONTO_ID  ORDER BY GELD_KONTEN.KONTO_ID ASC" );
 		
@@ -483,14 +483,14 @@ class buchen {
 		$konten_info->dropdown_kontorahmenkonten_vorwahl ( $label, $id, $name, $typ, $typ_id, $js, $vorwahl_konto );
 	}
 	
-	/* Kostentr�gerliste als dropdown */
+	/* Kostenträgerliste als dropdown */
 	function dropdown_kostentreager_typen($label, $name, $id, $js_action) {
 		if (! empty ( $_SESSION ['kos_typ'] ) && ! empty ( $_SESSION ['kos_bez'] )) {
 			// print_r($_SESSION);
 			$this->dropdown_kostentreager_typen_vw ( $label, $name, $id, $js_action, $_SESSION ['kos_typ'] );
 		} else {
 			echo "<label for=\"$id\">$label</label><select name=\"$name\" id=\"$id\" size=1 $js_action>\n";
-			echo "<option value=\"\">Bitte w�hlen</option>\n";
+			echo "<option value=\"\">Bitte wählen</option>\n";
 			echo "<option value=\"Objekt\">Objekt</option>\n";
 			echo "<option value=\"Wirtschaftseinheit\">Wirtschaftseinheit</option>\n";
 			echo "<option value=\"Haus\">Haus</option>\n";
@@ -534,7 +534,7 @@ class buchen {
 		$arr [11] ['typ'] = 'Benutzer';
 		$arr [11] ['bez'] = 'Benutzer';
 		
-		echo "<option value=\"\">Bitte w�hlen</option>\n";
+		echo "<option value=\"\">Bitte wählen</option>\n";
 		
 		for($a = 0; $a < count ( $arr ); $a ++) {
 			$typ = $arr [$a] ['typ'];
@@ -549,14 +549,14 @@ class buchen {
 		echo "</select>\n";
 	}
 	
-	/* Kostentr�gerliste als dropdown */
+	/* Kostenträgerliste als dropdown */
 	function dropdown_kostentreager_ids($label, $name, $id, $js_action) {
 		if ($js_action == '') {
 			$js_action = "onchange=\"drop_kos_register('kostentraeger_typ', 'dd_kostentraeger_id');\"";
 		}
 		if (! isset ( $_SESSION ['kos_typ'] ) && ! isset ( $_SESSION ['kos_id'] )) {
 			echo "<label for=\"$id\">$label</label><select name=\"$name\" id=\"$id\" size=1 $js_action>\n";
-			echo "<option value=\"\">Bitte w�hlen</option>\n";
+			echo "<option value=\"\">Bitte wählen</option>\n";
 			echo "</select>\n";
 		} else {
 			if (empty ( $_SESSION ['kos_id'] )) {
@@ -576,7 +576,7 @@ class buchen {
 		// }
 		
 		echo "<label for=\"$id\">$label</label><select name=\"$name\" id=\"$id\" size=1 $js_action>\n";
-		echo "<option value=\"\">Bitte w�hlen</option>\n";
+		echo "<option value=\"\">Bitte wählen</option>\n";
 		if ($typ == 'Objekt') {
 			$db_abfrage = "SELECT OBJEKT_KURZNAME, OBJEKT_ID FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC";
 			$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
@@ -983,7 +983,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 	function geldbuchung_speichern($datum, $kto_auszugsnr, $rechnungsnr, $betrag, $vzweck, $geldkonto_id, $kostentraeger_typ, $kostentraeger_bez, $kostenkonto, $mwst = '0.00') {
 		$kostentraeger_id = $this->kostentraeger_id_ermitteln ( $kostentraeger_typ, $kostentraeger_bez );
 		if (! is_numeric ( $kostentraeger_id ) or $kostentraeger_id == '0' or $kostentraeger_id == null or ! $kostentraeger_id) {
-			fehlermeldung_ausgeben ( "Es wurde nicht gebucht, Kostentr�ger unbekannt! Zeile. 747 class_buchen" );
+			fehlermeldung_ausgeben ( "Es wurde nicht gebucht, Kostenträger unbekannt! Zeile. 747 class_buchen" );
 			die ();
 		}
 		/* alt */
@@ -1006,7 +1006,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 		/* Protokollieren */
 		$last_dat = mysql_insert_id ();
 		protokollieren ( 'GELD_KONTO_BUCHUNGEN', $last_dat, '0' );
-		echo "<h3>Betrag von $betrag � wurde gebucht.</h3>";
+		echo "<h3>Betrag von $betrag € wurde gebucht.</h3>";
 		// weiterleiten_in_sec('?daten=buchen&option=buchungs_journal', 1);
 		weiterleiten_in_sec ( '?daten=buchen&option=zahlbetrag_buchen', 1 );
 	}
@@ -1032,19 +1032,19 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 		/* Protokollieren */
 		$last_dat = mysql_insert_id ();
 		protokollieren ( 'GELD_KONTO_BUCHUNGEN', $last_dat, '0' );
-		// echo "<h3>Betrag von $betrag � wurde gebucht.</h3>";
+		// echo "<h3>Betrag von $betrag € wurde gebucht.</h3>";
 		// weiterleiten_in_sec('?daten=rechnungen&option=ausgangsbuch', 1);
 	}
 	function form_kostenkonto_pdf() {
 		if (empty ( $_SESSION ['geldkonto_id'] )) {
-			die ( 'Erstgeldkonto w�hlen' );
+			die ( 'Erstgeldkonto wählen' );
 		}
 		if (! isset ( $_REQUEST [submit_kostenkonto] )) {
 			$kr = new kontenrahmen ();
 			$kontenrahmen_id = $kr->get_kontenrahmen ( 'Geldkonto', $_SESSION ['geldkonto_id'] );
 			$f = new formular ();
 			$f->erstelle_formular ( 'Kostenkonto als PDF', '' );
-			$kr->dropdown_konten_vom_rahmen ( 'Kostenkonto w�hlen', 'kostenkonto', 'kk', '', $kontenrahmen_id );
+			$kr->dropdown_konten_vom_rahmen ( 'Kostenkonto wählen', 'kostenkonto', 'kk', '', $kontenrahmen_id );
 			$f->text_feld ( "Anfangsdatum:", "anfangsdatum", "", "10", 'anfangsdatum', '' );
 			$f->text_feld ( "Enddatum:", "enddatum", "", "10", 'enddatum', '' );
 			$f->send_button ( "submit_kostenkonto", "Als PDF anzeigen" );
@@ -1068,7 +1068,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 		return $row ['GELD_KONTO_BUCHUNGEN_ID'];
 	}
 	
-	/* Ermitteln der letzten geldbuchungs_id NEU f�r jeder Geldkonto separat, j�hrlich ab 1 angefangen */
+	/* Ermitteln der letzten geldbuchungs_id NEU für jeder Geldkonto separat, jährlich ab 1 angefangen */
 	function get_last_kontoauszug($geldkonto_id, $jahr) {
 		$result = mysql_query ( "SELECT KONTO_AUSZUGSNUMMER FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y' ) = '$jahr'  && `AKTUELL` = '1' ORDER BY KONTO_AUSZUGSNUMMER DESC LIMIT 0,1" );
 		$row = mysql_fetch_assoc ( $result );
@@ -1086,7 +1086,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 		$heute_d = date ( "d.m.Y" );
 		$heute = date ( "Y-m-d" );
 		$gestern = date_mysql2german ( tage_minus ( $heute, 1 ) );
-		$form->erstelle_formular ( "Kontrolldaten eingeben / ver�ndern", NULL );
+		$form->erstelle_formular ( "Kontrolldaten eingeben / verändern", NULL );
 		$form->text_feld_inaktiv ( "Geldkonto:", "geldkonto", $geldkonto_bezeichnung, "30", 'geldkonto', '' );
 		$form->text_feld ( "Datum:", "datum", $gestern, "10", 'datum', '' );
 		$jahr = date ( "Y" );
@@ -1119,7 +1119,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 				$b_dat = $my_array [$a] ['GELD_KONTO_BUCHUNGEN_DAT'];
 				$g_buchungsnummer = $my_array [$a] ['G_BUCHUNGSNUMMER'];
 				$kostenkonto = $my_array [$a] ['KONTENRAHMEN_KONTO'];
-				$link_buchungsbeleg = "<a href=\"?daten=buchen&option=geldbuchung_aendern&geldbuchung_dat=$b_dat\">$g_buchungsnummer �ndern</a>";
+				$link_buchungsbeleg = "<a href=\"?daten=buchen&option=geldbuchung_aendern&geldbuchung_dat=$b_dat\">$g_buchungsnummer ändern</a>";
 				$betrag = nummer_punkt2komma ( $my_array [$a] ['BETRAG'] );
 				$mwst = nummer_punkt2komma ( $my_array [$a] ['MWST_ANTEIL'] );
 				$g_betrag += $my_array [$a] ['BETRAG'];
@@ -1138,7 +1138,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 				$datum = date_mysql2german ( $my_array [$a] ['DATUM'] );
 				echo "<tr><td>$auszug</td><td>$datum</td><td>$betrag</td><td>$mwst</td><td>$kostenkonto </td><td>$link_buchungsbeleg</td><td>$kostentraeger_bez</td><td> $vzweck</td></tr>";
 			}
-			echo "<tfoot><tr><td></td><td></td><td><b>$g_betrag �</b></td><td></td><td></td></tr></tfoot>";
+			echo "<tfoot><tr><td></td><td></td><td><b>$g_betrag €</b></td><td></td><td></td></tr></tfoot>";
 			echo "</table>";
 		}
 	}
@@ -1544,7 +1544,7 @@ else {
 		}
 	}
 	
-	/* ja steht f�r Jahr */
+	/* ja steht für Jahr */
 	function buchungsjournal_jahr_pdf($geldkonto_id, $ja, $monat = null) {
 		ob_clean (); // ausgabepuffer leeren
 		include_once ('pdfclass/class.ezpdf.php');
@@ -1927,11 +1927,11 @@ else {
 		
 		if (isset ( $monat )) {
 			$monatname = monat2name ( $monat );
-			$pdf->ezText ( "<u>Buchungskonten�bersicht $monatname $jahr</u>", 12, array (
+			$pdf->ezText ( "<u>Buchungskontenübersicht $monatname $jahr</u>", 12, array (
 					'justification' => 'center' 
 			) );
 		} else {
-			$pdf->ezText ( "<u>Buchungskonten�bersicht $jahr</u>", 11, array (
+			$pdf->ezText ( "<u>Buchungskontenübersicht $jahr</u>", 11, array (
 					'justification' => 'center' 
 			) );
 		}
@@ -2058,7 +2058,7 @@ else {
 			$betrag = nummer_punkt2komma ( $table_arr [$a] ['BETRAG'] );
 			$mwst_anteil = nummer_punkt2komma ( $table_arr [$a] ['MWST_ANTEIL'] );
 			if (preg_match ( "/Erfnr:/i", "$vzweck" )) {
-				// echo "Es wurde eine �bereinstimmung gefunden.";
+				// echo "Es wurde eine Übereinstimmung gefunden.";
 				// $pos = strpos($vzweck, 'Rnr:'); //bis zu Rnr: abschneiden
 				$pos = strpos ( $vzweck, ' ' ); // bis zu Rnr: abschneiden
 				if ($pos == true) {
@@ -2070,22 +2070,22 @@ else {
 					$table_arr [$a] ['VERWENDUNGSZWECK'] = $aussteller_name . ' ' . $vzweck_neu;
 				}
 			} else {
-				// echo "Es wurde keine �bereinstimmung gefunden.";
+				// echo "Es wurde keine Übereinstimmung gefunden.";
 			}
 			
 			$table_arr [$a] ['BETRAG_O_EUR'] = $betrag;
 			$table_arr [$a] ['MWST_ANTEIL_O_EUR'] = $mwst_anteil;
 			if ($betrag != '0,00') {
-				$table_arr [$a] ['BETRAG'] = $betrag . ' �';
-				$table_arr [$a] ['MWST_ANTEIL'] = $mwst_anteil . ' �';
+				$table_arr [$a] ['BETRAG'] = $betrag . ' €';
+				$table_arr [$a] ['MWST_ANTEIL'] = $mwst_anteil . ' €';
 			}
 			unset ( $erfass_nr );
 			unset ( $kto_auszugsnr );
 		} // end for
 		$summe = nummer_punkt2komma ( $summe );
 		$summe_mwst_a = nummer_punkt2komma ( $summe_mwst );
-		$table_arr [$anzahl_zeilen] ['BETRAG'] = "<b>$summe �</b>";
-		$table_arr [$anzahl_zeilen] ['MWST_ANTEIL'] = "<b>$summe_mwst_a �</b>";
+		$table_arr [$anzahl_zeilen] ['BETRAG'] = "<b>$summe €</b>";
+		$table_arr [$anzahl_zeilen] ['MWST_ANTEIL'] = "<b>$summe_mwst_a €</b>";
 		// die();
 		return $table_arr;
 	}
@@ -2123,7 +2123,7 @@ else {
 			}
 			$this->summe_konto_buchungen = nummer_punkt2komma ( $this->summe_konto_buchungen );
 			
-			echo "<tfoot><tr><td></td><td></td><td><b>Summe</b></td><td><b>$this->summe_konto_buchungen �</b></td><td></td><td></td></tr></tfoot>";
+			echo "<tfoot><tr><td></td><td></td><td><b>Summe</b></td><td><b>$this->summe_konto_buchungen €</b></td><td></td><td></td></tr></tfoot>";
 			
 			echo "</table><br>";
 		} else {
@@ -2188,7 +2188,7 @@ else {
 			$dateiname = $this->save_file ( $dateiname_org, 'Monatsbericht_Konten', $geldkonto_id, $content, $monat, $jahr );
 			
 			// weiterleiten($dateiname);
-			$download_link = "<h3><a href=\"$dateiname\">Monatsbericht $geldkonto_id f�r $monat/$jahr HIER</a></h3>";
+			$download_link = "<h3><a href=\"$dateiname\">Monatsbericht $geldkonto_id für $monat/$jahr HIER</a></h3>";
 			
 			echo $download_link;
 		} else {
@@ -2241,7 +2241,7 @@ else {
 				echo "<tr></td><td>$datum</td><td>$erfass_nr</td><td>$betrag</td><td>$kos_bez</td><td>$g_buchungsnummer</td><td>$vzweck</td></tr>";
 			}
 			$this->summe_konto_buchungen = nummer_punkt2komma ( $this->summe_konto_buchungen );
-			echo "<tfoot><tr><td></td><td><b>Summe</b></td><td><b>$this->summe_konto_buchungen �</b></td><td></td><td></td><td></td></tr></tfoot>";
+			echo "<tfoot><tr><td></td><td><b>Summe</b></td><td><b>$this->summe_konto_buchungen €</b></td><td></td><td></td><td></td></tr></tfoot>";
 			
 			echo "</table><br>";
 		} else {
@@ -2275,9 +2275,9 @@ else {
 		// $form->text_feld_inaktiv("Kontoart", "kontoart", "", "20", 'kontoart');
 		// $form->text_feld_inaktiv("Kostengruppe", "kostengruppe", "", "20", 'kostengruppe');
 		$js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
-		$this->dropdown_kostentreager_typen ( 'Kostentr�gertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
+		$this->dropdown_kostentreager_typen ( 'Kostenträgertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
 		$js_id = "";
-		$this->dropdown_kostentreager_ids ( 'Kostentr�ger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
+		$this->dropdown_kostentreager_ids ( 'Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
 		$form->text_feld ( "Anfangsdatum:", "anfangsdatum", "", "10", 'anfangsdatum', '' );
 		$form->text_feld ( "Enddatum:", "enddatum", "", "10", 'enddatum', '' );
 		$form->send_button ( "submit_kostenkonto", "Suchen" );
@@ -2287,7 +2287,7 @@ else {
 	function form_buchungen_zu_kostenkonto() {
 		$f = new formular ();
 		$k = new kontenrahmen ();
-		$k->dropdown_kontorahmenkonten ( 'Konto ausw�hlen', 'kkk', 'kostenkonto', 'Alle', '', '' );
+		$k->dropdown_kontorahmenkonten ( 'Konto auswählen', 'kkk', 'kostenkonto', 'Alle', '', '' );
 		$f->text_feld ( "Anfangsdatum:", "anfangsdatum", "", "10", 'anfangsdatum', '' );
 		$f->text_feld ( "Enddatum:", "enddatum", "", "10", 'enddatum', '' );
 		$f->send_button ( "submit_kostenkonto", "Suchen" );
@@ -2328,7 +2328,7 @@ else {
 		
 		$bg->monate_jahres_links ( $jahr, $link );
 		/* PDF LINK */
-		echo "<a href=\"?daten=buchen&option=kosten_einnahmen_pdf&monat=$monat&jahr=$jahr\">PDF �BERSICHT</a>";
+		echo "<a href=\"?daten=buchen&option=kosten_einnahmen_pdf&monat=$monat&jahr=$jahr\">PDF ÜBERSICHT</a>";
 		
 		echo "<h1>Block II</h1>";
 		$this->kosten_einnahmen ( $monat, $jahr, '4' );
@@ -2346,7 +2346,7 @@ else {
 		$this->kosten_einnahmen ( $monat, $jahr, '11' );
 	}
 	
-	/* Funktion f�r die Kosten und Einnahmen�bersicht */
+	/* Funktion für die Kosten und Einnahmenübersicht */
 	function kosten_einnahmen($monat, $jahr, $geldkonto_id) {
 		$datum_jahresanfang = "01.01.$jahr";
 		$this->kontostand_tagesgenau_bis ( $geldkonto_id, $datum_jahresanfang );
@@ -2416,7 +2416,7 @@ else {
 			
 			$g_kosten_jahr = 0.00;
 			
-			/* Schleife f�r jedes Geldkonto bzw. Zeilenausgabe */
+			/* Schleife für jedes Geldkonto bzw. Zeilenausgabe */
 			for($a = 0; $a < $anzahl_konten; $a ++) {
 				$geldkonto_id = $geldkontos_arr [$a] ['GELDKONTO_ID'];
 				$objekt_name = $geldkontos_arr [$a] ['OBJEKT_NAME'];
@@ -2477,7 +2477,7 @@ else {
 				$table_arr [$a] [KONTOSTAND_AKTUELL] = "<b>$kontostand_heute</b>";
 			} // end for
 			
-			/* Summenzeile hinzuf�gen */
+			/* Summenzeile hinzufügen */
 			$table_arr [$a] [OBJEKT_NAME] = "<b>Summe incl. FON</b>";
 			$table_arr [$a] [KONTOSTAND1_1] = '<b>' . nummer_punkt2komma ( $g_kontostand_ja ) . '</b>';
 			$table_arr [$a] [ME_MONAT] = '<b>' . nummer_punkt2komma ( $g_me_monat ) . '</b>';
@@ -2494,7 +2494,7 @@ else {
 					'KOSTEN_MONAT' => "Kosten $monatname",
 					'KOSTEN_JAHR' => "Kosten $jahr",
 					'KONTOSTAND_AKTUELL' => "Kontostand" 
-			), '<b>Kosten & Einnahmen / Objekt (Tabellarische �bersicht)</b>', array (
+			), '<b>Kosten & Einnahmen / Objekt (Tabellarische übersicht)</b>', array (
 					'shaded' => 0,
 					'width' => '500',
 					'justification' => 'right',
@@ -2634,7 +2634,7 @@ LIMIT 0 , 1" );
 		}
 	}
 	
-	/* Unabh�ngig vom Geldkonto */
+	/* Unabhängig vom Geldkonto */
 	function finde_buchungen_zu_kostenkonto($kostenkonto, $anfangsdatum, $enddatum) {
 		$result = mysql_query ( "SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE  KONTENRAHMEN_KONTO = '$kostenkonto' && DATUM BETWEEN '$anfangsdatum' AND '$enddatum' && AKTUELL='1' ORDER BY GELDKONTO_ID, BETRAG, DATUM, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID ASC" );
 		
@@ -2647,7 +2647,7 @@ LIMIT 0 , 1" );
 			echo "<table>";
 			
 			echo "<tr class=\"feldernamen\"><td colspan=6><b>Alle Buchungen zu $kostenkonto vom $anfangsdatum bis $enddatum<br>$kostenkonto $k->konto_bezeichnung</b></td></tr>";
-			echo "<tr class=\"feldernamen\"><td>Geldkonto</td><td>Kostentr�ger</td><td>Datum</td><td>Buchungsnr</td><td>Betrag</td><td width=70%>Vzweck</td></tr>";
+			echo "<tr class=\"feldernamen\"><td>Geldkonto</td><td>Kostenträger</td><td>Datum</td><td>Buchungsnr</td><td>Betrag</td><td width=70%>Vzweck</td></tr>";
 			$g = new geldkonto_info ();
 			while ( $row = mysql_fetch_assoc ( $result ) ) {
 				$datum = date_mysql2german ( $row [DATUM] );
@@ -2688,10 +2688,10 @@ LIMIT 0 , 1" );
 			$k->konto_informationen ( $kostenkonto );
 			echo "<table>";
 			if (empty ( $kostentraeger_id )) {
-				echo "<tr class=\"feldernamen\"><td colspan=5><b>Alle Kostentr�ger vom $anfangsdatum bis $enddatum<br>$kostenkonto $k->konto_bezeichnung</b></td></tr>";
-				echo "<tr><td>Kostentr�ger</td><td>Datum</td><td>Erfassnr</td><td>Betrag</td><td width=70%>Vzweck</td></tr>";
+				echo "<tr class=\"feldernamen\"><td colspan=5><b>Alle Kostenträger vom $anfangsdatum bis $enddatum<br>$kostenkonto $k->konto_bezeichnung</b></td></tr>";
+				echo "<tr><td>Kostenträger</td><td>Datum</td><td>Erfassnr</td><td>Betrag</td><td width=70%>Vzweck</td></tr>";
 			} else {
-				echo "<tr class=\"feldernamen\"><td colspan=5><b>Kostentr�ger $kostentraeger_bez vom $anfangsdatum bis $enddatum<br>$kostenkonto $k->konto_bezeichnung</b></td></tr>";
+				echo "<tr class=\"feldernamen\"><td colspan=5><b>Kostenträger $kostentraeger_bez vom $anfangsdatum bis $enddatum<br>$kostenkonto $k->konto_bezeichnung</b></td></tr>";
 				echo "<tr><td>Datum</td><td>Erfassnr</td><td>Betrag</td><td width=70%>Vzweck</td></tr>";
 			}
 			while ( $row = mysql_fetch_assoc ( $result ) ) {
@@ -2713,9 +2713,9 @@ LIMIT 0 , 1" );
 			}
 			$this->summe_konto_buchungen = nummer_punkt2komma ( $this->summe_konto_buchungen );
 			if (empty ( $kostentraeger_id )) {
-				echo "<tr class=\"feldernamen\"><td></td><td></td><td><b>Summe</b></td><td><b>$this->summe_konto_buchungen �</b></td><td></td></tr>";
+				echo "<tr class=\"feldernamen\"><td></td><td></td><td><b>Summe</b></td><td><b>$this->summe_konto_buchungen €</b></td><td></td></tr>";
 			} else {
-				echo "<tr class=\"feldernamen\"><td></td><td><b>Summe</b></td><td><b>$this->summe_konto_buchungen �</b></td><td></td></tr>";
+				echo "<tr class=\"feldernamen\"><td></td><td><b>Summe</b></td><td><b>$this->summe_konto_buchungen €</b></td><td></td></tr>";
 			}
 			echo "</table><br>";
 		} else {
@@ -2814,7 +2814,7 @@ LIMIT 0 , 1" );
 			$o = new objekt ();
 			$objekt_name = $o->get_objekt_name ( $objekt_id );
 			
-			/* Aktuell bzw. gew�nschten Monat berechnen */
+			/* Aktuell bzw. gewünschten Monat berechnen */
 			// $einheiten_array = $s->vermietete_monat_jahr($jahr_monat,$objekt_id, '');
 			$o = new objekt ();
 			$einheiten_array = $o->einheiten_objekt_arr ( $objekt_id );
@@ -2886,7 +2886,7 @@ LIMIT 0 , 1" );
 					$vname_lang = strlen ( $vn );
 					$tab_arr [$i] ['MIETER'] = "$mv->personen_name_string_u";
 					
-					/* Kommazahlen f�r die Ausgabe im PDF */
+					/* Kommazahlen für die Ausgabe im PDF */
 					$miete->saldo_vormonat_stand_a = nummer_punkt2komma ( $miete->saldo_vormonat_stand );
 					$miete->sollmiete_warm_a = nummer_punkt2komma ( $miete->sollmiete_warm );
 					$miete->davon_umlagen_a = nummer_punkt2komma ( $miete->davon_umlagen );
@@ -3006,18 +3006,18 @@ LIMIT 0 , 1" );
 			
 			$dateiname_org = $objekt_name . '-Monatsbericht_o_Auszug_';
 			$dateiname = $this->save_file ( $dateiname_org, 'Monatsberichte', $objekt_id, $content, $monat, $jahr );
-			/* Falls kein Objekt ausgew�hlt */
+			/* Falls kein Objekt ausgewählt */
 			
 			// weiterleiten($dateiname);
-			$download_link = "<a href=\"$dateiname\">Monatsbericht $objekt_name f�r $monat/$jahr HIER</a>";
-			hinweis_ausgeben ( "Monatsbericht ohne Vormieter f�r $objekt_name wurde erstellt<br>" );
+			$download_link = "<a href=\"$dateiname\">Monatsbericht $objekt_name für $monat/$jahr HIER</a>";
+			hinweis_ausgeben ( "Monatsbericht ohne Vormieter für $objekt_name wurde erstellt<br>" );
 			echo $download_link;
 			
 			// $pdf->ezTable($tab_arr);
 			// ob_clean(); //ausgabepuffer leeren
 			// $pdf->ezStream();
 		} else {
-			echo "Objekt ausw�hlen";
+			echo "Objekt auswählen";
 		}
 	}
 	function monatsbericht_mit_ausgezogenen() {
@@ -3061,7 +3061,7 @@ LIMIT 0 , 1" );
 			$einheit_info = new einheit ();
 			$o = new objekt ();
 			$objekt_name = $o->get_objekt_name ( $objekt_id );
-			/* Aktuell bzw. gew�nschten Monat berechnen */
+			/* Aktuell bzw. gewünschten Monat berechnen */
 			$ob = new objekt ();
 			
 			$einheiten_array = $ob->einheiten_objekt_arr ( $objekt_id );
@@ -3150,7 +3150,7 @@ LIMIT 0 , 1" );
 						$anz_tab ++;
 						
 						$akt_gesamt_soll = $miete->saldo_vormonat_stand + $miete->sollmiete_warm;
-						echo "$zeile. $einheit_kurzname $mv->personen_name_string_u Saldo: VM: $miete->saldo_vormonat_stand � WM: $miete->sollmiete_warm � UM: $miete->davon_umlagen GSOLL: $akt_gesamt_soll � SALDO NEU:$miete->erg �<br>";
+						echo "$zeile. $einheit_kurzname $mv->personen_name_string_u Saldo: VM: $miete->saldo_vormonat_stand € WM: $miete->sollmiete_warm € UM: $miete->davon_umlagen GSOLL: $akt_gesamt_soll € SALDO NEU:$miete->erg €<br>";
 						
 						$summe_sv = $summe_sv + $miete->saldo_vormonat_stand;
 						$summe_mieten = $summe_mieten + $miete->sollmiete_warm;
@@ -3242,15 +3242,15 @@ LIMIT 0 , 1" );
 			
 			$dateiname_org = $objekt_name . '-Monatsbericht_m_Auszug_';
 			$dateiname = $this->save_file ( $dateiname_org, 'Monatsberichte', $objekt_id, $content, $monat, $jahr );
-			/* Falls kein Objekt ausgew�hlt */
+			/* Falls kein Objekt ausgewählt */
 			
 			// weiterleiten($dateiname);
-			$download_link = "<h3><a href=\"$dateiname\">Monatsbericht $objekt_name f�r $monat/$jahr HIER</a></h3>";
-			hinweis_ausgeben ( "Monatsbericht ohne Vormieter f�r $objekt_name wurde erstellt<br>" );
+			$download_link = "<h3><a href=\"$dateiname\">Monatsbericht $objekt_name für $monat/$jahr HIER</a></h3>";
+			hinweis_ausgeben ( "Monatsbericht ohne Vormieter für $objekt_name wurde erstellt<br>" );
 			echo $download_link;
-			/* Falls kein Objekt ausgew�hlt */
+			/* Falls kein Objekt ausgewählt */
 		} else {
-			echo "Objekt ausw�hlen";
+			echo "Objekt auswählen";
 		}
 	}
 	
@@ -3268,7 +3268,7 @@ LIMIT 0 , 1" );
 		$filename = "$dir/$filename";
 		
 		if (file_exists ( $filename )) {
-			fehlermeldung_ausgeben ( "Datei exisitiert bereits, keine �berschreibung m�glich" );
+			fehlermeldung_ausgeben ( "Datei exisitiert bereits, keine Überschreibung möglich" );
 			$fhandle = fopen ( $filename, "w" );
 			fwrite ( $fhandle, $content );
 			fclose ( $fhandle );
@@ -3283,20 +3283,20 @@ LIMIT 0 , 1" );
 		}
 	}
 	function umlaute_anpassen($str) {
-		$str = str_replace ( '�', 'ae', $str );
-		$str = str_replace ( '�', 'oe', $str );
-		$str = str_replace ( '�', 'ue', $str );
-		$str = str_replace ( '�', 'Ae', $str );
-		$str = str_replace ( '�', 'Oe', $str );
-		$str = str_replace ( '�', 'Ue', $str );
-		$str = str_replace ( '�', 'ss', $str );
+		$str = str_replace ( 'ä', 'ae', $str );
+		$str = str_replace ( 'ö', 'oe', $str );
+		$str = str_replace ( 'ü', 'ue', $str );
+		$str = str_replace ( 'Ä', 'Ae', $str );
+		$str = str_replace ( 'Ö', 'Oe', $str );
+		$str = str_replace ( 'Ü', 'Ue', $str );
+		$str = str_replace ( 'ß', 'ss', $str );
 		
 		return $str;
 	}
 	function form_buchung_suchen() {
 		$f = new formular ();
 		$f->erstelle_formular ( "Suche in", NULL );
-		$this->dropdown_geldkonten_alle ( 'Geldkonto w�hlen' );
+		$this->dropdown_geldkonten_alle ( 'Geldkonto wählen' );
 		$f->text_feld ( "Zu suchender Betrag", "betrag", '', "10", 'betrag', '' );
 		$f->text_feld ( "Suchtext im Buchungstext", "ausdruck", '', "30", 'ausdruck', '' );
 		$f->datum_feld ( 'Anfangsdatum', 'anfangsdatum', '', 'anfangsdatum' );
@@ -3305,16 +3305,16 @@ LIMIT 0 , 1" );
 		$this->dropdown_kostenrahmen_nr ( 'Kostenkonto', 'kostenkonto', 'Geldkonto', $_SESSION ['geldkonto_id'], '' );
 		$buchung = new buchen ();
 		$js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
-		$buchung->dropdown_kostentreager_typen ( 'Kostentr�gertyp w�hlen', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
+		$buchung->dropdown_kostentreager_typen ( 'Kostenträgertyp wählen', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
 		$js_id = "";
-		$buchung->dropdown_kostentreager_ids ( 'Kostentr�ger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
+		$buchung->dropdown_kostentreager_ids ( 'Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
 		$f->hidden_feld ( "option", "buchung_suchen_1" );
 		$f->send_button ( "submit_php", "Suchen" );
 		$f->send_button ( "submit_pdf", "PDF-Ausgabe" );
 		$f->ende_formular ();
 	}
 	
-	/* Funktion zur Erstellung eines Dropdowns f�r Empfangsgeldkonto */
+	/* Funktion zur Erstellung eines Dropdowns für Empfangsgeldkonto */
 	function dropdown_geldkonten_alle($label) {
 		$result = mysql_query ( "SELECT GELD_KONTEN.KONTO_ID, GELD_KONTEN.BEZEICHNUNG, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ, GELD_KONTEN.INSTITUT FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' GROUP BY GELD_KONTEN.KONTO_ID ORDER BY GELD_KONTEN.KONTO_ID ASC" );
 		
@@ -3348,7 +3348,7 @@ LIMIT 0 , 1" );
 		if ($numrows) {
 			echo "<table>";
 			echo "<tr class=\"feldernamen\"><td colspan=7><b>Suchergebnis</b></td></tr>";
-			echo "<tr class=\"feldernamen\"><td>Geldkonto</td><td>Kostentr�ger</td><td>Datum</td><td>Kostenkonto</td><td>Buchungsnr</td><td>Betrag</td><td width=70%>Vzweck</td></tr>";
+			echo "<tr class=\"feldernamen\"><td>Geldkonto</td><td>Kostenträger</td><td>Datum</td><td>Kostenkonto</td><td>Buchungsnr</td><td>Betrag</td><td width=70%>Vzweck</td></tr>";
 			$g = new geldkonto_info ();
 			$summe = 0;
 			while ( $row = mysql_fetch_assoc ( $result ) ) {
@@ -3367,7 +3367,7 @@ LIMIT 0 , 1" );
 				$r = new rechnung ();
 				$kostentraeger_bezeichnung = $r->kostentraeger_ermitteln ( $kos_typ, $kos_id );
 				$dat_bu = $row ['GELD_KONTO_BUCHUNGEN_DAT'];
-				$link_aendern = "<a href=\"index.php?daten=buchen&option=geldbuchung_aendern&geldbuchung_dat=$dat_bu\">$g_buchungsnummer �ndern</a>";
+				$link_aendern = "<a href=\"index.php?daten=buchen&option=geldbuchung_aendern&geldbuchung_dat=$dat_bu\">$g_buchungsnummer ändern</a>";
 				
 				echo "<tr><td>$g->geldkonto_bezeichnung<td>$kostentraeger_bezeichnung</td><td>$datum</td><td><b>$kostenkonto</b></td><td><b>$link_aendern</b></td><td>$betrag_a</td><td>$vzweck</td></tr>";
 				$summe = $summe + $betrag;

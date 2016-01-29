@@ -94,10 +94,10 @@ class formular {
 		echo "<input type=\"checkbox\" id=\"$id\" name=\"$name\" value=\"$wert\" $js $checked>\n";
 	}
 	
-	/* Checkboxauswahl f� alle Boxen auf einmal mit JS-Action */
+	/* Checkboxauswahl für alle Boxen auf einmal mit JS-Action */
 	function check_box_js_alle($name, $id, $wert, $label, $js, $checked, $feld) {
 		echo "<label for=\"$name\">$label</label>\n";
-		// echo "<input type=\"button\" name=\"button\" onclick='activate(this.form.elements[\"mv_ids[]\"]);' value=\"Alle w�hlen\">";
+		// echo "<input type=\"button\" name=\"button\" onclick='activate(this.form.elements[\"mv_ids[]\"]);' value=\"Alle wählen\">";
 		$feld_arr = $feld . '[]';
 		echo "<input type=\"checkbox\" id=\"$id\" name=\"$name\" value=\"$wert\" $js $checked onclick='activate(this.form.elements[\"$feld_arr\"]);'>\n";
 	}
@@ -114,13 +114,13 @@ class formular {
 		echo "<textarea id=\"$id\" name=\"$name\"  cols=\"$cols\" rows=\"$rows\" $js>$wert</textarea>\n";
 	}
 	
-	/* Textfeld inaktiv, ausgegraut, nicht ver�nderbar */
+	/* Textfeld inaktiv, ausgegraut, nicht veränderbar */
 	function text_feld_inaktiv($beschreibung, $name, $wert, $size, $id) {
 		echo "<label for=\"$name\">$beschreibung</label>\n";
 		echo " <input type=\"text\" id=\"$id\" name=\"$beschreibung.$name\" value=\"$wert\" size=\"$size\" disabled>\n";
 	}
 	
-	/* Textfeld inaktiv, ausgegraut, nicht ver�nderbar mit JS */
+	/* Textfeld inaktiv, ausgegraut, nicht veränderbar mit JS */
 	function text_feld_inaktiv_js($beschreibung, $name, $wert, $size, $id, $js) {
 		echo "<label for=\"$name\">$beschreibung</label>\n";
 		echo " <input type=\"text\" id=\"$id\" name=\"$name\" $js value=\"$wert\" size=\"$size\" disabled >\n";
@@ -151,7 +151,7 @@ class formular {
 	
 	/* Datumsfeld mit ID, JS-Action und Label */
 	function datum_feld($beschreibung, $name, $wert, $id) {
-		$js_datum = "onchange=check_datum('$id')"; // check_datum holt sich den wert vom feld mit der id und pr�ft ihn!
+		$js_datum = "onchange=check_datum('$id')"; // check_datum holt sich den wert vom feld mit der id und prüft ihn!
 		$this->text_feld ( "$beschreibung", "$name", "$wert", '10', $id, $js_datum );
 	}
 	function button_alle_waehlen($name, $wert, $id, $feld, $js) {

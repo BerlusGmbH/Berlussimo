@@ -119,7 +119,7 @@ class b_pdf {
 	}
 	function mietentwicklung_aktuell($pdf, $mv_id) {
 		$me = new mietentwicklung ();
-		/* Aktuelle Mieth�he */
+		/* Aktuelle Miethöhe */
 		$jahr = date ( "Y" );
 		$monat = date ( "m" );
 		$me->get_mietentwicklung_infos ( $mv_id, $jahr, $monat );
@@ -152,7 +152,7 @@ class b_pdf {
 				
 				/*
 				 * $me = new mietentwicklung();
-				 * /*Aktuelle Mieth�he
+				 * /*Aktuelle Miethöhe
 				 */
 				/*
 				 * $jahr = date("Y");
@@ -171,7 +171,7 @@ class b_pdf {
 				$dets = new detail ();
 				$mv_sepa = new sepa (); // SEPA LS Infos auf leer stellen
 				                       // Infos nur von LS-teilnehmern
-				if ($dets->finde_detail_inhalt ( 'MIETVERTRAG', $mv_id, 'Einzugserm�chtigung' ) == 'JA') {
+				if ($dets->finde_detail_inhalt ( 'MIETVERTRAG', $mv_id, 'Einzugsermächtigung' ) == 'JA') {
 					$mv->ls_konto = $dets->finde_detail_inhalt ( 'MIETVERTRAG', $mv_id, 'Kontonummer-AutoEinzug' );
 					$mv->ls_blz = $dets->finde_detail_inhalt ( 'MIETVERTRAG', $mv_id, 'BLZ-AutoEinzug' );
 					$mv_sepa->get_iban_bic ( $mv->ls_konto, $mv->ls_blz );
@@ -195,7 +195,7 @@ class b_pdf {
 				}
 				$sepa->GLAEUBIGER_ID = $dets->finde_detail_inhalt ( 'GELD_KONTEN', $gk->geldkonto_id, 'GLAEUBIGER_ID' );
 				if (! isset ( $sepa->GLAEUBIGER_ID )) {
-					die ( "Bei $gk->kontonummer $mv->objekt_kurzname fehlt die Gl�ubiger ID" );
+					die ( "Bei $gk->kontonummer $mv->objekt_kurzname fehlt die Gläubiger ID" );
 				}
 				// echo '<pre>';
 				// print_r($sepa);
@@ -305,7 +305,7 @@ class b_pdf {
 					$pdf->ezText ( "$mv->mv_anrede", 9 );
 					// $meine_var{$this->v_text_org} = $this->v_text;
 					// echo $meine_var{$this->v_text_org};
-					eval ( "\$this->v_text = \"$this->v_text\";" ); // Variable ausm Text f�llen
+					eval ( "\$this->v_text = \"$this->v_text\";" ); // Variable ausm Text füllen
 					                                              
 					// die($this->v_text);
 					                                              
@@ -403,7 +403,7 @@ else {
 				$pdf->ezStream ( $pdf_opt );
 			}
 		} else {
-			die ( 'Keine Empf�nger gew�hlt' );
+			die ( 'Keine Empfänger gewählt' );
 		}
 	}
 	function get_texte($v_dat) {
@@ -416,9 +416,9 @@ else {
 	}
 	function form_mieter2sess() {
 		$f = new formular ();
-		$f->erstelle_formular ( "Mieter w�hlen", NULL );
+		$f->erstelle_formular ( "Mieter wählen", NULL );
 		$this->mieter_checkboxen ();
-		$f->send_button ( "submit", "Hinzuf�gen" );
+		$f->send_button ( "submit", "Hinzufügen" );
 		$f->ende_formular ();
 	}
 	function mieter_checkboxen() {
@@ -428,7 +428,7 @@ else {
 		}
 		
 		if (isset ( $_POST ['vorlage'] ) && is_array ( $_SESSION ['serienbrief_mvs'] )) {
-			echo "Vorlage w�hlen";
+			echo "Vorlage wählen";
 			if (isset ( $_REQUEST ['kat'] )) {
 				$this->vorlage_waehlen ( null, $_REQUEST ['kat'] );
 			} else {
@@ -460,8 +460,8 @@ else {
 				// echo "$mv->einheit_kurzname - $mv->personen_name_string".'<br>';
 			}
 			echo "</table>";
-			$f->send_button ( "delete", "Alle L�schen" );
-			$f->send_button ( "vorlage", "Vorlage W�hlen" );
+			$f->send_button ( "delete", "Alle Löschen" );
+			$f->send_button ( "vorlage", "Vorlage Wählen" );
 		}
 		
 		$f = new formular ();
@@ -583,7 +583,7 @@ else {
 		$this->dropdown_kats ( 'Kategorie', 'kat', 'kat', '', '' );
 		$f = new formular ();
 		$f->text_feld ( 'Neue Kategorie', 'kat_man', null, 50, 'kat_man', '' );
-		$this->dropdown_typ ( 'Empf�ngergruppe', 'empf_typ', 'empf_typ', '', '' );
+		$this->dropdown_typ ( 'Empfängergruppe', 'empf_typ', 'empf_typ', '', '' );
 		$f->text_feld ( 'Betreff', 'kurztext', '', 100, 'kurztext', '' );
 		$f->text_bereich ( 'Text', 'text', '', 50, 50, 'text' );
 		$f->hidden_feld ( "option", "serienbrief_vorlage_send" );
@@ -631,7 +631,7 @@ else {
 		$f = new formular ();
 		$f->erstelle_formular ( "Serienbriefvorlage bearbeiten", NULL );
 		$this->dropdown_kats ( 'Kategorie', 'kat', 'kat', '', $this->v_kat );
-		$this->dropdown_typ ( 'Empf�ngergruppe', 'empf_typ', 'empf_typ', '', $this->v_empf_typ );
+		$this->dropdown_typ ( 'Empfängergruppe', 'empf_typ', 'empf_typ', '', $this->v_empf_typ );
 		$f->text_feld ( 'Betreff', 'kurztext', $this->v_kurztext, 100, 'kurztext', '' );
 		$f->text_bereich ( 'Text', 'text', $this->v_text, 50, 50, 'text' );
 		$f->hidden_feld ( "dat", "$dat" );
@@ -641,11 +641,11 @@ else {
 	}
 	function form_serienbrief_an($empfaenger) {
 		$f = new formular ();
-		$f->erstelle_formular ( "$empfaenger w�hlen", NULL );
+		$f->erstelle_formular ( "$empfaenger wählen", NULL );
 		// $this->mieter_checkboxen();
 		$this->checkboxen_auswahl ( $empfaenger );
 		$f->hidden_feld ( "option", "empfaenger2sess" );
-		$f->send_button ( "submit", "Hinzuf�gen" );
+		$f->send_button ( "submit", "Hinzufügen" );
 		$f->ende_formular ();
 	}
 	function checkboxen_auswahl($empfaenger) {
@@ -718,7 +718,7 @@ else {
 		$pdf->ezText ( "<b>Wohnung:</b> $mv->haus_strasse $mv->haus_nr, $mv->haus_plz $mv->haus_stadt  <b>Wohnlage:</b> $mv->einheit_lage", 10 );
 		
 		$pdf->ezSetDy ( - 15 ); // Abstand
-		$tab [0] ['RAUM'] = 'K�che';
+		$tab [0] ['RAUM'] = 'Küche';
 		$tab [1] ['RAUM'] = 'Bad';
 		$tab [2] ['RAUM'] = '1. Zimmer';
 		$tab [3] ['RAUM'] = '2. Zimmer';
@@ -734,8 +734,8 @@ else {
 		
 		$tabw [0] ['RAUM'] = 'Kaltwasser Bad';
 		$tabw [1] ['RAUM'] = 'Warmwasser Bad';
-		$tabw [2] ['RAUM'] = 'Kaltwasser K�che';
-		$tabw [3] ['RAUM'] = 'Warmwasser K�che';
+		$tabw [2] ['RAUM'] = 'Kaltwasser Küche';
+		$tabw [3] ['RAUM'] = 'Warmwasser Küche';
 		$tabw [4] ['RAUM'] = '';
 		$tabw [5] ['RAUM'] = '';
 		$tabw [6] ['RAUM'] = '';
@@ -744,7 +744,7 @@ else {
 		
 		$cols = array (
 				'RAUM' => "Raum",
-				'GERAET_NR' => "Ger�te-Nr.",
+				'GERAET_NR' => "Geräte-Nr.",
 				'ALT' => "M-WERT(alt)",
 				'NEU' => "IST-WERT(neu)" 
 		);
@@ -752,7 +752,7 @@ else {
 		if ($einzug == null) {
 			$title = "Anlage zum Wohnungsabnahmeprotokoll | Ablesung der Heizung";
 		} else {
-			$title = "Anlage zum Wohnungs�bergabeprotokoll | Ablesung der Heizung";
+			$title = "Anlage zum Wohnungsübergabeprotokoll | Ablesung der Heizung";
 		}
 		$pdf->ezTable ( $tab, $cols, "$title", array (
 				'showHeadings' => 1,
@@ -799,12 +799,12 @@ else {
 		if ($einzug == null) {
 			$title1 = "Anlage zum Wohnungsabnahmeprotokoll | Ablesung der Wasseruhren";
 		} else {
-			$title1 = "Anlage zum Wohnungs�bergabeprotokoll | Ablesung der Wasseruhren";
+			$title1 = "Anlage zum Wohnungsübergabeprotokoll | Ablesung der Wasseruhren";
 		}
 		
 		$cols = array (
 				'RAUM' => "Wasser",
-				'GERAET_NR' => "Z�hler-Nr.",
+				'GERAET_NR' => "Zähler-Nr.",
 				'ALT' => "Stand",
 				'NEU' => "Eichdatum !!!" 
 		);
@@ -891,12 +891,12 @@ else {
 		
 		$pdf->ezSetMargins ( 135, 70, 50, 50 );
 		$pdf->ezText ( "<b>Wohnung:</b> $mv->haus_strasse $mv->haus_nr, $mv->haus_plz $mv->haus_stadt <b>Wohnlage:</b> $mv->einheit_lage", 10 );
-		$pdf->ezSetDy ( 12 ); // Abstand zur�ck
+		$pdf->ezSetDy ( 12 ); // Abstand zurück
 		$pdf->ezText ( "<b>Wohnungs-Nr:</b> $mv->einheit_kurzname", 10, array (
 				'justification' => 'right' 
 		) );
 		$pdf->ezSetDy ( - 5 ); // Abstand
-		$pdf->ezText ( '_____ Zimmer           K�che/Kochnische           Wannenbad/Dusche           extra WC           Abstellraum', 10, array (
+		$pdf->ezText ( '_____ Zimmer           Küche/Kochnische           Wannenbad/Dusche           extra WC           Abstellraum', 10, array (
 				'justification' => 'left' 
 		) );
 		$pdf->ezSetDy ( - 15 ); // Abstand
@@ -932,16 +932,16 @@ else {
 		$pdf->rectangle ( 350, $pdf->y, 10, 10 );
 		$pdf->addText ( 365, $pdf->y, 10, 'Zentral' );
 		$pdf->rectangle ( 350, $pdf->y - 15, 10, 10 );
-		$pdf->addText ( 365, $pdf->y - 15, 10, '�ber Gasetagenheizung' );
+		$pdf->addText ( 365, $pdf->y - 15, 10, 'über Gasetagenheizung' );
 		
 		$pdf->ezSetDy ( - 15 ); // Abstand
 		$y_e = $pdf->y;
-		$pdf->ezText ( "<b>Elektrik-Z�hler:</b>", 10, array (
+		$pdf->ezText ( "<b>Elektrik-Zähler:</b>", 10, array (
 				'justification' => 'left' 
 		) );
 		$pdf->ezSetDy ( - 5 ); // Abstand
 		
-		$pdf->ezText ( "<b>Z�hler-Nr.:</b>", 10, array (
+		$pdf->ezText ( "<b>Zähler-Nr.:</b>", 10, array (
 				'justification' => 'left' 
 		) );
 		$pdf->ezSetDy ( - 5 ); // Abstand
@@ -956,14 +956,14 @@ else {
 		$this->kasten ( $pdf, 3, 225, 15, 15 );
 		
 		$abstand = $pdf->y - $y_e;
-		$pdf->ezSetDy ( - $abstand ); // Zur�ckh�he Elektroz�hler
+		$pdf->ezSetDy ( - $abstand ); // Zurückhöhe Elektrozähler
 		$pdf->ezSetMargins ( 135, 70, 300, 50 );
-		$pdf->ezText ( "<b>Gas-Z�hler:</b>", 10, array (
+		$pdf->ezText ( "<b>Gas-Zähler:</b>", 10, array (
 				'justification' => 'left' 
 		) );
 		$pdf->ezSetDy ( - 5 ); // Abstand
 		
-		$pdf->ezText ( "<b>Z�hler-Nr.:</b>", 10, array (
+		$pdf->ezText ( "<b>Zähler-Nr.:</b>", 10, array (
 				'justification' => 'left' 
 		) );
 		$pdf->ezSetDy ( - 5 ); // Abstand
@@ -979,7 +979,7 @@ else {
 		
 		$pdf->ezSetMargins ( 135, 70, 50, 50 );
 		$pdf->ezSetDy ( - 10 ); // Abstand
-		$pdf->ezText ( "Der Mieter stimmt zu, dass der Vermieter die Z�hlerst�nde unter Angabe von Vor- und Zuname, sowie der Verzugsanschrift an den regionalen Versorger meldet.", 9, array (
+		$pdf->ezText ( "Der Mieter stimmt zu, dass der Vermieter die Zählerstände unter Angabe von Vor- und Zuname, sowie der Verzugsanschrift an den regionalen Versorger meldet.", 9, array (
 				'justification' => 'left' 
 		) );
 		$pdf->ezSetDy ( - 10 ); // Abstand
@@ -987,7 +987,7 @@ else {
 				'justification' => 'left' 
 		) );
 		$pdf->ezSetMargins ( 135, 70, 330, 50 );
-		$pdf->ezSetDy ( 12 ); // Zur�ck
+		$pdf->ezSetDy ( 12 ); // Zurück
 		$pdf->ezText ( "<b>Beseitigung erfolgt durch:</b>", 10, array (
 				'justification' => 'left' 
 		) );
@@ -1001,8 +1001,8 @@ else {
 		$pdf->ezSetDy ( - 20 ); // Abstand
 		
 		$this->kasten ( $pdf, 4, 50, 15, 15, 125 );
-		$pdf->addText ( 70, $pdf->y + 3, 10, "keine M�ngel" );
-		$pdf->addText ( 210, $pdf->y + 3, 10, "folgende M�ngel" );
+		$pdf->addText ( 70, $pdf->y + 3, 10, "keine Mängel" );
+		$pdf->addText ( 210, $pdf->y + 3, 10, "folgende Mängel" );
 		$pdf->addText ( 380, $pdf->y + 3, 10, "Mieter" );
 		$pdf->addText ( 490, $pdf->y + 3, 10, "Vermieter" );
 		$pdf->setLineStyle ( 1 );
@@ -1013,14 +1013,14 @@ else {
 		$pdf->ezSetDy ( - 20 ); // Abstand
 		$pdf->line ( 42, $pdf->y, 550, $pdf->y );
 		
-		$pdf->ezText ( "<b>K�che:</b>", 10, array (
+		$pdf->ezText ( "<b>Küche:</b>", 10, array (
 				'justification' => 'left' 
 		) );
 		$pdf->ezSetDy ( - 20 ); // Abstand
 		
 		$this->kasten ( $pdf, 4, 50, 15, 15, 125 );
-		$pdf->addText ( 70, $pdf->y + 3, 10, "keine M�ngel" );
-		$pdf->addText ( 210, $pdf->y + 3, 10, "folgende M�ngel" );
+		$pdf->addText ( 70, $pdf->y + 3, 10, "keine Mängel" );
+		$pdf->addText ( 210, $pdf->y + 3, 10, "folgende Mängel" );
 		$pdf->addText ( 350, $pdf->y + 3, 10, "Mieter" );
 		$pdf->addText ( 490, $pdf->y + 3, 10, "Vermieter" );
 		$pdf->setLineStyle ( 1 );
@@ -1037,8 +1037,8 @@ else {
 		$pdf->ezSetDy ( - 20 ); // Abstand
 		
 		$this->kasten ( $pdf, 4, 50, 15, 15, 125 );
-		$pdf->addText ( 70, $pdf->y + 3, 10, "keine M�ngel" );
-		$pdf->addText ( 210, $pdf->y + 3, 10, "folgende M�ngel" );
+		$pdf->addText ( 70, $pdf->y + 3, 10, "keine Mängel" );
+		$pdf->addText ( 210, $pdf->y + 3, 10, "folgende Mängel" );
 		$pdf->addText ( 350, $pdf->y + 3, 10, "Mieter" );
 		$pdf->addText ( 490, $pdf->y + 3, 10, "Vermieter" );
 		$pdf->setLineStyle ( 1 );
@@ -1055,8 +1055,8 @@ else {
 		$pdf->ezSetDy ( - 20 ); // Abstand
 		
 		$this->kasten ( $pdf, 4, 50, 15, 15, 125 );
-		$pdf->addText ( 70, $pdf->y + 3, 10, "keine M�ngel" );
-		$pdf->addText ( 210, $pdf->y + 3, 10, "folgende M�ngel" );
+		$pdf->addText ( 70, $pdf->y + 3, 10, "keine Mängel" );
+		$pdf->addText ( 210, $pdf->y + 3, 10, "folgende Mängel" );
 		$pdf->addText ( 350, $pdf->y + 3, 10, "Mieter" );
 		$pdf->addText ( 490, $pdf->y + 3, 10, "Vermieter" );
 		$pdf->setLineStyle ( 1 );
@@ -1074,8 +1074,8 @@ else {
 		$pdf->ezSetDy ( - 20 ); // Abstand
 		
 		$this->kasten ( $pdf, 4, 50, 15, 15, 125 );
-		$pdf->addText ( 70, $pdf->y + 3, 10, "keine M�ngel" );
-		$pdf->addText ( 210, $pdf->y + 3, 10, "folgende M�ngel" );
+		$pdf->addText ( 70, $pdf->y + 3, 10, "keine Mängel" );
+		$pdf->addText ( 210, $pdf->y + 3, 10, "folgende Mängel" );
 		$pdf->addText ( 350, $pdf->y + 3, 10, "Mieter" );
 		$pdf->addText ( 490, $pdf->y + 3, 10, "Vermieter" );
 		$pdf->setLineStyle ( 1 );
@@ -1092,8 +1092,8 @@ else {
 		$pdf->ezSetDy ( - 20 ); // Abstand
 		
 		$this->kasten ( $pdf, 4, 50, 15, 15, 125 );
-		$pdf->addText ( 70, $pdf->y + 3, 10, "keine M�ngel" );
-		$pdf->addText ( 210, $pdf->y + 3, 10, "folgende M�ngel" );
+		$pdf->addText ( 70, $pdf->y + 3, 10, "keine Mängel" );
+		$pdf->addText ( 210, $pdf->y + 3, 10, "folgende Mängel" );
 		$pdf->addText ( 350, $pdf->y + 3, 10, "Mieter" );
 		$pdf->addText ( 490, $pdf->y + 3, 10, "Vermieter" );
 		$pdf->setLineStyle ( 1 );
@@ -1110,8 +1110,8 @@ else {
 		$pdf->ezSetDy ( - 20 ); // Abstand
 		
 		$this->kasten ( $pdf, 4, 50, 15, 15, 125 );
-		$pdf->addText ( 70, $pdf->y + 3, 10, "keine M�ngel" );
-		$pdf->addText ( 210, $pdf->y + 3, 10, "folgende M�ngel" );
+		$pdf->addText ( 70, $pdf->y + 3, 10, "keine Mängel" );
+		$pdf->addText ( 210, $pdf->y + 3, 10, "folgende Mängel" );
 		$pdf->addText ( 350, $pdf->y + 3, 10, "Mieter" );
 		$pdf->addText ( 490, $pdf->y + 3, 10, "Vermieter" );
 		$pdf->setLineStyle ( 1 );
@@ -1128,8 +1128,8 @@ else {
 		$pdf->ezSetDy ( - 20 ); // Abstand
 		
 		$this->kasten ( $pdf, 4, 50, 15, 15, 125 );
-		$pdf->addText ( 70, $pdf->y + 3, 10, "keine M�ngel" );
-		$pdf->addText ( 210, $pdf->y + 3, 10, "folgende M�ngel" );
+		$pdf->addText ( 70, $pdf->y + 3, 10, "keine Mängel" );
+		$pdf->addText ( 210, $pdf->y + 3, 10, "folgende Mängel" );
 		$pdf->addText ( 350, $pdf->y + 3, 10, "Mieter" );
 		$pdf->addText ( 490, $pdf->y + 3, 10, "Vermieter" );
 		$pdf->setLineStyle ( 1 );
@@ -1146,8 +1146,8 @@ else {
 		$pdf->ezSetDy ( - 20 ); // Abstand
 		
 		$this->kasten ( $pdf, 4, 50, 15, 15, 125 );
-		$pdf->addText ( 70, $pdf->y + 3, 10, "keine M�ngel" );
-		$pdf->addText ( 210, $pdf->y + 3, 10, "folgende M�ngel" );
+		$pdf->addText ( 70, $pdf->y + 3, 10, "keine Mängel" );
+		$pdf->addText ( 210, $pdf->y + 3, 10, "folgende Mängel" );
 		$pdf->addText ( 350, $pdf->y + 3, 10, "Mieter" );
 		$pdf->addText ( 490, $pdf->y + 3, 10, "Vermieter" );
 		$pdf->setLineStyle ( 1 );
@@ -1160,16 +1160,16 @@ else {
 		$pdf->ezSetDy ( - 18 ); // Abstand
 		$pdf->line ( 42, $pdf->y, 550, $pdf->y );
 		
-		$pdf->ezText ( "Folgende Schl�ssel wurden �bergeben:", 9, array (
+		$pdf->ezText ( "Folgende Schlüssel wurden übergeben:", 9, array (
 				'justification' => 'left' 
 		) );
 		$pdf->ezSetMargins ( 135, 70, 250, 50 );
-		$pdf->ezSetDy ( 10 ); // Zur�ck
-		$pdf->ezText ( "______ Haust�r-/ Zentralschl�ssel", 9, array (
+		$pdf->ezSetDy ( 10 ); // Zurück
+		$pdf->ezText ( "______ Haustür-/ Zentralschlüssel", 9, array (
 				'justification' => 'left' 
 		) );
 		$pdf->ezSetMargins ( 135, 70, 50, 50 );
-		$pdf->ezText ( "______ Wohnungst�r   ______ Briefkasten   ______ Keller   ______ Sonstige _____________________________________", 9, array (
+		$pdf->ezText ( "______ Wohnungstür   ______ Briefkasten   ______ Keller   ______ Sonstige _____________________________________", 9, array (
 				'justification' => 'left' 
 		) );
 		// $pdf->ezText("______ Briefkasten",9, array('justification'=>'left'));
@@ -1199,9 +1199,9 @@ else {
 		$pdf->ezSetDy ( - 20 ); // Abstand
 		$this->kasten ( $pdf, 1, 50, 10, 10, 50 );
 		if ($einzug == 'einzug') {
-			$pdf->addText ( 65, $pdf->y + 2, 9, "<b>Der Mieter hat die Einzugsbest�tigung erhalten.</b>" );
+			$pdf->addText ( 65, $pdf->y + 2, 9, "<b>Der Mieter hat die Einzugsbestätigung erhalten.</b>" );
 		} else {
-			$pdf->addText ( 65, $pdf->y + 2, 9, "<b>Der Mieter hat die Auszugsbest�tigung erhalten.</b>" );
+			$pdf->addText ( 65, $pdf->y + 2, 9, "<b>Der Mieter hat die Auszugsbestätigung erhalten.</b>" );
 		}
 		$pdf->ezSetDy ( - 10 ); // Abstand
 		$pdf->ezText ( "$mv->haus_stadt, __________________", 9, array (
@@ -1235,25 +1235,25 @@ else {
 		}
 		
 		if ($einzug == '0') {
-			$pdf->ezText ( "<b>Einzugsbest�tigung</b>", 18, array (
+			$pdf->ezText ( "<b>Einzugsbestätigung</b>", 18, array (
 					'justification' => 'left' 
 			) );
 			$pdf->ezText ( "$mv->einheit_kurzname", 10, array (
 					'justification' => 'right' 
 			) );
 		} else {
-			$pdf->ezText ( "<b>Auszugsbest�tigung</b>", 18, array (
+			$pdf->ezText ( "<b>Auszugsbestätigung</b>", 18, array (
 					'justification' => 'left' 
 			) );
 			$pdf->ezText ( "$mv->einheit_kurzname", 10, array (
 					'justification' => 'right' 
 			) );
 		}
-		$pdf->ezText ( "<b>Wohnungsgeberbescheinigung gem�� � 19 des Bundesmeldegesetzes (BMG)</b>", 11, array (
+		$pdf->ezText ( "<b>Wohnungsgeberbescheinigung gemäß § 19 des Bundesmeldegesetzes (BMG)</b>", 11, array (
 				'justification' => 'left' 
 		) );
 		$pdf->ezSetDy ( - 35 ); // Abstand
-		$pdf->ezText ( "Hiermit best�tige(n) ich/wir als Wohnungsgeber/Vermieter, dass", 10 );
+		$pdf->ezText ( "Hiermit bestätige(n) ich/wir als Wohnungsgeber/Vermieter, dass", 10 );
 		$pdf->ezSetDy ( - 15 ); // Abstand
 		$pdf->ezText ( "$mv->personen_name_string_u", 10 );
 		
@@ -1279,13 +1279,13 @@ else {
 		if (empty ( $oo->objekt_eigentuemer )) {
 			$pdf->ezSetDy ( - 30 ); // Abstand
 			$this->kasten ( $pdf, 1, 50, 10, 10 );
-			$pdf->addText ( 70, $pdf->y + 1, 10, 'Der Wohnungsgeber/Vermieter ist gleichzeitig <b>Eigent�mer</b> der Wohnung oder' );
+			$pdf->addText ( 70, $pdf->y + 1, 10, 'Der Wohnungsgeber/Vermieter ist gleichzeitig <b>Eigentümer</b> der Wohnung oder' );
 			
 			$pdf->ezSetDy ( - 20 ); // Abstand
 			
 			$this->kasten ( $pdf, 1, 50, 10, 10 );
 			
-			$pdf->addText ( 70, $pdf->y + 1, 10, "Der Wohnungsgeber/Vermieter ist <b>nicht</b> Eigent�mer der Wohnung" );
+			$pdf->addText ( 70, $pdf->y + 1, 10, "Der Wohnungsgeber/Vermieter ist <b>nicht</b> Eigentümer der Wohnung" );
 			$pdf->ezSetDy ( - 15 ); // Abstand
 			
 			$pdf->ezSetDy ( - 25 ); // Abstand
@@ -1296,10 +1296,10 @@ else {
 			$this->kasten ( $pdf, 1, 50, 10, 10 );
 			$pdf->addText ( 50, $pdf->y + 2, 10, 'X' );
 			
-			$pdf->addText ( 70, $pdf->y + 1, 10, "Der Wohnungsgeber ist <b>nicht</b> Eigent�mer der Wohnung" );
+			$pdf->addText ( 70, $pdf->y + 1, 10, "Der Wohnungsgeber ist <b>nicht</b> Eigentümer der Wohnung" );
 			$pdf->ezSetDy ( - 15 ); // Abstand
 			
-			$pdf->eztext ( "Name und Anschrift des <b>Eigent�mers</b> lauten:", 10 );
+			$pdf->eztext ( "Name und Anschrift des <b>Eigentümers</b> lauten:", 10 );
 			
 			$pdf->eztext ( "$oo->objekt_eigentuemer", 10 );
 			$pp = new partners ();
@@ -1309,7 +1309,7 @@ else {
 		
 		$pdf->ezSetDy ( - 25 ); // Abstand
 		
-		$pdf->ezText ( "Ich best�tige mit meiner Unterschrift den Ein- bzw. Auszug der oben genannten Person(en) in die n�her bezeichnete Wohnung und dass ich als Wohnungsgeber oder als beauftragte Person diese Bescheinigung ausstellen darf. Ich habe davon Kenntnis genommen, da ich ordnungswidrig handele, wenn ich hierzu nicht berechtigt bin und dass es verboten ist, eine Wohnanschrift f�r eine Anmeldung eines Wohnsitzes einem Dritten anzubieten oder zur Verf�gung zu stellen, obwohl ein tats�chlicher Bezug der Wohnung durch einen Dritten weder stattfindet noch beabsichtigt ist. Ein Versto� gegen das Verbot stellt auch einen Ordnungswidrigkeit dar.", 8 );
+		$pdf->ezText ( "Ich bestätige mit meiner Unterschrift den Ein- bzw. Auszug der oben genannten Person(en) in die näher bezeichnete Wohnung und dass ich als Wohnungsgeber oder als beauftragte Person diese Bescheinigung ausstellen darf. Ich habe davon Kenntnis genommen, da ich ordnungswidrig handele, wenn ich hierzu nicht berechtigt bin und dass es verboten ist, eine Wohnanschrift für eine Anmeldung eines Wohnsitzes einem Dritten anzubieten oder zur Verfügung zu stellen, obwohl ein tatsächlicher Bezug der Wohnung durch einen Dritten weder stattfindet noch beabsichtigt ist. Ein Verstoß gegen das Verbot stellt auch einen Ordnungswidrigkeit dar.", 8 );
 		
 		/* Footer */
 		$pdf->ezSetDy ( - 25 ); // Abstand
