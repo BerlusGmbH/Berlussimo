@@ -1,4 +1,5 @@
 .project
 .settings
+.buildpath
 FOTOS
 classes/config.inc.php
