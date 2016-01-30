@@ -19,7 +19,7 @@
  */
 $mieten = new mietkonto ();
 echo "<div class=\"navi_leiste2\">";
-$mieten->erstelle_formular ( "Hauptmen� -> Mieth�he definieren...", NULL );
+$mieten->erstelle_formular ( "Hauptmenü -> Miethöhe definieren...", NULL );
 
 echo "<a href=\"?daten=miete_definieren&option=miethoehe\">Miete definieren</a>&nbsp;";
 

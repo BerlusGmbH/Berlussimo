@@ -18,7 +18,7 @@
  * 
  */
 include_once ("includes/allgemeine_funktionen.php");
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'einheit_raus' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -84,7 +84,7 @@ switch ($einheit_raus) {
 			echo "Einheit $kurzname wurde erstellt.";
 			weiterleiten_in_sec ( "?daten=einheit_raus&einheit_raus=einheit_kurz&haus_id=$haus_id", 2 );
 		} else {
-			echo "Dateneingabe zur Einheit unvollst�ndig";
+			echo "Dateneingabe zur Einheit unvollständig";
 		}
 		break;
 	
@@ -93,7 +93,7 @@ switch ($einheit_raus) {
 			$e = new einheit ();
 			$e->form_einheit_aendern ( $_REQUEST ['einheit_id'] );
 		} else {
-			fehlermeldung_ausgeben ( "Einheit w�hlen!" );
+			fehlermeldung_ausgeben ( "Einheit wählen!" );
 		}
 		break;
 	
@@ -104,7 +104,7 @@ switch ($einheit_raus) {
 			$e->einheit_update ( $_REQUEST ['dat'], $_REQUEST ['einheit_id'], $_REQUEST ['kurzname'], $_REQUEST ['lage'], $_REQUEST ['qm'], $_REQUEST ['haus_id'], $_REQUEST ['typ'] );
 			hinweis_ausgeben ( "Einheit aktualisiert" );
 		} else {
-			fehlermeldung_ausgeben ( "Daten unvollst�ndig �bermittelt!" );
+			fehlermeldung_ausgeben ( "Daten unvollständig übermittelt!" );
 		}
 		break;
 	
@@ -141,7 +141,7 @@ switch ($einheit_raus) {
 				echo "Keine Emailadressen der Mieter";
 			}
 		} else {
-			fehlermeldung_ausgeben ( "Objekt f�r Email w�hlen" );
+			fehlermeldung_ausgeben ( "Objekt für Email wählen" );
 		}
 		break;
 }
@@ -166,7 +166,7 @@ function einheit_kurz($haus_id) {
 		
 		iframe_start ();
 		echo "<table class=\"sortable\">\n";
-		echo "<tr><th>EINHEIT</th><th>TYP</TH><th>KONTO</th><th>MIETER</th><th>Anschrift</th><th>Lage</th><th>Fl�che</th><th>OPTION</th></tr>";
+		echo "<tr><th>EINHEIT</th><th>TYP</TH><th>KONTO</th><th>MIETER</th><th>Anschrift</th><th>Lage</th><th>Fläche</th><th>OPTION</th></tr>";
 		$counter = 0;
 		while ( list ( $EINHEIT_ID, $EINHEIT_KURZNAME, $EINHEIT_LAGE, $EINHEIT_QM, $HAUS_ID, $TYP ) = mysql_fetch_row ( $resultat ) ) {
 			$mieteranzahl = mieter_anzahl ( $EINHEIT_ID );
@@ -249,7 +249,7 @@ WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LPAD(EINHEIT_KURZNAME, LE
 		echo "<table class=\"tabelle_haus\" width=100%>\n";
 		$objekt_kurzname = $my_arr ['0'] ['OBJEKT_KURZNAME'];
 		echo "<tr class=\"feldernamen\"><td colspan=7>Einheiten im Objekt $objekt_kurzname</td></tr>\n";
-		echo "<tr class=\"feldernamen\"><td width=150>Kurzname</td><td>OPTION</td><td width=200>Mieter</td><td width=200>Anschrift</td><td width=100>Lage</td><td width=40>m�</td><td>Details</td></tr>\n";
+		echo "<tr class=\"feldernamen\"><td width=150>Kurzname</td><td>OPTION</td><td width=200>Mieter</td><td width=200>Anschrift</td><td width=100>Lage</td><td width=40>m²</td><td>Details</td></tr>\n";
 		echo "</table>";
 		iframe_start ();
 		echo "<table width=100%>\n";
@@ -266,7 +266,7 @@ WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LPAD(EINHEIT_KURZNAME, LE
 				$mieter = "leer";
 				$mietkonto_link = "";
 				/*
-				 * Pr�fen ob es einen Eigent�mer gibt und wenn ja, zahlt er nebenkosten heizkostenvorsch�ssen,
+				 * Prüfen ob es einen Eigentümer gibt und wenn ja, zahlt er nebenkosten heizkostenvorschüssen,
 				 * falls ja dann SELBSTNUTZER";
 				 */
 				$weg = new weg ();
@@ -282,7 +282,7 @@ WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LPAD(EINHEIT_KURZNAME, LE
 						$eig_link = "<a href=\"?daten=weg&option=einheit_uebersicht&einheit_id=$einheit_id\">$mieter_name</a>";
 						// $mietkonto_link = "<a href=\"?daten=weg&option=einheit_uebersicht&einheit_id=$einheit_id\>$einheit_kurzname</a>";
 					} else {
-						/* Eigentpmer zahlt keine Vorsch�sse, dann vermietet er und ist kein Selbstnutzer */
+						/* Eigentpmer zahlt keine Vorschüsse, dann vermietet er und ist kein Selbstnutzer */
 						$mieter = "leer";
 						// $mietkonto_link = "<a href=\"?daten=weg&option=einheit_uebersicht&einheit_id=$einheit_id\>$einheit_kurzname</a>";
 					}
@@ -300,7 +300,7 @@ WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LPAD(EINHEIT_KURZNAME, LE
 				$einheit_link = "<a class=\"table_links\" href=\"?daten=weg&option=einheit_uebersicht&einheit_id=$einheit_id\">$einheit_kurzname</a>";
 			}
 			
-			$link_aendern = "<a class=\"table_links\" href=\"?daten=einheit_raus&einheit_raus=einheit_aendern&einheit_id=$einheit_id\">�NDERN</a>";
+			$link_aendern = "<a class=\"table_links\" href=\"?daten=einheit_raus&einheit_raus=einheit_aendern&einheit_id=$einheit_id\">ÄNDERN</a>";
 			
 			$detail_check = detail_check ( "EINHEIT", $einheit_id );
 			if ($detail_check > 0) {

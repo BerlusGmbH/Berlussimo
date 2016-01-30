@@ -20,7 +20,7 @@
 include_once ("includes/allgemeine_funktionen.php");
 include_once ("classes/class_geldkonten.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'geldkonten' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -40,7 +40,7 @@ switch ($option) {
 	
 	case "uebersicht_ea" :
 		$form = new mietkonto ();
-		$form->erstelle_formular ( "Geldkonten�bersicht", NULL );
+		$form->erstelle_formular ( "Geldkontenübersicht", NULL );
 		$geldkonten = new geldkonto_info ();
 		$geldkonten->alle_geldkonten_tabelle ();
 		$form->ende_formular ();
@@ -74,7 +74,7 @@ switch ($option) {
 			$gk->geldkonto_speichern ( $kostentraeger_typ, $kos_id, $g_bez, $beguenstigter, $kontonummer, $blz, $institut, $iban_mysql, $bic );
 			weiterleiten ( '?daten=geldkonten&option=uebersicht_zuweisung' );
 		} else {
-			echo "Eingabe unvollst�ndig Error: 621ghp";
+			echo "Eingabe unvollständig Error: 621ghp";
 		}
 		break;
 	
@@ -84,7 +84,7 @@ switch ($option) {
 			$gk = new gk ();
 			$gk->form_geldkonto_edit ( $gk_id );
 		} else {
-			fehlermeldung_ausgeben ( "Geldkonto w�hlen" );
+			fehlermeldung_ausgeben ( "Geldkonto wählen" );
 		}
 		break;
 	
@@ -109,7 +109,7 @@ switch ($option) {
 			$gk->geldkonto_update ( $gk_id, $g_bez, $beguenstigter, $kontonummer, $blz, $institut, $iban_mysql, $bic );
 			weiterleiten ( '?daten=geldkonten' );
 		} else {
-			echo "Eingabe unvollst�ndig Error: Modul GK 115";
+			echo "Eingabe unvollständig Error: Modul GK 115";
 		}
 		
 		break;
@@ -144,7 +144,7 @@ switch ($option) {
 				weiterleiten ( '?daten=geldkonten&option=uebersicht_zuweisung' );
 			}
 		} else {
-			echo "Eingabe unvollst�ndig Error: 623gd";
+			echo "Eingabe unvollständig Error: 623gd";
 		}
 		break;
 	
@@ -157,12 +157,12 @@ switch ($option) {
 			$gk->zuweisung_aufheben ( $kos_typ, $kos_id, $geldkonto_id );
 			weiterleiten ( '?daten=geldkonten&option=uebersicht_zuweisung' );
 		} else {
-			echo "Eingabe unvollst�ndig Error: 623gf1";
+			echo "Eingabe unvollständig Error: 623gf1";
 		}
 	
 	default :
 		$form = new mietkonto ();
-		$form->erstelle_formular ( "Geldkontost�nde AKTUELL", NULL );
+		$form->erstelle_formular ( "Geldkontostände AKTUELL", NULL );
 		$geldkonten = new geldkonto_info ();
 		$geldkonten->alle_geldkonten_tabelle_kontostand ();
 		$form->ende_formular ();

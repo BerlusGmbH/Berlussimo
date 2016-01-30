@@ -21,7 +21,7 @@
 // error_reporting(E_ALL);
 include_once ("includes/allgemeine_funktionen.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! isset ( $_SESSION ['benutzer_id'] ) or ! check_user_mod ( $_SESSION ['benutzer_id'], 'person' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -97,11 +97,11 @@ if (isset ( $_REQUEST ["daten"] )) {
 			$p->form_person_erfassen ();
 			break;
 		
-		/* Pr�fen der Eingabe im Formular */
+		/* Prüfen der Eingabe im Formular */
 		case "person_erfassen_check" :
 			$f = new formular ();
-			$f->erstelle_formular ( '�berpr�fen', '' );
-			$f->fieldset ( "Daten �berpr�fen", 'p_pruefen' );
+			$f->erstelle_formular ( 'Überprüfen', '' );
+			$f->fieldset ( "Daten überprüfen", 'p_pruefen' );
 			$geb_dat = $_POST ['geburtsdatum'];
 			$nachname = $_POST ['nachname'];
 			$vorname = $_POST ['vorname'];
@@ -110,10 +110,10 @@ if (isset ( $_REQUEST ["daten"] )) {
 			$handy = $_POST ['handy'];
 			$email = $_POST ['email'];
 			if (empty ( $nachname ) or empty ( $vorname ) or empty ( $geb_dat )) {
-				fehlermeldung_ausgeben ( "<br>Name, Vorname oder Geburtsdatum unvollst�ndig" );
+				fehlermeldung_ausgeben ( "<br>Name, Vorname oder Geburtsdatum unvollständig" );
 			} else {
 				
-				echo "Eingegebene Daten �berpr�fen<hr>";
+				echo "Eingegebene Daten überprüfen<hr>";
 				echo "Nachname:$nachname<br>";
 				echo "Vorname: $vorname<br>";
 				echo "Geschlecht: $geschlecht<br>";
@@ -139,7 +139,7 @@ if (isset ( $_REQUEST ["daten"] )) {
 			$f->ende_formular ();
 			break;
 		
-		/* Neue Person nach Pr�fung speichern */
+		/* Neue Person nach Prüfung speichern */
 		case "person_erfassen_save" :
 			$f = new formular ();
 			$f->fieldset ( "Person/Mieter speichern", 'p_save' );
@@ -151,9 +151,9 @@ if (isset ( $_REQUEST ["daten"] )) {
 			$handy = $_POST ['handy'];
 			$email = $_POST ['email'];
 			if (empty ( $nachname ) or empty ( $vorname ) or empty ( $geb_dat )) {
-				fehlermeldung_ausgeben ( "<br>Name, Vorname oder Geburtsdatum unvollst�ndig" );
+				fehlermeldung_ausgeben ( "<br>Name, Vorname oder Geburtsdatum unvollständig" );
 			} else {
-				echo "Eingegebene Daten �berpr�fen<hr>";
+				echo "Eingegebene Daten überprüfen<hr>";
 				echo "Nachname:$nachname<br>";
 				echo "Vorname: $vorname<br>";
 				echo "Geburtsdatum: $geb_dat<br>";
@@ -179,11 +179,11 @@ if (isset ( $_REQUEST ["daten"] )) {
 		
 		case "person_loeschen" :
 			$form = new mietkonto ();
-			$form->erstelle_formular ( "Person l�schen", NULL );
+			$form->erstelle_formular ( "Person löschen", NULL );
 			iframe_start ();
 			if (isset ( $_REQUEST ["person_dat"] )) {
 				// person_loeschen($_REQUEST["person_dat"]);
-				hinweis_ausgeben ( "L�schfunktion deaktiviert!!!" );
+				hinweis_ausgeben ( "Löschfunktion deaktiviert!!!" );
 				weiterleiten ( "javascript:history.back()" );
 			}
 			iframe_end ();
@@ -192,17 +192,17 @@ if (isset ( $_REQUEST ["daten"] )) {
 		
 		case "person_aendern" :
 			$form = new mietkonto ();
-			$form->erstelle_formular ( "Person �ndern", NULL );
+			$form->erstelle_formular ( "Person ändern", NULL );
 			iframe_start ();
 			echo "Person aendern";
 			if (isset ( $_REQUEST ["person_id"] ) && ! isset ( $submit_person_aendern ) && ! isset ( $_REQUEST [person_definitiv_speichern] )) {
 				person_aendern_from ( $_REQUEST ["person_id"] );
 			}
 			if (isset ( $submit_person_aendern )) {
-				check_fields_nach_aenderung (); // pr�fen und eintragen
+				check_fields_nach_aenderung (); // prüfen und eintragen
 			}
 			if (isset ( $_REQUEST [person_definitiv_speichern] )) {
-				check_fields_nach_aenderung (); // �nderung anzeigen pr�fen und eintragen
+				check_fields_nach_aenderung (); // Änderung anzeigen prüfen und eintragen
 			}
 			iframe_end ();
 			$form->ende_formular ();
@@ -249,7 +249,7 @@ function check_fields() {
 		elseif (($key == "person_geburtstag") && isset ( $value )) {
 			$datum = $_REQUEST [person_geburtstag];
 			// if(strlen ($datum) != "10"){
-			// fehlermeldung_ausgeben("Datumsl�nge nicht korrekt!");
+			// fehlermeldung_ausgeben("Datumslänge nicht korrekt!");
 			// backlink();
 			// $myerror = true;
 			// break;
@@ -258,7 +258,7 @@ function check_fields() {
 			$tmp = explode ( ".", $datum );
 			if (checkdate ( $tmp [1], $tmp [0], $tmp [2] )) {
 			} else {
-				fehlermeldung_ausgeben ( "Falsches Datumsformat, bitte �berpr�fen!" );
+				fehlermeldung_ausgeben ( "Falsches Datumsformat, bitte überprüfen!" );
 				backlink ();
 				$myerror = true;
 				break;
@@ -270,11 +270,11 @@ function check_fields() {
 			// echo "$key => $value<br>";
 		}
 		erstelle_formular ( NULL, NULL ); // name, action
-		echo "<tr><td><h1>Folgende Daten wurden �bermittelt:\n</h1></td></tr>\n";
+		echo "<tr><td><h1>Folgende Daten wurden übermittelt:\n</h1></td></tr>\n";
 		echo "<tr><td><h2>Personendaten: $objekt_kurzname</h2></td></tr>\n";
 		echo "<tr><td>";
 		// print_r($_POST);
-		warnung_ausgeben ( "Sind Sie sicher, da� Sie die Person $_POST[person_nachname] $_POST[person_vorname] geb. am $_POST[person_geburtstag] speichern wollen?" );
+		warnung_ausgeben ( "Sind Sie sicher, daß Sie die Person $_POST[person_nachname] $_POST[person_vorname] geb. am $_POST[person_geburtstag] speichern wollen?" );
 		echo "</td></tr>";
 		erstelle_hiddenfeld ( "person_nachname", "$_POST[person_nachname]" );
 		erstelle_hiddenfeld ( "person_vorname", "$_POST[person_vorname]" );
@@ -332,7 +332,7 @@ function check_fields_nach_aenderung() {
 		elseif (($key == "person_geburtstag") && isset ( $value )) {
 			$datum = $_REQUEST [person_geburtstag];
 			// if(strlen ($datum) != "10"){
-			// fehlermeldung_ausgeben("Datumsl�nge nicht korrekt!");
+			// fehlermeldung_ausgeben("Datumslänge nicht korrekt!");
 			// backlink();
 			// $myerror = true;
 			// break;
@@ -340,7 +340,7 @@ function check_fields_nach_aenderung() {
 			$tmp = explode ( ".", $datum );
 			if (checkdate ( $tmp [1], $tmp [0], $tmp [2] )) {
 			} else {
-				fehlermeldung_ausgeben ( "Falsches Datumsformat, bitte �berpr�fen!" );
+				fehlermeldung_ausgeben ( "Falsches Datumsformat, bitte überprüfen!" );
 				backlink ();
 				$myerror = true;
 				break;
@@ -353,11 +353,11 @@ function check_fields_nach_aenderung() {
 		}
 		if (! isset ( $_REQUEST [person_definitiv_speichern] )) {
 			erstelle_formular ( NULL, NULL ); // name, action
-			echo "<tr><td><h1>Folgende Daten wurden �bermittelt:\n</h1></td></tr>\n";
+			echo "<tr><td><h1>Folgende Daten wurden übermittelt:\n</h1></td></tr>\n";
 			echo "<tr><td><h2>Personendaten: $objekt_kurzname</h2></td></tr>\n";
 			echo "<tr><td>";
 			// print_r($_POST);
-			warnung_ausgeben ( "Sind Sie sicher, da� Sie die Person $_POST[person_nachname] $_POST[person_vorname] geb. am $_POST[person_geburtstag] �ndern wollen?" );
+			warnung_ausgeben ( "Sind Sie sicher, daß Sie die Person $_POST[person_nachname] $_POST[person_vorname] geb. am $_POST[person_geburtstag] ändern wollen?" );
 			echo "</td></tr>";
 			erstelle_hiddenfeld ( "person_nachname", "$_POST[person_nachname]" );
 			erstelle_hiddenfeld ( "person_vorname", "$_POST[person_vorname]" );
@@ -368,7 +368,7 @@ function check_fields_nach_aenderung() {
 	}
 	if (isset ( $_REQUEST [person_definitiv_speichern] )) {
 		person_aendern_in_db ( $_REQUEST ["person_id"] );
-		hinweis_ausgeben ( "Person: $_REQUEST[person_nachname] $_REQUEST[person_vorname] wurde ge�ndert !" );
+		hinweis_ausgeben ( "Person: $_REQUEST[person_nachname] $_REQUEST[person_vorname] wurde geändert !" );
 		hinweis_ausgeben ( "Sie werden weitergeleitet." );
 		// echo "<head>";
 		// echo "<meta http-equiv=\"refresh\" content=\"2; URL=?daten=person&anzeigen=alle_personen\">";

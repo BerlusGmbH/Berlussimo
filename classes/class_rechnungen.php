@@ -23,7 +23,7 @@ if (file_exists ( "includes/allgemeine_funktionen.php" )) {
 	include_once ("includes/allgemeine_funktionen.php");
 }
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 if (file_exists ( "classes/class_formular.php" )) {
 	include_once ("classes/class_formular.php");
 }
@@ -33,7 +33,7 @@ if (file_exists ( "classes/berlussimo_class.php" )) {
 	include_once ("classes/berlussimo_class.php");
 }
 
-/* Klasse "buchen" f�r Buchungsspezifische Optionen laden */
+/* Klasse "buchen" für Buchungsspezifische Optionen laden */
 if (file_exists ( "classes/class_buchen.php" )) {
 	include_once ("classes/class_buchen.php");
 }
@@ -100,7 +100,7 @@ class rechnungen {
 	/* Nicht bezahlte Rechnungen von uns */
 	function verbindlichkeiten($jahr) {
 		if (! isset ( $_SESSION ['partner_id'] )) {
-			die ( 'Partner w�hlen' );
+			die ( 'Partner wählen' );
 		} else {
 			$p_id = $_SESSION ['partner_id'];
 			$abfrage = "SELECT * FROM `RECHNUNGEN` WHERE `RECHNUNGSTYP` IN ('Rechnung') AND `EMPFAENGER_TYP` = 'Partner' AND `EMPFAENGER_ID` = '$p_id' AND `AKTUELL` = '1' AND `STATUS_BESTAETIGT` = '0' && DATE_FORMAT(RECHNUNGSDATUM, '%Y') = '$jahr' ORDER BY `RECHNUNGEN`.`NETTO`  DESC";
@@ -132,7 +132,7 @@ class rechnungen {
 	/* Nicht bezahlte Rechnungen an uns */
 	function forderungen($jahr) {
 		if (! isset ( $_SESSION ['partner_id'] )) {
-			die ( 'Partner w�hlen' );
+			die ( 'Partner wählen' );
 		} else {
 			$p_id = $_SESSION ['partner_id'];
 			$abfrage = "SELECT * FROM `RECHNUNGEN` WHERE `RECHNUNGSTYP` IN ('Rechnung') AND `AUSSTELLER_TYP` = 'Partner' AND `AUSSTELLER_ID` = '$p_id' AND `AKTUELL` = '1' AND `STATUS_BEZAHLT` = '0' && DATE_FORMAT(RECHNUNGSDATUM, '%Y') = '$jahr' ORDER BY `RECHNUNGEN`.`NETTO`  DESC";
@@ -200,7 +200,7 @@ class rechnungen {
 			$this->rechnungs_empfaenger_typ = $row ['EMPFAENGER_TYP'];
 			$this->rechnungs_empfaenger_id = $row ['EMPFAENGER_ID'];
 			
-			/* Rechnungspartner finden und Rechnungstyp �ndern falls Aussteller = Empf�nger */
+			/* Rechnungspartner finden und Rechnungstyp ändern falls Aussteller = Empfänger */
 			$this->rechnungs_partner_ermitteln ();
 			
 			$this->rechnungs_kuerzel = $this->rechnungs_kuerzel_ermitteln ( $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id, $row ['RECHNUNGSDATUM'] );
@@ -216,7 +216,7 @@ class rechnungen {
 			$this->bezahlt_am = date_mysql2german ( $row ['BEZAHLT_AM'] );
 			$this->empfangs_geld_konto = $row ['EMPFANGS_GELD_KONTO'];
 			
-			/* Infos �ber Positionen */
+			/* Infos über Positionen */
 			$this->rechnung_auf_positionen_pruefen ( $belegnr );
 		} // end if rows>1
 	}
@@ -253,7 +253,7 @@ class rechnungen {
 			$this->rechnungs_empfaenger_typ = $row [EMPFAENGER_TYP];
 			$this->rechnungs_empfaenger_id = $row [EMPFAENGER_ID];
 			
-			/* Rechnungspartner finden und Rechnungstyp �ndern falls Aussteller = Empf�nger */
+			/* Rechnungspartner finden und Rechnungstyp ändern falls Aussteller = Empfänger */
 			$this->rechnungs_partner_ermitteln ();
 			
 			$this->rechnungs_kuerzel = $this->rechnungs_kuerzel_ermitteln ( $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id, $row [RECHNUNGSDATUM] );
@@ -269,7 +269,7 @@ class rechnungen {
 			$this->bezahlt_am = date_mysql2german ( $row [BEZAHLT_AM] );
 			$this->empfangs_geld_konto = $row [EMPFANGS_GELD_KONTO];
 			
-			/* Infos �ber Positionen */
+			/* Infos über Positionen */
 			$this->rechnung_auf_positionen_pruefen ( $belegnr );
 		} // end if rows>1
 	} // end function rechnung_grunddaten_holen
@@ -536,7 +536,7 @@ class rechnungen {
 	function form_rechnungsgrunddaten_aendern($belegnr) {
 		$this->rechnung_grunddaten_holen ( $belegnr );
 		$f = new formular ();
-		$f->erstelle_formular ( "Rechnungsgrunddaten �ndern", NULL );
+		$f->erstelle_formular ( "Rechnungsgrunddaten ändern", NULL );
 		$f->hidden_feld ( "rechnung_dat", $this->rechnung_dat );
 		$f->hidden_feld ( "belegnr", $belegnr );
 		$this->drop_rechnungs_typen ( 'Rechnungstyp', 'rechnungstyp', 'rechnungstyp', '', $this->rechnungstyp );
@@ -551,7 +551,7 @@ class rechnungen {
 		
 		$datum_feld = 'document.getElementById("faellig_am").value';
 		$js_datum = "onchange='check_datum($datum_feld)'";
-		$f->text_feld ( 'F�llig am', 'faellig_am', $this->faellig_am, '15', 'faellig_am', $js_datum );
+		$f->text_feld ( 'Fällig am', 'faellig_am', $this->faellig_am, '15', 'faellig_am', $js_datum );
 		
 		$netto = nummer_punkt2komma ( $this->rechnungs_netto );
 		$brutto = nummer_punkt2komma ( $this->rechnungs_brutto );
@@ -561,7 +561,7 @@ class rechnungen {
 		$this->rechnungs_skontobetrag = nummer_punkt2komma ( $this->rechnungs_skontobetrag );
 		$f->text_feld ( 'Skontobetrag', 'skontobetrag', $this->rechnungs_skontobetrag, '15', 'skontobetrag', '' );
 		$f->text_feld ( 'Aussteller Ausgangsnr', 'a_ausnr', $this->aussteller_ausgangs_rnr, '15', 'ausgangsnr', '' );
-		$f->text_feld ( 'Empf�nger Eingangsnr', 'e_einnr', $this->empfaenger_eingangs_rnr, '15', 'eingangsnr', '' );
+		$f->text_feld ( 'Empfänger Eingangsnr', 'e_einnr', $this->empfaenger_eingangs_rnr, '15', 'eingangsnr', '' );
 		
 		$this->kb = str_replace ( "<br>", "\n", $this->kurzbeschreibung );
 		$f->text_bereich ( 'Kurzbeschreibung', 'kurzbeschreibung', $this->kb, 30, 30, 'kurzbeschreibung' );
@@ -646,7 +646,7 @@ class rechnungen {
 		$js_neu_berechnen = "onKeyUp=\"refresh_preise()\" onmouseover=\"refresh_preise()\" ";
 		$js_listenpreis_berechnen = "onKeyUp=\"listen_stueckpreis()\" ";
 		$js_listenpreis_berechnen_von_enetto = "onKeyUp=\"listen_stueckpreis_rabatt()\" onclick=\"listen_stueckpreis_rabatt()\"";
-		$f->erstelle_formular ( "Positionen erfassen f�r Rechnung $this->rechnungsnummer", NULL );
+		$f->erstelle_formular ( "Positionen erfassen für Rechnung $this->rechnungsnummer", NULL );
 		
 		echo "<table><tr>";
 		echo "<td>";
@@ -697,16 +697,16 @@ class rechnungen {
 		echo "</p>";
 		echo "<table>";
 		echo "<tr><td>";
-		$fo->text_feld ( 'Alle Rabatte �ndern', 'rabbatt_aendern', '', 10, 'r_b', '' );
+		$fo->text_feld ( 'Alle Rabatte ändern', 'rabbatt_aendern', '', 10, 'r_b', '' );
 		$rab_value = "document.getElementById('r_b').value";
 		$js = "onclick=\"update_rechnung_rabatt($belegnr, $rab_value)\"";
-		$fo->button_js ( 'btn_rb', 'Alle Rabatte �ndern', $js );
+		$fo->button_js ( 'btn_rb', 'Alle Rabatte ändern', $js );
 		echo "</td><td>";
-		$fo->text_feld ( 'Alle Skonti �ndern', 'skonti_aendern', '', 10, 's_k', '' );
+		$fo->text_feld ( 'Alle Skonti ändern', 'skonti_aendern', '', 10, 's_k', '' );
 		$skonti_value = "document.getElementById('s_k').value";
 		$js1 = "onclick=\"update_rechnung_skonti($belegnr, $skonti_value)\"";
 		
-		$fo->button_js ( 'btn_sk', 'Alle Skonti �ndern', $js1 );
+		$fo->button_js ( 'btn_sk', 'Alle Skonti ändern', $js1 );
 		echo "</td></tr>";
 		echo "</table>";
 		
@@ -717,7 +717,7 @@ class rechnungen {
 		$rb->rechnung_footer_tabelle_anzeigen_pe ();
 		
 		$f = new formular ();
-		$f->erstelle_formular ( "Artikelsuche mit Autovervollst�ndigen $this->rechnungs_aussteller_name", NULL );
+		$f->erstelle_formular ( "Artikelsuche mit Autovervollständigen $this->rechnungs_aussteller_name", NULL );
 		// echo "Rechnung $this->rechnungsnummer hat $this->anzahl_positionen_aktuell Positionen<br>";
 		echo "Lieferant: $this->rechnungs_aussteller_name<br>";
 		
@@ -730,7 +730,7 @@ class rechnungen {
 		$js_check_art = "onclick=\"ajax_check_art($this->rechnungs_aussteller_id, $art_feld)\";";
 		$f->button_js ( 'suchen_btn', 'Suchen', $js_check_art );
 		
-		/* Fals Artikel gefunden hier rein - Autovervollst�ndigen */
+		/* Fals Artikel gefunden hier rein - Autovervollständigen */
 		echo "</div>";
 		echo "<div id=\"artikel_vorhanden\" class=\"artikel_vorhanden\"></div>";
 		
@@ -745,7 +745,7 @@ class rechnungen {
 		echo "</div>";
 		// echo "<br>";
 		
-		$f->erstelle_formular ( "Positionen erfassen f�r Rechnung $this->rechnungsnummer", NULL );
+		$f->erstelle_formular ( "Positionen erfassen für Rechnung $this->rechnungsnummer", NULL );
 		echo "<table><tr>";
 		echo "<td>";
 		$f->hidden_feld ( 'belegnr', $belegnr );
@@ -810,7 +810,7 @@ class rechnungen {
 		$js_neu_berechnen = "onKeyUp=\"refresh_preise()\" onmouseover=\"refresh_preise()\" ";
 		$js_listenpreis_berechnen = "onKeyUp=\"listen_stueckpreis()\" ";
 		$js_listenpreis_berechnen_von_enetto = "onKeyUp=\"listen_stueckpreis_rabatt()\" onclick=\"listen_stueckpreis_rabatt()\"";
-		$f->erstelle_formular ( "Position $pos �ndern in Rechnung $this->rechnungsnummer", NULL );
+		$f->erstelle_formular ( "Position $pos ändern in Rechnung $this->rechnungsnummer", NULL );
 		
 		echo "<table><tr>";
 		echo "<td>";
@@ -845,7 +845,7 @@ class rechnungen {
 		
 		// $js_btn = "onClick=\"display_positionen($beleg_feld)\"" ;
 		$js_save = "onClick=\"position_aendern()\"";
-		$f->button_js ( 'speichern_btn', 'Position �ndern', "$js_save $js_display_pos" );
+		$f->button_js ( 'speichern_btn', 'Position ändern', "$js_save $js_display_pos" );
 		// $f->button_js('pos_zeigen_btn', 'Positionen anzeigen', $js_btn);
 		echo "</td></tr></table>";
 		$f->ende_formular ();
@@ -863,7 +863,7 @@ class rechnungen {
 	function dropdown_v_einheiten_alt($beschreibung, $name, $id) {
 		echo "<label for=\"$id\">$beschreibung</label>\n";
 		echo "<select name=\"$name\" id=\"$id\">\n";
-		echo "<option value=\"Stk\">St�ck</option>\n";
+		echo "<option value=\"Stk\">Stück</option>\n";
 		echo "<option value=\"Std\">Stunden</option>\n";
 		echo "<option value=\"lfm\">Meter</option>\n";
 		echo "<option value=\"m²\">m²</option>\n";
@@ -890,7 +890,7 @@ class rechnungen {
 		$result = mysql_query ( "SELECT V_EINHEIT, BEZEICHNUNG  FROM VERPACKUNGS_E WHERE AKTUELL='1' ORDER BY BEZEICHNUNG ASC" );
 		$numrows = mysql_numrows ( $result );
 		
-		/* Wenn urpsrungsrechnungen vorhanden, ins array hinzuf�gen */
+		/* Wenn urpsrungsrechnungen vorhanden, ins array hinzufügen */
 		
 		echo "<label for=\"$id\">$beschreibung</label>\n";
 		echo "<select name=\"$name\" id=\"$id\">\n";
@@ -930,14 +930,14 @@ class rechnungen {
 			$r->rechnung_grunddaten_holen ( $beleg_nr );
 			$f = new formular ();
 			$f->erstelle_formular ( "Lieferscheine", NULL );
-			$f->fieldset ( "Lieferschein zu Rechnung $r->rechnungsnummer hinzuf�gen", 'lieferschein' );
+			$f->fieldset ( "Lieferschein zu Rechnung $r->rechnungsnummer hinzufügen", 'lieferschein' );
 			$link_pos_erf = "<a href=\"?daten=rechnungen&option=positionen_erfassen&belegnr=$beleg_nr\">Weiter zur Positionerfassung</a>";
 			echo $link_pos_erf;
 			$f->hidden_feld ( 'belegnr', $beleg_nr );
 			$f->text_feld ( "Lieferschein Nr zu Rechnung $r->rechnungsnummer ", 'lieferschein', '', '20', 'lieferschein', '' );
-			$f->radio_button ( "weiter", "ja", 'Anschliessend weiteren Lieferschein hinzuf�gen' );
+			$f->radio_button ( "weiter", "ja", 'Anschliessend weiteren Lieferschein hinzufügen' );
 			// radio_button_js($name, $wert, $label, $js, $checked
-			$f->radio_button_js ( "weiter", "nein", 'Keinen weiteren Lieferschein hinzuf�gen', '', 'checked' );
+			$f->radio_button_js ( "weiter", "nein", 'Keinen weiteren Lieferschein hinzufügen', '', 'checked' );
 			$f->send_button_js ( "submit_lief", "Weiter", '' );
 			$f->ende_formular ();
 		}
@@ -964,15 +964,15 @@ class rechnungen {
 					$f->erstelle_formular ( "Zahlung der $this->rechnungstyp buchen", NULL );
 					
 					if ($this->rechnungstyp == 'Rechnung' or $this->rechnungstyp == 'Buchungsbeleg') {
-						$g->dropdown_geldkonten_alle ( "$this->rechnungs_empfaenger_name -> Geldkonto ausw�hlen", $this->rechnungs_empfaenger_typ, $this->rechnungs_empfaenger_id );
+						$g->dropdown_geldkonten_alle ( "$this->rechnungs_empfaenger_name -> Geldkonto auswählen", $this->rechnungs_empfaenger_typ, $this->rechnungs_empfaenger_id );
 					}
 					if ($this->rechnungstyp == 'Gutschrift') {
-						$g->dropdown_geldkonten_alle ( "$this->rechnungs_aussteller_name -> Geldkonto ausw�hlen", $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id );
+						$g->dropdown_geldkonten_alle ( "$this->rechnungs_aussteller_name -> Geldkonto auswählen", $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id );
 					}
 					$js_buchungsopt = "onChange=\"buchungsart(auswahl)\"";
 					$js_optionen = 'TEST';
-					// $this->dropdown_buchungsoptionen('Buchungsart w�hlen', 'buchungsart', 'buchungsart', 'BLABLA');
-					$this->dropdown_buchungs_art ( 'Buchungsart w�hlen', 'buchungsart', 'buchungsart', 'BLABLA' );
+					// $this->dropdown_buchungsoptionen('Buchungsart wählen', 'buchungsart', 'buchungsart', 'BLABLA');
+					$this->dropdown_buchungs_art ( 'Buchungsart wählen', 'buchungsart', 'buchungsart', 'BLABLA' );
 					if ($this->rechnungstyp == 'Rechnung' or $this->rechnungstyp == 'Buchungsbeleg') {
 						$b->dropdown_kostenrahmen_nr ( 'kontenrahmen', $this->rechnungs_empfaenger_typ, $this->rechnungs_empfaenger_id );
 					}
@@ -997,19 +997,19 @@ class rechnungen {
 				}  // ende status unbezahlt
 				  // ############################################################
 				else {
-					$f->erstelle_formular ( "Empfang durch Kontoauszug best�tigen", NULL );
+					$f->erstelle_formular ( "Empfang durch Kontoauszug bestätigen", NULL );
 					
 					echo "$this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id  $this->rechnungs_empfaenger_typ, $this->rechnungs_empfaenger_id";
 					
 					if ($this->rechnungstyp == 'Rechnung' or $this->rechnungstyp == 'Buchungsbeleg') {
-						$g->dropdown_geldkonten_alle ( "$this->rechnungs_aussteller_name -> Geldkonto ausw�hlen", $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id );
+						$g->dropdown_geldkonten_alle ( "$this->rechnungs_aussteller_name -> Geldkonto auswählen", $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id );
 					}
 					
 					if ($this->rechnungstyp == 'Gutschrift') {
-						$g->dropdown_geldkonten_alle ( "$this->rechnungs_empfaenger_name -> Geldkonto ausw�hlen", $this->rechnungs_empfaenger_typ, $this->rechnungs_empfaenger_id );
+						$g->dropdown_geldkonten_alle ( "$this->rechnungs_empfaenger_name -> Geldkonto auswählen", $this->rechnungs_empfaenger_typ, $this->rechnungs_empfaenger_id );
 					}
 					
-					// $this->dropdown_buchungsoptionen('Buchungsart w�hlen', 'buchungsart', 'buchungsart', '');
+					// $this->dropdown_buchungsoptionen('Buchungsart wählen', 'buchungsart', 'buchungsart', '');
 					
 					if ($this->rechnungstyp == 'Rechnung' or $this->rechnungstyp == 'Buchungsbeleg') {
 						$b->dropdown_kostenrahmen_nr ( 'kontenrahmen', $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id );
@@ -1037,9 +1037,9 @@ class rechnungen {
 					// echo "<h1>KOSTENTR $this->rechnungs_aussteller_typ $this->rechnungs_aussteller_id</h1>";
 				}
 				// $js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
-				// $b->dropdown_kostentreager_typen('Kostentr�gertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ);
+				// $b->dropdown_kostentreager_typen('Kostenträgertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ);
 				// $js_id = "";
-				// $b->dropdown_kostentreager_ids('Kostentr�ger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id);
+				// $b->dropdown_kostentreager_ids('Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id);
 				
 				$f->ende_formular ();
 				$f->fieldset_ende ();
@@ -1072,18 +1072,18 @@ else {
 					$f->erstelle_formular ( "Zahlung der $this->rechnungstyp buchen", NULL );
 					
 					if ($this->rechnungstyp == 'Rechnung' or $this->rechnungstyp == 'Buchungsbeleg') {
-						$g->dropdown_geldkonten_alle ( "$this->rechnungs_empfaenger_name -> Geldkonto ausw�hlen", $this->rechnungs_empfaenger_typ, $this->rechnungs_empfaenger_id );
+						$g->dropdown_geldkonten_alle ( "$this->rechnungs_empfaenger_name -> Geldkonto auswählen", $this->rechnungs_empfaenger_typ, $this->rechnungs_empfaenger_id );
 					}
 					if ($this->rechnungstyp == 'Gutschrift') {
-						$g->dropdown_geldkonten_alle ( "$this->rechnungs_aussteller_name -> Geldkonto ausw�hlen", $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id );
+						$g->dropdown_geldkonten_alle ( "$this->rechnungs_aussteller_name -> Geldkonto auswählen", $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id );
 					}
 					
 					// $js_optionen = "onclick=\"alert(document.getElementById('buchungsart').options[buchungsart.selectedIndex].value)\"";
 					$js_optionen = "onclick=\"buchungs_infos(document.getElementById('buchungsart').options[buchungsart.selectedIndex].value)\"";
-					$this->dropdown_buchungs_betrag ( 'Buchungsbetrag w�hlen', 'buchungsbetrag', 'buchungsbetrag', $js_optionen );
+					$this->dropdown_buchungs_betrag ( 'Buchungsbetrag wählen', 'buchungsbetrag', 'buchungsbetrag', $js_optionen );
 					
 					$js_optionen = "onChange=\"buchungs_infos(this.value)\"";
-					$this->dropdown_buchungs_art ( 'Buchungsart w�hlen', 'buchungsart', 'buchungsart', $js_optionen );
+					$this->dropdown_buchungs_art ( 'Buchungsart wählen', 'buchungsart', 'buchungsart', $js_optionen );
 					
 					if ($this->rechnungstyp == 'Rechnung' or $this->rechnungstyp == 'Buchungsbeleg') {
 						
@@ -1105,7 +1105,7 @@ else {
 					$pruefen = "onClick=\"felder_pruefen(this.form);return false;\"";
 					$f->send_button_js ( "submit_rbb", "Buchen", $pruefen );
 					$f->hidden_feld ( "option", "rechnung_buchen_gesendet" );
-				}  // ende status unbezahlt und vollst�ndig
+				}  // ende status unbezahlt und vollständig
 else {
 					echo "NICHT VOLLSTÄNDIG ERFASST/KONTIERT!";
 				}
@@ -1134,29 +1134,29 @@ else {
 				$b = new buchen ();
 				$f->fieldset ( "Rechnung von $this->rechnungs_aussteller_name an $this->rechnungs_empfaenger_name, Rechnungsnr: $this->rechnungsnummer,  Erfassungsnummer: $this->belegnr", 'rech_buchen' );
 				
-				$f->erstelle_formular ( "Empfang durch Kontoauszug best�tigen", NULL );
+				$f->erstelle_formular ( "Empfang durch Kontoauszug bestätigen", NULL );
 				
 				// echo "$this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id $this->rechnungs_empfaenger_typ, $this->rechnungs_empfaenger_id";
 				
 				if ($this->rechnungstyp == 'Rechnung' or $this->rechnungstyp == 'Buchungsbeleg') {
-					$g->dropdown_geldkonten_alle ( "$this->rechnungs_aussteller_name -> Geldkonto ausw�hlen", $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id );
+					$g->dropdown_geldkonten_alle ( "$this->rechnungs_aussteller_name -> Geldkonto auswählen", $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id );
 				}
 				
 				if ($this->rechnungstyp == 'Gutschrift') {
-					$g->dropdown_geldkonten_alle ( "$this->rechnungs_empfaenger_name -> Geldkonto ausw�hlen", $this->rechnungs_empfaenger_typ, $this->rechnungs_empfaenger_id );
+					$g->dropdown_geldkonten_alle ( "$this->rechnungs_empfaenger_name -> Geldkonto auswählen", $this->rechnungs_empfaenger_typ, $this->rechnungs_empfaenger_id );
 				}
 				
 				/*
-				 * $this->dropdown_buchungs_betrag('Buchungsbetrag w�hlen', 'buchungsbetrag', 'buchungsbetrag', '');
+				 * $this->dropdown_buchungs_betrag('Buchungsbetrag wählen', 'buchungsbetrag', 'buchungsbetrag', '');
 				 * $js_optionen = "onChange=\"buchungs_infos(this.value)\"";
-				 * $this->dropdown_buchungs_art('Buchungsart w�hlen', 'buchungsart', 'buchungsart', $js_optionen);
+				 * $this->dropdown_buchungs_art('Buchungsart wählen', 'buchungsart', 'buchungsart', $js_optionen);
 				 */
 				
 				$js_optionen = "onclick=\"buchungs_infos(document.getElementById('buchungsart').options[buchungsart.selectedIndex].value)\"";
-				$this->dropdown_buchungs_betrag ( 'Buchungsbetrag w�hlen', 'buchungsbetrag', 'buchungsbetrag', $js_optionen );
+				$this->dropdown_buchungs_betrag ( 'Buchungsbetrag wählen', 'buchungsbetrag', 'buchungsbetrag', $js_optionen );
 				
 				$js_optionen = "onMouseover=\"buchungs_infos(this.value)\"";
-				$this->dropdown_buchungs_art ( 'Buchungsart w�hlen', 'buchungsart', 'buchungsart', $js_optionen );
+				$this->dropdown_buchungs_art ( 'Buchungsart wählen', 'buchungsart', 'buchungsart', $js_optionen );
 				if ($this->rechnungstyp == 'Rechnung' or $this->rechnungstyp == 'Buchungsbeleg') {
 					$b->dropdown_kostenrahmen_nr ( 'Kostenkonto', 'kostenkonto', $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id, '7001' );
 				}
@@ -1256,14 +1256,14 @@ else {
 		$last_dat = mysql_insert_id ();
 		protokollieren ( 'RECHNUNGEN', $last_dat, $alt_dat );
 		/* Ausgabe weil speichern erfolgreich */
-		echo "Grunddaten wurden ge�ndert";
+		echo "Grunddaten wurden geändert";
 	}
 	
-	/* Array mit Kontierungsdaten einer Rechnung/Beleges f�r die Buchung einer Rechnung, wie kontiert */
+	/* Array mit Kontierungsdaten einer Rechnung/Beleges für die Buchung einer Rechnung, wie kontiert */
 	function beleg_kontierungs_arr($datum, $kto_auszugsnr, $belegnr, $vorzeichen, $buchungsbetrag, $vzweck, $geldkonto_id) {
 		$this->rechnung_grunddaten_holen ( $belegnr );
 		$r = new rechnung (); // aus berlussimo_class
-		$b = new buchen (); // ben�tigt zum verbuchen einzelner positionen nach kontierung
+		$b = new buchen (); // benötigt zum verbuchen einzelner positionen nach kontierung
 		$kontierungs_status = $r->rechnung_auf_kontierung_pruefen ( $belegnr );
 		if ($kontierungs_status == 'vollstaendig') {
 			
@@ -1347,7 +1347,7 @@ else {
 		$form = new formular ();
 		$p = new partner ();
 		$p->partner_grunddaten ( $_SESSION ['partner_id'] );
-		$form->erstelle_formular ( "Ausgew�hlt: $p->partner_name", NULL );
+		$form->erstelle_formular ( "Ausgewählt: $p->partner_name", NULL );
 		$form->erstelle_formular ( "Rechnungseingangsbuch $monatname $jahr - $p->partner_name", NULL );
 		echo "<table id=\"monate_links\"><tr><td>";
 		$bg = new berlussimo_global ();
@@ -1379,7 +1379,7 @@ else {
 		$form = new formular ();
 		$p = new partner ();
 		$p->partner_grunddaten ( $_SESSION ['partner_id'] );
-		$form->erstelle_formular ( "Ausgew�hlt: $p->partner_name", NULL );
+		$form->erstelle_formular ( "Ausgewählt: $p->partner_name", NULL );
 		$form->erstelle_formular ( "Rechnungseingangsbuch $monatname $jahr - $p->partner_name", NULL );
 		echo "<table id=\"monate_links\"><tr><td>";
 		$bg = new berlussimo_global ();
@@ -1405,7 +1405,7 @@ else {
 		$form = new formular ();
 		$p = new partner ();
 		$p->partner_grunddaten ( $_SESSION ['partner_id'] );
-		$form->erstelle_formular ( "Ausgew�hlt: $p->partner_name", NULL );
+		$form->erstelle_formular ( "Ausgewählt: $p->partner_name", NULL );
 		$form->erstelle_formular ( "Rechnungseingangsbuch $monatname $jahr - $p->partner_name", NULL );
 		echo "<table id=\"monate_links\"><tr><td>";
 		$bg = new berlussimo_global ();
@@ -1431,7 +1431,7 @@ else {
 		$form = new formular ();
 		$p = new partner ();
 		$p->partner_grunddaten ( $_SESSION ['partner_id'] );
-		$form->erstelle_formular ( "Ausgew�hlt: $p->partner_name", NULL );
+		$form->erstelle_formular ( "Ausgewählt: $p->partner_name", NULL );
 		$form->erstelle_formular ( "Rechnungsausgangsbuch $monatname $jahr - $p->partner_name", NULL );
 		echo "<table id=\"monate_links\"><tr><td>";
 		$bg = new berlussimo_global ();
@@ -1457,7 +1457,7 @@ else {
 		$form = new formular ();
 		$p = new partner ();
 		$p->partner_grunddaten ( $_SESSION ['partner_id'] );
-		$form->erstelle_formular ( "Ausgew�hlt: $p->partner_name", NULL );
+		$form->erstelle_formular ( "Ausgewählt: $p->partner_name", NULL );
 		$form->erstelle_formular ( "Rechnungseingangsbuch $monatname $jahr - $p->partner_name", NULL );
 		echo "<table id=\"monate_links\"><tr><td>";
 		$bg = new berlussimo_global ();
@@ -1862,10 +1862,10 @@ else {
 		echo "UNbez rech";
 	}
 	function bestaetigte_rechnungen_anzeigen() {
-		echo "best�tigte rech";
+		echo "bestätigte rech";
 	}
 	function unbestaetigte_rechnungen_anzeigen() {
-		echo "UNbest�tigte rech";
+		echo "UNbestätigte rech";
 	}
 	
 	/* Urpsrungsrechnungen ermitteln OKAY aber ohne ausgangsrechnungen */
@@ -1873,7 +1873,7 @@ else {
 		$result = mysql_query ( "SELECT U_BELEG_NR FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR='$beleg_nr' && U_BELEG_NR IS NOT NULL && AKTUELL='1' GROUP BY U_BELEG_NR" );
 		$numrows = mysql_numrows ( $result );
 		
-		/* Wenn urpsrungsrechnungen vorhanden, ins array hinzuf�gen */
+		/* Wenn urpsrungsrechnungen vorhanden, ins array hinzufügen */
 		
 		if ($numrows) {
 			while ( $row = mysql_fetch_assoc ( $result ) ) {
@@ -1882,7 +1882,7 @@ else {
 			}
 		}
 		
-		/* Pr�fen ob aktuelle rechnung vorrechnungen hat */
+		/* Prüfen ob aktuelle rechnung vorrechnungen hat */
 		if (is_array ( $this->ursprungs_array [$beleg_nr] )) {
 			$anzahl_zu_beleg = count ( $this->ursprungs_array [$beleg_nr] );
 			
@@ -1905,7 +1905,7 @@ else {
 		$result = mysql_query ( "SELECT BELEG_NR FROM RECHNUNGEN_POSITIONEN WHERE U_BELEG_NR='$beleg_nr' && U_BELEG_NR IS NOT NULL && AKTUELL='1' GROUP BY U_BELEG_NR" );
 		$numrows = mysql_numrows ( $result );
 		
-		/* Wenn urpsrungsrechnungen vorhanden, ins array hinzuf�gen */
+		/* Wenn urpsrungsrechnungen vorhanden, ins array hinzufügen */
 		
 		if ($numrows) {
 			while ( $row = mysql_fetch_assoc ( $result ) ) {
@@ -1914,7 +1914,7 @@ else {
 			}
 		}
 		
-		/* Pr�fen ob aktuelle rechnung vorrechnungen hat */
+		/* Prüfen ob aktuelle rechnung vorrechnungen hat */
 		if (is_array ( $this->ursprungs_array [$beleg_nr] )) {
 			$anzahl_zu_beleg = count ( $this->ursprungs_array [$beleg_nr] );
 			
@@ -1933,7 +1933,7 @@ else {
 	} // end function
 	function rechnung_2_pdf(&$pdf, $beleg_nr) {
 		$this->rechnung_grunddaten_holen ( $beleg_nr );
-		/* Pr�fen ob Rechnung vorhanden */
+		/* Prüfen ob Rechnung vorhanden */
 		if (! $this->rechnungsnummer) {
 			die ( "Rechnung exisitiert nicht" );
 		}
@@ -1966,7 +1966,7 @@ else {
 				}
 			}
 			
-			/* Pr�fen ob es sich um eine Leistung handelt */
+			/* Prüfen ob es sich um eine Leistung handelt */
 			/*
 			 * $L_ = substr($artikel_nr, 0,2);
 			 * if($L_ =='L-'){
@@ -2000,10 +2000,10 @@ else {
 			$tab_arr [$new_pos] ['MWST_SATZ'] = nummer_punkt2komma ( $mwst_satz ) . '%';
 			$tab_arr [$new_pos] ['RABATT_SATZ'] = nummer_punkt2komma ( $rabatt_satz ) . '%';
 			$tab_arr [$new_pos] ['SKONTO'] = nummer_punkt2komma ( $skonto_satz ) . '%';
-			$tab_arr [$new_pos] ['GESAMT_NETTO'] = nummer_punkt2komma ( $gesamt_preis ) . ' �';
+			$tab_arr [$new_pos] ['GESAMT_NETTO'] = nummer_punkt2komma ( $gesamt_preis ) . ' €';
 			$g_netto += $gesamt_preis;
 			$tab_arr [$new_pos] ['SUMM_NETTO'] = nummer_punkt2komma ( $g_netto );
-			/* Linien und Netto, Brutto usw in den Tabellenarray hinzuf�gen */
+			/* Linien und Netto, Brutto usw in den Tabellenarray hinzufügen */
 			if ($index == $anz - 1) {
 				$tab_arr [$new_pos + 1] ['POSITION'] = '==';
 				$tab_arr [$new_pos + 1] ['ARTIKEL_NR'] = '==============';
@@ -2015,17 +2015,17 @@ else {
 				$tab_arr [$new_pos + 1] ['SKONTO'] = '==========';
 				$tab_arr [$new_pos + 1] ['GESAMT_NETTO'] = '==========';
 				$tab_arr [$new_pos + 2] ['SKONTO'] = '<b>Netto</b>';
-				// $tab_arr[$new_pos+2]['GESAMT_NETTO'] = '<b>'.nummer_punkt2komma($g_netto).' �</b>'.$this->rechungs_netto;
-				$tab_arr [$new_pos + 2] ['GESAMT_NETTO'] = '<b>' . nummer_punkt2komma ( $this->rechnungs_netto ) . ' �</b>';
+				// $tab_arr[$new_pos+2]['GESAMT_NETTO'] = '<b>'.nummer_punkt2komma($g_netto).' €</b>'.$this->rechungs_netto;
+				$tab_arr [$new_pos + 2] ['GESAMT_NETTO'] = '<b>' . nummer_punkt2komma ( $this->rechnungs_netto ) . ' €</b>';
 				$tab_arr [$new_pos + 3] ['SKONTO'] = '<b>MWSt</b>';
 				// $this->rechnungs_mwst = $this->rechnungs_brutto - $this->rechnungs_netto;
-				$tab_arr [$new_pos + 3] ['GESAMT_NETTO'] = '<b>' . nummer_punkt2komma ( $this->rechnungs_mwst ) . ' �</b>';
+				$tab_arr [$new_pos + 3] ['GESAMT_NETTO'] = '<b>' . nummer_punkt2komma ( $this->rechnungs_mwst ) . ' €</b>';
 				$tab_arr [$new_pos + 4] ['SKONTO'] = '<b>Brutto</b>';
-				$tab_arr [$new_pos + 4] ['GESAMT_NETTO'] = '<b>' . nummer_punkt2komma ( $this->rechnungs_brutto ) . " �</b>";
+				$tab_arr [$new_pos + 4] ['GESAMT_NETTO'] = '<b>' . nummer_punkt2komma ( $this->rechnungs_brutto ) . " €</b>";
 				$tab_arr [$new_pos + 5] ['SKONTO'] = '<b>Skonto</b>';
-				$tab_arr [$new_pos + 5] ['GESAMT_NETTO'] = '<b>' . nummer_punkt2komma ( $this->rechnungs_skontoabzug ) . ' �</b>';
+				$tab_arr [$new_pos + 5] ['GESAMT_NETTO'] = '<b>' . nummer_punkt2komma ( $this->rechnungs_skontoabzug ) . ' €</b>';
 				$tab_arr [$new_pos + 6] ['SKONTO'] = '<b>Skontiert</b>';
-				$tab_arr [$new_pos + 6] ['GESAMT_NETTO'] = '<b>' . nummer_punkt2komma ( $this->rechnungs_skontobetrag ) . ' �</b>';
+				$tab_arr [$new_pos + 6] ['GESAMT_NETTO'] = '<b>' . nummer_punkt2komma ( $this->rechnungs_skontobetrag ) . ' €</b>';
 			}
 			$new_pos ++;
 		}
@@ -2062,7 +2062,7 @@ else {
 				), // Linienfarbe, hier schwarz
 				
 				'fontSize' => 8, // schriftgroesse
-				'titleFontSize' => 8, // schriftgroesse �berschrift
+				'titleFontSize' => 8, // schriftgroesse Überschrift
 				'splitRows' => 0,
 				'protectRows' => 0,
 				'innerLineThickness' => 0.5,
@@ -2116,7 +2116,7 @@ else {
 		$pdf->setLineStyle ( 0.2 );
 		$pdf->line ( 5, 542, 20, 542 );
 		
-		/* Schiftart w�hlen */
+		/* Schiftart wählen */
 		// $pdf->selectFont("pdfclass/fonts/Courier.afm");
 		// $pdf->selectFont("schriften/TSan3___.afm");
 		
@@ -2131,13 +2131,13 @@ else {
 				'justification' => 'right' 
 		) );
 		if ($this->rechnungstyp != 'Angebot') {
-			$pdf->ezText ( "F�llig: $this->faellig_am  ", 10, array (
+			$pdf->ezText ( "Fällig: $this->faellig_am  ", 10, array (
 					'justification' => 'right' 
 			) );
 		}
 		$pdf->ezText ( "<b>$this->rechnungstyp:\n$rechnungsnummer</b>", 12 );
-		/* F�lligkeit */
-		// $pdf->addText(475,550,10,"F�llig: $r->faellig_am");
+		/* Fälligkeit */
+		// $pdf->addText(475,550,10,"Fällig: $r->faellig_am");
 		
 		$pdf->ezSetDy ( - 30 ); // abstand
 		/* Kurzbeschreibung */
@@ -2149,11 +2149,11 @@ else {
 		
 		$pdf->ezSetDy ( - 10 ); // abstand
 		if ($this->rechnungstyp == 'Angebot') {
-			$pdf->ezText ( "Sehr geehrte Damen und Herren,\n\nwir bedanken uns f�r Ihre Anfrage und �bermitteln Ihnen hiermit unser Angebot, an das wir uns f�r vier Wochen ab Erstellungsdatum gebunden halten.\n", 9 );
+			$pdf->ezText ( "Sehr geehrte Damen und Herren,\n\nwir bedanken uns für Ihre Anfrage und übermitteln Ihnen hiermit unser Angebot, an das wir uns für vier Wochen ab Erstellungsdatum gebunden halten.\n", 9 );
 		}
 		/* Tabelle ausgeben */
 		$pdf->ezTable ( $tab_arr, $cols, "", $tableoptions );
-		/* Zahlungshinweis bzw mit freudlichen Gr�ssen usw vom Aussteller */
+		/* Zahlungshinweis bzw mit freudlichen Grössen usw vom Aussteller */
 		// $zahlungshinweis_org = str_replace("<br>","\n",$bpdf->zahlungshinweis_org);
 		// $pdf->ezText("$zahlungshinweis_org", 10);
 		
@@ -2169,25 +2169,25 @@ else {
 		if ($this->check_abschlag ( $beleg_nr ) == false && $this->rechnungstyp == 'Schlussrechnung') {
 			// $pdf->ezSetDy(-10); //abstand
 			// $pdf->ezText("FEHLER TEILRECHNUGEN FEHLEN!!!", 30, array('justification'=>'full'));
-			fehlermeldung_ausgeben ( 'PDF-Ansicht nicht m�glich, erst Teilrechnungen zu dieser Schlussrechnung w�hlen!!' );
+			fehlermeldung_ausgeben ( 'PDF-Ansicht nicht möglich, erst Teilrechnungen zu dieser Schlussrechnung wählen!!' );
 			die ();
 		}
 		
 		if ($this->rechnungstyp != 'Angebot') {
-			/* Zahlungshinweis bzw mit freudlichen Gr�ssen usw vom Aussteller */
+			/* Zahlungshinweis bzw mit freudlichen Grössen usw vom Aussteller */
 			$zahlungshinweis_org = str_replace ( "<br>", "\n", $bpdf->zahlungshinweis_org );
 			// $pdf->ezText("$zahlungshinweis_org", 10);
-			$r_hinweis = "\n\nWir danken Ihnen f�r Ihren Auftrag und h�ren gern von Ihnen. \n";
-			// $r_hinweis .= "Bitte �berweisen Sie den f�lligen Betrag auf das unten genannte Geldkonto. ";
-			$r_hinweis .= "Die gelieferte Ware und die erbrachte Arbeitsleistung bleibt bis zur vollst�ndigen Bezahlung unser Eigentum. ";
-			$r_hinweis .= "Lt. Gesetzgeber sind wir zu dem Hinweis verpflichtet: Die gesetzliche Aufbewahrungspflicht f�r diese Rechnung betr�gt f�r Privatpersonen 2 Jahre / Unternehmen gem�� der gesetzlichen Bestimmungen. Die Aufbewahrungsfrist beginnt mit dem Schlu� dieses Kalenderjahres.";
+			$r_hinweis = "\n\nWir danken Ihnen für Ihren Auftrag und hören gern von Ihnen. \n";
+			// $r_hinweis .= "Bitte überweisen Sie den fälligen Betrag auf das unten genannte Geldkonto. ";
+			$r_hinweis .= "Die gelieferte Ware und die erbrachte Arbeitsleistung bleibt bis zur vollständigen Bezahlung unser Eigentum. ";
+			$r_hinweis .= "Lt. Gesetzgeber sind wir zu dem Hinweis verpflichtet: Die gesetzliche Aufbewahrungspflicht für diese Rechnung beträgt für Privatpersonen 2 Jahre / Unternehmen gemäß der gesetzlichen Bestimmungen. Die Aufbewahrungsfrist beginnt mit dem Schluß dieses Kalenderjahres.";
 			$r_hinweis .= "\n\n$zahlungshinweis_org";
 		} else {
-			$r_hinweis .= "Im Auftragsfall bitten wir um eine schriftliche Best�tigung.";
+			$r_hinweis .= "Im Auftragsfall bitten wir um eine schriftliche Bestätigung.";
 		}
 		
 		eval ( "\$r_hinweis = \"$r_hinweis\";" );
-		; // Variable ausm Text f�llen
+		; // Variable ausm Text füllen
 		$pdf->ezText ( "$r_hinweis", 8, array (
 				'justification' => 'full' 
 		) );
@@ -2197,7 +2197,7 @@ else {
 	}
 	function rechnung_anzeigen($beleg_nr) {
 		$this->rechnung_grunddaten_holen ( $beleg_nr );
-		/* Pr�fen ob Rechnung vorhanden */
+		/* Prüfen ob Rechnung vorhanden */
 		if (! $this->rechnungsnummer) {
 			die ( "Rechnung exisitiert nicht" );
 		}
@@ -2242,7 +2242,7 @@ else {
 				}
 			}
 			
-			/* Pr�fen ob es sich um eine Leistung handelt */
+			/* Prüfen ob es sich um eine Leistung handelt */
 			/*
 			 * $L_ = substr($artikel_nr, 0,2);
 			 * if($L_ =='L-'){
@@ -2276,10 +2276,10 @@ else {
 			$tab_arr [$new_pos] ['MWST_SATZ'] = nummer_punkt2komma ( $mwst_satz ) . '%';
 			$tab_arr [$new_pos] ['RABATT_SATZ'] = nummer_punkt2komma ( $rabatt_satz ) . '%';
 			$tab_arr [$new_pos] ['SKONTO'] = nummer_punkt2komma ( $skonto_satz ) . '%';
-			$tab_arr [$new_pos] ['GESAMT_NETTO'] = nummer_punkt2komma ( $gesamt_preis ) . ' �';
+			$tab_arr [$new_pos] ['GESAMT_NETTO'] = nummer_punkt2komma ( $gesamt_preis ) . ' €';
 			$g_netto += $gesamt_preis;
 			$tab_arr [$new_pos] ['SUMM_NETTO'] = nummer_punkt2komma ( $g_netto );
-			/* Linien und Netto, Brutto usw in den Tabellenarray hinzuf�gen */
+			/* Linien und Netto, Brutto usw in den Tabellenarray hinzufügen */
 			if ($index == $anz - 1) {
 				$tab_arr [$new_pos + 1] ['POSITION'] = '==';
 				$tab_arr [$new_pos + 1] ['ARTIKEL_NR'] = '==============';
@@ -2291,17 +2291,17 @@ else {
 				$tab_arr [$new_pos + 1] ['SKONTO'] = '==========';
 				$tab_arr [$new_pos + 1] ['GESAMT_NETTO'] = '==========';
 				$tab_arr [$new_pos + 2] ['SKONTO'] = '<b>Netto</b>';
-				// $tab_arr[$new_pos+2]['GESAMT_NETTO'] = '<b>'.nummer_punkt2komma($g_netto).' �</b>'.$this->rechungs_netto;
-				$tab_arr [$new_pos + 2] ['GESAMT_NETTO'] = '<b>' . nummer_punkt2komma ( $this->rechnungs_netto ) . ' �</b>';
+				// $tab_arr[$new_pos+2]['GESAMT_NETTO'] = '<b>'.nummer_punkt2komma($g_netto).' €</b>'.$this->rechungs_netto;
+				$tab_arr [$new_pos + 2] ['GESAMT_NETTO'] = '<b>' . nummer_punkt2komma ( $this->rechnungs_netto ) . ' €</b>';
 				$tab_arr [$new_pos + 3] ['SKONTO'] = '<b>MWSt</b>';
 				// $this->rechnungs_mwst = $this->rechnungs_brutto - $this->rechnungs_netto;
-				$tab_arr [$new_pos + 3] ['GESAMT_NETTO'] = '<b>' . nummer_punkt2komma ( $this->rechnungs_mwst ) . ' �</b>';
+				$tab_arr [$new_pos + 3] ['GESAMT_NETTO'] = '<b>' . nummer_punkt2komma ( $this->rechnungs_mwst ) . ' €</b>';
 				$tab_arr [$new_pos + 4] ['SKONTO'] = '<b>Brutto</b>';
-				$tab_arr [$new_pos + 4] ['GESAMT_NETTO'] = '<b>' . nummer_punkt2komma ( $this->rechnungs_brutto ) . " �</b>";
+				$tab_arr [$new_pos + 4] ['GESAMT_NETTO'] = '<b>' . nummer_punkt2komma ( $this->rechnungs_brutto ) . " €</b>";
 				$tab_arr [$new_pos + 5] ['SKONTO'] = '<b>Skonto</b>';
-				$tab_arr [$new_pos + 5] ['GESAMT_NETTO'] = '<b>' . nummer_punkt2komma ( $this->rechnungs_skontoabzug ) . ' �</b>';
+				$tab_arr [$new_pos + 5] ['GESAMT_NETTO'] = '<b>' . nummer_punkt2komma ( $this->rechnungs_skontoabzug ) . ' €</b>';
 				$tab_arr [$new_pos + 6] ['SKONTO'] = '<b>Skontiert</b>';
-				$tab_arr [$new_pos + 6] ['GESAMT_NETTO'] = '<b>' . nummer_punkt2komma ( $this->rechnungs_skontobetrag ) . ' �</b>';
+				$tab_arr [$new_pos + 6] ['GESAMT_NETTO'] = '<b>' . nummer_punkt2komma ( $this->rechnungs_skontobetrag ) . ' €</b>';
 			}
 			$new_pos ++;
 		}
@@ -2338,7 +2338,7 @@ else {
 				), // Linienfarbe, hier schwarz
 				
 				'fontSize' => 8, // schriftgroesse
-				'titleFontSize' => 8, // schriftgroesse �berschrift
+				'titleFontSize' => 8, // schriftgroesse Überschrift
 				'splitRows' => 0,
 				'protectRows' => 0,
 				'innerLineThickness' => 0.5,
@@ -2392,7 +2392,7 @@ else {
 		$pdf->setLineStyle ( 0.2 );
 		$pdf->line ( 5, 542, 20, 542 );
 		
-		/* Schiftart w�hlen */
+		/* Schiftart wählen */
 		// $pdf->selectFont("pdfclass/fonts/Courier.afm");
 		// $pdf->selectFont("schriften/TSan3___.afm");
 		
@@ -2407,13 +2407,13 @@ else {
 				'justification' => 'right' 
 		) );
 		if ($this->rechnungstyp != 'Angebot') {
-			$pdf->ezText ( "F�llig: $this->faellig_am  ", 10, array (
+			$pdf->ezText ( "Fällig: $this->faellig_am  ", 10, array (
 					'justification' => 'right' 
 			) );
 		}
 		$pdf->ezText ( "<b>$this->rechnungstyp:\n$rechnungsnummer</b>", 12 );
-		/* F�lligkeit */
-		// $pdf->addText(475,550,10,"F�llig: $r->faellig_am");
+		/* Fälligkeit */
+		// $pdf->addText(475,550,10,"Fällig: $r->faellig_am");
 		
 		$pdf->ezSetDy ( - 30 ); // abstand
 		/* Kurzbeschreibung */
@@ -2425,11 +2425,11 @@ else {
 		
 		$pdf->ezSetDy ( - 10 ); // abstand
 		if ($this->rechnungstyp == 'Angebot') {
-			$pdf->ezText ( "Sehr geehrte Damen und Herren,\n\nwir bedanken uns f�r Ihre Anfrage und �bermitteln Ihnen hiermit unser Angebot, an das wir uns f�r vier Wochen ab Erstellungsdatum gebunden halten.\n", 9 );
+			$pdf->ezText ( "Sehr geehrte Damen und Herren,\n\nwir bedanken uns für Ihre Anfrage und übermitteln Ihnen hiermit unser Angebot, an das wir uns für vier Wochen ab Erstellungsdatum gebunden halten.\n", 9 );
 		}
 		/* Tabelle ausgeben */
 		$pdf->ezTable ( $tab_arr, $cols, "", $tableoptions );
-		/* Zahlungshinweis bzw mit freudlichen Gr�ssen usw vom Aussteller */
+		/* Zahlungshinweis bzw mit freudlichen Grüßen usw vom Aussteller */
 		// $zahlungshinweis_org = str_replace("<br>","\n",$bpdf->zahlungshinweis_org);
 		// $pdf->ezText("$zahlungshinweis_org", 10);
 		
@@ -2445,25 +2445,25 @@ else {
 		if ($this->check_abschlag ( $beleg_nr ) == false && $this->rechnungstyp == 'Schlussrechnung') {
 			// $pdf->ezSetDy(-10); //abstand
 			// $pdf->ezText("FEHLER TEILRECHNUGEN FEHLEN!!!", 30, array('justification'=>'full'));
-			fehlermeldung_ausgeben ( 'PDF-Ansicht nicht m�glich, erst Teilrechnungen zu dieser Schlussrechnung w�hlen!!' );
+			fehlermeldung_ausgeben ( 'PDF-Ansicht nicht möglich, erst Teilrechnungen zu dieser Schlussrechnung wählen!!' );
 			die ();
 		}
 		
 		if ($this->rechnungstyp != 'Angebot') {
-			/* Zahlungshinweis bzw mit freudlichen Gr�ssen usw vom Aussteller */
+			/* Zahlungshinweis bzw mit freudlichen Grüßen usw vom Aussteller */
 			$zahlungshinweis_org = str_replace ( "<br>", "\n", $bpdf->zahlungshinweis_org );
 			// $pdf->ezText("$zahlungshinweis_org", 10);
-			$r_hinweis = "\n\nWir danken Ihnen f�r Ihren Auftrag und h�ren gern von Ihnen. \n";
-			// $r_hinweis .= "Bitte �berweisen Sie den f�lligen Betrag auf das unten genannte Geldkonto. ";
-			$r_hinweis .= "Die gelieferte Ware und die erbrachte Arbeitsleistung bleibt bis zur vollst�ndigen Bezahlung unser Eigentum. ";
-			$r_hinweis .= "Lt. Gesetzgeber sind wir zu dem Hinweis verpflichtet: Die gesetzliche Aufbewahrungspflicht f�r diese Rechnung betr�gt f�r Privatpersonen 2 Jahre / Unternehmen gem�� der gesetzlichen Bestimmungen. Die Aufbewahrungsfrist beginnt mit dem Schlu� dieses Kalenderjahres.";
+			$r_hinweis = "\n\nWir danken Ihnen für Ihren Auftrag und hören gern von Ihnen. \n";
+			// $r_hinweis .= "Bitte überweisen Sie den fälligen Betrag auf das unten genannte Geldkonto. ";
+			$r_hinweis .= "Die gelieferte Ware und die erbrachte Arbeitsleistung bleibt bis zur vollständigen Bezahlung unser Eigentum. ";
+			$r_hinweis .= "Lt. Gesetzgeber sind wir zu dem Hinweis verpflichtet: Die gesetzliche Aufbewahrungspflicht für diese Rechnung beträgt für Privatpersonen 2 Jahre / Unternehmen gemäß der gesetzlichen Bestimmungen. Die Aufbewahrungsfrist beginnt mit dem Schluß dieses Kalenderjahres.";
 			$r_hinweis .= "\n\n$zahlungshinweis_org";
 		} else {
-			$r_hinweis .= "Im Auftragsfall bitten wir um eine schriftliche Best�tigung.";
+			$r_hinweis .= "Im Auftragsfall bitten wir um eine schriftliche Bestätigung.";
 		}
 		
 		eval ( "\$r_hinweis = \"$r_hinweis\";" );
-		; // Variable ausm Text f�llen
+		; // Variable ausm Text füllen
 		$pdf->ezText ( "$r_hinweis", 8, array (
 				'justification' => 'full' 
 		) );
@@ -2543,13 +2543,13 @@ else {
 				$pdf_tab [$z] ['RDATUM'] = $rr->rechnungsdatum;
 				$abs_rg_nr = $z + 1;
 				$pdf_tab [$z] ['RNR'] = $abs_rg_nr . '. Teilrg. ' . "<b>$rr->rechnungsnummer</b>";
-				$pdf_tab [$z] ['NETTO'] = nummer_punkt2komma_t ( $rr->rechnungs_netto ) . "�";
+				$pdf_tab [$z] ['NETTO'] = nummer_punkt2komma_t ( $rr->rechnungs_netto ) . "€";
 				$summe_netto += $rr->rechnungs_netto;
-				$pdf_tab [$z] ['MWST'] = nummer_punkt2komma_t ( $rr->rechnungs_mwst ) . "�";
+				$pdf_tab [$z] ['MWST'] = nummer_punkt2komma_t ( $rr->rechnungs_mwst ) . "€";
 				$summe_mwst += $rr->rechnungs_mwst;
-				$pdf_tab [$z] ['BRUTTO'] = nummer_punkt2komma_t ( $rr->rechnungs_brutto ) . "�";
+				$pdf_tab [$z] ['BRUTTO'] = nummer_punkt2komma_t ( $rr->rechnungs_brutto ) . "€";
 				$summe_brutto += $rr->rechnungs_brutto;
-				$pdf_tab [$z] ['SKONTO'] = nummer_punkt2komma_t ( $rr->rechnungs_skontobetrag ) . "�";
+				$pdf_tab [$z] ['SKONTO'] = nummer_punkt2komma_t ( $rr->rechnungs_skontobetrag ) . "€";
 				$summe_skontiert += $rr->rechnungs_skontobetrag;
 				$summe_skonto_alle += $rr->rechnungs_skontoabzug;
 				$z ++;
@@ -2564,9 +2564,9 @@ else {
 			$z ++;
 			
 			$pdf_tab [$z] ['RDATUM'] = "<b>Teilsummen</b>";
-			$pdf_tab [$z] ['NETTO'] = "<b>" . nummer_punkt2komma_t ( $summe_netto ) . "�</b>";
-			$pdf_tab [$z] ['BRUTTO'] = "<b>" . nummer_punkt2komma_t ( $summe_brutto ) . "�</b>";
-			$pdf_tab [$z] ['MWST'] = "<b>" . nummer_punkt2komma_t ( $summe_mwst ) . "�</b>";
+			$pdf_tab [$z] ['NETTO'] = "<b>" . nummer_punkt2komma_t ( $summe_netto ) . "€</b>";
+			$pdf_tab [$z] ['BRUTTO'] = "<b>" . nummer_punkt2komma_t ( $summe_brutto ) . "€</b>";
+			$pdf_tab [$z] ['MWST'] = "<b>" . nummer_punkt2komma_t ( $summe_mwst ) . "€</b>";
 			$z ++;
 			
 			$pdf_tab [$z] ['RDATUM'] = '==================';
@@ -2577,11 +2577,11 @@ else {
 			$z ++;
 			
 			$rr->rechnung_grunddaten_holen ( $beleg_nr );
-			$pdf_tab [$z] ['RDATUM'] = "<b>Schlu�rechnung</b>";
+			$pdf_tab [$z] ['RDATUM'] = "<b>Schlußrechnung</b>";
 			$n_a = nummer_punkt2komma_t ( $rr->rechnungs_netto - $summe_netto );
-			$pdf_tab [$z] ['NETTO'] = "<b>$n_a �</b>";
-			$pdf_tab [$z] ['MWST'] = "<b>" . nummer_punkt2komma_t ( $rr->rechnungs_mwst - $summe_mwst ) . "�</b>";
-			$pdf_tab [$z] ['BRUTTO'] = "<b>" . nummer_punkt2komma_t ( $rr->rechnungs_brutto - $summe_brutto ) . "�</b>";
+			$pdf_tab [$z] ['NETTO'] = "<b>$n_a €</b>";
+			$pdf_tab [$z] ['MWST'] = "<b>" . nummer_punkt2komma_t ( $rr->rechnungs_mwst - $summe_mwst ) . "€</b>";
+			$pdf_tab [$z] ['BRUTTO'] = "<b>" . nummer_punkt2komma_t ( $rr->rechnungs_brutto - $summe_brutto ) . "€</b>";
 			$z ++;
 			$pdf_tab [$z] ['RDATUM'] = '==================';
 			$pdf_tab [$z] ['NETTO'] = '=========================';
@@ -2591,33 +2591,33 @@ else {
 			$z ++;
 			$pdf_tab [$z] ['RDATUM'] = "<b>verbleibende</b>";
 			$pdf_tab [$z] ['RNR'] = "<b>Restforderung</b>";
-			$pdf_tab [$z] ['BRUTTO'] = "<b>" . nummer_punkt2komma_t ( $rr->rechnungs_brutto - $summe_brutto ) . "�</b>";
+			$pdf_tab [$z] ['BRUTTO'] = "<b>" . nummer_punkt2komma_t ( $rr->rechnungs_brutto - $summe_brutto ) . "€</b>";
 			$rest_forderung = $rr->rechnungs_brutto - $summe_brutto;
 			$z ++;
 			$this->get_sicherheitseinbehalt ( $beleg_nr );
 			if ($this->rg_betrag > '0.00') {
 				$g_brutto_a = nummer_punkt2komma_t ( $rr->rechnungs_brutto );
-				$pdf_tab [$z] ['RDATUM'] = "<b>abz�glich</b>";
-				// $pdf_tab[$z]['RNR'] = "<b>Sicherheitseinbehalt von $this->rg_prozent % auf die Bruttosumme von $g_brutto_a �</b>";
+				$pdf_tab [$z] ['RDATUM'] = "<b>abzüglich</b>";
+				// $pdf_tab[$z]['RNR'] = "<b>Sicherheitseinbehalt von $this->rg_prozent % auf die Bruttosumme von $g_brutto_a €</b>";
 				$pdf_tab [$z] ['RNR'] = "<b>SEB von $this->rg_prozent %</b>";
 				
-				$pdf_tab [$z] ['BRUTTO'] = "<b>" . nummer_punkt2komma_t ( $this->rg_betrag ) . "�</b>";
+				$pdf_tab [$z] ['BRUTTO'] = "<b>" . nummer_punkt2komma_t ( $this->rg_betrag ) . "€</b>";
 				$z ++;
 				$pdf_tab [$z] ['RDATUM'] = "<b>zu zahlender Betrag</b>";
 				$pdf_tab [$z] ['RNR'] = "<b></b>";
 				$zu_zahlen = $rest_forderung - $this->rg_betrag;
 				$zu_zahlen_a = nummer_punkt2komma_t ( $zu_zahlen );
-				$pdf_tab [$z] ['BRUTTO'] = "<b>" . $zu_zahlen_a . "�</b>";
+				$pdf_tab [$z] ['BRUTTO'] = "<b>" . $zu_zahlen_a . "€</b>";
 				$z ++;
 				$pdf_tab [$z] ['RDATUM'] = "<b>Nach Skontoabzug</b>";
 				$summe_skonto_alle_a = nummer_punkt2komma_t ( $rr->rechnungs_skontoabzug );
-				$pdf_tab [$z] ['RNR'] = "<b>i.H. von $summe_skonto_alle_a �</b>";
-				$pdf_tab [$z] ['BRUTTO'] = "<b>" . nummer_punkt2komma_t ( ($zu_zahlen - $rr->rechnungs_skontoabzug) ) . "�</b>";
+				$pdf_tab [$z] ['RNR'] = "<b>i.H. von $summe_skonto_alle_a €</b>";
+				$pdf_tab [$z] ['BRUTTO'] = "<b>" . nummer_punkt2komma_t ( ($zu_zahlen - $rr->rechnungs_skontoabzug) ) . "€</b>";
 			} else {
 				$pdf_tab [$z] ['RDATUM'] = "<b>Nach Skontoabzug</b>";
 				$summe_skonto_alle_a = nummer_punkt2komma_t ( $rr->rechnungs_skontoabzug );
-				$pdf_tab [$z] ['RNR'] = "<b>i.H. von $summe_skonto_alle_a �</b>";
-				$pdf_tab [$z] ['BRUTTO'] = "<b>" . nummer_punkt2komma_t ( $rr->rechnungs_brutto - $summe_brutto - $rr->rechnungs_skontoabzug ) . "�</b>";
+				$pdf_tab [$z] ['RNR'] = "<b>i.H. von $summe_skonto_alle_a €</b>";
+				$pdf_tab [$z] ['BRUTTO'] = "<b>" . nummer_punkt2komma_t ( $rr->rechnungs_brutto - $summe_brutto - $rr->rechnungs_skontoabzug ) . "€</b>";
 			}
 			
 			$cols = array (
@@ -2641,7 +2641,7 @@ else {
 					), // Linienfarbe, hier schwarz
 					
 					'fontSize' => 8, // schriftgroesse
-					'titleFontSize' => 8, // schriftgroesse �berschrift
+					'titleFontSize' => 8, // schriftgroesse Überschrift
 					'splitRows' => 0,
 					'protectRows' => 0,
 					'innerLineThickness' => 0.5,
@@ -2714,7 +2714,7 @@ else {
 		$r = new rechnung ();
 		$kos_bez = $r->kostentraeger_ermitteln ( $kos_typ, $kos_id );
 		// $f = new formular();
-		// $f->fieldset('Rechnung f�r', 'rf');
+		// $f->fieldset('Rechnung für', 'rf');
 		echo $kos_bez;
 		// $f->fieldset_ende();
 		$pos_arr = $this->get_pool_pos_arr ( $kos_typ, $kos_id, $aussteller_typ, $aussteller_id );
@@ -2739,7 +2739,7 @@ else {
 					$pool_id_temp = $pool_id;
 					$pool_name = $this->get_pool_bez ( $pool_id );
 					$js_prozent_spalte_pool = "<a onclick=\"spalte_prozent_pool('$pool_id','V_PREIS')\">POOL%</a>";
-					$js_einheitspreis_spalte_pool = "<a onclick=\"spalte_einheitspreis_pool('$pool_id','V_PREIS')\">VP POOL �</a>";
+					$js_einheitspreis_spalte_pool = "<a onclick=\"spalte_einheitspreis_pool('$pool_id','V_PREIS')\">VP POOL €</a>";
 					$js_einheitspreis_rabatt_pool = "<a onclick=\"spalte_einheitspreis_pool('$pool_id','RABATT_SATZ')\">RABATT</a>";
 					$js_einheitspreis_skonto_pool = "<a onclick=\"spalte_einheitspreis_pool('$pool_id','SKONTO')\">SKONTO</a>";
 					$js_einheitspreis_mwst_pool = "<a onclick=\"spalte_einheitspreis_pool('$pool_id','MWST_SATZ')\">MWST</a>";
@@ -2805,9 +2805,9 @@ else {
 				echo $img_unten;
 				
 				echo "<hr><b $js_pos>$pos</b></td><td>$art_nr_link";
-				// echo "<br>Zur�ck";
+				// echo "<br>Zurück";
 				$js_back = "onclick=\"back2pool('$pp_dat');\"";
-				$f->button_js ( 'btn_back_p', 'Z�ruck', $js_back );
+				$f->button_js ( 'btn_back_p', 'Zurück', $js_back );
 				echo "</td><td $js_text>$text</td><td>$ve</td><td $js_menge>$menge</td><td>$epreis</td><td><p $js_vpreis>$vpreis EUR</p><hr>$js_vpreis_prozent<hr><font color=\"$farbe\"><b>$this->anz_preise $this->v_preis $this->v_rabatt_satz $art_nr_link1</b></font></td><td $js_mwst>";
 				/*
 				 * unset($this->anz_preise);
@@ -2897,13 +2897,13 @@ else {
 		$letzte_aussteller_rnr = $r->letzte_aussteller_ausgangs_nr ( $aussteller_id, $aussteller_typ, $jahr, $rechnungstyp );
 		$letzte_aussteller_rnr = $letzte_aussteller_rnr + 1;
 		$letzte_aussteller_rnr1 = sprintf ( '%03d', $letzte_aussteller_rnr );
-		/* K�rzel */
+		/* Kürzel */
 		$rechnungsdatum_sql = date_german2mysql ( $r_datum );
 		$rechnungs_kuerzel = $r->rechnungs_kuerzel_ermitteln ( $aussteller_typ, $aussteller_id, $rechnungsdatum_sql );
 		$rechnungsnummer = $this->rechnungs_kuerzel . ' ' . $letzte_aussteller_rnr1 . '-' . $jahr;
 		// echo "$rechnungs_kuerzel $rechnungsnummer";
 		
-		/* Pr�fen ob Rechnung vorhanden */
+		/* Prüfen ob Rechnung vorhanden */
 		$check_rechnung = $r->check_rechnung_vorhanden ( $rechnungsnummer, $rechnungsdatum_sql, $aussteller_typ, $aussteller_id, $kos_typ, $kos_id, $rechnungstyp );
 		
 		/* Wenn rechnung existiert */
@@ -3113,12 +3113,12 @@ else {
 				
 				$tab_arr [$a] ['KURZTEXT'] = $kurzbeschreibung;
 				if ($this->rechnungstyp == 'Rechnung') {
-					$tab_arr [$a] ['BRUTTO'] = nummer_punkt2komma ( $this->rechnungs_brutto ) . '� ';
+					$tab_arr [$a] ['BRUTTO'] = nummer_punkt2komma ( $this->rechnungs_brutto ) . '€ ';
 					$gesamt_brutto += $this->rechnungs_brutto;
 				}
 				
 				if ($this->rechnungstyp == 'Teilrechnung') {
-					$tab_arr [$a] ['BRUTTO'] = nummer_punkt2komma_t ( $this->rechnungs_brutto ) . '� ';
+					$tab_arr [$a] ['BRUTTO'] = nummer_punkt2komma_t ( $this->rechnungs_brutto ) . '€ ';
 					$gesamt_brutto += $this->rechnungs_brutto;
 				}
 				
@@ -3131,19 +3131,19 @@ else {
 						// $rrr->rechnungs_brutto_schluss_a = nummer_punkt2komma_t($rrr->rechnungs_brutto_schluss);
 					}
 					
-					$tab_arr [$a] ['BRUTTO'] = nummer_punkt2komma_t ( $rrr->rechnungs_brutto_schluss ) . '� ';
+					$tab_arr [$a] ['BRUTTO'] = nummer_punkt2komma_t ( $rrr->rechnungs_brutto_schluss ) . '€ ';
 					$gesamt_brutto += $rrr->rechnungs_brutto_schluss;
 				}
 				
 				if ($this->rechnungstyp == 'Gutschrift' or $this->rechnungstyp == 'Stornorechnung') {
-					$tab_arr [$a] ['GUT_RET'] = nummer_punkt2komma ( $this->rechnungs_brutto ) . '� ';
+					$tab_arr [$a] ['GUT_RET'] = nummer_punkt2komma ( $this->rechnungs_brutto ) . '€ ';
 					$gesamt_gut_retour += $this->rechnungs_brutto;
 				}
 				
 				$tab_arr [$a] ['RNR'] = $this->rechnungsnummer;
 				$tab_arr [$a] ['DATUM'] = $this->rechnungsdatum;
 				
-				$tab_arr [$a] ['SKONTO'] = nummer_punkt2komma ( $this->rechnungs_skontoabzug ) . '� ';
+				$tab_arr [$a] ['SKONTO'] = nummer_punkt2komma ( $this->rechnungs_skontoabzug ) . '€ ';
 				$gesamt_skonti += $this->rechnungs_skontoabzug;
 				
 				if ($a == sizeof ( $rechnungen_arr ) - 1) {
@@ -3151,9 +3151,9 @@ else {
 					$tab_arr [$a + 1] ['GUT_RET'] = '<b>=======</b>';
 					$tab_arr [$a + 1] ['SKONTO'] = '<b>=======</b>';
 					$tab_arr [$a + 2] ['KURZTEXT'] = '<b>SUMMEN:</b>';
-					$tab_arr [$a + 2] ['BRUTTO'] = '<b>' . nummer_punkt2komma ( $gesamt_brutto ) . '� </b>';
-					$tab_arr [$a + 2] ['GUT_RET'] = '<b>' . nummer_punkt2komma ( $gesamt_gut_retour ) . '� </b>';
-					$tab_arr [$a + 2] ['SKONTO'] = '<b>' . nummer_punkt2komma ( $gesamt_skonti ) . '� </b>';
+					$tab_arr [$a + 2] ['BRUTTO'] = '<b>' . nummer_punkt2komma ( $gesamt_brutto ) . '€ </b>';
+					$tab_arr [$a + 2] ['GUT_RET'] = '<b>' . nummer_punkt2komma ( $gesamt_gut_retour ) . '€ </b>';
+					$tab_arr [$a + 2] ['SKONTO'] = '<b>' . nummer_punkt2komma ( $gesamt_skonti ) . '€ </b>';
 				}
 			}
 		}
@@ -3163,7 +3163,7 @@ else {
 		/* Spaltendefinition */
 		$cols = array (
 				'LFDNR' => "<b>LFDNR.</b>",
-				'EMPFAENGER' => "<b>RECHNUNGSEMPF�NGER</b>",
+				'EMPFAENGER' => "<b>RECHNUNGSEMPFÄNGER</b>",
 				'KURZTEXT' => "<b>LEISTUNG/WARE</b>",
 				'BRUTTO' => "<b>BRUTTO</b>",
 				'GUT_RET' => "<b>GUTSCHRIFTEN\n RETOUREN</b>",
@@ -3186,7 +3186,7 @@ else {
 				), // Linienfarbe, hier schwarz
 				
 				'fontSize' => 8, // schriftgroesse
-				'titleFontSize' => 8, // schriftgroesse �berschrift
+				'titleFontSize' => 8, // schriftgroesse Überschrift
 				'splitRows' => 0,
 				'protectRows' => 0,
 				'innerLineThickness' => 0.5,
@@ -3272,29 +3272,29 @@ else {
 				
 				$tab_arr [$a] ['KURZTEXT'] = $kurzbeschreibung;
 				if ($this->rechnungstyp == 'Rechnung') {
-					$tab_arr [$a] ['BRUTTO'] = nummer_punkt2komma ( $this->rechnungs_brutto ) . '�';
+					$tab_arr [$a] ['BRUTTO'] = nummer_punkt2komma ( $this->rechnungs_brutto ) . '€';
 					$gesamt_brutto += $this->rechnungs_brutto;
 				}
 				
 				if ($this->rechnungstyp == 'Teilrechnung') {
-					$tab_arr [$a] ['BRUTTO'] = nummer_punkt2komma_t ( $this->rechnungs_brutto ) . '� ';
+					$tab_arr [$a] ['BRUTTO'] = nummer_punkt2komma_t ( $this->rechnungs_brutto ) . '€ ';
 					$gesamt_brutto += $this->rechnungs_brutto;
 				}
 				
 				if ($this->rechnungstyp == 'Schlussrechnung') {
-					$tab_arr [$a] ['BRUTTO'] = nummer_punkt2komma_t ( $this->rechnungs_brutto ) . '� ';
+					$tab_arr [$a] ['BRUTTO'] = nummer_punkt2komma_t ( $this->rechnungs_brutto ) . '€ ';
 					$gesamt_brutto += $this->rechnungs_brutto;
 				}
 				
 				if ($this->rechnungstyp == 'Gutschrift' or $this->rechnungstyp == 'Stornorechnung') {
-					$tab_arr [$a] ['GUT_RET'] = nummer_punkt2komma ( $this->rechnungs_brutto ) . '�';
+					$tab_arr [$a] ['GUT_RET'] = nummer_punkt2komma ( $this->rechnungs_brutto ) . '€';
 					$gesamt_gut_retour += $this->rechnungs_brutto;
 				}
 				
 				$tab_arr [$a] ['RNR'] = $this->rechnungsnummer;
 				$tab_arr [$a] ['DATUM'] = $this->rechnungsdatum;
 				
-				$tab_arr [$a] ['SKONTO'] = nummer_punkt2komma ( $this->rechnungs_skontoabzug ) . '�';
+				$tab_arr [$a] ['SKONTO'] = nummer_punkt2komma ( $this->rechnungs_skontoabzug ) . '€';
 				$gesamt_skonti += $this->rechnungs_skontoabzug;
 				
 				if ($a == sizeof ( $rechnungen_arr ) - 1) {
@@ -3302,9 +3302,9 @@ else {
 					$tab_arr [$a + 1] ['GUT_RET'] = '<b>=======</b>';
 					$tab_arr [$a + 1] ['SKONTO'] = '<b>=======</b>';
 					$tab_arr [$a + 2] ['KURZTEXT'] = '<b>SUMMEN:</b>';
-					$tab_arr [$a + 2] ['BRUTTO'] = '<b>' . nummer_punkt2komma ( $gesamt_brutto ) . '�</b>';
-					$tab_arr [$a + 2] ['GUT_RET'] = '<b>' . nummer_punkt2komma ( $gesamt_gut_retour ) . '�</b>';
-					$tab_arr [$a + 2] ['SKONTO'] = '<b>' . nummer_punkt2komma ( $gesamt_skonti ) . '�</b>';
+					$tab_arr [$a + 2] ['BRUTTO'] = '<b>' . nummer_punkt2komma ( $gesamt_brutto ) . '€</b>';
+					$tab_arr [$a + 2] ['GUT_RET'] = '<b>' . nummer_punkt2komma ( $gesamt_gut_retour ) . '€</b>';
+					$tab_arr [$a + 2] ['SKONTO'] = '<b>' . nummer_punkt2komma ( $gesamt_skonti ) . '€</b>';
 				}
 			}
 		}
@@ -3337,7 +3337,7 @@ else {
 				), // Linienfarbe, hier schwarz
 				
 				'fontSize' => 8, // schriftgroesse
-				'titleFontSize' => 8, // schriftgroesse �berschrift
+				'titleFontSize' => 8, // schriftgroesse Überschrift
 				'splitRows' => 0,
 				'protectRows' => 0,
 				'innerLineThickness' => 0.5,
@@ -3416,7 +3416,7 @@ else {
 	}
 	function dropdown_inhaber($label, $name, $id) {
 		echo "<label for=\"$id\">$label</label><select name=\"$name\" id=\"$id\" size=1 $js_action>\n";
-		echo "<option value=\"\">Bitte w�hlen</option>\n";
+		echo "<option value=\"\">Bitte wählen</option>\n";
 		echo "</select>\n";
 	}
 	function dropdown_monate($label, $name, $id) {
@@ -3438,14 +3438,14 @@ else {
 	function form_rbuecher_suchen() {
 		$f = new formular ();
 		$f->fieldset ( "Rechnungsbuch als PDF anzeigen ", 'rbuch' );
-		$this->dropdown_rbuch ( 'Rechnungsbuch w�hlen', 'buchart', 'buchart' );
+		$this->dropdown_rbuch ( 'Rechnungsbuch wählen', 'buchart', 'buchart' );
 		$js_action = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\" onmouseover=\"list_kostentraeger('list_kostentraeger', this.value)\"";
 		$this->dropdown_rbuch_inhaber ( 'Rechnungsbuchinhaber', 'r_inhaber_t', 'r_inhaber_t', $js_action );
-		$this->dropdown_inhaber ( 'Rechnungsinhaber w�hlen', 'r_inhaber', 'dd_kostentraeger_id' );
+		$this->dropdown_inhaber ( 'Rechnungsinhaber wählen', 'r_inhaber', 'dd_kostentraeger_id' );
 		$js = '';
-		$this->drop_rechnungs_typen ( 'Rechnungsart w�hlen', 'r_art', 'r_art', $js, 'Rechnung' );
-		$this->dropdown_monate ( 'Monat w�hlen', 'monat', 'monat' );
-		$this->dropdown_jahre ( 'Jahr w�hlen', 'jahr', 'jahr' );
+		$this->drop_rechnungs_typen ( 'Rechnungsart wählen', 'r_art', 'r_art', $js, 'Rechnung' );
+		$this->dropdown_monate ( 'Monat wählen', 'monat', 'monat' );
+		$this->dropdown_jahre ( 'Jahr wählen', 'jahr', 'jahr' );
 		$f->hidden_feld ( 'option', 'rechnungsbuch_suche1' );
 		$f->send_button ( 'submit', 'Anzeigen' );
 		$f->fieldset_ende ();
@@ -3481,7 +3481,7 @@ else {
 		}
 	}
 	
-	/* Funktionen f�r Angebote */
+	/* Funktionen für Angebote */
 	function form_angebot_erfassen() {
 		$f = new formular ();
 		$p = new partners ();
@@ -3594,7 +3594,7 @@ else {
 		
 		// $rnr = "$l_ausg_rnr-$a_jahr";
 		$letzte_aussteller_rnr = sprintf ( '%03d', $l_ausg_rnr );
-		/* K�rzel */
+		/* Kürzel */
 		$r = new rechnung ();
 		$rechnungs_kuerzel = $r->rechnungs_kuerzel_ermitteln ( 'Partner', $aus_id, $r_datum_sql );
 		
@@ -3689,7 +3689,7 @@ else {
 			if (! isset ( $_SESSION ['partner_id'] )) {
 				echo "Keine Angebote vorhanden!";
 			} else {
-				echo "Keine Angebote von gew�hltem Partner vorhanden!";
+				echo "Keine Angebote von gewähltem Partner vorhanden!";
 			}
 		}
 	}
@@ -3737,7 +3737,7 @@ else {
 			$skonto = $zeilen_arr [$a] ['SKONTO'];
 			$g_netto = $zeilen_arr [$a] ['GESAMT_NETTO'];
 			$aktuell = $zeilen_arr [$a] ['AKTUELL'];
-			/* Nur Aktuelle �bertragen, kein M�ll */
+			/* Nur Aktuelle übertragen, kein Müll */
 			if ($aktuell == 1) {
 				$this->position_speichern ( $l_erf_nr, $belegnr, $art_lieferant, $art_nr, $menge, $preis, $mwst, $skonto, $rabatt, $g_netto );
 			}
@@ -3754,7 +3754,7 @@ else {
 				$prozent = $row ['PROZENT'];
 				$bis = date_mysql2german ( $row ['EINBEHALT_BIS'] );
 				$this->rechnung_grunddaten_holen ( $b_nr );
-				echo "$this->rechnungs_empfaenger_name|$this->rechnungsnummer|BETRAG:$betrag � | $bis<br>";
+				echo "$this->rechnungs_empfaenger_name|$this->rechnungsnummer|BETRAG:$betrag € | $bis<br>";
 			}
 		}
 	}
@@ -3825,14 +3825,14 @@ else {
 					$db_abfrage = "UPDATE RECHNUNGEN_POSITIONEN SET RABATT_SATZ='$u_rabatt', SKONTO='$skonto', GESAMT_NETTO='$neu_preis' WHERE POSITION='$_pos' && BELEG_NR='$belegnr' && AKTUELL='1'";
 					$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 					
-					echo "Rechnungsposition $_pos wurde ge�ndert<br>";
+					echo "Rechnungsposition $_pos wurde geändert<br>";
 					
 					/* Update Rechnung Kontierung */
 					$db_abfrage = "UPDATE KONTIERUNG_POSITIONEN SET RABATT_SATZ='$u_rabatt', SKONTO='$skonto', GESAMT_SUMME='$k_neu_preis' WHERE POSITION='$_pos' && BELEG_NR='$belegnr' && AKTUELL='1'";
 					$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-					echo "Kontierungsposition $_pos wurde ge�ndert<br>";
+					echo "Kontierungsposition $_pos wurde geändert<br>";
 				} else {
-					echo "$_pos nicht ver�ndert, keine Daten in der Ursprungsrechnung";
+					echo "$_pos nicht verändert, keine Daten in der Ursprungsrechnung";
 				}
 			}
 		} else {
@@ -3876,9 +3876,9 @@ else {
 	function u_pools_erstellen() {
 		$b = new buchen ();
 		$js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
-		$b->dropdown_kostentreager_typen ( 'Kostentr�gertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
+		$b->dropdown_kostentreager_typen ( 'Kostenträgertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
 		$js_id = "onchange=\"list_u_pools('kostentraeger_typ', 'dd_kostentraeger_id')\" ";
-		$b->dropdown_kostentreager_ids ( 'Kostentr�ger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
+		$b->dropdown_kostentreager_ids ( 'Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
 		$f = new formular ();
 		echo "<br><br>";
 		$f->fieldset ( "Pools", 'pools' );
@@ -3897,7 +3897,7 @@ else {
 		}
 		$pool_arr = $this->get_pools_arr ( $kos_typ, $kos_id );
 		echo "<br><table>";
-		echo "<tr><th>NEUER UNTERPOOL F�R $kos_typ $kos_bez</th></tr><tr>";
+		echo "<tr><th>NEUER UNTERPOOL FÜR $kos_typ $kos_bez</th></tr><tr>";
 		$f = new formular ();
 		$f->text_feld ( 'Bezeichnung des Pools', 'np', '', '100', 'np', '' );
 		$js = "onclick=\"u_pool_erstellen('np','kostentraeger_typ', 'dd_kostentraeger_id')\"";
@@ -3928,7 +3928,7 @@ else {
 			echo "</table>";
 		} else {
 			echo "</table>";
-			echo "Keine POOLS f�r $kos_bez";
+			echo "Keine POOLS für $kos_bez";
 		}
 	}
 	function u_pool_erstellen($pool_bez, $kos_typ, $kos_bez) {
@@ -3983,7 +3983,7 @@ else {
 			$U_BELEG_NR = $row ['U_BELEG_NR'];
 			$U_POS = $row ['U_POS'];
 			$result1 = mysql_query ( "UPDATE KONTIERUNG_POSITIONEN SET WEITER_VERWENDEN='1' WHERE AKTUELL='1' && BELEG_NR='$U_BELEG_NR' && POSITION='$U_POS' && WEITER_VERWENDEN='0'" );
-			/* L�schen aus dem Unterpool */
+			/* Löschen aus dem Unterpool */
 			mysql_query ( "DELETE FROM POS_POOL WHERE PP_DAT='$pp_dat'" );
 		}
 	}
@@ -3992,7 +3992,7 @@ else {
 	function test_xml() {
 		ini_set ( 'display_errors', 'On' );
 		error_reporting ( E_ALL | E_STRICT );
-		echo "TESTXML Hr. G�hler";
+		echo "TESTXML Hr. Gühler";
 		$Kategorien = simplexml_load_file ( 'simple.XML' );
 		// Name, ID und link der ersten Kategorie ausgeben
 		echo "<pre>";
@@ -4014,10 +4014,10 @@ else {
 	function get_ugl_arr($tmp_datei) {
 		ini_set ( 'display_errors', 'On' );
 		error_reporting ( E_ALL | E_STRICT );
-		// echo "TESTXML Hr. G�hler";
+		// echo "TESTXML Hr. Gühler";
 		$datei = file_get_contents ( "$tmp_datei" );
 		$erste_2_zeichen = substr ( $datei, 0, 2 );
-		/* Pr�fen ob Version 4.00 der UGL Datei - Unielektro, dann 1. zeile l�schen bzw. bis KOP */
+		/* Prüfen ob Version 4.00 der UGL Datei - Unielektro, dann 1. zeile löschen bzw. bis KOP */
 		if ($erste_2_zeichen == 'RG') {
 			$anfang_position_KOP = strpos ( $datei, 'KOP' );
 			$datei = substr ( $datei, $anfang_position_KOP );
@@ -4034,7 +4034,7 @@ else {
 		$ths->kop = substr ( $datei, 0, 3 );
 		$ths->knr = substr ( $datei, 3, 10 );
 		$ths->lnr = substr ( $datei, 13, 10 ); // 23
-		$ths->a_art = substr ( $datei, 23, 2 ); // TB-Abrufauftrag, AN-Preisanfrage, BE-Bestellung, PA-Preisangebot, AB-Auftragsbest�tigung
+		$ths->a_art = substr ( $datei, 23, 2 ); // TB-Abrufauftrag, AN-Preisanfrage, BE-Bestellung, PA-Preisangebot, AB-Auftragsbestätigung
 		$ths->a_nr_hw = substr ( $datei, 25, 15 ); // Anfragenummer des HW
 		$ths->kundentext = substr ( $datei, 40, 50 ); // Kundenauftragstext
 		$ths->vorgangsnr_gh = substr ( $datei, 90, 15 ); // Vorgangsnummer des GH
@@ -4078,7 +4078,7 @@ else {
 		$d_h = date ( "d.m.Y" );
 		$f->datum_feld ( 'Rechnungsdatum', 'r_datum', $d_h, 'r_datum' );
 		$f->datum_feld ( 'Eingangsdatum', 'eingangsdatum', $d_h, 'eingangsdatum' );
-		$f->datum_feld ( 'F�llig', 'faellig', $d_h, 'faellig' );
+		$f->datum_feld ( 'Fällig', 'faellig', $d_h, 'faellig' );
 		$f->text_bereich ( "Kurzbeschreibung", "kurzbeschreibung", "", "50", "10", 'kb' );
 		// text_bereich($beschreibung, $name, $wert, $cols, $rows, $id)
 		
@@ -4096,13 +4096,13 @@ else {
 		$f->hidden_feld ( "empfaenger_typ", "Partner" );
 		$partner_arr = $p->partner_dropdown ( ' Ausgestellt an ', 'empfaenger_id', 'empfaenger' );
 		// $f->text_feld('Rechnungs- bzw. Angebotsnummer', 'rnr', '', 29, 'rnr', '');
-		$this->drop_rechnungs_typen ( 'Belegtyp w�hlen', 'beleg_typ', 'beleg_typ', '', 'Angebot' );
+		$this->drop_rechnungs_typen ( 'Belegtyp wählen', 'beleg_typ', 'beleg_typ', '', 'Angebot' );
 		$f->text_feld ( 'Skonto in %', 'skonto', '', 1, 'skonto', '' );
 		// $f->text_feld('Eingangsdatum', 'eingangsdatum', '', 30, 'eingangsdatum', '');
 		$d_h = date ( "d.m.Y" );
 		$f->datum_feld ( 'Rechnungsdatum', 'r_datum', $d_h, 'r_datum' );
 		$f->datum_feld ( 'Eingangsdatum', 'eingangsdatum', $d_h, 'eingangsdatum' );
-		$f->datum_feld ( 'F�llig', 'faellig', $d_h, 'faellig' );
+		$f->datum_feld ( 'Fällig', 'faellig', $d_h, 'faellig' );
 		$f->text_bereich ( "Kurzbeschreibung", "kurzbeschreibung", "", "50", "10" );
 		
 		echo "<input name=\"Datei\" type=\"file\" size=\"50\" maxlength=\"100000\" >";
@@ -4154,13 +4154,13 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
 		$form->erstelle_formular ( 'Kosten finden', NULL );
 		$b = new buchen ();
 		$js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
-		$b->dropdown_kostentreager_typen ( 'Kostentr�gertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
+		$b->dropdown_kostentreager_typen ( 'Kostenträgertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
 		$js_id = "";
-		$b->dropdown_kostentreager_ids ( 'Kostentr�ger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
+		$b->dropdown_kostentreager_ids ( 'Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
 		// $form->text_feld("Anfangsdatum:", "anfangsdatum", "", "10", 'anfangsdatum','');
 		// $form->text_feld("Enddatum:", "enddatum", "", "10", 'enddatum','');
 		$p = new partner ();
-		$p->partner_dropdown ( 'Rechnungsempf�nger w�hlen', 'empf_id', 'r_id' );
+		$p->partner_dropdown ( 'Rechnungsempfänger wählen', 'empf_id', 'r_id' );
 		$form->send_button ( "submit_kostenkonto", "Suchen" );
 		$form->hidden_feld ( "option", "kosten_einkauf_send" );
 		$form->hidden_feld ( "empf_typ", "Partner" );
@@ -4206,26 +4206,26 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
 			$db_abfrage = "SELECT POSITION, `ARTIKEL_NR`, MENGE, `PREIS`, `RABATT_SATZ`, `GESAMT_NETTO`, t1.BELEG_NR  FROM `RECHNUNGEN_POSITIONEN` as t1, RECHNUNGEN as t2 WHERE `ARTIKEL_NR` = '$art_nr' && t1.BELEG_NR=t2.BELEG_NR && t2.EMPFAENGER_TYP='$empf_typ' && t2.EMPFAENGER_ID='$empf_id' && t1.AKTUELL='1' && t2.AKTUELL='1' GROUP BY PREIS, RABATT_SATZ ORDER BY t1.BELEG_NR DESC LIMIT 0,1";
 			$result = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 			$row = mysql_fetch_assoc ( $result );
-			$this->v_preis = nummer_punkt2komma ( $row ['PREIS'] ) . ' �';
+			$this->v_preis = nummer_punkt2komma ( $row ['PREIS'] ) . ' €';
 			$this->v_rabatt_satz = nummer_punkt2komma ( $row ['RABATT_SATZ'] ) . ' %';
 			$this->v_beleg_nr = $row ['BELEG_NR'];
 		} else {
 			$this->anz_preise = 0;
-			$this->v_preis = nummer_punkt2komma ( 0.00 ) . ' �';
+			$this->v_preis = nummer_punkt2komma ( 0.00 ) . ' €';
 			$this->v_rabatt_satz = nummer_punkt2komma ( 0.00 ) . ' %';
 			$this->v_beleg_nr = '';
 		}
 	}
 	function form_teil_rg_hinzu($beleg_id) {
 		$form = new formular ();
-		$form->erstelle_formular ( 'Teilrechnungen w�hlen', '' );
+		$form->erstelle_formular ( 'Teilrechnungen wählen', '' );
 		// $form->text_feld($beschreibung, $name, $wert, $size, $id, $js_action)
 		$form->hidden_feld ( "option", "send_teil_rg" );
 		$form->hidden_feld ( "beleg_id", "$beleg_id" );
 		$this->rechnung_grunddaten_holen ( $beleg_id );
 		$this->list_teil_rg_in ( $this->rechnungs_empfaenger_typ, $this->rechnungs_empfaenger_id, $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id, 'Teilrechnung', $beleg_id );
-		$this->list_teil_rg ( $this->rechnungs_empfaenger_typ, $this->rechnungs_empfaenger_id, $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id, 'Teilrechnung', 'tr', 'tr_ids[]', 'Teilrechnugs w�hlen' );
-		$form->send_button ( "submit_trg", "Hinzuf�gen" );
+		$this->list_teil_rg ( $this->rechnungs_empfaenger_typ, $this->rechnungs_empfaenger_id, $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id, 'Teilrechnung', 'tr', 'tr_ids[]', 'Teilrechnugs wählen' );
+		$form->send_button ( "submit_trg", "Hinzufügen" );
 		$form->ende_formular ();
 	}
 	function get_rg_arr_ok($empf_typ, $empf_id, $aus_typ, $aus_id, $r_typ) {
@@ -4246,7 +4246,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
 			return $my_array;
 		}
 	}
-	/* Die als Teilrg schon hinzugef�gt sind */
+	/* Die als Teilrg schon hinzugefügt sind */
 	function get_teil_rg_arr_in($empf_typ, $empf_id, $aus_typ, $aus_id, $r_typ) {
 		$result = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE EMPFAENGER_TYP='$empf_typ' && EMPFAENGER_ID='$empf_id'  && AUSSTELLER_ID='$aus_id' && AUSSTELLER_TYP='$aus_typ' && RECHNUNGSTYP='$r_typ' && AKTUELL = '1' && BELEG_NR  IN (SELECT TEIL_R_ID FROM RECHNUNGEN_SCHLUSS WHERE AKTUELL='1')ORDER BY RECHNUNGSDATUM DESC" );
 		$numrows = mysql_numrows ( $result );
@@ -4261,7 +4261,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
 		if (is_array ( $arr )) {
 			$anz = count ( $arr );
 			echo "<table class=\"sortable\">";
-			echo "<thead><tr><th colspan=\"5\">BEREITS HINZUGEF�GT</th></tr></thead>";
+			echo "<thead><tr><th colspan=\"5\">BEREITS HINZUGEFÜGT</th></tr></thead>";
 			for($a = 0; $a < $anz; $a ++) {
 				$t_beleg_id = $arr [$a] ['BELEG_NR'];
 				$rnr = $arr [$a] ['RECHNUNGSNUMMER'];
@@ -4269,11 +4269,11 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
 				$datum = date_mysql2german ( $arr [$a] ['RECHNUNGSDATUM'] );
 				$netto = $arr [$a] ['NETTO'];
 				$link_loeschen = "<a href=\"?daten=rechnungen&option=teil_rg_loeschen&beleg_id=$beleg_id&t_beleg_id=$t_beleg_id\">Entfernen</a>";
-				echo "<tr><td>$rnr</td><td>$datum</td><td>$info</td><td>Netto: $netto �</td><td>$link_loeschen</td></tr>";
+				echo "<tr><td>$rnr</td><td>$datum</td><td>$info</td><td>Netto: $netto €</td><td>$link_loeschen</td></tr>";
 			}
 			echo "</table>";
 		} else {
-			hinweis_ausgeben ( "Bisher keine $r_typ hinzugef�gt" );
+			hinweis_ausgeben ( "Bisher keine $r_typ hinzugefügt" );
 		}
 	}
 	function list_teil_rg($empf_typ, $empf_id, $aus_typ, $aus_id, $r_typ, $id, $name, $label) {
@@ -4287,11 +4287,11 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
 				$info = $arr [$a] ['KURZBESCHREIBUNG'];
 				$datum = date_mysql2german ( $arr [$a] ['RECHNUNGSDATUM'] );
 				$netto = $arr [$a] ['NETTO'];
-				echo "<option value=\"$t_beleg_id\">$rnr - $datum - $info - Netto: $netto �</option>";
+				echo "<option value=\"$t_beleg_id\">$rnr - $datum - $info - Netto: $netto €</option>";
 			}
 			echo "</select>";
 		} else {
-			hinweis_ausgeben ( "Keine $r_typ zum Hinzuf�gen vorhanden" );
+			hinweis_ausgeben ( "Keine $r_typ zum Hinzufügen vorhanden" );
 			die ();
 		}
 	}
@@ -4304,7 +4304,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
 		$last_dat = mysql_insert_id ();
 		protokollieren ( 'RECHNUNGEN_SCHLUSS', $last_dat, '' );
 		/* Ausgabe weil speichern erfolgreich */
-		echo "Teilrechnungen wurden hinzugef�gt.";
+		echo "Teilrechnungen wurden hinzugefügt.";
 	}
 	function teilrechnungen_hinzu($beleg_id, $tr_ids_arr) {
 		if (is_numeric ( $beleg_id ) && is_array ( $tr_ids_arr )) {
@@ -4377,15 +4377,15 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
 				$key = $keys [$k];
 				
 				$f = new formular ();
-				$f->erstelle_formular ( "Rechnungen f�r $key", null );
+				$f->erstelle_formular ( "Rechnungen für $key", null );
 				if ($key == 'Stellplatz' or $key == 'Keller') {
 					$f->text_feld ( 'Bruttobetrag pro Einheit', 'brutto', '8,00', 10, 'brutto', null );
 				} else {
 					$f->text_feld ( 'Bruttobetrag pro Einheit', 'brutto', '14,99', 10, 'brutto', null );
 				}
-				$f->text_bereich ( 'Kurztext (Einheit wird automatisch hinzugef�gt', 'kurztext', 'Verwaltergeb�hr', 50, 2, 'kurztext' );
+				$f->text_bereich ( 'Kurztext (Einheit wird automatisch hinzugefügt', 'kurztext', 'Verwaltergebühr', 50, 2, 'kurztext' );
 				echo "<table class=\"sortable\">";
-				echo "<tr><th>EINHEIT</th><th>EMPF�NGER</th><th>BEZ</th></tr>";
+				echo "<tr><th>EINHEIT</th><th>EMPFÄNGER</th><th>BEZ</th></tr>";
 				$anz_e = count ( $n_ein_arr [$key] );
 				for($a = 0; $a < $anz_e; $a ++) {
 					$einheit_id = $n_ein_arr [$key] [$a] ['EINHEIT_ID'];
@@ -4409,11 +4409,11 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
 				$f->hidden_feld ( 'option', 'rgg' );
 				$ko = new kontenrahmen ();
 				$ko->dropdown_kontorahmenkonten ( 'Kostenkonto', 'kostenkonto', 'kostenkonto', 'Geldkonto', $_SESSION ['geldkonto_id'], '' );
-				$f->check_box_js ( 'sepa', '1', 'In SEPA-�Berweisungen vorbereiten', '', 'checked' );
-				$f->send_button ( 'btn_snd', "$anz_e Einzelrechnungen f�r $key erstellen" );
+				$f->check_box_js ( 'sepa', '1', 'In SEPA-Überweisungen vorbereiten', '', 'checked' );
+				$f->send_button ( 'btn_snd', "$anz_e Einzelrechnungen für $key erstellen" );
 				$f->ende_formular ();
 			} // end for $k
-		}  // Ende wenn verschiedene Empf�nger / Eigent�mer
+		}  // Ende wenn verschiedene Empfänger / Eigentümer
 else {
 			echo '<pre>';
 			// print_r($empf_kat);
@@ -4424,7 +4424,7 @@ else {
 			echo $o->objekt_kurzname;
 			echo "<br>";
 			echo $o->objekt_eigentuemer;
-			$f->text_bereich ( 'Kurztext', 'kurztext', 'Verwaltergeb�hr', 50, 2, 'kurztext' );
+			$f->text_bereich ( 'Kurztext', 'kurztext', 'Verwaltergebühr', 50, 2, 'kurztext' );
 			$f->hidden_feld ( 'empf_typ', 'Partner' );
 			;
 			$f->hidden_feld ( 'empf_id', $o->objekt_eigentuemer_id );
@@ -4448,7 +4448,7 @@ else {
 			$f->hidden_feld ( 'option', 'rgg_ob' );
 			$ko = new kontenrahmen ();
 			$ko->dropdown_kontorahmenkonten ( 'Kostenkonto', 'kostenkonto', 'kostenkonto', 'Geldkonto', $_SESSION ['geldkonto_id'], '' );
-			$f->check_box_js ( 'sepa', '1', 'Gesamtbetrag in SEPA-�Berweisungen vorbereiten', '', 'checked' );
+			$f->check_box_js ( 'sepa', '1', 'Gesamtbetrag in SEPA-Überweisungen vorbereiten', '', 'checked' );
 			$f->send_button ( 'btn_snd', "Gesamtrechnung erstellen" );
 			$f->ende_formular ();
 		}
@@ -4468,7 +4468,7 @@ else {
 		// print_r($arr);
 		$anz = count ( $arr );
 		echo "<table>";
-		echo "<tr><th>EMPF�NGER</th><th>BELEG</th><th>INFO</th><th>BRUTTO</th><th>OPTIONEN</th></tr>";
+		echo "<tr><th>EMPFÄNGER</th><th>BELEG</th><th>INFO</th><th>BRUTTO</th><th>OPTIONEN</th></tr>";
 		for($a = 0; $a < $anz; $a ++) {
 			$p_id = $arr [$a] ['EMPF_P_ID'];
 			$p = new partner ();
@@ -4496,10 +4496,10 @@ else {
 		}
 		$b = new buchen ();
 		$f = new formular ();
-		$f->erstelle_formular ( "Beleg einem Empf�nger zuweisen", null );
-		$this->drop_buchungsbelege ( $_SESSION ['partner_id'], $jahr, 'Beleg w�hlen', 'beleg_nr', 'beleg_nr', null, null );
+		$f->erstelle_formular ( "Beleg einem Empfänger zuweisen", null );
+		$this->drop_buchungsbelege ( $_SESSION ['partner_id'], $jahr, 'Beleg wählen', 'beleg_nr', 'beleg_nr', null, null );
 		$p = new partners ();
-		$p->partner_dropdown ( 'Empf�nger w�hlen', 'empf_p_id', 'empf_p_id' );
+		$p->partner_dropdown ( 'Empfänger wählen', 'empf_p_id', 'empf_p_id' );
 		$f->hidden_feld ( 'option', 'beleg_sent' );
 		$f->send_button ( 'sndBtn', 'Zuweisen' );
 		$f->ende_formular ();

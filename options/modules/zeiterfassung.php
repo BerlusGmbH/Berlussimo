@@ -21,7 +21,7 @@
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'zeiterfassung' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -29,10 +29,10 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'zeiterfassung' )) {
 	die ();
 }
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
 
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
 include_once ("options/links/links.zeiterfassung.php");
 include_once ("classes/class_zeiterfassung.php");
 
@@ -77,7 +77,7 @@ switch ($option) {
 		if (isset ( $benutzer_id ) && isset ( $beschreibung )) {
 			$ze->stundenzettel_speichern ( $benutzer_id, $beschreibung );
 		} else {
-			fehlermeldung_ausgeben ( "Bitte f�llen Sie alle Felder aus" );
+			fehlermeldung_ausgeben ( "Bitte füllen Sie alle Felder aus" );
 		}
 		break;
 	
@@ -115,7 +115,7 @@ switch ($option) {
 			}
 			
 			if (empty ( $leistung_id ) && empty ( $leistungs_beschreibung )) {
-				echo "W�hlen Sie bitte ein Leistung aus, oder geben Sie manuell Ihre Leistungsbeschreibung ein";
+				echo "Wählen Sie bitte ein Leistung aus, oder geben Sie manuell Ihre Leistungsbeschreibung ein";
 				die ();
 			}
 			if (empty ( $leistungs_beschreibung ) && ! empty ( $leistung_id )) {
@@ -129,7 +129,7 @@ switch ($option) {
 				echo "Entweder Leistung aussuchen oder Leistungsbeschreibung eintragen";
 			}
 		} else {
-			echo "EINGABE UNVOLLST�NDIG";
+			echo "EINGABE UNVOLLSTÄNDIG";
 			print_req ( $_POST );
 		}
 		break;
@@ -141,7 +141,7 @@ switch ($option) {
 			$ze = new zeiterfassung ();
 			$ze->pos_loeschen ( $zettel_id, $pos_id );
 		} else {
-			hinweis_ausgeben ( "FEHLER BEIM L�SCHEN" );
+			hinweis_ausgeben ( "FEHLER BEIM LÖSCHEN" );
 			weiterleiten_in_sec ( "?daten=zeiterfassung&option=zettel_eingabe&zettel_id=$zettel_id", 2 );
 		}
 		break;
@@ -153,7 +153,7 @@ switch ($option) {
 			$ze = new zeiterfassung ();
 			$ze->form_zeile_aendern ( $zettel_id, $pos_id );
 		} else {
-			hinweis_ausgeben ( "FEHLER BEIM �NDERN" );
+			hinweis_ausgeben ( "FEHLER BEIM ÄNDERN" );
 			weiterleiten_in_sec ( "?daten=zeiterfassung&option=zettel_eingabe&zettel_id=$zettel_id", 2 );
 		}
 		break;
@@ -184,7 +184,7 @@ switch ($option) {
 			}
 			
 			if (empty ( $leistung_id ) && empty ( $leistungs_beschreibung )) {
-				echo "W�hlen Sie bitte ein Leistung aus, oder geben Sie manuell Ihre Leistungsbeschreibung ein";
+				echo "Wählen Sie bitte ein Leistung aus, oder geben Sie manuell Ihre Leistungsbeschreibung ein";
 				die ();
 			}
 			if (empty ( $leistungs_beschreibung ) && ! empty ( $leistung_id )) {
@@ -200,7 +200,7 @@ switch ($option) {
 				echo "Entweder Leistung aussuchen oder Leistungsbeschreibung eintragen";
 			}
 		} else {
-			echo "EINGABE UNVOLLST�NDIG";
+			echo "EINGABE UNVOLLSTÄNDIG";
 		}
 		
 		break;
@@ -253,10 +253,10 @@ switch ($option) {
 				$z->zettel_loeschen_voll ( $zettel_id );
 				weiterleiten ( "?daten=zeiterfassung&option=nachweisliste&mitarbeiter_id=$benutzer_id" );
 			} else {
-				die ( "Sie haben keine Berechtigung fremde Stundennachweise zu l�schen, da sie keine Vollrechte haben." );
+				die ( "Sie haben keine Berechtigung fremde Stundennachweise zu löschen, da sie keine Vollrechte haben." );
 			}
 		} else {
-			die ( "Zettel ausw�hlen" );
+			die ( "Zettel auswählen" );
 		}
 		break;
 	
@@ -268,7 +268,7 @@ switch ($option) {
 	case "suchen_std" :
 		// print_req();
 		if (empty ( $_REQUEST ['kostentraeger_typ'] ) or empty ( $_REQUEST ['kostentraeger_id'] )) {
-			// die('Kostentraeger w�hlen!');
+			// die('Kostentraeger wählen!');
 		}
 		
 		if (empty ( $_REQUEST ['adatum'] )) {
@@ -286,7 +286,7 @@ switch ($option) {
 		$benutzer_id = $_REQUEST ['benutzer_id'];
 		$gewerk_id = $_REQUEST ['g_id'];
 		$kos_typ = $_REQUEST ['kostentraeger_typ'];
-		$kos_bez = $_REQUEST ['kostentraeger_id']; // bez sp�ter zu id machen nicht vergessen!
+		$kos_bez = $_REQUEST ['kostentraeger_id']; // bez später zu id machen nicht vergessen!
 		
 		$z->stunden_suchen ( $benutzer_id, $gewerk_id, $kos_typ, $kos_bez, $adatum, $edatum );
 		break;

@@ -18,8 +18,8 @@
  * 
  */
 echo "<div class=\"navi_leiste2\">";
-echo "<a href=\"?daten=haus_raus&haus_raus=haus_kurz\">Alle H�user kurz</a>&nbsp;";
-echo "<a href=\"?daten=haus_raus&haus_raus=haus_detailiert\">H�user im Detail</a>&nbsp;";
+echo "<a href=\"?daten=haus_raus&haus_raus=haus_kurz\">Alle Häuser kurz</a>&nbsp;";
+echo "<a href=\"?daten=haus_raus&haus_raus=haus_detailiert\">Häuser im Detail</a>&nbsp;";
 echo "<br><hr>";
 echo "</div>";
 ?>

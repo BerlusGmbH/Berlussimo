@@ -279,7 +279,7 @@ td.alt {
 }
 
 /*DIVS NEU DRUCKEN*/
-/* 1. Div f�r LOGO*/
+/* 1. Div für LOGO*/
 #div_logo {
 	width: 100%;
 	background-color: #fff;
@@ -293,7 +293,7 @@ td.alt {
 	margin-bottom: 10px;
 }
 
-/* 2. Div f�r Firmenname*/
+/* 2. Div für Firmenname*/
 #div_firma {
 	font-size: 8pt;
 	font-family: "Trebuchet MS";
@@ -301,7 +301,7 @@ td.alt {
 	background-color: #fff;
 	margin-bottom: 20px;
 }
-/* 3. Div f�r Empf�nger Adressfeld*/
+/* 3. Div für Empfänger Adressfeld*/
 #div_adressfeld {
 	width: 100%;
 	height: 150px;
@@ -318,7 +318,7 @@ td.alt {
 	font-size: 5px;
 }
 
-/* 4. Div f�r Rechnungsdaten*/
+/* 4. Div für Rechnungsdaten*/
 #div_rechnungsdaten {
 	width: 100%;
 	height: 100px;
@@ -371,7 +371,7 @@ td.alt {
 	font-size: 13pt;
 }
 
-/* 4. Div f�r POSITIONEN*/
+/* 4. Div für POSITIONEN*/
 #div_positionen {
 	width: 100%;
 	background-color: #fff;
@@ -384,7 +384,7 @@ body {
 	margin-bottom: 100px;
 }
 
-/* 5. Div f�r Zahlungshinweise*/
+/* 5. Div für Zahlungshinweise*/
 #div_z_hinweis {
 	font-size: 9pt;
 	font-family: "Trebuchet MS";
@@ -394,7 +394,7 @@ body {
 	padding-top: 20px;
 	page-break-inside: avoid;
 }
-/* 6. Div f�r Footer*/
+/* 6. Div für Footer*/
 #div_footer_zeile {
 	clear: both;
 	position: fixed;

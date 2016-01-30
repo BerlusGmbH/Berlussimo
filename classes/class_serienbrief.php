@@ -152,7 +152,7 @@ class serienbrief {
 					
 					// $meine_var{$this->v_text} = $this->v_text;
 					eval ( "\$bpdf->v_text = \"$bpdf->v_text\";" );
-					; // Variable ausm Text f�llen
+					; // Variable ausm Text füllen
 					
 					$pdf->ezText ( "$bpdf->v_text", 10, array (
 							'justification' => 'full' 
@@ -238,7 +238,7 @@ class serienbrief {
 					
 					// $meine_var{$this->v_text} = $this->v_text;
 					eval ( "\$bpdf->v_text = \"$bpdf->v_text\";" );
-					; // Variable ausm Text f�llen
+					; // Variable ausm Text füllen
 					
 					$pdf->ezText ( "$bpdf->v_text", 11, array (
 							'justification' => 'full' 
@@ -258,7 +258,7 @@ class serienbrief {
 				// $pdf->ezStream();
 			}
 		} else {
-			die ( 'Keine Empf�nger gew�hlt' );
+			die ( 'Keine Empfänger gewählt' );
 		}
 	}
 } // ENDE CLASS

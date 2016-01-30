@@ -21,7 +21,7 @@
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! isset ( $_SESSION ['benutzer_id'] ) or ! check_user_mod ( $_SESSION ['benutzer_id'], 'urlaub' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -29,10 +29,10 @@ if (! isset ( $_SESSION ['benutzer_id'] ) or ! check_user_mod ( $_SESSION ['benu
 	die ();
 }
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
 
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
 include_once ("options/links/links.urlaub.php");
 include_once ("classes/class_urlaub.php");
 
@@ -55,8 +55,8 @@ switch ($option) {
 		}
 		$vorjahr = $jahr - 1;
 		$nachjahr = $jahr + 1;
-		$link_vorjahr = "<a href=\"?daten=urlaub&option=uebersicht&jahr=$vorjahr\">�bersicht $vorjahr</a>";
-		$link_nachjahr = "<a href=\"?daten=urlaub&option=uebersicht&jahr=$nachjahr\">�bersicht $nachjahr</a>";
+		$link_vorjahr = "<a href=\"?daten=urlaub&option=uebersicht&jahr=$vorjahr\">Übersicht $vorjahr</a>";
+		$link_nachjahr = "<a href=\"?daten=urlaub&option=uebersicht&jahr=$nachjahr\">Übersicht $nachjahr</a>";
 		$u = new urlaub ();
 		echo "$link_vorjahr $link_nachjahr<br>";
 		$u->jahresuebersicht_anzeigen ( $jahr );
@@ -96,7 +96,7 @@ switch ($option) {
 			die ();
 		}
 		if ($e_jahr > $a_jahr) {
-			fehlermeldung_ausgeben ( "Urlaub erstreckt sich �ber ein Jahr, bitte nur Urlaub innerhalb eines Kalenderjahres eingeben." );
+			fehlermeldung_ausgeben ( "Urlaub erstreckt sich über ein Jahr, bitte nur Urlaub innerhalb eines Kalenderjahres eingeben." );
 			die ();
 		} else {
 			$art = $_REQUEST ['art'];
@@ -132,7 +132,7 @@ switch ($option) {
 			$u->urlaubstag_loeschen ( $dat );
 			weiterleiten_in_sec ( "?daten=urlaub&option=jahresansicht&jahr=2009&benutzer_id=$benutzer_id&jahr=$jahr", 1 );
 		} else {
-			echo "Urlaubstag ausw�hlen";
+			echo "Urlaubstag auswählen";
 		}
 		break;
 	
@@ -187,8 +187,8 @@ switch ($option) {
 		}
 		$vorjahr = $jahr - 1;
 		$nachjahr = $jahr + 1;
-		echo "<a href=\"?daten=urlaub&option=monatsansicht_jahr&jahr=$vorjahr\"> �bersicht $vorjahr </a> |  ";
-		echo "<a href=\"?daten=urlaub&option=monatsansicht_jahr&jahr=$nachjahr\"> �bersicht $nachjahr </a> ";
+		echo "<a href=\"?daten=urlaub&option=monatsansicht_jahr&jahr=$vorjahr\"> Übersicht $vorjahr </a> |  ";
+		echo "<a href=\"?daten=urlaub&option=monatsansicht_jahr&jahr=$nachjahr\"> Übersicht $nachjahr </a> ";
 		for($a = 1; $a <= 12; $a ++) {
 			$u->monatsansicht ( $a, $jahr );
 		}

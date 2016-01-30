@@ -21,7 +21,7 @@
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'kautionen' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -29,10 +29,10 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'kautionen' )) {
 	die ();
 }
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
 
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
 include_once ("options/links/links.kautionen.php");
 include_once ("classes/class_kautionen.php");
 
@@ -52,7 +52,7 @@ switch ($option) {
 			$k = new kautionen ();
 			$k->form_kautionsbuchung_mieter ( $mv_id );
 		} else {
-			echo "Mietvertrag ausw�hlen";
+			echo "Mietvertrag auswählen";
 		}
 		break;
 	
@@ -66,7 +66,7 @@ switch ($option) {
 			$k = new kautionen ();
 			$k->kaution_speichern ( $datum, 'MIETVERTRAG', $mv_id, $betrag, $text, '1000' );
 		} else {
-			echo "Mietvertrag ausw�hlen";
+			echo "Mietvertrag auswählen";
 		}
 		break;
 	
@@ -76,7 +76,7 @@ switch ($option) {
 			$mv_id = $_REQUEST [mietvertrag_id];
 			$k->form_hochrechnung_mv ( $mv_id );
 		} else {
-			echo "Mietvertrag ausw�hlen";
+			echo "Mietvertrag auswählen";
 		}
 		break;
 	
@@ -129,7 +129,7 @@ switch ($option) {
 		if (! empty ( $_SESSION [geldkonto_id] )) {
 			$k->mieter_ohne_kaution_anzeigen ( $_SESSION [geldkonto_id], '1000' );
 		} else {
-			hinweis_ausgeben ( 'Kautionskonto w�hlen' );
+			hinweis_ausgeben ( 'Kautionskonto wählen' );
 		}
 		break;
 	
@@ -166,7 +166,7 @@ switch ($option) {
 		$f->erstelle_formular ( "Neues Feld", null );
 		$f->text_feld ( "Feld/Spaltenbezeichnung", 'feld', '', 50, 'feld', null );
 		$f->hidden_feld ( "option", "feld_hinzu" );
-		$f->send_button ( "submit", "Feld hinzuf�gen" );
+		$f->send_button ( "submit", "Feld hinzufügen" );
 		$f->ende_formular ();
 		if (is_array ( $arr )) {
 			// echo '<pre>';
@@ -182,7 +182,7 @@ switch ($option) {
 				$z ++;
 				$feld = $arr [$a] ['FELD'];
 				$dat = $arr [$a] ['DAT'];
-				$link_del = "<a href=\"?daten=kautionen&option=feld_del&dat=$dat\">L�schen</a>";
+				$link_del = "<a href=\"?daten=kautionen&option=feld_del&dat=$dat\">Löschen</a>";
 				echo "<tr><td>$z. $feld</td>";
 				echo "<td>$link_del</td>";
 				echo "</tr>";

@@ -19,14 +19,14 @@
  */
 $mieten = new mietkonto ();
 echo "<div class=\"navi_leiste2\">";
-$mieten->erstelle_formular ( "Hauptmen� -> GELDKONTEN...", NULL );
+$mieten->erstelle_formular ( "Hauptmenü -> GELDKONTEN...", NULL );
 
-echo "<a href=\"?daten=geldkonten\">Kontost�nde</a>&nbsp;";
-echo "<a href=\"?daten=geldkonten&option=uebersicht_ea\">�bersicht E/A</a>&nbsp;";
+echo "<a href=\"?daten=geldkonten\">Kontostände</a>&nbsp;";
+echo "<a href=\"?daten=geldkonten&option=uebersicht_ea\">Übersicht E/A</a>&nbsp;";
 echo "<a href=\"?daten=geldkonten&option=gk_neu\">GK erstellen</a>&nbsp;";
 echo "<a href=\"?daten=geldkonten&option=gk_zuweisen\">GK zuweisen</a>&nbsp;";
 // echo "<a href=\"?daten=dt_aus&option=dtaus_buchen\">DTAUS Buchen</a>&nbsp;";
-echo "<a href=\"?daten=geldkonten&option=uebersicht_zuweisung\">�bersicht Zuweisung</a>&nbsp;";
+echo "<a href=\"?daten=geldkonten&option=uebersicht_zuweisung\">Übersicht Zuweisung</a>&nbsp;";
 
 $mieten->ende_formular ();
 

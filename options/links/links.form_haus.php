@@ -19,10 +19,10 @@
  */
 $mieten = new mietkonto ();
 echo "<div class=\"navi_leiste2\">";
-$mieten->erstelle_formular ( "Hauptmen� -> H�user...", NULL );
-echo "<a href=\"?daten=haus_raus&haus_raus=haus_kurz\">H�userliste</a>&nbsp; ";
+$mieten->erstelle_formular ( "Hauptmenü -> Häuser...", NULL );
+echo "<a href=\"?daten=haus_raus&haus_raus=haus_kurz\">Häuserliste</a>&nbsp; ";
 echo "<a href=\"?formular=haus&daten_rein=haus_neu\">Haus anlegen</a>&nbsp; ";
-echo "<a href=\"?daten=haus_raus&haus_raus=haus_aendern\">Haus �ndern</a>&nbsp; ";
+echo "<a href=\"?daten=haus_raus&haus_raus=haus_aendern\">Haus ändern</a>&nbsp; ";
 $mieten->ende_formular ();
 echo "</div>";
 ?>

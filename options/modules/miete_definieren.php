@@ -19,7 +19,7 @@
  */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'miete_definieren' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -51,7 +51,7 @@ if (isset ( $_REQUEST ['option'] ) && ! empty ( $_REQUEST ['option'] )) {
 
 // $me->mietdefinition_zu_details();
 
-/* Mieterinformationen �ber die Buchungsformulare anzeigen */
+/* Mieterinformationen über die Buchungsformulare anzeigen */
 if (isset ( $_REQUEST ['mietvertrag_id'] ) && ! empty ( $_REQUEST ['mietvertrag_id'] )) {
 	$mieter_info = new mietkonto ();
 	$mieter_info->erstelle_formular ( "Mieterinformationen", NULL );
@@ -63,7 +63,7 @@ switch ($schritt) {
 	
 	case "miethoehe" :
 		$form = new mietkonto ();
-		$form->erstelle_formular ( "Mieth�he definieren", NULL );
+		$form->erstelle_formular ( "Miethöhe definieren", NULL );
 		if (isset ( $_REQUEST ['mietvertrag_id'] ) && ! empty ( $_REQUEST ['mietvertrag_id'] )) {
 			$mietvertrag_id = $_REQUEST ['mietvertrag_id'];
 			$me = new mietentwicklung ();
@@ -101,7 +101,7 @@ else {
 			$form->ende_formular ();
 		} else {
 			// fals keine MV_ID eingegeben wurde, weiterleiten
-			warnung_ausgeben ( "Fehler : Bitte eine Einheit ausw�hlen!" );
+			warnung_ausgeben ( "Fehler : Bitte eine Einheit auswählen!" );
 			weiterleiten ( "?daten=miete_definieren" );
 		}
 		$form->ende_formular ();
@@ -115,12 +115,12 @@ else {
 		}
 		
 		if (! isset ( $_SESSION ['objekt_id'] )) {
-			echo "<div class=\"info_feld_oben\">Objekt ausw�hlen</div>";
+			echo "<div class=\"info_feld_oben\">Objekt auswählen</div>";
 			objekt_auswahl ();
 		}
 		
 		if (isset ( $_SESSION ['objekt_id'] )) {
-			echo "<div class=\"info_feld_oben\">Einheit ausw�hlen</div>";
+			echo "<div class=\"info_feld_oben\">Einheit auswählen</div>";
 			objekt_auswahl ();
 			einheiten_liste ();
 		}
@@ -130,7 +130,7 @@ else {
 	
 	case "aendern" :
 		$form = new mietkonto ();
-		$form->erstelle_formular ( "Aktuelle Mietdefinition �ndern", NULL );
+		$form->erstelle_formular ( "Aktuelle Mietdefinition ändern", NULL );
 		$me = new mietentwicklung ();
 		$me->me_dat_aendern_form ( $_REQUEST ['aendern_dat'] );
 		$me->mietentwicklung_anzeigen ( $_REQUEST ['mietvertrag_id'] );
@@ -172,7 +172,7 @@ else {
 	
 	case "miete_eingeben" :
 		$form = new mietkonto ();
-		$form->erstelle_formular ( "Mieth�he eingeben", NULL );
+		$form->erstelle_formular ( "Miethöhe eingeben", NULL );
 		
 		for($a = 0; $a < count ( $_POST [kostenkategorie] ); $a ++) {
 			$uarr = $_POST ['kostenkategorie'] [$a];
@@ -183,7 +183,7 @@ else {
 				}
 			}
 		}
-		hinweis_ausgeben ( "Miete wurde definiert, Sie werden gleich zur �bersicht weitergeleit!" );
+		hinweis_ausgeben ( "Miete wurde definiert, Sie werden gleich zur übersicht weitergeleit!" );
 		$mv_info = new mietvertrag ();
 		$einheit_id = $mv_info->get_einheit_id_von_mietvertrag ( $_POST ['mietvertrag_id'] );
 		weiterleiten_in_sec ( "?daten=uebersicht&anzeigen=einheit&einheit_id=$einheit_id", "2" );
@@ -202,13 +202,13 @@ else {
 function objekt_auswahl() {
 	echo "<div class=\"objekt_auswahl\">";
 	$mieten = new mietkonto ();
-	$mieten->erstelle_formular ( "Objekt ausw�hlen...", NULL );
+	$mieten->erstelle_formular ( "Objekt auswählen...", NULL );
 	
 	if (isset ( $_SESSION ['objekt_id'] )) {
 		$objekt_kurzname = new objekt ();
 		$objekt_kurzname->get_objekt_name ( $_SESSION ['objekt_id'] );
-		echo "<p>&nbsp;<b>Ausgew�hltes Objekt</b> -> $objekt_kurzname->objekt_name ->";
-		echo "<div class=\"info_feld_oben\">Ausgew�hltes Objekt " . $objekt_kurzname->objekt_name . "<br><b>Einheit ausw�hlen</b><br>WEISS: keine Zahlung im aktuellen Monat.<br>GRAU: Zahlungen wurden gebucht.</div>";
+		echo "<p>&nbsp;<b>Ausgewähltes Objekt</b> -> $objekt_kurzname->objekt_name ->";
+		echo "<div class=\"info_feld_oben\">Ausgewähltes Objekt " . $objekt_kurzname->objekt_name . "<br><b>Einheit auswählen</b><br>WEISS: keine Zahlung im aktuellen Monat.<br>GRAU: Zahlungen wurden gebucht.</div>";
 	}
 	
 	$objekte = new objekt ();
@@ -231,9 +231,9 @@ function objekt_auswahl() {
 function einheiten_liste() {
 	$mieten = new mietkonto ();
 	echo "<div class=\"einheit_auswahl\">";
-	$mieten->erstelle_formular ( "Vermietete Einheit ausw�hlen...", NULL );
+	$mieten->erstelle_formular ( "Vermietete Einheit auswählen...", NULL );
 	
-	/* Liste der Einheiten falls Objekt ausgew�hlt wurde */
+	/* Liste der Einheiten falls Objekt ausgewählt wurde */
 	if (isset ( $_SESSION ['objekt_id'] )) {
 		$objekt_id = $_SESSION ['objekt_id'];
 		$mein_objekt = new objekt ();
@@ -245,11 +245,11 @@ function einheiten_liste() {
 				$einheiten_array [] = $row;
 		}
 	} else {
-		/* Liste aller Einheiten da kein Objekt ausgew�hlt wurde */
+		/* Liste aller Einheiten da kein Objekt ausgewählt wurde */
 		$meine_einheiten = new einheit ();
 		$einheiten_array = $meine_einheiten->liste_aller_einheiten ();
 	}
-	// Beispiel f�r ein Array $sx mit den Spalten $sx['dat'], $sx['name'], $sx['id'].
+	// Beispiel für ein Array $sx mit den Spalten $sx['dat'], $sx['name'], $sx['id'].
 	
 	$einheiten_array = array_sortByIndex ( $einheiten_array, 'EINHEIT_KURZNAME' );
 	// echo "<pre>";

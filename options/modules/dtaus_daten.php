@@ -19,7 +19,7 @@
  */
 include_once ("includes/allgemeine_funktionen.php");
 include_once ("classes/class_dtaus_berlussimo.php");
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'dt_aus' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -52,7 +52,7 @@ switch ($option) {
 		objekt_auswahl_liste ( $link );
 		if (isset ( $_SESSION ['objekt_id'] )) {
 			$dtaus = new dtaus_vorbereitung ( $_SESSION ['objekt_id'] ); // 'objekt_id'
-			$form->erstelle_formular ( "DT-AUS Zusammenstellung f�r $dtaus->objekt_name", NULL );
+			$form->erstelle_formular ( "DT-AUS Zusammenstellung für $dtaus->objekt_name", NULL );
 			
 			// $dtaus = new dtaus_vorbereitung(2); // 'objekt_id'
 			// echo "<hr>";
@@ -79,7 +79,7 @@ switch ($option) {
 					$jahr = date ( "Y" );
 					$monat = date ( "m" );
 					echo "<table><tr class=\"feldernamen\">";
-					echo "<td colspan=2><b>Empf�nger:<br>" . $dtaus->objekt_geld_konten [0] [empfaenger_name] . "</b></td>";
+					echo "<td colspan=2><b>Empfänger:<br>" . $dtaus->objekt_geld_konten [0] [empfaenger_name] . "</b></td>";
 					echo "<td><b>Kontonr:<br> " . $dtaus->objekt_geld_konten [0] [empfaenger_kontonr] . "</b></td>";
 					echo "<td><b>BLZ:<br> " . $dtaus->objekt_geld_konten [0] [empfaenger_blz] . "</b></td>";
 					echo "<td>vzweck</td><td>MV-Nr</td><td>Einheit</td>";
@@ -102,13 +102,13 @@ switch ($option) {
 						// verwendungszweck ist statisch
 						
 						$zeilen_zaehler = $a + 1;
-						echo "<tr><td>$zeilen_zaehler. " . $dtaus->sortiert [$a] ['KONTOINHABER'] . "</td><td>" . $dtaus->sortiert [$a] ['KONTONUMMER'] . "</td><td>" . $dtaus->sortiert [$a] ['BLZ'] . "</td><td>" . $dtaus->sortiert [$a] ['MIETSUMME'] . " �-Cent</td><td>$vzweck1</td><td>$vzweck2</td><td>$vzweck3</td>";
+						echo "<tr><td>$zeilen_zaehler. " . $dtaus->sortiert [$a] ['KONTOINHABER'] . "</td><td>" . $dtaus->sortiert [$a] ['KONTONUMMER'] . "</td><td>" . $dtaus->sortiert [$a] ['BLZ'] . "</td><td>" . $dtaus->sortiert [$a] ['MIETSUMME'] . " €-Cent</td><td>$vzweck1</td><td>$vzweck2</td><td>$vzweck3</td>";
 						$gesamt_summe_rechnen = $gesamt_summe_rechnen + $dtaus->sortiert [$a] ['MIETSUMME'];
 						$dt->lastschrift ( $dtaus->sortiert [$a] ['KONTOINHABER'], $dtaus->sortiert [$a] ['BLZ'], $dtaus->sortiert [$a] ['KONTONUMMER'], $betrag_in_cent, $vzweck1, $vzweck2, $vzweck3 );
-						// ausgabe zum beispiel in einem textfeld f�r copy & paste
+						// ausgabe zum beispiel in einem textfeld für copy & paste
 					} // end for
 					  // echo "$import_string";
-					echo "<tr><td>$gesamt_summe_rechnen �</td></tr>";
+					echo "<tr><td>$gesamt_summe_rechnen €</td></tr>";
 					echo "</table>";
 					/* echo '<textarea class="content" style="width:900; height:1200;">' . $dt->doSome() . '</textarea><br><br>'; */
 					// fertig
@@ -121,7 +121,7 @@ switch ($option) {
 					// echo $string;
 				}  // end if dtaus sortiert nicht leer bzw >0
 else {
-					echo "Keine Teilnehmer am Einzugsverfahren f�r dieses Geldkonto";
+					echo "Keine Teilnehmer am Einzugsverfahren für dieses Geldkonto";
 				}
 			}
 			
@@ -162,7 +162,7 @@ else {
 				if (file_exists ( "$monats_ordner/$import_filename" )) {
 					$import_eingelesen = file ( "$monats_ordner/$import_filename" );
 					if (! isset ( $_POST [send_btn] )) {
-						$form->erstelle_formular ( "Lastschriften f�r Import ausw�hlen", NULL );
+						$form->erstelle_formular ( "Lastschriften für Import auswählen", NULL );
 						// print_r($_SESSION);
 						if (isset ( $_SESSION ['temp_datum'] )) {
 							$datum = $_SESSION ['temp_datum'];
@@ -191,7 +191,7 @@ else {
 							}
 							echo "</tr>";
 						}
-						echo "<tr><td><b>Gesamtbetrag: $gesamtbetrag �</b></td></tr>";
+						echo "<tr><td><b>Gesamtbetrag: $gesamtbetrag €</b></td></tr>";
 						echo "</table>";
 						$form->send_button ( "send_btn", "IMPORTIEREN" );
 					}
@@ -322,7 +322,7 @@ WHERE DETAIL_NAME = 'Kontoinhaber-AutoEinzug' && DETAIL_ZUORDNUNG_TABELLE = 'MIE
 				$row = mysql_fetch_assoc ( $result );
 				$this->alle_teilnehmer [$a] ['KONTOINHABER'] = $row ['KONTO_INHABER'];
 				
-				/* Kontonummer f�r das Einzugsverfahren ermitteln */
+				/* Kontonummer für das Einzugsverfahren ermitteln */
 				$result = mysql_query ( "SELECT DETAIL_INHALT AS KONTONUMMER
 FROM `DETAIL`
 WHERE DETAIL_NAME = 'Kontonummer-AutoEinzug' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG' && DETAIL_AKTUELL = '1' && DETAIL_ZUORDNUNG_ID = '$mv_id'" );
@@ -352,7 +352,7 @@ WHERE DETAIL_NAME = 'Kontonummer-AutoEinzug' && DETAIL_ZUORDNUNG_TABELLE = 'MIET
 						$mietsumme = '0.00';
 					}
 				}
-				/* FALL 2. Unabh�ngig vom Saldo, nur die im Mietvertrag vereinbarte Summe ziehen */
+				/* FALL 2. Unabhüngig vom Saldo, nur die im Mietvertrag vereinbarte Summe ziehen */
 				if ($einzugsart == "Nur die Summe aus Vertrag") {
 					$mietsumme = $mk->summe_forderung_monatlich ( $mv_id, $monat, $jahr );
 					$this->alle_teilnehmer [$a] ['Autoeinzugsart'] = $einzugsart;
@@ -447,14 +447,14 @@ WHERE DETAIL_NAME = 'Kontonummer-AutoEinzug' && DETAIL_ZUORDNUNG_TABELLE = 'MIET
 						// verwendungszweck ist statisch
 						
 						$zeilen_zaehler = $a + 1;
-						echo "<tr><td>$zeilen_zaehler. " . $this->alle_teilnehmer [$a] ['KONTOINHABER'] . "</td><td>" . $this->alle_teilnehmer [$a] ['KONTONUMMER'] . "</td><td>" . $this->alle_teilnehmer [$a] ['BLZ'] . "</td><td>" . $this->alle_teilnehmer [$a] ['ZIEHEN'] . " �-Cent</td><td>$vzweck1</td><td>$vzweck2</td><td>$vzweck3</td>";
+						echo "<tr><td>$zeilen_zaehler. " . $this->alle_teilnehmer [$a] ['KONTOINHABER'] . "</td><td>" . $this->alle_teilnehmer [$a] ['KONTONUMMER'] . "</td><td>" . $this->alle_teilnehmer [$a] ['BLZ'] . "</td><td>" . $this->alle_teilnehmer [$a] ['ZIEHEN'] . " ü-Cent</td><td>$vzweck1</td><td>$vzweck2</td><td>$vzweck3</td>";
 						$gesamt_summe_rechnen = $gesamt_summe_rechnen + $this->alle_teilnehmer [$a] ['ZIEHEN'];
 						$dt->lastschrift ( $this->alle_teilnehmer [$a] ['KONTOINHABER'], $this->alle_teilnehmer [$a] ['BLZ'], $this->alle_teilnehmer [$a] ['KONTONUMMER'], $betrag_in_cent, $vzweck1, $vzweck2, $vzweck3 );
-						// ausgabe zum beispiel in einem textfeld f�r copy & paste
+						// ausgabe zum beispiel in einem textfeld für copy & paste
 					} // end for
 					  // echo "$import_string";
 					$gesamt_summe_rechnen = nummer_punkt2komma ( $gesamt_summe_rechnen );
-					echo "<tr><td colspan=3><b>GESAMTSUMME ALLER MIETEN</b></td><td><b>$gesamt_summe_rechnen �</b></td></tr>";
+					echo "<tr><td colspan=3><b>GESAMTSUMME ALLER MIETEN</b></td><td><b>$gesamt_summe_rechnen ü</b></td></tr>";
 					echo "</table>";
 					// echo '<textarea class="content" style="width:900; height:1200;">' . $dt->doSome() . '</textarea><br><br>';
 					// fertig
@@ -469,7 +469,7 @@ WHERE DETAIL_NAME = 'Kontonummer-AutoEinzug' && DETAIL_ZUORDNUNG_TABELLE = 'MIET
 					fehlermeldung_ausgeben ( 'Kein Geldkonto zum Objekt hinterlegt' );
 				}
 			} else {
-				fehlermeldung_ausgeben ( "Keine Daten f�r DTAUS, siehe Soll" );
+				fehlermeldung_ausgeben ( "Keine Daten für DTAUS, siehe Soll" );
 			}
 			
 			echo "</table>";
@@ -520,9 +520,9 @@ WHERE DETAIL_NAME = 'Autoeinzugsart' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG'
 		}
 		
 		$filename_neu = "$monats_ordner/$filename";
-		/* wenn datei existiert l�schen */
+		/* wenn datei existiert lüschen */
 		if (file_exists ( $filename_neu )) {
-			unlink ( $filename_neu ); // Datei l�schen
+			unlink ( $filename_neu ); // Datei lüschen
 		}
 		if (! file_exists ( $filename_neu )) {
 			$fhandle = fopen ( $filename_neu, "w" );
@@ -530,7 +530,7 @@ WHERE DETAIL_NAME = 'Autoeinzugsart' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG'
 			fclose ( $fhandle );
 			echo "<br>$filename_neu erstellt";
 			chmod ( $filename_neu, 0644 );
-			// system("rm $dir -R"); //ordner abrechnungsjahr l�schen
+			// system("rm $dir -R"); //ordner abrechnungsjahr lüschen
 			echo "<table  border=3>";
 			echo "<tr class=\"feldernamen\"><td><a href=\"$_SERVER[SCRIPT_ROOT]$filename_neu\"><b>DOWNLOAD ALS DTA-DATEI</a></b></td></tr>";
 			echo "<tr><td>$string</td></tr>";
@@ -556,9 +556,9 @@ WHERE DETAIL_NAME = 'Autoeinzugsart' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG'
 		}
 		
 		$filename_neu = "$monats_ordner/$filename";
-		/* wenn datei existiert l�schen */
+		/* wenn datei existiert lüschen */
 		if (file_exists ( $filename_neu )) {
-			unlink ( $filename_neu ); // Datei l�schen
+			unlink ( $filename_neu ); // Datei lüschen
 		}
 		if (! file_exists ( $filename_neu )) {
 			$fhandle = fopen ( $filename_neu, "w" );
@@ -566,7 +566,7 @@ WHERE DETAIL_NAME = 'Autoeinzugsart' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG'
 			fclose ( $fhandle );
 			echo "<br>$filename_neu erstellt";
 			chmod ( $filename_neu, 0644 );
-			// system("rm $dir -R"); //ordner abrechnungsjahr l�schen
+			// system("rm $dir -R"); //ordner abrechnungsjahr lüschen
 			echo "<table  border=3>";
 			echo "<tr class=\"feldernamen\"><td>IMPORTDATEI</td></tr>";
 			echo "<tr><td>$string</td></tr>";
@@ -637,13 +637,13 @@ class dtaus_vorbereitung {
 		}
 	}
 	
-	/* Funktion zur Ermittlung der Mietvertr�ge die am Einzugsverfahren teilnehmen */
+	/* Funktion zur Ermittlung der Mietvertrüge die am Einzugsverfahren teilnehmen */
 	function mitvertrag_einzugsverfahren_arr() {
 		// $result = mysql_query ("SELECT DETAIL_ZUORDNUNG_ID AS MIETVERTRAG_NR
 		// FROM `DETAIL`
-		// WHERE DETAIL_NAME = 'Einzugserm�chtigung' && DETAIL_INHALT='JA' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG' && DETAIL_AKTUELL = '1'");
+		// WHERE DETAIL_NAME = 'Einzugsermüchtigung' && DETAIL_INHALT='JA' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG' && DETAIL_AKTUELL = '1'");
 		$result = mysql_query ( "SELECT DETAIL_ZUORDNUNG_ID AS MIETVERTRAG_NR FROM `DETAIL` LEFT JOIN(MIETVERTRAG) ON (DETAIL_ZUORDNUNG_ID=MIETVERTRAG_ID) 
-WHERE DETAIL_NAME = 'Einzugserm�chtigung' && DETAIL_INHALT='JA' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG' && DETAIL_AKTUELL = '1' && MIETVERTRAG_AKTUELL = '1' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS>=CURDATE())" );
+WHERE DETAIL_NAME = 'Einzugsermüchtigung' && DETAIL_INHALT='JA' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG' && DETAIL_AKTUELL = '1' && MIETVERTRAG_AKTUELL = '1' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS>=CURDATE())" );
 		
 		$numrows = mysql_numrows ( $result );
 		if ($numrows > 0) {
@@ -656,7 +656,7 @@ WHERE DETAIL_NAME = 'Einzugserm�chtigung' && DETAIL_INHALT='JA' && DETAIL_ZUOR
 		}
 	}
 	
-	/* Funktion zur Ermittlung der Kontodaten f�r das Einzugsverfahren */
+	/* Funktion zur Ermittlung der Kontodaten für das Einzugsverfahren */
 	function einzugsverfahren_teilnehmer() {
 		$monat = date ( "m" );
 		// $monat = '09';
@@ -674,7 +674,7 @@ WHERE DETAIL_NAME = 'Kontoinhaber-AutoEinzug' && DETAIL_ZUORDNUNG_TABELLE = 'MIE
 			$row = mysql_fetch_assoc ( $result );
 			$this->alle_teilnehmer [$a] ['KONTOINHABER'] = $row ['KONTO_INHABER'];
 			
-			/* Kontonummer f�r das Einzugsverfahren ermitteln */
+			/* Kontonummer für das Einzugsverfahren ermitteln */
 			$result = mysql_query ( "SELECT DETAIL_INHALT AS KONTONUMMER
 FROM `DETAIL`
 WHERE DETAIL_NAME = 'Kontonummer-AutoEinzug' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG' && DETAIL_AKTUELL = '1' && DETAIL_ZUORDNUNG_ID = '$mietvertrag_id'" );
@@ -708,7 +708,7 @@ WHERE DETAIL_NAME = 'Kontonummer-AutoEinzug' && DETAIL_ZUORDNUNG_TABELLE = 'MIET
 			 * if(!$einzugsart){
 			 * $mietsumme = $mietkonto->mietkontostand_ausrechnen($mietvertrag_id);
 			 * $this->alle_teilnehmer[$a]['Autoeinzugsart'] ="Aktuelles Saldo komplett";
-			 * /*Falls das Mietkonto in den positiven Bereich wandert, nur regul�re Miete ziehen
+			 * /*Falls das Mietkonto in den positiven Bereich wandert, nur regulüre Miete ziehen
 			 */
 			/*
 			 * $mietsumme = number_format($mietsumme, 2, ".", "");
@@ -855,16 +855,16 @@ WHERE DETAIL_NAME = 'Autoeinzugsart' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG'
 			fclose ( $fhandle );
 			echo "<br>$filename_neu erstellt";
 			chmod ( $filename_neu, 0644 );
-			// system("rm $dir -R"); //ordner abrechnungsjahr l�schen
+			// system("rm $dir -R"); //ordner abrechnungsjahr lüschen
 			echo "<table  border=3>";
 			echo "<tr class=\"feldernamen\"><td><a href=\"$_SERVER[SCRIPT_ROOT]$filename_neu\"><b>DOWNLOAD ALS DTA-DATEI</a></b></td></tr>";
 			echo "<tr><td>$string</td></tr>";
 			echo "</table>";
 		} else {
-			// unlink($filename_neu); // Datei l�schen
-			// exec("rm $monats_ordner/*.*"); 'Monatsordner aufr�umen'
-			// exec("rm $dtaus_ordner -R"); '/dtaus komplett l�schen'
-			echo "<b>Kein Schreiben m�glich<br>";
+			// unlink($filename_neu); // Datei lüschen
+			// exec("rm $monats_ordner/*.*"); 'Monatsordner aufrüumen'
+			// exec("rm $dtaus_ordner -R"); '/dtaus komplett lüschen'
+			echo "<b>Kein Schreiben müglich<br>";
 			echo "Die Datei existiert bereits als $filename_neu<br></b>";
 			echo "<tr><td><a href=\"$_SERVER[SCRIPT_ROOT]$filename_neu\"><b>DOWNLOAD ALS DTA-DATEI</a></b></td></tr>";
 		}
@@ -894,16 +894,16 @@ WHERE DETAIL_NAME = 'Autoeinzugsart' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG'
 			fclose ( $fhandle );
 			echo "<br>$filename_neu erstellt";
 			chmod ( $filename_neu, 0644 );
-			// system("rm $dir -R"); //ordner abrechnungsjahr l�schen
+			// system("rm $dir -R"); //ordner abrechnungsjahr lüschen
 			echo "<table  border=3>";
 			echo "<tr class=\"feldernamen\"><td>IMPORTDATEI</td></tr>";
 			echo "<tr><td>$string</td></tr>";
 			echo "</table>";
 		} else {
-			unlink ( $filename_neu ); // Datei l�schen
-			                       // exec("rm $monats_ordner/*.*"); 'Monatsordner aufr�umen'
-			                       // exec("rm $dtaus_ordner -R"); '/dtaus komplett l�schen'
-			echo "<br><b>Kein Schreiben m�glich<br>";
+			unlink ( $filename_neu ); // Datei lüschen
+			                       // exec("rm $monats_ordner/*.*"); 'Monatsordner aufrüumen'
+			                       // exec("rm $dtaus_ordner -R"); '/dtaus komplett lüschen'
+			echo "<br><b>Kein Schreiben müglich<br>";
 			echo "Die Datei existiert bereits als $filename_neu<br></b>";
 		}
 	}
@@ -915,14 +915,14 @@ function objekt_auswahl_liste($link) {
 	
 	echo "<div class=\"objekt_auswahl\">";
 	$mieten = new mietkonto ();
-	$mieten->erstelle_formular ( "Objekt ausw�hlen...", NULL );
+	$mieten->erstelle_formular ( "Objekt auswühlen...", NULL );
 	
 	if (isset ( $_SESSION ['objekt_id'] )) {
 		$objekt_kurzname = new objekt ();
 		$objekt_kurzname->get_objekt_name ( $_SESSION ['objekt_id'] );
-		echo "<p>&nbsp;<b>Ausgew�hltes Objekt</b> -> $objekt_kurzname->objekt_name ->";
+		echo "<p>&nbsp;<b>Ausgewühltes Objekt</b> -> $objekt_kurzname->objekt_name ->";
 	} else {
-		echo "<p>&nbsp;<b>Objekt ausw�hlen</b>";
+		echo "<p>&nbsp;<b>Objekt auswählen</b>";
 	}
 	
 	$objekte = new objekt ();

@@ -20,7 +20,7 @@
 include_once ("includes/allgemeine_funktionen.php");
 include_once ('classes/class_lager.php');
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION [benutzer_id], 'lager' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -55,7 +55,7 @@ switch ($option) {
 		$link = '?daten=lager&option=lagerbestand_bis_form';
 		$lager_info->lager_auswahl_liste ( $link );
 		if (empty ( $_SESSION [lager_id] )) {
-			die ( "Lager w�hlen" );
+			die ( "Lager wählen" );
 		} else {
 			$f = new formular ();
 			$lager_bez = $lager_info->lager_bezeichnung ( $_SESSION ['lager_id'] );

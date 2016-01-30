@@ -28,10 +28,10 @@ include_once ("../includes/allgemeine_funktionen.php");
 
 import_me ( 'e201' );
 function import_me($tabelle) {
-	$tabelle_in_gross = strtoupper ( $tabelle ); // Tabelle in GRO�BUCHSTABEN
+	$tabelle_in_gross = strtoupper ( $tabelle ); // Tabelle in GROßBUCHSTABEN
 	$datei = "$tabelle.csv"; // DATEINAME
 	$array = file ( $datei ); // DATEI IN ARRAY EINLESEN
-	echo $array [0]; // ZEILE 0 mit �berschriften
+	echo $array [0]; // ZEILE 0 mit Überschriften
 	$feldernamen [] = explode ( ":", $array [0] ); // FELDNAMEN AUS ZEILE 0 IN ARRAY EINLESEN
 	$anzahl_felder = count ( $feldernamen [0] ); // ANZAHL DER IMPORT FELDER
 	$feld1 = $feldernamen [0] [0]; // FELD1 - IMPORT nur zur info
@@ -45,7 +45,7 @@ function import_me($tabelle) {
 	 * print_r($zeile);
 	 * echo "</pre>";
 	 */
-	for($i = 0; $i < count ( $array ); $i ++) // Datei ab Zeile1 einlesen, weil Zeile 0 �berschrift ist
+	for($i = 0; $i < count ( $array ); $i ++) // Datei ab Zeile1 einlesen, weil Zeile 0 Überschrift ist
 {
 		
 		$zeile [$i] = explode ( ":", $array [$i] ); // Zeile in Array einlesen
@@ -58,7 +58,7 @@ function import_me($tabelle) {
 		$bemerkung = $zeile [$i] [5];
 		
 		if (preg_match ( "/Betriebskosten/i", $bemerkung ) || preg_match ( "/Heizkosten/i", $bemerkung )) {
-			echo "$i Es wurde eine �bereinstimmung gefunden.<br>";
+			echo "$i Es wurde eine Übereinstimmung gefunden.<br>";
 			$form = new mietkonto ();
 			$datum_arr = explode ( ".", $datum );
 			$monat = $datum_arr [1];
@@ -96,7 +96,7 @@ function import_me($tabelle) {
 		 *
 		 * $form->mietentwicklung_speichern($mv_id, $bemerkung, $betrag, $a_datum, $e_datum);
 		 *
-		 * echo "$i Heizkosten Es wurde eine �bereinstimmung gefunden.<br>";
+		 * echo "$i Heizkosten Es wurde eine Übereinstimmung gefunden.<br>";
 		 * }
 		 */
 	}

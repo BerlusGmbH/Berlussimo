@@ -21,7 +21,7 @@
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'katalog' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -29,10 +29,10 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'katalog' )) {
 	die ();
 }
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
 
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
 include_once ("options/links/links.katalog.php");
 include_once ("classes/class_katalog.php");
 
@@ -73,7 +73,7 @@ switch ($option) {
 	
 	case "preisentwicklung" :
 		if (empty ( $_REQUEST ['lieferant'] ) && empty ( $_SESSION ['partner_id'] ) && empty ( $_REQUEST ['artikel_nr'] )) {
-			echo "Erst Lieferanten w�hlen";
+			echo "Erst Lieferanten wählen";
 			die ();
 		}
 		if (empty ( $_REQUEST ['lieferant'] )) {
@@ -163,7 +163,7 @@ switch ($option) {
 			}
 			echo "</table>";
 		} else {
-			fehlermeldung_ausgeben ( "Partner w�hlen!" );
+			fehlermeldung_ausgeben ( "Partner wählen!" );
 		}
 		
 		break;

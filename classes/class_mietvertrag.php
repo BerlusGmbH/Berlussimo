@@ -20,7 +20,7 @@
 if (file_exists ( "includes/allgemeine_funktionen.php" )) {
 	include_once ("includes/allgemeine_funktionen.php");
 }
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 if (file_exists ( "classes/class_formular.php" )) {
 	include_once ("classes/class_formular.php");
 }
@@ -44,16 +44,16 @@ class mietvertraege {
 		$this->objekt_auswahl_liste ( $link );
 		$form = new mietkonto ();
 		$form->erstelle_formular ( "Neuen Mietvertrag erstellen", NULL );
-		// $this->dropdown_leerstaende($_SESSION['objekt_id'], 'einheit_id', 'Einheit ausw�hlen', 'dropdown_leerstand');
+		// $this->dropdown_leerstaende($_SESSION['objekt_id'], 'einheit_id', 'Einheit auswählen', 'dropdown_leerstand');
 		if (! empty ( $_SESSION ['objekt_id'] )) {
-			if ($this->dropdown_leerstaende ( $_SESSION ['objekt_id'], 'einheit_id', 'Einheit ausw�hlen', 'dropdown_leerstand' )) {
+			if ($this->dropdown_leerstaende ( $_SESSION ['objekt_id'], 'einheit_id', 'Einheit auswählen', 'dropdown_leerstand' )) {
 			}
 			$form->text_feld ( 'Einzugsdatum', 'datum_einzug', $this->datum_heute, '10' );
 			$form->text_feld ( 'Auszugsdatum', 'datum_auszug', '', '10' );
 			$javaaction = 'onchange="mieter_auswaehlen()"';
-			$this->dropdown_personen_liste ( 'Mieter ausw�hlen', 'alle_mieter_list', 'alle_mieter_list', $javaaction );
+			$this->dropdown_personen_liste ( 'Mieter auswählen', 'alle_mieter_list', 'alle_mieter_list', $javaaction );
 			$javaaction1 = 'onchange="mieter_entfernen()"';
-			$this->ausgewahlte_mieter_liste ( 'Ausgew�hlte Mieter', 'mieter_liste[]', 'mieter_liste', $javaaction1, '5' );
+			$this->ausgewahlte_mieter_liste ( 'Ausgewählte Mieter', 'mieter_liste[]', 'mieter_liste', $javaaction1, '5' );
 			$form->text_feld ( 'Miete kalt', 'miete_kalt', '', '10' );
 			$form->text_feld ( 'Nebenkosten Vorauszahlung', 'nebenkosten', '', '10' );
 			$form->text_feld ( 'Heizkosten Vorauszahlung', 'heizkosten', '', '10' );
@@ -71,13 +71,13 @@ class mietvertraege {
 			$sendbutton_js = "onclick=\"alle_mieter_auswaehlen()\"";
 			$form->send_button_js ( 'btn_mv_erstellen', 'Mietvertrag erstellen', $sendbutton_js );
 		} else {
-			echo "<h1>KEINE LEERST�NDE IM OBJEKT</h1>";
+			echo "<h1>KEINE LEERSTÄNDE IM OBJEKT</h1>";
 		}
 		$form->ende_formular ();
 	}
 	function mv_aendern_formular($mietvertrag_id) {
 		$form = new mietkonto ();
-		$form->erstelle_formular ( "Mietvertrag �ndern", NULL );
+		$form->erstelle_formular ( "Mietvertrag ändern", NULL );
 		$this->datum_heute = date ( "d.m.Y" );
 		
 		$this->get_mietvertrag_infos_aktuell ( $mietvertrag_id );
@@ -96,15 +96,15 @@ class mietvertraege {
 			$form->text_feld ( 'Auszugsdatum', 'datum_auszug', $this->mietvertrag_bis, '10' );
 		}
 		$javaaction = 'onchange="mieter_auswaehlen()"';
-		$this->dropdown_personen_liste ( 'Mieter ausw�hlen', 'alle_mieter_list', 'alle_mieter_list', $javaaction );
+		$this->dropdown_personen_liste ( 'Mieter auswählen', 'alle_mieter_list', 'alle_mieter_list', $javaaction );
 		$javaaction1 = 'onchange="mieter_entfernen()"';
 		
 		$mieter_arr = $form->get_personen_ids_mietvertrag ( $mietvertrag_id );
-		$this->ausgewahlte_mieter_liste_aendern ( 'Ausgew�hlte Mieter', 'mieter_liste[]', 'mieter_liste', $javaaction1, '5', $mieter_arr );
+		$this->ausgewahlte_mieter_liste_aendern ( 'Ausgewählte Mieter', 'mieter_liste[]', 'mieter_liste', $javaaction1, '5', $mieter_arr );
 		
 		$form->hidden_feld ( 'mietvertrag_raus', 'mv_aenderung_pruefen' );
 		$sendbutton_js = "onclick=\"alle_mieter_auswaehlen()\"";
-		$form->send_button_js ( 'btn_mv_updaten', 'Mietvertrag �ndern', $sendbutton_js );
+		$form->send_button_js ( 'btn_mv_updaten', 'Mietvertrag ändern', $sendbutton_js );
 		$form->ende_formular ();
 	}
 	function mietvertrag_beenden_form($mietvertrag_id) {
@@ -277,7 +277,7 @@ class mietvertraege {
 				if ($geschlecht == 'weiblich') {
 					$herr_frau = "Frau";
 				}
-				if ($geschlecht == 'm�nnlich') {
+				if ($geschlecht == 'männlich') {
 					$herr_frau = "Herr";
 				}
 				if (! empty ( $herr_frau )) {
@@ -297,7 +297,7 @@ class mietvertraege {
 				if ($geschlecht == 'weiblich') {
 					$herr_frau = 'Frau ';
 				}
-				if ($geschlecht == 'm�nnlich') {
+				if ($geschlecht == 'männlich') {
 					$herr_frau = 'Herr ';
 				}
 				
@@ -334,7 +334,7 @@ class mietvertraege {
 				if ($geschlecht == 'weiblich') {
 					$herr_frau = "Frau";
 				}
-				if ($geschlecht == 'm�nnlich') {
+				if ($geschlecht == 'männlich') {
 					$herr_frau = "Herr";
 				}
 				if (! empty ( $herr_frau )) {
@@ -355,7 +355,7 @@ class mietvertraege {
 				if ($geschlecht == 'weiblich') {
 					$herr_frau = 'Frau ';
 				}
-				if ($geschlecht == 'm�nnlich') {
+				if ($geschlecht == 'männlich') {
 					$herr_frau = 'Herr ';
 				}
 				
@@ -436,10 +436,10 @@ class mietvertraege {
 	function teilnahme_einzugsverfahren_eingeben($mv_id, $konto_inh, $konto_nr, $blz, $bankname, $art, $ja_nein) {
 		// echo "<h1>JA NEIN $ja_nein</h1>";
 		
-		/* Einzugserm�chtigung */
+		/* Einzugsermächtigung */
 		$last_id = last_id ( 'DETAIL' );
 		$last_id = $last_id + 1;
-		$db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$last_id', 'Einzugserm�chtigung', '$ja_nein', '', '1', 'MIETVERTRAG', '$mv_id')";
+		$db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$last_id', 'Einzugsermächtigung', '$ja_nein', '', '1', 'MIETVERTRAG', '$mv_id')";
 		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 		$last_dat = mysql_insert_id ();
 		protokollieren ( 'DETAIL', $last_dat, '0' );
@@ -509,7 +509,7 @@ class mietvertraege {
 		return $akt_mietvertrag_id;
 	}
 	
-	/* Pr�ft ob der Mietvertrag beendet wird/wurde, bzw. der Mieter auszieht */
+	/* Prüft ob der Mietvertrag beendet wird/wurde, bzw. der Mieter auszieht */
 	function check_auszug($mv_id) {
 		$this->get_mietvertrag_infos_aktuell ( $mv_id );
 		
@@ -585,7 +585,7 @@ class mietvertraege {
 				$this->mietvertrag_aktuell = '0';
 			}
 			
-			/* Array f�r Verzugsanschriften der Mieter l�schen */
+			/* Array für Verzugsanschriften der Mieter löschen */
 			if (isset ( $this->postanschrift )) {
 				unset ( $this->postanschrift );
 			}
@@ -602,7 +602,7 @@ class mietvertraege {
 					$namen = "Frau\n$p->person_nachname $p->person_vorname";
 					$this->herr_frau = 'Frau';
 				}
-				if ($geschlecht == 'm�nnlich') {
+				if ($geschlecht == 'männlich') {
 					$anrede_p = 'geehrter Herr';
 					$namen = "Herr\n$p->person_nachname $p->person_vorname";
 					$this->herr_frau = 'Herr';
@@ -613,7 +613,7 @@ class mietvertraege {
 					$this->mv_anrede = "Sehr geehrte Damen und Herren,\n";
 				}
 				
-				if ($geschlecht != 'm�nnlich' && $geschlecht != 'weiblich') {
+				if ($geschlecht != 'männlich' && $geschlecht != 'weiblich') {
 					$anrede_p = 'geehrte Damen und Herren';
 					$this->mv_anrede = "Sehr $anrede_p,\n";
 					$namen = "PPPPP";
@@ -636,13 +636,13 @@ class mietvertraege {
 						$namen = "Frau $p->person_nachname $p->person_vorname";
 						$this->mv_anrede = "$anrede_p $p->person_nachname,";
 					}
-					if ($geschlecht == 'm�nnlich') {
+					if ($geschlecht == 'männlich') {
 						$anrede_p = 'geehrter Herr';
 						$namen = "Herr $p->person_nachname $p->person_vorname";
 						$this->mv_anrede = "$anrede_p $p->person_nachname,";
 					}
 					
-					if ($geschlecht != 'm�nnlich' && $geschlecht != 'weiblich') {
+					if ($geschlecht != 'männlich' && $geschlecht != 'weiblich') {
 						$anrede_p = 'geehrte Damen und Herren';
 						$this->mv_anrede = "$anrede_p,\n";
 						$namen = "";
@@ -694,12 +694,12 @@ class mietvertraege {
 				// $this->postanschrift[$a]['name'] = "Frau\n$p->person_vorname $p->person_nachname";
 			}
 			
-			if ($geschlecht == 'm�nnlich') {
+			if ($geschlecht == 'männlich') {
 				// $this->postanschrift[$a]['anrede'] = "Sehr geehrter Herr $p->person_nachname,\n";
 				// $this->postanschrift[$a]['name'] = "Herr\n$p->person_vorname $p->person_nachname";
 			}
 			
-			if ($geschlecht != 'm�nnlich' && $geschlecht != 'weiblich') {
+			if ($geschlecht != 'männlich' && $geschlecht != 'weiblich') {
 				// $this->postanschrift[$a]['anrede'] = "Sehr geehrte Damen und Herren,\n";
 				// $this->postanschrift[$a]['name'] = "$p->person_vorname $p->person_nachname";
 				// $this->herr_frau = '';
@@ -771,7 +771,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC" );
 		protokollieren ( 'MIETVERTRAG', $mietvertrag_dat, $mietvertrag_dat );
 		
 		$db_abfrage = "UPDATE PERSON_MIETVERTRAG SET PERSON_MIETVERTRAG_AKTUELL='0' where PERSON_MIETVERTRAG_MIETVERTRAG_ID='$mietvertrag_id_alt'";
-		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () ); // personen zu MV gel�scht bzw auf 0 gesetzt
+		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () ); // personen zu MV gelöscht bzw auf 0 gesetzt
 		                    
 		// ####################ende der deaktivierung mv und person->mv############
 		$db_abfrage = "INSERT INTO MIETVERTRAG (`MIETVERTRAG_DAT`, `MIETVERTRAG_ID`, `MIETVERTRAG_VON`, `MIETVERTRAG_BIS`, `EINHEIT_ID`, `MIETVERTRAG_AKTUELL`) VALUES (NULL, '$mietvertrag_id_alt', '$mietvertrag_von', '$mietvertrag_bis', '$einheit_id', '1')";
@@ -785,17 +785,17 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC" );
 			$person_id = $person_arr [$a];
 			person_zu_mietvertrag ( $person_id, $mietvertrag_id_alt );
 		}
-		hinweis_ausgeben ( "Mietvertrag wurde ge�ndert" );
+		hinweis_ausgeben ( "Mietvertrag wurde geändert" );
 		weiterleiten_in_sec ( "?daten=uebersicht&anzeigen=einheit&einheit_id=$einheit_id", "2" );
 	}
 	
-	/* Funktion zur Ermittlung der Mietvertr�ge die am Einzugsverfahren teilnehmen */
+	/* Funktion zur Ermittlung der Mietverträge die am Einzugsverfahren teilnehmen */
 	function mietvertrag_einzugsverfahren_arr() {
 		$result = mysql_query ( "SELECT DETAIL_ZUORDNUNG_ID AS MIETVERTRAG_ID FROM `DETAIL` LEFT JOIN(MIETVERTRAG) ON (DETAIL_ZUORDNUNG_ID=MIETVERTRAG_ID) 
-WHERE DETAIL_NAME = 'Einzugserm�chtigung' && DETAIL_INHALT='JA' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG' && DETAIL_AKTUELL = '1' && MIETVERTRAG_AKTUELL = '1' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS>=CURDATE())" );
+WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='JA' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG' && DETAIL_AKTUELL = '1' && MIETVERTRAG_AKTUELL = '1' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS>=CURDATE())" );
 		
 		// $result = mysql_query ("SELECT * FROM `DETAIL` LEFT JOIN(MIETVERTRAG) ON (DETAIL_ZUORDNUNG_ID=MIETVERTRAG_ID)
-		// WHERE DETAIL_NAME = 'Einzugserm�chtigung' && DETAIL_INHALT='JA' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG' && DETAIL_AKTUELL = '1' && MIETVERTRAG_AKTUELL = '1' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS>=CURDATE())");
+		// WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='JA' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG' && DETAIL_AKTUELL = '1' && MIETVERTRAG_AKTUELL = '1' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS>=CURDATE())");
 		$numrows = mysql_numrows ( $result );
 		if ($numrows) {
 			while ( $row = mysql_fetch_assoc ( $result ) )
@@ -806,10 +806,10 @@ WHERE DETAIL_NAME = 'Einzugserm�chtigung' && DETAIL_INHALT='JA' && DETAIL_ZUOR
 		}
 	}
 	
-	/* Funktion zur Ermittlung der Mietvertr�ge die am Einzugsverfahren teilnahmen bzw. momentan auf NEIN stehen */
+	/* Funktion zur Ermittlung der Mietverträge die am Einzugsverfahren teilnahmen bzw. momentan auf NEIN stehen */
 	function mietvertrag_einzugsverfahren_arr_ausgesetzt() {
 		$result = mysql_query ( "SELECT DETAIL_ZUORDNUNG_ID AS MIETVERTRAG_ID FROM `DETAIL` LEFT JOIN(MIETVERTRAG) ON (DETAIL_ZUORDNUNG_ID=MIETVERTRAG_ID) 
-WHERE DETAIL_NAME = 'Einzugserm�chtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG' && DETAIL_AKTUELL = '1' && MIETVERTRAG_AKTUELL = '1' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS>=CURDATE())" );
+WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG' && DETAIL_AKTUELL = '1' && MIETVERTRAG_AKTUELL = '1' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS>=CURDATE())" );
 		
 		$numrows = mysql_numrows ( $result );
 		if ($numrows > 0) {
@@ -821,7 +821,7 @@ WHERE DETAIL_NAME = 'Einzugserm�chtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZU
 		}
 	}
 	
-	/* Liste als Array der aktuellen LS-Teilnehmer d.h. nur aktuelle Mietvertr�ge */
+	/* Liste als Array der aktuellen LS-Teilnehmer d.h. nur aktuelle Mietverträge */
 	function ls_akt_teilnehmer_arr() {
 		print_r ( $_SESSION );
 		
@@ -838,7 +838,7 @@ WHERE DETAIL_NAME = 'Einzugserm�chtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZU
 					$teilnehmer_objekt_arr ['objekt_id'] = $this->objekt_id;
 					$teilnehmer_objekt_arr ['OBJEKT_KURZNAME'] = $this->objekt_kurzname;
 					
-					// $teilnehmer_arr_z ist der arrayz�hler
+					// $teilnehmer_arr_z ist der arrayzähler
 					$teilnehmer_objekt_arr [$teilnehmer_arr_z] ['MV_ID'] = $this->mietvertrag_id;
 					$teilnehmer_objekt_arr [$teilnehmer_arr_z] ['EINHEIT_KURZNAME'] = $this->einheit_kurzname;
 					$teilnehmer_objekt_arr [$teilnehmer_arr_z] ['EINHEIT_ID'] = $this->einheit_id;
@@ -859,7 +859,7 @@ WHERE DETAIL_NAME = 'Einzugserm�chtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZU
 			}
 		}  // ende if !empty SESSION objekt_id
 else {
-			hinweis_ausgeben ( "Objekt ausw�hlen" );
+			hinweis_ausgeben ( "Objekt auswählen" );
 		}
 		/* Nach Einheit sortieren */
 		if (isset ( $teilnehmer_objekt_arr )) {
@@ -924,7 +924,7 @@ else {
 	} // end function
 	  
 	// ################### ANFANG AUSGESETZTE TLN (NEIN)####################
-	/* Liste als Array der aktuell ausgesetzten LS-Teilnehmer d.h. nur aktuelle Mietvertr�ge mit NEIN */
+	/* Liste als Array der aktuell ausgesetzten LS-Teilnehmer d.h. nur aktuelle Mietverträge mit NEIN */
 	function ls_akt_teilnehmer_arr_ausgesetzt() {
 		// print_r($_SESSION);
 		$this->alle_teilnehmer = $this->mietvertrag_einzugsverfahren_arr_ausgesetzt ();
@@ -940,7 +940,7 @@ else {
 					$teilnehmer_objekt_arr ['objekt_id'] = $this->objekt_id;
 					$teilnehmer_objekt_arr ['OBJEKT_KURZNAME'] = $this->objekt_kurzname;
 					
-					// $teilnehmer_arr_z ist der arrayz�hler
+					// $teilnehmer_arr_z ist der arrayzähler
 					$teilnehmer_objekt_arr [$teilnehmer_arr_z] [MV_ID] = $this->mietvertrag_id;
 					$teilnehmer_objekt_arr [$teilnehmer_arr_z] ['EINHEIT_KURZNAME'] = $this->einheit_kurzname;
 					$teilnehmer_objekt_arr [$teilnehmer_arr_z] ['EINHEIT_ID'] = $this->einheit_id;
@@ -957,7 +957,7 @@ else {
 			}
 		}  // ende if !empty SESSION objekt_id
 else {
-			hinweis_ausgeben ( "Objekt ausw�hlen" );
+			hinweis_ausgeben ( "Objekt auswählen" );
 		}
 		/* Nach Einheit sortieren */
 		
@@ -1015,12 +1015,12 @@ else {
 		$form->ende_formular ();
 	} // end function
 	function teilnehmer_aktivieren($mv_id) {
-		$db_abfrage = "UPDATE DETAIL SET DETAIL_INHALT='JA' where DETAIL_NAME='Einzugserm�chtigung' && DETAIL_ZUORDNUNG_TABELLE='MIETVERTRAG' && DETAIL_ZUORDNUNG_ID='$mv_id'";
+		$db_abfrage = "UPDATE DETAIL SET DETAIL_INHALT='JA' where DETAIL_NAME='Einzugsermächtigung' && DETAIL_ZUORDNUNG_TABELLE='MIETVERTRAG' && DETAIL_ZUORDNUNG_ID='$mv_id'";
 		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 		hinweis_ausgeben ( "Teilnahme zum Lastschriftverfahren aufgenommen." );
 	}
 	function teilnehmer_deaktivieren($mv_id) {
-		$db_abfrage = "UPDATE DETAIL SET DETAIL_INHALT='NEIN' where DETAIL_NAME='Einzugserm�chtigung' && DETAIL_ZUORDNUNG_TABELLE='MIETVERTRAG' && DETAIL_ZUORDNUNG_ID='$mv_id'";
+		$db_abfrage = "UPDATE DETAIL SET DETAIL_INHALT='NEIN' where DETAIL_NAME='Einzugsermächtigung' && DETAIL_ZUORDNUNG_TABELLE='MIETVERTRAG' && DETAIL_ZUORDNUNG_ID='$mv_id'";
 		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 		hinweis_ausgeben ( "Teilnahme zum Lastschriftverfahren ausgesetzt." );
 	}
@@ -1037,7 +1037,7 @@ else {
 			$form->mieter_infos_vom_mv ( $_REQUEST ['mietvertrag_id'] );
 			
 			if ($this->ls_daten_vorhanden ( $_REQUEST ['mietvertrag_id'] ) == false) {
-				$form->erstelle_formular ( "Teilnehmer hinzuf�gen", NULL );
+				$form->erstelle_formular ( "Teilnehmer hinzufügen", NULL );
 				$form->hidden_feld ( 'mietvertrag_id', $_REQUEST ['mietvertrag_id'] );
 				$this->autoeinzugsarten ( 'Einzugsart', 'einzugsart', 'einzugsart' );
 				$form->text_feld ( 'Kontoinhaber', 'konto_inhaber_autoeinzug', '', '40' );
@@ -1051,7 +1051,7 @@ else {
 				$form->erstelle_formular ( "Teilnehmer bearbeiten", NULL );
 				$this->ls_daten_holen ( $_REQUEST ['mietvertrag_id'] );
 				$form->hidden_feld ( 'mietvertrag_id', $_REQUEST ['mietvertrag_id'] );
-				$this->dropdown_ja_nein ( 'Einzugserm�chtigung erteilt', 'einzugsermaechtigung', $this->ls_einzugsermaechtigung );
+				$this->dropdown_ja_nein ( 'Einzugsermächtigung erteilt', 'einzugsermaechtigung', $this->ls_einzugsermaechtigung );
 				$form->hidden_feld ( 'deaktiviere_dat[]', $this->ls_einzugsermaechtigung_dat );
 				
 				$this->dropdown_autoeinzug_selected ( 'Einzugsart', 'einzugsart', $this->ls_autoeinzugsart );
@@ -1094,7 +1094,7 @@ else {
 		/* protokollieren fehlt */
 	}
 	function lastschrift_beenden($mv_id) {
-		$result = mysql_query ( "UPDATE `DETAIL` SET DETAIL_INHALT='NEIN' WHERE DETAIL_NAME = 'Einzugserm�chtigung' && DETAIL_INHALT='JA' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG' && DETAIL_ZUORDNUNG_ID='$mv_id' && DETAIL_AKTUELL = '1' " );
+		$result = mysql_query ( "UPDATE `DETAIL` SET DETAIL_INHALT='NEIN' WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='JA' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG' && DETAIL_ZUORDNUNG_ID='$mv_id' && DETAIL_AKTUELL = '1' " );
 	}
 	function ls_daten_holen($mv_id) {
 		unset ( $this->ls_konto_inhaber_dat );
@@ -1139,8 +1139,8 @@ else {
 		$row = mysql_fetch_assoc ( $result );
 		$this->ls_autoeinzugsart_dat = $row ['DETAIL_DAT'];
 		$this->ls_autoeinzugsart = $row ['DETAIL_INHALT'];
-		/* Einzugserm�chtigungt holen */
-		$result = mysql_query ( "SELECT DETAIL_DAT, DETAIL_INHALT FROM DETAIL WHERE DETAIL_NAME='Einzugserm�chtigung' && DETAIL_ZUORDNUNG_TABELLE='MIETVERTRAG' && DETAIL_ZUORDNUNG_ID='$mv_id' && DETAIL_AKTUELL='1'" );
+		/* Einzugsermächtigungt holen */
+		$result = mysql_query ( "SELECT DETAIL_DAT, DETAIL_INHALT FROM DETAIL WHERE DETAIL_NAME='Einzugsermächtigung' && DETAIL_ZUORDNUNG_TABELLE='MIETVERTRAG' && DETAIL_ZUORDNUNG_ID='$mv_id' && DETAIL_AKTUELL='1'" );
 		$row = mysql_fetch_assoc ( $result );
 		$this->ls_einzugsermaechtigung_dat = $row ['DETAIL_DAT'];
 		$this->ls_einzugsermaechtigung = $row ['DETAIL_INHALT'];
@@ -1162,9 +1162,9 @@ else {
 	function einheiten_liste($link) {
 		$mieten = new mietkonto ();
 		echo "<div class=\"einheit_auswahl\">";
-		$mieten->erstelle_formular ( "Vermietete Einheit ausw�hlen...", NULL );
+		$mieten->erstelle_formular ( "Vermietete Einheit auswählen...", NULL );
 		
-		/* Liste der Einheiten falls Objekt ausgew�hlt wurde */
+		/* Liste der Einheiten falls Objekt ausgewählt wurde */
 		if (isset ( $_SESSION ['objekt_id'] )) {
 			$objekt_id = $_SESSION ['objekt_id'];
 			$mein_objekt = new objekt ();
@@ -1176,11 +1176,11 @@ else {
 					$einheiten_array [] = $row;
 			}
 		} else {
-			/* Liste aller Einheiten da kein Objekt ausgew�hlt wurde */
+			/* Liste aller Einheiten da kein Objekt ausgewählt wurde */
 			$meine_einheiten = new einheit ();
 			$einheiten_array = $meine_einheiten->liste_aller_einheiten ();
 		}
-		// Beispiel f�r ein Array $sx mit den Spalten $sx['dat'], $sx['name'], $sx['id'].
+		// Beispiel für ein Array $sx mit den Spalten $sx['dat'], $sx['name'], $sx['id'].
 		
 		$einheiten_array = array_sortByIndex ( $einheiten_array, 'EINHEIT_KURZNAME' );
 		$counter = 0;
@@ -1250,7 +1250,7 @@ else {
 			unset ( $e );
 			return $my_array;
 		} else {
-			hinweis_ausgeben ( "Keine Ausz�ge im $monat/$jahr" );
+			hinweis_ausgeben ( "Keine Auszüge im $monat/$jahr" );
 			die ();
 		}
 	}
@@ -1309,7 +1309,7 @@ else {
 			unset ( $e );
 			return $my_array;
 		} else {
-			hinweis_ausgeben ( "Keine Einz�ge im $monat/$jahr" );
+			hinweis_ausgeben ( "Keine Einzüge im $monat/$jahr" );
 			die ();
 		}
 	}
@@ -1365,7 +1365,7 @@ else {
 			unset ( $e );
 			return $my_array;
 		} else {
-			hinweis_ausgeben ( "Keine Ausz�ge im $monat/$jahr" );
+			hinweis_ausgeben ( "Keine Auszüge im $monat/$jahr" );
 			die ();
 		}
 	}
@@ -1391,7 +1391,7 @@ else {
 			unset ( $e );
 			return $my_array;
 		} else {
-			hinweis_ausgeben ( "Keine Einz�ge im $monat/$jahr" );
+			hinweis_ausgeben ( "Keine Einzüge im $monat/$jahr" );
 			die ();
 		}
 	}
@@ -1429,7 +1429,7 @@ else {
 			}
 			echo "</table>";
 		} else {
-			hinweis_ausgeben ( "Keine Ausz�ge im $monat/$jahr" );
+			hinweis_ausgeben ( "Keine Auszüge im $monat/$jahr" );
 		}
 	}
 	function eingezogene_mieter_anzeigen($objekt_id, $jahr, $monat) {
@@ -1468,7 +1468,7 @@ else {
 			}
 			echo "</table>";
 		} else {
-			hinweis_ausgeben ( "Keine Ausz�ge im $monat/$jahr" );
+			hinweis_ausgeben ( "Keine Auszüge im $monat/$jahr" );
 		}
 	}
 	function alle_ausgezogene_mieter_anzeigen($jahr, $monat) {
@@ -1517,7 +1517,7 @@ else {
 			}
 			echo "</table>";
 		} else {
-			hinweis_ausgeben ( "Keine Ausz�ge im $monat/$jahr" );
+			hinweis_ausgeben ( "Keine Auszüge im $monat/$jahr" );
 		}
 	}
 	function alle_eingezogene_mieter_anzeigen($jahr, $monat) {
@@ -1565,7 +1565,7 @@ else {
 			}
 			echo "</table>";
 		} else {
-			hinweis_ausgeben ( "Keine Ausz�ge im $monat/$jahr" );
+			hinweis_ausgeben ( "Keine Auszüge im $monat/$jahr" );
 		}
 	}
 	function alle_ausgezogenen_pdf($jahr, $monat) {
@@ -1584,7 +1584,7 @@ else {
 		// die();
 		$pdf->selectFont ( $text_schrift );
 		$pdf->ezSetCmMargins ( 1.0, 2.0, 2.0, 1.0 );
-		$pdf->ezText ( "<b>Ausz�ge $monat_name $jahr</b> inkl. Kautionsh�he", 11 );
+		$pdf->ezText ( "<b>Auszüge $monat_name $jahr</b> inkl. Kautionshöhe", 11 );
 		$pdf->ezSetDy ( - 20 );
 		if (is_array ( $auszug_arr )) {
 			$anzahl_auszuege = count ( $auszug_arr );
@@ -1635,7 +1635,7 @@ else {
 					'ABNAHME' => "ABNAHME",
 					'KAUTION' => "KAUTION" 
 			);
-			$pdf->ezTable ( $pdf_tab, $cols, "Ausz�ge $monat_name $jahr", array (
+			$pdf->ezTable ( $pdf_tab, $cols, "Auszüge $monat_name $jahr", array (
 					'rowGap' => 1.5,
 					'showLines' => 1,
 					'showHeadings' => 1,
@@ -1662,11 +1662,11 @@ else {
 					) 
 			) );
 		} else {
-			hinweis_ausgeben ( "Keine Ausz�ge im $monat/$jahr" );
+			hinweis_ausgeben ( "Keine Auszüge im $monat/$jahr" );
 		}
 		ob_clean (); // ausgabepuffer leeren
 		            // header("Content-type: application/pdf"); // wird von MSIE ignoriert
-		$dateiname = $monat . "_" . $jahr . "_Ausz�ge.pdf";
+		$dateiname = $monat . "_" . $jahr . "_Auszüge.pdf";
 		$pdf_opt ['Content-Disposition'] = $dateiname;
 		$pdf->ezStream ( $pdf_opt );
 	}
@@ -1686,7 +1686,7 @@ else {
 		// die();
 		$pdf->selectFont ( $text_schrift );
 		$pdf->ezSetCmMargins ( 1.0, 2.0, 2.0, 1.0 );
-		$pdf->ezText ( "<b>Einz�ge $monat_name $jahr</b> inkl. Kautionsh�he", 11 );
+		$pdf->ezText ( "<b>Einzüge $monat_name $jahr</b> inkl. Kautionshöhe", 11 );
 		$pdf->ezSetDy ( - 20 );
 		if (is_array ( $auszug_arr )) {
 			$anzahl_auszuege = count ( $auszug_arr );
@@ -1738,7 +1738,7 @@ else {
 					'ABNAHME' => "ABNAHME",
 					'KAUTION' => "KAUTION" 
 			);
-			$pdf->ezTable ( $pdf_tab, $cols, "Ausz�ge $monat_name $jahr", array (
+			$pdf->ezTable ( $pdf_tab, $cols, "Auszüge $monat_name $jahr", array (
 					'rowGap' => 1.5,
 					'showLines' => 1,
 					'showHeadings' => 1,
@@ -1765,12 +1765,12 @@ else {
 					) 
 			) );
 		} else {
-			hinweis_ausgeben ( "Keine Ausz�ge im $monat/$jahr" );
+			hinweis_ausgeben ( "Keine Auszüge im $monat/$jahr" );
 		}
 		ob_clean (); // ausgabepuffer leeren
 		            // header("Content-type: application/pdf"); // wird von MSIE ignoriert
 		
-		$dateiname = $monat . "_" . $jahr . "_Einz�ge.pdf";
+		$dateiname = $monat . "_" . $jahr . "_Einzüge.pdf";
 		$pdf_opt ['Content-Disposition'] = $dateiname;
 		$pdf->ezStream ( $pdf_opt );
 		
@@ -1867,7 +1867,7 @@ else {
 			);
 			$pdf->ezText ( "<b>SALDO EUR</b>", 8, $text_options );
 			
-			/* Aktuell bzw. gew�nschten Monat berechnen */
+			/* Aktuell bzw. gewünschten Monat berechnen */
 			$ob = new objekt ();
 			
 			$einheiten_array = $ob->einheiten_objekt_arr ( $objekt_id );
@@ -1967,7 +1967,7 @@ else {
 							
 							$aktuelle_zeile ++;
 						} else {
-							// echo "<b>$zeile. $einheit_kurzname $nn $vn SALDO NEU: $end_saldoo � BEENDET AM :$mv_bis �</b><br>";
+							// echo "<b>$zeile. $einheit_kurzname $nn $vn SALDO NEU: $end_saldoo € BEENDET AM :$mv_bis €</b><br>";
 							
 							$pdf->ezSetCmMargins ( 3, 3, 3, 3 );
 							$text_options = array (
@@ -2018,7 +2018,7 @@ else {
 							$pdf->addText ( 70, 755, 10, "Saldenliste  $objekt_name $monatname $jahr" );
 							$pdf->ezStartPageNumbers ( 550, 755, 7, '', "Seite {PAGENUM} von {TOTALPAGENUM}" );
 							
-							/* �berschriftzeile */
+							/* Überschriftzeile */
 							$pdf->ezSetDy ( - 18 );
 							$pdf->ezSetCmMargins ( 3, 3, 3, 3 );
 							$text_options = array (
@@ -2061,15 +2061,15 @@ else {
 				}
 			}
 			
-			// hinweis_ausgeben("Saldenliste mit Vormieter f�r $objekt_name wurde erstellt<br>");
+			// hinweis_ausgeben("Saldenliste mit Vormieter für $objekt_name wurde erstellt<br>");
 			
 			ob_clean (); // ausgabepuffer leeren
 			$pdf->ezStopPageNumbers ();
 			$pdf->ezStream ();
 			
-			/* Falls kein Objekt ausgew�hlt */
+			/* Falls kein Objekt ausgewählt */
 		} else {
-			echo "Objekt ausw�hlen";
+			echo "Objekt auswählen";
 		}
 	}
 	function saldenliste_mv($monat, $jahr) {
@@ -2111,7 +2111,7 @@ else {
 			
 			$link_pdf = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=saldenliste_pdf&monat=$monat&jahr=$jahr\"><b>PDF-Datei</b></a>";
 			echo '<hr>' . $link_pdf . '<hr>';
-			/* Aktuell bzw. gew�nschten Monat berechnen */
+			/* Aktuell bzw. gewünschten Monat berechnen */
 			$ob = new objekt ();
 			
 			$einheiten_array = $ob->einheiten_objekt_arr ( $objekt_id );
@@ -2189,11 +2189,11 @@ else {
 				}
 			}
 			
-			// hinweis_ausgeben("Saldenliste mit Vormieter f�r $objekt_name wurde erstellt<br>");
+			// hinweis_ausgeben("Saldenliste mit Vormieter für $objekt_name wurde erstellt<br>");
 			
-			/* Falls kein Objekt ausgew�hlt */
+			/* Falls kein Objekt ausgewählt */
 		} else {
-			echo "Objekt ausw�hlen";
+			echo "Objekt auswählen";
 		}
 	}
 	function nebenkosten($objekt_id, $jahr) {
@@ -2301,7 +2301,7 @@ else {
 			
 			$link_pdf = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=nebenkosten_pdf&monat=$monat&jahr=$jahr\"><b>PDF-Datei</b></a>";
 			echo '<hr>' . $link_pdf . '<hr>';
-			/* Aktuell bzw. gew�nschten Monat berechnen */
+			/* Aktuell bzw. gewünschten Monat berechnen */
 			$ob = new objekt ();
 			
 			$einheiten_array = $ob->einheiten_objekt_arr ( $objekt_id );
@@ -2390,11 +2390,11 @@ else {
 				} // end if is_array mv_ids
 			}
 			echo "</table>";
-			// hinweis_ausgeben("Saldenliste mit Vormieter f�r $objekt_name wurde erstellt<br>");
+			// hinweis_ausgeben("Saldenliste mit Vormieter für $objekt_name wurde erstellt<br>");
 			
-			/* Falls kein Objekt ausgew�hlt */
+			/* Falls kein Objekt ausgewählt */
 		} else {
-			echo "Objekt ausw�hlen";
+			echo "Objekt auswählen";
 		}
 	}
 	function nebenkosten_pdf($objekt_id, $jahr) {
@@ -2538,7 +2538,7 @@ else {
 				'EINHEIT' => "Einheit",
 				'MIETER' => "Mieter",
 				'LAGE' => "Lage",
-				'QM' => "m�",
+				'QM' => "m²",
 				'EINZUG' => "Einzug",
 				'AUSZUG' => "Auszug",
 				'BETRIEBSKOSTEN' => "BK",
@@ -2547,7 +2547,7 @@ else {
 		);
 		$datum_h = date ( "d.m.Y" );
 		
-		$pdf->ezTable ( $table_arr, $cols, "Nebenkostenhochrechnung f�r das Jahr $jahr vom $datum_h", array (
+		$pdf->ezTable ( $table_arr, $cols, "Nebenkostenhochrechnung für das Jahr $jahr vom $datum_h", array (
 				'showHeadings' => 1,
 				'shaded' => 1,
 				'titleFontSize' => 8,
@@ -2754,7 +2754,7 @@ else {
 					$sum_hk_einheit_jahr_a = nummer_punkt2komma_t ( $sum_hk_einheit_jahr );
 					$sum_km_einheit_jahr_a = nummer_punkt2komma_t ( $sum_km_einheit_jahr );
 					$table_arr [$z] ['EINHEIT'] = "<i><b>$einheit_kn</b></i>";
-					$table_arr [$z] ['MIETER'] = "<i><b>JAHRESSUMME f�r $einheit_kn</b></i>";
+					$table_arr [$z] ['MIETER'] = "<i><b>JAHRESSUMME für $einheit_kn</b></i>";
 					$table_arr [$z] ['BETRIEBSKOSTEN'] = "<u><b>$sum_bk_einheit_jahr_a</b></u>";
 					$table_arr [$z] ['HEIZKOSTEN'] = "<u><b>$sum_hk_einheit_jahr_a</b></u>";
 					$table_arr [$z] ['KM'] = "<u><b>$sum_km_einheit_jahr_a</b></u>";
@@ -3040,7 +3040,7 @@ else {
 				$sum_hk_einheit_jahr_a = nummer_punkt2komma_t ( $sum_hk_einheit_jahr );
 				$sum_km_einheit_jahr_a = nummer_punkt2komma_t ( $sum_km_einheit_jahr );
 				$table_arr [$z] ['EINHEIT'] = "<i><b>$einheit_kn</b></i>";
-				$table_arr [$z] ['MIETER'] = "<i><b>JAHRESSUMME f�r $einheit_kn</b></i>";
+				$table_arr [$z] ['MIETER'] = "<i><b>JAHRESSUMME für $einheit_kn</b></i>";
 				$table_arr [$z] ['BETRIEBSKOSTEN'] = "<u><b>$sum_bk_einheit_jahr_a</b></u>";
 				$table_arr [$z] ['HEIZKOSTEN'] = "<u><b>$sum_hk_einheit_jahr_a</b></u>";
 				$table_arr [$z] ['KM'] = "<u><b>$sum_km_einheit_jahr_a</b></u>";
@@ -3084,7 +3084,7 @@ else {
 		);
 		$datum_h = date ( "d.m.Y" );
 		
-		$pdf->ezTable ( $table_arr, $cols, "Soll - Nebenkosten/Kaltmiete f�r das Jahr $jahr", array (
+		$pdf->ezTable ( $table_arr, $cols, "Soll - Nebenkosten/Kaltmiete für das Jahr $jahr", array (
 				'showHeadings' => 1,
 				'shaded' => 1,
 				'titleFontSize' => 8,
@@ -3232,7 +3232,7 @@ else {
 			$end_m = $datum_bis_arr [1];
 			$end_j = $datum_bis_arr [0];
 			
-			/* Schleife f�r jeden Monat */
+			/* Schleife für jeden Monat */
 			$monat = $start_m;
 			$jahr = $start_j;
 			$summe_g = 0.00;
@@ -3309,7 +3309,7 @@ else {
 			$cols1 ['12.2013'] = '12.2013';
 			$cols1 ['SUMME_A'] = 'BETRAG';
 			
-			// $pdf->ezTable($n_arr,$cols1,"Nebenkostenhochrechnung f�r das Jahr $jahr vom $datum_h",array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500,'cols'=>array('EINHEIT'=>array('justification'=>'left', 'width'=>75),'MIETER'=>array('justification'=>'left', 'width'=>175), 'EINZUG'=>array('justification'=>'right','width'=>50),'AUSZUG'=>array('justification'=>'right','width'=>50),'BETRIEBSKOSTEN'=>array('justification'=>'right','width'=>75), 'HEIZKOSTEN'=>array('justification'=>'right','width'=>75))));
+			// $pdf->ezTable($n_arr,$cols1,"Nebenkostenhochrechnung für das Jahr $jahr vom $datum_h",array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500,'cols'=>array('EINHEIT'=>array('justification'=>'left', 'width'=>75),'MIETER'=>array('justification'=>'left', 'width'=>175), 'EINZUG'=>array('justification'=>'right','width'=>50),'AUSZUG'=>array('justification'=>'right','width'=>50),'BETRIEBSKOSTEN'=>array('justification'=>'right','width'=>75), 'HEIZKOSTEN'=>array('justification'=>'right','width'=>75))));
 			$datum_von_d = date_mysql2german ( $datum_von );
 			$datum_bis_d = date_mysql2german ( $datum_bis );
 			// $pdf->ezTable($n_arr, $cols1, "Vereinbarte Sollkaltmieten im Zeitraum: $datum_von_d - $datum_bis_d", array('showHeadings'=>1,'shaded'=>1, 'width'=>500, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'cols'=>array('SUMME_A'=>array('justification'=>'right'))));
@@ -3441,7 +3441,7 @@ GROUP BY  `KOSTENTRAEGER_TYP` ,  `KOSTENTRAEGER_ID` ";
 			$end_m = $datum_bis_arr [1];
 			$end_j = $datum_bis_arr [0];
 			
-			/* Schleife f�r jeden Monat */
+			/* Schleife für jeden Monat */
 			$monat = $start_m;
 			$jahr = $start_j;
 			$summe_g = 0.00;
@@ -3531,7 +3531,7 @@ GROUP BY  `KOSTENTRAEGER_TYP` ,  `KOSTENTRAEGER_ID` ";
 			$cols1 ['12.2013'] = '12.2013';
 			$cols1 ['SUMME_A'] = 'BETRAG';
 			
-			// $pdf->ezTable($n_arr,$cols1,"Nebenkostenhochrechnung f�r das Jahr $jahr vom $datum_h",array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500,'cols'=>array('EINHEIT'=>array('justification'=>'left', 'width'=>75),'MIETER'=>array('justification'=>'left', 'width'=>175), 'EINZUG'=>array('justification'=>'right','width'=>50),'AUSZUG'=>array('justification'=>'right','width'=>50),'BETRIEBSKOSTEN'=>array('justification'=>'right','width'=>75), 'HEIZKOSTEN'=>array('justification'=>'right','width'=>75))));
+			// $pdf->ezTable($n_arr,$cols1,"Nebenkostenhochrechnung für das Jahr $jahr vom $datum_h",array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500,'cols'=>array('EINHEIT'=>array('justification'=>'left', 'width'=>75),'MIETER'=>array('justification'=>'left', 'width'=>175), 'EINZUG'=>array('justification'=>'right','width'=>50),'AUSZUG'=>array('justification'=>'right','width'=>50),'BETRIEBSKOSTEN'=>array('justification'=>'right','width'=>75), 'HEIZKOSTEN'=>array('justification'=>'right','width'=>75))));
 			$datum_von_d = date_mysql2german ( $datum_von );
 			$datum_bis_d = date_mysql2german ( $datum_bis );
 			// $pdf->ezTable($n_arr, $cols1, "Vereinbarte Sollkaltmieten im Zeitraum: $datum_von_d - $datum_bis_d", array('showHeadings'=>1,'shaded'=>1, 'width'=>500, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'cols'=>array('SUMME_A'=>array('justification'=>'right'))));
@@ -3579,7 +3579,7 @@ GROUP BY  `KOSTENTRAEGER_TYP` ,  `KOSTENTRAEGER_ID` ";
 			$end_m = $datum_bis_arr [1];
 			$end_j = $datum_bis_arr [0];
 			
-			/* Schleife f�r jeden Monat */
+			/* Schleife für jeden Monat */
 			$monat = $start_m;
 			$jahr = $start_j;
 			$summe_g = 0.00;
@@ -3699,7 +3699,7 @@ GROUP BY  `KOSTENTRAEGER_TYP` ,  `KOSTENTRAEGER_ID` ";
 		}
 	}
 	
-	/* Ausgabe der Summe aller Kostenkategorien f�r gew�nschten Monat, Jahr als String */
+	/* Ausgabe der Summe aller Kostenkategorien für gewünschten Monat, Jahr als String */
 	function summe_forderung_monatlich($mietvertrag_id, $monat, $jahr) {
 		$monat = sprintf ( '%02d', $monat );
 		$result = mysql_query ( "SELECT SUM(BETRAG) AS SUMME FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat'  && (KOSTENKATEGORIE = 'Miete kalt' OR KOSTENKATEGORIE = 'MOD' OR KOSTENKATEGORIE = 'MHG')" );
@@ -3759,7 +3759,7 @@ GROUP BY  `KOSTENTRAEGER_TYP` ,  `KOSTENTRAEGER_ID` ";
 			
 			// $link_pdf = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=saldenliste_pdf&monat=$monat&jahr=$jahr\"><b>PDF-Datei</b></a>";
 			// echo'<hr>'. $link_pdf.'<hr>';
-			/* Aktuell bzw. gew�nschten Monat berechnen */
+			/* Aktuell bzw. gewünschten Monat berechnen */
 			$ob = new objekt ();
 			
 			$einheiten_array = $ob->einheiten_objekt_arr ( $objekt_id );
@@ -3842,8 +3842,8 @@ GROUP BY  `KOSTENTRAEGER_TYP` ,  `KOSTENTRAEGER_ID` ";
 						$table_arr [$zeile_arr] ['MIETER'] = "$nn $vn";
 						$table_arr [$zeile_arr] ['EINZUG'] = $mv_von;
 						$table_arr [$zeile_arr] ['AUSZUG'] = $mv_bis;
-						$table_arr [$zeile_arr] ['BETRIEBSKOSTEN'] = "$betriebskosten_vorauszahlung �";
-						$table_arr [$zeile_arr] ['HEIZKOSTEN'] = "$heizkosten_vorauszahlung �";
+						$table_arr [$zeile_arr] ['BETRIEBSKOSTEN'] = "$betriebskosten_vorauszahlung €";
+						$table_arr [$zeile_arr] ['HEIZKOSTEN'] = "$heizkosten_vorauszahlung €";
 						
 						unset ( $mieter_daten_arr );
 						unset ( $nn );
@@ -3852,7 +3852,7 @@ GROUP BY  `KOSTENTRAEGER_TYP` ,  `KOSTENTRAEGER_ID` ";
 				} // end if is_array mv_ids
 			}
 			// echo "</table>";
-			// hinweis_ausgeben("Saldenliste mit Vormieter f�r $objekt_name wurde erstellt<br>");
+			// hinweis_ausgeben("Saldenliste mit Vormieter für $objekt_name wurde erstellt<br>");
 			ob_clean (); // ausgabepuffer leeren
 			$cols = array (
 					'EINHEIT' => "Einheit",
@@ -3864,7 +3864,7 @@ GROUP BY  `KOSTENTRAEGER_TYP` ,  `KOSTENTRAEGER_ID` ";
 			);
 			$datum_h = date ( "d.m.Y" );
 			
-			$pdf->ezTable ( $table_arr, $cols, "Nebenkostenhochrechnung f�r das Jahr $jahr vom $datum_h", array (
+			$pdf->ezTable ( $table_arr, $cols, "Nebenkostenhochrechnung für das Jahr $jahr vom $datum_h", array (
 					'showHeadings' => 1,
 					'shaded' => 0,
 					'titleFontSize' => 8,
@@ -3904,9 +3904,9 @@ GROUP BY  `KOSTENTRAEGER_TYP` ,  `KOSTENTRAEGER_ID` ";
 			
 			$pdf->ezStream ();
 			
-			/* Falls kein Objekt ausgew�hlt */
+			/* Falls kein Objekt ausgewählt */
 		} else {
-			echo "Objekt ausw�hlen";
+			echo "Objekt auswählen";
 		}
 	}
 	
@@ -3924,7 +3924,7 @@ GROUP BY  `KOSTENTRAEGER_TYP` ,  `KOSTENTRAEGER_ID` ";
 		$filename = "$dir/$filename";
 		
 		if (file_exists ( $filename )) {
-			fehlermeldung_ausgeben ( "Saldenliste exisitiert bereits, keine �berschreibung m�glich" );
+			fehlermeldung_ausgeben ( "Saldenliste exisitiert bereits, keine Überschreibung möglich" );
 			$fhandle = fopen ( $filename, "w" );
 			fwrite ( $fhandle, $content );
 			fclose ( $fhandle );
@@ -3942,17 +3942,17 @@ GROUP BY  `KOSTENTRAEGER_TYP` ,  `KOSTENTRAEGER_ID` ";
 		if (! isset ( $_REQUEST [send_ja] ) && ! isset ( $_REQUEST [send_nein] )) {
 			$this->get_mietvertrag_infos_aktuell ( $mv_id );
 			$f = new formular ();
-			$f->fieldset ( 'Mietvertrag l�schen', 'mvl' );
+			$f->fieldset ( 'Mietvertrag löschen', 'mvl' );
 			echo "<div>";
-			echo "<br><b>Sind Sie sicher, dass Sie den Mietvertrag $mv_id f�r die Einheit $this->einheit_kurzname l�schen wollen?</b><br>";
+			echo "<br><b>Sind Sie sicher, dass Sie den Mietvertrag $mv_id für die Einheit $this->einheit_kurzname löschen wollen?</b><br>";
 			echo "<br>Einheit: $this->einheit_kurzname";
 			echo "<br>Personen: $this->personen_name_string_u";
 			echo "<br>Einzug: $this->mietvertrag_von_d";
 			echo "<br>Auszug: $this->mietvertrag_bis_d";
 			echo "<br><br>";
 			$f->hidden_feld ( 'mv_id', $mv_id );
-			$f->send_button ( 'send_ja', 'Mietvertrag l�schen' );
-			$f->send_button ( 'send_nein', 'Abbrechen und zur�ck' );
+			$f->send_button ( 'send_ja', 'Mietvertrag löschen' );
+			$f->send_button ( 'send_nein', 'Abbrechen und zurück' );
 			echo "</div>";
 			$f->fieldset_ende ();
 		}
@@ -3968,7 +3968,7 @@ GROUP BY  `KOSTENTRAEGER_TYP` ,  `KOSTENTRAEGER_ID` ";
 		$db_abfrage = mysql_query ( "UPDATE PERSON_MIETVERTRAG SET PERSON_MIETVERTRAG_AKTUELL='0' WHERE PERSON_MIETVERTRAG_MIETVERTRAG_ID='$mv_id'" );
 		$db_abfrage = mysql_query ( "UPDATE MIETENTWICKLUNG SET MIETENTWICKLUNG_AKTUELL='0' WHERE KOSTENTRAEGER_TYP LIKE 'MIETVERTRAG' && KOSTENTRAEGER_ID = '$mv_id'" );
 		$db_abfrage = mysql_query ( "UPDATE DETAIL SET DETAIL_AKTUELL='0' WHERE DETAIL_ZUORDNUNG_TABELLE LIKE 'MIETVERTRAG' && DETAIL_ZUORDNUNG_ID = '$mv_id'" );
-		echo "Mietvertrag wurde gel�scht!";
+		echo "Mietvertrag wurde gelöscht!";
 	}
 	function alle_aktuellen_mvs_arr() {
 		/*

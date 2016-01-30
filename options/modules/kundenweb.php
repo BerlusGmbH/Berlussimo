@@ -27,7 +27,7 @@
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'kundenweb' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -35,7 +35,7 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'kundenweb' )) {
 	die ();
 }
 
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
 include_once ("options/links/links.kundenweb.php");
 include_once ("classes/class_kundenweb.php");
 if (isset ( $_REQUEST ["option"] )) {
@@ -59,7 +59,7 @@ switch ($option) {
 		$k->kundendaten_anzeigen ( $kunden_id );
 		break;
 	
-	/* Einzelne Berechtigung eines Kunden l�schen */
+	/* Einzelne Berechtigung eines Kunden löschen */
 	case "berechtigung_del" :
 		$kunden_id = $_REQUEST ['kunden_id'];
 		$ber_obj = $_REQUEST ['ber_obj'];

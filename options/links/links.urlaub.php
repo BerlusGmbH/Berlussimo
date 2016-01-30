@@ -21,7 +21,7 @@ $form = new formular ();
 
 $form->fieldset ( "Urlaub", 'urlaub_links' );
 echo "<div class=\"navi_leiste2\">&nbsp;&nbsp;";
-echo "<a href=\"?daten=urlaub&option=uebersicht\">�bersicht</a>&nbsp;";
+echo "<a href=\"?daten=urlaub&option=uebersicht\">Übersicht</a>&nbsp;";
 echo "<a href=\"?daten=urlaub&option=monatsansicht\">Monatsansicht</a>&nbsp;";
 echo "<a href=\"?daten=urlaub&option=urlaubsplan_jahr\">Urlaubsplan PDF</a>&nbsp;";
 // echo "<a href=\"?daten=urlaub&option=urlaubsplan_dyn\">Urlaubsplan Zeitraum</a>&nbsp;";

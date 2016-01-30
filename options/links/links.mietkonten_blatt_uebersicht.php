@@ -19,7 +19,7 @@
  */
 $mieten = new mietkonto ();
 echo "<div class=\"navi_leiste2\">";
-$mieten->erstelle_formular ( "Mietkonten�bersicht -> Darstelltungsoptionen...", NULL );
+$mieten->erstelle_formular ( "Mietkontenübersicht -> Darstelltungsoptionen...", NULL );
 echo "<a href=\"?daten=mietkonten_blatt&anzeigen=mietkonto_uebersicht_detailiert&mietvertrag_id=$_REQUEST[mietvertrag_id]\">Seit Einzug</a>&nbsp;";
 echo "<a href=\"?daten=mietkonten_blatt&anzeigen=mietkonto_detailiert_seit_1zahlung&mietvertrag_id=$_REQUEST[mietvertrag_id]\">Seit 1. Zahlung</a>&nbsp;";
 echo "<a href=\"?daten=miete_buchen\">Zeitraum eingrenzen</a>&nbsp;";

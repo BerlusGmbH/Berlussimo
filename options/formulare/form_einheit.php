@@ -55,7 +55,7 @@ if (isset ( $_REQUEST ["daten_rein"] )) {
 			if (isset ( $_POST [submit_einheit] )) {
 				foreach ( $_POST as $key => $value ) {
 					if (empty ( $value )) {
-						fehlermeldung_ausgeben ( "FEHLER: Alle Felder m�ssen ausgef�llt werden!" );
+						fehlermeldung_ausgeben ( "FEHLER: Alle Felder müssen ausgefüllt werden!" );
 						backlink ();
 						$error = 1;
 						break;
@@ -64,13 +64,13 @@ if (isset ( $_REQUEST ["daten_rein"] )) {
 				if (! isset ( $error )) {
 					// print_r($_POST);
 					erstelle_formular ( einheit_in_db, NULL ); // name, action
-					echo "<tr><td><h1>Folgende Daten wurden �bermittelt:\n</h1></td></tr>\n";
+					echo "<tr><td><h1>Folgende Daten wurden übermittelt:\n</h1></td></tr>\n";
 					echo "<tr><td><h2>Objektkurzname: $objekt_kurzname</h2></td></tr>\n";
 					echo "<tr><td><h2>Haus: $haus_kurzname</h2></td></tr>\n";
-					echo "<tr><td><h2>Einheit: $_POST[einheit_kurzname] - $_POST[einheit_qm]m� - Lage: $_POST[einheit_lage]</h2></td></tr>\n";
+					echo "<tr><td><h2>Einheit: $_POST[einheit_kurzname] - $_POST[einheit_qm]m² - Lage: $_POST[einheit_lage]</h2></td></tr>\n";
 					echo "<tr><td>";
 					// print_r($_POST);
-					warnung_ausgeben ( "Sind Sie sicher, da� Sie die neue Einheit $_POST[einheit_kurzname] ($_POST[einheit_qm]m�) im Objekt $objekt_kurzname, $haus_kurzname anlegen wollen?" );
+					warnung_ausgeben ( "Sind Sie sicher, daß Sie die neue Einheit $_POST[einheit_kurzname] ($_POST[einheit_qm]m²) im Objekt $objekt_kurzname, $haus_kurzname anlegen wollen?" );
 					echo "</td></tr>";
 					erstelle_hiddenfeld ( "haus_id", "$haus_id" );
 					erstelle_hiddenfeld ( "einheit_kurzname", "$_POST[einheit_kurzname]" );
@@ -99,9 +99,9 @@ if (isset ( $_REQUEST ["daten_rein"] )) {
 		
 		case "aendern" :
 			$form = new mietkonto ();
-			$form->erstelle_formular ( "Einheit �ndern", NULL );
+			$form->erstelle_formular ( "Einheit ändern", NULL );
 			iframe_start ();
-			echo "<h1>Einheit �ndern</h1>";
+			echo "<h1>Einheit ändern</h1>";
 			if (! isset ( $objekt_id )) {
 				objekt_links ();
 			}
@@ -134,7 +134,7 @@ if (isset ( $_REQUEST ["daten_rein"] )) {
 			if (isset ( $_POST [aendern_einheit] )) {
 				foreach ( $_POST as $key => $value ) {
 					if (empty ( $value )) {
-						fehlermeldung_ausgeben ( "FEHLER: Alle Felder m�ssen ausgef�llt werden!" );
+						fehlermeldung_ausgeben ( "FEHLER: Alle Felder müssen ausgefüllt werden!" );
 						$error = 1;
 						break;
 					}
@@ -142,13 +142,13 @@ if (isset ( $_REQUEST ["daten_rein"] )) {
 				}
 				if (! isset ( $error )) {
 					erstelle_formular ( einheit_in_db, NULL ); // name, action
-					echo "<tr><td><h1>Folgende Daten wurden �bermittelt:\n</h1></td></tr>\n";
+					echo "<tr><td><h1>Folgende Daten wurden übermittelt:\n</h1></td></tr>\n";
 					echo "<tr><td><h2>Objektkurzname: $objekt_kurzname</h2></td></tr>\n";
 					echo "<tr><td><h2>Haus: $haus_kurzname</h2></td></tr>\n";
-					echo "<tr><td><h2>Einheit: $_POST[einheit_kurzname] - $_POST[einheit_qm]m� - Lage: $_POST[einheit_lage]</h2></td></tr>\n";
+					echo "<tr><td><h2>Einheit: $_POST[einheit_kurzname] - $_POST[einheit_qm]m² - Lage: $_POST[einheit_lage]</h2></td></tr>\n";
 					echo "<tr><td>";
 					// print_r($_POST);
-					warnung_ausgeben ( "Sind Sie sicher, da� Sie die neue Einheit $_POST[einheit_kurzname] ($_POST[einheit_qm]m�) im Objekt $objekt_kurzname, $haus_kurzname anlegen wollen?" );
+					warnung_ausgeben ( "Sind Sie sicher, daß Sie die neue Einheit $_POST[einheit_kurzname] ($_POST[einheit_qm]m²) im Objekt $objekt_kurzname, $haus_kurzname anlegen wollen?" );
 					echo "</td></tr>";
 					erstelle_hiddenfeld ( "haus_id", "$haus_id" );
 					erstelle_hiddenfeld ( "einheit_kurzname", "$_POST[einheit_kurzname]" );
@@ -176,7 +176,7 @@ if (isset ( $_REQUEST ["daten_rein"] )) {
 			einheit_deaktivieren ( $_POST [einheit_dat] );
 			hinweis_ausgeben ( "DAT $_POST[einheit_dat] inaktiv" );
 			einheit_geandert_in_db ( $_POST [einheit_dat], $_POST [einheit_id], $_POST [haus_id], $_POST [einheit_kurzname], $_POST [einheit_lage], $_POST [einheit_qm] );
-			hinweis_ausgeben ( "EINHEIT $_POST[einheit_kurzname] WURDE GE�NDERT!" );
+			hinweis_ausgeben ( "EINHEIT $_POST[einheit_kurzname] WURDE GEÄNDERT!" );
 			einheiten_liste ( $haus_id );
 			iframe_end ();
 			break;
@@ -186,7 +186,7 @@ function objekt_links() {
 	$daten_rein = $_REQUEST ["daten_rein"];
 	$db_abfrage = "SELECT OBJEKT_DAT, OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC ";
 	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-	echo "<b>Objekt ausw�hlen:</b><br>\n ";
+	echo "<b>Objekt auswählen:</b><br>\n ";
 	while ( list ( $OBJEKT_DAT, $OBJEKT_ID, $OBJEKT_KURZNAME ) = mysql_fetch_row ( $resultat ) ) {
 		echo "<a class=\"objekt_links\" href=\"?formular=einheit&daten_rein=$daten_rein&objekt_id=$OBJEKT_ID\">$OBJEKT_KURZNAME</a><br>\n";
 	}
@@ -197,7 +197,7 @@ function haeuser_links($obj_id) {
 	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 	$numrows = mysql_numrows ( $resultat );
 	if ($numrows < 1) {
-		echo "<h2 class=\"fehler\">Keine H�user im ausgew�hlten Objekt</h2><br>\n";
+		echo "<h2 class=\"fehler\">Keine Häuser im ausgewählten Objekt</h2><br>\n";
 		echo "Erst Haus im Objekt anlegen - <a href=\"?formular=haus&daten_rein=anlegen\">Hauseningabe hier&nbsp;</a>\n<br>\n";
 	} else {
 		while ( list ( $HAUS_DAT, $HAUS_ID, $HAUS_STRASSE, $HAUS_NUMMER ) = mysql_fetch_row ( $resultat ) ) {
@@ -233,7 +233,7 @@ function einheiten_links($objekt_id, $haus_id) {
 	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 	$numrows = mysql_numrows ( $resultat );
 	if ($numrows < 1) {
-		echo "<h2 class=\"fehler\">Keine Einheiten im ausgew�hlten Haus</h2>";
+		echo "<h2 class=\"fehler\">Keine Einheiten im ausgewählten Haus</h2>";
 		echo "<p class=\"hinweis\">Bitte zuerst Einheit im Haus anlegen - <a href=\"?formular=einheit&daten_rein=anlegen\">Einheit anlegen HIER&nbsp;</a></p><br>";
 	} else {
 		while ( list ( $EINHEIT_ID, $EINHEIT_KURZNAME, $EINHEIT_LAGE ) = mysql_fetch_row ( $resultat ) ) {
@@ -248,22 +248,22 @@ function einheiten_liste($haus_id) {
 	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 	$numrows = mysql_numrows ( $resultat );
 	if ($numrows < 1) {
-		fehlermeldung_ausgeben ( "<h2 class=\"fehler\">Keine Einheiten im ausgew�hlten Haus</h2>" );
+		fehlermeldung_ausgeben ( "<h2 class=\"fehler\">Keine Einheiten im ausgewählten Haus</h2>" );
 		hinweis_ausgeben ( "Bitte zuerst hier Einheit im Haus anlegen</p>" );
 	} else {
 		echo "<div class=\"tabelle\">";
 		// iframe_start();
 		// echo "<div class=\"tabelle\"><table>";
 		echo "<table>";
-		echo "<tr class=\"feldernamen\"><td>EINHEIT KURZNAME</td><td>EINHEIT LAGE</td><td>FL�CHE</td></tr>\n";
+		echo "<tr class=\"feldernamen\"><td>EINHEIT KURZNAME</td><td>EINHEIT LAGE</td><td>FLÄCHE</td></tr>\n";
 		$counter = 0;
 		while ( list ( $EINHEIT_ID, $EINHEIT_KURZNAME, $EINHEIT_LAGE, $EINHEIT_QM ) = mysql_fetch_row ( $resultat ) ) {
 			$counter ++;
 			if ($counter == 1) {
-				echo "<tr class=\"zeile1\"><td>$EINHEIT_KURZNAME</td><td>$EINHEIT_LAGE</td><td>$EINHEIT_QM m�</td></tr>\n";
+				echo "<tr class=\"zeile1\"><td>$EINHEIT_KURZNAME</td><td>$EINHEIT_LAGE</td><td>$EINHEIT_QM m²</td></tr>\n";
 			}
 			if ($counter == 2) {
-				echo "<tr class=\"zeile2\"><td>$EINHEIT_KURZNAME</td><td>$EINHEIT_LAGE</td><td>$EINHEIT_QM m�</td></tr>\n";
+				echo "<tr class=\"zeile2\"><td>$EINHEIT_KURZNAME</td><td>$EINHEIT_LAGE</td><td>$EINHEIT_QM m²</td></tr>\n";
 				$counter = 0;
 			}
 		}

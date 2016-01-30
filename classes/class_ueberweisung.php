@@ -21,7 +21,7 @@
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
 include_once ("classes/berlussimo_class.php");
 class ueberweisung {
@@ -31,18 +31,18 @@ class ueberweisung {
 		$g = new geldkonto_info ();
 		$r->rechnung_grunddaten_holen ( $belegnr );
 		
-		$f->erstelle_formular ( "Rechnung �ber DTAUS zahlen", NULL );
+		$f->erstelle_formular ( "Rechnung über DTAUS zahlen", NULL );
 		if ($r->status_bezahlt == '0') {
 			
 			if ($r->rechnungstyp == 'Rechnung' or $r->rechnungstyp == 'Buchungsbeleg') {
-				$g->dropdown_geldkonten_k ( "�berweisen von $r->rechnungs_empfaenger_name -> Geldkonto ausw�hlen", 'a_konto_id', 'a_konto_id', $r->rechnungs_empfaenger_typ, $r->rechnungs_empfaenger_id );
+				$g->dropdown_geldkonten_k ( "Überweisen von $r->rechnungs_empfaenger_name -> Geldkonto auswählen", 'a_konto_id', 'a_konto_id', $r->rechnungs_empfaenger_typ, $r->rechnungs_empfaenger_id );
 				
-				$g->dropdown_geldkonten_k ( "�berweisen an $r->rechnungs_aussteller_name -> Geldkonto ausw�hlen", 'e_konto_id', 'e_konto_id', $r->rechnungs_aussteller_typ, $r->rechnungs_aussteller_id );
+				$g->dropdown_geldkonten_k ( "Überweisen an $r->rechnungs_aussteller_name -> Geldkonto auswählen", 'e_konto_id', 'e_konto_id', $r->rechnungs_aussteller_typ, $r->rechnungs_aussteller_id );
 				
-				$r->dropdown_buchungs_betrag_kurz ( 'Zu zahlenden Betrag w�hlen', 'betrags_art', 'betrags_art', '' );
+				$r->dropdown_buchungs_betrag_kurz ( 'Zu zahlenden Betrag wählen', 'betrags_art', 'betrags_art', '' );
 				$t_betrag = nummer_punkt2komma ( $r->rechnungs_skontobetrag );
 				
-				$f->text_feld ( 'Ausgew�hlten Betrag eingeben', 'betrag', $t_betrag, '10', 'betrag', '' );
+				$f->text_feld ( 'Ausgewählten Betrag eingeben', 'betrag', $t_betrag, '10', 'betrag', '' );
 				$f->text_feld ( 'Verwendungszweck1 (max. 27 Zeichen)', 'vzweck1', "Rechnung $r->rechnungsnummer", '27', 'vzweck1', '' );
 				$f->text_feld ( 'Verwendungszweck2 (max. 27 Zeichen)', 'vzweck2', "", '27', 'vzweck1', '' );
 				$f->text_feld ( 'Verwendungszweck3 (max. 27 Zeichen)', 'vzweck3', "", '27', 'vzweck1', '' );
@@ -56,7 +56,7 @@ class ueberweisung {
 			$f->hidden_feld ( "bezugsid", $belegnr );
 			
 			$f->hidden_feld ( "option", "ueberweisung_dtaus" );
-			$f->send_button ( "submit_dtaus", "Zu DTAUS hinzuf�gen" );
+			$f->send_button ( "submit_dtaus", "Zu DTAUS hinzufügen" );
 		} else {
 			echo "Diese Rechnung wurde am $r->bezahlt_am als bezahlt markiert";
 		}
@@ -66,38 +66,38 @@ class ueberweisung {
 	}
 	function form_rechnung_dtaus_sepa($belegnr) {
 		if (! isset ( $_SESSION ['geldkonto_id'] )) {
-			fehlermeldung_ausgeben ( "Geldkonto von welchem �berwiesen wird W�HLEN!!!!" );
+			fehlermeldung_ausgeben ( "Geldkonto von welchem überwiesen wird WÄHLEN!!!!" );
 		}
 		$f = new formular ();
 		$r = new rechnungen ();
 		$g = new geldkonto_info ();
 		$r->rechnung_grunddaten_holen ( $belegnr );
 		
-		$f->erstelle_formular ( "Rechnung �ber SEPA zahlen", NULL );
+		$f->erstelle_formular ( "Rechnung über SEPA zahlen", NULL );
 		if ($r->status_bezahlt == '0') {
 			
 			if ($r->rechnungstyp == 'Rechnung' or $r->rechnungstyp == 'Buchungsbeleg') {
-				// $g->dropdown_geldkonten_k("�berweisen von $r->rechnungs_empfaenger_name -> Geldkonto ausw�hlen", 'a_konto_id', 'a_konto_id', $r->rechnungs_empfaenger_typ, $r->rechnungs_empfaenger_id);
+				// $g->dropdown_geldkonten_k("Überweisen von $r->rechnungs_empfaenger_name -> Geldkonto auswählen", 'a_konto_id', 'a_konto_id', $r->rechnungs_empfaenger_typ, $r->rechnungs_empfaenger_id);
 				$sep = new sepa ();
-				// if($sep->dropdown_sepa_geldkonten('�berweisen von', 'gk_id', 'gk_id', $r->rechnungs_empfaenger_typ, $r->rechnungs_empfaenger_id) ==false){
-				// fehlermeldung_ausgeben("SEPA Kontoverbondung Rg.Empf�nger fehlt!!!");
+				// if($sep->dropdown_sepa_geldkonten('Überweisen von', 'gk_id', 'gk_id', $r->rechnungs_empfaenger_typ, $r->rechnungs_empfaenger_id) ==false){
+				// fehlermeldung_ausgeben("SEPA Kontoverbondung Rg.Empfänger fehlt!!!");
 				// die();
 				$gk_a_id = $_SESSION ['geldkonto_id'];
 				$f->hidden_feld ( 'gk_id', $gk_a_id );
 				
 				// }
-				if ($sep->dropdown_sepa_geldkonten ( '�berweisen an', 'empf_sepa_gk_id', 'empf_sepa_gk_id', $r->rechnungs_aussteller_typ, $r->rechnungs_aussteller_id ) == false) {
+				if ($sep->dropdown_sepa_geldkonten ( 'Überweisen an', 'empf_sepa_gk_id', 'empf_sepa_gk_id', $r->rechnungs_aussteller_typ, $r->rechnungs_aussteller_id ) == false) {
 					fehlermeldung_ausgeben ( "SEPA Kontoverbindung Rg. Aussteller fehlt!!!" );
 					die ();
 				}
 				
-				// $g->dropdown_geldkonten_k("�berweisen an $r->rechnungs_aussteller_name -> Geldkonto ausw�hlen", 'e_konto_id', 'e_konto_id', $r->rechnungs_aussteller_typ, $r->rechnungs_aussteller_id);
+				// $g->dropdown_geldkonten_k("Überweisen an $r->rechnungs_aussteller_name -> Geldkonto auswählen", 'e_konto_id', 'e_konto_id', $r->rechnungs_aussteller_typ, $r->rechnungs_aussteller_id);
 				$js_opt = "onchange=\"var betrag_feld = document.getElementById('betrag'); betrag_feld.value=nummer_punkt2komma(this.value);\";";
 				// $js_opt = "onfocus='document.getElementById(\"betrag\").value=this.value);'";
-				$r->dropdown_buchungs_betrag_kurz_sepa ( 'Zu zahlenden Betrag w�hlen', 'betrags_art', 'betrags_art', $js_opt );
+				$r->dropdown_buchungs_betrag_kurz_sepa ( 'Zu zahlenden Betrag wählen', 'betrags_art', 'betrags_art', $js_opt );
 				$t_betrag = nummer_punkt2komma ( $r->rechnungs_skontobetrag );
 				
-				$f->text_feld ( 'Ausgew�hlten Betrag eingeben', 'betrag', $t_betrag, '10', 'betrag', '' );
+				$f->text_feld ( 'Ausgewählten Betrag eingeben', 'betrag', $t_betrag, '10', 'betrag', '' );
 				// $f->text_feld('Verwendungszweck1 (max. 27 Zeichen)', 'vzweck1', "Rechnung $r->rechnungsnummer", '27', 'vzweck1', '');
 				$vzweck_140 = substr ( "$r->rechnungs_aussteller_name, Rnr:$r->rechnungsnummer, $r->kurzbeschreibung", 0, 140 );
 				$f->text_bereich ( 'Verwendungszweck Max 140Zeichen', 'vzweck', "$vzweck_140", 60, 60, 'vzweck' );
@@ -121,7 +121,7 @@ class ueberweisung {
 			$f->hidden_feld ( 'kat', 'RECHNUNG' );
 			$f->hidden_feld ( 'kos_typ', $r->rechnungs_aussteller_typ );
 			$f->hidden_feld ( 'kos_id', $r->rechnungs_aussteller_id );
-			$f->send_button ( 'sndBtn', 'Hinzuf�gen' );
+			$f->send_button ( 'sndBtn', 'Hinzufügen' );
 		} else {
 			echo "Diese Rechnung wurde am $r->bezahlt_am als bezahlt markiert";
 		}
@@ -173,7 +173,7 @@ class ueberweisung {
 		if (! is_array ( $a_konto_ids_arr )) {
 			echo "DTAUS POOL LEER";
 		} else {
-			echo "IM DTAUS POLL SIND DATEN F�R FOLGENDE GELDKONTEN VORHANDEN<br>";
+			echo "IM DTAUS POLL SIND DATEN FÜR FOLGENDE GELDKONTEN VORHANDEN<br>";
 			$anzahl_konten = count ( $a_konto_ids_arr );
 			for($a = 0; $a < $anzahl_konten; $a ++) {
 				$g_konto_id = $a_konto_ids_arr [$a] ['A_KONTO_ID'];
@@ -201,7 +201,7 @@ class ueberweisung {
 	function dtaus_zeilen_anzeigen($g_konto_id) {
 		$zeilen_arr = $this->dtaus_zeilen_arr ( $g_konto_id );
 		if (! is_array ( $zeilen_arr )) {
-			echo "Keine Daten f�r Konto $g_konto_id vorhanden";
+			echo "Keine Daten für Konto $g_konto_id vorhanden";
 		} else {
 			$anzahl_zeilen = count ( $zeilen_arr );
 			$g = new geldkonto_info ();
@@ -235,25 +235,25 @@ class ueberweisung {
 	function dtaus_von_konto_erstellen($g_konto_id) {
 		$zeilen_arr = $this->dtaus_zeilen_arr ( $g_konto_id );
 		if (! is_array ( $zeilen_arr )) {
-			fehlermeldung_ausgeben ( "F�r die DTAUS-Erstellung sind keine Daten verf�gbar" );
+			fehlermeldung_ausgeben ( "Für die DTAUS-Erstellung sind keine Daten verfügbar" );
 		} else {
 			$anzahl_zeilen = count ( $zeilen_arr );
 			$g = new geldkonto_info ();
 			$g->geld_konto_details ( $g_konto_id );
 			
 			echo "<table>";
-			echo "<tr><td colspan=\"4\">�bersicht</td></tr>";
-			echo "<tr><td>Art der Auftr�ge:</td><td>Gutschrift</td><td>Auftraggeber:</td><td>$g->geldkonto_bezeichnung</td></tr>";
+			echo "<tr><td colspan=\"4\">Übersicht</td></tr>";
+			echo "<tr><td>Art der Aufträge:</td><td>Gutschrift</td><td>Auftraggeber:</td><td>$g->geldkonto_bezeichnung</td></tr>";
 			$datum = date ( "d.m.Y" );
 			echo "<tr><td>Erstelldatum:</td><td>$datum</td><td>BLZ:</td><td>$g->blz</td></tr>";
-			echo "<tr><td>Anzahl der Auftr�ge:</td><td>$anzahl_zeilen</td><td>Kontonummer:</td><td>$g->kontonummer</td></tr>";
+			echo "<tr><td>Anzahl der Aufträge:</td><td>$anzahl_zeilen</td><td>Kontonummer:</td><td>$g->kontonummer</td></tr>";
 			$gesamt_summe = $this->gesamt_summe ( $g_konto_id );
 			$gesamt_summe = nummer_punkt2komma ( $gesamt_summe );
 			echo "<tr><td>Gesamtsumme:</td><td>$gesamt_summe</td><td></td><td></td></tr>";
 			echo "</table><br>";
 			
 			echo "<table>";
-			echo "<tr><td><b>Zahlungsempf�nger</b></td><td align=\"right\"><b>Betrag/EUR</b></td><td><b>KtoNr.</b></td><td><b>BLZ</b></td><td><b>Verwendungszweck</b></td></tr>";
+			echo "<tr><td><b>Zahlungsempfänger</b></td><td align=\"right\"><b>Betrag/EUR</b></td><td><b>KtoNr.</b></td><td><b>BLZ</b></td><td><b>Verwendungszweck</b></td></tr>";
 			
 			for($a = 0; $a < $anzahl_zeilen; $a ++) {
 				$g1 = new geldkonto_info ();
@@ -277,7 +277,7 @@ class ueberweisung {
 		}
 	}
 	function dtaus_datei_erstellen($g_konto_id) {
-		include_once ('classes/class.dtaus.php'); // �berweisung oder Lastschrift
+		include_once ('classes/class.dtaus.php'); // Überweisung oder Lastschrift
 		include_once ('classes/class_dtaus_berlussimo.php'); // zum speichern
 		
 		$dtaus = new dtaus_berlus ();
@@ -316,7 +316,7 @@ class ueberweisung {
 		$letzte_dtaus_id = $this->letzte_dtaus_id ();
 		$letzte_dtaus_id = $letzte_dtaus_id + 1;
 		$filename = "$letzte_dtaus_id.txt";
-		// $dtaus = new dtaus_berlus; //nach oben gewandert wegen umr�che entfernen
+		// $dtaus = new dtaus_berlus; //nach oben gewandert wegen umbrüche entfernen
 		$monat = date ( "m" );
 		$jahr = date ( "Y" );
 		
@@ -327,11 +327,11 @@ class ueberweisung {
 			$zugewiesene_l_id = $this->update_dtaus_id ( $g_konto_id );
 			
 			if ($zugewiesene_l_id !== $letzte_dtaus_id) {
-				echo "FEHLER 606, DTAUS ERSTELLUNG (LETZTE_DTAUS_ID WURDE VER�NDERT";
+				echo "FEHLER 606, DTAUS ERSTELLUNG (LETZTE_DTAUS_ID WURDE VERÄNDERT";
 			}
 		}
 		
-		// ausgabe zum beispiel in einem textfeld f�r copy & paste
+		// ausgabe zum beispiel in einem textfeld für copy & paste
 		// echo '<textarea class="content" style="width:900; height:1200;">' . $dt->doSome1('0128', 'GK', ' 51000') . '</textarea><br><br>';
 	}
 	function letzte_dtaus_id() {
@@ -435,18 +435,18 @@ class ueberweisung {
 			$g->geld_konto_details ( $g_konto_id );
 			
 			echo "<table>";
-			echo "<tr><td colspan=\"4\">�bersicht</td></tr>";
-			echo "<tr><td>Art der Auftr�ge:</td><td>Gutschrift</td><td>Auftraggeber:</td><td>$g->geldkonto_bezeichnung</td></tr>";
+			echo "<tr><td colspan=\"4\">Übersicht</td></tr>";
+			echo "<tr><td>Art der Aufträge:</td><td>Gutschrift</td><td>Auftraggeber:</td><td>$g->geldkonto_bezeichnung</td></tr>";
 			$datum = date ( "d.m.Y" );
 			echo "<tr><td>Erstelldatum:</td><td>$datum</td><td>BLZ:</td><td>$g->blz</td></tr>";
-			echo "<tr><td>Anzahl der Auftr�ge:</td><td>$anzahl_zeilen</td><td>Kontonummer:</td><td>$g->kontonummer</td></tr>";
+			echo "<tr><td>Anzahl der Aufträge:</td><td>$anzahl_zeilen</td><td>Kontonummer:</td><td>$g->kontonummer</td></tr>";
 			$gesamt_summe = $this->dtaus_gesamt_summe ( $dtaus_id );
 			$gesamt_summe = nummer_punkt2komma ( $gesamt_summe );
 			echo "<tr><td>Gesamtsumme:</td><td>$gesamt_summe</td><td></td><td></td></tr>";
 			echo "</table><br>";
 			
 			echo "<table>";
-			echo "<tr><td><b>Zahlungsempf�nger</b></td><td align=\"right\"><b>Betrag/EUR</b></td><td><b>KtoNr.</b></td><td><b>BLZ</b></td><td><b>Verwendungszweck</b></td></tr>";
+			echo "<tr><td><b>Zahlungsempfänger</b></td><td align=\"right\"><b>Betrag/EUR</b></td><td><b>KtoNr.</b></td><td><b>BLZ</b></td><td><b>Verwendungszweck</b></td></tr>";
 			
 			for($a = 0; $a < $anzahl_zeilen; $a ++) {
 				$g1 = new geldkonto_info ();
@@ -481,7 +481,7 @@ class ueberweisung {
 			$bpdf = new b_pdf ();
 			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
 			
-			$pdf->ezText ( "�bersicht DTAUS �berweisungen - DTAUS-ID: $dtaus_id", 14 );
+			$pdf->ezText ( "Übersicht DTAUS Überweisungen - DTAUS-ID: $dtaus_id", 14 );
 			$pdf->ezText ( "<b>Konto: $g->geldkonto_bezeichnung</b>", 10 );
 			$pdf->ezText ( "Kontonr: $g->kontonummer      BLZ:$g->blz" );
 			$datum = date ( "d.m.Y" );
@@ -501,7 +501,7 @@ class ueberweisung {
 			);
 			
 			// $pdf->ezTable($zeilen_arr, $cols);
-			$pdf->ezTable ( $zeilen_arr, $cols, "<b>�bersicht DTAUS</b>", array (
+			$pdf->ezTable ( $zeilen_arr, $cols, "<b>Übersicht DTAUS</b>", array (
 					'showHeadings' => 1,
 					'shaded' => 1,
 					'titleFontSize' => 8,
@@ -527,7 +527,7 @@ class ueberweisung {
 	}
 	function form_dtaus_datei_buchen($dtaus_id) {
 		$f = new formular ();
-		$f->erstelle_formular ( '�berweisungen verbuchen', null );
+		$f->erstelle_formular ( 'Überweisungen verbuchen', null );
 		$zeilen_arr = $this->dtausdatei_zeilen_arr ( $dtaus_id );
 		if (! is_array ( $zeilen_arr )) {
 			fehlermeldung_ausgeben ( "DTAUS DATEI FEHLERHAFT, KEINE DATEN IN DER DATENBANK" );
@@ -538,18 +538,18 @@ class ueberweisung {
 			$g->geld_konto_details ( $g_konto_id );
 			
 			echo "<table>";
-			echo "<tr><td colspan=\"4\">�bersicht</td></tr>";
-			echo "<tr><td>Art der Auftr�ge:</td><td>Gutschrift</td><td>Auftraggeber:</td><td>$g->geldkonto_bezeichnung</td></tr>";
+			echo "<tr><td colspan=\"4\">Übersicht</td></tr>";
+			echo "<tr><td>Art der Aufträge:</td><td>Gutschrift</td><td>Auftraggeber:</td><td>$g->geldkonto_bezeichnung</td></tr>";
 			$datum = date ( "d.m.Y" );
 			echo "<tr><td>Erstelldatum:</td><td>$datum</td><td>BLZ:</td><td>$g->blz</td></tr>";
-			echo "<tr><td>Anzahl der Auftr�ge:</td><td>$anzahl_zeilen</td><td>Kontonummer:</td><td>$g->kontonummer</td></tr>";
+			echo "<tr><td>Anzahl der Aufträge:</td><td>$anzahl_zeilen</td><td>Kontonummer:</td><td>$g->kontonummer</td></tr>";
 			$gesamt_summe = $this->dtaus_gesamt_summe ( $dtaus_id );
 			$gesamt_summe = nummer_punkt2komma ( $gesamt_summe );
 			echo "<tr><td>Gesamtsumme:</td><td>$gesamt_summe</td><td></td><td></td></tr>";
 			echo "</table><br>";
 			
 			echo "<table>";
-			echo "<tr><td>Status</td><td><b>Zahlungsempf�nger</b></td><td align=\"right\"><b>Betrag/EUR</b></td><td><b>KtoNr.</b></td><td><b>BLZ</b></td><td><b>Verwendungszweck</b></td><td>Buchungstext</td></tr>";
+			echo "<tr><td>Status</td><td><b>Zahlungsempfänger</b></td><td align=\"right\"><b>Betrag/EUR</b></td><td><b>KtoNr.</b></td><td><b>BLZ</b></td><td><b>Verwendungszweck</b></td><td>Buchungstext</td></tr>";
 			
 			for($a = 0; $a < $anzahl_zeilen; $a ++) {
 				$g1 = new geldkonto_info ();
@@ -565,7 +565,7 @@ class ueberweisung {
 				$g1->geld_konto_details ( $e_konto_id );
 				// echo " $g->kontonummer $g->blz | $g1->geldkonto_bezeichnung $g1->kontonummer $g1->blz $betrag $vzweck1 $vzweck2 $vzweck3<br>";
 				
-				/* Pr�fen ob Buchung als Zahlungsausgang gebucht wurde */
+				/* Prüfen ob Buchung als Zahlungsausgang gebucht wurde */
 				$erfass_nr = $zeilen_arr [$a] ['BEZUGS_ID'];
 				$f = new formular ();
 				
@@ -632,12 +632,12 @@ class ueberweisung {
 	}
 	
 	/*
-	 * Array mit Kontierungsdaten einer Rechnung/Beleges f�r die Buchung einer Rechnung, wie kontiert
-	 * vergleichen ob der �berwiesene Betrag Netto,. Brutto oder skontierter Betrag ist und danach buchen
+	 * Array mit Kontierungsdaten einer Rechnung/Beleges für die Buchung einer Rechnung, wie kontiert
+	 * vergleichen ob der überwiesene Betrag Netto,. Brutto oder skontierter Betrag ist und danach buchen
 	 */
 	function ueberwiesene_rechnung_buchen($datum, $kto_auszugsnr, $belegnr, $vorzeichen, $rechnungs_betrag, $vzweck, $geldkonto_id) {
 		$r = new rechnung (); // aus berlussimo_class
-		$b = new buchen (); // ben�tigt zum verbuchen einzelner positionen nach kontierung
+		$b = new buchen (); // benötigt zum verbuchen einzelner positionen nach kontierung
 		$r->rechnung_grunddaten_holen ( $belegnr );
 		$kontierungs_status = $r->rechnung_auf_kontierung_pruefen ( $belegnr );
 		if ($kontierungs_status == 'vollstaendig') {
@@ -746,16 +746,16 @@ else {
 	}
 	function form_ueberweisung_manuell() {
 		if (empty ( $_SESSION [geldkonto_id] ) or empty ( $_SESSION [partner_id] )) {
-			die ( 'ABBRUCH - Partner und Geldkonto w�hlen!!!' );
+			die ( 'ABBRUCH - Partner und Geldkonto wählen!!!' );
 		} else {
 			$g = new geldkonto_info ();
 			$konto_id = $_SESSION [geldkonto_id];
 			$g->geld_konto_details ( $konto_id );
 			$b = new buchen ();
 			$f = new formular ();
-			$f->fieldset ( "Sammel�berweisung erfassen vom $g->geldkonto_bezeichnung_kurz", 'su' );
-			$b->dropdown_geldkonten_alle ( 'Empf�ngergeldkonto w�hlen' );
-			// $f->text_feld('Beg�nstigter', 'beguenstigter', '', 50, 'beg', '');
+			$f->fieldset ( "Sammelüberweisung erfassen vom $g->geldkonto_bezeichnung_kurz", 'su' );
+			$b->dropdown_geldkonten_alle ( 'Empfängergeldkonto wählen' );
+			// $f->text_feld('Begünstigter', 'beguenstigter', '', 50, 'beg', '');
 			// $f->text_feld('Kontonummer', 'kontonummer', '', 15, 'knr', '');
 			// $f->text_feld('BLZ', 'blz', '', 15, 'blz', '');
 			// $f->text_feld('Kreditinstitut', 'Kreditinstitut', '', 50, 'ki', '');

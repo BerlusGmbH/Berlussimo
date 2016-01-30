@@ -252,12 +252,12 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
 			$anfang = $buchung->date_mysql2german ( $anfang );
 			$ende = $my_arr [$a] ['ENDE'];
 			$ende = $buchung->date_mysql2german ( $ende );
-			$aendern_link = "<a href=\"?daten=miete_definieren&option=aendern&mietvertrag_id=$e_mv_id&aendern_dat=$me_dat\">�ndern</a>";
-			$loeschen_link = "<a href=\"?daten=miete_definieren&option=me_loeschen&&mietvertrag_id=$e_mv_id&me_dat=$me_dat\">L�schen</a>";
+			$aendern_link = "<a href=\"?daten=miete_definieren&option=aendern&mietvertrag_id=$e_mv_id&aendern_dat=$me_dat\">Ändern</a>";
+			$loeschen_link = "<a href=\"?daten=miete_definieren&option=me_loeschen&&mietvertrag_id=$e_mv_id&me_dat=$me_dat\">Löschen</a>";
 			if ($ende == '00.00.0000') {
 				$ende = 'unbefristet';
 			}
-			echo "<tr class=\"zeile1\"><td>$e_kurzname</td><td>$anfang</td><td>$ende </td><td>$kostenkat</td><td align=right>$betrag �</td><td>$mwst_anteil_a</td><td>$aendern_link $loeschen_link</td></tr>";
+			echo "<tr class=\"zeile1\"><td>$e_kurzname</td><td>$anfang</td><td>$ende </td><td>$kostenkat</td><td align=right>$betrag €</td><td>$mwst_anteil_a</td><td>$aendern_link $loeschen_link</td></tr>";
 		}
 		echo "</table>";
 	}
@@ -287,15 +287,15 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
 				$ende = $row1 ['ENDE'];
 				$ende = date_mysql2german ( $ende );
 				
-				$aendern_link = "<a href=\"?daten=miete_definieren&option=aendern&mietvertrag_id=$e_mv_id&aendern_dat=$me_dat\">�ndern</a>";
-				$loeschen_link = "<a href=\"?daten=miete_definieren&option=me_loeschen&&mietvertrag_id=$e_mv_id&me_dat=$me_dat\">L�schen</a>";
+				$aendern_link = "<a href=\"?daten=miete_definieren&option=aendern&mietvertrag_id=$e_mv_id&aendern_dat=$me_dat\">Ändern</a>";
+				$loeschen_link = "<a href=\"?daten=miete_definieren&option=me_loeschen&&mietvertrag_id=$e_mv_id&me_dat=$me_dat\">Löschen</a>";
 				if ($ende == '00.00.0000') {
 					$ende = 'unbefristet';
 					$css_class = "zeile2";
 				} else {
 					$css_class = "zeile1";
 				}
-				echo "<tr class=\"$css_class\"><td>$anfang</td><td>$ende </td><td align=right>$betrag �</td><td>$mwst_anteil_a</td><td>$aendern_link $loeschen_link</td></tr>";
+				echo "<tr class=\"$css_class\"><td>$anfang</td><td>$ende </td><td align=right>$betrag €</td><td>$mwst_anteil_a</td><td>$aendern_link $loeschen_link</td></tr>";
 			} // end while 2
 			
 			echo "</tbody></table>";
@@ -333,8 +333,8 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
 			$ende_ser = str_replace ( '-', '', date_german2mysql ( $ende ) );
 			$heute_ser = date ( "Ymd" );
 			
-			$aendern_link = "<a href=\"?daten=miete_definieren&option=aendern&mietvertrag_id=$e_mv_id&aendern_dat=$me_dat\">�ndern</a>";
-			$loeschen_link = "<a href=\"?daten=miete_definieren&option=me_loeschen&&mietvertrag_id=$e_mv_id&me_dat=$me_dat\">L�schen</a>";
+			$aendern_link = "<a href=\"?daten=miete_definieren&option=aendern&mietvertrag_id=$e_mv_id&aendern_dat=$me_dat\">Ändern</a>";
+			$loeschen_link = "<a href=\"?daten=miete_definieren&option=me_loeschen&&mietvertrag_id=$e_mv_id&me_dat=$me_dat\">Löschen</a>";
 			if (($anfang_ser <= $heute_ser) && ($ende == '00.00.0000' or ($ende_ser > $heute_ser))) {
 				// $ende = 'unbefristet';
 				$css_class = "zeile2";
@@ -342,11 +342,11 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
 			} else {
 				$css_class = "zeile1";
 			}
-			echo "<tr class=\"$css_class\"><td>$kostenkat</td><td>$anfang</td><td>$ende </td><td align=right>$betrag_a �</td><td>$mwst_anteil_a</td><td>$aendern_link $loeschen_link</td></tr>";
+			echo "<tr class=\"$css_class\"><td>$kostenkat</td><td>$anfang</td><td>$ende </td><td align=right>$betrag_a €</td><td>$mwst_anteil_a</td><td>$aendern_link $loeschen_link</td></tr>";
 		} // end while 2
 		$summe_aktuell_a = nummer_punkt2komma_t ( $summe_aktuell );
 		$summe_mwst_a = nummer_punkt2komma_t ( $summe_mwst );
-		echo "<tr class=\"zeile1\"><td colspan=\"3\"><b>Gesamt aktuell</b></td><td align=right><b>$summe_aktuell_a �</b></td><td><b>$summe_mwst_a �</b></td><td></td></tr>";
+		echo "<tr class=\"zeile1\"><td colspan=\"3\"><b>Gesamt aktuell</b></td><td align=right><b>$summe_aktuell_a €</b></td><td><b>$summe_mwst_a €</b></td><td></td></tr>";
 		echo "</table>";
 		
 		echo "<table id=\"t2\" class=\"sortable\">";
@@ -379,12 +379,12 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
 			$ende = $row1 ['ENDE'];
 			$ende = date_mysql2german ( $ende );
 			
-			$aendern_link = "<a href=\"?daten=miete_definieren&option=aendern&mietvertrag_id=$e_mv_id&aendern_dat=$me_dat\">�ndern</a>";
-			$loeschen_link = "<a href=\"?daten=miete_definieren&option=me_loeschen&&mietvertrag_id=$e_mv_id&me_dat=$me_dat\">L�schen</a>";
+			$aendern_link = "<a href=\"?daten=miete_definieren&option=aendern&mietvertrag_id=$e_mv_id&aendern_dat=$me_dat\">Ändern</a>";
+			$loeschen_link = "<a href=\"?daten=miete_definieren&option=me_loeschen&&mietvertrag_id=$e_mv_id&me_dat=$me_dat\">Löschen</a>";
 			if ($ende == '00.00.0000') {
 				$ende = 'unbefristet';
 			}
-			echo "<tr class=\"zeile$z\"><td>$kostenkat</td><td>$anfang</td><td>$ende </td><td align=right>$betrag �</td><td>$mwst_anteil_a</td><td>$aendern_link $loeschen_link</td></tr>";
+			echo "<tr class=\"zeile$z\"><td>$kostenkat</td><td>$anfang</td><td>$ende </td><td align=right>$betrag €</td><td>$mwst_anteil_a</td><td>$aendern_link $loeschen_link</td></tr>";
 		} // end while 2
 		
 		echo "</table>";
@@ -419,9 +419,9 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
 			$ende = $row1 ['ENDE'];
 			$ende = date_mysql2german ( $ende );
 			
-			$aendern_link = "<a href=\"?daten=miete_definieren&option=aendern&mietvertrag_id=$e_mv_id&aendern_dat=$me_dat\">�ndern</a>";
-			$loeschen_link = "<a href=\"?daten=miete_definieren&option=me_loeschen&&mietvertrag_id=$e_mv_id&me_dat=$me_dat\">L�schen</a>";
-			echo "<tr class=\"zeile1\"><td>$kostenkat</td><td>$anfang</td><td>$ende </td><td align=right>$betrag �</td><td>$mwst_anteil_a</td><td>$aendern_link $loeschen_link</td></tr>";
+			$aendern_link = "<a href=\"?daten=miete_definieren&option=aendern&mietvertrag_id=$e_mv_id&aendern_dat=$me_dat\">Ändern</a>";
+			$loeschen_link = "<a href=\"?daten=miete_definieren&option=me_loeschen&&mietvertrag_id=$e_mv_id&me_dat=$me_dat\">Löschen</a>";
+			echo "<tr class=\"zeile1\"><td>$kostenkat</td><td>$anfang</td><td>$ende </td><td align=right>$betrag €</td><td>$mwst_anteil_a</td><td>$aendern_link $loeschen_link</td></tr>";
 		} // end while 2
 		
 		echo "</table>";
@@ -461,8 +461,8 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
 			$ende_ser = str_replace ( '-', '', date_german2mysql ( $ende ) );
 			$heute_ser = date ( "Ymd" );
 			
-			$aendern_link = "<a href=\"?daten=miete_definieren&option=aendern&mietvertrag_id=$e_mv_id&aendern_dat=$me_dat\">�ndern</a>";
-			$loeschen_link = "<a href=\"?daten=miete_definieren&option=me_loeschen&&mietvertrag_id=$e_mv_id&me_dat=$me_dat\">L�schen</a>";
+			$aendern_link = "<a href=\"?daten=miete_definieren&option=aendern&mietvertrag_id=$e_mv_id&aendern_dat=$me_dat\">Ändern</a>";
+			$loeschen_link = "<a href=\"?daten=miete_definieren&option=me_loeschen&&mietvertrag_id=$e_mv_id&me_dat=$me_dat\">Löschen</a>";
 			if (($anfang_ser <= $heute_ser) && ($ende == '00.00.0000' or ($ende_ser > $heute_ser))) {
 				// $ende = 'unbefristet';
 				$css_class = "zeile2";
@@ -470,12 +470,12 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
 			} else {
 				$css_class = "zeile1";
 			}
-			echo "<tr class=\"$css_class\"><td>$kostenkat</td><td>$anfang</td><td>$ende </td><td align=right>$betrag_a �</td><td>$mwst_anteil_a</td><td>$aendern_link $loeschen_link</td></tr>";
+			echo "<tr class=\"$css_class\"><td>$kostenkat</td><td>$anfang</td><td>$ende </td><td align=right>$betrag_a €</td><td>$mwst_anteil_a</td><td>$aendern_link $loeschen_link</td></tr>";
 			$pdf_aktuell [] = $row1;
 		} // end while 2
 		$summe_aktuell_a = nummer_punkt2komma_t ( $summe_aktuell );
 		$summe_mwst_a = nummer_punkt2komma_t ( $summe_mwst );
-		echo "<tr class=\"zeile1\"><td colspan=\"3\"><b>Gesamt aktuell</b></td><td align=right><b>$summe_aktuell_a �</b></td><td><b>$summe_mwst_a �</b></td><td></td></tr>";
+		echo "<tr class=\"zeile1\"><td colspan=\"3\"><b>Gesamt aktuell</b></td><td align=right><b>$summe_aktuell_a €</b></td><td><b>$summe_mwst_a €</b></td><td></td></tr>";
 		echo "</table>";
 		
 		$pdf_aktuell [$anz_zeilen] ['KOSTENKATEGORIE'] = "<b>SUMMEN</b>";
@@ -541,12 +541,12 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
 			$ende = $row1 ['ENDE'];
 			$ende = date_mysql2german ( $ende );
 			
-			$aendern_link = "<a href=\"?daten=miete_definieren&option=aendern&mietvertrag_id=$e_mv_id&aendern_dat=$me_dat\">�ndern</a>";
-			$loeschen_link = "<a href=\"?daten=miete_definieren&option=me_loeschen&&mietvertrag_id=$e_mv_id&me_dat=$me_dat\">L�schen</a>";
+			$aendern_link = "<a href=\"?daten=miete_definieren&option=aendern&mietvertrag_id=$e_mv_id&aendern_dat=$me_dat\">Ändern</a>";
+			$loeschen_link = "<a href=\"?daten=miete_definieren&option=me_loeschen&&mietvertrag_id=$e_mv_id&me_dat=$me_dat\">Löschen</a>";
 			if ($ende == '00.00.0000') {
 				$ende = 'unbefristet';
 			}
-			echo "<tr class=\"zeile$z\"><td>$kostenkat</td><td>$anfang</td><td>$ende </td><td align=right>$betrag �</td><td>$mwst_anteil_a</td><td>$aendern_link $loeschen_link</td></tr>";
+			echo "<tr class=\"zeile$z\"><td>$kostenkat</td><td>$anfang</td><td>$ende </td><td align=right>$betrag €</td><td>$mwst_anteil_a</td><td>$aendern_link $loeschen_link</td></tr>";
 			$pdf_anstehend [] = $row1;
 		} // end while 2
 		
@@ -559,7 +559,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
 					'MWST_ANTEIL' => "MWSt" 
 			);
 			$heute_d = date ( "d.m.Y" );
-			$pdf->ezTable ( $pdf_anstehend, $cols, "Anstehende �nderungen der Miete - Druckdatum: $heute_d - $mvs->einheit_kurzname - $mvs->personen_name_string</b>", array (
+			$pdf->ezTable ( $pdf_anstehend, $cols, "Anstehende Änderungen der Miete - Druckdatum: $heute_d - $mvs->einheit_kurzname - $mvs->personen_name_string</b>", array (
 					'showHeadings' => 1,
 					'shaded' => 1,
 					'titleFontSize' => 8,
@@ -609,9 +609,9 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
 			$ende = $row1 ['ENDE'];
 			$ende = date_mysql2german ( $ende );
 			
-			$aendern_link = "<a href=\"?daten=miete_definieren&option=aendern&mietvertrag_id=$e_mv_id&aendern_dat=$me_dat\">�ndern</a>";
-			$loeschen_link = "<a href=\"?daten=miete_definieren&option=me_loeschen&&mietvertrag_id=$e_mv_id&me_dat=$me_dat\">L�schen</a>";
-			echo "<tr class=\"zeile1\"><td>$kostenkat</td><td>$anfang</td><td>$ende </td><td align=right>$betrag �</td><td>$mwst_anteil_a</td><td>$aendern_link $loeschen_link</td></tr>";
+			$aendern_link = "<a href=\"?daten=miete_definieren&option=aendern&mietvertrag_id=$e_mv_id&aendern_dat=$me_dat\">Ändern</a>";
+			$loeschen_link = "<a href=\"?daten=miete_definieren&option=me_loeschen&&mietvertrag_id=$e_mv_id&me_dat=$me_dat\">Löschen</a>";
+			echo "<tr class=\"zeile1\"><td>$kostenkat</td><td>$anfang</td><td>$ende </td><td align=right>$betrag €</td><td>$mwst_anteil_a</td><td>$aendern_link $loeschen_link</td></tr>";
 			
 			$pdf_abgelaufen [] = $row1;
 		} // end while 2
@@ -650,7 +650,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
 		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 		while ( list ( $MIETENTWICKLUNG_ID, $KOSTENTRAEGER_ID, $KOSTENKATEGORIE, $BETRAG, $MWST_ANTEIL, $ANFANG, $ENDE ) = mysql_fetch_row ( $resultat ) ) {
 			$ANFANG = $form->date_mysql2german ( $ANFANG );
-			$form->dropdown_me_kostenkategorien ( 'Kostenkategorie ausw�hlen', 'kostenkategorie', $KOSTENKATEGORIE );
+			$form->dropdown_me_kostenkategorien ( 'Kostenkategorie auswählen', 'kostenkategorie', $KOSTENKATEGORIE );
 			// $form->text_feld_inaktiv('Kostenkategorie', 'kostenkategorie', $KOSTENKATEGORIE, strlen($KOSTENKATEGORIE));
 			$form->text_feld ( 'Anfang', 'anfang', $ANFANG, strlen ( $ANFANG ) );
 			// $form->text_feld_inaktiv('Anfang', 'anfang', $ANFANG, strlen($ANFANG));
@@ -671,7 +671,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
 			$form->hidden_feld ( 'me_id', $MIETENTWICKLUNG_ID );
 			$form->hidden_feld ( 'mv_id', $KOSTENTRAEGER_ID );
 			$form->hidden_feld ( 'option', 'andern_dat_speichern' );
-			$form->send_button ( 'btn_aendern_dat', '�ndern' );
+			$form->send_button ( 'btn_aendern_dat', 'Ändern' );
 			// echo "$KOSTENKATEGORIE, $BETRAG";
 		}
 	}
@@ -733,7 +733,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
 		echo "<a href=\"?daten=miete_definieren&option=staffel_eingabe&mv_id=$mv_id\">Staffel eingeben</a><hr>";
 		$form = new mietkonto ();
 		$f = new formular ();
-		$form->dropdown_me_kostenkategorien ( 'Kostenkategorie ausw�hlen', 'kostenkategorie', $_SESSION ['me_kostenkat'] );
+		$form->dropdown_me_kostenkategorien ( 'Kostenkategorie auswählen', 'kostenkategorie', $_SESSION ['me_kostenkat'] );
 		// $form->text_feld('Anfang', 'anfang', '', '10');
 		// $form->text_feld('Ende', 'ende', '', '10');
 		// datum_feld($beschreibung, $name, $wert, $id)
@@ -756,7 +756,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
 		$form->text_feld_js ( 'MWST-Anteil', 'mwst', '0,00', 10, 'mwst', $js_mwst );
 		$form->hidden_feld ( 'mv_id', $mv_id );
 		$form->hidden_feld ( 'option', 'me_neu_speichern' );
-		$form->send_button ( 'btn_hinzu_dat', 'Hinzuf�gen' );
+		$form->send_button ( 'btn_hinzu_dat', 'Hinzufügen' );
 	}
 	function me_dat_neu_speichern() {
 		/* Neue Zeile */
@@ -889,7 +889,7 @@ AND `MIETENTWICKLUNG_AKTUELL` = '1' && `MIETVERTRAG_AKTUELL` = '1' && `EINHEIT_A
 		if (! isset ( $_SESSION ['me_kostenkat'] )) {
 			$_SESSION ['me_kostenkat'] = 'Miete kalt';
 		}
-		$form->dropdown_me_kostenkategorien ( 'Kostenkategorie ausw�hlen', 'kostenkategorie[]', $_SESSION ['me_kostenkat'] );
+		$form->dropdown_me_kostenkategorien ( 'Kostenkategorie auswählen', 'kostenkategorie[]', $_SESSION ['me_kostenkat'] );
 		echo "</td>";
 		if (isset ( $_SESSION ['a_datum'] )) {
 			$a_datum = $_SESSION ['a_datum'];
@@ -922,7 +922,7 @@ AND `MIETENTWICKLUNG_AKTUELL` = '1' && `MIETVERTRAG_AKTUELL` = '1' && `EINHEIT_A
 		echo "</tr>";
 		$form->hidden_feld ( 'mv_id', $mv_id );
 		$form->hidden_feld ( 'option', 'me_neu_speichern1' );
-		// $form->send_button('btn_hinzu_dat', 'Hinzuf�gen');
+		// $form->send_button('btn_hinzu_dat', 'Hinzufügen');
 	}
 	function check_me($kos_typ, $kos_id, $kat, $anfang, $ende) {
 		$result = mysql_query ( "SELECT *
@@ -989,7 +989,7 @@ AND `MIETENTWICKLUNG_AKTUELL` = '1' && `MIETVERTRAG_AKTUELL` = '1' && `EINHEIT_A
 		// $kostenkategorien_arr[] = 'Untermieter Zuschlag';
 		// $kostenkategorien_arr[] = 'MOD';
 		// $kostenkategorien_arr[] = 'MHG';
-		// $kostenkategorien_arr[] = 'Mahngeb�hr';
+		// $kostenkategorien_arr[] = 'Mahngebühr';
 		// $kostenkategorien_arr[] = 'Ratenzahlung';
 		// $kostenkategorien_arr[] = 'Saldo Vortrag Vorverwaltung';
 		// $kostenkategorien_arr[] = 'Mietminderung';

@@ -40,7 +40,7 @@ switch ($daten_rein) {
 			erstelle_eingabefeld ( 'Objekt Kurzname', 'objekt_kurzname', NULL, 20 ); // name, wert, size
 			$partner = new partner ();
 			
-			$partner_arr = $partner->partner_dropdown ( 'Eigent�mer', 'eigentuemer', 'eigentuemer' );
+			$partner_arr = $partner->partner_dropdown ( 'Eigentümer', 'eigentuemer', 'eigentuemer' );
 			erstelle_submit_button ( obj_erstellen, Erstellen ); // name, wert
 			ende_formular ();
 			objekte_liste ();
@@ -50,10 +50,10 @@ switch ($daten_rein) {
 			if ($objekt_kurzname != '') {
 				// erstelle_formular('objekt_in_db', '?formular=objekte&daten_rein=objekt_in_db'); //name, action
 				$form->erstelle_formular ( "Wohnobjekt anlegen", '?formular=objekte&daten_rein=objekt_in_db' );
-				echo "<tr><td><h1>Folgende Daten wurden �bermittelt:\n</h1></td></tr>\n";
+				echo "<tr><td><h1>Folgende Daten wurden übermittelt:\n</h1></td></tr>\n";
 				echo "<tr><td><h2>Objektkurzname: $objekt_kurzname</h2></td></tr>\n";
 				echo "<tr><td>";
-				warnung_ausgeben ( "Sind Sie sicher, da� Sie das Objekt $objekt_kurzname anlegen wollen? $eigentuemer" );
+				warnung_ausgeben ( "Sind Sie sicher, daß Sie das Objekt $objekt_kurzname anlegen wollen? $eigentuemer" );
 				echo "</td></tr>";
 				erstelle_hiddenfeld ( "daten_rein", "objekt_in_db" );
 				erstelle_hiddenfeld ( "objekt_kurzname", "$objekt_kurzname" );
@@ -76,7 +76,7 @@ switch ($daten_rein) {
 		if ($objekt_kurzname != '') {
 			$kurzname_existiert = objekt_kurzname_anzahl ( $objekt_kurzname );
 			if ($kurzname_existiert < 1) {
-				neues_objekt_anlegen ( $objekt_kurzname, $eigentuemer ); // obj_id, kurzname - id mu� eingegeben werden
+				neues_objekt_anlegen ( $objekt_kurzname, $eigentuemer ); // obj_id, kurzname - id muß eingegeben werden
 				hinweis_ausgeben ( "$objekt_kurzname wurde als Verwaltungsobjekt angelegt." );
 				weiterleiten_in_sec ( "?daten=objekte_raus&objekte_raus=objekte_kurz", 2 );
 			} else {
@@ -90,9 +90,9 @@ switch ($daten_rein) {
 	
 	case "aendern_liste" :
 		$form = new mietkonto ();
-		$form->erstelle_formular ( "Wohnobjekt �ndern", NULL );
+		$form->erstelle_formular ( "Wohnobjekt ändern", NULL );
 		iframe_start ();
-		echo "<h1>Objekte �ndern</h1>";
+		echo "<h1>Objekte ändern</h1>";
 		liste_aktueller_objekte_edit ();
 		iframe_end ();
 		$form->ende_formular ();
@@ -100,7 +100,7 @@ switch ($daten_rein) {
 	
 	case "aendern" :
 		$form = new mietkonto ();
-		$form->erstelle_formular ( "Wohnobjekt �ndern", NULL );
+		$form->erstelle_formular ( "Wohnobjekt ändern", NULL );
 		
 		iframe_start ();
 		$obj_id = $_REQUEST ["obj_id"];
@@ -114,15 +114,15 @@ switch ($daten_rein) {
 				echo "$neu_objekt_kurzname $objekt_dat";
 				// objekt_update_kurzname($objekt_dat, $obj_id, $neu_objekt_kurzname);
 				erstelle_formular ( objekt_in_db, '?formular=objekte&daten_rein=aendern_in_db' ); // name, action
-				echo "<tr><td><h1>Folgende Daten wurden �bermittelt:\n</h1></td></tr>\n";
+				echo "<tr><td><h1>Folgende Daten wurden übermittelt:\n</h1></td></tr>\n";
 				echo "<tr><td><h2>Objektkurzname: $objekt_kurzname</h2></td></tr>\n";
 				echo "<tr><td>";
-				warnung_ausgeben ( "Sind Sie sicher, da� Sie das Objekt in $objekt_kurzname �ndern wollen?" );
+				warnung_ausgeben ( "Sind Sie sicher, daß Sie das Objekt in $objekt_kurzname ändern wollen?" );
 				echo "</td></tr>";
 				erstelle_hiddenfeld ( "obj_id", "$obj_id" );
 				erstelle_hiddenfeld ( "objekt_dat", "$objekt_dat" );
 				erstelle_hiddenfeld ( "objekt_kurzname", "$objekt_kurzname" );
-				erstelle_submit_button ( "obj_update", "�ndern" ); // name, wert
+				erstelle_submit_button ( "obj_update", "ändern" ); // name, wert
 				ende_formular ();
 			} else {
 				fehlermeldung_ausgeben ( "Bitte geben Sie dem Objekt einen Kurznamen!" );
@@ -150,7 +150,7 @@ switch ($daten_rein) {
 				weiterleiten ( "?daten=objekte_raus&objekte_raus=objekte_kurz" );
 			} else {
 				fehlermeldung_ausgeben ( "Objekt $objekt_kurzname existiert schon!!!" );
-				hinweis_ausgeben ( "Keine �nderungen wurden vorgenommen!!!" );
+				hinweis_ausgeben ( "Keine änderungen wurden vorgenommen!!!" );
 			}
 		}
 		iframe_end ();
@@ -166,15 +166,15 @@ switch ($daten_rein) {
 			erstelle_formular ( NULL, NULL ); // name, action
 			echo "<tr><td><h1>Objektkurzname: $objekt_kurzname</h2></td></tr>\n";
 			echo "<tr><td>";
-			warnung_ausgeben ( "Sind Sie sicher, da� Sie das Objekt $objekt_kurzname l�schen wollen?" );
+			warnung_ausgeben ( "Sind Sie sicher, daß Sie das Objekt $objekt_kurzname löschen wollen?" );
 			echo "</td></tr>";
 			erstelle_hiddenfeld ( "obj_dat", "$obj_dat" );
-			erstelle_submit_button ( "obj_loeschen", "L�schen" ); // name, wert
+			erstelle_submit_button ( "obj_loeschen", "Löschen" ); // name, wert
 			ende_formular ();
 		}
 		if (isset ( $_REQUEST [obj_loeschen] )) {
 			objekt_loeschen ( $obj_dat );
-			hinweis_ausgeben ( "$objekt_kurzname wurde gel�scht!" );
+			hinweis_ausgeben ( "$objekt_kurzname wurde gelöscht!" );
 			weiterleiten ( "?daten=objekte_raus&objekte_raus=objekte_kurz" );
 		}
 		iframe_end ();

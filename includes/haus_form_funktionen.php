@@ -20,7 +20,7 @@
 function objekt_liste_links() {
 	$db_abfrage = "SELECT OBJEKT_DAT, OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC ";
 	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-	echo "<b>Objekt ausw�hlen:</b><br>\n ";
+	echo "<b>Objekt auswählen:</b><br>\n ";
 	while ( list ( $OBJEKT_DAT, $OBJEKT_ID, $OBJEKT_KURZNAME ) = mysql_fetch_row ( $resultat ) ) {
 		echo "<a class=\"objekt_links\" href=\"?formular=haus&daten_rein=anlegen&haus_objekt=$OBJEKT_ID\">$OBJEKT_KURZNAME</a><br>\n";
 	}
@@ -28,7 +28,7 @@ function objekt_liste_links() {
 function objekt_liste_links_aenderung() {
 	$db_abfrage = "SELECT OBJEKT_DAT, OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC ";
 	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-	echo "<b>Objekt ausw�hlen:</b><br>\n ";
+	echo "<b>Objekt auswählen:</b><br>\n ";
 	while ( list ( $OBJEKT_DAT, $OBJEKT_ID, $OBJEKT_KURZNAME ) = mysql_fetch_row ( $resultat ) ) {
 		echo "<a class=\"objekt_links\" href=\"?formular=haus&daten_rein=aendern_liste&objekt_id=$OBJEKT_ID\">$OBJEKT_KURZNAME</a><br>\n";
 	}
@@ -36,14 +36,14 @@ function objekt_liste_links_aenderung() {
 function haus_eingabe_formular($objekt_id) {
 	$objekt_kurzname = objekt_kurzname ( $objekt_id );
 	$anzahl_haeuser = anzahl_haeuser_im_objekt ( $objekt_id );
-	echo "<p class=\"form_ausgewaehlt\">Ausgew�hltes Objekt: $objekt_kurzname (H�user: $anzahl_haeuser)</p>";
+	echo "<p class=\"form_ausgewaehlt\">Ausgewähltes Objekt: $objekt_kurzname (Häuser: $anzahl_haeuser)</p>";
 	erstelle_formular ( "haus_eingabe_form", NULL );
 	erstelle_hiddenfeld ( "objekt_id", $objekt_id );
 	erstelle_eingabefeld ( "Strasse", "haus_strasse", "", "50" );
 	erstelle_eingabefeld ( "Hausnummer", "haus_nummer", "", "5" );
 	erstelle_eingabefeld ( "Ort/Stadt", "haus_stadt", "", "50" );
 	erstelle_eingabefeld ( "PLZ", "haus_plz", "", "50" );
-	erstelle_eingabefeld ( "Haus in m�", "haus_qm", "", "50" );
+	erstelle_eingabefeld ( "Haus in m²", "haus_qm", "", "50" );
 	erstelle_submit_button ( "submit_haus", "Senden" );
 	ende_formular ();
 }
@@ -60,7 +60,7 @@ function haus_aendern_formular($haus_id) {
 		erstelle_eingabefeld ( "Hausnummer", "haus_nummer", "$HAUS_NUMMER", "5" );
 		erstelle_eingabefeld ( "Ort/Stadt", "haus_stadt", "$HAUS_STADT", "50" );
 		erstelle_eingabefeld ( "PLZ", "haus_plz", "$HAUS_PLZ", "50" );
-		erstelle_eingabefeld ( "Haus in m�", "haus_qm", "$HAUS_QM", "50" );
+		erstelle_eingabefeld ( "Haus in m²", "haus_qm", "$HAUS_QM", "50" );
 	}
 	erstelle_submit_button ( "submit_haus", "Senden" );
 	ende_formular ();
@@ -95,7 +95,7 @@ function haus_geaendert_eintragen($haus_dat, $haus_id, $strasse, $nummer, $stadt
 	
 	$aktuelle_haus_dat = zugeteilte_haus_dat ( $strasse, $nummer, $stadt, $plz );
 	protokollieren ( "HAUS", $aktuelle_haus_dat, $haus_dat );
-	hinweis_ausgeben ( "Haus wurde ge�ndert" );
+	hinweis_ausgeben ( "Haus wurde geändert" );
 	weiterleiten ( "?daten=haus_raus&haus_raus=haus_kurz" );
 }
 function zugeteilte_haus_dat($strasse, $nummer, $stadt, $plz) {
@@ -125,7 +125,7 @@ function haeuser_liste_dropdown1($obj_id) {
 	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 	$numrows = mysql_numrows ( $resultat );
 	if ($numrows < 1) {
-		echo "<h1>Keine H�user im ausgew�hlten Objekt</h1><br>";
+		echo "<h1>Keine Häuser im ausgewählten Objekt</h1><br>";
 		echo "Erst Haus im Objekt anlegen - <a href=\"?formular=haus&daten_rein=anlegen\">Hauseningabe hier&nbsp;</a>";
 	} else {
 		echo "<select name=\"haeuser\" size=\"1\">";
@@ -148,16 +148,16 @@ function haeuser_liste_tabellealt($objekt_id) {
 		
 		echo "<table width=100%>\n";
 		echo "<tr class=\"feldernamen\"><td colspan=7>Objekt: $objekt_kurzname</td></tr>\n";
-		echo "<tr class=\"feldernamen\"><td>Stra�e</td><td>Nummer</td><td colspan=6></td></tr>\n";
+		echo "<tr class=\"feldernamen\"><td>Straße</td><td>Nummer</td><td colspan=6></td></tr>\n";
 		$counter = 0;
 		while ( list ( $HAUS_DAT, $HAUS_ID, $HAUS_STRASSE, $HAUS_NUMMER ) = mysql_fetch_row ( $resultat ) ) {
 			// echo "$HAUS_DAT, $HAUS_ID, $HAUS_STRASSE, $HAUS_NUMMER<br>";
 			$counter ++;
 			if ($counter == 1) {
-				echo "<tr class=\"zeile1\"><td>$HAUS_STRASSE</td><td>$HAUS_NUMMER</td><td>Details</td><td><a href=\"?daten=einheit_raus&einheit_raus=einheit_kurz&haus_id=$HAUS_ID\">Einheiten</a></td><td>Mieter</td><td>�ndern</td><td><a href=\"?formular=haus&daten_rein=aendern_liste\">L�schen</a></td></tr>\n";
+				echo "<tr class=\"zeile1\"><td>$HAUS_STRASSE</td><td>$HAUS_NUMMER</td><td>Details</td><td><a href=\"?daten=einheit_raus&einheit_raus=einheit_kurz&haus_id=$HAUS_ID\">Einheiten</a></td><td>Mieter</td><td>Ändern</td><td><a href=\"?formular=haus&daten_rein=aendern_liste\">Löschen</a></td></tr>\n";
 			}
 			if ($counter == 2) {
-				echo "<tr class=\"zeile2\"><td>$HAUS_STRASSE</td><td>$HAUS_NUMMER</td><td>Details</td><td><a href=\"?daten=einheit_raus&einheit_raus=einheit_kurz&haus_id=$HAUS_ID\">Einheiten</a></td><td>Mieter</td><td>�ndern</td><td><a href=\"?formular=haus&daten_rein=aendern_liste\">L�schen</a></td></tr>\n";
+				echo "<tr class=\"zeile2\"><td>$HAUS_STRASSE</td><td>$HAUS_NUMMER</td><td>Details</td><td><a href=\"?daten=einheit_raus&einheit_raus=einheit_kurz&haus_id=$HAUS_ID\">Einheiten</a></td><td>Mieter</td><td>Ändern</td><td><a href=\"?formular=haus&daten_rein=aendern_liste\">Löschen</a></td></tr>\n";
 				$counter = 0;
 			}
 		}
@@ -173,7 +173,7 @@ function haeuser_liste_tabelle($objekt_id) {
 		
 		echo "<div class=\"tabelle_haus\"><table>\n";
 		echo "<tr class=\"feldernamen\"><td colspan=2>Objekt: $objekt_kurzname</td></tr>\n";
-		echo "<tr class=\"feldernamen\"><td>Stra�e</td><td>Nummer</td></tr>\n";
+		echo "<tr class=\"feldernamen\"><td>Straße</td><td>Nummer</td></tr>\n";
 		$counter = 0;
 		while ( list ( $HAUS_STRASSE, $HAUS_NUMMER ) = mysql_fetch_row ( $resultat ) ) {
 			// echo "$HAUS_DAT, $HAUS_ID, $HAUS_STRASSE, $HAUS_NUMMER<br>";

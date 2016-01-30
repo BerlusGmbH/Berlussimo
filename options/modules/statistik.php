@@ -21,7 +21,7 @@
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'statistik' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -29,10 +29,10 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'statistik' )) {
 	die ();
 }
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_statistik.php");
 
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
 include_once ("options/links/links.statistik.php");
 
 $option = $_REQUEST ["option"];
@@ -222,19 +222,19 @@ switch ($option) {
 	case "baustelle_manuell" :
 		$s = new statistik ();
 		$f = new formular ();
-		$f->erstelle_formular ( "Baustelen�bersicht", NULL );
-		$s->baustellen_leistung ( 'Einheit', '166', 25, '2009-11-01', '2009-11-31', 'Pl�tzer Sansi 53' );
+		$f->erstelle_formular ( "Baustelenübersicht", NULL );
+		$s->baustellen_leistung ( 'Einheit', '166', 25, '2009-11-01', '2009-11-31', 'Plötzer Sansi 53' );
 		// $s->baustellen_leistung('Einheit', '168', 25);
 		// $s->baustellen_leistung('Einheit', '304', 25);
 		// $s->baustellen_leistung('Einheit', '32', 25);
 		// $s->baustellen_leistung('Einheit', '368', 25);
-		$s->baustellen_leistung ( 'Einheit', '368', 25, '2010-04-12', '2010-05-30', 'La�nack Badsanierung MODs' );
+		$s->baustellen_leistung ( 'Einheit', '368', 25, '2010-04-12', '2010-05-30', 'Laßnack Badsanierung MODs' );
 		$f->ende_formular ();
 	
 	case "baustelle" :
 		$s = new statistik ();
 		$f = new formular ();
-		$f->erstelle_formular ( "Baustelen�bersicht", NULL );
+		$f->erstelle_formular ( "Baustelenübersicht", NULL );
 		$s->baustellen_uebersicht2 ( 600 );
 		$s->baustellen_uebersicht ();
 		$f->ende_formular ();
@@ -243,7 +243,7 @@ switch ($option) {
 	case "fenster" :
 		$s = new statistik ();
 		$f = new formular ();
-		$f->erstelle_formular ( "Fenster�bersicht", NULL );
+		$f->erstelle_formular ( "Fensterübersicht", NULL );
 		$s->fenster_uebersicht ();
 		$f->ende_formular ();
 		break;
@@ -253,7 +253,7 @@ switch ($option) {
 		// die();
 		if (isset ( $_REQUEST ['sndBtn'] )) {
 			if ($_REQUEST ['rest'] < $_REQUEST ['anz_fenster']) {
-				fehlermeldung_ausgeben ( "Eingegebene Menge gr��er als Restmenge!" );
+				fehlermeldung_ausgeben ( "Eingegebene Menge größer als Restmenge!" );
 				die ();
 			} else {
 				$s = new statistik ();
@@ -289,7 +289,7 @@ switch ($option) {
 				weiterleiten_in_sec ( "?daten=statistik&option=fenster", 3 );
 			}
 		} else {
-			fehlermeldung_ausgeben ( "Eingabe unvollst�ndig Z261" );
+			fehlermeldung_ausgeben ( "Eingabe unvollständig Z261" );
 			weiterleiten_in_sec ( "?daten=statistik&option=fenster", 3 );
 		}
 		break;
@@ -303,7 +303,7 @@ switch ($option) {
 				weiterleiten_in_sec ( "?daten=statistik&option=fenster", 3 );
 			}
 		} else {
-			fehlermeldung_ausgeben ( "Eingabe unvollst�ndig Z262" );
+			fehlermeldung_ausgeben ( "Eingabe unvollständig Z262" );
 			weiterleiten_in_sec ( "?daten=statistik&option=fenster", 3 );
 		}
 		break;

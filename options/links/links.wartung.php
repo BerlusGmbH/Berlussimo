@@ -19,10 +19,10 @@
  */
 $f = new formular ();
 echo "<div class=\"navi_leiste2\">";
-$f->erstelle_formular ( "Hauptmen� -> Wartungen...", NULL );
-echo "<a href=\"?daten=wartung&option=geraeteliste\">Alle Ger�te</a>&nbsp;";
+$f->erstelle_formular ( "Hauptmenü -> Wartungen...", NULL );
+echo "<a href=\"?daten=wartung&option=geraeteliste\">Alle Geräte</a>&nbsp;";
 echo "<a href=\"?daten=wartung\">Wartungen</a>&nbsp;";
-echo "<a href=\"?daten=wartung&option=geraet_hinzu\">Ger�t hinzuf�gen</a>&nbsp;";
+echo "<a href=\"?daten=wartung&option=geraet_hinzu\">Gerät hinzufügen</a>&nbsp;";
 $f->ende_formular ();
 echo "</div>";
 

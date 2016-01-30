@@ -25,7 +25,7 @@ include_once ("config.inc.php");
  */
 class partners {
 	
-	/* Name eines Partner/Lieferand/Eigent�mer */
+	/* Name eines Partner/Lieferand/Eigentümer */
 	function get_partner_name($partner_id) {
 		if (isset ( $this->partner_name )) {
 			unset ( $this->partner_name );
@@ -51,7 +51,7 @@ OR  `LAND` LIKE  '%$suchtext%'
 			while ( $row = mysql_fetch_assoc ( $result ) )
 				$my_array [] = $row;
 				
-				/* Zus�tzlich Stichwortsuche */
+				/* Zusätzlich Stichwortsuche */
 			$my_array_stich = $this->suche_partner_stichwort_arr ( $suchtext );
 			// echo '<pre>';
 			// print_r($my_array);
@@ -188,7 +188,7 @@ OR  `LAND` LIKE  '%$suchtext%'
 		echo "</table><br>\n";
 	}
 	
-	/* Name eines Partner/Lieferand/Eigent�mer */
+	/* Name eines Partner/Lieferand/Eigentümer */
 	function get_partner_id($partner_name) {
 		// echo "$result = mysql_query (\"SELECT PARTNER_ID FROM PARTNER_LIEFERANT WHERE PARTNER_NAME='$partner_name' && AKTUELL = '1\"); ";
 		$result = mysql_query ( "SELECT PARTNER_ID FROM PARTNER_LIEFERANT WHERE PARTNER_NAME='$partner_name' && AKTUELL = '1'" );
@@ -229,7 +229,7 @@ OR  `LAND` LIKE  '%$suchtext%'
 		$f->text_feld ( "Stichwort", "stichwort", "", "30", 'stichwort_neu', '' );
 		$f->hidden_feld ( "partner_id", "$partner_id" );
 		$f->hidden_feld ( "option", "partner_stich_sent_neu" );
-		$f->send_button ( "submit", "Stichwort hinzuf�gen" );
+		$f->send_button ( "submit", "Stichwort hinzufügen" );
 		$f->ende_formular ();
 	}
 	function check_stichwort($partner_id, $stichwort) {
@@ -243,7 +243,7 @@ OR  `LAND` LIKE  '%$suchtext%'
 		}
 	}
 	
-	/* Grundinformationen �ber einen Partner/Lieferand/Eigent�mer */
+	/* Grundinformationen über einen Partner/Lieferand/Eigentümer */
 	function get_partner_info($partner_id) {
 		$result = mysql_query ( "SELECT *  FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'" );
 		$row = mysql_fetch_assoc ( $result );
@@ -317,7 +317,7 @@ OR  `LAND` LIKE  '%$suchtext%'
 			
 			// print_r($clean_arr);
 			if (empty ( $partnername ) or empty ( $str ) or empty ( $hausnr ) or empty ( $plz ) or empty ( $ort ) or empty ( $land )) {
-				fehlermeldung_ausgeben ( "Dateneingabe unvollst�ndig!!!<br>Sie werden weitergeleitet." );
+				fehlermeldung_ausgeben ( "Dateneingabe unvollständig!!!<br>Sie werden weitergeleitet." );
 				$_SESSION [partnername] = $partnername;
 				$_SESSION [strasse] = $str;
 				$_SESSION [hausnummer] = $hausnr;
@@ -335,7 +335,7 @@ OR  `LAND` LIKE  '%$suchtext%'
 			}
 		} // Ende foreach
 		
-		/* Pr�fen ob Partner/Liefernat vorhanden */
+		/* Prüfen ob Partner/Liefernat vorhanden */
 		$result_3 = mysql_query ( "SELECT * FROM PARTNER_LIEFERANT WHERE PARTNER_NAME = '$clean_arr[partnername]' && STRASSE='$clean_arr[strasse]' && NUMMER='$clean_arr[hausnummer]' && PLZ='$clean_arr[plz]' && AKTUELL = '1' ORDER BY PARTNER_NAME" );
 		$numrows_3 = mysql_numrows ( $result_3 );
 		
@@ -468,7 +468,7 @@ OR  `LAND` LIKE  '%$suchtext%'
 			return false;
 		}
 	}
-	/* Dropdownfeld mit Partnern/Lieferanten/Eigent�mern */
+	/* Dropdownfeld mit Partnern/Lieferanten/Eigentümern */
 	function partner_dropdown($label, $name, $id, $vorwahl = null) {
 		$partner_arr = $this->partner_in_array ();
 		echo "<label for=\"$id\">$label</label><select name=\"$name\" size=\"1\" id=\"$id\">";
@@ -524,7 +524,7 @@ OR  `LAND` LIKE  '%$suchtext%'
 			$partner_name = $partner_arr [$a] ['PARTNER_NAME'];
 			$partner_link_detail = "<a href=\"?daten=partner&option=partner_im_detail&partner_id=$partner_id\">$partner_name</a>";
 			$link_detail_hinzu = "<a href=\"?daten=details&option=details_hinzu&detail_tabelle=PARTNER_LIEFERANT&detail_id=$partner_id\">Details</a>";
-			$link_aendern = "<a href=\"?daten=partner&option=partner_aendern&partner_id=$partner_id\">�ndern</a>";
+			$link_aendern = "<a href=\"?daten=partner&option=partner_aendern&partner_id=$partner_id\">Ändern</a>";
 			$partner_strasse = $partner_arr [$a] ['STRASSE'];
 			$partner_nr = $partner_arr [$a] ['NUMMER'];
 			$partner_plz = $partner_arr [$a] ['PLZ'];
@@ -594,7 +594,7 @@ OR  `LAND` LIKE  '%$suchtext%'
 		$this->get_partner_info ( $partner_id );
 		if ($this->partner_name) {
 			$f = new formular ();
-			$f->erstelle_formular ( "Partner $this->partner_name �ndern", NULL );
+			$f->erstelle_formular ( "Partner $this->partner_name ändern", NULL );
 			$f->text_bereich ( "Partnername", "partnername", $this->partner_name, "20", "3", 'partnername' );
 			$f->text_feld ( "Strasse:", "strasse", $this->partner_strasse, "30", 'strasse', '' );
 			$f->text_feld ( "Nummer:", "hausnummer", $this->partner_hausnr, "10", 'hausnummer', '' );
@@ -607,7 +607,7 @@ OR  `LAND` LIKE  '%$suchtext%'
 			$f->hidden_feld ( "partner_dat", "$this->partner_dat" );
 			$f->hidden_feld ( "partner_id", "$partner_id" );
 			$f->hidden_feld ( "option", "partner_aendern_send" );
-			$f->send_button ( "submit", "�nderung speichern" );
+			$f->send_button ( "submit", "Änderung speichern" );
 			$f->ende_formular ();
 		} else {
 			die ( "Partner $partner_id unbekannt" );
@@ -618,7 +618,7 @@ OR  `LAND` LIKE  '%$suchtext%'
 		$db_abfrage = "UPDATE PARTNER_LIEFERANT SET AKTUELL='0' WHERE PARTNER_DAT='$partner_dat'";
 		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 		
-		/* �nderung Speichern */
+		/* Änderung Speichern */
 		$db_abfrage = "INSERT INTO PARTNER_LIEFERANT VALUES(NULL, '$partner_id', '$partnername', '$strasse', '$hausnummer', '$plz', '$ort', '$land', '1')";
 		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 		
@@ -657,8 +657,8 @@ LIMIT 0 , 80" );
 		$f->erstelle_formular ( 'Serienbrief an Partner', null );
 		$js = "onclick=\"activate(this.form.elements['p_ids[]']);\"";
 		$f->check_box_js_alle ( 'c_alle', 'c_alle', 1, 'Alle', '', '', 'p_ids' );
-		$f->send_button ( 'Button', 'Vorlage w�hlen' );
-		$f->send_button ( "delete", "Alle L�schen" );
+		$f->send_button ( 'Button', 'Vorlage wählen' );
+		$f->send_button ( "delete", "Alle Löschen" );
 		
 		$anz_p = count ( $partner_arr );
 		for($a = 0; $a < $anz_p; $a ++) {
@@ -675,7 +675,7 @@ LIMIT 0 , 80" );
 			}
 		}
 		$f->hidden_feld ( 'option', 'serien_brief_vorlagenwahl' );
-		$f->send_button ( 'Button', 'Vorlage w�hlen' );
+		$f->send_button ( 'Button', 'Vorlage wählen' );
 		$f->ende_formular ();
 	}
 } // Ende Klasse Partner

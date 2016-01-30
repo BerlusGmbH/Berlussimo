@@ -27,7 +27,7 @@ class personal {
 		$jahr = date ( "Y" );
 		$b = new benutzer ();
 		// $b_arr = $b->get_all_users_arr();
-		$b_arr = $b->get_all_users_arr2 ( 0 ); // 1 f�r alle, 0 f�r aktuelle
+		$b_arr = $b->get_all_users_arr2 ( 0 ); // 1 für alle, 0 für aktuelle
 		if (! is_array ( $b_arr )) {
 			fehlermeldung_ausgeben ( "Keine Benutzer/Mitarbeiter gefunden!" );
 		} else {
@@ -56,7 +56,7 @@ class personal {
 					$sep = new sepa ();
 					echo "<form name=\"sepa_lg\" method=\"post\" action=\"\">";
 					echo "<td>";
-					if ($sep->dropdown_sepa_geldkonten ( '�berweisen an', 'empf_sepa_gk_id', 'empf_sepa_gk_id', 'Benutzer', $b_id ) == true) {
+					if ($sep->dropdown_sepa_geldkonten ( 'Überweisen an', 'empf_sepa_gk_id', 'empf_sepa_gk_id', 'Benutzer', $b_id ) == true) {
 						echo "</td>";
 						echo "<td>";
 						$lohn = $this->get_mitarbeiter_summe ( $_SESSION ['geldkonto_id'], 4000, $b_name );
@@ -83,7 +83,7 @@ class personal {
 						$kk->dropdown_kontorahmenkonten_vorwahl ( 'Buchungskonto', 'konto', 'konto', 'GELDKONTO', $_SESSION ['geldkonto_id'], '', 4000 );
 						echo "</td>";
 						echo "<td>";
-						$f->send_button ( 'btn_Sepa', '�-SEPA' );
+						$f->send_button ( 'btn_Sepa', 'Ü-SEPA' );
 						echo "</td>";
 						$f->ende_formular ();
 						echo "</td>";
@@ -114,10 +114,10 @@ class personal {
 	}
 	function form_krankenkassen() {
 		if (! isset ( $_SESSION ['geldkonto_id'] )) {
-			die ( fehlermeldung_ausgeben ( "Geldkonto w�hlen" ) );
+			die ( fehlermeldung_ausgeben ( "Geldkonto wählen" ) );
 		} else {
 			if (! isset ( $_SESSION ['partner_id'] )) {
-				die ( fehlermeldung_ausgeben ( "Partner w�hlen!" ) );
+				die ( fehlermeldung_ausgeben ( "Partner wählen!" ) );
 			}
 			$gk = new geldkonto_info ();
 			$gk->geld_konto_details ( $_SESSION ['geldkonto_id'] );
@@ -126,8 +126,8 @@ class personal {
 			$jahr = date ( "Y" );
 			$sep = new sepa ();
 			$f = new formular ();
-			$f->erstelle_formular ( 'SEPA-Krankenkassenbeitr�ge', null );
-			$sep->dropdown_sepa_geldkonten_filter ( 'Krankenkasse w�hlen', 'empf_sepa_gk_id', 'empf_sepa_gk_id', 'krankenkasse' );
+			$f->erstelle_formular ( 'SEPA-Krankenkassenbeiträge', null );
+			$sep->dropdown_sepa_geldkonten_filter ( 'Krankenkasse wählen', 'empf_sepa_gk_id', 'empf_sepa_gk_id', 'krankenkasse' );
 			$f->text_feld ( 'Betrag', 'betrag', "", 10, 'betrag', '' );
 			$f->text_feld ( 'VERWENDUNG', 'vzweck', "$gk->beguenstigter Beitrag $monat/$jahr Betriebsnummer ", 80, 'vzweck', '' );
 			$f->hidden_feld ( 'option', 'sepa_sammler_hinzu' );
@@ -139,16 +139,16 @@ class personal {
 			$kk = new kontenrahmen ();
 			// $kk->dropdown_kontorahmenkonten('Konto', 'konto', 'konto', 'Partner', $_SESSION['partner_id'], '');
 			$kk->dropdown_kontorahmenkonten_vorwahl ( 'Buchungskonto', 'konto', 'konto', 'Partner', $_SESSION ['partner_id'], '', 4001 );
-			$f->send_button ( 'btn_Sepa', 'Zum Sammler hinzuf�gen' );
+			$f->send_button ( 'btn_Sepa', 'Zum Sammler hinzufügen' );
 			$f->ende_formular ();
 		}
 	}
 	function form_finanzamt() {
 		if (! isset ( $_SESSION ['geldkonto_id'] )) {
-			die ( fehlermeldung_ausgeben ( "Geldkonto w�hlen" ) );
+			die ( fehlermeldung_ausgeben ( "Geldkonto wählen" ) );
 		} else {
 			if (! isset ( $_SESSION ['partner_id'] )) {
-				die ( fehlermeldung_ausgeben ( "Partner w�hlen!" ) );
+				die ( fehlermeldung_ausgeben ( "Partner wählen!" ) );
 			}
 			$gk = new geldkonto_info ();
 			$gk->geld_konto_details ( $_SESSION ['geldkonto_id'] );
@@ -158,7 +158,7 @@ class personal {
 			$sep = new sepa ();
 			$f = new formular ();
 			$f->erstelle_formular ( 'SEPA-Finanzamt', null );
-			$sep->dropdown_sepa_geldkonten_filter ( 'Finanzamt w�hlen', 'empf_sepa_gk_id', 'empf_sepa_gk_id', 'amt' );
+			$sep->dropdown_sepa_geldkonten_filter ( 'Finanzamt wählen', 'empf_sepa_gk_id', 'empf_sepa_gk_id', 'amt' );
 			$f->text_feld ( 'Betrag', 'betrag', "", 10, 'betrag', '' );
 			$f->text_feld ( 'VERWENDUNG', 'vzweck', "$gk->beguenstigter Steuer $monat/$jahr", 80, 'vzweck', '' );
 			$f->hidden_feld ( 'option', 'sepa_sammler_hinzu' );
@@ -170,7 +170,7 @@ class personal {
 			// $kk->dropdown_kontorahmenkonten('Konto', 'konto', 'konto', 'Partner', $_SESSION['partner_id'], '');
 			$kk->dropdown_kontorahmenkonten_vorwahl ( 'Buchungskonto', 'konto', 'konto', 'Partner', $_SESSION ['partner_id'], '', 1000 );
 			// $f->text_feld('Buchungskonto', 'konto', 1000, 5, 'konto', '');
-			$f->send_button ( 'btn_Sepa', 'Zum Sammler hinzuf�gen' );
+			$f->send_button ( 'btn_Sepa', 'Zum Sammler hinzufügen' );
 			$f->ende_formular ();
 		}
 	}

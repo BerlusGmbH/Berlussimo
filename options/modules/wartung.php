@@ -21,7 +21,7 @@
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION [benutzer_id], 'wartung' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -29,18 +29,18 @@ if (! check_user_mod ( $_SESSION [benutzer_id], 'wartung' )) {
 	die ();
 }
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
 
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
 include_once ("options/links/links.wartung.php");
 include_once ("classes/class_wartungen.php");
 if (! isset ( $_SESSION [plan_id] )) {
 	$w = new wartung ();
 	$w->wartungsplan_auswahl ();
 } else {
-	echo "<a href=\"?daten=wartung&option=plan_auswahl\">Wartungsplan �ndern</a><br><br>";
+	echo "<a href=\"?daten=wartung&option=plan_auswahl\">Wartungsplan ändern</a><br><br>";
 }
 
 $option = $_REQUEST ["option"];
@@ -56,7 +56,7 @@ switch ($option) {
 				$w->test ( $plan_id );
 			}
 		} else {
-			hinweis_ausgeben ( "Wartungsplan ausw�hlen" );
+			hinweis_ausgeben ( "Wartungsplan auswählen" );
 		}
 		break;
 	
@@ -80,7 +80,7 @@ switch ($option) {
 			$w->geraet_speichern ( $bezeichnung, $hersteller, $baujahr, $eingebaut, $kostentraeger_typ, $kostentraeger_bez, $plan_id );
 			weiterleiten_in_sec ( "?daten=wartung&option=geraet_hinzu", 1 );
 		} else {
-			echo "unvollst�ndig, zur�ck";
+			echo "unvollständig, zurück";
 		}
 		break;
 	
@@ -101,7 +101,7 @@ switch ($option) {
 			$w = new wartung ();
 			$w->geraete_uebersicht_alle ( $_SESSION [plan_id] );
 		} else {
-			hinweis_ausgeben ( "Wartungsplan ausw�hlen" );
+			hinweis_ausgeben ( "Wartungsplan auswählen" );
 		}
 		break;
 	
@@ -121,7 +121,7 @@ switch ($option) {
 			$w = new wartung ();
 			$w->form_termin ( $geraete_id, $plan_id );
 		} else {
-			echo "Ger�t und Wartungsplan ausw�hlen";
+			echo "Gerät und Wartungsplan auswählen";
 		}
 		break;
 	
@@ -138,7 +138,7 @@ switch ($option) {
 			$w = new wartung ();
 			$w->termin_speichern ( $benutzer_id, $plan_id, $datum, $zeit, $geraete_id, $dauer );
 		} else {
-			echo "Eingabe unvollst�ndig";
+			echo "Eingabe unvollständig";
 		}
 		break;
 	

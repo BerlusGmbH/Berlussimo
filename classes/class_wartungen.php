@@ -20,7 +20,7 @@
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
 include_once ("classes/class_urlaub.php");
 include_once ("classes/class_benutzer.php");
@@ -32,7 +32,7 @@ class wartung {
 		$result = mysql_query ( "SELECT WARTUNGSPLAN.`PLAN_ID`, IM_EINSATZ, `PLAN_BEZEICHNUNG`, `INTERVALL_NAME`, `FAKTOR`, W_GERAETE.GERAETE_ID, HERSTELLER, W_GERAETE.BEZEICHNUNG FROM `WARTUNGSPLAN` join (WARTUNG_ZUWEISUNG, W_GERAETE) ON (WARTUNG_ZUWEISUNG.PLAN_ID=WARTUNGSPLAN.PLAN_ID && WARTUNG_ZUWEISUNG.GERAETE_ID=W_GERAETE.GERAETE_ID) WHERE DATE_FORMAT(IM_EINSATZ, '%m') = '01' && W_GERAETE.GERAETE_ID NOT IN (SELECT GERAETE_ID FROM WARTUNGEN WHERE DATE_FORMAT(WARTUNGSDATUM, '%Y') = '2010')" );
 	}
 	
-	/* Liefer ein Array mit G�reten die im aktuellen und vorjahr nicht gewartet worden sind */
+	/* Liefer ein Array mit Geräten die im aktuellen und vorjahr nicht gewartet worden sind */
 	function alle_geraete_ng_arr($plan_id) {
 		$result = mysql_query ( "select W_GERAETE.GERAETE_ID, W_GERAETE.BAUJAHR, W_GERAETE.BEZEICHNUNG, W_GERAETE.HERSTELLER, DATE_FORMAT(W_GERAETE.IM_EINSATZ,'%d.%m.%Y') IM_EINSATZ, LAGE_TYP, LAGE_ID, WARTUNG_ZUWEISUNG.PLAN_ID
 from W_GERAETE
@@ -134,7 +134,7 @@ ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, `W_GERAETE`.`GERAETE_ID` ASC" );
 			if ($anzahl_termine > 0) {
 				
 				echo "<table class=\"sortable\">";
-				echo "<tr><th>Ger�t</th><th>Lage</th><th>Letzte Wartung</th><th>Wartung f�llig</th><th>TERMIN</th><th>Mietarbeiter</th></tr>";
+				echo "<tr><th>Gerät</th><th>Lage</th><th>Letzte Wartung</th><th>Wartung fällig</th><th>TERMIN</th><th>Mietarbeiter</th></tr>";
 				for($a = 0; $a < $anzahl_termine; $a ++) {
 					$geraete_id = $termine [$a] [GERAETE_ID];
 					$kos_bez = $termine [$a] [KOS_BEZ];
@@ -160,12 +160,12 @@ ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, `W_GERAETE`.`GERAETE_ID` ASC" );
 			
 			$anzahl_geraete = count ( $wartungsplan_s );
 			echo "<table >";
-			echo "<tr class=\"feldernamen\"><td>$this->plan_bez GER�TELISTE ($anzahl_geraete)</td></tr>";
+			echo "<tr class=\"feldernamen\"><td>$this->plan_bez GERÄTELISTE ($anzahl_geraete)</td></tr>";
 			echo "</table>";
 			if ($anzahl_geraete > 0) {
 				
 				echo "<table class=\"sortable\">";
-				echo "<tr><th>Ger�t</th><th>Lage</th><th>Letzte Wartung</th><th>Wartung f�llig</th><th>TERMIN</th><th>Mietarbeiter</th></tr>";
+				echo "<tr><th>Gerät</th><th>Lage</th><th>Letzte Wartung</th><th>Wartung fällig</th><th>TERMIN</th><th>Mietarbeiter</th></tr>";
 				for($a = 0; $a < $anzahl_geraete; $a ++) {
 					$geraete_id = $wartungsplan_s [$a] [GERAETE_ID];
 					$kos_bez = $wartungsplan_s [$a] [KOS_BEZ];
@@ -178,13 +178,13 @@ ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, `W_GERAETE`.`GERAETE_ID` ASC" );
 				echo "</table>";
 			} else {
 				echo "<table>";
-				echo "<tr><th>Keine Ger�te</th></tr>";
+				echo "<tr><th>Keine Geräte</th></tr>";
 				echo "</table>";
 			}
 			
 			$f->ende_formular ();
 		} else {
-			echo "Keine Ger�te";
+			echo "Keine Geräte";
 		}
 	}
 	function alle_geraete_ng_arr_o_termin($plan_id) {
@@ -313,7 +313,7 @@ ORDER BY `N_WARTUNG1` ASC" );
 			
 			echo "</table";
 		} else {
-			echo "Keine Wartungen oder Ger�te im Wartungsplan";
+			echo "Keine Wartungen oder Geräte im Wartungsplan";
 		}
 	}
 	function kalenderwoche() {
@@ -459,7 +459,7 @@ ORDER BY `N_WARTUNG1` ASC" );
 				echo "<tr><td width=\"70\">Datum</td><td>$datum</td></tr>";
 				echo "<tr><td width=\"70\">Uhrzeit</td><td>$zeit Uhr</td></tr>";
 				echo "<tr><td width=\"70\">Status</td><td>$status $abgesagt_von</td></tr>";
-				echo "<tr><td width=\"70\">Kostentr�ger</td><td>$this->kostentraeger_typ $this->kostentraeger_bez</td></tr>";
+				echo "<tr><td width=\"70\">Kostenträger</td><td>$this->kostentraeger_typ $this->kostentraeger_bez</td></tr>";
 				if ($this->kostentraeger_typ == 'Einheit') {
 					$e = new einheit ();
 					$e->get_einheit_info ( $this->kostentraeger_id );
@@ -470,13 +470,13 @@ ORDER BY `N_WARTUNG1` ASC" );
 					echo "<tr><td width=\"70\">Mieter</td><td>$mv->personen_name_string_u</td></tr>";
 				}
 				echo "<tr><td width=\"70\"><hr></td><td><hr></td></tr>";
-				echo "<tr><td width=\"70\">Ger�t</td><td>$this->bezeichnung</td></tr>";
+				echo "<tr><td width=\"70\">Gerät</td><td>$this->bezeichnung</td></tr>";
 				echo "<tr><td width=\"70\">Hersteller</td><td>$this->hersteller</td></tr>";
 				echo "<tr><td width=\"70\">Im Einsatz</td><td>$this->im_einsatz</td></tr>";
 				$this->wartungsdatum_a = date_mysql2german ( $this->wartungsdatum );
 				$this->n_wartung_a = date_mysql2german ( $this->n_wartung );
 				echo "<tr><td width=\"70\">Letzte Wartung</td><td>$this->wartungsdatum_a  $this->gewartet_von</td></tr>";
-				echo "<tr><td width=\"70\">Wartung f�llig</td><td>$this->n_wartung_a</td></tr>";
+				echo "<tr><td width=\"70\">Wartung fällig</td><td>$this->n_wartung_a</td></tr>";
 				echo "</table><br>";
 			}
 		} else {
@@ -548,7 +548,7 @@ ORDER BY `N_WARTUNG1` ASC" );
 				$pdf->addText ( 260, $pdf->y + 2, 8, 'Bemerkungen / Hinweise' );
 				$pdf->rectangle ( 250, $pdf->y - 107, 300, 107 );
 				$pdf->ezSetDy ( 20 ); // abstand
-				$pdf->ezText ( "Kostentr�ger: $this->kostentraeger_typ $this->kostentraeger_bez", 8 );
+				$pdf->ezText ( "Kostenträger: $this->kostentraeger_typ $this->kostentraeger_bez", 8 );
 				
 				if ($this->kostentraeger_typ == 'Einheit') {
 					$e = new einheit ();
@@ -564,7 +564,7 @@ ORDER BY `N_WARTUNG1` ASC" );
 					$pdf->ezText ( "Anschrift: $e->haus_strasse $e->haus_nummer Lage: $e->einheit_lage", 8 );
 					$pdf->ezText ( "Mieter: $mv->personen_name_string", 8 );
 				}
-				$pdf->ezText ( "Ger�t: $this->bezeichnung", 8 );
+				$pdf->ezText ( "Gerät: $this->bezeichnung", 8 );
 				$pdf->ezText ( "Hersteller: $this->hersteller", 8 );
 				$pdf->ezText ( "Im Einsatz: $this->im_einsatz", 8 );
 				
@@ -575,7 +575,7 @@ ORDER BY `N_WARTUNG1` ASC" );
 				}
 				$this->n_wartung_a = date_mysql2german ( $this->n_wartung );
 				
-				$pdf->ezText ( "Wartung f�llig: $this->n_wartung_a", 8 );
+				$pdf->ezText ( "Wartung fällig: $this->n_wartung_a", 8 );
 				$pdf->ezText ( "Letzte Wartung: $this->wartungsdatum_a  $this->gewartet_von", 8 );
 				if ($this->gewartet_von) {
 					$pdf->ezText ( "Bemerkungen von $this->gewartet_von:", 7 );
@@ -706,7 +706,7 @@ ORDER BY `N_WARTUNG1` ASC" );
 		$this->geraet_zu_plan ( $geraete_id, $plan_id );
 		if (! empty ( $_POST [wartungstermin] )) {
 			$wartungsdatum = date_german2mysql ( $_POST [wartungstermin] );
-			$bemerkung = '�bernahme Excel' . date ( "d.m.Y" ) . " $_SESSION[benutzername]";
+			$bemerkung = 'Übernahme Excel' . date ( "d.m.Y" ) . " $_SESSION[benutzername]";
 			$this->wartung_speichern ( $geraete_id, $plan_id, $wartungsdatum, '1', $bemerkung );
 		}
 	}
@@ -728,7 +728,7 @@ ORDER BY `N_WARTUNG1` ASC" );
 		
 		// $this->form_geraete_erfassen();
 		
-		/* Alle ger�te die nicht gemacht worden sind */
+		/* Alle geräte die nicht gemacht worden sind */
 		/*
 		 * $this->kalenderwoche();
 		 * $this->wochentag();
@@ -744,7 +744,7 @@ ORDER BY `N_WARTUNG1` ASC" );
 		 * echo "$this->bezeichnung $this->wartungsdatum $this->gewartet_von $this->kostentraeger_bez<br>";
 		 * }
 		 * }else{
-		 * hinweis_ausgeben("GRATULATION : Alle Ger�te sind im aktuellen und Vorjahr gewartet worden");
+		 * hinweis_ausgeben("GRATULATION : Alle Geräte sind im aktuellen und Vorjahr gewartet worden");
 		 * }
 		 */
 		// $this->form_termin(1,1);
@@ -764,12 +764,12 @@ ORDER BY `N_WARTUNG1` ASC" );
 		$kw = $this->kalenderwoche ();
 		$jahr = date ( "Y" );
 		$montagsdatum = $this->erster_montag_kw ( $kw, $jahr );
-		echo "Wochen�bersicht f�r $kw $jahr $montagsdatum<br>";
+		echo "Wochenübersicht für $kw $jahr $montagsdatum<br>";
 		$uhrzeit_1_wartung = '07:00';
 		$dauer_wartung_min = '90';
 		$dauer_zwischen_min = '10';
 		$wartungen_tag = '5';
-		/* �berschriften der Tage mit Datumsangaben */
+		/* Überschriften der Tage mit Datumsangaben */
 		echo "<TABLE><tr class=\"feldernamen\">";
 		$this->tag_1_datum = $montagsdatum;
 		$this->tag_2_datum = $this->tag_danach ( $this->tag_1_datum );
@@ -783,7 +783,7 @@ ORDER BY `N_WARTUNG1` ASC" );
 		// ###############
 		
 		$tag = $montagsdatum;
-		/* Alle Ger�te die nicht gewartet worden sind */
+		/* Alle Geräte die nicht gewartet worden sind */
 		$geraete_arr = $this->alle_geraete_ng_arr_o_termin ( $plan_id );
 		$geraete_zaehler = 0;
 		// ################
@@ -920,7 +920,7 @@ ORDER BY `N_WARTUNG1` ASC" );
 			$next_termin = $this->naechster_termin ( $next_termin, $dauer_wartung_min, $dauer_zwischen_min );
 		}
 		echo "</tr></TABLE>";
-		unset ( $a ); // wegen n�chste for schleife
+		unset ( $a ); // wegen nächste for schleife
 		echo "<b>$erster_termin</b>";
 		
 		for($a = 1; $a <= $anzahl_tage; $a ++) {
@@ -930,18 +930,18 @@ ORDER BY `N_WARTUNG1` ASC" );
 	}
 	function form_geraete_erfassen() {
 		$f = new formular ();
-		$f->erstelle_formular ( "Ger�te f�r Wartungen erfassen", NULL );
-		$f->text_feld ( "Ger�tebezeichnung", "bezeichnung", "", '50', 'bezeichnung', '' );
+		$f->erstelle_formular ( "Geräte für Wartungen erfassen", NULL );
+		$f->text_feld ( "Gerätebezeichnung", "bezeichnung", "", '50', 'bezeichnung', '' );
 		$f->text_feld ( "Hersteller", "hersteller", "", '50', 'hersteller', '' );
 		$f->text_feld ( 'Baujahr', 'baujahr', "", '10', 'baujahr', '' );
 		$f->datum_feld ( 'Eingebaut am', 'eingebaut', "", 'eingebaut' );
 		$f->datum_feld ( 'Datum der letzten Wartung', 'wartungstermin', "", 'wartungstermin' );
 		$b = new buchen ();
 		$js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
-		$b->dropdown_kostentreager_typen ( 'Kostentr�gertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
+		$b->dropdown_kostentreager_typen ( 'Kostenträgertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
 		
 		$js_id = "";
-		$b->dropdown_kostentreager_ids ( 'Kostentr�ger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
+		$b->dropdown_kostentreager_ids ( 'Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
 		$this->dropdown_wplaene ();
 		$f->hidden_feld ( "option", "geraet_gesendet" );
 		$f->send_button ( "submit", "Eintragen" );
@@ -952,7 +952,7 @@ ORDER BY `N_WARTUNG1` ASC" );
 		
 		$numrows = mysql_numrows ( $result );
 		echo "<label for=\"plan_id\">Wartungsplan</label><select name=\"plan_id\" id=\"plan_id\" size=1>\n";
-		echo "<option value=\"\">Bitte w�hlen</option>\n";
+		echo "<option value=\"\">Bitte wählen</option>\n";
 		if ($numrows) {
 			
 			while ( $row = mysql_fetch_assoc ( $result ) ) {
@@ -974,10 +974,10 @@ ORDER BY `N_WARTUNG1` ASC" );
 	function wartungsplan_auswahl() {
 		if (! isset ( $_SESSION [plan_id] )) {
 			$f = new formular ();
-			$f->erstelle_formular ( "Wartungsplan ausw�hlen", NULL );
+			$f->erstelle_formular ( "Wartungsplan auswählen", NULL );
 			$this->dropdown_wplaene ();
 			$f->hidden_feld ( "option", "wplan_gesendet" );
-			$f->send_button ( "submit", "Ausw�hlen" );
+			$f->send_button ( "submit", "Auswählen" );
 			$f->ende_formular ();
 		}
 	}
@@ -1015,7 +1015,7 @@ ORDER BY `N_WARTUNG1` ASC" );
 	function form_termin($geraet_id, $plan_id) {
 		$f = new formular ();
 		$this->geraete_infos ( $plan_id, $geraet_id );
-		$f->erstelle_formular ( "Manuelle Termineingabe f�r $this->bezeichnung $this->kostentraeger_bez", NULL );
+		$f->erstelle_formular ( "Manuelle Termineingabe für $this->bezeichnung $this->kostentraeger_bez", NULL );
 		$f->datum_feld ( 'Datum', 'datum', "", 'datum' );
 		
 		$f->text_feld ( "Uhrzeit z.B. 10:00", "uhrzeit", "", '10', 'uhrzeit', '' );
@@ -1031,7 +1031,7 @@ ORDER BY `N_WARTUNG1` ASC" );
 		$geraete_arr = $this->alle_geraete_arr ( $plan_id );
 		$anzahl = count ( $geraete_arr );
 		echo "<table>";
-		echo "<tr class=\"feldernamen\"><td>GER�T</td><td>BEZEICHNUNG</td><td>BAUJAHR</td><td>EINGEBAUT</td><td>L. WARTUNG</td><td>TERMIN</td></tr>";
+		echo "<tr class=\"feldernamen\"><td>GERÄT</td><td>BEZEICHNUNG</td><td>BAUJAHR</td><td>EINGEBAUT</td><td>L. WARTUNG</td><td>TERMIN</td></tr>";
 		for($a = 0; $a < $anzahl; $a ++) {
 			$geraete_id = $geraete_arr [$a] ['GERAETE_ID'];
 			$this->geraete_infos ( $plan_id, $geraete_id );
@@ -1095,7 +1095,7 @@ ORDER BY `N_WARTUNG1` ASC" );
 				}
 			}
 		} else {
-			echo "<b>Keine Wartungsger�te</b>";
+			echo "<b>Keine Wartungsgeräte</b>";
 		}
 	}
 	function get_termine_($g_id) {

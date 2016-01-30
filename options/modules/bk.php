@@ -23,7 +23,7 @@ include_once ("includes/allgemeine_funktionen.php");
 /* Wegen Serienbriefe */
 include_once ('classes/class_bpdf.php');
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'bk' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -31,10 +31,10 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'bk' )) {
 	die ();
 }
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
 
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
 include_once ("options/links/links.bk.php");
 include_once ("classes/class_bk.php");
 
@@ -80,7 +80,7 @@ switch ($option) {
 			$bk = new bk ();
 			$bk->form_bk_profil_anpassen ( $_SESSION ['profil_id'] );
 		} else {
-			fehlermeldung_ausgeben ( "Profil w�hlen!" );
+			fehlermeldung_ausgeben ( "Profil wählen!" );
 		}
 		break;
 	
@@ -108,7 +108,7 @@ switch ($option) {
 			$bk = new bk ();
 			$bk->form_buchung_anpassen ( $_REQUEST ['bk_be_id'], $_REQUEST ['profil_id'] );
 		} else {
-			fehlermeldung_ausgeben ( "Buchung und/oder Berechnungsprofil nicht ausgew�hlt" );
+			fehlermeldung_ausgeben ( "Buchung und/oder Berechnungsprofil nicht ausgewählt" );
 		}
 		break;
 	
@@ -118,7 +118,7 @@ switch ($option) {
 			$bk->update_bk_buchung ( $_POST ['bk_be_id'], $_POST ['umlagebetrag'], $_POST ['kostentraeger_typ'], $_POST ['kostentraeger_id'], $_POST ['genkey'], nummer_komma2punkt ( $_POST ['hndl_betrag'] ) );
 			weiterleiten_in_sec ( "?daten=bk&option=assistent", 0 );
 		} else {
-			echo "DATEN UNVOLLST�NDIG ERROR 505e7";
+			echo "DATEN UNVOLLSTäNDIG ERROR 505e7";
 		}
 		break;
 	
@@ -170,7 +170,7 @@ switch ($option) {
 				$bk->pdf_ausgabe_bk ( $einheit_name . ' ' . $zeitraum );
 			}
 		} else {
-			echo "Kein Berechnungsprofil gew�hlt";
+			echo "Kein Berechnungsprofil gewählt";
 		}
 		break;
 	
@@ -229,7 +229,7 @@ switch ($option) {
 			$wirt = new wirt_e ();
 			$wirt->form_einheit_hinzu ( $_REQUEST ['w_id'] );
 		} else {
-			echo "Wirtschafseinheit w�hlen";
+			echo "Wirtschafseinheit wählen";
 		}
 		break;
 	
@@ -271,7 +271,7 @@ switch ($option) {
 			$bk->update_prozent_umlage ( $profil_id, $bk_konto_id, $prozent );
 			weiterleiten ( '?daten=bk&option=assistent' );
 		} else {
-			echo "Daten unvollst�ndig fehler 247832748";
+			echo "Daten unvollständig fehler 247832748";
 		}
 		break;
 	
@@ -280,7 +280,7 @@ switch ($option) {
 			$bk = new bk ();
 			$bk->form_bk_hk_anpassung ( $_SESSION [profil_id] );
 		} else {
-			echo "Bitte Profil w�hlen";
+			echo "Bitte Profil wählen";
 		}
 		break;
 	
@@ -295,7 +295,7 @@ switch ($option) {
 			$bk->bk_hk_anpassung_speichern ( $profil_id, $kostenart, $betrag, $genkey );
 			weiterleiten ( '?daten=bk&option=anpassung_bk_hk' );
 		} else {
-			echo "Daten unvollst�ndig Error:jk3434";
+			echo "Daten unvollständig Error:jk3434";
 		}
 		break;
 	
@@ -305,7 +305,7 @@ switch ($option) {
 			$bk->bk_hk_anpassung_loeschen ( $_REQUEST [an_dat] );
 			weiterleiten ( '?daten=bk&option=anpassung_bk_hk' );
 		} else {
-			echo "Anpassungszeile w�hlen";
+			echo "Anpassungszeile wählen";
 		}
 		break;
 	
@@ -383,7 +383,7 @@ switch ($option) {
 			$bpdf->vorlage_speichern ( $_REQUEST ['kurztext'], $_REQUEST ['text'], $kat, $_REQUEST ['empf_typ'] );
 			$bpdf->vorlage_waehlen ( $_REQUEST ['empf_typ'] );
 		} else {
-			echo "Eingabe unvolls�ndig Err. 7824998123jhs";
+			echo "Eingabe unvollsändig Err. 7824998123jhs";
 		}
 		break;
 	
@@ -393,7 +393,7 @@ switch ($option) {
 			$bpdf = new b_pdf ();
 			$bpdf->form_vorlage_edit ( $_REQUEST ['vorlagen_dat'] );
 		} else {
-			echo "Vorlage w�hlen";
+			echo "Vorlage wählen";
 		}
 		break;
 	
@@ -424,7 +424,7 @@ switch ($option) {
 			echo "<br><br>Profil kopiert, bitte warten!";
 			weiterleiten_in_sec ( '?daten=bk&option=profile', 2 );
 		} else {
-			echo "Eingabe unvollst�ndig Err. 72348724";
+			echo "Eingabe unvollständig Err. 72348724";
 		}
 		break;
 	

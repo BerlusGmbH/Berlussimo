@@ -19,7 +19,7 @@
  */
 $f = new formular ();
 echo "<div class=\"navi_leiste2\">";
-$f->erstelle_formular ( "Hauptmen� -> Betriebskosten & Nebenkostenabrechnung...", NULL );
+$f->erstelle_formular ( "Hauptmenü -> Betriebskosten & Nebenkostenabrechnung...", NULL );
 echo "<a href=\"?daten=bk&option=wirtschaftseinheiten\">Alle Wirtschaftseinheiten</a>&nbsp;";
 echo "<a href=\"?daten=bk&option=wirtschaftseinheit_neu\">Neue Wirtschaftseinheit</a>&nbsp;";
 echo "<a href=\"?daten=bk&option=profile\">Alle Profile</a>&nbsp;";

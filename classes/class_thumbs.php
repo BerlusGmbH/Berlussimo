@@ -34,7 +34,7 @@ class thumbnail {
 		}
 	}
 	
-	// H�he des aktuellen Bildes im Container zur�ckgeben, false bei Fehler
+	// Höhe des aktuellen Bildes im Container zurückgeben, false bei Fehler
 	function height() {
 		if ($this->img) {
 			return ImageSY ( $this->img );
@@ -43,7 +43,7 @@ class thumbnail {
 		}
 	}
 	
-	// Breite des aktuellen Bildes im Container zur�ckgeben, false bei Fehler
+	// Breite des aktuellen Bildes im Container zurückgeben, false bei Fehler
 	function width() {
 		if ($this->img) {
 			return ImageSX ( $this->img );
@@ -52,7 +52,7 @@ class thumbnail {
 		}
 	}
 	
-	// Qualit�t f�r Ausgabe setzen
+	// Qualität für Ausgabe setzen
 	function setQuality($quality = false) {
 		if ($this->img && $quality) {
 			$this->quality = $quality;
@@ -102,7 +102,7 @@ class thumbnail {
 	
 	// Schneidet ein Bild neu zu
 	/*
-	 * Werte f�r cut (X stellt das Ergebnis dar)
+	 * Werte für cut (X stellt das Ergebnis dar)
 	 *
 	 * $srcX
 	 * +---+--------------+
@@ -149,7 +149,7 @@ class thumbnail {
 	}
 	
 	/*
-	 * schneidet ein Teil mit Gr��e newX und newY an festgelegten Stellen des Bildes zu
+	 * schneidet ein Teil mit Größe newX und newY an festgelegten Stellen des Bildes zu
 	 * $pos = Position welches Teil verwendet werden soll
 	 * +---+---+---+
 	 * | 1 | 2 | 3 |
@@ -233,7 +233,7 @@ class thumbnail {
 		}
 	}
 	
-	// erzeugt ein Quadrat des Bildes mit Kantenl�nge von $size
+	// erzeugt ein Quadrat des Bildes mit Kantenlänge von $size
 	// ist das Bild nicht quadratisch kann mit $pos
 	// der Bildausschnitt festgelegt werden, Werte siehe function autocut
 	function cube($size, $pos = 5) {
@@ -263,7 +263,7 @@ class thumbnail {
 		}
 	}
 	
-	// erzeugt ein Bild dessen gr��te Kantenl�nge $size ist
+	// erzeugt ein Bild dessen größte Kantenlänge $size ist
 	function maxSize($size) {
 		if ($this->img) {
 			
@@ -286,7 +286,7 @@ class thumbnail {
 		}
 	}
 	
-	// erzeugt ein Bild dessen kleinste Kantenl�nge $size ist
+	// erzeugt ein Bild dessen kleinste Kantenlänge $size ist
 	function minSize($size) {
 		if ($this->img) {
 			
@@ -311,9 +311,9 @@ class thumbnail {
 	
 	// speichert das Bild als $fileName
 	// wird $filename angegeben muss es ein voller Dateiname mit Pfad sein
-	// ist $override wahr wird ein bestehendes Bild �berschrieben, sonst nicht
-	// R�ckgabe:
-	// true wenn geschrieben (oder �berschrieben)
+	// ist $override wahr wird ein bestehendes Bild überschrieben, sonst nicht
+	// Rückgabe:
+	// true wenn geschrieben (oder überschrieben)
 	// false on error
 	// 0 wenn schon existiert (nur bei $override=false)
 	function save($fileName, $override = true) {
@@ -350,7 +350,7 @@ class thumbnail {
 		}
 	}
 	
-	// Setzt die Werte in der Klasse frei und l�scht Bild
+	// Setzt die Werte in der Klasse frei und löscht Bild
 	function destroy() {
 		if ($this->img) {
 			ImageDestroy ( $this->img );

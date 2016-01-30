@@ -19,7 +19,7 @@
  */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'miete_buchen' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -41,7 +41,7 @@ if (isset ( $_REQUEST ["schritt"] )) {
 } else {
 	$schritt = '';
 }
-/* Mieterinformationen �ber die Buchungsformulare anzeigen */
+/* Mieterinformationen über die Buchungsformulare anzeigen */
 if (isset ( $_REQUEST ['mietvertrag_id'] ) or ! empty ( $_REQUEST ['mietvertrag_id'] )) {
 	$mieter_info = new mietkonto ();
 	$mieter_info->erstelle_formular ( "Mieterinformationen", NULL );
@@ -54,13 +54,13 @@ switch ($schritt) {
 	// ################
 	case "buchungsauswahl" :
 		$form = new mietkonto ();
-		$form->erstelle_formular ( "Buchungsart ausw�hlen", NULL );
+		$form->erstelle_formular ( "Buchungsart auswählen", NULL );
 		if (isset ( $_REQUEST ['mietvertrag_id'] ) && ! empty ( $_REQUEST ['mietvertrag_id'] )) {
 			/* MAHNSPERRE */
 			$dd = new detail ();
 			$mahnsperre = $dd->finde_detail_inhalt ( 'MIETVERTRAG', $_REQUEST ['mietvertrag_id'], 'Mahnsperre' );
 			if (! empty ( $mahnsperre )) {
-				hinweis_ausgeben ( "<h1>Mahnsperre: Grund: $mahnsperre Bitte unbedingt die Mahnungsabteilung �ber Zahlung m�ndlich informieren</h1>" );
+				hinweis_ausgeben ( "<h1>Mahnsperre: Grund: $mahnsperre Bitte unbedingt die Mahnungsabteilung über Zahlung mündlich informieren</h1>" );
 			}
 			
 			$mietvertrag_id = $_REQUEST ['mietvertrag_id'];
@@ -73,22 +73,22 @@ switch ($schritt) {
 			$kontostand_aktuell = nummer_punkt2komma ( $geld->geld_konto_stand ( $_SESSION ['geldkonto_id'] ) );
 			if (isset ( $_SESSION ['temp_kontostand'] ) && isset ( $_SESSION ['temp_kontoauszugsnummer'] )) {
 				$kontostand_temp = nummer_punkt2komma ( $_SESSION ['temp_kontostand'] );
-				echo "<h3>Kontostand am $_SESSION[temp_datum] laut Kontoauszug $_SESSION[temp_kontoauszugsnummer] war $kontostand_temp �</h3>";
+				echo "<h3>Kontostand am $_SESSION[temp_datum] laut Kontoauszug $_SESSION[temp_kontoauszugsnummer] war $kontostand_temp €</h3>";
 			} else {
 				echo "<h3 style=\"color:red\">Kontrolldaten zum Kontoauszug fehlen</h3>";
 				echo "<h3 style=\"color:red\">Weiterleitung erfolgt</h3>";
 				weiterleiten_in_sec ( "?daten=buchen&option=kontoauszug_form", 1 );
 			}
 			if ($kontostand_aktuell == $kontostand_temp) {
-				echo "<h3>Kontostand aktuell: $kontostand_aktuell �</h3>";
+				echo "<h3>Kontostand aktuell: $kontostand_aktuell €</h3>";
 			} else {
-				echo "<h3 style=\"color:red\">Kontostand aktuell: $kontostand_aktuell �</h3>";
+				echo "<h3 style=\"color:red\">Kontostand aktuell: $kontostand_aktuell €</h3>";
 			}
 			
 			$buchung->buchungsauswahl ( $mietvertrag_id );
 		} else {
 			// fals keine MV_ID eingegeben wurde, weiterleiten
-			warnung_ausgeben ( "Fehler : Bitte eine Einheit ausw�hlen!" );
+			warnung_ausgeben ( "Fehler : Bitte eine Einheit auswählen!" );
 			weiterleiten ( "?daten=miete_buchen" );
 		}
 		$form->ende_formular ();
@@ -97,13 +97,13 @@ switch ($schritt) {
 	// ################
 	case "auto_buchung":
 	/*Automatisches Buchen der Miete wird
-	 * durch klicken auf Button suhbmit_buchen1 ausgel�st*/
+	 * durch klicken auf Button suhbmit_buchen1 ausgelöst*/
 	
 	if (check_datum ( $_POST [buchungsdatum] )) {
 			$buchungsdatum = date_german2mysql ( $_POST [buchungsdatum] );
 			if ("" . $_POST [ZAHLBETRAG] . "" == 0) {
 				warnung_ausgeben ( "Die Miete ist in der Mietentwicklung nicht definiert!" );
-				warnung_ausgeben ( "Sie werden um einen Schritt zur�ckversetzt!" );
+				warnung_ausgeben ( "Sie werden um einen Schritt zurückversetzt!" );
 				weiterleiten_in_sec ( 'javascript:history.back();', 5 );
 				die ();
 			} else {
@@ -115,13 +115,13 @@ switch ($schritt) {
 			}
 		} else {
 			warnung_ausgeben ( "Datumsformat nicht korrekt!" );
-			warnung_ausgeben ( "Sie werden um einen Schritt zur�ckversetzt!" );
+			warnung_ausgeben ( "Sie werden um einen Schritt zurückversetzt!" );
 			weiterleiten_in_sec ( 'javascript:history.back();', 3 );
 		}
 		break;
 	/* Ende Case */
 	
-	/* Case f�r die manuelle Buchung bzw. Buchung eines anderen Betrages */
+	/* Case für die manuelle Buchung bzw. Buchung eines anderen Betrages */
 	case "manuelle_buchung" :
 		$mietvertrag_id = $_POST [MIETVERTRAG_ID];
 		$buchung = new mietkonto ();
@@ -132,13 +132,13 @@ switch ($schritt) {
 		
 		if (empty ( $_POST [ZAHLBETRAG] )) {
 			warnung_ausgeben ( "Bitte geben Sie einen Betrag bzw. Zahl ein!" );
-			warnung_ausgeben ( "Sie werden um einen Schritt zur�ckversetzt!" );
+			warnung_ausgeben ( "Sie werden um einen Schritt zurückversetzt!" );
 			weiterleiten_in_sec ( 'javascript:history.back();', 5 );
 		} 
 
 		elseif (! is_numeric ( $zahlbetrag )) {
 			warnung_ausgeben ( "Bitte geben Sie eine Zahl als Betrag ein!" );
-			warnung_ausgeben ( "Sie werden um einen Schritt zur�ckversetzt!" );
+			warnung_ausgeben ( "Sie werden um einen Schritt zurückversetzt!" );
 			weiterleiten_in_sec ( 'javascript:history.back();', 5 );
 		} 
 
@@ -152,7 +152,7 @@ switch ($schritt) {
 			if ($summe_forderung_monatlich == 0) {
 				$summe_forderung_monatlich = $buchung->summe_forderung_aus_vertrag ( $mietvertrag_id );
 			}
-			/* Regelung f�r die Funktionsaufrufe abh�ngig vom eingegebenen Zahlbetrag */
+			/* Regelung für die Funktionsaufrufe abhängig vom eingegebenen Zahlbetrag */
 			if ($zahlbetrag == $summe_forderung_monatlich) {
 				$buchung->buchungsmaske_manuell_gleicher_betrag ( $mietvertrag_id, $geld_konto_id );
 			}
@@ -172,7 +172,7 @@ switch ($schritt) {
 	
 	// ################
 	case "manuelle_buchung3":
-	/*Buchen der Miete wird durch klicken auf Button submit_buchen3 ausgel�st*/
+	/*Buchen der Miete wird durch klicken auf Button submit_buchen3 ausgelöst*/
 	if (check_datum ( $_POST [buchungsdatum] )) {
 			$buchungsdatum = date_german2mysql ( $_POST [buchungsdatum] );
 			$buchen = new mietkonto ();
@@ -181,14 +181,14 @@ switch ($schritt) {
 			$buchen->miete_zahlbetrag_buchen ( $_POST [kontoauszugsnr], $_POST [MIETVERTRAG_ID], $buchungsdatum, $_POST [ZAHLBETRAG], $_POST [bemerkung], $_POST [geld_konto] );
 		} else {
 			warnung_ausgeben ( "Datumsformat nicht korrekt!" );
-			warnung_ausgeben ( "Sie werden um einen Schritt zur�ckversetzt!" );
+			warnung_ausgeben ( "Sie werden um einen Schritt zurückversetzt!" );
 			weiterleiten_in_sec ( 'javascript:history.back();', 5 );
 		}
 		break;
 	
 	// ################
 	case "manuelle_buchung4":
-	/*Kontonummer des Objektes finden, soll optimiert werden,  da die MV_ids in der Adresse ge�ndert werden k�nnen, und die Kontonummer bleibt die gleiche, obwohl der MV vielleicht einem anderen Objekt geh�rt, erledigt, testen*/
+	/*Kontonummer des Objektes finden, soll optimiert werden,  da die MV_ids in der Adresse geändert werden können, und die Kontonummer bleibt die gleiche, obwohl der MV vielleicht einem anderen Objekt gehört, erledigt, testen*/
 	
 	$mietvertrag_id = $_POST [MIETVERTRAG_ID];
 		$buchung = new mietkonto ();
@@ -208,7 +208,7 @@ switch ($schritt) {
 		 * $buchungsnummer = $buchung->letzte_buchungsnummer($_POST[MIETVERTRAG_ID]);
 		 * $buchung->intern_buchen($_POST[MIETVERTRAG_ID], $buchungsnummer);
 		 * $betrag = $buchung->nummer_punkt2komma($_POST[ZAHLBETRAG]);
-		 * hinweis_ausgeben("Zahlbetrag von $betrag � wurde wie erwartet verbucht.");
+		 * hinweis_ausgeben("Zahlbetrag von $betrag € wurde wie erwartet verbucht.");
 		 * weiterleiten_in_sec('?daten=miete_buchen', 3);
 		 */
 		
@@ -232,7 +232,7 @@ switch ($schritt) {
 		// $info->letzte_buchungen_anzeigen();
 		$info->letzte_buchungen_anzeigen_vormonat_monat ();
 		if (! isset ( $_SESSION ['objekt_id'] )) {
-			echo "<div class=\"info_feld_oben\">Objekt ausw�hlen</div>";
+			echo "<div class=\"info_feld_oben\">Objekt auswählen</div>";
 		}
 		
 		if (isset ( $_POST ['datum_setzen'] )) {
@@ -255,7 +255,7 @@ switch ($schritt) {
 			if (isset ( $_SESSION ['buchungsdatum'] )) {
 				
 				echo "<b>Buchungsdatum:</b> " . $_SESSION ['buchungsdatum'] . "";
-				echo "&nbsp;<a href=\"?daten=miete_buchen&schritt=datum_aendern\">Datum �ndern</a>&nbsp;";
+				echo "&nbsp;<a href=\"?daten=miete_buchen&schritt=datum_aendern\">Datum ändern</a>&nbsp;";
 			} else {
 				echo "<b>Datum eingeben !</b>";
 			}
@@ -265,16 +265,16 @@ switch ($schritt) {
 			$kontostand_aktuell = nummer_punkt2komma ( $geld->geld_konto_stand ( $_SESSION ['geldkonto_id'] ) );
 			if (isset ( $_SESSION ['temp_kontostand'] ) && isset ( $_SESSION ['temp_kontoauszugsnummer'] )) {
 				$kontostand_temp = nummer_punkt2komma ( $_SESSION ['temp_kontostand'] );
-				echo "<h3>Kontostand am $_SESSION[temp_datum] laut Kontoauszug $_SESSION[temp_kontoauszugsnummer] war $kontostand_temp �</h3>";
+				echo "<h3>Kontostand am $_SESSION[temp_datum] laut Kontoauszug $_SESSION[temp_kontoauszugsnummer] war $kontostand_temp €</h3>";
 			} else {
 				echo "<h3 style=\"color:red\">Kontrolldaten zum Kontoauszug fehlen</h3>";
 				echo "<h3 style=\"color:red\">Weiterleitung erfolgt</h3>";
 				weiterleiten_in_sec ( "?daten=buchen&option=kontoauszug_form", 1 );
 			}
 			if ($kontostand_aktuell == $kontostand_temp) {
-				echo "<h3>Kontostand aktuell: $kontostand_aktuell �</h3>";
+				echo "<h3>Kontostand aktuell: $kontostand_aktuell €</h3>";
 			} else {
-				echo "<h3 style=\"color:red\">Kontostand aktuell: $kontostand_aktuell �</h3>";
+				echo "<h3 style=\"color:red\">Kontostand aktuell: $kontostand_aktuell €</h3>";
 			}
 			
 			$datum_form->ende_formular ();
@@ -303,14 +303,14 @@ switch ($schritt) {
 	case "stornierung_in_db" :
 		$form = new mietkonto ();
 		$form->erstelle_formular ( "Sicherheitsabfrage", NULL );
-		/* Falls NEIN gedr�ckt */
+		/* Falls NEIN gedrückt */
 		if (isset ( $_POST [submit_storno_nein] )) {
 			weiterleiten ( "?daten=miete_buchen", 2 );
 			warnung_ausgeben ( ("Der Vorgang wurde vom Benutzer abgebrochen. <br> Die Buchung wurde nicht storniert. <br>Bitte warten, Sie werden weitergeleitet.") );
 		}
 		/* Sicherheitsabfrage vor dem Absenden oder Abbrechen */
 		if (! isset ( $_POST [submit_storno_ja] ) && ! isset ( $_POST [submit_storno_nein] )) {
-			warnung_ausgeben ( ("Sind Sie sicher, da� Sie die Buchungsnummer $_POST[BUCHUNGSNUMMER] stornieren m�chten?") );
+			warnung_ausgeben ( ("Sind Sie sicher, daß Sie die Buchungsnummer $_POST[BUCHUNGSNUMMER] stornieren möchten?") );
 			$form->hidden_feld ( "BUCHUNGSNUMMER", "" . $_POST [BUCHUNGSNUMMER] . "" );
 			for($a = 0; $a < count ( $_POST [MIETBUCHUNGEN] ); $a ++) {
 				$form->hidden_feld ( "MIETBUCHUNGEN[]", "" . $_POST [MIETBUCHUNGEN] [$a] . "" );
@@ -319,7 +319,7 @@ switch ($schritt) {
 			$form->send_button ( "submit_storno_ja", "JA" );
 			$form->send_button ( "submit_storno_nein", "NEIN" );
 		}
-		/* Falls JA gedr�ckt */
+		/* Falls JA gedrückt */
 		if (isset ( $_POST [submit_storno_ja] )) {
 			$form->miete_zahlbetrag_stornieren ( $_POST [BUCHUNGSNUMMER] );
 			for($a = 0; $a < count ( $_POST [MIETBUCHUNGEN] ); $a ++) {
@@ -356,7 +356,7 @@ switch ($schritt) {
 					$miete = new miete ();
 					$miete->mietkonto_berechnung ( $einheit_info->mietvertrag_id );
 					$zeile = $zeile + 1;
-					echo "$zeile . $mietkonto->datum_heute Mietvertrag: $einheit_info->mietvertrag_id Saldo: $miete->erg �<br>";
+					echo "$zeile . $mietkonto->datum_heute Mietvertrag: $einheit_info->mietvertrag_id Saldo: $miete->erg €<br>";
 					$mietkonto->monatsabschluesse_speichern ( $einheit_info->mietvertrag_id, $miete->erg );
 					$miete->erg = '0.00';
 				}
@@ -369,17 +369,17 @@ switch ($schritt) {
 function objekt_auswahl() {
 	echo "<div class=\"objekt_auswahl\">";
 	$mieten = new mietkonto ();
-	$mieten->erstelle_formular ( "Objekt ausw�hlen...", NULL );
+	$mieten->erstelle_formular ( "Objekt auswählen...", NULL );
 	
 	if (isset ( $_SESSION ['objekt_id'] )) {
 		$objekt_kurzname = new objekt ();
 		$objekt_kurzname->get_objekt_name ( $_SESSION ['objekt_id'] );
-		echo "<p>&nbsp;<b>Ausgew�hltes Objekt</b> -> $objekt_kurzname->objekt_name ->";
+		echo "<p>&nbsp;<b>Ausgewähltes Objekt</b> -> $objekt_kurzname->objekt_name ->";
 		
 		// $mieten->geldkonto_stand_anzeigen($_SESSION[objekt_id]);
 		echo "->&nbsp;<a href=\"?daten=miete_buchen&schritt=monatsabschluss\">Monatsabschluss</a>";
 		echo " </p>";
-		echo "<div class=\"info_feld_oben\">Ausgew�hltes Objekt " . $objekt_kurzname->objekt_name . "<br><b>Einheit ausw�hlen</b><br>WEISS: keine Zahlung im aktuellen Monat.<br>GRAU: Zahlungen wurden gebucht.</div>";
+		echo "<div class=\"info_feld_oben\">Ausgewähltes Objekt " . $objekt_kurzname->objekt_name . "<br><b>Einheit auswählen</b><br>WEISS: keine Zahlung im aktuellen Monat.<br>GRAU: Zahlungen wurden gebucht.</div>";
 	}
 	
 	$objekte = new objekt ();
@@ -403,9 +403,9 @@ function einheiten_liste() {
 	$mieten = new mietkonto ();
 	// $mieten->letzte_buchungen_anzeigen();
 	echo "<div class=\"einheit_auswahl\">";
-	$mieten->erstelle_formular ( "Einheit ausw�hlen...", NULL );
+	$mieten->erstelle_formular ( "Einheit auswählen...", NULL );
 	
-	/* Liste der Einheiten falls Objekt ausgew�hlt wurde */
+	/* Liste der Einheiten falls Objekt ausgewählt wurde */
 	if (isset ( $_SESSION ['objekt_id'] )) {
 		$objekt_id = $_SESSION ['objekt_id'];
 		$mein_objekt = new objekt ();
@@ -418,11 +418,11 @@ function einheiten_liste() {
 				$einheiten_array [] = $row;
 		}
 	} else {
-		/* Liste aller Einheiten da kein Objekt ausgew�hlt wurde */
+		/* Liste aller Einheiten da kein Objekt ausgewählt wurde */
 		$meine_einheiten = new einheit ();
 		$einheiten_array = $meine_einheiten->liste_aller_einheiten ();
 	}
-	// Beispiel f�r ein Array $sx mit den Spalten $sx['dat'], $sx['name'], $sx['id'].
+	// Beispiel für ein Array $sx mit den Spalten $sx['dat'], $sx['name'], $sx['id'].
 	
 	$einheiten_array = array_sortByIndex ( $einheiten_array, 'EINHEIT_KURZNAME' );
 	// echo "<pre>";

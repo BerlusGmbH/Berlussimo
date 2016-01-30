@@ -20,7 +20,7 @@
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/berlussimo_class.php");
 include_once ("classes/class_formular.php");
 include_once ("classes/mietzeit_class.php");
@@ -34,7 +34,7 @@ class mahnungen {
 		$f->fieldset ( 'Mahnungen und Zahlungserinnerungen', 'mze' );
 		if (isset ( $_REQUEST ['send_mahnen'] ) or isset ( $_REQUEST ['send_erinnern'] )) {
 			if (! is_array ( $_REQUEST ['mahnliste'] )) {
-				fehlermeldung_ausgeben ( 'ABBRUCH - Keine Mieter gew�hlt!' );
+				fehlermeldung_ausgeben ( 'ABBRUCH - Keine Mieter gewählt!' );
 				die ();
 			} else {
 				$mahnliste_auswahl = $_REQUEST ['mahnliste'];
@@ -47,7 +47,7 @@ class mahnungen {
 			$this->form_datum_konto ( 'Datum - Zahlungsfrist', 'datum', 'dz' );
 			// print_req();
 			if (isset ( $_REQUEST ['send_mahnen'] )) {
-				$f->text_feld ( 'Mahngeb�hr', 'mahngebuehr', '0,00', 10, 'mg', '' );
+				$f->text_feld ( 'Mahngebühr', 'mahngebuehr', '0,00', 10, 'mg', '' );
 				$f->hidden_feld ( 'mietvertrag_raus', 'mahnen_mehrere' );
 				$f->send_button ( 'send_mehrere', 'SERIENBRIEF MAHNUNGEN ERSTELLEN' );
 			}
@@ -113,7 +113,7 @@ class mahnungen {
 						$dd = new detail ();
 						$mahnsperre = $dd->finde_detail_inhalt ( 'MIETVERTRAG', $mv_id, 'Mahnsperre' );
 						$link_mkb = "<a href=\"?daten=mietkonten_blatt&anzeigen=mk_pdf&mietvertrag_id=$mv_id\">Mietkonto</a>";
-						$link_ue = "<a href=\"?daten=uebersicht&anzeigen=einheit&einheit_id=$mvs->einheit_id&mietvertrag_id=$mv_id\">�bersicht</a>";
+						$link_ue = "<a href=\"?daten=uebersicht&anzeigen=einheit&einheit_id=$mvs->einheit_id&mietvertrag_id=$mv_id\">Übersicht</a>";
 						
 						if (empty ( $mahnsperre )) {
 							
@@ -129,7 +129,7 @@ class mahnungen {
 						echo "</td><td>$link_mkb<hr>$link_ue</td><td>$mvs->personen_name_string<br>$mahnsperre</td>";
 						
 						/*
-						 * Regel f�r Mietschuldenfilter / H�he
+						 * Regel für Mietschuldenfilter / Höhe
 						 * if($saldo<=$doppelte_miete){
 						 * echo "<b>$e->einheit_kurzname Saldo: $saldo_a Forderung:$f_monatlich </b> $link_erinnerung $link_mahnung<br>";
 						 * }else{
@@ -143,7 +143,7 @@ class mahnungen {
 						}
 						// echo " Saldo: $saldo_a Forderung:$f_monatlich $link_erinnerung $link_mahnung<br>";
 						// echo "<hr>";
-						/* Nur Schuldner �ber eine miete */
+						/* Nur Schuldner über eine miete */
 						$gesamt_verlust = $gesamt_verlust + $saldo;
 					}
 					
@@ -151,7 +151,7 @@ class mahnungen {
 				}
 				$gesamt_verlust_a = nummer_punkt2komma ( $gesamt_verlust );
 				
-				echo "<tr><td colspan=\"2\"><b>Summe Schulden</b></td><td><b>$gesamt_verlust_a �</td><td></td><td></td><td></td></tr>";
+				echo "<tr><td colspan=\"2\"><b>Summe Schulden</b></td><td><b>$gesamt_verlust_a €</td><td></td><td></td><td></td></tr>";
 				echo "<tr><td colspan=\"3\">";
 				$f->send_button_js ( 'send_mahnen', 'Mahnen', '' );
 				echo "</td><td colspan=\"3\">";
@@ -162,7 +162,7 @@ class mahnungen {
 				if (isset ( $_REQUEST ['send_mahnen'] ) or isset ( $_REQUEST ['send_erinnern'] )) {
 					print_req ();
 				}
-				// echo "<h1>Summe Schulden: $gesamt_verlust_a �</h1>";
+				// echo "<h1>Summe Schulden: $gesamt_verlust_a €</h1>";
 			} else {
 				echo "Keine vermieteten Einheiten";
 			}
@@ -172,7 +172,7 @@ class mahnungen {
 	}
 	function form_datum_konto($label, $name, $id) {
 		if (empty ( $_SESSION ['objekt_id'] )) {
-			fehlermeldung_ausgeben ( 'Objekt unbedingt w�hlen, damit die Kontonr angezeigt werden kann.' );
+			fehlermeldung_ausgeben ( 'Objekt unbedingt wählen, damit die Kontonr angezeigt werden kann.' );
 			die ();
 		}
 		$f = new formular ();
@@ -303,7 +303,7 @@ class mahnungen {
 					 * $table_arr[$a][VERWENDUNGSZWECK] = '<b>SALDO VORMONAT</b>';
 					 */
 					$saldo_a = nummer_punkt2komma ( $saldo );
-					$table_arr [$zaehler] ['SALDO'] = "$saldo_a �";
+					$table_arr [$zaehler] ['SALDO'] = "$saldo_a €";
 					// echo "<b>$e->einheit_kurzname</b> ";
 					
 					$mvs = new mietvertraege ();
@@ -329,7 +329,7 @@ class mahnungen {
 			$datum_h = date ( "d.m.Y" );
 			$table_arr [$anzahl_zeilen] ['EINHEIT'] = "<b>$datum_h</b>";
 			$table_arr [$anzahl_zeilen] ['MIETER'] = "<b>Summe </b>";
-			$table_arr [$anzahl_zeilen] ['SALDO'] = "<b>$gesamt_verlust_a �</b>";
+			$table_arr [$anzahl_zeilen] ['SALDO'] = "<b>$gesamt_verlust_a €</b>";
 			/* PDF AUSGABE */
 			$cols = array (
 					'EINHEIT' => "Einheit",
@@ -368,7 +368,7 @@ class mahnungen {
 			header ( "Content-type: application/pdf" ); // wird von MSIE ignoriert
 			
 			$pdf->ezStream ();
-			// echo "<h1>Summe Schulden: $gesamt_verlust �</h1>";
+			// echo "<h1>Summe Schulden: $gesamt_verlust €</h1>";
 		} else {
 			// echo "Keine vermieteten Einheiten";
 		}
@@ -420,7 +420,7 @@ class mahnungen {
 					$link_erinnerung = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=zahlungserinnerung&mietvertrag_id=$mv_id\">Erinnerung PDF</a>";
 					$link_mahnung = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mahnung&mietvertrag_id=$mv_id\">Mahnung PDF</a>";
 					/*
-					 * Regel f�r Mietschuldenfilter / H�he
+					 * Regel für Mietschuldenfilter / Höhe
 					 * if($saldo<=$doppelte_miete){
 					 * echo "<b>$e->einheit_kurzname Saldo: $saldo_a Forderung:$f_monatlich </b> $link_erinnerung $link_mahnung<br>";
 					 * }else{
@@ -429,7 +429,7 @@ class mahnungen {
 					 */
 					echo " Saldo: $saldo_a Forderung:$f_monatlich $link_erinnerung $link_mahnung<br>";
 					echo "<hr>";
-					/* Nur Schuldner �ber eine miete */
+					/* Nur Schuldner über eine miete */
 					$gesamt_verlust = $gesamt_verlust + $saldo;
 				}
 				/* Auch die mit Guthaben */
@@ -437,7 +437,7 @@ class mahnungen {
 				unset ( $mz->erg );
 				unset ( $f_monatlich );
 			}
-			echo "<h1>Summe Schulden: $gesamt_verlust �</h1>";
+			echo "<h1>Summe Schulden: $gesamt_verlust €</h1>";
 		} else {
 			echo "Keine vermieteten Einheiten";
 		}
@@ -472,20 +472,20 @@ class mahnungen {
 					$personen_namen_string = $m1->mv_personen_als_string ( $mv_ids_arr );
 					echo "<b>$e->einheit_kurzname</b> ";
 					echo $personen_namen_string . ' ';
-					echo " Saldo: $saldo_a �<br>";
+					echo " Saldo: $saldo_a €<br>";
 					echo "<hr>";
 					$gesamt_guthaben = $gesamt_guthaben + $saldo;
 				}
 			}
 			unset ( $mz->erg );
 			
-			echo "<h1>Summe Guthaben: $gesamt_guthaben �</h1>";
+			echo "<h1>Summe Guthaben: $gesamt_guthaben €</h1>";
 		} else {
 			echo "Keine vermieteten Einheiten";
 		}
 	}
 	
-	/* finde aktuelle MIetvertr�ge */
+	/* finde aktuelle MIetverträge */
 	function finde_aktuelle_mvs() {
 		if (isset ( $_SESSION ['objekt_id'] )) {
 			$objekt_id = $_SESSION ['objekt_id'];
@@ -509,7 +509,7 @@ OR MIETVERTRAG_BIS = '0000-00-00' ) ORDER BY EINHEIT_KURZNAME ASC" );
 		}
 	}
 	
-	/* finde aktuelle MIetvertr�ge */
+	/* finde aktuelle MIetverträge */
 	function finde_ausgezogene_mvs() {
 		if (isset ( $_SESSION ['objekt_id'] )) {
 			$objekt_id = $_SESSION ['objekt_id'];
@@ -526,7 +526,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 		}
 	}
 	
-	/* finde aktuelle MIetvertr�ge */
+	/* finde aktuelle MIetverträge */
 	function finde_alle_mvs() {
 		if (isset ( $_SESSION ['objekt_id'] )) {
 			$objekt_id = $_SESSION ['objekt_id'];
@@ -579,7 +579,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 			if ($geschlecht == 'weiblich') {
 				$anrede_p = 'geehrte Frau';
 			}
-			if ($geschlecht == 'm�nnlich') {
+			if ($geschlecht == 'männlich') {
 				$anrede_p = 'geehrter Herr';
 			}
 			$anrede = $anrede . "$anrede_p $p->person_nachname,";
@@ -596,7 +596,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 				if ($geschlecht == 'weiblich') {
 					$anrede_p = 'geehrte Frau';
 				}
-				if ($geschlecht == 'm�nnlich') {
+				if ($geschlecht == 'männlich') {
 					$anrede_p = 'geehrter Herr';
 				}
 				$anrede = "$anrede_p $p->person_nachname,";
@@ -647,7 +647,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 		$saldo = abs ( $saldo );
 		$saldo_a = nummer_punkt2komma ( $saldo );
 		
-		$pdf->ezText ( "nach Durchsicht unserer Buchhaltungsunterlagen haben wir festgestellt, dass Ihr Mietkonto folgenden R�ckstand in H�he von <b>$saldo_a �</b> aufweist. Die konkreten Fehlbetr�ge entnehmen Sie bitte dem beigef�gten Mietkonto.\n\nWir bitten Sie den genannten Betrag unter Angabe der bei uns gef�hrten Mieternummer umgehend, sp�testens jedoch bis zum\n", 12 );
+		$pdf->ezText ( "nach Durchsicht unserer Buchhaltungsunterlagen haben wir festgestellt, dass Ihr Mietkonto folgenden Rückstand in Höhe von <b>$saldo_a €</b> aufweist. Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Mietkonto.\n\nWir bitten Sie den genannten Betrag unter Angabe der bei uns geführten Mieternummer umgehend, spätestens jedoch bis zum\n", 12 );
 		$pdf->ezSetCmMargins ( 3, 3, 9, 3 );
 		// $pdf->setColor(1.0,0.0,0.0);
 		$pdf->ezText ( "<b>$fristdatum</b>\n", 12 );
@@ -656,15 +656,15 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 		$g = new geldkonto_info ();
 		$g->geld_konto_details ( $geldkonto_id );
 		
-		// $pdf->ezText("auf das Konto der $g->kredit_institut zu �berweisen$g->kontonummer bei der $g->kredit_institut, BLZ $g->blz\n\n",12);
-		$pdf->ezText ( "auf das Konto der $g->kredit_institut zu �berweisen.\n\n", 12 );
+		// $pdf->ezText("auf das Konto der $g->kredit_institut zu Überweisen$g->kontonummer bei der $g->kredit_institut, BLZ $g->blz\n\n",12);
+		$pdf->ezText ( "auf das Konto der $g->kredit_institut zu überweisen.\n\n", 12 );
 		$pdf->ezText ( "IBAN: $g->IBAN1\n", 12 );
 		$pdf->ezText ( "IBAN: $g->BIC\n\n", 12 );
-		$pdf->ezText ( "F�r R�ckfragen stehen wir Ihnen gerne zur Verf�gung.\n\n", 12 );
-		$pdf->ezText ( "Mit freundlichen Gr��en\n", 12 );
+		$pdf->ezText ( "Für Rückfragen stehen wir Ihnen gerne zur Verfügung.\n\n", 12 );
+		$pdf->ezText ( "Mit freundlichen Grüßen\n", 12 );
 		$pdf->ezSetDy ( 15 );
 		$pdf->ezText ( "Wolfgang Wehrheim\n\n", 11 );
-		$pdf->ezText ( "Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift g�ltig.\n", 12 );
+		$pdf->ezText ( "Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift gültig.\n", 12 );
 		$pdf->addInfo ( 'Title', "Zahlungserinnerung $mv->personen_name_string" );
 		$pdf->addInfo ( 'Author', $_SESSION [username] );
 		// ### MIETKONTENBLATT####
@@ -716,7 +716,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 			/* Verzogene Mieter, abgelaufene MVS */
 			if ($mv->mietvertrag_aktuell == '0') {
 				/*
-				 * Bei 2 Mietern �berpr�fen ob verzugsadresse gleich ist,
+				 * Bei 2 Mietern überprüfen ob verzugsadresse gleich ist,
 				 * wenn gleich, dann nur 1 Brief an beide, sonst getrennte Personen anschreiben
 				 */
 				
@@ -757,7 +757,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 					$saldo = abs ( $saldo );
 					$saldo_a = nummer_punkt2komma ( $saldo );
 					
-					$pdf->ezText ( "nach Durchsicht unserer Buchhaltungsunterlagen mussten wir feststellen, dass Ihr Mietkonto einen R�ckstand in H�he von <b>$saldo_a �</b> aufweist. Die konkreten Fehlbetr�ge entnehmen Sie bitte dem beigef�gten Mietkonto.\n\nBitte �berweisen Sie den genannten Betrag unter Angabe der bei uns gef�hrten Mieternummer umgehend, sp�testens jedoch bis zum\n", 12 );
+					$pdf->ezText ( "nach Durchsicht unserer Buchhaltungsunterlagen mussten wir feststellen, dass Ihr Mietkonto einen Rückstand in Höhe von <b>$saldo_a €</b> aufweist. Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Mietkonto.\n\nBitte überweisen Sie den genannten Betrag unter Angabe der bei uns geführten Mieternummer umgehend, spätestens jedoch bis zum\n", 12 );
 					$pdf->ezSetCmMargins ( 3, 3, 9, 3 );
 					// $pdf->setColor(1.0,0.0,0.0);
 					$pdf->ezText ( "<b>$fristdatum</b>\n", 12 );
@@ -766,15 +766,15 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 					$g = new geldkonto_info ();
 					$g->geld_konto_details ( $geldkonto_id );
 					
-					$pdf->ezText ( "auf das Konto bei der $g->kredit_institut zu �berweisen.", 12 );
+					$pdf->ezText ( "auf das Konto bei der $g->kredit_institut zu überweisen.", 12 );
 					$pdf->ezSetDy ( - 10 );
 					$pdf->ezText ( "<b>IBAN</b> $g->IBAN1\n", 12 );
 					$pdf->ezText ( "<b>BIC</b> $g->BIC\n", 12 );
-					$pdf->ezText ( "F�r R�ckfragen stehen wir Ihnen gerne zur Verf�gung.\n\n", 12 );
-					$pdf->ezText ( "Mit freundlichen Gr��en\n\n\n", 12 );
+					$pdf->ezText ( "Für Rückfragen stehen wir Ihnen gerne zur Verfügung.\n\n", 12 );
+					$pdf->ezText ( "Mit freundlichen Grüßen\n\n\n", 12 );
 					$pdf->ezSetDy ( 15 );
 					$pdf->ezText ( "Wolfgang Wehrheim\n\n", 11 );
-					$pdf->ezText ( "Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift g�ltig.\n", 12 );
+					$pdf->ezText ( "Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift gültig.\n", 12 );
 					$pdf->addInfo ( 'Title', "Zahlungserinnerung $mv->personen_name_string" );
 					$pdf->addInfo ( 'Author', $_SESSION [username] );
 					$pdf->addInfo ( 'Title', "Zahlungserinnerung $mv->personen_name_string" );
@@ -831,7 +831,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 						$saldo = abs ( $saldo );
 						$saldo_a = nummer_punkt2komma ( $saldo );
 						
-						$pdf->ezText ( "nach Durchsicht unserer Buchhaltungsunterlagen mussten wir feststellen, dass Ihr Mietkonto einen R�ckstand in H�he von <b>$saldo_a �</b> aufweist. Die konkreten Fehlbetr�ge entnehmen Sie bitte dem beigef�gten Mietkonto.\n\nBitte �berweisen Sie den genannten Betrag unter Angabe der bei uns gef�hrten Mieternummer umgehend, sp�testens jedoch bis zum\n", 12 );
+						$pdf->ezText ( "nach Durchsicht unserer Buchhaltungsunterlagen mussten wir feststellen, dass Ihr Mietkonto einen Rückstand in Höhe von <b>$saldo_a €</b> aufweist. Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Mietkonto.\n\nBitte überweisen Sie den genannten Betrag unter Angabe der bei uns geführten Mieternummer umgehend, spätestens jedoch bis zum\n", 12 );
 						$pdf->ezSetCmMargins ( 3, 3, 9, 3 );
 						// $pdf->setColor(1.0,0.0,0.0);
 						$pdf->ezText ( "<b>$fristdatum</b>\n", 12 );
@@ -841,12 +841,12 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 						$g->geld_konto_details ( $geldkonto_id );
 						
 						$pdf->ezText ( "auf das Konto $g->kontonummer  bei der $g->kredit_institut, BLZ $g->blz\n", 12 );
-						$pdf->ezText ( "zu �berweisen.\n", 12 );
-						$pdf->ezText ( "F�r R�ckfragen stehen wir Ihnen gerne zur Verf�gung.\n\n", 12 );
-						$pdf->ezText ( "Mit freundlichen Gr��en\n\n\n", 12 );
+						$pdf->ezText ( "zu überweisen.\n", 12 );
+						$pdf->ezText ( "Für Rückfragen stehen wir Ihnen gerne zur Verfügung.\n\n", 12 );
+						$pdf->ezText ( "Mit freundlichen Grüßen\n\n\n", 12 );
 						$pdf->ezSetDy ( 15 );
 						$pdf->ezText ( "Wolfgang Wehrheim\n\n", 11 );
-						$pdf->ezText ( "Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift g�ltig.\n", 12 );
+						$pdf->ezText ( "Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift gültig.\n", 12 );
 						$pdf->addInfo ( 'Title', "Zahlungserinnerung $mv->personen_name_string" );
 						$pdf->addInfo ( 'Author', $_SESSION [username] );
 						// ### MIETKONTENBLATT####
@@ -901,7 +901,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 				$saldo_a = nummer_punkt2komma ( $saldo );
 				
 				/*
-				 * $pdf->ezText("nach Durchsicht unserer Buchhaltungsunterlagen mussten wir feststellen, dass Ihr Mietkonto einen R�ckstand in H�he von <b>$saldo_a �</b> aufweist. Die konkreten Fehlbetr�ge entnehmen Sie bitte dem beigef�gten Mietkonto.\n\nBitte �berweisen Sie den genannten Betrag unter Angabe Ihrer Mietvertragsnummer umgehend, sp�testens jedoch bis zum\n",12);
+				 * $pdf->ezText("nach Durchsicht unserer Buchhaltungsunterlagen mussten wir feststellen, dass Ihr Mietkonto einen Rückstand in Höhe von <b>$saldo_a €</b> aufweist. Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Mietkonto.\n\nBitte überweisen Sie den genannten Betrag unter Angabe Ihrer Mietvertragsnummer umgehend, spätestens jedoch bis zum\n",12);
 				 * $pdf->ezSetCmMargins(3,3,9,3);
 				 * #$pdf->setColor(1.0,0.0,0.0);
 				 * $pdf->ezText("<b>$fristdatum</b>\n",12);
@@ -911,20 +911,20 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 				 * $g->geld_konto_details($geldkonto_id);
 				 *
 				 * $pdf->ezText("auf das Konto $g->kontonummer bei der $g->kredit_institut, BLZ $g->blz\n",12);
-				 * $pdf->ezText("zu �berweisen.\n",12);
+				 * $pdf->ezText("zu überweisen.\n",12);
 				 */
 				
-				$pdf->ezText ( "nach Durchsicht unserer Buchhaltungsunterlagen haben wir festgestellt, dass Ihr Mietkonto folgenden R�ckstand aufweist", 11 );
-				// $pdf->ezText("nach Durchsicht unserer Buchhaltungsunterlagen habe wir festgestellt, dass Ihr Mietkonto folgenden R�ckstand aufweist",12);
-				// <b>$saldo_a �</b> aufweist. Die konkreten Fehlbetr�ge entnehmen Sie bitte dem beigef�gten Mietkonto.\n\nBitte �berweisen Sie den genannten Betrag unter Angabe Ihrer Mietvertragsnummer umgehend, sp�testens jedoch bis zum\n",12);
+				$pdf->ezText ( "nach Durchsicht unserer Buchhaltungsunterlagen haben wir festgestellt, dass Ihr Mietkonto folgenden Rückstand aufweist", 11 );
+				// $pdf->ezText("nach Durchsicht unserer Buchhaltungsunterlagen habe wir festgestellt, dass Ihr Mietkonto folgenden Rückstand aufweist",12);
+				// <b>$saldo_a €</b> aufweist. Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Mietkonto.\n\nBitte überweisen Sie den genannten Betrag unter Angabe Ihrer Mietvertragsnummer umgehend, spätestens jedoch bis zum\n",12);
 				$pdf->ezSetCmMargins ( 3, 3, 8, 3 );
 				// $pdf->ezSetMargins(120,70,50,50);
 				// $pdf->setColor(1.0,0.0,0.0);
-				$pdf->ezText ( "<b>Mietr�ckstand: $saldo_a �</b>\n", 12 );
+				$pdf->ezText ( "<b>Mietrückstand: $saldo_a €</b>\n", 12 );
 				$pdf->ezSetMargins ( 135, 70, 50, 50 );
 				$pdf->setColor ( 0.0, 0.0, 0.0 );
 				// $pdf->ezSetCmMargins(3,3,9,3);
-				$pdf->ezText ( "Die konkreten Fehlbetr�ge entnehmen Sie bitte dem beigef�gten Mietkonto.\nWir bitten Sie, den genannten Betrag unter Angabe der bei uns gef�hrten Mieternummer bis zum\n", 11 );
+				$pdf->ezText ( "Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Mietkonto.\nWir bitten Sie, den genannten Betrag unter Angabe der bei uns geführten Mieternummer bis zum\n", 11 );
 				$pdf->ezSetCmMargins ( 3, 3, 9, 3 );
 				// $pdf->setColor(1.0,0.0,0.0);
 				$pdf->ezText ( "<b>$fristdatum</b>\n", 12 );
@@ -934,13 +934,13 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 				$g = new geldkonto_info ();
 				$g->geld_konto_details ( $geldkonto_id );
 				$pdf->ezSetMargins ( 135, 70, 50, 50 );
-				$pdf->ezText ( "auf das Konto bei der $g->kredit_institut zu �berweisen.", 11 );
+				$pdf->ezText ( "auf das Konto bei der $g->kredit_institut zu überweisen.", 11 );
 				$pdf->ezText ( "\n<b>IBAN:</b> $g->IBAN1", 12 );
 				$pdf->ezText ( "<b>BIC:</b>   $g->BIC\n", 12 );
 				$pdf->ezText ( "Sollten Sie den Betrag in der Zwischenzeit bereits ausgegelichen haben, bitten wir Sie dieses Schreiben als gegenstandslos zu betrachten.\n\n", 11 );
 				
-				$pdf->ezText ( "F�r R�ckfragen stehen wir Ihnen gerne zur Verf�gung.\n", 11 );
-				$pdf->ezText ( "Mit freundlichen Gr��en\n\n\n", 11 );
+				$pdf->ezText ( "Für Rückfragen stehen wir Ihnen gerne zur Verfügung.\n", 11 );
+				$pdf->ezText ( "Mit freundlichen Grüßen\n\n\n", 11 );
 				
 				if (isset ( $_SESSION ['partner_id'] )) {
 					$pp = new partners ();
@@ -949,7 +949,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 				} else {
 					$pdf->ezText ( "Ihre Hausverwaltung\n", 11 );
 				}
-				$pdf->ezText ( "Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift g�ltig.", 11 );
+				$pdf->ezText ( "Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift gültig.", 11 );
 				$pdf->addInfo ( 'Title', "Zahlungserinnerung $mv->personen_name_string" );
 				$pdf->addInfo ( 'Author', $_SESSION [username] );
 				// ### MIETKONTENBLATT####
@@ -1010,7 +1010,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 			/* Verzogene Mieter, abgelaufene MVS */
 			if ($mv->mietvertrag_aktuell == '0') {
 				/*
-				 * Bei 2 Mietern �berpr�fen ob verzugsadresse gleich ist,
+				 * Bei 2 Mietern überprüfen ob verzugsadresse gleich ist,
 				 * wenn gleich, dann nur 1 Brief an beide, sonst getrennte Personen anschreiben
 				 */
 				
@@ -1051,35 +1051,35 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 					$saldo = abs ( $saldo );
 					$saldo_a = nummer_punkt2komma ( $saldo );
 					
-					$pdf->ezText ( "nach Durchsicht unserer Buchhaltungsunterlagen mussten wir feststellen, dass Ihr Mietkonto folgenden R�ckstand aufweist:\n", 11 );
+					$pdf->ezText ( "nach Durchsicht unserer Buchhaltungsunterlagen mussten wir feststellen, dass Ihr Mietkonto folgenden Rückstand aufweist:\n", 11 );
 					
 					$pdf->ezSetCmMargins ( 3, 3, 6, 7 );
-					$pdf->ezText ( "<b>Mietr�ckstand</b>", 11 );
+					$pdf->ezText ( "<b>Mietrückstand</b>", 11 );
 					
 					$pdf->ezSetDy ( 11 );
 					// $pdf->setColor(1.0,0.0,0.0);
-					$pdf->ezText ( "<b>$saldo_a �</b>", 12, array (
+					$pdf->ezText ( "<b>$saldo_a €</b>", 12, array (
 							'justification' => 'right' 
 					) );
 					
 					$pdf->setColor ( 0.0, 0.0, 0.0 );
-					$pdf->ezText ( "<b>zzgl. Mahngeb�hr</b>", 11 );
+					$pdf->ezText ( "<b>zzgl. Mahngebühr</b>", 11 );
 					$pdf->ezSetDy ( 11 );
 					
-					$pdf->ezText ( "<b>$mahngebuehr �</b>", 11, array (
+					$pdf->ezText ( "<b>$mahngebuehr €</b>", 11, array (
 							'justification' => 'right' 
 					) );
-					/* Linier �ber Gesamtr�ckstand */
+					/* Linier über Gesamtrückstand */
 					$pdf->ezSetDy ( - 5 );
 					$pdf->line ( 170, $pdf->y, 403, $pdf->y );
 					$pdf->setColor ( 0.0, 0.0, 0.0 );
-					$pdf->ezText ( "<b>Gesamtr�ckstand</b>", 11 );
+					$pdf->ezText ( "<b>Gesamtrückstand</b>", 11 );
 					$pdf->ezSetDy ( 11 );
 					// $pdf->setColor(1.0,0.0,0.0);
 					$mahngebuehr_r = nummer_komma2punkt ( $mahngebuehr );
 					$gesamt_rueckstand = $saldo + $mahngebuehr_r;
 					$gesamt_rueckstand = nummer_punkt2komma ( $gesamt_rueckstand );
-					$pdf->ezText ( "<b>$gesamt_rueckstand �</b>\n", 11, array (
+					$pdf->ezText ( "<b>$gesamt_rueckstand €</b>\n", 11, array (
 							'justification' => 'right' 
 					) );
 					
@@ -1089,14 +1089,14 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 					$g->geld_konto_details ( $geldkonto_id );
 					
 					$pdf->setColor ( 0.0, 0.0, 0.0 );
-					$pdf->ezText ( "Die konkreten Fehlbetr�ge entnehmen Sie bitte dem beigef�gten Mietkonto.", 11 );
-					$pdf->ezText ( "Wir fordern Sie auf, den genannten Betrag unter Angabe der bei uns gef�hrten Mieternummer bis zum", 11 );
+					$pdf->ezText ( "Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Mietkonto.", 11 );
+					$pdf->ezText ( "Wir fordern Sie auf, den genannten Betrag unter Angabe der bei uns geführten Mieternummer bis zum", 11 );
 					$pdf->ezSetCmMargins ( 3, 3, 9, 3 );
 					// $pdf->setColor(1.0,0.0,0.0);
 					$pdf->ezSetDy ( - 10 );
 					$pdf->ezText ( "<b>$fristdatum</b>\n", 11 );
 					$pdf->ezSetMargins ( 135, 70, 50, 50 );
-					$pdf->ezText ( "<b>auf das Konto bei der $g->kredit_institut zu �berweisen.</b>\n", 11 );
+					$pdf->ezText ( "<b>auf das Konto bei der $g->kredit_institut zu überweisen.</b>\n", 11 );
 					$pdf->setColor ( 0.0, 0.0, 0.0 );
 					$pdf->ezSetDy ( - 10 );
 					// die('SA');
@@ -1107,11 +1107,11 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 					$pdf->ezText ( "<b>BIC:</b> $g->BIC\n", 12 );
 					$pdf->ezText ( "<b>Wir weisen vorsorglich darauf hin, dass wir bei einer Nichtzahlung bis zum oben genannten Termin, berechtigt sind eine Zahlungsklage gegen Sie einzureichen.</b>\n", 12 );
 					
-					$pdf->ezText ( "F�r R�ckfragen stehen wir Ihnen gerne zur Verf�gung\n\n", 11 );
-					$pdf->ezText ( "Mit freundlichen Gr��en\n\n", 11 );
+					$pdf->ezText ( "Für Rückfragen stehen wir Ihnen gerne zur Verfügung\n\n", 11 );
+					$pdf->ezText ( "Mit freundlichen Grüßen\n\n", 11 );
 					$pdf->ezSetDy ( 15 );
 					$pdf->ezText ( "Wolfgang Wehrheim\n\n", 11 );
-					$pdf->ezText ( "Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift g�ltig.\n", 11 );
+					$pdf->ezText ( "Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift gültig.\n", 11 );
 					$pdf->addInfo ( 'Title', "Mahnung $mv->personen_name_string" );
 					$pdf->addInfo ( 'Author', $_SESSION [username] );
 					
@@ -1168,35 +1168,35 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 						$saldo = abs ( $saldo );
 						$saldo_a = nummer_punkt2komma ( $saldo );
 						
-						$pdf->ezText ( "nach Durchsicht unserer Buchhaltungsunterlagen mussten wir feststellen, dass Ihr Mietkonto folgenden R�ckstand aufweist:\n", 11 );
+						$pdf->ezText ( "nach Durchsicht unserer Buchhaltungsunterlagen mussten wir feststellen, dass Ihr Mietkonto folgenden Rückstand aufweist:\n", 11 );
 						
 						$pdf->ezSetCmMargins ( 3, 3, 6, 7 );
-						$pdf->ezText ( "<b>Mietr�ckstand</b>", 11 );
+						$pdf->ezText ( "<b>Mietrückstand</b>", 11 );
 						
 						$pdf->ezSetDy ( 11 );
 						// $pdf->setColor(1.0,0.0,0.0);
-						$pdf->ezText ( "<b>$saldo_a �</b>", 12, array (
+						$pdf->ezText ( "<b>$saldo_a €</b>", 12, array (
 								'justification' => 'right' 
 						) );
 						
 						$pdf->setColor ( 0.0, 0.0, 0.0 );
-						$pdf->ezText ( "<b>zzgl. Mahngeb�hr</b>", 11 );
+						$pdf->ezText ( "<b>zzgl. Mahngebühr</b>", 11 );
 						$pdf->ezSetDy ( 11 );
 						
-						$pdf->ezText ( "<b>$mahngebuehr �</b>", 11, array (
+						$pdf->ezText ( "<b>$mahngebuehr €</b>", 11, array (
 								'justification' => 'right' 
 						) );
-						/* Linier �ber Gesamtr�ckstand */
+						/* Linier über Gesamtrückstand */
 						$pdf->ezSetDy ( - 5 );
 						$pdf->line ( 170, $pdf->y, 403, $pdf->y );
 						$pdf->setColor ( 0.0, 0.0, 0.0 );
-						$pdf->ezText ( "<b>Gesamtr�ckstand</b>", 11 );
+						$pdf->ezText ( "<b>Gesamtrückstand</b>", 11 );
 						$pdf->ezSetDy ( 11 );
 						// $pdf->setColor(1.0,0.0,0.0);
 						$mahngebuehr_r = nummer_komma2punkt ( $mahngebuehr );
 						$gesamt_rueckstand = $saldo + $mahngebuehr_r;
 						$gesamt_rueckstand = nummer_punkt2komma ( $gesamt_rueckstand );
-						$pdf->ezText ( "<b>$gesamt_rueckstand �</b>\n", 11, array (
+						$pdf->ezText ( "<b>$gesamt_rueckstand €</b>\n", 11, array (
 								'justification' => 'right' 
 						) );
 						
@@ -1206,23 +1206,23 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 						$g->geld_konto_details ( $geldkonto_id );
 						
 						$pdf->setColor ( 0.0, 0.0, 0.0 );
-						$pdf->ezText ( "Die konkreten Fehlbetr�ge entnehmen Sie bitte dem beigef�gten Mietkonto.", 11 );
-						$pdf->ezText ( "Wir fordern Sie auf, den genannten Betrag unter Angabe der bei uns gef�hrten Mieternummer bis zum", 11 );
+						$pdf->ezText ( "Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Mietkonto.", 11 );
+						$pdf->ezText ( "Wir fordern Sie auf, den genannten Betrag unter Angabe der bei uns geführten Mieternummer bis zum", 11 );
 						$pdf->ezSetCmMargins ( 3, 3, 9, 3 );
 						// $pdf->setColor(1.0,0.0,0.0);
 						$pdf->ezText ( "<b>$fristdatum</b>\n", 11 );
 						$pdf->ezSetMargins ( 135, 70, 50, 50 );
-						$pdf->ezText ( "<b>auf das Konto bei der $g->kredit_institut zu �berweisen.\n", 11 );
+						$pdf->ezText ( "<b>auf das Konto bei der $g->kredit_institut zu überweisen.\n", 11 );
 						$pdf->ezText ( "<b>IBAN</b> $g->IBAN1\n", 12 );
 						// $pdf->ezSetDy(10);
 						$pdf->ezText ( "<b>BIC</b>  $g->BIC\n", 12 );
-						$pdf->ezText ( "Wir weisen vorsorglich darauf hin, dass wir bei einem R�ckstand von zwei Kaltmieten berechtigt sind, die Wohnung fristlos zu k�ndigen.\n", 11 );
+						$pdf->ezText ( "Wir weisen vorsorglich darauf hin, dass wir bei einem Rückstand von zwei Kaltmieten berechtigt sind, die Wohnung fristlos zu kündigen.\n", 11 );
 						$pdf->setColor ( 0.0, 0.0, 0.0 );
-						$pdf->ezText ( "zu �berweisen.\n", 11 );
-						$pdf->ezText ( "F�r R�ckfragen stehen wir Ihnen gerne zur Verf�gung.\n\n", 11 );
-						$pdf->ezText ( "Mit freundlichen Gr��en\n\n", 11 );
+						$pdf->ezText ( "zu überweisen.\n", 11 );
+						$pdf->ezText ( "Für Rückfragen stehen wir Ihnen gerne zur Verfügung.\n\n", 11 );
+						$pdf->ezText ( "Mit freundlichen Grüßen\n\n", 11 );
 						$pdf->ezText ( "Wolfgang Wehrheim\n\n", 11 );
-						$pdf->ezText ( "Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift g�ltig.\n", 11 );
+						$pdf->ezText ( "Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift gültig.\n", 11 );
 						$pdf->addInfo ( 'Title', "Mahnung $mv->personen_name_string" );
 						$pdf->addInfo ( 'Author', $_SESSION [username] );
 						
@@ -1273,35 +1273,35 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 				$saldo = abs ( $saldo );
 				$saldo_a = nummer_punkt2komma ( $saldo );
 				
-				$pdf->ezText ( "nach Durchsicht unserer Buchhaltungsunterlagen mussten wir feststellen, dass Ihr Mietkonto folgenden R�ckstand aufweist:\n", 11 );
+				$pdf->ezText ( "nach Durchsicht unserer Buchhaltungsunterlagen mussten wir feststellen, dass Ihr Mietkonto folgenden Rückstand aufweist:\n", 11 );
 				
 				$pdf->ezSetCmMargins ( 3, 3, 6, 7 );
-				$pdf->ezText ( "<b>Mietr�ckstand</b>", 11 );
+				$pdf->ezText ( "<b>Mietrückstand</b>", 11 );
 				
 				$pdf->ezSetDy ( 11 );
 				// $pdf->setColor(1.0,0.0,0.0);
-				$pdf->ezText ( "<b>$saldo_a �</b>", 12, array (
+				$pdf->ezText ( "<b>$saldo_a €</b>", 12, array (
 						'justification' => 'right' 
 				) );
 				
 				$pdf->setColor ( 0.0, 0.0, 0.0 );
-				$pdf->ezText ( "<b>zzgl. Mahngeb�hr</b>", 11 );
+				$pdf->ezText ( "<b>zzgl. Mahngebühr</b>", 11 );
 				$pdf->ezSetDy ( 11 );
 				
-				$pdf->ezText ( "<b>$mahngebuehr �</b>", 11, array (
+				$pdf->ezText ( "<b>$mahngebuehr €</b>", 11, array (
 						'justification' => 'right' 
 				) );
-				/* Linier �ber Gesamtr�ckstand */
+				/* Linier über Gesamtrückstand */
 				$pdf->ezSetDy ( - 5 );
 				$pdf->line ( 170, $pdf->y, 403, $pdf->y );
 				$pdf->setColor ( 0.0, 0.0, 0.0 );
-				$pdf->ezText ( "<b>Gesamtr�ckstand</b>", 11 );
+				$pdf->ezText ( "<b>Gesamtrückstand</b>", 11 );
 				$pdf->ezSetDy ( 11 );
 				// $pdf->setColor(1.0,0.0,0.0);
 				$mahngebuehr_r = nummer_komma2punkt ( $mahngebuehr );
 				$gesamt_rueckstand = $saldo + $mahngebuehr_r;
 				$gesamt_rueckstand = nummer_punkt2komma ( $gesamt_rueckstand );
-				$pdf->ezText ( "<b>$gesamt_rueckstand �</b>\n", 11, array (
+				$pdf->ezText ( "<b>$gesamt_rueckstand €</b>\n", 11, array (
 						'justification' => 'right' 
 				) );
 				
@@ -1311,21 +1311,21 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 				$g->geld_konto_details ( $geldkonto_id );
 				
 				$pdf->setColor ( 0.0, 0.0, 0.0 );
-				$pdf->ezText ( "Die konkreten Fehlbetr�ge entnehmen Sie bitte dem beigef�gten Mietkonto.", 11 );
-				$pdf->ezText ( "Wir fordern Sie auf, den genannten Betrag unter Angabe der bei uns gef�hrten Mieternummer bis zum\n", 11 );
+				$pdf->ezText ( "Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Mietkonto.", 11 );
+				$pdf->ezText ( "Wir fordern Sie auf, den genannten Betrag unter Angabe der bei uns geführten Mieternummer bis zum\n", 11 );
 				$pdf->ezSetCmMargins ( 3, 3, 9, 3 );
 				// $pdf->setColor(1.0,0.0,0.0);
 				$pdf->ezText ( "<b>$fristdatum</b>\n", 11 );
 				$pdf->ezSetMargins ( 135, 70, 50, 50 );
-				$pdf->ezText ( "auf das Konto bei der $g->kredit_institut zu �berweisen.\n", 11 );
+				$pdf->ezText ( "auf das Konto bei der $g->kredit_institut zu überweisen.\n", 11 );
 				$pdf->setColor ( 0.0, 0.0, 0.0 );
-				// $pdf->ezText("zu �berweisen.\n",11);
+				// $pdf->ezText("zu überweisen.\n",11);
 				$pdf->ezText ( "<b>IBAN:</b> $g->IBAN1", 12 );
 				// $pdf->ezSetDy(10);
 				$pdf->ezText ( "<b>BIC:</b>   $g->BIC\n", 12 );
-				$pdf->ezText ( "Wir weisen vorsorglich darauf hin, dass wir bei einem R�ckstand von zwei Kaltmieten berechtigt sind, die Wohnung fristlos zu k�ndigen.\n", 11 );
-				$pdf->ezText ( "F�r R�ckfragen stehen wir Ihnen gerne zur Verf�gung.\n\n", 11 );
-				$pdf->ezText ( "Mit freundlichen Gr��en\n\n", 11 );
+				$pdf->ezText ( "Wir weisen vorsorglich darauf hin, dass wir bei einem Rückstand von zwei Kaltmieten berechtigt sind, die Wohnung fristlos zu kündigen.\n", 11 );
+				$pdf->ezText ( "Für Rückfragen stehen wir Ihnen gerne zur Verfügung.\n\n", 11 );
+				$pdf->ezText ( "Mit freundlichen Grüßen\n\n", 11 );
 				
 				if (isset ( $_SESSION ['partner_id'] )) {
 					$pp = new partners ();
@@ -1335,7 +1335,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 					$pdf->ezText ( "Ihre Hausverwaltung\n", 11 );
 				}
 				
-				$pdf->ezText ( "Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift g�ltig.", 11 );
+				$pdf->ezText ( "Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift gültig.", 11 );
 				$pdf->addInfo ( 'Title', "Mahnung $mv->personen_name_string" );
 				$pdf->addInfo ( 'Author', $_SESSION [username] );
 				
@@ -1406,7 +1406,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 			if ($geschlecht == 'weiblich') {
 				$anrede_p = 'geehrte Frau';
 			}
-			if ($geschlecht == 'm�nnlich') {
+			if ($geschlecht == 'männlich') {
 				$anrede_p = 'geehrter Herr';
 			}
 			// die('SSSS');
@@ -1425,7 +1425,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 				if ($geschlecht == 'weiblich') {
 					$anrede_p = 'geehrte Frau';
 				}
-				if ($geschlecht == 'm�nnlich') {
+				if ($geschlecht == 'männlich') {
 					$anrede_p = 'geehrter Herr';
 				}
 				$anrede = "$anrede_p $p->person_nachname,";
@@ -1479,35 +1479,35 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 		$saldo = abs ( $saldo );
 		$saldo_a = nummer_punkt2komma ( $saldo );
 		
-		$pdf->ezText ( "nach Durchsicht unserer Buchhaltungsunterlagen mussten wir feststellen, dass Ihr Mietkonto folgenden R�ckstand aufweist:\n", 11 );
+		$pdf->ezText ( "nach Durchsicht unserer Buchhaltungsunterlagen mussten wir feststellen, dass Ihr Mietkonto folgenden Rückstand aufweist:\n", 11 );
 		
 		$pdf->ezSetCmMargins ( 3, 3, 6, 7 );
-		$pdf->ezText ( "<b>Mietr�ckstand</b>", 11 );
+		$pdf->ezText ( "<b>Mietrückstand</b>", 11 );
 		
 		$pdf->ezSetDy ( 11 );
 		// $pdf->setColor(1.0,0.0,0.0);
-		$pdf->ezText ( "<b>$saldo_a �</b>", 12, array (
+		$pdf->ezText ( "<b>$saldo_a €</b>", 12, array (
 				'justification' => 'right' 
 		) );
 		
 		$pdf->setColor ( 0.0, 0.0, 0.0 );
-		$pdf->ezText ( "<b>zzgl. Mahngeb�hr</b>", 11 );
+		$pdf->ezText ( "<b>zzgl. Mahngebühr</b>", 11 );
 		$pdf->ezSetDy ( 11 );
 		
-		$pdf->ezText ( "<b>$mahngebuehr �</b>", 11, array (
+		$pdf->ezText ( "<b>$mahngebuehr €</b>", 11, array (
 				'justification' => 'right' 
 		) );
-		/* Linier �ber Gesamtr�ckstand */
+		/* Linier über Gesamtrückstand */
 		$pdf->ezSetDy ( - 5 );
 		$pdf->line ( 170, $pdf->y, 403, $pdf->y );
 		$pdf->setColor ( 0.0, 0.0, 0.0 );
-		$pdf->ezText ( "<b>Gesamtr�ckstand</b>", 11 );
+		$pdf->ezText ( "<b>Gesamtrückstand</b>", 11 );
 		$pdf->ezSetDy ( 11 );
 		// $pdf->setColor(1.0,0.0,0.0);
 		$mahngebuehr_r = nummer_komma2punkt ( $mahngebuehr );
 		$gesamt_rueckstand = $saldo + $mahngebuehr_r;
 		$gesamt_rueckstand = nummer_punkt2komma ( $gesamt_rueckstand );
-		$pdf->ezText ( "<b>$gesamt_rueckstand �</b>\n", 11, array (
+		$pdf->ezText ( "<b>$gesamt_rueckstand €</b>\n", 11, array (
 				'justification' => 'right' 
 		) );
 		
@@ -1517,19 +1517,19 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 		$g->geld_konto_details ( $geldkonto_id );
 		
 		$pdf->setColor ( 0.0, 0.0, 0.0 );
-		$pdf->ezText ( "Die konkreten Fehlbetr�ge entnehmen Sie bitte dem beigef�gten Mietkonto.", 11 );
-		$pdf->ezText ( "Wir fordern Sie auf, den genannten Betrag unter Angabe der bei uns gef�hrten Mieternummer bis zum", 11 );
+		$pdf->ezText ( "Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Mietkonto.", 11 );
+		$pdf->ezText ( "Wir fordern Sie auf, den genannten Betrag unter Angabe der bei uns geführten Mieternummer bis zum", 11 );
 		$pdf->ezSetCmMargins ( 3, 3, 9, 3 );
 		// $pdf->setColor(1.0,0.0,0.0);
 		$pdf->ezText ( "<b>$fristdatum</b>\n", 11 );
 		$pdf->ezSetCmMargins ( 3, 3, 3, 3 );
 		$pdf->ezText ( "<b>auf das Konto $g->kontonummer  bei der $g->kredit_institut, BLZ $g->blz</b>\n", 11 );
 		$pdf->setColor ( 0.0, 0.0, 0.0 );
-		$pdf->ezText ( "zu �berweisen.\n\n", 11 );
-		$pdf->ezText ( "F�r R�ckfragen stehen wir Ihnen gerne zur Verf�gung.\n\n", 11 );
-		$pdf->ezText ( "Mit freundlichen Gr��en\n\n", 11 );
+		$pdf->ezText ( "zu überweisen.\n\n", 11 );
+		$pdf->ezText ( "Für Rückfragen stehen wir Ihnen gerne zur Verfügung.\n\n", 11 );
+		$pdf->ezText ( "Mit freundlichen Grüßen\n\n", 11 );
 		$pdf->ezText ( "Wolfgang Wehrheim\n\n", 11 );
-		$pdf->ezText ( "Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift g�ltig.\n", 11 );
+		$pdf->ezText ( "Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift gültig.\n", 11 );
 		$pdf->addInfo ( 'Title', "Mahnung $mv->personen_name_string" );
 		$pdf->addInfo ( 'Author', $_SESSION [username] );
 		
@@ -1606,35 +1606,35 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 			$saldo = abs ( $saldo );
 			$saldo_a = nummer_punkt2komma ( $saldo );
 			
-			$pdf->ezText ( "nach Durchsicht unserer Buchhaltungsunterlagen mussten wir feststellen, dass Ihr Mietkonto folgenden R�ckstand aufweist:\n", 11 );
+			$pdf->ezText ( "nach Durchsicht unserer Buchhaltungsunterlagen mussten wir feststellen, dass Ihr Mietkonto folgenden Rückstand aufweist:\n", 11 );
 			
 			$pdf->ezSetCmMargins ( 3, 3, 6, 7 );
-			$pdf->ezText ( "<b>Mietr�ckstand</b>", 11 );
+			$pdf->ezText ( "<b>Mietrückstand</b>", 11 );
 			
 			$pdf->ezSetDy ( 11 );
 			// $pdf->setColor(1.0,0.0,0.0);
-			$pdf->ezText ( "<b>$saldo_a �</b>", 12, array (
+			$pdf->ezText ( "<b>$saldo_a €</b>", 12, array (
 					'justification' => 'right' 
 			) );
 			
 			$pdf->setColor ( 0.0, 0.0, 0.0 );
-			$pdf->ezText ( "<b>zzgl. Mahngeb�hr</b>", 11 );
+			$pdf->ezText ( "<b>zzgl. Mahngebühr</b>", 11 );
 			$pdf->ezSetDy ( 11 );
 			
-			$pdf->ezText ( "<b>$mahngebuehr �</b>", 11, array (
+			$pdf->ezText ( "<b>$mahngebuehr €</b>", 11, array (
 					'justification' => 'right' 
 			) );
-			/* Linier �ber Gesamtr�ckstand */
+			/* Linier über Gesamtrückstand */
 			$pdf->ezSetDy ( - 5 );
 			$pdf->line ( 170, $pdf->y, 403, $pdf->y );
 			$pdf->setColor ( 0.0, 0.0, 0.0 );
-			$pdf->ezText ( "<b>Gesamtr�ckstand</b>", 11 );
+			$pdf->ezText ( "<b>Gesamtrückstand</b>", 11 );
 			$pdf->ezSetDy ( 11 );
 			// $pdf->setColor(1.0,0.0,0.0);
 			$mahngebuehr_r = nummer_komma2punkt ( $mahngebuehr );
 			$gesamt_rueckstand = $saldo + $mahngebuehr_r;
 			$gesamt_rueckstand = nummer_punkt2komma ( $gesamt_rueckstand );
-			$pdf->ezText ( "<b>$gesamt_rueckstand �</b>\n", 11, array (
+			$pdf->ezText ( "<b>$gesamt_rueckstand €</b>\n", 11, array (
 					'justification' => 'right' 
 			) );
 			
@@ -1644,19 +1644,19 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 			$g->geld_konto_details ( $geldkonto_id );
 			
 			$pdf->setColor ( 0.0, 0.0, 0.0 );
-			$pdf->ezText ( "Die konkreten Fehlbetr�ge entnehmen Sie bitte dem beigef�gten Mietkonto.", 11 );
-			$pdf->ezText ( "Wir fordern Sie auf, den genannten Betrag unter Angabe der bei uns gef�hrten Mieternummer bis zum", 11 );
+			$pdf->ezText ( "Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Mietkonto.", 11 );
+			$pdf->ezText ( "Wir fordern Sie auf, den genannten Betrag unter Angabe der bei uns geführten Mieternummer bis zum", 11 );
 			$pdf->ezSetCmMargins ( 3, 3, 9, 3 );
 			// $pdf->setColor(1.0,0.0,0.0);
 			$pdf->ezText ( "<b>$fristdatum</b>\n", 11 );
 			$pdf->ezSetMargins ( 135, 70, 50, 50 );
 			$pdf->ezText ( "<b>auf das Konto $g->kontonummer  bei der $g->kredit_institut, BLZ $g->blz</b>\n", 11 );
 			$pdf->setColor ( 0.0, 0.0, 0.0 );
-			$pdf->ezText ( "zu �berweisen.\n", 11 );
-			$pdf->ezText ( "F�r R�ckfragen stehen wir Ihnen gerne zur Verf�gung.\n\n", 11 );
-			$pdf->ezText ( "Mit freundlichen Gr��en\n\n", 11 );
+			$pdf->ezText ( "zu überweisen.\n", 11 );
+			$pdf->ezText ( "Für Rückfragen stehen wir Ihnen gerne zur Verfügung.\n\n", 11 );
+			$pdf->ezText ( "Mit freundlichen Grüßen\n\n", 11 );
 			$pdf->ezText ( "Wolfgang Wehrheim\n\n", 11 );
-			$pdf->ezText ( "Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift g�ltig.\n", 11 );
+			$pdf->ezText ( "Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift gültig.\n", 11 );
 			$pdf->addInfo ( 'Title', "Mahnung $mv->personen_name_string" );
 			$pdf->addInfo ( 'Author', $_SESSION [username] );
 			

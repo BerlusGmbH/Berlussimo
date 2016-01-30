@@ -33,7 +33,7 @@ class sepa {
 		$this->BANKNAME_K = '';
 		if ($land == 'DE') {
 			if (! is_numeric ( $blz ) or ! is_numeric ( $konto_nr )) {
-				// die('ABBRUCH: Kontonummer und BLZ m�ssen aus zahlen bestehen!!!');
+				// die('ABBRUCH: Kontonummer und BLZ müssen aus zahlen bestehen!!!');
 				// $this->konto_info = '';
 				// $this->konto_info = (object) null;
 				$this->BIC = ' ';
@@ -153,45 +153,45 @@ class sepa {
 	/* sivac_iban('800101561', '10050000', 'DE'); */
 	function get_iban_de($kto, $blz, $land = 'DE') {
 		/*
-		 * Die Berechnung erfolgt in mehreren Schritten. Zuerst wird die L�nderkennung um zwei Nullen erg�nzt.
+		 * Die Berechnung erfolgt in mehreren Schritten. Zuerst wird die Länderkennung um zwei Nullen ergänzt.
 		 * Danach wird aus Kontonummer und Bankleitzahl die BBAN kreiert.
 		 * Also beispielsweise Bankleitzahl 70090100 und Kontonummer 1234567890 ergeben die BBAN 700901001234567890.
 		 * Modulo 97-10.
 		 */
 		
 		/*
-		 * Anschlie�end werden die beiden Alpha-Zeichen der L�nderkennung sowie weitere eventuell in der Kontonummer enthaltene Buchstaben in rein numerische Ausdr�cke umgewandelt.
-		 * Die Grundlage f�r die Zahlen, die aus den Buchstaben gebildet werden sollen, bildet ihre Position der jeweiligen Alpha-Zeichen im lateinischen Alphabet.
+		 * Anschließend werden die beiden Alpha-Zeichen der Länderkennung sowie weitere eventuell in der Kontonummer enthaltene Buchstaben in rein numerische Ausdrücke umgewandelt.
+		 * Die Grundlage für die Zahlen, die aus den Buchstaben gebildet werden sollen, bildet ihre Position der jeweiligen Alpha-Zeichen im lateinischen Alphabet.
 		 * Zu diesem Zahlenwert wird 9 addiert. Die Summe ergibt die Zahl, die den jeweiligen Buchstaben ersetzen soll.
-		 * Dementsprechend steht f�r A (Position 1+9) die Zahl 10, f�r D (Position 4+9) die 13 und f�r E (Position 5+9) die 14.
-		 * Der L�nderkennung DE entspricht also die Ziffernfolge 1314.
+		 * Dementsprechend steht für A (Position 1+9) die Zahl 10, für D (Position 4+9) die 13 und für E (Position 5+9) die 14.
+		 * Der Länderkennung DE entspricht also die Ziffernfolge 1314.
 		 *
-		 * Im n�chsten Schritt wird diese Ziffernfolge, erg�nzt um die beiden Nullen, an die BBAN geh�ngt.
-		 * Hieraus ergibt sich 700901001234567890131400. Diese bei deutschen Konten immer 24-stellige Zahl wird anschlie�end Modulo 97 genommen.
-		 * Das hei�t, es wird der Rest berechnet, der sich bei der Teilung der 24-stelligen Zahl durch 97 ergibt. Das ist f�r dieses Beispiel 90.
+		 * Im nächsten Schritt wird diese Ziffernfolge, ergänzt um die beiden Nullen, an die BBAN gehängt.
+		 * Hieraus ergibt sich 700901001234567890131400. Diese bei deutschen Konten immer 24-stellige Zahl wird anschließend Modulo 97 genommen.
+		 * Das heißt, es wird der Rest berechnet, der sich bei der Teilung der 24-stelligen Zahl durch 97 ergibt. Das ist für dieses Beispiel 90.
 		 * Dieses Ergebnis wird von der nach ISO-Standard festgelegten Zahl 98 subtrahiert.
 		 * Ist das Resultat, wie in diesem Beispiel, kleiner als Zehn, so wird der Zahl eine Null vorangestellt, sodass sich wieder ein zweistelliger Wert ergibt.
-		 * Somit ist die errechnete Pr�fziffer 08. Aus der L�nderkennung, der zweistelligen Pr�fsumme und der BBAN wird nun die IBAN generiert.
+		 * Somit ist die errechnete Prüfziffer 08. Aus der Länderkennung, der zweistelligen Prüfsumme und der BBAN wird nun die IBAN generiert.
 		 * Die ermittelte IBAN lautet in unserem Beispiel: DE08700901001234567890.
 		 *
 		 * Zur besseren Veranschaulichung das ganze noch einmal zusammengefasst:
 		 * Bankleitzahl 70090100
 		 * Kontonummer 1234567890
 		 * BBAN 700901001234567890
-		 * alphanumerische L�nderkennung DE
-		 * numerische L�nderkennung 1314 (D = 13, E = 14)
-		 * numerische L�nderkennung erg�nzt um 00 131400
-		 * Pr�fsumme 700901001234567890131400
-		 * Pr�fsumme Modulo 97 90
-		 * Pr�fziffer 08 (98 - 90, erg�nzt um f�hrende Null)
-		 * L�nderkennung +Pr�fziffer + BBAN = IBAN DE08700901001234567890
+		 * alphanumerische Länderkennung DE
+		 * numerische Länderkennung 1314 (D = 13, E = 14)
+		 * numerische Länderkennung ergänzt um 00 131400
+		 * Prüfsumme 700901001234567890131400
+		 * Prüfsumme Modulo 97 90
+		 * Prüfziffer 08 (98 - 90, ergänzt um führende Null)
+		 * Länderkennung +Prüfziffer + BBAN = IBAN DE08700901001234567890
 		 *
-		 * Die Pr�fung der IBAN erfolgt, indem ihre ersten vier Stellen ans Ende verschoben und die Buchstaben wieder durch 1314 ersetzt werden.
-		 * Die Zahl 700901001234567890131408 Modulo 97 muss 1 ergeben. Dann ist die IBAN g�ltig, was auf unser Beispiel zutrifft.
+		 * Die Prüfung der IBAN erfolgt, indem ihre ersten vier Stellen ans Ende verschoben und die Buchstaben wieder durch 1314 ersetzt werden.
+		 * Die Zahl 700901001234567890131408 Modulo 97 muss 1 ergeben. Dann ist die IBAN gültig, was auf unser Beispiel zutrifft.
 		 */
 		
 		/*
-		 * Beispiel f�r Ausnahmebanken Kontonummern
+		 * Beispiel für Ausnahmebanken Kontonummern
 		 *
 		 * DE91 1007 0024 0003 5787 62
 		 * richtige IBAN: DE43 1007 0024 0357 8762 00
@@ -204,7 +204,7 @@ class sepa {
 		 * DEUTDEDBBER
 		 */
 		
-		/* ALNUM Pr�fung */
+		/* ALNUM Prüfung */
 		$err = '';
 		if (! ctype_digit ( $kto )) {
 			$err .= "Kto $kto nicht nummerisch";
@@ -314,7 +314,7 @@ class sepa {
 		// print_r($o);
 		// die();
 		
-		$result = mysql_query ( "SELECT DETAIL_ZUORDNUNG_ID FROM `DETAIL` WHERE `DETAIL_NAME` LIKE 'Einzugserm�chtigung' AND `DETAIL_INHALT` LIKE 'JA' AND `DETAIL_AKTUELL` = '1'" );
+		$result = mysql_query ( "SELECT DETAIL_ZUORDNUNG_ID FROM `DETAIL` WHERE `DETAIL_NAME` LIKE 'Einzugsermächtigung' AND `DETAIL_INHALT` LIKE 'JA' AND `DETAIL_AKTUELL` = '1'" );
 		$numrows = mysql_numrows ( $result );
 		if ($numrows) {
 			$arr = Array ();
@@ -355,7 +355,7 @@ class sepa {
 					$arr [$z] ['BANKNAME'] = $mv->ls_bankname_sep_k;
 					$arr [$z] ['ANSCHRIFT'] = "$mv->haus_strasse $mv->haus_nr, $mv->haus_plz $mv->haus_stadt";
 					if (! isset ( $mv->haus_strasse )) {
-						die ( "MV nicht in Ordnung, strasse pr�fen $mv_id" );
+						die ( "MV nicht in Ordnung, strasse prüfen $mv_id" );
 					}
 					
 					$arr [$z] ['mietvertrag_aktuell'] = $mv->mietvertrag_aktuell;
@@ -400,7 +400,7 @@ class sepa {
 	function get_mandate_arr($nutzungsart = 'Alle') {
 		if (! isset ( $_SESSION ['geldkonto_id'] ) && $nutzungsart != 'Alle') {
 			$_SESSION ['last_url'] = '?daten=sepa&option=mandate_mieter';
-			fehlermeldung_ausgeben ( 'Geldkonto w�hlen' );
+			fehlermeldung_ausgeben ( 'Geldkonto wählen' );
 			die ();
 		}
 		$datum_heute = date ( "Y-m-d" );
@@ -420,7 +420,7 @@ class sepa {
 	function alle_mandate_anzeigen_kurz($nutzungsart = 'Alle') {
 		if (! isset ( $_SESSION ['geldkonto_id'] ) && $nutzungsart != 'Alle') {
 			$_SESSION ['last_url'] = '?daten=sepa&option=mandate_mieter';
-			fehlermeldung_ausgeben ( 'Geldkonto w�hlen' );
+			fehlermeldung_ausgeben ( 'Geldkonto wählen' );
 			die ();
 		}
 		$datum_heute = date ( "Y-m-d" );
@@ -516,12 +516,12 @@ class sepa {
 			
 			/* ANFANG RECHNUNGEN */
 			if ($nutzungsart == 'RECHNUGEN') {
-				echo "Ansicht LS f�r Rechnungen, folgt noch!!!";
+				echo "Ansicht LS für Rechnungen, folgt noch!!!";
 			}
 			/* ENDE RECHNUNGEN */
 			/* ANFANG HAUSGELD */
 			if ($nutzungsart == 'HAUSGELD') {
-				echo "Ansicht LS f�r Hausgeld, folgt noch!!!<br>";
+				echo "Ansicht LS für Hausgeld, folgt noch!!!<br>";
 				echo "<table class=\"sortable\">";
 				echo "<thead><tr><th>EINHEIT</th><th>Name</th><th>REF</th><th>NUTZUNG</th><th>EINZUGSART</th><th>ZIEHEN</th><th>SALDO</th><th>DIFF</th><th>Anschrift</th><th>IBAN</th><th>BIC</th></tr></thead>";
 				$z = 0;
@@ -587,7 +587,7 @@ class sepa {
 			}
 			
 			if ($nutzungsart == 'Alle') {
-				echo "�bersicht alle Mandate, in Arbeit!!!!";
+				echo "Übersicht alle Mandate, in Arbeit!!!!";
 			}
 			
 			if (isset ( $summe_ziehen_alle ) && $summe_ziehen_alle > 0.00) {
@@ -598,13 +598,13 @@ class sepa {
 				$f->hidden_feld ( 'option', 'sepa_download' );
 				$f->hidden_feld ( 'nutzungsart', $nutzungsart );
 				$f->send_button ( 'Btn-SEPApdf', "PDF-Begleitzettell" );
-				$f->send_button ( 'Button', "SEPA-Datei f�r $nutzungsart erstellen" );
+				$f->send_button ( 'Button', "SEPA-Datei für $nutzungsart erstellen" );
 				$f->ende_formular ();
 			}
 			
 			unset ( $row );
 		} else {
-			fehlermeldung_ausgeben ( "Keine Mandate f�r $nutzungsart in der Datenbank!" );
+			fehlermeldung_ausgeben ( "Keine Mandate für $nutzungsart in der Datenbank!" );
 		}
 		// unset($mand);
 		// unset($tsep);
@@ -612,7 +612,7 @@ class sepa {
 	function alle_mandate_anzeigen($nutzungsart = 'Alle') {
 		if (! isset ( $_SESSION ['geldkonto_id'] ) && $nutzungsart != 'Alle') {
 			$_SESSION ['last_url'] = '?daten=sepa&option=mandate_mieter';
-			fehlermeldung_ausgeben ( 'Geldkonto w�hlen' );
+			fehlermeldung_ausgeben ( 'Geldkonto wählen' );
 			die ();
 		}
 		$datum_heute = date ( "Y-m-d" );
@@ -758,12 +758,12 @@ class sepa {
 			
 			/* ANFANG RECHNUNGEN */
 			if ($nutzungsart == 'RECHNUGEN') {
-				echo "Ansicht LS f�r Rechnungen, folgt noch!!!";
+				echo "Ansicht LS für Rechnungen, folgt noch!!!";
 			}
 			/* ENDE RECHNUNGEN */
 			/* ANFANG HAUSGELD */
 			if ($nutzungsart == 'HAUSGELD') {
-				echo "Ansicht LS f�r Hausgeld, folgt noch!!!<br>";
+				echo "Ansicht LS für Hausgeld, folgt noch!!!<br>";
 				echo "<table class=\"sortable\">";
 				echo "<thead><tr><th>EINHEIT</th><th>Name</th><th>REF</th><th>NUTZUNG</th><th>EINZUGSART</th><th>ZIEHEN</th><th>SALDO</th><th>DIFF</th><th>Anschrift</th><th>IBAN</th><th>BIC</th></tr></thead>";
 				$z = 0;
@@ -830,7 +830,7 @@ class sepa {
 			}
 			
 			if ($nutzungsart == 'Alle') {
-				echo "�bersicht alle Mandate, in Arbeit!!!!";
+				echo "Übersicht alle Mandate, in Arbeit!!!!";
 			}
 			
 			if (isset ( $summe_ziehen_alle ) && $summe_ziehen_alle > 0.00) {
@@ -841,13 +841,13 @@ class sepa {
 				$f->hidden_feld ( 'option', 'sepa_download' );
 				$f->hidden_feld ( 'nutzungsart', $nutzungsart );
 				$f->send_button ( 'Btn-SEPApdf', "PDF-Begleitzettell" );
-				$f->send_button ( 'Button', "SEPA-Datei f�r $nutzungsart erstellen" );
+				$f->send_button ( 'Button', "SEPA-Datei für $nutzungsart erstellen" );
 				$f->ende_formular ();
 			}
 			
 			unset ( $row );
 		} else {
-			fehlermeldung_ausgeben ( "Keine Mandate f�r $nutzungsart in der Datenbank!" );
+			fehlermeldung_ausgeben ( "Keine Mandate für $nutzungsart in der Datenbank!" );
 		}
 		// unset($mand);
 		// unset($tsep);
@@ -897,15 +897,15 @@ class sepa {
 		$d = new detail ();
 		$glaeubiger_id = $d->finde_detail_inhalt ( 'GELD_KONTEN', $gk_id, 'GLAEUBIGER_ID' );
 		if ($glaeubiger_id == false) {
-			die ( 'Zum Geldkonto wurde die Gl�ubiger ID nicht gespeichert, siehe DETAILS vomn GK' );
+			die ( 'Zum Geldkonto wurde die Glüubiger ID nicht gespeichert, siehe DETAILS vomn GK' );
 		}
 		$f->hidden_feld ( 'GLAEUBIGER_ID', $glaeubiger_id );
-		$f->text_feld_inaktiv ( 'Beg�nstigter', 'BEGBEZ', $geld_konto_info->konto_beguenstigter, 35, 'BEGBEZ' );
-		$f->text_feld_inaktiv ( 'Ihre Gl�ubigerID', 'GLAEUBIGER_ID', $glaeubiger_id, 35, 'GLAEUBIGER_ID' );
+		$f->text_feld_inaktiv ( 'Begünstigter', 'BEGBEZ', $geld_konto_info->konto_beguenstigter, 35, 'BEGBEZ' );
+		$f->text_feld_inaktiv ( 'Ihre GläubigerID', 'GLAEUBIGER_ID', $glaeubiger_id, 35, 'GLAEUBIGER_ID' );
 		
 		$f->text_feld_inaktiv ( 'Mandatsreferenz', 'M_REF', '', 35, 'M_REF' );
 		$js = "onclick=\"var show = document.getElementById('M_REF');show.value = 'MV' + this.value;\"";
-		$this->dropdown_mieter ( $objekt_id, 'Mieter w�hlen', 'mv_id', 'mv_id', $js );
+		$this->dropdown_mieter ( $objekt_id, 'Mieter wählen', 'mv_id', 'mv_id', $js );
 		$mv->autoeinzugsarten ( 'Einzugsart', 'einzugsart', 'einzugsart' );
 		
 		$f->text_feld ( "Kontoinhaber", "NAME", "", "50", 'NAME', '' );
@@ -915,7 +915,7 @@ class sepa {
 		$f->text_feld ( "Bank", "BANK", "", "50", 'BANK', '' );
 		$heute = date ( "d.m.Y" );
 		$f->datum_feld ( 'Datum Unterschrift', 'M_UDATUM', $heute, 'M_UDATUM' );
-		$f->datum_feld ( 'Datum G�ltigkeit', 'M_ADATUM', $heute, 'A_UDATUM' );
+		$f->datum_feld ( 'Datum Gültigkeit', 'M_ADATUM', $heute, 'A_UDATUM' );
 		$f->hidden_feld ( 'GK_ID', $gk_id );
 		$f->hidden_feld ( 'M_KOS_TYP', 'Mietvertrag' );
 		$f->hidden_feld ( 'option', 'mandat_mieter_neu_send' );
@@ -945,16 +945,16 @@ class sepa {
 		$d = new detail ();
 		$glaeubiger_id = $d->finde_detail_inhalt ( 'GELD_KONTEN', $gk_id, 'GLAEUBIGER_ID' );
 		if ($glaeubiger_id == false) {
-			die ( 'Zum Geldkonto wurde die Gl�ubiger ID nicht gespeichert, siehe DETAILS vomn GK' );
+			die ( 'Zum Geldkonto wurde die Gläubiger ID nicht gespeichert, siehe DETAILS vomn GK' );
 		}
 		$f->hidden_feld ( 'GLAEUBIGER_ID', $glaeubiger_id );
-		$f->text_feld_inaktiv ( 'Beg�nstigter', 'BEGBEZ', $geld_konto_info->konto_beguenstigter, 35, 'BEGBEZ' );
-		$f->text_feld_inaktiv ( 'Ihre Gl�ubigerID', 'GLAEUBIGER_ID', $glaeubiger_id, 35, 'GLAEUBIGER_ID' );
+		$f->text_feld_inaktiv ( 'Begünstigter', 'BEGBEZ', $geld_konto_info->konto_beguenstigter, 35, 'BEGBEZ' );
+		$f->text_feld_inaktiv ( 'Ihre GläubigerID', 'GLAEUBIGER_ID', $glaeubiger_id, 35, 'GLAEUBIGER_ID' );
 		
 		$f->text_feld_inaktiv ( 'Mandatsreferenz', 'M_REF', '', 35, 'M_REF' );
 		$js = "onclick=\"var show = document.getElementById('M_REF');show.value = 'WEG-ET' + this.value;\"";
-		// $this->dropdown_mieter($objekt_id, 'Mieter w�hlen', 'mv_id', 'mv_id', $js);
-		$this->dropdown_et_vorwahl ( 'x', $objekt_id, "Eigent�mer w�hlen OBJ_ID $objekt_id", 'mv_id', 'mv_id', $js );
+		// $this->dropdown_mieter($objekt_id, 'Mieter wählen', 'mv_id', 'mv_id', $js);
+		$this->dropdown_et_vorwahl ( 'x', $objekt_id, "Eigentümer wählen OBJ_ID $objekt_id", 'mv_id', 'mv_id', $js );
 		$mv->autoeinzugsarten ( 'Einzugsart', 'einzugsart', 'einzugsart' );
 		
 		$f->text_feld ( "Kontoinhaber", "NAME", "", "50", 'NAME', '' );
@@ -964,7 +964,7 @@ class sepa {
 		$f->text_feld ( "Bank", "BANK", "", "50", 'BANK', '' );
 		$heute = date ( "d.m.Y" );
 		$f->datum_feld ( 'Datum Unterschrift', 'M_UDATUM', $heute, 'M_UDATUM' );
-		$f->datum_feld ( 'Datum G�ltigkeit', 'M_ADATUM', $heute, 'A_UDATUM' );
+		$f->datum_feld ( 'Datum Gültigkeit', 'M_ADATUM', $heute, 'A_UDATUM' );
 		$f->hidden_feld ( 'GK_ID', $gk_id );
 		$f->hidden_feld ( 'M_KOS_TYP', 'Eigentuemer' );
 		$f->hidden_feld ( 'option', 'mandat_mieter_neu_send' );
@@ -981,30 +981,30 @@ class sepa {
 		$f = new formular ();
 		$e = new einheit ();
 		$mv = new mietvertraege ();
-		$f->erstelle_formular ( 'Mietermandat �ndern', '' );
+		$f->erstelle_formular ( 'Mietermandat ändern', '' );
 		$gk = new gk ();
 		$objekt_id = $gk->get_objekt_id ( $this->mand->GLAEUBIGER_GK_ID );
 		// $js = "onchange=\"var show = document.getElementById('M_REF');show.value = 'GK' + this.value;\"";
 		$js = "onchange=\"get_detail_inhalt('GELD_KONTEN', this.value, 'GLAEUBIGER_ID', 'GLAEUBIGER_ID'); daj3('ajax/ajax_info.php?option=get_gk_infos&var=konto_beguenstigter&gk_id=' + this.value, 'BEGUENSTIGTER');\"";
-		$gk->dropdown_geldkonten_alle_vorwahl ( 'Referenzgeldkonto w�hlen', 'GK_ID', 'GK_ID', $this->mand->GLAEUBIGER_GK_ID, $js );
+		$gk->dropdown_geldkonten_alle_vorwahl ( 'Referenzgeldkonto wählen', 'GK_ID', 'GK_ID', $this->mand->GLAEUBIGER_GK_ID, $js );
 		// $this->d
 		$geld_konto_info = new geldkonto_info ();
 		$geld_konto_info->geld_konto_details ( $this->mand->GLAEUBIGER_GK_ID );
 		
-		$f->text_feld ( "Gl�ubiger ID", "GLAEUBIGER_ID", $this->mand->GLAEUBIGER_ID, "50", 'GLAEUBIGER_ID', '' );
-		$f->text_feld ( 'Beg�nstigter', 'BEGUENSTIGTER', $geld_konto_info->konto_beguenstigter, 35, 'BEGUENSTIGTER', '' );
+		$f->text_feld ( "Gläubiger ID", "GLAEUBIGER_ID", $this->mand->GLAEUBIGER_ID, "50", 'GLAEUBIGER_ID', '' );
+		$f->text_feld ( 'Begünstigter', 'BEGUENSTIGTER', $geld_konto_info->konto_beguenstigter, 35, 'BEGUENSTIGTER', '' );
 		
 		$f->text_feld_inaktiv ( 'Mandatsreferenz', 'M_REF', $this->mand->M_REFERENZ, 35, 'M_REF' );
 		
 		if ($this->mand->NUTZUNGSART == 'MIETZAHLUNG') {
 			$js = "onchange=\"var show = document.getElementById('M_REF');show.value = 'MV' + this.value; daj3('ajax/ajax_info.php?option=get_mv_infos&mv_id=' + this.value, 'info_feld_kostentraeger');\"\"";
-			$this->dropdown_mieter_vorwahl ( $this->mand->M_KOS_ID, 'Mieter w�hlen', 'mv_id', 'mv_id', $js );
+			$this->dropdown_mieter_vorwahl ( $this->mand->M_KOS_ID, 'Mieter wählen', 'mv_id', 'mv_id', $js );
 			$f->hidden_feld ( 'M_KOS_TYP', 'Mietvertrag' );
 		}
 		
 		if ($this->mand->NUTZUNGSART == 'HAUSGELD') {
 			$js = "onclick=\"var show = document.getElementById('M_REF');show.value = 'WEG-ET' + this.value;\"";
-			$this->dropdown_et_vorwahl ( $this->mand->M_KOS_ID, $objekt_id, 'Eigent�mer w�hlen', 'mv_id', 'mv_id', $js );
+			$this->dropdown_et_vorwahl ( $this->mand->M_KOS_ID, $objekt_id, 'Eigentümer wählen', 'mv_id', 'mv_id', $js );
 			$f->hidden_feld ( 'M_KOS_TYP', 'Eigentuemer' );
 		}
 		// $mv->autoeinzugsarten('Einzugsart', 'einzugsart', 'einzugsart');
@@ -1018,12 +1018,12 @@ class sepa {
 		$u_datum = date_mysql2german ( $this->mand->M_UDATUM );
 		$e_datum = date_mysql2german ( $this->mand->M_EDATUM );
 		$f->datum_feld ( 'Datum Unterschrift', 'M_UDATUM', $u_datum, 'M_UDATUM' );
-		$f->datum_feld ( 'Datum G�ltigkeit', 'M_ADATUM', $a_datum, 'M_UDATUM' );
+		$f->datum_feld ( 'Datum Gültigkeit', 'M_ADATUM', $a_datum, 'M_UDATUM' );
 		$f->datum_feld ( 'Datum Ablauf', 'M_EDATUM', $e_datum, 'M_EDATUM' );
 		$f->hidden_feld ( 'KTO', $this->mand->KONTONR );
 		$f->hidden_feld ( 'BLZ', $this->mand->BLZ );
 		$f->hidden_feld ( 'option', 'mandat_mieter_edit_send' );
-		$f->send_button ( 'btn_edit_mieter', '�nderungen speichern' );
+		$f->send_button ( 'btn_edit_mieter', 'Änderungen speichern' );
 		$f->ende_formular ();
 		echo "<div id=\"info_feld_kostentraeger\">";
 		echo "</div>";
@@ -1114,7 +1114,7 @@ class sepa {
 		// echo '<pre>';
 		// print_r($e_array);
 		if (! is_array ( $e_array )) {
-			fehlermeldung_ausgeben ( "Keine Eigent�mer in diesem Objekt" );
+			fehlermeldung_ausgeben ( "Keine Eigentümer in diesem Objekt" );
 			die ();
 		}
 		// print_r($e_array);
@@ -1143,15 +1143,15 @@ class sepa {
 		}
 		/*
 		 * if($anz_et==0){
-		 * echo "<option>Keine Eigent�mer im Objekt</option>\n";
-		 * fehlermeldung_ausgeben("Keine Eigent�mer in diesem Objekt");
+		 * echo "<option>Keine Eigentümer im Objekt</option>\n";
+		 * fehlermeldung_ausgeben("Keine Eigentümer in diesem Objekt");
 		 * die();
 		 * }
 		 */
 		echo "</select>\n";
 	}
 	
-	/* Pr�fen ob mandatsreferenz existiert */
+	/* Prüfen ob mandatsreferenz existiert */
 	function check_m_ref($mref) {
 		$result = mysql_query ( "SELECT * FROM `SEPA_MANDATE` WHERE `M_REFERENZ` = '$mref' AND M_EDATUM='9999-12-31' AND `AKTUELL` = '1' LIMIT 0 , 1" );
 		// echo "SELECT * FROM `SEPA_MANDATE` WHERE `M_REFERENZ` = '$mref' AND M_EDATUM='9999-12-31' AND `AKTUELL` = '1' LIMIT 0 , 1";
@@ -1247,7 +1247,7 @@ class sepa {
 		
 		for($a = 0; $a < $anz; $a ++) {
 			
-			$name = substr ( $this->umlautundgross ( $arr [$a] ['NAME'] ), 0, 35 ); // auf 70 Zeichen k�rzen
+			$name = substr ( $this->umlautundgross ( $arr [$a] ['NAME'] ), 0, 35 ); // auf 70 Zeichen kürzen
 			$iban = $arr [$a] ['IBAN'];
 			$bic = $arr [$a] ['BIC'];
 			$mandat_datum = $arr [$a] ['M_UDATUM'];
@@ -1300,7 +1300,7 @@ class sepa {
 				 */
 				
 				$kat = 'RENT';
-				$vzweck1 = substr ( $this->umlautundgross ( "Mieteinzug $monatsname $jahr f�r $mv->einheit_kurzname $name" ), 0, 140 );
+				$vzweck1 = substr ( $this->umlautundgross ( "Mieteinzug $monatsname $jahr für $mv->einheit_kurzname $name" ), 0, 140 );
 				$PmtInfId = substr ( $this->umlautundgross ( $mv->objekt_kurzname . " LS-MIETEN $monat/$jahr" ), - 30 );
 			}
 			
@@ -1326,7 +1326,7 @@ class sepa {
 				if ($einzugsart == 'Nur die Summe aus Vertrag') {
 					$summe_zu_ziehen = $weg->soll_aktuell;
 				}
-				$vzweck1 = substr ( $this->umlautundgross ( "Hausgeld $monatsname $jahr f�r $e->einheit_kurzname $name" ), 0, 140 );
+				$vzweck1 = substr ( $this->umlautundgross ( "Hausgeld $monatsname $jahr für $e->einheit_kurzname $name" ), 0, 140 );
 				$kat = '';
 				$PmtInfId = substr ( $e->objekt_kurzname . " HAUSGELDER $monat/$jahr", - 30 );
 			}
@@ -1602,20 +1602,20 @@ class sepa {
 	function umlautundgross($wort) {
 		$tmp = strtoupper ( $wort );
 		$suche = array (
-				'�',
-				'�',
-				'�',
-				'�',
-				'�',
-				'�',
-				'�',
-				'�',
-				'�',
+				'Ä',
+				'Ö',
+				'Ü',
+				'ß',
+				'ä',
+				'ö',
+				'ü',
+				'ß',
+				'é',
 				'&',
 				'*',
 				'$',
 				'%',
-				'�',
+				'€',
 				'<BR>' 
 		);
 		$ersetze = array (
@@ -1898,7 +1898,7 @@ class sepa {
 			
 			echo "<label for=\"$id\">$label (Konten:$numrows)</label>\n<select name=\"$name\" id=\"$id\" size=\"1\" >\n";
 			if ($numrows > 1) {
-				echo "<option>Bitte w�hlen</option>\n";
+				echo "<option>Bitte wählen</option>\n";
 			}
 			for($a = 0; $a < count ( $my_array ); $a ++) {
 				$konto_id = $my_array [$a] ['KONTO_ID'];
@@ -1926,7 +1926,7 @@ class sepa {
 				$my_array [] = $row;
 				// print_r($my_array);
 			echo "<label for=\"$id\">$label</label>\n<select name=\"$name\" id=\"$id\" size=\"1\" >\n";
-			echo "<option selected>Bitte w�hlen</option>\n";
+			echo "<option selected>Bitte wählen</option>\n";
 			for($a = 0; $a < count ( $my_array ); $a ++) {
 				$konto_id = $my_array [$a] ['KONTO_ID'];
 				$beguenstigter = $my_array [$a] ['BEGUENSTIGTER'];
@@ -1997,7 +1997,7 @@ class sepa {
 		
 		$sep = new sepa ();
 		if (! $sep->get_sepa_konto_infos ( $an_sepa_gk_id )) {
-			die ( fehlermeldung_ausgeben ( "EMPF�NGER SEPAGELDKONTO UNBEKANNT! ID:$an_sepa_gk_id" ) );
+			die ( fehlermeldung_ausgeben ( "EMPFÄNGER SEPAGELDKONTO UNBEKANNT! ID:$an_sepa_gk_id" ) );
 		} else {
 			if (empty ( $sep->IBAN ) or empty ( $sep->BIC )) {
 				die ( fehlermeldung_ausgeben ( "$sep->geldkonto_bez hat keine IBAN oder BIC" ) );
@@ -2034,7 +2034,7 @@ class sepa {
 			return $last_b_id;
 		} else {
 			
-			fehlermeldung_ausgeben ( "Sepa �berweisung | BIC IBAN eingeben!!!" );
+			fehlermeldung_ausgeben ( "Sepa Überweisung | BIC IBAN eingeben!!!" );
 			die ();
 		}
 	}
@@ -2050,7 +2050,7 @@ class sepa {
 			echo "<hr>";
 			echo "<table class=\"sortable\">";
 			
-			echo "<thead><tr><th>EMPF�NGER</th><th>VZWECK</th><th>ZUWEISUNG</th><th>IBAN</th><th>BIC</th><th>BETRAG</th><th>KONTO</th><th>OPTION</TH></tr></thead>";
+			echo "<thead><tr><th>EMPFÄNGER</th><th>VZWECK</th><th>ZUWEISUNG</th><th>IBAN</th><th>BIC</th><th>BETRAG</th><th>KONTO</th><th>OPTION</TH></tr></thead>";
 			// echo "<tr><th>$kat</th></tr>";
 			$sum = 0;
 			for($a = 0; $a < $anz; $a ++) {
@@ -2076,7 +2076,7 @@ class sepa {
 			echo "</table>";
 			return true;
 		} else {
-			fehlermeldung_ausgeben ( "Keine $kat im SEPA-�-Sammler" );
+			fehlermeldung_ausgeben ( "Keine $kat im SEPA-Ü-Sammler" );
 		}
 	}
 	function get_sammler_arr($von_gk_id, $kat = null) {
@@ -2094,7 +2094,7 @@ class sepa {
 	}
 	function sammler2sepa($von_gk_id, $kat = null, $sammler = 0) {
 		if (! $von_gk_id) {
-			die ( fehlermeldung_ausgeben ( "Geldkonto w�hlen" ) );
+			die ( fehlermeldung_ausgeben ( "Geldkonto wählen" ) );
 		}
 		// die("$von_gk_id $kat $sammler");
 		
@@ -2102,11 +2102,11 @@ class sepa {
 		
 		$arr = $this->get_sammler_arr ( $von_gk_id, $kat );
 		if (! is_array ( $arr )) {
-			die ( fehlermeldung_ausgeben ( "Keine Datens�tze auf Konto $von_gk_id f�r $kat" ) );
+			die ( fehlermeldung_ausgeben ( "Keine Datensätze auf Konto $von_gk_id für $kat" ) );
 		} else {
 			$myKtoSepaSimple = new KtoSepaSimple ();
 			$o = new objekt ();
-			// $datum = $o->datum_plus_tage(date("Y-m-d"), 2); //TERMIN�berweisung
+			// $datum = $o->datum_plus_tage(date("Y-m-d"), 2); //TERMINÜberweisung
 			$datum = '1999-01-01';
 			$datum_h = date ( "dmY" );
 			$time_h = date ( "His" );
@@ -2125,15 +2125,15 @@ class sepa {
 				$konto = $arr [$a] ['KONTO'];
 				$ref_id = $arr [$a] ['ID'];
 				
-				/* �berweisungsdatensatz hinzuf�gen */
+				/* Überweisungsdatensatz hinzufügen */
 				$myKtoSepaSimple->Add ( $datum, $betrag, $empf, $iban, $bic, NULL, NULL, $ref_id, $vzweck );
 				
-				/* F�r das hinzuf�gen des Dateinamens */
+				/* Für das hinzufügen des Dateinamens */
 				$dat = $arr [$a] ['DAT'];
 				$this->sepa_ueberweisung2file ( $dat, $dateiname );
 			} // end for
 			
-			/* Eigene Informationen einf�gen */
+			/* Eigene Informationen einfügen */
 			$gk = new geldkonto_info ();
 			$gk->geld_konto_details ( $von_gk_id );
 			
@@ -2239,7 +2239,7 @@ class sepa {
 	}
 	function form_ls_datei_ab($datei) {
 		if (! isset ( $_SESSION ['geldkonto_id'] )) {
-			fehlermeldung_ausgeben ( "Geldkonto w�hlen!" );
+			fehlermeldung_ausgeben ( "Geldkonto wählen!" );
 		} else {
 			$gk = new geldkonto_info ();
 			$gk->geld_konto_details ( $_SESSION ['geldkonto_id'] );
@@ -2315,7 +2315,7 @@ class sepa {
 						// echo "$kt $kos_typ $kos_id";
 						$f->ende_formular ();
 					} else {
-						fehlermeldung_ausgeben ( "$betrag_a - $vzweck<br> wurde bereits verbucht. Doppelbuchung unm�glich!" );
+						fehlermeldung_ausgeben ( "$betrag_a - $vzweck<br> wurde bereits verbucht. Doppelbuchung unmöglich!" );
 					}
 				}
 			} else {
@@ -2417,12 +2417,12 @@ AND  `AKTUELL` =  '1'" );
 				$gkk = new geldkonto_info ();
 				$gkk->geld_konto_details ( $gk_id );
 				// print_r($gkk);
-				echo "<tr><td>$gkk->geldkonto_bez</td><td>$kat (�berweisungen:$anz_dat)</td><td>$sum</td></tr>";
+				echo "<tr><td>$gkk->geldkonto_bez</td><td>$kat (Überweisungen:$anz_dat)</td><td>$sum</td></tr>";
 				// echo $gk_id;
 			}
 			echo "</table>";
 		} else {
-			hinweis_ausgeben ( "Keine Datens�tze in SEPA-Sammlern" );
+			hinweis_ausgeben ( "Keine Datensätze in SEPA-Sammlern" );
 		}
 		// print_r($arr);
 	}
@@ -2440,7 +2440,7 @@ AND  `AKTUELL` =  '1'" );
 	function sepa_files($von_gk_id) {
 		$arr = $this->sepa_files_arr ( $von_gk_id );
 		if (! is_array ( $arr )) {
-			fehlermeldung_ausgeben ( "Keine SEPA-�berweisungen vom gew�hlten Geldkonto!" );
+			fehlermeldung_ausgeben ( "Keine SEPA-Überweisungen vom gewählten Geldkonto!" );
 		} else {
 			// echo '<pre>';
 			// print_r($arr);
@@ -2484,12 +2484,12 @@ AND  `AKTUELL` =  '1'" );
 	function sepa_file_anzeigen($file) {
 		$arr = $this->get_sepa_files_daten_arr ( $file );
 		if (! is_array ( $arr )) {
-			fehlermeldung_ausgeben ( "Keine Datens�tze zur Datei $file" );
+			fehlermeldung_ausgeben ( "Keine Datensätze zur Datei $file" );
 		} else {
 			$f = new formular ();
 			$f->erstelle_formular ( 'SEPA-Datei Vorschau / Autobuchen', null );
 			echo "<table class=\"sortable\">";
-			echo "<thead><tr><th>EMPF�NGER</th><th>VZWECK</th><th>IBAN</th><th>BIC</th><th>BETRAG</th><th>KONTO</th></tr></thead>";
+			echo "<thead><tr><th>EMPFÄNGER</th><th>VZWECK</th><th>IBAN</th><th>BIC</th><th>BETRAG</th><th>KONTO</th></tr></thead>";
 			// echo "<tr><th>$kat</th></tr>";
 			$sum = 0;
 			$anz = count ( $arr );
@@ -2521,7 +2521,7 @@ AND  `AKTUELL` =  '1'" );
 	function sepa_file_kopieren($file) {
 		$arr = $this->get_sepa_files_daten_arr ( $file );
 		if (! is_array ( $arr )) {
-			fehlermeldung_ausgeben ( "Keine Datens�tze zur Datei $file" );
+			fehlermeldung_ausgeben ( "Keine Datensätze zur Datei $file" );
 		} else {
 			
 			$sum = 0;
@@ -2560,7 +2560,7 @@ AND  `AKTUELL` =  '1'" );
 		// echo "$file, $datum, $gk_id, $auszug, $mwst";
 		$arr = $this->get_sepa_files_daten_arr ( $file );
 		if (! is_array ( $arr )) {
-			fehlermeldung_ausgeben ( "Keine Datens�tze zur Datei $file" );
+			fehlermeldung_ausgeben ( "Keine Datensätze zur Datei $file" );
 		} else {
 			$anz = count ( $arr );
 			for($a = 0; $a < $anz; $a ++) {
@@ -2586,12 +2586,12 @@ AND  `AKTUELL` =  '1'" );
 			echo "SEPA-Datei $file wurde verbucht!<br>";
 			if (isset ( $_SESSION ['temp_kontostand'] ) && isset ( $_SESSION ['temp_kontoauszugsnummer'] )) {
 				$kontostand_temp = nummer_punkt2komma ( $_SESSION ['temp_kontostand'] );
-				hinweis_ausgeben ( "<h3>Kontostand am $_SESSION[temp_datum] laut Kontoauszug $_SESSION[temp_kontoauszugsnummer] war $kontostand_temp �</h3>" );
+				hinweis_ausgeben ( "<h3>Kontostand am $_SESSION[temp_datum] laut Kontoauszug $_SESSION[temp_kontoauszugsnummer] war $kontostand_temp €</h3>" );
 			}
 			if ($kontostand_aktuell == $kontostand_temp) {
-				echo "<h3>Kontostand aktuell: $kontostand_aktuell �</h3>";
+				echo "<h3>Kontostand aktuell: $kontostand_aktuell €</h3>";
 			} else {
-				echo "<h3 style=\"color:red\">Kontostand aktuell: $kontostand_aktuell �</h3>";
+				echo "<h3 style=\"color:red\">Kontostand aktuell: $kontostand_aktuell €</h3>";
 			}
 		}
 	}
@@ -2606,13 +2606,13 @@ AND  `AKTUELL` =  '1'" );
 		
 		$arr = $this->get_sepa_files_daten_arr ( $file );
 		if (! is_array ( $arr )) {
-			fehlermeldung_ausgeben ( "Keine Datens�tze zur Datei $file" );
+			fehlermeldung_ausgeben ( "Keine Datensätze zur Datei $file" );
 		} else {
 			// echo "<tr><th>$kat</th></tr>";
 			$anz = count ( $arr );
 			for($a = 0; $a < $anz; $a ++) {
 				echo "<table>";
-				echo "<thead><tr><th>EMPF�NGER</th><th>DATUM</th><th>AUSZUG</th><th>VZWECK</th><th>BETRAG</th><th>KONTO</th><th></th></tr></thead>";
+				echo "<thead><tr><th>EMPFÄNGER</th><th>DATUM</th><th>AUSZUG</th><th>VZWECK</th><th>BETRAG</th><th>KONTO</th><th></th></tr></thead>";
 				$f = new formular ();
 				$empf = $arr [$a] ['BEGUENSTIGTER'];
 				$vzweck = $arr [$a] ['VZWECK'];
@@ -2627,12 +2627,12 @@ AND  `AKTUELL` =  '1'" );
 				$betrag = - $arr [$a] ['BETRAG'];
 				$betrag_u = $arr [$a] ['BETRAG'];
 				$z = $a + 1;
-				$f->erstelle_formular ( "SEPA-�berweisung buchen $kos_typ $empf", null );
+				$f->erstelle_formular ( "SEPA-Überweisung buchen $kos_typ $empf", null );
 				echo "<tr><td>$z. $kos_typ<br>$empf</td><td>$_SESSION[temp_datum]</td><td>$_SESSION[temp_kontoauszugsnummer]</td><td>";
 				$f->text_feld ( 'Buchungstext', 'vzweck', "$empf, $kat, $vzweck", 100, 'vzweck', '' );
 				echo "</td><td>$betrag</td><td>$konto<br>$kos_typ:$kos_bez</td><td>";
 				if ($kat == 'RECHNUNG') {
-					die ( fehlermeldung_ausgeben ( 'Rechnungen k�nnen nicht automatisch gebucht werden!!!' ) );
+					die ( fehlermeldung_ausgeben ( 'Rechnungen können nicht automatisch gebucht werden!!!' ) );
 				}
 				
 				$m_ref = $_SESSION ['temp_kontoauszugsnummer'];
@@ -2688,7 +2688,7 @@ AND  `AKTUELL` =  '1'" );
 		
 		$arr = $this->get_sepa_files_daten_arr ( $file );
 		if (! is_array ( $arr )) {
-			fehlermeldung_ausgeben ( "Keine Datens�tze zur Datei $file" );
+			fehlermeldung_ausgeben ( "Keine Datensätze zur Datei $file" );
 		} else {
 			
 			$m_ref = $_SESSION ['temp_kontoauszugsnummer'];
@@ -2697,9 +2697,9 @@ AND  `AKTUELL` =  '1'" );
 			// echo "<tr><th>$kat</th></tr>";
 			$anz = count ( $arr );
 			$f = new formular ();
-			$f->erstelle_formular ( "SEPA-�berweisung FREMD", null );
+			$f->erstelle_formular ( "SEPA-Überweisung FREMD", null );
 			echo "<table>";
-			echo "<thead><tr><th>EMPF�NGER</th><th>DATUM</th><th>AUSZUG</th><th>VZWECK</th><th>BETRAG</th><th>KONTO<input type=\"button\" onclick=\"auswahl_alle(this.form.konto)\" value=\"Alle\"></th><th>Zuweisung</th><th></th></tr></thead>";
+			echo "<thead><tr><th>EMPFöNGER</th><th>DATUM</th><th>AUSZUG</th><th>VZWECK</th><th>BETRAG</th><th>KONTO<input type=\"button\" onclick=\"auswahl_alle(this.form.konto)\" value=\"Alle\"></th><th>Zuweisung</th><th></th></tr></thead>";
 			
 			for($a = 0; $a < $anz; $a ++) {
 				
@@ -2725,7 +2725,7 @@ AND  `AKTUELL` =  '1'" );
 				$buc->dropdown_kostenrahmen_nr ( 'Kostenkonto', 'konto[]', 'GELDKONTO', $_SESSION ['geldkonto_id'], '', 'konto' );
 				echo "</td><td>$kos_typ:$kos_bez</td>";
 				if ($kat == 'RECHNUNG') {
-					die ( fehlermeldung_ausgeben ( 'Rechnungen k�nnen nicht automatisch gebucht werden!!!' ) );
+					die ( fehlermeldung_ausgeben ( 'Rechnungen können nicht automatisch gebucht werden!!!' ) );
 				}
 				$f->hidden_feld ( 'kos_typ[]', $kos_typ );
 				$f->hidden_feld ( 'kos_id[]', $kos_id );
@@ -2764,7 +2764,7 @@ AND  `AKTUELL` =  '1'" );
 		// die();
 		$arr = $this->get_sepa_files_daten_arr ( $filename );
 		if (! is_array ( $arr )) {
-			fehlermeldung_ausgeben ( "Keine Datens�tze zur Datei $file" );
+			fehlermeldung_ausgeben ( "Keine Datensätze zur Datei $file" );
 		} else {
 			
 			/*
@@ -2807,10 +2807,10 @@ AND  `AKTUELL` =  '1'" );
 					'BETRAG' => "Betrag",
 					'IBAN' => "IBAN",
 					'BIC' => "BIC",
-					'BEGUENSTIGTER' => "BEG�NSTIGTER",
+					'BEGUENSTIGTER' => "BEGÜNSTIGTER",
 					'KONTO' => "BKONTO" 
 			);
-			$pdf->ezTable ( $arr, $cols, "�bersicht SEPA-Datei", array (
+			$pdf->ezTable ( $arr, $cols, "Übersicht SEPA-Datei", array (
 					'rowGap' => 1.5,
 					'showLines' => 1,
 					'showHeadings' => 1,
@@ -2857,10 +2857,10 @@ AND  `AKTUELL` =  '1'" );
 	}
 	function form_sammel_ue() {
 		if (! isset ( $_SESSION ['geldkonto_id'] )) {
-			die ( fehlermeldung_ausgeben ( "Geldkonto w�hlen" ) );
+			die ( fehlermeldung_ausgeben ( "Geldkonto wählen" ) );
 		} else {
 			// if(!isset($_SESSION['partner_id'])){
-			// die(fehlermeldung_ausgeben("Partner w�hlen!"));
+			// die(fehlermeldung_ausgeben("Partner wählen!"));
 			// }
 			$gk = new geldkonto_info ();
 			$gk->geld_konto_details ( $_SESSION ['geldkonto_id'] );
@@ -2869,7 +2869,7 @@ AND  `AKTUELL` =  '1'" );
 			$jahr = date ( "Y" );
 			$sep = new sepa ();
 			$f = new formular ();
-			$f->erstelle_formular ( 'SEPA-Sammel�berweisung', null );
+			$f->erstelle_formular ( 'SEPA-Sammelüberweisung', null );
 			
 			if (isset ( $_REQUEST ['filter'] )) {
 				$filter = $_REQUEST ['filter'];
@@ -2877,17 +2877,17 @@ AND  `AKTUELL` =  '1'" );
 				$filter = '';
 			}
 			
-			$f->text_feld ( 'Filter Empf�ngergeldkonten', 'filter', $filter, 20, 'filter', '' );
+			$f->text_feld ( 'Filter Empfängergeldkonten', 'filter', $filter, 20, 'filter', '' );
 			$f->send_button ( 'btn_Sepa', 'Geldkonten filtern' );
 			$f->ende_formular ();
-			$f->erstelle_formular ( 'SEPA-Sammel�berweisung', null );
+			$f->erstelle_formular ( 'SEPA-Sammelüberweisung', null );
 			$f->text_feld_inaktiv ( 'Vom Geldkonto', 'vmgk', $gk->geldkonto_bez, 80, 'vmgkid' );
-			$sep->dropdown_sepa_geldkonten_filter ( 'Empf�ngerkonto w�hlen', 'empf_sepa_gk_id', 'empf_sepa_gk_id', $filter );
+			$sep->dropdown_sepa_geldkonten_filter ( 'Empfängerkonto wählen', 'empf_sepa_gk_id', 'empf_sepa_gk_id', $filter );
 			$f->text_feld ( 'Betrag', 'betrag', "", 10, 'betrag', '' );
 			$f->text_feld ( 'VERWENDUNG', 'vzweck', "", 80, 'vzweck', '' );
 			$f->hidden_feld ( 'option', 'sepa_sammler_hinzu_ue' );
 			// $f->hidden_feld('kat', 'SAMMLER');
-			$this->dropdown_sammler_typ ( 'Sammlerkategorie w�hlen!!!', 'kat', 'kat', '', 'SONSTIGES' );
+			$this->dropdown_sammler_typ ( 'Sammlerkategorie wählen!!!', 'kat', 'kat', '', 'SONSTIGES' );
 			$f->hidden_feld ( 'gk_id', $_SESSION ['geldkonto_id'] );
 			
 			$js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
@@ -2897,24 +2897,24 @@ AND  `AKTUELL` =  '1'" );
 			
 			// dropdown_kostentreager_typen_vw($label, $name, $id, $js_action, $vorwahl_typ){
 			if (isset ( $_SESSION ['kos_typ'] )) {
-				$bb->dropdown_kostentreager_typen_vw ( 'Kostentr�gertyp w�hlen', 'kos_typ', 'kostentraeger_typ', $js_typ, $_SESSION ['kos_typ'] );
+				$bb->dropdown_kostentreager_typen_vw ( 'Kostenträgertyp wählen', 'kos_typ', 'kostentraeger_typ', $js_typ, $_SESSION ['kos_typ'] );
 			} else {
-				$bb->dropdown_kostentreager_typen ( 'Kostentr�gertyp norm', 'kos_typ', 'kostentraeger_typ', $js_typ );
+				$bb->dropdown_kostentreager_typen ( 'Kostenträgertyp norm', 'kos_typ', 'kostentraeger_typ', $js_typ );
 			}
 			
 			$js_id = "";
 			
 			if (isset ( $_SESSION ['kos_bez'] )) {
-				$bb->dropdown_kostentraeger_bez_vw ( "Kostentr�ger C1 ", 'kos_id', 'dd_kostentraeger_id', $js_id, $_SESSION ['kos_typ'], $_SESSION ['kos_bez'] );
+				$bb->dropdown_kostentraeger_bez_vw ( "Kostenträger C1 ", 'kos_id', 'dd_kostentraeger_id', $js_id, $_SESSION ['kos_typ'], $_SESSION ['kos_bez'] );
 			} else {
-				$bb->dropdown_kostentreager_ids ( 'Kostentr�ger XC', 'kos_id', 'dd_kostentraeger_id', $js_id );
+				$bb->dropdown_kostentreager_ids ( 'Kostenträger XC', 'kos_id', 'dd_kostentraeger_id', $js_id );
 			}
 			// $f->hidden_feld('kos_typ', 'Partner');
 			// $f->hidden_feld('kos_id', $_SESSION['partner_id']);
 			$kk = new kontenrahmen ();
 			$kk->dropdown_kontorahmenkonten ( 'Buchungskonto', 'konto', 'konto', 'GELDKONTO', $_SESSION ['geldkonto_id'], '' );
 			// $f->text_feld('Buchungskonto', 'konto', 1000, 5, 'konto', '');
-			$f->send_button ( 'btn_Sepa', 'Zum Sammler hinzuf�gen' );
+			$f->send_button ( 'btn_Sepa', 'Zum Sammler hinzufügen' );
 			// echo "<pre>";
 			// print_r($_SESSION);
 			$f->ende_formular ();
@@ -2922,10 +2922,10 @@ AND  `AKTUELL` =  '1'" );
 	}
 	function form_sammel_ue_IBAN() {
 		if (! isset ( $_SESSION ['geldkonto_id'] )) {
-			die ( fehlermeldung_ausgeben ( "Geldkonto w�hlen" ) );
+			die ( fehlermeldung_ausgeben ( "Geldkonto wählen" ) );
 		} else {
 			// if(!isset($_SESSION['partner_id'])){
-			// die(fehlermeldung_ausgeben("Partner w�hlen!"));
+			// die(fehlermeldung_ausgeben("Partner wählen!"));
 			// }
 			$gk = new geldkonto_info ();
 			$gk->geld_konto_details ( $_SESSION ['geldkonto_id'] );
@@ -2935,10 +2935,10 @@ AND  `AKTUELL` =  '1'" );
 			$sep = new sepa ();
 			$f = new formular ();
 			
-			$f->erstelle_formular ( 'SEPA-Sammel�berweisung an IBAN/BIC', null );
+			$f->erstelle_formular ( 'SEPA-Sammelüberweisung an IBAN/BIC', null );
 			$f->text_feld_inaktiv ( 'Vom Geldkonto', 'vmgk', $gk->geldkonto_bez, 80, 'vmgkid' );
-			// $sep->dropdown_sepa_geldkonten_filter('Empf�ngerkonto w�hlen', 'empf_sepa_gk_id', 'empf_sepa_gk_id', $filter);
-			$f->text_feld ( 'Empf�nger', 'empfaenger', "", 50, 'empfaenger', '' );
+			// $sep->dropdown_sepa_geldkonten_filter('Empfängerkonto wählen', 'empf_sepa_gk_id', 'empf_sepa_gk_id', $filter);
+			$f->text_feld ( 'Empfänger', 'empfaenger', "", 50, 'empfaenger', '' );
 			$f->iban_feld ( 'IBAN', 'iban', "", 30, 'iban', '' );
 			$f->text_feld ( 'BIC', 'bic', "", 15, 'betrag', '' );
 			$f->text_feld ( 'Bankname', 'bank', "", 50, 'bank', '' );
@@ -2947,7 +2947,7 @@ AND  `AKTUELL` =  '1'" );
 			$f->text_feld ( 'VERWENDUNG', 'vzweck', "", 80, 'vzweck', '' );
 			$f->hidden_feld ( 'option', 'sepa_sammler_hinzu_ue_IBAN' );
 			// $f->hidden_feld('kat', 'SAMMLER');
-			$this->dropdown_sammler_typ ( 'Sammlerkategorie w�hlen!!!', 'kat', 'kat', '', 'SONSTIGES' );
+			$this->dropdown_sammler_typ ( 'Sammlerkategorie wählen!!!', 'kat', 'kat', '', 'SONSTIGES' );
 			$f->hidden_feld ( 'gk_id', $_SESSION ['geldkonto_id'] );
 			
 			$js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
@@ -2957,24 +2957,24 @@ AND  `AKTUELL` =  '1'" );
 			
 			// dropdown_kostentreager_typen_vw($label, $name, $id, $js_action, $vorwahl_typ){
 			if (isset ( $_SESSION ['kos_typ'] )) {
-				$bb->dropdown_kostentreager_typen_vw ( 'Kostentr�gertyp w�hlen', 'kos_typ', 'kostentraeger_typ', $js_typ, $_SESSION ['kos_typ'] );
+				$bb->dropdown_kostentreager_typen_vw ( 'Kostenträgertyp wählen', 'kos_typ', 'kostentraeger_typ', $js_typ, $_SESSION ['kos_typ'] );
 			} else {
-				$bb->dropdown_kostentreager_typen ( 'Kostentr�gertyp norm', 'kos_typ', 'kostentraeger_typ', $js_typ );
+				$bb->dropdown_kostentreager_typen ( 'Kostenträgertyp norm', 'kos_typ', 'kostentraeger_typ', $js_typ );
 			}
 			
 			$js_id = "";
 			
 			if (isset ( $_SESSION ['kos_bez'] )) {
-				$bb->dropdown_kostentraeger_bez_vw ( "Kostentr�ger C1 ", 'kos_id', 'dd_kostentraeger_id', $js_id, $_SESSION ['kos_typ'], $_SESSION ['kos_bez'] );
+				$bb->dropdown_kostentraeger_bez_vw ( "Kostenträger C1 ", 'kos_id', 'dd_kostentraeger_id', $js_id, $_SESSION ['kos_typ'], $_SESSION ['kos_bez'] );
 			} else {
-				$bb->dropdown_kostentreager_ids ( 'Kostentr�ger XC', 'kos_id', 'dd_kostentraeger_id', $js_id );
+				$bb->dropdown_kostentreager_ids ( 'Kostenträger XC', 'kos_id', 'dd_kostentraeger_id', $js_id );
 			}
 			// $f->hidden_feld('kos_typ', 'Partner');
 			// $f->hidden_feld('kos_id', $_SESSION['partner_id']);
 			$kk = new kontenrahmen ();
 			$kk->dropdown_kontorahmenkonten ( 'Buchungskonto', 'konto', 'konto', 'GELDKONTO', $_SESSION ['geldkonto_id'], '' );
 			// $f->text_feld('Buchungskonto', 'konto', 1000, 5, 'konto', '');
-			$f->send_button ( 'btn_Sepa', 'Zum Sammler hinzuf�gen' );
+			$f->send_button ( 'btn_Sepa', 'Zum Sammler hinzufügen' );
 			// echo "<pre>";
 			// print_r($_SESSION);
 			$f->ende_formular ();
@@ -2990,7 +2990,7 @@ AND  `AKTUELL` =  '1'" );
 		$arr [5] ['KAT'] = 'HAUSGELD';
 		$arr [6] ['KAT'] = 'SONSTIGES';
 		
-		echo "<option value=\"\">Bitte w�hlen</option>\n";
+		echo "<option value=\"\">Bitte wählen</option>\n";
 		
 		for($a = 0; $a < count ( $arr ); $a ++) {
 			$typ = $arr [$a] ['KAT'];
@@ -3025,7 +3025,7 @@ AND  `AKTUELL` =  '1'" );
 				$kat = $arr [$a] ['KAT'];
 				if ($this->sepa_sammler_anzeigen ( $_SESSION ['geldkonto_id'], $kat ) == true) {
 					$gk_id = $_SESSION ['geldkonto_id'];
-					echo "<a href=\"?daten=sepa&option=sammler2sepa&gk_id=$gk_id&kat=$kat\">SEPA-Datei f�r $kat erstellen</a>";
+					echo "<a href=\"?daten=sepa&option=sammler2sepa&gk_id=$gk_id&kat=$kat\">SEPA-Datei für $kat erstellen</a>";
 				}
 			}
 		}
@@ -3037,9 +3037,9 @@ AND  `AKTUELL` =  '1'" );
 	}
 	function iban_convert($iban, $mysql = 1) {
 		if ($mysql != 1) {
-			$iban_new = chunk_split ( $iban, 4, ' ' ); // f�r den Menschen leserlich in 4er Bl�cken
+			$iban_new = chunk_split ( $iban, 4, ' ' ); // für den Menschen leserlich in 4er Blöcken
 		} else {
-			$iban_new = str_replace ( ' ', '', $iban ); // f�r die Maschinen /mysql etc.. hintereinnander
+			$iban_new = str_replace ( ' ', '', $iban ); // für die Maschinen /mysql etc.. hintereinnander
 		}
 		
 		return $iban_new;
@@ -3066,7 +3066,7 @@ AND  `AKTUELL` =  '1'" );
 			echo "&nbsp;|&nbsp;<span style=\"color:blue;\">DS: $akt/$anz_ok</span>";
 		}
 		
-		$link_konten = "<a href=\"?daten=buchen&option=uebersicht_excel_konten\">�bersicht Geldkonten</a>";
+		$link_konten = "<a href=\"?daten=buchen&option=uebersicht_excel_konten\">Übersicht Geldkonten</a>";
 		echo "&nbsp;|&nbsp;<span style=\"color:yellow;\">$link_konten</span>";
 	}
 	function menue_konten($gk_id) {
@@ -3149,7 +3149,7 @@ AND  `AKTUELL` =  '1'" );
 		$gk_id = $_SESSION ['umsaetze_ok'] [$umsatz_id_temp] ['GK_ID'];
 		$_SESSION ['geldkonto_id'] = $gk_id;
 		
-		/* Passendes Objekt w�hlen */
+		/* Passendes Objekt wählen */
 		$gkk = new gk ();
 		$temp_objekt_id = $gkk->get_objekt_id ( $_SESSION ['geldkonto_id'] );
 		$_SESSION ['objekt_id'] = $temp_objekt_id;
@@ -3255,7 +3255,7 @@ AND  `AKTUELL` =  '1'" );
 			
 			if (ltrim ( rtrim ( $art ) ) == 'ABSCHLUSS') {
 				$zahler = "Bank";
-				$vzweck_kurz = "Kontof�hrungsgeb�hr, $vzweck_kurz";
+				$vzweck_kurz = "Kontoführungsgebühr, $vzweck_kurz";
 				// $bu->dropdown_kostenrahmen_nr('Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id, '5060');
 			}
 			$f->hidden_feld ( 'text', "$zahler, $vzweck_kurz" );
@@ -3299,8 +3299,8 @@ AND  `AKTUELL` =  '1'" );
 						$_SESSION ['kos_typ'] = 'Eigentuemer';
 					}
 					
-					$bu->dropdown_kostentreager_typen_vw ( 'Kostentr�gertyp AUTOIBAN', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, $_SESSION ['kos_typ'] );
-					$bu->dropdown_kostentraeger_bez_vw ( "Kostentr�ger IBAN", 'kostentraeger_id', 'dd_kostentraeger_id', '', $_SESSION ['kos_typ'], $_SESSION ['kos_id'] );
+					$bu->dropdown_kostentreager_typen_vw ( 'Kostenträgertyp AUTOIBAN', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, $_SESSION ['kos_typ'] );
+					$bu->dropdown_kostentraeger_bez_vw ( "Kostenträger IBAN", 'kostentraeger_id', 'dd_kostentraeger_id', '', $_SESSION ['kos_typ'], $_SESSION ['kos_id'] );
 					$treffer [] = 'GK';
 				}
 			}
@@ -3308,8 +3308,8 @@ AND  `AKTUELL` =  '1'" );
 			if ((strpos ( strtolower ( $vzweck ), 'miet' ) or strpos ( strtolower ( $vzweck ), 'hk' ) or strpos ( strtolower ( $vzweck ), 'bk' )) && count ( $treffer ) < 1) {
 				$_SESSION ['kos_typ'] = 'Mietvertrag';
 				// $bu->dropdown_kostenrahmen_nr('Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id, '80001');
-				// $bu->dropdown_kostentreager_typen_vw('Kostentr�gertyp vorwahl', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Mietvertrag');
-				// $bu->dropdown_kostentreager_ids('Kostentr�ger', 'kostentraeger_id', 'dd_kostentraeger_id', '');
+				// $bu->dropdown_kostentreager_typen_vw('Kostenträgertyp vorwahl', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Mietvertrag');
+				// $bu->dropdown_kostentreager_ids('Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', '');
 				$pe1 = new personen ();
 				$treffer = $pe1->finde_kos_typ_id ( $vorname, $nachname );
 				
@@ -3333,11 +3333,11 @@ AND  `AKTUELL` =  '1'" );
 						$bu->dropdown_kostenrahmen_nr ( 'Kostenkonto E2', 'kostenkonto', 'GELDKONTO', $gk_id, '6020' );
 					}
 					
-					$bu->dropdown_kostentreager_typen_vw ( 'Kostentr�gertyp PERSON', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, $kos_typ );
-					$bu->dropdown_kostentraeger_bez_vw ( "Kostentr�ger PERSON", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id );
+					$bu->dropdown_kostentreager_typen_vw ( 'Kostenträgertyp PERSON', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, $kos_typ );
+					$bu->dropdown_kostentraeger_bez_vw ( "Kostenträger PERSON", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id );
 				} else {
 					// $bu->dropdown_kostenrahmen_nr('Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id, '80001');
-					// $bu->dropdown_kostentreager_typen_vw('Kostentr�gertyp vorwahl', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Mietvertrag');
+					// $bu->dropdown_kostentreager_typen_vw('Kostenträgertyp vorwahl', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Mietvertrag');
 					
 					$kos_id = $this->get_mvid_from_vzweck ( $vzweck );
 					if (! isset ( $kos_id )) {
@@ -3349,15 +3349,15 @@ AND  `AKTUELL` =  '1'" );
 					} else {
 						$kos_typ = 'Mietvertrag';
 						$bu->dropdown_kostenrahmen_nr ( 'Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id, '80001' );
-						$bu->dropdown_kostentreager_typen_vw ( 'Kostentr�gertyp vorwahl', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Mietvertrag' );
+						$bu->dropdown_kostentreager_typen_vw ( 'Kostenträgertyp vorwahl', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Mietvertrag' );
 					}
 					
 					if (isset ( $kos_id )) {
-						$bu->dropdown_kostentraeger_bez_vw ( "Kostentr�ger MV2", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id );
+						$bu->dropdown_kostentraeger_bez_vw ( "Kostenträger MV2", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id );
 					} else {
 						$bu->dropdown_kostenrahmen_nr ( 'Kostenkonto MMM', 'kostenkonto', 'GELDKONTO', $gk_id, '80001' );
-						$bu->dropdown_kostentreager_typen_vw ( 'Kostentr�ger TYP - UNBEKANNT', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Mietvertrag' );
-						$bu->dropdown_kostentreager_ids ( 'Kostentr�ger UNBEKANNT1', 'kostentraeger_id', 'dd_kostentraeger_id', '' );
+						$bu->dropdown_kostentreager_typen_vw ( 'Kostenträger TYP - UNBEKANNT', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Mietvertrag' );
+						$bu->dropdown_kostentreager_ids ( 'Kostenträger UNBEKANNT1', 'kostentraeger_id', 'dd_kostentraeger_id', '' );
 					}
 				}
 				
@@ -3382,15 +3382,15 @@ AND  `AKTUELL` =  '1'" );
 				 * $akt_kostentraeger_bez =$r->kostentraeger_ermitteln($gk2->iban_kos_typ, $gk2->iban_kos_id);
 				 * $_SESSION['kos_bez'] = $akt_kostentraeger_bez;
 				 */
-				// $bu->dropdown_kostentraeger_bez_vw("Kostentr�ger IBAN $gk2->iban_kos_id", 'kostentraeger_id', 'dd_kostentraeger_id', $js_id, $_SESSION['kos_typ'], $_SESSION['kos_id']);
+				// $bu->dropdown_kostentraeger_bez_vw("Kostenträger IBAN $gk2->iban_kos_id", 'kostentraeger_id', 'dd_kostentraeger_id', $js_id, $_SESSION['kos_typ'], $_SESSION['kos_id']);
 				
 				// }else{
 				$_SESSION ['kos_typ'] = 'Eigentuemer';
 				// }
 				
 				$bu->dropdown_kostenrahmen_nr ( 'Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id, '6020' );
-				$bu->dropdown_kostentreager_typen_vw ( 'Kostentr�gertyp vorwahl', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Eigentuemer' );
-				$bu->dropdown_kostentreager_ids ( 'Kostentr�ger', 'kostentraeger_id', 'dd_kostentraeger_id', '' );
+				$bu->dropdown_kostentreager_typen_vw ( 'Kostenträgertyp vorwahl', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Eigentuemer' );
+				$bu->dropdown_kostentreager_ids ( 'Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', '' );
 				$treffer [] = 'Eigentuemer';
 			}
 			/* Suche na IBAN */
@@ -3401,8 +3401,8 @@ AND  `AKTUELL` =  '1'" );
 			 * $_SESSION['kos_typ'] = $gk->iban_kos_typ;
 			 * $_SESSION['kos_id'] = $gk->iban_kos_id;
 			 * $bu->dropdown_kostenrahmen_nr('Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id, '');
-			 * $bu->dropdown_kostentreager_typen_vw('Kostentr�gertyp vorwahl', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Eigentuemer');
-			 * #$bu->dropdown_kostentreager_ids('Kostentr�ger', 'kostentraeger_id', 'dd_kostentraeger_id', '');
+			 * $bu->dropdown_kostentreager_typen_vw('Kostenträgertyp vorwahl', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Eigentuemer');
+			 * #$bu->dropdown_kostentreager_ids('Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', '');
 			 * $treffer[]= $gk->iban_kos_typ;
 			 * }
 			 */
@@ -3452,8 +3452,8 @@ AND  `AKTUELL` =  '1'" );
 						$bu->dropdown_kostenrahmen_nr ( 'Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id, '6020' );
 					}
 					
-					$bu->dropdown_kostentreager_typen_vw ( 'Kostentr�gertyp PERSON2', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, $kos_typ );
-					$bu->dropdown_kostentraeger_bez_vw ( "Kostentr�ger PERSON2", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id );
+					$bu->dropdown_kostentreager_typen_vw ( 'Kostenträgertyp PERSON2', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, $kos_typ );
+					$bu->dropdown_kostentraeger_bez_vw ( "Kostenträger PERSON2", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id );
 					
 					echo "</td></tr><tr><td>";
 					
@@ -3470,37 +3470,37 @@ AND  `AKTUELL` =  '1'" );
 					if (isset ( $kos_id )) {
 						$kos_typ = 'Mietvertrag';
 						$bu->dropdown_kostenrahmen_nr ( 'Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id, '80001' );
-						$bu->dropdown_kostentreager_typen_vw ( 'Kostentr�gertyp MV2', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, $kos_typ );
-						$bu->dropdown_kostentraeger_bez_vw ( "Kostentr�ger MV2", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id );
+						$bu->dropdown_kostentreager_typen_vw ( 'Kostenträgertyp MV2', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, $kos_typ );
+						$bu->dropdown_kostentraeger_bez_vw ( "Kostenträger MV2", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id );
 					} else {
 						$kos_id = $this->get_etid_from_vzweck ( $vzweck );
 						if (isset ( $kos_id )) {
 							$kos_typ = 'Eigentuemer';
 							$bu->dropdown_kostenrahmen_nr ( 'Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id, '6020' );
 							$bu->dropdown_kostentreager_typen_vw ( 'ET vorwahl', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Eigentuemer' );
-							$bu->dropdown_kostentraeger_bez_vw ( "Kostentr�ger MV2", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id );
+							$bu->dropdown_kostentraeger_bez_vw ( "Kostenträger MV2", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id );
 						} else {
 							if ($art == 'ABSCHLUSS') {
 								$kos_id = $this->get_etid_from_vzweck ( $vzweck );
 								// echo "SANEL $kos_id";
 								$bu->dropdown_kostenrahmen_nr ( 'Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id, '5060' );
-								// $bu->dropdown_kostentreager_typen('Kostentr�gertyp NIXX', 'kostentraeger_typ', 'kostentraeger_typ', 'Objekt');
+								// $bu->dropdown_kostentreager_typen('Kostenträgertyp NIXX', 'kostentraeger_typ', 'kostentraeger_typ', 'Objekt');
 								$bu->dropdown_kostentreager_typen_vw ( 'ET vorwahl', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Objekt' );
-								$bu->dropdown_kostentraeger_bez_vw ( "Kostentr�ger MV2", 'kostentraeger_id', 'dd_kostentraeger_id', '', 'Objekt', $_SESSION ['objekt_id'] );
+								$bu->dropdown_kostentraeger_bez_vw ( "Kostenträger MV2", 'kostentraeger_id', 'dd_kostentraeger_id', '', 'Objekt', $_SESSION ['objekt_id'] );
 							} else {
 								
 								$kos_id = $this->get_etid_from_vzweck ( $vzweck );
 								// echo "SANEL $kos_id";
 								$bu->dropdown_kostenrahmen_nr ( 'Kostenkonto NIX3', 'kostenkonto', 'GELDKONTO', $gk_id, '80001' );
-								// $bu->dropdown_kostentreager_typen('Kostentr�gertyp NIXX3', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ);
-								$bu->dropdown_kostentreager_typen_vw ( 'Kostentr�gertyp NIXX3', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Mietvertrag' );
-								$bu->dropdown_kostentraeger_bez_vw ( "Kostentr�ger NIXX3", 'kostentraeger_id', 'dd_kostentraeger_id', '', 'Mietvertrag', null );
+								// $bu->dropdown_kostentreager_typen('Kostenträgertyp NIXX3', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ);
+								$bu->dropdown_kostentreager_typen_vw ( 'Kostenträgertyp NIXX3', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Mietvertrag' );
+								$bu->dropdown_kostentraeger_bez_vw ( "Kostenträger NIXX3", 'kostentraeger_id', 'dd_kostentraeger_id', '', 'Mietvertrag', null );
 							}
 						}
 					}
 				}
 			}
-			// $bu->dropdown_kostentreager_typen('Kostentr�gertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ);
+			// $bu->dropdown_kostentreager_typen('Kostenträgertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ);
 			
 			$f->hidden_feld ( 'option', 'excel_einzelbuchung' );
 			$f->hidden_feld ( 'betrag', $betrag_n );
@@ -3752,14 +3752,14 @@ AND  `AKTUELL` =  '1'" );
 				$kos_typ = 'Eigentuemer';
 				$bu->dropdown_kostenrahmen_nr ( 'Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id, '6020' );
 				$bu->dropdown_kostentreager_typen_vw ( 'ET vorwahl', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Eigentuemer' );
-				$bu->dropdown_kostentraeger_bez_vw ( "Kostentr�ger MV2", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id );
+				$bu->dropdown_kostentraeger_bez_vw ( "Kostenträger MV2", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id );
 			} else {
 				$kos_id = $this->get_mvid_from_vzweck ( $_SESSION ['kto_auszug_arr'] [$ds] ['vzweck'] );
 				if (isset ( $kos_id )) {
 					$kos_typ = 'Mietvertrag';
 					$bu->dropdown_kostenrahmen_nr ( 'Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id, '80001' );
 					$bu->dropdown_kostentreager_typen_vw ( 'MV vorwahl', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Eigentuemer' );
-					$bu->dropdown_kostentraeger_bez_vw ( "Kostentr�ger MV2", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id );
+					$bu->dropdown_kostentraeger_bez_vw ( "Kostenträger MV2", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id );
 				} else {
 					
 					$pe1 = new personen ();
@@ -3780,26 +3780,26 @@ AND  `AKTUELL` =  '1'" );
 						if ($kos_typ == 'Mietvertrag') {
 							$bu->dropdown_kostenrahmen_nr ( 'Kostenkonto PPP', 'kostenkonto', 'GELDKONTO', $gk_id, '80001' );
 							$bu->dropdown_kostentreager_typen_vw ( 'MV vorwahl', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Mietvertrag' );
-							$bu->dropdown_kostentraeger_bez_vw ( "Kostentr�ger MV2", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id );
+							$bu->dropdown_kostentraeger_bez_vw ( "Kostenträger MV2", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id );
 						}
 						if ($kos_typ == 'Eigentuemer') {
 							$bu->dropdown_kostenrahmen_nr ( 'Kostenkonto PPP', 'kostenkonto', 'GELDKONTO', $gk_id, '6020' );
 							$bu->dropdown_kostentreager_typen_vw ( 'MV vorwahl', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Eigentuemer' );
-							$bu->dropdown_kostentraeger_bez_vw ( "Kostentr�ger MV2", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id );
+							$bu->dropdown_kostentraeger_bez_vw ( "Kostenträger MV2", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id );
 						}
 					} else {
 						
 						$bu->dropdown_kostenrahmen_nr ( 'Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id, '' );
-						$bu->dropdown_kostentreager_typen ( 'Kostentr�gertyp NIXX', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
-						$bu->dropdown_kostentreager_ids ( 'Kostentr�ger NIXX', 'kostentraeger_id', 'dd_kostentraeger_id', '' );
+						$bu->dropdown_kostentreager_typen ( 'Kostenträgertyp NIXX', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
+						$bu->dropdown_kostentreager_ids ( 'Kostenträger NIXX', 'kostentraeger_id', 'dd_kostentraeger_id', '' );
 					}
 					
 					/*
 					 * if(!$kos_typ && !$kos_id){
 					 *
 					 * $bu->dropdown_kostenrahmen_nr('Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id, '');
-					 * $bu->dropdown_kostentreager_typen('Kostentr�gertyp NIXX', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ);
-					 * $bu->dropdown_kostentreager_ids('Kostentr�ger NIXX', 'kostentraeger_id', 'dd_kostentraeger_id', '');
+					 * $bu->dropdown_kostentreager_typen('Kostenträgertyp NIXX', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ);
+					 * $bu->dropdown_kostentreager_ids('Kostenträger NIXX', 'kostentraeger_id', 'dd_kostentraeger_id', '');
 					 *
 					 * }
 					 */
@@ -3819,7 +3819,7 @@ AND  `AKTUELL` =  '1'" );
 	}
 	function form_upload_excel_ktoauszug($action = null) {
 		$f = new formular ();
-		$f->fieldset ( 'Upload Excel-Kontoausz�ge aus Bank *.XLSX', 'upxel' );
+		$f->fieldset ( 'Upload Excel-Kontoauszüge aus Bank *.XLSX', 'upxel' );
 		if ($action == null) {
 			echo "<form method=\"post\" enctype=\"multipart/form-data\">";
 		} else {

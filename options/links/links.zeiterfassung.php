@@ -19,7 +19,7 @@
  */
 $f = new formular ();
 echo "<div class=\"navi_leiste2\">";
-$f->erstelle_formular ( "Hauptmen� -> Zeiterfassung...", NULL );
+$f->erstelle_formular ( "Hauptmenü -> Zeiterfassung...", NULL );
 
 echo "<a href=\"?daten=zeiterfassung&option=eigene_zettel\">Eigene Zettel</a>&nbsp;";
 echo "<a href=\"?daten=zeiterfassung&option=neuer_zettel\">Neuer Zettel</a>&nbsp;";

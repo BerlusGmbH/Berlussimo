@@ -19,7 +19,7 @@
  */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'uebersicht' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -31,7 +31,7 @@ include_once ("includes/formular_funktionen.php");
 include_once ("classes/berlussimo_class.php");
 include_once ("classes/mietkonto_class.php");
 include_once ("classes/class_kautionen.php");
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
 
 if (isset ( $_REQUEST ['einheit_id'] )) {
@@ -48,7 +48,7 @@ if (isset ( $_REQUEST ["daten"] )) {
 		
 		case "einheit" :
 			$form = new formular ();
-			$form->erstelle_formular ( "�bersichtsseite", NULL );
+			$form->erstelle_formular ( "Übersichtsseite", NULL );
 			$e = new einheit ();
 			if (is_array ( $e->get_mietvertrag_ids ( $einheit_id ) )) {
 				uebersicht_einheit ( $einheit_id );
@@ -77,7 +77,7 @@ function uebersicht_einheit($einheit_id) {
 		$mietvertrag_id = $e->get_last_mietvertrag_id ( $einheit_id );
 		
 		if (empty ( $mietvertrag_id )) {
-			die ( 'Keine Informationen, weil keine Vormietvertr�ge' );
+			die ( 'Keine Informationen, weil keine Vormietverträge' );
 		}
 		$mv = new mietvertraege ();
 		$mv->get_mietvertrag_infos_aktuell ( $mietvertrag_id );
@@ -145,8 +145,8 @@ function uebersicht_einheit($einheit_id) {
 	}
 	echo "$e->haus_strasse $e->haus_nummer<br/>";
 	echo "$e->haus_plz $e->haus_stadt<br/>";
-	echo "<hr><a href=\"?index.php&daten=todo&option=auftrag_haus&haus_id=$e->haus_id&einheit_id=$einheit_id\">Auftr�ge an Haus</a><hr>";
-	echo "Lage: $e->einheit_lage QM: $e->einheit_qm m� <b>TYP:$e->typ</b><hr>";
+	echo "<hr><a href=\"?index.php&daten=todo&option=auftrag_haus&haus_id=$e->haus_id&einheit_id=$einheit_id\">Aufträge an Haus</a><hr>";
+	echo "Lage: $e->einheit_lage QM: $e->einheit_qm m² <b>TYP:$e->typ</b><hr>";
 	$war = new wartung ();
 	$war->wartungen_anzeigen ( $e->einheit_kurzname );
 	echo "<hr>";
@@ -190,7 +190,7 @@ function uebersicht_einheit($einheit_id) {
 	if ($mv->anzahl_personen < 1) {
 		echo "leer";
 	}
-	// ####INFOS �BER PERSON/MIETER
+	// ####INFOS ÜBER PERSON/MIETER
 	$person_info = new person ();
 	for($i = 0; $i < $mv->anzahl_personen; $i ++) {
 		$person_info->get_person_infos ( $mv->personen_ids [$i] ['PERSON_MIETVERTRAG_PERSON_ID'] );
@@ -237,11 +237,11 @@ function uebersicht_einheit($einheit_id) {
 		if (! empty ( $mieter_details )) {
 			echo "<br>$mieter_details";
 		}
-		echo "<br>Anzahl Vertr�ge:  $person_anzahl_mvs<br>";
-		echo "Aktuelle Vertr�ge:<br>";
+		echo "<br>Anzahl Verträge:  $person_anzahl_mvs<br>";
+		echo "Aktuelle Verträge:<br>";
 		echo "$aktuelle_einheit_link<br>";
 		if (! empty ( $alte_einheit_link )) {
-			echo "Alte Vertr�ge:<br>";
+			echo "Alte Verträge:<br>";
 			echo "$alte_einheit_link<br>";
 		}
 		$link_person_details = "<a href=\"?daten=details&option=details_hinzu&detail_tabelle=PERSON&detail_id=$akt_person_id\">NEUES DETAIL ZU $person_info->person_nachname $person_info->person_vorname</a>";
@@ -262,7 +262,7 @@ function uebersicht_einheit($einheit_id) {
 	} else {
 		echo "<p class=rot>Keine Vormieter</p>";
 	}
-	echo "<hr><a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_kurz&einheit_id=$einheit_id\">Alle Mietvertr�ge von $e->einheit_kurzname</a>";
+	echo "<hr><a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_kurz&einheit_id=$einheit_id\">Alle Mietverträge von $e->einheit_kurzname</a>";
 	// echo "<pre>";
 	// print_r($person_mv_id_array);
 	// echo "</pre>";
@@ -286,7 +286,7 @@ function uebersicht_einheit($einheit_id) {
 	if (! empty ( $mv->mietvertrag_bis )) {
 		$mietvertrag_bis_datum = date_mysql2german ( $mv->mietvertrag_bis );
 		if ($mietvertrag_bis_datum == '00.00.0000') {
-			echo "AUSZUG: <b>ungek�ndigt</b><br>";
+			echo "AUSZUG: <b>ungekündigt</b><br>";
 			echo "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_beenden&mietvertrag_id=$mietvertrag_id\">VERTRAG BEENDEN</a><br>";
 		} else {
 			echo "<p class=auszug_bald>AUSZUG: $mietvertrag_bis_datum</p>";
@@ -301,7 +301,7 @@ function uebersicht_einheit($einheit_id) {
 			$enddatum_mandat = str_replace ( '-', '', $sep->mand->M_EDATUM );
 			// echo $enddatum_mandat;
 			if ($enddatum_mandat >= $d_heute) {
-				echo "<hr><p style=\"color:green;\"><b>G�ltiges SEPA-Mandat</b><br>";
+				echo "<hr><p style=\"color:green;\"><b>Gültiges SEPA-Mandat</b><br>";
 				$konto_inh = $sep->mand->NAME;
 				echo "<b>Kto-Inhaber:</b> $konto_inh<br>";
 				$iban = $iban_1 = chunk_split ( $sep->mand->IBAN, 4, ' ' );
@@ -312,8 +312,8 @@ function uebersicht_einheit($einheit_id) {
 				$a_datum = date_mysql2german ( $sep->mand->M_ADATUM );
 				$e_datum = date_mysql2german ( $sep->mand->M_EDATUM );
 				echo "<b>Unterschrieben:</b> $u_datum<br>";
-				echo "<b>G�ltig ab:</b>      $u_datum<br>";
-				echo "<b>G�ltig bis:</b>     $e_datum<br>";
+				echo "<b>Gültig ab:</b>      $u_datum<br>";
+				echo "<b>Gültig bis:</b>     $e_datum<br>";
 				$m_ein_art = $sep->mand->EINZUGSART;
 				echo "<b>Einzugsart:</b>$m_ein_art<br>";
 				echo "</p><hr>";
@@ -351,7 +351,7 @@ function uebersicht_einheit($einheit_id) {
 	
 	$k = new kautionen ();
 	$soll_kaution = nummer_punkt2komma ( 3 * $k->summe_mietekalt ( $mietvertrag_id ) );
-	echo "<br><span class=\"font_balken_uberschrift\"><b>Kaution (Soll:$soll_kaution �)</b></span><hr>";
+	echo "<br><span class=\"font_balken_uberschrift\"><b>Kaution (Soll:$soll_kaution €)</b></span><hr>";
 	
 	$k->kautionen_info ( 'Mietvertrag', $mietvertrag_id, '13' );
 	if ($k->anzahl_zahlungen >= 1) {
@@ -362,7 +362,7 @@ function uebersicht_einheit($einheit_id) {
 			$datum = date_mysql2german ( $k->kautionszahlungen_array [$a] ['DATUM'] );
 			$betrag = nummer_punkt2komma ( $k->kautionszahlungen_array [$a] ['BETRAG'] );
 			$vzweck = $k->kautionszahlungen_array [$a] ['VERWENDUNGSZWECK'];
-			echo "$buchung_zeile. $datum $betrag � $vzweck<br>";
+			echo "$buchung_zeile. $datum $betrag € $vzweck<br>";
 		}
 	} else {
 		echo "Keine Kautionsbuchungen vorhanden";
@@ -370,7 +370,7 @@ function uebersicht_einheit($einheit_id) {
 	echo "<hr>";
 	
 	echo "<a href=\"?daten=kautionen&option=kautionen_buchen&mietvertrag_id=$mietvertrag_id\">Kautionen buchen</a><hr>";
-	echo "<a href=\"?daten=kautionen&option=hochrechner&mietvertrag_id=$mietvertrag_id\">Kautionsh�he hochrechnen</a><hr>";
+	echo "<a href=\"?daten=kautionen&option=hochrechner&mietvertrag_id=$mietvertrag_id\">Kautionshöhe hochrechnen</a><hr>";
 	
 	// #####BALKEN 4 MIETE
 	$monat = date ( "M" );
@@ -383,19 +383,19 @@ function uebersicht_einheit($einheit_id) {
 	echo "<hr><span class=\"font_balken_uberschrift\"><b>MIETE</b></span><hr><b>Forderungen</b><br>";
 	$forderungen_arr = $buchung->aktuelle_forderungen_array ( $mietvertrag_id );
 	for($i = 0; $i < count ( $forderungen_arr ); $i ++) {
-		echo "" . $forderungen_arr [$i] ['KOSTENKATEGORIE'] . " " . $forderungen_arr [$i] ['BETRAG'] . " �<br>";
+		echo "" . $forderungen_arr [$i] ['KOSTENKATEGORIE'] . " " . $forderungen_arr [$i] ['BETRAG'] . " €<br>";
 	}
 	$summe_forderungen_aktuell = $buchung->summe_forderung_monatlich ( $mietvertrag_id, $monat, $jahr );
-	echo "<hr>Summe Forderungen: $summe_forderungen_aktuell �";
+	echo "<hr>Summe Forderungen: $summe_forderungen_aktuell €";
 	// echo "<b><a href=\"?daten=mietkonten_blatt&anzeigen=forderung_aus_monat&mietvertrag_id=$mietvertrag_id&monat=$vormonat&jahr=$jahr\">Forderungen Vormonat</a><hr>";
 	
 	$summe_zahlungen = $buchung->summe_zahlung_monatlich ( $mietvertrag_id, $buchung->monat_heute, $buchung->jahr_heute );
-	echo "<hr>Summe Zahlungen: $summe_zahlungen �<hr>";
+	echo "<hr>Summe Zahlungen: $summe_zahlungen €<hr>";
 	
 	$a = new miete ();
 	$a->mietkonto_berechnung ( $mietvertrag_id );
 	
-	echo "SALDO: $a->erg �<hr>";
+	echo "SALDO: $a->erg €<hr>";
 	// echo "</div><div class=\"div balken4\" align=\"right\"><span class=\"font_balken_uberschrift\">MIETE $monat $jahr</span><hr />";
 	// echo "<span class=\"font_balken_uberschrift\">MIETKONTENBLATT</span><hr>";
 	// iframe_start_skaliert(290, 550);
@@ -511,7 +511,7 @@ function uebersicht_einheit2($einheit_id) {
 		$mietvertrag_id = $e->get_last_mietvertrag_id ( $einheit_id );
 		
 		if (empty ( $mietvertrag_id )) {
-			die ( 'Keine Informationen, weil keine Vormietvertr�ge' );
+			die ( 'Keine Informationen, weil keine Vormietverträge' );
 		}
 		$mv = new mietvertraege ();
 		$mv->get_mietvertrag_infos_aktuell ( $mietvertrag_id );
@@ -542,8 +542,8 @@ function uebersicht_einheit2($einheit_id) {
 	echo "<p class=\"warnung\">WEG-ET:<br>$miteigentuemer_namen</p><hr>";
 	echo "$e->haus_strasse $e->haus_nummer<br/>";
 	echo "$e->haus_plz $e->haus_stadt<br/>";
-	echo "<hr><a href=\"?index.php&daten=todo&option=auftrag_haus&haus_id=$e->haus_id&einheit_id=$einheit_id\">Auftr�ge an Haus</a><hr>";
-	echo "Lage: $e->einheit_lage QM: $e->einheit_qm m� <b>TYP:$e->typ</b><hr>";
+	echo "<hr><a href=\"?index.php&daten=todo&option=auftrag_haus&haus_id=$e->haus_id&einheit_id=$einheit_id\">Aufträge an Haus</a><hr>";
+	echo "Lage: $e->einheit_lage QM: $e->einheit_qm m² <b>TYP:$e->typ</b><hr>";
 	$war = new wartung ();
 	$war->wartungen_anzeigen ( $e->einheit_kurzname );
 	echo "<hr>";
@@ -581,7 +581,7 @@ function uebersicht_einheit2($einheit_id) {
 	if ($mv->anzahl_personen < 1) {
 		echo "leer";
 	}
-	// ####INFOS �BER PERSON/MIETER
+	// ####INFOS ÜBER PERSON/MIETER
 	$person_info = new person ();
 	for($i = 0; $i < $mv->anzahl_personen; $i ++) {
 		$person_info->get_person_infos ( $mv->personen_ids [$i] ['PERSON_MIETVERTRAG_PERSON_ID'] );
@@ -628,11 +628,11 @@ function uebersicht_einheit2($einheit_id) {
 		if (! empty ( $mieter_details )) {
 			echo "<br>$mieter_details";
 		}
-		echo "<br>Anzahl Vertr�ge:  $person_anzahl_mvs<br>";
-		echo "Aktuelle Vertr�ge:<br>";
+		echo "<br>Anzahl Verträge:  $person_anzahl_mvs<br>";
+		echo "Aktuelle Verträge:<br>";
 		echo "$aktuelle_einheit_link<br>";
 		if (! empty ( $alte_einheit_link )) {
-			echo "Alte Vertr�ge:<br>";
+			echo "Alte Verträge:<br>";
 			echo "$alte_einheit_link<br>";
 		}
 		$link_person_details = "<a href=\"?daten=details&option=details_hinzu&detail_tabelle=PERSON&detail_id=$akt_person_id\">NEUES DETAIL ZU $person_info->person_nachname $person_info->person_vorname</a>";
@@ -653,7 +653,7 @@ function uebersicht_einheit2($einheit_id) {
 	} else {
 		echo "<p class=rot>Keine Vormieter</p>";
 	}
-	echo "<hr><a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_kurz&einheit_id=$einheit_id\">Alle Mietvertr�ge von $e->einheit_kurzname</a>";
+	echo "<hr><a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_kurz&einheit_id=$einheit_id\">Alle Mietverträge von $e->einheit_kurzname</a>";
 	// echo "<pre>";
 	// print_r($person_mv_id_array);
 	// echo "</pre>";
@@ -677,7 +677,7 @@ function uebersicht_einheit2($einheit_id) {
 	if (! empty ( $mv->mietvertrag_bis )) {
 		$mietvertrag_bis_datum = date_mysql2german ( $mv->mietvertrag_bis );
 		if ($mietvertrag_bis_datum == '00.00.0000') {
-			echo "AUSZUG: <b>ungek�ndigt</b><br>";
+			echo "AUSZUG: <b>ungekündigt</b><br>";
 			echo "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_beenden&mietvertrag_id=$mietvertrag_id\">VERTRAG BEENDEN</a><br>";
 		} else {
 			echo "<p class=auszug_bald>AUSZUG: $mietvertrag_bis_datum</p>";
@@ -692,7 +692,7 @@ function uebersicht_einheit2($einheit_id) {
 			$enddatum_mandat = str_replace ( '-', '', $sep->mand->M_EDATUM );
 			// echo $enddatum_mandat;
 			if ($enddatum_mandat >= $d_heute) {
-				echo "<hr><p style=\"color:green;\"><b>G�ltiges SEPA-Mandat</b><br>";
+				echo "<hr><p style=\"color:green;\"><b>Gültiges SEPA-Mandat</b><br>";
 				$konto_inh = $sep->mand->NAME;
 				echo "<b>Kto-Inhaber:</b> $konto_inh<br>";
 				$iban = $iban_1 = chunk_split ( $sep->mand->IBAN, 4, ' ' );
@@ -703,8 +703,8 @@ function uebersicht_einheit2($einheit_id) {
 				$a_datum = date_mysql2german ( $sep->mand->M_ADATUM );
 				$e_datum = date_mysql2german ( $sep->mand->M_EDATUM );
 				echo "<b>Unterschrieben:</b> $u_datum<br>";
-				echo "<b>G�ltig ab:</b>      $u_datum<br>";
-				echo "<b>G�ltig bis:</b>     $e_datum<br>";
+				echo "<b>Gültig ab:</b>      $u_datum<br>";
+				echo "<b>Gültig bis:</b>     $e_datum<br>";
 				$m_ein_art = $sep->mand->EINZUGSART;
 				echo "<b>Einzugsart:</b>$m_ein_art<br>";
 				echo "</p><hr>";
@@ -742,7 +742,7 @@ function uebersicht_einheit2($einheit_id) {
 	
 	$k = new kautionen ();
 	$soll_kaution = nummer_punkt2komma ( 3 * $k->summe_mietekalt ( $mietvertrag_id ) );
-	echo "<br><span class=\"font_balken_uberschrift\"><b>Kaution (Soll:$soll_kaution �)</b></span><hr>";
+	echo "<br><span class=\"font_balken_uberschrift\"><b>Kaution (Soll:$soll_kaution €)</b></span><hr>";
 	
 	$k->kautionen_info ( 'Mietvertrag', $mietvertrag_id, '13' );
 	if ($k->anzahl_zahlungen >= 1) {
@@ -753,7 +753,7 @@ function uebersicht_einheit2($einheit_id) {
 			$datum = date_mysql2german ( $k->kautionszahlungen_array [$a] ['DATUM'] );
 			$betrag = nummer_punkt2komma ( $k->kautionszahlungen_array [$a] ['BETRAG'] );
 			$vzweck = $k->kautionszahlungen_array [$a] ['VERWENDUNGSZWECK'];
-			echo "$buchung_zeile. $datum $betrag � $vzweck<br>";
+			echo "$buchung_zeile. $datum $betrag € $vzweck<br>";
 		}
 	} else {
 		echo "Keine Kautionsbuchungen vorhanden";
@@ -761,7 +761,7 @@ function uebersicht_einheit2($einheit_id) {
 	echo "<hr>";
 	
 	echo "<a href=\"?daten=kautionen&option=kautionen_buchen&mietvertrag_id=$mietvertrag_id\">Kautionen buchen</a><hr>";
-	echo "<a href=\"?daten=kautionen&option=hochrechner&mietvertrag_id=$mietvertrag_id\">Kautionsh�he hochrechnen</a><hr>";
+	echo "<a href=\"?daten=kautionen&option=hochrechner&mietvertrag_id=$mietvertrag_id\">Kautionshöhe hochrechnen</a><hr>";
 	
 	// #####BALKEN 4 MIETE
 	$monat = date ( "M" );
@@ -774,19 +774,19 @@ function uebersicht_einheit2($einheit_id) {
 	echo "<hr><span class=\"font_balken_uberschrift\"><b>MIETE</b></span><hr><b>Forderungen</b><br>";
 	$forderungen_arr = $buchung->aktuelle_forderungen_array ( $mietvertrag_id );
 	for($i = 0; $i < count ( $forderungen_arr ); $i ++) {
-		echo "" . $forderungen_arr [$i] ['KOSTENKATEGORIE'] . " " . $forderungen_arr [$i] ['BETRAG'] . " �<br>";
+		echo "" . $forderungen_arr [$i] ['KOSTENKATEGORIE'] . " " . $forderungen_arr [$i] ['BETRAG'] . " €<br>";
 	}
 	$summe_forderungen_aktuell = $buchung->summe_forderung_monatlich ( $mietvertrag_id, $monat, $jahr );
-	echo "<hr>Summe Forderungen: $summe_forderungen_aktuell �";
+	echo "<hr>Summe Forderungen: $summe_forderungen_aktuell €";
 	// echo "<b><a href=\"?daten=mietkonten_blatt&anzeigen=forderung_aus_monat&mietvertrag_id=$mietvertrag_id&monat=$vormonat&jahr=$jahr\">Forderungen Vormonat</a><hr>";
 	
 	$summe_zahlungen = $buchung->summe_zahlung_monatlich ( $mietvertrag_id, $buchung->monat_heute, $buchung->jahr_heute );
-	echo "<hr>Summe Zahlungen: $summe_zahlungen �<hr>";
+	echo "<hr>Summe Zahlungen: $summe_zahlungen €<hr>";
 	
 	$a = new miete ();
 	$a->mietkonto_berechnung ( $mietvertrag_id );
 	
-	echo "SALDO: $a->erg �<hr>";
+	echo "SALDO: $a->erg €<hr>";
 	// echo "</div><div class=\"div balken4\" align=\"right\"><span class=\"font_balken_uberschrift\">MIETE $monat $jahr</span><hr />";
 	// echo "<span class=\"font_balken_uberschrift\">MIETKONTENBLATT</span><hr>";
 	// iframe_start_skaliert(290, 550);
@@ -907,7 +907,7 @@ function uebersicht_einheit_alt($einheit_id) {
 	$datum_heute = date_mysql2german ( $datum_heute );
 	
 	/*
-	 * #### �BERSCHRIFT GANZ OBEN
+	 * #### ÜBERSCHRIFT GANZ OBEN
 	 * echo "<div class=\"div ueberschrift\">";
 	 *
 	 * echo "$einheit_objekt_name | $einheit_haus_strasse $einheit_haus_nr in $einheit_plz $einheit_stadt &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Datum: $datum_heute";
@@ -919,7 +919,7 @@ function uebersicht_einheit_alt($einheit_id) {
 	echo "<span class=\"font_balken_uberschrift\">$einheit_kurzname</span><hr/>";
 	echo "$einheit_haus_strasse $einheit_haus_nr<br/>";
 	echo "$einheit_plz $einheit_stadt<br/>";
-	echo "Lage: $einheit_lage QM: $einheit_qm m�<hr/>";
+	echo "Lage: $einheit_lage QM: $einheit_qm m²<hr/>";
 	$details_info = new details ();
 	$einheit_details_arr = $details_info->get_details ( EINHEIT, $einheit_id );
 	if (count ( $einheit_details_arr ) > 0) {
@@ -969,7 +969,7 @@ function uebersicht_einheit_alt($einheit_id) {
 	if ($anzahl_personen_im_mv < 1) {
 		echo "leer";
 	}
-	// ####INFOS �BER PERSON/MIETER
+	// ####INFOS ÜBER PERSON/MIETER
 	$person_info = new person ();
 	for($i = 0; $i < $anzahl_personen_im_mv; $i ++) {
 		$person_info->get_person_infos ( $personen_ids_arr [$i] ['PERSON_MIETVERTRAG_PERSON_ID'] );
@@ -1015,11 +1015,11 @@ function uebersicht_einheit_alt($einheit_id) {
 		if (! empty ( $mieter_details )) {
 			echo "<br>$mieter_details";
 		}
-		echo "<br>Anzahl Vertr�ge:  $person_anzahl_mvs<br>";
-		echo "Aktuelle Vertr�ge:<br>";
+		echo "<br>Anzahl Verträge:  $person_anzahl_mvs<br>";
+		echo "Aktuelle Verträge:<br>";
 		echo "$aktuelle_einheit_link<br>";
 		if (! empty ( $alte_einheit_link )) {
-			echo "Alte Vertr�ge:<br>";
+			echo "Alte Verträge:<br>";
 			echo "$alte_einheit_link<br>";
 		}
 	}
@@ -1038,7 +1038,7 @@ function uebersicht_einheit_alt($einheit_id) {
 	} else {
 		echo "<p class=rot>Keine Vormieter</p>";
 	}
-	echo "<hr><a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_kurz&einheit_id=$einheit_id\">Alle Mietvertr�ge von $einheit_kurzname</a>";
+	echo "<hr><a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_kurz&einheit_id=$einheit_id\">Alle Mietverträge von $einheit_kurzname</a>";
 	echo "</div>";
 	
 	/* Wenn die Wohnung z.Zeit vermietet ist, dann Vertragsdaten anzeigen */
@@ -1069,7 +1069,7 @@ function uebersicht_einheit_alt($einheit_id) {
 		if (! empty ( $mietvertrag_bis )) {
 			$mietvertrag_bis_datum = date_mysql2german ( $mietvertrag_bis );
 			if ($mietvertrag_bis_datum == '00.00.0000') {
-				echo "AUSZUG: <b>ungek�ndigt</b><br>";
+				echo "AUSZUG: <b>ungekündigt</b><br>";
 				echo "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_beenden&mietvertrag_id=$mietvertrag_id\">VERTRAG BEENDEN</a><br>";
 			} else {
 				echo "AUSZUG: <p class=auszug_bald>$mietvertrag_bis_datum</p>";
@@ -1084,7 +1084,7 @@ function uebersicht_einheit_alt($einheit_id) {
 		 */
 		echo "<hr>";
 		echo "<a href=\"?daten=kautionen&option=kautionen_buchen&mietvertrag_id=$mietvertrag_id\">Kautionen buchen</a><hr>";
-		echo "<a href=\"?daten=kautionen&option=hochrechner&mietvertrag_id=$mietvertrag_id\">Kautionsh�he hochrechnen</a><hr>";
+		echo "<a href=\"?daten=kautionen&option=hochrechner&mietvertrag_id=$mietvertrag_id\">Kautionshöhe hochrechnen</a><hr>";
 		// ###DETAILS ZUM VERTRAG
 		$mv_details_info = new details ();
 		$mv_details_arr = $mv_details_info->get_details ( MIETVERTRAG, $mietvertrag_id );
@@ -1126,19 +1126,19 @@ function uebersicht_einheit_alt($einheit_id) {
 		echo "<br><br><hr><span class=\"font_balken_uberschrift\"><b>MIETE</b></span><hr><b>Forderungen</b><br>";
 		$forderungen_arr = $buchung->aktuelle_forderungen_array ( $mietvertrag_id );
 		for($i = 0; $i < count ( $forderungen_arr ); $i ++) {
-			echo "" . $forderungen_arr [$i] ['KOSTENKATEGORIE'] . " " . $forderungen_arr [$i] ['BETRAG'] . " �<br>";
+			echo "" . $forderungen_arr [$i] ['KOSTENKATEGORIE'] . " " . $forderungen_arr [$i] ['BETRAG'] . " €<br>";
 		}
 		$summe_forderungen_aktuell = $buchung->summe_forderung_monatlich ( $mietvertrag_id, $monat, $jahr );
-		echo "<hr>Summe Forderungen: $summe_forderungen_aktuell �";
+		echo "<hr>Summe Forderungen: $summe_forderungen_aktuell €";
 		// echo "<b><a href=\"?daten=mietkonten_blatt&anzeigen=forderung_aus_monat&mietvertrag_id=$mietvertrag_id&monat=$vormonat&jahr=$jahr\">Forderungen Vormonat</a><hr>";
 		
 		$summe_zahlungen = $buchung->summe_zahlung_monatlich ( $mietvertrag_id, $buchung->monat_heute, $buchung->jahr_heute );
-		echo "<hr>Summe Zahlungen: $summe_zahlungen �<hr>";
+		echo "<hr>Summe Zahlungen: $summe_zahlungen €<hr>";
 		
 		$a = new miete ();
 		$a->mietkonto_berechnung ( $mietvertrag_id );
 		
-		echo "SALDO: $a->erg �<hr>";
+		echo "SALDO: $a->erg €<hr>";
 		echo "</div><div class=\"div balken4\" align=\"right\"><span class=\"font_balken_uberschrift\">MIETE $monat $jahr</span><hr />";
 		echo "<span class=\"font_balken_uberschrift\">MIETKONTENBLATT</span><hr>";
 		iframe_start_skaliert ( 290, 550 );
@@ -1171,11 +1171,11 @@ function uebersicht_einheit_alt($einheit_id) {
  * #echo "</pre>";
  * ###########################
  *
- * /*echo "<p class=formular_tabelle align=center>�BERSICHT $einheit_objekt_name -> $einheit_haus_strasse $einheit_haus_nr -> $einheit_kurzname -> $einheit_lage</p>";
+ * /*echo "<p class=formular_tabelle align=center>ÜBERSICHT $einheit_objekt_name -> $einheit_haus_strasse $einheit_haus_nr -> $einheit_kurzname -> $einheit_lage</p>";
  * echo "<p class=formular_tabelle>";
  * #echo "Objekt:-> $einheit_objekt_name<br>";
  * #echo "Haus:-> $einheit_haus_strasse $einheit_haus_nr<br>";
- * #echo "Einheit:-> $einheit_kurzname LAGE: $einheit_lage QM: $einheit_qm m�<br>";
+ * #echo "Einheit:-> $einheit_kurzname LAGE: $einheit_lage QM: $einheit_qm m²<br>";
  * #echo "Mietvertraege zur Einheit:-> $einheit_kurzname :-> $anzahl_mietvertraege<br>";
  * #echo "Mietvertrag Aktuell :-> ID: $mietvertrag_id VON: $mietvertrag_von BIS: $mietvertrag_id<br>";
  * #echo "Im Aktuellen MV befinden sich $anzahl_personen_im_mv Person (-en)<br>";

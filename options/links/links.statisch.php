@@ -21,7 +21,7 @@ include_once ("classes/mietkonto_class.php");
 $mieten = new mietkonto ();
 
 echo "<div class=\"navi_leiste1\">";
-$mieten->erstelle_formular ( "Hauptmen�...", NULL );
+$mieten->erstelle_formular ( "Hauptmenü...", NULL );
 
 if (check_user_links ( $_SESSION ['benutzer_id'], 'partner' )) {
 	echo "<b>| </b>&nbsp;<a href=\"?daten=partner\">Partner/Lieferant</a>&nbsp;<b>| </b>&nbsp;";
@@ -32,7 +32,7 @@ if (check_user_links ( $_SESSION ['benutzer_id'], 'objekte_raus' )) {
 }
 
 if (check_user_links ( $_SESSION ['benutzer_id'], 'haus_raus' )) {
-	echo "<a href=\"?daten=haus_raus&haus_raus=haus_kurz\">H�user</a>&nbsp;<b>| </b>&nbsp;";
+	echo "<a href=\"?daten=haus_raus&haus_raus=haus_kurz\">Häuser</a>&nbsp;<b>| </b>&nbsp;";
 }
 
 if (check_user_links ( $_SESSION ['benutzer_id'], 'einheit_raus' )) {
@@ -40,7 +40,7 @@ if (check_user_links ( $_SESSION ['benutzer_id'], 'einheit_raus' )) {
 }
 
 if (check_user_links ( $_SESSION ['benutzer_id'], 'mietvertrag_raus' )) {
-	echo "<a href=\"?daten=mietvertrag_raus\">Mietvertr�ge</a>&nbsp;<b>| </b>&nbsp;";
+	echo "<a href=\"?daten=mietvertrag_raus\">Mietverträge</a>&nbsp;<b>| </b>&nbsp;";
 }
 
 if (check_user_links ( $_SESSION ['benutzer_id'], 'person' )) {
@@ -92,7 +92,7 @@ if (check_user_links ( $_SESSION ['benutzer_id'], 'buchen' )) {
 }
 
 if (check_user_links ( $_SESSION ['benutzer_id'], 'leerstand' )) {
-	echo "<a href=\"?daten=leerstand\">Leerst�nde </a>&nbsp;<b>| </b>&nbsp;";
+	echo "<a href=\"?daten=leerstand\">Leerstände </a>&nbsp;<b>| </b>&nbsp;";
 }
 
 if (check_user_links ( $_SESSION ['benutzer_id'], 'statistik' )) {
@@ -104,7 +104,7 @@ if (check_user_links ( $_SESSION ['benutzer_id'], 'zeiterfassung' )) {
 }
 
 if (check_user_links ( $_SESSION ['benutzer_id'], 'ueberweisung' )) {
-	echo "<a href=\"?daten=ueberweisung\">�berweisung </a>&nbsp;<b>| </b>&nbsp;";
+	echo "<a href=\"?daten=ueberweisung\">Überweisung </a>&nbsp;<b>| </b>&nbsp;";
 }
 
 if (check_user_links ( $_SESSION ['benutzer_id'], 'urlaub' )) {
@@ -168,7 +168,7 @@ echo "<a target=\"_new\" href=\"http://www.hausverwaltung.de/software/schnellein
 if (check_user_links ( $_SESSION ['benutzer_id'], 'buchen' )) {
 	echo "<a href=\"?daten=dbbackup\">DB sichern </a>&nbsp;";
 }
-// echo "<a href=\"?formular=haus&daten_rein=aendern_liste\">Haus �ndern/l�schen</a>&nbsp;";
+// echo "<a href=\"?formular=haus&daten_rein=aendern_liste\">Haus ändern/löschen</a>&nbsp;";
 $mieten->ende_formular ();
 echo "</div>";
 

@@ -18,7 +18,7 @@
  *
  */
 $form = new formular ();
-$form->fieldset ( "Kundenwebmen�", 'kundenweb_links' );
+$form->fieldset ( "Kundenwebmenü", 'kundenweb_links' );
 echo "<div class=\"navi_leiste2\">&nbsp;&nbsp;";
 echo "<a href=\"?daten=kundenweb&option=neuer_benutzer\">Neuer Kundenweb-Benutzer</a>&nbsp;";
 echo "<a href=\"?daten=kundenweb\">Benutzerverwaltung</a>&nbsp;";

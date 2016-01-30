@@ -227,7 +227,7 @@ RWALTUNG?3076000000?3176001601?32BUNDESAGENTUR FUER ARBEIT?34000
 			$rest = substr ( $rest, $this->pos_betrag, 34 );
 			// echo "REST3 $rest<br>";
 			$waehrung_iso = substr ( $rest, 6, 3 );
-			// echo "W�HRUNG $waehrung_iso<br>";
+			// echo "WÄHRUNG $waehrung_iso<br>";
 			$laenge_rest = strlen ( $rest );
 			$rest = substr ( $rest, 9, $laenge_rest );
 			// echo "REST3 $rest<br>";
@@ -447,7 +447,7 @@ else {
 		$rest = substr ( $rest, $this->pos_betrag, 34 );
 		// echo "REST3 $rest<br>";
 		$waehrung_iso = substr ( $rest, 6, 3 );
-		// echo "W�HRUNG $waehrung_iso<br>";
+		// echo "WÄHRUNG $waehrung_iso<br>";
 		$laenge_rest = strlen ( $rest );
 		$rest = substr ( $rest, 9, $laenge_rest );
 		// echo "REST3 $rest<br>";

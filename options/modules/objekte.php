@@ -21,7 +21,7 @@
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'objekte_raus' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -29,10 +29,10 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'objekte_raus' )) {
 	die ();
 }
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
 
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
 include_once ("options/links/links.form_objekte.php");
 
 $daten = $_REQUEST ["daten"];
@@ -61,7 +61,7 @@ switch ($objekte_raus) {
 				weiterleiten ( '?daten=objekte_raus&objekte_raus=objekte_kurz' );
 			}
 		} else {
-			echo "DATEN UNVOLLST�NDIG";
+			echo "DATEN UNVOLLSTÄNDIG";
 		}
 		break;
 	
@@ -80,7 +80,7 @@ switch ($objekte_raus) {
 				weiterleiten ( '?daten=objekte_raus&objekte_raus=objekte_kurz' );
 			}
 		} else {
-			echo "DATEN UNVOLLST�NDIG";
+			echo "DATEN UNVOLLSTÄNDIG";
 		}
 		break;
 	
@@ -89,7 +89,7 @@ switch ($objekte_raus) {
 			$o = new objekt ();
 			$o->pdf_checkliste ( $_REQUEST [objekt_id] );
 		} else {
-			echo "Objekt ausw�hlen";
+			echo "Objekt auswählen";
 		}
 		break;
 	
@@ -98,7 +98,7 @@ switch ($objekte_raus) {
 			$o = new objekt ();
 			$o->pdf_mietaufstellung ( $_REQUEST ['objekt_id'] );
 		} else {
-			echo "Objekt ausw�hlen";
+			echo "Objekt auswählen";
 		}
 		break;
 	
@@ -111,7 +111,7 @@ switch ($objekte_raus) {
 				$o = new objekt ();
 				$o->pdf_mietaufstellung_m_j ( $objekt_id, $monat, $jahr );
 			} else {
-				echo "Monat und Jahr w�hlen";
+				echo "Monat und Jahr wählen";
 			}
 		}
 		break;
@@ -124,7 +124,7 @@ switch ($objekte_raus) {
 				$o = new objekt ();
 				$o->pdf_mietaufstellung_j ( $objekt_id, $jahr );
 			} else {
-				echo "Monat und Jahr w�hlen";
+				echo "Monat und Jahr wählen";
 			}
 		}
 		break;
@@ -155,14 +155,14 @@ switch ($objekte_raus) {
 				$o->objekt_kopieren ( $objekt_id, $eigentuemer_id, $objekt_kurzname, $vorzeichen, $datum_u, 0 );
 			}
 		} else {
-			fehlermeldung_ausgeben ( "Bitte alle felder ausf�llen!" );
+			fehlermeldung_ausgeben ( "Bitte alle felder ausfüllen!" );
 		}
 		break;
 	
 	/* Sollmieten Zeitraum Formular */
 	case "sollmieten_zeitraum_form" :
 		$f = new formular ();
-		$f->erstelle_formular ( 'Vereinbarte Nettosollmieten f�r Zeitraum', null );
+		$f->erstelle_formular ( 'Vereinbarte Nettosollmieten für Zeitraum', null );
 		// $f->fo
 		// $mv = new mietvertraege();
 		// $mv->mieten_tabelle(4, '2011-12-01', '2012-11-31');
@@ -212,7 +212,7 @@ switch ($objekte_raus) {
 		if (! empty ( $_POST ['weg_qm'] )) {
 			$qm = $_POST ['weg_qm'];
 			$d = new detail ();
-			$d->detail_speichern_2 ( 'EINHEIT', $einheit_id, 'WEG-Fl�che', $_POST ['weg_qm'], 'Importiert' );
+			$d->detail_speichern_2 ( 'EINHEIT', $einheit_id, 'WEG-Fläche', $_POST ['weg_qm'], 'Importiert' );
 		}
 		
 		if (! empty ( $_POST ['weg_mea'] )) {
@@ -222,8 +222,8 @@ switch ($objekte_raus) {
 		
 		$weg = new weg ();
 		$ihr = nummer_punkt2komma ( 0.4 * nummer_komma2punkt ( $qm ) );
-		$weg->wohngeld_def_speichern ( '01.01.2014', '00.00.0000', $ihr, 'Instandhaltungsr�cklage', 6030, 'Hausgeld', 6000, $einheit_id );
-		$weg->wohngeld_def_speichern ( '01.01.2014', '00.00.0000', 30, 'WEG-Verwaltergeb�hr', 6060, 'Hausgeld', 6000, $einheit_id );
+		$weg->wohngeld_def_speichern ( '01.01.2014', '00.00.0000', $ihr, 'Instandhaltungsrücklage', 6030, 'Hausgeld', 6000, $einheit_id );
+		$weg->wohngeld_def_speichern ( '01.01.2014', '00.00.0000', 30, 'WEG-Verwaltergebühr', 6060, 'Hausgeld', 6000, $einheit_id );
 		
 		weiterleiten ( "index.php?daten=objekte_raus&objekte_raus=import" );
 		break;
@@ -296,7 +296,7 @@ switch ($objekte_raus) {
 			$pdf_opt ['Content-Disposition'] = "Stammdaten_" . $oo->objekt_kurzname . '_' . date ( "d.m.Y" ) . '.pdf';
 			$pdf->ezStream ( $pdf_opt );
 		} else {
-			fehlermeldung_ausgeben ( "Objekt w�hlen" );
+			fehlermeldung_ausgeben ( "Objekt wählen" );
 		}
 		break;
 	
@@ -382,11 +382,11 @@ function objekte_kurz() {
 		
 		// echo "<table class=\"sortable\">\n";
 		// echo "<tr class=\"feldernamen\"><td colspan=4>Objektliste</td></tr>\n";
-		// echo "<tr class=\"feldernamen\"><td width=200>Objektname</td><td width=100>Gesamtfl�che</td><td colspan=2>Zusatzinformationen</td></tr>\n";
+		// echo "<tr class=\"feldernamen\"><td width=200>Objektname</td><td width=100>Gesamtfläche</td><td colspan=2>Zusatzinformationen</td></tr>\n";
 		// echo "</table>";
 		iframe_start ();
 		echo "<table class=\"sortable\">\n";
-		echo "<tr><th>Objekt</th><th>FL�CHE</th><th>H�USER</th><th>Einheiten</th><th>INFOS</th><th colspan=\"9\"></th></tr>";
+		echo "<tr><th>Objekt</th><th>FLÄCHE</th><th>HÄUSER</th><th>Einheiten</th><th>INFOS</th><th colspan=\"9\"></th></tr>";
 		$counter = 0;
 		while ( list ( $OBJEKT_ID, $OBJEKT_KURZNAME ) = mysql_fetch_row ( $resultat ) ) {
 			$anzahl_haeuser = anzahl_haeuser_im_objekt ( $OBJEKT_ID );
@@ -398,7 +398,7 @@ function objekte_kurz() {
 			} else {
 				$detail_link = "<a href=\"?daten=details&option=details_hinzu&detail_tabelle=OBJEKT&detail_id=$OBJEKT_ID\">Neues Detail</a>";
 			}
-			$aendern_link = "<a href=\"?daten=objekte_raus&objekte_raus=objekt_aendern&objekt_id=$OBJEKT_ID\">�ndern</a>";
+			$aendern_link = "<a href=\"?daten=objekte_raus&objekte_raus=objekt_aendern&objekt_id=$OBJEKT_ID\">Ändern</a>";
 			$haus_neu_link = "<a href=\"index.php?formular=haus&daten_rein=haus_neu&objekt_id=$OBJEKT_ID\">Haus erstellen</a>";
 			$check_liste_link = "<a href=\"?daten=objekte_raus&objekte_raus=checkliste&objekt_id=$OBJEKT_ID\">Checkliste HW</a>";
 			$mietaufstellung_link = "<a href=\"?daten=objekte_raus&objekte_raus=mietaufstellung&objekt_id=$OBJEKT_ID\">Mietaufstellung</a>";
@@ -413,7 +413,7 @@ function objekte_kurz() {
 			$link_stammdaten = "<a href=\"?daten=objekte_raus&objekte_raus=stammdaten_pdf&objekt_id=$OBJEKT_ID\"><img src=\"css/pdf.png\"></a>";
 			$vorjahr = date ( "Y" ) - 1;
 			$link_sollist = "<a href=\"?daten=objekte_raus&objekte_raus=mietaufstellung_j&objekt_id=$OBJEKT_ID&jahr=$vorjahr\">SOLL/IST $vorjahr</a>";
-			echo "<tr class=\"zeile$counter\"><td>$OBJEKT_KURZNAME<br>$link_stammdaten</td><td>$flaeche m�</td><td sorttable_customkey=\"$anzahl_haeuser\"><a  href=\"?daten=haus_raus&haus_raus=haus_kurz&objekt_id=$OBJEKT_ID\">H�userliste (<b>$anzahl_haeuser</b>)</a>  $haus_neu_link</td><td><a href=\"?daten=einheit_raus&einheit_raus=einheit_kurz&objekt_id=$OBJEKT_ID\">Einheitenliste</a></td><td>$detail_link</td><td>$aendern_link</td><td>$check_liste_link</td><td>$mietaufstellung_link</td><td>$mietaufstellung_link_m_j</td><td>$mietaufstellung_link_m_j_xls</td><td>$alle_mietkontenblatt_link</td><td>$link_mieterliste</td><td>$link_mieteremail</td><td>$link_sollist</td></tr>";
+			echo "<tr class=\"zeile$counter\"><td>$OBJEKT_KURZNAME<br>$link_stammdaten</td><td>$flaeche m²</td><td sorttable_customkey=\"$anzahl_haeuser\"><a  href=\"?daten=haus_raus&haus_raus=haus_kurz&objekt_id=$OBJEKT_ID\">Häuserliste (<b>$anzahl_haeuser</b>)</a>  $haus_neu_link</td><td><a href=\"?daten=einheit_raus&einheit_raus=einheit_kurz&objekt_id=$OBJEKT_ID\">Einheitenliste</a></td><td>$detail_link</td><td>$aendern_link</td><td>$check_liste_link</td><td>$mietaufstellung_link</td><td>$mietaufstellung_link_m_j</td><td>$mietaufstellung_link_m_j_xls</td><td>$alle_mietkontenblatt_link</td><td>$link_mieterliste</td><td>$link_mieteremail</td><td>$link_sollist</td></tr>";
 			
 			if ($counter == 2) {
 				$counter = 0;

@@ -45,7 +45,7 @@ function erstelle_button($name, $wert, $onclick) {
 	echo "<input type=\"button\" name=\"$name\" value=\"$wert\" onclick=\"\">";
 }
 function erstelle_back_button() {
-	echo "<input type=\"button\" name=\"zurueck\" value=\"Abbrechen und Zur�ck\" onclick=\"javascript:history.back()\" class=\"buttons\">";
+	echo "<input type=\"button\" name=\"zurueck\" value=\"Abbrechen und Zurück\" onclick=\"javascript:history.back()\" class=\"buttons\">";
 }
 function erstelle_eingabefeld($beschreibung, $name, $wert, $size) {
 	echo "<tr><td>$beschreibung:</td><td><input type=\"text\" name=\"$name\" value=\"$wert\" size=\"$size\"></td></tr>\n";
@@ -92,7 +92,7 @@ function liste_aktueller_objekte_edit() {
 	$db_abfrage = "SELECT OBJEKT_DAT, OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC ";
 	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 	while ( list ( $OBJEKT_DAT, $OBJEKT_ID, $OBJEKT_KURZNAME ) = mysql_fetch_row ( $resultat ) )
-		echo "$OBJEKT_KURZNAME - <a href=?formular=objekte&daten_rein=aendern&obj_id=$OBJEKT_ID>Edit </a> - <a href=?formular=objekte&daten_rein=loeschen&obj_dat=$OBJEKT_DAT>L�schen</a><br>\n";
+		echo "$OBJEKT_KURZNAME - <a href=?formular=objekte&daten_rein=aendern&obj_id=$OBJEKT_ID>Edit </a> - <a href=?formular=objekte&daten_rein=loeschen&obj_dat=$OBJEKT_DAT>Löschen</a><br>\n";
 }
 function objekt_zum_aendern_holen($obj_id) {
 	$db_abfrage = "SELECT OBJEKT_DAT, OBJEKT_ID, OBJEKT_AKTUELL, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_ID='$obj_id' ORDER BY OBJEKT_DAT DESC LIMIT 0,1";
@@ -103,7 +103,7 @@ function objekt_zum_aendern_holen($obj_id) {
 		echo "<input type=\"hidden\" name=\"objekt_dat\" value=\"$OBJEKT_DAT\"><br>\n";
 		echo "<input type=\"text\" name=\"objekt_kurzname\" value=\"$OBJEKT_KURZNAME\" size=\"20\"><br>\n";
 	}
-	erstelle_submit_button ( "submit_update_objekt", "�ndern" );
+	erstelle_submit_button ( "submit_update_objekt", "Ändern" );
 	ende_formular ();
 }
 function objekt_update_kurzname($obj_dat, $obj_id, $obj_kurzname) {
@@ -129,7 +129,7 @@ function objekt_loeschen($obj_dat) {
 function objekt_liste_dropdown() {
 	$db_abfrage = "SELECT OBJEKT_DAT, OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC ";
 	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-	echo "<b>Objekt ausw�hlen:</b><br>\n ";
+	echo "<b>Objekt auswählen:</b><br>\n ";
 	echo "<select name=\"haus_objekt\" size=\"1\">\n";
 	while ( list ( $OBJEKT_DAT, $OBJEKT_ID, $OBJEKT_KURZNAME ) = mysql_fetch_row ( $resultat ) ) {
 		echo "<option value=\"$OBJEKT_ID\">$OBJEKT_KURZNAME</option>\n";
@@ -137,7 +137,7 @@ function objekt_liste_dropdown() {
 	echo "</select><br>";
 }
 function detail_drop_down_kategorie() {
-	echo "<tr><td>Detailzugeh�rigkeit:</td><td> <select name=\"bereich_kategorie\" size=\"1\">\n";
+	echo "<tr><td>Detailzugehörigkeit:</td><td> <select name=\"bereich_kategorie\" size=\"1\">\n";
 	echo "<option value=\"OBJEKT\">OBJEKT</option>\n";
 	echo "<option value=\"HAUS\">HAUS</option>\n";
 	echo "<option value=\"EINHEIT\">EINHEIT</option>\n";
@@ -155,7 +155,7 @@ function detail_drop_down_kategorie_db() {
 		fehlermeldung_ausgeben ( "Keine Hauptkategorien" );
 		erstelle_back_button;
 	} else {
-		echo "<tr><td>Detailzugeh�rigkeit:</td><td> <select name=\"bereich_kategorie\" size=\"1\">\n";
+		echo "<tr><td>Detailzugehörigkeit:</td><td> <select name=\"bereich_kategorie\" size=\"1\">\n";
 		while ( list ( $DETAIL_KAT_ID, $DETAIL_KAT_NAME ) = mysql_fetch_row ( $resultat ) ) {
 			echo "<option value=\"$DETAIL_KAT_ID\">$DETAIL_KAT_NAME</option>\n";
 		}
@@ -165,7 +165,7 @@ function detail_drop_down_kategorie_db() {
 function objekt_auswahl_form() {
 	erstelle_formular ( NULL, NULL );
 	objekt_liste_dropdown ();
-	erstelle_submit_button ( "submit_objekt_auswahl", "Ausw�hlen" );
+	erstelle_submit_button ( "submit_objekt_auswahl", "Auswählen" );
 	ende_formular ();
 }
 function haeuser_liste_dropdown($obj_id) {
@@ -175,7 +175,7 @@ function haeuser_liste_dropdown($obj_id) {
 	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 	$numrows = mysql_numrows ( $resultat );
 	if ($numrows < 1) {
-		echo "<h2 class=\"fehler\">Keine H�user im ausgew�hlten Objekt</h2><br>\n";
+		echo "<h2 class=\"fehler\">Keine Häuser im ausgewählten Objekt</h2><br>\n";
 		echo "Erst Haus im Objekt anlegen - <a href=\"?formular=haus&daten_rein=anlegen\">Hauseningabe hier&nbsp;</a>\n<br>\n";
 	} else {
 		echo "<select name=\"haeuser\" size=\"1\">\n";
@@ -194,7 +194,7 @@ function einheit_eingabe_form($haus_id) {
 	erstelle_hiddenfeld ( "haus_id", "$haus_id" );
 	erstelle_eingabefeld ( "Kurzname", "einheit_kurzname", "", "50" );
 	erstelle_eingabefeld ( "Lage (V1L)", "einheit_lage", "", "50" );
-	erstelle_eingabefeld ( "m�", "einheit_qm", "", "5" );
+	erstelle_eingabefeld ( "m²", "einheit_qm", "", "5" );
 	erstelle_submit_button ( "submit_einheit", "Senden" );
 	ende_formular ();
 }
@@ -224,7 +224,7 @@ function neue_einheit_in_db($haus_id, $einheit_kurzname, $einheit_lage, $einheit
 		$db_abfrage = "INSERT INTO EINHEIT (EINHEIT_DAT, EINHEIT_ID, EINHEIT_QM, EINHEIT_LAGE, HAUS_ID, EINHEIT_AKTUELL, EINHEIT_KURZNAME) VALUES (NULL,'$einheit_id','$einheit_qm', '$einheit_lage', '$haus_id', '1', '$einheit_kurzname')";
 		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 		$dat_neu = letzte_einheit_dat_of_einheit_id ( $einheit_id );
-		hinweis_ausgeben ( "Einheit $_POST[einheit_kurzname] mit der Lage $_POST[einheit_lage] und Gr��e von $_POST[einheit_qm]m� wurde angelegt." );
+		hinweis_ausgeben ( "Einheit $_POST[einheit_kurzname] mit der Lage $_POST[einheit_lage] und Größe von $_POST[einheit_qm]m² wurde angelegt." );
 		protokollieren ( 'EINHEIT', $dat_neu, $dat_alt );
 	}
 }
@@ -237,10 +237,10 @@ function einheit_liste_dropdown($haus_id) {
 	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 	$numrows = mysql_numrows ( $resultat );
 	if ($numrows < 1) {
-		echo "<h2 class=\"fehler\">Keine Einheiten im ausgew�hlten Haus</h2>";
+		echo "<h2 class=\"fehler\">Keine Einheiten im ausgewählten Haus</h2>";
 		echo "<p class=\"hinweis\">Bitte zuerst Einheit im Haus anlegen - <a href=\"?formular=einheit&daten_rein=anlegen\">Einheit anlegen HIER&nbsp;</a></p><br>";
 	} else {
-		echo "<b>Einheit ausw�hlen:</b><br>\n ";
+		echo "<b>Einheit auswählen:</b><br>\n ";
 		echo "<select name=\"einheiten\" size=\"1\">\n";
 		while ( list ( $EINHEIT_ID, $EINHEIT_KURZNAME ) = mysql_fetch_row ( $resultat ) ) {
 			echo "<option value=\"$EINHEIT_ID\">$EINHEIT_KURZNAME</option>\n";
@@ -257,7 +257,7 @@ function einheit_auswahl_form($haus_id) {
 function einheit_auswaehlen($haus_id) {
 	erstelle_formular ( NULL, NULL );
 	einheit_liste_dropdown ( $haus_id );
-	erstelle_submit_button ( "submit_einheit", "Ausw�hlen" );
+	erstelle_submit_button ( "submit_einheit", "Auswählen" );
 	ende_formular ();
 }
 function einheit_aendern_form($einheit_id) {
@@ -270,9 +270,9 @@ function einheit_aendern_form($einheit_id) {
 		erstelle_hiddenfeld ( "haus_id", "$HAUS_ID" );
 		erstelle_eingabefeld ( "Kurzname", "einheit_kurzname", "$EINHEIT_KURZNAME", "50" );
 		erstelle_eingabefeld ( "Lage (V1L)", "einheit_lage", "$EINHEIT_LAGE", "50" );
-		erstelle_eingabefeld ( "m�", "einheit_qm", "$EINHEIT_QM", "5" );
+		erstelle_eingabefeld ( "m²", "einheit_qm", "$EINHEIT_QM", "5" );
 	}
-	erstelle_submit_button ( "aendern_einheit", "�ndern" );
+	erstelle_submit_button ( "aendern_einheit", "Ändern" );
 	ende_formular ();
 }
 function einheit_deaktivieren($einheit_dat) {
@@ -382,7 +382,7 @@ function detail_in_db_eintragen($kat_name, $kat_uname, $bemerkung, $table, $id) 
 	if (isset ( $kat_name ) && isset ( $kat_uname ) && isset ( $table ) && isset ( $id ))
 		
 		// $dat_alt = letzte_detail_dat($table, $id);
-		$dat_alt = "0"; // weil, neues detail hinzugef�gt wurde
+		$dat_alt = "0"; // weil, neues detail hinzugefügt wurde
 	$db_abfrage = "INSERT INTO DETAIL (`DETAIL_DAT`, `DETAIL_ID`, `DETAIL_NAME`, `DETAIL_INHALT`, `DETAIL_BEMERKUNG`, `DETAIL_AKTUELL`, `DETAIL_ZUORDNUNG_TABELLE`, `DETAIL_ZUORDNUNG_ID`) VALUES (NULL, '', '$kat_name', '$kat_uname', '$bemerkung', '1', '$table', '$id')";
 	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 	$dat_neu = letzte_detail_dat ( $table, $id );
@@ -462,13 +462,13 @@ function mietvertrag_form_neu() {
 		personen_liste_multi ();
 		erstelle_eingabefeld ( "Vertragsbeginn)", "mietvertrag_von", "", "10" );
 		erstelle_eingabefeld ( "Vertragsende", "mietvertrag_bis", "", "10" );
-		erstelle_submit_button ( "submit_vertragspartner", "Vertrag abschlie�en!" );
+		erstelle_submit_button ( "submit_vertragspartner", "Vertrag abschließen!" );
 		ende_formular ();
 	}
 	if (isset ( $_REQUEST [submit_vertragspartner] )) {
 		$anzahl_partner = count ( $_REQUEST [PERSON_ID] );
 		if ($anzahl_partner < 1) {
-			fehlermeldung_ausgeben ( "W�hlen Sie Vertragsparteien aus" );
+			fehlermeldung_ausgeben ( "Wählen Sie Vertragsparteien aus" );
 			$error = true;
 		} elseif (empty ( $_REQUEST [mietvertrag_von] )) {
 			fehlermeldung_ausgeben ( "Vertragsbeginn eintragen" );
@@ -479,7 +479,7 @@ function mietvertrag_form_neu() {
 			erstelle_formular ( NULL, NULL ); // name, action
 			$anzahl_partner = count ( $_REQUEST [PERSON_ID] );
 			$einheit_kurzname = einheit_kurzname ( $_REQUEST [einheit_id] );
-			echo "<tr><td><h1>Folgende Daten wurden �bermittelt:\n</h1></td></tr>\n";
+			echo "<tr><td><h1>Folgende Daten wurden übermittelt:\n</h1></td></tr>\n";
 			echo "<tr><td><h2>Einheitkurzname: $einheit_kurzname</h2></td></tr>\n";
 			echo "<tr><td>Vertragsparteien: ";
 			for($a = 0; $a < $anzahl_partner; $a ++) {
@@ -495,7 +495,7 @@ function mietvertrag_form_neu() {
 			echo "<tr><td>Bis: $vertrag_bis</td></tr>";
 			echo "<tr><td>";
 			// print_r($_POST);
-			warnung_ausgeben ( "Sind Sie sicher, da� Sie diesen Mietvertrag abschlie�en m�chten?" );
+			warnung_ausgeben ( "Sind Sie sicher, daß Sie diesen Mietvertrag abschließen möchten?" );
 			echo "</td></tr>";
 			erstelle_hiddenfeld ( "einheit_id", "" . $_REQUEST [einheit_id] . "" );
 			erstelle_hiddenfeld ( "mietvertrag_von", "" . $_REQUEST [mietvertrag_von] . "" );

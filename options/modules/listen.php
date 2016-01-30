@@ -18,7 +18,7 @@
  * 
  */
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'listen' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -28,9 +28,9 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'listen' )) {
 
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
 include_once ("options/links/links.listen.php");
 include_once ("classes/class_listen.php");
 include_once ("classes/class_sepa.php");
@@ -44,7 +44,7 @@ if (isset ( $_REQUEST ["option"] )) {
 switch ($option) {
 	
 	default :
-		echo "Bitte w�hlen!";
+		echo "Bitte wählen!";
 		break;
 	
 	case "mieterliste_aktuell" :
@@ -168,7 +168,7 @@ switch ($option) {
 				$lang = 'de';
 			}
 			
-			/* Vorschlag zur �berweisung */
+			/* Vorschlag zur überweisung */
 			$uebersicht_arr = $li->inspiration_sepa_arr ( 0, $_SESSION ['objekt_id'], $monat, $jahr, $lang );
 			// $li->sepa_ueberweisung_anzeigen($uebersicht_arr);
 			$li->form_sepa_ueberweisung_anzeigen ( $uebersicht_arr );
@@ -185,7 +185,7 @@ switch ($option) {
 			$li = new listen ();
 			$li->form_sepa_ueberweisung_et ( $e_id, $betrag );
 		} else {
-			fehlermeldung_ausgeben ( "Eigent�mer und Betrag fehlen!!" );
+			fehlermeldung_ausgeben ( "Eigentümer und Betrag fehlen!!" );
 		}
 		break;
 	
@@ -224,7 +224,7 @@ switch ($option) {
 			$sep = new sepa ();
 			$sep->sepa_sammler_anzeigen ( $_SESSION ['geldkonto_id'], 'ET-AUSZAHLUNG' );
 		} else {
-			fehlermeldung_ausgeben ( "Geldkonto w�hlen" );
+			fehlermeldung_ausgeben ( "Geldkonto wählen" );
 		}
 		break;
 	
@@ -363,7 +363,7 @@ switch ($option) {
 		
 		break;
 	
-	/* Profil f�r ein Objekt anlegen */
+	/* Profil für ein Objekt anlegen */
 	case "profil_neu" :
 		$l = new listen ();
 		$l->form_profil_neu ();
@@ -372,7 +372,7 @@ switch ($option) {
 	case "step2" :
 		// echo '<pre>';
 		if (! isset ( $_POST )) {
-			fehlermeldung_ausgeben ( 'Profilformular ausf�llen!!!' );
+			fehlermeldung_ausgeben ( 'Profilformular ausfüllen!!!' );
 		} else {
 			if (isset ( $_POST ['kurz_b'] ) && isset ( $_POST ['objekt_id'] ) && isset ( $_POST ['gk_id'] ) && isset ( $_POST ['p_id'] )) {
 				$kurz_b = $_POST ['kurz_b'];
@@ -423,7 +423,7 @@ switch ($option) {
 			$profil_id = $_SESSION ['r_profil_id'];
 			weiterleiten ( "?daten=listen&option=profil_edit&profil_id=$profil_id" );
 		} else {
-			fehlermeldung_ausgeben ( "Buchungskonten f�r den Bericht w�hlen!!!" );
+			fehlermeldung_ausgeben ( "Buchungskonten für den Bericht wählen!!!" );
 		}
 		break;
 	
@@ -433,10 +433,10 @@ switch ($option) {
 			$li = new listen ();
 			$li->pruefung_bericht ( $_SESSION ['r_profil_id'] );
 		} else {
-			fehlermeldung_ausgeben ( "Profil w�hlen" );
+			fehlermeldung_ausgeben ( "Profil wählen" );
 		}
 		break;
-	/* Neue PDF �ber Profile */
+	/* Neue PDF über Profile */
 	case "dyn_pdf" :
 		echo '<pre>';
 		// print_r($_POST);
@@ -626,7 +626,7 @@ switch ($option) {
 			echo $string;
 			die ();
 		} else {
-			fehlermeldung_ausgeben ( "Objekte w�hlen!" );
+			fehlermeldung_ausgeben ( "Objekte wählen!" );
 		}
 		break;
 }

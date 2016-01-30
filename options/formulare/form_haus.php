@@ -34,7 +34,7 @@ if (isset ( $_REQUEST ["daten_rein"] )) {
 				// haus_eingabe_formular();
 				objekt_liste_links ();
 			} else {
-				haeuser_liste_tabelle ( $_REQUEST [haus_objekt] ); // rechts die liste der h�user
+				haeuser_liste_tabelle ( $_REQUEST [haus_objekt] ); // rechts die liste der häuser
 				iframe_start ();
 				// echo "$_REQUEST[haus_objekt]";
 				haus_eingabe_formular ( $_REQUEST [haus_objekt] );
@@ -43,9 +43,9 @@ if (isset ( $_REQUEST ["daten_rein"] )) {
 			if (isset ( $_POST ["submit_haus"] )) {
 				foreach ( $_POST as $key => $value ) {
 					if (empty ( $value )) {
-						fehlermeldung_ausgeben ( "Alle felder m�ssen ausgef�llt werden" );
+						fehlermeldung_ausgeben ( "Alle felder müssen ausgefüllt werden" );
 						weiterleiten ( "javascript:history.back()" );
-						// echo "<a href=\"javascript:history.back()\">Zur�ck</a>\n";
+						// echo "<a href=\"javascript:history.back()\">Zurück</a>\n";
 						$error = 1;
 						iframe_end ();
 						break;
@@ -83,18 +83,18 @@ if (isset ( $_REQUEST ["daten_rein"] )) {
 					$h->haus_speichern ( $_POST ['strasse'], $_POST ['haus_nr'], $_POST ['ort'], $_POST ['plz'], $_POST ['qm'], $_POST ['objekt_id'] );
 					weiterleiten ( "?daten=haus_raus&haus_raus=haus_kurz&objekt_id=$_POST[objekt_id]" );
 				} else {
-					echo "Daten unvollst�ndig";
+					echo "Daten unvollständig";
 				}
 			} else {
-				echo "Daten unvollst�ndig";
+				echo "Daten unvollständig";
 			}
 			break;
 		
 		case "aendern_liste" :
 			$form = new mietkonto ();
-			$form->erstelle_formular ( "Haus �ndern", NULL );
+			$form->erstelle_formular ( "Haus ändern", NULL );
 			iframe_start ();
-			echo "<h1>Haus �ndern</h1>";
+			echo "<h1>Haus ändern</h1>";
 			if (! isset ( $_REQUEST ["objekt_id"] )) {
 				objekt_liste_links_aenderung ();
 			}
@@ -109,7 +109,7 @@ if (isset ( $_REQUEST ["daten_rein"] )) {
 				hinweis_ausgeben ( "Objekt: $objekt_kurzname" );
 				hinweis_ausgeben ( "Haus: $haus_kurzname" );
 				haus_aendern_formular ( $_REQUEST ["haus_id"] );
-				haeuser_liste_tabelle ( $_REQUEST ["objekt_id"] ); // rechts die liste der h�user
+				haeuser_liste_tabelle ( $_REQUEST ["objekt_id"] ); // rechts die liste der häuser
 			}
 			
 			iframe_end ();
@@ -118,13 +118,13 @@ if (isset ( $_REQUEST ["daten_rein"] )) {
 		
 		case "aendern" :
 			$form = new mietkonto ();
-			$form->erstelle_formular ( "Haus �ndern", NULL );
+			$form->erstelle_formular ( "Haus ändern", NULL );
 			iframe_start ();
-			echo "<h1>Haus �ndern - Prozedur</h1>";
+			echo "<h1>Haus ändern - Prozedur</h1>";
 			foreach ( $_POST as $key => $value ) {
 				if (! isset ( $value )) {
-					fehlermeldung_ausgeben ( "FEHLER: Alle Felder m�ssen ausgef�llt werden!" );
-					echo "<a href=\"javascript:history.back()\">Zur�ck</a>\n";
+					fehlermeldung_ausgeben ( "FEHLER: Alle Felder müssen ausgefüllt werden!" );
+					echo "<a href=\"javascript:history.back()\">Zurück</a>\n";
 					$error = 1;
 					// echo "ERROR $key $value<br>";
 					break;
@@ -135,12 +135,12 @@ if (isset ( $_REQUEST ["daten_rein"] )) {
 				if (! isset ( $_REQUEST [einheit_update] )) {
 					erstelle_formular ( haus_in_db, NULL ); // name, action
 					$objekt_kurzname = objekt_kurzname ( $_POST ["objekt_id"] );
-					echo "<tr><td><h1>Folgende Daten wurden �bermittelt:\n</h1></td></tr>\n";
+					echo "<tr><td><h1>Folgende Daten wurden übermittelt:\n</h1></td></tr>\n";
 					echo "<tr><td><h2>Objektkurzname: $objekt_kurzname</h2></td></tr>\n";
 					echo "<tr><td><h2>Haus: $_POST[haus_strasse] $_POST[haus_nummer] in $_POST[haus_plz] $_POST[haus_stadt]</h2></td></tr>\n";
 					echo "<tr><td>";
 					// print_r($_POST);
-					warnung_ausgeben ( "Sind Sie sicher, da� Sie das Haus $_POST[haus_strasse] $_POST[haus_nummer] im Objekt $objekt_kurzname  �ndern wollen?" );
+					warnung_ausgeben ( "Sind Sie sicher, daß Sie das Haus $_POST[haus_strasse] $_POST[haus_nummer] im Objekt $objekt_kurzname  ändern wollen?" );
 					echo "</td></tr>";
 					erstelle_hiddenfeld ( "haus_dat", "$_POST[haus_dat]" );
 					erstelle_hiddenfeld ( "haus_id", "$_POST[haus_id]" );
@@ -168,7 +168,7 @@ if (isset ( $_REQUEST ["daten_rein"] )) {
 			break;
 		
 		case "loeschen" :
-			echo "<h1>Haus l�schen</h1>";
+			echo "<h1>Haus löschen</h1>";
 			break;
 	}
 }
@@ -178,7 +178,7 @@ function haus_liste_links_aenderung($objekt_id) {
 	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 	$numrows = mysql_numrows ( $resultat );
 	if ($numrows < 1) {
-		echo "<h2 class=\"fehler\">Keine H�user im ausgew�hlten Objekt</h2><br>\n";
+		echo "<h2 class=\"fehler\">Keine Häuser im ausgewählten Objekt</h2><br>\n";
 		echo "Erst Haus im Objekt anlegen - <a href=\"?formular=haus&daten_rein=anlegen\">Hauseningabe hier&nbsp;</a>\n<br>\n";
 	} else {
 		while ( list ( $HAUS_DAT, $HAUS_ID, $HAUS_STRASSE, $HAUS_NUMMER ) = mysql_fetch_row ( $resultat ) ) {

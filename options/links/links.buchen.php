@@ -19,7 +19,7 @@
  */
 $mieten = new mietkonto ();
 echo "<div class=\"navi_leiste2\">";
-$mieten->erstelle_formular ( "Hauptmen� -> Buchen...", NULL );
+$mieten->erstelle_formular ( "Hauptmenü -> Buchen...", NULL );
 
 echo "<a href=\"?daten=miete_buchen\">Miete Buchen</a>&nbsp;";
 echo "<a href=\"?daten=buchen&option=zahlbetrag_buchen\">Kosten buchen</a>&nbsp;";
@@ -32,8 +32,8 @@ $jahr = date ( "Y" );
 $vorjahr = date ( "Y" ) - 1;
 echo "<a href=\"?daten=buchen&option=buchungs_journal_jahr_pdf&jahr=$jahr\">Buchungsjournal $jahr PDF</a>&nbsp;";
 echo "<a href=\"?daten=buchen&option=buchungs_journal_jahr_pdf&jahr=$vorjahr&xls\">Buchungsjournal $vorjahr XLS</a>&nbsp;";
-echo "<a href=\"?daten=buchen&option=konten_uebersicht\">Konten�bersicht</a>&nbsp;";
-echo "<a href=\"?daten=buchen&option=konto_uebersicht\">Konto�bersicht</a>&nbsp;";
+echo "<a href=\"?daten=buchen&option=konten_uebersicht\">Kontenübersicht</a>&nbsp;";
+echo "<a href=\"?daten=buchen&option=konto_uebersicht\">Kontoübersicht</a>&nbsp;";
 echo "<a href=\"?daten=buchen&option=buchungen_zu_kostenkonto\">Buchungen zu Kostenkonto</a>&nbsp;";
 echo "<a href=\"?daten=buchen&option=monatsbericht_o_a\">Monatsbericht o. Auszug</a>&nbsp;";
 echo "<a href=\"?daten=buchen&option=monatsbericht_m_a\">Monatsbericht m. Auszug</a>&nbsp;";

@@ -7,7 +7,7 @@
 // // www.glowfish.de ////
 // // ////
 // // based on version 1.0 from ////
-// // 05/2004 - G�KHAN SIRIN ////
+// // 05/2004 - GÜKHAN SIRIN ////
 // // WWW.G82.DE ////
 // // madg /at/ g82 /./ de ////
 // ///////////////////////////////////////////////////////
@@ -92,7 +92,7 @@ class dtaus {
 			$o .= $this->nullen ( 13 );
 			$o .= '05000';
 			$o .= $this->leerzeichen ( 1 );
-			// Betrag in DM, muss nach Einf�hrung des Euro 00000000000 sein. Feld C9
+			// Betrag in DM, muss nach Einführung des Euro 00000000000 sein. Feld C9
 			// $o .= $this->nullen(11, $value[3]);
 			$o .= $this->nullen ( 11 );
 			$o .= $this->meineblz;
@@ -179,7 +179,7 @@ class dtaus {
 			// $o .= '05000';
 			$o .= $zahlungsart;
 			$o .= $this->leerzeichen ( 1 );
-			// Betrag in DM, muss nach Einf�hrung des Euro 00000000000 sein. Feld C9
+			// Betrag in DM, muss nach Einführung des Euro 00000000000 sein. Feld C9
 			// $o .= $this->nullen(11, $value[3]);
 			$o .= $this->nullen ( 11 );
 			$o .= $this->meineblz;
@@ -235,14 +235,14 @@ class dtaus {
 	function umlautundgross($wort) {
 		$tmp = strtoupper ( $wort );
 		$suche = array (
-				'�',
-				'�',
-				'�',
-				'�',
-				'�',
-				'�',
-				'�',
-				'�' 
+				'Ä',
+				'Ö',
+				'Ü',
+				'ß',
+				'ä',
+				'ö',
+				'ü',
+				'ß' 
 		);
 		$ersetze = array (
 				'AE',

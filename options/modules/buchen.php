@@ -21,7 +21,7 @@
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! isset ( $_SESSION ['benutzer_id'] ) or ! check_user_mod ( $_SESSION ['benutzer_id'], 'buchen' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -29,15 +29,15 @@ if (! isset ( $_SESSION ['benutzer_id'] ) or ! check_user_mod ( $_SESSION ['benu
 	die ();
 }
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
 
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
 include_once ("options/links/links.buchen.php");
 include_once ("classes/class_buchen.php");
 include_once ("classes/class_rechnungen.php");
 
-/* Pr�fen ob es Buchungen vor einem Jahr gibt und ausgeben */
+/* Prüfen ob es Buchungen vor einem Jahr gibt und ausgeben */
 $bu = new buchen ();
 if ($bu->get_buchungen_vor ( 2005 ) != false) {
 	fehlermeldung_ausgeben ( "Buchungen vor 2005 gefunden (DATUM FALSCH?!?: ANZAHL: " . $bu->get_buchungen_vor ( 2005 ) );
@@ -53,12 +53,12 @@ if (! empty ( $_REQUEST ["option"] )) {
 switch ($option) {
 	
 	/*
-	 * Aufruf des Formulars f�r die
-	 * Buchung der Zahlbetr�ge
+	 * Aufruf des Formulars für die
+	 * Buchung der Zahlbeträge
 	 */
 	case "zahlbetrag_buchen" :
 		$form = new formular ();
-		$form->erstelle_formular ( "Buchungsmaske f�r Zahlbetr�ge", NULL );
+		$form->erstelle_formular ( "Buchungsmaske für Zahlbeträge", NULL );
 		$buchung = new buchen ();
 		$link = "?daten=buchen&option=zahlbetrag_buchen";
 		$buchung->geldkonto_auswahl ( $link );
@@ -71,7 +71,7 @@ switch ($option) {
 	
 	case "geldkonto_aendern" :
 		$form = new formular ();
-		$form->erstelle_formular ( "Geldkonto �ndern", NULL );
+		$form->erstelle_formular ( "Geldkonto ändern", NULL );
 		$buchung = new buchen ();
 		unset ( $_SESSION ['geldkonto_id'] );
 		unset ( $_SESSION ['temp_datum'] );
@@ -90,11 +90,11 @@ switch ($option) {
 		
 		$link_kontoauszug = "<a href=\"?daten=buchen&option=kontoauszug_form\">Kontrolldaten zum Kontoauszug eingeben</a>";
 		$form = new formular ();
-		$form->erstelle_formular ( "Buchungsinformationen pr�fen", NULL );
+		$form->erstelle_formular ( "Buchungsinformationen prüfen", NULL );
 		$kostentraeger_typ = $_POST ['kostentraeger_typ'];
 		$kostentraeger_id = $_POST ['kostentraeger_id'];
 		if (empty ( $kostentraeger_typ ) or empty ( $kostentraeger_id )) {
-			$error = "Fehler - Kostentr�gertyp und Kostentr�ger w�hlen";
+			$error = "Fehler - Kostenträgertyp und Kostenträger wählen";
 		} else {
 			echo "if(empty($kostentraeger_typ) OR empty($kostentraeger_id)){";
 		}
@@ -121,12 +121,12 @@ switch ($option) {
 		}
 		if ($datum != $_SESSION ['temp_datum']) {
 			$link_kontoauszug = "<a href=\"?daten=buchen&option=kontoauszug_form\">Kontrolldaten zum Kontoauszug eingeben</a>";
-			$error = "Sie haben das Buchungsdatum ver�ndert.<br>";
-			$error .= "Bitte die Kontrolldaten zur Kontoauszugsnummer $_SESSION[temp_kontoauszugsnummer] ver�ndern.";
+			$error = "Sie haben das Buchungsdatum verändert.<br>";
+			$error .= "Bitte die Kontrolldaten zur Kontoauszugsnummer $_SESSION[temp_kontoauszugsnummer] verändern.";
 			$error .= "<br>$link_kontoauszug";
 		}
 		if (! check_datum ( $datum )) {
-			$error = "Fehler - Datumsformat �berpr�fen";
+			$error = "Fehler - Datumsformat überprüfen";
 		}
 		$betrag = $_POST ['betrag'];
 		if (empty ( $betrag )) {
@@ -141,7 +141,7 @@ switch ($option) {
 		
 		$geldkonto_id = $_POST ['geldkonto_id'];
 		if (empty ( $geldkonto_id )) {
-			$error = "Fehler - Kein Geldkonto wurde gew�hlt";
+			$error = "Fehler - Kein Geldkonto wurde gewählt";
 		}
 		if (! isset ( $error )) {
 			echo "$kostentraeger_typ - $kostentraeger_id";
@@ -155,8 +155,8 @@ switch ($option) {
 			echo "Kontoauszugsnr: $kto_auszugsnr<br>";
 			echo "Betrag: $betrag<br>";
 			echo "Kostenkonto: $kostenkonto<br>";
-			echo "Kostentr�gertyp $kostentraeger_typ<br>";
-			echo "Kostentr�ger $kostentraeger_id<br>";
+			echo "Kostenträgertyp $kostentraeger_typ<br>";
+			echo "Kostenträger $kostentraeger_id<br>";
 			echo "Buchungstext $vzweck<br></h3>";
 			/*
 			 * $form->hidden_feld("geldkonto_id", "$geldkonto_id");
@@ -180,7 +180,7 @@ switch ($option) {
 				$mwst = '0.00';
 			}
 			// if(is_numeric($kostentraeger_id)){
-			// die('KOSTENTR�GER W�HLEN');
+			// die('KOSTENTRÄGER WÄHLEN');
 			// }
 			$buchung->geldbuchung_speichern ( $datum, $kto_auszugsnr, $rechnungsnr, $betrag, $vzweck, $geldkonto_id, $kostentraeger_typ, $kostentraeger_id, $kostenkonto, $mwst );
 		} else {
@@ -208,7 +208,7 @@ switch ($option) {
 	
 	case "geldbuchung_aendern" :
 		$form = new formular ();
-		$form->erstelle_formular ( "Geldbuchung �ndern", NULL );
+		$form->erstelle_formular ( "Geldbuchung ändern", NULL );
 		$buchung = new buchen ();
 		$geldbuchung_dat = $_REQUEST ['geldbuchung_dat'];
 		$buchung->buchungsmaske_buchung_aendern ( $geldbuchung_dat );
@@ -217,7 +217,7 @@ switch ($option) {
 	
 	case "geldbuchung_aendern1" :
 		$form = new formular ();
-		$form->erstelle_formular ( "Geldbuchung �ndern", NULL );
+		$form->erstelle_formular ( "Geldbuchung ändern", NULL );
 		$buchung = new buchen ();
 		$geldbuchung_dat_alt = $_POST ['buch_dat_alt'];
 		$geldbuchung_id = $_POST ['akt_buch_id'];
@@ -251,13 +251,13 @@ switch ($option) {
 	
 	case "kontoauszug_gesendet" :
 		$form = new formular ();
-		$form->erstelle_formular ( "Kontoauszug tempor�r gespeichert", NULL );
+		$form->erstelle_formular ( "Kontoauszug temporär gespeichert", NULL );
 		$_SESSION ['temp_kontoauszugsnummer'] = $_POST ['kontoauszugsnummer'];
 		$_SESSION ['temp_datum'] = $_POST ['datum'];
 		$_SESSION ['buchungsdatum'] = $_POST ['datum'];
 		$kontostand_punkt = nummer_komma2punkt ( $_POST ['kontostand'] );
 		$_SESSION ['temp_kontostand'] = $kontostand_punkt;
-		echo "Kontoauszugsdaten wurden tempor�r gespeichert.<br>";
+		echo "Kontoauszugsdaten wurden temporär gespeichert.<br>";
 		echo "Sie werden weitergeleitet.";
 		weiterleiten_in_sec ( "?daten=buchen&option=zahlbetrag_buchen", 1 );
 		$form->ende_formular ();
@@ -348,7 +348,7 @@ switch ($option) {
 			$b = new buchen ();
 			$b->buchungsjournal_startzeit_pdf ( $_SESSION [geldkonto_id], $datum );
 		} else {
-			echo "Geldkonto ausw�hlen";
+			echo "Geldkonto auswählen";
 		}
 		
 		break;
@@ -363,14 +363,14 @@ switch ($option) {
 			$b = new buchen ();
 			$b->buchungsjournal_jahr_pdf ( $_SESSION [geldkonto_id], $jahr );
 		} else {
-			echo "Geldkonto ausw�hlen";
+			echo "Geldkonto auswählen";
 		}
 		
 		break;
 	
 	case "reset_kontoauszug" :
 		unset ( $_SESSION [temp_kontoauszugsnummer] );
-		echo "Tempor�re Kontoauszugsnummer wurde gel�scht.<br>";
+		echo "Temporäre Kontoauszugsnummer wurde gelöscht.<br>";
 		echo "Sie werden weitergeleitet.";
 		weiterleiten_in_sec ( '?daten=buchen&option=buchungs_journal', 1 );
 		break;
@@ -378,7 +378,7 @@ switch ($option) {
 	case "buchungsbeleg_ansicht" :
 		$buchungsnr = $_REQUEST ['buchungsnr'];
 		$form = new formular ();
-		$form->erstelle_formular ( "Ansicht Buchungsbeleg f�r Buchungsnummer $buchungsnr", NULL );
+		$form->erstelle_formular ( "Ansicht Buchungsbeleg für Buchungsnummer $buchungsnr", NULL );
 		$b = new buchen ();
 		$b->buchungsbeleg_ansicht ( $buchungsnr );
 		$form->ende_formular ();
@@ -388,13 +388,13 @@ switch ($option) {
 		$b = new buchen ();
 		$link = "?daten=buchen&option=konten_uebersicht";
 		$form = new formular ();
-		$form->fieldset ( "Buchungen -> Kostenkonten�bersicht", 'kostenkonten' );
+		$form->fieldset ( "Buchungen -> Kostenkontenübersicht", 'kostenkonten' );
 		$b->geldkonto_auswahl_menu ( $link );
 		$geldkonto_id = $_SESSION ['geldkonto_id'];
 		if (! empty ( $geldkonto_id )) {
 			$b->buchungskonten_uebersicht ( $geldkonto_id );
 		} else {
-			echo "Geldkonto ausw�hlen";
+			echo "Geldkonto auswählen";
 		}
 		$form->fieldset_ende ();
 		break;
@@ -403,13 +403,13 @@ switch ($option) {
 		$b = new buchen ();
 		$link = "?daten=buchen&option=konten_uebersicht";
 		$form = new formular ();
-		$form->fieldset ( "Buchungen -> Kostenkonten�bersicht als PDF", 'kostenkonten' );
+		$form->fieldset ( "Buchungen -> Kostenkontenübersicht als PDF", 'kostenkonten' );
 		$b->geldkonto_auswahl_menu ( $link );
 		$geldkonto_id = $_SESSION [geldkonto_id];
 		if (! empty ( $geldkonto_id )) {
 			$b->buchungskonten_uebersicht_pdf ( $geldkonto_id );
 		} else {
-			echo "Geldkonto ausw�hlen";
+			echo "Geldkonto auswählen";
 		}
 		$form->fieldset_ende ();
 		break;
@@ -427,7 +427,7 @@ switch ($option) {
 			
 			$weg->kontobuchungen_anzeigen_jahr_xls ( $_SESSION ['geldkonto_id'], $jahr );
 		} else {
-			fehlermeldung_ausgeben ( "Geldkonto w�hlen!!!" );
+			fehlermeldung_ausgeben ( "Geldkonto wählen!!!" );
 		}
 		break;
 	
@@ -435,13 +435,13 @@ switch ($option) {
 		$b = new buchen ();
 		$link = "?daten=buchen&option=konto";
 		$form = new formular ();
-		$form->erstelle_formular ( 'Buchungen -> Kostenkonten�bersicht dynamisch', null );
+		$form->erstelle_formular ( 'Buchungen -> Kostenkontenübersicht dynamisch', null );
 		$b->geldkonto_auswahl_menu ( $link );
 		$geldkonto_id = $_SESSION [geldkonto_id];
 		if (! empty ( $geldkonto_id )) {
 			$b->form_kontouebersicht ();
 		} else {
-			echo "Geldkonto ausw�hlen";
+			echo "Geldkonto auswählen";
 		}
 		$form->fieldset_ende ();
 		break;
@@ -450,7 +450,7 @@ switch ($option) {
 		$b = new buchen ();
 		$link = "?daten=buchen&option=konto";
 		$form = new formular ();
-		$form->fieldset ( "Buchungen -> Kostenkonten�bersicht dynamisch", 'kostenkonten_dyn' );
+		$form->fieldset ( "Buchungen -> Kostenkontenübersicht dynamisch", 'kostenkonten_dyn' );
 		$kostentraeger_typ = $_POST [kostentraeger_typ];
 		$kostentraeger_id = $_POST [kostentraeger_id];
 		$kostenkonto = $_POST [kostenkonto];
@@ -462,7 +462,7 @@ switch ($option) {
 		$form->fieldset_ende ();
 		break;
 	
-	/* Einsicht aller Buchungen zu einem Kostenkonto unabh�ngig vom Geldkonto */
+	/* Einsicht aller Buchungen zu einem Kostenkonto unabhängig vom Geldkonto */
 	case "buchungen_zu_kostenkonto" :
 		$b = new buchen ();
 		$link = "?daten=buchen&option=konto";
@@ -870,9 +870,9 @@ dude',
 	/* CSV Kontoauszug */
 	case "kontoauszug_csv" :
 		$datei = "temp/berlussimo_auszug.csv.csv"; // DATEINAME
-		$tabelle_in_gross = strtoupper ( $datei ); // Tabelle in GRO�BUCHSTABEN
+		$tabelle_in_gross = strtoupper ( $datei ); // Tabelle in GROßBUCHSTABEN
 		$array = file ( $datei ); // DATEI IN ARRAY EINLESEN
-		                       // echo $array[0]; //ZEILE 0 mit �berschriften
+		                       // echo $array[0]; //ZEILE 0 mit Überschriften
 		$anz_zeilen = count ( $array );
 		/* Ausgabe ab 1. zeile */
 		echo "<table class=\"sortable\">";
@@ -887,7 +887,7 @@ dude',
 		}
 		
 		if (empty ( $geldkonto_id ) or empty ( $partner_id )) {
-			fehlermeldung_ausgeben ( 'Geldkonto und Partner w�hlen' );
+			fehlermeldung_ausgeben ( 'Geldkonto und Partner wählen' );
 			die ();
 		}
 		if (isset ( $_REQUEST ['start'] )) {
@@ -992,7 +992,7 @@ dude',
 			require_once "classes/simplexlsx.class.php";
 			$xlsx = new SimpleXLSX ( $_FILES ['file'] ['tmp_name'] );
 			
-			/* Kontost�nde abrufen */
+			/* Kontostände abrufen */
 			$arr_konten = $xlsx->rows ( 4 );
 			// echo '<pre>';
 			// print_r($arr_konten);
@@ -1047,7 +1047,7 @@ dude',
 						}
 					} else {
 						$bez = $arr_konten [$a] [0];
-						die ( fehlermeldung_ausgeben ( "$bez $kto $blz $IBAN nicht gefunden!!!<br>Schreibweise pr�fen!!!" ) );
+						die ( fehlermeldung_ausgeben ( "$bez $kto $blz $IBAN nicht gefunden!!!<br>Schreibweise prüfen!!!" ) );
 					}
 				}
 			}
@@ -1092,7 +1092,7 @@ dude',
 							$arr [$a] ['GK_ID'] = $gk_id;
 							$_SESSION ['umsaetze_ok'] [] = $arr [$a];
 							
-							/* Startdatens�tze */
+							/* Startdatensätze */
 							if ($arr [$a] [1] != $tmp_konto_nr) {
 								$tmp_konto_nr = $arr [$a] [1];
 								$_SESSION ['umsatz_konten_start'] [$gk_id] = count ( $_SESSION ['umsaetze_ok'] );
@@ -1105,7 +1105,7 @@ dude',
 				if (is_array ( $_SESSION ['umsaetze_nok'] ) or is_array ( $_SESSION ['umsaetze_ok'] )) {
 					weiterleiten ( '?daten=buchen&option=excel_buchen_session' );
 				} else {
-					fehlermeldung_ausgeben ( "Keine Daten aus der Importdatei �bernommen!" );
+					fehlermeldung_ausgeben ( "Keine Daten aus der Importdatei übernommen!" );
 				}
 			} else {
 				fehlermeldung_ausgeben ( "Keine Daten in der Importdatei" );
@@ -1230,7 +1230,7 @@ dude',
 						$gk_id = $gk->get_geldkonto_id ( $arr [$a] [0] );
 						if (! $gk_id) {
 							echo "Kein Konto mit BEZ " . $arr [$a] [0] . "<br>";
-							echo "$kto $blz " . $arr [$a] [0] . " pr�fen!!!";
+							echo "$kto $blz " . $arr [$a] [0] . " prüfen!!!";
 						}
 					}
 					if ($gk_id) {
@@ -1286,9 +1286,9 @@ dude',
 								}
 							}
 						}
-						/* �BERWEISUNGSAMMLER SEPA */
+						/* ÜBERWEISUNGSAMMLER SEPA */
 						if ($arr [$a] [13] == 'SEPA-UEBERWEIS.SAMMLER-SOLL') {
-							echo "<b>SEPA-�BERWEISUNG SAMMLER</b>";
+							echo "<b>SEPA-ÜBERWEISUNG SAMMLER</b>";
 							$sep = new sepa ();
 							$ue_arr = $sep->sepa_files_arr ( $gk_id );
 							if (is_array ( $ue_arr )) {
@@ -1307,7 +1307,7 @@ dude',
 							}
 						}
 						
-						/* EINZEL�BERWEISUNGEN HABEN */
+						/* EINZELÜBERWEISUNGEN HABEN */
 						if ($arr [$a] [13] == 'SEPA-UEBERWEIS.HABEN EINZEL') {
 							echo "<b>EINNAHME EINZELBUCHUNG</b><br>";
 							/* Mietzahlungen */
@@ -1328,7 +1328,7 @@ dude',
 							echo $arr [$a] [14] . "<br>"; // vZweck###############################################
 						}
 						
-						/* EINZEL�BERWEISUNGEN DAUERAUFTRAG HABEN */
+						/* EINZELÜBERWEISUNGEN DAUERAUFTRAG HABEN */
 						if ($arr [$a] [13] == 'SEPA Dauerauftragsgutschrift') {
 							echo "<b>DAUERAUFTRAG EINNAHME EINZELBUCHUNG</b>";
 						}
@@ -1390,7 +1390,7 @@ dude',
 	case "sepa_ue_autobuchen" :
 		if (isset ( $_POST )) {
 			if (! isset ( $_SESSION ['geldkonto_id'] )) {
-				fehlermeldung_ausgeben ( "Geldkonto w�hlen" );
+				fehlermeldung_ausgeben ( "Geldkonto wählen" );
 				die ();
 			}
 			
@@ -1460,7 +1460,7 @@ dude',
  * // Es wird downloaded.pdf benannt
  * header('Content-Disposition: attachment; filename="downloaded.pdf"');
  *
- * // Die originale PDF Datei hei�t original.pdf
+ * // Die originale PDF Datei heißt original.pdf
  * readfile('original.pdf');
  */
 ?>

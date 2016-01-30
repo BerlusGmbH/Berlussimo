@@ -20,7 +20,7 @@
 $mieten = new mietkonto ();
 
 echo "<div class=\"navi_leiste2\">";
-$mieten->erstelle_formular ( "Hauptmen� -> Objekte...", NULL );
+$mieten->erstelle_formular ( "Hauptmenü -> Objekte...", NULL );
 echo "<a href=\"?daten=objekte_raus&objekte_raus=objekte_kurz\">Objektliste</a>&nbsp; ";
 echo "<a href=\"?daten=objekte_raus&objekte_raus=objekt_anlegen\">Objekte anlegen</a>&nbsp; ";
 echo "<a href=\"?daten=objekte_raus&objekte_raus=objekt_kopieren\">Objekt kopieren</a>&nbsp; ";

@@ -19,7 +19,7 @@
  */
 $mieten = new mietkonto ();
 echo "<div class=\"navi_leiste2\">";
-$mieten->erstelle_formular ( "Hauptmen� -> Personen...", NULL );
+$mieten->erstelle_formular ( "Hauptmenü -> Personen...", NULL );
 echo "<a href=\"?daten=person&anzeigen=alle_personen\">Personenliste</a>&nbsp;";
 echo "<a href=\"?daten=person&anzeigen=person_erfassen\">Neue Person</a>&nbsp;";
 echo "<a href=\"?daten=person&anzeigen=person_hinweis\">Personen mit Hinweisen</a>&nbsp;";

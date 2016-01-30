@@ -50,7 +50,7 @@ if (! FTP_SERVER == "") {
 	$login_result = ftp_login ( $connection_id, FTP_USER, FTP_PASSWORD );
 	if ((! $connection_id) || (! $login_result)) {
 		echo "<H1>Ftp-Verbindung nicht hergestellt!<H1>";
-		echo "<P>Verbindung mit FTP-Server nicht m�glich!</P>";
+		echo "<P>Verbindung mit FTP-Server nicht möglich!</P>";
 		die ();
 	} else {
 		echo "<P>Verbunden mit FTP-Server</P>";

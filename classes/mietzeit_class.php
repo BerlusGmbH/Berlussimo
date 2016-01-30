@@ -87,7 +87,7 @@ class miete {
 		/* Saldo Vortrag vorhanden, dann ab Saldo VV rechnen */
 		// echo $datum_saldo_vv;
 		if (! empty ( $datum_saldo_vv )) {
-			/* Saldo Vorvertrag mit 1. Zahlung vergleichen, �lteres nehmen */
+			/* Saldo Vorvertrag mit 1. Zahlung vergleichen, älteres nehmen */
 			$datum_saldo_vv_s = str_replace ( '-', '', $datum_saldo_vv );
 			// $datums_arr[] = $datum_saldo_vv_s;
 			// echo $datum_saldo_vv_s;
@@ -104,7 +104,7 @@ class miete {
 				$datum1_zahlung_s = str_replace ( '-', '', $datum1_zahlung );
 				$datums_arr [] = $datum1_zahlung_s;
 			}
-			/* �lteres w�hlen und als Startdatum setzen */
+			/* älteres wählen und als Startdatum setzen */
 			$anfangs_datum = min ( $datums_arr );
 			$this->start_m = substr ( $anfangs_datum, 4, 2 );
 			$this->start_j = substr ( $anfangs_datum, 0, 4 );
@@ -131,7 +131,7 @@ else {
 			}
 			/* Wenn MD oder 1 Zahlung definiert */
 			if (is_array ( $datums_arr )) {
-				/* �lteres Datum nehmen, da Zahlung vor Definition sein kann */
+				/* älteres Datum nehmen, da Zahlung vor Definition sein kann */
 				$anfangs_datum = min ( $datums_arr );
 				$this->start_m = substr ( $anfangs_datum, 4, 2 );
 				$this->start_j = substr ( $anfangs_datum, 0, 4 );
@@ -510,7 +510,7 @@ else {
 			$datum_mietdefinition = $this->tage_plus ( $datum_saldo_vv_org, 28 );
 		}
 		// die('SxxxIVAC');
-		/* Wenn miete �ber mietentwicklung definiert ist */
+		/* Wenn miete über mietentwicklung definiert ist */
 		if (! empty ( $datum_mietdefinition )) {
 			// echo "DEFINITION $datum_mietdefinition";
 			$datum_mietdefinition = explode ( "-", $datum_mietdefinition );
@@ -679,7 +679,7 @@ else {
 		if ($datum_mietdefinition1 > $datum1_zahlung1) {
 			$datum_mietdefinition = $datum1_zahlung;
 		}
-		/* Wenn miete �ber mietentwicklung definiert ist */
+		/* Wenn miete über mietentwicklung definiert ist */
 		if (! empty ( $datum_mietdefinition )) {
 			// echo "DEFINITION $datum_mietdefinition";
 			$datum_mietdefinition = explode ( "-", $datum_mietdefinition );
@@ -777,7 +777,7 @@ else {
 		}
 	}
 	
-	/* Diese funktion lieferut uns den aktuellen stand und den stand des Vormonats, inkl geleistete Zahlungen usw f�r den MOnatsbericht */
+	/* Diese funktion lieferut uns den aktuellen stand und den stand des Vormonats, inkl geleistete Zahlungen usw für den MOnatsbericht */
 	function mietkonto_berechnung_monatsgenau_OK($mietvertrag_id, $jahr, $monat) {
 		$this->mietvertrag_id = $mietvertrag_id;
 		$this->jahr_aktuell = date ( "Y" );
@@ -928,7 +928,7 @@ else {
 				$this->erg = number_format ( $this->erg, 2, '.', '' );
 				$this->daten_arr [$a] ['monate'] [$m_zaehler] ['erg'] = $this->erg;
 				$this->saldo_vormonat_stand = $this->saldo_vormonat;
-				/* Daten f�r den Monatsbericht */
+				/* Daten für den Monatsbericht */
 				$this->saldo_vormonat = $this->erg;
 				$this->sollmiete_warm = $this->daten_arr [$a] ['monate'] [$m_zaehler] ['soll'];
 				$m_zaehler ++;
@@ -936,7 +936,7 @@ else {
 		}
 	}
 	
-	/* Diese funktion liefert uns den aktuellen stand und den stand des Vormonats, inkl geleistete Zahlungen usw f�r den MOnatsbericht */
+	/* Diese funktion liefert uns den aktuellen stand und den stand des Vormonats, inkl geleistete Zahlungen usw für den MOnatsbericht */
 	function mietkonto_berechnung_monatsgenau_2013_1OK($mietvertrag_id, $jahr, $monat) {
 		$this->mietvertrag_id = $mietvertrag_id;
 		$this->jahr_aktuell = date ( "Y" );
@@ -1074,7 +1074,7 @@ else {
 				$this->hk_abrechnung = '0.00';
 				$this->erg = number_format ( $this->erg, 2, '.', '' );
 				$this->saldo_vormonat_stand = $this->saldo_vormonat;
-				/* Daten f�r den Monatsbericht */
+				/* Daten für den Monatsbericht */
 				$this->saldo_vormonat = $this->erg;
 				$this->sollmiete_warm = substr ( $this->temp_soll, 1 );
 				$m_zaehler ++;
@@ -1082,7 +1082,7 @@ else {
 		}
 	}
 	
-	/* Diese funktion liefert uns den aktuellen stand und den stand des Vormonats, inkl geleistete Zahlungen usw f�r den MOnatsbericht */
+	/* Diese funktion liefert uns den aktuellen stand und den stand des Vormonats, inkl geleistete Zahlungen usw für den MOnatsbericht */
 	function mietkonto_berechnung_monatsgenau($mietvertrag_id, $jahr, $monat) {
 		$this->mietvertrag_id = $mietvertrag_id;
 		$this->jahr_aktuell = date ( "Y" );
@@ -1102,7 +1102,7 @@ else {
 		/* Saldo Vortrag vorhanden, dann ab Saldo VV rechnen */
 		// echo $datum_saldo_vv;
 		if (! empty ( $datum_saldo_vv )) {
-			/* Saldo Vorvertrag mit 1. Zahlung vergleichen, �lteres nehmen */
+			/* Saldo Vorvertrag mit 1. Zahlung vergleichen, älteres nehmen */
 			$datum_saldo_vv_s = str_replace ( '-', '', $datum_saldo_vv );
 			// $datums_arr[] = $datum_saldo_vv_s;
 			// echo $datum_saldo_vv_s;
@@ -1119,7 +1119,7 @@ else {
 				$datum1_zahlung_s = str_replace ( '-', '', $datum1_zahlung );
 				$datums_arr [] = $datum1_zahlung_s;
 			}
-			/* �lteres w�hlen und als Startdatum setzen */
+			/* älteres wählen und als Startdatum setzen */
 			$anfangs_datum = min ( $datums_arr );
 			$this->start_m = substr ( $anfangs_datum, 4, 2 );
 			$this->start_j = substr ( $anfangs_datum, 0, 4 );
@@ -1144,7 +1144,7 @@ else {
 			}
 			/* Wenn MD oder 1 Zahlung definiert */
 			if (is_array ( $datums_arr )) {
-				/* �lteres Datum nehmen, da Zahlung vor Definition sein kann */
+				/* älteres Datum nehmen, da Zahlung vor Definition sein kann */
 				$anfangs_datum = min ( $datums_arr );
 				$this->start_m = substr ( $anfangs_datum, 4, 2 );
 				$this->start_j = substr ( $anfangs_datum, 0, 4 );
@@ -1223,7 +1223,7 @@ else {
 				$this->hk_abrechnung = '0.00';
 				$this->erg = number_format ( $this->erg, 2, '.', '' );
 				$this->saldo_vormonat_stand = $this->saldo_vormonat;
-				/* Daten f�r den Monatsbericht */
+				/* Daten für den Monatsbericht */
 				$this->saldo_vormonat = $this->erg;
 				$this->sollmiete_warm = substr ( $this->temp_soll, 1 );
 				$m_zaehler ++;
@@ -1245,7 +1245,7 @@ else {
 	 * }
 	 */
 	
-	/* Gegen�berdarstellung von intern und extern buchung */
+	/* Gegenüberdarstellung von intern und extern buchung */
 	function mietbuchung_intern_extern_anzeigen($mietvertrag_id) {
 		$result = mysql_query ( "SELECT ( SELECT sum(BETRAG) FROM MIETE_ZAHLBETRAG WHERE MIETVERTRAG_ID='$mietvertrag_id' ) AS ZB,  ( SELECT sum(BETRAG) FROM MIETBUCHUNGEN WHERE  MIETVERTRAG_ID='$mietvertrag_id' ) AS INTERN" );
 		$row = mysql_fetch_assoc ( $result );
@@ -1253,7 +1253,7 @@ else {
 		$miete_zahlbetrag_summe = number_format ( $row ['zb'], 2, ",", "" );
 		$miete_intern_summe = number_format ( $row [INTERN], 2, ",", "" );
 		
-		echo "<h1>ZB:$miete_zahlbetrag_summe � INT:$miete_intern_summe �</h1>";
+		echo "<h1>ZB:$miete_zahlbetrag_summe € INT:$miete_intern_summe €</h1>";
 	}
 	function mietkonten_blatt_anzeigen($mv_id) {
 		$a = new miete ();
@@ -1287,11 +1287,11 @@ else {
 		/* Regel wenn es ein Berechnungsergebnis gibt, d.h. miete definiert und berechnet, falls nicht auch nicht anzeigen, da in wahrscheinlich in Zukunft */
 		if (! empty ( $a->erg )) {
 			
-			// $buchung->erstelle_formular("Mietkonten�bersicht...", NULL);
+			// $buchung->erstelle_formular("Mietkontenübersicht...", NULL);
 			echo "<div id=\"logo\"><img src=\"grafiken/logo43_19.png\"/></div>";
 			
 			$a->erg = number_format ( $a->erg, 2, ",", "" );
-			// echo "<tr><td colspan=4><h1>SALDO $a->erg �</h1>";
+			// echo "<tr><td colspan=4><h1>SALDO $a->erg €</h1>";
 			
 			echo "<table class=aktuelle_buchungen>";
 			echo "<thead>";
@@ -1315,7 +1315,7 @@ else {
 			// echo "<tr><td><b>Datum</b></td><td><b>Monatssoll</b></td><td><b>Zahlung</b></td><td><b>Saldo</b></td></tr>";
 			if (! empty ( $a->saldo_vv )) {
 				$saldo_vv = number_format ( $a->saldo_vv, 2, ",", "" );
-				echo "<tr><td></td><td colspan=2 align=left><h2 class=\"saldo_vv\">SALDO VORTRAG VORVERWALTUNG</h2></td><td><b>$saldo_vv �</b></td></tr>";
+				echo "<tr><td></td><td colspan=2 align=left><h2 class=\"saldo_vv\">SALDO VORTRAG VORVERWALTUNG</h2></td><td><b>$saldo_vv €</b></td></tr>";
 			}
 			
 			foreach ( $a->daten_arr as $key => $value ) {
@@ -1324,7 +1324,7 @@ else {
 					$akt_monat = sprintf ( "%02d", $a->daten_arr [$key] ['monate'] [$b] ['monat'] );
 					if ($a->daten_arr [$key] ['monate'] [$b] ['soll'] < '0.00') {
 						$soll_aus_mv = nummer_punkt2komma ( $a->daten_arr [$key] ['monate'] [$b] ['soll'] );
-						echo "<tr><td>01.$akt_monat.$key</td><td>Soll aus Mietvertrag " . $a->daten_arr [$key] ['monate'] [$b] ['monat'] . ".$key </td><td><b>$soll_aus_mv �</b></td><td></td></tr>";
+						echo "<tr><td>01.$akt_monat.$key</td><td>Soll aus Mietvertrag " . $a->daten_arr [$key] ['monate'] [$b] ['monat'] . ".$key </td><td><b>$soll_aus_mv €</b></td><td></td></tr>";
 					}
 					
 					if (! empty ( $a->daten_arr [$key] ['monate'] [$b] ['bk_abrechnung'] )) {
@@ -1340,7 +1340,7 @@ else {
 						
 						$bk_abrechnung = number_format ( $bk_abrechnung, 2, ",", "" );
 						$datum_bk = $a->daten_arr [$key] ['monate'] [$b] ['bk_abrechnung_datum'];
-						echo "<tr><td>$datum_bk</td><td><b>Betriebskostenabrechung</b> </td><td><b>$bk_abrechnung �</b></td><td></td></tr>";
+						echo "<tr><td>$datum_bk</td><td><b>Betriebskostenabrechung</b> </td><td><b>$bk_abrechnung €</b></td><td></td></tr>";
 					}
 					
 					if (! empty ( $a->daten_arr [$key] ['monate'] [$b] ['hk_abrechnung'] )) {
@@ -1355,7 +1355,7 @@ else {
 						 */
 						$hk_abrechnung = nummer_punkt2komma ( $hk_abrechnung );
 						$datum_hk = $a->daten_arr [$key] ['monate'] [$b] ['hk_abrechnung_datum'];
-						echo "<tr><td>$datum_hk</td><td><b>Heizkostenabrechung</b> </td><td><b>$hk_abrechnung �</b></td><td></td></tr>";
+						echo "<tr><td>$datum_hk</td><td><b>Heizkostenabrechung</b> </td><td><b>$hk_abrechnung €</b></td><td></td></tr>";
 					}
 					/* Zeilen Zahlungen */
 					if (! is_array ( $a->daten_arr [$key] ['monate'] [$b] ['zahlungen'] )) {
@@ -1367,14 +1367,14 @@ else {
 							}
 							// $a->saldo_vormonat +
 							$akt_saldo_nz = nummer_punkt2komma ( $a->daten_arr [$key] ['monate'] [$cb] ['erg'] + $a->daten_arr [$key] ['monate'] [$b] ['soll'] );
-							echo "<tr><td></td><td>Keine Zahlung</td><td></td><td><b>$akt_saldo_nz �</b></td></tr>\n";
+							echo "<tr><td></td><td>Keine Zahlung</td><td></td><td><b>$akt_saldo_nz €</b></td></tr>\n";
 							die ();
 						}
 					} else {
 						for($c = 0; $c < count ( $a->daten_arr [$key] ['monate'] [$b] ['zahlungen'] ); $c ++) {
 							$datum = date_mysql2german ( $a->daten_arr [$key] ['monate'] [$b] ['zahlungen'] [$c] ['DATUM'] );
 							$zahlbetrag_ausgabe = number_format ( $a->daten_arr [$key] ['monate'] [$b] ['zahlungen'] [$c] ['BETRAG'], 2, ",", "" );
-							echo "<tr><td>$datum</td><td>" . $a->daten_arr [$key] ['monate'] [$b] ['zahlungen'] [$c] ['BEMERKUNG'] . "</td><td>$zahlbetrag_ausgabe �</td><td></td></tr>\n";
+							echo "<tr><td>$datum</td><td>" . $a->daten_arr [$key] ['monate'] [$b] ['zahlungen'] [$c] ['BEMERKUNG'] . "</td><td>$zahlbetrag_ausgabe €</td><td></td></tr>\n";
 						} // end for
 					}
 					/* Saldo am ende des Monats */
@@ -1384,21 +1384,21 @@ else {
 					if (is_array ( $a->daten_arr [$key] ['monate'] [$b] ['zahlungen'] )) {
 						if ($a->daten_arr [$key] ['monate'] [$b] ['monat'] == date ( "m" ) && $b == date ( "Y" )) {
 							$tag_heute = date ( "d" );
-							echo "<tr><td>$tag_heute.$akt_monat.$key</td><td>SALDO " . $a->daten_arr [$key] ['monate'] [$b] ['monat'] . ".$key </td><td></td><td><b>$saldo_aus �</b></td></tr>";
+							echo "<tr><td>$tag_heute.$akt_monat.$key</td><td>SALDO " . $a->daten_arr [$key] ['monate'] [$b] ['monat'] . ".$key </td><td></td><td><b>$saldo_aus €</b></td></tr>";
 						} else {
-							echo "<tr><td>$letzter_tag.$akt_monat.$key</td><td>SALDO " . $a->daten_arr [$key] ['monate'] [$b] ['monat'] . ".$key </td><td></td><td><b>$saldo_aus �</b></td></tr>";
+							echo "<tr><td>$letzter_tag.$akt_monat.$key</td><td>SALDO " . $a->daten_arr [$key] ['monate'] [$b] ['monat'] . ".$key </td><td></td><td><b>$saldo_aus €</b></td></tr>";
 						}
 					}
 				} // ende for monate
 			} // end foreach
-			/* Letzte Zeile �berhaupt */
+			/* Letzte Zeile überhaupt */
 			$tag_heute = date ( "d" );
-			echo "<tr><td><b>$tag_heute.$akt_monat.$key</b></td><td><b>Aktuell</b></td><td></td><td><b>$saldo_aus �</b></td></tr>";
+			echo "<tr><td><b>$tag_heute.$akt_monat.$key</b></td><td><b>Aktuell</b></td><td></td><td><b>$saldo_aus €</b></td></tr>";
 			echo "</table>\n";
 		}  // Ende if if(!empty($a->erg)){
 else {
-			echo "<h1>Keine Berechnungsgrundlage f�r das Mietkonto</h1>";
-			echo "<h1>Einzugsdatum, Mietdefinition �berpr�fen</h1>";
+			echo "<h1>Keine Berechnungsgrundlage für das Mietkonto</h1>";
+			echo "<h1>Einzugsdatum, Mietdefinition überprüfen</h1>";
 		}
 		
 		// $buchung->ende_formular();
@@ -1425,21 +1425,21 @@ else {
 		/* Regel wenn es ein Berechnungsergebnis gibt, d.h. miete definiert und berechnet, falls nicht auch nicht anzeigen, da in wahrscheinlich in Zukunft */
 		if (! empty ( $a->erg )) {
 			
-			// $buchung->erstelle_formular("Mietkonten�bersicht...", NULL);
+			// $buchung->erstelle_formular("Mietkontenübersicht...", NULL);
 			// echo "<div id=\"logo\"><img src=\"grafiken/logo43_19.png\"/></div>";
 			
 			$a->erg = number_format ( $a->erg, 2, ",", "" );
 			
 			if (! empty ( $a->saldo_vv )) {
 				$saldo_vv = number_format ( $a->saldo_vv, 2, ",", "" );
-				echo "SALDO VV - $saldo_vv �<br>";
+				echo "SALDO VV - $saldo_vv €<br>";
 			}
 			foreach ( $a->daten_arr as $key => $value ) {
 				for($b = 0; $b < count ( $a->daten_arr [$key] ['monate'] ); $b ++) {
 					// Miete Sollzeile
 					$akt_monat = sprintf ( "%02d", $a->daten_arr [$key] ['monate'] [$b] ['monat'] );
 					$soll_aus_mv = number_format ( $a->daten_arr [$key] ['monate'] [$b] ['soll'], 2, ",", "" );
-					echo "01.$akt_monat.$key | Soll " . $a->daten_arr [$key] ['monate'] [$b] ['monat'] . ".$key | $soll_aus_mv �<br>";
+					echo "01.$akt_monat.$key | Soll " . $a->daten_arr [$key] ['monate'] [$b] ['monat'] . ".$key | $soll_aus_mv €<br>";
 					$bk_abrechnung = $a->daten_arr [$key] ['monate'] [$b] ['bk_abrechnung'];
 					if (! empty ( $bk_abrechnung )) {
 						/*
@@ -1453,7 +1453,7 @@ else {
 						
 						$bk_abrechnung = number_format ( $bk_abrechnung, 2, ",", "" );
 						$datum_bk = $a->daten_arr [$key] ['monate'] [$b] ['bk_abrechnung_datum'];
-						echo "$datum_bk | BK | <b>$bk_abrechnung �</b><br>";
+						echo "$datum_bk | BK | <b>$bk_abrechnung €</b><br>";
 					}
 					$hk_abrechnung = $a->daten_arr [$key] ['monate'] [$b] ['hk_abrechnung'];
 					if (! empty ( $hk_abrechnung )) {
@@ -1467,7 +1467,7 @@ else {
 						 */
 						$hk_abrechnung = number_format ( $hk_abrechnung, 2, ",", "" );
 						$datum_hk = $a->daten_arr [$key] ['monate'] [$b] ['hk_abrechnung_datum'];
-						echo "$datum_hk | HK | $hk_abrechnung �<br>";
+						echo "$datum_hk | HK | $hk_abrechnung €<br>";
 					}
 					/* Zeilen Zahlungen */
 					if (! is_array ( $a->daten_arr [$key] ['monate'] [$b] ['zahlungen'] )) {
@@ -1476,7 +1476,7 @@ else {
 						for($c = 0; $c < count ( $a->daten_arr [$key] ['monate'] [$b] ['zahlungen'] ); $c ++) {
 							$datum = date_mysql2german ( $a->daten_arr [$key] ['monate'] [$b] ['zahlungen'] [$c] ['DATUM'] );
 							$zahlbetrag_ausgabe = number_format ( $a->daten_arr [$key] ['monate'] [$b] ['zahlungen'] [$c] ['BETRAG'], 2, ",", "" );
-							echo " $datum | " . $a->daten_arr [$key] ['monate'] [$b] ['zahlungen'] [$c] ['BEMERKUNG'] . " | $zahlbetrag_ausgabe �<br>";
+							echo " $datum | " . $a->daten_arr [$key] ['monate'] [$b] ['zahlungen'] [$c] ['BEMERKUNG'] . " | $zahlbetrag_ausgabe €<br>";
 						}
 					}
 					/* Saldo am ende des Monats */
@@ -1485,11 +1485,11 @@ else {
 					/* Letzter d.h. Aktueller Monat */
 					if ($a->daten_arr [$key] ['monate'] [$b] ['monat'] == date ( "m" )) {
 						$tag_heute = date ( "d" );
-						// echo "$tag_heute.$akt_monat.$key | SALDO ".$a->daten_arr[$key]['monate'][$b]['monat'].".$key |<b>$saldo_aus �";
+						// echo "$tag_heute.$akt_monat.$key | SALDO ".$a->daten_arr[$key]['monate'][$b]['monat'].".$key |<b>$saldo_aus €";
 						/* Linie zwischen den monaten */
 						echo "<hr>";
 					} else {
-						// echo "$letzter_tag.$akt_monat.$key | SALDO ".$a->daten_arr[$key]['monate'][$b]['monat'].".$key | $saldo_aus �";
+						// echo "$letzter_tag.$akt_monat.$key | SALDO ".$a->daten_arr[$key]['monate'][$b]['monat'].".$key | $saldo_aus €";
 						/* Linie zwischen den monaten */
 						echo "<hr>";
 					}
@@ -1497,8 +1497,8 @@ else {
 			}
 		}  // Ende if if(!empty($a->erg)){
 else {
-			echo "<h1>Keine Berechnungsgrundlage f�r das Mietkonto</h1>";
-			echo "<h1>Einzugsdatum, Mietdefinition �berpr�fen</h1>";
+			echo "<h1>Keine Berechnungsgrundlage für das Mietkonto</h1>";
+			echo "<h1>Einzugsdatum, Mietdefinition überprüfen</h1>";
 		}
 		
 		// $buchung->ende_formular();
@@ -1793,7 +1793,7 @@ ORDER BY `NEW_ENDE` ASC
 		return $row ['SUMME'];
 	}
 	function sanel_neu_ok() {
-		/* Z�hlt Monatsdiff zwischen anfang und ende der mietdefinition, falls ende =0000-00-00 dann bis akt monat */
+		/* Zählt Monatsdiff zwischen anfang und ende der mietdefinition, falls ende =0000-00-00 dann bis akt monat */
 		$this->saldo_vv = 0;
 		$this->gesamt_soll = 0;
 		$db_abfrage = "SELECT KOSTENKATEGORIE, BETRAG, ANFANG, ENDE, IF(ENDE='0000-00-00', CURDATE(), ENDE) AS NEW_ENDE, 
@@ -1874,7 +1874,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 				}
 			}
 			
-			if (preg_match ( "/Mahngeb�hr/i", $kostenkat )) {
+			if (preg_match ( "/Mahngebühr/i", $kostenkat )) {
 				if ($betrag < 0) {
 					$betrag = abs ( $betrag );
 				} else {
@@ -1960,7 +1960,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 				}
 			}
 			
-			if (preg_match ( "/Mahngeb�hr/i", $kostenkat )) {
+			if (preg_match ( "/Mahngebühr/i", $kostenkat )) {
 				if ($betrag < 0) {
 					$betrag = abs ( $betrag );
 				} else {
@@ -2027,7 +2027,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 				}
 			}
 			
-			if (preg_match ( "/Mahngeb�hr/i", $kostenkat )) {
+			if (preg_match ( "/Mahngebühr/i", $kostenkat )) {
 				if ($betrag < 0) {
 					$betrag = abs ( $betrag );
 				} else {
@@ -2118,14 +2118,14 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 				/* Zeile Saldovortragvorverwaltung */
 				$pdf->ezText ( "Saldovortrag Vorverwaltung", 9 );
 				$pdf->ezSetDy ( 10 );
-				$pdf->ezText ( "$saldo_vv �", 9, array (
+				$pdf->ezText ( "$saldo_vv €", 9, array (
 						'justification' => 'right' 
 				) );
 				$pdf->ezSetDy ( - 3 );
 				$pdf->line ( 70, $pdf->y, 530, $pdf->y );
 			}
 			
-			/* Version f�r aktuelle Mieter */
+			/* Version für aktuelle Mieter */
 			if ($mieter_ausgezogen == '0') {
 				foreach ( $a->daten_arr as $key => $value ) {
 					for($b = 0; $b < count ( $a->daten_arr [$key] ['monate'] ); $b ++) {
@@ -2137,8 +2137,8 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 						 * $pdf->setLineStyle(0.5);
 						 * $pdf->line(42,50,550,50);
 						 * $pdf->selectFont($berlus_schrift);
-						 * $pdf->addText(170,42,6,"BERLUS HAUSVERWALTUNG � Fontanestr. 1 � 14193 Berlin � Inhaber Wolfgang Wehrheim");
-						 * $pdf->addText(150,35,6,"Bankverbindung: Dresdner Bank Berlin � BLZ: 100 800 00 � Konto-Nr.: 05 804 000 00 � Steuernummer: 24/582/61188");
+						 * $pdf->addText(170,42,6,"BERLUS HAUSVERWALTUNG * Fontanestr. 1 * 14193 Berlin * Inhaber Wolfgang Wehrheim");
+						 * $pdf->addText(150,35,6,"Bankverbindung: Dresdner Bank Berlin * BLZ: 100 800 00 * Konto-Nr.: 05 804 000 00 * Steuernummer: 24/582/61188");
 						 * $pdf->ezNewPage();
 						 * $pdf->addJpegFromFile('pdfclass/logo_hv_sw.jpg', 220, 750, 175, 100);
 						 * #$pdf->addJpgFromFile('pdfclass/logo_262_150_sw1.jpg', 300, 500, 250, 150);
@@ -2164,7 +2164,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 							$pdf->ezText ( "01.$akt_monat.$key Soll aus Mietvertrag $monat_name $key", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 5.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$soll_aus_mv �", 9, array (
+							$pdf->ezText ( "$soll_aus_mv €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 5.0, 2.5, 2.5, 2.5 );
@@ -2176,7 +2176,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 							 * $pdf->ezText("01.$akt_monat.$key NICHT ANZEIGEN $monat_name $key",9);
 							 * $pdf->ezSetDy(10);
 							 * $pdf->ezSetCmMargins(5.0,2.5,4.0,4.5);
-							 * $pdf->ezText("$soll_aus_mv $t �",9, array('justification'=>'right'));
+							 * $pdf->ezText("$soll_aus_mv $t €",9, array('justification'=>'right'));
 							 * $pdf->ezSetCmMargins(5.0,2.5,2.5,2.5);
 							 */
 						}
@@ -2194,7 +2194,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 								$pdf->ezText ( "$anzahl_mahnungen JAHR $key MONAT $b AKT $akt_monat COUNT: $g $datum $zahlbetrag_ausgabe", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 5.0, 2.5, 4.0, 4.5 );
-								$pdf->ezText ( "$zahlbetrag_ausgabe �", 9, array (
+								$pdf->ezText ( "$zahlbetrag_ausgabe €", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetCmMargins ( 5.0, 2.5, 2.5, 2.5 );
@@ -2210,7 +2210,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 							$pdf->ezText ( "$datum_wasser Wasserabrechnung ", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 5.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$wasser_abrechnung �", 9, array (
+							$pdf->ezText ( "$wasser_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 5.0, 2.5, 2.5, 2.5 );
@@ -2225,7 +2225,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 							$pdf->ezText ( "$datum_bk Betriebskostenabrechnung", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 5.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$bk_abrechnung �", 9, array (
+							$pdf->ezText ( "$bk_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 5.0, 2.5, 2.5, 2.5 );
@@ -2240,7 +2240,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 							$pdf->ezText ( "$datum_hk Heizkostenabrechnung", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 5.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$hk_abrechnung �", 9, array (
+							$pdf->ezText ( "$hk_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 5.0, 2.5, 2.5, 2.5 );
@@ -2262,7 +2262,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 								$pdf->ezText ( "<b>Keine Zahlung</b>", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 5.0, 2.5, 2.5, 2.5 );
-								$pdf->ezText ( "<b>$akt_saldo_nz �</b>", 9, array (
+								$pdf->ezText ( "<b>$akt_saldo_nz €</b>", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetDy ( - 3 );
@@ -2276,7 +2276,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 								$pdf->ezText ( "$datum " . $a->daten_arr [$key] ['monate'] [$b] ['zahlungen'] [$c] ['BEMERKUNG'] . "", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 5.0, 2.5, 4.0, 4.5 );
-								$pdf->ezText ( "$zahlbetrag_ausgabe �", 9, array (
+								$pdf->ezText ( "$zahlbetrag_ausgabe €", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetCmMargins ( 5.0, 2.5, 2.5, 5.5 );
@@ -2294,7 +2294,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 								$pdf->ezText ( "$tag_heute.$akt_monat.$key $monat_name $key ", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 5.0, 2.5, 2.5, 2.5 );
-								$pdf->ezText ( "$saldo_aus  �", 9, array (
+								$pdf->ezText ( "$saldo_aus  €", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetCmMargins ( 5.0, 2.5, 2.5, 2.5 );
@@ -2304,7 +2304,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 								$pdf->ezText ( "<b>$letzter_tag.$akt_monat.$key Saldo $monat_name $key</b>", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 5.0, 2.5, 2.5, 2.5 );
-								$pdf->ezText ( "<b>$saldo_aus  �</b>", 9, array (
+								$pdf->ezText ( "<b>$saldo_aus  €</b>", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetCmMargins ( 5.0, 2.5, 2.5, 2.5 );
@@ -2314,9 +2314,9 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 						}
 					} // ende for monate
 				} // end foreach
-			} // ENDE VERSION F�R AKTUELLE MIETER###########################################################################
+			} // ENDE VERSION FÜR AKTUELLE MIETER###########################################################################
 			
-			/* VERSION F�R MIETER DIE AUSGEZOGEN SIND */
+			/* VERSION FÜR MIETER DIE AUSGEZOGEN SIND */
 			if ($mieter_ausgezogen == '1') {
 				foreach ( $a->daten_arr as $key => $value ) {
 					for($b = 0; $b < count ( $a->daten_arr [$key] ['monate'] ); $b ++) {
@@ -2327,8 +2327,8 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 							 * $pdf->setLineStyle(0.5);
 							 * $pdf->line(42,50,550,50);
 							 * $pdf->selectFont($berlus_schrift);
-							 * $pdf->addText(170,42,6,"BERLUS HAUSVERWALTUNG � Fontanestr. 1 � 14193 Berlin � Inhaber Wolfgang Wehrheim");
-							 * $pdf->addText(150,35,6,"Bankverbindung: Dresdner Bank Berlin � BLZ: 100 800 00 � Konto-Nr.: 05 804 000 00 � Steuernummer: 24/582/61188");
+							 * $pdf->addText(170,42,6,"BERLUS HAUSVERWALTUNG * Fontanestr. 1 * 14193 Berlin * Inhaber Wolfgang Wehrheim");
+							 * $pdf->addText(150,35,6,"Bankverbindung: Dresdner Bank Berlin * BLZ: 100 800 00 * Konto-Nr.: 05 804 000 00 * Steuernummer: 24/582/61188");
 							 */
 							$pdf->ezNewPage ();
 							// $pdf->ezSetMargins(250,70,50,50);
@@ -2356,7 +2356,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 							$pdf->ezText ( "01.$akt_monat.$key Soll aus Mietvertrag $monat_name $key", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 5.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$soll_aus_mv �", 9, array (
+							$pdf->ezText ( "$soll_aus_mv €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 5.0, 2.5, 2.5, 2.5 );
@@ -2368,7 +2368,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 							 * $pdf->ezText("01.$akt_monat.$key NICHT ANZEIGEN $monat_name $key",9);
 							 * $pdf->ezSetDy(10);
 							 * $pdf->ezSetCmMargins(5.0,2.5,4.0,4.5);
-							 * $pdf->ezText("$soll_aus_mv $t �",9, array('justification'=>'right'));
+							 * $pdf->ezText("$soll_aus_mv $t €",9, array('justification'=>'right'));
 							 * $pdf->ezSetCmMargins(5.0,2.5,2.5,2.5);
 							 */
 						}
@@ -2382,7 +2382,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 							$pdf->ezText ( "$datum_wasser Wasserabrechnung ", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 5.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$wasser_abrechnung �", 9, array (
+							$pdf->ezText ( "$wasser_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 5.0, 2.5, 2.5, 2.5 );
@@ -2396,7 +2396,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 							$pdf->ezText ( "$datum_bk Betriebskostenabrechnung", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 5.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$bk_abrechnung �", 9, array (
+							$pdf->ezText ( "$bk_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 5.0, 2.5, 2.5, 2.5 );
@@ -2411,7 +2411,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 							$pdf->ezText ( "$datum_hk Heizkostenabrechnung", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 5.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$hk_abrechnung �", 9, array (
+							$pdf->ezText ( "$hk_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 5.0, 2.5, 2.5, 2.5 );
@@ -2433,7 +2433,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 								$pdf->ezText ( "<b>Keine Zahlung</b>", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 5.0, 2.5, 2.5, 2.5 );
-								$pdf->ezText ( "<b>$akt_saldo_nz �</b>", 9, array (
+								$pdf->ezText ( "<b>$akt_saldo_nz €</b>", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetDy ( - 3 );
@@ -2447,7 +2447,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 								$pdf->ezText ( "$datum " . $a->daten_arr [$key] ['monate'] [$b] ['zahlungen'] [$c] ['BEMERKUNG'] . "", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 5.0, 2.5, 4.0, 4.5 );
-								$pdf->ezText ( "$zahlbetrag_ausgabe �", 9, array (
+								$pdf->ezText ( "$zahlbetrag_ausgabe €", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetCmMargins ( 5.0, 2.5, 2.5, 5.5 );
@@ -2465,7 +2465,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 								$pdf->ezText ( "<b>$tag_heute.$akt_monat.$key Saldo $monat_name $key</b>", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 5.0, 2.5, 2.5, 2.5 );
-								$pdf->ezText ( "$saldo_aus �", 9, array (
+								$pdf->ezText ( "$saldo_aus €", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetDy ( - 3 );
@@ -2476,7 +2476,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 								$pdf->ezText ( "<b>$letzter_tag.$akt_monat.$key Saldo $monat_name $key</b>", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 5.0, 2.5, 2.5, 2.5 );
-								$pdf->ezText ( "<b>$saldo_aus �</b>", 9, array (
+								$pdf->ezText ( "<b>$saldo_aus €</b>", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetDy ( - 3 );
@@ -2492,7 +2492,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 							$pdf->ezText ( "<b><i>$auszugsdatum_a Ende der Mietzeit</b></i>", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 5.0, 2.5, 2.5, 2.5 );
-							$pdf->ezText ( "<b>$saldo_aus �</b>", 9, array (
+							$pdf->ezText ( "<b>$saldo_aus €</b>", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->setColor ( 0.0, 0.0, 0.0 );
@@ -2505,31 +2505,31 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 				} // end foreach
 			} // ende version ausgezogene Mieter
 			
-			/* Letzte Zeile �berhaupt */
+			/* Letzte Zeile überhaupt */
 			$tag_heute = date ( "d" );
-			// echo "<tr><td><b>$tag_heute.$akt_monat.$key</b></td><td><b>Aktuell</b></td><td></td><td><b>$saldo_aus �</b></td></tr>";
+			// echo "<tr><td><b>$tag_heute.$akt_monat.$key</b></td><td><b>Aktuell</b></td><td></td><td><b>$saldo_aus €</b></td></tr>";
 			// echo "</table>\n";
 			$pdf->ezSetDy ( - 2 );
 			$pdf->line ( 70, $pdf->y, 530, $pdf->y );
 			$pdf->ezText ( "<b>$tag_heute.$akt_monat.$key Saldo Aktuell</b>", 9 );
 			$pdf->ezSetCmMargins ( 5.0, 2.5, 2.5, 2.5 );
 			$pdf->ezSetDy ( 10 );
-			$pdf->ezText ( "<b>$saldo_aus �</b>", 9, array (
+			$pdf->ezText ( "<b>$saldo_aus €</b>", 9, array (
 					'justification' => 'right' 
 			) );
 			$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
 		}  // Ende if if(!empty($a->erg)){
 else {
-			// echo "<h1>Keine Berechnungsgrundlage f�r das Mietkonto</h1>";
-			// echo "<h1>Einzugsdatum, Mietdefinition �berpr�fen</h1>";
+			// echo "<h1>Keine Berechnungsgrundlage für das Mietkonto</h1>";
+			// echo "<h1>Einzugsdatum, Mietdefinition überprüfen</h1>";
 		}
 		
 		/*
 		 * $pdf->setLineStyle(0.5);
 		 * $pdf->line(42,50,550,50);
 		 * $pdf->selectFont($berlus_schrift);
-		 * $pdf->addText(170,42,6,"BERLUS HAUSVERWALTUNG � Fontanestr. 1 � 14193 Berlin � Inhaber Wolfgang Wehrheim");
-		 * $pdf->addText(150,35,6,"Bankverbindung: Dresdner Bank Berlin � BLZ: 100 800 00 � Konto-Nr.: 05 804 000 00 � Steuernummer: 24/582/61188");
+		 * $pdf->addText(170,42,6,"BERLUS HAUSVERWALTUNG * Fontanestr. 1 * 14193 Berlin * Inhaber Wolfgang Wehrheim");
+		 * $pdf->addText(150,35,6,"Bankverbindung: Dresdner Bank Berlin * BLZ: 100 800 00 * Konto-Nr.: 05 804 000 00 * Steuernummer: 24/582/61188");
 		 */
 		
 		// $this->pdf_tabelle_mieterbelastung('5300', $mv_id, $pdf);
@@ -2595,14 +2595,14 @@ else {
 				/* Zeile Saldovortragvorverwaltung */
 				$pdf->ezText ( "Saldovortrag Vorverwaltung", 9 );
 				$pdf->ezSetDy ( 10 );
-				$pdf->ezText ( "$saldo_vv �", 9, array (
+				$pdf->ezText ( "$saldo_vv €", 9, array (
 						'justification' => 'right' 
 				) );
 				$pdf->ezSetDy ( - 3 );
 				$pdf->line ( 70, $pdf->y, 530, $pdf->y );
 			}
 			
-			/* Version f�r aktuelle Mieter */
+			/* Version für aktuelle Mieter */
 			if ($mieter_ausgezogen == '0') {
 				foreach ( $a->daten_arr as $key => $value ) {
 					for($b = 0; $b < count ( $a->daten_arr [$key] ['monate'] ); $b ++) {
@@ -2614,8 +2614,8 @@ else {
 						 * $pdf->setLineStyle(0.5);
 						 * $pdf->line(42,50,550,50);
 						 * $pdf->selectFont($berlus_schrift);
-						 * $pdf->addText(170,42,6,"BERLUS HAUSVERWALTUNG � Fontanestr. 1 � 14193 Berlin � Inhaber Wolfgang Wehrheim");
-						 * $pdf->addText(150,35,6,"Bankverbindung: Dresdner Bank Berlin � BLZ: 100 800 00 � Konto-Nr.: 05 804 000 00 � Steuernummer: 24/582/61188");
+						 * $pdf->addText(170,42,6,"BERLUS HAUSVERWALTUNG * Fontanestr. 1 * 14193 Berlin * Inhaber Wolfgang Wehrheim");
+						 * $pdf->addText(150,35,6,"Bankverbindung: Dresdner Bank Berlin * BLZ: 100 800 00 * Konto-Nr.: 05 804 000 00 * Steuernummer: 24/582/61188");
 						 * $pdf->ezNewPage();
 						 * $pdf->addJpegFromFile('pdfclass/logo_hv_sw.jpg', 220, 750, 175, 100);
 						 * #$pdf->addJpgFromFile('pdfclass/logo_262_150_sw1.jpg', 300, 500, 250, 150);
@@ -2641,7 +2641,7 @@ else {
 							$pdf->ezText ( "01.$akt_monat.$key Soll aus Mietvertrag $monat_name $key", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$soll_aus_mv �", 9, array (
+							$pdf->ezText ( "$soll_aus_mv €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -2653,7 +2653,7 @@ else {
 							 * $pdf->ezText("01.$akt_monat.$key NICHT ANZEIGEN $monat_name $key",9);
 							 * $pdf->ezSetDy(10);
 							 * $pdf->ezSetCmMargins(4.0,2.5,4.0,4.5);
-							 * $pdf->ezText("$soll_aus_mv $t �",9, array('justification'=>'right'));
+							 * $pdf->ezText("$soll_aus_mv $t €",9, array('justification'=>'right'));
 							 * $pdf->ezSetCmMargins(4.0,2.5,2.5,2.5);
 							 */
 						}
@@ -2671,7 +2671,7 @@ else {
 								$pdf->ezText ( "$anzahl_mahnungen JAHR $key MONAT $b AKT $akt_monat COUNT: $g $datum $zahlbetrag_ausgabe", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 4.0, 4.5 );
-								$pdf->ezText ( "$zahlbetrag_ausgabe �", 9, array (
+								$pdf->ezText ( "$zahlbetrag_ausgabe €", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -2687,7 +2687,7 @@ else {
 							$pdf->ezText ( "$datum_wasser Wasserabrechnung ", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$wasser_abrechnung �", 9, array (
+							$pdf->ezText ( "$wasser_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -2702,7 +2702,7 @@ else {
 							$pdf->ezText ( "$datum_bk Betriebskostenabrechnung", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$bk_abrechnung �", 9, array (
+							$pdf->ezText ( "$bk_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -2717,7 +2717,7 @@ else {
 							$pdf->ezText ( "$datum_hk Heizkostenabrechnung", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$hk_abrechnung �", 9, array (
+							$pdf->ezText ( "$hk_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -2739,7 +2739,7 @@ else {
 								$pdf->ezText ( "<b>Keine Zahlung</b>", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
-								$pdf->ezText ( "<b>$akt_saldo_nz �</b>", 9, array (
+								$pdf->ezText ( "<b>$akt_saldo_nz €</b>", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetDy ( - 3 );
@@ -2752,7 +2752,7 @@ else {
 								$pdf->ezText ( "$datum " . $a->daten_arr [$key] ['monate'] [$b] ['zahlungen'] [$c] ['BEMERKUNG'] . "", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 4.0, 4.5 );
-								$pdf->ezText ( "$zahlbetrag_ausgabe �", 9, array (
+								$pdf->ezText ( "$zahlbetrag_ausgabe €", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -2770,7 +2770,7 @@ else {
 								$pdf->ezText ( "$tag_heute.$akt_monat.$key $monat_name $key ", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
-								$pdf->ezText ( "$saldo_aus  �", 9, array (
+								$pdf->ezText ( "$saldo_aus  €", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -2780,7 +2780,7 @@ else {
 								$pdf->ezText ( "<b>$letzter_tag.$akt_monat.$key Saldo $monat_name $key</b>", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
-								$pdf->ezText ( "<b>$saldo_aus  �</b>", 9, array (
+								$pdf->ezText ( "<b>$saldo_aus  €</b>", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -2790,9 +2790,9 @@ else {
 						}
 					} // ende for monate
 				} // end foreach
-			} // ENDE VERSION F�R AKTUELLE MIETER###########################################################################
+			} // ENDE VERSION FÜR AKTUELLE MIETER###########################################################################
 			
-			/* VERSION F�R MIETER DIE AUSGEZOGEN SIND */
+			/* VERSION FÜR MIETER DIE AUSGEZOGEN SIND */
 			if ($mieter_ausgezogen == '1') {
 				foreach ( $a->daten_arr as $key => $value ) {
 					for($b = 0; $b < count ( $a->daten_arr [$key] ['monate'] ); $b ++) {
@@ -2803,8 +2803,8 @@ else {
 							 * $pdf->setLineStyle(0.5);
 							 * $pdf->line(42,50,550,50);
 							 * $pdf->selectFont($berlus_schrift);
-							 * $pdf->addText(170,42,6,"BERLUS HAUSVERWALTUNG � Fontanestr. 1 � 14193 Berlin � Inhaber Wolfgang Wehrheim");
-							 * $pdf->addText(150,35,6,"Bankverbindung: Dresdner Bank Berlin � BLZ: 100 800 00 � Konto-Nr.: 05 804 000 00 � Steuernummer: 24/582/61188");
+							 * $pdf->addText(170,42,6,"BERLUS HAUSVERWALTUNG * Fontanestr. 1 * 14193 Berlin * Inhaber Wolfgang Wehrheim");
+							 * $pdf->addText(150,35,6,"Bankverbindung: Dresdner Bank Berlin * BLZ: 100 800 00 * Konto-Nr.: 05 804 000 00 * Steuernummer: 24/582/61188");
 							 */
 							$pdf->ezNewPage ();
 							// $pdf->ezSetMargins(135,70,50,50);
@@ -2832,7 +2832,7 @@ else {
 							$pdf->ezText ( "01.$akt_monat.$key Soll aus Mietvertrag $monat_name $key", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$soll_aus_mv �", 9, array (
+							$pdf->ezText ( "$soll_aus_mv €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -2844,7 +2844,7 @@ else {
 							 * $pdf->ezText("01.$akt_monat.$key NICHT ANZEIGEN $monat_name $key",9);
 							 * $pdf->ezSetDy(10);
 							 * $pdf->ezSetCmMargins(4.0,2.5,4.0,4.5);
-							 * $pdf->ezText("$soll_aus_mv $t �",9, array('justification'=>'right'));
+							 * $pdf->ezText("$soll_aus_mv $t €",9, array('justification'=>'right'));
 							 * $pdf->ezSetCmMargins(4.0,2.5,2.5,2.5);
 							 */
 						}
@@ -2858,7 +2858,7 @@ else {
 							$pdf->ezText ( "$datum_wasser Wasserabrechnung ", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$wasser_abrechnung �", 9, array (
+							$pdf->ezText ( "$wasser_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -2872,7 +2872,7 @@ else {
 							$pdf->ezText ( "$datum_bk Betriebskostenabrechnung", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$bk_abrechnung �", 9, array (
+							$pdf->ezText ( "$bk_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -2887,7 +2887,7 @@ else {
 							$pdf->ezText ( "$datum_hk Heizkostenabrechnung", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$hk_abrechnung �", 9, array (
+							$pdf->ezText ( "$hk_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -2909,7 +2909,7 @@ else {
 								$pdf->ezText ( "<b>Keine Zahlung</b>", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
-								$pdf->ezText ( "<b>$akt_saldo_nz �</b>", 9, array (
+								$pdf->ezText ( "<b>$akt_saldo_nz €</b>", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetDy ( - 3 );
@@ -2922,7 +2922,7 @@ else {
 								$pdf->ezText ( "$datum " . $a->daten_arr [$key] ['monate'] [$b] ['zahlungen'] [$c] ['BEMERKUNG'] . "", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 4.0, 4.5 );
-								$pdf->ezText ( "$zahlbetrag_ausgabe �", 9, array (
+								$pdf->ezText ( "$zahlbetrag_ausgabe €", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -2940,7 +2940,7 @@ else {
 								$pdf->ezText ( "<b>$tag_heute.$akt_monat.$key Saldo $monat_name $key</b>", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
-								$pdf->ezText ( "$saldo_aus �", 9, array (
+								$pdf->ezText ( "$saldo_aus €", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetDy ( - 3 );
@@ -2951,7 +2951,7 @@ else {
 								$pdf->ezText ( "<b>$letzter_tag.$akt_monat.$key Saldo $monat_name $key</b>", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
-								$pdf->ezText ( "<b>$saldo_aus �</b>", 9, array (
+								$pdf->ezText ( "<b>$saldo_aus €</b>", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetDy ( - 3 );
@@ -2967,7 +2967,7 @@ else {
 							$pdf->ezText ( "<b><i>$auszugsdatum_a Ende der Mietzeit</b></i>", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
-							$pdf->ezText ( "<b>$saldo_aus �</b>", 9, array (
+							$pdf->ezText ( "<b>$saldo_aus €</b>", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->setColor ( 0.0, 0.0, 0.0 );
@@ -2980,31 +2980,31 @@ else {
 				} // end foreach
 			} // ende version ausgezogene Mieter
 			
-			/* Letzte Zeile �berhaupt */
+			/* Letzte Zeile überhaupt */
 			$tag_heute = date ( "d" );
-			// echo "<tr><td><b>$tag_heute.$akt_monat.$key</b></td><td><b>Aktuell</b></td><td></td><td><b>$saldo_aus �</b></td></tr>";
+			// echo "<tr><td><b>$tag_heute.$akt_monat.$key</b></td><td><b>Aktuell</b></td><td></td><td><b>$saldo_aus €</b></td></tr>";
 			// echo "</table>\n";
 			$pdf->ezSetDy ( - 2 );
 			$pdf->line ( 70, $pdf->y, 530, $pdf->y );
 			$pdf->ezText ( "<b>$tag_heute.$akt_monat.$key Saldo Aktuell</b>", 9 );
 			$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
 			$pdf->ezSetDy ( 10 );
-			$pdf->ezText ( "<b>$saldo_aus �</b>", 9, array (
+			$pdf->ezText ( "<b>$saldo_aus €</b>", 9, array (
 					'justification' => 'right' 
 			) );
 			$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
 		}  // Ende if if(!empty($a->erg)){
 else {
-			// echo "<h1>Keine Berechnungsgrundlage f�r das Mietkonto</h1>";
-			// echo "<h1>Einzugsdatum, Mietdefinition �berpr�fen</h1>";
+			// echo "<h1>Keine Berechnungsgrundlage für das Mietkonto</h1>";
+			// echo "<h1>Einzugsdatum, Mietdefinition überprüfen</h1>";
 		}
 		
 		/*
 		 * $pdf->setLineStyle(0.5);
 		 * $pdf->line(42,50,550,50);
 		 * $pdf->selectFont($berlus_schrift);
-		 * $pdf->addText(170,42,6,"BERLUS HAUSVERWALTUNG � Fontanestr. 1 � 14193 Berlin � Inhaber Wolfgang Wehrheim");
-		 * $pdf->addText(150,35,6,"Bankverbindung: Dresdner Bank Berlin � BLZ: 100 800 00 � Konto-Nr.: 05 804 000 00 � Steuernummer: 24/582/61188");
+		 * $pdf->addText(170,42,6,"BERLUS HAUSVERWALTUNG * Fontanestr. 1 * 14193 Berlin * Inhaber Wolfgang Wehrheim");
+		 * $pdf->addText(150,35,6,"Bankverbindung: Dresdner Bank Berlin * BLZ: 100 800 00 * Konto-Nr.: 05 804 000 00 * Steuernummer: 24/582/61188");
 		 */
 		$pdf->addInfo ( 'Title', "Mietkontenblatt $mv->personen_name_string" );
 		$pdf->addInfo ( 'Author', $_SESSION ['username'] );
@@ -3060,14 +3060,14 @@ else {
 				/* Zeile Saldovortragvorverwaltung */
 				$pdf->ezText ( "Saldovortrag Vorverwaltung", 9 );
 				$pdf->ezSetDy ( 10 );
-				$pdf->ezText ( "$saldo_vv �", 9, array (
+				$pdf->ezText ( "$saldo_vv €", 9, array (
 						'justification' => 'right' 
 				) );
 				$pdf->ezSetDy ( - 3 );
 				$pdf->line ( 70, $pdf->y, 530, $pdf->y );
 			}
 			
-			/* Version f�r aktuelle Mieter */
+			/* Version für aktuelle Mieter */
 			if ($mieter_ausgezogen == '0') {
 				foreach ( $a->daten_arr as $key => $value ) {
 					for($b = 0; $b < count ( $a->daten_arr [$key] ['monate'] ); $b ++) {
@@ -3079,8 +3079,8 @@ else {
 						 * $pdf->setLineStyle(0.5);
 						 * $pdf->line(42,50,550,50);
 						 * $pdf->selectFont($berlus_schrift);
-						 * $pdf->addText(170,42,6,"BERLUS HAUSVERWALTUNG � Fontanestr. 1 � 14193 Berlin � Inhaber Wolfgang Wehrheim");
-						 * $pdf->addText(150,35,6,"Bankverbindung: Dresdner Bank Berlin � BLZ: 100 800 00 � Konto-Nr.: 05 804 000 00 � Steuernummer: 24/582/61188");
+						 * $pdf->addText(170,42,6,"BERLUS HAUSVERWALTUNG * Fontanestr. 1 * 14193 Berlin * Inhaber Wolfgang Wehrheim");
+						 * $pdf->addText(150,35,6,"Bankverbindung: Dresdner Bank Berlin * BLZ: 100 800 00 * Konto-Nr.: 05 804 000 00 * Steuernummer: 24/582/61188");
 						 * $pdf->ezNewPage();
 						 * $pdf->addJpegFromFile('pdfclass/logo_hv_sw.jpg', 220, 750, 175, 100);
 						 * #$pdf->addJpgFromFile('pdfclass/logo_262_150_sw1.jpg', 300, 500, 250, 150);
@@ -3106,7 +3106,7 @@ else {
 							$pdf->ezText ( "01.$akt_monat.$key Soll aus Mietvertrag $monat_name $key", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$soll_aus_mv �", 9, array (
+							$pdf->ezText ( "$soll_aus_mv €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -3118,7 +3118,7 @@ else {
 							 * $pdf->ezText("01.$akt_monat.$key NICHT ANZEIGEN $monat_name $key",9);
 							 * $pdf->ezSetDy(10);
 							 * $pdf->ezSetCmMargins(4.0,2.5,4.0,4.5);
-							 * $pdf->ezText("$soll_aus_mv $t �",9, array('justification'=>'right'));
+							 * $pdf->ezText("$soll_aus_mv $t €",9, array('justification'=>'right'));
 							 * $pdf->ezSetCmMargins(4.0,2.5,2.5,2.5);
 							 */
 						}
@@ -3136,7 +3136,7 @@ else {
 								$pdf->ezText ( "$anzahl_mahnungen JAHR $key MONAT $b AKT $akt_monat COUNT: $g $datum $zahlbetrag_ausgabe", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 4.0, 4.5 );
-								$pdf->ezText ( "$zahlbetrag_ausgabe �", 9, array (
+								$pdf->ezText ( "$zahlbetrag_ausgabe €", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -3152,7 +3152,7 @@ else {
 							$pdf->ezText ( "$datum_wasser Wasserabrechnung ", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$wasser_abrechnung �", 9, array (
+							$pdf->ezText ( "$wasser_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -3167,7 +3167,7 @@ else {
 							$pdf->ezText ( "$datum_bk Betriebskostenabrechnung", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$bk_abrechnung �", 9, array (
+							$pdf->ezText ( "$bk_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -3182,7 +3182,7 @@ else {
 							$pdf->ezText ( "$datum_hk Heizkostenabrechnung", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$hk_abrechnung �", 9, array (
+							$pdf->ezText ( "$hk_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -3204,7 +3204,7 @@ else {
 								$pdf->ezText ( "<b>Keine Zahlung</b>", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
-								$pdf->ezText ( "<b>$akt_saldo_nz �</b>", 9, array (
+								$pdf->ezText ( "<b>$akt_saldo_nz €</b>", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetDy ( - 3 );
@@ -3217,7 +3217,7 @@ else {
 								$pdf->ezText ( "$datum " . $a->daten_arr [$key] ['monate'] [$b] ['zahlungen'] [$c] ['BEMERKUNG'] . "", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 4.0, 4.5 );
-								$pdf->ezText ( "$zahlbetrag_ausgabe �", 9, array (
+								$pdf->ezText ( "$zahlbetrag_ausgabe €", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -3235,7 +3235,7 @@ else {
 								$pdf->ezText ( "$tag_heute.$akt_monat.$key $monat_name $key ", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
-								$pdf->ezText ( "$saldo_aus  �", 9, array (
+								$pdf->ezText ( "$saldo_aus  €", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -3245,7 +3245,7 @@ else {
 								$pdf->ezText ( "<b>$letzter_tag.$akt_monat.$key Saldo $monat_name $key</b>", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
-								$pdf->ezText ( "<b>$saldo_aus  �</b>", 9, array (
+								$pdf->ezText ( "<b>$saldo_aus  €</b>", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -3255,9 +3255,9 @@ else {
 						}
 					} // ende for monate
 				} // end foreach
-			} // ENDE VERSION F�R AKTUELLE MIETER###########################################################################
+			} // ENDE VERSION FÜR AKTUELLE MIETER###########################################################################
 			
-			/* VERSION F�R MIETER DIE AUSGEZOGEN SIND */
+			/* VERSION FÜR MIETER DIE AUSGEZOGEN SIND */
 			if ($mieter_ausgezogen == '1') {
 				foreach ( $a->daten_arr as $key => $value ) {
 					for($b = 0; $b < count ( $a->daten_arr [$key] ['monate'] ); $b ++) {
@@ -3268,8 +3268,8 @@ else {
 							 * $pdf->setLineStyle(0.5);
 							 * $pdf->line(42,50,550,50);
 							 * $pdf->selectFont($berlus_schrift);
-							 * $pdf->addText(170,42,6,"BERLUS HAUSVERWALTUNG � Fontanestr. 1 � 14193 Berlin � Inhaber Wolfgang Wehrheim");
-							 * $pdf->addText(150,35,6,"Bankverbindung: Dresdner Bank Berlin � BLZ: 100 800 00 � Konto-Nr.: 05 804 000 00 � Steuernummer: 24/582/61188");
+							 * $pdf->addText(170,42,6,"BERLUS HAUSVERWALTUNG * Fontanestr. 1 * 14193 Berlin * Inhaber Wolfgang Wehrheim");
+							 * $pdf->addText(150,35,6,"Bankverbindung: Dresdner Bank Berlin * BLZ: 100 800 00 * Konto-Nr.: 05 804 000 00 * Steuernummer: 24/582/61188");
 							 */
 							$pdf->ezNewPage ();
 							// $pdf->ezSetMargins(135,70,50,50);
@@ -3297,7 +3297,7 @@ else {
 							$pdf->ezText ( "01.$akt_monat.$key Soll aus Mietvertrag $monat_name $key", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$soll_aus_mv �", 9, array (
+							$pdf->ezText ( "$soll_aus_mv €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -3309,7 +3309,7 @@ else {
 							 * $pdf->ezText("01.$akt_monat.$key NICHT ANZEIGEN $monat_name $key",9);
 							 * $pdf->ezSetDy(10);
 							 * $pdf->ezSetCmMargins(4.0,2.5,4.0,4.5);
-							 * $pdf->ezText("$soll_aus_mv $t �",9, array('justification'=>'right'));
+							 * $pdf->ezText("$soll_aus_mv $t €",9, array('justification'=>'right'));
 							 * $pdf->ezSetCmMargins(4.0,2.5,2.5,2.5);
 							 */
 						}
@@ -3323,7 +3323,7 @@ else {
 							$pdf->ezText ( "$datum_wasser Wasserabrechnung ", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$wasser_abrechnung �", 9, array (
+							$pdf->ezText ( "$wasser_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -3337,7 +3337,7 @@ else {
 							$pdf->ezText ( "$datum_bk Betriebskostenabrechnung", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$bk_abrechnung �", 9, array (
+							$pdf->ezText ( "$bk_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -3352,7 +3352,7 @@ else {
 							$pdf->ezText ( "$datum_hk Heizkostenabrechnung", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 4.0, 4.5 );
-							$pdf->ezText ( "$hk_abrechnung �", 9, array (
+							$pdf->ezText ( "$hk_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -3374,7 +3374,7 @@ else {
 								$pdf->ezText ( "<b>Keine Zahlung</b>", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
-								$pdf->ezText ( "<b>$akt_saldo_nz �</b>", 9, array (
+								$pdf->ezText ( "<b>$akt_saldo_nz €</b>", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetDy ( - 3 );
@@ -3387,7 +3387,7 @@ else {
 								$pdf->ezText ( "$datum " . $a->daten_arr [$key] ['monate'] [$b] ['zahlungen'] [$c] ['BEMERKUNG'] . "", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 4.0, 4.5 );
-								$pdf->ezText ( "$zahlbetrag_ausgabe �", 9, array (
+								$pdf->ezText ( "$zahlbetrag_ausgabe €", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
@@ -3405,7 +3405,7 @@ else {
 								$pdf->ezText ( "<b>$tag_heute.$akt_monat.$key Saldo $monat_name $key</b>", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
-								$pdf->ezText ( "$saldo_aus �", 9, array (
+								$pdf->ezText ( "$saldo_aus €", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetDy ( - 3 );
@@ -3416,7 +3416,7 @@ else {
 								$pdf->ezText ( "<b>$letzter_tag.$akt_monat.$key Saldo $monat_name $key</b>", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
-								$pdf->ezText ( "<b>$saldo_aus �</b>", 9, array (
+								$pdf->ezText ( "<b>$saldo_aus €</b>", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetDy ( - 3 );
@@ -3432,7 +3432,7 @@ else {
 							$pdf->ezText ( "<b><i>$auszugsdatum_a Ende der Mietzeit</b></i>", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
-							$pdf->ezText ( "<b>$saldo_aus �</b>", 9, array (
+							$pdf->ezText ( "<b>$saldo_aus €</b>", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->setColor ( 0.0, 0.0, 0.0 );
@@ -3445,31 +3445,31 @@ else {
 				} // end foreach
 			} // ende version ausgezogene Mieter
 			
-			/* Letzte Zeile �berhaupt */
+			/* Letzte Zeile überhaupt */
 			$tag_heute = date ( "d" );
-			// echo "<tr><td><b>$tag_heute.$akt_monat.$key</b></td><td><b>Aktuell</b></td><td></td><td><b>$saldo_aus �</b></td></tr>";
+			// echo "<tr><td><b>$tag_heute.$akt_monat.$key</b></td><td><b>Aktuell</b></td><td></td><td><b>$saldo_aus €</b></td></tr>";
 			// echo "</table>\n";
 			$pdf->ezSetDy ( - 2 );
 			$pdf->line ( 70, $pdf->y, 530, $pdf->y );
 			$pdf->ezText ( "<b>$tag_heute.$akt_monat.$key Saldo Aktuell</b>", 9 );
 			$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
 			$pdf->ezSetDy ( 10 );
-			$pdf->ezText ( "<b>$saldo_aus �</b>", 9, array (
+			$pdf->ezText ( "<b>$saldo_aus €</b>", 9, array (
 					'justification' => 'right' 
 			) );
 			$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
 		}  // Ende if if(!empty($a->erg)){
 else {
-			// echo "<h1>Keine Berechnungsgrundlage f�r das Mietkonto</h1>";
-			// echo "<h1>Einzugsdatum, Mietdefinition �berpr�fen</h1>";
+			// echo "<h1>Keine Berechnungsgrundlage für das Mietkonto</h1>";
+			// echo "<h1>Einzugsdatum, Mietdefinition überprüfen</h1>";
 		}
 		
 		/*
 		 * $pdf->setLineStyle(0.5);
 		 * $pdf->line(42,50,550,50);
 		 * $pdf->selectFont($berlus_schrift);
-		 * $pdf->addText(170,42,6,"BERLUS HAUSVERWALTUNG � Fontanestr. 1 � 14193 Berlin � Inhaber Wolfgang Wehrheim");
-		 * $pdf->addText(150,35,6,"Bankverbindung: Dresdner Bank Berlin � BLZ: 100 800 00 � Konto-Nr.: 05 804 000 00 � Steuernummer: 24/582/61188");
+		 * $pdf->addText(170,42,6,"BERLUS HAUSVERWALTUNG * Fontanestr. 1 * 14193 Berlin * Inhaber Wolfgang Wehrheim");
+		 * $pdf->addText(150,35,6,"Bankverbindung: Dresdner Bank Berlin * BLZ: 100 800 00 * Konto-Nr.: 05 804 000 00 * Steuernummer: 24/582/61188");
 		 */
 		$pdf->addInfo ( 'Title', "Mietkontenblatt $mv->personen_name_string" );
 		$pdf->addInfo ( 'Author', $_SESSION ['username'] );
@@ -3526,7 +3526,7 @@ else {
 		 * $drucken_j = 2008;
 		 */
 		
-		/* Druckstartpunkt festlegen, davor alles l�schen */
+		/* Druckstartpunkt festlegen, davor alles löschen */
 		foreach ( $this->daten_arr as $key => $value ) {
 			/* Volle Jahre */
 			if ($key < $drucken_j) {
@@ -3547,7 +3547,7 @@ else {
 		/* Neu nummerieren */
 		$this->daten_arr [$erstes_jahr] ['monate'] = array_values ( $this->daten_arr [$erstes_jahr] ['monate'] );
 		
-		/* Ab hier ist das Array ab dem gewollten monat verf�gbar */
+		/* Ab hier ist das Array ab dem gewollten monat verfügbar */
 		
 		$zeile = 0;
 		$jahr1 = 0;
@@ -3624,7 +3624,7 @@ else {
 					$table_arr [$zeile] ['BEMERKUNG'] = "<b>Saldo $monatsname $key</b>";
 					$table_arr [$zeile] [SALDO] = '<b>' . nummer_punkt2komma ( $this->daten_arr [$key] ['monate'] [$b] ['erg'] ) . '</b>';
 					
-					/* LEER F�R LINIE */
+					/* LEER FÜR LINIE */
 					if ("$akt_monat.$key" != date ( "m.Y" )) {
 						$zeile ++;
 						$table_arr [$zeile] ['DATUM'] = "__________";
@@ -3763,7 +3763,7 @@ else {
 		 * $drucken_j = 2008;
 		 */
 		
-		/* Druckstartpunkt festlegen, davor alles l�schen */
+		/* Druckstartpunkt festlegen, davor alles löschen */
 		foreach ( $this->daten_arr as $key => $value ) {
 			/* Volle Jahre */
 			if ($key < $drucken_j) {
@@ -3784,7 +3784,7 @@ else {
 		/* Neu nummerieren */
 		$this->daten_arr [$erstes_jahr] ['monate'] = array_values ( $this->daten_arr [$erstes_jahr] ['monate'] );
 		
-		/* Ab hier ist das Array ab dem gewollten monat verf�gbar */
+		/* Ab hier ist das Array ab dem gewollten monat verfügbar */
 		
 		$zeile = 0;
 		$jahr1 = 0;
@@ -3861,7 +3861,7 @@ else {
 					$table_arr [$zeile] ['BEMERKUNG'] = "<b>Saldo $monatsname $key</b>";
 					$table_arr [$zeile] [SALDO] = '<b>' . nummer_punkt2komma ( $this->daten_arr [$key] ['monate'] [$b] ['erg'] ) . '</b>';
 					
-					/* LEER F�R LINIE */
+					/* LEER FÜR LINIE */
 					if ("$akt_monat.$key" != date ( "m.Y" )) {
 						$zeile ++;
 						$table_arr [$zeile] ['DATUM'] = "__________";
@@ -4023,7 +4023,7 @@ else {
 					$table_arr [$zeile] ['BEMERKUNG'] = "<b>Saldo $monatsname $key</b>";
 					$table_arr [$zeile] [SALDO] = '<b>' . nummer_punkt2komma ( $this->daten_arr [$key] ['monate'] [$b] ['erg'] ) . '</b>';
 					
-					/* LEER F�R LINIE */
+					/* LEER FÜR LINIE */
 					if ("$akt_monat.$key" != date ( "m.Y" )) {
 						$zeile ++;
 						$table_arr [$zeile] ['DATUM'] = "**linie**";
@@ -4266,7 +4266,7 @@ else {
 					$table_arr [$zeile] ['BEMERKUNG'] = "<b>Saldo $monatsname $key</b>";
 					$table_arr [$zeile] [SALDO] = '<b>' . nummer_punkt2komma ( $this->daten_arr [$key] ['monate'] [$b] ['erg'] ) . '</b>';
 					
-					/* LEER F�R LINIE */
+					/* LEER FÜR LINIE */
 					if ("$akt_monat.$key" != date ( "m.Y" )) {
 						$zeile ++;
 						$table_arr [$zeile] ['DATUM'] = "<b><u><i>__________</i></u></b>";
@@ -4393,7 +4393,7 @@ else {
 		return $tab_neu;
 	}
 	
-	/* Mit dieser Funktion f�gt man ein Mitkontenblatt in das vorhandene PDF-Dokument hinzu */
+	/* Mit dieser Funktion fügt man ein Mitkontenblatt in das vorhandene PDF-Dokument hinzu */
 	function mietkontenblatt2pdf($pdf, $mv_id) {
 		include_once ('pdfclass/class.ezpdf.php');
 		$a = new miete ();
@@ -4441,14 +4441,14 @@ else {
 						'justification' => 'left' 
 				) );
 				$pdf->ezSetDy ( 10 );
-				$pdf->ezText ( "$saldo_vv �", 9, array (
+				$pdf->ezText ( "$saldo_vv €", 9, array (
 						'justification' => 'right' 
 				) );
 				$pdf->ezSetDy ( - 3 );
 				$pdf->line ( 50, $pdf->y, 550, $pdf->y );
 			}
 			
-			/* Version f�r aktuelle Mieter */
+			/* Version für aktuelle Mieter */
 			if ($mieter_ausgezogen == false) {
 				
 				foreach ( $a->daten_arr as $key => $value ) {
@@ -4470,7 +4470,7 @@ else {
 							
 							$pdf->ezSetMargins ( 140, 70, 50, 100 );
 							$pdf->ezSetDy ( 10 );
-							$pdf->ezText ( "$soll_aus_mv �", 9, array (
+							$pdf->ezText ( "$soll_aus_mv €", 9, array (
 									'justification' => 'right' 
 							) );
 						}
@@ -4481,7 +4481,7 @@ else {
 							 * $pdf->ezText("01.$akt_monat.$key NICHT ANZEIGEN $monat_name $key",9);
 							 * $pdf->ezSetDy(10);
 							 * $pdf->ezSetCmMargins(4.0,2.5,4.0,4.5);
-							 * $pdf->ezText("$soll_aus_mv $t �",9, array('justification'=>'right'));
+							 * $pdf->ezText("$soll_aus_mv $t €",9, array('justification'=>'right'));
 							 * $pdf->ezSetCmMargins(4.0,2.5,2.5,2.5);
 							 */
 						}
@@ -4499,7 +4499,7 @@ else {
 								$pdf->ezSetMargins ( 140, 70, 50, 100 );
 								$pdf->ezText ( "$anzahl_mahnungen JAHR $key MONAT $b AKT $akt_monat COUNT: $g $datum $zahlbetrag_ausgabe", 9 );
 								$pdf->ezSetDy ( 10 );
-								$pdf->ezText ( "$zahlbetrag_ausgabe �", 9, array (
+								$pdf->ezText ( "$zahlbetrag_ausgabe €", 9, array (
 										'justification' => 'right' 
 								) );
 							} // end for
@@ -4514,7 +4514,7 @@ else {
 							$pdf->ezText ( "$datum_wasser Wasserabrechnung ", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetMargins ( 140, 70, 50, 100 );
-							$pdf->ezText ( "$wasser_abrechnung �", 9, array (
+							$pdf->ezText ( "$wasser_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 						}
@@ -4528,7 +4528,7 @@ else {
 							$pdf->ezText ( "$datum_bk Betriebskostenabrechnung", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetMargins ( 140, 70, 50, 100 );
-							$pdf->ezText ( "$bk_abrechnung �", 9, array (
+							$pdf->ezText ( "$bk_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 						}
@@ -4542,7 +4542,7 @@ else {
 							$pdf->ezText ( "$datum_hk Heizkostenabrechnung", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetMargins ( 140, 70, 50, 100 );
-							$pdf->ezText ( "$hk_abrechnung �", 9, array (
+							$pdf->ezText ( "$hk_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 						}
@@ -4563,7 +4563,7 @@ else {
 								$pdf->ezSetMargins ( 140, 70, 50, 50 );
 								$pdf->ezText ( "<b>Keine Zahlung</b>", 9 );
 								$pdf->ezSetDy ( 10 );
-								$pdf->ezText ( "<b>$akt_saldo_nz �</b>", 9, array (
+								$pdf->ezText ( "<b>$akt_saldo_nz €</b>", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetDy ( - 3 );
@@ -4577,7 +4577,7 @@ else {
 								$pdf->ezText ( "$datum " . $a->daten_arr [$key] ['monate'] [$b] ['zahlungen'] [$c] ['BEMERKUNG'] . "", 9 );
 								$pdf->ezSetDy ( 10 );
 								
-								$pdf->ezText ( "$zahlbetrag_ausgabe �", 9, array (
+								$pdf->ezText ( "$zahlbetrag_ausgabe €", 9, array (
 										'justification' => 'right' 
 								) );
 							} // end for
@@ -4595,7 +4595,7 @@ else {
 								$pdf->ezText ( "$tag_heute.$akt_monat.$key $monat_name $key ", 9 );
 								$pdf->ezSetDy ( 10 );
 								
-								$pdf->ezText ( "$saldo_aus �", 9, array (
+								$pdf->ezText ( "$saldo_aus €", 9, array (
 										'justification' => 'right' 
 								) );
 							} else {
@@ -4604,7 +4604,7 @@ else {
 								$pdf->ezText ( "<b>$letzter_tag.$akt_monat.$key Saldo $monat_name $key</b>", 9 );
 								$pdf->ezSetDy ( 10 );
 								
-								$pdf->ezText ( "<b>$saldo_aus �</b>", 9, array (
+								$pdf->ezText ( "<b>$saldo_aus €</b>", 9, array (
 										'justification' => 'right' 
 								) );
 								
@@ -4614,9 +4614,9 @@ else {
 						}
 					} // ende for monate
 				} // end foreach
-			} // ENDE VERSION F�R AKTUELLE MIETER###########################################################################
+			} // ENDE VERSION FÜR AKTUELLE MIETER###########################################################################
 			
-			/* VERSION F�R MIETER DIE AUSGEZOGEN SIND */
+			/* VERSION FÜR MIETER DIE AUSGEZOGEN SIND */
 			if ($mieter_ausgezogen == true) {
 				foreach ( $a->daten_arr as $key => $value ) {
 					for($b = 0; $b < count ( $a->daten_arr [$key] ['monate'] ); $b ++) {
@@ -4633,7 +4633,7 @@ else {
 							$pdf->ezText ( "01.$akt_monat.$key Soll aus Mietvertrag $monat_name $key", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetMargins ( 140, 70, 50, 100 );
-							$pdf->ezText ( "$soll_aus_mv �", 9, array (
+							$pdf->ezText ( "$soll_aus_mv €", 9, array (
 									'justification' => 'right' 
 							) );
 						}
@@ -4644,7 +4644,7 @@ else {
 							 * $pdf->ezText("01.$akt_monat.$key NICHT ANZEIGEN $monat_name $key",9);
 							 * $pdf->ezSetDy(10);
 							 * $pdf->ezSetCmMargins(4.0,2.5,4.0,4.5);
-							 * $pdf->ezText("$soll_aus_mv $t �",9, array('justification'=>'right'));
+							 * $pdf->ezText("$soll_aus_mv $t €",9, array('justification'=>'right'));
 							 * $pdf->ezSetCmMargins(4.0,2.5,2.5,2.5);
 							 */
 						}
@@ -4658,7 +4658,7 @@ else {
 							$pdf->ezText ( "$datum_wasser Wasserabrechnung ", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetMargins ( 140, 70, 50, 100 );
-							$pdf->ezText ( "$wasser_abrechnung �", 9, array (
+							$pdf->ezText ( "$wasser_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 						}
@@ -4671,7 +4671,7 @@ else {
 							$pdf->ezText ( "$datum_bk Betriebskostenabrechnung", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetMargins ( 140, 70, 50, 100 );
-							$pdf->ezText ( "$bk_abrechnung �", 9, array (
+							$pdf->ezText ( "$bk_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 						}
@@ -4685,7 +4685,7 @@ else {
 							$pdf->ezText ( "$datum_hk Heizkostenabrechnung", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetMargins ( 140, 70, 50, 100 );
-							$pdf->ezText ( "$hk_abrechnung �", 9, array (
+							$pdf->ezText ( "$hk_abrechnung €", 9, array (
 									'justification' => 'right' 
 							) );
 						}
@@ -4706,7 +4706,7 @@ else {
 								$pdf->ezText ( "<b>Keine Zahlung</b>", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetMargins ( 140, 70, 50, 50 );
-								$pdf->ezText ( "<b>$akt_saldo_nz �</b>", 9, array (
+								$pdf->ezText ( "<b>$akt_saldo_nz €</b>", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetDy ( - 3 );
@@ -4719,7 +4719,7 @@ else {
 								$pdf->ezText ( "$datum " . $a->daten_arr [$key] ['monate'] [$b] ['zahlungen'] [$c] ['BEMERKUNG'] . "", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetMargins ( 140, 70, 50, 50 );
-								$pdf->ezText ( "$zahlbetrag_ausgabe �", 9, array (
+								$pdf->ezText ( "$zahlbetrag_ausgabe €", 9, array (
 										'justification' => 'right' 
 								) );
 							} // end for
@@ -4736,7 +4736,7 @@ else {
 								$pdf->ezText ( "<b>$tag_heute.$akt_monat.$key Saldo $monat_name $key</b>", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetMargins ( 140, 70, 50, 50 );
-								$pdf->ezText ( "$saldo_aus �", 9, array (
+								$pdf->ezText ( "$saldo_aus €", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetDy ( - 3 );
@@ -4746,7 +4746,7 @@ else {
 								$pdf->ezText ( "<b>$letzter_tag.$akt_monat.$key Saldo $monat_name $key</b>", 9 );
 								$pdf->ezSetDy ( 10 );
 								$pdf->ezSetMargins ( 140, 70, 50, 50 );
-								$pdf->ezText ( "<b>$saldo_aus �</b>", 9, array (
+								$pdf->ezText ( "<b>$saldo_aus €</b>", 9, array (
 										'justification' => 'right' 
 								) );
 								$pdf->ezSetDy ( - 3 );
@@ -4761,7 +4761,7 @@ else {
 							$pdf->ezText ( "<b><i>$auszugsdatum_a Ende der Mietzeit</b></i>", 9 );
 							$pdf->ezSetDy ( 10 );
 							$pdf->ezSetMargins ( 140, 70, 50, 50 );
-							$pdf->ezText ( "<b>$saldo_aus �</b>", 9, array (
+							$pdf->ezText ( "<b>$saldo_aus €</b>", 9, array (
 									'justification' => 'right' 
 							) );
 							$pdf->setColor ( 0.0, 0.0, 0.0 );
@@ -4773,22 +4773,22 @@ else {
 				} // end foreach
 			} // ende version ausgezogene Mieter
 			
-			/* Letzte Zeile �berhaupt */
+			/* Letzte Zeile überhaupt */
 			$tag_heute = date ( "d" );
-			// echo "<tr><td><b>$tag_heute.$akt_monat.$key</b></td><td><b>Aktuell</b></td><td></td><td><b>$saldo_aus �</b></td></tr>";
+			// echo "<tr><td><b>$tag_heute.$akt_monat.$key</b></td><td><b>Aktuell</b></td><td></td><td><b>$saldo_aus €</b></td></tr>";
 			// echo "</table>\n";
 			$pdf->ezSetDy ( - 2 );
 			$pdf->line ( 50, $pdf->y, 550, $pdf->y );
 			$pdf->ezText ( "<b>$tag_heute.$akt_monat.$key Saldo Aktuell</b>", 9 );
 			$pdf->ezSetMargins ( 140, 70, 50, 50 );
 			$pdf->ezSetDy ( 10 );
-			$pdf->ezText ( "<b>$saldo_aus �</b>", 9, array (
+			$pdf->ezText ( "<b>$saldo_aus €</b>", 9, array (
 					'justification' => 'right' 
 			) );
 		}  // Ende if if(!empty($a->erg)){
 else {
-			// echo "<h1>Keine Berechnungsgrundlage f�r das Mietkonto</h1>";
-			// echo "<h1>Einzugsdatum, Mietdefinition �berpr�fen</h1>";
+			// echo "<h1>Keine Berechnungsgrundlage für das Mietkonto</h1>";
+			// echo "<h1>Einzugsdatum, Mietdefinition überprüfen</h1>";
 		}
 		
 		$pdf->addInfo ( 'Title', "Mietkontenblatt $mv->personen_name_string" );
@@ -4816,8 +4816,8 @@ else {
 		$pdf->setLineStyle ( 0.5 );
 		$pdf->line ( 42, 50, 550, 50 );
 		$pdf->selectFont ( $berlus_schrift );
-		$pdf->addText ( 170, 42, 6, "BERLUS HAUSVERWALTUNG �  Fontanestr. 1 � 14193 Berlin � Inhaber Wolfgang Wehrheim" );
-		$pdf->addText ( 150, 35, 6, "Bankverbindung: Dresdner Bank Berlin � BLZ: 100  800  00 � Konto-Nr.: 05 804 000 00 � Steuernummer: 24/582/61188" );
+		$pdf->addText ( 170, 42, 6, "BERLUS HAUSVERWALTUNG *  Fontanestr. 1 * 14193 Berlin * Inhaber Wolfgang Wehrheim" );
+		$pdf->addText ( 150, 35, 6, "Bankverbindung: Dresdner Bank Berlin * BLZ: 100  800  00 * Konto-Nr.: 05 804 000 00 * Steuernummer: 24/582/61188" );
 		$pdf->addInfo ( 'Title', "Mietkontenblatt $mv->personen_name_string" );
 		$pdf->addInfo ( 'Author', $_SESSION ['username'] );
 	}

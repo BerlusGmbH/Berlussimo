@@ -19,13 +19,13 @@
  */
 $mieten = new mietkonto ();
 echo "<div class=\"navi_leiste2\">";
-$mieten->erstelle_formular ( "Hauptmen� -> Kautionen...", NULL );
+$mieten->erstelle_formular ( "Hauptmenü -> Kautionen...", NULL );
 
 echo "<a href=\"?daten=kautionen\">Kautionen</a>&nbsp;<b>|</b>&nbsp;";
 echo "<a href=\"?daten=kautionen&option=kautionen_buchen\">Kautionen buchen</a>&nbsp;<b>|</b>&nbsp;";
-echo "<a href=\"?daten=kautionen&option=kontohochrechnung\">Konto�bersicht</a>&nbsp;<b>|</b>&nbsp;";
+echo "<a href=\"?daten=kautionen&option=kontohochrechnung\">Kontoübersicht</a>&nbsp;<b>|</b>&nbsp;";
 echo "<a href=\"?daten=kautionen&option=mv_ohne_k\">Mieter ohne Kautionsbuchungen</a>&nbsp;<b>|</b>&nbsp;";
-echo "<a href=\"?daten=kautionen&option=kautionsuebersicht\"><b>Kautions�bersicht</a>&nbsp;<b>|</b>&nbsp;";
+echo "<a href=\"?daten=kautionen&option=kautionsuebersicht\"><b>Kautionsübersicht</a>&nbsp;<b>|</b>&nbsp;";
 echo "<a href=\"?daten=kautionen&option=kautionsfelder\"><b>Kautionsfelder</a>&nbsp;<b>|</b>&nbsp;";
 
 $mieten->ende_formular ();

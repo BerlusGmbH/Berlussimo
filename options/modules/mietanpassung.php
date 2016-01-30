@@ -28,7 +28,7 @@ include_once ("includes/allgemeine_funktionen.php");
 /* Wegen PDF */
 include_once ('classes/class_bpdf.php');
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'mietanpassung' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -36,10 +36,10 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'mietanpassung' )) {
 	die ();
 }
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
 
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
 include_once ("options/links/links.mietanpassung.php");
 include_once ("classes/berlussimo_class.php");
 include_once ("classes/class_mietanpassung.php");
@@ -53,7 +53,7 @@ if (isset ( $_REQUEST ["option"] ) && ! empty ( $_REQUEST ["option"] )) {
 /* Optionsschalter */
 switch ($option) {
 	
-	/* �bersichtstabelle nach Mittelwert */
+	/* übersichtstabelle nach Mittelwert */
 	case "uebersicht" :
 		$ma = new mietanpassung ();
 		$bg = new berlussimo_global ();
@@ -75,10 +75,10 @@ switch ($option) {
 		// $ma->get_einheit_daten(597);
 		break;
 	
-	/* �bersicht der Mieter, die nach Mittelwert des MS aufeinmal erh�ht werden sollen, SAMMELPDF */
+	/* übersicht der Mieter, die nach Mittelwert des MS aufeinmal erhöht werden sollen, SAMMELPDF */
 	case "uebersicht_mw_netto" :
 		$f = new formular ();
-		$f->erstelle_formular ( "Stapelmieterh�hungen f�r Nettomieter", null );
+		$f->erstelle_formular ( "Stapelmieterhöhungen für Nettomieter", null );
 		$ma = new mietanpassung ();
 		$bg = new berlussimo_global ();
 		$bg->objekt_auswahl_liste ( '?daten=mietanpassung&option=uebersicht_mw_netto' );
@@ -95,7 +95,7 @@ switch ($option) {
 				$f->check_box_js_alle ( 'einheit_all', 'a_ids', null, 'Alle', null, null, 'einheit_ids' );
 				// $f->check_box_js('einheit_ids[]', $einheit_id, $einheit_kn, null, 'checked');
 				// check_box_js($name, $wert, $label, $js, $checked)
-				echo "</th><th>EINHEIT</th><th>NAME</th><th>L. ERH.</th><th>L. BETRAG</th><th>L %</th><th>WARTEN</th><th>ERH�HUNG</th><th>ERH %</th></tr>";
+				echo "</th><th>EINHEIT</th><th>NAME</th><th>L. ERH.</th><th>L. BETRAG</th><th>L %</th><th>WARTEN</th><th>ERHÖHUNG</th><th>ERH %</th></tr>";
 				$sum = 0;
 				$schnitt_proz = 0;
 				$z = 0;
@@ -109,14 +109,14 @@ switch ($option) {
 					$einheit_id = $arr [$a] ['EINHEIT_ID'];
 					$mv_id = $arr [$a] ['MV_ID'];
 					
-					/* Pr�fen ob Mieter auszieht */
+					/* Prüfen ob Mieter auszieht */
 					$mv1 = new mietvertraege ();
 					if ($mv1->check_auszug ( $mv_id ) == true) {
 						$zieht_aus = 'JA';
 					} else {
 						$zieht_aus = 'NEIN';
 					}
-					/* Pr�fen ob eventuel schon erh�ht */
+					/* Prüfen ob eventuel schon erhöht */
 					if ($ma->check_erhoehung ( $mv_id ) == true) {
 						$erhoeht = 'JA';
 					} else {
@@ -155,7 +155,7 @@ switch ($option) {
 							$f->check_box_js ( 'einheit_ids[]', $einheit_id, $einheit_kn, null, null );
 						}
 						echo "</td><td>$einheit_kn</td><td>$mietername</td><td>$l_datum</td><td>$l_betrag</td><td>$l_anstieg_proz %</td>";
-						echo "<td>$noch_monate_15 Mon. / +$diff_abwarten �</td>";
+						echo "<td>$noch_monate_15 Mon. / +$diff_abwarten €</td>";
 						
 						echo "<td>$mon_mehr EUR</td><td>$prozent_neu %</td></tr>";
 						$sum += nummer_komma2punkt ( $mon_mehr );
@@ -172,7 +172,7 @@ switch ($option) {
 			$f->hidden_feld ( 'option', 'nettostapel' );
 			// $ma->nettomieter_daten_arr($_SESSION['objekt_id'], 'Bruttomieter');
 		} else {
-			fehlermeldung_ausgeben ( "Objekt w�hlen" );
+			fehlermeldung_ausgeben ( "Objekt wählen" );
 		}
 		// echo '<pre>';
 		// print_r($arr);
@@ -262,21 +262,21 @@ switch ($option) {
 			
 			// print_r($tab_ue);
 			// die();
-			/* �bersichtseite */
+			/* übersichtseite */
 			$tab_ue [$anz] ['MEHR'] = nummer_punkt2komma_t ( $sum );
 			$pdf->ezNewPage ();
 			$cols = array (
 					'EINHEIT' => "Einheit",
 					'MIETER' => "Mieter",
 					'ANSCHRIFT' => "Anschrift",
-					'MEHR' => "Erh�.",
+					'MEHR' => "Erhö.",
 					'NEUE_MIETE' => "Neue\nMiete",
 					'NK' => "NK",
 					'HK' => "HK",
 					'WM' => "WM",
 					'N_ANSTIEG_DATUM' => "ZUM" 
 			);
-			$pdf->ezTable ( $tab_ue, $cols, "Mieterh�hungen vom $druckdatum", array (
+			$pdf->ezTable ( $tab_ue, $cols, "Mieterhöhungen vom $druckdatum", array (
 					'showHeadings' => 1,
 					'shaded' => 1,
 					'showLines' => 1,
@@ -313,7 +313,7 @@ switch ($option) {
 			$ms_jahr = $ma->get_ms_jahr ();
 			$ma->form_mietanpassung ( $einheit_id, $ms_jahr );
 		} else {
-			echo "Einheit w�hlen";
+			echo "Einheit wählen";
 		}
 		break;
 	
@@ -340,7 +340,7 @@ switch ($option) {
 			// $ma = new mietanpassung;
 			// $ma->pdf_anschreiben_prozent($_POST[ber_array], date("d.m.Y"));
 			$f = new formular ();
-			$f->erstelle_formular ( "Mieterh�hung um  x Prozent", null );
+			$f->erstelle_formular ( "Mieterhöhung um  x Prozent", null );
 			
 			$f->text_feld ( 'Prozent eingeben', 'prozent', '', 5, 'prozent', '' );
 			$f->hidden_feld ( 'option', 'ber_prozentual' );
@@ -376,7 +376,7 @@ switch ($option) {
 			if ($neue_miete > $_SESSION [ber_arr] ['NEUE_MIETE']) {
 				$max_miete = $_SESSION ['ber_arr'] ['NEUE_MIETE'];
 				echo "Neue Miete = $neue_miete |||  Kappung: $max_miete<br>";
-				die ( "NEUE MIETE H�HER ALS KAPPUNGSGRENZE ODER MIETE NACH MIETSPIEGEL, PROZENTE REDUZIEREN!!!!" );
+				die ( "NEUE MIETE HÖHER ALS KAPPUNGSGRENZE ODER MIETE NACH MIETSPIEGEL, PROZENTE REDUZIEREN!!!!" );
 			} else {
 				$_SESSION [ber_arr] ['NEUE_MIETE'] = $neue_miete;
 			}
@@ -390,11 +390,11 @@ switch ($option) {
 			
 			$ma->pdf_anschreiben_prozent ( $_SESSION [ber_arr], '19.01.2011' );
 		} else {
-			echo "DATEN UNVOLLST�NDIG";
+			echo "DATEN UNVOLLSTÄNDIG";
 		}
 		break;
 	
-	/* Allen Einheiten die Auststattungsklasse 4 in Details hinzuf�gen */
+	/* Allen Einheiten die Auststattungsklasse 4 in Details hinzufügen */
 	case "ak4" :
 		if (! empty ( $_SESSION ['objekt_id'] )) {
 			$ma = new mietanpassung ();
@@ -402,7 +402,7 @@ switch ($option) {
 			// $ma->update_wohnlage($_SESSION['objekt_id']);
 			$ma->update_klassen ( $_SESSION ['objekt_id'] );
 		} else {
-			fehlermeldung_ausgeben ( "Objekt w�hlen!!!" );
+			fehlermeldung_ausgeben ( "Objekt wählen!!!" );
 		}
 		break;
 } // end switch

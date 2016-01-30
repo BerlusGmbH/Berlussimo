@@ -21,7 +21,7 @@
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
 include_once ("classes/class_zeiterfassung.php");
 class urlaub {
@@ -108,7 +108,7 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 		
 		/* Erstes Jahr in der Firma */
 		if ($eintritt_jahr == $jahr) {
-			/* Mitarbeiter noch besch�ftigt */
+			/* Mitarbeiter noch beschäftigt */
 			
 			if ($austritt_jahr == '0000') {
 				$bis = "$jahr-12-31";
@@ -117,12 +117,12 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 			} else {
 				
 				$jahre = $austritt_jahr - $eintritt_jahr;
-				/* Mitarbeiter nicht mehr besch�ftigt, gleiches Jahr ausgetreten */
+				/* Mitarbeiter nicht mehr beschäftigt, gleiches Jahr ausgetreten */
 				if ($jahre == 0) {
 					$tage = $this->tage_zwischen ( $eintritt, $austritt );
 					$monate = $tage / 30;
 				}
-				/* Mitarbeiter nicht mehr besch�ftigt, Jahre danach ausgetreten */
+				/* Mitarbeiter nicht mehr beschäftigt, Jahre danach ausgetreten */
 				if ($jahre > 0) {
 					$bis = "$jahr-12-31";
 					$tage = $this->tage_zwischen ( $eintritt, $bis );
@@ -133,7 +133,7 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 		
 		/* Jahre danach in der Firma */
 		if ($eintritt_jahr < $jahr) {
-			/* Mitarbeiter noch besch�ftigt */
+			/* Mitarbeiter noch beschäftigt */
 			
 			if ($austritt_jahr == '0000') {
 				$tage = 365;
@@ -142,13 +142,13 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 				
 				$jahre = $austritt_jahr - $eintritt_jahr;
 				
-				/* Mitarbeiter nicht mehr besch�ftigt, 1 Jahr danach ausgetreten */
+				/* Mitarbeiter nicht mehr beschäftigt, 1 Jahr danach ausgetreten */
 				if ($jahre == 1) {
 					$von = "$jahr-01-01";
 					$tage = $this->tage_zwischen ( $von, $austritt );
 					$monate = $tage / 30;
 				}
-				/* Mitarbeiter nicht mehr besch�ftigt, Jahre danach ausgetreten */
+				/* Mitarbeiter nicht mehr beschäftigt, Jahre danach ausgetreten */
 				if ($jahre > 1) {
 					if ($jahr != $austritt_jahr) {
 						$tage = 365;
@@ -266,7 +266,7 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 				$table_arr [$zaehler] [REST_J] = "$this->rest_jahr";
 			} // end for
 			
-			$pdf->ezTable ( $table_arr, $cols, "Jahres�bersicht $jahr", array (
+			$pdf->ezTable ( $table_arr, $cols, "Jahresübersicht $jahr", array (
 					'showHeadings' => 1,
 					'showLines' => '1',
 					'shaded' => 1,
@@ -294,7 +294,7 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 			) );
 			$datum_uhrzeit = date ( "d.m.Y      H:i" );
 			$pdf->ezSetDy ( - 20 ); // abstand
-			$pdf->ezText ( "�bersicht vom $datum_uhrzeit Uhr", 7, array (
+			$pdf->ezText ( "Übersicht vom $datum_uhrzeit Uhr", 7, array (
 					'left' => '0' 
 			) );
 			
@@ -344,7 +344,7 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 				
 				/* Erstes Jahr in der Firma */
 				if ($eintritt_jahr == $jahr) {
-					/* Mitarbeiter noch besch�ftigt */
+					/* Mitarbeiter noch beschäftigt */
 					
 					if ($austritt_jahr == '0000') {
 						$bis = "$jahr-12-31";
@@ -353,12 +353,12 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 					} else {
 						
 						$jahre = $austritt_jahr - $eintritt_jahr;
-						/* Mitarbeiter nicht mehr besch�ftigt, gleiches Jahr ausgetreten */
+						/* Mitarbeiter nicht mehr beschäftigt, gleiches Jahr ausgetreten */
 						if ($jahre == 0) {
 							$tage = $this->tage_zwischen ( $eintritt, $austritt );
 							$monate = $tage / 30;
 						}
-						/* Mitarbeiter nicht mehr besch�ftigt, Jahre danach ausgetreten */
+						/* Mitarbeiter nicht mehr beschäftigt, Jahre danach ausgetreten */
 						if ($jahre > 0) {
 							$bis = "$jahr-12-31";
 							$tage = $this->tage_zwischen ( $eintritt, $bis );
@@ -369,7 +369,7 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 				
 				/* Jahre danach in der Firma */
 				if ($eintritt_jahr < $jahr) {
-					/* Mitarbeiter noch besch�ftigt */
+					/* Mitarbeiter noch beschäftigt */
 					
 					if ($austritt_jahr == '0000') {
 						$tage = 365;
@@ -378,13 +378,13 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 						
 						$jahre = $austritt_jahr - $eintritt_jahr;
 						
-						/* Mitarbeiter nicht mehr besch�ftigt, 1 Jahr danach ausgetreten */
+						/* Mitarbeiter nicht mehr beschäftigt, 1 Jahr danach ausgetreten */
 						if ($jahre == 1) {
 							$von = "$jahr-01-01";
 							$tage = $this->tage_zwischen ( $von, $austritt );
 							$monate = $tage / 30;
 						}
-						/* Mitarbeiter nicht mehr besch�ftigt, Jahre danach ausgetreten */
+						/* Mitarbeiter nicht mehr beschäftigt, Jahre danach ausgetreten */
 						if ($jahre > 1) {
 							if ($jahr != $austritt_jahr) {
 								$tage = 365;
@@ -500,7 +500,7 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 		
 		/* Erstes Jahr in der Firma */
 		if ($eintritt_jahr == $jahr) {
-			/* Mitarbeiter noch besch�ftigt */
+			/* Mitarbeiter noch beschäftigt */
 			
 			if ($austritt_jahr == '0000') {
 				$bis = "$jahr-12-31";
@@ -509,12 +509,12 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 			} else {
 				
 				$jahre = $austritt_jahr - $eintritt_jahr;
-				/* Mitarbeiter nicht mehr besch�ftigt, gleiches Jahr ausgetreten */
+				/* Mitarbeiter nicht mehr beschäftigt, gleiches Jahr ausgetreten */
 				if ($jahre == 0) {
 					$tage = $this->tage_zwischen ( $eintritt, $austritt );
 					$monate = $tage / 30;
 				}
-				/* Mitarbeiter nicht mehr besch�ftigt, Jahre danach ausgetreten */
+				/* Mitarbeiter nicht mehr beschäftigt, Jahre danach ausgetreten */
 				if ($jahre > 0) {
 					$bis = "$jahr-12-31";
 					$tage = $this->tage_zwischen ( $eintritt, $bis );
@@ -525,7 +525,7 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 		
 		/* Jahre danach in der Firma */
 		if ($eintritt_jahr < $jahr) {
-			/* Mitarbeiter noch besch�ftigt */
+			/* Mitarbeiter noch beschäftigt */
 			
 			if ($austritt_jahr == '0000') {
 				$tage = 365;
@@ -534,13 +534,13 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 				
 				$jahre = $austritt_jahr - $eintritt_jahr;
 				
-				/* Mitarbeiter nicht mehr besch�ftigt, 1 Jahr danach ausgetreten */
+				/* Mitarbeiter nicht mehr beschäftigt, 1 Jahr danach ausgetreten */
 				if ($jahre == 1) {
 					$von = "$jahr-01-01";
 					$tage = $this->tage_zwischen ( $von, $austritt );
 					$monate = $tage / 30;
 				}
-				/* Mitarbeiter nicht mehr besch�ftigt, Jahre danach ausgetreten */
+				/* Mitarbeiter nicht mehr beschäftigt, Jahre danach ausgetreten */
 				if ($jahre > 1) {
 					if ($jahr != $austritt_jahr) {
 						$tage = 365;
@@ -653,7 +653,7 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 				$urlaubstag = date_mysql2german ( $urlaubstag );
 				$wochentag = $this->tagesname ( $urlaubstag );
 				$u_dat = $row ['U_DAT'];
-				$link_loeschen = "<a href=\"?daten=urlaub&option=urlaubstag_loeschen&u_dat=$u_dat&benutzer_id=$benutzer_id&jahr=$jahr\">Urlaubstag l�schen</a>";
+				$link_loeschen = "<a href=\"?daten=urlaub&option=urlaubstag_loeschen&u_dat=$u_dat&benutzer_id=$benutzer_id&jahr=$jahr\">Urlaubstag löschen</a>";
 				echo "<tr class=\"zeile1\"><td>$zeile</td><td>$antrag_vom</td><td>$art</td><td>$urlaubstag, $wochentag</td><td>$anteil</td><td>$link_loeschen</td></tr>";
 			}
 			echo "$benutzername Gesamt: $summe_tage Tage";
@@ -821,7 +821,7 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 		$f = new formular ();
 		$z = new zeiterfassung ();
 		$mitarbeiter_name = $z->get_benutzer_name ( $benutzer_id );
-		$f->erstelle_formular ( "Urlaubsplanung und Abwesenheit f�r $mitarbeiter_name", NULL );
+		$f->erstelle_formular ( "Urlaubsplanung und Abwesenheit für $mitarbeiter_name", NULL );
 		$f->datum_feld ( 'Abwesend vom', 'u_vom', "", 'u_vom' );
 		$f->datum_feld ( 'Abwesend bis', 'u_bis', "", 'u_bis' );
 		// $f->radio_button('art', 'krank', 'als Krank eintragen');
@@ -847,7 +847,7 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 				$anteil = $this->anteil_datum ( $datum_a );
 				$this->urlaubstag_speichern ( $benutzer_id, $datum_a, $anteil, $art );
 			} else {
-				echo "Der gew�nschte Tag ist ein Feiertag oder Wochenende";
+				echo "Der gewünschte Tag ist ein Feiertag oder Wochenende";
 			}
 		} else {
 			/* ersten Tag eingeben */
@@ -855,7 +855,7 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 				$anteil = $this->anteil_datum ( $datum_a );
 				$this->urlaubstag_speichern ( $benutzer_id, $datum_a, $anteil, $art );
 			} else {
-				echo "Der gew�nschte Tag ist ein Feiertag oder Wochenende";
+				echo "Der gewünschte Tag ist ein Feiertag oder Wochenende";
 			}
 			
 			$zeile = 0;
@@ -980,12 +980,12 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 	function urlaubstag_loeschen($dat) {
 		$db_abfrage = "UPDATE URLAUB SET AKTUELL='0' WHERE U_DAT='$dat'";
 		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-		echo "gel�scht";
+		echo "gelöscht";
 	}
 	function urlaubstag_loeschen_datum($benutzer_id, $datum) {
 		$db_abfrage = "UPDATE URLAUB SET AKTUELL='0' WHERE DATUM='$datum' && BENUTZER_ID='$benutzer_id'";
 		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-		echo "gel�scht";
+		echo "gelöscht";
 	}
 	function feiertag($datum) {
 		$datum = explode ( "-", $datum );
@@ -1437,7 +1437,7 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 			$betrag_vormonat = $betrag_ende_monat;
 		}
 		
-		/* Beispiel: Kaution Euro 1000 bei Mietdauer 1 Jahr und 14 Tagen: 1000 : 100 : 1 Jahr x Zins 3 x 1 Jahr = Euro 30. Folgejahr: 1030 : 100 : 360 x 3 x 14 Tage = 0,40 Euro - Der Mieter erh�lt mit Zinseszinses vom Vermieter Euro 1.030,40 zur�ck! */
+		/* Beispiel: Kaution Euro 1000 bei Mietdauer 1 Jahr und 14 Tagen: 1000 : 100 : 1 Jahr x Zins 3 x 1 Jahr = Euro 30. Folgejahr: 1030 : 100 : 360 x 3 x 14 Tage = 0,40 Euro - Der Mieter erhält mit Zinseszinses vom Vermieter Euro 1.030,40 zurück! */
 	}
 } // end class urlaub
 
