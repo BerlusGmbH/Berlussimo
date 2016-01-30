@@ -34,13 +34,13 @@ import_me ( 'geld_214' );
 // import_me('buchungen2012_30000');
 // kontrolle_zb_mb();
 function import_me($tabelle) {
-	$tabelle_in_gross = strtoupper ( $tabelle ); // Tabelle in GRO�BUCHSTABEN
+	$tabelle_in_gross = strtoupper ( $tabelle ); // Tabelle in GROßBUCHSTABEN
 	$datei = "$tabelle.csv"; // DATEINAME
 	                         // $CSVarray = get_csv($file);
 	$array = get_csv ( $datei ); // DATEI IN ARRAY EINLESEN
 	                          // echo "<pre>";
 	                          // print_r($array);
-	echo $array [0]; // ZEILE 0 mit �berschriften
+	echo $array [0]; // ZEILE 0 mit Überschriften
 	$feldernamen [] = explode ( ":", $array [0] ); // FELDNAMEN AUS ZEILE 0 IN ARRAY EINLESEN
 	$anzahl_felder = count ( $feldernamen [0] ); // ANZAHL DER IMPORT FELDER
 	$feld1 = $feldernamen [0] [0]; // FELD1 - IMPORT nur zur info
@@ -54,8 +54,8 @@ function import_me($tabelle) {
 	
 	$anzahl_zeilen = count ( $array );
 	
-	for($i = 5000; $i < 9175; $i ++) // Datei ab Zeile1 einlesen, weil Zeile 0 �berschrift ist
-	                                 // for ($i = 2460; $i < 9175; $i++) //Datei ab Zeile1 einlesen, weil Zeile 0 �berschrift ist
+	for($i = 5000; $i < 9175; $i ++) // Datei ab Zeile1 einlesen, weil Zeile 0 Überschrift ist
+	                                 // for ($i = 2460; $i < 9175; $i++) //Datei ab Zeile1 einlesen, weil Zeile 0 Überschrift ist
 	{
 		
 		$zeile [$i] = $array [$i]; // Zeile in Array einlesen
@@ -124,7 +124,7 @@ function import_me($tabelle) {
 			
 			$geldkonto_ins->geld_konten_id_ermitteln_f ( 'Objekt', $objekt_kostentraeger_id );
 			$objekt_geldkonto_id = $geldkonto_ins->konto_id;
-			/* �berpr�fen ob Einheit Geldkonto = Objektgeldkonto und falls unterschiedlich buchen auf Objektgeldkonto weil FM das Objektgeldkonto unabh�ngig von Einheit belastet. Nur so stimmt die Kontobelastung und -buchung */
+			/* Überprüfen ob Einheit Geldkonto = Objektgeldkonto und falls unterschiedlich buchen auf Objektgeldkonto weil FM das Objektgeldkonto unabhängig von Einheit belastet. Nur so stimmt die Kontobelastung und -buchung */
 			if ($einheit_geldkonto_id != $objekt_geldkonto_id) {
 				// echo "<h1> E_KONTO: $einheit_geldkonto_id != OBJEKT_KONTO:$objekt_geldkonto_id</h1>";
 				$geldkonto_ins->konto_id = $objekt_geldkonto_id;
@@ -135,7 +135,7 @@ function import_me($tabelle) {
 				$geldkonto_ins->konto_id = $einheit_geldkonto_id;
 				$kostentraeger_id = $einheit_kostentraeger_id;
 			}
-			// echo "NACH �NDERUNG KT:$kostentraeger_typ KID:$kostentraeger_id KONTO:$geldkonto_ins->konto_id<br>";
+			// echo "NACH ÄNDERUNG KT:$kostentraeger_typ KID:$kostentraeger_id KONTO:$geldkonto_ins->konto_id<br>";
 		} else {
 			$kostentraeger_typ = 'Objekt';
 			$kostentraeger_id = rtrim ( ltrim ( $zeile [$i] [7] ) );
@@ -168,7 +168,7 @@ function import_me($tabelle) {
 				$betrag = $form->nummer_komma2punkt ( $betrag );
 				// $zb_exists = $form->check_zahlbetrag('888888', $kostentraeger_typ, $kostentraeger_id, $datum_sql, $betrag, $v_zweck, $geldkonto_ins->konto_id, $buchungskonto);
 				// if(!$zb_exists){
-				// echo "Existiert nicht, wird hinzugef�gt:<br>$zeile[$i]<br>";
+				// echo "Existiert nicht, wird hinzugefügt:<br>$zeile[$i]<br>";
 				
 				insert_geldbuchung ( $geldkonto_ins->konto_id, $buchungskonto, '888888', 'IMPORT', $v_zweck, $datum_sql, $kostentraeger_typ, $kostentraeger_id, $betrag );
 				// }

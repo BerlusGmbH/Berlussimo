@@ -19,7 +19,7 @@
  */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'details' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -29,10 +29,10 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'details' )) {
 
 include_once ("includes/formular_funktionen.php");
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
 
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhüngige Dateien d.h. Links und eigene Klasse */
 include_once ("classes/class_details.php");
 include_once ("options/links/links.details.php");
 
@@ -53,7 +53,7 @@ switch ($option) {
 	
 	case "details_hinzu" :
 		$f = new formular ();
-		$f->fieldset ( "Details hinzuf�gen", 'details' );
+		$f->fieldset ( "Details hinzufügen", 'details' );
 		$d = new detail (); // class details neue, nicht berlussimo
 		$vorauswahl = $_REQUEST ['vorauswahl'];
 		$d->form_detail_hinzu ( $detail_tabelle, $detail_id, $vorauswahl );
@@ -62,7 +62,7 @@ switch ($option) {
 	
 	case "detail_gesendet" :
 		$f = new formular ();
-		$f->fieldset ( "Details hinzuf�gen", 'details' );
+		$f->fieldset ( "Details hinzufügen", 'details' );
 		$d = new detail (); // class details neue, nicht berlussimo
 		/*
 		 * echo "<pre>";
@@ -96,7 +96,7 @@ switch ($option) {
 	
 	case "detail_loeschen" :
 		$f = new formular ();
-		$f->fieldset ( "Detail l�schen", 'details' );
+		$f->fieldset ( "Detail löschen", 'details' );
 		$d = new detail (); // class details neue, nicht berlussimo
 		if (! empty ( $_REQUEST ['detail_dat'] )) {
 			$detail_dat = $_REQUEST ['detail_dat'];

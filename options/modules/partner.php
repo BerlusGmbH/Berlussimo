@@ -21,7 +21,7 @@
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'partner' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -29,10 +29,10 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'partner' )) {
 	die ();
 }
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
 
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
 include_once ("options/links/links.partner.php");
 include_once ("classes/class_partners.php");
 if (isset ( $_REQUEST ["option"] )) {
@@ -61,12 +61,12 @@ switch ($option) {
 		break;
 	
 	/*
-	 * Aufruf des Formulars f�r die
+	 * Aufruf des Formulars für die
 	 * Partner/Lieferantenerfassung
 	 */
 	case "partner_erfassen" :
 		$form = new formular ();
-		$form->erstelle_formular ( "Partner / Lieferanten / Eigent�mer anlegen", NULL );
+		$form->erstelle_formular ( "Partner / Lieferanten / Eigentümer anlegen", NULL );
 		$partners = new partners ();
 		// $partners->partner_rechts_anzeigen();
 		$partners->form_partner_erfassen ();
@@ -77,8 +77,8 @@ switch ($option) {
 		$partners = new partners ();
 		$partners->partner_rechts_anzeigen ();
 		$form = new formular ();
-		$form->erstelle_formular ( "Partnerdaten �berpr�fen", NULL );
-		echo "<p><b>�bermittelte Partnerdaten:</b></p>";
+		$form->erstelle_formular ( "Partnerdaten überprüfen", NULL );
+		echo "<p><b>Übermittelte Partnerdaten:</b></p>";
 		// $form->array_anzeigen($_POST);
 		$clean_arr = $form->post_array_bereinigen ();
 		// $form->array_anzeigen($clean_arr);
@@ -92,7 +92,7 @@ switch ($option) {
 			$form->hidden_feld ( "option", "partner_gesendet1" );
 			$form->send_button ( "submit_partner1", "Speichern" );
 		} else {
-			echo "Daten unvollst�ndig";
+			echo "Daten unvollständig";
 		}
 		$form->ende_formular ();
 		break;
@@ -185,7 +185,7 @@ switch ($option) {
 			$partner = new partners ();
 			$partner->form_partner_aendern ( $_REQUEST [partner_id] );
 		} else {
-			echo "Bitte den Partner zum �ndern w�hlen.";
+			echo "Bitte den Partner zum Ändern wählen.";
 		}
 		break;
 	
@@ -197,14 +197,14 @@ switch ($option) {
 				$p->partner_aendern ( $_POST [partner_dat], $_POST [partner_id], $_POST [partnername], $_POST [strasse], $_POST [hausnummer], $_POST [plz], $_POST [ort], $_POST [land] );
 				weiterleiten ( "?daten=partner&option=partner_im_detail&partner_id=$_POST[partner_id]" );
 			} else {
-				echo "DATEN UNVOLLST�NDIG";
+				echo "DATEN UNVOLLSTÄNDIG";
 			}
 		} else {
-			echo "Daten unvollst�ndig";
+			echo "Daten unvollständig";
 		}
 		break;
 	
-	/* Auswahlmaske Empf�nger */
+	/* Auswahlmaske Empfänger */
 	case "serienbrief" :
 		// echo "Serienbriefe an Partner";
 		$pp = new partners ();
@@ -217,7 +217,7 @@ switch ($option) {
 		if (isset ( $_REQUEST ['delete'] )) {
 			unset ( $_SESSION ['p_ids'] );
 			$_SESSION ['p_ids'] = array ();
-			echo "Alle gel�scht!";
+			echo "Alle gelöscht!";
 			break;
 			// weiterleiten_in_sec("?daten=weg&option=serienbrief", 2);
 		}
@@ -236,7 +236,7 @@ switch ($option) {
 				$s->vorlage_waehlen ( 'Partner' );
 			}
 		} else {
-			fehlermeldung_ausgeben ( "Bitte Partner aus Liste w�hlen!" );
+			fehlermeldung_ausgeben ( "Bitte Partner aus Liste wählen!" );
 		}
 		break;
 	

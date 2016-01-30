@@ -23,7 +23,7 @@
  *         
  */
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'weg' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -33,9 +33,9 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'weg' )) {
 
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
 include_once ("options/links/links.weg.php");
 include_once ("classes/class_weg.php");
 include_once ("classes/class_serienbrief.php");
@@ -106,7 +106,7 @@ switch ($option) {
 						echo ",";
 					}
 				}
-				echo "\">Email an alle Eigent�mer ($anz Emailadressen)</a>";
+				echo "\">Email an alle Eigentümer ($anz Emailadressen)</a>";
 			}
 			
 			// echo '<pre>';
@@ -114,7 +114,7 @@ switch ($option) {
 			// print_r($emails_arr_u);
 			// print_r($einheiten_arr);
 		} else {
-			echo "Bitte ein Objekt aus de Objektliste w�hlen";
+			echo "Bitte ein Objekt aus de Objektliste wählen";
 		}
 		break;
 	
@@ -137,7 +137,7 @@ switch ($option) {
 			$weg = new weg ();
 			$weg->uebersicht_einheit ( $_REQUEST ['einheit_id'] );
 		} else {
-			die ( 'Einheit w�hlen' );
+			die ( 'Einheit wählen' );
 		}
 		break;
 	
@@ -146,7 +146,7 @@ switch ($option) {
 			$weg = new weg ();
 			$weg->form_eigentuemer_einheit ( $_SESSION ['objekt_id'] );
 		} else {
-			die ( 'Bitte vorher Objekt w�hlen!!!' );
+			die ( 'Bitte vorher Objekt wählen!!!' );
 		}
 		break;
 	
@@ -155,7 +155,7 @@ switch ($option) {
 			$weg = new weg ();
 			$weg->form_eigentuemer_aendern ( $_REQUEST ['eigentuemer_id'] );
 		} else {
-			die ( 'Bitte den Eigent�mer w�hlen!!!' );
+			die ( 'Bitte den Eigentümer wählen!!!' );
 		}
 		break;
 	
@@ -167,13 +167,13 @@ switch ($option) {
 		if (isset ( $_REQUEST ['et_id'] )) {
 			$et_id = $_REQUEST ['et_id'];
 		} else {
-			die ( 'Eigent�mer ID fehlt' );
+			die ( 'Eigentümer ID fehlt' );
 		}
 		
 		if (isset ( $_REQUEST ['einheit_id'] )) {
 			$einheit_id = $_REQUEST ['einheit_id'];
 		} else {
-			die ( 'Einheit nicht gew�hlt' );
+			die ( 'Einheit nicht gewählt' );
 		}
 		
 		if (isset ( $_REQUEST ['z_liste'] )) {
@@ -181,19 +181,19 @@ switch ($option) {
 		} else {
 			echo '<pre>';
 			print_req ();
-			die ( 'Personen nicht gew�hlt' );
+			die ( 'Personen nicht gewählt' );
 		}
 		
 		if (isset ( $_REQUEST ['eigentuemer_seit'] )) {
 			$eigentuemer_von = $_REQUEST ['eigentuemer_seit'];
 		} else {
-			die ( 'Datum Eigent�mer SEIT fehlt!' );
+			die ( 'Datum Eigentümer SEIT fehlt!' );
 		}
 		
 		if (isset ( $_REQUEST ['eigentuemer_bis'] )) {
 			$eigentuemer_bis = $_REQUEST ['eigentuemer_bis'];
 		} else {
-			die ( 'Datum Eigent�mer BIS fehlt!' );
+			die ( 'Datum Eigentümer BIS fehlt!' );
 		}
 		
 		$weg->eigentuemer_aendern_db ( $et_id, $einheit_id, $eigent_arr, $eigentuemer_von, $eigentuemer_bis );
@@ -215,7 +215,7 @@ switch ($option) {
 				weiterleiten ( "?daten=weg&option=einheiten" );
 			}
 		} else {
-			die ( 'Neue Eigent�mer w�hlen!' );
+			die ( 'Neue Eigentümer wählen!' );
 		}
 		break;
 	
@@ -230,7 +230,7 @@ switch ($option) {
 			}
 			$w->form_wg_einheiten ( $monat, $jahr, $_SESSION [objekt_id] );
 		} else {
-			echo "Objekt ausw�hlen";
+			echo "Objekt auswählen";
 		}
 		break;
 	
@@ -250,7 +250,7 @@ switch ($option) {
 			
 			$w->form_wohngeld_buchen ( $monat, $jahr, $_REQUEST [einheit_id] );
 		} else {
-			echo "Einheit w�hlen";
+			echo "Einheit wählen";
 		}
 		break;
 	
@@ -259,7 +259,7 @@ switch ($option) {
 			$w = new weg ();
 			$w->form_wg_definition_neu ( $_REQUEST ['einheit_id'] );
 		} else {
-			echo "Einheit w�hlen";
+			echo "Einheit wählen";
 		}
 		break;
 	
@@ -282,7 +282,7 @@ switch ($option) {
 			echo "Ihre Eingabe wurde gespeichert, sie werden zur Eingabemaske weitergeleitet.";
 		} else {
 			// print_req();
-			echo "Dateneingabe unvollst�ndig";
+			echo "Dateneingabe unvollständig";
 			// die();
 		}
 		if (! empty ( $_REQUEST ['einheit_id'] )) {
@@ -307,7 +307,7 @@ switch ($option) {
 			$w->wohngeld_def_speichern ( $von, $bis, $betrag, $kostenkat, $e_konto, $gruppe, $g_konto, $einheit_id );
 			echo "Ihre Eingabe wurde gespeichert, sie werden zur Eingabemaske weitergeleitet.";
 		} else {
-			echo "Dateneingabe unvollst�ndig";
+			echo "Dateneingabe unvollständig";
 		}
 		
 		if (! empty ( $_REQUEST [einheit_id] )) {
@@ -332,7 +332,7 @@ switch ($option) {
 			$w = new weg ();
 			$w->wohngeld_buchung_speichern ( $eigentuemer_id, $einheit_id, $geldkonto_id, $datum, $kontoauszugsnr, $def_array, $def_b_texte, $wg_g_konto, $wg_g_betrag, $b_text );
 		} else {
-			echo "Buchungsdaten sind unvollst�ndig";
+			echo "Buchungsdaten sind unvollständig";
 		}
 		// print_req();
 		break;
@@ -342,7 +342,7 @@ switch ($option) {
 			$w = new weg ();
 			$w->hausgeld_kontoauszug ( $_REQUEST ['eigentuemer_id'] );
 		} else {
-			echo "Einheit w�hlen";
+			echo "Einheit wählen";
 		}
 		break;
 	
@@ -353,7 +353,7 @@ switch ($option) {
 			$einheit_id = $_REQUEST ['einheit_id'];
 			weiterleiten ( "?daten=weg&option=wohngeld_definieren&einheit_id=$einheit_id" );
 		} else {
-			echo "Hausgelddefintion w�hlen!";
+			echo "Hausgelddefintion wählen!";
 		}
 		break;
 	
@@ -362,13 +362,13 @@ switch ($option) {
 			$w = new weg ();
 			$w->form_wohngeld_def_edit ( $_REQUEST ['dat'] );
 		} else {
-			echo "Hausgelddefintion w�hlen!";
+			echo "Hausgelddefintion wählen!";
 		}
 		break;
 	
 	case "wg_def_edit" :
 		// print_req();
-		if (isset ( $_REQUEST ['dat'] ) && $_REQUEST ['kostenart'] != 'Bitte w�hlen') {
+		if (isset ( $_REQUEST ['dat'] ) && $_REQUEST ['kostenart'] != 'Bitte wählen') {
 			$dat = $_REQUEST ['dat'];
 			$id = $_REQUEST ['id'];
 			$kos_typ = $_REQUEST ['kos_typ'];
@@ -382,14 +382,14 @@ switch ($option) {
 			$gruppe = $koskat_arr [2];
 			$g_konto = $koskat_arr [3];
 			// print_r($koskat_arr);
-			/* L�schen */
+			/* Löschen */
 			$w = new weg ();
 			$w->wohngeld_def_delete ( $_REQUEST ['dat'] );
 			/* Neu speichern */
 			$w->wohngeld_def_speichern ( $von, $bis, $betrag, $kostenkat, $e_konto, $gruppe, $g_konto, $kos_id );
 			weiterleiten ( "?daten=weg&option=wohngeld_definieren&einheit_id=$kos_id" );
 		} else {
-			fehlermeldung_ausgeben ( "Eingabe unvollst�ndig" );
+			fehlermeldung_ausgeben ( "Eingabe unvollständig" );
 			weiterleiten_in_sec ( "?daten=weg&option=wohngeld_definieren&einheit_id=$_REQUEST[kos_id]", 2 );
 		}
 		break;
@@ -408,7 +408,7 @@ switch ($option) {
 			$w = new weg ();
 			$w->mahnliste ( $_SESSION ['objekt_id'] );
 		} else {
-			echo "Objekt w�hlen";
+			echo "Objekt wählen";
 		}
 		break;
 	
@@ -417,7 +417,7 @@ switch ($option) {
 			$w = new weg ();
 			$w->form_mahnen ( $_REQUEST [eig] );
 		} else {
-			echo "Eigent�mer w�hlen";
+			echo "Eigentümer wählen";
 		}
 		break;
 	
@@ -427,7 +427,7 @@ switch ($option) {
 			$anschrift = $_REQUEST [anschriften];
 			$w->pdf_mahnschreiben ( $_REQUEST [eig], $_REQUEST [datum], $_REQUEST [mahngebuehr], $anschrift );
 		} else {
-			echo "Eingaben unvollst�ndig f�r ein Mahnschreiben!";
+			echo "Eingaben unvollständig für ein Mahnschreiben!";
 		}
 		break;
 	
@@ -448,7 +448,7 @@ switch ($option) {
 			 * $pdf->ezStream();
 			 */
 		} else {
-			echo "Eigentuemer w�hlen";
+			echo "Eigentuemer wählen";
 		}
 		break;
 	
@@ -457,7 +457,7 @@ switch ($option) {
 			$w = new weg ();
 			$w->wp_liste ( $_SESSION ['objekt_id'] );
 		} else {
-			echo "Objekt w�hlen!";
+			echo "Objekt wählen!";
 		}
 		break;
 	
@@ -472,7 +472,7 @@ switch ($option) {
 			print_req ();
 			$w->wp_plan_speichern ( $_REQUEST [wjahr], $_REQUEST [objekt_id] );
 		} else {
-			echo "Wirtschaftjahr eingeben und Objekt w�hlen bitte!";
+			echo "Wirtschaftjahr eingeben und Objekt wählen bitte!";
 		}
 		
 		break;
@@ -504,7 +504,7 @@ switch ($option) {
 			$w = new weg ();
 			$w->pdf_wplan ( $_REQUEST ['wp_id'] );
 		} else {
-			echo "Wirtschaftsplan w�hlen!";
+			echo "Wirtschaftsplan wählen!";
 		}
 		break;
 	
@@ -530,7 +530,7 @@ switch ($option) {
 			$weg = new weg ();
 			$weg->form_hga_profil_grunddaten ( $_REQUEST ['profil_id'] );
 		} else {
-			fehlermeldung_ausgeben ( "HGA Profil w�hlen!" );
+			fehlermeldung_ausgeben ( "HGA Profil wählen!" );
 		}
 		break;
 	
@@ -539,11 +539,11 @@ switch ($option) {
 		if (! empty ( $_REQUEST ['profil_id'] ) && ! empty ( $_REQUEST ['profilbez'] ) && ! empty ( $_REQUEST ['objekt_id'] ) && ! empty ( $_REQUEST ['jahr'] ) && ! empty ( $_REQUEST ['geldkonto_id'] ) && ! empty ( $_REQUEST ['gk_id_ihr'] ) && ! empty ( $_REQUEST ['wp_id'] ) && ! empty ( $_REQUEST ['hg_konto'] ) && ! empty ( $_REQUEST ['hk_konto'] ) && ! empty ( $_REQUEST ['ihr_konto'] )) {
 			$weg = new weg ();
 			$weg->hga_profil_aendern ( $_REQUEST ['profil_id'], $_REQUEST ['objekt_id'], $_REQUEST ['geldkonto_id'], $_REQUEST ['jahr'], $_REQUEST ['profilbez'], $_REQUEST ['gk_id_ihr'], $_REQUEST ['wp_id'], $_REQUEST ['hg_konto'], $_REQUEST ['hk_konto'], $_REQUEST ['ihr_konto'], $_REQUEST ['p_von'], $_REQUEST ['p_bis'] );
-			fehlermeldung_ausgeben ( "Profil ge�ndert, bitte warten!!!!" );
+			fehlermeldung_ausgeben ( "Profil geändert, bitte warten!!!!" );
 			$profil_id = $_REQUEST ['profil_id'];
 			weiterleiten_in_sec ( "?daten=weg&option=grunddaten_profil&profil_id=$profil_id", 2 );
 		} else {
-			fehlermeldung_ausgeben ( "Profil nicht ge�ndert, Daten unvollst�ndig!!!!" );
+			fehlermeldung_ausgeben ( "Profil nicht geändert, Daten unvollständig!!!!" );
 		}
 		break;
 	
@@ -584,11 +584,11 @@ switch ($option) {
 			$w->hga_profil_speichern ( $_REQUEST ['objekt_id'], $_REQUEST ['geldkonto_id'], $_REQUEST ['jahr'], $_REQUEST ['profilbez'], $_REQUEST ['gk_id_ihr'], $_REQUEST ['wp_id'], $_REQUEST ['hg_konto'], $_REQUEST ['hk_konto'], $_REQUEST ['ihr_konto'] );
 			// weiterleiten('?daten=weg&option=assistent&schritt=2');
 		} else {
-			echo "Daten unvollst�ndig";
+			echo "Daten unvollständig";
 		}
 		break;
 	
-	/* Schritt 2 Ausgew�hlte Kontensummen zu HGA_ZEILEN */
+	/* Schritt 2 Ausgewählte Kontensummen zu HGA_ZEILEN */
 	case "konto_hinzu" :
 		// print_req();
 		$w = new weg ();
@@ -601,7 +601,7 @@ switch ($option) {
 		if (isset ( $_REQUEST ['profil_id'] ) && ! empty ( $_REQUEST ['profil_id'] ) && isset ( $_REQUEST ['konto'] ) && ! empty ( $_REQUEST ['konto'] )) {
 			$weg = new weg ();
 			$weg->konto_loeschen ( $_REQUEST ['profil_id'], $_REQUEST ['konto'] );
-			fehlermeldung_ausgeben ( "Konto $konto wurde gel�scht!" );
+			fehlermeldung_ausgeben ( "Konto $konto wurde gelöscht!" );
 		}
 		weiterleiten_in_sec ( '?daten=weg&option=assistent&schritt=2', 2 );
 		break;
@@ -633,7 +633,7 @@ switch ($option) {
 		if ($_SESSION ['hga_profil_id']) {
 			$w->tab_hk_verbrauch ( $_SESSION ['hga_profil_id'] );
 		} else {
-			echo "Hausgeldabrechnungsprofil w�hlen!";
+			echo "Hausgeldabrechnungsprofil wählen!";
 		}
 		break;
 	
@@ -653,7 +653,7 @@ switch ($option) {
 				weiterleiten_in_sec ( 'index.php?daten=weg&option=kontostaende', 3 );
 			}
 		} else {
-			echo "Daten unvollst�ndig eingegeben";
+			echo "Daten unvollständig eingegeben";
 		}
 		break;
 	
@@ -678,7 +678,7 @@ switch ($option) {
 		if (isset ( $_REQUEST ['delete'] )) {
 			unset ( $_SESSION ['eig_ids'] );
 			$_SESSION ['eig_ids'] = array ();
-			echo "Alle gel�scht!";
+			echo "Alle gelöscht!";
 			break;
 			// weiterleiten_in_sec("?daten=weg&option=serienbrief", 2);
 		}
@@ -697,7 +697,7 @@ switch ($option) {
 				$s->vorlage_waehlen ( 'Eigentuemer' );
 			}
 		} else {
-			fehlermeldung_ausgeben ( "Bitte Eigent�mer aus Liste w�hlen!" );
+			fehlermeldung_ausgeben ( "Bitte Eigentümer aus Liste wählen!" );
 		}
 		break;
 	
@@ -716,7 +716,7 @@ switch ($option) {
 			$weg = new weg ();
 			$weg->form_hausgeldzahlungen ( $_SESSION ['objekt_id'] );
 		} else {
-			fehlermeldung_ausgeben ( "Objekt w�hlen!!!" );
+			fehlermeldung_ausgeben ( "Objekt wählen!!!" );
 		}
 		break;
 	
@@ -725,7 +725,7 @@ switch ($option) {
 			$weg = new weg ();
 			$weg->form_hausgeldzahlungen_xls ( $_SESSION ['objekt_id'] );
 		} else {
-			fehlermeldung_ausgeben ( "Objekt w�hlen!!!" );
+			fehlermeldung_ausgeben ( "Objekt wählen!!!" );
 		}
 		break;
 	
@@ -749,7 +749,7 @@ switch ($option) {
 	
 	case "stammdaten_weg" :
 		if (! isset ( $_SESSION ['objekt_id'] )) {
-			fehlermeldung_ausgeben ( "Objekt w�hlen!!!" );
+			fehlermeldung_ausgeben ( "Objekt wählen!!!" );
 		} else {
 			$weg = new weg ();
 			$weg->stammdaten_weg ( $_SESSION ['objekt_id'] );
@@ -758,7 +758,7 @@ switch ($option) {
 	
 	case "pdf_et_liste_alle_kurz" :
 		if (! isset ( $_SESSION ['objekt_id'] )) {
-			fehlermeldung_ausgeben ( "Objekt w�hlen!!!" );
+			fehlermeldung_ausgeben ( "Objekt wählen!!!" );
 		} else {
 			$weg = new weg ();
 			$weg->pdf_et_liste_alle_kurz ( $_SESSION ['objekt_id'] );
@@ -773,7 +773,7 @@ switch ($option) {
 			$jahr = $_REQUEST ['jahr'];
 		}
 		if (! isset ( $_SESSION ['objekt_id'] )) {
-			die ( fehlermeldung_ausgeben ( "Objekt w�hlen" ) );
+			die ( fehlermeldung_ausgeben ( "Objekt wählen" ) );
 		}
 		$w->pdf_hausgelder ( $_SESSION ['objekt_id'], $jahr );
 		break;
@@ -787,7 +787,7 @@ switch ($option) {
 				weiterleiten_in_sec ( "?daten=weg&option=wp_zeile_neu&wp_id=$wp_id", 0 );
 			}
 		} else {
-			fehlermeldung_ausgeben ( "Zeile aus dem WP w�hlen!!!" );
+			fehlermeldung_ausgeben ( "Zeile aus dem WP wählen!!!" );
 		}
 		break;
 } // end switch

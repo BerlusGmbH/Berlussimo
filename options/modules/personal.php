@@ -22,7 +22,7 @@
  *         
  */
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'personal' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -30,7 +30,7 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'personal' )) {
 	die ();
 }
 
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
 include_once ("options/links/links.personal.php");
 include_once ("classes/class_personal.php");
 

@@ -26,11 +26,11 @@ echo "<a href=\"?daten=statistik&option=leer_vermietet_jahr\">LEERSTAND/VERMIETE
 echo "<a href=\"?daten=statistik&option=stellplaetze\">Stellplaetze (E)</a>&nbsp;";
 echo "<a href=\"?daten=statistik&option=garage\">Garage (GBN)</a>&nbsp;";
 echo "<a href=\"?daten=statistik&option=sollmieten_aktuell\">Sollmieten aktuell inkl. Leerstand</a>&nbsp;";
-echo "<a href=\"?daten=statistik&option=sollmieten_haeuser&pdf\">Sollmieten H�usergruppen</a>&nbsp;";
+echo "<a href=\"?daten=statistik&option=sollmieten_haeuser&pdf\">Sollmieten Häusergruppen</a>&nbsp;";
 echo "<a href=\"?daten=statistik&option=me_k\">Kosten/Einnahmen Diag.</a>&nbsp;";
 echo "<a href=\"?daten=statistik&option=baustelle\">Baustellen</a>&nbsp;";
-echo "<a href=\"?daten=zeiterfassung&option=stunden\">Stunden�bersicht</a>&nbsp;";
-echo "<a href=\"?daten=statistik&option=fenster\">Fenster�bersicht</a>&nbsp;";
+echo "<a href=\"?daten=zeiterfassung&option=stunden\">Stundenübersicht</a>&nbsp;";
+echo "<a href=\"?daten=statistik&option=fenster\">Fensterübersicht</a>&nbsp;";
 echo "<a href=\"?daten=statistik&option=leer_haus_stat\">Statistik im Haus 5J</a>&nbsp;";
 echo "<a href=\"?daten=leerstand&option=kontrolle_preise\">Vermietungspreise</a>&nbsp;";
 echo "</div>";

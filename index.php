@@ -139,10 +139,10 @@ if (isset ( $_SESSION ['autorisiert'] )) {
 	
 	include_once ("classes/mietkonto_class.php");
 	include_once ("includes/config.php");
-	// echo "<p align=center style=\"filter:FlipH();\">BERLUSSIMO�</p>\n";
+	// echo "<p align=center style=\"filter:FlipH();\">BERLUSSIMO</p>\n";
 	echo "<body>\n";
 	// echo "<hr><a href=\"?formular=objekte\"><b>Objektverwaltung&nbsp;</b></a>\n ";
-	// echo "<a href =\"?daten=objekte_raus\"><b>Objekt�bersicht&nbsp;</b></a>\n<hr>";
+	// echo "<a href =\"?daten=objekte_raus\"><b>Objektübersicht&nbsp;</b></a>\n<hr>";
 	$form = new mietkonto ();
 	$benutzer = $_SESSION ['username'];
 	// echo "<div class=\"willkommen\">Wilkommen $_SESSION[username]</div>";
@@ -158,7 +158,7 @@ if (isset ( $_SESSION ['autorisiert'] )) {
 		if (isset ( $_SESSION ['partner_id'] )) {
 			$link_partner = "<a href=\"?daten=rechnungen&option=eingangsbuch&partner_wechseln\">Partner wechseln: <b>$p->partner_name</b></a>&nbsp;&nbsp;";
 		} else {
-			$link_partner = "<a href=\"?daten=rechnungen&option=eingangsbuch&partner_wechseln\">Partner w�hlen</b></a>&nbsp;&nbsp;";
+			$link_partner = "<a href=\"?daten=rechnungen&option=eingangsbuch&partner_wechseln\">Partner wählen</b></a>&nbsp;&nbsp;";
 		}
 	} else {
 		$link_partner = '';
@@ -173,7 +173,7 @@ if (isset ( $_SESSION ['autorisiert'] )) {
 		if (isset ( $_SESSION ['geldkonto_id'] )) {
 			$link_geldkonto = "<a href=\"?daten=buchen&option=geldkonto_aendern\">Geldkonto: $g->geldkonto_bezeichnung_kurz</a>&nbsp;&nbsp;";
 		} else {
-			$link_geldkonto = "<a href=\"?daten=buchen&option=geldkonto_aendern\">Geldkonto w�hlen</a>&nbsp;&nbsp;";
+			$link_geldkonto = "<a href=\"?daten=buchen&option=geldkonto_aendern\">Geldkonto wählen</a>&nbsp;&nbsp;";
 		}
 	} else {
 		$link_geldkonto = '';
@@ -188,7 +188,7 @@ if (isset ( $_SESSION ['autorisiert'] )) {
 	
 	// todo_liste($_SESSION[benutzer_id]);
 }
-echo "<div  id=\"aus\"><center><b>Berlussimo</b> wurde von der <a target=\"_new\"  href=\"http://www.berlus.de\">Berlus GmbH</a> - Hausverwaltung zur Verf�gung gestellt.</center></div>";
+echo "<div  id=\"aus\"><center><b>Berlussimo</b> wurde von der <a target=\"_new\"  href=\"http://www.berlus.de\">Berlus GmbH</a> - Hausverwaltung zur Verfügung gestellt.</center></div>";
 
 echo "</body></html>";
 function include_options() {

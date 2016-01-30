@@ -13,7 +13,7 @@ if (file_exists ( "includes/allgemeine_funktionen.php" )) {
 	include_once ("includes/allgemeine_funktionen.php");
 }
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 if (file_exists ( "classes/class_formular.php" )) {
 	include_once ("classes/class_formular.php");
 }
@@ -130,7 +130,7 @@ class zeiterfassung {
 		
 		$stundenzettel_pos_arr = $this->stundenzettelleistungen_in_arr ( $id );
 		if (! is_array ( $stundenzettel_pos_arr )) {
-			echo "Stundenzettel enth�lt keine Daten";
+			echo "Stundenzettel enthält keine Daten";
 		} else {
 			$link_pdf = "<a href=\"?daten=zeiterfassung&option=zettel2pdf&zettel_id=$id\">PDF-Ansicht</a>";
 			echo "<br>Stundenzettelinhalt $link_pdf<br><hr>";
@@ -144,8 +144,8 @@ class zeiterfassung {
 			echo "<th>Von</th>";
 			echo "<th>Bis</th>";
 			echo "<th>Beschreibung</th>";
-			echo "<th>Kostentr�ger TYP</th>";
-			echo "<th>Kostentr�ger</th>";
+			echo "<th>Kostenträger TYP</th>";
+			echo "<th>Kostenträger</th>";
 			echo "<th>Dauer</th>";
 			echo "<th>Dauer/Min</th>";
 			echo "<th>Option</th>";
@@ -166,8 +166,8 @@ class zeiterfassung {
 				$beginn = $stundenzettel_pos_arr [$a] ['BEGINN'];
 				$ende = $stundenzettel_pos_arr [$a] ['ENDE'];
 				
-				$link_loschen = "<a href=\"?daten=zeiterfassung&option=loeschen&zettel_id=$id&pos_id=$pos_dat\">L�schen</a>";
-				$link_aendern = "<a href=\"?daten=zeiterfassung&option=aendern&zettel_id=$id&pos_id=$pos_dat\">�ndern</a>";
+				$link_loschen = "<a href=\"?daten=zeiterfassung&option=loeschen&zettel_id=$id&pos_id=$pos_dat\">Löschen</a>";
+				$link_aendern = "<a href=\"?daten=zeiterfassung&option=aendern&zettel_id=$id&pos_id=$pos_dat\">Ändern</a>";
 				
 				if ($kostentraeger_typ == 'Mietvertrag') {
 					$mv = new mietvertraege ();
@@ -206,11 +206,11 @@ class zeiterfassung {
 			$arbeitsdauer = $this->min2std ( $gesamt_min );
 			
 			$restsaldo_min = sprintf ( "%02d", $restsaldo_min );
-			echo "<br><br><b>�BERSICHT DIESER STUNDENNACHWEIS</b><hr>";
+			echo "<br><br><b>ÜBERSICHT DIESER STUNDENNACHWEIS</b><hr>";
 			echo "Arbeitsdauer: $arbeitsdauer, ";
 			echo "Soll: $stunden_woche:00, ";
 			echo "Saldo: $saldo_woche_std Std. und $restsaldo_min Minuten<br><br>";
-			echo "<hr><b>�BERSICHT: MITARBEITER -> $this->st_benutzername<hr>Gesamtarbeitszeit in Stunden: $this->gesamt_azeit_std<br>";
+			echo "<hr><b>ÜBERSICHT: MITARBEITER -> $this->st_benutzername<hr>Gesamtarbeitszeit in Stunden: $this->gesamt_azeit_std<br>";
 			echo "Gesamt Sollstunden: $this->gesamt_soll_stunden<br>";
 			
 			$g_ist_arbeitsdauer = $this->zeit2decimal ( $this->gesamt_azeit_std ); // =80
@@ -226,7 +226,7 @@ class zeiterfassung {
 	function form_zeile_aendern($zettel_id, $pos_dat) {
 		$f = new formular ();
 		$b = new buchen ();
-		$f->erstelle_formular ( 'Eintrag �ndern', '' );
+		$f->erstelle_formular ( 'Eintrag ändern', '' );
 		$zeile_arr = $this->zeile_in_arr ( $zettel_id, $pos_dat );
 		// print_r($zeile_arr);
 		if (is_array ( $zeile_arr )) {
@@ -268,16 +268,16 @@ class zeiterfassung {
 			$k_id = $zeile_arr [0] ['KOSTENTRAEGER_ID'];
 			$r = new rechnung ();
 			$k_bez = $r->kostentraeger_ermitteln ( $k_typ, $k_id );
-			$b->dropdown_kostentreager_typen_vw ( "Kostentr�gertyp ($k_typ)", 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, $k_typ );
+			$b->dropdown_kostentreager_typen_vw ( "Kostenträgertyp ($k_typ)", 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, $k_typ );
 			
 			$js_id = "";
-			// $b->dropdown_kostentreager_ids("Kostentr�ger ($k_bez)", 'kostentraeger_id', 'dd_kostentraeger_id', $js_id);
-			$b->dropdown_kostentraeger_bez_vw ( "Kostentr�ger ($k_bez)", 'kostentraeger_id', 'dd_kostentraeger_id', $js_id, $k_typ, $k_bez );
+			// $b->dropdown_kostentreager_ids("Kostenträger ($k_bez)", 'kostentraeger_id', 'dd_kostentraeger_id', $js_id);
+			$b->dropdown_kostentraeger_bez_vw ( "Kostenträger ($k_bez)", 'kostentraeger_id', 'dd_kostentraeger_id', $js_id, $k_typ, $k_bez );
 			$hinweis = $zeile_arr [0] ['HINWEIS'];
 			$f->text_bereich ( 'Hinweise / Notizen / Uhrzeiten / Besonderheiten (max. 1000 Zeichen)', 'hinweis', $hinweis, 40, 10, 'hinweis' );
 			$f->hidden_feld ( "option", "zettel_zeile_aendern" );
 			$js = "onmouseover=\"zeitdiff('beginn', 'ende', 'dauer_be', 'dauer_min')\"";
-			$f->send_button_js ( "submit_zettel", "�nderungen Speichern", $js );
+			$f->send_button_js ( "submit_zettel", "Änderungen Speichern", $js );
 		} else {
 			echo "Keine Daten vorhanden!";
 		}
@@ -324,7 +324,7 @@ class zeiterfassung {
 				$zettel_id = $eigene_zettel_arr [$a] ['ZETTEL_ID'];
 				
 				if (! $this->check_if_beleg_erstellt ( $zettel_id )) {
-					$link_stundenzettel_del = "<a href=\"?daten=zeiterfassung&option=zettel_loeschen&zettel_id=$zettel_id\">L�schen</a>";
+					$link_stundenzettel_del = "<a href=\"?daten=zeiterfassung&option=zettel_loeschen&zettel_id=$zettel_id\">Löschen</a>";
 				} else {
 					$link_stundenzettel_del = '';
 				}
@@ -435,9 +435,9 @@ class zeiterfassung {
 		$this->dropdown_zeiten ( 'Ende', 'ende', 'ende', '15:15', $js_z );
 		$f->text_feld_inaktiv_js ( 'Dauer zwischen Beginn und Ende', 'dauer_be', '', 30, 'dauer_be', $js_z1 );
 		$js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
-		$b->dropdown_kostentreager_typen ( 'Kostentr�gertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
+		$b->dropdown_kostentreager_typen ( 'Kostenträgertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
 		$js_id = "";
-		$b->dropdown_kostentreager_ids ( 'Kostentr�ger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
+		$b->dropdown_kostentreager_ids ( 'Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
 		$f->text_bereich ( 'Hinweise / Notizen / Uhrzeiten / Besonderheiten (max. 1000 Zeichen)', 'hinweis', '', 40, 10, 'hinweis' );
 		$f->hidden_feld ( "option", "zettel_eingabe1" );
 		$js = "onmouseover=\"zeitdiff('beginn', 'ende', 'dauer_be', 'dauer_min')\"";
@@ -460,9 +460,9 @@ class zeiterfassung {
 		$f->text_feld ( 'Beginn', 'beginn', '', 6, 'beginn', '' );
 		$f->text_feld ( 'Ende', 'ende', '', 6, 'ende', '' );
 		$js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
-		$b->dropdown_kostentreager_typen ( 'Kostentr�gertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
+		$b->dropdown_kostentreager_typen ( 'Kostenträgertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
 		$js_id = "";
-		$b->dropdown_kostentreager_ids ( 'Kostentr�ger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
+		$b->dropdown_kostentreager_ids ( 'Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
 		$f->text_bereich ( 'Hinweise / Notizen / Uhrzeiten / Besonderheiten (max. 1000 Zeichen)', 'hinweis', '', 40, 10, 'hinweis' );
 		$f->hidden_feld ( "option", "zettel_eingabe1" );
 		$js = "onmouseover=\"check_felder_pflicht($pflicht_felder)\"";
@@ -474,7 +474,7 @@ class zeiterfassung {
 		
 		$numrows = mysql_numrows ( $result );
 		echo "<label for=\"leistung_id\">Leistung</label><select name=\"leistung_id\" id=\"leistung_id\" size=1>\n";
-		echo "<option value=\"\">Bitte w�hlen</option>\n";
+		echo "<option value=\"\">Bitte wählen</option>\n";
 		if ($numrows) {
 			
 			while ( $row = mysql_fetch_assoc ( $result ) ) {
@@ -490,7 +490,7 @@ class zeiterfassung {
 		
 		$numrows = mysql_numrows ( $result );
 		echo "<label for=\"leistung_id\">Leistung</label><select name=\"leistung_id\" id=\"leistung_id\" size=1>\n";
-		echo "<option value=\"\">Bitte w�hlen</option>\n";
+		echo "<option value=\"\">Bitte wählen</option>\n";
 		if ($numrows) {
 			
 			while ( $row = mysql_fetch_assoc ( $result ) ) {
@@ -511,7 +511,7 @@ class zeiterfassung {
 		$f->erstelle_formular ( "Neuer Stundenzettel", NULL );
 		$f->fieldset ( "Neuen Stundenzettel anlegen", 'z_anlegen' );
 		$f->hidden_feld ( "benutzer_id", "$benutzer_id" );
-		$f->text_feld ( "�berschrift (KW)", "beschreibung", "", "50", 'beschreibung', '' );
+		$f->text_feld ( "Überschrift (KW)", "beschreibung", "", "50", 'beschreibung', '' );
 		$f->send_button ( "zettel_anlegen", "Stundenzettel anlegen" );
 		$f->hidden_feld ( "option", "zettel_anlegen" );
 		$f->fieldset_ende ();
@@ -558,7 +558,7 @@ class zeiterfassung {
 	}
 	function dropdown_dauer_min() {
 		echo "<label for=\"dauer_min\">Dauer in Stunden</label><select name=\"dauer_min\" id=\"dauer_min\" size=1>\n";
-		echo "<option value=\"\">Bitte w�hlen</option>\n";
+		echo "<option value=\"\">Bitte wählen</option>\n";
 		$dauer = 0;
 		for($a = 1; $a <= 56; $a ++) {
 			$dauer += 15;
@@ -698,7 +698,7 @@ class zeiterfassung {
 		
 		// hinweis_ausgeben('Ihre Eingabe wurde gespeichert!<br>Sie werden weitergeleitet.');
 		
-		/* Pr�fen ob Leistung in POSITIONEN_KATALOG existiert, falls nicht, hinzuf�gen */
+		/* Prüfen ob Leistung in POSITIONEN_KATALOG existiert, falls nicht, hinzufügen */
 		if (! $this->check_leistung_pos_leistung ( $benutzer_id, $leistung_id )) {
 			$r = new rechnung ();
 			
@@ -727,7 +727,7 @@ class zeiterfassung {
 		
 		hinweis_ausgeben ( 'Ihre Eingabe wurde gespeichert!<br>Sie werden weitergeleitet.' );
 		
-		/* Pr�fen ob Leistung in POSITIONEN_KATALOG existiert, falls nicht, hinzuf�gen */
+		/* Prüfen ob Leistung in POSITIONEN_KATALOG existiert, falls nicht, hinzufügen */
 		if (! $this->check_leistung_pos_leistung ( $benutzer_id, $leistung_id )) {
 			$r = new rechnung ();
 			
@@ -756,7 +756,7 @@ class zeiterfassung {
 		
 		hinweis_ausgeben ( 'Ihre Eingabe wurde gespeichert!<br>Sie werden weitergeleitet.' );
 		
-		/* Pr�fen ob Leistung in POSITIONEN_KATALOG existiert, falls nicht, hinzuf�gen */
+		/* Prüfen ob Leistung in POSITIONEN_KATALOG existiert, falls nicht, hinzufügen */
 		if (! $this->check_leistung_pos_leistung ( $benutzer_id, $leistung_id )) {
 			$r = new rechnung ();
 			
@@ -933,8 +933,8 @@ class zeiterfassung {
 		                    // print_r($this);
 		$stundenzettel_pos_arr = $this->stundenzettelleistungen_in_arr ( $id );
 		if (! is_array ( $stundenzettel_pos_arr )) {
-			// echo "Stundenzettel enth�lt keine Daten";
-			$pdf->ezText ( "<b>Stundenzettel enth�lt keine Daten</b>", 10, array (
+			// echo "Stundenzettel enthält keine Daten";
+			$pdf->ezText ( "<b>Stundenzettel enthält keine Daten</b>", 10, array (
 					'left' => '10' 
 			) );
 		} else {
@@ -963,19 +963,19 @@ class zeiterfassung {
 				$pdf->ezText ( "$zeile.", 10, array (
 						'left' => '10' 
 				) );
-				$pdf->ezSetDy ( 11 ); // zeile zur�ck
+				$pdf->ezSetDy ( 11 ); // zeile zurück
 				$pdf->ezText ( "$datum", 10, array (
 						'left' => '25' 
 				) );
-				$pdf->ezSetDy ( 11 ); // zeile zur�ck
+				$pdf->ezSetDy ( 11 ); // zeile zurück
 				$pdf->ezText ( "$kostentraeger_typ", 10, array (
 						'left' => '75' 
 				) );
-				$pdf->ezSetDy ( 11 ); // zeile zur�ck
+				$pdf->ezSetDy ( 11 ); // zeile zurück
 				$pdf->ezText ( "$kostentraeger_bez", 10, array (
 						'left' => '115' 
 				) );
-				$pdf->ezSetDy ( 11 ); // zeile zur�ck
+				$pdf->ezSetDy ( 11 ); // zeile zurück
 				$pdf->ezSetCmMargins ( 1, 1, 1, 4 );
 				if (! empty ( $hinweis )) {
 					$pdf->ezText ( "$beschreibung\n$hinweis", 10, array (
@@ -987,7 +987,7 @@ class zeiterfassung {
 					) );
 				}
 				$pdf->ezSetCmMargins ( 1, 1, 1, 1 );
-				$pdf->ezSetDy ( 13 ); // zeile zur�ck
+				$pdf->ezSetDy ( 13 ); // zeile zurück
 				$pdf->ezText ( "$dauer_std Std. ($dauer_min Min.)", 10, array (
 						'left' => '450' 
 				) );
@@ -1098,7 +1098,7 @@ class zeiterfassung {
 		$stundenzettel_pos_arr = $this->stundenzettelleistungen_in_arr ( $id );
 		if (! is_array ( $stundenzettel_pos_arr )) {
 			
-			$pdf->ezText ( "<b>Stundenzettel enth�lt keine Daten</b>", 10, array (
+			$pdf->ezText ( "<b>Stundenzettel enthält keine Daten</b>", 10, array (
 					'left' => '10' 
 			) );
 		} else {
@@ -1207,7 +1207,7 @@ class zeiterfassung {
 			$table_arr [$a + 2] [DAUER] = "<b>$arbeitsdauer</b>";
 			$table_arr [$a + 3] [LEISTUNG] = "<b>Soll/Woche</b>";
 			$table_arr [$a + 3] [DAUER] = "<b>$stunden_woche Stunden</b>";
-			$table_arr [$a + 4] [LEISTUNG] = "<b>�berstunden/Woche</b>";
+			$table_arr [$a + 4] [LEISTUNG] = "<b>Überstunden/Woche</b>";
 			$table_arr [$a + 4] [DAUER] = "<b>$saldo_woche_std:$restsaldo_min</b>";
 			
 			$table_arr [$a + 5] [LEISTUNG] = "";
@@ -1383,7 +1383,7 @@ class zeiterfassung {
 				$zeile = $a + 1;
 				$zettel_id = $eigene_zettel_arr [$a] ['ZETTEL_ID'];
 				if ($this->check_if_beleg_erstellt ( $zettel_id )) {
-					$link_stundenzettel_del = "<a href=\"?daten=zeiterfassung&option=zettel_loeschen&zettel_id=$zettel_id\">L�schen</a>";
+					$link_stundenzettel_del = "<a href=\"?daten=zeiterfassung&option=zettel_loeschen&zettel_id=$zettel_id\">Löschen</a>";
 				} else {
 					$link_stundenzettel_del = '';
 				}
@@ -1487,7 +1487,7 @@ class zeiterfassung {
 	}
 	function pos_loeschen($zettel_id, $pos_id) {
 		$result = mysql_query ( "DELETE FROM STUNDENZETTEL_POS WHERE ZETTEL_ID='$zettel_id' && ST_DAT='$pos_id'" );
-		hinweis_ausgeben ( "Zeile gel�scht, Sie werden weitergeleitet!" );
+		hinweis_ausgeben ( "Zeile gelöscht, Sie werden weitergeleitet!" );
 		weiterleiten_in_sec ( "login_mitarbeiter.php?daten=zeiterfassung&option=zettel_eingabe&zettel_id=$zettel_id", 2 );
 	}
 	function pos_deaktivieren($zettel_id, $pos_dat) {
@@ -1508,8 +1508,8 @@ class zeiterfassung {
 		$pdf->ezSetCmMargins ( 1, 1, 1, 1 );
 		$pdf->setLineStyle ( 0.5 );
 		$pdf->line ( 42, 50, 550, 50 );
-		$pdf->addText ( 170, 42, 6, "BERLUS HAUSVERWALTUNG �  Fontanestr. 1 � 14193 Berlin � Inhaber Wolfgang Wehrheim" );
-		$pdf->addText ( 150, 35, 6, "Bankverbindung: Dresdner Bank Berlin � BLZ: 100  800  00 � Konto-Nr.: 05 804 000 00 � Steuernummer: 24/582/61188" );
+		$pdf->addText ( 170, 42, 6, "BERLUS HAUSVERWALTUNG |  Fontanestr. 1 | 14193 Berlin | Inhaber Wolfgang Wehrheim" );
+		$pdf->addText ( 150, 35, 6, "Bankverbindung: Dresdner Bank Berlin | BLZ: 100  800  00 | Konto-Nr.: 05 804 000 00 | Steuernummer: 24/582/61188" );
 		return $pdf;
 	}
 	function einheit_kurz_objekt($objekt_id) {
@@ -1530,7 +1530,7 @@ WHERE EINHEIT_AKTUELL='1'" );
 			echo "<table class=\"tabelle_haus\" width=100%>\n";
 			$objekt_kurzname = $my_arr ['0'] ['OBJEKT_KURZNAME'];
 			echo "<tr class=\"feldernamen\"><td colspan=6>Einheiten im Objekt $objekt_kurzname</td></tr>\n";
-			echo "<tr class=\"feldernamen\"><td width=150>Kurzname</td><td width=200>Mieter</td><td width=200>Anschrift</td><td width=100>Lage</td><td width=40>m�</td><td>Details</td></tr>\n";
+			echo "<tr class=\"feldernamen\"><td width=150>Kurzname</td><td width=200>Mieter</td><td width=200>Anschrift</td><td width=100>Lage</td><td width=40>m²</td><td>Details</td></tr>\n";
 			echo "</table>";
 			iframe_start ();
 			echo "<table width=100%>\n";
@@ -1754,7 +1754,7 @@ LIMIT 0 , 1";
 				protokollieren ( 'STUNDENZETTEL_POS', $last_dat, '0' );
 			}
 		} else {
-			echo "Keine Tage gew�hlt, Stundenzettel wurde nicht erstellt";
+			echo "Keine Tage gewählt, Stundenzettel wurde nicht erstellt";
 		}
 	}
 	function form_stunden_anzeigen() {
@@ -1763,12 +1763,12 @@ LIMIT 0 , 1";
 		$be = new benutzer ();
 		
 		$f->erstelle_formular ( 'Zeiterfassung durchsuchen', '' );
-		$be->dropdown_benutzer2 ( 'Mitarbeiter w�hlen', 'benutzer_id', 'benutzer_id', '' );
-		$be->dropdown_gewerke ( 'Gewerk w�hlen', 'g_id', 'g_id', '' );
+		$be->dropdown_benutzer2 ( 'Mitarbeiter wählen', 'benutzer_id', 'benutzer_id', '' );
+		$be->dropdown_gewerke ( 'Gewerk wählen', 'g_id', 'g_id', '' );
 		$js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
-		$b->dropdown_kostentreager_typen ( 'Kostentr�gertyp w�hlen', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
+		$b->dropdown_kostentreager_typen ( 'Kostenträgertyp wählen', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
 		$js_id = "";
-		$b->dropdown_kostentreager_ids ( 'Kostentr�ger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
+		$b->dropdown_kostentreager_ids ( 'Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
 		$f->datum_feld ( 'Anfangsdatum', 'adatum', '', 'adatum' );
 		$f->datum_feld ( 'Enddatum', 'edatum', '', 'edatum' );
 		$f->hidden_feld ( 'option', 'suchen_std' );
@@ -1834,14 +1834,14 @@ ORDER BY GEWERK_ID ASC, STD DESC";
 					$kostentraeger_id = $row ['KOSTENTRAEGER_ID'];
 					$r = new rechnung ();
 					$kosten_bez = $r->kostentraeger_ermitteln ( $kostentraeger_typ, $kostentraeger_id );
-					echo "<tr><td>$benutzername</td><td>$std Std.</td><td>$eur �</td><td>$kosten_bez</td></tr>";
+					echo "<tr><td>$benutzername</td><td>$std Std.</td><td>$eur €</td><td>$kosten_bez</td></tr>";
 					$g_summe_std += $row ['STD'];
 					$g_summe += $row ['LEISTUNG_EUR'];
 				}
 				$g_summe_a = nummer_punkt2komma_t ( $g_summe );
 				$g_summe_std_a = nummer_punkt2komma_t ( $g_summe_std );
 				
-				echo "<tfoot><tr class=\"zeile2\"><td>Gesamt</td><td>$g_summe_std_a Std.</td><td>$g_summe_a �</td><td></td></tfoot>";
+				echo "<tfoot><tr class=\"zeile2\"><td>Gesamt</td><td>$g_summe_std_a Std.</td><td>$g_summe_a €</td><td></td></tfoot>";
 				
 				echo "</table>";
 				
@@ -1868,13 +1868,13 @@ ORDER BY STD DESC
 						$bez = $row ['BEZEICHNUNG'];
 						$std = nummer_punkt2komma_t ( $row ['STD'] );
 						$eur = nummer_punkt2komma_t ( $row ['LEISTUNG_EUR'] );
-						echo "<tr><td>$bez</td><td>$std Std.</td><td>$eur �</td></tr>";
+						echo "<tr><td>$bez</td><td>$std Std.</td><td>$eur €</td></tr>";
 						$g_summe_std += $row ['STD'];
 						$g_summe += $row ['LEISTUNG_EUR'];
 					}
 					$g_summe_a = nummer_punkt2komma_t ( $g_summe );
 					$g_summe_std_a = nummer_punkt2komma_t ( $g_summe_std );
-					echo "<tfoot><tr class=\"zeile2\"><td>Gesamt</td><td>$g_summe_std_a Std.</td><td>$g_summe_a �</td></td></tfoot>";
+					echo "<tfoot><tr class=\"zeile2\"><td>Gesamt</td><td>$g_summe_std_a Std.</td><td>$g_summe_a €</td></td></tfoot>";
 					
 					echo "</table>";
 				}
@@ -1948,7 +1948,7 @@ GROUP BY STUNDENZETTEL.BENUTZER_ID LIMIT 0 , 1";
 					$benutzername = $row ['benutzername'];
 					$std = nummer_punkt2komma_t ( $row ['STD'] );
 					$eur = nummer_punkt2komma_t ( $row ['LEISTUNG_EUR'] );
-					echo "<tr><td>$benutzername</td><td>$std Std.</td><td>$eur �</td></tr>";
+					echo "<tr><td>$benutzername</td><td>$std Std.</td><td>$eur €</td></tr>";
 				}
 				echo "</table>";
 			}
@@ -2028,13 +2028,13 @@ ORDER BY STD DESC, DATUM ";
 					$bez = $row ['BEZEICHNUNG'];
 					$std = nummer_punkt2komma_t ( $row ['STD'] );
 					$eur = nummer_punkt2komma_t ( $row ['LEISTUNG_EUR'] );
-					echo "<tr><td>$bez</td><td>$std Std.</td><td>$eur �</td></tr>";
+					echo "<tr><td>$bez</td><td>$std Std.</td><td>$eur €</td></tr>";
 					$g_summe_std += $row ['STD'];
 					$g_summe += $row ['LEISTUNG_EUR'];
 				}
 				$g_summe_a = nummer_punkt2komma_t ( $g_summe );
 				$g_summe_std_a = nummer_punkt2komma_t ( $g_summe_std );
-				echo "<tfoot><tr class=\"zeile2\"><td>Gesamt</td><td>$g_summe_std_a Std.</td><td>$g_summe_a �</td></td></tfoot>";
+				echo "<tfoot><tr class=\"zeile2\"><td>Gesamt</td><td>$g_summe_std_a Std.</td><td>$g_summe_a €</td></td></tfoot>";
 				echo "</table>";
 				
 				$db_abfrage = "SELECT KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, STUNDENZETTEL.BENUTZER_ID, benutzername, STUNDENSATZ, SUM( DAUER_MIN ) /60 AS STD, STUNDENSATZ * ( SUM( DAUER_MIN ) /60 ) AS LEISTUNG_EUR
@@ -2056,13 +2056,13 @@ GROUP BY STUNDENZETTEL.BENUTZER_ID ORDER BY DATUM ASC, STD DESC, GEWERK_ID ASC";
 						$benutzername = $row ['benutzername'];
 						$std = nummer_punkt2komma_t ( $row ['STD'] );
 						$eur = nummer_punkt2komma_t ( $row ['LEISTUNG_EUR'] );
-						echo "<tr><td>$benutzername</td><td>$std Std.</td><td>$eur �</td></tr>";
+						echo "<tr><td>$benutzername</td><td>$std Std.</td><td>$eur €</td></tr>";
 						$g_summe_std += $row ['STD'];
 						$g_summe += $row ['LEISTUNG_EUR'];
 					}
 					$g_summe_a = nummer_punkt2komma_t ( $g_summe );
 					$g_summe_std_a = nummer_punkt2komma_t ( $g_summe_std );
-					echo "<tfoot><tr class=\"zeile2\"><td>Gesamt</td><td>$g_summe_std_a Std.</td><td>$g_summe_a �</td></td></tfoot>";
+					echo "<tfoot><tr class=\"zeile2\"><td>Gesamt</td><td>$g_summe_std_a Std.</td><td>$g_summe_a €</td></td></tfoot>";
 					echo "</table>";
 				}
 				

@@ -19,7 +19,7 @@
  */
 $f = new formular ();
 echo "<div class=\"navi_leiste2\">";
-$f->erstelle_formular ( "Hauptmen� -> Artikel- und Leistungskatalog...", NULL );
+$f->erstelle_formular ( "Hauptmenü -> Artikel- und Leistungskatalog...", NULL );
 
 echo "<a href=\"?daten=katalog&option=katalog_anzeigen\">Artikel & Leistungen</a>&nbsp;";
 echo "<a href=\"?daten=katalog&option=preisentwicklung\">Preisentwicklung</a>&nbsp;";

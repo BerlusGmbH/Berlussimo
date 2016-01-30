@@ -19,9 +19,9 @@
  */
 $mieten = new mietkonto ();
 echo "<div class=\"navi_leiste2\">";
-$mieten->erstelle_formular ( "Hauptmen� -> Lager...", NULL );
+$mieten->erstelle_formular ( "Hauptmenü -> Lager...", NULL );
 
-// echo "<a href=\"?daten=lager\">Lager�bersicht</a>&nbsp;<b>|</b>&nbsp;";
+// echo "<a href=\"?daten=lager\">Lagerübersicht</a>&nbsp;<b>|</b>&nbsp;";
 echo "<a href=\"?daten=lager&option=lagerbestand\">Lagerbestand</a>&nbsp;<b>|</b>&nbsp;";
 echo "<a href=\"?daten=lager&option=lagerbestand_bis_form\">Lagerbestand bis...</a>&nbsp;<b>|</b>&nbsp;";
 echo "<a href=\"?daten=lager&option=re\">RE</a>&nbsp;<b>|</b>&nbsp;";

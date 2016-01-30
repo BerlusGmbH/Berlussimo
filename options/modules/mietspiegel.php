@@ -3,7 +3,7 @@
 include_once ("includes/allgemeine_funktionen.php");
 include_once ("classes/class_mietspiegel.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! isset ( $_SESSION ['benutzer_id'] ) or ! check_user_mod ( $_SESSION ['benutzer_id'], 'mietspiegel' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -11,7 +11,7 @@ if (! isset ( $_SESSION ['benutzer_id'] ) or ! check_user_mod ( $_SESSION ['benu
 	die ();
 }
 
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
 include_once ("options/links/links.mietspiegel.php");
 
 if (! empty ( $_REQUEST ["option"] )) {
@@ -76,14 +76,14 @@ switch ($option) {
 					$ms->ms_speichern ( $jahr, $ort, $_REQUEST ['feld'], $_REQUEST ['u_wert'], $_REQUEST ['m_wert'], $_REQUEST ['o_wert'] );
 					weiterleiten ( "?daten=mietspiegel&option=mietspiegel_anzeigen&jahr=$jahr&ort=$ort" );
 				} else {
-					fehlermeldung_ausgeben ( "Alle Felder ausf�llen" );
+					fehlermeldung_ausgeben ( "Alle Felder ausfüllen" );
 				}
 			} else {
 				if (isset ( $_REQUEST ['feld'] ) && ! empty ( $_REQUEST ['feld'] ) && isset ( $_REQUEST ['u_wert'] ) && ! empty ( $_REQUEST ['u_wert'] ) && isset ( $_REQUEST ['m_wert'] ) && ! empty ( $_REQUEST ['m_wert'] ) && isset ( $_REQUEST ['o_wert'] ) && ! empty ( $_REQUEST ['o_wert'] )) {
 					$ms = new mietspiegel ();
 					$ms->ms_speichern ( $jahr, null, $_REQUEST ['feld'], $_REQUEST ['u_wert'], $_REQUEST ['m_wert'], $_REQUEST ['o_wert'] );
 				} else {
-					fehlermeldung_ausgeben ( "Alle Felder ausf�llen" );
+					fehlermeldung_ausgeben ( "Alle Felder ausfüllen" );
 				}
 				weiterleiten ( "?daten=mietspiegel&option=mietspiegel_anzeigen&jahr=$jahr" );
 			}

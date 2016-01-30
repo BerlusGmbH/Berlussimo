@@ -19,7 +19,7 @@
  */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* Überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION [benutzer_id], 'admin_panel' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -69,7 +69,7 @@ function detail_kategorie_form() {
 			fehlermeldung_ausgeben ( "Geben Sie bitte einen Kategorienamen ein!" );
 			erstelle_back_button ();
 		} elseif (isset ( $_REQUEST [bereich_kategorie] ) && empty ( $_REQUEST [bereich_kategorie] )) {
-			fehlermeldung_ausgeben ( "W�hlen Sie bitte eine Detailtabelle aus!" );
+			fehlermeldung_ausgeben ( "Wählen Sie bitte eine Detailtabelle aus!" );
 			erstelle_back_button ();
 		} else {
 			$detail_kat_name = bereinige_string ( $_REQUEST [detail_kat_name] );
@@ -80,7 +80,7 @@ function detail_kategorie_form() {
 			if ($detail_kat_exists == 0) {
 				$db_abfrage = "INSERT INTO DETAIL_KATEGORIEN VALUES (NULL, '$detail_kat_name', '$bereich_kategorie', '1')";
 				$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-				hinweis_ausgeben ( "Detail bzw. Detailgruppe $detail_kat_name wurde dem Bereich $bereich_kategorie hinzugef�gt." );
+				hinweis_ausgeben ( "Detail bzw. Detailgruppe $detail_kat_name wurde dem Bereich $bereich_kategorie hinzugefügt." );
 			} else {
 				fehlermeldung_ausgeben ( "Gleichnamige Detailkategorie existiert!" );
 				erstelle_back_button ();
@@ -115,7 +115,7 @@ function detail_unterkategorie_form() {
 			if ($u_kat_exists == 0) {
 				$db_abfrage = "INSERT INTO DETAIL_UNTERKATEGORIEN VALUES (NULL, '$bereich_kategorie', '$detail_kat_uname', '1')";
 				$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-				hinweis_ausgeben ( "Unterdetail <u>$detail_kat_uname</u> bzw. Auswahloption wurde dem Bereich $haupt_kat_name hinzugef�gt." );
+				hinweis_ausgeben ( "Unterdetail <u>$detail_kat_uname</u> bzw. Auswahloption wurde dem Bereich $haupt_kat_name hinzugefügt." );
 			} else {
 				fehlermeldung_ausgeben ( "Gleichnamige Detailoption existiert!" );
 				erstelle_back_button ();

@@ -42,10 +42,10 @@ class ids {
 	}
 }
 function import_me($tabelle) {
-	$tabelle_in_gross = strtoupper ( $tabelle ); // Tabelle in GRO�BUCHSTABEN
+	$tabelle_in_gross = strtoupper ( $tabelle ); // Tabelle in GROßBUCHSTABEN
 	$datei = "$tabelle.csv"; // DATEINAME
 	$array = file ( $datei ); // DATEI IN ARRAY EINLESEN
-	echo $array [0]; // ZEILE 0 mit �berschriften
+	echo $array [0]; // ZEILE 0 mit Überschriften
 	$feldernamen [] = explode ( ":", $array [0] ); // FELDNAMEN AUS ZEILE 0 IN ARRAY EINLESEN
 	$anzahl_felder = count ( $feldernamen [0] ); // ANZAHL DER IMPORT FELDER
 	$feld1 = $feldernamen [0] [0]; // FELD1 - IMPORT nur zur info
@@ -59,7 +59,7 @@ function import_me($tabelle) {
 	 * print_r($zeile);
 	 * echo "</pre>";
 	 */
-	for($i = 1; $i < count ( $array ); $i ++) // Datei ab Zeile1 einlesen, weil Zeile 0 �berschrift ist
+	for($i = 1; $i < count ( $array ); $i ++) // Datei ab Zeile1 einlesen, weil Zeile 0 Überschrift ist
 {
 		
 		$zeile [$i] = explode ( ":", $array [$i] ); // Zeile in Array einlesen
@@ -101,7 +101,7 @@ function import_me($tabelle) {
 			// ####letzte id der tabelle
 			$akt_id->last_id ( $tabelle ); // Objektwert zuweisen
 			$letzte_tab_id = $akt_id->id; // Letzte id
-			$letzte_tab_id = $letzte_tab_id + 1; // Letzte id um 1 erh�hen
+			$letzte_tab_id = $letzte_tab_id + 1; // Letzte id um 1 erhöhen
 			                                   // ####letzte id der tabelle
 			$vorhanden = zeile_vorhanden ( $mv_id, $mietekalt_beschriftung );
 			if (! $vorhanden) {
@@ -117,7 +117,7 @@ function import_me($tabelle) {
 			
 			$akt_id->last_id ( $tabelle ); // Objektwert zuweisen
 			$letzte_tab_id = $akt_id->id; // Letzte id
-			$letzte_tab_id = $letzte_tab_id + 1; // Letzte id um 1 erh�hen
+			$letzte_tab_id = $letzte_tab_id + 1; // Letzte id um 1 erhöhen
 			                                   // ####letzte id der tabelle
 			$vorhanden = zeile_vorhanden ( $mv_id, $nebenkosten_beschriftung );
 			if (! $vorhanden) {
@@ -131,7 +131,7 @@ function import_me($tabelle) {
 			
 			$akt_id->last_id ( $tabelle ); // Objektwert zuweisen
 			$letzte_tab_id = $akt_id->id; // Letzte id
-			$letzte_tab_id = $letzte_tab_id + 1; // Letzte id um 1 erh�hen
+			$letzte_tab_id = $letzte_tab_id + 1; // Letzte id um 1 erhöhen
 			                                   // ####letzte id der tabelle
 			$vorhanden = zeile_vorhanden ( $mv_id, $heizkosten_beschriftung );
 			if (! $vorhanden) {
@@ -173,7 +173,7 @@ function kaution_als_detail($mv_id, $betrag) {
 	$akt_id = new ids ();
 	$akt_id->last_id ( 'detail' ); // Objektwert zuweisen
 	$letzte_tab_id = $akt_id->id; // Letzte id
-	$letzte_tab_id = $letzte_tab_id + 1; // Letzte id um 1 erh�hen
+	$letzte_tab_id = $letzte_tab_id + 1; // Letzte id um 1 erhöhen
 	/* KAUTION */
 	$db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$letzte_tab_id', 'Kaution', '$betrag', '', '1', 'MIETVERTRAG', '$mv_id')";
 	echo "<br>DB = $db_abfrage<br>";
@@ -183,17 +183,17 @@ function teilnahme_einzug_hinzu($mv_id, $kontoinhaber, $kontonummer, $blz, $bank
 	$akt_id = new ids ();
 	$akt_id->last_id ( 'detail' ); // Objektwert zuweisen
 	$letzte_tab_id = $akt_id->id; // Letzte id
-	$letzte_tab_id = $letzte_tab_id + 1; // Letzte id um 1 erh�hen
+	$letzte_tab_id = $letzte_tab_id + 1; // Letzte id um 1 erhöhen
 	
 	/* Einzugserm JA */
-	$db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$letzte_tab_id', 'Einzugserm�chtigung', 'JA', '', '1', 'MIETVERTRAG', '$mv_id')";
+	$db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$letzte_tab_id', 'Einzugsermächtigung', 'JA', '', '1', 'MIETVERTRAG', '$mv_id')";
 	echo "<br>DB = $db_abfrage<br>";
 	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 	
 	/* Kontoinhaber */
 	$akt_id->last_id ( 'detail' ); // Objektwert zuweisen
 	$letzte_tab_id = $akt_id->id; // Letzte id
-	$letzte_tab_id = $letzte_tab_id + 1; // Letzte id um 1 erh�hen
+	$letzte_tab_id = $letzte_tab_id + 1; // Letzte id um 1 erhöhen
 	$db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$letzte_tab_id', 'Kontoinhaber-AutoEinzug', '$kontoinhaber', '', '1', 'MIETVERTRAG', '$mv_id')";
 	echo "<br>DB = $db_abfrage<br>";
 	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
@@ -201,7 +201,7 @@ function teilnahme_einzug_hinzu($mv_id, $kontoinhaber, $kontonummer, $blz, $bank
 	/* Kontonummer */
 	$akt_id->last_id ( 'detail' ); // Objektwert zuweisen
 	$letzte_tab_id = $akt_id->id; // Letzte id
-	$letzte_tab_id = $letzte_tab_id + 1; // Letzte id um 1 erh�hen
+	$letzte_tab_id = $letzte_tab_id + 1; // Letzte id um 1 erhöhen
 	$db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$letzte_tab_id', 'Kontonummer-AutoEinzug', '$kontonummer', '', '1', 'MIETVERTRAG', '$mv_id')";
 	echo "<br>DB = $db_abfrage<br>";
 	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
@@ -209,7 +209,7 @@ function teilnahme_einzug_hinzu($mv_id, $kontoinhaber, $kontonummer, $blz, $bank
 	/* BLZ */
 	$akt_id->last_id ( 'detail' ); // Objektwert zuweisen
 	$letzte_tab_id = $akt_id->id; // Letzte id
-	$letzte_tab_id = $letzte_tab_id + 1; // Letzte id um 1 erh�hen
+	$letzte_tab_id = $letzte_tab_id + 1; // Letzte id um 1 erhöhen
 	$db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$letzte_tab_id', 'BLZ-AutoEinzug', '$blz', '', '1', 'MIETVERTRAG', '$mv_id')";
 	echo "<br>DB = $db_abfrage<br>";
 	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
@@ -217,7 +217,7 @@ function teilnahme_einzug_hinzu($mv_id, $kontoinhaber, $kontonummer, $blz, $bank
 	/* Bankname */
 	$akt_id->last_id ( 'detail' ); // Objektwert zuweisen
 	$letzte_tab_id = $akt_id->id; // Letzte id
-	$letzte_tab_id = $letzte_tab_id + 1; // Letzte id um 1 erh�hen
+	$letzte_tab_id = $letzte_tab_id + 1; // Letzte id um 1 erhöhen
 	$db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$letzte_tab_id', 'Bankname-AutoEinzug', '$bankname', '', '1', 'MIETVERTRAG', '$mv_id')";
 	echo "<br>DB = $db_abfrage<br>";
 	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
@@ -225,7 +225,7 @@ function teilnahme_einzug_hinzu($mv_id, $kontoinhaber, $kontonummer, $blz, $bank
 	/* Einzugsart */
 	$akt_id->last_id ( 'detail' ); // Objektwert zuweisen
 	$letzte_tab_id = $akt_id->id; // Letzte id
-	$letzte_tab_id = $letzte_tab_id + 1; // Letzte id um 1 erh�hen
+	$letzte_tab_id = $letzte_tab_id + 1; // Letzte id um 1 erhöhen
 	$db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$letzte_tab_id', 'Autoeinzugsart', '$einzugsart', '', '1', 'MIETVERTRAG', '$mv_id')";
 	echo "<br>DB = $db_abfrage<br>";
 	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );

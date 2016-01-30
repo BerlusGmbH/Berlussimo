@@ -18,11 +18,11 @@
  * 
  */
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
 include_once ("includes/allgemeine_funktionen.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'leerstand' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -89,7 +89,7 @@ if (isset ( $option )) {
 				$l = new leerstand ();
 				$l->pdf_projekt ( $_REQUEST [einheit_id] );
 			} else {
-				echo "Einheit w�hlen";
+				echo "Einheit wählen";
 			}
 			break;
 		
@@ -138,7 +138,7 @@ if (isset ( $option )) {
 				$l = new leerstand ();
 				$l->pdf_expose ( $einheit_id );
 			} else {
-				fehlermeldung_ausgeben ( 'Einheit w�hlen' );
+				fehlermeldung_ausgeben ( 'Einheit wählen' );
 			}
 			break;
 		
@@ -163,7 +163,7 @@ if (isset ( $option )) {
 				$l = new leerstand ();
 				$l->form_exposedaten ( $einheit_id );
 			} else {
-				fehlermeldung_ausgeben ( 'Einheit w�hlen' );
+				fehlermeldung_ausgeben ( 'Einheit wählen' );
 			}
 			break;
 		
@@ -174,7 +174,7 @@ if (isset ( $option )) {
 			if (! empty ( $_POST ['einheit_id'] ) && ! empty ( $_POST ['zimmer'] ) && ! empty ( $_POST ['balkon'] ) && ! empty ( $_POST ['expose_bk'] ) && ! empty ( $_POST ['expose_km'] ) && ! empty ( $_POST ['expose_hk'] ) && ! empty ( $_POST ['heizungsart'] ) && ! empty ( $_POST ['expose_frei'] ) && ! empty ( $_POST ['besichtigungsdatum'] ) && ! empty ( $_POST ['uhrzeit'] )) {
 				$l->expose_aktualisieren ( $_POST ['einheit_id'], $_POST ['zimmer'], $_POST ['balkon'], $_POST ['expose_bk'], $_POST ['expose_km'], $_POST ['expose_hk'], $_POST ['heizungsart'], $_POST ['expose_frei'], $_POST ['besichtigungsdatum'], $_POST ['uhrzeit'] );
 			} else {
-				fehlermeldung_ausgeben ( "Dateneingabe unvollst�ndig" );
+				fehlermeldung_ausgeben ( "Dateneingabe unvollständig" );
 			}
 			break;
 		
@@ -186,7 +186,7 @@ if (isset ( $option )) {
 			$einheit_id = $_POST ['einheit_id'];
 			if ($einheit_id) {
 				
-				$pdf_object = $l->pdf_expose ( $einheit_id, 1 ); // R�ckgabe PDF-Object
+				$pdf_object = $l->pdf_expose ( $einheit_id, 1 ); // Rückgabe PDF-Object
 				$b = new buchen ();
 				$e = new einheit ();
 				$e->get_einheit_info ( $einheit_id );
@@ -210,11 +210,11 @@ if (isset ( $option )) {
 				for($a = 0; $a < $anz; $a ++) {
 					$email = $mails [$a];
 					// $l->mail_att("$email","Einladung zur Wohnungsbesichtigung","Im Anhang ist eine Exposedatei",$anhang);
-					$l->multi_attach_mail ( $email, $files, 'sivac@berlus.de', 'hausverwaltung.de - Einladung zur Wohnungsbesichtigung', "Wir laden Sie zur Wohnungsbesichtigung ein.\nIn der Anlage finden Sie das Expos� mit dem Besichtigunstermin.\n\nIhre Berlus Hausverwaltung\nFontanestr. 1\n14193 Berlin\nwww.hausverwaltung.de\n\nTel.: 030 89 78 44 77\nFax: 030 89 78 44 79\nEmail: info@berlus.de", 'Berlus HV' );
+					$l->multi_attach_mail ( $email, $files, 'sivac@berlus.de', 'hausverwaltung.de - Einladung zur Wohnungsbesichtigung', "Wir laden Sie zur Wohnungsbesichtigung ein.\nIn der Anlage finden Sie das Exposé mit dem Besichtigunstermin.\n\nIhre Berlus Hausverwaltung\nFontanestr. 1\n14193 Berlin\nwww.hausverwaltung.de\n\nTel.: 030 89 78 44 77\nFax: 030 89 78 44 79\nEmail: info@berlus.de", 'Berlus HV' );
 					echo "Email gesendet an $email<br>";
 				}
 			} else {
-				fehlermeldung_ausgeben ( 'Einheit w�hlen' );
+				fehlermeldung_ausgeben ( 'Einheit wählen' );
 			}
 			echo "</form>";
 			break;
@@ -226,7 +226,7 @@ if (isset ( $option )) {
 				$id = $_REQUEST ['id'];
 				$l->form_edit_interessent ( $id );
 			} else {
-				hinweis_ausgeben ( "Bitte Namen w�hlen" );
+				hinweis_ausgeben ( "Bitte Namen wählen" );
 			}
 			break;
 		
@@ -238,9 +238,9 @@ if (isset ( $option )) {
 				$l = new leerstand ();
 				
 				if ($l->interessenten_deaktivieren ( $id )) {
-					hinweis_ausgeben ( "Interessen gel�scht" );
+					hinweis_ausgeben ( "Interessen gelöscht" );
 				} else {
-					fehlermeldung_ausgeben ( "Interessent konnte nicht gel�scht werden!" );
+					fehlermeldung_ausgeben ( "Interessent konnte nicht gelöscht werden!" );
 				}
 			} else {
 				if (! empty ( $_POST ['id'] ) && ! empty ( $_POST ['name'] ) && ! empty ( $_POST ['anschrift'] ) && ! empty ( $_POST ['tel'] ) && ! empty ( $_POST ['email'] ) && ! empty ( $_POST ['einzug'] ) && ! empty ( $_POST ['zimmer'] )) {
@@ -293,7 +293,7 @@ if (isset ( $option )) {
 						$dateiname = stripslashes ( $_FILES ['expose'] ['name'] [$a] );
 						if (! $dateiname) {
 							$datzahl = $a + 1;
-							die ( "$datzahl Datei nicht gew�hlt!" );
+							die ( "$datzahl Datei nicht gewählt!" );
 						}
 						$extension = strtolower ( getExtension ( $dateiname ) );
 						if (($extension != "jpg") && ($extension != "jpeg")) {
@@ -324,7 +324,7 @@ if (isset ( $option )) {
 						}
 					} // end for
 				} else {
-					fehlermeldung_ausgeben ( "Keine Dateien �bermitelt" );
+					fehlermeldung_ausgeben ( "Keine Dateien übermitelt" );
 				}
 			}
 			
@@ -332,7 +332,7 @@ if (isset ( $option )) {
 		
 		case "sanierung" :
 			if (! isset ( $_SESSION ['objekt_id'] )) {
-				fehlermeldung_ausgeben ( "Objekt w�hlen" );
+				fehlermeldung_ausgeben ( "Objekt wählen" );
 			} else {
 				$le = new leerstand ();
 				$le->sanierungsliste ( $_SESSION ['objekt_id'], 11, 250, 200 );
@@ -349,7 +349,7 @@ if (isset ( $option )) {
 		
 		case "fotos_upload" :
 			if (! isset ( $_REQUEST ['einheit_id'] )) {
-				fehlermeldung_ausgeben ( "Einheit w�hlen" );
+				fehlermeldung_ausgeben ( "Einheit wählen" );
 			} else {
 				$l = new leerstand ();
 				$l->form_fotos_upload ( $_REQUEST ['einheit_id'] );
@@ -442,9 +442,9 @@ if (isset ( $option )) {
 			if (isset ( $_POST ['filename'] )) {
 				$filename = $_POST ['filename'];
 				if (unlink ( $filename )) {
-					echo "$filename ge�scht";
+					echo "$filename geöscht";
 				} else {
-					echo "nicht gel�scht!";
+					echo "nicht gelöscht!";
 				}
 			}
 			die ();
@@ -453,7 +453,7 @@ if (isset ( $option )) {
 		
 		case "fotos_f_anzeige" :
 			if (! isset ( $_REQUEST ['einheit_id'] )) {
-				fehlermeldung_ausgeben ( "Einheit w�hlen" );
+				fehlermeldung_ausgeben ( "Einheit wählen" );
 			} else {
 				$le = new leerstand ();
 				$le->fotos_anzeigen_wohnung ( $_REQUEST ['einheit_id'], 'ANZEIGE', '10' );
@@ -478,7 +478,7 @@ if (isset ( $option )) {
 		case "vermietung" :
 			
 			if (! isset ( $_SESSION ['objekt_id'] )) {
-				fehlermeldung_ausgeben ( "Objekt w�hlen" );
+				fehlermeldung_ausgeben ( "Objekt wählen" );
 			} else {
 				$le = new leerstand ();
 				$le->vermietungsliste ( $_SESSION ['objekt_id'], 11 );
@@ -582,7 +582,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC" );
 }
 function leerstand_objekt($objekt_id) {
 	$form = new formular ();
-	$form->erstelle_formular ( "Leerst�nde", NULL );
+	$form->erstelle_formular ( "Leerstände", NULL );
 	$b = new berlussimo_global ();
 	$link = "?daten=leerstand&option=objekt&objekt_id=$objekt_id";
 	
@@ -615,7 +615,7 @@ function leerstand_objekt($objekt_id) {
 	echo "<tr><td colspan=\"6\">Leerstand $monat_name $jahr</td></tr>";
 	echo "</table>";
 	echo "<table class=\"sortable\">";
-	echo "<tr><th>Objekt</th><th>Einheit</th><th>TYP</th><th>Lage</th><th>Fl�che</th><th>Link</th><th>Anschrift</th><th>PDF</th></tr>";
+	echo "<tr><th>Objekt</th><th>Einheit</th><th>TYP</th><th>Lage</th><th>Fläche</th><th>Link</th><th>Anschrift</th><th>PDF</th></tr>";
 	
 	$anzahl_leer = count ( $leerstand );
 	$summe_qm = 0;
@@ -629,10 +629,10 @@ function leerstand_objekt($objekt_id) {
 		$link_expose_pdf = "<a href=\"?daten=leerstand&option=expose_pdf&einheit_id=$einheit_id\"><img src=\"css/pdf2.png\"></a>";
 		$link_expose_eingabe = "<a href=\"?daten=leerstand&option=form_expose&einheit_id=$einheit_id\">Bearbeiten</a>";
 		$link_fotos = "<a href=\"?daten=leerstand&option=expose_foto_upload&einheit_id=$einheit_id\">Fotos hochladen</a>";
-		echo "<tr><td>" . $leerstand [$a] ['OBJEKT_KURZNAME'] . "</td><td>$link_einheit</td><td>$typ</td><td>$lage</td><td>$qm m�</td><td><a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_neu\">Vermieten</td></td><td>" . $leerstand [$a] ['HAUS_STRASSE'] . " " . $leerstand [$a] ['HAUS_NUMMER'] . "</td><td>$link_projekt_pdf Projekt<br>$link_expose_pdf Expose</td></tr>";
+		echo "<tr><td>" . $leerstand [$a] ['OBJEKT_KURZNAME'] . "</td><td>$link_einheit</td><td>$typ</td><td>$lage</td><td>$qm m²</td><td><a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_neu\">Vermieten</td></td><td>" . $leerstand [$a] ['HAUS_STRASSE'] . " " . $leerstand [$a] ['HAUS_NUMMER'] . "</td><td>$link_projekt_pdf Projekt<br>$link_expose_pdf Expose</td></tr>";
 		$summe_qm += $qm;
 	}
-	echo "<tr><td></td><td></td><td></td><td></td><td>$summe_qm m�</td><td></td><td></td><td></td></tr>";
+	echo "<tr><td></td><td></td><td></td><td></td><td>$summe_qm m²</td><td></td><td></td><td></td></tr>";
 	echo "</table>";
 	$form->ende_formular ();
 }
@@ -642,13 +642,13 @@ function objekt_auswahl_liste($link) {
 	}
 	
 	$mieten = new mietkonto ();
-	$mieten->erstelle_formular ( "Objekt ausw�hlen...", NULL );
+	$mieten->erstelle_formular ( "Objekt auswählen...", NULL );
 	if (isset ( $_SESSION ['objekt_id'] )) {
 		$objekt_kurzname = new objekt ();
 		$objekt_kurzname->get_objekt_name ( $_SESSION ['objekt_id'] );
-		echo "<p>&nbsp;<b>Ausgew�hltes Objekt</b> -> $objekt_kurzname->objekt_name ->";
+		echo "<p>&nbsp;<b>Ausgewähltes Objekt</b> -> $objekt_kurzname->objekt_name ->";
 	} else {
-		echo "<p>&nbsp;<b>Objekt ausw�hlen</b>";
+		echo "<p>&nbsp;<b>Objekt auswählen</b>";
 	}
 	echo "<p class=\"objekt_auswahl\">";
 	$objekte = new objekt ();

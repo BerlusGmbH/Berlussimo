@@ -67,7 +67,7 @@ class statistik {
 		$f = new formular ();
 		$f->erstelle_formular ( 'Leerstand Statistik HAUS', null );
 		$h = new haus ();
-		$h->dropdown_haeuser_2 ( 'Haus w�hlen', 'haus_id', 'haus_id' );
+		$h->dropdown_haeuser_2 ( 'Haus wählen', 'haus_id', 'haus_id' );
 		$f->hidden_feld ( 'option', 'leer_haus_stat1' );
 		$f->send_button ( 'BtnSnd', 'anzeigen' );
 		$f->ende_formular ();
@@ -318,7 +318,7 @@ LIMIT 0 , 30 " );
 		$link = "?daten=statistik&option=sollmieten_aktuell";
 		$bg->monate_jahres_links ( $jahr, $link );
 		
-		echo "<a href=\"?daten=statistik&option=verwaltergebuehr_objekt_pdf&objekt_id=$objekt_id\">Berechnung f�r $objekt_name als PDF</a><hr>";
+		echo "<a href=\"?daten=statistik&option=verwaltergebuehr_objekt_pdf&objekt_id=$objekt_id\">Berechnung für $objekt_name als PDF</a><hr>";
 		echo "<b>OBJEKT $objekt_name $monat/$jahr</b><br>";
 		$typ_lage = '';
 		$vermietete_arr = $this->vermietete_monat_jahr ( $datum, $objekt_id, $typ_lage );
@@ -351,15 +351,15 @@ LIMIT 0 , 30 " );
 		$g_summe_a = nummer_punkt2komma ( $g_summe );
 		$gsollmiete_vermietet_a = nummer_punkt2komma ( $gsollmiete_vermietet );
 		$gsollmiete_leer_a = nummer_punkt2komma ( $gsollmiete_leer );
-		echo "$gsollmiete_vermietet_a �   GESAMT SOLL VERMIETET<br>";
-		echo "$gsollmiete_leer_a �   GESAMT SOLL LEER<br>";
+		echo "$gsollmiete_vermietet_a €   GESAMT SOLL VERMIETET<br>";
+		echo "$gsollmiete_leer_a €   GESAMT SOLL LEER<br>";
 		$v_geb = ($g_summe / 100) * 5;
 		$brutto_vgeb = $v_geb * 1.19;
 		$brutto_vgeb_a = nummer_punkt2komma ( $brutto_vgeb );
 		$v_geb_a = nummer_punkt2komma ( $v_geb );
-		echo " $g_summe_a �   GESAMT SOLL<br>";
-		echo " $v_geb_a �   NETTO VERWALTERGEB�HR 5%<br>";
-		echo " <b>$brutto_vgeb_a �   INKL. 19% MWST VERWALTERGEB�HR 5%</b><hr>";
+		echo " $g_summe_a €   GESAMT SOLL<br>";
+		echo " $v_geb_a €   NETTO VERWALTERGEBÜHR 5%<br>";
+		echo " <b>$brutto_vgeb_a €   INKL. 19% MWST VERWALTERGEBÜHR 5%</b><hr>";
 	}
 	function summe_sollmieten_pdf($objekt_id) {
 		$o1 = new objekt ();
@@ -370,7 +370,7 @@ LIMIT 0 , 30 " );
 		$jahr = date ( "Y" );
 		
 		/*
-		 * echo "<a href=\"?daten=statistik&option=verwaltergebuehr_objekt_pdf&objekt_id=$objekt_id\">Berechnung f�r $objekt_name als PDF</a><hr>";
+		 * echo "<a href=\"?daten=statistik&option=verwaltergebuehr_objekt_pdf&objekt_id=$objekt_id\">Berechnung für $objekt_name als PDF</a><hr>";
 		 *
 		 * echo "<b>OBJEKT $objekt_name $monat/$jahr</b><br>";
 		 */
@@ -406,8 +406,8 @@ LIMIT 0 , 30 " );
 		$gsollmiete_vermietet_a = nummer_punkt2komma ( $gsollmiete_vermietet );
 		$gsollmiete_leer_a = nummer_punkt2komma ( $gsollmiete_leer );
 		/*
-		 * echo "$gsollmiete_vermietet_a � GESAMT SOLL VERMIETET<br>";
-		 * echo "$gsollmiete_leer_a � GESAMT SOLL LEER<br>";
+		 * echo "$gsollmiete_vermietet_a € GESAMT SOLL VERMIETET<br>";
+		 * echo "$gsollmiete_leer_a € GESAMT SOLL LEER<br>";
 		 */
 		$v_geb = ($g_summe / 100) * 5;
 		$v_geb = sprintf ( "%01.2f", $v_geb );
@@ -418,9 +418,9 @@ LIMIT 0 , 30 " );
 		$brutto_vgeb_a = nummer_punkt2komma ( $brutto_vgeb );
 		$v_geb_a = nummer_punkt2komma ( $v_geb );
 		/*
-		 * echo " $g_summe_a � GESAMT SOLL<br>";
-		 * echo " $v_geb_a � NETTO VERWALTERGEB�HR 5%<br>";
-		 * echo " <b>$brutto_vgeb_a � INKL. 19% MWST VERWALTERGEB�HR 5%</b><hr>";
+		 * echo " $g_summe_a € GESAMT SOLL<br>";
+		 * echo " $v_geb_a € NETTO VERWALTERGEBÜHR 5%<br>";
+		 * echo " <b>$brutto_vgeb_a € INKL. 19% MWST VERWALTERGEBÜHR 5%</b><hr>";
 		 */
 		ob_clean (); // ausgabepuffer leeren
 		header ( "Content-type: application/pdf" ); // wird von MSIE ignoriert
@@ -445,24 +445,24 @@ LIMIT 0 , 30 " );
 		// $pdf->addText(42,743,6,"BERLUS HAUSVERWALTUNG - Fontanestr. 1 - 14193 Berlin");
 		// $pdf->line(42,750,550,750);
 		$monatsname = monat2name ( $monat );
-		$pdf->addText ( 42, 700, 12, "Berechnungsbogen f�r die Verwaltergeb�hr <b>$objekt_name $monatsname $jahr</b>" );
+		$pdf->addText ( 42, 700, 12, "Berechnungsbogen für die Verwaltergebühr <b>$objekt_name $monatsname $jahr</b>" );
 		
 		$pdf->addText ( 42, 650, 10, "Gesamtsoll aus vermieteten Einheiten" );
-		$pdf->addText ( 300, 650, 10, "$gsollmiete_vermietet_a �" );
+		$pdf->addText ( 300, 650, 10, "$gsollmiete_vermietet_a €" );
 		$pdf->addText ( 42, 635, 10, "Gesamtsoll aus leerstehenden Einheiten" );
-		$pdf->addText ( 300, 635, 10, "$gsollmiete_leer_a �" );
+		$pdf->addText ( 300, 635, 10, "$gsollmiete_leer_a €" );
 		$pdf->setLineStyle ( 0.5 );
 		$pdf->line ( 42, 630, 350, 630 );
 		$pdf->addText ( 42, 620, 10, "<b>Gesamtsoll" );
-		$pdf->addText ( 300, 620, 10, "$g_summe_a �</b>" );
-		$pdf->addText ( 42, 595, 10, "5% Verwaltergeb�hr" );
-		$pdf->addText ( 300, 595, 10, "$v_geb_a �" );
+		$pdf->addText ( 300, 620, 10, "$g_summe_a €</b>" );
+		$pdf->addText ( 42, 595, 10, "5% Verwaltergebühr" );
+		$pdf->addText ( 300, 595, 10, "$v_geb_a €" );
 		$pdf->addText ( 42, 585, 10, "+ 19% MWSt" );
-		$pdf->addText ( 300, 585, 10, "$mwst_eur �" );
+		$pdf->addText ( 300, 585, 10, "$mwst_eur €" );
 		$pdf->setLineStyle ( 0.5 );
 		$pdf->line ( 42, 580, 350, 580 );
-		$pdf->addText ( 42, 570, 10, "<b>Verwaltergeb�hr brutto" );
-		$pdf->addText ( 300, 570, 10, "$brutto_vgeb_a �</b>" );
+		$pdf->addText ( 42, 570, 10, "<b>Verwaltergebühr brutto" );
+		$pdf->addText ( 300, 570, 10, "$brutto_vgeb_a €</b>" );
 		
 		$pdf->ezStream ();
 	}
@@ -474,7 +474,7 @@ LIMIT 0 , 30 " );
 	}
 	function form_haeuser_auswahl() {
 		$f = new formular ();
-		$f->fieldset ( "Verwaltergeb�hr f�r H�usergruppen", 'v_geb_haeuser' );
+		$f->fieldset ( "Verwaltergebühr für Häusergruppen", 'v_geb_haeuser' );
 		if (! empty ( $_POST )) {
 			// echo '<pre>';
 			// print_r($_POST);
@@ -513,7 +513,7 @@ LIMIT 0 , 30 " );
 			$haus_arr = $h->liste_aller_haeuser ();
 			$anzahl_haeuser = count ( $haus_arr );
 			if (is_array ( $haus_arr )) {
-				$f->erstelle_formular ( "H�user ausw�hlen", NULL );
+				$f->erstelle_formular ( "Häuser auswählen", NULL );
 				for($a = 0; $a < $anzahl_haeuser; $a ++) {
 					$objekt_id = $haus_arr [$a] ['OBJEKT_ID'];
 					$haus_id = $haus_arr [$a] ['HAUS_ID'];
@@ -528,7 +528,7 @@ LIMIT 0 , 30 " );
 				$f->send_button ( 'btn_send', 'Berechnen' );
 				$f->ende_formular ();
 			} else {
-				echo "Keine H�user";
+				echo "Keine Häuser";
 			}
 		}
 		
@@ -590,11 +590,11 @@ LIMIT 0 , 30 " );
 		$brutto_vgeb_a = nummer_punkt2komma ( $brutto_vgeb );
 		$v_geb_a = nummer_punkt2komma ( $v_geb );
 		if (! isset ( $_REQUEST [pdf] )) {
-			echo "$gsollmiete_vermietet_a �   GESAMT SOLL VERMIETET<br>";
-			echo "$gsollmiete_leer_a �   GESAMT SOLL LEER<br>";
-			echo " $g_summe_a �   GESAMT SOLL<br>";
-			echo " $v_geb_a �   NETTO VERWALTERGEB�HR 5%<br>";
-			echo " <b>$brutto_vgeb_a �   INKL. 19% MWST VERWALTERGEB�HR 5%</b><hr>";
+			echo "$gsollmiete_vermietet_a €   GESAMT SOLL VERMIETET<br>";
+			echo "$gsollmiete_leer_a €   GESAMT SOLL LEER<br>";
+			echo " $g_summe_a €   GESAMT SOLL<br>";
+			echo " $v_geb_a €   NETTO VERWALTERGEBÜHR 5%<br>";
+			echo " <b>$brutto_vgeb_a €   INKL. 19% MWST VERWALTERGEBÜHR 5%</b><hr>";
 		} else {
 			/* PDF AUSGABE */
 			ob_clean (); // ausgabepuffer leeren
@@ -611,27 +611,27 @@ LIMIT 0 , 30 " );
 			$pdf->addText ( 42, 743, 6, "BERLUS HAUSVERWALTUNG - Fontanestr. 1 - 14193 Berlin" );
 			$pdf->line ( 42, 750, 550, 750 );
 			$monatsname = monat2name ( $monat );
-			$pdf->addText ( 42, 720, 12, "Berechnungsbogen f�r die Verwaltergeb�hr $monatsname $jahr" );
+			$pdf->addText ( 42, 720, 12, "Berechnungsbogen für die Verwaltergebühr $monatsname $jahr" );
 			
 			$pdf->addText ( 42, 650, 10, "Gesamtsoll aus vermieteten Einheiten" );
-			$pdf->addText ( 300, 650, 10, "$gsollmiete_vermietet_a �" );
+			$pdf->addText ( 300, 650, 10, "$gsollmiete_vermietet_a €" );
 			$pdf->addText ( 42, 635, 10, "Gesamtsoll aus leerstehenden Einheiten" );
-			$pdf->addText ( 300, 635, 10, "$gsollmiete_leer_a �" );
+			$pdf->addText ( 300, 635, 10, "$gsollmiete_leer_a €" );
 			$pdf->setLineStyle ( 0.5 );
 			$pdf->line ( 42, 630, 350, 630 );
 			$pdf->addText ( 42, 620, 10, "<b>Gesamtsoll" );
-			$pdf->addText ( 300, 620, 10, "$g_summe_a �</b>" );
-			$pdf->addText ( 42, 595, 10, "5% Verwaltergeb�hr" );
-			$pdf->addText ( 300, 595, 10, "$v_geb_a �" );
+			$pdf->addText ( 300, 620, 10, "$g_summe_a €</b>" );
+			$pdf->addText ( 42, 595, 10, "5% Verwaltergebühr" );
+			$pdf->addText ( 300, 595, 10, "$v_geb_a €" );
 			$pdf->addText ( 42, 585, 10, "+ 19% MWSt" );
-			$pdf->addText ( 300, 585, 10, "$mwst_eur �" );
+			$pdf->addText ( 300, 585, 10, "$mwst_eur €" );
 			$pdf->setLineStyle ( 0.5 );
 			$pdf->line ( 42, 580, 350, 580 );
-			$pdf->addText ( 42, 570, 10, "<b>Verwaltergeb�hr brutto" );
-			$pdf->addText ( 300, 570, 10, "$brutto_vgeb_a �</b>" );
+			$pdf->addText ( 42, 570, 10, "<b>Verwaltergebühr brutto" );
+			$pdf->addText ( 300, 570, 10, "$brutto_vgeb_a €</b>" );
 			
-			/* H�user */
-			$pdf->addText ( 42, 480, 10, "In diese Berechnung wurden folgende H�user einbezogen:" );
+			/* Häuser */
+			$pdf->addText ( 42, 480, 10, "In diese Berechnung wurden folgende Häuser einbezogen:" );
 			$text_xpos = 460;
 			for($c = 0; $c < count ( $haeuser ); $c ++) {
 				$haus = $haeuser [$c];
@@ -649,7 +649,7 @@ LIMIT 0 , 30 " );
 					$pdf->selectFont ( $berlus_schrift );
 					$pdf->addText ( 42, 743, 6, "BERLUS HAUSVERWALTUNG - Fontanestr. 1 - 14193 Berlin" );
 					$pdf->line ( 42, 750, 550, 750 );
-					$pdf->addText ( 42, 720, 12, "Berechnungsbogen f�r die Verwaltergeb�hr $monat/$jahr" );
+					$pdf->addText ( 42, 720, 12, "Berechnungsbogen für die Verwaltergebühr $monat/$jahr" );
 				}
 			}
 			
@@ -676,7 +676,7 @@ ORDER BY EINHEIT_KURZNAME ASC" );
 		while ( $row = mysql_fetch_assoc ( $result ) )
 			$my_arr [] = $row;
 		
-		return count ( $my_arr ); // liefert anzahl leerst�nde
+		return count ( $my_arr ); // liefert anzahl leerstände
 	}
 	function stat_kosten_me_jahr($geldkonto_id, $jahr) {
 		$b = new buchen ();
@@ -837,13 +837,13 @@ ORDER BY EINHEIT_KURZNAME ASC" );
 				$benutzname = $row [benutzername];
 				$std = nummer_punkt2komma ( $row [STD] );
 				$leistung_eur = nummer_punkt2komma ( $row [LEISTUNG_EUR] );
-				// echo "$benutzname $std Stunden $leistung_eur �<br>";
+				// echo "$benutzname $std Stunden $leistung_eur €<br>";
 				echo "<tr><td>$benutzname</td><td>$std</td><td>$leistung_eur</td></tr>";
 			}
-			// echo "<hr><b>Stunden gesamt: $gesamt_std | Preis Leistung: $gesamt_eur �</b><hr><br>";
+			// echo "<hr><b>Stunden gesamt: $gesamt_std | Preis Leistung: $gesamt_eur €</b><hr><br>";
 			$gesamt_std_a = nummer_punkt2komma ( $gesamt_std );
 			$gesamt_eur_a = nummer_punkt2komma ( $gesamt_eur );
-			echo "<tr><th>Gesamt</th><th>$gesamt_std_a Std.</th><th>$gesamt_eur_a �</th></tr>";
+			echo "<tr><th>Gesamt</th><th>$gesamt_std_a Std.</th><th>$gesamt_eur_a €</th></tr>";
 		} else {
 			echo "Keine Stunden eingetragen<hr><br>";
 		}
@@ -892,7 +892,7 @@ ORDER BY EINHEIT_KURZNAME ASC" );
 				if ($kos_typ == 'Einheit') {
 					$e = new einheit ();
 					$e->get_einheit_info ( $kos_id );
-					$kos_bez = "$e->einheit_kurzname $e->haus_strasse $e->haus_nummer $e->einheit_lage $e->einheit_qm m�";
+					$kos_bez = "$e->einheit_kurzname $e->haus_strasse $e->haus_nummer $e->einheit_lage $e->einheit_qm m²";
 				}
 				$soll_std_a = nummer_punkt2komma ( $soll_std );
 				$g_stunden_a = nummer_punkt2komma ( $g_stunden );
@@ -967,8 +967,8 @@ ORDER BY EINHEIT_KURZNAME ASC" );
 	}
 	function get_kontierung($art_nr, $menge, $kos_typ, $kos_id) {
 		echo "<table class=\"sortable\">";
-		// echo "<tr><th>BELEG</th><th>ARTIKEL</th><th>AUSSTELLER</th><th>EMPF�NGER</th><th>MENGE SOLL</th><th>MENGE IST</th><th>BEZ</th><th>RG KURZBESCHRIBUNG</th></tr>";
-		echo "<tr><th>BELEG</th><th>ARTIKEL</th><th>BEZ</th><th>AUSSTELLER</th><th>EMPF�NGER</th><th>MENGE SOLL</th><th>MENGE IST</th></tr>";
+		// echo "<tr><th>BELEG</th><th>ARTIKEL</th><th>AUSSTELLER</th><th>EMPFÄNGER</th><th>MENGE SOLL</th><th>MENGE IST</th><th>BEZ</th><th>RG KURZBESCHRIBUNG</th></tr>";
+		echo "<tr><th>BELEG</th><th>ARTIKEL</th><th>BEZ</th><th>AUSSTELLER</th><th>EMPFÄNGER</th><th>MENGE SOLL</th><th>MENGE IST</th></tr>";
 		
 		$result = mysql_query ( "SELECT BELEG_NR, POSITION, MENGE FROM  `KONTIERUNG_POSITIONEN`	WHERE  `KOSTENTRAEGER_TYP` LIKE  '$kos_typ'	AND  `KOSTENTRAEGER_ID` ='$kos_id' AND  `AKTUELL` =  '1'" );
 		while ( $row = mysql_fetch_assoc ( $result ) ) {
@@ -1201,7 +1201,7 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION" );
 	}
 	
 	/*
-	 * Alle �bersicht
+	 * Alle Übersicht
 	 * SELECT STUNDENZETTEL.BENUTZER_ID, benutzername, SUM(DAUER_MIN)/60 AS STD FROM `STUNDENZETTEL_POS` JOIN STUNDENZETTEL ON (STUNDENZETTEL.ZETTEL_ID=STUNDENZETTEL_POS.ZETTEL_ID) JOIN BENUTZER ON(STUNDENZETTEL.BENUTZER_ID=BENUTZER.benutzer_id) WHERE STUNDENZETTEL.AKTUELL = '1' && STUNDENZETTEL_POS.AKTUELL = '1' && KOSTENTRAEGER_TYP='Einheit' && KOSTENTRAEGER_ID='166' GROUP BY STUNDENZETTEL.BENUTZER_ID ORDER BY STD DESC
 	 *
 	 *
@@ -1211,7 +1211,7 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION" );
 } // end class
 
 /*
- * MIETVERTR�GE OHNE MIETDEFINITION
+ * MIETVERTRÄGE OHNE MIETDEFINITION
  * SELECT MIETVERTRAG_ID
  * FROM MIETVERTRAG
  * WHERE MIETVERTRAG_AKTUELL = '1' && MIETVERTRAG_ID NOT
@@ -1226,15 +1226,15 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION" );
 
 // }//end classs
 /*
- * SET @num =5300;# MySQL lieferte ein leeres Resultat zur�ck (d.&nbsp;h. null Zeilen).
- * # MySQL lieferte ein leeres Resultat zur�ck (d.&nbsp;h. null Zeilen).
+ * SET @num =5300;# MySQL lieferte ein leeres Resultat zurück (d.&nbsp;h. null Zeilen).
+ * # MySQL lieferte ein leeres Resultat zurück (d.&nbsp;h. null Zeilen).
  * SELECT @num := @num +1 AS ZEILE, GELD_KONTO_BUCHUNGEN_DAT
  * FROM `GELD_KONTO_BUCHUNGEN`
  * WHERE `GELDKONTO_ID` =1
  *
  *
- * SET @num =0;# MySQL lieferte ein leeres Resultat zur�ck (d.&nbsp;h. null Zeilen).
- * # MySQL lieferte ein leeres Resultat zur�ck (d.&nbsp;h. null Zeilen).
+ * SET @num =0;# MySQL lieferte ein leeres Resultat zurück (d.&nbsp;h. null Zeilen).
+ * # MySQL lieferte ein leeres Resultat zurück (d.&nbsp;h. null Zeilen).
  * SELECT @num := @num +1 AS ZEILE, BETRAG
  * FROM `GELD_KONTO_BUCHUNGEN`
  * WHERE `GELDKONTO_ID` =1
@@ -1245,7 +1245,7 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION" );
  *
  *
  *
- * SET @num =0;# MySQL lieferte ein leeres Resultat zur�ck (d.&nbsp;h. null Zeilen).
+ * SET @num =0;# MySQL lieferte ein leeres Resultat zurück (d.&nbsp;h. null Zeilen).
  * UPDATE GELD_KONTO_BUCHUNGEN SET G_BUCHUNGSNUMMER = @num:= @num +1 WHERE GELD_KONTO_BUCHUNGEN_DAT IN (
  * SELECT GELD_KONTO_BUCHUNGEN_DAT
  * FROM GELD_KONTO_BUCHUNGEN_OK37
@@ -1253,8 +1253,8 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION" );
  * AND AKTUELL = '1'
  * AND DATE_FORMAT( DATUM, '%Y' ) = '2009'
  * ORDER BY GELD_KONTO_BUCHUNGEN_DAT ASC
- * )# Betroffene Datens�tze: 468
- * # Betroffene Datens�tze: 467
+ * )# Betroffene Datensätze: 468
+ * # Betroffene Datensätze: 467
  *
  *
  * UPDATE KONTIERUNG_POSITIONEN AS t1

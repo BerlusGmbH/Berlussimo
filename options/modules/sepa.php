@@ -18,7 +18,7 @@
  * 
  */
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'sepa' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -28,9 +28,9 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'sepa' )) {
 
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
 include_once ("options/links/links.sepa.php");
 include_once ("classes/class_sepa.php");
 
@@ -74,7 +74,7 @@ switch ($option) {
 		if (isset ( $_SESSION ['geldkonto_id'] )) {
 			$sep->form_mandat_mieter_neu ( $_SESSION ['geldkonto_id'] );
 		} else {
-			fehlermeldung_ausgeben ( "Erst Geldkonto w�hlen!!!" );
+			fehlermeldung_ausgeben ( "Erst Geldkonto wählen!!!" );
 		}
 		break;
 	
@@ -83,7 +83,7 @@ switch ($option) {
 		if (isset ( $_SESSION ['geldkonto_id'] )) {
 			$sep->form_mandat_hausgeld_neu ( $_SESSION ['geldkonto_id'] );
 		} else {
-			fehlermeldung_ausgeben ( "Erst Geldkonto w�hlen!!!" );
+			fehlermeldung_ausgeben ( "Erst Geldkonto wählen!!!" );
 		}
 		break;
 	
@@ -147,7 +147,7 @@ switch ($option) {
 						$sep = new sepa ();
 						$sep->mandat_speichern ( $mref, $glaeubiger_id, $gk_id, $empf, $name, $anschrift, $kto, $blz, $iban, $bic, $bankname, $udatum, $adatum, $edatum, $m_art, $n_art, $e_art, $kos_typ, $kos_id );
 					} else {
-						fehlermeldung_ausgeben ( "Eingabe unvollst�ndig, bitte alle Felder ausf�llen!" );
+						fehlermeldung_ausgeben ( "Eingabe unvollständig, bitte alle Felder ausfüllen!" );
 					}
 				}
 			}
@@ -209,7 +209,7 @@ switch ($option) {
 					$dat = $_REQUEST ['mref_dat'];
 					$sep->mandat_aendern ( $dat, $mref, $glaeubiger_id, $gk_id, $empf, $name, $anschrift, $kto, $blz, $iban, $bic, $bankname, $udatum, $adatum, $edatum, $m_art, $n_art, $e_art, $kos_typ, $kos_id );
 				} else {
-					fehlermeldung_ausgeben ( "Eingabe unvollst�ndig, bitte alle Felder ausf�llen!" );
+					fehlermeldung_ausgeben ( "Eingabe unvollständig, bitte alle Felder ausfüllen!" );
 				}
 			}
 		}
@@ -250,7 +250,7 @@ switch ($option) {
 			$nutzungsart = $_POST ['nutzungsart'];
 			$sep->sepa_datei_erstellen ( 1, $dateiname_msgid, $nutzungsart, $pdf ); // als Sammelbetrag auf dem Kontoauszug!
 		} else {
-			$sep->sepa_datei_erstellen ( 0, $dateiname_msgid, $nutzungsart, $pdf ); // Einzelbetr�ge auf dem Kontoauszug
+			$sep->sepa_datei_erstellen ( 0, $dateiname_msgid, $nutzungsart, $pdf ); // Einzelbeträge auf dem Kontoauszug
 		}
 		
 		// $sep->sepa_datei_erstellen();
@@ -266,7 +266,7 @@ switch ($option) {
 			$sep = new sepa ();
 			$sep->mandat_nutzungen_anzeigen ( $_REQUEST ['m_ref'] );
 		} else {
-			fehlermeldung_ausgeben ( "Mandat w�hlen" );
+			fehlermeldung_ausgeben ( "Mandat wählen" );
 		}
 		break;
 	
@@ -281,30 +281,30 @@ switch ($option) {
 			/*
 			 * if($sep->sepa_sammler_anzeigen($_SESSION['geldkonto_id'], 'RECHNUNG')==true){
 			 * $kat = 'RECHNUNG';
-			 * echo "<a href=\"?daten=sepa&option=sammler2sepa&gk_id=$gk_id&kat=$kat\">SEPA-Datei f�r $kat erstellen</a>";
+			 * echo "<a href=\"?daten=sepa&option=sammler2sepa&gk_id=$gk_id&kat=$kat\">SEPA-Datei für $kat erstellen</a>";
 			 * }
 			 * if($sep->sepa_sammler_anzeigen($_SESSION['geldkonto_id'], 'ET-AUSZAHLUNG')==true){
 			 * $kat = 'ET-AUSZAHLUNG';
-			 * echo "<a href=\"?daten=sepa&option=sammler2sepa&gk_id=$gk_id&kat=$kat\">SEPA-Datei f�r $kat erstellen</a>";
+			 * echo "<a href=\"?daten=sepa&option=sammler2sepa&gk_id=$gk_id&kat=$kat\">SEPA-Datei für $kat erstellen</a>";
 			 * }
 			 *
 			 * if($sep->sepa_sammler_anzeigen($_SESSION['geldkonto_id'], 'LOHN')==true){
 			 * $kat = 'LOHN';
-			 * echo "<a href=\"?daten=sepa&option=sammler2sepa&gk_id=$gk_id&kat=$kat\">SEPA-Datei f�r $kat erstellen</a>";
+			 * echo "<a href=\"?daten=sepa&option=sammler2sepa&gk_id=$gk_id&kat=$kat\">SEPA-Datei für $kat erstellen</a>";
 			 * }
 			 *
 			 * if($sep->sepa_sammler_anzeigen($_SESSION['geldkonto_id'], 'KK')==true){
 			 * $kat = 'KK';
-			 * echo "<a href=\"?daten=sepa&option=sammler2sepa&gk_id=$gk_id&kat=$kat\">SEPA-Datei f�r $kat erstellen</a>";
+			 * echo "<a href=\"?daten=sepa&option=sammler2sepa&gk_id=$gk_id&kat=$kat\">SEPA-Datei für $kat erstellen</a>";
 			 * }
 			 * if($sep->sepa_sammler_anzeigen($_SESSION['geldkonto_id'], 'STEUERN')==true){
 			 * $kat = 'STEUERN';
-			 * echo "<a href=\"?daten=sepa&option=sammler2sepa&gk_id=$gk_id&kat=$kat\">SEPA-Datei f�r $kat erstellen</a>";
+			 * echo "<a href=\"?daten=sepa&option=sammler2sepa&gk_id=$gk_id&kat=$kat\">SEPA-Datei für $kat erstellen</a>";
 			 * }
 			 */
 			$sep->sepa_alle_sammler_anzeigen ();
 		} else {
-			fehlermeldung_ausgeben ( "Geldkonto w�hlen" );
+			fehlermeldung_ausgeben ( "Geldkonto wählen" );
 		}
 		break;
 	
@@ -314,23 +314,23 @@ switch ($option) {
 			$von_gk_id = $_REQUEST ['gk_id'];
 			$kat = $_REQUEST ['kat'];
 			if ($kat == 'ET_AUSZAHLUNG') {
-				$sammler = '0'; // Einzelbetr�ge
+				$sammler = '0'; // Einzelbeträge
 			} else {
 				$sammler = '1'; // Nur einen Betrag
 			}
 			$sep->sammler2sepa ( $von_gk_id, $kat, $sammler );
 		} else {
-			fehlermeldung_ausgeben ( "Geldkonto und Kategorie w�hlen!!!" );
+			fehlermeldung_ausgeben ( "Geldkonto und Kategorie wählen!!!" );
 		}
 		break;
 	
 	case "re_zahlen" :
 		if (empty ( $_SESSION ['geldkonto_id'] )) {
-			hinweis_ausgeben ( "Bitte Geldkonto ausw�hlen!" );
+			hinweis_ausgeben ( "Bitte Geldkonto auswählen!" );
 		} else {
 			$g = new geldkonto_info ();
 			$g->geld_konto_details ( $_SESSION ['geldkonto_id'] );
-			echo "<b>Ausgew�hltes Konto $g->geldkonto_bezeichnung_kurz</b><br>";
+			echo "<b>Ausgewähltes Konto $g->geldkonto_bezeichnung_kurz</b><br>";
 		}
 		
 		if (isset ( $_REQUEST ['partner_wechseln'] )) {
@@ -380,11 +380,11 @@ switch ($option) {
 	
 	case "ra_zahlen" :
 		if (empty ( $_SESSION ['geldkonto_id'] )) {
-			hinweis_ausgeben ( "Bitte Geldkonto ausw�hlen!" );
+			hinweis_ausgeben ( "Bitte Geldkonto auswählen!" );
 		} else {
 			$g = new geldkonto_info ();
 			$g->geld_konto_details ( $_SESSION ['geldkonto_id'] );
-			echo "<b>Ausgew�hltes Konto $g->geldkonto_bezeichnung_kurz</b><br>";
+			echo "<b>Ausgewähltes Konto $g->geldkonto_bezeichnung_kurz</b><br>";
 		}
 		
 		if (isset ( $_REQUEST ['partner_wechseln'] )) {
@@ -465,7 +465,7 @@ switch ($option) {
 	
 	case "sepa_files" :
 		if (! isset ( $_SESSION ['geldkonto_id'] )) {
-			die ( fehlermeldung_ausgeben ( "Geldkonto w�hlen" ) );
+			die ( fehlermeldung_ausgeben ( "Geldkonto wählen" ) );
 		} else {
 			$sep = new sepa ();
 			$sep->sepa_files ( $_SESSION ['geldkonto_id'] );
@@ -474,7 +474,7 @@ switch ($option) {
 	
 	case "sepa_files_fremd" :
 		if (! isset ( $_SESSION ['geldkonto_id'] )) {
-			die ( fehlermeldung_ausgeben ( "Geldkonto w�hlen" ) );
+			die ( fehlermeldung_ausgeben ( "Geldkonto wählen" ) );
 		} else {
 			$sep = new sepa ();
 			$sep->sepa_files ( null );
@@ -483,7 +483,7 @@ switch ($option) {
 	
 	case "sepa_file_buchen_fremd" :
 		if (! isset ( $_REQUEST ['sepa_file'] )) {
-			die ( fehlermeldung_ausgeben ( "SEPA-DATEI w�hlen" ) );
+			die ( fehlermeldung_ausgeben ( "SEPA-DATEI wählen" ) );
 		} else {
 			$sep = new sepa ();
 			$sep->sepa_file_buchen_fremd ( $_REQUEST ['sepa_file'] );
@@ -529,7 +529,7 @@ switch ($option) {
 	
 	case "sepa_file_anzeigen" :
 		if (! isset ( $_REQUEST ['sepa_file'] )) {
-			die ( fehlermeldung_ausgeben ( "SEPA-DATEI w�hlen" ) );
+			die ( fehlermeldung_ausgeben ( "SEPA-DATEI wählen" ) );
 		} else {
 			$sep = new sepa ();
 			$sep->sepa_file_anzeigen ( $_REQUEST ['sepa_file'] );
@@ -539,7 +539,7 @@ switch ($option) {
 	/* Sepafile Inhalt in Pool schieben, als Vorlage nutzen */
 	case "sepa_file_kopieren" :
 		if (! isset ( $_REQUEST ['sepa_file'] )) {
-			die ( fehlermeldung_ausgeben ( "SEPA-DATEI w�hlen" ) );
+			die ( fehlermeldung_ausgeben ( "SEPA-DATEI wählen" ) );
 		} else {
 			$sep = new sepa ();
 			if ($sep->sepa_file_kopieren ( $_REQUEST ['sepa_file'] )) {
@@ -550,7 +550,7 @@ switch ($option) {
 	
 	case "sepa_file_buchen" :
 		if (! isset ( $_REQUEST ['sepa_file'] )) {
-			die ( fehlermeldung_ausgeben ( "SEPA-DATEI w�hlen" ) );
+			die ( fehlermeldung_ausgeben ( "SEPA-DATEI wählen" ) );
 		} else {
 			$sep = new sepa ();
 			$sep->sepa_file_buchen ( $_REQUEST ['sepa_file'] );
@@ -732,7 +732,7 @@ switch ($option) {
 			$kostenkonto = '6020';
 		}
 		if (! $kostenkonto) {
-			DIE ( 'Kein Kostenkonto gew�hlt' );
+			DIE ( 'Kein Kostenkonto gewählt' );
 		}
 		
 		$vzweck = "SEPA-LS $m_ref";
@@ -751,7 +751,7 @@ switch ($option) {
 		if (isset ( $_POST )) {
 			// print_r($_POST);
 			if (! isset ( $_SESSION ['geldkonto_id'] )) {
-				fehlermeldung_ausgeben ( "Geldkonto w�hlen" );
+				fehlermeldung_ausgeben ( "Geldkonto wählen" );
 				die ();
 			}
 			

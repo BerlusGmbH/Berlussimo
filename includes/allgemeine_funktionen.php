@@ -20,14 +20,14 @@
 function umlautundgross($wort) {
 	$tmp = strtoupper ( $wort );
 	$suche = array (
-			'�',
-			'�',
-			'�',
-			'�',
-			'�',
-			'�',
-			'�',
-			'�' 
+			'Ä',
+			'Ö',
+			'Ü',
+			'ß',
+			'ä',
+			'ö',
+			'ü',
+			'ß' 
 	);
 	$ersetze = array (
 			'AE',
@@ -80,7 +80,7 @@ function check_user_mod($benutzer_id, $module_name) {
 			$wer = $_SESSION ['username'];
 			$ip = $_SERVER ['REMOTE_ADDR'];
 			$host = gethostbyaddr ( $_SERVER ['REMOTE_ADDR'] );
-			/* Nur wenn jemand seine eigenen Rechte �berlisten will, sonst ist das der Admin */
+			/* Nur wenn jemand seine eigenen Rechte überlisten will, sonst ist das der Admin */
 			if ($_SESSION ['benutzer_id'] == $benutzer_id) {
 				$db_abfrage = "INSERT INTO ZUGRIFF_ERROR VALUES(NULL, '$benutzer_id','$wer', NULL, '$module_name', '$ip', '$host')";
 				$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
@@ -127,7 +127,7 @@ function last_id2($tab, $spalte) {
 	}
 }
 function backlink() {
-	echo "<hr class=\"backlink\"><a class=\"backlink\" href=\"javascript:history.back()\"><b>Zur�ck</b></a><hr class=\"backlink\">\n";
+	echo "<hr class=\"backlink\"><a class=\"backlink\" href=\"javascript:history.back()\"><b>Zurück</b></a><hr class=\"backlink\">\n";
 }
 function letzte_objekt_dat() {
 	$db_abfrage = "SELECT OBJEKT_DAT FROM OBJEKT ORDER BY OBJEKT_DAT DESC LIMIT 0,1";
@@ -414,8 +414,8 @@ function personen_liste_alle() {
 			$anzahl_mv = count ( $mietvertraege_arr );
 			
 			$detail_check = detail_check ( "PERSON", $PERSON_ID );
-			$delete_link = "<a class=\"table_links\" href=\"?daten=person&anzeigen=person_loeschen&person_dat=$PERSON_DAT\">L�schen</a>";
-			$aendern_link = "<a class=\"table_links\" href=\"?daten=person&anzeigen=person_aendern&person_id=$PERSON_ID\">�ndern</a>";
+			$delete_link = "<a class=\"table_links\" href=\"?daten=person&anzeigen=person_loeschen&person_dat=$PERSON_DAT\">Löschen</a>";
+			$aendern_link = "<a class=\"table_links\" href=\"?daten=person&anzeigen=person_aendern&person_id=$PERSON_ID\">Ändern</a>";
 			$mietvertrag_link = "";
 			$haus_info = "";
 			$haus_info_link = "";
@@ -841,7 +841,7 @@ function person_pruefen($nachname, $vorname, $geburtstag) {
 			return "error";
 		}
 	} else {
-		hinweis_ausgeben ( "Person existiert!!!<br>Ihre Eingaben sind 100%-ig identisch mit folgenden Datenbankeintr�gen:" );
+		hinweis_ausgeben ( "Person existiert!!!<br>Ihre Eingaben sind 100%-ig identisch mit folgenden Datenbankeinträgen:" );
 		while ( list ( $PERSON_ID, $PERSON_NACHNAME, $PERSON_VORNAME, $PERSON_GEBURTSTAG ) = mysql_fetch_row ( $resultat ) ) {
 			echo "$PERSON_ID, $PERSON_NACHNAME, $PERSON_VORNAME, $PERSON_GEBURTSTAG <br>";
 		}
@@ -852,14 +852,14 @@ function person_loeschen($person_dat) {
 	$db_abfrage = "UPDATE PERSON SET PERSON_AKTUELL='0' WHERE PERSON_DAT='$person_dat'";
 	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 	// $numberOfRows = mysql_affected_rows();
-	// hinweis_ausgeben("Ver�nderte Datens�tze: $numberOfRows");
+	// hinweis_ausgeben("Veränderte Datensätze: $numberOfRows");
 	
-	$dat_alt = $person_dat; // person wurde gel�scht DAT_ALT = DAT_NEU im Protokoll
+	$dat_alt = $person_dat; // person wurde gelöscht DAT_ALT = DAT_NEU im Protokoll
 	$dat_neu = $person_dat;
 	protokollieren ( 'PERSON', $dat_neu, $dat_alt );
 	
-	hinweis_ausgeben ( "Person gel�scht!" );
-	echo "<a href=\"http://berlus.de/berlussimo/?daten=person&anzeigen=alle_personen\">Zur�ck zu Personenliste</a>";
+	hinweis_ausgeben ( "Person gelöscht!" );
+	echo "<a href=\"http://berlus.de/berlussimo/?daten=person&anzeigen=alle_personen\">Zurück zu Personenliste</a>";
 }
 function person_aendern_in_db($person_id) {
 	$db_abfrage = "UPDATE PERSON SET PERSON_AKTUELL='0' WHERE PERSON_ID='$person_id'";
@@ -912,7 +912,7 @@ function umbruch_entfernen($string) {
 	return $new;
 }
 
-// ## Funktion zur Eintragung der Person mit Datenpr�fung.
+// ## Funktion zur Eintragung der Person mit Datenprüfung.
 function person_in_db_eintragen() {
 	$gebdatum = $_REQUEST [person_geburtstag];
 	$gebdatum = date_german2mysql ( $gebdatum );
@@ -1064,7 +1064,7 @@ function array_sortByIndex($array, $index, $order = SORT_ASC, $natsort = FALSE, 
 		return $sorted;
 	}
 	return $array;
-	// Beispiel f�r ein Array $sx mit den Spalten $sx['dat'], $sx['name'], $sx['id'].
+	// Beispiel für ein Array $sx mit den Spalten $sx['dat'], $sx['name'], $sx['id'].
 	// $arrSXsorted = array_sortByIndex($sx,'dat');
 }
 function array_orderby() {
@@ -1258,7 +1258,7 @@ function monat2name($monat, $lang = 'de') {
 			return 'Februar';
 		}
 		if ($monat == '03') {
-			return 'M�rz';
+			return 'März';
 		}
 		if ($monat == '04') {
 			return 'April';

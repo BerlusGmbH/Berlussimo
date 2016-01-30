@@ -22,7 +22,7 @@
 if (file_exists ( "includes/allgemeine_funktionen.php" )) {
 	include_once ("includes/allgemeine_funktionen.php");
 }
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 if (file_exists ( "classes/class_formular.php" )) {
 	include_once ("classes/class_formular.php");
 }
@@ -79,7 +79,7 @@ class personen {
 		$f->text_feld ( "Nachname", "nachname", "", "35", 'nachname', '' );
 		$f->text_feld ( "Vorname", "vorname", "", "35", 'vorname', '' );
 		$f->datum_feld ( 'Geburtsdatum', 'geburtsdatum', '', 'geburtsdatum' );
-		$this->dropdown_geschlecht ( 'Geschlecht w�hlen', 'geschlecht', 'geschlecht' );
+		$this->dropdown_geschlecht ( 'Geschlecht wählen', 'geschlecht', 'geschlecht' );
 		$f->text_feld ( "Telefon", "telefon", "", "20", 'telefon', '' );
 		$f->text_feld ( "Handy", "handy", "", "20", 'handy', '' );
 		$f->text_feld ( "Email", "email", "", "20", 'email', '' );
@@ -122,10 +122,10 @@ class personen {
 		echo "<select name=\"$name\" id=\"$id\">";
 		if ($vorwahl == 'weiblich') {
 			echo "<option value=\"weiblich\" selected>weiblich</option>";
-			echo "<option value=\"m�nnlich\">m�nnlich</option>";
+			echo "<option value=\"männlich\">männlich</option>";
 		} else {
 			echo "<option value=\"weiblich\">weiblich</option>";
-			echo "<option value=\"m�nnlich\" selected>m�nnlich</option>";
+			echo "<option value=\"männlich\" selected>männlich</option>";
 		}
 		
 		echo "</select>";
@@ -321,8 +321,8 @@ LIMIT 0 , 30";
 			$person_vorname = $personen_arr [$a] ['PERSON_VORNAME'];
 			
 			$person_gebam = date_mysql2german ( $personen_arr [$a] ['PERSON_GEBURTSTAG'] );
-			// $delete_link = "<a class=\"table_links\" href=\"?daten=person&anzeigen=person_loeschen&person_dat=$PERSON_DAT\">L�schen</a>";
-			$aendern_link = "<a class=\"table_links\" href=\"?daten=person&anzeigen=person_aendern&person_id=$person_id\">Person �ndern</a>";
+			// $delete_link = "<a class=\"table_links\" href=\"?daten=person&anzeigen=person_loeschen&person_dat=$PERSON_DAT\">Löschen</a>";
+			$aendern_link = "<a class=\"table_links\" href=\"?daten=person&anzeigen=person_aendern&person_id=$person_id\">Person ändern</a>";
 			
 			$detail_check = detail_check ( "PERSON", $person_id );
 			if ($detail_check > 0) {

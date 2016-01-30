@@ -26,7 +26,7 @@
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
 include_once ("classes/berlussimo_class.php");
 include_once ("classes/class_wirtschafts_e.php");
@@ -42,7 +42,7 @@ class todo {
 		$f->text_feld ( 'Bezeichnung', 'bau_bez', '', 50, 'bau_bez', '' );
 		$f->hidden_feld ( 'option', 'neue_baustelle' );
 		$p = new partners ();
-		$p->partner_dropdown ( 'Rechnungsempf�nger w�hlen', 'p_id', 'p_id' );
+		$p->partner_dropdown ( 'Rechnungsempfänger wählen', 'p_id', 'p_id' );
 		$f->send_button ( 'btn_sndb', 'Erstellen' );
 		$f->ende_formular ();
 	}
@@ -67,7 +67,7 @@ class todo {
 		if (is_array ( $arr )) {
 			$anz = count ( $arr );
 			echo "<table class=\"sortable\">";
-			echo "<thead><tr><th>BAUSTELLE</th><th>RECHNUNGSEMPF�NGER</th><th>OPTIONEN</th></tr></thead>";
+			echo "<thead><tr><th>BAUSTELLE</th><th>RECHNUNGSEMPFÄNGER</th><th>OPTIONEN</th></tr></thead>";
 			for($a = 0; $a < $anz; $a ++) {
 				$bau_id = $arr [$a] ['ID'];
 				$bez = $arr [$a] ['BEZ'];
@@ -108,9 +108,9 @@ class todo {
 			$f->hidden_feld ( 'kostentraeger_id', $_REQUEST ['kos_id'] );
 		} else {
 			$js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
-			$bb->dropdown_kostentreager_typen ( 'Kostentr�gertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
+			$bb->dropdown_kostentreager_typen ( 'Kostenträgertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
 			$js_id = "";
-			$bb->dropdown_kostentreager_ids ( 'Kostentr�ger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
+			$bb->dropdown_kostentreager_ids ( 'Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
 		}
 		// }else{
 		// $this->get_kos_typ_id($t_id);
@@ -125,7 +125,7 @@ class todo {
 		}
 		if ($typ == 'Partner') {
 			$pp = new partners ();
-			$pp->partner_dropdown ( 'Partner w�hlen', 'benutzer_id', 'benutzer_id' );
+			$pp->partner_dropdown ( 'Partner wählen', 'benutzer_id', 'benutzer_id' );
 		}
 		
 		$f->datum_feld ( 'Anzeigen ab', 'anzeigen_ab', date ( "d.m.Y" ), 'dat_a' );
@@ -250,8 +250,8 @@ class todo {
 		
 		$my_proj_id_arr = $this->get_my_projekt_arr ( $benutzer_id );
 		if (! is_array ( $my_proj_id_arr )) {
-			// die("Keine Projekte und Aufgaben f�r Sie vohanden!");
-			echo "<title>Keine Projekte und Aufgaben f�r Sie!</title>\n";
+			// die("Keine Projekte und Aufgaben für Sie vohanden!");
+			echo "<title>Keine Projekte und Aufgaben für Sie!</title>\n";
 			echo "<link>http://berlussimo-1/berlussimo_workspace/sivac/berlussimo/rss.php</link>\n";
 			echo "<description>Sie haben keine Projekte und Aufgaben</description>\n";
 		} else {
@@ -333,7 +333,7 @@ class todo {
 	</script>
 	</head>
 	<form>
-	<input type="button"  width="60" value=" L�SCHEN " onclick="mee();"/>	
+	<input type="button"  width="60" value=" LÖSCHEN " onclick="mee();"/>	
 	
 	</form>   
    	
@@ -357,15 +357,15 @@ class todo {
 		
 		$my_proj_id_arr = $this->get_my_projekt_arr ( $benutzer_id );
 		if (! is_array ( $my_proj_id_arr )) {
-			// die("Keine Projekte und Aufgaben f�r Sie vohanden!");
-			echo "<title>Keine Projekte und Aufgaben f�r Sie!</title>\n";
+			// die("Keine Projekte und Aufgaben für Sie vohanden!");
+			echo "<title>Keine Projekte und Aufgaben für Sie!</title>\n";
 			echo "<link>http://berlussimo-1/berlussimo_workspace/sivac/berlussimo/rss.php</link>\n";
 		} else {
 			$b = new benutzer ();
 			$b->get_benutzer_infos ( $benutzer_id );
 			echo "<title>Aufgaben von Benutzer: $b->benutzername</title>\n";
 			echo "<link>http://berlussimo-1/berlussimo_workspace/sivac/berlussimo/rss.php</link>\n";
-			echo "<description>Angezeigt werden Projekte und dazugeh�rige Aufgaben!</description>\n";
+			echo "<description>Angezeigt werden Projekte und dazugehürige Aufgaben!</description>\n";
 			$anz_p = count ( $my_proj_id_arr );
 			
 			for($p = 0; $p < $anz_p; $p ++) {
@@ -516,7 +516,7 @@ class todo {
 		$my_proj_id_arr = $this->get_my_projekt_arr ( $benutzer_id, $erl );
 		// print_r($my_proj_id_arr);
 		if (! is_array ( $my_proj_id_arr )) {
-			die ( 'Keine Projekte und Aufgaben f�r Sie vohanden!' );
+			die ( 'Keine Projekte und Aufgaben für Sie vohanden!' );
 		} else {
 			$anz_p = count ( $my_proj_id_arr );
 			for($p = 0; $p < $anz_p; $p ++) {
@@ -862,7 +862,7 @@ class todo {
 			$pz = $p + 1;
 			$f = new formular ();
 			// ob_clean();
-			$f->fieldset ( "Meine Auftr�ge", 'ana' );
+			$f->fieldset ( "Meine Aufträge", 'ana' );
 			
 			// echo "<table class=\"sortable\">";
 			// echo "<table class=\"sortable\">";
@@ -995,7 +995,7 @@ class todo {
 			$pz = $p + 1;
 			$f = new formular ();
 			// ob_clean();
-			$f->fieldset ( "Meine Auftr�ge", 'ana' );
+			$f->fieldset ( "Meine Aufträge", 'ana' );
 			
 			// echo "<table class=\"sortable\">";
 			// echo "<table class=\"sortable\">";
@@ -1319,7 +1319,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 			$r = new rechnung ();
 			$this->kos_bez = $r->kostentraeger_ermitteln ( $this->kos_typ, $this->kos_id );
 		} else {
-			die ( 'Kostentr�ger unbekannt' );
+			die ( 'Kostenträger unbekannt' );
 		}
 	}
 	function form_suche($typ_int_ext = 'intern') {
@@ -1327,23 +1327,23 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 		$f->erstelle_formular ( "Auftragsuche $typ_int_ext", null );
 		if ($typ_int_ext == 'intern') {
 			$be = new benutzer ();
-			$f->check_box_js ( 'check_int_ext', 1, 'Externe Auftr�ge suchen', 'onchange="redirect_to(\'?daten=todo&option=auftrag_suche&typ_int_ext=extern\')"', null );
-			$be->dropdown_benutzer2 ( 'Mitarbeiter w�hlen', 'benutzer_id', 'benutzer_id', null );
+			$f->check_box_js ( 'check_int_ext', 1, 'Externe Aufträge suchen', 'onchange="redirect_to(\'?daten=todo&option=auftrag_suche&typ_int_ext=extern\')"', null );
+			$be->dropdown_benutzer2 ( 'Mitarbeiter wählen', 'benutzer_id', 'benutzer_id', null );
 			$f->hidden_feld ( 'benutzer_typ', 'benutzer' );
 		} else {
 			$p = new partner ();
-			$f->check_box_js ( 'check_int_ext', 1, 'Interne Auftr�ge suchen', 'onchange="redirect_to(\'?daten=todo&option=auftrag_suche&typ_int_ext=intern\')"', null );
+			$f->check_box_js ( 'check_int_ext', 1, 'Interne Aufträge suchen', 'onchange="redirect_to(\'?daten=todo&option=auftrag_suche&typ_int_ext=intern\')"', null );
 			echo "<br>";
-			$p->partner_dropdown ( 'Externe Firma/Partner w�hlen', 'benutzer_id', 'benutzer_id', null );
+			$p->partner_dropdown ( 'Externe Firma/Partner wählen', 'benutzer_id', 'benutzer_id', null );
 			$f->hidden_feld ( 'benutzer_typ', 'Partner' );
 		}
 		$f->hidden_feld ( 'option', 'auftrag_suche_send' );
-		$f->send_button ( 'BTN_SuchA', 'Auftr�ge finden' );
+		$f->send_button ( 'BTN_SuchA', 'Aufträge finden' );
 		$f->ende_formular ();
 	}
 	function form_edit_aufgabe($t_id) {
 		if (empty ( $t_id )) {
-			die ( 'Aufgabe oder Projekt w�hlen' );
+			die ( 'Aufgabe oder Projekt wählen' );
 		}
 		$this->get_aufgabe_alles ( $t_id );
 		// echo '<pre>';
@@ -1353,19 +1353,19 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 		$bb = new buchen ();
 		if ($this->ue_id == '0') {
 			$f->fieldset ( "Projekt bearbeiten:$this->text", 'na' );
-			// echo "<a href=\"?daten=todo&option=projekt_loeschen&t_id=$t_id\">Projekt l�schen ???</a><br>";
+			// echo "<a href=\"?daten=todo&option=projekt_loeschen&t_id=$t_id\">Projekt löschen ???</a><br>";
 		} else {
 			$f->fieldset ( "Aufgabe bearbeiten:$this->text", 'na' );
-			// echo "<a href=\"?daten=todo&option=projekt_loeschen&t_id=$t_id\">Aufgabe l�schen ???</a><br>";
+			// echo "<a href=\"?daten=todo&option=projekt_loeschen&t_id=$t_id\">Aufgabe löschen ???</a><br>";
 		}
 		$f->text_bereich ( 'Beschreibung', 'text', $this->text, 5, 20, 'aufgabe' );
 		
 		$js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
-		// $bb->dropdown_kostentreager_typen('Kostentr�gertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ);
-		$bb->dropdown_kostentreager_typen_vw ( 'Kostentr�gertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, $this->kos_typ );
+		// $bb->dropdown_kostentreager_typen('Kostenträgertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ);
+		$bb->dropdown_kostentreager_typen_vw ( 'Kostenträgertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, $this->kos_typ );
 		$js_id = "";
-		// $bb->dropdown_kostentreager_ids('Kostentr�ger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id);
-		$bb->dropdown_kostentraeger_bez_vw ( 'Kostentr�ger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id, $this->kos_typ, $this->kos_id );
+		// $bb->dropdown_kostentreager_ids('Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id);
+		$bb->dropdown_kostentraeger_bez_vw ( 'Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id, $this->kos_typ, $this->kos_id );
 		
 		if ($this->benutzer_typ == 'Benutzer' or empty ( $this->benutzer_typ )) {
 			$b = new benutzer ();
@@ -1373,13 +1373,13 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 		}
 		if ($this->benutzer_typ == 'Partner') {
 			$pp = new partners ();
-			$pp->partner_dropdown ( 'Partner w�hlen', 'benutzer_id', 'benutzer_id', $this->benutzer_id );
+			$pp->partner_dropdown ( 'Partner wählen', 'benutzer_id', 'benutzer_id', $this->benutzer_id );
 		}
 		
 		$f->datum_feld ( 'Anzeigen ab', 'anzeigen_ab', $this->anzeigen_ab, 'dat_a' );
 		$this->dropdown_akut ( $this->akut );
 		$this->dropdown_erledigt ( $this->erledigt );
-		$f->send_button ( 'submit_n1', '�nderungen speichern' );
+		$f->send_button ( 'submit_n1', 'Änderungen speichern' );
 		$f->fieldset_ende ();
 		$f->ende_formular ();
 		if (isset ( $_POST ['submit_n1'] )) {
@@ -1442,13 +1442,13 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 	function projekt_aufgabe_loeschen($t_id) {
 		$this->get_aufgabe_alles ( $t_id );
 		$f = new formular ();
-		$f->erstelle_formular ( 'L�schen von Projekten und Aufgaben', '' );
-		$f->fieldset ( 'L�schen', 'loeschen' );
+		$f->erstelle_formular ( 'Löschen von Projekten und Aufgaben', '' );
+		$f->fieldset ( 'Löschen', 'loeschen' );
 		if ($this->ue_id == '0') {
-			echo "Ganzes Projekt <b>$this->text</b> l�schen?<br><br>";
+			echo "Ganzes Projekt <b>$this->text</b> löschen?<br><br>";
 			$f->hidden_feld ( 'art', 'Projekt' );
 		} else {
-			echo "Aufgabe: <b>$this->text</b> l�schen?<br><br>";
+			echo "Aufgabe: <b>$this->text</b> löschen?<br><br>";
 			$f->hidden_feld ( 'art', 'Aufgabe' );
 		}
 		$f->hidden_feld ( 't_id', $t_id );
@@ -1738,7 +1738,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 		                    // print_r($this);
 		                    // die();
 		if ($this->benutzer_typ == 'Benutzer') {
-			$pdf->ezText ( "<b>Durchgef�hrte Arbeiten:</b>" );
+			$pdf->ezText ( "<b>Durchgeführte Arbeiten:</b>" );
 			$pdf->ezText ( "_________________________________________________________________________" );
 			$pdf->ezText ( "_________________________________________________________________________" );
 			$pdf->ezText ( "_________________________________________________________________________" );
@@ -1801,13 +1801,13 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 				$b_tel = $dd->finde_detail_inhalt ( 'PARTNER_LIEFERANT', $_SESSION [partner_id], 'Telefon' );
 			}
 			$pdf->ezSetDy ( - 10 ); // abstand
-			$pdf->ezText ( "<b>Bei Kosten �ber Freigabesumme bitten wir um R�ckmeldung unter $b_tel.</b>" );
+			$pdf->ezText ( "<b>Bei Kosten über Freigabesumme bitten wir um Rückmeldung unter $b_tel.</b>" );
 			$pdf->ezSetDy ( - 10 ); // abstand
 			$pdf->ezText ( "Rechnung bitte unter Angabe der <u><b>Auftragsnummer $id</b></u> und <u><b>$this->kos_typ $this->kos_bez</b></u>   an:", 10 );
 			$pdf->ezSetDy ( - 10 ); // abstand
 			$pdf->ezText ( "<b>$rr->rechnungs_empfaenger_name\n$rr->rechnungs_empfaenger_strasse  $rr->rechnungs_empfaenger_hausnr\n$rr->rechnungs_empfaenger_plz  $rr->rechnungs_empfaenger_ort</b>", 12 );
 			$pdf->ezSetDy ( - 25 ); // abstand
-			$pdf->ezText ( "Mit freundlichen Gr�ssen", 10 );
+			$pdf->ezText ( "Mit freundlichen Grüßen", 10 );
 			$pdf->ezSetDy ( - 25 ); // abstand
 			$pdf->ezText ( "i.A. $this->verfasst_von", 10 );
 		}
@@ -1924,7 +1924,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 		}
 		if (! is_array ( $arr )) {
 			
-			fehlermeldung_ausgeben ( "Keine Auftr�ge an Haus $h->haus_strasse $h->haus_nummer" );
+			fehlermeldung_ausgeben ( "Keine Aufträge an Haus $h->haus_strasse $h->haus_nummer" );
 		} else {
 			array_unique ( $obj_arr );
 			$anz = count ( $arr );
@@ -2038,9 +2038,9 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 			$anz = count ( $arr );
 			$f = new formular ();
 			if ($erl == 0) {
-				$f->erstelle_formular ( "Auftr�ge OFFEN", null );
+				$f->erstelle_formular ( "Aufträge OFFEN", null );
 			} else {
-				$f->erstelle_formular ( "Auftr�ge ERLEDIGT", null );
+				$f->erstelle_formular ( "Aufträge ERLEDIGT", null );
 			}
 			
 			echo "<table class=\"sortable\">";

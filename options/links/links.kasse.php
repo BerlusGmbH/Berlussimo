@@ -19,7 +19,7 @@
  */
 $mieten = new mietkonto ();
 echo "<div class=\"navi_leiste2\">";
-$mieten->erstelle_formular ( "Hauptmen� -> Kassen...", NULL );
+$mieten->erstelle_formular ( "Hauptmenü -> Kassen...", NULL );
 
 echo "<a href=\"?daten=kasse&option=kassenbuch\">Kassenbuch</a>&nbsp;";
 echo "<a href=\"?daten=kasse&option=rechnung_an_kasse_erfassen\">Ausgaben erfassen</a>&nbsp;";

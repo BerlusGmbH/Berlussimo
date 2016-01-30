@@ -25,9 +25,9 @@
 include ("config.php");
 function import_me() {
 	$datei = "zahlungen.csv"; // DATEINAME
-	$tabelle_in_gross = strtoupper ( $datei ); // Tabelle in GRO�BUCHSTABEN
+	$tabelle_in_gross = strtoupper ( $datei ); // Tabelle in GROßBUCHSTABEN
 	$array = file ( $datei ); // DATEI IN ARRAY EINLESEN
-	echo $array [0]; // ZEILE 0 mit �berschriften
+	echo $array [0]; // ZEILE 0 mit Überschriften
 	$feldernamen [] = explode ( ";", $array [0] ); // FELDNAMEN AUS ZEILE 0 IN ARRAY EINLESEN
 	$anzahl_felder = count ( $feldernamen [0] ); // ANZAHL DER IMPORT FELDER
 	$feld1 = $feldernamen [0] [0]; // FELD1 - IMPORT nur zur info
@@ -37,19 +37,19 @@ function import_me() {
 	$dat_feld = "$tabelle_in_gross" . "_DAT"; // DAT_FELD ZUSAMMENSTELLEN z.B(EINHEIT_DAT)
 	$id_feld = "$tabelle_in_gross" . "_ID"; // ID_FELD ZUSAMMENSTELLEN z.B(EINHEIT_ID)
 	$aktuell_feld = "$tabelle_in_gross" . "_AKTUELL"; // AKTUELL_FELD ZUSAMMENSTELLEN z.B(EINHEIT_AKTUELL)
-	$feldnamen_sql = "`$dat_feld`, `$id_feld`, `"; // ALLE FELDNAMEN F�R MYSQL ZUSAMMENSTELLEN
+	$feldnamen_sql = "`$dat_feld`, `$id_feld`, `"; // ALLE FELDNAMEN FÜR MYSQL ZUSAMMENSTELLEN
 	$feldnamen_sql .= "$feldnamen_string";
 	$feldnamen_sql .= "`, `$aktuell_feld`";
 	$feldnamen_sql = ltrim ( $feldnamen_sql );
 	
 	echo "<b>Importiere daten aus $datei nach MYSQL $tabelle:</b><br><br>";
 	
-	for($i = 1; $i < count ( $array ); $i ++) // Datei ab Zeile1 einlesen, weil Zeile 0 �berschrift ist
+	for($i = 1; $i < count ( $array ); $i ++) // Datei ab Zeile1 einlesen, weil Zeile 0 Überschrift ist
 {
 		
 		$zeile [$i] = explode ( ";", $array [$i] ); // Zeile in Array einlesen
 		
-		$zeilenwerte_string = "'"; // Werte f�r MYSQL zusammenstellen
+		$zeilenwerte_string = "'"; // Werte für MYSQL zusammenstellen
 		$zeilenwerte_string .= implode ( ",", $zeile [$i] );
 		$zeilenwerte_string = ltrim ( $zeilenwerte_string ); // Leerzeichen vorn weg
 		$zeilenwerte_string = rtrim ( $zeilenwerte_string ); // Leerzeichen hinten weg

@@ -19,9 +19,9 @@
  */
 $mieten = new mietkonto ();
 echo "<div class=\"navi_leiste2\">";
-$mieten->erstelle_formular ( "Hauptmen� -> Kontenrahmen...", NULL );
+$mieten->erstelle_formular ( "Hauptmenü -> Kontenrahmen...", NULL );
 
-echo "<a href=\"?daten=kontenrahmen&option=kontenrahmen_uebersicht\">Kontenrahmen�bersicht</a>&nbsp;";
+echo "<a href=\"?daten=kontenrahmen&option=kontenrahmen_uebersicht\">Kontenrahmenübersicht</a>&nbsp;";
 echo "<a href=\"?daten=kontenrahmen&option=kontenrahmen_neu\">Kontenrahmen erstellen</a>&nbsp;";
 echo "<a href=\"?daten=kontenrahmen&option=kostenkonto_neu\">Buchungskonto erstellen</a>&nbsp;";
 echo "<a href=\"?daten=kontenrahmen&option=gruppen\">Gruppen anzeigen</a>&nbsp;";

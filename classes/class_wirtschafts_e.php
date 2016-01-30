@@ -87,7 +87,7 @@ class wirt_e {
 	}
 	function dropdown_we($label, $name, $id, $js_action, $vorwahl = null) {
 		echo "<label for=\"$id\">$label</label><select name=\"$name\" id=\"$id\" size=1 $js_action>\n";
-		echo "<option value=\"\">Bitte w�hlen</option>\n";
+		echo "<option value=\"\">Bitte wählen</option>\n";
 		
 		$wirt_e_arr = $this->get_wirt_e_arr ();
 		$anzahl = count ( $wirt_e_arr );
@@ -201,10 +201,10 @@ class wirt_e {
 			}
 			echo "</SELECT>";
 			echo "<p>Einheiten: $this->anzahl_e</p>";
-			echo "<p>QM: $this->g_qm m�</p>";
-			echo "<p>Gew.: $this->g_qm_gewerbe m�</p>";
-			$f->send_button ( "submit_del", "L�schen" );
-			$f->send_button ( "submit_del_all", "Alle l�schen" );
+			echo "<p>QM: $this->g_qm m²</p>";
+			echo "<p>Gew.: $this->g_qm_gewerbe m²</p>";
+			$f->send_button ( "submit_del", "Löschen" );
+			$f->send_button ( "submit_del_all", "Alle löschen" );
 		} else {
 			echo "Keine Einheiten in der Wirtschafseinheit $this->w_name";
 		}
@@ -219,7 +219,7 @@ class wirt_e {
 		$f->erstelle_formular ( "Vorauswahl / Einheiten aus ...", NULL );
 		$self = "?daten=bk&option=wirt_einheiten_hinzu&w_id=$w_id";
 		$link_o = "<a href=\"$self&anzeigen=objekt\">Objekt</a>";
-		$link_h = "<a href=\"$self&anzeigen=haus\">H�user</a>";
+		$link_h = "<a href=\"$self&anzeigen=haus\">Häuser</a>";
 		$link_e = "<a href=\"$self&anzeigen=einheit\">Einheiten</a>";
 		echo "$link_o<br>";
 		echo "$link_h<br>";
@@ -227,7 +227,7 @@ class wirt_e {
 		$f->ende_formular ();
 		echo "</td><td>";
 		$f = new formular ();
-		$f->erstelle_formular ( "Bitte w�hlen", NULL );
+		$f->erstelle_formular ( "Bitte wählen", NULL );
 		$anzeigen = $_REQUEST ['anzeigen'];
 		// echo $anzeigen;
 		if ($anzeigen == 'objekt') {
@@ -244,7 +244,7 @@ class wirt_e {
 			}
 			echo "</SELECT";
 			$f->hidden_feld ( "anzeigen", "$anzeigen" );
-			$f->send_button ( "submit_we", "�bernehmen" );
+			$f->send_button ( "submit_we", "Übernehmen" );
 		}
 		if ($anzeigen == 'haus') {
 			$h = new haus ();
@@ -260,7 +260,7 @@ class wirt_e {
 			}
 			echo "</SELECT";
 			$f->hidden_feld ( "anzeigen", "$anzeigen" );
-			$f->send_button ( "submit_we", "�bernehmen" );
+			$f->send_button ( "submit_we", "Übernehmen" );
 		}
 		if ($anzeigen == 'einheit') {
 			$e_array = $this->liste_aller_einheiten ( $w_id );
@@ -275,7 +275,7 @@ class wirt_e {
 			echo "</SELECT";
 			$f->hidden_feld ( "anzeigen", "$anzeigen" );
 			
-			$f->send_button ( "submit_we", "�bernehmen" );
+			$f->send_button ( "submit_we", "Übernehmen" );
 		}
 		$f->hidden_feld ( "anzeigen", "$anzeigen" );
 		$f->hidden_feld ( "option", "wirt_hinzu" );

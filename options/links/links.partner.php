@@ -19,7 +19,7 @@
  */
 $formular = new formular ();
 echo "<div class=\"navi_leiste2\">";
-$formular->erstelle_formular ( "Hauptmen� -> Partner...", NULL );
+$formular->erstelle_formular ( "Hauptmenü -> Partner...", NULL );
 echo "<div class=\"navi_leiste2\">\n";
 echo "<a href=\"?daten=partner&option=partner_liste\">Alle Partner</a>&nbsp;";
 echo "<a href=\"?daten=partner&option=partner_erfassen\">Neuer Partner</a>&nbsp;";

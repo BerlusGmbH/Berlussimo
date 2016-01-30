@@ -18,7 +18,7 @@
  * 
  */
 include_once ("includes/allgemeine_funktionen.php");
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION [benutzer_id], 'kasse' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -46,7 +46,7 @@ switch ($option) {
 	
 	case "rechnung_erfassen1" :
 		$form = new mietkonto ();
-		$form->erstelle_formular ( "Rechnungsdaten �berpr�fen", NULL );
+		$form->erstelle_formular ( "Rechnungsdaten überprüfen", NULL );
 		echo "<p><b>Eingegebene Rechnungsdaten:</b></p>";
 		$clean_arr = post_array_bereinigen ();
 		// $form->array_anzeigen($clean_arr);
@@ -58,7 +58,7 @@ switch ($option) {
 		}
 		if ($clean_arr [Aussteller_typ] == $clean_arr [Empfaenger_typ] && $clean_arr [Aussteller] == $clean_arr [Empfaenger]) {
 			$fehler = true;
-			fehlermeldung_ausgeben ( "Rechnungsaussteller- und Empf�nger sind identisch.<br>" );
+			fehlermeldung_ausgeben ( "Rechnungsaussteller- und Empfänger sind identisch.<br>" );
 		}
 		
 		if (! $fehler) {
@@ -90,9 +90,9 @@ switch ($option) {
 			$netto_betrag_komma = nummer_punkt2komma ( $clean_arr [nettobetrag] );
 			$brutto_betrag_komma = nummer_punkt2komma ( $clean_arr [bruttobetrag] );
 			$skonto_betrag_komma = nummer_punkt2komma ( $clean_arr [skontobetrag] );
-			echo "Nettobetrag: $netto_betrag_komma �<br>";
-			echo "Bruttobetrag: $brutto_betrag_komma �<br>";
-			echo "Skontobetrag: $skonto_betrag_komma �<br>";
+			echo "Nettobetrag: $netto_betrag_komma €<br>";
+			echo "Bruttobetrag: $brutto_betrag_komma €<br>";
+			echo "Skontobetrag: $skonto_betrag_komma €<br>";
 			echo "Skonto in %: $clean_arr[skonto] %<br>";
 			$skonto_satz = $clean_arr [skonto];
 			$ein_prozent = ($clean_arr [bruttobetrag] / 100);
@@ -100,10 +100,10 @@ switch ($option) {
 			$skonto_in_eur_komma = nummer_punkt2komma ( $skonto_in_eur );
 			$skontobetrag_errechnet = $clean_arr [bruttobetrag] - $skonto_in_eur;
 			$skontobetrag_errechnet_komma = nummer_punkt2komma ( $skontobetrag_errechnet );
-			echo "F�llig am: $clean_arr[faellig_am] <br>";
+			echo "Fällig am: $clean_arr[faellig_am] <br>";
 			echo "Kurzbeschreibung: $clean_arr[kurzbeschreibung] <br>";
-			echo "<hr><b>Errechnete Daten:</b><br>Skonto in �: $skonto_in_eur_komma  �<br>";
-			echo "Skontobetrag errechnet: $skontobetrag_errechnet_komma �<br>";
+			echo "<hr><b>Errechnete Daten:</b><br>Skonto in €: $skonto_in_eur_komma  €<br>";
+			echo "Skontobetrag errechnet: $skontobetrag_errechnet_komma €<br>";
 			
 			$form->hidden_feld ( "option", "rechnung_erfassen2" );
 			$form->send_button ( "submit_rechnung2", "Rechnung speichern" );
@@ -136,7 +136,7 @@ switch ($option) {
 	
 	case "kassendaten_gesendet" :
 		$form = new mietkonto ();
-		$form->erstelle_formular ( "Buchungsdaten �berpr�fen $_SESSION[kasse]", NULL );
+		$form->erstelle_formular ( "Buchungsdaten überprüfen $_SESSION[kasse]", NULL );
 		$kasse = new kasse ();
 		// print_r($_POST);
 		echo "<b>Gesendete Daten:</b><br>";
@@ -173,7 +173,7 @@ switch ($option) {
 		} else {
 			$jahr = $_REQUEST [jahr];
 		}
-		$form->erstelle_formular ( "Kassenbuch der Kasse $_SESSION[kasse] f�r das Jahr $jahr", NULL );
+		$form->erstelle_formular ( "Kassenbuch der Kasse $_SESSION[kasse] für das Jahr $jahr", NULL );
 		$vorjahr = $jahr - 1;
 		$jahr_aktuell = date ( "Y" );
 		$kassen_id = $_SESSION [kasse];
@@ -211,7 +211,7 @@ switch ($option) {
 	case "kasseneintrag_aendern" :
 		$form = new mietkonto ();
 		$jahr = date ( "Y" );
-		$form->erstelle_formular ( "Kassenbuch der Kasse $_SESSION[kasse] f�r das Jahr $jahr", NULL );
+		$form->erstelle_formular ( "Kassenbuch der Kasse $_SESSION[kasse] für das Jahr $jahr", NULL );
 		$kasse = new kasse ();
 		$kasse->buchungsmaske_kasse_aendern ( $_REQUEST [eintrag_dat] );
 		$form->ende_formular ();

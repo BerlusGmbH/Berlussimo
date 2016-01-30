@@ -24,7 +24,7 @@ if (file_exists ( "classes/class_werkzeug.php" )) {
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'benutzer' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -32,10 +32,10 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'benutzer' )) {
 	die ();
 }
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
 
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
 include_once ("options/links/links.benutzer.php");
 include_once ("classes/class_benutzer.php");
 
@@ -60,7 +60,7 @@ switch ($option) {
 			$b = new benutzer ();
 			$b->berechtigungen ( $b_id );
 		} else {
-			echo "Benutzer/Mitarbeiter w�hlen";
+			echo "Benutzer/Mitarbeiter wählen";
 		}
 		break;
 	
@@ -70,7 +70,7 @@ switch ($option) {
 			$b = new benutzer ();
 			$b->form_benutzer_aendern ( $b_id );
 		} else {
-			echo "Benutzer/Mitarbeiter w�hlen";
+			echo "Benutzer/Mitarbeiter wählen";
 		}
 		break;
 	
@@ -94,7 +94,7 @@ switch ($option) {
 			fehlermeldung_ausgeben ( "Bitte warten..." );
 			weiterleiten_in_sec ( "?daten=benutzer&option=aendern&b_id=$b_id", 2 );
 		} else {
-			fehlermeldung_ausgeben ( "Benutzerdaten unvollst�ndig" );
+			fehlermeldung_ausgeben ( "Benutzerdaten unvollständig" );
 		}
 		break;
 	
@@ -148,7 +148,7 @@ switch ($option) {
 					die ( 'Datumsangaben falsch' );
 				}
 			} else {
-				die ( 'Fehler xg763663 - Daten unvollst�ndig' );
+				die ( 'Fehler xg763663 - Daten unvollständig' );
 			}
 		} else {
 			die ( 'Fehler xg763664' );
@@ -172,7 +172,7 @@ switch ($option) {
 			$b_id = $_REQUEST ['b_id'];
 			$w->werkzeugliste ( $b_id );
 		} else {
-			echo "Mitarbeiter w�hlen!";
+			echo "Mitarbeiter wählen!";
 			$w->werkzeugliste ();
 		}
 		
@@ -183,9 +183,9 @@ switch ($option) {
 		if (! empty ( $_REQUEST ['b_id'] )) {
 			$b_id = $_REQUEST ['b_id'];
 			$w = new werkzeug ();
-			$w->pdf_rueckgabeschein_alle ( $b_id, 'Werkzeugr�ckgabeschein ' );
+			$w->pdf_rueckgabeschein_alle ( $b_id, 'Werkzeugrückgabeschein ' );
 		} else {
-			fehlermeldung_ausgeben ( 'Mitarbeiter w�hlen' );
+			fehlermeldung_ausgeben ( 'Mitarbeiter wählen' );
 		}
 		break;
 	
@@ -195,7 +195,7 @@ switch ($option) {
 			$w = new werkzeug ();
 			$w->pdf_rueckgabeschein_alle ( $b_id, 'Werkzeugausgabegabeschein ' );
 		} else {
-			fehlermeldung_ausgeben ( 'Mitarbeiter w�hlen' );
+			fehlermeldung_ausgeben ( 'Mitarbeiter wählen' );
 		}
 		break;
 	
@@ -206,9 +206,9 @@ switch ($option) {
 			$b_id = $_REQUEST ['b_id'];
 			$w = new werkzeug ();
 			// $w->pdf_rueckgabeschein_alle($b_id);
-			$w->werkzeug_rueckgabe_alle ( $b_id ); // �nderung der DB
+			$w->werkzeug_rueckgabe_alle ( $b_id ); // änderung der DB
 		} else {
-			fehlermeldung_ausgeben ( 'Mitarbeiter w�hlen' );
+			fehlermeldung_ausgeben ( 'Mitarbeiter wählen' );
 		}
 		break;
 	
@@ -219,9 +219,9 @@ switch ($option) {
 			$w_id = $_REQUEST ['w_id'];
 			$w = new werkzeug ();
 			// $w->pdf_rueckgabeschein_alle($b_id);
-			$w->form_werkzeug_zuweisen ( $w_id ); // �nderung der DB
+			$w->form_werkzeug_zuweisen ( $w_id ); // änderung der DB
 		} else {
-			fehlermeldung_ausgeben ( 'Werkzeug w�hlen' );
+			fehlermeldung_ausgeben ( 'Werkzeug wählen' );
 		}
 		break;
 	
@@ -235,7 +235,7 @@ switch ($option) {
 			echo "Zugewiesen";
 			weiterleiten_in_sec ( "?daten=benutzer&option=werkzeuge", 1 );
 		} else {
-			fehlermeldung_ausgeben ( "Mitarbeiter und Werkzeug w�hlen!" );
+			fehlermeldung_ausgeben ( "Mitarbeiter und Werkzeug wählen!" );
 		}
 		break;
 	

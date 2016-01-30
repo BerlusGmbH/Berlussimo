@@ -24,10 +24,10 @@
  */
 $f = new formular ();
 echo "<div class=\"navi_leiste2\">";
-$f->erstelle_formular ( "Hauptmen� -> Aufgaben und Projekte...", NULL );
-echo "<a href=\"?daten=todo&option=offene_auftraege\"><b>Alle offenen Auftr�ge</b></a>|&nbsp;";
-echo "<a href=\"?daten=todo&option=neue_auftraege\"><b>Alle Auftr�ge</b></a>|&nbsp;";
-echo "<a href=\"?daten=todo&option=erledigte_auftraege\"><b>Alle erledigten Auftr�ge</b></a>|&nbsp;";
+$f->erstelle_formular ( "Hauptmenü -> Aufgaben und Projekte...", NULL );
+echo "<a href=\"?daten=todo&option=offene_auftraege\"><b>Alle offenen Aufträge</b></a>|&nbsp;";
+echo "<a href=\"?daten=todo&option=neue_auftraege\"><b>Alle Aufträge</b></a>|&nbsp;";
+echo "<a href=\"?daten=todo&option=erledigte_auftraege\"><b>Alle erledigten Aufträge</b></a>|&nbsp;";
 echo "<a href=\"?daten=todo\">Meine Projekte</a>|&nbsp;";
 echo "<a href=\"?daten=todo&option=neues_projekt&typ=Benutzer\">Neuer Auftrag INT</a>|&nbsp;";
 echo "<a href=\"?daten=todo&option=neues_projekt&typ=Partner\">Neuer Auftrag EXT</a>|&nbsp;";

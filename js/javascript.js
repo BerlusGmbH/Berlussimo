@@ -125,13 +125,13 @@ function gesamt_berechnen() {
 	gesamt_bisher_netto = gesamt_bisher_netto.toFixed(2);
 	gesamt_bisher_netto_komma = gesamt_bisher_netto.replace(".", ",");
 	document.getElementById('gesamt_errechnet').innerHTML = 'Netto '
-			+ gesamt_bisher_netto_komma + ' �';
+			+ gesamt_bisher_netto_komma + ' €';
 
 	gesamt_bisher_brutto = gesamt_bisher_netto / 100 * 119;
 	gesamt_bisher_brutto = gesamt_bisher_brutto.toFixed(2);
 	gesamt_bisher_brutto_komma = gesamt_bisher_brutto.replace(".", ",");
 	document.getElementById('gesamt_errechnet_brutto').innerHTML = 'Brutto '
-			+ gesamt_bisher_brutto_komma + ' �';
+			+ gesamt_bisher_brutto_komma + ' €';
 
 	var rechnung_netto = document.getElementById('rechnung_netto').value;
 	var rechnung_brutto = document.getElementById('rechnung_brutto').value;
@@ -141,11 +141,11 @@ function gesamt_berechnen() {
 	differenz = differenz.toFixed(2);
 	differenz_komma = differenz.replace(".", ",");
 	document.getElementById('differenz').innerHTML = 'Differenz '
-			+ differenz_komma + ' �';
+			+ differenz_komma + ' €';
 
-	if (document.getElementById('differenz').innerHTML == 'Differenz 0,00 �') {
+	if (document.getElementById('differenz').innerHTML == 'Differenz 0,00 €') {
 		// alert('JETZT WEITER');
-		Abfrage = confirm("Die Summen der Positionsbetr�ge ist identisch mit der Rechnungssumme!\n Erst jetzt k�nnen Sie speichern, in dem Sie auf den Button Speichern klicken!");
+		Abfrage = confirm("Die Summen der Positionsbeträge ist identisch mit der Rechnungssumme!\n Erst jetzt können Sie speichern, in dem Sie auf den Button Speichern klicken!");
 		if (Abfrage == true) {
 			document.getElementById('senden_pos').style.visibility = 'visible';
 		}
@@ -270,7 +270,7 @@ function zusammenfassung_neuberechnen(form) {
 		var durchschnitt_rabatt = durchschnitt_rabatt.toFixed(2);
 
 		document.getElementById('g_netto_errechnet').innerHTML = g_netto_errechnet_ausgabe
-				+ '&nbsp�';
+				+ '&nbsp€';
 		document.getElementById('durchschnitt_rabatt').innerHTML = durchschnitt_rabatt
 				+ '&nbsp%';
 
@@ -278,7 +278,7 @@ function zusammenfassung_neuberechnen(form) {
 		var rechnungs_brutto = document.getElementById('rechnungs_brutto').innerHTML;
 
 		if (rechnungs_netto == g_netto_errechnet_ausgabe) {
-			document.getElementById('speichern_button1').value = 'Speichern m�glich';
+			document.getElementById('speichern_button1').value = 'Speichern möglich';
 			document.getElementById('speichern_button1').disabled = false;
 		} else {
 			document.getElementById('speichern_button1').value = 'Speichern deaktiviert';
@@ -310,7 +310,7 @@ function zusammenfassung_neuberechnen(form) {
 	var durchschnitt_rabatt = durchschnitt_rabatt.toFixed(2);
 
 	document.getElementById('g_netto_errechnet').innerHTML = g_netto_errechnet_ausgabe
-			+ '&nbsp�';
+			+ '&nbsp€';
 	document.getElementById('durchschnitt_rabatt').innerHTML = durchschnitt_rabatt
 			+ '&nbsp%';
 
@@ -318,7 +318,7 @@ function zusammenfassung_neuberechnen(form) {
 	var rechnungs_brutto = document.getElementById('rechnungs_brutto').innerHTML;
 
 	if (rechnungs_netto == g_netto_errechnet_ausgabe) {
-		document.getElementById('speichern_button1').value = 'Speichern m�glich';
+		document.getElementById('speichern_button1').value = 'Speichern möglich';
 		document.getElementById('speichern_button1').disabled = false;
 	} else {
 		document.getElementById('speichern_button1').value = 'Speichern deaktiviert';
@@ -348,9 +348,9 @@ function pool_berechnung(form) {
 	/*
 	 * if(!laenge){ laenge =1; }else{ alert(laenge); }
 	 */
-	/* Status des H�ckchen, true oder 1 wenn ja, sonst null */
+	/* Status des Häkchen, true oder 1 wenn ja, sonst null */
 	// var check_box_status = form.positionen_list[0].checked;
-	/* Alle Zeilen durchlaufen, pr�fen was ausgew�hlt */
+	/* Alle Zeilen durchlaufen, prüfen was ausgewählt */
 	/* SUMMENVARIABLEN DEFINIEREN */
 	var g_netto_ausgewaehlt = 0.00;
 	var g_brutto_ausgewaehlt = 0.00;
@@ -403,7 +403,7 @@ function pool_berechnung(form) {
 			// pos_gesamt_skontiert);
 
 			/*
-			 * Summen aller Zeilen im Pool bilden, wenn alle ausgew�hlt =
+			 * Summen aller Zeilen im Pool bilden, wenn alle ausgewählt =
 			 * summe_ausgewaehlt
 			 */
 			g_netto_errechnet = g_netto_errechnet + pos_gesamt_netto;
@@ -414,7 +414,7 @@ function pool_berechnung(form) {
 			/* Durchschnitsrabatt */
 			durchschnitt_rabatt = durchschnitt_rabatt + rabatt_wert;
 
-			/* Wenn zeile ausgew�hlt, Gesamtsummen ausgew�hlter Zeilen anzeigen */
+			/* Wenn zeile ausgewählt, Gesamtsummen ausgewählter Zeilen anzeigen */
 			if (check_box_status) {
 				g_netto_ausgewaehlt = g_netto_ausgewaehlt + pos_gesamt_netto;
 				g_brutto_ausgewaehlt = g_brutto_ausgewaehlt + pos_gesamt_br;
@@ -445,28 +445,28 @@ function pool_berechnung(form) {
 		 * nummer_punkt2komma(durchschnitt_rabatt);
 		 */
 
-		/* Update von Ausgew�hlten Summen */
+		/* Update von Ausgewählten Summen */
 		document.getElementById('g_netto_ausgewaehlt').innerHTML = g_netto_ausgewaehlt_a
-				+ '&nbsp�';
+				+ '&nbsp€';
 		document.getElementById('g_brutto_ausgewaehlt').innerHTML = g_brutto_ausgewaehlt_a
-				+ '&nbsp�';
+				+ '&nbsp€';
 		document.getElementById('g_skonto_nachlass').innerHTML = g_skonto_n_a
-				+ '&nbsp�';
+				+ '&nbsp€';
 		document.getElementById('g_skonto_betrag').innerHTML = g_skonto_betrag
-				+ '&nbsp�';
+				+ '&nbsp€';
 
-		/* Update von Ausgew�hlten Summen */
+		/* Update von Ausgewählten Summen */
 		/*
 		 * document.getElementById('g_netto_errechnet').innerHTML =
-		 * g_netto_errechnet_a + '&nbsp�';
+		 * g_netto_errechnet_a + '&nbsp€';
 		 * document.getElementById('g_brutto_errechnet').innerHTML =
-		 * g_brutto_errechnet_a + '&nbsp�';
+		 * g_brutto_errechnet_a + '&nbsp€';
 		 * document.getElementById('durchschnitt_rabatt').innerHTML =
 		 * durchschnitt_rabatt_a + '&nbsp%';
 		 */
 
 		/*
-		 * Update von Ausgew�hlten Summen versteckte Felder f�r Weitergabe per
+		 * Update von Ausgewählten Summen versteckte Felder für Weitergabe per
 		 * FORM
 		 */
 		/*
@@ -483,7 +483,7 @@ function pool_berechnung(form) {
 		document.getElementById('speichern_button2').disabled = false;
 	} else {
 
-		/* Wenn nur eine Zeile ausgew�hlt */
+		/* Wenn nur eine Zeile ausgewählt */
 
 		var g_brutto_ausgewaehlt = 0.00;
 
@@ -521,7 +521,7 @@ function pool_berechnung(form) {
 		// pos_gesamt_skontiert);
 
 		/*
-		 * Summen aller Zeilen im Pool bilden, wenn alle ausgew�hlt =
+		 * Summen aller Zeilen im Pool bilden, wenn alle ausgewählt =
 		 * summe_ausgewaehlt
 		 */
 		g_netto_errechnet = g_netto_errechnet + pos_gesamt_netto;
@@ -532,7 +532,7 @@ function pool_berechnung(form) {
 		/* Durchschnitsrabatt */
 		durchschnitt_rabatt = durchschnitt_rabatt + rabatt_wert;
 
-		/* Wenn zeile ausgew�hlt, Gesamtsummen ausgew�hlter Zeilen anzeigen */
+		/* Wenn zeile ausgewählt, Gesamtsummen ausgewählter Zeilen anzeigen */
 		var ausgewaehlte_zeilen = 0;
 		if (check_box_status) {
 			g_netto_ausgewaehlt = g_netto_ausgewaehlt + pos_gesamt_netto;
@@ -562,28 +562,28 @@ function pool_berechnung(form) {
 		 * nummer_punkt2komma(durchschnitt_rabatt);
 		 */
 
-		/* Update von Ausgew�hlten Summen */
+		/* Update von Ausgewählten Summen */
 		document.getElementById('g_netto_ausgewaehlt').innerHTML = g_netto_ausgewaehlt_a
-				+ '&nbsp�';
+				+ '&nbsp€';
 		document.getElementById('g_brutto_ausgewaehlt').innerHTML = g_brutto_ausgewaehlt_a
-				+ '&nbsp�';
+				+ '&nbsp€';
 		document.getElementById('g_skonto_nachlass').innerHTML = g_skonto_n_a
-				+ '&nbsp�';
+				+ '&nbsp€';
 		document.getElementById('g_skonto_betrag').innerHTML = g_skonto_betrag
-				+ '&nbsp�';
+				+ '&nbsp€';
 
-		/* Update von Ausgew�hlten Summen */
+		/* Update von Ausgewählten Summen */
 		/*
 		 * document.getElementById('g_netto_errechnet').innerHTML =
-		 * g_netto_errechnet_a + '&nbsp�';
+		 * g_netto_errechnet_a + '&nbsp€';
 		 * document.getElementById('g_brutto_errechnet').innerHTML =
-		 * g_brutto_errechnet_a + '&nbsp�';
+		 * g_brutto_errechnet_a + '&nbsp€';
 		 * document.getElementById('durchschnitt_rabatt').innerHTML =
 		 * durchschnitt_rabatt_a + '&nbsp%';
 		 */
 
 		/*
-		 * Update von Ausgew�hlten Summen versteckte Felder f�r Weitergabe per
+		 * Update von Ausgewählten Summen versteckte Felder für Weitergabe per
 		 * FORM
 		 */
 		/*
@@ -599,7 +599,7 @@ function pool_berechnung(form) {
 			document.getElementById('speichern_button2').value = 'Speichern und in Rechnung stellen';
 			document.getElementById('speichern_button2').disabled = false;
 		} else {
-			document.getElementById('speichern_button2').value = 'Zeilen ausw�hlen';
+			document.getElementById('speichern_button2').value = 'Zeilen auswählen';
 			document.getElementById('speichern_button2').disabled = true;
 		}
 	}
@@ -689,19 +689,19 @@ function rechnung_pool_neuberechnen(form) {
 		g_skonto_betrag_komma = g_skonto_betrag_2stellig.replace(".", ",");
 
 		document.getElementById('g_netto_errechnet').innerHTML = g_netto_errechnet_ausgabe
-				+ '&nbsp�';
+				+ '&nbsp€';
 		document.getElementById('g_brutto_errechnet').innerHTML = g_brutto_errechnet_ausgabe
-				+ '&nbsp�';
+				+ '&nbsp€';
 		document.getElementById('durchschnitt_rabatt').innerHTML = durchschnitt_rabatt
 				+ '&nbsp%';
 		document.getElementById('g_netto_ausgewaehlt').innerHTML = g_netto_ausgewaehlt_komma
-				+ '&nbsp�';
+				+ '&nbsp€';
 		document.getElementById('g_brutto_ausgewaehlt').innerHTML = g_brutto_ausgewaehlt_komma
-				+ '&nbsp�';
+				+ '&nbsp€';
 		document.getElementById('g_skonto_nachlass').innerHTML = g_skonto_nachlass_komma
-				+ '&nbsp�' + '(' + skonto_wert + '%)';
+				+ '&nbsp€' + '(' + skonto_wert + '%)';
 		document.getElementById('g_skonto_betrag').innerHTML = g_skonto_betrag_komma
-				+ '&nbsp�';
+				+ '&nbsp€';
 
 		document.getElementById('RECHNUNG_NETTO_BETRAG').value = g_netto_ausgewaehlt;
 		document.getElementById('RECHNUNG_BRUTTO_BETRAG').value = g_brutto_ausgewaehlt;
@@ -764,19 +764,19 @@ function rechnung_pool_neuberechnen(form) {
 		g_skonto_betrag_komma = g_skonto_betrag_2stellig.replace(".", ",");
 
 		document.getElementById('g_netto_errechnet').innerHTML = g_netto_errechnet_ausgabe
-				+ '&nbsp�';
+				+ '&nbsp€';
 		document.getElementById('g_brutto_errechnet').innerHTML = g_brutto_errechnet_ausgabe
-				+ '&nbsp�';
+				+ '&nbsp€';
 		document.getElementById('durchschnitt_rabatt').innerHTML = durchschnitt_rabatt
 				+ '&nbsp%';
 		document.getElementById('g_netto_ausgewaehlt').innerHTML = g_netto_ausgewaehlt_komma
-				+ '&nbsp�';
+				+ '&nbsp€';
 		document.getElementById('g_brutto_ausgewaehlt').innerHTML = g_brutto_ausgewaehlt_komma
-				+ '&nbsp�';
+				+ '&nbsp€';
 		document.getElementById('g_skonto_nachlass').innerHTML = g_skonto_nachlass_komma
-				+ '&nbsp�' + '(' + skonto_wert + '%)';
+				+ '&nbsp€' + '(' + skonto_wert + '%)';
 		document.getElementById('g_skonto_betrag').innerHTML = g_skonto_betrag_komma
-				+ '&nbsp�';
+				+ '&nbsp€';
 
 		document.getElementById('RECHNUNG_NETTO_BETRAG').value = g_netto_ausgewaehlt;
 		document.getElementById('RECHNUNG_BRUTTO_BETRAG').value = g_brutto_ausgewaehlt;
@@ -797,7 +797,7 @@ function BoxenAktivieren(box) {
 
 		box.checked = false;
 		gemerkt = "nein";
-		document.getElementById('speichern_button2').value = 'Eingabe unvollst�ndig';
+		document.getElementById('speichern_button2').value = 'Eingabe unvollständig';
 		document.getElementById('speichern_button2').disabled = true;
 	}
 }
@@ -818,7 +818,7 @@ function check_ob_pos_gewaehlt(box, field) {
 
 		box.checked = false;
 		gemerkt = "nein";
-		document.getElementById('speichern_button2').value = 'Eingabe unvollst�ndig';
+		document.getElementById('speichern_button2').value = 'Eingabe unvollständig';
 		document.getElementById('speichern_button2').disabled = true;
 	}
 }
@@ -863,7 +863,7 @@ function check_datum(id) {
 function check_datum1(datum) {
 	var l = datum.length;
 	if (l != 10) {
-		alert('Datumsformat �berpr�fen (dd.mm.yyyy)');
+		alert('Datumsformat überprüfen (dd.mm.yyyy)');
 	} else {
 		datum_arr = datum.split(".");
 		var tag = datum_arr[0];
@@ -875,7 +875,7 @@ function check_datum1(datum) {
 
 		diff = akt_jahr - jahr;
 		if (diff >= 1) {
-			alert('Datum pr�fen - Jahreseingabe:' + jahr);
+			alert('Datum prüfen - Jahreseingabe:' + jahr);
 
 		}
 		if (diff == 0) {
@@ -948,7 +948,7 @@ function listen_stueckpreis_rabatt() {
 	document.getElementById("lp").value = listenpreis;
 }
 
-// Rechnungsbuchung felder pr�fen, kontoauszugsnummer, datum...
+// Rechnungsbuchung felder prüfen, kontoauszugsnummer, datum...
 function felder_pruefen(myform) {
 	datum = document.getElementById("datum").value;
 	kontoauszugsnr = document.getElementById("kontoauszugsnr").value;
@@ -957,7 +957,7 @@ function felder_pruefen(myform) {
 
 	if (buchungsart != 'Teilbetraege') {
 		if (kostenkonto.length == '0') {
-			alert('Kostenkonto w�hlen');
+			alert('Kostenkonto wählen');
 			document.getElementById("kostenkonto").focus();
 		}
 	}
@@ -968,12 +968,12 @@ function felder_pruefen(myform) {
 	}
 
 	else if (datum.length != '10') {
-		alert('Datum pr�fen');
+		alert('Datum prüfen');
 		document.getElementById("datum").focus();
 	}
 
 	else if (buchungsart.length == '0') {
-		alert('Buchungsbetrag w�hlen');
+		alert('Buchungsbetrag wählen');
 		document.getElementById("buchungsart").focus();
 	}
 
@@ -991,7 +991,7 @@ function seite_aktualisieren(zeit) {
 	setTimeout("location.reload(true);", zeit);
 }
 
-/* Element nach id l�schen */
+/* Element nach id löschen */
 function kill_js_id(id) {
 	var berlus_element = document.getElementById(id);
 	berlus_element.parentNode.removeChild(berlus_element);
@@ -1002,7 +1002,7 @@ function check_pflicht_text(id) {
 	text = document.getElementById(id).value;
 	feldname = document.getElementById(id).name;
 	if (text == '') {
-		alert('Bitte f�llen Sie das Pflichtfeld ' + feldname + ' aus!!!');
+		alert('Bitte füllen Sie das Pflichtfeld ' + feldname + ' aus!!!');
 		document.getElementById(id).focus();
 	}
 }
@@ -1035,17 +1035,17 @@ function check_felder_pflicht(str) {
 var intAnzahl = 0; // Anzahl gesetzter Checkboxen
 function count_auswahl(obj, max) {
 	var intGesamt = max; // Gesamtanzahl Checkboxen, die gesetzt werden
-							// d�rfen
-	// Falls die Checkbox angew�hlt wurde
+							// dürfen
+	// Falls die Checkbox angewählt wurde
 	if (obj.checked == true) {
 		intAnzahl++;
-		// Falls die Gesamtanzahl �berschritten wurde
+		// Falls die Gesamtanzahl überschritten wurde
 		if (intAnzahl > intGesamt) {
-			alert("Maximal " + intGesamt + "  Tage ausw�hlen!");
-			intAnzahl--; // Anzahl wieder zur�cksetzen
-			obj.checked = false; // Checkbox wieder abw�hlen
+			alert("Maximal " + intGesamt + "  Tage auswählen!");
+			intAnzahl--; // Anzahl wieder zurücksetzen
+			obj.checked = false; // Checkbox wieder abwählen
 		}
-		// Falls eine Checkbox wieder abgew�hlt wird
+		// Falls eine Checkbox wieder abgewählt wird
 	} else {
 		intAnzahl--; // Anzahl dekrementieren
 	}
@@ -1093,7 +1093,7 @@ function add2list(q_liste, z_liste) {
 		}
 	}
 	if (!vorhanden) {
-		z_liste.add(neuer_eintrag, null); // nicht f�r iE
+		z_liste.add(neuer_eintrag, null); // nicht für iE
 		z_liste.style.visibility = "visible";
 	}
 

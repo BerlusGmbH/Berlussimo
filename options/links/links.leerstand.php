@@ -18,7 +18,7 @@
  * 
  */
 $form = new formular ();
-$form->fieldset ( "Leerst�nde", 'leerstand' );
+$form->fieldset ( "Leerstände", 'leerstand' );
 echo "<div class=\"navi_leiste2\">&nbsp;&nbsp;";
 echo "<a href=\"?daten=leerstand&option=form_interessenten\">Interessenten eingeben</a>&nbsp;";
 echo "<a href=\"?daten=leerstand&option=interessentenliste\">Interessenten</a>&nbsp;";

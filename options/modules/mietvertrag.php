@@ -18,7 +18,7 @@
  * 
  */
 
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
 ?>
 <script type="text/javascript">
 function mieter_auswaehlen()
@@ -38,11 +38,11 @@ var neuer_mieter = document.createElement('option');
   }
   if(!mieter_vorhanden){
   try {
-    mieter_liste.add(neuer_mieter, null); // nicht f�r iE
+    mieter_liste.add(neuer_mieter, null); // nicht für iE
     mieter_liste.style.visibility = "visible"; 	
     }
   catch(ex) {
-    mieter_liste.add(neuer_mieter); // f�r iE
+    mieter_liste.add(neuer_mieter); // für iE
   mieter_liste.style.visibility = "visible";
   }
   }
@@ -80,7 +80,7 @@ function alle_mieter_auswaehlen() {
 <?
 include_once ("includes/allgemeine_funktionen.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'mietvertrag_raus' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -115,21 +115,21 @@ switch ($mietvertrag_raus) {
 	
 	case "mietvertrag_kurz" :
 		$form = new mietkonto ();
-		$form->erstelle_formular ( "Mietvertr�ge", NULL );
+		$form->erstelle_formular ( "Mietverträge", NULL );
 		mietvertrag_kurz ( $einheit_id );
 		$form->ende_formular ();
 		break;
 	
 	case "mietvertrag_aktuelle" :
 		$form = new mietkonto ();
-		$form->erstelle_formular ( "Aktuelle Mietvertr�ge", NULL );
+		$form->erstelle_formular ( "Aktuelle Mietverträge", NULL );
 		mietvertrag_aktuelle ( $einheit_id );
 		$form->ende_formular ();
 		break;
 	
 	case "mietvertrag_abgelaufen" :
 		$form = new mietkonto ();
-		$form->erstelle_formular ( "Abgelaufene Mietvertr�ge", NULL );
+		$form->erstelle_formular ( "Abgelaufene Mietverträge", NULL );
 		mietvertrag_abgelaufen ( $einheit_id );
 		$form->ende_formular ();
 		break;
@@ -145,7 +145,7 @@ switch ($mietvertrag_raus) {
 	
 	case "ls_teilnehmer_neu" :
 		$form = new mietkonto ();
-		$form->erstelle_formular ( "Teilnehmer am Lastschriftverfahren hinzuf�gen", NULL );
+		$form->erstelle_formular ( "Teilnehmer am Lastschriftverfahren hinzufügen", NULL );
 		$mv_info = new mietvertraege ();
 		$mv_info->neuer_ls_teilnehmer ();
 		$form->ende_formular ();
@@ -188,14 +188,14 @@ switch ($mietvertrag_raus) {
 	
 	case "ls_pruefen" :
 		$form = new mietkonto ();
-		$form->erstelle_formular ( "LS-Teilnehmer - Daten pr�fen", NULL );
+		$form->erstelle_formular ( "LS-Teilnehmer - Daten prüfen", NULL );
 		/* Neuer LS-Teilnehmer */
 		if (empty ( $_POST [deaktiviere_dat] )) {
 			if (empty ( $_POST [einzugsart] ) or empty ( $_POST [konto_inhaber_autoeinzug] ) or empty ( $_POST [konto_nummer_autoeinzug] ) or empty ( $_POST [blz_autoeinzug] ) or empty ( $_POST [geld_institut] )) {
-				$error = 'Daten unvollst�ndig<br>';
+				$error = 'Daten unvollständig<br>';
 			} else {
 				if (! is_numeric ( $_POST [konto_nummer_autoeinzug] ) or ! is_numeric ( $_POST [blz_autoeinzug] )) {
-					$error .= 'Kontonummer und BLZ pr�fen<br>';
+					$error .= 'Kontonummer und BLZ prüfen<br>';
 				} else {
 					// echo "konto nr blz ok";
 				}
@@ -220,12 +220,12 @@ switch ($mietvertrag_raus) {
 				}
 			}
 		} else {
-			/* Bearbeiten bzw. Daten �ndern und vervollst�ndigen */
+			/* Bearbeiten bzw. Daten ändern und vervollständigen */
 			if (empty ( $_POST [einzugsart] ) or empty ( $_POST [konto_inhaber_autoeinzug] ) or empty ( $_POST [konto_nummer_autoeinzug] ) or empty ( $_POST [blz_autoeinzug] ) or empty ( $_POST [geld_institut] )) {
-				$error = 'Daten unvollst�ndig<br>';
+				$error = 'Daten unvollständig<br>';
 			} else {
 				if (! is_numeric ( $_POST [konto_nummer_autoeinzug] ) or ! is_numeric ( $_POST [blz_autoeinzug] )) {
-					$error .= 'Kontonummer und BLZ pr�fen<br>';
+					$error .= 'Kontonummer und BLZ prüfen<br>';
 				} else {
 					// echo "konto nr blz ok";
 				}
@@ -291,8 +291,8 @@ switch ($mietvertrag_raus) {
 	
 	case "mv_pruefen" :
 		$form = new mietkonto ();
-		$form->erstelle_formular ( "Neuen Mietvertrag pr�fen", NULL );
-		/* Ob Mieter ausgew�hlt wurden */
+		$form->erstelle_formular ( "Neuen Mietvertrag prüfen", NULL );
+		/* Ob Mieter ausgewählt wurden */
 		if (is_array ( $_POST [mieter_liste] )) {
 			// echo "MIETER OK";
 		} else {
@@ -300,14 +300,14 @@ switch ($mietvertrag_raus) {
 		}
 		/* Einzugsdatum */
 		if (! check_datum ( $_POST [datum_einzug] )) {
-			$error .= 'Einzugsdatum pr�fen<br>';
+			$error .= 'Einzugsdatum prüfen<br>';
 		} else {
 			// echo "Einzugsdatum OK";
 		}
 		/* Auszugsdatum */
 		if (! empty ( $_POST [datum_auszug] )) {
 			if (! check_datum ( $_POST [datum_auszug] )) {
-				$error .= 'Auszugsdatum pr�fen<br>';
+				$error .= 'Auszugsdatum prüfen<br>';
 			} else {
 				// echo "AUSZUGsdatum OK";
 			}
@@ -332,12 +332,12 @@ switch ($mietvertrag_raus) {
 			if (! empty ( $_POST [konto_inhaber_autoeinzug] ) && ! empty ( $_POST [konto_nummer_autoeinzug] ) && ! empty ( $_POST [blz_autoeinzug] ) && ! empty ( $_POST [geld_institut] )) {
 				
 				if (! is_numeric ( $_POST [konto_nummer_autoeinzug] ) or ! is_numeric ( $_POST [blz_autoeinzug] )) {
-					$error .= 'Kontonummer und BLZ pr�fen<br>';
+					$error .= 'Kontonummer und BLZ prüfen<br>';
 				} else {
 					// echo "konto nr blz ok";
 				}
 			} else {
-				$error .= 'Lastschriftdaten unvollst�ndig<br>';
+				$error .= 'Lastschriftdaten unvollständig<br>';
 			}
 		} // lasteneinzug ende
 		if (isset ( $error )) {
@@ -358,12 +358,12 @@ switch ($mietvertrag_raus) {
 			} else {
 				echo "Auszug: $_POST[datum_auszug]<br>";
 			}
-			echo "Miete kalt: $_POST[miete_kalt] �<br>";
+			echo "Miete kalt: $_POST[miete_kalt] €<br>";
 			if (! empty ( $_POST [nebenkosten] )) {
-				echo "Nebenkosten Vorauszahlung: $_POST[nebenkosten] �<br>";
+				echo "Nebenkosten Vorauszahlung: $_POST[nebenkosten] €<br>";
 			}
 			if (! empty ( $_POST [heizkosten] )) {
-				echo "Heizkosten Vorauszahlung: $_POST[heizkosten] �<br>";
+				echo "Heizkosten Vorauszahlung: $_POST[heizkosten] €<br>";
 			}
 			if ($_POST [lasteneinzug] == 1) {
 				echo "<hr><b>Teilnahme am Einzugsverfahren: JA</b><br>Einzugsart: $_POST[einzugsart]<br>";
@@ -450,7 +450,7 @@ switch ($mietvertrag_raus) {
 	case "mv_geaendert_speichern" :
 		$form = new mietkonto ();
 		$mv_info = new mietvertraege ();
-		$form->erstelle_formular ( "Mietvertrags�nderungen speichern", NULL );
+		$form->erstelle_formular ( "Mietvertragsänderungen speichern", NULL );
 		$mv_info->mv_aenderungen_speichern ( $_POST [mietvertrag_dat], $_POST [mietvertrag_id], $_POST [datum_auszug], $_POST [datum_einzug], $_POST [einheit_id], $_POST [mieter_liste] );
 		$form->ende_formular ();
 		break;
@@ -491,14 +491,14 @@ switch ($mietvertrag_raus) {
 	
 	case "mietvertrag_aendern_alt" :
 		$form = new mietkonto ();
-		$form->erstelle_formular ( "Mietvertrag �ndern", NULL );
+		$form->erstelle_formular ( "Mietvertrag ändern", NULL );
 		iframe_start ();
 		mietvertrag_aendern_form ( $_REQUEST [mietvertrag_id] );
 		iframe_end ();
 		$form->ende_formular ();
 		break;
 	
-	/* aktuelle Mietvertr�ge */
+	/* aktuelle Mietverträge */
 	case "mahnliste" :
 		$f = new formular ();
 		$f->fieldset ( "Mahnliste aktuell", 'mahnliste' );
@@ -576,8 +576,8 @@ switch ($mietvertrag_raus) {
 		if (! empty ( $_REQUEST [mietvertrag_id] ) && empty ( $_REQUEST [submit] )) {
 			$mv_id = $_REQUEST [mietvertrag_id];
 			$f = new formular ();
-			$f->erstelle_formular ( "Zahlungserinnerung f�r Mietvertrag $mv_id", '' );
-			// $f->fieldset("Zahlungserinnerung f�r Mietvertrag $mv_id", 'zahlungserinnerung');
+			$f->erstelle_formular ( "Zahlungserinnerung für Mietvertrag $mv_id", '' );
+			// $f->fieldset("Zahlungserinnerung für Mietvertrag $mv_id", 'zahlungserinnerung');
 			$datum_feld = 'document.getElementById("datum_zahlungsfrist").value';
 			$js_datum = "onchange='check_datum($datum_feld)'";
 			$f->text_feld ( 'Datum Zahlungsfrist', 'datum_zahlungsfrist', '', '10', 'datum_zahlungsfrist', $js_datum );
@@ -602,12 +602,12 @@ switch ($mietvertrag_raus) {
 		if (! empty ( $_REQUEST [mietvertrag_id] ) && empty ( $_REQUEST [submit] )) {
 			$mv_id = $_REQUEST [mietvertrag_id];
 			$f = new formular ();
-			$f->erstelle_formular ( "Mahnung f�r Mietvertrag $mv_id", '' );
-			// $f->fieldset("Mahnung f�r Mietvertrag $mv_id", 'zahlungserinnerung');
+			$f->erstelle_formular ( "Mahnung für Mietvertrag $mv_id", '' );
+			// $f->fieldset("Mahnung für Mietvertrag $mv_id", 'zahlungserinnerung');
 			$datum_feld = 'document.getElementById("datum_zahlungsfrist").value';
 			$js_datum = "onchange='check_datum($datum_feld)'";
 			$f->text_feld ( 'Datum Zahlungsfrist', 'datum_zahlungsfrist', '', '10', 'datum_zahlungsfrist', $js_datum );
-			$f->text_feld ( 'Mahngeb�hr', 'mahngebuehr', '', '10', 'mahngebuehr', '' );
+			$f->text_feld ( 'Mahngebühr', 'mahngebuehr', '', '10', 'mahngebuehr', '' );
 			$g = new geldkonto_info ();
 			$g->geld_konto_ermitteln ( 'Mietvertrag', $mv_id );
 			$f->send_button ( "submit", "Schreiben erstellen" );
@@ -628,13 +628,13 @@ switch ($mietvertrag_raus) {
 	
 	case "mietvertrag_aendern" :
 		$form = new mietkonto ();
-		$form->erstelle_formular ( "Mietvertrag �ndern", NULL );
+		$form->erstelle_formular ( "Mietvertrag ändern", NULL );
 		if (! empty ( $_REQUEST [mietvertrag_id] )) {
 			$mv_info = new mietvertraege ();
 			$mv_info->mv_aendern_formular ( $_REQUEST [mietvertrag_id] );
 		} else {
 			
-			fehlermeldung_ausgeben ( "Mietvertrag zum �ndern ausw�hlen" );
+			fehlermeldung_ausgeben ( "Mietvertrag zum ändern auswählen" );
 			weiterleiten_in_sec ( '?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_kurz"', '2' );
 		}
 		$form->ende_formular ();
@@ -642,9 +642,9 @@ switch ($mietvertrag_raus) {
 	
 	case "mv_aenderung_pruefen" :
 		$form = new mietkonto ();
-		$form->erstelle_formular ( "Mietvertrag pr�fen/�ndern", NULL );
+		$form->erstelle_formular ( "Mietvertrag prüfen/ändern", NULL );
 		
-		/* Ob Mieter ausgew�hlt wurden */
+		/* Ob Mieter ausgewählt wurden */
 		if (is_array ( $_POST [mieter_liste] )) {
 			// echo "MIETER OK";
 		} else {
@@ -652,14 +652,14 @@ switch ($mietvertrag_raus) {
 		}
 		/* Einzugsdatum */
 		if (! check_datum ( $_POST [datum_einzug] )) {
-			$error .= 'Einzugsdatum pr�fen<br>';
+			$error .= 'Einzugsdatum prüfen<br>';
 		} else {
 			// echo "Einzugsdatum OK";
 		}
 		/* Auszugsdatum */
 		if (! empty ( $_POST [datum_auszug] )) {
 			if (! check_datum ( $_POST [datum_auszug] )) {
-				$error .= 'Auszugsdatum pr�fen<br>';
+				$error .= 'Auszugsdatum prüfen<br>';
 			} else {
 				// echo "AUSZUGsdatum OK";
 			}
@@ -672,7 +672,7 @@ switch ($mietvertrag_raus) {
 		if (isset ( $error )) {
 			echo $error;
 		} else {
-			echo "<p><h1>GE�NDERTE VERTRAGSDATEN:</h1><br>";
+			echo "<p><h1>GEÄNDERTE VERTRAGSDATEN:</h1><br>";
 			$einheit_kurzname = einheit_kurzname ( $_POST [einheit_id] );
 			$haus_id = haus_id ( $_POST [einheit_id] );
 			$anschrift = haus_strasse_nr ( $haus_id );
@@ -698,7 +698,7 @@ switch ($mietvertrag_raus) {
 				$form->hidden_feld ( 'mieter_liste[]', $person_id );
 			}
 			$form->hidden_feld ( 'mietvertrag_raus', 'mv_geaendert_speichern' );
-			$form->send_button ( 'btn_mv_aendern', '�nderungen speichern' );
+			$form->send_button ( 'btn_mv_aendern', 'Änderungen speichern' );
 		}
 		$form->ende_formular ();
 		break;
@@ -712,7 +712,7 @@ switch ($mietvertrag_raus) {
 		$objekt_id = $_SESSION ['objekt_id'];
 		$jahr = $_REQUEST ['jahr'];
 		$monat = $_REQUEST ['monat'];
-		$f->fieldset ( "Letzte Ausz�ge", 'l_auszuege' );
+		$f->fieldset ( "Letzte Auszüge", 'l_auszuege' );
 		if (! empty ( $objekt_id )) {
 			if (empty ( $jahr )) {
 				$jahr = date ( "Y" );
@@ -733,7 +733,7 @@ switch ($mietvertrag_raus) {
 		$objekt_id = $_SESSION ['objekt_id'];
 		$jahr = $_REQUEST ['jahr'];
 		$monat = $_REQUEST ['monat'];
-		$f->fieldset ( "Letzte Einz�ge", 'l_einzuege' );
+		$f->fieldset ( "Letzte Einzüge", 'l_einzuege' );
 		if (! empty ( $objekt_id )) {
 			if (empty ( $jahr )) {
 				$jahr = date ( "Y" );
@@ -752,7 +752,7 @@ switch ($mietvertrag_raus) {
 		$m = new mietvertraege ();
 		$jahr = $_REQUEST ['jahr'];
 		$monat = $_REQUEST ['monat'];
-		$f->fieldset ( "Alle Ausz�ge", 'l_auszuege' );
+		$f->fieldset ( "Alle Auszüge", 'l_auszuege' );
 		if (empty ( $jahr )) {
 			$jahr = date ( "Y" );
 		}
@@ -769,7 +769,7 @@ switch ($mietvertrag_raus) {
 		$m = new mietvertraege ();
 		$jahr = $_REQUEST ['jahr'];
 		$monat = $_REQUEST ['monat'];
-		$f->fieldset ( "Alle Einz�ge", 'l_einzuege' );
+		$f->fieldset ( "Alle Einzüge", 'l_einzuege' );
 		if (empty ( $jahr )) {
 			$jahr = date ( "Y" );
 		}
@@ -825,7 +825,7 @@ switch ($mietvertrag_raus) {
 			$pdf_opt ['Content-Disposition'] = $datum_h . "_" . $dateiname;
 			$pdf->ezStream ( $pdf_opt );
 		} else {
-			fehlermeldung_ausgeben ( "Mietvertrag w�hlen!" );
+			fehlermeldung_ausgeben ( "Mietvertrag wählen!" );
 		}
 		
 		break;
@@ -916,7 +916,7 @@ switch ($mietvertrag_raus) {
 			$objekt_id = $_SESSION ['objekt_id'];
 		}
 		if (empty ( $_SESSION ['objekt_id'] )) {
-			die ( 'Objekt w�hlen' );
+			die ( 'Objekt wählen' );
 		}
 		
 		$link_pdf = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=nebenkosten_pdf&jahr=$jahr\"><b>PDF-Datei</b></a>";
@@ -941,7 +941,7 @@ switch ($mietvertrag_raus) {
 			$objekt_id = $_SESSION ['objekt_id'];
 		}
 		if (empty ( $_SESSION ['objekt_id'] )) {
-			die ( 'Objekt w�hlen' );
+			die ( 'Objekt wählen' );
 		}
 		
 		$mv_info = new mietvertraege ();
@@ -962,7 +962,7 @@ switch ($mietvertrag_raus) {
 			$objekt_id = $_SESSION ['objekt_id'];
 		}
 		if (empty ( $_SESSION ['objekt_id'] )) {
-			die ( 'Objekt w�hlen' );
+			die ( 'Objekt wählen' );
 		}
 		
 		$mv_info = new mietvertraege ();
@@ -1001,7 +1001,7 @@ switch ($mietvertrag_raus) {
 			$mv = new mietvertraege ();
 			$mv->form_mietvertrag_loeschen ( $mv_id );
 		} else {
-			echo "Mietvertrag w�hlen!";
+			echo "Mietvertrag wählen!";
 		}
 		break;
 	
@@ -1030,14 +1030,14 @@ function objekt_auswahl_liste($link) {
 	
 	echo "<div class=\"objekt_auswahl\">";
 	$mieten = new mietkonto ();
-	$mieten->erstelle_formular ( "Objekt ausw�hlen...", NULL );
+	$mieten->erstelle_formular ( "Objekt auswählen...", NULL );
 	
 	if (isset ( $_SESSION ['objekt_id'] )) {
 		$objekt_kurzname = new objekt ();
 		$objekt_kurzname->get_objekt_name ( $_SESSION ['objekt_id'] );
-		echo "<p>&nbsp;<b>Ausgew�hltes Objekt</b> -> $objekt_kurzname->objekt_name ->";
+		echo "<p>&nbsp;<b>Ausgewähltes Objekt</b> -> $objekt_kurzname->objekt_name ->";
 	} else {
-		echo "<p>&nbsp;<b>Objekt ausw�hlen</b>";
+		echo "<p>&nbsp;<b>Objekt auswählen</b>";
 	}
 	
 	$objekte = new objekt ();
@@ -1089,22 +1089,22 @@ function mietvertrag_beenden_form_alt11($mietvertrag_id) {
 			// $einheit_kurzname = einheit_kurzname($einheit_id);
 			$MIETVERTRAG_VON = date_mysql2german ( $MIETVERTRAG_VON );
 			$MIETVERTRAG_BIS = date_mysql2german ( $MIETVERTRAG_BIS );
-			warnung_ausgeben ( "<tr><td colspan=2><h1>Vertrag f�r die Einheit $einheit_kurzname beenden:\n</h1></td></tr>\n" );
+			warnung_ausgeben ( "<tr><td colspan=2><h1>Vertrag für die Einheit $einheit_kurzname beenden:\n</h1></td></tr>\n" );
 			erstelle_eingabefeld ( "Mietvertragsende eintragen", "MIETVERTRAG_BIS", "", "10" );
 			erstelle_hiddenfeld ( "MIETVERTRAG_DAT", $MIETVERTRAG_DAT );
 			erstelle_hiddenfeld ( "EINHEIT_ID", $EINHEIT_ID );
 		} // while end
-		erstelle_submit_button ( "submit_mv_beenden", "Endg�ltig Beenden" ); // name, wert
+		erstelle_submit_button ( "submit_mv_beenden", "Endgültig Beenden" ); // name, wert
 		ende_formular ();
 	} // end if
 	if (isset ( $_REQUEST [submit_mv_beenden] )) {
 		if (empty ( $_REQUEST [MIETVERTRAG_BIS] )) {
 			echo "datum eingeben";
 		} else {
-			// echo "$_REQUEST[MIETVERTRAG_BIS] datum pr�fen, wenn ok �ndern<br>$_REQUEST[MIETVERTRAG_DAT]";
+			// echo "$_REQUEST[MIETVERTRAG_BIS] datum prüfen, wenn ok ändern<br>$_REQUEST[MIETVERTRAG_DAT]";
 			mietvertrag_beenden ( $_REQUEST [MIETVERTRAG_DAT], $_REQUEST [MIETVERTRAG_BIS] );
 			$einheit_name = einheit_kurzname ( $_REQUEST [EINHEIT_ID] );
-			hinweis_ausgeben ( "Mietvertrag f�r die Einheit $einheit_name wird zum $_REQUEST[MIETVERTRAG_BIS] beendet!" );
+			hinweis_ausgeben ( "Mietvertrag für die Einheit $einheit_name wird zum $_REQUEST[MIETVERTRAG_BIS] beendet!" );
 		}
 	}
 }
@@ -1122,16 +1122,16 @@ function mietvertrag_aendern_form($mietvertrag_id) {
 			
 			$MIETVERTRAG_VON = date_mysql2german ( $MIETVERTRAG_VON );
 			$MIETVERTRAG_BIS = date_mysql2german ( $MIETVERTRAG_BIS );
-			warnung_ausgeben ( "<tr><td colspan=2><h1>Mietvertrag �ndern/korrigieren:\n</h1></td></tr>\n" );
+			warnung_ausgeben ( "<tr><td colspan=2><h1>Mietvertrag ändern/korrigieren:\n</h1></td></tr>\n" );
 			$form->mieter_infos_vom_mv ( $mietvertrag_id );
-			warnung_ausgeben ( "<tr><td colspan=2><b>Bitte w�hlen Sie die Personen aus!</b></td></tr>\n" );
-			erstelle_eingabefeld ( "Einzugsdatum �ndern", "MIETVERTRAG_VON", "$MIETVERTRAG_VON", "10" );
-			erstelle_eingabefeld ( "Auszugsdatum �ndern", "MIETVERTRAG_BIS", "$MIETVERTRAG_BIS", "10" );
+			warnung_ausgeben ( "<tr><td colspan=2><b>Bitte wählen Sie die Personen aus!</b></td></tr>\n" );
+			erstelle_eingabefeld ( "Einzugsdatum ändern", "MIETVERTRAG_VON", "$MIETVERTRAG_VON", "10" );
+			erstelle_eingabefeld ( "Auszugsdatum ändern", "MIETVERTRAG_BIS", "$MIETVERTRAG_BIS", "10" );
 			erstelle_hiddenfeld ( "MIETVERTRAG_DAT", $MIETVERTRAG_DAT );
 			erstelle_hiddenfeld ( "EINHEIT_ID", $EINHEIT_ID );
 		} // while end
 		personen_liste_multi ();
-		erstelle_submit_button ( "submit_mv_aendern", "�ndern" ); // name, wert
+		erstelle_submit_button ( "submit_mv_aendern", "ändern" ); // name, wert
 		ende_formular ();
 	} // end if
 	if (isset ( $_REQUEST [submit_mv_aendern] )) {
@@ -1140,14 +1140,14 @@ function mietvertrag_aendern_form($mietvertrag_id) {
 		} elseif (empty ( $_REQUEST [MIETVERTRAG_BIS] )) {
 			echo "Auszugsdatum eingeben";
 		} elseif (empty ( $_REQUEST [PERSON_ID] )) {
-			echo "Personen zum Vetrag ausw�hlen!";
+			echo "Personen zum Vetrag auswählen!";
 		} else {
-			// echo "$_REQUEST[MIETVERTRAG_BIS] datum pr�fen, wenn ok �ndern<br>$_REQUEST[MIETVERTRAG_DAT]";
+			// echo "$_REQUEST[MIETVERTRAG_BIS] datum prüfen, wenn ok ändern<br>$_REQUEST[MIETVERTRAG_DAT]";
 			erstelle_formular ( NULL, NULL ); // name, action
 			$einheit_kurzname = einheit_kurzname ( $_REQUEST [EINHEIT_ID] );
 			$MIETVERTRAG_VON = $_REQUEST [MIETVERTRAG_VON];
 			$MIETVERTRAG_BIS = $_REQUEST [MIETVERTRAG_BIS];
-			warnung_ausgeben ( "<tr><td colspan=2><h1>Der Mietvertrag f�r die Einheit $einheit_kurzname wird wie folgt ge�ndert:\n</h1></td></tr>\n" );
+			warnung_ausgeben ( "<tr><td colspan=2><h1>Der Mietvertrag für die Einheit $einheit_kurzname wird wie folgt geändert:\n</h1></td></tr>\n" );
 			for($i = 0; $i < count ( $_REQUEST [PERSON_ID] ); $i ++) {
 				$mietername = personen_name ( $_REQUEST [PERSON_ID] [$i] );
 				echo "<tr><td>Mieter:</td><td><b>$mietername</b></td></tr>";
@@ -1169,7 +1169,7 @@ function mietvertrag_aendern_form($mietvertrag_id) {
 			erstelle_hiddenfeld ( "MIETVERTRAG_DAT", $_REQUEST [MIETVERTRAG_DAT] );
 			erstelle_hiddenfeld ( "EINHEIT_ID", $_REQUEST [EINHEIT_ID] );
 			echo "<tr><td>";
-			hinweis_ausgeben ( "M�chten Sie die Vertrags�nderungen �bernehmen?" );
+			hinweis_ausgeben ( "Möchten Sie die Vertragsänderungen übernehmen?" );
 			echo "</td></tr>";
 			erstelle_submit_button ( "submit_mv_pruefen", "Speichern" );
 		}
@@ -1212,7 +1212,7 @@ function mietvertrag_aktualisieren($mietvertrag_dat, $mietvertrag_bis, $mietvert
 	$mietvertrag_id_alt = mietvertrag_id_by_dat ( $mietvertrag_dat );
 	$db_abfrage = "UPDATE PERSON_MIETVERTRAG SET PERSON_MIETVERTRAG_AKTUELL='0' where PERSON_MIETVERTRAG_MIETVERTRAG_ID='$mietvertrag_id_alt'";
 	echo "<br>UPDATE PERSON_MIETVERTRAG SET PERSON_MIETVERTRAG_AKTUELL='0' where PERSON_MIETVERTRAG_MIETVERTRAG_ID='$mietvertrag_id_alt'";
-	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () ); // personen zu MV gel�scht bzw auf 0 gesetzt
+	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () ); // personen zu MV gelöscht bzw auf 0 gesetzt
 	
 	$db_abfrage1 = "SELECT MIETVERTRAG_ID, MIETVERTRAG_VON, EINHEIT_ID FROM MIETVERTRAG where MIETVERTRAG_DAT='$mietvertrag_dat' LIMIT 0,1";
 	echo "<br>SELECT MIETVERTRAG_ID, MIETVERTRAG_VON, EINHEIT_ID FROM MIETVERTRAG where MIETVERTRAG_DAT='$mietvertrag_dat' LIMIT 0,1";
@@ -1252,10 +1252,10 @@ function mietvertrag_kurz($einheit_id) {
 	
 	$numrows = mysql_numrows ( $resultat );
 	if ($numrows < 1) {
-		echo "<h1><b>Keine Mietvertr�ge zur Einheit $einheit_id vorhanden!!!</b></h1>";
+		echo "<h1><b>Keine Mietverträge zur Einheit $einheit_id vorhanden!!!</b></h1>";
 	} else {
 		echo "<table width=100%>\n";
-		echo "<tr class=\"feldernamen\"><td colspan=5>Alle Mietvertr�ge</td></tr>\n";
+		echo "<tr class=\"feldernamen\"><td colspan=5>Alle Mietverträge</td></tr>\n";
 		echo "<tr class=\"feldernamen\"><td width=100>EINHEIT</td><td width=300>MIETER</td><td width=85>VON</td><td width=80>BIS</td><td>Optionen</td></tr>\n";
 		echo "</table>\n";
 		iframe_start ();
@@ -1266,11 +1266,11 @@ function mietvertrag_kurz($einheit_id) {
 			$datum_heute = date ( "Y-m-d" );
 			if (($MIETVERTRAG_BIS > $datum_heute) or ($MIETVERTRAG_BIS == "0000-00-00")) {
 				$beenden_link = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_beenden&mietvertrag_id=$MIETVERTRAG_ID\">Beenden</a>";
-				$aendern_link = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_aendern&mietvertrag_id=$MIETVERTRAG_ID\">�ndern</a>";
+				$aendern_link = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_aendern&mietvertrag_id=$MIETVERTRAG_ID\">Ändern</a>";
 			} else {
 				$beenden_link = "Abgelaufen";
-				// $aendern_link = "k.�.";
-				$aendern_link = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_aendern&mietvertrag_id=$MIETVERTRAG_ID\">�ndern</a>";
+				// $aendern_link = "k.Ä.";
+				$aendern_link = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_aendern&mietvertrag_id=$MIETVERTRAG_ID\">Ändern</a>";
 			}
 			$MIETVERTRAG_BIS = date_mysql2german ( $MIETVERTRAG_BIS );
 			$MIETVERTRAG_VON = date_mysql2german ( $MIETVERTRAG_VON );
@@ -1278,9 +1278,9 @@ function mietvertrag_kurz($einheit_id) {
 			$einheit_kurzname = einheit_kurzname ( $EINHEIT_ID );
 			$detail_check = detail_check ( "MIETVERTRAG", $MIETVERTRAG_ID );
 			$mietkonto_link = "<a href=\"?daten=mietkonten_blatt&anzeigen=mietkonto_uebersicht_detailiert&mietvertrag_id=$MIETVERTRAG_ID\">MIETKONTO</a>";
-			$miete_aendern = "<a href=\"?daten=miete_definieren&option=miethoehe&mietvertrag_id=$MIETVERTRAG_ID\">MIETH�HE</a>";
+			$miete_aendern = "<a href=\"?daten=miete_definieren&option=miethoehe&mietvertrag_id=$MIETVERTRAG_ID\">MIETHÖHE</a>";
 			$einheit_link = "<a href=\"?daten=uebersicht&anzeigen=einheit&einheit_id=$EINHEIT_ID\">$einheit_kurzname</a>";
-			$mv_loeschen_link = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mv_loeschen&mv_id=$MIETVERTRAG_ID\">MV l�schen</a>";
+			$mv_loeschen_link = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mv_loeschen&mv_id=$MIETVERTRAG_ID\">MV löschen</a>";
 			
 			if ($detail_check > 0) {
 				$detail_link = "<a class=\"table_links\" href=\"?daten=details&option=details_anzeigen&detail_tabelle=MIETVERTRAG&detail_id=$MIETVERTRAG_ID\">Details</a>";
@@ -1316,10 +1316,10 @@ function mietvertrag_abgelaufen($einheit_id) {
 	
 	$numrows = mysql_numrows ( $resultat );
 	if ($numrows < 1) {
-		echo "<h1><b>Keine Mietvertr�ge zur Einheit $einheit_id vorhanden!!!</b></h1>";
+		echo "<h1><b>Keine Mietverträge zur Einheit $einheit_id vorhanden!!!</b></h1>";
 	} else {
 		echo "<table width=100%>\n";
-		echo "<tr class=\"feldernamen\"><td colspan=5>Alle Mietvertr�ge</td></tr>\n";
+		echo "<tr class=\"feldernamen\"><td colspan=5>Alle Mietverträge</td></tr>\n";
 		echo "<tr class=\"feldernamen\"><td width=100>EINHEIT</td><td width=300>MIETER</td><td width=85>VON</td><td width=80>BIS</td><td>Optionen</td></tr>\n";
 		echo "</table>\n";
 		iframe_start ();
@@ -1330,10 +1330,10 @@ function mietvertrag_abgelaufen($einheit_id) {
 			$datum_heute = date ( "Y-m-d" );
 			if (($MIETVERTRAG_BIS > $datum_heute) or ($MIETVERTRAG_BIS == "0000-00-00")) {
 				$beenden_link = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_beenden&einheit_id=$EINHEIT_ID\">Beenden</a>";
-				$aendern_link = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_aendern&einheit_id=$EINHEIT_ID\">�ndern</a>";
+				$aendern_link = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_aendern&einheit_id=$EINHEIT_ID\">Ändern</a>";
 			} else {
 				$beenden_link = "Abgelaufen";
-				$aendern_link = "k.�.";
+				$aendern_link = "k.Ä.";
 			}
 			$MIETVERTRAG_BIS = date_mysql2german ( $MIETVERTRAG_BIS );
 			$MIETVERTRAG_VON = date_mysql2german ( $MIETVERTRAG_VON );
@@ -1342,7 +1342,7 @@ function mietvertrag_abgelaufen($einheit_id) {
 			$detail_check = detail_check ( "MIETVERTRAG", $MIETVERTRAG_ID );
 			$buchen_link = "<a href=\"?daten=miete_buchen&schritt=buchungsauswahl&mietvertrag_id=$MIETVERTRAG_ID\">BUCHEN</a>";
 			$mietkonto_link = "<a href=\"?daten=mietkonten_blatt&anzeigen=mietkonto_uebersicht_detailiert&mietvertrag_id=$MIETVERTRAG_ID\">MIETKONTO</a>";
-			$miete_aendern = "<a href=\"?daten=miete_definieren&option=miethoehe&mietvertrag_id=$MIETVERTRAG_ID\">MIETH�HE</a>";
+			$miete_aendern = "<a href=\"?daten=miete_definieren&option=miethoehe&mietvertrag_id=$MIETVERTRAG_ID\">MIETHÖHE</a>";
 			$einheit_link = "<a href=\"?daten=uebersicht&anzeigen=einheit&einheit_id=$EINHEIT_ID\">$einheit_kurzname</a>";
 			$kautionen_link = "<a href=\"?daten=kautionen&option=kautionen_buchen&mietvertrag_id=$MIETVERTRAG_ID\">KAUTION BUCHEN</a>";
 			
@@ -1380,10 +1380,10 @@ function mietvertrag_aktuelle($einheit_id) {
 	
 	$numrows = mysql_numrows ( $resultat );
 	if ($numrows < 1) {
-		echo "<h1><b>Keine Mietvertr�ge zur Einheit $einheit_id vorhanden!!!</b></h1>";
+		echo "<h1><b>Keine Mietverträge zur Einheit $einheit_id vorhanden!!!</b></h1>";
 	} else {
 		echo "<table width=100%>\n";
-		echo "<tr class=\"feldernamen\"><td colspan=5>Alle Mietvertr�ge</td></tr>\n";
+		echo "<tr class=\"feldernamen\"><td colspan=5>Alle Mietverträge</td></tr>\n";
 		echo "<tr class=\"feldernamen\"><td width=100>EINHEIT</td><td width=300>MIETER</td><td width=85>VON</td><td width=80>BIS</td><td>Optionen</td></tr>\n";
 		echo "</table>\n";
 		iframe_start ();
@@ -1394,11 +1394,11 @@ function mietvertrag_aktuelle($einheit_id) {
 			$datum_heute = date ( "Y-m-d" );
 			if (($MIETVERTRAG_BIS > $datum_heute) or ($MIETVERTRAG_BIS == "0000-00-00")) {
 				$beenden_link = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_beenden&mietvertrag_id=$MIETVERTRAG_ID\">Beenden</a>";
-				$aendern_link = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_aendern&mietvertrag_id=$MIETVERTRAG_ID\">�ndern</a>";
+				$aendern_link = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_aendern&mietvertrag_id=$MIETVERTRAG_ID\">Ändern</a>";
 			} else {
 				$beenden_link = "Abgelaufen";
-				// $aendern_link = "k.�.";
-				$aendern_link = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_aendern&mietvertrag_id=$MIETVERTRAG_ID\">�ndern</a>";
+				// $aendern_link = "k.Ä.";
+				$aendern_link = "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_aendern&mietvertrag_id=$MIETVERTRAG_ID\">Ändern</a>";
 			}
 			$MIETVERTRAG_BIS = date_mysql2german ( $MIETVERTRAG_BIS );
 			$MIETVERTRAG_VON = date_mysql2german ( $MIETVERTRAG_VON );
@@ -1407,7 +1407,7 @@ function mietvertrag_aktuelle($einheit_id) {
 			$detail_check = detail_check ( "MIETVERTRAG", $MIETVERTRAG_ID );
 			$einheit_link = "<a href=\"?daten=uebersicht&anzeigen=einheit&einheit_id=$EINHEIT_ID\">$einheit_kurzname</a>";
 			$kautionen_link = "<a href=\"?daten=kautionen&option=kautionen_buchen&mietvertrag_id=$MIETVERTRAG_ID\">KAUTION BUCHEN</a>";
-			$miete_aendern = "<a href=\"?daten=miete_definieren&option=miethoehe&mietvertrag_id=$MIETVERTRAG_ID\">MIETH�HE</a>";
+			$miete_aendern = "<a href=\"?daten=miete_definieren&option=miethoehe&mietvertrag_id=$MIETVERTRAG_ID\">MIETHÖHE</a>";
 			if ($detail_check > 0) {
 				$detail_link = "<a class=\"table_links\" href=\"?daten=details&option=details_anzeigen&detail_tabelle=MIETVERTRAG&detail_id=$MIETVERTRAG_ID\">Details</a>";
 			} else {
@@ -1433,7 +1433,7 @@ function mietvertrag_objekt_links() {
 	$daten_rein = $_REQUEST ["daten_rein"];
 	$db_abfrage = "SELECT OBJEKT_DAT, OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC ";
 	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-	echo "<b>Objekt ausw�hlen:</b><br>\n ";
+	echo "<b>Objekt auswählen:</b><br>\n ";
 	while ( list ( $OBJEKT_DAT, $OBJEKT_ID, $OBJEKT_KURZNAME ) = mysql_fetch_row ( $resultat ) ) {
 		echo "<a class=\"objekt_links\" href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_neu&objekt_id=$OBJEKT_ID\">$OBJEKT_KURZNAME</a><br>\n";
 	}

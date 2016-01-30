@@ -23,7 +23,7 @@
  * leider die Funktionen und vars nicht in Deutsch
  */
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 // include_once("classes/class_formular.php");
 
 // include_once("config.inc.php");
@@ -181,7 +181,7 @@ class kasse extends rechnung {
 			echo "<table>";
 			echo "<tr><td colspan=6><b>EINNAHMEN</b></td></tr>";
 			
-			echo "<tr><td>F�LLIG AM</td><td>BELEG</td><td>VON</td><td>NETTO</td><td>BRUTTO</td><td align=right>SKONTO</td></tr>";
+			echo "<tr><td>FÄLLIG AM</td><td>BELEG</td><td>VON</td><td>NETTO</td><td>BRUTTO</td><td align=right>SKONTO</td></tr>";
 			while ( $row = mysql_fetch_assoc ( $result ) ) {
 				echo "<tr><td>$row[FAELLIG_AM]</td><td>$row[BELEG_NR]</td><td>$row[EMPFAENGER_TYP] $row[EMPFAENGER_ID]</td><td>$row[NETTO]</td><td>$row[BRUTTO]</td><td align=right>$row[SKONTOBETRAG]</td>";
 			}
@@ -217,7 +217,7 @@ class kasse extends rechnung {
 			echo "<table>";
 			echo "<tr><td colspan=6><b>AUSGABEN</b></td></tr>";
 			
-			echo "<tr><td>F�LLIG AM</td><td>BELEG</td><td>VON</td><td>NETTO</td><td>BRUTTO</td><td align=right>SKONTO</td></tr>";
+			echo "<tr><td>FÄLLIG AM</td><td>BELEG</td><td>VON</td><td>NETTO</td><td>BRUTTO</td><td align=right>SKONTO</td></tr>";
 			while ( $row = mysql_fetch_assoc ( $result ) ) {
 				echo "<tr><td>$row[FAELLIG_AM]</td><td>$row[BELEG_NR]</td><td>$row[AUSSTELLER_TYP] $row[AUSSTELLER_ID]</td><td>$row[NETTO]</td><td>$row[BRUTTO]</td><td align=right>$row[SKONTOBETRAG]</td>";
 			}
@@ -230,7 +230,7 @@ class kasse extends rechnung {
 	
 	/* Alle Eingangskassenbelege werden angezeigt */
 	function kassenbelege_anzeigen_eingang($kassen_id) {
-		/* Z�hlen aller Zeilen */
+		/* Zählen aller Zeilen */
 		$result = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE AKTUELL = '1' AND RECHNUNGSTYP='Kassenbeleg' AND EMPFAENGER_TYP='Kasse' AND EMPFAENGER_ID='$kassen_id' ORDER BY BELEG_NR DESC" );
 		/*
 		 * $result = mysql_query ("SELECT RECHNUNGEN. * , COUNT( RECHNUNGEN_POSITIONEN.POSITION ) AS ANZAHL_POSITIONEN
@@ -250,7 +250,7 @@ class kasse extends rechnung {
 			while ( $row = mysql_fetch_assoc ( $result ) )
 				$my_array [] = $row;
 			echo "<table class=rechnungen>\n";
-			echo "<tr class=feldernamen><td>BNr</td><td>TYP</td><td>Beleg.Nr</td><td>F�lig</td><td>Von</td><td>An</td><td width=80>Netto</td><td width=80>Brutto</td><td width=80>Skonto</td></tr>\n";
+			echo "<tr class=feldernamen><td>BNr</td><td>TYP</td><td>Beleg.Nr</td><td>Fällig</td><td>Von</td><td>An</td><td width=80>Netto</td><td width=80>Brutto</td><td width=80>Skonto</td></tr>\n";
 			for($a = 0; $a < count ( $my_array ); $a ++) {
 				$belegnr = $my_array [$a] [BELEG_NR];
 				$this->rechnung_grunddaten_holen ( $belegnr );
@@ -265,7 +265,7 @@ class kasse extends rechnung {
 				$rechnungsnummer = $my_array [$a] [RECHNUNGSNUMMER];
 				$rechnungstyp = $my_array [$a] [RECHNUNGSTYP];
 				$kassenbeleg_eingangsnr = $my_array [$a] [EMPFAENGER_EINGANGS_RNR];
-				echo "<tr><td>$beleg_link</td><td>$rechnungstyp</td><td>$kassenbeleg_eingangsnr</td><td><b>$faellig_am</b></td><td>" . $this->rechnungs_aussteller_name . "</td><td>" . $this->rechnungs_empfaenger_name . "</td><td align=right>$netto �</td><td align=right>$brutto �</td><td align=right>$skonto_betrag �</td></tr>\n";
+				echo "<tr><td>$beleg_link</td><td>$rechnungstyp</td><td>$kassenbeleg_eingangsnr</td><td><b>$faellig_am</b></td><td>" . $this->rechnungs_aussteller_name . "</td><td>" . $this->rechnungs_empfaenger_name . "</td><td align=right>$netto €</td><td align=right>$brutto €</td><td align=right>$skonto_betrag €</td></tr>\n";
 			}
 			
 			echo "</table>\n";
@@ -274,7 +274,7 @@ class kasse extends rechnung {
 	
 	/* Alle Eingangskassenbelege werden angezeigt */
 	function kassenbelege_anzeigen_ausgang($kassen_id) {
-		/* Z�hlen aller Zeilen */
+		/* Zählen aller Zeilen */
 		$result = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE AKTUELL = '1' AND RECHNUNGSTYP='Kassenbeleg' AND AUSSTELLER_TYP='Kasse' AND AUSSTELLER_ID='$kassen_id' ORDER BY BELEG_NR DESC" );
 		/*
 		 * $result = mysql_query ("SELECT RECHNUNGEN. * , COUNT( RECHNUNGEN_POSITIONEN.POSITION ) AS ANZAHL_POSITIONEN
@@ -294,7 +294,7 @@ class kasse extends rechnung {
 			while ( $row = mysql_fetch_assoc ( $result ) )
 				$my_array [] = $row;
 			echo "<table class=rechnungen>\n";
-			echo "<tr class=feldernamen><td>BNr</td><td>TYP</td><td>Beleg.Nr</td><td>F�lig</td><td>Von</td><td>An</td><td width=80>Netto</td><td width=80>Brutto</td><td width=80>Skonto</td></tr>\n";
+			echo "<tr class=feldernamen><td>BNr</td><td>TYP</td><td>Beleg.Nr</td><td>Fällig</td><td>Von</td><td>An</td><td width=80>Netto</td><td width=80>Brutto</td><td width=80>Skonto</td></tr>\n";
 			for($a = 0; $a < count ( $my_array ); $a ++) {
 				$belegnr = $my_array [$a] [BELEG_NR];
 				$this->rechnung_grunddaten_holen ( $belegnr );
@@ -308,7 +308,7 @@ class kasse extends rechnung {
 				$skonto_betrag = nummer_punkt2komma ( $my_array [$a] [SKONTOBETRAG] );
 				$rechnungsnummer = $my_array [$a] [RECHNUNGSNUMMER];
 				$rechnungstyp = $my_array [$a] [RECHNUNGSTYP];
-				echo "<tr><td>$beleg_link</td><td>$rechnungstyp</td><td>$rechnungsnummer</td><td><b>$faellig_am</b></td><td>" . $this->rechnungs_aussteller_name . "</td><td>" . $this->rechnungs_empfaenger_name . "</td><td align=right>$netto �</td><td align=right>$brutto �</td><td align=right>$skonto_betrag �</td></tr>\n";
+				echo "<tr><td>$beleg_link</td><td>$rechnungstyp</td><td>$rechnungsnummer</td><td><b>$faellig_am</b></td><td>" . $this->rechnungs_aussteller_name . "</td><td>" . $this->rechnungs_empfaenger_name . "</td><td align=right>$netto €</td><td align=right>$brutto €</td><td align=right>$skonto_betrag €</td></tr>\n";
 			}
 			
 			echo "</table>\n";
@@ -326,9 +326,9 @@ class kasse extends rechnung {
 		$form->text_bereich ( 'Beleg/Text', 'beleg_text', '', 10, 5, 'beleg_text' );
 		$buchung = new buchen ();
 		$js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
-		$buchung->dropdown_kostentreager_typen ( 'Kostentr�gertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
+		$buchung->dropdown_kostentreager_typen ( 'Kostenträgertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
 		$js_id = "";
-		$buchung->dropdown_kostentreager_ids ( 'Kostentr�ger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
+		$buchung->dropdown_kostentreager_ids ( 'Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
 		$form->hidden_feld ( "option", "kassendaten_gesendet" );
 		$form->send_button ( "submit", "Speichern" );
 		$form->ende_formular ();
@@ -356,15 +356,15 @@ class kasse extends rechnung {
 		$akt_kostentraeger_bez = str_replace ( "<b>", "", $akt_kostentraeger_bez );
 		$akt_kostentraeger_bez = str_replace ( "</b>", "", $akt_kostentraeger_bez );
 		if (empty ( $this->kostentraeger_typ ) or $this->kostentraeger_typ != 'Rechnung') {
-			$form->text_feld_inaktiv ( 'Kostentr�ger aktuell', 'kostentraeger', $akt_kostentraeger_bez, '30', 'kostentraeger' );
+			$form->text_feld_inaktiv ( 'Kostenträger aktuell', 'kostentraeger', $akt_kostentraeger_bez, '30', 'kostentraeger' );
 			$buchung = new buchen ();
 			$js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
-			$buchung->dropdown_kostentreager_typen ( 'Kostentr�gertyp w�hlen', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
+			$buchung->dropdown_kostentreager_typen ( 'Kostenträgertyp wählen', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
 			$js_id = "";
-			$buchung->dropdown_kostentreager_ids ( 'Kostentr�ger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
+			$buchung->dropdown_kostentreager_ids ( 'Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
 		}
 		$form->hidden_feld ( "option", "kassendaten_aendern" );
-		$form->send_button ( "submit", "�nderungen speichern" );
+		$form->send_button ( "submit", "Änderungen speichern" );
 		$form->ende_formular ();
 	}
 	function kassenbuch_dat_infos($buchungs_dat) {
@@ -416,7 +416,7 @@ class kasse extends rechnung {
 		$betrag1 = nummer_komma2punkt ( $betrag );
 		$db_abfrage = "INSERT INTO KASSEN_BUCH VALUES (NULL, '$letzte_kb_id','$kassen_id', '$zahlungstyp','$betrag1', '$datum', '$beleg_text', '1', '$kostentraeger_typ', '$kostentraeger_id')";
 		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-		echo "Betrag von $betrag � wurde ins Kassenbuch eingetragen!<br>";
+		echo "Betrag von $betrag € wurde ins Kassenbuch eingetragen!<br>";
 		echo "Sie werden zum Kassenbuch weitergeleitet!";
 		weiterleiten_in_sec ( '?daten=kasse&option=kassenbuch', 2 );
 	}
@@ -432,7 +432,7 @@ class kasse extends rechnung {
 		$betrag1 = nummer_komma2punkt ( $betrag );
 		$db_abfrage = "INSERT INTO KASSEN_BUCH VALUES (NULL, '$letzte_kb_id','$kassen_id', '$zahlungstyp','$betrag1', '$datum', '$beleg_text', '1', '$kostentraeger_typ', '$kostentraeger_id')";
 		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-		echo "Betrag von $betrag � wurde ins Kassenbuch eingetragen!<br>";
+		echo "Betrag von $betrag € wurde ins Kassenbuch eingetragen!<br>";
 		echo "Sie werden zum Kassenbuch weitergeleitet!";
 		weiterleiten_in_sec ( '?daten=kasse&option=kassenbuch', 2 );
 	}
@@ -456,7 +456,7 @@ class kasse extends rechnung {
 		$datum = date_german2mysql ( $datum );
 		$db_abfrage = "INSERT INTO KASSEN_BUCH VALUES (NULL, '$letzte_kb_id','$kassen_id', '$zahlungstyp','$betrag', '$datum', '$beleg_text', '1', '$kostentraeger_typ', '$kostentraeger_id')";
 		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-		echo "Betrag von $betrag � wurde ins Kassenbuch eingetragen!<br>";
+		echo "Betrag von $betrag € wurde ins Kassenbuch eingetragen!<br>";
 		// echo "Sie werden zum Kassenbuch weitergeleitet!";
 		// weiterleiten_in_sec('?daten=kasse&option=kassenbuch', 2);
 	}
@@ -500,8 +500,8 @@ class kasse extends rechnung {
 				} else {
 					$info_link = $this->kostentraeger_beschreibung ( $kostentraeger_typ, $kostentraeger_id );
 				}
-				$aendern_link = "<a href=\"?daten=kasse&option=kasseneintrag_aendern&eintrag_dat=$dat\">�ndern</a>";
-				$loeschen_link = "<a href=\"?daten=kasse&option=kasseneintrag_loeschen&eintrag_dat=$dat\">L�schen</a>";
+				$aendern_link = "<a href=\"?daten=kasse&option=kasseneintrag_aendern&eintrag_dat=$dat\">Ändern</a>";
+				$loeschen_link = "<a href=\"?daten=kasse&option=kasseneintrag_loeschen&eintrag_dat=$dat\">Löschen</a>";
 				if ($zaehler == 1) {
 					echo "<tr class=\"zeile1\"><td>$zeile</td><td>$datum</td>";
 				}
@@ -525,7 +525,7 @@ class kasse extends rechnung {
 			// $summe_ausgaben = nummer_punkt2komma($summe_ausgaben);
 			// $kassenstand = sprintf("%01.2f", $kassenstand);
 			$kassenstand = nummer_punkt2komma ( $kassenstand );
-			echo "<tr class=feldernamen><td></td><td></td><td>$summe_einnahmen �</td><td>$summe_ausgaben �</td><td>Kassenstand: $kassenstand �</td><td></td><td></td></tr>";
+			echo "<tr class=feldernamen><td></td><td></td><td>$summe_einnahmen €</td><td>$summe_ausgaben €</td><td>Kassenstand: $kassenstand €</td><td></td><td></td></tr>";
 			echo "</table>";
 		} else {
 			echo "kassenbuch leer";
@@ -576,8 +576,8 @@ class kasse extends rechnung {
 				} else {
 					$info_link = $this->kostentraeger_beschreibung ( $kostentraeger_typ, $kostentraeger_id );
 				}
-				$aendern_link = "<a href=\"?daten=kasse&option=kasseneintrag_aendern&eintrag_dat=$dat\">�ndern</a>";
-				$loeschen_link = "<a href=\"?daten=kasse&option=kasseneintrag_loeschen&eintrag_dat=$dat\">L�schen</a>";
+				$aendern_link = "<a href=\"?daten=kasse&option=kasseneintrag_aendern&eintrag_dat=$dat\">Ändern</a>";
+				$loeschen_link = "<a href=\"?daten=kasse&option=kasseneintrag_loeschen&eintrag_dat=$dat\">Löschen</a>";
 				if ($zaehler == 1) {
 					echo "<tr class=\"zeile1\"><td>$zeile</td><td>$datum</td>";
 				}
@@ -603,7 +603,7 @@ class kasse extends rechnung {
 			// $summe_ausgaben = nummer_punkt2komma($summe_ausgaben);
 			// $kassenstand = sprintf("%01.2f", $kassenstand);
 			$kassenstand = nummer_punkt2komma ( $kassenstand );
-			echo "<tr class=feldernamen><td></td><td></td><td>$summe_einnahmen �</td><td>$summe_ausgaben �</td><td>Kassenstand: $kassenstand �</td><td></td><td></td></tr>";
+			echo "<tr class=feldernamen><td></td><td></td><td>$summe_einnahmen €</td><td>$summe_ausgaben €</td><td>Kassenstand: $kassenstand €</td><td></td><td></td></tr>";
 			echo "</table>";
 		} else {
 			echo "kassenbuch leer";
@@ -646,8 +646,8 @@ class kasse extends rechnung {
 				} else {
 					$info_link = $this->kostentraeger_beschreibung ( $kostentraeger_typ, $kostentraeger_id );
 				}
-				$aendern_link = "<a href=\"?daten=kasse&option=kasseneintrag_aendern&eintrag_dat=$dat\">�ndern</a>";
-				$loeschen_link = "<a href=\"?daten=kasse&option=kasseneintrag_loeschen&eintrag_dat=$dat\">L�schen</a>";
+				$aendern_link = "<a href=\"?daten=kasse&option=kasseneintrag_aendern&eintrag_dat=$dat\">Ändern</a>";
+				$loeschen_link = "<a href=\"?daten=kasse&option=kasseneintrag_loeschen&eintrag_dat=$dat\">Löschen</a>";
 				if ($zaehler == 1) {
 					echo "<tr class=\"zeile1\"><td>$zeile</td><td>$datum</td>";
 				}
@@ -671,7 +671,7 @@ class kasse extends rechnung {
 			$summe_ausgaben = nummer_punkt2komma ( $summe_ausgaben );
 			$kassenstand = sprintf ( "%01.2f", $kassenstand );
 			$kassenstand = nummer_punkt2komma ( $kassenstand );
-			echo "<tr class=feldernamen><td></td><td></td><td>$summe_einnahmen �</td><td>$summe_ausgaben �</td><td>Kassenstand: $kassenstand �</td><td></td><td></td></tr>";
+			echo "<tr class=feldernamen><td></td><td></td><td>$summe_einnahmen €</td><td>$summe_ausgaben €</td><td>Kassenstand: $kassenstand €</td><td></td><td></td></tr>";
 			echo "</table>";
 		} else {
 			echo "kassenbuch leer";
@@ -733,7 +733,7 @@ class kasse extends rechnung {
 		
 		$form = new formular ();
 		if (! isset ( $_SESSION [kasse] )) {
-			$form->erstelle_formular ( "Kasse w�hlen", NULL );
+			$form->erstelle_formular ( "Kasse wählen", NULL );
 		} else {
 			$form->erstelle_formular ( "Kassenauswahl - Aktuell: Kasse $_SESSION[kasse]", NULL );
 		}

@@ -5,7 +5,7 @@
  * Hausverwaltungssoftware
  *
  *
- * @copyright    Copyright (c) 2010, Berlus GmbH, Eichkampstra�e 161, 14055 Berlin
+ * @copyright    Copyright (c) 2010, Berlus GmbH, Eichkampstraße 161, 14055 Berlin
  * @link         http://www.berlus.de
  * @author       Sanel Sivac & Wolfgang Wehrheim
  * @contact		 software(@)berlus.de
@@ -19,7 +19,7 @@
  */
 
 /*
- * Klasse dient zur Aufbereitung der Stammdaten und Details des Objektes, H�user, Einheiten, Mietvertr�ge, Personen
+ * Klasse dient zur Aufbereitung der Stammdaten und Details des Objektes, Häuser, Einheiten, Mietverträge, Personen
  * und der Darstellung als PDF und weiterer Formate
  */
 class stammdaten {
@@ -40,13 +40,13 @@ class stammdaten {
 		$pdf_tab [0] ['BEZ'] = 'Objekt Kurzname';
 		$pdf_tab [0] ['TXT'] = $o->objekt_kurzname;
 		
-		$pdf_tab [1] ['BEZ'] = 'Eigent�mer/Verwalter';
+		$pdf_tab [1] ['BEZ'] = 'Eigentümer/Verwalter';
 		$pdf_tab [1] ['TXT'] = $o->objekt_eigentuemer;
 		
-		$pdf_tab [2] ['BEZ'] = 'Eigent�mer/Gr�nder';
+		$pdf_tab [2] ['BEZ'] = 'Eigentümer/Gründer';
 		$pdf_tab [2] ['TXT'] = $o->objekt_eigentuemer_pdf;
 		
-		$pdf_tab [3] ['BEZ'] = 'Anzahl H�user';
+		$pdf_tab [3] ['BEZ'] = 'Anzahl Häuser';
 		$pdf_tab [3] ['TXT'] = $o->anzahl_haeuser;
 		
 		$pdf_tab [4] ['BEZ'] = 'Anzahl Einheiten';
@@ -111,7 +111,7 @@ class stammdaten {
 			// die();
 			
 			$cols = array (
-					'BEGUENSTIGTER' => "Beg�nstigter",
+					'BEGUENSTIGTER' => "Begünstigter",
 					'IBAN' => "IBAN",
 					'BIC' => "BIC",
 					'BANK' => "Bankname" 
@@ -175,7 +175,7 @@ class stammdaten {
 					'TXT' => "" 
 			);
 			$pdf->ezSetDy ( - 10 ); // abstand
-			$pdf->ezTable ( $pdf_tab, $cols, "H�user im Objekt $o->objekt_kurzname", array (
+			$pdf->ezTable ( $pdf_tab, $cols, "Häuser im Objekt $o->objekt_kurzname", array (
 					'showHeadings' => 0,
 					'shaded' => 1,
 					'titleFontSize' => 9,
@@ -209,8 +209,8 @@ class stammdaten {
 		$pdf_tab [0] ['BEZ'] = "Anzahl Einheiten";
 		$pdf_tab [0] ['TXT'] = $anz_einheiten;
 		
-		$pdf_tab [1] ['BEZ'] = "Fl�che aus Mietvertr�gen";
-		$pdf_tab [1] ['TXT'] = nummer_punkt2komma_t ( $h->get_qm_gesamt ( $haus_id ) ) . " m�";
+		$pdf_tab [1] ['BEZ'] = "Fläche aus Mietverträgen";
+		$pdf_tab [1] ['TXT'] = nummer_punkt2komma_t ( $h->get_qm_gesamt ( $haus_id ) ) . " m²";
 		
 		$d = new detail ();
 		$details_arr = $d->finde_alle_details_arr ( 'Haus', $haus_id );
@@ -265,7 +265,7 @@ class stammdaten {
 				'EINHEIT_KURZNAME' => "Einheit",
 				'TYP' => "Typ",
 				'EINHEIT_LAGE' => "Lage",
-				'EINHEIT_QM' => "Einheit m�",
+				'EINHEIT_QM' => "Einheit m²",
 				'HAUS_STRASSE' => "Strasse",
 				'HAUS_NUMMER' => "Hausnummer",
 				'HAUS_PLZ' => "PLZ",
@@ -326,7 +326,7 @@ class stammdaten {
 			$pdf_tab [$z] ['BEZ'] = "Typ";
 			$pdf_tab [$z] ['TXT'] = $e->typ;
 			$z ++;
-			$pdf_tab [$z] ['BEZ'] = "Fl�che";
+			$pdf_tab [$z] ['BEZ'] = "Fläche";
 			$pdf_tab [$z] ['TXT'] = $e->einheit_qm_d;
 			$z ++;
 			$pdf_tab [$z] ['BEZ'] = "Lage";
@@ -373,7 +373,7 @@ class stammdaten {
 				unset ( $pdf_tab );
 			}
 			
-			/* Eigent�mer */
+			/* Eigentümer */
 			
 			$weg = new weg ();
 			$et_arr = $weg->get_eigentuemer_arr_2 ( $einheit_id, 'ASC' );
@@ -404,13 +404,13 @@ class stammdaten {
 					
 					// $pdf->ezTable($pdf_tab_et);
 					$cols = array (
-							'ET_NAME' => "Eigent�mer Namen",
+							'ET_NAME' => "Eigentümer Namen",
 							'PERSONEN' => "Anz. Personen",
 							'VON' => "Von",
 							'BIS' => "Bis" 
 					);
 					$etnr = $et + 1;
-					$ueberschrift = "$etnr. Eigent�mer - $weg->einheit_kurzname";
+					$ueberschrift = "$etnr. Eigentümer - $weg->einheit_kurzname";
 					$pdf->ezSetDy ( - 5 ); // abstand
 					$pdf->ezTable ( $pdf_tab_et, $cols, "$ueberschrift", array (
 							'showHeadings' => 1,
@@ -495,13 +495,13 @@ class stammdaten {
 						// die();
 						
 						$cols = array (
-								'BEGUENSTIGTER' => "Beg�nstigter",
+								'BEGUENSTIGTER' => "Begünstigter",
 								'IBAN' => "IBAN",
 								'BIC' => "BIC",
 								'BANK' => "Bankname" 
 						);
 						$pdf->ezSetDy ( - 5 ); // abstand
-						$pdf->ezTable ( $pdf_gk, $cols, "Geldkonten�bersicht des Eigent�mers", array (
+						$pdf->ezTable ( $pdf_gk, $cols, "Geldkontenübersicht des Eigentümers", array (
 								'showHeadings' => 1,
 								'shaded' => 1,
 								'titleFontSize' => 8,
@@ -664,7 +664,7 @@ class stammdaten {
 							'BEZ' => "Bezeichnung",
 							'TXT' => "" 
 					);
-					$pdf->ezTable ( $pdf_pe, $cols, "Informationen �ber Personen im Mietvertrag</b>", array (
+					$pdf->ezTable ( $pdf_pe, $cols, "Informationen über Personen im Mietvertrag</b>", array (
 							'showHeadings' => 0,
 							'shaded' => 1,
 							'titleFontSize' => 8,

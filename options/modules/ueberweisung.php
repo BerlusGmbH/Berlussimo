@@ -21,7 +21,7 @@
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'ueberweisung' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -29,10 +29,10 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'ueberweisung' )) {
 	die ();
 }
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
 
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
 include_once ("options/links/links.ueberweisung.php");
 include_once ("classes/class_ueberweisung.php");
 
@@ -61,11 +61,11 @@ switch ($option) {
 	
 	case "re_zahlen" :
 		if (empty ( $_SESSION ['geldkonto_id'] )) {
-			hinweis_ausgeben ( "Bitte Geldkonto ausw�hlen!" );
+			hinweis_ausgeben ( "Bitte Geldkonto auswählen!" );
 		} else {
 			$g = new geldkonto_info ();
 			$g->geld_konto_details ( $_SESSION ['geldkonto_id'] );
-			echo "<b>Ausgew�hltes Konto $g->geldkonto_bezeichnung_kurz</b><br>";
+			echo "<b>Ausgewähltes Konto $g->geldkonto_bezeichnung_kurz</b><br>";
 		}
 		
 		if (isset ( $_REQUEST ['partner_wechseln'] )) {
@@ -125,7 +125,7 @@ switch ($option) {
 		$buchungstext = $_POST ['buchungstext'];
 		
 		if (! $betrags_art) {
-			echo "Zu zahlenden Betrag w�hlen";
+			echo "Zu zahlenden Betrag wählen";
 		} else {
 			
 			// echo "$a_konto_id $e_konto_id $betrag $betrags_art $vzweck1 $vzweck2 $vzweck3 $bezugstab $bezugsid $buchungstext";
@@ -139,7 +139,7 @@ switch ($option) {
 	case "u_dtaus_erstellen" :
 		$g_konto_id = $_REQUEST [konto_id];
 		if (! $g_konto_id) {
-			fehlermeldung_ausgeben ( "KEIN KONTO AUSGEW�HLT" );
+			fehlermeldung_ausgeben ( "KEIN KONTO AUSGEWÄHLT" );
 		} else {
 			$u = new ueberweisung ();
 			$u->dtaus_von_konto_erstellen ( $g_konto_id );
@@ -149,11 +149,11 @@ switch ($option) {
 	case "dtaus_dateien" :
 		$u = new ueberweisung ();
 		if (empty ( $_SESSION ['geldkonto_id'] )) {
-			echo "GELDKONTO AUSW�HLEN";
+			echo "GELDKONTO AUSWÄHLEN";
 		} else {
 			$g = new geldkonto_info ();
 			$g->geld_konto_details ( $_SESSION ['geldkonto_id'] );
-			echo "<b>Ausgew�hltes Konto $g->geldkonto_bezeichnung_kurz</b><br>";
+			echo "<b>Ausgewähltes Konto $g->geldkonto_bezeichnung_kurz</b><br>";
 		}
 		$u->dtaus_dateien_anzeigen ( $_SESSION ['geldkonto_id'] );
 		break;
@@ -161,7 +161,7 @@ switch ($option) {
 	case "dtaus_ansicht" :
 		$dtaus_id = $_REQUEST ['dtaus_id'];
 		if (! $dtaus_id) {
-			echo "DTAUS DATEI AUSW�HLEN";
+			echo "DTAUS DATEI AUSWÄHLEN";
 		} else {
 			$u = new ueberweisung ();
 			$u->dtaus_datei_uebersicht ( $dtaus_id );
@@ -171,7 +171,7 @@ switch ($option) {
 	case "dtaus_ansicht_pdf" :
 		$dtaus_id = $_REQUEST ['dtaus_id'];
 		if (! $dtaus_id) {
-			echo "DTAUS DATEI AUSW�HLEN";
+			echo "DTAUS DATEI AUSWÄHLEN";
 		} else {
 			$u = new ueberweisung ();
 			$u->pdf_dtaus_datei_uebersicht ( $dtaus_id );
@@ -181,7 +181,7 @@ switch ($option) {
 	case "dtaus_buchen" :
 		$dtaus_id = $_REQUEST [dtaus_id];
 		if (! $dtaus_id) {
-			echo "DTAUS DATEI AUSW�HLEN";
+			echo "DTAUS DATEI AUSWÄHLEN";
 		} else {
 			$u = new ueberweisung ();
 			$u->form_dtaus_datei_buchen ( $dtaus_id );
@@ -198,7 +198,7 @@ switch ($option) {
 			$u = new ueberweisung ();
 			$u->autobuchen_zahlung ( $dtaus_id, $datum, $kto_auszugsnr );
 		} else {
-			echo "DTAUS UNVOLLST�NDIG error 5875858";
+			echo "DTAUS UNVOLLSTÄNDIG error 5875858";
 		}
 		break;
 	
@@ -212,7 +212,7 @@ switch ($option) {
 		print_r ( $_POST );
 		print_r ( $_SESSION );
 		if (empty ( $_SESSION [geldkonto_id] ) or empty ( $_SESSION [partner_id] )) {
-			die ( 'ABBRUCH - Geldkonto und Partner w�hlen / Fehler 34234xx' );
+			die ( 'ABBRUCH - Geldkonto und Partner wählen / Fehler 34234xx' );
 		} else {
 			if (! empty ( $_POST [geld_konto] ) && ! empty ( $_POST [betrag] ) && ! empty ( $_POST [vzweck1] )) {
 				$u = new ueberweisung ();
@@ -224,7 +224,7 @@ switch ($option) {
 				$u->zahlung2dtaus ( $_SESSION [geldkonto_id], $e_konto_id, $betrag, '', $vzweck1, $vzweck2, $vzweck3, 'MANUELL', null, "$vzweck1, $vzweck2, $vzweck3", '' );
 				weiterleiten_in_sec ( '?daten=ueberweisung&option=manuelle_ueberweisung', 2 );
 			} else {
-				"Daten unvollst�ndig, Empf�ngerkontonummer, BLZ, VZWECK UND BETRAG pr�fen";
+				"Daten unvollständig, Empfängerkontonummer, BLZ, VZWECK UND BETRAG prüfen";
 			}
 		}
 		

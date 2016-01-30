@@ -25,7 +25,7 @@ if (file_exists ( 'classes/class_bpdf.php' )) {
 	include_once ('classes/class_bpdf.php');
 }
 
-/* Klasse "formular" f�r Formularerstellung laden */
+/* Klasse "formular" für Formularerstellung laden */
 if (file_exists ( "classes/class_formular.php" )) {
 	include_once ("classes/class_formular.php");
 }
@@ -39,15 +39,15 @@ if (file_exists ( "classes/class_benutzer.php" )) {
 class werkzeug {
 	function form_werkzeug_hizu() {
 		$f = new formular ();
-		$f->erstelle_formular ( 'Werkzeug hinzuf�gen', '' );
+		$f->erstelle_formular ( 'Werkzeug hinzufügen', '' );
 		$f->text_feld ( 'INTBelegnr', 'beleg_id', '', '20', 'beleg_id', '' );
 		$f->text_feld ( 'Postition', 'pos', '', '10', 'pos', '' );
 		$js = '';
-		$f->button_js ( 'btn_hnz', 'Hinzuf�gen', $js );
+		$f->button_js ( 'btn_hnz', 'Hinzufügen', $js );
 		$f->ende_formular ();
 	}
 	function werkzeugliste($b_id = NULL) {
-		$link_NACH_MIT = "<a href=\"?daten=benutzer&option=werkzeugliste_nach_mitarbeiter&b_id=$b_id\">�BERSICHT NACH MITARBEITER</a>";
+		$link_NACH_MIT = "<a href=\"?daten=benutzer&option=werkzeugliste_nach_mitarbeiter&b_id=$b_id\">ÜBERSICHT NACH MITARBEITER</a>";
 		echo $link_NACH_MIT . '<br>';
 		$f = new formular ();
 		$f->fieldset ( 'Werkzeugliste', 'wl' );
@@ -55,8 +55,8 @@ class werkzeug {
 		if (is_array ( $arr )) {
 			$anz = count ( $arr );
 			if ($b_id != NULL) {
-				$link_rueckgabe_alle = "<a href=\"?daten=benutzer&option=werkzeug_rueckgabe_alle&b_id=$b_id\">R�ckgabe vermerken</a>";
-				$link_rueckgabe_alle_pdf = "<a href=\"?daten=benutzer&option=werkzeug_rueckgabe_alle_pdf&b_id=$b_id\">R�ckgabe PDF</a>";
+				$link_rueckgabe_alle = "<a href=\"?daten=benutzer&option=werkzeug_rueckgabe_alle&b_id=$b_id\">Rückgabe vermerken</a>";
+				$link_rueckgabe_alle_pdf = "<a href=\"?daten=benutzer&option=werkzeug_rueckgabe_alle_pdf&b_id=$b_id\">Rückgabe PDF</a>";
 				$link_ausgabe_alle_pdf = "<a href=\"?daten=benutzer&option=werkzeug_ausgabe_alle_pdf&b_id=$b_id\">Ausgabeschein PDF</a>";
 				echo "$link_ausgabe_alle_pdf | $link_rueckgabe_alle_pdf | $link_rueckgabe_alle<br><br>";
 			}
@@ -91,9 +91,9 @@ class werkzeug {
 					echo "<td>FREI $link_frei</td>";
 				}
 				if ($b_id == NULL) {
-					$link_loeschen = "<a href=\"?daten=benutzer&option=werkzeug_raus&w_id=$w_id\">Aus Liste L�schen</td>";
+					$link_loeschen = "<a href=\"?daten=benutzer&option=werkzeug_raus&w_id=$w_id\">Aus Liste Löschen</td>";
 				} else {
-					$link_loeschen = "<a href=\"?daten=benutzer&option=werkzeug_rueckgabe&w_id=$w_id&b_id=$b_id\">Einzelr�ckgabe</td>";
+					$link_loeschen = "<a href=\"?daten=benutzer&option=werkzeug_rueckgabe&w_id=$w_id&b_id=$b_id\">Einzelrückgabe</td>";
 				}
 				echo "<td>$link_loeschen</td>";
 				echo "</tr>";
@@ -106,7 +106,7 @@ class werkzeug {
 		}
 		$f->fieldset_ende ();
 	}
-	function pdf_werkzeug_rueckgabe_einzel($b_id, $w_id, $scheintext = 'Einzelr�ckgabeschein') {
+	function pdf_werkzeug_rueckgabe_einzel($b_id, $w_id, $scheintext = 'Einzelrückgabeschein') {
 		$arr = $this->werkzeugliste_arr ( $b_id );
 		$pdf = new Cezpdf ( 'a4', 'landscape' );
 		$bpdf = new b_pdf ();
@@ -175,7 +175,7 @@ class werkzeug {
 				), // Linienfarbe, hier schwarz
 				
 				'fontSize' => 8, // schriftgroesse
-				'titleFontSize' => 8, // schriftgroesse �berschrift
+				'titleFontSize' => 8, // schriftgroesse Überschrift
 				'splitRows' => 0,
 				'protectRows' => 0,
 				'innerLineThickness' => 0.5,
@@ -284,7 +284,7 @@ class werkzeug {
 		// echo $db_abfrage;
 		$result = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 	}
-	function pdf_rueckgabeschein_alle($b_id, $scheintext = 'R�ckgabeschein', $ein_ausgabe_text = 'Bearbeitet') {
+	function pdf_rueckgabeschein_alle($b_id, $scheintext = 'Rückgabeschein', $ein_ausgabe_text = 'Bearbeitet') {
 		$arr = $this->werkzeugliste_arr ( $b_id );
 		$pdf = new Cezpdf ( 'a4', 'landscape' );
 		$bpdf = new b_pdf ();
@@ -351,7 +351,7 @@ class werkzeug {
 				), // Linienfarbe, hier schwarz
 				
 				'fontSize' => 8, // schriftgroesse
-				'titleFontSize' => 8, // schriftgroesse �berschrift
+				'titleFontSize' => 8, // schriftgroesse Überschrift
 				'splitRows' => 0,
 				'protectRows' => 0,
 				'innerLineThickness' => 0.5,
@@ -409,13 +409,13 @@ class werkzeug {
 	}
 	function form_werkzeug_zuweisen($w_id) {
 		$f = new formular ();
-		$f->erstelle_formular ( 'Werkzeug hinzuf�gen', '' );
+		$f->erstelle_formular ( 'Werkzeug hinzufügen', '' );
 		$f->hidden_feld ( 'w_id', $w_id );
 		$bb = new benutzer ();
 		$this->get_werkzeug_info ( $w_id );
 		$f->text_feld_inaktiv ( 'Bezeichnung', 'w', $this->werkzeug_bez, 100, 'wbz' );
 		$js = '';
-		$bb->dropdown_benutzer2 ( 'Mitarbeiter w�hlen', 'b_id', 'b_id', $js );
+		$bb->dropdown_benutzer2 ( 'Mitarbeiter wählen', 'b_id', 'b_id', $js );
 		$f->hidden_feld ( 'option', 'werkzeug_zuweisen_snd' );
 		$f->send_button ( 'btn_snd', 'Zuweisen' );
 		$f->ende_formular ();
@@ -487,9 +487,9 @@ class werkzeug {
 					echo "<td>FREI $link_frei</td>";
 				}
 				if ($b_id == NULL) {
-					$link_loeschen = "<a href=\"?daten=benutzer&option=werkzeug_raus&w_id=$w_id\">Aus Liste L�schen</td>";
+					$link_loeschen = "<a href=\"?daten=benutzer&option=werkzeug_raus&w_id=$w_id\">Aus Liste Löschen</td>";
 				} else {
-					$link_loeschen = "<a href=\"?daten=benutzer&option=werkzeug_rueckgabe&w_id=$w_id&b_id=$b_id\">Einzelr�ckgabe</td>";
+					$link_loeschen = "<a href=\"?daten=benutzer&option=werkzeug_rueckgabe&w_id=$w_id&b_id=$b_id\">Einzelrückgabe</td>";
 				}
 				echo "<td>$link_loeschen</td>";
 				echo "</tr>";

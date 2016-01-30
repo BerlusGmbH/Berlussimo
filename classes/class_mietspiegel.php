@@ -71,7 +71,7 @@ class mietspiegel {
 				$u_wert = nummer_punkt2komma ( $arr [$a] ['U_WERT'] );
 				$m_wert = nummer_punkt2komma ( $arr [$a] ['M_WERT'] );
 				$o_wert = nummer_punkt2komma ( $arr [$a] ['O_WERT'] );
-				$link_loeschen = "<a href=\"?daten=mietspiegel&option=ms_wert_del&dat=$dat\">L�schen</a>";
+				$link_loeschen = "<a href=\"?daten=mietspiegel&option=ms_wert_del&dat=$dat\">Löschen</a>";
 				echo "<tr><td><b>$feld</b></td><td>$u_wert</td><td><b>$m_wert</b></td><td>$o_wert</td><td>$link_loeschen</td></tr>";
 			}
 			echo "</table>";
@@ -95,18 +95,18 @@ class mietspiegel {
 	function abzuege_anzeigen($jahr, $ort = null) {
 		$arr = $this->mietspiegel_abzuege_arr ( $jahr, $ort );
 		if (! is_array ( $arr )) {
-			fehlermeldung_ausgeben ( "ABZ�GE NICHT EINGEPFLEGT" );
+			fehlermeldung_ausgeben ( "ABZÜGE NICHT EINGEPFLEGT" );
 		} else {
 			$anz = count ( $arr );
 			echo "<table>";
-			echo "<tr><th colspan=\"4\">BESONDERE ABZ�GE</th></tr>";
+			echo "<tr><th colspan=\"4\">BESONDERE ABZÜGE</th></tr>";
 			echo "<tr><th>AUSSTATTUNGSKLASSE</th><th>MERKMAL</th><th>WERT</th><th>OPTION</th></tr>";
 			for($a = 0; $a < $anz; $a ++) {
 				$dat = $arr [$a] ['DAT'];
 				$merkmal = $arr [$a] ['MERKMAL'];
 				$wert = $arr [$a] ['WERT'];
 				$ausstattungsklasse = $arr [$a] ['A_KLASSE'];
-				$link_del = "<a href=\"?daten=mietspiegel&option=del_sonderabzug&dat=$dat\">L�schen</a>";
+				$link_del = "<a href=\"?daten=mietspiegel&option=del_sonderabzug&dat=$dat\">Löschen</a>";
 				echo "<tr><td><b>$ausstattungsklasse</b></td><td>$merkmal</td><td><b>$wert</b></td><td>$link_del</td></tr>";
 			}
 			echo "</table>";
@@ -140,14 +140,14 @@ class mietspiegel {
 	}
 	function form_neue_sonderabzuege($jahr, $ort = null) {
 		$f = new formular ();
-		$f->erstelle_formular ( 'Sonderabz�ge eintragen / Ausstattugsklasse = Spaltennr in MS', null );
+		$f->erstelle_formular ( 'Sonderabzüge eintragen / Ausstattugsklasse = Spaltennr in MS', null );
 		$f->hidden_feld ( 'jahr', $jahr );
 		
 		if ($ort != null) {
 			$f->hidden_feld ( 'ort', $ort );
 		}
 		
-		$this->dropdown_merkmale_ms ( 'Merkmal w�hlen', 'merkmal', 'merkmal', '', '' );
+		$this->dropdown_merkmale_ms ( 'Merkmal wählen', 'merkmal', 'merkmal', '', '' );
 		$f->text_feld ( 'Wertabzug (z.B. -1,86 MINUSBETRAG!!!', 'wert', '', 10, 'wert', '' );
 		$this->dropdown_klassen ( 10, 'Ausstattungsklasse / Spaltennr aus MS', 'a_klasse', 'a_klasse' );
 		$f->hidden_feld ( 'option', 'abzug_speichern' );

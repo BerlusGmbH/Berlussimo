@@ -19,7 +19,7 @@
  */
 $mieten = new mietkonto ();
 echo "<div class=\"navi_leiste2\">";
-$mieten->erstelle_formular ( "Hauptmen� -> DT-AUS VORBEREITUNG...", NULL );
+$mieten->erstelle_formular ( "Hauptmenü -> DT-AUS VORBEREITUNG...", NULL );
 
 echo "<a href=\"?daten=dt_aus&option=dtaus_erstellen\">DTAUS Erstellen</a>&nbsp;";
 echo "<a href=\"?daten=dt_aus&option=dtaus_buchen\">DTAUS Buchen</a>&nbsp;";

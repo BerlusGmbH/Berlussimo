@@ -1,5 +1,5 @@
 /* (en) Avoid page breaks right after headings */
-/* (de) Vermeidung von Seitenumbr�chen direkt nach einer �berschrift */
+/* (de) Vermeidung von Seitenumbrüchen direkt nach einer Überschrift */
 h1, h2, h3, h4, h5, h6 {
 	page-break-after: avoid;
 }
@@ -288,7 +288,7 @@ input[type=submit] {
 }
 
 /*DRUCKENSACHEN AUSBLENDEN*/
-/* 1. Div f�r LOGO*/
+/* 1. Div für LOGO*/
 #div_logo {
 	display: none;
 }
@@ -297,15 +297,15 @@ input[type=submit] {
 	display: none;
 }
 
-/* 2. Div f�r Firmenname*/
+/* 2. Div für Firmenname*/
 #div_firma {
 	display: none;
 }
-/* 3. Div f�r Empf�nger Adressfeld*/
+/* 3. Div für Empfänger Adressfeld*/
 #div_adressfeld {
 	display: none;
 }
-/* 4. Div f�r Rechnungsdaten*/
+/* 4. Div für Rechnungsdaten*/
 #div_rechnungsdaten {
 	display: none;
 }
@@ -578,7 +578,7 @@ table.sortable select, label {
 	font-size: 11px;
 }
 
-/*AJAX GALLERY HTML5 UPLOAD FOTOS F�R EINHEITEN*/
+/*AJAX GALLERY HTML5 UPLOAD FOTOS FÜR EINHEITEN*/
 #gallery .thumbnail {
 	width: 200px;
 	height: 150px;

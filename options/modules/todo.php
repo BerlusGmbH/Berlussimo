@@ -26,7 +26,7 @@
 /* Allgemeine Funktionsdatei laden */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'todo' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -34,7 +34,7 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'todo' )) {
 	die ();
 }
 
-/* Modulabh�ngige Dateien d.h. Links und eigene Klasse */
+/* Modulabhängige Dateien d.h. Links und eigene Klasse */
 include_once ("options/links/links.todo.php");
 include_once ("classes/class_todo.php");
 if (isset ( $_REQUEST ["option"] )) {
@@ -88,27 +88,27 @@ switch ($option) {
 			$t = new todo ();
 			$t->form_edit_aufgabe ( $_REQUEST ['t_id'] );
 		} else {
-			echo "Aufgabe oder Projekt w�hlen";
+			echo "Aufgabe oder Projekt wählen";
 		}
 		break;
 	
-	/* Projekt oder Aufgabe l�schen */
+	/* Projekt oder Aufgabe löschen */
 	case "projekt_loeschen" :
 		if (! empty ( $_REQUEST ['t_id'] )) {
 			$t = new todo ();
 			$t->projekt_aufgabe_loeschen ( $_REQUEST ['t_id'] );
 		} else {
-			echo "Aufgabe oder Projekt w�hlen";
+			echo "Aufgabe oder Projekt wählen";
 		}
 		break;
 	
-	/* Definitiv l�schen */
+	/* Definitiv löschen */
 	case "loeschen" :
 		if (! empty ( $_REQUEST ['t_id'] )) {
 			$t = new todo ();
 			$t->projekt_aufgabe_loeschen_sql ( $_REQUEST ['t_id'], $_REQUEST ['art'] );
 		} else {
-			echo "Aufgabe oder Projekt w�hlen";
+			echo "Aufgabe oder Projekt wählen";
 		}
 		break;
 	
@@ -122,7 +122,7 @@ switch ($option) {
 			$t = new todo ();
 			$t->pdf_projekt ( intval ( $_REQUEST ['proj_id'] ) );
 		} else {
-			echo "Projekt w�hlen";
+			echo "Projekt wählen";
 		}
 		break;
 	
@@ -131,7 +131,7 @@ switch ($option) {
 			$t = new todo ();
 			$t->pdf_auftrag ( intval ( $_REQUEST ['proj_id'] ) );
 		} else {
-			echo "Projekt w�hlen";
+			echo "Projekt wählen";
 		}
 		break;
 	
@@ -149,7 +149,7 @@ switch ($option) {
 			}
 			// print_r($_REQUEST);
 		} else {
-			fehlermeldung_ausgeben ( 'Ihre Eingabe zur Baustelle war unvollst�ndig!' );
+			fehlermeldung_ausgeben ( 'Ihre Eingabe zur Baustelle war unvollständig!' );
 		}
 		break;
 	
@@ -209,7 +209,7 @@ switch ($option) {
 			$t = new todo ();
 			$t->auftraege_an_haus ( $_REQUEST ['haus_id'] );
 		} else {
-			fehlermeldung_ausgeben ( "Haus w�hlen" );
+			fehlermeldung_ausgeben ( "Haus wählen" );
 		}
 		break;
 	

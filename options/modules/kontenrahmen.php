@@ -18,7 +18,7 @@
  * 
  */
 include_once ("includes/allgemeine_funktionen.php");
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION [benutzer_id], 'kontenrahmen' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -36,7 +36,7 @@ switch ($option) {
 	
 	default :
 		$f = new formular ();
-		$f->fieldset ( "Kontenrahmen�bersicht", 'kontenrahmen' );
+		$f->fieldset ( "Kontenrahmenübersicht", 'kontenrahmen' );
 		$konten_info = new k_rahmen ();
 		$konten_info->kontenrahmen_liste_anzeigen ();
 		$f->fieldset_ende ();
@@ -44,7 +44,7 @@ switch ($option) {
 	
 	case "kontenrahmen_uebersicht" :
 		$f = new formular ();
-		$f->fieldset ( "Kontenrahmen�bersicht", 'kontenrahmen' );
+		$f->fieldset ( "Kontenrahmenübersicht", 'kontenrahmen' );
 		$konten_info = new k_rahmen ();
 		$konten_info->kontenrahmen_liste_anzeigen ();
 		$f->fieldset_ende ();
@@ -52,7 +52,7 @@ switch ($option) {
 	
 	case "konten_anzeigen" :
 		$f = new formular ();
-		$f->fieldset ( "Kostenkonten�bersicht", 'kostenkonten' );
+		$f->fieldset ( "Kostenkontenübersicht", 'kostenkonten' );
 		if (! empty ( $_REQUEST [k_id] )) {
 			$konten_info = new k_rahmen ();
 			if (! isset ( $_REQUEST [pdf] )) {
@@ -99,7 +99,7 @@ switch ($option) {
 			$k->kostenkonto_speichern ( $_REQUEST [kontenrahmen_id], $_REQUEST [konto], $_REQUEST [bez], $_REQUEST [kontoart_id], $_REQUEST [k_gruppe] );
 			weiterleiten ( "?daten=kontenrahmen&option=konten_anzeigen&k_id=$_SESSION[kontenrahmen_id]" );
 		} else {
-			echo "Eingabe unvollst�ndig. Error: S562q357";
+			echo "Eingabe unvollständig. Error: S562q357";
 		}
 		break;
 	
@@ -119,7 +119,7 @@ switch ($option) {
 			$k->kostenkonto_aendern ( $_REQUEST [dat], $_REQUEST [kontenrahmen_id], $_REQUEST [konto], $_REQUEST [bez], $_REQUEST [kontoart_id], $_REQUEST [k_gruppe] );
 			weiterleiten ( "?daten=kontenrahmen&option=konten_anzeigen&k_id=$_SESSION[kontenrahmen_id]" );
 		} else {
-			echo "Eingabe unvollst�ndig. Error: S56sdf7";
+			echo "Eingabe unvollständig. Error: S56sdf7";
 		}
 		
 		break;
@@ -141,7 +141,7 @@ switch ($option) {
 			$k->gruppe_speichern ( $_REQUEST [g_bez] );
 			weiterleiten ( "?daten=kontenrahmen&option=gruppe_neu" );
 		} else {
-			echo "Eingabe unvollst�ndig. Error: 123sdf7";
+			echo "Eingabe unvollständig. Error: 123sdf7";
 		}
 		break;
 	
@@ -162,7 +162,7 @@ switch ($option) {
 			$k->kontoart_speichern ( $_REQUEST [kontoart] );
 			weiterleiten ( "?daten=kontenrahmen&option=kontoart_neu" );
 		} else {
-			echo "Eingabe unvollst�ndig. Error: 94555f7";
+			echo "Eingabe unvollständig. Error: 94555f7";
 		}
 		break;
 	
@@ -177,7 +177,7 @@ switch ($option) {
 			$k->zuweisung_speichern ( $_REQUEST [kostentraeger_typ], $_REQUEST [kostentraeger_id], $_REQUEST [kontenrahmen_id] );
 			weiterleiten ( "?daten=kontenrahmen" );
 		} else {
-			echo "Eingabe unvollst�ndig. Error: 42gsbx3f7";
+			echo "Eingabe unvollständig. Error: 42gsbx3f7";
 		}
 		break;
 	
@@ -187,7 +187,7 @@ switch ($option) {
 			$k->zuweisung_loeschen ( $_REQUEST [dat] );
 			weiterleiten ( "?daten=kontenrahmen" );
 		} else {
-			echo "Eingabe unvollst�ndig. Error: 42gsjklasd7";
+			echo "Eingabe unvollständig. Error: 42gsjklasd7";
 		}
 		break;
 }

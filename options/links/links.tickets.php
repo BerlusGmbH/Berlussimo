@@ -19,7 +19,7 @@
  */
 $f = new formular ();
 echo "<div class=\"navi_leiste2\">";
-$f->erstelle_formular ( "Hauptmen� -> Tickets...", NULL );
+$f->erstelle_formular ( "Hauptmenü -> Tickets...", NULL );
 echo "<a href=\"?daten=tickets&option=meine_tickets\">Meine Tickets</a>&nbsp;";
 $f->ende_formular ();
 

@@ -37,11 +37,11 @@ import_me ( 'miete_214' );
 // import_me('buchungen2012_30000');
 // kontrolle_zb_mb();
 function import_me($tabelle) {
-	$tabelle_in_gross = strtoupper ( $tabelle ); // Tabelle in GRO�BUCHSTABEN
+	$tabelle_in_gross = strtoupper ( $tabelle ); // Tabelle in GROßBUCHSTABEN
 	$datei = "$tabelle.csv"; // DATEINAME
 	$array = file ( $datei ); // DATEI IN ARRAY EINLESEN
 	
-	echo $array [0]; // ZEILE 0 mit �berschriften
+	echo $array [0]; // ZEILE 0 mit Überschriften
 	$feldernamen [] = explode ( ":", $array [0] ); // FELDNAMEN AUS ZEILE 0 IN ARRAY EINLESEN
 	$anzahl_felder = count ( $feldernamen [0] ); // ANZAHL DER IMPORT FELDER
 	$feld1 = $feldernamen [0] [0]; // FELD1 - IMPORT nur zur info
@@ -105,7 +105,7 @@ function import_me($tabelle) {
 					if (! preg_match ( "/Miete Sollstellung/i", $bemerkung )) {
 						
 						if (preg_match ( "/Betriebskostenabrechnung/i", $bemerkung ) or preg_match ( "/Heizkostenabrechnung/i", $bemerkung ) or preg_match ( "/Saldo Vortrag Vorverwaltung/", $bemerkung )) {
-							// echo "<b>$i Es wurde eine �bereinstimmung gefunden.<br></b>";
+							// echo "<b>$i Es wurde eine Übereinstimmung gefunden.<br></b>";
 							$form = new mietkonto ();
 							$datum_arr = explode ( ".", $datum );
 							$tag = $datum_arr [0];
@@ -155,7 +155,7 @@ function import_me($tabelle) {
 					$kostentraeger_typ = 'Mietvertrag';
 					// echo "$i <b>$mv_id</b> $FMeinheit_name $betrag $datum $bemerkung<br>";
 					if (preg_match ( "/Betriebskostenabrechnung/i", $bemerkung ) or preg_match ( "/Heizkostenabrechnung/i", $bemerkung ) or preg_match ( "/Saldo Vortrag Vorverwaltung/", $bemerkung )) {
-						// echo "<b>$i Es wurde eine �bereinstimmung gefunden.<br></b>";
+						// echo "<b>$i Es wurde eine Übereinstimmung gefunden.<br></b>";
 						$form = new mietkonto ();
 						$datum_arr = explode ( ".", $datum );
 						$tag = $datum_arr [0];

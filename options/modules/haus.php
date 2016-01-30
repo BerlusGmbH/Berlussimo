@@ -19,7 +19,7 @@
  */
 include_once ("includes/allgemeine_funktionen.php");
 
-/* �berpr�fen ob Benutzer Zugriff auf das Modul hat */
+/* überprüfen ob Benutzer Zugriff auf das Modul hat */
 if (! check_user_mod ( $_SESSION ['benutzer_id'], 'haus_raus' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
@@ -37,15 +37,15 @@ if (! empty ( $_REQUEST ['objekt_id'] )) {
 include_once ("options/links/links.form_haus.php");
 switch ($haus_raus) {
 	
-	/* Liste der H�user anzeigen */
+	/* Liste der Häuser anzeigen */
 	case "haus_kurz" :
 		$form = new mietkonto ();
-		$form->erstelle_formular ( "H�userliste", NULL );
+		$form->erstelle_formular ( "Häuserliste", NULL );
 		haus_kurz ( $objekt_id );
 		$form->ende_formular ();
 		break;
 	
-	/* Formular zum �ndern des Hauses aufrufen */
+	/* Formular zum Ändern des Hauses aufrufen */
 	case "haus_aendern" :
 		$f = new formular ();
 		
@@ -54,7 +54,7 @@ switch ($haus_raus) {
 		$bk->objekt_auswahl_liste ( $link );
 		if (! isset ( $_REQUEST ['haus_id'] )) {
 			if (isset ( $_SESSION ['objekt_id'] )) {
-				$f->fieldset ( 'H�user zum �ndern w�hlen', 'hww' );
+				$f->fieldset ( 'Häuser zum Ändern wählen', 'hww' );
 				haus_kurz ( $_SESSION ['objekt_id'] );
 				$f->fieldset_ende ();
 			}
@@ -66,7 +66,7 @@ switch ($haus_raus) {
 		
 		break;
 	
-	/* �nderungen des Hauses speichern */
+	/* Änderungen des Hauses speichern */
 	case "haus_aend_speichern" :
 		// print_req();
 		if (isset ( $_REQUEST ['haus_id'] ) && ! empty ( $_REQUEST ['haus_id'] ) && isset ( $_REQUEST ['strasse'] ) && ! empty ( $_REQUEST ['strasse'] ) && isset ( $_REQUEST ['haus_nr'] ) && ! empty ( $_REQUEST ['haus_nr'] ) && isset ( $_REQUEST ['ort'] ) && ! empty ( $_REQUEST ['ort'] ) && isset ( $_REQUEST ['plz'] ) && ! empty ( $_REQUEST ['plz'] ) && isset ( $_REQUEST ['qm'] ) && ! empty ( $_REQUEST ['qm'] ) && isset ( $_REQUEST ['Objekt'] ) && ! empty ( $_REQUEST ['Objekt'] )) {
@@ -80,10 +80,10 @@ switch ($haus_raus) {
 			
 			$h = new haus ();
 			$h->haus_aenderung_in_db ( $strasse, $haus_nr, $ort, $plz, $qm, $objekt_id, $haus_id );
-			fehlermeldung_ausgeben ( "Haus ge�ndert!" );
+			fehlermeldung_ausgeben ( "Haus geändert!" );
 			weiterleiten_in_sec ( "?daten=haus_raus&haus_raus=haus_kurz&objekt_id=$objekt_id", 3 );
 		} else {
-			fehlermeldung_ausgeben ( "Eingegebene Daten unvollst�ndig, erneut versuchen bitte!" );
+			fehlermeldung_ausgeben ( "Eingegebene Daten unvollständig, erneut versuchen bitte!" );
 			$haus_id = $_REQUEST ['haus_id'];
 			weiterleiten_in_sec ( "?daten=haus_raus&haus_raus=haus_aendern&haus_id=$haus_id", 3 );
 		}
@@ -92,18 +92,18 @@ switch ($haus_raus) {
 function haus_kurz($objekt_id = '') {
 	if (empty ( $objekt_id )) {
 		$db_abfrage = "SELECT OBJEKT_ID, HAUS_ID, HAUS_STRASSE, HAUS_NUMMER, HAUS_PLZ, HAUS_QM FROM HAUS WHERE HAUS_AKTUELL='1' ORDER BY HAUS_STRASSE,  0+HAUS_NUMMER, OBJEKT_ID ASC";
-		$title = "Alle H�user";
+		$title = "Alle Häuser";
 	} else {
 		$db_abfrage = "SELECT OBJEKT_ID, HAUS_ID, HAUS_STRASSE, HAUS_NUMMER, HAUS_PLZ, HAUS_QM FROM HAUS where OBJEKT_ID='$objekt_id' && HAUS_AKTUELL='1' ORDER BY HAUS_STRASSE, 0+HAUS_NUMMER, OBJEKT_ID ASC";
 		$objekt_kurzname = objekt_namen_by_id ( $objekt_id );
-		$title = "H�user vom Objekt:  $objekt_kurzname";
+		$title = "Häuser vom Objekt:  $objekt_kurzname";
 	}
 	
 	$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 	
 	$numrows = mysql_numrows ( $resultat );
 	if ($numrows < 1) {
-		echo "<h1><b>Keine H�user vorhanden!!!</b></h1>\n";
+		echo "<h1><b>Keine Häuser vorhanden!!!</b></h1>\n";
 	} else {
 		// echo "<div id=\"iframe_1\">";
 		// echo "<div class=\"abstand_iframe\">";
@@ -111,8 +111,8 @@ function haus_kurz($objekt_id = '') {
 		iframe_start ();
 		echo "<table class=\"sortable\">\n";
 		// echo "<tr class=\"feldernamen\"><td colspan=8>$title</td></tr>\n";
-		// echo "<tr class=\"feldernamen\"><td width=155>Stra�e</td><td width=60>Nr.</td><td width=60>PLZ</td><td width=60>H m�</td><td width=100>E m�</td><td colspan=2>Zusatzinfo</td></tr>\n";
-		echo "<tr><th>Strasse</th><th>Nr.</th><th>PLZ</th><th>m�</th><th>Em�</th><th>Einheiten</th><th>INFOS</th><th>OPTION</th></tr>";
+		// echo "<tr class=\"feldernamen\"><td width=155>Straße</td><td width=60>Nr.</td><td width=60>PLZ</td><td width=60>H m²</td><td width=100>E m²</td><td colspan=2>Zusatzinfo</td></tr>\n";
+		echo "<tr><th>Strasse</th><th>Nr.</th><th>PLZ</th><th>m²</th><th>Em²</th><th>Einheiten</th><th>INFOS</th><th>OPTION</th></tr>";
 		
 		$counter = 0;
 		while ( list ( $OBJEKT_ID, $HAUS_ID, $HAUS_STRASSE, $HAUS_NUMMER, $HAUS_PLZ, $HAUS_QM ) = mysql_fetch_row ( $resultat ) ) {
@@ -129,13 +129,13 @@ function haus_kurz($objekt_id = '') {
 			}
 			$counter ++;
 			
-			$link_haus_aendern = "<a href=\"?daten=haus_raus&haus_raus=haus_aendern&haus_id=$HAUS_ID\">Haus �ndern</th>";
+			$link_haus_aendern = "<a href=\"?daten=haus_raus&haus_raus=haus_aendern&haus_id=$HAUS_ID\">Haus ändern</th>";
 			
 			if ($counter == 1) {
-				echo "<tr class=\"zeile1\"><td width=150>$HAUS_STRASSE</td><td width=60>$HAUS_NUMMER</td><td width=60>$HAUS_PLZ</td><td width=60>$HAUS_QM m�</td><td width=100>$gesammtflaeche_einheiten m�</td><td><a class=\"table_links\" href=\"?daten=einheit_raus&einheit_raus=einheit_kurz&haus_id=$HAUS_ID\">Einheiten (<b>$einheiten_im_haus</b>)</a></td><td>$detail_link</td><td>$link_haus_aendern</td></tr>";
+				echo "<tr class=\"zeile1\"><td width=150>$HAUS_STRASSE</td><td width=60>$HAUS_NUMMER</td><td width=60>$HAUS_PLZ</td><td width=60>$HAUS_QM m²</td><td width=100>$gesammtflaeche_einheiten m²</td><td><a class=\"table_links\" href=\"?daten=einheit_raus&einheit_raus=einheit_kurz&haus_id=$HAUS_ID\">Einheiten (<b>$einheiten_im_haus</b>)</a></td><td>$detail_link</td><td>$link_haus_aendern</td></tr>";
 			}
 			if ($counter == 2) {
-				echo "<tr class=\"zeile2\"><td width=150>$HAUS_STRASSE</td><td width=60>$HAUS_NUMMER</td><td width=60>$HAUS_PLZ</td><td width=60>$HAUS_QM m�</td><td width=60>$gesammtflaeche_einheiten m�</td><td><a class=\"table_links\" href=\"?daten=einheit_raus&einheit_raus=einheit_kurz&haus_id=$HAUS_ID\">Einheiten (<b>$einheiten_im_haus</b>)</a></td><td>$detail_link</td><td>$link_haus_aendern</td></tr>";
+				echo "<tr class=\"zeile2\"><td width=150>$HAUS_STRASSE</td><td width=60>$HAUS_NUMMER</td><td width=60>$HAUS_PLZ</td><td width=60>$HAUS_QM m²</td><td width=60>$gesammtflaeche_einheiten m²</td><td><a class=\"table_links\" href=\"?daten=einheit_raus&einheit_raus=einheit_kurz&haus_id=$HAUS_ID\">Einheiten (<b>$einheiten_im_haus</b>)</a></td><td>$detail_link</td><td>$link_haus_aendern</td></tr>";
 				$counter = 0;
 			}
 		}
