@@ -365,7 +365,7 @@ class b_pdf {
 				$headers .= "\r\nContent-Type: multipart/mixed; boundary=\"PHP-mixed-" . $random_hash . "\"";
 				$attachment = chunk_split ( base64_encode ( file_get_contents ( $DATEI ) ) );
 				
-				$message = "--PHP-mixed-" . $random_hash . "\n" . "Content-Type: multipart/alternative; boundary=\"PHP-alt-" . $random_hash . "\"\n\n" . "--PHP-alt-" . $random_hash . "\n" . "Content-Type: text/plain; charset=\"iso-8859-1\"\n" . "Content-Transfer-Encoding: 7bit\n\n" . "Serienbriefe im Anhang.\n" . "\n\n" . "--PHP-alt-" . $random_hash . "--\n\n" . "--PHP-mixed-" . $random_hash . "\n" . "Content-Type: " . $content_type . "; name=\"$this->v_kurztext vom $datum_heute.tar.gz\"\n" . "Content-Transfer-Encoding: base64\n" . "Content-Disposition: attachment\n\n" . $attachment . "\n" . "--PHP-mixed-" . $random_hash . "--\n\n";
+				$message = "--PHP-mixed-" . $random_hash . "\n" . "Content-Type: multipart/alternative; boundary=\"PHP-alt-" . $random_hash . "\"\n\n" . "--PHP-alt-" . $random_hash . "\n" . "Content-Type: text/plain; charset=\"UTF-8\"\n" . "Content-Transfer-Encoding: 7bit\n\n" . "Serienbriefe im Anhang.\n" . "\n\n" . "--PHP-alt-" . $random_hash . "--\n\n" . "--PHP-mixed-" . $random_hash . "\n" . "Content-Type: " . $content_type . "; name=\"$this->v_kurztext vom $datum_heute.tar.gz\"\n" . "Content-Transfer-Encoding: base64\n" . "Content-Disposition: attachment\n\n" . $attachment . "\n" . "--PHP-mixed-" . $random_hash . "--\n\n";
 				
 				/* Wenn Email versendet, dann PDF ANZEIGEN, sonst die(fehler)"; */
 				/*

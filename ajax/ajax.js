@@ -128,7 +128,7 @@ function ajax_check_art(lieferant, artikel_nr) {
 				break;
 			}
 		};
-		req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=iso-8859-1");
+		req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 		req.send(null);
 	}//ende else keine artikel nr
 }
@@ -325,7 +325,7 @@ function position_speichern() {
 			}
 		};
 
-		req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=ISO-8859-1");
+		req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 		req.send(null);
 		//      req.send(daten);
 	}
@@ -754,7 +754,7 @@ function autovervoll(lieferant_id, string) {
 			}
 		};
 
-		req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=ISO-8859-1");
+		req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 		req.send(null);
 	}//ende else keine artikel nr
 }
@@ -1592,7 +1592,7 @@ function daj3(url, targ) {
 	preloading(targ, 'Lade, bitte warten!!!');
 
 	xmlhttp.open("get", url);
-	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded;charset=ISO-8859-1");
+	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded;charset=UTF-8");
 
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 200 && targ) {
