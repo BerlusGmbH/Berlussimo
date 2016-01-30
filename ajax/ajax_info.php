@@ -669,7 +669,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 				$rechnungs_positionen_arr [] = $row;
 				
 				// $this->anzahl_positionen = $numrows;
-			header ( 'Content-Type: text/html; charset=ISO-8859-1' );
+			header ( 'Content-Type: text/html; charset=UTF-8' );
 			echo "<table id=\"positionen_tab\">\n";
 			echo "<tr>";
 			echo "<th scopr=\"col\">Ändern</th>";

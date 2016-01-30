@@ -894,7 +894,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 		$headers .= "\nMIME-Version: 1.0\n" . "Content-Type: multipart/mixed;\n" . " boundary=\"{$mime_boundary}\"";
 		
 		// multipart boundary
-		$message = "--{$mime_boundary}\n" . "Content-Type: text/plain; charset=\"iso-8859-1\"\n" . "Content-Transfer-Encoding: 7bit\n\n" . $message . "\n\n";
+		$message = "--{$mime_boundary}\n" . "Content-Type: text/plain; charset=\"UTF-8\"\n" . "Content-Transfer-Encoding: 7bit\n\n" . $message . "\n\n";
 		
 		// preparing attachments
 		for($i = 0; $i < count ( $files ); $i ++) {

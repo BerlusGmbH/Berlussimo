@@ -99,7 +99,7 @@ echo "<link href=\"css/demo.css\"       rel=\"stylesheet\" type=\"text/css\" /  
 
 // echo "<script src=\"js/lightbox-plus-jquery.min.js\"></script>";
 
-echo "<meta http-equiv=\"content-type\" content=\"text/html; charset=ISO-8859-1\">\n";
+echo "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n";
 // echo "<meta content=\"text/html; charset=ISO-8859-1\" http-equiv=\"content-type\">";
 echo "</head>";
 

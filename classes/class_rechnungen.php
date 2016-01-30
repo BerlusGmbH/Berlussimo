@@ -4189,7 +4189,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
 		echo "</table>";
 	}
 	function ibm850_encode($str) {
-		$text = iconv ( "CP850", "ISO-8859-1", $str );
+		$text = iconv ( "CP850", "UTF-8", $str );
 		return $text;
 	}
 	function get_letzen_preis_aus_rg($art_nr, $aus_typ, $aus_id, $empf_typ, $empf_id) {

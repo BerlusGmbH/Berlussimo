@@ -211,7 +211,7 @@ class todo {
 	}
 	function rss_feed_ok_test($benutzer_id) {
 		ob_clean ();
-		echo '<?xml version="1.0" encoding="ISO-8859-1" ?>
+		echo '<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">';
 		
 		echo "<channel>\n";
@@ -239,8 +239,8 @@ class todo {
 	function rss_feed($benutzer_id) {
 		$url = "http://berlussimo.no-ip.biz:5000/berlussimo-aktiv/";
 		ob_clean ();
-		header ( "Content-Type: application/xml; charset=ISO-8859-1" );
-		echo '<?xml version="1.0" encoding="ISO-8859-1" ?>';
+		header ( "Content-Type: application/xml; charset=UTF-8" );
+		echo '<?xml version="1.0" encoding="UTF-8" ?>';
 		echo "\n";
 		echo '<rss version="2.0">';
 		echo "\n";
@@ -349,8 +349,8 @@ class todo {
 	}
 	function rss_feed_OK($benutzer_id) {
 		ob_clean ();
-		header ( "Content-Type: application/xml; charset=ISO-8859-1" );
-		echo '<?xml version="1.0" encoding="ISO-8859-1" ?>';
+		header ( "Content-Type: application/xml; charset=UTF-8" );
+		echo '<?xml version="1.0" encoding="UTF-8" ?>';
 		/* echo "<?xml-stylesheet type=\"text/css\" href=\"css/rss.css\" ?>\n"; */
 		echo "<rss version=\"2.0\">\n";
 		echo "<channel>\n";
