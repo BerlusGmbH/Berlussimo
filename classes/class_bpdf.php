@@ -129,9 +129,9 @@ class b_pdf {
 		 */
 	}
 	function erstelle_brief_vorlage($v_dat, $empf_typ, $empf_id_arr, $option = '0') {
-		if (file_exists ( 'pdfclass/class.ezpdf.php' )) {
-			include_once ('pdfclass/class.ezpdf.php');
-		}
+		//if (file_exists ( 'pdfclass/class.ezpdf.php' )) {
+		//	include_once ('pdfclass/class.ezpdf.php');
+		//}
 		if (file_exists ( 'classes/class_bpdf.php' )) {
 			include_once ('classes/class_bpdf.php');
 		}

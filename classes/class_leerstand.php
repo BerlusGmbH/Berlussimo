@@ -27,7 +27,7 @@ include_once ("classes/class_mietanpassung.php");
 class leerstand {
 	function leerstand_objekt_pdf($objekt_id, $monat, $jahr) {
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
@@ -105,7 +105,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC" );
 		$e = new einheit ();
 		$e->get_einheit_info ( $einheit_id );
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
@@ -242,7 +242,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC" );
 		}
 	}
 	function pdf_interessentenliste($tab_arr) {
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
@@ -343,7 +343,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC" );
 		 */
 		
 		// ob_clean();
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		
 		$pdf = new Cezpdf ( 'a4', 'portrait' );

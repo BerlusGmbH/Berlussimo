@@ -132,7 +132,7 @@ class lager_v {
 				$tab_arr [$zaehler] ['MWST'] = '<b>' . date_mysql2german ( $datum_bis ) . '</b>';
 				$tab_arr [$zaehler] ['W_WERT'] = "<b>$gesamt_lager_wert_a</b>";
 				
-				include_once ('pdfclass/class.ezpdf.php');
+				//include_once ('pdfclass/class.ezpdf.php');
 				include_once ('classes/class_bpdf.php');
 				$pdf = new Cezpdf ( 'a4', 'landscape' );
 				$bpdf = new b_pdf ();

@@ -513,7 +513,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
 			// echo '<pre>';
 			// print_r($arr);
 			// die();
-			include_once ('pdfclass/class.ezpdf.php');
+			//include_once ('pdfclass/class.ezpdf.php');
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();
@@ -590,7 +590,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
 			// echo '<pre>';
 			// print_r($arr);
 			// die();
-			include_once ('pdfclass/class.ezpdf.php');
+			//include_once ('pdfclass/class.ezpdf.php');
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'landscape' );
 			$bpdf = new b_pdf ();
@@ -726,7 +726,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
 				// echo '<pre>';
 				// print_r($arr);
 				// die();
-				include_once ('pdfclass/class.ezpdf.php');
+				//include_once ('pdfclass/class.ezpdf.php');
 				include_once ('classes/class_bpdf.php');
 				$pdf = new Cezpdf ( 'a4', 'landscape' );
 				$bpdf = new b_pdf ();
@@ -841,7 +841,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
 		$this->get_objekt_infos ( $objekt_id );
 		ob_clean ();
 		// ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
@@ -1614,7 +1614,7 @@ ORDER BY EINHEIT_KURZNAME";
 		 * 'KONTOSTAND1_1'=>array('justification'=>'right'),'ME_MONAT'=>array('justification'=>'right'), 'ME_MONAT'=>array('justification'=>'right'),'ME_JAHR'=>array('justification'=>'right'),'KOSTEN_MONAT'=>array('justification'=>'right'),'KOSTEN_JAHR'=>array('justification'=>'right'), 'KONTOSTAND_AKTUELL'=>array('justification'=>'right'))));
 		 */
 		
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
