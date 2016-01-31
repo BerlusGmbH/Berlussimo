@@ -424,7 +424,7 @@ LIMIT 0 , 30 " );
 		 */
 		ob_clean (); // ausgabepuffer leeren
 		header ( "Content-type: application/pdf" ); // wird von MSIE ignoriert
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$pdf->ezSetCmMargins ( 4.5, 1, 1, 1 );
 		
@@ -599,7 +599,7 @@ LIMIT 0 , 30 " );
 			/* PDF AUSGABE */
 			ob_clean (); // ausgabepuffer leeren
 			header ( "Content-type: application/pdf" ); // wird von MSIE ignoriert
-			include_once ('pdfclass/class.ezpdf.php');
+			//include_once ('pdfclass/class.ezpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$pdf->ezSetCmMargins ( 4.5, 1, 1, 1 );
 			$berlus_schrift = 'pdfclass/fonts/Times-Roman.afm';

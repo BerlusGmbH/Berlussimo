@@ -3048,7 +3048,7 @@ class mietanpassung {
 		$ber->B_NEUE_ENDMIETE_A = nummer_punkt2komma ( $ber->B_NEUE_ENDMIETE );
 		
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
@@ -3742,7 +3742,7 @@ class mietanpassung {
 		$ber->TAT_KOST_M_A = $ber->TAT_KOST_M;
 		
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
@@ -4307,7 +4307,7 @@ class mietanpassung {
 		$ber->L_ANSTIEG_BETRAG_A = nummer_punkt2komma ( $ber->L_ANSTIEG_BETRAG );
 		$ber->ANSTIEG_3J_A = nummer_punkt2komma ( $ber->ANSTIEG_3J );
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();

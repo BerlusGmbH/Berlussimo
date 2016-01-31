@@ -237,7 +237,7 @@ switch ($option) {
 		$bk = new bk ();
 		// $bk->pdf_uebersicht_profil('',3); //direkt;
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
@@ -315,7 +315,7 @@ switch ($option) {
 		break;
 	
 	case "serienbrief" :
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$bpdf = new b_pdf ();
 		$ber = new berlussimo_global ();
@@ -358,7 +358,7 @@ switch ($option) {
 		break;
 	
 	case "serienbrief_pdf" :
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$bpdf = new b_pdf ();
 		$bpdf->erstelle_brief_vorlage ( $_REQUEST ['vorlagen_dat'], 'Mietvertrag', $_SESSION [serienbrief_mvs], $option = '0' );

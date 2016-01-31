@@ -595,7 +595,7 @@ switch ($option) {
 	
 	case "test" :
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$pdf->ezSetCmMargins ( 4.5, 2.5, 2.5, 2.5 );
 		$berlus_schrift = 'pdfclass/fonts/Times-Roman.afm';

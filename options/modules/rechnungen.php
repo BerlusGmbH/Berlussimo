@@ -2836,7 +2836,7 @@ switch ($option) {
 			// print_r($_POST);
 			$anz = count ( $_POST ['uebernahme'] );
 			/* ezPDF-Klasse laden */
-			include_once ('pdfclass/class.ezpdf.php');
+			//include_once ('pdfclass/class.ezpdf.php');
 			/* Eigene PDF-Klasse laden */
 			include_once ('classes/class_bpdf.php');
 			/* Neues PDF-Objekt erstellen */

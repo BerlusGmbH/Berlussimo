@@ -222,7 +222,7 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 			$zaehler = 0;
 			
 			ob_clean (); // ausgabepuffer leeren
-			include_once ('pdfclass/class.ezpdf.php');
+			//include_once ('pdfclass/class.ezpdf.php');
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();
@@ -672,7 +672,7 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 		$numrows = mysql_numrows ( $result );
 		if ($numrows) {
 			ob_clean (); // ausgabepuffer leeren
-			include_once ('pdfclass/class.ezpdf.php');
+			//include_once ('pdfclass/class.ezpdf.php');
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();
@@ -1150,7 +1150,7 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 	}
 	function monatsansicht_pdf($monat, $jahr) {
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
@@ -1246,7 +1246,7 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 	}
 	function monatsansicht_pdf_mehrere($monat_a, $monat_e, $jahr) {
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();

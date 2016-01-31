@@ -895,7 +895,7 @@ class zeiterfassung {
 	function zettel2pdf_altOK($id) {
 		ob_clean (); // ausgabepuffer leeren
 		header ( "Content-type: application/pdf" ); // wird von MSIE ignoriert
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		/*
 		 * $pdf = new Cezpdf('a4', 'portrait');
 		 * $pdf->ezSetCmMargins(4.5,1,1,1);
@@ -1076,7 +1076,7 @@ class zeiterfassung {
 		}
 		
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();

@@ -1779,7 +1779,7 @@ else {
 	function saldenliste_mv_pdf($monat, $jahr) {
 		ob_clean (); // ausgabepuffer leeren
 		/* PDF AUSGABE */
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$pdf->selectFont ( 'pdfclass/fonts/Helvetica.afm' );
 		$pdf->ezSetCmMargins ( 4.5, 0, 0, 0 );
@@ -2522,7 +2522,7 @@ else {
 		// die();
 		
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'landscape' );
 		$bpdf = new b_pdf ();
@@ -2776,7 +2776,7 @@ else {
 			// die();
 			
 			ob_clean (); // ausgabepuffer leeren
-			include_once ('pdfclass/class.ezpdf.php');
+			//include_once ('pdfclass/class.ezpdf.php');
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();
@@ -3063,7 +3063,7 @@ else {
 		// die();
 		
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
@@ -3277,7 +3277,7 @@ else {
 			// print_r($n_arr);
 			
 			ob_clean (); // ausgabepuffer leeren
-			include_once ('pdfclass/class.ezpdf.php');
+			//include_once ('pdfclass/class.ezpdf.php');
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'landscape' );
 			$bpdf = new b_pdf ();
@@ -3499,7 +3499,7 @@ GROUP BY  `KOSTENTRAEGER_TYP` ,  `KOSTENTRAEGER_ID` ";
 			// print_r($n_arr);
 			
 			ob_clean (); // ausgabepuffer leeren
-			include_once ('pdfclass/class.ezpdf.php');
+			//include_once ('pdfclass/class.ezpdf.php');
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'landscape' );
 			$bpdf = new b_pdf ();
@@ -3722,7 +3722,7 @@ GROUP BY  `KOSTENTRAEGER_TYP` ,  `KOSTENTRAEGER_ID` ";
 	}
 	function nebenkosten_pdf_OK($monat, $jahr) {
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();

@@ -730,7 +730,7 @@ else {
 			// CASE ENDE
 			// #####################################################################################
 			case "mietkonto_gesamt_pdf" :
-				include ('pdfclass/class.ezpdf.php');
+				//include ('pdfclass/class.ezpdf.php');
 				echo "PDF-ausgabe";
 				// ###Grunddaten zum MV holen d.h. mietvertrag von, bis #########
 				$buchung = new mietkonto ();

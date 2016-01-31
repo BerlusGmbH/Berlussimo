@@ -190,7 +190,7 @@ switch ($option) {
 			$ms_jahr = $man->get_ms_jahr ();
 			
 			ob_clean (); // ausgabepuffer leeren
-			include_once ('pdfclass/class.ezpdf.php');
+			//include_once ('pdfclass/class.ezpdf.php');
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();

@@ -23,9 +23,9 @@
  * leider die Funktionen und vars nicht in Deutsch
  */
 include_once ("config.inc.php");
-if (file_exists ( 'pdfclass/class.ezpdf.php' )) {
-	include_once ('pdfclass/class.ezpdf.php');
-}
+//if (file_exists ( 'pdfclass/class.ezpdf.php' )) {
+//	include_once ('pdfclass/class.ezpdf.php');
+//}
 if (file_exists ( 'classes/class_bpdf.php' )) {
 	include_once ('classes/class_bpdf.php');
 }
@@ -3708,7 +3708,7 @@ else {
 	}
 	function pdf_alle_mietkontenblaetter($objekt_id) {
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		include_once ('classes/class_mahnungen.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
@@ -4395,7 +4395,7 @@ else {
 	
 	/* Mit dieser Funktion fügt man ein Mitkontenblatt in das vorhandene PDF-Dokument hinzu */
 	function mietkontenblatt2pdf($pdf, $mv_id) {
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		$a = new miete ();
 		$a->mietkonto_berechnung ( $mv_id );
 		
@@ -4798,7 +4798,7 @@ else {
 		return $pdf;
 	}
 	function hv_pdf_kopf() {
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$pdf->ezSetCmMargins ( 4.5, 1, 1, 1 );
 		$berlus_schrift = 'pdfclass/fonts/Times-Roman.afm';
