@@ -1366,7 +1366,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 		return $end_saldo;
 	}
 	function mietkonten_blatt_pdf($mv_id) {
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
 		$berlus_schrift = 'pdfclass/fonts/Times-Roman.afm';
@@ -1976,7 +1976,7 @@ else {
 		}
 		
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
@@ -2234,7 +2234,7 @@ else {
 	
 	/* Mit dieser Funktion f�gt man ein Mitkontenblatt in das vorhandene PDF-Dokument hinzu */
 	function mietkontenblatt2pdf($pdf, $mv_id) {
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		$a = new miete ();
 		$a->mietkonto_berechnung ( $mv_id );
 		
@@ -2637,7 +2637,7 @@ else {
 		return $pdf;
 	}
 	function hv_pdf_kopf() {
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$pdf->ezSetCmMargins ( 4.5, 1, 1, 1 );
 		$berlus_schrift = 'pdfclass/fonts/Times-Roman.afm';

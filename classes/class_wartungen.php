@@ -494,7 +494,7 @@ ORDER BY `N_WARTUNG1` ASC" );
 			
 			$this->get_wplan_info ( $plan_id );
 			
-			include_once ('pdfclass/class.ezpdf.php');
+			//include_once ('pdfclass/class.ezpdf.php');
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();

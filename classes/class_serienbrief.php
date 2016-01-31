@@ -17,9 +17,9 @@
  * @lastmodified $Date$
  * 
  */
-if (file_exists ( 'pdfclass/class.ezpdf.php' )) {
-	include_once ('pdfclass/class.ezpdf.php');
-}
+//if (file_exists ( 'pdfclass/class.ezpdf.php' )) {
+//	include_once ('pdfclass/class.ezpdf.php');
+//}
 if (file_exists ( 'classes/class_bpdf.php' )) {
 	include_once ('classes/class_bpdf.php');
 }

@@ -2207,7 +2207,7 @@ else {
 		$p->get_partner_info ( $this->rechnung_aussteller_partner_id );
 		
 		/* ezPDF-Klasse laden */
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		/* Eigene PDF-Klasse laden */
 		include_once ('classes/class_bpdf.php');
 		/* Neues PDF-Objekt erstellen */
@@ -3219,7 +3219,7 @@ else {
 		);
 		
 		/* ezPDF-Klasse laden */
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		/* Eigene PDF-Klasse laden */
 		include_once ('classes/class_bpdf.php');
 		/* Neues PDF-Objekt erstellen */
@@ -3370,7 +3370,7 @@ else {
 		);
 		
 		/* ezPDF-Klasse laden */
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		/* Eigene PDF-Klasse laden */
 		include_once ('classes/class_bpdf.php');
 		/* Neues PDF-Objekt erstellen */
