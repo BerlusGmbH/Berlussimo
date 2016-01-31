@@ -87,6 +87,7 @@ class mietkonto {
 	/* DB Verbindung */
 	function connectToBase() {
 		mysql_connect ( DB_HOST, DB_USER, DB_PASS );
+		mysql_set_charset('utf8',$con);
 		mysql_select_db ( DB_NAME );
 	}
 	/* Datumsfunktionen */
