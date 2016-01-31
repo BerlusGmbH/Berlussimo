@@ -137,7 +137,7 @@ class lager_v {
 				$pdf = new Cezpdf ( 'a4', 'landscape' );
 				$bpdf = new b_pdf ();
 				$_SESSION ['partner_id'] = $ll->lager_partner_id;
-				$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'pdfclass/fonts/Helvetica.afm', 6 );
+				$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'Helvetica.afm', 6 );
 				$p = new partners ();
 				$p->get_partner_info ( $_SESSION [partner_id] );
 				$datum = date ( "d.m.Y" );

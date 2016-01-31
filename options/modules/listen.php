@@ -289,7 +289,7 @@ switch ($option) {
 		// die();
 		$pdf = new Cezpdf ( 'a4', 'landscape' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'Helvetica.afm', 6 );
 		$pdf->ezStopPageNumbers ();
 		$li = new listen ();
 		// die('SIVAC');
@@ -310,7 +310,7 @@ switch ($option) {
 		
 		$pdf = new Cezpdf ( 'a4', 'landscape' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'Helvetica.afm', 6 );
 		$pdf->ezStopPageNumbers ();
 		$objekt_id = $_SESSION ['objekt_id'];
 		$o = new objekt ();

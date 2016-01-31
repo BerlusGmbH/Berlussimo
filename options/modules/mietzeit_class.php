@@ -1371,7 +1371,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 		$pdf->ezSetCmMargins ( 4.0, 2.5, 2.5, 2.5 );
 		$berlus_schrift = 'pdfclass/fonts/Times-Roman.afm';
 		$text_schrift = 'pdfclass/fonts/Arial.afm';
-		$pdf->addJpegFromFile ( 'pdfclass/logo_hv_sw.jpg', 220, 750, 175, 100 );
+		$pdf->addJpegFromFile ( 'includes/logos/logo_hv_sw.jpg', 220, 750, 175, 100 );
 		// $pdf->addJpgFromFile('pdfclass/logo_262_150_sw1.jpg', 300, 500, 250, 150);
 		$pdf->setLineStyle ( 0.5 );
 		$pdf->selectFont ( $berlus_schrift );
@@ -1441,7 +1441,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 							$pdf->addText ( 170, 42, 6, "BERLUS HAUSVERWALTUNG �  Fontanestr. 1 � 14193 Berlin � Inhaber Wolfgang Wehrheim" );
 							$pdf->addText ( 150, 35, 6, "Bankverbindung: Dresdner Bank Berlin � BLZ: 100  800  00 � Konto-Nr.: 05 804 000 00 � Steuernummer: 24/582/61188" );
 							$pdf->ezNewPage ();
-							$pdf->addJpegFromFile ( 'pdfclass/logo_hv_sw.jpg', 220, 750, 175, 100 );
+							$pdf->addJpegFromFile ( 'includes/logos/logo_hv_sw.jpg', 220, 750, 175, 100 );
 							// $pdf->addJpgFromFile('pdfclass/logo_262_150_sw1.jpg', 300, 500, 250, 150);
 							$pdf->setLineStyle ( 0.5 );
 							$pdf->selectFont ( $berlus_schrift );
@@ -1627,7 +1627,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 							$pdf->addText ( 170, 42, 6, "BERLUS HAUSVERWALTUNG �  Fontanestr. 1 � 14193 Berlin � Inhaber Wolfgang Wehrheim" );
 							$pdf->addText ( 150, 35, 6, "Bankverbindung: Dresdner Bank Berlin � BLZ: 100  800  00 � Konto-Nr.: 05 804 000 00 � Steuernummer: 24/582/61188" );
 							$pdf->ezNewPage ();
-							$pdf->addJpegFromFile ( 'pdfclass/logo_hv_sw.jpg', 220, 750, 175, 100 );
+							$pdf->addJpegFromFile ( 'includes/logos/logo_hv_sw.jpg', 220, 750, 175, 100 );
 							// $pdf->addJpgFromFile('pdfclass/logo_262_150_sw1.jpg', 300, 500, 250, 150);
 							$pdf->setLineStyle ( 0.5 );
 							$pdf->selectFont ( $berlus_schrift );
@@ -1980,7 +1980,7 @@ else {
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		
 		$pdf->ezText ( "Mietkonto Einheit : <b>$mv->einheit_kurzname</b>", 10 );
 		$pdf->ezText ( "Mieter: <b>$mv->personen_name_string</b>", 10 );
@@ -2164,7 +2164,7 @@ else {
 		            // include_once('classes/class_bpdf.php');
 		            // $pdf = new Cezpdf('a4', 'portrait');
 		            // $bpdf = new b_pdf;
-		            // $bpdf->b_header($pdf, 'Partner', $_SESSION[partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6);
+		            // $bpdf->b_header($pdf, 'Partner', $_SESSION[partner_id], 'portrait', 'Helvetica.afm', 6);
 		
 		$pdf->ezText ( "Mietkonto Einheit : <b>$mv->einheit_kurzname</b>", 10 );
 		$pdf->ezText ( "Mieter: <b>$mv->personen_name_string</b>", 10 );
@@ -2642,7 +2642,7 @@ else {
 		$pdf->ezSetCmMargins ( 4.5, 1, 1, 1 );
 		$berlus_schrift = 'pdfclass/fonts/Times-Roman.afm';
 		$text_schrift = 'pdfclass/fonts/Arial.afm';
-		$pdf->addJpegFromFile ( 'pdfclass/logo_hv_sw.jpg', 220, 750, 175, 100 );
+		$pdf->addJpegFromFile ( 'includes/logos/logo_hv_sw.jpg', 220, 750, 175, 100 );
 		// $pdf->addJpgFromFile('pdfclass/logo_262_150_sw1.jpg', 300, 500, 250, 150);
 		$pdf->setLineStyle ( 0.5 );
 		$pdf->selectFont ( $berlus_schrift );

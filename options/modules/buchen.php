@@ -600,7 +600,7 @@ switch ($option) {
 		$pdf->ezSetCmMargins ( 4.5, 2.5, 2.5, 2.5 );
 		$berlus_schrift = 'pdfclass/fonts/Times-Roman.afm';
 		$text_schrift = 'pdfclass/fonts/Arial.afm';
-		$pdf->addJpegFromFile ( 'pdfclass/hv_logo198_80.jpg', 450, 780, 100, 42 );
+		$pdf->addJpegFromFile ( 'includes/logos/hv_logo198_80.jpg', 450, 780, 100, 42 );
 		$pdf->setLineStyle ( 0.5 );
 		$pdf->selectFont ( $berlus_schrift );
 		$pdf->addText ( 42, 743, 6, "BERLUS HAUSVERWALTUNG - Fontanestr. 1 - 14193 Berlin" );

@@ -1418,7 +1418,7 @@ class sepa {
 			/* PDF */
 			$pdf = new Cezpdf ( 'a4', 'landscape' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'landscape', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'landscape', 'Helvetica.afm', 6 );
 			$this->footer_zahlungshinweis = $bpdf->zahlungshinweis;
 			$pdf->ezStopPageNumbers (); // seitennummerirung beenden
 			$p = new partners ();
@@ -2796,7 +2796,7 @@ AND  `AKTUELL` =  '1'" );
 			/* PDF */
 			$pdf = new Cezpdf ( 'a4', 'landscape' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'Helvetica.afm', 6 );
 			
 			$pdf->ezText ( "SEPA-Datei: $filename", 12 );
 			$pdf->ezText ( "Geldkonto: <b>$this->geldkonto_bez $this->IBAN1 $this->BIC</b>", 12 );

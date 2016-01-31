@@ -110,7 +110,7 @@ class werkzeug {
 		$arr = $this->werkzeugliste_arr ( $b_id );
 		$pdf = new Cezpdf ( 'a4', 'landscape' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'Helvetica.afm', 6 );
 		
 		$anz = count ( $arr );
 		for($a = 0; $a < $anz; $a ++) {
@@ -288,7 +288,7 @@ class werkzeug {
 		$arr = $this->werkzeugliste_arr ( $b_id );
 		$pdf = new Cezpdf ( 'a4', 'landscape' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'Helvetica.afm', 6 );
 		
 		$anz = count ( $arr );
 		for($a = 0; $a < $anz; $a ++) {

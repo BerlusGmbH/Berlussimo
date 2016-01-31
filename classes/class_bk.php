@@ -1746,7 +1746,7 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		}
 		
 		$profil_zeilen_arr = $this->uebersicht_profil_arr ( $profil_id );
@@ -3109,7 +3109,7 @@ else {
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6 );
 		$this->footer_zahlungshinweis = $bpdf->zahlungshinweis;
 		
 		$pdf->ezStopPageNumbers ();

@@ -517,7 +517,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 			
 			$cols = array (
 					'EINHEIT_KURZNAME1' => 'Einheit',
@@ -594,7 +594,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'landscape' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'landscape', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'landscape', 'Helvetica.afm', 6 );
 			
 			$cols = array (
 					'EINHEIT_KURZNAME1' => 'Einheit',
@@ -730,7 +730,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
 				include_once ('classes/class_bpdf.php');
 				$pdf = new Cezpdf ( 'a4', 'landscape' );
 				$bpdf = new b_pdf ();
-				$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'landscape', 'pdfclass/fonts/Helvetica.afm', 6 );
+				$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'landscape', 'Helvetica.afm', 6 );
 				
 				// print_r($table_arr);
 				// die();
@@ -846,7 +846,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
 		
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		$pdf->ezStopPageNumbers ();
 		$pdf->ezSetDy ( - 20 );
 		$pdf->ezText ( "<b>CHECKLISTE</b>", 14 );
@@ -1618,7 +1618,7 @@ ORDER BY EINHEIT_KURZNAME";
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		$db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` ,EINHEIT_ID,  `EINHEIT_LAGE` , `EINHEIT_QM`, TYP FROM EINHEIT , HAUS, OBJEKT
 WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1'
 ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";

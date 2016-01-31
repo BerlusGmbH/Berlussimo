@@ -1573,7 +1573,7 @@ else {
 		// include_once('pdfclass/class.ezpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		// $bpdf->b_header($pdf, 'Partner', $_SESSION['partner_id'], 'portrait', 'pdfclass/fonts/Helvetica.afm', 5);
+		// $bpdf->b_header($pdf, 'Partner', $_SESSION['partner_id'], 'portrait', 'Helvetica.afm', 5);
 		// $pdf->ezStopPageNumbers(); //seitennummerirung beenden
 		
 		$pdf->addInfo ( 'Author', $_SESSION [username] );
@@ -1675,7 +1675,7 @@ else {
 		// include_once('pdfclass/class.ezpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		// $bpdf->b_header($pdf, 'Partner', $_SESSION['partner_id'], 'portrait', 'pdfclass/fonts/Helvetica.afm', 5);
+		// $bpdf->b_header($pdf, 'Partner', $_SESSION['partner_id'], 'portrait', 'Helvetica.afm', 5);
 		// $pdf->ezStopPageNumbers(); //seitennummerirung beenden
 		
 		$pdf->addInfo ( 'Author', $_SESSION [username] );
@@ -1781,10 +1781,10 @@ else {
 		/* PDF AUSGABE */
 		//include_once ('pdfclass/class.ezpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
-		$pdf->selectFont ( 'pdfclass/fonts/Helvetica.afm' );
+		$pdf->selectFont ( 'Helvetica.afm' );
 		$pdf->ezSetCmMargins ( 4.5, 0, 0, 0 );
 		/* Kopfzeile */
-		$pdf->addJpegFromFile ( 'pdfclass/logo_hv_sw.jpg', 220, 750, 175, 100 );
+		$pdf->addJpegFromFile ( 'includes/logos/logo_hv_sw.jpg', 220, 750, 175, 100 );
 		$pdf->setLineStyle ( 0.5 );
 		$pdf->addText ( 86, 743, 6, "BERLUS HAUSVERWALTUNG * Fontanestr. 1 * 14193 Berlin * Inhaber Wolfgang Wehrheim * Telefon: 89784477 * Fax: 89784479 * Email: info@berlus.de" );
 		$pdf->line ( 42, 750, 550, 750 );
@@ -2006,7 +2006,7 @@ else {
 						if ($zeilen_pro_seite == $aktuelle_zeile) {
 							$pdf->ezNewPage ();
 							/* Kopfzeile */
-							$pdf->addJpegFromFile ( 'pdfclass/logo_hv_sw.jpg', 220, 750, 175, 100 );
+							$pdf->addJpegFromFile ( 'includes/logos/logo_hv_sw.jpg', 220, 750, 175, 100 );
 							$pdf->setLineStyle ( 0.5 );
 							$pdf->addText ( 86, 743, 6, "BERLUS HAUSVERWALTUNG * Fontanestr. 1 * 14193 Berlin * Inhaber Wolfgang Wehrheim * Telefon: 89784477 * Fax: 89784479 * Email: info@berlus.de" );
 							$pdf->line ( 42, 750, 550, 750 );
@@ -2526,7 +2526,7 @@ else {
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'landscape' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'landscape', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'landscape', 'Helvetica.afm', 6 );
 		
 		include_once ('classes/class_mietentwicklung.php');
 		
@@ -2780,7 +2780,7 @@ else {
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 			
 			include_once ('classes/class_mietentwicklung.php');
 			
@@ -3067,7 +3067,7 @@ else {
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		
 		include_once ('classes/class_mietentwicklung.php');
 		
@@ -3281,7 +3281,7 @@ else {
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'landscape' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'landscape', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'landscape', 'Helvetica.afm', 6 );
 			
 			$count = count ( $n_arr );
 			$n_arr [$anz_mvs] ['SUMME_A'] = "<b>" . nummer_punkt2komma_t ( $summe_g ) . "</b>";
@@ -3385,7 +3385,7 @@ GROUP BY  `KOSTENTRAEGER_TYP` ,  `KOSTENTRAEGER_ID` ";
 		            // include_once('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6 );
 		
 		$cols = array (
 				'EINHEIT' => "EINHEIT",
@@ -3503,7 +3503,7 @@ GROUP BY  `KOSTENTRAEGER_TYP` ,  `KOSTENTRAEGER_ID` ";
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'landscape' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'landscape', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'landscape', 'Helvetica.afm', 6 );
 			
 			$count = count ( $n_arr );
 			$n_arr [$anz_mvs] ['SUMME_A'] = "<b>" . nummer_punkt2komma_t ( $summe_g ) . "</b>";
@@ -3726,7 +3726,7 @@ GROUP BY  `KOSTENTRAEGER_TYP` ,  `KOSTENTRAEGER_ID` ";
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		
 		include_once ('classes/class_mietentwicklung.php');
 		
