@@ -181,7 +181,7 @@ LIMIT 0 , 1";
 	
 	case "finde_partner" :
 		// header("Content-Type: text/html; charset=ISO-8859-1");
-		// header('Content-Type: text/plain; charset=UTF-8'); //wichtig f�r die Umlaute in Dropdownfeldern
+		// header('Content-Type: text/plain; charset=UTF-8'); //wichtig für die Umlaute in Dropdownfeldern
 		if (isset ( $_REQUEST ['suchstring'] ) && ! empty ( $_REQUEST ['suchstring'] )) {
 			$suchstring = mysql_real_escape_string ( $_REQUEST ['suchstring'] );
 			if (strlen ( $suchstring ) > 2) {
