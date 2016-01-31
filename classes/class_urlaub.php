@@ -226,7 +226,7 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 			$cols = array (
 					'MITARBEITER' => "Mitarbeiter",
 					'MONATE' => "Monate",
@@ -676,7 +676,7 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 			
 			$summe_tage = 0;
 			$summe_krank = 0;
@@ -1154,7 +1154,7 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		$pdf->addText ( 43, 710, 6, "U -> Urlaub" );
 		$pdf->addText ( 43, 704, 6, "W -> Wochenende" );
 		$pdf->addText ( 43, 698, 6, "F -> Feiertag" );
@@ -1250,7 +1250,7 @@ WHERE URLAUB.ART = '$art' && URLAUB.BENUTZER_ID = BENUTZER.benutzer_id && URLAUB
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		
 		$pdf->addText ( 43, 710, 6, "U -> Urlaub" );
 		$pdf->addText ( 43, 704, 6, "W -> Wochenende" );

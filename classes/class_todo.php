@@ -1526,7 +1526,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		
 		$cols = array (
 				'POS' => "POS",
@@ -1648,7 +1648,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6 );
 		
 		$pdf->Rectangle ( 250, 630, 305, 80 );
 		$pdf->addText ( 252, 700, 10, "Arbeitsauftrag Nr: <b>$id</b> an" );

@@ -26,7 +26,7 @@ class listen {
 		$monat_name = monat2name ( $monat );
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		$pdf->ezStopPageNumbers (); // seitennummerirung beenden
 		$gk = new geldkonto_info ();
 		
@@ -389,7 +389,7 @@ ORDER BY EINHEIT_KURZNAME";
 		$monat_name = monat2name ( $monat );
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		$pdf->ezStopPageNumbers (); // seitennummerirung beenden
 		
 		$gk = new geldkonto_info ();
@@ -857,7 +857,7 @@ ORDER BY EINHEIT_KURZNAME";
 		$monat_name = monat2name ( $monat );
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6 );
 		$pdf->ezStopPageNumbers (); // seitennummerirung beenden
 		$gk = new geldkonto_info ();
 		$gk->geld_konto_ermitteln ( 'OBJEKT', $objekt_id );
@@ -1431,7 +1431,7 @@ ORDER BY EINHEIT_KURZNAME";
 		$monat_name = monat2name ( $monat );
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6 );
 		$pdf->ezStopPageNumbers (); // seitennummerirung beenden
 		$gk = new geldkonto_info ();
 		$gk->geld_konto_ermitteln ( 'OBJEKT', $objekt_id );
@@ -1959,7 +1959,7 @@ ORDER BY EINHEIT_KURZNAME";
 		$monat_name = monat2name ( $monat );
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6 );
 		$pdf->ezStopPageNumbers (); // seitennummerirung beenden
 		$gk = new geldkonto_info ();
 		$gk->geld_konto_ermitteln ( 'OBJEKT', $objekt_id );
@@ -3256,7 +3256,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 		$monat_name = monat2name ( $monat );
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6 );
 		$pdf->ezStopPageNumbers (); // seitennummerirung beenden
 		$gk = new geldkonto_info ();
 		$gk->geld_konto_ermitteln ( 'OBJEKT', $objekt_id );
@@ -5118,7 +5118,7 @@ ORDER BY EINHEIT_KURZNAME";
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'landscape' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'landscape', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'landscape', 'Helvetica.afm', 6 );
 			
 			$count = count ( $n_arr );
 			$n_arr [$anz_mvs] ['SUMME_A'] = "<b>" . nummer_punkt2komma_t ( $summe_g ) . "</b>";
@@ -5213,7 +5213,7 @@ ORDER BY EINHEIT_KURZNAME";
 	function saldo_berechnung_et($einheit_id) {
 		$pdf = new Cezpdf ( 'a4', 'landscape' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'Helvetica.afm', 6 );
 		$pdf->ezStopPageNumbers ();
 		
 		echo '<pre>';
@@ -5662,7 +5662,7 @@ ORDER BY EINHEIT_KURZNAME";
 			// die();
 			// $pdf = new Cezpdf('a4', 'landscape');
 			// $bpdf = new b_pdf;
-			// $bpdf->b_header($pdf, 'Partner', $_SESSION['partner_id'], 'landscape', 'pdfclass/fonts/Helvetica.afm', 6);
+			// $bpdf->b_header($pdf, 'Partner', $_SESSION['partner_id'], 'landscape', 'Helvetica.afm', 6);
 			// $pdf->ezStopPageNumbers();
 			
 			$cols = array (
@@ -6867,7 +6867,7 @@ ORDER BY EINHEIT_KURZNAME";
 			
 			$pdf = new Cezpdf ( 'a4', 'landscape' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'Helvetica.afm', 6 );
 			$pdf->ezStopPageNumbers ();
 			$gmon_akt = $this->et_tab [0] ['GMON'];
 			$gmon_obj = $this->et_tab [0] ['GMON_OBJ'];
@@ -7371,7 +7371,7 @@ ORDER BY EINHEIT_KURZNAME";
 			// die();
 			// $pdf = new Cezpdf('a4', 'landscape');
 			// $bpdf = new b_pdf;
-			// $bpdf->b_header($pdf, 'Partner', $_SESSION['partner_id'], 'landscape', 'pdfclass/fonts/Helvetica.afm', 6);
+			// $bpdf->b_header($pdf, 'Partner', $_SESSION['partner_id'], 'landscape', 'Helvetica.afm', 6);
 			// $pdf->ezStopPageNumbers();
 			
 			$cols = array (
@@ -7562,7 +7562,7 @@ ORDER BY EINHEIT_KURZNAME";
 			
 			$pdf = new Cezpdf ( 'a4', 'landscape' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'Helvetica.afm', 6 );
 			$pdf->ezStopPageNumbers ();
 			
 			$anz_e = count ( $ein_arr );
@@ -10066,7 +10066,7 @@ ORDER BY EINHEIT_KURZNAME";
 			
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6 );
 			$pdf->ezStopPageNumbers ();
 			
 			$anz_e = count ( $ein_arr );
@@ -10288,7 +10288,7 @@ ORDER BY EINHEIT_KURZNAME";
 			
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6 );
 			$pdf->ezStopPageNumbers ();
 			
 			$anz_e = count ( $ein_arr );
@@ -11084,7 +11084,7 @@ ORDER BY EINHEIT_KURZNAME";
 		$monat_name = monat2name ( $monat );
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $this->partner_id, 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $this->partner_id, 'portrait', 'Helvetica.afm', 6 );
 		$pdf->ezStopPageNumbers (); // seitennummerirung beenden
 		                           // $gk = new geldkonto_info();
 		                           // $gk->geld_konto_ermitteln('OBJEKT', $objekt_id);
@@ -12148,7 +12148,7 @@ ORDER BY EINHEIT_KURZNAME";
 			ob_clean (); // ausgabepuffer leeren
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6 );
 			
 			$cols = array (
 					'MONAT' => "Monat",
@@ -12209,7 +12209,7 @@ ORDER BY EINHEIT_KURZNAME";
 		
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		
 		$pdf->ezText ( "<b>$weg->empf_namen</b>", 10 );
 		$pdf->ezSetDy ( - 5 );

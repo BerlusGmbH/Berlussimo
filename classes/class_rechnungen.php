@@ -2216,7 +2216,7 @@ else {
 		$bpdf = new b_pdf ();
 		/* Header und Footer des Rechnungsaustellers in alle PDF-Seiten laden */
 		// die("hallo $this->rechnung_aussteller_partner_id");
-		$bpdf->b_header ( $pdf, 'Partner', $this->rechnung_aussteller_partner_id, 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $this->rechnung_aussteller_partner_id, 'portrait', 'Helvetica.afm', 6 );
 		
 		$table_arr = $this->rechnungs_positionen_arr ( $beleg_nr );
 		$anz = count ( $table_arr );
@@ -3227,7 +3227,7 @@ else {
 		/* Neue Instanz von b_pdf */
 		$bpdf = new b_pdf ();
 		/* Header und Footer des Rechnungsaustellers in alle PDF-Seiten laden */
-		$bpdf->b_header ( $pdf, $von_typ, $von_id, 'landscape', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, $von_typ, $von_id, 'landscape', 'Helvetica.afm', 6 );
 		
 		$all = $pdf->openObject ();
 		$pdf->saveState ();
@@ -3378,7 +3378,7 @@ else {
 		/* Neue Instanz von b_pdf */
 		$bpdf = new b_pdf ();
 		/* Header und Footer des Rechnungsaustellers in alle PDF-Seiten laden */
-		$bpdf->b_header ( $pdf, $von_typ, $von_id, 'landscape', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, $von_typ, $von_id, 'landscape', 'Helvetica.afm', 6 );
 		
 		$all = $pdf->openObject ();
 		$pdf->saveState ();

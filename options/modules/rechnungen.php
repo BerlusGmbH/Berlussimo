@@ -2845,7 +2845,7 @@ switch ($option) {
 			$bpdf = new b_pdf ();
 			/* Header und Footer des Rechnungsaustellers in alle PDF-Seiten laden */
 			// die("hallo $this->rechnung_aussteller_partner_id");
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6 );
 			
 			$pdf->ezStopPageNumbers ();
 			

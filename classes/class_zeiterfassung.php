@@ -1083,7 +1083,7 @@ class zeiterfassung {
 		
 		$this->stundenzettel_grunddaten ( $id );
 		$this->bp_partner_id = $this->get_partner_id_benutzer ( $this->st_benutzer_id );
-		$bpdf->b_header ( $pdf, 'Partner', $this->bp_partner_id, 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $this->bp_partner_id, 'portrait', 'Helvetica.afm', 6 );
 		// $pdf = $this->pdf_header($this->bp_partner_id);
 		
 		$p = new partners ();
@@ -1498,7 +1498,7 @@ class zeiterfassung {
 		$pdf->ezSetCmMargins ( 4.5, 1, 1, 1 );
 		$berlus_schrift = 'pdfclass/fonts/Times-Roman.afm';
 		$text_schrift = 'pdfclass/fonts/Arial.afm';
-		$pdf->addJpegFromFile ( 'pdfclass/logo_hv_sw.jpg', 220, 750, 175, 100 );
+		$pdf->addJpegFromFile ( 'includes/logos/logo_hv_sw.jpg', 220, 750, 175, 100 );
 		// $pdf->addJpgFromFile('pdfclass/logo_262_150_sw1.jpg', 300, 500, 250, 150);
 		$pdf->setLineStyle ( 0.5 );
 		$pdf->selectFont ( $berlus_schrift );

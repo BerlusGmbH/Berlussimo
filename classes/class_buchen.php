@@ -267,7 +267,7 @@ class buchen {
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		for($b = 0; $b < $anz_art; $b ++) {
 			$art = $konto_arten_arr [$b];
 			$pdf->ezTable ( $new_arr [$art] );
@@ -1331,7 +1331,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		$p = new partners ();
 		$datum_heute = date ( "d.m.Y" );
 		$p->get_partner_info ( $_SESSION ['partner_id'] );
@@ -1551,7 +1551,7 @@ else {
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		
 		if ($monat == null) {
 			$result = mysql_query ( "SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, MWST_ANTEIL,VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y') = '$ja' && AKTUELL='1' ORDER BY G_BUCHUNGSNUMMER ASC" );
@@ -1917,7 +1917,7 @@ else {
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		$pdf->addText ( 43, 735, 6, "$g->geldkonto_bezeichnung" );
 		$pdf->addText ( 43, 728, 6, "KNr:$g->kontonummer BLZ:$g->blz" );
 		$datum_heute = date ( "d.m.Y" );
@@ -2148,7 +2148,7 @@ else {
 			$pdf->ezSetCmMargins ( 4.5, 2.5, 2.5, 2.5 );
 			$berlus_schrift = './fonts/Times-Roman.afm';
 			$text_schrift = './fonts/Arial.afm';
-			$pdf->addJpegFromFile ( 'pdfclass/hv_logo198_80.jpg', 450, 780, 100, 42 );
+			$pdf->addJpegFromFile ( 'includes/logos/hv_logo198_80.jpg', 450, 780, 100, 42 );
 			$pdf->setLineStyle ( 0.5 );
 			$pdf->selectFont ( $berlus_schrift );
 			$pdf->addText ( 42, 743, 6, "BERLUS HAUSVERWALTUNG - Fontanestr. 1 - 14193 Berlin" );
@@ -2399,10 +2399,10 @@ else {
 			/* PDF AUSGABE */
 			//include_once ('pdfclass/class.ezpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
-			$pdf->selectFont ( 'pdfclass/fonts/Helvetica.afm' );
+			$pdf->selectFont ( 'Helvetica.afm' );
 			$pdf->ezSetCmMargins ( 4.5, 0, 0, 0 );
 			/* Kopfzeile */
-			$pdf->addJpegFromFile ( 'pdfclass/logo_hv_sw.jpg', 220, 750, 175, 100 );
+			$pdf->addJpegFromFile ( 'includes/logos/logo_hv_sw.jpg', 220, 750, 175, 100 );
 			$pdf->setLineStyle ( 0.5 );
 			$pdf->addText ( 86, 743, 6, "BERLUS HAUSVERWALTUNG * Fontanestr. 1 * 14193 Berlin * Inhaber Wolfgang Wehrheim * Telefon: 89784477 * Fax: 89784479 * Email: info@berlus.de" );
 			$pdf->line ( 42, 750, 550, 750 );
@@ -2831,7 +2831,7 @@ LIMIT 0 , 1" );
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6 );
 			$datum_heute = date ( "d.m.Y" );
 			$p = new partners ();
 			$p->get_partner_info ( $_SESSION ['partner_id'] );
@@ -3082,7 +3082,7 @@ LIMIT 0 , 1" );
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6 );
 			$datum_heute = date ( "d.m.Y" );
 			$p = new partners ();
 			$p->get_partner_info ( $_SESSION ['partner_id'] );
@@ -3390,7 +3390,7 @@ LIMIT 0 , 1" );
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 			
 			$g = new geldkonto_info ();
 			$summe = 0;

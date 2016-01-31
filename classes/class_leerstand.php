@@ -32,7 +32,7 @@ class leerstand {
 		
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		
 		$monatsname = monat2name ( $monat );
 		$l_tag = letzter_tag_im_monat ( $monat, $jahr );
@@ -110,7 +110,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC" );
 		
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		$pdf->ezStopPageNumbers ();
 		$pdf->ezText ( "EINHEIT:", 14 );
 		$pdf->ezSetMargins ( 0, 0, 150, 0 );
@@ -246,7 +246,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC" );
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		if (empty ( $tab_arr )) {
 			$tab_arr = $this->interessenten_tab_arr ();
 		}
@@ -348,14 +348,14 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC" );
 		
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6 );
 		$pdf->ezStopPageNumbers ();
 		// $pdf->setStrokeColor(0/255,0/255,0/255);
 		// $pdf->setColor(0/255,0/255,0/255);
 		$bpdf = new b_pdf ();
 		// $pdf->ezSetMargins(0,70,30,30);
-		// $pdf->selectFont("pdfclass/fonts/Helvetica.afm");
-		// $bpdf->b_header($pdf, 'Partner', $_SESSION[partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6);
+		// $pdf->selectFont("Helvetica.afm");
+		// $bpdf->b_header($pdf, 'Partner', $_SESSION[partner_id], 'portrait', 'Helvetica.afm', 6);
 		// $pdf->setColor(64,42,27);
 		// $pdf->setStrokeColor($tone,1,$tone);
 		/*

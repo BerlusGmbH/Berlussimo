@@ -3019,7 +3019,7 @@ class weg {
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		// $this->footer_zahlungshinweis = $bpdf->zahlungshinweis;
 		
 		$pdf->ezStopPageNumbers (); // seitennummerirung beenden
@@ -3111,7 +3111,7 @@ class weg {
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		$this->hausgeld_kontoauszug_pdf ( $pdf, $eigentuemer_id, 0 ); // null für keine neue Seite
 		if (isset ( $_REQUEST ['jahr'] )) {
 			$this->hg_ist_soll_pdf ( $pdf, $eigentuemer_id );
@@ -3537,7 +3537,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
 		}
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'pdfclass/fonts/Helvetica.afm', 5 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 5 );
 		$pdf->ezStopPageNumbers (); // seitennummerirung beenden
 		$p = new partners ();
 		$p->get_partner_info ( $_SESSION ['partner_id'] );
@@ -5011,7 +5011,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		$this->footer_zahlungshinweis = $bpdf->zahlungshinweis;
 		$pdf->setColor ( 0.6, 0.6, 0.6 );
 		$pdf->filledRectangle ( 50, 690, 500, 15 );
@@ -5407,7 +5407,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		$this->footer_zahlungshinweis = $bpdf->zahlungshinweis;
 		$pdf->setColor ( 0.6, 0.6, 0.6 );
 		$pdf->filledRectangle ( 50, 690, 500, 15 );
@@ -6479,7 +6479,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		$pdf->ezStopPageNumbers (); // seitennummerirung beenden
 		$p = new partners ();
 		$p->get_partner_info ( $_SESSION ['partner_id'] );
@@ -7338,7 +7338,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		// $this->footer_zahlungshinweis = $bpdf->zahlungshinweis;
 		$pdf->ezStopPageNumbers (); // seitennummerirung beenden
 		$p = new partners ();
@@ -9339,7 +9339,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
 		
 		// $pdf = new Cezpdf('a4', 'portrait');
 		// $bpdf = new b_pdf;
-		// $bpdf->b_header($pdf, 'Partner', $_SESSION['partner_id'], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6);
+		// $bpdf->b_header($pdf, 'Partner', $_SESSION['partner_id'], 'portrait', 'Helvetica.afm', 6);
 		// $pdf->ezStopPageNumbers();
 		
 		$numrows = mysql_numrows ( $result );
@@ -9553,7 +9553,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
 		
 		$pdf = new Cezpdf ( 'a4', 'landscape' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'pdfclass/fonts/Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'Helvetica.afm', 6 );
 		// $pdf->ezStopPageNumbers();
 		$pdf->ezSetDy ( 15 ); // abstand
 		$pdf->ezText ( "Objektname: $o->objekt_name, Gesamtanteile: $objekt_mea MEA", 12 );
@@ -9737,7 +9737,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
 		
 		$pdf = new Cezpdf ( 'a4', 'landscape' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'pdfclass/fonts/Helvetica.afm', 5 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'Helvetica.afm', 5 );
 		$pdf->ezStopPageNumbers (); // seitennummerirung beenden
 		$p = new partners ();
 		$p->get_partner_info ( $_SESSION ['partner_id'] );

@@ -761,10 +761,10 @@ else {
 				// ##erste seite
 				$pdf = new Cezpdf ( 'a4', 'portrait' );
 				$pdf->ezSetCmMargins ( 4.3, 0, 1.5, 2.5 );
-				$berlus_schrift = './fonts/Times-Roman.afm';
-				$text_schrift = './fonts/Helvetica.afm';
+				$berlus_schrift = 'Times-Roman.afm';
+				$text_schrift = 'Helvetica.afm';
 				// links,
-				$pdf->addJpegFromFile ( 'Slogo_78_31.jpg', 190, 730, 200, 80 );
+				$pdf->addJpegFromFile ( 'includes/logos/Slogo_78_31.jpg', 190, 730, 200, 80 );
 				$pdf->setLineStyle ( 0.5 );
 				// line(x1,y1,x2,y2) /links anfang hoehe weite hoehe
 				$pdf->line ( 42, 722, 550, 722 );

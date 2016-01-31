@@ -140,7 +140,7 @@ class b_pdf {
 			
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 			$pdf->ezStopPageNumbers (); // seitennummerierung beenden
 			
 			for($index = 0; $index < sizeof ( $empf_id_arr ); $index ++) {
@@ -253,7 +253,7 @@ class b_pdf {
 					/* Kopf */
 					
 					$pdf_einzeln = new Cezpdf ( 'a4', 'portrait' );
-					$bpdf->b_header ( $pdf_einzeln, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+					$bpdf->b_header ( $pdf_einzeln, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 					$pdf_einzeln->ezStopPageNumbers (); // seitennummerirung beenden
 					
 					/* Faltlinie */

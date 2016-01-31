@@ -501,9 +501,9 @@ ORDER BY `N_WARTUNG1` ASC" );
 			$pdf->setLineStyle ( 1 );
 			if ($benutzer_id != '') {
 				$this->bp_partner_id = $z->get_partner_id_benutzer ( $benutzer_id );
-				$bpdf->b_header ( $pdf, 'Partner', $this->bp_partner_id, 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+				$bpdf->b_header ( $pdf, 'Partner', $this->bp_partner_id, 'portrait', 'Helvetica.afm', 6 );
 			} else {
-				$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+				$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 			}
 			
 			$pdf->ezText ( "$benutzer_name", 10 );
@@ -1178,7 +1178,7 @@ ORDER BY `N_WARTUNG1` ASC" );
 			ob_clean ();
 			$pdf = new Cezpdf ( 'a4', 'landscape' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'Helvetica.afm', 6 );
 			
 			$cols = array (
 					'Z' => '',

@@ -286,7 +286,7 @@ switch ($objekte_raus) {
 			$oo->get_objekt_infos ( $_SESSION ['objekt_id'] );
 			
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6 );
 			
 			$st = new stammdaten ();
 			/* Objektstammdaten */

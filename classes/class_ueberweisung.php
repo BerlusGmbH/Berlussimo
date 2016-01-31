@@ -479,7 +479,7 @@ class ueberweisung {
 			
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'pdfclass/fonts/Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6 );
 			
 			$pdf->ezText ( "Übersicht DTAUS Überweisungen - DTAUS-ID: $dtaus_id", 14 );
 			$pdf->ezText ( "<b>Konto: $g->geldkonto_bezeichnung</b>", 10 );
