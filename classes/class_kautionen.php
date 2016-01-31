@@ -211,7 +211,7 @@ class kautionen {
 	}
 	function kautionsberechnung_pdf($kostentraeger_typ, $kostentraeger_id, $datum_bis, $zins_pj, $kap_prozent, $soli_prozent) {
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
@@ -716,7 +716,7 @@ class kautionen {
 			
 			// echo "<b>ENDSUMME $endsumme</b><br>";
 			if (isset ( $_REQUEST [pdf] )) {
-				include_once ('pdfclass/class.ezpdf.php');
+				//include_once ('pdfclass/class.ezpdf.php');
 				include_once ('classes/class_bpdf.php');
 				$pdf = new Cezpdf ( 'a4', 'portrait' );
 				$bpdf = new b_pdf ();

@@ -263,7 +263,7 @@ class buchen {
 		print_r ( $new_arr );
 		
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
@@ -1327,7 +1327,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 	}
 	function buchungsjournal_startzeit_pdf($geldkonto_id, $datum) {
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
@@ -1547,7 +1547,7 @@ else {
 	/* ja steht für Jahr */
 	function buchungsjournal_jahr_pdf($geldkonto_id, $ja, $monat = null) {
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
@@ -1913,7 +1913,7 @@ else {
 		// ###########
 		
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
@@ -2143,7 +2143,7 @@ else {
 			$k->konto_informationen ( $kostenkonto );
 			
 			/* PDF */
-			include_once ('pdfclass/class.ezpdf.php');
+			//include_once ('pdfclass/class.ezpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$pdf->ezSetCmMargins ( 4.5, 2.5, 2.5, 2.5 );
 			$berlus_schrift = './fonts/Times-Roman.afm';
@@ -2397,7 +2397,7 @@ else {
 			
 			ob_clean (); // ausgabepuffer leeren
 			/* PDF AUSGABE */
-			include_once ('pdfclass/class.ezpdf.php');
+			//include_once ('pdfclass/class.ezpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$pdf->selectFont ( 'pdfclass/fonts/Helvetica.afm' );
 			$pdf->ezSetCmMargins ( 4.5, 0, 0, 0 );
@@ -2827,7 +2827,7 @@ LIMIT 0 , 1" );
 			
 			$zaehler = 0;
 			
-			include_once ('pdfclass/class.ezpdf.php');
+			//include_once ('pdfclass/class.ezpdf.php');
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();
@@ -3021,7 +3021,7 @@ LIMIT 0 , 1" );
 		}
 	}
 	function monatsbericht_mit_ausgezogenen() {
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		echo "Monatsbericht Mieter - Monatsbericht Kostenkonten<br>";
 		echo "<h3>Aktuelle Mieterstatistik mit ausgezogenen Mietern<br></h3>";
 		$s = new statistik ();
@@ -3078,7 +3078,7 @@ LIMIT 0 , 1" );
 			// PDF#
 			$zaehler = 0;
 			
-			include_once ('pdfclass/class.ezpdf.php');
+			//include_once ('pdfclass/class.ezpdf.php');
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();
@@ -3386,7 +3386,7 @@ LIMIT 0 , 1" );
 		if ($numrows) {
 			
 			ob_clean (); // ausgabepuffer leeren
-			include_once ('pdfclass/class.ezpdf.php');
+			//include_once ('pdfclass/class.ezpdf.php');
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();

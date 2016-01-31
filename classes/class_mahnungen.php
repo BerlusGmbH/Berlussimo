@@ -548,7 +548,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 	function zahlungserinnerung_pdf($mv_id, $fristdatum, $geldkonto_id) {
 		// die("SIVAC");
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
@@ -681,7 +681,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 	function zahlungserinnerung_pdf_mehrere($mahnliste, $fristdatum, $geldkonto_id) {
 		// die('ZE');
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
@@ -975,7 +975,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 	}
 	function mahnung_pdf_mehrere($mahnliste, $fristdatum, $geldkonto_id, $mahngebuehr) {
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
@@ -1373,7 +1373,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 	}
 	function mahnung_pdf($mv_id, $fristdatum, $geldkonto_id, $mahngebuehr) {
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
@@ -1549,7 +1549,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 	}
 	function mahnung_pdf_mehrere_alt_OK($mahnliste, $fristdatum, $geldkonto_id, $mahngebuehr) {
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();

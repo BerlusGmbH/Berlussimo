@@ -2318,7 +2318,7 @@ class mietanpassung {
 		$ber->MIETE_3_JAHRE_A = nummer_punkt2komma ( $ber->MIETE_3_JAHRE );
 		
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();

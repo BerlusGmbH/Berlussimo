@@ -17,7 +17,7 @@
  * @lastmodified $Date$
  * 
  */
-include_once ('pdfclass/class.ezpdf.php');
+//include_once ('pdfclass/class.ezpdf.php');
 include_once ('classes/class_bpdf.php');
 include_once ('classes/class_leerstand.php');
 include_once ('classes/class_details.php');
@@ -5114,7 +5114,7 @@ ORDER BY EINHEIT_KURZNAME";
 			// print_r($n_arr);
 			
 			ob_clean (); // ausgabepuffer leeren
-			include_once ('pdfclass/class.ezpdf.php');
+			//include_once ('pdfclass/class.ezpdf.php');
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'landscape' );
 			$bpdf = new b_pdf ();

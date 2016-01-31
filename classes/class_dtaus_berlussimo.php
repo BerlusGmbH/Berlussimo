@@ -102,7 +102,7 @@ class dtaus_berlus {
 		$tab_arr [$anz] ['BLZ'] = 'Summe';
 		$tab_arr [$anz] ['BETRAG'] = nummer_punkt2komma_t ( $summe );
 		
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();

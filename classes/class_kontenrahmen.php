@@ -114,7 +114,7 @@ ORDER BY KONTO ASC" );
 	}
 	function konten_liste_anzeigen_pdf($kontenrahmen_id) {
 		ob_clean (); // ausgabepuffer leeren
-		include_once ('pdfclass/class.ezpdf.php');
+		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
