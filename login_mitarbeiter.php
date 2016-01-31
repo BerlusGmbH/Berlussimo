@@ -1,3 +1,3 @@
 <?php
-header('Location: index.php?login');
+header ( 'Location: index.php?login' );
 ?>

@@ -17,14 +17,12 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
-
-
-if(isset($_REQUEST["formular"])){
-switch($_REQUEST["formular"]) {
-
-    case "einheit":
-    include("options/formulare/form_einheit.php");
-    break;
-    }
+if (isset ( $_REQUEST ["formular"] )) {
+	switch ($_REQUEST ["formular"]) {
+		
+		case "einheit" :
+			include ("options/formulare/form_einheit.php");
+			break;
+	}
 }
 ?>

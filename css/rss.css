@@ -1,33 +1,37 @@
 rss {
-display: block;
-font-family: verdana, arial;
+	display: block;
+	font-family: verdana, arial;
 }
+
 title {
-display: block;
-margin: 5px;
-padding: 2px;
-color: red;
-border-bottom: 1px solid silver;
+	display: block;
+	margin: 5px;
+	padding: 2px;
+	color: red;
+	border-bottom: 1px solid silver;
 }
+
 link {
-display: block;
-font-size: small;
-padding-left: 10px;
+	display: block;
+	font-size: small;
+	padding-left: 10px;
 }
+
 item {
-display: block;
-padding: 2px 30px 2px 30px;
+	display: block;
+	padding: 2px 30px 2px 30px;
 }
+
 docs {
-display: block;
-background-color: #fff;
-margin: 20px;
-text-align: center;
-padding: 5px;
-color: #7f7f7f;
-border: 1px solid silver;
+	display: block;
+	background-color: #fff;
+	margin: 20px;
+	text-align: center;
+	padding: 5px;
+	color: #7f7f7f;
+	border: 1px solid silver;
 }
 /* all hidden elements */
 language, lastBuildDate, ttl, guid, category, description, pubDate {
-display: none;
+	display: none;
 }

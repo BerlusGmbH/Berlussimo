@@ -17,10 +17,9 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
-
-$f = new formular;
-echo "<div class=\"navi_leiste2\">"; 
-$f->erstelle_formular("Hauptmenü -> Betriebskosten & Nebenkostenabrechnung...", NULL);
+$f = new formular ();
+echo "<div class=\"navi_leiste2\">";
+$f->erstelle_formular ( "HauptmenÃ¼ -> Betriebskosten & Nebenkostenabrechnung...", NULL );
 echo "<a href=\"?daten=bk&option=wirtschaftseinheiten\">Alle Wirtschaftseinheiten</a>&nbsp;";
 echo "<a href=\"?daten=bk&option=wirtschaftseinheit_neu\">Neue Wirtschaftseinheit</a>&nbsp;";
 echo "<a href=\"?daten=bk&option=profile\">Alle Profile</a>&nbsp;";
@@ -34,7 +33,7 @@ echo "<a href=\"?daten=bk&option=anpassung_bk_nk\"><b>HK-BK eingeben</b></a>&nbs
 echo "<a href=\"?daten=bk&option=serienbrief\">Serienbrief</a>&nbsp;";
 echo "<a href=\"?daten=bk&option=serienbrief_vorlage_neu\">Neue Serienbriefvorlage</a>&nbsp;";
 echo "<a href=\"?daten=bk&option=form_profil_kopieren\">Profile kopieren</a>&nbsp;";
-$f->ende_formular();
+$f->ende_formular ();
 
 echo "</div>";
 

@@ -22,14 +22,12 @@
  * Das ist eine Test bzw. Spieledatei, aus der kann man viel lernen,
  * leider die Funktionen und vars nicht in Deutsch
  */
+function connect() {
+	$con = mysql_connect ( 'localhost', 'DBUSER', 'DBPASSWORD' ) or die ( mysql_error () );
+	mysql_set_charset('utf8',$con);
+	mysql_select_db ( 'DBNAME', $con ) or die ( mysql_error () );
+}
 
-
-function connect() 
-{ 
-$con= mysql_connect('localhost','DBUSER','DBPASSWORD') or die(mysql_error()); 
-      mysql_select_db('DBNAME',$con) or die(mysql_error()); 
-} 
-
-connect();
+connect ();
 
 ?>

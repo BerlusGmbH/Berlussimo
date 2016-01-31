@@ -1,142 +1,122 @@
+p a {
+	font-weight: normal;
+	outline: none;
+}
 
+p a:link, p a:visited {
+	color: #fff;
+	text-decoration: underline;
+}
 
+p a:hover {
+	color: #fff;
+	text-decoration: none;
+	background: #000;
+}
 
-p a
-        {
-        font-weight:normal;
-        outline:none;
-        }
-p a:link,
-p a:visited
-        {
-        color:#fff;
-        text-decoration:underline;
-        }
-p a:hover
-        {
-        color:#fff;
-        text-decoration:none;
-        background:#000;
-        }
-p a:active
-        {
-        color:#000;
-        text-decoration:underline;
-        }
+p a:active {
+	color: #000;
+	text-decoration: underline;
+}
 
-h1
-        {
-        font-weight:lighter;
-        font-family:georgia, times new roman, times, georgia, palatino, serif;
-        text-align:center;
-        margin-top:0.6em;
-        color:#000;
-        font-size:2em;
-        }
-h2
-        {
-        font-weight:lighter;
-        font-family:verdana,arial,sans-serif;
-        text-align:center;
-        margin-top:1em;
-        color:#333;
-        text-transform:uppercase;
-        letter-spacing:1px;
-        font-size:1.2em;
-        }
-h2 span
-        {
-        font-variant:small-caps;
-        text-transform:none;
-        }
-table
-        {
-        width: 100%;
-        padding: 0;
-        margin: 0 auto 1.5em auto;
-        border-left: 1px solid #767676;
-        border-collapse:collapse;
-        }
-.cs1
-        {
-        width:30em;
-        }
-.cs2
-        {
-        width:20em;
-        }
-.cs1 td,
-.cs2 td,
+h1 {
+	font-weight: lighter;
+	font-family: georgia, times new roman, times, georgia, palatino, serif;
+	text-align: center;
+	margin-top: 0.6em;
+	color: #000;
+	font-size: 2em;
+}
 
-caption
-        {
-        padding: 0 0 5px 0;
-        margin:0 auto;
-        width:auto;
-        font: italic 11px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-        text-align: right;
-        }
-th
-        {
-        font: bold 16px/22px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-        color: #fff;
-        border-right: 1px solid #767676;
-        border-bottom: 1px solid #767676;
-        border-top: 1px solid #767676;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        text-align: left;
-        padding: 8px 12px 4px 12px;
-        background: #484646 ;
-        vertical-align:middle;
-        }
-td.total
-        {
-        border-top: 0;
-        border-left: 0;
-        border-right: 1px solid #767676;
-        background: none;
-        text-align:right;
-        font-weight:bold;
-        text-transform:uppercase;
-        letter-spacing:1px;
-		font-size:12px;
-        }
-th.sortable,
-th.sortable-text,
-th.sortable-date,
-th.sortable-keep,
-th.sortable-date-dmy,
-th.sortable-numeric,
-th.sortable-currency,
-th.sortable-sortByTwelveHourTimestamp,
-th.sortable-sortIPAddress,
-th.sortable-sortEnglishLonghandDateFormat,
-th.sortable-sortScientificNotation,
-th.sortable-sortImage,
-th.sortable-sortFileSize,
-th.sortable-sortAlphaNumeric,
-th.sortable-sortEnglishDateTime
+h2 {
+	font-weight: lighter;
+	font-family: verdana, arial, sans-serif;
+	text-align: center;
+	margin-top: 1em;
+	color: #333;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-size: 1.2em;
+}
 
-        {
-        cursor:pointer;
-        background: #fff  no-repeat;
-        padding: 8px 12px 4px 16px;
-        }
-th.forwardSort
-        {
-        background:#fff  no-repeat 0 0;
-        }
-th.reverseSort
-        {
-        background:#fff  no-repeat 0 0;
-        }
-table thead th.forwardSort a,
-table thead th.reverseSort a
-        {
-        color:#000;
-        text-decoration:none;
-        }
+h2 span {
+	font-variant: small-caps;
+	text-transform: none;
+}
+
+table {
+	width: 100%;
+	padding: 0;
+	margin: 0 auto 1.5em auto;
+	border-left: 1px solid #767676;
+	border-collapse: collapse;
+}
+
+.cs1 {
+	width: 30em;
+}
+
+.cs2 {
+	width: 20em;
+}
+
+.cs1 td, .cs2 td, caption {
+	padding: 0 0 5px 0;
+	margin: 0 auto;
+	width: auto;
+	font: italic 11px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	text-align: right;
+}
+
+th {
+	font: bold 16px/22px "Trebuchet MS", Verdana, Arial, Helvetica,
+		sans-serif;
+	color: #fff;
+	border-right: 1px solid #767676;
+	border-bottom: 1px solid #767676;
+	border-top: 1px solid #767676;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	text-align: left;
+	padding: 8px 12px 4px 12px;
+	background: #484646;
+	vertical-align: middle;
+}
+
+td.total {
+	border-top: 0;
+	border-left: 0;
+	border-right: 1px solid #767676;
+	background: none;
+	text-align: right;
+	font-weight: bold;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-size: 12px;
+}
+
+th.sortable, th.sortable-text, th.sortable-date, th.sortable-keep, th.sortable-date-dmy,
+	th.sortable-numeric, th.sortable-currency, th.sortable-sortByTwelveHourTimestamp,
+	th.sortable-sortIPAddress, th.sortable-sortEnglishLonghandDateFormat,
+	th.sortable-sortScientificNotation, th.sortable-sortImage, th.sortable-sortFileSize,
+	th.sortable-sortAlphaNumeric, th.sortable-sortEnglishDateTime {
+	cursor: pointer;
+	background: #fff no-repeat;
+	padding: 8px 12px 4px 16px;
+}
+
+th.forwardSort {
+	background: #fff no-repeat 0 0;
+}
+
+th.reverseSort {
+	background: #fff no-repeat 0 0;
+}
+
+table thead th.forwardSort a, table thead th.reverseSort a {
+	color: #000;
+	text-decoration: none;
+}
 /*
 These styles should be added when very long tables are expected
 th.sort-active
@@ -150,68 +130,64 @@ th.sort-active a
         cursor:wait;
         }
 */
-th a
-        {
-        font: normal  "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-		text-decoration:none;
-        color: #fff;
-        background:transparent;
-        }
-td a
-        {
-        font: normal  "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-		text-decoration:none;
-        color:#000;
-        background:transparent;
-        }
-td img
-        {
-        margin:0 auto;
-        border:3px solid #ddd;
-        }
-td a:hover
-        {
-        color:#a84444;
-        border-bottom:1px dotted #a80000;
-        background:transparent;
-        }
-td
-        {
-        font: normal 12px Verdana, Arial, Helvetica, sans-serif;
-        border-right: 1px solid #767676;
-        border-bottom: 1px solid #767676;
-        padding: 6px 12px 6px 12px;
-        color: #000;
-        }
-td.lft
-        {
-        text-align:left;
-        }
-tr.alt
-        {
-        background: #F5FAFA;
-        color: #797268;
-        }
+th a {
+	font: normal "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	text-decoration: none;
+	color: #fff;
+	background: transparent;
+}
+
+td a {
+	font: normal "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	text-decoration: none;
+	color: #000;
+	background: transparent;
+}
+
+td img {
+	margin: 0 auto;
+	border: 3px solid #ddd;
+}
+
+td a:hover {
+	color: #a84444;
+	border-bottom: 1px dotted #a80000;
+	background: transparent;
+}
+
+td {
+	font: normal 12px Verdana, Arial, Helvetica, sans-serif;
+	border-right: 1px solid #767676;
+	border-bottom: 1px solid #767676;
+	padding: 6px 12px 6px 12px;
+	color: #000;
+}
+
+td.lft {
+	text-align: left;
+}
+
+tr.alt {
+	background: #F5FAFA;
+	color: #797268;
+}
 
 /* Poor old Internet Explorer 6 has a bug that means we can't use background images for the table rows
    as it trys to download the image each and every time that it is used (which means a 1000 row table
    will produce 1000 http requests for the image in question) */
-tr[class="alt"] td
-        {
-        background: #000  no-repeat;
-        }
-td[class~="alt"]
-        {
-        background: #edf3f3  no-repeat !important;
-        }
+tr[class="alt"] td {
+	background: #000 no-repeat;
+}
+
+td[class~="alt"] {
+	background: #edf3f3 no-repeat !important;
+}
 
 /* Image free rules for Internet Explorer < 7 */
-* html tr.alt td
-        {
-        background-color:#F5FAFA;
-        }
-* html tr td.alt,
-* html tr.alt td.alt
-        {
-        background-color:#edf3f3;
-        }
+* html tr.alt td {
+	background-color: #F5FAFA;
+}
+
+* html tr td.alt, * html tr.alt td.alt {
+	background-color: #edf3f3;
+}
