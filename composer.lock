@@ -1,0 +1,46 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "c403e0198c014b3fef6d8e2f41fbb08c",
+    "content-hash": "b35ec2f49c5fc9314e9410ffb31f8f72",
+    "packages": [
+        {
+            "name": "ros/ezpdf",
+            "version": "0.12.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/didaxRedux/php-ezPDF.git",
+                "reference": "ae793dc291a9266e56954666b99ea14f53c35b66"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/didaxRedux/php-ezPDF/zipball/ae793dc291a9266e56954666b99ea14f53c35b66",
+                "reference": "ae793dc291a9266e56954666b99ea14f53c35b66",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Porting of the well-known R&OS PDF class.",
+            "time": "2015-12-03 15:55:45"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
