@@ -77,7 +77,7 @@ function alle_mieter_auswaehlen() {
 
 
 </script>
-<?
+<?php
 include_once ("includes/allgemeine_funktionen.php");
 
 /* überprüfen ob Benutzer Zugriff auf das Modul hat */
