@@ -17,16 +17,15 @@
  * @lastmodified $Date: 2011-07-07 10:41:33 +0200 (Do, 07 Jul 2011) $
  * 
  */
-
-$f = new formular;
-echo "<div class=\"navi_leiste2\">"; 
-$f->erstelle_formular("Hauptmenü -> Zeiterfassung...", NULL);
+$f = new formular ();
+echo "<div class=\"navi_leiste2\">";
+$f->erstelle_formular ( "HauptmenÃ¼ -> Zeiterfassung...", NULL );
 
 echo "<a href=\"?daten=zeiterfassung&option=eigene_zettel\">Eigene Zettel</a>&nbsp;";
 echo "<a href=\"?daten=zeiterfassung&option=neuer_zettel\">Neuer Zettel</a>&nbsp;";
-#echo "<a href=\"?daten=zeiterfassung&option=stunden\">Stunden</a>&nbsp;";
-#echo "<a href=\"?daten=zeiterfassung&option=einheitenliste\">Einheitenliste</a>";
-$f->ende_formular();
+// echo "<a href=\"?daten=zeiterfassung&option=stunden\">Stunden</a>&nbsp;";
+// echo "<a href=\"?daten=zeiterfassung&option=einheitenliste\">Einheitenliste</a>";
+$f->ende_formular ();
 
 echo "</div>";
 

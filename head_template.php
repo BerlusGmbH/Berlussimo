@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * BERLUSSIMO
  *
@@ -17,5 +17,4 @@
  * @lastmodified $Date$
  * 
  */
-
 ?>

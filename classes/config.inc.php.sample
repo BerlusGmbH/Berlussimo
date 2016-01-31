@@ -23,8 +23,8 @@ define ("DB_PASS", "DB_Password");
 define ("DB_NAME", "Berlussimo_DB");
 define ("DB_HOST", "localhost");
 
-// Erg�nzungen f�r den FTP-Upload von Datenbanksicherungen
-// Die Felder sind nur dann auszuf�llen, wenn ein FTP-Upload stattfinden soll
+// Ergänzungen für den FTP-Upload von Datenbanksicherungen
+// Die Felder sind nur dann auszufüllen, wenn ein FTP-Upload stattfinden soll
 
 define ("FTP_SERVER", "");
 define ("FTP_USER", "");

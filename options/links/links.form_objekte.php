@@ -17,14 +17,13 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
-	
-$mieten = new mietkonto;
+$mieten = new mietkonto ();
 
 echo "<div class=\"navi_leiste2\">";
-$mieten->erstelle_formular("Hauptmenü -> Objekte...", NULL);
+$mieten->erstelle_formular ( "HauptmenÃ¼ -> Objekte...", NULL );
 echo "<a href=\"?daten=objekte_raus&objekte_raus=objekte_kurz\">Objektliste</a>&nbsp; ";
 echo "<a href=\"?daten=objekte_raus&objekte_raus=objekt_anlegen\">Objekte anlegen</a>&nbsp; ";
 echo "<a href=\"?daten=objekte_raus&objekte_raus=objekt_kopieren\">Objekt kopieren</a>&nbsp; ";
-$mieten->ende_formular();
+$mieten->ende_formular ();
 echo "</div>";
 ?>
