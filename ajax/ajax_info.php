@@ -52,7 +52,7 @@ include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_geldkonten.php");
 include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_kautionen.php");
 
 session_start ();
-header ( 'Content-Type: text/plain; charset=ISO-8859-1' );
+//header ( 'Content-Type: text/plain; charset=ISO-8859-1' );
 // wichtig für die Umlaute in Dropdownfeldern
 // ini_set('display_errors','On');
 /* Allgemeine Funktionsdatei laden */
@@ -1490,7 +1490,8 @@ function dropdown_pools($label, $name, $id, $js, $kos_typ, $kos_id) {
 	}
 }
 function connectToBase() {
-	mysql_connect ( DB_HOST, DB_USER, DB_PASS );
+	$con = mysql_connect ( DB_HOST, DB_USER, DB_PASS );
+	mysql_set_charset('utf8',$con);
 	mysql_select_db ( DB_NAME );
 }
 function get_wp_vorjahr_wert($objekt_id, $vorjahr, $kostenkonto) {

@@ -24,6 +24,7 @@
  */
 function connect() {
 	$con = mysql_connect ( 'localhost', 'DBUSER', 'DBPASSWORD' ) or die ( mysql_error () );
+	mysql_set_charset('utf8',$con);
 	mysql_select_db ( 'DBNAME', $con ) or die ( mysql_error () );
 }
 
