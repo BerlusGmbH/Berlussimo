@@ -31,9 +31,9 @@ define ( "DOC_ROOT", $_SERVER ['DOCUMENT_ROOT'] );
 include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/config.inc.php");
 include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/includes/config.php");
 /* KLASSEN */
-require __DIR__ . '/vendor/autoload.php';
+//require __DIR__ . '/vendor/autoload.php';
 //include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/pdfclass/class.ezpdf.php");
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_bpdf.php");
+//include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_bpdf.php");
 include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_person.php");
 include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_details.php");
 include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_weg.php");
