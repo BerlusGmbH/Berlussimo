@@ -307,7 +307,7 @@ class objekt {
 								}
 							}
 							
-							/* Mietvertr�ge */
+							/* Mietverträge */
 							$mv_arr = $ein->get_mietvertrag_ids ( $einheit_id );
 							if (is_array ( $mv_arr )) {
 								$anz_mv = count ( $mv_arr );
@@ -984,7 +984,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
 		$db_abfrage = "UPDATE OBJEKT SET OBJEKT_AKTUELL='0' WHERE OBJEKT_DAT='$objekt_dat'";
 		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 		
-		/* �nderung Speichern */
+		/* Änderung Speichern */
 		$db_abfrage = "INSERT INTO OBJEKT VALUES(NULL, '$objekt_id', '1', '$objekt_kurzname','$eigentuemer_id')";
 		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 		
@@ -1216,7 +1216,7 @@ WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC" );
 		$this->get_objekt_name ( $objekt_id );
 		$objekt_name = $this->objekt_name;
 		// echo "OBJEKTNAME $objekt_name SANEL";
-		// liste der h�user als array
+		// liste der häuser als array
 		$haeuser_arr = $this->haeuser_objekt_in_arr ( $objekt_id );
 		if (is_array ( $haeuser_arr )) {
 			for($a = 0; $a < count ( $haeuser_arr ); $a ++) {
@@ -1309,7 +1309,7 @@ class haus extends objekt {
 		$f->text_feld ( "Ort", "ort", "$this->haus_stadt", "50", 'ort', '' );
 		$f->text_feld ( "Plz", "plz", "$this->haus_plz", "10", 'plz', '' );
 		$this->haus_qm_a = nummer_punkt2komma ( $this->haus_qm );
-		$f->text_feld ( "Gr�sse in qm", "qm", "$this->haus_qm_a", "10", 'qm', '' );
+		$f->text_feld ( "Grösse in qm", "qm", "$this->haus_qm_a", "10", 'qm', '' );
 		
 		$o = new objekt ();
 		$o->dropdown_objekte ( 'Objekt', objekt_id, $this->objekt_name );
@@ -1610,7 +1610,7 @@ ORDER BY EINHEIT_KURZNAME";
 		// print_r($my_arr);
 		/*
 		 * $pdf->ezTable($table_arr,array('OBJEKT_NAME'=>'Objekt','KONTOSTAND1_1'=>"Kontostand $datum_jahresanfang",'ME_MONAT'=>"Mieten Einnahmen $monatname",'ME_JAHR'=>"Mieten Einnahmen $jahr", 'KOSTEN_MONAT'=>"Kosten $monatname",'KOSTEN_JAHR'=>"Kosten $jahr", 'KONTOSTAND_AKTUELL'=>"Kontostand")
-		 * ,'<b>Kosten & Einnahmen / Objekt (Tabellarische �bersicht)</b>', array('shaded'=>0, 'width'=>'500', 'justification'=>'right', 'cols'=>array(
+		 * ,'<b>Kosten & Einnahmen / Objekt (Tabellarische Übersicht)</b>', array('shaded'=>0, 'width'=>'500', 'justification'=>'right', 'cols'=>array(
 		 * 'KONTOSTAND1_1'=>array('justification'=>'right'),'ME_MONAT'=>array('justification'=>'right'), 'ME_MONAT'=>array('justification'=>'right'),'ME_JAHR'=>array('justification'=>'right'),'KOSTEN_MONAT'=>array('justification'=>'right'),'KOSTEN_JAHR'=>array('justification'=>'right'), 'KONTOSTAND_AKTUELL'=>array('justification'=>'right'))));
 		 */
 		
@@ -1629,7 +1629,7 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
 				'EINHEIT_KURZNAME' => 'Einheit',
 				'TYP' => 'Typ',
 				'EINHEIT_LAGE' => 'Lage',
-				'EINHEIT_QM' => 'Fl�che m�',
+				'EINHEIT_QM' => 'Fläche m²',
 				'MIETER' => 'Mieterinfos',
 				'MIETER' => 'Mieter',
 				'KONTAKT' => 'Kontakt' 
@@ -1746,7 +1746,7 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
 		}
 	}
 	
-	/* Alle Mietvertr�ge einer Einheit */
+	/* Alle Mietverträge einer Einheit */
 	function get_mietvertrag_ids($einheit_id) {
 		$result = mysql_query ( "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' ORDER BY MIETVERTRAG_VON ASC" );
 		// echo "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' ORDER BY MIETVERTRAG_VON ASC";
@@ -1775,7 +1775,7 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
 		return $typ_array;
 	}
 	
-	/* Alle Mietvertr�ge einer Einheit bis Monat(zweistellig*) Jahr(vierstellig) */
+	/* Alle Mietverträge einer Einheit bis Monat(zweistellig*) Jahr(vierstellig) */
 	function get_mietvertraege_bis($einheit_id, $jahr, $monat) {
 		if (strlen ( $monat ) < 2) {
 			$monat = '0' . $monat;
@@ -1791,7 +1791,7 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
 		}
 	}
 	
-	/* Mietvertr�ge einer Einheit im Monat(zweistellig*) Jahr(vierstellig) */
+	/* Mietverträge einer Einheit im Monat(zweistellig*) Jahr(vierstellig) */
 	function get_mietvertraege_zu($einheit_id, $jahr, $monat, $asc = 'ASC') {
 		if (isset ( $this->mietvertrag_id )) {
 			unset ( $this->mietvertrag_id );
@@ -2105,7 +2105,7 @@ class mietvertrag extends einheit {
 			$summe = $summe + $aktuelle_mietdaten [$i] ['BETRAG'];
 			$ausgabe_str .= "" . $aktuelle_mietdaten [$i] ['KOSTENKATEGORIE'] . " " . $aktuelle_mietdaten [$i] ['BETRAG'] . " €<br>\n";
 		}
-		$ausgabe_str .= "<hr><hr>F�llig: <b>$summe €</b></div>\n";
+		$ausgabe_str .= "<hr><hr>Fällig: <b>$summe €</b></div>\n";
 		// return $summe;
 		return $ausgabe_str;
 	}
@@ -2279,7 +2279,7 @@ class partner extends rechnung {
 			
 			print_r ( $clean_arr );
 			if (empty ( $partnername ) or empty ( $str ) or empty ( $hausnr ) or empty ( $plz ) or empty ( $ort ) or empty ( $land )) {
-				fehlermeldung_ausgeben ( "Dateneingabe unvollst�ndig!!!<br>Sie werden weitergeleitet." );
+				fehlermeldung_ausgeben ( "Dateneingabe unvollständig!!!<br>Sie werden weitergeleitet." );
 				$_SESSION [partnername] = $partnername;
 				$_SESSION [strasse] = $str;
 				$_SESSION [hausnummer] = $hausnr;
@@ -2296,7 +2296,7 @@ class partner extends rechnung {
 			}
 		} // Ende foreach
 		
-		/* Pr�fen ob Partner/Liefernat vorhanden */
+		/* Prüfen ob Partner/Liefernat vorhanden */
 		$result_3 = mysql_query ( "SELECT * FROM PARTNER_LIEFERANT WHERE PARTNER_NAME = '$clean_arr[partnername]' && STRASSE='$clean_arr[strasse]' && NUMMER='$clean_arr[hausnummer]' && PLZ='$clean_arr[plz]' && AKTUELL = '1' ORDER BY PARTNER_NAME" );
 		$numrows_3 = mysql_numrows ( $result_3 );
 		
@@ -2449,7 +2449,7 @@ class partner extends rechnung {
 			$bank = $geldkonten_arr [$a] ['INSTITUT'];
 			$i = $a + 1;
 			echo "<b>Konto $i:</b><br><br>";
-			echo "Beg�nstigter: $beguenstigter<br>";
+			echo "Begünstigter: $beguenstigter<br>";
 			echo "Bankinstitut: $bank<br>";
 			echo "Kontonummer: $kontonr<br>";
 			echo "BLZ: $blz<hr>";
@@ -2568,7 +2568,7 @@ class rechnung {
 	
 	/* Ende rechnung_grunddaten_holen */
 	
-	/* Infos �ber Positionen */
+	/* Infos über Positionen */
 	var $anzahl_positionen;
 	function get_kontierung_obj($dat) {
 		$result = mysql_query ( "SELECT * FROM KONTIERUNG_POSITIONEN WHERE `KONTIERUNG_DAT` ='$dat'" );
@@ -2621,7 +2621,7 @@ class rechnung {
 		$form->hidden_feld ( "skontobetrag", "0,00" );
 		// $form->text_feld("Betrag nach Abzug von Skonto:", "skontobetrag", "", "10");
 		// $formular->text_feld("Skonto in %:", "skonto", '', '10', 'skonto', 'onchange="skonto_berechnen()"');
-		$form->text_feld ( "F�llig am", "faellig_am", '', "10" );
+		$form->text_feld ( "Fällig am", "faellig_am", '', "10" );
 		$form->text_bereich ( "Kurzbeschreibung", "kurzbeschreibung", "", "50", "10" );
 		$form->send_button ( "submit_rechnung1", "Rechnung speichern" );
 		$form->hidden_feld ( "option", "rechnung_erfassen1" );
@@ -2815,7 +2815,7 @@ GROUP BY RECHNUNGEN.BELEG_NR ORDER BY BELEG_NR DESC $navi->limit" );
 		}
 	}
 	
-	/* Alle vollst�ndig erfasste d.h. mit Positionen erfasste Rechungen die auch vollst�ndig kontiert worden sind */
+	/* Alle vollständig erfasste d.h. mit Positionen erfasste Rechungen die auch vollständig kontiert worden sind */
 	function vollstaendig_kontierte_rechungen_anzeigen() {
 		/* Zählen aller Zeilen */
 		$result = mysql_query ( "SELECT RECHNUNGEN. * , COUNT( RECHNUNGEN_POSITIONEN.POSITION ) AS ANZAHL_POSITIONEN
@@ -2852,7 +2852,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 		echo "</table>\n";
 	}
 	
-	/* Alle erfassten Rechungen die noch nicht vollst�ndig kontiert worden sind */
+	/* Alle erfassten Rechungen die noch nicht vollständig kontiert worden sind */
 	/* Rechnungen die Positionen haben aber/und Rechnungen deren Kaufmenge <> Kontierungsmenge */
 	function unvollstaendig_kontierte_rechungen_anzeigen() {
 		/* Zählen aller Zeilen */
@@ -2958,7 +2958,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 				} // end if
 			} // end for 2
 		} // end for 1
-		  // ################H�USER######################
+		  // ################HÄUSER######################
 		/* Aus dem Kontierungspool werden alle Positionen aller Häuser in ein Array geschoben */
 		$positionen_arr = $this->pool_durchsuchen ( 'Haus' );
 		
@@ -3138,7 +3138,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 			$einheit_id = $einheiten_im_pool [$a] [KOSTENTRAEGER_ID];
 			$einheit_info->get_einheit_haus ( $einheit_id );
 			$einheit_haus_id = $einheit_info->haus_id;
-			/* Falls Einheit zum gew�hlten Haus geh�rt, Pos in Hausrechnung stellen */
+			/* Falls Einheit zum gewählten Haus gehört, Pos in Hausrechnung stellen */
 			if ($einheit_haus_id == $haus_id) {
 				$haus_rechnung_arr [] = $this->pool_position_holen ( $einheiten_im_pool [$a] [KONTIERUNG_ID] );
 			}
@@ -3160,7 +3160,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 			$haus_id = $haeuser_im_pool [$a] ['KOSTENTRAEGER_ID'];
 			$haus_info->get_haus_info ( $haus_id );
 			$haus_objekt_id = $haus_info->objekt_id;
-			/* Falls Haus zum gew�hlten Objekt geh�rt, Pos in Objektrechnung stellen */
+			/* Falls Haus zum gewählten Objekt gehört, Pos in Objektrechnung stellen */
 			// echo $haus_objekt_id;
 			if ($haus_objekt_id == $objekt_id) {
 				$objekt_rechnung_arr [] = $this->pool_position_holen ( $haeuser_im_pool [$a] ['KONTIERUNG_ID'] );
@@ -3171,7 +3171,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 			$einheit_id = $einheiten_im_pool [$i] ['KOSTENTRAEGER_ID'];
 			$einheit_info->get_einheit_haus ( $einheit_id );
 			$einheit_objekt_id = $einheit_info->objekt_id;
-			/* Falls Einheit zum gew�hlten Haus geh�rt, Pos in Hausrechnung stellen */
+			/* Falls Einheit zum gewählten Haus gehört, Pos in Hausrechnung stellen */
 			if ($einheit_objekt_id == $objekt_id) {
 				$objekt_rechnung_arr [] = $this->pool_position_holen ( $einheiten_im_pool [$i] ['KONTIERUNG_ID'] );
 			}
@@ -3285,7 +3285,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 		$f->ende_formular ();
 	}
 	
-	/* Funkt. zur Auswahl der Positionen f�r eine neue Rechnung aus dem Pool */
+	/* Funkt. zur Auswahl der Positionen für eine neue Rechnung aus dem Pool */
 	function rechnung_schreiben_positionen_wahl($kostentraeger_typ, $kostentraeger_id, $positionen, $aussteller_typ, $aussteller_id) {
 		if (isset ( $_REQUEST ['csv'] )) {
 			
@@ -3509,7 +3509,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 		}
 	}
 	
-	/* Funkt. zur Auswahl der Positionen f�r eine neue Rechnung aus dem Pool */
+	/* Funkt. zur Auswahl der Positionen für eine neue Rechnung aus dem Pool */
 	function rechnung_schreiben_positionen_wahl_LETZTE($kostentraeger_typ, $kostentraeger_id, $positionen, $aussteller_typ, $aussteller_id) {
 		// echo "<pre>";
 		// print_r($positionen);
@@ -3854,7 +3854,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 		/* Doppelte entfernen */
 		$objekte = array_unique ( $objekte );
 		
-		/* H�user */
+		/* Häuser */
 		$haus_info = new haus ();
 		for($a = 0; $a < count ( $haus_im_pool ); $a ++) {
 			$haus_id = $haus_im_pool [$a] [KOSTENTRAEGER_ID];
@@ -3885,10 +3885,10 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 		return $objekte_sortiert;
 	}
 	
-	/* H�user_ids eines Objekt holen */
+	/* Häuser_ids eines Objekt holen */
 	function haeuser_vom_objekt_im_pool($objekt_id) {
 		$haus_im_pool = $this->pool_durchsuchen ( 'Haus' );
-		/* H�user */
+		/* Häuser */
 		$haus_info = new haus ();
 		for($a = 0; $a < count ( $haus_im_pool ); $a ++) {
 			$haus_id = $haus_im_pool [$a] [KOSTENTRAEGER_ID];
@@ -3939,7 +3939,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 		$einheiten_im_pool = $this->pool_durchsuchen ( 'Einheit' );
 		$haus_im_pool = $this->pool_durchsuchen ( 'Haus' );
 		$objekte_im_pool = $this->pool_durchsuchen ( 'Objekt' );
-		/* Lager ids zum neuer Array hinzu, danach dopplete l�schen */
+		/* Lager ids zum neuer Array hinzu, danach dopplete löschen */
 		$lager_im_pool = $this->pool_durchsuchen ( 'Lager' );
 		if (is_array ( $lager_im_pool )) {
 			for($a = 0; $a < count ( $lager_im_pool ); $a ++) {
@@ -3973,7 +3973,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 			}
 		} // end if
 		
-		/* Einheiten H�user Objekte anhand von Einheitszugeh�rigkeit */
+		/* Einheiten Häuser Objekte anhand von Einheitszugehörigkeit */
 		$einheit_info = new einheit ();
 		for($a = 0; $a < count ( $einheiten_im_pool ); $a ++) {
 			$einheit_id = $einheiten_im_pool [$a] ['KOSTENTRAEGER_ID'];
@@ -3991,7 +3991,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 		 * $elemente[HAUS] = array_unique($elemente[HAUS]);
 		 * $elemente[EINHEITEN] = array_unique($elemente[EINHEITEN]);
 		 * }
-		 * /*H�user
+		 * /*Häuser
 		 */
 		$haus_info = new haus ();
 		for($a = 0; $a < count ( $haus_im_pool ); $a ++) {
@@ -4054,7 +4054,7 @@ else {
 		for($a = 0; $a < count ( $kontierung_id_arr ); $a ++) {
 			$beleg_nr = $kontierung_id_arr [$a] ['BELEG_NR'];
 			$this->rechnung_grunddaten_holen ( $beleg_nr );
-			/* Empf�nger der Rechnung wird zum Austeller der Auto...Rechnung */
+			/* Empfänger der Rechnung wird zum Austeller der Auto...Rechnung */
 			$rechnungs_empfaenger_id = $this->rechnungs_empfaenger_id;
 			if ($aussteller_id == $rechnungs_empfaenger_id && $aussteller_typ == $this->rechnungs_empfaenger_typ) {
 				$neuer_kontierungs_array [] = $kontierung_id_arr [$a];
@@ -4098,7 +4098,7 @@ else {
 			$rechnungsnummer = $clean_arr ['rechnungsnummer'];
 		}
 		
-		/* Pr�fen ob Rechnung vorhanden */
+		/* Prüfen ob Rechnung vorhanden */
 		
 		$rechnungsdatum = date_german2mysql ( $clean_arr [rechnungsdatum] );
 		$result_3 = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE RECHNUNGSNUMMER = '$clean_arr[rechnungsnummer]' && RECHNUNGSDATUM = '$rechnungsdatum' && AUSSTELLER_TYP='$rechnungs_aussteller_typ' && AUSSTELLER_ID='$rechnungs_aussteller_id' && EMPFAENGER_TYP='$rechnungs_empfaenger_typ' && EMPFAENGER_ID='$rechnungs_empfaenger_id' && AKTUELL = '1'" );
@@ -4207,7 +4207,7 @@ else {
 		$this->rechnungs_aussteller_typ = $clean_arr ['RECHNUNG_AUSSTELLER_TYP'];
 		$this->rechnungs_aussteller_id = $clean_arr ['RECHNUNG_AUSSTELLER_ID'];
 		
-		/* Wenn Austeller = Empf�nger - GmbH an Gmbh = Buchungsbeleg */
+		/* Wenn Austeller = Empfänger - GmbH an Gmbh = Buchungsbeleg */
 		if ($this->rechnungs_empfaenger_id == $this->rechnungs_aussteller_id && $this->rechnungs_aussteller_typ == $this->rechnungs_empfaenger_typ) {
 			$this->rechnungs_typ_druck = 'Buchungsbeleg';
 		} else {
@@ -4222,14 +4222,14 @@ else {
 		$letzte_aussteller_rnr = $this->letzte_aussteller_ausgangs_nr ( $this->rechnungs_aussteller_id, $this->rechnungs_aussteller_typ, $jahr, $this->rechnungs_typ_druck );
 		$letzte_aussteller_rnr = $letzte_aussteller_rnr + 1;
 		$letzte_aussteller_rnr1 = sprintf ( '%03d', $letzte_aussteller_rnr );
-		/* K�rzel */
+		/* Kürzel */
 		$this->rechnungs_kuerzel = $this->rechnungs_kuerzel_ermitteln ( $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id, $rechnungsdatum_sql );
 		
 		$rechnungsnummer = $this->rechnungs_kuerzel . ' ' . $letzte_aussteller_rnr1 . '-' . $jahr;
 		
 		// echo "<h1> $rechnunsgnummer $this->rechnungs_kuerzel $letzte_aussteller_rnr</h1>";
 		
-		/* Pr�fen ob Rechnung vorhanden */
+		/* Prüfen ob Rechnung vorhanden */
 		$check_rechnung = $this->check_rechnung_vorhanden ( $rechnungsnummer, $rechnungsdatum_sql, $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id, $this->rechnungs_empfaenger_typ, $this->rechnungs_empfaenger_id, $this->rechnungs_typ_druck );
 		
 		/* Wenn rechnung existiert */
@@ -4396,7 +4396,7 @@ else {
 		}
 		// #######################
 		
-		/* Pr�fen ob Rechnung vorhanden */
+		/* Prüfen ob Rechnung vorhanden */
 		$rechnungsdatum = date_german2mysql ( $clean_arr [rechnungsdatum] );
 		$result_3 = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE RECHNUNGSNUMMER = '$clean_arr[rechnungsnummer]' && RECHNUNGSDATUM = '$rechnungsdatum' && AUSSTELLER_TYP='$clean_arr[Aussteller_typ]' && AUSSTELLER_ID='$clean_arr[Aussteller]' && EMPFAENGER_TYP='$clean_arr[Empfaenger_typ]' && EMPFAENGER_ID='$clean_arr[Empfaenger]' && AKTUELL = '1' && RECHNUNGSTYP='$this->rechnungs_typ_druck'" );
 		$numrows_3 = mysql_numrows ( $result_3 );
@@ -4899,7 +4899,7 @@ else {
 		 * $g = new geldkonto_info;
 		 * $g->geld_konto_details($this->empfangs_geld_konto);
 		 * echo "Den Buchungsbetrag betrag bitten wir auf folgendes Konto zu überweisen:<br><br>";
-		 * echo "Empf�nger: $g->konto_beguenstigter<br>";
+		 * echo "Empfänger: $g->konto_beguenstigter<br>";
 		 * echo "Kontonr.: $g->kontonummer<br>";
 		 * echo "BLZ: $g->blz<br>";
 		 * echo "Kreditinstitut: $g->kredit_institut<br>";
@@ -5032,7 +5032,7 @@ else {
 		echo "<tr><td colspan=4><div id=\"rechnung_beschreibung\">$this->kurzbeschreibung</div><b>$kontierungsstatus_link<hr>$kontierung_aufheben_link</b></td></tr>\n";
 		echo "</table>\n";
 		/* DRUCKEN ab hier */
-		/* Logo zum Drucken hinzuf�gen */
+		/* Logo zum Drucken hinzufügen */
 		if (file_exists ( "print_css/" . $this->rechnungs_aussteller_typ . "/" . $this->rechnungs_aussteller_id . "_logo.png" )) {
 			echo "<div id=\"div_logo\"><img src=\"print_css/" . $this->rechnungs_aussteller_typ . "/" . $this->rechnungs_aussteller_id . "_logo.png\"><hr></div>\n";
 		} else {
@@ -5044,13 +5044,13 @@ else {
 		/* Rechnungskopf mit Grunddaten */
 		/* DIV Adressfeld */
 		echo "<div id=\"div_adressfeld\">$this->rechnungs_empfaenger_name<br>$this->rechnungs_empfaenger_strasse $this->rechnungs_empfaenger_hausnr<br><br>$this->rechnungs_empfaenger_plz $this->rechnungs_empfaenger_ort</div>\n";
-		/* Markierung f�r die Brieffaltung */
+		/* Markierung für die Brieffaltung */
 		echo "<div id=\"div_faltlinie\">______";
 		echo "</div>\n";
 		
 		/* DIV ADRRESSFELD */
 		echo "\n<div id=\"div_rechnungsdaten\">\n";
-		/* Links �berschriften/Titel */
+		/* Links Überschriften/Titel */
 		echo "<div id=\"rechnungsdaten_links\">\n";
 		echo "<p id=\"rechnungsnummer_u\">$this->rechnungs_typ_druck:<br>$this->rechnungsnummer</p>\n";
 		echo "</div>\n";
@@ -5076,9 +5076,9 @@ else {
 		/* Ende Partnernamen holen */
 		
 		/*
-		 * Aussteller Empf�nger neu Definieren - wegen der automatischen Erstellung von Rechnungen an Eigent�mer nach Kontierung
-		 * Fr�here Empf�nger wird zu Aussteller
-		 * Empf�nger wird aus $objekt - Eigent�mer definiert
+		 * Aussteller Empfänger neu Definieren - wegen der automatischen Erstellung von Rechnungen an Eigentümer nach Kontierung
+		 * Frühere Empfänger wird zu Aussteller
+		 * Empfänger wird aus $objekt - Eigentümer definiert
 		 */
 		$rechnungs_aussteller_id = $this->rechnungs_aussteller_id;
 		$rechnungs_aussteller_name = $this->rechnungs_empfaenger_name;
@@ -5115,7 +5115,7 @@ else {
 		$this->rechnungs_kopf ( $belegnr );
 		
 		$rechnungs_positionen_arr = $this->rechnungs_positionen_arr ( $belegnr );
-		/* Rechnungspositionen �berschrift */
+		/* Rechnungspositionen Überschrift */
 		if ($this->anzahl_positionen > 0) {
 			echo "<table class=positionen>\n";
 			echo "<form method=\"post\" name=\"myform\">\n";
@@ -5194,11 +5194,11 @@ else {
 		$this->rechnung_grunddaten_holen ( $beleg_nr );
 		// print_r($this);
 		$form = new mietkonto ();
-		// nur f�r die formularerstellung
+		// nur für die formularerstellung
 		$kontenrahmen = new kontenrahmen ();
 		// nur kontoliste dropdown
 		$rechnung = new rechnung ();
-		// f�r rechnungsmethoden
+		// für rechnungsmethoden
 		// $this->rechnung_grunddaten_holen($beleg_nr);
 		// $this->rechnungs_kopf_kontierung($beleg_nr, $kostentraeger_typ);
 		$this->rechnungs_kopf ( $beleg_nr, $kostentraeger_typ );
@@ -5490,7 +5490,7 @@ else {
 	 * t2.MENGE * t2.PREIS
 	 * ) * ( 100 - t2.RABATT_SATZ ) /100 ) WHERE t1.BELEG_NR>='2550'
 	 */
-	/* Kostentr�ger ermitteln */
+	/* Kostenträger ermitteln */
 	function kostentraeger_ermitteln($kostentraeger_typ, $kostentraeger_id) {
 		if ($kostentraeger_typ == 'Objekt') {
 			$objekte = new objekt ();
@@ -5613,7 +5613,7 @@ else {
 			} else {
 				/* Falls rechnung unbezahlt */
 				$msg = '';
-				// $msg = "Bitte Rechnungbetrag auf folgendes Konto ".$geld_konto_info->kontonummer." bei ".$geld_konto_info->kredit_institut." BLZ: ".$geld_konto_info->blz." �berwiesen.";
+				// $msg = "Bitte Rechnungbetrag auf folgendes Konto ".$geld_konto_info->kontonummer." bei ".$geld_konto_info->kredit_institut." BLZ: ".$geld_konto_info->blz." überwiesen.";
 			}
 			if ($this->rechnungstyp == "Rechnung" or $this->rechnungstyp == "Stornorechnung") {
 				$msg = 'Den Rechnungsbetrag  bitten wir auf das unten genannte Konto zu überweisen.';
@@ -5646,7 +5646,7 @@ else {
 			echo "<tr><td  colspan=$colspan valign=top id=\"footer_msg\"><br>$msg</td></tr></table>";
 		}
 		echo "</div>";
-		// ende div_positionen f�r druck
+		// ende div_positionen für druck
 	} /* ende rechnungsfootoer */
 	
 	/* Rechnungsfooter bei Positionseingabe */
@@ -5676,7 +5676,7 @@ else {
 			} else {
 				/* Falls rechnung unbezahlt */
 				$msg = '';
-				// $msg = "Bitte Rechnungbetrag auf folgendes Konto ".$geld_konto_info->kontonummer." bei ".$geld_konto_info->kredit_institut." BLZ: ".$geld_konto_info->blz." �berwiesen.";
+				// $msg = "Bitte Rechnungbetrag auf folgendes Konto ".$geld_konto_info->kontonummer." bei ".$geld_konto_info->kredit_institut." BLZ: ".$geld_konto_info->blz." überwiesen.";
 			}
 			$msg = 'Den Rechnungsbetrag  bitten wir auf das unten genannte Konto zu überweisen.';
 			echo "</table><table width=100% >";
@@ -5705,7 +5705,7 @@ else {
 		}
 	}
 	
-	/* Rechnung Position l�schen bzw. deaktivieren */
+	/* Rechnung Position löschen bzw. deaktivieren */
 	function position_deaktivieren($pos, $belegnr) {
 		$result = mysql_query ( "UPDATE RECHNUNGEN_POSITIONEN SET AKTUELL='0' WHERE BELEG_NR='$belegnr' && AKTUELL='1' && POSITION='$pos'" );
 	}
@@ -5777,7 +5777,7 @@ else {
 		return $row ['KATALOG_ID'];
 	}
 	
-	/* Neuen Artikel/Leistung zum Lieferanten hinzuf�gen, wenn keine Artikelnummer eingegeben wurde, es wird eine neue vergeben */
+	/* Neuen Artikel/Leistung zum Lieferanten hinzufügen, wenn keine Artikelnummer eingegeben wurde, es wird eine neue vergeben */
 	function artikel_leistung_speichern($partner_id, $bezeichnung, $listenpreis, $rabatt, $einheit, $mwst) {
 		$letzte_kat_id = $this->get_last_katalog_id ();
 		$letzte_kat_id = $letzte_kat_id + 1;
@@ -5792,7 +5792,7 @@ else {
 		return $this->get_last_artikelnr ( $partner_id );
 	}
 	
-	/* Neuen Artikel/Leistung zum Lieferanten hinzuf�gen, wenn eine Artikelnummer eingegeben wurde, es wird mit der eingegebenen artikel_nr gespeichert */
+	/* Neuen Artikel/Leistung zum Lieferanten hinzufügen, wenn eine Artikelnummer eingegeben wurde, es wird mit der eingegebenen artikel_nr gespeichert */
 	function artikel_leistung_mit_artikelnr_speichern($partner_id, $bezeichnung, $listenpreis, $artikel_nr, $rabatt, $einheit, $mwst, $pos_skonto) {
 		$letzte_kat_id = $this->get_last_katalog_id ();
 		$letzte_kat_id = $letzte_kat_id + 1;
@@ -5835,14 +5835,14 @@ else {
 		}
 	}
 	
-	/* Maske zum Vervollst�ndigen von Rechnungen d.h. Eingabe von Positionen */
+	/* Maske zum Vervollständigen von Rechnungen d.h. Eingabe von Positionen */
 	function positionen_eingabe_form($belegnr) {
 		$this->rechnung_grunddaten_holen ( $belegnr );
 		$form = new mietkonto ();
 		// echo "$rechnung_id $partner";
 		// echo "<table border=1><tr><td>\n";
 		$form->erstelle_formular ( "Positionsanzahl eingeben", NULL );
-		// echo "Geben Sie bitte die Anzahl der Positionen f�r die Rechnung $this->rechnungsnummer.<br>\n";
+		// echo "Geben Sie bitte die Anzahl der Positionen für die Rechnung $this->rechnungsnummer.<br>\n";
 		$form->text_feld ( "Anzahl der Positionen:", "anzahl_positionen", "", "3" );
 		$form->hidden_feld ( "option", "send_positionen" );
 		$form->send_button ( "submit_position", "Senden" );
@@ -5865,7 +5865,7 @@ else {
 			echo "Kein Geldkonto ausgewählt";
 		} else {
 			
-			/* Update der erfassten Rechung um die ausgew�hlte Kontonummer des rechnungaustellers mitzuteilen */
+			/* Update der erfassten Rechung um die ausgewählte Kontonummer des rechnungaustellers mitzuteilen */
 			if ($this->rechnungs_empfaenger_typ != 'Kasse') {
 				$db_abfrage = "UPDATE RECHNUNGEN SET EMPFANGS_GELD_KONTO='$empfangs_geld_konto' WHERE BELEG_NR='$belegnr' && AKTUELL='1' ";
 			} else {
@@ -5922,7 +5922,7 @@ else {
 					echo "Position $a ($neue_artikel_nr) " . $_POST ['positionen'] [$a] ['bezeichnung'] . " wurde gespeichert<br>\n";
 				}
 			} // end for
-			/* Rechnung als vollst�ndig markieren */
+			/* Rechnung als vollständig markieren */
 			$this->rechnung_als_vollstaendig ( $belegnr );
 			weiterleiten_in_sec ( "?daten=rechnungen&option=rechnungs_uebersicht&belegnr=$belegnr", 2 );
 		} // end else kein konto
@@ -5980,7 +5980,7 @@ else {
 			/* in rechnung gestellte menge */
 			$kontierungs_menge = $positionen [$a] ['menge'];
 			$kontierungs_menge = nummer_komma2punkt ( $kontierungs_menge );
-			/* urspr�ngliche kontierungsmenge */
+			/* ursprüngliche kontierungsmenge */
 			$u_kontierungs_menge = $this->kontierungs_menge_von_dat ( $dat );
 			
 			$kontenrahmen_konto = $this->kostenkonto;
@@ -6016,7 +6016,7 @@ else {
 				$this->kontierung_dat_deaktivieren ( $dat );
 			}
 		} // end for
-		/* Rechnung als vollst�ndig markieren */
+		/* Rechnung als vollständig markieren */
 		$this->rechnung_als_vollstaendig ( $belegnr );
 		$this->rechnung_als_zugewiesen ( $belegnr );
 		weiterleiten_in_sec ( "?daten=rechnungen&option=rechnungs_uebersicht&belegnr=$belegnr", 2 );
@@ -6094,7 +6094,7 @@ else {
 	
 	// function rechnung
 	
-	/* Pr�fen ob ein Artikel nach Beschreibung exisitiert */
+	/* Prüfen ob ein Artikel nach Beschreibung exisitiert */
 	function artikel_exists($partner_id, $artikel_bezeichnung) {
 		$result = mysql_query ( "SELECT ARTIKEL_NR FROM POSITIONEN_KATALOG WHERE ART='$partner_id' && BEZEICHNUNG='$artikel_bezeichnung' && AKTUELL='1' ORDER BY KATALOG_DAT DESC LIMIT 0,1" );
 		$row = mysql_fetch_assoc ( $result );
@@ -6162,7 +6162,7 @@ else {
 		return $row ['MENGE'];
 	}
 	
-	/* Nach in Rechnungsstellung einer Konierungsposition mit ver�nderter Menge kontierungs_position anpassen um die Differenz */
+	/* Nach in Rechnungsstellung einer Konierungsposition mit veränderter Menge kontierungs_position anpassen um die Differenz */
 	function kontierung_dat_id_andern($dat, $id, $aktuelle_menge) {
 		$ursprungs_menge = $this->kontierungs_menge ( $dat, $id );
 		if ($ursprungs_menge == $aktuelle_menge) {
@@ -6185,7 +6185,7 @@ else {
 		}
 	}
 	
-	/* Menge einer Kontierungsposition �ndern bzw anpassen */
+	/* Menge einer Kontierungsposition ändern bzw anpassen */
 	function kontierungs_menge_anpassen($dat, $id, $neue_menge) {
 		$result = mysql_query ( "SELECT * FROM KONTIERUNG_POSITIONEN WHERE KONTIERUNG_DAT='$dat' && KONTIERUNG_ID='$id' && AKTUELL='1'" );
 		$row = mysql_fetch_assoc ( $result );
@@ -6207,7 +6207,7 @@ else {
 		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 	}
 	
-	/* Menge einer Kontierungsposition �ndern bzw anpassen */
+	/* Menge einer Kontierungsposition ändern bzw anpassen */
 	function kontierungs_menge_anpassen_dat($dat, $neue_menge) {
 		$result = mysql_query ( "SELECT * FROM KONTIERUNG_POSITIONEN WHERE KONTIERUNG_DAT='$dat' && AKTUELL='1'" );
 		$row = mysql_fetch_assoc ( $result );
@@ -6230,14 +6230,14 @@ else {
 		
 		if ($diff_menge > 0) {
 			
-			/* Ursprungsmenge um Diffmenge Anpassen, dh. wenn vorher 3 und nur 2 in Rechnung dann 3 auf 2 setzen und rest als neue kontierungszeile einf�gen, siehe drunter */
+			/* Ursprungsmenge um Diffmenge Anpassen, dh. wenn vorher 3 und nur 2 in Rechnung dann 3 auf 2 setzen und rest als neue kontierungszeile einfügen, siehe drunter */
 			$db_abfrage = "UPDATE KONTIERUNG_POSITIONEN SET MENGE='$neue_menge', WEITER_VERWENDEN='0' WHERE KONTIERUNG_DAT='$dat'";
 			$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 			
 			$datum = date ( "Y-m-d" );
 			$kontierung_id = $this->get_last_kontierung_id ();
 			$kontierung_id = $kontierung_id + 1;
-			/* Differenzmenge / Restmenge f�r Pool f�r Weiterverwendung */
+			/* Differenzmenge / Restmenge für Pool für Weiterverwendung */
 			$gesamt_preis = $diff_menge * $einzel_preis;
 			$db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$beleg_nr', '$kontierungs_pos','$diff_menge', '$einzel_preis', '$gesamt_preis', '$mwst_satz', '$rabatt_satz', '$kontenrahmen_konto', '$kostentraeger_typ', '$kostentraeger_id', '$datum', '$verwendungs_jahr', '1', '1')";
 			$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
@@ -6272,7 +6272,7 @@ else {
 		return $row ['RECHNUNGEN_POS_ID'];
 	}
 	
-	/* Funktion f�r's Suchen von rechnungen */
+	/* Funktion für's Suchen von rechnungen */
 	function suche_rechnung_form() {
 		$form = new mietkonto ();
 		$partner = new partner ();
@@ -6424,7 +6424,7 @@ else {
 		
 		if ($kostentraeger_typ == 'Partner') {
 			$partner_info = new partner ();
-			$partner_info->partner_dropdown ( 'Kostentr�ger', $name, 'kostentraeger', $vorwahl_id );
+			$partner_info->partner_dropdown ( 'Kostenträger', $name, 'kostentraeger', $vorwahl_id );
 		}
 		if ($kostentraeger_typ == 'Lager') {
 			$lager_info = new lager ();
@@ -6732,7 +6732,7 @@ else {
 				}
 				
 				echo "<td id=\"td_ansehen\">$beleg_link<br>$pdf_link $pdf_link1</td><td>$r->empfaenger_eingangs_rnr</td><td>$r->rechnungsdatum</td>";
-				/* Pr�fen ob die rechnung tempor�r zur Buchungszwecken an Rechnungsausstellr kontiert */
+				/* Prüfen ob die rechnung temporär zur Buchungszwecken an Rechnungsausstellr kontiert */
 				if ($this->check_kontierung_rg ( $belegnr, $r->rechnungs_aussteller_typ, $r->rechnungs_aussteller_id ) == true) {
 					echo "<td style=\"background-color:#f8ffbb\">$r->rechnungs_aussteller_name</td>";
 				} else {
@@ -6867,7 +6867,7 @@ else {
 				}
 				if ($r->rechnungstyp == 'Gutschrift' or $r->rechnungstyp == 'Stornorechnung') {
 					$r->rechnungs_brutto_a = nummer_punkt2komma ( $r->rechnungs_brutto );
-					echo "<td></td><td align=\"right\" valign=\"top\">$r->rechnungs_brutto_a �</td>";
+					echo "<td></td><td align=\"right\" valign=\"top\">$r->rechnungs_brutto_a €</td>";
 					$g_brutto_g = $g_brutto_g + $r->rechnungs_brutto;
 					// $g_brutto_g= sprintf("%01.2f", $g_brutto_g);
 				}
@@ -6999,7 +6999,7 @@ else {
 	 */
 } // Ende Klasse Rechnung
 
-/* Klasse zum Bl�ttern bzw mehrseitegen Darstellung von DB-Ergebnissen */
+/* Klasse zum Blättern bzw mehrseitegen Darstellung von DB-Ergebnissen */
 class blaettern {
 	var $aktuelle_seite;
 	// zeigt an wo man ist
@@ -7046,7 +7046,7 @@ class kontenrahmen {
 	var $konto_art_id;
 	var $konto_art_bezeichnung;
 	
-	/* Holt Infos �ber ein Konto z.B. 5200 */
+	/* Holt Infos über ein Konto z.B. 5200 */
 	function konto_informationen($konto) {
 		$result = mysql_query ( "SELECT * FROM KONTENRAHMEN_KONTEN WHERE KONTO='$konto' && AKTUELL='1' ORDER BY KONTENRAHMEN_KONTEN_ID DESC LIMIT 0,1" );
 		$row = mysql_fetch_assoc ( $result );
@@ -7060,7 +7060,7 @@ class kontenrahmen {
 		$this->konto_art_bezeichnung = $this->kontoart ( $this->konto_art_id );
 	}
 	
-	/* Holt Infos �ber ein Konto z.B. 5200 */
+	/* Holt Infos über ein Konto z.B. 5200 */
 	function konto_informationen2($konto, $kontenrahmen_id) {
 		$result = mysql_query ( "SELECT * FROM KONTENRAHMEN_KONTEN WHERE KONTO='$konto' && KONTENRAHMEN_ID='$kontenrahmen_id' && AKTUELL='1' ORDER BY KONTENRAHMEN_KONTEN_ID DESC LIMIT 0,1" );
 		$row = mysql_fetch_assoc ( $result );
@@ -7074,14 +7074,14 @@ class kontenrahmen {
 		$this->konto_art_bezeichnung = $this->kontoart ( $this->konto_art_id );
 	}
 	
-	/* Holt Infos �ber eine Kontogruppe z.B. 1 - Reparaturen */
+	/* Holt Infos über eine Kontogruppe z.B. 1 - Reparaturen */
 	function gruppen_bezeichnung($gruppen_id) {
 		$result = mysql_query ( "SELECT BEZEICHNUNG FROM KONTENRAHMEN_GRUPPEN WHERE KONTENRAHMEN_GRUPPEN_ID='$gruppen_id' && AKTUELL='1' ORDER BY KONTENRAHMEN_GRUPPEN_ID DESC LIMIT 0,1" );
 		$row = mysql_fetch_assoc ( $result );
 		return $row ['BEZEICHNUNG'];
 	}
 	
-	/* Holt Infos �ber eine Kontoart z.B. 1 - Kosten , 4 Einnahmen usw. */
+	/* Holt Infos über eine Kontoart z.B. 1 - Kosten , 4 Einnahmen usw. */
 	function kontoart($kontoart_id) {
 		$result = mysql_query ( "SELECT KONTOART FROM KONTENRAHMEN_KONTOARTEN WHERE KONTENRAHMEN_KONTOART_ID='$kontoart_id' && AKTUELL='1' ORDER BY KONTENRAHMEN_KONTOART_ID DESC LIMIT 0,1" );
 		$row = mysql_fetch_assoc ( $result );
@@ -7137,7 +7137,7 @@ class kontenrahmen {
 			$konten_arr [$a] [GRUPPE] = $this->konto_gruppen_bezeichnung;
 			$konten_arr [$a] [KONTOART] = $this->konto_art_bezeichnung;
 		}
-		/* Feldernamen definieren - �berschrift Tabelle */
+		/* Feldernamen definieren - Überschrift Tabelle */
 		$ueberschrift_felder_arr [0] = "Konto";
 		$ueberschrift_felder_arr [1] = "Bezeichnung";
 		$ueberschrift_felder_arr [2] = "Gruppe";
@@ -7160,7 +7160,7 @@ class kontenrahmen {
 		return $my_array;
 	}
 	
-	/* Den dazugeh�rigen Kontenrahmen finden, egal ob Geldkonto, Partner usw. */
+	/* Den dazugehörigen Kontenrahmen finden, egal ob Geldkonto, Partner usw. */
 	function get_kontenrahmen($typ, $typ_id) {
 		$result = mysql_query ( "SELECT KONTENRAHMEN_ID FROM `KONTENRAHMEN_ZUWEISUNG` WHERE TYP='$typ' && TYP_ID='$typ_id' && AKTUELL='1' ORDER BY DAT DESC LIMIT 0,1" );
 		
@@ -7331,10 +7331,10 @@ class geldkonto_info {
 				$detail_link = "<a class=\"table_links\" href=\"?daten=details&option=details_anzeigen&detail_tabelle=GELD_KONTEN&detail_id=$konto_id\">Details</a>";
 				$link_aendern = "<a class=\"table_links\" href=\"?daten=geldkonten&option=gk_aendern&gk_id=$konto_id\">GK ändern</a>";
 				if ($zaehler == 1) {
-					echo "<tr class=\"zeile1\"><td>$konto_id</td><td>$konto_bezeichnung</td><td>$beguenstigter</td><td>$iban</td><td>$bic</td><td align=right>$konto_stand_aktuell �</td><td>$detail_link</td><td>$link_aendern</td></tr>";
+					echo "<tr class=\"zeile1\"><td>$konto_id</td><td>$konto_bezeichnung</td><td>$beguenstigter</td><td>$iban</td><td>$bic</td><td align=right>$konto_stand_aktuell €</td><td>$detail_link</td><td>$link_aendern</td></tr>";
 				}
 				if ($zaehler == 2) {
-					echo "<tr class=\"zeile2\"><td>$konto_id</td><td>$konto_bezeichnung</td><td>$beguenstigter</td><td>$iban</td><td>$bic</td><td align=right>$konto_stand_aktuell �</td><td>$detail_link</td><td>$link_aendern</td></tr>";
+					echo "<tr class=\"zeile2\"><td>$konto_id</td><td>$konto_bezeichnung</td><td>$beguenstigter</td><td>$iban</td><td>$bic</td><td align=right>$konto_stand_aktuell €</td><td>$detail_link</td><td>$link_aendern</td></tr>";
 					$zaehler = 0;
 				}
 			}
@@ -7424,7 +7424,7 @@ class geldkonto_info {
 		}
 	}
 	
-	/* Funktion zur Erstellung eines Dropdowns f�r Empfangsgeldkonto */
+	/* Funktion zur Erstellung eines Dropdowns für Empfangsgeldkonto */
 	function dropdown_geldkonten($kostentraeger_typ, $kostentraeger_id) {
 		// echo "<pre>";
 		// print_r($_SESSION);
@@ -7455,7 +7455,7 @@ class geldkonto_info {
 		}
 	}
 	
-	/* Funktion zur Erstellung eines Dropdowns f�r Empfangsgeldkonto */
+	/* Funktion zur Erstellung eines Dropdowns für Empfangsgeldkonto */
 	function dropdown_geldkonten_alle($label, $kostentraeger_typ, $kostentraeger_id) {
 		$result = mysql_query ( "SELECT GELD_KONTEN.KONTO_ID, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ, GELD_KONTEN.INSTITUT FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE KOSTENTRAEGER_TYP = '$kostentraeger_typ' && KOSTENTRAEGER_ID = '$kostentraeger_id' && GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' ORDER BY GELD_KONTEN.KONTO_ID ASC" );
 		
@@ -7484,7 +7484,7 @@ class geldkonto_info {
 		}
 	}
 	
-	/* Funktion zur Erstellung eines Dropdowns f�r Empfangsgeldkonto */
+	/* Funktion zur Erstellung eines Dropdowns für Empfangsgeldkonto */
 	function dropdown_geldkonten_k($label, $name, $id, $kostentraeger_typ, $kostentraeger_id) {
 		$result = mysql_query ( "SELECT GELD_KONTEN.KONTO_ID, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ, GELD_KONTEN.INSTITUT FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE KOSTENTRAEGER_TYP = '$kostentraeger_typ' && KOSTENTRAEGER_ID = '$kostentraeger_id' && GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' ORDER BY GELD_KONTEN.KONTO_ID ASC" );
 		
