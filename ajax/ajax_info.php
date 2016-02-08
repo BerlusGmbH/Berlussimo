@@ -1162,7 +1162,7 @@ WHERE (`ARTIKEL_NR` LIKE '$string%' OR `BEZEICHNUNG` LIKE '$string%') ORDER BY A
 		if (! empty ( $_REQUEST [einheit_id] )) {
 			echo get_eigentuemer ( $_REQUEST [einheit_id] );
 		} else {
-			echo "Einheit w�hlen - Fehler 4554as";
+			echo "Einheit wählen - Fehler 4554as";
 		}
 		break;
 	

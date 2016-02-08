@@ -1647,7 +1647,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 	/* Liefert den Leerstands-array, wenn Baustellenfortschritt mehr als 99% */
 	function vermietungsliste_arr($objekt_id = null, $monate = null) {
 		if ($objekt_id == null) {
-			fehlermeldung_ausgeben ( "Objekt wï¿½hlen" );
+			fehlermeldung_ausgeben ( "Objekt wählen" );
 		} else {
 			
 			if ($monate == null) {
@@ -1995,7 +1995,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 	}
 	function stat_sanierung($objekt_id = null, $monate = null, $w = 300, $h = 500) {
 		if ($objekt_id == null) {
-			fehlermeldung_ausgeben ( "Objekt wï¿½hlen" );
+			fehlermeldung_ausgeben ( "Objekt wählen" );
 		} else {
 			$li = new listen ();
 			$f = new formular ();

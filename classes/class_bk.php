@@ -262,11 +262,11 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
 		$f->erstelle_formular ( "Assistent für BK", NULL );
 		// echo '<pre>';
 		// print_r($_SESSION);
-		/* �berpr�fen ob Profil ausgew�hlt wurde */
+		/* Überprüfen ob Profil ausgewählt wurde */
 		/* Falls nein, neues erstellen */
 		if (! isset ( $_SESSION ['profil_id'] )) {
-			/* Profil ausw�hlen oder neues anlegen */
-			/* Wenn keine Daten gesendet f�r neues Profil */
+			/* Profil auswählen oder neues anlegen */
+			/* Wenn keine Daten gesendet für neues Profil */
 			$fehler = true;
 			if (empty ( $_POST )) {
 				$this->form_profil_anlegen ();
@@ -2602,7 +2602,7 @@ else {
 		$this->bk_profil_infos ( $profil_id );
 		$jahr = $this->bk_jahr;
 		
-		/* Alle ausgew�hlten BK Kontensummen mit Key und Kostentr�ger w�hlen */
+		/* Alle ausgewählten BK Kontensummen mit Key und Kostenträger wählen */
 		$summen_arr = $this->get_buchungssummen_konto_arr ( $profil_id );
 		$anzahl_summen = count ( $summen_arr );
 		

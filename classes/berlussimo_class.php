@@ -2503,9 +2503,9 @@ class partner extends rechnung {
 		
 		$form = new formular ();
 		if (! isset ( $_SESSION ['partner_id'] )) {
-			$form->erstelle_formular ( "Partner w�hlen", NULL );
+			$form->erstelle_formular ( "Partner wählen", NULL );
 		} else {
-			$form->erstelle_formular ( "Partner ausgew�hlt - Aktuell: Partner $_SESSION[partner_id]", NULL );
+			$form->erstelle_formular ( "Partner ausgewählt - Aktuell: Partner $_SESSION[partner_id]", NULL );
 		}
 		// $result = mysql_query ("SELECT PARTNER_ID, PARTNER_NAME FROM PARTNER_LIEFERANT WHERE AKTUELL = '1' ORDER BY PARTNER_NAME ASC");
 		/* Sortiert nach Anzahl der Belege */
@@ -2685,7 +2685,7 @@ class rechnung {
 	
 	/* Alle Rechnungen werden angezeigt */
 	function erfasste_rechungen_anzeigen() {
-		/* Z�hlen aller Zeilen */
+		/* Zählen aller Zeilen */
 		$result = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE AKTUELL = '1' ORDER BY BELEG_NR DESC" );
 		/*
 		 * $result = mysql_query ("SELECT RECHNUNGEN. * , COUNT( RECHNUNGEN_POSITIONEN.POSITION ) AS ANZAHL_POSITIONEN
@@ -2817,7 +2817,7 @@ GROUP BY RECHNUNGEN.BELEG_NR ORDER BY BELEG_NR DESC $navi->limit" );
 	
 	/* Alle vollst�ndig erfasste d.h. mit Positionen erfasste Rechungen die auch vollst�ndig kontiert worden sind */
 	function vollstaendig_kontierte_rechungen_anzeigen() {
-		/* Z�hlen aller Zeilen */
+		/* Zählen aller Zeilen */
 		$result = mysql_query ( "SELECT RECHNUNGEN. * , COUNT( RECHNUNGEN_POSITIONEN.POSITION ) AS ANZAHL_POSITIONEN
 FROM RECHNUNGEN, RECHNUNGEN_POSITIONEN
 WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL='1' && RECHNUNGEN_POSITIONEN.AKTUELL='1' GROUP BY RECHNUNGEN.BELEG_NR ASC" );
@@ -2855,7 +2855,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 	/* Alle erfassten Rechungen die noch nicht vollst�ndig kontiert worden sind */
 	/* Rechnungen die Positionen haben aber/und Rechnungen deren Kaufmenge <> Kontierungsmenge */
 	function unvollstaendig_kontierte_rechungen_anzeigen() {
-		/* Z�hlen aller Zeilen */
+		/* Zählen aller Zeilen */
 		/*
 		 * $result = mysql_query ("SELECT RECHNUNGEN. * , COUNT( RECHNUNGEN_POSITIONEN.POSITION ) AS ANZAHL_POSITIONEN
 		 * FROM RECHNUNGEN, RECHNUNGEN_POSITIONEN
