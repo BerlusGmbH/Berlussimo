@@ -57,16 +57,6 @@ class mietvertraege {
 			$form->text_feld ( 'Miete kalt', 'miete_kalt', '', '10' );
 			$form->text_feld ( 'Nebenkosten Vorauszahlung', 'nebenkosten', '', '10' );
 			$form->text_feld ( 'Heizkosten Vorauszahlung', 'heizkosten', '', '10' );
-			$javaaction_radio = "onchange=\"lasteneinzug_form(this.value, this.form.name)\"";
-			$form->radio_button_js ( 'lasteneinzug', '0', 'Lasteneinzug NEIN', $javaaction_radio, 'checked' );
-			$form->radio_button_js ( 'lasteneinzug', '1', 'Lasteneinzug JA', $javaaction_radio, '' );
-			echo "<div id=\"einzugsformular\" style='visibility:hidden;'>";
-			$this->autoeinzugsarten ( 'Einzugsart', 'einzugsart', 'einzugsart' );
-			$form->text_feld ( 'Kontoinhaber', 'konto_inhaber_autoeinzug', '', '40' );
-			$form->text_feld ( 'Kontonummer', 'konto_nummer_autoeinzug', '', '15' );
-			$form->text_feld ( 'BLZ', 'blz_autoeinzug', '', '15' );
-			$form->text_feld ( 'Geldinstitut', 'geld_institut', '', '15' );
-			echo "</div>";
 			$form->hidden_feld ( 'mietvertrag_raus', 'mv_pruefen' );
 			$sendbutton_js = "onclick=\"alle_mieter_auswaehlen()\"";
 			$form->send_button_js ( 'btn_mv_erstellen', 'Mietvertrag erstellen', $sendbutton_js );
