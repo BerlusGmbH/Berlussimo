@@ -57,16 +57,6 @@ mieter_liste.style.visibility = "hidden";
 }
 }
 
-function lasteneinzug_form(value, form_name){
-//var radio_button=document.getElementById("lasteneinzug");
-lasteneinzug_div = document.getElementById('einzugsformular');
-if(value==1){
-lasteneinzug_div.style.visibility = "visible"; 	
-}else{
-lasteneinzug_div.style.visibility = "hidden"; 
-}
-}
-
 function alle_mieter_auswaehlen() {
 	var mieter_liste=document.getElementById("mieter_liste");
 	for (var i = 0; i < mieter_liste.length; i++) {
@@ -327,19 +317,6 @@ switch ($mietvertrag_raus) {
 			// echo "keine kaltmiete";
 			$error .= 'Keine Kaltmiete eingegeben<br>';
 		}
-		/* Lastschriftverfahren */
-		if ($_POST [lasteneinzug] == 1) {
-			if (! empty ( $_POST [konto_inhaber_autoeinzug] ) && ! empty ( $_POST [konto_nummer_autoeinzug] ) && ! empty ( $_POST [blz_autoeinzug] ) && ! empty ( $_POST [geld_institut] )) {
-				
-				if (! is_numeric ( $_POST [konto_nummer_autoeinzug] ) or ! is_numeric ( $_POST [blz_autoeinzug] )) {
-					$error .= 'Kontonummer und BLZ prüfen<br>';
-				} else {
-					// echo "konto nr blz ok";
-				}
-			} else {
-				$error .= 'Lastschriftdaten unvollständig<br>';
-			}
-		} // lasteneinzug ende
 		if (isset ( $error )) {
 			echo $error;
 		} else {
@@ -365,13 +342,6 @@ switch ($mietvertrag_raus) {
 			if (! empty ( $_POST [heizkosten] )) {
 				echo "Heizkosten Vorauszahlung: $_POST[heizkosten] €<br>";
 			}
-			if ($_POST [lasteneinzug] == 1) {
-				echo "<hr><b>Teilnahme am Einzugsverfahren: JA</b><br>Einzugsart: $_POST[einzugsart]<br>";
-				echo "Kontoinhaber: $_POST[konto_inhaber_autoeinzug]<br>";
-				echo "Kontonummer: $_POST[konto_nummer_autoeinzug]<br>";
-				echo "BLZ: $_POST[blz_autoeinzug]<br>";
-				echo "Geldinstitut: $_POST[geld_institut]<br>";
-			}
 			$form->hidden_feld ( 'einheit_id', $_POST [einheit_id] );
 			$form->hidden_feld ( 'einheit_name', $einheit_kurzname );
 			$form->hidden_feld ( 'datum_einzug', $_POST [datum_einzug] );
@@ -384,17 +354,6 @@ switch ($mietvertrag_raus) {
 			$form->hidden_feld ( 'miete_kalt', $_POST [miete_kalt] );
 			$form->hidden_feld ( 'heizkosten', $_POST [heizkosten] );
 			$form->hidden_feld ( 'nebenkosten', $_POST [nebenkosten] );
-			/* Hidden LS-Verfahren */
-			if ($_POST [lasteneinzug] == 1) {
-				$form->hidden_feld ( 'lasteneinzug', '1' );
-				$form->hidden_feld ( 'einzugsart', $_POST [einzugsart] );
-				$form->hidden_feld ( 'konto_inhaber_autoeinzug', $_POST [konto_inhaber_autoeinzug] );
-				$form->hidden_feld ( 'konto_nummer_autoeinzug', $_POST [konto_nummer_autoeinzug] );
-				$form->hidden_feld ( 'blz_autoeinzug', $_POST [blz_autoeinzug] );
-				$form->hidden_feld ( 'geld_institut', $_POST [geld_institut] );
-			} else {
-				$form->hidden_feld ( 'lasteneinzug', '0' );
-			}
 			
 			$form->hidden_feld ( 'mietvertrag_raus', 'mv_speichern' );
 			$form->send_button ( 'btn_mv_erstellen', 'Mietvertrag speichern' );
@@ -438,10 +397,7 @@ switch ($mietvertrag_raus) {
 		if (! empty ( $_POST [nebenkosten] )) {
 			$mv_info->mieten_speichern ( $zugewiesene_vertrags_id, $_POST [datum_einzug], $_POST [datum_auszug], 'Nebenkosten Vorauszahlung', $_POST [nebenkosten], 0 );
 		}
-		
-		if ($_POST [lasteneinzug] == '1') {
-			$mv_info->teilnahme_einzugsverfahren_eingeben ( $zugewiesene_vertrags_id, $_POST [konto_inhaber_autoeinzug], $_POST [konto_nummer_autoeinzug], $_POST [blz_autoeinzug], $_POST [geld_institut], $_POST [einzugsart], 'JA' );
-		}
+
 		weiterleiten_in_sec ( "?daten=uebersicht&anzeigen=einheit&einheit_id=$_POST[einheit_id]", "1" );
 		iframe_end ();
 		$form->ende_formular ();
