@@ -503,7 +503,7 @@ function buchungs_infos(auswahl) {
 	} else {
 		//document.getElementById("label_kostenkonto").style.visibility = 'visible';
 		document.getElementById("kostenkonto").style.visibility = 'visible';
-		//alert('Kostenkonto w�hlen');
+		//alert('Kostenkonto wählen');
 		document.getElementById("kostenkonto").focus();
 		kostentrager_finden(typ, id);
 		info_feld_text = document.getElementById("info_feld_kostentraeger").innerHTML;
