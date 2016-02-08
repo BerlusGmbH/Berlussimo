@@ -44,7 +44,7 @@ class leerstand {
 				'OBJEKT_KURZNAME' => "Objekt",
 				'EINHEIT_KURZNAME' => 'Einheit',
 				'HAUS_STRASSE' => 'Strasse',
-				'EINHEIT_QM' => 'Flï¿½che mï¿½',
+				'EINHEIT_QM' => 'Fläche m²',
 				'EINHEIT_LAGE' => 'Lage/Typ' 
 		);
 		
@@ -52,7 +52,7 @@ class leerstand {
 		$objekt_name = $o->get_objekt_name ( $objekt_id );
 		$anzahl_leer = count ( $table_arr );
 		
-		$pdf->ezTable ( $table_arr, $cols, "<b>Leerstandï¿½bersicht $monatsname $jahr im $objekt_name,  Leerstand: $anzahl_leer</b>", array (
+		$pdf->ezTable ( $table_arr, $cols, "<b>Leerstandsübersicht $monatsname $jahr im $objekt_name,  Leerstand: $anzahl_leer</b>", array (
 				'showHeadings' => 1,
 				'shaded' => 0,
 				'titleFontSize' => 8,
@@ -131,17 +131,17 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC" );
 		$pdf->ezText ( "$e->einheit_lage", 14 );
 		
 		$pdf->ezSetMargins ( 0, 0, 50, 0 );
-		$pdf->ezText ( "FLï¿½CHE:", 14 );
+		$pdf->ezText ( "FLÄCHE:", 14 );
 		$pdf->ezSetMargins ( 0, 0, 150, 0 );
 		$pdf->ezSetDy ( 16 );
 		$einheit_qm = nummer_punkt2komma ( $e->einheit_qm );
-		$pdf->ezText ( "$einheit_qm mï¿½", 14 );
+		$pdf->ezText ( "$einheit_qm m²", 14 );
 		
 		$pdf->ezSetDy ( - 30 );
 		$pdf->ezSetMargins ( 0, 0, 100, 0 );
 		
 		$pdf->ellipse ( 60, $pdf->y - 10, 10 );
-		$pdf->ezText ( "EMTRï¿½MPELUNG", 12 );
+		$pdf->ezText ( "EMTRÜMPELUNG", 12 );
 		
 		$pdf->ezSetDy ( - 20 );
 		$pdf->ellipse ( 60, $pdf->y - 10, 10 );
@@ -149,11 +149,11 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC" );
 		
 		$pdf->ezSetDy ( - 20 );
 		$pdf->ellipse ( 60, $pdf->y - 10, 10 );
-		$pdf->ezText ( "SANITï¿½RROHINSTALLATION", 12 );
+		$pdf->ezText ( "SANITÄRROHINSTALLATION", 12 );
 		
 		$pdf->ezSetDy ( - 20 );
 		$pdf->ellipse ( 60, $pdf->y - 10, 10 );
-		$pdf->ezText ( "SANITï¿½R - ENDMONTAGE", 12 );
+		$pdf->ezText ( "SANITÄR - ENDMONTAGE", 12 );
 		
 		$pdf->ezSetDy ( - 20 );
 		$pdf->ellipse ( 60, $pdf->y - 10, 10 );
@@ -169,7 +169,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC" );
 		
 		$pdf->ezSetDy ( - 20 );
 		$pdf->ellipse ( 60, $pdf->y - 10, 10 );
-		$pdf->ezText ( "Tï¿½RE / BESCHLï¿½GE", 12 );
+		$pdf->ezText ( "TÜRE / BESCHLÄGE", 12 );
 		
 		$pdf->ezSetDy ( - 20 );
 		$pdf->ellipse ( 60, $pdf->y - 10, 10 );
@@ -189,7 +189,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC" );
 		
 		$pdf->ezSetDy ( - 20 );
 		$pdf->ellipse ( 60, $pdf->y - 10, 10 );
-		$pdf->ezText ( "SPï¿½LE MONTIEREN:     JA  |  NEIN", 12 );
+		$pdf->ezText ( "SPÜLE MONTIEREN:     JA  |  NEIN", 12 );
 		
 		$pdf->ezSetDy ( - 20 );
 		$pdf->ellipse ( 60, $pdf->y - 10, 10 );
