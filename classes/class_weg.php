@@ -3090,12 +3090,12 @@ class weg {
 		$pdf->setColor ( 1.0, 0.0, 0.0 );
 		$pdf->ezText ( "<b>$datum</b>\n", 11 );
 		$pdf->ezSetMargins ( 135, 70, 50, 50 );
-		$pdf->ezText ( "<b>auf das Konto $g->kontonummer  bei der $g->kredit_institut, BLZ $g->blz</b>\n", 11 );
+		$pdf->ezText ( "<b>auf das Konto der WEG (IBAN: $g->IBAN1, BIC: $g->BIC)\nbei der $g->kredit_institut\n</b>", 11 );
 		$pdf->setColor ( 0.0, 0.0, 0.0 );
 		$pdf->ezText ( "zu überweisen.\n", 11 );
 		$pdf->ezText ( "Für Rückfragen stehen wir Ihnen gerne zur Verfügung.\n", 11 );
 		$pdf->ezText ( "Mit freundlichen Grüßen\n\n\n", 11 );
-		$pdf->ezText ( "Wolfgang Wehrheim\n\n", 11 );
+		$pdf->ezText ( "Berlus GmbH\n\n", 11 );
 		$pdf->ezText ( "Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift gültig.\n", 11 );
 		$pdf->addInfo ( 'Title', "Mahnung $mv->personen_name_string" );
 		$pdf->addInfo ( 'Author', $_SESSION [username] );
