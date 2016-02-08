@@ -59,10 +59,6 @@ if (check_user_links ( $_SESSION ['benutzer_id'], 'mietanpassung' )) {
 	echo "<a href=\"?daten=mietanpassung\">Mietanpassung MS</a>&nbsp;<b>| </b>&nbsp;";
 }
 
-if (check_user_links ( $_SESSION ['benutzer_id'], 'dt_aus' )) {
-	echo "<a href=\"?daten=dt_aus\">DT-AUS</a>&nbsp;<b>| </b>&nbsp;";
-}
-
 if (check_user_links ( $_SESSION ['benutzer_id'], 'rechnungen' )) {
 	echo "<a href=\"?daten=rechnungen&option=erfasste_rechnungen\"><b>Rechnungen</b> </a>&nbsp;<b>| </b>&nbsp;";
 }
@@ -101,10 +97,6 @@ if (check_user_links ( $_SESSION ['benutzer_id'], 'statistik' )) {
 
 if (check_user_links ( $_SESSION ['benutzer_id'], 'zeiterfassung' )) {
 	echo "<a href=\"?daten=zeiterfassung\">Zeiterfassung </a>&nbsp;<b>| </b>&nbsp;";
-}
-
-if (check_user_links ( $_SESSION ['benutzer_id'], 'ueberweisung' )) {
-	echo "<a href=\"?daten=ueberweisung\">Überweisung </a>&nbsp;<b>| </b>&nbsp;";
 }
 
 if (check_user_links ( $_SESSION ['benutzer_id'], 'urlaub' )) {
