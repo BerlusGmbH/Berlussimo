@@ -17,15 +17,14 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
- 
-if(isset($_REQUEST["optionen"])){ 
-$daten = $_REQUEST["optionen"];
-switch($daten) {
-
-    case "admin_panel":
-    include("options/modules/admin_panel.php");
-    break;
-    }
+if (isset ( $_REQUEST ["optionen"] )) {
+	$daten = $_REQUEST ["optionen"];
+	switch ($daten) {
+		
+		case "admin_panel" :
+			include ("options/modules/admin_panel.php");
+			break;
+	}
 }
 
 ?>

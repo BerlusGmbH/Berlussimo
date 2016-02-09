@@ -17,8 +17,7 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
- 
- echo "<a href=\"?optionen=admin_panel&admin_panel=details_neue_kat\">Neue Hauptdetails</a>&nbsp;";
- echo "<a href=\"?optionen=admin_panel&admin_panel=details_neue_ukat\">Neue Detailoptionen</a>&nbsp;";
- echo "<hr>";
+echo "<a href=\"?optionen=admin_panel&admin_panel=details_neue_kat\">Neue Hauptdetails</a>&nbsp;";
+echo "<a href=\"?optionen=admin_panel&admin_panel=details_neue_ukat\">Neue Detailoptionen</a>&nbsp;";
+echo "<hr>";
 ?>

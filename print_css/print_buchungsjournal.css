@@ -1,49 +1,45 @@
-
-a{
-display:none;
+a {
+	display: none;
 }
 
 body {
-background-color: transparent;
-font-size: 10pt;
-font-family:'Arial';
-margin-left:70px;
-margin-right:70px;
+	background-color: transparent;
+	font-size: 10pt;
+	font-family: 'Arial';
+	margin-left: 70px;
+	margin-right: 70px;
 }
 
-.navi_leiste1{
-display: none;
+.navi_leiste1 {
+	display: none;
 }
 
-.navi_leiste2{
-display: none;
+.navi_leiste2 {
+	display: none;
 }
 
-
-form, fieldset{
-border:0;
-
+form, fieldset {
+	border: 0;
 }
 
-legend{
-display:none;
+legend {
+	display: none;
 }
 
 th {
-	font: bold 14px "Trebuchet MS", Verdana, Arial, Helvetica,
-	sans-serif;
+	font: bold 14px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
 	color: #000;
 	border-bottom: 1px solid #C1DAD7;
 	border-top: 0px solid #C1DAD7;
 	letter-spacing: 2px;
 	text-transform: uppercase;
 	padding: 2px 2px 2px 0px;
-	}
+}
 
 thead {
- 	    display:table-header-group;
- 	} 
+	display: table-header-group;
+}
 
 tbody {
- 	    display:table-row-group;
-	} 
+	display: table-row-group;
+}

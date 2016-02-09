@@ -17,14 +17,13 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
-
-$f = new formular;
-echo "<div class=\"navi_leiste2\">"; 
-$f->erstelle_formular("Hauptmenü -> Benutzerverwaltung...", NULL);
+$f = new formular ();
+echo "<div class=\"navi_leiste2\">";
+$f->erstelle_formular ( "HauptmenÃ¼ -> Benutzerverwaltung...", NULL );
 echo "<a href=\"?daten=benutzer\">Alle Benutzer</a>&nbsp;";
 echo "<a href=\"?daten=benutzer&option=neuer_benutzer\">Neuer Benutzer</a>&nbsp;";
 echo "<a href=\"?daten=benutzer&option=werkzeuge\">Werkzeuge</a>&nbsp;";
-$f->ende_formular();
+$f->ende_formular ();
 
 echo "</div>";
 ?>

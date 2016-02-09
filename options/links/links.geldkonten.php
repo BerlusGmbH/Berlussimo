@@ -17,19 +17,18 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
+$mieten = new mietkonto ();
+echo "<div class=\"navi_leiste2\">";
+$mieten->erstelle_formular ( "Hauptmen√º -> GELDKONTEN...", NULL );
 
-$mieten = new mietkonto;
-echo "<div class=\"navi_leiste2\">"; 
-$mieten->erstelle_formular("Hauptmen¸ -> GELDKONTEN...", NULL);
-
-echo "<a href=\"?daten=geldkonten\">Kontost‰nde</a>&nbsp;";
-echo "<a href=\"?daten=geldkonten&option=uebersicht_ea\">‹bersicht E/A</a>&nbsp;";
+echo "<a href=\"?daten=geldkonten\">Kontost√§nde</a>&nbsp;";
+echo "<a href=\"?daten=geldkonten&option=uebersicht_ea\">√úbersicht E/A</a>&nbsp;";
 echo "<a href=\"?daten=geldkonten&option=gk_neu\">GK erstellen</a>&nbsp;";
 echo "<a href=\"?daten=geldkonten&option=gk_zuweisen\">GK zuweisen</a>&nbsp;";
-#echo "<a href=\"?daten=dt_aus&option=dtaus_buchen\">DTAUS Buchen</a>&nbsp;";
-echo "<a href=\"?daten=geldkonten&option=uebersicht_zuweisung\">‹bersicht Zuweisung</a>&nbsp;";
+// echo "<a href=\"?daten=dt_aus&option=dtaus_buchen\">DTAUS Buchen</a>&nbsp;";
+echo "<a href=\"?daten=geldkonten&option=uebersicht_zuweisung\">√úbersicht Zuweisung</a>&nbsp;";
 
-$mieten->ende_formular();
+$mieten->ende_formular ();
 
 echo "</div>";
 ?>
