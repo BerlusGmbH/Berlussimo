@@ -1,36 +1,47 @@
-Instructions for installation of Berlussimo.
+### These instructions assume that you are running Ubuntu 14.04 and have an mySQL server
+### with acces to the command line
 
-Dependencies
+### setup berlussimo web app on apache2
 
-php 5.5.9
-php gd
+#upgrade ubuntu
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get dist-upgrade
 
-Version for install on own webserver.
+#the following command restarts the server
+sudo shutdown -r now
 
+#install apache2 and dependencies
+sudo apt-get install apache2 php5 php5-gd libapache2-mod-php5 php5-mysql git
+cd /var/www/;sudo git clone https://github.com/BerlusGmbH/Berlussimo berlussimo
+sudo cp /var/www/berlussimo/classes/config.inc.php.sample /var/www/berlussimo/classes/config.inc.php
 
+#edit config to fit your mysql config
+sudo nano /var/www/berlussimo/classes/config.inc.php
 
-1. copy all files in subfolder berlussimo
+#install composer and fetch dependencies
+curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
+cd /var/www/berlussimo/;sudo composer install
 
-2.  In folder INSTALL/DB-Version-0.4.0 you can find the MYSQL Database of Berlussimo 
-	Load this file as new mysql-database and create an new user with password for your database.
+#make web directory writeable by apache2
+sudo chown -R www-data:www-data /var/www/berlussimo
 
-3. Change file berlussimo/classes/config.inc.php an enter your USERNAME and PASSWORD for your own Mysql-Database.
+#edit DocumentRoot to /var/www/berlussimo
+sudo nano /etc/apache2/sites-enabled/000-default.conf
+sudo service apache2 restart
 
+### import database schema
+mysqladmin create berlussimo
+mysql berlussimo < /var/www/berlussimo/INSTALL/DB-Version-0.4.0/berlussimo_db_0.40.sql
 
+### you should now be able to open http://your.server/index.php in your browser and login with
 
-Open http://your.server/berlussimo_path/index.php in your browser and login with
+# login: admin
+# password: password
 
-Login: admin
-Password: password
+### if you did not stick with the default install directory (/var/www/berlussimo),
+### please change your index.php accordingly
 
-
-
-
-In index.php you can change following if you not install berlussimo in folder berlussimo:
-
-define ("BERLUS_PATH", 'berlussimo'); 
-to
-define ("BERLUS_PATH", 'your_install_path');
-
-
-Sanel Sivac, Berlin-Germany 18.11.2015 
+# define ("BERLUS_PATH", 'berlussimo'); 
+# to
+# define ("BERLUS_PATH", 'your_install_path');
