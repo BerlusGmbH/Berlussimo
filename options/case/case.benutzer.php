@@ -17,19 +17,13 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
-
-if(isset($_REQUEST["daten"])){ 
-$daten = $_REQUEST["daten"];
-switch($daten) {
-
-    case "benutzer":
-    include("options/modules/benutzer.php");
-    break;
-    }
-
-
-
-
-
+if (isset ( $_REQUEST ["daten"] )) {
+	$daten = $_REQUEST ["daten"];
+	switch ($daten) {
+		
+		case "benutzer" :
+			include ("options/modules/benutzer.php");
+			break;
+	}
 }
 ?>

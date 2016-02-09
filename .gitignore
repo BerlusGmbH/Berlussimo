@@ -1,5 +1,6 @@
 .project
 .settings
 .buildpath
-classes/config.inc.php
 FOTOS
+vendor
+classes/config.inc.php

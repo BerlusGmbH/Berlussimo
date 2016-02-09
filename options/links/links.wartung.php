@@ -17,14 +17,13 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
-
-$f = new formular;
-echo "<div class=\"navi_leiste2\">"; 
-$f->erstelle_formular("Hauptmen¸ -> Wartungen...", NULL);
-echo "<a href=\"?daten=wartung&option=geraeteliste\">Alle Ger‰te</a>&nbsp;";
+$f = new formular ();
+echo "<div class=\"navi_leiste2\">";
+$f->erstelle_formular ( "Hauptmen√º -> Wartungen...", NULL );
+echo "<a href=\"?daten=wartung&option=geraeteliste\">Alle Ger√§te</a>&nbsp;";
 echo "<a href=\"?daten=wartung\">Wartungen</a>&nbsp;";
-echo "<a href=\"?daten=wartung&option=geraet_hinzu\">Ger‰t hinzuf¸gen</a>&nbsp;";
-$f->ende_formular();
+echo "<a href=\"?daten=wartung&option=geraet_hinzu\">Ger√§t hinzuf√ºgen</a>&nbsp;";
+$f->ende_formular ();
 echo "</div>";
 
 ?>

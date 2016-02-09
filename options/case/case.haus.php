@@ -17,12 +17,12 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
-if(isset($_REQUEST["daten"])){
-switch($_REQUEST["daten"]) {
-
-    case "haus_raus":
-    include("options/modules/haus.php");
-    break;
-    }
+if (isset ( $_REQUEST ["daten"] )) {
+	switch ($_REQUEST ["daten"]) {
+		
+		case "haus_raus" :
+			include ("options/modules/haus.php");
+			break;
+	}
 }
 ?>
