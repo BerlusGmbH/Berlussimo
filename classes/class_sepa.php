@@ -2116,7 +2116,7 @@ class sepa {
 			$msg_id = "$von_gk_id-$datum_h-$time_h-$benutzername";
 			$dateiname = "$von_gk_id-$datum_h-$time_h-$benutzername.xml";
 			for($a = 0; $a < $anz; $a ++) {
-				$empf = utf8_decode ( $this->umlautundgross ( $arr [$a] ['BEGUENSTIGTER'] ) );
+				$empf = $this->umlautundgross ( $arr [$a] ['BEGUENSTIGTER'] );
 				$vzweck = substr ( $this->umlautundgross ( $arr [$a] ['VZWECK'] ), 0, 140 );
 				$betrag = $arr [$a] ['BETRAG'];
 				$sum += $betrag;
