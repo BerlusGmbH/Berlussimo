@@ -1972,7 +1972,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 		$counter = 0;
 		for($a = 2; $a < $anz_fotos; $a ++) {
 			$counter ++;
-			$foto = utf8_decode ( $fotos_arr [$a] );
+			$foto = $fotos_arr [$a];
 			
 			// echo "<div class=\"thumbnail\"><img src=\"$dir$foto\"></div>";
 			// echo "<a href=\"$dir$foto\" data-lightbox=\"roadtrip\"></div></a>\n";

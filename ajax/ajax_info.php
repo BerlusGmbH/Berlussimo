@@ -630,8 +630,8 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 	
 	case "get_iban_bic" :
 		// echo "IBAN NO HERE";
-		$kto = utf8_decode ( $_REQUEST ["kto"] );
-		$blz = utf8_decode ( $_REQUEST ["blz"] );
+		$kto = $_REQUEST ["kto"];
+		$blz = $_REQUEST ["blz"];
 		// echo "$kto $blz";
 		$sep = new sepa ();
 		$sep->get_iban_bic ( $kto, $blz );
@@ -755,19 +755,19 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 		// header('Content-Type: text/plain; charset=UTF-8'); //wichtig für die Umlaute in Dropdownfeldern
 		$belegnr = $_REQUEST ["belegnr"];
 		$position = $_REQUEST ["pos"];
-		$artikel_nr = utf8_decode ( $_REQUEST ["artikel_nr"] );
+		$artikel_nr = $_REQUEST ["artikel_nr"];
 		// $bez = $_REQUEST["bez"];
-		$bez = trim ( addslashes ( htmlspecialchars ( rawurldecode ( utf8_decode ( $_REQUEST ["bez"] ) ) ) ) );
+		$bez = trim ( addslashes ( htmlspecialchars ( rawurldecode ( $_REQUEST ["bez"] ) ) ) );
 		// $artikel_nr= utf8_decode($artikel_nr);
 		// $bez= utf8_decode($bez);
-		$lieferant_id = utf8_decode ( $_REQUEST ["lieferant_id"] );
-		$menge = utf8_decode ( $_REQUEST ["menge"] );
-		$einheit = utf8_decode ( $_REQUEST ["einheit"] );
-		$preis = utf8_decode ( $_REQUEST ["listenpreis"] );
-		$rabatt = utf8_decode ( $_REQUEST ["rabatt"] );
-		$pos_mwst = utf8_decode ( $_REQUEST ["pos_mwst"] );
-		$pos_skonto = utf8_decode ( $_REQUEST ["pos_skonto"] );
-		$g_netto = utf8_decode ( $_REQUEST ["g_netto"] );
+		$lieferant_id = $_REQUEST ["lieferant_id"];
+		$menge = $_REQUEST ["menge"];
+		$einheit = $_REQUEST ["einheit"];
+		$preis = $_REQUEST ["listenpreis"];
+		$rabatt = $_REQUEST ["rabatt"];
+		$pos_mwst = $_REQUEST ["pos_mwst"];
+		$pos_skonto = $_REQUEST ["pos_skonto"];
+		$g_netto = $_REQUEST ["g_netto"];
 		
 		$r = new rechnung ();
 		// $r->rechnung_grunddaten_holen($belegnr);
@@ -1021,7 +1021,6 @@ else {
 	
 	case "autovervollst" :
 		$string = $_REQUEST ["string"];
-		$string = utf8_decode ( $string );
 		$lieferant_id = $_REQUEST ["l_id"];
 		if (isset ( $string ) && strlen ( $string ) > 0) {
 			$abfrage = "SELECT LTRIM(RTRIM(ARTIKEL_NR)), BEZEICHNUNG, LISTENPREIS FROM `POSITIONEN_KATALOG`
@@ -1043,7 +1042,6 @@ WHERE `ART_LIEFERANT` = '$lieferant_id' AND (`ARTIKEL_NR` LIKE '$string%' OR `BE
 	
 	case "autovervollst2" :
 		$string = $_REQUEST ["string"];
-		$string = utf8_decode ( $string );
 		$lieferant_id = $_REQUEST ["l_id"];
 		// aktueller partner d.h. eigener preis
 		if (isset ( $string ) && strlen ( $string ) > 0) {
@@ -1324,16 +1322,16 @@ WHERE (`ARTIKEL_NR` LIKE '$string%' OR `BEZEICHNUNG` LIKE '$string%') ORDER BY A
 		break;
 	
 	case "u_pools_anzeigen" :
-		$kos_typ = utf8_decode ( $_REQUEST ['kos_typ'] );
-		$kos_bez = utf8_decode ( $_REQUEST ['kos_bez'] );
+		$kos_typ = $_REQUEST ['kos_typ'];
+		$kos_bez = $_REQUEST ['kos_bez'];
 		$r = new rechnungen ();
 		echo "$kos_typ $kos_bez";
 		$r->u_pools_anzeigen ( $kos_typ, $kos_bez );
 		break;
 	
 	case "pool_act_deactivate" :
-		$kos_typ = utf8_decode ( $_REQUEST ['kos_typ'] );
-		$kos_id = utf8_decode ( $_REQUEST ['kos_id'] );
+		$kos_typ = $_REQUEST ['kos_typ'];
+		$kos_id = $_REQUEST ['kos_id'];
 		$pool_id = $_REQUEST ['pool_id'];
 		$_SESSION ['pool_id'] = $pool_id;
 		$r = new rechnungen ();
@@ -1341,9 +1339,9 @@ WHERE (`ARTIKEL_NR` LIKE '$string%' OR `BEZEICHNUNG` LIKE '$string%') ORDER BY A
 		break;
 	
 	case "u_pool_erstellen" :
-		$kos_typ = utf8_decode ( $_REQUEST ['kos_typ'] );
-		$kos_bez = utf8_decode ( $_REQUEST ['kos_bez'] );
-		$pool_bez = utf8_decode ( $_REQUEST ['pool_bez'] );
+		$kos_typ = $_REQUEST ['kos_typ'];
+		$kos_bez = $_REQUEST ['kos_bez'];
+		$pool_bez = $_REQUEST ['pool_bez'];
 		$r = new rechnungen ();
 		$r->u_pool_erstellen ( $pool_bez, $kos_typ, $kos_bez );
 		break;
