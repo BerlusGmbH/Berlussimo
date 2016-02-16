@@ -718,12 +718,6 @@ function autovervoll(lieferant_id, string) {
 							lieferant_bez = artikel_zeile_arr[3];
 							n_lieferant_id = artikel_zeile_arr[4];
 
-							if (a == 0) {
-								//alert("ART:"+art_nr);
-								//alert(art_nr.length);
-								art_nr = art_nr.substring(1);
-							}
-
 							//art_link = "<tr class=\"zeile2\"><td><a class=\"artikel_vorhanden\"  onClick=\"ajax_check_art('" + n_lieferant_id + "','"+ art_nr + "');\">"+art_nr+"</a></td><td>"+ bez + "</td><td>"+ preis +"</td><td>" + lieferant_bez + '</td></tr>';
 							art_link = "<tr class=\"zeile2\"><td><a class=\"artikel_vorhanden\"  onClick=\"ajax_check_art('";
 							art_link += n_lieferant_id;
