@@ -20,10 +20,10 @@
 include_once ('class_sepa_fremd.php');
 
 // include_once('pdfclass/class.ezpdf.php');
-//include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/pdfclass/class.ezpdf.php");
+//include_once (BERLUS_PATH . "/pdfclass/class.ezpdf.php");
 // include_once('classes/class_bpdf.php');
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_bpdf.php");
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_buchen.php");
+include_once (BERLUS_PATH . "/classes/class_bpdf.php");
+include_once (BERLUS_PATH . "/classes/class_buchen.php");
 class sepa {
 	function get_iban_bicALTFALSCH($konto_nr, $blz, $land = 'DE') {
 		$this->BIC = '';

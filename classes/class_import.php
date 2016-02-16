@@ -6,11 +6,11 @@ class import {
 			$bg = new berlussimo_global ();
 			$bg->objekt_auswahl_liste ( '?daten=objekte_raus&objekte_raus=import' );
 		} else {
-			if (! file_exists ( HAUPT_PATH . '/' . BERLUS_PATH . '/' . $file )) {
-				$ff = HAUPT_PATH . '/' . BERLUS_PATH . '/' . $file;
+			if (! file_exists ( BERLUS_PATH . '/' . $file )) {
+				$ff = BERLUS_PATH . '/' . $file;
 				die ( fehlermeldung_ausgeben ( "Datei: <u>$ff</u> existiert nicht" ) );
 			}
-			$arr = file ( HAUPT_PATH . '/' . BERLUS_PATH . '/' . $file );
+			$arr = file ( BERLUS_PATH . '/' . $file );
 			$o = new objekt ();
 			$o->get_objekt_infos ( $_SESSION ['objekt_id'] );
 			echo '<pre>';
@@ -947,11 +947,11 @@ class import {
 		return str_replace ( '€', '', $string );
 	}
 	function get_import_arr($file = null) {
-		if (! file_exists ( HAUPT_PATH . '/' . BERLUS_PATH . '/' . $file )) {
-			$ff = HAUPT_PATH . '/' . BERLUS_PATH . '/' . $file;
+		if (! file_exists ( BERLUS_PATH . '/' . $file )) {
+			$ff = BERLUS_PATH . '/' . $file;
 			die ( fehlermeldung_ausgeben ( "Datei: <u>$ff</u> existiert nicht" ) );
 		}
-		$arr = file ( HAUPT_PATH . '/' . BERLUS_PATH . '/' . $file );
+		$arr = file ( BERLUS_PATH . '/' . $file );
 		$o = new objekt ();
 		$o->get_objekt_infos ( $_SESSION ['objekt_id'] );
 		// echo '<pre>';
