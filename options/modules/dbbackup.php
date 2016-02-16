@@ -19,11 +19,11 @@
 $f = new formular ();
 $f->fieldset ( 'Datenbankzeilen sichern', 'db_sich' );
 $ccyymmddhhmmss = date ( "Ymd-His" );
-$sql_file = ROOT_PATH . "/backup/backup" . $ccyymmddhhmmss . ".sql";
-$tar_file = ROOT_PATH . "/backup/backup" . $ccyymmddhhmmss . ".tar.gz";
-if (! file_exists ( ROOT_PATH . "/backup" )) {
-	if (! mkdir ( ROOT_PATH . "/backup", 0777 )) {
-		die ( "Kann Verzeichnis " . ROOT_PATH . "/backup nicht anlegen!" );
+$sql_file = BERLUS_PATH . "/backup/backup" . $ccyymmddhhmmss . ".sql";
+$tar_file = BERLUS_PATH . "/backup/backup" . $ccyymmddhhmmss . ".tar.gz";
+if (! file_exists ( BERLUS_PATH . "/backup" )) {
+	if (! mkdir ( BERLUS_PATH . "/backup", 0777 )) {
+		die ( "Kann Verzeichnis " . BERLUS_PATH . "/backup nicht anlegen!" );
 	}
 } else {
 	echo "Backupverzeichnis existiert!<br>";

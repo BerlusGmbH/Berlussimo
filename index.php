@@ -21,54 +21,48 @@
 // error_reporting(E_ALL|E_STRICT);
 // ini_set('allow_url_include', 1);
 // ini_set("auto_detect_line_endings", true);
-define ( "ROOT_PATH", dirname ( __FILE__ ) );
 
-define ( "BERLUS_PATH", 'berlussimo' );
-define ( "HAUPT_PATH", dirname ( __DIR__ ) );
-define ( "PROG_PATH", dirname ( __FILE__ ) );
-define ( "DOC_ROOT", $_SERVER ['DOCUMENT_ROOT'] );
+define ( "BERLUS_PATH", __DIR__ );
 
 /* neu */
 /* KONFIG */
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/config.inc.php");
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/includes/config.php");
+include_once (BERLUS_PATH . "/classes/config.inc.php");
+include_once (BERLUS_PATH . "/includes/config.php");
 /* KLASSEN */
 require __DIR__ . '/vendor/autoload.php';
-//include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/pdfclass/class.ezpdf.php");
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_bpdf.php");
+include_once (BERLUS_PATH . "/classes/class_bpdf.php");
 
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_person.php");
+include_once (BERLUS_PATH . "/classes/class_person.php");
 
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_details.php");
+include_once (BERLUS_PATH . "/classes/class_details.php");
 
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_weg.php");
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_sepa.php");
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/berlussimo_class.php");
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/includes/allgemeine_funktionen.php");
+include_once (BERLUS_PATH . "/classes/class_weg.php");
+include_once (BERLUS_PATH . "/classes/class_sepa.php");
+include_once (BERLUS_PATH . "/classes/berlussimo_class.php");
+include_once (BERLUS_PATH . "/includes/allgemeine_funktionen.php");
 
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_sepa.php");
+include_once (BERLUS_PATH . "/classes/class_sepa.php");
 
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_buchen.php");
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_mietvertrag.php");
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/mietzeit_class.php");
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/mietkonto_class.php");
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_formular.php");
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_benutzer.php");
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_mietentwicklung.php");
+include_once (BERLUS_PATH . "/classes/class_buchen.php");
+include_once (BERLUS_PATH . "/classes/class_mietvertrag.php");
+include_once (BERLUS_PATH . "/classes/mietzeit_class.php");
+include_once (BERLUS_PATH . "/classes/mietkonto_class.php");
+include_once (BERLUS_PATH . "/classes/class_formular.php");
+include_once (BERLUS_PATH . "/classes/class_benutzer.php");
+include_once (BERLUS_PATH . "/classes/class_mietentwicklung.php");
 
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_ueberweisung.php");
+include_once (BERLUS_PATH . "/classes/class_ueberweisung.php");
 
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_import.php");
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_todo.php");
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_wartungen.php");
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_serienbrief.php");
+include_once (BERLUS_PATH . "/classes/class_import.php");
+include_once (BERLUS_PATH . "/classes/class_todo.php");
+include_once (BERLUS_PATH . "/classes/class_wartungen.php");
+include_once (BERLUS_PATH . "/classes/class_serienbrief.php");
 
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_stammdaten.php");
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_thumbs.php");
+include_once (BERLUS_PATH . "/classes/class_stammdaten.php");
+include_once (BERLUS_PATH . "/classes/class_thumbs.php");
 
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/phplot.php");
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_kundenweb.php");
-// include_once(HAUPT_PATH.'/'.BERLUS_PATH."/classes/dta.lib.php");
+include_once (BERLUS_PATH . "/classes/phplot.php");
+include_once (BERLUS_PATH . "/classes/class_kundenweb.php");
 
 /* Alt */
 /*

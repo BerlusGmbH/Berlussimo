@@ -1972,7 +1972,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 		$counter = 0;
 		for($a = 2; $a < $anz_fotos; $a ++) {
 			$counter ++;
-			$foto = utf8_decode ( $fotos_arr [$a] );
+			$foto = $fotos_arr [$a];
 			
 			// echo "<div class=\"thumbnail\"><img src=\"$dir$foto\"></div>";
 			// echo "<a href=\"$dir$foto\" data-lightbox=\"roadtrip\"></div></a>\n";
@@ -2047,7 +2047,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 	}
 	function get_png($objekt_id, $monat, $jahr, $w = 300, $h = 200) {
 		$monat = sprintf ( '%02d', $monat );
-		include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/phplot.php");
+		include_once (BERLUS_PATH . "/classes/phplot.php");
 		
 		$plot = new PHPlot ( $w, $h, "/tmp/plot_sanierung.png" );
 		$plot->SetImageBorderType ( 'plain' );

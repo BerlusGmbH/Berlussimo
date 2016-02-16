@@ -20,10 +20,10 @@
 include_once ('class_sepa_fremd.php');
 
 // include_once('pdfclass/class.ezpdf.php');
-//include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/pdfclass/class.ezpdf.php");
+//include_once (BERLUS_PATH . "/pdfclass/class.ezpdf.php");
 // include_once('classes/class_bpdf.php');
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_bpdf.php");
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/class_buchen.php");
+include_once (BERLUS_PATH . "/classes/class_bpdf.php");
+include_once (BERLUS_PATH . "/classes/class_buchen.php");
 class sepa {
 	function get_iban_bicALTFALSCH($konto_nr, $blz, $land = 'DE') {
 		$this->BIC = '';
@@ -2116,7 +2116,7 @@ class sepa {
 			$msg_id = "$von_gk_id-$datum_h-$time_h-$benutzername";
 			$dateiname = "$von_gk_id-$datum_h-$time_h-$benutzername.xml";
 			for($a = 0; $a < $anz; $a ++) {
-				$empf = utf8_decode ( $this->umlautundgross ( $arr [$a] ['BEGUENSTIGTER'] ) );
+				$empf = $this->umlautundgross ( $arr [$a] ['BEGUENSTIGTER'] );
 				$vzweck = substr ( $this->umlautundgross ( $arr [$a] ['VZWECK'] ), 0, 140 );
 				$betrag = $arr [$a] ['BETRAG'];
 				$sum += $betrag;

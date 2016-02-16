@@ -27,9 +27,9 @@
 // include_once("classes/class_formular.php");
 
 // include_once("config.inc.php");
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/config.inc.php");
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/includes/config.php");
-include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/berlussimo_class.php");
+include_once (BERLUS_PATH . "/classes/config.inc.php");
+include_once (BERLUS_PATH . "/includes/config.php");
+include_once (BERLUS_PATH . "/classes/berlussimo_class.php");
 class kasse extends rechnung {
 	var $kassen_name;
 	var $kassen_verwalter;
