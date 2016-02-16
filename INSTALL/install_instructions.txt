@@ -38,10 +38,3 @@ mysql berlussimo < /var/www/berlussimo/INSTALL/DB-Version-0.4.0/berlussimo_db_0.
 
 # login: admin
 # password: password
-
-### if you did not stick with the default install directory (/var/www/berlussimo),
-### please change your index.php accordingly
-
-# define ("BERLUS_PATH", 'berlussimo'); 
-# to
-# define ("BERLUS_PATH", 'your_install_path');

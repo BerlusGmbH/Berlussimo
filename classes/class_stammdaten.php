@@ -766,7 +766,7 @@ class stammdaten {
 		$mvs->get_mietvertrag_infos_aktuell ( $mv_id );
 		
 		// require_once 'phplot.php';
-		include_once (HAUPT_PATH . '/' . BERLUS_PATH . "/classes/phplot.php");
+		include_once (BERLUS_PATH . "/classes/phplot.php");
 		$plot = new PHPlot ( $w, $h );
 		$plot->SetImageBorderType ( 'plain' );
 		$plot->SetPlotType ( 'bars' );

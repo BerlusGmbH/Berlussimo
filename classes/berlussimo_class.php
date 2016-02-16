@@ -38,7 +38,7 @@ if (file_exists ( "classes/class_statistik.php" )) {
 if (file_exists ( "classes/class_sepa.php" )) {
 	include_once ("classes/class_sepa.php");
 }
-// include_once(HAUPT_PATH.'/'.BERLUS_PATH."/classes/class_sepa.php");
+
 class berlussimo_global {
 	function berlussimo_global() {
 		$this->datum_heute = date ( "Y-m-d" );

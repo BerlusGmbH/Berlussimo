@@ -3891,7 +3891,6 @@ else {
 		$kos_id = $bu->kostentraeger_id_ermitteln ( $kos_typ, $kos_bez );
 		if (! $kos_id) {
 			echo $kos_bez;
-			$kos_bez = utf8_decode ( $kos_bez );
 			echo "<br>$kos_typ $kos_bez";
 			DIE ( 'NIX' );
 		}
