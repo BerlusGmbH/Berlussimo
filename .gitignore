@@ -1,7 +1,8 @@
 .project
 .settings
 .buildpath
-FOTOS
+.idea
 vendor
 classes/config.inc.php
-.idea
+FOTOS
+Monatsberichte
