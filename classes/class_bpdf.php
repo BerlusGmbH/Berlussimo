@@ -40,8 +40,7 @@ class b_pdf {
 		if (file_exists ( $font_file )) {
 			$pdf->selectFont ( "$font_file" );
 		} else {
-			// die("FONT".HAUPT_PATH.'/'.BERLUS_PATH."/$font_file");
-			$pdf->selectFont ( HAUPT_PATH . '/' . BERLUS_PATH . "/$font_file" );
+			$pdf->selectFont ( BERLUS_PATH . "/$font_file" );
 		}
 		
 		if ($orientation == 'portrait') {
@@ -49,7 +48,7 @@ class b_pdf {
 			if (! isset ( $_REQUEST ['no_logo'] )) {
 				if ($logo_file == '') {
 					$logo_file = "print_css/$partner_typ/$partner_id" . "_logo.png";
-					$logo_file = HAUPT_PATH . '/' . BERLUS_PATH . "/print_css/$partner_typ/$partner_id" . "_logo.png";
+					$logo_file = BERLUS_PATH . "/print_css/$partner_typ/$partner_id" . "_logo.png";
 				}
 				if (file_exists ( "$logo_file" )) {
 					$pdf->addPngFromFile ( "$logo_file", 200, 730, 200, 80 );
@@ -61,7 +60,7 @@ class b_pdf {
 			} else {
 				// $pdf->addText(43,760,$f_size,"Vorschau / Druckansicht ");
 				$logo_file = "print_css/$partner_typ/$partner_id" . "_logo.png";
-				$logo_file = HAUPT_PATH . '/' . BERLUS_PATH . "/print_css/$partner_typ/$partner_id" . "_logo.png";
+				$logo_file = BERLUS_PATH . "/print_css/$partner_typ/$partner_id" . "_logo.png";
 			}
 			$pdf->setLineStyle ( 0.5 );
 			$this->footer_info ( $partner_typ, $partner_id );
@@ -81,7 +80,7 @@ class b_pdf {
 		} else {
 			$pdf->ezSetMargins ( 120, 40, 30, 30 );
 			$logo_file = "print_css/$partner_typ/$partner_id" . "_logo.png";
-			$logo_file = HAUPT_PATH . '/' . BERLUS_PATH . "/print_css/$partner_typ/$partner_id" . "_logo.png";
+			$logo_file = BERLUS_PATH . "/print_css/$partner_typ/$partner_id" . "_logo.png";
 			if (file_exists ( "$logo_file" )) {
 				$pdf->addPngFromFile ( "$logo_file", 320, 505, 200, 80 );
 			} else {
