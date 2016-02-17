@@ -17,7 +17,7 @@
  * @lastmodified $Date: 2011-07-07 10:41:33 +0200 (Do, 07 Jul 2011) $
  *
  */
-define ( "BERLUS_PATH",  __DIR__ );
+define ( "BERLUS_PATH",  __DIR__ . '/..' );
 
 /* neu */
 /* KONFIG */
