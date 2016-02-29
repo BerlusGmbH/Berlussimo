@@ -1,0 +1,1862 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass scrbook
+\begin_preamble
+%Farben fuer Programmlisting
+\usepackage{listings,xcolor}
+\definecolor{pl_background}{rgb}{0.95,0.95,0.95}
+\definecolor{pl_comment}{rgb}{0.12, 0.38, 0.18 }
+\definecolor{pl_ifelse}{rgb}{0.74,0.74,.29}
+\definecolor{pl_keyword}{rgb}{0.37, 0.08, 0.25}
+\definecolor{pl_string}{rgb}{0.06, 0.10, 0.98}
+% Vordefiniertes Programmlisting
+\lstset{
+language = SQL,
+basicstyle = \small\sffamily,
+backgroundcolor = \color{pl_background},
+stringstyle = \color{pl_string},
+keywordstyle = \color{pl_keyword}\bfseries,
+commentstyle = \color{pl_comment}\itshape,
+frame = lrbt,
+numbers = left,
+showstringspaces = false,
+breaklines = true,
+xleftmargin = 15pt,
+emph = [1]{php},
+emphstyle = [1]\color{black},
+emph = [2]{if,and,or,else},
+emphstyle = [2]\color{pl_ifelse}}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize a4paper
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 2
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Berlussimo
+\end_layout
+
+\begin_layout Author
+Cristian Müller
+\end_layout
+
+\begin_layout Part
+Current Situation
+\end_layout
+
+\begin_layout Chapter
+Data Model
+\end_layout
+
+\begin_layout Section
+Building Slip (BAUBELEG)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE BAU_BELEG (
+\end_layout
+
+\begin_layout Plain Layout
+
+	DAT INT(7) PRIMARY KEY NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BELEG_NR INT(7) NOT NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Building Site (BAUSTELLEN)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE BAUSTELLEN (
+\end_layout
+
+\begin_layout Plain Layout
+
+	DAT INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	KOSTENTRAEGER_TYP VARCHAR(30) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	KOSTENTRAEGER_ID INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	A_DATUM DATE NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	E_DATUM DATE NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BESCHREIBUNG VARCHAR(50) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+CONSTRAINT `PRIMARY` PRIMARY KEY (DAT, KOSTENTRAEGER_TYP) );
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Building Site External (BAUSTELLEN_EXT)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE BELEG2RG (
+\end_layout
+
+\begin_layout Plain Layout
+
+	DAT INT(11) PRIMARY KEY NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BELEG_NR INT(7) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	EMPF_P_ID INT(7) NOT NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+User (BENUTZER)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE BENUTZER (
+\end_layout
+
+\begin_layout Plain Layout
+
+	benutzer_id INT(7) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	benutzername VARCHAR(20) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	passwort VARCHAR(50) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	STUNDENSATZ DECIMAL(10,2) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	GEB_DAT DATE,
+\end_layout
+
+\begin_layout Plain Layout
+
+	GEWERK_ID INT(7) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	EINTRITT DATE NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	AUSTRITT DATE NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	URLAUB INT(2),
+\end_layout
+
+\begin_layout Plain Layout
+
+	STUNDEN_PW DECIMAL(4,2) NOT NULL );
+\end_layout
+
+\begin_layout Plain Layout
+
+CREATE INDEX benutzername ON BENUTZER (benutzername);
+\end_layout
+
+\begin_layout Plain Layout
+
+CREATE INDEX benutzer_id ON BENUTZER (benutzer_id);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+User Module (BENUTZER_MODULE)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE BENUTZER_MODULE (
+\end_layout
+
+\begin_layout Plain Layout
+
+	BM_DAT INT(7) PRIMARY KEY NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BM_ID INT(7) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BENUTZER_ID INT(7) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	MODUL_NAME VARCHAR(50) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	AKTUELL ENUM('0', '1') NOT NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Partner User (BENUTZER_PARTNER)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE BENUTZER_PARTNER (
+\end_layout
+
+\begin_layout Plain Layout
+
+	BP_DAT INT(7) PRIMARY KEY NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BP_BENUTZER_ID INT(7) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BP_PARTNER_ID INT(7) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	AKTUELL ENUM('0', '1') NOT NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+User Report (BERICHTE_USER)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE BERICHTE_USER (
+\end_layout
+
+\begin_layout Plain Layout
+
+	B_DAT INT(7) PRIMARY KEY NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	B_ID INT(7) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	B_NAME VARCHAR(50) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	B_PASS VARCHAR(50) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	B_EMAIL VARCHAR(100) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	B_VORNAME VARCHAR(100) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	B_NACHNAME CHAR(100) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	AKTUELL ENUM('0', '1') NOT NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Operating Cost Accounting (BK_ABRECHNUNGEN)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE BK_ABRECHNUNGEN (
+\end_layout
+
+\begin_layout Plain Layout
+
+	B_DAT INT(6) PRIMARY KEY NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	B_ID INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	PROFIL_ID INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	PROFIL_BEZ VARCHAR(100) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	PROFIL_JAHR INT(4) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	WIRT_E INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	WIRT_NAME VARCHAR(100) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	DATUM DATE NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	ANZ_EINHEITEN INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	QM_GESAMT DECIMAL(10,2) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	QM_WOHNRAUM DECIMAL(10,2) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	QM_GEWERBE DECIMAL(10,2) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	ANZ_KONTEN INT(5) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	ANZ_ABRECHNUNGEN VARCHAR(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	ERSTELLT TIMESTAMP DEFAULT 'CURRENT_TIMESTAMP' NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	ERSTELLER VARCHAR(30) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	PARTNER_ID INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	KONTENRAHMEN_ID INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	AKTUELL ENUM('0', '1') NOT NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Operating Cost Accounting Account (BK_ABRECHNUNGEN_KONTEN)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE BK_ABRECHNUNGEN_KONTEN (
+\end_layout
+
+\begin_layout Plain Layout
+
+	BK_A_DAT INT(7) PRIMARY KEY NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BK_A_ID INT(7) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	B_ID INT(7) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BK_K_ID INT(7) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	KONTO INT(7) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	KONTO_BEZ VARCHAR(100) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	G_KOSTEN DECIMAL(10,2) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	G_KOSTEN_WO DECIMAL(10,2) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	G_KOSTEN_GE DECIMAL(10,2) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	AKTUELL ENUM('0', '1') NOT NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Operating Cost Ajustment (BK_ANPASSUNG)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE BK_ANPASSUNG (
+\end_layout
+
+\begin_layout Plain Layout
+
+	AN_DAT INT(6) PRIMARY KEY NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	AN_ID INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	GRUND VARCHAR(50) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	FEST_BETRAG DECIMAL(10,2) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	KEY_ID INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	PROFIL_ID INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	AKTUELL ENUM('0', '1') NOT NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Operating Cost Booking Calculation (BK_BERECHNUNG_BUCHUNGEN)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE BK_BERECHNUNG_BUCHUNGEN (
+\end_layout
+
+\begin_layout Plain Layout
+
+	BK_BE_DAT INT(6) PRIMARY KEY NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BK_BE_ID INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BUCHUNG_ID INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BK_K_ID INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BK_PROFIL_ID INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	KEY_ID INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	ANTEIL DECIMAL(7,4) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	KOSTENTRAEGER_TYP VARCHAR(30) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	KOSTENTRAEGER_ID INT(7) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	HNDL_BETRAG DECIMAL(10,3) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	AKTUELL ENUM('0', '1') NOT NULL );
+\end_layout
+
+\begin_layout Plain Layout
+
+CREATE INDEX BUCHUNG_ID ON BK_BERECHNUNG_BUCHUNGEN (BUCHUNG_ID, BK_K_ID,
+ BK_PROFIL_ID, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, AKTUELL);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Operating Cost Individual Accounting Row (BK_EINZEL_ABR_ZEILEN)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE BK_EINZEL_ABR_ZEILEN (
+\end_layout
+
+\begin_layout Plain Layout
+
+	BK_Z_DAT INT(7) PRIMARY KEY NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BK_Z_ID INT(7) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BK_E_ID INT(7) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	KONTO_ID INT(7) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	KONTO_BEZ VARCHAR(100) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	G_KOSTEN DECIMAL(10,2) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	G_HNDL DECIMAL(10,2) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	VERTEILER VARCHAR(50) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	IHRE_ME VARCHAR(50) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	ANTEIL_HNDL DECIMAL(10,2) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BETEILIGUNG DECIMAL(10,2) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	AKTUELL ENUM('0', '1') NOT NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Operating Cost Individual Accounting (BK_EINZEL_ABRECHNUNGEN)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE BK_EINZEL_ABRECHNUNGEN (
+\end_layout
+
+\begin_layout Plain Layout
+
+	BK_E_DAT INT(7) PRIMARY KEY NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BK_E_ID INT(7) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	B_ID INT(7) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	EMPF VARCHAR(255) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	ZEITRAUM VARCHAR(255) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	MIETERNUMMER VARCHAR(100) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	EINHEIT_ID INT(7) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	EINHEIT_NAME VARCHAR(50) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	G_KOSTEN DECIMAL(10,2) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	G_HNDL DECIMAL(10,2) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	VORSCHUSS DECIMAL(10,2) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	SALDO DECIMAL(10,2) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	SALDO_ART VARCHAR(50) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	AKTUELL ENUM('0', '1') NOT NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Operating Cost General Keys (BK_GENERAL_KEYS)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE BK_GENERAL_KEYS (
+\end_layout
+
+\begin_layout Plain Layout
+
+	GKEY_DAT INT(7) PRIMARY KEY NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	GKEY_ID INT(7) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	GKEY_NAME VARCHAR(50) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	G_VAR VARCHAR(30) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	E_VAR VARCHAR(20) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	ME VARCHAR(10) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	AKTUELL ENUM('0', '1') NOT NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Operating Cost Account (BK_Konten)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE BK_KONTEN (
+\end_layout
+
+\begin_layout Plain Layout
+
+	BK_K_DAT INT(6) PRIMARY KEY NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BK_K_ID INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	KONTO VARCHAR(10) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	KONTO_BEZ VARCHAR(100) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BK_PROFIL_ID INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	GENKEY_ID INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	HNDL ENUM('0', '1') NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	AKTUELL ENUM('0', '1') NOT NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Operating Cost Profile (BK_PROFIL)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE BK_PROFILE (
+\end_layout
+
+\begin_layout Plain Layout
+
+	BK_DAT INT(6) PRIMARY KEY NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BK_ID INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BEZEICHNUNG VARCHAR(50) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	TYP VARCHAR(20) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	TYP_ID INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	JAHR DECIMAL(4) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BERECHNUNGS_DATUM DATE NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	VERRECHNUNGS_DATUM DATE NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	AKTUELL ENUM('0', '1') NOT NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Bank Identifier Code (BLZ)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE BLZ (
+\end_layout
+
+\begin_layout Plain Layout
+
+	BLZ INT(8) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	MERKMAL INT(1) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BEZEICHNUNG VARCHAR(200) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	PLZ INT(5) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	ORT VARCHAR(100) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	KURZ_BEZ VARCHAR(50) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	PAN INT(5) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BIC VARCHAR(11) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	PZ VARCHAR(2) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	DSN INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	AEK CHAR(1) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BLZ_L ENUM('0', '1') NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	BLZ_NEU INT(8) NOT NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Detail (DETAIL)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE DETAIL (
+\end_layout
+
+\begin_layout Plain Layout
+
+	DETAIL_DAT INT(11) PRIMARY KEY NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	DETAIL_ID INT(11) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	DETAIL_NAME VARCHAR(50) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	DETAIL_INHALT MEDIUMTEXT NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	DETAIL_BEMERKUNG VARCHAR(400) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	DETAIL_AKTUELL ENUM('0', '1') NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	DETAIL_ZUORDNUNG_TABELLE VARCHAR(50) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	DETAIL_ZUORDNUNG_ID VARCHAR(6) NOT NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Detail Category (DETAIL_KATEGORIEN)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE DETAIL_KATEGORIEN (
+\end_layout
+
+\begin_layout Plain Layout
+
+	DETAIL_KAT_ID INT(6) PRIMARY KEY NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	DETAIL_KAT_NAME VARCHAR(100) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	DETAIL_KAT_KATEGORIE VARCHAR(30) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	DETAIL_KAT_AKTUELL ENUM('0', '1') NOT NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Detail Subcategory (DETAIL_UNTERKATEGORIEN)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE DETAIL_UNTERKATEGORIEN (
+\end_layout
+
+\begin_layout Plain Layout
+
+	UKAT_DAT INT(6) PRIMARY KEY NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	KATEGORIE_ID INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	UNTERKATEGORIE_NAME VARCHAR(100) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	AKTUELL ENUM('0', '1') NOT NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Unit (EINHEIT)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE EINHEIT (
+\end_layout
+
+\begin_layout Plain Layout
+
+	EINHEIT_DAT INT(11) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	EINHEIT_ID INT(11) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	EINHEIT_QM DECIMAL(6,2) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	EINHEIT_LAGE VARCHAR(50) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	HAUS_ID INT(11) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	EINHEIT_AKTUELL ENUM('0', '1') NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	EINHEIT_KURZNAME VARCHAR(50) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	TYP ENUM('WOHNRAUM', 'GEWERBE', 'STELLPLATZ', 'GARAGE', 'KELLER', 'FREIFLAECHE'
+, 'WOHNEIGENTUM', 'WERBEFLAECHE') NOT NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+);
+\end_layout
+
+\begin_layout Plain Layout
+
+CREATE UNIQUE INDEX EINHEIT_DAT ON EINHEIT (EINHEIT_DAT);
+\end_layout
+
+\begin_layout Plain Layout
+
+CREATE INDEX EINHEIT_ID ON EINHEIT (EINHEIT_ID);
+\end_layout
+
+\begin_layout Plain Layout
+
+CREATE INDEX EINHEIT_KURZNAME ON EINHEIT (EINHEIT_KURZNAME);
+\end_layout
+
+\begin_layout Plain Layout
+
+CREATE INDEX HAUS_ID ON EINHEIT (HAUS_ID);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Holiday (FEIERTAG)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE FEIERTAGE (
+\end_layout
+
+\begin_layout Plain Layout
+
+	F_DAT INT(6) PRIMARY KEY NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	DATUM DATE NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	FEIERTAG VARCHAR(50) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	AKTUELL ENUM('0', '1') NOT NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Window Installed (FENSTER_EINGEBAUT)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE FENSTER_EINGEBAUT (
+\end_layout
+
+\begin_layout Plain Layout
+
+	DAT INT(7) PRIMARY KEY NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	R_BELEG_ID INT(7) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	POS INT(5) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	EINHEIT_ID INT(7) NOT NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Window Shipment (FENSTER_LIEFERUNG)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE FENSTER_LIEFERUNG (
+\end_layout
+
+\begin_layout Plain Layout
+
+	DAT INT(7) PRIMARY KEY NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	R_BELEG_ID INT(7) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	POS INT(4) NOT NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Footer Line (FOOTER_ZEILE)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE FOOTER_ZEILE (
+\end_layout
+
+\begin_layout Plain Layout
+
+	FOOTER_DAT INT(6) PRIMARY KEY NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	FOOTER_ID INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	FOOTER_TYP VARCHAR(50) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	FOOTER_TYP_ID INT(6) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	ZAHLUNGSHINWEIS MEDIUMTEXT,
+\end_layout
+
+\begin_layout Plain Layout
+
+	ZEILE1 VARCHAR(200) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	ZEILE2 VARCHAR(200) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	HEADER VARCHAR(200),
+\end_layout
+
+\begin_layout Plain Layout
+
+	AKTUELL ENUM('0', '1') NOT NULL
+\end_layout
+
+\begin_layout Plain Layout
+
+);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Section
+Person (PERSON)
+\end_layout
+
+\begin_layout Subsection
+Data Definition
+\end_layout
+
+\begin_layout Standard
+
+\begin_inset listings
+lstparams "tabsize=4"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+CREATE TABLE PERSON (
+\end_layout
+
+\begin_layout Plain Layout
+
+	PERSON_DAT INT(11) PRIMARY KEY NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	PERSON_ID INT(11) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	PERSON_NACHNAME VARCHAR(200) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	PERSON_VORNAME VARCHAR(200) NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	PERSON_GEBURTSTAG DATE NOT NULL,
+\end_layout
+
+\begin_layout Plain Layout
+
+	PERSON_AKTUELL ENUM('0', '1') NOT NULL );
+\end_layout
+
+\begin_layout Plain Layout
+
+CREATE INDEX PERSON_ID ON PERSON (PERSON_ID);
+\end_layout
+
+\begin_layout Plain Layout
+
+CREATE INDEX PERSON_NACHNAME ON PERSON (PERSON_NACHNAME);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

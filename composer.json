@@ -1,5 +1,6 @@
 {
     "require": {
-        "ros/ezpdf": "0.12.1"
+        "ros/ezpdf": "0.12.1",
+        "philo/laravel-blade": "3.*"
     }
 }

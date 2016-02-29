@@ -4,5 +4,7 @@
 .idea
 vendor
 classes/config.inc.php
+*.lyx#
+/doc/development/generate/cache/*
 FOTOS
 Monatsberichte
