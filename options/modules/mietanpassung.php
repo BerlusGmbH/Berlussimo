@@ -40,7 +40,7 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'mietanpassung' )) {
 include_once ("classes/class_formular.php");
 
 /* Modulabhängige Dateien d.h. Links und eigene Klasse */
-include_once ("options/links/links.mietanpassung.php");
+//include_once ("options/links/links.mietanpassung.php");
 include_once ("classes/berlussimo_class.php");
 include_once ("classes/class_mietanpassung.php");
 

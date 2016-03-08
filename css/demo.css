@@ -47,7 +47,7 @@ h2 span {
 table {
 	width: 100%;
 	padding: 0;
-	margin: 0 auto 1.5em auto;
+	margin: 0 auto 0 auto;
 	border-left: 1px solid #767676;
 	border-collapse: collapse;
 }
@@ -71,7 +71,7 @@ table {
 th {
 	font: bold 16px/22px "Trebuchet MS", Verdana, Arial, Helvetica,
 		sans-serif;
-	color: #fff;
+	color: #ffffff;
 	border-right: 1px solid #767676;
 	border-bottom: 1px solid #767676;
 	border-top: 1px solid #767676;
@@ -79,7 +79,7 @@ th {
 	text-transform: uppercase;
 	text-align: left;
 	padding: 8px 12px 4px 12px;
-	background: #484646;
+	background-color: #4F2514;
 	vertical-align: middle;
 }
 

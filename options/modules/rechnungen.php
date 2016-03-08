@@ -27,7 +27,7 @@ if (! isset ( $_SESSION ['benutzer_id'] ) or ! check_user_mod ( $_SESSION ['benu
 	die ();
 }
 
-include_once ("options/links/links.rechnungen.php");
+//include_once ("options/links/links.rechnungen.php");
 include_once ("classes/mietkonto_class.php");
 include_once ("classes/berlussimo_class.php");
 include_once ("classes/class_partners.php");
