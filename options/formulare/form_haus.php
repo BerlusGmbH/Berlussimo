@@ -19,7 +19,7 @@
  */
 include_once ("includes/haus_form_funktionen.php");
 include_once ("includes/formular_funktionen.php");
-include_once ("options/links/links.form_haus.php");
+//include_once ("options/links/links.form_haus.php");
 include_once ("includes/allgemeine_funktionen.php");
 
 if (isset ( $_REQUEST ["daten_rein"] )) {

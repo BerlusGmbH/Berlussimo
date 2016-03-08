@@ -33,7 +33,7 @@ if (! isset ( $_SESSION ['benutzer_id'] ) or ! check_user_mod ( $_SESSION ['benu
 include_once ("classes/class_formular.php");
 
 /* Modulabhängige Dateien d.h. Links und eigene Klasse */
-include_once ("options/links/links.buchen.php");
+//include_once ("options/links/links.buchen.php");
 include_once ("classes/class_buchen.php");
 include_once ("classes/class_rechnungen.php");
 

@@ -28,7 +28,7 @@ if (! check_user_mod ( $_SESSION [benutzer_id], 'admin_panel' )) {
 }
 
 include_once ("includes/formular_funktionen.php");
-include_once ("options/links/links.admin_menu.php");
+//include_once ("options/links/links.admin_menu.php");
 $admin_panel = $_REQUEST ["admin_panel"];
 if (isset ( $admin_panel )) {
 	

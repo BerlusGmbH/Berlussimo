@@ -33,7 +33,6 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'partner' )) {
 include_once ("classes/class_formular.php");
 
 /* Modulabhängige Dateien d.h. Links und eigene Klasse */
-include_once ("options/links/links.partner.php");
 include_once ("classes/class_partners.php");
 if (isset ( $_REQUEST ["option"] )) {
 	$option = $_REQUEST ["option"];

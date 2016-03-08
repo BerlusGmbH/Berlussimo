@@ -35,7 +35,7 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'todo' )) {
 }
 
 /* Modulabhängige Dateien d.h. Links und eigene Klasse */
-include_once ("options/links/links.todo.php");
+//include_once ("options/links/links.todo.php");
 include_once ("classes/class_todo.php");
 if (isset ( $_REQUEST ["option"] )) {
 	$option = $_REQUEST ["option"];

@@ -90,7 +90,7 @@ if (! empty ( $_REQUEST ['einheit_id'] )) {
 } else {
 	$einheit_id = '';
 }
-include ("options/links/links.mietvertrag.php");
+//include ("options/links/links.mietvertrag.php");
 if (isset ( $_REQUEST ['mietvertrag_raus'] ) && ! empty ( $_REQUEST ['mietvertrag_raus'] )) {
 	$mietvertrag_raus = $_REQUEST ['mietvertrag_raus'];
 } else {

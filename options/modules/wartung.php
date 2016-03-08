@@ -34,7 +34,7 @@ include_once ("classes/class_formular.php");
 
 /* Modulabhängige Dateien d.h. Links und eigene Klasse */
 /* Modulabhängige Dateien d.h. Links und eigene Klasse */
-include_once ("options/links/links.wartung.php");
+//include_once ("options/links/links.wartung.php");
 include_once ("classes/class_wartungen.php");
 if (! isset ( $_SESSION [plan_id] )) {
 	$w = new wartung ();

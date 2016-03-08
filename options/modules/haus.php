@@ -34,7 +34,7 @@ if (! empty ( $_REQUEST ['objekt_id'] )) {
 } else {
 	$objekt_id = '';
 }
-include_once ("options/links/links.form_haus.php");
+//include_once ("options/links/links.form_haus.php");
 switch ($haus_raus) {
 	
 	/* Liste der Häuser anzeigen */

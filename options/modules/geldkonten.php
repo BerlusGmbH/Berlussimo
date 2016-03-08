@@ -28,7 +28,7 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'geldkonten' )) {
 	die ();
 }
 
-include_once ("options/links/links.geldkonten.php");
+//include_once ("options/links/links.geldkonten.php");
 // include_once("classes/mietkonto_class.php");
 include_once ("classes/berlussimo_class.php");
 if (! empty ( $_REQUEST ["option"] )) {

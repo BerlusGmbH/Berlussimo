@@ -33,7 +33,7 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'statistik' )) {
 include_once ("classes/class_statistik.php");
 
 /* Modulabhängige Dateien d.h. Links und eigene Klasse */
-include_once ("options/links/links.statistik.php");
+//include_once ("options/links/links.statistik.php");
 
 $option = $_REQUEST ["option"];
 switch ($option) {
