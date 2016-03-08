@@ -37,7 +37,7 @@ if (! isset ( $_SESSION ['benutzer_id'] ) or ! check_user_mod ( $_SESSION ['benu
 }
 
 /* Modulabhängige Dateien d.h. Links und eigene Klasse */
-include_once ("options/links/links.tickets.php");
+//include_once ("options/links/links.tickets.php");
 
 $b = new benutzer ();
 $b->get_benutzer_infos ( $_SESSION ['benutzer_id'] );

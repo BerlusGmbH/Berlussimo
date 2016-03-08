@@ -26,7 +26,7 @@ if (! check_user_mod ( $_SESSION [benutzer_id], 'kasse' )) {
 	die ();
 }
 
-include_once ("options/links/links.kasse.php");
+//include_once ("options/links/links.kasse.php");
 include_once ("classes/mietkonto_class.php");
 include_once ("classes/berlussimo_class.php");
 include_once ("classes/kasse_class.php");

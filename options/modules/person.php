@@ -30,7 +30,7 @@ if (! isset ( $_SESSION ['benutzer_id'] ) or ! check_user_mod ( $_SESSION ['benu
 }
 
 include_once ("includes/formular_funktionen.php");
-include_once ("options/links/links.person.php");
+//include_once ("options/links/links.person.php");
 include_once ("classes/class_person.php");
 
 if (isset ( $_REQUEST ["daten"] )) {

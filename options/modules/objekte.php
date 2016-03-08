@@ -33,7 +33,7 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'objekte_raus' )) {
 include_once ("classes/class_formular.php");
 
 /* Modulabhängige Dateien d.h. Links und eigene Klasse */
-include_once ("options/links/links.form_objekte.php");
+//include_once ("options/links/links.form_objekte.php");
 
 $daten = $_REQUEST ["daten"];
 $objekte_raus = $_REQUEST ["objekte_raus"];

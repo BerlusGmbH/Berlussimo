@@ -33,7 +33,7 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'katalog' )) {
 include_once ("classes/class_formular.php");
 
 /* Modulabhängige Dateien d.h. Links und eigene Klasse */
-include_once ("options/links/links.katalog.php");
+//include_once ("options/links/links.katalog.php");
 include_once ("classes/class_katalog.php");
 
 if (isset ( $_REQUEST ['option'] ) && ! empty ( $_REQUEST ['option'] )) {

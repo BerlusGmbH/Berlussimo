@@ -28,7 +28,7 @@ if (! check_user_mod ( $_SESSION [benutzer_id], 'lager' )) {
 	die ();
 }
 
-include_once ("options/links/links.lager.php");
+//include_once ("options/links/links.lager.php");
 include_once ("classes/berlussimo_class.php");
 
 $option = $_REQUEST ["option"];

@@ -35,7 +35,7 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'bk' )) {
 include_once ("classes/class_formular.php");
 
 /* Modulabhängige Dateien d.h. Links und eigene Klasse */
-include_once ("options/links/links.bk.php");
+//include_once ("options/links/links.bk.php");
 include_once ("classes/class_bk.php");
 
 if (isset ( $_REQUEST ['option'] ) && ! empty ( $_REQUEST ['option'] )) {
