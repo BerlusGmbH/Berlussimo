@@ -86,11 +86,6 @@
     padding: 5px;
 }
 
-.nav button {
-    background-color: #895B48;
-    color: #ffffff
-}
-
 body {
     padding-top: 51px;
 }
@@ -111,6 +106,31 @@ body {
     padding-right: 0px;
     padding-left: 0px;
     margin-top: 10px;
+}
+
+#main .panel {
+    margin-bottom: 5px;
+}
+
+.berlus-overview {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.berlus-overview .panel-body {
+    padding: 2px;
+}
+
+.berlus-overview .panel {
+    border-color: #4F2514;
+    border-width: 1px;
+    border-left: hidden;
+    border-bottom: hidden;
+}
+
+.berlus-overview .panel-heading {
+    color: #ffffff;
+    background-color: #4F2514;
 }
 
 #tree ul {
@@ -187,6 +207,16 @@ body {
 
 .container {
     width: auto;
+}
+
+.btn-berlus {
+    background-color: #895B48;
+    color: #ffffff
+}
+
+.btn-berlus:hover {
+    background-color: #331206;
+    color: #ffffff
 }
 
 #sidebar .nav a {
