@@ -235,16 +235,16 @@ if (isset ($_SESSION ['autorisiert'])) {
     if (check_user_links($_SESSION ['benutzer_id'], 'rechnungen') && isset ($_SESSION ['partner_id'])) {
         $p = new partners ();
         $p->get_partner_name($_SESSION ['partner_id']);
-        echo "<a href='?daten=rechnungen&option=eingangsbuch&partner_wechseln'><button type='button' class='btn btn-default navbar-btn'>Partner: <b>$p->partner_name</b></button></a>";
+        echo "<a href='?daten=rechnungen&option=eingangsbuch&partner_wechseln'><button type='button' class='btn btn-default btn-berlus navbar-btn'>Partner: <b>$p->partner_name</b></button></a>";
     } else {
-        echo "<a href='?daten=rechnungen&option=eingangsbuch&partner_wechseln'><button type='button' class='btn btn-default navbar-btn'>Partner wählen</b></button></a>";
+        echo "<a href='?daten=rechnungen&option=eingangsbuch&partner_wechseln'><button type='button' class='btn btn-default btn-berlus navbar-btn'>Partner wählen</b></button></a>";
     }
     if (check_user_links($_SESSION ['benutzer_id'], 'buchen') && isset ($_SESSION ['geldkonto_id'])) {
         $g = new geldkonto_info ();
         $g->geld_konto_details($_SESSION ['geldkonto_id']);
-        echo "<a href='?daten=buchen&option=geldkonto_aendern'><button type='button' class='btn btn-default navbar-btn'>Geldkonto: <b>$g->geldkonto_bezeichnung_kurz</b></button></a>";
+        echo "<a href='?daten=buchen&option=geldkonto_aendern'><button type='button' class='btn btn-default btn-berlus navbar-btn'>Geldkonto: <b>$g->geldkonto_bezeichnung_kurz</b></button></a>";
     } else {
-        echo "<a href='?daten=buchen&option=geldkonto_aendern'><button type='button' class='btn btn-default navbar-btn'>Geldkonto wählen</button></a>";
+        echo "<a href='?daten=buchen&option=geldkonto_aendern'><button type='button' class='btn btn-default btn-berlus navbar-btn'>Geldkonto wählen</button></a>";
     }
     echo "</div>";
     echo "</div>\n";

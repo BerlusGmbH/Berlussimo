@@ -47,8 +47,8 @@ if (isset ( $_REQUEST ["daten"] )) {
 	switch ($anzeigen) {
 		
 		case "einheit" :
-			$form = new formular ();
-			$form->erstelle_formular ( "Übersichtsseite", NULL );
+			//$form = new formular ();
+			//$form->erstelle_formular ( "Übersichtsseite", NULL );
 			$e = new einheit ();
 			if (is_array ( $e->get_mietvertrag_ids ( $einheit_id ) )) {
 				uebersicht_einheit ( $einheit_id );
@@ -56,7 +56,7 @@ if (isset ( $_REQUEST ["daten"] )) {
 				echo "<h2>BISHER LEERSTAND</h2>";
 				$e->uebersicht_einheit_leer ( $einheit_id );
 			}
-			$form->ende_formular ();
+			//$form->ende_formular ();
 			break;
 	}
 }
@@ -137,8 +137,41 @@ function uebersicht_einheit($einheit_id) {
 	
 	// echo '<pre>';
 	// print_r($weg);
-	echo "<div class=\"div balken1\"><span class=\"font_balken_uberschrift\">EINHEIT</span><hr />";
-	echo "<span class=\"font_balken_uberschrift\">$e->einheit_kurzname</span><hr/>";
+	echo "<div class='container-fluid'>";
+    echo "<div class='row panel'>";
+    $link_neuer_auftrag_int = "<a href=\"?daten=todo&option=neues_projekt&typ=Benutzer&kos_typ=Einheit&kos_id=$einheit_id\"><button class='btn btn-default btn-berlus'>Interner Auftrag</button></a>";
+    $link_neuer_auftrag_ext = "<a href=\"?daten=todo&option=neues_projekt&typ=Partner&kos_typ=Einheit&kos_id=$einheit_id\"><button class='btn btn-default btn-berlus'>Externer Auftrag</button></a>";
+    echo "<div>$link_neuer_auftrag_int $link_neuer_auftrag_ext</div>";
+    echo "</div>";
+    echo "<div class='row'>";
+
+    ##### OBJEKT #####
+
+    echo "<div class='berlus-overview col-lg-2'>";
+    echo "<div class='panel panel-default'>";
+    $details_info = new details ();
+    $objekt_details_arr = $details_info->get_details ( 'OBJEKT', $e->objekt_id );
+    echo "<div class='panel-heading'><h3 class='panel-title'>OBJEKT: $e->objekt_name</h3></div>";
+    echo "<div class='panel-body'>";
+    for($i = 0; $i < count ( $objekt_details_arr ); $i ++) {
+        echo "<b>" . $objekt_details_arr [$i] ['DETAIL_NAME'] . "</b><br>" . $objekt_details_arr [$i] ['DETAIL_INHALT'] . "<br>";
+    }
+    $oo = new objekt ();
+    $oo->get_objekt_infos ( $e->objekt_id );
+    echo "<hr><span class=\"warnung\">OBJEKT-ET: $oo->objekt_eigentuemer</span><hr>";
+    $link_objekt_details = "<a href=\"?daten=details&option=details_hinzu&detail_tabelle=OBJEKT&detail_id=$e->objekt_id\">NEUES DETAIL ZUM OBJEKT $e->objekt_name</a>";
+    echo "$link_objekt_details";
+    echo "</div></div></div>";
+
+    ##### ENDE OBJEKT #####
+
+    ##### EINHEIT #########
+
+    echo "<div class='berlus-overview col-lg-2'>";
+    echo "<div class='panel panel-default'>";
+    echo "<div class='panel-heading'><h3 class='panel-title'>EINHEIT: $e->einheit_kurzname</h3></div>";
+    echo "<div class=\"panel-body\">";
+
 	echo "<p class=\"warnung\">WEG-ET:<br>$miteigentuemer_namen</p><hr>";
 	if (isset ( $betreuer_str )) {
 		echo "<p style=\"color:green;font-size:10px;\"><u><b>BETREUER</b></u>:<br>$betreuer_str</p><hr>";
@@ -168,24 +201,19 @@ function uebersicht_einheit($einheit_id) {
 		echo "k.A zur Ausstattung";
 	}
 	$link_einheit_details = "<a href=\"?daten=details&option=details_hinzu&detail_tabelle=EINHEIT&detail_id=$einheit_id\">NEUES DETAIL ZUR EINHEIT $e->einheit_kurzname</a>";
-	echo "<hr>$link_einheit_details<hr>";
-	$details_info = new details ();
-	$objekt_details_arr = $details_info->get_details ( 'OBJEKT', $e->objekt_id );
-	echo "<hr /><b>OBJEKT</b>: $e->objekt_name<hr/>";
-	for($i = 0; $i < count ( $objekt_details_arr ); $i ++) {
-		echo "<b>" . $objekt_details_arr [$i] ['DETAIL_NAME'] . "</b><br>" . $objekt_details_arr [$i] ['DETAIL_INHALT'] . "<br>";
-	}
-	$oo = new objekt ();
-	$oo->get_objekt_infos ( $e->objekt_id );
-	echo "<hr><span class=\"warnung\">OBJEKT-ET: $oo->objekt_eigentuemer</span><hr>";
-	$link_objekt_details = "<a href=\"?daten=details&option=details_hinzu&detail_tabelle=OBJEKT&detail_id=$e->objekt_id\">NEUES DETAIL ZUM OBJEKT $e->objekt_name</a>";
-	echo "<hr>$link_objekt_details<hr>";
-	echo "</div>";
-	// #ende spalte objekt und einheit####
+	echo "<hr>$link_einheit_details";
+    echo "</div>";
+    echo "</div></div>";
+	#### ende einheit ####
 	
-	// ######## balken 2 MIETER
-	$mv->personen_name_string_u3 = str_replace ( ',', '', $mv->personen_name_string_u2 );
-	echo "<div class=\"div balken2\"><span class=\"font_balken_uberschrift\">MIETER<br> ($mv->personen_name_string_u3)</span><hr />";
+	// ######## MIETER
+
+    $mv->personen_name_string_u3 = str_replace ( ',', '', $mv->personen_name_string_u2 );
+    echo "<div class='berlus-overview col-lg-2'>";
+    echo "<div class='panel panel-default'>";
+    echo "<div class='panel-heading'><h3 class='panel-title'>MIETER: $mv->personen_name_string_u3</h3></div>";
+    echo "<div class=\"panel-body\">";
+	//echo "<div class='col-lg-2'><span class=\"font_balken_uberschrift\">MIETER<br> ($mv->personen_name_string_u3)</span><hr />";
 	// echo "Personen im MV: $anzahl_personen_im_mv";
 	if ($mv->anzahl_personen < 1) {
 		echo "leer";
@@ -267,9 +295,14 @@ function uebersicht_einheit($einheit_id) {
 	// print_r($person_mv_id_array);
 	// echo "</pre>";
 	echo "</div>";
+    echo "</div></div>";
 	
 	// #####BALKEN 3 VERTRAGSDATEN
-	echo "<div class=\"div balken3\"><span class=\"font_balken_uberschrift\">VERTRAGSDATEN</span><hr />";
+    echo "<div class='berlus-overview col-lg-2'>";
+    echo "<div class='panel panel-default'>";
+    echo "<div class='panel-heading'><h3 class='panel-title'>VERTRAGSDATEN</h3></div>";
+    echo "<div class=\"panel-body\">";
+	//echo "<div class='col-lg-2'><span class=\"font_balken_uberschrift\">VERTRAGSDATEN</span><hr />";
 	
 	$mietvertrag_info = new mietvertrag ();
 	$anzahl_mietvertraege = $mietvertrag_info->get_anzahl_mietvertrag_id_zu_einheit ( $einheit_id );
@@ -395,7 +428,7 @@ function uebersicht_einheit($einheit_id) {
 	$a = new miete ();
 	$a->mietkonto_berechnung ( $mietvertrag_id );
 	
-	echo "SALDO: $a->erg €<hr>";
+	echo "SALDO: $a->erg €";
 	// echo "</div><div class=\"div balken4\" align=\"right\"><span class=\"font_balken_uberschrift\">MIETE $monat $jahr</span><hr />";
 	// echo "<span class=\"font_balken_uberschrift\">MIETKONTENBLATT</span><hr>";
 	// iframe_start_skaliert(290, 550);
@@ -405,19 +438,21 @@ function uebersicht_einheit($einheit_id) {
 	
 	// $mietvertrag_info->tage_berechnen_bis_heute("01.05.2008");
 	
-	echo "</div>"; // ende balken4
-	$link_neuer_auftrag_int = "<a href=\"?daten=todo&option=neues_projekt&typ=Benutzer&kos_typ=Einheit&kos_id=$einheit_id\">Neuer Auftrag INT</a>";
-	$link_neuer_auftrag_ext = "<a href=\"?daten=todo&option=neues_projekt&typ=Partner&kos_typ=Einheit&kos_id=$einheit_id\">Neuer Auftrag EXT</a>";
-	echo "<div class=\"div balken4\" align=\"right\">";
+	echo "</div>";
+    echo "</div></div>";
+    ### ENDE VERTRAGSDATEN ####
+	echo "<div class='berlus-overview col-lg-4'>";
 	$det = new detail ();
 	$hinw_einheit = $det->finde_detail_inhalt ( 'Einheit', $einheit_id, 'Hinweis_zu_Einheit' );
 	if (! empty ( $hinw_einheit )) {
 		$tmps = str_replace ( 'nils@inspirationgroup.biz', 'alon@inspirationgroup.biz', $hinw_einheit );
 		echo str_replace ( 'chen@inspirationgroup.biz', 'alon@inspirationgroup.biz', $tmps ) . "<br>";
 	}
-	
-	echo "<span class=\"font_balken_uberschrift\">$link_neuer_auftrag_int<br>$link_neuer_auftrag_ext</span><hr />";
-	$t = new todo ();
+
+    //$link_neuer_auftrag_int = "<a href=\"?daten=todo&option=neues_projekt&typ=Benutzer&kos_typ=Einheit&kos_id=$einheit_id\">Neuer Auftrag INT</a>";
+    //$link_neuer_auftrag_ext = "<a href=\"?daten=todo&option=neues_projekt&typ=Partner&kos_typ=Einheit&kos_id=$einheit_id\">Neuer Auftrag EXT</a>";
+    //echo "<span class='font_balken_uberschrift' style='float: right'>$link_neuer_auftrag_int $link_neuer_auftrag_ext</span>";
+    $t = new todo ();
 	$t_arr = $t->get_auftraege_einheit ( 'Einheit', $einheit_id, '0' );
 	// echo '<pre>';
 	// print_r($t_arr);
@@ -493,6 +528,7 @@ function uebersicht_einheit($einheit_id) {
 	}
 	echo "</table>";
 	echo "</div>";
+    echo "</div></div>";
 }
 
 /* Neue Version zu Einheit oder Einheit und MV */
