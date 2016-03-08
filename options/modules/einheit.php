@@ -43,8 +43,6 @@ if (! empty ( $_REQUEST ["objekt_id"] )) {
 	$objekt_id = '';
 }
 
-include_once ("options/links/links.form_einheit.php");
-
 switch ($einheit_raus) {
 	
 	default :

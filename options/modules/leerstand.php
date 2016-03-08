@@ -32,7 +32,7 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'leerstand' )) {
 
 include_once ('classes/class_leerstand.php');
 
-include_once ("options/links/links.leerstand.php");
+//include_once ("options/links/links.leerstand.php");
 
 if (isset ( $_REQUEST ["daten"] )) {
 	$daten = $_REQUEST ["daten"];

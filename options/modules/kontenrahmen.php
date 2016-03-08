@@ -26,7 +26,7 @@ if (! check_user_mod ( $_SESSION [benutzer_id], 'kontenrahmen' )) {
 	die ();
 }
 
-include_once ("options/links/links.kontenrahmen.php");
+//include_once ("options/links/links.kontenrahmen.php");
 include_once ("classes/mietkonto_class.php");
 include_once ("classes/berlussimo_class.php");
 include_once ("classes/class_kontenrahmen.php");

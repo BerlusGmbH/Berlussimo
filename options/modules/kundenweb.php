@@ -36,7 +36,7 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'kundenweb' )) {
 }
 
 /* Modulabhängige Dateien d.h. Links und eigene Klasse */
-include_once ("options/links/links.kundenweb.php");
+//include_once ("options/links/links.kundenweb.php");
 include_once ("classes/class_kundenweb.php");
 if (isset ( $_REQUEST ["option"] )) {
 	$option = $_REQUEST ["option"];

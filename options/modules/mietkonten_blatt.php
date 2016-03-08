@@ -31,7 +31,7 @@ include_once ("includes/formular_funktionen.php");
 include_once ("classes/berlussimo_class.php");
 include_once ("classes/mietkonto_class.php");
 include_once ("classes/class_mietentwicklung.php");
-include_once ("options/links/links.mietkonten_blatt.php");
+//include_once ("options/links/links.mietkonten_blatt.php");
 /*
  * Mietdefinition beginn (in MIETENTWICKLUNG)
  * Datum auf 1.3.2008 oder 1.1.2007 setzen

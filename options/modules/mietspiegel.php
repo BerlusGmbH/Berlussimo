@@ -12,7 +12,7 @@ if (! isset ( $_SESSION ['benutzer_id'] ) or ! check_user_mod ( $_SESSION ['benu
 }
 
 /* Modulabhängige Dateien d.h. Links und eigene Klasse */
-include_once ("options/links/links.mietspiegel.php");
+//include_once ("options/links/links.mietspiegel.php");
 
 if (! empty ( $_REQUEST ["option"] )) {
 	$option = $_REQUEST ["option"];

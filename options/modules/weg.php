@@ -36,7 +36,7 @@ include_once ("includes/allgemeine_funktionen.php");
 /* Klasse "formular" für Formularerstellung laden */
 include_once ("classes/class_formular.php");
 /* Modulabhängige Dateien d.h. Links und eigene Klasse */
-include_once ("options/links/links.weg.php");
+//include_once ("options/links/links.weg.php");
 include_once ("classes/class_weg.php");
 include_once ("classes/class_serienbrief.php");
 
