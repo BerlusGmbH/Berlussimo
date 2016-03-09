@@ -132,7 +132,7 @@ if (check_user_links ( $_SESSION ['benutzer_id'], 'todo' )) {
 }
 
 if (check_user_links ( $_SESSION ['benutzer_id'], 'Wartung' )) {
-	echo "&nbsp;<a href=\"/wartungsplaner2/\" target=\"new\"><b>Wartungsplaner </b></a>&nbsp;<b>| </b>&nbsp;";
+	echo "&nbsp;<a href=\"/wartungsplaner/\" target=\"new\"><b>Wartungsplaner </b></a>&nbsp;<b>| </b>&nbsp;";
 }
 
 if (check_user_links ( $_SESSION ['benutzer_id'], 'admin_panel' )) {
