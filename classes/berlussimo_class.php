@@ -1768,10 +1768,10 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
 		return $einheiten_array;
 	}
 	function get_einheit_typ_arr() {
-		$result = mysql_query ( "SELECT TYP FROM EINHEIT GROUP BY TYP ORDER BY TYP ASC" );
-		$typ_array = array ();
-		while ( $row = mysql_fetch_assoc ( $result ) )
-			$typ_array [] = $row;
+		$result = mysql_query ( "SHOW COLUMNS FROM EINHEIT WHERE FIELD = 'TYP'" );
+        $row = mysql_fetch_assoc ( $result );
+        preg_match("/^enum\(\'(.*)\'\)$/", $row['Type'], $matches);
+		$typ_array = explode("','", $matches[1]);
 		return $typ_array;
 	}
 	
@@ -1887,7 +1887,7 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
 			echo "<label for=\"$id\">$label</label><select name=\"$name\" size=1 id=\"$id\">\n";
 			$anz = count ( $arr );
 			for($a = 0; $a < $anz; $a ++) {
-				$typ = $arr [$a] ['TYP'];
+				$typ = $arr [$a];
 				if ($typ == $vorwahl) {
 					echo "<option value=\"$typ\" selected>$typ</option>\n";
 				} else {
