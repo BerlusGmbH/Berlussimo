@@ -214,7 +214,7 @@ if (check_user_links ( $_SESSION ['benutzer_id'], 'todo' )) {
 }
 
 if (check_user_links ( $_SESSION ['benutzer_id'], 'Wartung' )) {
-	//echo "&nbsp;<a href=\"/workspace/Wartungsplaner2/\" target=\"new\"><b>Wartungsplaner </b></a>&nbsp;<b>| </b>&nbsp;";
+	//echo "&nbsp;<a href=\"/wartungsplaner/\" target=\"new\"><b>Wartungsplaner </b></a>&nbsp;<b>| </b>&nbsp;";
     echo "<ul class=\"nav list-group\">\n";
     echo "<li class='list-group-item'><a class=\"tree-toggler\">Wartungsplaner</a></li>\n";
     echo "</ul>\n";
