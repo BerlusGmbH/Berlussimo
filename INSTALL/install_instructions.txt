@@ -8,6 +8,11 @@ sudo apt-get update
 sudo apt-get upgrade
 sudo apt-get dist-upgrade
 
+#install npm and bower
+curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+sudo apt-get install -y nodejs
+sudo npm install -g bower
+
 #the following command restarts the server
 sudo shutdown -r now
 
@@ -22,6 +27,7 @@ sudo nano /var/www/berlussimo/classes/config.inc.php
 #install composer and fetch dependencies
 curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 cd /var/www/berlussimo/;sudo composer install
+cd /var/www/berlussimo/;sudo bower --allow-root install bootstrap-treeview
 
 #make web directory writeable by apache2
 sudo chown -R www-data:www-data /var/www/berlussimo
@@ -33,6 +39,7 @@ sudo service apache2 restart
 ### import database schema
 mysqladmin create berlussimo
 mysql berlussimo < /var/www/berlussimo/INSTALL/DB-Version-0.4.0/berlussimo_db_0.40.sql
+mysql berlussimo < /var/www/berlussimo/INSTALL/DB-Version-0.4.0/berlussimo_db_0.4.1.sql
 
 ### you should now be able to open http://your.server/index.php in your browser and login with
 
