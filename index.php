@@ -171,8 +171,6 @@ if (isset ($_SESSION ['autorisiert'])) {
         echo "<script type='text/javascript' src='js/navigation_customerweb.js'></script>\n";
     if (check_user_links($_SESSION['benutzer_id'], 'mietspiegel'))
         echo "<script type='text/javascript' src='js/navigation_rent_index.js'></script>\n";
-    if (check_user_links($_SESSION['benutzer_id'], 'buchen'))
-        echo "<script type='text/javascript' src='js/navigation_booking.js'></script>\n";
     echo "<script type='text/javascript' src='js/navigation_manual.js'></script>\n";
 }
 echo "<link href='css/lightbox.css' rel='stylesheet'>";
