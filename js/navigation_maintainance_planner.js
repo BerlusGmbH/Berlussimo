@@ -1,4 +1,4 @@
 tree.push({
     text: "Wartungsplaner",
-    href: "/workspace/Wartungsplaner2/"
+    href: "/wartungsplaner/"
 });
