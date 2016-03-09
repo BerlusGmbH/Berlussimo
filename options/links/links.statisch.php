@@ -18,6 +18,7 @@
  * 
  */
 include_once ("classes/mietkonto_class.php");
+$mieten = new mietkonto ();
 
 //echo "<div class=\"navi_leiste1\">";
 
