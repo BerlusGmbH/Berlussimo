@@ -449,10 +449,11 @@ class werkzeug {
 		$arr = $this->werkzeugliste_verteilt_arr ();
 		if (is_array ( $arr )) {
 			$anz = count ( $arr );
-			// echo "<table class=\"sortable\">";
-			// echo "<tr><th>LIEFERANT</th><th>WBNR</th><th>BESCHREIBUNG</th><th>KURZINFO</th><th>MENGE</th><th>MITARBITER</th><th>OPTION</th></tr>";
+			//echo "<table class=\"sortable\">";
+			//echo "<tr><th>LIEFERANT</th><th>WBNR</th><th>BESCHREIBUNG</th><th>KURZINFO</th><th>MENGE</th><th>MITARBITER</th><th>OPTION</th></tr>";
 			$tmp_b_id = '';
 			for($a = 0; $a < $anz; $a ++) {
+				$b_id = $arr [$a] ['BENUTZER_ID'];
 				$w_id = $arr [$a] ['ID'];
 				$beleg_id = $arr [$a] ['BELEG_ID'];
 				$art_nr = $arr [$a] ['ARTIKEL_NR'];
@@ -468,14 +469,12 @@ class werkzeug {
 				$lieferant = $r->rechnungs_aussteller_name;
 				$link_beleg = "<a href=\"?daten=rechnungen&option=rechnungs_uebersicht&belegnr=$beleg_id\">$lieferant</a>";
 				$wb_nr = 'W-' . $w_id;
-				if ($tmp_b_id != $b_id && $a != 0) {
+				if ($tmp_b_id != $b_id) {
 					$tmp_b_id = $b_id;
 					echo "<table class=\"sortable\">";
 					echo "<tr><th>LIEFERANT</th><th>WBNR</th><th>BESCHREIBUNG</th><th>KURZINFO</th><th>MENGE</th><th>MITARBITER</th><th>OPTION</th></tr>";
 				}
 				echo "<tr><td>$link_beleg</td><td>$wb_nr</td><td>$art_info</td><td>$kurzinfo</td><td>$menge</td>";
-				
-				$b_id = $arr [$a] ['BENUTZER_ID'];
 				
 				if ($b_id) {
 					$bb = new benutzer ();
