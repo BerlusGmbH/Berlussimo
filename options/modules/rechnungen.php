@@ -79,6 +79,10 @@ switch ($option) {
 			// $fehler = true;
 			fehlermeldung_ausgeben ( "Rechnungsaussteller- und Empfänger sind identisch.<br>" );
 		}
+        if ($clean_arr ['aussteller_id'] == 0) {
+            $fehler = true;
+            fehlermeldung_ausgeben ( "Bitte Rechnungsaussteller wählen.<br>" );
+        }
 		
 		if (! isset ( $fehler )) {
 			if ($clean_arr ['empfaenger_typ'] == 'Kasse') {
