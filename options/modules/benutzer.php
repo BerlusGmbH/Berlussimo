@@ -201,7 +201,7 @@ switch ($option) {
 	
 	case "werkzeug_rueckgabe_alle" :
 		ini_set ( 'display_errors', 'On' );
-		error_reporting ( E_ALL | E_STRICT );
+		//error_reporting ( E_ALL | E_STRICT );
 		if (! empty ( $_REQUEST ['b_id'] )) {
 			$b_id = $_REQUEST ['b_id'];
 			$w = new werkzeug ();
@@ -214,7 +214,7 @@ switch ($option) {
 	
 	case "werkzeug_zuweisen" :
 		ini_set ( 'display_errors', 'On' );
-		error_reporting ( E_ALL | E_STRICT );
+		//error_reporting ( E_ALL | E_STRICT );
 		if (! empty ( $_REQUEST ['w_id'] )) {
 			$w_id = $_REQUEST ['w_id'];
 			$w = new werkzeug ();
