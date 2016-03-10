@@ -157,7 +157,7 @@ switch ($option) {
 	
 	case "werkzeuge" :
 		ini_set ( 'display_errors', 'On' );
-		error_reporting ( E_ALL | E_STRICT );
+		//error_reporting ( E_ALL | E_STRICT );
 		$w = new werkzeug ();
 		// $w->form_werkzeug_hizu();
 		// echo "<hr>";
@@ -166,7 +166,7 @@ switch ($option) {
 	
 	case "werkzeuge_mitarbeiter" :
 		ini_set ( 'display_errors', 'On' );
-		error_reporting ( E_ALL | E_STRICT );
+		//error_reporting ( E_ALL | E_STRICT );
 		$w = new werkzeug ();
 		if (! empty ( $_REQUEST ['b_id'] )) {
 			$b_id = $_REQUEST ['b_id'];
