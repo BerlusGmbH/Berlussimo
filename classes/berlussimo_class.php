@@ -2458,6 +2458,7 @@ class partner extends rechnung {
 	function partner_dropdown($label, $name, $id, $vorwahl_id = null) {
 		$partner_arr = $this->partner_in_array ();
 		echo "<label for=\"$id\">$label</label><select name=\"$name\" size=\"1\" id=\"$id\">";
+        echo "<option value=\"0\">Bitte wählen</option>\n";
 		for($a = 0; $a < count ( $partner_arr ); $a ++) {
 			$partner_id = $partner_arr [$a] ['PARTNER_ID'];
 			$partner_name = $partner_arr [$a] ['PARTNER_NAME'];
