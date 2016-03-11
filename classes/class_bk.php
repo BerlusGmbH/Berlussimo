@@ -1891,7 +1891,7 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
 		$this->bk_profil_infos ( $profil_id );
 		$r = new rechnung ();
 		echo "Berechnung für " . $r->kostentraeger_ermitteln ( $this->bk_kos_typ, $this->bk_kos_id ) . " $this->bk_jahr<hr>";
-		$this->bk_nk_profil_berechnung ( $profil_id );
+		return $this->bk_nk_profil_berechnung ( $profil_id );
 	}
 	function tage_im_jahr($jahr) {
 		if (date ( "L", mktime ( 0, 0, 0, 12, 31, $jahr ) ) == 1) {
