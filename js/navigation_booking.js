@@ -20,10 +20,6 @@ tree.push({
             href: "?daten=buchen&option=eingangsbuch_kurz&anzeige=empfaenger_eingangs_rnr"
         },
         {
-            text: "Profil zurücksetzen",
-            href: "?daten=bk&option=profil_reset"
-        },
-        {
             text: "Buchungsjournal",
             href: "?daten=buchen&option=buchungs_journal"
         },
