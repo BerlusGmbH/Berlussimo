@@ -158,7 +158,7 @@ switch ($option) {
 	
 	case "zusammenfassung" :
 		$bk = new bk ();
-		$bk->zusammenfassung ( $_SESSION [profil_id] );
+		$zusammenfassung = $bk->zusammenfassung ( $_SESSION [profil_id] );
 		break;
 	
 	case "pdf_ausgabe" :
