@@ -1406,7 +1406,7 @@ class sepa {
 		$glaeubiger_id = $d->finde_detail_inhalt ( 'GELD_KONTEN', $_SESSION ['geldkonto_id'], 'GLAEUBIGER_ID' );
 		/* SEPA FILE */
 		if ($pdf == 0) {
-			$xmlstring = $myKtoSepaSimple->GetXML ( 'CORE', $dateiname_msgid, $PmtInfId, $this->umlautundgross ( $gk->konto_beguenstigter ), $this->umlautundgross ( "$gk->konto_beguenstigter - $username" ), $seps->IBAN, $seps->BIC, $glaeubiger_id, $sammelbetrag );
+			$xmlstring = $myKtoSepaSimple->GetXML ( 'CORE', $dateiname_msgid, $PmtInfId, $this->umlautundgross ( $gk->konto_beguenstigter ), $this->umlautundgross ( $gk->konto_beguenstigter ), $seps->IBAN, $seps->BIC, $glaeubiger_id, $sammelbetrag );
 			
 			/* SEPA AUSGABE */
 			ob_clean ();
