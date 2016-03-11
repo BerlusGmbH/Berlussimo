@@ -32,8 +32,12 @@ tree.push({
             href: "?daten=bk&option=pdf_ausgabe"
         },
         {
-            text: "BK/HK Anpassen",
+            text: "BK/HK anpassen",
             href: "?daten=bk&option=anpassung_bk_hk"
+        },
+        {
+            text: "BK/HK eingeben",
+            href: "?daten=bk&option=anpassung_bk_nk"
         },
         {
             text: "Energiewerte",

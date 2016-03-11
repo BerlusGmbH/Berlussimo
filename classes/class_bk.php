@@ -1066,7 +1066,7 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
 		$f->ende_formular ();
 		
 		$f = new formular ();
-		$f->erstelle_formular ( $_SESSION ['me_kostenkat'] . " in der Mietdefinition ab $this->bk_verrechnungs_datum_d �ndern", NULL );
+		$f->erstelle_formular ( $_SESSION ['me_kostenkat'] . " in der Mietdefinition ab $this->bk_verrechnungs_datum_d ändern", NULL );
 		fehlermeldung_ausgeben ( "Alle Eingaben werden in der Mietdefinition zum $this->bk_verrechnungs_datum_d gespeichert!!! Verrechnungsdatum im Profil prüfen!!!<br><br>" );
 		$jahr = date ( "Y" );
 		// $ob = new objekt;

@@ -450,12 +450,12 @@ else {
 		
 		if (isset ( $_SESSION ['serienbrief_mvs'] ) && is_array ( $_SESSION ['serienbrief_mvs'] )) {
 			echo "<table class=\"sortable\">";
-			echo "<tr><th>Einheit</th<th>Mieter</th></tr>";
+			echo "<tr><th>Einheit</th><th>Mieter</th></tr>";
 			for($a = 0; $a < count ( $_SESSION ['serienbrief_mvs'] ); $a ++) {
 				$mv = new mietvertraege ();
 				$mv_id = $_SESSION ['serienbrief_mvs'] [$a];
 				$mv->get_mietvertrag_infos_aktuell ( $mv_id );
-				echo "<tr><td>$mv->einheit_kurzname</td<td>$mv->personen_name_string</td></tr>";
+				echo "<tr><td>$mv->einheit_kurzname</td><td>$mv->personen_name_string</td></tr>";
 				// echo "$mv->einheit_kurzname - $mv->personen_name_string".'<br>';
 			}
 			echo "</table>";
