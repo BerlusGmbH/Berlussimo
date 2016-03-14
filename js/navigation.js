@@ -9,38 +9,31 @@ $(document).ready(function () {
         data: tree, enableLinks: true, collapseIcon: 'glyphicon glyphicon-chevron-down',
         expandIcon: 'glyphicon glyphicon-chevron-right', levels: 0, selectedBackColor: '#4f2514'
     });
-    var dataParameter = getURLParameter('daten');
-    dataParameter = dataParameter === undefined ? getURLParameter('formular') : dataParameter;
-    var optionParameter = getURLParameter('option');
-    optionParameter = optionParameter === undefined ? getURLParameter('objekte_raus') : optionParameter;
-    optionParameter = optionParameter === undefined ? getURLParameter('haus_raus') : optionParameter;
-    optionParameter = optionParameter === undefined ? getURLParameter('einheit_raus') : optionParameter;
-    optionParameter = optionParameter === undefined ? getURLParameter('mietvertrag_raus') : optionParameter;
-    optionParameter = optionParameter === undefined ? getURLParameter('anzeigen') : optionParameter;
-    optionParameter = optionParameter === undefined ? getURLParameter('daten_rein') : optionParameter;
     var node;
-    if (dataParameter !== undefined) {
-        treeview.treeview('getSiblings', '0').some(function (vo, io, ao) {
-            if (getURLParameter('daten', vo.href) === dataParameter ||
-                getURLParameter('formular', vo.href) === dataParameter
-            ) {
-                vo.nodes.some(function (vi, ii, ai) {
-                    if (getURLParameter('option', vi.href) === optionParameter ||
-                        getURLParameter('objekte_raus', vi.href) === optionParameter ||
-                        getURLParameter('haus_raus', vi.href) === optionParameter ||
-                        getURLParameter('einheit_raus', vi.href) === optionParameter ||
-                        getURLParameter('mietvertrag_raus', vi.href) === optionParameter ||
-                        getURLParameter('anzeigen', vi.href) === optionParameter ||
-                        getURLParameter('daten_rein', vi.href) === optionParameter
-                    ) {
+    var matches = 0;
+    treeview.treeview('getSiblings', '0').some(function (vo) {
+        try {
+            var currentMatches = compareByParameters(vo.href);
+            if ( matches < currentMatches ) {
+                node = vo;
+                matches = currentMatches;
+            }
+            if (vo.nodes !== undefined) {
+                vo.nodes.some(function (vi) {
+                    var currentMatches = compareByParameters(vi.href);
+                    if (matches < currentMatches) {
                         node = vi;
-                        treeview.treeview('selectNode', node);
-                        treeview.treeview('revealNode', node);
-                        return true;
+                        matches = currentMatches;
                     }
                 });
             }
-        });
+        } catch (e) {
+            console.error(e);
+        }
+    });
+    if (node !== undefined) {
+        treeview.treeview('selectNode', node);
+        treeview.treeview('revealNode', node);
     }
     treeview.on('nodeSelected', function (event, data) {
         window.location.href = data.href;
@@ -57,17 +50,21 @@ function getMonthFromDate(d) {
     return mm;
 }
 
-function getURLParameter(sParam, sPageURL) {
-    if (sPageURL === null || sPageURL === undefined) {
-        sPageURL = window.location.search.substring(1);
-    } else {
-        sPageURL = sPageURL.substring(1);
+function compareByParameters(url) {
+    var currentUrl = window.location.search.substring(1);
+    var currentParametersString = currentUrl.split('&');
+    var parameters = {};
+    for (var i = 0; i < currentParametersString.length; i++) {
+        var parameter = currentParametersString[i].split('=');
+        parameters[parameter[0]] = parameter[1];
     }
-    var sURLVariables = sPageURL.split('&');
-    for (var i = 0; i < sURLVariables.length; i++) {
-        var sParameterName = sURLVariables[i].split('=');
-        if (sParameterName[0] == sParam) {
-            return sParameterName[1];
+    var matches = 0;
+    var parametersString = url.substring(1).split('&');
+    for (i = 0; i < parametersString.length; i++) {
+        parameter = parametersString[i].split('=');
+        if (parameter[0] in parameters && parameters[parameter[0]] === parameter[1]) {
+            matches++;
         }
     }
+    return matches;
 }
