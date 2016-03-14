@@ -617,8 +617,7 @@ switch ($option) {
 						'num' => 2,
 						'name' => 'bilbo',
 						'type' => 'hobbit',
-						'url' => 'http://www.ros.co.
-nz/pdf/' 
+						'url' => 'http://www.ros.co.nz/pdf/'
 				),
 				array (
 						'num' => 3,
