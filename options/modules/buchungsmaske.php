@@ -30,7 +30,7 @@ if (! check_user_mod ( $_SESSION ['benutzer_id'], 'miete_buchen' )) {
 include_once ("includes/formular_funktionen.php");
 include_once ("classes/mietkonto_class.php");
 include_once ("classes/berlussimo_class.php");
-include_once ("options/links/links.mietkonten_blatt.php");
+//include_once ("options/links/links.mietkonten_blatt.php");
 include_once ("classes/mietzeit_class.php");
 include_once ("classes/class_mietvertrag.php");
 if (isset ( $_REQUEST ["daten"] )) {
