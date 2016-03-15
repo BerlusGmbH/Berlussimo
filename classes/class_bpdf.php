@@ -956,7 +956,7 @@ else {
 		
 		$abstand = $pdf->y - $y_e;
 		$pdf->ezSetDy ( - $abstand ); // Zurückhöhe Elektrozähler
-		$pdf->ezSetMargins ( 135, 70, 300, 50 );
+		$pdf->ezSetMargins ( 135, 70, 280, 50 );
 		$pdf->ezText ( "<b>Gas-Zähler:</b>", 10, array (
 				'justification' => 'left' 
 		) );
@@ -966,15 +966,15 @@ else {
 				'justification' => 'left' 
 		) );
 		$pdf->ezSetDy ( - 5 ); // Abstand
-		$this->kasten ( $pdf, 10, 360, 15, 15 );
+		$this->kasten ( $pdf, 14, 340, 15, 15 );
 		
 		$pdf->ezText ( "<b>Stand</b>", 10, array (
 				'justification' => 'left' 
 		) );
 		$pdf->ezSetDy ( - 10 ); // Abstand
-		$this->kasten ( $pdf, 6, 360, 15, 15 );
-		$pdf->addText ( 455, $pdf->y, 15, "<b>,</b>" );
-		$this->kasten ( $pdf, 3, 465, 15, 15 );
+		$this->kasten ( $pdf, 6, 340, 15, 15 );
+		$pdf->addText ( 435, $pdf->y, 15, "<b>,</b>" );
+		$this->kasten ( $pdf, 3, 445, 15, 15 );
 		
 		$pdf->ezSetMargins ( 135, 70, 50, 50 );
 		$pdf->ezSetDy ( - 10 ); // Abstand
