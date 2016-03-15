@@ -624,8 +624,6 @@ Darlehenstilgungen? ____________________________________________________________
 		$pdf->ezSetDy ( - 10 );
 		$pdf->ezText ( "Wenn ja: ________________________________________________________________________________", 10 );
 		$pdf->ezSetDy ( - 10 );
-		$pdf->ezText ( "Die Kosten für Kabelanschluss werde ich übernehmen: Ja / Nein", 10 );
-		$pdf->ezSetDy ( - 10 );
 		$pdf->ezText ( "Welche Haustiere wollen Sie in der Wohnung halten ? _____________________________________________", 10 );
 		$pdf->ezSetDy ( - 10 );
 		$pdf->ezText ( "<b>Bitte folgende Unterlagen beilegen:", 10 );
