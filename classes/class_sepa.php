@@ -405,10 +405,10 @@ class sepa {
 		}
 		$datum_heute = date ( "Y-m-d" );
 		if ($nutzungsart == 'Alle') {
-			$result = mysql_query ( "SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' AND M_EDATUM>='$datum_heute' ORDER BY NAME ASC" );
+			$result = mysql_query ( "SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' AND M_EDATUM>='$datum_heute' AND M_ADATUM<='$datum_heute' ORDER BY NAME ASC" );
 		} else {
 			$gk_id = $_SESSION ['geldkonto_id'];
-			$result = mysql_query ( "SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' && M_EDATUM>='$datum_heute' && NUTZUNGSART='$nutzungsart' && GLAEUBIGER_GK_ID='$gk_id' ORDER BY NAME ASC" );
+			$result = mysql_query ( "SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' && M_EDATUM>='$datum_heute' && M_ADATUM<='$datum_heute' && NUTZUNGSART='$nutzungsart' && GLAEUBIGER_GK_ID='$gk_id' ORDER BY NAME ASC" );
 		}
 		$numrows = mysql_numrows ( $result );
 		if ($numrows) {
@@ -425,10 +425,10 @@ class sepa {
 		}
 		$datum_heute = date ( "Y-m-d" );
 		if ($nutzungsart == 'Alle') {
-			$result = mysql_query ( "SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' AND M_EDATUM>='$datum_heute' ORDER BY NAME ASC" );
+			$result = mysql_query ( "SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' AND M_EDATUM>='$datum_heute' AND M_ADATUM<='$datum_heute' ORDER BY NAME ASC" );
 		} else {
 			$gk_id = $_SESSION ['geldkonto_id'];
-			$result = mysql_query ( "SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' &&  M_EDATUM>='$datum_heute' AND NUTZUNGSART='$nutzungsart' && GLAEUBIGER_GK_ID='$gk_id' ORDER BY NAME ASC" );
+			$result = mysql_query ( "SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' && M_EDATUM>='$datum_heute' && M_ADATUM<='$datum_heute' AND NUTZUNGSART='$nutzungsart' && GLAEUBIGER_GK_ID='$gk_id' ORDER BY NAME ASC" );
 		}
 		
 		$monat = date ( "m" );
@@ -617,10 +617,10 @@ class sepa {
 		}
 		$datum_heute = date ( "Y-m-d" );
 		if ($nutzungsart == 'Alle') {
-			$result = mysql_query ( "SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' AND M_EDATUM>='$datum_heute' ORDER BY NAME ASC" );
+			$result = mysql_query ( "SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' AND M_EDATUM>='$datum_heute' AND M_ADATUM<='$datum_heute' ORDER BY NAME ASC" );
 		} else {
 			$gk_id = $_SESSION ['geldkonto_id'];
-			$result = mysql_query ( "SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' && NUTZUNGSART='$nutzungsart' AND M_EDATUM>='$datum_heute' && GLAEUBIGER_GK_ID='$gk_id' ORDER BY NAME ASC" );
+			$result = mysql_query ( "SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' && NUTZUNGSART='$nutzungsart' AND M_EDATUM>='$datum_heute' AND M_ADATUM<='$datum_heute' && GLAEUBIGER_GK_ID='$gk_id' ORDER BY NAME ASC" );
 		}
 		
 		$monat = date ( "m" );
