@@ -8,13 +8,13 @@ sudo apt-get update
 sudo apt-get upgrade
 sudo apt-get dist-upgrade
 
+#the following command restarts the server
+sudo shutdown -r now
+
 #install npm and bower
 curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
 sudo apt-get install -y nodejs
 sudo npm install -g bower
-
-#the following command restarts the server
-sudo shutdown -r now
 
 #install mySQL. The setup will let you set a root password for the mySQL server. You will need this later.
 sudo apt-get install mysql-server
