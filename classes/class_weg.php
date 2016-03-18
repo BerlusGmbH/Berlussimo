@@ -4828,10 +4828,11 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
 		$g_summe_a = nummer_punkt2komma_t ( $g_summe );
 		// echo "<tfoot><tr><td></td><td></td><th><b>AUSGABEN GESAMT</b></th><th><b>$g_summe_a</b></th></tr></tfoot>";
 		// echo "</table>";
-		$ausgaben_tab_sort = array_sortByIndex ( $ausgaben_tab, 'GRUPPE' );
-		unset ( $ausgaben_tab );
-		$ausgaben_tab = $ausgaben_tab_sort;
-		unset ( $ausgaben_tab_sort );
+		//$ausgaben_tab_sort = array_sortByIndex ( $ausgaben_tab, 'GRUPPE' );
+		//unset ( $ausgaben_tab );
+		//$ausgaben_tab = $ausgaben_tab_sort;
+		//unset ( $ausgaben_tab_sort );
+		$ausgaben_tab = array_orderby($ausgaben_tab, 'GRUPPE', SORT_DESC, 'KONTO', SORT_ASC);
 		/*
 		 * include_once('test_class/arr_multisort.class.php');
 		 * $srt = new arr_multisort();
@@ -5985,9 +5986,10 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
 		echo "<a href=\"index.php?daten=weg&option=testhgg_pdf\">PDF</a>";
 		/* Art = Ausgaben, Einnahmen, Mittelverwendung */
 		$_umlage_ktos = $this->get_hgkonten_arr ( $p_id, 'Ausgaben/Einnahmen' );
-		$_umlage_ktos_sort = array_sortByIndex ( $_umlage_ktos, 'GRUPPE', DESC );
-		$_umlage_ktos = $_umlage_ktos_sort;
-		unset ( $_umlage_ktos_sort );
+		$_umlage_ktos = array_orderby($_umlage_ktos, 'GRUPPE', SORT_DESC, 'KONTO', SORT_ASC);
+		//$_umlage_ktos_sort = array_sortByIndex ( $_umlage_ktos, 'GRUPPE', DESC );
+		//$_umlage_ktos = $_umlage_ktos_sort;
+		//unset ( $_umlage_ktos_sort );
 		
 		$this->get_hga_profil_infos ( $p_id );
 		$bb = new buchen ();
