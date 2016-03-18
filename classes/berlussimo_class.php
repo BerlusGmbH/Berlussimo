@@ -2498,10 +2498,6 @@ class partner extends rechnung {
 		echo "</table><br>\n";
 	}
 	function partner_auswahl($link) {
-		if (isset ( $_REQUEST ['partner_id'] ) && ! empty ( $_REQUEST ['partner_id'] )) {
-			$_SESSION ['partner_id'] = $_REQUEST ['partner_id'];
-		}
-		
 		$form = new formular ();
 		if (! isset ( $_SESSION ['partner_id'] )) {
 			$form->erstelle_formular ( "Partner wählen", NULL );
@@ -2510,7 +2506,28 @@ class partner extends rechnung {
 		}
 		// $result = mysql_query ("SELECT PARTNER_ID, PARTNER_NAME FROM PARTNER_LIEFERANT WHERE AKTUELL = '1' ORDER BY PARTNER_NAME ASC");
 		/* Sortiert nach Anzahl der Belege */
-		$result = mysql_query ( "SELECT PARTNER_ID, PARTNER_NAME, COUNT(BELEG_NR) AS BELEGE FROM PARTNER_LIEFERANT JOIN RECHNUNGEN ON(PARTNER_LIEFERANT.PARTNER_ID=RECHNUNGEN.AUSSTELLER_ID OR PARTNER_LIEFERANT.PARTNER_ID=RECHNUNGEN.EMPFAENGER_ID) WHERE PARTNER_LIEFERANT.AKTUELL = '1'  && RECHNUNGEN.AKTUELL = '1' GROUP BY PARTNER_ID ORDER BY COUNT(BELEG_NR)  DESC, PARTNER_NAME ASC" );
+		$result = mysql_query ( "
+SELECT PARTNER_NAME, PARTNER_LIEFERANT.PARTNER_ID, RECHNUNGEN
+FROM PARTNER_LIEFERANT LEFT JOIN (
+	SELECT PARTNER_ID, SUM(RECHNUNGEN) AS RECHNUNGEN
+	FROM ((
+			SELECT AUSSTELLER_ID AS PARTNER_ID, COUNT(*) AS RECHNUNGEN
+			FROM RECHNUNGEN
+			WHERE AKTUELL = '1'
+			GROUP BY AUSSTELLER_ID
+		)
+		UNION
+		(
+			SELECT EMPFAENGER_ID AS PARTNER_ID, COUNT(*) AS RECHNUNGEN
+			FROM RECHNUNGEN
+			WHERE AKTUELL = '1'
+			GROUP BY EMPFAENGER_ID
+	)) AS RECHNUNGEN
+	GROUP BY PARTNER_ID
+) AS RECHNUNGEN ON (RECHNUNGEN.PARTNER_ID=PARTNER_LIEFERANT.PARTNER_ID)
+WHERE PARTNER_LIEFERANT.AKTUELL = '1'
+ORDER BY RECHNUNGEN DESC;
+" );
 		$numrows = mysql_numrows ( $result );
 		echo "<p class=\"objekt_auswahl\">";
 		if ($numrows) {
@@ -6936,7 +6953,7 @@ else {
 	}
 	function r_eingang_monate_links($monat, $jahr) {
 		// $monat = date("m");
-		$link_p_wechseln = "<a href=\"?daten=rechnungen&option=eingangsbuch&partner_wechseln\">Partner wechseln</a>&nbsp;";
+		$link_p_wechseln = "<a href=\"?daten=rechnungen&option=partner_wechseln\">Partner wechseln</a>&nbsp;";
 		
 		echo $link_p_wechseln;
 		$link_alle = "<a href=\"?daten=rechnungen&option=eingangsbuch&monat=alle&jahr=$jahr\">Alle von $jahr</a>&nbsp;";
@@ -6969,7 +6986,7 @@ else {
 	 * }
 	 */
 	function r_ausgang_monate_links($monat, $jahr) {
-		$link_p_wechseln = "<a href=\"?daten=rechnungen&option=ausgangsbuch&partner_wechseln\">Partner wechseln</a>&nbsp;";
+		$link_p_wechseln = "<a href=\"?daten=rechnungen&option=partner_wechseln\">Partner wechseln</a>&nbsp;";
 		echo $link_p_wechseln;
 		$link_alle = "<a href=\"?daten=rechnungen&option=ausgangsbuch&monat=alle&jahr=$jahr\">Alle von $jahr</a>&nbsp;";
 		echo $link_alle;
