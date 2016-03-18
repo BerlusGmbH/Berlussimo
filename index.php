@@ -144,16 +144,19 @@ if (isset ( $_SESSION ['autorisiert'] )) {
 	$form->erstelle_formular ( "Benutzer: $benutzer", NULL );
 	include_once ('classes/class_partners.php');
 	$p = new partners ();
-	
+
+    if (isset($_REQUEST ['partner_id'])) {
+        $_SESSION ['partner_id'] = $_REQUEST ['partner_id'];
+    }
 	if (isset ( $_SESSION ['partner_id'] )) {
 		$p->get_partner_name ( $_SESSION ['partner_id'] );
 	}
 	
 	if (check_user_links ( $_SESSION ['benutzer_id'], 'rechnungen' )) {
 		if (isset ( $_SESSION ['partner_id'] )) {
-			$link_partner = "<a href=\"?daten=rechnungen&option=eingangsbuch&partner_wechseln\">Partner wechseln: <b>$p->partner_name</b></a>&nbsp;&nbsp;";
+			$link_partner = "<a href=\"?daten=rechnungen&option=partner_wechseln\">Partner wechseln: <b>$p->partner_name</b></a>&nbsp;&nbsp;";
 		} else {
-			$link_partner = "<a href=\"?daten=rechnungen&option=eingangsbuch&partner_wechseln\">Partner wählen</b></a>&nbsp;&nbsp;";
+			$link_partner = "<a href=\"?daten=rechnungen&option=partner_wechseln\">Partner wählen</b></a>&nbsp;&nbsp;";
 		}
 	} else {
 		$link_partner = '';
