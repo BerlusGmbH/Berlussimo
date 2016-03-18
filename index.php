@@ -8,7 +8,7 @@
  * @copyright    Copyright (c) 2010, Berlus GmbH, Fontanestr. 1, 14193 Berlin
  * @link         http://www.berlus.de
  * @author       Sanel Sivac & Wolfgang Wehrheim
- * @contact         software(@)berlus.de
+ * @contact		 software(@)berlus.de
  * @license     http://www.gnu.org/licenses/agpl.html AGPL Version 3
  *
  * @filesource   $HeadURL: http://192.168.2.52/svn/berlussimo_1/tags/02.11.2010 - Downloadversion 0.27/index.php $
@@ -230,12 +230,15 @@ if (isset ($_SESSION ['autorisiert'])) {
     echo "<li><a href=\"?logout\">Logout</a></li>\n";
     echo "</ul></ul>";
     echo "<div class='nav navbar-nav navbar-right'>\n";
+    if (isset($_REQUEST ['partner_id'])) {
+        $_SESSION ['partner_id'] = $_REQUEST ['partner_id'];
+    }
     if (check_user_links($_SESSION ['benutzer_id'], 'rechnungen') && isset ($_SESSION ['partner_id'])) {
         $p = new partners ();
         $p->get_partner_name($_SESSION ['partner_id']);
-        echo "<a href='?daten=rechnungen&option=eingangsbuch&partner_wechseln'><button type='button' class='btn btn-default btn-berlus navbar-btn'>Partner: <b>$p->partner_name</b></button></a>";
+        echo "<a href='?daten=rechnungen&option=partner_wechseln'><button type='button' class='btn btn-default btn-berlus navbar-btn'>Partner: <b>$p->partner_name</b></button></a>";
     } else {
-        echo "<a href='?daten=rechnungen&option=eingangsbuch&partner_wechseln'><button type='button' class='btn btn-default btn-berlus navbar-btn'>Partner wählen</b></button></a>";
+        echo "<a href='?daten=rechnungen&option=partner_wechseln'><button type='button' class='btn btn-default btn-berlus navbar-btn'>Partner wählen</b></button></a>";
     }
     if (check_user_links($_SESSION ['benutzer_id'], 'buchen') && isset ($_SESSION ['geldkonto_id'])) {
         $g = new geldkonto_info ();
