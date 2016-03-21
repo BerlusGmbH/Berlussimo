@@ -7304,6 +7304,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         // print_r($_umlage_ktos);
         // die();
         $_umlage_ktos_sort = array_sortByIndex($_umlage_ktos, 'GRUPPE', 'DESC');
+        //$_umlage_ktos = array_orderby($_umlage_ktos, 'GRUPPE', SORT_DESC, 'KONTO', SORT_ASC);
         // $_umlage_ktos_sort = array_msort($_umlage_ktos, array('KONTO'=>array(SORT_DESC,SORT_REGULAR), 'KONTO'=>SORT_ASC));
         $_umlage_ktos = $_umlage_ktos_sort;
         unset ($_umlage_ktos_sort);
@@ -7710,12 +7711,8 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $pdf->ezText("$this->pdf_anrede", 10);
             $pdf->ezText("beiliegend übersenden wir Ihnen die Hausgeld-Einzelabrechnung zur Jahresabrechnung $jahr.", 10);
 
-            /* Kopf Ende */
-            // $pdf->ezSetDy(-20);
+            $zeilen = array_orderby($tab_arr [$a] ['ZEILEN'], 'GRUPPE', SORT_DESC, 'KONTO', SORT_ASC);
 
-            $zeilen = array_sortByIndex($tab_arr [$a] ['ZEILEN'], 'GRUPPE', ASC);
-            // print_r($zeilen);
-            // die();
             $cols = array(
                 'KOS_BEZ' => "KOS",
                 'KONTO' => "Konto",
