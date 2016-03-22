@@ -4714,7 +4714,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             //$wtab_arr [$c + 1] ['BETRAG'] = "$energie_alle_a";
 
             //$jahres_beteiligung = $jahres_beteiligung + $heizkosten_vorjahr;
-            $jahres_beteiligung_a = nummer_punkt2komma($jahres_beteiligung);
+            $jahres_beteiligung_a = nummer_punkt2komma_t($jahres_beteiligung);
 
             $wtab_arr [$c + 2] ['KONTO_BEZ'] = "<b>Gesamtkosten Jahr</b>";
             $wtab_arr [$c + 2] ['BETEILIGUNG_ANT'] = "<b>$jahres_beteiligung_a</b>";
@@ -4732,8 +4732,8 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $jahr = date("Y");
 
             $hausgeld_aktuell_a = nummer_punkt2komma_t($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $this->wp_jahr - 1) * -1);
-            $wtab_arr [$c + 3] ['KONTO_BEZ'] = "<b>Hausgeld bisher</b>";
-            $wtab_arr [$c + 3] ['BETEILIGUNG_ANT'] = "<b>$hausgeld_aktuell_a</b>";
+            $wtab_arr [$c + 3] ['KONTO_BEZ'] = "Hausgeld bisher";
+            $wtab_arr [$c + 3] ['BETEILIGUNG_ANT'] = "$hausgeld_aktuell_a";
 
             // print_r($wtab_arr);
             // die();
