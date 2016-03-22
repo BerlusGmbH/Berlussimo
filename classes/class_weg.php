@@ -4089,7 +4089,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 $arr [$a] ['KONTO_BEZ'] = $k->konto_bezeichnung;
             }
 
-            $arr1 = array_sortByIndex($arr, 'GRUPPEN_BEZ', 'KONTOART_ID', 'KOSTENKONTO');
+            $arr1 = array_orderBy($arr, 'GRUPPEN_BEZ', SORT_DESC, 'KONTOART_BEZ', SORT_ASC, 'KOSTENKONTO', SORT_ASC);
             $arr = $arr1;
             unset ($arr1);
 
@@ -4195,12 +4195,12 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $tab_arr [$zeile_tab] ['BETRAG'] = "<b>$summe_gruppe_a</b>";
             $zeile_tab++;
 
-            $energie_alle = $this->get_summe_energie_jahr_alle($_SESSION ['hga_profil_id']) * -1;
-            $energie_alle_a = nummer_punkt2komma_t($energie_alle);
+            //$energie_alle = $this->get_summe_energie_jahr_alle($_SESSION ['hga_profil_id']) * -1;
+            //$energie_alle_a = nummer_punkt2komma_t($energie_alle);
 
-            $tab_arr [$zeile_tab] ['KONTOART_BEZ'] = '<b>Energiekosten Vorjahr lt. Abrechnung</b>';
-            $tab_arr [$zeile_tab] ['BETRAG_VJ'] = "";
-            $tab_arr [$zeile_tab] ['BETRAG'] = "<b>$energie_alle_a</b>";
+            //$tab_arr [$zeile_tab] ['KONTOART_BEZ'] = '<b>Energiekosten Vorjahr lt. Abrechnung</b>';
+            //$tab_arr [$zeile_tab] ['BETRAG_VJ'] = "";
+            //$tab_arr [$zeile_tab] ['BETRAG'] = "<b>$energie_alle_a</b>";
 
             $zeile_tab++;
             $tab_arr [$zeile_tab] ['KONTOART_BEZ'] = '<b>SUMME</b>';
@@ -4281,7 +4281,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 $arr [$a] ['KONTO_BEZ'] = $k->konto_bezeichnung;
             }
 
-            $arr1 = array_sortByIndex($arr, 'GRUPPEN_BEZ', 'KONTOART_ID', 'KOSTENKONTO', 'KONTO_BEZ');
+            $arr1 = array_orderBy($arr, 'GRUPPEN_BEZ', SORT_DESC, 'KONTOART_BEZ', SORT_ASC, 'KOSTENKONTO', SORT_ASC);
             $arr = $arr1;
             unset ($arr1);
 
@@ -4704,16 +4704,16 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
 
             $gko = strip_tags(nummer_komma2punkt($wtab_arr [$c - 1] ['BETRAG']));
 
-            $heizkosten_vorjahr = $this->get_summe_hk('Eigentuemer', $eig_id, $_SESSION ['hga_profil_id']) * -1;
-            $heizkosten_vorjahr_a = nummer_punkt2komma($heizkosten_vorjahr);
+            //$heizkosten_vorjahr = $this->get_summe_hk('Eigentuemer', $eig_id, $_SESSION ['hga_profil_id']) * -1;
+            //$heizkosten_vorjahr_a = nummer_punkt2komma($heizkosten_vorjahr);
 
-            $energie_alle = $this->get_summe_energie_jahr_alle($_SESSION ['hga_profil_id']) * -1;
-            $energie_alle_a = nummer_punkt2komma_t($energie_alle);
-            $wtab_arr [$c + 1] ['KONTO_BEZ'] = "<b>Energiekosten nach Verbrauch aus dem Vorjahr</b>";
-            $wtab_arr [$c + 1] ['BETEILIGUNG_ANT'] = "<b>$heizkosten_vorjahr_a</b>";
-            $wtab_arr [$c + 1] ['BETRAG'] = "$energie_alle_a";
+            //$energie_alle = $this->get_summe_energie_jahr_alle($_SESSION ['hga_profil_id']) * -1;
+            //$energie_alle_a = nummer_punkt2komma_t($energie_alle);
+            //$wtab_arr [$c + 1] ['KONTO_BEZ'] = "<b>Energiekosten nach Verbrauch aus dem Vorjahr</b>";
+            //$wtab_arr [$c + 1] ['BETEILIGUNG_ANT'] = "<b>$heizkosten_vorjahr_a</b>";
+            //$wtab_arr [$c + 1] ['BETRAG'] = "$energie_alle_a";
 
-            $jahres_beteiligung = $jahres_beteiligung + $heizkosten_vorjahr;
+            //$jahres_beteiligung = $jahres_beteiligung + $heizkosten_vorjahr;
             $jahres_beteiligung_a = nummer_punkt2komma($jahres_beteiligung);
 
             $wtab_arr [$c + 2] ['KONTO_BEZ'] = "<b>Gesamtkosten Jahr</b>";
@@ -5140,6 +5140,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         $g_summe1_a = nummer_punkt2komma_t($g_summe1);
         // echo "<tfoot><tr><td></td><td></td><th><b>GESAMT</b></th><th><b>$g_summe1_a</b></th></tr></tfoot>";
         // echo "</table>";
+        $mv_tab = array_orderby($mv_tab, 'GRUPPE', SORT_DESC, 'KONTO', SORT_ASC);
         $mv_tab [$znr] ['BEZ'] = '<b>SUMME</b>';
         $mv_tab [$znr] ['BETRAG'] = "<b>$g_summe1_a</b>";
 
@@ -8953,6 +8954,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                     // echo "<br>$gk_info->kredit_institut";
                     $this->get_hga_profil_infos($p_id);
                     $this->tab_konten_auswahl_summen_arr($gk_id, $this->p_jahr);
+                    $this->tab_konten_auswahl_ohne_zuordnung_arr($gk_id, $this->p_jahr, $_SESSION ['hga_profil_id']);
                     break;
 
                 case "3" :
@@ -9031,7 +9033,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 }
                 echo "<tr><td>$konto $link_u</td><td>$k->konto_bezeichnung</td><td>$k->konto_art_bezeichnung | $k->konto_gruppen_bezeichnung</td><td>$summe_a</td><td>$this->summe_zeilen_a</td><td>$this->summe_hndl_a</td><td>";
 
-                if ($summe != $this->summe_zeilen && $this->summe_zeilen != 0) {
+                if ($summe != $this->summe_zeilen && $this->konto_has_entry) {
                     $f = new formular ();
                     $f->erstelle_formular('Autokorr', null);
                     $f->hidden_feld('profil_id', $_SESSION ['hga_profil_id']);
@@ -9052,6 +9054,39 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         } else {
             echo "<hr><b>Es gibt keine Buchungen auf dem Konto im Jahr $jahr zur Auswahl.</b><hr><br>";
             $this->form_konto_hinzu('');
+        }
+    }
+
+    function tab_konten_auswahl_ohne_zuordnung_arr($gk_id, $jahr, $profil_id)
+    {
+        $arr = $this->konten_auswahl_ohne_zuordnung_arr($gk_id, $jahr, $profil_id);
+        $anz = count($arr);
+        if ($anz) {
+            $f = new formular ();
+            $f->erstelle_formular ( "Übernommene Einnahmen/Ausgaben ohne Geldbuchung (Diese Buchungen verfälschen die Abrechnung)", NULL );
+            $f->ende_formular ();
+            echo "<table>";
+            echo "<tr><th>KONTO</th><th>BEZ</th><th>BEZ IM PDF</th><th>GRUPPE</th><th>ÜBERNOMMEN</th><th>€ HNDL</th><th>OPTION</th></tr>";
+
+            for ($a = 0; $a < $anz; $a++) {
+                $konto = $arr [$a] ['KONTO'];
+                $summe = $arr [$a] ['BETRAG'];
+                $hndl  = $arr [$a] ['HNDL_BETRAG'];
+                $bez_pdf = $arr [$a] ['TEXT'];
+
+                $k = new kontenrahmen ();
+                $kontenrahmen_id = $k->get_kontenrahmen('Geldkonto', $gk_id);
+                $k->konto_informationen2($konto, $kontenrahmen_id);
+
+                $link_del = "<a href=\"?daten=weg&option=konto_del&konto=$konto&profil_id=$_SESSION[hga_profil_id]\">Löschen</a>";
+
+                echo "<tr><td>$konto</td><td>$k->konto_bezeichnung</td><td>$bez_pdf</td><td>$k->konto_art_bezeichnung | $k->konto_gruppen_bezeichnung</td><td>$summe</td><td>$hndl</td><td>";
+
+
+                    echo "$link_del";
+                echo "</td></tr>";
+            } // end for
+            echo "</table>";
         }
     }
 
@@ -9376,6 +9411,27 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
     function konten_auswahl_summen_arr($gk_id, $jahr)
     {
         $result = mysql_query("SELECT KONTENRAHMEN_KONTO, SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE DATE_FORMAT(DATUM, '%Y') = '$jahr'  && AKTUELL='1' && GELDKONTO_ID='$gk_id' GROUP BY KONTENRAHMEN_KONTO ORDER BY KONTENRAHMEN_KONTO ASC");
+        $numrows = mysql_numrows($result);
+        if ($numrows > 0) {
+            while ($row = mysql_fetch_assoc($result)) {
+                $my_arr [] = $row;
+            }
+            return $my_arr;
+        }
+    }
+
+    function konten_auswahl_ohne_zuordnung_arr($gk_id, $jahr, $profil_id)
+    {
+        $result = mysql_query("SELECT * FROM WEG_HGA_ZEILEN
+                               WHERE KONTO NOT IN (SELECT KONTENRAHMEN_KONTO
+					                               FROM GELD_KONTO_BUCHUNGEN
+					                               WHERE DATE_FORMAT(DATUM, '%Y') = '$jahr'
+						                              AND AKTUELL='1'
+						                              AND GELDKONTO_ID='$gk_id'
+					                               GROUP BY KONTENRAHMEN_KONTO)
+	                              AND WEG_HG_P_ID=$profil_id
+	                              AND AKTUELL='1'
+	                           ORDER BY KONTO DESC;");
         $numrows = mysql_numrows($result);
         if ($numrows > 0) {
             while ($row = mysql_fetch_assoc($result)) {
