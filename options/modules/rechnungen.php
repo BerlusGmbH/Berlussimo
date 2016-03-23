@@ -1570,6 +1570,10 @@ switch ($option) {
 
     case "partner_wechseln" :
         $link = $_SERVER['HTTP_REFERER'];
+        $parsedLink = parse_url($link);
+        if ($parsedLink['host'] !== $_SERVER['SERVER_NAME'] ) {
+            $link = $_SERVER['REQUEST_URI'];
+        }
         $p = new partner ();
         $p->partner_auswahl($link);
         break;
