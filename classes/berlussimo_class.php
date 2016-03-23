@@ -2532,7 +2532,11 @@ ORDER BY RECHNUNGEN DESC, PARTNER_NAME ASC;
 		echo "<p class=\"objekt_auswahl\">";
 		if ($numrows) {
 			while ( $row = mysql_fetch_assoc ( $result ) ) {
-				$partner_link = "<a class=\"objekt_auswahl_buchung\" href=\"$link&partner_id=$row[PARTNER_ID]\">$row[PARTNER_NAME]</a>";
+				if(strpos($link, '?') !== false) {
+					$partner_link = "<a class=\"objekt_auswahl_buchung\" href=\"$link&partner_id=$row[PARTNER_ID]\">$row[PARTNER_NAME]</a>";
+				} else {
+					$partner_link = "<a class=\"objekt_auswahl_buchung\" href=\"$link?partner_id=$row[PARTNER_ID]\">$row[PARTNER_NAME]</a>";
+				}
 				echo "$partner_link<hr>";
 			}
 			echo "</p>";
