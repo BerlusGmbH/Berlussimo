@@ -3238,7 +3238,7 @@ AND  `AKTUELL` =  '1'" );
 		
 		// echo $vzweck;
 		$art = ltrim ( rtrim ( $art ) );
-		if (ltrim ( rtrim ( $art ) ) == 'ABSCHLUSS' or $art == 'SEPA-UEBERWEIS.HABEN EINZEL' or $art == 'SEPA-CT HABEN EINZELBUCHUNG' or $art == 'SEPA-DD EINZELB.-SOLL B2B' or $art == 'SEPA-DD EINZELB.SOLL B2B' or $art == 'SEPA-DD EINZELB. SOLL CORE' or $art == 'SEPA-DD EINZELB.SOLL CORE' or $art == 'SEPA Dauerauftragsgutschrift' or $art == 'SEPA DAUERAUFTRAGSGUTSCHR' or $art == 'SEPA-LS EINZELBUCHUNG SOLL' or $art == 'SEPA-UEBERWEIS.HABEN RETOUR' or $art == 'SEPA-CT HABEN RETOUR' or $art == 'ZAHLEINGUEBELEKTRMEDIEN' or $art == 'SCHECKKARTE' or $art == 'ZAHLUNG UEB ELEKTR MEDIEN' or $art == 'LASTSCHRIFT EINZUGSERM') {
+		if (ltrim ( rtrim ( $art ) ) == 'ABSCHLUSS' or $art == 'SEPA-UEBERWEIS.HABEN EINZEL' or $art == 'SEPA-CT HABEN EINZELBUCHUNG' or $art == 'SEPA-DD EINZELB.-SOLL B2B' or $art == 'SEPA-DD EINZELB.SOLL B2B' or $art == 'SEPA-DD EINZELB. SOLL CORE' or $art == 'SEPA-CC EINZELB.SOLL' or $art == 'SEPA-CC EINZELB.SOLL KARTE' or $art == 'SEPA-DD EINZELB.SOLL CORE' or $art == 'SEPA Dauerauftragsgutschrift' or $art == 'SEPA DAUERAUFTRAGSGUTSCHR' or $art == 'SEPA-LS EINZELBUCHUNG SOLL' or $art == 'SEPA-UEBERWEIS.HABEN RETOUR' or $art == 'SEPA-CT HABEN RETOUR' or $art == 'ZAHLEINGUEBELEKTRMEDIEN' or $art == 'SCHECKKARTE' or $art == 'ZAHLUNG UEB ELEKTR MEDIEN' or $art == 'LASTSCHRIFT EINZUGSERM') {
 			// echo "$art $vzweck";
 			$treffer = array ();
 			// $pos_svwz = strpos(strtoupper($vzweck), 'ABZR:');
