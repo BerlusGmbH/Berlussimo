@@ -2395,9 +2395,9 @@ class weg
         }
 
         // for($a=1;$a<=$diff_in_monaten;$a++){
-        if ($je == $akt_jahr) {
-            $akt_monat = date("m");
-        }
+        //if ($je == date('Y')) {
+        //    $akt_monat = date("m");
+        //}
 
         for ($a = $m; $a <= $akt_monat; $a++) {
             $m = sprintf('%02d', $a);
