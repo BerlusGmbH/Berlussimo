@@ -3348,8 +3348,8 @@ class weg
         for ($a = 1; $a <= $diff_in_monaten; $a++) {
             $m = sprintf('%02d', $m);
             // echo "$a. $m.$j<br>";
-            $soll_array [$a - 1] [monat] = $m;
-            $soll_array [$a - 1] [jahr] = $j;
+            $soll_array [$a - 1] ['monat'] = $m;
+            $soll_array [$a - 1] ['jahr'] = $j;
 
             if ($m == 12) {
                 $m = 0;
@@ -3367,17 +3367,17 @@ class weg
         $anz_monate = count($soll_array);
         $anz_defs = count($moegliche_defs);
         for ($a = 0; $a < $anz_monate; $a++) {
-            $monat = $soll_array [$a] [monat];
-            $jahr = $soll_array [$a] [jahr];
+            $monat = $soll_array [$a] ['monat'];
+            $jahr = $soll_array [$a] ['jahr'];
             for ($b = 0; $b < $anz_defs; $b++) {
                 $e_konto = $moegliche_defs [$b] ['E_KONTO'];
                 $kostenkat = $moegliche_defs [$b] ['KOSTENKAT'];
-                $soll_ist_arr [$b] [KONTO] = $e_konto;
-                $soll_ist_arr [$b] [KOSTENKAT] = $kostenkat;
+                $soll_ist_arr [$b] ['KONTO'] = $e_konto;
+                $soll_ist_arr [$b] ['KOSTENKAT'] = $kostenkat;
                 $summe_kostenkat = $this->get_summe_kostenkat($monat, $jahr, 'Einheit', $this->einheit_id, $kostenkat);
-                $soll_ist_arr [$b] [SUMME_SOLL] += $summe_kostenkat;
+                $soll_ist_arr [$b] ['SUMME_SOLL'] += $summe_kostenkat;
                 $summe_ist_zahlungen = $this->get_summe_zahlungen_kostenkonto('Eigentuemer', $eigentuemer_id, $monat, $jahr, $geldkonto_id, $e_konto);
-                $soll_ist_arr [$b] [SUMME_IST] += $summe_ist_zahlungen;
+                $soll_ist_arr [$b] ['SUMME_IST'] += $summe_ist_zahlungen;
             }
         }
 
@@ -3394,13 +3394,13 @@ class weg
             $g_ist += $ist;
             $saldo = $ist - $soll;
             $g_saldo += $saldo;
-            $soll_ist_arr [$a] [SALDO] = nummer_punkt2komma($saldo);
+            $soll_ist_arr [$a] ['SALDO'] = nummer_punkt2komma($saldo);
         }
 
-        $soll_ist_arr [$a + 1] [KOSTENKAT] = '<b>Summen</b>';
-        $soll_ist_arr [$a + 1] [SUMME_SOLL] = '<b>' . nummer_punkt2komma($g_soll) . '</b>';
-        $soll_ist_arr [$a + 1] [SUMME_IST] = '<b>' . nummer_punkt2komma($g_ist) . '</b>';
-        $soll_ist_arr [$a + 1] [SALDO] = '<b>' . nummer_punkt2komma($g_saldo) . '</b>';
+        $soll_ist_arr [$a + 1] ['KOSTENKAT'] = '<b>Summen</b>';
+        $soll_ist_arr [$a + 1] ['SUMME_SOLL'] = '<b>' . nummer_punkt2komma($g_soll) . '</b>';
+        $soll_ist_arr [$a + 1] ['SUMME_IST'] = '<b>' . nummer_punkt2komma($g_ist) . '</b>';
+        $soll_ist_arr [$a + 1] ['SALDO'] = '<b>' . nummer_punkt2komma($g_saldo) . '</b>';
 
         // print_r($soll_ist_arr);
 

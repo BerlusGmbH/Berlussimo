@@ -33,7 +33,7 @@ tree.push({
         },
         {
             text: "Mahnliste",
-            href: "daten=weg&option=mahnliste"
+            href: "?daten=weg&option=mahnliste"
         },
         {
             text: "Wirtschaftspläne",
