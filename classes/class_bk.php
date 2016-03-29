@@ -1587,7 +1587,7 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
 				echo "<b>$kostenkonto</b> SUMME $summe $g_bez $konto_bez <br>";
 			}
 		}
-		echo "GESAMT Umlagef�hige Kosten $g_summe �";
+		echo "GESAMT Umlagefähige Kosten $g_summe €";
 	}
 	
 	/*
