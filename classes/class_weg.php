@@ -343,6 +343,22 @@ class weg
         }
     }
 
+    function get_hga_def($kos_typ, $kos_id, $kostenkat)
+    {
+        $result = mysql_query("SELECT BETRAG AS SUMME, E_KONTO 
+FROM WEG_WG_DEF 
+WHERE KOS_TYP LIKE '$kos_typ' 
+	&& KOS_ID='$kos_id' 
+	&& AKTUELL='1' 
+	&& KOSTENKAT = '$kostenkat'
+ORDER BY ANFANG ASC");
+        $row = mysql_fetch_assoc($result);
+        if (!empty ($row ['SUMME'])) {
+            $this->e_konto = $row ['E_KONTO'];
+            return $row ['SUMME'];
+        }
+    }
+
     function get_wg_info($monat, $jahr, $kos_typ, $kos_id, $gruppe)
     {
         $this->gruppe_erg = $this->get_summe_kostenkat_gruppe_m2($monat, $jahr, $kos_typ, $kos_id, $gruppe);
@@ -362,7 +378,61 @@ class weg
 
     function get_moegliche_def($kos_typ, $kos_id)
     {
-        $result = mysql_query("SELECT E_KONTO, KOSTENKAT FROM WEG_WG_DEF WHERE KOS_TYP LIKE '$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' GROUP BY KOSTENKAT ORDER BY E_KONTO ASC");
+        $result = mysql_query("SELECT E_KONTO, KOSTENKAT FROM WEG_WG_DEF WHERE KOS_TYP LIKE '$kos_typ' && KOS_ID='$kos_id' && E_KONTO != 6050 && AKTUELL='1' GROUP BY KOSTENKAT ORDER BY E_KONTO ASC");
+        $numrows = mysql_numrows($result);
+        if ($numrows > 0) {
+            while ($row = mysql_fetch_assoc($result)) {
+                $my_arr [] = $row;
+            }
+            return $my_arr;
+        }
+    }
+
+    function get_ergebnisse_hga($kos_typ_soll, $kos_id_soll, $kos_typ_ist, $kos_id_ist, $jahr, $geldkonto, $buchungskonto)
+    {
+        $result = mysql_query("SELECT *, IST - SOLL AS SALDO FROM (
+	SELECT IF(SOLL IS NULL, 0, SOLL) AS SOLL, IF(IST IS NULL, 0, IST) AS IST, IF(IST.JAHR IS NULL, SOLL.JAHR, IST.JAHR) AS JAHR
+	FROM (
+		SELECT SUM(BETRAG) AS IST, DATE_FORMAT(DATUM, '%Y') AS JAHR
+		FROM GELD_KONTO_BUCHUNGEN 
+		WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr' 
+			&& KOSTENTRAEGER_TYP LIKE '$kos_typ_ist' 
+			&& KOSTENTRAEGER_ID=$kos_id_ist
+			&& AKTUELL='1' 
+			&& GELDKONTO_ID=$geldkonto
+			&& KONTENRAHMEN_KONTO=$buchungskonto 
+		GROUP BY JAHR) AS IST 
+		RIGHT JOIN (
+		SELECT SUM(BETRAG) AS SOLL, DATE_FORMAT(ANFANG, '%Y') AS JAHR 
+		FROM WEG_WG_DEF 
+		WHERE KOS_TYP LIKE '$kos_typ_soll' 
+			&& KOS_ID=$kos_id_soll 
+			&& E_KONTO=$buchungskonto 
+			&& AKTUELL='1' 
+			&& DATE_FORMAT(ANFANG, '%Y') <= '$jahr' 
+		GROUP BY JAHR) AS SOLL ON ( IST.JAHR = SOLL.JAHR )
+	UNION
+	SELECT IF(SOLL IS NULL, 0, SOLL) AS SOLL, IF(IST IS NULL, 0, IST) AS IST, IF(IST.JAHR IS NULL, SOLL.JAHR, IST.JAHR) AS JAHR
+	FROM (
+		SELECT SUM(BETRAG) AS IST, DATE_FORMAT(DATUM, '%Y') AS JAHR
+		FROM GELD_KONTO_BUCHUNGEN 
+		WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr' 
+			&& KOSTENTRAEGER_TYP LIKE '$kos_typ_ist' 
+			&& KOSTENTRAEGER_ID=$kos_id_ist
+			&& AKTUELL='1' 
+			&& GELDKONTO_ID=$geldkonto
+			&& KONTENRAHMEN_KONTO=$buchungskonto 
+		GROUP BY JAHR) AS IST LEFT JOIN (
+		SELECT SUM(BETRAG) AS SOLL, DATE_FORMAT(ANFANG, '%Y') AS JAHR 
+		FROM WEG_WG_DEF 
+		WHERE KOS_TYP LIKE '$kos_typ_soll' 
+			&& KOS_ID=$kos_id_soll
+			&& E_KONTO = $buchungskonto
+			&& AKTUELL='1' 
+			&& DATE_FORMAT(ANFANG, '%Y') <= '$jahr' 
+		GROUP BY JAHR) AS SOLL ON ( IST.JAHR = SOLL.JAHR )
+) AS SOLL_IST
+ORDER BY JAHR;");
         $numrows = mysql_numrows($result);
         if ($numrows > 0) {
             while ($row = mysql_fetch_assoc($result)) {
@@ -2547,9 +2617,17 @@ class weg
             // $tab_arr[$zeile][SALDO] = "===============";
             $zeile++;
         } // ende Monatsschleife
-        $akt_datum_a = date_mysql2german($akt_datum);
         // echo "<tr><th>$akt_datum_a</th><th colspan=\"$spalten3\">Saldo</th><th align=\"right\">$this->hg_saldo_a"."€</th></tr>";
         // echo "</table>";
+        if($akt_jahr == date("Y")) {
+            $akt_datum_a = date_mysql2german($akt_datum);
+        } else {
+            if($this->eigentuemer_bis === '0000-00-00' || new DateTime($this->eigentuemer_bis) > new DateTime("$akt_jahr-12-31")) {
+                $akt_datum_a = date_mysql2german("$akt_jahr-12-31");
+            } else {
+                $akt_datum_a = date_mysql2german($this->eigentuemer_bis);
+            }
+        }
         $tab_arr [$zeile + 1] [DATUM] = "<b>$akt_datum_a</b>";
         $tab_arr [$zeile + 1] [TEXT] = "<b>Saldo aktuell</b>";
         $tab_arr [$zeile + 1] [SALDO] = "<b>$this->hg_saldo_a</b>";
@@ -3292,6 +3370,7 @@ class weg
         $this->hausgeld_kontoauszug_pdf($pdf, $eigentuemer_id, 0); // null für keine neue Seite
         if (isset ($_REQUEST ['jahr'])) {
             $this->hg_ist_soll_pdf($pdf, $eigentuemer_id);
+            $this->hga_uebersicht_pdf($pdf, $eigentuemer_id);
         }
         ob_clean(); // ausgabepuffer leeren
         $pdf->ezStream();
@@ -3303,7 +3382,11 @@ class weg
         $this->get_eigentumer_id_infos($eigentuemer_id);
         if (isset ($_REQUEST ['jahr']) && !empty ($_REQUEST ['jahr'])) {
             $jahr = $_REQUEST ['jahr'];
-            $anfangsdatum = "$jahr-01-01";
+            if (new DateTime("$jahr-01-01") < new DateTime($this->eigentuemer_von)) {
+                $anfangsdatum = $this->eigentuemer_von;
+            } else  {
+                $anfangsdatum = "$jahr-01-01";
+            }
             $akt_jahrt = date("Y");
             if ($jahr == $akt_jahrt) {
                 $ende_datum = date("Y-m-d");
@@ -3417,7 +3500,87 @@ class weg
             'shaded' => 0,
             'titleFontSize' => 8,
             'fontSize' => 7,
-            'xPos' => 55,
+            'xPos' => 50,
+            'xOrientation' => 'right',
+            'width' => 500,
+            'rowGap' => 1,
+            'cols' => array(
+                'DATUM' => array(
+                    'justification' => 'right',
+                    'width' => 70
+                ),
+                'BEMERKUNG' => array(
+                    'justification' => 'left',
+                    'width' => 300
+                ),
+                'BETRAG' => array(
+                    'justification' => 'right',
+                    'width' => 75
+                ),
+                'SALDO' => array(
+                    'justification' => 'right',
+                    'width' => 75
+                )
+            )
+        ));
+        return $pdf;
+    }
+
+    function hga_uebersicht_pdf(Cezpdf $pdf, $eigentuemer_id)
+    {
+        $e_konto = 6050;
+        // echo "funkt $eigentuemer_id";
+        $this->get_eigentumer_id_infos($eigentuemer_id);
+        if (isset ($_REQUEST ['jahr']) && !empty ($_REQUEST ['jahr'])) {
+            $jahr = $_REQUEST ['jahr'];
+            $akt_jahr = date("Y");
+        } else {
+            $jahr = $akt_jahr = date("Y");
+        }
+
+        $gg = new geldkonto_info ();
+        $gg->geld_konto_ermitteln('Objekt', $this->objekt_id);
+        $geldkonto_id = $gg->geldkonto_id;
+
+        $ergebnisse_hga = $this->get_ergebnisse_hga('Einheit', $this->einheit_id, 'Eigentuemer', $eigentuemer_id, $jahr, $geldkonto_id, $e_konto);
+
+        $anz = count($ergebnisse_hga);
+        $g_soll = 0;
+        $g_ist = 0;
+        $g_saldo = 0;
+        for ($a = 0; $a < $anz; $a++) {
+            $soll = $ergebnisse_hga [$a] ['SOLL'];
+            $g_soll += $soll;
+            $ist = $ergebnisse_hga [$a] ['IST'];
+            $g_ist += $ist;
+            $saldo = $ist - $soll;
+            $g_saldo += $saldo;
+        }
+
+        $ergebnisse_hga [$a + 1] ['JAHR'] = '<b>Summen</b>';
+        $ergebnisse_hga [$a + 1] ['SOLL'] = '<b>' . nummer_punkt2komma($g_soll) . '</b>';
+        $ergebnisse_hga [$a + 1] ['IST'] = '<b>' . nummer_punkt2komma($g_ist) . '</b>';
+        $ergebnisse_hga [$a + 1] ['SALDO'] = '<b>' . nummer_punkt2komma($g_saldo) . '</b>';
+
+        // print_r($soll_ist_arr);
+
+        $cols = array(
+            'JAHR' => "<b>JAHR</b>",
+            'SOLL' => "<b>SOLL (- ist Guthaben)</b>",
+            'IST' => "<b>IST</b>",
+            'SALDO' => "<b>SALDO</b>"
+        );
+        $pdf->ezSetDy(-10);
+        $pdf->ezText("ERGEBNISSE HGA", 11, array(
+            'justification' => 'full'
+        ));
+        $pdf->ezTable($ergebnisse_hga, $cols, "", array(
+            'showHeadings' => 1,
+            'shaded' => 0,
+            'titleFontSize' => 11,
+            'titleJustification' => 'left',
+            'fontSize' => 7,
+            'xPos' => 50,
             'xOrientation' => 'right',
             'width' => 500,
             'rowGap' => 1,
