@@ -366,7 +366,7 @@ ORDER BY ANFANG ASC");
 
     function get_monatliche_def($monat, $jahr, $kos_typ, $kos_id)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME, E_KONTO, KOSTENKAT FROM WEG_WG_DEF WHERE KOS_TYP LIKE '$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' GROUP BY KOSTENKAT ORDER BY E_KONTO ASC");
+        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME, E_KONTO, KOSTENKAT FROM WEG_WG_DEF WHERE KOS_TYP LIKE '$kos_typ' && KOS_ID='$kos_id' && E_KONTO!=6050 && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' GROUP BY KOSTENKAT ORDER BY E_KONTO ASC");
         $numrows = mysql_numrows($result);
         if ($numrows > 0) {
             while ($row = mysql_fetch_assoc($result)) {
@@ -388,51 +388,17 @@ ORDER BY ANFANG ASC");
         }
     }
 
-    function get_ergebnisse_hga($kos_typ_soll, $kos_id_soll, $kos_typ_ist, $kos_id_ist, $jahr, $geldkonto, $buchungskonto)
+    function get_ergebnisse_hga_soll($kos_id_soll, $jahr, $buchungskonto)
     {
-        $result = mysql_query("SELECT *, IST - SOLL AS SALDO FROM (
-	SELECT IF(SOLL IS NULL, 0, SOLL) AS SOLL, IF(IST IS NULL, 0, IST) AS IST, IF(IST.JAHR IS NULL, SOLL.JAHR, IST.JAHR) AS JAHR
-	FROM (
-		SELECT SUM(BETRAG) AS IST, DATE_FORMAT(DATUM, '%Y') AS JAHR
-		FROM GELD_KONTO_BUCHUNGEN 
-		WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr' 
-			&& KOSTENTRAEGER_TYP LIKE '$kos_typ_ist' 
-			&& KOSTENTRAEGER_ID=$kos_id_ist
-			&& AKTUELL='1' 
-			&& GELDKONTO_ID=$geldkonto
-			&& KONTENRAHMEN_KONTO=$buchungskonto 
-		GROUP BY JAHR) AS IST 
-		RIGHT JOIN (
-		SELECT SUM(BETRAG) AS SOLL, DATE_FORMAT(ANFANG, '%Y') AS JAHR 
-		FROM WEG_WG_DEF 
-		WHERE KOS_TYP LIKE '$kos_typ_soll' 
-			&& KOS_ID=$kos_id_soll 
-			&& E_KONTO=$buchungskonto 
-			&& AKTUELL='1' 
-			&& DATE_FORMAT(ANFANG, '%Y') <= '$jahr' 
-		GROUP BY JAHR) AS SOLL ON ( IST.JAHR = SOLL.JAHR )
-	UNION
-	SELECT IF(SOLL IS NULL, 0, SOLL) AS SOLL, IF(IST IS NULL, 0, IST) AS IST, IF(IST.JAHR IS NULL, SOLL.JAHR, IST.JAHR) AS JAHR
-	FROM (
-		SELECT SUM(BETRAG) AS IST, DATE_FORMAT(DATUM, '%Y') AS JAHR
-		FROM GELD_KONTO_BUCHUNGEN 
-		WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr' 
-			&& KOSTENTRAEGER_TYP LIKE '$kos_typ_ist' 
-			&& KOSTENTRAEGER_ID=$kos_id_ist
-			&& AKTUELL='1' 
-			&& GELDKONTO_ID=$geldkonto
-			&& KONTENRAHMEN_KONTO=$buchungskonto 
-		GROUP BY JAHR) AS IST LEFT JOIN (
-		SELECT SUM(BETRAG) AS SOLL, DATE_FORMAT(ANFANG, '%Y') AS JAHR 
-		FROM WEG_WG_DEF 
-		WHERE KOS_TYP LIKE '$kos_typ_soll' 
-			&& KOS_ID=$kos_id_soll
-			&& E_KONTO = $buchungskonto
-			&& AKTUELL='1' 
-			&& DATE_FORMAT(ANFANG, '%Y') <= '$jahr' 
-		GROUP BY JAHR) AS SOLL ON ( IST.JAHR = SOLL.JAHR )
-) AS SOLL_IST
-ORDER BY JAHR;");
+        $result = mysql_query("
+SELECT BETRAG AS SOLL, KOSTENKAT AS HGA
+FROM WEG_WG_DEF 
+WHERE KOS_TYP LIKE 'Einheit' 
+	&& KOS_ID = $kos_id_soll 
+	&& E_KONTO = $buchungskonto
+	&& AKTUELL = '1' 
+	&& DATE_FORMAT(ANFANG, '%Y') <= '$jahr'
+ORDER BY HGA;");
         $numrows = mysql_numrows($result);
         if ($numrows > 0) {
             while ($row = mysql_fetch_assoc($result)) {
@@ -440,6 +406,25 @@ ORDER BY JAHR;");
             }
             return $my_arr;
         }
+    }
+
+    function get_ergebnis_hga_ist($kos_id_ist, $jahr, $geldkonto, $buchungskonto)
+    {
+        $result = mysql_query("
+SELECT IF(SUM(BETRAG) IS NULL,0,SUM(BETRAG)) AS IST
+FROM GELD_KONTO_BUCHUNGEN 
+WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr' 
+	&& KOSTENTRAEGER_TYP LIKE 'Eigentuemer' 
+	&& KOSTENTRAEGER_ID=$kos_id_ist
+	&& AKTUELL='1' 
+	&& GELDKONTO_ID=$geldkonto
+	&& KONTENRAHMEN_KONTO=$buchungskonto;");
+        $numrows = mysql_numrows($result);
+        if ($numrows > 0) {
+            $row = mysql_fetch_assoc($result);
+            return $row['IST'];
+        }
+        return 0;
     }
 
     function get_summe_kostenkat_monat($monat, $jahr, $kos_typ, $kos_id, $e_konto)
@@ -467,7 +452,7 @@ ORDER BY JAHR;");
     function get_summe_kostenkat_gruppe_m2($monat, $jahr, $kos_typ, $kos_id, $gruppe)
     {
         // echo "SELECT SUM(BETRAG) AS SUMME, G_KONTO FROM WEG_WG_DEF WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && GRUPPE = '$gruppe' ORDER BY ANFANG ASC";
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME, G_KONTO FROM WEG_WG_DEF WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && GRUPPE = '$gruppe' ORDER BY ANFANG ASC");
+        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME, G_KONTO FROM WEG_WG_DEF WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && E_KONTO!=6050 && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && GRUPPE = '$gruppe' ORDER BY ANFANG ASC");
         // echo "SELECT SUM(BETRAG) AS SUMME, G_KONTO FROM WEG_WG_DEF WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && GRUPPE = '$gruppe' ORDER BY ANFANG ASC";
         // die();
         $numrows = mysql_numrows($result);
@@ -3542,22 +3527,19 @@ ORDER BY JAHR;");
         $gg->geld_konto_ermitteln('Objekt', $this->objekt_id);
         $geldkonto_id = $gg->geldkonto_id;
 
-        $ergebnisse_hga = $this->get_ergebnisse_hga('Einheit', $this->einheit_id, 'Eigentuemer', $eigentuemer_id, $jahr, $geldkonto_id, $e_konto);
+        $ergebnisse_hga = $this->get_ergebnisse_hga_soll($this->einheit_id, $jahr, $e_konto);
+        $ergebnis_hga_ist = $this->get_ergebnis_hga_ist($eigentuemer_id, $jahr, $geldkonto_id, $e_konto);
 
         $anz = count($ergebnisse_hga);
         $g_soll = 0;
-        $g_ist = 0;
-        $g_saldo = 0;
+        $g_ist = $ergebnis_hga_ist;
         for ($a = 0; $a < $anz; $a++) {
-            $soll = $ergebnisse_hga [$a] ['SOLL'];
-            $g_soll += $soll;
-            $ist = $ergebnisse_hga [$a] ['IST'];
-            $g_ist += $ist;
-            $saldo = $ist - $soll;
-            $g_saldo += $saldo;
+            $g_soll += $ergebnisse_hga [$a] ['SOLL'];
         }
 
-        $ergebnisse_hga [$a + 1] ['JAHR'] = '<b>Summen</b>';
+        $g_saldo = $g_ist - $g_soll;
+
+        $ergebnisse_hga [$a + 1] ['HGA'] = '<b>Summen</b>';
         $ergebnisse_hga [$a + 1] ['SOLL'] = '<b>' . nummer_punkt2komma($g_soll) . '</b>';
         $ergebnisse_hga [$a + 1] ['IST'] = '<b>' . nummer_punkt2komma($g_ist) . '</b>';
         $ergebnisse_hga [$a + 1] ['SALDO'] = '<b>' . nummer_punkt2komma($g_saldo) . '</b>';
@@ -3565,7 +3547,7 @@ ORDER BY JAHR;");
         // print_r($soll_ist_arr);
 
         $cols = array(
-            'JAHR' => "<b>JAHR</b>",
+            'HGA' => "<b>HGA</b>",
             'SOLL' => "<b>SOLL (- ist Guthaben)</b>",
             'IST' => "<b>IST</b>",
             'SALDO' => "<b>SALDO</b>"
