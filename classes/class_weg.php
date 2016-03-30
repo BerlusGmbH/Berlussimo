@@ -3527,17 +3527,29 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         $gg->geld_konto_ermitteln('Objekt', $this->objekt_id);
         $geldkonto_id = $gg->geldkonto_id;
 
+        $eigentuemer_ids = $this->get_eigentuemer_arr($this->einheit_id);
+
+        $g_soll = 0;
+        $g_ist = 0;
+
+//        $gk = new gk ();
+//        $gk_ids_arr = $gk->get_zuweisung_kos_arr ( 'Eigentuemer', $eigentuemer_ids[$a] );
+
+        $anz = count($eigentuemer_ids);
+        for ($a = 0; $a < $anz; $a++) {
+            $g_ist += $this->get_ergebnis_hga_ist($eigentuemer_ids[$a]['ID'], $jahr, $geldkonto_id, $e_konto);
+        }
+
         $ergebnisse_hga = $this->get_ergebnisse_hga_soll($this->einheit_id, $jahr, $e_konto);
-        $ergebnis_hga_ist = $this->get_ergebnis_hga_ist($eigentuemer_id, $jahr, $geldkonto_id, $e_konto);
 
         $anz = count($ergebnisse_hga);
-        $g_soll = 0;
-        $g_ist = $ergebnis_hga_ist;
         for ($a = 0; $a < $anz; $a++) {
             $g_soll += $ergebnisse_hga [$a] ['SOLL'];
         }
 
         $g_saldo = $g_ist - $g_soll;
+        $ergebnisse_hga[0]['IST'] = $g_ist;
+        $ergebnisse_hga[0]['SALDO'] = $g_saldo;
 
         $ergebnisse_hga [$a + 1] ['HGA'] = '<b>Summen</b>';
         $ergebnisse_hga [$a + 1] ['SOLL'] = '<b>' . nummer_punkt2komma($g_soll) . '</b>';
@@ -3556,6 +3568,7 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         $pdf->ezText("ERGEBNISSE HGA", 11, array(
             'justification' => 'full'
         ));
+        $pdf->ezSetDy(-5);
         $pdf->ezTable($ergebnisse_hga, $cols, "", array(
             'showHeadings' => 1,
             'shaded' => 0,
