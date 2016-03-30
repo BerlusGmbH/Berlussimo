@@ -571,7 +571,7 @@ class kautionen {
 		}
 	}
 	function summe_mietekalt($mv_id) {
-		$result = mysql_query ( "SELECT SUM(BETRAG) AS SUMME FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mv_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE='Miete kalt'  ORDER BY ANFANG ASC LIMIT 0,1" );
+		$result = mysql_query ( "SELECT BETRAG AS SUMME FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mv_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE='Miete kalt' && DATE_FORMAT(ANFANG, '%d') = '01' ORDER BY ANFANG ASC LIMIT 0,1" );
 		
 		$numrows = mysql_numrows ( $result );
 		if (! $numrows) {
