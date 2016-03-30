@@ -1,6 +1,7 @@
 tree.push({
     text: "Mietspiegel",
     href: "?daten=mietspiegel",
+    selectable: false,
     nodes: [
         {
             text: "Mietspiegelliste",
