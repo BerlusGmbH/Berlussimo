@@ -1,12 +1,7 @@
 tree.push({
     text: "Kautionen",
-    href: "?daten=kautionen",
     selectable: false,
     nodes: [
-        {
-            text: "Kautionen",
-            href: "?daten=kautionen"
-        },
         {
             text: "Kautionen buchen",
             href: "?daten=kautionen&option=kautionen_buchen"

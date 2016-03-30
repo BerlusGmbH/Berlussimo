@@ -13,10 +13,12 @@ $(document).ready(function () {
     var matches = 0;
     treeview.treeview('getSiblings', '0').some(function (vo) {
         try {
-            var currentMatches = compareByParameters(vo.href);
-            if ( matches < currentMatches ) {
-                node = vo;
-                matches = currentMatches;
+            if (vo.href !== undefined) {
+                var currentMatches = compareByParameters(vo.href);
+                if (matches < currentMatches) {
+                    node = vo;
+                    matches = currentMatches;
+                }
             }
             if (vo.nodes !== undefined) {
                 vo.nodes.some(function (vi) {

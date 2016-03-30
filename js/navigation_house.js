@@ -1,6 +1,5 @@
 tree.push({
     text: "Häuser",
-    href: "?daten=haus_raus&haus_raus=haus_kurz",
     selectable: false,
     nodes: [
         {
