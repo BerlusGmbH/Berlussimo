@@ -47,8 +47,8 @@ switch ($option) {
 	
 	/* Kautionseinzahlung */
 	case "kautionen_buchen" :
-		if (! empty ( $_REQUEST [mietvertrag_id] )) {
-			$mv_id = $_REQUEST [mietvertrag_id];
+		if (! empty ( $_REQUEST ['mietvertrag_id'] )) {
+			$mv_id = $_REQUEST ['mietvertrag_id'];
 			$k = new kautionen ();
 			$k->form_kautionsbuchung_mieter ( $mv_id );
 		} else {
@@ -57,12 +57,12 @@ switch ($option) {
 		break;
 	
 	case "kaution_gesendet" :
-		if (! empty ( $_REQUEST [mietvertrag_id] ) && ! empty ( $_REQUEST [datum] ) && ! empty ( $_REQUEST [betrag] ) && ! empty ( $_REQUEST [text] )) {
-			$mv_id = $_REQUEST [mietvertrag_id];
-			$betrag = nummer_komma2punkt ( $_REQUEST [betrag] );
+		if (! empty ( $_REQUEST ['mietvertrag_id'] ) && ! empty ( $_REQUEST ['datum'] ) && ! empty ( $_REQUEST ['betrag'] ) && ! empty ( $_REQUEST ['text'] )) {
+			$mv_id = $_REQUEST ['mietvertrag_id'];
+			$betrag = nummer_komma2punkt ( $_REQUEST ['betrag'] );
 			$datum = $_REQUEST ['datum'];
 			$datum = date_german2mysql ( $datum );
-			$text = $_REQUEST [text];
+			$text = $_REQUEST ['text'];
 			$k = new kautionen ();
 			$k->kaution_speichern ( $datum, 'MIETVERTRAG', $mv_id, $betrag, $text, '1000' );
 		} else {
@@ -72,8 +72,8 @@ switch ($option) {
 	
 	case "hochrechner" :
 		$k = new kautionen ();
-		if (! empty ( $_REQUEST [mietvertrag_id] )) {
-			$mv_id = $_REQUEST [mietvertrag_id];
+		if (! empty ( $_REQUEST ['mietvertrag_id'] )) {
+			$mv_id = $_REQUEST ['mietvertrag_id'];
 			$k->form_hochrechnung_mv ( $mv_id );
 		} else {
 			echo "Mietvertrag auswählen";
@@ -98,9 +98,9 @@ switch ($option) {
 	
 	case "hochrechner_pdf" :
 		$k = new kautionen ();
-		if (! empty ( $_REQUEST [datum_bis] ) && ! empty ( $_REQUEST [mietvertrag_id] )) {
-			$datum_bis = date_german2mysql ( $_REQUEST [datum_bis] );
-			$mietvertrag_id = $_REQUEST [mietvertrag_id];
+		if (! empty ( $_REQUEST ['datum_bis'] ) && ! empty ( $_REQUEST ['mietvertrag_id'] )) {
+			$datum_bis = date_german2mysql ( $_REQUEST ['datum_bis'] );
+			$mietvertrag_id = $_REQUEST ['mietvertrag_id'];
 			$k->kautionsberechnung_pdf ( 'Mietvertrag', $mietvertrag_id, $datum_bis, 0.0025, 25, 5.5 );
 		} else {
 			echo "Mietvertrag und Auszahlungsdatum eingeben";
@@ -110,13 +110,13 @@ switch ($option) {
 	case "kontohochrechnung" :
 		$k = new kautionen ();
 		
-		if (empty ( $_REQUEST [datum_bis] )) {
+		if (empty ( $_REQUEST ['datum_bis'] )) {
 			$datum_bis = date ( "Y" ) . "-12-31";
 		} else {
-			$datum_bis = date_german2mysql ( $_REQUEST [datum_bis] );
+			$datum_bis = date_german2mysql ( $_REQUEST ['datum_bis'] );
 		}
 		
-		if (! empty ( $_REQUEST [tag] ) && ! empty ( $_REQUEST [monat] ) && ! empty ( $_REQUEST [jahr] )) {
+		if (! empty ( $_REQUEST ['tag'] ) && ! empty ( $_REQUEST ['monat'] ) && ! empty ( $_REQUEST ['jahr'] )) {
 		}
 		
 		$k->kontohochrechnung ( $datum_bis, 0.0025, 25, 5.5 );
@@ -126,8 +126,8 @@ switch ($option) {
 	/* Mieter ohne Kautionen */
 	case "mv_ohne_k" :
 		$k = new kautionen ();
-		if (! empty ( $_SESSION [geldkonto_id] )) {
-			$k->mieter_ohne_kaution_anzeigen ( $_SESSION [geldkonto_id], '1000' );
+		if (! empty ( $_SESSION ['geldkonto_id'] )) {
+			$k->mieter_ohne_kaution_anzeigen ( $_SESSION ['geldkonto_id'], '1000' );
 		} else {
 			hinweis_ausgeben ( 'Kautionskonto wählen' );
 		}
@@ -211,5 +211,3 @@ switch ($option) {
 		
 		break;
 }
-
-?>
