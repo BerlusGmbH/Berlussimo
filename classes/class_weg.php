@@ -2517,7 +2517,17 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             $monatsname = monat2name($monat);
             $jahr = $soll_array [$a] ['jahr'];
             $this->get_wg_info($monat, $jahr, 'Einheit', $this->einheit_id, 'Hausgeld');
-            $this->Wohngeld_soll_a = nummer_punkt2komma($this->gruppe_erg);
+            if ($this->eigentuemer_bis !== "0000-00-00" ) {
+                $date = new DateTime("$jahr-$monat-01");
+                $bis = new DateTime($this->eigentuemer_bis);
+                if ($bis > $date) {
+                    $this->Wohngeld_soll_a = nummer_punkt2komma($this->gruppe_erg);
+                } else {
+                    $this->Wohngeld_soll_a = "0,00";
+                }
+            } else {
+                $this->Wohngeld_soll_a = nummer_punkt2komma($this->gruppe_erg);
+            }
             // echo "01.$monat.$jahr Wohngeld soll $this->Wohngeld_soll_a<br>";
             /* Sollzeile */
             // echo "<tr><td><b>SOLL</b></td><td>$monatsname $jahr</td>";
@@ -2590,15 +2600,15 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             $spalten3 = $spalten - 2;
             $this->hg_saldo_a = nummer_punkt2komma($this->hg_saldo);
             // echo "<tr class=\"zeile2\"><td colspan=\"$spalten2\"><b>Saldo $monatsname $jahr</b></td><td align=\"right\"><b>$this->hg_saldo_a"."€</b></td></tr>";
-            $tab_arr [$zeile] [DATUM] = "<b>$monatsname $jahr</b>";
-            $tab_arr [$zeile] [TEXT] = "<b>Monatssaldo</b>";
-            $tab_arr [$zeile] [SALDO] = "<b>$this->hg_saldo_a</b>";
+            $tab_arr [$zeile] ['DATUM'] = "<b>$monatsname $jahr</b>";
+            $tab_arr [$zeile] ['TEXT'] = "<b>Monatssaldo</b>";
+            $tab_arr [$zeile] ['SALDO'] = "<b>$this->hg_saldo_a</b>";
             $zeile++;
 
-            $tab_arr [$zeile] [DATUM] = "_____________";
-            $tab_arr [$zeile] [TEXT] = "______________________________________";
+            $tab_arr [$zeile] ['DATUM'] = "_____________";
+            $tab_arr [$zeile] ['TEXT'] = "______________________________________";
             $tab_arr [$zeile] ['BETRAG'] = "________________";
-            $tab_arr [$zeile] [SALDO] = "________________";
+            $tab_arr [$zeile] ['SALDO'] = "________________";
             // $tab_arr[$zeile][SALDO] = "===============";
             $zeile++;
         } // ende Monatsschleife
@@ -2607,15 +2617,11 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         if($akt_jahr == date("Y")) {
             $akt_datum_a = date_mysql2german($akt_datum);
         } else {
-            if($this->eigentuemer_bis === '0000-00-00' || new DateTime($this->eigentuemer_bis) > new DateTime("$akt_jahr-12-31")) {
-                $akt_datum_a = date_mysql2german("$akt_jahr-12-31");
-            } else {
-                $akt_datum_a = date_mysql2german($this->eigentuemer_bis);
-            }
+            $akt_datum_a = date_mysql2german("$akt_jahr-12-31");
         }
-        $tab_arr [$zeile + 1] [DATUM] = "<b>$akt_datum_a</b>";
-        $tab_arr [$zeile + 1] [TEXT] = "<b>Saldo aktuell</b>";
-        $tab_arr [$zeile + 1] [SALDO] = "<b>$this->hg_saldo_a</b>";
+        $tab_arr [$zeile + 1] ['DATUM'] = "<b>$akt_datum_a</b>";
+        $tab_arr [$zeile + 1] ['TEXT'] = "<b>Saldo aktuell</b>";
+        $tab_arr [$zeile + 1] ['SALDO'] = "<b>$this->hg_saldo_a</b>";
 
         $cols = array(
             'DATUM' => "DATUM",
@@ -3437,6 +3443,13 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         for ($a = 0; $a < $anz_monate; $a++) {
             $monat = $soll_array [$a] ['monat'];
             $jahr = $soll_array [$a] ['jahr'];
+            if ($this->eigentuemer_bis !== "0000-00-00" ) {
+                $date = new DateTime("$jahr-$monat-01");
+                $bis = new DateTime($this->eigentuemer_bis);
+                if ($bis <= $date) {
+                    continue;
+                }
+            }
             for ($b = 0; $b < $anz_defs; $b++) {
                 $e_konto = $moegliche_defs [$b] ['E_KONTO'];
                 $kostenkat = $moegliche_defs [$b] ['KOSTENKAT'];
@@ -3532,9 +3545,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         $g_soll = 0;
         $g_ist = 0;
 
-//        $gk = new gk ();
-//        $gk_ids_arr = $gk->get_zuweisung_kos_arr ( 'Eigentuemer', $eigentuemer_ids[$a] );
-
         $anz = count($eigentuemer_ids);
         for ($a = 0; $a < $anz; $a++) {
             $g_ist += $this->get_ergebnis_hga_ist($eigentuemer_ids[$a]['ID'], $jahr, $geldkonto_id, $e_konto);
@@ -3545,11 +3555,14 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         $anz = count($ergebnisse_hga);
         for ($a = 0; $a < $anz; $a++) {
             $g_soll += $ergebnisse_hga [$a] ['SOLL'];
+            $ergebnisse_hga [$a] ['SOLL'] = nummer_punkt2komma($ergebnisse_hga [$a] ['SOLL']);
         }
 
         $g_saldo = $g_ist - $g_soll;
-        $ergebnisse_hga[0]['IST'] = $g_ist;
-        $ergebnisse_hga[0]['SALDO'] = $g_saldo;
+        if ($a > 0) {
+            $ergebnisse_hga[0]['IST'] = nummer_punkt2komma($g_ist);
+            $ergebnisse_hga[0]['SALDO'] = nummer_punkt2komma($g_saldo);
+        }
 
         $ergebnisse_hga [$a + 1] ['HGA'] = '<b>Summen</b>';
         $ergebnisse_hga [$a + 1] ['SOLL'] = '<b>' . nummer_punkt2komma($g_soll) . '</b>';
