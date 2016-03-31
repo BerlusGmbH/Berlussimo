@@ -102,8 +102,12 @@ class kautionen {
 	function form_kautionsbuchung_mieter($mietvertrag_id) {
 		$mv = new mietvertraege ();
 		$mv->get_mietvertrag_infos_aktuell ( $mietvertrag_id );
-		$mietekalt_1 = $this->summe_mietekalt ( $mietvertrag_id );
-		$kaution = nummer_punkt2komma ( $mietekalt_1 * 3 );
+		$k = new kautionen ();
+		if ( ($kaution = $k->get_sollkaution ( $mietvertrag_id )) !== "") {
+			$kaution = nummer_punkt2komma ( $kaution );
+		} else {
+			$kaution = nummer_punkt2komma( 3 * $k->summe_mietekalt($mietvertrag_id));
+		}
 		$f = new formular ();
 		$f->erstelle_formular ( "Kautionen buchen für $mv->einheit_kurzname $mv->personen_name_string", NULL );
 		$f->datum_feld ( 'Datum', 'datum', "", 'datum' );
@@ -571,7 +575,7 @@ class kautionen {
 		}
 	}
 	function summe_mietekalt($mv_id) {
-		$result = mysql_query ( "SELECT SUM(BETRAG) AS SUMME FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mv_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE='Miete kalt'  ORDER BY ANFANG ASC LIMIT 0,1" );
+		$result = mysql_query ( "SELECT BETRAG AS SUMME FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mv_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE='Miete kalt' && DATE_FORMAT(ANFANG, '%d') = '01' ORDER BY ANFANG ASC LIMIT 0,1" );
 		
 		$numrows = mysql_numrows ( $result );
 		if (! $numrows) {
@@ -581,6 +585,11 @@ class kautionen {
 			return $row ['SUMME'];
 		}
 	}
+	
+	function get_sollkaution($mv_id) {
+		return $this->get_feld_wert( $mv_id, 'SOLL' );
+	}
+	
 	function kaution_speichern($datum, $kostentraeger_typ, $kostentraeger_id, $betrag, $text, $konto) {
 		$db_abfrage = "INSERT INTO KAUTIONS_BUCHUNGEN VALUES (NULL, '$kostentraeger_typ', '$kostentraeger_id','$datum', '$betrag','$text', '$konto')";
 		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
