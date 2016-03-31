@@ -283,20 +283,20 @@ switch ($mietvertrag_raus) {
 		$form = new mietkonto ();
 		$form->erstelle_formular ( "Neuen Mietvertrag prüfen", NULL );
 		/* Ob Mieter ausgewählt wurden */
-		if (is_array ( $_POST [mieter_liste] )) {
+		if (is_array ( $_POST ['mieter_liste'] )) {
 			// echo "MIETER OK";
 		} else {
 			$error = 'Keine Mieter im Vertrag<br>';
 		}
 		/* Einzugsdatum */
-		if (! check_datum ( $_POST [datum_einzug] )) {
+		if (! check_datum ( $_POST ['datum_einzug'] )) {
 			$error .= 'Einzugsdatum prüfen<br>';
 		} else {
 			// echo "Einzugsdatum OK";
 		}
 		/* Auszugsdatum */
-		if (! empty ( $_POST [datum_auszug] )) {
-			if (! check_datum ( $_POST [datum_auszug] )) {
+		if (! empty ( $_POST ['datum_auszug'] )) {
+			if (! check_datum ( $_POST ['datum_auszug'] )) {
 				$error .= 'Auszugsdatum prüfen<br>';
 			} else {
 				// echo "AUSZUGsdatum OK";
@@ -304,56 +304,65 @@ switch ($mietvertrag_raus) {
 		} else {
 			// echo "KEIN A DATUM";
 			// $error .= 'Kein Auszugsdatum eingegeben<br>';
-			$_POST [datum_auszug] = '0000-00-00';
+			$_POST ['datum_auszug'] = '0000-00-00';
 		}
-		if (! empty ( $_POST [miete_kalt] )) {
-			if (is_numeric ( $_POST [miete_kalt] )) {
+		if (! empty ( $_POST ['miete_kalt'] )) {
+			if (is_numeric ( $_POST ['miete_kalt'] )) {
 				// echo "Kaltmiete betrag nicht ok";
 				$error .= 'Kaltmiete Betrag fehlerhaft<br>';
-			} else {
-				// echo "Kaltmiete betrag ok";
 			}
 		} else {
 			// echo "keine kaltmiete";
 			$error .= 'Keine Kaltmiete eingegeben<br>';
 		}
+		if (! empty ( $_POST ['sollkaution'] )) {
+			if (is_numeric ( $_POST ['sollkaution'] )) {
+				$error .= 'Sollkaution Betrag fehlerhaft<br>';
+			}
+		} else {
+			$error .= 'Keine Sollkaution eingegeben<br>';
+		}
 		if (isset ( $error )) {
 			echo $error;
 		} else {
 			echo "<p><h1>VERTRAGSDATEN:</h1><br>";
-			$einheit_kurzname = einheit_kurzname ( $_POST [einheit_id] );
-			$haus_id = haus_id ( $_POST [einheit_id] );
+			$einheit_kurzname = einheit_kurzname ( $_POST ['einheit_id'] );
+			$haus_id = haus_id ( $_POST ['einheit_id'] );
 			$anschrift = haus_strasse_nr ( $haus_id );
 			echo "<b>Einheit:</b> $einheit_kurzname<br>$anschrift<br>";
 			$mv_info = new mietvertraege ();
 			echo "<hr><b>Mieter:</b><br>";
 			// print_r($_POST[mieter_liste]);
-			$mv_info->mv_personen_anzeigen_form ( $_POST [mieter_liste] );
+			$mv_info->mv_personen_anzeigen_form ( $_POST ['mieter_liste'] );
 			echo "<hr>Einzug: $_POST[datum_einzug]<br>";
-			if ($_POST [datum_auszug] == '0000-00-00') {
+			if ($_POST ['datum_auszug'] == '0000-00-00') {
 				echo "Auszug: unbefristet<br>";
 			} else {
 				echo "Auszug: $_POST[datum_auszug]<br>";
 			}
 			echo "Miete kalt: $_POST[miete_kalt] €<br>";
-			if (! empty ( $_POST [nebenkosten] )) {
+			if (! empty ( $_POST ['sollkaution'] )) {
+				echo "Sollkaution: $_POST[sollkaution] €<br>";
+			}
+			if (! empty ( $_POST ['nebenkosten'] )) {
 				echo "Nebenkosten Vorauszahlung: $_POST[nebenkosten] €<br>";
 			}
-			if (! empty ( $_POST [heizkosten] )) {
+			if (! empty ( $_POST ['heizkosten'] )) {
 				echo "Heizkosten Vorauszahlung: $_POST[heizkosten] €<br>";
 			}
-			$form->hidden_feld ( 'einheit_id', $_POST [einheit_id] );
+			$form->hidden_feld ( 'einheit_id', $_POST ['einheit_id'] );
 			$form->hidden_feld ( 'einheit_name', $einheit_kurzname );
-			$form->hidden_feld ( 'datum_einzug', $_POST [datum_einzug] );
-			$form->hidden_feld ( 'datum_auszug', $_POST [datum_auszug] );
+			$form->hidden_feld ( 'datum_einzug', $_POST ['datum_einzug'] );
+			$form->hidden_feld ( 'datum_auszug', $_POST ['datum_auszug'] );
 			// $form->hidden_feld('einheit_id', $_POST[einheit_id]);
-			for($a = 0; $a < count ( $_POST [mieter_liste] ); $a ++) {
-				$person_id = $_POST [mieter_liste] [$a];
+			for($a = 0; $a < count ( $_POST ['mieter_liste'] ); $a ++) {
+				$person_id = $_POST ['mieter_liste'] [$a];
 				$form->hidden_feld ( 'mieter_liste[]', $person_id );
 			}
-			$form->hidden_feld ( 'miete_kalt', $_POST [miete_kalt] );
-			$form->hidden_feld ( 'heizkosten', $_POST [heizkosten] );
-			$form->hidden_feld ( 'nebenkosten', $_POST [nebenkosten] );
+			$form->hidden_feld ( 'sollkaution', $_POST ['sollkaution'] );
+			$form->hidden_feld ( 'miete_kalt', $_POST ['miete_kalt'] );
+			$form->hidden_feld ( 'heizkosten', $_POST ['heizkosten'] );
+			$form->hidden_feld ( 'nebenkosten', $_POST ['nebenkosten'] );
 			
 			$form->hidden_feld ( 'mietvertrag_raus', 'mv_speichern' );
 			$form->send_button ( 'btn_mv_erstellen', 'Mietvertrag speichern' );
@@ -378,24 +387,29 @@ switch ($mietvertrag_raus) {
 		 * print_r($_POST);
 		 * echo "</pre>";
 		 */
-		$zugewiesene_vertrags_id = mietvertrag_anlegen ( $_POST [datum_einzug], $_POST [datum_auszug], $_POST [einheit_id] );
-		$anzahl_partner = count ( $_POST [mieter_liste] );
+		$zugewiesene_vertrags_id = mietvertrag_anlegen ( $_POST ['datum_einzug'], $_POST ['datum_auszug'], $_POST [einheit_id] );
+		$anzahl_partner = count ( $_POST ['mieter_liste'] );
 		for($a = 0; $a < $anzahl_partner; $a ++) {
-			$person_id = $_POST [mieter_liste] [$a];
+			$person_id = $_POST ['mieter_liste'] [$a];
 			person_zu_mietvertrag ( $person_id, $zugewiesene_vertrags_id );
 		}
 		
 		hinweis_ausgeben ( "Mietvertrag wurde erstellt!" );
 		
 		$mv_info = new mietvertraege ();
-		$mv_info->mieten_speichern ( $zugewiesene_vertrags_id, $_POST [datum_einzug], $_POST [datum_auszug], 'Miete kalt', $_POST [miete_kalt], 0 );
-		
-		if (! empty ( $_POST [heizkosten] )) {
-			$mv_info->mieten_speichern ( $zugewiesene_vertrags_id, $_POST [datum_einzug], $_POST [datum_auszug], 'Heizkosten Vorauszahlung', $_POST [heizkosten], 0 );
+		$k = new kautionen ();
+		$mv_info->mieten_speichern ( $zugewiesene_vertrags_id, $_POST ['datum_einzug'], $_POST ['datum_auszug'], 'Miete kalt', $_POST ['miete_kalt'], 0 );
+
+		if (! empty ( $_POST ['sollkaution'] )) {
+			$k->feld_wert_speichern ( $zugewiesene_vertrags_id, 'SOLL', $_POST ['sollkaution'] );
+		}
+
+		if (! empty ( $_POST ['heizkosten'] )) {
+			$mv_info->mieten_speichern ( $zugewiesene_vertrags_id, $_POST ['datum_einzug'], $_POST ['datum_auszug'], 'Heizkosten Vorauszahlung', $_POST ['heizkosten'], 0 );
 		}
 		
-		if (! empty ( $_POST [nebenkosten] )) {
-			$mv_info->mieten_speichern ( $zugewiesene_vertrags_id, $_POST [datum_einzug], $_POST [datum_auszug], 'Nebenkosten Vorauszahlung', $_POST [nebenkosten], 0 );
+		if (! empty ( $_POST ['nebenkosten'] )) {
+			$mv_info->mieten_speichern ( $zugewiesene_vertrags_id, $_POST ['datum_einzug'], $_POST ['datum_auszug'], 'Nebenkosten Vorauszahlung', $_POST ['nebenkosten'], 0 );
 		}
 
 		weiterleiten_in_sec ( "?daten=uebersicht&anzeigen=einheit&einheit_id=$_POST[einheit_id]", "1" );
@@ -407,7 +421,7 @@ switch ($mietvertrag_raus) {
 		$form = new mietkonto ();
 		$mv_info = new mietvertraege ();
 		$form->erstelle_formular ( "Mietvertragsänderungen speichern", NULL );
-		$mv_info->mv_aenderungen_speichern ( $_POST [mietvertrag_dat], $_POST [mietvertrag_id], $_POST [datum_auszug], $_POST [datum_einzug], $_POST [einheit_id], $_POST [mieter_liste] );
+		$mv_info->mv_aenderungen_speichern ( $_POST ['mietvertrag_dat'], $_POST ['mietvertrag_id'], $_POST ['datum_auszug'], $_POST ['datum_einzug'], $_POST ['einheit_id'], $_POST ['mieter_liste'] );
 		$form->ende_formular ();
 		break;
 	
@@ -585,9 +599,9 @@ switch ($mietvertrag_raus) {
 	case "mietvertrag_aendern" :
 		$form = new mietkonto ();
 		$form->erstelle_formular ( "Mietvertrag ändern", NULL );
-		if (! empty ( $_REQUEST [mietvertrag_id] )) {
+		if (! empty ( $_REQUEST ['mietvertrag_id'] )) {
 			$mv_info = new mietvertraege ();
-			$mv_info->mv_aendern_formular ( $_REQUEST [mietvertrag_id] );
+			$mv_info->mv_aendern_formular ( $_REQUEST ['mietvertrag_id'] );
 		} else {
 			
 			fehlermeldung_ausgeben ( "Mietvertrag zum ändern auswählen" );
@@ -601,20 +615,20 @@ switch ($mietvertrag_raus) {
 		$form->erstelle_formular ( "Mietvertrag prüfen/ändern", NULL );
 		
 		/* Ob Mieter ausgewählt wurden */
-		if (is_array ( $_POST [mieter_liste] )) {
+		if (is_array ( $_POST ['mieter_liste'] )) {
 			// echo "MIETER OK";
 		} else {
 			$error = 'Keine Mieter im Vertrag<br>';
 		}
 		/* Einzugsdatum */
-		if (! check_datum ( $_POST [datum_einzug] )) {
+		if (! check_datum ( $_POST ['datum_einzug'] )) {
 			$error .= 'Einzugsdatum prüfen<br>';
 		} else {
 			// echo "Einzugsdatum OK";
 		}
 		/* Auszugsdatum */
-		if (! empty ( $_POST [datum_auszug] )) {
-			if (! check_datum ( $_POST [datum_auszug] )) {
+		if (! empty ( $_POST ['datum_auszug'] )) {
+			if (! check_datum ( $_POST ['datum_auszug'] )) {
 				$error .= 'Auszugsdatum prüfen<br>';
 			} else {
 				// echo "AUSZUGsdatum OK";
@@ -622,35 +636,35 @@ switch ($mietvertrag_raus) {
 		} else {
 			// echo "KEIN A DATUM";
 			// $error .= 'Kein Auszugsdatum eingegeben<br>';
-			$_POST [datum_auszug] = '0000-00-00';
+			$_POST ['datum_auszug'] = '0000-00-00';
 		}
 		
 		if (isset ( $error )) {
 			echo $error;
 		} else {
 			echo "<p><h1>GEÄNDERTE VERTRAGSDATEN:</h1><br>";
-			$einheit_kurzname = einheit_kurzname ( $_POST [einheit_id] );
-			$haus_id = haus_id ( $_POST [einheit_id] );
+			$einheit_kurzname = einheit_kurzname ( $_POST ['einheit_id'] );
+			$haus_id = haus_id ( $_POST ['einheit_id'] );
 			$anschrift = haus_strasse_nr ( $haus_id );
 			echo "<b>Einheit:</b> $einheit_kurzname<br>$anschrift<br>";
 			$mv_info = new mietvertraege ();
 			echo "<hr><b>Mieter:</b><br>";
-			$mv_info->mv_personen_anzeigen_form ( $_POST [mieter_liste] );
+			$mv_info->mv_personen_anzeigen_form ( $_POST ['mieter_liste'] );
 			echo "<hr>Einzug: $_POST[datum_einzug]<br>";
-			if ($_POST [datum_auszug] == '0000-00-00') {
+			if ($_POST ['datum_auszug'] == '0000-00-00') {
 				echo "Auszug: unbefristet<br>";
 			} else {
 				echo "Auszug: $_POST[datum_auszug]<br>";
 			}
 			
-			$form->hidden_feld ( 'einheit_id', $_POST [einheit_id] );
-			$form->hidden_feld ( 'mietvertrag_id', $_POST [mietvertrag_id] );
-			$form->hidden_feld ( 'mietvertrag_dat', $_POST [mietvertrag_dat] );
-			$form->hidden_feld ( 'datum_einzug', $_POST [datum_einzug] );
-			$form->hidden_feld ( 'datum_auszug', $_POST [datum_auszug] );
+			$form->hidden_feld ( 'einheit_id', $_POST ['einheit_id'] );
+			$form->hidden_feld ( 'mietvertrag_id', $_POST ['mietvertrag_id'] );
+			$form->hidden_feld ( 'mietvertrag_dat', $_POST ['mietvertrag_dat'] );
+			$form->hidden_feld ( 'datum_einzug', $_POST ['datum_einzug'] );
+			$form->hidden_feld ( 'datum_auszug', $_POST ['datum_auszug'] );
 			
-			for($a = 0; $a < count ( $_POST [mieter_liste] ); $a ++) {
-				$person_id = $_POST [mieter_liste] [$a];
+			for($a = 0; $a < count ( $_POST ['mieter_liste'] ); $a ++) {
+				$person_id = $_POST ['mieter_liste'] [$a];
 				$form->hidden_feld ( 'mieter_liste[]', $person_id );
 			}
 			$form->hidden_feld ( 'mietvertrag_raus', 'mv_geaendert_speichern' );
