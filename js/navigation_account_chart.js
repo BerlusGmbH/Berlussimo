@@ -32,7 +32,7 @@ tree.push({
             href: "?daten=kontenrahmen&option=kontoart_neu"
         },
         {
-            text: "Kostenrahmen zuweisen",
+            text: "Kontenrahmen zuweisen",
             href: "?daten=kontenrahmen&option=kontenrahmen_zuweisen"
         }
     ]
