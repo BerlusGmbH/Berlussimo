@@ -350,7 +350,11 @@ function uebersicht_einheit($einheit_id) {
 	// echo "</div>"; //ende balken3
 	
 	$k = new kautionen ();
-	$soll_kaution = nummer_punkt2komma ( 3 * $k->summe_mietekalt ( $mietvertrag_id ) );
+	if ( ($soll_kaution = $k->get_sollkaution ( $mietvertrag_id )) !== "") {
+		$soll_kaution = nummer_punkt2komma ( $soll_kaution );
+	} else {
+		$soll_kaution = nummer_punkt2komma( 3 * $k->summe_mietekalt($mietvertrag_id));
+	}
 	echo "<br><span class=\"font_balken_uberschrift\"><b>Kaution (Soll:$soll_kaution €)</b></span><hr>";
 	
 	$k->kautionen_info ( 'Mietvertrag', $mietvertrag_id, '13' );
@@ -739,9 +743,13 @@ function uebersicht_einheit2($einheit_id) {
 	echo "<br><hr>$link_mv_details<hr>";
 	
 	// echo "</div>"; //ende balken3
-	
+
 	$k = new kautionen ();
-	$soll_kaution = nummer_punkt2komma ( 3 * $k->summe_mietekalt ( $mietvertrag_id ) );
+	if ( ($soll_kaution = $k->get_sollkaution ( $mietvertrag_id )) !== "") {
+		$soll_kaution = nummer_punkt2komma ( $soll_kaution );
+	} else {
+		$soll_kaution = nummer_punkt2komma( 3 * $k->summe_mietekalt($mietvertrag_id));
+	}
 	echo "<br><span class=\"font_balken_uberschrift\"><b>Kaution (Soll:$soll_kaution €)</b></span><hr>";
 	
 	$k->kautionen_info ( 'Mietvertrag', $mietvertrag_id, '13' );
