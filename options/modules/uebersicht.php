@@ -350,8 +350,8 @@ function uebersicht_einheit($einheit_id) {
 	// echo "</div>"; //ende balken3
 	
 	$k = new kautionen ();
-	if ( ($soll_kaution = $k->get_sollkaution ( $mietvertrag_id )) !== "") {
-		$soll_kaution = nummer_punkt2komma ( $soll_kaution );
+	if ( $k->get_sollkaution ( $mietvertrag_id ) !== "") {
+		$soll_kaution = $k->get_sollkaution ( $mietvertrag_id );
 	} else {
 		$soll_kaution = nummer_punkt2komma( 3 * $k->summe_mietekalt($mietvertrag_id));
 	}
