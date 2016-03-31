@@ -35,6 +35,7 @@ if (file_exists("classes/mietzeit_class.php")) {
 if (file_exists("classes/class_listen.php")) {
     include_once("classes/class_listen.php");
 }
+include_once (BERLUS_PATH . "/classes/class_kautionen.php");
 
 class mietvertraege
 {
@@ -59,6 +60,7 @@ class mietvertraege
             $javaaction1 = 'onchange="mieter_entfernen()"';
             $this->ausgewahlte_mieter_liste('Ausgewählte Mieter', 'mieter_liste[]', 'mieter_liste', $javaaction1, '5');
             $form->text_feld('Miete kalt', 'miete_kalt', '', '10');
+            $form->text_feld('Sollkaution', 'sollkaution', '', '10');
             $form->text_feld('Nebenkosten Vorauszahlung', 'nebenkosten', '', '10');
             $form->text_feld('Heizkosten Vorauszahlung', 'heizkosten', '', '10');
             $form->hidden_feld('mietvertrag_raus', 'mv_pruefen');
