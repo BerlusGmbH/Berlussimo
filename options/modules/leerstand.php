@@ -58,16 +58,16 @@ if (isset ( $option )) {
 			break;
 		
 		case "objekt_pdf" :
-			if (isset ( $_SESSION [objekt_id] )) {
-				$objekt_id = $_SESSION [objekt_id];
-				if (! empty ( $_REQUEST [monat] )) {
-					$monat = $_REQUEST [monat];
+			if (isset ( $_SESSION ['objekt_id'] )) {
+				$objekt_id = $_SESSION ['objekt_id'];
+				if (! empty ( $_REQUEST ['monat'] )) {
+					$monat = $_REQUEST ['monat'];
 				} else {
 					$monat = date ( "m" );
 				}
 				
-				if (! empty ( $_REQUEST [jahr] )) {
-					$jahr = $_REQUEST [jahr];
+				if (! empty ( $_REQUEST ['jahr'] )) {
+					$jahr = $_REQUEST ['jahr'];
 				} else {
 					$jahr = date ( "Y" );
 				}
@@ -85,9 +85,9 @@ if (isset ( $option )) {
 			break;
 		
 		case "projekt_pdf" :
-			if (! empty ( $_REQUEST [einheit_id] )) {
+			if (! empty ( $_REQUEST ['einheit_id'] )) {
 				$l = new leerstand ();
-				$l->pdf_projekt ( $_REQUEST [einheit_id] );
+				$l->pdf_projekt ( $_REQUEST ['einheit_id'] );
 			} else {
 				echo "Einheit wählen";
 			}
