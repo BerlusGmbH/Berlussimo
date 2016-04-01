@@ -21,7 +21,7 @@ include_once ("includes/allgemeine_funktionen.php");
 include_once ('classes/class_lager.php');
 
 /* überprüfen ob Benutzer Zugriff auf das Modul hat */
-if (! check_user_mod ( $_SESSION [benutzer_id], 'lager' )) {
+if (! check_user_mod ( $_SESSION ['benutzer_id'], 'lager' )) {
 	echo '<script type="text/javascript">';
 	echo "alert('Keine Berechtigung')";
 	echo '</script>';
@@ -37,11 +37,11 @@ $lager_info = new lager ();
 switch ($option) {
 	
 	default :
-		unset ( $_SESSION [objekt_id] );
+		unset ( $_SESSION ['objekt_id'] );
 		break;
 	
 	case "lagerbestand" :
-		unset ( $_SESSION [objekt_id] );
+		unset ( $_SESSION ['objekt_id'] );
 		$link = '?daten=lager&option=lagerbestand';
 		$lager_info->lager_auswahl_liste ( $link );
 		$form = new mietkonto ();
@@ -54,14 +54,14 @@ switch ($option) {
 		$l = new lager_v ();
 		$link = '?daten=lager&option=lagerbestand_bis_form';
 		$lager_info->lager_auswahl_liste ( $link );
-		if (empty ( $_SESSION [lager_id] )) {
+		if (empty ( $_SESSION ['lager_id'] )) {
 			die ( "Lager wählen" );
 		} else {
 			$f = new formular ();
 			$lager_bez = $lager_info->lager_bezeichnung ( $_SESSION ['lager_id'] );
 			$f->erstelle_formular ( "Lagerbestand vom $lager_bez bis zum... anzeigen", '' );
 			$f->datum_feld ( 'Datum bis', 'datum', '', 'datum' );
-			$f->check_box_js ( 'pdf_check', '', 'PDF-Ausgabe', '', checked );
+			$f->check_box_js ( 'pdf_check', '', 'PDF-Ausgabe', '', 'checked' );
 			$f->hidden_feld ( 'option', 'lagerbestand_bis' );
 			$f->send_button ( 'send', 'Lagerbestand anzeigen' );
 			$f->ende_formular ();
@@ -69,18 +69,18 @@ switch ($option) {
 		break;
 	
 	case "lagerbestand_bis" :
-		unset ( $_SESSION [objekt_id] );
+		unset ( $_SESSION ['objekt_id'] );
 		$link = '?daten=lager&option=lagerbestand';
 		$lager_info->lager_auswahl_liste ( $link );
 		$form = new mietkonto ();
 		$form->erstelle_formular ( "Lagerbestand ->", NULL );
-		if (! empty ( $_REQUEST [datum] )) {
+		if (! empty ( $_REQUEST ['datum'] )) {
 			/* Class_lager) */
 			$l = new lager_v ();
 			if (! isset ( $_REQUEST ['pdf_check'] )) {
-				$l->lagerbestand_anzeigen_bis ( $_REQUEST [datum] );
+				$l->lagerbestand_anzeigen_bis ( $_REQUEST ['datum'] );
 			} else {
-				$l->lagerbestand_anzeigen_bis_pdf ( $_REQUEST [datum] );
+				$l->lagerbestand_anzeigen_bis_pdf ( $_REQUEST ['datum'] );
 			}
 		} else {
 			fehlermeldung_ausgeben ( "Datum eingeben" );
@@ -91,9 +91,9 @@ switch ($option) {
 	case "ra" :
 		$link = '?daten=lager&option=ra';
 		$lager_info->lager_auswahl_liste ( $link );
-		if (! empty ( $_SESSION [lager_id] )) {
-			$monat = $_REQUEST [monat];
-			$jahr = $_REQUEST [jahr];
+		if (! empty ( $_SESSION ['lager_id'] )) {
+			$monat = $_REQUEST ['monat'];
+			$jahr = $_REQUEST ['jahr'];
 			if (empty ( $monat )) {
 				$monat = date ( "m" );
 			}
@@ -101,7 +101,7 @@ switch ($option) {
 				$jahr = date ( "Y" );
 			}
 			$r = new rechnung ();
-			$lager_id = $_SESSION [lager_id];
+			$lager_id = $_SESSION ['lager_id'];
 			$r->rechnungsausgangsbuch ( 'Lager', $lager_id, $monat, $jahr, 'Rechnung' );
 		}
 		break;
@@ -109,9 +109,9 @@ switch ($option) {
 	case "re" :
 		$link = '?daten=lager&option=re';
 		$lager_info->lager_auswahl_liste ( $link );
-		if (! empty ( $_SESSION [lager_id] )) {
-			$monat = $_REQUEST [monat];
-			$jahr = $_REQUEST [jahr];
+		if (! empty ( $_SESSION ['lager_id'] )) {
+			$monat = $_REQUEST ['monat'];
+			$jahr = $_REQUEST ['jahr'];
 			if (empty ( $monat )) {
 				$monat = date ( "m" );
 			}
@@ -119,7 +119,7 @@ switch ($option) {
 				$jahr = date ( "Y" );
 			}
 			$r = new rechnung ();
-			$lager_id = $_SESSION [lager_id];
+			$lager_id = $_SESSION ['lager_id'];
 			$r->rechnungseingangsbuch ( 'Lager', $lager_id, $monat, $jahr, 'Rechnung' );
 		}
 		break;
@@ -130,8 +130,8 @@ switch ($option) {
 		break;
 	
 	case "artikel_suche" :
-		if (! empty ( $_REQUEST [artikel_nr] )) {
-			$artikel_nr = $_REQUEST [artikel_nr];
+		if (! empty ( $_REQUEST ['artikel_nr'] )) {
+			$artikel_nr = $_REQUEST ['artikel_nr'];
 			$l = new lager ();
 			$l->artikel_suche_einkauf ( $artikel_nr, 'Lager', $_SESSION ['lager_id'] );
 		}
@@ -146,8 +146,8 @@ switch ($option) {
 		$l = new lager_v ();
 		// $l->form_lieferschein_erfassen();
 		print_req ();
-		if (! empty ( $_REQUEST [lieferant_id] ) && ! empty ( $_REQUEST [empfaenger_id] ) && ! empty ( $_REQUEST [l_nr] ) && ! empty ( $_REQUEST [l_datum] )) {
-			$l->lieferschein_speichern ( 'Partner', $_REQUEST [lieferant_id], 'Partner', $_REQUEST [empfaenger_id], $_REQUEST [l_datum], $_REQUEST [l_nr] );
+		if (! empty ( $_REQUEST ['lieferant_id'] ) && ! empty ( $_REQUEST ['empfaenger_id'] ) && ! empty ( $_REQUEST ['l_nr'] ) && ! empty ( $_REQUEST ['l_datum'] )) {
+			$l->lieferschein_speichern ( 'Partner', $_REQUEST ['lieferant_id'], 'Partner', $_REQUEST ['empfaenger_id'], $_REQUEST ['l_datum'], $_REQUEST ['l_nr'] );
 		}
 		break;
 	
@@ -157,4 +157,3 @@ switch ($option) {
 		break;
 } // end switch
 
-?>
