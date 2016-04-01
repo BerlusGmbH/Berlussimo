@@ -146,8 +146,6 @@ switch ($option) {
 	
 	case "lieferschein_send" :
 		$l = new lager_v ();
-		// $l->form_lieferschein_erfassen();
-		print_req ();
 		if (! empty ( $_REQUEST ['lieferant_id'] ) && ! empty ( $_REQUEST ['empfaenger_id'] ) && ! empty ( $_REQUEST ['l_nr'] ) && ! empty ( $_REQUEST ['l_datum'] )) {
 			$l->lieferschein_speichern ( 'Partner', $_REQUEST ['lieferant_id'], 'Partner', $_REQUEST ['empfaenger_id'], $_REQUEST ['l_datum'], $_REQUEST ['l_nr'] );
 		}
