@@ -1,6 +1,5 @@
 tree.push({
     text: "Kundenweb",
-    href: "?daten=kundenweb",
     selectable: false,
     nodes: [
         {
@@ -9,7 +8,7 @@ tree.push({
         },
         {
             text: "Verwaltung",
-            href: "?daten=kundenweb"
+            href: "?daten=kundenweb&opiton=berechtigung"
         }
     ]
 });
