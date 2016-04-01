@@ -37,11 +37,11 @@ $lager_info = new lager ();
 switch ($option) {
 	
 	default :
-		unset ( $_SESSION ['objekt_id'] );
+		unset ( $_SESSION ['partner_id'] );
 		break;
 	
 	case "lagerbestand" :
-		unset ( $_SESSION ['objekt_id'] );
+		unset ( $_SESSION ['partner_id'] );
 		$link = '?daten=lager&option=lagerbestand';
 		$lager_info->lager_auswahl_liste ( $link );
 		$form = new mietkonto ();
@@ -69,7 +69,7 @@ switch ($option) {
 		break;
 	
 	case "lagerbestand_bis" :
-		unset ( $_SESSION ['objekt_id'] );
+		unset ( $_SESSION ['partner_id'] );
 		$link = '?daten=lager&option=lagerbestand';
 		$lager_info->lager_auswahl_liste ( $link );
 		$form = new mietkonto ();
@@ -89,6 +89,7 @@ switch ($option) {
 		break;
 	
 	case "ra" :
+		unset ( $_SESSION ['partner_id'] );
 		$link = '?daten=lager&option=ra';
 		$lager_info->lager_auswahl_liste ( $link );
 		if (! empty ( $_SESSION ['lager_id'] )) {
@@ -107,6 +108,7 @@ switch ($option) {
 		break;
 	
 	case "re" :
+		unset ( $_SESSION ['partner_id'] );
 		$link = '?daten=lager&option=re';
 		$lager_info->lager_auswahl_liste ( $link );
 		if (! empty ( $_SESSION ['lager_id'] )) {
