@@ -1184,7 +1184,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 			
 			// echo "<h2>SANIERUNGSLISTE $oo->objekt_kurzname - Leerstände bis $datum_d (heute + $monate Monate)</h2>";
 			echo "<table class=\"sortable\">";
-			echo "<tr><th>EINHEITEN BIS bis $datum_d</th><th>AUSSTATTUNG</th><th>SANIER-<br>VERLAUF</th><th>JAHR DER<br>LETZTEN<br>SANIERUNG</th><th>ENERGIE<br>AUSWEIS</th><th>ENERGIE<br>AUSWEIS<br>BIS</th><th>REINIGEN<br>FOTOS</th></tr>";
+			echo "<tr><th>EINHEITEN BIS $datum_d</th><th>AUSSTATTUNG</th><th>SANIER-<br>VERLAUF</th><th>JAHR DER<br>LETZTEN<br>SANIERUNG</th><th>ENERGIE<br>AUSWEIS</th><th>ENERGIE<br>AUSWEIS<br>BIS</th><th>REINIGEN<br>FOTOS</th></tr>";
 			$anz_e = count ( $arr );
 			for($a = 0; $a < $anz_e; $a ++) {
 				$einheit_id = $arr [$a] ['EINHEIT_ID'];

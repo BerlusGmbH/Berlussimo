@@ -3682,7 +3682,7 @@ else {
 		// ausgabepuffer leeren
 		header ( "Content-type: application/pdf" );
 		// wird von MSIE ignoriert
-		$dateiname = "$this->bk_berechnungs_datum $this->bk_bezeichnung - $this->bk_jahr";
+		$dateiname = "$this->bk_berechnungs_datum $this->bk_bezeichnung - $this->bk_jahr.pdf";
 		$pdf_opt ['Content-Disposition'] = $dateiname;
 		$pdf->ezStream ( $pdf_opt );
 		// $pdf->ezStream();
