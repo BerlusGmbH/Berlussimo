@@ -31,7 +31,7 @@ if (file_exists ( "classes/class_sepa.php" )) {
 
 /* PDF KLASSE */
 class b_pdf {
-	function b_header(&$pdf, $partner_typ, $partner_id, $orientation = 'portrait', $font_file, $f_size, $logo_file = '') {
+	function b_header(Cezpdf &$pdf, $partner_typ, $partner_id, $orientation = 'portrait', $font_file, $f_size, $logo_file = '') {
 		// echo "$partner_typ $partner_id";
 		// die('S');
 		$all = $pdf->openObject ();
@@ -74,8 +74,8 @@ class b_pdf {
 			// $pdf->line(42,50,550,50);
 			
 			if (! isset ( $_REQUEST ['no_logo'] )) {
-				$pdf->addText ( 170, 42, $f_size, "$this->zeile1" );
-				$pdf->addText ( 150, 35, $f_size, "$this->zeile2" );
+				$pdf->addText ( $pdf->ez['pageWidth']/2, 42, $f_size, "$this->zeile1", 0, 'center' );
+				$pdf->addText ( $pdf->ez['pageWidth']/2, 35, $f_size, "$this->zeile2", 0, 'center' );
 			}
 		} else {
 			$pdf->ezSetMargins ( 120, 40, 30, 30 );
@@ -94,8 +94,8 @@ class b_pdf {
 			$pdf->setLineStyle ( 0.5 );
 			$pdf->line ( 42, 30, 785, 30 );
 			
-			$pdf->addText ( 275, 23, $f_size, "$this->zeile1" );
-			$pdf->addText ( 255, 16, $f_size, "$this->zeile2" );
+			$pdf->addText ( $pdf->ez['pageWidth']/2, 23, $f_size, "$this->zeile1", 0, 'center' );
+			$pdf->addText ( $pdf->ez['pageWidth']/2, 16, $f_size, "$this->zeile2", 0, 'center' );
 		}
 		$pdf->restoreState ();
 		$pdf->closeObject ();
