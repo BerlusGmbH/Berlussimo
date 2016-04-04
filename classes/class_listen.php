@@ -8767,16 +8767,16 @@ ORDER BY EINHEIT_KURZNAME";
 		/* Nutzenlastenwechsel */
 		$nl_datum = $d->finde_detail_inhalt ( 'Objekt', $objekt_id, 'Nutzen-Lastenwechsel' );
 		$nl_datum_arr = explode ( '.', $nl_datum );
-		$nl_tag = $nl_datum_arr [0];
-		$nl_monat = $nl_datum_arr [1];
-		$nl_jahr = $nl_datum_arr [2];
+		//$nl_tag = $nl_datum_arr [0];
+		//$nl_monat = $nl_datum_arr [1];
+		//$nl_jahr = $nl_datum_arr [2];
 		
 		/* Verwaltungsübernahme */
 		$vu_datum = $d->finde_detail_inhalt ( 'Objekt', $objekt_id, 'Verwaltungsübernahme' );
 		$vu_datum_arr = explode ( '.', $vu_datum );
-		$vu_tag = $vu_datum_arr [0];
-		$vu_monat = $vu_datum_arr [1];
-		$vu_jahr = $vu_datum_arr [2];
+		//$vu_tag = $vu_datum_arr [0];
+		//$vu_monat = $vu_datum_arr [1];
+		//$vu_jahr = $vu_datum_arr [2];
 		
 		// echo "$objekt_id $jahr";
 		
@@ -8785,21 +8785,21 @@ ORDER BY EINHEIT_KURZNAME";
 		$anz_e = count ( $ein_arr );
 		
 		// $cols = array('MONAT'=>MONAT,'NT'=>NT, 'IHR'=>IHR, 'HV'=>HV,'FIX'=>FIX, 'LEER'=>LEER, 'MV_NAME'=>MIETER, 'KM_S'=>KM_S, 'KM_SA'=>KMANT, 'M_ERG'=>ERG, 'M_ERGA'=>ERGA);
-		$cols ['MONAT'] = MONAT;
-		$cols ['NT'] = NT;
+		$cols ['MONAT'] = 'MONAT';
+		$cols ['NT'] = 'NT';
 		$cols ['IHR'] = IHR;
 		$cols ['HV'] = HV;
-		$cols ['FIX'] = FIX;
+		$cols ['FIX'] = 'FIX';
 		// $cols['LEER'] = LEER;
-		$cols ['MV_NAME'] = MIETER;
-		$cols ['KOS_BEZ'] = KOS_BEZ;
-		$cols ['WM_S'] = WM_S;
-		$cols ['MWST'] = MWST;
-		$cols ['NK'] = NK;
-		$cols ['KM_S'] = KM_S;
-		$cols ['KM_SA'] = KM_SA;
-		$cols ['M_ERG'] = M_ERG;
-		$cols ['TXT'] = TXT;
+		$cols ['MV_NAME'] = 'MIETER';
+		$cols ['KOS_BEZ'] = 'KOS_BEZ';
+		$cols ['WM_S'] = 'WM_S';
+		$cols ['MWST'] = 'MWST';
+		$cols ['NK'] = 'NK';
+		$cols ['KM_S'] = 'KM_S';
+		$cols ['KM_SA'] = 'KM_SA';
+		$cols ['M_ERG'] = 'M_ERG';
+		$cols ['TXT'] = 'TXT';
 		
 		/* schleife Einheiten */
 		for($e = 0; $e < $anz_e; $e ++) {
@@ -9017,7 +9017,7 @@ ORDER BY EINHEIT_KURZNAME";
 							}
 						} else {
 							$pdf_tab [$e] [$et] [$monat] ['LEER'] = 'J';
-							$pdf_tab [$e] [$et] [$monat] ['MV_NAME'] = LEER;
+							$pdf_tab [$e] [$et] [$monat] ['MV_NAME'] = 'LEER';
 							$mv_arr = '';
 						}
 					}  // end if monat!!!
@@ -9447,11 +9447,11 @@ ORDER BY EINHEIT_KURZNAME";
 		unset ( $cols ['KOS_BEZ'] );
 		unset ( $cols ['NT'] );
 		unset ( $cols ['MONAT'] );
-		$cols ['EINHEIT'] = EINHEIT;
-		$cols ['ET'] = ET;
+		$cols ['EINHEIT'] = 'EINHEIT';
+		$cols ['ET'] = 'ET';
 		
 		/* Legende */
-		if (is_array ( $b_konten_arr )) {
+		if (isset($b_konten_arr) && is_array ( $b_konten_arr )) {
 			// echo '<pre>';
 			// print_r($b_konten_arr);
 			// die();

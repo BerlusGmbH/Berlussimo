@@ -1719,6 +1719,10 @@ else {
 				header ( "Content-type: application/vnd.ms-excel" );
 				// header("Content-Disposition: attachment; filename=$fileName");
 				header ( "Content-Disposition: inline; filename=$fileName" );
+				echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">";
+				echo "<html><head>";
+				echo "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">";
+				echo "</head><body>";
 				echo "<table class=\"sortable\" id=\"positionen_tab\">";
 				echo "<thead>";
 				echo "<tr>";
@@ -1758,6 +1762,7 @@ else {
 					echo "</tr>";
 				}
 				echo "</table>";
+				echo "</body></html>";
 				die ();
 			}
 		}  // end if numrow
