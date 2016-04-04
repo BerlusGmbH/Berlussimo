@@ -387,7 +387,7 @@ class b_pdf {
 				header ( "Content-type: application/pdf" ); // wird von MSIE ignoriert
 				                                         // $pdf->ezStream();
 				
-				$dateiname = "$datum_heute - Serie - $this->v_kurztext.pdf";
+				$dateiname = "\"$datum_heute - Serie - $this->v_kurztext.pdf\"";
 				$pdf_opt ['Content-Disposition'] = $dateiname;
 				$pdf->ezStream ( $pdf_opt );
 			}  // emalsend
@@ -397,7 +397,7 @@ else {
 				ob_clean (); // ausgabepuffer leeren
 				header ( "Content-type: application/pdf" ); // wird von MSIE ignoriert
 				                                         // $pdf->ezStream();
-				$dateiname = "$datum_heute - Serie - $this->v_kurztext.pdf";
+				$dateiname = "\"$datum_heute - Serie - $this->v_kurztext.pdf\"";
 				$pdf_opt ['Content-Disposition'] = $dateiname;
 				$pdf->ezStream ( $pdf_opt );
 			}
