@@ -3577,8 +3577,10 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             'IST' => "<b>IST</b>",
             'SALDO' => "<b>SALDO</b>"
         );
+        $page = $pdf->ezGetCurrentPageNumber();
+        $pdf->transaction('start');
         $pdf->ezSetDy(-10);
-        $pdf->ezText("ERGEBNISSE HGA", 11, array(
+        $pdf->ezText("ERGEBNISSE HAUSGELDABRECHNUNGEN", 11, array(
             'justification' => 'full'
         ));
         $pdf->ezSetDy(-5);
@@ -3611,6 +3613,45 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
                 )
             )
         ));
+        if ($pdf->ezGetCurrentPageNumber() > $page) {
+            $pdf->transaction('abort');
+            $pdf->ezNewPage();
+            $pdf->ezText("ERGEBNISSE HAUSGELDABRECHNUNGEN", 11, array(
+                'justification' => 'full'
+            ));
+            $pdf->ezSetDy(-5);
+            $pdf->ezTable($ergebnisse_hga, $cols, "", array(
+                'showHeadings' => 1,
+                'shaded' => 0,
+                'titleFontSize' => 11,
+                'titleJustification' => 'left',
+                'fontSize' => 7,
+                'xPos' => 50,
+                'xOrientation' => 'right',
+                'width' => 500,
+                'rowGap' => 1,
+                'cols' => array(
+                    'DATUM' => array(
+                        'justification' => 'right',
+                        'width' => 70
+                    ),
+                    'BEMERKUNG' => array(
+                        'justification' => 'left',
+                        'width' => 300
+                    ),
+                    'BETRAG' => array(
+                        'justification' => 'right',
+                        'width' => 75
+                    ),
+                    'SALDO' => array(
+                        'justification' => 'right',
+                        'width' => 75
+                    )
+                )
+            ));
+        } else {
+            $pdf->transaction('commit');
+        }
         return $pdf;
     }
 
