@@ -237,7 +237,7 @@ class todo {
 		die ();
 	}
 	function rss_feed($benutzer_id) {
-		$url = "http://berlussimo.no-ip.biz:5000/berlussimo-aktiv/";
+		$url = "https://app.berlussimo.de/";
 		ob_clean ();
 		header ( "Content-Type: application/xml; charset=UTF-8" );
 		echo '<?xml version="1.0" encoding="UTF-8" ?>';
@@ -252,13 +252,13 @@ class todo {
 		if (! is_array ( $my_proj_id_arr )) {
 			// die("Keine Projekte und Aufgaben für Sie vohanden!");
 			echo "<title>Keine Projekte und Aufgaben für Sie!</title>\n";
-			echo "<link>http://berlussimo-1/berlussimo_workspace/sivac/berlussimo/rss.php</link>\n";
+			echo "<link>https://app.berlussimo.de/rss.php</link>\n";
 			echo "<description>Sie haben keine Projekte und Aufgaben</description>\n";
 		} else {
 			$b = new benutzer ();
 			$b->get_benutzer_infos ( $benutzer_id );
 			echo "<title>Projekte von Benutzer: $b->benutzername</title>\n";
-			echo "<link>http://berlussimo.no-ip.biz:5000/berlussimo_workspace/sivac/berlussimo/</link>\n";
+			echo "<link>https://app.berlussimo.de/</link>\n";
 			echo "<description>Ihre Projekte und Aufgaben</description>\n";
 			$anz_p = count ( $my_proj_id_arr );
 			
@@ -359,12 +359,12 @@ class todo {
 		if (! is_array ( $my_proj_id_arr )) {
 			// die("Keine Projekte und Aufgaben für Sie vohanden!");
 			echo "<title>Keine Projekte und Aufgaben für Sie!</title>\n";
-			echo "<link>http://berlussimo-1/berlussimo_workspace/sivac/berlussimo/rss.php</link>\n";
+			echo "<link>https://app.berlussimo.de/rss.php</link>\n";
 		} else {
 			$b = new benutzer ();
 			$b->get_benutzer_infos ( $benutzer_id );
 			echo "<title>Aufgaben von Benutzer: $b->benutzername</title>\n";
-			echo "<link>http://berlussimo-1/berlussimo_workspace/sivac/berlussimo/rss.php</link>\n";
+			echo "<link>https://app.berlussimo.de/rss.php</link>\n";
 			echo "<description>Angezeigt werden Projekte und dazugehürige Aufgaben!</description>\n";
 			$anz_p = count ( $my_proj_id_arr );
 			
@@ -378,7 +378,7 @@ class todo {
 					$f = new formular ();
 					echo "<item>\n";
 					echo "<title>Projekt $pz</title>\n";
-					$link_mp = "http://berlussimo-1/berlussimo_workspace/sivac/berlussimo/?daten=todo";
+					$link_mp = "https://app.berlussimo.de/?daten=todo";
 					echo "<link>$link_mp</link>";
 					// echo "</item>\n";
 					$z1 = 0;
@@ -492,7 +492,7 @@ class todo {
 								}
 								// echo "</tr>";
 								echo "Akut: $u_akut </description>\n";
-								$link_2 = "http://berlussimo-1/berlussimo_workspace/sivac/berlussimo/?daten=todo&amp;option=edit&amp;t_id=$u_t_id";
+								$link_2 = "https://app.berlussimo.de/?daten=todo&amp;option=edit&amp;t_id=$u_t_id";
 								echo "<link>$link_2</link>\n";
 								echo "</item>\n";
 							}
