@@ -79,19 +79,6 @@ ob_start();
 // Ausgabepuffer Starten
 // session_start();
 
-if (empty ($_SESSION ['autorisiert']) && !empty ($_REQUEST ['send_login'])) {
-    $usercheck = check_user($_REQUEST ['benutzername'], $_REQUEST ['passwort']);
-    if ($usercheck) {
-        $_SESSION ['username'] = $usercheck;
-        $benutzer_id = get_benutzer_id($_SESSION ['username']);
-        $_SESSION ['benutzer_id'] = $benutzer_id;
-        $_SESSION ['autorisiert'] = '1';
-    } else {
-        fehlermeldung_ausgeben("Anmeldung gescheitert!");
-        weiterleiten_in_sec('index.php', 2);
-    }
-}
-
 echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
 echo "<head>";
 // echo "<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js'></script>";
@@ -185,6 +172,22 @@ echo "<link rel='stylesheet' type='text/css'  href='css/berlussimo.css'  media='
 echo "<meta http-equiv='content-type' content='text/html; charset=UTF-8'>\n";
 // echo "<meta content='text/html; charset=ISO-8859-1' http-equiv='content-type'>";
 echo "</head>";
+
+if (empty ($_SESSION ['autorisiert']) && !empty ($_REQUEST ['send_login'])) {
+	$usercheck = check_user($_REQUEST ['benutzername'], $_REQUEST ['passwort']);
+	if ($usercheck) {
+		$_SESSION ['username'] = $usercheck;
+		$benutzer_id = get_benutzer_id($_SESSION ['username']);
+		$_SESSION ['benutzer_id'] = $benutzer_id;
+		$_SESSION ['autorisiert'] = '1';
+		weiterleiten_in_sec('/', 0);
+		die();
+	} else {
+		fehlermeldung_ausgeben("Anmeldung gescheitert!");
+		weiterleiten_in_sec('/', 2);
+		die();
+	}
+}
 
 if (isset ($_REQUEST ['logout'])) {
     echo "AUSGELOGGT!<br>";
@@ -302,25 +305,24 @@ function include_options()
 
 function check_user($benutzername, $passwort)
 {
-    // $benutzername = mysql_real_escape_string($benutzername);
-    // $passwort = mysql_real_escape_string($passwort);
     include_once("includes/config.php");
-    // $passwort = md5($passwort);
-    /* ' or 1=1-- */
-    $db_abfrage = "SELECT benutzername FROM BENUTZER WHERE benutzername='$benutzername' && passwort='$passwort' ";
-    // $db_abfrage1 = mysql_escape_string($db_abfrage);
-    // echo $db_abfrage; die();
-    $resultat = mysql_query(stripslashes(mysql_escape_string($db_abfrage))) or die (mysql_error());
-    // $resultat = mysql_query($db_abfrage) or die(mysql_error());
-    // $resultat = mysql_query($db_abfrage) or die(mysql_error());
-    // mysql_real_escape_string
+
+    $db_abfrage = "PREPARE login FROM 'SELECT benutzername FROM BENUTZER WHERE benutzername=? && passwort=?';";
+    $resultat = mysql_query(stripslashes(mysql_real_escape_string($db_abfrage))) or die (mysql_error());
+	$db_abfrage = "SET @benutzer='$benutzername';";
+	$resultat = mysql_query(stripslashes(mysql_real_escape_string($db_abfrage))) or die (mysql_error());
+	$db_abfrage = "SET @passwort='$passwort';";
+	$resultat = mysql_query(stripslashes(mysql_real_escape_string($db_abfrage))) or die (mysql_error());
+	$db_abfrage = "EXECUTE login USING @benutzer, @passwort;";
+	$resultat = mysql_query(stripslashes(mysql_real_escape_string($db_abfrage))) or die (mysql_error());
 
     $numrows = mysql_numrows($resultat);
     if ($numrows < 1) {
         return false;
     } else {
-        while (list ($benutzername) = mysql_fetch_row($resultat))
-            return $benutzername;
+        $benutzername = mysql_fetch_assoc($resultat)['benutzername'];
+		mysql_query(stripslashes(mysql_real_escape_string("DEALLOCATE PREPARE login;"))) or die (mysql_error());
+		return $benutzername;
     }
 }
 
@@ -346,20 +348,3 @@ function compressed_output()
         ob_start();
     }
 }
-
-//function check_user_links($benutzer_id, $module_name)
-//{
-//    if (empty ($_SESSION ['benutzer_id'])) {
-//        die ("SIE SIND NICHT ANGEMELDET");
-//    } else {
-//        $db_abfrage = "SELECT BM_DAT FROM BENUTZER_MODULE WHERE BENUTZER_ID='$benutzer_id' && (MODUL_NAME='$module_name' OR MODUL_NAME='*') && AKTUELL='1'";
-//        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-//        $numrows = mysql_numrows($resultat);
-//        if ($numrows) {
-//            return 1;
-//        }
-//    }
-//}
-
-// $output = ob_get_clean();
-// echo $output;
