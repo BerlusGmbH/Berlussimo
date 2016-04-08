@@ -22,47 +22,48 @@
 // ini_set('allow_url_include', 1);
 // ini_set("auto_detect_line_endings", true);
 
-define ( "BERLUS_PATH", __DIR__ );
+define("BERLUS_PATH", __DIR__);
 
 /* neu */
 /* KONFIG */
-include_once (BERLUS_PATH . "/classes/config.inc.php");
-include_once (BERLUS_PATH . "/includes/config.php");
+include_once(BERLUS_PATH . "/classes/config.inc.php");
+include_once(BERLUS_PATH . "/includes/config.php");
 /* KLASSEN */
 require __DIR__ . '/vendor/autoload.php';
-include_once (BERLUS_PATH . "/classes/class_bpdf.php");
+include_once(BERLUS_PATH . "/classes/class_bpdf.php");
 
-include_once (BERLUS_PATH . "/classes/class_person.php");
+include_once(BERLUS_PATH . "/classes/class_person.php");
 
-include_once (BERLUS_PATH . "/classes/class_details.php");
+include_once(BERLUS_PATH . "/classes/class_details.php");
 
-include_once (BERLUS_PATH . "/classes/class_weg.php");
-include_once (BERLUS_PATH . "/classes/class_sepa.php");
-include_once (BERLUS_PATH . "/classes/berlussimo_class.php");
-include_once (BERLUS_PATH . "/includes/allgemeine_funktionen.php");
+include_once(BERLUS_PATH . "/classes/class_weg.php");
+include_once(BERLUS_PATH . "/classes/class_sepa.php");
+include_once(BERLUS_PATH . "/classes/berlussimo_class.php");
+include_once(BERLUS_PATH . "/includes/allgemeine_funktionen.php");
 
-include_once (BERLUS_PATH . "/classes/class_sepa.php");
+include_once(BERLUS_PATH . "/classes/class_sepa.php");
 
-include_once (BERLUS_PATH . "/classes/class_buchen.php");
-include_once (BERLUS_PATH . "/classes/class_mietvertrag.php");
-include_once (BERLUS_PATH . "/classes/mietzeit_class.php");
-include_once (BERLUS_PATH . "/classes/mietkonto_class.php");
-include_once (BERLUS_PATH . "/classes/class_formular.php");
-include_once (BERLUS_PATH . "/classes/class_benutzer.php");
-include_once (BERLUS_PATH . "/classes/class_mietentwicklung.php");
+include_once(BERLUS_PATH . "/classes/class_buchen.php");
+include_once(BERLUS_PATH . "/classes/class_mietvertrag.php");
+include_once(BERLUS_PATH . "/classes/mietzeit_class.php");
+include_once(BERLUS_PATH . "/classes/mietkonto_class.php");
+include_once(BERLUS_PATH . "/classes/class_formular.php");
+include_once(BERLUS_PATH . "/classes/class_benutzer.php");
+include_once(BERLUS_PATH . "/classes/class_mietentwicklung.php");
 
-include_once (BERLUS_PATH . "/classes/class_ueberweisung.php");
+include_once(BERLUS_PATH . "/classes/class_ueberweisung.php");
 
-include_once (BERLUS_PATH . "/classes/class_import.php");
-include_once (BERLUS_PATH . "/classes/class_todo.php");
-include_once (BERLUS_PATH . "/classes/class_wartungen.php");
-include_once (BERLUS_PATH . "/classes/class_serienbrief.php");
+include_once(BERLUS_PATH . "/classes/class_import.php");
+include_once(BERLUS_PATH . "/classes/class_todo.php");
+include_once(BERLUS_PATH . "/classes/class_wartungen.php");
+include_once(BERLUS_PATH . "/classes/class_serienbrief.php");
 
-include_once (BERLUS_PATH . "/classes/class_stammdaten.php");
-include_once (BERLUS_PATH . "/classes/class_thumbs.php");
+include_once(BERLUS_PATH . "/classes/class_stammdaten.php");
+include_once(BERLUS_PATH . "/classes/class_thumbs.php");
 
-include_once (BERLUS_PATH . "/classes/phplot.php");
-include_once (BERLUS_PATH . "/classes/class_kundenweb.php");
+include_once(BERLUS_PATH . "/classes/phplot.php");
+include_once(BERLUS_PATH . "/classes/class_kundenweb.php");
+include_once(BERLUS_PATH . "classes/class_partners.php");
 
 /* Alt */
 /*
@@ -71,10 +72,10 @@ include_once (BERLUS_PATH . "/classes/class_kundenweb.php");
  * include_once("classes/class_formular.php");
  * include_once("classes/class_benutzer.php");
  */
-ob_clean ();
-set_time_limit ( 120 );
-session_start ();
-ob_start ();
+ob_clean();
+set_time_limit(120);
+session_start();
+ob_start();
 // Ausgabepuffer Starten
 // session_start();
 
@@ -92,42 +93,41 @@ echo "<link rel=\"stylesheet\" type=\"text/css\"  href=\"css/uebersicht.css\" me
 echo "<link rel=\"stylesheet\" type=\"text/css\"  href=\"css/berlussimo.css\"  media=\"screen\">\n";
 echo "<link href=\"css/demo.css\"       rel=\"stylesheet\" type=\"text/css\" /  media=\"screen\">";
 
-// echo "<script src=\"js/lightbox-plus-jquery.min.js\"></script>";
-
-echo "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n";
-// echo "<meta content=\"text/html; charset=ISO-8859-1\" http-equiv=\"content-type\">";
+echo "<meta http-equiv='content-type' content='text/html; charset=UTF-8'>\n";
+// echo "<meta content='text/html; charset=ISO-8859-1' http-equiv='content-type'>";
 echo "</head>";
 
-if (isset ( $_REQUEST ['logout'] )) {
-	echo "AUSGELOGGT!<br>";
-	$_SESSION = array ();
-	weiterleiten ( 'index.php' );
+if (empty ($_SESSION ['autorisiert']) && !empty ($_REQUEST ['send_login'])) {
+	$usercheck = check_user($_REQUEST ['benutzername'], $_REQUEST ['passwort']);
+	if ($usercheck) {
+		$_SESSION ['username'] = $usercheck;
+		$benutzer_id = get_benutzer_id($_SESSION ['username']);
+		$_SESSION ['benutzer_id'] = $benutzer_id;
+		$_SESSION ['autorisiert'] = '1';
+		weiterleiten_in_sec('/', 0);
+		die();
+	} else {
+		fehlermeldung_ausgeben("Anmeldung gescheitert!");
+		weiterleiten_in_sec('/', 2);
+		die();
+	}
 }
 
-if (empty ( $_SESSION ['autorisiert'] )) {
-	
-	if (empty ( $_REQUEST ['send_login'] )) {
-		
-		$f = new formular ();
-		$f->erstelle_formular ( 'Berlussimo - Bitte anmelden', '' );
-		$f->fieldset ( 'Benutzernamen und Passwort eingeben', 'bin' );
-		$f->text_feld ( 'Benutzername', 'benutzername', '', 30, 'benutzername', '' );
-		$f->passwort_feld ( 'Password', 'passwort', '', 30, 'passwort', '' );
-		$f->send_button ( 'send_login', 'Anmelden' );
-		$f->fieldset_ende ();
-		$f->ende_formular ();
-	} else {
-		$usercheck = check_user ( $_REQUEST ['benutzername'], $_REQUEST ['passwort'] );
-		if ($usercheck) {
-			$_SESSION ['username'] = $usercheck;
-			$benutzer_id = get_benutzer_id ( $_SESSION ['username'] );
-			$_SESSION ['benutzer_id'] = $benutzer_id;
-			$_SESSION ['autorisiert'] = '1';
-		} else {
-			fehlermeldung_ausgeben ( "Anmeldung gescheitert!" );
-			weiterleiten_in_sec ( 'index.php', 2 );
-		}
-	}
+if (isset ($_REQUEST ['logout'])) {
+    echo "AUSGELOGGT!<br>";
+    $_SESSION = array();
+    weiterleiten('index.php');
+}
+
+if (empty ($_SESSION ['autorisiert']) && empty ($_REQUEST ['send_login'])) {
+    $f = new formular ();
+    $f->erstelle_formular('Berlussimo - Bitte anmelden', '');
+    $f->fieldset('Benutzernamen und Passwort eingeben', 'bin');
+    $f->text_feld('Benutzername', 'benutzername', '', 30, 'benutzername', '');
+    $f->passwort_feld('Password', 'passwort', '', 30, 'passwort', '');
+    $f->send_button('send_login', 'Anmelden');
+    $f->fieldset_ende();
+    $f->ende_formular();
 }
 
 if (isset ( $_SESSION ['autorisiert'] )) {
@@ -189,57 +189,59 @@ if (isset ( $_SESSION ['autorisiert'] )) {
 echo "<div  id=\"aus\"><center><b>Berlussimo</b> wurde von der <a target=\"_new\"  href=\"http://www.berlus.de\">Berlus GmbH</a> - Hausverwaltung zur Verfügung gestellt.</center></div>";
 
 echo "</body></html>";
-function include_options() {
-	$optdir = dir ( "options/case" );
-	while ( $func = $optdir->read () ) {
-		if (substr ( $func, 0, 5 ) == "case.") {
-			include ($optdir->path . "/" . $func);
-		}
-	}
-	closedir ( $optdir->handle );
-}
-function check_user($benutzername, $passwort) {
-	// $benutzername = mysql_real_escape_string($benutzername);
-	// $passwort = mysql_real_escape_string($passwort);
-	include_once ("includes/config.php");
-	// $passwort = md5($passwort);
-	/* ' or 1=1-- */
-	$db_abfrage = "SELECT benutzername FROM BENUTZER WHERE benutzername='$benutzername' && passwort='$passwort' ";
-	// $db_abfrage1 = mysql_escape_string($db_abfrage);
-	// echo $db_abfrage; die();
-	$resultat = mysql_query ( stripslashes ( mysql_escape_string ( $db_abfrage ) ) ) or die ( mysql_error () );
-	// $resultat = mysql_query($db_abfrage) or die(mysql_error());
-	// $resultat = mysql_query($db_abfrage) or die(mysql_error());
-	// mysql_real_escape_string
-	
-	$numrows = mysql_numrows ( $resultat );
-	if ($numrows < 1) {
-		return false;
-	} else {
-		while ( list ( $benutzername ) = mysql_fetch_row ( $resultat ) )
-			return $benutzername;
-	}
-}
-function get_benutzer_id($benutzername) {
-	$result = mysql_query ( "SELECT benutzer_id FROM BENUTZER WHERE benutzername='$benutzername' LIMIT 0,1" );
-	
-	$row = mysql_fetch_assoc ( $result );
-	return $row ['benutzer_id'];
-}
-function compressed_output() {
-	$encoding = getEnv ( "HTTP_ACCEPT_ENCODING" );
-	$useragent = getEnv ( "HTTP_USER_AGENT" );
-	$method = trim ( getEnv ( "REQUEST_METHOD" ) );
-	$msie = preg_match ( "=msie=i", $useragent );
-	$gzip = preg_match ( "=gzip=i", $encoding );
-	
-	if ($gzip && ($method != "POST" or ! $msie)) {
-		ob_start ( "ob_gzhandler" );
-	} else {
-		ob_start ();
-	}
+function include_options()
+{
+    $optdir = dir("options/case");
+    while ($func = $optdir->read()) {
+        if (substr($func, 0, 5) == "case.") {
+            include($optdir->path . "/" . $func);
+        }
+    }
+    closedir($optdir->handle);
 }
 
-// $output = ob_get_clean();
-// echo $output;
-?>
+function check_user($benutzername, $passwort)
+{
+    include_once("includes/config.php");
+
+    $db_abfrage = "PREPARE login FROM 'SELECT benutzername FROM BENUTZER WHERE benutzername=? && passwort=?';";
+    $resultat = mysql_query(stripslashes(mysql_real_escape_string($db_abfrage))) or die (mysql_error());
+	$db_abfrage = "SET @benutzer='$benutzername';";
+	$resultat = mysql_query(stripslashes(mysql_real_escape_string($db_abfrage))) or die (mysql_error());
+	$db_abfrage = "SET @passwort='$passwort';";
+	$resultat = mysql_query(stripslashes(mysql_real_escape_string($db_abfrage))) or die (mysql_error());
+	$db_abfrage = "EXECUTE login USING @benutzer, @passwort;";
+	$resultat = mysql_query(stripslashes(mysql_real_escape_string($db_abfrage))) or die (mysql_error());
+
+    $numrows = mysql_numrows($resultat);
+    if ($numrows < 1) {
+        return false;
+    } else {
+        $benutzername = mysql_fetch_assoc($resultat)['benutzername'];
+		mysql_query(stripslashes(mysql_real_escape_string("DEALLOCATE PREPARE login;"))) or die (mysql_error());
+		return $benutzername;
+    }
+}
+
+function get_benutzer_id($benutzername)
+{
+    $result = mysql_query("SELECT benutzer_id FROM BENUTZER WHERE benutzername='$benutzername' LIMIT 0,1");
+
+    $row = mysql_fetch_assoc($result);
+    return $row ['benutzer_id'];
+}
+
+function compressed_output()
+{
+    $encoding = getEnv("HTTP_ACCEPT_ENCODING");
+    $useragent = getEnv("HTTP_USER_AGENT");
+    $method = trim(getEnv("REQUEST_METHOD"));
+    $msie = preg_match("=msie=i", $useragent);
+    $gzip = preg_match("=gzip=i", $encoding);
+
+    if ($gzip && ($method != "POST" or !$msie)) {
+        ob_start("ob_gzhandler");
+    } else {
+        ob_start();
+    }
+}
