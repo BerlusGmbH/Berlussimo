@@ -1574,6 +1574,12 @@ switch ($option) {
         if ($parsedLink['host'] !== $_SERVER['SERVER_NAME'] ) {
             $link = $_SERVER['REQUEST_URI'];
         }
+        parse_str($parsedLink['query'], $vars);
+        if (isset($vars['partner_id'])) {
+            unset($vars['partner_id']);
+            $queryString = http_build_query($vars);
+            $link = $parsedLink['path'] . '?' . $queryString;
+        }
         $p = new partner ();
         $p->partner_auswahl($link);
         break;
