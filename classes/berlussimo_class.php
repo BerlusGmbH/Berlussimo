@@ -7546,7 +7546,7 @@ class geldkonto_info {
 		 * $this->geldkonto_bezeichnung_kurz = $this->geldkonto_bezeichnung;
 		 */
 		$this->IBAN = $row ['IBAN'];
-		$this->IBAN1 = chunk_split ( $this->IBAN, 4, ' ' );
+		$this->IBAN1 = trim(chunk_split ( $this->IBAN, 4, ' ' ));
 		$this->BIC = $row ['BIC'];
 		
 		$this->beguenstigter = $row ['BEGUENSTIGTER'];
