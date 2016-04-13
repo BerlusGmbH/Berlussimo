@@ -4293,19 +4293,11 @@ else {
 				if ($check_hk == true) {
 					$anp_tab [2] ['KOSTENKAT'] = 'Heizkosten Vorauszahlung';
 					$anp_tab [2] ['AKTUELL'] = "$hk_monatlich_bisher_a €";
-					
-					if ($hk_summe > 0) {
-						$anp_tab [2] ['ANPASSUNG'] = "0,00 €";
-						$anp_tab [2] ['NEU'] = "$hk_monatlich_bisher_a €";
-						$pdf->ergebnis_tab ["$mieternummer - $empf"] ['HK_VORSCHUSS_ALT'] = $hk_monatlich_bisher_a;
-						$pdf->ergebnis_tab ["$mieternummer - $empf"] ['HK_VORSCHUSS_NEU'] = $hk_monatlich_bisher_a;
-						$hk_vorschuss_neu = $hk_monatlich_letzte;
-					} else {
-						$anp_tab [2] ['ANPASSUNG'] = "$hk_anp_betrag_a €";
-						$anp_tab [2] ['NEU'] = "$hk_vorschuss_neu_a €";
-						$pdf->ergebnis_tab ["$mieternummer - $empf"] ['HK_VORSCHUSS_ALT'] = $hk_monatlich_bisher_a;
-						$pdf->ergebnis_tab ["$mieternummer - $empf"] ['HK_VORSCHUSS_NEU'] = $hk_vorschuss_neu_a;
-					}
+
+					$anp_tab [2] ['ANPASSUNG'] = "$hk_anp_betrag_a €";
+					$anp_tab [2] ['NEU'] = "$hk_vorschuss_neu_a €";
+					$pdf->ergebnis_tab ["$mieternummer - $empf"] ['HK_VORSCHUSS_ALT'] = $hk_monatlich_bisher_a;
+					$pdf->ergebnis_tab ["$mieternummer - $empf"] ['HK_VORSCHUSS_NEU'] = $hk_vorschuss_neu_a;
 					
 					if ($hk_summe > $hk_monatlich_bisher_schnitt * $anzahl_monate) {
 						die ( "$mieternummer $empf -  Summe Hk Abrechnung > eingezahlte Summe für HK im Jahr" );
