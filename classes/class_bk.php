@@ -4295,7 +4295,7 @@ else {
 					$anp_tab [2] ['AKTUELL'] = "$hk_monatlich_bisher_a €";
 					
 					if ($hk_summe > 0) {
-						$anp_tab [2] ['ANPASSUNG'] = "0,00 �";
+						$anp_tab [2] ['ANPASSUNG'] = "0,00 €";
 						$anp_tab [2] ['NEU'] = "$hk_monatlich_bisher_a €";
 						$pdf->ergebnis_tab ["$mieternummer - $empf"] ['HK_VORSCHUSS_ALT'] = $hk_monatlich_bisher_a;
 						$pdf->ergebnis_tab ["$mieternummer - $empf"] ['HK_VORSCHUSS_NEU'] = $hk_monatlich_bisher_a;
