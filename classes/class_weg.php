@@ -8159,7 +8159,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $pdf->ezSetDy(-5);
 
             /* Zweite Seite */
-            // $pdf->ezNewPage();
+            $pdf->ezNewPage();
 
             $cols_1 = array(
                 'ART' => "Hausgeldeinnahmen für Kosten",
@@ -8207,7 +8207,6 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 'IST' => "Ist ",
                 'ERG' => ""
             );
-            $pdf->ezNewPage();
             $pdf->ezTable($hk_tab, $cols_3, '<b>Energieabrechnung (Heizung/Kalt- Warmwasser)</b>', array(
                 'rowGap' => 1.5,
                 'showLines' => 1,
