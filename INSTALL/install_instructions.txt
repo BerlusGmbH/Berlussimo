@@ -45,6 +45,7 @@ mysqladmin create -u root -p berlussimo
 mysql -u root -p berlussimo < /var/www/berlussimo/INSTALL/DB-Version-0.4.0/berlussimo_db_0.4.0.sql
 mysql -u root -p berlussimo < /var/www/berlussimo/INSTALL/DB-Version-0.4.0/berlussimo_db_0.4.1.sql
 mysql -u root -p berlussimo < /var/www/berlussimo/INSTALL/DB-Version-0.4.0/berlussimo_db_0.4.2.sql
+mysql -u root -p berlussimo < /var/www/berlussimo/INSTALL/DB-Version-0.4.0/berlussimo_db_0.4.3.sql
 
 ### you should now be able to open http://<your_server>/index.php in your browser and login with
 
