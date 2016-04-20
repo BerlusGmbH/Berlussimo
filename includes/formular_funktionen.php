@@ -23,10 +23,13 @@ function erstelle_formular($name, $action) {
 	$scriptname = $_SERVER ['REQUEST_URI'];
 	$servername = $_SERVER ['SERVER_NAME'];
 	$serverport = $_SERVER ['SERVER_PORT'];
-	
-	$self = "http://$servername:$serverport$scriptname";
-	
-	// $self = "http://$servername$scriptname";
+	$https = $_SERVER ['HTTPS'];
+
+	if(isset($https) && $https !== 'off') {
+		$self = "https://$servername:$serverport$scriptname";
+	} else {
+		$self = "http://$servername:$serverport$scriptname";
+	}
 	
 	if (! isset ( $action )) {
 		echo "<form name=\"$name\" action=\"$self\"  method=\"post\">\n";
