@@ -2124,7 +2124,7 @@ else {
 				$r = new rechnung ();
 				$kos_bez = $r->kostentraeger_ermitteln ( $kos_typ, $kos_id );
 				
-				echo "<tr></td><td>$datum</td><td>$erfass_nr</td><td>$betrag</td><td>$kos_bez</td><td>$g_buchungsnummer</td><td>$vzweck</td></tr>";
+				echo "<tr></td><td>$datum</td><td><a href='?daten=rechnungen&option=rechnungs_uebersicht&belegnr=$erfass_nr'>$erfass_nr</a></td><td>$betrag</td><td>$kos_bez</td><td>$g_buchungsnummer</td><td>$vzweck</td></tr>";
 			}
 			$this->summe_konto_buchungen = nummer_punkt2komma ( $this->summe_konto_buchungen );
 			
