@@ -905,10 +905,12 @@ function post_unterarray_bereinigen($arrayname) {
 	return $clean_arr;
 }
 function umbruch_entfernen($string) {
-	$new = str_replace ( "\n", "", $string );
-	$new = str_replace ( "<br>", "", $new );
-	$new = str_replace ( "<br \>", "", $new );
-	$new = str_replace ( "<br\>", "", $new );
+	$new = str_replace ( "\r\n", " ", $string );
+	$new = str_replace ( "\r", " ", $new );
+	$new = str_replace ( "\n", " ", $new );
+	$new = str_replace ( "<br>", " ", $new );
+	$new = str_replace ( "<br \>", " ", $new );
+	$new = str_replace ( "<br\>", " ", $new );
 	return $new;
 }
 
