@@ -1076,7 +1076,11 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
 		// if (preg_match("/c/o/i", "$this->objekt_eigentuemer")) {
 		if (stristr ( $this->objekt_eigentuemer, 'c/o' ) == TRUE) {
 			$rest = stristr ( $this->objekt_eigentuemer, 'c/o' );
-			$this->objekt_eigentuemer_pdf = umbruch_entfernen ( str_replace ( $rest, '', $this->objekt_eigentuemer ) );
+			$this->objekt_eigentuemer_pdf = trim(umbruch_entfernen ( str_replace ( $rest, '', $this->objekt_eigentuemer )));
+		} elseif (stristr ( $this->objekt_eigentuemer, 'vertreten durch' ) == TRUE) {
+			$this->objekt_eigentuemer_pdf = umbruch_entfernen ( $this->objekt_eigentuemer );
+			$rest = stristr ( $this->objekt_eigentuemer_pdf, ' vertreten durch' );
+			$this->objekt_eigentuemer_pdf = trim(str_replace ( $rest, '', $this->objekt_eigentuemer_pdf ));
 		} else {
 			// die("nOT FOUND $this->objekt_eigentuemer SIVAC");
 			$this->objekt_eigentuemer_pdf = $p->partner_name;
