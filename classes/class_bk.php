@@ -227,13 +227,13 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
 				} else {
 					$_SESSION ['genkey'] = $_POST ['genkey'];
 					$_SESSION ['hndl'] = $_POST ['hndl'];
-					// SPEICHERN VON KEY# FEHLT
-					$this->update_genkey ( $_SESSION ['bk_konto_id'], $_SESSION ['profil_id'], $_SESSION ['genkey'], $_SESSION ['hndl'] );
 					if ($_POST ['kontierung'] == '1') {
 						$_SESSION ['kontierung'] = '1';
 					} else {
 						$_SESSION ['kontierung'] = '0';
 					}
+					// SPEICHERN VON KEY# FEHLT
+					$this->update_genkey ( $_SESSION ['bk_konto_id'], $_SESSION ['profil_id'], $_SESSION ['genkey'], $_SESSION ['hndl'] );
 					$fehler = false;
 					header ( "Location:?daten=bk&option=assistent" );
 				}
@@ -351,14 +351,18 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
 				$buchung_id = $zeilen [$a] ['BUCHUNG_ID'];
 				$anteil = $zeilen [$a] ['ANTEIL'];
 				$this->bk_buchungen_details ( $buchung_id );
-				$hndl_betrag_neu = ($this->buchung_betrag / 100) * $anteil;
-				if ($hndl == '1') {
-					$db_abfrage = "UPDATE BK_BERECHNUNG_BUCHUNGEN SET HNDL_BETRAG='$hndl_betrag_neu' WHERE BK_BE_DAT='$dat'";
-					echo $db_abfrage;
-				} else {
-					$db_abfrage = "UPDATE BK_BERECHNUNG_BUCHUNGEN SET HNDL_BETRAG='0.000' WHERE BK_BE_DAT='$dat'";
-					echo $db_abfrage;
+				$this->bk_profil_infos($profil_id);
+				if ($_SESSION['kontierung'] == '1') {
+					$this->bk_buchungen_details ( $buchung_id );
+					$this->bk_kos_typ = $this->b_kos_typ;
+					$this->bk_kos_id = $this->b_kos_id;
 				}
+				if ($hndl == '1') {
+					$hndl_betrag_neu = ($this->buchung_betrag / 100) * $anteil;
+				} else {
+					$hndl_betrag_neu = '0.000';
+				}
+				$db_abfrage = "UPDATE BK_BERECHNUNG_BUCHUNGEN SET HNDL_BETRAG='$hndl_betrag_neu', KEY_ID='$genkey_id', KOSTENTRAEGER_TYP='$this->bk_kos_typ', KOSTENTRAEGER_ID='$this->bk_kos_id' WHERE BK_BE_DAT='$dat'";
 				$result = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 			}
 		} else {
@@ -617,7 +621,7 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
 					$classe = 'zeilebk_' . $zeile . '_r';
 					$hndl_betrag_a = "<b>$hndl_betrag_a</b>";
 				}
-				echo "<tr class=\"$classe\"><td><a $js><b>$buchung_id</b></a></td><td> $datum </td><td>$buchung_betrag</td><td>$anteil%</td>><td>$umlagebetrag</td><td>$hndl_betrag_a</td><td>$this->vzweck</td><td>  $kos_bez</td><td>$this->u_kontierung</td>";
+				echo "<tr class=\"$classe\"><td><a $js><b>$buchung_id</b></a></td><td> $datum </td><td>$buchung_betrag</td><td>$anteil%</td><td>$umlagebetrag</td><td>$hndl_betrag_a</td><td>$this->vzweck</td><td>  $kos_bez</td><td>$this->u_kontierung</td>";
 				// echo "<a $js>$buchungs_id ($gesamt_anteil%) $datum <b>|</b> $buchung_betrag davon $anteil % = <b>$umlagebetrag</b> <b>|</b> $this->vzweck </a>";
 				echo "<td>$this->g_key_name</td><td>$link_anpassen</td></tr>";
 				// echo "</div><br>";
@@ -692,7 +696,7 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
 	}
 	function form_gen_key() {
 		$f = new formular ();
-		$f->erstelle_formular ( "Generalsschlüssel auswählen", NULL );
+		$f->erstelle_formular ( "Generalschlüssel auswählen", NULL );
 		$f->hidden_feld ( "option", "assistent" );
 		$f->hidden_feld ( "option1", "genkey" );
 		$this->dropdown_gen_keys ();
@@ -700,8 +704,9 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
 		$f->ende_formular ();
 	}
 	function form_gen_key_hndl() {
+		$this->bk_profil_infos ( $_SESSION ['profil_id'] );
 		$f = new formular ();
-		$f->erstelle_formular ( "Generalsschlüssel / HNDL", NULL );
+		$f->erstelle_formular ( "Generalschlüssel / HNDL", NULL );
 		$f->hidden_feld ( "option", "assistent" );
 		$f->hidden_feld ( "option1", "genkey" );
 		$this->dropdown_gen_keys ();
@@ -836,7 +841,7 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
 		}
 		echo "</div>";
 	}
-	function dropdown_gen_keys() {
+	function dropdown_gen_keys( $default ) {
 		$result = mysql_query ( "SELECT * FROM BK_GENERAL_KEYS WHERE  AKTUELL='1'   ORDER BY GKEY_NAME ASC" );
 		
 		$numrows = mysql_numrows ( $result );
@@ -846,7 +851,11 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
 				$keyid = $row ['GKEY_ID'];
 				$keyname = $row ['GKEY_NAME'];
 				
-				echo "<option value=\"$keyid\">$keyname</option>";
+				echo "<option";
+				if ($keyname == $default) {
+					echo " selected";
+				}
+				echo " value=\"$keyid\">$keyname</option>";
 			}
 			echo "</select>";
 		}
