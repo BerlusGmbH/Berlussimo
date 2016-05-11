@@ -312,7 +312,7 @@ function uebersicht_einheit($einheit_id) {
 				$a_datum = date_mysql2german ( $sep->mand->M_ADATUM );
 				$e_datum = date_mysql2german ( $sep->mand->M_EDATUM );
 				echo "<b>Unterschrieben:</b> $u_datum<br>";
-				echo "<b>Gültig ab:</b>      $u_datum<br>";
+				echo "<b>Gültig ab:</b>      $a_datum<br>";
 				echo "<b>Gültig bis:</b>     $e_datum<br>";
 				$m_ein_art = $sep->mand->EINZUGSART;
 				echo "<b>Einzugsart:</b>$m_ein_art<br>";
