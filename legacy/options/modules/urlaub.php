@@ -1,0 +1,209 @@
+<?php
+
+if (request()->has('option')) {
+    $option = request()->input('option');
+} else {
+    $option = 'default';
+}
+
+/* Optionsschalter */
+switch ($option) {
+
+    // case "uebersicht":
+    default :
+        if (request()->has('jahr')) {
+            $jahr = request()->input('jahr');
+        }
+        if (!isset ($jahr)) {
+            $jahr = date("Y");
+        }
+        $vorjahr = $jahr - 1;
+        $nachjahr = $jahr + 1;
+        $link_vorjahr = "<a class='waves-effect waves-light btn' href='" . route('legacy::urlaub::index', ['option' => 'uebersicht', 'jahr' => $vorjahr]) . "'><i class=\"material-icons left\">keyboard_arrow_left</i>$vorjahr</a>";
+        $link_nachjahr = "<a class='waves-effect waves-light btn' href='" . route('legacy::urlaub::index', ['option' => 'uebersicht', 'jahr' => $nachjahr]) . "'><i class=\"material-icons right\">keyboard_arrow_right</i>$nachjahr</a>";
+        $pdf_link = "<a class='waves-effect waves-light btn' href='" . route('legacy::urlaub::index', ['option' => 'uebersicht_pdf', 'jahr' => $jahr]) . "'>PDF</a>";
+        echo "<div class='left-align'>";
+        echo "$link_vorjahr &nbsp;<b>Übersicht $jahr</b>&nbsp; $link_nachjahr $pdf_link";
+        echo " </div>";
+        $u = new urlaub ();
+        $u->jahresuebersicht_anzeigen($jahr);
+        break;
+
+    case "uebersicht_pdf" :
+        $u = new urlaub ();
+        $jahr = request()->input('jahr');
+        if (!$jahr) {
+            $jahr = date("Y");
+        }
+        $u->jahresuebersicht_alle_pdf($jahr);
+        break;
+
+    case "urlaubsantrag" :
+        $u = new urlaub ();
+        $benutzer_id = request()->input('benutzer_id');
+        if (empty ($benutzer_id)) {
+            $benutzer_id = Auth::user()->id;
+        }
+        $u->form_urlaubsantrag($benutzer_id);
+        break;
+
+    case "urlaubsantrag_check" :
+
+        $u = new urlaub ();
+        $benutzer_id = request()->input('benutzer_id');
+        $datum_a = date_german2mysql(request()->input('u_vom'));
+        $datum_e = date_german2mysql(request()->input('u_bis'));
+        $datum_a_arr = explode("-", $datum_a);
+        $datum_e_arr = explode("-", $datum_e);
+        $a_jahr = $datum_a_arr [0];
+        $e_jahr = $datum_e_arr [0];
+        // #echo "$a_jahr $e_jahr";
+        if ($e_jahr < $a_jahr) {
+            fehlermeldung_ausgeben("Enddatum kleiner als Anfangsdatum, bitte neu eingeben!");
+            die ();
+        }
+        if ($e_jahr > $a_jahr) {
+            fehlermeldung_ausgeben("Urlaub erstreckt sich über ein Jahr, bitte nur Urlaub innerhalb eines Kalenderjahres eingeben.");
+            die ();
+        } else {
+            $art = request()->input('art');
+            $u->tage_arr($benutzer_id, $datum_a, $datum_e, $art);
+        }
+        weiterleiten_in_sec(route('legacy::urlaub::index', ['option' => 'urlaubsantrag', 'benutzer_id' => $benutzer_id], false), 1);
+        break;
+
+    case "jahresansicht" :
+        $u = new urlaub ();
+        $benutzer_id = request()->input('benutzer_id');
+        $jahr = request()->input('jahr');
+        if (!empty ($benutzer_id) && !empty ($jahr)) {
+            $u->jahres_ansicht($benutzer_id, $jahr);
+        }
+        break;
+
+    case "jahresansicht_pdf" :
+        $u = new urlaub ();
+        $benutzer_id = request()->input('benutzer_id');
+        $jahr = request()->input('jahr');
+        if (!empty ($benutzer_id) && !empty ($jahr)) {
+            $u->jahres_ansicht_pdf($benutzer_id, $jahr);
+        }
+        break;
+
+    case "urlaubstag_loeschen" :
+        $u = new urlaub ();
+        $dat = request()->input('u_dat');
+        $benutzer_id = request()->input('benutzer_id');
+        $jahr = request()->input('jahr');
+        if (!empty ($dat)) {
+            $u->urlaubstag_loeschen($dat);
+            weiterleiten_in_sec(route('legacy::urlaub::index', ['option' => 'jahresansicht', 'benutzer_id' => $benutzer_id, 'jahr' => $jahr], false), 1);
+        } else {
+            echo "Urlaubstag auswählen";
+        }
+        break;
+
+    case "urlaubstag_loeschen_js" :
+        $u = new urlaub ();
+        $benutzer_id = request()->input('benutzer_id');
+        $datum = date_german2mysql(request()->input('datum'));
+        $u->urlaubstag_loeschen_datum($benutzer_id, $datum);
+        break;
+
+    case "monatsansicht" :
+        $u = new urlaub ();
+        if (request()->has('jahr')) {
+            $jahr = request()->input('jahr');
+        }
+        if (request()->has('monat')) {
+            $monat = request()->input('monat');
+        }
+        if (!isset ($monat)) {
+            $monat = date("m");
+        }
+        if (!isset ($jahr)) {
+            $jahr = date("Y");
+        }
+        $u->monatsansicht($monat, $jahr);
+        break;
+
+    case "monatsansicht_pdf" :
+        $u = new urlaub ();
+        $jahr = request()->input('jahr');
+        $monat = request()->input('monat');
+        if (empty ($monat)) {
+            $monat = date("m");
+        }
+        if (empty ($jahr)) {
+            $jahr = date("Y");
+        }
+        $u->monatsansicht_pdf($monat, $jahr);
+        break;
+
+    case "monatsansicht_pdf_mehrere" :
+        $u = new urlaub ();
+        $u->monatsansicht_pdf_mehrere(1, 12, 2010);
+        break;
+
+    case "monatsansicht_jahr" :
+        $u = new urlaub ();
+        $jahr = request()->input('jahr');
+
+        if (empty ($jahr)) {
+            $jahr = date("Y");
+        }
+        $vorjahr = $jahr - 1;
+        $nachjahr = $jahr + 1;
+        echo "<a href='" . route('legacy::urlaub::index', ['option' => 'monatsansicht_jahr', 'jahr' => $vorjahr], false) . "'> Übersicht $vorjahr </a> |  ";
+        echo "<a href='" . route('legacy::urlaub::index', ['option' => 'monatsansicht_jahr', 'jahr' => $machjahr], false) . "'> Übersicht $nachjahr </a> ";
+        for ($a = 1; $a <= 12; $a++) {
+            $u->monatsansicht($a, $jahr);
+        }
+        break;
+
+    case "urlaubsplan_jahr" :
+        $u = new urlaub ();
+        $jahr = request()->input('jahr');
+        if (empty ($jahr)) {
+            $jahr = date("Y");
+        }
+        $u->monatsansicht_pdf_mehrere(1, 12, $jahr);
+        break;
+
+    case "test" :
+        $w = new wartung ();
+        $w->test(1);
+
+        // $u = new urlaub;
+        // $u->rest_tage(2007, 1);
+        // $u->rest_tage(2008, 1);
+        // $u->rest_tage(2009, 1);
+        // $u->zinsen(954.14,1.8);
+        // $u->monatsansicht(12, 2009);
+        // $u->zinsen(893.90,4);
+        // $u->zinsen(372.70,0.005);
+        // echo "Anzahl der Tage bis zum Monatsende: ".(date("t") - date("j"));
+        // $k = new kautionen;
+        // datum_bis = '2010-04-31';
+
+        // $k->kautionsberechnung('Mietvertrag', '220', '2010-12-31', 0.005,25,5.5);
+        // echo "<br>";
+        // $k->kautionsberechnung('Mietvertrag', '221', '2010-01-31', 0.005,25,5.5);
+        // echo "<br>";
+        // $k->kautionsberechnung('Mietvertrag', '221', '2010-02-28', 0.005,25,5.5);
+
+        // $k->form_hochrechnung_mv(221);
+
+        // kautionsberechnung($kostentraeger_typ, $kostentraeger_id, $datum_bis, $zins_pj, $kap_prozent, $soli_prozent)
+        // $k->zinstage();
+
+        break;
+
+    case "hochrechnung_mv" :
+        $k = new kautionen ();
+        $datum_bis = date_german2mysql(request()->input('datum_bis'));
+        $mietvertrag_id = request()->input('mietvertrag_id');
+        $k->kautionsberechnung('Mietvertrag', $mietvertrag_id, $datum_bis, 0.005, 25, 5.5);
+
+        break;
+}

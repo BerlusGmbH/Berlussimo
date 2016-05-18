@@ -1,0 +1,12 @@
+*
+!public/
+!objektberichte/
+!kontenberichte/
+!serienbriefe/
+!backups/
+!fotos/
+!logos/
+!logos/Kasse
+!logos/Lager
+!logos/Partner
+!.gitignore

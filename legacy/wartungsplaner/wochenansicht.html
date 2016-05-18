@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>WOCHENANSICHT</title>
+<link rel="stylesheet" type="text/css" href="wochenansicht.css" />
+</head>
+<body>
+
+
+<table id="zeiten">
+<tr><th colspan="2">Montag</th></tr>
+
+<?php
+$arr[0]['VON'] = '06:45';
+$arr[0]['BIS'] = '07:45';
+$arr[0]['STATUS'] = 'belegt';
+
+
+$arr[1]['VON'] = '08:00';
+$arr[1]['BIS'] = '09:00';
+$arr[1]['STATUS'] = 'frei';
+
+$arr[2]['VON'] = '10:00';
+$arr[2]['BIS'] = '12:00';
+$arr[2]['STATUS'] = 'belegt';
+
+
+$anz = count($arr);
+$z=0;
+for($b=0;$b<$anz;$b++){
+	
+	$von_arr = explode(':', $arr[$b]['VON']);
+	$von_std = $von_arr[0];
+	$von_min = $von_arr[1];	
+	$bis_arr = explode(':', $arr[$b]['BIS']);
+	$bis_std = $bis_arr[0];
+	$bis_min = $bis_arr[1];	
+	$stat =$arr[$b]['STATUS'];
+echo "$von_std $bis_std<br>";	
+while($von_std == $bis_std){
+	
+		for($a=0;$a<4;$a++){
+	 	$zeiten_arr[$z]['zeit'] = "$von_std:$von_min";		
+		$zeiten_arr[$z]['status'] = "$stat";	
+		if($von_min == 60){
+		$von_std++;	
+		$von_min = 0;		
+		}
+		$von_min += 15;		
+		$z++;
+		}
+	}
+
+}
+echo '<pre>';
+print_r($zeiten_arr);
+#die('ENDE');
+ini_set('display_errors','On'); 
+error_reporting(E_ALL|E_STRICT);
+	
+for($a=6;$a<18;$a++){
+	echo "<tr>";
+    echo "<th rowspan=\"4\">$a:00</th>";
+    	$min = '00';
+		for($i=0;$i<4;$i++){
+			$suche = array('zeit' => "$a:$min");
+			$st = array_search_i("$a:$min", $zeiten_arr);
+			if($st){
+			echo "<td class=\"zeile_belegt\">$st</td></tr>";
+			}else{
+			echo "<td class=\"zeile_frei\">c</td></tr>";
+			}
+		$min +=15;
+		}
+	echo "</tr>";
+}
+
+
+function array_search_i($str,$array){
+    foreach($array as $key => $value) {
+        #if(stristr($str,$value)) return $key;
+#echo "$key $value<br>";
+		if(in_array($str, $value)){
+		return $array[$key]['status'];	
+		}
+    }
+   
+} 
+	
+
+?>
+
+
+
+</table>
+
+
+</body>
+</html>
