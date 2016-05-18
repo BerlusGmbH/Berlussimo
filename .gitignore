@@ -9,4 +9,7 @@ FOTOS
 /.env
 /node_modules
 /public
+/storage
+/_ide_helper.php
+/bootstrap/cache
 Monatsberichte
