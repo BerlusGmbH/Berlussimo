@@ -6,4 +6,7 @@
 vendor
 classes/config.inc.php
 FOTOS
+/.env
+/node_modules
+/public
 Monatsberichte
