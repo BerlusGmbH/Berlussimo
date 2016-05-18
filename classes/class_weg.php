@@ -8356,12 +8356,12 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                     'xOrientation' => 'right',
                     'width' => 530,
                     'cols' => array(
-                        'TEXT' => array(
-                            'justification' => 'left'
+                        'KONTENRAHMEN_KONTO' => array(
+                            'justification' => 'left',
+                            'width' => 40
                         ),
-                        'SUM' => array(
-                            'justification' => 'right',
-                            'width' => 80
+                        'BETRAG' => array(
+                            'justification' => 'right'
                         )
                     )
                 ));
