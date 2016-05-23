@@ -2379,7 +2379,7 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         }
     }
 
-    function hausgeld_kontoauszug_pdf($pdf, $eigentuemer_id, $seite = "0")
+    function hausgeld_kontoauszug_pdf(Cezpdf &$pdf, $eigentuemer_id, $seite = "0")
     {
         if ($seite != 0) {
             $pdf->ezNewPage();
@@ -2436,8 +2436,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         $je = $datum_arr [0]; // Jahr
         $me = $datum_arr [1]; // Monat
         $te = $datum_arr [2]; // Tag
-
-        // echo "$je $akt_jahr";
 
         if ($je >= $akt_jahr) {
             $akt_jahr = $je;
@@ -5409,29 +5407,29 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         include_once('classes/class_bpdf.php');
         $pdf = new Cezpdf ('a4', 'portrait');
         $bpdf = new b_pdf ();
-        $bpdf->b_header($pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6);
+        $bpdf->b_header($pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6);
         $this->footer_zahlungshinweis = $bpdf->zahlungshinweis;
         $pdf->setColor(0.6, 0.6, 0.6);
         $pdf->filledRectangle(50, 690, 500, 15);
         $pdf->setColor(0, 0, 0);
-        $pdf->ezSety(720);
+        $pdf->ezSetY(720);
         // $pdf->ezSetY(650);
         $datum = date("d.m.Y");
         $p = new partners ();
         $p->get_partner_info($_SESSION ['partner_id']);
         $pdf->ezSetDy(-30);
-        $pdf->ezText("$p->partner_ort, $datum", 10, array(
+        $pdf->ezText("$p->partner_ort, den $datum", 10, array(
             'justification' => 'right'
         ));
         // $pdf->ezSetY(650);
-        $pdf->ezSety(705);
+        $pdf->ezSetY(705);
 
         $o = new objekt ();
         $o->get_objekt_infos($this->p_objekt_id);
         $pdf->ezText(" <b>HAUSGELD-GESAMTABRECHNUNG $this->p_jahr | OBJEKT: $o->objekt_kurzname</b>", 10, array(
             'justification' => 'full'
         ));
-        $pdf->ezSetDy(-5);
+        $pdf->ezSetDy(-15);
 
         // $pdf->ezStopPageNumbers(); //seitennummerirung beenden
         $p = new partners ();
@@ -5445,7 +5443,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             'BETRAG_VORJAHR' => "Betrag Vorjahr",
             'BETRAG' => "Betrag"
         );
-        $pdf->eztable($einnahmen_tab, $cols_2, '<b>HAUSGELDEINNAHMEN</b>', array(
+        $bpdf->addTable($pdf, $einnahmen_tab, $cols_2, '<b>HAUSGELDEINNAHMEN</b>', array(
             'rowGap' => 1.5,
             'showLines' => 1,
             'showHeadings' => 1,
@@ -5480,7 +5478,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             )
         ));
 
-        $pdf->ezSetDy(-10);
+        $pdf->ezSetDy(-15);
         $cols_2 = array(
             'KONTO' => "Konto",
             'BEZ' => "Bezeichnung",
@@ -5490,7 +5488,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             'BETRAG' => "Betrag",
 
         );
-        $pdf->eztable($ausgaben_tab, $cols_2, '<b>BEWIRTSCHAFTUNGSKOSTEN/-EINNAHMEN</b>', array(
+        $bpdf->addTable($pdf, $ausgaben_tab, $cols_2, '<b>BEWIRTSCHAFTUNGSKOSTEN/-EINNAHMEN</b>', array(
             'rowGap' => 1.5,
             'showLines' => 1,
             'showHeadings' => 1,
@@ -5532,8 +5530,8 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             'BETRAG_VORJAHR' => "Betrag Vorjahr",
             'BETRAG' => "Betrag"
         );
-        $pdf->ezSetDy(-10);
-        $pdf->eztable($mv_tab, $cols_2, '<b>MITTELVERWENDUNG</b>', array(
+        $pdf->ezSetDy(-15);
+        $bpdf->addTable($pdf, $mv_tab, $cols_2, '<b>MITTELVERWENDUNG</b>', array(
             'rowGap' => 1.5,
             'showLines' => 1,
             'showHeadings' => 1,
@@ -5577,13 +5575,12 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
 		 * $pdf->eztable($berechnungs_tab, $cols,'KONTOSTAND', array('rowGap' => 1.5,'showLines'=>0,'showHeadings'=>0,'shaded'=>0, 'titleFontSize' => 10, 'fontSize' => 8, 'xPos'=>55,'xOrientation'=>'right', 'width'=>500,'cols'=>array('BEZ'=>array('justification'=>'left', 'width'=>450), 'BETRAG'=>array('justification'=>'right','width'=>50) )));
 		 */
 
-        $pdf->ezSetDy(-20);
+        $pdf->ezSetDy(-15);
         $cols_ber = array(
             'BEZ' => "",
             'BETRAG' => "Betrag"
         );
-        $pdf->ezNewPage();
-        $pdf->eztable($berechnung_tab, $cols_ber, '<b>BERECHNUNG</b>', array(
+        $bpdf->addTable($pdf, $berechnung_tab, $cols_ber, '<b>BERECHNUNG</b>', array(
             'rowGap' => 1.5,
             'showLines' => 1,
             'showHeadings' => 1,
@@ -5609,9 +5606,9 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 )
             )
         ));
-        // $pdf->ezSetDy(-20);
+        $pdf->ezSetDy(-15);
 
-        $pdf->eztable($kto_tab, $cols_ber, "<b>GELDKONTOENTWICKLUNG (HAUSGELD)</b>", array(
+        $bpdf->addTable($pdf, $kto_tab, $cols_ber, "<b>GELDKONTOENTWICKLUNG (HAUSGELD)</b>", array(
             'rowGap' => 1.5,
             'showLines' => 1,
             'showHeadings' => 1,
@@ -7110,9 +7107,9 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $this->eigentuemer_von_t_a = date_mysql2german($this->eigentuemer_von_t);
             $this->eigentuemer_bis_t_a = date_mysql2german($this->eigentuemer_bis_t);
 
-            $hg_tab [0] [ART] = 'Einnahmen aus Hausgeld für Kosten';
-            $hg_tab [0] [ZEITRAUM] = "$this->eigentuemer_von_t_a bis $this->eigentuemer_bis_t_a";
-            $hg_tab [0] [SOLL] = '-' . nummer_punkt2komma($hg_kosten_soll);
+            $hg_tab [0] ['ART'] = 'Einnahmen aus Hausgeld für Kosten';
+            $hg_tab [0] ['ZEITRAUM'] = "$this->eigentuemer_von_t_a bis $this->eigentuemer_bis_t_a";
+            $hg_tab [0] ['SOLL'] = '-' . nummer_punkt2komma($hg_kosten_soll);
 
             $hg_ist_summe = $this->get_summe_zahlungen_arr_jahr('Eigentuemer', $eig_id, $jahr, $geldkonto_id, '6020');
 
@@ -7126,8 +7123,8 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
 			 * }
 			 */
 
-            $hg_tab [0] [IST] = nummer_punkt2komma($hg_ist_summe);
-            $hg_tab [0] [ERG] = nummer_punkt2komma($hg_ist_summe);
+            $hg_tab [0] ['IST'] = nummer_punkt2komma($hg_ist_summe);
+            $hg_tab [0] ['ERG'] = nummer_punkt2komma($hg_ist_summe);
 
             $hg_kosten_saldo = $hg_ist_summe - $hg_kosten_soll;
 
@@ -7135,18 +7132,18 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $hg_kosten_ant = nummer_komma2punkt(strip_tags($tab_arr2 [$l_z] ['BETRAG_ANT']));
             $hg_kosten_saldo_ist_soll = ($hg_ist_summe + $hg_kosten_ant);
 
-            $hg_tab [1] [ART] = '<b>Ergebnis Hausgeld (ohne Instandhaltungsrücklage und Heizung)</b>';
+            $hg_tab [1] ['ART'] = '<b>Ergebnis Hausgeld (ohne Instandhaltungsrücklage und Heizung)</b>';
             // $hg_tab[1][IST] = '<b>'.nummer_punkt2komma($hg_kosten_saldo_ist_soll).'</b>';
-            $hg_tab [1] [ERG] = '<b>' . nummer_punkt2komma($hg_kosten_saldo_ist_soll) . '</b>';
+            $hg_tab [1] ['ERG'] = '<b>' . nummer_punkt2komma($hg_kosten_saldo_ist_soll) . '</b>';
 
             /* Zwischenergebnis 1 */
             $zw1 = $hg_kosten_saldo_ist_soll;
 
             /* Heizkostentabelle */
             $hk_kosten_soll = $this->hg_tab_soll_ist_einnahmen('6010', 'Einheit', $this->einheit_id, $this->eigentuemer_von_t, $this->eigentuemer_bis_t);
-            $hk_tab [0] [ART] = 'Einnahmen aus Hausgeld für Heizkosten';
-            $hk_tab [0] [ZEITRAUM] = "$this->eigentuemer_von_t_a bis $this->eigentuemer_bis_t_a";
-            $hk_tab [0] [SOLL] = '-' . nummer_punkt2komma($hk_kosten_soll);
+            $hk_tab [0] ['ART'] = 'Einnahmen aus Hausgeld für Heizkosten';
+            $hk_tab [0] ['ZEITRAUM'] = "$this->eigentuemer_von_t_a bis $this->eigentuemer_bis_t_a";
+            $hk_tab [0] ['SOLL'] = '-' . nummer_punkt2komma($hk_kosten_soll);
 
             /*
 			 * $hk_ist_summe = $this->get_summe_zahlungen_arr_jahr('Eigentuemer', $eig_id, $jahr, $geldkonto_id, '6010');
@@ -7163,36 +7160,36 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 $hk_ist_summe = $this->get_summe_zahlungen_arr_jahr('Eigentuemer', $eig_id, $jahr, $geldkonto_id, '6010');
             }
 
-            $hk_tab [0] [IST] = nummer_punkt2komma($hk_ist_summe);
-            $hk_tab [0] [ERG] = nummer_punkt2komma($hk_ist_summe);
+            $hk_tab [0] ['IST'] = nummer_punkt2komma($hk_ist_summe);
+            $hk_tab [0] ['ERG'] = nummer_punkt2komma($hk_ist_summe);
             $hk_diff_ist_soll = $hk_ist_summe - $hk_kosten_soll + $hg_kosten_saldo_ist_soll;
             $hk_verbrauch_ist = $this->get_summe_hk('Eigentuemer', $eig_id, $p_id);
 
-            $hk_tab [1] [ART] = 'Heizkostenverbrauch';
-            $hk_tab [1] [IST] = nummer_punkt2komma($hk_verbrauch_ist);
-            $hk_tab [1] [ERG] = nummer_punkt2komma($hk_verbrauch_ist);
+            $hk_tab [1] ['ART'] = 'Heizkostenverbrauch';
+            $hk_tab [1] ['IST'] = nummer_punkt2komma($hk_verbrauch_ist);
+            $hk_tab [1] ['ERG'] = nummer_punkt2komma($hk_verbrauch_ist);
 
             $zw2 = $hk_verbrauch_ist + $zw1 + $hk_ist_summe;
 
-            $hk_tab [2] [ART] = "<b>Ergebnis Hausgeld nach Heizkostenabrechnung</b>";
-            $hk_tab [2] [ERG] = '<b>' . nummer_punkt2komma($zw2) . '</b>';
+            $hk_tab [2] ['ART'] = "<b>Ergebnis Hausgeld nach Heizkostenabrechnung</b>";
+            $hk_tab [2] ['ERG'] = '<b>' . nummer_punkt2komma($zw2) . '</b>';
 
             /* Instandhaltungstabelle */
             $inst_kosten_soll = $this->hg_tab_soll_ist_einnahmen('6030', 'Einheit', $this->einheit_id, $this->eigentuemer_von_t, $this->eigentuemer_bis_t);
-            $inst_tab [0] [ART] = 'Einnahmen aus Hausgeld für Instandhaltungsrücklage';
-            $inst_tab [0] [ZEITRAUM] = "$this->eigentuemer_von_t_a bis $this->eigentuemer_bis_t_a";
-            $inst_tab [0] [SOLL] = '-' . nummer_punkt2komma($inst_kosten_soll);
+            $inst_tab [0] ['ART'] = 'Einnahmen aus Hausgeld für Instandhaltungsrücklage';
+            $inst_tab [0] ['ZEITRAUM'] = "$this->eigentuemer_von_t_a bis $this->eigentuemer_bis_t_a";
+            $inst_tab [0] ['SOLL'] = '-' . nummer_punkt2komma($inst_kosten_soll);
 
             $inst_ist_summe = $this->get_summe_zahlungen_arr_jahr('Eigentuemer', $eig_id, $jahr, $geldkonto_id, '6030');
             if (!$inst_ist_summe) {
                 $inst_ist_summe = $this->get_summe_zahlungen_hga('Eigentuemer', $eig_id, $p_id, '6030');
             }
-            $inst_tab [0] [IST] = nummer_punkt2komma($inst_ist_summe);
+            $inst_tab [0] ['IST'] = nummer_punkt2komma($inst_ist_summe);
 
             $inst_diff = $inst_ist_summe - $inst_kosten_soll;
 
-            $inst_tab [1] [ART] = '<b>Ergebnis Instandhaltungsrücklage</b>';
-            $inst_tab [1] [ERG] = '<b>' . nummer_punkt2komma($inst_diff) . '</b>';
+            $inst_tab [1] ['ART'] = '<b>Ergebnis Instandhaltungsrücklage</b>';
+            $inst_tab [1] ['ERG'] = '<b>' . nummer_punkt2komma($inst_diff) . '</b>';
 
             $zw3 = $zw2 + $inst_diff;
             if ($zw3 < 0) {
@@ -7201,8 +7198,8 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             if ($zw3 > 0) {
                 $zw_text = 'Guthaben';
             }
-            $inst_tab [2] [ART] = "<b>Ergebnis Hausgeld und Instandhaltungsrücklage = $zw_text</b>";
-            $inst_tab [2] [ERG] = '<b>' . nummer_punkt2komma($zw3) . '</b>';
+            $inst_tab [2] ['ART'] = "<b>Ergebnis Hausgeld und Instandhaltungsrücklage = $zw_text</b>";
+            $inst_tab [2] ['ERG'] = '<b>' . nummer_punkt2komma($zw3) . '</b>';
 
             $pdf->ezSetDy(-5);
 
