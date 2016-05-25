@@ -863,7 +863,7 @@ else {
 		$pdf->addText ( 150, $pdf->y, 6, "Mieter" );
 		$pdf->addText ( 400, $pdf->y, 6, "Vermieter" );
 	}
-	function pdf_abnahmeprotokoll($pdf, $mv_id, $einzug = null) {
+	function pdf_abnahmeprotokoll(Cezpdf &$pdf, $mv_id, $einzug = null) {
 		$mv = new mietvertraege ();
 		$mv->get_mietvertrag_infos_aktuell ( $mv_id );
 		
@@ -1217,7 +1217,7 @@ else {
 		$pdf->addText ( 150, $pdf->y, 6, "Mieter" );
 		$pdf->addText ( 400, $pdf->y, 6, "Vermieter" );
 	}
-	function pdf_einauszugsbestaetigung($pdf, $mv_id, $einzug = 0) {
+	function pdf_einauszugsbestaetigung(Cezpdf $pdf, $mv_id, $einzug = 0) {
 		$pdf->ezSetMargins ( 135, 70, 50, 50 );
 		$mv = new mietvertraege ();
 		$mv->get_mietvertrag_infos_aktuell ( $mv_id );
@@ -1298,12 +1298,12 @@ else {
 			$pdf->addText ( 70, $pdf->y + 1, 10, "Der Wohnungsgeber ist <b>nicht</b> Eigentümer der Wohnung" );
 			$pdf->ezSetDy ( - 15 ); // Abstand
 			
-			$pdf->eztext ( "Name und Anschrift des <b>Eigentümers</b> lauten:", 10 );
+			$pdf->ezText ( "Name und Anschrift des <b>Eigentümers</b> lauten:", 10 );
 			
-			$pdf->eztext ( "$oo->objekt_eigentuemer", 10 );
+			$pdf->ezText ( "$oo->objekt_eigentuemer", 10 );
 			$pp = new partners ();
 			$pp->get_partner_info ( $oo->objekt_eigentuemer_id );
-			$pdf->eztext ( "$pp->partner_strasse $pp->partner_hausnr, $pp->partner_plz $pp->partner_ort", 10 );
+			$pdf->ezText ( "$pp->partner_strasse $pp->partner_hausnr, $pp->partner_plz $pp->partner_ort", 10 );
 		}
 		
 		$pdf->ezSetDy ( - 25 ); // Abstand
@@ -1327,7 +1327,7 @@ else {
 		
 		$pdf->ezSetDy ( - 15 ); // Abstand
 	}
-	function kasten($pdf, $anz_felder, $startx, $h, $b, $abstand_zw = null) {
+	function kasten(Cezpdf &$pdf, $anz_felder, $startx, $h, $b, $abstand_zw = null) {
 		for($a = 1; $a <= $anz_felder; $a ++) {
 			
 			if ($a == 1) {
@@ -1342,6 +1342,24 @@ else {
 			}
 		}
 	}
-} // end class b_pdf
 
-?>
+	function addTable(Cezpdf &$pdf, &$data, $cols='', $title='', $options='') {
+		$pdf->transaction('start');
+		$pageNumber = $pdf->ezGetCurrentPageNumber();
+		$pdf->ezTable($data,$cols,$title,$options);
+		if($pageNumber < $pdf->ezGetCurrentPageNumber()) {
+			$pdf->transaction('rewind');
+		} else {
+			$pdf->transaction('commit');
+			return;
+		}
+		$pdf->ezNewPage();
+		$pageNumber = $pdf->ezGetCurrentPageNumber();
+		$pdf->ezTable($data, $cols, $title, $options);
+		if($pageNumber < $pdf->ezGetCurrentPageNumber()) {
+			$pdf->transaction('rewind');
+			$pdf->ezTable($data, $cols, $title, $options);
+		}
+		$pdf->transaction('commit');
+	}
+} // end class b_pdf
