@@ -5703,199 +5703,18 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
 
     function ihr_pdf($p_id)
     {
-        $this->get_hga_profil_infos($p_id);
-        $this->p_ihr_gk_id;
-        $kk = new kontenrahmen ();
-        $kontenrahmen_id = $kk->get_kontenrahmen('Geldkonto', $this->p_ihr_gk_id);
-        $bb = new buchen ();
-        $kontostand11 = $bb->kontostand_tagesgenau_bis($this->p_ihr_gk_id, "01.01.$this->p_jahr");
-        if (!$kontostand11) {
-            $kontostand11 = $this->get_kontostand_manuell($this->p_ihr_gk_id, $this->p_jahr . "-01-01");
-        }
-        $kontostand11_a = nummer_punkt2komma_t($kontostand11);
-        $ze = 0;
-        $tab_arr [$ze] ['TEXT'] = "I. Anfangsbestand 01.01.$this->p_jahr";
-        $tab_arr [$ze] ['SOLL'] = "$kontostand11_a € ";
-        $tab_arr [$ze] ['IST'] = "$kontostand11_a € ";
-        $ze++;
-        // echo "<tr><td><b><h1>I. Anfangsbestand 01.01.$this->p_jahr</h1></td><td><h1>$kontostand11_a €</h1></td><td><h1>$kontostand11_a €</h1></td></tr>";
-
-        // $this->get_jahres_soll(6020, $this->p_jahr, $this->p_objekt_id);
-
-        // echo "W_PLAN = $this->p_wplan_id<br>";
-        $soll_summe_wp = $this->get_soll_betrag_wp(6040, $this->p_wplan_id);
-        $soll_summe_wp_a = nummer_punkt2komma_t($soll_summe_wp);
-        // echo "II. Soll-Zuführung zur Rücklage laut WP $soll_summe_wp_a €<br>";
-        // echo "<tr><td><b><h1>II. Soll-Zuführung zur Rücklage laut WP</h1></td><td><h1>$soll_summe_wp_a €</h1></td><td></td></tr>";
-        $tab_arr [$ze] ['TEXT'] = "II. Soll-Zuführung zur Rücklage laut WP";
-        $tab_arr [$ze] ['SOLL'] = "$soll_summe_wp_a € ";
-        $tab_arr [$ze] ['IST'] = "";
-        $ze++;
-
-        /*
-		 * $ist_summe_ihr = $bb->summe_kontobuchungen_jahr($this->p_ihr_gk_id, 6030, $this->p_jahr);
-		 * #echo "III. Ist-Zuführung zur Rücklage $ist_summe_ihr €<br>";
-		 * echo "<tr><td><b><h1>III. Ist-Zuführung zur Rücklage</h1></td><td></td><td><h1>$ist_summe_ihr €</h1></td></tr>";
-		 */
-
-        $iii_arr [] = $this->III_tab_anzeigen_pdf($p_id);
-
-        // echo '<pre>';
-        // print_r($iii_arr);
-        if (is_array($iii_arr)) {
-            $iii_arr = $iii_arr [0];
-            for ($a = 0; $a < sizeof($iii_arr); $a++) {
-                $text3 = $iii_arr [$a] ['TEXT'];
-                $ist3 = $iii_arr [$a] ['IST'];
-                $tab_arr [$ze] ['TEXT'] = $text3;
-                $tab_arr [$ze] ['IST'] = $ist3;
-                $ze++;
-            }
-        }
-
-        $soll_endbestand = $kontostand11 + $soll_summe_wp;
-        $soll_endbestand_a = nummer_punkt2komma_t($soll_endbestand);
-        // echo "IV. Soll-Endbestand 31.12.$this->p_jahr $soll_endbestand_a €<br>";
-        // echo "<tr><td><b><h1>IV. Soll-Endbestand 31.12.$this->p_jahr</h1></td><td><h1>$soll_endbestand_a €</h1></td><td><h1></h1></td></tr>";
-        $tab_arr [$ze] ['TEXT'] = "IV. Soll-Endbestand 31.12.$this->p_jahr";
-        $tab_arr [$ze] ['SOLL'] = "$soll_endbestand_a € ";
-        $tab_arr [$ze] ['IST'] = "";
-        $ze++;
-
-        $n_jahr = $this->p_jahr + 1;
-        $kontostand11 = $bb->kontostand_tagesgenau_bis($this->p_ihr_gk_id, "01.01.$n_jahr");
-        if (!$kontostand11) {
-            $kontostand11 = $this->get_kontostand_manuell($this->p_ihr_gk_id, $this->p_jahr . "-12-31");
-        }
-
-        $kontostand11_a = nummer_punkt2komma_t($kontostand11);
-        // echo "V. Ist-Endbestand 31.12.$this->p_jahr $kontostand11_a €<br>";
-        // echo "<tr><td><b><h1>V. Ist-Endbestand 31.12.$this->p_jahr</h1></td><td><h1></h1></td><td><h1>$kontostand11_a €</h1></td></tr>";
-        // $tab_arr[$ze]['TEXT'] = "V. Ist-Endbestand Commerzbank 31.12.$this->p_jahr";
-        // $tab_arr[$ze]['SOLL'] = "";
-        // $tab_arr[$ze]['IST'] = "$kontostand11_a € ";
-        $ze++;
-
-        /*
-		 * if(!$this->man3){
-		 * $this->VI_ausstehend($p_id, 6030);
-		 * $tab_arr[$ze]['TEXT'] = "VI. Endbestand";
-		 * $tab_arr[$ze]['SOLL'] = "";
-		 * $tab_arr[$ze]['IST'] = "$this->summe_alle_diff_a € ";
-		 * }
-		 */
-
-        /*
-		 * MANUELL BOR
-		 * $ze++;
-		 * $tab_arr[$ze]['TEXT'] = "VII. Kontostand 31.12.2012 Kontoschliessung\n Sondervermögen DKB (Zuführung in 2013)";
-		 * $tab_arr[$ze]['SOLL'] = "38,31 €";
-		 * $tab_arr[$ze]['IST'] = "38,31 € ";
-		 *
-		 * $ze++;
-		 * $tab_arr[$ze]['TEXT'] = "VIII. Kontostand 31.12.2012 Kontoschliessung\n IHR DKB (Zuführung in 2013)";
-		 * $tab_arr[$ze]['SOLL'] = "13,28 €";
-		 * $tab_arr[$ze]['IST'] = "13,28 € ";
-		 */
-        $ze++;
-        $tab_arr [$ze] ['TEXT'] = "V. Kontostand 31.12.$this->p_jahr";
-        // $end_ihr_a = nummer_punkt2komma($kontostand11 + 38.31 + 13.28);
-        $tab_arr [$ze] ['SOLL'] = "";
-        $tab_arr [$ze] ['IST'] = "$kontostand11_a € ";
-
-        if ($this->p_ihr_gk_id == '1437') {
-            $ze++;
-            $tab_arr [$ze] ['TEXT'] = "<b>VI. Tatsächliche Instandhaltungsrücklage abzg. Liquditätssicherung,\n die auf das Hausgeldkonto zu erstatten ist.</b>";
-            // $end_ihr_a = nummer_punkt2komma($kontostand11 + 38.31 + 13.28);
-            $tab_arr [$ze] ['SOLL'] = "";
-            $tab_arr [$ze] ['IST'] = "<b>22.044,55 € </b>";
-        }
-
-        // echo '<pre>';
-        // print_r($tab_arr);
-
-        if (is_array($this->ausstehend)) {
-            // print_r($this->ausstehend);
-            // die();
-        }
-
-        //include_once ('pdfclass/class.ezpdf.php');
         include_once('classes/class_bpdf.php');
         $pdf = new Cezpdf ('a4', 'portrait');
         $bpdf = new b_pdf ();
         $bpdf->b_header($pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6);
         $this->footer_zahlungshinweis = $bpdf->zahlungshinweis;
-        $pdf->setColor(0.6, 0.6, 0.6);
-        $pdf->filledRectangle(50, 690, 500, 15);
-        $pdf->setColor(0, 0, 0);
-        $pdf->ezSety(720);
-        // $pdf->ezSetY(650);
-        $datum = date("d.m.Y");
-        $p = new partners ();
-        $p->get_partner_info($_SESSION ['partner_id']);
-        $pdf->ezText("$p->partner_ort, $datum", 10, array(
-            'justification' => 'right'
-        ));
-
-        $pdf->ezSety(705);
-        $o = new objekt ();
-        $o->get_objekt_infos($this->p_objekt_id);
-        $pdf->ezText(" <b>Entwicklung der Instandhaltungsrücklage $this->p_jahr | OBJEKT: $o->objekt_kurzname</b>", 10, array(
-            'justification' => 'full'
-        ));
-        $pdf->ezSetDy(-15);
-
-        $pdf->ezStopPageNumbers(); // seitennummerirung beenden
-        $p = new partners ();
-        $p->get_partner_info($_SESSION ['partner_id']);
-        // $cols = array('TEXT'=>"", 'SOLL'=>"SOLL-BETRAG", 'IST'=>"IST-BETRAG");
-        $cols = array(
-            'TEXT' => "",
-            'IST' => "IST-BETRAG"
-        );
-        $pdf->ezTable($tab_arr, $cols, "", array(
-            'rowGap' => 1.5,
-            'showLines' => 1,
-            'showHeadings' => 1,
-            'shaded' => 1,
-            'shadeCol' => array(
-                0.9,
-                0.9,
-                0.9
-            ),
-            'titleFontSize' => 7,
-            'fontSize' => 10,
-            'xPos' => 55,
-            'xOrientation' => 'right',
-            'width' => 500,
-            'cols' => array(
-                'TEXT' => array(
-                    'justification' => 'left'
-                ),
-                'SOLL' => array(
-                    'justification' => 'right',
-                    'width' => 100
-                ),
-                'IST' => array(
-                    'justification' => 'right',
-                    'width' => 100
-                )
-            )
-        ));
-
-        /*
-		 * $pdf->ezSetDy(-20);
-		 * $cols = array('EINHEIT'=>"<b>EINHEIT</b>", 'SOLL'=>"<b>SOLL-BETRAG</b>", 'IST'=>"<b>IST-BETRAG</b>", 'DIFF'=>"<b>AUSSTEHEND</b>");
-		 * $pdf->ezTable($this->ausstehend, $cols, "Ausstehende Beträge", array('rowGap' => 1.5,'showLines'=>1,'showHeadings'=>1,'shaded'=>1, 'shadeCol' =>array(0.9,0.9,0.9), 'titleFontSize' => 10, 'fontSize' => 10, 'xPos'=>55,'xOrientation'=>'right', 'width'=>500,'cols'=>array('EINHEIT'=>array('justification'=>'left'),'SOLL'=>array('justification'=>'right', 'width'=>100),'IST'=>array('justification'=>'right', 'width'=>100), 'DIFF'=>array('justification'=>'right', 'width'=>100))));
-		 */
-        $pdf->ezNewPage();
         $this->ihr_pdf_einzeln($pdf, $p_id);
 
         ob_clean();
         $pdf->ezStream();
     }
 
-    function ihr_pdf_einzeln(&$pdf, $p_id)
+    function ihr_pdf_einzeln(Cezpdf &$pdf, $p_id)
     {
         $this->get_hga_profil_infos($p_id);
         $this->p_ihr_gk_id;
@@ -5912,11 +5731,11 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         $tab_arr [$ze] ['SOLL'] = "$kontostand11_a € ";
         $tab_arr [$ze] ['IST'] = "$kontostand11_a € ";
         $ze++;
-        $soll_summe_wp = $this->get_soll_betrag_wp(6040, $this->p_wplan_id);
+        $soll_summe_wp = -$this->get_soll_betrag_wp(6040, $this->p_wplan_id);
         $soll_summe_wp_a = nummer_punkt2komma_t($soll_summe_wp);
         $tab_arr [$ze] ['TEXT'] = "II. Soll-Zuführung zur Rücklage laut WP";
-        $tab_arr [$ze] ['SOLL'] = "$soll_summe_wp_a € ";
-        $tab_arr [$ze] ['IST'] = "";
+        $tab_arr [$ze] ['SOLL'] = "";
+        $tab_arr [$ze] ['IST'] = "$soll_summe_wp_a € ";
         $ze++;
 
         $iii_arr [] = $this->III_tab_anzeigen_pdf($p_id);
@@ -5936,9 +5755,8 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         $soll_endbestand_a = nummer_punkt2komma_t($soll_endbestand);
 
         $tab_arr [$ze] ['TEXT'] = "IV. Soll-Endbestand 31.12.$this->p_jahr";
-        $tab_arr [$ze] ['SOLL'] = "$soll_endbestand_a € ";
-        $tab_arr [$ze] ['IST'] = "";
-        // $ze++;
+        $tab_arr [$ze] ['SOLL'] = "";
+        $tab_arr [$ze] ['IST'] = "$soll_endbestand_a € ";
 
         $n_jahr = $this->p_jahr + 1;
         $kontostand11 = $bb->kontostand_tagesgenau_bis($this->p_ihr_gk_id, "01.01.$n_jahr");
@@ -5947,39 +5765,12 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         }
 
         $kontostand11_a = nummer_punkt2komma_t($kontostand11);
-        // $ze++;
 
-        /*
-		 * MANUELL BOR
-		 * $ze++;
-		 * $tab_arr[$ze]['TEXT'] = "VII. Kontostand 31.12.2012 Kontoschliessung\n Sondervermögen DKB (Zuführung in 2013)";
-		 * $tab_arr[$ze]['SOLL'] = "38,31 €";
-		 * $tab_arr[$ze]['IST'] = "38,31 € ";
-		 *
-		 * $ze++;
-		 * $tab_arr[$ze]['TEXT'] = "VIII. Kontostand 31.12.2012 Kontoschliessung\n IHR DKB (Zuführung in 2013)";
-		 * $tab_arr[$ze]['SOLL'] = "13,28 €";
-		 * $tab_arr[$ze]['IST'] = "13,28 € ";
-		 */
 
         $ze++;
         $tab_arr [$ze] ['TEXT'] = "V. Endbestand 31.12.$this->p_jahr";
-        // $end_ihr_a = nummer_punkt2komma($kontostand11 + 38.31 + 13.28);
         $tab_arr [$ze] ['SOLL'] = "";
         $tab_arr [$ze] ['IST'] = "$kontostand11_a € ";
-
-        if ($this->p_ihr_gk_id == '1437') {
-            $ze++;
-            $tab_arr [$ze] ['TEXT'] = "<b>VI. Tatsächliche Instandhaltungsrücklage abzg. Liquditätssicherung,\n die auf das Hausgeldkonto zu erstatten ist.</b>";
-            // $end_ihr_a = nummer_punkt2komma($kontostand11 + 38.31 + 13.28);
-            $tab_arr [$ze] ['SOLL'] = "";
-            $tab_arr [$ze] ['IST'] = "<b>22.044,55 €</b>";
-        }
-
-        if (is_array($this->ausstehend)) {
-            // print_r($this->ausstehend);
-            // die();
-        }
 
         $this->footer_zahlungshinweis = $bpdf->zahlungshinweis;
         $pdf->setColor(0.6, 0.6, 0.6);
@@ -5990,11 +5781,11 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         $datum = date("d.m.Y");
         $p = new partners ();
         $p->get_partner_info($_SESSION ['partner_id']);
-        $pdf->ezText("$p->partner_ort, $datum", 10, array(
+        $pdf->ezText("$p->partner_ort, den $datum", 10, array(
             'justification' => 'right'
         ));
 
-        $pdf->ezSety(705);
+        $pdf->ezSetY(705);
         $o = new objekt ();
         $o->get_objekt_infos($this->p_objekt_id);
         $pdf->ezText(" <b>Entwicklung der Instandhaltungsrücklage $this->p_jahr | OBJEKT: $o->objekt_kurzname</b>", 10, array(
@@ -6021,7 +5812,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             ),
             'titleFontSize' => 7,
             'fontSize' => 10,
-            'xPos' => 55,
+            'xPos' => 'left',
             'xOrientation' => 'right',
             'width' => 500,
             'cols' => array(
@@ -6070,7 +5861,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $pdf->filledRectangle(50, 690, 500, 15);
             $pdf->setColor(0, 0, 0);
             $pdf->ezSety(720);
-            $pdf->ezText("$p->partner_ort, $datum", 10, array(
+            $pdf->ezText("$p->partner_ort, den $datum", 10, array(
                 'justification' => 'right'
             ));
 
@@ -6082,13 +5873,13 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $pdf->ezSetDy(-10);
             $pdf->ezText("<b>Geldkontobezeichnung:</b> $gkkk->geldkonto_bez", 9);
             $pdf->ezText("<b>Geldinstitut:</b> $gkkk->kredit_institut", 9);
-            $pdf->ezText("<b>Kontonummer:</b> $gkkk->kontonummer -- <b>IBAN:</b> $gkkk->IBAN1", 9);
-            $pdf->ezText("<b>BLZ:</b> $gkkk->blz -- <b>BIC:</b> $gkkk->BIC", 9);
+            $pdf->ezText("<b>IBAN:</b> $gkkk->IBAN1", 9);
+            $pdf->ezText("<b>BIC:</b> $gkkk->BIC", 9);
 
             for ($b = 0; $b < $anz_konten; $b++) {
                 $tab_arr_e [$b] ['TEXT'] = $tab_arr [$b] ['TEXT'];
                 $tab_arr_e [$b] ['IST'] = $tab_arr [$b] ['IST'];
-                $tab_arr_e [$b] ['ANTEIL'] = nummer_punkt2komma_t(nummer_komma2punkt(str_replace('.', '', $tab_arr [$b] ['IST'])) / $anteile_g * $einheit_anteile);
+                $tab_arr_e [$b] ['ANTEIL'] = nummer_punkt2komma_t(nummer_komma2punkt(str_replace('.', '', $tab_arr [$b] ['IST'])) / $anteile_g * $einheit_anteile) . " € ";
             }
 
             $pdf->ezSetDy(-15);
@@ -6108,7 +5899,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 ),
                 'titleFontSize' => 7,
                 'fontSize' => 10,
-                'xPos' => 55,
+                'xPos' => 'left',
                 'xOrientation' => 'right',
                 'width' => 500,
                 'cols' => array(
@@ -6144,14 +5935,14 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 ),
                 'titleFontSize' => 7,
                 'fontSize' => 10,
-                'xPos' => 55,
+                'xPos' => 'left',
                 'xOrientation' => 'right',
                 'width' => 500,
                 'cols' => array(
                     'TEXT' => array(
                         'justification' => 'left'
                     ),
-                    'SOLL' => array(
+                    'ANTEIL' => array(
                         'justification' => 'right',
                         'width' => 100
                     ),
@@ -6171,14 +5962,8 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 'BETRAG' => ""
             );
 
-            $tab_laut [0] ['TXT'] = "Übertrag vom Hausgeldkonto nach Kontoschliessung bei der DK Bank";
-            $tab_laut [0] ['BETRAG'] = "12.242,35 € ";
-            $tab_laut [1] ['TXT'] = "Zuführungen im Jahr 2015 - Jahessoll laut WP 2015 8.000 EUR";
-            $tab_laut [1] ['BETRAG'] = "6.000,03 € ";
-            $tab_laut [2] ['TXT'] = "Kontoführungsgebühren 2015";
-            $tab_laut [2] ['BETRAG'] = "-4,88 € ";
-            $tab_laut [3] ['TXT'] = "<b>Kontostand des IHR-Geldkontos vom $datum_heute</b>";
-            $tab_laut [3] ['BETRAG'] = "<b>$kontostand_aktuell € </b>";
+            $tab_laut [0] ['TXT'] = "Kontostand des IHR-Geldkontos vom $datum_heute";
+            $tab_laut [0] ['BETRAG'] = "$kontostand_aktuell € ";
 
             $pdf->ezTable($tab_laut, $cols_laut, "Zusatzinformationen", array(
                 'rowGap' => 1.5,
@@ -6192,7 +5977,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 ),
                 'titleFontSize' => 7,
                 'fontSize' => 10,
-                'xPos' => 55,
+                'xPos' => 'left',
                 'xOrientation' => 'right',
                 'width' => 500,
                 'cols' => array(
