@@ -22,7 +22,10 @@ if (isset ( $_REQUEST ['daten'] )) {
 	switch ($daten) {
 		
 		case "einheit_raus" :
+			include_once ("options/links/links.form_einheit.php");
+			echo "<div id='main'>";
 			include ("options/modules/einheit.php");
+			echo "</div>";
 			break;
 	}
 }

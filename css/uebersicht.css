@@ -12,26 +12,19 @@ body {
 	background-color: #000;
 }
 
-form {
-	float: inline;
-	page-break-inside: auto;
-}
-
 fieldset {
-	padding: 0px;
+	padding: 0;
 	page-break-inside: auto;
 }
 
 .div.ueberschrift {
-	border-style: 1;
 	padding: 10px;
-	margin: 0px;
-	font-family: verdana;
+	margin: 0;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: small;
 	background-color: #d7e9c1;
-	-moz-border-radius: 2em 0;
 	position: absolute;
-	width: 100% x;
+	width: 100%;
 	height: auto;
 	top: auto;
 	left: 15px;
@@ -39,74 +32,68 @@ fieldset {
 }
 
 .div.balken1 {
-	border-style: 1;
 	border: 2px;
 	padding: 10px;
-	margin-right: 0px;
-	margin-left: 0px;
-	font-family: verdana;
+	margin-right: 0;
+	margin-left: 0;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: small;
 	background-color: #d7e9c1;
 	position: relative;
 	width: 250px;
 	left: 10px;
-	top: 0px;
+	top: 0;
 	float: left;
 	display: inline;
 }
 
 .div.balken2 {
-	border-style: 1;
 	border: 2px;
 	padding: 10px;
-	margin-right: 0px;
+	margin-right: 0;
 	margin-left: 12px;
-	font-family: verdana;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: small;
 	background-color: #d7e9c1;
 	position: relative;
 	width: 250px;
-	top: 0px;
-	border: 2px;
+	top: 0;
 	float: left;
 	display: inline;
 }
 
 .div.balken3 {
-	border-style: 1;
 	padding: 10px;
-	margin-right: 0px;
+	margin-right: 0;
 	margin-left: 2px;
-	font-family: verdana;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: small;
 	background-color: #d7e9c1;
 	position: relative;
 	width: 250px;
-	top: 0px;
+	top: 0;
 	float: left;
 	display: inline;
 }
 
 .div.balken4 {
-	border-style: 1;
 	padding: 3px;
-	margin-right: 0px;
-	margin-left: 0px;
-	font-family: verdana;
+	margin-right: 0;
+	margin-left: 0;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: small;
 	background-color: #d8b9c1;
 	position: relative;
 	width: 600px;
-	top: 0px;
+	top: 0;
 	display: inline;
 	float: left;
 }
 
 .div.balken5 {
-	border-style: 1;
 	padding: 10px;
-	margin: 0px;
-	font-family: verdana;
+	margin: 0;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: small;
 	background-color: #d8b9c1;
 	-moz-border-radius: 2em 0;
@@ -118,7 +105,7 @@ fieldset {
 }
 
 .font_balken_uberschrift {
-	font-family: verdana;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: medium;
 	font-weight: bold;
 }
@@ -138,10 +125,9 @@ p.rot {
 }
 
 .div.balken_detail_kat_form {
-	border-style: 1;
 	padding: 20px;
-	margin: 0px;
-	font-family: verdana;
+	margin: 0;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: small;
 	background-color: #d7e9c1;
 	-moz-border-radius-topright: 2em;
@@ -154,10 +140,9 @@ p.rot {
 }
 
 div.aktuelle_buchungen {
-	border-style: 1;
 	padding: 10px;
-	margin: 0px;
-	font-family: verdana;
+	margin: 0;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: small;
 	color: #000;
 	background-color: #d7e9c1;
@@ -174,7 +159,7 @@ div.aktuelle_buchungen {
 table.aktuelle_buchungen {
 	border-style: 1;
 	padding: 5px;
-	font-family: verdana;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: small;
 	color: #000;
 	background-color: #fff;
@@ -187,10 +172,9 @@ table.aktuelle_buchungen {
 }
 
 div.aktuelle_forderungen {
-	border-style: 1;
 	padding: 10px;
-	margin: 0px;
-	font-family: verdana;
+	margin: 0;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: small;
 	background-color: #d7e9c1;
 	-moz-border-radius-topright: 2em;
@@ -204,13 +188,13 @@ div.aktuelle_forderungen {
 }
 
 tr.tabelle_ueberschrift {
-	font-family: verdana;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: small;
 	font-weight: bold;
 }
 
 tr.tabelle_ueberschrift_mietkontenblatt {
-	font-family: verdana;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 8pt;
 	font-weight: bold;
 }
@@ -219,9 +203,8 @@ tr.tabelle_ueberschrift_mietkontenblatt {
 background-color: #fff;
 }*/
 table.aktuelle_forderungen {
-	border-style: 1;
 	padding: 5px;
-	font-family: verdana;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: small;
 	background-color: #fff;
 	-moz-border-radius-topright: 2em;
@@ -233,10 +216,9 @@ table.aktuelle_forderungen {
 }
 
 .buchungs_formular {
-	border-style: 1;
 	padding: 10px;
-	margin: 0px;
-	font-family: verdana;
+	margin: 0;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: small;
 	background-color: #fff;
 	-moz-border-radius-topright: 2em;
@@ -277,14 +259,10 @@ table.aktuelle_forderungen {
 	display: none
 }
 
-input[type=submit] {
-	margin-bottom: 20px;
-}
-
 #pos_kontierung {
 	color: #ff0000;
-	padding: 0px;
-	margin: 0px;
+	padding: 0;
+	margin: 0;
 }
 
 /*DRUCKENSACHEN AUSBLENDEN*/
@@ -475,49 +453,43 @@ p {
 
 table.bk_table {
 	border-color: #600;
-	border-width: 0px;
+	border-width: 0;
 	border-style: solid;
 }
 
 tr.zeilebk_1_g {
 	background-color: #73a682;
-	font-family: verdana;
-	font-size: auto;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #000;
 }
 
 tr.zeilebk_2_g {
 	background-color: #84b894;
-	font-family: verdana;
-	font-size: auto;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #000;
 }
 
 tr.zeilebk_1_r {
 	background-color: #ef7079;
-	font-family: verdana;
-	font-size: auto;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #000;
 }
 
 tr.zeilebk_2_r {
 	background-color: #d7565f;
-	font-family: verdana;
-	font-size: auto;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #000;
 }
 
 tr.zeilebk_1_gg {
 	background-color: #ffed88;
-	font-family: verdana;
-	font-size: auto;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #000;
 }
 
 tr.zeilebk_2_gg {
 	background-color: #ffed88;
-	font-family: verdana;
-	font-size: auto;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #000;
 }
 
@@ -527,15 +499,14 @@ table.sortable a.details:hover {
 
 table.sortable a.einheit {
 	background-color: #a2bbe6;
-	font-family: verdana;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 20px;
 	color: #000;
 }
 
 table.sortable a.details {
 	background-color: #ffed88;
-	font-family: verdana;
-	font-size: auto;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #ff0000;
 	display: inline-block;
 	width: 7em;
@@ -553,28 +524,26 @@ table.sortable label {
 
 table.sortable input, a, button, progress {
 	cursor: pointer;
-	padding: 0px;
-	margin: 0px;
+	padding: 0;
+	margin: 0;
 }
 
 table.sortable tr, td, table {
-	padding: 0px;
-	margin: 0px;
+	padding: 0;
+	margin: 0;
 	vertical-align: top;
 	align: justify;
-	padding: 0px;
-	margin: 0px;
 }
 
 table.details tr td {
-	padding: 0px;
-	margin: 0px;
+	padding: 0;
+	margin: 0;
 	font-size: 11px;
 }
 
 table.sortable select, label {
-	padding: 0px;
-	margin: 0px;
+	padding: 0;
+	margin: 0;
 	font-size: 11px;
 }
 

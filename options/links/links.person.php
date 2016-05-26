@@ -17,15 +17,11 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
-$mieten = new mietkonto ();
 echo "<div class=\"navi_leiste2\">";
-$mieten->erstelle_formular ( "Hauptmenü -> Personen...", NULL );
+erstelle_abschnitt("Personen");
 echo "<a href=\"?daten=person&anzeigen=alle_personen\">Personenliste</a>&nbsp;";
 echo "<a href=\"?daten=person&anzeigen=person_erfassen\">Neue Person</a>&nbsp;";
 echo "<a href=\"?daten=person&anzeigen=person_hinweis\">Personen mit Hinweisen</a>&nbsp;";
 echo "<a href=\"?daten=person&anzeigen=person_anschrift\">Zustell- und Verzugsanschriften</a>&nbsp;";
-// echo "<a href=\"?daten=person&anzeigen=alle_mieter\">Mieterliste</a>&nbsp;";
-$mieten->ende_formular ();
-
+ende_abschnitt();
 echo "</div>";
-?>

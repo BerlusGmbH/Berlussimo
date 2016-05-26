@@ -21,7 +21,10 @@ if (isset ( $_REQUEST ["formular"] )) {
 	switch ($_REQUEST ["formular"]) {
 		
 		case "einheit" :
+			include_once ("options/links/links.form_einheit.php");
+			echo "<div id='main'>";
 			include ("options/formulare/form_einheit.php");
+			echo "</div>";
 			break;
 	}
 }

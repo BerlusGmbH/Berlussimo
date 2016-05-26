@@ -21,14 +21,13 @@
  *          @lastmodified $Date$
  *         
  */
-$f = new formular ();
 echo "<div class=\"navi_leiste2\">";
 if (empty ( $_SESSION ['objekt_id'] )) {
-	$f->erstelle_formular ( "Hauptmenü -> WEG...", NULL );
+	erstelle_abschnitt("WEG");
 } else {
 	$o = new objekt ();
 	$o->get_objekt_infos ( $_SESSION ['objekt_id'] );
-	$f->erstelle_formular ( "Hauptmenü -> WEG -> $o->objekt_kurzname", NULL );
+	erstelle_abschnitt("Hauptmenü -> WEG -> $o->objekt_kurzname");
 }
 
 echo "<a class=\"WEG\" href=\"?daten=weg\">WEG</a>&nbsp;";
@@ -56,8 +55,5 @@ $vorjahr = date ( "Y" ) - 1;
 echo "<a class=\"WEG\" href=\"?daten=weg&option=hausgeld_zahlungen&jahr=$jahr\">Kontenübersicht $jahr</a>&nbsp;";
 echo "<a class=\"WEG\" href=\"?daten=weg&option=hausgeld_zahlungen_xls&jahr=$vorjahr\">Kontenübersicht XLS $vorjahr</a>&nbsp;";
 echo "<a class=\"WEG\" href=\"?daten=weg&option=pdf_hausgelder\">Hausgelder</a>&nbsp;";
-// echo "<a class=\"WEG\" href=\"?daten=weg&option=hausgeld_kontoauszug\">Hausgeld Kontoauszug</b></a>&nbsp;";
-$f->ende_formular ();
+ende_abschnitt();
 echo "</div>";
-
-?>

@@ -17,12 +17,10 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
-$mieten = new mietkonto ();
 echo "<div class=\"navi_leiste2\">";
-$mieten->erstelle_formular ( "Mietkontenübersicht -> Darstelltungsoptionen...", NULL );
+erstelle_abschnitt("Mietkontenübersicht -> Darstelltungsoptionen...");
 echo "<a href=\"?daten=mietkonten_blatt&anzeigen=mietkonto_uebersicht_detailiert&mietvertrag_id=$_REQUEST[mietvertrag_id]\">Seit Einzug</a>&nbsp;";
 echo "<a href=\"?daten=mietkonten_blatt&anzeigen=mietkonto_detailiert_seit_1zahlung&mietvertrag_id=$_REQUEST[mietvertrag_id]\">Seit 1. Zahlung</a>&nbsp;";
 echo "<a href=\"?daten=miete_buchen\">Zeitraum eingrenzen</a>&nbsp;";
-$mieten->ende_formular ();
+ende_abschnitt();
 echo "</div>";
-?>

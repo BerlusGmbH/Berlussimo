@@ -17,9 +17,8 @@
  * @lastmodified $Date: 2011-07-07 10:41:33 +0200 (Do, 07 Jul 2011) $
  * 
  */
-$mieten = new mietkonto ();
 echo "<div class=\"navi_leiste2\">";
-$mieten->erstelle_formular ( "Hauptmenü -> Buchen...", NULL );
+erstelle_abschnitt( "Buchen");
 
 echo "<a href=\"?daten=miete_buchen\">Miete Buchen</a>&nbsp;";
 echo "<a href=\"?daten=buchen&option=zahlbetrag_buchen\">Kosten buchen</a>&nbsp;";
@@ -46,7 +45,7 @@ echo "<a href=\"?daten=buchen&option=uebersicht_excel_konten\">Excel Konten</a>&
 echo "<a href=\"?daten=buchen&option=buchungskonto_summiert_xls&jahr=$vorjahr\">Buchungskonten summiert XLS</a>&nbsp;";
 
 // echo "<a href=\"?daten=buchen&option=kontoauszug_csv\">kONTOAUSZUG CSV</a>&nbsp;";
-$mieten->ende_formular ();
+ende_abschnitt();
 
 echo "</div>";
 

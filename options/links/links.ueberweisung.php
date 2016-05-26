@@ -17,15 +17,11 @@
  * @lastmodified $Date: 2011-07-07 10:41:33 +0200 (Do, 07 Jul 2011) $
  * 
  */
-$f = new formular ();
 echo "<div class=\"navi_leiste2\">";
-$f->erstelle_formular ( "Hauptmenü -> Überweisung DTAUS...", NULL );
+erstelle_abschnitt("Überweisung DTAUS");
 echo "<a href=\"?daten=ueberweisung\">DTAUS Pool</a>&nbsp;";
 echo "<a href=\"?daten=ueberweisung&option=re_zahlen\">RE Zahlen</a>&nbsp;";
 echo "<a href=\"?daten=ueberweisung&option=dtaus_dateien\">Erstellte Dateien</a>&nbsp;";
 echo "<a href=\"?daten=ueberweisung&option=manuelle_ueberweisung\">Sammelüberweisung</a>&nbsp;";
-$f->ende_formular ();
-
+ende_abschnitt();
 echo "</div>";
-
-?>
