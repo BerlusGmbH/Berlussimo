@@ -17,17 +17,12 @@
  * @lastmodified $Date: 2011-07-07 10:41:33 +0200 (Do, 07 Jul 2011) $
  * 
  */
-$mieten = new mietkonto ();
 echo "<div class=\"navi_leiste2\">";
-$mieten->erstelle_formular ( "Hauptmenü -> Lager...", NULL );
-
-// echo "<a href=\"?daten=lager\">Lagerübersicht</a>&nbsp;<b>|</b>&nbsp;";
+erstelle_abschnitt( "Lager");
 echo "<a href=\"?daten=lager&option=lagerbestand\">Lagerbestand</a>&nbsp;<b>|</b>&nbsp;";
 echo "<a href=\"?daten=lager&option=lagerbestand_bis_form\">Lagerbestand bis...</a>&nbsp;<b>|</b>&nbsp;";
 echo "<a href=\"?daten=lager&option=re\">RE</a>&nbsp;<b>|</b>&nbsp;";
 echo "<a href=\"?daten=lager&option=ra\">RA</a>&nbsp;<b>|</b>&nbsp;";
 echo "<a href=\"?daten=lager&option=artikelsuche\">Artikelsuche</a>&nbsp;<b>|</b>&nbsp;";
-$mieten->ende_formular ();
-
+ende_abschnitt();
 echo "</div>";
-?>

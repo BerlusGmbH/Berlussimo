@@ -116,15 +116,15 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
 		
 		$row = mysql_fetch_assoc ( $result );
 		
-		$this->bbk_be_dat = $row [BK_BE_DAT];
-		$this->bbk_be_id = $row [BK_BE_ID];
-		$this->bbk_be_buchung_id = $row [BUCHUNG_ID];
-		$this->bbk_profil_id = $row [BK_PROFIL_ID];
-		$this->bbk_key_id = $row [KEY_ID];
-		$this->bbk_anteil = $row [ANTEIL];
+		$this->bbk_be_dat = $row ['BK_BE_DAT'];
+		$this->bbk_be_id = $row ['BK_BE_ID'];
+		$this->bbk_be_buchung_id = $row ['BUCHUNG_ID'];
+		$this->bbk_profil_id = $row ['BK_PROFIL_ID'];
+		$this->bbk_key_id = $row ['KEY_ID'];
+		$this->bbk_anteil = $row ['ANTEIL'];
 		$this->bbk_kos_typ = $row ['KOSTENTRAEGER_TYP'];
 		$this->bbk_kos_id = $row ['KOSTENTRAEGER_ID'];
-		$this->bbk_hndl_betrag = $row [HNDL_BETRAG];
+		$this->bbk_hndl_betrag = $row ['HNDL_BETRAG'];
 		
 		$r = new rechnung ();
 		$this->bbk_kos_bez = strip_tags ( $r->kostentraeger_ermitteln ( $this->bbk_kos_typ, $this->bbk_kos_id ) );
@@ -170,7 +170,7 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
 	}
 	function assistent() {
 		$f = new formular ();
-		$f->erstelle_formular ( "Assistent für BK", NULL );
+		erstelle_abschnitt( "Assistent für BK");
 		/* Überprüfen ob Profil ausgewählt wurde */
 		/* Falls nein, neues erstellen */
 		if (! isset ( $_SESSION ['profil_id'] )) {
@@ -218,33 +218,33 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
 			$fehler = false;
 		}
 		
-		if (! $fehler && isset ( $_SESSION ['bk_konto'] )) {
-			if (empty ( $_SESSION ['genkey'] )) {
-				$fehler = true;
-				if (! isset ( $_POST ['genkey'] )) {
-					$this->form_gen_key_hndl ();
-					$fehler = true;
-				} else {
-					$_SESSION ['genkey'] = $_POST ['genkey'];
-					$_SESSION ['hndl'] = $_POST ['hndl'];
-					if ($_POST ['kontierung'] == '1') {
-						$_SESSION ['kontierung'] = '1';
-					} else {
-						$_SESSION ['kontierung'] = '0';
-					}
-					// SPEICHERN VON KEY# FEHLT
-					$this->update_genkey ( $_SESSION ['bk_konto_id'], $_SESSION ['profil_id'], $_SESSION ['genkey'], $_SESSION ['hndl'] );
-					$fehler = false;
-					header ( "Location:?daten=bk&option=assistent" );
-				}
-			} else {
-				$fehler = false;
-			}
-		}
+//		if (! $fehler && isset ( $_SESSION ['bk_konto'] )) {
+//			if (empty ( $_SESSION ['genkey'] )) {
+//				$fehler = true;
+//				if (! isset ( $_POST ['genkey'] )) {
+//					$this->form_gen_key_hndl ();
+//					$fehler = true;
+//				} else {
+//					$_SESSION ['genkey'] = $_POST ['genkey'];
+//					$_SESSION ['hndl'] = $_POST ['hndl'];
+//					if ($_POST ['kontierung'] == '1') {
+//						$_SESSION ['kontierung'] = '1';
+//					} else {
+//						$_SESSION ['kontierung'] = '0';
+//					}
+//					// SPEICHERN VON KEY# FEHLT
+//					$this->update_genkey ( $_SESSION ['bk_konto_id'], $_SESSION ['profil_id'], $_SESSION ['genkey'], $_SESSION ['hndl'] );
+//					$fehler = false;
+//					header ( "Location:?daten=bk&option=assistent" );
+//				}
+//			} else {
+//				$fehler = false;
+//			}
+//		}
 		
 		// ##############
 		
-		if (! $fehler && isset ( $_SESSION ['bk_konto'] ) && isset ( $_SESSION ['bk_konto_id'] ) && isset ( $_SESSION ['genkey'] )) {
+		if (isset ( $_SESSION ['bk_konto'] ) && isset ( $_SESSION ['bk_konto_id'] )) {
 			if (empty ( $_SESSION ['buchungen_arr'] )) {
 				$this->buchungsauswahl ( $_SESSION ['bk_konto'], $_SESSION ['bk_konto_id'] );
 			}
@@ -255,7 +255,7 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
 		// ECHO "<pre>";
 		// print_r($_SESSION);
 		
-		$f->ende_formular ();
+		ende_abschnitt();
 	}
 	function assistent_alt() {
 		$f = new formular ();
@@ -326,11 +326,11 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
 		}
 		
 		// ##############
-		if (empty ( $_SESSION [buchungen_arr] ) && ! $fehler) {
-			$this->buchungsauswahl ( $_SESSION [bk_konto], $_SESSION [bk_konto_id] );
+		if (empty ( $_SESSION ['buchungen_arr'] ) && ! $fehler) {
+			$this->buchungsauswahl ( $_SESSION ['bk_konto'], $_SESSION ['bk_konto_id'] );
 		}
 		
-		$f->ende_formular;
+		$f->ende_formular();
 	}
 	function update_genkey($konto_id, $profil_id, $genkey_id, $hndl) {
 		$db_abfrage = "UPDATE BK_KONTEN SET GENKEY_ID='$genkey_id', HNDL='$hndl'  WHERE BK_K_ID='$konto_id' && BK_PROFIL_ID= '$profil_id' && AKTUELL='1'";
@@ -495,13 +495,16 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
 		$f->datum_feld ( 'Von:', 'anzeigen_von', $von, 'anzeigen_von' );
 		$f->datum_feld ( 'Bis:', 'anzeigen_bis', $bis, 'anzeigen_bis' );
 		$f->text_feld ( 'Kostenkonto:', 'konto_anzeigen', $konto, 10, 'konto_anzeigen', '' );
-		// $f->text_feld("Von", 'anzeigen_von', "$von", 10, 'anzeigen_von','');
-		// $f->text_feld("Bis", 'anzeigen_bis', "$bis", 10, 'anzeigen_bis','');
 		$f->send_button ( "submit_anzeige", "Aktualisieren" );
 		$f->ende_formular ();
-		
+
 		/* Buchungen zur Auswahl */
-		$f->erstelle_formular ( 'Buchungen hinzufügen', '' );
+		$f->erstelle_formular ( 'buchungen_hinzufuegen', '', 'Buchungen hinzufügen' );
+		$this->dropdown_gen_keys ();
+		$this->dropdown_hndl ();
+		$this->dropdown_uebernahme_kontierung ();
+		$f->hidden_feld ( 'option', 'buchungen_hinzu' );
+		$f->send_button ( "submit_key", "Bestehende Ändern" );
 		$geldkonto_id = $_SESSION ['geldkonto_id'];
 		// echo "<div class=\"auswahl\" id=\"$konto\">";
 		$buchungen_arr = $this->bk_konten_buchungen_alle ( $geldkonto_id, $this->bk_jahr, $konto, $konto_id, $this->bk_profil_id );
@@ -549,13 +552,11 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
 			// $f->button_js('jsbtn', 'Markierte �bernehmen', $js2);
 			echo "</td></tr>";
 			echo "</table>";
-			$f->hidden_feld ( 'option', 'buchungen_hinzu' );
 			$f->send_button ( "submit_key", "Hinzufügen" );
 			// $f->ende_formular();
 		} else {
-			echo "Es stehen keine weiteren Buchungen zum Kostenkonto $kostenkonto zur Auswahl.";
+			echo "<p style='clear:both;'>Es stehen keine weiteren Buchungen zum Kostenkonto $kostenkonto zur Auswahl.</p>";
 		}
-		// echo "</div>";
 		$f->ende_formular ();
 		/* Buchungen schon ausgewählt */
 		unset ( $buchungen_arr );
@@ -841,7 +842,7 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
 		}
 		echo "</div>";
 	}
-	function dropdown_gen_keys( $default ) {
+	function dropdown_gen_keys() {
 		$result = mysql_query ( "SELECT * FROM BK_GENERAL_KEYS WHERE  AKTUELL='1'   ORDER BY GKEY_NAME ASC" );
 		
 		$numrows = mysql_numrows ( $result );
@@ -852,9 +853,9 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
 				$keyname = $row ['GKEY_NAME'];
 				
 				echo "<option";
-				if ($keyname == $default) {
-					echo " selected";
-				}
+				//if ($keyname == $default) {
+				//	echo " selected";
+				//}
 				echo " value=\"$keyid\">$keyname</option>";
 			}
 			echo "</select>";
