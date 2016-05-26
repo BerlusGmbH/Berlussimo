@@ -525,5 +525,3 @@ function mietvertrag_form_neu() {
 		weiterleiten_in_sec ( "?daten=miete_definieren&option=miethoehe&mietvertrag_id=$zugewiesene_vetrags_id", "2" );
 	}
 }
-
-?>

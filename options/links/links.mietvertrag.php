@@ -17,9 +17,8 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
-$mieten = new mietkonto ();
 echo "<div class=\"navi_leiste2\">";
-$mieten->erstelle_formular ( "Hauptmenü -> Mietverträge...", NULL );
+erstelle_abschnitt("Mietverträge");
 $monat = sprintf ( '%02d', date ( "m" ) );
 $jahr = date ( "Y" );
 echo "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_kurz\">Alle Mietverträge</a>&nbsp;";
@@ -42,9 +41,7 @@ echo "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=nebenkosten\"><b>Nebenk
 $vorjahr = date ( "Y" ) - 1;
 echo "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=nebenkosten_pdf_zs&jahr=$vorjahr\"><b>NK/KM/Jahr mit ZS</b></a>&nbsp;";
 echo "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=nebenkosten_pdf_zs&jahr=$vorjahr&xls\"><b>NK/KM/Jahr mit ZS als XLS</b></a>&nbsp;";
-// echo "<a href=\"?daten=mietvertrag_raus&mietvertrag_raus=mietvertrag_detailiert\">Mietverträge im Detail</a>&nbsp;";
-$mieten->ende_formular ();
+ende_abschnitt();
 echo "</div>";
-?>
 
 

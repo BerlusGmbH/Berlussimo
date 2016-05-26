@@ -17,9 +17,7 @@
  * @lastmodified $Date: 2011-07-07 10:41:33 +0200 (Do, 07 Jul 2011) $
  * 
  */
-$form = new formular ();
-
-$form->fieldset ( "Statistiken", 'statistiken_links' );
+erstelle_abschnitt("Statistiken");
 echo "<div class=\"navi_leiste2\">&nbsp;&nbsp;";
 echo "<a href=\"?daten=statistik&option=bau_stat_menu\">BAU STAT</a>&nbsp;";
 echo "<a href=\"?daten=statistik&option=leer_vermietet_jahr\">LEERSTAND/VERMIETET</a>&nbsp;";
@@ -34,6 +32,4 @@ echo "<a href=\"?daten=statistik&option=fenster\">Fensterübersicht</a>&nbsp;";
 echo "<a href=\"?daten=statistik&option=leer_haus_stat\">Statistik im Haus 5J</a>&nbsp;";
 echo "<a href=\"?daten=leerstand&option=kontrolle_preise\">Vermietungspreise</a>&nbsp;";
 echo "</div>";
-$form->fieldset_ende ();
-
-?>
+ende_abschnitt();

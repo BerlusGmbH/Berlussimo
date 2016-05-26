@@ -17,7 +17,11 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
+
+echo "<div class=\"navi_leiste2\">";
+erstelle_abschnitt( "Administration");
 echo "<a href=\"?optionen=admin_panel&admin_panel=details_neue_kat\">Neue Hauptdetails</a>&nbsp;";
 echo "<a href=\"?optionen=admin_panel&admin_panel=details_neue_ukat\">Neue Detailoptionen</a>&nbsp;";
-echo "<hr>";
-?>
+ende_abschnitt();
+
+echo "</div>";

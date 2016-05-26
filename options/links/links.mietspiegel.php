@@ -1,11 +1,7 @@
 <?php
-$f = new formular ();
 echo "<div class=\"navi_leiste2\">";
-$f->erstelle_formular ( "Hauptmenü -> Mietspiegelverwaltung...", NULL );
+erstelle_abschnitt("Mietspiegelverwaltung");
 echo "<a href=\"?daten=mietspiegel&option=mietspiegelliste\">Mietspiegelliste</a>&nbsp;";
 echo "<a href=\"?daten=mietspiegel&option=neuer_mietspiegel\">Neuer Mietspiegel</a>&nbsp;";
-$f->ende_formular ();
-
+ende_abschnitt();
 echo "</div>";
-
-?>

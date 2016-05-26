@@ -22,7 +22,10 @@ if (isset ( $_REQUEST ['formular'] )) {
 	switch ($formular) {
 		
 		case "objekte" :
+			include_once ("options/links/links.form_objekte.php");
+			echo "<div id='main'>";
 			include ("options/formulare/form_objekte.php");
+			echo "</div>";
 			break;
 	}
 }

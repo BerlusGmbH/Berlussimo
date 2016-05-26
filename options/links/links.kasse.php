@@ -17,15 +17,10 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
-$mieten = new mietkonto ();
 echo "<div class=\"navi_leiste2\">";
-$mieten->erstelle_formular ( "Hauptmenü -> Kassen...", NULL );
-
+erstelle_abschnitt("Kassen");
 echo "<a href=\"?daten=kasse&option=kassenbuch\">Kassenbuch</a>&nbsp;";
 echo "<a href=\"?daten=kasse&option=rechnung_an_kasse_erfassen\">Ausgaben erfassen</a>&nbsp;";
 echo "<a href=\"?daten=kasse&option=buchungsmaske_kasse\">E/A Buchen</a>&nbsp;";
-
-$mieten->ende_formular ();
-
+ende_abschnitt();
 echo "</div>";
-?>

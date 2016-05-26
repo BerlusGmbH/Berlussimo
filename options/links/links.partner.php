@@ -17,15 +17,14 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
-$formular = new formular ();
 echo "<div class=\"navi_leiste2\">";
-$formular->erstelle_formular ( "Hauptmenü -> Partner...", NULL );
+erstelle_abschnitt("Partner");
 echo "<div class=\"navi_leiste2\">\n";
 echo "<a href=\"?daten=partner&option=partner_liste\">Alle Partner</a>&nbsp;";
 echo "<a href=\"?daten=partner&option=partner_erfassen\">Neuer Partner</a>&nbsp;";
 echo "<a href=\"?daten=partner&option=partner_umsatz\">Umsatz Partner</a>&nbsp;";
 echo "<a href=\"?daten=partner&option=serienbrief\">Serienbrief</a>&nbsp;";
-$formular->ende_formular ();
+ende_abschnitt();
 echo "</div>\n";
 
 ?>

@@ -22,6 +22,8 @@ if (isset ( $_REQUEST ["daten"] )) {
 	switch ($daten) {
 		
 		case "mietkonten_blatt" :
+			include_once ("options/links/links.mietkonten_blatt.php");
+			echo "<div id='main'>";
 			include ("options/modules/mietkonten_blatt.php");
 			break;
 	}

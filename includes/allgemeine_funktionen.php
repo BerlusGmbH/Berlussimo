@@ -364,6 +364,17 @@ function iframe_end() {
 	echo "</div>\n";
 	echo "</div>\n";
 }
+
+function erstelle_abschnitt($ueberschrift) {
+    echo "<div class='abschnitt'>";
+    echo "<div class='heading'>$ueberschrift</div>";
+    echo "<div class='body'>";
+}
+
+function ende_abschnitt() {
+    echo "</div></div>";
+}
+
 function personen_liste_alle() {
 	if (isset ( $_REQUEST [person_finden] )) {
 		if ($_REQUEST [suche_nach] == "Nachname") {
