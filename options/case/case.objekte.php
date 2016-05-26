@@ -22,6 +22,8 @@ if (isset ( $_REQUEST ['daten'] )) {
 	switch ($daten) {
 		
 		case "objekte_raus" :
+			include_once ("options/links/links.form_objekte.php");
+			echo "<div id='main'>";
 			include ("options/modules/objekte.php");
 			break;
 	}

@@ -22,7 +22,10 @@ if (isset ( $_REQUEST ["optionen"] )) {
 	switch ($daten) {
 		
 		case "admin_panel" :
+			include_once ("options/links/links.admin_menu.php");
+            echo "<div id='main'>";
 			include ("options/modules/admin_panel.php");
+            echo "</div>";
 			break;
 	}
 }

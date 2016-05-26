@@ -22,7 +22,10 @@ if (isset ( $_REQUEST ["daten"] )) {
 	switch ($daten) {
 		
 		case "miete_definieren" :
+			include_once ("options/links/links.miete_definieren.php");
+			echo "<div id='main'>";
 			include ("options/modules/miete_definieren.php");
+			echo "</div>";
 			break;
 	}
 }

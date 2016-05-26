@@ -27,11 +27,17 @@ class formular {
 	}
 	
 	/* Formular erstellen bzw. anfangen, inkl legend, action */
-	function erstelle_formular($name, $action) {
-		// echo '<pre>';
-		// print_r($_SERVER);
+	function erstelle_formular($name, $action, $legend = null) {
+
+		if (! isset ( $action )) {
+			echo "<form class='$name' name='$name' action='$self'  method='post' >\n";
+		} else {
+			echo "<form class='$name' name=\"$name\" action=\"$action\" method=\"post\">\n";
+		}
+		echo "\n";
+
 		echo "<fieldset class=\"$name\" id=\"$name\">\n";
-		echo "<legend>$name</legend>\n";
+		echo "<legend>" . ((!is_null($legend)) ? $legend : $name) . "</legend>\n";
 		// $self = $_SERVER['PHP_SELF'];
 		$scriptname = $_SERVER ['REQUEST_URI'];
 		$servername = $_SERVER ['SERVER_NAME'];
@@ -43,13 +49,6 @@ class formular {
 		} else {
 			$self = "http://$servername:$serverport$scriptname";
 		}
-		
-		if (! isset ( $action )) {
-			echo "<form class=\"$name\" name=\"$name\" action=\"$self\"  method=\"post\" >\n";
-		} else {
-			echo "<form class=\"$name\" name=\"$name\" action=\"$action\" method=\"post\">\n";
-		}
-		echo "\n";
 	}
 	
 	/* Formular abschliessen */
@@ -97,6 +96,12 @@ class formular {
 	function check_box_js1($name, $id, $wert, $label, $js, $checked) {
 		echo "<label for=\"$name\">$label</label>\n";
 		echo "<input type=\"checkbox\" id=\"$id\" name=\"$name\" value=\"$wert\" $js $checked>\n";
+	}
+
+	/* Checkboxauswahl mit JS-Action */
+	function check_box_js1_label_last($name, $id, $wert, $label, $js, $checked) {
+		echo "<input type=\"checkbox\" id=\"$id\" name=\"$name\" value=\"$wert\" $js $checked>\n";
+		echo "<label for=\"$name\">$label</label>\n";
 	}
 	
 	/* Checkboxauswahl für alle Boxen auf einmal mit JS-Action */

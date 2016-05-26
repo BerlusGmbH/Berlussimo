@@ -122,11 +122,9 @@ if (isset ($_REQUEST ['logout'])) {
 if (empty ($_SESSION ['autorisiert']) && empty ($_REQUEST ['send_login'])) {
     $f = new formular ();
     $f->erstelle_formular('Berlussimo - Bitte anmelden', '');
-    $f->fieldset('Benutzernamen und Passwort eingeben', 'bin');
     $f->text_feld('Benutzername', 'benutzername', '', 30, 'benutzername', '');
     $f->passwort_feld('Password', 'passwort', '', 30, 'passwort', '');
     $f->send_button('send_login', 'Anmelden');
-    $f->fieldset_ende();
     $f->ende_formular();
 }
 
@@ -141,7 +139,7 @@ if (isset ( $_SESSION ['autorisiert'] )) {
 	$form = new mietkonto ();
 	$benutzer = $_SESSION ['username'];
 	// echo "<div class=\"willkommen\">Wilkommen $_SESSION[username]</div>";
-	$form->erstelle_formular ( "Benutzer: $benutzer", NULL );
+	erstelle_abschnitt("Benutzer: $benutzer");
 	include_once ('classes/class_partners.php');
 	$p = new partners ();
 
@@ -176,10 +174,12 @@ if (isset ( $_SESSION ['autorisiert'] )) {
 	} else {
 		$link_geldkonto = '';
 	}
+
+	$link_logout = '<a href="?logout">Abmelden</a>';
 	
-	echo "<div><center>$link_partner &nbsp; $link_geldkonto</center></div>";
-	// echo "<div id=\"berlussimo_logo_top\"><img src=\"css/berlussimo_top_logo.png\"/><br>$link_partner $link_geldkonto</div>";
-	// echo "<div id=\"berlussimo_logo_top\">$link_partner <br>$link_geldkonto</div>";
+	echo "<div style='text-align: center'>$link_partner &nbsp; $link_geldkonto<span style='float: right'>$link_logout</span></div>";
+	ende_abschnitt();
+
 	include ("options/links/links.statisch.php");
 	
 	include_options ();
