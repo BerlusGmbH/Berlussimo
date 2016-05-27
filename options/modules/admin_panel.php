@@ -28,7 +28,6 @@ if (! check_user_mod ( $_SESSION [benutzer_id], 'admin_panel' )) {
 }
 
 include_once ("includes/formular_funktionen.php");
-//include_once ("options/links/links.admin_menu.php");
 $admin_panel = $_REQUEST ["admin_panel"];
 if (isset ( $admin_panel )) {
 	
@@ -56,24 +55,24 @@ if (isset ( $admin_panel )) {
 function detail_kategorie_form() {
 	echo "<div class=\"div balken_detail_kat_form\"><span class=\"font_balken_uberschrift\">HAUPTDETAIL / DETAILGRUPPE ERSTELLEN</span><hr />";
 	
-	if (! isset ( $_REQUEST [submit_detail_kat] )) {
+	if (! isset ( $_REQUEST ['submit_detail_kat'] )) {
 		erstelle_formular ( NULL, NULL );
 		detail_drop_down_kategorie ();
 		erstelle_eingabefeld ( "Detail / Detailgruppe", "detail_kat_name", "", 30 );
 		erstelle_submit_button_nur ( "submit_detail_kat", "Erstellen" );
 		ende_formular ();
 	}
-	if (isset ( $_REQUEST [submit_detail_kat] )) {
+	if (isset ( $_REQUEST ['submit_detail_kat'] )) {
 		// print_r($_REQUEST);
-		if (isset ( $_REQUEST [detail_kat_name] ) && empty ( $_REQUEST [detail_kat_name] )) {
+		if (isset ( $_REQUEST ['detail_kat_name'] ) && empty ( $_REQUEST ['detail_kat_name'] )) {
 			fehlermeldung_ausgeben ( "Geben Sie bitte einen Kategorienamen ein!" );
 			erstelle_back_button ();
-		} elseif (isset ( $_REQUEST [bereich_kategorie] ) && empty ( $_REQUEST [bereich_kategorie] )) {
+		} elseif (isset ( $_REQUEST ['bereich_kategorie'] ) && empty ( $_REQUEST ['bereich_kategorie'] )) {
 			fehlermeldung_ausgeben ( "Wählen Sie bitte eine Detailtabelle aus!" );
 			erstelle_back_button ();
 		} else {
-			$detail_kat_name = bereinige_string ( $_REQUEST [detail_kat_name] );
-			$bereich_kategorie = bereinige_string ( $_REQUEST [bereich_kategorie] );
+			$detail_kat_name = bereinige_string ( $_REQUEST ['detail_kat_name'] );
+			$bereich_kategorie = bereinige_string ( $_REQUEST ['bereich_kategorie'] );
 			echo $detail_kat_name;
 			echo $bereich_kategorie;
 			$detail_kat_exists = check_detail_kat ( $detail_kat_name );
@@ -93,21 +92,21 @@ function detail_kategorie_form() {
 function detail_unterkategorie_form() {
 	echo "<div class=\"div balken_detail_kat_form\"><span class=\"font_balken_uberschrift\">AUSWAHLOPTIONEN</span><hr />";
 	
-	if (! isset ( $_REQUEST [submit_detail_ukat] )) {
+	if (! isset ( $_REQUEST ['submit_detail_ukat'] )) {
 		erstelle_formular ( NULL, NULL );
 		detail_drop_down_kategorie_db ();
 		erstelle_eingabefeld ( "Auswahloption", "detail_kat_uname", "", 30 );
 		erstelle_submit_button_nur ( "submit_detail_ukat", "Erstellen" );
 		ende_formular ();
 	}
-	if (isset ( $_REQUEST [submit_detail_ukat] )) {
+	if (isset ( $_REQUEST ['submit_detail_ukat'] )) {
 		// print_r($_REQUEST);
-		if (isset ( $_REQUEST [detail_kat_uname] ) && empty ( $_REQUEST [detail_kat_uname] )) {
+		if (isset ( $_REQUEST ['detail_kat_uname'] ) && empty ( $_REQUEST ['detail_kat_uname'] )) {
 			fehlermeldung_ausgeben ( "Geben Sie bitte eine Option ein!" );
 			erstelle_back_button ();
 		} else {
-			$detail_kat_uname = bereinige_string ( $_REQUEST [detail_kat_uname] );
-			$bereich_kategorie = bereinige_string ( $_REQUEST [bereich_kategorie] );
+			$detail_kat_uname = bereinige_string ( $_REQUEST ['detail_kat_uname'] );
+			$bereich_kategorie = bereinige_string ( $_REQUEST ['bereich_kategorie'] );
 			echo $detail_kat_uname;
 			echo $bereich_kategorie;
 			$u_kat_exists = check_detail_ukat ( $bereich_kategorie, $detail_kat_uname );
@@ -144,7 +143,7 @@ function get_detail_kat_name($id) {
 		return $DETAIL_KAT_NAME;
 }
 function liste_detail_kat() {
-	if (isset ( $_REQUEST [table] ) && ! empty ( $_REQUEST [table] )) {
+	if (isset ( $_REQUEST ['table'] ) && ! empty ( $_REQUEST ['table'] )) {
 		$db_abfrage = "SELECT DETAIL_KAT_ID, DETAIL_KAT_NAME, DETAIL_KAT_KATEGORIE FROM DETAIL_KATEGORIEN WHERE DETAIL_KAT_AKTUELL='1' && DETAIL_KAT_KATEGORIE='$_REQUEST[table]' ORDER BY DETAIL_KAT_KATEGORIE ASC ";
 	} else {
 		$db_abfrage = "SELECT DETAIL_KAT_ID, DETAIL_KAT_NAME, DETAIL_KAT_KATEGORIE FROM DETAIL_KATEGORIEN WHERE DETAIL_KAT_AKTUELL='1' ORDER BY DETAIL_KAT_KATEGORIE ASC ";
@@ -170,7 +169,7 @@ function liste_detail_kat() {
 	echo "</table></div>";
 }
 function liste_udetail_kat() {
-	if (isset ( $_REQUEST [table] ) && ! empty ( $_REQUEST [table] )) {
+	if (isset ( $_REQUEST ['table'] ) && ! empty ( $_REQUEST ['table'] )) {
 		$db_abfrage = "SELECT UKAT_DAT, KATEGORIE_ID, UNTERKATEGORIE_NAME FROM DETAIL_UNTERKATEGORIEN WHERE AKTUELL='1' ORDER BY KATEGORIE_ID ASC ";
 	} else {
 		$db_abfrage = "SELECT UKAT_DAT, KATEGORIE_ID, UNTERKATEGORIE_NAME FROM DETAIL_UNTERKATEGORIEN WHERE AKTUELL='1' ORDER BY KATEGORIE_ID ASC ";
@@ -194,5 +193,3 @@ function liste_udetail_kat() {
 	}
 	echo "</table></div>";
 }
-
-?>

@@ -17,10 +17,13 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
-echo "<ul id='partner' class=\"nav tree list-group\">\n";
-    echo "<li class='list-group-item'><a href=\"?daten=partner&option=partner_liste\">Alle Partner</a></li>\n";
-    echo "<li class='list-group-item'><a href=\"?daten=partner&option=partner_erfassen\">Neuer Partner</a></li>\n";
-    echo "<li class='list-group-item'><a href=\"?daten=partner&option=partner_umsatz\">Umsatz Partner</a></li>\n";
-    echo "<li class='list-group-item'><a href=\"?daten=partner&option=serienbrief\">Serienbrief</a></li>\n";
-echo "</ul>\n";
-
+echo "<div class=\"navi_leiste2\">";
+erstelle_abschnitt("Partner");
+echo "<div class=\"navi_leiste2\">\n";
+echo "<a href=\"?daten=partner&option=partner_liste\">Alle Partner</a>&nbsp;";
+echo "<a href=\"?daten=partner&option=partner_erfassen\">Neuer Partner</a>&nbsp;";
+echo "<a href=\"?daten=partner&option=partner_umsatz\">Umsatz Partner</a>&nbsp;";
+echo "<a href=\"?daten=partner&option=serienbrief\">Serienbrief</a>&nbsp;";
+ende_abschnitt();
+echo "</div>\n";
+echo "</div>\n";

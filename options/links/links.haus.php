@@ -22,4 +22,3 @@ echo "<a href=\"?daten=haus_raus&haus_raus=haus_kurz\">Alle Häuser kurz</a>&nbs
 echo "<a href=\"?daten=haus_raus&haus_raus=haus_detailiert\">Häuser im Detail</a>&nbsp;";
 echo "<br><hr>";
 echo "</div>";
-?>

@@ -179,7 +179,7 @@ if (isset ( $_REQUEST ["daten"] )) {
 			
 			case "show_mkb2pdf" :
 				// print_r($_POST);
-				if (! empty ( $_REQUEST [mv_id] )) {
+				if (! empty ( $_REQUEST ['mv_id'] )) {
 					$mz = new miete ();
 					$mz->mkb2pdf ( $_REQUEST ['mv_id'], $_REQUEST ['monat'], $_REQUEST ['jahr'] );
 				} else {
@@ -243,7 +243,7 @@ if (isset ( $_REQUEST ["daten"] )) {
 				// $buchung->array_anzeigen($mieter_ids);
 				// ####Personendaten zu Person_id holen#######
 				for($i = 0; $i < count ( $mieter_ids ); $i ++) {
-					$mieter_daten_arr [] = $buchung->get_person_infos ( $mieter_ids [$i] [PERSON_MIETVERTRAG_PERSON_ID] );
+					$mieter_daten_arr [] = $buchung->get_person_infos ( $mieter_ids [$i] ['PERSON_MIETVERTRAG_PERSON_ID'] );
 				}
 				// ##Überschrift##############################
 				$heute = date ( "Y-m-d" );
@@ -253,7 +253,7 @@ if (isset ( $_REQUEST ["daten"] )) {
 				// ####Ausgabe von Personendaten####################
 				echo "<b>Mieter:</b>";
 				for($i = 0; $i < count ( $mieter_daten_arr ); $i ++) {
-					echo " " . $mieter_daten_arr [$i] [0] [PERSON_NACHNAME] . " " . $mieter_daten_arr [$i] [0] [PERSON_VORNAME] . " ";
+					echo " " . $mieter_daten_arr [$i] [0] ['PERSON_NACHNAME'] . " " . $mieter_daten_arr [$i] [0] ['PERSON_VORNAME'] . " ";
 				}
 				echo " </p>";
 				echo "<hr>";
@@ -276,8 +276,8 @@ if (isset ( $_REQUEST ["daten"] )) {
 						$monat_mietdefintion = $datum_mietdefinition [1];
 						$jahr_mietdefinition = $datum_mietdefinition [0];
 						$monate_arr = $zeitraum->zeitraum_generieren ( $monat_mietdefintion, $jahr_mietdefinition, $monat_aktuell, $jahr_aktuell );
-						$einzugs_monat == $monat_mietdefintion;
-						$einzugs_jahr == $jahr_mietdefinition;
+						$einzugs_monat = $monat_mietdefintion;
+						$einzugs_jahr = $jahr_mietdefinition;
 					} else {
 						// echo "EINZUG $einzugs_monat $einzugs_jahr";
 						$monate_arr = $zeitraum->zeitraum_generieren ( $einzugs_monat, $einzugs_jahr, $monat_aktuell, $jahr_aktuell );
@@ -320,8 +320,8 @@ if (isset ( $_REQUEST ["daten"] )) {
 				// $saldo = $summe_aller_zahlbetraege - $summe_gesamt_forderung;
 				// #####################jeden monat durchlaufen####################
 				for($i = 0; $i < count ( $monate_arr ); $i ++) {
-					$monat = $monate_arr [$i] [monat];
-					$jahr = $monate_arr [$i] [jahr];
+					$monat = $monate_arr [$i] ['monat'];
+					$jahr = $monate_arr [$i] ['jahr'];
 					$alle_zahlbetraege_monat_arr = $buchung->alle_zahlbetraege_monat_arr ( $mietvertrag_id, $monat, $jahr );
 					// $buchung->array_anzeigen($alle_zahlbetraege_monat_arr);
 					$summe_forderung_monatlich = $buchung->summe_forderung_monatlich ( $mietvertrag_id, $monat, $jahr );
@@ -344,7 +344,7 @@ if (isset ( $_REQUEST ["daten"] )) {
 								if ($a < 1) {
 									// Miete Sollzeile
 									echo "<tr><td>01.$monat.$jahr</td><td>Soll Miete $monat/$jahr </td><td><b>$saldo_vortrag_vorverwaltung $summe_forderung_monatlich €</b></td><td></td><td></td><td></td></tr>";
-									$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] [BETRAG] - $summe_forderung_monatlich;
+									$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] ['BETRAG'] - $summe_forderung_monatlich;
 									// AUSGABE 1 zahlung
 									// 1. Zahlung Einzugsmonat
 									if ($zahlungsnummer < $anzahl_zahlungen_im_monat) {
@@ -353,7 +353,7 @@ if (isset ( $_REQUEST ["daten"] )) {
 										$differenz_monatlich = number_format ( $differenz_monatlich, 2, ".", "" );
 										
 										$gesamt_soll = number_format ( $gesamt_soll, 2, ".", "" );
-										echo "<tr><td>$zahlungsdatum</td><td>1.Zahlbetrag 1.mon</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b></b></td></tr>";
+										echo "<tr><td>$zahlungsdatum</td><td>1.Zahlbetrag 1.mon</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] ['BETRAG'] . " € </td><td>$differenz_monatlich €</td><td><b></b></td></tr>";
 									}
 									/*
 									 * //letzte Zahlung Einzugsmonat
@@ -369,22 +369,22 @@ if (isset ( $_REQUEST ["daten"] )) {
 								if ($a > 0) {
 									// weitere/andere Zahlungen Einzugsmonat
 									if ($zahlungsnummer < $anzahl_zahlungen_im_monat) {
-										$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] [BETRAG];
-										$gesamt_soll = $gesamt_soll + $alle_zahlbetraege_monat_arr [$a] [BETRAG];
+										$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] ['BETRAG'];
+										$gesamt_soll = $gesamt_soll + $alle_zahlbetraege_monat_arr [$a] ['BETRAG'];
 										$saldo_vormonat = $gesamt_soll;
 										$differenz_monatlich = number_format ( $differenz_monatlich, 2, ".", "" );
-										echo "<tr><td>$zahlungsdatum</td><td>Zahlbetrag zwischen</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b></b></td></tr>";
+										echo "<tr><td>$zahlungsdatum</td><td>Zahlbetrag zwischen</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] ['BETRAG'] . " € </td><td>$differenz_monatlich €</td><td><b></b></td></tr>";
 									}
 									// LETZTE ZAHLUNG EINZUGSMONAT
 									if ($zahlungsnummer == $anzahl_zahlungen_im_monat) {
-										$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] [BETRAG];
-										$gesamt_soll = $gesamt_soll + $alle_zahlbetraege_monat_arr [$a] [BETRAG];
+										$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] ['BETRAG'];
+										$gesamt_soll = $gesamt_soll + $alle_zahlbetraege_monat_arr [$a] ['BETRAG'];
 										// $gesamt_soll = $gesamt_soll + $saldo_vortrag_vorverwaltung;
 										// $gesamt_soll = $saldo_vormonat + $differenz_monatlich;
 										// echo "GSOLL $gesamt_soll<br>";
 										$saldo_vormonat = $gesamt_soll;
 										$differenz_monatlich = number_format ( $differenz_monatlich, 2, ".", "" );
-										echo "<tr><td>$zahlungsdatum</td><td>" . $alle_zahlbetraege_monat_arr [$a] [BEMERKUNG] . "</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b>$gesamt_soll €</b></td></tr>";
+										echo "<tr><td>$zahlungsdatum</td><td>" . $alle_zahlbetraege_monat_arr [$a] ['BEMERKUNG'] . "</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] ['BETRAG'] . " € </td><td>$differenz_monatlich €</td><td><b>$gesamt_soll €</b></td></tr>";
 									}
 								}
 							}
@@ -417,13 +417,13 @@ else {
 									
 									// Miete Sollzeile
 									echo "<tr><td>01.$monat.$jahr</td><td>Soll Miete $monat/$jahr </td><td><b>$summe_forderung_monatlich €</b></td><td></td><td></td><td></td></tr>";
-									$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] [BETRAG] - $summe_forderung_monatlich;
+									$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] ['BETRAG'] - $summe_forderung_monatlich;
 									$differenz_monatlich = number_format ( $differenz_monatlich, 2, ".", "" );
 									// AUSGABE 1 zahlung
 									// 1. Zahlung Einzugsmonat
 									if ($zahlungsnummer < $anzahl_zahlungen_im_monat) {
 										$differenz_monatlich = number_format ( $differenz_monatlich, 2, ".", "" );
-										echo "<tr><td>$zahlungsdatum</td><td>" . $alle_zahlbetraege_monat_arr [$a] [BEMERKUNG] . "</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b></b></td></tr>";
+										echo "<tr><td>$zahlungsdatum</td><td>" . $alle_zahlbetraege_monat_arr [$a] ['BEMERKUNG'] . "</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] ['BETRAG'] . " € </td><td>$differenz_monatlich €</td><td><b></b></td></tr>";
 										
 										$gesamt_soll = $saldo_vormonat + $differenz_monatlich;
 										$saldo_vormonat = $gesamt_soll;
@@ -433,7 +433,7 @@ else {
 										$gesamt_soll = $saldo_vormonat + $differenz_monatlich;
 										$differenz_monatlich = number_format ( $differenz_monatlich, 2, ".", "" );
 										$gesamt_soll = number_format ( $gesamt_soll, 2, ".", "" );
-										echo "<tr><td>$zahlungsdatum</td><td>" . $alle_zahlbetraege_monat_arr [$a] [BEMERKUNG] . "</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b>$gesamt_soll €</b></td></tr>";
+										echo "<tr><td>$zahlungsdatum</td><td>" . $alle_zahlbetraege_monat_arr [$a] ['BEMERKUNG'] . "</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] ['BETRAG'] . " € </td><td>$differenz_monatlich €</td><td><b>$gesamt_soll €</b></td></tr>";
 										
 										$saldo_vormonat = $gesamt_soll;
 										// echo "DDDDOLL $gesamt_soll<br>";
@@ -442,23 +442,23 @@ else {
 								if ($a > 0) {
 									// 1. Zahlung Andere monate
 									if ($zahlungsnummer < $anzahl_zahlungen_im_monat) {
-										$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] [BETRAG];
+										$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] ['BETRAG'];
 										$differenz_monatlich = number_format ( $differenz_monatlich, 2, ".", "" );
-										echo "<tr><td>$zahlungsdatum</td><td>" . $alle_zahlbetraege_monat_arr [$a] [BEMERKUNG] . "</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b></b></td></tr>";
+										echo "<tr><td>$zahlungsdatum</td><td>" . $alle_zahlbetraege_monat_arr [$a] ['BEMERKUNG'] . "</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] ['BETRAG'] . " € </td><td>$differenz_monatlich €</td><td><b></b></td></tr>";
 										$gesamt_soll = $saldo_vormonat + $differenz_monatlich;
 										$saldo_vormonat = $gesamt_soll;
 										// echo "DDDDOLL111 $gesamt_soll<br>";
 										$saldo_vormonat = $gesamt_soll;
 									}
 									if ($zahlungsnummer == $anzahl_zahlungen_im_monat) {
-										$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] [BETRAG];
+										$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] ['BETRAG'];
 										$differenz_monatlich = number_format ( $differenz_monatlich, 2, ".", "" );
 										$gesamt_soll = $saldo_vormonat + $differenz_monatlich;
 										$saldo_vormonat = $gesamt_soll;
 										// echo "DDDDOLLeeee $gesamt_soll<br>";
 										/* Letzte Zeile */
 										$gesamt_soll = number_format ( $gesamt_soll, 2, ".", "" );
-										echo "<tr><td>$zahlungsdatum</td><td>" . $alle_zahlbetraege_monat_arr [$a] [BEMERKUNG] . "</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b>$gesamt_soll €</b></td></tr>";
+										echo "<tr><td>$zahlungsdatum</td><td>" . $alle_zahlbetraege_monat_arr [$a] ['BEMERKUNG'] . "</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b>$gesamt_soll €</b></td></tr>";
 										$saldo_vormonat = $gesamt_soll;
 									}
 								}
@@ -517,7 +517,7 @@ else {
 				// $buchung->array_anzeigen($mieter_ids);
 				// ####Personendaten zu Person_id holen#######
 				for($i = 0; $i < count ( $mieter_ids ); $i ++) {
-					$mieter_daten_arr [] = $buchung->get_person_infos ( $mieter_ids [$i] [PERSON_MIETVERTRAG_PERSON_ID] );
+					$mieter_daten_arr [] = $buchung->get_person_infos ( $mieter_ids [$i] ['PERSON_MIETVERTRAG_PERSON_ID'] );
 				}
 				// ##Überschrift##############################
 				$heute = date ( "Y-m-d" );
@@ -527,7 +527,7 @@ else {
 				// ####Ausgabe von Personendaten####################
 				echo "<p class=\"mieterdaten_mietkonto\"><b>Mieter:</b>";
 				for($i = 0; $i < count ( $mieter_daten_arr ); $i ++) {
-					echo " " . $mieter_daten_arr [$i] [0] [PERSON_NACHNAME] . " " . $mieter_daten_arr [$i] [0] [PERSON_VORNAME] . " ";
+					echo " " . $mieter_daten_arr [$i] [0] ['PERSON_NACHNAME'] . " " . $mieter_daten_arr [$i] [0] ['PERSON_VORNAME'] . " ";
 				}
 				echo "</p>";
 				echo "<p><a href=\"mietkonto_pdf.php?mietvertrag_id=$mietvertrag_id\"><img src=\"includes/logos/pdf_logo.gif\" width=30 ></a></p>";
@@ -581,8 +581,8 @@ else {
 		$saldo = $summe_aller_zahlbetraege - $summe_gesamt_forderung;
 		// #####################jeden monat durchlaufen####################
 		for($i = 0; $i < count ( $monate_arr ); $i ++) {
-			$monat = $monate_arr [$i] [monat];
-			$jahr = $monate_arr [$i] [jahr];
+			$monat = $monate_arr [$i] ['monat'];
+			$jahr = $monate_arr [$i] ['jahr'];
 			$alle_zahlbetraege_monat_arr = $buchung->alle_zahlbetraege_monat_arr ( $mietvertrag_id, $monat, $jahr );
 			// $buchung->array_anzeigen($alle_zahlbetraege_monat_arr);
 			$summe_forderung_monatlich = $buchung->summe_forderung_monatlich ( $mietvertrag_id, $monat, $jahr );
@@ -602,7 +602,7 @@ else {
 						if ($a < 1) {
 							// Miete Sollzeile
 							echo "<tr><td>01.$monat.$jahr</td><td>Soll Miete $monat/$jahr </td><td><b>$summe_forderung_monatlich €</b></td><td></td><td></td><td></td></tr>";
-							$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] [BETRAG] - $summe_forderung_monatlich;
+							$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] ['BETRAG'] - $summe_forderung_monatlich;
 							// AUSGABE 1 zahlung
 							// 1. Zahlung Einzugsmonat
 							if ($zahlungsnummer < $anzahl_zahlungen_im_monat) {
@@ -624,19 +624,19 @@ else {
 						if ($a > 0) {
 							// weitere/andere Zahlungen Einzugsmonat
 							if ($zahlungsnummer < $anzahl_zahlungen_im_monat) {
-								$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] [BETRAG];
-								$gesamt_soll = $gesamt_soll + $alle_zahlbetraege_monat_arr [$a] [BETRAG];
+								$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] ['BETRAG'];
+								$gesamt_soll = $gesamt_soll + $alle_zahlbetraege_monat_arr [$a] ['BETRAG'];
 								$saldo_vormonat = $gesamt_soll;
 								echo "<tr><td>$zahlungsdatum</td><td>Zahlbetrag zwischen</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b></b></td></tr>";
 							}
 							// LETZTE ZAHLUNG EINZUGSMONAT
 							if ($zahlungsnummer == $anzahl_zahlungen_im_monat) {
-								$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] [BETRAG];
-								$gesamt_soll = $gesamt_soll + $alle_zahlbetraege_monat_arr [$a] [BETRAG];
+								$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] ['BETRAG'];
+								$gesamt_soll = $gesamt_soll + $alle_zahlbetraege_monat_arr [$a] ['BETRAG'];
 								// $gesamt_soll = $saldo_vormonat + $differenz_monatlich;
 								// echo "GSOLL $gesamt_soll<br>";
 								$saldo_vormonat = $gesamt_soll;
-								echo "<tr><td>$zahlungsdatum</td><td>" . $alle_zahlbetraege_monat_arr [$a] [BEMERKUNG] . "</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b>$gesamt_soll €</b></td></tr>";
+								echo "<tr><td>$zahlungsdatum</td><td>" . $alle_zahlbetraege_monat_arr [$a] ['BEMERKUNG'] . "</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b>$gesamt_soll €</b></td></tr>";
 							}
 						}
 					}
@@ -665,11 +665,11 @@ else {
 							
 							// Miete Sollzeile
 							echo "<tr><td>01.$monat.$jahr</td><td>Soll Miete $monat/$jahr </td><td><b>$summe_forderung_monatlich €</b></td><td></td><td></td><td></td></tr>";
-							$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] [BETRAG] - $summe_forderung_monatlich;
+							$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] ['BETRAG'] - $summe_forderung_monatlich;
 							// AUSGABE 1 zahlung
 							// 1. Zahlung Einzugsmonat
 							if ($zahlungsnummer < $anzahl_zahlungen_im_monat) {
-								echo "<tr><td>$zahlungsdatum</td><td>" . $alle_zahlbetraege_monat_arr [$a] [BEMERKUNG] . "</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b></b></td></tr>";
+								echo "<tr><td>$zahlungsdatum</td><td>" . $alle_zahlbetraege_monat_arr [$a] ['BEMERKUNG'] . "</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b></b></td></tr>";
 								
 								$gesamt_soll = $saldo_vormonat + $differenz_monatlich;
 								$saldo_vormonat = $gesamt_soll;
@@ -677,7 +677,7 @@ else {
 							}
 							if ($zahlungsnummer == $anzahl_zahlungen_im_monat) {
 								$gesamt_soll = $saldo_vormonat + $differenz_monatlich;
-								echo "<tr><td>$zahlungsdatum</td><td>" . $alle_zahlbetraege_monat_arr [$a] [BEMERKUNG] . "</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b>$gesamt_soll €</b></td></tr>";
+								echo "<tr><td>$zahlungsdatum</td><td>" . $alle_zahlbetraege_monat_arr [$a] ['BEMERKUNG'] . "</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b>$gesamt_soll €</b></td></tr>";
 								
 								$saldo_vormonat = $gesamt_soll;
 								// echo "DDDDOLL $gesamt_soll<br>";
@@ -686,20 +686,20 @@ else {
 						if ($a > 0) {
 							// 1. Zahlung Andere monate
 							if ($zahlungsnummer < $anzahl_zahlungen_im_monat) {
-								$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] [BETRAG];
+								$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] ['BETRAG'];
 								
-								echo "<tr><td>$zahlungsdatum</td><td>" . $alle_zahlbetraege_monat_arr [$a] [BEMERKUNG] . "</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b></b></td></tr>";
+								echo "<tr><td>$zahlungsdatum</td><td>" . $alle_zahlbetraege_monat_arr [$a] ['BEMERKUNG'] . "</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b></b></td></tr>";
 								$gesamt_soll = $saldo_vormonat + $differenz_monatlich;
 								$saldo_vormonat = $gesamt_soll;
 								// echo "DDDDOLL111 $gesamt_soll<br>";
 								$saldo_vormonat = $gesamt_soll;
 							}
 							if ($zahlungsnummer == $anzahl_zahlungen_im_monat) {
-								$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] [BETRAG];
+								$differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] ['BETRAG'];
 								$gesamt_soll = $saldo_vormonat + $differenz_monatlich;
 								$saldo_vormonat = $gesamt_soll;
 								// echo "DDDDOLLeeee $gesamt_soll<br>";
-								echo "<tr><td>$zahlungsdatum</td><td>" . $alle_zahlbetraege_monat_arr [$a] [BEMERKUNG] . "</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b>$gesamt_soll €</b></td></tr>";
+								echo "<tr><td>$zahlungsdatum</td><td>" . $alle_zahlbetraege_monat_arr [$a] ['BEMERKUNG'] . "</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b>$gesamt_soll €</b></td></tr>";
 								$saldo_vormonat = $gesamt_soll;
 							}
 						}
@@ -753,7 +753,7 @@ else {
 		// $buchung->array_anzeigen($mieter_ids);
 		// ####Personendaten zu Person_id holen#######
 		for($i = 0; $i < count ( $mieter_ids ); $i ++) {
-			$mieter_daten_arr [] = $buchung->get_person_infos ( $mieter_ids [$i] [PERSON_MIETVERTRAG_PERSON_ID] );
+			$mieter_daten_arr [] = $buchung->get_person_infos ( $mieter_ids [$i] ['PERSON_MIETVERTRAG_PERSON_ID'] );
 		}
 		// ##überschrift##############################
 		$heute = date ( "Y-m-d" );
@@ -1081,18 +1081,18 @@ function mietkonto_monats_uebersicht_ORG($mietvertrag_id, $monat, $jahr, $vormon
 	echo "<tr><td><b>FORDERUNGEN</td<td><b>ZAHLUNGEN</td><td><b>AUFTEILUNG</td><td><b>BERECHNUNG</td><td><b>KONTOSTAND_VOR</td><td><b>KONTOSTAND_NACH</td></tr>";
 	echo "<tr><td align=right valign=top>"; // Zelle1
 	for($i = 0; $i < count ( $forderungen_arr ); $i ++) {
-		echo "" . $forderungen_arr [$i] [KOSTENKATEGORIE] . " = " . $forderungen_arr [$i] [BETRAG] . "€<br>";
-		if ($forderungen_arr [$i] [KOSTENKATEGORIE] == "BK") {
-			$BK_BETRAG = $forderungen_arr [$i] [BETRAG];
+		echo "" . $forderungen_arr [$i] ['KOSTENKATEGORIE'] . " = " . $forderungen_arr [$i] ['BETRAG'] . "€<br>";
+		if ($forderungen_arr [$i] ['KOSTENKATEGORIE'] == "BK") {
+			$BK_BETRAG = $forderungen_arr [$i] ['BETRAG'];
 		}
-		if ($forderungen_arr [$i] [KOSTENKATEGORIE] == "HK") {
-			$HK_BETRAG = $forderungen_arr [$i] [BETRAG];
+		if ($forderungen_arr [$i] ['KOSTENKATEGORIE'] == "HK") {
+			$HK_BETRAG = $forderungen_arr [$i] ['BETRAG'];
 		}
 	}
 	echo "</td>"; // ende zell1
 	echo "<td align=right valign=top>"; // Zelle2
 	for($i = 0; $i < count ( $zahlungen_arr ); $i ++) {
-		echo "" . $zahlungen_arr [$i] [KOSTENKATEGORIE] . " = " . $zahlungen_arr [$i] [BETRAG] . "€<br>";
+		echo "" . $zahlungen_arr [$i] ['KOSTENKATEGORIE'] . " = " . $zahlungen_arr [$i] ['BETRAG'] . "€<br>";
 	}
 	echo "</td>"; // ende zell2
 	echo "<td>"; // Zelle3
@@ -1102,7 +1102,7 @@ function mietkonto_monats_uebersicht_ORG($mietvertrag_id, $monat, $jahr, $vormon
 		
 		if (($summe_zahlungen + $konto_vormonat) > $summe_forderungen) {
 			for($i = 0; $i < count ( $forderungen_arr ); $i ++) {
-				echo "" . $forderungen_arr [$i] [KOSTENKATEGORIE] . " = " . $forderungen_arr [$i] [BETRAG] . "€<br>";
+				echo "" . $forderungen_arr [$i] ['KOSTENKATEGORIE'] . " = " . $forderungen_arr [$i] ['BETRAG'] . "€<br>";
 			}
 		} else {
 			if (($summe_zahlungen + $konto_vormonat) > $BK_BETRAG) {
@@ -1165,7 +1165,7 @@ function mietkonto_monats_uebersicht($mietvertrag_id, $monat, $jahr, $vormonat_s
 	echo "<tr class=\"zeile1\"><td align=right valign=top>"; // Zelle1
 	
 	for($i = 0; $i < count ( $forderungen_arr ); $i ++) {
-		echo "" . $forderungen_arr [$i] [KOSTENKATEGORIE] . " = " . $forderungen_arr [$i] [BETRAG] . "€<br>";
+		echo "" . $forderungen_arr [$i] ['KOSTENKATEGORIE'] . " = " . $forderungen_arr [$i] ['BETRAG'] . "€<br>";
 	}
 	
 	echo "</td>"; // ende zell1
@@ -1175,7 +1175,7 @@ function mietkonto_monats_uebersicht($mietvertrag_id, $monat, $jahr, $vormonat_s
 		for($i = 0; $i < count ( $zahlungen_arr ); $i ++) {
 			$zeile = $i + 1;
 			$zahlungs_datum = $mietkonto_info->date_mysql2german ( $zahlungen_arr [$i] [DATUM] );
-			echo "<b>$zeile. " . $zahlungs_datum . "</b><br>" . $zahlungen_arr [$i] [KOSTENKATEGORIE] . " = " . $zahlungen_arr [$i] [BETRAG] . "€<br>";
+			echo "<b>$zeile. " . $zahlungs_datum . "</b><br>" . $zahlungen_arr [$i] ['KOSTENKATEGORIE'] . " = " . $zahlungen_arr [$i] ['BETRAG'] . "€<br>";
 		}
 	} else {
 		echo "Keine Zahlungen im Monat $monat $jahr";
@@ -1189,11 +1189,11 @@ function mietkonto_monats_uebersicht($mietvertrag_id, $monat, $jahr, $vormonat_s
 		echo "Keine Aufteilung da keine Zahlungen im Monat $monat $jahr";
 	}
 	
-	if ($anzahl_zahlungen_im_monat == 1 && $zahlungen_arr [0] [KOSTENKATEGORIE] == "ZAHLBETRAG") {
+	if ($anzahl_zahlungen_im_monat == 1 && $zahlungen_arr [0] ['KOSTENKATEGORIE'] == "ZAHLBETRAG") {
 		
 		if (($summe_zahlungen) >= $summe_forderungen) {
 			for($i = 0; $i < count ( $forderungen_arr ); $i ++) {
-				echo "" . $forderungen_arr [$i] [KOSTENKATEGORIE] . " = " . $forderungen_arr [$i] [BETRAG] . "€<br>";
+				echo "" . $forderungen_arr [$i] ['KOSTENKATEGORIE'] . " = " . $forderungen_arr [$i] ['BETRAG'] . "€<br>";
 			}
 			$rest = ($summe_zahlungen + $konto_vormonat) - $summe_forderungen;
 			if ($rest > 0) {
@@ -1203,11 +1203,11 @@ function mietkonto_monats_uebersicht($mietvertrag_id, $monat, $jahr, $vormonat_s
 		}
 	}
 	
-	if ($anzahl_zahlungen_im_monat == 1 && $zahlungen_arr [0] [KOSTENKATEGORIE] != "ZAHLBETRAG") {
+	if ($anzahl_zahlungen_im_monat == 1 && $zahlungen_arr [0] ['KOSTENKATEGORIE'] != "ZAHLBETRAG") {
 		
 		if (($summe_zahlungen) >= $summe_forderungen) {
 			for($i = 0; $i < count ( $forderungen_arr ); $i ++) {
-				echo "F" . $forderungen_arr [$i] [KOSTENKATEGORIE] . " = " . $forderungen_arr [$i] [BETRAG] . "€<br>";
+				echo "F" . $forderungen_arr [$i] ['KOSTENKATEGORIE'] . " = " . $forderungen_arr [$i] ['BETRAG'] . "€<br>";
 			}
 			$rest = ($summe_zahlungen + $konto_vormonat) - $summe_forderungen;
 			if ($rest > 0) {
@@ -1215,7 +1215,7 @@ function mietkonto_monats_uebersicht($mietvertrag_id, $monat, $jahr, $vormonat_s
 				$ueberschuss = $rest;
 			}
 		} else {
-			echo "Z" . $zahlungen_arr [0] [KOSTENKATEGORIE] . " = " . $zahlungen_arr [0] [BETRAG] . "€<br>";
+			echo "Z" . $zahlungen_arr [0] ['KOSTENKATEGORIE'] . " = " . $zahlungen_arr [0] ['BETRAG'] . "€<br>";
 		}
 	}
 	
@@ -1300,8 +1300,8 @@ function mietkonto_uebersicht_test($mietvertrag_id) {
 	$tag = $einzugsdatum_arr [2];
 	
 	$datum = getdate ();
-	$aktueller_monat = $datum [mon];
-	$aktuelles_jahr = $datum [year];
+	$aktueller_monat = $datum ['mon'];
+	$aktuelles_jahr = $datum ['year'];
 	$differenz_in_jahren = $aktuelles_jahr - $jahr;
 	
 	// $jahr = "2006";

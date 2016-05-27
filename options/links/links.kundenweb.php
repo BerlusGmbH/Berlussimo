@@ -17,11 +17,9 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  *
  */
-$form = new formular ();
-$form->fieldset ( "Kundenwebmenü", 'kundenweb_links' );
+erstelle_abschnitt("Kundenwebmenü");
 echo "<div class=\"navi_leiste2\">&nbsp;&nbsp;";
 echo "<a href=\"?daten=kundenweb&option=neuer_benutzer\">Neuer Kundenweb-Benutzer</a>&nbsp;";
 echo "<a href=\"?daten=kundenweb\">Benutzerverwaltung</a>&nbsp;";
 echo "</div>";
-$form->fieldset_ende ();
-?>
+ende_abschnitt();

@@ -198,11 +198,9 @@ if (isset ($_REQUEST ['logout'])) {
 if (empty ($_SESSION ['autorisiert']) && empty ($_REQUEST ['send_login'])) {
     $f = new formular ();
     $f->erstelle_formular('Berlussimo - Bitte anmelden', '');
-    $f->fieldset('Benutzernamen und Passwort eingeben', 'bin');
     $f->text_feld('Benutzername', 'benutzername', '', 30, 'benutzername', '');
     $f->passwort_feld('Password', 'passwort', '', 30, 'passwort', '');
     $f->send_button('send_login', 'Anmelden');
-    $f->fieldset_ende();
     $f->ende_formular();
 }
 

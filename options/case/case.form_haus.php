@@ -21,7 +21,10 @@ if (isset ( $_REQUEST ["formular"] )) {
 	switch ($_REQUEST ["formular"]) {
 		
 		case "haus" :
+			include_once ("options/links/links.form_haus.php");
+			echo "<div id='main'>";
 			include ("options/formulare/form_haus.php");
+			echo "</div>";
 			break;
 	}
 }

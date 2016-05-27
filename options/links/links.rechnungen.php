@@ -17,10 +17,8 @@
  * @lastmodified $Date: 2011-07-07 10:41:33 +0200 (Do, 07 Jul 2011) $
  * 
  */
-$mieten = new mietkonto ();
 echo "<div class=\"navi_leiste2\">";
-$mieten->erstelle_formular ( "Hauptmenü -> Rechnungen...", NULL );
-
+erstelle_abschnitt("Rechnungen");
 echo "<a href=\"?daten=rechnungen&option=erfasste_rechnungen\">Rechnungsliste</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=eingangsbuch\">Eingangsbuch</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=ausgangsbuch\">Ausgangsbuch</a>&nbsp;";
@@ -31,7 +29,6 @@ echo "<a href=\"?daten=rechnungen&option=rechnung_suchen\"><b>Rechnung suchen</b
 echo "<hr>";
 echo "<a href=\"?daten=rechnungen&option=vollstaendige_rechnungen\">Vollständige Rechnungen</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=unvollstaendige_rechnungen\">Unvollständige Rechnungen</a>&nbsp;";
-// echo "<a href=\"?daten=rechnungen&option=gutschrift_erfassen\">Gutschrift schreiben</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=kontierte_rechnungen\">Kontierte Rechnungen</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=nicht_kontierte_rechnungen\">Nicht kontierte Rechnungen</a>&nbsp;";
 echo "<a href=\"?daten=zeiterfassung&option=stundennachweise\"><b>Stundennachweise</b></a>&nbsp;";
@@ -41,7 +38,6 @@ echo "<hr><a href=\"?daten=rechnungen&option=meine_angebote\">Angebote</a>&nbsp;
 echo "<a href=\"?daten=rechnungen&option=angebot_erfassen\">Angebot erfassen</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=u_pool_erstellen\">Unterpool erstellen</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=u_pool_liste\">Rechnungen im Unterpool</a>&nbsp;";
-
 echo "<a href=\"?daten=rechnungen&option=verbindlichkeiten\">Verbindlichkeiten</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=forderungen\">Forderungen</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=form_ugl\">UGL-Import</a>&nbsp;";
@@ -52,13 +48,5 @@ echo "<a href=\"?daten=rechnungen&option=vg_rechnungen\">Verwaltergebühren</a>&
 echo "<a href=\"?daten=rechnungen&option=rg_aus_beleg\">RG aus Beleg</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=pdf_druckpool&no_logo\">PDF-Druckpool</a>&nbsp;";
 echo "<a href=\"?daten=rechnungen&option=sepa_druckpool\">SEPA RG-Pool</a>&nbsp;";
-
-// echo "<a href=\"?daten=rechnungen&option=bezahlte_rechnungen\">Bezahlte Rechnungen</a>&nbsp;";
-// echo "<a href=\"?daten=rechnungen&option=unbezahlte_rechnungen\">Unbezahlte Rechnungen</a>&nbsp;";
-// echo "<a href=\"?daten=rechnungen&option=bestaetigte_rechnungen\">Bestätigte Rechnungen</a>&nbsp;";
-// echo "<a href=\"?daten=rechnungen&option=unbestaetigte_rechnungen\">Unbestätigte Rechnungen</a>&nbsp;";
-
-$mieten->ende_formular ();
-
+ende_abschnitt();
 echo "</div>";
-?>

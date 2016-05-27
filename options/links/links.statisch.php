@@ -17,10 +17,11 @@
  * @lastmodified $Date: 2011-07-07 10:41:33 +0200 (Do, 07 Jul 2011) $
  * 
  */
-include_once ("classes/mietkonto_class.php");
+include_once ("includes/allgemeine_funktionen.php");
 $mieten = new mietkonto ();
 
-//echo "<div class=\"navi_leiste1\">";
+echo "<div class=\"navi_leiste1\">";
+erstelle_abschnitt( "Hauptmenü");
 
 if (check_user_links ( $_SESSION ['benutzer_id'], 'partner' )) {
 	//echo "<b>| </b>&nbsp;<a href=\"?daten=partner\"></a>&nbsp;<b>| </b>&nbsp;";
@@ -270,3 +271,5 @@ if (check_user_links ( $_SESSION ['benutzer_id'], 'buchen' )) {
     echo "<li class='list-group-item'><a class=\"tree-toggler\">DB sichern</a></li>\n";
     echo "</ul>\n";
 }
+ende_abschnitt();
+echo "</div>";

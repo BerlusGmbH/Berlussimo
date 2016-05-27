@@ -22,9 +22,8 @@
  *          @lastmodified $Date$
  *         
  */
-$f = new formular ();
 echo "<div class=\"navi_leiste2\">";
-$f->erstelle_formular ( "Hauptmenü -> Aufgaben und Projekte...", NULL );
+erstelle_abschnitt("Aufgaben und Projekte");
 echo "<a href=\"?daten=todo&option=offene_auftraege\"><b>Alle offenen Aufträge</b></a>|&nbsp;";
 echo "<a href=\"?daten=todo&option=neue_auftraege\"><b>Alle Aufträge</b></a>|&nbsp;";
 echo "<a href=\"?daten=todo&option=erledigte_auftraege\"><b>Alle erledigten Aufträge</b></a>|&nbsp;";
@@ -36,7 +35,5 @@ echo "<a href=\"?daten=todo&option=form_neue_baustelle\">Neue Baustelle</a>|&nbs
 echo "<a href=\"?daten=todo&option=baustellen_liste\">Baustellenliste</a>|&nbsp;";
 echo "<a href=\"?daten=todo&option=baustellen_liste_inaktiv\">Baustellenliste inaktiv</a>|&nbsp;";
 echo "<a href=\"../../../workspace/Mobile_ZE\">Mobile ZE</a>&nbsp;";
-$f->ende_formular ();
+ende_abschnitt();
 echo "</div>";
-
-?>

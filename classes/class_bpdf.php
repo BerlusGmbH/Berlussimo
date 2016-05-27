@@ -436,14 +436,14 @@ else {
 		}
 		
 		if (isset ( $_POST ['mv_ids'] ) && is_array ( $_POST ['mv_ids'] )) {
-			for($index = 0; $index < sizeof ( $_POST [mv_ids] ); $index ++) {
-				$mv_id_add = $_POST [mv_ids] [$index];
-				if (is_array ( $_SESSION [serienbrief_mvs] )) {
-					if (! in_array ( $mv_id_add, $_SESSION [serienbrief_mvs] )) {
-						$_SESSION [serienbrief_mvs] [] = $mv_id_add;
+			for($index = 0; $index < sizeof ( $_POST ['mv_ids'] ); $index ++) {
+				$mv_id_add = $_POST ['mv_ids'] [$index];
+				if (is_array ( $_SESSION ['serienbrief_mvs'] )) {
+					if (! in_array ( $mv_id_add, $_SESSION ['serienbrief_mvs'] )) {
+						$_SESSION ['serienbrief_mvs'] [] = $mv_id_add;
 					}
 				} else {
-					$_SESSION [serienbrief_mvs] [] = $mv_id_add;
+					$_SESSION ['serienbrief_mvs'] [] = $mv_id_add;
 				}
 			}
 		}
@@ -478,10 +478,10 @@ else {
 				// echo "$mv->einheit_kurzname - $mv->personen_name_string".'<br>';
 				if (isset ( $_SESSION ['serienbrief_mvs'] )) {
 					if (! in_array ( $mv_id, $_SESSION ['serienbrief_mvs'] )) {
-						$f->check_box_js1 ( 'mv_ids[]', 'mv_id_boxen', $mv_id, "$mv->einheit_kurzname - $mv->personen_name_string", '', '' );
+						$f->check_box_js1_label_last( 'mv_ids[]', 'mv_id_boxen', $mv_id, "$mv->einheit_kurzname - $mv->personen_name_string", '', '' );
 					}
 				} else {
-					$f->check_box_js1 ( 'mv_ids[]', 'mv_id_boxen', $mv_id, "$mv->einheit_kurzname - $mv->personen_name_string", '', '' );
+					$f->check_box_js1_label_last( 'mv_ids[]', 'mv_id_boxen', $mv_id, "$mv->einheit_kurzname - $mv->personen_name_string", '', '' );
 				}
 			}
 		} else {
@@ -657,25 +657,13 @@ else {
 				
 				for($a = 0; $a < $anz; $a ++) {
 					$p1 = ( object ) $arr [$a];
-					// echo '<pre>';
-					// print_r($p1);
-					// die();
-					if (is_array ( $_SESSION [empfaenger_ids] )) {
-						if (! in_array ( $p1->PARTNER_ID, $_SESSION [empfaenger_ids] )) {
+					if (is_array ( $_SESSION ['empfaenger_ids'] )) {
+						if (! in_array ( $p1->PARTNER_ID, $_SESSION ['empfaenger_ids'] )) {
 							$f->check_box_js ( 'empf_ids[]', $p1->PARTNER_ID, "$p1->PARTNER_NAME $p1->STRASSE $p1->NUMMER, $p1->PLZ $p1->ORT", '', '' );
 						}
 					} else {
 						$f->check_box_js ( 'empf_ids[]', $p1->PARTNER_ID, "$p1->PARTNER_NAME $p1->STRASSE $p1->NUMMER, $p1->PLZ $p1->ORT", '', '' );
 					}
-					/*
-					 * if(!in_array($mv_id_add, $_SESSION[serienbrief_mvs])){
-					 * $_SESSION[serienbrief_mvs][] = $mv_id_add;
-					 * }
-					 * }else{
-					 * $_SESSION[serienbrief_mvs][] = $mv_id_add;
-					 * }
-					 *
-					 */
 				}
 			} else {
 				die ( 'Keine Partner im System' );
@@ -693,9 +681,9 @@ else {
 					$haus_str = $arr [$a] ['HAUS_STRASSE'];
 					$haus_nr = $arr [$a] ['HAUS_NUMMER'];
 					$haus_id = $arr [$a] ['HAUS_ID'];
-					
-					if (is_array ( $_SESSION [empfaenger_ids] )) {
-						if (! in_array ( $haus_id, $_SESSION [empfaenger_ids] )) {
+                    
+					if (is_array ( $_SESSION ['empfaenger_ids'] )) {
+						if (! in_array ( $haus_id, $_SESSION ['empfaenger_ids'] )) {
 							$f->check_box_js ( 'empf_ids[]', $haus_id, "$haus_str $haus_nr", '', '' );
 						}
 					} else {
@@ -707,7 +695,7 @@ else {
 		if ($empfaenger == 'exMieter') {
 		}
 	}
-	function pdf_heizungabnahmeprotokoll($pdf, $mv_id, $einzug = null) {
+	function pdf_heizungabnahmeprotokoll(Cezpdf $pdf, $mv_id, $einzug = null) {
 		$mv = new mietvertraege ();
 		$mv->get_mietvertrag_infos_aktuell ( $mv_id );
 		$pdf->ezText ( "<b>Wohnungs-Nr:</b> $mv->einheit_kurzname", 10, array (

@@ -17,12 +17,8 @@
  * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
  * 
  */
-$f = new formular ();
 echo "<div class=\"navi_leiste2\">";
-$f->erstelle_formular ( "Hauptmenü -> Tickets...", NULL );
+erstelle_abschnitt("Tickets");
 echo "<a href=\"?daten=tickets&option=meine_tickets\">Meine Tickets</a>&nbsp;";
-$f->ende_formular ();
-
+ende_abschnitt();
 echo "</div>";
-
-?>

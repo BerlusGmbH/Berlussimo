@@ -21,13 +21,10 @@
  *          @lastmodified $Date$
  *         
  */
-$f = new formular ();
 echo "<div class=\"navi_leiste2\">";
-$f->erstelle_formular ( "Hauptmenü -> Personalwesen...", NULL );
+erstelle_abschnitt("Personalwesen");
 echo "<a href=\"?daten=personal&option=lohn_gehalt_sepa\">Lohn- und Gehalt SEPA</a>&nbsp;";
 echo "<a href=\"?daten=personal&option=kk\">KK</a>&nbsp;";
 echo "<a href=\"?daten=personal&option=steuern\">Steuern</a>&nbsp;";
-$f->ende_formular ();
+ende_formular();
 echo "</div>";
-
-?>
