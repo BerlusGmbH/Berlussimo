@@ -5065,7 +5065,19 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $p_id_query = '=' . $p_id;
         }
 
-        $result = mysql_query("SELECT KONTO, TEXT FROM WEG_HGA_ZEILEN WHERE AKTUELL='1' && WEG_HG_P_ID" . $p_id_query . " && ART='$art'  GROUP BY KONTO  HAVING SUM(IF(ART='$art' && WEG_HG_P_ID=$p_id,1,0)) > 0  ORDER BY KONTO ASC");
+        $result = mysql_query("SELECT KONTO
+FROM WEG_HGA_ZEILEN 
+WHERE AKTUELL='1' 
+	&& WEG_HG_P_ID" . $p_id_query . " 
+	&& ART='$art' 
+	&& KONTO NOT IN (SELECT KONTO
+		FROM WEG_HGA_ZEILEN 
+		WHERE AKTUELL='1' 
+			&& WEG_HG_P_ID = '$p_id'
+			&& ART!='$art')
+GROUP BY KONTO
+ORDER BY KONTO ASC
+");
         $numrows = mysql_numrows($result);
         if ($numrows > 0) {
             $z = 0;
