@@ -99,7 +99,7 @@ switch ($option) {
 		break;
 	
 	case "stellplaetze" :
-		$objekt_id = $_REQUEST [objekt_id];
+		$objekt_id = $_REQUEST ['objekt_id'];
 		if (empty ( $objekt_id )) {
 			$objekt_id = 4; // Block E
 		}
@@ -110,7 +110,7 @@ switch ($option) {
 		break;
 	
 	case "garage" :
-		$objekt_id = $_REQUEST [objekt_id];
+		$objekt_id = $_REQUEST ['objekt_id'];
 		if (empty ( $objekt_id )) {
 			$objekt_id = 13; // GBN
 		}
@@ -121,7 +121,7 @@ switch ($option) {
 		break;
 	
 	case "keller" :
-		$objekt_id = $_REQUEST [objekt_id];
+		$objekt_id = $_REQUEST ['objekt_id'];
 		if (empty ( $objekt_id )) {
 			$objekt_id = 1; // II
 		}
@@ -160,7 +160,7 @@ switch ($option) {
 		break;
 	
 	case "verwaltergebuehr_objekt" :
-		$objekt_id = $_REQUEST [objekt_id];
+		$objekt_id = $_REQUEST ['objekt_id'];
 		if (empty ( $objekt_id )) {
 			$objekt_id = 4; // Block E
 		}
@@ -169,7 +169,7 @@ switch ($option) {
 		break;
 	
 	case "verwaltergebuehr_objekt_pdf" :
-		$objekt_id = $_REQUEST [objekt_id];
+		$objekt_id = $_REQUEST ['objekt_id'];
 		if (empty ( $objekt_id )) {
 			$objekt_id = 4; // Block E
 		}
@@ -189,7 +189,7 @@ switch ($option) {
 	case "me_k" :
 		$s = new statistik ();
 		$jahr = 2010;
-		unset ( $_SESSION [daten_arr] );
+		unset ( $_SESSION ['daten_arr'] );
 		// $s->stat_kosten_me_jahr($geldkonto_id, $jahr);
 		$s->kosten_einnahmen_k ( '4', $jahr, 'II', 'Euro' );
 		$s->kosten_einnahmen_k ( '5', $jahr, 'III', 'Euro' );
@@ -205,13 +205,13 @@ switch ($option) {
 		// $s->alle_mvs_einheit_arr();
 		$bg = new berlussimo_global ();
 		$link = "?daten=statistik&option=testen";
-		if (! empty ( $_REQUEST [jahr] )) {
-			$jahr = $_REQUEST [jahr];
+		if (! empty ( $_REQUEST ['jahr'] )) {
+			$jahr = $_REQUEST ['jahr'];
 		} else {
 			$jahr = date ( "Y" );
 		}
-		if (! empty ( $_REQUEST [monat] )) {
-			$monat = $_REQUEST [monat];
+		if (! empty ( $_REQUEST ['monat'] )) {
+			$monat = $_REQUEST ['monat'];
 		} else {
 			$monat = date ( "m" );
 		}
@@ -329,5 +329,3 @@ switch ($option) {
 		}
 		break;
 }
-
-?>
