@@ -201,12 +201,12 @@ switch ($option) {
 		break;
 	
 	case "eigentuemer_send" :
-		if (is_array ( $_POST [z_liste] )) {
-			if (! empty ( $_POST [einheit_id] ) && ! empty ( $_POST [eigentuemer_seit] )) {
-				$einheit_id = $_POST [einheit_id];
+		if (is_array ( $_POST ['z_liste'] )) {
+			if (! empty ( $_POST ['einheit_id'] ) && ! empty ( $_POST ['eigentuemer_seit'] )) {
+				$einheit_id = $_POST ['einheit_id'];
 				$eigentuemer_seit = $_POST ['eigentuemer_seit'];
 				$eigentuemer_bis = $_POST ['eigentuemer_bis'];
-				$eigent_arr = $_POST [z_liste];
+				$eigent_arr = $_POST ['z_liste'];
 				$weg = new weg ();
 				if (! isset ( $eigentuemer_bis ) or empty ( $eigentuemer_bis )) {
 					$eigentuemer_bis = '00.00.0000';
@@ -228,24 +228,24 @@ switch ($option) {
 			if (empty ( $_REQUEST ['jahr'] )) {
 				$jahr = date ( "Y" );
 			}
-			$w->form_wg_einheiten ( $monat, $jahr, $_SESSION [objekt_id] );
+			$w->form_wg_einheiten ( $monat, $jahr, $_SESSION ['objekt_id'] );
 		} else {
 			echo "Objekt auswählen";
 		}
 		break;
 	
 	case "wohngeld_buchen_maske" :
-		if (! empty ( $_REQUEST [einheit_id] )) {
+		if (! empty ( $_REQUEST ['einheit_id'] )) {
 			$w = new weg ();
-			if (empty ( $_REQUEST [monat] )) {
+			if (empty ( $_REQUEST ['monat'] )) {
 				$monat = date ( "m" );
 			} else {
-				$monat = $_REQUEST [monat];
+				$monat = $_REQUEST ['monat'];
 			}
-			if (empty ( $_REQUEST [jahr] )) {
+			if (empty ( $_REQUEST ['jahr'] )) {
 				$jahr = date ( "Y" );
 			} else {
-				$jahr = $_REQUEST [jahr];
+				$jahr = $_REQUEST ['jahr'];
 			}
 			
 			$w->form_wohngeld_buchen ( $monat, $jahr, $_REQUEST [einheit_id] );
@@ -294,7 +294,7 @@ switch ($option) {
 	
 	case "wg_def_neu" :
 		
-		if (! empty ( $_REQUEST [einheit_id] ) && ! empty ( $_REQUEST [von] ) && ! empty ( $_REQUEST [betrag] ) && ! empty ( $_REQUEST [kostenkat] ) && ! empty ( $_REQUEST [e_konto] ) && ! empty ( $_REQUEST [gruppe] ) && ! empty ( $_REQUEST [g_konto] )) {
+		if (! empty ( $_REQUEST ['einheit_id'] ) && ! empty ( $_REQUEST ['von'] ) && ! empty ( $_REQUEST ['betrag'] ) && ! empty ( $_REQUEST ['kostenkat'] ) && ! empty ( $_REQUEST ['e_konto'] ) && ! empty ( $_REQUEST ['gruppe'] ) && ! empty ( $_REQUEST ['g_konto'] )) {
 			$w = new weg ();
 			$von = $_REQUEST ['von'];
 			$bis = $_REQUEST ['bis'];
@@ -310,8 +310,8 @@ switch ($option) {
 			echo "Dateneingabe unvollständig";
 		}
 		
-		if (! empty ( $_REQUEST [einheit_id] )) {
-			$einheit_id = $_REQUEST [einheit_id];
+		if (! empty ( $_REQUEST ['einheit_id'] )) {
+			$einheit_id = $_REQUEST ['einheit_id'];
 			weiterleiten_in_sec ( "?daten=weg&option=wohngeld_definieren&einheit_id=$einheit_id", 2 );
 		}
 		break;
@@ -367,7 +367,6 @@ switch ($option) {
 		break;
 	
 	case "wg_def_edit" :
-		// print_req();
 		if (isset ( $_REQUEST ['dat'] ) && $_REQUEST ['kostenart'] != 'Bitte wählen') {
 			$dat = $_REQUEST ['dat'];
 			$id = $_REQUEST ['id'];
@@ -381,7 +380,6 @@ switch ($option) {
 			$kostenkat = $koskat_arr [1];
 			$gruppe = $koskat_arr [2];
 			$g_konto = $koskat_arr [3];
-			// print_r($koskat_arr);
 			/* Löschen */
 			$w = new weg ();
 			$w->wohngeld_def_delete ( $_REQUEST ['dat'] );
@@ -413,28 +411,28 @@ switch ($option) {
 		break;
 	
 	case "mahnen" :
-		if (! empty ( $_REQUEST [eig] )) {
+		if (! empty ( $_REQUEST ['eig'] )) {
 			$w = new weg ();
-			$w->form_mahnen ( $_REQUEST [eig] );
+			$w->form_mahnen ( $_REQUEST ['eig'] );
 		} else {
 			echo "Eigentümer wählen";
 		}
 		break;
 	
 	case "mahnung_sent" :
-		if (! empty ( $_REQUEST [eig] ) && ! empty ( $_REQUEST [datum] ) && ! empty ( $_REQUEST [mahngebuehr] )) {
+		if (! empty ( $_REQUEST ['eig'] ) && ! empty ( $_REQUEST ['datum'] ) && ! empty ( $_REQUEST ['mahngebuehr'] )) {
 			$w = new weg ();
-			$anschrift = $_REQUEST [anschriften];
-			$w->pdf_mahnschreiben ( $_REQUEST [eig], $_REQUEST [datum], $_REQUEST [mahngebuehr], $anschrift );
+			$anschrift = $_REQUEST ['anschriften'];
+			$w->pdf_mahnschreiben ( $_REQUEST ['eig'], $_REQUEST ['datum'], $_REQUEST ['mahngebuehr'], $anschrift );
 		} else {
 			echo "Eingaben unvollständig für ein Mahnschreiben!";
 		}
 		break;
 	
 	case "hg_kontoauszug" :
-		if (! empty ( $_REQUEST [eigentuemer_id] )) {
+		if (! empty ( $_REQUEST ['eigentuemer_id'] )) {
 			$w = new weg ();
-			$w->hg_kontoauszug_anzeigen_pdf ( $_REQUEST [eigentuemer_id] );
+			$w->hg_kontoauszug_anzeigen_pdf ( $_REQUEST ['eigentuemer_id'] );
 			/*
 			 * include_once('pdfclass/class.ezpdf.php');
 			 * include_once('classes/class_bpdf.php');
@@ -467,10 +465,10 @@ switch ($option) {
 		break;
 	
 	case "wp_neu_send" :
-		if (! empty ( $_REQUEST [wjahr] ) && ! empty ( $_REQUEST [objekt_id] )) {
+		if (! empty ( $_REQUEST ['wjahr'] ) && ! empty ( $_REQUEST ['objekt_id'] )) {
 			$w = new weg ();
 			print_req ();
-			$w->wp_plan_speichern ( $_REQUEST [wjahr], $_REQUEST [objekt_id] );
+			$w->wp_plan_speichern ( $_REQUEST ['wjahr'], $_REQUEST ['objekt_id'] );
 		} else {
 			echo "Wirtschaftjahr eingeben und Objekt wählen bitte!";
 		}
@@ -478,10 +476,10 @@ switch ($option) {
 		break;
 	
 	case "wp_zeile_neu" :
-		if (! empty ( $_REQUEST [wp_id] )) {
-			$_SESSION [wp_id] = $_REQUEST [wp_id];
+		if (! empty ( $_REQUEST ['wp_id'] )) {
+			$_SESSION ['wp_id'] = $_REQUEST ['wp_id'];
 			$w = new weg ();
-			$w->form_wplan_zeile ( $_SESSION [wp_id] );
+			$w->form_wplan_zeile ( $_SESSION ['wp_id'] );
 		}
 		
 		break;
@@ -535,7 +533,6 @@ switch ($option) {
 		break;
 	
 	case "profil_send_gaendert" :
-		// print_req();
 		if (! empty ( $_REQUEST ['profil_id'] ) && ! empty ( $_REQUEST ['profilbez'] ) && ! empty ( $_REQUEST ['objekt_id'] ) && ! empty ( $_REQUEST ['jahr'] ) && ! empty ( $_REQUEST ['geldkonto_id'] ) && ! empty ( $_REQUEST ['gk_id_ihr'] ) && ! empty ( $_REQUEST ['wp_id'] ) && ! empty ( $_REQUEST ['hg_konto'] ) && ! empty ( $_REQUEST ['hk_konto'] ) && ! empty ( $_REQUEST ['ihr_konto'] )) {
 			$weg = new weg ();
 			$weg->hga_profil_aendern ( $_REQUEST ['profil_id'], $_REQUEST ['objekt_id'], $_REQUEST ['geldkonto_id'], $_REQUEST ['jahr'], $_REQUEST ['profilbez'], $_REQUEST ['gk_id_ihr'], $_REQUEST ['wp_id'], $_REQUEST ['hg_konto'], $_REQUEST ['hk_konto'], $_REQUEST ['ihr_konto'], $_REQUEST ['p_von'], $_REQUEST ['p_bis'] );
@@ -549,7 +546,7 @@ switch ($option) {
 	
 	case "hga_einzeln" :
 		$w = new weg ();
-		$w->test ( $_SESSION ['hga_profil_id'] );
+		$w->hga_einzeln ( $_SESSION ['hga_profil_id'] );
 		break;
 	
 	case "hga_gesamt" :
@@ -610,7 +607,7 @@ switch ($option) {
 		$w = new weg ();
 		// print_r($_SESSION);
 		// print_req();
-		$w->hga_zeile_speichern ( $_SESSION [hga_profil_id], $_REQUEST [konto], $_REQUEST [art], $_REQUEST [textbez], $_REQUEST [genkey], $_REQUEST [summe], $_REQUEST [summe_hndl], 'Wirtschaftseinheit', $_REQUEST [wirt_id] );
+		$w->hga_zeile_speichern ( $_SESSION ['hga_profil_id'], $_REQUEST ['konto'], $_REQUEST ['art'], $_REQUEST ['textbez'], $_REQUEST ['genkey'], $_REQUEST ['summe'], $_REQUEST ['summe_hndl'], 'Wirtschaftseinheit', $_REQUEST ['wirt_id'] );
 		weiterleiten ( '?daten=weg&option=assistent&schritt=2' );
 		break;
 	
@@ -621,8 +618,8 @@ switch ($option) {
 		$p_id = $_REQUEST ['p_id'];
 		
 		for($a = 0; $a < $anz_e; $a ++) {
-			$eig_id = $_REQUEST [eig_id] [$a];
-			$betrag = $_REQUEST [hk_verbrauch] [$a];
+			$eig_id = $_REQUEST ['eig_id'] [$a];
+			$betrag = $_REQUEST ['hk_verbrauch'] [$a];
 			$w->hk_verbrauch_eintragen ( $p_id, $eig_id, $betrag );
 		}
 		weiterleiten ( 'index.php?daten=weg&option=hk_verbrauch_tab' );
