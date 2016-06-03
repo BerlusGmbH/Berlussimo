@@ -32,16 +32,16 @@ if (file_exists ( "classes/class_sepa.php" )) {
 /* PDF KLASSE */
 class b_pdf {
 	function b_header(Cezpdf &$pdf, $partner_typ, $partner_id, $orientation = 'portrait', $font_file, $f_size, $logo_file = '') {
-		// echo "$partner_typ $partner_id";
-		// die('S');
+		$diff=array(196=>'Adieresis',228=>'adieresis',
+			214=>'Odieresis',246=>'odieresis',
+			220=>'Udieresis',252=>'udieresis',
+			223=>'germandbls');
+		$pdf->selectFont('Helvetica'
+			,array('encoding'=>'WinAnsiEncoding'
+			,'differences'=>$diff));
 		$all = $pdf->openObject ();
 		$pdf->saveState ();
 		$pdf->setStrokeColor ( 0, 0, 0, 1 );
-		if (file_exists ( $font_file )) {
-			$pdf->selectFont ( "$font_file" );
-		} else {
-			$pdf->selectFont ( BERLUS_PATH . "/$font_file" );
-		}
 		
 		if ($orientation == 'portrait') {
 			$pdf->ezSetMargins ( 135, 70, 50, 50 );
@@ -139,7 +139,7 @@ class b_pdf {
 			
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6 );
 			$pdf->ezStopPageNumbers (); // seitennummerierung beenden
 			
 			for($index = 0; $index < sizeof ( $empf_id_arr ); $index ++) {
@@ -252,7 +252,7 @@ class b_pdf {
 					/* Kopf */
 					
 					$pdf_einzeln = new Cezpdf ( 'a4', 'portrait' );
-					$bpdf->b_header ( $pdf_einzeln, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
+					$bpdf->b_header ( $pdf_einzeln, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6 );
 					$pdf_einzeln->ezStopPageNumbers (); // seitennummerirung beenden
 					
 					/* Faltlinie */
