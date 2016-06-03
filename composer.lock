@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "77f5ba2086fd6133b7202f09bff3cf40",
-    "content-hash": "315923927c374ee627ba4c0e2a2e6fa3",
+    "hash": "37a203c0730b78291f7a77c6bf02bc7e",
+    "content-hash": "3d647176ba381ed18532593f0aa8f6a6",
     "packages": [
         {
             "name": "rospdf/pdf-php",
-            "version": "0.12.21",
+            "version": "0.12.22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rospdf/pdf-php.git",
-                "reference": "174314e735a7ef7cdd0ce8ca3e1b44de08cd9651"
+                "reference": "140b9987fd8dcf3087b98827e615f07b6257b6ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rospdf/pdf-php/zipball/174314e735a7ef7cdd0ce8ca3e1b44de08cd9651",
-                "reference": "174314e735a7ef7cdd0ce8ca3e1b44de08cd9651",
+                "url": "https://api.github.com/repos/rospdf/pdf-php/zipball/140b9987fd8dcf3087b98827e615f07b6257b6ea",
+                "reference": "140b9987fd8dcf3087b98827e615f07b6257b6ea",
                 "shasum": ""
             },
             "require": {
@@ -63,7 +63,7 @@
             ],
             "description": "The R&OS Pdf class supports the creation of PDF documents without any adiditional modules or extensions.",
             "homepage": "https://github.com/rospdf/pdf-php",
-            "time": "2016-05-17 07:48:01"
+            "time": "2016-06-01 21:36:09"
         }
     ],
     "packages-dev": [],
