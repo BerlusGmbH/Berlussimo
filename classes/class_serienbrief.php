@@ -95,7 +95,7 @@ class serienbrief {
 				
 				$pdf = new Cezpdf ( 'a4', 'portrait' );
 				$bpdf = new b_pdf ();
-				$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
+				$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica', 6 );
 				$pdf->ezStopPageNumbers (); // seitennummerierung beenden
 				
 				$anz_eigentuemer = count ( $empf_id_arr );
@@ -140,7 +140,7 @@ class serienbrief {
 					$p->get_partner_info ( $_SESSION ['partner_id'] );
 					
 					$pdf->ezText ( "$p->partner_ort, $datum_heute", 10, array (
-							'justification' => 'right' 
+							'justification' => 'right'
 					) );
 					$pdf->ezText ( "<b>Objekt: $weg->haus_strasse $weg->haus_nummer, $weg->haus_plz $weg->haus_stadt</b>", 10 );
 					
@@ -155,7 +155,7 @@ class serienbrief {
 					; // Variable ausm Text füllen
 					
 					$pdf->ezText ( "$bpdf->v_text", 10, array (
-							'justification' => 'full' 
+							'justification' => 'full'
 					) );
 					
 					/* NEue Seite */
@@ -180,7 +180,7 @@ class serienbrief {
 				
 				$pdf = new Cezpdf ( 'a4', 'portrait' );
 				$bpdf = new b_pdf ();
-				$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
+				$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6 );
 				$pdf->ezStopPageNumbers (); // seitennummerierung beenden
 				
 				$anz_eigentuemer = count ( $empf_id_arr );

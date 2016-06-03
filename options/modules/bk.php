@@ -360,7 +360,7 @@ switch ($option) {
         //include_once ('pdfclass/class.ezpdf.php');
         include_once('classes/class_bpdf.php');
         $bpdf = new b_pdf ();
-        $bpdf->erstelle_brief_vorlage($_REQUEST ['vorlagen_dat'], 'Mietvertrag', $_SESSION [serienbrief_mvs], $option = '0');
+        $bpdf->erstelle_brief_vorlage($_REQUEST ['vorlagen_dat'], 'Mietvertrag', $_SESSION ['serienbrief_mvs'], $option = '0');
         // $bpdf->form_mieter2sess();
         break;
 
