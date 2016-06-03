@@ -1,6 +1,6 @@
 {
     "require": {
-        "foxou33/bootstrap-treeview": "dev-master",
-        "rospdf/pdf-php": "0.12.21"
+        "rospdf/pdf-php": "0.12.22",
+        "foxou33/bootstrap-treeview": "dev-master"
     }
 }
