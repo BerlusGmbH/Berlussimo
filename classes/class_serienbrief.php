@@ -155,7 +155,7 @@ class serienbrief {
 					; // Variable ausm Text füllen
 					
 					$pdf->ezText ( "$bpdf->v_text", 10, array (
-							'justification' => 'full'
+							'justification' => 'left'
 					) );
 					
 					/* NEue Seite */
