@@ -479,12 +479,17 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
     function get_sume_hausgeld($kos_typ, $kos_id, $monat, $jahr)
     {
         $result = mysql_query("SELECT SUM(BETRAG) AS SUMME, G_KONTO, E_KONTO, ANFANG, ENDE FROM WEG_WG_DEF WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ORDER BY ANFANG ASC");
-        // echo "SELECT SUM(BETRAG) AS SUMME, G_KONTO, E_KONTO, ANFANG, ENDE FROM WEG_WG_DEF WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ORDER BY ANFANG ASC<br><br>";
-        // die('SIVAC');
         $row = mysql_fetch_assoc($result);
         if (!empty ($row ['SUMME'])) {
             return $row ['SUMME'] * -1;
         }
+    }
+
+    function get_wplan_vorgaenger($wplan_id, $objekt_id)
+    {
+        //determining previous wplan based on id is dangerous
+        $result = mysql_query("SELECT * FROM WEG_WPLAN where objekt_id = $objekt_id && plan_id < $wplan_id ORDER BY DAT DESC LIMIT 1;");
+        return mysql_fetch_assoc($result);
     }
 
     function form_eigentuemer_einheit($objekt_id)
@@ -4576,7 +4581,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         }
     }
 
-    function einzel_wp($pdf, $wp_id)
+    function einzel_wp(Cezpdf $pdf, $wp_id)
     {
         ini_set('memory_limit', '1024M'); // or you could use 1G
         set_time_limit(0);
@@ -4941,7 +4946,8 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $monat = sprintf('%02d', date("m"));
             $jahr = date("Y");
 
-            $hausgeld_aktuell_a = nummer_punkt2komma_t($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $this->wp_jahr - 1) * -1);
+            $wp_jahr = $this->get_wplan_vorgaenger($wp_id, $this->wp_objekt_id);
+            $hausgeld_aktuell_a = nummer_punkt2komma_t($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $wp_jahr) * -1);
             $wtab_arr [$c + 3] ['KONTO_BEZ'] = "Hausgeld bisher";
             $wtab_arr [$c + 3] ['BETEILIGUNG_ANT'] = "$hausgeld_aktuell_a";
 
