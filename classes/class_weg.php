@@ -4946,7 +4946,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $monat = sprintf('%02d', date("m"));
             $jahr = date("Y");
 
-            $wp_jahr = $this->get_wplan_vorgaenger($wp_id, $this->wp_objekt_id);
+            $wp_jahr = $this->get_wplan_vorgaenger($wp_id, $this->wp_objekt_id)['JAHR'];
             $hausgeld_aktuell_a = nummer_punkt2komma_t($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $wp_jahr) * -1);
             $wtab_arr [$c + 3] ['KONTO_BEZ'] = "Hausgeld bisher";
             $wtab_arr [$c + 3] ['BETEILIGUNG_ANT'] = "$hausgeld_aktuell_a";
@@ -4959,9 +4959,9 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $this->hausgelder_neu [$a] ['BETRAG_ALT'] = "$hausgeld_aktuell_a €";
             $this->hausgelder_neu [$a] ['BETRAG'] = "$hausgeld_neu_a €";
 
-            $this->hausgelder_neu [$a] ['DIFF'] = nummer_punkt2komma($hausgeld_neu - ($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $this->wp_jahr - 1) * -1));
-            $this->hausgelder_neu [$a] ['DIFF2M'] = nummer_punkt2komma(($hausgeld_neu - ($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $this->wp_jahr - 1) * -1)) * 2);
-            $this->hausgelder_neu [$a] ['SE'] = nummer_punkt2komma($hausgeld_neu + ($hausgeld_neu - ($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $this->wp_jahr - 1) * -1)) * 2);
+            $this->hausgelder_neu [$a] ['DIFF'] = nummer_punkt2komma($hausgeld_neu - ($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $wp_jahr) * -1));
+            $this->hausgelder_neu [$a] ['DIFF2M'] = nummer_punkt2komma(($hausgeld_neu - ($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $wp_jahr) * -1)) * 2);
+            $this->hausgelder_neu [$a] ['SE'] = nummer_punkt2komma($hausgeld_neu + ($hausgeld_neu - ($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $wp_jahr) * -1)) * 2);
 
             //
             // $cols = array('KONTO'=>"Konto", 'KONTO_BEZ'=>"Bezeichnung", 'GRUPPEN_BEZ'=>"Kostenart", 'KONTOART_BEZ'=>"Kontoart", 'BETRAG'=>"Betrag", 'FORMEL'=>"VERT.", 'AUFTEILEN'=>"GRUPPE", 'AUFTEILEN_G'=>"G VERT.", 'AUFTEILEN_T'=>"E VERT.", 'BETEILIGUNG_ANT'=>"Ihr Anteil");
