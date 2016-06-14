@@ -1039,7 +1039,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 		if (empty ( $_SESSION ['geldkonto_id'] )) {
 			die ( 'Erstgeldkonto wählen' );
 		}
-		if (! isset ( $_REQUEST [submit_kostenkonto] )) {
+		if (! isset ( $_REQUEST ['submit_kostenkonto'] )) {
 			$kr = new kontenrahmen ();
 			$kontenrahmen_id = $kr->get_kontenrahmen ( 'Geldkonto', $_SESSION ['geldkonto_id'] );
 			$f = new formular ();
@@ -1051,9 +1051,9 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 			$f->ende_formular ();
 		} else {
 			// print_req();
-			$von = date_german2mysql ( $_REQUEST [anfangsdatum] );
-			$bis = date_german2mysql ( $_REQUEST [enddatum] );
-			$kostenkonto = $_REQUEST [kostenkonto];
+			$von = date_german2mysql ( $_REQUEST ['anfangsdatum'] );
+			$bis = date_german2mysql ( $_REQUEST ['enddatum'] );
+			$kostenkonto = $_REQUEST ['kostenkonto'];
 			$abfrage = "SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE AKTUELL='1' && GELDKONTO_ID='$_SESSION[geldkonto_id]' && KONTENRAHMEN_KONTO='$kostenkonto' && DATUM BETWEEN '$von' AND '$bis' ORDER BY DATUM ASC";
 			// echo $abfrage;
 			// die();
@@ -1381,24 +1381,24 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 			$p->get_partner_id ( $beguenstigter );
 			$partner_id = $p->partner_id;
 			
-			$table_arr [$a] [DATUM] = "<b>$datum_ger</b>";
-			$table_arr [$a] [BETRAG] = "<b>$this->summe_konto_buchungen_a</b>";
-			$table_arr [$a] [VERWENDUNGSZWECK] = '<b>SALDO VORMONAT</b>';
+			$table_arr [$a] ['DATUM'] = "<b>$datum_ger</b>";
+			$table_arr [$a] ['BETRAG'] = "<b>$this->summe_konto_buchungen_a</b>";
+			$table_arr [$a] ['VERWENDUNGSZWECK'] = '<b>SALDO VORMONAT</b>';
 			$this->summe_mwst = 0;
 			for($a = 0; $a < $numrows; $a ++) {
 				$datum = date_mysql2german ( $my_array [$a] [DATUM] );
-				$b_id = $my_array [$a] [GELD_KONTO_BUCHUNGEN_ID];
-				$b_dat = $my_array [$a] [GELD_KONTO_BUCHUNGEN_DAT];
-				$g_buchungsnummer = $my_array [$a] [G_BUCHUNGSNUMMER];
-				$betrag = $my_array [$a] [BETRAG];
+				$b_id = $my_array [$a] ['GELD_KONTO_BUCHUNGEN_ID'];
+				$b_dat = $my_array [$a] ['GELD_KONTO_BUCHUNGEN_DAT'];
+				$g_buchungsnummer = $my_array [$a] ['G_BUCHUNGSNUMMER'];
+				$betrag = $my_array [$a] ['BETRAG'];
 				$mwst_anteil = $my_array [$a] ['MWST_ANTEIL'];
 				$this->summe_mwst += $mwst_anteil;
-				$vzweck = $my_array [$a] [VERWENDUNGSZWECK];
-				$auszug = $my_array [$a] [KONTO_AUSZUGSNUMMER];
-				$erfass_nr = $my_array [$a] [ERFASS_NR];
-				$kostenkonto = $my_array [$a] [KONTENRAHMEN_KONTO];
-				$kostentraeger_typ = $my_array [$a] [KOSTENTRAEGER_TYP];
-				$kostentraeger_id = $my_array [$a] [KOSTENTRAEGER_ID];
+				$vzweck = $my_array [$a] ['VERWENDUNGSZWECK'];
+				$auszug = $my_array [$a] ['KONTO_AUSZUGSNUMMER'];
+				$erfass_nr = $my_array [$a] ['ERFASS_NR'];
+				$kostenkonto = $my_array [$a] ['KONTENRAHMEN_KONTO'];
+				$kostentraeger_typ = $my_array [$a] ['KOSTENTRAEGER_TYP'];
+				$kostentraeger_id = $my_array [$a] ['KOSTENTRAEGER_ID'];
 				
 				$r = new rechnung ();
 				
@@ -1412,16 +1412,16 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 				$kostentraeger_bez = substr ( $kostentraeger_bez, 0, 50 );
 				$kostentraeger_bez = strip_tags ( $kostentraeger_bez );
 				
-				$table_arr [$a] [DATUM] = $datum;
-				$table_arr [$a] [AUSZUG] = $auszug;
-				$table_arr [$a] [BETRAG] = $betrag;
+				$table_arr [$a] ['DATUM'] = $datum;
+				$table_arr [$a] ['AUSZUG'] = $auszug;
+				$table_arr [$a] ['BETRAG'] = $betrag;
 				$table_arr [$a] ['MWST_ANTEIL'] = $mwst_anteil;
-				$table_arr [$a] [KONTO] = $kostenkonto;
-				$table_arr [$a] [ZUORDNUNG] = $kostentraeger_bez;
-				$table_arr [$a] [G_BUCHUNGSNUMMER] = $g_buchungsnummer;
-				$table_arr [$a] [VERWENDUNGSZWECK] = $vzweck;
-				$table_arr [$a] [KOSTENTRAEGER_BEZ] = $kostentraeger_bez;
-				$table_arr [$a] [PLATZ] = "";
+				$table_arr [$a] ['KONTO'] = $kostenkonto;
+				$table_arr [$a] ['ZUORDNUNG'] = $kostentraeger_bez;
+				$table_arr [$a] ['G_BUCHUNGSNUMMER'] = $g_buchungsnummer;
+				$table_arr [$a] ['VERWENDUNGSZWECK'] = $vzweck;
+				$table_arr [$a] ['KOSTENTRAEGER_BEZ'] = $kostentraeger_bez;
+				$table_arr [$a] ['PLATZ'] = "";
 			} // end for
 			
 			/* Datum Monat danach */
@@ -1551,7 +1551,7 @@ else {
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6 );
 		
 		if ($monat == null) {
 			$result = mysql_query ( "SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, MWST_ANTEIL,VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y') = '$ja' && AKTUELL='1' ORDER BY G_BUCHUNGSNUMMER ASC" );
@@ -2272,7 +2272,7 @@ else {
 		 * echo "<pre>";
 		 * print_r($_SESSION);
 		 */
-		$geldkonto_id = $_SESSION [geldkonto_id];
+		$geldkonto_id = $_SESSION ['geldkonto_id'];
 		$form = new formular ();
 		$form->hidden_feld ( "geldkonto_id", "$geldkonto_id" );
 		$this->dropdown_kostenrahmen_nr ( 'Kostenkonto', 'kostenkonto', 'GELDKONTO', $geldkonto_id, '' );
@@ -2316,15 +2316,15 @@ else {
 		 * }
 		 */
 		
-		if (! empty ( $_REQUEST [monat] ) && ! empty ( $_REQUEST [jahr] )) {
-			if ($_REQUEST [monat] != 'alle') {
-				$_SESSION ['monat'] = sprintf ( '%02d', $_REQUEST [monat] );
+		if (! empty ( $_REQUEST ['monat'] ) && ! empty ( $_REQUEST [jahr] )) {
+			if ($_REQUEST ['monat'] != 'alle') {
+				$_SESSION ['monat'] = sprintf ( '%02d', $_REQUEST ['monat'] );
 			} else {
-				$_SESSION ['monat'] = $_REQUEST [monat];
+				$_SESSION ['monat'] = $_REQUEST ['monat'];
 			}
-			$_SESSION ['jahr'] = $_REQUEST [jahr];
-			$jahr = $_SESSION [jahr];
-			$monat = $_SESSION [monat];
+			$_SESSION ['jahr'] = $_REQUEST ['jahr'];
+			$jahr = $_SESSION ['jahr'];
+			$monat = $_SESSION ['monat'];
 		}
 		if (empty ( $monat ) or empty ( $jahr )) {
 			$monat = date ( "m" );
@@ -2473,23 +2473,23 @@ else {
 				$kontostand_heute = nummer_punkt2komma ( $kontostand_heute );
 				// echo "<b>$kontostand_jahresanfang| $summe_mieteinnahmen_monat|$summe_mieteinnahmen_jahr|$summe_kosten_monat|$summe_kosten_jahr|$kontostand_heute</b><br>";
 				
-				$table_arr [$a] [OBJEKT_NAME] = $objekt_name;
-				$table_arr [$a] [KONTOSTAND1_1] = $kontostand_jahresanfang;
-				$table_arr [$a] [ME_MONAT] = $summe_mieteinnahmen_monat;
-				$table_arr [$a] [ME_JAHR] = $summe_mieteinnahmen_jahr;
-				$table_arr [$a] [KOSTEN_MONAT] = $summe_kosten_monat;
-				$table_arr [$a] [KOSTEN_JAHR] = $summe_kosten_jahr;
-				$table_arr [$a] [KONTOSTAND_AKTUELL] = "<b>$kontostand_heute</b>";
+				$table_arr [$a] ['OBJEKT_NAME'] = $objekt_name;
+				$table_arr [$a] ['KONTOSTAND1_1'] = $kontostand_jahresanfang;
+				$table_arr [$a] ['ME_MONAT'] = $summe_mieteinnahmen_monat;
+				$table_arr [$a] ['ME_JAHR'] = $summe_mieteinnahmen_jahr;
+				$table_arr [$a] ['KOSTEN_MONAT'] = $summe_kosten_monat;
+				$table_arr [$a] ['KOSTEN_JAHR'] = $summe_kosten_jahr;
+				$table_arr [$a] ['KONTOSTAND_AKTUELL'] = "<b>$kontostand_heute</b>";
 			} // end for
 			
 			/* Summenzeile hinzufügen */
-			$table_arr [$a] [OBJEKT_NAME] = "<b>Summe incl. FON</b>";
-			$table_arr [$a] [KONTOSTAND1_1] = '<b>' . nummer_punkt2komma ( $g_kontostand_ja ) . '</b>';
-			$table_arr [$a] [ME_MONAT] = '<b>' . nummer_punkt2komma ( $g_me_monat ) . '</b>';
-			$table_arr [$a] [ME_JAHR] = '<b>' . nummer_punkt2komma ( $g_me_jahr ) . '</b>';
-			$table_arr [$a] [KOSTEN_MONAT] = '<b>' . nummer_punkt2komma ( $g_kosten_monat ) . '</b>';
-			$table_arr [$a] [KOSTEN_JAHR] = '<b>' . nummer_punkt2komma ( $g_kosten_jahr ) . '</b>';
-			$table_arr [$a] [KONTOSTAND_AKTUELL] = '<b>' . nummer_punkt2komma ( $g_kontostand_akt ) . '</b>';
+			$table_arr [$a] ['OBJEKT_NAME'] = "<b>Summe incl. FON</b>";
+			$table_arr [$a] ['KONTOSTAND1_1'] = '<b>' . nummer_punkt2komma ( $g_kontostand_ja ) . '</b>';
+			$table_arr [$a] ['ME_MONAT'] = '<b>' . nummer_punkt2komma ( $g_me_monat ) . '</b>';
+			$table_arr [$a] ['ME_JAHR'] = '<b>' . nummer_punkt2komma ( $g_me_jahr ) . '</b>';
+			$table_arr [$a] ['KOSTEN_MONAT'] = '<b>' . nummer_punkt2komma ( $g_kosten_monat ) . '</b>';
+			$table_arr [$a] ['KOSTEN_JAHR'] = '<b>' . nummer_punkt2komma ( $g_kosten_jahr ) . '</b>';
+			$table_arr [$a] ['KONTOSTAND_AKTUELL'] = '<b>' . nummer_punkt2komma ( $g_kontostand_akt ) . '</b>';
 			
 			$pdf->ezTable ( $table_arr, array (
 					'OBJEKT_NAME' => 'Objekt',
@@ -2656,14 +2656,14 @@ LIMIT 0 , 1" );
 			$g = new geldkonto_info ();
 			while ( $row = mysql_fetch_assoc ( $result ) ) {
 				$datum = date_mysql2german ( $row [DATUM] );
-				$auszugsnr = $row [KONTO_AUSZUGSNUMMER];
-				$g_buchungsnummer = $row [G_BUCHUNGSNUMMER];
-				$erfass_nr = $row [ERFASS_NR];
-				$betrag = nummer_punkt2komma ( $row [BETRAG] );
-				$vzweck = $row [VERWENDUNGSZWECK];
-				$kos_typ = $row [KOSTENTRAEGER_TYP];
-				$kos_id = $row [KOSTENTRAEGER_ID];
-				$geldkonto_id = $row [GELDKONTO_ID];
+				$auszugsnr = $row ['KONTO_AUSZUGSNUMMER'];
+				$g_buchungsnummer = $row ['G_BUCHUNGSNUMMER'];
+				$erfass_nr = $row ['ERFASS_NR'];
+				$betrag = nummer_punkt2komma ( $row ['BETRAG'] );
+				$vzweck = $row ['VERWENDUNGSZWECK'];
+				$kos_typ = $row ['KOSTENTRAEGER_TYP'];
+				$kos_id = $row ['KOSTENTRAEGER_ID'];
+				$geldkonto_id = $row ['GELDKONTO_ID'];
 				$g->geld_konto_details ( $geldkonto_id );
 				$r = new rechnung ();
 				$kostentraeger_bezeichnung = $r->kostentraeger_ermitteln ( $kos_typ, $kos_id );
@@ -2701,12 +2701,12 @@ LIMIT 0 , 1" );
 			}
 			while ( $row = mysql_fetch_assoc ( $result ) ) {
 				$datum = date_mysql2german ( $row [DATUM] );
-				$auszugsnr = $row [KONTO_AUSZUGSNUMMER];
-				$erfass_nr = $row [ERFASS_NR];
-				$betrag = nummer_punkt2komma ( $row [BETRAG] );
-				$vzweck = $row [VERWENDUNGSZWECK];
-				$kos_typ = $row [KOSTENTRAEGER_TYP];
-				$kos_id = $row [KOSTENTRAEGER_ID];
+				$auszugsnr = $row ['KONTO_AUSZUGSNUMMER'];
+				$erfass_nr = $row ['ERFASS_NR'];
+				$betrag = nummer_punkt2komma ( $row ['BETRAG'] );
+				$vzweck = $row ['VERWENDUNGSZWECK'];
+				$kos_typ = $row ['KOSTENTRAEGER_TYP'];
+				$kos_id = $row ['KOSTENTRAEGER_ID'];
 				$r = new rechnung ();
 				$kostentraeger_bezeichnung = $r->kostentraeger_ermitteln ( $kos_typ, $kos_id );
 				$this->summe_kontobuchungen_dyn ( $geldkonto_id, $kostenkonto, $anfangsdatum, $enddatum, $kostentraeger_typ, $kostentraeger_bez );
@@ -3044,7 +3044,7 @@ LIMIT 0 , 1" );
 		// $jahr_monat = date("Y-m");
 		// $jahr = date("Y");
 		if (isset ( $_REQUEST ['monat'] )) {
-			$monat = $_REQUEST [monat];
+			$monat = $_REQUEST ['monat'];
 		}
 		if (empty ( $monat )) {
 			$monat = date ( "m" );
@@ -3395,7 +3395,7 @@ LIMIT 0 , 1" );
 			include_once ('classes/class_bpdf.php');
 			$pdf = new Cezpdf ( 'a4', 'portrait' );
 			$bpdf = new b_pdf ();
-			$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
+			$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6 );
 			
 			$g = new geldkonto_info ();
 			$summe = 0;
@@ -3403,15 +3403,15 @@ LIMIT 0 , 1" );
 			$zeile = 0;
 			while ( $row = mysql_fetch_assoc ( $result ) ) {
 				$datum = date_mysql2german ( $row [DATUM] );
-				$auszugsnr = $row [KONTO_AUSZUGSNUMMER];
-				$g_buchungsnummer = $row [G_BUCHUNGSNUMMER];
-				$erfass_nr = $row [ERFASS_NR];
-				$betrag = nummer_punkt2komma ( $row [BETRAG] );
-				$vzweck = $row [VERWENDUNGSZWECK];
-				$kos_typ = $row [KOSTENTRAEGER_TYP];
-				$kos_id = $row [KOSTENTRAEGER_ID];
-				$kostenkonto = $row [KONTENRAHMEN_KONTO];
-				$geldkonto_id = $row [GELDKONTO_ID];
+				$auszugsnr = $row ['KONTO_AUSZUGSNUMMER'];
+				$g_buchungsnummer = $row ['G_BUCHUNGSNUMMER'];
+				$erfass_nr = $row ['ERFASS_NR'];
+				$betrag = nummer_punkt2komma ( $row ['BETRAG'] );
+				$vzweck = $row ['VERWENDUNGSZWECK'];
+				$kos_typ = $row ['KOSTENTRAEGER_TYP'];
+				$kos_id = $row ['KOSTENTRAEGER_ID'];
+				$kostenkonto = $row ['KONTENRAHMEN_KONTO'];
+				$geldkonto_id = $row ['GELDKONTO_ID'];
 				$g->geld_konto_details ( $geldkonto_id );
 				$r = new rechnung ();
 				if ($kos_typ == 'Mietvertrag') {
@@ -3492,5 +3492,3 @@ LIMIT 0 , 1" );
 		}
 	}
 } // end class
-
-?>
