@@ -355,19 +355,18 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 				$mv_id = $row ['MIETVERTRAG_ID'];
 				$objekt_id = $row ['OBJEKT_ID'];
 				$mv = new mietvertraege ();
-				$mv->get_mietvertrag_infos_aktuell ( $mv_id );
 				
 				if (! isset ( $_SESSION ['geldkonto_id'] )) {
+					$mv->get_mietvertrag_infos_aktuell ( $mv_id );
 					if ($mv->mietvertrag_aktuell == 1) {
 						echo "$mv->einheit_kurzname*$mv_id*$mv->personen_name_string|";
 					} else {
 						echo "ALTMIETER:$mv->einheit_kurzname*$mv_id*$mv->personen_name_string|";
 					}
 				} else {
-					// $eee = new einheit();
-					// $eee->get_einheit_info($mv->einheit_id);
 					$gk = new gk ();
 					if ($gk->check_zuweisung_kos_typ ( $_SESSION ['geldkonto_id'], 'Objekt', $objekt_id )) {
+						$mv->get_mietvertrag_infos_aktuell ( $mv_id );
 						if ($mv->mietvertrag_aktuell == 1) {
 							echo "$mv->einheit_kurzname*$mv_id*$mv->personen_name_string|";
 						} else {
@@ -430,34 +429,26 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 		
 		if ($typ == 'Eigentuemer') {
 			ob_clean ();
-			// $db_abfrage = "SELECT ID, EINHEIT_ID FROM `WEG_MITEIGENTUEMER` WHERE AKTUELL='1'";
 			$db_abfrage = "SELECT ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME FROM `WEG_MITEIGENTUEMER` , EINHEIT WHERE EINHEIT_AKTUELL = '1' && AKTUELL = '1' && EINHEIT.EINHEIT_ID = WEG_MITEIGENTUEMER.EINHEIT_ID GROUP BY ID ORDER BY EINHEIT_KURZNAME ASC";
 			$result = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 			while ( $row = mysql_fetch_assoc ( $result ) ) {
 				$weg = new weg ();
-				// $eig_bez[] = $weg->get_eigentumer_id_infos2($ID).'*'. $ID;
 				$ID = $row ['ID'];
 				$einheit_id = $row ['EINHEIT_ID'];
-				$weg->get_eigentuemer_namen ( $row ['ID'] );
-				// $weg->eigentuemer_name_str
-				// $e = new einheit();
-				// $e->get_einheit_info($EINHEIT_ID);
 				$einheit_kn = $row ['EINHEIT_KURZNAME'];
 				
 				if (! isset ( $_SESSION ['geldkonto_id'] )) {
+					$weg->get_eigentuemer_namen ( $row ['ID'] );
 					echo "$einheit_kn*$ID*$weg->eigentuemer_name_str|";
-					// echo "$mv->einheit_kurzname*$mv_id*$mv->personen_name_string|";
 				} else {
 					$eee = new einheit ();
 					$eee->get_einheit_info ( $einheit_id );
 					$gk = new gk ();
 					if ($gk->check_zuweisung_kos_typ ( $_SESSION ['geldkonto_id'], 'Objekt', $eee->objekt_id )) {
-						// echo "$einheit_kn*$weg->eigentuemer_name_str iiii*".$row['ID']."|";
+						$weg->get_eigentuemer_namen ( $row ['ID'] );
 						echo "$einheit_kn*$ID*$weg->eigentuemer_name_str|";
 					}
 				}
-				
-				// echo "$einheit_kn $bezxx|";
 			}
 		}
 		
