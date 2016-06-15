@@ -38,16 +38,9 @@ class weg
 {
     function uebersicht_einheit($einheit_id)
     {
-        // $this->weg_objekte_arr();
-        // $this->liste_weg_objekte('?daten=weg');
         $f = new formular ();
         $f->fieldset('Übersicht Einheit', 'u_id');
         $this->get_weg_einheit_info($einheit_id);
-        /*
-		 * echo '<pre>';
-		 * print_r($this);
-		 */
-        // echo $e->einheit_kurzname;
         $f->fieldset_ende();
     }
 
@@ -55,7 +48,6 @@ class weg
     {
         $e = new einheit ();
         $e->get_einheit_info($einheit_id);
-        // print_r($e);
         $d = new detail ();
         $this->weg_anteile = $d->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Anteile');
         $this->e = $e;
@@ -64,10 +56,6 @@ class weg
         $de = new detail ();
         $details_obj = $de->finde_alle_details_arr('Objekt', $e->objekt_id);
         if (is_array($details_obj)) {
-            /*
-			 * echo '<pre>';
-			 * print_r($details_obj);
-			 */
             echo "<table>";
             echo "<tr><th colspan=\"2\">OBJEKT DETAILS</th></tr>";
             $anz_det = count($details_obj);
@@ -82,7 +70,6 @@ class weg
         }
 
         echo "<table class=\"sortable\">";
-        // echo "<tr><th>Beschreibung</th><th>WERT</th></tr>";
         echo "<tr><th>EINHEIT</th><th>$e->einheit_kurzname</th></tr>";
         echo "<tr><td>TYP</td><td>$e->typ</td></tr>";
         echo "<tr><td>ANSCHRIFT</td><td>$e->haus_strasse $e->haus_nummer, $e->haus_plz $e->haus_stadt</td></tr>";
@@ -116,16 +103,12 @@ class weg
         echo "<table>";
         $this->get_last_eigentuemer_ausgabe($einheit_id);
         echo "</table>";
-        // print_r($this);
 
         /* ET DETAILS */
         $de = new detail ();
         $details_et = $de->finde_alle_details_arr('Eigentuemer', $this->eigentuemer_id);
         if (is_array($details_et)) {
-            /*
-			 * echo '<pre>';
-			 * print_r($details_obj);
-			 */
+
             echo "<table>";
             echo "<tr><th colspan=\"2\">ET DETAILS</th></tr>";
             $anz_det = count($details_et);
@@ -172,11 +155,6 @@ class weg
 
         $t = new todo ();
         $t_arr = $t->get_auftraege_einheit('Einheit', $einheit_id, 0);
-
-        /*
-		 * echo '<pre>';
-		 * print_r($t_arr);
-		 */
 
         $anz_t = count($t_arr);
         echo "<table>";
@@ -247,10 +225,7 @@ class weg
             echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
         }
         echo "</table>";
-        /*
-		 * echo '<pre>';
-		 * print_r($this);
-		 */
+
         unset ($t_arr);
         $t = new todo ();
         $t_arr = $t->get_auftraege_einheit('Eigentuemer', $this->eigentuemer_id, 0);
@@ -324,8 +299,6 @@ class weg
             echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
         }
         echo "</table>";
-
-        // $this->eigentuemer_einheit($einheit_id);
     }
 
     function get_kostenkat_info($monat, $jahr, $kos_typ, $kos_id, $kostenkat)
@@ -429,7 +402,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
 
     function get_summe_kostenkat_monat($monat, $jahr, $kos_typ, $kos_id, $e_konto)
     {
-        // echo "SELECT SUM(BETRAG) AS SUMME, G_KONTO FROM WEG_WG_DEF WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && GRUPPE = '$gruppe' ORDER BY ANFANG ASC";
         $result = mysql_query("SELECT SUM(BETRAG) AS SUMME, G_KONTO, ANFANG, ENDE FROM WEG_WG_DEF WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && E_KONTO = '$e_konto' ORDER BY ANFANG ASC");
         $row = mysql_fetch_assoc($result);
         if (!empty ($row ['SUMME'])) {
@@ -451,10 +423,7 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
 
     function get_summe_kostenkat_gruppe_m2($monat, $jahr, $kos_typ, $kos_id, $gruppe)
     {
-        // echo "SELECT SUM(BETRAG) AS SUMME, G_KONTO FROM WEG_WG_DEF WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && GRUPPE = '$gruppe' ORDER BY ANFANG ASC";
         $result = mysql_query("SELECT SUM(BETRAG) AS SUMME, G_KONTO FROM WEG_WG_DEF WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && E_KONTO!=6050 && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && GRUPPE = '$gruppe' ORDER BY ANFANG ASC");
-        // echo "SELECT SUM(BETRAG) AS SUMME, G_KONTO FROM WEG_WG_DEF WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && GRUPPE = '$gruppe' ORDER BY ANFANG ASC";
-        // die();
         $numrows = mysql_numrows($result);
         if ($numrows) {
             $row = mysql_fetch_assoc($result);
@@ -465,7 +434,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
 
     function wg_def_in_array($kos_typ, $kos_id, $monat, $jahr)
     {
-        // echo "SELECT KOSTENKAT FROM WEG_WG_DEF WHERE KOS_TYP LIKE '$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' GROUP BY KOSTENKAT ORDER BY E_KONTO ASC<br>";
         $result = mysql_query("SELECT KOSTENKAT FROM WEG_WG_DEF WHERE KOS_TYP LIKE '$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' GROUP BY KOSTENKAT ORDER BY E_KONTO ASC");
         $numrows = mysql_numrows($result);
         if ($numrows > 0) {
@@ -478,18 +446,21 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
 
     function get_sume_hausgeld($kos_typ, $kos_id, $monat, $jahr)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME, G_KONTO, E_KONTO, ANFANG, ENDE FROM WEG_WG_DEF WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ORDER BY ANFANG ASC");
+        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME, G_KONTO, E_KONTO, ANFANG, ENDE
+FROM WEG_WG_DEF
+WHERE KOS_TYP='$kos_typ'
+    && KOS_ID='$kos_id'
+    && AKTUELL='1'
+    && E_KONTO = '6020'
+        && (
+            ( ENDE = '0000-00-00' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat')
+            OR
+            ( DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ))");
+
         $row = mysql_fetch_assoc($result);
         if (!empty ($row ['SUMME'])) {
             return $row ['SUMME'] * -1;
         }
-    }
-
-    function get_wplan_vorgaenger($wplan_id, $objekt_id)
-    {
-        //determining previous wplan based on id is dangerous
-        $result = mysql_query("SELECT * FROM WEG_WPLAN where objekt_id = $objekt_id && plan_id < $wplan_id ORDER BY DAT DESC LIMIT 1;");
-        return mysql_fetch_assoc($result);
     }
 
     function form_eigentuemer_einheit($objekt_id)
@@ -500,7 +471,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         $f->fieldset('Eigentuemer zu Einheit', 'ee_id');
         $f->erstelle_formular('Eigentümerwechsel', '');
         $f->text_feld_inaktiv('Aktueller Eigentümer', 'ae', 'Erst Einheit wählen', '50', 'ae');
-        // $e->dropdown_einheiten('Einheit', 'einheit_id');
         $js = "onclick=\"get_eigentuemer('einheit_id','ae')\"";
         $this->dropdown_einheiten('Einheit wählen', 'einheit_id', 'einheit_id', $objekt_id, $js);
         $javaaction = "onchange=\"add2list('q_liste','z_liste')\"";
@@ -522,19 +492,13 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         $mv = new mietvertraege ();
         $f->fieldset('Eigentuemer zu Einheit', 'ee_id');
         $this->get_eigentumer_id_infos4($et_id);
-        // echo '<pre>';
-        // print_r($this);
         $f->text_feld_inaktiv("Aktueller Eigentümer der Einheit $this->einheit_kurzname", 'ae', "$this->empf_namen_u", '50', 'ae');
         $f->erstelle_formular('Eigentümerdaten ändern', '');
-        // $js = "onclick=\"get_eigentuemer('einheit_id','ae')\"";
-        // $this->dropdown_einheiten('Einheit wählen', 'einheit_id', 'einheit_id', $objekt_id, $js);
-        // $e->dropdown_einheiten('einheit_id', 'einheit_id');
         $bu = new buchen ();
         $bu->dropdown_kostentraeger_bez_vw('Einheit', 'einheit_id', 'einheit_id', '', 'Einheit', $this->einheit_id);
         $javaaction = "onchange=\"add2list('q_liste','z_liste')\"";
         $mv->dropdown_personen_liste('Personen als Eigentümer wählen', 'q_liste', 'q_liste', $javaaction);
         $javaaction1 = "onclick=\"remove_from_dd('z_liste')\"";
-        // $mv->ausgewahlte_mieter_liste('Ausgewählte Personen', 'z_liste[]', 'z_liste', $javaaction1, '5');
         $this->ausgewahlte_et_liste_aendern('Ausgewählte Personen', 'z_liste[]', 'z_liste', $javaaction1, '5', '');
         $eigentuemer_von = date_mysql2german($this->eigentuemer_von);
         $eigentuemer_bis = date_mysql2german($this->eigentuemer_bis);
@@ -565,7 +529,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         $person_info = new person ();
 
         echo "<label for=\"$id\">$label</label><select name=\"$name\" id=\"$id\" $javaaction size=\"$size\" style='visibility:visible;'>";
-        // print_r($et_arr);
         if (is_array($et_arr)) {
             for ($a = 0; $a < count($et_arr); $a++) {
                 $person_id = $et_arr [$a] ['PERSON_ID'];
@@ -609,8 +572,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         $tage_jahr = $bk->tage_im_jahr($jahr);
 
         $result = mysql_query("SELECT * FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' && (DATE_FORMAT(VON, '%Y') <='$jahr' AND BIS='0000-00-00' OR DATE_FORMAT(VON, '%Y') <='$jahr' AND DATE_FORMAT(BIS, '%Y') >='$jahr') ORDER BY VON ASC");
-        // echo "SELECT * FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' && (DATE_FORMAT(VON, '%Y') <='$jahr' AND BIS='0000-00-00' OR DATE_FORMAT(VON, '%Y') <='$jahr' AND DATE_FORMAT(BIS, '%Y') >='$jahr') ORDER BY VON ASC";
-        // die();
         $numrows = mysql_numrows($result);
         if ($numrows > 0) {
             $z = 0;
@@ -637,7 +598,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
 
                 if ($time_bis < $time_jahr31_12) {
                     $datum_bis = $time_bis;
-                    // echo "BLA1 - $datum_bis<br>";
                 }
 
                 if ($time_bis >= $time_jahr31_12) {
@@ -651,14 +611,11 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
                 $einheit_id = $row ['EINHEIT_ID'];
                 $eigentuemer_id = $row ['ID'];
 
-                // echo "$datum_von $datum_bis<br>";
                 $datum_von_d = date('Y-m-d', $datum_von);
                 $datum_bis_d = date('Y-m-d', $datum_bis);
 
                 $bk = new bk ();
                 $diff = $bk->diff_in_tagen($datum_von_d, $datum_bis_d) + 1;
-                // $tage_jahr = $bk->tage_im_jahr($jahr);
-                // echo "$eigentuemer_id $datum_von_d $datum_bis_d --> $diff Tage von $tage_jahr<br>";
 
                 $my_arr [$z] ['EINHEIT_ID'] = $einheit_id;
                 $my_arr [$z] ['ID'] = $eigentuemer_id;
@@ -668,17 +625,13 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
 
                 $z++;
             }
-            // print_r($my_arr);
-            // die();
             return $my_arr;
         }
     }
 
     function get_last_eigentuemer_arr($einheit_id)
     {
-        // echo "SELECT * FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON DESC LIMIT 0,1<br>";
         $result = mysql_query("SELECT * FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON DESC LIMIT 0,1");
-        // echo "SELECT * FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON DESC LIMIT 0,1";
         $numrows = mysql_numrows($result);
         if ($numrows) {
             $row = mysql_fetch_assoc($result);
@@ -711,7 +664,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         $personen_id_arr = $this->get_person_id_eigentuemer_arr($this->eigentuemer_id);
         $anz_p = count($personen_id_arr);
         if (!$anz_p) {
-            // $this->eigentuemer_name[0]['Nachname'] = 'unbekannt';
         } else {
             unset ($this->eigentuemer_name);
 
@@ -753,8 +705,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             }
 
             $arr = array_sortByIndex($this->eigentuemer_name, 'Geschlecht', 'DESC');
-            // print_r($arr);
-            // die();
             unset ($this->eigentuemer_name);
             $this->eigentuemer_name = $arr;
             $this->pdf_anrede = 'Sehr ';
@@ -789,15 +739,12 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
 
             $this->anrede = $this->pdf_anrede;
             $this->pdf_anrede = str_replace("<br>", "\n", $this->anrede);
-            // echo "$this->pdf_anrede";
         }
     }
 
     function last_eigentuemer_details_ausgabe($einheit_id)
     {
         $arr = $this->get_last_eigentuemer_details_arr($einheit_id);
-        // echo '<pre>';
-        // print_r($arr);
         $anz = count($arr);
         if (is_array($arr)) {
             echo "<tr><td>EIGENTUEMERANZAHL</td><td>$anz</td></tr>";
@@ -819,9 +766,7 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         $arr = $this->get_last_eigentuemer_arr($einheit_id);
         $anz = count($arr);
         if (!$anz) {
-            // $this->eigentuemer_name[0]['Nachname'] = 'unbekannt';
         } else {
-            // print_r($arr);
             $this->von = $arr ['VON'];
             $this->bis = $arr ['BIS'];
             $this->eigentuemer_id = $arr ['ID'];
@@ -829,7 +774,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             $personen_id_arr = $this->get_person_id_eigentuemer_arr($this->eigentuemer_id);
             $anz_p = count($personen_id_arr);
             if (!$anz_p) {
-                // $this->eigentuemer_name[0]['Nachname'] = 'unbekannt';
             } else {
                 unset ($this->eigentuemer_name);
                 for ($a = 0; $a < $anz_p; $a++) {
@@ -915,7 +859,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
                 $vorname = $this->eigentuemer_name [$a] ['Vorname'];
                 $person_id = $this->eigentuemer_name [$a] ['person_id'];
                 $eig_zahl = $a + 1;
-                // echo "<tr><th>EIGENTÜMER $eig_zahl</th><th>$vorname $nachname</th></tr>";
                 $this->eigentuemer_namen .= "$eig_zahl. $nachname $vorname<br>";
                 $this->eigentuemer_namen2 .= "$nachname $vorname ";
             }
@@ -983,7 +926,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
 
     function get_eigentumer_id_infos($e_id)
     {
-        // $this->eigentuemer_von
         $einheit_id = $this->get_einheit_id_from_eigentuemer($e_id);
         $this->einheit_id = $einheit_id;
         $e = new einheit ();
@@ -1000,9 +942,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
 
     function get_eigentumer_id_infos2($e_id)
     {
-        // echo "SIVAC $e_id";
-        // die();
-        // $this->eigentuemer_von
         $einheit_id = $this->get_einheit_id_from_eigentuemer($e_id);
         $this->einheit_id = $einheit_id;
         $e = new einheit ();
@@ -1013,8 +952,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         $this->haus_stadt = $e->haus_stadt;
         $this->einheit_kurzname = $e->einheit_kurzname;
         $this->objekt_id = $e->objekt_id;
-        // $this->get_last_eigentuemer_namen($einheit_id);
-        //
         $this->get_eigentuemer_namen($e_id);
         $this->get_anrede_eigentuemer($e_id);
         $miteigentuemer_namen = strip_tags($this->eigentuemer_name_str);
@@ -1046,12 +983,10 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             unset ($this->GLAEUBIGER_ID);
         }
 
-        // $this->eigentuemer_von
         $einheit_id = $this->get_einheit_id_from_eigentuemer($e_id);
         $this->einheit_id = $einheit_id;
         $e = new einheit ();
         $e->get_einheit_info($einheit_id);
-        // print_r($e);
         $this->einheit_kurzname = $e->einheit_kurzname;
         $this->einheit_lage = $e->einheit_lage;
         $this->einheit_qm = $e->einheit_qm;
@@ -1070,7 +1005,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             $this->einheit_qm_weg = $this->einheit_qm;
             $this->einheit_qm_weg_d = $this->einheit_qm_d;
         }
-        // die();
 
         $this->haus_strasse = $e->haus_strasse;
         $this->haus_nummer = $e->haus_nummer;
@@ -1079,11 +1013,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         $this->einheit_kurzname = $e->einheit_kurzname;
         $this->objekt_id = $e->objekt_id;
         $this->post_anschrift_haus = "$this->haus_strasse $this->haus_nummer\n<b>$this->haus_plz $this->haus_stadt</b>";
-        // $this->get_last_eigentuemer_namen($einheit_id);
-        // $this->get_eigentuemer_namen($e_id);
-        // $this->get_anrede_eigentuemer($e_id);
-        // $miteigentuemer_namen = strip_tags($this->eigentuemer_name_str);
-        /* Personen finden */
         $this->personen_id_arr = $this->get_person_id_eigentuemer_arr($e_id);
         $this->anz_personen = count($this->personen_id_arr);
         for ($a = 0; $a < $this->anz_personen; $a++) {
@@ -1123,10 +1052,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
                 $this->zustellanschriften [] = br2n($p->zustellanschrift);
                 $this->zustellanschriften_p [$person_id] = $p->zustellanschrift;
             }
-
-            // unset($this->personen_id_arr);
-
-            // print_r($p);
         }
         /* Sortieren nach Geschlecht */
         $this->personen_id_arr1 = array_sortByIndex($this->personen_id_arr, 'geschlecht', SORT_DESC);
@@ -1177,14 +1102,8 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         }
 
         $this->empf_namen = bereinige_string($this->empf_namen_u);
-
-        // echo "$this->empf_namen_u $this->anz_anschrift && $this->anz_zustell<br>";
-
-        // print_r($this);
-
         $gg = new geldkonto_info ();
         $gg->geld_konto_ermitteln('Objekt', $this->objekt_id);
-        // die();
         $this->geldkonto_id = $gg->geldkonto_id;
         $this->OBJ_KONTONUMMER = $gg->kontonummer;
         $this->OBJ_BLZ = $gg->blz;
@@ -1201,8 +1120,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         if ($sep->check_m_ref($this->SEPA_MANDAT)) {
             $this->SEPA_MANDAT_AKTIV = 1;
             $sep->get_mandat_infos_mref($this->SEPA_MANDAT);
-            // print_r($sep);
-            // die();
             $this->MAND = $sep->mand;
             $this->BIC = $sep->mand->BIC;
             $this->IBAN = $sep->mand->IBAN;
@@ -1221,37 +1138,7 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             } else {
                 $this->GLAEUBIGER_ID = $glaeubiger_id;
             }
-
-            /*
-			 * [DAT] => 286
-			 * [M_ID] => 275
-			 * [M_REFERENZ] => ET16
-			 * [GLAEUBIGER_ID] => DE97ZZZ00000825342
-			 * [GLAEUBIGER_GK_ID] => 509
-			 * [BEGUENSTIGTER] => WEG Borstellstr. 38 c/o Berlus GmbH
-			 * [NAME] => Kai Lembke und Lopez
-			 * [ANSCHRIFT] => Borstellstr. 38
-			 * [KONTONR] =>
-			 * [BLZ] =>
-			 * [IBAN] => DE472576189408623200
-			 * [BIC] => GENODEF1SEE
-			 * [BANKNAME] => Volksbank Sweden
-			 * [M_UDATUM] => 2014-01-15
-			 * [M_ADATUM] => 2014-01-15
-			 * [M_EDATUM] => 9999-12-31
-			 * [M_ART] => WIEDERKEHREND
-			 * [NUTZUNGSART] => HAUSGELD
-			 * [EINZUGSART] => Aktuelles Saldo komplett
-			 * [M_KOS_TYP] => MIETVERTRAG
-			 * [M_KOS_ID] => 16
-			 * [AKTUELL] => 1
-			 */
         }
-
-        // print_r($sep);
-        // print_r($this);
-        // die();
-        // return "$e->einheit_kurzname $miteigentuemer_namen";
     }
 
     function get_eigentumer_id_infos4($e_id)
@@ -1269,7 +1156,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             unset ($this->GLAEUBIGER_ID);
         }
 
-        // $this->eigentuemer_von
         $einheit_id = $this->get_einheit_id_from_eigentuemer($e_id);
         $this->einheit_id = $einheit_id;
         $e = new einheit ();
@@ -1301,11 +1187,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         $this->einheit_kurzname = $e->einheit_kurzname;
         $this->objekt_id = $e->objekt_id;
         $this->post_anschrift_haus = "$this->haus_strasse $this->haus_nummer\n<b>$this->haus_plz $this->haus_stadt</b>";
-        // $this->get_last_eigentuemer_namen($einheit_id);
-        // $this->get_eigentuemer_namen($e_id);
-        // $this->get_anrede_eigentuemer($e_id);
-        // $miteigentuemer_namen = strip_tags($this->eigentuemer_name_str);
-        /* Personen finden */
         $this->personen_id_arr = $this->get_person_id_eigentuemer_arr($e_id);
         $this->anz_personen = count($this->personen_id_arr);
         for ($a = 0; $a < $this->anz_personen; $a++) {
@@ -1345,10 +1226,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
                 $this->zustellanschriften [] = br2n($p->zustellanschrift);
                 $this->zustellanschriften_p [$person_id] = $p->zustellanschrift;
             }
-
-            // unset($this->personen_id_arr);
-
-            // print_r($p);
         }
         /* Sortieren nach Geschlecht */
         $this->personen_id_arr1 = array_sortByIndex($this->personen_id_arr, 'geschlecht', SORT_DESC);
@@ -1416,7 +1293,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
     function get_person_id_eigentuemer_arr($id)
     {
         $result = mysql_query("SELECT PERSON_ID FROM WEG_EIGENTUEMER_PERSON WHERE WEG_EIG_ID='$id' && AKTUELL='1'");
-        // echo "SELECT PERSON_ID FROM WEG_EIGENTUEMER_PERSON WHERE WEG_EIG_ID='$id' && AKTUELL='1'";
         $numrows = mysql_numrows($result);
         if ($numrows > 0) {
             while ($row = mysql_fetch_assoc($result)) {
@@ -1441,7 +1317,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
     function get_einheiten_et($person_id)
     {
         $result = mysql_query("SELECT WEG_EIGENTUEMER_PERSON.WEG_EIG_ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME FROM WEG_EIGENTUEMER_PERSON, WEG_MITEIGENTUEMER,EINHEIT WHERE PERSON_ID='$person_id' && WEG_MITEIGENTUEMER.AKTUELL='1' && WEG_EIGENTUEMER_PERSON.AKTUELL='1' && EINHEIT.EINHEIT_AKTUELL='1' && WEG_EIGENTUEMER_PERSON.WEG_EIG_ID=WEG_MITEIGENTUEMER.ID && WEG_MITEIGENTUEMER.EINHEIT_ID=EINHEIT.EINHEIT_ID GROUP BY WEG_EIG_ID");
-        // echo "SELECT PERSON_ID FROM WEG_EIGENTUEMER_PERSON WHERE WEG_EIG_ID='$id' && AKTUELL='1'";
         $numrows = mysql_numrows($result);
         if ($numrows > 0) {
             while ($row = mysql_fetch_assoc($result)) {
@@ -1517,12 +1392,7 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
     {
         $o = new objekt ();
         $einheiten_arr = $o->einheiten_objekt_arr($objekt_id);
-        // print_r($einheiten_arr);
         return $einheiten_arr;
-        // $result = mysql_query ("SELECT EINHEIT_ID FROM EINHEIT WHERE TYP LIKE '%eigentum%' && EINHEIT_AKTUELL='1' ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1'), EINHEIT_KURZNAME ASC");
-        // OK$result = mysql_query ("SELECT * FROM EINHEIT WHERE TYP LIKE '%eigentum%' && EINHEIT_AKTUELL='1' ORDER BY LENGTH(EINHEIT_KURZNAME), EINHEIT_KURZNAME ASC");
-        // $result = mysql_query ("SELECT * FROM EINHEIT WHERE EINHEIT_AKTUELL='1' ORDER BY LENGTH(EINHEIT_KURZNAME), EINHEIT_KURZNAME ASC");
-        // $result = mysql_query ("SELECT EINHEIT_ID FROM EINHEIT WHERE TYP LIKE '%eigentum%' && EINHEIT_AKTUELL='1' ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1'), EINHEIT_KURZNAME ASC");
     }
 
     function einheiten_weg_tabelle_anzeigen($objekt_id)
@@ -1786,7 +1656,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             $akt_eigentuemer_bis = $o->datum_minus_tage($eigentuemer_von, 1);
             $db_abfrage = "UPDATE WEG_MITEIGENTUEMER SET BIS='$akt_eigentuemer_bis' where AKTUELL='1' && ID='$alt_id'";
             $resultat = mysql_query($db_abfrage) or die (mysql_error());
-            // echo "1";
         }
 
         /* Neue Eigentümer eintragen */
@@ -1818,18 +1687,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
 
         $eigentuemer_von = date_german2mysql($eigentuemer_von);
         $eigentuemer_bis = date_german2mysql($eigentuemer_bis);
-        /* Letzten Eigentümer Ende auf Anfang -1 Tag setzen, falls überhaupt vorhanden */
-        /*
-		 * $alt_id = $this->check_miteigentuemer($einheit_id);
-		 * if(isset($alt_id) && !empty($alt_id)){
-		 * $o = new objekt;
-		 * $akt_eigentuemer_bis = $o->datum_minus_tage($eigentuemer_von, 1);
-		 * $db_abfrage = "UPDATE WEG_MITEIGENTUEMER SET BIS='$akt_eigentuemer_bis' where AKTUELL='1' && ID='$alt_id'";
-		 * $resultat = mysql_query($db_abfrage) or
-		 * die(mysql_error());
-		 * #echo "1";
-		 * }
-		 */
 
         /* Neue Eigentümer eintragen */
         $id = $et_id;
@@ -1890,8 +1747,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
     {
         $arr = $this->einheiten_weg_tabelle_arr($objekt_id);
         $anz = count($arr);
-        // print_r($arr);
-        // die();
         if ($anz > 0) {
             echo "<table class=\"sortable\">";
             echo "<tr><th>einheit</th><th>Eigentümer</th><th>OPTIONEN</th><th>Hausgeld soll</th><th>Saldo</th></tr>";
@@ -1906,7 +1761,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
                 $this->Wohngeld_soll_a = nummer_punkt2komma($this->gruppe_erg);
                 $b_link = "<a href=\"?daten=weg&option=wohngeld_buchen_maske&einheit_id=$einheit_id\">Hausgeld buchen</a>";
 
-                // $this->get_last_eigentuemer($einheit_id);
                 $this->hausgeld_kontoauszug_stand($this->eigentuemer_id);
                 echo "<tr><td>$u_link</td><td>$this->eigentuemer_namen</td><td>$b_link</td><td>$this->Wohngeld_soll_a</td><td>$this->hg_erg_a €</td></tr>";
             }
@@ -1925,11 +1779,7 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         $bg->monate_jahres_links($jahr, "?daten=weg&option=wohngeld_buchen_maske&einheit_id=$einheit_id");
         $e->get_einheit_info($einheit_id);
         $this->get_last_eigentuemer($einheit_id);
-        // $f->hidden_feld('eigentuemer_id', "$this->eigentuemer_id");
         $this->get_last_eigentuemer_namen($einheit_id);
-        // $k = new kontenrahmen;
-        // $kontenrahmen_id = $k->get_kontenrahmen('Objekt',$e->objekt_id);
-        // echo $kontenrahmen_id;
 
         $g = new geldkonto_info ();
         $kontostand_aktuell = nummer_punkt2komma($g->geld_konto_stand($_SESSION ['geldkonto_id']));
@@ -2048,29 +1898,10 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
 
     function form_wohngeld_def_edit($dat)
     {
-        // die('ALLES OK');
         $this->get_hausgeld_def($dat);
         if (!isset ($this->wg_def_dat)) {
             die ('Hausgelddefintion existiert nicht');
         } else {
-
-            /*
-			 * get_hausgeld_def($dat){
-			 * if(isset($this->wg_def_dat)){
-			 * unset($this->wg_def_dat);
-			 * unset($this->wg_def_id);
-			 * unset($this->wg_def_von);
-			 * unset($this->wg_def_bis);
-			 * unset($this->wg_def_betrag);
-			 * unset($this->wg_def_koskat);
-			 * unset($this->wg_def_e_konto);
-			 * unset($this->wg_def_gruppen_bez);
-			 * unset($this->wg_def_g_konto);
-			 * unset($this->wg_def_kos_typ);
-			 * unset($this->wg_def_kos_id);
-			 * unset($this->wg_def_kos_aktuell);
-			 */
-            // $this->wohngeld_uebersicht('Einheit', $einheit_id);
 
             $f = new formular ();
             $e = new einheit ();
@@ -2182,9 +2013,9 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         if ($numrows > 0) {
             echo "<label for=\"genkeys\">$label</label><select id=\"genkeys\" name=\"genkey\" size=\"1\" $js>";
             while ($row = mysql_fetch_assoc($result)) {
-                $keyid = $row [GKEY_ID];
-                $keyname = $row [GKEY_NAME];
-                $key_me = $row [ME];
+                $keyid = $row ['GKEY_ID'];
+                $keyname = $row ['GKEY_NAME'];
+                $key_me = $row ['ME'];
                 echo "<option value=\"$keyid\">$key_me</option>";
             }
             echo "</select>";
@@ -2225,14 +2056,8 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
                 $e_konto = $arr [$a] ['E_KONTO'];
                 $g_konto = $arr [$a] ['G_KONTO'];
                 $gruppe = $arr [$a] ['GRUPPE'];
-                // echo $kostenkat.'<br>';
                 echo "<option value=\"$e_konto|$kostenkat|$gruppe|$g_konto\">$e_konto | $kostenkat | $gruppe | $g_konto</option>\n";
             }
-            /*
-			 * $f = new formular;
-			 * $f->hidden_feld('g_konto', $arr[0]['G_KONTO']);
-			 * $f->hidden_feld('gruppe', $arr[0]['GRUPPE']);
-			 */
             echo "</select>";
         }
     }
@@ -2256,7 +2081,7 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         $numrows = mysql_numrows($result);
         if ($numrows) {
             $row = mysql_fetch_assoc($result);
-            return $row [KOSTENKAT];
+            return $row ['KOSTENKAT'];
         }
     }
 
@@ -2315,7 +2140,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
 
     function wohngeld_buchung_speichern($eigentuemer_id, $einheit_id, $geldkonto_id, $datum, $kontoauszug, $def_array, $def_b_texte, $wg_g_konto, $wg_g_betrag, $buchungstext)
     {
-        // echo "$eigentuemer_id, $einheit_id, $geldkonto_id, $datum, $kontoauszugsnr, $def_array, $def_b_texte,$wg_g_konto, $wg_g_betrag, $b_text";
         /* Wohngeldgesamtbetrag buchen */
         $kontoauszugsnr = $kontoauszug;
         $b = new buchen ();
@@ -2430,7 +2254,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         } else {
             $diff_in_monaten = $mi->diff_in_monaten($datum_ab, $this->eigentuemer_bis);
         }
-        // echo "Diff in Monaten $diff_in_monaten<br>";
 
         $datum_ab_arr = explode('-', $datum_ab);
         $j = $datum_ab_arr [0];
@@ -2452,14 +2275,8 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             $m = 1;
         }
 
-        // for($a=1;$a<=$diff_in_monaten;$a++){
-        //if ($je == date('Y')) {
-        //    $akt_monat = date("m");
-        //}
-
         for ($a = $m; $a <= $akt_monat; $a++) {
             $m = sprintf('%02d', $a);
-            // echo "$a. $m.$j<br>";
             $soll_array [$a - 1] ['monat'] = $m;
             $soll_array [$a - 1] ['jahr'] = $akt_jahr;
 
@@ -2469,15 +2286,10 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             }
             $m++;
         }
-        // echo "<pre>";
-        // print_r($soll_array);
-        // die();
 
-        /* Überschriften der Tabelle dynamisch */
         $moegliche_def_arr = $this->get_moegliche_def('Einheit', $this->einheit_id);
         $anz = count($moegliche_def_arr);
 
-        // echo "<table>";
         $spalten = $anz + 3;
         $pdf->ezText("<b>$kos_bez, $this->haus_strasse $this->haus_nummer</b>", 11, array(
             'justification' => 'full'
@@ -2496,24 +2308,12 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             }
             $e_konto = $moegliche_def_arr [$k] ['E_KONTO'];
         }
-        // return $pdf;
-
-        // print_r($moegliche_def_arr);
-        // die();
-
-        /* Monatsschleife */
         $anz_monate = count($soll_array);
-        // echo "<hr>ANZM $anz_monate</hr>";
-
-        // echo '<pre>';
 
         $soll_monate = array_keys($soll_array);
-        // print_r($soll_array);
-        // print_r($soll_monate);
         $anz_keys = count($soll_monate);
         $xx = $soll_monate [0]; // erster
         $anz_monate = $soll_monate [$anz_monate - 1]; // letzter
-        // die();
 
         for ($a = $xx; $a <= $anz_monate; $a++) {
             $monat = $soll_array [$a] ['monat'];
@@ -2531,10 +2331,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             } else {
                 $this->Wohngeld_soll_a = nummer_punkt2komma($this->gruppe_erg);
             }
-            // echo "01.$monat.$jahr Wohngeld soll $this->Wohngeld_soll_a<br>";
-            /* Sollzeile */
-            // echo "<tr><td><b>SOLL</b></td><td>$monatsname $jahr</td>";
-            // die();
 
             $monatliche_def_arr = $this->get_monatliche_def($monat, $jahr, 'Einheit', $this->einheit_id);
             $anz_defs = count($monatliche_def_arr);
@@ -2554,11 +2350,7 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
                     $e_konto = $monatliche_def_arr [$b] ['E_KONTO'];
                     $kostenkat = $monatliche_def_arr [$b] ['KOSTENKAT'];
                     $teil_summe_a = nummer_punkt2komma($teil_summe_a);
-                    /* Jede mögliche Definitionsspalte */
-                    // echo "<td align=\"right\">$teil_summe_a"."€</td>";
-                    /* Gesamtsoll spalte */
                     if ($b == $anz - 1) {
-                        // echo "<td align=\"right\">$this->Wohngeld_soll_a"."€</td>";
                         $tab_arr [$zeile] ['DATUM'] = "01.$monat.$jahr";
                         $tab_arr [$zeile] ['TEXT'] = "Hausgeld soll";
                         $tab_arr [$zeile] ['BETRAG'] = nummer_punkt2komma(nummer_komma2punkt($this->Wohngeld_soll_a) * -1);
@@ -2566,7 +2358,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
                         $this->hg_saldo += nummer_komma2punkt($this->Wohngeld_soll_a) * -1;
                     }
                 }
-                // echo "</tr>";
             }
 
             /* Wenn Zahlungen im Monat vorhanden */
@@ -2584,7 +2375,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
 
                 $spalten4 = count($moegliche_def_arr) + 1;
                 $summe_zahlungen_a = nummer_punkt2komma($summe_zahlungen);
-                // echo "<tr class=\"zeile1\"><td><b>ZAHLUNGEN</b></td><td colspan=\"$spalten4\"><b>$monatsname $jahr</b></td><td align=\"right\">$summe_zahlungen_a"."€</td></tr>";
                 $tab_arr [$zeile] ['DATUM'] = "$monatsname $jahr";
                 $tab_arr [$zeile] ['TEXT'] = "Summe Buchungen";
                 $tab_arr [$zeile] ['BETRAG'] = "$summe_zahlungen_a";
@@ -2602,7 +2392,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             $spalten2 = $spalten - 1;
             $spalten3 = $spalten - 2;
             $this->hg_saldo_a = nummer_punkt2komma($this->hg_saldo);
-            // echo "<tr class=\"zeile2\"><td colspan=\"$spalten2\"><b>Saldo $monatsname $jahr</b></td><td align=\"right\"><b>$this->hg_saldo_a"."€</b></td></tr>";
             $tab_arr [$zeile] ['DATUM'] = "<b>$monatsname $jahr</b>";
             $tab_arr [$zeile] ['TEXT'] = "<b>Monatssaldo</b>";
             $tab_arr [$zeile] ['SALDO'] = "<b>$this->hg_saldo_a</b>";
@@ -2612,11 +2401,8 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             $tab_arr [$zeile] ['TEXT'] = "______________________________________";
             $tab_arr [$zeile] ['BETRAG'] = "________________";
             $tab_arr [$zeile] ['SALDO'] = "________________";
-            // $tab_arr[$zeile][SALDO] = "===============";
             $zeile++;
         } // ende Monatsschleife
-        // echo "<tr><th>$akt_datum_a</th><th colspan=\"$spalten3\">Saldo</th><th align=\"right\">$this->hg_saldo_a"."€</th></tr>";
-        // echo "</table>";
         if ($akt_jahr == date("Y")) {
             $akt_datum_a = date_mysql2german($akt_datum);
         } else {
@@ -2669,14 +2455,10 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
     {
         $this->hg_saldo = '0.00';
         $kos_bez = $this->get_eigentumer_id_infos($eigentuemer_id);
-        // echo "Einheitid : $this->einheit_id $kos_bez<br>";
         $this->eigentuemer_von_a = date_mysql2german($this->eigentuemer_von);
-        // echo "Eigentümer seit $this->eigentuemer_von_a<br>";
         $gg = new geldkonto_info ();
         $gg->geld_konto_ermitteln('Objekt', $this->objekt_id);
-        // echo "Objekt $this->objekt_id";
         $geldkonto_id = $gg->geldkonto_id;
-        // echo "Objekt $this->objekt_id GG $gg->geldkonto_id";
 
         $datum_arr = explode('-', $this->eigentuemer_von);
         $j = $datum_arr [0]; // Jahr
@@ -2690,11 +2472,9 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
 
         $diff_in_jahren = $akt_jahr - $j; // Volle Jahre
         $datum_1_def = $this->datum_erste_hg_def('Einheit', $this->einheit_id);
-        // echo $datum_1_def;
         $datum_1_def_arr = explode('-', $datum_1_def);
         $dat2 = $datum_1_def_arr [0] . $datum_1_def_arr [2] . $datum_1_def_arr [1];
         $dat1 = $j . $t . $m;
-        // echo "<br>$dat1 $dat2<br>";
         if ($dat1 >= $dat2) {
             $datum_ab = "$j-$m-$t";
         } else {
@@ -2703,7 +2483,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
 
         $mi = new miete ();
         $diff_in_monaten = $mi->diff_in_monaten($datum_ab, $akt_datum);
-        // echo "Diff in Monaten $diff_in_monaten<br>";
 
         $datum_ab_arr = explode('-', $datum_ab);
         $j = $datum_ab_arr [0];
@@ -2722,10 +2501,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             }
             $m++;
         }
-        // echo "<pre>";
-        // print_r($soll_array);
-
-        /* überschriften der Tabelle dynamisch */
         $moegliche_def_arr = $this->get_moegliche_def('Einheit', $this->einheit_id);
         $anz = count($moegliche_def_arr);
         echo "<table>";
@@ -2744,7 +2519,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             echo "<th>$kostenkat<br>$e_konto</th>";
         }
         echo "<th>GESAMT</th></tr>";
-        // print_r($moegliche_def_arr);
 
         /* Monatsschleife */
         $anz_monate = count($soll_array);
@@ -2826,23 +2600,14 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             $this->hg_erg_a = 0;
             return 0;
         }
-        // echo "<pre>";
-        // echo "EIG $eigentuemer_id<br>";
 
         $this->hg_saldo = '0.00';
         $kos_bez = $this->get_eigentumer_id_infos($eigentuemer_id);
-        // echo "Einheitid : $this->einheit_id $kos_bez<br>";
         $this->eigentuemer_von_a = date_mysql2german($this->eigentuemer_von);
-        // print_r($this);
-        // echo "Eigentümer seit $this->eigentuemer_von_a<br>";
 
         $gg = new geldkonto_info ();
         $gg->geld_konto_ermitteln('Objekt', $_SESSION ['objekt_id']);
-        // echo "Objekt $this->objekt_id";
         $geldkonto_id = $gg->geldkonto_id;
-        // echo "Objekt $this->objekt_id GG $gg->geldkonto_id";
-        // print_r($gg);
-        // die();
 
         $datum_arr = explode('-', $this->eigentuemer_von);
         $j = $datum_arr [0]; // Jahr
@@ -2893,9 +2658,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             }
             $m++;
         }
-        // echo "<pre>";
-        // print_r($soll_array);
-        // die();
 
         /* überschriften der Tabelle dynamisch */
         $moegliche_def_arr = $this->get_moegliche_def('Einheit', $this->einheit_id);
@@ -2920,46 +2682,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             $this->Wohngeld_soll = $this->gruppe_erg;
             $this->Wohngeld_soll_g += $this->gruppe_erg;
             $this->Wohngeld_soll_a = nummer_punkt2komma($this->gruppe_erg);
-            // echo "01.$monat.$jahr Wohngeld soll $this->Wohngeld_soll_a<br>";
-            /* Sollzeile */
-
-            /*
-			 * $monatliche_def_arr = $this->get_monatliche_def($monat, $jahr, 'Einheit', $this->einheit_id);
-			 * $anz_defs = count($monatliche_def_arr);
-			 * if($anz_defs>0){
-			 *
-			 * for($b=0;$b<$anz_defs;$b++){
-			 * $teil_summe_a = 0;
-			 * $teil_summe = nummer_punkt2komma($monatliche_def_arr[$b]['SUMME']);
-			 * if($teil_summe>0){
-			 * $teil_summe_a = '-'.$teil_summe;
-			 * }
-			 * elseif($teil_summe<0){
-			 * $teil_summe_a = '+'.substr($teil_summe,1);
-			 * }
-			 * if($teil_summe == '0.00'){
-			 * $teil_summe_a = nummer_punkt2komma(0.00);
-			 * }
-			 * $e_konto = $monatliche_def_arr[$b]['E_KONTO'];
-			 * $kostenkat = $monatliche_def_arr[$b]['KOSTENKAT'];
-			 * $teil_summe_a = nummer_punkt2komma($teil_summe_a);
-			 * /*Jede mögliche Definitionsspalte
-			 */
-
-            /* Gesamtsoll spalte */
-            /*
-			 * if($b==$anz-1){
-			 * $this->hg_saldo += nummer_komma2punkt($this->Wohngeld_soll_a);
-			 * }
-			 * }
-			 * #echo "</tr>";
-			 * #}
-			 *
-			 *
-			 *
-			 * /*Wenn Zahlungen im Monat vorhanden
-			 */
-            // $summe_zahlungen = $this->get_summe_zahlungen('Eigentuemer', $eigentuemer_id, $monat, $jahr, $geldkonto_id);
 
             $summe_zahlungen = 0.00;
             $summe_zahlungen_6 = $this->get_summe_zahlungen('Eigentuemer', $eigentuemer_id, $monat, $jahr, $geldkonto_id, 6000);
@@ -3084,27 +2806,15 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         for ($a = 0; $a < $anz; $a++) {
             $konto = $kostenkonten_alle [$a] ['KONTENRAHMEN_KONTO'];
             $k->konto_informationen2($konto, $kontenrahmen_id);
-            // echo "$k->konto $k->konto_bezeichnung $k->konto_gruppen_bezeichnung $k->konto_art_bezeichnung<br>";
             $gruppen_arr [$a] ['GRUPPE'] = $k->konto_gruppen_bezeichnung;
             $gruppen_arr [$a] ['KONTOART'] = $k->konto_art_bezeichnung;
             $gruppen_arr [$a] ['KONTO'] = $k->konto;
             $gruppen_arr [$a] ['KONTO_BEZ'] = $k->konto_bezeichnung;
 
-            // $this->konten_dat = $row[KONTENRAHMEN_KONTEN_DAT];
-            // $this->konten_id = $row[KONTENRAHMEN_KONTEN_ID];
-            // $this->konto = $konto;
-            // $this->konto_bezeichnung = $row[BEZEICHNUNG];
-            // $this->gruppe_id = $row['GRUPPE'];
-            // $this->konto_gruppen_bezeichnung = $this->gruppen_bezeichnung($this->gruppe_id);
-            // $this->konto_art_id = $row[KONTO_ART];
-            // $this->konto_art_bezeichnung = $this->kontoart($this->konto_art_id); "
         }
         echo '<pre>';
-        // print_r($gruppen_arr);
         $gruppen_arr1 = array_sortByIndex($gruppen_arr, 'GRUPPE');
 
-        // print_r($gruppen_arr1);
-        // $jahr = date("Y");
         echo "<table>";
         echo "<tr><th>Konto</th><th>ART</th><th>Gruppe</th><th>Bezeichnung</th><th>Summe</th></tr>";
         $gruppen_summe = 0;
@@ -3128,8 +2838,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         $monat = date("m");
         $jahr = date("Y");
         $arr = $this->einheiten_weg_tabelle_arr($objekt_id);
-        // echo '<pre>';
-        // print_r($arr);
         $anz = count($arr);
         if ($anz > 0) {
             echo "<table class=\"sortable\">";
@@ -3147,10 +2855,8 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
                 $mahn_link = "<a href=\"?daten=weg&option=mahnen&eig=$this->eigentuemer_id\">Mahnen</a>";
 
                 $this->hausgeld_kontoauszug_stand($this->eigentuemer_id);
-                // if($this->hg_erg<0.00){
                 echo "<tr><td>$u_link</td><td>$this->eigentuemer_namen</td><td>$this->Wohngeld_soll_a</td><td><b>$this->hg_erg_a €</b><td>$mahn_link</td></tr>";
                 $summe += $this->hg_erg;
-                // }
             }
             $summe_a = nummer_punkt2komma_t($summe);
             echo "<tr><td></td><td>SUMME</td><td></td><td><b>$summe_a</b><td></td></tr>";
@@ -3161,15 +2867,12 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
     function get_eigentuemer_saldo($eigentuemer_id, $einheit_id)
     {
         $kos_bez = $this->get_eigentumer_id_infos($eigentuemer_id);
-        // echo "<pre>";
-        // print_r($this);
 
         $datum_def = $this->datum_erste_hg_def('Einheit', $einheit_id);
         $datum_def_a = str_replace('-', '', $datum_def);
 
         $eigentuemer_von = $this->eigentuemer_von;
-        $eigentuemer_von_a = str_replace('-', '', $this->eigentuemer_von);
-        // echo "$datum_def $eigentuemer_von<br>";
+        $eigentuemer_von_a = str_replace('-', '', $this->eigentuemer_von);;
         if ($datum_def_a > $eigentuemer_von_a) {
             $datum = $datum_def;
         } else {
@@ -3177,7 +2880,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         }
 
         $arr = $this->monatsarray_erstellen($datum, $this->eigentuemer_bis);
-        // print_r($arr);
 
         $anz = count($arr);
         $this->zahlung_gesamt = 0.00;
@@ -3196,15 +2898,9 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             $arr [$a] ['soll'] = $this->get_summe_kostenkat_gruppe_m2($mo, $ja, 'Einheit', $einheit_id, 'Hausgeld');
             $this->soll_gesamt += $arr [$a] ['soll'];
             $this->soll_aktuell = $arr [$a] ['soll'];
-
-            // echo "$mo/$ja $zahlung GE: $this->zahlung_gesamt<br>";
         }
-        // echo "<br>ZA: $this->zahlung_gesamt";
-        // echo "<br>SO:$this->soll_gesamt";
         $this->hg_erg = $this->zahlung_gesamt + $this->soll_gesamt;
         $this->hg_erg_a = nummer_punkt2komma($this->hg_erg);
-        // echo "<br>END:$this->hg_erg_a";
-        // print_r($arr);
     }
 
     function dropdown_anschrift($label, $name, $id, $eig, $js)
@@ -3257,17 +2953,10 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             $standard_anschrift = "$this->eig_namen_u_pdf$e->haus_strasse $e->haus_nummer\n\n$e->haus_plz $e->haus_stadt";
         }
 
-        // $this->get_anrede_eigentuemer($eig);
-        // echo '<pre>';
-        // print_r($this->eigentuemer_name);
-        // die();
-
-        //include_once ('pdfclass/class.ezpdf.php');
         include_once('classes/class_bpdf.php');
         $pdf = new Cezpdf ('a4', 'portrait');
         $bpdf = new b_pdf ();
         $bpdf->b_header($pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6);
-        // $this->footer_zahlungshinweis = $bpdf->zahlungshinweis;
 
         $pdf->ezStopPageNumbers(); // seitennummerirung beenden
         $p = new partners ();
@@ -3275,12 +2964,10 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
         $datum_heute = date("d.m.Y");
         $pdf->addText(480, 697, 8, "$p->partner_ort, $datum_heute");
 
-        // $pdf->ezText("$this->eig_namen_u_pdf$e->haus_strasse $e->haus_nummer\n\n$e->haus_plz $e->haus_stadt",12);
         $pdf->ezText($standard_anschrift, 12);
         $pdf->ezSetDy(-60);
         /* Betreff */
         $pdf->ezText("<b>Mahnung </b>", 11);
-        // $pdf->ezText("Einheit: $mv->einheit_kurzname",12);
         $pdf->ezSetDy(-10);
         /* Faltlinie */
         $pdf->setLineStyle(0.2);
@@ -3372,7 +3059,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
 
     function hg_ist_soll_pdf($pdf, $eigentuemer_id)
     {
-        // echo "funkt $eigentuemer_id";
         $this->get_eigentumer_id_infos($eigentuemer_id);
         if (isset ($_REQUEST ['jahr']) && !empty ($_REQUEST ['jahr'])) {
             $jahr = $_REQUEST ['jahr'];
@@ -3392,7 +3078,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             $ende_datum = $this->eigentuemer_bis;
         }
 
-        // echo "Einheit $this->einheit_id $this->einheit_kurzname EIG $eigentuemer_id";
         if (!empty ($anfangsdatum)) {
             $anfangsdatum_arr = explode('-', $anfangsdatum);
             $t = $anfangsdatum_arr [2];
@@ -3414,13 +3099,7 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             $diff_in_monaten = $mi->diff_in_monaten($anfangsdatum, $akt_datum);
         } else {
             $diff_in_monaten = $mi->diff_in_monaten($anfangsdatum, $ende_datum);
-            // die("$diff_in_monaten");
         }
-        // echo "DIFF MOnaten = $diff_in_monaten $anfangsdatum, $akt_datum";
-
-        // echo '<pre>';
-        // echo "HAHHAHAHA $anfangsdatum";
-        // print_r($moegliche_defs);
 
         for ($a = 1; $a <= $diff_in_monaten; $a++) {
             $m = sprintf('%02d', $m);
@@ -3434,8 +3113,6 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
             }
             $m++;
         }
-        // print_r($soll_array);
-        // die();
 
         $gg = new geldkonto_info ();
         $gg->geld_konto_ermitteln('Objekt', $this->objekt_id);
@@ -3771,10 +3448,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         $k = new kontenrahmen ();
         $kontenrahmen_id = $k->get_kontenrahmen('Objekt', $_SESSION [objekt_id]);
         $obj_id = $_SESSION [objekt_id];
-        // $k->dropdown_kontorahmenkonten('Buchungskonto wählen', 'bkonto', 'bkonto', 'Objekt', $_SESSION[objekt_id], '');
-        // $f->text_feld('Wirtschaftsjahr', 'wjahr', date("Y")+1, '10', 'wjahr', '');
         $vorjahr = $this->get_jahr_wp($wp_id) - 1;
-        // options[q_liste.selectedIndex].text
         $kostenkonto = "document.getElementById('bkonto').options[document.getElementById('bkonto').selectedIndex].value";
         $js = "onclick=\"get_wp_vorjahr_wert($obj_id,$vorjahr, $kostenkonto, 'vsumme')\"";
         $js1 = "onchange=\"get_wp_vorjahr_wert($obj_id,$vorjahr, $kostenkonto, 'vsumme')\"";
@@ -3983,7 +3657,6 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         $pdf->addText(100, 660, 10, "Summe Kosten jährlich laut WP $this->wp_jahr: $this->summe_kosten_hg_a € ");
         $pdf->addText(100, 650, 10, "Überschuß/Unterdeckung $diff € ");
         $pdf->ezSetY(640);
-        // $cols = array('EINHEIT'=>"EINHEIT",'NAME'=>"NAME", 'BETRAG_ALT'=>"ALT €", 'BETRAG'=>"BETRAG €", 'DIFF'=>"DIFF €", 'DIFF2M'=>"DIFF2M €", 'SE'=>"SE!!! €");
         $cols = array(
             'EINHEIT' => "EINHEIT",
             'NAME' => "NAME",
@@ -4016,8 +3689,6 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             )
         ));
 
-        // print_r($this->hausgelder_neu);
-        // die();
         ob_clean(); // ausgabepuffer leeren
         $pdf->ezStream();
     }
@@ -4032,17 +3703,14 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         } else {
             die ('Geldkonto des Objekts wählen!');
         }
-        // print_r($_SESSION);
-        // die();
+
         $o = new objekt ();
         $objekt_name = $o->get_objekt_name($_SESSION ['objekt_id']);
-        // $pdf->rectangle(50,650,500,20);
-        // $pdf->ezSetDy(-38);
+
 
         $pdf->setColor(0.6, 0.6, 0.6);
         $pdf->filledRectangle(50, 690, 500, 20);
-        // $pdf->setColor(2,30,5);
-        // $pdf->rectangle(50,690,500,20);
+
         $pdf->setColor(0, 0, 0);
         $pdf->ezSetDy(3);
         $pdf->ezText(" GESAMTWIRTSCHAFTSPLAN $jahr / OBJEKT: $objekt_name", 13, array(
@@ -4050,21 +3718,14 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         ));
         $pdf->setColor(0, 0, 0);
 
-        // $pdf->ezText(" OBJEKT: $objekt_name / GESAMTWIRTSCHAFTSPLAN $jahr",11, array('justification'=>'full'));
-        // $pdf->rectangle(50,635,500,15);
         $pdf->ezSetDy(-6);
-        // $pdf->ezText(" Konto Kostenart Betrag Vorjahr Betrag", 9, array('justification'=>'full'));
+
 
         $bb = new buchen ();
         $konten_arr = $bb->konten_aus_buchungen($geldkonto_id);
         $kr = new kontenrahmen ();
         $kontenrahmen_id = $kr->get_kontenrahmen('Geldkonto', $geldkonto_id);
-        /*
-		 * echo $kontenrahmen_id;
-		 * #$kr->konto_informationen2($konto, $kontenrahmen_id)
-		 * echo "<pre>";
-		 * print_r($konten_arr);
-		 */
+
         $anz_k = count($konten_arr);
         for ($a = 0; $a < $anz_k; $a++) {
             $konto = $konten_arr [$a] ['KONTO'];
@@ -4077,9 +3738,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $konten_arr [$a] ['ART_BEZ'] = $kr->konto_art_bezeichnung;
         }
         echo "<pre>";
-        // print_r($konten_arr);
         $gruppen_arr = array_values(array_unique($gruppen_arr));
-        // print_r($gruppen_arr);
 
         $bb = new buchen ();
 
@@ -4191,9 +3850,6 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         $tab_arr [$zeile] ['BETRAG_VJ1'] = "<b>$summe_g_vj1_a</b>";
         $zeile++;
 
-        // print_r($tab_arr);
-        // die();
-
         $cols = array(
             'KONTO' => "Konto",
             'KONTO_BEZ' => "Bezeichnung",
@@ -4248,17 +3904,13 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         } else {
             die ('Geldkonto des Objekts wählen!');
         }
-        // print_r($_SESSION);
-        // die();
+
         $o = new objekt ();
         $objekt_name = $o->get_objekt_name($_SESSION ['objekt_id']);
-        // $pdf->rectangle(50,650,500,20);
-        // $pdf->ezSetDy(-38);
 
         $pdf->setColor(0.6, 0.6, 0.6);
         $pdf->filledRectangle(50, 690, 500, 20);
-        // $pdf->setColor(2,30,5);
-        // $pdf->rectangle(50,690,500,20);
+
         $pdf->setColor(0, 0, 0);
         $pdf->ezSetDy(3);
         $pdf->ezText(" GESAMTWIRTSCHAFTSPLAN $jahr / OBJEKT: $objekt_name", 12, array(
@@ -4266,10 +3918,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         ));
         $pdf->setColor(0, 0, 0);
 
-        // $pdf->ezText(" OBJEKT: $objekt_name / GESAMTWIRTSCHAFTSPLAN $jahr",11, array('justification'=>'full'));
-        // $pdf->rectangle(50,635,500,15);
         $pdf->ezSetDy(-6);
-        // $pdf->ezText(" Konto Kostenart Betrag Vorjahr Betrag", 9, array('justification'=>'full'));
 
         $arr = $this->wp_zeilen_arr($wplan_id);
         if (is_array($arr)) {
@@ -4290,8 +3939,6 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                     $wirte->get_wirt_e_infos($wirt_id);
                     $arr [$a] ['WIRT_ID'] = $wirt_id;
                     $arr [$a] ['WIRT_E'] = $wirte->w_name;
-                    // print_r($wirte);
-                    // die();
                 } else {
                     $arr [$a] ['WIRT_E'] = 'ALLE';
                 }
@@ -4309,32 +3956,22 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             unset ($arr1);
 
             $temp_g_id = '';
-            // echo "<table>";
             $summe_gruppe = 0;
             $summe_gruppe_vj = 0;
             $summe_g = 0;
             $summe_g_vj = 0;
-            // $pdf->ezTable($arr);
 
             $zeile_tab = 0;
 
-            // $tab_arr[$zeile_tab]['KONTOART_BEZ'] = "Kontostand zum 01.01.";
             $bb = new buchen ();
 
             $datum_kto_j = "31.12." . $vorjahr;
 
-            // $tab_arr[$zeile_tab]['BETRAG'] = $bb->kontostand_tagesgenau_bis($geldkonto_id, $datum_kto_j);
-
             $datum_kto_vj = "31.12." . $vorjahr1;
-            // $tab_arr[$zeile_tab]['BETRAG_VJ'] = $bb->kontostand_tagesgenau_bis($geldkonto_id, $datum_kto_vj);
+
             $vorjahr2 = $vorjahr1 - 1;
             $datum_kto_vj1 = "31.12." . $vorjahr2;
-            // $tab_arr[$zeile_tab]['BETRAG_VJ1'] = $bb->kontostand_tagesgenau_bis($geldkonto_id, $datum_kto_vj1);
-            // echo "$datum_kto_j $datum_kto_vj $datum_kto_vj1";
 
-            // echo '<pre>';
-            // print_r($arr);
-            // die();
             $zeile_tab++;
             for ($a = 0; $a < count($arr); $a++) {
                 $gruppe_id = $arr [$a] ['GRUPPE_ID'];
@@ -4345,22 +3982,13 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 $kkonto = $arr [$a] ['KOSTENKONTO'];
                 $kontoart_bez = $arr [$a] ['KONTOART_BEZ'];
                 $konto_bez = $arr [$a] ['KONTO_BEZ'];
-                // $kos_typ = $arr[$a]['KOS_TYP'];
-                // $kos_id = $arr[$a]['KOS_ID'];
-                // $gen_key_id = $arr[$a]['GENKEY_ID'];
-
-                // $bk = new bk;
-                // $bk->get_genkey_infos($gen_key_id);
 
                 if ($temp_g_id != $gruppe_id) {
                     if (is_array($tab_arr)) {
-                        // $pdf->ezTable($tab_arr);
-                        // unset($tab_arr);
                         $tab_arr [$zeile_tab] ['KONTOART_BEZ'] = '<b>Zwischensumme</b>';
                         $summe_gruppe_a = nummer_punkt2komma_t($summe_gruppe);
                         $summe_gruppe_vj_a = nummer_punkt2komma_t($summe_gruppe_vj);
 
-                        // $tab_arr[$zeile_tab]['BETRAG_VJ'] = "<b>$summe_gruppe_vj_a</b>";
                         $tab_arr [$zeile_tab] ['BETRAG'] = "<b>$summe_gruppe_a</b>";
                         $summe_gruppe = 0;
                         $summe_gruppe_vj = 0;
@@ -4378,20 +4006,12 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 $tab_arr [$zeile_tab] ['GRUPPEN_BEZ'] = $gruppen_bez;
                 $tab_arr [$zeile_tab] ['KONTO_BEZ'] = $konto_bez;
                 $tab_arr [$zeile_tab] ['KONTOART_BEZ'] = $kontoart_bez;
-                // $tab_arr[$zeile_tab]['BETRAG_VJ'] = nummer_punkt2komma_t($betrag_vj);
 
                 $bb = new buchen ();
                 $tab_arr [$zeile_tab] ['BETRAG_VJ'] = $bb->summe_kontobuchungen_jahr($geldkonto_id, $kkonto, $vorjahr);
                 $tab_arr [$zeile_tab] ['BETRAG_VJ1'] = $bb->summe_kontobuchungen_jahr($geldkonto_id, $kkonto, $vorjahr1);
 
                 $tab_arr [$zeile_tab] ['BETRAG'] = nummer_punkt2komma_t($betrag);
-                // $tab_arr[$zeile_tab]['KOS_TYP'] = $kos_typ;
-                // $tab_arr[$zeile_tab]['KOS_ID'] = $kos_id;
-                // $tab_arr[$zeile_tab]['GEN_KEY_ID'] = $gen_key_id;
-                // $r = new rechnung();
-                // $kos_bez = $r->kostentraeger_ermitteln($kos_typ,$kos_id);
-                // $tab_arr[$zeile_tab]['KOS_BEZ'] = $kos_bez;
-                // $tab_arr[$zeile_tab]['KEY_BEZ'] = $bk->g_key_name;
 
                 $summe_gruppe = $summe_gruppe + $betrag;
                 $summe_gruppe_vj = $summe_gruppe_vj + $betrag_vj;
@@ -4400,9 +4020,6 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 $zeile_tab++;
             } // end for
 
-            // print_r($tab_arr);
-            // echo "<hr>";
-            // die('SIVAC');
             $tab_arr [$zeile_tab] ['KONTOART_BEZ'] = '<b>Zwischensumme</b>';
             $summe_gruppe_a = nummer_punkt2komma_t($summe_gruppe);
             $summe_gruppe_vj_a = nummer_punkt2komma_t($summe_gruppe_vj);
@@ -4410,21 +4027,12 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $tab_arr [$zeile_tab] ['BETRAG'] = "<b>$summe_gruppe_a</b>";
             $zeile_tab++;
 
-            //$energie_alle = $this->get_summe_energie_jahr_alle($_SESSION ['hga_profil_id']) * -1;
-            //$energie_alle_a = nummer_punkt2komma_t($energie_alle);
-
-            //$tab_arr [$zeile_tab] ['KONTOART_BEZ'] = '<b>Energiekosten Vorjahr lt. Abrechnung</b>';
-            //$tab_arr [$zeile_tab] ['BETRAG_VJ'] = "";
-            //$tab_arr [$zeile_tab] ['BETRAG'] = "<b>$energie_alle_a</b>";
-
             $zeile_tab++;
             $tab_arr [$zeile_tab] ['KONTOART_BEZ'] = '<b>SUMME</b>';
             $summe_g += $energie_alle;
             $tab_arr [$zeile_tab] ['BETRAG_VJ'] = "<b>" . nummer_punkt2komma_t($summe_g_vj) . "</b>";
             $tab_arr [$zeile_tab] ['BETRAG'] = "<b>" . nummer_punkt2komma_t($summe_g) . "</b>";
             $this->summe_kosten_hg = $summe_g;
-            // $cols = array('KOS_BEZ'=>"Auft",'KEY_BEZ'=>"Key", 'KONTO'=>"Konto", 'KONTO_BEZ'=>"Bezeichnung", 'GRUPPEN_BEZ'=>"Kostenart", 'KONTOART_BEZ'=>"Kontoart",'BETRAG_VJ1'=>"IST aus $vorjahr1",'BETRAG_VJ'=>"IST aus $vorjahr",'BETRAG'=>"Betrag");
-            // $cols = array('KONTO'=>"Konto", 'KONTO_BEZ'=>"Bezeichnung", 'GRUPPEN_BEZ'=>"Kostenart", 'KONTOART_BEZ'=>"Kontoart",'BETRAG_VJ1'=>"IST aus $vorjahr1",'BETRAG_VJ'=>"IST aus $vorjahr",'BETRAG'=>"Betrag");
             $cols = array(
                 'KONTO' => "Konto",
                 'KONTO_BEZ' => "Bezeichnung",
@@ -4466,10 +4074,8 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $pdf->ezSetDy(-10);
             $datum = date("d.m.Y");
             $pdf->ezText("Druckdatum: $datum");
-            // $pdf->ezTable($tab_arr);
         }
-        // ob_clean();
-        // $pdf->ezStream();
+
 
         return $pdf;
     }
@@ -4501,12 +4107,10 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             unset ($arr1);
 
             $temp_g_id = '';
-            // echo "<table>";
             $summe_gruppe = 0;
             $summe_gruppe_vj = 0;
             $summe_g = 0;
             $summe_g_vj = 0;
-            // $pdf->ezTable($arr);
 
             $zeile_tab = 0;
             for ($a = 0; $a < count($arr); $a++) {
@@ -4558,7 +4162,6 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $tab_arr [$zeile_tab] ['BETRAG_VJ'] = "<b>" . nummer_punkt2komma($summe_g_vj) . "</b>";
             $tab_arr [$zeile_tab] ['BETRAG'] = "<b>" . nummer_punkt2komma($summe_g) . "</b>";
         }
-        // print_r($tab_arr);
         return $tab_arr;
     }
 
@@ -4586,55 +4189,18 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         ini_set('memory_limit', '1024M'); // or you could use 1G
         set_time_limit(0);
 
-        // echo '<pre>';
         $this->get_wplan_infos($wp_id);
-        // print_r($this);
         $einheiten_arr = $this->einheiten_weg_tabelle_arr($this->wp_objekt_id);
         $anz_einheiten = count($einheiten_arr);
 
-        /* Wirtschaftsplantabelle Gesamt als Tab */
-        // $wtab_arr = $this->wplan_gesamt_tab_arr($wp_id);
-        // $wp_zeilen = $this->wp_zeilen_arr($wp_id);
         $wp_zeilen = $this->wplan_gesamt_tab_arr($wp_id);
-
-        // echo '<pre>';
-        // echo "<hr><br>";
-        // print_r($einheiten_arr);
-        // die();
 
         $anz = count($wp_zeilen);
 
-        /*
-		 * if($anz){
-		 * $z = 0;
-		 * for($a=0;$a<$anz;$a++){
-		 * $konto = $wp_zeilen[$a]['KONTO'];
-		 * $betrag = $wp_zeilen[$a]['BETRAG'];
-		 * #$kos_typ =$wp_zeilen[$a]['KOS_TYP'];
-		 * #$kos_id =$wp_zeilen[$a]['KOS_ID'];
-		 * #$gen_key_id = $wp_zeilen[$a]['GENKEY_ID'];
-		 * #if($kos_typ == 'Einheit'){
-		 * #$b_arr[$z]['EINHEIT'] = $kos_id;
-		 * #$b_arr[$z]['KONTO'] = $konto;
-		 * #}
-		 * }
-		 * #print_r($b_arr);
-		 * }
-		 */
-
-        // die();
-        // echo "<hr>";
         $wtab_arr = $wp_zeilen;
         $anz_tab = count($wtab_arr);
 
         unset ($wp_zeilen);
-        // print_r($wtab_arr);
-
-        // die('SANEL232323');
-
-        // echo '<pre>';
-        // print_r($wtab_arr);
-        // die();
 
         /* Alle Einheiten durchlaufen */
         for ($a = 0; $a < $anz_einheiten; $a++) {
@@ -4645,56 +4211,34 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $pdf->ezNewPage();
             $pdf->setColor(0.6, 0.6, 0.6);
             $pdf->filledRectangle(50, 690, 500, 20);
-            // $pdf->setColor(2,30,5);
-            // $pdf->rectangle(50,690,500,20);
+
             $pdf->setColor(0, 0, 0);
             $pdf->ezSetDy(3);
             $pdf->ezText(" EINZELWIRTSCHAFTSPLAN $this->wp_jahr / OBJEKT: $this->wp_objekt_name / EINHEIT: $e->einheit_kurzname", 12, array(
                 'justification' => 'full'
             ));
             $pdf->setColor(0, 0, 0);
-            // $pdf->rectangle(400,601,150,87);
-            // $pdf->setColor(0,0,0);
-            // $pdf->ezSetDy(-10);
+
             /*
 			 * Aktuellen bzw. letzten Eigentümer einer Einheit holen
 			 * ohne die davor, weil nur letzter den Wirtschaftsplan bekommt
 			 */
 
-            // $eigentuemer_ids_arr = $this->get_last_eigentuemer_arr($einheit_id);
-            // $anz_e = count($eigentuemer_ids_arr);
-            // $eig_id = $eigentuemer_ids_arr['ID'];
             $eig_id = $this->get_last_eigentuemer_id($einheit_id);
             $eig_id = $this->eigentuemer_id;
-            // print_r($eigentuemer_ids_arr);
-            // die();
+
             $this->get_eigentumer_id_infos3($eig_id);
             $pdf->ezSetDy(-20);
 
             $pdf->ezText("$this->empf_namen_u");
 
-            // $pdf->ezSetDy(10);
             $pdf->ezText("$this->haus_strasse $this->haus_nummer");
             $pdf->ezSetDy(-10);
             $pdf->ezText("$this->haus_plz $this->haus_stadt");
 
-            /*
-			 * $d = new detail;
-			 * $anteile_g = $d->finde_detail_inhalt('OBJEKT', $this->wp_objekt_id, 'Gesamtanteile');
-			 * #$pdf->ezText("Gesamtanteile: $anteile_g");
-			 * $pdf->addText(405,670,8,"Einheiten: $anz");
-			 * $pdf->addText(405,660,8,"Gesamtanteile: $anteile_g");
-			 * $this->einheit_anteile = $d->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Anteile');
-			 * #$pdf->ezText("Anteile Einheit $this->einheit_kurzname: $this->einheit_anteile");
-			 * $pdf->addText(405,650,8,"MAE: $this->einheit_anteile");
-			 * $anteile_prozent = $this->einheit_anteile /($anteile_g/100);
-			 * #$pdf->ezText("Anteile % Einheit $anteile_prozent %");
-			 */
-
             $d = new detail ();
             $anteile_g = $d->finde_detail_inhalt('OBJEKT', $e->objekt_id, 'Gesamtanteile');
             $anteile_g_a = nummer_punkt2komma_t($anteile_g);
-            // $pdf->ezText("Gesamtanteile: $anteile_g");
             $pdf->addText(405, 670, 8, "Einheiten:");
             $pdf->addText(465, 670, 8, "$anz_einheiten");
             $pdf->addText(405, 660, 8, "Einheit:");
@@ -4702,7 +4246,6 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $pdf->addText(405, 650, 8, "Gesamtanteile:");
             $pdf->addText(465, 650, 8, "$anteile_g_a");
             $this->einheit_anteile = $d->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Anteile');
-            // $pdf->ezText("Anteile Einheit $this->einheit_kurzname: $this->einheit_anteile");
             $pdf->addText(405, 640, 8, "Ihre MAE:");
             $this->einheit_anteile_a = nummer_punkt2komma_t($this->einheit_anteile);
             $pdf->addText(465, 640, 8, "$this->einheit_anteile_a");
@@ -4721,7 +4264,6 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             for ($c = 0; $c < $anz_tab; $c++) {
                 $betrag = strip_tags($wtab_arr [$c] ['BETRAG']);
                 $kkonto = $wtab_arr [$c] ['KONTO'];
-                // echo $kkonto.'<br>';
                 if (isset ($wtab_arr [$c] ['FORMEL'])) {
                     $formel = $wtab_arr [$c] ['FORMEL'];
                 }
@@ -4779,8 +4321,6 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                         $wtab_arr [$c] ['AUFTEILEN_T'] = "$we_prozent%";
                         $beteiligung_ant = nummer_komma2punkt($betrag) / 100 * $we_prozent;
                     }
-
-                    // $wtab_arr[$c]['AUFTEILEN'] = 'ALLE';
                 } else {
                     // ##WENN BESTIMMTE WIRTE ZUR AUFTEILUNG ANGEGEBEN*/
 
@@ -4826,7 +4366,6 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                             $wtab_arr [$c] ['AUFTEILEN_G'] = "100%";
                             $wtab_arr [$c] ['AUFTEILEN_T'] = "$aufzug_prozent%";
                             $beteiligung_ant = nummer_komma2punkt($betrag) / 100 * $aufzug_prozent;
-                            // die("$beteiligung_ant = nummer_komma2punkt($betrag)/100*$aufzug_prozent;");
                         }
 
                         if ($formel == 'WE-PROZENT') {
@@ -4842,37 +4381,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                     }
                 }
 
-                // echo "$beteiligung_ant = ($betrag/$anteile_g)* nummer_komma2punkt($this->einheit_anteile)";
-                // die();
                 if (!empty ($kkonto)) {
-
-                    /*
-					 * if($kkonto=='2400'){
-					 * $beteiligung_ant = '0.00';
-					 * #$wtab_arr[$c]['BETEILIGUNG_ANT'] = '<b>**</b>';
-					 * $monat = '01';
-					 * $hk_vorschuss = $this->get_summe_kostenkat($monat, $this->wp_jahr, 'Einheit', $einheit_id, 'Heizkostenvorschuss') * 12;
-					 * $hk_vorschuss_a = nummer_punkt2komma_t($hk_vorschuss);
-					 * $wtab_arr[$c]['BETEILIGUNG_ANT'] = '**-'.$hk_vorschuss_a;
-					 * $gruppen_summe -= $hk_vorschuss;
-					 * $jahres_beteiligung -= $hk_vorschuss;
-					 * $hk_vorschuss = 0;
-					 * #$wtab_arr[$c]['GRUPPEN_BEZ'] = $wtab_arr[$c]['GRUPPEN_BEZ']. "\n <b>**aktueller HK-Vorschuss</b>";
-					 * }
-					 */
-                    /*
-					 * if($kkonto =='6040'){
-					 * $ihr_v = $e->einheit_qm * 0.7 * 12;
-					 * $ihr_v_a = nummer_punkt2komma_t($ihr_v);
-					 * $wtab_arr[$c]['BETEILIGUNG_ANT'] = '-'.$ihr_v_a;
-					 * $gruppen_summe -= $ihr_v;
-					 * $jahres_beteiligung -= $ihr_v;
-					 * #$wtab_arr[$c]['GRUPPEN_BEZ'] = $wtab_arr[$c]['GRUPPEN_BEZ']. "\n $e->einheit_qm_a m² * 0,70 € * 12 Mon.";
-					 * }
-					 */
-
-                    // if($kkonto !='2400' && $kkonto !='6040'){
-                    // if($kkonto !='2400'){
                     $wtab_arr [$c] ['BETEILIGUNG_ANT'] = nummer_punkt2komma($beteiligung_ant);
                     $jahres_beteiligung = $jahres_beteiligung + nummer_komma2punkt(nummer_punkt2komma($beteiligung_ant));
                     $gruppen_summe += $beteiligung_ant;
@@ -4888,47 +4397,16 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                     if (strip_tags($wtab_arr [$c] ['KONTOART_BEZ']) == 'SALDO') {
                         $jahres_beteiligung_a = nummer_punkt2komma_t($jahres_beteiligung);
                         $wtab_arr [$c] ['BETEILIGUNG_ANT'] = "<b>$jahres_beteiligung_a</b>";
-                        // $jahres_beteiligung = 0;
                         $wtab_arr [$c] ['AUFTEILEN_G'] = "";
                         $wtab_arr [$c] ['AUFTEILEN_T'] = "";
                     }
                 }
 
-                /*
-				 * if(strip_tags($wtab_arr[$c]['KONTOART_BEZ']) == 'Zwischensumme' or strip_tags($wtab_arr[$c]['KONTOART_BEZ']) == 'SALDO'){
-				 * $wtab_arr[$c]['BETEILIGUNG_ANT'] = '<b>zw1'.nummer_punkt2komma($beteiligung_ant).'</b>';
-				 * }else{
-				 * $wtab_arr[$c]['BETEILIGUNG_ANT'] = nummer_punkt2komma($beteiligung_ant);
-				 * $jahres_beteiligung = $jahres_beteiligung + nummer_komma2punkt(nummer_punkt2komma($beteiligung_ant));
-				 * }
-				 * }else{
-				 * if(strip_tags($wtab_arr[$c]['KONTOART_BEZ']) == 'Zwischensumme' or strip_tags($wtab_arr[$c]['KONTOART_BEZ']) == 'SALDO'){
-				 * $wtab_arr[$c]['BETEILIGUNG_ANT'] = '<b>zw'.nummer_punkt2komma($beteiligung_ant).'</b>';
-				 * }else{
-				 * $wtab_arr[$c]['BETEILIGUNG_ANT'] = nummer_punkt2komma($beteiligung_ant);
-				 * $jahres_beteiligung = $jahres_beteiligung + nummer_komma2punkt(nummer_punkt2komma($beteiligung_ant));
-				 * }
-				 * $jahres_beteiligung = $jahres_beteiligung + nummer_komma2punkt(nummer_punkt2komma($beteiligung_ant));
-				 * }
-				 */
                 $beteiligung_ant = 0;
             }
-            // echo "<pre>";
-            // print_r($_SESSION);
-            // die();
 
             $gko = strip_tags(nummer_komma2punkt($wtab_arr [$c - 1] ['BETRAG']));
 
-            //$heizkosten_vorjahr = $this->get_summe_hk('Eigentuemer', $eig_id, $_SESSION ['hga_profil_id']) * -1;
-            //$heizkosten_vorjahr_a = nummer_punkt2komma($heizkosten_vorjahr);
-
-            //$energie_alle = $this->get_summe_energie_jahr_alle($_SESSION ['hga_profil_id']) * -1;
-            //$energie_alle_a = nummer_punkt2komma_t($energie_alle);
-            //$wtab_arr [$c + 1] ['KONTO_BEZ'] = "<b>Energiekosten nach Verbrauch aus dem Vorjahr</b>";
-            //$wtab_arr [$c + 1] ['BETEILIGUNG_ANT'] = "<b>$heizkosten_vorjahr_a</b>";
-            //$wtab_arr [$c + 1] ['BETRAG'] = "$energie_alle_a";
-
-            //$jahres_beteiligung = $jahres_beteiligung + $heizkosten_vorjahr;
             $jahres_beteiligung_a = nummer_punkt2komma_t($jahres_beteiligung);
 
             $wtab_arr [$c + 2] ['KONTO_BEZ'] = "<b>Gesamtkosten Jahr</b>";
@@ -4937,7 +4415,6 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $wtab_arr [$c + 2] ['BETRAG'] = "$gesamtkosten";
 
             $hausgeld_neu_genau = nummer_punkt2komma($jahres_beteiligung / 12);
-            // $hausgeld_neu = ceil(($jahres_beteiligung / 12));
             $hausgeld_neu = round(($jahres_beteiligung / 12), 0, PHP_ROUND_HALF_DOWN);
             $hausgeld_neu_a = nummer_punkt2komma($hausgeld_neu);
             $wtab_arr [$c + 4] ['KONTO_BEZ'] = "<b>Hausgeld $this->wp_jahr\nGerundet auf vollen Euro-Betrag</b>";
@@ -4945,26 +4422,22 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
 
             $monat = sprintf('%02d', date("m"));
             $jahr = date("Y");
-
-            $wp_jahr = $this->get_wplan_vorgaenger($wp_id, $this->wp_objekt_id)['JAHR'];
-            $hausgeld_aktuell_a = nummer_punkt2komma_t($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $wp_jahr) * -1);
+            
+            $hausgeld_aktuell_a = nummer_punkt2komma_t($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $this->wp_jahr) * -1);
             $wtab_arr [$c + 3] ['KONTO_BEZ'] = "Hausgeld bisher";
             $wtab_arr [$c + 3] ['BETEILIGUNG_ANT'] = "$hausgeld_aktuell_a";
 
-            // print_r($wtab_arr);
-            // die();
             $this->hausgeld_einnahmen_summe += $hausgeld_neu;
             $this->hausgelder_neu [$a] ['EINHEIT'] = "$e->einheit_kurzname";
             $this->hausgelder_neu [$a] ['NAME'] = "$this->empf_namen";
             $this->hausgelder_neu [$a] ['BETRAG_ALT'] = "$hausgeld_aktuell_a €";
             $this->hausgelder_neu [$a] ['BETRAG'] = "$hausgeld_neu_a €";
 
-            $this->hausgelder_neu [$a] ['DIFF'] = nummer_punkt2komma($hausgeld_neu - ($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $wp_jahr) * -1));
-            $this->hausgelder_neu [$a] ['DIFF2M'] = nummer_punkt2komma(($hausgeld_neu - ($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $wp_jahr) * -1)) * 2);
-            $this->hausgelder_neu [$a] ['SE'] = nummer_punkt2komma($hausgeld_neu + ($hausgeld_neu - ($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $wp_jahr) * -1)) * 2);
+            $this->hausgelder_neu [$a] ['DIFF'] = nummer_punkt2komma($hausgeld_neu - ($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $this->wp_jahr) * -1));
+            $this->hausgelder_neu [$a] ['DIFF2M'] = nummer_punkt2komma(($hausgeld_neu - ($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $this->wp_jahr) * -1)) * 2);
+            $this->hausgelder_neu [$a] ['SE'] = nummer_punkt2komma($hausgeld_neu + ($hausgeld_neu - ($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $this->wp_jahr) * -1)) * 2);
 
             //
-            // $cols = array('KONTO'=>"Konto", 'KONTO_BEZ'=>"Bezeichnung", 'GRUPPEN_BEZ'=>"Kostenart", 'KONTOART_BEZ'=>"Kontoart", 'BETRAG'=>"Betrag", 'FORMEL'=>"VERT.", 'AUFTEILEN'=>"GRUPPE", 'AUFTEILEN_G'=>"G VERT.", 'AUFTEILEN_T'=>"E VERT.", 'BETEILIGUNG_ANT'=>"Ihr Anteil");
             $cols = array(
                 'KONTO' => "Konto",
                 'KONTO_BEZ' => "Bezeichnung",
@@ -4975,9 +4448,6 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 'BETEILIGUNG_ANT' => "Ihr Anteil"
             );
             $pdf->ezSetDy(-10);
-            // echo '<pre>';
-            // print_r($wtab_arr);
-            // die();
             $pdf->ezTable($wtab_arr, $cols, "", array(
                 'showHeadings' => 1,
                 'shaded' => 1,
@@ -5002,7 +4472,6 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                     )
                 )
             ));
-            // $pdf->ezTable($wtab_arr);
             $pdf->ezSetDy(-5);
             $datum = date("d.m.Y");
             $pdf->ezText("Druckdatum: $datum");
@@ -5010,13 +4479,9 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $pdf->ezText("Verteiler: MEA - Nach Miteingentumsanteilen          Formel: Betrag/$anteile_g_a*$this->einheit_anteile_a");
             $pdf->ezText("Verteiler: ME -  Nach Anzahl der WEG-Einheiten     Formel: Betrag/$anz_einheiten");
             $pdf->ezText("Verteiler: QM -  Nach Quadratmeter                         Formel: Betrag/$qm_gesamt_a*$e->einheit_qm_a");
-            // ob_clean();
-            // $pdf->ezStream();
+
             unset ($this->empf_namen_u);
         }
-        // echo '<pre>';
-        // print_r($wtab_arr);
-        // die();
     }
 
     function get_hgkonten_gruppe_arr($gruppenbez, $text, $p_id)
@@ -5032,13 +4497,6 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 $konto = $row ['KONTO'];
 
                 $k->konto_informationen2($konto, $kontenrahmen_id);
-                /*
-				 * $arr[$a]['GRUPPE_ID'] = $k->gruppe_id;
-				 * $arr[$a]['GRUPPEN_BEZ'] = $k->konto_gruppen_bezeichnung;
-				 * $arr[$a]['KONTOART_ID'] = $k->konto_art_id;
-				 * $arr[$a]['KONTOART_BEZ'] = $k->konto_art_bezeichnung;
-				 * $arr[$a]['KONTO_BEZ'] = $k->konto_bezeichnung;
-				 */
                 if ($gruppenbez == $k->konto_gruppen_bezeichnung) {
                     $arr [$z] ['KONTO'] = $konto;
                     $arr [$z] ['GRUPPE'] = $k->konto_gruppen_bezeichnung;
@@ -5158,7 +4616,6 @@ ORDER BY KONTO ASC
 
         $einnahme_manuell = $this->get_summe_zahlungen_manuell($p_id);
         if (!is_array($einnahme_manuell)) {
-            // $einnahme_konten_arr = $kk->get_konten_nach_art('Einnahmen', $kontenrahmen_id);
             $einnahme_konten_arr = $kk->get_konten_nach_art_gruppe('Einnahmen', 'Einnahmen Hausgeld', $kontenrahmen_id);
 
             $anz_e = count($einnahme_konten_arr);
@@ -5193,8 +4650,6 @@ ORDER BY KONTO ASC
             $einnahmen_tab [$zeile_einnahmen] ['BEZ'] = "<b>SUMME</b>";
             $einnahmen_tab [$zeile_einnahmen] ['BETRAG'] = "<b>$e_summe_a</b>";
             $einnahmen_tab [$zeile_einnahmen] ['BETRAG_VORJAHR'] = $e_summe_vorjahr_a;
-            // echo "<tfoot><tr><td></td><td></td><th><b>SUMME</b></th><th><b>$e_summe_a</b></th></tr></tfoot>";
-            // echo "</table>";
         } else {
             $anz_m = count($einnahme_manuell);
             $e_summe = 0;
@@ -5217,7 +4672,6 @@ ORDER BY KONTO ASC
             $e_summe_a = nummer_punkt2komma_t($e_summe);
             echo "<tfoot><tr><td></td><td></td><th><b>SUMME</b></th><th><b>$e_summe_a</b></th></tr></tfoot>";
             echo "<table>";
-            // $zeile_einnahmen++;
             $einnahmen_tab [$zeile_einnahmen] ['BEZ'] = '<b>SUMME</b>';
             $einnahmen_tab [$zeile_einnahmen] ['BETRAG'] = "<b>$e_summe_a</b>";
         }
@@ -5240,11 +4694,6 @@ ORDER BY KONTO ASC
             $kontoart = $_umlage_ktos [$a] ['KONTO_ART'];
 
             $betraege_arr = $this->get_betraege_arr($p_id, $konto);
-            /*
-			 * if($konto == '2040'){
-			 * print_r($betraege_arr);
-			 * }
-			 */
             $anz_b = count($betraege_arr);
 
             for ($b = 0; $b < $anz_b; $b++) {
@@ -5304,11 +4753,6 @@ ORDER BY KONTO ASC
             $gruppe = $_umlage_ktos [$a] ['GRUPPE'];
 
             $betraege_arr = $this->get_betraege_arr($p_id, $konto);
-            /*
-			 * if($konto == '2040'){
-			 * print_r($betraege_arr);
-			 * }
-			 */
             $anz_b = count($betraege_arr);
 
             for ($b = 0; $b < $anz_b; $b++) {
@@ -5434,7 +4878,6 @@ ORDER BY KONTO ASC
         $pdf->filledRectangle(50, 690, 500, 15);
         $pdf->setColor(0, 0, 0);
         $pdf->ezSetY(720);
-        // $pdf->ezSetY(650);
         $datum = date("d.m.Y");
         $p = new partners ();
         $p->get_partner_info($_SESSION ['partner_id']);
@@ -5442,7 +4885,6 @@ ORDER BY KONTO ASC
         $pdf->ezText("$p->partner_ort, den $datum", 10, array(
             'justification' => 'right'
         ));
-        // $pdf->ezSetY(650);
         $pdf->ezSetY(705);
 
         $o = new objekt ();
@@ -5452,10 +4894,8 @@ ORDER BY KONTO ASC
         ));
         $pdf->ezSetDy(-15);
 
-        // $pdf->ezStopPageNumbers(); //seitennummerirung beenden
         $p = new partners ();
         $p->get_partner_info($_SESSION ['partner_id']);
-        // $pdf->addText(480,697,8,"$p->partner_ort, $datum");
 
         $cols_2 = array(
             'KONTO' => "Konto",
@@ -5591,11 +5031,6 @@ ORDER BY KONTO ASC
             )
         ));
 
-        /*
-		 * $cols = array('BEZ'=>"", 'BETRAG'=>"");
-		 * $pdf->eztable($berechnungs_tab, $cols,'KONTOSTAND', array('rowGap' => 1.5,'showLines'=>0,'showHeadings'=>0,'shaded'=>0, 'titleFontSize' => 10, 'fontSize' => 8, 'xPos'=>55,'xOrientation'=>'right', 'width'=>500,'cols'=>array('BEZ'=>array('justification'=>'left', 'width'=>450), 'BETRAG'=>array('justification'=>'right','width'=>50) )));
-		 */
-
         $pdf->ezSetDy(-15);
         $cols_ber = array(
             'BEZ' => "",
@@ -5673,22 +5108,12 @@ ORDER BY KONTO ASC
             $kontostand11 = $this->get_kontostand_manuell($this->p_ihr_gk_id, $this->p_jahr . "-01-01");
         }
         $kontostand11_a = nummer_punkt2komma($kontostand11);
-        // echo "<b>I. Anfangsbestand 01.01.$this->p_jahr $kontostand11_a €<br>";
         echo "<tr><td><b><h1>I. Anfangsbestand 01.01.$this->p_jahr</h1></td><td><h1>$kontostand11_a €</h1></td><td><h1>$kontostand11_a €</h1></td></tr>";
 
-        // $this->get_jahres_soll(6020, $this->p_jahr, $this->p_objekt_id);
-
-        // echo "W_PLAN = $this->p_wplan_id<br>";
         $soll_summe_wp = $this->get_soll_betrag_wp(6040, $this->p_wplan_id);
         $soll_summe_wp_a = nummer_punkt2komma($soll_summe_wp);
-        // echo "II. Soll-Zuführung zur Rücklage laut WP $soll_summe_wp_a €<br>";
         echo "<tr><td><b><h1>II. Soll-Zuführung zur Rücklage laut WP</h1></td><td><h1>$soll_summe_wp_a €</h1></td><td></td></tr>";
 
-        /*
-		 * $ist_summe_ihr = $bb->summe_kontobuchungen_jahr($this->p_ihr_gk_id, 6030, $this->p_jahr);
-		 * #echo "III. Ist-Zuführung zur Rücklage $ist_summe_ihr €<br>";
-		 * echo "<tr><td><b><h1>III. Ist-Zuführung zur Rücklage</h1></td><td></td><td><h1>$ist_summe_ihr €</h1></td></tr>";
-		 */
         $this->III_tab_anzeigen($p_id);
 
         $soll_endbestand = $kontostand11 + $soll_summe_wp;
@@ -5703,21 +5128,12 @@ ORDER BY KONTO ASC
         }
 
         $kontostand11_a = nummer_punkt2komma($kontostand11);
-        // echo "V. Ist-Endbestand 31.12.$this->p_jahr $kontostand11_a €<br>";
         echo "<tr><td><b><h1>V. Ist-Endbestand 31.12.$this->p_jahr</h1></td><td><h1></h1></td><td><h1>$kontostand11_a €</h1></td></tr>";
 
         if (!$this->man3) {
             $this->VI_ausstehend($p_id, 6030);
             echo "<tr><td><b><h1>VI. Ausstehende Beträge</h1></td><td><h1></h1></td><td><h1>$this->summe_alle_diff_a €</h1></td></tr>";
 
-            /*
-			 * echo "ALLE GEZAHLT $this->summe_alle_ist<br>";
-			 * echo "ALLE SOLL $this->summe_alle_soll<br>";
-			 * echo "ALLE DIFF $this->summe_alle_diff<br>";
-			 */
-
-            // echo "VI. AUSSTEHENDE BETRÄGE $this->summe_alle_diff_a<br>";
-            // print_r($this->ausstehend);
             $this->VI_ausstehend_tab();
         }
     }
@@ -5855,7 +5271,6 @@ ORDER BY KONTO ASC
         $d = new detail ();
         $anteile_g = $d->finde_detail_inhalt('OBJEKT', $this->p_objekt_id, 'Gesamtanteile');
 
-        // print_r($this);
         $einheiten_arr = $this->einheiten_weg_tabelle_arr($this->p_objekt_id);
 
         $anz_einheiten = count($einheiten_arr);
@@ -5864,10 +5279,6 @@ ORDER BY KONTO ASC
 
         $gkkk = new geldkonto_info ();
         $gkkk->geld_konto_details($this->p_ihr_gk_id);
-
-        // print_r($gkkk);
-        // print_r($this);
-        // die();
 
         $datum_heute = date("d.m.Y");
         $kontostand_aktuell = nummer_punkt2komma_t($bb->kontostand_tagesgenau_bis($this->p_ihr_gk_id, "$datum_heute"));
@@ -6012,20 +5423,6 @@ ORDER BY KONTO ASC
                 )
             ));
         }
-
-        // echo '<pre>';
-        // print_r($einheiten_arr);
-        // print_r($tab_arr);
-        // die();
-        /*
-		 * $pdf->ezSetDy(-20);
-		 * $cols = array('EINHEIT'=>"<b>EINHEIT</b>", 'SOLL'=>"<b>SOLL-BETRAG</b>", 'IST'=>"<b>IST-BETRAG</b>", 'DIFF'=>"<b>AUSSTEHEND</b>");
-		 * $pdf->ezTable($this->ausstehend, $cols, "Ausstehende Beträge", array('rowGap' => 1.5,'showLines'=>1,'showHeadings'=>1,'shaded'=>1, 'shadeCol' =>array(0.9,0.9,0.9), 'titleFontSize' => 10, 'fontSize' => 10, 'xPos'=>55,'xOrientation'=>'right', 'width'=>500,'cols'=>array('EINHEIT'=>array('justification'=>'left'),'SOLL'=>array('justification'=>'right', 'width'=>100),'IST'=>array('justification'=>'right', 'width'=>100), 'DIFF'=>array('justification'=>'right', 'width'=>100))));
-		 */
-
-        // ob_clean();
-        // $pdf->ezStream();
-        // return $pdf;
     }
 
     function III_tab_anzeigen($p_id)
@@ -6052,7 +5449,6 @@ ORDER BY KONTO ASC
                 $summe = $arr [$a] ['SUMME'];
                 $summe_a = nummer_punkt2komma($summe);
                 $kk->konto_informationen2($konto, $kontenrahmen_id);
-                // echo "$konto | $summe<br>";
                 echo "<tr><td><b><h1>III $z. $kk->konto_bezeichnung</h1></td><td></td><td><h1>$summe_a €</h1></td></tr>";
             }
         } else {
@@ -6082,8 +5478,6 @@ ORDER BY KONTO ASC
                 $kk->konto_informationen2($konto, $kontenrahmen_id);
                 $new_arr [$a] ['TEXT'] = "III $z. $kk->konto_bezeichnung";
                 $new_arr [$a] ['IST'] = "$summe_a € ";
-                // echo "$konto | $summe<br>";
-                // echo "<tr><td><b><h1>III $z. $kk->konto_bezeichnung</h1></td><td></td><td><h1>$summe_a €</h1></td></tr>";
             }
             return $new_arr;
         } else {
@@ -6122,8 +5516,6 @@ ORDER BY KONTO ASC
     {
         if (is_array($this->ausstehend)) {
             $anz = count($this->ausstehend);
-            // echo '<pre>';
-            // print_r($this->ausstehend);
             echo "<table class=\"sortable\">";
             echo "<tr><th>EINHEIT</th><th>EIGENTUEMER</th><th>SOLL</th><th>IST</th><th>FEHLBETRAG</th></tr>";
             for ($a = 0; $a < $anz; $a++) {
@@ -6135,7 +5527,6 @@ ORDER BY KONTO ASC
                 $e->get_einheit_info($einheit_id);
                 echo "<tr><td>$einheit_id</td><td>$e->einheit_kurzname</td><td>$soll</td><td>$ist</td><td>$diff</td></tr>";
             }
-            // echo "<tfoot><tr><td></td><td><b>SUMMEN</b></td><td><b>$this->summe_alle_soll_a</b></td><td><b>$this->summe_alle_ist_a</b></td><td><b>$this->summe_alle_diff_a</b></td></tr></tfoot>";
             echo "</table>";
         }
     }
@@ -6144,8 +5535,6 @@ ORDER BY KONTO ASC
     {
         $this->get_hga_profil_infos($p_id);
         $einheiten_arr = $this->einheiten_weg_tabelle_arr($this->p_objekt_id);
-        // print_r($einheiten_arr);
-        // die();
         $anz = count($einheiten_arr);
         if ($anz) {
             $z = 0;
@@ -6160,18 +5549,14 @@ ORDER BY KONTO ASC
                 $soll_betrag = $this->hg_tab_soll_ist_einnahmen($konto, $kos_typ, $kos_id, $von, $bis);
                 $this->summe_alle_soll += $soll_betrag;
                 $eig_arr = $this->get_eigentuemer_arr_jahr($kos_id, $this->p_jahr);
-                // echo '<pre>';
-                // print_r($eig_arr);
                 $anz_e = count($eig_arr);
                 $summeg_eig = 0;
                 for ($b = 0; $b < $anz_e; $b++) {
                     $eig_id = $eig_arr [$b] ['E_ID'];
                     $bb = new buchen ();
                     $ist_betrag = $bb->summe_kontobuchungen_dyn2($this->p_gk_id, $konto, $von, $bis, 'Eigentuemer', $eig_id);
-                    // echo "EIG $eig_id IST $ist_betrag<br>";
                     $summeg_eig += $ist_betrag;
                 }
-                // echo "Einheit $kos_id I:$ist_betrag G: $summeg_eig S:$soll_betrag<br>";
                 $diff = $summeg_eig - $soll_betrag;
 
                 $diff_a = nummer_punkt2komma($diff);
@@ -6205,7 +5590,6 @@ ORDER BY KONTO ASC
     function get_jahres_soll($konto, $jahr, $objekt_id)
     {
         $einheiten_arr = $this->einheiten_weg_tabelle_arr($objekt_id);
-        // print_r($einheiten_arr);
         $anz = count($einheiten_arr);
         if ($anz) {
             $von = "$this->p_jahr" . "-01-01";
@@ -6215,8 +5599,6 @@ ORDER BY KONTO ASC
                 $kos_id = $einheiten_arr [$a];
                 $arr [] = $this->hg_tab_soll_ist_einnahmen($konto, $kos_typ, $kos_id, $von, $bis);
             }
-            // echo '<pre>';
-            // print_r($arr);
         }
     }
 
@@ -6226,9 +5608,6 @@ ORDER BY KONTO ASC
         /* Art = Ausgaben, Einnahmen, Mittelverwendung */
         $_umlage_ktos = $this->get_hgkonten_arr($p_id, 'Ausgaben/Einnahmen');
         $_umlage_ktos = array_orderby($_umlage_ktos, 'GRUPPE', SORT_DESC, 'KONTO', SORT_ASC);
-        //$_umlage_ktos_sort = array_sortByIndex ( $_umlage_ktos, 'GRUPPE', DESC );
-        //$_umlage_ktos = $_umlage_ktos_sort;
-        //unset ( $_umlage_ktos_sort );
 
         $this->get_hga_profil_infos($p_id);
         $bb = new buchen ();
@@ -6246,14 +5625,10 @@ ORDER BY KONTO ASC
 
         $einnahme_manuell = $this->get_summe_zahlungen_manuell($p_id);
         if (!is_array($einnahme_manuell)) {
-            // $einnahme_konten_arr = $kk->get_konten_nach_art('Einnahmen', $kontenrahmen_id);
             $einnahme_konten_arr = $kk->get_konten_nach_art_gruppe('Einnahmen', 'Einnahmen Hausgeld', $kontenrahmen_id);
 
-            // echo '<pre>';
-            // print_r($einnahme_konten_arr);
             $anz_e = count($einnahme_konten_arr);
             $e_summe = 0;
-            // echo "<table class=\"sortable\">";
             echo "<table>";
             echo "<thead><tr><th colspan=\"4\">HAUSGELDEINNAHMEN AUS BUCHUNGSJOURNAL</th></tr></thead>";
             echo "<tr><th>KONTO</th><th>KONTOART</th><th>BEZEICHNUNG</th><th>BETRAG</th></tr>";
@@ -6271,7 +5646,7 @@ ORDER BY KONTO ASC
                 $e_summe += $summe_ekonto;
             }
             if (!$e_summe) {
-                // echo "<tr><td></td><td></td><td>KEINE EINNAHMEN IM JAHR $this->p_jahr</td><td></td></tr>";
+
             }
 
             $e_summe_a = nummer_punkt2komma($e_summe);
@@ -6279,7 +5654,6 @@ ORDER BY KONTO ASC
             echo "</table>";
         } else {
             $anz_m = count($einnahme_manuell);
-            // print_r($einnahme_manuell);
             echo "<table>";
             echo "<thead><tr><th colspan=\"4\">HAUSGELDEINNAHMEN MANUELL</th></tr></thead>";
             echo "<tr><th>KONTO</th><th>KONTOART</th><th>BEZEICHNUNG</th><th>BETRAG</th></tr>";
@@ -6301,7 +5675,6 @@ ORDER BY KONTO ASC
 
         $anz_k = count($_umlage_ktos);
 
-        // echo "<table class=\"sortable\">";
         echo "<table>";
         echo "<thead><tr><th colspan=\"4\">BEWIRTSCHAFTUNGSKOSTEN/-EINNAHMEN</th></tr></thead>";
         echo "<tr><th>Konto</th><th>Kontoart</th><th>Text</th><th>Betrag</th></tr>";
@@ -6313,11 +5686,6 @@ ORDER BY KONTO ASC
             $gruppe = $_umlage_ktos [$a] ['GRUPPE'];
 
             $betraege_arr = $this->get_betraege_arr($p_id, $konto);
-            /*
-			 * if($konto == '2040'){
-			 * print_r($betraege_arr);
-			 * }
-			 */
             $anz_b = count($betraege_arr);
 
             for ($b = 0; $b < $anz_b; $b++) {
@@ -6335,7 +5703,6 @@ ORDER BY KONTO ASC
                 $bk = new bk ();
                 $bk->get_genkey_infos($gen_key_id);
                 $betrag_a = nummer_punkt2komma($betrag);
-                // echo "<tr><td>$konto_b</td><td>$gruppe</td><td>$text</td><td>$kos_typ: $kos_bez</td><td>$bk->g_key_name $bk->g_key_me</td><td>$betrag</td></tr>";
                 echo "<tr><td>$konto_b</td><td>$gruppe</td><td>$text</td><td>$betrag_a</td></tr>";
 
                 if ($kos_typ == 'Wirtschaftseinheit') {
@@ -6367,7 +5734,6 @@ ORDER BY KONTO ASC
 
         $anz_k = count($_umlage_ktos);
 
-        // echo "<table class=\"sortable\">";
         echo "<table>";
         echo "<thead><tr><th colspan=\"4\">MITTELVERWENDUNG</th></tr></thead>";
         echo "<tr><th>Konto</th><th>Kontoart</th><th>Text</th><th>Betrag</th></tr>";
@@ -6379,11 +5745,7 @@ ORDER BY KONTO ASC
             $gruppe = $_umlage_ktos [$a] ['GRUPPE'];
 
             $betraege_arr = $this->get_betraege_arr($p_id, $konto);
-            /*
-			 * if($konto == '2040'){
-			 * print_r($betraege_arr);
-			 * }
-			 */
+
             $anz_b = count($betraege_arr);
 
             for ($b = 0; $b < $anz_b; $b++) {
@@ -6401,7 +5763,6 @@ ORDER BY KONTO ASC
                 $bk = new bk ();
                 $bk->get_genkey_infos($gen_key_id);
                 $betrag_a = nummer_punkt2komma($betrag);
-                // echo "<tr><td>$konto_b</td><td>$gruppe</td><td>$text</td><td>$kos_typ: $kos_bez</td><td>$bk->g_key_name $bk->g_key_me</td><td>$betrag</td></tr>";
                 echo "<tr><td>$konto_b</td><td>$gruppe</td><td>$text</td><td>$betrag_a</td></tr>";
 
                 if ($kos_typ == 'Wirtschaftseinheit') {
@@ -6464,22 +5825,12 @@ ORDER BY KONTO ASC
         if (empty ($this->p_von) or empty ($this->p_bis)) {
             $tj = $bk->tage_im_jahr($jahr);
         } else {
-            // $tj=240;
-            // $tj=$this->tage_zwischen($this->p_von,$this->p_bis);
             $bk = new bk ();
             $tj = $bk->diff_in_tagen($this->p_von, $this->p_bis) + 1;
         }
-        // $tj= $bk->tage_im_jahr($jahr);
-
-        // $_umlage_ktos =$this->get_hgkonten_gruppe_arr('Umlagefähige Kosten', 'A. umlagefähige Kosten gemäß BetrKV.', $p_id);
         /* Art = Ausgaben, Einnahmen, Mittelverwendung */
         $_umlage_ktos = $this->get_hgkonten_arr($p_id, 'Ausgaben/Einnahmen', false);
-        // echo '<pre>';
-        // print_r($_umlage_ktos);
-        // die();
         $_umlage_ktos_sort = array_sortByIndex($_umlage_ktos, 'GRUPPE', 'DESC');
-        //$_umlage_ktos = array_orderby($_umlage_ktos, 'GRUPPE', SORT_DESC, 'KONTO', SORT_ASC);
-        // $_umlage_ktos_sort = array_msort($_umlage_ktos, array('KONTO'=>array(SORT_DESC,SORT_REGULAR), 'KONTO'=>SORT_ASC));
         $_umlage_ktos = $_umlage_ktos_sort;
         unset ($_umlage_ktos_sort);
 
@@ -6497,9 +5848,6 @@ ORDER BY KONTO ASC
         }
 
         $einheiten_arr = $this->einheiten_weg_tabelle_arr($this->p_objekt_id);
-        // echo '<pre>';
-        // print_r($einheiten_arr);
-        // die();
         /* Alle Einheiten durchlaufen um die Eigentümer und Tage zu Sammeln */
         $anz_einheiten = count($einheiten_arr);
         for ($b = 0; $b < $anz_einheiten; $b++) {
@@ -6517,11 +5865,6 @@ ORDER BY KONTO ASC
 
         unset ($einheiten_arr);
 
-        // echo '<pre>';
-        // print_r($betraege_arr);
-        // echo "EINHEITEN2<pre>";
-        // print_r($einheiten_arr_eig);
-        // die('SANEL');
         $anz_eig = count($einheiten_arr_eig);
 
         /* Kontenrahmen vom Geldkonto holen */
@@ -6549,9 +5892,6 @@ ORDER BY KONTO ASC
             /* Jedes Konto durchlaufen, Daten in Tab und für Eigentuemer berechnen */
             $g_summe_aller_kosten = 0;
             $hndl_z = 0;
-            // echo '<pre>';
-            // print_r($betraege_arr);
-            // die();
             for ($b = 0; $b < $anz_b; $b++) {
                 $konto = $betraege_arr [$b] ['0'] ['KONTO'];
                 $k->konto_informationen2($konto, $kontenrahmen_id);
@@ -6594,21 +5934,10 @@ ORDER BY KONTO ASC
                     /* Hier weiter mt g_value */
                     $g_value = $this->key_daten_gesamt($gen_key_id, 'Wirtschaftseinheit', $kos_id);
 
-                    /* NUR zum Testzweck */
-                    /*
-					 * if($g_value=='0.00'){
-					 * die('GENKEY 4 nicht definiert');
-					 * }
-					 */
-
                     if (isset ($this->$ein_berr)) {
                         unset ($this->ein_berr);
                     }
-                    /* Einheiten Array erstellen, auf die es aufgeteilt wird */
-                    // $this->ein_berr = $wi->get_einheiten_from_wirte($kos_id);
-                    // echo "<hr>";
-                    // print_r($this->ein_berr);
-                    // die();
+
                     if ($wi->check_einheit_in_we($einheit_id, $kos_id)) {
                         $this->berechnen = '1';
                     } else {
@@ -6623,7 +5952,6 @@ ORDER BY KONTO ASC
                 if ($gen_key_id == 1) {
                     $e_anteile = nummer_punkt2komma($e->einheit_qm);
                 }
-                // die();
                 if ($gen_key_id == 2) {
                     $e_anteile = 1;
                 }
@@ -6645,24 +5973,14 @@ ORDER BY KONTO ASC
                 /* Prüfen ob Einheit im Array der Aufteilung */
                 $bet = 0;
                 $bet_hndl = 0;
-                /*
-				 * if($g_value=='0.00'){
-				 * die('GENKEY 4 nicht definiert');
-				 * }
-				 */
+
                 if ($g_value == 0.00 or empty ($g_value)) {
                     $tab_arr [$a] ['ZEILEN'] [$b] ['G_KEY_A'] = $g_value . $bk->g_key_name;
                     $tab_arr [$a] ['ZEILEN'] [$b] ['E_KEY_A'] = $e_anteile . $bk->g_key_me . $bk->g_key_me;
                 }
 
                 if ($this->berechnen == 1) {
-                    // echo "<pre>";
-                    // print_r($this);
-
-                    // if($this->berechnen == '1' && $g_value !='0.00'){
-                    /* Normaler Betrag */
                     $betrag = number_format($betrag, 2, '.', '');
-                    // $betrag = nummer_
                     $e_anteile = punkt_zahl($e_anteile);
                     $e_anteile_a = number_format($e_anteile, 3, ',', '');
 
@@ -6671,19 +5989,11 @@ ORDER BY KONTO ASC
 
                     $bet = ((($betrag * $e_anteile) / $g_value) * $tage) / $tj;
                     $bet = number_format($bet, 2, '.', '');
-                    // OK$bet = ((($betrag*nummer_komma2punkt($e_anteile))/nummer_komma2punkt($g_value))*$tage)/$tj;
-                    // echo "$bet = ((($betrag*nummer_komma2punkt($e_anteile))/nummer_komma2punkt($g_value))*$tage)/$tj;";
-                    // die();
                     $bet_hndl = ((($hndl_betrag * $e_anteile) / $g_value) * $tage) / $tj;
-                    // 0 = (((0.00*nummer_komma2punkt(80.219))/986.51)*198)/366;
-                    // echo "$bet_hndl = ((($hndl_betrag*nummer_komma2punkt($e_anteile))/$g_value)*$tage)/$tj;";
-                    // die();
                     $tab_arr [$a] ['ZEILEN'] [$b] ['G_KEY_NAME'] = $bk->g_key_name;
                     $tab_arr [$a] ['ZEILEN'] [$b] ['G_KEY_ME'] = $bk->g_key_me;
                     $tab_arr [$a] ['ZEILEN'] [$b] ['G_KEY_A'] = $g_value_a . $bk->g_key_me;
                     $tab_arr [$a] ['ZEILEN'] [$b] ['E_KEY_A'] = $e_anteile_a . $bk->g_key_me;
-                    // print_r($tab_arr);
-                    // die('SSS');
                 } else {
                     $bet = 0.00;
                     $bet_hndl = 0.00;
@@ -6699,11 +6009,9 @@ ORDER BY KONTO ASC
                 /* Ergebnistabelle füttern */
                 $eigent_id = $tab_arr [$a] ['EIG_ID'];
 
-                // $tab_erg['BETRAG'][$konto][$a]['EIG_ID'] = $tab_arr[$a]['EIG_ID'];
                 $tab_erg ['BETRAG'] [$eigent_id] ['BETEILIGUNG'] += nummer_komma2punkt($bet_a);
 
                 if ($bet_hndl != 0.00) {
-                    // $tab_erg[BETRAG_HNDL][$konto][$eigent_id]['EIG_ID'] = $tab_arr[$a]['EIG_ID'];
                     $tab_erg [BETRAG_HNDL] [$eigent_id] ['BETEILIGUNG'] += nummer_komma2punkt($bet_hndl_a);
 
                     $hndl_arr [$eigent_id] ['ZEILEN'] [$hndl_z] ['KONTO'] = $konto;
@@ -6726,12 +6034,8 @@ ORDER BY KONTO ASC
         } // end for Eigentuemer $a
         $tab_erg ['BETRAG'] ['G_SUMME'] = $g_summe_aller_kosten;
 
-        // print_r($tab_arr);
-        // print_r($tab_erg);
         echo "<hr>";
         $anz = count($tab_arr);
-        // echo '<pre>';
-        // print_r($tab_arr);
         for ($a = 0; $a < $anz; $a++) {
             $eig_id = $tab_arr [$a] ['EIG_ID'];
             $zeilen = $tab_arr [$a] ['ZEILEN'];
@@ -6759,21 +6063,15 @@ ORDER BY KONTO ASC
             echo "<tr><td></td><td></td><td></td><td>$g_summe</td><td>$g_bet</td></tr>";
             echo "</table>";
         }
-        // print_r($tab_arr);
-        // die();
-        // print_r($zeilen);
 
-        // die();
         /* Gesamtbeteiligung als letzte Zeile hinzufügen */
         $g_summe = nummer_punkt2komma_t($tab_erg ['BETRAG'] ['G_SUMME']);
         $g_bet = nummer_punkt2komma_t($tab_erg ['BETRAG'] [$eig_id] ['BETEILIGUNG']);
 
-        //include_once ('pdfclass/class.ezpdf.php');
         include_once('classes/class_bpdf.php');
         $pdf = new Cezpdf ('a4', 'portrait');
         $bpdf = new b_pdf ();
         $bpdf->b_header($pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6);
-        // $this->footer_zahlungshinweis = $bpdf->zahlungshinweis;
         $pdf->ezStopPageNumbers(); // seitennummerirung beenden
         $p = new partners ();
         $p->get_partner_info($_SESSION ['partner_id']);
@@ -6785,20 +6083,12 @@ ORDER BY KONTO ASC
             /* Bei jedem Eigentümer, mit neuer Seite anfangen */
             if ($a > 0) {
                 $pdf->ezNewPage();
-                // $pdf->ezStartPageNumbers(); //seitennummerirung beenden
-                // $pdf->ezStopPageNumbers(); //seitennummerirung beenden
-                // $pdf->ezStopPageNumbers(1,1,$i);
-                // $i=$pdf->ezStartPageNumbers(); //seitennummerirung beenden
-                // $i=$pdf->ezStartPageNumbers(300,500,20,'','',1);
-                // $pdf->ezStopPageNumbers(1,1,$i);
                 $pdf->setColor(0, 0, 0);
                 $pdf->ezSetDy(-5);
             }
 
             $eig_id = $tab_arr [$a] ['EIG_ID'];
             $this->n_tage = $tab_arr [$a] ['TAGE'];
-            // print_r($tab_arr);
-            // die();
             /* Kopf Anfang */
             $einheit_id = $tab_arr [$a] ['EINHEIT_ID'];
             $this->einheit_id = $einheit_id;
@@ -6808,7 +6098,6 @@ ORDER BY KONTO ASC
             $anz_einheiten = $oo->anzahl_einheiten_objekt($e->objekt_id);
             $pdf->setColor(0, 0, 0);
             $pdf->setStrokeColor(0, 0, 0);
-            // $pdf->setLineStyle(1);
             $pdf->setLineStyle(0.5);
             $pdf->rectangle(400, 601, 165, 87);
             $this->get_eigentumer_id_infos2($eig_id);
@@ -6827,7 +6116,6 @@ ORDER BY KONTO ASC
 
             $d = new detail ();
             $anteile_g = $d->finde_detail_inhalt('OBJEKT', $e->objekt_id, 'Gesamtanteile');
-            // $pdf->ezText("Gesamtanteile: $anteile_g");
             $pdf->addText(405, 680, 8, "Einheiten:");
             $pdf->addText(465, 680, 8, "$anz_einheiten");
             $pdf->addText(405, 670, 8, "Einheit:");
@@ -6835,7 +6123,6 @@ ORDER BY KONTO ASC
             $pdf->addText(405, 660, 8, "Gesamtanteile:");
             $pdf->addText(465, 660, 8, "$anteile_g");
             $this->einheit_anteile = $d->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Anteile');
-            // $pdf->ezText("Anteile Einheit $this->einheit_kurzname: $this->einheit_anteile");
             $pdf->addText(405, 650, 8, "Ihre MAE:");
             $pdf->addText(465, 650, 8, "$this->einheit_anteile");
 
@@ -6845,8 +6132,6 @@ ORDER BY KONTO ASC
 
             $pdf->addText(405, 630, 8, "Aufzug %:");
             $pdf->addText(465, 630, 8, "$e->aufzug_prozent_d");
-
-            // $this->aufzug_prozent
 
             $this->eigentuemer_von_d = date_mysql2german($this->eigentuemer_von);
             $this->eigentuemer_bis_d = date_mysql2german($this->eigentuemer_bis);
@@ -6978,9 +6263,9 @@ ORDER BY KONTO ASC
             $this->eigentuemer_von_t_a = date_mysql2german($this->eigentuemer_von_t);
             $this->eigentuemer_bis_t_a = date_mysql2german($this->eigentuemer_bis_t);
 
-            $hg_tab [0] [ART] = "Einnahmen aus Hausgeld für Kosten";
-            $hg_tab [0] [ZEITRAUM] = "$this->eigentuemer_von_t_a bis $this->eigentuemer_bis_t_a";
-            $hg_tab [0] [SOLL] = '-' . nummer_punkt2komma_t($hg_kosten_soll);
+            $hg_tab [0] ['ART'] = "Einnahmen aus Hausgeld für Kosten";
+            $hg_tab [0] ['ZEITRAUM'] = "$this->eigentuemer_von_t_a bis $this->eigentuemer_bis_t_a";
+            $hg_tab [0] ['SOLL'] = '-' . nummer_punkt2komma_t($hg_kosten_soll);
 
             $hg_ist_summe = $this->get_summe_zahlungen_arr_jahr('Eigentuemer', $eig_id, $jahr, $geldkonto_id, $this->hg_konto);
 
@@ -6988,8 +6273,8 @@ ORDER BY KONTO ASC
                 $hg_ist_summe = $this->get_summe_zahlungen_hga('Eigentuemer', $eig_id, $p_id, $this->hg_konto);
             }
 
-            $hg_tab [0] [IST] = nummer_punkt2komma_t($hg_ist_summe);
-            $hg_tab [0] [ERG] = nummer_punkt2komma_t($hg_ist_summe);
+            $hg_tab [0] ['IST'] = nummer_punkt2komma_t($hg_ist_summe);
+            $hg_tab [0] ['ERG'] = nummer_punkt2komma_t($hg_ist_summe);
 
             $hg_kosten_saldo = $hg_ist_summe - $hg_kosten_soll;
 
@@ -7001,26 +6286,17 @@ ORDER BY KONTO ASC
             $hg_kosten_ant = $tab_erg ['BETRAG'] [$eig_id] ['BETEILIGUNG'];
             $hg_kosten_saldo_ist_soll = ($hg_ist_summe + $hg_kosten_ant);
 
-            $hg_tab [1] [ART] = '<b>Zwischenergebnis (ohne Instandhaltungsrücklage und Energieabrechnung)</b>';
-            // $hg_tab[1][IST] = '<b>'.nummer_punkt2komma($hg_kosten_saldo_ist_soll).'</b>';
-            $hg_tab [1] [ERG] = '<b>' . nummer_punkt2komma($hg_kosten_saldo_ist_soll) . '</b>';
+            $hg_tab [1] ['ART'] = '<b>Zwischenergebnis (ohne Instandhaltungsrücklage und Energieabrechnung)</b>';
+            $hg_tab [1] ['ERG'] = '<b>' . nummer_punkt2komma($hg_kosten_saldo_ist_soll) . '</b>';
 
             /* Zwischenergebnis 1 */
             $zw1 = $hg_kosten_saldo_ist_soll;
 
             /* Heizkostentabelle */
             $hk_kosten_soll = $this->hg_tab_soll_ist_einnahmen($this->hk_konto, 'Einheit', $this->einheit_id, $this->eigentuemer_von_t, $this->eigentuemer_bis_t);
-            $hk_tab [0] [ART] = "Einnahmen aus Hausgeld für Energiekosten";
-            $hk_tab [0] [ZEITRAUM] = "$this->eigentuemer_von_t_a bis $this->eigentuemer_bis_t_a";
-            $hk_tab [0] [SOLL] = '-' . nummer_punkt2komma($hk_kosten_soll);
-
-            // $hk_ist_summe = $this->get_summe_zahlungen_hga('Eigentuemer', $eig_id, '0', '6010');
-            /*
-			 * $hk_ist_summe = $this->get_summe_zahlungen_arr_jahr('Eigentuemer', $eig_id, $jahr, $geldkonto_id, $this->hk_konto);
-			 * if(!$hk_ist_summe){
-			 * $hk_ist_summe = $this->get_summe_zahlungen_hga('Eigentuemer', $eig_id, $p_id, $this->hk_konto);
-			 * }
-			 */
+            $hk_tab [0] ['ART'] = "Einnahmen aus Hausgeld für Energiekosten";
+            $hk_tab [0] ['ZEITRAUM'] = "$this->eigentuemer_von_t_a bis $this->eigentuemer_bis_t_a";
+            $hk_tab [0] ['SOLL'] = '-' . nummer_punkt2komma($hk_kosten_soll);
 
             $hk_ist_summe = $this->get_summe_zahlungen_hga('Eigentuemer', $eig_id, $p_id, '6010');
             if (!$hk_ist_summe) {
@@ -7030,38 +6306,33 @@ ORDER BY KONTO ASC
             $tab_hg_zahl_kosten [1] ['TEXT'] = 'Hausgeldzahlung Anteil für Energie';
             $tab_hg_zahl_kosten [1] ['SUM'] = nummer_punkt2komma($hk_ist_summe);
 
-            $hk_tab [0] [IST] = nummer_punkt2komma($hk_ist_summe);
-            $hk_tab [0] [ERG] = nummer_punkt2komma($hk_ist_summe);
+            $hk_tab [0] ['IST'] = nummer_punkt2komma($hk_ist_summe);
+            $hk_tab [0] ['ERG'] = nummer_punkt2komma($hk_ist_summe);
             $hk_diff_ist_soll = $hk_ist_summe - $hk_kosten_soll + $hg_kosten_saldo_ist_soll;
             $hk_verbrauch_ist = $this->get_summe_hk('Eigentuemer', $eig_id, $p_id);
 
-            $hk_tab [1] [ART] = 'Energieabrechnungsergebnis';
-            $hk_tab [1] [IST] = nummer_punkt2komma($hk_verbrauch_ist);
-            $hk_tab [1] [ERG] = nummer_punkt2komma($hk_verbrauch_ist);
+            $hk_tab [1] ['ART'] = 'Energieabrechnungsergebnis';
+            $hk_tab [1] ['IST'] = nummer_punkt2komma($hk_verbrauch_ist);
+            $hk_tab [1] ['ERG'] = nummer_punkt2komma($hk_verbrauch_ist);
 
             $zw2 = $hk_verbrauch_ist + $zw1 + $hk_ist_summe;
 
-            $hk_tab [2] [ART] = "<b>Zwischenergebnis nach Abzug Energieabrechnung</b>";
-            $hk_tab [2] [ERG] = '<b>' . nummer_punkt2komma($zw2) . '</b>';
+            $hk_tab [2] ['ART'] = "<b>Zwischenergebnis nach Abzug Energieabrechnung</b>";
+            $hk_tab [2] ['ERG'] = '<b>' . nummer_punkt2komma($zw2) . '</b>';
 
-            $hk_tab [0] [IST] = $hk_tab [0] [IST];
-            /*
-			 * if($eig_id=='11'){
-			 * die();
-			 * }
-			 */
+            $hk_tab [0] ['IST'] = $hk_tab [0] [IST];
 
             /* Instandhaltungstabelle */
             $inst_kosten_soll = $this->hg_tab_soll_ist_einnahmen($this->ihr_konto, 'Einheit', $this->einheit_id, $this->eigentuemer_von_t, $this->eigentuemer_bis_t);
-            $inst_tab [0] [ART] = "Einnahmen aus Hausgeld für Instandhaltungsrücklage";
-            $inst_tab [0] [ZEITRAUM] = "$this->eigentuemer_von_t_a bis $this->eigentuemer_bis_t_a";
-            $inst_tab [0] [SOLL] = '-' . nummer_punkt2komma($inst_kosten_soll);
+            $inst_tab [0] ['ART'] = "Einnahmen aus Hausgeld für Instandhaltungsrücklage";
+            $inst_tab [0] ['ZEITRAUM'] = "$this->eigentuemer_von_t_a bis $this->eigentuemer_bis_t_a";
+            $inst_tab [0] ['SOLL'] = '-' . nummer_punkt2komma($inst_kosten_soll);
 
             $inst_ist_summe = $this->get_summe_zahlungen_arr_jahr('Eigentuemer', $eig_id, $jahr, $geldkonto_id, $this->ihr_konto);
             if (!$inst_ist_summe) {
                 $inst_ist_summe = $this->get_summe_zahlungen_hga('Eigentuemer', $eig_id, $p_id, $this->ihr_konto);
             }
-            $inst_tab [0] [IST] = nummer_punkt2komma($inst_ist_summe);
+            $inst_tab [0] ['IST'] = nummer_punkt2komma($inst_ist_summe);
             $inst_diff = $inst_ist_summe - $inst_kosten_soll;
 
             $tab_hg_zahl_kosten [2] ['TEXT'] = 'Hausgeldzahlung Anteil für die IHR';
@@ -7096,8 +6367,8 @@ ORDER BY KONTO ASC
             $tab_hg_zahl_kosten [9] ['TEXT'] = "<b>Ergebnis $nzgh </b>";
             $tab_hg_zahl_kosten [9] ['SUM'] = "<b>" . nummer_punkt2komma($bet_erg) . "</b>";
 
-            $inst_tab [1] [ART] = '<b>Ergebnis Instandhaltungsrücklage</b>';
-            $inst_tab [1] [ERG] = '<b>' . nummer_punkt2komma($inst_diff) . '</b>';
+            $inst_tab [1] ['ART'] = '<b>Ergebnis Instandhaltungsrücklage</b>';
+            $inst_tab [1] ['ERG'] = '<b>' . nummer_punkt2komma($inst_diff) . '</b>';
 
             $zw3 = $zw2 + $inst_diff;
             if ($zw3 < 0) {
@@ -7106,8 +6377,8 @@ ORDER BY KONTO ASC
             if ($zw3 > 0) {
                 $zw_text = 'Guthaben';
             }
-            $inst_tab [2] [ART] = "<b><i>Gesamtergebnis Hausgeld (inkl. Energieabrechnung und Instandhaltungsrücklagen)  =  $zw_text</i></b>";
-            $inst_tab [2] [ERG] = '<b>' . nummer_punkt2komma_t($zw3) . '</b>';
+            $inst_tab [2] ['ART'] = "<b><i>Gesamtergebnis Hausgeld (inkl. Energieabrechnung und Instandhaltungsrücklagen)  =  $zw_text</i></b>";
+            $inst_tab [2] ['ERG'] = '<b>' . nummer_punkt2komma_t($zw3) . '</b>';
 
             $uebersicht [$a] ['EINHEIT_ID'] = $einheit_id;
             $uebersicht [$a] ['EINHEIT'] = $this->einheit_kurzname . "  " . ltrim(rtrim($this->eigentuemer_name_str));
@@ -7273,8 +6544,6 @@ ORDER BY KONTO ASC
                 )
             ));
 
-            // $pdf->ezTable($tab_hg_zahl_kosten);
-
             /* Zweite Seite */
             // $pdf->ezNewPage();
             $pdf->ezSetDy(-30);
@@ -7290,7 +6559,6 @@ ORDER BY KONTO ASC
                 'justification' => 'full'
             ));
             $pdf->ezSetDy(-25);
-            // $pdf->ezText("$this->footer_zahlungshinweis", 10, array('justification'=>'full'));
 
             $cols_bu = array(
                 'DATUMD' => "Datum",
@@ -7365,8 +6633,6 @@ ORDER BY KONTO ASC
                 $anz_zeilen = count($zeilen);
                 $hndl_arr [$eig_id] ['ZEILEN'] [$anz_zeilen] [E_BETRAG_HNDL] = '<b>' . nummer_punkt2komma_t($tab_erg [BETRAG_HNDL] [$eig_id] ['BETEILIGUNG']) . '</b>';
                 $zeilen = $hndl_arr [$eig_id] ['ZEILEN'];
-                // print_r($hndl_arr);
-                // die();
                 $cols = array(
                     'KONTO' => "Konto",
                     'BEZ' => "Kontobezeichnung",
@@ -7453,30 +6719,6 @@ ORDER BY KONTO ASC
             $tab_zahl_rueck [$a] ['SALDO'] = nummer_punkt2komma($inst_diff + $vorjahre);
         } // end for $a
 
-        // $pdf->ezTable($tab_zahl_rueck);
-
-        /*
-		 * print_r($tab_erg['BETRAG']);
-		 * $eig_id_arr = array_keys($tab_erg['BETRAG']);
-		 * print_r($eig_id_arr);
-		 * $zzz = 0;
-		 * for($a=0;$a<count($eig_id_arr);$a++){
-		 * $eig_id = $eig_id_arr[$a];
-		 * $betrag = $tab_erg['BETRAG'][$eig_id][BETEILIGUNG];
-		 *
-		 * if(is_int($eig_id)){
-		 * $einheit_und_name = $this->get_eigentumer_id_infos2($eig_id);
-		 * echo "$eig_id $einheit_und_name $this->anrede_pdf $betrag<br>";
-		 * $uebersicht[$zzz]['EINHEIT'] = $einheit_und_name;
-		 * $uebersicht[$zzz]['ERGEBNIS'] = nummer_punkt2komma_t($betrag);
-		 * $zzz++;
-		 * }
-		 * }
-		 */
-        // echo '<pre>';
-        // print_r($uebersicht);
-        // die();
-
         $anz_u = count($uebersicht);
         $summe_alle = 0;
         $summe_nachzahlung = 0;
@@ -7551,10 +6793,6 @@ ORDER BY KONTO ASC
 
         $uebersicht [$anz_u + 2] ['ERGEBNIS_E'] = '<b>' . nummer_punkt2komma_t($sum_pro_einheit) . '</b>';
 
-        // echo '<pre>';
-        // print_r($uebersicht);
-        // die();
-
         $cols = array(
             'EINHEIT' => "EINHEIT / EIGENTÜMER",
             'ZAHLUNGEN_J' => "HAUSGELD",
@@ -7626,8 +6864,6 @@ ORDER BY KONTO ASC
     function get_summe_zahlungen_hga($kos_typ, $kos_id, $hga_id, $kostenkonto)
     {
         $result = mysql_query("SELECT BUCHUNGS_DAT, BUCHUNGS_SUMME FROM WEG_HG_ZAHLUNGEN WHERE  AKTUELL='1' && KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && WEG_HGA_ID='$hga_id' && KOSTENKONTO='$kostenkonto' ORDER BY BUCHUNGS_DAT ASC");
-        // echo "SELECT BUCHUNGS_DAT FROM WEG_HG_ZAHLUNGEN WHERE AKTUELL='1' && KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && WEG_HGA_ID='$hga_id' && KOSTENKONTO='$kostenkonto' ORDER BY BUCHUNGS_DAT ASC";
-        // die();
         $numrows = mysql_numrows($result);
         $summe = 0;
         if ($numrows > 1) {
@@ -7714,8 +6950,6 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
 
     function test2($p_id = '0', $jahr = 2011)
     {
-        // $this->monatsarray_erstellen('2008-01-01','2011-12-31');
-        // die();
         $jahr = date("Y");
         $result = mysql_query("SELECT * FROM WEG_HGA_ZEILEN WHERE AKTUELL='1' && WEG_HG_P_ID='$p_id' ORDER BY KONTO ASC");
         $numrows = mysql_numrows($result);
@@ -7735,12 +6969,6 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
 
                 $bk = new bk ();
                 $bk->get_genkey_infos($gen_key_id);
-                /*
-				 * $this->g_key_name = $row[GKEY_NAME];
-				 * $this->g_key_g_var = $row[G_VAR];
-				 * $this->g_key_e_var = $row[E_VAR];
-				 * $this->g_key_me = $row[ME];
-				 */
 
                 echo "<tr><td>$konto</td><td>$text</td><td>$betrag</td><td>$kos_typ: $kos_bez</td><td>$bk->g_key_name $bk->g_key_me</td></tr>";
             }
@@ -7754,19 +6982,13 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
     {
         $bk = new bk ();
         $bk->get_genkey_infos($key_id);
-        // print_r($bk);
-        // echo "$key_id, $kos_typ, $kos_id<br>";
 
         if ($kos_typ == 'Wirtschaftseinheit') {
-            // echo "SIVAC";
             $wi = new wirt_e ();
             $wi->get_wirt_e_infos($kos_id);
-            // print_r($wi);
             $g_var_name = $bk->g_key_g_var; // z.B. g_mea
-            // echo "VAR:$wi->$g_var_name|;";
             return $wi->$g_var_name;
         }
-        // die('GSGSGSGSGSGS');
     }
 
     function assistent()
@@ -7862,8 +7084,6 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
     function tab_konten_auswahl_summen_arr($gk_id, $jahr)
     {
         $arr = $this->konten_auswahl_summen_arr($gk_id, $jahr);
-        // echo '<pre>';
-        // print_r($arr);
         $anz = count($arr);
         if ($anz) {
             echo "<table>";
@@ -7983,7 +7203,6 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
                 $kos_bez = $r->kostentraeger_ermitteln($kos_typ, $kos_id);
                 $bk = new bk ();
                 $bk->get_genkey_infos($genkey_id);
-                // $bk->g_key_name;
                 echo "<tr><td>$konto</td><td>$text</td><td>$art</td><td>$betrag</td><td>$betrag_hndl</td><td>$kos_bez</td><td>$bk->g_key_name</td></tr>";
             }
             echo "</table>";
@@ -8024,10 +7243,6 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
     {
         $db_abfrage = "UPDATE WEG_HGA_PROFIL SET AKTUELL='0' WHERE ID='$id' && AKTUELL='1'";
         $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        /* Protokollieren */
-        // $last_dat = mysql_insert_id();
-        /* ID anpassen, muss dat_wert von id sein */
-        // protokollieren('WEG_HGA_ZEILEN', $id, $last_dat);
 
         $db_abfrage = "UPDATE WEG_HGA_HK SET AKTUELL='0' WHERE WEG_HGA_ID='$id' && AKTUELL='1'";
         $resultat = mysql_query($db_abfrage) or die (mysql_error());
@@ -8161,11 +7376,8 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
             $einheit_id = $einheiten_arr [$a] ['EINHEIT_ID'];
             $einheit_kn = $einheiten_arr [$a] ['EINHEIT_KURZNAME'];
             $eig_arr = $this->get_eigentuemer_arr_jahr($einheit_id, $this->p_jahr);
-            // echo "<pre>";
-            // print_r($eig_arr);
 
             $anz_eig = count($eig_arr);
-            // print_r($eig_arr);
             for ($b = 0; $b < $anz_eig; $b++) {
                 $eig_id = $eig_arr [$b] ['ID'];
                 $von = date_mysql2german($eig_arr [$b] ['VON']);
@@ -8175,7 +7387,6 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
                 $betrag_a = nummer_punkt2komma($this->get_hga_hk_betrag($p_id, $eig_id));
                 $sum += nummer_komma2punkt($betrag_a);
                 echo "<tr><td>$z.) $einheit_kn</td><td>$this->eigentuemer_name_str</td><td>$von</td><td>$bis</td><td>$tage</td><td>";
-                // $f->text_feld('Heizkostenverbrauch in €', 'hk_verbrauch[]', '', 10, 'hk_verbrauch', '');
                 $link_wert = "<a class=\"details\" onclick=\"change_hk_wert_et('Heizungsveerbrauch', '$eig_id', '$betrag_a', '$p_id')\">$betrag_a</a>";
                 echo $link_wert;
                 echo "</td></tr>";
@@ -8243,7 +7454,6 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
         $wirt->dropdown_we('Wirtschaftseinheit wählen', 'wirt_id', 'wirt_id', '');
         $f->hidden_feld('option', 'konto_zu_zeilen');
         $f->send_button('send', 'Eintragen');
-        // print_r($_SESSION);
         $f->ende_formular();
         $f->fieldset_ende();
     }
@@ -8413,21 +7623,12 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
         $o->get_objekt_infos($objekt_id);
         echo "<h2>Liste Eigentümer $o->objekt_kurzname</h2>";
         $einheiten_arr = $o->einheiten_objekt_arr($objekt_id);
-        // echo '<pre>';
-        // print_r($einheiten_arr);
-        // die();
         $anz_e = count($einheiten_arr);
         for ($a = 0; $a < $anz_e; $a++) {
             $einheit_id = $einheiten_arr [$a] ['EINHEIT_ID'];
-            // $eigent_arr[] = $this->get_last_eigentuemer_arr($einheit_id);
             $eigent_arr [] = $this->get_eigentuemer_arr_2($einheit_id);
         }
         unset ($einheiten_arr);
-
-        /* Eigentümerschleife */
-        // echo '<pre>';
-        // print_r($eigent_arr);
-        // die();
 
         $f = new formular ();
         $f->erstelle_formular('Serienbrief an Eigentümer', null);
@@ -8435,7 +7636,6 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
         $f->check_box_js_alle('c_alle', 'c_alle', 1, 'Alle', '', '', 'eig_ids');
         $f->send_button('Button', 'Vorlage wählen');
         $f->send_button("delete", "Alle Löschen");
-        // $f->check_box_js_alle('nn', 'nn', 'NN', 'Alle markieren', '', '', 'mv_ids');
         $anz_einheit = count($eigent_arr);
         echo "<table>";
         for ($a = 0; $a < $anz_einheit; $a++) {
@@ -8445,9 +7645,6 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
 
                 $eig_id = $eigent_arr [$a] [$b] ['ID'];
                 $this->get_eigentumer_id_infos2($eig_id);
-                // p($this);
-                // echo '<hr>';
-                // print_r($_SESSION['eig_ids']);
 
                 if (isset ($_SESSION ['eig_ids']) && in_array($eig_id, $_SESSION ['eig_ids'])) {
                     $f->check_box_js1('eig_ids[]', 'eig_ids', $eig_id, "$this->einheit_kurzname $this->eigentuemer_name_str", '', 'checked');
@@ -8548,9 +7745,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
 
                 if (isset ($konten_arr [$le]) && $konten_arr [$le] == $kto && $zaehler > 0) {
                     $sum_kto += $row ['BETRAG'];
-                    // echo "RACUNAJ $kto $konten_arr[$zaehler]<br>";
                 } else {
-                    // echo "<hr>NERACUNAJ $kto";
                     $my_arr [] ['BETRAG'] = "<b>" . nummer_punkt2komma_t($sum_kto) . "</b>";
                     $anz_bisher = count($my_arr);
                     $my_arr [$anz_bisher - 1] ['KONTENRAHMEN_KONTO'] = "<b>Summe</b>";
@@ -8561,14 +7756,6 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
                 $konten_arr [] = $kto;
                 $my_arr [] = $row;
 
-                /* Wenn nicht vorh. Kto hinzu */
-                /*
-				 * if(!in_array($kto,$konten_arr) && $zaehler>0){
-				 * $konten_arr[]=$kto;
-				 * $sum_kto = 0;
-				 * }
-				 */
-
                 $zaehler++;
 
                 if ($zaehler == $numrows) {
@@ -8577,9 +7764,9 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
                     $my_arr [$anz_bisher - 1] ['KONTENRAHMEN_KONTO'] = "<b>Summe</b>";
                 }
             }
-            // ob_clean();
+
             print_r($konten_arr);
-            // die();
+
             return $my_arr;
         }
     }
@@ -8588,21 +7775,10 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
     {
         $result = mysql_query("SELECT SUM(BETRAG) AS SUMME, KONTENRAHMEN_KONTO, `KOSTENTRAEGER_TYP`, `KOSTENTRAEGER_ID` FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && ( DATE_FORMAT( DATUM, '%Y' ) = '$jahr') && AKTUELL='1' GROUP BY KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID");
 
-        // $pdf = new Cezpdf('a4', 'portrait');
-        // $bpdf = new b_pdf;
-        // $bpdf->b_header($pdf, 'Partner', $_SESSION['partner_id'], 'portrait', 'Helvetica.afm', 6);
-        // $pdf->ezStopPageNumbers();
-
         $numrows = mysql_numrows($result);
         if ($numrows > 0) {
             $k = new kontenrahmen ();
-            // $k->konto_informationen($kostenkonto);
             $kontenrahmen_id = $k->get_kontenrahmen('GELDKONTO', $geldkonto_id);
-            // $k->konto_informecho "<table>";
-            // echo "<tr><th>$kostenkonto $k->konto_bezeichnung</th></tr>";
-            // echo "</table>";
-            // echo "<table class=\"sortable\">";
-            // echo "<tr><th>Datum</th><th>Erfassnr</th><th>Betrag</th><th>ZUWEISUNG</th><th>Buchungsnr</th><th>Vzweck</th></tr>";
 
             $kto_temp = '';
             $z = 0;
@@ -8645,7 +7821,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
             echo "<tr><th colspan=\"3\">$kto_sum_a</th></tr>";
             echo "</table><br>";
         } else {
-            // echo "Geldkonto $geldkonto_id - Kostenkonto $kostenkonto leer<br>";
+
         }
     }
 
@@ -8662,19 +7838,12 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
             $gk->geld_konto_details($geldkonto_id);
             $fileName = "$gk->geldkonto_bezeichnung - Buchungskonten summiert $jahr" . '.xls';
             header("Content-type: application/vnd.ms-excel");
-            // header("Content-Disposition: attachment; filename=$fileName");
             header("Content-Disposition: inline; filename=$fileName");
 
             echo "<table class=\"sortable\">";
             echo "<tr><th>SUMME</th><th>ZUWEISUNG</th><th>BEZEICHNUNG</th></tr>";
             $k = new kontenrahmen ();
-            // $k->konto_informationen($kostenkonto);
             $kontenrahmen_id = $k->get_kontenrahmen('GELDKONTO', $geldkonto_id);
-            // $k->konto_informecho "<table>";
-            // echo "<tr><th>$kostenkonto $k->konto_bezeichnung</th></tr>";
-            // echo "</table>";
-            // echo "<table class=\"sortable\">";
-            // echo "<tr><th>Datum</th><th>Erfassnr</th><th>Betrag</th><th>ZUWEISUNG</th><th>Buchungsnr</th><th>Vzweck</th></tr>";
 
             $kto_temp = '';
             $z = 0;
@@ -8716,7 +7885,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
             echo "<tr><th colspan=\"3\">$kto_sum_a</th></tr>";
             echo "</table><br>";
         } else {
-            // echo "Geldkonto $geldkonto_id - Kostenkonto $kostenkonto leer<br>";
+
         }
 
         die ();
@@ -8726,16 +7895,12 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
     {
         $o = new objekt ();
         $o->objekt_informationen($objekt_id);
-        // echo '<pre>';
-        // print_r($o);
-        // die();
+
         $det1 = new detail ();
         $objekt_mea = $det1->finde_detail_inhalt('Objekt', $objekt_id, 'Gesamtanteile');
-        // print_r($o);
-        // echo $o->objekt_name;
+
         $ein_arr = $this->einheiten_weg_tabelle_arr($objekt_id);
-        // echo '<pre>';
-        // print_r($arr);
+
         $anz_e = count($ein_arr);
 
         $zeile = 0;
@@ -8748,24 +7913,21 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
 
             $weg = new weg ();
             $et_arr = $weg->get_eigentuemer_arr($einheit_id);
-            // echo "$einheit_id ";
+
             $anz_et = count($et_arr);
-            // print_r($et_arr);
+
             for ($et = 0; $et < $anz_et; $et++) {
                 $et_id = $et_arr [$et] ['ID'];
                 $et_von = $et_arr [$et] ['VON'];
                 $et_bis = $et_arr [$et] ['BIS'];
                 $weg1 = new weg ();
                 $weg1->get_eigentumer_id_infos4($et_id);
-                // echo '<pre>';
-                // print_r($weg1);
-                // die();
+
                 $pdf_tab [$zeile] ['P_DETAILS'] = '';
                 for ($p = 0; $p < $weg1->anz_personen; $p++) {
                     $det1 = new detail ();
                     $person_id = $weg1->personen_id_arr1 [$p] ['PERSON_ID'];
                     $alle_details = $det1->finde_alle_details_arr('Person', $person_id);
-                    // print_r($alle_details);
                     $pers = new person ();
                     $pers->get_person_infos($person_id);
                     $pdf_tab [$zeile] ['P_DETAILS'] .= "<b>$pers->person_vorname $pers->person_nachname</b>\n";
@@ -8777,15 +7939,12 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
                             $pdf_tab [$zeile] ['P_DETAILS'] .= "\n";
                         }
                     }
-                    // $pdf_tab[$zeile]['P_DETAILS'] .="\n";
                     if ($p < $weg1->anz_personen - 1) {
                         $pdf_tab [$zeile] ['P_DETAILS'] .= "\n<b>++++++++++++++++++++++++++++++++++++++++++++++</b>\n";
                     }
                 }
                 unset ($alle_details);
 
-                // print_r($pdf_tab);
-                // die();
                 $pdf_tab [$zeile] ['EINHEIT_KN'] = $weg1->einheit_kurzname;
                 $pdf_tab [$zeile] ['ET_NAME'] = $weg1->empf_namen;
                 $pdf_tab [$zeile] ['VON'] = date_mysql2german($weg1->eigentuemer_von);
@@ -8804,15 +7963,11 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
             $einheit_mea = 0;
         }
 
-        // print_r($pdf_tab);
-
         $pdf = new Cezpdf ('a4', 'landscape');
         $bpdf = new b_pdf ();
         $bpdf->b_header($pdf, 'Partner', $_SESSION ['partner_id'], 'landscape', 'Helvetica.afm', 6);
-        // $pdf->ezStopPageNumbers();
         $pdf->ezSetDy(15); // abstand
         $pdf->ezText("Objektname: $o->objekt_name, Gesamtanteile: $objekt_mea MEA", 12);
-        // $pdf->ezText("Gesamtanteile: $objekt_mea MEA",12);
         $pdf->ezSetDy(-10); // abstand
         $cols = array(
             'EINHEIT_KN' => "EINHEIT",
@@ -8843,7 +7998,6 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
                 )
             )
         ));
-        // $pdf->ezTable($pdf_tab);
 
         ob_clean(); // ausgabepuffer leeren
         header("Content-type: application/pdf"); // wird von MSIE ignoriert
@@ -8854,12 +8008,8 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
     {
         $o = new objekt ();
         $o->objekt_informationen($objekt_id);
-        // print_r($o);
-        // echo $o->objekt_name;
         $arr = $this->einheiten_weg_tabelle_arr($objekt_id);
         $csv = $this->einheiten_weg_tabelle_arr($objekt_id);
-        // echo '<pre>';
-        // print_r($arr);
 
         if (!is_array($arr)) {
             fehlermeldung_ausgeben("Keine Einheiten im Objekt");
@@ -8876,8 +8026,6 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
                 $arr [$a] ['EINHEIT_MEA'] = $det1->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-Anteile');
                 $csv [$a] ['EINHEIT_MEA'] = $arr [$a] ['EINHEIT_MEA'];
 
-                // print_r($arr[$a]['E_DETAILS_ARR']);
-                // die("EINHEIT', $einheit_id");
                 $anz_e_det = count($arr [$a] ['E_DETAILS_ARR']);
                 $det_string = "";
                 for ($dd = 0; $dd < $anz_e_det; $dd++) {
@@ -8887,7 +8035,6 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
                 }
                 $arr [$a] ['E_DETAILS'] = $det_string;
                 $csv [$a] ['E_DETAILS'] = $det_string;
-                // die($det_string);
                 unset ($arr [$a] ['E_DETAILS_ARR']);
 
                 $w = new weg ();
@@ -8967,13 +8114,8 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
         }
         if (isset ($_REQUEST ['csv'])) {
             ob_clean();
-            // echo '<pre>';
-            // print_r($csv);
-            // die();
 
-            // header("Content-type: application/vnd.ms-excel");
             header("Content-Disposition: attachment; filename='ET.CSV");
-            // header("Content-Disposition: inline; filename='ET.CSV");
             $ueberschrift = array_keys($csv [0]);
             $anz_k = count($ueberschrift);
             for ($k = 0; $k < $anz_k; $k++) {
@@ -9028,9 +8170,6 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
                 'EINHEIT_MEA' => "MEA"
             );
         }
-        // print_r($cols);
-        // $pdf->ezTable($arr);
-        // #die();
 
         $pdf->ezTable($arr, $cols, "$o->objekt_name", array(
             'showHeadings' => 1,
@@ -9048,7 +8187,6 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
         ));
         ob_clean(); // ausgabepuffer leeren
         $pdf->ezStream();
-        // print_r($arr);
     } // end function
 
     function pdf_hausgelder($objekt_id, $jahr)
@@ -9060,7 +8198,6 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
         $o = new objekt ();
         $einheiten_arr = $o->einheiten_objekt_arr($objekt_id);
         echo '<pre>';
-        // print_r($einheiten_arr);
         if (is_array($einheiten_arr)) {
             $anz = count($einheiten_arr);
             echo "<table>";
@@ -9094,13 +8231,10 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
     function form_hga_profil_grunddaten($profil_id)
     {
         $this->get_hga_profil_infos($profil_id);
-        // echo "<pre>";
-        // print_r($this);
         $f = new formular ();
         $f->erstelle_formular("Grunddaten des HGA-Profils ändern $this->p_bez", null);
         $f->text_feld('Profilbezeichnung eingeben', 'profilbez', $this->p_bez, '50', 'profilbez', '');
         $o = new objekt ();
-        // $o->dropdown_objekte('Verwaltungsobjekt wählen', 'objekt_id');
         $this->dropdown_weg_objekte('WEG-Verwaltungsobjekt wählen', 'objekt_id', 'objekt_id', $this->p_objekt_id);
         $f->text_feld('Jahr eingeben', 'jahr', $this->p_jahr, 5, 'jahr', '');
         $f->datum_feld('Berechnung von', 'p_von', $this->p_von_d, 'p_von');
@@ -9109,8 +8243,6 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
         $gk = new gk ();
         $gk->dropdown_geldkonten_alle_vorwahl('Hausgeldkonto wählen', 'geldkonto_id', 'geldkonto_id', $this->p_gk_id, null);
         $gk->dropdown_geldkonten_alle_vorwahl('Geldkonto für die IHR wählen', 'gk_id_ihr', 'gk_id_ihr', $this->p_ihr_gk_id, null);
-        // $gk->dropdown_geldkonten_alle('Geldkonto für die IHR wählen', 'gk_id_ihr', 'gk_ihr_id');
-        // $f->hidden_feld('geldkonto_id', $_SESSION['geldkonto_id']);
         $this->dropdown_wps_alle('Dazugehörigen Wirtschaftsplan wählen', 'wp_id', 'wp_id', '', $this->p_wplan_id);
         $kk = new kontenrahmen ();
         $kk->dropdown_kontorahmenkonten_vorwahl('Konto für Hausgeldeinnahmen für Kosten wählen', 'hg_konto', 'hg_konto', 'Geldkonto', $this->p_gk_id, '', $this->hg_konto);
@@ -9122,4 +8254,3 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
         $f->ende_formular();
     }
 } // end class
-?>
