@@ -74,9 +74,6 @@ class mahnungen {
 				$akt_mvs = $this->finde_alle_mvs ();
 			}
 			if (is_array ( $akt_mvs )) {
-				// echo '<pre>';
-				// print_r($akt_mvs);
-				// die();
 				$anzahl_mvs = count ( $akt_mvs );
 				$jahr = date ( "Y" );
 				$monat = date ( "m" );
@@ -88,7 +85,6 @@ class mahnungen {
 					$mv_id = $akt_mvs [$a] ['MIETVERTRAG_ID'];
 					
 					if (! $this->check_berechnung_heute ( $mv_id )) {
-						// $mz->mietkonto_berechnung_monatsgenau($mv_id, $jahr, $monat);
 						$mz->mietkonto_berechnung ( $mv_id );
 						$saldo = $mz->erg;
 						$this->update_mahnliste_heute ( $mv_id, $saldo );
@@ -102,11 +98,9 @@ class mahnungen {
 						$this->check_letzte_mahnung ( $mv_id );
 						$this->check_letzte_zahlungserinnerung ( $mv_id );
 						$saldo_a = nummer_punkt2komma ( $saldo );
-						// echo "<b>$e->einheit_kurzname</b> ";
 						$mvs = new mietvertraege ();
 						$mvs->get_mietvertrag_infos_aktuell ( $mv_id );
-						// echo "$mvs->einheit_kurzname $mvs->personen_name_string";
-						
+
 						echo "<tr><td>";
 						
 						/* Mahnsperre */
@@ -127,23 +121,12 @@ class mahnungen {
 							$link_mahnung = "<b>Mahnsperre:</b> $mahnsperre";
 						}
 						echo "</td><td>$link_mkb<hr>$link_ue</td><td>$mvs->personen_name_string<br>$mahnsperre</td>";
-						
-						/*
-						 * Regel für Mietschuldenfilter / Höhe
-						 * if($saldo<=$doppelte_miete){
-						 * echo "<b>$e->einheit_kurzname Saldo: $saldo_a Forderung:$f_monatlich </b> $link_erinnerung $link_mahnung<br>";
-						 * }else{
-						 * echo "$e->einheit_kurzname Saldo: $saldo_a Forderung:$f_monatlich $link_erinnerung $link_mahnung<br>";
-						 * }
-						 */
+
 						if (isset ( $this->datum_l_mahnung )) {
 							echo "<td>$saldo_a</td><td>$this->datum_l_zahl_e $this->saldo_zahl_e</td><td>$this->datum_l_mahnung $this->saldo_l_mahnung + $this->mahn_geb</td><td></td></tr>";
 						} else {
 							echo "<td>$saldo_a</td><td>$this->datum_l_zahl_e $this->saldo_zahl_e</td><td></td><td>$link_erinnerung $link_mahnung</td></tr>";
 						}
-						// echo " Saldo: $saldo_a Forderung:$f_monatlich $link_erinnerung $link_mahnung<br>";
-						// echo "<hr>";
-						/* Nur Schuldner über eine miete */
 						$gesamt_verlust = $gesamt_verlust + $saldo;
 					}
 					
@@ -162,7 +145,6 @@ class mahnungen {
 				if (isset ( $_REQUEST ['send_mahnen'] ) or isset ( $_REQUEST ['send_erinnern'] )) {
 					print_req ();
 				}
-				// echo "<h1>Summe Schulden: $gesamt_verlust_a €</h1>";
 			} else {
 				echo "Keine vermieteten Einheiten";
 			}
@@ -182,7 +164,6 @@ class mahnungen {
 		} else {
 			$datum = '';
 		}
-		// $f->text_feld("$label', $name, $datum ,'10', $id, $js_datum);
 		$f->datum_feld ( $label, $name, $datum, $id );
 		$g = new geldkonto_info ();
 		$objekt_id = $_SESSION ['objekt_id'];
@@ -239,7 +220,6 @@ class mahnungen {
 		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
 	}
 	function check_letzte_zahlungserinnerung($mietvertrag_id) {
-		// $this->datum_l_zahl_e $this->saldo_zahl_e
 		unset ( $this->datum_l_zahl_e );
 		unset ( $this->saldo_zahl_e );
 		
@@ -258,9 +238,7 @@ class mahnungen {
 	
 	/* Liefert Anzeige mit Mietern mit Schulden */
 	function finde_schuldner_pdf($schulder_typ) {
-		ob_clean (); // ausgabepuffer leeren
-		            // include_once('pdfclass/class.ezpdf.php');
-		            // include_once('classes/class_bpdf.php');
+		ob_clean ();
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
 		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
@@ -275,9 +253,6 @@ class mahnungen {
 			$akt_mvs = $this->finde_alle_mvs ();
 		}
 		if (is_array ( $akt_mvs )) {
-			// echo '<pre>';
-			// print_r($akt_mvs);
-			// die();
 			$anzahl_mvs = count ( $akt_mvs );
 			$jahr = date ( "Y" );
 			$monat = date ( "m" );
@@ -289,34 +264,24 @@ class mahnungen {
 				$mv_id = $akt_mvs [$a] ['MIETVERTRAG_ID'];
 				
 				$mk = new mietkonto ();
-				// $mz->mietkonto_berechnung_monatsgenau($mv_id, $jahr, $monat);
 				$mz->mietkonto_berechnung ( $mv_id );
 				$zeile = $zeile + 1;
 				$saldo = $mz->erg;
 				
 				$doppelte_miete = $mz->sollmiete_warm * 2;
 				if ($saldo < '0.00') {
-					
-					/*
-					 * $table_arr[$a][DATUM] = "<b>$datum_ger</b>";
-					 * $table_arr[$a][BETRAG] = "<b>$this->summe_konto_buchungen_a</b>";
-					 * $table_arr[$a][VERWENDUNGSZWECK] = '<b>SALDO VORMONAT</b>';
-					 */
+
 					$saldo_a = nummer_punkt2komma ( $saldo );
 					$table_arr [$zaehler] ['SALDO'] = "$saldo_a €";
-					// echo "<b>$e->einheit_kurzname</b> ";
-					
+
 					$mvs = new mietvertraege ();
 					$mvs->get_mietvertrag_infos_aktuell ( $mv_id );
-					// echo "$mvs->einheit_kurzname $mvs->personen_name_string_u";
 					$table_arr [$zaehler] ['EINHEIT'] = $mvs->einheit_kurzname;
 					$table_arr [$zaehler] ['MIETER'] = $mvs->personen_name_string_u;
 					
 					$dd = new detail ();
 					$mahnsperre = $dd->finde_detail_inhalt ( 'MIETVERTRAG', $mv_id, 'Mahnsperre' );
-					// if($mahnsperre){
 					$table_arr [$zaehler] ['MAHNEN'] = bereinige_string ( $mahnsperre );
-					// }
 					
 					$gesamt_verlust = $gesamt_verlust + $saldo;
 					$zaehler ++;
@@ -361,16 +326,11 @@ class mahnungen {
 							) 
 					) 
 			) );
-			// print_r($table_arr);
-			// die();
 			ob_clean (); // ausgabepuffer leeren
 			
 			header ( "Content-type: application/pdf" ); // wird von MSIE ignoriert
 			
 			$pdf->ezStream ();
-			// echo "<h1>Summe Schulden: $gesamt_verlust €</h1>";
-		} else {
-			// echo "Keine vermieteten Einheiten";
 		}
 	}
 	
@@ -386,8 +346,6 @@ class mahnungen {
 			$akt_mvs = $this->finde_alle_mvs ();
 		}
 		if (is_array ( $akt_mvs )) {
-			// echo '<pre>';
-			// print_r($akt_mvs);
 			$anzahl_mvs = count ( $akt_mvs );
 			$jahr = date ( "Y" );
 			$monat = date ( "m" );
@@ -400,11 +358,8 @@ class mahnungen {
 			for($a = 0; $a < $anzahl_mvs; $a ++) {
 				$mz = new miete ();
 				$mv_id = $akt_mvs [$a] [MIETVERTRAG_ID];
-				// $f_monatlich = '-'.$mk->summe_forderung_monatlich($mv_id, $monat, $jahr);
 				$f_monatlich = '-' . $mk->summe_forderung_monatlich ( $mv_id, $monat, $jahr );
-				// summe_forderung_aus_vertrag($mietvertrag_id)
 				$e_id = $akt_mvs [$a] [EINHEIT_ID];
-				// $saldo = $mz->saldo_berechnen($mv_id);
 				$mz->mietkonto_berechnung_monatsgenau ( $mv_id, $jahr, $monat );
 				$saldo = $mz->erg;
 				
@@ -413,7 +368,6 @@ class mahnungen {
 					$saldo_a = nummer_punkt2komma ( $saldo );
 					$e->get_einheit_info ( $e_id );
 					$mv_ids_arr = $m->get_personen_ids_mietvertrag ( $mv_id );
-					// $m1->mv_personen_anzeigen($mv_ids_arr); //$mv_ids_arr Array mit personan Ids
 					$personen_namen_string = $m1->mv_personen_als_string ( $mv_ids_arr );
 					echo "<b>$e->einheit_kurzname</b> ";
 					echo $personen_namen_string . ' ';
@@ -433,7 +387,6 @@ class mahnungen {
 					$gesamt_verlust = $gesamt_verlust + $saldo;
 				}
 				/* Auch die mit Guthaben */
-				// $gesamt_verlust = $gesamt_verlust + $saldo;
 				unset ( $mz->erg );
 				unset ( $f_monatlich );
 			}
@@ -448,8 +401,6 @@ class mahnungen {
 		$akt_mvs = $this->finde_alle_mvs ();
 		
 		if (is_array ( $akt_mvs )) {
-			// echo '<pre>';
-			// print_r($akt_mvs);
 			$anzahl_mvs = count ( $akt_mvs );
 			$jahr = date ( "Y" );
 			$monat = date ( "m" );
@@ -462,9 +413,9 @@ class mahnungen {
 			for($a = 0; $a < $anzahl_mvs; $a ++) {
 				$mv_id = $akt_mvs [$a] ['MIETVERTRAG_ID'];
 				$e_id = $akt_mvs [$a] ['EINHEIT_ID'];
-				// $saldo = $mz->saldo_berechnen($mv_id);
 				$mz = new miete ();
-				$saldo = $mz->mietkonto_berechnung_monatsgenau ( $mv_id, $jahr, $monat );
+				$mz->mietkonto_berechnung_monatsgenau ( $mv_id, $jahr, $monat );
+				$saldo = $mz->erg;
 				if ($saldo > 0) {
 					$saldo_a = nummer_punkt2komma ( $saldo );
 					$e->get_einheit_info ( $e_id );
@@ -537,22 +488,16 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 		while ( $row = mysql_fetch_assoc ( $result ) ) {
 			$my_arr [] = $row;
 		}
-		/*
-		 * echo "<pre>";
-		 * print_r($my_arr);
-		 */
 		if (isset ( $my_arr )) {
 			return $my_arr;
 		}
 	}
 	function zahlungserinnerung_pdf($mv_id, $fristdatum, $geldkonto_id) {
-		// die("SIVAC");
 		ob_clean (); // ausgabepuffer leeren
-		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
-		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
+		$bpdf->b_header ( $pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6 );
 		
 		// ###ANSCHREIBEN#####
 		$berlus_schrift = 'pdfclass/fonts/Times-Roman.afm';
@@ -565,16 +510,14 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 		
 		$jahr = date ( "Y" );
 		$monat = date ( "m" );
-		// $mz->mietkonto_berechnung_monatsgenau($mv_id, $jahr, $monat);
 		$mz->mietkonto_berechnung ( $mv_id );
 		$saldo = $mz->erg;
-		// $saldo = $mz->saldo_berechnen($mv_id);
-		
+
 		$mv->get_mietvertrag_infos_aktuell ( $mv_id );
 		$e->get_einheit_info ( $mv->einheit_id );
 		$p = new person ();
 		if ($mv->anzahl_personen == 1) {
-			$p->get_person_infos ( $mv->personen_ids ['0'] [PERSON_MIETVERTRAG_PERSON_ID] );
+			$p->get_person_infos ( $mv->personen_ids ['0'] ['PERSON_MIETVERTRAG_PERSON_ID'] );
 			$geschlecht = $d->finde_person_geschlecht ( $mv->personen_ids [0] ['PERSON_MIETVERTRAG_PERSON_ID'] );
 			if ($geschlecht == 'weiblich') {
 				$anrede_p = 'geehrte Frau';
@@ -583,15 +526,15 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 				$anrede_p = 'geehrter Herr';
 			}
 			$anrede = $anrede . "$anrede_p $p->person_nachname,";
-			$personen_anrede [0] [anrede] = $anrede;
-			$personen_anrede [0] [geschlecht] = $geschlecht;
-			// prinr_r($mv->personen_ids);
+			$personen_anrede [0] ['anrede'] = $anrede;
+			$personen_anrede [0] ['geschlecht'] = $geschlecht;
+
 		}
 		if ($mv->anzahl_personen > 1) {
 			
 			for($a = 0; $a < $mv->anzahl_personen; $a ++) {
 				// $anrede_p = $d->finde_person_anrede($mv->personen_ids[$a]['PERSON_MIETVERTRAG_PERSON_ID']);
-				$p->get_person_infos ( $mv->personen_ids [$a] [PERSON_MIETVERTRAG_PERSON_ID] );
+				$p->get_person_infos ( $mv->personen_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID'] );
 				$geschlecht = $d->finde_person_geschlecht ( $mv->personen_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID'] );
 				if ($geschlecht == 'weiblich') {
 					$anrede_p = 'geehrte Frau';
@@ -600,8 +543,8 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 					$anrede_p = 'geehrter Herr';
 				}
 				$anrede = "$anrede_p $p->person_nachname,";
-				$personen_anrede [$a] [anrede] = $anrede;
-				$personen_anrede [$a] [geschlecht] = $geschlecht;
+				$personen_anrede [$a] ['anrede'] = $anrede;
+				$personen_anrede [$a] ['geschlecht'] = $geschlecht;
 			}
 		}
 		// echo '<pre>';
@@ -610,7 +553,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 		
 		$pdf->selectFont ( $text_schrift );
 		for($b = 0; $b < $mv->anzahl_personen; $b ++) {
-			$anrede_p = $personen_anreden [$b] [anrede];
+			$anrede_p = $personen_anreden [$b] ['anrede'];
 			if ($b < 1) {
 				$anrede = "Sehr $anrede_p\n";
 			} else {
@@ -638,8 +581,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 		$pdf->ezText ( "Objekt: $e->haus_strasse $e->haus_nummer, $e->haus_plz $e->haus_stadt", 12 );
 		$pdf->ezText ( "Einheit/Mieternummer: $mv->einheit_kurzname", 12 );
 		$pdf->ezSetDy ( - 12 );
-		// $pdf->ezText("Mietvertragsnr: $mv->mietvertrag_id\n\n",12);
-		// $pdf->ezText("Mieter: $mv->personen_name_string\n\n",12);
 		/* Faltlinie */
 		$pdf->setLineStyle ( 0.2 );
 		$pdf->line ( 5, 542, 20, 542 );
@@ -649,14 +590,12 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 		
 		$pdf->ezText ( "nach Durchsicht unserer Buchhaltungsunterlagen haben wir festgestellt, dass Ihr Mietkonto folgenden Rückstand in Höhe von <b>$saldo_a €</b> aufweist. Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Mietkonto.\n\nWir bitten Sie den genannten Betrag unter Angabe der bei uns geführten Mieternummer umgehend, spätestens jedoch bis zum\n", 12 );
 		$pdf->ezSetCmMargins ( 3, 3, 9, 3 );
-		// $pdf->setColor(1.0,0.0,0.0);
 		$pdf->ezText ( "<b>$fristdatum</b>\n", 12 );
 		$pdf->ezSetCmMargins ( 3, 3, 3, 3 );
 		$pdf->setColor ( 0.0, 0.0, 0.0 );
 		$g = new geldkonto_info ();
 		$g->geld_konto_details ( $geldkonto_id );
 		
-		// $pdf->ezText("auf das Konto der $g->kredit_institut zu Überweisen$g->kontonummer bei der $g->kredit_institut, BLZ $g->blz\n\n",12);
 		$pdf->ezText ( "auf das Konto der $g->kredit_institut zu überweisen.\n\n", 12 );
 		$pdf->ezText ( "IBAN: $g->IBAN1\n", 12 );
 		$pdf->ezText ( "IBAN: $g->BIC\n\n", 12 );
@@ -669,9 +608,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 		$pdf->addInfo ( 'Author', $_SESSION [username] );
 		// ### MIETKONTENBLATT####
 		$pdf->ezNewPage ();
-		// $mz->mietkontenblatt2pdf($pdf,$mv_id);
 		$pdf->ezSetMargins ( 135, 70, 50, 50 );
-		// $mz->mkb2pdf_mahnung($pdf,$mv_id);
 		$mz->mkb2pdf_mahnung_letzter_nullstand ( $pdf, $mv_id );
 		$fristdatum = date_german2mysql ( $fristdatum );
 		$this->update_zahlungsfrist_z ( $mv_id, $fristdatum, '-' . $saldo );
@@ -679,9 +616,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 		$pdf->ezStream ();
 	}
 	function zahlungserinnerung_pdf_mehrere($mahnliste, $fristdatum, $geldkonto_id) {
-		// die('ZE');
 		ob_clean (); // ausgabepuffer leeren
-		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
@@ -703,7 +638,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 			
 			$jahr = date ( "Y" );
 			$monat = date ( "m" );
-			// $mz->mietkonto_berechnung_monatsgenau($mv_id, $jahr, $monat);
 			$mz->mietkonto_berechnung ( $mv_id );
 			$saldo = $mz->erg;
 			
@@ -722,12 +656,10 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 				
 				/* Wenn Verzugsanschriften von beiden gleich */
 				if ($this->mieter2_verzug_pruefen ( $mv_id )) {
-					// die("$mv_id GLEICH");
 					/* Wie aktuelle Mieter behandeln, weil zur gleichen Adresse verzogen */
 					
 					if ($mv->anzahl_personen == 1) {
 						$anschrift_pdf = ltrim ( $mv->postanschrift [0] ['anschrift'] );
-						// $anschrift_pdf="$mv->personen_name_string_u\n$e->haus_strasse $e->haus_nummer\n\n$e->haus_plz $e->haus_stadt";
 					} else {
 						$anschrift_alle = $mv->postanschrift [0] ['adresse'];
 						$anschrift_pdf = "$mv->personen_name_string_u\n$anschrift_alle";
@@ -748,8 +680,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 					$pdf->ezText ( "Objekt: $e->haus_strasse $e->haus_nummer, $e->haus_plz $e->haus_stadt", 12 );
 					$pdf->ezText ( "Einheit/Mieternummer: $mv->einheit_kurzname", 12 );
 					$pdf->ezSetDy ( - 12 );
-					// $pdf->ezText("Mietvertragsnr: $mv->mietvertrag_id\n\n",12);
-					// $pdf->ezText("Mieter: $mv->personen_name_string\n\n",12);
 					/* Faltlinie */
 					$pdf->setLineStyle ( 0.2 );
 					$pdf->line ( 5, 542, 20, 542 );
@@ -759,7 +689,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 					
 					$pdf->ezText ( "nach Durchsicht unserer Buchhaltungsunterlagen mussten wir feststellen, dass Ihr Mietkonto einen Rückstand in Höhe von <b>$saldo_a €</b> aufweist. Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Mietkonto.\n\nBitte überweisen Sie den genannten Betrag unter Angabe der bei uns geführten Mieternummer umgehend, spätestens jedoch bis zum\n", 12 );
 					$pdf->ezSetCmMargins ( 3, 3, 9, 3 );
-					// $pdf->setColor(1.0,0.0,0.0);
 					$pdf->ezText ( "<b>$fristdatum</b>\n", 12 );
 					$pdf->ezSetMargins ( 135, 70, 50, 50 );
 					$pdf->setColor ( 0.0, 0.0, 0.0 );
@@ -781,9 +710,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 					$pdf->addInfo ( 'Author', $_SESSION [username] );
 					// ### MIETKONTENBLATT####
 					$pdf->ezNewPage ();
-					// $mz->mietkontenblatt2pdf($pdf,$mv_id);
 					$pdf->ezSetMargins ( 135, 70, 50, 50 );
-					// $mz->mkb2pdf_mahnung($pdf,$mv_id);
 					$mz->mkb2pdf_mahnung_letzter_nullstand ( $pdf, $mv_id );
 					$fristdatum_sql = date_german2mysql ( $fristdatum );
 					$this->update_zahlungsfrist_z ( $mv_id, $fristdatum_sql, '-' . $saldo );
@@ -822,8 +749,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 						$pdf->ezText ( "Objekt: $e->haus_strasse $e->haus_nummer, $e->haus_plz $e->haus_stadt", 12 );
 						$pdf->ezText ( "Einheit/Mieternummer: $mv->einheit_kurzname", 12 );
 						$pdf->ezSetDy ( - 12 );
-						// $pdf->ezText("Mietvertragsnr: $mv->mietvertrag_id\n\n",12);
-						// $pdf->ezText("Mieter: $mv->personen_name_string\n\n",12);
 						/* Faltlinie */
 						$pdf->setLineStyle ( 0.2 );
 						$pdf->line ( 5, 542, 20, 542 );
@@ -833,7 +758,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 						
 						$pdf->ezText ( "nach Durchsicht unserer Buchhaltungsunterlagen mussten wir feststellen, dass Ihr Mietkonto einen Rückstand in Höhe von <b>$saldo_a €</b> aufweist. Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Mietkonto.\n\nBitte überweisen Sie den genannten Betrag unter Angabe der bei uns geführten Mieternummer umgehend, spätestens jedoch bis zum\n", 12 );
 						$pdf->ezSetCmMargins ( 3, 3, 9, 3 );
-						// $pdf->setColor(1.0,0.0,0.0);
 						$pdf->ezText ( "<b>$fristdatum</b>\n", 12 );
 						$pdf->ezSetMargins ( 135, 70, 50, 50 );
 						$pdf->setColor ( 0.0, 0.0, 0.0 );
@@ -851,16 +775,12 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 						$pdf->addInfo ( 'Author', $_SESSION [username] );
 						// ### MIETKONTENBLATT####
 						$pdf->ezNewPage ();
-						// $mz->mietkontenblatt2pdf($pdf,$mv_id);
 						$pdf->ezSetMargins ( 135, 70, 50, 50 );
-						// $mz->mkb2pdf_mahnung($pdf,$mv_id);
 						$mz->mkb2pdf_mahnung_letzter_nullstand ( $pdf, $mv_id );
 						$fristdatum_sql = date_german2mysql ( $fristdatum );
 						$this->update_zahlungsfrist_z ( $mv_id, $fristdatum_sql, '-' . $saldo );
 						/* PDF AUSGABE */
-						// if($mm<$mv->anzahl_personen-1){
 						$pdf->ezNewPage ();
-						// }
 					}
 				}
 			}
@@ -868,13 +788,9 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 			if ($mv->mietvertrag_aktuell == '1') {
 				if (! $mv->postanschrift [0] ['anschrift']) {
 					$anschrift_pdf = "$mv->personen_name_string_u\n$e->haus_strasse $e->haus_nummer\n\n$e->haus_plz $e->haus_stadt";
-					// $anschrift_pdf = ltrim($mv->postanschrift[0]['anschrift']);
 				} else {
 					$anschrift_pdf = ltrim ( $mv->postanschrift [0] ['anschrift'] );
 				}
-				// echo '<pre>';
-				// print_r($mv);
-				// die();
 				
 				$pdf->ezSetMargins ( 135, 70, 50, 50 );
 				$anrede = $mv->mv_anrede;
@@ -891,8 +807,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 				$pdf->ezText ( "Objekt: $e->haus_strasse $e->haus_nummer, $e->haus_plz $e->haus_stadt", 12 );
 				$pdf->ezText ( "Einheit/Mieternummer: $mv->einheit_kurzname", 12 );
 				$pdf->ezSetDy ( - 12 );
-				// $pdf->ezText("Mietvertragsnr: $mv->mietvertrag_id\n\n",12);
-				// $pdf->ezText("Mieter: $mv->personen_name_string\n\n",12);
 				/* Faltlinie */
 				$pdf->setLineStyle ( 0.2 );
 				$pdf->line ( 5, 542, 20, 542 );
@@ -900,33 +814,13 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 				$saldo = abs ( $saldo );
 				$saldo_a = nummer_punkt2komma ( $saldo );
 				
-				/*
-				 * $pdf->ezText("nach Durchsicht unserer Buchhaltungsunterlagen mussten wir feststellen, dass Ihr Mietkonto einen Rückstand in Höhe von <b>$saldo_a €</b> aufweist. Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Mietkonto.\n\nBitte überweisen Sie den genannten Betrag unter Angabe Ihrer Mietvertragsnummer umgehend, spätestens jedoch bis zum\n",12);
-				 * $pdf->ezSetCmMargins(3,3,9,3);
-				 * #$pdf->setColor(1.0,0.0,0.0);
-				 * $pdf->ezText("<b>$fristdatum</b>\n",12);
-				 * $pdf->ezSetMargins(135,70,50,50);
-				 * $pdf->setColor(0.0,0.0,0.0);
-				 * $g = new geldkonto_info;
-				 * $g->geld_konto_details($geldkonto_id);
-				 *
-				 * $pdf->ezText("auf das Konto $g->kontonummer bei der $g->kredit_institut, BLZ $g->blz\n",12);
-				 * $pdf->ezText("zu überweisen.\n",12);
-				 */
-				
 				$pdf->ezText ( "nach Durchsicht unserer Buchhaltungsunterlagen haben wir festgestellt, dass Ihr Mietkonto folgenden Rückstand aufweist", 11 );
-				// $pdf->ezText("nach Durchsicht unserer Buchhaltungsunterlagen habe wir festgestellt, dass Ihr Mietkonto folgenden Rückstand aufweist",12);
-				// <b>$saldo_a €</b> aufweist. Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Mietkonto.\n\nBitte überweisen Sie den genannten Betrag unter Angabe Ihrer Mietvertragsnummer umgehend, spätestens jedoch bis zum\n",12);
 				$pdf->ezSetCmMargins ( 3, 3, 8, 3 );
-				// $pdf->ezSetMargins(120,70,50,50);
-				// $pdf->setColor(1.0,0.0,0.0);
 				$pdf->ezText ( "<b>Mietrückstand: $saldo_a €</b>\n", 12 );
 				$pdf->ezSetMargins ( 135, 70, 50, 50 );
 				$pdf->setColor ( 0.0, 0.0, 0.0 );
-				// $pdf->ezSetCmMargins(3,3,9,3);
 				$pdf->ezText ( "Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Mietkonto.\nWir bitten Sie, den genannten Betrag unter Angabe der bei uns geführten Mieternummer bis zum\n", 11 );
 				$pdf->ezSetCmMargins ( 3, 3, 9, 3 );
-				// $pdf->setColor(1.0,0.0,0.0);
 				$pdf->ezText ( "<b>$fristdatum</b>\n", 12 );
 				$pdf->ezSetMargins ( 135, 70, 50, 50 );
 				$pdf->setColor ( 0.0, 0.0, 0.0 );
@@ -954,9 +848,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 				$pdf->addInfo ( 'Author', $_SESSION [username] );
 				// ### MIETKONTENBLATT####
 				$pdf->ezNewPage ();
-				// $mz->mietkontenblatt2pdf($pdf,$mv_id);
 				$pdf->ezSetMargins ( 135, 70, 50, 50 );
-				// $mz->mkb2pdf_mahnung($pdf,$mv_id);
 				$mz->mkb2pdf_mahnung_letzter_nullstand ( $pdf, $mv_id );
 				$fristdatum_sql = date_german2mysql ( $fristdatum );
 				$this->update_zahlungsfrist_z ( $mv_id, $fristdatum_sql, '-' . $saldo );
@@ -965,8 +857,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 					$pdf->ezNewPage ();
 				}
 			} // end aktueller MV
-				  // echo '<pre>';
-				  // print_r($mv);
 		} // end for
 		ob_clean (); // ausgabepuffer leeren
 		$pdf->ezStream ();
@@ -975,7 +865,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 	}
 	function mahnung_pdf_mehrere($mahnliste, $fristdatum, $geldkonto_id, $mahngebuehr) {
 		ob_clean (); // ausgabepuffer leeren
-		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
@@ -997,7 +886,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 			
 			$jahr = date ( "Y" );
 			$monat = date ( "m" );
-			// $mz->mietkonto_berechnung_monatsgenau($mv_id, $jahr, $monat);
 			$mz->mietkonto_berechnung ( $mv_id );
 			$saldo = $mz->erg;
 			
@@ -1016,12 +904,10 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 				
 				/* Wenn Verzugsanschriften von beiden gleich */
 				if ($this->mieter2_verzug_pruefen ( $mv_id )) {
-					// die("$mv_id GLEICH");
 					/* Wie aktuelle Mieter behandeln, weil zur gleichen Adresse verzogen */
 					
 					if ($mv->anzahl_personen == 1) {
 						$anschrift_pdf = ltrim ( $mv->postanschrift [0] ['anschrift'] );
-						// $anschrift_pdf="$mv->personen_name_string_u\n$e->haus_strasse $e->haus_nummer\n\n$e->haus_plz $e->haus_stadt";
 					} else {
 						$anschrift_alle = $mv->postanschrift [0] ['adresse'];
 						$anschrift_pdf = "$mv->personen_name_string_u\n$anschrift_alle";
@@ -1042,8 +928,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 					$pdf->ezText ( "Objekt: $e->haus_strasse $e->haus_nummer, $e->haus_plz $e->haus_stadt", 12 );
 					$pdf->ezText ( "Einheit/Mieternummer: $mv->einheit_kurzname", 12 );
 					$pdf->ezSetDy ( - 12 );
-					// $pdf->ezText("Mietvertragsnr: $mv->mietvertrag_id\n\n",12);
-					// $pdf->ezText("Mieter: $mv->personen_name_string\n\n",12);
 					/* Faltlinie */
 					$pdf->setLineStyle ( 0.2 );
 					$pdf->line ( 5, 542, 20, 542 );
@@ -1057,7 +941,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 					$pdf->ezText ( "<b>Mietrückstand</b>", 11 );
 					
 					$pdf->ezSetDy ( 11 );
-					// $pdf->setColor(1.0,0.0,0.0);
 					$pdf->ezText ( "<b>$saldo_a €</b>", 12, array (
 							'justification' => 'right' 
 					) );
@@ -1075,7 +958,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 					$pdf->setColor ( 0.0, 0.0, 0.0 );
 					$pdf->ezText ( "<b>Gesamtrückstand</b>", 11 );
 					$pdf->ezSetDy ( 11 );
-					// $pdf->setColor(1.0,0.0,0.0);
 					$mahngebuehr_r = nummer_komma2punkt ( $mahngebuehr );
 					$gesamt_rueckstand = $saldo + $mahngebuehr_r;
 					$gesamt_rueckstand = nummer_punkt2komma ( $gesamt_rueckstand );
@@ -1092,18 +974,13 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 					$pdf->ezText ( "Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Mietkonto.", 11 );
 					$pdf->ezText ( "Wir fordern Sie auf, den genannten Betrag unter Angabe der bei uns geführten Mieternummer bis zum", 11 );
 					$pdf->ezSetCmMargins ( 3, 3, 9, 3 );
-					// $pdf->setColor(1.0,0.0,0.0);
 					$pdf->ezSetDy ( - 10 );
 					$pdf->ezText ( "<b>$fristdatum</b>\n", 11 );
 					$pdf->ezSetMargins ( 135, 70, 50, 50 );
 					$pdf->ezText ( "<b>auf das Konto bei der $g->kredit_institut zu überweisen.</b>\n", 11 );
 					$pdf->setColor ( 0.0, 0.0, 0.0 );
 					$pdf->ezSetDy ( - 10 );
-					// die('SA');
 					$pdf->ezText ( "<b>IBAN:</b> $g->IBAN1\n", 12 );
-					// $pdf->ezText("<b>XXXXXXXXXXXXXXXXXXXXX</b>",12);
-					// $pdf->ezSetDy(10);
-					// $pdf->ezSetDy(-10);
 					$pdf->ezText ( "<b>BIC:</b> $g->BIC\n", 12 );
 					$pdf->ezText ( "<b>Wir weisen vorsorglich darauf hin, dass wir bei einer Nichtzahlung bis zum oben genannten Termin, berechtigt sind eine Zahlungsklage gegen Sie einzureichen.</b>\n", 12 );
 					
@@ -1117,9 +994,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 					
 					// ### MIETKONTENBLATT####
 					$pdf->ezNewPage ();
-					// $mz->mietkontenblatt2pdf($pdf,$mv_id);
 					$pdf->ezSetMargins ( 135, 70, 50, 50 );
-					// $mz->mkb2pdf_mahnung($pdf,$mv_id);
 					$mz->mkb2pdf_mahnung_letzter_nullstand ( $pdf, $mv_id );
 					$fristdatum_sql = date_german2mysql ( $fristdatum );
 					$this->update_zahlungsfrist_z ( $mv_id, $fristdatum_sql, '-' . $saldo );
@@ -1159,8 +1034,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 						$pdf->ezText ( "Objekt: $e->haus_strasse $e->haus_nummer, $e->haus_plz $e->haus_stadt", 12 );
 						$pdf->ezText ( "Einheit/Mieternummer: $mv->einheit_kurzname", 12 );
 						$pdf->ezSetDy ( - 12 );
-						// $pdf->ezText("Mietvertragsnr: $mv->mietvertrag_id\n\n",12);
-						// $pdf->ezText("Mieter: $mv->personen_name_string\n\n",12);
 						/* Faltlinie */
 						$pdf->setLineStyle ( 0.2 );
 						$pdf->line ( 5, 542, 20, 542 );
@@ -1174,7 +1047,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 						$pdf->ezText ( "<b>Mietrückstand</b>", 11 );
 						
 						$pdf->ezSetDy ( 11 );
-						// $pdf->setColor(1.0,0.0,0.0);
 						$pdf->ezText ( "<b>$saldo_a €</b>", 12, array (
 								'justification' => 'right' 
 						) );
@@ -1209,12 +1081,10 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 						$pdf->ezText ( "Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Mietkonto.", 11 );
 						$pdf->ezText ( "Wir fordern Sie auf, den genannten Betrag unter Angabe der bei uns geführten Mieternummer bis zum", 11 );
 						$pdf->ezSetCmMargins ( 3, 3, 9, 3 );
-						// $pdf->setColor(1.0,0.0,0.0);
 						$pdf->ezText ( "<b>$fristdatum</b>\n", 11 );
 						$pdf->ezSetMargins ( 135, 70, 50, 50 );
 						$pdf->ezText ( "<b>auf das Konto bei der $g->kredit_institut zu überweisen.\n", 11 );
 						$pdf->ezText ( "<b>IBAN</b> $g->IBAN1\n", 12 );
-						// $pdf->ezSetDy(10);
 						$pdf->ezText ( "<b>BIC</b>  $g->BIC\n", 12 );
 						$pdf->ezText ( "Wir weisen vorsorglich darauf hin, dass wir bei einem Rückstand von zwei Kaltmieten berechtigt sind, die Wohnung fristlos zu kündigen.\n", 11 );
 						$pdf->setColor ( 0.0, 0.0, 0.0 );
@@ -1228,16 +1098,12 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 						
 						// ### MIETKONTENBLATT####
 						$pdf->ezNewPage ();
-						// $mz->mietkontenblatt2pdf($pdf,$mv_id);
 						$pdf->ezSetMargins ( 135, 70, 50, 50 );
-						// $mz->mkb2pdf_mahnung($pdf,$mv_id);
 						$mz->mkb2pdf_mahnung_letzter_nullstand ( $pdf, $mv_id );
 						$fristdatum_sql = date_german2mysql ( $fristdatum );
 						$this->update_zahlungsfrist_z ( $mv_id, $fristdatum_sql, '-' . $saldo );
 						/* PDF AUSGABE */
-						// if($mm<$mv->anzahl_personen-1){
 						$pdf->ezNewPage ();
-						// }
 					}
 				}
 			}
@@ -1264,8 +1130,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 				$pdf->ezText ( "Objekt: $e->haus_strasse $e->haus_nummer, $e->haus_plz $e->haus_stadt", 12 );
 				$pdf->ezText ( "Einheit/Mieternummer: $mv->einheit_kurzname", 12 );
 				$pdf->ezSetDy ( - 12 );
-				// $pdf->ezText("Mietvertragsnr: $mv->mietvertrag_id\n\n",12);
-				// $pdf->ezText("Mieter: $mv->personen_name_string\n\n",12);
 				/* Faltlinie */
 				$pdf->setLineStyle ( 0.2 );
 				$pdf->line ( 5, 542, 20, 542 );
@@ -1279,7 +1143,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 				$pdf->ezText ( "<b>Mietrückstand</b>", 11 );
 				
 				$pdf->ezSetDy ( 11 );
-				// $pdf->setColor(1.0,0.0,0.0);
 				$pdf->ezText ( "<b>$saldo_a €</b>", 12, array (
 						'justification' => 'right' 
 				) );
@@ -1297,7 +1160,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 				$pdf->setColor ( 0.0, 0.0, 0.0 );
 				$pdf->ezText ( "<b>Gesamtrückstand</b>", 11 );
 				$pdf->ezSetDy ( 11 );
-				// $pdf->setColor(1.0,0.0,0.0);
 				$mahngebuehr_r = nummer_komma2punkt ( $mahngebuehr );
 				$gesamt_rueckstand = $saldo + $mahngebuehr_r;
 				$gesamt_rueckstand = nummer_punkt2komma ( $gesamt_rueckstand );
@@ -1314,14 +1176,11 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 				$pdf->ezText ( "Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Mietkonto.", 11 );
 				$pdf->ezText ( "Wir fordern Sie auf, den genannten Betrag unter Angabe der bei uns geführten Mieternummer bis zum\n", 11 );
 				$pdf->ezSetCmMargins ( 3, 3, 9, 3 );
-				// $pdf->setColor(1.0,0.0,0.0);
 				$pdf->ezText ( "<b>$fristdatum</b>\n", 11 );
 				$pdf->ezSetMargins ( 135, 70, 50, 50 );
 				$pdf->ezText ( "auf das Konto bei der $g->kredit_institut zu überweisen.\n", 11 );
 				$pdf->setColor ( 0.0, 0.0, 0.0 );
-				// $pdf->ezText("zu überweisen.\n",11);
 				$pdf->ezText ( "<b>IBAN:</b> $g->IBAN1", 12 );
-				// $pdf->ezSetDy(10);
 				$pdf->ezText ( "<b>BIC:</b>   $g->BIC\n", 12 );
 				$pdf->ezText ( "Wir weisen vorsorglich darauf hin, dass wir bei einem Rückstand von zwei Kaltmieten berechtigt sind, die Wohnung fristlos zu kündigen.\n", 11 );
 				$pdf->ezText ( "Für Rückfragen stehen wir Ihnen gerne zur Verfügung.\n\n", 11 );
@@ -1341,9 +1200,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 				
 				// ### MIETKONTENBLATT####
 				$pdf->ezNewPage ();
-				// $mz->mietkontenblatt2pdf($pdf,$mv_id);
 				$pdf->ezSetMargins ( 135, 70, 50, 50 );
-				// $mz->mkb2pdf_mahnung($pdf,$mv_id);
 				$mz->mkb2pdf_mahnung_letzter_nullstand ( $pdf, $mv_id );
 				$fristdatum_sql = date_german2mysql ( $fristdatum );
 				$this->update_zahlungsfrist_z ( $mv_id, $fristdatum_sql, '-' . $saldo );
@@ -1356,7 +1213,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 		ob_clean (); // ausgabepuffer leeren
 		$pdf->ezStream ();
 		
-		$_SESSION [mahn_datum] = $fristdatum;
+		$_SESSION ['mahn_datum'] = $fristdatum;
 	}
 	function mieter2_verzug_pruefen($mv_id) {
 		$mv = new mietvertraege ();
@@ -1373,7 +1230,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 	}
 	function mahnung_pdf($mv_id, $fristdatum, $geldkonto_id, $mahngebuehr) {
 		ob_clean (); // ausgabepuffer leeren
-		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
@@ -1386,10 +1242,8 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 		$mz = new miete ();
 		$d = new detail ();
 		$e = new einheit ();
-		// $saldo = $mz->saldo_berechnen($mv_id);
 		$jahr = date ( "Y" );
 		$monat = date ( "m" );
-		// $mz->mietkonto_berechnung_monatsgenau($mv_id, $jahr, $monat);
 		$mz->mietkonto_berechnung ( $mv_id );
 		$saldo = $mz->erg;
 		$mv->get_mietvertrag_infos_aktuell ( $mv_id );
@@ -1400,8 +1254,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 		$p = new person ();
 		if ($mv->anzahl_personen == 1) {
 			$p->get_person_infos ( $mv->personen_ids ['0'] ['PERSON_MIETVERTRAG_PERSON_ID'] );
-			// print_r($mv);
-			// echo $mv->personen_ids[0]['PERSON_MIETVERTRAG_PERSON_ID'];
 			$geschlecht = $d->finde_person_geschlecht ( $mv->personen_ids [0] ['PERSON_MIETVERTRAG_PERSON_ID'] );
 			if ($geschlecht == 'weiblich') {
 				$anrede_p = 'geehrte Frau';
@@ -1409,17 +1261,13 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 			if ($geschlecht == 'männlich') {
 				$anrede_p = 'geehrter Herr';
 			}
-			// die('SSSS');
-			// die($anrede_p);
 			$anrede = $anrede . "$anrede_p $p->person_nachname,";
 			$personen_anrede [0] [anrede] = $anrede;
 			$personen_anrede [0] [geschlecht] = $geschlecht;
-			// prinr_r($mv->personen_ids);
 		}
 		if ($mv->anzahl_personen > 1) {
 			
 			for($a = 0; $a < $mv->anzahl_personen; $a ++) {
-				// $anrede_p = $d->finde_person_anrede($mv->personen_ids[$a]['PERSON_MIETVERTRAG_PERSON_ID']);
 				$p->get_person_infos ( $mv->personen_ids [$a] [PERSON_MIETVERTRAG_PERSON_ID] );
 				$geschlecht = $d->finde_person_geschlecht ( $mv->personen_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID'] );
 				if ($geschlecht == 'weiblich') {
@@ -1429,13 +1277,11 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 					$anrede_p = 'geehrter Herr';
 				}
 				$anrede = "$anrede_p $p->person_nachname,";
-				$personen_anrede [$a] [anrede] = $anrede;
-				$personen_anrede [$a] [geschlecht] = $geschlecht;
+				$personen_anrede [$a] ['anrede'] = $anrede;
+				$personen_anrede [$a] ['geschlecht'] = $geschlecht;
 			}
 		}
-		// echo '<pre>';
 		$personen_anreden = array_sortByIndex ( $personen_anrede, 'geschlecht', SORT_DESC );
-		// print_r($personen_anreden);
 		
 		$pdf->selectFont ( $text_schrift );
 		for($b = 0; $b < $mv->anzahl_personen; $b ++) {
@@ -1446,14 +1292,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 				$anrede = $anrede . "sehr $anrede_p\n"; // \n neue zeile in pdf
 			}
 		}
-		
-		/*
-		 * $pdf->addText(42, 680,12,"Objekt: $mv->objekt_kurzname");
-		 * $pdf->addText(42, 665,12,"Einheit: $mv->einheit_kurzname");
-		 * $pdf->addText(42, 650,12,"Mietvertragsnr: $mv->mietvertrag_id");
-		 * $pdf->addText(42, 635,12,"Mieter: $mv->personen_name_string");
-		 * #$pdf->addText(42, 615,12,"$anrede");
-		 */
+
 		$pdf->ezSetDy ( - 15 );
 		$pdf->ezSetCmMargins ( 3, 3, 3, 3 );
 		$pdf->ezText ( "$mv->personen_name_string_u\n$e->haus_strasse $e->haus_nummer\n\n$e->haus_plz $e->haus_stadt", 12 );
@@ -1470,8 +1309,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 		$pdf->ezText ( "Objekt: $e->haus_strasse $e->haus_nummer, $e->haus_plz $e->haus_stadt", 11 );
 		$pdf->ezText ( "Einheit/Mieternummer: $mv->einheit_kurzname", 11 );
 		$pdf->ezSetDy ( - 11 );
-		// $pdf->ezText("Mietvertragsnr: $mv->mietvertrag_id\n\n",12);
-		// $pdf->ezText("Mieter: $mv->personen_name_string\n\n",12);
 		/* Faltlinie */
 		$pdf->setLineStyle ( 0.2 );
 		$pdf->line ( 5, 542, 20, 542 );
@@ -1485,7 +1322,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 		$pdf->ezText ( "<b>Mietrückstand</b>", 11 );
 		
 		$pdf->ezSetDy ( 11 );
-		// $pdf->setColor(1.0,0.0,0.0);
 		$pdf->ezText ( "<b>$saldo_a €</b>", 12, array (
 				'justification' => 'right' 
 		) );
@@ -1503,7 +1339,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 		$pdf->setColor ( 0.0, 0.0, 0.0 );
 		$pdf->ezText ( "<b>Gesamtrückstand</b>", 11 );
 		$pdf->ezSetDy ( 11 );
-		// $pdf->setColor(1.0,0.0,0.0);
 		$mahngebuehr_r = nummer_komma2punkt ( $mahngebuehr );
 		$gesamt_rueckstand = $saldo + $mahngebuehr_r;
 		$gesamt_rueckstand = nummer_punkt2komma ( $gesamt_rueckstand );
@@ -1520,7 +1355,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 		$pdf->ezText ( "Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Mietkonto.", 11 );
 		$pdf->ezText ( "Wir fordern Sie auf, den genannten Betrag unter Angabe der bei uns geführten Mieternummer bis zum", 11 );
 		$pdf->ezSetCmMargins ( 3, 3, 9, 3 );
-		// $pdf->setColor(1.0,0.0,0.0);
 		$pdf->ezText ( "<b>$fristdatum</b>\n", 11 );
 		$pdf->ezSetCmMargins ( 3, 3, 3, 3 );
 		$pdf->ezText ( "<b>auf das Konto $g->kontonummer  bei der $g->kredit_institut, BLZ $g->blz</b>\n", 11 );
@@ -1536,27 +1370,23 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 		// ### MIETKONTENBLATT####
 		$pdf->ezNewPage ();
 		$pdf->ezSetMargins ( 135, 70, 50, 50 );
-		// $mz->mkb2pdf_mahnung($pdf,$mv_id);
 		$mz->mkb2pdf_mahnung_letzter_nullstand ( $pdf, $mv_id );
 		
-		// $mz->mietkontenblatt2pdf($pdf,$mv_id);
 		$fristdatum_sql = date_german2mysql ( $fristdatum );
 		$minus_saldo = '-' . $saldo;
 		$this->update_zahlungsfrist_m ( $mv_id, $fristdatum_sql, $minus_saldo, '-' . $mahngebuehr_r );
-		
+
 		/* PDF AUSGABE */
 		// $pdf->ezStream();
 	}
 	function mahnung_pdf_mehrere_alt_OK($mahnliste, $fristdatum, $geldkonto_id, $mahngebuehr) {
 		ob_clean (); // ausgabepuffer leeren
-		//include_once ('pdfclass/class.ezpdf.php');
 		include_once ('classes/class_bpdf.php');
 		$pdf = new Cezpdf ( 'a4', 'portrait' );
 		$bpdf = new b_pdf ();
 		$bpdf->b_header ( $pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6 );
 		$pdf->ezStopPageNumbers ();
-		
-		// $pdf->ezSetCmMargins(4.5,1,1,1);
+
 		$berlus_schrift = 'pdfclass/fonts/Times-Roman.afm';
 		$text_schrift = 'pdfclass/fonts/Arial.afm';
 		
@@ -1571,7 +1401,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 			$mz = new miete ();
 			$d = new detail ();
 			$e = new einheit ();
-			// $saldo = $mz->saldo_berechnen($mv_id);
 			$jahr = date ( "Y" );
 			$monat = date ( "m" );
 			$mz->mietkonto_berechnung_monatsgenau ( $mv_id, $jahr, $monat );
@@ -1597,8 +1426,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 			$pdf->ezText ( "Objekt: $e->haus_strasse $e->haus_nummer, $e->haus_plz $e->haus_stadt", 11 );
 			$pdf->ezText ( "Einheit/Mieternummer: $mv->einheit_kurzname", 11 );
 			$pdf->ezSetDy ( - 11 );
-			// $pdf->ezText("Mietvertragsnr: $mv->mietvertrag_id\n\n",12);
-			// $pdf->ezText("Mieter: $mv->personen_name_string\n\n",12);
 			/* Faltlinie */
 			$pdf->setLineStyle ( 0.2 );
 			$pdf->line ( 5, 542, 20, 542 );
@@ -1612,7 +1439,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 			$pdf->ezText ( "<b>Mietrückstand</b>", 11 );
 			
 			$pdf->ezSetDy ( 11 );
-			// $pdf->setColor(1.0,0.0,0.0);
 			$pdf->ezText ( "<b>$saldo_a €</b>", 12, array (
 					'justification' => 'right' 
 			) );
@@ -1630,7 +1456,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 			$pdf->setColor ( 0.0, 0.0, 0.0 );
 			$pdf->ezText ( "<b>Gesamtrückstand</b>", 11 );
 			$pdf->ezSetDy ( 11 );
-			// $pdf->setColor(1.0,0.0,0.0);
 			$mahngebuehr_r = nummer_komma2punkt ( $mahngebuehr );
 			$gesamt_rueckstand = $saldo + $mahngebuehr_r;
 			$gesamt_rueckstand = nummer_punkt2komma ( $gesamt_rueckstand );
@@ -1647,7 +1472,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 			$pdf->ezText ( "Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Mietkonto.", 11 );
 			$pdf->ezText ( "Wir fordern Sie auf, den genannten Betrag unter Angabe der bei uns geführten Mieternummer bis zum", 11 );
 			$pdf->ezSetCmMargins ( 3, 3, 9, 3 );
-			// $pdf->setColor(1.0,0.0,0.0);
 			$pdf->ezText ( "<b>$fristdatum</b>\n", 11 );
 			$pdf->ezSetMargins ( 135, 70, 50, 50 );
 			$pdf->ezText ( "<b>auf das Konto $g->kontonummer  bei der $g->kredit_institut, BLZ $g->blz</b>\n", 11 );
@@ -1658,13 +1482,12 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 			$pdf->ezText ( "Wolfgang Wehrheim\n\n", 11 );
 			$pdf->ezText ( "Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift gültig.\n", 11 );
 			$pdf->addInfo ( 'Title', "Mahnung $mv->personen_name_string" );
-			$pdf->addInfo ( 'Author', $_SESSION [username] );
+			$pdf->addInfo ( 'Author', $_SESSION ['username'] );
 			
 			// ### MIETKONTENBLATT####
 			$pdf->ezNewPage ();
 			$pdf->ezSetMargins ( 135, 70, 50, 50 );
 			$mz->mkb2pdf_mahnung ( $pdf, $mv_id );
-			// $mz->mietkontenblatt2pdf($pdf,$mv_id);
 			$fristdatum_sql = date_german2mysql ( $fristdatum );
 			$minus_saldo = '-' . $saldo;
 			$this->update_zahlungsfrist_m ( $mv_id, $fristdatum_sql, $minus_saldo, '-' . $mahngebuehr_r );
@@ -1677,5 +1500,3 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
 		$pdf->ezStream ();
 	}
 } // end class
-
-?>
