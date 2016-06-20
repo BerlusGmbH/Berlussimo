@@ -1,3 +1,4 @@
+/bower_components
 .project
 .settings
 .buildpath
@@ -15,3 +16,4 @@ FOTOS
 Monatsberichte
 /resources
 /composer.lock
+/test.php
