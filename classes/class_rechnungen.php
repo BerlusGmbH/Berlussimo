@@ -3610,7 +3610,7 @@ function ursprungs_rechnungs_nr_arr($beleg_nr)
         $d = new detail ();
         if ($von_typ == 'Partner') {
             $mandanten_nr = $d->finde_mandanten_nr($von_id);
-            $pdf->addText(43, 480, 8, "<b>Mandant: $mandanten_nr</b> Blatt: $monat ");
+            $pdf->addText(43, 480, 8, "<b>Mandant: $mandanten_nr</b> Zeitraum: $monat-$jahr");
         }
         $pdf->addText(335, 480, 12, "<b>RECHNUNGSEINGANGSBUCH</b>");
         $pdf->restoreState();
