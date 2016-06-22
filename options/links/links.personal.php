@@ -26,5 +26,5 @@ erstelle_abschnitt("Personalwesen");
 echo "<a href=\"?daten=personal&option=lohn_gehalt_sepa\">Lohn- und Gehalt SEPA</a>&nbsp;";
 echo "<a href=\"?daten=personal&option=kk\">KK</a>&nbsp;";
 echo "<a href=\"?daten=personal&option=steuern\">Steuern</a>&nbsp;";
-ende_formular();
+ende_abschnitt();
 echo "</div>";
