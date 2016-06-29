@@ -128,7 +128,7 @@ switch ($einheit_raus) {
 			if (is_array ( $emails_arr )) {
 				$emails_arr_u = array_values ( array_unique ( $emails_arr ) );
 				$anz = count ( $emails_arr_u );
-				echo "<hr><a href=\"mailto:";
+				echo "<hr><a href=\"mailto:?bcc=";
 				for($a = 0; $a < $anz; $a ++) {
 					$email = $emails_arr_u [$a];
 					echo "$email";
