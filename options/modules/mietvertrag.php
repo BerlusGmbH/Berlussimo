@@ -431,8 +431,9 @@ switch ($mietvertrag_raus) {
         /* Lastschrift beenden */
         //$m->lastschrift_beenden($_POST[mietvertrag_id]);
         $s = new sepa();
-        $s->mandat_beenden($_POST ['mietvertrag_id'], $_POST ['mietvertrag_bis']);
-        hinweis_ausgeben("Teilnahme am SEPA-Lastschriftverfahren wurde beendet");
+        if($s->mandat_beenden($_POST ['mietvertrag_id'], $_POST ['mietvertrag_bis'])) {
+            hinweis_ausgeben("Teilnahme am SEPA-Lastschriftverfahren wurde beendet");
+        }
 
         $einheit_id = $_POST ['einheit_id'];
         weiterleiten_in_sec("?daten=uebersicht&anzeigen=einheit&einheit_id=$einheit_id", 2);
