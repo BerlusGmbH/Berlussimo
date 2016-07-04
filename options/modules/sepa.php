@@ -157,8 +157,6 @@ switch ($option) {
 		break;
 	
 	case "mandat_edit_mieter" :
-		// echo "MANDAT EDITOR";
-		// print_req();
 		$sep = new sepa ();
 		$sep->form_mandat_mieter_edit ( $_REQUEST ['mref_dat'] );
 		break;
