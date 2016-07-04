@@ -115,6 +115,7 @@ class mietvertraege
         $form->hidden_feld('mietvertrag_dat', $this->mietvertrag_dat);
         $form->hidden_feld('einheit_id', $this->einheit_id);
         $form->hidden_feld('einheit_kurzname', $this->einheit_kurzname);
+        $form->hidden_feld('mietvertrag_von', $this->mietvertrag_von );
 
         $form->text_feld_inaktiv('Einheit', 'einheit_name', $this->einheit_kurzname, '10', '');
         $form->text_feld('Mietvertragsende eintragen', 'mietvertrag_bis', '', '10', 'mietvertrag_bis', '');
@@ -136,7 +137,7 @@ class mietvertraege
         echo "<label for=\"$id\">$label</label><select name=\"$name\" id=\"$id\" $javaaction size=\"$size\" style='visibility:visible;' MULTIPLE>";
         // print_r($mieter_arr);
         for ($a = 0; $a < count($mieter_arr); $a++) {
-            $person_id = $mieter_arr [$a] [PERSON_MIETVERTRAG_PERSON_ID];
+            $person_id = $mieter_arr [$a] ['PERSON_MIETVERTRAG_PERSON_ID'];
             $person_info->get_person_infos($person_id);
 
             echo "<option value=\"$person_id\">$person_info->person_nachname $person_info->person_vorname</option>";
