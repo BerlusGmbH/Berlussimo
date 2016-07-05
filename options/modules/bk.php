@@ -47,9 +47,6 @@ if (isset ($_REQUEST ['option']) && !empty ($_REQUEST ['option'])) {
 switch ($option) {
 
     default :
-        // $bk = new bk;
-        // $bk->zeige();
-        // $bk->nebenkosten_objekt(4, '2008-03-01', '2008-12-31');
         break;
 
     case "assistent" :
@@ -96,9 +93,7 @@ switch ($option) {
         break;
 
     case "profil_set" :
-        $_SESSION [profil_id] = $_REQUEST [profil_id];
-        // echo '<pre>';
-        // print_r($_SESSION);
+        $_SESSION ['profil_id'] = $_REQUEST ['profil_id'];
         weiterleiten_in_sec("?daten=bk&option=assistent", 0);
         break;
 
@@ -122,10 +117,10 @@ switch ($option) {
         break;
 
     case "eig_konto_anlegen" :
-        if (!empty ($_REQUEST [kostenkonto]) && !empty ($_REQUEST [konto_bez]) && $_SESSION [profil_id]) {
+        if (!empty ($_REQUEST ['kostenkonto']) && !empty ($_REQUEST ['konto_bez']) && $_SESSION ['profil_id']) {
             $bk = new bk ();
-            $bk->bk_konto_speichern($_SESSION [profil_id], $_REQUEST [kostenkonto], $_REQUEST [konto_bez]);
-            unset ($_SESSION [genkey]);
+            $bk->bk_konto_speichern($_SESSION ['profil_id'], $_REQUEST ['kostenkonto'], $_REQUEST ['konto_bez']);
+            unset ($_SESSION ['genkey']);
         } else {
             fehlermeldung_ausgeben("Fehler bk.php, 96");
         }
@@ -133,31 +128,31 @@ switch ($option) {
         break;
 
     case "neues_bk_konto" :
-        if (!empty ($_SESSION [profil_id])) {
+        if (!empty ($_SESSION ['profil_id'])) {
             $bk = new bk ();
-            $bk->form_eigenes_konto_anlegen($_SESSION [profil_id]);
+            $bk->form_eigenes_konto_anlegen($_SESSION ['profil_id']);
         } else {
             fehlermeldung_ausgeben("Fehler bk.php, 105");
         }
         break;
 
     case "change_konto" :
-        unset ($_SESSION [bk_konto]); // 1020
-        unset ($_SESSION [bk_konto_id]); // 2
-        unset ($_SESSION [genkey]); // 1
+        unset ($_SESSION ['bk_konto']); // 1020
+        unset ($_SESSION ['bk_konto_id']); // 2
+        unset ($_SESSION ['genkey']); // 1
         weiterleiten_in_sec("?daten=bk&option=assistent", 0);
         break;
 
     case "konto_auswahl" :
-        $_SESSION [bk_konto] = $_REQUEST [bk_konto]; // 1020
-        $_SESSION [bk_konto_id] = $_REQUEST [bk_konto_id]; // 1
-        unset ($_SESSION [genkey]); // 1
+        $_SESSION ['bk_konto'] = $_REQUEST ['bk_konto']; // 1020
+        $_SESSION ['bk_konto_id'] = $_REQUEST ['bk_konto_id']; // 1
+        unset ($_SESSION ['genkey']); // 1
         weiterleiten_in_sec("?daten=bk&option=assistent", 0);
         break;
 
     case "zusammenfassung" :
         $bk = new bk ();
-        $bk->zusammenfassung($_SESSION [profil_id]);
+        $bk->zusammenfassung($_SESSION ['profil_id']);
         break;
 
     case "pdf_ausgabe" :
@@ -186,8 +181,8 @@ switch ($option) {
     case "new_we" :
         $wirt = new wirt_e ();
 
-        if (!empty ($_POST [w_name])) {
-            $wirt->neue_we_speichern($_POST [w_name]);
+        if (!empty ($_POST ['w_name'])) {
+            $wirt->neue_we_speichern($_POST ['w_name']);
             header("Location: ?daten=bk&option=wirtschaftseinheiten");
         } else {
             fehlermeldung_ausgeben("Fehler: Wirtschaftseinheit braucht eine Bezeichnung!");
@@ -199,12 +194,9 @@ switch ($option) {
         $wirt = new wirt_e ();
         $wirt->einheit2_wirt($w_id, $_POST ['IMPORT_AUS'], $_REQUEST ['anzeigen']);
         $anzeigen = $_REQUEST ['anzeigen'];
-
-        // weiterleiten("?daten=bk&option=wirt_einheiten_hinzu&w_id=$w_id&anzeigen=$anzeigen");
         break;
 
     case "wirt_delete" :
-        // print_r($_POST);
         if (isset ($_POST ['submit_del_all']) && isset ($_REQUEST ['w_id'])) {
             $w_id = $_REQUEST ['w_id'];
             $anzeigen = $_REQUEST ['anzeigen'];
@@ -223,7 +215,6 @@ switch ($option) {
         break;
 
     case "wirt_einheiten_hinzu" :
-        // print_r($_POST);
         if (!empty ($_REQUEST ['w_id'])) {
             $wirt = new wirt_e ();
             $wirt->form_einheit_hinzu($_REQUEST ['w_id']);
@@ -234,26 +225,23 @@ switch ($option) {
 
     case "profil_pdf" :
         $bk = new bk ();
-        // $bk->pdf_uebersicht_profil('',3); //direkt;
         ob_clean(); // ausgabepuffer leeren
-        //include_once ('pdfclass/class.ezpdf.php');
         include_once('classes/class_bpdf.php');
         $pdf = new Cezpdf ('a4', 'portrait');
         $bpdf = new b_pdf ();
-        $bpdf->b_header($pdf, 'Partner', $_SESSION [partner_id], 'portrait', 'Helvetica.afm', 6);
-        $bk->pdf_uebersicht_profil($pdf, $_SESSION [profil_id]); // mit pdf;
+        $bpdf->b_header($pdf, 'Partner', $_SESSION ['partner_id'], 'portrait', 'Helvetica.afm', 6);
+        $bk->pdf_uebersicht_profil($pdf, $_SESSION ['profil_id']); // mit pdf;
         $pdf->ezStream();
 
         break;
 
     case "konto_pro_anpassen" :
-        $bk_konto = $_REQUEST [bk_konto];
-        $bk_konto_id = $_REQUEST [bk_konto_id];
+        $bk_konto = $_REQUEST ['bk_konto'];
+        $bk_konto_id = $_REQUEST ['bk_konto_id'];
         if (!empty ($bk_konto) && !empty ($bk_konto_id)) {
             $bk = new bk ();
-            // echo "$bk_konto $bk_konto_id $_SESSION[profil_id]";
-            if (!empty ($_SESSION [profil_id])) {
-                $bk->form_konto_pro_anpassen($_SESSION [profil_id], $bk_konto, $bk_konto_id);
+            if (!empty ($_SESSION ['profil_id'])) {
+                $bk->form_konto_pro_anpassen($_SESSION ['profil_id'], $bk_konto, $bk_konto_id);
             } else {
                 echo "fehler 645362";
             }
@@ -275,19 +263,19 @@ switch ($option) {
         break;
 
     case "anpassung_bk_hk" :
-        if (!empty ($_SESSION [profil_id])) {
+        if (!empty ($_SESSION ['profil_id'])) {
             $bk = new bk ();
-            $bk->form_bk_hk_anpassung($_SESSION [profil_id]);
+            $bk->form_bk_hk_anpassung($_SESSION ['profil_id']);
         } else {
             echo "Bitte Profil wählen";
         }
         break;
 
     case "anpassung_send" :
-        $profil_id = $_REQUEST [profil_id];
-        $kostenart = $_REQUEST [kostenart];
-        $betrag = $_REQUEST [betrag];
-        $genkey = $_REQUEST [genkey];
+        $profil_id = $_REQUEST ['profil_id'];
+        $kostenart = $_REQUEST ['kostenart'];
+        $betrag = $_REQUEST ['betrag'];
+        $genkey = $_REQUEST ['genkey'];
 
         if (!empty ($profil_id) && !empty ($kostenart) && !empty ($betrag) && !empty ($genkey)) {
             $bk = new bk ();
@@ -299,9 +287,9 @@ switch ($option) {
         break;
 
     case "anpassung_bk_hk_del" :
-        if (!empty ($_REQUEST [an_dat])) {
+        if (!empty ($_REQUEST ['an_dat'])) {
             $bk = new bk ();
-            $bk->bk_hk_anpassung_loeschen($_REQUEST [an_dat]);
+            $bk->bk_hk_anpassung_loeschen($_REQUEST ['an_dat']);
             weiterleiten('?daten=bk&option=anpassung_bk_hk');
         } else {
             echo "Anpassungszeile wählen";
@@ -310,16 +298,14 @@ switch ($option) {
 
     case "test" :
         $bk = new bk ();
-        $bk->test_res($_SESSION [profil_id]);
+        $bk->test_res($_SESSION ['profil_id']);
         break;
 
     case "serienbrief" :
-        //include_once ('pdfclass/class.ezpdf.php');
         include_once('classes/class_bpdf.php');
         $bpdf = new b_pdf ();
         $ber = new berlussimo_global ();
         $ber->objekt_auswahl_liste("?daten=bk&option=serienbrief");
-        // $bpdf->erstelle_brief_vorlage(1, 'Mietvertrag', '5', $option='0');
         if (!isset ($_REQUEST ['empfaenger'])) {
             $bpdf->form_mieter2sess();
         } else {
@@ -340,28 +326,17 @@ switch ($option) {
             $anz = count($_REQUEST ['empf_ids']);
             if ($anz) {
                 $arr = $_REQUEST ['empf_ids'];
-                // $_SESSION['empfaenger_ids']= $arr;
-                // $_SESSION['empfaengerliste']['empfaenger_typ'] = $_REQUEST[empfaenger_typ];
-                // $_SESSION['empfaengerliste']['empfaenger_typ'][0]['typ_ids'] = $arr;
-                // $_SESSION['empfaengerliste']['empfaenger_typ'][0]['typ'] = $_REQUEST[empfaenger_typ];
-                // for($a=0;$a<$anz;$a++){
-                // $id = $arr[$a];
-                // $_SESSION[empfaenger_typ][typ][empfaenger_ids]= $id;
             }
         }
-
-        // print_r($_SESSION);
 
         echo '<pre>';
         print_r($_SESSION ['empfaengerliste']);
         break;
 
     case "serienbrief_pdf" :
-        //include_once ('pdfclass/class.ezpdf.php');
         include_once('classes/class_bpdf.php');
         $bpdf = new b_pdf ();
         $bpdf->erstelle_brief_vorlage($_REQUEST ['vorlagen_dat'], 'Mietvertrag', $_SESSION ['serienbrief_mvs'], $option = '0');
-        // $bpdf->form_mieter2sess();
         break;
 
     case "serienbrief_vorlage_neu" :
@@ -412,7 +387,6 @@ switch ($option) {
     case "profil_kopieren" :
         if (!empty ($_POST ['profil_id']) && !empty ($_POST ['profil_bez'])) {
             $bk = new bk ();
-            // print_req();
             $profil_id = $_POST ['profil_id'];
             $bezeichung = $_POST ['profil_bez'];
             if (isset ($_POST ['buchungen_kopieren'])) {
@@ -459,7 +433,6 @@ switch ($option) {
         break;
 
     case "energie_send" :
-        // print_req();
         $mvs = $_POST ['mvs'];
         if (is_array($mvs)) {
 
@@ -499,7 +472,6 @@ switch ($option) {
         break;
 
     case "me_send_hk_bk" :
-        // print_req();
         if (isset ($_POST ['kat'])) {
             if (is_array($_POST ['mvs'])) {
                 $anz = count($_POST ['mvs']);
@@ -520,7 +492,6 @@ switch ($option) {
                             $me = new mietentwicklung ();
                             $me_dat_arr = $me->get_dat_info($dat);
                             if (is_array($me_dat_arr)) {
-                                // print_r($me_dat_arr);
                                 $anfang_alt = $me_dat_arr ['ANFANG'];
                                 $kat_alt = $me_dat_arr ['KOSTENKATEGORIE'];
                                 $betrag_alt = $me_dat_arr ['BETRAG'];
@@ -548,5 +519,3 @@ switch ($option) {
 
         break;
 } // end switch for cases
-
-?>
