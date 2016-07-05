@@ -6,7 +6,6 @@
 vendor
 classes/config.inc.php
 FOTOS
-/bower_components
 /.env
 /node_modules
 /public
@@ -17,3 +16,4 @@ Monatsberichte
 /resources
 /composer.lock
 /test.php
+/SERIENBRIEFE/
