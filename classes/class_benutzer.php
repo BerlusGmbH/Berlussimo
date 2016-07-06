@@ -238,8 +238,8 @@ class benutzer {
 		// print_r($module_arr);
 		return $module_arr;
 	}
-	function dropdown_benutzer($vorwahl = null) {
-		$benutzer_arr = $this->get_all_users_arr2 ( 0 );
+	function dropdown_benutzer($vorwahl = null, $alle = 0) {
+		$benutzer_arr = $this->get_all_users_arr2 ( $alle );
 		$anz = count ( $benutzer_arr );
 		if ($anz) {
 			echo "<label for=\"benutzer_id\">Mitarbeiter wählen</label><select id=\"benutzer_id\" name=\"benutzer_id\" size=\"1\">";
