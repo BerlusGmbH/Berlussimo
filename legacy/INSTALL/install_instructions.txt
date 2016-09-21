@@ -1,0 +1,53 @@
+### These instructions assume that you are running Ubuntu 14.04. After completing these instructions
+### you will have a basic installation with database and webserver.
+
+### setup berlussimo web app on apache2
+
+#upgrade ubuntu
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get dist-upgrade
+
+#the following command restarts the server
+sudo shutdown -r now
+
+#install mySQL. The setup will let you set a root password for the mySQL server. You will need this later.
+sudo apt-get install mysql-server
+
+#install apache2 and dependencies
+sudo apt-get install apache2 php5 php5-gd libapache2-mod-php5 php5-mysql git
+cd /var/www/;sudo git clone https://github.com/BerlusGmbH/Berlussimo berlussimo
+sudo cp /var/www/berlussimo/classes/config.inc.php.sample /var/www/berlussimo/classes/config.inc.php
+
+#edit config to fit your mysql config
+#for example:
+#define ("DB_USER", "root");
+#define ("DB_PASS", "<your_password_set_above>");
+#define ("DB_NAME", "berlussimo");
+#define ("DB_HOST", "localhost");
+sudo nano /var/www/berlussimo/classes/config.inc.php
+
+#install composer and fetch dependencies
+curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
+cd /var/www/berlussimo/;sudo composer install
+
+#make web directory writeable by apache2
+sudo chown -R www-data:www-data /var/www/berlussimo
+
+#edit DocumentRoot to /var/www/berlussimo
+sudo nano /etc/apache2/sites-enabled/000-default.conf
+sudo service apache2 restart
+
+### import database schema. Theese instructions will create a database named berlussimo.
+### Set this name to reflect your settings from config.inc.php
+### You will be prompted for the root password set above.
+mysqladmin create -u root -p berlussimo
+mysql -u root -p berlussimo < /var/www/berlussimo/INSTALL/DB-Version-0.4.0/berlussimo_db_0.4.0.sql
+mysql -u root -p berlussimo < /var/www/berlussimo/INSTALL/DB-Version-0.4.0/berlussimo_db_0.4.1.sql
+mysql -u root -p berlussimo < /var/www/berlussimo/INSTALL/DB-Version-0.4.0/berlussimo_db_0.4.2.sql
+mysql -u root -p berlussimo < /var/www/berlussimo/INSTALL/DB-Version-0.4.0/berlussimo_db_0.4.3.sql
+
+### you should now be able to open http://<your_server>/index.php in your browser and login with
+
+# login: admin
+# password: password

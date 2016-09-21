@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+<title>Google Maps JavaScript API v3 Example: Directions Waypoints</title>
+<link href="http://code.google.com/apis/maps/documentation/javascript/examples/default.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript">
+  var directionDisplay;
+  var directionsService = new google.maps.DirectionsService();
+  var map;
+
+  function initialize() {
+    directionsDisplay = new google.maps.DirectionsRenderer();
+    var chicago = new google.maps.LatLng(52.5477100, 13.5055900);
+    var myOptions = {
+      zoom: 11,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      center: chicago
+    }
+    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+    directionsDisplay.setMap(map);
+  }
+
+  var checkboxArray = document.getElementById("waypoints");
+  <?php
+  $str0 = "Sansibarstr. 30, 13349 Berlin";
+  $str5 = "Fontanestr. 1, 14193 Berlin";
+  $str2 = "Gartenfelderstr. 76, 13599 Berlin";
+  $str6 = "Leibnizstr. 1, 10585 Berlin";
+  $str4 = "Druebecker Weg 3, 12059 Berlin";
+  $str1 = "Sansibarstr. 1, 13351 Berlin";
+  $str3 = "Breite Str. 1, 12167 Berlin";
+	echo "checkboxArray[0] = '" . $str0 . "';\n";
+	echo "checkboxArray[1] = '" . $str1 . "';\n";
+	echo "checkboxArray[2] = '" . $str2 . "';\n";
+	echo "checkboxArray[3] = '" . $str3 . "';\n";
+	echo "checkboxArray[4] = '" . $str4 . "';\n";
+	echo "checkboxArray[5] = '" . $str5 . "';\n";
+	echo "checkboxArray[6] = '" . $str6 . "';\n";
+    ?>
+
+//var checkboxArray = '<php echo htmlspecialchars($arr, ENT_QUOTES); ?>'.split('#');
+    function calcRoute() {
+alert(checkboxArray[0]);
+    var start = checkboxArray[0];
+    var end = checkboxArray[1];
+    var waypts = [];
+
+    for (var i = 2; i < checkboxArray.length; i++) {
+
+        waypts.push({
+            location:checkboxArray[i],
+            stopover:true});
+
+    }
+alert(waypts.length);
+    var request = {
+        origin: start,
+        destination: end,
+        waypoints: waypts,
+        optimizeWaypoints: true,
+        travelMode: google.maps.DirectionsTravelMode.DRIVING
+    };
+    directionsService.route(request, function(response, status) {
+      if (status == google.maps.DirectionsStatus.OK) {
+        directionsDisplay.setDirections(response);
+        var route = response.routes[0];
+        var summaryPanel = document.getElementById("directions_panel");
+        summaryPanel.innerHTML = "";
+        // For each route, display summary information.
+        for (var i = 0; i < route.legs.length; i++) {
+          var routeSegment = i + 1;
+          summaryPanel.innerHTML += "<b>Route Segment: " + routeSegment + "</b><br />";
+          summaryPanel.innerHTML += route.legs[i].start_address + " to ";
+          summaryPanel.innerHTML += route.legs[i].end_address + "<br />";
+          summaryPanel.innerHTML += route.legs[i].distance.text + "<br /><br />";
+        }
+      }
+    });
+  }
+
+  function calcRoute2() {
+	    var start = document.getElementById("start").value;
+	    var end = document.getElementById("end").value;
+	    var waypts = [];
+	    var checkboxArray = document.getElementById("waypoints");
+	    for (var i = 0; i < checkboxArray.length; i++) {
+	      if (checkboxArray.options[i].selected == true) {
+	        waypts.push({
+	            location:checkboxArray[i].value,
+	            stopover:true});
+	      }
+	    }
+
+	    var request = {
+	        origin: start,
+	        destination: end,
+	        waypoints: waypts,
+	        optimizeWaypoints: true,
+	        travelMode: google.maps.DirectionsTravelMode.DRIVING
+	    };
+	    directionsService.route(request, function(response, status) {
+	      if (status == google.maps.DirectionsStatus.OK) {
+	        directionsDisplay.setDirections(response);
+	        var route = response.routes[0];
+	        var summaryPanel = document.getElementById("directions_panel");
+	        summaryPanel.innerHTML = "";
+	        // For each route, display summary information.
+	        for (var i = 0; i < route.legs.length; i++) {
+	          var routeSegment = i + 1;
+	          summaryPanel.innerHTML += "<b>Route Segment: " + routeSegment + "</b><br />";
+	          summaryPanel.innerHTML += route.legs[i].start_address + " to ";
+	          summaryPanel.innerHTML += route.legs[i].end_address + "<br />";
+	          summaryPanel.innerHTML += route.legs[i].distance.text + "<br /><br />";
+	        }
+	      }
+	    });
+	  }
+
+</script>
+</head>
+<body onload="initialize()">
+<div id="map_canvas" style="float:left;width:70%;height:100%;"></div>
+<div id="control_panel" style="float:right;width:30%;text-align:left;padding-top:20px">
+<div style="margin:20px;border-width:2px;">
+<b>Start:</b>
+<select id="start">
+  <option value="Sansibarstr 12, 13351 Berlin">sansi 12</option>
+  <option value="Gartenfelder Strasse 76, 13599 Berlin">Ga 76</option>
+  <option value="Drübecker Weg 3, 12059 Berlin">Drübecker 3</option>
+  <option value="Fontanestrasse 1, 14193 Berlin">FON</option>
+</select>
+<br />
+<b>Waypoints:</b> <br />
+<i>(Ctrl-Click for multiple selection)</i> <br />
+<select multiple id="waypoints">
+  <option value="Breite Strasse 8a, 12167, Berlin">Breita8a</input>
+  <option value="Sansibarstr 12, 13351 Berlin">sansi 12</option>
+  <option value="Gartenfelder Strasse 76, 13599 Berlin">Ga 76</option>
+  <option value="Drübecker Weg 3, 12059 Berlin">Drübecker 3</option>
+  <option value="Fontanestrasse 1, 14193 Berlin">FON</option>
+  <option value="Südendstr 10, 12169 Berlin">SÜDEND</option>
+  <option value="Silbersteinstr 1, 12051 Berlin">SILB</option>
+  <option value="Sansibarstr 65, 13349 Berlin">sansi 12</option>
+  <option value="Gartenfelder Strasse 50, 13599 Berlin">Ga 76</option>
+  <option value="Harzer Str 1, 12059 Berlin">Drübecker 3</option>
+  <option value="Bettinastr 1, 14193 Berlin">FON</option>
+  <option value="Südendstr 11, 12169 Berlin">SÜDEND</option>
+  <option value="Silbersteinstr 100, 12051 Berlin">SILB</option>
+</select>
+<br />
+<b>End:</b>
+<select id="end">
+  <option value="Sansibarstr 12, 13351 Berlin">sansi 12</option>
+  <option value="Gartenfelder Strasse 76, 13599 Berlin">Ga 76</option>
+  <option value="Drübecker Weg 3, 12059 Berlin">Drübecker 3</option>
+  <option value="Fontanestrasse 1, 14193 Berlin">FON</option>
+</select>
+<br />
+  <input type="submit" onclick="calcRoute();" />
+</div>
+<div id="directions_panel" style="margin:20px;background-color:#FFEE77;"></div>
+</div>
+</body>
+</html>

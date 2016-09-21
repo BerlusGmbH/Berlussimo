@@ -1,0 +1,366 @@
+@CHARSET "UTF-8";
+body {
+    padding: 0;
+    margin: 0;
+
+}
+
+p {
+
+    text-align: left; /* depends on element width */
+    padding: 1px;
+}
+
+#container {
+    position: relative;
+    height: 45%;
+    background: #000;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+#container1 {
+    position: relative;
+    height: 50%;
+    background: #000;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+#leftBox {
+    position: absolute;
+    left: 0;
+    width: 50%;
+    background: #fff;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    overflow: auto;
+    border: 1px solid #000;
+}
+
+#rightBox {
+    position: absolute;
+    right: 0;
+    width: 50%;
+    text-align: left; /* depends on element width */
+    background: blue;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    overflow: auto;
+    border: 1px solid #000;
+}
+
+#leftBox1 {
+    position: absolute;
+    left: 0;
+    width: 50%;
+    background: red;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    overflow: auto;
+    border: 1px solid #000;
+
+}
+
+#rightBox1 {
+    position: absolute;
+    right: 0;
+    width: 50%;
+    text-align: right; /* depends on element width */
+    background: green;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #000;
+    overflow: auto;
+}
+
+body {
+    font: 11px Helvetica, Arial, "Nimbus Sans L", FreeSans, sans-serif;
+}
+
+table {
+
+    background-color: #dcefc0;
+    width: 99%;
+    margin: 1px;
+    border: 0 solid #000;
+}
+
+table, tr, td, th {
+    border: 0;
+    text-align: left;
+    font: 12px Helvetica, Arial, "Nimbus Sans L", FreeSans, sans-serif;
+}
+
+th {
+    font: 12px Helvetica, Arial, "Nimbus Sans L", FreeSans, sans-serif;
+    /*background-color: #c1a666;*/
+    background-color: #445544;
+    text-align: left;
+    text-transform: uppercase;
+    padding-left: 3px;
+    border: 0;
+    color: #fff;
+}
+
+.zeile3 {
+    background-color: green;
+    border: 0;
+    cursor: pointer;
+    color: white;
+    border: 0;
+}
+
+.zeile2 {
+    font: 12px Helvetica, Arial, "Nimbus Sans L", FreeSans, sans-serif;
+    background-color: #dcefc0;
+    border: 0;
+    cursor: pointer;
+}
+
+.zeile1 {
+    font: 12px Helvetica, Arial, "Nimbus Sans L", FreeSans, sans-serif;
+    background-color: #bbea78;
+    border: 0;
+    cursor: pointer;
+}
+
+.zeile_belegt {
+    font: 12px Helvetica, Arial, "Nimbus Sans L", FreeSans, sans-serif;
+    background-color: #e86c6c;
+    margin: 2px;
+    padding: 2px;
+    border: 1px solid #666;
+    cursor: pointer;
+}
+
+p.zeile_belegt:hover {
+    font: 12px Helvetica, Arial, "Nimbus Sans L", FreeSans, sans-serif;
+    background-color: #fff;
+    margin: 2px;
+    padding: 2px;
+    border: 1px solid #666;
+    cursor: pointer;
+}
+
+.zeile_frei {
+    font: 12px Helvetica, Arial, "Nimbus Sans L", FreeSans, sans-serif;
+    margin: 2px;
+    padding: 2px;
+    border: 1px solid #666;
+    background-color: #bbea78;
+}
+
+label, select, input[type=checkbox], input[type=radio], input[type=button], input[type=submit] {
+    cursor: pointer;
+    margin: 5px;
+}
+
+input[type=text]:focus {
+    background-color: red;
+    color: white;
+}
+
+a.handy {
+    margin: 5px;
+    font: 12px Helvetica, Arial, "Nimbus Sans L", FreeSans, sans-serif;
+    color: #000;
+    padding: 2px;
+    height: 100%;
+}
+
+a, a.rot {
+    cursor: pointer;
+    color: red;
+    font: 12px Helvetica, Arial, "Nimbus Sans L", FreeSans, sans-serif;
+    text-transform: uppercase;
+}
+
+select {
+    margin: 3px;
+}
+
+input[type="text"] {
+    margin-top: 3px;
+    margin-left: 10px;
+    background-color: #dcefc0;
+}
+
+#navibox {
+    background-color: #445544;
+    font: 11px Helvetica, Arial, "Nimbus Sans L", FreeSans, sans-serif;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border: 1px solid white;
+    height: 5%;
+}
+
+label {
+    font-size: 12px;
+    color: #fff;
+    padding: 3px;
+
+}
+
+div#mainBox {
+    background-color: #899f8a;
+}
+
+div#innerBox {
+    width: 98.5%;
+    height: 100%;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-bottom: 3px;
+    margin-top: 3px;
+    text-align: left;
+    border: 1px solid #797979;
+    background-color: #5d6d5d;
+}
+
+div#leftBox {
+    background-color: #899f8a;
+}
+
+div#leftBox1 {
+    background-color: #899f8a;
+}
+
+div#rightBox {
+    background-color: #899f8a;
+}
+
+div#rightBox1 {
+
+    background-color: #899f8a;
+}
+
+div.clear {
+    clear: both;
+    height: 0;
+    font-size: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.zeile_ueber {
+    margin: 2px;
+    padding: 2px;
+    border: 1px solid #666;
+    background-color: #445544;
+    text-transform: uppercase;
+    color: #fff;
+    font: 11px Helvetica, Arial, "Nimbus Sans L", FreeSans, sans-serif;
+}
+
+.zeile_detail {
+    margin: 2px;
+    padding: 2px;
+    border: 1px solid #666;
+    background-color: #ffffb9;
+    font: 11px Helvetica, Arial, "Nimbus Sans L", FreeSans, sans-serif;
+}
+
+.zeile_hinweis {
+    margin: 2px;
+    padding: 2px;
+    border: 1px solid #666;
+    background-color: #ffff00;
+    font: 11px Helvetica, Arial, "Nimbus Sans L", FreeSans, sans-serif;
+}
+
+.zeile_hinweis_rot {
+    margin: 2px;
+    padding: 2px;
+    border: 1px solid #666;
+    background-color: #ff0000;
+    color: #fff;
+    font: 14px Helvetica, Arial, "Nimbus Sans L", FreeSans, sans-serif;
+}
+
+.zeile_hinweis_gruen {
+    margin: 2px;
+    padding: 2px;
+    border: 1px solid #666;
+    background-color: #007907;
+    color: #fff;
+    font: 14px Helvetica, Arial, "Nimbus Sans L", FreeSans, sans-serif;
+}
+
+/*JS SORTABLE*/
+table.sortable thead {
+    background-color: #eee;
+    color: #666666;
+    font-weight: bold;
+    cursor: default;
+}
+
+.formbox {
+    height: 100%;
+    width: 100%;
+    color: #000;
+}
+
+.reihe {
+    clear: both;
+    padding: 1px 0;
+    border: 1px solid #666;
+    background-color: #fff;
+}
+
+.label {
+    float: left;
+    text-align: left;
+    padding-left: 1px;
+    padding-top: 1px;
+    padding-right: 5px;
+    font-size: 14px;
+    font-family: verdana;
+    color: white;
+
+}
+
+.feld {
+    float: right;
+    text-align: left;
+    margin-right: 1px;
+}
+
+.knopf {
+    clear: both;
+    float: right;
+}
+
+.defbreite {
+    width: 300px;
+}
+
+.defbreite input {
+    color: #fff;
+    background-color: #000;
+}
+
+input[disabled] {
+    background: #bbea78;
+    color: red;
+}
+
+select {
+    width: 250px;
+}
+
+table.sortable thead {
+    background-color: #eee;
+    color: #666666;
+    font-weight: bold;
+    cursor: default;
+}
+
+  

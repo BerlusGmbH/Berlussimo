@@ -1,0 +1,230 @@
+body {
+    font: 12px Helvetica, Arial, "Nimbus Sans L", FreeSans, sans-serif;
+    color: #000;
+    padding: 0;
+    background-color: silver;
+    height: 100%;
+    margin: 1px;
+    margin-left: 1%;
+}
+
+table {
+    background-color: #dcefc0;
+    width: 99%;
+    margin: 1px;
+    border: 0 solid #000;
+}
+
+table, tr, td, th {
+    border: 0;
+    align: left;
+}
+
+th {
+    background-color: #c1a666;
+    text-align: left;
+    text-transform: uppercase;
+    padding-left: 3px;
+    border: 0;
+}
+
+.zeile3 {
+    background-color: #b19999;
+    border: 0;
+    cursor: pointer;
+}
+
+.zeile2 {
+    background-color: #dcefc0;
+    border: 0;
+    cursor: pointer;
+}
+
+.zeile1 {
+    background-color: #bbea78;
+    border: 0;
+    cursor: pointer;
+}
+
+.zeile_belegt {
+    background-color: #e86c6c;
+    margin: 2px;
+    padding: 2px;
+    border: 1px solid #666;
+    cursor: pointer;
+}
+
+p.zeile_belegt:hover {
+    background-color: #fff;
+    margin: 2px;
+    padding: 2px;
+    border: 1px solid #666;
+    cursor: pointer;
+}
+
+.zeile_frei {
+    margin: 2px;
+    padding: 2px;
+    border: 1px solid #666;
+    background-color: #bbea78;
+}
+
+label, select, input[type=checkbox], input[type=radio], input[type=button], input[type=submit] {
+    cursor: pointer;
+    margin: 5px;
+}
+
+a.handy {
+    margin: 5px;
+    font: 12px Helvetica, Arial, "Nimbus Sans L", FreeSans, sans-serif;
+    color: #000;
+    padding: 2px;
+    height: 100%;
+}
+
+a.rot {
+    cursor: pointer;
+    color: red;
+}
+
+select {
+    margin: 3px;
+}
+
+input[type="text"] {
+    margin-top: 3px;
+    margin-left: 10px;
+    background-color: #dcefc0;
+}
+
+#navibox {
+    background-color: #445544;
+    font: 14px Helvetica, Arial, "Nimbus Sans L", FreeSans, sans-serif;
+    width: 99%;
+    padding-left: 5px;
+    padding: 2px;
+    border: 1px solid white;
+    margin-left: 5px;
+}
+
+label {
+    font-size: 12px;
+    color: #fff;
+    padding: 3px;
+
+}
+
+div#mainBox {
+    height: 100%;
+    padding: 0;
+    width: 99%;
+    margin: 0;
+    text-align: left;
+    border: 1px solid #797979;
+    background-color: #899f8a;
+}
+
+div#innerBox {
+    width: 98.5%;
+    height: 100%;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-bottom: 3px;
+    margin-top: 3px;
+    text-align: left;
+    border: 1px solid #797979;
+    background-color: #5d6d5d;
+}
+
+div#leftBox {
+    overflow: scroll;
+    margin: 2px;
+    padding: 0;
+    text-align: left;
+    float: left;
+    background-color: #899f8a;
+    width: 50%;
+    min-height: 200px;
+    max-height: 250px;
+    border: 1px solid #CDCDCF;
+    overflow: auto;
+}
+
+div#leftBox1 {
+    overflow: scroll;
+    margin-left: 2px;
+    padding: 0;
+    text-align: left;
+    float: left;
+    width: 50%;
+    min-height: 275px;
+    max-height: 300px;
+    background-color: #899f8a;
+    border: 1px solid #CDCDCF;
+    /*height:325px;*/
+}
+
+div#rightBox {
+    width: 49%;
+    height: 250px;
+    overflow: visible;
+    margin: 1px;
+    padding: 0;
+    text-align: left;
+    float: right;
+    background-color: #899f8a;
+    border: 1px solid #CDCDCF;
+    overflow: scroll;
+}
+
+div#rightBox1 {
+
+    margin: 1px;
+    padding: 0;
+    text-align: left;
+    float: right;
+    width: 49%;
+    min-height: 275px;
+    max-height: 300px;
+    background-color: #899f8a;
+    border: 1px solid #CDCDCF;
+    overflow: scroll;
+}
+
+div.clear {
+    clear: both;
+    height: 0;
+    font-size: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.zeile_ueber {
+    margin: 2px;
+    padding: 2px;
+    border: 1px solid #666;
+    background-color: #dcefc0;
+}
+
+.zeile_detail {
+    margin: 2px;
+    padding: 2px;
+    border: 1px solid #666;
+    background-color: #ffffb9;
+}
+
+.zeile_hinweis {
+    margin: 2px;
+    padding: 2px;
+    border: 1px solid #666;
+    background-color: #ffff00;
+}
+
+/*JS SORTABLE*/
+table.sortable thead {
+    background-color: #eee;
+    color: #666666;
+    font-weight: bold;
+    cursor: default;
+}
+

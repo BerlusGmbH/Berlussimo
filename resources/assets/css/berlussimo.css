@@ -1,0 +1,61 @@
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+.mainmenu .row {
+    margin-bottom: 0;
+}
+
+.row {
+    margin-bottom: 10px;
+}
+
+.chips {
+    margin-bottom: 0;
+}
+
+.error-block {
+    position: absolute;
+    right: auto;
+    top: 50px;
+    margin: 0;
+    margin-left: 3rem;
+    color: #f44336;
+    opacity: 1;
+    font-size: 12px;
+}
+
+/* get chips autocomplete in line with other form elements */
+.chips .input {
+    margin-bottom: 0;
+}
+
+.chips > .autocomplete-content {
+    margin-top: 15px;
+}
+
+/* right width for autocomplete windows */
+.autocomplete-content {
+    position: absolute;
+    width: 92%;
+    width: calc(100% - 4.5rem);
+}
+
+.input-field .prefix ~ .autocomplete-content {
+    margin-left: 3rem;
+    width: 92%;
+    width: calc(100% - 4.5rem);
+}
+
+.chip .img {
+    float: left;
+    font-size: 50px;
+    line-height: 32px;
+    padding-right: 8px;
+}
