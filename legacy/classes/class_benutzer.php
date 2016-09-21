@@ -262,9 +262,9 @@ class benutzer
         $b = $this->get_all_users_arr2($alle);
         if (!$b->isEmpty()) {
             echo "<label for=\"benutzer_id\">Mitarbeiter wählen</label><select id=\"benutzer_id\" name=\"benutzer_id\" size=\"1\">";
-            for ($a = 0; $a < $anz; $a++) {
-                $benutzername = $b->name;
-                $benutzer_id = $b->id;
+            foreach($b as $user) {
+                $benutzername = $user->name;
+                $benutzer_id = $user->id;
                 if ($vorwahl != null) {
                     if ($benutzername == $vorwahl) {
                         echo "<option value=\"$benutzer_id\" selected>$benutzername</option>";
