@@ -1251,7 +1251,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $erledigt = request()->input('status');
                 $db_abfrage = "UPDATE TODO_LISTE SET TEXT='" . request()->input('text') . "', ANZEIGEN_AB='$anz_ab', BENUTZER_ID='" . request()->input('benutzer_id') ."', ERLEDIGT='$erledigt', AKUT='" . request()->input('akut') . "', KOS_TYP='" . request()->input('kostentraeger_typ'). "', KOS_ID='$kostentraeger_id' WHERE T_DAT='$this->t_dat'";
                 $resultat = mysql_query($db_abfrage) or die (mysql_error());
-                weiterleiten(route('legacy::todo::index'));
+                weiterleiten(route('legacy::todo::index', [], false));
             }
         }
     }
@@ -1298,7 +1298,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             $db_abfrage = "DELETE FROM TODO_LISTE WHERE T_ID ='$t_id' OR UE_ID='$t_id'";
         }
         $result = mysql_query($db_abfrage) or die (mysql_error());
-        weiterleiten(route('legacy::todo::index'));
+        weiterleiten(route('legacy::todo::index', [], false));
     }
 
     function pdf_projekt($id)

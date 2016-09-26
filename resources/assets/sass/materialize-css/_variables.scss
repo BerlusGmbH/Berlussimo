@@ -40,7 +40,7 @@ $primary-color-dark: darken($primary-color, 15%) !default;
 $secondary-color: color("grey", "darken-1") !default;
 $success-color: color("green", "base") !default;
 $error-color: color("red", "base") !default;
-$link-color: color("grey", "darken-3") !default;
+$link-color: color("grey", "darken-2") !default;
 
 
 /* 2. Badges
@@ -91,7 +91,7 @@ $button-floating-radius: 50% !default;
 
 $card-padding: 20px !default;
 $card-bg-color: #fff !default;
-$card-link-color: color("orange", "accent-2") !default;
+$card-link-color: color("grey", "darken-2") !default;
 $card-link-color-light: lighten($card-link-color, 20%) !default;
 
 

@@ -385,7 +385,7 @@ class b_pdf
             }
             echo "</div>";
         } else {
-            die ("Keine Mieter");
+            echo "Keine Mieter";
         }
     }
 

@@ -16,7 +16,7 @@ class LegacyController extends Controller
         error_reporting(E_ALL ^ E_DEPRECATED ^ E_WARNING ^ E_NOTICE);
     }
 
-    public function render()
+    public function render($view = 'berlussimo')
     {
         $response = $this->renderResponse();
         if ($this->responseIsFile($response)) {
@@ -24,7 +24,7 @@ class LegacyController extends Controller
         } elseif ($response->headers->has('Location')) {
             return redirect()->to($response->headers->get('Location'))->withHeaders($response->headers->all());
         } else {
-            return $this->renderView($response->content(), $response->headers->all());
+            return $this->renderView($view, $response->content(), $response->headers->all());
         }
     }
 
@@ -41,8 +41,8 @@ class LegacyController extends Controller
         return $response->headers->has('Content-Type');
     }
 
-    protected function renderView($content, $headers)
+    protected function renderView($view, $content, $headers)
     {
-        return response()->view('berlusssimo', ['content' => $content, 'submenu' => $this->submenu])->header($headers);
+        return response()->view($view, ['content' => $content, 'submenu' => $this->submenu])->header($headers);
     }
 }

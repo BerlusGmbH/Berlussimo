@@ -48,7 +48,7 @@ switch ($schritt) {
         } else {
             // fals keine MV_ID eingegeben wurde, weiterleiten
             warnung_ausgeben("Fehler : Bitte eine Einheit auswählen!");
-            weiterleiten(route('legacy::miete_definieren::index'));
+            weiterleiten(route('legacy::miete_definieren::index', [], false));
         }
         $form->ende_formular();
         break;

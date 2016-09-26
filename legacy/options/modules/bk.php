@@ -178,7 +178,7 @@ switch ($option) {
             $wirt->del_eine($w_id, request()->input('IMPORT_AUS'));
         }
 
-        weiterleiten(route('legacy::bk::index', ['option' => 'wirt_einheiten_hinzu', 'w_id' => $w_id, 'anzeigen' => $anzeigen]));
+        weiterleiten(route('legacy::bk::index', ['option' => 'wirt_einheiten_hinzu', 'w_id' => $w_id, 'anzeigen' => $anzeigen], false));
         break;
 
     case "wirt_einheiten_hinzu" :
@@ -245,7 +245,7 @@ switch ($option) {
         if (!empty ($profil_id) && !empty ($kostenart) && !empty ($betrag) && !empty ($genkey)) {
             $bk = new bk ();
             $bk->bk_hk_anpassung_speichern($profil_id, $kostenart, $betrag, $genkey);
-            weiterleiten(route('legacy::bk::index', ['option' => 'anpassung_bk_hk']));
+            weiterleiten(route('legacy::bk::index', ['option' => 'anpassung_bk_hk'], false));
         } else {
             echo "Daten unvollständig Error:jk3434";
         }
@@ -255,7 +255,7 @@ switch ($option) {
         if (request()->has('an_dat')) {
             $bk = new bk ();
             $bk->bk_hk_anpassung_loeschen(request()->input('an_dat'));
-            weiterleiten(route('legacy::bk::index', ['option' => 'anpassung_bk_hk']));
+            weiterleiten(route('legacy::bk::index', ['option' => 'anpassung_bk_hk'], false));
         } else {
             echo "Anpassungszeile wählen";
         }

@@ -1,53 +1,38 @@
 @extends('layouts.app')
 
-@section('main')
+@section('app-content')
     <div class="row">
         <div class="card col s12 m10 l8 offset-m1 offset-l2">
             <div class="card-content">
                 <span class="card-title">Login</span>
                 <form role="form" method="POST" action="{{ url('/login') }}">
                     {!! csrf_field() !!}
+                    <div class="input-field">
+                        <i class="material-icons prefix">email</i>
+                        <input type="email" id="email" name="email"
+                               class="validate {{ $errors->has('email') ? 'invalid' : '' }}"
+                               value="{{ old('email') }}">
+                        <span class="error-block">{{ $errors->has('email') ? $errors->first('email') : '' }}</span>
+                        <label for="email">E-Mail Adresse</label>
+                    </div>
 
-                    <div class="row">
-                        <div class="{{ $errors->has('email') ? 'invalid' : '' }}">
-                            <div class="input-field col s12">
-                                <label for="email">E-Mail Address</label>
-                                <input type="email" name="email" id="email" value="{{ old('email') }}">
-
-                                @if ($errors->has('email'))
-                                    <span class="help-block">
-                                <strong>{{ $errors->first('email') }}</strong>
-                            </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="{{ $errors->has('password') ? ' has-error' : '' }}">
-                            <div class="input-field col s12">
-                                <label for="password">Password</label>
-                                <input type="password" name="password" id="password">
-
-                                @if ($errors->has('password'))
-                                    <span class="error">
-                                <strong>{{ $errors->first('password') }}</strong>
-                            </span>
-                                @endif
-                            </div>
-                        </div>
+                    <div class="input-field">
+                        <i class="material-icons prefix">lock</i>
+                        <input type="password" id="password" name="password">
+                        <label for="password">Passwort</label>
                     </div>
 
                     <div class="row">
                         <div class="col s6">
                             <input type="checkbox" name="remember" id="remember">
-                            <label for="remember">Remember Me</label>
+                            <label for="remember">Angemeldet bleiben</label>
                         </div>
                         <div class="col s6">
-                            <a class="right" href="{{ url('/password/reset') }}">Forgot Your
-                                Password?</a>
+                            <a class="right" href="{{ url('/password/reset') }}">Password vergessen</a>
                         </div>
                         <div class="col s12">
                             <button type="submit" class="btn right">
-                                <i class="fa fa-btn fa-sign-in"></i>Login
+                                <i class="fa fa-btn fa-sign-in"></i>Anmelden
                             </button>
                         </div>
                     </div>

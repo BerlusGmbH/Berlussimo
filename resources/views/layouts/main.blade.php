@@ -36,7 +36,7 @@
     </ul>
 @endsection
 
-@section('main')
+@section('app-content')
     <ul class="side-nav" id="berlussimo-sidenav">
         <li>
             <div class="userView grey">

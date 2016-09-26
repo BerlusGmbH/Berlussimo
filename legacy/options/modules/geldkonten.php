@@ -102,7 +102,7 @@ switch ($option) {
                 echo "Zuweisung existiert bereits.";
             } else {
                 $gk->zuweisung_speichern($kostentraeger_typ, $kos_id, $geldkonto_id);
-                weiterleiten(route('legacy::geldkonten::index', ['option' => 'uebersicht_zuweisung']));
+                weiterleiten(route('legacy::geldkonten::index', ['option' => 'uebersicht_zuweisung'], false));
             }
         } else {
             echo "Eingabe unvollständig Error: 623gd";
@@ -116,7 +116,7 @@ switch ($option) {
             $kos_typ = request()->input('kos_typ');
             $kos_id = request()->input('kos_id');
             $gk->zuweisung_aufheben($kos_typ, $kos_id, $geldkonto_id);
-            weiterleiten(route('legacy::geldkonten::index', ['option' => 'uebersicht_zuweisung']));
+            weiterleiten(route('legacy::geldkonten::index', ['option' => 'uebersicht_zuweisung'], false));
         } else {
             echo "Eingabe unvollständig Error: 623gf1";
         }

@@ -311,10 +311,6 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC" );
     /* Funktion um alle Details zu finden anhand des Detailnamens, werden die Detailinhalte angezeigt */
     function finde_detail_inhalt($tab, $id, $detail_name) {
         $db_abfrage = "SELECT DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = '$tab' && DETAIL_NAME = '$detail_name' && DETAIL_ZUORDNUNG_ID = '$id' && DETAIL_AKTUELL = '1' ORDER BY DETAIL_DAT DESC LIMIT 0 , 1";
-        // if($detail_name=='WEG-KaltmieteINS'){
-        // echo $db_abfrage;
-        // die();
-        // }
         $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
         while ( list ( $DETAIL_INHALT ) = mysql_fetch_row ( $resultat ) )
             return ltrim ( rtrim ( $DETAIL_INHALT ) );

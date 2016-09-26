@@ -1145,7 +1145,7 @@ ORDER BY KOSTENTRAEGER_TYP,KOSTENTRAEGER_ID, W_GERAETE.IM_EINSATZ ASC
                 }
             }
         } else {
-            echo "<b>Keine Wartungsgeräte</b>";
+            echo "<b>Keine Wartungsgeräte</b><br>";
         }
     }
 

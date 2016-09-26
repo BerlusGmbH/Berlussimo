@@ -8,10 +8,8 @@
     @if($content != "")
         <div class="row">
             <div class="col s12">
-                <div class="card">
-                    <div class="card-content">
-                        {!! $content !!}
-                    </div>
+                <div class="card-panel">
+                    {!! $content !!}
                 </div>
             </div>
         </div>

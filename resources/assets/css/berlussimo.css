@@ -59,3 +59,17 @@ main {
     line-height: 32px;
     padding-right: 8px;
 }
+
+.modal.bottom-sheet {
+    max-height: 95%;
+}
+
+.yellow-page.row .col {
+    display:inline-block;
+    vertical-align: top;
+    float: none;
+}
+
+.warnung {
+    color: #F44336 !important;
+}
