@@ -11,7 +11,7 @@ sudo apt-get dist-upgrade
 #the following command restarts the server
 sudo shutdown -r now
 
-#install npm and bower
+#install npm
 curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
