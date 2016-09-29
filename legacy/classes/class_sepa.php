@@ -985,15 +985,15 @@ class sepa
             /* Feststellen ob Erstnutzung, Folgenutzung des Mandats */
             if (!$this->check_mandat_is_used($m_ref, $iban) == true) {
                 $abbuchung = 'FRST';
-                // $datum = date("2014-01-25");//PLUS TAGE 7
+                //PLUS 5 TAGE
                 $o = new objekt ();
-                $datum = $o->datum_plus_tage(date("Y-m-d"), 7);
+                $datum = $o->datum_plus_tage(date("Y-m-d"), 5);
                 $this->summe_frst += $summe_zu_ziehen;
             } else {
                 $abbuchung = 'RCUR';
-                // $datum = date("2014-01-20");//PLUS TAGE 3
+                //PLUS 1 TAG
                 $o = new objekt ();
-                $datum = $o->datum_plus_tage(date("Y-m-d"), 3);
+                $datum = $o->datum_plus_tage(date("Y-m-d"), 1);
                 $this->summe_rcur += $summe_zu_ziehen;
             }
 
