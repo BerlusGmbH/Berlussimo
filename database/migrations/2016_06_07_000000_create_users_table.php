@@ -54,14 +54,14 @@ class CreateUsersTable extends Migration
                     $user->save();
                 }
             });
-        };
-
-        $user = new User();
-        $user->name = 'admin';
-        $user->email = 'admin@berlussimo';
-        $user->password = Hash::make('admin');
-        $user->api_token = str_random(60);
-        $user->save();
+        } else {
+            $user = new User();
+            $user->name = 'admin';
+            $user->email = 'admin@berlussimo';
+            $user->password = Hash::make('password');
+            $user->api_token = str_random(60);
+            $user->save();
+        }
     }
 
     /**

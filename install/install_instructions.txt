@@ -14,7 +14,6 @@ sudo shutdown -r now
 #install npm and bower
 curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
 sudo apt-get install -y nodejs
-sudo npm install -g bower
 
 #install mySQL. The setup will let you set a root password for the mySQL server. You will need this later.
 sudo apt-get install mysql-server
@@ -22,7 +21,8 @@ sudo apt-get install mysql-server
 #install apache2 and dependencies
 sudo apt-get install apache2 php5 php5-gd libapache2-mod-php5 php5-mysql git
 cd /var/www/;sudo git clone https://github.com/BerlusGmbH/Berlussimo berlussimo
-sudo cp /var/www/berlussimo/classes/config.inc.php.sample /var/www/berlussimo/classes/config.inc.php
+cd /var/www/berlussimo/; sudo git checkout develop
+sudo cp /var/www/berlussimo/legacy/classes/config.inc.php.sample /var/www/berlussimo/legacy/classes/config.inc.php
 
 #edit config to fit your mysql config
 #for example:
@@ -30,30 +30,63 @@ sudo cp /var/www/berlussimo/classes/config.inc.php.sample /var/www/berlussimo/cl
 #define ("DB_PASS", "<your_password_set_above>");
 #define ("DB_NAME", "berlussimo");
 #define ("DB_HOST", "localhost");
-sudo nano /var/www/berlussimo/classes/config.inc.php
+sudo nano /var/www/berlussimo/legacy/classes/config.inc.php
+
+#edit config to fit your mysql config
+#'mysql' => [
+#            'driver' => 'mysql',
+#            'host' => env('DB_HOST', 'localhost'),
+#            'port' => env('DB_PORT', '3306'),
+#            'database' => env('DB_DATABASE', 'berlussimo'),
+#            'username' => env('DB_USERNAME', 'root'),
+#            'password' => env('DB_PASSWORD', '<your_password_set_above>'),
+#            'charset' => 'utf8',
+#            'collation' => 'utf8_unicode_ci',
+#            'prefix' => '',
+#            'strict' => false,
+#            'engine' => null,
+#        ],
+sudo nano /var/www/berlussimo/app/config/database.php
 
 #install composer and fetch dependencies
 curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
-cd /var/www/berlussimo/;sudo composer install
-cd /var/www/berlussimo/;sudo bower --allow-root install bootstrap-treeview
+cd /var/www/berlussimo/
 
-#make web directory writeable by apache2
-sudo chown -R www-data:www-data /var/www/berlussimo
-
-#edit DocumentRoot to /var/www/berlussimo
-sudo nano /etc/apache2/sites-enabled/000-default.conf
-sudo service apache2 restart
+sudo composer install
 
 ### import database schema. Theese instructions will create a database named berlussimo.
 ### Set this name to reflect your settings from config.inc.php
 ### You will be prompted for the root password set above.
 mysqladmin create -u root -p berlussimo
-mysql -u root -p berlussimo < /var/www/berlussimo/INSTALL/DB-Version-0.4.0/berlussimo_db_0.4.0.sql
-mysql -u root -p berlussimo < /var/www/berlussimo/INSTALL/DB-Version-0.4.0/berlussimo_db_0.4.1.sql
-mysql -u root -p berlussimo < /var/www/berlussimo/INSTALL/DB-Version-0.4.0/berlussimo_db_0.4.2.sql
-mysql -u root -p berlussimo < /var/www/berlussimo/INSTALL/DB-Version-0.4.0/berlussimo_db_0.4.3.sql
+mysql -u root -p berlussimo < /var/www/berlussimo/install/DB-Version-0.4.0/berlussimo_db_0.4.0.sql
+mysql -u root -p berlussimo < /var/www/berlussimo/install/DB-Version-0.4.0/berlussimo_db_0.4.1.sql
+mysql -u root -p berlussimo < /var/www/berlussimo/install/DB-Version-0.4.0/berlussimo_db_0.4.2.sql
+mysql -u root -p berlussimo < /var/www/berlussimo/install/DB-Version-0.4.0/berlussimo_db_0.4.3.sql
 
-### you should now be able to open http://<your_server>/index.php in your browser and login with
+sudo php artisan migrate
+sudo php artisan optimize
+sudo php artisan route:cache
 
-# login: admin
+sudo npm install --global gulp-cli
+sudo gulp
+
+sudo sh -c 'echo "APP_KEY=" > .env'
+sudo php artisan key:generate
+
+#make web directory writeable by apache2
+sudo chown -R www-data:www-data /var/www/berlussimo
+
+sudo a2enmod rewrite
+
+#edit DocumentRoot to /var/www/berlussimo/public
+#and insert the following section:
+#        <Directory "/var/www/berlussimo/public">
+#               AllowOverride all
+#        </Directory>
+sudo nano /etc/apache2/sites-enabled/000-default.conf
+sudo service apache2 restart
+
+### you should now be able to open http://<your_server>/ in your browser and login with
+
+# login: admin@berlussimo
 # password: password
