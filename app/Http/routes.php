@@ -112,7 +112,7 @@ Route::group(['prefix' => config('app.legacy.prefix'), 'namespace' => 'Legacy', 
     });
 
     Route::group(['prefix' => 'miete_definieren', 'as' => 'miete_definieren::'], function () {
-        Route::match(['get', 'post'], '/', 'MieteBuchenController@request')->name('index');
+        Route::match(['get', 'post'], '/', 'MieteDefinierenController@request')->name('index');
     });
 
     Route::group(['prefix' => 'mietkontenblatt', 'as' => 'mietkontenblatt::'], function () {
