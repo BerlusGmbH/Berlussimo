@@ -305,40 +305,39 @@ switch ($objekte_raus) {
 function objekte_kurz()
 {
     $db_abfrage = "SELECT OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME";
-    $resultat = mysql_query($db_abfrage) or die (mysql_error());
+    $result = DB::select($db_abfrage);
 
-    $numrows = mysql_numrows($resultat);
-    if ($numrows > 0) {
+    if (!empty($result)) {
         iframe_start();
         echo "<table class=\"sortable striped\">\n";
-        echo "<tr><th>Objekt</th><th>FLÄCHE</th><th>HÄUSER</th><th>Einheiten</th><th>INFOS</th><th colspan=\"9\"></th></tr>";
+        echo "<tr><th>Objekt</th><th>Fläche</th><th>Häuser</th><th>Einheiten</th><th>Infos</th><th colspan=\"9\"></th></tr>";
         $counter = 0;
-        while (list ($OBJEKT_ID, $OBJEKT_KURZNAME) = mysql_fetch_row($resultat)) {
-            $anzahl_haeuser = anzahl_haeuser_im_objekt($OBJEKT_ID);
+        foreach($result as $row) {
+            $anzahl_haeuser = anzahl_haeuser_im_objekt($row['OBJEKT_ID']);
             $counter++;
-            $flaeche = nummer_punkt2komma(objekt_flaeche($OBJEKT_ID));
-            $detail_check = detail_check("OBJEKT", $OBJEKT_ID);
+            $flaeche = nummer_punkt2komma(objekt_flaeche($row['OBJEKT_ID']));
+            $detail_check = detail_check("OBJEKT", $row['OBJEKT_ID']);
             if ($detail_check > 0) {
-                $detail_link = "<a  href='" . route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $OBJEKT_ID]) . "'>Details</a>";
+                $detail_link = "<a  href='" . route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $row['OBJEKT_ID']]) . "'>Details</a>";
             } else {
-                $detail_link = "<a href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $OBJEKT_ID]) . "'>Neues Detail</a>";
+                $detail_link = "<a href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $row['OBJEKT_ID']]) . "'>Neues Detail</a>";
             }
-            $aendern_link = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'objekt_aendern', 'objekt_id' => $OBJEKT_ID]) . "'>Ändern</a>";
-            $haus_neu_link = "<a href='" . route('legacy::haeuserform::index', ['daten_rein' => 'haus_neu', 'objekt_id' => $OBJEKT_ID]) . ">Haus erstellen</a>";
-            $check_liste_link = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'checkliste', 'objekt_id' => $OBJEKT_ID]) . "'>Checkliste HW</a>";
-            $mietaufstellung_link = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'mietaufstellung', 'objekt_id' => $OBJEKT_ID]) . "'>Mietaufstellung</a>";
+            $aendern_link = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'objekt_aendern', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Ändern</a>";
+            $haus_neu_link = "<a href='" . route('legacy::haeuserform::index', ['daten_rein' => 'haus_neu', 'objekt_id' => $row['OBJEKT_ID']]) . ">Haus erstellen</a>";
+            $check_liste_link = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'checkliste', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Checkliste HW</a>";
+            $mietaufstellung_link = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'mietaufstellung', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Mietaufstellung</a>";
             $monat = date("m");
             $jahr = date("Y");
-            $mietaufstellung_link_m_j = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'mietaufstellung_m_j', 'objekt_id' => $OBJEKT_ID, 'monat' => $monat, 'jahr' => $jahr]) . "'>Mietaufstellung MJ</a>";
-            $mietaufstellung_link_m_j_xls = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'mietaufstellung_m_j', 'objekt_id' => $OBJEKT_ID, 'monat' => $monat, 'jahr' => $jahr, 'XLS']) . "'>Mietaufstellung MJ-XLS</a>";
+            $mietaufstellung_link_m_j = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'mietaufstellung_m_j', 'objekt_id' => $row['OBJEKT_ID'], 'monat' => $monat, 'jahr' => $jahr]) . "'>Mietaufstellung MJ</a>";
+            $mietaufstellung_link_m_j_xls = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'mietaufstellung_m_j', 'objekt_id' => $row['OBJEKT_ID'], 'monat' => $monat, 'jahr' => $jahr, 'XLS']) . "'>Mietaufstellung MJ-XLS</a>";
 
-            $alle_mietkontenblatt_link = "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'alle_mkb', 'objekt_id' => $OBJEKT_ID]) . "'>Alle MKB-PDF</a>";
-            $link_mieterliste = "<a href='" . route('legacy::einheiten::index', ['einheit_raus' => 'mieterliste_aktuell', 'objekt_id' => $OBJEKT_ID]) . "'>Mieterliste PDF</a>";
-            $link_mieteremail = "<a href='" . route('legacy::einheiten::index', ['einheit_raus' => 'mieteremail_aktuell', 'objekt_id' => $OBJEKT_ID]) . "'>Mieter-Email</a>";
-            $link_stammdaten = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'stammdaten_pdf', 'objekt_id' => $OBJEKT_ID]) . "'><img src=\"images/pdf_light.png\"></a>";
+            $alle_mietkontenblatt_link = "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'alle_mkb', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Alle MKB-PDF</a>";
+            $link_mieterliste = "<a href='" . route('legacy::einheiten::index', ['einheit_raus' => 'mieterliste_aktuell', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Mieterliste PDF</a>";
+            $link_mieteremail = "<a href='" . route('legacy::einheiten::index', ['einheit_raus' => 'mieteremail_aktuell', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Mieter-Email</a>";
+            $link_stammdaten = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'stammdaten_pdf', 'objekt_id' => $row['OBJEKT_ID']]) . "'><img src=\"images/pdf_light.png\"></a>";
             $vorjahr = date("Y") - 1;
-            $link_sollist = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'mietaufstellung_j', 'objekt_id' => $OBJEKT_ID, 'jahr' => $vorjahr]) . "'>SOLL/IST $vorjahr</a>";
-            echo "<tr class=\"zeile$counter\"><td>$OBJEKT_KURZNAME<br>$link_stammdaten</td><td>$flaeche m²</td><td sorttable_customkey=\"$anzahl_haeuser\"><a  href='" . route('legacy::haeuser::index', ['haus_raus' => 'haus_kurz', 'objekt_id' => $OBJEKT_ID]) . "'>Häuserliste (<b>$anzahl_haeuser</b>)</a>  $haus_neu_link</td><td><a href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_kurz', 'objekt_id' => $OBJEKT_ID]) . "'>Einheitenliste</a></td><td>$detail_link</td><td>$aendern_link</td><td>$check_liste_link</td><td>$mietaufstellung_link</td><td>$mietaufstellung_link_m_j</td><td>$mietaufstellung_link_m_j_xls</td><td>$alle_mietkontenblatt_link</td><td>$link_mieterliste</td><td>$link_mieteremail</td><td>$link_sollist</td></tr>";
+            $link_sollist = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'mietaufstellung_j', 'objekt_id' => $row['OBJEKT_ID'], 'jahr' => $vorjahr]) . "'>SOLL/IST $vorjahr</a>";
+            echo "<tr class=\"zeile$counter\"><td>$row[OBJEKT_KURZNAME]<br>$link_stammdaten</td><td>$flaeche m²</td><td sorttable_customkey=\"$anzahl_haeuser\"><a  href='" . route('legacy::haeuser::index', ['haus_raus' => 'haus_kurz', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Häuserliste (<b>$anzahl_haeuser</b>)</a>  $haus_neu_link</td><td><a href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_kurz', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Einheitenliste</a></td><td>$detail_link</td><td>$aendern_link</td><td>$check_liste_link</td><td>$mietaufstellung_link</td><td>$mietaufstellung_link_m_j</td><td>$mietaufstellung_link_m_j_xls</td><td>$alle_mietkontenblatt_link</td><td>$link_mieterliste</td><td>$link_mieteremail</td><td>$link_sollist</td></tr>";
 
             if ($counter == 2) {
                 $counter = 0;
@@ -352,16 +351,15 @@ function objekte_kurz()
 function objekt_flaeche($objekt_id)
 {
     $db_abfrage = "SELECT SUM(HAUS_QM) AS SUMME FROM HAUS WHERE OBJEKT_ID='$objekt_id'";
-    $resultat = mysql_query($db_abfrage) or die (mysql_error());
-    while (list ($SUMME) = mysql_fetch_row($resultat))
-        return $SUMME;
+    $result = DB::select($db_abfrage);
+    foreach($result as $row)
+        return $row['SUMME'];
 }
 
 function objekt_wohnflaeche($objekt_id)
 {
-    // $sql = 'SELECT SUM(HAUS_QM) AS Summe FROM HAUS';
     $db_abfrage = "SELECT SUM(HAUS_QM) AS SUMME FROM HAUS WHERE OBJEKT_ID='$objekt_id'";
-    $resultat = mysql_query($db_abfrage) or die (mysql_error());
-    while (list ($SUMME) = mysql_fetch_row($resultat))
-        return $SUMME;
+    $result = DB::select($db_abfrage);
+    foreach($result as $row)
+        return $row['SUMME'];
 }

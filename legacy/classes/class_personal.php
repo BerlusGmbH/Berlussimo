@@ -78,20 +78,14 @@ class personal
 
     function check_datensatz_sepa($gk_id, $vzweck, $kos_typ, $kos_id, $konto)
     {
-        $result = mysql_query("SELECT * FROM SEPA_UEBERWEISUNG WHERE FILE IS NULL && GK_ID_AUFTRAG ='$gk_id' && `AKTUELL` = '1' && VZWECK = '$vzweck' && KONTO='$konto' && KOS_TYP='$kos_typ' && KOS_ID='$kos_id' LIMIT 0,1");
-
-        $row = mysql_fetch_assoc($result);
-        if ($row) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select("SELECT * FROM SEPA_UEBERWEISUNG WHERE FILE IS NULL && GK_ID_AUFTRAG ='$gk_id' && `AKTUELL` = '1' && VZWECK = '$vzweck' && KONTO='$konto' && KOS_TYP='$kos_typ' && KOS_ID='$kos_id' LIMIT 0,1");
+        return !empty($result);
     }
 
     function get_mitarbeiter_summe($gk_id, $konto, $benutzername, $kos_typ = null, $kos_id = null)
     {
-        $result = mysql_query("SELECT BETRAG FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$gk_id' && `AKTUELL` = '1' && VERWENDUNGSZWECK LIKE '%$benutzername%' && KONTENRAHMEN_KONTO='$konto' ORDER BY G_BUCHUNGSNUMMER DESC LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT BETRAG FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$gk_id' && `AKTUELL` = '1' && VERWENDUNGSZWECK LIKE '%$benutzername%' && KONTENRAHMEN_KONTO='$konto' ORDER BY G_BUCHUNGSNUMMER DESC LIMIT 0,1");
+        $row = $result[0];
         return $row ['BETRAG'];
     }
 

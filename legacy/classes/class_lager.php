@@ -3,12 +3,9 @@
 class lager {
 	var $lagerbestand_arr;
 	function lager_in_array() {
-		$result = mysql_query ( "SELECT * FROM LAGER WHERE AKTUELL = '1' ORDER BY LAGER_NAME ASC" );
-		$numrows = mysql_numrows ( $result );
-		if ($numrows > 0) {
-			while ( $row = mysql_fetch_assoc ( $result ) )
-				$my_array [] = $row;
-			return $my_array;
+		$result = DB::select( "SELECT * FROM LAGER WHERE AKTUELL = '1' ORDER BY LAGER_NAME ASC" );
+		if (!empty($result)) {
+			return $result;
 		} else {
 			return false;
 		}
@@ -24,30 +21,27 @@ class lager {
 		echo "</select><br>\n";
 	}
 	function lager_bezeichnung($id) {
-		$result = mysql_query ( "SELECT LAGER_NAME FROM LAGER WHERE AKTUELL = '1' && LAGER_ID='$id' ORDER BY LAGER_NAME ASC" );
-		$numrows = mysql_numrows ( $result );
-		if ($numrows > 0) {
-			$row = mysql_fetch_assoc ( $result );
+		$result = DB::select( "SELECT LAGER_NAME FROM LAGER WHERE AKTUELL = '1' && LAGER_ID='$id' ORDER BY LAGER_NAME ASC" );
+		if (!empty($result)) {
+			$row = $result[0];
 			return $row ['LAGER_NAME'];
 		} else {
 			return false;
 		}
 	}
 	function get_lager_id($bez) {
-		$result = mysql_query ( "SELECT LAGER_ID FROM LAGER WHERE AKTUELL = '1' && LAGER_NAME='$bez' ORDER BY LAGER_NAME ASC LIMIT 0,1" );
-		$numrows = mysql_numrows ( $result );
-		if ($numrows > 0) {
-			$row = mysql_fetch_assoc ( $result );
+		$result = DB::select( "SELECT LAGER_ID FROM LAGER WHERE AKTUELL = '1' && LAGER_NAME='$bez' ORDER BY LAGER_NAME ASC LIMIT 0,1" );
+		if (!empty($result)) {
+			$row = $result[0];
 			return $row ['LAGER_ID'];
 		} else {
 			return false;
 		}
 	}
 	function lager_name_partner($id) {
-		$result = mysql_query ( "SELECT LAGER_NAME, PARTNER_ID FROM LAGER RIGHT JOIN(LAGER_PARTNER) ON (LAGER.LAGER_ID = LAGER_PARTNER.LAGER_ID) WHERE LAGER.AKTUELL = '1' && LAGER_PARTNER.AKTUELL = '1' && LAGER.LAGER_ID='$id' ORDER BY LAGER_NAME ASC" );
-		$numrows = mysql_numrows ( $result );
-		if ($numrows > 0) {
-			$row = mysql_fetch_assoc ( $result );
+		$result = DB::select( "SELECT LAGER_NAME, PARTNER_ID FROM LAGER RIGHT JOIN(LAGER_PARTNER) ON (LAGER.LAGER_ID = LAGER_PARTNER.LAGER_ID) WHERE LAGER.AKTUELL = '1' && LAGER_PARTNER.AKTUELL = '1' && LAGER.LAGER_ID='$id' ORDER BY LAGER_NAME ASC" );
+		if (!empty($result)) {
+			$row = $result[0];
 			$this->lager_name = $row ['LAGER_NAME'];
 			$this->lager_partner_id = $row ['PARTNER_ID'];
 		} else {
@@ -81,20 +75,19 @@ class lager {
 	function artikel_suche_einkauf($artikel_nr, $empfaenger_typ, $empfaenger_id) {
 		$r = new rechnung ();
 		$bez = $r->kostentraeger_ermitteln ( $empfaenger_typ, $empfaenger_id );
-		$result = mysql_query ( " SELECT RECHNUNGSNUMMER, RECHNUNGSDATUM, RECHNUNGEN_POSITIONEN.BELEG_NR, U_BELEG_NR, POSITION, ART_LIEFERANT, ARTIKEL_NR, MENGE, PREIS
+		$result = DB::select( " SELECT RECHNUNGSNUMMER, RECHNUNGSDATUM, RECHNUNGEN_POSITIONEN.BELEG_NR, U_BELEG_NR, POSITION, ART_LIEFERANT, ARTIKEL_NR, MENGE, PREIS
 FROM `RECHNUNGEN_POSITIONEN` , RECHNUNGEN
 WHERE `ARTIKEL_NR` LIKE '%$artikel_nr%'
 AND RECHNUNGEN.AKTUELL = '1'
 AND RECHNUNGEN_POSITIONEN.AKTUELL = '1'
 AND RECHNUNGEN.EMPFAENGER_TYP = '$empfaenger_typ' && RECHNUNGEN.EMPFAENGER_ID = '$empfaenger_id' && RECHNUNGEN_POSITIONEN.BELEG_NR = RECHNUNGEN.BELEG_NR" );
-		$numrows = mysql_numrows ( $result );
-		if ($numrows) {
+		if (!empty($result)) {
 			echo "<h3>Suchergebnis in Rechnungen von $bez  zu: $artikel_nr</h3>";
 			echo "<table class=\"sortable\">";
 			echo "<tr><th>LIEFERANT</th><th>ARTIKELNR</th><th>RDATUM</th><th>RNR</th><th>POSITION</th><th>BEZEICHNUNG</th><th>MENGE EINGANG</th><th>MENGE RAUS</th><th>RESTMENGE</th><th>PREIS</th></tr>";
 			$g_menge = 0;
 			$g_kontiert = 0;
-			while ( $row = mysql_fetch_assoc ( $result ) ) {
+			foreach($result as $row) {
 				$p = new partners ();
 
 				$r_nr = $row ['RECHNUNGSNUMMER'];
@@ -109,7 +102,6 @@ AND RECHNUNGEN.EMPFAENGER_TYP = '$empfaenger_typ' && RECHNUNGEN.EMPFAENGER_ID = 
 				$artikel_info_arr = $r->artikel_info ( $art_lieferant, $art_nr );
 				$anz_bez = count ( $artikel_info_arr );
 				$artikel_bez = $artikel_info_arr [0] ['BEZEICHNUNG'];
-				// print_r($artikel_info_arr);
 				$kontierte_menge = nummer_punkt2komma ( $r->position_auf_kontierung_pruefen ( $beleg_nr, $position ) );
 				$g_kontiert += nummer_komma2punkt ( $kontierte_menge );
 				$g_menge += $menge;
@@ -136,41 +128,19 @@ AND RECHNUNGEN.EMPFAENGER_TYP = '$empfaenger_typ' && RECHNUNGEN.EMPFAENGER_ID = 
 		$f->send_button ( "submit", "Suchen" );
 		$f->ende_formular ();
 	}
-	function artikel_suche($suchtext) {
-		/*
-		 * SELECT *
-		 * FROM `RECHNUNGEN_POSITIONEN` , RECHNUNGEN
-		 * WHERE `ARTIKEL_NR` LIKE '145980'
-		 * AND RECHNUNGEN.AKTUELL = '1'
-		 * AND RECHNUNGEN_POSITIONEN.AKTUELL = '1'
-		 * AND RECHNUNGEN.EMPFAENGER_TYP = 'Lager' && RECHNUNGEN.EMPFAENGER_ID = '3' && RECHNUNGEN_POSITIONEN.BELEG_NR = RECHNUNGEN.BELEG_NR
-		 * LIMIT 0 , 30
-		 */
-	}
 	function lagerbestand_anzeigen() {
 		if (session()->has('lager_id')) {
 			$lager_id = session()->get('lager_id');
-			mysql_query ( "SET SQL_BIG_SELECTS=1" );
-			// $result = mysql_query ("SELECT RECHNUNGEN_POSITIONEN.BELEG_NR, POSITION, BEZEICHNUNG, RECHNUNGEN_POSITIONEN.ART_LIEFERANT, RECHNUNGEN_POSITIONEN.ARTIKEL_NR, COUNT( RECHNUNGEN_POSITIONEN.MENGE) AS GEKAUFTE_MENGE, RECHNUNGEN_POSITIONEN.PREIS, RECHNUNGEN_POSITIONEN.MWST_SATZ FROM RECHNUNGEN RIGHT JOIN (RECHNUNGEN_POSITIONEN, POSITIONEN_KATALOG) ON ( RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && POSITIONEN_KATALOG.ART_LIEFERANT = RECHNUNGEN_POSITIONEN.ART_LIEFERANT && RECHNUNGEN_POSITIONEN.ARTIKEL_NR = POSITIONEN_KATALOG.ARTIKEL_NR ) WHERE EMPFAENGER_TYP = 'Lager' && EMPFAENGER_ID = '$lager_id' && RECHNUNGEN_POSITIONEN.AKTUELL='1' GROUP BY RECHNUNGEN_POSITIONEN.ARTIKEL_NR ORDER BY BEZEICHNUNG");
-
-			$result = mysql_query ( "SELECT RECHNUNGEN.EINGANGSDATUM, RECHNUNGEN_POSITIONEN.BELEG_NR, POSITION, BEZEICHNUNG, RECHNUNGEN_POSITIONEN.ART_LIEFERANT, RECHNUNGEN_POSITIONEN.ARTIKEL_NR, RECHNUNGEN_POSITIONEN.MENGE AS GEKAUFTE_MENGE, RECHNUNGEN_POSITIONEN.PREIS, RECHNUNGEN_POSITIONEN.MWST_SATZ FROM RECHNUNGEN RIGHT JOIN (RECHNUNGEN_POSITIONEN, POSITIONEN_KATALOG) ON ( RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && POSITIONEN_KATALOG.ART_LIEFERANT = RECHNUNGEN_POSITIONEN.ART_LIEFERANT && RECHNUNGEN_POSITIONEN.ARTIKEL_NR = POSITIONEN_KATALOG.ARTIKEL_NR  ) WHERE EMPFAENGER_TYP = 'Lager' && EMPFAENGER_ID = '$lager_id' && RECHNUNGEN_POSITIONEN.AKTUELL='1' && RECHNUNGEN.AKTUELL='1'  GROUP BY RECHNUNGEN_POSITIONEN.ARTIKEL_NR, BELEG_NR ORDER BY BEZEICHNUNG ASC" );
-			// echo "SELECT RECHNUNGEN.EINGANGSDATUM, RECHNUNGEN_POSITIONEN.BELEG_NR, POSITION, BEZEICHNUNG, RECHNUNGEN_POSITIONEN.ART_LIEFERANT, RECHNUNGEN_POSITIONEN.ARTIKEL_NR, RECHNUNGEN_POSITIONEN.MENGE AS GEKAUFTE_MENGE, RECHNUNGEN_POSITIONEN.PREIS, RECHNUNGEN_POSITIONEN.MWST_SATZ FROM RECHNUNGEN RIGHT JOIN (RECHNUNGEN_POSITIONEN, POSITIONEN_KATALOG) ON ( RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && POSITIONEN_KATALOG.ART_LIEFERANT = RECHNUNGEN_POSITIONEN.ART_LIEFERANT && RECHNUNGEN_POSITIONEN.ARTIKEL_NR = POSITIONEN_KATALOG.ARTIKEL_NR ) WHERE EMPFAENGER_TYP = 'Lager' && EMPFAENGER_ID = '$lager_id' && RECHNUNGEN_POSITIONEN.AKTUELL='1' && RECHNUNGEN.AKTUELL='1' GROUP BY RECHNUNGEN_POSITIONEN.ARTIKEL_NR, BELEG_NR ORDER BY BEZEICHNUNG ASC";
-
-			$az = mysql_numrows ( $result );
-			// az = anzahl zeilen
+			DB::statement( "SET SQL_BIG_SELECTS=1" );
+			$my_array = DB::select( "SELECT RECHNUNGEN.EINGANGSDATUM, RECHNUNGEN_POSITIONEN.BELEG_NR, POSITION, BEZEICHNUNG, RECHNUNGEN_POSITIONEN.ART_LIEFERANT, RECHNUNGEN_POSITIONEN.ARTIKEL_NR, RECHNUNGEN_POSITIONEN.MENGE AS GEKAUFTE_MENGE, RECHNUNGEN_POSITIONEN.PREIS, RECHNUNGEN_POSITIONEN.MWST_SATZ FROM RECHNUNGEN RIGHT JOIN (RECHNUNGEN_POSITIONEN, POSITIONEN_KATALOG) ON ( RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && POSITIONEN_KATALOG.ART_LIEFERANT = RECHNUNGEN_POSITIONEN.ART_LIEFERANT && RECHNUNGEN_POSITIONEN.ARTIKEL_NR = POSITIONEN_KATALOG.ARTIKEL_NR  ) WHERE EMPFAENGER_TYP = 'Lager' && EMPFAENGER_ID = '$lager_id' && RECHNUNGEN_POSITIONEN.AKTUELL='1' && RECHNUNGEN.AKTUELL='1'  GROUP BY RECHNUNGEN_POSITIONEN.ARTIKEL_NR, BELEG_NR ORDER BY BEZEICHNUNG ASC" );
+			$az = count( $my_array );
 			if ($az) {
-				while ( $row = mysql_fetch_assoc ( $result ) ) {
-					$my_array [] = $row;
-				}
-
 				echo "<table class=\"sortable\">";
-				// echo "<tr class=\"feldernamen\" align=\"right\"><td>Ansehen</td><td>Artikelnr.</td><td>Artikelbezeichnung</td><td>MENGE</td><td>RESTMENGE</td><td>PREIS</td><td>MWSt</td><td>RESTWERT</td></tr>";
 				echo "<tr><th>Datum</th><th>LIEFERANT</th><th>Rechnung</th><th>Artikelnr.</th><th>Bezeichnung</th><th>Menge</th><th>rest</th><th>Preis</th><th>Mwst</th><th>Restwert</th></tr>";
 				$gesamt_lager_wert = 0;
 				$zaehler = 0;
 				$rechnung_info = new rechnung ();
-				for($a = 0; $a < count ( $my_array ); $a ++) {
-
+				for($a = 0; $a < $az; $a ++) {
 					$datum = date_mysql2german ( $my_array [$a] ['EINGANGSDATUM'] );
 					$beleg_nr = $my_array [$a] ['BELEG_NR'];
 					$lieferant_id = $my_array [$a] ['ART_LIEFERANT'];

@@ -15,17 +15,9 @@ class partner extends rechnung {
         return $partner_id;
     }
 
-    /*
-	 * function get_partner_name($partner_id){
-	 * $result = mysql_query ("SELECT PARTNER_NAME FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
-	 * $row = mysql_fetch_assoc($result);
-	 * return $row['PARTNER_NAME'];
-	 * }
-	 */
     function get_aussteller_info($partner_id) {
-        $result = mysql_query ( "SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'" );
-        $row = mysql_fetch_assoc ( $result );
-        // return
+        $result = DB::select( "SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'" );
+        $row = $result[0];
         $this->rechnungs_aussteller_name = $row ['PARTNER_NAME'];
         $this->rechnungs_aussteller_strasse = $row ['STRASSE'];
         $this->rechnungs_aussteller_hausnr = $row ['NUMMER'];
@@ -33,9 +25,8 @@ class partner extends rechnung {
         $this->rechnungs_aussteller_ort = $row ['ORT'];
     }
     function get_empfaenger_info($partner_id) {
-        $result = mysql_query ( "SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'" );
-        $row = mysql_fetch_assoc ( $result );
-        // return
+        $result = DB::select( "SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'" );
+        $row = $result[0];
         $this->rechnungs_empfaenger_name = $row ['PARTNER_NAME'];
         $this->rechnungs_empfaenger_strasse = $row ['STRASSE'];
         $this->rechnungs_empfaenger_hausnr = $row ['NUMMER'];
@@ -47,7 +38,6 @@ class partner extends rechnung {
     function form_partner_erfassen() {
         $form = new mietkonto ();
         $form->erstelle_formular ( "Partner erfassen", NULL );
-        // $form->text_feld("Partnername:", "partnername", "", "10");
         $form->text_bereich ( "Partnername", "partnername", session()->get('partnername'), "20", "3" );
         $form->text_feld ( "Strasse:", "strasse", session()->get('strasse'), "50" );
         $form->text_feld ( "Nummer:", "hausnummer", session()->get('hausnummer'), "10" );
@@ -95,8 +85,8 @@ class partner extends rechnung {
         } // Ende foreach
 
         /* Prüfen ob Partner/Liefernat vorhanden */
-        $result_3 = mysql_query ( "SELECT * FROM PARTNER_LIEFERANT WHERE PARTNER_NAME = '$clean_arr[partnername]' && STRASSE='$clean_arr[strasse]' && NUMMER='$clean_arr[hausnummer]' && PLZ='$clean_arr[plz]' && AKTUELL = '1' ORDER BY PARTNER_NAME" );
-        $numrows_3 = mysql_numrows ( $result_3 );
+        $result_3 = DB::select( "SELECT * FROM PARTNER_LIEFERANT WHERE PARTNER_NAME = '$clean_arr[partnername]' && STRASSE='$clean_arr[strasse]' && NUMMER='$clean_arr[hausnummer]' && PLZ='$clean_arr[plz]' && AKTUELL = '1' ORDER BY PARTNER_NAME" );
+        $numrows_3 = count($result_3);
 
         /* Wenn kein Fehler durch eingabe oder partner in db nicht vorhanden wird neuer datensatz gespeichert */
 
@@ -105,9 +95,9 @@ class partner extends rechnung {
             $partner_id = $this->letzte_partner_id ();
             $partner_id = $partner_id + 1;
             $db_abfrage = "INSERT INTO PARTNER_LIEFERANT VALUES (NULL, $partner_id, '$clean_arr[partnername]','$clean_arr[strasse]', '$clean_arr[hausnummer]','$clean_arr[plz]','$clean_arr[ort]','$clean_arr[land]','1')";
-            $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+            DB::insert( $db_abfrage );
             /* Protokollieren */
-            $last_dat = mysql_insert_id ();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren ( 'PARTNER_LIEFERANT', $last_dat, '0' );
 
             if (! empty ( $kreditinstitut ) or ! empty ( $kontonummer ) or ! empty ( $blz )) {
@@ -115,15 +105,15 @@ class partner extends rechnung {
                 $konto_id = $this->letzte_geldkonto_id ();
                 $konto_id = $konto_id + 1;
                 $db_abfrage = "INSERT INTO GELD_KONTEN VALUES (NULL, '$konto_id','$clean_arr[partnername] - Konto','$clean_arr[partnername]', '$clean_arr[KONTONUMMER]','$clean_arr[BLZ]', '$clean_arr[kreditinstitut]','1')";
-                $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+                DB::insert( $db_abfrage );
                 /* Protokollieren */
-                $last_dat = mysql_insert_id ();
+                $last_dat = DB::getPdo()->lastInsertId();
                 protokollieren ( 'GELD_KONTEN', $last_dat, '0' );
                 /* Geldkonto dem Partner zuweisen */
                 $letzte_zuweisung_id = $this->letzte_zuweisung_geldkonto_id ();
                 $letzte_zuweisung_id = $letzte_zuweisung_id + 1;
                 $db_abfrage = "INSERT INTO GELD_KONTEN_ZUWEISUNG VALUES (NULL, '$letzte_zuweisung_id','$konto_id', 'Partner','$partner_id', '1')";
-                $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+                DB::insert( $db_abfrage );
             }
             if (isset ( $resultat )) {
                 hinweis_ausgeben ( "Partner $clean_arr[partnername] wurde gespeichert." );
@@ -147,38 +137,35 @@ class partner extends rechnung {
 
     /* Letzte Partner ID */
     function letzte_partner_id() {
-        $result = mysql_query ( "SELECT PARTNER_ID FROM PARTNER_LIEFERANT  ORDER BY PARTNER_ID DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT PARTNER_ID FROM PARTNER_LIEFERANT  ORDER BY PARTNER_ID DESC LIMIT 0,1" );
+        $row = $result[0];
         return $row ['PARTNER_ID'];
     }
 
     /* Letzte Partnergeldkonto ID */
     function letzte_geldkonto_id() {
-        $result = mysql_query ( "SELECT KONTO_ID FROM GELD_KONTEN ORDER BY KONTO_ID DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT KONTO_ID FROM GELD_KONTEN ORDER BY KONTO_ID DESC LIMIT 0,1" );
+        $row = $result[0];
         return $row ['KONTO_ID'];
     }
 
     /* Letzte Zuweisunggeldkonto ID */
     function letzte_zuweisung_geldkonto_id() {
-        $result = mysql_query ( "SELECT ZUWEISUNG_ID FROM GELD_KONTEN_ZUWEISUNG ORDER BY ZUWEISUNG_ID DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT ZUWEISUNG_ID FROM GELD_KONTEN_ZUWEISUNG ORDER BY ZUWEISUNG_ID DESC LIMIT 0,1" );
+        $row = $result[0];
         return $row ['ZUWEISUNG_ID'];
     }
     function partner_rechts_anzeigen() {
-        $result = mysql_query ( "SELECT * FROM PARTNER_LIEFERANT WHERE AKTUELL = '1' ORDER BY PARTNER_NAME" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows > 0) {
+        $result = DB::select( "SELECT * FROM PARTNER_LIEFERANT WHERE AKTUELL = '1' ORDER BY PARTNER_NAME" );
+        if (!empty($result)) {
             $form = new mietkonto ();
             $form->erstelle_formular ( "Partner", NULL );
             echo "<div class=\"tabelle\">\n";
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_array [] = $row;
             echo "<table>\n";
-            // echo "<tr class=\"feldernamen\"><td>Partner</td></tr>\n";
             echo "<tr><th>Partner</th></tr>";
-            for($i = 0; $i < count ( $my_array ); $i ++) {
-                echo "<tr><td>" . $my_array [$i] ['PARTNER_NAME'] . "</td></tr>\n";
+            $numrows = count($result);
+            for($i = 0; $i < $numrows; $i ++) {
+                echo "<tr><td>" . $result[$i] ['PARTNER_NAME'] . "</td></tr>\n";
             }
             echo "</table></div>\n";
             $form->ende_formular ();
@@ -187,21 +174,17 @@ class partner extends rechnung {
         }
     }
     function partner_in_array() {
-        $result = mysql_query ( "SELECT * FROM PARTNER_LIEFERANT WHERE AKTUELL = '1' ORDER BY PARTNER_NAME ASC" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows) {
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_array [] = $row;
-            return $my_array;
+        $result = DB::select( "SELECT * FROM PARTNER_LIEFERANT WHERE AKTUELL = '1' ORDER BY PARTNER_NAME ASC" );
+        if (!empty($result)) {
+            return $result;
         } else {
             return false;
         }
     }
     function partner_grunddaten($partner_id) {
-        $result = mysql_query ( "SELECT * FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1' ORDER BY PARTNER_DAT DESC LIMIT 0,1" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT * FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1' ORDER BY PARTNER_DAT DESC LIMIT 0,1" );
+        if (!empty($result)) {
+            $row = $result[0];
             $this->partner_id = $partner_id;
             $this->partner_name = $row ['PARTNER_NAME'];
             $this->partner_str = $row ['STRASSE'];
@@ -214,10 +197,9 @@ class partner extends rechnung {
         }
     }
     function getpartner_id_name($partner_name) {
-        $result = mysql_query ( "SELECT PARTNER_ID FROM PARTNER_LIEFERANT WHERE REPLACE(PARTNER_NAME, '<br>', '') ='$partner_name' && AKTUELL = '1' ORDER BY PARTNER_DAT DESC LIMIT 0,1" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT PARTNER_ID FROM PARTNER_LIEFERANT WHERE REPLACE(PARTNER_NAME, '<br>', '') ='$partner_name' && AKTUELL = '1' ORDER BY PARTNER_DAT DESC LIMIT 0,1" );
+        if (!empty($result)) {
+            $row = $result[0];
             $this->partner_id = $row ['PARTNER_ID'];
         } else {
             return false;
@@ -302,7 +284,7 @@ class partner extends rechnung {
         session()->forget('partner_id');
         $form = new formular ();
         $form->erstelle_formular ( "Partner wählen", NULL );
-        $result = mysql_query ( "
+        $result = DB::select( "
 SELECT PARTNER_NAME, PARTNER_LIEFERANT.PARTNER_ID, RECHNUNGEN
 FROM PARTNER_LIEFERANT LEFT JOIN (
 	SELECT PARTNER_ID, SUM(RECHNUNGEN) AS RECHNUNGEN
@@ -324,10 +306,9 @@ FROM PARTNER_LIEFERANT LEFT JOIN (
 WHERE PARTNER_LIEFERANT.AKTUELL = '1'
 ORDER BY RECHNUNGEN DESC, PARTNER_NAME ASC;
 " );
-        $numrows = mysql_numrows ( $result );
         echo "<p class=\"objekt_auswahl\">";
-        if ($numrows) {
-            while ( $row = mysql_fetch_assoc ( $result ) ) {
+        if (!empty($result)) {
+            foreach( $result as $row ) {
                 $partner_link = "<a class=\"objekt_auswahl_buchung\" href='" . route('legacy::partner::select', [$row['PARTNER_ID']]) . "'>$row[PARTNER_NAME]</a>";
 				echo "$partner_link<hr>";
 			}
@@ -337,9 +318,5 @@ ORDER BY RECHNUNGEN DESC, PARTNER_NAME ASC;
 			return FALSE;
 		}
 		$form->ende_formular ();
-	}
-	function anzahl_rechnungen($p_id) {
-		$result = mysql_query ( "SELECT COUNT(BELEG_NR) FROM RECHNUNGEN WHERE AKTUELL = '1' && (AUSSTELLER_ID='$p_id' OR EMPFAENGER_ID='$p_id')  ORDER BY PARTNER_NAME ASC" );
-		$numrows = mysql_numrows ( $result );
 	}
 } // Ende Klasse Partner

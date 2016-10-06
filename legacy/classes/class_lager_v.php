@@ -17,22 +17,17 @@ class lager_v {
         $f->ende_formular ();
     } // Funktionsende
     function check_lieferschein_exists($li_typ, $li_id, $empf_typ, $empf_id, $datum, $l_nr) {
-        $result = mysql_query ( "SELECT * FROM LIEFERSCHEINE WHERE AKTUELL='1' && DATUM='$datum' && LI_TYP='$li_typ' && LI_ID='$li_id' && EMPF_TYP='$empf_typ' && EMPF_ID='$empf_id'" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select( "SELECT * FROM LIEFERSCHEINE WHERE AKTUELL='1' && DATUM='$datum' && LI_TYP='$li_typ' && LI_ID='$li_id' && EMPF_TYP='$empf_typ' && EMPF_ID='$empf_id'" );
+        return !empty($result);
     }
     function lieferschein_speichern($li_typ, $li_id, $empf_typ, $empf_id, $datum, $l_nr) {
         $datum = date_german2mysql ( $datum );
         if (! $this->check_lieferschein_exists ( $li_typ, $li_id, $empf_typ, $empf_id, $datum, $l_nr )) {
             $last_id = last_id2 ( 'LIEFERSCHEINE', 'L_ID' ) + 1;
             $db_abfrage = "INSERT INTO LIEFERSCHEINE VALUES (NULL, '$last_id','$datum', '$li_typ', '$li_id', '$empf_typ','$empf_id','$l_nr', '1')";
-            $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+            DB::insert( $db_abfrage );
             /* Protokollieren */
-            $last_dat = mysql_insert_id ();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren ( 'LIEFERSCHEINE', $last_dat, '0' );
         } else {
             die ( 'Lieferschein existiert bereits' );
@@ -45,22 +40,15 @@ class lager_v {
             $ll = new lager ();
             $ll->lager_name_partner ( $lager_id );
             /* $ll->lager_partner_id */
-            mysql_query ( "SET SQL_BIG_SELECTS=1" );
-            $result = mysql_query ( "SELECT RECHNUNGSNUMMER, RECHNUNGEN.EINGANGSDATUM, RECHNUNGEN_POSITIONEN.BELEG_NR, POSITION, BEZEICHNUNG, RECHNUNGEN_POSITIONEN.ART_LIEFERANT, RECHNUNGEN_POSITIONEN.ARTIKEL_NR, RECHNUNGEN_POSITIONEN.MENGE AS GEKAUFTE_MENGE, RECHNUNGEN_POSITIONEN.PREIS, RECHNUNGEN_POSITIONEN.MWST_SATZ FROM RECHNUNGEN RIGHT JOIN (RECHNUNGEN_POSITIONEN, POSITIONEN_KATALOG) ON ( RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && POSITIONEN_KATALOG.ART_LIEFERANT = RECHNUNGEN_POSITIONEN.ART_LIEFERANT && RECHNUNGEN_POSITIONEN.ARTIKEL_NR = POSITIONEN_KATALOG.ARTIKEL_NR  ) WHERE EMPFAENGER_TYP = 'Lager' && EMPFAENGER_ID = '$lager_id' && EINGANGSDATUM<='$datum_bis' && RECHNUNGEN_POSITIONEN.AKTUELL='1' && RECHNUNGEN.AKTUELL='1'  GROUP BY RECHNUNGEN_POSITIONEN.ARTIKEL_NR, BELEG_NR ORDER BY RECHNUNGEN.EINGANGSDATUM ASC" );
+            DB::statement( "SET SQL_BIG_SELECTS=1" );
+            $my_array = DB::select( "SELECT RECHNUNGSNUMMER, RECHNUNGEN.EINGANGSDATUM, RECHNUNGEN_POSITIONEN.BELEG_NR, POSITION, BEZEICHNUNG, RECHNUNGEN_POSITIONEN.ART_LIEFERANT, RECHNUNGEN_POSITIONEN.ARTIKEL_NR, RECHNUNGEN_POSITIONEN.MENGE AS GEKAUFTE_MENGE, RECHNUNGEN_POSITIONEN.PREIS, RECHNUNGEN_POSITIONEN.MWST_SATZ FROM RECHNUNGEN RIGHT JOIN (RECHNUNGEN_POSITIONEN, POSITIONEN_KATALOG) ON ( RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && POSITIONEN_KATALOG.ART_LIEFERANT = RECHNUNGEN_POSITIONEN.ART_LIEFERANT && RECHNUNGEN_POSITIONEN.ARTIKEL_NR = POSITIONEN_KATALOG.ARTIKEL_NR  ) WHERE EMPFAENGER_TYP = 'Lager' && EMPFAENGER_ID = '$lager_id' && EINGANGSDATUM<='$datum_bis' && RECHNUNGEN_POSITIONEN.AKTUELL='1' && RECHNUNGEN.AKTUELL='1'  GROUP BY RECHNUNGEN_POSITIONEN.ARTIKEL_NR, BELEG_NR ORDER BY RECHNUNGEN.EINGANGSDATUM ASC" );
 
-            $az = mysql_numrows ( $result ); // az = anzahl zeilen
+            $az = count($my_array); // az = anzahl zeilen
             if ($az) {
-                while ( $row = mysql_fetch_assoc ( $result ) ) {
-                    $my_array [] = $row;
-                }
-
-                // echo "<table class=\"sortable\">";
-                // echo "<tr class=\"feldernamen\" align=\"right\"><td>Ansehen</td><td>Artikelnr.</td><td>Artikelbezeichnung</td><td>MENGE</td><td>RESTMENGE</td><td>PREIS</td><td>MWSt</td><td>RESTWERT</td></tr>";
-                // echo "<tr><th>Datum</th><th>LIEFERANT</th><th>Rechnung</th><th>Artikelnr.</th><th>Bezeichnung</th><th>Menge</th><th>rest</th><th>Preis</th><th>Mwst</th><th>Restwert</th></tr>";
                 $gesamt_lager_wert = 0;
                 $zaehler = 0;
                 $rechnung_info = new rechnung ();
-                for($a = 0; $a < count ( $my_array ); $a ++) {
+                for($a = 0; $a < $az; $a ++) {
 
                     $datum = date_mysql2german ( $my_array [$a] ['EINGANGSDATUM'] );
                     $beleg_nr = $my_array [$a] ['BELEG_NR'];
@@ -184,25 +172,17 @@ class lager_v {
         $datum = date_german2mysql ( $datum );
         if (session()->has('lager_id')) {
             $lager_id = session()->get('lager_id');
-            mysql_query ( "SET SQL_BIG_SELECTS=1" );
-            // $result = mysql_query ("SELECT RECHNUNGEN_POSITIONEN.BELEG_NR, POSITION, BEZEICHNUNG, RECHNUNGEN_POSITIONEN.ART_LIEFERANT, RECHNUNGEN_POSITIONEN.ARTIKEL_NR, COUNT( RECHNUNGEN_POSITIONEN.MENGE) AS GEKAUFTE_MENGE, RECHNUNGEN_POSITIONEN.PREIS, RECHNUNGEN_POSITIONEN.MWST_SATZ FROM RECHNUNGEN RIGHT JOIN (RECHNUNGEN_POSITIONEN, POSITIONEN_KATALOG) ON ( RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && POSITIONEN_KATALOG.ART_LIEFERANT = RECHNUNGEN_POSITIONEN.ART_LIEFERANT && RECHNUNGEN_POSITIONEN.ARTIKEL_NR = POSITIONEN_KATALOG.ARTIKEL_NR ) WHERE EMPFAENGER_TYP = 'Lager' && EMPFAENGER_ID = '$lager_id' && RECHNUNGEN_POSITIONEN.AKTUELL='1' GROUP BY RECHNUNGEN_POSITIONEN.ARTIKEL_NR ORDER BY BEZEICHNUNG");
-
-            $result = mysql_query ( "SELECT RECHNUNGEN.EINGANGSDATUM, RECHNUNGEN_POSITIONEN.BELEG_NR, POSITION, BEZEICHNUNG, RECHNUNGEN_POSITIONEN.ART_LIEFERANT, RECHNUNGEN_POSITIONEN.ARTIKEL_NR, RECHNUNGEN_POSITIONEN.MENGE AS GEKAUFTE_MENGE, RECHNUNGEN_POSITIONEN.PREIS, RECHNUNGEN_POSITIONEN.MWST_SATZ FROM RECHNUNGEN RIGHT JOIN (RECHNUNGEN_POSITIONEN, POSITIONEN_KATALOG) ON ( RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && POSITIONEN_KATALOG.ART_LIEFERANT = RECHNUNGEN_POSITIONEN.ART_LIEFERANT && RECHNUNGEN_POSITIONEN.ARTIKEL_NR = POSITIONEN_KATALOG.ARTIKEL_NR  ) WHERE EMPFAENGER_TYP = 'Lager' && EMPFAENGER_ID = '$lager_id' && EINGANGSDATUM<='$datum' && RECHNUNGEN_POSITIONEN.AKTUELL='1' && RECHNUNGEN.AKTUELL='1'  GROUP BY RECHNUNGEN_POSITIONEN.ARTIKEL_NR, BELEG_NR ORDER BY RECHNUNGEN.EINGANGSDATUM ASC" );
-            // echo "SELECT RECHNUNGEN.EINGANGSDATUM, RECHNUNGEN_POSITIONEN.BELEG_NR, POSITION, BEZEICHNUNG, RECHNUNGEN_POSITIONEN.ART_LIEFERANT, RECHNUNGEN_POSITIONEN.ARTIKEL_NR, RECHNUNGEN_POSITIONEN.MENGE AS GEKAUFTE_MENGE, RECHNUNGEN_POSITIONEN.PREIS, RECHNUNGEN_POSITIONEN.MWST_SATZ FROM RECHNUNGEN RIGHT JOIN (RECHNUNGEN_POSITIONEN, POSITIONEN_KATALOG) ON ( RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && POSITIONEN_KATALOG.ART_LIEFERANT = RECHNUNGEN_POSITIONEN.ART_LIEFERANT && RECHNUNGEN_POSITIONEN.ARTIKEL_NR = POSITIONEN_KATALOG.ARTIKEL_NR ) WHERE EMPFAENGER_TYP = 'Lager' && EMPFAENGER_ID = '$lager_id' && RECHNUNGEN_POSITIONEN.AKTUELL='1' && RECHNUNGEN.AKTUELL='1' GROUP BY RECHNUNGEN_POSITIONEN.ARTIKEL_NR, BELEG_NR ORDER BY BEZEICHNUNG ASC";
-
-            $az = mysql_numrows ( $result ); // az = anzahl zeilen
+            DB::statement( "SET SQL_BIG_SELECTS=1" );
+            $my_array = DB::select( "SELECT RECHNUNGEN.EINGANGSDATUM, RECHNUNGEN_POSITIONEN.BELEG_NR, POSITION, BEZEICHNUNG, RECHNUNGEN_POSITIONEN.ART_LIEFERANT, RECHNUNGEN_POSITIONEN.ARTIKEL_NR, RECHNUNGEN_POSITIONEN.MENGE AS GEKAUFTE_MENGE, RECHNUNGEN_POSITIONEN.PREIS, RECHNUNGEN_POSITIONEN.MWST_SATZ FROM RECHNUNGEN RIGHT JOIN (RECHNUNGEN_POSITIONEN, POSITIONEN_KATALOG) ON ( RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && POSITIONEN_KATALOG.ART_LIEFERANT = RECHNUNGEN_POSITIONEN.ART_LIEFERANT && RECHNUNGEN_POSITIONEN.ARTIKEL_NR = POSITIONEN_KATALOG.ARTIKEL_NR  ) WHERE EMPFAENGER_TYP = 'Lager' && EMPFAENGER_ID = '$lager_id' && EINGANGSDATUM<='$datum' && RECHNUNGEN_POSITIONEN.AKTUELL='1' && RECHNUNGEN.AKTUELL='1'  GROUP BY RECHNUNGEN_POSITIONEN.ARTIKEL_NR, BELEG_NR ORDER BY RECHNUNGEN.EINGANGSDATUM ASC" );
+            $az = count( $my_array); // az = anzahl zeilen
             if ($az) {
-                while ( $row = mysql_fetch_assoc ( $result ) ) {
-                    $my_array [] = $row;
-                }
-
                 echo "<table class=\"sortable\">";
                 // echo "<tr class=\"feldernamen\" align=\"right\"><td>Ansehen</td><td>Artikelnr.</td><td>Artikelbezeichnung</td><td>MENGE</td><td>RESTMENGE</td><td>PREIS</td><td>MWSt</td><td>RESTWERT</td></tr>";
                 echo "<tr><th>Datum</th><th>LIEFERANT</th><th>Rechnung</th><th>Artikelnr.</th><th>Bezeichnung</th><th>Menge</th><th>rest</th><th>Preis</th><th>Mwst</th><th>Restwert</th></tr>";
                 $gesamt_lager_wert = 0;
                 $zaehler = 0;
                 $rechnung_info = new rechnung ();
-                for($a = 0; $a < count ( $my_array ); $a ++) {
+                for($a = 0; $a < $az; $a ++) {
 
                     $datum = date_mysql2german ( $my_array [$a] ['EINGANGSDATUM'] );
                     $beleg_nr = $my_array [$a] ['BELEG_NR'];
@@ -263,34 +243,28 @@ class lager_v {
         }
     }
     function reparatur_kontierungsdatum() {
-        $result = mysql_query ( "SELECT KONTIERUNG_DAT, KONTIERUNG_ID FROM KONTIERUNG_POSITIONEN WHERE KONTIERUNGS_DATUM='0000-00-00'" );
-        $numrows = mysql_numrows ( $result );
+        $my_arr = DB::select( "SELECT KONTIERUNG_DAT, KONTIERUNG_ID FROM KONTIERUNG_POSITIONEN WHERE KONTIERUNGS_DATUM='0000-00-00'" );
+        $numrows = count( $my_arr);
         if ($numrows > 0) {
-            while ( $row = mysql_fetch_assoc ( $result ) ) {
-                $my_arr [] = $row;
-            }
-
-            $anz = count ( $my_arr );
-            for($a = 0; $a < $anz; $a ++) {
+            for($a = 0; $a < $numrows; $a ++) {
                 $dat = $my_arr [$a] ['KONTIERUNG_DAT'];
                 $id = $my_arr [$a] ['KONTIERUNG_ID'];
                 $datum = $this->get_date_from_protokoll ( 'KONTIERUNG_POSITIONEN', $dat );
                 echo "$dat, $datum<br>";
-                mysql_query ( "UPDATE KONTIERUNG_POSITIONEN SET KONTIERUNGS_DATUM='$datum' WHERE KONTIERUNG_DAT='$dat' && KONTIERUNGS_DATUM='0000-00-00'" );
+                DB::update( "UPDATE KONTIERUNG_POSITIONEN SET KONTIERUNGS_DATUM='$datum' WHERE KONTIERUNG_DAT='$dat' && KONTIERUNGS_DATUM='0000-00-00'" );
             }
         }
     }
     function get_date_from_protokoll($table, $dat) {
-        $result = mysql_query ( "SELECT DATE_FORMAT(`PROTOKOLL_WANN`, '%Y-%m-%d') AS DATUM  FROM `PROTOKOLL` WHERE `PROTOKOLL_TABELE` LIKE '$table' && PROTOKOLL_DAT_NEU='$dat' ORDER BY PROTOKOLL_WANN DESC LIMIT 0,1" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows) {
-            $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT DATE_FORMAT(`PROTOKOLL_WANN`, '%Y-%m-%d') AS DATUM  FROM `PROTOKOLL` WHERE `PROTOKOLL_TABELE` LIKE '$table' && PROTOKOLL_DAT_NEU='$dat' ORDER BY PROTOKOLL_WANN DESC LIMIT 0,1" );
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['DATUM'];
         }
     }
     function position_auf_kontierung_pruefen($beleg_nr, $position, $datum) {
-        $result = mysql_query ( "SELECT SUM( MENGE ) AS KONTIERTE_MENGE FROM `KONTIERUNG_POSITIONEN` WHERE BELEG_NR = '$beleg_nr' && POSITION = '$position' && KONTIERUNGS_DATUM<='$datum' && AKTUELL='1'" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT SUM( MENGE ) AS KONTIERTE_MENGE FROM `KONTIERUNG_POSITIONEN` WHERE BELEG_NR = '$beleg_nr' && POSITION = '$position' && KONTIERUNGS_DATUM<='$datum' && AKTUELL='1'" );
+        $row = $result[0];
         $kontierte_menge = $row ['KONTIERTE_MENGE'];
         return $kontierte_menge;
     }

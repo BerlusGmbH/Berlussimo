@@ -158,13 +158,8 @@ class benutzer
     function berechtigungen_arr($b_id)
     {
         $db_abfrage = "SELECT * FROM BENUTZER_MODULE WHERE AKTUELL='1' && BENUTZER_ID='$b_id' ORDER BY MODUL_NAME ASC";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
-        }
+        $result = DB::select($db_abfrage);
+        return $result;
     }
 
     function form_mberechtigungen_setzen($b_id)
@@ -262,7 +257,7 @@ class benutzer
         $b = $this->get_all_users_arr2($alle);
         if (!$b->isEmpty()) {
             echo "<label for=\"benutzer_id\">Mitarbeiter wählen</label><select id=\"benutzer_id\" name=\"benutzer_id\" size=\"1\">";
-            foreach($b as $user) {
+            foreach ($b as $user) {
                 $benutzername = $user->name;
                 $benutzer_id = $user->id;
                 if ($vorwahl != null) {
@@ -409,50 +404,39 @@ class benutzer
     {
         if (is_array($modul_name)) {
 
-            $db_abfrage = "DELETE  FROM BENUTZER_MODULE WHERE BENUTZER_ID='$b_id'";
-            $result = mysql_query($db_abfrage) or die (mysql_error());
+            DB::delete("DELETE FROM BENUTZER_MODULE WHERE BENUTZER_ID='$b_id'");
 
             if (in_array('*', $modul_name)) {
-
-                $db_abfrage = "INSERT INTO BENUTZER_MODULE VALUES(NULL,'0', '$b_id', '*', '1')";
-                $result = mysql_query($db_abfrage) or die (mysql_error());
+                DB::insert("INSERT INTO BENUTZER_MODULE VALUES(NULL,'0', '$b_id', '*', '1')");
             } else {
                 $anz = count($modul_name);
                 for ($a = 0; $a < $anz; $a++) {
                     $mod = $modul_name [$a];
-                    $db_abfrage = "INSERT INTO BENUTZER_MODULE VALUES(NULL,'0', '$b_id', '$mod', '1')";
-                    $result = mysql_query($db_abfrage) or die (mysql_error());
+                    DB::insert("INSERT INTO BENUTZER_MODULE VALUES(NULL,'0', '$b_id', '$mod', '1')");
                 }
             }
         } else {
-
             /* Dropdown auswahl */
             if ($modul_name == '*') {
                 // erst bisherige Module löschen
-                $db_abfrage = "DELETE  FROM BENUTZER_MODULE WHERE BENUTZER_ID='$b_id'";
-                $result = mysql_query($db_abfrage) or die (mysql_error());
+                DB::delete("DELETE  FROM BENUTZER_MODULE WHERE BENUTZER_ID='$b_id'");
             }
-
-            $db_abfrage = "INSERT INTO BENUTZER_MODULE VALUES(NULL,'0', '$b_id', '$modul_name', '1')";
-            $result = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert("INSERT INTO BENUTZER_MODULE VALUES(NULL,'0', '$b_id', '$modul_name', '1')");
         }
     }
 
     function berechtigungen_entziehen($b_id, $modul_name)
     {
-        $db_abfrage = "DELETE  FROM BENUTZER_MODULE WHERE BENUTZER_ID='$b_id' && MODUL_NAME='$modul_name'";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
+        DB::delete("DELETE FROM BENUTZER_MODULE WHERE BENUTZER_ID='$b_id' && MODUL_NAME='$modul_name'");
     }
 
     function dropdown_gewerke($label, $name, $id, $js)
     {
-        $db_abfrage = "SELECT G_ID, BEZEICHNUNG FROM GEWERKE WHERE AKTUELL='1' ORDER BY BEZEICHNUNG ASC";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_num_rows($result);
-        if ($numrows) {
+        $result = DB::select("SELECT G_ID, BEZEICHNUNG FROM GEWERKE WHERE AKTUELL='1' ORDER BY BEZEICHNUNG ASC");
+        if (!empty($result)) {
             echo "<label for=\"$id\">$label</label><select id=\"$id\" name=\"$name\" $js>";
             echo "<option value=\"Alle\">Alle</option>";
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $gid = $row ['G_ID'];
                 $bez = $row ['BEZEICHNUNG'];
                 echo "<option value=\"$gid\">$bez</option>";

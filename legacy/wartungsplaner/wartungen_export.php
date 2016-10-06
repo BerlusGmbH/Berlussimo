@@ -10,15 +10,8 @@ GERAETE_ID NOT IN
 AND
 GERAETE_ID NOT IN
 (SELECT GERAETE_ID FROM GEO_TERMINE WHERE AKTUELL='1' && DATUM>DATE_FORMAT(NOW(),'%Y-%m-%d') GROUP BY GERAETE_ID) ORDER BY EINBAUORT ASC";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) {
-            $my_array[] = $row;
-        }
-        return $my_array;
-    }
+    $result = DB::select($db_abfrage);
+    return $result;
 }
 
 
@@ -65,7 +58,7 @@ function ausgabe($gruppen_id, $monate_plus_int, $format = 'tab')
         ob_clean();
         $pdf = new Cezpdf('a4', 'portrait');
         $bpdf = new b_pdf;
-        $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'pdfclass/fonts/Helvetica.afm', 6);
+        $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
 
         $anz = count($thermen_arr);
 

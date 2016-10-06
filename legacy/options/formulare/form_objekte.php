@@ -176,23 +176,20 @@ switch ($daten_rein) {
 }
 function objekte_liste()
 {
-    $db_abfrage = "SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC ";
-    $resultat = mysql_query($db_abfrage) or die (mysql_error());
+    $result = DB::select("SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC ");
     echo "<div class=\"tabelle_objekte\"><table>\n";
     echo "<tr class=\"feldernamen\"><td>Objektliste</td></tr>\n";
     echo "<tr class=\"feldernamen\"><td>Objektkurznamen</td></tr>\n";
     $counter = 0;
-    while (list ($OBJEKT_KURZNAME) = mysql_fetch_row($resultat)) {
+    foreach ($result as $row) {
         $counter++;
         if ($counter == 1) {
-            echo "<tr class=\"zeile1\"><td>$OBJEKT_KURZNAME</td></tr>\n";
+            echo "<tr class=\"zeile1\"><td>$row[OBJEKT_KURZNAME]</td></tr>\n";
         }
         if ($counter == 2) {
-            echo "<tr class=\"zeile2\"><td>$OBJEKT_KURZNAME</td></tr>\n";
+            echo "<tr class=\"zeile2\"><td>$row[OBJEKT_KURZNAME]</td></tr>\n";
             $counter = 0;
         }
     }
     echo "</table></div>";
 }
-
-?>

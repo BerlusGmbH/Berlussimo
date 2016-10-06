@@ -16,8 +16,7 @@ switch ($option) {
         $menge_hinzu = $menge - $menge_erl;
         for ($a = 0; $a < $menge_hinzu; $a++) {
             $l_id = last_id2('WERKZEUGE', 'ID') + 1;
-            $db_abfrage = "INSERT INTO WERKZEUGE VALUES(NULL, '$l_id', '$beleg_id', '$pos', '$art_nr', '1', '', NULL, NULL, '1')";
-            $result = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert("INSERT INTO WERKZEUGE VALUES(NULL, ?, ?, ?, ?, '1', '', NULL, NULL, '1')", [$l_id, $beleg_id, $pos, $art_nr]);
         }
 
         break;
@@ -40,8 +39,7 @@ switch ($option) {
 
                 /* Update Rechnung Positionen */
                 $rabatt = nummer_punkt2komma($rabatt);
-                $db_abfrage = "UPDATE RECHNUNGEN_POSITIONEN SET GESAMT_NETTO='$gpreis', RABATT_SATZ='$rabatt' WHERE POSITION='$pos' && BELEG_NR='$belegnr' && AKTUELL='1'";
-                $resultat = mysql_query($db_abfrage);
+                DB::update("UPDATE RECHNUNGEN_POSITIONEN SET GESAMT_NETTO=?, RABATT_SATZ=? WHERE POSITION=? && BELEG_NR=? && AKTUELL='1'", [$gpreis, $rabatt, $pos, $belegnr]);
             }
         } else {
             echo "error:Keine Position verändert, da keine Pos im Beleg vorhanden!";
@@ -67,8 +65,7 @@ switch ($option) {
                 $gpreis = number_format(($menge * $preis / 100) * (100 - $rabatt), 2);
 
                 /* Update Rechnung Positionen */
-                $db_abfrage = "UPDATE RECHNUNGEN_POSITIONEN SET GESAMT_NETTO='$gpreis', SKONTO='$skonto' WHERE POSITION='$pos' && BELEG_NR='$belegnr' && AKTUELL='1'";
-                $resultat = mysql_query($db_abfrage);
+                DB::update("UPDATE RECHNUNGEN_POSITIONEN SET GESAMT_NETTO=?, SKONTO=? WHERE POSITION=? && BELEG_NR=? && AKTUELL='1'", [$gpreis, $skonto, $pos, $belegnr]);
             }
         } else {
             echo "error:Keine Position verändert, da keine Pos im Beleg vorhanden!";
@@ -84,38 +81,30 @@ switch ($option) {
 
     case "kostenkonto" :
         $konto_id = request()->input('konto_id');
-        $db_abfrage = "SELECT KONTENRAHMEN_KONTEN.BEZEICHNUNG, KONTENRAHMEN_GRUPPEN.BEZEICHNUNG AS GRUPPE, KONTENRAHMEN_KONTOARTEN.KONTOART
+        $result = DB::select("SELECT KONTENRAHMEN_KONTEN.BEZEICHNUNG, KONTENRAHMEN_GRUPPEN.BEZEICHNUNG AS GRUPPE, KONTENRAHMEN_KONTOARTEN.KONTOART
 FROM KONTENRAHMEN_KONTEN
 RIGHT JOIN (
 KONTENRAHMEN_GRUPPEN, KONTENRAHMEN_KONTOARTEN
 ) ON ( KONTENRAHMEN_KONTEN.GRUPPE = KONTENRAHMEN_GRUPPEN.KONTENRAHMEN_GRUPPEN_ID && KONTENRAHMEN_KONTOARTEN.KONTENRAHMEN_KONTOART_ID = KONTENRAHMEN_KONTEN.KONTO_ART )
-WHERE KONTO = '$konto_id'
+WHERE KONTO = ?
 ORDER BY KONTENRAHMEN_KONTEN_DAT DESC
-LIMIT 0 , 1";
+LIMIT 0 , 1", [$konto_id]);
 
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        while (list ($BEZEICHNUNG, $GRUPPE, $KONTOART) = mysql_fetch_row($resultat))
-            echo "$BEZEICHNUNG|$GRUPPE|$KONTOART";
+        foreach ($result as $row)
+            echo $row['BEZEICHNUNG'] . "|" . $row['GRUPPE'] . "|" . $row['KONTOART'];
         break;
 
     case "finde_partner" :
         if (request()->has('suchstring')) {
-            $suchstring = mysql_real_escape_string(request()->input('suchstring'));
+            $suchstring = request()->input('suchstring');
             if (strlen($suchstring) > 2) {
-                $db_abfrage = "SELECT PARTNER_NAME, PARTNER_ID, STRASSE, NUMMER, PLZ, ORT, LAND FROM PARTNER_LIEFERANT WHERE AKTUELL='1' && PARTNER_NAME LIKE '%$suchstring%' ORDER BY PARTNER_NAME ASC";
-                $resultat = mysql_query($db_abfrage) or die (mysql_error());
-                $numrows = mysql_numrows($resultat);
-                if ($numrows) {
-                    echo "<h2>GEFUNDEN!!!</h2>";
-                    echo "<table>";
-                    $z = 0;
-                    while (list ($PARTNER_NAME, $PARTNER_ID, $STRASSE, $NUMMER, $PLZ, $ORT) = mysql_fetch_row($resultat)) {
-                        $z++;
-                        $PARTNER_NAME1 = str_replace('<br>', ' ', $PARTNER_NAME);
-                        echo "<tr class=\"zeile$z\"><td>$PARTNER_NAME1</td><td>$STRASSE</td><td>$NUMMER</td><td>$PLZ</td><td>$ORT</td></tr>";
-                        if ($z == 2) {
-                            $z = 0;
-                        }
+                $result = DB::select("SELECT PARTNER_NAME, PARTNER_ID, STRASSE, NUMMER, PLZ, ORT, LAND FROM PARTNER_LIEFERANT WHERE AKTUELL='1' && PARTNER_NAME LIKE ? ORDER BY PARTNER_NAME ASC", ['%' . $suchstring . '%']);
+                if (!empty($result)) {
+                    echo "<h5>Bereits vorhandene ähnliche Einträge.</h5>";
+                    echo "<table class='striped'>";
+                    foreach ($result as $row) {
+                        $PARTNER_NAME1 = str_replace('<br>', ' ', $row['PARTNER_NAME']);
+                        echo "<tr><td>$PARTNER_NAME1</td><td>$row[STRASSE]</td><td>$row[NUMMER]</td><td>$row[PLZ]</td><td>$row[ORT]</td></tr>";
                     }
                     echo "</table>";
                 }
@@ -124,61 +113,36 @@ LIMIT 0 , 1";
         break;
 
     case "list_kostentraeger" :
-        ob_clean();
         $typ = request()->input('typ');
         if ($typ == 'Objekt') {
             if (!session()->has('geldkonto_id')) {
-                $db_abfrage = "SELECT OBJEKT_KURZNAME, OBJEKT_ID FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC";
-                $resultat = mysql_query($db_abfrage) or die (mysql_error());
-                while (list ($OBJEKT_KURZNAME, $OBJEKT_ID) = mysql_fetch_row($resultat)) {
-                    echo "$OBJEKT_KURZNAME*$OBJEKT_ID*|";
+                $result = DB::select("SELECT OBJEKT_KURZNAME, OBJEKT_ID FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC");
+                foreach ($result as $row) {
+                    echo "$row[OBJEKT_KURZNAME]*$row[OBJEKT_ID]*|";
                 }
             } else {
-                $db_abfrage = "SELECT OBJEKT_KURZNAME, OBJEKT_ID FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC";
-                $resultat = mysql_query($db_abfrage) or die (mysql_error());
-                while (list ($OBJEKT_KURZNAME, $OBJEKT_ID) = mysql_fetch_row($resultat)) {
+                $result = DB::select("SELECT OBJEKT_KURZNAME, OBJEKT_ID FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC");
+                foreach ($result as $row) {
                     $gk = new gk ();
-                    if ($gk->check_zuweisung_kos_typ(session()->get('geldkonto_id'), 'Objekt', $OBJEKT_ID)) {
-                        echo "$OBJEKT_KURZNAME*$OBJEKT_ID*|";
+                    if ($gk->check_zuweisung_kos_typ(session()->get('geldkonto_id'), 'Objekt', $row->OBJEKT_ID)) {
+                        echo "$row[OBJEKT_KURZNAME]*$row[OBJEKT_ID]*|";
                     }
                 }
             }
         }
 
         if ($typ == 'Wirtschaftseinheit') {
-            ob_clean();
-            $db_abfrage = "SELECT LTRIM(RTRIM(W_NAME)) FROM WIRT_EINHEITEN WHERE AKTUELL='1' ORDER BY W_NAME ASC";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-            // echo "<meta content=\"text/html; charset=ISO-8859-1\" http-equiv=\"content-type\">";
-            while (list ($W_NAME) = mysql_fetch_row($resultat)) {
-                echo "$W_NAME|";
+            $result = DB::select("SELECT LTRIM(RTRIM(W_NAME)) FROM WIRT_EINHEITEN WHERE AKTUELL='1' ORDER BY W_NAME ASC");
+            foreach ($result as $row) {
+                echo "$row[W_NAME]|";
             }
         }
 
-        /*
-         * if($typ == 'Haus'){
-         * ob_clean();
-         * $db_abfrage = "SELECT HAUS_ID, HAUS_STRASSE, HAUS_NUMMER, OBJEKT_ID FROM HAUS WHERE HAUS_AKTUELL='1' ORDER BY HAUS_STRASSE, 0+HAUS_NUMMER, OBJEKT_ID ASC";
-         * echo $db_abfrage;
-         * $resultat = mysql_query($db_abfrage) or
-         * die(mysql_error());
-         *
-         * while (list ($HAUS_ID, $HAUS_STRASSE, $HAUS_NUMMER, $OBJEKT_ID) = mysql_fetch_row($resultat))
-         * #$hh = new haus();
-         * #$hh->get_haus_info($HAUS_ID);
-         * #print_r($hh);
-         * echo "$HAUS_STRASSE $HAUS_NUMMER|$hh->objekt_name";
-         * }
-         */
         if ($typ == 'Haus') {
-            ob_clean();
-            $db_abfrage = "SELECT HAUS_ID, HAUS_STRASSE, HAUS_NUMMER, OBJEKT_ID FROM HAUS WHERE HAUS_AKTUELL='1' ORDER BY HAUS_STRASSE,  0+HAUS_NUMMER, OBJEKT_ID ASC";
-            // echo $db_abfrage;
-            $result = mysql_query($db_abfrage) or die (mysql_error());
-            $numrows = mysql_numrows($result);
-            if ($numrows) {
-                while ($row = mysql_fetch_assoc($result)) {
-                    $h_id = $row ['HAUS_ID'];
+            $result = DB::select("SELECT HAUS_ID, HAUS_STRASSE, HAUS_NUMMER, OBJEKT_ID FROM HAUS WHERE HAUS_AKTUELL='1' ORDER BY HAUS_STRASSE,  0+HAUS_NUMMER, OBJEKT_ID ASC");
+            if (!empty($result)) {
+                foreach ($result as $row) {
+                    $h_id = $row['HAUS_ID'];
                     $h_str = $row ['HAUS_STRASSE'];
                     $h_nr = $row ['HAUS_NUMMER'];
                     $hh = new haus ();
@@ -195,68 +159,44 @@ LIMIT 0 , 1";
             }
         }
 
-        if ($typ == 'EinheitOK') {
-            ob_clean();
-            $db_abfrage = "SELECT EINHEIT_KURZNAME, EINHEIT_ID FROM EINHEIT WHERE EINHEIT_AKTUELL='1' ORDER BY EINHEIT_KURZNAME ASC";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-            while (list ($EINHEIT_KURZNAME, $EINHEIT_ID) = mysql_fetch_row($resultat))
-                if (!session()->has('geldkonto_id')) {
-                    echo "$EINHEIT_KURZNAME|";
-                } else {
-                    $eee = new einheit ();
-                    $eee->get_einheit_info($EINHEIT_ID);
-                    $gk = new gk ();
-                    if ($gk->check_zuweisung_kos_typ(session()->get('geldkonto_id'), 'Objekt', $eee->objekt_id)) {
-                        echo "$EINHEIT_KURZNAME|";
-                    }
-                }
-        }
-
         if ($typ == 'Einheit') {
-            ob_clean();
-            $db_abfrage = "SELECT EINHEIT_ID, EINHEIT_KURZNAME, HAUS.OBJEKT_ID AS OBJEKT_ID
+            $result = DB::select("SELECT EINHEIT_ID, EINHEIT_KURZNAME, HAUS.OBJEKT_ID AS OBJEKT_ID
 FROM  `EINHEIT` 
 RIGHT JOIN (
 HAUS, OBJEKT
 ) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID ) 
 WHERE EINHEIT_AKTUELL =  '1'
 GROUP BY EINHEIT_ID
-ORDER BY LPAD( EINHEIT_KURZNAME, LENGTH( EINHEIT_KURZNAME ) ,  '1' ) ASC ";
+ORDER BY LPAD( EINHEIT_KURZNAME, LENGTH( EINHEIT_KURZNAME ) ,  '1' ) ASC ");
 
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-            while (list ($EINHEIT_ID, $EINHEIT_KURZNAME, $OBJEKT_ID) = mysql_fetch_row($resultat))
+            foreach ($result as $row)
                 if (!session()->has('geldkonto_id')) {
-                    echo "$EINHEIT_KURZNAME*$EINHEIT_ID*|";
+                    echo "$row[EINHEIT_KURZNAME]*$row[EINHEIT_ID]*|";
                 } else {
                     $gk = new gk ();
-                    if ($gk->check_zuweisung_kos_typ(session()->get('geldkonto_id'), 'Objekt', $OBJEKT_ID)) {
-                        echo "$EINHEIT_KURZNAME*$EINHEIT_ID*|";
+                    if ($gk->check_zuweisung_kos_typ(session()->get('geldkonto_id'), 'Objekt', $row->OBJEKT_ID)) {
+                        echo "$row[EINHEIT_KURZNAME]*$row[EINHEIT_ID]*|";
                     }
                 }
         }
 
         if ($typ == 'Partner') {
-            ob_clean();
-            $db_abfrage = "SELECT PARTNER_NAME, PARTNER_ID FROM PARTNER_LIEFERANT WHERE AKTUELL='1' ORDER BY PARTNER_NAME ASC";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-            while (list ($PARTNER_NAME, $PARTNER_ID) = mysql_fetch_row($resultat)) {
-                $PARTNER_NAME1 = str_replace('<br>', ' ', $PARTNER_NAME);
-                echo "$PARTNER_NAME1*$PARTNER_ID*|";
+            $result = DB::select("SELECT PARTNER_NAME, PARTNER_ID FROM PARTNER_LIEFERANT WHERE AKTUELL='1' ORDER BY PARTNER_NAME ASC");
+            foreach ($result as $row) {
+                $PARTNER_NAME1 = str_replace('<br>', ' ', $row['PARTNER_NAME']);
+                echo "$PARTNER_NAME1*$row[PARTNER_ID]*|";
             }
         }
         /* NEU SCHNELL ENDE 2014 */
         if ($typ == 'Mietvertrag') {
-            ob_clean();
-
             $gk_arr_objekt = get_objekt_arr_gk(session()->get('geldkonto_id'));
             if (is_array($gk_arr_objekt)) {
 
                 $db_abfrage = "SELECT  HAUS.OBJEKT_ID, OBJEKT_KURZNAME, MIETVERTRAG.EINHEIT_ID, EINHEIT_KURZNAME, MIETVERTRAG_ID FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT, MIETVERTRAG) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && EINHEIT.EINHEIT_ID=MIETVERTRAG.EINHEIT_ID)
 WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERTRAG_AKTUELL='1' ";
 
-                $anz_gk = count($gk_arr_objekt);
-                for ($go = 0; $go < $anz_gk; $go++) {
-                    $oo_id = $gk_arr_objekt [$go];
+                foreach($gk_arr_objekt as $row) {
+                    $oo_id = $row['KOSTENTRAEGER_ID'];
                     $db_abfrage .= "&& OBJEKT_ID=$oo_id ";
                 }
 
@@ -266,10 +206,10 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
                 $db_abfrage = "SELECT  HAUS.OBJEKT_ID, OBJEKT_KURZNAME, MIETVERTRAG.EINHEIT_ID, EINHEIT_KURZNAME, MIETVERTRAG_ID FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT, MIETVERTRAG) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && EINHEIT.EINHEIT_ID=MIETVERTRAG.EINHEIT_ID)
 WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERTRAG_AKTUELL='1' GROUP BY MIETVERTRAG_ID ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC";
             }
-            $result = mysql_query($db_abfrage) or die (mysql_error());
-            while ($row = mysql_fetch_assoc($result)) {
-                $mv_id = $row ['MIETVERTRAG_ID'];
-                $objekt_id = $row ['OBJEKT_ID'];
+            $result = DB::select($db_abfrage);
+            foreach ($result as $row) {
+                $mv_id = $row['MIETVERTRAG_ID'];
+                $objekt_id = $row['OBJEKT_ID'];
                 $mv = new mietvertraege ();
 
                 if (!session()->has('geldkonto_id')) {
@@ -294,60 +234,30 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         }
 
         if ($typ == 'GELDKONTO') {
-            ob_clean();
-            $db_abfrage = "SELECT KONTO_ID, BEZEICHNUNG  FROM `GELD_KONTEN`  WHERE AKTUELL='1' ORDER BY BEZEICHNUNG ASC";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-            while (list ($KONTO_ID, $BEZEICHNUNG) = mysql_fetch_row($resultat)) {
-                echo "$BEZEICHNUNG*$KONTO_ID*|";
+            $result = DB::select("SELECT KONTO_ID, BEZEICHNUNG  FROM `GELD_KONTEN`  WHERE AKTUELL='1' ORDER BY BEZEICHNUNG ASC");
+            foreach ($result as $row) {
+                echo "$row[BEZEICHNUNG]*$row[KONTO_ID]*|";
             }
         }
 
         if ($typ == 'Lager') {
-            ob_clean();
-            $db_abfrage = "SELECT LAGER_ID, LAGER_NAME  FROM `LAGER`  WHERE AKTUELL='1' ORDER BY LAGER_NAME ASC";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-            while (list ($LAGER_ID, $LAGER_NAME) = mysql_fetch_row($resultat)) {
-                // echo "$LAGER_NAME|";
-                echo "$LAGER_NAME*$LAGER_ID*|";
+            $result = DB::select("SELECT LAGER_ID, LAGER_NAME  FROM `LAGER` WHERE AKTUELL='1' ORDER BY LAGER_NAME ASC");
+            foreach ($result as $row) {
+                echo "$row[LAGER_NAME]*$row[LAGER_ID]*|";
             }
         }
 
         if ($typ == 'Baustelle_ext') {
-            ob_clean();
-            $db_abfrage = "SELECT ID, BEZ  FROM `BAUSTELLEN_EXT`  WHERE AKTUELL='1' && AKTIV='1' ORDER BY BEZ ASC";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-            while (list ($ID, $BEZ) = mysql_fetch_row($resultat)) {
-                // echo "$BEZ|";
-                echo "$BEZ*$ID*|";
+            $result = DB::select("SELECT ID, BEZ  FROM `BAUSTELLEN_EXT`  WHERE AKTUELL='1' && AKTIV='1' ORDER BY BEZ ASC");
+            foreach ($result as $row) {
+                echo "$row[BEZ]*$row[ID]*|";
             }
         }
 
-        /*
-         * if($typ == 'Eigentuemer'){
-         * ob_clean();
-         * $db_abfrage = "SELECT ID, EINHEIT_ID FROM `WEG_MITEIGENTUEMER` WHERE AKTUELL='1'";
-         * $resultat = mysql_query($db_abfrage) or
-         * die(mysql_error());
-         * while (list ( $ID, $EINHEIT_ID) = mysql_fetch_row($resultat)){
-         * $weg = new weg;
-         * $eig_bez[] = $weg->get_eigentumer_id_infos2($ID).'*'. $ID;
-         * }
-         * asort($eig_bez);
-         * $anz = count($eig_bez);
-         * if($anz>0){
-         * for($a=0;$a<$anz;$a++){
-         * $eig_bez1 = $eig_bez[$a];
-         * echo "$eig_bez1|";
-         * }
-         * }
-         * }
-         */
-
         if ($typ == 'Eigentuemer') {
             ob_clean();
-            $db_abfrage = "SELECT ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME FROM `WEG_MITEIGENTUEMER` , EINHEIT WHERE EINHEIT_AKTUELL = '1' && AKTUELL = '1' && EINHEIT.EINHEIT_ID = WEG_MITEIGENTUEMER.EINHEIT_ID GROUP BY ID ORDER BY EINHEIT_KURZNAME ASC";
-            $result = mysql_query($db_abfrage) or die (mysql_error());
-            while ($row = mysql_fetch_assoc($result)) {
+            $result = DB::select("SELECT ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME FROM `WEG_MITEIGENTUEMER` , EINHEIT WHERE EINHEIT_AKTUELL = '1' && AKTUELL = '1' && EINHEIT.EINHEIT_ID = WEG_MITEIGENTUEMER.EINHEIT_ID GROUP BY ID ORDER BY EINHEIT_KURZNAME ASC");
+            foreach ($result as $row) {
                 $weg = new weg ();
                 $ID = $row ['ID'];
                 $einheit_id = $row ['EINHEIT_ID'];
@@ -369,7 +279,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         }
 
         if ($typ == 'ALLE') {
-            ob_clean();
             echo "ALLE|";
         }
 
@@ -385,138 +294,79 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
     case "list_kostentraeger2" :
         $typ = request()->input('typ');
         if ($typ == 'Objekt') {
-            $db_abfrage = "SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-            // echo "<meta content=\"text/html; charset=ISO-8859-1\" http-equiv=\"content-type\">";
-            while (list ($OBJEKT_KURZNAME) = mysql_fetch_row($resultat)) {
-                echo "$OBJEKT_KURZNAME|";
+            $result = DB::select("SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC");
+            foreach ($result as $row) {
+                echo "$row[OBJEKT_KURZNAME]|";
             }
         }
 
         if ($typ == 'Wirtschaftseinheit') {
-            $db_abfrage = "SELECT W_NAME FROM WIRT_EINHEITEN WHERE AKTUELL='1' ORDER BY W_NAME ASC";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-            // echo "<meta content=\"text/html; charset=ISO-8859-1\" http-equiv=\"content-type\">";
-            while (list ($W_NAME) = mysql_fetch_row($resultat)) {
-                echo "$W_NAME|";
+            $result = DB::select("SELECT W_NAME FROM WIRT_EINHEITEN WHERE AKTUELL='1' ORDER BY W_NAME ASC");
+            foreach ($result as $row) {
+                echo "$row[W_NAME]|";
             }
         }
 
         if ($typ == 'Haus') {
-            $db_abfrage = "SELECT HAUS_STRASSE, HAUS_NUMMER FROM HAUS WHERE HAUS_AKTUELL='1' ORDER BY HAUS_STRASSE,  0+HAUS_NUMMER, OBJEKT_ID ASC";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-
-            while (list ($HAUS_STRASSE, $HAUS_NUMMER) = mysql_fetch_row($resultat))
-                echo "$HAUS_STRASSE $HAUS_NUMMER|";
+            $result = DB::select("SELECT HAUS_STRASSE, HAUS_NUMMER FROM HAUS WHERE HAUS_AKTUELL='1' ORDER BY HAUS_STRASSE,  0+HAUS_NUMMER, OBJEKT_ID ASC");
+            foreach ($result as $row)
+                echo "$row[HAUS_STRASSE] $row[HAUS_NUMMER]|";
         }
 
         if ($typ == 'Einheit') {
-            $db_abfrage = "SELECT EINHEIT_KURZNAME FROM EINHEIT WHERE EINHEIT_AKTUELL='1' ORDER BY EINHEIT_KURZNAME ASC";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-            while (list ($EINHEIT_KURZNAME) = mysql_fetch_row($resultat))
-                echo "$EINHEIT_KURZNAME|";
+            $result = DB::select("SELECT EINHEIT_KURZNAME FROM EINHEIT WHERE EINHEIT_AKTUELL='1' ORDER BY EINHEIT_KURZNAME ASC");
+            foreach ($result as $row)
+                echo "$row[EINHEIT_KURZNAME]|";
         }
 
         if ($typ == 'Partner') {
-            $db_abfrage = "SELECT PARTNER_NAME FROM PARTNER_LIEFERANT WHERE AKTUELL='1' ORDER BY PARTNER_NAME ASC";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-            while (list ($PARTNER_NAME) = mysql_fetch_row($resultat)) {
-                $PARTNER_NAME1 = str_replace('<br>', '', $PARTNER_NAME);
+            $result = DB::select("SELECT PARTNER_NAME FROM PARTNER_LIEFERANT WHERE AKTUELL='1' ORDER BY PARTNER_NAME ASC");
+            foreach ($result as $row) {
+                $PARTNER_NAME1 = str_replace('<br>', '', $row->PARTNER_NAME);
                 echo "$PARTNER_NAME1|";
             }
         }
 
         if ($typ == 'Mietvertrag') {
-            ob_clean();
-            // alt OK $db_abfrage = "SELECT MIETVERTRAG_ID, EINHEIT_KURZNAME FROM `MIETVERTRAG` JOIN EINHEIT ON (MIETVERTRAG.EINHEIT_ID=EINHEIT.EINHEIT_ID) WHERE MIETVERTRAG_AKTUELL='1' ORDER BY EINHEIT_KURZNAME ASC";
-
-            $db_abfrage = "SELECT OBJEKT_KURZNAME, MIETVERTRAG.EINHEIT_ID, EINHEIT_KURZNAME, MIETVERTRAG_ID FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT, MIETVERTRAG) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && EINHEIT.EINHEIT_ID=MIETVERTRAG.EINHEIT_ID)
-WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERTRAG_AKTUELL='1' GROUP BY MIETVERTRAG_ID ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC";
-            $result = mysql_query($db_abfrage) or die (mysql_error());
-            while ($row = mysql_fetch_assoc($result)) {
-                $mv_id = $row ['MIETVERTRAG_ID'];
+            $result = DB::select("SELECT OBJEKT_KURZNAME, MIETVERTRAG.EINHEIT_ID, EINHEIT_KURZNAME, MIETVERTRAG_ID FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT, MIETVERTRAG) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && EINHEIT.EINHEIT_ID=MIETVERTRAG.EINHEIT_ID)
+WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERTRAG_AKTUELL='1' GROUP BY MIETVERTRAG_ID ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC");
+            foreach ($result as $row) {
+                $mv_id = $row['MIETVERTRAG_ID'];
                 $mv = new mietvertraege ();
                 $mv->get_mietvertrag_infos_aktuell($mv_id);
-                // HAUS#### echo "$h_str $h_nr*$h_id*$hh->objekt_name|";
                 echo "$mv->einheit_kurzname*$mv_id*$mv->personen_name_string|";
             }
         }
 
-        /*
-         * if($typ == 'Mietvertrag'){
-         * $db_abfrage = "SELECT MIETVERTRAG_ID, EINHEIT_KURZNAME FROM `MIETVERTRAG` JOIN EINHEIT ON (MIETVERTRAG.EINHEIT_ID=EINHEIT.EINHEIT_ID) WHERE MIETVERTRAG_AKTUELL='1' ORDER BY EINHEIT_KURZNAME ASC";
-         * $resultat = mysql_query($db_abfrage) or
-         * die(mysql_error());
-         * while (list ( $MIETVERTRAG_ID, $EINHEIT_KURZNAME) = mysql_fetch_row($resultat)){
-         * $mv = new mietvertraege;
-         * $mv->get_mietvertrag_infos_aktuell($MIETVERTRAG_ID);
-         *
-         * echo " $EINHEIT_KURZNAME * $mv->personen_name_string * $MIETVERTRAG_ID|";
-         * }
-         * }
-         */
-
         if ($typ == 'GELDKONTO') {
-            $db_abfrage = "SELECT KONTO_ID, BEZEICHNUNG  FROM `GELD_KONTEN`  WHERE AKTUELL='1' ORDER BY BEZEICHNUNG ASC";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-            while (list ($KONTO_ID, $BEZEICHNUNG) = mysql_fetch_row($resultat)) {
-                echo "$BEZEICHNUNG|";
+            $result = DB::select("SELECT KONTO_ID, BEZEICHNUNG  FROM `GELD_KONTEN`  WHERE AKTUELL='1' ORDER BY BEZEICHNUNG ASC");
+            foreach ($result as $row) {
+                echo "$row[BEZEICHNUNG]|";
             }
         }
 
         if ($typ == 'Lager') {
-            $db_abfrage = "SELECT LAGER_ID, LAGER_NAME  FROM `LAGER`  WHERE AKTUELL='1' ORDER BY LAGER_NAME ASC";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-            while (list ($LAGER_ID, $LAGER_NAME) = mysql_fetch_row($resultat)) {
-                echo "$LAGER_NAME|";
+            $result = DB::select("SELECT LAGER_ID, LAGER_NAME FROM LAGER WHERE AKTUELL='1' ORDER BY LAGER_NAME ASC");
+            foreach ($result as $row) {
+                echo "row[$LAGER_NAME]|";
             }
         }
 
         if ($typ == 'Baustelle_ext') {
-            $db_abfrage = "SELECT ID, BEZ  FROM `BAUSTELLEN_EXT`  WHERE AKTUELL='1' ORDER BY BEZ ASC";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-            while (list ($ID, $BEZ) = mysql_fetch_row($resultat)) {
-                echo "$BEZ|";
+            $result = DB::select("SELECT ID, BEZ  FROM BAUSTELLEN_EXT WHERE AKTUELL='1' ORDER BY BEZ ASC");
+            foreach ($result as $row) {
+                echo "$row[BEZ]|";
             }
         }
 
-        /*
-         * if($typ == 'Eigentuemer'){
-         * $db_abfrage = "SELECT ID, EINHEIT_ID FROM `WEG_MITEIGENTUEMER` WHERE AKTUELL='1'";
-         * $resultat = mysql_query($db_abfrage) or
-         * die(mysql_error());
-         * while (list ( $ID, $EINHEIT_ID) = mysql_fetch_row($resultat)){
-         * $weg = new weg;
-         * $eig_bez[] = $weg->get_eigentumer_id_infos2($ID).'*'. $ID;
-         * }
-         * asort($eig_bez);
-         * $anz = count($eig_bez);
-         * if($anz>0){
-         * for($a=0;$a<$anz;$a++){
-         * $eig_bez1 = $eig_bez[$a];
-         * echo "$eig_bez1|";
-         * }
-         * }
-         *
-         * }
-         */
-
         if ($typ == 'Eigentuemer') {
-            ob_clean();
-            // $db_abfrage = "SELECT ID, EINHEIT_ID FROM `WEG_MITEIGENTUEMER` WHERE AKTUELL='1'";
-            $db_abfrage = "SELECT ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME FROM `WEG_MITEIGENTUEMER` , EINHEIT WHERE EINHEIT_AKTUELL = '1' && AKTUELL = '1' && EINHEIT.EINHEIT_ID = WEG_MITEIGENTUEMER.EINHEIT_ID GROUP BY ID ORDER BY  EINHEIT_KURZNAME ASC";
-            $result = mysql_query($db_abfrage) or die (mysql_error());
-            while ($row = mysql_fetch_assoc($result)) {
+            $result = DB::select("SELECT ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME FROM WEG_MITEIGENTUEMER, EINHEIT WHERE EINHEIT_AKTUELL = '1' && AKTUELL = '1' && EINHEIT.EINHEIT_ID = WEG_MITEIGENTUEMER.EINHEIT_ID GROUP BY ID ORDER BY  EINHEIT_KURZNAME ASC");
+            foreach ($result as $row) {
                 $weg = new weg ();
-                // $eig_bez[] = $weg->get_eigentumer_id_infos2($ID).'*'. $ID;
-                $ID = $row ['ID'];
-                $weg->get_eigentuemer_namen($row ['ID']);
-                // $weg->eigentuemer_name_str
-                // $e = new einheit();
-                // $e->get_einheit_info($EINHEIT_ID);
+                $ID = $row['ID'];
+                $weg->get_eigentuemer_namen($row['ID']);
                 $einheit_kn = $row ['EINHEIT_KURZNAME'];
                 echo "$einheit_kn $weg->eigentuemer_name_str*$ID|";
-                // echo "$einheit_kn $bezxx|";
             }
         }
 
@@ -538,44 +388,31 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         $artikel_nr = request()->input('artikel_nr');
 
         $lieferant_id = request()->input('lieferant_id');
-        $db_abfrage = "SELECT ARTIKEL_NR, BEZEICHNUNG, LISTENPREIS, RABATT_SATZ, EINHEIT, MWST_SATZ, SKONTO FROM POSITIONEN_KATALOG WHERE AKTUELL='1' && ART_LIEFERANT='$lieferant_id' && ARTIKEL_NR='$artikel_nr' ORDER BY KATALOG_DAT DESC LIMIT 0,1";
-        ob_clean();
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($resultat);
-        if (!$numrows) {
-            echo '';
-            die ();
-        }
-        while (list ($ARTIKEL_NR, $BEZEICHNUNG, $LISTENPREIS, $RABATT_SATZ, $EINHEIT, $MWST_SATZ, $SKONTO) = mysql_fetch_row($resultat))
-            echo "$ARTIKEL_NR|$BEZEICHNUNG|$LISTENPREIS|$RABATT_SATZ|$EINHEIT|$MWST_SATZ|$SKONTO";
+        $result = DB::select("SELECT ARTIKEL_NR, BEZEICHNUNG, LISTENPREIS, RABATT_SATZ, EINHEIT, MWST_SATZ, SKONTO FROM POSITIONEN_KATALOG WHERE AKTUELL='1' && ART_LIEFERANT=? && ARTIKEL_NR=? ORDER BY KATALOG_DAT DESC LIMIT 0,1", [$lieferant_id, $artikel_nr]);
+        foreach ($result as $row)
+            echo "$row[ARTIKEL_NR]|$row[BEZEICHNUNG]|$row[LISTENPREIS]|$row[RABATT_SATZ]|$row[EINHEIT]|$row[MWST_SATZ]|$row[SKONTO]";
         break;
 
     case "display_positionen" :
         $belegnr = request()->input('belegnr');
-        $result = mysql_query("SELECT * FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR='$belegnr' && AKTUELL='1' ORDER BY POSITION ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows < 1) {
-            echo '';
-        } else {
-            while ($row = mysql_fetch_assoc($result))
-                $rechnungs_positionen_arr [] = $row;
-
-            // $this->anzahl_positionen = $numrows;
+        $result = DB::select("SELECT * FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR=? && AKTUELL='1' ORDER BY POSITION ASC", [$belegnr]);
+        if (!empty($result)) {
+            $rechnungs_positionen_arr = $result;
             header('Content-Type: text/html; charset=UTF-8');
-            echo "<table id=\"positionen_tab\">\n";
+            echo "<table id='positionen_tab'>\n";
             echo "<tr>";
-            echo "<th scopr=\"col\">Ändern</th>";
-            echo "<th scopr=\"col\">Pos</th>";
-            echo "<th scopr=\"col\">Art.</th>";
-            echo "<th scopr=\"col\">Bezeichnung</th>";
-            echo "<th scopr=\"col\">Menge</th>";
-            echo "<th scopr=\"col\">Einheit</th>";
-            echo "<th scopr=\"col\">LP</th>";
-            echo "<th scopr=\"col\">EP</th>";
-            echo "<th scopr=\"col\">Rabatt</th>";
-            echo "<th scopr=\"col\">MWSt</th>";
-            echo "<th scopr=\"col\">Skonto</th>";
-            echo "<th scopr=\"col\">Netto</th>";
+            echo "<th>Ändern</th>";
+            echo "<th>Pos</th>";
+            echo "<th>Art.</th>";
+            echo "<th>Bezeichnung</th>";
+            echo "<th>Menge</th>";
+            echo "<th>Einheit</th>";
+            echo "<th>LP</th>";
+            echo "<th>EP</th>";
+            echo "<th>Rabatt</th>";
+            echo "<th>MWSt</th>";
+            echo "<th>Skonto</th>";
+            echo "<th>Netto</th>";
             echo "</tr>";
             $g_netto = 0;
             $g_mwst = 0;
@@ -641,7 +478,8 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         }
         break;
 
-    case "insert_position" :
+    case
+    "insert_position" :
         $belegnr = request()->input('belegnr');
         $position = request()->input('pos');
         $artikel_nr = request()->input('artikel_nr');
@@ -679,19 +517,8 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             $menge = nummer_komma2punkt($menge);
         }
 
-        $lieferant_id = mysql_real_escape_string($lieferant_id);
-        $artikel_nr = mysql_real_escape_string($artikel_nr);
-        $preis = mysql_real_escape_string($preis);
-        $rabatt = mysql_real_escape_string($rabatt);
-        $pos_skonto = mysql_real_escape_string($pos_skonto);
-        // $bez = addslashes($bez);
-
-        $db_abfrage = "select * from POSITIONEN_KATALOG where ART_LIEFERANT='$lieferant_id' && ARTIKEL_NR='$artikel_nr' && AKTUELL='1' && LISTENPREIS='$preis' && RABATT_SATZ='$rabatt' && SKONTO='$pos_skonto' && BEZEICHNUNG='$bez'";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-
-        if (!$numrows) {
-            // $r->artikel_leistung_speichern($lieferant_id, $bez, $preis, $rabatt, $einheit, $pos_mwst);
+        $result = DB::select("SELECT * FROM POSITIONEN_KATALOG WHERE ART_LIEFERANT=? && ARTIKEL_NR=? && AKTUELL='1' && LISTENPREIS=? && RABATT_SATZ=? && SKONTO=? && BEZEICHNUNG=?", [$lieferant_id, $artikel_nr, $preis, $rabatt, $pos_skonto, $bez]);
+        if (empty($result)) {
             $r->artikel_leistung_mit_artikelnr_speichern($lieferant_id, $bez, $preis, $artikel_nr, $rabatt, $einheit, $pos_mwst, $pos_skonto);
         }
 
@@ -699,9 +526,8 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         $last_pos = $r2->rechnung_last_position($belegnr);
         $last_pos = $last_pos + 1;
 
-        $db_abfrage = "INSERT INTO RECHNUNGEN_POSITIONEN VALUES (NULL, '$letzte_rech_pos_id', '$last_pos', '$belegnr','$belegnr','$lieferant_id','$artikel_nr', '$menge','$preis','$pos_mwst', '$rabatt', '$pos_skonto', '$g_netto','1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        ob_clean();
+        $result = DB::insert("INSERT INTO RECHNUNGEN_POSITIONEN VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '1')",
+            [$letzte_rech_pos_id, $last_pos, $belegnr, $belegnr, $lieferant_id, $artikel_nr, $menge, $preis, $pos_mwst, $rabatt, $pos_skonto, $g_netto]);
         break;
 
     case "aendern_position" :
@@ -723,14 +549,11 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         $letzte_rech_pos_id = $letzte_rech_pos_id + 1;
 
         /* Abfragen ob Artikel im Katalog "so" vorhanden */
-        $db_abfrage = "select * from POSITIONEN_KATALOG where ART_LIEFERANT='$lieferant_id' && ARTIKEL_NR='$artikel_nr' && AKTUELL='1' && LISTENPREIS='$preis' && RABATT_SATZ='$rabatt' && BEZEICHNUNG='$bez' && EINHEIT='$einheit' && MWST_SATZ='$pos_mwst' && SKONTO='$pos_skonto'";
-
-        echo $db_abfrage;
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
+        $result = DB::select("SELECT * FROM POSITIONEN_KATALOG WHERE ART_LIEFERANT=? && ARTIKEL_NR=? && AKTUELL='1' && LISTENPREIS=? && RABATT_SATZ=? && BEZEICHNUNG=? && EINHEIT=? && MWST_SATZ=? && SKONTO=?",
+            [$lieferant_id, $artikel_nr, $preis, $rabatt, $bez, $einheit, $pos_mwst, $pos_skonto]);
 
         /* Falls nicht so vorhanden, artikel speichern */
-        if (!$numrows) {
+        if (empty($result)) {
             $r->artikel_leistung_mit_artikelnr_speichern($lieferant_id, $bez, $preis, $artikel_nr, $rabatt, $einheit, $pos_mwst, $pos_skonto);
             /* Falls vorhanden, deaktivieren und als neuen Datensatz speichern */
         }
@@ -739,8 +562,8 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         /* Alte Position aus der Rechnung deaktivieren */
         $r->position_deaktivieren($pos, $belegnr);
         /* Psition neu speichern */
-        $db_abfrage = "INSERT INTO RECHNUNGEN_POSITIONEN VALUES (NULL, '$letzte_rech_pos_id', '$pos', '$belegnr', '$belegnr', '$lieferant_id','$artikel_nr', '$menge','$preis','$pos_mwst', '$rabatt', '$pos_skonto', '$g_netto','1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert("INSERT INTO RECHNUNGEN_POSITIONEN VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,'1')",
+            [$letzte_rech_pos_id, $pos, $belegnr, $lieferant_id, $artikel_nr, $menge, $preis, $pos_mwst, $rabatt, $pos_skonto, $g_netto]);
         break;
 
     case "get_kontierungs_infos" :
@@ -749,7 +572,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         $r->rechnung_grunddaten_holen($belegnr);
         $buchungsbetrag = request()->input('buchungsbetrag');
         // netto, brutto, skonto, keine summe oder betrag
-        $result = mysql_query("SELECT KONTIERUNG_ID, sum( GESAMT_SUMME - ( GESAMT_SUMME /100 * RABATT_SATZ ) ) AS NETTO, sum( (
+        $result = DB::select("SELECT KONTIERUNG_ID, sum( GESAMT_SUMME - ( GESAMT_SUMME /100 * RABATT_SATZ ) ) AS NETTO, sum( (
 (
 GESAMT_SUMME - ( GESAMT_SUMME /100 * RABATT_SATZ ) ) /100
 ) * ( 100 + MWST_SATZ )
@@ -761,14 +584,13 @@ GESAMT_SUMME - ( GESAMT_SUMME /100 * RABATT_SATZ ) ) /100
 ) * ( 100 - SKONTO )
 ) AS SKONTO_BETRAG, MENGE, POSITION, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID
 FROM `KONTIERUNG_POSITIONEN`
-WHERE BELEG_NR = '$belegnr' && AKTUELL = '1'
-GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO") or die (mysql_error());
+WHERE BELEG_NR = ? && AKTUELL = '1'
+GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO", [$belegnr]);
 
-        $numrows = mysql_numrows($result);
-        if ($numrows >= 1) {
+        if (!empty($result)) {
             $str = "<b>Kontierung:</b><br>";
             $g_betrag = 0;
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach ($result as $row) {
 
                 $netto = $row ['NETTO'];
                 $brutto = $row ['BRUTTO'];
@@ -851,14 +673,10 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO") or die (mysql
     case "get_detail_ukats" :
         $kat_id = request()->input('kat_id');
         if (isset ($kat_id)) {
-            $abfrage = "SELECT UNTERKATEGORIE_NAME FROM `DETAIL_UNTERKATEGORIEN` WHERE `KATEGORIE_ID` = '$kat_id' AND `AKTUELL` = '1' ORDER BY UNTERKATEGORIE_NAME ASC";
+            $result = DB::select("SELECT UNTERKATEGORIE_NAME FROM `DETAIL_UNTERKATEGORIEN` WHERE `KATEGORIE_ID` = ? AND `AKTUELL` = '1' ORDER BY UNTERKATEGORIE_NAME ASC", [$kat_id]);
 
-            $resultat = mysql_query($abfrage) or die (mysql_error());
-            $numrows = mysql_numrows($resultat);
-            if ($numrows) {
-                while (list ($UNTERKATEGORIE_NAME) = mysql_fetch_row($resultat)) {
-                    echo "$UNTERKATEGORIE_NAME;";
-                }
+            foreach ($result as $row) {
+                echo "$row[UNTERKATEGORIE_NAME];";
             }
         } else {
             echo "AJAX FEHLER 2004";
@@ -869,15 +687,11 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO") or die (mysql
         $string = request()->input('string');
         $lieferant_id = request()->input('l_id');
         if (isset ($string) && strlen($string) > 0) {
-            $abfrage = "SELECT LTRIM(RTRIM(ARTIKEL_NR)), BEZEICHNUNG, LISTENPREIS FROM `POSITIONEN_KATALOG`
-WHERE `ART_LIEFERANT` = '$lieferant_id' AND (`ARTIKEL_NR` LIKE '$string%' OR `BEZEICHNUNG` LIKE '$string%') GROUP BY ARTIKEL_NR ORDER BY ARTIKEL_NR ASC LIMIT 0,5";
+            $result = DB::select("SELECT LTRIM(RTRIM(ARTIKEL_NR)), BEZEICHNUNG, LISTENPREIS FROM `POSITIONEN_KATALOG`
+WHERE `ART_LIEFERANT` = ? AND (`ARTIKEL_NR` LIKE ? OR `BEZEICHNUNG` LIKE ?) GROUP BY ARTIKEL_NR ORDER BY ARTIKEL_NR ASC LIMIT 0,5", [$lieferant_id, $string . '%', $string . '%']);
 
-            $resultat = mysql_query($abfrage) or die (mysql_error());
-            $numrows = mysql_numrows($resultat);
-            if ($numrows) {
-                while (list ($ARTIKEL_NR, $BEZEICHNUNG, $LISTENPREIS) = mysql_fetch_row($resultat)) {
-                    echo "$ARTIKEL_NR??$BEZEICHNUNG??$LISTENPREIS||";
-                }
+            foreach ($result as $row) {
+                echo "$row[ARTIKEL_NR]??$row[BEZEICHNUNG]??$row[LISTENPREIS]||";
             }
         } else {
             echo "AJAX FEHLER 20041";
@@ -889,17 +703,13 @@ WHERE `ART_LIEFERANT` = '$lieferant_id' AND (`ARTIKEL_NR` LIKE '$string%' OR `BE
         $lieferant_id = request()->input('l_id');
         // aktueller partner d.h. eigener preis
         if (isset ($string) && strlen($string) > 0) {
-            $abfrage = "SELECT * FROM (SELECT ARTIKEL_NR, BEZEICHNUNG, LISTENPREIS, ART_LIEFERANT, FORMAT((LISTENPREIS - (LISTENPREIS/100)* RABATT_SATZ)/100*(100+MWST_SATZ),2) AS BRUTTO FROM `POSITIONEN_KATALOG`
-WHERE (`ARTIKEL_NR` LIKE '$string%' OR `BEZEICHNUNG` LIKE '$string%') ORDER BY ART_LIEFERANT ASC, LISTENPREIS DESC, KATALOG_ID DESC) AS AB1 GROUP BY ART_LIEFERANT, ARTIKEL_NR ORDER BY ARTIKEL_NR ASC";
+            $result = DB::select("SELECT * FROM (SELECT ARTIKEL_NR, BEZEICHNUNG, LISTENPREIS, ART_LIEFERANT, FORMAT((LISTENPREIS - (LISTENPREIS/100)* RABATT_SATZ)/100*(100+MWST_SATZ),2) AS BRUTTO FROM `POSITIONEN_KATALOG`
+WHERE (`ARTIKEL_NR` LIKE ? OR `BEZEICHNUNG` LIKE ?) ORDER BY ART_LIEFERANT ASC, LISTENPREIS DESC, KATALOG_ID DESC) AS AB1 GROUP BY ART_LIEFERANT, ARTIKEL_NR ORDER BY ARTIKEL_NR ASC", [$string . '%', $string . '%']);
 
-            $resultat = mysql_query($abfrage) or die (mysql_error());
-            $numrows = mysql_numrows($resultat);
-            if ($numrows) {
-                while (list ($ARTIKEL_NR, $BEZEICHNUNG, $LISTENPREIS, $ART_LIEFERANT, $BRUTTO) = mysql_fetch_row($resultat)) {
-                    $p = new partners ();
-                    $p->get_partner_name($ART_LIEFERANT);
-                    echo "$ARTIKEL_NR??$BEZEICHNUNG??$BRUTTO??$p->partner_name??$ART_LIEFERANT||";
-                }
+            foreach ($result as $row) {
+                $p = new partners ();
+                $p->get_partner_name($row[ART_LIEFERANT]);
+                echo "$row[ARTIKEL_NR]??$row[BEZEICHNUNG]??$row[BRUTTO]??$p->partner_name??$row[ART_LIEFERANT]||";
             }
         } else {
             echo "AJAX FEHLER 20041";
@@ -938,8 +748,8 @@ WHERE (`ARTIKEL_NR` LIKE '$string%' OR `BEZEICHNUNG` LIKE '$string%') ORDER BY A
             }
 
             $last_bk_be_id = last_id_ajax('BK_BERECHNUNG_BUCHUNGEN', 'BK_BE_ID') + 1;
-            $abfrage = "INSERT INTO BK_BERECHNUNG_BUCHUNGEN VALUES(NULL, '$last_bk_be_id', '$buchung_id', '$bk_konto_id', '$profil_id','$bk_genkey_id', '$max_anteil','$bk->bk_kos_typ', '$bk->bk_kos_id','$hndl_betrag','1')";
-            $resultat = mysql_query($abfrage) or die (mysql_error());
+            DB::insert("INSERT INTO BK_BERECHNUNG_BUCHUNGEN VALUES(NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?,'1')",
+                [$last_bk_be_id, $buchung_id, $bk_konto_id, $profil_id, $bk_genkey_id, $max_anteil, $bk->bk_kos_typ, $bk->bk_kos_id, $hndl_betrag]);
         } else {
             echo "Fehler 67765213";
         }
@@ -952,8 +762,7 @@ WHERE (`ARTIKEL_NR` LIKE '$string%' OR `BEZEICHNUNG` LIKE '$string%') ORDER BY A
         $bk_konto_id = request()->input('bk_konto_id');
 
         if ($bk_be_id && $profil_id && $bk_konto_id) {
-            $abfrage = "DELETE FROM BK_BERECHNUNG_BUCHUNGEN WHERE BK_BE_ID='$bk_be_id' && BK_K_ID='$bk_konto_id' && BK_PROFIL_ID= '$profil_id'";
-            $resultat = mysql_query($abfrage) or die (mysql_error());
+            DB::delete("DELETE FROM BK_BERECHNUNG_BUCHUNGEN WHERE BK_BE_ID=? && BK_K_ID=? && BK_PROFIL_ID=?", [$bk_be_id, $bk_konto_id, $profil_id]);
         }
         break;
 
@@ -965,8 +774,7 @@ WHERE (`ARTIKEL_NR` LIKE '$string%' OR `BEZEICHNUNG` LIKE '$string%') ORDER BY A
         if ($profil_id && $bk_konto_id) {
             if (!check_konto_exists($bk_konto_id, $profil_id)) {
                 $last_id = last_id_ajax('BK_KONTEN', 'BK_K_ID') + 1;
-                $abfrage = "INSERT INTO BK_KONTEN VALUES (NULL, '$last_id', '$bk_konto_id', '$profil_id','0','0','1')";
-                $resultat = mysql_query($abfrage) or die (mysql_error());
+                DB::insert("INSERT INTO BK_KONTEN VALUES (NULL, '$last_id', '$bk_konto_id', '$profil_id','0','0','1')");
                 session()->put('bk_konto', $bk_konto_id);
             }
         }
@@ -978,11 +786,8 @@ WHERE (`ARTIKEL_NR` LIKE '$string%' OR `BEZEICHNUNG` LIKE '$string%') ORDER BY A
         $bk_konto_id = request()->input('bk_konto_id');
 
         if ($profil_id && $bk_konto_id) {
-            $abfrage = "DELETE FROM BK_KONTEN WHERE  BK_K_ID='$bk_konto_id' && BK_PROFIL_ID= '$profil_id'";
-            $resultat = mysql_query($abfrage) or die (mysql_error());
-
-            $abfrage = "DELETE FROM BK_BERECHNUNG_BUCHUNGEN WHERE  BK_K_ID='$bk_konto_id' && BK_PROFIL_ID= '$profil_id'";
-            $resultat = mysql_query($abfrage) or die (mysql_error());
+            DB::delete("DELETE FROM BK_KONTEN WHERE  BK_K_ID=? && BK_PROFIL_ID=?", [$bk_konto_id, $profil_id]);
+            DB::delete("DELETE FROM BK_BERECHNUNG_BUCHUNGEN WHERE  BK_K_ID='$bk_konto_id' && BK_PROFIL_ID= '$profil_id'", [$bk_konto_id, $profil_id]);
 
             session()->forget('bk_konto');
             session()->forget('bk_konto_id');
@@ -1189,45 +994,36 @@ WHERE (`ARTIKEL_NR` LIKE '$string%' OR `BEZEICHNUNG` LIKE '$string%') ORDER BY A
         $w->hk_verbrauch_eintragen($p_id, $eig_id, $betrag);
         break;
 } // END SWITCH
+
 function update_spalte_2($spalte, $prozent)
 {
-    $db_abfrage = "UPDATE POS_POOL SET `$spalte`=(EINZEL_PREIS+((EINZEL_PREIS/100)*$prozent)) WHERE AKTUELL='1'";
-    echo $db_abfrage;
-    $result = mysql_query($db_abfrage) or die (mysql_error());
+    DB::update("UPDATE POS_POOL SET `$spalte`=(EINZEL_PREIS+((EINZEL_PREIS/100)*$prozent)) WHERE AKTUELL='1'");
     update_g_preis();
 }
 
 function spalte_prozent_pool($spalte, $prozent, $pool_id)
 {
-    $db_abfrage = "UPDATE POS_POOL SET `$spalte`=(EINZEL_PREIS+((EINZEL_PREIS/100)*$prozent)) WHERE POOL_ID='$pool_id' && AKTUELL='1'";
-    // echo $db_abfrage;
-    $result = mysql_query($db_abfrage) or die (mysql_error());
+    DB::update("UPDATE POS_POOL SET `$spalte`=(EINZEL_PREIS+((EINZEL_PREIS/100)*$prozent)) WHERE POOL_ID='$pool_id' && AKTUELL='1'");
     update_g_preis();
 }
 
 function spalte_einheitspreis_pool($spalte, $preis, $pool_id)
 {
-    $db_abfrage = "UPDATE POS_POOL SET `$spalte`=$preis WHERE POOL_ID='$pool_id' && AKTUELL='1'";
-    // echo $db_abfrage;
-    $result = mysql_query($db_abfrage) or die (mysql_error());
+    DB::update("UPDATE POS_POOL SET `$spalte`=$preis WHERE POOL_ID='$pool_id' && AKTUELL='1'");
     update_g_preis();
 }
 
 function update_spalte($pp_dat, $spalte, $wert)
 {
-    $db_abfrage = "UPDATE POS_POOL SET `$spalte`='$wert' WHERE PP_DAT='$pp_dat'";
-    $result = mysql_query($db_abfrage) or die (mysql_error());
+    DB::update("UPDATE POS_POOL SET `$spalte`='$wert' WHERE PP_DAT='$pp_dat'");
 }
 
 function up($pp_dat, $pos, $pool_id)
 {
     $pos_new = $pos - 1;
 
-    $db_abfrage = "UPDATE POS_POOL SET POS='$pos_new' WHERE PP_DAT='$pp_dat'";
-    $result = mysql_query($db_abfrage);
-
-    $db_abfrage = "UPDATE POS_POOL SET POS='$pos' WHERE POS='$pos_new' && POOL_ID='$pool_id' && PP_DAT!='$pp_dat'";
-    $result = mysql_query($db_abfrage);
+    DB::update("UPDATE POS_POOL SET POS=? WHERE PP_DAT=?", [$pos_new, $pp_dat]);
+    DB::update("UPDATE POS_POOL SET POS=? WHERE POS=? && POOL_ID=? && PP_DAT!=?", [$pos, $pos_new, $pool_id, $pp_dat]);
 
     update_g_preis($pp_dat);
 }
@@ -1235,23 +1031,18 @@ function up($pp_dat, $pos, $pool_id)
 function down($pp_dat, $pos, $pool_id)
 {
     $pos_new = $pos + 1;
-    $db_abfrage = "UPDATE POS_POOL SET POS='$pos_new' WHERE PP_DAT='$pp_dat'";
-    $result = mysql_query($db_abfrage);
-
-    $db_abfrage = "UPDATE POS_POOL SET POS='$pos' WHERE POS='$pos_new' && POOL_ID='$pool_id' && PP_DAT!='$pp_dat'";
-    $result = mysql_query($db_abfrage);
+    DB::update("UPDATE POS_POOL SET POS=? WHERE PP_DAT=?", [$pos_new, $pp_dat]);
+    DB::update("UPDATE POS_POOL SET POS=? WHERE POS=? && POOL_ID=? && PP_DAT!=?", [$pos, $pos_new, $pool_id, $pp_dat]);
 
     update_g_preis($pp_dat);
 }
 
 function get_last_pos($kos_typ, $kos_id, $aussteller_typ, $aussteller_id, $pool_id)
 {
-    $result = mysql_query("SELECT POS FROM POS_POOL WHERE POOL_ID='$pool_id' && KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AUSSTELLER_TYP='$aussteller_typ' && AUSSTELLER_ID='$aussteller_id' && AKTUELL='1' ORDER BY POS DESC LIMIT 0,1");
-    // echo "SELECT POS FROM POS_POOL WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AUSSTELLER_TYP='$aussteller_typ' && AUSSTELLER_ID='$aussteller_id' ORDER BY POS DESC LIMIT 0,1";
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        $row = mysql_fetch_assoc($result);
-        return $row ['POS'];
+    $result = DB::select("SELECT POS FROM POS_POOL WHERE POOL_ID=? && KOS_TYP=? && KOS_ID=? && AUSSTELLER_TYP=? && AUSSTELLER_ID=? && AKTUELL='1' ORDER BY POS DESC LIMIT 0,1",
+        [$pool_id, $kos_typ, $kos_id, $aussteller_typ, $aussteller_id]);
+    if (!empty($result)) {
+        return $result[0]->POS;
     } else {
         return 0;
     }
@@ -1260,46 +1051,34 @@ function get_last_pos($kos_typ, $kos_id, $aussteller_typ, $aussteller_id, $pool_
 function insert_in_u_pool($obj, $pool_id)
 {
     $pos = get_last_pos($obj->kos_typ, $obj->kos_id, $obj->rechnungs_empfaenger_typ, $obj->rechnungs_empfaenger_id, $pool_id) + 1;
-    $db_abfrage = "INSERT INTO POS_POOL VALUES(NULL, '$obj->beleg_nr', '$obj->pos', '$pool_id', '$pos', '$obj->menge', '$obj->einzel_preis','$obj->einzel_preis', '$obj->g_summe', '$obj->mwst_satz', '$obj->skonto', '$obj->rabatt_satz', '$obj->kostenkonto', '$obj->kos_typ', '$obj->kos_id','$obj->rechnungs_empfaenger_typ','$obj->rechnungs_empfaenger_id', '1')";
-    $result = mysql_query($db_abfrage) or die (mysql_error());
+    DB::insert("INSERT INTO POS_POOL VALUES(NULL, '$obj->beleg_nr', '$obj->pos', '$pool_id', '$pos', '$obj->menge', '$obj->einzel_preis','$obj->einzel_preis', '$obj->g_summe', '$obj->mwst_satz', '$obj->skonto', '$obj->rabatt_satz', '$obj->kostenkonto', '$obj->kos_typ', '$obj->kos_id','$obj->rechnungs_empfaenger_typ','$obj->rechnungs_empfaenger_id', '1')");
 }
 
 function update_g_preis()
 {
-    $db_abfrage = "UPDATE POS_POOL SET G_SUMME=(MENGE*V_PREIS)/100*(100-RABATT_SATZ) WHERE AKTUELL='1'";
-    $result = mysql_query($db_abfrage) or die (mysql_error());
+    DB::update("UPDATE POS_POOL SET G_SUMME=(MENGE*V_PREIS)/100*(100-RABATT_SATZ) WHERE AKTUELL='1'");
 }
 
 function update_v_preis($spalte, $pp_dat, $prozent)
 {
-    $db_abfrage = "UPDATE POS_POOL SET V_PREIS=(EINZEL_PREIS+((EINZEL_PREIS/100)*$prozent)) WHERE PP_DAT='$pp_dat' && AKTUELL='1'";
-    echo $db_abfrage;
-    $result = mysql_query($db_abfrage) or die (mysql_error());
+    DB::update("UPDATE POS_POOL SET V_PREIS=(EINZEL_PREIS+((EINZEL_PREIS/100)*$prozent)) WHERE PP_DAT='$pp_dat' && AKTUELL='1'");
     update_g_preis();
 }
 
 function kontierung_pos_deaktivieren($dat)
 {
-    $db_abfrage = "UPDATE KONTIERUNG_POSITIONEN SET WEITER_VERWENDEN='0' WHERE KONTIERUNG_DAT='$dat'";
-    $resultat = mysql_query($db_abfrage) or die (mysql_error());
-    /* Protokollieren */
+    DB::update("UPDATE KONTIERUNG_POSITIONEN SET WEITER_VERWENDEN='0' WHERE KONTIERUNG_DAT='$dat'");
     protokollieren('KONTIERUNG_POSITIONEN', $dat, $dat);
-    // echo "$db_abfrage<br>OK";
 }
 
 function dropdown_pools($label, $name, $id, $js, $kos_typ, $kos_id)
 {
-    $result = mysql_query("SELECT *  FROM  POS_POOLS WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' ORDER BY POOL_NAME ASC");
-    // echo "SELECT * FROM POS_POOLS WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' ORDER BY POOL_NAME ASC";
-    $numrows = mysql_numrows($result);
-    if ($numrows > 0) {
-        while ($row = mysql_fetch_assoc($result))
-            $my_array [] = $row;
-
-        echo "<label for=\"$id\">$label</label>\n<select name=\"$name\" id=\"$id\" size=\"1\" $js>\n";
-        for ($a = 0; $a < count($my_array); $a++) {
-            $pool_id = $my_array [$a] ['ID'];
-            $pool_name = $my_array [$a] ['POOL_NAME'];
+    $result = DB::select("SELECT * FROM POS_POOLS WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' ORDER BY POOL_NAME ASC");
+    if (!empty($result)) {
+        echo "<select name=\"$name\" id=\"$id\" size=\"1\" $js>\n";
+        foreach($result as $row) {
+            $pool_id = $row['ID'];
+            $pool_name = $row['POOL_NAME'];
 
             if (session()->has('pool_id') && session()->get('pool_id') == $pool_id) {
                 echo "<option value=\"$pool_id\" selected>$pool_name</option>\n";
@@ -1307,33 +1086,22 @@ function dropdown_pools($label, $name, $id, $js, $kos_typ, $kos_id)
                 echo "<option value=\"$pool_id\" >$pool_name</option>\n";
             }
         } // end for
-        echo "</select>\n";
+        echo "</select><label for=\"$id\">$label</label>\n";
     } else {
-        echo "$kos_typ $kos_id";
         echo "<b>Keine Unterpools hinterlegt oder aktiviert</b>";
         $link = "<br><a href='" . route('legacy::rechnungen::index', ['option' => 'u_pool_erstellen']) . "'>Hier Pools erstellen</a>";
         echo $link;
-        die ();
         return false;
     }
 }
 
-function connectToBase()
-{
-    $con = mysql_connect(DB_HOST, DB_USER, DB_PASS);
-    mysql_set_charset('utf8', $con);
-    mysql_select_db(DB_NAME);
-}
-
 function get_wp_vorjahr_wert($objekt_id, $vorjahr, $kostenkonto)
 {
-    $result = mysql_query("SELECT PLAN_ID FROM WEG_WPLAN WHERE AKTUELL='1' && JAHR='$vorjahr' && OBJEKT_ID='$objekt_id' LIMIT 0,1");
-    $row = mysql_fetch_assoc($result);
-    if ($row) {
-        $vorplan_id = $row ['PLAN_ID'];
-        $result = mysql_query("SELECT BETRAG FROM WEG_WPLAN_ZEILEN WHERE WPLAN_ID='$vorplan_id' && AKTUELL='1' && KOSTENKONTO='$kostenkonto' LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
-        return nummer_punkt2komma($row ['BETRAG']);
+    $result = DB::select("SELECT PLAN_ID FROM WEG_WPLAN WHERE AKTUELL='1' && JAHR='$vorjahr' && OBJEKT_ID='$objekt_id' LIMIT 0,1");
+    if (!empty($result)) {
+        $vorplan_id = $result[0]['PLAN_ID'];
+        $result = DB::select("SELECT BETRAG FROM WEG_WPLAN_ZEILEN WHERE WPLAN_ID='$vorplan_id' && AKTUELL='1' && KOSTENKONTO='$kostenkonto' LIMIT 0,1");
+        return nummer_punkt2komma($result[0]['BETRAG']);
     } else {
         return '0,00';
     }
@@ -1342,14 +1110,11 @@ function get_wp_vorjahr_wert($objekt_id, $vorjahr, $kostenkonto)
 /* Artikelinformationen aus dem Katalog holen */
 function artikel_info($partner_id, $artikel_nr)
 {
-    $result = mysql_query("SELECT * FROM POSITIONEN_KATALOG WHERE ART_LIEFERANT='$partner_id' && ARTIKEL_NR = '$artikel_nr' && AKTUELL='1' ORDER BY KATALOG_DAT DESC LIMIT 0,1");
-    $numrows = mysql_numrows($result);
-    if ($numrows < 1) {
+    $result = DB::select("SELECT * FROM POSITIONEN_KATALOG WHERE ART_LIEFERANT=?  && ARTIKEL_NR=? && AKTUELL='1' ORDER BY KATALOG_DAT DESC LIMIT 0,1", [$partner_id, $artikel_nr]);
+    if (empty($result)) {
         return false;
     } else {
-        while ($row = mysql_fetch_assoc($result))
-            $my_array [] = $row;
-        return $my_array;
+        return $result;
     }
 }
 
@@ -1361,76 +1126,64 @@ function artikel_info($partner_id, $artikel_nr)
  */
 function check_konto_exists($konto, $profil_id)
 {
-    $result = mysql_query("SELECT * FROM BK_KONTEN WHERE KONTO='$konto' && BK_PROFIL_ID='$profil_id' && AKTUELL='1' LIMIT 0,1");
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        return true;
-    } else {
-        return false;
-    }
+    $result = DB::select("SELECT * FROM BK_KONTEN WHERE KONTO='$konto' && BK_PROFIL_ID='$profil_id' && AKTUELL='1' LIMIT 0,1");
+    return !empty($result);
 }
 
 /* Ermitteln der letzten katalog_id */
 function get_last_katalog_id()
 {
-    $result = mysql_query("SELECT KATALOG_ID FROM POSITIONEN_KATALOG WHERE AKTUELL='1' ORDER BY KATALOG_ID DESC LIMIT 0,1");
-    $row = mysql_fetch_assoc($result);
-    return $row ['KATALOG_ID'];
+    $result = DB::select("SELECT KATALOG_ID FROM POSITIONEN_KATALOG WHERE AKTUELL='1' ORDER BY KATALOG_ID DESC LIMIT 0,1");
+    if(!empty($result)) {
+        return $result[0]['KATALOG_ID'];
+    } else {
+        return 0;
+    }
+
 }
 
 function get_kostentraeger_infos($typ, $id)
 {
     if ($typ == 'Objekt') {
-        $db_abfrage = "SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' && OBJEKT_ID='$id'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        // echo "<meta content=\"text/html; charset=ISO-8859-1\" http-equiv=\"content-type\">";
-        while (list ($OBJEKT_KURZNAME) = mysql_fetch_row($resultat)) {
-            // echo "$OBJEKT_KURZNAME";
-            return $OBJEKT_KURZNAME;
+        $result = DB::select("SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' && OBJEKT_ID='$id'");
+        foreach($result as $row) {
+            return $row['OBJEKT_KURZNAME'];
         }
     }
 
     if ($typ == 'Haus') {
-        $db_abfrage = "SELECT HAUS_STRASSE, HAUS_NUMMER FROM HAUS WHERE HAUS_AKTUELL='1' && HAUS_ID='$id'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-
-        while (list ($HAUS_STRASSE, $HAUS_NUMMER) = mysql_fetch_row($resultat))
-            // echo "$HAUS_STRASSE $HAUS_NUMMER";
-            return "$HAUS_STRASSE $HAUS_NUMMER";
+        $result = DB::select("SELECT HAUS_STRASSE, HAUS_NUMMER FROM HAUS WHERE HAUS_AKTUELL='1' && HAUS_ID='$id'");
+        foreach($result as $row)
+            return "$row[HAUS_STRASSE] $row[HAUS_NUMMER]";
     }
 
     if ($typ == 'Einheit') {
-        $db_abfrage = "SELECT EINHEIT_KURZNAME FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID='$id'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        while (list ($EINHEIT_KURZNAME) = mysql_fetch_row($resultat))
-            // echo "$EINHEIT_KURZNAME";
-            return "$EINHEIT_KURZNAME";
+        $result = DB::select("SELECT EINHEIT_KURZNAME FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID='$id'");
+        foreach($result as $row)
+            return "$row[EINHEIT_KURZNAME]";
     }
 
     if ($typ == 'Partner') {
-        $db_abfrage = "SELECT PARTNER_NAME FROM PARTNER_LIEFERANT WHERE AKTUELL='1' && PARTNER_ID='$id' ";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        while (list ($PARTNER_NAME) = mysql_fetch_row($resultat))
-            $PARTNER_NAME1 = str_replace('<br>', '', $PARTNER_NAME);
-        // echo "$PARTNER_NAME1";
+        $result = DB::select("SELECT PARTNER_NAME FROM PARTNER_LIEFERANT WHERE AKTUELL='1' && PARTNER_ID='$id'");
+        $PARTNER_NAME1 = '';
+        foreach($result as $row)
+            $PARTNER_NAME1 = str_replace('<br>', '', $row['PARTNER_NAME']);
         return "$PARTNER_NAME1";
     }
     if ($typ == 'Lager') {
-        $db_abfrage = "SELECT LAGER_NAME FROM LAGER WHERE AKTUELL='1' && LAGER_ID='$id'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        while (list ($LAGER_NAME) = mysql_fetch_row($resultat))
-            $LAGER_NAME1 = str_replace('<br>', '', $LAGER_NAME);
+        $result = DB::select("SELECT LAGER_NAME FROM LAGER WHERE AKTUELL='1' && LAGER_ID='$id'");
+        $LAGER_NAME1 = '';
+        foreach($result as $row)
+            $LAGER_NAME1 = str_replace('<br>', '', $row['LAGER_NAME']);
         return "$LAGER_NAME1";
     }
 }
 
 function last_id_ajax($tab, $spalte)
 {
-    $result = mysql_query("SELECT $spalte FROM `$tab` ORDER BY $spalte DESC LIMIT 0,1");
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        $row = mysql_fetch_assoc($result);
-        return $row [$spalte];
+    $result = DB::select("SELECT $spalte FROM `$tab` ORDER BY $spalte DESC LIMIT 0,1");
+    if (!empty($result)) {
+        return $result[0][$spalte];
     } else {
         return 0;
     }
@@ -1450,14 +1203,9 @@ function get_eigentuemer($einheit_id)
 
 function get_objekt_arr_gk($gk_id)
 {
-    $db_abfrage = "SELECT KOSTENTRAEGER_ID  FROM  GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='Objekt'";
-    $result = mysql_query($db_abfrage) or die (mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) {
-            $arr [] = $row ['KOSTENTRAEGER_ID'];
-        }
-        return $arr;
+    $result = DB::select("SELECT KOSTENTRAEGER_ID FROM GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='Objekt'");
+    if (!empty($result)) {
+        return $result;
     } else {
         return false;
     }
@@ -1479,8 +1227,7 @@ function detail_update($detail_dat, $wert_neu, $det_name, $kos_typ, $kos_id)
             $tabelle_id = $row ['DETAIL_ZUORDNUNG_ID'];
             $det_bemerkung = Auth::user()->email . '-' . date("d.m.Y H:i");
 
-            $db_abfrage = "UPDATE DETAIL SET DETAIL_AKTUELL='0' WHERE DETAIL_DAT='$detail_dat'";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::update("UPDATE DETAIL SET DETAIL_AKTUELL='0' WHERE DETAIL_DAT='$detail_dat'");
             $d->detail_speichern_2($tabelle, $tabelle_id, $det_name, $wert_neu, $det_bemerkung);
         }
     } else {
@@ -1488,6 +1235,3 @@ function detail_update($detail_dat, $wert_neu, $det_name, $kos_typ, $kos_id)
         $d->detail_speichern_2($kos_typ, $kos_id, $det_name, $wert_neu, $det_bemerkung);
     }
 }
-
-?>
-

@@ -1216,7 +1216,7 @@ switch ($option) {
         $datum = date_german2mysql(session()->get('temp_datum'));
         $betrag = nummer_komma2punkt(request()->input('betrag'));
         $kostenkonto = request()->input('kostenkonto');
-        $vzweck = mysql_real_escape_string(request()->input('text'));
+        $vzweck = request()->input('text');
         $geldkonto_id = session()->get('geldkonto_id');
         $rechnungsnr = $kto_auszugsnr;
 
@@ -1295,15 +1295,3 @@ switch ($option) {
         echo "</table>";
         break;
 } // end switch
-
-/*
- * // Wir werden eine PDF Datei ausgeben
- * header('Content-type: application/pdf');
- *
- * // Es wird downloaded.pdf benannt
- * header('Content-Disposition: attachment; filename="downloaded.pdf"');
- *
- * // Die originale PDF Datei heißt original.pdf
- * readfile('original.pdf');
- */
-?>

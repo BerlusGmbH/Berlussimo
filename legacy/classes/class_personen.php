@@ -56,13 +56,9 @@ class personen
     function personen_arr()
     {
         $db_abfrage = "SELECT PERSON_ID, PERSON_NACHNAME, PERSON_VORNAME FROM PERSON WHERE PERSON_AKTUELL='1' ORDER BY PERSON_NACHNAME ASC, PERSON_VORNAME ASC";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $arr [] = $row;
-            }
-            return $arr;
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
+            return $result;
         } else {
             return false;
         }
@@ -74,10 +70,10 @@ class personen
             $l_pid = $this->letzte_person_id() + 1;
             $geb_dat_db = date_german2mysql($geb_dat);
             $db_abfrage = "INSERT INTO PERSON VALUES (NULL, '$l_pid', '$nachname', '$vorname', '$geb_dat_db', '1')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert($db_abfrage);
 
             /* Protokollieren */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('PERSON', $last_dat, '0');
 
             echo "Person wurde gespeichert";
@@ -110,31 +106,24 @@ class personen
     {
         $geb_dat_db = date_german2mysql($geb_dat);
         $db_abfrage = "SELECT * FROM PERSON WHERE  PERSON_NACHNAME='$nachname' && PERSON_VORNAME='$vorname' && PERSON_GEBURTSTAG='$geb_dat_db' &&PERSON_AKTUELL='1'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($resultat);
-        if ($numrows) {
-            return true;
-        } else {
-            return false;
-        }
+        $resultat = DB::select($db_abfrage);
+        return !empty($resultat);
     }
 
     function letzte_person_id()
     {
         $db_abfrage = "SELECT PERSON_ID FROM PERSON ORDER BY PERSON_ID DESC LIMIT 0,1";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        while (list ($PERSON_ID) = mysql_fetch_row($resultat))
-            return $PERSON_ID;
+        $resultat = DB::select($db_abfrage);
+        if(!empty($resultat)) {
+            return $resultat[0]['PERSON_ID'];
+        }
     }
 
     function finde_kos_typ_id($vorname, $nachname)
     {
         $treffer ['ANZ'] = 0;
-        // echo '<pre>';
         $personen_ids_arr = $this->get_person_ids_byname_arr($vorname, $nachname);
         if (is_array($personen_ids_arr)) {
-            // print_r($personen_ids_arr);
-
             $anz_p = count($personen_ids_arr);
             for ($a = 0; $a < $anz_p; $a++) {
                 /* Mietvertraege */
@@ -191,52 +180,32 @@ class personen
 )
 && PERSON_AKTUELL =  '1'
 LIMIT 0 , 30";
-        // echo $db_abfrage;
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($resultat);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($resultat))
-                $personen_arr [] = $row;
-        }
-        if (isset ($personen_arr) && is_array($personen_arr)) {
-            return $personen_arr;
+        $resultat = DB::select($db_abfrage);
+        if (!empty($resultat)) {
+            return $resultat;
         }
     }
 
     function mv_ids_von_person($person_id)
     {
         $db_abfrage = "SELECT PERSON_MIETVERTRAG_MIETVERTRAG_ID FROM PERSON_MIETVERTRAG where PERSON_MIETVERTRAG_PERSON_ID='$person_id' && PERSON_MIETVERTRAG_AKTUELL='1' ORDER BY PERSON_MIETVERTRAG_MIETVERTRAG_ID DESC";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($resultat);
-        if ($numrows > 0) {
+        $resultat = DB::select($db_abfrage);
+        if (!empty($resultat)) {
             $mietvertraege = array();
-            while (list ($PERSON_MIETVERTRAG_MIETVERTRAG_ID) = mysql_fetch_row($resultat)) {
-                array_push($mietvertraege, "$PERSON_MIETVERTRAG_MIETVERTRAG_ID");
+            foreach($resultat as $row) {
+                array_push($mietvertraege, "$row[PERSON_MIETVERTRAG_MIETVERTRAG_ID]");
             }
             return $mietvertraege;
         }
     }
 
-    function personen_ohne_geschlecht()
-    {
-        /*
-         * SELECT * FROM `PERSON` WHERE PERSON_AKTUELL='1' && PERSON_ID NOT IN (
-         * SELECT DETAIL_ZUORDNUNG_ID FROM `DETAIL` WHERE DETAIL_ZUORDNUNG_TABELLE='PERSON' && `DETAIL_NAME` LIKE 'Geschlecht' && DETAIL_AKTUELL='1')
-         */
-    }
-
     function finde_personen_name($string)
     {
         $db_abfrage = "SELECT PERSON_DAT, PERSON_ID, PERSON_NACHNAME, PERSON_VORNAME, PERSON_GEBURTSTAG FROM PERSON WHERE PERSON_AKTUELL='1' && (PERSON_NACHNAME LIKE '%$string%' OR PERSON_VORNAME LIKE '%$string%' )ORDER BY PERSON_NACHNAME, PERSON_VORNAME ASC LIMIT 0,50";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        $resultat = DB::select($db_abfrage);
 
-        $numrows = mysql_numrows($resultat);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($resultat))
-                $personen_arr [] = $row;
-        }
-        if (isset ($personen_arr) && is_array($personen_arr)) {
-            return $personen_arr;
+        if (!empty($resultat)) {
+            return $resultat;
         }
     }
 
@@ -271,13 +240,7 @@ LIMIT 0 , 30";
         } else {
             return [];
         }
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-
-        $numrows = mysql_numrows($resultat);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($resultat))
-                $personen_arr [] = $row;
-        }
+        $personen_arr = DB::select($db_abfrage);
 
         echo "<table>";
         echo "<tr><th>Personenliste</th><th  colspan=\"5\">";
@@ -374,8 +337,8 @@ LIMIT 0 , 30";
     function get_person_infos($person_id)
     {
         unset ($this->p_mv_ids);
-        $result = mysql_query("SELECT * FROM PERSON WHERE PERSON_AKTUELL='1' && PERSON_ID='$person_id' ORDER BY PERSON_DAT DESC LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT * FROM PERSON WHERE PERSON_AKTUELL='1' && PERSON_ID='$person_id' ORDER BY PERSON_DAT DESC LIMIT 0,1");
+        $row = $result[0];
         $this->person_nachname = ltrim(rtrim(strip_tags($row ['PERSON_NACHNAME'])));
         $this->person_vorname = ltrim(rtrim(strip_tags($row ['PERSON_VORNAME'])));
         $this->person_geburtstag = $row ['PERSON_GEBURTSTAG'];
@@ -396,8 +359,8 @@ LIMIT 0 , 30";
 
     function get_person_anzahl_mietvertraege_aktuell($person_id)
     {
-        $result = mysql_query("SELECT PERSON_MIETVERTRAG_MIETVERTRAG_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_PERSON_ID='$person_id' && PERSON_MIETVERTRAG_AKTUELL='1'");
-        $anzahl = mysql_numrows($result);
+        $result = DB::select("SELECT PERSON_MIETVERTRAG_MIETVERTRAG_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_PERSON_ID='$person_id' && PERSON_MIETVERTRAG_AKTUELL='1'");
+        $anzahl = count($result);
         $this->person_anzahl_mietvertraege = $anzahl; // Wieviel MV hat die Person (nur aktuelle)
     }
 
@@ -409,13 +372,11 @@ WHERE `DETAIL_NAME` LIKE '%Hinweis%'
 AND `DETAIL_AKTUELL` = '1'
 AND `DETAIL_ZUORDNUNG_TABELLE` LIKE 'PERSON' && DETAIL_ZUORDNUNG_ID = PERSON_ID ORDER BY PERSON_NACHNAME ASC";
 
-        $result = mysql_query($abfrage);
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
+        $result = DB::select($abfrage);
+        if (!empty($result)) {
             echo "<table class=\"sortable\">";
             echo "<tr><th>Name</th><th>Vorname</th><th>DETAIL</th><th>Inhalt</th><th>Bemerkung</th></tr>";
-            while ($row = mysql_fetch_assoc($result)) {
-                // $arr[] = $row;
+            foreach($result as $row) {
                 $pname = $row ['PERSON_NACHNAME'];
                 $person_id = $row ['PERSON_ID'];
                 $vname = $row ['PERSON_VORNAME'];
@@ -426,16 +387,12 @@ AND `DETAIL_ZUORDNUNG_TABELLE` LIKE 'PERSON' && DETAIL_ZUORDNUNG_ID = PERSON_ID 
                 $mv_ids_arr = $this->mv_ids_von_person($person_id);
                 echo "<td>";
                 if (is_array($mv_ids_arr)) {
-                    // print_r($mv_ids_arr);
                     $anz = count($mv_ids_arr);
                     for ($a = 0; $a < $anz; ++$a) {
                         $mv = new mietvertraege ();
                         $mv_id = $mv_ids_arr [$a];
                         $mv->get_mietvertrag_infos_aktuell($mv_id);
                         echo "$mv->einheit_kurzname\n";
-                        // echo '<pre>';
-                        // print_r($mv);
-                        // die();
                     }
                 }
                 echo "</td>";
@@ -455,13 +412,11 @@ WHERE `DETAIL_NAME` LIKE '%anschrift%'
 AND `DETAIL_AKTUELL` = '1'
 AND `DETAIL_ZUORDNUNG_TABELLE` LIKE 'PERSON' && DETAIL_ZUORDNUNG_ID = PERSON_ID ORDER BY PERSON_NACHNAME ASC";
 
-        $result = mysql_query($abfrage);
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
+        $result = DB::select($abfrage);
+        if (!empty($result)) {
             echo "<table class=\"sortable\">";
             echo "<tr><th>Name</th><th>Vorname</th><th>DETAIL</th><th>Inhalt</th><th>Bemerkung</th></tr>";
-            while ($row = mysql_fetch_assoc($result)) {
-                // $arr[] = $row;
+            foreach($result as $row) {
                 $pname = $row ['PERSON_NACHNAME'];
                 $person_id = $row ['PERSON_ID'];
                 $vname = $row ['PERSON_VORNAME'];
@@ -472,16 +427,12 @@ AND `DETAIL_ZUORDNUNG_TABELLE` LIKE 'PERSON' && DETAIL_ZUORDNUNG_ID = PERSON_ID 
                 $mv_ids_arr = $this->mv_ids_von_person($person_id);
                 echo "<td>";
                 if (is_array($mv_ids_arr)) {
-                    // print_r($mv_ids_arr);
                     $anz = count($mv_ids_arr);
                     for ($a = 0; $a < $anz; ++$a) {
                         $mv = new mietvertraege ();
                         $mv_id = $mv_ids_arr [$a];
                         $mv->get_mietvertrag_infos_aktuell($mv_id);
                         echo "$mv->einheit_kurzname\n";
-                        // echo '<pre>';
-                        // print_r($mv);
-                        // die();
                     }
                 }
                 echo "</td>";

@@ -1061,21 +1061,16 @@ class mietanpassung {
 	}
 	function get_sondermerkmale_arr($a_klasse, $jahr) {
 		$db_abfrage = "SELECT MERKMAL, WERT, A_KLASSE FROM `MS_SONDERMERKMALE` WHERE (A_KLASSE IS NULL OR A_KLASSE='$a_klasse') && JAHR='$jahr' ORDER BY A_KLASSE ASC";
-		$result = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-		$my_arr = Array ();
-		while ( $row = mysql_fetch_assoc ( $result ) )
-			$my_arr [] = $row;
-		if (is_array ( $my_arr )) {
-			return $my_arr;
-		}
+		$result = DB::select( $db_abfrage );
+		return $result;
 	}
 	function datum_letzte_m_erhoehung($mv_id) {
 		unset ( $this->erhoehungsbetrag );
 		unset ( $this->erhoehungsdatum );
 		$jahr = date ( "Y" );
 		$monat = date ( "m" );
-		$result = mysql_query ( "SELECT ANFANG, BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mv_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && (KOSTENKATEGORIE LIKE 'Miete kalt%' or KOSTENKATEGORIE LIKE 'MHG%') ORDER BY ANFANG DESC LIMIT 0,1" );
-		$row = mysql_fetch_assoc ( $result );
+		$result = DB::select( "SELECT ANFANG, BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mv_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && (KOSTENKATEGORIE LIKE 'Miete kalt%' or KOSTENKATEGORIE LIKE 'MHG%') ORDER BY ANFANG DESC LIMIT 0,1" );
+		$row = $result[0];
 		$this->erhoehungsbetrag = $row ['BETRAG'];
 		$this->erhoehungsdatum = date_mysql2german ( $row ['ANFANG'] );
 	}
@@ -1086,10 +1081,9 @@ class mietanpassung {
 		$monat = date ( "m" );
 		
 		$db_abfrage = "SELECT ANFANG, BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mv_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') && DATE_FORMAT( ANFANG, '%Y-%m' ) >= '$jahr-$monat'  && (KOSTENKATEGORIE LIKE 'MHG' or KOSTENKATEGORIE LIKE 'Miete kalt') ORDER BY ANFANG ASC LIMIT 0,1";
-		$result = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-		$numrows = mysql_numrows ( $result );
-		if ($numrows) {
-			$row = mysql_fetch_assoc ( $result );
+		$result = DB::select( $db_abfrage );
+		if (!empty($result)) {
+			$row = $result[0];
 			$this->naechste_erhoehung_datum = $row ['ANFANG'];
 			$this->naechste_erhoehung_betrag = $row ['BETRAG'];
 			return true;
@@ -1099,16 +1093,8 @@ class mietanpassung {
 	}
 	function nettomieter_daten_arr($objekt_id, $mieterart = 'Nettomieter') {
 		$o = new objekt ();
-		// $f = new formular;
-		// $f->fieldset("Mieterhöhungstabelle für $mieterart STAPEL nach Mittelwert", 'me');
 		$einheiten_arr = $o->einheiten_objekt_arr ( $objekt_id );
 		$anzahl = count ( $einheiten_arr );
-		// echo "<table class=\"sortable\">";
-		// echo "<tr><td>$einheit_name</td><td>$mieter</td><td>$ms_feld</td><td>$u_wert</td><td>$m_wert</td><td>$o_wert</td><td>$einheit_qm</td><td>$einzug</td><td>$anstieg_3_jahre</td><td>$letzter_anstieg_datum</td><td>$max_anstieg_prozentual</td><td>$max_anstieg_euro</td><td>$miete_3_jahre</td><td>$miete_aktuell</td><td>$maximale_miete</td><td>$neue_miete_m_wert</td><td>$neue_miete_m_wert_nach_abzug</td><td>$neues_anstieg_m_wert_w</td><td>$angemessene_neue_miete</td><td>$monatlich_mehr</td><td>$abzug_pro_qm</td>";
-		// echo "<tr><th>EIN.</th><th>Klasse</th><th>MIETER</th><th>STR</th><th>MS</th><th>U WERT</th><th>M WERT</th><th>O WERT</th><th>m²</th><th>EINZUG</th><th>AN- STIEG in 3 J %</th><th>L. ER- HÖHUNG</th><th>MAX %</th><th>MAX MEHR €</th><th>MIETE vor 3 Jahren</th><th>MIETE AKT.</th><th>MAX MIETE KAPP</th><th>NEUE MIETE MWERT</th><th>ABZUG m²</th><th>ABZUG GESAMT</th><th>MW NACH ABZUG (ANGEMESSEN)</th><th>MEHR IM MONAT</th><th>ABZÜGE</th><th>m² AKT.</th><th>NEU m²/€</th><th>STATUS</th><th>Optionen</th><th>Bruttomiete AKT</th><th>Neue Bruttomiete</th></tr>";
-		// echo '<pre>';
-		// print_r($einheiten_arr);
-		// die();
 		$summe_m_mehr = 0;
 		$ms_jahr = $this->get_ms_jahr ();
 		
@@ -1120,32 +1106,14 @@ class mietanpassung {
 				$m_mieter_art = $tab_arr ['MIETER_ART'];
 				$monatlich_mehr_m = $tab_arr ['MONATLICH_MEHR'];
 				if ($einheit_qm > 0.00 && isset ( $tab_arr ['MV_ID'] ) && $tab_arr ['MV_ID'] != '' && $mieterart == $m_mieter_art) {
-					// $this->zeile_anzeigen($tab_arr, '');
-					/* Summe aller die mehr als 1 Euro haben */
-					// if($this->monatlich_mehr_mieter>0){
-					// $summe_m_mehr += $this->monatlich_mehr_mieter;
-					
-					// }//
-					
 					$arr [] = $tab_arr;
-					/*
-					 * echo '<pre>';
-					 * print_r($tab_arr);
-					 */
 				}
 			}
 		}
 		$summe_m_mehr_a = nummer_punkt2komma ( $summe_m_mehr );
-		// echo "<tfoot><tr><th colspan=\"25\">Monatlich mehr Einnahmen $summe_m_mehr_a €</th></tr></tfoot>";
-		// echo "</table>";
-		
 		if (isset ( $arr )) {
 			return $arr;
 		}
-		// echo '<pre>';
-		// print_r($arr);
-		
-		// $f->fieldset_ende();
 	}
 	function liste_anzeigen($objekt_id) {
 		$o = new objekt ();
@@ -1154,11 +1122,7 @@ class mietanpassung {
 		$einheiten_arr = $o->einheiten_objekt_arr ( $objekt_id );
 		$anzahl = count ( $einheiten_arr );
 		echo "<table class=\"sortable\">";
-		// echo "<tr><td>$einheit_name</td><td>$mieter</td><td>$ms_feld</td><td>$u_wert</td><td>$m_wert</td><td>$o_wert</td><td>$einheit_qm</td><td>$einzug</td><td>$anstieg_3_jahre</td><td>$letzter_anstieg_datum</td><td>$max_anstieg_prozentual</td><td>$max_anstieg_euro</td><td>$miete_3_jahre</td><td>$miete_aktuell</td><td>$maximale_miete</td><td>$neue_miete_m_wert</td><td>$neue_miete_m_wert_nach_abzug</td><td>$neues_anstieg_m_wert_w</td><td>$angemessene_neue_miete</td><td>$monatlich_mehr</td><td>$abzug_pro_qm</td>";
 		echo "<tr><th>EIN.</th><th>Klasse</th><th>MIETER</th><th>STR</th><th>MS</th><th>U WERT</th><th>M WERT</th><th>O WERT</th><th>m²</th><th>EINZUG</th><th>AN- STIEG in 3 J %</th><th>L. ER- HÖHUNG</th><th>MAX %</th><th>MAX MEHR €</th><th>MIETE vor 3 Jahren</th><th>MIETE AKT.</th><th>MAX MIETE KAPP</th><th>NEUE MIETE MWERT</th><th>ABZUG m²</th><th>ABZUG GESAMT</th><th>MW NACH ABZUG (ANGEMESSEN)</th><th>MEHR IM MONAT</th><th>ABZÜGE</th><th>m² AKT.</th><th>NEU m²/€</th><th>STATUS</th><th>Optionen</th><th>Bruttomiete AKT</th><th>Neue Bruttomiete</th></tr>";
-		// echo '<pre>';
-		// print_r($einheiten_arr);
-		// die();
 		$summe_m_mehr = 0;
 		$ms_jahr = $this->get_ms_jahr ();
 		
@@ -1215,10 +1179,9 @@ class mietanpassung {
 		unset ( $this->m_wert );
 		unset ( $this->o_wert );
 		$db_abfrage = "SELECT U_WERT, M_WERT, O_WERT FROM MIETSPIEGEL WHERE JAHR='$jahr' && FELD='$feld' ORDER BY DAT DESC LIMIT 0,1";
-		$result = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-		$numrows = mysql_numrows ( $result );
-		if ($numrows) {
-			$row = mysql_fetch_assoc ( $result );
+		$result = DB::select( $db_abfrage );
+		if (!empty($result)) {
+			$row = $result[0];
 			$this->u_wert = $row ['U_WERT'];
 			$this->m_wert = $row ['M_WERT'];
 			$this->o_wert = $row ['O_WERT'];
@@ -1226,17 +1189,11 @@ class mietanpassung {
 	}
 	function get_zuabschlag_arr($mv_id) {
 		$db_abfrage = "SELECT * FROM `MIETENTWICKLUNG` WHERE `KOSTENKATEGORIE` LIKE 'MOD' AND KOSTENTRAEGER_TYP='MIETVERTRAG' AND KOSTENTRAEGER_ID='$mv_id'";
-		$result = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-		$numrows = mysql_numrows ( $result );
-		if ($numrows) {
-			while ( $row = mysql_fetch_assoc ( $result ) )
-				$my_arr [] = $row;
-			return $my_arr;
-		}
+		$result = DB::select( $db_abfrage );
+		return $result;
 	}
 	function form_mietanpassung($einheit_id, $ms_jahr) {
 		$array = $this->get_einheit_daten ( $einheit_id, $ms_jahr );
-		// print_r($array);
 		if (is_array ( $array )) {
 			/* Berechnungsarray für das Versenden vorbereiten */
 			$f = new formular ();
@@ -1302,7 +1259,6 @@ class mietanpassung {
 			}
 			
 			echo "<table>";
-			// echo "<tr><th>Beschreibung</th><th>Werte</th></tr>";
 			echo "<tr><th colspan=\"2\">Grunddaten Mieteinheit</th></tr>";
 			echo "<tr><td>Einheit</td><td>$einheit_name</td></tr>";
 			$einheit_qm_a = nummer_punkt2komma ( $einheit_qm );
@@ -1328,10 +1284,7 @@ class mietanpassung {
 			echo "</table>";
 			
 			echo "<table><tr><th colspan=\"2\" style=\"background:yellow;color:red\">MERKMALE +</th><th style=\"background:green;color:red\">AUSWAHL +</th><th style=\"background:red;color:white\">AUSWAHL -</th></tr>";
-			
-			// if($max_anstieg_prozentual<15){
-			// if($neue_miete_m_wert<$maximale_miete){
-			
+
 			$diff_mw_ow = $o_wert - $m_wert;
 			$_1_5tel = nummer_punkt2komma ( $diff_mw_ow / 5 );
 			$_2_5tel = nummer_punkt2komma ( $diff_mw_ow / 5 * 2 );
@@ -1373,9 +1326,6 @@ class mietanpassung {
 			echo "</td><td>";
 			$f->check_box_js1 ( 'MG5', 'MG5_M', '-', 'Wohnumfeld - 20 %', "onclick=\"check_on_off('MG5_P', 'MG5_M')\"", '' );
 			echo "</td></tr>";
-			// }else{
-			// echo "<tr><td colspan=\"4\" style=\"background:black;color:red\"> MAXIMALE ERHÖHUNG VON 15 % bzw. REST $max_anstieg_prozentual % OHNE BEACHTUNG DER SONDERMERKMALE ERREICHT - KAPPUNGSGRENZE ERREICHT!!!</td></tr>";
-			// }
 			echo "</table><table>";
 			
 			echo "<tr><th colspan=\"2\">Mieterinfos</th></tr>";
@@ -1422,8 +1372,6 @@ class mietanpassung {
 				echo "<tr><td>Neue Miete nach Mietspiegel</td><td><b>$neue_miete_m_wert_a €</b></td></tr>";
 				
 				echo "<tr><th colspan=\"2\">Wertmindernde Faktoren pro m²</th></tr>";
-				// echo "<tr><td>Gesamtminderung</td><td><b>$einheit_qm m² * $abzug_pro_qm = $gesamt_abzug</b></td></tr>";
-				
 				if (is_array ( $abzuege_arr )) {
 					
 					$anz = count ( $abzuege_arr );
@@ -1454,7 +1402,6 @@ class mietanpassung {
 				echo "<tr><th colspan=\"2\">Neue angemessene Miete kalt ab $anstiegs_datum</th></tr>";
 				echo "<tr><td>Miete kalt aktuell</td><td>$miete_aktuell_a €</td></tr>";
 				
-				// echo "<hr><h3>Neue Miete ab $anstiegs_datum $angemessene_neue_miete</h3>";
 				echo "<tr><td>Neue Miete kalt pro m²</td><td>$m2_preis_neu €</td></tr>";
 				$monatlich_mehr_a = nummer_punkt2komma ( $monatlich_mehr );
 				echo "<tr><td>Monatliche Erhöhung</td><td>$monatlich_mehr_a €</td></tr>";
@@ -1488,9 +1435,7 @@ class mietanpassung {
 				$f->hidden_feld ( "option", "ber_uebernehmen_netto" );
 				$f->datum_feld ( 'Druckdatum PDF', 'druckdatum', '', 'druckdatum' );
 				$f->send_button ( "ber_uebernehmen_netto", "Übernehmen->PDF" );
-				// $f->send_button("ber_prozent", "Manuelle Prozenteingabe");
 				echo "</td></tr>";
-				// echo "Monatliche Erhöhung: $monatlich_mehr €<br><br>";
 				$link = "<a href='" . route('legacy::mietanpassungen::index', ['option' => 'miete_anpassen_mw', 'einheit_id' => $einheit_id]) . "'>Anpassen</a>";
 			}  // ende Nettomieter
 			
@@ -1607,25 +1552,21 @@ class mietanpassung {
 	}
 	function datum_1_mietdefinition($mietvertrag_id) {
 		/* Zweite Mietdefinition */
-		$result1 = mysql_query ( "SELECT ANFANG, BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE LIKE 'Miete kalt' ORDER BY ANFANG ASC LIMIT 1,1" );
-		$numrows1 = mysql_numrows ( $result1 );
-		if (! $numrows1) {
+		$result1 = DB::select( "SELECT ANFANG, BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE LIKE 'Miete kalt' ORDER BY ANFANG ASC LIMIT 1,1" );
+		if (empty($result1)) {
 			/* Erste Mietdefinition */
-			$result = mysql_query ( "SELECT ANFANG, BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE LIKE 'Miete kalt' ORDER BY ANFANG ASC LIMIT 0,1" );
-			$numrows = mysql_numrows ( $result );
-			if ($numrows) {
-				$row = mysql_fetch_assoc ( $result );
+			$result = DB::select( "SELECT ANFANG, BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE LIKE 'Miete kalt' ORDER BY ANFANG ASC LIMIT 0,1" );
+			if (!empty($result)) {
+				$row = $result[0];
 				return $row ['ANFANG'];
 			}
 		} else {
 			/* Beide Mietdefinitionen und vergleichen */
-			$result = mysql_query ( "SELECT ANFANG, BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE LIKE 'Miete kalt' ORDER BY ANFANG ASC LIMIT 0,1" );
-			$numrows = mysql_numrows ( $result );
-			$row = mysql_fetch_assoc ( $result );
+			$result = DB::select( "SELECT ANFANG, BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE LIKE 'Miete kalt' ORDER BY ANFANG ASC LIMIT 0,1" );
+			$row = $result[0];
 			
-			$result1 = mysql_query ( "SELECT ANFANG, BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE LIKE 'Miete kalt' ORDER BY ANFANG ASC LIMIT 1,1" );
-			$numrows1 = mysql_numrows ( $result1 );
-			$row1 = mysql_fetch_assoc ( $result1 );
+			$result1 = DB::select( "SELECT ANFANG, BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE LIKE 'Miete kalt' ORDER BY ANFANG ASC LIMIT 1,1" );
+			$row1 = $result1[0];
 			$_miete1 = $row ['BETRAG'];
 			$_miete2 = $row1 ['BETRAG'];
 			if ($_miete1 >= $_miete2) {
@@ -1636,32 +1577,26 @@ class mietanpassung {
 		}
 	}
 	function kosten_monatlich($mietvertrag_id, $monat, $jahr, $kostenkat) {
-		$result = mysql_query ( "SELECT SUM(BETRAG) AS SUMME_RATE FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && KOSTENKATEGORIE LIKE '$kostenkat' ORDER BY ANFANG ASC" );
-		$row = mysql_fetch_assoc ( $result );
+		$result = DB::select( "SELECT SUM(BETRAG) AS SUMME_RATE FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && KOSTENKATEGORIE LIKE '$kostenkat' ORDER BY ANFANG ASC" );
+		$row = $result[0];
 		$summe = $row ['SUMME_RATE'];
 		return $summe;
 	}
 	function get_erhoehungen_arr($ab_datum, $kos_typ, $kos_id) {
 		$db_abfrage = "SELECT ANFANG, KOSTENKATEGORIE, ENDE, BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && MIETENTWICKLUNG_AKTUELL = '1'  && (KOSTENKATEGORIE LIKE 'Miete kalt%' or KOSTENKATEGORIE LIKE 'MOD') && ANFANG >='$ab_datum' ORDER BY ANFANG ASC";
-		$result = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-		$my_arr = Array ();
-		while ( $row = mysql_fetch_assoc ( $result ) )
-			$my_arr [] = $row;
-		return $my_arr;
+		$result = DB::select( $db_abfrage );
+		return $result;
 	}
 	function get_mod_arr($ab_datum, $kos_typ, $kos_id) {
 		$db_abfrage = "SELECT ANFANG, KOSTENKATEGORIE, ENDE, BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && MIETENTWICKLUNG_AKTUELL = '1'  && KOSTENKATEGORIE LIKE 'MOD' && ANFANG >='$ab_datum' ORDER BY ANFANG ASC";
-		$result = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-		while ( $row = mysql_fetch_assoc ( $result ) )
-			$my_arr [] = $row;
-		return $my_arr;
+		$result = DB::select( $db_abfrage );
+		return $result;
 	}
 	function check_bruttomieter($kos_typ, $kos_id) {
 		$db_abfrage = "SELECT BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && MIETENTWICKLUNG_AKTUELL = '1'  && KOSTENKATEGORIE='Nebenkosten Vorauszahlung' && BETRAG!='0' ORDER BY MIETENTWICKLUNG_DAT DESC LIMIT 0,1";
-		$result = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-		$numrows = mysql_numrows ( $result );
-		if ($numrows) {
-			while ( $row = mysql_fetch_assoc ( $result ) ) {
+		$result = DB::select( $db_abfrage );
+		if (!empty($result)) {
+			foreach($result as $row) {
 				// Kein Bruttomieter, da Betrag > 0.00
 				$betrag = $row ['BETRAG'];
 				if ($betrag > 0.00) {
@@ -1682,11 +1617,6 @@ class mietanpassung {
 	}
 	function pdf_anschreiben_MW_stapel($pdf, $ber_array, $datum) {
 		$ber = ( object ) $ber_array;
-		// if($ber->MV_ID=515){
-		// echo "<pre>";
-		// print_r($ber_array);
-		// die('SIVAC3333');
-		// }
 		$ber->MIETE_AKTUELL_A = nummer_punkt2komma ( $ber->MIETE_AKTUELL );
 		$ber->EINHEIT_QM_A = nummer_punkt2komma ( $ber->EINHEIT_QM );
 		$ber->M2_AKTUELL_A = nummer_punkt2komma ( $ber->M2_AKTUELL );
@@ -1738,17 +1668,6 @@ class mietanpassung {
 		$tab_arr [1] ['BETRAG'] = '<b>' . $ber->MONATLICH_MEHR_A . ' €</b>';
 		$tab_arr [2] ['BEZ'] = "<b>Neue Nettokaltmiete ab $ber->N_ANSTIEG_DATUM:</b>";
 		$tab_arr [2] ['BETRAG'] = '<b>' . $ber->NEUE_MIETE_A . ' €</b>';
-		/*
-		 * $tab_arr[3][BEZ] = 'Nebenkosten Vorauszahlung';
-		 * $tab_arr[3][BETRAG] = "+ $ber->B_AKT_NK";
-		 * $tab_arr[4][BEZ] = 'Heizkosten Vorauszahlung';
-		 * $tab_arr[4][BETRAG] = "+ $ber->B_AKT_HK";
-		 * $tab_arr[5][BEZ] = 'Alte Endmiete';
-		 * $tab_arr[5][BETRAG] = $ber->B_AKT_ENDMIETE;
-		 * $tab_arr[6][BEZ] = '<b>Neue Endmiete</b>';
-		 * $tab_arr[6][BETRAG] = "<b>$ber->B_NEUE_ENDMIETE</b>";
-		 */
-		// $pdf->ezSetDy(-10);
 		$cols = array (
 				'BEZ' => "BEZ",
 				'BETRAG' => "BETRAG" 
@@ -1788,12 +1707,6 @@ class mietanpassung {
 		$pdf->ezText ( "$brief_text", 11, array (
 				'justification' => 'full' 
 		) );
-		// $jahr_minus_3 = date("Y")-3;
-		// $monat = date("m");
-		// $tag = date("d");
-		
-		// $datum_vor_3_jahren = "$jahr_minus_3-$monat-$tag";
-		// DATUM_3_JAHRE
 		$datum_vor_3_jahren_a = $ber->DATUM_3_JAHRE;
 		$datum_vor_3_jahren = date_german2mysql ( $datum_vor_3_jahren_a );
 		$ber->EINZUG_A = date_mysql2german ( $ber->EINZUG );
@@ -1813,25 +1726,6 @@ class mietanpassung {
 				'justification' => 'full' 
 		) );
 		
-		/*
-		 * $erhoehungen_arr = $this->get_erhoehungen_arr($datum_vor_3_jahren, 'MIETVERTRAG', $ber->MV_ID);
-		 * if(is_array($erhoehungen_arr)){
-		 * $anz_e = count($erhoehungen_arr);
-		 * #echo "<tr><th colspan=\"2\">Mieterhöhungen seit 3 Jahren</th></tr>";
-		 * $pdf->ezText("\nMieterhöhungen seit 3 Jahren",11, array('justification'=>'full'));
-		 * for ($j = 0; $j < $anz_e;$j++){
-		 * $k_kat = $erhoehungen_arr[$j]['KOSTENKATEGORIE'];
-		 * $anf_kat = date_mysql2german($erhoehungen_arr[$j]['ANFANG']);
-		 * $ende_kat = date_mysql2german($erhoehungen_arr[$j]['ENDE']);
-		 * if($ende_kat == '00.00.0000'){
-		 * $ende_kat = 'unbefristet';
-		 * }
-		 * $betrag_kat = nummer_punkt2komma($erhoehungen_arr[$j]['BETRAG']);
-		 * # echo "<tr><td><b>Von: $anf_kat Bis: $ende_kat - $k_kat</b></td><td>$betrag_kat €</td></tr>";
-		 * $pdf->ezText("Vom $anf_kat bis $ende_kat - $k_kat - $betrag_kat €",11, array('justification'=>'full'));
-		 * }
-		 * }
-		 */
 		/* Zweite Seite */
 		$pdf->ezNewPage ();
 		
@@ -4736,10 +4630,9 @@ class mietanpassung {
 	}
 	function get_ms_jahr() {
 		$db_abfrage = "SELECT JAHR FROM MIETSPIEGEL ORDER BY JAHR DESC LIMIT 0,1";
-		$result = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-		$numrows = mysql_numrows ( $result );
-		if ($numrows) {
-			$row = mysql_fetch_assoc ( $result );
+		$result = DB::select( $db_abfrage );
+		if (!empty($result)) {
+			$row = $result[0];
 			return $row ['JAHR'];
 		}
 	}

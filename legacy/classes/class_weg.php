@@ -274,8 +274,8 @@ class weg
 
     function get_summe_kostenkat($monat, $jahr, $kos_typ, $kos_id, $kostenkat)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME, E_KONTO FROM WEG_WG_DEF WHERE KOS_TYP LIKE '$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && KOSTENKAT = '$kostenkat' ORDER BY ANFANG ASC");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME, E_KONTO FROM WEG_WG_DEF WHERE KOS_TYP LIKE '$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && KOSTENKAT = '$kostenkat' ORDER BY ANFANG ASC");
+        $row = $result[0];
         if (!empty ($row ['SUMME'])) {
             $this->e_konto = $row ['E_KONTO'];
             return $row ['SUMME'];
@@ -284,14 +284,14 @@ class weg
 
     function get_hga_def($kos_typ, $kos_id, $kostenkat)
     {
-        $result = mysql_query("SELECT BETRAG AS SUMME, E_KONTO 
+        $result = DB::select("SELECT BETRAG AS SUMME, E_KONTO 
 FROM WEG_WG_DEF 
 WHERE KOS_TYP LIKE '$kos_typ' 
 	&& KOS_ID='$kos_id' 
 	&& AKTUELL='1' 
 	&& KOSTENKAT = '$kostenkat'
 ORDER BY ANFANG ASC");
-        $row = mysql_fetch_assoc($result);
+        $row = $result[0];
         if (!empty ($row ['SUMME'])) {
             $this->e_konto = $row ['E_KONTO'];
             return $row ['SUMME'];
@@ -305,31 +305,23 @@ ORDER BY ANFANG ASC");
 
     function get_monatliche_def($monat, $jahr, $kos_typ, $kos_id)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME, E_KONTO, KOSTENKAT FROM WEG_WG_DEF WHERE KOS_TYP LIKE '$kos_typ' && KOS_ID='$kos_id' && E_KONTO!=6050 && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' GROUP BY KOSTENKAT ORDER BY E_KONTO ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME, E_KONTO, KOSTENKAT FROM WEG_WG_DEF WHERE KOS_TYP LIKE '$kos_typ' && KOS_ID='$kos_id' && E_KONTO!=6050 && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' GROUP BY KOSTENKAT ORDER BY E_KONTO ASC");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function get_moegliche_def($kos_typ, $kos_id)
     {
-        $result = mysql_query("SELECT E_KONTO, KOSTENKAT FROM WEG_WG_DEF WHERE KOS_TYP LIKE '$kos_typ' && KOS_ID='$kos_id' && E_KONTO != 6050 && AKTUELL='1' GROUP BY KOSTENKAT ORDER BY E_KONTO ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select("SELECT E_KONTO, KOSTENKAT FROM WEG_WG_DEF WHERE KOS_TYP LIKE '$kos_typ' && KOS_ID='$kos_id' && E_KONTO != 6050 && AKTUELL='1' GROUP BY KOSTENKAT ORDER BY E_KONTO ASC");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function get_ergebnisse_hga_soll($kos_id_soll, $jahr, $buchungskonto)
     {
-        $result = mysql_query("
+        $result = DB::select("
 SELECT BETRAG AS SOLL, KOSTENKAT AS HGA
 FROM WEG_WG_DEF 
 WHERE KOS_TYP LIKE 'Einheit' 
@@ -338,18 +330,14 @@ WHERE KOS_TYP LIKE 'Einheit'
 	&& AKTUELL = '1' 
 	&& DATE_FORMAT(ANFANG, '%Y') <= '$jahr'
 ORDER BY HGA;");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function get_ergebnis_hga_ist($kos_id_ist, $jahr, $geldkonto, $buchungskonto)
     {
-        $result = mysql_query("
+        $result = DB::select("
 SELECT IF(SUM(BETRAG) IS NULL,0,SUM(BETRAG)) AS IST
 FROM GELD_KONTO_BUCHUNGEN 
 WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr' 
@@ -358,9 +346,8 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
 	&& AKTUELL='1' 
 	&& GELDKONTO_ID=$geldkonto
 	&& KONTENRAHMEN_KONTO=$buchungskonto;");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc($result);
+        if (!empty($result)) {
+            $row = $result[0];
             return $row['IST'];
         }
         return 0;
@@ -368,8 +355,8 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
 
     function get_summe_kostenkat_monat($monat, $jahr, $kos_typ, $kos_id, $e_konto)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME, G_KONTO, ANFANG, ENDE FROM WEG_WG_DEF WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && E_KONTO = '$e_konto' ORDER BY ANFANG ASC");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME, G_KONTO, ANFANG, ENDE FROM WEG_WG_DEF WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && E_KONTO = '$e_konto' ORDER BY ANFANG ASC");
+        $row = $result[0];
         if (!empty ($row ['SUMME'])) {
             return $row ['SUMME'];
         }
@@ -377,22 +364,17 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
 
     function get_betraf_def($kos_typ, $kos_id)
     {
-        $result = mysql_query("SELECT E_KONTO, KOSTENKAT FROM WEG_WG_DEF WHERE KOS_TYP LIKE '$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' GROUP BY KOSTENKAT ORDER BY E_KONTO ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select("SELECT E_KONTO, KOSTENKAT FROM WEG_WG_DEF WHERE KOS_TYP LIKE '$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' GROUP BY KOSTENKAT ORDER BY E_KONTO ASC");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function get_summe_kostenkat_gruppe_m2($monat, $jahr, $kos_typ, $kos_id, $gruppe)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME, G_KONTO FROM WEG_WG_DEF WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && E_KONTO!=6050 && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && GRUPPE = '$gruppe' ORDER BY ANFANG ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME, G_KONTO FROM WEG_WG_DEF WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && E_KONTO!=6050 && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && GRUPPE = '$gruppe' ORDER BY ANFANG ASC");
+        if (!empty($result)) {
+            $row = $result[0];
             $summe = $row ['SUMME'];
             return $summe;
         }
@@ -400,19 +382,15 @@ WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr'
 
     function wg_def_in_array($kos_typ, $kos_id, $monat, $jahr)
     {
-        $result = mysql_query("SELECT KOSTENKAT FROM WEG_WG_DEF WHERE KOS_TYP LIKE '$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' GROUP BY KOSTENKAT ORDER BY E_KONTO ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select("SELECT KOSTENKAT FROM WEG_WG_DEF WHERE KOS_TYP LIKE '$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' GROUP BY KOSTENKAT ORDER BY E_KONTO ASC");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function get_sume_hausgeld($kos_typ, $kos_id, $monat, $jahr)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME, G_KONTO, E_KONTO, ANFANG, ENDE
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME, G_KONTO, E_KONTO, ANFANG, ENDE
 FROM WEG_WG_DEF
 WHERE KOS_TYP='$kos_typ'
     && KOS_ID='$kos_id'
@@ -423,7 +401,7 @@ WHERE KOS_TYP='$kos_typ'
             OR
             ( DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ))");
 
-        $row = mysql_fetch_assoc($result);
+        $row = $result[0];
         if (!empty ($row ['SUMME'])) {
             return $row ['SUMME'] * -1;
         }
@@ -481,11 +459,11 @@ WHERE KOS_TYP='$kos_typ'
     {
         /* ET_ID INAKTIV */
         $db_abfrage = "UPDATE WEG_MITEIGENTUEMER SET AKTUELL='0' where AKTUELL='1' && ID='$et_id'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
 
         /* PERSONEN von ET_ID INAKTIV */
         $db_abfrage = "UPDATE WEG_EIGENTUEMER_PERSON SET AKTUELL='0' where AKTUELL='1' && WEG_EIG_ID='$et_id'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
 
         $this->eigentuemer_speichern_mit_id($et_id, $einheit_id, $eigent_arr, $eigentuemer_von, $eigentuemer_bis);
     }
@@ -507,25 +485,17 @@ WHERE KOS_TYP='$kos_typ'
 
     function get_eigentuemer_arr($einheit_id)
     {
-        $result = mysql_query("SELECT * FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select("SELECT * FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON ASC");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function get_eigentuemer_arr_2($einheit_id, $sortvon = 'DESC')
     {
-        $result = mysql_query("SELECT * FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON $sortvon");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select("SELECT * FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON $sortvon");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -537,11 +507,10 @@ WHERE KOS_TYP='$kos_typ'
         $bk = new bk ();
         $tage_jahr = $bk->tage_im_jahr($jahr);
 
-        $result = mysql_query("SELECT * FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' && (DATE_FORMAT(VON, '%Y') <='$jahr' AND BIS='0000-00-00' OR DATE_FORMAT(VON, '%Y') <='$jahr' AND DATE_FORMAT(BIS, '%Y') >='$jahr') ORDER BY VON ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
+        $result = DB::select("SELECT * FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' && (DATE_FORMAT(VON, '%Y') <='$jahr' AND BIS='0000-00-00' OR DATE_FORMAT(VON, '%Y') <='$jahr' AND DATE_FORMAT(BIS, '%Y') >='$jahr') ORDER BY VON ASC");
+        if (!empty($result)) {
             $z = 0;
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $von = $row ['VON'];
                 $von_arr = explode('-', $von);
                 $von_d = $von_arr [2];
@@ -597,11 +566,9 @@ WHERE KOS_TYP='$kos_typ'
 
     function get_last_eigentuemer_arr($einheit_id)
     {
-        $result = mysql_query("SELECT * FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON DESC LIMIT 0,1");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
-            return $row;
+        $result = DB::select("SELECT * FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON DESC LIMIT 0,1");
+        if (!empty($result)) {
+            return $result[0];
         }
     }
 
@@ -1246,10 +1213,9 @@ WHERE KOS_TYP='$kos_typ'
 
     function get_einheit_id_from_eigentuemer($e_id)
     {
-        $result = mysql_query("SELECT EINHEIT_ID, VON, BIS FROM WEG_MITEIGENTUEMER WHERE ID='$e_id' && AKTUELL='1' ORDER BY DAT DESC LIMIT 0,1");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT EINHEIT_ID, VON, BIS FROM WEG_MITEIGENTUEMER WHERE ID='$e_id' && AKTUELL='1' ORDER BY DAT DESC LIMIT 0,1");
+        if (!empty($result)) {
+            $row = $result[0];
             $this->eigentuemer_von = $row ['VON'];
             $this->eigentuemer_bis = $row ['BIS'];
             return $row ['EINHEIT_ID'];
@@ -1258,37 +1224,25 @@ WHERE KOS_TYP='$kos_typ'
 
     function get_person_id_eigentuemer_arr($id)
     {
-        $result = mysql_query("SELECT PERSON_ID FROM WEG_EIGENTUEMER_PERSON WHERE WEG_EIG_ID='$id' && AKTUELL='1'");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select("SELECT PERSON_ID FROM WEG_EIGENTUEMER_PERSON WHERE WEG_EIG_ID='$id' && AKTUELL='1'");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function get_eigentuemer_id_from_person_arr($person_id)
     {
-        $result = mysql_query("SELECT WEG_EIG_ID FROM WEG_EIGENTUEMER_PERSON WHERE PERSON_ID='$person_id' && AKTUELL='1'");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select("SELECT WEG_EIG_ID FROM WEG_EIGENTUEMER_PERSON WHERE PERSON_ID='$person_id' && AKTUELL='1'");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function get_einheiten_et($person_id)
     {
-        $result = mysql_query("SELECT WEG_EIGENTUEMER_PERSON.WEG_EIG_ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME FROM WEG_EIGENTUEMER_PERSON, WEG_MITEIGENTUEMER,EINHEIT WHERE PERSON_ID='$person_id' && WEG_MITEIGENTUEMER.AKTUELL='1' && WEG_EIGENTUEMER_PERSON.AKTUELL='1' && EINHEIT.EINHEIT_AKTUELL='1' && WEG_EIGENTUEMER_PERSON.WEG_EIG_ID=WEG_MITEIGENTUEMER.ID && WEG_MITEIGENTUEMER.EINHEIT_ID=EINHEIT.EINHEIT_ID GROUP BY WEG_EIG_ID");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select("SELECT WEG_EIGENTUEMER_PERSON.WEG_EIG_ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME FROM WEG_EIGENTUEMER_PERSON, WEG_MITEIGENTUEMER,EINHEIT WHERE PERSON_ID='$person_id' && WEG_MITEIGENTUEMER.AKTUELL='1' && WEG_EIGENTUEMER_PERSON.AKTUELL='1' && EINHEIT.EINHEIT_AKTUELL='1' && WEG_EIGENTUEMER_PERSON.WEG_EIG_ID=WEG_MITEIGENTUEMER.ID && WEG_MITEIGENTUEMER.EINHEIT_ID=EINHEIT.EINHEIT_ID GROUP BY WEG_EIG_ID");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -1336,10 +1290,9 @@ WHERE KOS_TYP='$kos_typ'
 
     function weg_objekte_arr()
     {
-        $result = mysql_query("SELECT HAUS_ID FROM EINHEIT WHERE TYP LIKE '%eigentum%' && EINHEIT_AKTUELL='1' GROUP BY HAUS_ID");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
+        $result = DB::select("SELECT HAUS_ID FROM EINHEIT WHERE TYP LIKE '%eigentum%' && EINHEIT_AKTUELL='1' GROUP BY HAUS_ID");
+        if (!empty($result)) {
+            foreach($result as $row) {
                 $haus_id_arr [] = $row ['HAUS_ID'];
             }
 
@@ -1350,7 +1303,6 @@ WHERE KOS_TYP='$kos_typ'
                 for ($a = 0; $a < $anz; $a++) {
                     $haus_id = $haus_id_arr_uni [$a];
                     $h->get_haus_info($haus_id);
-                    // print_r($h);
                     $objekt_arr [] = $h->objekt_id;
                 }
                 $objekt_id_arr_uni = array_values(array_unique($objekt_arr));
@@ -1520,25 +1472,17 @@ WHERE KOS_TYP='$kos_typ'
 
     function get_wps_arr($objekt_id)
     {
-        $result = mysql_query("SELECT * FROM WEG_WPLAN WHERE AKTUELL='1' && OBJEKT_ID='$objekt_id' ORDER BY JAHR DESC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $arr [] = $row;
-            }
-            return $arr;
+        $result = DB::select("SELECT * FROM WEG_WPLAN WHERE AKTUELL='1' && OBJEKT_ID='$objekt_id' ORDER BY JAHR DESC");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function get_wps_alle_arr()
     {
-        $result = mysql_query("SELECT * FROM WEG_WPLAN WHERE AKTUELL='1' ORDER BY JAHR DESC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $arr [] = $row;
-            }
-            return $arr;
+        $result = DB::select("SELECT * FROM WEG_WPLAN WHERE AKTUELL='1' ORDER BY JAHR DESC");
+        if ($result) {
+            return $result;
         }
     }
 
@@ -1627,15 +1571,15 @@ WHERE KOS_TYP='$kos_typ'
             $o = new objekt ();
             $akt_eigentuemer_bis = $o->datum_minus_tage($eigentuemer_von, 1);
             $db_abfrage = "UPDATE WEG_MITEIGENTUEMER SET BIS='$akt_eigentuemer_bis' where AKTUELL='1' && ID='$alt_id'";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::update($db_abfrage);
         }
 
         /* Neue Eigentümer eintragen */
         $id = last_id2('WEG_MITEIGENTUEMER', 'ID') + 1;
         $db_abfrage = "INSERT INTO WEG_MITEIGENTUEMER VALUES (NULL, '$id', '$einheit_id', '$eigentuemer_von', '$eigentuemer_bis', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
         /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('WEG_MITEIGENTUEMER', '0', $last_dat);
 
         /* Personen zu ID eintragen */
@@ -1644,9 +1588,9 @@ WHERE KOS_TYP='$kos_typ'
             $p_id = last_id2('WEG_EIGENTUEMER_PERSON', 'ID') + 1;
             $person_id = $eigent_arr [$a];
             $db_abfrage = "INSERT INTO WEG_EIGENTUEMER_PERSON VALUES (NULL, '$p_id', '$id', '$person_id', '1')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert($db_abfrage);
             /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('WEG_EIGENTUEMER_PERSON', '0', $last_dat);
         } // end for
     }
@@ -1663,10 +1607,10 @@ WHERE KOS_TYP='$kos_typ'
         /* Neue Eigentümer eintragen */
         $id = $et_id;
         $db_abfrage = "INSERT INTO WEG_MITEIGENTUEMER VALUES (NULL, '$id', '$einheit_id', '$eigentuemer_von', '$eigentuemer_bis', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
 
         /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('WEG_MITEIGENTUEMER', '0', $last_dat);
 
         /* Personen zu ID eintragen */
@@ -1675,9 +1619,9 @@ WHERE KOS_TYP='$kos_typ'
             $p_id = last_id2('WEG_EIGENTUEMER_PERSON', 'ID') + 1;
             $person_id = $eigent_arr [$a];
             $db_abfrage = "INSERT INTO WEG_EIGENTUEMER_PERSON VALUES (NULL, '$p_id', '$id', '$person_id', '1')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert($db_abfrage);
             /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('WEG_EIGENTUEMER_PERSON', '0', $last_dat);
         } // end for
     }
@@ -1687,9 +1631,9 @@ WHERE KOS_TYP='$kos_typ'
         /* Neue Eigentümer eintragen */
         $id = last_id2('WEG_MITEIGENTUEMER', 'ID') + 1;
         $db_abfrage = "INSERT INTO WEG_MITEIGENTUEMER VALUES (NULL, '$id', '$einheit_id', '$von', '$bis', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
         /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('WEG_MITEIGENTUEMER', '0', $last_dat);
         return $id;
     }
@@ -1699,18 +1643,16 @@ WHERE KOS_TYP='$kos_typ'
         /* Personen zu ID eintragen */
         $p_id = last_id2('WEG_EIGENTUEMER_PERSON', 'ID') + 1;
         $db_abfrage = "INSERT INTO WEG_EIGENTUEMER_PERSON VALUES (NULL, '$p_id', '$et_id', '$person_id', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-
-        $last_dat = mysql_insert_id();
+        DB::insert($db_abfrage);
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('WEG_EIGENTUEMER_PERSON', '0', $last_dat);
     }
 
     function check_miteigentuemer($einheit_id)
     {
-        $result = mysql_query("SELECT ID FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON DESC LIMIT 0,1");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT ID FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON DESC LIMIT 0,1");
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['ID'];
         }
     }
@@ -1845,11 +1787,9 @@ WHERE KOS_TYP='$kos_typ'
             unset ($this->wg_def_kos_aktuell);
         }
 
-        $result = mysql_query("SELECT * FROM WEG_WG_DEF WHERE AKTUELL='1' && DAT='$dat'");
-        $numrows = mysql_numrows($result);
-
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT * FROM WEG_WG_DEF WHERE AKTUELL='1' && DAT='$dat'");
+        if (!empty($result)) {
+            $row = $result[0];
             $this->wg_def_dat = $row ['DAT'];
             $this->wg_def_id = $row ['ID'];
             $this->wg_def_von = $row ['ANFANG'];
@@ -1979,12 +1919,11 @@ WHERE KOS_TYP='$kos_typ'
 
     function dropdown_genkeys($label, $js)
     {
-        $result = mysql_query("SELECT * FROM BK_GENERAL_KEYS WHERE  AKTUELL='1'   ORDER BY GKEY_NAME ASC");
+        $result = DB::select("SELECT * FROM BK_GENERAL_KEYS WHERE  AKTUELL='1'   ORDER BY GKEY_NAME ASC");
 
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
+        if (!empty($result)) {
             echo "<label for=\"genkeys\">$label</label><select id=\"genkeys\" name=\"genkey\" size=\"1\" $js>";
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $keyid = $row ['GKEY_ID'];
                 $keyname = $row ['GKEY_NAME'];
                 $key_me = $row ['ME'];
@@ -1996,22 +1935,15 @@ WHERE KOS_TYP='$kos_typ'
 
     function check_def()
     {
-        $result = mysql_query("SELECT ID FROM WEG_WG_DEF WHERE AKTUELL='1'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            return true;
-        }
+        $result = DB::select("SELECT ID FROM WEG_WG_DEF WHERE AKTUELL='1'");
+        return !empty($result);
     }
 
     function get_definitionen_arr()
     {
-        $result = mysql_query("SELECT * FROM WEG_WG_DEF WHERE AKTUELL='1' GROUP BY KOSTENKAT ORDER BY E_KONTO, KOSTENKAT ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $arr [] = $row;
-            }
-            return $arr;
+        $result = DB::select("SELECT * FROM WEG_WG_DEF WHERE AKTUELL='1' GROUP BY KOSTENKAT ORDER BY E_KONTO, KOSTENKAT ASC");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -2041,38 +1973,33 @@ WHERE KOS_TYP='$kos_typ'
         $id = last_id2('WEG_WG_DEF', 'ID') + 1;
         $betrag = nummer_komma2punkt($betrag);
         $db_abfrage = "INSERT INTO WEG_WG_DEF VALUES (NULL, '$id', '$von', '$bis', '$betrag', '$kostenkat', '$e_konto', '$gruppe', '$g_konto','Einheit', '$einheit_id', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
         /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('WEG_WG_DEF', '0', $last_dat);
     }
 
     function get_kostenkat($e_konto)
     {
-        $result = mysql_query("SELECT KOSTENKAT FROM WEG_WG_DEF WHERE AKTUELL='1' && E_KONTO='$e_konto' GROUP BY E_KONTO ORDER BY ANFANG DESC LIMIT 0,1");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT KOSTENKAT FROM WEG_WG_DEF WHERE AKTUELL='1' && E_KONTO='$e_konto' GROUP BY E_KONTO ORDER BY ANFANG DESC LIMIT 0,1");
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['KOSTENKAT'];
         }
     }
 
     function get_definitionen_arr_kos($kos_typ, $kos_id)
     {
-        $result = mysql_query("SELECT * FROM WEG_WG_DEF WHERE AKTUELL='1' && KOS_TYP='$kos_typ' && KOS_ID='$kos_id' ORDER BY ANFANG ASC, ENDE DESC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $arr [] = $row;
-            }
-            return $arr;
+        $result = DB::select("SELECT * FROM WEG_WG_DEF WHERE AKTUELL='1' && KOS_TYP='$kos_typ' && KOS_ID='$kos_id' ORDER BY ANFANG ASC, ENDE DESC");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function wohngeld_def_delete($dat)
     {
         $db_abfrage = "UPDATE WEG_WG_DEF SET AKTUELL='0' WHERE DAT='$dat'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
         protokollieren('WEG_WG_DEF', $dat, $dat);
     }
 
@@ -2172,10 +2099,9 @@ WHERE KOS_TYP='$kos_typ'
 
     function datum_erste_hg_def($kos_typ, $kos_id)
     {
-        $result = mysql_query("SELECT ANFANG FROM WEG_WG_DEF WHERE AKTUELL='1' &&  KOS_TYP LIKE '$kos_typ' && KOS_ID='$kos_id' ORDER BY ANFANG ASC LIMIT 0,1");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT ANFANG FROM WEG_WG_DEF WHERE AKTUELL='1' &&  KOS_TYP LIKE '$kos_typ' && KOS_ID='$kos_id' ORDER BY ANFANG ASC LIMIT 0,1");
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['ANFANG'];
         }
     }
@@ -2687,81 +2613,59 @@ WHERE KOS_TYP='$kos_typ'
 
     function get_zahlungen_arr($kos_typ, $kos_id, $monat, $jahr, $geldkonto_id, $buchungskonto)
     {
-        // echo "SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE DATE_FORMAT(DATUM, '%Y-%m') = '$jahr-$monat' && KOSTENTRAEGER_TYP LIKE '$kos_typ' && KOSTENTRAEGER_ID='$kos_id' && AKTUELL='1' && GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO='$buchungskonto' ORDER BY DATUM ASC<br><br>";
-        $result = mysql_query("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE DATE_FORMAT(DATUM, '%Y-%m') = '$jahr-$monat' && KOSTENTRAEGER_TYP LIKE '$kos_typ' && KOSTENTRAEGER_ID='$kos_id' && AKTUELL='1' && GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO='$buchungskonto' ORDER BY DATUM ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE DATE_FORMAT(DATUM, '%Y-%m') = '$jahr-$monat' && KOSTENTRAEGER_TYP LIKE '$kos_typ' && KOSTENTRAEGER_ID='$kos_id' && AKTUELL='1' && GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO='$buchungskonto' ORDER BY DATUM ASC");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function get_summe_zahlungen_kostenkonto($kos_typ, $kos_id, $monat, $jahr, $geldkonto_id, $buchungskonto)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE DATE_FORMAT(DATUM, '%Y-%m') = '$jahr-$monat' && KOSTENTRAEGER_TYP LIKE '$kos_typ' && KOSTENTRAEGER_ID='$kos_id' && AKTUELL='1' && GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO='$buchungskonto' ORDER BY DATUM ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc($result);
-            return $row ['SUMME'];
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE DATE_FORMAT(DATUM, '%Y-%m') = '$jahr-$monat' && KOSTENTRAEGER_TYP LIKE '$kos_typ' && KOSTENTRAEGER_ID='$kos_id' && AKTUELL='1' && GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO='$buchungskonto' ORDER BY DATUM ASC");
+        if (!empty($result)) {
+            return $result['SUMME'];
         }
     }
 
     function get_zahlungen_arr1($kos_typ, $kos_id, $monat, $jahr, $geldkonto_id)
     {
-        // echo "SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE DATE_FORMAT(DATUM, '%Y-%m') = '$jahr-$monat' && KOSTENTRAEGER_TYP LIKE '$kos_typ' && KOSTENTRAEGER_ID='$kos_id' && AKTUELL='1' && GELDKONTO_ID='$geldkonto_id' ORDER BY DATUM ASC";
-        $result = mysql_query("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE DATE_FORMAT(DATUM, '%Y-%m') = '$jahr-$monat' && KOSTENTRAEGER_TYP LIKE '$kos_typ' && KOSTENTRAEGER_ID='$kos_id' && AKTUELL='1' && GELDKONTO_ID='$geldkonto_id' ORDER BY DATUM ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE DATE_FORMAT(DATUM, '%Y-%m') = '$jahr-$monat' && KOSTENTRAEGER_TYP LIKE '$kos_typ' && KOSTENTRAEGER_ID='$kos_id' && AKTUELL='1' && GELDKONTO_ID='$geldkonto_id' ORDER BY DATUM ASC");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function get_zahlungen_arr_jahr($kos_typ, $kos_id, $jahr, $geldkonto_id, $kostenkonto)
     {
-        $result = mysql_query("SELECT *, DATE_FORMAT(DATUM, '%d.%m.%Y') AS DATUM_D FROM GELD_KONTO_BUCHUNGEN WHERE DATE_FORMAT(DATUM, '%Y') = '$jahr' && KOSTENTRAEGER_TYP LIKE '$kos_typ' && KOSTENTRAEGER_ID='$kos_id' && AKTUELL='1' && GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO='$kostenkonto' ORDER BY DATUM ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select("SELECT *, DATE_FORMAT(DATUM, '%d.%m.%Y') AS DATUM_D FROM GELD_KONTO_BUCHUNGEN WHERE DATE_FORMAT(DATUM, '%Y') = '$jahr' && KOSTENTRAEGER_TYP LIKE '$kos_typ' && KOSTENTRAEGER_ID='$kos_id' && AKTUELL='1' && GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO='$kostenkonto' ORDER BY DATUM ASC");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function get_summe_zahlungen_arr_jahr($kos_typ, $kos_id, $jahr, $geldkonto_id, $kostenkonto)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE DATE_FORMAT(DATUM, '%Y') = '$jahr' && KOSTENTRAEGER_TYP LIKE '$kos_typ' && KOSTENTRAEGER_ID='$kos_id' && AKTUELL='1' && GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO='$kostenkonto' ORDER BY DATUM ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE DATE_FORMAT(DATUM, '%Y') = '$jahr' && KOSTENTRAEGER_TYP LIKE '$kos_typ' && KOSTENTRAEGER_ID='$kos_id' && AKTUELL='1' && GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO='$kostenkonto' ORDER BY DATUM ASC");
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['SUMME'];
         }
     }
 
     function get_summe_zahlungen($kos_typ, $kos_id, $monat, $jahr, $geldkonto_id, $kostenkonto = '6020')
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE DATE_FORMAT(DATUM, '%Y-%m') = '$jahr-$monat' && KOSTENTRAEGER_TYP LIKE '$kos_typ' && KOSTENTRAEGER_ID='$kos_id' && AKTUELL='1' && GELDKONTO_ID='$geldkonto_id' && `KONTENRAHMEN_KONTO` = '$kostenkonto' GROUP BY KOSTENTRAEGER_ID ORDER BY DATUM ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE DATE_FORMAT(DATUM, '%Y-%m') = '$jahr-$monat' && KOSTENTRAEGER_TYP LIKE '$kos_typ' && KOSTENTRAEGER_ID='$kos_id' && AKTUELL='1' && GELDKONTO_ID='$geldkonto_id' && `KONTENRAHMEN_KONTO` = '$kostenkonto' GROUP BY KOSTENTRAEGER_ID ORDER BY DATUM ASC");
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['SUMME'];
         }
     }
 
     function kostenkonten_in_array($geld_konto_id)
     {
-        $result = mysql_query("SELECT KONTENRAHMEN_KONTO FROM GELD_KONTO_BUCHUNGEN WHERE  AKTUELL='1' && GELDKONTO_ID='$geld_konto_id' GROUP BY KONTENRAHMEN_KONTO ORDER BY KONTENRAHMEN_KONTO ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select("SELECT KONTENRAHMEN_KONTO FROM GELD_KONTO_BUCHUNGEN WHERE  AKTUELL='1' && GELDKONTO_ID='$geld_konto_id' GROUP BY KONTENRAHMEN_KONTO ORDER BY KONTENRAHMEN_KONTO ASC");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -3313,16 +3217,11 @@ WHERE KOS_TYP='$kos_typ'
             $monat = $monats_arr [$a] ['monat'];
             $jahr = $monats_arr [$a] ['jahr'];
 
-            $result = mysql_query("SELECT SUM( BETRAG ) AS SUMME FROM WEG_WG_DEF WHERE KOS_TYP = '$kos_typ' && KOS_ID = '$kos_id' && AKTUELL = '1' && ( ENDE = '0000-00-00'
+            $result = DB::select("SELECT SUM( BETRAG ) AS SUMME FROM WEG_WG_DEF WHERE KOS_TYP = '$kos_typ' && KOS_ID = '$kos_id' && AKTUELL = '1' && ( ENDE = '0000-00-00'
 OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && E_KONTO = '$e_konto'");
-            // echo "SELECT SUM( BETRAG ) AS SUMME FROM WEG_WG_DEF WHERE KOS_TYP = '$kos_typ' && KOS_ID = '$kos_id' && AKTUELL = '1' && ( ENDE = '0000-00-00'
-            // OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && E_KONTO = '$e_konto'<br>";
-            $numrows = mysql_numrows($result);
-            if ($numrows > 0) {
-                while ($row = mysql_fetch_assoc($result)) {
+            if (!empty($result)) {
+                foreach($result as $row) {
                     $soll_summe += $row ['SUMME'];
-                    // $m_sum = $row['SUMME'];
-                    // echo "<br>$monat $jahr <b>$e_konto</b> $m_sum $soll_summe $kos_typ $kos_id<br>";
                 }
             }
         }
@@ -3448,33 +3347,26 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
 
     function get_jahr_wp($wp_id)
     {
-        $result = mysql_query("SELECT JAHR FROM WEG_WPLAN WHERE AKTUELL='1' && PLAN_ID='$wp_id' LIMIT 0,1");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT JAHR FROM WEG_WPLAN WHERE AKTUELL='1' && PLAN_ID='$wp_id' LIMIT 0,1");
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['JAHR'];
         }
     }
 
     function wp_zeilen_arr($wplan_id)
     {
-        $result = mysql_query("SELECT * FROM WEG_WPLAN_ZEILEN WHERE AKTUELL='1' && WPLAN_ID='$wplan_id' ORDER BY KOSTENKONTO ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select("SELECT * FROM WEG_WPLAN_ZEILEN WHERE AKTUELL='1' && WPLAN_ID='$wplan_id' ORDER BY KOSTENKONTO ASC");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function get_soll_betrag_wp($konto, $wplan_id)
     {
-        // echo "SELECT SUM(ABS(BETRAG)) AS BETRAG FROM WEG_WPLAN_ZEILEN WHERE AKTUELL='1' && WPLAN_ID='$wplan_id' && KOSTENKONTO='$konto'"
-        $result = mysql_query("SELECT SUM(BETRAG) AS BETRAG FROM WEG_WPLAN_ZEILEN WHERE AKTUELL='1' && WPLAN_ID='$wplan_id' && KOSTENKONTO='$konto'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT SUM(BETRAG) AS BETRAG FROM WEG_WPLAN_ZEILEN WHERE AKTUELL='1' && WPLAN_ID='$wplan_id' && KOSTENKONTO='$konto'");
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['BETRAG'];
         }
     }
@@ -3482,9 +3374,6 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
     function wp_zeilen_anzeigen($wplan_id)
     {
         $arr = $this->wp_zeilen_arr($wplan_id);
-        // echo '<pre>';
-        // print_r($arr);
-
         if (is_array($arr)) {
             $k = new kontenrahmen ();
             $kontenrahmen_id = $k->get_kontenrahmen('Objekt', session()->get('objekt_id'));
@@ -3551,9 +3440,9 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         if (!$this->check_wplan_exists($wjahr, $objekt_id)) {
             $id = last_id2('WEG_WPLAN', 'PLAN_ID') + 1;
             $db_abfrage = "INSERT INTO WEG_WPLAN VALUES (NULL, '$id', '$wjahr', '$objekt_id', '1')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert($db_abfrage);
 
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('WEG_WPLAN', '0', $last_dat);
         } else {
             $o = new objekt ();
@@ -3568,29 +3457,24 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         $betrag = nummer_komma2punkt($betrag);
         $betrag_vj = nummer_komma2punkt($betrag_vj);
         $db_abfrage = "INSERT INTO WEG_WPLAN_ZEILEN VALUES (NULL, '$id', '$wp_id', '$kostenkonto', '$betrag' , '$betrag_vj' , '$formel', '$wirt_id', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
 
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('WEG_WPLAN_ZEILEN', '0', $last_dat);
     }
 
     function wp_zeile_loeschen($dat)
     {
         $db_abfrage = "UPDATE WEG_WPLAN_ZEILEN SET AKTUELL='0' WHERE DAT='$dat'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-
-        $last_dat = mysql_insert_id();
+        DB::update($db_abfrage);
         protokollieren('WEG_WPLAN_ZEILEN', $dat, $dat);
         return true;
     }
 
     function check_wplan_exists($wjahr, $objekt_id)
     {
-        $result = mysql_query("SELECT PLAN_ID FROM WEG_WPLAN WHERE AKTUELL='1' && JAHR='$wjahr' && OBJEKT_ID='$objekt_id'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            return true;
-        }
+        $result = DB::select("SELECT PLAN_ID FROM WEG_WPLAN WHERE AKTUELL='1' && JAHR='$wjahr' && OBJEKT_ID='$objekt_id'");
+        return !empty($result);
     }
 
     function pdf_wplan($wp_id)
@@ -4139,10 +4023,9 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
     {
         unset ($this->wp_jahr);
         unset ($this->wp_objekt_id);
-        $result = mysql_query("SELECT * FROM WEG_WPLAN WHERE PLAN_ID='$wp_id' && AKTUELL='1' ORDER BY DAT DESC LIMIT 0,1");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT * FROM WEG_WPLAN WHERE PLAN_ID='$wp_id' && AKTUELL='1' ORDER BY DAT DESC LIMIT 0,1");
+        if (!empty($result)) {
+            $row = $result[0];
             $this->wp_jahr = $row ['JAHR'];
             $this->wp_objekt_id = $row ['OBJEKT_ID'];
             $o = new objekt ();
@@ -4454,13 +4337,11 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         $k = new kontenrahmen ();
         $kontenrahmen_id = $k->get_kontenrahmen('Objekt', session()->get('objekt_id'));
 
-        $result = mysql_query("SELECT KONTO, TEXT FROM WEG_HGA_ZEILEN WHERE AKTUELL='1' && WEG_HG_P_ID='$p_id' ORDER BY KONTO ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
+        $result = DB::select("SELECT KONTO, TEXT FROM WEG_HGA_ZEILEN WHERE AKTUELL='1' && WEG_HG_P_ID='$p_id' ORDER BY KONTO ASC");
+        if (!empty($result)) {
             $z = 0;
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $konto = $row ['KONTO'];
-
                 $k->konto_informationen2($konto, $kontenrahmen_id);
                 if ($gruppenbez == $k->konto_gruppen_bezeichnung) {
                     $arr [$z] ['KONTO'] = $konto;
@@ -4494,7 +4375,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $p_id_query = '=' . $p_id;
         }
 
-        $result = mysql_query("SELECT KONTO
+        $result = DB::select("SELECT KONTO
 FROM WEG_HGA_ZEILEN 
 WHERE AKTUELL='1' 
 	&& WEG_HG_P_ID" . $p_id_query . " 
@@ -4507,10 +4388,9 @@ WHERE AKTUELL='1'
 GROUP BY KONTO
 ORDER BY KONTO ASC
 ");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
+        if (!empty($result)) {
             $z = 0;
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $konto = $row ['KONTO'];
                 $k->konto_informationen2($konto, $kontenrahmen_id);
                 $arr [$z] ['KONTO'] = $konto;
@@ -4526,32 +4406,26 @@ ORDER BY KONTO ASC
 
     function get_kontostand_manuell($gk_id, $datum)
     {
-        $result = mysql_query("SELECT BETRAG FROM WEG_KONTOSTAND WHERE GK_ID='$gk_id' && AKTUELL='1' && DATUM='$datum' ORDER BY DAT DESC LIMIT 0,1");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT BETRAG FROM WEG_KONTOSTAND WHERE GK_ID='$gk_id' && AKTUELL='1' && DATUM='$datum' ORDER BY DAT DESC LIMIT 0,1");
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['BETRAG'];
         }
     }
 
     function get_summe_zahlungen_manuell($p_id)
     {
-        $result = mysql_query("SELECT KOSTENKONTO, SUM(BUCHUNGS_SUMME) AS SUMME FROM WEG_HG_ZAHLUNGEN WHERE  AKTUELL='1' &&  WEG_HGA_ID='$p_id' GROUP BY KOSTENKONTO ORDER BY `WEG_HG_ZAHLUNGEN`.`KOSTENKONTO` ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $arr [] = $row;
-            }
-            return $arr;
+        $result = DB::select("SELECT KOSTENKONTO, SUM(BUCHUNGS_SUMME) AS SUMME FROM WEG_HG_ZAHLUNGEN WHERE  AKTUELL='1' &&  WEG_HGA_ID='$p_id' GROUP BY KOSTENKONTO ORDER BY `WEG_HG_ZAHLUNGEN`.`KOSTENKONTO` ASC");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function get_summe_zahlungen_manuell_konto($p_id, $kostenkonto)
     {
-        $result = mysql_query("SELECT SUM(BUCHUNGS_SUMME) AS SUMME FROM WEG_HG_ZAHLUNGEN WHERE  AKTUELL='1' &&  WEG_HGA_ID='$p_id' && KOSTENKONTO='$kostenkonto' ORDER BY `WEG_HG_ZAHLUNGEN`.`KOSTENKONTO` ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT SUM(BUCHUNGS_SUMME) AS SUMME FROM WEG_HG_ZAHLUNGEN WHERE  AKTUELL='1' &&  WEG_HGA_ID='$p_id' && KOSTENKONTO='$kostenkonto' ORDER BY `WEG_HG_ZAHLUNGEN`.`KOSTENKONTO` ASC");
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['SUMME'];
         }
     }
@@ -5452,26 +5326,17 @@ ORDER BY KONTO ASC
 
     function get_summen_konten_arr($gk_id, $jahr)
     {
-        $result = mysql_query("SELECT `KONTENRAHMEN_KONTO`, SUM(BETRAG) AS SUMME  FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` = '$gk_id' AND `AKTUELL` = '1' && DATE_FORMAT(DATUM, '%Y') = '$jahr' GROUP BY `KONTENRAHMEN_KONTO` ORDER BY DATUM ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select("SELECT `KONTENRAHMEN_KONTO`, SUM(BETRAG) AS SUMME  FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` = '$gk_id' AND `AKTUELL` = '1' && DATE_FORMAT(DATUM, '%Y') = '$jahr' GROUP BY `KONTENRAHMEN_KONTO` ORDER BY DATUM ASC");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function get_summen_konten_arr_manuell($gk_id, $jahr)
     {
-        $result = mysql_query("SELECT `KONTENRAHMEN_KONTO`, SUM(BETRAG) AS SUMME  FROM `WEG_IHR_III` WHERE `IHR_GK_ID` = '$gk_id' AND `AKTUELL` = '1' && DATE_FORMAT(DATUM, '%Y') = '$jahr' GROUP BY `KONTENRAHMEN_KONTO` ORDER BY DATUM ASC");
-        echo "SELECT `KONTENRAHMEN_KONTO`, SUM(BETRAG) AS SUMME  FROM `WEG_IHR_III` WHERE `IHR_GK_ID` = '$gk_id' AND `AKTUELL` = '1' && DATE_FORMAT(DATUM, '%Y') = '$jahr' GROUP BY `KONTENRAHMEN_KONTO` ORDER BY DATUM ASC";
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select("SELECT `KONTENRAHMEN_KONTO`, SUM(BETRAG) AS SUMME  FROM `WEG_IHR_III` WHERE `IHR_GK_ID` = '$gk_id' AND `AKTUELL` = '1' && DATE_FORMAT(DATUM, '%Y') = '$jahr' GROUP BY `KONTENRAHMEN_KONTO` ORDER BY DATUM ASC");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -6805,31 +6670,29 @@ ORDER BY KONTO ASC
 
     function get_summe_hk($kos_typ, $kos_id, $hga_id)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS BETRAG FROM WEG_HGA_HK WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && WEG_HGA_ID='$hga_id'");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT SUM(BETRAG) AS BETRAG FROM WEG_HGA_HK WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && WEG_HGA_ID='$hga_id'");
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['BETRAG'];
         }
     }
 
     function get_summe_energie_jahr_alle($hga_id)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS BETRAG FROM WEG_HGA_HK WHERE AKTUELL='1' && WEG_HGA_ID='$hga_id'");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT SUM(BETRAG) AS BETRAG FROM WEG_HGA_HK WHERE AKTUELL='1' && WEG_HGA_ID='$hga_id'");
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['BETRAG'];
         }
     }
 
     function get_summe_zahlungen_hga($kos_typ, $kos_id, $hga_id, $kostenkonto)
     {
-        $result = mysql_query("SELECT BUCHUNGS_DAT, BUCHUNGS_SUMME FROM WEG_HG_ZAHLUNGEN WHERE  AKTUELL='1' && KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && WEG_HGA_ID='$hga_id' && KOSTENKONTO='$kostenkonto' ORDER BY BUCHUNGS_DAT ASC");
-        $numrows = mysql_numrows($result);
+        $result = DB::select("SELECT BUCHUNGS_DAT, BUCHUNGS_SUMME FROM WEG_HG_ZAHLUNGEN WHERE  AKTUELL='1' && KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && WEG_HGA_ID='$hga_id' && KOSTENKONTO='$kostenkonto' ORDER BY BUCHUNGS_DAT ASC");
+        $numrows = count($result);
         $summe = 0;
         if ($numrows > 1) {
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach ($result as $row) {
                 $buchungs_dat = $row ['BUCHUNGS_DAT'];
                 $b = new buchen ();
                 $b->geldbuchungs_dat_infos($buchungs_dat);
@@ -6837,7 +6700,7 @@ ORDER BY KONTO ASC
             }
         }
         if ($numrows = 1) {
-            $row = mysql_fetch_assoc($result);
+            $row = $result[0];
             $buchungs_dat = $row ['BUCHUNGS_DAT'];
             if (empty ($buchungs_dat)) {
                 $summe = $row ['BUCHUNGS_SUMME'];
@@ -6873,7 +6736,7 @@ ORDER BY KONTO ASC
     {
         $p_id_vorjahr = $this->get_pid_lastyear($p_id);
         if (!is_null($p_id_vorjahr)) {
-            $result = mysql_query("(
+            $result = DB::select("(
 SELECT Z1.*, Z2.BETRAG AS BETRAG_VORJAHR 
 FROM (SELECT * FROM WEG_HGA_ZEILEN WHERE WEG_HG_P_ID='$p_id' AND AKTUELL='1' ) AS Z1 
 	LEFT JOIN (SELECT * FROM WEG_HGA_ZEILEN WHERE WEG_HG_P_ID='$p_id_vorjahr' AND AKTUELL='1' ) AS Z2 ON (Z1.KONTO = Z2.KONTO) 
@@ -6887,24 +6750,19 @@ FROM (SELECT * FROM WEG_HGA_ZEILEN WHERE WEG_HG_P_ID='$p_id' AND AKTUELL='1' ) A
 WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
 )");
         } else {
-            $result = mysql_query("SELECT *, 0 AS BETRAG_VORJAHR FROM WEG_HGA_ZEILEN WHERE AKTUELL='1' && WEG_HG_P_ID='$p_id' && KONTO='$konto' ORDER BY KONTO ASC");
+            $result = DB::select("SELECT *, 0 AS BETRAG_VORJAHR FROM WEG_HGA_ZEILEN WHERE AKTUELL='1' && WEG_HG_P_ID='$p_id' && KONTO='$konto' ORDER BY KONTO ASC");
         }
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $arr [] = $row;
-            }
-            return $arr;
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function get_pid_lastyear($p_id)
     {
         $p_id_vorjahr = null;
-        $result = mysql_query("SELECT P2.ID FROM WEG_HGA_PROFIL AS P1 JOIN WEG_HGA_PROFIL AS P2 ON(P1.OBJEKT_ID = P2.OBJEKT_ID) WHERE P1.AKTUELL='1' && P1.AKTUELL='1' && P1.ID='$p_id' && P2.JAHR = P1.JAHR - 1");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            $p_id_vorjahr = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT P2.ID FROM WEG_HGA_PROFIL AS P1 JOIN WEG_HGA_PROFIL AS P2 ON(P1.OBJEKT_ID = P2.OBJEKT_ID) WHERE P1.AKTUELL='1' && P1.AKTUELL='1' && P1.ID='$p_id' && P2.JAHR = P1.JAHR - 1");
+        if (!empty($result)) {
+            $p_id_vorjahr = $result[0];
             $p_id_vorjahr = $p_id_vorjahr['ID'];
         }
         return $p_id_vorjahr;
@@ -6913,12 +6771,11 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
     function test2($p_id = '0', $jahr = 2011)
     {
         $jahr = date("Y");
-        $result = mysql_query("SELECT * FROM WEG_HGA_ZEILEN WHERE AKTUELL='1' && WEG_HG_P_ID='$p_id' ORDER BY KONTO ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
+        $result = DB::select("SELECT * FROM WEG_HGA_ZEILEN WHERE AKTUELL='1' && WEG_HG_P_ID='$p_id' ORDER BY KONTO ASC");
+        if (!empty($result)) {
             echo "<table>";
             echo "<tr><th>Konto</th><th>Text</th><th>Betrag</th><th>Zuordnung</th><th>Schlüssel</th></tr>";
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $konto = $row ['KONTO'];
                 $text = $row ['TEXT'];
                 $gen_key_id = $row ['GEN_KEY_ID'];
@@ -7019,11 +6876,9 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
 
     function get_hga_profil_infos($p_id)
     {
-        $result = mysql_query("SELECT * FROM WEG_HGA_PROFIL WHERE AKTUELL='1' && ID='$p_id' ORDER BY DAT ASC LIMIT 0,1") or mysql_error();
-        $numrows = mysql_numrows($result);
-
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT * FROM WEG_HGA_PROFIL WHERE AKTUELL='1' && ID='$p_id' ORDER BY DAT ASC LIMIT 0,1");
+        if (!empty($result)) {
+            $row = $result[0];
             $this->p_jahr = $row ['JAHR'];
             $this->p_objekt_id = $row ['OBJEKT_ID'];
             $this->p_gk_id = $row ['GELDKONTO_ID'];
@@ -7134,23 +6989,21 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
     function konto_loeschen($profil_id, $konto)
     {
         $db_abfrage = "UPDATE WEG_HGA_ZEILEN SET AKTUELL='0' WHERE KONTO='$konto' && WEG_HG_P_ID='$profil_id'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
     }
 
     function autokorr_hga($profil_id, $konto, $betrag)
     {
-        mysql_query("UPDATE WEG_HGA_ZEILEN SET BETRAG='$betrag' WHERE AKTUELL='1' && WEG_HG_P_ID='$profil_id' && KONTO='$konto'") or mysql_error();
+        DB::update("UPDATE WEG_HGA_ZEILEN SET BETRAG='$betrag' WHERE AKTUELL='1' && WEG_HG_P_ID='$profil_id' && KONTO='$konto'");
     }
 
     function tab_zeilen($p_id)
     {
-        $result = mysql_query("SELECT * FROM WEG_HGA_ZEILEN WHERE AKTUELL='1' && WEG_HG_P_ID='$p_id' ORDER BY KONTO, ART ASC") or mysql_error();
-        $numrows = mysql_numrows($result);
-
-        if ($numrows) {
+        $result = DB::update("SELECT * FROM WEG_HGA_ZEILEN WHERE AKTUELL='1' && WEG_HG_P_ID='$p_id' ORDER BY KONTO, ART ASC");
+        if (!empty($result)) {
             echo "<table class=\"sortable\">";
             echo "<tr><th>KONTO</th><th>TEXT</th><th>ART</th><th>BETRAG</th><th>HNDL BETRAG</th><th>ZUORDNUNG</th><th>SCHLÜSSEL</th></tr>";
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $id = $row ['ID'];
                 $konto = $row ['KONTO'];
                 $art = $row ['ART'];
@@ -7172,13 +7025,11 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
 
     function tab_profile()
     {
-        $result = mysql_query("SELECT * FROM WEG_HGA_PROFIL WHERE AKTUELL='1' ORDER BY ID DESC") or mysql_error();
-        $numrows = mysql_numrows($result);
-
-        if ($numrows) {
+        $result = DB::select("SELECT * FROM WEG_HGA_PROFIL WHERE AKTUELL='1' ORDER BY ID DESC");
+        if (!empty($result)) {
             echo "<table class=\"sortable striped\">";
             echo "<tr><th>Bezeichnung</th><th>Jahr</th><th>Objekt</th><th>Optionen</th></tr>";
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $dat = $row ['DAT'];
                 $id = $row ['ID'];
                 $bez = $row ['BEZEICHNUNG'];
@@ -7202,16 +7053,16 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
     function hga_profil_del($id)
     {
         $db_abfrage = "UPDATE WEG_HGA_PROFIL SET AKTUELL='0' WHERE ID='$id' && AKTUELL='1'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
 
         $db_abfrage = "UPDATE WEG_HGA_HK SET AKTUELL='0' WHERE WEG_HGA_ID='$id' && AKTUELL='1'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
 
         $db_abfrage = "UPDATE WEG_HGA_ZEILEN SET AKTUELL='0' WHERE WEG_HG_P_ID='$id' && AKTUELL='1'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
 
         $db_abfrage = "UPDATE WEG_HG_ZAHLUNGEN SET AKTUELL='0' WHERE WEG_HGA_ID='$id' && AKTUELL='1'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
     }
 
     function form_hk_verbrauch($p_id)
@@ -7307,14 +7158,14 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
     function hk_verbrauch_eintragen($p_id, $eig_id, $betrag)
     {
         $db_abfrage = "UPDATE WEG_HGA_HK SET AKTUELL='0' WHERE WEG_HGA_ID='$p_id' && KOS_ID='$eig_id'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
 
         $id = last_id2('WEG_HGA_HK', 'ID') + 1;
         $betrag_a = nummer_komma2punkt($betrag);
         $db_abfrage = "INSERT INTO WEG_HGA_HK VALUES (NULL, '$id', '$betrag_a', 'Eigentuemer','$eig_id', '$p_id', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
         /* Protokollieren */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('WEG_HGA_HK', '0', $last_dat);
     }
 
@@ -7362,11 +7213,9 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
 
     function get_hga_hk_betrag($p_id, $et_id)
     {
-        $result = mysql_query("SELECT BETRAG FROM `WEG_HGA_HK` WHERE KOS_TYP='Eigentuemer' && `KOS_ID` ='$et_id' AND  `WEG_HGA_ID` ='$p_id' AND  `AKTUELL` =  '1' ORDER BY DAT DESC LIMIT 0,1");
-        $numrows = mysql_numrows($result);
-
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT BETRAG FROM `WEG_HGA_HK` WHERE KOS_TYP='Eigentuemer' && `KOS_ID` ='$et_id' AND  `WEG_HGA_ID` ='$p_id' AND  `AKTUELL` =  '1' ORDER BY DAT DESC LIMIT 0,1");
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['BETRAG'];
         } else {
             return '0.00';
@@ -7375,14 +7224,13 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
 
     function get_summe_zeilen($konto, $profil_id)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME, SUM(HNDL_BETRAG) AS SUMME_HNDL FROM WEG_HGA_ZEILEN WHERE AKTUELL='1' && WEG_HG_P_ID='$profil_id' && KONTO='$konto'");
-        $numrows = mysql_numrows($result);
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME, SUM(HNDL_BETRAG) AS SUMME_HNDL FROM WEG_HGA_ZEILEN WHERE AKTUELL='1' && WEG_HG_P_ID='$profil_id' && KONTO='$konto'");
         $this->summe_zeilen = 0;
         $this->summe_hndl = 0;
         $this->konto_has_entry = false;
 
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        if (!empty($result)) {
+            $row = $result[0];
             $this->summe_zeilen = $row ['SUMME'];
             $this->summe_hndl = $row ['SUMME_HNDL'];
             if (isset($row ['SUMME_HNDL']) || isset($row ['SUMME'])) {
@@ -7424,9 +7272,9 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
         $betrag_a = nummer_komma2punkt($betrag);
         $hndl_betrag_a = nummer_komma2punkt($hndl_betrag);
         $db_abfrage = "INSERT INTO WEG_HGA_ZEILEN VALUES (NULL, '$id', '$profil_id', '$konto','$art', '$text', '$gen_key_id','$betrag_a','$hndl_betrag_a', '$kos_typ','$kos_id','1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
         /* Protokollieren */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('WEG_HGA_ZEILEN', '0', $last_dat);
     }
 
@@ -7440,19 +7288,15 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
 
     function konten_auswahl_summen_arr($gk_id, $jahr)
     {
-        $result = mysql_query("SELECT KONTENRAHMEN_KONTO, SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE DATE_FORMAT(DATUM, '%Y') = '$jahr'  && AKTUELL='1' && GELDKONTO_ID='$gk_id' GROUP BY KONTENRAHMEN_KONTO ORDER BY KONTENRAHMEN_KONTO ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select("SELECT KONTENRAHMEN_KONTO, SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE DATE_FORMAT(DATUM, '%Y') = '$jahr'  && AKTUELL='1' && GELDKONTO_ID='$gk_id' GROUP BY KONTENRAHMEN_KONTO ORDER BY KONTENRAHMEN_KONTO ASC");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function konten_auswahl_ohne_zuordnung_arr($gk_id, $jahr, $profil_id)
     {
-        $result = mysql_query("SELECT * FROM WEG_HGA_ZEILEN
+        $result = DB::select("SELECT * FROM WEG_HGA_ZEILEN
                                WHERE KONTO NOT IN (SELECT KONTENRAHMEN_KONTO
 					                               FROM GELD_KONTO_BUCHUNGEN
 					                               WHERE DATE_FORMAT(DATUM, '%Y') = '$jahr'
@@ -7462,12 +7306,8 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
 	                              AND WEG_HG_P_ID=$profil_id
 	                              AND AKTUELL='1'
 	                           ORDER BY KONTO DESC;");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -7482,9 +7322,9 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
 
         $id = last_id2('WEG_HGA_PROFIL', 'ID') + 1;
         $db_abfrage = "INSERT INTO WEG_HGA_PROFIL VALUES (NULL, '$id', '$bez', '$jahr','$von','$bis', '$objekt_id', '$gk_id', '$gk_id_ihr', '$wp_id', '$hg_konto', '$hk_konto', '$ihr_konto', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
         /* Protokollieren */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('WEG_HGA_PROFIL', '0', $last_dat);
         session()->put('hga_profil_id', $id);
         session()->put('jahr', $jahr);
@@ -7493,7 +7333,7 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
     function hga_profil_aendern($profil_id, $objekt_id, $gk_id, $jahr, $bez, $gk_id_ihr, $wp_id, $hg_konto, $hk_konto, $ihr_konto, $von, $bis)
     {
         $db_abfrage = "UPDATE WEG_HGA_PROFIL SET AKTUELL='0' WHERE ID='$profil_id'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
         /* Protokollieren */
         protokollieren('WEG_HGA_PROFIL', $profil_id, $profil_id);
 
@@ -7501,9 +7341,9 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
         $bis = date_german2mysql($bis);
 
         $db_abfrage = "INSERT INTO WEG_HGA_PROFIL VALUES (NULL, '$profil_id', '$bez', '$jahr','$von','$bis', '$objekt_id', '$gk_id', '$gk_id_ihr', '$wp_id', '$hg_konto', '$hk_konto', '$ihr_konto', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
         /* Protokollieren */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('WEG_HGA_PROFIL', '0', $last_dat);
 
         session()->put('hga_profil_id', $profil_id);
@@ -7536,9 +7376,9 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
             $id = last_id2('WEG_KONTOSTAND', 'PLAN_ID') + 1;
             $betrag_db = nummer_komma2punkt($betrag);
             $db_abfrage = "INSERT INTO WEG_KONTOSTAND VALUES (NULL, '$id', '$gk_id', '$datum', '$betrag_db', '1')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            $resultat = DB::insert($db_abfrage);
 
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('WEG_KONTOSTAND', '0', $last_dat);
             return true;
         } else {
@@ -7549,21 +7389,17 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
 
     function kontostand_check_exists($gk_id, $datum)
     {
-        $result = mysql_query("SELECT ID FROM WEG_KONTOSTAND WHERE AKTUELL='1' && GK_ID='$gk_id' && DATUM='$datum'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            return true;
-        }
+        $result = DB::select("SELECT ID FROM WEG_KONTOSTAND WHERE AKTUELL='1' && GK_ID='$gk_id' && DATUM='$datum'");
+        return !empty($result);
     }
 
     function kontostand_anzeigen($gk_id)
     {
-        $result = mysql_query("SELECT * FROM WEG_KONTOSTAND WHERE AKTUELL='1' && GK_ID='$gk_id' ORDER BY DATUM ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
+        $result = DB::select("SELECT * FROM WEG_KONTOSTAND WHERE AKTUELL='1' && GK_ID='$gk_id' ORDER BY DATUM ASC");
+        if (!empty($result)) {
             echo "<table>";
             echo "<tr><th>DATUM</th><th>BETRAG</th></tr>";
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $datum = date_mysql2german($row ['DATUM']);
                 $betrag = $row ['BETRAG'];
                 echo "<tr><td>$datum</td><td>$betrag</td></tr>";
@@ -7688,29 +7524,24 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
 
     function get_buchungen_et($gk_id, $et_id, $jahr)
     {
-        $result = mysql_query("SELECT  DATE_FORMAT(`DATUM`, '%d.%m.%Y') AS DATUMD, DATUM ,  `KONTENRAHMEN_KONTO` ,  `BETRAG` ,  `VERWENDUNGSZWECK`
+        $result = DB::select("SELECT  DATE_FORMAT(`DATUM`, '%d.%m.%Y') AS DATUMD, DATUM ,  `KONTENRAHMEN_KONTO` ,  `BETRAG` ,  `VERWENDUNGSZWECK`
 FROM  `GELD_KONTO_BUCHUNGEN`
 WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KOSTENTRAEGER_ID` =  '$et_id' && DATE_FORMAT(  `DATUM` ,  '%Y' ) =  '$jahr' && AKTUELL='1' ORDER BY DATUM ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function get_buchungen_et_HG($gk_id, $et_id, $jahr)
     {
-        $result = mysql_query("SELECT  DATE_FORMAT(`DATUM`, '%d.%m.%Y') AS DATUMD, DATUM ,  `KONTENRAHMEN_KONTO` ,  `BETRAG` ,  `VERWENDUNGSZWECK`
+        $result = DB::select("SELECT  DATE_FORMAT(`DATUM`, '%d.%m.%Y') AS DATUMD, DATUM ,  `KONTENRAHMEN_KONTO` ,  `BETRAG` ,  `VERWENDUNGSZWECK`
 FROM  `GELD_KONTO_BUCHUNGEN`
 WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KOSTENTRAEGER_ID` =  '$et_id' && DATE_FORMAT(  `DATUM` ,  '%Y' ) =  '$jahr' && AKTUELL='1' ORDER BY KONTENRAHMEN_KONTO, DATUM ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
+        if (!empty($result)) {
             $sum_kto = 0;
             $konten_arr = array();
             $zaehler = 0;
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $kto = $row ['KONTENRAHMEN_KONTO'];
 
                 $le = count($konten_arr) - 1;
@@ -7745,17 +7576,15 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
 
     function kontobuchungen_anzeigen_jahr($geldkonto_id, $jahr)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME, KONTENRAHMEN_KONTO, `KOSTENTRAEGER_TYP`, `KOSTENTRAEGER_ID` FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && ( DATE_FORMAT( DATUM, '%Y' ) = '$jahr') && AKTUELL='1' GROUP BY KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME, KONTENRAHMEN_KONTO, `KOSTENTRAEGER_TYP`, `KOSTENTRAEGER_ID` FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && ( DATE_FORMAT( DATUM, '%Y' ) = '$jahr') && AKTUELL='1' GROUP BY KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID");
+        if (!empty($result)) {
             $k = new kontenrahmen ();
             $kontenrahmen_id = $k->get_kontenrahmen('GELDKONTO', $geldkonto_id);
 
             $kto_temp = '';
             $z = 0;
             $kto_sum = 0;
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $kostenkonto = $row ['KONTENRAHMEN_KONTO'];
                 $k->konto_informationen2($kostenkonto, $kontenrahmen_id);
                 if ($kostenkonto != $kto_temp) {
@@ -7792,18 +7621,13 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
             $kto_sum_a = nummer_punkt2komma_t($kto_sum);
             echo "<tr><th colspan=\"3\">$kto_sum_a</th></tr>";
             echo "</table><br>";
-        } else {
-
         }
     }
 
     function kontobuchungen_anzeigen_jahr_xls($geldkonto_id, $jahr)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME, KONTENRAHMEN_KONTO, `KOSTENTRAEGER_TYP`, `KOSTENTRAEGER_ID` FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && ( DATE_FORMAT( DATUM, '%Y' ) = '$jahr') && AKTUELL='1' GROUP BY KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID");
-
-        $numrows = mysql_numrows($result);
-
-        if ($numrows > 0) {
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME, KONTENRAHMEN_KONTO, `KOSTENTRAEGER_TYP`, `KOSTENTRAEGER_ID` FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && ( DATE_FORMAT( DATUM, '%Y' ) = '$jahr') && AKTUELL='1' GROUP BY KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID");
+        if (!empty($result)) {
 
             ob_clean(); // ausgabepuffer leeren
             $gk = new geldkonto_info ();
@@ -7823,7 +7647,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
             $kto_temp = '';
             $z = 0;
             $kto_sum = 0;
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach ($result as $row) {
                 $kostenkonto = $row ['KONTENRAHMEN_KONTO'];
                 $k->konto_informationen2($kostenkonto, $kontenrahmen_id);
 

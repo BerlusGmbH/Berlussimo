@@ -17,10 +17,9 @@ class sepa
                 return;
             }
 
-            $result = mysql_query("SELECT * FROM `BLZ` WHERE `BLZ` ='$blz' LIMIT 0 , 1");
-            $numrows = mysql_numrows($result);
-            if ($numrows) {
-                $row = mysql_fetch_assoc($result);
+            $result = DB::select("SELECT * FROM `BLZ` WHERE `BLZ` ='$blz' LIMIT 0 , 1");
+            if (!empty($result)) {
+                $row = $result[0];
                 $konto_info = ( object )$row;
                 $this->BIC = $konto_info->BIC;
                 $this->BANKNAME = $konto_info->BEZEICHNUNG;
@@ -72,12 +71,11 @@ class sepa
 
         echo '<pre>';
 
-        $result = mysql_query("SELECT DETAIL_ZUORDNUNG_ID FROM `DETAIL` WHERE `DETAIL_NAME` LIKE 'Einzugsermächtigung' AND `DETAIL_INHALT` LIKE 'JA' AND `DETAIL_AKTUELL` = '1'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
+        $result = DB::select("SELECT DETAIL_ZUORDNUNG_ID FROM `DETAIL` WHERE `DETAIL_NAME` LIKE 'Einzugsermächtigung' AND `DETAIL_INHALT` LIKE 'JA' AND `DETAIL_AKTUELL` = '1'");
+        if (!empty($result)) {
             $arr = Array();
             $z = 0;
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $mieter = ( object )$row;
                 $mv_id = $mieter->DETAIL_ZUORDNUNG_ID;
                 $mv = new mietvertraege ();
@@ -132,7 +130,7 @@ class sepa
                 $mv_id = $arr [$a] ['MV_ID'];
                 $sql = "INSERT INTO `SEPA_MANDATE` VALUES (NULL, '$last_id', '$m_r', '$g_id', '$g_gk_id', '$beg', '$name', '$ans', '$kto', '$blz', '$iban', '$bic', '$bank', '$m_udatum', '$m_adatum', '9999-12-31', 'WIEDERKEHREND', 'MIETZAHLUNG', '$eart', 'MIETVERTRAG', '$mv_id', '1');";
                 echo "$sql<br>";
-                $result = mysql_query($sql);
+                DB::insert($sql);
             }
         }
     }
@@ -141,13 +139,8 @@ class sepa
 
     function check_objekt_aktiv($objekt_id)
     {
-        $result = mysql_query("SELECT * FROM `OBJEKT` WHERE `OBJEKT_ID`=$objekt_id && OBJEKT_AKTUELL='1'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select("SELECT * FROM `OBJEKT` WHERE `OBJEKT_ID`=$objekt_id && OBJEKT_AKTUELL='1'");
+        return !empty($result);
     }
 
     function iban_to_human_format($iban)
@@ -171,20 +164,17 @@ class sepa
         }
         $datum_heute = date("Y-m-d");
         if ($nutzungsart == 'Alle') {
-            $result = mysql_query("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' AND M_EDATUM>='$datum_heute' AND M_ADATUM<='$datum_heute' ORDER BY NAME ASC");
+            $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' AND M_EDATUM>='$datum_heute' AND M_ADATUM<='$datum_heute' ORDER BY NAME ASC");
         } else {
             $gk_id = session()->get('geldkonto_id');
-            $result = mysql_query("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' && M_EDATUM>='$datum_heute' && M_ADATUM<='$datum_heute' AND NUTZUNGSART='$nutzungsart' && GLAEUBIGER_GK_ID='$gk_id' ORDER BY NAME ASC");
+            $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' && M_EDATUM>='$datum_heute' && M_ADATUM<='$datum_heute' AND NUTZUNGSART='$nutzungsart' && GLAEUBIGER_GK_ID='$gk_id' ORDER BY NAME ASC");
         }
 
         $monat = date("m");
         $jahr = date("Y");
 
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-
+        if (!empty($result)) {
             if ($nutzungsart == 'MIETZAHLUNG') {
-
                 echo "<table class=\"sortable striped\">";
                 echo "<thead><tr><th>NR</th><th>EINHEIT</th><th>Name</th><th>REF</th><th>NUTZUNG</th><th>EINZUGSART</th><th>Anschrift</th><th>IBAN DB</th><th>BIC</th></tr></thead>";
                 $z = 0;
@@ -193,7 +183,7 @@ class sepa
                 $summe_ziehen_alle = 0.00;
                 $summe_saldo_alle = 0.00;
                 $summe_diff_alle = 0.00;
-                while ($row = mysql_fetch_assoc($result)) {
+                foreach($result as $row) {
                     $z++;
                     $zz++; // Zeile
 
@@ -237,7 +227,7 @@ class sepa
                 $summe_ziehen_alle = 0.00;
                 $summe_saldo_alle = 0.00;
                 $summe_diff_alle = 0.00;
-                while ($row = mysql_fetch_assoc($result)) {
+                foreach($result as $row) {
                     $z++;
                     $mand = ( object )$row;
                     $mand->IBAN1 = chunk_split($mand->IBAN, 4, ' ');
@@ -317,12 +307,8 @@ class sepa
 
     function check_mandat_is_used($m_ref, $iban)
     {
-        $result = mysql_query("SELECT * FROM `SEPA_MANDATE_SEQ` WHERE `M_REFERENZ` = '$m_ref' AND IBAN='$iban' && `AKTUELL` = '1' LIMIT 0 , 1");
-        // $result = mysql_query ("SELECT * FROM `SEPA_MANDATE_SEQ` WHERE `M_REFERENZ` = '$m_ref' && `AKTUELL` = '1' LIMIT 0 , 1");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            return true;
-        }
+        $result = DB::select("SELECT * FROM `SEPA_MANDATE_SEQ` WHERE `M_REFERENZ` = '$m_ref' AND IBAN='$iban' && `AKTUELL` = '1' LIMIT 0 , 1");
+        return !empty($result);
     }
 
     function alle_mandate_anzeigen($nutzungsart = 'Alle')
@@ -334,20 +320,17 @@ class sepa
         }
         $datum_heute = date("Y-m-d");
         if ($nutzungsart == 'Alle') {
-            $result = mysql_query("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' AND M_EDATUM>='$datum_heute' AND M_ADATUM<='$datum_heute' ORDER BY NAME ASC");
+            $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' AND M_EDATUM>='$datum_heute' AND M_ADATUM<='$datum_heute' ORDER BY NAME ASC");
         } else {
             $gk_id = session()->get('geldkonto_id');
-            $result = mysql_query("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' && NUTZUNGSART='$nutzungsart' AND M_EDATUM>='$datum_heute' AND M_ADATUM<='$datum_heute' && GLAEUBIGER_GK_ID='$gk_id' ORDER BY NAME ASC");
+            $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' && NUTZUNGSART='$nutzungsart' AND M_EDATUM>='$datum_heute' AND M_ADATUM<='$datum_heute' && GLAEUBIGER_GK_ID='$gk_id' ORDER BY NAME ASC");
         }
 
         $monat = date("m");
         $jahr = date("Y");
 
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-
+        if (!empty($result)) {
             if ($nutzungsart == 'MIETZAHLUNG') {
-
                 echo "<table class=\"sortable striped\">";
                 echo "<thead><tr><th>NR</th><th>EINHEIT</th><th>Name</th><th>REF</th><th>NUTZUNG</th><th>EINZUGSART</th><th>ZIEHEN</th><th>SALDO</th><th>SALDO NACH</th><th>Anschrift</th><th>IBAN DB</th><th>BIC</th></tr></thead>";
                 $z = 0;
@@ -356,7 +339,7 @@ class sepa
                 $summe_ziehen_alle = 0.00;
                 $summe_saldo_alle = 0.00;
                 $summe_diff_alle = 0.00;
-                while ($row = mysql_fetch_assoc($result)) {
+                foreach($result as $row) {
                     $z++;
                     $zz++; // Zeile
 
@@ -437,7 +420,7 @@ class sepa
                 $summe_ziehen_alle = 0.00;
                 $summe_saldo_alle = 0.00;
                 $summe_diff_alle = 0.00;
-                while ($row = mysql_fetch_assoc($result)) {
+                foreach ($result as $row) {
                     $z++;
                     $mand = ( object )$row;
                     $mand->IBAN1 = chunk_split($mand->IBAN, 4, ' ');
@@ -606,12 +589,8 @@ class sepa
 
     function check_m_ref($mref)
     {
-        $result = mysql_query("SELECT * FROM `SEPA_MANDATE` WHERE `M_REFERENZ` = '$mref' AND M_EDATUM='9999-12-31' AND `AKTUELL` = '1' LIMIT 0 , 1");
-        // echo "SELECT * FROM `SEPA_MANDATE` WHERE `M_REFERENZ` = '$mref' AND M_EDATUM='9999-12-31' AND `AKTUELL` = '1' LIMIT 0 , 1";
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            return true;
-        }
+        $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `M_REFERENZ` = '$mref' AND M_EDATUM='9999-12-31' AND `AKTUELL` = '1' LIMIT 0 , 1");
+        return !empty($result);
     }
 
     function form_mandat_hausgeld_neu($gk_id)
@@ -756,10 +735,9 @@ class sepa
         if (isset ($this->mand)) {
             unset ($this->mand);
         }
-        $result = mysql_query("SELECT * FROM `SEPA_MANDATE` WHERE `DAT` ='$dat'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `DAT` ='$dat'");
+        if (!empty($result)) {
+            $row = $result[0];
             $this->mand = ( object )$row;
         }
     }
@@ -802,22 +780,18 @@ class sepa
 
     function check_m_ref_alle($mref)
     {
-        $result = mysql_query("SELECT * FROM `SEPA_MANDATE` WHERE `M_REFERENZ` = '$mref' AND `AKTUELL` = '1' LIMIT 0 , 1");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            return true;
-        }
+        $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `M_REFERENZ` = '$mref' AND `AKTUELL` = '1' LIMIT 0 , 1");
+        return !empty($result);
     }
 
     function mandat_beenden($mv_id, $edatum)
     {
         $edatum = date_german2mysql($edatum);
-        $result = mysql_query("SELECT * FROM `SEPA_MANDATE` WHERE M_KOS_TYP LIKE 'MIETVERTRAG' AND M_KOS_ID = '$mv_id' AND AKTUELL = '1' AND M_EDATUM = '9999-12-31' LIMIT 0 , 1");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            mysql_query("UPDATE `SEPA_MANDATE` SET AKTUELL='0' WHERE M_KOS_TYP LIKE 'MIETVERTRAG' AND M_KOS_ID = '$mv_id'") or die (mysql_error());;
+        $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE M_KOS_TYP LIKE 'MIETVERTRAG' AND M_KOS_ID = '$mv_id' AND AKTUELL = '1' AND M_EDATUM = '9999-12-31' LIMIT 0 , 1");
+        if (!empty($result)) {
+            DB::update("UPDATE `SEPA_MANDATE` SET AKTUELL='0' WHERE M_KOS_TYP LIKE 'MIETVERTRAG' AND M_KOS_ID = '$mv_id'");
             $sql = "INSERT INTO `SEPA_MANDATE`(M_ID, M_REFERENZ, GLAEUBIGER_ID, GLAEUBIGER_GK_ID, BEGUENSTIGTER, NAME, ANSCHRIFT, KONTONR, BLZ, IBAN, BIC, BANKNAME, M_UDATUM, M_ADATUM, M_EDATUM, M_ART, NUTZUNGSART, EINZUGSART, M_KOS_TYP, M_KOS_ID, AKTUELL) SELECT M_ID, M_REFERENZ, GLAEUBIGER_ID, GLAEUBIGER_GK_ID, BEGUENSTIGTER, NAME, ANSCHRIFT, KONTONR, BLZ, IBAN, BIC, BANKNAME, M_UDATUM, M_ADATUM, '$edatum', M_ART, NUTZUNGSART, EINZUGSART, M_KOS_TYP, M_KOS_ID, '1' FROM SEPA_MANDATE WHERE M_KOS_TYP LIKE 'MIETVERTRAG' AND M_KOS_ID = '$mv_id' AND M_EDATUM = '9999-12-31' LIMIT 1;";
-            $result = mysql_query($sql) or die (mysql_error());
+            DB::insert($sql);
             return true;
         } else {
             return false;
@@ -840,10 +814,10 @@ class sepa
             $edatum = date_german2mysql($edatum);
             $sql = "INSERT INTO `SEPA_MANDATE` VALUES (NULL, '$last_id', '$mref', '$glaeubiger_id', '$gk_id', '$empf', '$name', '$anschrift', '$kto', '$blz', '$iban', '$bic', '$bankname', '$udatum', '$adatum', '$edatum', '$m_art', '$n_art', '$e_art', '$kos_typ', '$kos_id', '1');";
             echo "$sql<br>";
-            $result = mysql_query($sql) or die (mysql_error());;
+            DB::insert($sql);
 
             /* Protokollieren */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('SEPA_MANDATE', $last_dat, $dat);
         }
     }
@@ -852,7 +826,7 @@ class sepa
 
     function mandat_dat_deaktivieren($dat)
     {
-        mysql_query("UPDATE `SEPA_MANDATE` SET AKTUELL='0' WHERE `DAT` = '$dat'") or die (mysql_error());
+        DB::update("UPDATE `SEPA_MANDATE` SET AKTUELL='0' WHERE `DAT` = '$dat'");
         return true;
     }
 
@@ -866,11 +840,9 @@ class sepa
             $adatum = date_german2mysql($adatum);
             $edatum = date_german2mysql($edatum);
             $sql = "INSERT INTO `SEPA_MANDATE` VALUES (NULL, '$last_id', '$mref', '$glaeubiger_id', '$gk_id', '$empf', '$name', '$anschrift', '$kto', '$blz', '$iban', '$bic', '$bankname', '$udatum', '$adatum', '$edatum', '$m_art', '$n_art', '$e_art', '$kos_typ', '$kos_id', '1');";
-            // echo "$sql<br>";
-
-            $result = mysql_query($sql) or die (mysql_error());;
+            DB::insert($sql);
             /* Protokollieren */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('SEPA_MANDATE', $last_dat, '0');
             echo "Mandat gespeichert";
         }
@@ -1201,16 +1173,13 @@ class sepa
         }
         $datum_heute = date("Y-m-d");
         if ($nutzungsart == 'Alle') {
-            $result = mysql_query("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' AND M_EDATUM>='$datum_heute' AND M_ADATUM<='$datum_heute' ORDER BY NAME ASC");
+            $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' AND M_EDATUM>='$datum_heute' AND M_ADATUM<='$datum_heute' ORDER BY NAME ASC");
         } else {
             $gk_id = session()->get('geldkonto_id');
-            $result = mysql_query("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' && M_EDATUM>='$datum_heute' && M_ADATUM<='$datum_heute' && NUTZUNGSART='$nutzungsart' && GLAEUBIGER_GK_ID='$gk_id' ORDER BY NAME ASC");
+            $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' && M_EDATUM>='$datum_heute' && M_ADATUM<='$datum_heute' && NUTZUNGSART='$nutzungsart' && GLAEUBIGER_GK_ID='$gk_id' ORDER BY NAME ASC");
         }
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $arr [] = $row;
-            return $arr;
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -1266,9 +1235,9 @@ class sepa
         $sql = "INSERT INTO `SEPA_MANDATE_SEQ` VALUES (NULL, '$mref','$iban', '$seq', '$betrag', '$datei', '$datum', '$vzweck', '1');";
         // echo "$sql<br>";
 
-        $result = mysql_query($sql) or die (mysql_error());;
+        DB::insert($sql);
         /* Protokollieren */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('SEPA_MANDATE_SEQ', $last_dat, '0');
         // echo "Mandat gespeichert";
     }
@@ -1281,10 +1250,9 @@ class sepa
         $this->BANKNAME = '';
         $this->BANKNAME_K = '';
         if ($land == 'DE') {
-            $result = mysql_query("SELECT * FROM `BLZ` WHERE `BLZ` ='$blz' LIMIT 0 , 1");
-            $numrows = mysql_numrows($result);
-            if ($numrows) {
-                $row = mysql_fetch_assoc($result);
+            $result = DB::select("SELECT * FROM `BLZ` WHERE `BLZ` ='$blz' LIMIT 0 , 1");
+            if (!empty($result)) {
+                $row = $result[0];
                 $konto_info = ( object )$row;
                 $this->BIC = $konto_info->BIC;
                 $this->BANKNAME = $konto_info->BEZEICHNUNG;
@@ -1486,14 +1454,10 @@ class sepa
     function mandat_nutzungen_arr($m_ref)
     {
         $this->get_mandat_infos_mref($m_ref);
-        // echo $this->mand->IBAN;
         $iban = $this->mand->IBAN;
-        $result = mysql_query("SELECT * FROM `SEPA_MANDATE_SEQ` WHERE `M_REFERENZ` = '$m_ref' AND IBAN='$iban' AND `AKTUELL` = '1' ORDER BY DATUM");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $arr [] = $row;
-            return $arr;
+        $result = DB::select("SELECT * FROM `SEPA_MANDATE_SEQ` WHERE `M_REFERENZ` = '$m_ref' AND IBAN='$iban' AND `AKTUELL` = '1' ORDER BY DATUM");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -1502,11 +1466,9 @@ class sepa
         if (isset ($this->mand)) {
             unset ($this->mand);
         }
-        $result = mysql_query("SELECT * FROM `SEPA_MANDATE` WHERE `M_REFERENZ` ='$m_ref' && AKTUELL='1' ORDER BY DAT LIMIT 0,1");
-        // echo "SELECT * FROM `SEPA_MANDATE` WHERE `M_REFERENZ` ='$m_ref' && AKTUELL='1' ORDER BY DAT LIMIT 0,1";
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `M_REFERENZ` ='$m_ref' && AKTUELL='1' ORDER BY DAT LIMIT 0,1");
+        if (!empty($result)) {
+            $row = $result[0];
             $this->mand = ( object )$row;
         }
     }
@@ -1776,19 +1738,14 @@ class sepa
 
     function dropdown_sepa_geldkonten($label, $name, $id, $kos_typ, $kos_id)
     {
-        // $result = mysql_query ("SELECT * FROM `SEPA_KONTOS` WHERE `KOS_TYP` = '$kos_typ' AND `KOS_ID` ='$kos_id' AND `AKTUELL` = '1' ORDER BY BEGUENSTIGTER");
-        $result = mysql_query("SELECT GELD_KONTEN.KONTO_ID, GELD_KONTEN.IBAN, GELD_KONTEN.BIC, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ, GELD_KONTEN.INSTITUT, GELD_KONTEN.BEZEICHNUNG FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE KOSTENTRAEGER_TYP = '$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' GROUP BY GELD_KONTEN.KONTO_ID ORDER BY GELD_KONTEN.KONTO_ID ASC");
-        // echo "SELECT * FROM `SEPA_KONTOS` WHERE `KOS_TYP` = '$kos_typ' AND `KOS_ID` ='$kos_id' AND `AKTUELL` = '1' ORDER BY BEGUENSTIGTER";
-        $numrows = mysql_numrows($result);
+        $my_array = DB::select("SELECT GELD_KONTEN.KONTO_ID, GELD_KONTEN.IBAN, GELD_KONTEN.BIC, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ, GELD_KONTEN.INSTITUT, GELD_KONTEN.BEZEICHNUNG FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE KOSTENTRAEGER_TYP = '$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' GROUP BY GELD_KONTEN.KONTO_ID ORDER BY GELD_KONTEN.KONTO_ID ASC");
+        $numrows = count($my_array);
         if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-
             echo "<label for=\"$id\">$label (Konten:$numrows)</label>\n<select name=\"$name\" id=\"$id\" size=\"1\" >\n";
             if ($numrows > 1) {
                 echo "<option>Bitte wählen</option>\n";
             }
-            for ($a = 0; $a < count($my_array); $a++) {
+            for ($a = 0; $a < $numrows; $a++) {
                 $konto_id = $my_array [$a] ['KONTO_ID'];
                 $beguenstigter = $my_array [$a] ['BEGUENSTIGTER'];
                 $bez = $my_array [$a] ['BEZEICHNUNG'];
@@ -1833,9 +1790,9 @@ class sepa
             $vzweck = "$sep->beguenstigter, $vzweck";
 
             $db_abfrage = "INSERT INTO SEPA_UEBERWEISUNG VALUES (NULL, '$last_b_id', NULL, '$kat', '$vzweck', '$betrag', '$von_gk_id', '$sep->IBAN', '$sep->BIC', '$sep->bankname', '$sep->beguenstigter', '$kos_typ', '$kos_id', '$konto', '1')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert($db_abfrage);
             /* Protokollieren */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('SEPA_UEBERWEISUNG', $last_dat, '0');
             return $last_b_id;
         }
@@ -1861,10 +1818,9 @@ class sepa
         if (isset ($this->kos_id)) {
             unset ($this->kos_id);
         }
-        $result = mysql_query("SELECT * FROM `GELD_KONTEN` WHERE `KONTO_ID` = '$gk_id' AND `AKTUELL` = '1' ORDER BY KONTO_DAT DESC LIMIT 0,1");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT * FROM `GELD_KONTEN` WHERE `KONTO_ID` = '$gk_id' AND `AKTUELL` = '1' ORDER BY KONTO_DAT DESC LIMIT 0,1");
+        if (!empty($result)) {
+            $row = $result[0];
             $this->IBAN = $row ['IBAN'];
             $this->IBAN1 = chunk_split($this->IBAN, 4, ' ');
             $this->BIC = $row ['BIC'];
@@ -1900,14 +1856,10 @@ class sepa
 
         if (!empty ($iban) && !empty ($bic)) {
 
-            // echo "<hr>";
             $db_abfrage = "INSERT INTO SEPA_UEBERWEISUNG VALUES (NULL, '$last_b_id', NULL, '$kat', '$vzweck', '$betrag', '$von_gk_id', '$iban', '$bic', '$bank', '$empfaenger', '$kos_typ', '$kos_id', '$konto', '1')";
-            // echo $db_abfrage;
-            // echo "<hr>";
-            // die();
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert($db_abfrage);
             /* Protokollieren */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('SEPA_UEBERWEISUNG', $last_dat, '0');
             return $last_b_id;
         } else {
@@ -1977,41 +1929,33 @@ class sepa
     function get_sammler_arr($von_gk_id, $kat = null)
     {
         if ($kat == null) {
-            $result = mysql_query("SELECT * FROM `SEPA_UEBERWEISUNG` WHERE `FILE` IS NULL AND `GK_ID_AUFTRAG` ='$von_gk_id' AND `AKTUELL` = '1' ORDER BY DAT");
+            $result = DB::select("SELECT * FROM `SEPA_UEBERWEISUNG` WHERE `FILE` IS NULL AND `GK_ID_AUFTRAG` ='$von_gk_id' AND `AKTUELL` = '1' ORDER BY DAT");
         } else {
-            $result = mysql_query("SELECT * FROM `SEPA_UEBERWEISUNG` WHERE `FILE` IS NULL AND KAT='$kat' AND `GK_ID_AUFTRAG` ='$von_gk_id' AND `AKTUELL` = '1' ORDER BY DAT");
+            $result = DB::select("SELECT * FROM `SEPA_UEBERWEISUNG` WHERE `FILE` IS NULL AND KAT='$kat' AND `GK_ID_AUFTRAG` ='$von_gk_id' AND `AKTUELL` = '1' ORDER BY DAT");
         }
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $arr [] = $row;
-            return $arr;
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function sepa_ueberweisung2file($dat, $dateiname)
     {
         $db_abfrage = "UPDATE SEPA_UEBERWEISUNG SET FILE='$dateiname' WHERE DAT='$dat'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
         /* Protokollieren */
         protokollieren('SEPA_UEBERWEISUNG', $dat, $dat);
     }
 
     function get_sepa_lsfiles_arr()
     {
-        // OK$result = mysql_query ("SELECT COUNT(BETRAG) AS ANZ, DATEI, SUM(BETRAG) AS SUMME, DATUM FROM `SEPA_MANDATE_SEQ` WHERE AKTUELL='1' GROUP BY DATEI ORDER BY DATUM DESC");
         if (session()->has('geldkonto_id')) {
             $vorz = session()->get('geldkonto_id') . '-';
-            $result = mysql_query("SELECT COUNT(BETRAG) AS ANZ, DATEI, SUM(BETRAG) AS SUMME, DATUM FROM `SEPA_MANDATE_SEQ` WHERE AKTUELL='1' && DATEI LIKE '$vorz%' GROUP BY DATEI ORDER BY DATUM DESC");
-            // echo "SELECT COUNT(BETRAG) AS ANZ, DATEI, SUM(BETRAG) AS SUMME, DATUM FROM `SEPA_MANDATE_SEQ` WHERE AKTUELL='1' && DATEI LIKE '$vorz%' GROUP BY DATEI ORDER BY DATUM DESC";
+            $result = DB::select("SELECT COUNT(BETRAG) AS ANZ, DATEI, SUM(BETRAG) AS SUMME, DATUM FROM `SEPA_MANDATE_SEQ` WHERE AKTUELL='1' && DATEI LIKE '$vorz%' GROUP BY DATEI ORDER BY DATUM DESC");
         } else {
-            $result = mysql_query("SELECT COUNT(BETRAG) AS ANZ, DATEI, SUM(BETRAG) AS SUMME, DATUM FROM `SEPA_MANDATE_SEQ` WHERE AKTUELL='1' GROUP BY DATEI ORDER BY DATUM DESC");
+            $result = DB::select("SELECT COUNT(BETRAG) AS ANZ, DATEI, SUM(BETRAG) AS SUMME, DATUM FROM `SEPA_MANDATE_SEQ` WHERE AKTUELL='1' GROUP BY DATEI ORDER BY DATUM DESC");
         }
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $arr [] = $row;
-            return $arr;
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -2125,18 +2069,15 @@ class sepa
 
     function get_sepa_lszeilen_arr($datei)
     {
-        $result = mysql_query("SELECT * FROM `SEPA_MANDATE_SEQ` WHERE AKTUELL='1' && DATEI='$datei'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $arr [] = $row;
-            return $arr;
+        $result = DB::select("SELECT * FROM `SEPA_MANDATE_SEQ` WHERE AKTUELL='1' && DATEI='$datei'");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function check_ls_buchung($gk_id, $m_ref, $betrag, $kontoauszug, $datum, $kos_typ, $kos_id)
     {
-        $result = mysql_query("SELECT *  
+        $result = DB::select("SELECT *  
 FROM  `GELD_KONTO_BUCHUNGEN` 
 WHERE  `KONTO_AUSZUGSNUMMER` ='$kontoauszug'
 AND  `ERFASS_NR` =  '$m_ref'
@@ -2147,21 +2088,7 @@ AND  `KOSTENTRAEGER_ID` ='$kos_id'
 AND DATUM ='$datum'		
 AND  `AKTUELL` =  '1'");
 
-        /*
-		 * echo "SELECT *
-		 * FROM `GELD_KONTO_BUCHUNGEN`
-		 * WHERE `KONTO_AUSZUGSNUMMER` ='$kontoauszug'
-		 * AND `ERFASS_NR` = '$m_ref'
-		 * AND `BETRAG` = '$betrag'
-		 * AND `GELDKONTO_ID` ='$gk_id'
-		 * AND `KOSTENTRAEGER_TYP` = '$kos_typ'
-		 * AND `KOSTENTRAEGER_ID` ='$kos_id'
-		 * AND DATUM ='$datum'
-		 * AND `AKTUELL` = '1'";
-		 */
-        // die();
-
-        $numrows = mysql_numrows($result);
+        $numrows = count($result);
         if ($numrows) {
             return $numrows;
         } else {
@@ -2171,8 +2098,6 @@ AND  `AKTUELL` =  '1'");
 
     function sepa_sammler_alle()
     {
-        // echo "SAMMLER ALLE";
-        // echo "<pre>";
         $arr = $this->sepa_gk_arr();
         if (is_array($arr)) {
             echo "<h2>Zu erstellende SEPA-Dateien</h2>";
@@ -2186,9 +2111,7 @@ AND  `AKTUELL` =  '1'");
                 $anz_dat = $arr [$a] ['ANZ'];
                 $gkk = new geldkonto_info ();
                 $gkk->geld_konto_details($gk_id);
-                // print_r($gkk);
                 echo "<tr><td>$gkk->geldkonto_bez</td><td>$kat (Überweisungen:$anz_dat)</td><td>$sum</td></tr>";
-                // echo $gk_id;
             }
             echo "</table>";
         } else {
@@ -2199,24 +2122,17 @@ AND  `AKTUELL` =  '1'");
 
     function sepa_gk_arr()
     {
-        $result = mysql_query("SELECT GK_ID_AUFTRAG, KAT, SUM(BETRAG) AS SUMME, COUNT(BETRAG) AS ANZ FROM `SEPA_UEBERWEISUNG` WHERE `FILE` IS NULL AND `AKTUELL` = '1' GROUP BY KAT, `GK_ID_AUFTRAG`");
-        // echo "SELECT GK_ID_AUFTRAG, KAT, SUM(BETRAG) AS SUMME FROM `SEPA_UEBERWEISUNG` WHERE `FILE` IS NULL AND `AKTUELL` = '1' GROUP BY KAT, `GK_ID_AUFTRAG`";
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $arr [] = $row;
-            return $arr;
+        $result = DB::select("SELECT GK_ID_AUFTRAG, KAT, SUM(BETRAG) AS SUMME, COUNT(BETRAG) AS ANZ FROM `SEPA_UEBERWEISUNG` WHERE `FILE` IS NULL AND `AKTUELL` = '1' GROUP BY KAT, `GK_ID_AUFTRAG`");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function get_summe_sepa_sammler($von_gk_id, $kat, $kos_typ, $kos_id)
     {
-        $result = mysql_query("SELECT SUM( BETRAG ) AS SUMME FROM `SEPA_UEBERWEISUNG` WHERE `FILE` IS NULL AND `KOS_TYP` LIKE '$kos_typ' AND `KOS_ID` ='$kos_id' && KAT='$kat' AND `AKTUELL` = '1'");
-        // echo "SELECT SUM( BETRAG ) AS SUMME FROM `SEPA_UEBERWEISUNG` WHERE `FILE` IS NULL AND `KOS_TYP` = '$kos_typ' AND `KOS_ID` ='$kos_id' && KAT='$kat' AND `AKTUELL` = '1'";
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                return $row ['SUMME'];
+        $result = DB::select("SELECT SUM( BETRAG ) AS SUMME FROM `SEPA_UEBERWEISUNG` WHERE `FILE` IS NULL AND `KOS_TYP` LIKE '$kos_typ' AND `KOS_ID` ='$kos_id' && KAT='$kat' AND `AKTUELL` = '1'");
+        if (!empty($result)) {
+            return $result[0]['SUMME'];
         } else {
             return '0.00';
         }
@@ -2261,15 +2177,12 @@ AND  `AKTUELL` =  '1'");
     function sepa_files_arr($von_gk_id)
     {
         if ($von_gk_id != null) {
-            $result = mysql_query("SELECT ID, FILE, SUM(BETRAG) AS SUMME FROM `SEPA_UEBERWEISUNG` WHERE `FILE` IS NOT NULL AND GK_ID_AUFTRAG='$von_gk_id' AND `AKTUELL` = '1' GROUP BY FILE ORDER BY DAT DESC");
+            $result = DB::select("SELECT ID, FILE, SUM(BETRAG) AS SUMME FROM `SEPA_UEBERWEISUNG` WHERE `FILE` IS NOT NULL AND GK_ID_AUFTRAG='$von_gk_id' AND `AKTUELL` = '1' GROUP BY FILE ORDER BY DAT DESC");
         } else {
-            $result = mysql_query("SELECT ID, FILE, SUM(BETRAG) AS SUMME FROM `SEPA_UEBERWEISUNG` WHERE `FILE` IS NOT NULL AND `AKTUELL` = '1' GROUP BY FILE ORDER BY DAT DESC LIMIT 0, 300");
+            $result = DB::select("SELECT ID, FILE, SUM(BETRAG) AS SUMME FROM `SEPA_UEBERWEISUNG` WHERE `FILE` IS NOT NULL AND `AKTUELL` = '1' GROUP BY FILE ORDER BY DAT DESC LIMIT 0, 300");
         }
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $arr [] = $row;
-            return $arr;
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -2304,9 +2217,9 @@ AND  `AKTUELL` =  '1'");
                 $last_b_id = $bk->last_id('SEPA_UEBERWEISUNG', 'ID') + 1;
 
                 $db_abfrage = "INSERT INTO SEPA_UEBERWEISUNG VALUES (NULL, '$last_b_id', NULL, '$kat', '$vzweckn', '$betrag', '$von_gk_id', '$iban', '$bic', '$bankname', '$beguenstigter', '$kos_typ', '$kos_id', '$konto', '1')";
-                $resultat = mysql_query($db_abfrage) or die (mysql_error());
+                DB::insert($db_abfrage);
                 /* Protokollieren */
-                $last_dat = mysql_insert_id();
+                $last_dat = DB::getPdo()->lastInsertId();
                 protokollieren('SEPA_UEBERWEISUNG', $last_dat, '0');
             }
             return true;
@@ -2315,18 +2228,14 @@ AND  `AKTUELL` =  '1'");
 
     function get_sepa_files_daten_arr($file)
     {
-        $result = mysql_query("SELECT * FROM `SEPA_UEBERWEISUNG` WHERE `FILE` = '$file' AND `AKTUELL` = '1'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $arr [] = $row;
-            return $arr;
+        $result = DB::select("SELECT * FROM `SEPA_UEBERWEISUNG` WHERE `FILE` = '$file' AND `AKTUELL` = '1'");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function sepa_file_autobuchen($file, $datum, $gk_id, $auszug, $mwst = '0')
     {
-        // echo "$file, $datum, $gk_id, $auszug, $mwst";
         $arr = $this->get_sepa_files_daten_arr($file);
         if (!is_array($arr)) {
             fehlermeldung_ausgeben("Keine Datensätze zur Datei $file");
@@ -2381,9 +2290,9 @@ AND  `AKTUELL` =  '1'");
 
         /* neu */
         $db_abfrage = "INSERT INTO GELD_KONTO_BUCHUNGEN VALUES (NULL, '$buchung_id', '$g_buchungsnummer', '$kto_auszugsnr', '$m_ref', '$betrag', '$mwst', '$vzweck', '$geldkonto_id', '$kostenkonto', '$datum', '$kostentraeger_typ', '$kostentraeger_id', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
         /* Protokollieren */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('GELD_KONTO_BUCHUNGEN', $last_dat, '0');
     }
 
@@ -2457,12 +2366,8 @@ AND  `AKTUELL` =  '1'");
 
     function get_zeilen_anz_aus_sepa($sepa_file, $gk_id, $betrag, $kos_typ, $kos_id)
     {
-        $result = mysql_query("SELECT *  FROM `SEPA_UEBERWEISUNG` WHERE `FILE` LIKE '$sepa_file' AND `BETRAG` = '$betrag' && GK_ID_AUFTRAG='$gk_id' && KOS_TYP='$kos_typ' &&  KOS_ID='$kos_id' AND `AKTUELL` = '1'");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            return $numrows;
-        }
+        $result = DB::select("SELECT *  FROM `SEPA_UEBERWEISUNG` WHERE `FILE` LIKE '$sepa_file' AND `BETRAG` = '$betrag' && GK_ID_AUFTRAG='$gk_id' && KOS_TYP='$kos_typ' &&  KOS_ID='$kos_id' AND `AKTUELL` = '1'");
+        return count($result);
     }
 
     function sepa_file_buchen_fremd($file)
@@ -2634,11 +2539,10 @@ AND  `AKTUELL` =  '1'");
 
     function get_sepa_fileinfos($file)
     {
-        $result = mysql_query("SELECT FILE, GK_ID_AUFTRAG, SUM(BETRAG) AS SUMME FROM `SEPA_UEBERWEISUNG` WHERE `FILE`='$file' AND `AKTUELL` = '1' GROUP BY FILE ORDER BY DAT LIMIT 0,1");
+        $result = DB::select("SELECT FILE, GK_ID_AUFTRAG, SUM(BETRAG) AS SUMME FROM `SEPA_UEBERWEISUNG` WHERE `FILE`='$file' AND `AKTUELL` = '1' GROUP BY FILE ORDER BY DAT LIMIT 0,1");
 
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        if (!empty($result)) {
+            $row = $result[0];
             $this->sepa_summe = $row ['SUMME'];
             $this->sepa_gk_id = $row ['GK_ID_AUFTRAG'];
 
@@ -2708,16 +2612,12 @@ AND  `AKTUELL` =  '1'");
 
     function dropdown_sepa_geldkonten_filter($label, $name, $id, $filter_bez)
     {
-        $result = mysql_query("SELECT GELD_KONTEN.KONTO_ID, GELD_KONTEN.IBAN, GELD_KONTEN.BIC, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ, GELD_KONTEN.INSTITUT,  GELD_KONTEN.BEZEICHNUNG FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE  GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' && GELD_KONTEN.BEZEICHNUNG LIKE '%$filter_bez%' GROUP BY GELD_KONTEN.KONTO_ID ORDER BY GELD_KONTEN.BEGUENSTIGTER ASC");
-        // echo "SELECT GELD_KONTEN.KONTO_ID, GELD_KONTEN.IBAN, GELD_KONTEN.BIC, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ, GELD_KONTEN.INSTITUT FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' && GELD_KONTEN.BEZEICHNUNG LIKE '%$filter_bez' ORDER BY GELD_KONTEN.KONTO_ID ASC";
-        $numrows = mysql_numrows($result);
+        $my_array = DB::select("SELECT GELD_KONTEN.KONTO_ID, GELD_KONTEN.IBAN, GELD_KONTEN.BIC, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ, GELD_KONTEN.INSTITUT,  GELD_KONTEN.BEZEICHNUNG FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE  GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' && GELD_KONTEN.BEZEICHNUNG LIKE '%$filter_bez%' GROUP BY GELD_KONTEN.KONTO_ID ORDER BY GELD_KONTEN.BEGUENSTIGTER ASC");
+        $numrows = count($my_array);
         if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-            // print_r($my_array);
             echo "<label for=\"$id\">$label</label>\n<select name=\"$name\" id=\"$id\" size=\"1\" >\n";
             echo "<option selected>Bitte wählen</option>\n";
-            for ($a = 0; $a < count($my_array); $a++) {
+            for ($a = 0; $a < $numrows; $a++) {
                 $konto_id = $my_array [$a] ['KONTO_ID'];
                 $beguenstigter = $my_array [$a] ['BEGUENSTIGTER'];
                 $bez = $my_array [$a] ['BEZEICHNUNG'];
@@ -2833,15 +2733,12 @@ AND  `AKTUELL` =  '1'");
     function get_kats_arr($von_gk_id, $kat = null)
     {
         if ($kat == null) {
-            $result = mysql_query("SELECT KAT FROM `SEPA_UEBERWEISUNG` WHERE `FILE` IS NULL AND `GK_ID_AUFTRAG` ='$von_gk_id' AND `AKTUELL` = '1' GROUP BY KAT ORDER BY DAT");
+            $result = DB::select("SELECT KAT FROM `SEPA_UEBERWEISUNG` WHERE `FILE` IS NULL AND `GK_ID_AUFTRAG` ='$von_gk_id' AND `AKTUELL` = '1' GROUP BY KAT ORDER BY DAT");
         } else {
-            $result = mysql_query("SELECT KAT FROM `SEPA_UEBERWEISUNG` WHERE `FILE` IS NULL AND KAT='$kat' AND `GK_ID_AUFTRAG` ='$von_gk_id' AND `AKTUELL` = '1' GROUP BY KAT ORDER BY DAT");
+            $result = DB::select("SELECT KAT FROM `SEPA_UEBERWEISUNG` WHERE `FILE` IS NULL AND KAT='$kat' AND `GK_ID_AUFTRAG` ='$von_gk_id' AND `AKTUELL` = '1' GROUP BY KAT ORDER BY DAT");
         }
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $arr [] = $row;
-            return $arr;
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -2849,8 +2746,6 @@ AND  `AKTUELL` =  '1'");
     {
         $arr = $this->get_sammler_arr($von_gk_id, $kat);
         if (is_array($arr)) {
-            // echo '<pre>';
-            // print_r($arr);
             $anz = count($arr);
 
             echo "<hr>";
@@ -2859,7 +2754,6 @@ AND  `AKTUELL` =  '1'");
             echo "<table class=\"sortable\">";
 
             echo "<thead><tr><th>EMPFÄNGER</th><th>VZWECK</th><th>ZUWEISUNG</th><th>IBAN</th><th>BIC</th><th>BETRAG</th><th>KONTO</th><th>OPTION</TH></tr></thead>";
-            // echo "<tr><th>$kat</th></tr>";
             $sum = 0;
             for ($a = 0; $a < $anz; $a++) {
                 $empf = $arr [$a] ['BEGUENSTIGTER'];
@@ -2891,7 +2785,7 @@ AND  `AKTUELL` =  '1'");
     function datensatz_entfernen($dat)
     {
         $db_abfrage = "UPDATE SEPA_UEBERWEISUNG SET AKTUELL='0' WHERE DAT='$dat' && FILE IS NULL";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
         return true;
     }
 
@@ -3038,9 +2932,9 @@ AND  `AKTUELL` =  '1'");
         if (!isset ($namen_arr [1])) {
             $vorname = '';
         } else {
-            $vorname = mysql_real_escape_string(ltrim(rtrim($namen_arr [1])));
+            $vorname = ltrim(rtrim($namen_arr [1]));
         }
-        $nachname = mysql_real_escape_string(ltrim(rtrim($namen_arr [0])));
+        $nachname = ltrim(rtrim($namen_arr [0]));
 
         $zahler_iban = session()->get('umsaetze_ok')[$umsatz_id_temp][26];
         $zahler_bic = session()->get('umsaetze_ok')[$umsatz_id_temp][27];
@@ -3059,7 +2953,7 @@ AND  `AKTUELL` =  '1'");
 
         echo "<br><hr><u>Buchungstext: </u><hr>";
 
-        $vzweck = mysql_real_escape_string(session()->get('umsaetze_ok')[$umsatz_id_temp][14]);
+        $vzweck = session()->get('umsaetze_ok')[$umsatz_id_temp][14];
 
         $art = ltrim(rtrim($art));
         if (ltrim(rtrim($art)) == 'ABSCHLUSS' or $art == 'SEPA-UEBERWEIS.HABEN EINZEL' or $art == 'SEPA-CT HABEN EINZELBUCHUNG' or $art == 'SEPA-DD EINZELB.-SOLL B2B' or $art == 'SEPA-DD EINZELB.SOLL B2B' or $art == 'SEPA-DD EINZELB. SOLL CORE' or $art == 'SEPA-CC EINZELB.SOLL' or $art == 'SEPA-CC EINZELB.SOLL KARTE' or $art == 'SEPA-DD EINZELB.SOLL CORE' or $art == 'SEPA Dauerauftragsgutschrift' or $art == 'SEPA DAUERAUFTRAGSGUTSCHR' or $art == 'SEPA-LS EINZELBUCHUNG SOLL' or $art == 'SEPA-UEBERWEIS.HABEN RETOUR' or $art == 'SEPA-CT HABEN RETOUR' or $art == 'ZAHLEINGUEBELEKTRMEDIEN' or $art == 'SCHECKKARTE' or $art == 'ZAHLUNG UEB ELEKTR MEDIEN' or $art == 'LASTSCHRIFT EINZUGSERM') {
@@ -3560,12 +3454,9 @@ AND  `AKTUELL` =  '1'");
     function get_sepa_lsfiles_arr_gk($gk_id)
     {
         $vorz = $gk_id . '-';
-        $result = mysql_query("SELECT COUNT(BETRAG) AS ANZ, DATEI, SUM(BETRAG) AS SUMME, DATUM FROM `SEPA_MANDATE_SEQ` WHERE AKTUELL='1' && DATEI LIKE '$vorz%' GROUP BY DATEI ORDER BY DATUM DESC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $arr [] = $row;
-            return $arr;
+        $result = DB::select("SELECT COUNT(BETRAG) AS ANZ, DATEI, SUM(BETRAG) AS SUMME, DATUM FROM `SEPA_MANDATE_SEQ` WHERE AKTUELL='1' && DATEI LIKE '$vorz%' GROUP BY DATEI ORDER BY DATUM DESC");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -3573,12 +3464,9 @@ AND  `AKTUELL` =  '1'");
     {
         $datum = date_german2mysql($datum);
         $vorz = $gk_id . '-';
-        $result = mysql_query("SELECT COUNT(BETRAG) AS ANZ, DATEI, SUM(BETRAG) AS SUMME, DATUM FROM `SEPA_MANDATE_SEQ` WHERE AKTUELL='1' && DATEI LIKE '$vorz%' && DATUM='$datum' GROUP BY DATEI ORDER BY DATUM DESC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $arr [] = $row;
-            return $arr;
+        $result = DB::select("SELECT COUNT(BETRAG) AS ANZ, DATEI, SUM(BETRAG) AS SUMME, DATUM FROM `SEPA_MANDATE_SEQ` WHERE AKTUELL='1' && DATEI LIKE '$vorz%' && DATUM='$datum' GROUP BY DATEI ORDER BY DATUM DESC");
+        if (!empty($result)) {
+            return $result;
         }
     }
 

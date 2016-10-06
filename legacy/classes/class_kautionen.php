@@ -5,8 +5,8 @@ class kautionen
     function get_kautionsbetrag($mietvertrag_id)
     {
         $this->kautions_betrag = 0;
-        $result = mysql_query("SELECT DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE='MIETVERTRAG' && DETAIL_ZUORDNUNG_ID = '$mietvertrag_id' && DETAIL_AKTUELL = '1' && DETAIL_NAME LIKE '%Kaution%' ORDER BY DETAIL_DAT DESC LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE='MIETVERTRAG' && DETAIL_ZUORDNUNG_ID = '$mietvertrag_id' && DETAIL_AKTUELL = '1' && DETAIL_NAME LIKE '%Kaution%' ORDER BY DETAIL_DAT DESC LIMIT 0,1");
+        $row = $result[0];
         $this->kautions_betrag = $row ['DETAIL_INHALT'];
         if ($this->kautions_betrag == '') {
             $this->kautions_betrag = 'Keine Kautionsdaten';
@@ -28,13 +28,9 @@ class kautionen
 
     function kautionszahlungen_arr($kostentraeger_typ, $kostentraeger_id, $kautions_konto_id)
     {
-        // $result = mysql_query ("SELECT DATUM, BETRAG FROM KAUTIONS_BUCHUNGEN WHERE KOSTENTRAEGER_TYP='$kostentraeger_typ' && KOSTENTRAEGER_ID='$kostentraeger_id' ORDER BY DATUM");
-        $result = mysql_query("SELECT DATUM, BETRAG, VERWENDUNGSZWECK FROM GELD_KONTO_BUCHUNGEN WHERE KOSTENTRAEGER_TYP='$kostentraeger_typ' && KOSTENTRAEGER_ID='$kostentraeger_id' && GELDKONTO_ID='$kautions_konto_id' && AKTUELL='1' ORDER BY DATUM");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
+        $result = DB::select("SELECT DATUM, BETRAG, VERWENDUNGSZWECK FROM GELD_KONTO_BUCHUNGEN WHERE KOSTENTRAEGER_TYP='$kostentraeger_typ' && KOSTENTRAEGER_ID='$kostentraeger_id' && GELDKONTO_ID='$kautions_konto_id' && AKTUELL='1' ORDER BY DATUM");
+        if (!empty($result)) {
+            return $result;
         } else {
             return false;
         }
@@ -47,12 +43,9 @@ class kautionen
         } else {
 
             $gk_id = session()->get('geldkonto_id');
-            $result = mysql_query("SELECT DATUM, BETRAG, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN  WHERE   AKTUELL='1' && GELDKONTO_ID='$gk_id' ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, DATUM ASC");
-            $numrows = mysql_numrows($result);
-            if ($numrows) {
-                while ($row = mysql_fetch_assoc($result))
-                    $my_arr [] = $row;
-                return $my_arr;
+            $result = DB::select("SELECT DATUM, BETRAG, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN  WHERE   AKTUELL='1' && GELDKONTO_ID='$gk_id' ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, DATUM ASC");
+            if (!empty($result)) {
+                return $result;
             } else {
                 return false;
             }
@@ -101,10 +94,9 @@ class kautionen
 
     function get_feld_wert($mv_id, $feld)
     {
-        $result = mysql_query("SELECT * FROM  `KAUTION_DATEN` WHERE  `MV_ID` = '$mv_id' AND  `FELD` ='$feld' AND  `AKTUELL` =  '1' ORDER BY DAT DESC LIMIT 0,1");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT * FROM  `KAUTION_DATEN` WHERE  `MV_ID` = '$mv_id' AND  `FELD` ='$feld' AND  `AKTUELL` =  '1' ORDER BY DAT DESC LIMIT 0,1");
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['WERT'];
         } else {
             return "";
@@ -113,20 +105,19 @@ class kautionen
 
     function summe_mietekalt($mv_id)
     {
-        $result = mysql_query("SELECT BETRAG AS SUMME FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mv_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE='Miete kalt' && DATE_FORMAT(ANFANG, '%d') = '01' ORDER BY ANFANG ASC LIMIT 0,1");
+        $result = DB::select("SELECT BETRAG AS SUMME FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mv_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE='Miete kalt' && DATE_FORMAT(ANFANG, '%d') = '01' ORDER BY ANFANG ASC LIMIT 0,1");
 
-        $numrows = mysql_numrows($result);
-        if (!$numrows) {
+        $numrows = count($result);
+        if (empty($result)) {
             return false;
         } else {
-            $row = mysql_fetch_assoc($result);
+            $row = $result[0];
             return $row ['SUMME'];
         }
     }
 
     function kautionsberechnung($kostentraeger_typ, $kostentraeger_id, $datum_bis, $zins_pj, $kap_prozent, $soli_prozent)
     {
-        // echo "$kostentraeger_typ, $kostentraeger_id, $datum_bis, $zins_pj, $kap_prozent, $soli_prozent";
         if (session()->has('geldkonto_id')) {
             $zahlungen_arr = $this->kautionszahlungen_arr($kostentraeger_typ, $kostentraeger_id, session()->get('geldkonto_id'));
         } else {
@@ -592,10 +583,10 @@ class kautionen
     function kaution_speichern($datum, $kostentraeger_typ, $kostentraeger_id, $betrag, $text, $konto)
     {
         $db_abfrage = "INSERT INTO KAUTIONS_BUCHUNGEN VALUES (NULL, '$kostentraeger_typ', '$kostentraeger_id','$datum', '$betrag','$text', '$konto')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        $resultat = DB::insert($db_abfrage);
         if ($resultat) {
             /* Protokollieren */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('KAUTIONS_BUCHUNGEN', $last_dat, '0');
             echo "<br>Kaution wurde gespeichert";
         } else {
@@ -757,19 +748,15 @@ class kautionen
 
     function kautionszahlungen_alle_arr_bis($datum_bis)
     {
-        // $result = mysql_query ("SELECT DATUM, BETRAG, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM KAUTIONS_BUCHUNGEN ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, DATUM ASC");
         if (!session()->has('geldkonto_id')) {
             echo "Kautionskonto wählen<br>";
             return null;
         } else {
 
             $gk_id = session()->get('geldkonto_id');
-            $result = mysql_query("SELECT DATUM, BETRAG, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, VERWENDUNGSZWECK FROM GELD_KONTO_BUCHUNGEN  WHERE  DATUM<='$datum_bis' && AKTUELL='1' && GELDKONTO_ID='$gk_id' && KONTENRAHMEN_KONTO!='2002' && KONTENRAHMEN_KONTO!='2003' && KONTENRAHMEN_KONTO!='2004' ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, DATUM ASC");
-            $numrows = mysql_numrows($result);
-            if ($numrows) {
-                while ($row = mysql_fetch_assoc($result))
-                    $my_arr [] = $row;
-                return $my_arr;
+            $result = DB::select("SELECT DATUM, BETRAG, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, VERWENDUNGSZWECK FROM GELD_KONTO_BUCHUNGEN  WHERE  DATUM<='$datum_bis' && AKTUELL='1' && GELDKONTO_ID='$gk_id' && KONTENRAHMEN_KONTO!='2002' && KONTENRAHMEN_KONTO!='2003' && KONTENRAHMEN_KONTO!='2004' ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, DATUM ASC");
+            if (!empty($result)) {
+                return $result;
             } else {
                 return false;
             }
@@ -803,14 +790,9 @@ class kautionen
         $db_abfrage = "SELECT MIETVERTRAG_ID FROM `MIETVERTRAG`
 WHERE `MIETVERTRAG_AKTUELL` = '1' && MIETVERTRAG_ID NOT IN (SELECT KOSTENTRAEGER_ID AS MIETVERTRAG_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='MIETVERTRAG')
     ORDER BY EINHEIT_ID ASC,`MIETVERTRAG`.`MIETVERTRAG_BIS`  ASC";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -818,8 +800,6 @@ WHERE `MIETVERTRAG_AKTUELL` = '1' && MIETVERTRAG_ID NOT IN (SELECT KOSTENTRAEGER
     {
         $o = new objekt ();
         $ein_arr = $o->einheiten_objekt_arr($objekt_id);
-        // echo '<pre>';
-        // print_r($ein_arr);
         if (!is_array($ein_arr)) {
             fehlermeldung_ausgeben("Keine Einheiten im Objekt");
         } else {
@@ -901,12 +881,9 @@ WHERE `MIETVERTRAG_AKTUELL` = '1' && MIETVERTRAG_ID NOT IN (SELECT KOSTENTRAEGER
 
     function get_felder_arr()
     {
-        $result = mysql_query("SELECT * FROM  `KAUTION_FELD` WHERE AKTUELL='1' ORDER BY DAT ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
+        $result = DB::select("SELECT * FROM `KAUTION_FELD` WHERE AKTUELL='1' ORDER BY DAT ASC");
+        if (!empty($result)) {
+            return $result;
         } else {
             return false;
         }
@@ -915,31 +892,30 @@ WHERE `MIETVERTRAG_AKTUELL` = '1' && MIETVERTRAG_ID NOT IN (SELECT KOSTENTRAEGER
     function feld_speichern($feld)
     {
         $db_abfrage = "INSERT INTO KAUTION_FELD VALUES (NULL, '$feld',  '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
         // protokollieren
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('KAUTION_FELD', $last_dat, $last_dat);
     }
 
     function feld_del($dat)
     {
         $db_abfrage = "UPDATE KAUTION_FELD SET AKTUELL='0' WHERE DAT='$dat'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
         // protokollieren
-        $last_dat = mysql_insert_id();
         protokollieren('KAUTION_FELD', $dat, $dat);
     }
 
     function feld_wert_speichern($mv_id, $feld, $wert)
     {
         $db_abfrage = "UPDATE KAUTION_DATEN SET AKTUELL='0' WHERE MV_ID='$mv_id' && FELD='$feld'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
 
         $db_abfrage = "INSERT INTO KAUTION_DATEN VALUES (NULL, '$mv_id', '$feld', '$wert', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
 
         // protokollieren
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('KAUTION_DATEN', $last_dat, $last_dat);
     }
 } // end class

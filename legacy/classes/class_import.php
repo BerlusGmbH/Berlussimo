@@ -394,11 +394,9 @@ class import
     function dropdown_personen_liste_filter($label, $name, $id, $javaaction, $name_v, $vorname_v, $et = 0)
     {
         $db_abfrage = "SELECT PERSON_ID, PERSON_NACHNAME, PERSON_VORNAME, PERSON_GEBURTSTAG FROM PERSON WHERE PERSON_AKTUELL='1' && PERSON_VORNAME='$vorname_v' && PERSON_NACHNAME='$name_v' ORDER BY PERSON_NACHNAME, PERSON_VORNAME ASC";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
+        $personen = DB::select($db_abfrage);
+        $numrows = count($personen);
         if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $personen [] = $row;
             echo "<label for=\"$id\">$label</label><select name=\"$name\" id=\"$id\" $javaaction>";
             for ($a = 0; $a < count($personen); $a++) {
                 $person_id = $personen [$a] ['PERSON_ID'];
@@ -785,17 +783,8 @@ class import
 
     function check_person_et($person_id, $einheit_id)
     {
-        // SELECT `WEG_EIG_ID` FROM `WEG_EIGENTUEMER_PERSON` WHERE `PERSON_ID` = 1386 AND `AKTUELL` = '1' && `WEG_EIG_ID` IN (SELECT ID
-        // FROM `WEG_MITEIGENTUEMER`
-        // WHERE `EINHEIT_ID` =1139
-        // AND `AKTUELL` = '1')
-        $result = mysql_query("SELECT `WEG_EIG_ID` FROM `WEG_EIGENTUEMER_PERSON` WHERE `PERSON_ID` = '$person_id' AND `AKTUELL` = '1' && `WEG_EIG_ID` IN (SELECT ID FROM  `WEG_MITEIGENTUEMER` WHERE  `EINHEIT_ID` ='$einheit_id' AND  `AKTUELL` =  '1')");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select("SELECT `WEG_EIG_ID` FROM `WEG_EIGENTUEMER_PERSON` WHERE `PERSON_ID` = '$person_id' AND `AKTUELL` = '1' && `WEG_EIG_ID` IN (SELECT ID FROM  `WEG_MITEIGENTUEMER` WHERE  `EINHEIT_ID` ='$einheit_id' AND  `AKTUELL` =  '1')");
+        return !empty($result);
     }
 
     function step3($arr, $einheit_id)
@@ -987,15 +976,8 @@ class import
 
     function check_mv($von, $bis, $einheit_id)
     {
-        $result = mysql_query("SELECT * FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' &&  MIETVERTRAG_VON = '$von'  && MIETVERTRAG_BIS = '$bis'  LIMIT 0 , 1 ");
-        // echo "SELECT * FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' && MIETVERTRAG_VON = '$von' && MIETVERTRAG_BIS = '$bis' LIMIT 0 , 1 ";
-        // echo "SELECT * FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' && ( MIETVERTRAG_BIS >= '$this->datum_heute' OR MIETVERTRAG_BIS = '0000-00-00' ) LIMIT 0 , 1 ";
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select("SELECT * FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' &&  MIETVERTRAG_VON = '$von'  && MIETVERTRAG_BIS = '$bis'  LIMIT 0 , 1 ");
+        return !empty($result);
     }
 
     function euro_entferen($string)
@@ -1114,9 +1096,9 @@ class import
         /* Neue Eigentümer eintragen */
         $id = last_id2('WEG_MITEIGENTUEMER', 'ID') + 1;
         $db_abfrage = "INSERT INTO WEG_MITEIGENTUEMER VALUES (NULL, '$id', '$einheit_id', '$von', '$bis', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
         /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('WEG_MITEIGENTUEMER', '0', $last_dat);
         return $id;
     }
@@ -1126,18 +1108,18 @@ class import
         /* Personen zu ID eintragen */
         $p_id = last_id2('WEG_EIGENTUEMER_PERSON', 'ID') + 1;
         $db_abfrage = "INSERT INTO WEG_EIGENTUEMER_PERSON VALUES (NULL, '$p_id', '$et_id', '$person_id', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
         /* Zugewiesene DAT auslesen */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('WEG_EIGENTUEMER_PERSON', '0', $last_dat);
     }
 
     function get_last_eigentuemer_id($einheit_id)
     {
-        $result = mysql_query("SELECT ID FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON DESC LIMIT 0,1");
-        $numrows = mysql_numrows($result);
+        $result = DB::select("SELECT ID FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON DESC LIMIT 0,1");
+        $numrows = count($result);
         if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+            $row = $result[0];
             return $row ['ID'];
         } else {
             return false;

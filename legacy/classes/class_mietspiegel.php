@@ -2,25 +2,18 @@
 
 class mietspiegel {
 	function get_ms_arr() {
-		$result = mysql_query ( "SELECT JAHR, ORT FROM MIETSPIEGEL GROUP BY JAHR, ORT ORDER BY JAHR DESC, ORT ASC" );
-		
-		$numrows = mysql_numrows ( $result );
-		if ($numrows) {
-			while ( $row = mysql_fetch_assoc ( $result ) )
-				$my_array [] = $row;
-			return $my_array;
+		$result = DB::select( "SELECT JAHR, ORT FROM MIETSPIEGEL GROUP BY JAHR, ORT ORDER BY JAHR DESC, ORT ASC" );
+		if (!empty($result)) {
+			return $result;
 		} else {
-			return FALSE;
+			return false;
 		}
 	}
 	function liste_mietspiegel() {
 		$arr = $this->get_ms_arr ();
-		// echo '<pre>';
-		// print_r($arr);
 		if (! is_array ( $arr )) {
 			echo "Keine Mietspiegeldaten in der Datenbank";
 		} else {
-			
 			$anz = count ( $arr );
 			for($a = 0; $a < $anz; $a ++) {
 				$jahr = $arr [$a] ['JAHR'];
@@ -36,17 +29,14 @@ class mietspiegel {
 	}
 	function mietspiegel_werte_arr($jahr, $ort = null) {
 		if ($ort == null) {
-			$result = mysql_query ( "SELECT * FROM MIETSPIEGEL WHERE JAHR='$jahr' && ORT='' ORDER BY FELD ASC" );
+			$result = DB::select( "SELECT * FROM MIETSPIEGEL WHERE JAHR='$jahr' && ORT='' ORDER BY FELD ASC" );
 		} else {
-			$result = mysql_query ( "SELECT * FROM MIETSPIEGEL WHERE JAHR='$jahr' && ORT='$ort' ORDER BY FELD ASC" );
+			$result = DB::select( "SELECT * FROM MIETSPIEGEL WHERE JAHR='$jahr' && ORT='$ort' ORDER BY FELD ASC" );
 		}
-		$numrows = mysql_numrows ( $result );
-		if ($numrows) {
-			while ( $row = mysql_fetch_assoc ( $result ) )
-				$my_array [] = $row;
-			return $my_array;
+		if (!empty($result)) {
+			return $result;
 		} else {
-			return FALSE;
+			return false;
 		}
 	}
 	function mietspiegel_anzeigen($jahr, $ort = null) {
@@ -75,17 +65,14 @@ class mietspiegel {
 	}
 	function mietspiegel_abzuege_arr($jahr, $ort = null) {
 		if ($ort == null) {
-			$result = mysql_query ( "SELECT * FROM `MS_SONDERMERKMALE` WHERE JAHR='$jahr' && ORT='' ORDER BY A_KLASSE ASC" );
+			$result = DB::select( "SELECT * FROM `MS_SONDERMERKMALE` WHERE JAHR='$jahr' && ORT='' ORDER BY A_KLASSE ASC" );
 		} else {
-			$result = mysql_query ( "SELECT * FROM `MS_SONDERMERKMALE` WHERE JAHR='$jahr' && ORT='$ort' ORDER BY A_KLASSE ASC" );
+			$result = DB::select( "SELECT * FROM `MS_SONDERMERKMALE` WHERE JAHR='$jahr' && ORT='$ort' ORDER BY A_KLASSE ASC" );
 		}
-		$numrows = mysql_numrows ( $result );
-		if ($numrows) {
-			while ( $row = mysql_fetch_assoc ( $result ) )
-				$my_array [] = $row;
-			return $my_array;
+		if (!empty($result)) {
+			return $result;
 		} else {
-			return FALSE;
+			return false;
 		}
 	}
 	function abzuege_anzeigen($jahr, $ort = null) {
@@ -153,7 +140,7 @@ class mietspiegel {
 	function ms_speichern($jahr, $ort = null, $feld = 0, $u_wert = 0, $m_wert = 0, $o_wert = 0) {
 		if ($feld != '0') {
 			$db_abfrage = "DELETE FROM MIETSPIEGEL WHERE FELD='0' ";
-			$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+			DB::delete( $db_abfrage );
 		}
 		
 		$u_wert = nummer_komma2punkt ( $u_wert );
@@ -162,31 +149,27 @@ class mietspiegel {
 		
 		if ($ort == null) {
 			$db_abfrage = "INSERT INTO MIETSPIEGEL VALUES (NULL, '$jahr', '', '$feld', '$u_wert', '$m_wert', '$o_wert')";
-			$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+			DB::insert( $db_abfrage );
 		} else {
 			$db_abfrage = "INSERT INTO MIETSPIEGEL VALUES (NULL, '$jahr', '$ort', '$feld', '$u_wert', '$m_wert', '$o_wert')";
-			$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+			DB::insert( $db_abfrage );
 		}
 	}
 	function get_merkmale_ms_arr() {
-		$result = mysql_query ( "SELECT * FROM  `MS_SONDERMERKMALE` GROUP BY MERKMAL ORDER BY MERKMAL ASC" );
-		
-		$numrows = mysql_numrows ( $result );
-		if ($numrows) {
-			while ( $row = mysql_fetch_assoc ( $result ) )
-				$my_array [] = $row;
-			return $my_array;
+		$result = DB::select( "SELECT * FROM `MS_SONDERMERKMALE` GROUP BY MERKMAL ORDER BY MERKMAL ASC" );
+		if (!empty($result)) {
+			return $result;
 		} else {
-			return FALSE;
+			return false;
 		}
 	}
 	function sonderabzug_speichern($jahr, $merkmal, $betrag, $klasse, $ort) {
 		if ($ort == null) {
 			$db_abfrage = "INSERT INTO MS_SONDERMERKMALE VALUES (NULL, '$jahr', '', '$merkmal', '$betrag', '$klasse')";
-			$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+			DB::insert( $db_abfrage );
 		} else {
 			$db_abfrage = "INSERT INTO MS_SONDERMERKMALE VALUES (NULL, '$jahr', '$ort', '$merkmal', '$betrag', '$klasse')";
-			$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+			DB::insert( $db_abfrage );
 		}
 	}
 	function dropdown_merkmale_ms($label, $name, $id, $vorwahl = '', $js = '') {
@@ -215,10 +198,10 @@ class mietspiegel {
 	}
 	function ms_wert_loeschen($dat) {
 		$db_abfrage = "DELETE FROM MIETSPIEGEL WHERE DAT='$dat'";
-		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+		DB::delete($db_abfrage);
 	}
 	function ms_sonderabzug_loeschen($dat) {
 		$db_abfrage = "DELETE FROM MS_SONDERMERKMALE WHERE DAT='$dat'";
-		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+		DB::delete($db_abfrage);
 	}
 }//end class	

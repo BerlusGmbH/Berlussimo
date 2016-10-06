@@ -10,32 +10,25 @@ class partners
 {
 
     /* Name eines Partner/Lieferand/Eigentümer */
+    public $partner_ort;
+
     function suche_partner_in_array($suchtext)
     {
-        $result = mysql_query("SELECT * FROM  `PARTNER_LIEFERANT` WHERE  `AKTUELL` =  '1' AND  `PARTNER_NAME` LIKE  '%$suchtext%'
+        $my_array = DB::select("SELECT * FROM  `PARTNER_LIEFERANT` WHERE  `AKTUELL` =  '1' AND  `PARTNER_NAME` LIKE  '%$suchtext%'
 OR  `STRASSE` LIKE  '%$suchtext%'
 OR  `PLZ` LIKE  '%$suchtext%'
 OR  `ORT` LIKE  '%$suchtext%'
 OR  `LAND` LIKE  '%$suchtext%'
  GROUP BY PARTNER_ID ORDER BY PARTNER_NAME ASC");
 
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-
+        if (!empty($my_array)) {
             /* Zusätzlich Stichwortsuche */
             $my_array_stich = $this->suche_partner_stichwort_arr($suchtext);
-            // echo '<pre>';
-            // print_r($my_array);
-            // print_r($my_array_stich);
             if (is_array($my_array_stich)) {
                 $anz_stich = count($my_array_stich);
                 for ($p = 0; $p < $anz_stich; $p++) {
                     $partner_id = $my_array_stich [$p] ['PARTNER_ID'];
                     $this->get_partner_info($partner_id);
-                    // print_r($this);
-                    // die();
                     $anz = count($my_array);
                     $my_array [$anz] ['PARTNER_ID'] = $partner_id;
                     $my_array [$anz] ['PARTNER_NAME'] = "<b>$this->partner_name</b>";
@@ -82,14 +75,10 @@ OR  `LAND` LIKE  '%$suchtext%'
 
     function suche_partner_stichwort_arr($stichwort)
     {
-        $result = mysql_query("SELECT * FROM  `PARTNER_STICHWORT` WHERE  `AKTUELL` =  '1' AND  `STICHWORT` LIKE  '%$stichwort%'
+        $result = DB::select("SELECT * FROM  `PARTNER_STICHWORT` WHERE  `AKTUELL` =  '1' AND  `STICHWORT` LIKE  '%$stichwort%'
 			ORDER BY STICHWORT ASC");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-            return $my_array;
+        if (!empty($result)) {
+            return $result;
         } else {
             return false;
         }
@@ -97,8 +86,8 @@ OR  `LAND` LIKE  '%$suchtext%'
 
     function get_partner_info($partner_id)
     {
-        $result = mysql_query("SELECT *  FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT *  FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
+        $row = $result[0];
         if ($row) {
             $this->partner_dat = $row ['PARTNER_DAT'];
             $this->partner_name = $row ['PARTNER_NAME'];
@@ -120,11 +109,7 @@ OR  `LAND` LIKE  '%$suchtext%'
 
                 $id = last_id2('PARTNER_STICHWORT', 'ID') + 1;
                 $db_abfrage = "INSERT INTO PARTNER_STICHWORT VALUES (NULL, '$id', '$partner_id', '$stichwort',  '1')";
-                $resultat = mysql_query($db_abfrage) or die (mysql_error());
-
-                /* Protokollieren */
-                // $last_dat = mysql_insert_id();
-                // protokollieren('PARTNER_STICHWORT', $last_dat, '0');
+                DB::insert($db_abfrage);
             }
         }
     }
@@ -132,18 +117,14 @@ OR  `LAND` LIKE  '%$suchtext%'
     function stichworte_loeschen($partner_id)
     {
         $db_abfrage = "UPDATE PARTNER_STICHWORT SET AKTUELL='0' WHERE PARTNER_ID='$partner_id'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
     }
 
     function stichwort_speichern($partner_id, $stichwort)
     {
         $id = last_id2('PARTNER_STICHWORT', 'ID') + 1;
         $db_abfrage = "INSERT INTO PARTNER_STICHWORT VALUES (NULL, '$id', '$partner_id', '$stichwort',  '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-
-        /* Protokollieren */
-        // $last_dat = mysql_insert_id();
-        // protokollieren('PARTNER_STICHWORT', $last_dat, '0');
+        DB::insert($db_abfrage);
     }
 
     /* Name eines Partner/Lieferand/Eigentümer */
@@ -151,7 +132,6 @@ OR  `LAND` LIKE  '%$suchtext%'
     function partner_liste_filter($partner_arr)
     {
         echo "<table class=\"sortable\">";
-        // echo "<tr class=\"feldernamen\"><td width=\"200px\">Name</td><td>Anschrift</td><td>Details</td></tr>";
         echo "<tr><th>Partner</th><th>Anschrift</th><th>GEWERK / Stichwort</th><th>Details</th></tr>";
         $zaehler = 0;
         for ($a = 0; $a < count($partner_arr); $a++) {
@@ -203,14 +183,11 @@ OR  `LAND` LIKE  '%$suchtext%'
 
     function get_partner_stichwort_arr($partner_id)
     {
-        $result = mysql_query("SELECT * FROM  `PARTNER_STICHWORT` WHERE  `AKTUELL` =  '1' AND  `PARTNER_ID` =  '$partner_id'
+        $result = DB::select("SELECT * FROM  `PARTNER_STICHWORT` WHERE  `AKTUELL` =  '1' AND  `PARTNER_ID` =  '$partner_id'
 				 ORDER BY STICHWORT ASC");
 
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-            return $my_array;
+        if (!empty($result)) {
+            return $result;
         } else {
             return false;
         }
@@ -218,9 +195,8 @@ OR  `LAND` LIKE  '%$suchtext%'
 
     function get_partner_id($partner_name)
     {
-        // echo "$result = mysql_query (\"SELECT PARTNER_ID FROM PARTNER_LIEFERANT WHERE PARTNER_NAME='$partner_name' && AKTUELL = '1\"); ";
-        $result = mysql_query("SELECT PARTNER_ID FROM PARTNER_LIEFERANT WHERE PARTNER_NAME='$partner_name' && AKTUELL = '1'");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT PARTNER_ID FROM PARTNER_LIEFERANT WHERE PARTNER_NAME='$partner_name' && AKTUELL = '1'");
+        $row = $result[0];
         $this->partner_id = $row ['PARTNER_ID'];
     }
 
@@ -256,13 +232,10 @@ OR  `LAND` LIKE  '%$suchtext%'
 
     function get_stichwort_arr()
     {
-        $result = mysql_query("SELECT STICHWORT FROM  `PARTNER_STICHWORT` WHERE  `AKTUELL` =  '1'  GROUP BY STICHWORT	ORDER BY STICHWORT ASC");
+        $result = DB::select("SELECT STICHWORT FROM  `PARTNER_STICHWORT` WHERE  `AKTUELL` =  '1'  GROUP BY STICHWORT	ORDER BY STICHWORT ASC");
 
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-            return $my_array;
+        if (!empty($result)) {
+            return $result;
         } else {
             return false;
         }
@@ -272,14 +245,8 @@ OR  `LAND` LIKE  '%$suchtext%'
 
     function check_stichwort($partner_id, $stichwort)
     {
-        $result = mysql_query("SELECT STICHWORT FROM  `PARTNER_STICHWORT` WHERE  `AKTUELL` =  '1'  && PARTNER_ID='$partner_id' && STICHWORT='$stichwort' LIMIT 0,1");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select("SELECT STICHWORT FROM  `PARTNER_STICHWORT` WHERE  `AKTUELL` =  '1'  && PARTNER_ID='$partner_id' && STICHWORT='$stichwort' LIMIT 0,1");
+        return !empty($result);
     }
 
     /* Partner suchen Formular */
@@ -377,8 +344,8 @@ function partner_speichern($clean_arr)
         } // Ende foreach
 
         /* Prüfen ob Partner/Liefernat vorhanden */
-        $result_3 = mysql_query("SELECT * FROM PARTNER_LIEFERANT WHERE PARTNER_NAME = '$clean_arr[partnername]' && STRASSE='$clean_arr[strasse]' && NUMMER='$clean_arr[hausnummer]' && PLZ='$clean_arr[plz]' && AKTUELL = '1' ORDER BY PARTNER_NAME");
-        $numrows_3 = mysql_numrows($result_3);
+        $result_3 = DB::select("SELECT * FROM PARTNER_LIEFERANT WHERE PARTNER_NAME = '$clean_arr[partnername]' && STRASSE='$clean_arr[strasse]' && NUMMER='$clean_arr[hausnummer]' && PLZ='$clean_arr[plz]' && AKTUELL = '1' ORDER BY PARTNER_NAME");
+        $numrows_3 = count($result_3);
 
         /* Wenn kein Fehler durch eingabe oder partner in db nicht vorhanden wird neuer datensatz gespeichert */
 
@@ -387,36 +354,10 @@ function partner_speichern($clean_arr)
             $partner_id = $this->letzte_partner_id();
             $partner_id = $partner_id + 1;
             $db_abfrage = "INSERT INTO PARTNER_LIEFERANT VALUES (NULL, $partner_id, '$clean_arr[partnername]','$clean_arr[strasse]', '$clean_arr[hausnummer]','$clean_arr[plz]','$clean_arr[ort]','$clean_arr[land]','1')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert($db_abfrage);
             /* Protokollieren */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('PARTNER_LIEFERANT', $last_dat, '0');
-
-            /*
-             * if(!empty($kreditinstitut) OR !empty($kontonummer) OR !empty($blz)){
-             * /*Kontodaten speichern
-             */
-            /*
-             * $konto_id= $this->letzte_geldkonto_id();
-             * $konto_id = $konto_id + 1;
-             * $db_abfrage = "INSERT INTO GELD_KONTEN VALUES (NULL, '$konto_id','$clean_arr[partnername] - Konto','$clean_arr[partnername]', '$clean_arr[kontonummer]','$clean_arr[blz]', '$clean_arr[kreditinstitut]','1')";
-             * $resultat = mysql_query($db_abfrage) or
-             * die(mysql_error());
-             */
-            /* Protokollieren */
-            /*
-             * $last_dat = mysql_insert_id();
-             * protokollieren('GELD_KONTEN', $last_dat, '0');
-             */
-            /* Geldkonto dem Partner zuweisen */
-            /*
-             * $letzte_zuweisung_id = $this->letzte_zuweisung_geldkonto_id();
-             * $letzte_zuweisung_id = $letzte_zuweisung_id +1;
-             * $db_abfrage = "INSERT INTO GELD_KONTEN_ZUWEISUNG VALUES (NULL, '$letzte_zuweisung_id','$konto_id', 'Partner','$partner_id', '1')";
-             * $resultat = mysql_query($db_abfrage) or
-             * die(mysql_error());
-             * }
-             */
             if (isset ($resultat)) {
                 hinweis_ausgeben("Partner $clean_arr[partnername] wurde gespeichert.");
                 weiterleiten_in_sec(route('legacy::partner::index', ['option' => 'partner_erfassen'], false), 2);
@@ -449,8 +390,8 @@ function partner_speichern($clean_arr)
 
     function letzte_partner_id()
     {
-        $result = mysql_query("SELECT PARTNER_ID FROM PARTNER_LIEFERANT  ORDER BY PARTNER_ID DESC LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT PARTNER_ID FROM PARTNER_LIEFERANT  ORDER BY PARTNER_ID DESC LIMIT 0,1");
+        $row = $result[0];
         return $row ['PARTNER_ID'];
     }
 
@@ -458,8 +399,8 @@ function partner_speichern($clean_arr)
 
     function letzte_geldkonto_id()
     {
-        $result = mysql_query("SELECT KONTO_ID FROM GELD_KONTEN ORDER BY KONTO_ID DESC LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT KONTO_ID FROM GELD_KONTEN ORDER BY KONTO_ID DESC LIMIT 0,1");
+        $row = $result[0];
         return $row ['KONTO_ID'];
     }
 
@@ -467,8 +408,8 @@ function partner_speichern($clean_arr)
 
     function letzte_zuweisung_geldkonto_id()
     {
-        $result = mysql_query("SELECT ZUWEISUNG_ID FROM GELD_KONTEN_ZUWEISUNG ORDER BY ZUWEISUNG_ID DESC LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT ZUWEISUNG_ID FROM GELD_KONTEN_ZUWEISUNG ORDER BY ZUWEISUNG_ID DESC LIMIT 0,1");
+        $row = $result[0];
         return $row ['ZUWEISUNG_ID'];
     }
 
@@ -476,8 +417,8 @@ function partner_speichern($clean_arr)
 
     function letzte_konto_geldkonto_id_p($partner_id)
     {
-        $result = mysql_query("SELECT KONTO_ID FROM GELD_KONTEN_ZUWEISUNG WHERE KOSTENTRAEGER_TYP='Partner' && KOSTENTRAEGER_ID='$partner_id' ORDER BY ZUWEISUNG_ID DESC LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT KONTO_ID FROM GELD_KONTEN_ZUWEISUNG WHERE KOSTENTRAEGER_TYP='Partner' && KOSTENTRAEGER_ID='$partner_id' ORDER BY ZUWEISUNG_ID DESC LIMIT 0,1");
+        $row = $result[0];
         return $row ['KONTO_ID'];
     }
 
@@ -485,19 +426,17 @@ function partner_speichern($clean_arr)
 
     function partner_rechts_anzeigen()
     {
-        $result = mysql_query("SELECT * FROM PARTNER_LIEFERANT WHERE AKTUELL = '1' ORDER BY PARTNER_NAME");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
+        $result = DB::select("SELECT * FROM PARTNER_LIEFERANT WHERE AKTUELL = '1' ORDER BY PARTNER_NAME");
+        if (!empty($result)) {
             $form = new mietkonto ();
             $form->erstelle_formular("Partner", NULL);
             echo "<div class=\"tabelle\">\n";
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
             echo "<table class=\"sortable\">\n";
             echo "<tr class=\"feldernamen\"><td>Partner</td></tr>\n";
             echo "<tr><th>Partner</th></tr>";
-            for ($i = 0; $i < count($my_array); $i++) {
-                echo "<tr><td>" . $my_array [$i] ['PARTNER_NAME'] . "</td></tr>\n";
+            $numrows = count($result);
+            for ($i = 0; $i < $numrows; $i++) {
+                echo "<tr><td>" . $result[$i] ['PARTNER_NAME'] . "</td></tr>\n";
             }
             echo "</table></div>\n";
             $form->ende_formular();
@@ -528,12 +467,9 @@ function partner_speichern($clean_arr)
 
     function partner_in_array()
     {
-        $result = mysql_query("SELECT * FROM PARTNER_LIEFERANT WHERE AKTUELL = '1' ORDER BY PARTNER_NAME ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-            return $my_array;
+        $result = DB::select("SELECT * FROM PARTNER_LIEFERANT WHERE AKTUELL = '1' ORDER BY PARTNER_NAME ASC");
+        if (!empty($result)) {
+            return $result;
         } else {
             return false;
         }
@@ -557,12 +493,9 @@ function partner_speichern($clean_arr)
 
     function gewerke_in_array()
     {
-        $result = mysql_query("SELECT * FROM GEWERKE WHERE AKTUELL = '1' ORDER BY BEZEICHNUNG ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-            return $my_array;
+        $result = DB::select("SELECT * FROM GEWERKE WHERE AKTUELL = '1' ORDER BY BEZEICHNUNG ASC");
+        if (!empty($result)) {
+            return $result;
         } else {
             return false;
         }
@@ -572,7 +505,6 @@ function partner_speichern($clean_arr)
     {
         $partner_arr = $this->partner_in_array();
         echo "<table class=\"sortable\">";
-        // echo "<tr class=\"feldernamen\"><td width=\"200px\">Name</td><td>Anschrift</td><td>Details</td></tr>";
         echo "<tr><th>Partner</th><th>Anschrift</th><th>Gewerk / Stichwort</th><th>Details</th></tr>";
         $zaehler = 0;
         for ($a = 0; $a < count($partner_arr); $a++) {
@@ -639,35 +571,31 @@ function partner_speichern($clean_arr)
     {
         /* Deaktivieren */
         $db_abfrage = "UPDATE PARTNER_LIEFERANT SET AKTUELL='0' WHERE PARTNER_DAT='$partner_dat'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
 
         /* Änderung Speichern */
         $db_abfrage = "INSERT INTO PARTNER_LIEFERANT VALUES(NULL, '$partner_id', '$partnername', '$strasse', '$hausnummer', '$plz', '$ort', '$land', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
 
         /* Protokollieren */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('PARTNER_LIEFERANT', $last_dat, $partner_dat);
     }
 
     function partner_nach_umsatz()
     {
-        $result = mysql_query("SELECT  `AUSSTELLER_TYP` , AUSSTELLER_ID, SUM( NETTO ) AS NETTO, SUM( BRUTTO ) AS BRUTTO
+        $result = DB::select("SELECT  `AUSSTELLER_TYP` , AUSSTELLER_ID, SUM( NETTO ) AS NETTO, SUM( BRUTTO ) AS BRUTTO
 FROM  `RECHNUNGEN` 
 WHERE  `RECHNUNGSTYP` =  'RECHNUNG'
 GROUP BY  `AUSSTELLER_TYP` ,  `AUSSTELLER_ID` 
 ORDER BY SUM( BRUTTO ) DESC 
 LIMIT 0 , 80");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            $z = 0;
-            while ($row = mysql_fetch_assoc($result)) {
+        if (!empty($result)) {
+            foreach($result as $row) {
                 $this->get_partner_name($row ['AUSSTELLER_ID']);
                 $row ['PARTNER_NAME'] = $this->partner_name;
-                $my_array [] = $row;
             }
-
-            return $my_array;
+            return $result;
         } else {
             return false;
         }
@@ -678,8 +606,8 @@ LIMIT 0 , 80");
         if (isset ($this->partner_name)) {
             unset ($this->partner_name);
         }
-        $result = mysql_query("SELECT PARTNER_NAME FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT PARTNER_NAME FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
+        $row = $result[0];
         if ($row) {
             $this->partner_name = $row ['PARTNER_NAME'];
         } else {

@@ -16,6 +16,10 @@ class einheit extends haus {
      * var $datum_heute;
      * var $mietvertrag_id;
      */
+    public $einheit_qm_gewerbe;
+    public $einheit_qm;
+    public $einheit_kurzname;
+
     function emails_mieter_arr($objekt_id) {
         if ($objekt_id == null) {
             $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` ,EINHEIT_ID,  `EINHEIT_LAGE` , `EINHEIT_QM`, `TYP` FROM EINHEIT , HAUS, OBJEKT
@@ -26,12 +30,12 @@ ORDER BY HAUS_STRASSE, HAUS_NUMMER, OBJEKT_KURZNAME, EINHEIT_LAGE";
 				WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.OBJEKT_ID='$objekt_id'
 				ORDER BY EINHEIT_KURZNAME";
         }
-        $result = mysql_query ( $db_abfrage );
-        $numrows = mysql_numrows ( $result );
+        $result = DB::select( $db_abfrage );
+        $numrows = count( $result );
         if ($numrows) {
             $z = 0;
             $emails_arr = '';
-            while ( $row = mysql_fetch_assoc ( $result ) ) {
+            foreach( $result as $row ) {
 
                 $einheit_id = $row ['EINHEIT_ID'];
                 $mv_id = $this->get_mietvertrag_id ( $einheit_id );
@@ -51,8 +55,6 @@ ORDER BY HAUS_STRASSE, HAUS_NUMMER, OBJEKT_KURZNAME, EINHEIT_LAGE";
                             }
                         }
                     }
-
-                    // die();
                 }
             }
 
@@ -104,11 +106,11 @@ ORDER BY HAUS_STRASSE, HAUS_NUMMER, OBJEKT_KURZNAME, EINHEIT_LAGE";
 WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.OBJEKT_ID='$objekt_id' 
 ORDER BY EINHEIT_KURZNAME";
         }
-        $result = mysql_query ( $db_abfrage );
-        $numrows = mysql_numrows ( $result );
+        $result = DB::select( $db_abfrage );
+        $numrows = count($result);
         if ($numrows) {
             $z = 0;
-            while ( $row = mysql_fetch_assoc ( $result ) ) {
+            foreach( $result as $row ) {
                 $my_arr [] = $row;
                 $einheit_id = $row ['EINHEIT_ID'];
                 $mv_id = $this->get_mietvertrag_id ( $einheit_id );
@@ -116,7 +118,6 @@ ORDER BY EINHEIT_KURZNAME";
                     $mvs = new mietvertraege ();
                     $mvs->get_mietvertrag_infos_aktuell ( $mv_id );
                     $kontaktdaten = $this->kontaktdaten_mieter ( $mv_id );
-                    // $my_arr[$z]['MIETER'] = $mvs->personen_name_string_u."\n".$kontaktdaten;
                     $my_arr [$z] ['MIETER'] = $mvs->personen_name_string_u;
                     $my_arr [$z] ['KONTAKT'] = $kontaktdaten;
                 } else {
@@ -127,14 +128,6 @@ ORDER BY EINHEIT_KURZNAME";
         } else {
             echo "NO!sdsd";
         }
-
-        // echo '<pre>';
-        // print_r($my_arr);
-        /*
-         * $pdf->ezTable($table_arr,array('OBJEKT_NAME'=>'Objekt','KONTOSTAND1_1'=>"Kontostand $datum_jahresanfang",'ME_MONAT'=>"Mieten Einnahmen $monatname",'ME_JAHR'=>"Mieten Einnahmen $jahr", 'KOSTEN_MONAT'=>"Kosten $monatname",'KOSTEN_JAHR'=>"Kosten $jahr", 'KONTOSTAND_AKTUELL'=>"Kontostand")
-         * ,'<b>Kosten & Einnahmen / Objekt (Tabellarische Übersicht)</b>', array('shaded'=>0, 'width'=>'500', 'justification'=>'right', 'cols'=>array(
-         * 'KONTOSTAND1_1'=>array('justification'=>'right'),'ME_MONAT'=>array('justification'=>'right'), 'ME_MONAT'=>array('justification'=>'right'),'ME_JAHR'=>array('justification'=>'right'),'KOSTEN_MONAT'=>array('justification'=>'right'),'KOSTEN_JAHR'=>array('justification'=>'right'), 'KONTOSTAND_AKTUELL'=>array('justification'=>'right'))));
-         */
 
         $pdf = new Cezpdf ( 'a4', 'portrait' );
         $bpdf = new b_pdf ();
@@ -184,11 +177,11 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
         $pdf->ezStream();
     }
     function kontaktdaten_mieter($mv_id) {
-        $result = mysql_query ( "SELECT PERSON_MIETVERTRAG_PERSON_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_MIETVERTRAG_ID='$mv_id' && PERSON_MIETVERTRAG_AKTUELL='1' ORDER BY PERSON_MIETVERTRAG_ID ASC" );
-        $numrows = mysql_numrows ( $result );
+        $result = DB::select( "SELECT PERSON_MIETVERTRAG_PERSON_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_MIETVERTRAG_ID='$mv_id' && PERSON_MIETVERTRAG_AKTUELL='1' ORDER BY PERSON_MIETVERTRAG_ID ASC" );
+        $numrows = count( $result );
         if ($numrows) {
             $kontaktdaten = '';
-            while ( $row = mysql_fetch_assoc ( $result ) ) {
+            foreach( $result as $row ) {
                 $person_id = $row ['PERSON_MIETVERTRAG_PERSON_ID'];
                 $arr = $this->finde_detail_kontakt_arr ( 'PERSON', $person_id );
                 if (is_array ( $arr )) {
@@ -205,26 +198,22 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
     }
     function finde_detail_kontakt_arr($tab, $id) {
         $db_abfrage = "SELECT DETAIL_NAME, DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = '$tab' && (DETAIL_NAME LIKE '%tel%'or DETAIL_NAME LIKE '%fax%' or DETAIL_NAME LIKE '%mobil%' or DETAIL_NAME LIKE '%handy%' OR DETAIL_NAME LIKE '%mail%') && DETAIL_ZUORDNUNG_ID = '$id' && DETAIL_AKTUELL = '1' ORDER BY DETAIL_NAME ASC";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-        $numrows = mysql_numrows ( $resultat );
+        $resultat = DB::select( $db_abfrage );
+        $numrows = count( $resultat );
         if ($numrows) {
-            while ( $row = mysql_fetch_assoc ( $resultat ) )
-                $my_array [] = $row;
-            return $my_array;
+            return $resultat;
         }
     }
     function get_einheit_info($einheit_id) {
         unset ( $this->einheit_dat );
         unset ( $this->typ );
-        $result = mysql_query ( "SELECT * FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID='$einheit_id' ORDER BY EINHEIT_DAT DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
-        // print_r($row);
+        $result = DB::select( "SELECT * FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID='$einheit_id' ORDER BY EINHEIT_DAT DESC LIMIT 0,1" );
+        $row = $result[0];
         $this->einheit_dat = $row ['EINHEIT_DAT'];
         $this->haus_id = $row ['HAUS_ID'];
         $this->einheit_kurzname = ltrim ( rtrim ( $row ['EINHEIT_KURZNAME'] ) );
         $this->einheit_qm = ltrim ( rtrim ( $row ['EINHEIT_QM'] ) );
         $this->einheit_qm_d = nummer_punkt2komma ( $this->einheit_qm );
-        // $this->einheit_qm_d = number_format($this->einheit_qm, 2,","," ");
         $this->einheit_lage = ltrim ( rtrim ( $row ['EINHEIT_LAGE'] ) );
         $this->get_haus_info ( $this->haus_id );
         $this->typ = $row ['TYP'];
@@ -240,11 +229,11 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
     }
     function get_mietvertrag_id($einheit_id) {
         $this->datum_heute = date ( "Y-m-d" );
-        $result = mysql_query ( "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1'  && ( MIETVERTRAG_BIS >= '$this->datum_heute' OR MIETVERTRAG_BIS = '0000-00-00' ) ORDER BY MIETVERTRAG_VON DESC LIMIT 0 , 1 " );
-        $numrows = mysql_numrows ( $result );
+        $result = DB::select( "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1'  && ( MIETVERTRAG_BIS >= '$this->datum_heute' OR MIETVERTRAG_BIS = '0000-00-00' ) ORDER BY MIETVERTRAG_VON DESC LIMIT 0 , 1 " );
+        $numrows = count( $result );
 
         if ($numrows > 0) {
-            $row = mysql_fetch_assoc ( $result );
+            $row = $result[0];
             $this->mietvertrag_id = $row ['MIETVERTRAG_ID'];
             return $this->mietvertrag_id;
         } else {
@@ -252,10 +241,10 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
         }
     }
     function get_last_mietvertrag_id($einheit_id) {
-        $result = mysql_query ( "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1'  ORDER BY MIETVERTRAG_VON DESC LIMIT 0 , 1 " );
-        $numrows = mysql_numrows ( $result );
+        $result = DB::select( "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1'  ORDER BY MIETVERTRAG_VON DESC LIMIT 0 , 1 " );
+        $numrows = count( $result );
         if ($numrows > 0) {
-            $row = mysql_fetch_assoc ( $result );
+            $row = $result[0];
             $this->mietvertrag_id = $row ['MIETVERTRAG_ID'];
             return $this->mietvertrag_id;
         } else {
@@ -265,28 +254,21 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
 
     /* Alle Mietverträge einer Einheit */
     function get_mietvertrag_ids($einheit_id) {
-        $result = mysql_query ( "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' ORDER BY MIETVERTRAG_VON ASC" );
-        // echo "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' ORDER BY MIETVERTRAG_VON ASC";
-        $numrows = mysql_numrows ( $result );
-        if ($numrows) {
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_arr [] = $row;
-            return $my_arr;
+        $result = DB::select( "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' ORDER BY MIETVERTRAG_VON ASC" );
+        if (!empty($result)) {
+            return $result;
         } else {
             return false;
         }
     }
     function get_einheit_as_array($einheit_id) {
-        $result = mysql_query ( "SELECT * FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID='$einheit_id' ORDER BY EINHEIT_DAT LIMIT 0,1" );
-        $einheiten_array = array ();
-        while ( $row = mysql_fetch_assoc ( $result ) )
-            $einheiten_array [] = $row;
-        $this->anzahl_einheiten = count ( $einheiten_array );
-        return $einheiten_array;
+        $result = DB::select( "SELECT * FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID='$einheit_id' ORDER BY EINHEIT_DAT LIMIT 0,1" );
+        $this->anzahl_einheiten = count($result);
+        return $result;
     }
     function get_einheit_typ_arr() {
-        $result = mysql_query ( "SHOW COLUMNS FROM EINHEIT WHERE FIELD = 'TYP'" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SHOW COLUMNS FROM EINHEIT WHERE FIELD = 'TYP'" );
+        $row = $result[0];
         preg_match("/^enum\(\'(.*)\'\)$/", $row['Type'], $matches);
         $typ_array = explode("','", $matches[1]);
         return $typ_array;
@@ -297,12 +279,10 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
         if (strlen ( $monat ) < 2) {
             $monat = '0' . $monat;
         }
-        $result = mysql_query ( "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr-$monat' ORDER BY MIETVERTRAG_VON ASC" );
-        $numrows = mysql_numrows ( $result );
+        $result = DB::select( "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr-$monat' ORDER BY MIETVERTRAG_VON ASC" );
+        $numrows = count( $result );
         if ($numrows) {
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_arr [] = $row;
-            return $my_arr;
+            return $result;
         } else {
             return false;
         }
@@ -317,11 +297,10 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
         if (strlen ( $monat ) < 2) {
             $monat = '0' . $monat;
         }
-        $result = mysql_query ( "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr-$monat' && (DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr-$monat' OR MIETVERTRAG_BIS='0000-00-00') ORDER BY MIETVERTRAG_VON $asc LIMIT 0,1" );
-        // echo "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr-$monat' && (DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr-$monat' OR MIETVERTRAG_BIS='0000-00-00') ORDER BY MIETVERTRAG_VON ASC LIMIT 0,1";
-        $numrows = mysql_numrows ( $result );
+        $result = DB::select( "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr-$monat' && (DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr-$monat' OR MIETVERTRAG_BIS='0000-00-00') ORDER BY MIETVERTRAG_VON $asc LIMIT 0,1" );
+        $numrows = count( $result );
         if ($numrows) {
-            $row = mysql_fetch_assoc ( $result );
+            $row = $result[0];
             $this->mietvertrag_id = $row ['MIETVERTRAG_ID'];
             return $this->mietvertrag_id;
         } else {
@@ -336,55 +315,41 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
         if (strlen ( $monat ) < 2) {
             $monat = '0' . $monat;
         }
-        $result = mysql_query ( "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr-$monat' && (DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr-$monat' OR MIETVERTRAG_BIS='0000-00-00') " );
-        // echo "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr-$monat' && (DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr-$monat' OR MIETVERTRAG_BIS='0000-00-00') ORDER BY MIETVERTRAG_VON ASC LIMIT 0,1";
-        $numrows = mysql_numrows ( $result );
+        $result = DB::select( "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr-$monat' && (DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr-$monat' OR MIETVERTRAG_BIS='0000-00-00') " );
+        $numrows = count( $result );
         if ($numrows) {
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_array [] = $row;
-            return $my_array;
+            return $result;
         } else {
             return false;
         }
     }
     function get_einheit_haus($einheit_id) {
-        $result = mysql_query ( "SELECT HAUS_ID, EINHEIT_KURZNAME FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID='$einheit_id' ORDER BY EINHEIT_DAT DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
-        // print_r($row);
+        $result = DB::select( "SELECT HAUS_ID, EINHEIT_KURZNAME FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID='$einheit_id' ORDER BY EINHEIT_DAT DESC LIMIT 0,1" );
+        $row = $result[0];
         $this->haus_id = $row ['HAUS_ID'];
         $this->get_haus_info ( $row ['HAUS_ID'] );
         $this->einheit_kurzname = $row ['EINHEIT_KURZNAME'];
         $this->get_einheit_info ( $einheit_id );
     }
     function get_einheit_id($einheit_name) {
-        $result = mysql_query ( "SELECT EINHEIT_ID FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_KURZNAME='$einheit_name' ORDER BY EINHEIT_DAT DESC LIMIT 0,1" );
-        // echo "SELECT EINHEIT_ID FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_KURZNAME='$einheit_name' ORDER BY EINHEIT_DAT DESC LIMIT 0,1";
-
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT EINHEIT_ID FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_KURZNAME='$einheit_name' ORDER BY EINHEIT_DAT DESC LIMIT 0,1" );
+        $row = $result[0];
         $this->einheit_id = $row ['EINHEIT_ID'];
     }
     function get_einheit_status($einheit_id) {
         $this->datum_heute = date ( "Y-m-d" );
-        $result = mysql_query ( "SELECT * FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' && ( MIETVERTRAG_BIS >= '$this->datum_heute' OR MIETVERTRAG_BIS = '0000-00-00' ) LIMIT 0 , 1 " );
-        // echo "SELECT * FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' && ( MIETVERTRAG_BIS >= '$this->datum_heute' OR MIETVERTRAG_BIS = '0000-00-00' ) LIMIT 0 , 1 ";
-        $numrows = mysql_numrows ( $result );
-        if ($numrows > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select( "SELECT * FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' && ( MIETVERTRAG_BIS >= '$this->datum_heute' OR MIETVERTRAG_BIS = '0000-00-00' ) LIMIT 0 , 1 " );
+        $numrows = count( $result );
+        return !empty($result);
     }
     function liste_aller_einheiten() {
-        $result = mysql_query ( "SELECT * FROM EINHEIT WHERE EINHEIT_AKTUELL='1' ORDER BY LENGTH(EINHEIT_KURZNAME), EINHEIT_KURZNAME" );
-        while ( $row = mysql_fetch_assoc ( $result ) )
-            $einheiten_array [] = $row;
-        $this->anzahl_einheiten = count ( $einheiten_array );
-        return $einheiten_array;
+        $result = DB::select( "SELECT * FROM EINHEIT WHERE EINHEIT_AKTUELL='1' ORDER BY LENGTH(EINHEIT_KURZNAME), EINHEIT_KURZNAME" );
+        $this->anzahl_einheiten = count ( $result );
+        return $result;
     }
     function finde_einheit_id_by_kurz($anfang) {
-        $result = mysql_query ( "SELECT EINHEIT_ID FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_KURZNAME LIKE '$anfang%' ORDER BY EINHEIT_DAT DESC LIMIT 0,1" );
-        $einheiten_array = array ();
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT EINHEIT_ID FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_KURZNAME LIKE '$anfang%' ORDER BY EINHEIT_DAT DESC LIMIT 0,1" );
+        $row = $result[0];
         return $row ['EINHEIT_ID'];
     }
     function dropdown_einheiten($name, $id) {
@@ -418,8 +383,8 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
     }
     function letzter_vormieter($einheit_id) {
         $datum_heute = date ( "Y-m-d" );
-        $result = mysql_query ( "SELECT MIETVERTRAG_ID FROM `MIETVERTRAG` WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL='1' && ((MIETVERTRAG_BIS<'$datum_heute') && (MIETVERTRAG_BIS!='0000-00-00')) ORDER BY MIETVERTRAG_BIS DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT MIETVERTRAG_ID FROM `MIETVERTRAG` WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL='1' && ((MIETVERTRAG_BIS<'$datum_heute') && (MIETVERTRAG_BIS!='0000-00-00')) ORDER BY MIETVERTRAG_BIS DESC LIMIT 0,1" );
+        $row = $result[0];
         $mietvertrag_id = $row ['MIETVERTRAG_ID'];
         $mv_info = new mietvertrag ();
         $vormieter_array = $mv_info->get_personen_ids_mietvertrag ( $mietvertrag_id );
@@ -433,7 +398,7 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
         $alle_einheiten_array = $this->liste_aller_einheiten ();
         for($a = 0; $a < count ( $alle_einheiten_array ); $a ++) {
             $id = $alle_einheiten_array[$a]['EINHEIT_ID'];
-            $result = mysql_query ( "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && EINHEIT_ID='$id' && (MIETVERTRAG_BIS>='$datum_heute' OR MIETVERTRAG_BIS = '0000-00-00') ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1" );
+            DB::select( "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && EINHEIT_ID='$id' && (MIETVERTRAG_BIS>='$datum_heute' OR MIETVERTRAG_BIS = '0000-00-00') ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1" );
         }
     }
     function form_einheit_neu($haus_id = '') {
@@ -502,9 +467,9 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
         $last_id = last_id2 ( 'EINHEIT', 'EINHEIT_ID' ) + 1;
         $qm = nummer_komma2punkt ( $qm );
         $db_abfrage = "INSERT INTO EINHEIT VALUES (NULL, '$last_id', '$qm', '$lage', '$haus_id', '1', '$kurzname', '$typ')";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+        DB::insert( $db_abfrage );
         /* Protokollieren */
-        $last_dat = mysql_insert_id ();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren ( 'EINHEIT', $last_dat, '0' );
         return $last_id;
     }
@@ -513,15 +478,15 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
         $last_id = $einheit_id;
         $qm = nummer_komma2punkt ( $qm );
         $db_abfrage = "INSERT INTO EINHEIT VALUES (NULL, '$last_id', '$qm', '$lage', '$haus_id', '1', '$kurzname', '$typ')";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+        DB::insert( $db_abfrage );
         /* Protokollieren */
-        $last_dat = mysql_insert_id ();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren ( 'EINHEIT', $last_dat, $einheit_dat );
         return $last_dat;
     }
     function einheit_deaktivieren($einheit_dat) {
         $db_abfrage = "UPDATE EINHEIT SET EINHEIT_AKTUELL='0' WHERE EINHEIT_DAT='$einheit_dat'";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+        DB::update( $db_abfrage );
         /* Protokollieren */
         protokollieren ( 'EINHEIT', $einheit_dat, $einheit_dat );
         return $einheit_dat;

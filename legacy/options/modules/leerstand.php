@@ -446,7 +446,7 @@ if (isset ($option)) {
 }
 function leerstand_finden($objekt_id)
 {
-    $result = mysql_query("SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_QM, EINHEIT_LAGE
+    $result = DB::select("SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_QM, EINHEIT_LAGE
 FROM `EINHEIT`
 RIGHT JOIN (
 HAUS, OBJEKT
@@ -460,28 +460,12 @@ WHERE MIETVERTRAG_AKTUELL = '1' && ( MIETVERTRAG_BIS > CURdate( )
 OR MIETVERTRAG_BIS = '0000-00-00' )
 )
 ORDER BY EINHEIT_KURZNAME ASC");
-    echo "<hr>SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_QM, EINHEIT_LAGE
-FROM `EINHEIT`
-RIGHT JOIN (
-HAUS, OBJEKT
-) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID='$objekt_id' )
-WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID NOT
-IN (
-
-SELECT EINHEIT_ID
-FROM MIETVERTRAG
-WHERE MIETVERTRAG_AKTUELL = '1' && ( MIETVERTRAG_BIS > CURdate( )
-OR MIETVERTRAG_BIS = '0000-00-00' )
-)
-ORDER BY EINHEIT_KURZNAME ASC";
-    while ($row = mysql_fetch_assoc($result))
-        $my_arr [] = $row;
-    return $my_arr;
+    return $result;
 }
 
 function leerstand_finden_monat($objekt_id, $datum)
 {
-    $result = mysql_query("SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_QM, EINHEIT_LAGE, TYP
+    $result = DB::select("SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_QM, EINHEIT_LAGE, TYP
 FROM `EINHEIT`
 RIGHT JOIN (
 HAUS, OBJEKT
@@ -495,12 +479,7 @@ WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m-%d' ) <=
 OR MIETVERTRAG_BIS = '0000-00-00' )
 )
 GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
-    // echo "<pre>";
-
-    while ($row = mysql_fetch_assoc($result))
-        $my_arr [] = $row;
-    // print_r($my_arr);
-    return $my_arr;
+    return $result;
 }
 
 function leerstand_objekt($objekt_id)

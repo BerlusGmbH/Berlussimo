@@ -27,21 +27,15 @@ class k_rahmen
 
     function kontenrahmen_in_arr()
     {
-        $result = mysql_query("SELECT *  FROM KONTENRAHMEN WHERE  AKTUELL='1' ORDER BY NAME ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-        }
-        return $my_array;
+        $result = DB::select("SELECT *  FROM KONTENRAHMEN WHERE  AKTUELL='1' ORDER BY NAME ASC");
+        return $result;
     }
 
     function zuweisung_anzeigen($kontenrahmen_id)
     {
-        $result = mysql_query("SELECT * FROM `KONTENRAHMEN_ZUWEISUNG` WHERE `KONTENRAHMEN_ID` ='$kontenrahmen_id' AND `AKTUELL`='1'");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
+        $result = DB::select("SELECT * FROM `KONTENRAHMEN_ZUWEISUNG` WHERE `KONTENRAHMEN_ID` ='$kontenrahmen_id' AND `AKTUELL`='1'");
+        if (!empty($result)) {
+            foreach($result as $row) {
                 $dat = $row ['DAT'];
                 $typ = $row ['TYP'];
                 $id = $row ['TYP_ID'];
@@ -85,12 +79,11 @@ class k_rahmen
 
     function get_kontenrahmen_infos($kontenrahmen_id)
     {
-        $result = mysql_query("SELECT *  FROM  KONTENRAHMEN WHERE AKTUELL = '1' && KONTENRAHMEN_ID='$kontenrahmen_id'");
-        $numrows = mysql_numrows($result);
+        $result = DB::select("SELECT *  FROM  KONTENRAHMEN WHERE AKTUELL = '1' && KONTENRAHMEN_ID='$kontenrahmen_id'");
         unset ($this->dat);
         unset ($this->name);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        if (!empty($result)) {
+            $row = $result[0];
             $this->dat = $row ['KONTENRAHMEN_DAT'];
             $this->name = $row ['NAME'];
         }
@@ -98,17 +91,11 @@ class k_rahmen
 
     function konten_in_arr_rahmen($kontenrahmen_id)
     {
-        $result = mysql_query("SELECT KONTENRAHMEN_KONTEN_DAT, KONTO, KONTENRAHMEN_KONTEN.BEZEICHNUNG, GRUPPE AS GRUPPEN_ID, KONTENRAHMEN_GRUPPEN.BEZEICHNUNG AS GRUPPE, KONTO_ART AS KONTOART_ID, KONTOART
+        $result = DB::select("SELECT KONTENRAHMEN_KONTEN_DAT, KONTO, KONTENRAHMEN_KONTEN.BEZEICHNUNG, GRUPPE AS GRUPPEN_ID, KONTENRAHMEN_GRUPPEN.BEZEICHNUNG AS GRUPPE, KONTO_ART AS KONTOART_ID, KONTOART
 FROM KONTENRAHMEN_KONTEN, KONTENRAHMEN_GRUPPEN, KONTENRAHMEN_KONTOARTEN
 WHERE KONTENRAHMEN_ID = '$kontenrahmen_id' && KONTENRAHMEN_GRUPPEN.AKTUELL = '1' && KONTENRAHMEN_KONTEN.AKTUELL = '1' && KONTENRAHMEN_KONTOARTEN.AKTUELL = '1' && KONTENRAHMEN_KONTEN.GRUPPE = KONTENRAHMEN_GRUPPEN.KONTENRAHMEN_GRUPPEN_ID && KONTO_ART = KONTENRAHMEN_KONTOART_ID
 ORDER BY KONTO ASC");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-        }
-        return $my_array;
+        return $result;
     }
 
     function konten_liste_anzeigen_pdf($kontenrahmen_id)
@@ -187,9 +174,9 @@ ORDER BY KONTO ASC");
         if (!$this->check_k_exists($k_bez)) {
             $k_id = last_id2("KONTENRAHMEN", "KONTENRAHMEN_ID") + 1;
             $db_abfrage = "INSERT INTO KONTENRAHMEN VALUES (NULL, '$k_id', '$k_bez', '1')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert($db_abfrage);
             /* Protokollieren */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('KONTENRAHMEN', $last_dat, '0');
             return true;
         } else {
@@ -200,14 +187,8 @@ ORDER BY KONTO ASC");
 
     function check_k_exists($k_bez)
     {
-        $result = mysql_query("SELECT *  FROM  KONTENRAHMEN WHERE AKTUELL = '1' && NAME='$k_bez' ");
-        $numrows = mysql_numrows($result);
-
-        if ($numrows > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select("SELECT *  FROM  KONTENRAHMEN WHERE AKTUELL = '1' && NAME='$k_bez' ");
+        return !empty($result);
     }
 
     function form_kostenkonto_neu()
@@ -226,16 +207,12 @@ ORDER BY KONTO ASC");
 
     function dropdown_kontenrahmen($label, $name, $id)
     {
-        $result = mysql_query("SELECT *  FROM KONTENRAHMEN WHERE  AKTUELL='1' ORDER BY NAME ASC");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-
+        $my_array = DB::select("SELECT * FROM KONTENRAHMEN WHERE AKTUELL='1' ORDER BY NAME ASC");
+        if (!empty($result)) {
             echo "<div class='input-field'>";
             echo "<select name=\"$name\" id=\"$id\" size=\"1\" >\n";
-            for ($a = 0; $a < count($my_array); $a++) {
+            $numrows = count($my_array);
+            for ($a = 0; $a < $numrows; $a++) {
                 $id = $my_array [$a] ['KONTENRAHMEN_ID'];
                 $bez = $my_array [$a] ['NAME'];
                 if (session()->has('kontenrahmen_id') && session()->get('kontenrahmen_id') == $id) {
@@ -254,13 +231,10 @@ ORDER BY KONTO ASC");
 
     function dropdown_k_arten($label, $name, $id)
     {
-        $result = mysql_query("SELECT *  FROM  KONTENRAHMEN_KONTOARTEN WHERE AKTUELL = '1'  ORDER BY KONTOART ASC");
+        $my_array = DB::select("SELECT * FROM KONTENRAHMEN_KONTOARTEN WHERE AKTUELL = '1'  ORDER BY KONTOART ASC");
 
-        $numrows = mysql_numrows($result);
+        $numrows = count(!$my_array);
         if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-
             echo "<div class='input-field'>";
             echo "<select name=\"$name\" id=\"$id\" size=\"1\" >\n";
             for ($a = 0; $a < count($my_array); $a++) {
@@ -281,13 +255,10 @@ ORDER BY KONTO ASC");
 
     function dropdown_k_gruppen($label, $name, $id)
     {
-        $result = mysql_query("SELECT *  FROM  KONTENRAHMEN_GRUPPEN WHERE AKTUELL = '1'  ORDER BY BEZEICHNUNG ASC");
+        $my_array = DB::select("SELECT *  FROM  KONTENRAHMEN_GRUPPEN WHERE AKTUELL = '1'  ORDER BY BEZEICHNUNG ASC");
 
-        $numrows = mysql_numrows($result);
+        $numrows = count($my_array);
         if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-
             echo "<div class='input-field'>";
             echo "<select name=\"$name\" id=\"$id\" size=\"1\" >\n";
             for ($a = 0; $a < count($my_array); $a++) {
@@ -312,9 +283,9 @@ ORDER BY KONTO ASC");
         if (!$this->check_konto_exists($konto, $kontenrahmen_id)) {
             $k_id = last_id2("KONTENRAHMEN_KONTEN", "KONTENRAHMEN_KONTEN_ID") + 1;
             $db_abfrage = "INSERT INTO KONTENRAHMEN_KONTEN VALUES (NULL, '$k_id', '$konto','$bez', '$k_gruppe_id', '$kontoart_id', '$kontenrahmen_id',  '1')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            $resultat = DB::insert($db_abfrage);
             /* Protokollieren */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('KONTENRAHMEN_KONTEN', $last_dat, '0');
         } else {
             die ("$bez exisitiert schon");
@@ -323,14 +294,8 @@ ORDER BY KONTO ASC");
 
     function check_konto_exists($konto, $kontenrahmen_id)
     {
-        $result = mysql_query("SELECT *  FROM  KONTENRAHMEN_KONTEN WHERE AKTUELL = '1' && KONTO='$konto' && KONTENRAHMEN_ID='$kontenrahmen_id'");
-        $numrows = mysql_numrows($result);
-
-        if ($numrows > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select("SELECT * FROM KONTENRAHMEN_KONTEN WHERE AKTUELL = '1' && KONTO='$konto' && KONTENRAHMEN_ID='$kontenrahmen_id'");
+        return !empty($result);
     }
 
     function form_kostenkonto_aendern($konto_dat)
@@ -361,11 +326,11 @@ ORDER BY KONTO ASC");
         unset ($this->kontenrahmen_id);
         unset ($this->gruppe_id);
 
-        $result = mysql_query("SELECT *  FROM  KONTENRAHMEN_KONTEN WHERE AKTUELL = '1' && KONTENRAHMEN_KONTEN_DAT='$dat' ORDER BY KONTENRAHMEN_KONTEN_DAT 	LIMIT 0,1");
-        $numrows = mysql_numrows($result);
+        $result = DB::select("SELECT *  FROM  KONTENRAHMEN_KONTEN WHERE AKTUELL = '1' && KONTENRAHMEN_KONTEN_DAT='$dat' ORDER BY KONTENRAHMEN_KONTEN_DAT 	LIMIT 0,1");
+        $numrows = count($result);
 
         if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+            $row = $result[0];
             $this->dat = $row ['KONTENRAHMEN_KONTEN_DAT'];
             $this->konto = $row ['KONTO'];
             $this->konto_bez = $row ['BEZEICHNUNG'];
@@ -380,14 +345,14 @@ ORDER BY KONTO ASC");
 
         /* Deaktivieren von DAT */
         $db_abfrage = "UPDATE KONTENRAHMEN_KONTEN SET AKTUELL='0' WHERE KONTENRAHMEN_KONTEN_DAT='$dat'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
 
         if (!$this->check_konto_exists($konto, $kontenrahmen_id)) {
             $k_id = last_id2("KONTENRAHMEN_KONTEN", "KONTENRAHMEN_KONTEN_ID") + 1;
             $db_abfrage = "INSERT INTO KONTENRAHMEN_KONTEN VALUES (NULL, '$k_id', '$konto','$bez', '$k_gruppe_id', '$kontoart_id', '$kontenrahmen_id',  '1')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert($db_abfrage);
             /* Protokollieren */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('KONTENRAHMEN_KONTEN', $last_dat, $dat);
         } else {
             die ("$bez exisitiert schon");
@@ -396,13 +361,10 @@ ORDER BY KONTO ASC");
 
     function gruppen_anzeigen()
     {
-        $result = mysql_query("SELECT *  FROM  KONTENRAHMEN_GRUPPEN WHERE AKTUELL = '1'  ORDER BY BEZEICHNUNG ASC");
+        $my_array = DB::select("SELECT *  FROM  KONTENRAHMEN_GRUPPEN WHERE AKTUELL = '1'  ORDER BY BEZEICHNUNG ASC");
 
-        $numrows = mysql_numrows($result);
+        $numrows = count($my_array);
         if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-
             echo "<table class=\"sortable\">";
             echo "<tr><th>Gruppenbezeichnung</th></tr>";
             for ($a = 0; $a < count($my_array); $a++) {
@@ -432,9 +394,9 @@ ORDER BY KONTO ASC");
         if (!$this->check_gruppe_exists($g_bez)) {
             $g_id = last_id2("KONTENRAHMEN_GRUPPEN", "KONTENRAHMEN_GRUPPEN_ID") + 1;
             $db_abfrage = "INSERT INTO KONTENRAHMEN_GRUPPEN VALUES (NULL, '$g_id', '$g_bez',  '1')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert($db_abfrage);
             /* Protokollieren */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('KONTENRAHMEN_GRUPPEN', $last_dat, 0);
         } else {
             echo "Gruppenbezeichnung existiert schon";
@@ -443,14 +405,8 @@ ORDER BY KONTO ASC");
 
     function check_gruppe_exists($g_bez)
     {
-        $result = mysql_query("SELECT *  FROM  KONTENRAHMEN_GRUPPEN WHERE AKTUELL = '1' && BEZEICHNUNG='$g_bez'");
-        $numrows = mysql_numrows($result);
-
-        if ($numrows > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select("SELECT *  FROM  KONTENRAHMEN_GRUPPEN WHERE AKTUELL = '1' && BEZEICHNUNG='$g_bez'");
+        return !empty($result);
     }
 
     function form_kontoart_neu()
@@ -465,12 +421,10 @@ ORDER BY KONTO ASC");
 
     function kontoarten_anzeigen()
     {
-        $result = mysql_query("SELECT *  FROM  KONTENRAHMEN_KONTOARTEN WHERE AKTUELL = '1'  ORDER BY KONTOART ASC");
+        $my_array = DB::select("SELECT *  FROM  KONTENRAHMEN_KONTOARTEN WHERE AKTUELL = '1'  ORDER BY KONTOART ASC");
 
-        $numrows = mysql_numrows($result);
+        $numrows = count($my_array);
         if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
             echo "<table class=\"sortable\">";
             echo "<tr><th>Kostenkontoarten</th></tr>";
             for ($a = 0; $a < count($my_array); $a++) {
@@ -490,9 +444,9 @@ ORDER BY KONTO ASC");
         if (!$this->check_kontoart_exists($kontoart)) {
             $k_id = last_id2("KONTENRAHMEN_KONTOARTEN", "KONTENRAHMEN_KONTOART_ID") + 1;
             $db_abfrage = "INSERT INTO KONTENRAHMEN_KONTOARTEN VALUES (NULL, '$k_id', '$kontoart',  '1')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert($db_abfrage);
             /* Protokollieren */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('KONTENRAHMEN_KONTOARTEN', $last_dat, 0);
         } else {
             echo "Kostenkontoart <b>$kontoart</b> existiert schon.";
@@ -501,14 +455,8 @@ ORDER BY KONTO ASC");
 
     function check_kontoart_exists($kontoart)
     {
-        $result = mysql_query("SELECT *  FROM KONTENRAHMEN_KONTOARTEN WHERE AKTUELL = '1' && KONTOART='$kontoart'");
-        $numrows = mysql_numrows($result);
-
-        if ($numrows > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select("SELECT *  FROM KONTENRAHMEN_KONTOARTEN WHERE AKTUELL = '1' && KONTOART='$kontoart'");
+        return !empty($result);
     }
 
     function form_kontenrahmen_zuweisen()
@@ -535,9 +483,9 @@ ORDER BY KONTO ASC");
         if (!$this->check_zuweisung_exists($kos_typ, $kos_id, $kontenrahmen_id)) {
             $id = last_id2("KONTENRAHMEN_ZUWEISUNG", "ID") + 1;
             $db_abfrage = "INSERT INTO KONTENRAHMEN_ZUWEISUNG VALUES (NULL, '$id', '$kos_typ','$kos_id', '$kontenrahmen_id',  '1')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert($db_abfrage);
             /* Protokollieren */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('KONTENRAHMEN_ZUWEISUNG', $last_dat, 0);
         } else {
             echo "Zuweisung des Kontenrahmens existiert schon";
@@ -546,20 +494,14 @@ ORDER BY KONTO ASC");
 
     function check_zuweisung_exists($kos_typ, $kos_id, $kontenrahmen_id)
     {
-        $result = mysql_query("SELECT *  FROM  KONTENRAHMEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTENRAHMEN_ID='$kontenrahmen_id' && TYP='$kos_typ' && TYP_ID='$kos_id'");
-        $numrows = mysql_numrows($result);
-
-        if ($numrows > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select("SELECT *  FROM  KONTENRAHMEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTENRAHMEN_ID='$kontenrahmen_id' && TYP='$kos_typ' && TYP_ID='$kos_id'");
+        return !empty($result);
     }
 
     function zuweisung_loeschen($dat)
     {
         $db_abfrage = "UPDATE KONTENRAHMEN_ZUWEISUNG SET AKTUELL='0' WHERE DAT='$dat'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
         /* Protokollieren */
         protokollieren('KONTENRAHMEN_ZUWEISUNG', $dat, $dat);
     }

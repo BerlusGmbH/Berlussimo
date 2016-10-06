@@ -25,6 +25,10 @@ class objekt {
      * var $datum_heute;
      */
 
+    public $geld_konten_arr;
+    public $anzahl_geld_konten;
+    public $objekt_name;
+
     function form_objekt_kopieren() {
         $f = new formular ();
         $f->erstelle_formular ( 'Objekt kopieren', null );
@@ -257,17 +261,15 @@ class objekt {
 WHERE OBJEKT.OBJEKT_ID='$objekt_id' && `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1'
 ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
 
-        // echo $db_abfrage;
-        $result = mysql_query ( $db_abfrage );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows) {
+        $result = DB::select( $db_abfrage );
+        if (!empty($result)) {
             $z = 0;
             $g_flaeche = 0;
             $g_km_monat = 0;
             $g_nkosten = 0;
             $g_zahlung = 0;
             $g_brutto_m = 0;
-            while ( $row = mysql_fetch_assoc ( $result ) ) {
+            foreach( $result as $row ) {
                 $my_arr [] = $row;
                 $einheit_id = $row ['EINHEIT_ID'];
                 $einheit_qm = $row ['EINHEIT_QM'];
@@ -278,18 +280,12 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
                 $my_arr [$z] ['EINHEIT_QM'] = $einheit_qm;
                 $my_arr [$z] ['EINHEIT_QM_A'] = nummer_punkt2komma ( $einheit_qm );
                 $e = new einheit ();
-                // $mv_id = $e->get_mietvertrag_id($einheit_id);
-                // $mv_id = $e->get_last_mietvertrag_id($einheit_id); // OK
                 $mv_id = $e->get_mietvertraege_zu ( $einheit_id, $jahr, $monat, 'DESC' );
-                // OK
 
                 if ($mv_id) {
                     $mvs = new mietvertraege ();
                     $mvs->get_mietvertrag_infos_aktuell ( $mv_id );
-                    // $kontaktdaten = $e->kontaktdaten_mieter($mv_id);
-                    // $my_arr[$z]['MIETER'] = $mvs->personen_name_string_u."\n".$kontaktdaten;
                     $my_arr [$z] ['MIETER'] = $mvs->personen_name_string_u;
-                    // $my_arr[$z]['KONTAKT'] = $kontaktdaten;
                     $my_arr [$z] ['MIETER_SEIT'] = $mvs->mietvertrag_von_d;
 
                     if ($monat == null) {
@@ -301,11 +297,6 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
                     }
                     $miete = new miete ();
                     $miete->mietkonto_berechnung_monatsgenau ( $mv_id, $jahr, $monat );
-                    // echo '<pre>';
-                    // print_r($miete);
-                    // die();
-                    // $miete_warm = $miete->sollmiete_warm;
-                    // $umlagen = $miete->davon_umlagen;
                     $miete_brutto_arr = explode ( '|', $miete->sollmiete_warm );
                     if (is_array ( $miete_brutto_arr )) {
                         $miete_warm = $miete_brutto_arr [0];
@@ -656,10 +647,8 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
         $pdf->ezStream();
     }
     function get_strassennamen($objekt_id) {
-        $result = mysql_query ( "SELECT HAUS_STRASSE FROM HAUS WHERE HAUS_AKTUELL='1' && OBJEKT_ID='$objekt_id' GROUP BY HAUS_STRASSE" );
-        while ( $row = mysql_fetch_assoc ( $result ) )
-            $haeuser_array [] = $row;
-        return $haeuser_array;
+        $result = DB::select( "SELECT HAUS_STRASSE FROM HAUS WHERE HAUS_AKTUELL='1' && OBJEKT_ID='$objekt_id' GROUP BY HAUS_STRASSE" );
+        return $result;
     }
     function pdf_checkliste($objekt_id) {
         $this->get_objekt_infos ( $objekt_id );
@@ -777,10 +766,10 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
         $last_id = $bk->last_id ( 'OBJEKT', 'OBJEKT_ID' ) + 1;
         /* Speichern */
         $db_abfrage = "INSERT INTO OBJEKT VALUES(NULL, '$last_id', '1', '$objekt_kurzname','$eigentuemer_id')";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+        DB::insert( $db_abfrage );
 
         /* Protokollieren */
-        $last_dat = mysql_insert_id ();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren ( 'OBJEKT', $last_dat, '0' );
     }
     function form_objekt_aendern($objekt_id) {
@@ -799,14 +788,14 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
     function objekt_aendern($objekt_dat, $objekt_id, $objekt_kurzname, $eigentuemer_id) {
         /* Deaktivieren */
         $db_abfrage = "UPDATE OBJEKT SET OBJEKT_AKTUELL='0' WHERE OBJEKT_DAT='$objekt_dat'";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+        DB::update( $db_abfrage );
 
         /* Änderung Speichern */
         $db_abfrage = "INSERT INTO OBJEKT VALUES(NULL, '$objekt_id', '1', '$objekt_kurzname','$eigentuemer_id')";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+        DB::insert( $db_abfrage );
 
         /* Protokollieren */
-        $last_dat = mysql_insert_id ();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren ( 'OBJEKT', $last_dat, $objekt_dat );
     }
     function date_mysql2german($date) {
@@ -858,14 +847,14 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
         return $monate_vergangen;
     }
     function get_objekt_name($objekt_id) {
-        $result = mysql_query ( "SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' && OBJEKT_ID='$objekt_id' ORDER BY OBJEKT_DAT DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' && OBJEKT_ID='$objekt_id' ORDER BY OBJEKT_DAT DESC LIMIT 0,1" );
+        $row = $result[0];
         $this->objekt_name = $row ['OBJEKT_KURZNAME'];
         return $row ['OBJEKT_KURZNAME'];
     }
     function get_objekt_eigentuemer_partner($objekt_id) {
-        $result = mysql_query ( "SELECT EIGENTUEMER_PARTNER FROM OBJEKT WHERE OBJEKT_AKTUELL='1' && OBJEKT_ID='$objekt_id' ORDER BY OBJEKT_DAT DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT EIGENTUEMER_PARTNER FROM OBJEKT WHERE OBJEKT_AKTUELL='1' && OBJEKT_ID='$objekt_id' ORDER BY OBJEKT_DAT DESC LIMIT 0,1" );
+        $row = $result[0];
         $this->objekt_eigentuemer_partner_id = $row ['EIGENTUEMER_PARTNER'];
     }
 
@@ -880,8 +869,8 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
         }
     }
     function get_objekt_infos($objekt_id) {
-        $result = mysql_query ( "SELECT *  FROM `OBJEKT` WHERE OBJEKT_ID = '$objekt_id' && OBJEKT_AKTUELL = '1' ORDER BY OBJEKT_DAT DESC LIMIT 0 , 1 " );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT *  FROM `OBJEKT` WHERE OBJEKT_ID = '$objekt_id' && OBJEKT_AKTUELL = '1' ORDER BY OBJEKT_DAT DESC LIMIT 0 , 1 " );
+        $row = $result[0];
         $this->objekt_dat = $row ['OBJEKT_DAT'];
         $this->objekt_id = $row ['OBJEKT_ID'];
         $this->objekt_kurzname = $row ['OBJEKT_KURZNAME'];
@@ -890,7 +879,6 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
         $p->partner_grunddaten ( $this->objekt_eigentuemer_id );
         $this->objekt_eigentuemer = $p->partner_name;
 
-        // if (preg_match("/c/o/i", "$this->objekt_eigentuemer")) {
         if (stristr ( $this->objekt_eigentuemer, 'c/o' ) == TRUE) {
             $rest = stristr ( $this->objekt_eigentuemer, 'c/o' );
             $this->objekt_eigentuemer_pdf = trim(umbruch_entfernen ( str_replace ( $rest, '', $this->objekt_eigentuemer )));
@@ -904,34 +892,27 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
         }
     }
     function get_objekt_geldkonto_nr($objekt_id) {
-        $result = mysql_query ( "SELECT DETAIL_INHALT FROM `DETAIL` WHERE DETAIL_NAME = 'Geld Konto Nummer' && DETAIL_ZUORDNUNG_TABELLE = 'OBJEKT' && DETAIL_ZUORDNUNG_ID = '$objekt_id' ORDER BY DETAIL_DAT DESC LIMIT 0 , 1 " );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT DETAIL_INHALT FROM `DETAIL` WHERE DETAIL_NAME = 'Geld Konto Nummer' && DETAIL_ZUORDNUNG_TABELLE = 'OBJEKT' && DETAIL_ZUORDNUNG_ID = '$objekt_id' ORDER BY DETAIL_DAT DESC LIMIT 0 , 1 " );
+        $row = $result[0];
         $this->objekt_kontonummer = $row ['DETAIL_INHALT'];
     }
     function get_objekt_id($objekt_name) {
-        $result = mysql_query ( "SELECT OBJEKT_ID FROM OBJEKT WHERE OBJEKT_AKTUELL='1' && OBJEKT_KURZNAME='$objekt_name' ORDER BY OBJEKT_DAT DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
-        // print_r($row);
+        $result = DB::select( "SELECT OBJEKT_ID FROM OBJEKT WHERE OBJEKT_AKTUELL='1' && OBJEKT_KURZNAME='$objekt_name' ORDER BY OBJEKT_DAT DESC LIMIT 0,1" );
+        $row = $result[0];
         $this->objekt_id = $row ['OBJEKT_ID'];
         return $this->objekt_id;
     }
     function get_objekt_anzahl_haeuser($objekt_id) {
-        $result = mysql_query ( "SELECT HAUS_ID FROM HAUS WHERE HAUS_AKTUELL='1' && OBJEKT_ID='$objekt_id' ORDER BY HAUS_STRASSE, HAUS_NUMMER ASC" );
-        $this->anzahl_haeuser = mysql_numrows ( $result );
+        $result = DB::select( "SELECT HAUS_ID FROM HAUS WHERE HAUS_AKTUELL='1' && OBJEKT_ID='$objekt_id' ORDER BY HAUS_STRASSE, HAUS_NUMMER ASC" );
+        $this->anzahl_haeuser = $result[0];
     }
     function liste_aller_objekte() {
-        $result = mysql_query ( "SELECT * FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC" );
-        $objekte_array = array ();
-        while ( $row = mysql_fetch_assoc ( $result ) )
-            $objekte_array [] = $row;
+        $objekte_array = DB::select( "SELECT * FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC" );
         $this->anzahl_objekte = count ( $objekte_array );
         return $objekte_array;
     }
     function liste_aller_objekte_kurz() {
-        $result = mysql_query ( "SELECT OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC" );
-        $objekte_array = array ();
-        while ( $row = mysql_fetch_assoc ( $result ) )
-            $objekte_array [] = $row;
+        $objekte_array = DB::select( "SELECT OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC" );
         $this->anzahl_objekte = count ( $objekte_array );
         return $objekte_array;
     }
@@ -966,69 +947,44 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
         }
         echo "</select>\n";
     }
-    function liste_haeuser_objekt($objekt_id) {
-        $result = mysql_query ( "SELECT * FROM HAUS WHERE HAUS_AKTUELL='1' && OBJEKT_ID='$objekt_id' ORDER BY HAUS_STRASSE, HAUS_NUMMER DESC LIMIT $this->start,$this->zeilen_pro_seite;" );
-
-        $haeuser_array = array ();
-        for($i = 0; $i < $this->zeilen_pro_seite; $i ++) {
-            $row = mysql_fetch_assoc ( $result );
-            $haeuser_array [] = $row;
-        }
-        return $haeuser_array;
-    }
     function haeuser_objekt_in_arr($objekt_id) {
-        $result = mysql_query ( "SELECT * FROM HAUS WHERE HAUS_AKTUELL='1' && OBJEKT_ID='$objekt_id' ORDER BY HAUS_STRASSE, HAUS_NUMMER ASC" );
-        while ( $row = mysql_fetch_assoc ( $result ) )
-            $haeuser_array [] = $row;
-        return $haeuser_array;
+        $result = DB::select( "SELECT * FROM HAUS WHERE HAUS_AKTUELL='1' && OBJEKT_ID='$objekt_id' ORDER BY HAUS_STRASSE, HAUS_NUMMER ASC" );
+        return $result;
     }
     function anzahl_haeuser_objekt($objekt_id) {
-        $result = mysql_query ( "SELECT HAUS_ID FROM HAUS WHERE HAUS_AKTUELL='1' && OBJEKT_ID='$objekt_id' ORDER BY HAUS_STRASSE, HAUS_NUMMER ASC;" );
-        $this->anzahl_haeuser = mysql_numrows ( $result );
+        $result = DB::select( "SELECT HAUS_ID FROM HAUS WHERE HAUS_AKTUELL='1' && OBJEKT_ID='$objekt_id' ORDER BY HAUS_STRASSE, HAUS_NUMMER ASC;" );
+        $this->anzahl_haeuser = count( $result );
         $this->seiten_anzahl = ceil ( $this->anzahl_haeuser / $this->zeilen_pro_seite );
     }
     function get_qm_gesamt($objekt_id) {
-        $result = mysql_query ( "SELECT OBJEKT_KURZNAME, SUM(EINHEIT_QM) AS GESAMT_QM FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID = '$objekt_id' ) WHERE EINHEIT_AKTUELL='1' && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' GROUP BY OBJEKT.OBJEKT_ID ORDER BY EINHEIT_KURZNAME ASC" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows) {
-            $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT OBJEKT_KURZNAME, SUM(EINHEIT_QM) AS GESAMT_QM FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID = '$objekt_id' ) WHERE EINHEIT_AKTUELL='1' && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' GROUP BY OBJEKT.OBJEKT_ID ORDER BY EINHEIT_KURZNAME ASC" );
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['GESAMT_QM'];
         } else {
             return '0.00';
         }
     }
     function get_qm_gesamt_gewerbe($objekt_id) {
-        $result = mysql_query ( "SELECT OBJEKT_KURZNAME, SUM(EINHEIT_QM) AS GESAMT_QM FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID = '$objekt_id' ) WHERE EINHEIT_AKTUELL='1'  && EINHEIT.TYP = 'Gewerbe' GROUP BY OBJEKT.OBJEKT_ID ORDER BY EINHEIT_KURZNAME ASC" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows) {
-            $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT OBJEKT_KURZNAME, SUM(EINHEIT_QM) AS GESAMT_QM FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID = '$objekt_id' ) WHERE EINHEIT_AKTUELL='1'  && EINHEIT.TYP = 'Gewerbe' GROUP BY OBJEKT.OBJEKT_ID ORDER BY EINHEIT_KURZNAME ASC" );
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['GESAMT_QM'];
         } else {
             return '0.00';
         }
     }
     function einheiten_objekt_arr($objekt_id) {
-        $result = mysql_query ( "SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT_LAGE, EINHEIT_QM,  HAUS_STRASSE, HAUS_NUMMER, HAUS_PLZ, HAUS_STADT, TYP FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT
+        $result = DB::select( "SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT_LAGE, EINHEIT_QM,  HAUS_STRASSE, HAUS_NUMMER, HAUS_PLZ, HAUS_STADT, TYP FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT
 ) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID = '$objekt_id' )
 WHERE EINHEIT_AKTUELL='1' && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC" );
-
-        /*
-         * echo "SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT_LAGE, EINHEIT_QM, HAUS_STRASSE, HAUS_NUMMER, TYP FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT
-         * ) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID = '$objekt_id' )
-         * WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LENGTH(EINHEIT_KURZNAME), EINHEIT_KURZNAME ASC";
-         */
-        while ( $row = mysql_fetch_assoc ( $result ) )
-            $my_arr [] = $row;
-        if (is_array ( $my_arr )) {
-            // print_r($my_arr);
-            return $my_arr;
-        }
+        return $result;
     }
     function anzahl_einheiten_objekt($objekt_id) {
-        $result = mysql_query ( "SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT_LAGE, EINHEIT_QM,  HAUS_STRASSE, HAUS_NUMMER FROM `EINHEIT`
+        $result = DB::select( "SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT_LAGE, EINHEIT_QM,  HAUS_STRASSE, HAUS_NUMMER FROM `EINHEIT`
 RIGHT JOIN (HAUS, OBJEKT) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID = '$objekt_id' )
 WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC" );
-        $anzahl = mysql_numrows ( $result );
+        $anzahl = count( $result );
         return $anzahl;
     }
     function leerstand_vom_objekt($objekt_id) {
@@ -1036,8 +992,7 @@ WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC" );
         // objektnamen holen
         $this->get_objekt_name ( $objekt_id );
         $objekt_name = $this->objekt_name;
-        // echo "OBJEKTNAME $objekt_name SANEL";
-        // liste der häuser als array
+        
         $haeuser_arr = $this->haeuser_objekt_in_arr ( $objekt_id );
         if (is_array ( $haeuser_arr )) {
             for($a = 0; $a < count ( $haeuser_arr ); $a ++) {

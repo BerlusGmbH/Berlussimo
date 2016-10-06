@@ -12,8 +12,8 @@ class kontenrahmen {
 
 	/* Holt Infos über ein Konto z.B. 5200 */
 	function konto_informationen($konto) {
-		$result = mysql_query ( "SELECT * FROM KONTENRAHMEN_KONTEN WHERE KONTO='$konto' && AKTUELL='1' ORDER BY KONTENRAHMEN_KONTEN_ID DESC LIMIT 0,1" );
-		$row = mysql_fetch_assoc ( $result );
+		$result = DB::select( "SELECT * FROM KONTENRAHMEN_KONTEN WHERE KONTO='$konto' && AKTUELL='1' ORDER BY KONTENRAHMEN_KONTEN_ID DESC LIMIT 0,1" );
+		$row = $result[0];
 		$this->konten_dat = $row ['KONTENRAHMEN_KONTEN_DAT'];
 		$this->konten_id = $row ['KONTENRAHMEN_KONTEN_ID'];
 		$this->konto = $konto;
@@ -26,8 +26,8 @@ class kontenrahmen {
 
 	/* Holt Infos über ein Konto z.B. 5200 */
 	function konto_informationen2($konto, $kontenrahmen_id) {
-		$result = mysql_query ( "SELECT * FROM KONTENRAHMEN_KONTEN WHERE KONTO='$konto' && KONTENRAHMEN_ID='$kontenrahmen_id' && AKTUELL='1' ORDER BY KONTENRAHMEN_KONTEN_ID DESC LIMIT 0,1" );
-		$row = mysql_fetch_assoc ( $result );
+		$result = DB::select( "SELECT * FROM KONTENRAHMEN_KONTEN WHERE KONTO='$konto' && KONTENRAHMEN_ID='$kontenrahmen_id' && AKTUELL='1' ORDER BY KONTENRAHMEN_KONTEN_ID DESC LIMIT 0,1" );
+		$row = $result[0];
 		$this->konten_dat = $row ['KONTENRAHMEN_KONTEN_DAT'];
 		$this->konten_id = $row ['KONTENRAHMEN_KONTEN_ID'];
 		$this->konto = $konto;
@@ -40,54 +40,41 @@ class kontenrahmen {
 
 	/* Holt Infos über eine Kontogruppe z.B. 1 - Reparaturen */
 	function gruppen_bezeichnung($gruppen_id) {
-		$result = mysql_query ( "SELECT BEZEICHNUNG FROM KONTENRAHMEN_GRUPPEN WHERE KONTENRAHMEN_GRUPPEN_ID='$gruppen_id' && AKTUELL='1' ORDER BY KONTENRAHMEN_GRUPPEN_ID DESC LIMIT 0,1" );
-		$row = mysql_fetch_assoc ( $result );
+		$result = DB::select( "SELECT BEZEICHNUNG FROM KONTENRAHMEN_GRUPPEN WHERE KONTENRAHMEN_GRUPPEN_ID='$gruppen_id' && AKTUELL='1' ORDER BY KONTENRAHMEN_GRUPPEN_ID DESC LIMIT 0,1" );
+		$row = $result[0];
 		return $row ['BEZEICHNUNG'];
 	}
 
 	/* Holt Infos über eine Kontoart z.B. 1 - Kosten , 4 Einnahmen usw. */
 	function kontoart($kontoart_id) {
-		$result = mysql_query ( "SELECT KONTOART FROM KONTENRAHMEN_KONTOARTEN WHERE KONTENRAHMEN_KONTOART_ID='$kontoart_id' && AKTUELL='1' ORDER BY KONTENRAHMEN_KONTOART_ID DESC LIMIT 0,1" );
-		$row = mysql_fetch_assoc ( $result );
+		$result = DB::select( "SELECT KONTOART FROM KONTENRAHMEN_KONTOARTEN WHERE KONTENRAHMEN_KONTOART_ID='$kontoart_id' && AKTUELL='1' ORDER BY KONTENRAHMEN_KONTOART_ID DESC LIMIT 0,1" );
+		$row = $result[0];
 		return $row ['KONTOART'];
 	}
 	function get_kontoart_id($kontoartbez) {
-		$result = mysql_query ( "SELECT KONTENRAHMEN_KONTOART_ID FROM KONTENRAHMEN_KONTOARTEN WHERE KONTOART='$kontoartbez' && AKTUELL='1' ORDER BY KONTENRAHMEN_KONTOART_ID DESC LIMIT 0,1" );
-		$row = mysql_fetch_assoc ( $result );
+		$result = DB::select( "SELECT KONTENRAHMEN_KONTOART_ID FROM KONTENRAHMEN_KONTOARTEN WHERE KONTOART='$kontoartbez' && AKTUELL='1' ORDER BY KONTENRAHMEN_KONTOART_ID DESC LIMIT 0,1" );
+		$row = $result[0];
 		return $row ['KONTENRAHMEN_KONTOART_ID'];
 	}
 	function get_gruppen_id($gruppenbez) {
-		$result = mysql_query ( "SELECT KONTENRAHMEN_GRUPPEN_ID FROM KONTENRAHMEN_GRUPPEN WHERE BEZEICHNUNG='$gruppenbez' && AKTUELL='1' ORDER BY KONTENRAHMEN_GRUPPEN_DAT DESC LIMIT 0,1" );
-		$row = mysql_fetch_assoc ( $result );
+		$result = DB::select( "SELECT KONTENRAHMEN_GRUPPEN_ID FROM KONTENRAHMEN_GRUPPEN WHERE BEZEICHNUNG='$gruppenbez' && AKTUELL='1' ORDER BY KONTENRAHMEN_GRUPPEN_DAT DESC LIMIT 0,1" );
+		$row = $result[0];
 		return $row ['KONTENRAHMEN_GRUPPEN_ID'];
 	}
 	function get_konten_nach_art($kontoartbez, $k_id) {
 		$kontoart_id = $this->get_kontoart_id ( $kontoartbez );
 		if ($kontoart_id) {
-			$result = mysql_query ( "SELECT * FROM `KONTENRAHMEN_KONTEN` WHERE `KONTO_ART` ='$kontoart_id' AND `KONTENRAHMEN_ID` ='$k_id' AND `AKTUELL` = '1' ORDER BY KONTO ASC" );
-			$numrows = mysql_numrows ( $result );
-			if ($numrows) {
-				while ( $row = mysql_fetch_assoc ( $result ) ) {
-					$my_array [] = $row;
-				}
-				return $my_array;
-			}
+			$result = DB::select( "SELECT * FROM `KONTENRAHMEN_KONTEN` WHERE `KONTO_ART` ='$kontoart_id' AND `KONTENRAHMEN_ID` ='$k_id' AND `AKTUELL` = '1' ORDER BY KONTO ASC" );
+			return $result;
 		}
 	}
 	function get_konten_nach_art_gruppe($kontoartbez, $gruppenbez, $k_id) {
 		$kontoart_id = $this->get_kontoart_id ( $kontoartbez );
 		$gruppen_id = $this->get_gruppen_id ( $gruppenbez );
 		if ($kontoart_id && $gruppen_id) {
-			// echo "OK";
-			// echo "SELECT * FROM `KONTENRAHMEN_KONTEN` WHERE `KONTO_ART` ='$kontoart_id' && GRUPPE='$gruppen_id' AND `KONTENRAHMEN_ID` ='$k_id' AND `AKTUELL` = '1' ORDER BY KONTO ASC";
-			$result = mysql_query ( "SELECT * FROM `KONTENRAHMEN_KONTEN` WHERE `KONTO_ART` ='$kontoart_id' && GRUPPE='$gruppen_id' AND `KONTENRAHMEN_ID` ='$k_id' AND `AKTUELL` = '1' ORDER BY KONTO ASC" );
-			$numrows = mysql_numrows ( $result );
-			if ($numrows) {
-
-				while ( $row = mysql_fetch_assoc ( $result ) ) {
-					$my_array [] = $row;
-				}
-				return $my_array;
+			$result = DB::select( "SELECT * FROM `KONTENRAHMEN_KONTEN` WHERE `KONTO_ART` ='$kontoart_id' && GRUPPE='$gruppen_id' AND `KONTENRAHMEN_ID` ='$k_id' AND `AKTUELL` = '1' ORDER BY KONTO ASC" );
+			if (!empty($result)) {
+				return $result;
 			}
 		}
 	}
@@ -114,30 +101,21 @@ class kontenrahmen {
 		// echo "<h1>$typ $typ_id</h1>";
 		$kontenrahmen_id = $this->get_kontenrahmen ( $typ, $typ_id );
 
-		$result = mysql_query ( "SELECT KONTO, BEZEICHNUNG FROM KONTENRAHMEN_KONTEN WHERE KONTENRAHMEN_ID='$kontenrahmen_id' && AKTUELL='1' ORDER BY KONTO ASC" );
-
-		$numrows = mysql_numrows ( $result );
-		if ($numrows > 0) {
-			while ( $row = mysql_fetch_assoc ( $result ) )
-				$my_array [] = $row;
-		}
-		return $my_array;
+		$result = DB::select( "SELECT KONTO, BEZEICHNUNG FROM KONTENRAHMEN_KONTEN WHERE KONTENRAHMEN_ID='$kontenrahmen_id' && AKTUELL='1' ORDER BY KONTO ASC" );
+		return $result;
 	}
 
 	/* Den dazugehörigen Kontenrahmen finden, egal ob Geldkonto, Partner usw. */
 	function get_kontenrahmen($typ, $typ_id) {
-		$result = mysql_query ( "SELECT KONTENRAHMEN_ID FROM `KONTENRAHMEN_ZUWEISUNG` WHERE TYP='$typ' && TYP_ID='$typ_id' && AKTUELL='1' ORDER BY DAT DESC LIMIT 0,1" );
-
-		$numrows = mysql_numrows ( $result );
-		if ($numrows) {
-			$row = mysql_fetch_assoc ( $result );
+		$result = DB::select( "SELECT KONTENRAHMEN_ID FROM `KONTENRAHMEN_ZUWEISUNG` WHERE TYP='$typ' && TYP_ID='$typ_id' && AKTUELL='1' ORDER BY DAT DESC LIMIT 0,1" );
+		if (!empty($numrows)) {
+			$row = $result[0];
 			return $row ['KONTENRAHMEN_ID'];
 		} else {
 			/* Sonst den Kontenrahmen verwenden die keinen Kontenrahmen haben TYP='ALLE' */
-			$result = mysql_query ( "SELECT KONTENRAHMEN_ID FROM `KONTENRAHMEN_ZUWEISUNG` WHERE TYP='ALLE' && AKTUELL='1' ORDER BY DAT DESC LIMIT 0,1" );
-			$numrows = mysql_numrows ( $result );
-			if ($numrows > 0) {
-				$row = mysql_fetch_assoc ( $result );
+			$result = DB::select( "SELECT KONTENRAHMEN_ID FROM `KONTENRAHMEN_ZUWEISUNG` WHERE TYP='ALLE' && AKTUELL='1' ORDER BY DAT DESC LIMIT 0,1" );
+			if (!empty($result)) {
+				$row = $result[0];
 				return $row ['KONTENRAHMEN_ID'];
 			}
 		}
@@ -150,8 +128,6 @@ class kontenrahmen {
 		for($a = 0; $a < count ( $konten_arr ); $a ++) {
 			$konto = $konten_arr [$a] ['KONTO'];
 			$this->konto_informationen ( $konten_arr [$a] ['KONTO'] );
-
-			// echo "<option value=\"$konto\">".$konto." - ".$this->konto_bezeichnung."</option>\n";
 			echo "<option value=\"$konto\">$konto</option>\n";
 		}
 		echo "</select>\n";
@@ -186,24 +162,12 @@ class kontenrahmen {
 		echo "</select>\n";
 	}
 	function kontenrahmen_in_arr() {
-		$result = mysql_query ( "SELECT KONTENRAHMEN_ID, NAME FROM KONTENRAHMEN WHERE  AKTUELL='1' ORDER BY NAME ASC" );
-
-		$numrows = mysql_numrows ( $result );
-		if ($numrows > 0) {
-			while ( $row = mysql_fetch_assoc ( $result ) )
-				$my_array [] = $row;
-		}
-		return $my_array;
+		$result = DB::select( "SELECT KONTENRAHMEN_ID, NAME FROM KONTENRAHMEN WHERE  AKTUELL='1' ORDER BY NAME ASC" );
+		return $result;
 	}
 	function konten_in_arr_rahmen($kontenrahmen_id) {
-		$result = mysql_query ( "SELECT KONTO, BEZEICHNUNG FROM KONTENRAHMEN_KONTEN WHERE KONTENRAHMEN_ID='$kontenrahmen_id' && AKTUELL='1' ORDER BY KONTO ASC" );
-
-		$numrows = mysql_numrows ( $result );
-		if ($numrows > 0) {
-			while ( $row = mysql_fetch_assoc ( $result ) )
-				$my_array [] = $row;
-		}
-		return $my_array;
+		$result = DB::select( "SELECT KONTO, BEZEICHNUNG FROM KONTENRAHMEN_KONTEN WHERE KONTENRAHMEN_ID='$kontenrahmen_id' && AKTUELL='1' ORDER BY KONTO ASC" );
+		return $result;
 	}
 
 	/* Kontenliste als dropdown mit Label, Id und Name */
@@ -216,8 +180,6 @@ class kontenrahmen {
 			$konto = $konten_arr [$a] ['KONTO'];
 			$bez = $konten_arr [$a] ['BEZEICHNUNG'];
 			$this->konto_informationen ( $konten_arr [$a] ['KONTO'] );
-
-			// echo "<option value=\"$konto\">".$konto." - ".$this->konto_bezeichnung."</option>\n";
 			echo "<option value=\"$konto\">$konto $bez</option>\n";
 		}
 		echo "</select><label for=\"$id\" id=\"label_$name\">$label</label>\n";

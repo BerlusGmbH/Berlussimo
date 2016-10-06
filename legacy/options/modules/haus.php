@@ -71,43 +71,37 @@ function haus_kurz($objekt_id = '')
         $title = "Häuser vom Objekt:  $objekt_kurzname";
     }
 
-    $resultat = mysql_query($db_abfrage) or die (mysql_error());
+    $result = DB::select($db_abfrage);
 
-    $numrows = mysql_numrows($resultat);
-    if ($numrows < 1) {
-        echo "<h1><b>Keine Häuser vorhanden!!!</b></h1>\n";
+    if (empty($result)) {
+        echo "<h5>Keine Häuser vorhanden.</h5>\n";
     } else {
-        // echo "<div id=\"iframe_1\">";
-        // echo "<div class=\"abstand_iframe\">";
-        // echo "<div class=\"scrollbereich\">";
         iframe_start();
         echo "<table class=\"sortable striped\">\n";
-        // echo "<tr class=\"feldernamen\"><td colspan=8>$title</td></tr>\n";
-        // echo "<tr class=\"feldernamen\"><td width=155>Straße</td><td width=60>Nr.</td><td width=60>PLZ</td><td width=60>H m²</td><td width=100>E m²</td><td colspan=2>Zusatzinfo</td></tr>\n";
         echo "<tr><th>Strasse</th><th>Nr.</th><th>PLZ</th><th>m²</th><th>Em²</th><th>Einheiten</th><th>INFOS</th><th>OPTION</th></tr>";
 
         $counter = 0;
-        while (list ($OBJEKT_ID, $HAUS_ID, $HAUS_STRASSE, $HAUS_NUMMER, $HAUS_PLZ, $HAUS_QM) = mysql_fetch_row($resultat)) {
-            $detail_check = detail_check("HAUS", $HAUS_ID);
+        foreach($result as $row) {
+            $detail_check = detail_check("HAUS", $row['HAUS_ID']);
             if ($detail_check > 0) {
-                $detail_link = "<a class=\"table_links\" href='" . route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_tabelle' => 'HAUS', 'detail_id' => $HAUS_ID]) . "'>Details</a>";
+                $detail_link = "<a class=\"table_links\" href='" . route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_tabelle' => 'HAUS', 'detail_id' => $row['HAUS_ID']]) . "'>Details</a>";
             } else {
-                $detail_link = "<a class=\"table_links\" href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'HAUS', 'detail_id' => $HAUS_ID]) . "'>Neues Detail</a>";
+                $detail_link = "<a class=\"table_links\" href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'HAUS', 'detail_id' => $row['HAUS_ID']]) . "'>Neues Detail</a>";
             }
-            $einheiten_im_haus = anzahl_einheiten_im_haus($HAUS_ID);
-            $gesammtflaeche_einheiten = einheiten_gesamt_qm($HAUS_ID);
+            $einheiten_im_haus = anzahl_einheiten_im_haus($row['HAUS_ID']);
+            $gesammtflaeche_einheiten = einheiten_gesamt_qm($row['HAUS_ID']);
             if (empty ($gesammtflaeche_einheiten)) {
                 $gesammtflaeche_einheiten = "0";
             }
             $counter++;
 
-            $link_haus_aendern = "<a href='" . route('legacy::haeuser::index', ['haus_raus' => 'haus_aendern', 'haus_id' => $HAUS_ID]) . "'>Haus ändern</th>";
+            $link_haus_aendern = "<a href='" . route('legacy::haeuser::index', ['haus_raus' => 'haus_aendern', 'haus_id' => $row['HAUS_ID']]) . "'>Haus ändern</th>";
 
             if ($counter == 1) {
-                echo "<tr class=\"zeile1\"><td width=150>$HAUS_STRASSE</td><td width=60>$HAUS_NUMMER</td><td width=60>$HAUS_PLZ</td><td width=60>$HAUS_QM m²</td><td width=100>$gesammtflaeche_einheiten m²</td><td><a class=\"table_links\" href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_kurz', 'haus_id' => $HAUS_ID]) . "'>Einheiten (<b>$einheiten_im_haus</b>)</a></td><td>$detail_link</td><td>$link_haus_aendern</td></tr>";
+                echo "<tr class=\"zeile1\"><td width=150>$row->HAUS_STRASSE</td><td width=60>$row[HAUS_NUMMER]</td><td width=60>$row[HAUS_PLZ]</td><td width=60>$row[HAUS_QM] m²</td><td width=100>$gesammtflaeche_einheiten m²</td><td><a class=\"table_links\" href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_kurz', 'haus_id' => $row['HAUS_ID']]) . "'>Einheiten (<b>$einheiten_im_haus</b>)</a></td><td>$detail_link</td><td>$link_haus_aendern</td></tr>";
             }
             if ($counter == 2) {
-                echo "<tr class=\"zeile2\"><td width=150>$HAUS_STRASSE</td><td width=60>$HAUS_NUMMER</td><td width=60>$HAUS_PLZ</td><td width=60>$HAUS_QM m²</td><td width=60>$gesammtflaeche_einheiten m²</td><td><a class=\"table_links\" href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_kurz', 'haus_id' => $HAUS_ID]) . "'>Einheiten (<b>$einheiten_im_haus</b>)</a></td><td>$detail_link</td><td>$link_haus_aendern</td></tr>";
+                echo "<tr class=\"zeile2\"><td width=150>$row->HAUS_STRASSE</td><td width=60>$row[HAUS_NUMMER]</td><td width=60>$row[HAUS_PLZ]</td><td width=60>$row[HAUS_QM] m²</td><td width=60>$gesammtflaeche_einheiten m²</td><td><a class=\"table_links\" href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_kurz', 'haus_id' => $row['HAUS_ID']]) . "'>Einheiten (<b>$einheiten_im_haus</b>)</a></td><td>$detail_link</td><td>$link_haus_aendern</td></tr>";
                 $counter = 0;
             }
         }
@@ -120,27 +114,20 @@ function haus_kurz($objekt_id = '')
 
 function anzahl_einheiten_im_haus($haus_id)
 {
-    $db_abfrage = "SELECT * FROM EINHEIT WHERE HAUS_ID='$haus_id' && EINHEIT_AKTUELL='1'";
-    $resultat = mysql_query($db_abfrage) or die (mysql_error());
-
-    $numrows = mysql_numrows($resultat);
-    return $numrows;
+    $result = DB::select("SELECT COUNT(*) AS ANZAHL FROM EINHEIT WHERE HAUS_ID='$haus_id' && EINHEIT_AKTUELL='1'");
+    return $result[0]['ANZAHL'];
 }
 
 function einheiten_gesamt_qm($haus_id)
 {
-    $db_abfrage = "SELECT SUM(EINHEIT_QM) AS SUMME FROM EINHEIT where HAUS_ID='$haus_id' && EINHEIT_AKTUELL='1'";
-    $resultat = mysql_query($db_abfrage) or die (mysql_error());
-    while (list ($SUMME) = mysql_fetch_row($resultat))
-        return $SUMME;
+    $result = DB::select("SELECT SUM(EINHEIT_QM) AS SUMME FROM EINHEIT where HAUS_ID='$haus_id' && EINHEIT_AKTUELL='1'");
+    foreach($result as $row)
+        return $row['SUMME'];
 }
 
 function objekt_namen_by_id($objekt_id)
 {
-    $db_abfrage = "SELECT OBJEKT_KURZNAME FROM OBJEKT where OBJEKT_ID='$objekt_id' && OBJEKT_AKTUELL='1'";
-    $resultat = mysql_query($db_abfrage) or die (mysql_error());
-    while (list ($OBJEKT_KURZNAME) = mysql_fetch_row($resultat))
-        return $OBJEKT_KURZNAME;
+    $result = DB::select("SELECT OBJEKT_KURZNAME FROM OBJEKT where OBJEKT_ID='$objekt_id' && OBJEKT_AKTUELL='1'");
+    foreach($result as $row)
+        return $row['OBJEKT_KURZNAME'];
 }
-
-?>

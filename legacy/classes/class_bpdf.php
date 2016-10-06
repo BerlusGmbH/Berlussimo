@@ -3,6 +3,8 @@
 
 class b_pdf
 {
+    public $zahlungshinweis;
+
     function mietentwicklung_aktuell($pdf, $mv_id)
     {
         $me = new mietentwicklung ();
@@ -269,8 +271,8 @@ class b_pdf
 
     function footer_info($typ, $id)
     {
-        $result = mysql_query("SELECT * FROM FOOTER_ZEILE WHERE FOOTER_TYP='$typ' && FOOTER_TYP_ID='$id' && AKTUELL='1' ORDER BY  FOOTER_ID ASC LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT * FROM FOOTER_ZEILE WHERE FOOTER_TYP='$typ' && FOOTER_TYP_ID='$id' && AKTUELL='1' ORDER BY  FOOTER_ID ASC LIMIT 0,1");
+        $row = $result[0];
         $this->footer_typ = $row ['FOOTER_TYP'];
         $this->footer_typ_id = $row ['FOOTER_TYP_ID'];
         $this->zahlungshinweis = str_replace("<br>", "\n", $row ['ZAHLUNGSHINWEIS']);
@@ -284,8 +286,8 @@ class b_pdf
 
     function get_texte($v_dat)
     {
-        $result = mysql_query("SELECT * FROM PDF_VORLAGEN WHERE DAT='$v_dat'");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT * FROM PDF_VORLAGEN WHERE DAT='$v_dat'");
+        $row = $result[0];
         $this->v_kurztext = $row ['KURZTEXT'];
         $this->v_text = $row ['TEXT'];
         $this->v_kat = $row ['KAT'];
@@ -407,17 +409,15 @@ class b_pdf
             $db_abfrage = "SELECT * FROM PDF_VORLAGEN WHERE KAT='$kat' && EMPF_TYP='$empf_typ' ORDER BY KURZTEXT ASC";
         }
 
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
             echo "<table class=\"sortable striped\">\n";
             $link_kat = "<a href='" . route('legacy::bk::index', ['option' => 'serienbrief', 'vorlage' => 1]) . "'>Alle Kats anzeigen</a>";
             echo "<thead>";
             echo "<tr><th>Vorlage / Betreff</th><th>KAT</th><th>BEARBEITEN</th><th>EINZELPDF</th><th>MEHRERE PDFs</th></tr>";
             echo "</thead>";
             echo "<tr><td><b>$empf_typ<b></td><td>$link_kat</td><td></td><td></td><td></td></tr>";
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $dat = $row ['DAT'];
                 $kurztext = $row ['KURZTEXT'];
                 $text = $row ['TEXT'];
@@ -453,15 +453,14 @@ class b_pdf
     function dropdown_kats($label, $name, $id, $js, $vorwahl = '')
     {
         $db_abfrage = "SELECT KAT FROM PDF_VORLAGEN GROUP BY KAT ORDER BY KAT ASC";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
+        $result = DB::select($db_abfrage);
 
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
+        if (!empty($result)) {
             echo "<label for=\"$id\">$label</label>";
             echo "<select name=\"$name\" size=\"1\" id=\"$id\" $js>\n";
             echo "<option value=\"NEU\" selected>NEU</option>\n";
 
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $kat = $row ['KAT'];
                 if ($vorwahl == $kat) {
                     echo "<option value=\"$kat\" selected>$kat</option>\n";
@@ -478,14 +477,12 @@ class b_pdf
     function dropdown_typ($label, $name, $id, $js, $vorwahl = '')
     {
         $db_abfrage = "SELECT EMPF_TYP AS KAT FROM PDF_VORLAGEN GROUP BY EMPF_TYP ORDER BY KAT ASC";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
             echo "<label for=\"$id\">$label</label>";
             echo "<select name=\"$name\" size=\"1\" id=\"$id\" $js>\n";
 
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $kat = $row ['KAT'];
                 if ($vorwahl == $kat) {
                     echo "<option value=\"$kat\" selected>$kat</option>\n";
@@ -503,29 +500,24 @@ class b_pdf
     {
         if (!$this->check_v_exists($kurztext, $text)) {
             $db_abfrage = "INSERT INTO PDF_VORLAGEN VALUES (NULL, '$kurztext', '$text', '$empf_typ', '$kat', '1')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert($db_abfrage);
             /* Protokollieren */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('PDF_VORLAGEN', $last_dat, '0');
         }
     }
 
     function check_v_exists($kurztext, $text)
     {
-        $result = mysql_query("SELECT *  FROM  PDF_VORLAGEN WHERE KURZTEXT='$kurztext' && TEXT='$text' ");
-        $numrows = mysql_numrows($result);
-
-        if ($numrows) {
-            return true;
-        }
+        $result = DB::select("SELECT * FROM PDF_VORLAGEN WHERE KURZTEXT='$kurztext' && TEXT='$text' ");
+        return !empty($result);
     }
 
     function vorlage_update($dat, $kurztext, $text, $kat = 'Alle', $empf_typ = 'Mieter')
     {
         $db_abfrage = "UPDATE PDF_VORLAGEN SET KURZTEXT= '$kurztext', TEXT= '$text', KAT='$kat', EMPF_TYP='$empf_typ' WHERE DAT='$dat'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
         /* Protokollieren */
-        $last_dat = mysql_insert_id();
         protokollieren('PDF_VORLAGEN', $dat, $dat);
     }
 

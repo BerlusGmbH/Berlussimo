@@ -38,10 +38,6 @@ Route::group(['prefix' => config('app.legacy.prefix'), 'namespace' => 'Legacy', 
         Route::match(['get', 'post'], '/', 'BuchenController@request')->name('index');
     });
 
-    Route::group(['prefix' => 'dbbackup', 'as' => 'dbbackup::'], function () {
-        Route::match(['get', 'post'], '/', 'DbBackupController@request')->name('index');
-    });
-
     Route::group(['prefix' => 'details', 'as' => 'details::'], function () {
         Route::match(['get', 'post'], '/', 'DetailsController@request')->name('index');
     });

@@ -188,11 +188,6 @@
                             <a target='_new'
                                href='http://www.hausverwaltung.de/software/schnelleinstieg.html'>Handbuch</a>
                         </div>
-                        @if(check_user_links(Auth::user()->id, 'buchen'))
-                            <div class="col s4 m3 l1">
-                                <a href='{{route('legacy::dbbackup::index')}}'>DB sichern </a>&nbsp;
-                            </div>
-                        @endif
                     </div>
                     @yield('submenu')
                 </div>

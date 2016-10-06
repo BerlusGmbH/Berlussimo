@@ -27,13 +27,10 @@ class zeiterfassung
 
     function stundenzettel_in_arr($benutzer_id)
     {
-        $result = mysql_query("SELECT ZETTEL_ID, BESCHREIBUNG, ERFASSUNGSDATUM FROM STUNDENZETTEL WHERE BENUTZER_ID='$benutzer_id' && AKTUELL = '1' ORDER BY ERFASSUNGSDATUM DESC");
+        $result = DB::select("SELECT ZETTEL_ID, BESCHREIBUNG, ERFASSUNGSDATUM FROM STUNDENZETTEL WHERE BENUTZER_ID='$benutzer_id' && AKTUELL = '1' ORDER BY ERFASSUNGSDATUM DESC");
 
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
+        if (!empty($result)) {
+            return $result;
         } else {
             return false;
         }
@@ -41,8 +38,8 @@ class zeiterfassung
 
     function anzahl_e_zettel($benutzer_id)
     {
-        $result = mysql_query("SELECT COUNT(*) AS ZAHL FROM `STUNDENZETTEL` WHERE `BENUTZER_ID` = '$benutzer_id' && AKTUELL='1'");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT COUNT(*) AS ZAHL FROM `STUNDENZETTEL` WHERE `BENUTZER_ID` = '$benutzer_id' && AKTUELL='1'");
+        $row = $result[0];
         return $row ['ZAHL'];
     }
 
@@ -62,8 +59,8 @@ class zeiterfassung
 
     function gzeit_zettel($zettel_id)
     {
-        $result = mysql_query("SELECT SUM( DAUER_MIN ) AS G_ZEIT FROM `STUNDENZETTEL_POS` WHERE `ZETTEL_ID` = '$zettel_id' && AKTUELL='1'");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT SUM( DAUER_MIN ) AS G_ZEIT FROM `STUNDENZETTEL_POS` WHERE `ZETTEL_ID` = '$zettel_id' && AKTUELL='1'");
+        $row = $result[0];
         return $row ['G_ZEIT'];
     }
 
@@ -81,9 +78,9 @@ class zeiterfassung
 
     function get_partner_id_benutzer($benutzer_id)
     {
-        $result = mysql_query("SELECT BP_PARTNER_ID FROM BENUTZER_PARTNER WHERE BP_BENUTZER_ID='$benutzer_id' && AKTUELL = '1' ORDER BY BP_DAT DESC LIMIT 0,1");
+        $result = DB::select("SELECT BP_PARTNER_ID FROM BENUTZER_PARTNER WHERE BP_BENUTZER_ID='$benutzer_id' && AKTUELL = '1' ORDER BY BP_DAT DESC LIMIT 0,1");
 
-        $row = mysql_fetch_assoc($result);
+        $row = $result[0];
         return $row ['BP_PARTNER_ID'];
     }
 
@@ -152,13 +149,9 @@ class zeiterfassung
 
     function zeile_in_arr($zettel_id, $pos_dat)
     {
-        $result = mysql_query("SELECT ST_DAT, ST_ID, ZETTEL_ID, DATUM, LEISTUNG_ID, DAUER_MIN, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, HINWEIS, BEGINN, ENDE, LEISTUNGSKATALOG.BEZEICHNUNG FROM STUNDENZETTEL_POS JOIN LEISTUNGSKATALOG ON (STUNDENZETTEL_POS.LEISTUNG_ID = LEISTUNGSKATALOG.LK_ID) WHERE ZETTEL_ID='$zettel_id' && ST_DAT='$pos_dat' && STUNDENZETTEL_POS.AKTUELL = '1' ORDER BY  DATUM, ST_ID ASC");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
+        $result = DB::select("SELECT ST_DAT, ST_ID, ZETTEL_ID, DATUM, LEISTUNG_ID, DAUER_MIN, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, HINWEIS, BEGINN, ENDE, LEISTUNGSKATALOG.BEZEICHNUNG FROM STUNDENZETTEL_POS JOIN LEISTUNGSKATALOG ON (STUNDENZETTEL_POS.LEISTUNG_ID = LEISTUNGSKATALOG.LK_ID) WHERE ZETTEL_ID='$zettel_id' && ST_DAT='$pos_dat' && STUNDENZETTEL_POS.AKTUELL = '1' ORDER BY  DATUM, ST_ID ASC");
+        if (!empty($result)) {
+            return $result;
         } else {
             return false;
         }
@@ -166,9 +159,9 @@ class zeiterfassung
 
     function get_userid($zettel_id)
     {
-        $result = mysql_query("SELECT BENUTZER_ID FROM STUNDENZETTEL WHERE ZETTEL_ID='$zettel_id' && AKTUELL='1' ORDER BY ZETTEL_DAT DESC LIMIT 0,1");
+        $result = DB::select("SELECT BENUTZER_ID FROM STUNDENZETTEL WHERE ZETTEL_ID='$zettel_id' && AKTUELL='1' ORDER BY ZETTEL_DAT DESC LIMIT 0,1");
 
-        $row = mysql_fetch_assoc($result);
+        $row = $result[0];
         return $row ['BENUTZER_ID'];
     }
 
@@ -309,20 +302,14 @@ class zeiterfassung
 
     function check_if_beleg_erstellt($zettel_id)
     {
-        $result = mysql_query("SELECT IN_BELEG FROM STUNDENZETTEL_POS WHERE ZETTEL_ID='$zettel_id' && AKTUELL='1' && (IN_BELEG != '0' OR IN_BELEG != NULL) LIMIT 0,1");
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            return $numrows;
-        }
+        $result = DB::select("SELECT IN_BELEG FROM STUNDENZETTEL_POS WHERE ZETTEL_ID='$zettel_id' && AKTUELL='1' && (IN_BELEG != '0' OR IN_BELEG != NULL) LIMIT 0,1");
+        return count($result);
     }
 
     function anzahl_pos_zettel($zettel_id)
     {
-        $result = mysql_query("SELECT * FROM STUNDENZETTEL_POS WHERE ZETTEL_ID='$zettel_id' && AKTUELL='1'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            return $numrows;
-        }
+        $result = DB::select("SELECT * FROM STUNDENZETTEL_POS WHERE ZETTEL_ID='$zettel_id' && AKTUELL='1'");
+        return count($result);
     }
 
     function stundenzettel_erfassen($zettel_id)
@@ -334,9 +321,7 @@ class zeiterfassung
         $f->datum_feld("Datum:", "datum", "", "10", 'datum', '');
         $f->hidden_feld("zettel_id", "$zettel_id");
         $f->hidden_feld("benutzer_id", "$this->benutzer_id");
-        // $this->dropdown_leistungen($this->gewerk_id);
         $f->text_feld("Leistungsbeschreibung eingeben", "leistungs_beschreibung", "", "50", 'leistungsbeschreibung', '');
-        // $this->dropdown_dauer_min();
         $f->hidden_feld('dauer_min', '');
         $pflicht_felder = 'beginn|ende';
         $js_check_pflicht = "onmouseout=\"check_pflicht_text(this.id)\"";
@@ -344,8 +329,6 @@ class zeiterfassung
         $js_z1 = "onclick=\"zeitdiff('beginn', 'ende', 'dauer_be', 'dauer_min')\"";
 
         $this->dropdown_zeiten('Beginn', 'beginn', 'beginn', '6:45', $js_z);
-        // $f->text_feld('Beginn', 'beginn', '', 6, 'beginn', '');
-        // $f->text_feld('Ende', 'ende', '', 6, 'ende', '');
         $this->dropdown_zeiten('Ende', 'ende', 'ende', '15:15', $js_z);
         $f->text_feld_inaktiv_js('Dauer zwischen Beginn und Ende', 'dauer_be', '', 30, 'dauer_be', $js_z1);
         $js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
@@ -503,13 +486,9 @@ class zeiterfassung
 
     function stundenzettelleistungen_in_arr($zettel_id)
     {
-        $result = mysql_query("SELECT ST_DAT, ST_ID, ZETTEL_ID, DATUM, LEISTUNG_ID, DAUER_MIN, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, HINWEIS, BEGINN, ENDE, LEISTUNGSKATALOG.BEZEICHNUNG FROM STUNDENZETTEL_POS JOIN LEISTUNGSKATALOG ON (STUNDENZETTEL_POS.LEISTUNG_ID = LEISTUNGSKATALOG.LK_ID) WHERE ZETTEL_ID='$zettel_id' && STUNDENZETTEL_POS.AKTUELL = '1' ORDER BY  DATUM, ST_ID ASC");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
+        $result = DB::select("SELECT ST_DAT, ST_ID, ZETTEL_ID, DATUM, LEISTUNG_ID, DAUER_MIN, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, HINWEIS, BEGINN, ENDE, LEISTUNGSKATALOG.BEZEICHNUNG FROM STUNDENZETTEL_POS JOIN LEISTUNGSKATALOG ON (STUNDENZETTEL_POS.LEISTUNG_ID = LEISTUNGSKATALOG.LK_ID) WHERE ZETTEL_ID='$zettel_id' && STUNDENZETTEL_POS.AKTUELL = '1' ORDER BY  DATUM, ST_ID ASC");
+        if (!empty($result)) {
+            return $result;
         } else {
             return false;
         }
@@ -561,14 +540,11 @@ class zeiterfassung
 
     function dropdown_leistungen($gewerk_id)
     {
-        $result = mysql_query("SELECT LK_ID, BEZEICHNUNG FROM `LEISTUNGSKATALOG` WHERE (`GEWERK` ='$gewerk_id' OR `GEWERK` IS NULL) AND `AKTUELL` ='1' ORDER BY BEZEICHNUNG ASC");
-
-        $numrows = mysql_numrows($result);
+        $result = DB::select("SELECT LK_ID, BEZEICHNUNG FROM `LEISTUNGSKATALOG` WHERE (`GEWERK` ='$gewerk_id' OR `GEWERK` IS NULL) AND `AKTUELL` ='1' ORDER BY BEZEICHNUNG ASC");
         echo "<label for=\"leistung_id\">Leistung</label><select name=\"leistung_id\" id=\"leistung_id\" size=1>\n";
         echo "<option value=\"\">Bitte wählen</option>\n";
-        if ($numrows) {
-
-            while ($row = mysql_fetch_assoc($result)) {
+        if (!empty($result)) {
+            foreach($result as $row) {
                 $leistung_id = $row ['LK_ID'];
                 $beschreibung = $row ['BEZEICHNUNG'];
                 echo "<option value=\"$leistung_id\">$beschreibung</option>\n";
@@ -634,14 +610,11 @@ class zeiterfassung
 
     function dropdown_leistungen_vw($gewerk_id, $lk_id_vorwahl)
     {
-        $result = mysql_query("SELECT LK_ID, BEZEICHNUNG FROM `LEISTUNGSKATALOG` WHERE (`GEWERK` ='$gewerk_id' OR `GEWERK` IS NULL) AND `AKTUELL` ='1' ORDER BY BEZEICHNUNG ASC");
-
-        $numrows = mysql_numrows($result);
+        $result = DB::select("SELECT LK_ID, BEZEICHNUNG FROM `LEISTUNGSKATALOG` WHERE (`GEWERK` ='$gewerk_id' OR `GEWERK` IS NULL) AND `AKTUELL` ='1' ORDER BY BEZEICHNUNG ASC");
         echo "<label for=\"leistung_id\">Leistung</label><select name=\"leistung_id\" id=\"leistung_id\" size=1>\n";
         echo "<option value=\"\">Bitte wählen</option>\n";
-        if ($numrows) {
-
-            while ($row = mysql_fetch_assoc($result)) {
+        if (!empty($result)) {
+            foreach($result as $row) {
                 $leistung_id = $row ['LK_ID'];
                 $beschreibung = $row ['BEZEICHNUNG'];
                 if ($lk_id_vorwahl == $leistung_id) {
@@ -673,10 +646,10 @@ class zeiterfassung
         $datum = date("Y-m-d");
         $l_zettel_id = $this->letzte_zettel_id() + 1;
         $db_abfrage = "INSERT INTO STUNDENZETTEL VALUES (NULL, '$l_zettel_id', '$benutzer_id', '$beschreibung', '$datum',  '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
 
         /* Protokollieren */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('STUNDENZETTEL', $last_dat, '0');
         $mein_letzerzettel_id = $this->mein_letzer_zettel($benutzer_id);
         hinweis_ausgeben('Stundennachweis wurde gespeichert!<br>Sie werden weitergeleitet.');
@@ -685,17 +658,15 @@ class zeiterfassung
 
     function letzte_zettel_id()
     {
-        $result = mysql_query("SELECT ZETTEL_ID FROM STUNDENZETTEL WHERE AKTUELL = '1' ORDER BY ZETTEL_ID DESC LIMIT 0,1");
-
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT ZETTEL_ID FROM STUNDENZETTEL WHERE AKTUELL = '1' ORDER BY ZETTEL_ID DESC LIMIT 0,1");
+        $row = $result[0];
         return $row ['ZETTEL_ID'];
     }
 
     function mein_letzer_zettel($benutzer_id)
     {
-        $result = mysql_query("SELECT ZETTEL_ID FROM STUNDENZETTEL WHERE BENUTZER_ID='$benutzer_id' && AKTUELL = '1' ORDER BY ZETTEL_ID DESC LIMIT 0,1");
-
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT ZETTEL_ID FROM STUNDENZETTEL WHERE BENUTZER_ID='$benutzer_id' && AKTUELL = '1' ORDER BY ZETTEL_ID DESC LIMIT 0,1");
+        $row = $result[0];
         return $row ['ZETTEL_ID'];
     }
 
@@ -704,10 +675,10 @@ class zeiterfassung
         $datum = date("Y-m-d");
         $l_zettel_id = $this->letzte_zettel_id() + 1;
         $db_abfrage = "INSERT INTO STUNDENZETTEL VALUES (NULL, '$l_zettel_id', '$benutzer_id', '$beschreibung', '$datum',  '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
 
         /* Protokollieren */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('STUNDENZETTEL', $last_dat, '0');
         $mein_letzerzettel_id = $this->mein_letzer_zettel($benutzer_id);
         hinweis_ausgeben('Stundennachweis wurde erstellt.');
@@ -722,10 +693,10 @@ class zeiterfassung
 
         $datum = date_german2mysql($datum);
         $db_abfrage = "INSERT INTO STUNDENZETTEL_POS VALUES (NULL, '$l_id', '$zettel_id', '$datum', '$beginn', '$ende', '$leistung_id', '$dauer_min', '$kostentraeger_typ', '$kostentraeger_id','$hinweis', '0', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
 
         /* Protokollieren */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('STUNDENZETTEL_POS', $last_dat, '0');
 
         hinweis_ausgeben('Ihre Eingabe wurde gespeichert!<br>Sie werden weitergeleitet.');
@@ -745,37 +716,29 @@ class zeiterfassung
 
     function letzte_zettel_pos_id()
     {
-        $result = mysql_query("SELECT ST_ID FROM STUNDENZETTEL_POS WHERE AKTUELL = '1' ORDER BY ST_ID DESC LIMIT 0,1");
+        $result = DB::select("SELECT ST_ID FROM STUNDENZETTEL_POS WHERE AKTUELL = '1' ORDER BY ST_ID DESC LIMIT 0,1");
 
-        $row = mysql_fetch_assoc($result);
+        $row = $result[0];
         return $row ['ST_ID'];
     }
 
     function check_leistung_pos_leistung($benutzer_id, $leistung_id)
     {
         $artikel_nr = 'L-' . $benutzer_id . '-' . $leistung_id;
-        $result = mysql_query("SELECT ARTIKEL_NR FROM POSITIONEN_KATALOG WHERE ARTIKEL_NR='$artikel_nr' && AKTUELL = '1'");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select("SELECT ARTIKEL_NR FROM POSITIONEN_KATALOG WHERE ARTIKEL_NR='$artikel_nr' && AKTUELL = '1'");
+        return !empty($result);
     }
 
     function stundensatz($benutzer_id)
     {
         $result = DB::select("SELECT hourly_rate FROM users WHERE id = ? ORDER BY id DESC LIMIT 0,1", [$benutzer_id]);
-
         return !empty($result) ? $esult[0]->STUNDENSATZ : 0;
     }
 
     function get_beschr_by_l_id($leistung_id)
     {
-        $result = mysql_query("SELECT BEZEICHNUNG FROM LEISTUNGSKATALOG WHERE LK_ID='$leistung_id' && AKTUELL = '1' ORDER BY LK_ID DESC LIMIT 0,1");
-
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT BEZEICHNUNG FROM LEISTUNGSKATALOG WHERE LK_ID='$leistung_id' && AKTUELL = '1' ORDER BY LK_ID DESC LIMIT 0,1");
+        $row = $result[0];
         return $row ['BEZEICHNUNG'];
     }
 
@@ -787,10 +750,10 @@ class zeiterfassung
 
         $datum = date_german2mysql($datum);
         $db_abfrage = "INSERT INTO STUNDENZETTEL_POS VALUES ('$dat', '$l_id', '$zettel_id', '$datum', '$beginn', '$ende', '$leistung_id', '$dauer_min', '$kostentraeger_typ', '$kostentraeger_id','$hinweis', '0', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
 
         /* Protokollieren */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('STUNDENZETTEL_POS', $last_dat, '0');
 
         hinweis_ausgeben('Ihre Eingabe wurde gespeichert!<br>Sie werden weitergeleitet.');
@@ -819,9 +782,9 @@ class zeiterfassung
         $datum_d = date_mysql2german($datum);
         $leistungs_beschreibung = "$datum_d $beginn-$ende Uhr $benutzer_name - $leistungs_beschreibung";
         $db_abfrage = "INSERT INTO LEISTUNGSKATALOG VALUES (NULL, '$lk_id', '$leistungs_beschreibung', '$this->gewerk_id',  '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
         /* Protokollieren */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         if ($last_dat) {
             protokollieren('LEISTUNGSKATALOG', $last_dat, '0');
 
@@ -847,32 +810,29 @@ class zeiterfassung
 
     function letzte_leistung_id()
     {
-        $result = mysql_query("SELECT LK_ID FROM LEISTUNGSKATALOG WHERE AKTUELL = '1' ORDER BY LK_ID DESC LIMIT 0,1");
-
-        $row = mysql_fetch_assoc($result);
+        DB::select("SELECT LK_ID FROM LEISTUNGSKATALOG WHERE AKTUELL = '1' ORDER BY LK_ID DESC LIMIT 0,1");
+        $row = $result[0];
         return $row ['LK_ID'];
     }
 
     function get_leistung_id_by_beschr($gewerk_id, $beschreibung)
     {
-        $result = mysql_query("SELECT LK_ID FROM LEISTUNGSKATALOG WHERE GEWERK='$gewerk_id' && BEZEICHNUNG='$beschreibung' && AKTUELL = '1' ORDER BY LK_ID DESC LIMIT 0,1");
-
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT LK_ID FROM LEISTUNGSKATALOG WHERE GEWERK='$gewerk_id' && BEZEICHNUNG='$beschreibung' && AKTUELL = '1' ORDER BY LK_ID DESC LIMIT 0,1");
+        $row = $result[0];
         return $row ['LK_ID'];
     }
 
     function zettel_pos_speichern($datum, $benutzer_id, $leistung_id, $zettel_id, $dauer_min, $kostentraeger_typ, $kostentraeger_bez, $hinweis, $beginn, $ende)
     {
-        // echo "$datum, $benutzer_id, $leistung_id, $zettel_id, $dauer_min, $kostentraeger_typ, $kostentraeger_bez";
         $l_id = $this->letzte_zettel_pos_id() + 1;
         $b = new buchen ();
         $kostentraeger_id = $b->kostentraeger_id_ermitteln($kostentraeger_typ, $kostentraeger_bez);
         $datum = date_german2mysql($datum);
         $db_abfrage = "INSERT INTO STUNDENZETTEL_POS VALUES (NULL, '$l_id', '$zettel_id', '$datum', '$beginn', '$ende', '$leistung_id', '$dauer_min', '$kostentraeger_typ', '$kostentraeger_id','$hinweis', '0', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
 
         /* Protokollieren */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('STUNDENZETTEL_POS', $last_dat, '0');
 
         // hinweis_ausgeben('Ihre Eingabe wurde gespeichert!<br>Sie werden weitergeleitet.');
@@ -969,13 +929,13 @@ class zeiterfassung
 
         $db_abfrage = "INSERT INTO RECHNUNGEN_POSITIONEN VALUES (NULL, '$letzte_rech_pos_id', '$last_pos', '$beleg_nr','$beleg_nr','$lieferant_id','$artikel_nr', '$menge','$preis','$mwst', '$rabatt', '0.00', '$g_netto','1')";
 
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
     }
 
     function zettel_pos_in_rg($st_dat, $erf_nr)
     {
         $db_abfrage = "UPDATE STUNDENZETTEL_POS SET IN_BELEG='$erf_nr' WHERE ST_DAT='$st_dat'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
     }
 
     function zettel2pdf_altOK($id)
@@ -1405,13 +1365,8 @@ class zeiterfassung
 
     function anzahl_zettel_mitarbeiter($benutzer_id)
     {
-        $result = mysql_query("SELECT *  FROM STUNDENZETTEL WHERE BENUTZER_ID='$benutzer_id'  && AKTUELL='1'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            return $numrows;
-        } else {
-            return '0';
-        }
+        $result = DB::select("SELECT *  FROM STUNDENZETTEL WHERE BENUTZER_ID='$benutzer_id'  && AKTUELL='1'");
+        return count($result);
     }
 
     function anzahl_offene_zettel($benutzer_id)
@@ -1515,13 +1470,9 @@ class zeiterfassung
 
     function get_beleg_id_erstellt($zettel_id)
     {
-        $result = mysql_query("SELECT IN_BELEG FROM STUNDENZETTEL_POS WHERE ZETTEL_ID='$zettel_id' && (IN_BELEG != '0' OR IN_BELEG != NULL) && AKTUELL='1' GROUP BY IN_BELEG");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select("SELECT IN_BELEG FROM STUNDENZETTEL_POS WHERE ZETTEL_ID='$zettel_id' && (IN_BELEG != '0' OR IN_BELEG != NULL) && AKTUELL='1' GROUP BY IN_BELEG");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -1585,12 +1536,9 @@ AND STUNDENZETTEL.AKTUELL = '1' && STUNDENZETTEL_POS.AKTUELL = '1' && STUNDENZET
 )
 ORDER BY `URLAUB`.`DATUM` ASC";
 
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -1601,10 +1549,10 @@ ORDER BY `URLAUB`.`DATUM` ASC";
             $datum = date("Y-m-d");
             $l_zettel_id = $this->letzte_zettel_id() + 1;
             $db_abfrage = "INSERT INTO STUNDENZETTEL VALUES (NULL, '$l_zettel_id', '$benutzer_id', '$beschreibung', '$datum',  '1')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert($db_abfrage);
 
             /* Protokollieren */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('STUNDENZETTEL', $last_dat, '0');
             $zettel_id = $this->mein_letzer_zettel($benutzer_id);
 
@@ -1625,10 +1573,10 @@ ORDER BY `URLAUB`.`DATUM` ASC";
                 }
                 $hinweis = "Erstellt von " . Auth::user()->email . " aus Urlaubsdaten.";
                 $db_abfrage = "INSERT INTO STUNDENZETTEL_POS VALUES (NULL, '$l_id', '$zettel_id', '$datum', '', '', '$leistung_id', '$dauer_min', 'Objekt', '1','$hinweis', '0', '1')";
-                $resultat = mysql_query($db_abfrage) or die (mysql_error());
+                DB::insert($db_abfrage);
 
                 /* Protokollieren */
-                $last_dat = mysql_insert_id();
+                $last_dat = DB::getPdo()->lastInsertId();
                 protokollieren('STUNDENZETTEL_POS', $last_dat, '0');
             }
         } else {
@@ -1671,12 +1619,9 @@ AND STUNDENZETTEL.AKTUELL = '1' && STUNDENZETTEL_POS.AKTUELL = '1' && STUNDENZET
 )
 ORDER BY `URLAUB`.`DATUM` ASC";
 
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -1686,12 +1631,11 @@ ORDER BY `URLAUB`.`DATUM` ASC";
 WHERE `DATUM` = '$datum' AND STUNDENZETTEL_POS.`AKTUELL` = '1' && STUNDENZETTEL.`AKTUELL` = '1' && STUNDENZETTEL.ZETTEL_ID = STUNDENZETTEL_POS.ZETTEL_ID && STUNDENZETTEL.BENUTZER_ID = '$benutzer_id'
 LIMIT 0 , 1";
 
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
+        $result = DB::select($db_abfrage);
         unset ($this->z_beschreibung);
         unset ($this->z_zettel_id);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        if (!empty($result)) {
+            $row = $result[0];
             $this->z_beschreibung = $row ['BESCHREIBUNG'];
             $this->z_zettel_id = $row ['ZETTEL_ID'];
         } else {
@@ -1702,45 +1646,37 @@ LIMIT 0 , 1";
 
     function check_if_pos_in_beleg($zettel_id, $pos_id)
     {
-        $result = mysql_query("SELECT IN_BELEG FROM STUNDENZETTEL_POS WHERE ZETTEL_ID='$zettel_id' && ST_DAT='$pos_id' && AKTUELL='1'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select("SELECT IN_BELEG FROM STUNDENZETTEL_POS WHERE ZETTEL_ID='$zettel_id' && ST_DAT='$pos_id' && AKTUELL='1'");
+        return !empty($result);
     }
 
     function pos_loeschen($zettel_id, $pos_id)
     {
-        $result = mysql_query("DELETE FROM STUNDENZETTEL_POS WHERE ZETTEL_ID='$zettel_id' && ST_DAT='$pos_id'");
+        DB::delete("DELETE FROM STUNDENZETTEL_POS WHERE ZETTEL_ID='$zettel_id' && ST_DAT='$pos_id'");
         hinweis_ausgeben("Zeile gelöscht, Sie werden weitergeleitet!");
         weiterleiten_in_sec(route('legacy::zeiterfassung::index', ['option' => 'zettel_eingabe', 'zettel_id' => $zettel_id], false), 2);
     }
 
     function pos_deaktivieren($zettel_id, $pos_dat)
     {
-        $result = mysql_query("UPDATE STUNDENZETTEL_POS SET AKTUELL='0' WHERE ZETTEL_ID='$zettel_id' && ST_DAT='$pos_dat'");
+        DB::update("UPDATE STUNDENZETTEL_POS SET AKTUELL='0' WHERE ZETTEL_ID='$zettel_id' && ST_DAT='$pos_dat'");
     }
 
     function einheit_kurz_objekt($objekt_id)
     {
-        $result = mysql_query("SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT_LAGE, EINHEIT_QM,  HAUS_STRASSE, HAUS_NUMMER
+        $my_arr = DB::select("SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT_LAGE, EINHEIT_QM,  HAUS_STRASSE, HAUS_NUMMER
 FROM `EINHEIT`
 RIGHT JOIN (
 HAUS, OBJEKT
 ) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID = '$objekt_id' )
 WHERE EINHEIT_AKTUELL='1'");
 
-        while ($row = mysql_fetch_assoc($result))
-            $my_arr [] = $row;
-
-        $numrows = mysql_numrows($result);
+        $numrows = count($my_arr);
         if ($numrows < 1) {
             echo "<h1><b>Keine Einheiten vorhanden!!!</b></h1>";
         } else {
             echo "<table class=\"tabelle_haus\" width=100%>\n";
-            $objekt_kurzname = $my_arr ['0'] ['OBJEKT_KURZNAME'];
+            $objekt_kurzname = $my_arr [0] ['OBJEKT_KURZNAME'];
             echo "<tr class=\"feldernamen\"><td colspan=6>Einheiten im Objekt $objekt_kurzname</td></tr>\n";
             echo "<tr class=\"feldernamen\"><td width=150>Kurzname</td><td width=200>Mieter</td><td width=200>Anschrift</td><td width=100>Lage</td><td width=40>m²</td><td>Details</td></tr>\n";
             echo "</table>";
@@ -1798,8 +1734,8 @@ WHERE EINHEIT_AKTUELL='1'");
 
     function zettel_loeschen_voll($zettel_id)
     {
-        $result = mysql_query("UPDATE STUNDENZETTEL SET AKTUELL='0' WHERE ZETTEL_ID='$zettel_id'");
-        $result = mysql_query("UPDATE STUNDENZETTEL_POS SET AKTUELL='0' WHERE ZETTEL_ID='$zettel_id'");
+        DB::update("UPDATE STUNDENZETTEL SET AKTUELL='0' WHERE ZETTEL_ID='$zettel_id'");
+        DB::update("UPDATE STUNDENZETTEL_POS SET AKTUELL='0' WHERE ZETTEL_ID='$zettel_id'");
     }
 
     function form_stunden_anzeigen()
@@ -1869,7 +1805,7 @@ ORDER BY GEWERK_ID ASC, STD DESC", [$von, $bis]);
                 echo "<tr><th>Mitarbeiter</th><th>Stunden</th><th>Leistung</th><th>ZUWEISUNG</th></tr>";
                 $g_summe = 0;
                 $g_summe_std = 0;
-                foreach($result as $row) {
+                foreach ($result as $row) {
                     $benutzername = $row->name;
                     $mitarbeiter_ids [] = $row->BENUTZER_ID;
                     $std = nummer_punkt2komma_t($row->STD);
@@ -1906,7 +1842,7 @@ ORDER BY STD DESC
                     echo "<tr><th>GEWERK</th><th>Stunden</th><th>Leistung</th></tr>";
                     $g_summe = 0;
                     $g_summe_std = 0;
-                    foreach($result as $row) {
+                    foreach ($result as $row) {
                         $bez = $row->BEZEICHNUNG;
                         $std = nummer_punkt2komma_t($row->STD);
                         $eur = nummer_punkt2komma_t($row->LEISTUNG_EUR);
@@ -1921,7 +1857,7 @@ ORDER BY STD DESC
                     echo "</table>";
                 }
 
-                foreach($mitarbeiter_ids as $m_id) {
+                foreach ($mitarbeiter_ids as $m_id) {
                     $result = DB::select("SELECT KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, users.id, name, DATUM, BEGINN, ENDE, DAUER_MIN, DAUER_MIN/60 AS STUNDEN, LEISTUNG_ID, BEZEICHNUNG FROM STUNDENZETTEL_POS 
 JOIN STUNDENZETTEL ON 
 (STUNDENZETTEL_POS.ZETTEL_ID=STUNDENZETTEL.ZETTEL_ID)
@@ -1939,7 +1875,7 @@ WHERE STUNDENZETTEL_POS.AKTUELL = '1'  && STUNDENZETTEL.AKTUELL = '1' && DATUM B
                         echo "<table>";
                         echo "<tr><th>DATUM</th><th>ZEIT</th><th>Dauer</th><th>Leistung</th><th>ZUWEISUNG</th></tr>";
 
-                        foreach($result as $row) {
+                        foreach ($result as $row) {
 
                             $datum_m = date_mysql2german($row->DATUM);
                             $beginn = $row->BEGINN;
@@ -1976,7 +1912,7 @@ GROUP BY STUNDENZETTEL.BENUTZER_ID LIMIT 0 , 1", [$benutzer_id, $von, $bis]);
 
                 echo "<table>";
                 echo "<tr><th>Mitarbeiter</th><th>Stunden</th><th>Leistung</th></tr>";
-                foreach($result as $row) {
+                foreach ($result as $row) {
                     $benutzername = $row->name;
                     $std = nummer_punkt2komma_t($row->STD);
                     $eur = nummer_punkt2komma_t($row->LEISTUNG_EUR);
@@ -2001,7 +1937,7 @@ DATUM BETWEEN ? AND ? && STUNDENZETTEL.BENUTZER_ID=? $kos_typ_db $kos_id_db ORDE
                 echo "<table>";
                 echo "<tr><th>DATUM</th><th>Dauer</th><th>Leistung</th><th>ZUWEISUNG</th></tr>";
 
-                foreach($result as $row) {
+                foreach ($result as $row) {
                     $benutzername = $row->name;
                     $datum_m = date_mysql2german($row->DATUM);
                     $beginn = $row->BEGINN;
@@ -2039,7 +1975,7 @@ ORDER BY STD DESC, DATUM", [$kos_typ, $kos_id, $gewerk_id, $von, $bis]);
                 echo "<tr><th>GEWERK</th><th>Stunden</th><th>Leistung</th></tr>";
                 $g_summe = 0;
                 $g_summe_std = 0;
-                foreach($result as $row) {
+                foreach ($result as $row) {
                     $bez = $row->BEZEICHNUNG;
                     $std = nummer_punkt2komma_t($row->STD);
                     $eur = nummer_punkt2komma_t($row->LEISTUNG_EUR);
@@ -2063,7 +1999,7 @@ GROUP BY STUNDENZETTEL.BENUTZER_ID ORDER BY DATUM ASC, STD DESC, GEWERK_ID ASC",
                     echo "<tr><th>Mitarbeiter</th><th>Stunden</th><th>Leistung</th></tr>";
                     $g_summe = 0;
                     $g_summe_std = 0;
-                    foreach($result as $row) {
+                    foreach ($result as $row) {
                         $mitarbeiter_ids [] = $row->BENUTZER_ID;
                         $benutzername = $row->name;
                         $std = nummer_punkt2komma_t($row->STD);
@@ -2078,7 +2014,7 @@ GROUP BY STUNDENZETTEL.BENUTZER_ID ORDER BY DATUM ASC, STD DESC, GEWERK_ID ASC",
                     echo "</table>";
                 }
 
-                foreach($mitarbeiter_ids as $m_id) {
+                foreach ($mitarbeiter_ids as $m_id) {
                     $result = DB::select("SELECT KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, users.id, name, DATUM, BEGINN, ENDE, DAUER_MIN, DAUER_MIN/60 AS STUNDEN, LEISTUNG_ID, BEZEICHNUNG FROM STUNDENZETTEL_POS 
 JOIN STUNDENZETTEL ON 
 (STUNDENZETTEL_POS.ZETTEL_ID=STUNDENZETTEL.ZETTEL_ID)
@@ -2098,7 +2034,7 @@ DATUM BETWEEN ? AND ? && STUNDENZETTEL.BENUTZER_ID=? $kos_typ_db $kos_id_db ORDE
                         echo "<table>";
                         echo "<tr><th>DATUM</th><th>Dauer</th><th>Leistung</th><th>Zuweisung</th></tr>";
 
-                        foreach($result as $row) {
+                        foreach ($result as $row) {
                             $datum_m = date_mysql2german($row->DATUM);
                             $beginn = $row->BEGINN;
                             $ende = $row->ENDE;
