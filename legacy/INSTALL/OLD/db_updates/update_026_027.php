@@ -21,6 +21,6 @@
  * 
  */
 
-/*Erstellung der Datenbanktabelle 'LIEFERSCHEINE' für die Erfassung von Lieferscheinen*/ 
+/*Erstellung der Datenbanktabelle 'LIEFERSCHEINE' fÃ¼r die Erfassung von Lieferscheinen*/ 
 $sql = 'CREATE TABLE `LIEFERSCHEINE` (`L_DAT` INT(7) NOT NULL AUTO_INCREMENT PRIMARY KEY, `L_ID` INT(7) NOT NULL, `DATUM` DATE NOT NULL, `LI_TYP` VARCHAR(50) NOT NULL, `LI_ID` INT(7) NOT NULL, `EMPF_TYP` VARCHAR(50) NOT NULL, `EMPF_ID` INT(7) NOT NULL, `L_NR` INT(30) NOT NULL, `AKTUELL` ENUM('0','1') NOT NULL) ENGINE = MyISAM'; 
 ?>

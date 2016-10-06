@@ -1371,7 +1371,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         }
         $e = new einheit ();
         if (!empty($result)) {
-            foreach($result as $row)) {
+            foreach($result as $row) {
                 $einheit_id = $row ['EINHEIT_ID'];
                 $e->get_einheit_info($einheit_id);
                 if ($e->objekt_id == $objekt_id) {

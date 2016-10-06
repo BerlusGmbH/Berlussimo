@@ -989,7 +989,7 @@ function mietkonto_monats_uebersicht_ORG($mietvertrag_id, $monat, $jahr, $vormon
     echo "<table width=100% border=1>";
     $monatsname = $mietkonto_info->monatsname;
     echo "<tr><td colspan=6>$monat $jahr</td></tr>";
-    echo "<tr><td><b>FORDERUNGEN</td<td><b>ZAHLUNGEN</td><td><b>AUFTEILUNG</td><td><b>BERECHNUNG</td><td><b>KONTOSTAND_VOR</td><td><b>KONTOSTAND_NACH</td></tr>";
+    echo "<tr><td><b>FORDERUNGEN</td><td><b>ZAHLUNGEN</td><td><b>AUFTEILUNG</td><td><b>BERECHNUNG</td><td><b>KONTOSTAND_VOR</td><td><b>KONTOSTAND_NACH</td></tr>";
     echo "<tr><td align=right valign=top>"; // Zelle1
     for ($i = 0; $i < count($forderungen_arr); $i++) {
         echo "" . $forderungen_arr [$i] ['KOSTENKATEGORIE'] . " = " . $forderungen_arr [$i] ['BETRAG'] . "€<br>";
@@ -1074,7 +1074,7 @@ function mietkonto_monats_uebersicht($mietvertrag_id, $monat, $jahr, $vormonat_s
     echo "<table width=100% class=table_form >";
     $monatsname = $mietkonto_info->monatsname;
     echo "<tr class=\"zeile1\"><td colspan=5>$monat $jahr</td></tr>";
-    echo "<tr class=\"zeile1\"><td><b>FORDERUNGEN</td<td><b>ZAHLUNGEN</td><td><b>AUFTEILUNG</td><td><b>BERECHNUNG</td><td><b>KONTOSTAND</td></tr>";
+    echo "<tr class=\"zeile1\"><td><b>FORDERUNGEN</td><td><b>ZAHLUNGEN</td><td><b>AUFTEILUNG</td><td><b>BERECHNUNG</td><td><b>KONTOSTAND</td></tr>";
     echo "<tr class=\"zeile1\"><td align=right valign=top>"; // Zelle1
 
     for ($i = 0; $i < count($forderungen_arr); $i++) {
