@@ -181,7 +181,6 @@ function check_mietvertrag_aktuell($mv_id)
 
 function kontakt_suche($target_id, $string)
 {
-    $string = utf8_decode($string);
     $datum_d = date("d.m.Y");
     echo "<p class=\"zeile_ueber\">Suchergebnisse, auf Datensatz klicken um zu äbernehmen</p>";
     echo "<table>";
@@ -209,8 +208,8 @@ function kontakt_suche($target_id, $string)
                         $js .= "setTimeout('daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'einheit_register', 'einheit_id' => $einheit_id, 'einheit_bez' => $EINHEIT_KURZNAME], false) . "', 'rightBox')', 500);";
                         $js .= "setTimeout('daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'get_partner_info'], false) . "', 'rightBox')', 1000);\"";
 
-                        $p_nachname = utf8_encode($row['PERSON_NACHNAME']);
-                        $p_vorname = utf8_encode($row['PERSON_VORNAME']);
+                        $p_nachname = $row['PERSON_NACHNAME'];
+                        $p_vorname = $row['PERSON_VORNAME'];
                         echo "<tr class=\"zeile$z\" $js><td>MIETER</td><td>$p_nachname $p_vorname $EINHEIT_KURZNAME</td></tr>";
                         if ($z == 2) {
                             $z = 0;
@@ -239,10 +238,10 @@ function kontakt_suche($target_id, $string)
             $js_t1 = $js_tages_ansicht;
 
 
-            $pa_name = utf8_encode($row['PARTNER_NAME']);
-            $pa_str = utf8_encode($row['STRASSE']);
-            $pa_nr = utf8_encode($row['NUMMER']);
-            $pa_ort = utf8_encode($row['ORT']);
+            $pa_name = $row['PARTNER_NAME'];
+            $pa_str = $row['STRASSE'];
+            $pa_nr = $row['NUMMER'];
+            $pa_ort = $row['ORT'];
             echo "<tr class=\"zeile$z\" $js_tages_ansicht $js_t1><td>PARTNER</td><td>$pa_name $pa_str $pa_nr $pa_ort</td></tr>";
 
             if ($z == 2) {
@@ -406,7 +405,7 @@ function get_g_id_arr($kos_typ, $kos_id, $einheit_id)
 function form_inaktiv($kos_typ, $kos_id)
 {
     if ($kos_typ == 'Partner') {
-        $anschrift = utf8_encode(get_partner_anschrift($kos_id));
+        $anschrift = get_partner_anschrift($kos_id);
         $kos_bez = get_partner_name($kos_id);
     }
     formular('', 'inaktiv');
@@ -486,9 +485,9 @@ function dropdown_partner_vorwahl($p_id, $arr, $label, $name, $id, $js, $class_r
             $partner_id = $arr[$a]['PARTNER_ID'];
             $partner_name = $arr[$a]['PARTNER_NAME'];
             if ($p_id == $partner_id) {
-                echo utf8_encode("<option value=\"$partner_id\" selected>$partner_name</option>\n");
+                echo "<option value=\"$partner_id\" selected>$partner_name</option>\n";
             } else {
-                echo utf8_encode("<option value=\"$partner_id\">$partner_name</option>\n");
+                echo "<option value=\"$partner_id\">$partner_name</option>\n";
             }
         }
         echo "</select>\n";
@@ -523,8 +522,8 @@ function get_entfernung_km($start, $destination = START_ADRESSE)
         if ($status == 'OK') {
             $lat = $xml->route->leg->step->start_location->lat;
             $lon = $xml->route->leg->step->start_location->lng;
-            $start_a = utf8_decode($xml->route->leg->start_address);
-            $end_a = utf8_decode($xml->route->leg->end_address);
+            $start_a = $xml->route->leg->start_address;
+            $end_a = $xml->route->leg->end_address;
             $km = $xml->route->leg->distance->text;
             $fahrzeit = $xml->route->leg->duration->text;
 
@@ -565,10 +564,6 @@ function get_lat_lon_db($str, $nr, $plz, $ort)
 
 function get_lat_lon_db_osm($str, $nr, $plz, $ort)
 {
-    /*Wichtig fürs ß*/
-    $str = utf8_encode($str);
-    $ort = utf8_encode($ort);
-
     if (session()->has('lon_lats')) {
         if (is_array(session()->get('lon_lats'))) {
             if (array_key_exists("$str,$nr, $plz, $ort", session()->get('lon_lats'))) {
@@ -621,9 +616,6 @@ function get_lat_lon_db_osm($str, $nr, $plz, $ort)
     }
 
     if (!empty($lat) && !empty($lon)) {
-        $nr = utf8_decode($nr);
-        $plz = utf8_decode($plz);
-        $ort = utf8_decode($ort);
         if (!check_str($str, $nr, $plz, $ort)) {
             DB::insert("INSERT INTO GEO_LON_LAT VALUES (NULL, '$str', '$nr', '$plz', '$ort','$lon','$lat','$quelle','1')");
         }
@@ -975,12 +967,12 @@ function dropdown_wgeraet($arr, $label, $name, $id, $js, $class_r = 'reihe', $cl
             $einbauort = $arr[$a]['LAGE_RAUM'];
             if (session()->has('g_id')) {
                 if ($g_id == session()->get('g_id')) {
-                    echo utf8_encode("<option value=\"$g_id\" selected>$einbauort - $g_bez</option>\n");
+                    echo "<option value=\"$g_id\" selected>$einbauort - $g_bez</option>\n";
                 } else {
-                    echo utf8_encode("<option value=\"$g_id\">$einbauort - $g_bez</option>\n");
+                    echo "<option value=\"$g_id\">$einbauort - $g_bez</option>\n";
                 }
             } else {
-                echo utf8_encode("<option value=\"$g_id\">$einbauort - $g_bez</option>\n");
+                echo "<option value=\"$g_id\">$einbauort - $g_bez</option>\n";
             }
         }
         echo "</select>\n";
@@ -1028,12 +1020,12 @@ function dropdown_w_gruppen($arr, $label, $name, $id, $js, $class_r = 'reihe', $
             $g_bez = $arr[$a]['GRUPPE'];
             if (session()->has('vorschlag_gruppe_id') && session()->has('vorschlag_gruppe_id')) {
                 if (request()->get('vorschlag_gruppe_id') == $g_id) {
-                    echo utf8_encode("<option value=\"$g_id\" selected>$g_bez</option>\n");
+                    echo "<option value=\"$g_id\" selected>$g_bez</option>\n";
                 } else {
-                    echo utf8_encode("<option value=\"$g_id\">$g_bez</option>\n");
+                    echo "<option value=\"$g_id\">$g_bez</option>\n";
                 }
             } else {
-                echo utf8_encode("<option value=\"$g_id\">$g_bez</option>\n");
+                echo "<option value=\"$g_id\">$g_bez</option>\n";
             }
         }
         echo "</select>\n";
@@ -1055,7 +1047,7 @@ function dropdown_w_teile_gruppe($arr, $label, $name, $id, $js, $class_r = 'reih
         echo "<option value=\"\" selected>Bitte wählen</option>\n";
         for ($a = 0; $a < $anz; $a++) {
             $g_bez = $arr[$a]['BEZEICHNUNG'];
-            echo utf8_encode("<option value=\"$g_bez\">$g_bez</option>\n");
+            echo "<option value=\"$g_bez\">$g_bez</option>\n";
         }
         echo "</select>\n";
         echo "</span>";
@@ -1076,7 +1068,7 @@ function dropdown_hersteller($arr, $label, $name, $id, $js, $class_r = 'reihe', 
         echo "<option value=\"\" selected>Bitte wählen</option>\n";
         for ($a = 0; $a < $anz; $a++) {
             $g_her = $arr[$a]['HERSTELLER'];
-            echo utf8_encode("<option value=\"$g_her\">$g_her</option>\n");
+            echo "<option value=\"$g_her\">$g_her</option>\n";
         }
         echo "</select>\n";
         echo "</span>";
@@ -1369,7 +1361,7 @@ function get_wgeraete_bez($gruppe_id)
         for ($a = 0; $a < $anz; $a++) {
             $g_id = $arr[$a]['GERAETE_ID'];
             $g_bez = $arr[$a]['BEZEICHNUNG'];
-            echo utf8_encode("$g_id,$g_bez|");
+            echo "$g_id,$g_bez|";
         }
     }
 }
@@ -2473,7 +2465,7 @@ function tages_ansicht_neu($benutzer_id, $datum_d, $hinweis_an = 1)
         $bis_arr = explode(':', $bis);
         $std = $bis_arr[0] - $von_arr[0];
         echo "<tr class=\"zeile_$status\"><td>$von<br>$bis</td>";
-        echo utf8_encode("<td valign=\"top\">$kunden_info<br>$link_neuer_termin");
+        echo "<td valign=\"top\">$kunden_info<br>$link_neuer_termin";
         if ($status == 'frei') {
             for ($br = 0; $br < $std; $br++) {
                 echo "<br>";
@@ -2481,7 +2473,7 @@ function tages_ansicht_neu($benutzer_id, $datum_d, $hinweis_an = 1)
             }
         }
 
-        echo utf8_encode("</td><td valign=\"top\">$g_info");
+        echo "</td><td valign=\"top\">$g_info";
         echo "<br>";
         echo "</td></tr>";
         $von_str = $bis_str;
@@ -2599,7 +2591,7 @@ function tages_ansicht_umkreis($benutzer_id, $datum_d)
         }
         echo "<tr class=\"zeile_$status\"><td id=\"$von-$bis\" name=\"$von-$bis\">$von<br>$bis";
 
-        echo utf8_encode("</td><td valign=\"top\">$kunden_info<br><br></td>");
+        echo "</td><td valign=\"top\">$kunden_info<br><br></td>";
         if ($status == 'frei') {
             $js_res = "onclick=\"termin_reservieren('$datum_d', '$von', '$bis', '$benutzer_id');\"";
             echo "<td>";
@@ -3651,11 +3643,6 @@ function check_is_eigentuemer($partner_id)
 
 function get_lon_lat_osm($str, $nr, $plz, $ort, $w_datum)
 {
-    $str = utf8_encode($str);
-    $nr = utf8_encode($nr);
-    $plz = utf8_encode($plz);
-    $ort = utf8_encode($ort);
-
     if (empty($w_datum)) {
         $w_datum = date("d.m.Y");
     }
@@ -3695,10 +3682,6 @@ function get_lon_lat_osm($str, $nr, $plz, $ort, $w_datum)
     }
 
     if (!empty($lat) && !empty($lon)) {
-        $str = utf8_decode($str);
-        $nr = utf8_decode($nr);
-        $plz = utf8_decode($plz);
-        $ort = utf8_decode($ort);
         if (!check_str($str, $nr, $plz, $ort)) {
             DB::insert("INSERT INTO GEO_LON_LAT VALUES (NULL, '$str', '$nr', '$plz', '$ort','$lon','$lat','$quelle','1')");
         }
@@ -5066,8 +5049,6 @@ class general
                 $status = $xml->status;
                 echo "STATUS $status";
                 if ($status == 'OK') {
-                    $start_a = utf8_decode($xml->route->leg->start_address);
-                    $end_a = utf8_decode($xml->route->leg->end_address);
                     $km = $xml->route->leg->distance->text;
                     $fahrzeit = $xml->route->leg->duration->text;
                     $this->km = $km;
@@ -5214,7 +5195,7 @@ class general
                 $gif = $xml->route->legs->leg->maneuvers->maneuver[$a]->iconUrl;
                 if ($a < $anz - 1) {
                     echo "<img src=\"$gif\">";
-                    echo "$z." . utf8_decode($xml->route->legs->leg->maneuvers->maneuver[$a]->narrative) . "<br>";
+                    echo "$z." . $xml->route->legs->leg->maneuvers->maneuver[$a]->narrative . "<br>";
                 }
             }
 

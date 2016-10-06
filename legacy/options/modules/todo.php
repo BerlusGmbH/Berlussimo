@@ -190,7 +190,6 @@ switch ($option) {
             $datum = $auftraege_arr [$a] ['ERSTELLT'];
             $text = $auftraege_arr [$a] ['TEXT'];
             $text_k = substr($text, 0, 20);
-            // echo "TEXT:$text<br>";
             echo "TEXTK:$text_k<br>";
             $kos_typ = $auftraege_arr [$a] ['KOS_TYP'];
             $kos_id = $auftraege_arr [$a] ['KOS_ID'];
@@ -199,8 +198,8 @@ switch ($option) {
 
             $data ['name'] = 'BerlussimoAPI';
             $data ['email'] = 'sivac@berlus.de';
-            $data ['subject'] = utf8_encode($text);
-            $data ['message'] = utf8_encode($text);
+            $data ['subject'] = $text;
+            $data ['message'] = $text;
             $data ['ip'] = $_SERVER ['REMOTE_ADDR'];
             $data ['body'] = 'BODY MANUAL';
             $data ['zuordnung'] = $kos_bez;

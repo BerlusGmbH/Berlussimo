@@ -1578,7 +1578,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         }
 
         ob_end_clean();
-        $gk_bez = utf8_encode(date("Y_m_d") . '_' . substr(str_replace('.', '_', str_replace(',', '', str_replace(' ', '_', ltrim(rtrim($this->kos_bez))))), 0, 30) . '_Auftrag-Nr._' . $id . '.pdf');
+        $gk_bez = date("Y_m_d") . '_' . substr(str_replace('.', '_', str_replace(',', '', str_replace(' ', '_', ltrim(rtrim($this->kos_bez))))), 0, 30) . '_Auftrag-Nr._' . $id . '.pdf';
         $pdf_opt ['Content-Disposition'] = $gk_bez;
 
         $pdf->ezStream($pdf_opt);

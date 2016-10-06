@@ -125,11 +125,11 @@ if (request()->has('option')) {
 
         /*Neuen Partner speichern*/
         case "partner_save":
-            $partner_name = utf8_decode(request()->input('partner_name'));
-            $str = utf8_decode(request()->input('str'));
+            $partner_name = request()->input('partner_name');
+            $str = request()->input('str');
             $nr = request()->input('nr');
             $plz = request()->input('plz');
-            $ort = utf8_decode(request()->input('ort'));
+            $ort = request()->input('ort');
             $land = request()->input('land');
             $wohnlage = request()->input('wohnlage');
             $tel = request()->input('tel');
@@ -786,7 +786,6 @@ if (request()->has('option')) {
                 $p_id = request()->input('p_id');
                 $g->get_partner_info($p_id);
                 $var = "$g->partner_name|$g->partner_strasse|$g->partner_hausnr|$g->partner_plz|$g->partner_ort";
-                $var = utf8_encode($var);
                 echo $var;
             }
             break;
