@@ -19,7 +19,7 @@ class todo
     {
         $last_id = last_id2('BAUSTELLEN_EXT', 'ID') + 1;
         $db_abfrage = "INSERT INTO BAUSTELLEN_EXT VALUES (NULL, '$last_id', '$bau_bez', '$p_id', '1','1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
         return true;
     }
 
@@ -51,19 +51,16 @@ class todo
     function baustellen_liste_arr($aktiv = 1)
     {
         $db_abfrage = "SELECT * FROM BAUSTELLEN_EXT WHERE AKTUELL='1' && AKTIV='$aktiv' ORDER BY BEZ, PARTNER_ID";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
+        $result = DB::insert($db_abfrage);
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function baustelle_aktivieren($b_id, $aktiv = '1')
     {
         $db_abfrage = "UPDATE BAUSTELLEN_EXT SET AKTIV='$aktiv' WHERE ID='$b_id'";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
     }
 
     function form_neue_aufgabe($t_id = NULL, $typ = 'Benutzer')
@@ -130,7 +127,7 @@ class todo
 
                 $benutzer_id = Auth::user()->id;
                 $db_abfrage = "INSERT INTO TODO_LISTE VALUES (NULL, '$last_id', '$t_id', '" . request()->input('text') . "', NULL, '$anz_ab','$typ', '" . request()->input('benutzer_id') . "','$benutzer_id', '0','" . request()->input('akut') . "','" . request()->input('kostentraeger_typ') . "','$kostentraeger_id', '$wert_eur','1')";
-                $resultat = mysql_query($db_abfrage) or die (mysql_error());
+                DB::insert($db_abfrage);
                 ob_clean();
                 weiterleiten(route('legacy::todo::index', ['option' => 'pdf_auftrag', 'proj_id' => $last_id], false));
             }
@@ -140,8 +137,8 @@ class todo
 
     function get_text($t_id)
     {
-        $result = mysql_query("SELECT TEXT FROM TODO_LISTE WHERE T_ID='$t_id' && AKTUELL='1' ORDER BY T_ID DESC LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT TEXT FROM TODO_LISTE WHERE T_ID='$t_id' && AKTUELL='1' ORDER BY T_ID DESC LIMIT 0,1");
+        $row = $result[0];
         return $row ['TEXT'];
     }
 
@@ -174,11 +171,10 @@ class todo
         } else {
             $m = new mietvertraege ();
             $m->get_mietvertrag_infos_aktuell($mv_id);
-            $result = mysql_query("SELECT PERSON_MIETVERTRAG_PERSON_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_MIETVERTRAG_ID='$mv_id' && PERSON_MIETVERTRAG_AKTUELL='1' ORDER BY PERSON_MIETVERTRAG_ID ASC");
-            $numrows = mysql_numrows($result);
-            if ($numrows) {
+            $result = DB::select("SELECT PERSON_MIETVERTRAG_PERSON_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_MIETVERTRAG_ID='$mv_id' && PERSON_MIETVERTRAG_AKTUELL='1' ORDER BY PERSON_MIETVERTRAG_ID ASC");
+            if (!empty($result)) {
                 $kontaktdaten = "Lage: $m->einheit_lage<br>$m->personen_name_string_u<br>$m->haus_strasse $m->haus_nr, $m->haus_plz $m->haus_stadt<br>";
-                while ($row = mysql_fetch_assoc($result)) {
+                foreach($result as $row) {
                     $person_id = $row ['PERSON_MIETVERTRAG_PERSON_ID'];
                     $arr = $this->finde_detail_kontakt_arr('PERSON', $person_id);
                     if (is_array($arr)) {
@@ -198,12 +194,9 @@ class todo
     function finde_detail_kontakt_arr($tab, $id)
     {
         $db_abfrage = "SELECT DETAIL_NAME, DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = '$tab' && (DETAIL_NAME LIKE '%tel%'or DETAIL_NAME LIKE '%fax%' or DETAIL_NAME LIKE '%mobil%' or DETAIL_NAME LIKE '%handy%' OR DETAIL_NAME LIKE '%mail%' OR DETAIL_NAME LIKE '%anschrift%') && DETAIL_ZUORDNUNG_ID = '$id' && DETAIL_AKTUELL = '1' ORDER BY DETAIL_NAME ASC";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($resultat);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($resultat))
-                $my_array [] = $row;
-            return $my_array;
+        $resultat = DB::select($db_abfrage);
+        if (!empty($resultat)) {
+            return $resultat;
         }
     }
 
@@ -263,12 +256,11 @@ class todo
 
             for ($p = 0; $p < $anz_p; $p++) {
                 $proj_id = $my_proj_id_arr [$p] ['PROJ_ID'];
-                $result = mysql_query("SELECT * FROM TODO_LISTE WHERE T_ID='$proj_id' && AKTUELL='1' ORDER BY ANZEIGEN_AB ASC");
-                $anz = mysql_numrows($result);
-                if ($anz) {
+                $result = DB::select("SELECT * FROM TODO_LISTE WHERE T_ID='$proj_id' && AKTUELL='1' ORDER BY ANZEIGEN_AB ASC");
+                if (!empty($result)) {
                     $pz = $p + 1;
                     $z1 = 0;
-                    while ($row = mysql_fetch_assoc($result)) {
+                    foreach ($result as $row) {
                         $z1++;
                         $t_id = $row ['T_ID'];
                         $text = $row ['TEXT'];
@@ -383,24 +375,18 @@ OR `VERFASSER_ID` ='$benutzer_id'
 AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         }
 
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function get_unteruafgaben_arr($t_id)
     {
         $db_abfrage = "SELECT * FROM TODO_LISTE WHERE UE_ID ='$t_id' && ANZEIGEN_AB <= DATE_FORMAT(NOW(), '%Y-%m-%d' ) && AKTUELL='1' ORDER BY ERLEDIGT ASC, AKUT ASC, ANZEIGEN_AB ASC";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -426,10 +412,9 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 
             for ($p = 0; $p < $anz_p; $p++) {
                 $proj_id = $my_proj_id_arr [$p] ['PROJ_ID'];
-                $result = mysql_query("SELECT * FROM TODO_LISTE WHERE T_ID='$proj_id' && AKTUELL='1' ORDER BY ANZEIGEN_AB ASC");
+                $result = DB::select("SELECT * FROM TODO_LISTE WHERE T_ID='$proj_id' && AKTUELL='1' ORDER BY ANZEIGEN_AB ASC");
 
-                $anz = mysql_numrows($result);
-                if ($anz) {
+                if (!empty($result)) {
                     $pz = $p + 1;
                     $f = new formular ();
                     echo "<item>\n";
@@ -437,7 +422,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                     $link_mp = route('legacy::todo::index');
                     echo "<link>$link_mp</link>";
                     $z1 = 0;
-                    while ($row = mysql_fetch_assoc($result)) {
+                    foreach($result as $row) {
                         $z1++;
                         $t_id = $row ['T_ID'];
                         $text = $row ['TEXT'];
@@ -559,10 +544,9 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             $anz_p = count($my_proj_id_arr);
             for ($p = 0; $p < $anz_p; $p++) {
                 $proj_id = $my_proj_id_arr [$p] ['PROJ_ID'];
-                $result = mysql_query("SELECT * FROM TODO_LISTE WHERE T_ID='$proj_id' && AKTUELL='1' ORDER BY ANZEIGEN_AB ASC");
+                $result = DB::select("SELECT * FROM TODO_LISTE WHERE T_ID='$proj_id' && AKTUELL='1' ORDER BY ANZEIGEN_AB ASC");
 
-                $anz = mysql_numrows($result);
-                if ($anz) {
+                if (!empty($result)) {
                     $pz = $p + 1;
                     $f = new formular ();
 
@@ -570,8 +554,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 
                     $z1 = 0;
                     $f->erstelle_formular('FF', null);
-                    while ($row = mysql_fetch_assoc($result)) {
-                        // echo "<table>";
+                    foreach($result as $row) {
                         echo "<table class=\"sortable striped\">";
                         echo "<thead><tr><th>Opt</th><th>Tage</th><th>Datum</th><th>Projekt</th><th>Verfasser</th><th>Verantwortlich</th><th>Zuordnung</th><th>Status</th></tr></thead>";
                         $z1++;
@@ -715,15 +698,9 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
     {
         $db_abfrage = "SELECT * FROM TODO_LISTE WHERE (BENUTZER_ID='$b_id' OR VERFASSER_ID='$b_id') && AKTUELL='1' && UE_ID!='0' && ERLEDIGT='$erl' ORDER BY KOS_TYP, KOS_ID, UE_ID, VERFASSER_ID, ANZEIGEN_AB ASC";
 
-        // echo $db_abfrage;
-        // echo "<br><br>";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -741,8 +718,8 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 
     function get_aufgabe_alles($t_id)
     {
-        $result = mysql_query("SELECT * FROM TODO_LISTE WHERE T_ID='$t_id' && AKTUELL='1' ORDER BY T_ID DESC LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT * FROM TODO_LISTE WHERE T_ID='$t_id' && AKTUELL='1' ORDER BY T_ID DESC LIMIT 0,1");
+        $row = $result[0];
         $this->t_dat = $row ['T_DAT'];
         $this->t_id = $row ['T_ID'];
         $this->ue_id = $row ['UE_ID'];
@@ -804,32 +781,25 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
     function get_auftraege_alle($b_id, $erl = '0')
     {
         $db_abfrage = "SELECT * FROM TODO_LISTE WHERE (BENUTZER_ID='$b_id' OR VERFASSER_ID='$b_id') && AKTUELL='1' && UE_ID='0' && ERLEDIGT='$erl' ORDER BY TEXT ASC";
-
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function verschieben($t_id, $p_id)
     {
         $db_abfrage = "UPDATE TODO_LISTE SET UE_ID='$p_id' WHERE T_ID='$t_id'";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
         return true;
     }
 
     function als_erledigt_markieren($t_dat)
     {
         $db_abfrage = "UPDATE TODO_LISTE SET ERLEDIGT='1' WHERE T_DAT='$t_dat'";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-
+        DB::update($db_abfrage);
         // Protokollieren
         protokollieren('TODO_LISTE', $t_dat, $t_dat);
-
         return true;
     }
 
@@ -837,13 +807,9 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
     {
         $db_abfrage = "SELECT * FROM TODO_LISTE WHERE (BENUTZER_ID='$b_id' OR VERFASSER_ID='$b_id') && AKTUELL='1' && UE_ID='0' && ERLEDIGT='$erl' && T_ID NOT IN (SELECT UE_ID FROM TODO_LISTE WHERE (BENUTZER_ID='$b_id' OR VERFASSER_ID='$b_id') && AKTUELL='1' && UE_ID!='0' && ERLEDIGT='$erl') ORDER BY KOS_TYP, KOS_ID, UE_ID, VERFASSER_ID, ANZEIGEN_AB ASC";
 
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -863,14 +829,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         unset ($arr);
 
         $db_abfrage = "SELECT * FROM TODO_LISTE WHERE AKTUELL='1'  ORDER BY T_ID DESC";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $arr [] = $row;
-            }
-        }
-
+        $arr = DB::select($db_abfrage);
         $anz = count($arr);
         $p = 0;
         if ($anz) {
@@ -952,13 +911,9 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
     {
         $db_abfrage = "SELECT * FROM TODO_LISTE WHERE AKTUELL='1' ORDER BY VERFASSER_ID, BENUTZER_ID, TEXT ASC";
 
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -977,13 +932,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         unset ($arr);
 
         $db_abfrage = "SELECT * FROM TODO_LISTE WHERE AKTUELL='1' AND ERLEDIGT='$erl' ORDER BY T_ID DESC";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $arr [] = $row;
-            }
-        }
+        $arr = DB::select($db_abfrage);
 
         $anz = count($arr);
         $p = 0;
@@ -1159,19 +1108,16 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         $db_abfrage = "SELECT * 	FROM `TODO_LISTE` 	WHERE (	`BENUTZER_ID` ='$benutzer_id'	OR `VERFASSER_ID` ='$benutzer_id' )
 	AND `AKTUELL` = '1' AND ERLEDIGT='$erl' ORDER BY ERSTELLT DESC";
 
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function get_kos_typ_id($t_id)
     {
-        $result = mysql_query("SELECT KOS_TYP, KOS_ID FROM TODO_LISTE WHERE T_ID='$t_id' && AKTUELL='1' ORDER BY T_ID DESC LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT KOS_TYP, KOS_ID FROM TODO_LISTE WHERE T_ID='$t_id' && AKTUELL='1' ORDER BY T_ID DESC LIMIT 0,1");
+        $row = $result[0];
         if (is_array($row)) {
             $this->kos_typ = $row ['KOS_TYP'];
             $this->kos_id = $row ['KOS_ID'];
@@ -1250,7 +1196,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $kostentraeger_id = $bb->kostentraeger_id_ermitteln($kostentraeger_typ, $kostentraeger_bez);
                 $erledigt = request()->input('status');
                 $db_abfrage = "UPDATE TODO_LISTE SET TEXT='" . request()->input('text') . "', ANZEIGEN_AB='$anz_ab', BENUTZER_ID='" . request()->input('benutzer_id') ."', ERLEDIGT='$erledigt', AKUT='" . request()->input('akut') . "', KOS_TYP='" . request()->input('kostentraeger_typ'). "', KOS_ID='$kostentraeger_id' WHERE T_DAT='$this->t_dat'";
-                $resultat = mysql_query($db_abfrage) or die (mysql_error());
+                DB::update($db_abfrage);
                 weiterleiten(route('legacy::todo::index', [], false));
             }
         }
@@ -1297,7 +1243,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         if ($art = 'Projekt') {
             $db_abfrage = "DELETE FROM TODO_LISTE WHERE T_ID ='$t_id' OR UE_ID='$t_id'";
         }
-        $result = mysql_query($db_abfrage) or die (mysql_error());
+        DB::delete($db_abfrage);
         weiterleiten(route('legacy::todo::index', [], false));
     }
 
@@ -1399,8 +1345,8 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 
     function get_status($t_id)
     {
-        $result = mysql_query("SELECT ERLEDIGT FROM TODO_LISTE WHERE T_ID='$t_id' && AKTUELL='1' ORDER BY T_ID DESC LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT ERLEDIGT FROM TODO_LISTE WHERE T_ID='$t_id' && AKTUELL='1' ORDER BY T_ID DESC LIMIT 0,1");
+        $row = $result[0];
 
         if ($row ['ERLEDIGT'] == 1) {
             return 'erledigt';
@@ -1411,8 +1357,8 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 
     function get_kos_bez($t_id)
     {
-        $result = mysql_query("SELECT KOS_TYP, KOS_ID FROM TODO_LISTE WHERE T_ID='$t_id' && AKTUELL='1' ORDER BY T_ID DESC LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT KOS_TYP, KOS_ID FROM TODO_LISTE WHERE T_ID='$t_id' && AKTUELL='1' ORDER BY T_ID DESC LIMIT 0,1");
+        $row = $result[0];
 
         $kos_typ = $row ['KOS_TYP'];
         $kos_id = $row ['KOS_ID'];
@@ -1632,7 +1578,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         }
 
         ob_end_clean();
-        $gk_bez = utf8_encode(date("Y_m_d") . '_' . substr(str_replace('.', '_', str_replace(',', '', str_replace(' ', '_', ltrim(rtrim($this->kos_bez))))), 0, 30) . '_Auftrag-Nr._' . $id . '.pdf');
+        $gk_bez = date("Y_m_d") . '_' . substr(str_replace('.', '_', str_replace(',', '', str_replace(' ', '_', ltrim(rtrim($this->kos_bez))))), 0, 30) . '_Auftrag-Nr._' . $id . '.pdf';
         $pdf_opt ['Content-Disposition'] = $gk_bez;
 
         $pdf->ezStream($pdf_opt);
@@ -1820,27 +1766,18 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             $db_abfrage = "SELECT *, DATE_FORMAT(ERSTELLT, '%d.%m.%Y') AS ERSTELLT_D FROM  `TODO_LISTE` WHERE  `KOS_TYP` = '$kos_typ' && KOS_ID='$kos_id'  ORDER BY ERSTELLT DESC";
         }
 
-        // echo "$erledigt ".$db_abfrage;
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            // print_r($my_arr);
-            return $my_arr;
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function get_haus_ids($haus_str, $haus_nr, $haus_plz)
     {
         $db_abfrage = "SELECT HAUS_ID FROM HAUS WHERE HAUS_AKTUELL='1' && HAUS_STRASSE='$haus_str' && HAUS_NUMMER='$haus_nr' && HAUS_PLZ='$haus_plz'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($resultat);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($resultat))
-                $my_array [] = $row;
-            return $my_array;
+        $resultat = DB::select($db_abfrage);
+        if (!empty($resultat)) {
+            return $resultat;
         }
     }
 
@@ -1885,13 +1822,10 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 
     function liste_auftrage_an_arr($typ, $id, $erl = 0)
     {
-        $db_abfrage = "SELECT * 	FROM `TODO_LISTE` 	WHERE BENUTZER_TYP='$typ' && `BENUTZER_ID` ='$id' AND `AKTUELL` = '1' AND ERLEDIGT='$erl' ORDER BY ERSTELLT DESC";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
+        $db_abfrage = "SELECT * FROM `TODO_LISTE` WHERE BENUTZER_TYP='$typ' && `BENUTZER_ID` ='$id' AND `AKTUELL` = '1' AND ERLEDIGT='$erl' ORDER BY ERSTELLT DESC";
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
+            return $result;
         }
     }
 } // end class todo

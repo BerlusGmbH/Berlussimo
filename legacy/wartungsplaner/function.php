@@ -51,11 +51,9 @@ function kw($datum)
 /*berlussimo funktionen*/
 function partner_in_array()
 {
-    $result = mysql_query("SELECT * FROM PARTNER_LIEFERANT WHERE AKTUELL = '1' ORDER BY PARTNER_NAME ASC");
-    $numrows = mysql_numrows($result);
-    if ($numrows > 0) {
-        while ($row = mysql_fetch_assoc($result)) $my_array[] = $row;
-        return $my_array;
+    $result = DB::select("SELECT * FROM PARTNER_LIEFERANT WHERE AKTUELL = '1' ORDER BY PARTNER_NAME ASC");
+    if (!empty($result)) {
+        return $result;
     } else {
         return false;
     }
@@ -64,9 +62,9 @@ function partner_in_array()
 
 function get_partner_info($partner_id)
 {
-    $result = mysql_query("SELECT *  FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
-    $row = mysql_fetch_assoc($result);
-    if ($row) {
+    $result = DB::select("SELECT * FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
+    if(!empty($result)) {
+        $row = $result[0];
         $this->partner_dat = $row['PARTNER_DAT'];
         $this->partner_name = $row['PARTNER_NAME'];
         $this->partner_strasse = $row['STRASSE'];
@@ -130,8 +128,7 @@ function get_lon_lat_osm($str, $nr, $plz, $ort, $w_datum)
     if (!empty($lat) && !empty($lon)) {
         if (!check_str($str, $nr, $plz, $ort)) {
             $db_abfrage = "INSERT INTO GEO_LON_LAT VALUES (NULL, '$str', '$nr', '$plz', '$ort','$lon','$lat','1')";
-            $resultat = mysql_query($db_abfrage) or
-            die(mysql_error());
+            DB::insert($db_abfrage);
         }
     }
 
@@ -140,27 +137,20 @@ function get_lon_lat_osm($str, $nr, $plz, $ort, $w_datum)
 function check_str($str, $nr, $plz, $ort)
 {
     $db_abfrage = "SELECT * FROM GEO_LON_LAT WHERE STR='$str' && NR='$nr' && PLZ='$plz' && ORT='$ort'";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        return true;
-    }
+    $result = DB::select($db_abfrage);
+    return !empty($result);
 
 }
 
 function get_lat_lon_db($str, $nr, $plz, $ort)
 {
     $db_abfrage = "SELECT LAT, LON FROM GEO_LON_LAT WHERE STR='$str' && NR='$nr' && PLZ='$plz' && ORT='$ort' LIMIT 0,1";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        $row = mysql_fetch_assoc($result);
+    $result = DB::select($db_abfrage);
+    if (!empty($result)) {
+        $row = $result[0];
         $lat = $row['LAT'];
         $lon = $row['LON'];
         return "$lat, $lon, DB";
-
     }
 
 }
@@ -169,15 +159,13 @@ function get_tages_termine($datum, $benutzer_id)
 {
     $datum_sql = date_german2mysql($datum);
     $db_abfrage = "SELECT * FROM GEO_TERMINE WHERE BENUTZER_ID='$benutzer_id' && DATUM>='$datum_sql' ORDER BY VON ASC, BIS ASC";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
+    $result = DB::select($db_abfrage);
+    if (!empty($result)) {
         $ausgabe = "lat\tlon\ttitle\tdescription\ticon\ticonSize\ticonOffset\n";
         $bild = 1;
         $temp_datum = '';
         $farbe = 0;
-        while ($row = mysql_fetch_assoc($result)) {
+        foreach ($result as $row) {
             $bild++;
             $datum = $row['DATUM'];
             if ($datum != $temp_datum) {
@@ -225,13 +213,10 @@ function get_tages_termine_anzeigen($datum, $benutzer_id)
     die();
 
     $db_abfrage = "SELECT * FROM GEO_TERMINE, GEO_LON_LAT WHERE BENUTZER_ID='$benutzer_id' && DATE_FORMAT(DATUM, '%d.%m.%Y') BETWEEN '$datum' AND $datum_plus && GEO_LONLAT_ID = GEO_LON_LAT.DAT ORDER BY VON ASC, BIS ASC";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-
+    $result = DB::select($db_abfrage);
+    if (!empty($result)) {
         $zeile = 0;
-        while ($row = mysql_fetch_assoc($result)) {
+        foreach($result as $row) {
             $zeile++;
             $str = $row['STR'];
             $nr = $row['NR'];
@@ -253,11 +238,9 @@ function get_tages_termine_anzeigen($datum, $benutzer_id)
 function get_lonlat_values($lonlatid)
 {
     $db_abfrage = "SELECT LAT, LON FROM GEO_LON_LAT WHERE DAT='$lonlatid' LIMIT 0,1";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        $row = mysql_fetch_assoc($result);
+    $result = DB::select($db_abfrage);
+    if (!empty($result)) {
+        $row = $result[0];
         $lat = $row['LAT'];
         $lon = $row['LON'];
         return "$lat, $lon";
@@ -267,12 +250,9 @@ function get_lonlat_values($lonlatid)
 function get_lonlat_id($lon, $lat)
 {
     $db_abfrage = "SELECT DAT FROM GEO_LON_LAT WHERE LAT='$lat' && LON='$lon' LIMIT 0,1";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        $row = mysql_fetch_assoc($result);
-        return $row['DAT'];
+    $result = DB::select($db_abfrage);
+    if (!empty($result)) {
+        return $result[0]['DAT'];
     }
 }
 
@@ -452,21 +432,17 @@ function get_datum_infos($datum)
 
 function get_termine_von_kw($benutzer_id, $kw)
 {
-    $result = mysql_query("SELECT *, DATE_FORMAT(DATUM, '%d.%m.%Y') AS D_GER FROM GEO_TERMINE WHERE BENUTZER_ID='$benutzer_id' && DATE_FORMAT(DATUM, '%u') = '$kw' ORDER BY DATUM ASC, VON ASC, BIS ASC");
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) $my_array[] = $row;
-        return $my_array;
+    $result = DB::select("SELECT *, DATE_FORMAT(DATUM, '%d.%m.%Y') AS D_GER FROM GEO_TERMINE WHERE BENUTZER_ID='$benutzer_id' && DATE_FORMAT(DATUM, '%u') = '$kw' ORDER BY DATUM ASC, VON ASC, BIS ASC");
+    if (!empty($result)) {
+        return $result;
     }
 }
 
 function get_termine_von_1tag($benutzer_id, $datum)
 {
-    $result = mysql_query("SELECT *, DATE_FORMAT(DATUM, '%d.%m.%Y') AS D_GER FROM GEO_TERMINE WHERE BENUTZER_ID='$benutzer_id' && DATE_FORMAT(DATUM, '%d.%m.%Y') = '$datum' ORDER BY DATUM ASC, VON ASC, BIS ASC");
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) $my_array[] = $row;
-        return $my_array;
+    $result = DB::select("SELECT *, DATE_FORMAT(DATUM, '%d.%m.%Y') AS D_GER FROM GEO_TERMINE WHERE BENUTZER_ID='$benutzer_id' && DATE_FORMAT(DATUM, '%d.%m.%Y') = '$datum' ORDER BY DATUM ASC, VON ASC, BIS ASC");
+    if (!empty($result)) {
+        return $result;
     }
 }
 
@@ -483,7 +459,7 @@ function get_entfernung($lon, $lat)
     if (!empty($result)) {
         echo "<table>";
         $zeile = 0;
-        foreach($result as $row) {
+        foreach ($result as $row) {
             $zeile++;
             $str = $row->STR;
             $nr = $row->NR;
@@ -690,11 +666,9 @@ function termine_frei($datum, $termin_dauer, $benutzer_id)
         $anz_m_termine = count($t2v);
         for ($a = 0; $a < $anz_m_termine; $a++) {
             $t_anfang_temp_arr = explode(':', $t2v[$a]['VON']);
-            #$t_anfang = $t2v[$a]['VON'];
             $t_anfang_std = $t_anfang_temp_arr[0];
             $t_anfang_min = $t_anfang_temp_arr[1];
             $t_anfang = mktime($t_anfang_std, $t_anfang_min, 0, $h_monat, $h_tag, $h_jahr);
-            #$t_ende = $t2v[$a]['BIS'];
             $t_ende_temp_arr = explode(':', $t2v[$a]['BIS']);
             $t_ende_std = $t_ende_temp_arr[0];
             $t_ende_min = $t_ende_temp_arr[1];
@@ -833,23 +807,16 @@ function termine_frei($datum, $termin_dauer, $benutzer_id)
 function check_termin_of_day($datum)
 {
     $db_abfrage = "SELECT * FROM GEO_TERMINE, GEO_LON_LAT WHERE DATUM='$datum' && GEO_LONLAT_ID = GEO_LON_LAT.DAT ORDER BY VON ASC, BIS ASC";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        return true;
-    }
+    $result = DB::select($db_abfrage);
+    return !empty($result);
 }
 
 function get_termine_of_day_arr($benutzer_id, $datum)
 {
     $db_abfrage = "SELECT * FROM GEO_TERMINE, GEO_LON_LAT WHERE DATUM='$datum' && GEO_LONLAT_ID = GEO_LON_LAT.DAT && BENUTZER_ID='$benutzer_id' ORDER BY VON ASC, BIS ASC";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) $my_array[] = $row;
-        return $my_array;
+    $result = DB::select($db_abfrage);
+    if (!empty($result)) {
+        return $result;
     }
 }
 
@@ -961,20 +928,15 @@ function dropdown_zeiten($label, $name, $id, $von, $js)
 
 function dropdown_leistungen($gewerk_id)
 {
-    $result = mysql_query("SELECT LK_ID, BEZEICHNUNG FROM `LEISTUNGSKATALOG` WHERE (`GEWERK` ='$gewerk_id' OR `GEWERK` IS NULL) AND `AKTUELL` ='1' ORDER BY BEZEICHNUNG ASC");
-
-    $numrows = mysql_numrows($result);
+    $result = DB::select("SELECT LK_ID, BEZEICHNUNG FROM `LEISTUNGSKATALOG` WHERE (`GEWERK` ='$gewerk_id' OR `GEWERK` IS NULL) AND `AKTUELL` ='1' ORDER BY BEZEICHNUNG ASC");
     echo "<label for=\"leistung_id\">Leistung</label><select name=\"leistung_id\" id=\"leistung_id\" size=1>\n";
     echo "<option value=\"\">Bitte wählen</option>\n";
-    if ($numrows) {
-
-
-        while ($row = mysql_fetch_assoc($result)) {
+    if (!empty($result)) {
+        foreach($result as $row) {
             $leistung_id = $row['LK_ID'];
             $beschreibung = $row['BEZEICHNUNG'];
             echo "<option value=\"$leistung_id\">$beschreibung</option>\n";
         }
-
     }
     echo "</select>\n";
 }
@@ -982,7 +944,5 @@ function dropdown_leistungen($gewerk_id)
 function termin_speichern_db($benutzer_id, $datum, $von, $bis, $hinweis, $geo_id, $partner_id, $text)
 {
     $datum_sql = date_german2mysql($datum);
-    $db_abfrage = "INSERT INTO GEO_TERMINE VALUES (NULL, '$benutzer_id', '$datum_sql', '$von', '$bis','$text','$geo_id','$partner_id', '$hinweis')";
-    $resultat = mysql_query($db_abfrage) or
-    die(mysql_error());
+    DB::insert("INSERT INTO GEO_TERMINE VALUES (NULL, '$benutzer_id', '$datum_sql', '$von', '$bis','$text','$geo_id','$partner_id', '$hinweis')");
 }

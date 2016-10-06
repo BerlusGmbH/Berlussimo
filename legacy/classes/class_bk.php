@@ -3,30 +3,79 @@
 class bk
 {
 
+    public $bbk_be_buchung_id;
+    public $buchung_betrag;
+    public $bbk_kos_typ;
+    public $bbk_kos_id;
+    public $bbk_kos_bez;
+    public $vzweck;
+    public $bbk_key_id;
+    public $summe_kosten_konto;
+    public $summe_kosten_konto_a;
+    public $bk_verrechnungs_datum;
+    public $konto_bez;
+    public $bk_kos_typ;
+    public $bk_kos_id;
+    public $bk_verrechnungs_datum_d;
+    public $bbk_anteil;
+    public $bbk_hndl_betrag;
+    public $key_daten;
+    public $g_key_g_var;
+    public $g_key_name;
+    public $bk_berechnungs_datum_d;
+    public $bk_profil_id;
+    public $bk_jahr;
+    public $bbk_be_dat;
+    public $bk_an_anpassung_ab;
+    public $bk_an_keyid;
+    public $bk_an_fest_betrag;
+    public $bk_an_grund;
+    public $bk_an_id;
+    public $bk_an_dat;
+    public $anzahl_anpassungen;
+    public $bk_kos_bez;
+    public $bk_bezeichnung;
+    public $profil_id;
+    public $bk_berechnungs_datum;
+    public $wirt_g_qm_wohnen_a;
+    public $wirt_g_qm_gewerbe_a;
+    public $g_key_me;
+    public $buchungsdatum;
+    public $footer_zahlungshinweis;
+    public $kontenrahmen_id;
+    public $konto_hndl;
+    public $konto_gkey;
+    public $konto;
+    public $g_key_e_var;
+    public $buchung_betrag_a;
+    public $objekt_schluessel_einheit;
+    public $objekt_schluessel;
+    public $datum;
+    public $b_kos_id;
+    public $b_kos_typ;
+    public $u_kontierung;
+    public $wirt_g_qm_gewerbe;
+    public $wirt_ges_qm;
+    public $wirt_ges_qm_a;
+    public $wirt_g_qm_wohnen;
+    public $bbk_profil_id;
+    public $bbk_be_id;
+
     /*
 	 * Liefert ein Array mit allen Kostenkonten zu einer Kontengruppe, gesucht nach Gruppenbezeichnung
-	 * z.B. Umlagef�hige Kosten
+	 * z.B. Umlagefähige Kosten
 	 */
-    function update_prozent_umlage_alt($profil_id, $bk_konto_id, $prozent)
-    {
-        $prozent = nummer_komma2punkt($prozent);
-        $db_abfrage = "UPDATE BK_BERECHNUNG_BUCHUNGEN SET ANTEIL='$prozent'  WHERE BK_K_ID='$bk_konto_id' && BK_PROFIL_ID='$profil_id' && AKTUELL='1'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-    }
-
     function update_prozent_umlage($profil_id, $bk_konto_id, $prozent)
     {
         $prozent = nummer_komma2punkt($prozent);
 
         $db_abfrage = "SELECT BUCHUNG_ID FROM BK_BERECHNUNG_BUCHUNGEN WHERE AKTUELL='1' && BK_K_ID='$bk_konto_id' && BK_PROFIL_ID='$profil_id'";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $buchung_id = $row ['BUCHUNG_ID'];
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
+            foreach ($result as $row) {
+                $buchung_id = $row['BUCHUNG_ID'];
                 $ursprung_summe = $this->get_summe($buchung_id);
-                $db_abfrage1 = "UPDATE BK_BERECHNUNG_BUCHUNGEN SET ANTEIL='$prozent', HNDL_BETRAG=($ursprung_summe/100)*$prozent  WHERE BUCHUNG_ID='$buchung_id' && BK_K_ID='$bk_konto_id' && BK_PROFIL_ID='$profil_id' && AKTUELL='1'";
-                $resultat = mysql_query($db_abfrage1) or die (mysql_error());
+                DB::update("UPDATE BK_BERECHNUNG_BUCHUNGEN SET ANTEIL='$prozent', HNDL_BETRAG=($ursprung_summe/100)*$prozent  WHERE BUCHUNG_ID='$buchung_id' && BK_K_ID='$bk_konto_id' && BK_PROFIL_ID='$profil_id' && AKTUELL='1'");
             }
         }
     }
@@ -34,11 +83,9 @@ class bk
     function get_summe($buchungs_id)
     {
         $db_abfrage = "SELECT BETRAG FROM GELD_KONTO_BUCHUNGEN WHERE AKTUELL='1' && GELD_KONTO_BUCHUNGEN_ID='$buchungs_id' ORDER BY GELD_KONTO_BUCHUNGEN_DAT DESC LIMIT 0,1";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
-            return $row ['BETRAG'];
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
+            return $result[0]['BETRAG'];
         }
     }
 
@@ -52,15 +99,14 @@ class bk
         $b = new buchen ();
         $kostentraeger_id = $b->kostentraeger_id_ermitteln($kostentraeger_typ, $kostentraeger_bez);
 
-        $db_abfrage = "UPDATE BK_BERECHNUNG_BUCHUNGEN SET ANTEIL='$anteil_prozent' , KEY_ID='$genkey' ,KOSTENTRAEGER_TYP='$kostentraeger_typ' , KOSTENTRAEGER_ID='$kostentraeger_id', HNDL_BETRAG='$hndl_betrag' WHERE BK_BE_ID='$bk_be_id'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update("UPDATE BK_BERECHNUNG_BUCHUNGEN SET ANTEIL='$anteil_prozent' , KEY_ID='$genkey' ,KOSTENTRAEGER_TYP='$kostentraeger_typ' , KOSTENTRAEGER_ID='$kostentraeger_id', HNDL_BETRAG='$hndl_betrag' WHERE BK_BE_ID='$bk_be_id'");
     }
 
     function get_bk_buchung_details($be_id, $profil_id)
     {
-        $result = mysql_query("SELECT *  FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE AKTUELL='1' && BK_BE_ID='$be_id' && BK_PROFIL_ID='$profil_id'");
+        $result = DB::select("SELECT *  FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE AKTUELL='1' && BK_BE_ID='$be_id' && BK_PROFIL_ID='$profil_id'");
 
-        $row = mysql_fetch_assoc($result);
+        $row = $result[0];
 
         $this->bbk_be_dat = $row ['BK_BE_DAT'];
         $this->bbk_be_id = $row ['BK_BE_ID'];
@@ -81,14 +127,13 @@ class bk
         unset ($this->buchung_betrag);
         unset ($this->buchungsdatum);
         unset ($this->vzweck);
-        $result = mysql_query(" SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELD_KONTO_BUCHUNGEN_ID` ='$buchung_id' AND `AKTUELL` = '1' LIMIT 0 , 1");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
-            $this->buchung_betrag = $row ['BETRAG'];
-            $this->buchungsdatum = $row ['DATUM'];
-            $this->vzweck = $row ['VERWENDUNGSZWECK'];
+        $result = DB::select("SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELD_KONTO_BUCHUNGEN_ID` ='$buchung_id' AND `AKTUELL` = '1' LIMIT 0 , 1");
+        if (!empty($result)) {
+            $row = $result[0];
 
+            $this->buchung_betrag = $row['BETRAG'];
+            $this->buchungsdatum = $row['DATUM'];
+            $this->vzweck = $row['VERWENDUNGSZWECK'];
             $kos_typ = $row ['KOSTENTRAEGER_TYP'];
             $kos_id = $row ['KOSTENTRAEGER_ID'];
             $this->b_kos_typ = $row ['KOSTENTRAEGER_TYP'];
@@ -144,10 +189,9 @@ class bk
 
     function get_genkey_infos($key_id)
     {
-        $result = mysql_query("SELECT *  FROM BK_GENERAL_KEYS  WHERE GKEY_ID='$key_id' && AKTUELL='1'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT *  FROM BK_GENERAL_KEYS  WHERE GKEY_ID='$key_id' && AKTUELL='1'");
+        if (!empty($result)) {
+            $row = $result[0];
             $this->g_key_name = $row ['GKEY_NAME'];
             $this->g_key_g_var = $row ['G_VAR'];
             $this->g_key_e_var = $row ['E_VAR'];
@@ -161,21 +205,16 @@ class bk
 
     function dropdown_gen_keys()
     {
-        $result = mysql_query("SELECT * FROM BK_GENERAL_KEYS WHERE  AKTUELL='1'   ORDER BY GKEY_NAME ASC");
+        $result = DB::select("SELECT * FROM BK_GENERAL_KEYS WHERE  AKTUELL='1'   ORDER BY GKEY_NAME ASC");
 
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
+        if (!empty($result)) {
             echo "<div class='input-field'>";
             echo "<select id=\"genkeys\" name=\"genkey\" size=\"1\">";
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach ($result as $row) {
                 $keyid = $row ['GKEY_ID'];
                 $keyname = $row ['GKEY_NAME'];
 
-                echo "<option";
-                //if ($keyname == $default) {
-                //	echo " selected";
-                //}
-                echo " value=\"$keyid\">$keyname</option>";
+                echo "<option value=\"$keyid\">$keyname</option>";
             }
             echo "</select><label for=\"genkeys\">Verteilerschlüssel</label>";
             echo "</div>";
@@ -286,18 +325,15 @@ class bk
         $ber_datum = date_german2mysql($ber_datum);
         $ver_datum = date_german2mysql($ver_datum);
 
-        $db_abfrage = "INSERT INTO BK_PROFILE VALUES (NULL, '$last_bk_id', '$bez', 'Wirtschaftseinheit', '$w_id','$jahr','$ber_datum','$ver_datum', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert("INSERT INTO BK_PROFILE VALUES (NULL, '$last_bk_id', '$bez', 'Wirtschaftseinheit', '$w_id','$jahr','$ber_datum','$ver_datum', '1')");
         session()->put('profil_id', $last_bk_id);
     }
 
     function last_id($tab, $spalte)
     {
-        $result = mysql_query("SELECT $spalte FROM `$tab` ORDER BY $spalte DESC LIMIT 0,1");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
-            return $row [$spalte];
+        $result = DB::select("SELECT $spalte FROM `$tab` ORDER BY $spalte DESC LIMIT 0,1");
+        if (!empty($result)) {
+            return $result[0][$spalte];
         } else {
             return 0;
         }
@@ -309,10 +345,9 @@ class bk
     {
         unset ($this->bk_profil_id);
         unset ($this->bk_bezeichnung);
-        $result = mysql_query("SELECT * FROM `BK_PROFILE` WHERE BK_ID='$profil_id' && AKTUELL='1' ORDER BY BK_DAT DESC LIMIT 0,1");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT * FROM `BK_PROFILE` WHERE BK_ID='$profil_id' && AKTUELL='1' ORDER BY BK_DAT DESC LIMIT 0,1");
+        if (!empty($result)) {
+            $row = $result[0];
             $this->bk_profil_id = $row ['BK_ID'];
             $this->bk_bezeichnung = $row ['BEZEICHNUNG'];
             $this->bk_kos_typ = $row ['TYP'];
@@ -352,9 +387,7 @@ class bk
             echo "<b>Im Profil angelegte Konten</b><br>";
             echo "</div>";
 
-            // echo "<div class=\"ausgewaehlt\">";
             echo "<table class=\"sortable striped\">";
-            // echo "<tr class=\"feldernamen\"><td>Konto</td><td>Bezeichnung</td><td>Summe Auswahl �</td><td>Durchschnitt %</td><td>Umlage</td><td>OPTION</td></tr>";
             echo "<tr><th>Konto</th><th>Bezeichnung</th><th>Summe Auswahl</th><th>Durchschnitt</th><th>Umlage</th><th>OPTION</th></tr>";
 
             $g_summe = 0;
@@ -396,24 +429,16 @@ class bk
 
     function bk_konten($profil_id)
     {
-        $result = mysql_query("SELECT * FROM `BK_PROFILE` JOIN BK_KONTEN ON ( BK_PROFILE.BK_ID = BK_KONTEN.BK_PROFIL_ID ) WHERE BK_PROFILE.BK_ID='$profil_id' && BK_KONTEN.AKTUELL='1' && BK_PROFILE.AKTUELL='1' ORDER BY KONTO ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
-        }
+        $result = DB::select("SELECT * FROM `BK_PROFILE` JOIN BK_KONTEN ON ( BK_PROFILE.BK_ID = BK_KONTEN.BK_PROFIL_ID ) WHERE BK_PROFILE.BK_ID='$profil_id' && BK_KONTEN.AKTUELL='1' && BK_PROFILE.AKTUELL='1' ORDER BY KONTO ASC");
+        return $result;
     }
 
     function summe_kosten_ausgewaehlt($profil_id, $konto_id)
     {
         $this->summe_kosten_konto = 0.00;
-        $result = mysql_query("SELECT BUCHUNG_ID FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE  `BK_K_ID` ='$konto_id'  && BK_PROFIL_ID='$profil_id' && AKTUELL = '1'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-
-            while ($row = mysql_fetch_assoc($result)) {
+        $result = DB::select("SELECT BUCHUNG_ID FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE  `BK_K_ID` ='$konto_id'  && BK_PROFIL_ID='$profil_id' && AKTUELL = '1'");
+        if (!empty($result)) {
+            foreach ($result as $row) {
                 $buchung_id = $row ['BUCHUNG_ID'];
                 $this->bk_buchungen_details($buchung_id);
                 $this->summe_kosten_konto += $this->buchung_betrag;
@@ -424,11 +449,9 @@ class bk
     function summe_kosten_umgelegt($profil_id, $konto_id)
     {
         $summe = 0;
-        $result = mysql_query("SELECT BUCHUNG_ID, ANTEIL FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE  `BK_K_ID` ='$konto_id'  && BK_PROFIL_ID='$profil_id' && AKTUELL = '1'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-
-            while ($row = mysql_fetch_assoc($result)) {
+        $result = DB::select("SELECT BUCHUNG_ID, ANTEIL FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE  `BK_K_ID` ='$konto_id'  && BK_PROFIL_ID='$profil_id' && AKTUELL = '1'");
+        if (!empty($result)) {
+            foreach ($result as $row) {
                 $buchung_id = $row ['BUCHUNG_ID'];
                 $anteil = $row ['ANTEIL'];
                 $this->bk_buchungen_details($buchung_id);
@@ -454,15 +477,12 @@ class bk
 
     function get_konto_id($konto, $profil_id)
     {
-        $result = mysql_query("SELECT BK_K_ID  FROM `BK_KONTEN` WHERE AKTUELL='1' && BK_PROFIL_ID='$profil_id' && KONTO='$konto' ORDER BY BK_K_DAT DESC LIMIT 0,1");
-
-        $row = mysql_fetch_assoc($result);
-        return $row ['BK_K_ID'];
+        $result = DB::select("SELECT BK_K_ID  FROM `BK_KONTEN` WHERE AKTUELL='1' && BK_PROFIL_ID='$profil_id' && KONTO='$konto' ORDER BY BK_K_DAT DESC LIMIT 0,1");
+        return $result[0]['BK_K_ID'];
     }
 
     function buchungsauswahl($konto, $konto_id)
     {
-        $f = new formular ();
         if (request()->has('submit_anzeige')) {
             if (request()->has('anzeigen_von') && request()->has('anzeigen_bis')) {
                 if (check_datum(request()->input('anzeigen_von') && check_datum(request()->input('anzeigen_bis')))) {
@@ -567,11 +587,9 @@ class bk
 
             echo "<tr><td>";
             $js2 = "onclick=\"buchungen_hinzu('uebernahme[]', $konto_id,$this->bk_profil_id)\"";
-            // $f->button_js('jsbtn', 'Markierte �bernehmen', $js2);
             echo "</td></tr>";
             echo "</table>";
             $f->send_button("submit_key", "Hinzufügen");
-            // $f->ende_formular();
         } else {
             echo "<p style='clear:both;'>Es stehen keine weiteren Buchungen zum Kostenkonto $kostenkonto zur Auswahl.</p>";
         }
@@ -643,17 +661,12 @@ class bk
                     $hndl_betrag_a = "<b>$hndl_betrag_a</b>";
                 }
                 echo "<tr class=\"$classe\"><td><a $js><b>$buchung_id</b></a></td><td> $datum </td><td>$buchung_betrag</td><td>$anteil%</td><td>$umlagebetrag</td><td>$hndl_betrag_a</td><td>$this->vzweck</td><td>  $kos_bez</td><td>$this->u_kontierung</td>";
-                // echo "<a $js>$buchungs_id ($gesamt_anteil%) $datum <b>|</b> $buchung_betrag davon $anteil % = <b>$umlagebetrag</b> <b>|</b> $this->vzweck </a>";
                 echo "<td>$this->g_key_name</td><td>$link_anpassen</td></tr>";
-                // echo "</div><br>";
                 if ($zeile == 2) {
                     $zeile = 0;
                 }
             }
             echo "</tr>";
-            // echo "<tr><td>";
-
-            // echo "</td></tr>";
             echo "<tr><td></td><td></td><td>$sum_gb</td><td></td><td>$sum_umlage</td><td>$sum_hndl</td></tr>";
             echo "</table>";
         } else {
@@ -687,46 +700,26 @@ class bk
         $vorjahr = $jahr - 1;
         $nachjahr = $jahr + 1;
 
-        // $result = mysql_query ("SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` ='$geldkonto_id' AND `KONTENRAHMEN_KONTO` ='$kostenkonto' AND `AKTUELL` = '1' && DATE_FORMAT(DATUM, '%Y') BETWEEN '$jahr' AND '$nachjahr' AND GELD_KONTO_BUCHUNGEN_ID NOT IN (SELECT BUCHUNG_ID FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE `BK_K_ID` ='$konto_id' AND `AKTUELL` = '1' && ANTEIL='100' ORDER BY BK_BE_ID ASC) ORDER BY DATUM ASC ");
-        // $result = mysql_query ("SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` ='$geldkonto_id' AND `KONTENRAHMEN_KONTO` ='$kostenkonto' AND `AKTUELL` = '1' && DATE_FORMAT(DATUM, '%Y') BETWEEN $vorjahr AND $nachjahr ORDER BY DATUM ASC ");
-        // $result = mysql_query ("SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` ='$geldkonto_id' AND `KONTENRAHMEN_KONTO` ='$kostenkonto' AND `AKTUELL` = '1' && DATE_FORMAT(DATUM, '%Y') BETWEEN $jahr AND $nachjahr ORDER BY DATUM ASC ");
-
         if (!session()->has('anzeigen_von') && !session()->has('anzeigen_bis')) {
-            $result = mysql_query("SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` ='$geldkonto_id' AND `KONTENRAHMEN_KONTO` ='$kostenkonto' AND `AKTUELL` = '1' && DATE_FORMAT(DATUM, '%Y-%m') BETWEEN '$vorjahr-12' AND '$nachjahr-03' AND GELD_KONTO_BUCHUNGEN_ID NOT IN (SELECT BUCHUNG_ID FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE `BK_K_ID` = '$konto_id' GROUP BY BUCHUNG_ID HAVING SUM( ANTEIL ) >= '100' ) ");
+            $result = DB::select("SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` ='$geldkonto_id' AND `KONTENRAHMEN_KONTO` ='$kostenkonto' AND `AKTUELL` = '1' && DATE_FORMAT(DATUM, '%Y-%m') BETWEEN '$vorjahr-12' AND '$nachjahr-03' AND GELD_KONTO_BUCHUNGEN_ID NOT IN (SELECT BUCHUNG_ID FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE `BK_K_ID` = '$konto_id' GROUP BY BUCHUNG_ID HAVING SUM( ANTEIL ) >= '100' ) ");
         } else {
             $von = date_german2mysql(session()->get('anzeigen_von'));
             $bis = date_german2mysql(session()->get('anzeigen_bis'));
-
-            $result = mysql_query("SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` ='$geldkonto_id' AND `KONTENRAHMEN_KONTO` ='$kostenkonto' AND `AKTUELL` = '1' && DATE_FORMAT(DATUM, '%Y-%m-%d') BETWEEN '$von' AND '$bis' AND GELD_KONTO_BUCHUNGEN_ID NOT IN (SELECT BUCHUNG_ID FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE `BK_K_ID` = '$konto_id' GROUP BY BUCHUNG_ID HAVING SUM( ANTEIL ) >= '100' ) ");
+            $result = DB::select("SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` ='$geldkonto_id' AND `KONTENRAHMEN_KONTO` ='$kostenkonto' AND `AKTUELL` = '1' && DATE_FORMAT(DATUM, '%Y-%m-%d') BETWEEN '$von' AND '$bis' AND GELD_KONTO_BUCHUNGEN_ID NOT IN (SELECT BUCHUNG_ID FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE `BK_K_ID` = '$konto_id' GROUP BY BUCHUNG_ID HAVING SUM( ANTEIL ) >= '100' ) ");
         }
-
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
-        }
+        return $result;
     }
 
     function gesamt_anteil($buchung_id, $profil_id, $konto_id)
     {
-        $result = mysql_query("SELECT  SUM( ANTEIL ) AS G_ANTEIL FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE BUCHUNG_ID = '$buchung_id' && `BK_K_ID` = '$konto_id' AND BK_PROFIL_ID = '$profil_id' && `AKTUELL` = '1' GROUP BY BUCHUNG_ID");
-
-        $row = mysql_fetch_assoc($result);
-        return $row ['G_ANTEIL'];
+        $result = DB::select("SELECT SUM( ANTEIL ) AS G_ANTEIL FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE BUCHUNG_ID = '$buchung_id' && `BK_K_ID` = '$konto_id' AND BK_PROFIL_ID = '$profil_id' && `AKTUELL` = '1' GROUP BY BUCHUNG_ID");
+        return $result[0]['G_ANTEIL'];
     }
 
     function bk_konten_buchungen_hinzu($profil_id, $konto_id)
     {
-        $result = mysql_query("SELECT BK_BE_ID, BUCHUNG_ID,  ANTEIL, KEY_ID, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID,HNDL_BETRAG FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE  `BK_K_ID` ='$konto_id' AND BK_PROFIL_ID='$profil_id' && `AKTUELL` = '1'  ORDER BY BUCHUNG_ID ASC ");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
-        }
+        $result = DB::select("SELECT BK_BE_ID, BUCHUNG_ID,  ANTEIL, KEY_ID, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID,HNDL_BETRAG FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE  `BK_K_ID` ='$konto_id' AND BK_PROFIL_ID='$profil_id' && `AKTUELL` = '1'  ORDER BY BUCHUNG_ID ASC ");
+        return $result;
     }
 
     function assistent_alt()
@@ -795,13 +788,11 @@ class bk
 
     function liste_bk_profile()
     {
-        $result = mysql_query("SELECT * FROM `BK_PROFILE` WHERE AKTUELL='1' ORDER BY BK_ID DESC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
+        $result = DB::select("SELECT * FROM `BK_PROFILE` WHERE AKTUELL='1' ORDER BY BK_ID DESC");
+        if (!empty($result)) {
             echo "<table class=\"sortable striped\">";
             echo "<thead><tr><th>Nr.</th><th>Berechnungsprofile</th><th>OPTIONEN</TH></tr></thead>";
-            while ($row = mysql_fetch_assoc($result)) {
-
+            foreach($result as $row) {
                 $profil_id = $row ['BK_ID'];
                 $bez = $row ['BEZEICHNUNG'];
                 $link = "<a href='" . route('legacy::bk::index', ['option' => 'profil_set', 'profil_id' => $profil_id]) . "'>$bez</a><br>";
@@ -815,8 +806,6 @@ class bk
     function buchungskonten_auswahl()
     {
         if (!session()->has('profil_id')) {
-            // $this->status_schritt('rot','Schritt 1 unvollständig');
-
             $this->form_profil_anlegen();
         } else {
             $profil_id = session()->get('profil_id');
@@ -824,8 +813,6 @@ class bk
             $text = "Schritt 1 erfolgreich<br>Ausgewähltes Profil: $this->bk_bezeichnung";
             echo $text;
             echo "<hr>";
-            // $this->status_schritt('rot','Schritt 2');
-
             /* 1. Kontenrahmen finden */
             $k = new kontenrahmen ();
             $this->kontenrahmen_id = $k->get_kontenrahmen($this->bk_kos_typ, $this->bk_kos_id);
@@ -855,23 +842,16 @@ class bk
 
     function update_genkey($konto_id, $profil_id, $genkey_id, $hndl)
     {
-        $db_abfrage = "UPDATE BK_KONTEN SET GENKEY_ID='$genkey_id', HNDL='$hndl'  WHERE BK_K_ID='$konto_id' && BK_PROFIL_ID= '$profil_id' && AKTUELL='1'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update("UPDATE BK_KONTEN SET GENKEY_ID='$genkey_id', HNDL='$hndl'  WHERE BK_K_ID='$konto_id' && BK_PROFIL_ID= '$profil_id' && AKTUELL='1'");
 
-        /* Dazugeh�rige Buchungen anpassen */
+        /* Dazugehörige Buchungen anpassen */
 
-        $db_abfrage = "SELECT BK_BE_DAT, BUCHUNG_ID, ANTEIL FROM BK_BERECHNUNG_BUCHUNGEN WHERE AKTUELL='1' && BK_K_ID='$konto_id' && BK_PROFIL_ID='$profil_id'";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $zeilen [] = $row;
-            }
-            for ($a = 0; $a < count($zeilen); $a++) {
-
-                $dat = $zeilen [$a] ['BK_BE_DAT'];
-                $buchung_id = $zeilen [$a] ['BUCHUNG_ID'];
-                $anteil = $zeilen [$a] ['ANTEIL'];
+        $result = DB::select("SELECT BK_BE_DAT, BUCHUNG_ID, ANTEIL FROM BK_BERECHNUNG_BUCHUNGEN WHERE AKTUELL='1' && BK_K_ID='$konto_id' && BK_PROFIL_ID='$profil_id'");
+        if (!empty($result)) {
+            foreach($result as $row) {
+                $dat = $row['BK_BE_DAT'];
+                $buchung_id = $row['BUCHUNG_ID'];
+                $anteil = $row['ANTEIL'];
                 $this->bk_buchungen_details($buchung_id);
                 $this->bk_profil_infos($profil_id);
                 if (session()->get('kontierung') == '1') {
@@ -884,11 +864,10 @@ class bk
                 } else {
                     $hndl_betrag_neu = '0.000';
                 }
-                $db_abfrage = "UPDATE BK_BERECHNUNG_BUCHUNGEN SET HNDL_BETRAG='$hndl_betrag_neu', KEY_ID='$genkey_id', KOSTENTRAEGER_TYP='$this->bk_kos_typ', KOSTENTRAEGER_ID='$this->bk_kos_id' WHERE BK_BE_DAT='$dat'";
-                $result = mysql_query($db_abfrage) or die (mysql_error());
+                DB::update("UPDATE BK_BERECHNUNG_BUCHUNGEN SET HNDL_BETRAG='$hndl_betrag_neu', KEY_ID='$genkey_id', KOSTENTRAEGER_TYP='$this->bk_kos_typ', KOSTENTRAEGER_ID='$this->bk_kos_id' WHERE BK_BE_DAT='$dat'");
             }
         } else {
-            echo "<h1>Fehler 34324324 - Keine Buchungen im Kostenkonto $konto_id";
+            echo "<h5>Fehler 34324324 - Keine Buchungen im Kostenkonto $konto_id</h5>";
         }
     }
 
@@ -980,13 +959,10 @@ class bk
                 $bk->bk_kos_typ = $bk->b_kos_typ;
                 $bk->bk_kos_id = $bk->b_kos_id;
             }
-
             $last_bk_be_id = last_id2('BK_BERECHNUNG_BUCHUNGEN', 'BK_BE_ID') + 1;
-            $abfrage = "INSERT INTO BK_BERECHNUNG_BUCHUNGEN VALUES(NULL, '$last_bk_be_id', '$buchung_id', '$bk_konto_id', '$profil_id','$bk_genkey_id', '$max_anteil','$bk->bk_kos_typ', '$bk->bk_kos_id','$hndl_betrag','1')";
-            $resultat = mysql_query($abfrage) or die (mysql_error());
+            DB::insert("INSERT INTO BK_BERECHNUNG_BUCHUNGEN VALUES(NULL, '$last_bk_be_id', '$buchung_id', '$bk_konto_id', '$profil_id','$bk_genkey_id', '$max_anteil','$bk->bk_kos_typ', '$bk->bk_kos_id','$hndl_betrag','1')");
         } else {
             echo "Fehler 888888 bk_class";
-            die ();
         }
     }
 
@@ -1030,15 +1006,13 @@ class bk
 
     function get_durchschnitt_umlegen($profil_id, $bk_k_id)
     {
-        $result = mysql_query("SELECT AVG( ANTEIL ) AS D FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE `BK_K_ID` = '$bk_k_id' && BK_PROFIL_ID='$profil_id'");
-        $row = mysql_fetch_assoc($result);
-        return $row ['D'];
+        $result = DB::select("SELECT AVG( ANTEIL ) AS D FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE `BK_K_ID` = '$bk_k_id' && BK_PROFIL_ID='$profil_id'");
+        return $result[0]['D'];
     }
 
     function auswahl_buchungskonten_kontenrahmen($kontenrahmen_id)
     {
         $konten_arr = $this->konten_in_arr_rahmen($kontenrahmen_id);
-        // $konten_arr = $this->get_konten_nach_gruppe('Umlagef�hige Kosten');
         $anzahl_konten = count($konten_arr);
         echo "<div class=\"bk_beschreibung_auswahl\">";
         echo "<b>Zur Auswahl stehende Konten im Kontenrahmen</b><br>";
@@ -1065,14 +1039,8 @@ class bk
 
     function konten_in_arr_rahmen($kontenrahmen_id)
     {
-        $result = mysql_query("SELECT KONTO, BEZEICHNUNG FROM KONTENRAHMEN_KONTEN WHERE KONTENRAHMEN_ID='$kontenrahmen_id' && AKTUELL='1' && KONTO NOT IN(SELECT KONTO FROM BK_KONTEN WHERE BK_PROFIL_ID='$this->bk_profil_id')  ORDER BY KONTO ASC");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-        }
-        return $my_array;
+        $result = DB::select("SELECT KONTO, BEZEICHNUNG FROM KONTENRAHMEN_KONTEN WHERE KONTENRAHMEN_ID='$kontenrahmen_id' && AKTUELL='1' && KONTO NOT IN(SELECT KONTO FROM BK_KONTEN WHERE BK_PROFIL_ID='$this->bk_profil_id')  ORDER BY KONTO ASC");
+        return $result;
     }
 
     function profil_reset()
@@ -1132,16 +1100,9 @@ class bk
 
     function get_anpassung_infos2($profil_id)
     {
-        unset ($this->anp_arr);
         $db_abfrage = "SELECT * FROM BK_ANPASSUNG WHERE PROFIL_ID='$profil_id' && AKTUELL='1' ORDER BY GRUND ASC";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $this->anp_arr [] = $row;
-            }
-            return $this->anp_arr;
-        }
+        $result = DB::select($db_abfrage);
+        return $result;
     }
 
     function get_anpassung_details($profil_id, $kostenart)
@@ -1153,10 +1114,9 @@ class bk
         unset ($this->bk_an_key_id);
         unset ($this->bk_an_anpassung_ab);
         $db_abfrage = "SELECT * FROM BK_ANPASSUNG WHERE PROFIL_ID='$profil_id' && GRUND='$kostenart' && AKTUELL='1' ORDER BY AN_DAT DESC LIMIT 0,1";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
+            $row = $result[0];
             $this->anzahl_anpassungen = $numrows;
             $this->bk_an_dat = $row ['AN_DAT'];
             $this->bk_an_id = $row ['AN_ID'];
@@ -1190,15 +1150,13 @@ class bk
     {
         $last_id = $this->last_id('BK_ANPASSUNG', 'AN_ID') + 1;
         $betrag = nummer_komma2punkt($betrag);
-        $db_abfrage = "INSERT INTO BK_ANPASSUNG VALUES (NULL, '$last_id','$kostenart', '$betrag', '$genkey','$profil_id', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert("INSERT INTO BK_ANPASSUNG VALUES (NULL, '$last_id','$kostenart', '$betrag', '$genkey','$profil_id', '1')");
         return $last_id;
     }
 
     function bk_hk_anpassung_loeschen($an_dat)
     {
-        $db_abfrage = "DELETE FROM BK_ANPASSUNG WHERE AN_DAT='$an_dat'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::delete("DELETE FROM BK_ANPASSUNG WHERE AN_DAT='$an_dat'");
     }
 
     function form_bk_hk_anpassung_alle()
@@ -1332,15 +1290,10 @@ IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jahr-12-31')
 DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jahr-12-31'), IF(DATE_FORMAT(MIETVERTRAG_VON, '%Y') < '$jahr', '$jahr-01-01', MIETVERTRAG_VON))+1 AS TAGE FROM `MIETVERTRAG` WHERE `MIETVERTRAG_AKTUELL`='1' 
 && DATE_FORMAT(MIETVERTRAG_VON,'%Y') <= '$jahr' && (DATE_FORMAT(MIETVERTRAG_BIS,'%Y') >='$jahr' OR DATE_FORMAT(MIETVERTRAG_BIS,'%Y') ='0000') && EINHEIT_ID='$einheit_id' ORDER BY MIETVERTRAG_VON ASC";
 
-        $result = mysql_query($abfrage) or die (mysql_error());
+        $my_array = DB::select($abfrage);
 
-        $numrows = mysql_numrows($result);
-        /* Wenn �berhaupt vermietet, sonst Leerstand ganzes Jahr, siehe unten nach ELSE */
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_array [] = $row;
-            }
-
+        /* Wenn überhaupt vermietet, sonst Leerstand ganzes Jahr, siehe unten nach ELSE */
+        if (!empty($result)) {
             $anzahl_zeilen = count($my_array);
             $tage = 0;
             for ($a = 0; $a < $anzahl_zeilen; $a++) {
@@ -1412,7 +1365,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     $mv_id = $my_array [$a] ['KOS_ID'];
                     $berechnung_von_a = date_mysql2german($berechnung_von);
                     $berechnung_bis_a = date_mysql2german($berechnung_bis);
-                    // echo "VERMIETET $berechnung_von $berechnung_bis_a $tage_vermietet<br>";
                     $my_array_neu [] = array(
                         'KOS_TYP' => 'MIETVERTRAG',
                         'KOS_ID' => $mv_id,
@@ -1562,22 +1514,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     $li = new listen ();
                     $b_von_2 = date_german2mysql($b_von);
                     $b_bis_2 = date_german2mysql($b_bis);
-                    // $km_mon_array= $li-> monats_array($b_von_2,$b_bis_2);
-                    // echo "$b_bis $b_bis_2 $b_von $b_von_2";
-
-                    /*
-					 * $anz_m = count($km_mon_array);
-					 * $sm_kalt = 0;
-					 * for($m=0;$m<$anz_m;$m++){
-					 * $sm = $km_mon_array[$m]['MONAT'];
-					 * $sj = $km_mon_array[$m]['JAHR'];
-					 * $mk = new mietkonto();
-					 * $mk->kaltmiete_monatlich_ink_vz($mv_id,$sm,$sj);
-					 * $sm_kalt += $mk->ausgangs_kaltmiete;
-					 * }
-					 *
-					 * $sm_kalt_a = nummer_punkt2komma($sm_kalt);
-					 */
 
                     if ($tage < 365) {
                         echo "<tr><td class=\"rot\">$mv->einheit_kurzname</td><td class=\"rot\">$mv->personen_name_string</td><td class=\"rot\">$b_von</td><td class=\"rot\">$b_bis</td><td class=\"rot\">$tage</td><td class=\"rot\">";
@@ -1647,11 +1583,9 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
     function profil_aendern_db($profil_id, $bez, $jahr, $typ, $typ_id, $b_datum, $v_datum)
     {
         if ($this->profil_deaktivieren($profil_id)) {
-            // $last_id = last_id2('BK_PROFILE', 'BK_ID')+1;
             $b_datum_sql = date_german2mysql($b_datum);
             $v_datum_sql = date_german2mysql($v_datum);
-            $db_abfrage = "INSERT INTO BK_PROFILE VALUES(NULL, '$profil_id', '$bez', '$typ', '$typ_id', '$jahr', '$b_datum_sql', '$v_datum_sql', '1')";
-            $result = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert("INSERT INTO BK_PROFILE VALUES(NULL, '$profil_id', '$bez', '$typ', '$typ_id', '$jahr', '$b_datum_sql', '$v_datum_sql', '1')");
         } else {
             fehlermeldung_ausgeben("Änderung fehlgeschlagen!");
         }
@@ -1661,9 +1595,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
 
     function profil_deaktivieren($profil_id)
     {
-        $db_abfrage = "UPDATE BK_PROFILE SET AKTUELL='0' WHERE BK_ID = '$profil_id'";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        return true;
+        return DB::update("UPDATE BK_PROFILE SET AKTUELL='0' WHERE BK_ID = '$profil_id'");
     }
 
     /* Alle hinzugefügten Buchungen */
@@ -1746,7 +1678,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
         if ($this->bk_bezeichnung) {
             $konten_arr = $this->bk_konten($this->bk_profil_id);
             if (is_array($konten_arr)) {
-                // echo $konten_arr[0][KONTO];
                 $anzahl_konten = count($konten_arr);
 
                 for ($a = 0; $a < $anzahl_konten; $a++) {
@@ -1796,7 +1727,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                                 $buchung_id = $buchungen_arr [$g] ['BUCHUNG_ID'];
                                 $this->bk_buchungen_details($buchung_id);
                                 $js = "onclick=\"buchung_raus($buchung_id, $konto_id,$this->bk_profil_id)\"";
-                                // $js = 'buchung_hinzu($buchung_id, $konto_id,$profil_id)'
                                 $img_gruen = "<img src=\"images/bk/gruen.png\" alt=\"Hinzufuegen\">";
                                 echo "<div class=\"zeile_gruen\">";
                                 echo "<a $js>$img_gruen $buchung_id $this->datum $this->vzweck $this->buchung_betrag </a>";
@@ -1808,8 +1738,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                         echo "</div>";
 
                         echo "<br><br>";
-                        // echo '<pre>';
-                        // print_r($buchungen_arr);
 
                         for ($b = 0; $b < $anzahl_berechnungs_def; $b++) {
                             $v_einheit = $berechnungs_arr [$b] ['V_EINHEIT'];
@@ -1821,12 +1749,8 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                             echo "<br>Von: $von1 bis $bis1 wird nach $v_einheit in $typ berechnet<br>";
                             $summe = substr($this->summe_konto_von_bis($von1, $bis1, $konto, $geldkonto_id), 1);
                             echo "<b>KOSTEN zwischen $von1 und $bis1: $konto $summe Euro für $this->objekt_schluessel $this->objekt_schluessel_einheit</b><br>";
-                            // echo "$this->objekt_schluessel $this->objekt_schluessel_einheit";
 
-                            // $summe = substr($this->summe_konto_von_bis($von, $bis, $konto, $geldkonto_id),1);
                             if (!empty ($summe)) {
-
-                                // $ei = nummer_punkt2komma( ($summe/12)/$this->objekt_schluessel*38.44*12);
                                 echo "38.44 m² x 12 monate = $ei Eur";
                             } else {
                                 echo "<b>Keine angefallenen Kosten auf dem Konto $konto für den Zeitraum $von bis $bis </b><br>";
@@ -1834,13 +1758,10 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                         }
                     } else {
                         echo "Mindestens ein Berechnungsschlüssel muss existieren<br>";
-                        end;
                     }
-                    // echo "<hr>";
                 }
             } else {
                 echo "Keine Konten im Profil definiert";
-                end;
             }
         }
 
@@ -1860,17 +1781,16 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
             $g_summe = $g_summe + $summe;
             echo "$summe <b>$kostenkonto</b> $konto_bez<br>";
         }
-        echo "<hr>GESAMT Umlagef�hige Kosten $g_summe ";
+        echo "<hr>GESAMT Umlagefähige Kosten $g_summe ";
     }
 
     function bk_profil($typ, $typ_id, $jahr)
     {
         unset ($this->bk_profil_id);
         unset ($this->bk_bezeichnung);
-        $result = mysql_query("SELECT * FROM `BK_PROFILE` WHERE JAHR='$jahr' && TYP='$typ' && TYP_ID='$typ_id'  && AKTUELL='1' ORDER BY BK_ID DESC LIMIT 0,1");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT * FROM `BK_PROFILE` WHERE JAHR='$jahr' && TYP='$typ' && TYP_ID='$typ_id'  && AKTUELL='1' ORDER BY BK_ID DESC LIMIT 0,1");
+        if (!empty($result)) {
+            $row = $result[0];
             $this->bk_profil_id = $row ['BK_ID'];
             $this->bk_bezeichnung = $row ['BEZEICHNUNG'];
         }
@@ -1878,14 +1798,8 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
 
     function bk_konten_berechnung($konto_id)
     {
-        $result = mysql_query("SELECT * FROM `BK_KONTEN_BERECHNUNG` WHERE BK_K_ID='$konto_id' ORDER BY VON ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
-        }
+        $result = DB::select("SELECT * FROM `BK_KONTEN_BERECHNUNG` WHERE BK_K_ID='$konto_id' ORDER BY VON ASC");
+        return $result;
     }
 
     function objekt_schluessel($v_einheit, $objekt_id)
@@ -1893,9 +1807,9 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
         unset ($this->objekt_schluessel);
         unset ($this->objekt_schluessel_einheit);
 
-        if ($v_einheit == 'm�') {
-            $result = mysql_query("SELECT SUM(EINHEIT_QM) AS QM FROM `EINHEIT` RIGHT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) JOIN OBJEKT ON (HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID) WHERE OBJEKT.OBJEKT_ID='$objekt_id'");
-            $row = mysql_fetch_assoc($result);
+        if ($v_einheit == 'm²') {
+            $result = DB::select("SELECT SUM(EINHEIT_QM) AS QM FROM `EINHEIT` RIGHT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) JOIN OBJEKT ON (HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID) WHERE OBJEKT.OBJEKT_ID='$objekt_id'");
+            $row = $result[0];
             $this->objekt_schluessel = $row ['QM'];
             $this->objekt_schluessel_einheit = $v_einheit;
         }
@@ -1908,28 +1822,21 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
 
     function summe_konto_von_bis($von, $bis, $kostenkonto, $geldkonto_id)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME  FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` = '$geldkonto_id' AND `KONTENRAHMEN_KONTO` = '$kostenkonto' AND DATUM BETWEEN '$von' AND '$bis' AND `AKTUELL` ='1'");
-
-        $row = mysql_fetch_assoc($result);
-        return $row ['SUMME'];
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME  FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` = '$geldkonto_id' AND `KONTENRAHMEN_KONTO` = '$kostenkonto' AND DATUM BETWEEN '$von' AND '$bis' AND `AKTUELL` ='1'");
+        return $result[0]['SUMME'];
     }
 
     function get_konten_nach_gruppe($gruppenbez)
     {
-        $result = mysql_query("SELECT KONTENRAHMEN_GRUPPEN.BEZEICHNUNG AS G_BEZEICHNUNG, KONTO, KONTENRAHMEN_KONTEN.BEZEICHNUNG, KONTO_ART FROM `KONTENRAHMEN_GRUPPEN` INNER JOIN (KONTENRAHMEN_KONTEN) ON ( KONTENRAHMEN_GRUPPEN_ID = GRUPPE )
+        $result = DB::select("SELECT KONTENRAHMEN_GRUPPEN.BEZEICHNUNG AS G_BEZEICHNUNG, KONTO, KONTENRAHMEN_KONTEN.BEZEICHNUNG, KONTO_ART FROM `KONTENRAHMEN_GRUPPEN` INNER JOIN (KONTENRAHMEN_KONTEN) ON ( KONTENRAHMEN_GRUPPEN_ID = GRUPPE )
 WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KONTEN`.`KONTO` ASC");
-
-        while ($row = mysql_fetch_assoc($result)) {
-            $my_arr [] = $row;
-        }
-        return $my_arr;
+        return $result;
     }
 
     function zeige()
     {
         $konto_arr = $this->get_konten_nach_gruppe('Umlagefähige Kosten');
         echo '<pre>';
-        // print_r($konto_arr);
         $anzahl_konten = count($konto_arr);
         $von = '2008-01-01';
         $bis = '2009-12-31';
@@ -1945,41 +1852,33 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
                 echo "<b>$kostenkonto</b> SUMME $summe $g_bez $konto_bez <br>";
             }
         }
-        echo "GESAMT Umlagef�hige Kosten $g_summe �";
+        echo "GESAMT Umlagefähige Kosten $g_summe €";
     }
 
     function bk_konten_arr($profil_id)
     {
         $db_abfrage = "SELECT BK_K_ID, KONTO  FROM `BK_KONTEN` WHERE `BK_PROFIL_ID` ='$profil_id' AND `AKTUELL` ='1' ORDER BY KONTO ASC";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
-        }
+        $result = DB::select($db_abfrage);
+        return $result;
     }
 
     function konto_tab_anzeigen($bk_k_id, $konto, $profil_id)
     {
         $db_abfrage = "SELECT * FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE `BK_PROFIL_ID` ='$profil_id'  && `BK_K_ID` ='$bk_k_id'  AND `AKTUELL` ='1'";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
             $this->bk_profil_infos($this->bk_profil_id);
 
             $k = new kontenrahmen ();
             $this->kontenrahmen_id = $k->get_kontenrahmen($this->bk_kos_typ, $this->bk_kos_id);
             $k->konto_informationen2($konto, $this->kontenrahmen_id);
 
-            echo "<TABLE>";
+            echo "<table>";
             echo "<tr class=\"feldernamen\"><td colspan=\"6\">KOSTENKONTO $konto | $k->konto_bezeichnung</td></tr>";
             echo "<tr class=\"feldernamen\"><td>BUCHUNG</td><td>BETRAG</td><td>ANTEIL</td><td>UMGELEGT</td><td>SCHLÜSSEL</td><td>AUFTEILUNG</td></tr>";
             $gesamt_kosten = 0;
             $gesamt_umlegen = 0;
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $buchung_id = $row ['BUCHUNG_ID'];
                 $this->bk_buchungen_details($buchung_id);
                 $gesamt_kosten = $gesamt_kosten + $this->buchung_betrag;
@@ -2052,9 +1951,6 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
             $summe_konto_a = nummer_punkt2komma($summe_konto);
             $bk_k_id = $summen_arr [$a] ['BK_K_ID'];
 
-            // $kostenkonto = $this->get_konto_from_id($bk_k_id, $profil_id);
-            // $k->konto_informationen2($kostenkonto, $this->kontenrahmen_id);
-            // $bk_res[kontrolle][$a][$bk_k_id][KOSTENART] = $k->konto_bezeichnung; //alt
             $this->get_konto_infos_byid($bk_k_id, $profil_id);
             $kostenkonto = $this->konto;
             $bk_res ['kontrolle'] [$a] [$bk_k_id] ['KOSTENART'] = $this->konto_bez;
@@ -2291,17 +2187,7 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
             $check_bt_hndl = 0.00;
         } // end for $a
 
-        // echo '<pre>';
-        // print_r($bk_res);
-        // die();
-
-        // die();
-        // print_r(array_keys($bk_res));
-        // $this->ber_array_anzeigen($bk_res);
-
         return $bk_res;
-        // echo 10 % 6;
-        // die("$anzahl_ge $anzahl_wo");
     }
 
     function get_buchungssummen_konto_arr($profil_id)
@@ -2311,43 +2197,20 @@ FROM `BK_BERECHNUNG_BUCHUNGEN`
 JOIN GELD_KONTO_BUCHUNGEN ON ( BK_BERECHNUNG_BUCHUNGEN.BUCHUNG_ID = GELD_KONTO_BUCHUNGEN.GELD_KONTO_BUCHUNGEN_ID )
 WHERE `BK_PROFIL_ID` = '$profil_id' && BK_BERECHNUNG_BUCHUNGEN.AKTUELL = '1' && GELD_KONTO_BUCHUNGEN.AKTUELL = '1'
 ORDER BY GELD_KONTO_BUCHUNGEN.KONTENRAHMEN_KONTO) as t1, BK_KONTEN WHERE BK_KONTEN.BK_K_ID=t1.BK_K_ID GROUP BY BK_K_ID, KEY_ID, KOS_TYP, KOS_ID ORDER BY KONTO";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
-        }
+        $result = DB::select($db_abfrage);
+        return $result;
     }
 
     function get_konto_infos_byid($bk_k_id, $profil_id)
     {
         unset ($this->konto_bez);
-        $result = mysql_query("SELECT *  FROM `BK_KONTEN` WHERE AKTUELL='1' && BK_PROFIL_ID='$profil_id' && BK_K_ID='$bk_k_id' ORDER BY BK_K_DAT DESC LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT *  FROM `BK_KONTEN` WHERE AKTUELL='1' && BK_PROFIL_ID='$profil_id' && BK_K_ID='$bk_k_id' ORDER BY BK_K_DAT DESC LIMIT 0,1");
+        $row = $result[0];
         $this->konto = $row ['KONTO'];
         $this->konto_bez = $row ['KONTO_BEZ'];
         $this->konto_gkey = $row ['GENKEY_ID'];
         $this->konto_hndl = $row ['HNDL'];
     }
-
-    /*
-	 * Eingezogen vor dem jahr, wohnen noch, ganzes jahr 365Tage 460MVS
-	 * SELECT * FROM `MIETVERTRAG` WHERE `MIETVERTRAG_AKTUELL` = '1' && (DATE_FORMAT(MIETVERTRAG_VON,'%Y') <='2008' && DATE_FORMAT(MIETVERTRAG_BIS,'%Y') ='0000')
-	 *
-	 */
-
-    /*
-	 * Vor dem jahr eingezogen, im Jahr ausgezogen 60MVS
-	 * SELECT * FROM `MIETVERTRAG` WHERE `MIETVERTRAG_AKTUELL` = '1' && (DATE_FORMAT(MIETVERTRAG_VON,'%Y') <='2008' && DATE_FORMAT(MIETVERTRAG_BIS,'%Y') ='2008')
-	 *
-	 */
-
-    /*
-	 * Im jahr eingezogen und ausgezogen 8 MVS
-	 *
-	 * SELECT * FROM `MIETVERTRAG` WHERE `MIETVERTRAG_AKTUELL` = '1' && (DATE_FORMAT(MIETVERTRAG_VON,'%Y') ='2008' && DATE_FORMAT(MIETVERTRAG_BIS,'%Y') ='2008')
-	 */
 
     function mvs_und_leer_jahr_1mv($mv1_id, $jahr)
     {
@@ -2357,27 +2220,20 @@ IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jahr-12-31')
 DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jahr-12-31'), IF(DATE_FORMAT(MIETVERTRAG_VON, '%Y') < '$jahr', '$jahr-01-01', MIETVERTRAG_VON))+1 AS TAGE FROM `MIETVERTRAG` WHERE `MIETVERTRAG_AKTUELL`='1' 
 && DATE_FORMAT(MIETVERTRAG_VON,'%Y') <= '$jahr' && (DATE_FORMAT(MIETVERTRAG_BIS,'%Y') >='$jahr' OR DATE_FORMAT(MIETVERTRAG_BIS,'%Y') ='0000') && MIETVERTRAG_ID='$mv1_id' ORDER BY MIETVERTRAG_VON ASC";
 
-        $result = mysql_query($abfrage) or die (mysql_error());
+        $result = DB::select($abfrage);
 
-        $numrows = mysql_numrows($result);
-        /* Wenn �berhaupt vermietet, sonst Leerstand ganzes Jahr, siehe unten nach ELSE */
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_array [] = $row;
-            }
-
-            $anzahl_zeilen = count($my_array);
+        /* Wenn überhaupt vermietet, sonst Leerstand ganzes Jahr, siehe unten nach ELSE */
+        if (!empty($result)) {
+            $anzahl_zeilen = count($result);
             $tage = 0;
             for ($a = 0; $a < $anzahl_zeilen; $a++) {
-                $tage = $tage + $my_array [$a] ['TAGE'];
+                $tage = $tage + $result [$a] ['TAGE'];
             }
 
             $tage_im_jahr = $this->tage_im_jahr($jahr);
             /* Voll vermietet */
             if ($tage == $tage_im_jahr) {
-                /* Voll mermietet */
-                // echo "GANZ VERMIETET = $tage == $tage_im_jahr<br>";
-                return $my_array;
+                return $result;
             }
 
             /* Nicht ganzes Jahr vermietet */
@@ -2388,8 +2244,8 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 $summe_tage = 0;
                 for ($a = 0; $a < $anzahl_zeilen; $a++) {
 
-                    $berechnung_von = $my_array [$a] ['BERECHNUNG_VON'];
-                    $berechnung_bis = $my_array [$a] ['BERECHNUNG_BIS'];
+                    $berechnung_von = $result [$a] ['BERECHNUNG_VON'];
+                    $berechnung_bis = $result [$a] ['BERECHNUNG_BIS'];
 
                     /* Wenn etwas am Anfang des Jahres fehlt */
                     if ($a == 0) {
@@ -2410,11 +2266,11 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                         }
                     }
 
-                    /* Fehlzeiten / leerst�nde zwischen den vertr�gen */
+                    /* Fehlzeiten / leerstände zwischen den verträgen */
                     /* In allen Zeilen ausser letzte */
 
                     if ($a < $anzahl_zeilen - 1) {
-                        $berechnung_von_next = $my_array [$a + 1] ['BERECHNUNG_VON'];
+                        $berechnung_von_next = $result [$a + 1]['BERECHNUNG_VON'];
                         $diff_zw_mvs = $this->diff_in_tagen($berechnung_bis, $berechnung_von_next) - 1;
                         if ($diff_zw_mvs > 1) {
                             // echo "ES FEHLEN $berechnung_bis $berechnung_von_next $diff_zw_mvs<br>";
@@ -2437,7 +2293,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     $mv_id = $my_array [$a] ['KOS_ID'];
                     $berechnung_von_a = date_mysql2german($berechnung_von);
                     $berechnung_bis_a = date_mysql2german($berechnung_bis);
-                    // echo "VERMIETET $berechnung_von $berechnung_bis_a $tage_vermietet<br>";
                     $my_array_neu [] = array(
                         'KOS_TYP' => 'MIETVERTRAG',
                         'KOS_ID' => $mv_id,
@@ -2551,11 +2406,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                         echo "<br>$a.$z $einheit_name - <b>$zeitraum</b> - $mv->personen_name_string $mieter_info  | " . nummer_punkt2komma($this->beteiligung_berechnen(13509.40, "$von", "$bis", 6988.45, $einheit_qm)) . ' euro';
                     }
                 }
-
-                // if(is_array($mvs_arr)){
-                // echo '<pre>';
-                // print_r($mvs_arr);
-                // }
                 echo "<hr>";
             }
         } else {
@@ -2565,10 +2415,9 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
 
     function finde_mvs_jahr($einheit_id, $jahr)
     {
-        $result = mysql_query(" SELECT * FROM `MIETVERTRAG` WHERE EINHEIT_ID = '$einheit_id' && `MIETVERTRAG_AKTUELL` = '1' ORDER BY `MIETVERTRAG`.`MIETVERTRAG_VON` ASC ");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
+        $result = DB::select(" SELECT * FROM `MIETVERTRAG` WHERE EINHEIT_ID = '$einheit_id' && `MIETVERTRAG_AKTUELL` = '1' ORDER BY `MIETVERTRAG`.`MIETVERTRAG_VON` ASC ");
+        if (!empty($result)) {
+            foreach($result as $row) {
                 $mv_von = $row ['MIETVERTRAG_VON'];
                 $mv_bis = $row ['MIETVERTRAG_BIS'];
 
@@ -2603,10 +2452,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     $my_arr [] = $row;
                 }
             }
-            // if(is_array($my_arr)){
-            // $my_array1 = array_unique($my_arr);
-            // return $my_array1;
-            // }
             return $my_arr;
         }
     }
@@ -2619,15 +2464,9 @@ IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jahr-12-31')
 DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jahr-12-31'), IF(DATE_FORMAT(MIETVERTRAG_VON, '%Y') < '$jahr', '$von', MIETVERTRAG_VON))+1 AS TAGE FROM `MIETVERTRAG` WHERE `MIETVERTRAG_AKTUELL`='1' 
 && DATE_FORMAT(MIETVERTRAG_VON,'%Y') <= '$jahr' && (DATE_FORMAT(MIETVERTRAG_BIS,'%Y') >='$jahr' OR DATE_FORMAT(MIETVERTRAG_BIS,'%Y') ='0000') && EINHEIT_ID='$einheit_id' ORDER BY MIETVERTRAG_VON ASC";
 
-        $result = mysql_query($abfrage) or die (mysql_error());
-
-        $numrows = mysql_numrows($result);
-        /* Wenn �berhaupt vermietet, sonst Leerstand ganzes Jahr, siehe unten nach ELSE */
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_array [] = $row;
-            }
-
+        $my_array = DB::select($abfrage);
+        /* Wenn überhaupt vermietet, sonst Leerstand ganzes Jahr, siehe unten nach ELSE */
+        if (!empty($my_array)) {
             $anzahl_zeilen = count($my_array);
             $tage = 0;
             for ($a = 0; $a < $anzahl_zeilen; $a++) {
@@ -2858,11 +2697,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     $beteiligung_gesamt = 0;
                     echo "<hr>";
                 } // end for $z
-
-                // if(is_array($mvs_arr)){
-                // echo '<pre>';
-                // print_r($mvs_arr);
-                // }
             } // end for $a
 
             $beteiligung_gesamt_alle_a = nummer_punkt2komma($beteiligung_gesamt_alle);
@@ -2875,25 +2709,15 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
     function bk_konten_berechnung_arr($profil_id)
     {
         $db_abfrage = "SELECT BK_BERECHNUNG_BUCHUNGEN.BK_K_ID, KONTO  FROM BK_BERECHNUNG_BUCHUNGEN JOIN BK_KONTEN ON (BK_BERECHNUNG_BUCHUNGEN.BK_K_ID=BK_KONTEN.BK_K_ID && BK_BERECHNUNG_BUCHUNGEN.BK_PROFIL_ID=BK_KONTEN.BK_PROFIL_ID) WHERE BK_BERECHNUNG_BUCHUNGEN.BK_PROFIL_ID ='$profil_id' AND BK_BERECHNUNG_BUCHUNGEN.AKTUELL ='1'  && BK_KONTEN.AKTUELL ='1' GROUP BY BK_K_ID ORDER BY KONTO ASC";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
-        }
+        $result = DB::select($db_abfrage);
+        return $result;
     }
 
     function bk_berechnung_arr($profil_id, $bk_k_id)
     {
         $db_abfrage = "SELECT * FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE `BK_K_ID` ='$bk_k_id' AND `BK_PROFIL_ID` ='$profil_id' AND `AKTUELL` ='1' ";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
-        }
+        $result = DB::select($db_abfrage);
+        return $result;
     }
 
     function bk_nk_profil_berechnung_Alt_ok($profil_id)
@@ -3072,12 +2896,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
             // Anfangsdifferenz auf = 0, weil nächstes konto;
             $hndl_diff = 0.00;
         } // end for $a
-
-        // echo '<pre>';
-        // print_r($bk_res);
-        // print_r($bk_res[kontrolle]);
-        // print_r(array_keys($bk_res));
-        // $this->ber_array_anzeigen($bk_res);
         return $bk_res;
     }
 
@@ -3085,10 +2903,8 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
 
     function get_konto_from_id($bk_k_id, $profil_id)
     {
-        $result = mysql_query("SELECT KONTO  FROM `BK_KONTEN` WHERE AKTUELL='1' && BK_PROFIL_ID='$profil_id' && BK_K_ID='$bk_k_id' ORDER BY BK_K_DAT DESC LIMIT 0,1");
-
-        $row = mysql_fetch_assoc($result);
-        return $row ['KONTO'];
+        $result = DB::select("SELECT KONTO  FROM `BK_KONTEN` WHERE AKTUELL='1' && BK_PROFIL_ID='$profil_id' && BK_K_ID='$bk_k_id' ORDER BY BK_K_DAT DESC LIMIT 0,1");
+        return $result[0]['KONTO'];
     }
 
     function pdf_ausgabe_alle($profil_id)
@@ -3488,15 +3304,14 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
 
                 /* Betriebskostenergebnis speichern */
                 if ($kos_typ == 'MIETVERTRAG') {
-                    /* Pr�fen ob Betriebskostenabrechnung in Mietentwicklung vorhanden, wenn nein, speichern, also nicht doppelt */
+                    /* Prüfen ob Betriebskostenabrechnung in Mietentwicklung vorhanden, wenn nein, speichern, also nicht doppelt */
                     if (!$this->check_me($kos_typ, $kos_id, "Betriebskostenabrechnung $this->bk_jahr", $this->bk_verrechnungs_datum, $this->bk_verrechnungs_datum)) {
 
                         $last_me_id = $this->last_id('MIETENTWICKLUNG', 'MIETENTWICKLUNG_ID') + 1;
-                        $db_abfrage = "INSERT INTO MIETENTWICKLUNG VALUES(NULL, '$last_me_id', '$kos_typ', '$kos_id', 'Betriebskostenabrechnung $this->bk_jahr', '$this->bk_verrechnungs_datum', '$this->bk_verrechnungs_datum', '$bk_ergebnis', '1')";
-                        $result = mysql_query($db_abfrage) or die (mysql_error());
+                        DB::insert("INSERT INTO MIETENTWICKLUNG VALUES(NULL, '$last_me_id', '$kos_typ', '$kos_id', 'Betriebskostenabrechnung $this->bk_jahr', '$this->bk_verrechnungs_datum', '$this->bk_verrechnungs_datum', '$bk_ergebnis', '1')");
                     } // end if check_me
 
-                    /* Bei Ver�nderung der NK Vorauszahlungen, �nderungen speichern */
+                    /* Bei Veränderung der NK Vorauszahlungen, Änderungen speichern */
                     $nk_v_alt = nummer_komma2punkt($pdf_tab [$a] ['NK_VORSCHUSS_ALT']);
                     $nk_v_neu = nummer_komma2punkt($pdf_tab [$a] ['NK_VORSCHUSS_NEU']);
 
@@ -3504,24 +3319,22 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     if ($nk_anpassungs_betrag != 0) {
 
                         /* Neue NK Vorauszahlung speichern bzw. definieren ab Verrechnungsdatum */
-                        /* Pr�fen ob Nebenkostenanpassung in Mietentwicklung vorhanden, wenn nein, speichern, also nicht doppelt */
+                        /* Prüfen ob Nebenkostenanpassung in Mietentwicklung vorhanden, wenn nein, speichern, also nicht doppelt */
                         if (!$this->check_me($kos_typ, $kos_id, "Nebenkosten Vorauszahlung", $this->bk_verrechnungs_datum, '0000-00-00')) {
 
                             $last_me_id = $this->last_id('MIETENTWICKLUNG', 'MIETENTWICKLUNG_ID') + 1;
-                            $db_abfrage = "INSERT INTO MIETENTWICKLUNG VALUES(NULL, '$last_me_id', '$kos_typ', '$kos_id', 'Nebenkosten Vorauszahlung', '$this->bk_verrechnungs_datum', '0000-00-00', '$nk_v_neu', '1')";
-                            $result = mysql_query($db_abfrage) or die (mysql_error());
+                            DB::insert("INSERT INTO MIETENTWICKLUNG VALUES(NULL, '$last_me_id', '$kos_typ', '$kos_id', 'Nebenkosten Vorauszahlung', '$this->bk_verrechnungs_datum', '0000-00-00', '$nk_v_neu', '1')");
 
                             /* Alte Nk Vorauszahlung mit Enddatum versehen */
                             $o = new objekt ();
                             $ablauf_datum = $o->datum_minus_tage($this->bk_verrechnungs_datum, '1');
-                            $db_abfrage = "UPDATE MIETENTWICKLUNG SET ENDE='$ablauf_datum' WHERE KOSTENKATEGORIE = 'Nebenkosten Vorauszahlung' && BETRAG='$nk_v_alt' && MIETENTWICKLUNG_AKTUELL='1' && KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$kos_id'";
-                            $result = mysql_query($db_abfrage) or die (mysql_error());
+                            DB::update("UPDATE MIETENTWICKLUNG SET ENDE='$ablauf_datum' WHERE KOSTENKATEGORIE = 'Nebenkosten Vorauszahlung' && BETRAG='$nk_v_alt' && MIETENTWICKLUNG_AKTUELL='1' && KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$kos_id'");
                         } // end if check_me
                     } // end if $nk_anpassungs_betrag <> 0)
 
                     /* Heizkostenvorauszahlungen anpassen */
 
-                    /* Bei Ver�nderung der HK Vorauszahlungen, �nderungen speichern */
+                    /* Bei Veränderung der HK Vorauszahlungen, Änderungen speichern */
                     $hk_v_alt = nummer_komma2punkt($pdf_tab [$a] ['HK_VORSCHUSS_ALT']);
                     $hk_v_neu = nummer_komma2punkt($pdf_tab [$a] ['HK_VORSCHUSS_NEU']);
 
@@ -3529,18 +3342,16 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     if ($hk_anpassungs_betrag != 0) {
 
                         /* Neue HK Vorauszahlung speichern bzw. definieren ab Verrechnungsdatum */
-                        /* Pr�fen ob Heizkostenanpassung in Mietentwicklung vorhanden, wenn nein, speichern, also nicht doppelt */
+                        /* Prüfen ob Heizkostenanpassung in Mietentwicklung vorhanden, wenn nein, speichern, also nicht doppelt */
                         if (!$this->check_me($kos_typ, $kos_id, "Heizkosten Vorauszahlung", $this->bk_verrechnungs_datum, '0000-00-00')) {
 
                             $last_me_id = $this->last_id('MIETENTWICKLUNG', 'MIETENTWICKLUNG_ID') + 1;
-                            $db_abfrage = "INSERT INTO MIETENTWICKLUNG VALUES(NULL, '$last_me_id', '$kos_typ', '$kos_id', 'Heizkosten Vorauszahlung', '$this->bk_verrechnungs_datum', '0000-00-00', '$hk_v_neu', '1')";
-                            $result = mysql_query($db_abfrage) or die (mysql_error());
+                            DB::insert("INSERT INTO MIETENTWICKLUNG VALUES(NULL, '$last_me_id', '$kos_typ', '$kos_id', 'Heizkosten Vorauszahlung', '$this->bk_verrechnungs_datum', '0000-00-00', '$hk_v_neu', '1')");
 
                             /* Alte HK Vorauszahlung mit Enddatum versehen */
                             $o = new objekt ();
                             $ablauf_datum = $o->datum_minus_tage($this->bk_verrechnungs_datum, '1');
-                            $db_abfrage = "UPDATE MIETENTWICKLUNG SET ENDE='$ablauf_datum' WHERE KOSTENKATEGORIE = 'Heizkosten Vorauszahlung' && BETRAG='$hk_v_alt' && MIETENTWICKLUNG_AKTUELL='1' && KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$kos_id'";
-                            $result = mysql_query($db_abfrage) or die (mysql_error());
+                            DB::update("UPDATE MIETENTWICKLUNG SET ENDE='$ablauf_datum' WHERE KOSTENKATEGORIE = 'Heizkosten Vorauszahlung' && BETRAG='$hk_v_alt' && MIETENTWICKLUNG_AKTUELL='1' && KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$kos_id'");
                         } // end check hk vorhanden
                     } // end anpassung hk <> 0
                 } // end if MV
@@ -3676,11 +3487,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
     {
         $last_b_id = $this->last_id('BK_ABRECHNUNGEN', 'B_ID') + 1;
 
-        $db_abfrage = "INSERT INTO BK_ABRECHNUNGEN VALUES (NULL, '$last_b_id', '$profil_id', '$profil_bez','$profil_jahr', '$wirt_e', '$wirt_name', '$datum', '$anz_einheiten', '$qm_gesamt', '$qm_wohnraum', '$qm_gewerbe', '$anz_konten', '$anz_abrechnungen', '$ersteller', '$partner_id','$kontenrahmen_id','1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        /* Protokollieren */
-        $last_dat = mysql_insert_id();
-        // protokollieren('BK_PROFILE', $last_dat, '0');
+        DB::insert("INSERT INTO BK_ABRECHNUNGEN VALUES (NULL, '$last_b_id', '$profil_id', '$profil_bez','$profil_jahr', '$wirt_e', '$wirt_name', '$datum', '$anz_einheiten', '$qm_gesamt', '$qm_wohnraum', '$qm_gewerbe', '$anz_konten', '$anz_abrechnungen', '$ersteller', '$partner_id','$kontenrahmen_id','1')");
         return $last_b_id;
     }
 
@@ -3738,7 +3545,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
             'BETRAG' => 'BETRAG',
             'HNDL_BETRAG' => 'HNDL BETRAG'
         );
-        $pdf->ezTable($table_arr, $cols, "Profil�bersicht $this->bk_bezeichnung $this->bk_kos_bez $this->bk_jahr", array(
+        $pdf->ezTable($table_arr, $cols, "Profilübersicht $this->bk_bezeichnung $this->bk_kos_bez $this->bk_jahr", array(
             'showHeadings' => 1,
             'shaded' => 1,
             'titleFontSize' => 8,
@@ -3758,13 +3565,8 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
     function uebersicht_profil_arr($profil_id)
     {
         $db_abfrage = " SELECT BK_KONTEN.BK_K_ID, KONTO, KONTO_BEZ, BK_BERECHNUNG_BUCHUNGEN . * FROM `BK_KONTEN` JOIN BK_BERECHNUNG_BUCHUNGEN ON ( BK_KONTEN.BK_K_ID = BK_BERECHNUNG_BUCHUNGEN.BK_K_ID ) WHERE BK_KONTEN.BK_PROFIL_ID = '$profil_id' AND BK_KONTEN.`AKTUELL` = '1' && BK_BERECHNUNG_BUCHUNGEN.AKTUELL = '1' ORDER BY KONTO ASC ";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
-        }
+        $result = DB::select($db_abfrage);
+        return $result;
     }
 
     function pdf_einzel_tab(Cezpdf &$pdf, $bk_arr, $label, $kontroll_tab_druck)
@@ -3909,7 +3711,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
         $pdf->ezText('Mieter:                ' . $empf, 8);
         $pdf->ezSetDy(-20);
 
-        /* Ergebnis in die �bersichtstabelle */
+        /* Ergebnis in die Übersichtstabelle */
         $pdf->ergebnis_tab ["$mieternummer - $empf"] ['ERGEBNIS'] = $ergebnis;
         $pdf->ergebnis_tab ["$mieternummer - $empf"] ['SUMME_NK'] = $summe_nebenkosten_jahr;
 
@@ -4700,75 +4502,49 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
 
     function check_kw_abrechnung($kos_typ, $kos_id, $jahr)
     {
-        $result = mysql_query("SELECT *  FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE LIKE 'Kaltwasserabrechnung $jahr'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select("SELECT * FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE LIKE 'Kaltwasserabrechnung $jahr'");
+        return !empty($result);
     }
 
     function summe_kw_abrechnung($kos_typ, $kos_id, $jahr)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME  FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE LIKE 'Kaltwasserabrechnung $jahr'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
-            return $row ['SUMME'];
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME  FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE LIKE 'Kaltwasserabrechnung $jahr'");
+        if (!empty($result)) {
+            return $result[0]['SUMME'];
         }
     }
 
     function check_hk_abrechnung($kos_typ, $kos_id, $jahr)
     {
-        $result = mysql_query("SELECT *  FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE LIKE 'Heizkostenabrechnung $jahr'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select("SELECT * FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE LIKE 'Heizkostenabrechnung $jahr'");
+        return !empty($result);
     }
 
     function summe_hk_abrechnung($kos_typ, $kos_id, $jahr)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME  FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE LIKE 'Heizkostenabrechnung $jahr'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
-            return $row ['SUMME'];
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME  FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE LIKE 'Heizkostenabrechnung $jahr'");
+        if (!empty($result)) {
+            return $result[0]['SUMME'];
         }
     }
 
     function check_me($kos_typ, $kos_id, $kategorie, $anfang, $ende)
     {
-        $result = mysql_query("SELECT *  FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE='$kategorie' && ANFANG='$anfang' && ENDE='$ende'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select("SELECT * FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE='$kategorie' && ANFANG='$anfang' && ENDE='$ende'");
+        return !empty($result);
     }
 
     function check_bk_abrechnung($kos_typ, $kos_id, $jahr)
     {
-        $result = mysql_query("SELECT *  FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE LIKE 'Betriebskostenabrechnung $jahr'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select("SELECT *  FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE LIKE 'Betriebskostenabrechnung $jahr'");
+        return !empty($result);
     }
 
     function summe_bk_abrechnung($kos_typ, $kos_id, $jahr)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME  FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE LIKE 'Betriebskostenabrechnung $jahr'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
-            return $row ['SUMME'];
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME  FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE LIKE 'Betriebskostenabrechnung $jahr'");
+        if (!empty($result)) {
+            return $esult[0]['SUMME'];
         }
     }
 
@@ -4776,11 +4552,10 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
     {
         unset ($this->bk_an_dat);
         $db_abfrage = "SELECT * FROM BK_ANPASSUNG WHERE PROFIL_ID='$profil_id' && AKTUELL='1' ORDER BY AN_DAT DESC LIMIT 0,1";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
-            $this->anzahl_anpassungen = $numrows;
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
+            $row = $result[0];
+            $this->anzahl_anpassungen = count($result);
             $this->bk_an_dat = $row ['AN_DAT'];
             $this->bk_an_id = $row ['AN_ID'];
             $this->bk_an_grund = $row ['GRUND'];
@@ -4797,13 +4572,8 @@ FROM `BK_BERECHNUNG_BUCHUNGEN`
 JOIN GELD_KONTO_BUCHUNGEN ON ( BK_BERECHNUNG_BUCHUNGEN.BUCHUNG_ID = GELD_KONTO_BUCHUNGEN.GELD_KONTO_BUCHUNGEN_ID )
 WHERE `BK_PROFIL_ID` = '$profil_id' && BK_BERECHNUNG_BUCHUNGEN.AKTUELL = '1' && GELD_KONTO_BUCHUNGEN.AKTUELL = '1'
 GROUP BY BK_K_ID, KEY_ID, BK_BERECHNUNG_BUCHUNGEN.KOSTENTRAEGER_TYP, BK_BERECHNUNG_BUCHUNGEN.KOSTENTRAEGER_ID ORDER BY GELD_KONTO_BUCHUNGEN.KONTENRAHMEN_KONTO ";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
-        }
+        $result = DB::select($db_abfrage);
+        return $result;
     }
 
     /* ALT OK mit fehler bei % anteil */
@@ -4815,13 +4585,8 @@ FROM `BK_BERECHNUNG_BUCHUNGEN`
 JOIN GELD_KONTO_BUCHUNGEN ON ( BK_BERECHNUNG_BUCHUNGEN.BUCHUNG_ID = GELD_KONTO_BUCHUNGEN.GELD_KONTO_BUCHUNGEN_ID )
 WHERE `BK_PROFIL_ID` = '$profil_id' && BK_BERECHNUNG_BUCHUNGEN.AKTUELL = '1' && GELD_KONTO_BUCHUNGEN.AKTUELL = '1'
 GROUP BY BK_K_ID, KEY_ID ORDER BY GELD_KONTO_BUCHUNGEN.KONTENRAHMEN_KONTO ";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
-        }
+        $result = DB::select($db_abfrage);
+        return $result;
     }
 
     /* NEU */
@@ -4860,8 +4625,7 @@ GROUP BY BK_K_ID, KEY_ID ORDER BY GELD_KONTO_BUCHUNGEN.KONTENRAHMEN_KONTO ";
     function bk_konto_speichern($profil_id, $kostenkonto, $konto_bez)
     {
         $last_id = $this->last_id('BK_KONTEN', 'BK_K_ID') + 1;
-        $db_abfrage = "INSERT INTO BK_KONTEN VALUES (NULL, '$last_id','$kostenkonto', '$konto_bez', '$profil_id','1','0', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert("INSERT INTO BK_KONTEN VALUES (NULL, '$last_id','$kostenkonto', '$konto_bez', '$profil_id','1','0', '1')");
         return $last_id;
     }
 
@@ -4870,10 +4634,7 @@ GROUP BY BK_K_ID, KEY_ID ORDER BY GELD_KONTO_BUCHUNGEN.KONTENRAHMEN_KONTO ";
         $last_a_id = $this->last_id('BK_ABRECHNUNGEN_KONTEN', 'BK_A_ID') + 1;
 
         $db_abfrage = "INSERT INTO BK_ABRECHNUNGEN_KONTEN VALUES (NULL, '$last_a_id', '$b_id','$bk_k_id','$konto','$konto_bez','$g_kosten','$g_kosten_wo','$g_kosten_ge', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        /* Protokollieren */
-        $last_dat = mysql_insert_id();
-        // protokollieren('BK_PROFILE', $last_dat, '0');
+        DB::insert($db_abfrage);
         return $last_a_id;
     }
 
@@ -4882,10 +4643,7 @@ GROUP BY BK_K_ID, KEY_ID ORDER BY GELD_KONTO_BUCHUNGEN.KONTENRAHMEN_KONTO ";
         $last_e_id = $this->last_id('BK_EINZEL_ABRECHNUNGEN', 'BK_E_ID') + 1;
 
         $db_abfrage = "INSERT INTO BK_EINZEL_ABRECHNUNGEN VALUES (NULL, '$last_e_id', '$b_id','$empf', '$zeitraum', '$mieternr', '$einheit_id','$einheit_name','$g_kosten','$g_hndl', '$vorschuss', '$saldo', '$saldo_art', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        /* Protokollieren */
-        $last_dat = mysql_insert_id();
-        // protokollieren('BK_PROFILE', $last_dat, '0');
+        DB::insert($db_abfrage);
         return $last_e_id;
     }
 
@@ -4894,17 +4652,13 @@ GROUP BY BK_K_ID, KEY_ID ORDER BY GELD_KONTO_BUCHUNGEN.KONTENRAHMEN_KONTO ";
         $last_z_id = $this->last_id('BK_EINZEL_ABR_ZEILEN', 'BK_Z_ID') + 1;
 
         $db_abfrage = "INSERT INTO BK_EINZEL_ABR_ZEILEN VALUES (NULL, '$last_z_id','$bk_e_id', '$konto_id', '$konto_bez', '$g_kosten','$g_hndl', '$verteiler', '$ihre_me', '$anteil_hndl', '$beteiligung', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        /* Protokollieren */
-        $last_dat = mysql_insert_id();
-        // protokollieren('BK_PROFILE', $last_dat, '0');
+        DB::insert($db_abfrage);
         return $last_z_id;
     }
 
     function test_res($profil_id)
     {
         $bk_res_arr = $this->bk_nk_profil_berechnung($profil_id);
-        // $this->kontroll_blatt_anzeigen($bk_res_arr);
         $this->ber_array_anzeigen($bk_res_arr);
     }
 
@@ -5089,7 +4843,7 @@ GROUP BY BK_K_ID, KEY_ID ORDER BY GELD_KONTO_BUCHUNGEN.KONTENRAHMEN_KONTO ";
     {
         $last_id = $this->last_id('BK_KONTEN', 'BK_K_ID') + 1;
         $db_abfrage = "INSERT INTO BK_KONTEN VALUES (NULL, '$last_id','$kostenkonto', '$konto_bez', '$profil_id','$genkey_id','$hndl', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
         return $last_id;
     }
 
@@ -5097,7 +4851,7 @@ GROUP BY BK_K_ID, KEY_ID ORDER BY GELD_KONTO_BUCHUNGEN.KONTENRAHMEN_KONTO ";
     {
         $last_bk_be_id = $this->last_id('BK_BERECHNUNG_BUCHUNGEN', 'BK_BE_ID') + 1;
         $abfrage = "INSERT INTO BK_BERECHNUNG_BUCHUNGEN VALUES(NULL, '$last_bk_be_id', '$buchung_id', '$bk_konto_id', '$profil_id','$key_id', '$anteil','$kos_typ', '$kos_id','$hndl_betrag','1')";
-        $resultat = mysql_query($abfrage) or die (mysql_error());
+        DB::insert($abfrage);
     }
 
     function form_profil_kopieren()
@@ -5114,12 +4868,10 @@ GROUP BY BK_K_ID, KEY_ID ORDER BY GELD_KONTO_BUCHUNGEN.KONTENRAHMEN_KONTO ";
 
     function dropdown_profile()
     {
-        $result = mysql_query("SELECT BK_ID AS PROFIL_ID, BEZEICHNUNG FROM BK_PROFILE WHERE  AKTUELL='1' ORDER BY BEZEICHNUNG ASC");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
+        $result = DB::select("SELECT BK_ID AS PROFIL_ID, BEZEICHNUNG FROM BK_PROFILE WHERE  AKTUELL='1' ORDER BY BEZEICHNUNG ASC");
+        if (!empty($result)) {
             echo "<label for=\"profil_id\">Profil wählen</label><select id=\"profil_id\" name=\"profil_id\" size=\"1\">";
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $profil_id = $row ['PROFIL_ID'];
                 $bez = $row ['BEZEICHNUNG'];
                 echo "<option value=\"$profil_id\">$bez</option>";

@@ -55,14 +55,10 @@ class gk {
 	}
 	function geldkonto_update($gk_id, $g_bez, $beguenstigter, $kontonummer, $blz, $institut, $iban, $bic) {
 		$db_abfrage = "UPDATE GELD_KONTEN SET AKTUELL='0' WHERE KONTO_ID='$gk_id'";
-		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+		DB::update( $db_abfrage );
 		
 		$db_abfrage = "INSERT INTO GELD_KONTEN VALUES (NULL, '$gk_id', '$g_bez','$beguenstigter', '$kontonummer', '$blz','$iban', '$bic', '$institut', '1')";
-		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-		
-		/* Protokollieren */
-		// $last_dat = mysql_insert_id();
-		// protokollieren('GELD_KONTEN', $last_dat, $last_dat);
+		DB::insert( $db_abfrage );
 	}
 	function geldkonto_speichern($kos_typ, $kos_id, $g_bez, $beguenstigter, $kontonummer, $blz, $institut, $iban, $bic) {
 		if (! $this->check_gk_exists ( $kontonummer, $blz, $institut )) {
@@ -70,10 +66,10 @@ class gk {
 			$last_b_id = $bk->last_id ( 'GELD_KONTEN', 'KONTO_ID' ) + 1;
 			
 			$db_abfrage = "INSERT INTO GELD_KONTEN VALUES (NULL, '$last_b_id', '$g_bez','$beguenstigter', '$kontonummer', '$blz','$iban', '$bic', '$institut', '1')";
-			$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+			DB::insert( $db_abfrage );
 			
 			/* Protokollieren */
-			$last_dat = mysql_insert_id ();
+			$last_dat = DB::getPdo()->lastInsertId();
 			protokollieren ( 'GELD_KONTEN', $last_dat, '0' );
 			
 			if ($this->check_zuweisung_kos ( $last_b_id, $kos_typ, $kos_id )) {
@@ -96,7 +92,6 @@ class gk {
 		
 		$b = new buchen ();
 		$js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
-		// $js_typ='';
 		$b->dropdown_kostentreager_typen ( 'Geldkonto zuweisen an', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ );
 		$js_id = "";
 		$b->dropdown_kostentreager_ids ( 'Bitte Zuweisung wählen', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id );
@@ -106,15 +101,12 @@ class gk {
 		$f->ende_formular ();
 	}
 	function dropdown_geldkonten_alle($label, $name, $id) {
-		$result = mysql_query ( "SELECT *  FROM  GELD_KONTEN WHERE GELD_KONTEN.AKTUELL = '1' ORDER BY BEZEICHNUNG ASC" );
+		$my_array = DB::select( "SELECT *  FROM  GELD_KONTEN WHERE GELD_KONTEN.AKTUELL = '1' ORDER BY BEZEICHNUNG ASC" );
 		
-		$numrows = mysql_numrows ( $result );
+		$numrows = count( $my_array );
 		if ($numrows) {
-			while ( $row = mysql_fetch_assoc ( $result ) )
-				$my_array [] = $row;
-			
 			echo "<label for=\"$id\">$label</label>\n<select name=\"$name\" id=\"$id\" size=\"1\" >\n";
-			for($a = 0; $a < count ( $my_array ); $a ++) {
+			for($a = 0; $a < $numrows; $a ++) {
 				$konto_id = $my_array [$a] ['KONTO_ID'];
 				$beguenstigter = $my_array [$a] ['BEGUENSTIGTER'];
 				$kontonummer = $my_array [$a] ['KONTONUMMER'];
@@ -134,16 +126,13 @@ class gk {
 		}
 	}
 	function dropdown_geldkonten_alle_vorwahl($label, $name, $id, $vorwahl_gk_id, $js) {
-		$result = mysql_query ( "SELECT *  FROM  GELD_KONTEN WHERE GELD_KONTEN.AKTUELL = '1' ORDER BY BEZEICHNUNG ASC" );
-		$numrows = mysql_numrows ( $result );
+		$result = DB::select( "SELECT *  FROM  GELD_KONTEN WHERE GELD_KONTEN.AKTUELL = '1' ORDER BY BEZEICHNUNG ASC" );
+		$numrows = count( $result );
 		if ($numrows) {
-			
 			echo "<label for=\"$id\">$label</label>\n<select name=\"$name\" id=\"$id\" size=\"1\" $js>\n";
-			while ( $row = mysql_fetch_assoc ( $result ) ) {
+			foreach( $result as $row ) {
 				$konto_id = $row ['KONTO_ID'];
 				$beguenstigter = $row ['BEGUENSTIGTER'];
-				// $kontonummer = $row['KONTONUMMER'];
-				// $blz = $row['BLZ'];
 				$geld_institut = $row ['INSTITUT'];
 				$bez = $row ['BEZEICHNUNG'];
 				$iban = $row ['IBAN'];
@@ -162,21 +151,17 @@ class gk {
 		}
 	}
 	function uebersicht_zuweisung() {
-		$result = mysql_query ( "SELECT *  FROM  GELD_KONTEN WHERE GELD_KONTEN.AKTUELL = '1' ORDER BY BEZEICHNUNG ASC" );
-		
-		$numrows = mysql_numrows ( $result );
+		$my_array = DB::select( "SELECT *  FROM  GELD_KONTEN WHERE GELD_KONTEN.AKTUELL = '1' ORDER BY BEZEICHNUNG ASC" );
+		$numrows = count($my_array);
 		if ($numrows > 0) {
-			while ( $row = mysql_fetch_assoc ( $result ) )
-				$my_array [] = $row;
 			echo "<table class=\"sortable\">";
 			echo "<tr><th>BEZEICHNUNG</th><th width=\"200\">IBAN</th><th>BIC</th><th>ZUWEISUNG</th></tr>";
-			for($a = 0; $a < count ( $my_array ); $a ++) {
+			for($a = 0; $a < $numrows; $a ++) {
 				$konto_id = $my_array [$a] ['KONTO_ID'];
 				$beguenstigter = $my_array [$a] ['BEGUENSTIGTER'];
 				$kontonummer = $my_array [$a] ['KONTONUMMER'];
 				$blz = $my_array [$a] ['BLZ'];
 				$iban = chunk_split ( $my_array [$a] ['IBAN'], 4, ' ' );
-				// $iban_1 = chunk_split($iban, 4, ' ');
 				$bic = $my_array [$a] ['BIC'];
 				$geld_institut = $my_array [$a] ['INSTITUT'];
 				$bez = $my_array [$a] ['BEZEICHNUNG'];
@@ -190,16 +175,13 @@ class gk {
 		}
 	}
 	function check_zuweisung($geldkonto_id) {
-		$result = mysql_query ( "SELECT *  FROM  GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id'" );
+		$my_array = DB::select( "SELECT *  FROM  GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id'" );
 		
-		$numrows = mysql_numrows ( $result );
+		$numrows = count ( $my_array );
 		
 		if ($numrows > 0) {
-			while ( $row = mysql_fetch_assoc ( $result ) )
-				$my_array [] = $row;
-			
 			$kos_bez_string = '';
-			for($a = 0; $a < count ( $my_array ); $a ++) {
+			for($a = 0; $a < $numrows; $a ++) {
 				$zaehler = $a + 1;
 				$kos_typ = $my_array [$a] ['KOSTENTRAEGER_TYP'];
 				$kos_id = $my_array [$a] ['KOSTENTRAEGER_ID'];
@@ -214,19 +196,13 @@ class gk {
 		}
 	}
 	function get_zuweisung_arr($geldkonto_id) {
-		$result = mysql_query ( "SELECT *  FROM  GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id'" );
-		
-		$numrows = mysql_numrows ( $result );
-		
-		if ($numrows > 0) {
-			while ( $row = mysql_fetch_assoc ( $result ) )
-				$my_array [] = $row;
-			return $my_array;
+		$result = DB::select( "SELECT *  FROM  GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id'" );
+		if (!empty($result)) {
+			return $result;
 		}
 	}
 	function get_zuweisung_string_kurz($geldkonto_id) {
 		$arr = $this->get_zuweisung_arr ( $geldkonto_id );
-		// print_r($arr);
 		if (is_array ( $arr )) {
 			$anz = count ( $arr );
 			$kos_bez_alle = '';
@@ -251,101 +227,64 @@ class gk {
 		}
 	}
 	function get_objekt_id($geldkonto_id) {
-		$result = mysql_query ( "SELECT KOSTENTRAEGER_ID FROM  GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='Objekt' LIMIT 0,1" );
-		// echo "SELECT KOSTENTRAEGER_ID FROM GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='Objekt' LIMIT 0,1";
-		$numrows = mysql_numrows ( $result );
-		
-		if ($numrows) {
-			$row = mysql_fetch_assoc ( $result );
+		$result = DB::select( "SELECT KOSTENTRAEGER_ID FROM  GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='Objekt' LIMIT 0,1" );
+		if (!empty($result)) {
+			$row = $result[0];
 			$kos_id = $row ['KOSTENTRAEGER_ID'];
 			return $kos_id;
 		}
 	}
 	function check_zuweisung_kos($geldkonto_id, $kos_typ, $kos_id) {
-		$result = mysql_query ( "SELECT *  FROM  GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID='$kos_id'" );
-		
-		$numrows = mysql_numrows ( $result );
-		
-		if ($numrows > 0) {
-			return true;
-		} else {
-			return false;
-		}
+		$result = DB::select( "SELECT * FROM GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID='$kos_id'" );
+		return !empty($result);
 	}
 	function get_zuweisung_kos_arr($kos_typ, $kos_id) {
-		$db_abfrage = "SELECT *  FROM  GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID='$kos_id'";
-		// echo $db_abfrage;
-		$result = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-		$numrows = mysql_numrows ( $result );
-		if ($numrows) {
-			while ( $row = mysql_fetch_assoc ( $result ) ) {
-				$arr [] = $row;
-			}
-			return $arr;
+		$db_abfrage = "SELECT * FROM GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID='$kos_id'";
+		$result = DB::select( $db_abfrage );
+		if (!empty($result)) {
+			return $result;
 		} else {
 			return false;
 		}
 	}
 	function check_zuweisung_kos_typ($geldkonto_id, $kos_typ, $kos_id) {
 		if (! empty ( $kos_id )) {
-			$result = mysql_query ( "SELECT *  FROM  GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID='$kos_id'" );
+			$result = DB::select( "SELECT *  FROM  GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID='$kos_id'" );
 		} else {
-			$result = mysql_query ( "SELECT *  FROM  GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='$kos_typ'" );
+			$result = DB::select( "SELECT *  FROM  GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='$kos_typ'" );
 		}
-		$numrows = mysql_numrows ( $result );
-		
-		if ($numrows) {
-			return true;
-		} else {
-			return false;
-		}
+		return !empty($result);
 	}
 	function check_gk_exists($kontonummer, $blz, $institut) {
-		$result = mysql_query ( "SELECT *  FROM  GELD_KONTEN WHERE AKTUELL = '1' && KONTONUMMER='$kontonummer' && BLZ='$blz' && INSTITUT='$institut'" );
-		$numrows = mysql_numrows ( $result );
-		
-		if ($numrows > 0) {
-			return true;
-		} else {
-			return false;
-		}
+		$result = DB::select( "SELECT * FROM GELD_KONTEN WHERE AKTUELL = '1' && KONTONUMMER='$kontonummer' && BLZ='$blz' && INSTITUT='$institut'" );
+		return !empty($result);
 	}
 	function zuweisung_speichern($kos_typ, $kos_id, $geldkonto_id) {
 		$bk = new bk ();
 		$last_b_id = $bk->last_id ( 'GELD_KONTEN_ZUWEISUNG', 'ZUWEISUNG_ID' ) + 1;
 		
 		$db_abfrage = "INSERT INTO GELD_KONTEN_ZUWEISUNG VALUES (NULL, '$last_b_id', '$geldkonto_id', '$kos_typ','$kos_id', '1')";
-		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-		/* Protokollieren */
-		$last_dat = mysql_insert_id ();
-		// protokollieren('GELD_KONTEN_ZUWEISUNG', $last_dat, '0');
+		DB::insert( $db_abfrage );
 		return $last_b_id;
 	}
 	function zuweisung_aufheben($kos_typ, $kos_id, $geldkonto_id) {
 		$db_abfrage = "UPDATE GELD_KONTEN_ZUWEISUNG SET AKTUELL='0' WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID='$kos_id'";
-		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-		/* Protokollieren */
-		$last_dat = mysql_insert_id ();
-		// protokollieren('GELD_KONTEN_ZUWEISUNG', $last_dat, '$last_dat');
+		DB::update( $db_abfrage );
 	}
 	function get_geldkonto_id($bezeichnung) {
-		$result = mysql_query ( "SELECT KONTO_ID  FROM GELD_KONTEN WHERE BEZEICHNUNG='$bezeichnung' && AKTUELL='1' ORDER BY KONTO_DAT DESC LIMIT 0,1" );
-		// echo "SELECT KONTO_ID FROM GELD_KONTEN WHERE BEZEICHNUNG='$bezeichnung' && AKTUELL='1' ORDER BY KONTO_DAT DESC LIMIT 0,1<br>";
-		$row = mysql_fetch_assoc ( $result );
+		$result = DB::select( "SELECT KONTO_ID FROM GELD_KONTEN WHERE BEZEICHNUNG='$bezeichnung' && AKTUELL='1' ORDER BY KONTO_DAT DESC LIMIT 0,1" );
+		$row = $result[0];
 		return $row ['KONTO_ID'];
 	}
 	function get_geldkonto_id2($kto, $blz, $iban = null) {
 		if ($iban == null) {
-			$result = mysql_query ( "SELECT KONTO_ID  FROM GELD_KONTEN WHERE KONTONUMMER='$kto' && BLZ='$blz' &&  AKTUELL='1' ORDER BY KONTO_DAT DESC LIMIT 0,2" );
-			// echo "SELECT KONTO_ID FROM GELD_KONTEN WHERE KONTONUMMER='$kto' && BLZ='$blz' && AKTUELL='1' ORDER BY KONTO_DAT DESC LIMIT 0,1<br>";
+			$result = DB::select( "SELECT KONTO_ID  FROM GELD_KONTEN WHERE KONTONUMMER='$kto' && BLZ='$blz' &&  AKTUELL='1' ORDER BY KONTO_DAT DESC LIMIT 0,2" );
 		} else {
-			$result = mysql_query ( "SELECT KONTO_ID  FROM GELD_KONTEN WHERE IBAN='$iban'  &&  AKTUELL='1' ORDER BY KONTO_DAT DESC LIMIT 0,2" );
-			// echo "SELECT KONTO_ID FROM GELD_KONTEN WHERE IBAN='$iban' && AKTUELL='1' ORDER BY KONTO_DAT DESC LIMIT 0,1<br>";
+			$result = DB::select( "SELECT KONTO_ID  FROM GELD_KONTEN WHERE IBAN='$iban'  &&  AKTUELL='1' ORDER BY KONTO_DAT DESC LIMIT 0,2" );
 		}
-		$numrows = mysql_numrows ( $result );
+		$numrows = count( $result );
 		if ($numrows == 1) {
-			$row = mysql_fetch_assoc ( $result );
-			// echo "<h1>".$row['KONTO_ID']."</h1>";
+			$row = $result[0];
 			return $row ['KONTO_ID'];
 		}
 		
@@ -364,28 +303,26 @@ class gk {
 		if (isset ( $this->iban_konto_id )) {
 			unset ( $this->iban_konto_id );
 		}
-		$result = mysql_query ( "SELECT GELD_KONTEN.KONTO_ID, IBAN, GELD_KONTEN_ZUWEISUNG.KOSTENTRAEGER_TYP, GELD_KONTEN_ZUWEISUNG.KOSTENTRAEGER_ID   FROM `GELD_KONTEN`, GELD_KONTEN_ZUWEISUNG WHERE GELD_KONTEN.IBAN = '$iban' AND GELD_KONTEN.KONTO_ID=GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN.AKTUELL = '1' && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' LIMIT 0,1" );
-		$row = mysql_fetch_assoc ( $result );
+		$result = DB::select( "SELECT GELD_KONTEN.KONTO_ID, IBAN, GELD_KONTEN_ZUWEISUNG.KOSTENTRAEGER_TYP, GELD_KONTEN_ZUWEISUNG.KOSTENTRAEGER_ID   FROM `GELD_KONTEN`, GELD_KONTEN_ZUWEISUNG WHERE GELD_KONTEN.IBAN = '$iban' AND GELD_KONTEN.KONTO_ID=GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN.AKTUELL = '1' && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' LIMIT 0,1" );
+		$row = $result[0];
 		$this->iban_kos_typ = $row ['KOSTENTRAEGER_TYP'];
 		$this->iban_kos_id = $row ['KOSTENTRAEGER_ID'];
 		$this->iban_konto_id = $row ['KONTO_ID'];
 	}
 	function update_iban_bic_alle() {
-		$result = mysql_query ( "SELECT *  FROM  GELD_KONTEN WHERE GELD_KONTEN.AKTUELL = '1' ORDER BY KONTO_DAT" );
+		$result = DB::select( "SELECT *  FROM  GELD_KONTEN WHERE GELD_KONTEN.AKTUELL = '1' ORDER BY KONTO_DAT" );
 		
-		$numrows = mysql_numrows ( $result );
+		$numrows = count( $result );
 		if ($numrows) {
-			while ( $row = mysql_fetch_assoc ( $result ) ) {
+			foreach( $result as $row ) {
 				$dat = $row ['KONTO_DAT'];
 				$kto = $row ['KONTONUMMER'];
 				$blz = $row ['BLZ'];
 				$sep = new sepa ();
 				$sep->get_iban_bic ( $kto, $blz );
-				// echo "$sep->IBAN|$sep->BIC|$sep->BANKNAME_K<br>";
 				/* Update */
 				$db_abfrage = "UPDATE GELD_KONTEN SET IBAN='$sep->IBAN', BIC='$sep->BIC' WHERE KONTO_DAT='$dat'";
-				$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-				// die();
+				DB::update( $db_abfrage );
 			}
 			echo "Alle vorhandenen Geldkonten mit IBAN und BIC versehen!!!";
 		}

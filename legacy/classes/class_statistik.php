@@ -51,7 +51,7 @@ class statistik
         } else {
             $m_lage = "EINHEIT_LAGE LIKE '" . $typ_lage . "%' &&";
         }
-        $result = mysql_query("SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
+        $result = DB::select("SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
 
 FROM `EINHEIT`
 RIGHT JOIN (
@@ -67,11 +67,9 @@ OR MIETVERTRAG_BIS = '0000-00-00' )
 )
 ORDER BY EINHEIT_KURZNAME ASC");
 
-        while ($row = mysql_fetch_assoc($result))
-            $my_arr [] = $row;
         $this->leer = 0;
-        $this->leer = count($my_arr);
-        return $my_arr;
+        $this->leer = count($result);
+        return $result;
     }
 
     function vermietete_monat_jahr($jahr_monat, $objekt_id, $typ_lage)
@@ -81,7 +79,7 @@ ORDER BY EINHEIT_KURZNAME ASC");
         } else {
             $m_lage = '';
         }
-        $result = mysql_query("SELECT EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
+        $result = DB::select("SELECT EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
 
 FROM `EINHEIT`
 RIGHT JOIN (
@@ -96,11 +94,9 @@ OR MIETVERTRAG_BIS = '0000-00-00' )
 )
 GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
 
-        while ($row = mysql_fetch_assoc($result))
-            $my_arr [] = $row;
         $this->vermietete = 0;
-        $this->vermietete = count($my_arr);
-        return $my_arr;
+        $this->vermietete = count($result);
+        return $result;
     }
 
     function form_haus_leer_stat()
@@ -122,8 +118,6 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         for ($a = 1; $a < 13; $a++) {
             $monat = $mo = sprintf("%02d", $a);
             $jahr_monat = "$jahr-$monat";
-            // $leer += $this->leerstaende_monat_jahr_haus($jahr_monat, $haus_id, '');
-            // $verm += $this->vermietet_monat_jahr_haus($jahr_monat, $haus_id, '');
             $leer = $this->leer_monat_jahr_haus_m2($jahr_monat, $haus_id, '');
             $verm = $this->vermietet_monat_jahr_haus_m2($jahr_monat, $haus_id, '');
 
@@ -133,8 +127,6 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
             // echo "$a. $leer_qm $verm_qm<br>";
         }
         echo "</table>";
-        // $this->vermietet = $verm/12;
-        // $this->leer = $leer/12;
 
         $lj = $leer_qm / 12;
         $vj = $verm_qm / 12;
@@ -160,10 +152,9 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
 
         // echo $db_abfrage;
 
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($resultat);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($resultat);
+        $resultat = DB::select($db_abfrage);
+        if (!empty($resultat)) {
+            $row = $resultat[0];
             return $row ['QM'];
         } else {
             return '0.00';
@@ -179,10 +170,9 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         }
         $db_abfrage = "SELECT SUM(EINHEIT_QM) AS QM FROM `EINHEIT` RIGHT JOIN ( HAUS, OBJEKT ) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID) WHERE EINHEIT.EINHEIT_AKTUELL='1' && HAUS.HAUS_AKTUELL='1' && EINHEIT.HAUS_ID = '$haus_id' && (TYP='Wohnraum' OR TYP='Gewerbe') && EINHEIT_ID IN ( SELECT EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr_monat' && ( DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr_monat' OR MIETVERTRAG_BIS = '0000-00-00' ) ) ORDER BY EINHEIT_KURZNAME ASC";
 
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($resultat);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($resultat);
+        $resultat = DB::select($db_abfrage);
+        if (!empty($resultat)) {
+            $row = $resultat[0];
             return $row ['QM'];
         } else {
             return '0.00';
@@ -198,14 +188,10 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         }
         $db_abfrage = "SELECT OBJEKT_KURZNAME, EINHEIT.HAUS_ID, EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER FROM `EINHEIT` RIGHT JOIN ( HAUS, OBJEKT ) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID) WHERE EINHEIT.EINHEIT_AKTUELL='1' && HAUS.HAUS_AKTUELL='1' && EINHEIT.HAUS_ID = '$haus_id' && (TYP='Wohnraum' OR TYP='Gewerbe') && EINHEIT_ID NOT IN ( SELECT EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr_monat' && ( DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr_monat' OR MIETVERTRAG_BIS = '0000-00-00' ) ) ORDER BY EINHEIT_KURZNAME ASC";
 
-        // echo $db_abfrage;
-        // echo "<hr>";
-
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($resultat);
+        $resultat = DB::select($db_abfrage);
+        $numrows = count($resultat);
 
         return $numrows;
-        // return $my_arr;
     }
 
     function vermietet_monat_jahr_haus($jahr_monat, $haus_id, $typ_lage)
@@ -217,16 +203,10 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         }
         $db_abfrage = "SELECT OBJEKT_KURZNAME, EINHEIT.HAUS_ID, EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER FROM `EINHEIT` RIGHT JOIN ( HAUS, OBJEKT ) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID) WHERE EINHEIT.EINHEIT_AKTUELL='1' && HAUS.HAUS_AKTUELL='1' && EINHEIT.HAUS_ID = '$haus_id' && (TYP='Wohnraum' OR TYP='Gewerbe') && EINHEIT_ID IN ( SELECT EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr_monat' && ( DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr_monat' OR MIETVERTRAG_BIS = '0000-00-00' ) ) ORDER BY EINHEIT_KURZNAME ASC";
 
-        // echo $db_abfrage;
-        // echo "<hr>";
-
-        // while ($row = mysql_fetch_assoc($result)) $my_arr[] = $row;
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($resultat);
+        $resultat = DB::select($db_abfrage);
+        $numrows = count($resultat);
 
         return $numrows;
-
-        // return $my_arr;
     }
 
     function summe_sollmiete_alle()
@@ -308,9 +288,9 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
 
     function get_sollmiete_leerstand($einheit_id)
     {
-        $result = mysql_query("SELECT SUM( DETAIL_INHALT ) AS SUMME FROM DETAIL WHERE DETAIL_AKTUELL = '1' && DETAIL_ZUORDNUNG_TABELLE = 'EINHEIT' && DETAIL_ZUORDNUNG_ID = '$einheit_id' && (DETAIL_NAME = 'Miete kalt' OR DETAIL_NAME = 'Nebenkosten Vorauszahlung' OR DETAIL_NAME = 'Heizkosten Vorauszahlung')  ");
+        $result = DB::select("SELECT SUM( DETAIL_INHALT ) AS SUMME FROM DETAIL WHERE DETAIL_AKTUELL = '1' && DETAIL_ZUORDNUNG_TABELLE = 'EINHEIT' && DETAIL_ZUORDNUNG_ID = '$einheit_id' && (DETAIL_NAME = 'Miete kalt' OR DETAIL_NAME = 'Nebenkosten Vorauszahlung' OR DETAIL_NAME = 'Heizkosten Vorauszahlung')  ");
 
-        $row = mysql_fetch_assoc($result);
+        $row = $result[0];
         return $row ['SUMME'];
     }
 
@@ -322,7 +302,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         $datum = date("Y-m");
         $monat = date("m");
         $jahr = date("Y");
-        
+
         $typ_lage = '';
         $vermietete_arr = $this->vermietete_monat_jahr($datum, $objekt_id, $typ_lage);
         $anzahl_vermietete = count($vermietete_arr);
@@ -481,7 +461,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         } else {
             $m_lage = '';
         }
-        $result = mysql_query(" SELECT EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
+        $result = DB::select(" SELECT EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
 FROM `EINHEIT`
 RIGHT JOIN (
 HAUS
@@ -497,11 +477,9 @@ OR MIETVERTRAG_BIS = '0000-00-00' )
 ORDER BY EINHEIT_KURZNAME ASC
 LIMIT 0 , 30 ");
 
-        while ($row = mysql_fetch_assoc($result))
-            $my_arr [] = $row;
         $this->vermietete = 0;
-        $this->vermietete = count($my_arr);
-        return $my_arr;
+        $this->vermietete = count($result);
+        return $result;
     }
 
     function leerstand_monat_jahr_haus($jahr_monat, $haus_id, $typ_lage)
@@ -511,7 +489,7 @@ LIMIT 0 , 30 ");
         } else {
             $m_lage = '';
         }
-        $result = mysql_query(" SELECT EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
+        $result = DB::select(" SELECT EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
 FROM `EINHEIT`
 RIGHT JOIN (
 HAUS
@@ -527,17 +505,14 @@ OR MIETVERTRAG_BIS = '0000-00-00' )
 ORDER BY EINHEIT_KURZNAME ASC
 LIMIT 0 , 30 ");
 
-        while ($row = mysql_fetch_assoc($result))
-            $my_arr [] = $row;
         $this->vermietete = 0;
-        $this->vermietete = count($my_arr);
-        return $my_arr;
+        $this->vermietete = count($result);
+        return $result;
     }
 
     function berechnung_anzeigen($leerstand_arr, $vermietete_arr, $monat, $jahr)
     {
         echo '<pre>';
-        // print_r($vermietete_arr);
         $anzahl_vermietete = count($vermietete_arr);
         $mv = new mietvertrag ();
         $m = new mietkonto ();
@@ -664,7 +639,7 @@ LIMIT 0 , 30 ");
         } else {
             $m_lage = "EINHEIT_LAGE LIKE '" . $typ_lage . "%' &&";
         }
-        $result = mysql_query("SELECT EINHEIT_ID FROM `EINHEIT` WHERE $m_lage  EINHEIT_AKTUELL='1' && EINHEIT_ID NOT
+        $result = DB::select("SELECT EINHEIT_ID FROM `EINHEIT` WHERE $m_lage  EINHEIT_AKTUELL='1' && EINHEIT_ID NOT
 IN (
 SELECT EINHEIT_ID
 FROM MIETVERTRAG
@@ -673,10 +648,7 @@ OR MIETVERTRAG_BIS = '0000-00-00' )
 )
 ORDER BY EINHEIT_KURZNAME ASC");
 
-        while ($row = mysql_fetch_assoc($result))
-            $my_arr [] = $row;
-
-        return count($my_arr); // liefert anzahl leerstände
+        return count($result); // liefert anzahl leerstände
     }
 
     function kosten_einnahmen_k($geldkonto_id, $jahr, $desc, $y_label)
@@ -735,10 +707,7 @@ ORDER BY EINHEIT_KURZNAME ASC");
         $anzahl_alle_einheiten = count($e->liste_aller_einheiten());
         echo "Gesamt Einheiten: $anzahl_alle_einheiten<br>";
 
-        $result = mysql_query("SELECT EINHEIT_ID, MIETVERTRAG_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr-$monat' && ( DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr-$monat' OR MIETVERTRAG_BIS = '0000-00-00' )");
-
-        while ($row = mysql_fetch_assoc($result))
-            $my_arr [] = $row;
+        $my_arr = DB::select("SELECT EINHEIT_ID, MIETVERTRAG_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr-$monat' && ( DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr-$monat' OR MIETVERTRAG_BIS = '0000-00-00' )");
 
         $anzahl_gesamt_mvs = count($my_arr);
 
@@ -788,11 +757,9 @@ ORDER BY EINHEIT_KURZNAME ASC");
     {
         /* stundenzettel */
         $db_abfrage = "SELECT SUM(DAUER_MIN)/60 AS STUNDEN  FROM `STUNDENZETTEL_POS` JOIN STUNDENZETTEL ON (STUNDENZETTEL.ZETTEL_ID=STUNDENZETTEL_POS.ZETTEL_ID) WHERE `BENUTZER_ID` = '$mitarbeiter_id' AND STUNDENZETTEL.AKTUELL = '1' && STUNDENZETTEL_POS.AKTUELL = '1' && KOSTENTRAEGER_TYP='$typ' && KOSTENTRAEGER_ID='$id'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($resultat);
-
-        if ($numrows) {
-            $row = mysql_fetch_assoc($resultat);
+        $resultat = DB::select($db_abfrage);
+        if (!empty($resultat)) {
+            $row = $resultat[0];
             return $row ['STUNDEN'];
         } else {
             return 0;
@@ -802,32 +769,28 @@ ORDER BY EINHEIT_KURZNAME ASC");
     function baustellen_uebersicht()
     {
         $db_abfrage = "SELECT * FROM BAUSTELLEN ORDER BY DAT DESC";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($resultat);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($resultat)) {
-                $kos_typ = $row ['KOSTENTRAEGER_TYP'];
-                $kos_id = $row ['KOSTENTRAEGER_ID'];
-                $datum_a = $row ['A_DATUM'];
-                $datum_e = $row ['E_DATUM'];
-                $beschreibung = $row ['BESCHREIBUNG'];
-                $this->baustellen_leistung($kos_typ, $kos_id, 25, $datum_a, $datum_e, $beschreibung);
-            }
+        $resultat = DB::select($db_abfrage);
+        foreach ($resultat as $row) {
+            $kos_typ = $row ['KOSTENTRAEGER_TYP'];
+            $kos_id = $row ['KOSTENTRAEGER_ID'];
+            $datum_a = $row ['A_DATUM'];
+            $datum_e = $row ['E_DATUM'];
+            $beschreibung = $row ['BESCHREIBUNG'];
+            $this->baustellen_leistung($kos_typ, $kos_id, 25, $datum_a, $datum_e, $beschreibung);
         }
     }
 
     function baustellen_leistung($kos_typ, $kos_id, $preis, $datum_a, $datum_e, $beschreibung = '')
     {
         $db_abfrage = "SELECT STUNDENZETTEL.BENUTZER_ID, name, hourly_rate, SUM(DAUER_MIN)/60 AS STD, $preis*(SUM(DAUER_MIN)/60) AS LEISTUNG_EUR FROM `STUNDENZETTEL_POS` JOIN STUNDENZETTEL ON (STUNDENZETTEL.ZETTEL_ID=STUNDENZETTEL_POS.ZETTEL_ID) JOIN users ON(STUNDENZETTEL.BENUTZER_ID=users.id) WHERE  STUNDENZETTEL_POS.DATUM BETWEEN '$datum_a' AND '$datum_e' && STUNDENZETTEL.AKTUELL = '1' && STUNDENZETTEL_POS.AKTUELL = '1' && KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID='$kos_id' GROUP BY STUNDENZETTEL.BENUTZER_ID ORDER BY STD DESC";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($resultat);
+        $resultat = DB::select($db_abfrage);
 
         $r = new rechnung ();
         $kos_bez = $r->kostentraeger_ermitteln($kos_typ, $kos_id);
         $datum1 = date_mysql2german($datum_a);
         $datum2 = date_mysql2german($datum_e);
 
-        if ($numrows) {
+        if (!empty($resultat)) {
             echo "<table class='striped'>";
             echo "<thead>";
             echo "<tr><th colspan=\"3\">Baustelle $kos_bez $beschreibung Vom:$datum1 Bis: $datum2</th></tr>";
@@ -836,14 +799,12 @@ ORDER BY EINHEIT_KURZNAME ASC");
             $gesamt_std = $this->stunden_gesamt_kostentraeger($kos_typ, $kos_id, $datum_a, $datum_e);
             $gesamt_eur = nummer_punkt2komma($gesamt_std * $preis);
 
-            while ($row = mysql_fetch_assoc($resultat)) {
+            foreach($resultat as $row) {
                 $benutzname = $row ['name'];
                 $std = nummer_punkt2komma($row ['STD']);
                 $leistung_eur = nummer_punkt2komma($row ['LEISTUNG_EUR']);
-                // echo "$benutzname $std Stunden $leistung_eur €<br>";
                 echo "<tr><td>$benutzname</td><td>$std</td><td>$leistung_eur</td></tr>";
             }
-            // echo "<hr><b>Stunden gesamt: $gesamt_std | Preis Leistung: $gesamt_eur €</b><hr><br>";
             $gesamt_std_a = nummer_punkt2komma($gesamt_std);
             $gesamt_eur_a = nummer_punkt2komma($gesamt_eur);
             echo "<tr><th>Gesamt</th><th>$gesamt_std_a Std.</th><th>$gesamt_eur_a €</th></tr>";
@@ -857,11 +818,9 @@ ORDER BY EINHEIT_KURZNAME ASC");
     {
         /* stundenzettel */
         $db_abfrage = "SELECT SUM(DAUER_MIN)/60 AS STUNDEN  FROM `STUNDENZETTEL_POS`  WHERE STUNDENZETTEL_POS.DATUM BETWEEN '$datum_a' AND '$datum_e' && STUNDENZETTEL_POS.AKTUELL = '1' && KOSTENTRAEGER_TYP='$typ' && KOSTENTRAEGER_ID='$id'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($resultat);
-
-        if ($numrows) {
-            $row = mysql_fetch_assoc($resultat);
+        $resultat = DB::select($db_abfrage);
+        if (!empty($resultat)) {
+            $row = $resultat[0];
             return $row ['STUNDEN'];
         } else {
             return 0;
@@ -871,12 +830,11 @@ ORDER BY EINHEIT_KURZNAME ASC");
     function baustellen_uebersicht2($soll_std)
     {
         $db_abfrage = "SELECT * FROM BAUSTELLEN ORDER BY DAT DESC";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($resultat);
-        if ($numrows) {
+        $resultat = DB::select($db_abfrage);
+        if (!empty($resultat)) {
             echo "<table class=\"sortable striped\">";
             echo "<thead><tr><th>Baustelle</th><th>SOLL</th><th>GESAMT</th><th>DIFF</th><th>STATUS</th></tr></thead>";
-            while ($row = mysql_fetch_assoc($resultat)) {
+            foreach($resultat as $row) {
                 $kos_typ = $row ['KOSTENTRAEGER_TYP'];
                 $kos_id = $row ['KOSTENTRAEGER_ID'];
                 $datum_a = $row ['A_DATUM'];
@@ -913,25 +871,24 @@ ORDER BY EINHEIT_KURZNAME ASC");
     function gesamt_stunden($kos_typ, $kos_id, $datum_a, $datum_e)
     {
         $db_abfrage = "SELECT SUM(DAUER_MIN)/60 AS G_STD FROM `STUNDENZETTEL_POS` JOIN STUNDENZETTEL ON (STUNDENZETTEL.ZETTEL_ID=STUNDENZETTEL_POS.ZETTEL_ID) JOIN users ON(STUNDENZETTEL.BENUTZER_ID=users.id) WHERE  STUNDENZETTEL_POS.DATUM BETWEEN '$datum_a' AND '$datum_e' && STUNDENZETTEL.AKTUELL = '1' && STUNDENZETTEL_POS.AKTUELL = '1' && KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID='$kos_id'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($resultat);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($resultat);
+        $resultat = DB::select($db_abfrage);
+        if (!empty($resultat)) {
+            $row = $resultat[0];
             return $row ['G_STD'];
         }
     }
 
     function get_baustelle_ext_id($bau_bez)
     {
-        $result = mysql_query("SELECT ID FROM BAUSTELLEN_EXT WHERE BEZ='$bau_bez' && AKTUELL = '1' ORDER BY ID DESC LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT ID FROM BAUSTELLEN_EXT WHERE BEZ='$bau_bez' && AKTUELL = '1' ORDER BY ID DESC LIMIT 0,1");
+        $row = $result[0];
         return $row ['ID'];
     }
 
     function get_baustelle_ext_infos($bau_id)
     {
-        $result = mysql_query("SELECT * FROM BAUSTELLEN_EXT WHERE ID='$bau_id' && AKTUELL = '1' ORDER BY ID DESC LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT * FROM BAUSTELLEN_EXT WHERE ID='$bau_id' && AKTUELL = '1' ORDER BY ID DESC LIMIT 0,1");
+        $row = $result[0];
         $this->bez = $row ['BEZ'];
     }
 
@@ -956,7 +913,7 @@ ORDER BY EINHEIT_KURZNAME ASC");
             $pos = $arr [$a] ['POS'];
             $art_nr = $arr [$a] ['ARTIKEL_NR'];
             $img = "images/del.png";
-            $link_rnr = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnung_kontieren', 'belegnr' => $beleg_id]). "'>$rnr</a>";
+            $link_rnr = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnung_kontieren', 'belegnr' => $beleg_id]) . "'>$rnr</a>";
             $link_del = "<a href='" . route('legacy::statistik::index', ['option' => 'lieferung_loeschen', 'beleg_id' => $beleg_id, 'pos' => $pos]) . "'><img src=\"$img\"></a>";
             $preis = $arr [$a] ['PREIS'];
             $menge = $arr [$a] ['MENGE'];
@@ -1036,20 +993,17 @@ ORDER BY EINHEIT_KURZNAME ASC");
 
     function get_lieferungen_arr()
     {
-        $result = mysql_query("SELECT R_BELEG_ID, POS, ARTIKEL_NR, PREIS, MENGE, ART_LIEFERANT FROM `FENSTER_LIEFERUNG`, RECHNUNGEN_POSITIONEN
+        $result = DB::select("SELECT R_BELEG_ID, POS, ARTIKEL_NR, PREIS, MENGE, ART_LIEFERANT FROM `FENSTER_LIEFERUNG`, RECHNUNGEN_POSITIONEN
 WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
-
-        while ($row = mysql_fetch_assoc($result))
-            $my_arr [] = $row;
-        if (isset ($my_arr)) {
-            return $my_arr;
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function get_eingebaut($beleg_nr, $pos)
     {
-        $result = mysql_query("SELECT COUNT(*) AS EINGEBAUT  FROM `FENSTER_EINGEBAUT` WHERE `R_BELEG_ID` = '$beleg_nr' AND `POS` ='$pos' ");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT COUNT(*) AS EINGEBAUT  FROM `FENSTER_EINGEBAUT` WHERE `R_BELEG_ID` = '$beleg_nr' AND `POS` ='$pos' ");
+        $row = $result[0];
         return $row ['EINGEBAUT'];
     }
 
@@ -1082,12 +1036,9 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
 
     function get_wo_eingebaut_arr($beleg_nr, $pos)
     {
-        $result = mysql_query("SELECT COUNT(EINHEIT_ID) AS ANZ, EINHEIT_ID  FROM `FENSTER_EINGEBAUT` WHERE `R_BELEG_ID` = '$beleg_nr' AND `POS` ='$pos' GROUP BY EINHEIT_ID");
-
-        while ($row = mysql_fetch_assoc($result))
-            $my_arr [] = $row;
-        if (isset ($my_arr)) {
-            return $my_arr;
+        $result = DB::select("SELECT COUNT(EINHEIT_ID) AS ANZ, EINHEIT_ID  FROM `FENSTER_EINGEBAUT` WHERE `R_BELEG_ID` = '$beleg_nr' AND `POS` ='$pos' GROUP BY EINHEIT_ID");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -1137,12 +1088,9 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
 
     function get_bau_beleg_arr()
     {
-        $result = mysql_query("SELECT * FROM  `BAU_BELEG`");
-
-        while ($row = mysql_fetch_assoc($result))
-            $my_arr [] = $row;
-        if (isset ($my_arr)) {
-            return $my_arr;
+        $result = DB::select("SELECT * FROM `BAU_BELEG`");
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -1152,9 +1100,9 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
         $table_tmp = "<table class=\"sortable\">";
         $table_tmp .= "<tr><th>BELEG</th><th>ARTIKEL</th><th>BEZ</th><th>AUSSTELLER</th><th>EMPFÄNGER</th><th>MENGE SOLL</th><th>MENGE IST</th></tr>";
 
-        $result = mysql_query("SELECT BELEG_NR, POSITION, MENGE FROM `KONTIERUNG_POSITIONEN` WHERE `KOSTENTRAEGER_TYP` LIKE '$kos_typ' AND `KOSTENTRAEGER_ID` ='$kos_id' AND `AKTUELL` = '1'");
+        $result = DB::select("SELECT BELEG_NR, POSITION, MENGE FROM `KONTIERUNG_POSITIONEN` WHERE `KOSTENTRAEGER_TYP` LIKE '$kos_typ' AND `KOSTENTRAEGER_ID` ='$kos_id' AND `AKTUELL` = '1'");
 
-        while ($row = mysql_fetch_assoc($result)) {
+        foreach($result as $row) {
             $beleg_nr = $row ['BELEG_NR'];
             $position = $row ['POSITION'];
             $menge_kont = $row ['MENGE'];
@@ -1167,7 +1115,7 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
                 $a_arr = $r->artikel_info($lieferant_id, $art_nr);
                 $bez = $a_arr [0] ['BEZEICHNUNG'];
                 $r->rechnung_grunddaten_holen($beleg_nr);
-                $link_beleg = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnung_kontieren', 'belegnr' => $beleg_id]). "'>$r->rechnungsnummer</a>";
+                $link_beleg = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnung_kontieren', 'belegnr' => $beleg_id]) . "'>$r->rechnungsnummer</a>";
                 $link_katalog = "<a href='" . route('legacy::katalog::index', ['option' => 'artikel_suche', 'artikel_nr' => $art_nr]) . "'>$art_nr</a>";
                 $table_tmp .= "<tr><td>$link_beleg</td><td>$link_katalog</td><td>$bez</td><td>$r->rechnungs_aussteller_name</td><td>$r->rechnungs_empfaenger_name</td><td>$menge</td><td>$menge_kont</td></tr>";
             }
@@ -1184,7 +1132,7 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
     {
         if (!$this->check_lieferung($beleg_id, $pos)) {
             $db_abfrage = "INSERT INTO FENSTER_LIEFERUNG VALUES (NULL, '$beleg_id', '$pos')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert($db_abfrage);
             return true;
         } else {
             fehlermeldung_ausgeben("Lieferung exisitiert schon!");
@@ -1194,24 +1142,18 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
 
     function check_lieferung($beleg_id, $pos)
     {
-        $result = mysql_query("SELECT * FROM `FENSTER_LIEFERUNG` WHERE `R_BELEG_ID` ='$beleg_id' AND `POS` ='$pos' LIMIT 0 , 1");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select("SELECT * FROM `FENSTER_LIEFERUNG` WHERE `R_BELEG_ID` ='$beleg_id' AND `POS` ='$pos' LIMIT 0 , 1");
+        return !empty($result);
     }
 
     function lieferung_loeschen($beleg_id, $pos)
     {
         if ($this->check_lieferung($beleg_id, $pos)) {
             $db_abfrage = "DELETE FROM FENSTER_LIEFERUNG WHERE R_BELEG_ID='$beleg_id' && POS='$pos'";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::delete($db_abfrage);
 
             $db_abfrage = "DELETE FROM FENSTER_EINGEBAUT WHERE R_BELEG_ID='$beleg_id' && POS='$pos'";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-
+            DB::delete($db_abfrage);
             return true;
         } else {
             fehlermeldung_ausgeben("Lieferung exisitiert nicht!");
@@ -1224,7 +1166,7 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
         if ($this->check_lieferung($beleg_id, $pos)) {
 
             $db_abfrage = "DELETE FROM FENSTER_EINGEBAUT WHERE R_BELEG_ID='$beleg_id' && POS='$pos' && EINHEIT_ID='$einheit_id'";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::delete($db_abfrage);
 
             return true;
         } else {
@@ -1237,7 +1179,7 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
     {
         for ($a = 0; $a < $anz_fenster; $a++) {
             $db_abfrage = "INSERT INTO FENSTER_EINGEBAUT VALUES (NULL, '$beleg_id', '$pos', '$einheit_id')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert($db_abfrage);
         }
 
         return true;

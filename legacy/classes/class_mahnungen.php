@@ -142,25 +142,19 @@ class mahnungen {
 	}
 	function check_berechnung_heute($mietvertrag_id) {
 		$datum = date ( "Y-m-d" );
-		$result = mysql_query ( "SELECT * FROM `MIETER_MAHNLISTEN`  WHERE DATUM='$datum' && MIETVERTRAG_ID='$mietvertrag_id' && AKTUELL='1'" );
-		$numrows = mysql_numrows ( $result );
-		if ($numrows) {
-			return true;
-		} else {
-			return false;
-		}
+		$result = DB::select( "SELECT * FROM `MIETER_MAHNLISTEN`  WHERE DATUM='$datum' && MIETVERTRAG_ID='$mietvertrag_id' && AKTUELL='1'" );
+		return !empty($result);
 	}
 	function update_mahnliste_heute($mv_id, $saldo) {
 		$datum = date ( "Y-m-d" );
 		$db_abfrage = "INSERT INTO MIETER_MAHNLISTEN VALUES (NULL,'$datum', '$mv_id', '$saldo','0000-00-00','0000-00-00','0.00', '1')";
-		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+		DB::insert( $db_abfrage );
 	}
 	function saldo_mahnliste_heute($mietvertrag_id) {
 		$datum = date ( "Y-m-d" );
-		$result = mysql_query ( "SELECT SALDO FROM `MIETER_MAHNLISTEN`  WHERE DATUM='$datum' && MIETVERTRAG_ID='$mietvertrag_id' ORDER BY DATUM DESC LIMIT 0,1" );
-		$numrows = mysql_numrows ( $result );
-		if ($numrows) {
-			$row = mysql_fetch_assoc ( $result );
+		$result = DB::select( "SELECT SALDO FROM `MIETER_MAHNLISTEN`  WHERE DATUM='$datum' && MIETVERTRAG_ID='$mietvertrag_id' ORDER BY DATUM DESC LIMIT 0,1" );
+		if (!empty($result)) {
+			$row = $result[0];
 			return $row ['SALDO'];
 		}
 	}
@@ -168,10 +162,9 @@ class mahnungen {
 		unset ( $this->datum_l_mahnung );
 		unset ( $this->saldo_l_mahnung );
 		unset ( $this->mahn_geb );
-		$result = mysql_query ( "SELECT ZAHLUNGSFRIST_M, SALDO, MAHN_GEB  FROM `MIETER_MAHNLISTEN` WHERE MIETVERTRAG_ID='$mietvertrag_id' && ZAHLUNGSFRIST_M!='0000-00-00' ORDER BY DATUM DESC LIMIT 0,1" );
-		$numrows = mysql_numrows ( $result );
-		if ($numrows) {
-			$row = mysql_fetch_assoc ( $result );
+		$result = DB::select( "SELECT ZAHLUNGSFRIST_M, SALDO, MAHN_GEB  FROM `MIETER_MAHNLISTEN` WHERE MIETVERTRAG_ID='$mietvertrag_id' && ZAHLUNGSFRIST_M!='0000-00-00' ORDER BY DATUM DESC LIMIT 0,1" );
+		if (!empty($result)) {
+			$row = $result[0];
 			$this->datum_l_mahnung = date_mysql2german ( $row ['ZAHLUNGSFRIST_M'] );
 			$this->saldo_l_mahnung = nummer_punkt2komma ( abs ( $row ['SALDO'] ) );
 			$this->mahn_geb = nummer_punkt2komma ( abs ( $row ['MAHN_GEB'] ) );
@@ -183,20 +176,19 @@ class mahnungen {
 	}
 	function update_zahlungsfrist_z($mv_id, $datum, $saldo) {
 		$db_abfrage = "UPDATE MIETER_MAHNLISTEN SET ZAHLUNGSFRIST_Z='$datum' WHERE MIETVERTRAG_ID='$mv_id' && SALDO='$saldo' && ZAHLUNGSFRIST_Z='0000-00-00'";
-		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+		DB::update( $db_abfrage );
 	}
 	function update_zahlungsfrist_m($mv_id, $datum, $saldo, $mahn_geb) {
 		$db_abfrage = "UPDATE MIETER_MAHNLISTEN SET ZAHLUNGSFRIST_M='$datum', MAHN_GEB='$mahn_geb'  WHERE MIETVERTRAG_ID='$mv_id' && SALDO='$saldo' ";
-		$resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+		DB::update( $db_abfrage );
 	}
 	function check_letzte_zahlungserinnerung($mietvertrag_id) {
 		unset ( $this->datum_l_zahl_e );
 		unset ( $this->saldo_zahl_e );
 		
-		$result = mysql_query ( "SELECT ZAHLUNGSFRIST_Z, SALDO  FROM `MIETER_MAHNLISTEN` WHERE MIETVERTRAG_ID='$mietvertrag_id' && ZAHLUNGSFRIST_Z!='0000-00-00' ORDER BY DATUM DESC LIMIT 0,1" );
-		$numrows = mysql_numrows ( $result );
-		if ($numrows) {
-			$row = mysql_fetch_assoc ( $result );
+		$result = DB::select( "SELECT ZAHLUNGSFRIST_Z, SALDO  FROM `MIETER_MAHNLISTEN` WHERE MIETVERTRAG_ID='$mietvertrag_id' && ZAHLUNGSFRIST_Z!='0000-00-00' ORDER BY DATUM DESC LIMIT 0,1" );
+		if (!empty($result)) {
+			$row = $result[0];
 			$this->datum_l_zahl_e = date_mysql2german ( $row ['ZAHLUNGSFRIST_Z'] );
 			$this->saldo_zahl_e = nummer_punkt2komma ( $row ['SALDO'] );
 		} else {
@@ -407,7 +399,7 @@ class mahnungen {
 	function finde_aktuelle_mvs() {
 		if (session()->has('objekt_id')) {
 			$objekt_id = session()->get('objekt_id');
-			$result = mysql_query ( "SELECT MIETVERTRAG_ID, EINHEIT.EINHEIT_ID, HAUS.HAUS_ID, OBJEKT.OBJEKT_ID FROM MIETVERTRAG 
+			$my_arr = DB::select( "SELECT MIETVERTRAG_ID, EINHEIT.EINHEIT_ID, HAUS.HAUS_ID, OBJEKT.OBJEKT_ID FROM MIETVERTRAG 
 LEFT JOIN EINHEIT ON (MIETVERTRAG.EINHEIT_ID=EINHEIT.EINHEIT_ID)
 LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID)
 LEFT JOIN OBJEKT ON (HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID)
@@ -415,49 +407,34 @@ LEFT JOIN OBJEKT ON (HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID)
 WHERE MIETVERTRAG_AKTUELL = '1' && EINHEIT_AKTUELL = '1' && HAUS_AKTUELL = '1' && OBJEKT_AKTUELL = '1'  && OBJEKT.OBJEKT_ID='$objekt_id' && ( MIETVERTRAG_BIS > CURdate( )
 OR MIETVERTRAG_BIS = '0000-00-00' ) ORDER BY EINHEIT_KURZNAME ASC" );
 		} else {
-			$result = mysql_query ( "SELECT MIETVERTRAG_ID, EINHEIT_ID FROM MIETVERTRAG
+			$my_arr = DB::select( "SELECT MIETVERTRAG_ID, EINHEIT_ID FROM MIETVERTRAG
 WHERE MIETVERTRAG_AKTUELL = '1' && ( MIETVERTRAG_BIS > CURdate( )
 OR MIETVERTRAG_BIS = '0000-00-00' ) ORDER BY EINHEIT_KURZNAME ASC" );
 		}
-		while ( $row = mysql_fetch_assoc ( $result ) ) {
-			$my_arr [] = $row;
-		}
-		if (isset ( $my_arr )) {
-			return $my_arr;
-		}
+		return $my_arr;
 	}
 	
 	/* finde aktuelle MIetverträge */
 	function finde_ausgezogene_mvs() {
 		if (session()->has('objekt_id')) {
 			$objekt_id = session()->get('objekt_id');
-			$result = mysql_query ( "SELECT MIETVERTRAG_ID, EINHEIT.EINHEIT_ID, HAUS.HAUS_ID, OBJEKT.OBJEKT_ID  FROM MIETVERTRAG  LEFT JOIN EINHEIT ON (MIETVERTRAG.EINHEIT_ID=EINHEIT.EINHEIT_ID)
+			$result = DB::select("SELECT MIETVERTRAG_ID, EINHEIT.EINHEIT_ID, HAUS.HAUS_ID, OBJEKT.OBJEKT_ID  FROM MIETVERTRAG  LEFT JOIN EINHEIT ON (MIETVERTRAG.EINHEIT_ID=EINHEIT.EINHEIT_ID)
 LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID) WHERE MIETVERTRAG_AKTUELL = '1' && EINHEIT_AKTUELL = '1' && HAUS_AKTUELL = '1' && OBJEKT_AKTUELL = '1'  && OBJEKT.OBJEKT_ID='$objekt_id'  && MIETVERTRAG_BIS < CURdate() && MIETVERTRAG_BIS != '0000-00-00' ORDER BY EINHEIT_ID ASC" );
 		} else {
-			$result = mysql_query ( "SELECT MIETVERTRAG_ID, EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' && MIETVERTRAG_BIS < CURdate() && MIETVERTRAG_BIS != '0000-00-00' ORDER BY EINHEIT_ID ASC" );
+			$result = DB::select("SELECT MIETVERTRAG_ID, EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' && MIETVERTRAG_BIS < CURdate() && MIETVERTRAG_BIS != '0000-00-00' ORDER BY EINHEIT_ID ASC" );
 		}
-		while ( $row = mysql_fetch_assoc ( $result ) ) {
-			$my_arr [] = $row;
-		}
-		if (isset ( $my_arr )) {
-			return $my_arr;
-		}
+		return $result;
 	}
 	
 	/* finde aktuelle MIetverträge */
 	function finde_alle_mvs() {
 		if (session()->has('objekt_id')) {
 			$objekt_id = session()->get('objekt_id');
-			$result = mysql_query ( "SELECT MIETVERTRAG_ID, EINHEIT.EINHEIT_ID, HAUS.HAUS_ID, OBJEKT.OBJEKT_ID  FROM MIETVERTRAG LEFT JOIN EINHEIT ON (MIETVERTRAG.EINHEIT_ID=EINHEIT.EINHEIT_ID) LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID) WHERE MIETVERTRAG_AKTUELL = '1' && EINHEIT_AKTUELL = '1' && HAUS_AKTUELL = '1' && OBJEKT_AKTUELL = '1'  && OBJEKT.OBJEKT_ID='$objekt_id'   ORDER BY EINHEIT_ID ASC" );
+			$result = DB::select( "SELECT MIETVERTRAG_ID, EINHEIT.EINHEIT_ID, HAUS.HAUS_ID, OBJEKT.OBJEKT_ID  FROM MIETVERTRAG LEFT JOIN EINHEIT ON (MIETVERTRAG.EINHEIT_ID=EINHEIT.EINHEIT_ID) LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID) WHERE MIETVERTRAG_AKTUELL = '1' && EINHEIT_AKTUELL = '1' && HAUS_AKTUELL = '1' && OBJEKT_AKTUELL = '1'  && OBJEKT.OBJEKT_ID='$objekt_id'   ORDER BY EINHEIT_ID ASC" );
 		} else {
-			$result = mysql_query ( "SELECT MIETVERTRAG_ID, EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' ORDER BY EINHEIT_ID ASC" );
+			$result = DB::select( "SELECT MIETVERTRAG_ID, EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' ORDER BY EINHEIT_ID ASC" );
 		}
-		while ( $row = mysql_fetch_assoc ( $result ) ) {
-			$my_arr [] = $row;
-		}
-		if (isset ( $my_arr )) {
-			return $my_arr;
-		}
+		return $result;
 	}
 	function zahlungserinnerung_pdf($mv_id, $fristdatum, $geldkonto_id) {
 		ob_end_clean (); // ausgabepuffer leeren

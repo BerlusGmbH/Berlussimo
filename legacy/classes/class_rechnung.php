@@ -42,10 +42,9 @@ class rechnung {
     /* Infos über Positionen */
     var $anzahl_positionen;
     function get_kontierung_obj($dat) {
-        $result = mysql_query ( "SELECT * FROM KONTIERUNG_POSITIONEN WHERE `KONTIERUNG_DAT` ='$dat'" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows) {
-            $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT * FROM KONTIERUNG_POSITIONEN WHERE `KONTIERUNG_DAT` ='$dat'" );
+        if (!empty($result)) {
+            $row = $result[0];
             $this->dat = $dat;
             $this->beleg_nr = $row ['BELEG_NR'];
             $this->pos = $row ['POSITION'];
@@ -66,11 +65,9 @@ class rechnung {
         $formular = new formular ();
         $partner = new partner ();
         $form->erstelle_formular ( "Bargeldlose Rechnung erfassen", NULL );
-        // echo "Rechnung erfassen<br>\n";
         $form->hidden_feld ( "aussteller_typ", "Partner" );
         $partner_arr = $partner->partner_dropdown ( 'Rechnung ausgestellt von', 'aussteller_id', 'aussteller' );
         $form->hidden_feld ( "empfaenger_typ", "Partner" );
-        // $partner_arr=$partner->partner_dropdown('Rechnung ausgestellt an','empfaenger_id', 'empfaenger');
         $pp = new partners ();
         $pp->partner_dropdown ( 'Rechnung ausgestellt an', 'empfaenger_id', 'empfaenger', session()->get('partner_id'));
 
@@ -157,28 +154,18 @@ class rechnung {
     /* Alle Rechnungen werden angezeigt */
     function erfasste_rechungen_anzeigen() {
         /* Zählen aller Zeilen */
-        $result = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE AKTUELL = '1' ORDER BY BELEG_NR DESC" );
-        /*
-		 * $result = mysql_query ("SELECT RECHNUNGEN. * , COUNT( RECHNUNGEN_POSITIONEN.POSITION ) AS ANZAHL_POSITIONEN
-                    * FROM RECHNUNGEN, RECHNUNGEN_POSITIONEN
-                    * WHERE RECHNUNGEN.BELEG_NR = '1' && RECHNUNGEN_POSITIONEN.BELEG_NR = '1'
-                        * GROUP BY RECHNUNGEN.BELEG_NR DESC");
-		 */
-        $numrows1 = mysql_numrows ( $result );
+        $result = DB::select( "SELECT * FROM RECHNUNGEN WHERE AKTUELL = '1' ORDER BY BELEG_NR DESC" );
+        $numrows1 = count( $result );
         /* Seitennavigation mit Limit erstellen */
         echo "<table><tr><td>Anzahl aller Rechnungen: $numrows1</td></tr><tr><td>\n";
         $navi = new blaettern ( 0, $numrows1, 100, route('legacy::rechnungen::index', ['option' => 'erfasste_rechnungen'], false) );
         echo "</td></tr></table>\n";
-        $result = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE AKTUELL = '1'  ORDER BY BELEG_NR DESC " . $navi->limit . "" );
-        $numrows = mysql_numrows ( $result );
-
-        if ($numrows > 0) {
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_array [] = $row;
+        $my_array = DB::select( "SELECT * FROM RECHNUNGEN WHERE AKTUELL = '1'  ORDER BY BELEG_NR DESC " . $navi->limit );
+        if (!empty($my_array)) {
             echo "<table class=sortable>\n";
-            // echo "<tr class=feldernamen><td>Erfassungsnr</td><td>TYP</td><td>Rech.Nr</td><td>Fälig</td><td>Von</td><td>An</td><td width=80>Netto</td><td width=80>Brutto</td><td width=80>Skonto</td></tr>\n";
             echo "<tr><th>Erfassungsnr</th><th>TYP</th><th>Rech.Nr</th><th>Fälig</th><th>Von</th><th>An</th><th>Netto</th><th>Brutto</th><th>Skonto</th></tr>\n";
-            for($a = 0; $a < count ( $my_array ); $a ++) {
+            $numrows = count ( $my_array );
+            for($a = 0; $a < $numrows; $a ++) {
                 $belegnr = $my_array [$a] ['BELEG_NR'];
                 $this->rechnung_grunddaten_holen ( $belegnr );
 
@@ -203,28 +190,24 @@ class rechnung {
     }
     function vollstaendig_erfasste_rechungen_anzeigen() {
         /* Zählen aller Zeilen */
-        // $result = mysql_query ("SELECT * FROM RECHNUNGEN WHERE AKTUELL = '1' ORDER BY BELEG_NR DESC ");
-        $result = mysql_query ( "SELECT RECHNUNGEN. * , COUNT( RECHNUNGEN_POSITIONEN.POSITION ) AS ANZAHL_POSITIONEN
+        $result = DB::select( "SELECT RECHNUNGEN. * , COUNT( RECHNUNGEN_POSITIONEN.POSITION ) AS ANZAHL_POSITIONEN
 FROM RECHNUNGEN, RECHNUNGEN_POSITIONEN
 WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL='1' && RECHNUNGEN_POSITIONEN.AKTUELL='1' GROUP BY RECHNUNGEN.BELEG_NR ASC" );
-        $numrows = mysql_numrows ( $result );
+        $numrows = count( $result );
         if ($numrows > 0) {
             /* Seitennavigation mit Limit erstellen */
             echo "<table><tr><td>Anzahl vollständige Rechnungen: $numrows</td></tr><tr><td>\n";
             $navi = new blaettern ( 0, $numrows, 10, route('legacy::rechnungen::index', ['option' => 'vollstaendige_rechnungen'], false));
             echo "</td><tr></table>\n";
-            $result = mysql_query ( "SELECT RECHNUNGEN. * , COUNT( RECHNUNGEN_POSITIONEN.POSITION ) AS ANZAHL_POSITIONEN
+            $my_array = DB::select( "SELECT RECHNUNGEN. * , COUNT( RECHNUNGEN_POSITIONEN.POSITION ) AS ANZAHL_POSITIONEN
 FROM RECHNUNGEN, RECHNUNGEN_POSITIONEN
 WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL='1' && RECHNUNGEN_POSITIONEN.AKTUELL='1' AND RECHNUNGSTYP='Rechnung' OR RECHNUNGSTYP='Gutschrift'
 GROUP BY RECHNUNGEN.BELEG_NR ORDER BY BELEG_NR DESC $navi->limit" );
-            $numrows = mysql_numrows ( $result );
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_array [] = $row;
-
             echo "<table class=rechnungen>\n";
             echo "<tr class=feldernamen><td>BNr</td><td>R-Datum</td><td>E-Datum</td><td>Fällig</td><td>Von</td><td>An</td><td width=80>Netto</td><td width=80>Brutto</td><td width=80>Skonto</td></tr>\n";
 
-            for($a = 0; $a < count ( $my_array ); $a ++) {
+            $numrows = count ( $my_array );
+            for($a = 0; $a < $numrows; $a ++) {
                 $belegnr = $my_array [$a] ['BELEG_NR'];
                 $anzahl_positionen = $my_array [$a] ['ANZAHL_POSITIONEN'];
                 $this->rechnung_grunddaten_holen ( $belegnr );
@@ -246,26 +229,22 @@ GROUP BY RECHNUNGEN.BELEG_NR ORDER BY BELEG_NR DESC $navi->limit" );
     }
     function unvollstaendig_erfasste_rechungen_anzeigen() {
         /* Zählen aller Zeilen */
-        $result = mysql_query ( " SELECT BELEG_NR FROM RECHNUNGEN WHERE BELEG_NR NOT IN (  SELECT BELEG_NR FROM RECHNUNGEN_POSITIONEN WHERE AKTUELL='1') && AKTUELL='1'" );
+        $result = DB::select( " SELECT BELEG_NR FROM RECHNUNGEN WHERE BELEG_NR NOT IN (  SELECT BELEG_NR FROM RECHNUNGEN_POSITIONEN WHERE AKTUELL='1') && AKTUELL='1'" );
 
-        $numrows1 = mysql_numrows ( $result );
+        $numrows1 = count( $result );
         echo "<table><tr><td>Anzahl aller unvollständig erfassten Rechnungen: $numrows1</td></tr><tr><td>\n";
         /* Seitennavigation mit Limit erstellen */
         $navi = new blaettern ( 0, $numrows1, 10, route('legacy::rechnungen::index', ['option' => 'unvollstaendige_rechnungen']) );
         echo "</td></tr></table>\n";
-        $result = mysql_query ( " SELECT * FROM RECHNUNGEN WHERE BELEG_NR NOT IN (  SELECT BELEG_NR FROM RECHNUNGEN_POSITIONEN WHERE AKTUELL='1') && AKTUELL='1' ORDER BY BELEG_NR DESC  $navi->limit" );
-        $numrows = mysql_numrows ( $result );
-
+        $my_array = DB::select( " SELECT * FROM RECHNUNGEN WHERE BELEG_NR NOT IN (  SELECT BELEG_NR FROM RECHNUNGEN_POSITIONEN WHERE AKTUELL='1') && AKTUELL='1' ORDER BY BELEG_NR DESC  $navi->limit" );
+        $numrows = count( $result );
         if ($numrows > 0) {
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_array [] = $row;
             echo "<table class=rechnungen>\n";
             echo "<tr class=feldernamen><td>BNr</td><td>R-Datum</td><td>E-Datum</td><td>Fällig</td><td>Von</td><td>An</td><td width=80>Netto</td><td width=80>Brutto</td><td width=80>Skonto</td></tr>\n";
 
-            for($a = 0; $a < count ( $my_array ); $a ++) {
+            for($a = 0; $a < $numrows; $a ++) {
                 $belegnr = $my_array [$a] ['BELEG_NR'];
                 $this->rechnung_grunddaten_holen ( $belegnr );
-
                 $e_datum = date_mysql2german ( $my_array [$a] ['EINGANGSDATUM'] );
                 $r_datum = date_mysql2german ( $my_array [$a] ['RECHNUNGSDATUM'] );
                 $faellig_am = date_mysql2german ( $my_array [$a] ['FAELLIG_AM'] );
@@ -275,7 +254,6 @@ GROUP BY RECHNUNGEN.BELEG_NR ORDER BY BELEG_NR DESC $navi->limit" );
                 $skonto_betrag = nummer_punkt2komma ( $my_array [$a] ['SKONTOBETRAG'] );
                 echo "<tr><td>$beleg_link</td><td>$r_datum</td><td>$e_datum</td><td><b>$faellig_am</b></td><td>" . $this->rechnungs_aussteller_name . "</td><td>" . $this->rechnungs_empfaenger_name . "</td><td align=right>$netto €</td><td align=right>$brutto €</td><td align=right>$skonto_betrag €</td></tr>\n";
             }
-
             echo "</table>\n";
         }
     }
@@ -283,25 +261,23 @@ GROUP BY RECHNUNGEN.BELEG_NR ORDER BY BELEG_NR DESC $navi->limit" );
     /* Alle vollständig erfasste d.h. mit Positionen erfasste Rechungen die auch vollständig kontiert worden sind */
     function vollstaendig_kontierte_rechungen_anzeigen() {
         /* Zählen aller Zeilen */
-        $result = mysql_query ( "SELECT RECHNUNGEN. * , COUNT( RECHNUNGEN_POSITIONEN.POSITION ) AS ANZAHL_POSITIONEN
+        $rechnungen_mit_positionen = DB::select( "SELECT RECHNUNGEN. * , COUNT( RECHNUNGEN_POSITIONEN.POSITION ) AS ANZAHL_POSITIONEN
 FROM RECHNUNGEN, RECHNUNGEN_POSITIONEN
 WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL='1' && RECHNUNGEN_POSITIONEN.AKTUELL='1' GROUP BY RECHNUNGEN.BELEG_NR ASC" );
-        while ( $row = mysql_fetch_assoc ( $result ) )
-            $rechnungen_mit_positionen [] = $row;
-        for($vv = 0; $vv < count ( $rechnungen_mit_positionen ); $vv ++) {
+        $numrows = count ( $rechnungen_mit_positionen );
+        for($vv = 0; $vv < $numrows; $vv ++) {
             $status_kontierung = $this->rechnung_auf_kontierung_pruefen ( $rechnungen_mit_positionen [$vv] ['BELEG_NR'] );
-            // echo $rechnungen_mit_positionen[$vv]['BELEG_NR'].$status_kontierung."<br>\n";
             if ($status_kontierung == 'vollstaendig') {
                 $kontierte_belege [] = $rechnungen_mit_positionen [$vv];
             }
         }
 
-        $numrows = count ( $kontierte_belege );
         $my_array = $kontierte_belege;
         echo "<table class=rechnungen>\n";
         echo "<tr class=feldernamen><td>BNr</td><td>R-Datum</td><td>E-Datum</td><td>Fällig</td><td>Von</td><td>An</td><td width=80>Netto</td><td width=80>Brutto</td><td width=80>Skonto</td></tr>\n";
 
-        for($a = 0; $a < count ( $my_array ); $a ++) {
+        $numrows = count ( $my_array );
+        for($a = 0; $a < $numrows; $a ++) {
             $belegnr = $my_array [$a] ['BELEG_NR'];
             $this->rechnung_grunddaten_holen ( $belegnr );
 
@@ -321,29 +297,22 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
     /* Rechnungen die Positionen haben aber/und Rechnungen deren Kaufmenge <> Kontierungsmenge */
     function unvollstaendig_kontierte_rechungen_anzeigen() {
         /* Zählen aller Zeilen */
-        /*
-		 * $result = mysql_query ("SELECT RECHNUNGEN. * , COUNT( RECHNUNGEN_POSITIONEN.POSITION ) AS ANZAHL_POSITIONEN
-		 * FROM RECHNUNGEN, RECHNUNGEN_POSITIONEN
-		 * WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL='1' && RECHNUNGEN_POSITIONEN.AKTUELL='1' GROUP BY RECHNUNGEN.BELEG_NR ASC");
-		 */
-        $result = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE AKTUELL='1' ORDER BY BELEG_NR ASC" );
+        $rechnungen_mit_positionen = DB::select( "SELECT * FROM RECHNUNGEN WHERE AKTUELL='1' ORDER BY BELEG_NR ASC" );
 
-        while ( $row = mysql_fetch_assoc ( $result ) )
-            $rechnungen_mit_positionen [] = $row;
-        for($vv = 0; $vv < count ( $rechnungen_mit_positionen ); $vv ++) {
+        $numrows = count ( $rechnungen_mit_positionen );
+        for($vv = 0; $vv < $numrows; $vv ++) {
             $status_kontierung = $this->rechnung_auf_kontierung_pruefen ( $rechnungen_mit_positionen [$vv] ['BELEG_NR'] );
-            // echo $rechnungen_mit_positionen[$vv]['BELEG_NR'].$status_kontierung."<br>\n";
             if ($status_kontierung == 'unvollstaendig') {
                 $unkontierte_belege [] = $rechnungen_mit_positionen [$vv];
             }
         }
 
-        $numrows = count ( $unkontierte_belege );
         $my_array = $unkontierte_belege;
+        $numrows = count ( $my_array );
         echo "<table class=rechnungen>\n";
         echo "<tr class=feldernamen><td>BNr</td><td>R-Datum</td><td>E-Datum</td><td>Fällig</td><td>Von</td><td>An</td><td width=80>Netto</td><td width=80>Brutto</td><td width=80>Skonto</td></tr>\n";
 
-        for($a = 0; $a < count ( $my_array ); $a ++) {
+        for($a = 0; $a < $numrows; $a ++) {
             $belegnr = $my_array [$a] ['BELEG_NR'];
             $this->rechnung_grunddaten_holen ( $belegnr );
             $e_datum = date_mysql2german ( $my_array [$a] ['EINGANGSDATUM'] );
@@ -358,27 +327,25 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         echo "</table>\n";
     }
     function erfasste_menge($belegnr) {
-        $result = mysql_query ( " SELECT SUM( MENGE ) AS ERFASSTE_MENGE FROM `RECHNUNGEN_POSITIONEN` WHERE BELEG_NR = '$belegnr' && AKTUELL='1' " );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( " SELECT SUM( MENGE ) AS ERFASSTE_MENGE FROM `RECHNUNGEN_POSITIONEN` WHERE BELEG_NR = '$belegnr' && AKTUELL='1' " );
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['ERFASSTE_MENGE'];
         } else {
-            return $numrows;
+            return 0;
         }
     }
     function kontierte_menge($belegnr) {
-        $result = mysql_query ( " SELECT SUM( MENGE ) AS KONTIERTE_MENGE FROM `KONTIERUNG_POSITIONEN` WHERE BELEG_NR = '$belegnr' && AKTUELL='1'" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( " SELECT SUM( MENGE ) AS KONTIERTE_MENGE FROM `KONTIERUNG_POSITIONEN` WHERE BELEG_NR = '$belegnr' && AKTUELL='1'" );
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['KONTIERTE_MENGE'];
         } else {
-            return $numrows;
+            return 0;
         }
     }
     function rechnung_kontierung_aufheben($belegnr) {
-        mysql_query ( "UPDATE  `KONTIERUNG_POSITIONEN` SET AKTUELL='0' WHERE `BELEG_NR` ='$belegnr'" ) or die ( 'Kontierungsaufhebung nicht möglich' );
+        DB::update( "UPDATE  `KONTIERUNG_POSITIONEN` SET AKTUELL='0' WHERE `BELEG_NR` ='$belegnr'" ) or die ( 'Kontierungsaufhebung nicht möglich' );
         return true;
     }
     function rechnung_auf_kontierung_pruefen($belegnr) {
@@ -403,17 +370,11 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         /* Ein Array mit Objekten erstellen, dieser wird nachher mit Unterarrays gefällt */
         $objekte = new objekt ();
         $objekte_arr = $objekte->liste_aller_objekte_kurz ();
-        /*
-		 * echo "<pre>";
-		 * print_r($objekte_arr);
-		 * echo "</pre>";
-		 */
         /* Aus dem Kontierungspool werden alle Positionen aller Objekte in ein Array geschoben */
         $positionen_arr = $this->pool_durchsuchen ( 'Objekt' );
 
         /* Array mit Objektpositionen durchlaufen und die Objekt_id als KOSTENTRAEGER_ID finden */
         for($a = 0; $a < count ( $positionen_arr ); $a ++) {
-            // echo $positionen_arr[$a]['KOSTENTRAEGER_ID']."<br>";
             $kostentraeger_id = $positionen_arr [$a] ['KOSTENTRAEGER_ID'];
             /* Mit der $kostentrager_id wird der Objektarraydurchlaufen und beim Treffer, die Position dem Unterarray von Objekte zugewiesen */
             for($i = 0; $i < count ( $objekte_arr ); $i ++) {
@@ -437,7 +398,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             /* Mit der $kostentrager_id wird der Objektarraydurchlaufen und beim Treffer, die Position dem Unterarray von Objekte zugewiesen */
             for($i = 0; $i < count ( $objekte_arr ); $i ++) {
                 if (in_array ( $kostentraeger_id, $objekte_arr [$i] )) {
-                    // echo "vorhanden $i<br>";
                     $objekte_arr [$i] ['HAUS_KOSTEN'] [] = $positionen_arr [$a];
                 } // end if
             } // end for 2
@@ -547,45 +507,29 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             $kontierung_id = $einheit_kosten [$b] ['KONTIERUNG_ID'];
             $einheit_kosten_positionen [] = $this->pool_position_holen ( $kontierung_id );
         }
-        /*
-		 * echo "<pre>";
-		 * print_r($einheit_kosten_positionen);
-		 * echo "</pre>";
-		 */
         echo "EINHEITENDE<hr>";
     }
     function pool_position_holen($kontierung_id) {
-        $result = mysql_query ( "SELECT * FROM `KONTIERUNG_POSITIONEN` WHERE KONTIERUNG_ID= '$kontierung_id' && AKTUELL='1' ORDER BY KONTIERUNG_DAT DESC LIMIT 0,1" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT * FROM `KONTIERUNG_POSITIONEN` WHERE KONTIERUNG_ID= '$kontierung_id' && AKTUELL='1' ORDER BY KONTIERUNG_DAT DESC LIMIT 0,1" );
+        if (!empty($result)) {
+            $row = $result[0];
             return $row;
         }
     }
     function pool_durchsuchen($kostentraeger_typ) {
-        $result = mysql_query ( "SELECT KONTIERUNG_DAT, KONTIERUNG_ID, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM `KONTIERUNG_POSITIONEN` WHERE KOSTENTRAEGER_TYP = '$kostentraeger_typ' && AKTUELL='1' && WEITER_VERWENDEN='1' ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID ASC" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows > 0) {
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_array [] = $row;
-            return $my_array;
+        $result = DB::select( "SELECT KONTIERUNG_DAT, KONTIERUNG_ID, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM `KONTIERUNG_POSITIONEN` WHERE KOSTENTRAEGER_TYP = '$kostentraeger_typ' && AKTUELL='1' && WEITER_VERWENDEN='1' ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID ASC" );
+        if (!empty($result)) {
+            return $result;
         }
     }
     function rechnung_aus_pool_zusammenstellen($kostentraeger_typ, $kostentraeger_id) {
-        $result = mysql_query ( "SELECT KONTIERUNG_DAT, KONTIERUNG_ID, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM `KONTIERUNG_POSITIONEN` WHERE KOSTENTRAEGER_TYP = '$kostentraeger_typ' && KOSTENTRAEGER_ID='$kostentraeger_id' && WEITER_VERWENDEN='1' && AKTUELL='1' ORDER BY BELEG_NR DESC, POSITION ASC" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows > 0) {
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_array [] = $row;
-            /*
-			 * echo "<pre>";
-			 * print_r($my_array);
-			 * echo "</pre>";
-			 */
-            for($a = 0; $a < count ( $my_array ); $a ++) {
+        $result = DB::select( "SELECT KONTIERUNG_DAT, KONTIERUNG_ID, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM `KONTIERUNG_POSITIONEN` WHERE KOSTENTRAEGER_TYP = '$kostentraeger_typ' && KOSTENTRAEGER_ID='$kostentraeger_id' && WEITER_VERWENDEN='1' && AKTUELL='1' ORDER BY BELEG_NR DESC, POSITION ASC" );
+        if (!empty($result)) {
+            $numrows = count ( $my_array );
+            $positionen_detailiert = [];
+            for($a = 0; $a < $numrows; $a ++) {
                 $positionen_detailiert [] = $this->pool_position_holen ( $my_array [$a] ['KONTIERUNG_ID'] );
             }
-            // return $my_array;
             return $positionen_detailiert;
         } else {
             return false;
@@ -1281,8 +1225,8 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         $form->ende_formular ();
     }
     function mwst_satz_der_position($belegnr, $position) {
-        $result = mysql_query ( "SELECT MWST_SATZ FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR='$belegnr' && POSITION='$position' && AKTUELL='1' ORDER BY RECHNUNGEN_POS_DAT DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT MWST_SATZ FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR='$belegnr' && POSITION='$position' && AKTUELL='1' ORDER BY RECHNUNGEN_POS_DAT DESC LIMIT 0,1" );
+        $row = $result[0];
         return $row ['MWST_SATZ'];
     }
     function objekte_im_pool() {
@@ -1503,13 +1447,10 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         return $neuer_kontierungs_array;
     }
     function rechnung_auf_positionen_pruefen($belegnr) {
-        $result = mysql_query ( "SELECT * FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR='$belegnr' && AKTUELL='1'" );
-        $numrows = mysql_numrows ( $result );
-        return $numrows;
+        $result = DB::select( "SELECT * FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR='$belegnr' && AKTUELL='1'" );
+        return count($result);
     }
     function rechnung_speichern($clean_arr) {
-        // echo '<pre>';
-        // print_r($clean_arr);
         $rechnungs_aussteller_typ = $clean_arr ['aussteller_typ'];
         $rechnungs_aussteller_id = $clean_arr ['aussteller_id'];
         $rechnungs_empfaenger_typ = $clean_arr ['empfaenger_typ'];
@@ -1540,10 +1481,8 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         /* Prüfen ob Rechnung vorhanden */
 
         $rechnungsdatum = date_german2mysql ( $clean_arr ['rechnungsdatum'] );
-        $result_3 = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE RECHNUNGSNUMMER = '$clean_arr[rechnungsnummer]' && RECHNUNGSDATUM = '$rechnungsdatum' && AUSSTELLER_TYP='$rechnungs_aussteller_typ' && AUSSTELLER_ID='$rechnungs_aussteller_id' && EMPFAENGER_TYP='$rechnungs_empfaenger_typ' && EMPFAENGER_ID='$rechnungs_empfaenger_id' && AKTUELL = '1'" );
-        $numrows_3 = mysql_numrows ( $result_3 );
-
-        if ($numrows_3 > 0) {
+        $result_3 = DB::select( "SELECT * FROM RECHNUNGEN WHERE RECHNUNGSNUMMER = '$clean_arr[rechnungsnummer]' && RECHNUNGSDATUM = '$rechnungsdatum' && AUSSTELLER_TYP='$rechnungs_aussteller_typ' && AUSSTELLER_ID='$rechnungs_aussteller_id' && EMPFAENGER_TYP='$rechnungs_empfaenger_typ' && EMPFAENGER_ID='$rechnungs_empfaenger_id' && AKTUELL = '1'" );
+        if (!empty($result_3)) {
             $partner_info = new partner ();
             $von = $partner_info->get_partner_name ( $rechnungs_aussteller_id );
             fehlermeldung_ausgeben ( "Rechnung von $von mit der Rechnungsnummer $clean_arr[rechnungsnummer] vom $clean_arr[rechnungsdatum] existiert bereits." );
@@ -1578,10 +1517,10 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             }
 
             $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', '$rechnungs_typ', '$rechnungsdatum','$eingangsdatum', '$netto_betrag','$brutto_betrag','0.00', '$rechnungs_aussteller_typ', '$rechnungs_aussteller_id','$rechnungs_empfaenger_typ', '$rechnungs_empfaenger_id','1', '1', '0', '0', '1', '$status_bezahlt', '0', '$faellig_am', '$bezahlt_am', '$kurzbeschreibung', '$clean_arr[geld_konto]')";
-            $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+            DB::insert( $db_abfrage );
 
             /* Protokollieren */
-            $last_dat = mysql_insert_id ();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren ( 'RECHNUNGEN', $last_dat, '0' );
             /* Ausgabe weil speichern erfolgreich */
             echo "Rechnung/Beleg $letzte_belegnr wurde erfasst.";
@@ -1699,9 +1638,9 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             $letzte_belegnr = $letzte_belegnr + 1;
 
             $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', '$this->rechnungs_typ_druck', '$rechnungsdatum_sql','$eingangsdatum', '$netto_betrag','$brutto_betrag','$skonto_betrag', '$this->rechnungs_aussteller_typ', '$this->rechnungs_aussteller_id','$this->rechnungs_empfaenger_typ', '$this->rechnungs_empfaenger_id','1', '1', '1', '0', '1', '0', '0', '$faellig_am', '0000-00-00', '$kurzbeschreibung', '$empfangs_geld_konto')";
-            $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+            DB::insert( $db_abfrage );
             /* Protokollieren */
-            $last_dat = mysql_insert_id ();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren ( 'RECHNUNGEN', $last_dat, '0' );
             /* Ausgabe weil speichern erfolgreich */
             echo "$this->rechnungs_typ_druck $letzte_belegnr wurde erfasst.";
@@ -1718,189 +1657,14 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         }
     }
     function check_rechnung_vorhanden($rechnungsnummer, $rechnungsdatum, $aussteller_typ, $aussteller_id, $empfaenger_typ, $empfaenger_id, $rechnungs_typ) {
-        $result_3 = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE RECHNUNGSNUMMER = '$rechnungsnummer' && RECHNUNGSDATUM = '$rechnungsdatum' && AUSSTELLER_TYP='$aussteller_typ' && AUSSTELLER_ID='$aussteller_id' && EMPFAENGER_TYP='$empfaenger_typ' && EMPFAENGER_ID='$empfaenger_id' && AKTUELL = '1' && RECHNUNGSTYP='$rechnungs_typ'" );
-        $numrows = mysql_numrows ( $result_3 );
-
-        if ($numrows) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /* automatisch erstellte rechnung speichern */
-    function auto_rechnung_speichern_alt($clean_arr) {
-        echo "<pre>";
-        print_r ( $clean_arr );
-        echo "</pre>";
-
-        // #######################
-        if ($clean_arr ['Empfaenger_typ'] == 'Objekt') {
-            $this->rechnungs_empfaenger_typ = 'Partner';
-        }
-        if ($clean_arr ['Empfaenger_typ'] == 'Haus') {
-            $this->rechnungs_empfaenger_typ = 'Partner';
-        }
-        if ($clean_arr ['Empfaenger_typ'] == 'Einheit') {
-            $this->rechnungs_empfaenger_typ = 'Partner';
-        }
-        if ($clean_arr ['Empfaenger_typ'] == 'Lager') {
-            $this->rechnungs_empfaenger_typ = 'Lager';
-        }
-        // #######################
-
-        $this->rechnungs_aussteller_typ = $clean_arr ['Aussteller_typ'];
-        $this->rechnungs_aussteller_id = $clean_arr ['Aussteller_id'];
-        $this->rechnungs_empfaenger_id = $clean_arr ['Empfaenger_id'];
-
-        if ($this->rechnungs_aussteller_typ == 'Partner') {
-            $this->rechnung_aussteller_partner_id = $this->rechnungs_aussteller_id;
-        }
-
-        if ($this->rechnungs_empfaenger_typ == 'Partner') {
-            $this->rechnung_empfaenger_partner_id = $this->rechnungs_empfaenger_id;
-        }
-
-        if ($this->rechnungs_aussteller_typ == 'Lager') {
-            $lager_info = new lager ();
-            /*
-			 * Liefert Lagernamen und Partner id
-			 * $lager_info->lager_name
-			 * $lager_info->lager_partner_id
-			 */
-            $lager_info->lager_name_partner ( $this->rechnungs_aussteller_id );
-            $this->rechnung_aussteller_partner_id = $lager_info->lager_partner_id;
-        }
-
-        if ($this->rechnungs_empfaenger_typ == 'Lager') {
-            $lager_info1 = new lager ();
-            /*
-			 * Liefert Lagernamen und Partner id
-			 * $lager_info->lager_name
-			 * $lager_info->lager_partner_id
-			 */
-            $lager_info1->lager_name_partner ( $this->rechnungs_empfaenger_id );
-            $this->rechnung_empfaenger_partner_id = $lager_info1->lager_partner_id;
-        }
-
-        if ($this->rechnungs_aussteller_typ == 'Kasse') {
-            /* Kassennamen holen */
-            $kassen_info = new kasse ();
-            $kassen_info->get_kassen_info ( $this->rechnungs_aussteller_id );
-            /* Kassen Partner finden */
-            $this->rechnung_aussteller_partner_id = $kassen_info->kassen_partner_id;
-        }
-
-        if ($this->rechnungs_empfaenger_typ == 'Kasse') {
-            /* Kassennamen holen */
-            $kassen_info = new kasse ();
-            $kassen_info->get_kassen_info ( $this->rechnungs_empfaenger_id );
-            /* Kassen Partner finden */
-            $this->rechnung_empfaenger_partner_id = $kassen_info->kassen_partner_id;
-        }
-
-        if ($this->rechnung_empfaenger_partner_id == $this->rechnung_aussteller_partner_id) {
-            $this->rechnungs_typ_druck = 'Buchungsbeleg';
-        } else {
-            $this->rechnungs_typ_druck = 'Rechnung';
-        }
-        echo "$this->rechnung_empfaenger_partner_id == $this->rechnung_aussteller_partner_id";
-
-        $datum_arr = explode ( '.', $clean_arr ['rechnungsdatum'] );
-        $jahr = $datum_arr [2];
-        if (empty ( $clean_arr ['rechnungsnummer'] )) {
-            $letzte_aussteller_rnr = $this->letzte_aussteller_ausgangs_nr ( $clean_arr ['Aussteller_id'], $clean_arr ['Aussteller_typ'], $jahr, $this->rechnungs_typ_druck );
-            $letzte_aussteller_rnr = $letzte_aussteller_rnr + 1;
-            $letzte_aussteller_rnr1 = sprintf ( '%03d', $letzte_aussteller_rnr );
-            $this->rechnungs_kuerzel = $this->rechnungs_kuerzel_ermitteln ( $clean_arr ['Aussteller_typ'], $clean_arr ['Aussteller_id'], $clean_arr ['rechnungsdatum'] );
-            $rechnungsnummer = $this->rechnungs_kuerzel . ' ' . $letzte_aussteller_rnr1 . '-' . $jahr;
-        } else {
-            $letzte_aussteller_rnr = $this->letzte_aussteller_ausgangs_nr ( $clean_arr ['Aussteller_id'], $clean_arr ['Aussteller_typ'], $jahr, $this->rechnungs_typ_druck );
-            $letzte_aussteller_rnr = $letzte_aussteller_rnr + 1;
-            $rechnungsnummer = $clean_arr ['rechnungsnummer'];
-        }
-
-        // #######################
-        if ($clean_arr ['Empfaenger_typ'] == 'Objekt') {
-            $clean_arr ['Empfaenger_typ'] = 'Partner';
-        }
-        if ($clean_arr ['Empfaenger_typ'] == 'Haus') {
-            $clean_arr ['Empfaenger_typ'] = 'Partner';
-        }
-        if ($clean_arr ['Empfaenger_typ'] == 'Einheit') {
-            $clean_arr ['Empfaenger_typ'] = 'Partner';
-        }
-        // #######################
-
-        /* Prüfen ob Rechnung vorhanden */
-        $rechnungsdatum = date_german2mysql ( $clean_arr ['rechnungsdatum'] );
-        $result_3 = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE RECHNUNGSNUMMER = '$clean_arr[rechnungsnummer]' && RECHNUNGSDATUM = '$rechnungsdatum' && AUSSTELLER_TYP='$clean_arr[Aussteller_typ]' && AUSSTELLER_ID='$clean_arr[Aussteller]' && EMPFAENGER_TYP='$clean_arr[Empfaenger_typ]' && EMPFAENGER_ID='$clean_arr[Empfaenger]' && AKTUELL = '1' && RECHNUNGSTYP='$this->rechnungs_typ_druck'" );
-        $numrows_3 = mysql_numrows ( $result_3 );
-
-        if ($numrows_3 > 0) {
-            $partner_info = new partner ();
-            $von = $partner_info->get_partner_name ( $clean_arr ['Aussteller'] );
-            fehlermeldung_ausgeben ( "$this->rechnungs_typ_druck von $von mit der $this->rechnungs_typ_druck.snummer $clean_arr[rechnungsnummer] vom $clean_arr[rechnungsdatum] existiert bereits." );
-            die ();
-        } else {
-            /* Letzte Belegnummer holen */
-            $letzte_belegnr = $this->letzte_beleg_nr ();
-            $letzte_belegnr = $letzte_belegnr + 1;
-            /* Letzte Rechnungsid holen */
-            if (empty ( $clean_arr ['empfaenger_typ'] )) {
-                $clean_arr ['empfaenger_typ'] = 'Partner';
-            }
-
-            /* Rechnungsdaten speichern */
-            $rechnungsdatum = date_german2mysql ( $clean_arr ['rechnungsdatum'] );
-            // $eingangsdatum = date_german2mysql($clean_arr[eingangsdatum]);
-            $eingangsdatum = $rechnungsdatum;
-            $faellig_am = date_german2mysql ( $clean_arr ['faellig_am'] );
-            $kurzbeschreibung = $clean_arr ['kurzbeschreibung'];
-            $netto_betrag = nummer_komma2punkt ( $clean_arr ['netto_betrag'] );
-            $brutto_betrag = $clean_arr ['brutto_betrag'];
-            $brutto_betrag = number_format ( $brutto_betrag, 2, ".", "" );
-            $skonto = $clean_arr ['skonto'];
-            $skonto = nummer_komma2punkt ( $skonto );
-            // $skonto_betrag = $clean_arr[skonto_betrag];
-            // $skonto_betrag = ($brutto_betrag/100) * (100-$skonto);
-            // $skonto_betrag = nummer_komma2punkt($skonto_betrag);
-            $letzte_empfaenger_rnr = $this->letzte_empfaenger_eingangs_nr ( $clean_arr ['Empfaenger_id'], $clean_arr ['Empfaenger_typ'], $jahr, $this->rechnungs_typ_druck );
-            $letzte_empfaenger_rnr = $letzte_empfaenger_rnr + 1;
-
-            /*
-			 * if($clean_arr[Aussteller_typ] == 'Lager'){
-			 * $rechnungstyp = 'Rechnung';
-			 * }else{
-			 * $rechnungstyp = 'Rechnung';
-			 * }
-			 */
-
-            $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', '$this->rechnungs_typ_druck', '$rechnungsdatum','$eingangsdatum', '$netto_betrag','$brutto_betrag','$brutto_betrag', '$skonto', '$clean_arr[Aussteller_typ]', '$clean_arr[Aussteller_id]','$clean_arr[Empfaenger_typ]', '$clean_arr[Empfaenger_id]','1', '1', '1', '0', '1', '0', '0', '$faellig_am', '0000-00-00', '$kurzbeschreibung', '$clean_arr[empfangs_geld_konto]')";
-            $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-            /* Protokollieren */
-            $last_dat = mysql_insert_id ();
-            protokollieren ( 'RECHNUNGEN', $last_dat, '0' );
-            /* Ausgabe weil speichern erfolgreich */
-            echo "$this->rechnungs_typ_druck $letzte_belegnr wurde erfasst.";
-            /* Weiterleiten auf die Rechnungserfassung */
-
-            if ($clean_arr ['Empfaenger_typ'] == 'Kasse') {
-                $kasse = new kasse ();
-                $kassen_id = $clean_arr ['Empfaenger_id'];
-                $datum = date_mysql2german ( $eingangsdatum );
-                $kasse->speichern_in_kassenbuch ( $kassen_id, $brutto_betrag, $datum, 'Ausgaben', $kurzbeschreibung, 'Rechnung', $letzte_belegnr );
-            }
-
-            weiterleiten_in_sec ( route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $letzte_belegnr]), 2 );
-            return $letzte_belegnr;
-        }
+        $result_3 = DB::select( "SELECT * FROM RECHNUNGEN WHERE RECHNUNGSNUMMER = '$rechnungsnummer' && RECHNUNGSDATUM = '$rechnungsdatum' && AUSSTELLER_TYP='$aussteller_typ' && AUSSTELLER_ID='$aussteller_id' && EMPFAENGER_TYP='$empfaenger_typ' && EMPFAENGER_ID='$empfaenger_id' && AKTUELL = '1' && RECHNUNGSTYP='$rechnungs_typ'" );
+        return !empty($result_3);
     }
 
     /* Letzte Rechnung ID */
     function letzte_rechnung_id($empfaenger_id, $typ) {
-        $result = mysql_query ( "SELECT RECHNUNG_ID FROM RECHNUNGEN WHERE EMPFAENGER_ID='$empfaenger_id' && EMPFAENGER_TYP='$typ' ORDER BY RECHNUNG_ID DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT RECHNUNG_ID FROM RECHNUNGEN WHERE EMPFAENGER_ID='$empfaenger_id' && EMPFAENGER_TYP='$typ' ORDER BY RECHNUNG_ID DESC LIMIT 0,1" );
+        $row = $result[0];
         return $row ['RECHNUNG_ID'];
     }
 
@@ -1908,20 +1672,11 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
     function letzte_aussteller_ausgangs_nr($aussteller_id, $typ, $jahr, $rechnungs_typ) {
         if ($rechnungs_typ == 'Rechnung' or $rechnungs_typ == 'Stornorechnung' or $rechnungs_typ == 'Gutschrift' or $rechnungs_typ == 'Schlussrechnung' or $rechnungs_typ == 'Teilrechnung') {
             $rechnungs_typ == 'Rechnung';
-            $result = mysql_query ( "SELECT AUSTELLER_AUSGANGS_RNR FROM RECHNUNGEN WHERE AUSSTELLER_ID='$aussteller_id' && AUSSTELLER_TYP='$typ' && RECHNUNGSDATUM BETWEEN '$jahr-01-01' AND '$jahr-12-31' && (RECHNUNGSTYP='$rechnungs_typ' OR RECHNUNGSTYP='Gutschrift' OR RECHNUNGSTYP='Stornorechnung'  OR RECHNUNGSTYP='Schlussrechnung'  OR RECHNUNGSTYP='Teilrechnung') && AKTUELL='1' ORDER BY AUSTELLER_AUSGANGS_RNR DESC LIMIT 0,1" );
+            $result = DB::select( "SELECT AUSTELLER_AUSGANGS_RNR FROM RECHNUNGEN WHERE AUSSTELLER_ID='$aussteller_id' && AUSSTELLER_TYP='$typ' && RECHNUNGSDATUM BETWEEN '$jahr-01-01' AND '$jahr-12-31' && (RECHNUNGSTYP='$rechnungs_typ' OR RECHNUNGSTYP='Gutschrift' OR RECHNUNGSTYP='Stornorechnung'  OR RECHNUNGSTYP='Schlussrechnung'  OR RECHNUNGSTYP='Teilrechnung') && AKTUELL='1' ORDER BY AUSTELLER_AUSGANGS_RNR DESC LIMIT 0,1" );
         } else {
-            $result = mysql_query ( "SELECT AUSTELLER_AUSGANGS_RNR FROM RECHNUNGEN WHERE AUSSTELLER_ID='$aussteller_id' && AUSSTELLER_TYP='$typ' && RECHNUNGSDATUM BETWEEN '$jahr-01-01' AND '$jahr-12-31' && RECHNUNGSTYP='$rechnungs_typ' && AKTUELL='1' ORDER BY AUSTELLER_AUSGANGS_RNR DESC LIMIT 0,1" );
+            $result = DB::select( "SELECT AUSTELLER_AUSGANGS_RNR FROM RECHNUNGEN WHERE AUSSTELLER_ID='$aussteller_id' && AUSSTELLER_TYP='$typ' && RECHNUNGSDATUM BETWEEN '$jahr-01-01' AND '$jahr-12-31' && RECHNUNGSTYP='$rechnungs_typ' && AKTUELL='1' ORDER BY AUSTELLER_AUSGANGS_RNR DESC LIMIT 0,1" );
         }
-        /*
-		 * if($rechnungs_typ == 'Rechnung'){
-		 * $result = mysql_query ("SELECT AUSTELLER_AUSGANGS_RNR FROM RECHNUNGEN WHERE AUSSTELLER_ID='$aussteller_id' && AUSSTELLER_TYP='$typ' && RECHNUNGSDATUM BETWEEN '$jahr-01-01' AND '$jahr-12-31' && (RECHNUNGSTYP='$rechnungs_typ' OR RECHNUNGSTYP='Gutschrift') && AKTUELL='1' ORDER BY AUSTELLER_AUSGANGS_RNR DESC LIMIT 0,1");
-		 * }else{
-		 */
-        // $result = mysql_query ("SELECT AUSTELLER_AUSGANGS_RNR FROM RECHNUNGEN WHERE AUSSTELLER_ID='$aussteller_id' && AUSSTELLER_TYP='$typ' && RECHNUNGSDATUM BETWEEN '$jahr-01-01' AND '$jahr-12-31' && RECHNUNGSTYP='$rechnungs_typ' && AKTUELL='1' ORDER BY AUSTELLER_AUSGANGS_RNR DESC LIMIT 0,1");
-
-        // }
-
-        $row = mysql_fetch_assoc ( $result );
+        $row = $result[0];
         return $row ['AUSTELLER_AUSGANGS_RNR'];
     }
 
@@ -1929,35 +1684,33 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
     function letzte_empfaenger_eingangs_nr($empfaenger_id, $typ, $jahr, $rechnungs_typ) {
         if ($rechnungs_typ == 'Rechnung' or $rechnungs_typ == 'Stornorechnung' or $rechnungs_typ == 'Gutschrift' or $rechnungs_typ == 'Schlussrechnung' or $rechnungs_typ == 'Teilrechnung') {
             $rechnungs_typ == 'Rechnung';
-            $result = mysql_query ( "SELECT EMPFAENGER_EINGANGS_RNR FROM RECHNUNGEN WHERE EMPFAENGER_ID='$empfaenger_id' && EMPFAENGER_TYP='$typ' && DATE_FORMAT(RECHNUNGSDATUM, '%Y') = '$jahr' && (RECHNUNGSTYP='$rechnungs_typ' OR RECHNUNGSTYP='Gutschrift' OR RECHNUNGSTYP='Stornorechnung' OR RECHNUNGSTYP='Schlussrechnung'  OR RECHNUNGSTYP='Teilrechnung') && AKTUELL='1' ORDER BY BELEG_NR DESC LIMIT 0,1" );
+            $result = DB::select( "SELECT EMPFAENGER_EINGANGS_RNR FROM RECHNUNGEN WHERE EMPFAENGER_ID='$empfaenger_id' && EMPFAENGER_TYP='$typ' && DATE_FORMAT(RECHNUNGSDATUM, '%Y') = '$jahr' && (RECHNUNGSTYP='$rechnungs_typ' OR RECHNUNGSTYP='Gutschrift' OR RECHNUNGSTYP='Stornorechnung' OR RECHNUNGSTYP='Schlussrechnung'  OR RECHNUNGSTYP='Teilrechnung') && AKTUELL='1' ORDER BY BELEG_NR DESC LIMIT 0,1" );
         } else {
-            // $result = mysql_query ("SELECT EMPFAENGER_EINGANGS_RNR FROM RECHNUNGEN WHERE EMPFAENGER_ID='$empfaenger_id' && EMPFAENGER_TYP='$typ' && DATE_FORMAT(RECHNUNGSDATUM, '%Y') = '$jahr' && RECHNUNGSTYP='$rechnungs_typ' && AKTUELL='1' ORDER BY BELEG_NR DESC LIMIT 0,1");
-            $result = mysql_query ( "SELECT EMPFAENGER_EINGANGS_RNR FROM RECHNUNGEN WHERE EMPFAENGER_ID='$empfaenger_id' && EMPFAENGER_TYP='$typ' && DATE_FORMAT(RECHNUNGSDATUM, '%Y') = '$jahr' && RECHNUNGSTYP='$rechnungs_typ'  && AKTUELL='1' ORDER BY BELEG_NR DESC LIMIT 0,1" );
+            $result = DB::select( "SELECT EMPFAENGER_EINGANGS_RNR FROM RECHNUNGEN WHERE EMPFAENGER_ID='$empfaenger_id' && EMPFAENGER_TYP='$typ' && DATE_FORMAT(RECHNUNGSDATUM, '%Y') = '$jahr' && RECHNUNGSTYP='$rechnungs_typ'  && AKTUELL='1' ORDER BY BELEG_NR DESC LIMIT 0,1" );
         }
-        $row = mysql_fetch_assoc ( $result );
+        $row = $result[0];
         return $row ['EMPFAENGER_EINGANGS_RNR'];
     }
 
     /* Letzte Belegnummer */
     function letzte_beleg_nr() {
-        $result = mysql_query ( "SELECT BELEG_NR FROM RECHNUNGEN ORDER BY BELEG_NR DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT BELEG_NR FROM RECHNUNGEN ORDER BY BELEG_NR DESC LIMIT 0,1" );
+        $row = $result[0];
         return $row ['BELEG_NR'];
     }
 
     /* Letzte Belegnummer */
     function letzte_beleg_nr_auto($aussteller_id, $empfaenger_id) {
-        $result = mysql_query ( "SELECT BELEG_NR FROM RECHNUNGEN WHERE AUSSTELLER_TYP='Partner' && AUSSTELLER_ID='$aussteller_id' && EMPFAENGER_ID='$empfaenger_id' ORDER BY BELEG_NR DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT BELEG_NR FROM RECHNUNGEN WHERE AUSSTELLER_TYP='Partner' && AUSSTELLER_ID='$aussteller_id' && EMPFAENGER_ID='$empfaenger_id' ORDER BY BELEG_NR DESC LIMIT 0,1" );
+        $row = $result[0];
         return $row ['BELEG_NR'];
     }
 
     /* Rechnungsgrunddaten holen */
     function rechnung_grunddaten_holen_NOK($belegnr) {
-        $result = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE BELEG_NR='$belegnr' && AKTUELL='1' ORDER BY BELEG_NR DESC LIMIT 0,1" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT * FROM RECHNUNGEN WHERE BELEG_NR='$belegnr' && AKTUELL='1' ORDER BY BELEG_NR DESC LIMIT 0,1" );
+        if (!empty($result)) {
+            $row = $result[0];
             $this->belegnr = $row ['BELEG_NR'];
             /* Skontogesamtbetrag updaten */
             $rr = new rechnungen ();
@@ -2008,18 +1761,17 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
     } // end function rechnung_grunddaten_holen
     function rechnung_grunddaten_holen($belegnr) {
         // echo "BERLUSSIMO $belegnr<br>";
-        $result = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE BELEG_NR='$belegnr' && AKTUELL='1' ORDER BY BELEG_NR DESC LIMIT 0,1" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT * FROM RECHNUNGEN WHERE BELEG_NR='$belegnr' && AKTUELL='1' ORDER BY BELEG_NR DESC LIMIT 0,1" );
+        if (!empty($result)) {
+            $row = $result[0];
             $this->belegnr = $row ['BELEG_NR'];
             /* Skontogesamtbetrag updaten */
             $rr = new rechnungen ();
             $rr->update_skontobetrag ( $belegnr );
             $rr->update_nettobetrag ( $belegnr );
             $rr->update_bruttobetrag ( $belegnr );
-            $result = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE BELEG_NR='$belegnr' && AKTUELL='1' ORDER BY BELEG_NR DESC LIMIT 0,1" );
-            $row = mysql_fetch_assoc ( $result );
+            $result = DB::select( "SELECT * FROM RECHNUNGEN WHERE BELEG_NR='$belegnr' && AKTUELL='1' ORDER BY BELEG_NR DESC LIMIT 0,1" );
+            $row = $result[0];
 
             $this->aussteller_ausgangs_rnr = $row ['AUSTELLER_AUSGANGS_RNR'];
             $this->empfaenger_eingangs_rnr = $row ['EMPFAENGER_EINGANGS_RNR'];
@@ -2032,7 +1784,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
             $this->rechnungs_brutto = $row ['BRUTTO'];
 
-            // die("RB $this->rechnungs_brutto - $this->rechnungs_netto");
             $this->summe_mwst = $this->rechnungs_brutto - $this->rechnungs_netto;
             $this->rechnungs_mwst = $this->summe_mwst;
             $this->rechnungs_skontobetrag = $row ['SKONTOBETRAG'];
@@ -2059,59 +1810,39 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         }
     } // end function
     function summe_skonto_positionen($beleg_nr) {
-        // $result = mysql_query ("SELECT SUM((MENGE*PREIS/100)*(100+MWST_SATZ) / 100 * (100-SKONTO)) AS SKONTO_BETRAG FROM RECHNUNGEN_POSITIONEN WHERE `BELEG_NR`='$beleg_nr' && AKTUELL='1'");
-        // $row = mysql_fetch_assoc($result);
-        // return $row[SKONTO_BETRAG];
         $rr = new rechnungen ();
         return $rr->summe_skonto_positionen ( $beleg_nr );
     }
     function update_skontobetrag($beleg_nr) {
         $rr = new rechnungen ();
         $betrag = nummer_komma2punkt ( nummer_punkt2komma ( $rr->summe_skonto_positionen ( $beleg_nr ) ) );
-        mysql_query ( "UPDATE RECHNUNGEN SET SKONTOBETRAG='$betrag' WHERE BELEG_NR='$beleg_nr' && AKTUELL='1'" );
+        DB::update("UPDATE RECHNUNGEN SET SKONTOBETRAG='$betrag' WHERE BELEG_NR='$beleg_nr' && AKTUELL='1'" );
     }
     function summe_netto_positionen($beleg_nr) {
-
-        /*
-		 * $result = mysql_query ("SELECT SUM((MENGE*PREIS/100)*(100-RABATT_SATZ) ) AS NETTO_BETRAG FROM RECHNUNGEN_POSITIONEN WHERE `BELEG_NR`='$beleg_nr' && AKTUELL='1'");
-		 * $row = mysql_fetch_assoc($result);
-		 * return $row[NETTO_BETRAG];
-		 */
         $rr = new rechnungen ();
         return $rr->summe_netto_positionen ( $beleg_nr );
     }
     function update_nettobetrag($beleg_nr) {
         $betrag = nummer_komma2punkt ( nummer_punkt2komma ( $this->summe_netto_positionen ( $beleg_nr ) ) );
-        // echo "BETRAG $betrag";
-        mysql_query ( "UPDATE RECHNUNGEN SET NETTO='$betrag' WHERE BELEG_NR='$beleg_nr' && AKTUELL='1'" );
+        DB::update( "UPDATE RECHNUNGEN SET NETTO='$betrag' WHERE BELEG_NR='$beleg_nr' && AKTUELL='1'" );
     }
     function summe_brutto_positionen($beleg_nr) {
-        $result = mysql_query ( "SELECT SUM((MENGE*PREIS/100)*(100+MWST_SATZ) ) AS BRUTTO FROM RECHNUNGEN_POSITIONEN WHERE `BELEG_NR`='$beleg_nr' && AKTUELL='1'" );
-        $row = mysql_fetch_assoc ( $result );
-
-        // $brutto = nummer_punkt2komma( $row[BRUTTO]);
-        // echo "<h1>$brutto</h1>";
-        // $brutto = nummer_komma2punkt($brutto);
-        // echo "<h1>$brutto</h1>";
-        // return $brutto;
+        $result = DB::select( "SELECT SUM((MENGE*PREIS/100)*(100+MWST_SATZ) ) AS BRUTTO FROM RECHNUNGEN_POSITIONEN WHERE `BELEG_NR`='$beleg_nr' && AKTUELL='1'" );
+        $row = $result[0];
         return $row ['BRUTTO'];
     }
     function update_bruttobetrag($beleg_nr) {
         $rr = new rechnungen ();
         $rr->update_bruttobetrag ( $beleg_nr );
-        // $betrag = nummer_komma2punkt(nummer_punkt2komma($this->summe_brutto_positionen($beleg_nr)));
-        // mysql_query ("UPDATE RECHNUNGEN SET BRUTTO='$betrag' WHERE BELEG_NR='$beleg_nr' && AKTUELL='1'");
     }
     function footer_zeilen_anzeigen($belegnr) {
         $this->rechnung_grunddaten_holen ( $belegnr );
         echo "<div id=\"div_footer_zeile\">";
 
-        $result = mysql_query ( "SELECT ZEILE1, ZEILE2 FROM FOOTER_ZEILE WHERE AKTUELL = '1' && FOOTER_TYP = '$this->rechnungs_aussteller_typ' && FOOTER_TYP_ID = '$this->rechnungs_aussteller_id' ORDER BY FOOTER_DAT DESC LIMIT 0,1" );
-        $nums = mysql_num_rows ( $result );
-        if ($nums) {
-            $row = mysql_fetch_assoc ( $result ) or DIE ();
+        $result = DB::select( "SELECT ZEILE1, ZEILE2 FROM FOOTER_ZEILE WHERE AKTUELL = '1' && FOOTER_TYP = '$this->rechnungs_aussteller_typ' && FOOTER_TYP_ID = '$this->rechnungs_aussteller_id' ORDER BY FOOTER_DAT DESC LIMIT 0,1" );
+        if (!empty($result)) {
+            $row = $result;
             echo "<p id=\"footer_zeilenx\"><hr><center>$row[ZEILE1]<br>$row[ZEILE2]</center></p>";
-            // echo "<p id=\"$footer_zeile2\">$row[ZEILE2]</p>";
         }
         echo "</div>";
     }
@@ -2119,17 +1850,16 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         $this->rechnung_grunddaten_holen ( $belegnr );
         echo "<div id=\"div_z_hinweis\">";
 
-        $result = mysql_query ( "SELECT ZAHLUNGSHINWEIS FROM FOOTER_ZEILE WHERE AKTUELL = '1' && FOOTER_TYP = '$this->rechnungs_aussteller_typ' && FOOTER_TYP_ID = '$this->rechnungs_aussteller_id' ORDER BY FOOTER_DAT DESC LIMIT 0,1" );
-        $nums = mysql_num_rows ( $result );
-        if ($nums) {
-            $row = mysql_fetch_assoc ( $result ) or DIE ();
+        $result = DB::select( "SELECT ZAHLUNGSHINWEIS FROM FOOTER_ZEILE WHERE AKTUELL = '1' && FOOTER_TYP = '$this->rechnungs_aussteller_typ' && FOOTER_TYP_ID = '$this->rechnungs_aussteller_id' ORDER BY FOOTER_DAT DESC LIMIT 0,1" );
+        if (!empty($result)) {
+            $row = $result[0];
             echo "<p id=\"pzahlungs_hinweis\">$row[ZAHLUNGSHINWEIS]</p>";
         }
         echo "</div>";
     }
     function rechnungs_kuerzel_ermitteln($austeller_typ, $aussteller_id, $datum) {
-        $result = mysql_query ( "SELECT KUERZEL FROM RECHNUNG_KUERZEL WHERE AKTUELL = '1' && AUSSTELLER_TYP = '$austeller_typ' && AUSSTELLER_ID = '$aussteller_id' && ( VON <= '$datum' OR BIS >= '$datum' ) ORDER BY RK_DAT DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT KUERZEL FROM RECHNUNG_KUERZEL WHERE AKTUELL = '1' && AUSSTELLER_TYP = '$austeller_typ' && AUSSTELLER_ID = '$aussteller_id' && ( VON <= '$datum' OR BIS >= '$datum' ) ORDER BY RK_DAT DESC LIMIT 0,1" );
+        $row = $result[0];
         return $row ['KUERZEL'];
     }
     function rechnungs_partner_ermitteln() {
@@ -2349,13 +2079,9 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         }
     }
     function nach_link_arr($u_beleg_nr, $art_nr, $partner_id) {
-        // SELECT BELEG_NR, MENGE, GESAMT_NETTO FROM `RECHNUNGEN_POSITIONEN` WHERE `U_BELEG_NR` = '6218' AND `BELEG_NR` != '6218' && ARTIKEL_NR='030626038206' && `ART_LIEFERANT`='10' && AKTUELL='1' ORDER BY `RECHNUNGEN_POSITIONEN`.`POSITION` ASC
-        $result = mysql_query ( "SELECT BELEG_NR, MENGE, GESAMT_NETTO  FROM `RECHNUNGEN_POSITIONEN` WHERE `U_BELEG_NR` = '$u_beleg_nr' AND `BELEG_NR` != '$u_beleg_nr' && ARTIKEL_NR='$art_nr' && `ART_LIEFERANT`='$partner_id' && AKTUELL='1' ORDER BY BELEG_NR ASC" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows) {
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_array [] = $row;
-            return $my_array;
+        $result = DB::select( "SELECT BELEG_NR, MENGE, GESAMT_NETTO  FROM `RECHNUNGEN_POSITIONEN` WHERE `U_BELEG_NR` = '$u_beleg_nr' AND `BELEG_NR` != '$u_beleg_nr' && ARTIKEL_NR='$art_nr' && `ART_LIEFERANT`='$partner_id' && AKTUELL='1' ORDER BY BELEG_NR ASC" );
+        if (!empty($result)) {
+            return $result;
         }
     }
     function rechnungs_kopf($belegnr) {
@@ -2364,7 +2090,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         $wa_nummer = $this->aussteller_ausgangs_rnr;
 
         echo "<table id=rechnung width=\"100%\">\n";
-        // echo "<p id=\"rechnungs_optionen\">";
         if ($this->status_bezahlt == '1') {
             $status_gezahlt = 'JA';
             $link_zahlung_freigeben = "";
@@ -2774,9 +2499,9 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             $rabatt_satz = request()->input('gesendet') [$a] ['RABATT_SATZ'];
             $skonto = nummer_komma2punkt ( request()->input('gesendet') [$a] ['SKONTO'] );
             $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$beleg_nr', '$kontierungs_pos','$kontierungs_menge', '$einzel_preis', '$gesamt_preis', '$mwst_satz', '$skonto', '$rabatt_satz', '$kontenrahmen_konto', '$kostentraeger_typ', '$kostentraeger_id', '$datum', '$verwendungs_jahr', '$weiter_verwenden', '1')";
-            $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+            DB::insert( $db_abfrage );
             /* Protokollieren */
-            $last_dat = mysql_insert_id ();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren ( 'KONTIERUNG_POSITIONEN', $last_dat, '0' );
         }
         $anzahl_positionen = count ( request()->input('gesendet') );
@@ -2786,29 +2511,27 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
     /* Ermitteln der letzten Kontierungs_id */
     function get_last_kontierung_id() {
-        $result = mysql_query ( "SELECT KONTIERUNG_ID FROM KONTIERUNG_POSITIONEN WHERE  AKTUELL='1' ORDER BY KONTIERUNG_ID DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT KONTIERUNG_ID FROM KONTIERUNG_POSITIONEN WHERE  AKTUELL='1' ORDER BY KONTIERUNG_ID DESC LIMIT 0,1" );
+        $row = $result[0];
         return $row ['KONTIERUNG_ID'];
     }
 
     /* Ermitteln der letzten Kontierungs_position eines Beleges */
     function get_last_position_of_beleg($belegnr) {
-        $result = mysql_query ( "SELECT POSITION FROM KONTIERUNG_POSITIONEN WHERE  BELEG_NR='$belegnr' && AKTUELL='1' ORDER BY KONTIERUNG_DAT DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT POSITION FROM KONTIERUNG_POSITIONEN WHERE  BELEG_NR='$belegnr' && AKTUELL='1' ORDER BY KONTIERUNG_DAT DESC LIMIT 0,1" );
+        $row = $result[0];
         return $row ['POSITION'];
     }
     function position_auf_kontierung_pruefen($beleg_nr, $position) {
-        $result = mysql_query ( "SELECT SUM( MENGE ) AS KONTIERTE_MENGE FROM `KONTIERUNG_POSITIONEN` WHERE BELEG_NR = '$beleg_nr' && POSITION = '$position' && AKTUELL='1'" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT SUM( MENGE ) AS KONTIERTE_MENGE FROM `KONTIERUNG_POSITIONEN` WHERE BELEG_NR = '$beleg_nr' && POSITION = '$position' && AKTUELL='1'" );
+        $row = $result[0];
         $kontierte_menge = $row ['KONTIERTE_MENGE'];
         return $kontierte_menge;
     }
     function position_kontierung_anzeigen($beleg_nr, $position) {
-        $result = mysql_query ( "SELECT KONTIERUNG_DAT, KONTIERUNG_ID, MENGE, EINZEL_PREIS, GESAMT_SUMME, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM `KONTIERUNG_POSITIONEN` WHERE BELEG_NR = '$beleg_nr' && POSITION = '$position' && AKTUELL='1'" );
-        $numrows = mysql_numrows ( $result );
+        $my_array = DB::select( "SELECT KONTIERUNG_DAT, KONTIERUNG_ID, MENGE, EINZEL_PREIS, GESAMT_SUMME, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM `KONTIERUNG_POSITIONEN` WHERE BELEG_NR = '$beleg_nr' && POSITION = '$position' && AKTUELL='1'" );
+        $numrows = count( $my_array );
         if ($numrows > 0) {
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_array [] = $row;
             echo "<hr>\n";
             for($a = 0; $a < $numrows; $a ++) {
                 $dat = $my_array [$a] ['KONTIERUNG_DAT'];
@@ -2828,16 +2551,11 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         }
     }
     function position_kontierung_infos($beleg_nr, $position) {
-        $result = mysql_query ( "SELECT KONTIERUNG_ID, MENGE, EINZEL_PREIS, GESAMT_SUMME, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM `KONTIERUNG_POSITIONEN` WHERE BELEG_NR = '$beleg_nr' && POSITION = '$position' && AKTUELL='1'" );
-        $numrows = mysql_numrows ( $result );
+        $my_array = DB::select( "SELECT KONTIERUNG_ID, MENGE, EINZEL_PREIS, GESAMT_SUMME, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM `KONTIERUNG_POSITIONEN` WHERE BELEG_NR = '$beleg_nr' && POSITION = '$position' && AKTUELL='1'" );
         unset ( $this->k_kontenrahmen_konto );
         unset ( $this->k_kostentraeger_bez );
-        if ($numrows > 0) {
-
+        if (!empty($result)) {
             $g = new geldkonto_info ();
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_array [] = $row;
-            // for($a=0;$a<$numrows;$a++){
             for($a = 0; $a < 1; $a ++) {
                 $menge = $my_array [$a] ['MENGE'];
                 $einzel_preis = $my_array [$a] ['EINZEL_PREIS'];
@@ -3101,63 +2819,43 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
     /* Rechnungspositionen finden */
     function rechnungs_positionen_arr($belegnr) {
-        $result = mysql_query ( "SELECT * FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR='$belegnr' && AKTUELL='1' ORDER BY POSITION ASC" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows < 1) {
-            $this->anzahl_positionen = '0';
-        } else {
-            $this->anzahl_positionen = $numrows;
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_array [] = $row;
-            return $my_array;
-        }
+        $result = DB::select( "SELECT * FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR='$belegnr' && AKTUELL='1' ORDER BY POSITION ASC" );
+        $numrows = count( $result );
+        $this->anzahl_positionen = $numrows;
+        return $result;
     }
 
     /* Rechnung Position löschen bzw. deaktivieren */
     function position_deaktivieren($pos, $belegnr) {
-        $result = mysql_query ( "UPDATE RECHNUNGEN_POSITIONEN SET AKTUELL='0' WHERE BELEG_NR='$belegnr' && AKTUELL='1' && POSITION='$pos'" );
+        DB::update( "UPDATE RECHNUNGEN_POSITIONEN SET AKTUELL='0' WHERE BELEG_NR='$belegnr' && AKTUELL='1' && POSITION='$pos'" );
     }
 
     /* Artikelinformationen aus dem Katalog holen */
     function artikel_info($partner_id, $artikel_nr) {
-        $result = mysql_query ( "SELECT * FROM POSITIONEN_KATALOG WHERE ART_LIEFERANT='$partner_id' && ARTIKEL_NR = '$artikel_nr' && AKTUELL='1' ORDER BY KATALOG_DAT DESC LIMIT 0,1" );
-        // echo "SELECT * FROM POSITIONEN_KATALOG WHERE ART_LIEFERANT='$partner_id' && ARTIKEL_NR = '$artikel_nr' && AKTUELL='1' ORDER BY KATALOG_DAT DESC LIMIT 0,1";
-        $numrows = mysql_numrows ( $result );
-        if (! $numrows) {
+        $result = DB::select( "SELECT * FROM POSITIONEN_KATALOG WHERE ART_LIEFERANT='$partner_id' && ARTIKEL_NR = '$artikel_nr' && AKTUELL='1' ORDER BY KATALOG_DAT DESC LIMIT 0,1" );
+        if (empty($result)) {
             return false;
         } else {
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_array [] = $row;
-            return $my_array;
+            return $result;
         }
     }
 
     /* Artikelnummern aus dem Katalog des Partner/Lieferanten holen */
     function artikel_leistungen_arr($partner_id) {
-        $result = mysql_query ( "SELECT ARTIKEL_NR, BEZEICHNUNG, LISTENPREIS, RABATT_SATZ FROM POSITIONEN_KATALOG WHERE ART_LIEFERANT='$partner_id'  && AKTUELL='1' ORDER BY ARTIKEL_NR ASC" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows > 0) {
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_array [] = $row;
-            return $my_array;
+        $result = DB::select( "SELECT ARTIKEL_NR, BEZEICHNUNG, LISTENPREIS, RABATT_SATZ FROM POSITIONEN_KATALOG WHERE ART_LIEFERANT='$partner_id'  && AKTUELL='1' ORDER BY ARTIKEL_NR ASC" );
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     /* Artikelnummer, Lieferant aus einem Beleg holen, darauf die Bezeichnung aus dem Katalog des Partner/Lieferanten holen */
     function kontierungsartikel_holen($beleg_nr, $position) {
-        $result = mysql_query ( "SELECT ARTIKEL_NR, ART_LIEFERANT  FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR='$beleg_nr' && POSITION='$position' && AKTUELL='1' ORDER BY RECHNUNGEN_POS_DAT DESC LIMIT 0,1" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT ARTIKEL_NR, ART_LIEFERANT  FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR='$beleg_nr' && POSITION='$position' && AKTUELL='1' ORDER BY RECHNUNGEN_POS_DAT DESC LIMIT 0,1" );
+        if (!empty($result)) {
+            $row = $result[0];
             $artikel_nr = $row ['ARTIKEL_NR'];
             $art_lieferant = $row ['ART_LIEFERANT'];
-            /*
-			 * $this->rechnung_grunddaten_holen($beleg_nr);
-			 * $aussteller_id = $this->rechnungs_aussteller_id;
-			 * #echo "$artikel_nr $aussteller_id<hr>";
-			 */
             $artikel_info = $this->artikel_info ( $art_lieferant, $artikel_nr );
-            // print_r($artikel_info);
             $this->artikel_nr = $row ['ARTIKEL_NR'];
             $this->art_lieferant = $row ['ART_LIEFERANT'];
             return $artikel_info [0] ['BEZEICHNUNG'];
@@ -3166,22 +2864,22 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
     /* Ermitteln der letzten Artikel_nr/Leistungnr eines Lieferanten */
     function get_last_artikelnr($partner_id) {
-        $result = mysql_query ( "SELECT ARTIKEL_NR FROM POSITIONEN_KATALOG WHERE ART_LIEFERANT='$partner_id' && AKTUELL='1' ORDER BY KATALOG_DAT DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT ARTIKEL_NR FROM POSITIONEN_KATALOG WHERE ART_LIEFERANT='$partner_id' && AKTUELL='1' ORDER BY KATALOG_DAT DESC LIMIT 0,1" );
+        $row = $result[0];
         return $row ['ARTIKEL_NR'];
     }
 
     /* Ermitteln der letzten Artikel_nr/Leistungnr eines Lieferanten nach Bezeichnung */
     function get_last_artikelnr_nach_bezeichnung($partner_id, $bezeichnung) {
-        $result = mysql_query ( "SELECT ARTIKEL_NR FROM POSITIONEN_KATALOG WHERE PARTNER_ID='$partner_id' && BEZEICHNUNG='$bezeichnung' && AKTUELL='1' ORDER BY ARTIKEL_NR DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT ARTIKEL_NR FROM POSITIONEN_KATALOG WHERE PARTNER_ID='$partner_id' && BEZEICHNUNG='$bezeichnung' && AKTUELL='1' ORDER BY ARTIKEL_NR DESC LIMIT 0,1" );
+        $row = $result[0];
         return $row ['ARTIKEL_NR'];
     }
 
     /* Ermitteln der letzten katalog_id */
     function get_last_katalog_id() {
-        $result = mysql_query ( "SELECT KATALOG_ID FROM POSITIONEN_KATALOG WHERE AKTUELL='1' ORDER BY KATALOG_ID DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT KATALOG_ID FROM POSITIONEN_KATALOG WHERE AKTUELL='1' ORDER BY KATALOG_ID DESC LIMIT 0,1" );
+        $row = $result[0];
         return $row ['KATALOG_ID'];
     }
 
@@ -3193,10 +2891,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         $letzte_artikel_nr = $letzte_artikel_nr + 1;
 
         $db_abfrage = "INSERT INTO POSITIONEN_KATALOG VALUES (NULL, '$letzte_kat_id','$partner_id', '$letzte_artikel_nr','$bezeichnung', '$listenpreis', '$rabatt', '$einheit', '$mwst', '1')";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-        /* Protokollieren */
-        $last_dat = mysql_insert_id ();
-        // protokollieren('POSITIONEN_KATALOG', $last_dat, '0');
+        DB::insert( $db_abfrage );
         return $this->get_last_artikelnr ( $partner_id );
     }
 
@@ -3207,9 +2902,9 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
         $bezeichnung = stripslashes ( $bezeichnung );
         $db_abfrage = "INSERT INTO POSITIONEN_KATALOG VALUES (NULL, '$letzte_kat_id','$partner_id', '$artikel_nr','$bezeichnung', '$listenpreis', '$rabatt', '$einheit', '$mwst', '$pos_skonto','1')";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+        DB::insert( $db_abfrage );
         /* Protokollieren */
-        $last_dat = mysql_insert_id ();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren ( 'POSITIONEN_KATALOG', $last_dat, '0' );
         return $this->get_last_artikelnr ( $partner_id );
     }
@@ -3222,7 +2917,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         if (is_array ( $katalog_arr )) {
             echo "<div class=\"tabelle\">\n";
             echo $partner_name;
-            // print_r($katalog_arr);
             echo "<table>\n";
             echo "<tr><td>ArtNr</td><td>Bezeichnung</td><td>LP</td><td>UP</td><td>Rabatt</td></tr>\n";
             for($a = 0; $a < count ( $katalog_arr ); $a ++) {
@@ -3280,9 +2974,9 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
                 $zahlungs_datum = date_german2mysql ( $this->bezahlt_am );
                 $db_abfrage = "UPDATE RECHNUNGEN SET EMPFANGS_GELD_KONTO='$empfangs_geld_konto', STATUS_ZAHLUNG_FREIGEGEBEN='1', STATUS_BEZAHLT='1', BEZAHLT_AM='$zahlungs_datum'  WHERE BELEG_NR='$belegnr' && AKTUELL='1' ";
             }
-            $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+            DB::update( $db_abfrage );
             /* Protokollieren von update */
-            $last_dat = mysql_insert_id ();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren ( 'RECHNUNGEN', $last_dat, $last_dat );
             echo "Dem Beleg $belegnr wurde die Kontonummer des Rechnungsausteller hinzugefügt<br>\n";
 
@@ -3301,9 +2995,9 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
                     $db_abfrage = "INSERT INTO RECHNUNGEN_POSITIONEN VALUES (NULL, '$letzte_rech_pos_id', '$a', '$belegnr','$this->rechnungs_aussteller_id','" . request()->input('positionen') [$a] ['artikel_nr'] . "', '$pos_menge','$pos_preis','$pos_mwst_satz', '$pos_rabatt', '$pos_gesamt_netto','1')";
 
-                    $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+                    DB::insert( $db_abfrage );
                     /* Protokollieren */
-                    $last_dat = mysql_insert_id ();
+                    $last_dat = DB::getPdo()->lastInsertId();
                     protokollieren ( 'RECHNUNGEN_POSITIONEN', $last_dat, '0' );
                     echo "Position $a wurde gespeichert <br>\n";
                 }  // end if
@@ -3321,9 +3015,9 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
                     $db_abfrage = "INSERT INTO RECHNUNGEN_POSITIONEN VALUES (NULL, '$letzte_rech_pos_id', '$a', '$belegnr','$neue_artikel_nr', '" . request()->input('positionen') [$a] ['menge'] . "','$pos_preis','$pos_mwst_satz', '$pos_rabatt', '$pos_gesamt_netto','1')";
 
-                    $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+                    DB::insert( $db_abfrage );
                     /* Protokollieren */
-                    $last_dat = mysql_insert_id ();
+                    $last_dat = DB::getPdo()->lastInsertId();
                     protokollieren ( 'RECHNUNGEN_POSITIONEN', $last_dat, '0' );
                     echo "Position $a ($neue_artikel_nr) " . request()->input('positionen') [$a] ['bezeichnung'] . " wurde gespeichert<br>\n";
                 }
@@ -3336,9 +3030,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
     /* Positionen einer automatisch erstellten Rechnung speichern */
     function auto_positionen_speichern($belegnr, $positionen) {
-        // echo "<pre>";
-        // print_r($positionen);
-        // echo "</pre>";
         $this->rechnung_grunddaten_holen ( $belegnr );
 
         for($a = 0; $a < count ( $positionen ); $a ++) {
@@ -3366,22 +3057,16 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             $mwst_satz = $this->mwst_satz_der_position ( $u_beleg_nr, $u_position );
 
             $db_abfrage = "INSERT INTO RECHNUNGEN_POSITIONEN VALUES (NULL, '$letzte_rech_pos_id', '$zeile', '$belegnr', '$u_beleg_nr','$ursprungs_art_lieferant','$ursprungs_artikel_nr', '$menge','$einzel_preis','$mwst_satz', '$pos_rabatt_satz', '$skonto', '$gpreis','1')";
-            $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+            DB::insert( $db_abfrage );
             /* Protokollieren */
-            $last_dat = mysql_insert_id ();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren ( 'RECHNUNGEN_POSITIONEN', $last_dat, '0' );
-            // echo "Position $a ($neue_artikel_nr) ".$positionen[$a]['bezeichnung']." wurde gespeichert<br>\n";
-
             /* Autokontierung der Position */
             $position = $zeile;
             $u_position = $positionen [$a] ['position'];
             $u_belegnr = $positionen [$a] ['beleg_nr'];
             $dat = $positionen [$a] ['kontierung_dat'];
             $this->position_kontierung_infos_n ( $dat );
-            /*
-			 * echo '<pre>';
-			 * print_r($this);
-			 */
             echo "UBELEG $u_beleg_nr POS $u_position ";
             /* in rechnung gestellte menge */
             $kontierungs_menge = $positionen [$a] ['menge'];
@@ -3436,8 +3121,8 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         unset ( $this->verwendungs_jahr );
         unset ( $this->mwst_satz );
         unset ( $this->rabatt_satz );
-        $result = mysql_query ( "SELECT * FROM KONTIERUNG_POSITIONEN WHERE BELEG_NR='$belegnr' && POSITION='$pos' && AKTUELL='1' ORDER BY KONTIERUNG_DAT DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT * FROM KONTIERUNG_POSITIONEN WHERE BELEG_NR='$belegnr' && POSITION='$pos' && AKTUELL='1' ORDER BY KONTIERUNG_DAT DESC LIMIT 0,1" );
+        $row = $result[0];
         $this->kontierungs_menge = $row ['MENGE'];
         $this->kostenkonto = $row ['KONTENRAHMEN_KONTO'];
         $this->kostentraeger_typ = $row ['KOSTENTRAEGER_TYP'];
@@ -3456,8 +3141,8 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         unset ( $this->verwendungs_jahr );
         unset ( $this->mwst_satz );
         unset ( $this->rabatt_satz );
-        $result = mysql_query ( "SELECT * FROM KONTIERUNG_POSITIONEN WHERE KONTIERUNG_DAT='$dat' && AKTUELL='1' ORDER BY KONTIERUNG_DAT DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT * FROM KONTIERUNG_POSITIONEN WHERE KONTIERUNG_DAT='$dat' && AKTUELL='1' ORDER BY KONTIERUNG_DAT DESC LIMIT 0,1" );
+        $row = $result[0];
         $this->kontierungs_menge = $row ['MENGE'];
         $this->kostenkonto = $row ['KONTENRAHMEN_KONTO'];
         $this->kostentraeger_typ = $row ['KOSTENTRAEGER_TYP'];
@@ -3468,49 +3153,49 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         $this->rabatt_satz = $row ['RABATT_SATZ'];
     }
     function art_nr_from_beleg($belegnr, $pos) {
-        $result = mysql_query ( "SELECT ARTIKEL_NR FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR='$belegnr' && POSITION='$pos' && AKTUELL='1' ORDER BY RECHNUNGEN_POS_DAT DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT ARTIKEL_NR FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR='$belegnr' && POSITION='$pos' && AKTUELL='1' ORDER BY RECHNUNGEN_POS_DAT DESC LIMIT 0,1" );
+        $row = $result[0];
         return $row ['ARTIKEL_NR'];
     }
     function art_lieferant_from_beleg($belegnr, $pos) {
-        $result = mysql_query ( "SELECT ART_LIEFERANT FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR='$belegnr' && POSITION='$pos' && AKTUELL='1' ORDER BY RECHNUNGEN_POS_DAT DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT ART_LIEFERANT FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR='$belegnr' && POSITION='$pos' && AKTUELL='1' ORDER BY RECHNUNGEN_POS_DAT DESC LIMIT 0,1" );
+        $row = $result[0];
         return $row ['ART_LIEFERANT'];
     }
     function rechnung_als_vollstaendig($belegnr) {
         $db_abfrage = "UPDATE RECHNUNGEN SET STATUS_VOLLSTAENDIG='1' WHERE BELEG_NR='$belegnr' && AKTUELL='1'";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+        DB::update( $db_abfrage );
     }
     function rechnung_als_unvollstaendig($belegnr) {
         $db_abfrage = "UPDATE RECHNUNGEN SET STATUS_VOLLSTAENDIG='0', STATUS_ZUGEWIESEN='0' WHERE BELEG_NR='$belegnr' && AKTUELL='1'";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+        DB::update( $db_abfrage );
     }
     function rechnung_als_zugewiesen($belegnr) {
         $db_abfrage = "UPDATE RECHNUNGEN SET STATUS_ZUGEWIESEN='1' WHERE BELEG_NR='$belegnr' && AKTUELL='1'";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+        DB::update( $db_abfrage );
     }
     function rechnung_als_freigegeben($belegnr) {
         $db_abfrage = "UPDATE RECHNUNGEN SET STATUS_ZAHLUNG_FREIGEGEBEN='1' WHERE BELEG_NR='$belegnr' && AKTUELL='1'";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+        DB::update( $db_abfrage );
     }
     function rechnung_als_gezahlt($belegnr, $datum) {
         $db_abfrage = "UPDATE RECHNUNGEN SET STATUS_BEZAHLT='1', BEZAHLT_AM='$datum' WHERE BELEG_NR='$belegnr' && AKTUELL='1'";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+        DB::update( $db_abfrage );
     }
 
     // function rechnung
 
     /* Prüfen ob ein Artikel nach Beschreibung exisitiert */
     function artikel_exists($partner_id, $artikel_bezeichnung) {
-        $result = mysql_query ( "SELECT ARTIKEL_NR FROM POSITIONEN_KATALOG WHERE ART='$partner_id' && BEZEICHNUNG='$artikel_bezeichnung' && AKTUELL='1' ORDER BY KATALOG_DAT DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT ARTIKEL_NR FROM POSITIONEN_KATALOG WHERE ART='$partner_id' && BEZEICHNUNG='$artikel_bezeichnung' && AKTUELL='1' ORDER BY KATALOG_DAT DESC LIMIT 0,1" );
+        $row = $result[0];
         return $row ['ARTIKEL_NR'];
     }
 
     /* Nach in Rechnungsstellung einer Konierungsposition, Tabelle WEITER_VERWENDEN auf 0 setzen */
     function kontierung_dat_id_deaktivieren($dat, $id) {
         $db_abfrage = "UPDATE KONTIERUNG_POSITIONEN SET WEITER_VERWENDEN='0' WHERE KONTIERUNG_DAT='$dat' && KONTIERUNG_ID='$id' && AKTUELL='1'";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+        DB::update( $db_abfrage );
         /* Protokollieren */
         protokollieren ( 'RECHNUNGEN_POSITIONEN', $dat, $dat );
     }
@@ -3518,7 +3203,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
     /* Nach in Rechnungsstellung einer Konierungsposition, Tabelle WEITER_VERWENDEN auf 0 setzen */
     function kontierung_dat_anpassen($dat, $neue_menge) {
         $db_abfrage = "UPDATE KONTIERUNG_POSITIONEN SET WEITER_VERWENDEN='0', MENGE='$neue_menge' WHERE KONTIERUNG_DAT='$dat'";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+        DB::update( $db_abfrage );
         /* Protokollieren */
         protokollieren ( 'RECHNUNGEN_POSITIONEN', $dat, $dat );
     }
@@ -3526,7 +3211,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
     /* Nach in Rechnungsstellung einer Konierungsposition, Tabelle WEITER_VERWENDEN auf 0 setzen */
     function kontierung_dat_deaktivieren($dat) {
         $db_abfrage = "UPDATE KONTIERUNG_POSITIONEN SET WEITER_VERWENDEN='0' WHERE KONTIERUNG_DAT='$dat' ";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+        DB::update( $db_abfrage );
         /* Protokollieren */
         protokollieren ( 'KONTIERUNG_POSITIONEN', $dat, $dat );
     }
@@ -3534,7 +3219,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
     /* Kontierung einer Position aufheben */
     function pos_kontierung_aufheben($dat, $id) {
         $db_abfrage = "UPDATE KONTIERUNG_POSITIONEN SET AKTUELL='0' WHERE KONTIERUNG_DAT='$dat' && KONTIERUNG_ID='$id' && AKTUELL='1'";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+        DB::update( $db_abfrage );
         /* Protokollieren */
         protokollieren ( 'KONTIERUNG_POSITIONEN', $dat, $dat );
     }
@@ -3542,29 +3227,29 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
     /* Kontierung einer Position aufheben */
     function pos_kontierung_aufheben_dat($dat) {
         $db_abfrage = "UPDATE KONTIERUNG_POSITIONEN SET AKTUELL='0' WHERE KONTIERUNG_DAT='$dat'";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+        DB::update( $db_abfrage );
         /* Protokollieren */
         protokollieren ( 'KONTIERUNG_POSITIONEN', $dat, $dat );
     }
 
     /* Ermitteln der Menge einer Kontierungsposition */
     function kontierungs_menge($dat, $id) {
-        $result = mysql_query ( "SELECT MENGE FROM KONTIERUNG_POSITIONEN WHERE KONTIERUNG_DAT='$dat' && KONTIERUNG_ID='$id' && AKTUELL='1'" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT MENGE FROM KONTIERUNG_POSITIONEN WHERE KONTIERUNG_DAT='$dat' && KONTIERUNG_ID='$id' && AKTUELL='1'" );
+        $row = $result[0];
         return $row ['MENGE'];
     }
 
     /* Ermitteln der Gesamtmenge einer Kontierungsposition */
     function kontierungs_menge_gesamt($belegnr, $pos) {
-        $result = mysql_query ( "SELECT SUM(MENGE) AS GESAMT_KONTIERT FROM KONTIERUNG_POSITIONEN WHERE BELEG_NR='$belegnr' && POSITION='$pos' && AKTUELL='1'" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT SUM(MENGE) AS GESAMT_KONTIERT FROM KONTIERUNG_POSITIONEN WHERE BELEG_NR='$belegnr' && POSITION='$pos' && AKTUELL='1'" );
+        $row = $result[0];
         return $row ['GESAMT_KONTIERT'];
     }
 
     /* Ermitteln der Gesamtmenge einer Kontierungsposition */
     function kontierungs_menge_von_dat($dat) {
-        $result = mysql_query ( "SELECT MENGE FROM KONTIERUNG_POSITIONEN WHERE KONTIERUNG_DAT='$dat' && AKTUELL='1'" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT MENGE FROM KONTIERUNG_POSITIONEN WHERE KONTIERUNG_DAT='$dat' && AKTUELL='1'" );
+        $row = $result[0];
         return $row ['MENGE'];
     }
 
@@ -3575,15 +3260,15 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             $this->kontierung_dat_id_deaktivieren ( $dat, $id );
         }
         if ($ursprungs_menge > $aktuelle_menge) {
-            $result = mysql_query ( "SELECT MENGE FROM KONTIERUNG_POSITIONEN WHERE KONTIERUNG_DAT='$dat' && KONTIERUNG_ID='$id' && AKTUELL='1'" );
-            $row = mysql_fetch_assoc ( $result );
+            $result = DB::select( "SELECT MENGE FROM KONTIERUNG_POSITIONEN WHERE KONTIERUNG_DAT='$dat' && KONTIERUNG_ID='$id' && AKTUELL='1'" );
+            $row = $result[0];
             return $row ['MENGE'];
 
             $this->kontierung_dat_id_deaktivieren ( $dat, $id );
             $differenz_menge = $ursprungs_menge - $aktuelle_menge;
 
             $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$beleg_nr', '$kontierungs_pos','$kontierungs_menge', '$einzel_preis', '$gesamt_preis', '$kontenrahmen_konto', '$kostentraeger_typ', '$kostentraeger_id', '$datum', '$verwendungs_jahr', '$weiter_verwenden', '1')";
-            $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+            DB::insert( $db_abfrage );
         }
 
         if ($ursprungs_menge > $aktuelle_menge) {
@@ -3593,8 +3278,8 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
     /* Menge einer Kontierungsposition ändern bzw anpassen */
     function kontierungs_menge_anpassen($dat, $id, $neue_menge) {
-        $result = mysql_query ( "SELECT * FROM KONTIERUNG_POSITIONEN WHERE KONTIERUNG_DAT='$dat' && KONTIERUNG_ID='$id' && AKTUELL='1'" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT * FROM KONTIERUNG_POSITIONEN WHERE KONTIERUNG_DAT='$dat' && KONTIERUNG_ID='$id' && AKTUELL='1'" );
+        $row = $result[0];
         $beleg_nr = $row ['BELEG_NR'];
         $kontierungs_pos = $row ['POSITION'];
         $kontierungs_menge = $row ['MENGE'];
@@ -3610,19 +3295,18 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         $this->kontierung_dat_id_deaktivieren ( $dat, $id );
 
         $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$beleg_nr', '$kontierungs_pos','$neue_menge', '$einzel_preis', '$gesamt_preis', '$kontenrahmen_konto', '$kostentraeger_typ', '$kostentraeger_id', '$datum', '$verwendungs_jahr', '$weiter_verwenden', '1')";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+        $resultat = DB::insert( $db_abfrage );
     }
 
     /* Menge einer Kontierungsposition ändern bzw anpassen */
     function kontierungs_menge_anpassen_dat($dat, $neue_menge) {
-        $result = mysql_query ( "SELECT * FROM KONTIERUNG_POSITIONEN WHERE KONTIERUNG_DAT='$dat' && AKTUELL='1'" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT * FROM KONTIERUNG_POSITIONEN WHERE KONTIERUNG_DAT='$dat' && AKTUELL='1'" );
+        $row = $result[0];
         $beleg_nr = $row ['BELEG_NR'];
         $u_kontierung_id = $row ['KONTIERUNG_ID'];
         $kontierungs_pos = $row ['POSITION'];
         $kontierungs_menge = $row ['MENGE'];
         $einzel_preis = $row ['EINZEL_PREIS'];
-        // $gesamt_preis = $row[GESAMT_SUMME];
         $mwst_satz = $row ['MWST_SATZ'];
         $rabatt_satz = $row ['RABATT_SATZ'];
         $kontenrahmen_konto = $row ['KONTENRAHMEN_KONTO'];
@@ -3638,15 +3322,14 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
             /* Ursprungsmenge um Diffmenge Anpassen, dh. wenn vorher 3 und nur 2 in Rechnung dann 3 auf 2 setzen und rest als neue kontierungszeile einfügen, siehe drunter */
             $db_abfrage = "UPDATE KONTIERUNG_POSITIONEN SET MENGE='$neue_menge', WEITER_VERWENDEN='0' WHERE KONTIERUNG_DAT='$dat'";
-            $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
-
+            DB::update( $db_abfrage );
             $datum = date ( "Y-m-d" );
             $kontierung_id = $this->get_last_kontierung_id ();
             $kontierung_id = $kontierung_id + 1;
             /* Differenzmenge / Restmenge für Pool für Weiterverwendung */
             $gesamt_preis = $diff_menge * $einzel_preis;
             $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$beleg_nr', '$kontierungs_pos','$diff_menge', '$einzel_preis', '$gesamt_preis', '$mwst_satz', '$rabatt_satz', '$kontenrahmen_konto', '$kostentraeger_typ', '$kostentraeger_id', '$datum', '$verwendungs_jahr', '1', '1')";
-            $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+            DB::insert( $db_abfrage );
         } else {
             echo "KEINE DIFFERENZMENGE ERSICHTLICH";
         }
@@ -3665,16 +3348,16 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         $datum = date ( "Y-m-d" );
 
         $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$beleg_nr', '$kontierungs_pos','$kontierungs_menge', '$einzel_preis', '$gesamt_preis', '$mwst_satz', '$skonto' , '$rabatt_satz', '$kontenrahmen_konto', '$kostentraeger_typ', '$kostentraeger_id', '$datum', '$verwendungs_jahr', '$weiter_verwenden', '1')";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+        DB::insert( $db_abfrage );
         /* Protokollieren */
-        $last_dat = mysql_insert_id ();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren ( 'KONTIERUNG_POSITIONEN', $last_dat, '0' );
     }
 
     /* Ermitteln der letzten RECHNUNGEN_POS_ID */
     function get_last_rechnung_pos_id() {
-        $result = mysql_query ( "SELECT RECHNUNGEN_POS_ID FROM RECHNUNGEN_POSITIONEN ORDER BY RECHNUNGEN_POS_ID DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT RECHNUNGEN_POS_ID FROM RECHNUNGEN_POSITIONEN ORDER BY RECHNUNGEN_POS_ID DESC LIMIT 0,1" );
+        $row = $result[0];
         return $row ['RECHNUNGEN_POS_ID'];
     }
 
@@ -3718,49 +3401,24 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         $form->ende_formular ();
     }
     function rechnung_finden_nach_beleg($beleg_nr) {
-        $result = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE BELEG_NR='$beleg_nr' && AKTUELL = '1' ORDER BY BELEG_NR DESC" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows > 0) {
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_array [] = $row;
-        }
-        return $my_array;
+        $result = DB::select( "SELECT * FROM RECHNUNGEN WHERE BELEG_NR='$beleg_nr' && AKTUELL = '1' ORDER BY BELEG_NR DESC" );
+        return $result;
     }
     function rechnung_finden_nach_rnr($rnr) {
-        $result = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE LTRIM(RTRIM(RECHNUNGSNUMMER)) = '$rnr' && AKTUELL = '1' ORDER BY BELEG_NR DESC" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows > 0) {
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_array [] = $row;
-            return $my_array;
-        }
+        $result = DB::select( "SELECT * FROM RECHNUNGEN WHERE LTRIM(RTRIM(RECHNUNGSNUMMER)) = '$rnr' && AKTUELL = '1' ORDER BY BELEG_NR DESC" );
+        return $result;
     }
     function rechnung_finden_nach_aussteller($aussteller) {
-        $result = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE AUSSTELLER_ID='$aussteller' && AUSSTELLER_TYP='Partner' && AKTUELL = '1' ORDER BY BELEG_NR DESC" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows > 0) {
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_array [] = $row;
-        }
-        return $my_array;
+        $result = DB::select( "SELECT * FROM RECHNUNGEN WHERE AUSSTELLER_ID='$aussteller' && AUSSTELLER_TYP='Partner' && AKTUELL = '1' ORDER BY BELEG_NR DESC" );
+        return $result;
     }
     function rechnung_finden_nach_empfaenger($empfaengertyp, $id) {
-        $result = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE EMPFAENGER_TYP='$empfaengertyp' && EMPFAENGER_ID='$id' && AKTUELL = '1' ORDER BY EMPFAENGER_EINGANGS_RNR DESC" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows > 0) {
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_array [] = $row;
-        }
-        return $my_array;
+        $result = DB::select( "SELECT * FROM RECHNUNGEN WHERE EMPFAENGER_TYP='$empfaengertyp' && EMPFAENGER_ID='$id' && AKTUELL = '1' ORDER BY EMPFAENGER_EINGANGS_RNR DESC" );
+        return $result;
     }
     function rechnung_finden_nach_paar($aussteller, $empfaenger) {
-        $result = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE EMPFAENGER_ID='$empfaenger' && EMPFAENGER_TYP='Partner' && AUSSTELLER_ID='$aussteller' && AUSSTELLER_TYP='Partner' && AKTUELL = '1' ORDER BY BELEG_NR DESC" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows > 0) {
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_array [] = $row;
-        }
-        return $my_array;
+        $result = DB::select( "SELECT * FROM RECHNUNGEN WHERE EMPFAENGER_ID='$empfaenger' && EMPFAENGER_TYP='Partner' && AUSSTELLER_ID='$aussteller' && AUSSTELLER_TYP='Partner' && AKTUELL = '1' ORDER BY BELEG_NR DESC" );
+        return $result;
     }
     function rechnung_finden_nach_lieferschein($lieferschein) {
         $d = new detail ();
@@ -3835,14 +3493,13 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         }
     }
     function get_partner_name($partner_id) {
-        $result = mysql_query ( "SELECT PARTNER_NAME FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT PARTNER_NAME FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'" );
+        $row = $result[0];
         return $row ['PARTNER_NAME'];
     }
     function get_aussteller_info($partner_id) {
-        $result = mysql_query ( "SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'" );
-        $row = mysql_fetch_assoc ( $result );
-        // return
+        $result = DB::select( "SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'" );
+        $row = $result[0];
         $this->rechnungs_aussteller_name = $row ['PARTNER_NAME'];
         $this->rechnungs_aussteller_strasse = $row ['STRASSE'];
         $this->rechnungs_aussteller_hausnr = $row ['NUMMER'];
@@ -3850,9 +3507,8 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         $this->rechnungs_aussteller_ort = $row ['ORT'];
     }
     function get_empfaenger_info($partner_id) {
-        $result = mysql_query ( "SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'" );
-        $row = mysql_fetch_assoc ( $result );
-        // return
+        $result = DB::select( "SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'" );
+        $row = $result[0];
         $this->rechnungs_empfaenger_name = $row ['PARTNER_NAME'];
         $this->rechnungs_empfaenger_strasse = $row ['STRASSE'];
         $this->rechnungs_empfaenger_hausnr = $row ['NUMMER'];
@@ -4194,17 +3850,12 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         echo "</table>";
     }
     function check_kontierung_rg($beleg_nr, $kos_typ, $kos_id) {
-        $result = mysql_query ( "SELECT * FROM `KONTIERUNG_POSITIONEN` WHERE BELEG_NR = '$beleg_nr' && KOSTENTRAEGER_TYP = '$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && AKTUELL='1'" );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select( "SELECT * FROM `KONTIERUNG_POSITIONEN` WHERE BELEG_NR = '$beleg_nr' && KOSTENTRAEGER_TYP = '$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && AKTUELL='1'" );
+        return !empty($result);
     }
     function get_weiterbelastung($belegnr) {
-        $result = mysql_query ( "SELECT SUM((GESAMT_NETTO/100)*(100+MWST_SATZ)) AS SUMME FROM `RECHNUNGEN_POSITIONEN` WHERE `U_BELEG_NR`!=`BELEG_NR` && `U_BELEG_NR` = '$belegnr' AND `AKTUELL` = '1'" );
-        $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT SUM((GESAMT_NETTO/100)*(100+MWST_SATZ)) AS SUMME FROM `RECHNUNGEN_POSITIONEN` WHERE `U_BELEG_NR`!=`BELEG_NR` && `U_BELEG_NR` = '$belegnr' AND `AKTUELL` = '1'" );
+        $row = $result[0];
         return $row ['SUMME'];
     }
     function rechnungsbuch_anzeigen_ein_ALTOK($arr) {
@@ -4283,28 +3934,19 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         echo "</table>";
     }
     function eingangsrechnungen_arr($empfaenger_typ, $empfaenger_id, $monat, $jahr, $rechnungstyp) {
-        // echo "<h1>$monat</h1>";
         if ($rechnungstyp == 'Rechnung') {
             $r_sql = "(RECHNUNGSTYP='$rechnungstyp' OR RECHNUNGSTYP='Stornorechnung' OR RECHNUNGSTYP='Gutschrift' OR RECHNUNGSTYP='Teilrechnung' OR RECHNUNGSTYP='Schlussrechnung')";
         } else {
             $r_sql = "RECHNUNGSTYP='$rechnungstyp'";
         }
         if ($monat == 'alle') {
-            $result = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE EMPFAENGER_ID='$empfaenger_id' && EMPFAENGER_TYP='$empfaenger_typ' && DATE_FORMAT( RECHNUNGSDATUM, '%Y' ) = '$jahr' && $r_sql && AKTUELL = '1' GROUP BY BELEG_NR ORDER BY EMPFAENGER_EINGANGS_RNR ASC" );
+            $result = DB::select( "SELECT * FROM RECHNUNGEN WHERE EMPFAENGER_ID='$empfaenger_id' && EMPFAENGER_TYP='$empfaenger_typ' && DATE_FORMAT( RECHNUNGSDATUM, '%Y' ) = '$jahr' && $r_sql && AKTUELL = '1' GROUP BY BELEG_NR ORDER BY EMPFAENGER_EINGANGS_RNR ASC" );
         } else {
-            $result = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE EMPFAENGER_ID='$empfaenger_id' && EMPFAENGER_TYP='$empfaenger_typ' && DATE_FORMAT( RECHNUNGSDATUM, '%Y-%m' ) = '$jahr-$monat' && $r_sql && AKTUELL = '1' GROUP BY BELEG_NR ORDER BY EMPFAENGER_EINGANGS_RNR ASC" );
+            $result = DB::select( "SELECT * FROM RECHNUNGEN WHERE EMPFAENGER_ID='$empfaenger_id' && EMPFAENGER_TYP='$empfaenger_typ' && DATE_FORMAT( RECHNUNGSDATUM, '%Y-%m' ) = '$jahr-$monat' && $r_sql && AKTUELL = '1' GROUP BY BELEG_NR ORDER BY EMPFAENGER_EINGANGS_RNR ASC" );
         }
-        // echo "SELECT * FROM RECHNUNGEN WHERE EMPFAENGER_ID='$empfaenger_id' && EMPFAENGER_TYP='$empfaenger_typ' && DATE_FORMAT( RECHNUNGSDATUM, '%Y' ) = '$jahr' && $r_sql && AKTUELL = '1' ORDER BY EMPFAENGER_EINGANGS_RNR DESC<hr>";
-
-        $numrows = mysql_numrows ( $result );
-        if ($numrows > 0) {
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_array [] = $row;
-            return $my_array;
-        }
+        return $result;
     }
     function ausgangsrechnungen_arr($aussteller_typ, $aussteller_id, $monat, $jahr, $rechnungstyp) {
-        // echo "<h1>$monat</h1>";
         if ($rechnungstyp == 'Rechnung') {
             $r_sql = "(RECHNUNGSTYP='$rechnungstyp' OR RECHNUNGSTYP='Stornorechnung' OR RECHNUNGSTYP='Gutschrift' OR RECHNUNGSTYP='Teilrechnung' OR RECHNUNGSTYP='Schlussrechnung')";
         } else {
@@ -4312,16 +3954,11 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         }
 
         if ($monat == 'alle') {
-            $result = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE AUSSTELLER_ID='$aussteller_id' && AUSSTELLER_TYP='$aussteller_typ' && DATE_FORMAT( RECHNUNGSDATUM, '%Y' ) = '$jahr' && $r_sql && AKTUELL = '1' ORDER BY AUSTELLER_AUSGANGS_RNR ASC" );
+            $result = DB::select( "SELECT * FROM RECHNUNGEN WHERE AUSSTELLER_ID='$aussteller_id' && AUSSTELLER_TYP='$aussteller_typ' && DATE_FORMAT( RECHNUNGSDATUM, '%Y' ) = '$jahr' && $r_sql && AKTUELL = '1' ORDER BY AUSTELLER_AUSGANGS_RNR ASC" );
         } else {
-            $result = mysql_query ( "SELECT * FROM RECHNUNGEN WHERE AUSSTELLER_ID='$aussteller_id' && AUSSTELLER_TYP='$aussteller_typ' && DATE_FORMAT( RECHNUNGSDATUM, '%Y-%m' ) = '$jahr-$monat' && $r_sql && AKTUELL = '1' ORDER BY AUSTELLER_AUSGANGS_RNR DESC" );
+            $result = DB::select( "SELECT * FROM RECHNUNGEN WHERE AUSSTELLER_ID='$aussteller_id' && AUSSTELLER_TYP='$aussteller_typ' && DATE_FORMAT( RECHNUNGSDATUM, '%Y-%m' ) = '$jahr-$monat' && $r_sql && AKTUELL = '1' ORDER BY AUSTELLER_AUSGANGS_RNR DESC" );
         }
-        $numrows = mysql_numrows ( $result );
-        if ($numrows) {
-            while ( $row = mysql_fetch_assoc ( $result ) )
-                $my_array [] = $row;
-            return $my_array;
-        }
+        return $result;
     }
     function r_eingang_monate_links($monat, $jahr) {
         $link_p_wechseln = "<a href='" . route('legacy::rechnungen::index', ['option' => 'partner_wechseln']) . "'>Partner wechseln</a>&nbsp;";

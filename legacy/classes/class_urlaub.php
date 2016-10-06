@@ -913,11 +913,9 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
         $datum_arr = explode("-", $datum);
         $monat = $datum_arr [1];
         $tag = $datum_arr [2];
-        $result = mysql_query("SELECT ANTEIL FROM URLAUB_EINST WHERE DATE_FORMAT(DATUM, '%m-%d') ='$monat-$tag' LIMIT 0,1 ");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT ANTEIL FROM URLAUB_EINST WHERE DATE_FORMAT(DATUM, '%m-%d') ='$monat-$tag' LIMIT 0,1 ");
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['ANTEIL'];
         } else {
             return '1.0';
@@ -932,22 +930,15 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
             $d_a = date_mysql2german($datum);
             echo "$d_a wurde schon als Urlaubstag eingetragen<br>";
         } else {
-
             $db_abfrage = "INSERT INTO URLAUB VALUES (NULL, '$benutzer_id','$datum_heute','$datum', '$anteil', '1', '$art')";
-
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert($db_abfrage);
         }
     }
 
     function urlaubstag_eingetragen($datum, $benutzer_id)
     {
-        $result = mysql_query("SELECT * FROM URLAUB WHERE DATUM='$datum' && BENUTZER_ID='$benutzer_id' && AKTUELL='1'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select("SELECT * FROM URLAUB WHERE DATUM='$datum' && BENUTZER_ID='$benutzer_id' && AKTUELL='1'");
+        return !empty($result);
     }
 
     function tag_danach($datum)
@@ -973,14 +964,14 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
     function urlaubstag_loeschen($dat)
     {
         $db_abfrage = "UPDATE URLAUB SET AKTUELL='0' WHERE U_DAT='$dat'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
         echo "gelöscht";
     }
 
     function urlaubstag_loeschen_datum($benutzer_id, $datum)
     {
         $db_abfrage = "UPDATE URLAUB SET AKTUELL='0' WHERE DATUM='$datum' && BENUTZER_ID='$benutzer_id'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
         echo "gelöscht";
     }
 
@@ -1107,12 +1098,9 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
 
     function check_anwesenheit($benutzer_id, $datum)
     {
-        $result = mysql_query("SELECT * FROM URLAUB WHERE AKTUELL='1' && BENUTZER_ID='$benutzer_id' && DATUM='$datum'");
-
-        $numrows = mysql_numrows($result);
-        if (!$numrows) {
-        } else {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT * FROM URLAUB WHERE AKTUELL='1' && BENUTZER_ID='$benutzer_id' && DATUM='$datum'");
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['ART'];
         }
     }

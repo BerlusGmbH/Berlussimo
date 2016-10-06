@@ -231,21 +231,10 @@ function alle_mieter_arr()
     $abfrage .= " FROM `MIETVERTRAG`, PERSON_MIETVERTRAG WHERE ((MIETVERTRAG_BIS = '0000-00-00')OR (MIETVERTRAG_BIS >'2008-06-10'))";
     $abfrage .= " && ( MIETVERTRAG.MIETVERTRAG_ID = PERSON_MIETVERTRAG.PERSON_MIETVERTRAG_MIETVERTRAG_ID) ";
 
-    // $abfrage = 'SELECT DISTINCT PERSON.PERSON_ID, PERSON.PERSON_NACHNAME, PERSON.PERSON_VORNAME, PERSON_MIETVERTRAG.PERSON_MIETVERTRAG_PERSON_ID, PERSON_MIETVERTRAG.PERSON_MIETVERTRAG_MIETVERTRAG_ID, MIETVERTRAG.MIETVERTRAG_ID, MIETVERTRAG.MIETVERTRAG_BIS, MIETVERTRAG.EINHEIT_ID';
-    // $abfrage .=' FROM PERSON, PERSON_MIETVERTRAG, MIETVERTRAG WHERE PERSON.PERSON_ID = PERSON_MIETVERTRAG.PERSON_MIETVERTRAG_PERSON_ID && PERSON_MIETVERTRAG.PERSON_MIETVERTRAG_MIETVERTRAG_ID = MIETVERTRAG.MIETVERTRAG_ID';
-    // $abfrage .=' && ((MIETVERTRAG.MIETVERTRAG_BIS=\'0000-00-00\') OR (MIETVERTRAG.MIETVERTRAG_BIS>\'2008-06-10\')) ORDER BY PERSON.PERSON_NACHNAME ASC';
-    // echo $abfrage;
-    // $abfrage = "SELECT DISTINCT PERSON.PERSON_ID, PERSON.PERSON_NACHNAME, PERSON.PERSON_VORNAME, PERSON_MIETVERTRAG.PERSON_MIETVERTRAG_PERSON_ID, PERSON_MIETVERTRAG.PERSON_MIETVERTRAG_MIETVERTRAG_ID, MIETVERTRAG.MIETVERTRAG_ID, MIETVERTRAG.MIETVERTRAG_BIS, MIETVERTRAG.EINHEIT_ID FROM PERSON, PERSON_MIETVERTRAG, MIETVERTRAG WHERE PERSON.PERSON_ID = PERSON_MIETVERTRAG.PERSON_MIETVERTRAG_PERSON_ID && PERSON_MIETVERTRAG.PERSON_MIETVERTRAG_MIETVERTRAG_ID = MIETVERTRAG.MIETVERTRAG_ID ORDER BY PERSON.PERSON_NACHNAME ASC";
-    $result = mysql_query($abfrage);
-    $mieterdaten = array();
-    while ($row = mysql_fetch_assoc($result)) {
-        // echo $row[PERSON.PERSON_ID];
-        $mieterdaten [] = $row;
-    }
-    $anzahl_mieter = count($mieterdaten);
-    // return $mieterdaten;
+    $result = DB::select($abfrage);
+
     echo "<pre>";
-    print_r($mieterdaten);
+    print_r($result);
     echo "</pre>";
 }
 
@@ -307,22 +296,20 @@ function check_fields_nach_aenderung()
 function personen_liste()
 {
     $db_abfrage = "SELECT PERSON_NACHNAME, PERSON_VORNAME, PERSON_GEBURTSTAG FROM PERSON WHERE PERSON_AKTUELL='1' ORDER BY PERSON_NACHNAME, PERSON_VORNAME ASC";
-    $resultat = mysql_query($db_abfrage) or die (mysql_error());
+    $result = DB::select($db_abfrage);
     echo "<div class=\"tabelle_personen\"><table>\n";
     echo "<tr class=\"feldernamen\"><td colspan=3>Personenliste</td></tr>\n";
     echo "<tr class=\"feldernamen\"><td>Nachname</td><td>Vorname</td><td>Geb. am</td></tr>\n";
     $counter = 0;
-    while (list ($PERSON_NACHNAME, $PERSON_VORNAME, $PERSON_GEBURTSTAG) = mysql_fetch_row($resultat)) {
+    foreach ($result as $row) {
         $counter++;
         if ($counter == 1) {
-            echo "<tr class=\"zeile1\"><td>$PERSON_NACHNAME</td><td>$PERSON_VORNAME</td><td>$PERSON_GEBURTSTAG</td></tr>\n";
+            echo "<tr class=\"zeile1\"><td>$row[PERSON_NACHNAME]</td><td>$row[PERSON_VORNAME]</td><td>$row[PERSON_GEBURTSTAG]</td></tr>\n";
         }
         if ($counter == 2) {
-            echo "<tr class=\"zeile2\"><td>$PERSON_NACHNAME</td><td>$PERSON_VORNAME</td><td>$PERSON_GEBURTSTAG</td></tr>\n";
+            echo "<tr class=\"zeile2\"><td>$row[PERSON_NACHNAME]</td><td>$row[PERSON_VORNAME]</td><td>$row[PERSON_GEBURTSTAG]</td></tr>\n";
             $counter = 0;
         }
     }
     echo "</table></div>";
 }
-
-?>

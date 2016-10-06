@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use App\Models\User;
+use Hash;
 
 class UserTest extends \TestCase
 {
@@ -19,7 +20,7 @@ class UserTest extends \TestCase
         $user = new User();
         $user->name = 'test';
         $user->email = 'test@berlussimo';
-        $user->password = \Hash::make(str_random(60));
+        $user->password = Hash::make(str_random(60));
         $user->api_token = str_random(60);
         $user->save();
     }

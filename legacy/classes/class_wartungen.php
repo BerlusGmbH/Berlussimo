@@ -7,15 +7,10 @@ class wartung
         $sql = "SELECT WARTUNGSPLAN.`PLAN_ID`, IM_EINSATZ, `PLAN_BEZEICHNUNG`, `INTERVALL_NAME`, `FAKTOR`, W_GERAETE.GERAETE_ID, HERSTELLER, W_GERAETE.BEZEICHNUNG FROM `WARTUNGSPLAN` JOIN (WARTUNG_ZUWEISUNG, W_GERAETE) ON (WARTUNG_ZUWEISUNG.PLAN_ID=WARTUNGSPLAN.PLAN_ID && WARTUNG_ZUWEISUNG.GERAETE_ID=W_GERAETE.GERAETE_ID) WHERE DATE_FORMAT(IM_EINSATZ, '%m') = '01' && W_GERAETE.GERAETE_ID IN (SELECT GERAETE_ID FROM WARTUNGEN WHERE DATE_FORMAT(WARTUNGSDATUM, '%Y') = '2010')";
     }
 
-    function ndurchgefuehrte_wartungen($monat, $jahr, $plan_id)
-    {
-        $result = mysql_query("SELECT WARTUNGSPLAN.`PLAN_ID`, IM_EINSATZ, `PLAN_BEZEICHNUNG`, `INTERVALL_NAME`, `FAKTOR`, W_GERAETE.GERAETE_ID, HERSTELLER, W_GERAETE.BEZEICHNUNG FROM `WARTUNGSPLAN` JOIN (WARTUNG_ZUWEISUNG, W_GERAETE) ON (WARTUNG_ZUWEISUNG.PLAN_ID=WARTUNGSPLAN.PLAN_ID && WARTUNG_ZUWEISUNG.GERAETE_ID=W_GERAETE.GERAETE_ID) WHERE DATE_FORMAT(IM_EINSATZ, '%m') = '01' && W_GERAETE.GERAETE_ID NOT IN (SELECT GERAETE_ID FROM WARTUNGEN WHERE DATE_FORMAT(WARTUNGSDATUM, '%Y') = '2010')");
-    }
-
     /* Liefer ein Array mit Geräten die im aktuellen und vorjahr nicht gewartet worden sind */
     function alle_geraete_ng_arr($plan_id)
     {
-        $result = mysql_query("select W_GERAETE.GERAETE_ID, W_GERAETE.BAUJAHR, W_GERAETE.BEZEICHNUNG, W_GERAETE.HERSTELLER, DATE_FORMAT(W_GERAETE.IM_EINSATZ,'%d.%m.%Y') IM_EINSATZ, LAGE_TYP, LAGE_ID, WARTUNG_ZUWEISUNG.PLAN_ID
+        $result = DB::select("select W_GERAETE.GERAETE_ID, W_GERAETE.BAUJAHR, W_GERAETE.BEZEICHNUNG, W_GERAETE.HERSTELLER, DATE_FORMAT(W_GERAETE.IM_EINSATZ,'%d.%m.%Y') IM_EINSATZ, LAGE_TYP, LAGE_ID, WARTUNG_ZUWEISUNG.PLAN_ID
 from W_GERAETE
 LEFT OUTER JOIN WARTUNG_ZUWEISUNG on (W_GERAETE.GERAETE_ID = WARTUNG_ZUWEISUNG.GERAETE_ID)
 
@@ -25,11 +20,8 @@ SELECT GERAETE_ID FROM WARTUNGEN WHERE DATE_FORMAT(WARTUNGEN.WARTUNGSDATUM, '%Y'
 )
 ORDER BY LAGE_TYP ASC, LAGE_ID ASC , W_GERAETE.IM_EINSATZ ASC");
 
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
+        if (!empty($result)) {
+            return $result;
         } else {
             return false;
         }
@@ -38,19 +30,14 @@ ORDER BY LAGE_TYP ASC, LAGE_ID ASC , W_GERAETE.IM_EINSATZ ASC");
     function alle_g_array($plan_id)
     {
         $this->get_wplan_info($plan_id);
-        // $this->intervall; int
-        // $this->intervall_period /day month year
-        $result = mysql_query(" SELECT W_GERAETE.GERAETE_ID, W_GERAETE.BAUJAHR, W_GERAETE.BEZEICHNUNG, W_GERAETE.HERSTELLER, DATE_FORMAT( W_GERAETE.IM_EINSATZ, '%d.%m.%Y' ) AS IM_EINSATZ, DATE_FORMAT( WARTUNGSDATUM, '%d.%m.%Y' ) AS L_WARTUNG, DATE_FORMAT( DATE_ADD( WARTUNGSDATUM, INTERVAL $this->intervall $this->intervall_period ) , '%d.%m.%Y' ) AS N_WARTUNG, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, WARTUNG_ZUWEISUNG.PLAN_ID
+        $result = DB::select(" SELECT W_GERAETE.GERAETE_ID, W_GERAETE.BAUJAHR, W_GERAETE.BEZEICHNUNG, W_GERAETE.HERSTELLER, DATE_FORMAT( W_GERAETE.IM_EINSATZ, '%d.%m.%Y' ) AS IM_EINSATZ, DATE_FORMAT( WARTUNGSDATUM, '%d.%m.%Y' ) AS L_WARTUNG, DATE_FORMAT( DATE_ADD( WARTUNGSDATUM, INTERVAL $this->intervall $this->intervall_period ) , '%d.%m.%Y' ) AS N_WARTUNG, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, WARTUNG_ZUWEISUNG.PLAN_ID
 FROM W_GERAETE
 JOIN WARTUNG_ZUWEISUNG ON ( W_GERAETE.GERAETE_ID = WARTUNG_ZUWEISUNG.GERAETE_ID )
 JOIN WARTUNGEN ON ( W_GERAETE.GERAETE_ID = WARTUNGEN.GERAETE_ID )
 WHERE W_GERAETE.AKTUELL = '1' && WARTUNG_ZUWEISUNG.AKTUELL = '1' && WARTUNG_ZUWEISUNG.PLAN_ID = '1'
 ORDER BY KOSTENTRAEGER_TYP ASC , KOSTENTRAEGER_ID ASC , W_GERAETE.IM_EINSATZ ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
+        if (!empty($result)) {
+            return $result;
         } else {
             return false;
         }
@@ -58,11 +45,9 @@ ORDER BY KOSTENTRAEGER_TYP ASC , KOSTENTRAEGER_ID ASC , W_GERAETE.IM_EINSATZ ASC
 
     function get_wplan_info($plan_id)
     {
-        $result = mysql_query("SELECT * FROM `WARTUNGSPLAN` WHERE `PLAN_ID` ='$plan_id'   AND `AKTUELL` = '1' ORDER BY DAT DESC LIMIT 0,1");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT * FROM `WARTUNGSPLAN` WHERE `PLAN_ID` ='$plan_id'   AND `AKTUELL` = '1' ORDER BY DAT DESC LIMIT 0,1");
+        if (!empty($result)) {
+            $row = $result[0];
             $this->plan_id = $plan_id;
             $this->plan_bez = $row ['PLAN_BEZEICHNUNG'];
             $this->intervall = $row ['INTERVALL'];
@@ -80,13 +65,10 @@ ORDER BY KOSTENTRAEGER_TYP ASC , KOSTENTRAEGER_ID ASC , W_GERAETE.IM_EINSATZ ASC
     function letzte_wartung_infos($plan_id, $geraet_id)
     {
         $this->get_wplan_info($plan_id);
-        // $this->intervall; int
-        // $this->intervall_period /day month year
-        $result = mysql_query("SELECT *, DATE_ADD( WARTUNGSDATUM, INTERVAL $this->intervall $this->intervall_period )  AS N_WARTUNG FROM `WARTUNGEN` WHERE `GERAETE_ID` ='$geraet_id'  AND `PLAN_ID` ='$plan_id' AND `AKTUELL` = '1' ORDER BY WARTUNGSDATUM DESC LIMIT 0,1");
+        $result = DB::select("SELECT *, DATE_ADD( WARTUNGSDATUM, INTERVAL $this->intervall $this->intervall_period )  AS N_WARTUNG FROM `WARTUNGEN` WHERE `GERAETE_ID` ='$geraet_id'  AND `PLAN_ID` ='$plan_id' AND `AKTUELL` = '1' ORDER BY WARTUNGSDATUM DESC LIMIT 0,1");
 
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        if (!empty($result)) {
+            $row = $result[0];
             $this->geraet_id = $geraet_id;
             $this->plan_id = $plan_id;
             $this->wartungsdatum = $row ['WARTUNGSDATUM'];
@@ -204,16 +186,13 @@ ORDER BY KOSTENTRAEGER_TYP ASC , KOSTENTRAEGER_ID ASC , W_GERAETE.IM_EINSATZ ASC
 
     function alle_geraete_in_arr($plan_id)
     {
-        $result = mysql_query(" SELECT W_GERAETE.GERAETE_ID, W_GERAETE.BAUJAHR, W_GERAETE.BEZEICHNUNG, W_GERAETE.HERSTELLER, DATE_FORMAT( W_GERAETE.IM_EINSATZ, '%d.%m.%Y' ) AS IM_EINSATZ, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, WARTUNG_ZUWEISUNG.PLAN_ID
+        $result = DB::select(" SELECT W_GERAETE.GERAETE_ID, W_GERAETE.BAUJAHR, W_GERAETE.BEZEICHNUNG, W_GERAETE.HERSTELLER, DATE_FORMAT( W_GERAETE.IM_EINSATZ, '%d.%m.%Y' ) AS IM_EINSATZ, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, WARTUNG_ZUWEISUNG.PLAN_ID
 FROM W_GERAETE
 JOIN WARTUNG_ZUWEISUNG ON ( W_GERAETE.GERAETE_ID = WARTUNG_ZUWEISUNG.GERAETE_ID )
 WHERE W_GERAETE.AKTUELL = '1' && WARTUNG_ZUWEISUNG.AKTUELL = '1' && WARTUNG_ZUWEISUNG.PLAN_ID = '$plan_id'
 ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, `W_GERAETE`.`GERAETE_ID` ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -222,13 +201,11 @@ ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, `W_GERAETE`.`GERAETE_ID` ASC");
         $this->termin_g = '';
         $this->termin_von = '';
 
-        $result = mysql_query("SELECT DATE_FORMAT(TERMIN, '%d.%m.%Y') AS DATUM, DATE_FORMAT(TERMIN, '%H:%i') AS ZEIT, BENUTZER_ID FROM `W_TERMINE` WHERE GERAETE_ID='$geraete_id' && DATE_FORMAT( TERMIN, '%Y' ) = YEAR( NOW( ) )  && PLAN_ID='$plan_id'  && ABGESAGT='0'  && TERMIN >NOW()  ORDER BY TERMIN DESC LIMIT 0,1");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
+        $result = DB::select("SELECT DATE_FORMAT(TERMIN, '%d.%m.%Y') AS DATUM, DATE_FORMAT(TERMIN, '%H:%i') AS ZEIT, BENUTZER_ID FROM `W_TERMINE` WHERE GERAETE_ID='$geraete_id' && DATE_FORMAT( TERMIN, '%Y' ) = YEAR( NOW( ) )  && PLAN_ID='$plan_id'  && ABGESAGT='0'  && TERMIN >NOW()  ORDER BY TERMIN DESC LIMIT 0,1");
+        if (!empty($result)) {
             $this->termin_g = '';
             $this->termin_von = '';
-            $row = mysql_fetch_assoc($result);
+            $row = $result[0];
             $this->datum_g = $row ['DATUM'];
             $zeit = $row ['ZEIT'];
             $benutzer_id = $row ['BENUTZER_ID'];
@@ -285,25 +262,14 @@ ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, `W_GERAETE`.`GERAETE_ID` ASC");
     {
         $this->get_wplan_info($plan_id);
 
-        $result = mysql_query("SELECT MAX(WARTUNGSDATUM) AS WARTUNGSDATUM, DATE_ADD( MAX(WARTUNGSDATUM), INTERVAL $this->intervall $this->intervall_period ) AS N_WARTUNG1, DATE_ADD( DATE_ADD( MAX(WARTUNGSDATUM), INTERVAL $this->intervall $this->intervall_period ) , INTERVAL $this->intervall $this->intervall_period ) AS N_WARTUNG2, DATE_ADD( DATE_ADD( DATE_ADD( MAX(WARTUNGSDATUM), INTERVAL $this->intervall $this->intervall_period ) , INTERVAL $this->intervall $this->intervall_period ) , INTERVAL $this->intervall $this->intervall_period ) AS N_WARTUNG3
+        $result = DB::select("SELECT MAX(WARTUNGSDATUM) AS WARTUNGSDATUM, DATE_ADD( MAX(WARTUNGSDATUM), INTERVAL $this->intervall $this->intervall_period ) AS N_WARTUNG1, DATE_ADD( DATE_ADD( MAX(WARTUNGSDATUM), INTERVAL $this->intervall $this->intervall_period ) , INTERVAL $this->intervall $this->intervall_period ) AS N_WARTUNG2, DATE_ADD( DATE_ADD( DATE_ADD( MAX(WARTUNGSDATUM), INTERVAL $this->intervall $this->intervall_period ) , INTERVAL $this->intervall $this->intervall_period ) , INTERVAL $this->intervall $this->intervall_period ) AS N_WARTUNG3
 FROM `WARTUNGEN`
 WHERE PLAN_ID = '$plan_id'
 AND AKTUELL = '1' GROUP BY GERAETE_ID
 ORDER BY `N_WARTUNG1` ASC");
 
-        /*
-         * $result = mysql_query ("SELECT * , DATE_ADD( WARTUNGSDATUM, INTERVAL $this->intervall $this->intervall_period ) AS N_WARTUNG1, DATE_ADD( DATE_ADD( WARTUNGSDATUM, INTERVAL $this->intervall $this->intervall_period ) , INTERVAL $this->intervall $this->intervall_period ) AS N_WARTUNG2, DATE_ADD( DATE_ADD( DATE_ADD( WARTUNGSDATUM, INTERVAL $this->intervall $this->intervall_period ) , INTERVAL $this->intervall $this->intervall_period ) , INTERVAL $this->intervall $this->intervall_period ) AS N_WARTUNG3
-         * FROM `WARTUNGEN`
-         * WHERE PLAN_ID = '$plan_id'
-         * AND AKTUELL = '1'
-         * ORDER BY `N_WARTUNG1` ASC");
-         */
-
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -322,11 +288,9 @@ ORDER BY `N_WARTUNG1` ASC");
         unset ($this->bemerkung);
         unset ($this->gewartet_von);
 
-        $result = mysql_query("SELECT * FROM `W_GERAETE` WHERE `GERAETE_ID` ='$geraet_id'   AND `AKTUELL` = '1'  LIMIT 0,1");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT * FROM `W_GERAETE` WHERE `GERAETE_ID` ='$geraet_id'   AND `AKTUELL` = '1'  LIMIT 0,1");
+        if (!empty($result)) {
+            $row = $result[0];
             $this->geraet_id = $geraet_id;
             $this->baujahr = $row ['BAUJAHR'];
             $this->bezeichnung = $row ['BEZEICHNUNG'];
@@ -420,15 +384,12 @@ ORDER BY `N_WARTUNG1` ASC");
     function terminkalender_arr($benutzer_id, $plan_id, $ab, $bis)
     {
         if ($benutzer_id != '') {
-            $result = mysql_query("SELECT *, DATE_FORMAT(TERMIN,'%d.%m.%Y') AS DATUM, DATE_FORMAT(TERMIN,'%H:%i') AS ZEIT FROM W_TERMINE WHERE PLAN_ID='$plan_id' && BENUTZER_ID='$benutzer_id' && DATE_FORMAT(TERMIN,'%Y-%m-%d') BETWEEN '$ab' AND '$bis' ORDER BY TERMIN ASC");
+            $result = DB::select("SELECT *, DATE_FORMAT(TERMIN,'%d.%m.%Y') AS DATUM, DATE_FORMAT(TERMIN,'%H:%i') AS ZEIT FROM W_TERMINE WHERE PLAN_ID='$plan_id' && BENUTZER_ID='$benutzer_id' && DATE_FORMAT(TERMIN,'%Y-%m-%d') BETWEEN '$ab' AND '$bis' ORDER BY TERMIN ASC");
         } else {
-            $result = mysql_query("SELECT *, DATE_FORMAT(TERMIN,'%d.%m.%Y') AS DATUM, DATE_FORMAT(TERMIN,'%H:%i') AS ZEIT FROM W_TERMINE WHERE PLAN_ID='$plan_id' && DATE_FORMAT(TERMIN,'%Y-%m-%d') BETWEEN '$ab' AND '$bis' ORDER BY TERMIN ASC");
+            $result = DB::select("SELECT *, DATE_FORMAT(TERMIN,'%d.%m.%Y') AS DATUM, DATE_FORMAT(TERMIN,'%H:%i') AS ZEIT FROM W_TERMINE WHERE PLAN_ID='$plan_id' && DATE_FORMAT(TERMIN,'%Y-%m-%d') BETWEEN '$ab' AND '$bis' ORDER BY TERMIN ASC");
         }
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -444,7 +405,6 @@ ORDER BY `N_WARTUNG1` ASC");
 
             $this->get_wplan_info($plan_id);
 
-            //include_once ('pdfclass/class.ezpdf.php');
             include_once('classes/class_bpdf.php');
             $pdf = new Cezpdf ('a4', 'portrait');
             $bpdf = new b_pdf ();
@@ -557,10 +517,10 @@ ORDER BY `N_WARTUNG1` ASC");
         $geraete_id = $this->letzte_geraete_id() + 1;
 
         $db_abfrage = "INSERT INTO W_GERAETE VALUES (NULL, '$geraete_id', '$bezeichnung', '$hersteller','$baujahr', '$eingebaut', '$kostentraeger_typ', '$kostentraeger_id',  '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
 
         /* Protokollieren */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('W_GERAETE', $last_dat, '0');
 
         $this->geraet_zu_plan($geraete_id, $plan_id);
@@ -573,19 +533,19 @@ ORDER BY `N_WARTUNG1` ASC");
 
     function letzte_geraete_id()
     {
-        $result = mysql_query("SELECT GERAETE_ID FROM W_GERAETE WHERE AKTUELL='1' ORDER BY GERAETE_ID DESC");
+        $result = DB::select("SELECT GERAETE_ID FROM W_GERAETE WHERE AKTUELL='1' ORDER BY GERAETE_ID DESC");
 
-        $row = mysql_fetch_assoc($result);
+        $row = $result[0];
         return $row ['GERAETE_ID'];
     }
 
     function geraet_zu_plan($geraete_id, $plan_id)
     {
         $db_abfrage = "INSERT INTO WARTUNG_ZUWEISUNG VALUES (NULL, '$geraete_id', '$plan_id',  '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
 
         /* Protokollieren */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('WARTUNG_ZUWEISUNG', $last_dat, '0');
     }
 
@@ -594,10 +554,10 @@ ORDER BY `N_WARTUNG1` ASC");
         $datum = date_german2mysql($datum);
 
         $db_abfrage = "INSERT INTO WARTUNGEN VALUES (NULL, '$geraete_id', '$plan_id', '$wartungsdatum','$benutzer_id', '$bemerkung', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
 
         /* Protokollieren */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('WARTUNGEN', $last_dat, '0');
     }
 
@@ -780,7 +740,7 @@ ORDER BY `N_WARTUNG1` ASC");
         $this->get_wplan_info($plan_id);
         $tage = $this->intervall_tage;
 
-        $result = mysql_query(" SELECT W_GERAETE.GERAETE_ID, W_GERAETE.BAUJAHR, W_GERAETE.BEZEICHNUNG, W_GERAETE.HERSTELLER, DATE_FORMAT( W_GERAETE.IM_EINSATZ, '%d.%m.%Y' ) IM_EINSATZ, KOSTENTRAEGER_TYP,KOSTENTRAEGER_ID, WARTUNG_ZUWEISUNG.PLAN_ID
+        $result = DB::select(" SELECT W_GERAETE.GERAETE_ID, W_GERAETE.BAUJAHR, W_GERAETE.BEZEICHNUNG, W_GERAETE.HERSTELLER, DATE_FORMAT( W_GERAETE.IM_EINSATZ, '%d.%m.%Y' ) IM_EINSATZ, KOSTENTRAEGER_TYP,KOSTENTRAEGER_ID, WARTUNG_ZUWEISUNG.PLAN_ID
 FROM W_GERAETE
 LEFT OUTER JOIN WARTUNG_ZUWEISUNG ON ( W_GERAETE.GERAETE_ID = WARTUNG_ZUWEISUNG.GERAETE_ID )
 WHERE W_GERAETE.AKTUELL = '1' && WARTUNG_ZUWEISUNG.AKTUELL = '1' && WARTUNG_ZUWEISUNG.PLAN_ID = '$plan_id' && W_GERAETE.GERAETE_ID NOT
@@ -799,24 +759,17 @@ WHERE DATE_FORMAT( TERMIN, '%Y' ) = YEAR( NOW( ) ) && PLAN_ID = '$plan_id' && AK
 ORDER BY KOSTENTRAEGER_TYP,KOSTENTRAEGER_ID, W_GERAETE.IM_EINSATZ ASC
 ");
 
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
+        if (!empty($result)) {
+            return $result;
         }
     }
 
     function termine_arr($datum, $plan_id, $benutzer_id)
     {
         $datum_sql = date_german2mysql($datum);
-        $result = mysql_query("SELECT DATE_FORMAT(TERMIN,'%H:%i') AS ZEIT, GERAETE_ID, ABGESAGT, DAUER_MIN FROM `W_TERMINE` WHERE DATE_FORMAT( TERMIN, '%Y-%m-%d' ) = '$datum_sql'  &&  BENUTZER_ID='$benutzer_id' && AKTUELL='1' && PLAN_ID='$plan_id'   ORDER BY TERMIN ASC");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
+        $result = DB::select("SELECT DATE_FORMAT(TERMIN,'%H:%i') AS ZEIT, GERAETE_ID, ABGESAGT, DAUER_MIN FROM `W_TERMINE` WHERE DATE_FORMAT( TERMIN, '%Y-%m-%d' ) = '$datum_sql'  &&  BENUTZER_ID='$benutzer_id' && AKTUELL='1' && PLAN_ID='$plan_id'   ORDER BY TERMIN ASC");
+        if (!empty($result)) {
+            return $result;
         } else {
             return false;
         }
@@ -911,11 +864,7 @@ ORDER BY KOSTENTRAEGER_TYP,KOSTENTRAEGER_ID, W_GERAETE.IM_EINSATZ ASC
         if ($this->termin == 'FREI') {
             $termin_dat_zeit = "$datum $zeit";
             $db_abfrage = "INSERT INTO W_TERMINE VALUES (NULL, '$plan_id', '$termin_dat_zeit', '$dauer','$geraete_id', '$benutzer_id', '0', NULL, NULL,NULL,NULL, NULL, '1')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-
-            /* Protokollieren */
-            $last_dat = mysql_insert_id();
-            // protokollieren('W_TERMINE', $last_dat, '0');
+            DB::insert($db_abfrage);
         }
     }
 
@@ -924,12 +873,10 @@ ORDER BY KOSTENTRAEGER_TYP,KOSTENTRAEGER_ID, W_GERAETE.IM_EINSATZ ASC
         $datum_sql = date_german2mysql($datum);
         unset ($this->termin);
 
-        $result = mysql_query("SELECT * FROM `W_TERMINE` WHERE DATE_FORMAT( TERMIN, '%Y-%m-%d' ) = '$datum_sql'  && DATE_FORMAT( TERMIN, '%H:%i' )= '$zeit' && BENUTZER_ID='$benutzer_id' && PLAN_ID='$plan_id' && ABGESAGT='0'");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
+        $result = DB::select("SELECT * FROM `W_TERMINE` WHERE DATE_FORMAT( TERMIN, '%Y-%m-%d' ) = '$datum_sql'  && DATE_FORMAT( TERMIN, '%H:%i' )= '$zeit' && BENUTZER_ID='$benutzer_id' && PLAN_ID='$plan_id' && ABGESAGT='0'");
+        if (!empty($result)) {
             $this->termin = '';
-            $row = mysql_fetch_assoc($result);
+            $row = $result[0];
             $geraet_id = $row ['GERAETE_ID'];
             $this->geraete_infos($plan_id, $geraet_id);
             $this->termin = $this->kostentraeger_bez;
@@ -1015,14 +962,12 @@ ORDER BY KOSTENTRAEGER_TYP,KOSTENTRAEGER_ID, W_GERAETE.IM_EINSATZ ASC
 
     function dropdown_wplaene()
     {
-        $result = mysql_query("SELECT PLAN_ID, PLAN_BEZEICHNUNG  FROM `WARTUNGSPLAN` WHERE  `AKTUELL` ='1' ORDER BY PLAN_BEZEICHNUNG ASC");
-
-        $numrows = mysql_numrows($result);
+        $result = DB::select("SELECT PLAN_ID, PLAN_BEZEICHNUNG  FROM `WARTUNGSPLAN` WHERE  `AKTUELL` ='1' ORDER BY PLAN_BEZEICHNUNG ASC");
         echo "<label for=\"plan_id\">Wartungsplan</label><select name=\"plan_id\" id=\"plan_id\" size=1>\n";
         echo "<option value=\"\">Bitte wählen</option>\n";
-        if ($numrows) {
+        if (!empty($result)) {
 
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $plan_id = $row ['PLAN_ID'];
                 $beschreibung = $row ['PLAN_BEZEICHNUNG'];
                 if (session()->has('plan_id')) {
@@ -1053,11 +998,9 @@ ORDER BY KOSTENTRAEGER_TYP,KOSTENTRAEGER_ID, W_GERAETE.IM_EINSATZ ASC
 
     function wartungsplan_infos($plan_id)
     {
-        $result = mysql_query("SELECT * FROM `WARTUNGSPLAN` WHERE `PLAN_ID` ='$plan_id'   AND `AKTUELL` = '1'  LIMIT 0,1");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT * FROM `WARTUNGSPLAN` WHERE `PLAN_ID` ='$plan_id'   AND `AKTUELL` = '1'  LIMIT 0,1");
+        if (!empty($result)) {
+            $row = $result[0];
             $this->plan_bezeichnung = $row ['PLAN_BEZEICHNUNG'];
             $this->intervall = $row ['INTERVALL_NAME'];
             $this->faktor = $row ['FAKTOR'];
@@ -1101,13 +1044,9 @@ ORDER BY KOSTENTRAEGER_TYP,KOSTENTRAEGER_ID, W_GERAETE.IM_EINSATZ ASC
 
     function alle_geraete_arr($plan_id)
     {
-        $result = mysql_query("SELECT W_GERAETE.GERAETE_ID  FROM W_GERAETE JOIN WARTUNG_ZUWEISUNG ON(W_GERAETE.GERAETE_ID=WARTUNG_ZUWEISUNG.GERAETE_ID) WHERE WARTUNG_ZUWEISUNG.PLAN_ID='$plan_id' && WARTUNG_ZUWEISUNG.AKTUELL='1' && W_GERAETE.AKTUELL='1' ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID ASC");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
+        $result = DB::select("SELECT W_GERAETE.GERAETE_ID  FROM W_GERAETE JOIN WARTUNG_ZUWEISUNG ON(W_GERAETE.GERAETE_ID=WARTUNG_ZUWEISUNG.GERAETE_ID) WHERE WARTUNG_ZUWEISUNG.PLAN_ID='$plan_id' && WARTUNG_ZUWEISUNG.AKTUELL='1' && W_GERAETE.AKTUELL='1' ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID ASC");
+        if (!empty($result)) {
+            return $result;
         } else {
             return false;
         }
@@ -1151,13 +1090,9 @@ ORDER BY KOSTENTRAEGER_TYP,KOSTENTRAEGER_ID, W_GERAETE.IM_EINSATZ ASC
 
     function get_geraete_arr($lage)
     {
-        $result = mysql_query("SELECT * FROM  `W_GERAETE` WHERE  `LAGE_RAUM` =  '$lage' AND  `AKTUELL` =  '1'");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $arr [] = $row;
-            }
-            return $arr;
+        $result = DB::select("SELECT * FROM `W_GERAETE` WHERE  `LAGE_RAUM` =  '$lage' AND  `AKTUELL` =  '1'");
+        if (!empty($result)) {
+            return $result;
         } else {
             return false;
         }
@@ -1165,13 +1100,9 @@ ORDER BY KOSTENTRAEGER_TYP,KOSTENTRAEGER_ID, W_GERAETE.IM_EINSATZ ASC
 
     function get_termine_($g_id)
     {
-        $result = mysql_query("SELECT * FROM  `GEO_TERMINE` WHERE  `GERAETE_ID` ='$g_id' && AKTUELL='1' ORDER BY DATUM DESC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $arr [] = $row;
-            }
-            return $arr;
+        $result = DB::select("SELECT * FROM  `GEO_TERMINE` WHERE  `GERAETE_ID` ='$g_id' && AKTUELL='1' ORDER BY DATUM DESC");
+        if (!empty($result)) {
+            return $result;
         } else {
             return false;
         }
@@ -1290,13 +1221,9 @@ ORDER BY KOSTENTRAEGER_TYP,KOSTENTRAEGER_ID, W_GERAETE.IM_EINSATZ ASC
 	AND
 	GERAETE_ID NOT IN
 	(SELECT GERAETE_ID FROM GEO_TERMINE WHERE AKTUELL='1' && DATUM>DATE_FORMAT(NOW(),'%Y-%m-%d') GROUP BY GERAETE_ID) ORDER BY EINBAUORT ASC, L_WART ASC";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_array [] = $row;
-            }
-            return $my_array;
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
+            return $result;
         }
     }
 } // end class wartungen

@@ -13,8 +13,8 @@ class katalog
         if (session()->has('partner_id')) {
             echo "<p><a href='" . route('legacy::katalog::index', ['option' => 'partner_wechseln']) . "'>Lieferanten wechseln</a><br></p>";
         } else {
-            $result = mysql_query("SELECT PARTNER_ID, PARTNER_NAME FROM PARTNER_LIEFERANT WHERE AKTUELL='1' ORDER BY PARTNER_NAME ASC");
-            while ($row = mysql_fetch_assoc($result)) {
+            $result = DB::select("SELECT PARTNER_ID, PARTNER_NAME FROM PARTNER_LIEFERANT WHERE AKTUELL='1' ORDER BY PARTNER_NAME ASC");
+            foreach($result as $row) {
                 $p_id = $row ['PARTNER_ID'];
                 $p_name = $row ['PARTNER_NAME'];
                 $link = "<a href=\"$option_link?partner_id=$p_id&option=katalog_anzeigen\">$p_name</a><br>\n";
@@ -26,10 +26,8 @@ class katalog
     /* Funktion zur Darstellung der Artikel und Leistungen eines Partners */
     function katalog_artikel_anzeigen($partner_id)
     {
-        $result = mysql_query("SELECT ARTIKEL_NR, BEZEICHNUNG, LISTENPREIS, RABATT_SATZ, EINHEIT FROM POSITIONEN_KATALOG WHERE ART_LIEFERANT='$partner_id' && AKTUELL='1' GROUP BY ARTIKEL_NR ORDER BY KATALOG_DAT DESC");
-
-        $anzahl_artikel = mysql_numrows($result);
-        if ($anzahl_artikel) {
+        $result = DB::select("SELECT ARTIKEL_NR, BEZEICHNUNG, LISTENPREIS, RABATT_SATZ, EINHEIT FROM POSITIONEN_KATALOG WHERE ART_LIEFERANT='$partner_id' && AKTUELL='1' GROUP BY ARTIKEL_NR ORDER BY KATALOG_DAT DESC");
+        if (!empty($result)) {
             /* Katalogartikel und Leistungen Überschrift */
             echo "<div id=\"div_katalog\">";
             echo "<table id=\"katalog_tab\" class=\"sortable\">\n";
@@ -44,14 +42,13 @@ class katalog
             echo "</tr>";
             echo "</thead>";
 
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $artnr = $row ['ARTIKEL_NR'];
                 $bez = $row ['BEZEICHNUNG'];
                 $lp = nummer_punkt2komma($row ['LISTENPREIS']);
                 $rabatt = nummer_punkt2komma($row ['RABATT_SATZ']);
                 $unser_preis = nummer_punkt2komma(($lp / 100) * (100 - $rabatt));
                 $ve = $row ['EINHEIT']; // ve steht für verpackungseinheit
-                // echo "<b>$artnr</b><br>$bez $lp $rabatt $ve<br>";
                 $link_pe = "<a href='" . route('legacy::katalog::index', ['option' => 'preisentwicklung', 'artikel_nr' => $artnr]) . "'>$artnr</a>";
 
                 echo "<tr><td valign=top>$link_pe</td><td valign=top>$bez</td><td valign=top>$lp</td><td valign=top>$rabatt %</td><td valign=top>$unser_preis</td><td valign=top>$ve</td></tr>";
@@ -73,14 +70,14 @@ class katalog
 
     function preisentwicklung_anzeigen($p_id, $artikel_nr)
     {
-        $result = mysql_query("SELECT ARTIKEL_NR, BEZEICHNUNG, LISTENPREIS, RABATT_SATZ, SKONTO, ((LISTENPREIS/100)*(100-RABATT_SATZ)) AS UNSER_NETTO, ((LISTENPREIS/100)*(100-RABATT_SATZ)) /100 * (100+MWST_SATZ) AS UNSER_BRUTTO, ((LISTENPREIS/100)*(100-RABATT_SATZ)) /100 * (100+MWST_SATZ) /100 *(100-SKONTO) AS U_SKONTIERT FROM POSITIONEN_KATALOG WHERE ART_LIEFERANT='$p_id'  && ARTIKEL_NR='$artikel_nr' && AKTUELL='1'   ORDER BY KATALOG_ID ASC");
+        $result = DB::select("SELECT ARTIKEL_NR, BEZEICHNUNG, LISTENPREIS, RABATT_SATZ, SKONTO, ((LISTENPREIS/100)*(100-RABATT_SATZ)) AS UNSER_NETTO, ((LISTENPREIS/100)*(100-RABATT_SATZ)) /100 * (100+MWST_SATZ) AS UNSER_BRUTTO, ((LISTENPREIS/100)*(100-RABATT_SATZ)) /100 * (100+MWST_SATZ) /100 *(100-SKONTO) AS U_SKONTIERT FROM POSITIONEN_KATALOG WHERE ART_LIEFERANT='$p_id'  && ARTIKEL_NR='$artikel_nr' && AKTUELL='1'   ORDER BY KATALOG_ID ASC");
 
-        $numrows = mysql_numrows($result);
+        $numrows = count($result);
         if ($numrows > 0) {
             $zeile = 0;
             echo "<table>";
             echo "<tr><th>Zeile</th><th>Artikelnr</th><th>Bezeichnung</th><th>LP</th><th>RABATT</th><th>NETTO</th><th>BRUTTO</th><th>SKONTO</th><th>SKONTIERT</th></tr>";
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 if ($zeile == 0) {
                     $erst_preis = nummer_punkt2komma($row ['UNSER_NETTO']);
                 }
@@ -127,29 +124,22 @@ class katalog
 
     function get_preis_entwicklung_infos($p_id, $artikel_nr)
     {
-        $result = mysql_query("SELECT ARTIKEL_NR, BEZEICHNUNG, LISTENPREIS, RABATT_SATZ, SKONTO, ((LISTENPREIS/100)*(100-RABATT_SATZ)) AS UNSER_NETTO, ((LISTENPREIS/100)*(100-RABATT_SATZ)) /100 * (100+MWST_SATZ) AS UNSER_BRUTTO, ((LISTENPREIS/100)*(100-RABATT_SATZ)) /100 * (100+MWST_SATZ) /100 *(100-SKONTO) AS U_SKONTIERT FROM POSITIONEN_KATALOG WHERE ART_LIEFERANT='$p_id'  && ARTIKEL_NR='$artikel_nr' && AKTUELL='1'   ORDER BY KATALOG_ID ASC");
-        // echo "<br>SELECT ARTIKEL_NR, BEZEICHNUNG, LISTENPREIS, RABATT_SATZ, SKONTO, ((LISTENPREIS/100)*(100-RABATT_SATZ)) AS UNSER_NETTO, ((LISTENPREIS/100)*(100-RABATT_SATZ)) /100 * (100+MWST_SATZ) AS UNSER_BRUTTO, ((LISTENPREIS/100)*(100-RABATT_SATZ)) /100 * (100+MWST_SATZ) /100 *(100-SKONTO) AS U_SKONTIERT FROM POSITIONEN_KATALOG WHERE ART_LIEFERANT='$p_id' && ARTIKEL_NR='$artikel_nr' && AKTUELL='1' ORDER BY KATALOG_ID ASC<br>";
-        $numrows = mysql_numrows($result);
+        $result = DB::select("SELECT ARTIKEL_NR, BEZEICHNUNG, LISTENPREIS, RABATT_SATZ, SKONTO, ((LISTENPREIS/100)*(100-RABATT_SATZ)) AS UNSER_NETTO, ((LISTENPREIS/100)*(100-RABATT_SATZ)) /100 * (100+MWST_SATZ) AS UNSER_BRUTTO, ((LISTENPREIS/100)*(100-RABATT_SATZ)) /100 * (100+MWST_SATZ) /100 *(100-SKONTO) AS U_SKONTIERT FROM POSITIONEN_KATALOG WHERE ART_LIEFERANT='$p_id'  && ARTIKEL_NR='$artikel_nr' && AKTUELL='1'   ORDER BY KATALOG_ID ASC");
+        $numrows = count($result);
         if ($numrows > 0) {
             $zeile = 0;
-            // echo "$numrows $p_id $artikel_nr<br>";
-
             if ($numrows == '1') {
-                $row = mysql_fetch_assoc($result);
+                $row = $result[0];
                 $this->erst_preis = $row ['UNSER_NETTO'];
                 $this->last_preis_ = $row ['UNSER_NETTO'];
                 $this->vorzeichen = "+";
                 $this->preis_diff = '0.00';
-                // break;
             } else {
-
-                while ($row = mysql_fetch_assoc($result)) {
-
+                foreach($result as $row) {
                     if ($zeile == 0) {
                         $this->erst_preis = $row ['UNSER_NETTO'];
                         $this->erst_preis_a = nummer_punkt2komma($row ['UNSER_NETTO']);
                     }
-
                     if ($zeile == $numrows - 1) {
                         $this->last_preis = $row ['UNSER_NETTO'];
                         $this->last_preis_a = nummer_punkt2komma($row ['UNSER_NETTO']);
@@ -163,36 +153,23 @@ class katalog
                     $this->u_brutto = nummer_punkt2komma($row ['UNSER_BRUTTO']);
                     $this->u_skontiert = nummer_punkt2komma($row ['U_SKONTIERT']);
                     $this->skonto = nummer_punkt2komma($row ['SKONTO']);
-                    // echo "$zeile.| $artikel_nr | $bez | $listenpreis | $rabattsatz | $u_preis <br>";
-                    // echo "<tr><td>$zeile</td><td>$artikel_nr</td><td>$bez</td><td>$listenpreis</td><td>$rabattsatz</td><td>$u_preis</td><td>$u_brutto</td><td>$skonto</td><td>$u_skontiert</td></tr>";
                 }
 
-                // echo " <b>$this->erst_preis XXX $this->last_preis</b><br>";
-
-                // echo "<hr>";
                 if ($this->erst_preis > $this->last_preis) {
-                    // echo "<b>Preis für $bez ist gesunken ($erst_preis>$last_preis)</b>";
                     $this->vorzeichen = "-";
-                    // echo "<tr><td colspan=\"9\">Preis für $bez ist <b>gesunken</b> ($erst_preis>$last_preis)</td></tr>";
                     $this->preis_diff = '0.00';
                 }
 
                 if ($this->erst_preis < $this->last_preis) {
                     $this->vorzeichen = "+";
-                    // echo "<b>Preis für $bez ist gestiegen ($erst_preis<$last_preis)</b>";
-                    // echo "<tr><td colspan=\"9\">Preis für $bez ist <b>gestiegen</b> ($erst_preis<$last_preis)</td></tr>";
                     $this->preis_diff = nummer_punkt2komma(($this->last_preis / ($this->erst_preis / 100)) - 100);
-                    // echo "<tr><td colspan=\"9\" style=\"color:red\">ANSTIEG IN PROZENT $this->preis_diff %</td></tr>";
                 }
 
                 if ($this->erst_preis == $this->last_preis) {
-                    // echo "<b>Preis für $bez ist unverändert ($erst_preis=$last_preis)</b>";
-                    // echo "<tfoot><tr><td colspan=\"9\">Preis für $bez ist unverändert ($erst_preis=$last_preis)</td></tr></tfoot>";
                     $this->vorzeichen = "+";
                     $this->preis_diff = '0.00';
                 }
             }
-            // echo "</table>";
         } else {
             fehlermeldung_ausgeben("Artikel nicht gefunden");
         }
@@ -220,22 +197,20 @@ class katalog
 
     function artikel_suche_einkauf($artikel_nr)
     {
-        $result = mysql_query(" SELECT RECHNUNGSNUMMER, RECHNUNGEN_POSITIONEN.BELEG_NR, U_BELEG_NR, POSITION, ART_LIEFERANT, ARTIKEL_NR, MENGE, PREIS, SKONTO, MWST_SATZ, GESAMT_NETTO, (GESAMT_NETTO/100)*(100+MWST_SATZ) AS BRUTTO, (GESAMT_NETTO/100)*(100+MWST_SATZ) /100 * (100-SKONTO) AS SKONTIERT
+        $result = DB::select(" SELECT RECHNUNGSNUMMER, RECHNUNGEN_POSITIONEN.BELEG_NR, U_BELEG_NR, POSITION, ART_LIEFERANT, ARTIKEL_NR, MENGE, PREIS, SKONTO, MWST_SATZ, GESAMT_NETTO, (GESAMT_NETTO/100)*(100+MWST_SATZ) AS BRUTTO, (GESAMT_NETTO/100)*(100+MWST_SATZ) /100 * (100-SKONTO) AS SKONTIERT
 FROM `RECHNUNGEN_POSITIONEN` , RECHNUNGEN
 WHERE `ARTIKEL_NR` LIKE '$artikel_nr'
 AND RECHNUNGEN.AKTUELL = '1'
 AND RECHNUNGEN_POSITIONEN.AKTUELL = '1'
 AND RECHNUNGEN_POSITIONEN.BELEG_NR = RECHNUNGEN.BELEG_NR");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
+        if (!empty($result)) {
             echo "<h3>Suchergebnis in allen Rechnungen  zu: $artikel_nr</h3>";
             echo "<table class=\"sortable\">";
             echo "<tr><th>LIEFERANT</th><th>ARTIKELNR</th><th>RNR</th><th>POSITION</th><th>BEZEICHNUNG</th><th>MENGE EINGANG</th><th>MENGE RAUS</th><th>RESTMENGE</th><th>NETTO</th><th>MWST %</th><th>BRUTTO</th><th>SKONTO</th><th>SKONTIERT</th></tr>";
             $g_menge = 0;
             $g_kontiert = 0;
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $p = new partners ();
-
                 $r_nr = $row ['RECHNUNGSNUMMER'];
                 $beleg_nr = $row ['BELEG_NR'];
                 $u_beleg_nr = $row ['U_BELEG_NR'];
@@ -275,14 +250,13 @@ AND RECHNUNGEN_POSITIONEN.BELEG_NR = RECHNUNGEN.BELEG_NR");
 
     function artikel_suche_freitext($artikel_nr)
     {
-        $result = mysql_query("SELECT * FROM POSITIONEN_KATALOG WHERE AKTUELL='1' && ARTIKEL_NR LIKE '%$artikel_nr%' OR BEZEICHNUNG LIKE '%$artikel_nr%' GROUP BY ARTIKEL_NR, ART_LIEFERANT ORDER BY ART_LIEFERANT DESC, BEZEICHNUNG ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
+        $result = DB::select("SELECT * FROM POSITIONEN_KATALOG WHERE AKTUELL='1' && ARTIKEL_NR LIKE '%$artikel_nr%' OR BEZEICHNUNG LIKE '%$artikel_nr%' GROUP BY ARTIKEL_NR, ART_LIEFERANT ORDER BY ART_LIEFERANT DESC, BEZEICHNUNG ASC");
+        if (!empty($result)) {
             echo "<h5>Suchergebnis in allen Katalogen  zu: $artikel_nr</h5>";
             echo "<table class=\"sortable\">";
             echo "<tr><th>LIEFERANT</th><th>ARTIKELNR</th><th>BEZEICHNUNG</th></tr>";
 
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $p = new partners ();
 
                 $art_lieferant = $row ['ART_LIEFERANT'];
@@ -318,31 +292,23 @@ AND RECHNUNGEN_POSITIONEN.BELEG_NR = RECHNUNGEN.BELEG_NR");
     function get_positionen_arr($partner_id, $limit = null)
     {
         if ($limit == null) {
-            $result = mysql_query("SELECT * FROM  `RECHNUNGEN_POSITIONEN`	WHERE  `ART_LIEFERANT` ='$partner_id' AND  `AKTUELL` =  '1' && 
+            $result = DB::select("SELECT * FROM  `RECHNUNGEN_POSITIONEN`	WHERE  `ART_LIEFERANT` ='$partner_id' AND  `AKTUELL` =  '1' && 
 			BELEG_NR IN(SELECT BELEG_NR FROM  `RECHNUNGEN` WHERE  `AUSSTELLER_TYP` =  'Partner' AND  `AUSSTELLER_ID` ='$partner_id' AND  `AKTUELL` =  '1')
 			  GROUP BY ARTIKEL_NR, BELEG_NR ORDER BY BELEG_NR DESC, POSITION ASC");
         } else {
-            $result = mysql_query("SELECT * FROM  `RECHNUNGEN_POSITIONEN`	WHERE   `ART_LIEFERANT` ='$partner_id' AND  `AKTUELL` =  '1' 	&& 
+            $result = DB::select("SELECT * FROM  `RECHNUNGEN_POSITIONEN`	WHERE   `ART_LIEFERANT` ='$partner_id' AND  `AKTUELL` =  '1' 	&& 
 		BELEG_NR IN(SELECT BELEG_NR FROM  `RECHNUNGEN` WHERE  `AUSSTELLER_TYP` =  'Partner' AND  `AUSSTELLER_ID` ='$partner_id' AND  `AKTUELL` =  '1')
 				GROUP BY ARTIKEL_NR,  BELEG_NR  ORDER BY BELEG_NR DESC,  POSITION ASC LIMIT 0,$limit");
         }
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
-        }
+        return $result;
     }
 
     function get_anz_bisher($art_nr, $partner_id)
     {
-        $result = mysql_query("SELECT SUM(MENGE) AS G_MENGE FROM  `RECHNUNGEN_POSITIONEN`	WHERE ARTIKEL_NR='$art_nr' &&  `ART_LIEFERANT` ='$partner_id' AND  `AKTUELL` =  '1' &&
+        $result = DB::select("SELECT SUM(MENGE) AS G_MENGE FROM  `RECHNUNGEN_POSITIONEN`	WHERE ARTIKEL_NR='$art_nr' &&  `ART_LIEFERANT` ='$partner_id' AND  `AKTUELL` =  '1' &&
 			BELEG_NR IN(SELECT BELEG_NR FROM  `RECHNUNGEN` WHERE  `AUSSTELLER_TYP` = 'Partner' AND  `AUSSTELLER_ID` ='$partner_id' AND  `AKTUELL` =  '1')");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['G_MENGE'];
         } else {
             return '0.00';
@@ -351,14 +317,8 @@ AND RECHNUNGEN_POSITIONEN.BELEG_NR = RECHNUNGEN.BELEG_NR");
 
     function get_meistgekauft_arr($partner_id)
     {
-        $result = mysql_query("SELECT BELEG_NR, SUM(MENGE) AS G_MENGE, ARTIKEL_NR  FROM  `RECHNUNGEN_POSITIONEN`	WHERE  `ART_LIEFERANT` ='$partner_id' AND  `AKTUELL` =  '1' &&
+        $result = DB::select("SELECT BELEG_NR, SUM(MENGE) AS G_MENGE, ARTIKEL_NR  FROM  `RECHNUNGEN_POSITIONEN`	WHERE  `ART_LIEFERANT` ='$partner_id' AND  `AKTUELL` =  '1' &&
 			BELEG_NR IN(SELECT BELEG_NR FROM  `RECHNUNGEN` WHERE  `AUSSTELLER_TYP` = 'Partner' AND  `AUSSTELLER_ID` ='$partner_id' AND  `AKTUELL` =  '1') GROUP BY ARTIKEL_NR ORDER BY G_MENGE DESC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $my_arr [] = $row;
-            }
-            return $my_arr;
-        }
+        return $result;
     }
 } // end class

@@ -66,10 +66,7 @@ function form_termin_eintragen($benutzer_id, $datum_d, $VON, $BIS)
 function termin_loeschen_db($termin_dat)
 {
     $b_id = session()->get('benutzer_id');
-    $db_abfrage = "UPDATE GEO_TERMINE SET AKTUELL='0', ABGESAGT_AM=NOW(), ABGESAGT_VON='$b_id' WHERE DAT='$termin_dat'";
-
-    $resultat = mysql_query($db_abfrage) or
-    die(mysql_error());
+    DB::update("UPDATE GEO_TERMINE SET AKTUELL='0', ABGESAGT_AM=NOW(), ABGESAGT_VON='$b_id' WHERE DAT='$termin_dat'");
 }
 
 
@@ -177,35 +174,27 @@ function button_bild($name, $id, $value, $bild, $js, $class = 'knopf')
 function check_mietvertrag_aktuell($mv_id)
 {
     $datum_heute = date("Y-m-d");
-    $result = mysql_query("SELECT * FROM MIETVERTRAG WHERE MIETVERTRAG_ID='$mv_id' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS='$datum_heute') && MIETVERTRAG_AKTUELL='1'");
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        return true;
-    }
+    $result = DB::select("SELECT * FROM MIETVERTRAG WHERE MIETVERTRAG_ID='$mv_id' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS='$datum_heute') && MIETVERTRAG_AKTUELL='1'");
+    return !empty($result);
 }
 
 
 function kontakt_suche($target_id, $string)
 {
-    $string = utf8_decode($string);
     $datum_d = date("d.m.Y");
     echo "<p class=\"zeile_ueber\">Suchergebnisse, auf Datensatz klicken um zu äbernehmen</p>";
     echo "<table>";
     $db_abfrage = "SELECT * FROM PERSON WHERE (PERSON_NACHNAME LIKE '$string%' OR PERSON_VORNAME LIKE '%$string%')  && PERSON_AKTUELL='1'";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
+    $result = DB::select($db_abfrage);
     $z = 0;
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) {
+    if (!empty($result)) {
+        foreach ($result as $row) {
             $p_id = $row['PERSON_ID'];
             /*MV_IDS abfragen*/
-            $db_abfrage1 = "SELECT PERSON_MIETVERTRAG_MIETVERTRAG_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_PERSON_ID='$p_id' && PERSON_MIETVERTRAG_AKTUELL='1'";
-            $result1 = mysql_query($db_abfrage1) or
-            die(mysql_error());
-            $numrows1 = mysql_numrows($result1);
-            if ($numrows) {
-                while ($row1 = mysql_fetch_assoc($result1)) {
+            $db_abfrage = "SELECT PERSON_MIETVERTRAG_MIETVERTRAG_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_PERSON_ID='$p_id' && PERSON_MIETVERTRAG_AKTUELL='1'";
+            $result1 = DB::select($db_abfrage);
+            if (!empty($result1)) {
+                foreach ($result1 as $row1) {
                     $mv_id = $row1['PERSON_MIETVERTRAG_MIETVERTRAG_ID'];
                     if (!empty($mv_id) && check_mietvertrag_aktuell($mv_id) == true) {
                         $einheit_id = get_einheit_id_vom_mv($mv_id);
@@ -219,8 +208,8 @@ function kontakt_suche($target_id, $string)
                         $js .= "setTimeout('daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'einheit_register', 'einheit_id' => $einheit_id, 'einheit_bez' => $EINHEIT_KURZNAME], false) . "', 'rightBox')', 500);";
                         $js .= "setTimeout('daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'get_partner_info'], false) . "', 'rightBox')', 1000);\"";
 
-                        $p_nachname = utf8_encode($row['PERSON_NACHNAME']);
-                        $p_vorname = utf8_encode($row['PERSON_VORNAME']);
+                        $p_nachname = $row['PERSON_NACHNAME'];
+                        $p_vorname = $row['PERSON_VORNAME'];
                         echo "<tr class=\"zeile$z\" $js><td>MIETER</td><td>$p_nachname $p_vorname $EINHEIT_KURZNAME</td></tr>";
                         if ($z == 2) {
                             $z = 0;
@@ -233,11 +222,9 @@ function kontakt_suche($target_id, $string)
     }
 
     $db_abfrage = "SELECT * FROM PARTNER_LIEFERANT WHERE (PARTNER_NAME LIKE '%$string%' OR STRASSE LIKE '%$string%' OR NUMMER LIKE '%$string%' OR ORT LIKE '%$string%')  && AKTUELL='1'";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) {
+    $result = DB::select($db_abfrage);
+    if (!empty($result)) {
+        foreach ($result as $row) {
             $z++;
             $p_id = $row['PARTNER_ID'];
             $js_t = "onclick=\"setTimeout('daj3(\'/wartungsplaner/ajax?option=kos_typ_register&kos_typ=Partner&kos_id=$p_id\', \'rightBox\')', 100);";
@@ -251,10 +238,10 @@ function kontakt_suche($target_id, $string)
             $js_t1 = $js_tages_ansicht;
 
 
-            $pa_name = utf8_encode($row['PARTNER_NAME']);
-            $pa_str = utf8_encode($row['STRASSE']);
-            $pa_nr = utf8_encode($row['NUMMER']);
-            $pa_ort = utf8_encode($row['ORT']);
+            $pa_name = $row['PARTNER_NAME'];
+            $pa_str = $row['STRASSE'];
+            $pa_nr = $row['NUMMER'];
+            $pa_ort = $row['ORT'];
             echo "<tr class=\"zeile$z\" $js_tages_ansicht $js_t1><td>PARTNER</td><td>$pa_name $pa_str $pa_nr $pa_ort</td></tr>";
 
             if ($z == 2) {
@@ -264,13 +251,11 @@ function kontakt_suche($target_id, $string)
     }
 
     $db_abfrage = "SELECT * FROM EINHEIT WHERE EINHEIT_KURZNAME LIKE '%$string%'  && EINHEIT_AKTUELL='1'";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
+    $result = DB::select($db_abfrage);
     $datum_d = date("d.m.Y");
-    if ($numrows) {
+    if (!empty($result)) {
         $z = 0;
-        while ($row = mysql_fetch_assoc($result)) {
+        foreach ($result as $row) {
             $z++;
             $einheit_id = $row['EINHEIT_ID'];
             $einheit_bez = $row['EINHEIT_KURZNAME'];
@@ -316,20 +301,16 @@ function str_suche($target_id, $string)
     echo "<p class=\"zeile_ueber\">Suchergebnisse, auf Datensatz klicken um zu äbernehmen</p>";
     echo "<table>";
     $db_abfrage = "SELECT * FROM PERSON WHERE (PERSON_NACHNAME LIKE '$string%' OR PERSON_VORNAME LIKE '%$string%')  && PERSON_AKTUELL='1'";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
+    $result = DB::select($db_abfrage);
     $z = 0;
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) {
+    if (!empty($result)) {
+        foreach ($result as $row) {
             $p_id = $row['PERSON_ID'];
             /*MV_IDS abfragen*/
-            $db_abfrage1 = "SELECT PERSON_MIETVERTRAG_MIETVERTRAG_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_PERSON_ID='$p_id' && PERSON_MIETVERTRAG_AKTUELL='1'";
-            $result1 = mysql_query($db_abfrage1) or
-            die(mysql_error());
-            $numrows1 = mysql_numrows($result1);
-            if ($numrows) {
-                while ($row1 = mysql_fetch_assoc($result1)) {
+            $db_abfrage = "SELECT PERSON_MIETVERTRAG_MIETVERTRAG_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_PERSON_ID='$p_id' && PERSON_MIETVERTRAG_AKTUELL='1'";
+            $result1 = DB::select($db_abfrage);
+            if (!empty($result1)) {
+                foreach ($result1 as $row1) {
                     $mv_id = $row1['PERSON_MIETVERTRAG_MIETVERTRAG_ID'];
                     if (!empty($mv_id)) {
                         $einheit_id = get_einheit_id_vom_mv($mv_id);
@@ -352,11 +333,9 @@ function str_suche($target_id, $string)
     }
 
     $db_abfrage = "SELECT * FROM PARTNER_LIEFERANT WHERE (PARTNER_NAME LIKE '%$string%' OR STRASSE LIKE '%$string%' OR NUMMER LIKE '%$string%' OR ORT LIKE '%$string%')  && AKTUELL='1'";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) {
+    $result = DB::select($db_abfrage);
+    if (!empty($result)) {
+        foreach ($result as $row) {
             $z++;
             $p_id = $row['PARTNER_ID'];
             $js_t = "onclick=\"setTimeout('daj3(\'/wartungsplaner/ajax?option=kos_typ_register&kos_typ=Partner&kos_id=$p_id\', \'rightBox\')', 100);";
@@ -375,12 +354,10 @@ function str_suche($target_id, $string)
     }
 
     $db_abfrage = "SELECT * FROM EINHEIT WHERE EINHEIT_KURZNAME LIKE '%$string%'  && EINHEIT_AKTUELL='1'";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
+    $result = DB::select($db_abfrage);
     $datum_d = date("d.m.Y");
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) {
+    if (!empty($result)) {
+        foreach ($result as $row) {
             $einheit_id = $row['EINHEIT_ID'];
             $einheit_info_arr = get_einheit_info($einheit_id);
             $mietername = $einheit_info_arr['MIETER'];
@@ -418,14 +395,9 @@ function get_g_id_arr($kos_typ, $kos_id, $einheit_id)
     $einheit_info_arr = get_einheit_info($einheit_id);
     $einheit_kurzname = $einheit_info_arr['EINHEIT_KURZNAME'];
     $db_abfrage = "SELECT GERAETE_ID FROM W_GERAETE WHERE AKTUELL='1' && LAGE_RAUM='$einheit_kurzname' && KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID='$kos_id'";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) {
-            $arr[] = $row;
-        }
-        return $arr;
+    $result = DB::select($db_abfrage);
+    if (!empty($result)) {
+        return $result;
     }
 }
 
@@ -433,7 +405,7 @@ function get_g_id_arr($kos_typ, $kos_id, $einheit_id)
 function form_inaktiv($kos_typ, $kos_id)
 {
     if ($kos_typ == 'Partner') {
-        $anschrift = utf8_encode(get_partner_anschrift($kos_id));
+        $anschrift = get_partner_anschrift($kos_id);
         $kos_bez = get_partner_name($kos_id);
     }
     formular('', 'inaktiv');
@@ -459,10 +431,9 @@ function form_inaktiv($kos_typ, $kos_id)
 
 function get_partner_name($partner_id)
 {
-    $result = mysql_query("SELECT *  FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
-    $row = mysql_fetch_assoc($result);
-    if ($row) {
-        return $row['PARTNER_NAME'];
+    $result = DB::select("SELECT * FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
+    if (!empty($result)) {
+        return $result[0]['PARTNER_NAME'];
     } else {
         return 'unbekannt';
     }
@@ -470,40 +441,33 @@ function get_partner_name($partner_id)
 
 function get_partner_id($partner_name, $str, $nr, $plz)
 {
-    $result = mysql_query("SELECT PARTNER_ID  FROM PARTNER_LIEFERANT WHERE PARTNER_NAME='$partner_name' && STRASSE='$str' && NUMMER='$nr' && PLZ='$plz' && AKTUELL = '1'");
-    $row = mysql_fetch_assoc($result);
-    if ($row) {
-        return $row['PARTNER_ID'];
+    $result = DB::select("SELECT PARTNER_ID FROM PARTNER_LIEFERANT WHERE PARTNER_NAME='$partner_name' && STRASSE='$str' && NUMMER='$nr' && PLZ='$plz' && AKTUELL = '1'");
+    if (!empty($result)) {
+        return $result[0]['PARTNER_ID'];
     }
 }
 
 function get_gruppe_id($gruppen_bez)
 {
-    $result = mysql_query("SELECT GRUPPE_ID FROM W_GRUPPE WHERE GRUPPE='$gruppen_bez' && AKTUELL = '1' ORDER BY GRUPPE ASC LIMIT 0,1");
-    $row = mysql_fetch_assoc($result);
-    if ($row) {
-        return $row['GRUPPE_ID'];
+    $result = DB::select("SELECT GRUPPE_ID FROM W_GRUPPE WHERE GRUPPE='$gruppen_bez' && AKTUELL = '1' ORDER BY GRUPPE ASC LIMIT 0,1");
+    if (!empty($result)) {
+        return $result[0]['GRUPPE_ID'];
     }
 }
 
 
 function get_gruppen_bez($gruppe_id)
 {
-    $result = mysql_query("SELECT GRUPPE FROM W_GRUPPE WHERE GRUPPE_ID='$gruppe_id' && AKTUELL = '1' ORDER BY GRUPPE ASC LIMIT 0,1");
-    $row = mysql_fetch_assoc($result);
-    if ($row) {
-        return $row['GRUPPE'];
+    $result = DB::select("SELECT GRUPPE FROM W_GRUPPE WHERE GRUPPE_ID='$gruppe_id' && AKTUELL = '1' ORDER BY GRUPPE ASC LIMIT 0,1");
+    if (!empty($result)) {
+        return $result[0]['GRUPPE'];
     }
 }
 
 function get_partner_arr()
 {
-    $result = mysql_query("SELECT * FROM PARTNER_LIEFERANT WHERE AKTUELL = '1' ORDER BY PARTNER_NAME ASC");
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) $my_array[] = $row;
-        return $my_array;
-    }
+    $result = DB::select("SELECT * FROM PARTNER_LIEFERANT WHERE AKTUELL = '1' ORDER BY PARTNER_NAME ASC");
+    return $result;
 }
 
 function dropdown_partner_vorwahl($p_id, $arr, $label, $name, $id, $js, $class_r = 'reihe', $class_f = 'feld')
@@ -521,9 +485,9 @@ function dropdown_partner_vorwahl($p_id, $arr, $label, $name, $id, $js, $class_r
             $partner_id = $arr[$a]['PARTNER_ID'];
             $partner_name = $arr[$a]['PARTNER_NAME'];
             if ($p_id == $partner_id) {
-                echo utf8_encode("<option value=\"$partner_id\" selected>$partner_name</option>\n");
+                echo "<option value=\"$partner_id\" selected>$partner_name</option>\n";
             } else {
-                echo utf8_encode("<option value=\"$partner_id\">$partner_name</option>\n");
+                echo "<option value=\"$partner_id\">$partner_name</option>\n";
             }
         }
         echo "</select>\n";
@@ -534,9 +498,9 @@ function dropdown_partner_vorwahl($p_id, $arr, $label, $name, $id, $js, $class_r
 
 function get_partner_anschrift($partner_id)
 {
-    $result = mysql_query("SELECT *  FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
-    $row = mysql_fetch_assoc($result);
-    if ($row) {
+    $result = DB::select("SELECT *  FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
+    if (!empty($result)) {
+        $row = $result[0];
         return $row['STRASSE'] . ' ' . $row['NUMMER'] . ', ' . $row['PLZ'] . ' ' . $row['ORT'];
     } else {
         return 'unbekannt';
@@ -558,8 +522,8 @@ function get_entfernung_km($start, $destination = START_ADRESSE)
         if ($status == 'OK') {
             $lat = $xml->route->leg->step->start_location->lat;
             $lon = $xml->route->leg->step->start_location->lng;
-            $start_a = utf8_decode($xml->route->leg->start_address);
-            $end_a = utf8_decode($xml->route->leg->end_address);
+            $start_a = $xml->route->leg->start_address;
+            $end_a = $xml->route->leg->end_address;
             $km = $xml->route->leg->distance->text;
             $fahrzeit = $xml->route->leg->duration->text;
 
@@ -584,11 +548,9 @@ function get_km_osm($s_lon, $s_lat, $e_lon, $e_lat)
 function get_lat_lon_db($str, $nr, $plz, $ort)
 {
     $db_abfrage = "SELECT DAT, LAT, LON FROM GEO_LON_LAT WHERE STR='$str' && NR='$nr' && PLZ='$plz' && ORT='$ort' LIMIT 0,1";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        $row = mysql_fetch_assoc($result);
+    $result = DB::select($db_abfrage);
+    if (!empty($result)) {
+        $row = $result[0];
         $lat = $row['LAT'];
         $lon = $row['LON'];
         $dat = $row['DAT'];
@@ -602,10 +564,6 @@ function get_lat_lon_db($str, $nr, $plz, $ort)
 
 function get_lat_lon_db_osm($str, $nr, $plz, $ort)
 {
-    /*Wichtig fürs ß*/
-    $str = utf8_encode($str);
-    $ort = utf8_encode($ort);
-
     if (session()->has('lon_lats')) {
         if (is_array(session()->get('lon_lats'))) {
             if (array_key_exists("$str,$nr, $plz, $ort", session()->get('lon_lats'))) {
@@ -658,13 +616,8 @@ function get_lat_lon_db_osm($str, $nr, $plz, $ort)
     }
 
     if (!empty($lat) && !empty($lon)) {
-        $nr = utf8_decode($nr);
-        $plz = utf8_decode($plz);
-        $ort = utf8_decode($ort);
         if (!check_str($str, $nr, $plz, $ort)) {
-            $db_abfrage = "INSERT INTO GEO_LON_LAT VALUES (NULL, '$str', '$nr', '$plz', '$ort','$lon','$lat','$quelle','1')";
-            $resultat = mysql_query($db_abfrage) or
-            die(mysql_error());
+            DB::insert("INSERT INTO GEO_LON_LAT VALUES (NULL, '$str', '$nr', '$plz', '$ort','$lon','$lat','$quelle','1')");
         }
     }
 
@@ -721,10 +674,9 @@ function kos_typ_info_anzeigen($kos_typ, $kos_id)
 function finde_detail_inhalt($tab, $id, $detail_name)
 {
     $db_abfrage = "SELECT DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = '$tab' && DETAIL_NAME = '$detail_name' && DETAIL_ZUORDNUNG_ID = '$id' && DETAIL_AKTUELL = '1' ORDER BY DETAIL_DAT DESC LIMIT 0 , 1";
-    $resultat = mysql_query($db_abfrage) or
-    die(mysql_error());
-    while (list ($DETAIL_INHALT) = mysql_fetch_row($resultat))
-        return $DETAIL_INHALT;
+    $result = DB::select($db_abfrage);
+    foreach ($result as $row)
+        return $row['DETAIL_INHALT'];
 }
 
 function finde_detail_kontakt_arr($tab, $id, $hinweis = '1')
@@ -734,13 +686,8 @@ function finde_detail_kontakt_arr($tab, $id, $hinweis = '1')
     } else {
         $db_abfrage = "SELECT DETAIL_NAME, DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = '$tab' && (DETAIL_NAME LIKE '%tel%'or DETAIL_NAME LIKE '%fax%' or DETAIL_NAME LIKE '%mobil%' or DETAIL_NAME LIKE '%handy%' OR DETAIL_NAME LIKE '%mail%') && DETAIL_ZUORDNUNG_ID = '$id' && DETAIL_AKTUELL = '1' ORDER BY DETAIL_NAME ASC";
     }
-    $resultat = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_numrows($resultat);
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($resultat)) $my_array[] = $row;
-        return $my_array;
-    }
+    $result = DB::select($db_abfrage);
+    return $result;
 }
 
 
@@ -749,30 +696,21 @@ function alle_gegen_alle($gruppe_id = '1')
     session()->put('gruppe_id', $gruppe_id);
     echo "<b>ANFANG" . date("H:i:s") . "</b>";
     echo "<br>";
-    $result = mysql_query("SELECT `GERAETE_ID`, LAGE_RAUM AS EINBAUORT, HERSTELLER, BEZEICHNUNG, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, `INTERVAL_M`, DATE_FORMAT(NOW(),'%Y-%m-%d') as HEUTE, DATE_FORMAT(DATE_ADD(DATE_FORMAT(NOW(),'%Y-%m-%d'), INTERVAL -INTERVAL_M MONTH),'%Y-%m-%d') AS L_WART_FAELLIG, (SELECT DATUM FROM GEO_TERMINE WHERE GERAETE_ID=W_GERAETE.GERAETE_ID && AKTUELL='1' ORDER BY DATUM DESC LIMIT 0,1) AS L_WART FROM `W_GERAETE` WHERE `AKTUELL`='1' && GRUPPE_ID='$gruppe_id' && 
+    $arr = DB::select("SELECT `GERAETE_ID`, LAGE_RAUM AS EINBAUORT, HERSTELLER, BEZEICHNUNG, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, `INTERVAL_M`, DATE_FORMAT(NOW(),'%Y-%m-%d') as HEUTE, DATE_FORMAT(DATE_ADD(DATE_FORMAT(NOW(),'%Y-%m-%d'), INTERVAL -INTERVAL_M MONTH),'%Y-%m-%d') AS L_WART_FAELLIG, (SELECT DATUM FROM GEO_TERMINE WHERE GERAETE_ID=W_GERAETE.GERAETE_ID && AKTUELL='1' ORDER BY DATUM DESC LIMIT 0,1) AS L_WART FROM `W_GERAETE` WHERE `AKTUELL`='1' && GRUPPE_ID='$gruppe_id' && 
 GERAETE_ID NOT IN
 (SELECT GERAETE_ID FROM GEO_TERMINE WHERE AKTUELL='1' && (DATUM>=DATE_FORMAT(DATE_ADD(DATE_FORMAT(NOW(),'%Y-%m-%d'), INTERVAL -(INTERVAL_M-2) MONTH),'%Y-%m-%d') AND DATUM <= DATE_FORMAT(NOW(),'%Y-%m-%d')) )
 AND
 GERAETE_ID NOT IN
 (SELECT GERAETE_ID FROM GEO_TERMINE WHERE AKTUELL='1' && DATUM>DATE_FORMAT(NOW(),'%Y-%m-%d')) ORDER BY `L_WART_FAELLIG` ASC, INTERVAL_M ASC, KOSTENTRAEGER_TYP ASC, KOSTENTRAEGER_ID ASC
-") or
-    die(mysql_error());
+");
 
-    $numrows = mysql_numrows($result);
-    /*Wenn Zeile vorhanden*/
-    if ($numrows) {
-
-
-        while ($row = mysql_fetch_assoc($result)) {
-            $arr[] = $row;
-        }
-
+    if (!empty($arr)) {
         if (session()->has('kreuz')) {
             session()->forget('kreuz');
         }
         session()->put('kreuz', []);
 
-
+        $numrows = count($arr);
         $z1 = 0;
         for ($a = 0; $a < $numrows; $a++) {
 
@@ -809,7 +747,6 @@ GERAETE_ID NOT IN
                         $bis_str = "$g1->partner_strasse $g1->partner_hausnr";
 
                         $en = new general();
-                        #$en->get_strecken_info($x1, $x2, $y1, $y2);
                         $en->get_fahrzeit_entf($lat_lon_db_start, $lat_lon_db_ziel);
                         echo "$a.$z1 $von_str bis $bis_str = $en->km km | Fahrzeit $en->fahrzeit<br>";
                         $z1++;
@@ -835,12 +772,10 @@ GERAETE_ID NOT IN
 
 function alle_details_anzeigen($tab, $tab_id)
 {
-    $result = mysql_query("SELECT * FROM DETAIL WHERE DETAIL_AKTUELL='1' && DETAIL_ZUORDNUNG_TABELLE='$tab' && DETAIL_ZUORDNUNG_ID='$tab_id' ORDER BY DETAIL_NAME ASC") or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
+    $result = DB::select("SELECT * FROM DETAIL WHERE DETAIL_AKTUELL='1' && DETAIL_ZUORDNUNG_TABELLE='$tab' && DETAIL_ZUORDNUNG_ID='$tab_id' ORDER BY DETAIL_NAME ASC");
+    if (!empty($result)) {
         echo "<hr>";
-        while ($row = mysql_fetch_assoc($result)) {
+        foreach($result as $row) {
             echo '<p class="zeile_detail"><b>' . $row['DETAIL_NAME'] . '</b>: ' . $row['DETAIL_INHALT'] . '</p>';
         }
         echo "<hr>";
@@ -849,12 +784,10 @@ function alle_details_anzeigen($tab, $tab_id)
 
 function alle_details_anzeigen_br($tab, $tab_id)
 {
-    $result = mysql_query("SELECT * FROM DETAIL WHERE DETAIL_AKTUELL='1' && DETAIL_ZUORDNUNG_TABELLE='$tab' && DETAIL_ZUORDNUNG_ID='$tab_id' ORDER BY DETAIL_NAME ASC") or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
+    $result = DB::select("SELECT * FROM DETAIL WHERE DETAIL_AKTUELL='1' && DETAIL_ZUORDNUNG_TABELLE='$tab' && DETAIL_ZUORDNUNG_ID='$tab_id' ORDER BY DETAIL_NAME ASC");
+    if (!empty($result)) {
         echo "<hr>";
-        while ($row = mysql_fetch_assoc($result)) {
+        foreach($result as $row) {
             echo '<b>' . $row['DETAIL_NAME'] . '</b>: ' . $row['DETAIL_INHALT'] . '<br>';
         }
         echo "<hr>";
@@ -899,8 +832,7 @@ function save_to_db($table, $values, $id_spalte = 'x')
     } else {
         $db_abfrage = "INSERT INTO $table VALUES (NULL, $values)";
     }
-    $resultat = mysql_query($db_abfrage) or
-    die(mysql_error());
+    DB::insert($db_abfrage);
 
     session()->put($id_spalte, $id);
     return true;
@@ -909,9 +841,7 @@ function save_to_db($table, $values, $id_spalte = 'x')
 
 function deactivate_wteil($g_id)
 {
-    $db_abfrage = "UPDATE W_GERAETE SET AKTUELL='0' WHERE GERAETE_ID='$g_id'";
-    $resultat = mysql_query($db_abfrage) or
-    die(mysql_error());
+    DB::update("UPDATE W_GERAETE SET AKTUELL='0' WHERE GERAETE_ID='$g_id'");
     return true;
 }
 
@@ -1006,12 +936,8 @@ function dropdown_dauer($label, $id, $name, $selected, $js, $class_r = 'reihe', 
 function check_termin_frei($b_id, $datum_sql, $von, $bis)
 {
     $db_abfrage = "SELECT *  FROM `GEO_TERMINE` WHERE `DATUM` = '$datum_sql' AND BENUTZER_ID='$b_id' AND `AKTUELL` = '1' AND `VON` < '$bis' AND BIS > '$von'";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if (!$numrows) {
-        return true;
-    }
+    $result = DB::select($db_abfrage);
+    return empty($result);
 }
 
 
@@ -1041,12 +967,12 @@ function dropdown_wgeraet($arr, $label, $name, $id, $js, $class_r = 'reihe', $cl
             $einbauort = $arr[$a]['LAGE_RAUM'];
             if (session()->has('g_id')) {
                 if ($g_id == session()->get('g_id')) {
-                    echo utf8_encode("<option value=\"$g_id\" selected>$einbauort - $g_bez</option>\n");
+                    echo "<option value=\"$g_id\" selected>$einbauort - $g_bez</option>\n";
                 } else {
-                    echo utf8_encode("<option value=\"$g_id\">$einbauort - $g_bez</option>\n");
+                    echo "<option value=\"$g_id\">$einbauort - $g_bez</option>\n";
                 }
             } else {
-                echo utf8_encode("<option value=\"$g_id\">$einbauort - $g_bez</option>\n");
+                echo "<option value=\"$g_id\">$einbauort - $g_bez</option>\n";
             }
         }
         echo "</select>\n";
@@ -1094,12 +1020,12 @@ function dropdown_w_gruppen($arr, $label, $name, $id, $js, $class_r = 'reihe', $
             $g_bez = $arr[$a]['GRUPPE'];
             if (session()->has('vorschlag_gruppe_id') && session()->has('vorschlag_gruppe_id')) {
                 if (request()->get('vorschlag_gruppe_id') == $g_id) {
-                    echo utf8_encode("<option value=\"$g_id\" selected>$g_bez</option>\n");
+                    echo "<option value=\"$g_id\" selected>$g_bez</option>\n";
                 } else {
-                    echo utf8_encode("<option value=\"$g_id\">$g_bez</option>\n");
+                    echo "<option value=\"$g_id\">$g_bez</option>\n";
                 }
             } else {
-                echo utf8_encode("<option value=\"$g_id\">$g_bez</option>\n");
+                echo "<option value=\"$g_id\">$g_bez</option>\n";
             }
         }
         echo "</select>\n";
@@ -1120,10 +1046,8 @@ function dropdown_w_teile_gruppe($arr, $label, $name, $id, $js, $class_r = 'reih
         echo "<select name=\"$name\" size=\"1\" id=\"$id\" $js>\n";
         echo "<option value=\"\" selected>Bitte wählen</option>\n";
         for ($a = 0; $a < $anz; $a++) {
-            #$g_id = $arr[$a]['GERAETE_ID'];
             $g_bez = $arr[$a]['BEZEICHNUNG'];
-            #$g_her = $arr[$a]['HERSTELLER'];
-            echo utf8_encode("<option value=\"$g_bez\">$g_bez</option>\n");
+            echo "<option value=\"$g_bez\">$g_bez</option>\n";
         }
         echo "</select>\n";
         echo "</span>";
@@ -1144,7 +1068,7 @@ function dropdown_hersteller($arr, $label, $name, $id, $js, $class_r = 'reihe', 
         echo "<option value=\"\" selected>Bitte wählen</option>\n";
         for ($a = 0; $a < $anz; $a++) {
             $g_her = $arr[$a]['HERSTELLER'];
-            echo utf8_encode("<option value=\"$g_her\">$g_her</option>\n");
+            echo "<option value=\"$g_her\">$g_her</option>\n";
         }
         echo "</select>\n";
         echo "</span>";
@@ -1158,7 +1082,7 @@ function form_wartungsteil_erfassen($kos_typ, $kos_id)
     $arr = get_wartungsgruppen_arr();
     formular('', 'formx');
     echo "<p class=\"zeile_ueber\">Neues Wartungsteil erfassen</p>";
-	$js = "onchange=\"drop_change_check('w_gruppe_id', 'gbez');lade_dropdown('w_gruppe_id', 'g_bez', 'g_hersteller', '" . route('legacy::wartungsplaner::ajax', ['option' => 'get_hersteller_gruppe'], false) . "')\"";
+    $js = "onchange=\"drop_change_check('w_gruppe_id', 'gbez');lade_dropdown('w_gruppe_id', 'g_bez', 'g_hersteller', '" . route('legacy::wartungsplaner::ajax', ['option' => 'get_hersteller_gruppe'], false) . "')\"";
     dropdown_w_gruppen($arr, 'Wartungsgruppe wählen oder ...', 'w_gruppe_id', 'w_gruppe_id', $js);
     $js_gbez = "onkeyup='text_kuerzen(\"gbez\", \"50\")'";
     text_feld('Gruppenbezeichnung eingeben', 'gbez', 'gbez', 30, $js_gbez, '');
@@ -1288,13 +1212,8 @@ function datum_feld2($beschreibung, $name, $id, $datum)
 
 function get_wartungsteile_arr($kos_typ, $kos_id)
 {
-    $result = mysql_query("SELECT * FROM W_GERAETE WHERE AKTUELL='1' && KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID='$kos_id' ORDER BY BEZEICHNUNG ASC") or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) $my_array[] = $row;
-        return $my_array;
-    }
+    $result = DB::select("SELECT * FROM W_GERAETE WHERE AKTUELL='1' && KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID='$kos_id' ORDER BY BEZEICHNUNG ASC");
+    return $result;
 }
 
 
@@ -1348,23 +1267,15 @@ function geraete_liste()
 
 function get_alle_wartungsteile_arr()
 {
-    $result = mysql_query("SELECT * FROM W_GERAETE WHERE AKTUELL='1' ORDER BY GRUPPE_ID, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, LAGE_RAUM, BEZEICHNUNG ASC") or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) $my_array[] = $row;
-        return $my_array;
-    }
+    $result = DB::select("SELECT * FROM W_GERAETE WHERE AKTUELL='1' ORDER BY GRUPPE_ID, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, LAGE_RAUM, BEZEICHNUNG ASC");
+    return $result;
 }
 
 function geraete_info_anzeigen($g_id)
 {
-    $result = mysql_query("SELECT * FROM W_GERAETE WHERE AKTUELL='1' && GERAETE_ID='$g_id' LIMIT 0,1") or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) {
-            $my_array[] = $row;
+    $result = DB::select("SELECT * FROM W_GERAETE WHERE AKTUELL='1' && GERAETE_ID='$g_id' LIMIT 0,1");
+    if (!empty($result)) {
+        foreach($result as $row) {
             $dat = $row['DAT'];
             $gruppe_id = $row['GRUPPE_ID'];
             $bezeichnung = $row['BEZEICHNUNG'];
@@ -1403,7 +1314,6 @@ function geraete_info_anzeigen($g_id)
             echo "<p class=\"zeile_ueber\">DETAIL ZUM KUNDEN</p>";
             form_detail_hinzu($kos_typ_d, $kos_id);
         }
-        return $my_array;
     } else {
         echo "FEHLER 3x00f in function geraete_info_anzeigen()";
     }
@@ -1411,65 +1321,35 @@ function geraete_info_anzeigen($g_id)
 
 function geraete_info_arr($g_id)
 {
-    if ($g_id == 1) {
-        die("SELECT * FROM W_GERAETE WHERE AKTUELL='1' && GERAETE_ID='$g_id' LIMIT 0,1");
-    }
-    $result = mysql_query("SELECT * FROM W_GERAETE WHERE AKTUELL='1' && GERAETE_ID='$g_id' LIMIT 0,1") or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) {
-            $my_array[] = $row;
-        }
-        return $my_array;
-    }
+    $result = DB::select("SELECT * FROM W_GERAETE WHERE AKTUELL='1' && GERAETE_ID='$g_id' LIMIT 0,1", [], false);
+    return $result;
 }
 
 
 function get_wartungsteile_hersteller_arr()
 {
-    $result = mysql_query("SELECT HERSTELLER FROM W_GERAETE WHERE AKTUELL='1' GROUP BY HERSTELLER ORDER BY HERSTELLER ASC") or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) $my_array[] = $row;
-        return $my_array;
-    }
+    $result = DB::select("SELECT HERSTELLER FROM W_GERAETE WHERE AKTUELL='1' GROUP BY HERSTELLER ORDER BY HERSTELLER ASC");
+    return $result;
 }
 
 function get_wartungsgruppen_arr()
 {
-    $result = mysql_query("SELECT * FROM W_GRUPPE WHERE AKTUELL='1' ORDER BY GRUPPE ASC") or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) $my_array[] = $row;
-        return $my_array;
-    }
+    $result = DB::select("SELECT * FROM W_GRUPPE WHERE AKTUELL='1' ORDER BY GRUPPE ASC");
+    return $result;
 }
 
 /*Alle Wartungsteile einer Gruppe*/
 function get_wartungsteile_gruppe_arr($gruppe_id)
 {
-    $result = mysql_query("SELECT * FROM W_GERAETE WHERE GRUPPE_ID='$gruppe_id' && AKTUELL='1' ORDER BY BEZEICHNUNG ASC") or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) $my_array[] = $row;
-        return $my_array;
-    }
+    $result = DB::select("SELECT * FROM W_GERAETE WHERE GRUPPE_ID='$gruppe_id' && AKTUELL='1' ORDER BY BEZEICHNUNG ASC");
+    return $result;
 }
 
 /*Alle Wartungsteile eines Herstellers*/
 function get_hersteller_modelle_arr($hersteller)
 {
-    $result = mysql_query("SELECT * FROM W_GERAETE WHERE HERSTELLER='$hersteller' && AKTUELL='1' ORDER BY BEZEICHNUNG ASC") or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) $my_array[] = $row;
-        return $my_array;
-    }
+    $result = DB::select("SELECT * FROM W_GERAETE WHERE HERSTELLER='$hersteller' && AKTUELL='1' ORDER BY BEZEICHNUNG ASC");
+    return $result;
 }
 
 
@@ -1481,7 +1361,7 @@ function get_wgeraete_bez($gruppe_id)
         for ($a = 0; $a < $anz; $a++) {
             $g_id = $arr[$a]['GERAETE_ID'];
             $g_bez = $arr[$a]['BEZEICHNUNG'];
-            echo utf8_encode("$g_id,$g_bez|");
+            echo "$g_id,$g_bez|";
         }
     }
 }
@@ -1556,10 +1436,7 @@ function detail_speichern_2($tabelle, $id, $det_name, $det_inhalt, $det_bemerkun
 {
     $last_detail_id = last_id2('DETAIL', 'DETAIL_ID');
     $det_inhalt = str_replace("\n", '<br />', $det_inhalt);
-    $db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$last_detail_id', '$det_name','$det_inhalt', '$det_bemerkung', '1','$tabelle','$id')";
-    $resultat = mysql_query($db_abfrage) or
-    die(mysql_error());
-    return true;
+    return DB::insert("INSERT INTO DETAIL VALUES (NULL, '$last_detail_id', '$det_name','$det_inhalt', '$det_bemerkung', '1','$tabelle','$id')");
 }
 
 function termin_suchen($g_id)
@@ -1567,8 +1444,8 @@ function termin_suchen($g_id)
     session()->put('g_id', $g_id);
     $g_info_arr = geraete_info_arr($g_id);
     if (is_array($g_info_arr)) {
-        $gruppe_id = $g_info_arr['0']['GRUPPE_ID'];
-        $kos_typ = $g_info_arr['0']['KOSTENTRAEGER_TYP'];
+        $gruppe_id = $g_info_arr[0]['GRUPPE_ID'];
+        $kos_typ = $g_info_arr[0]['KOSTENTRAEGER_TYP'];
 
     } else {
         die('Keine Geräte Informationen!!! Fehler 43332! Z:945. termin_suchen!');
@@ -1576,7 +1453,7 @@ function termin_suchen($g_id)
     if ($kos_typ != 'Partner') {
         die('ABBRUCH - Geräteeigentämer kein PARTNER');
     }
-    $kos_id = $g_info_arr['0']['KOSTENTRAEGER_ID'];
+    $kos_id = $g_info_arr[0]['KOSTENTRAEGER_ID'];
 
     /*Präfen ob Therme einem Eigentuemer gehärt*/
     /*Bei true is der Eigentämer auch Eigentämer eines Wohnobjektes*/
@@ -1644,9 +1521,9 @@ function termin_suchen3($g_id)
     session()->put('g_id', $g_id);
     $g_info_arr = geraete_info_arr($g_id);
     if (is_array($g_info_arr)) {
-        $gruppe_id = $g_info_arr['0']['GRUPPE_ID'];
+        $gruppe_id = $g_info_arr[0]['GRUPPE_ID'];
         session()->put('gruppe_id', $gruppe_id);
-        $kos_typ = $g_info_arr['0']['KOSTENTRAEGER_TYP'];
+        $kos_typ = $g_info_arr[0]['KOSTENTRAEGER_TYP'];
 
     } else {
         die('Keine Geräte Informationen!!! Fehler 43332! Z:945. termin_suchen!');
@@ -1654,7 +1531,7 @@ function termin_suchen3($g_id)
     if ($kos_typ != 'Partner') {
         die('ABBRUCH - Geräteeigentümer kein PARTNER');
     }
-    $kos_id = $g_info_arr['0']['KOSTENTRAEGER_ID'];
+    $kos_id = $g_info_arr[0]['KOSTENTRAEGER_ID'];
 
     /*Präfen ob Therme einem Eigentuemer gehärt*/
     /*Bei true is der Eigentämer auch Eigentämer eines Wohnobjektes*/
@@ -1802,10 +1679,10 @@ function besten_termin_suchen($g_id, $datum_df)
     $g_info_arr = geraete_info_arr($g_id);
     if (is_array($g_info_arr)) {
 
-        $gruppe_id = $g_info_arr['0']['GRUPPE_ID'];
-        $kos_typ = $g_info_arr['0']['KOSTENTRAEGER_TYP'];
-        $lage_raum = $g_info_arr['0']['LAGE_RAUM'];
-        $kos_id = $g_info_arr['0']['KOSTENTRAEGER_ID'];
+        $gruppe_id = $g_info_arr[0]['GRUPPE_ID'];
+        $kos_typ = $g_info_arr[0]['KOSTENTRAEGER_TYP'];
+        $lage_raum = $g_info_arr[0]['LAGE_RAUM'];
+        $kos_id = $g_info_arr[0]['KOSTENTRAEGER_ID'];
     } else {
         die('Keine Geräte Informationen!!! Fehler 43332! Z:945. termin_suchen!');
     }
@@ -2166,9 +2043,8 @@ function kontaktdaten_anzeigen_kunde($kos_id)
 {
     $arr = finde_detail_kontakt_arr('PARTNER_LIEFERANT', $kos_id);
     if (is_array($arr)) {
-        $anz = count($arr);
         $kontaktdaten = '';
-        for ($a = 0; $a < $anz; $a++) {
+        foreach ($arr as $a) {
             $dname = $arr[$a]['DETAIL_NAME'];
             $dinhalt = $arr[$a]['DETAIL_INHALT'];
             $kontaktdaten .= "<br><b>$dname</b>:$dinhalt";
@@ -2187,11 +2063,10 @@ function kontaktdaten_anzeigen_mieter($einheit_bez, $hinweis_an = 1)
         /*Nie vermietet*/
         return 'Leerstand';
     } else {
-        $result = mysql_query("SELECT PERSON_MIETVERTRAG_PERSON_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_MIETVERTRAG_ID='$mv_id' && PERSON_MIETVERTRAG_AKTUELL='1' ORDER BY PERSON_MIETVERTRAG_ID ASC");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
+        $result = DB::select("SELECT PERSON_MIETVERTRAG_PERSON_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_MIETVERTRAG_ID='$mv_id' && PERSON_MIETVERTRAG_AKTUELL='1' ORDER BY PERSON_MIETVERTRAG_ID ASC");
+        if (!empty($result)) {
             $kontaktdaten = '';
-            while ($row = mysql_fetch_assoc($result)) {
+            Foreach ($result as $row) {
                 $person_id = $row['PERSON_MIETVERTRAG_PERSON_ID'];
                 $arr = finde_detail_kontakt_arr('PERSON', $person_id, $hinweis_an);
                 if (is_array($arr)) {
@@ -2226,8 +2101,7 @@ function tages_ansicht($benutzer_id, $datum_d)
     echo "<p class=\"zeile_hinweis\"><b>$link_tag_davor | Kalender von $benutzername (KW: $kw) Datum: $wochentag, $datum_d | <b>$link_tag_danach</b></p>";
     $arr = tages_termine_arr_b($benutzer_id, $datum_d);
     $anz = count($arr);
-    #echo '<pre>';
-    #print_r($arr);
+
     echo "<table><tr><th>ZEIT</th><th>TERMIN</th><th>INFOS</th></tr>";
 
     $von_str = '';
@@ -2591,7 +2465,7 @@ function tages_ansicht_neu($benutzer_id, $datum_d, $hinweis_an = 1)
         $bis_arr = explode(':', $bis);
         $std = $bis_arr[0] - $von_arr[0];
         echo "<tr class=\"zeile_$status\"><td>$von<br>$bis</td>";
-        echo utf8_encode("<td valign=\"top\">$kunden_info<br>$link_neuer_termin");
+        echo "<td valign=\"top\">$kunden_info<br>$link_neuer_termin";
         if ($status == 'frei') {
             for ($br = 0; $br < $std; $br++) {
                 echo "<br>";
@@ -2599,7 +2473,7 @@ function tages_ansicht_neu($benutzer_id, $datum_d, $hinweis_an = 1)
             }
         }
 
-        echo utf8_encode("</td><td valign=\"top\">$g_info");
+        echo "</td><td valign=\"top\">$g_info";
         echo "<br>";
         echo "</td></tr>";
         $von_str = $bis_str;
@@ -2717,7 +2591,7 @@ function tages_ansicht_umkreis($benutzer_id, $datum_d)
         }
         echo "<tr class=\"zeile_$status\"><td id=\"$von-$bis\" name=\"$von-$bis\">$von<br>$bis";
 
-        echo utf8_encode("</td><td valign=\"top\">$kunden_info<br><br></td>");
+        echo "</td><td valign=\"top\">$kunden_info<br><br></td>";
         if ($status == 'frei') {
             $js_res = "onclick=\"termin_reservieren('$datum_d', '$von', '$bis', '$benutzer_id');\"";
             echo "<td>";
@@ -3332,26 +3206,15 @@ function zeit_plus_min($zeit, $plusmin)
 function get_termine_tag_arr($benutzer_id, $datum_d)
 {
     $datum = date_german2mysql($datum_d);
-    $result = mysql_query("SELECT GEO_TERMINE.DAT, GEO_TERMINE.DATUM, DATE_FORMAT(GEO_TERMINE.VON, '%H:%i') AS VON, DATE_FORMAT(GEO_TERMINE.BIS, '%H:%i') AS BIS, GEO_TERMINE.TEXT, GEO_TERMINE.HINWEIS, GEO_TERMINE.GERAETE_ID, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, RECHNUNG_AN FROM GEO_TERMINE, W_GERAETE WHERE GEO_TERMINE.AKTUELL='1' && W_GERAETE.AKTUELL='1' && BENUTZER_ID='$benutzer_id' && DATUM='$datum' && GEO_TERMINE.GERAETE_ID=W_GERAETE.GERAETE_ID ORDER BY VON ASC") or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) $my_array[] = $row;
-        return $my_array;
-    }
+    $result = DB::select("SELECT GEO_TERMINE.DAT, GEO_TERMINE.DATUM, DATE_FORMAT(GEO_TERMINE.VON, '%H:%i') AS VON, DATE_FORMAT(GEO_TERMINE.BIS, '%H:%i') AS BIS, GEO_TERMINE.TEXT, GEO_TERMINE.HINWEIS, GEO_TERMINE.GERAETE_ID, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, RECHNUNG_AN FROM GEO_TERMINE, W_GERAETE WHERE GEO_TERMINE.AKTUELL='1' && W_GERAETE.AKTUELL='1' && BENUTZER_ID='$benutzer_id' && DATUM='$datum' && GEO_TERMINE.GERAETE_ID=W_GERAETE.GERAETE_ID ORDER BY VON ASC");
+    return $result;
 }
 
 
 function get_alle_termine_arr()
 {
-    $datum = date_german2mysql($datum_d);
-    $result = mysql_query("SELECT GEO_TERMINE.DAT, GEO_TERMINE.DATUM, DATE_FORMAT(GEO_TERMINE.VON, '%H:%i') AS VON, DATE_FORMAT(GEO_TERMINE.BIS, '%H:%i') AS BIS, GEO_TERMINE.TEXT, GEO_TERMINE.HINWEIS, GEO_TERMINE.GERAETE_ID, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, RECHNUNG_AN FROM GEO_TERMINE, W_GERAETE WHERE GEO_TERMINE.AKTUELL='1' && W_GERAETE.AKTUELL='1' && GEO_TERMINE.GERAETE_ID=W_GERAETE.GERAETE_ID GROUP BY W_GERAETE.GERAETE_ID") or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) $my_array[] = $row;
-        return $my_array;
-    }
+    $result = DB::select("SELECT GEO_TERMINE.DAT, GEO_TERMINE.DATUM, DATE_FORMAT(GEO_TERMINE.VON, '%H:%i') AS VON, DATE_FORMAT(GEO_TERMINE.BIS, '%H:%i') AS BIS, GEO_TERMINE.TEXT, GEO_TERMINE.HINWEIS, GEO_TERMINE.GERAETE_ID, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, RECHNUNG_AN FROM GEO_TERMINE, W_GERAETE WHERE GEO_TERMINE.AKTUELL='1' && W_GERAETE.AKTUELL='1' && GEO_TERMINE.GERAETE_ID=W_GERAETE.GERAETE_ID GROUP BY W_GERAETE.GERAETE_ID");
+    return $result;
 }
 
 
@@ -3359,9 +3222,8 @@ function get_durchschnitt_km($benutzer_id, $datum)
 {
     #echo "$benutzer_id $datum $lat_lon_db_ziel<br><br>";
     $db_abfrage = "SELECT GEO_TERMINE.GERAETE_ID, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GEO_TERMINE, W_GERAETE WHERE GEO_TERMINE.AKTUELL='1' && W_GERAETE.AKTUELL='1' && BENUTZER_ID='$benutzer_id' && DATUM='$datum' && GEO_TERMINE.GERAETE_ID=W_GERAETE.GERAETE_ID";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_num_rows($result);
+    $result = DB::select($db_abfrage);
+    $numrows = count($result);
 
     /*Profil holen fär von zu Hause*/
     $gg = new general();
@@ -3376,7 +3238,7 @@ function get_durchschnitt_km($benutzer_id, $datum)
     if ($numrows) {
         $summe_km = 0;
 
-        while ($row = mysql_fetch_assoc($result)) {
+        foreach($result as $row) {
             $g_id = $row['GERAETE_ID'];
             $kos_typ = $row['KOSTENTRAEGER_TYP'];
             $kos_id = $row['KOSTENTRAEGER_ID'];
@@ -3430,9 +3292,8 @@ function get_durchschnitt_km($benutzer_id, $datum)
 function get_durchschnitt_km3($benutzer_id, $datum)
 {
     $db_abfrage = "SELECT GEO_TERMINE.GERAETE_ID, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GEO_TERMINE, W_GERAETE WHERE GEO_TERMINE.AKTUELL='1' && W_GERAETE.AKTUELL='1' && BENUTZER_ID='$benutzer_id' && DATUM='$datum' && GEO_TERMINE.GERAETE_ID=W_GERAETE.GERAETE_ID";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_num_rows($result);
+    $result = DB::select($db_abfrage);
+    $numrows = count($result);
 
     /*Profil holen fär von zu Hause*/
     $gg = new general();
@@ -3447,7 +3308,7 @@ function get_durchschnitt_km3($benutzer_id, $datum)
     if ($numrows) {
         $summe_km = 100000;
 
-        while ($row = mysql_fetch_assoc($result)) {
+        foreach($result as $row) {
             $g_id = $row['GERAETE_ID'];
             $kos_typ = $row['KOSTENTRAEGER_TYP'];
             $kos_id = $row['KOSTENTRAEGER_ID'];
@@ -3505,9 +3366,8 @@ function get_durchschnitt_km3($benutzer_id, $datum)
 function get_durchschnitt_km2($benutzer_id, $datum, $lat_lon_db_ziel)
 {
     $db_abfrage = "SELECT GEO_TERMINE.GERAETE_ID, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GEO_TERMINE, W_GERAETE WHERE GEO_TERMINE.AKTUELL='1' && W_GERAETE.AKTUELL='1' && BENUTZER_ID='$benutzer_id' && DATUM='$datum' && GEO_TERMINE.GERAETE_ID=W_GERAETE.GERAETE_ID";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_num_rows($result);
+    $result = DB::select($db_abfrage);
+    $numrows = count($result);
 
     /*Profil holen fär von zu Hause*/
     $gg = new general();
@@ -3526,7 +3386,7 @@ function get_durchschnitt_km2($benutzer_id, $datum, $lat_lon_db_ziel)
     if ($numrows) {
         $summe_km = 0;
 
-        while ($row = mysql_fetch_assoc($result)) {
+        foreach($result as $row) {
             $g_id = $row['GERAETE_ID'];
             $kos_typ = $row['KOSTENTRAEGER_TYP'];
             $kos_id = $row['KOSTENTRAEGER_ID'];
@@ -3693,27 +3553,19 @@ function get_wochentag_name($datum)
 function get_anzahl_termine($benutzer_id, $datum_d)
 {
     $datum = date_german2mysql($datum_d);
-    $db_abfrage = "SELECT * FROM GEO_TERMINE WHERE AKTUELL='1' && BENUTZER_ID='$benutzer_id' && DATUM='$datum'";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_num_rows($result);
-    if ($numrows) {
-        return $numrows;
-    } else {
-        return 0;
-    }
+    $db_abfrage = "SELECT COUNT(*) AS ANZAHL FROM GEO_TERMINE WHERE AKTUELL='1' && BENUTZER_ID='$benutzer_id' && DATUM='$datum'";
+    $result = DB::select($db_abfrage);
+    return $result[0]['ANZAHL'];
 }
 
 function get_datum_lw($g_id)
 {
     $datum_heute = date("Y-m-d");
     $db_abfrage = "SELECT DATE_FORMAT(DATUM, '%d.%m.%Y') AS DATUM, BENUTZER_ID FROM GEO_TERMINE WHERE AKTUELL='1' && GERAETE_ID='$g_id' && DATUM<='$datum_heute' ORDER BY DATUM DESC";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_num_rows($result);
-    if ($numrows) {
+    $result = DB::select($db_abfrage);
+    if (!empty($result)) {
         $link = '';
-        while ($row = mysql_fetch_assoc($result)) {
+        foreach($result as $row) {
             $datum = $row['DATUM'];
             $b_id = $row['BENUTZER_ID'];
             $b_name = get_benutzername($b_id);
@@ -3728,12 +3580,10 @@ function get_datum_nw($g_id)
 {
     $datum_heute = date("Y-m-d");
     $db_abfrage = "SELECT DATE_FORMAT(DATUM, '%d.%m.%Y') AS DATUM, BENUTZER_ID, VON, BIS FROM GEO_TERMINE WHERE AKTUELL='1' && GERAETE_ID='$g_id' && DATUM>'$datum_heute' ORDER BY DATUM ASC";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_num_rows($result);
-    if ($numrows) {
+    $result = DB::select($db_abfrage);
+    if (!empty($result)) {
         $link = '';
-        while ($row = mysql_fetch_assoc($result)) {
+        foreach($result as $row) {
             $datum = $row['DATUM'];
             $b_id = $row['BENUTZER_ID'];
             $von = substr($row['VON'], 0, 5);
@@ -3752,10 +3602,8 @@ function is_termin_frei($benutzer_id, $datum_d, $termine_tag)
     if (check_anwesenheit($benutzer_id, $datum)) {
 
         $db_abfrage = "SELECT * FROM GEO_TERMINE WHERE AKTUELL='1' && BENUTZER_ID='$benutzer_id' && DATUM='$datum' ";
-        $result = mysql_query($db_abfrage) or
-        die(mysql_error());
-        $numrows = mysql_num_rows($result);
-
+        $result = DB::select($db_abfrage);
+        $numrows = count($result);
 
         if ($numrows < $termine_tag) {
             return true;
@@ -3770,14 +3618,8 @@ function is_termin_frei($benutzer_id, $datum_d, $termine_tag)
 /*URLAUB*/
 function check_anwesenheit($benutzer_id, $datum)
 {
-    $result = mysql_query("SELECT *  FROM URLAUB WHERE AKTUELL='1' && BENUTZER_ID='$benutzer_id' && DATUM='$datum' ");
-
-    $numrows = mysql_numrows($result);
-    if (!$numrows) {
-        return true;
-    } else {
-        return false;
-    }
+    $result = DB::select("SELECT * FROM URLAUB WHERE AKTUELL='1' && BENUTZER_ID='$benutzer_id' && DATUM='$datum' ");
+    return empty($result);
 }
 
 function get_kw($datum)
@@ -3794,21 +3636,13 @@ function get_kw($datum)
 
 function check_is_eigentuemer($partner_id)
 {
-    $result = mysql_query("SELECT * FROM OBJEKT WHERE EIGENTUEMER_PARTNER='$partner_id' && OBJEKT_AKTUELL='1'");
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        return true;
-    }
+    $result = DB::select("SELECT * FROM OBJEKT WHERE EIGENTUEMER_PARTNER='$partner_id' && OBJEKT_AKTUELL='1'");
+    return !empty($result);
 }
 
 
 function get_lon_lat_osm($str, $nr, $plz, $ort, $w_datum)
 {
-    $str = utf8_encode($str);
-    $nr = utf8_encode($nr);
-    $plz = utf8_encode($plz);
-    $ort = utf8_encode($ort);
-
     if (empty($w_datum)) {
         $w_datum = date("d.m.Y");
     }
@@ -3848,14 +3682,8 @@ function get_lon_lat_osm($str, $nr, $plz, $ort, $w_datum)
     }
 
     if (!empty($lat) && !empty($lon)) {
-        $str = utf8_decode($str);
-        $nr = utf8_decode($nr);
-        $plz = utf8_decode($plz);
-        $ort = utf8_decode($ort);
         if (!check_str($str, $nr, $plz, $ort)) {
-            $db_abfrage = "INSERT INTO GEO_LON_LAT VALUES (NULL, '$str', '$nr', '$plz', '$ort','$lon','$lat','$quelle','1')";
-            $resultat = mysql_query($db_abfrage) or
-            die(mysql_error());
+            DB::insert("INSERT INTO GEO_LON_LAT VALUES (NULL, '$str', '$nr', '$plz', '$ort','$lon','$lat','$quelle','1')");
         }
     }
 
@@ -3865,12 +3693,8 @@ function get_lon_lat_osm($str, $nr, $plz, $ort, $w_datum)
 function check_str($str, $nr, $plz, $ort)
 {
     $db_abfrage = "SELECT * FROM GEO_LON_LAT WHERE STR='$str' && NR='$nr' && PLZ='$plz' && ORT='$ort'";
-    $result = mysql_query($db_abfrage) or
-    die(mysql_error());
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        return true;
-    }
+    $result = DB::select($db_abfrage);
+    return !empty($result);
 }
 
 function get_benutzername($benutzer_id)
@@ -4076,44 +3900,28 @@ function alle_noch_zu_machen_arr($gruppe_id = '1')
 {
     session()->put('gruppe_id', $gruppe_id);
     /*Hier ok + 4 Monate*/
-    $result = mysql_query("SELECT `GERAETE_ID`, LAGE_RAUM AS EINBAUORT, HERSTELLER, BEZEICHNUNG, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, `INTERVAL_M`, DATE_FORMAT(NOW(),'%Y-%m-%d') as HEUTE, DATE_FORMAT(DATE_ADD(DATE_FORMAT(NOW(),'%Y-%m-%d'), INTERVAL -INTERVAL_M MONTH),'%Y-%m-%d') AS L_WART_FAELLIG, (SELECT DATUM FROM GEO_TERMINE WHERE GERAETE_ID=W_GERAETE.GERAETE_ID && AKTUELL='1' ORDER BY DATUM DESC LIMIT 0,1) AS L_WART FROM `W_GERAETE` WHERE `AKTUELL`='1' && GRUPPE_ID='$gruppe_id' && 
+    $result = DB::select("SELECT `GERAETE_ID`, LAGE_RAUM AS EINBAUORT, HERSTELLER, BEZEICHNUNG, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, `INTERVAL_M`, DATE_FORMAT(NOW(),'%Y-%m-%d') as HEUTE, DATE_FORMAT(DATE_ADD(DATE_FORMAT(NOW(),'%Y-%m-%d'), INTERVAL -INTERVAL_M MONTH),'%Y-%m-%d') AS L_WART_FAELLIG, (SELECT DATUM FROM GEO_TERMINE WHERE GERAETE_ID=W_GERAETE.GERAETE_ID && AKTUELL='1' ORDER BY DATUM DESC LIMIT 0,1) AS L_WART FROM `W_GERAETE` WHERE `AKTUELL`='1' && GRUPPE_ID='$gruppe_id' && 
 GERAETE_ID NOT IN
 (SELECT GERAETE_ID FROM GEO_TERMINE WHERE AKTUELL='1' && (DATUM>=DATE_FORMAT(DATE_ADD(DATE_FORMAT(NOW(),'%Y-%m-%d'), INTERVAL -(INTERVAL_M-4) MONTH),'%Y-%m-%d') AND DATUM <= DATE_FORMAT(NOW(),'%Y-%m-%d')) )
 AND
 GERAETE_ID NOT IN
 (SELECT GERAETE_ID FROM GEO_TERMINE WHERE AKTUELL='1' && DATUM>DATE_FORMAT(NOW(),'%Y-%m-%d') GROUP BY GERAETE_ID) ORDER BY `L_WART_FAELLIG` ASC, INTERVAL_M ASC, KOSTENTRAEGER_TYP ASC, KOSTENTRAEGER_ID ASC
-") or
-    die(mysql_error());
-
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) {
-            $my_array[] = $row;
-        }
-        return $my_array;
-    }
+");
+    return $result;
 }
 
 function alle_noch_zu_machen_arr_chrono($gruppe_id = '1')
 {
     session()->put('gruppe_id', $gruppe_id);
     /*Hier ok + 4 Monate*/
-    $result = mysql_query("SELECT `GERAETE_ID`, LAGE_RAUM AS EINBAUORT, HERSTELLER, BEZEICHNUNG, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, `INTERVAL_M`, DATE_FORMAT(NOW(),'%Y-%m-%d') as HEUTE, DATE_FORMAT(DATE_ADD(DATE_FORMAT(NOW(),'%Y-%m-%d'), INTERVAL -INTERVAL_M MONTH),'%Y-%m-%d') AS L_WART_FAELLIG, (SELECT DATUM FROM GEO_TERMINE WHERE GERAETE_ID=W_GERAETE.GERAETE_ID && AKTUELL='1' ORDER BY DATUM DESC LIMIT 0,1) AS L_WART FROM `W_GERAETE` WHERE `AKTUELL`='1' && GRUPPE_ID='$gruppe_id' &&
+    $result = DB::select("SELECT `GERAETE_ID`, LAGE_RAUM AS EINBAUORT, HERSTELLER, BEZEICHNUNG, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, `INTERVAL_M`, DATE_FORMAT(NOW(),'%Y-%m-%d') as HEUTE, DATE_FORMAT(DATE_ADD(DATE_FORMAT(NOW(),'%Y-%m-%d'), INTERVAL -INTERVAL_M MONTH),'%Y-%m-%d') AS L_WART_FAELLIG, (SELECT DATUM FROM GEO_TERMINE WHERE GERAETE_ID=W_GERAETE.GERAETE_ID && AKTUELL='1' ORDER BY DATUM DESC LIMIT 0,1) AS L_WART FROM `W_GERAETE` WHERE `AKTUELL`='1' && GRUPPE_ID='$gruppe_id' &&
 			GERAETE_ID NOT IN
 			(SELECT GERAETE_ID FROM GEO_TERMINE WHERE AKTUELL='1' && (DATUM>=DATE_FORMAT(DATE_ADD(DATE_FORMAT(NOW(),'%Y-%m-%d'), INTERVAL -(INTERVAL_M) MONTH),'%Y-%m-%d') AND DATUM <= DATE_FORMAT(NOW(),'%Y-%m-%d')) )
 			AND
 			GERAETE_ID NOT IN
 			(SELECT GERAETE_ID FROM GEO_TERMINE WHERE AKTUELL='1' && DATUM>DATE_FORMAT(NOW(),'%Y-%m-%d') GROUP BY GERAETE_ID) ORDER BY `L_WART_FAELLIG` ASC, INTERVAL_M ASC, KOSTENTRAEGER_TYP ASC, KOSTENTRAEGER_ID ASC
-			") or
-    die(mysql_error());
-
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        while ($row = mysql_fetch_assoc($result)) {
-            $my_array[] = $row;
-        }
-        return $my_array;
-    }
+			");
+    return $result;
 }
 
 
@@ -4426,7 +4234,7 @@ function vorschlag_kurz_chrono($gruppe_id = '1', $gemacht = 'NOT')
         $selected_index = $gruppe_element . '.selectedIndex';
         $vorschlag_gruppe_id = $gruppe_element . ".options[$selected_index].value";
         $d_onchange = "onChange=\"daj3('/wartungsplaner/ajax?option=detail_geraet&tab=W_GERAETE&tab_id='+this.value,'rightBox1');daj3('/wartungsplaner/ajax?option=geraete_info_anzeigen&g_id='+this.value,'rightBox');daj3('/wartungsplaner/ajax?option=termin_suchen&g_id='+this.value,'leftBox1');daj3('/wartungsplaner/ajax?option=get_datum_lw&g_id='+this.value,'lw_datum')\"";
-        $js_suche = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termin_vorschlaege_kurz', 'datum_d' => $datum_feld, 'vorschlag_gruppe_id' => $vorschlag_gruppe_id],false) . ", 'leftBox1');\"";
+        $js_suche = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termin_vorschlaege_kurz', 'datum_d' => $datum_feld, 'vorschlag_gruppe_id' => $vorschlag_gruppe_id], false) . ", 'leftBox1');\"";
         button('btn_heute', 'btn_heute', 'Erneut vorschlagen', $js_suche, '');
         $tt = 1;
         if (request()->has('vorschlaege_anzeigen')) {
@@ -4487,7 +4295,7 @@ function vorschlag_kurz_chrono($gruppe_id = '1', $gemacht = 'NOT')
         if ($weiter_stueck > $anz) {
             $weiter_stueck = 0;
         }
-        $js_weiter = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termin_vorschlaege_kurz', 'vorschlaege_anzeigen' => $weiter_stueck],false) . "','leftBox1');\"";
+        $js_weiter = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termin_vorschlaege_kurz', 'vorschlaege_anzeigen' => $weiter_stueck], false) . "','leftBox1');\"";
         button('btn_weiter', 'btn_w', 'Weitere anzeigen', $js_weiter);
         echo "<table class=\"sortable\">";
         echo "<tr><th class=\"sorttable_numeric\">Z</th><th>Mitarbeiter</th><th class=\"sorttable_numeric\">DATUM</th><th>LETZTE</th><th class=\"sorttable_numeric\">Entf</th><th>Kunde</th><th>Hersteller<br>Bezeichnung</th><th class=\"sorttable_numeric\">Alle</th></tr>";
@@ -4543,7 +4351,7 @@ function vorschlag_kurz_chrono($gruppe_id = '1', $gemacht = 'NOT')
                 }
                 echo "<tr valign=\"top\" class=\"zeile$ze\" $js_tages_ansicht><td>$z.";
                 $art_id = $arr_sort[$a]['EINHEIT_ID'];
-                $url = route('legacy::wartungsplaner::ajax', ['option' => 'pdf_anschreiben', 'art' => 'Mieter', 'art_id' => $art_id],false);
+                $url = route('legacy::wartungsplaner::ajax', ['option' => 'pdf_anschreiben', 'art' => 'Mieter', 'art_id' => $art_id], false);
                 $js_pdf_zettel = "onclick=\"window.open('$url');\"";
                 button('btn_pdf_a', 'btn_pdf_a', 'Einwurfzettel', $js_pdf_zettel);
                 echo "</td><td>$mitarbeiter_name</td><td>$datum</td><td>$l_wartung</td><td>$km km</td><td><b>Einheit: $einheit_name</b><br><b>MIETER:</b> $mietername<br>$str $nr $plz<br><b>Kunde</b>:$kos_bez</td><td>$hersteller<br>$g_bez<br>$einbauort</td><td>Alle $intervall M.</td></tr>";
@@ -4553,7 +4361,7 @@ function vorschlag_kurz_chrono($gruppe_id = '1', $gemacht = 'NOT')
                 $ku->get_partner_info($arr_sort[$a]['KOSTENTRAEGER_ID']);
                 echo "<tr valign=\"top\" class=\"zeile$ze\" $js_tages_ansicht><td>$z.";
                 $art_id = $arr_sort[$a]['KOSTENTRAEGER_ID'];
-                $url = route('legacy::wartungsplaner::ajax', ['option' => 'pdf_anschreiben', 'art' => 'Partner', 'art_id' => $art_id],false);
+                $url = route('legacy::wartungsplaner::ajax', ['option' => 'pdf_anschreiben', 'art' => 'Partner', 'art_id' => $art_id], false);
                 $js_pdf_zettel = "onclick=\"window.open('$url');\"";
                 button('btn_pdf_a', 'btn_pdf_a', 'Einwurfzettel', $js_pdf_zettel);
                 echo "</td><td>$mitarbeiter_name</td><td>$datum</td><td>$l_wartung</td><td>$km km</td><td><b>KUNDE: $kos_bez</b><br>$ku->partner_strasse $ku->partner_hausnr<br>$ku->partner_plz $ku->partner_ort</td><td>$hersteller<br>$g_bez<br>$einbauort</td><td>Alle $intervall M.</td></tr>";
@@ -4567,7 +4375,7 @@ function vorschlag_kurz_chrono($gruppe_id = '1', $gemacht = 'NOT')
         if ($weiter_stueck > $anz) {
             $weiter_stueck = 0;
         }
-        $js_weiter = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termin_vorschlaege_kurz', 'vorschlaege_anzeigen' => $weiter_stueck],false) . "','leftBox1');\"";
+        $js_weiter = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termin_vorschlaege_kurz', 'vorschlaege_anzeigen' => $weiter_stueck], false) . "','leftBox1');\"";
         button('btn_weiter', 'btn_w', 'Weitere anzeigen', $js_weiter);
     } else {
         echo "Keine Vorschläge";
@@ -4578,43 +4386,37 @@ function vorschlag_kurz_chrono($gruppe_id = '1', $gemacht = 'NOT')
 
 function get_einheit_id($einheit_name)
 {
-    $result = mysql_query("SELECT EINHEIT_ID FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_KURZNAME='$einheit_name' ORDER BY EINHEIT_DAT DESC LIMIT 0,1");
-    $row = mysql_fetch_assoc($result);
-    return $row['EINHEIT_ID'];
+    $result = DB::select("SELECT EINHEIT_ID FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_KURZNAME='$einheit_name' ORDER BY EINHEIT_DAT DESC LIMIT 0,1");
+    return $result[0]['EINHEIT_ID'];
 }
 
 
 function get_einheit_id_vom_mv($mv_id)
 {
-    $result = mysql_query("SELECT EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && MIETVERTRAG_ID='$mv_id' ORDER BY MIETVERTRAG_VON DESC LIMIT 0,1");
-    $row = mysql_fetch_assoc($result);
-    return $row['EINHEIT_ID'];
+    $result = DB::select("SELECT EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && MIETVERTRAG_ID='$mv_id' ORDER BY MIETVERTRAG_VON DESC LIMIT 0,1");
+    return $result[0]['EINHEIT_ID'];
 }
 
 
 function get_last_mietvertrag_id($einheit_id)
 {
-    $result = mysql_query("SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS>=DATE_FORMAT(NOW(), '%Y-%m-%d')) ORDER BY MIETVERTRAG_VON DESC LIMIT 0 , 1 ");
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        $row = mysql_fetch_assoc($result);
-        return $row['MIETVERTRAG_ID'];
+    $result = DB::select("SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS>=DATE_FORMAT(NOW(), '%Y-%m-%d')) ORDER BY MIETVERTRAG_VON DESC LIMIT 0 , 1 ");
+    if (!empty($result)) {
+        return $result[0]['MIETVERTRAG_ID'];
     }
 }
 
 
 function get_mieter_infos($mv_id)
 {
-    $result = mysql_query("SELECT PERSON_MIETVERTRAG_PERSON_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_MIETVERTRAG_ID='$mv_id' && PERSON_MIETVERTRAG_AKTUELL='1' ORDER BY PERSON_MIETVERTRAG_ID ASC");
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
+    $result = DB::select("SELECT PERSON_MIETVERTRAG_PERSON_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_MIETVERTRAG_ID='$mv_id' && PERSON_MIETVERTRAG_AKTUELL='1' ORDER BY PERSON_MIETVERTRAG_ID ASC");
+    if (!empty($result)) {
         $person_string = '';
-        while ($row = mysql_fetch_assoc($result)) {
-            $person_id = $row['PERSON_MIETVERTRAG_PERSON_ID'];
-            $result1 = mysql_query("SELECT PERSON_NACHNAME, PERSON_VORNAME FROM PERSON WHERE PERSON_ID='$person_id' && PERSON_AKTUELL='1' ORDER BY PERSON_VORNAME, PERSON_VORNAME ASC");
-            $numrows1 = mysql_numrows($result1);
-            if ($numrows1) {
-                while ($row1 = mysql_fetch_assoc($result1)) {
+        foreach($result as $row) {
+            $person_id = $row->PERSON_MIETVERTRAG_PERSON_ID;
+            $result1 = DB::select("SELECT PERSON_NACHNAME, PERSON_VORNAME FROM PERSON WHERE PERSON_ID='$person_id' && PERSON_AKTUELL='1' ORDER BY PERSON_VORNAME, PERSON_VORNAME ASC");
+            if (!empty($result1)) {
+                foreach($result1 as $row1) {
                     $p_nname = $row1['PERSON_NACHNAME'];
                     $p_vname = $row1['PERSON_VORNAME'];
                     $person_string .= "$p_nname $p_vname\n";
@@ -4629,10 +4431,9 @@ function get_mieter_infos($mv_id)
 
 function get_einheit_info($einheit_id)
 {
-    $result = mysql_query("SELECT EINHEIT_KURZNAME, EINHEIT.EINHEIT_ID, EINHEIT_QM, EINHEIT_LAGE, TYP,  HAUS.HAUS_STRASSE, HAUS_NUMMER, HAUS_STADT, HAUS_PLZ, OBJEKT.OBJEKT_ID, OBJEKT_KURZNAME, EIGENTUEMER_PARTNER FROM EINHEIT, HAUS, OBJEKT WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID='$einheit_id' && EINHEIT.HAUS_ID=HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' ORDER BY EINHEIT_DAT DESC LIMIT 0,1");
-    $numrows = mysql_numrows($result);
-    if ($numrows) {
-        $row = mysql_fetch_assoc($result);
+    $result = DB::select("SELECT EINHEIT_KURZNAME, EINHEIT.EINHEIT_ID, EINHEIT_QM, EINHEIT_LAGE, TYP,  HAUS.HAUS_STRASSE, HAUS_NUMMER, HAUS_STADT, HAUS_PLZ, OBJEKT.OBJEKT_ID, OBJEKT_KURZNAME, EIGENTUEMER_PARTNER FROM EINHEIT, HAUS, OBJEKT WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID='$einheit_id' && EINHEIT.HAUS_ID=HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' ORDER BY EINHEIT_DAT DESC LIMIT 0,1");
+    if (!empty($result)) {
+        $row = $result[0];
         $mv_id = get_last_mietvertrag_id($einheit_id);
         if (empty($mv_id)) {
             /*Nie vermietet*/
@@ -4657,7 +4458,7 @@ function handy($datum_d)
 
     $datum_gestern = tage_minus_wp($datum_d, 1);
     $datum_morgen = tage_plus_wp($datum_d, 1);
-    echo "<p class=\"zeile_ueber\"><a href=\"" . route('legacy::wartungsplaner::ajax', ['option' => 'handy', 'datum_d' => $datum_gestern],false) . "\">GESTERN $datum_gestern</a></p>";
+    echo "<p class=\"zeile_ueber\"><a href=\"" . route('legacy::wartungsplaner::ajax', ['option' => 'handy', 'datum_d' => $datum_gestern], false) . "\">GESTERN $datum_gestern</a></p>";
 
     $arr = tages_termine_arr_b(session()->get('mitarbeiter_id'), $datum_d);
     $anz = count($arr);
@@ -4691,12 +4492,12 @@ function handy($datum_d)
                 $g_info = "<b>$HERSTELLER / $BEZEICHNUNG</b>";
 
             }
-            echo "<a class=\"handy\" href=\"" . route('legacy::wartungsplaner::ajax', ['option' => 'form_start_stop', 'tab' => 'GEO_TERMINE', 'tab_dat' => $dat],false) . "\"><p class=\"zeile_belegt\">$von - $bis<br>$kunden_info<br>$g_info</p></a>";
+            echo "<a class=\"handy\" href=\"" . route('legacy::wartungsplaner::ajax', ['option' => 'form_start_stop', 'tab' => 'GEO_TERMINE', 'tab_dat' => $dat], false) . "\"><p class=\"zeile_belegt\">$von - $bis<br>$kunden_info<br>$g_info</p></a>";
         } else {
             echo "<p class=\"zeile_frei\">$von - $bis<br>$txt</p>";
         }
     }//end for
-    echo "<p class=\"zeile_ueber\"><a href=\"" . route('legacy::wartungsplaner::ajax', ['option' => 'handy', 'datum_d' => $datum_morgen],false) . "\">MORGEN $datum_morgen</a></p>";
+    echo "<p class=\"zeile_ueber\"><a href=\"" . route('legacy::wartungsplaner::ajax', ['option' => 'handy', 'datum_d' => $datum_morgen], false) . "\">MORGEN $datum_morgen</a></p>";
 
 
 }
@@ -4707,11 +4508,8 @@ function t_starten($tab, $tab_dat)
     $gg->check_status($tab, $tab_dat);
     if ($gg->status == 'nicht angefangen') {
         $b_id = session()->get('mitarbeiter_id');
-        $db_abfrage = "INSERT INTO START_STOP VALUES('NULL','$tab','$tab_dat', NULL, NULL, NULL, '$b_id', '1')";
-        $result = mysql_query($db_abfrage) or
-        die(mysql_error());
+        DB::insert("INSERT INTO START_STOP VALUES('NULL','$tab','$tab_dat', NULL, NULL, NULL, '$b_id', '1')");
     }
-
     form_start_stop($tab, $tab_dat);
 }
 
@@ -4721,9 +4519,7 @@ function t_beenden($tab, $tab_dat)
     $gg->check_status($tab, $tab_dat);
     if ($gg->status == 'aktiv') {
         $b_id = session()->get('mitarbeiter_id');
-        $db_abfrage = "UPDATE START_STOP SET END_TIME=CURRENT_TIMESTAMP, BENUTZER_ID='$b_id' WHERE TAB='$tab' && TAB_DAT='$tab_dat'";
-        $result = mysql_query($db_abfrage) or
-        die(mysql_error());
+        DB::update("UPDATE START_STOP SET END_TIME=CURRENT_TIMESTAMP, BENUTZER_ID='$b_id' WHERE TAB='$tab' && TAB_DAT='$tab_dat'");
     }
     form_start_stop($tab, $tab_dat);
 }
@@ -4748,34 +4544,34 @@ function form_start_stop($tab, $tab_dat)
     $gg->check_status($tab, $tab_dat);
     if ($gg->status == 'nicht angefangen') {
         echo "<p class=\"zeile_hinweis\">STATUS: NICHT ANGEFANGEN</p>";
-        $js_start = "onclick=\"wopen('" . route('legacy::wartungsplaner::ajax', ['option' => 't_starten', 'tab' => $tab, 'tab_dat' => $tab_dat],false) . "','');\"";
+        $js_start = "onclick=\"wopen('" . route('legacy::wartungsplaner::ajax', ['option' => 't_starten', 'tab' => $tab, 'tab_dat' => $tab_dat], false) . "','');\"";
         echo "<p $js_start class=\"zeile_frei\">STARTEN</p>";
     }
 
     if ($gg->status == 'erledigt') {
         echo "<p class=\"zeile_hinweis\">STATUS: ERLEDIGT</p>";
-        $js_druck = "onclick=\"wopen('" . route('legacy::wartungsplaner::ajax', ['option' => 't_drucken', 'tab' => $tab, 'tab_dat' => $tab_dat],false) . "','');\"";
+        $js_druck = "onclick=\"wopen('" . route('legacy::wartungsplaner::ajax', ['option' => 't_drucken', 'tab' => $tab, 'tab_dat' => $tab_dat], false) . "','');\"";
         echo "<p $js_druck class=\"zeile_frei\">DRUCKEN</p>";
     }
 
     if ($gg->status == 'unterbrochen') {
         echo "<p class=\"zeile_hinweis\">STATUS: UNTERBROCHEN</p>";
-        $js_neustart = "onclick=\"wopen('" . route('legacy::wartungsplaner::ajax', ['option' => 't_neustart', 'tab' => $tab, 'tab_dat' => $tab_dat],false) . "','');\"";
+        $js_neustart = "onclick=\"wopen('" . route('legacy::wartungsplaner::ajax', ['option' => 't_neustart', 'tab' => $tab, 'tab_dat' => $tab_dat], false) . "','');\"";
         echo "<p $js_neustart class=\"zeile_frei\">NEUSTARTEN</p>";
 
-        $js_druck = "onclick=\"wopen('" . route('legacy::wartungsplaner::ajax', ['option' => 't_drucken', 'tab' => $tab, 'tab_dat' => $tab_dat],false) . "','');\"";
+        $js_druck = "onclick=\"wopen('" . route('legacy::wartungsplaner::ajax', ['option' => 't_drucken', 'tab' => $tab, 'tab_dat' => $tab_dat], false) . "','');\"";
         echo "<p $js_druck class=\"zeile_frei\">DRUCKEN</p>";
     }
 
     if ($gg->status == 'aktiv') {
         echo "<p class=\"zeile_hinweis\">STATUS: AKTIV/LäUFT</p>";
-        $js_ende = "onclick=\"wopen('" . route('legacy::wartungsplaner::ajax', ['option' => 't_beenden', 'tab' => $tab, 'tab_dat' => $tab_dat],false) . "','');\"";
+        $js_ende = "onclick=\"wopen('" . route('legacy::wartungsplaner::ajax', ['option' => 't_beenden', 'tab' => $tab, 'tab_dat' => $tab_dat], false) . "','');\"";
         echo "<p $js_ende class=\"zeile_frei\">BEENDEN</p>";
 
-        $js_ab = "onclick=\"wopen('" . route('legacy::wartungsplaner::ajax', ['option' => 't_abbruch', 'tab' => $tab, 'tab_dat' => $tab_dat],false) . "','');\"";
+        $js_ab = "onclick=\"wopen('" . route('legacy::wartungsplaner::ajax', ['option' => 't_abbruch', 'tab' => $tab, 'tab_dat' => $tab_dat], false) . "','');\"";
         echo "<p $js_ab class=\"zeile_frei\">ABBRECHEN</p>";
 
-        $js_druck = "onclick=\"wopen('" . route('legacy::wartungsplaner::ajax', ['option' => 't_drucken', 'tab' => $tab, 'tab_dat' => $tab_dat],false) . "','');\"";
+        $js_druck = "onclick=\"wopen('" . route('legacy::wartungsplaner::ajax', ['option' => 't_drucken', 'tab' => $tab, 'tab_dat' => $tab_dat], false) . "','');\"";
         echo "<p $js_druck class=\"zeile_frei\">DRUCKEN</p>";
     }
     $js = '';
@@ -4898,13 +4694,13 @@ class general
         }
 
 
-        echo "<center><a href=\"" . route('legacy::wartungsplaner::ajax', ['option' => 'karte_gross', 'b_id' => $b_id, 'datum_d' => $datum_d],false) . "\" target=\"_blank\"><img border=\"0\" src =\"$map_berlin$map_markers\"></a></center>";
+        echo "<center><a href=\"" . route('legacy::wartungsplaner::ajax', ['option' => 'karte_gross', 'b_id' => $b_id, 'datum_d' => $datum_d], false) . "\" target=\"_blank\"><img border=\"0\" src =\"$map_berlin$map_markers\"></a></center>";
     }
 
     function get_wteam_profil($benutzer_id)
     {
-        $result = mysql_query("SELECT *, DATE_FORMAT(VON, '%H:%i') AS VON, DATE_FORMAT(BIS, '%H:%i') AS BIS FROM W_TEAM_PROFILE WHERE BENUTZER_ID='$benutzer_id' && AKTUELL = '1'");
-        while ($row = mysql_fetch_assoc($result)) {
+        $result = DB::select("SELECT *, DATE_FORMAT(VON, '%H:%i') AS VON, DATE_FORMAT(BIS, '%H:%i') AS BIS FROM W_TEAM_PROFILE WHERE BENUTZER_ID='$benutzer_id' && AKTUELL = '1'");
+        foreach($result as $row) {
             $benutzer_id = $row['BENUTZER_ID'];
             $arr['ID'] = $row['ID'];
             $arr['1'] = $row['1'];
@@ -4925,9 +4721,9 @@ class general
 
     function get_partner_info($partner_id)
     {
-        $result = mysql_query("SELECT *  FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
-        $row = mysql_fetch_assoc($result);
-        if ($row) {
+        $result = DB::select("SELECT *  FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
+        if (!empty($result)) {
+            $row = $result[0];
             $this->partner_dat = $row['PARTNER_DAT'];
             $this->partner_name = $row['PARTNER_NAME'];
             $this->partner_strasse = $row['STRASSE'];
@@ -5085,20 +4881,12 @@ class general
     function get_teams_arr()
     {
         $abfrage = "SELECT  * FROM W_TEAMS WHERE AKTUELL='1' ORDER BY TEAM_BEZ";
-
-        $result = mysql_query($abfrage);
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $arr[] = $row;
-            }
-            return $arr;
-        }
+        $result = DB::select($abfrage);
+        return $result;
     }
 
     function dropdown_mitarbeiter($team_id, $label, $id, $name, $selected, $js, $class_r = 'reihe', $class_f = 'feld')
     {
-
         $arr = $this->get_wteam_benutzer($team_id);
         if (is_array($arr)) {
             echo "<div class=\"$class_r\">";
@@ -5128,13 +4916,8 @@ class general
 
     function get_wteam_benutzer($team_id)
     {
-        $result = mysql_query("SELECT BENUTZER_ID FROM W_TEAMS_BENUTZER WHERE TEAM_ID='$team_id' && AKTUELL = '1'");
-        while ($row = mysql_fetch_assoc($result)) {
-            $arr[] = $row;
-        }
-        if (isset($arr)) {
-            return $arr;
-        }
+        $result = DB::select("SELECT BENUTZER_ID FROM W_TEAMS_BENUTZER WHERE TEAM_ID='$team_id' && AKTUELL = '1'");
+        return $result;
     }
 
     function dropdown_mitarbeiter_n_team($team_id, $label, $id, $name, $selected, $js, $class_r = 'reihe', $class_f = 'feld')
@@ -5175,9 +4958,7 @@ class general
     function team_hinzu($team_bez)
     {
         $id = last_id2('W_TEAMS', 'TEAM_ID') + 1;
-        $db_abfrage = "INSERT INTO W_TEAMS VALUES(NULL, '$id', '$team_bez', '1')";
-        $result = mysql_query($db_abfrage) or
-        die(mysql_error());
+        DB::insert("INSERT INTO W_TEAMS VALUES(NULL, '$id', '$team_bez', '1')");
         echo "Team $team_bez wurde hinzugefügt!";
     }
 
@@ -5200,17 +4981,13 @@ class general
 
     function mitarbeiter_entfernen($team_id, $b_id)
     {
-        $db_abfrage = "UPDATE W_TEAMS_BENUTZER SET AKTUELL='0' WHERE TEAM_ID='$team_id' && BENUTZER_ID='$b_id'";
-        $result = mysql_query($db_abfrage) or
-        die(mysql_error());
+        DB::update("UPDATE W_TEAMS_BENUTZER SET AKTUELL='0' WHERE TEAM_ID='$team_id' && BENUTZER_ID='$b_id'");
     }
 
     function mitarbeiter_hinzu($team_id, $b_id)
     {
         $id = last_id2('W_TEAMS_BENUTZER', 'ID') + 1;
-        $db_abfrage = "INSERT INTO W_TEAMS_BENUTZER VALUES(NULL, '$id', '$team_id', '$b_id', '1')";
-        $result = mysql_query($db_abfrage) or
-        die(mysql_error());
+        DB::insert("INSERT INTO W_TEAMS_BENUTZER VALUES(NULL, '$id', '$team_id', '$b_id', '1')");
 
         /*Falls kein profil vorhanden, Leerprofil erstellen*/
         if (!is_array($this->get_wteam_profil($b_id))) {
@@ -5221,10 +4998,7 @@ class general
             $db_abfrage .= "NULL, '$id', '$b_id', '0','0','0','0','0','0','0','06:45','15:15','5', '$start_adresse', '1', '1'";
             $db_abfrage .= ")";
 
-            $result = mysql_query($db_abfrage) or
-            die(mysql_error());
-
-
+            DB::insert($db_abfrage);
         }
     }
 
@@ -5241,11 +5015,9 @@ class general
         $dat2 = ltrim(rtrim($ziel_arr[2]));
 
         $db_abfrage = "SELECT * FROM GEO_ENTFERNUNG WHERE AKTUELL='1' && GEO_DAT_START='$dat1' && GEO_DAT_ZIEL='$dat2' ORDER BY DAT DESC LIMIT 0,1";
-        $result = mysql_query($db_abfrage) or
-        die(mysql_error());
-        $numrows = mysql_num_rows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
+            $row = $result[0];
             if ($row['QUELLE'] == 'OpenStreetMaps') {
                 $this->km = $row['KM'] . ' km';
                 $this->fahrzeit = $row['FAHRZEIT'];
@@ -5277,8 +5049,6 @@ class general
                 $status = $xml->status;
                 echo "STATUS $status";
                 if ($status == 'OK') {
-                    $start_a = utf8_decode($xml->route->leg->start_address);
-                    $end_a = utf8_decode($xml->route->leg->end_address);
                     $km = $xml->route->leg->distance->text;
                     $fahrzeit = $xml->route->leg->duration->text;
                     $this->km = $km;
@@ -5327,12 +5097,11 @@ class general
             $datum_sql = date_german2mysql($datum_d);
             $wochentag_nr = get_wochentag($datum_d);
 
-            $abfrage = "SELECT  '$datum_d' AS DATUM,  DATE_FORMAT('$datum_sql','%Y%m%d') AS DATUMZ, benutzername, W_TEAMS_BENUTZER.BENUTZER_ID,  TERMINE_TAG,  (SELECT COUNT(DAT) FROM GEO_TERMINE WHERE DATUM='$datum_sql' && W_TEAMS_BENUTZER.BENUTZER_ID=GEO_TERMINE.BENUTZER_ID && AKTUELL='1') AS T_BELEGT, TERMINE_TAG-(SELECT COUNT(DAT) FROM GEO_TERMINE WHERE DATUM='$datum_sql' && W_TEAMS_BENUTZER.BENUTZER_ID=GEO_TERMINE.BENUTZER_ID && AKTUELL='1') AS FREI, START_ADRESSE  FROM BENUTZER, `W_TEAMS_BENUTZER`, W_TEAM_PROFILE, GEO_TERMINE WHERE W_TEAM_PROFILE.$wochentag_nr='1' AND `TEAM_ID` = '$TEAM_ID' AND W_TEAMS_BENUTZER.AKTUELL = '1' AND W_TEAM_PROFILE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID AND W_TEAM_PROFILE.AKTUELL='1' AND W_TEAM_PROFILE.AKTIV='1' AND TERMINE_TAG>(SELECT COUNT(*) AS ANZ FROM GEO_TERMINE WHERE GEO_TERMINE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID && GEO_TERMINE.AKTUELL='1' && DATUM='$datum_sql') && W_TEAMS_BENUTZER.BENUTZER_ID NOT IN(SELECT BENUTZER_ID FROM URLAUB WHERE URLAUB.DATUM='$datum_sql' && URLAUB.AKTUELL='1') && BENUTZER.benutzer_id=W_TEAMS_BENUTZER.BENUTZER_ID  GROUP BY  W_TEAMS_BENUTZER.BENUTZER_ID ORDER BY DATUMZ ASC, FREI ASC";
+            $abfrage = "SELECT '$datum_d' AS DATUM, DATE_FORMAT('$datum_sql','%Y%m%d') AS DATUMZ, benutzername, W_TEAMS_BENUTZER.BENUTZER_ID,  TERMINE_TAG,  (SELECT COUNT(DAT) FROM GEO_TERMINE WHERE DATUM='$datum_sql' && W_TEAMS_BENUTZER.BENUTZER_ID=GEO_TERMINE.BENUTZER_ID && AKTUELL='1') AS T_BELEGT, TERMINE_TAG-(SELECT COUNT(DAT) FROM GEO_TERMINE WHERE DATUM='$datum_sql' && W_TEAMS_BENUTZER.BENUTZER_ID=GEO_TERMINE.BENUTZER_ID && AKTUELL='1') AS FREI, START_ADRESSE  FROM BENUTZER, `W_TEAMS_BENUTZER`, W_TEAM_PROFILE, GEO_TERMINE WHERE W_TEAM_PROFILE.$wochentag_nr='1' AND `TEAM_ID` = '$TEAM_ID' AND W_TEAMS_BENUTZER.AKTUELL = '1' AND W_TEAM_PROFILE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID AND W_TEAM_PROFILE.AKTUELL='1' AND W_TEAM_PROFILE.AKTIV='1' AND TERMINE_TAG>(SELECT COUNT(*) AS ANZ FROM GEO_TERMINE WHERE GEO_TERMINE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID && GEO_TERMINE.AKTUELL='1' && DATUM='$datum_sql') && W_TEAMS_BENUTZER.BENUTZER_ID NOT IN(SELECT BENUTZER_ID FROM URLAUB WHERE URLAUB.DATUM='$datum_sql' && URLAUB.AKTUELL='1') && BENUTZER.benutzer_id=W_TEAMS_BENUTZER.BENUTZER_ID  GROUP BY  W_TEAMS_BENUTZER.BENUTZER_ID ORDER BY DATUMZ ASC, FREI ASC";
 
-            $result = mysql_query($abfrage);
-            $numrows = mysql_numrows($result);
-            if ($numrows) {
-                while ($row = mysql_fetch_assoc($result)) {
+            $result = DB::select($abfrage);
+            if (!empty($result)) {
+                foreach($result as $row) {
                     $arr[] = $row;
                     $b_id = $row['BENUTZER_ID'];
                     $arr[$z]['D_KM'] = str_replace('.', ',', number_format(get_durchschnitt_km($b_id, $datum_sql), 2));
@@ -5377,11 +5146,9 @@ class general
             $abfrage1 = "SELECT '$datum_d' AS DATUM,  DATE_FORMAT('$datum_sql','%Y%m%d') AS DATUMZ, benutzername, W_TEAMS_BENUTZER.BENUTZER_ID,  TERMINE_TAG,  START_ADRESSE  FROM BENUTZER, `W_TEAMS_BENUTZER`, W_TEAM_PROFILE, GEO_TERMINE WHERE W_TEAM_PROFILE.$wochentag_nr='1' AND `TEAM_ID` = '$TEAM_ID' AND W_TEAMS_BENUTZER.AKTUELL = '1' AND W_TEAM_PROFILE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID AND W_TEAM_PROFILE.AKTUELL='1' AND W_TEAM_PROFILE.AKTIV='1' AND TERMINE_TAG>(SELECT COUNT(*) AS ANZ FROM GEO_TERMINE WHERE GEO_TERMINE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID && GEO_TERMINE.AKTUELL='1' && DATUM='$datum_sql') && W_TEAMS_BENUTZER.BENUTZER_ID NOT IN(SELECT BENUTZER_ID FROM URLAUB WHERE URLAUB.DATUM='$datum_sql' && URLAUB.AKTUELL='1') && BENUTZER.benutzer_id=W_TEAMS_BENUTZER.BENUTZER_ID  GROUP BY  W_TEAMS_BENUTZER.BENUTZER_ID ORDER BY DATUMZ ASC";
             /*Egal ob Termine frei, wird nachher geschaut*/
             $abfrage = "SELECT  '$datum_d' AS DATUM,  DATE_FORMAT('$datum_sql','%Y%m%d') AS DATUMZ, benutzername, W_TEAMS_BENUTZER.BENUTZER_ID,  TERMINE_TAG,  START_ADRESSE  FROM BENUTZER, `W_TEAMS_BENUTZER`, W_TEAM_PROFILE, GEO_TERMINE WHERE W_TEAM_PROFILE.$wochentag_nr='1' AND `TEAM_ID` = '$TEAM_ID' AND W_TEAMS_BENUTZER.AKTUELL = '1' AND W_TEAM_PROFILE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID AND W_TEAM_PROFILE.AKTUELL='1' AND W_TEAM_PROFILE.AKTIV='1'  && W_TEAMS_BENUTZER.BENUTZER_ID NOT IN(SELECT BENUTZER_ID FROM URLAUB WHERE URLAUB.DATUM='$datum_sql' && URLAUB.AKTUELL='1') && BENUTZER.benutzer_id=W_TEAMS_BENUTZER.BENUTZER_ID  GROUP BY  W_TEAMS_BENUTZER.BENUTZER_ID ORDER BY DATUMZ ASC";
-            $result = mysql_query($abfrage1);
-            $numrows = mysql_numrows($result);
-            if ($numrows) {
-                while ($row = mysql_fetch_assoc($result)) {
-
+            $result = DB::select($abfrage1);
+            if (!empty($result)) {
+                foreach($result as $row) {
                     $b_id = $row['BENUTZER_ID'];
                     if (is_array(get_luecken_termine1($b_id, $datum_d))) {
                         $arr[$z] = $row;
@@ -5400,8 +5167,6 @@ class general
                 $tage += 15;
                 $arr = $this->get_termin_arr1($TEAM_ID, $datum_df, $tage);
             } else {
-                #echo "räckgabe<br>";
-                #print_r($arr);
                 return $arr;
             }
         } else {
@@ -5430,7 +5195,7 @@ class general
                 $gif = $xml->route->legs->leg->maneuvers->maneuver[$a]->iconUrl;
                 if ($a < $anz - 1) {
                     echo "<img src=\"$gif\">";
-                    echo "$z." . utf8_decode($xml->route->legs->leg->maneuvers->maneuver[$a]->narrative) . "<br>";
+                    echo "$z." . $xml->route->legs->leg->maneuvers->maneuver[$a]->narrative . "<br>";
                 }
             }
 
@@ -5442,9 +5207,9 @@ class general
         unset($this->gruppe_id);
         unset($this->gruppe);
         unset($this->team_id);
-        $result = mysql_query("SELECT * FROM W_GRUPPE WHERE GRUPPE_ID='$gruppen_id' && AKTUELL = '1' LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
-        if ($row) {
+        $result = DB::select("SELECT * FROM W_GRUPPE WHERE GRUPPE_ID='$gruppen_id' && AKTUELL = '1' LIMIT 0,1");
+        if (!empty($result)) {
+            $row = $result[0];
             $this->gruppe_id = $row['GRUPPE_ID'];
             $this->gruppe = $row['GRUPPE'];
             $this->team_id = $row['TEAM_ID'];
@@ -5457,9 +5222,9 @@ class general
         unset($this->team_id);
         unset($this->team_bez);
         unset($this->team_benutzer_ids);
-        $result = mysql_query("SELECT * FROM W_TEAMS WHERE TEAM_ID='$team_id' && AKTUELL = '1' LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
-        if ($row) {
+        $result = DB::select("SELECT * FROM W_TEAMS WHERE TEAM_ID='$team_id' && AKTUELL = '1' LIMIT 0,1");
+        if (!empty($result)) {
+            $row = $result[0];
             $this->team_id = $team_id;
             $this->team_bez = $row['TEAM_BEZ'];
             $this->team_benutzer_ids = $this->get_wteam_benutzer($team_id);
@@ -5477,21 +5242,17 @@ class general
 
     function get_wteam_benutzer_tag($team_id, $tag_nr = '1')
     {
-        $result = mysql_query("SELECT BENUTZER_ID FROM W_TEAMS_BENUTZER WHERE TEAM_ID='$team_id' && AKTUELL = '1'");
-        while ($row = mysql_fetch_assoc($result)) {
-            $arr[] = $row;
-        }
-        return $arr;
+        $result = DB::select("SELECT BENUTZER_ID FROM W_TEAMS_BENUTZER WHERE TEAM_ID='$team_id' && AKTUELL = '1'");
+        return $result;
     }
 
     function check_status($tab, $tab_dat)
     {
-        $result = mysql_query("SELECT * FROM START_STOP WHERE TAB='$tab' && TAB_DAT='$tab_dat' && AKTUELL='1' ORDER BY S_DAT DESC LIMIT 0,1");
-        $numrows = mysql_numrows($result);
-        if (!$numrows) {
+        $result = DB::select("SELECT * FROM START_STOP WHERE TAB='$tab' && TAB_DAT='$tab_dat' && AKTUELL='1' ORDER BY S_DAT DESC LIMIT 0,1");
+        if (empty($result)) {
             $this->status = 'nicht angefangen';
         } else {
-            $row = mysql_fetch_assoc($result);
+            $row = $result[0];
             if ($row['START_TIME'] != NULL && $row['END_TIME'] != NULL && $row['UNTERBROCHEN'] == NULL) {
                 $this->status = 'erledigt';
             }
@@ -5503,18 +5264,14 @@ class general
             if ($row['UNTERBROCHEN'] == '1') {
                 $this->status = 'unterbrochen';
             }
-
-
         }
     }
 
     function check_my_active($b_id, $tab)
     {
-        $result = mysql_query("SELECT * FROM START_STOP WHERE TAB='$tab' && BENUTZER_ID='$b_id' && AKTUELL='1' && END_TIME IS NULL && UNTERBROCHEN IS NULL ORDER BY S_DAT DESC LIMIT 0,1");
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
-            return $row['TAB_DAT'];
+        $result = DB::select("SELECT * FROM START_STOP WHERE TAB='$tab' && BENUTZER_ID='$b_id' && AKTUELL='1' && END_TIME IS NULL && UNTERBROCHEN IS NULL ORDER BY S_DAT DESC LIMIT 0,1");
+        if (!empty($result)) {
+            return $result[0]['TAB_DAT'];
         } else {
             return false;
         }
@@ -5523,17 +5280,16 @@ class general
     function start_stop_protokoll($tab = '', $kw, $b_id)
     {
         if ($tab != '') {
-            $result = mysql_query("SELECT *, TIME_TO_SEC(TIMEDIFF(END_TIME, START_TIME))/60 AS DAUER_MIN, TIME_TO_SEC(TIMEDIFF(END_TIME, START_TIME))/3600 AS DAUER_STD FROM START_STOP WHERE TAB='$tab' && BENUTZER_ID='$b_id' && AKTUELL='1' ORDER BY START_TIME");
+            $result = DB::select("SELECT *, TIME_TO_SEC(TIMEDIFF(END_TIME, START_TIME))/60 AS DAUER_MIN, TIME_TO_SEC(TIMEDIFF(END_TIME, START_TIME))/3600 AS DAUER_STD FROM START_STOP WHERE TAB='$tab' && BENUTZER_ID='$b_id' && AKTUELL='1' ORDER BY START_TIME");
         } else {
-            $result = mysql_query("SELECT *, TIME_TO_SEC(TIMEDIFF(END_TIME, START_TIME))/60 AS DAUER_MIN, TIME_TO_SEC(TIMEDIFF(END_TIME, START_TIME))/3600 AS DAUER_STD FROM START_STOP WHERE BENUTZER_ID='$b_id' && AKTUELL='1' ORDER BY START_TIME");
+            $result = DB::select("SELECT *, TIME_TO_SEC(TIMEDIFF(END_TIME, START_TIME))/60 AS DAUER_MIN, TIME_TO_SEC(TIMEDIFF(END_TIME, START_TIME))/3600 AS DAUER_STD FROM START_STOP WHERE BENUTZER_ID='$b_id' && AKTUELL='1' ORDER BY START_TIME");
         }
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
+        if (!empty($result)) {
             echo "<table class=\"sortable\">";
             $bname = get_benutzername($b_id);
             echo "<tr><th colspan=\"4\">$bname</th></tr>";
             $z = 0;
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $z++;
                 $table = $row['TAB'];
                 $tab_dat = $row['TAB_DAT'];
@@ -5567,11 +5323,9 @@ class general
     function get_termin_details($dat)
     {
         $db_abfrage = "SELECT * FROM GEO_TERMINE WHERE AKTUELL='1' && DAT='$dat' LIMIT 0,1";
-        $result = mysql_query($db_abfrage) or
-        die(mysql_error());
-        $numrows = mysql_num_rows($result);
-        if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
+            $row = $result[0];
             $this->t_datum = $row['DATUM'];
             $this->t_von = $row['VON'];
             $this->t_bis = $row['BIS'];
@@ -5620,7 +5374,7 @@ class general
         $pdf->ezStream();
     }
 
-    function pdf_protokoll_seite(&$pdf, $datum_d, $b_id, $arr)
+    function pdf_protokoll_seite(Cezpdf &$pdf, $datum_d, $b_id, $arr)
     {
         if (!is_array($arr)) {
             die('ABBRUCH KEINE TERMINDATEN');
@@ -6011,9 +5765,7 @@ class general
 
     function update_profil($b_id, $spalte, $wert)
     {
-        $db_abfrage = "UPDATE W_TEAM_PROFILE SET `$spalte`='$wert' WHERE BENUTZER_ID='$b_id'";
-        $resultat = mysql_query($db_abfrage) or
-        die(mysql_error());
+        DB::update("UPDATE W_TEAM_PROFILE SET `$spalte`='$wert' WHERE BENUTZER_ID='$b_id'");
         echo "<p class=\"zeile_hinweis_rot\">Profil geändert</p>";
     }
 

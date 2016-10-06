@@ -16,7 +16,7 @@ class LegacyResponse extends Response
      */
     public function __construct($include, $status = 200, $headers = [])
     {
-        error_reporting(E_ALL ^ E_DEPRECATED ^ E_WARNING ^ E_NOTICE);
+        error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
         ob_start();
         include(base_path($include));
         $content = ob_get_contents();

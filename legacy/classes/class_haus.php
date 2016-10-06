@@ -11,10 +11,13 @@ class haus extends objekt {
      * var $haus_plz;
      * var $haus_stadt;
      */
+    public $haus_stadt;
+    public $haus_nummer;
+    public $haus_strasse;
+
     function get_haus_info($haus_id) {
-        $result = mysql_query ( "SELECT * FROM HAUS WHERE HAUS_AKTUELL='1' && HAUS_ID='$haus_id' ORDER BY HAUS_DAT DESC LIMIT 0,1" );
-        $row = mysql_fetch_assoc ( $result );
-        // print_r($row);
+        $result = DB::select( "SELECT * FROM HAUS WHERE HAUS_AKTUELL='1' && HAUS_ID='$haus_id' ORDER BY HAUS_DAT DESC LIMIT 0,1" );
+        $row = $result[0];
         $this->objekt_id = $row ['OBJEKT_ID'];
         $gg = new geldkonto_info ();
         $gg->geld_konto_ermitteln ( 'OBJEKT', $this->objekt_id );
@@ -26,14 +29,11 @@ class haus extends objekt {
         $this->haus_qm = $row ['HAUS_QM'];
     }
     function liste_aller_haeuser() {
-        $result = mysql_query ( "SELECT * FROM HAUS WHERE HAUS_AKTUELL='1' ORDER BY HAUS_STRASSE, HAUS_NUMMER ASC" );
-        while ( $row = mysql_fetch_assoc ( $result ) )
-            $haeuser_array [] = $row;
-        return $haeuser_array;
+        $result = DB::select( "SELECT * FROM HAUS WHERE HAUS_AKTUELL='1' ORDER BY HAUS_STRASSE, HAUS_NUMMER ASC" );
+        return $result;
     }
     function form_haus_aendern($haus_id) {
         $this->get_haus_info ( $haus_id );
-        // print_r($this);
         $f = new formular ();
         $f->erstelle_formular ( "Haus ändern - $this->objekt_name $this->haus_strasse $this->haus_nummer", NULL );
 
@@ -90,16 +90,16 @@ class haus extends objekt {
         $last_id = $bk->last_id ( 'HAUS', 'HAUS_ID' ) + 1;
         /* Speichern */
         $db_abfrage = "INSERT INTO HAUS VALUES(NULL, '$last_id', '$strasse', '$haus_nr','$ort', '$plz', '$qm', '1', '$objekt_id')";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+        DB::insert( $db_abfrage );
 
         /* Protokollieren */
-        $last_dat = mysql_insert_id ();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren ( 'HAUS', $last_dat, '0' );
         return $last_id;
     }
     function haus_deaktivieren($haus_id) {
         $db_abfrage = "UPDATE HAUS SET HAUS_AKTUELL='0' WHERE HAUS_ID='$haus_id'";
-        $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+        DB::update( $db_abfrage );
         return true;
     }
     function haus_aenderung_in_db($strasse, $haus_nr, $ort, $plz, $qm, $objekt_id, $haus_id) {
@@ -107,10 +107,10 @@ class haus extends objekt {
 
             /* Speichern */
             $db_abfrage = "INSERT INTO HAUS VALUES(NULL, '$haus_id', '$strasse', '$haus_nr','$ort', '$plz', '$qm', '1', '$objekt_id')";
-            $resultat = mysql_query ( $db_abfrage ) or die ( mysql_error () );
+            DB::insert( $db_abfrage );
 
             /* Protokollieren */
-            $last_dat = mysql_insert_id ();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren ( 'HAUS', $last_dat, '0' );
             return $last_id;
         } else {
@@ -118,10 +118,10 @@ class haus extends objekt {
         }
     }
     function get_qm_gesamt_gewerbe($haus_id) {
-        $result = mysql_query ( "SELECT SUM(EINHEIT_QM) AS GESAMT_QM FROM `EINHEIT` WHERE `HAUS_ID` = '$haus_id' AND `EINHEIT_AKTUELL` ='1' && TYP='Gewerbe'" );
-        $numrows = mysql_numrows ( $result );
+        $result = DB::select( "SELECT SUM(EINHEIT_QM) AS GESAMT_QM FROM `EINHEIT` WHERE `HAUS_ID` = '$haus_id' AND `EINHEIT_AKTUELL` ='1' && TYP='Gewerbe'" );
+        $numrows = count( $result );
         if ($numrows) {
-            $row = mysql_fetch_assoc ( $result );
+            $row = $result[0];
             if ($row ['GESAMT_QM'] != NULL) {
                 return $row ['GESAMT_QM'];
             } else {
@@ -132,10 +132,9 @@ class haus extends objekt {
         }
     }
     function get_qm_gesamt($haus_id) {
-        $result = mysql_query ( "SELECT SUM(EINHEIT_QM) AS GESAMT_QM FROM `EINHEIT` WHERE `HAUS_ID` = '$haus_id' AND `EINHEIT_AKTUELL` ='1' " );
-        $numrows = mysql_numrows ( $result );
-        if ($numrows) {
-            $row = mysql_fetch_assoc ( $result );
+        $result = DB::select( "SELECT SUM(EINHEIT_QM) AS GESAMT_QM FROM `EINHEIT` WHERE `HAUS_ID` = '$haus_id' AND `EINHEIT_AKTUELL` ='1' " );
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['GESAMT_QM'];
         } else {
             return '0.00';
@@ -177,12 +176,9 @@ class haus extends objekt {
         echo "</div>";
     }
     function liste_aller_einheiten_im_haus($haus_id) {
-        $result = mysql_query ( "SELECT * FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && HAUS_ID='$haus_id' ORDER BY EINHEIT_KURZNAME ASC" );
-        $einheiten_array = array ();
-        while ( $row = mysql_fetch_assoc ( $result ) )
-            $einheiten_array [] = $row;
-        $this->anzahl_einheiten = count ( $einheiten_array );
-        return $einheiten_array;
+        $result = DB::select( "SELECT * FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && HAUS_ID='$haus_id' ORDER BY EINHEIT_KURZNAME ASC" );
+        $this->anzahl_einheiten = count ( $result );
+        return $result;
     }
     function get_haus_id($haus_name) {
         $haus_arr = explode ( ' ', $haus_name );
@@ -206,9 +202,9 @@ class haus extends objekt {
             $haus_strasse = $haus_strasse . " $haus_arr[$a]";
         }
         $haus_strasse = ltrim ( rtrim ( $haus_strasse ) );
-        $result = mysql_query ( "SELECT HAUS_ID FROM HAUS WHERE HAUS_AKTUELL='1' && HAUS_STRASSE='$haus_strasse' && HAUS_NUMMER='$haus_nr' ORDER BY HAUS_DAT DESC LIMIT 0,1" );
+        $result = DB::select( "SELECT HAUS_ID FROM HAUS WHERE HAUS_AKTUELL='1' && HAUS_STRASSE='$haus_strasse' && HAUS_NUMMER='$haus_nr' ORDER BY HAUS_DAT DESC LIMIT 0,1" );
 
-        $row = mysql_fetch_assoc ( $result );
+        $row = $result[0];
         $this->haus_id = $row ['HAUS_ID'];
     }
 }

@@ -1852,7 +1852,7 @@ switch ($option) {
         $r->form_rbuecher_suchen();
         ?>
         <script>
-            document.addEventListener("DOMContentLoaded", function(event) {
+            document.addEventListener("DOMContentLoaded", function (event) {
                 var typ = document.getElementById("r_inhaber_t");
                 list_kostentraeger('list_kostentraeger', typ.value);
             });
@@ -2278,9 +2278,9 @@ switch ($option) {
             $gk->geld_konto_ermitteln('Partner', session()->get('partner_id'));
             $faellig_am = tage_plus($datum, 10);
             $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', 'Rechnung', '$datum','$datum', '$netto_betrag','$brutto_betrag','0.00', 'Partner', '" . session()->get('partner_id') . "','$empf_typ', '$empf_id','1', '1', '0', '0', '0', '0', '0', '$faellig_am', '0000-00-00', '$kurztext_neu', '$gk->geldkonto_id')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert($db_abfrage);
             /* Protokollieren */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('RECHNUNGEN', $last_dat, '0');
 
             /* Positionen erfassen */
@@ -2289,19 +2289,19 @@ switch ($option) {
             $letzte_rech_pos_id = $r->get_last_rechnung_pos_id() + 1;
             $p_id = session()->get('partner_id');
             $db_abfrage = "INSERT INTO RECHNUNGEN_POSITIONEN VALUES (NULL, '$letzte_rech_pos_id', '1', '$letzte_belegnr', '$letzte_belegnr','$p_id', '$art_nr', '1','$netto_betrag','19', '0','0', '$netto_betrag','1')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert($db_abfrage);
             /* Protokollieren */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('RECHNUNGEN_POSITIONEN', $last_dat, '0');
 
             /* Kontieren */
             $kontierung_id = $r->get_last_kontierung_id() + 1;
 
             $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$letzte_belegnr', '1','1', '$netto_betrag', '$netto_betrag', '19', '0', '0', '$kostenkonto', '$empf_typ', '$empf_id', '$datum', '$jahr', '0', '1')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert($db_abfrage);
 
             /* Protokollieren */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('KONTIERUNG_POSITIONEN', $last_dat, '0');
 
             /* In SEPA ÜBERWEISUNGEN bei Häkchen */
@@ -2356,9 +2356,9 @@ switch ($option) {
         $gk->geld_konto_ermitteln('Partner', session()->get('partner_id'));
         $faellig_am = tage_plus($datum, 10);
         $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', 'Rechnung', '$datum','$datum', '$netto_betrag','0.00','0.00', 'Partner', '" . session()->get('partner_id') . "','$empf_typ', '$empf_id','1', '1', '0', '0', '0', '0', '0', '$faellig_am', '0000-00-00', '$kurztext_neu', '$gk->geldkonto_id')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
         /* Protokollieren */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('RECHNUNGEN', $last_dat, '0');
 
         $pos = 0;
@@ -2378,18 +2378,18 @@ switch ($option) {
             $letzte_rech_pos_id = $r->get_last_rechnung_pos_id() + 1;
             $p_id = session()->get('partner_id');
             $db_abfrage = "INSERT INTO RECHNUNGEN_POSITIONEN VALUES (NULL, '$letzte_rech_pos_id', '$pos', '$letzte_belegnr', '$letzte_belegnr','$p_id', '$art_nr', $menge,'$netto_betrag','19', '0','0', '$g_netto','1')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert($db_abfrage);
             /* Protokollieren */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('RECHNUNGEN_POSITIONEN', $last_dat, '0');
 
             /* Kontieren */
             $kontierung_id = $r->get_last_kontierung_id() + 1;
             $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$letzte_belegnr', '$pos','$menge', '$netto_betrag', '$g_netto', '19', '0', '0', '$kostenkonto', 'Objekt', '" . session()->get('objekt_id') . "', '$datum', '$jahr', '0', '1')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            $resultat = DB::insert($db_abfrage);
 
             /* Protokollieren */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('KONTIERUNG_POSITIONEN', $last_dat, '0');
         }
 

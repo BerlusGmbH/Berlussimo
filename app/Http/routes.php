@@ -38,10 +38,6 @@ Route::group(['prefix' => config('app.legacy.prefix'), 'namespace' => 'Legacy', 
         Route::match(['get', 'post'], '/', 'BuchenController@request')->name('index');
     });
 
-    Route::group(['prefix' => 'dbbackup', 'as' => 'dbbackup::'], function () {
-        Route::match(['get', 'post'], '/', 'DbBackupController@request')->name('index');
-    });
-
     Route::group(['prefix' => 'details', 'as' => 'details::'], function () {
         Route::match(['get', 'post'], '/', 'DetailsController@request')->name('index');
     });
@@ -112,7 +108,7 @@ Route::group(['prefix' => config('app.legacy.prefix'), 'namespace' => 'Legacy', 
     });
 
     Route::group(['prefix' => 'miete_definieren', 'as' => 'miete_definieren::'], function () {
-        Route::match(['get', 'post'], '/', 'MieteBuchenController@request')->name('index');
+        Route::match(['get', 'post'], '/', 'MieteDefinierenController@request')->name('index');
     });
 
     Route::group(['prefix' => 'mietkontenblatt', 'as' => 'mietkontenblatt::'], function () {

@@ -21,18 +21,15 @@ class serienbrief
             $db_abfrage = "SELECT * FROM PDF_VORLAGEN WHERE KAT='$kat' && EMPF_TYP='$empf_typ' ORDER BY KURZTEXT ASC";
         }
 
-        $result = mysql_query($db_abfrage) or die (mysql_error());
+        $result = DB::select($db_abfrage);
 
         /* Wenn keine Vorlagen, dann alle anzeigen */
-        $numrows = mysql_numrows($result);
-        if (!$numrows) {
+        if (empty($result)) {
             $db_abfrage = "SELECT * FROM PDF_VORLAGEN ORDER BY KURZTEXT ASC";
-            $result = mysql_query($db_abfrage) or die (mysql_error());
+            $result = DB::select($db_abfrage);
         }
 
-        $numrows = mysql_numrows($result);
-
-        if ($numrows) {
+        if (!empty($result)) {
             echo "<table class=\"striped\">\n";
             $link_kat = "<a href='" . route('legacy::weg::index', ['option' => 'serien_brief_vorlagenwahl']) . "'>Alle Kats anzeigen</a>";
             echo "<thead>";
@@ -40,7 +37,7 @@ class serienbrief
             echo "<tr><th><b>$empf_typ<b></th><th>$link_kat</th><th></th><th></th></tr>";
             echo "</thead>";
 
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $dat = $row ['DAT'];
                 $kurztext = $row ['KURZTEXT'];
                 $text = $row ['TEXT'];

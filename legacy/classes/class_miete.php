@@ -991,28 +991,13 @@ class miete
 
     function mietbuchung_intern_extern_anzeigen($mietvertrag_id)
     {
-        $result = mysql_query("SELECT ( SELECT sum(BETRAG) FROM MIETE_ZAHLBETRAG WHERE MIETVERTRAG_ID='$mietvertrag_id' ) AS ZB,  ( SELECT sum(BETRAG) FROM MIETBUCHUNGEN WHERE  MIETVERTRAG_ID='$mietvertrag_id' ) AS INTERN");
-        $row = mysql_fetch_assoc($result);
-        // return $my_array;
+        $result = DB::select("SELECT ( SELECT sum(BETRAG) FROM MIETE_ZAHLBETRAG WHERE MIETVERTRAG_ID='$mietvertrag_id' ) AS ZB,  ( SELECT sum(BETRAG) FROM MIETBUCHUNGEN WHERE  MIETVERTRAG_ID='$mietvertrag_id' ) AS INTERN");
+        $row = $result[0];
         $miete_zahlbetrag_summe = number_format($row ['zb'], 2, ",", "");
         $miete_intern_summe = number_format($row ['INTERN'], 2, ",", "");
 
         echo "<h1>ZB:$miete_zahlbetrag_summe € INT:$miete_intern_summe €</h1>";
     }
-
-    /*
-	 * function insert_saldos(){
-	 * $result = mysql_query ("SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_ID ASC");
-	 *
-	 * while ($row = mysql_fetch_assoc($result)){
-	 * $mv_id= $row[MIETVERTRAG_ID];
-	 * $db_abfrage = "INSERT INTO MIETE_ZAHLBETRAG VALUES (NULL, '11111', '$mv_id', '2006-12-30', '500.00', 'Saldo Vortrag Vorverwaltung', '1', '11')";
-	 * $resultat = mysql_query($db_abfrage) or
-	 * die(mysql_error());
-	 * }
-	 *
-	 * }
-	 */
 
     /* Gegenüberdarstellung von intern und extern buchung */
 
@@ -1043,9 +1028,8 @@ class miete
 
         /* Regel wenn es ein Berechnungsergebnis gibt, d.h. miete definiert und berechnet, falls nicht auch nicht anzeigen, da in wahrscheinlich in Zukunft */
         if (!empty ($a->erg)) {
-            
+
             $a->erg = number_format($a->erg, 2, ",", "");
-            // echo "<tr><td colspan=4><h1>SALDO $a->erg €</h1>";
 
             echo "<table class=aktuelle_buchungen>";
             echo "<thead>";
@@ -1066,7 +1050,6 @@ class miete
             echo "</tr>";
             echo "</thead>";
 
-            // echo "<tr><td><b>Datum</b></td><td><b>Monatssoll</b></td><td><b>Zahlung</b></td><td><b>Saldo</b></td></tr>";
             if (!empty ($a->saldo_vv)) {
                 $saldo_vv = number_format($a->saldo_vv, 2, ",", "");
                 echo "<tr><td></td><td colspan=2 align=left><h2 class=\"saldo_vv\">SALDO VORTRAG VORVERWALTUNG</h2></td><td><b>$saldo_vv €</b></td></tr>";
@@ -1083,14 +1066,6 @@ class miete
 
                     if (!empty ($a->daten_arr [$key] ['monate'] [$b] ['bk_abrechnung'])) {
                         $bk_abrechnung = $a->daten_arr [$key] ['monate'] [$b] ['bk_abrechnung'];
-                        /*
-						 * if($bk_abrechnung < '0.00'){
-						 * $bk_abrechnung = abs($bk_abrechnung);
-						 * }
-						 * else{
-						 * $bk_abrechnung = "-$bk_abrechnung";
-						 * }
-						 */
 
                         $bk_abrechnung = number_format($bk_abrechnung, 2, ",", "");
                         $datum_bk = $a->daten_arr [$key] ['monate'] [$b] ['bk_abrechnung_datum'];
@@ -1099,14 +1074,7 @@ class miete
 
                     if (!empty ($a->daten_arr [$key] ['monate'] [$b] ['hk_abrechnung'])) {
                         $hk_abrechnung = $a->daten_arr [$key] ['monate'] [$b] ['hk_abrechnung'];
-                        /*
-						 * if($hk_abrechnung < '0.00'){
-						 * $hk_abrechnung = abs($hk_abrechnung);
-						 * }
-						 * else{
-						 * $hk_abrechnung = "-$hk_abrechnung";
-						 * }
-						 */
+
                         $hk_abrechnung = nummer_punkt2komma($hk_abrechnung);
                         $datum_hk = $a->daten_arr [$key] ['monate'] [$b] ['hk_abrechnung_datum'];
                         echo "<tr><td>$datum_hk</td><td><b>Heizkostenabrechung</b> </td><td><b>$hk_abrechnung €</b></td><td></td></tr>";
@@ -1119,10 +1087,8 @@ class miete
                             } else {
                                 $cb = 12;
                             }
-                            // $a->saldo_vormonat +
                             $akt_saldo_nz = nummer_punkt2komma($a->daten_arr [$key] ['monate'] [$cb] ['erg'] + $a->daten_arr [$key] ['monate'] [$b] ['soll']);
                             echo "<tr><td></td><td>Keine Zahlung</td><td></td><td><b>$akt_saldo_nz €</b></td></tr>\n";
-                            //die ();
                         }
                     } else {
                         for ($c = 0; $c < count($a->daten_arr [$key] ['monate'] [$b] ['zahlungen']); $c++) {
@@ -1154,8 +1120,6 @@ class miete
             echo "<h1>Keine Berechnungsgrundlage für das Mietkonto</h1>";
             echo "<h1>Einzugsdatum, Mietdefinition überprüfen</h1>";
         }
-
-        // $buchung->ende_formular();
     }
 
     function mietkonto_berechnung($mietvertrag_id)
@@ -1171,25 +1135,15 @@ class miete
 
         $datum_saldo_vv = $buchung->datum_saldo_vortrag_vorverwaltung($mietvertrag_id);
         $this->saldo_vv = $buchung->saldo_vortrag_vorverwaltung($mietvertrag_id);
-        // echo "$datum_saldo_vv $this->saldo_vv";
         $this->saldo_vv = number_format($this->saldo_vv, 2, '.', '');
 
-        // die();
         /* Saldo Vortrag vorhanden, dann ab Saldo VV rechnen */
-        // echo $datum_saldo_vv;
         if (!empty ($datum_saldo_vv)) {
-            /* Saldo Vorvertrag mit 1. Zahlung vergleichen, älteres nehmen */
             $datum_saldo_vv_s = str_replace('-', '', $datum_saldo_vv);
-            // $datums_arr[] = $datum_saldo_vv_s;
-            // echo $datum_saldo_vv_s;
-
             /* Einen Monat nach SALDO VV */
             $anfangs_datum = $this->tage_plus($datum_saldo_vv, 15);
-            // echo "AD $anfangs_datum<br>";
             $anfangs_datum_s = str_replace('-', '', $anfangs_datum);
             $datums_arr [] = $anfangs_datum_s;
-            // echo "1. $anfangs_datum $anfangs_datum_s<br>";
-
             $datum1_zahlung = $buchung->datum_1_zahlung($mietvertrag_id);
             if (!empty ($datum1_zahlung)) {
                 $datum1_zahlung_s = str_replace('-', '', $datum1_zahlung);
@@ -1199,15 +1153,7 @@ class miete
             $anfangs_datum = min($datums_arr);
             $this->start_m = substr($anfangs_datum, 4, 2);
             $this->start_j = substr($anfangs_datum, 0, 4);
-
-            // echo '<pre>';
-            // print_r($datums_arr);
-            // die("$this->start_m $this->start_j");
-            // }
-            // echo "$this->start_m $this->start_j";
-            // die('BLA');
-        }  /* Wenn kein Vortrag */
-        else {
+        } else { /* Wenn kein Vortrag */
             /* Datum der 1. Mietdefinition */
             $datum_mietdefinition = $buchung->datum_1_mietdefinition($mietvertrag_id);
             if (!empty ($datum_mietdefinition)) {
@@ -1403,7 +1349,7 @@ class miete
 
         /* Regel wenn es ein Berechnungsergebnis gibt, d.h. miete definiert und berechnet, falls nicht auch nicht anzeigen, da in wahrscheinlich in Zukunft */
         if (!empty ($a->erg)) {
-            
+
             $a->erg = number_format($a->erg, 2, ",", "");
 
             if (!empty ($a->saldo_vv)) {
@@ -1483,21 +1429,13 @@ class miete
     function berechnen()
     {
         $mv_id = 3;
-        $result = mysql_query("SELECT ANFANG, ENDE, KOSTENKATEGORIE, BETRAG FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$mv_id' ");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr1 [] = $row;
-        }
+        $my_arr1 = DB::select("SELECT ANFANG, ENDE, KOSTENKATEGORIE, BETRAG FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$mv_id' ");
 
         echo "<pre>";
-        // print_r($my_arr1);
 
         $einzug = '2008-03-01';
         $auszug = date("Y-m-d");
         $monate = $this->diff_in_monaten($einzug, $auszug);
-        // +$my_arr1 = test_arr(); //array aus ME
 
         $saldo_neu = 0;
 
@@ -1521,22 +1459,15 @@ class miete
 
         echo "<br><h1><b>$saldo_neu</b></h1><br>";
 
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE AKTUELL='1' && KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$mv_id' ");
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE AKTUELL='1' && KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$mv_id' ");
 
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc($result);
+        if (!empty($result)) {
+            $row = $result[0];
             $summe_eingezahlt = $row ['SUMME'];
         }
         $b = $summe_eingezahlt - $saldo_neu;
         echo "<h1>$b</h1>";
     }
-
-    /*
-	 *
-	 * diff_in_monaten('2009-01-01', '');
-	 *
-	 */
 
     function diff_in_monaten($einzug, $auszug)
     {
@@ -1640,30 +1571,14 @@ class miete
         $db_abfrage = " SELECT SUM( M_SUMME ) AS J_SUMME FROM ( SELECT ((DATEDIFF( NEW_ENDE, NEW_ANFANG ) +1) / '30.417') * BETRAG AS M_SUMME, NEW_ANFANG, NEW_ENDE, KOSTENKATEGORIE, BETRAG FROM (SELECT KOSTENKATEGORIE, BETRAG, ANFANG, ENDE, IF( ANFANG < '$jahr-01-01' && ( ENDE >= '$jahr-01-01' OR ENDE = '0000-00-00' ) , '$jahr-01-01', ANFANG ) AS NEW_ANFANG, IF( ENDE = '0000-00-00', '$jahr-12-31', ENDE ) AS NEW_ENDE FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = '$kos_typ' && `KOSTENTRAEGER_ID` = '$kos_id' && KOSTENKATEGORIE = 'Nebenkosten Vorauszahlung' && (
 ENDE > '$jahr-01-01' OR ENDE = '0000-00-00') ORDER BY `NEW_ENDE` ASC) AS tage) AS J ";
 
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        $resultat = DB::select($db_abfrage);
 
-        $row = mysql_fetch_assoc($resultat);
+        $row = $resultat[0];
         return $row ['J_SUMME'];
     }
 
     function summe_nebenkosten_im_jahr($kos_typ, $kos_id, $jahr)
     {
-        /*
-		 * alt $db_abfrage ="SELECT SUM( MONATLICH ) AS SUMME FROM (
-		 * SELECT NEW_ANFANG, NEW_ENDE, BETRAG, (
-		 * PERIOD_DIFF( DATE_FORMAT( NEW_ENDE, '%Y%m' ) , DATE_FORMAT( NEW_ANFANG, '%Y%m' ) ) +1
-		 * ) * BETRAG AS MONATLICH
-		 * FROM (
-		 *
-		 * SELECT KOSTENKATEGORIE, BETRAG, ANFANG, ENDE, IF( ANFANG < '$jahr-01-01' && ( ENDE >= '$jahr-01-01'
-		 * OR ENDE = '0000-00-00' ) , '$jahr-01-01', ANFANG ) AS NEW_ANFANG, IF( ENDE = '0000-00-00' OR ENDE>'$jahr-12-31', '$jahr-12-31', ENDE ) AS NEW_ENDE
-		 * FROM MIETENTWICKLUNG
-		 * WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = '$kos_typ' && `KOSTENTRAEGER_ID` = '$kos_id' && KOSTENKATEGORIE = 'Nebenkosten Vorauszahlung' && ( ENDE > '$jahr-01-01'
-		 * OR ENDE = '0000-00-00' )
-		 * ORDER BY `NEW_ENDE` ASC
-		 * ) AS t1
-		 * ) AS t2 ";
-		 */
         $db_abfrage = "SELECT SUM( MONATLICH ) AS SUMME FROM (
 SELECT NEW_ANFANG, NEW_ENDE, BETRAG, (
 PERIOD_DIFF( DATE_FORMAT( NEW_ENDE, '%Y%m' ) , DATE_FORMAT( NEW_ANFANG, '%Y%m' ) ) +1
@@ -1678,9 +1593,9 @@ OR ENDE = '0000-00-00' ) && DATE_FORMAT(ANFANG, '%Y') <= '$jahr'
 ORDER BY `NEW_ENDE` ASC
 ) AS t1
 ) AS t2 ";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        $resultat = DB::select($db_abfrage);
 
-        $row = mysql_fetch_assoc($resultat);
+        $row = $resultat[0];
         return $row ['SUMME'];
     }
 
@@ -1692,27 +1607,13 @@ FROM MIETENTWICKLUNG
 WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = '$kos_typ' && `KOSTENTRAEGER_ID` = '$kos_id' && KOSTENKATEGORIE = '$kostenkat' && ( DATE_FORMAT(ENDE,'%Y') >= '$jahr'
 OR ENDE = '0000-00-00' ) && DATE_FORMAT(ANFANG, '%Y') <= '$jahr'
  ORDER BY `NEW_ENDE` DESC LIMIT 0,1 ";
-
-        // echo "<br>".$db_abfrage;
-        // die();
-
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-
-        $row = mysql_fetch_assoc($resultat);
+        $resultat = DB::select($db_abfrage);
+        $row = $resultat[0];
         return $row ['BETRAG'];
     }
 
     function letzte_vorauszahlung_summe($kos_typ, $kos_id, $jahr, $kostenkat)
     {
-        /*
-		 * $db_abfrage ="SELECT SUM(BETRAG) AS BETRAG, ANFANG, ENDE, IF( ANFANG < '$jahr-01-01' && ( ENDE >= '$jahr-01-01'
-		 * OR ENDE = '0000-00-00' ) , '$jahr-01-01', ANFANG ) AS NEW_ANFANG, IF( ENDE = '0000-00-00' OR ENDE>'$jahr-12-31', '$jahr-12-31', ENDE ) AS NEW_ENDE
-		 * FROM MIETENTWICKLUNG
-		 * WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = '$kos_typ' && `KOSTENTRAEGER_ID` = '$kos_id' && KOSTENKATEGORIE = '$kostenkat' && ( DATE_FORMAT(ENDE,'%Y') >= '$jahr'
-		 * OR ENDE = '0000-00-00' ) && DATE_FORMAT(ANFANG, '%Y') <= '$jahr'
-		 * ORDER BY `NEW_ENDE` DESC ";
-		 */
-        // alt falsch
         $db_abfrage = "SELECT KOSTENKATEGORIE, BETRAG, ANFANG, ENDE, IF( ANFANG < '$jahr-01-01' && ( ENDE >= '$jahr-01-01'
 	OR ENDE = '0000-00-00' ) , '$jahr-01-01', ANFANG ) AS NEW_ANFANG, IF( ENDE = '0000-00-00' OR ENDE>'$jahr-12-31', '$jahr-12-31', ENDE ) AS NEW_ENDE
 	FROM MIETENTWICKLUNG
@@ -1720,49 +1621,14 @@ OR ENDE = '0000-00-00' ) && DATE_FORMAT(ANFANG, '%Y') <= '$jahr'
 	OR ENDE = '0000-00-00' ) && DATE_FORMAT(ANFANG, '%Y') <= '$jahr'
 	ORDER BY `NEW_ENDE` DESC LIMIT 0,1 ";
 
-        // echo "<br>".$db_abfrage;
-        // die();
+        $resultat = DB::select($db_abfrage);
 
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-
-        $row = mysql_fetch_assoc($resultat);
+        $row = $resultat[0];
         return $row ['BETRAG'];
     }
 
     function summe_heizkosten_im_jahr($kos_typ, $kos_id, $jahr)
     {
-        // echo "<b>SANEL: $kos_typ $kos_id $jahr</b><br>";
-        /*
-		 * alt
-		 *
-		 * $db_abfrage =" SELECT SUM( MONATLICH ) AS SUMME FROM (
-		 * SELECT NEW_ANFANG, NEW_ENDE, BETRAG, (
-		 * PERIOD_DIFF( DATE_FORMAT( NEW_ENDE, '%Y%m' ) , DATE_FORMAT( NEW_ANFANG, '%Y%m' ) ) +1
-		 * ) * BETRAG AS MONATLICH
-		 * FROM (
-		 *
-		 * SELECT KOSTENKATEGORIE, BETRAG, ANFANG, ENDE, IF( ANFANG < '$jahr-01-01' && ( ENDE >= '$jahr-01-01'
-		 * OR ENDE = '0000-00-00' ) , '$jahr-01-01', ANFANG ) AS NEW_ANFANG, IF( ENDE = '0000-00-00' OR ENDE>'$jahr-12-31', '$jahr-12-31', ENDE ) AS NEW_ENDE
-		 * FROM MIETENTWICKLUNG
-		 * WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = '$kos_typ' && `KOSTENTRAEGER_ID` = '$kos_id' && KOSTENKATEGORIE = 'Heizkosten Vorauszahlung' && ( ENDE > '$jahr-01-01'
-		 * OR ENDE = '0000-00-00' )
-		 * ORDER BY `NEW_ENDE` ASC
-		 * ) AS t1
-		 * ) AS t2 ";
-		 */
-        /*
-		 * richtig*
-		 *
-		 *
-		 * SELECT KOSTENKATEGORIE, BETRAG, ANFANG, ENDE, IF( ANFANG < '2009-01-01' && ( ENDE >= '2009-01-01'
-		 * OR ENDE = '0000-00-00' ) , '2009-01-01', ANFANG ) AS NEW_ANFANG, IF( ENDE = '0000-00-00' OR ENDE>'2009-12-31', '2009-12-31', ENDE ) AS NEW_ENDE
-		 * FROM MIETENTWICKLUNG
-		 * WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `KOSTENTRAEGER_ID` = '1' && KOSTENKATEGORIE = 'Heizkosten Vorauszahlung' && (DATE_FORMAT(ENDE, '%Y') >= '2009'
-		 * OR ENDE = '0000-00-00' ) && DATE_FORMAT(ANFANG, '%Y') <= '2009'
-		 * ORDER BY `NEW_ENDE` ASC
-		 *
-		 */
-
         /* neu */
         $db_abfrage = " SELECT SUM( MONATLICH ) AS SUMME FROM (
 SELECT NEW_ANFANG, NEW_ENDE, BETRAG, (
@@ -1779,12 +1645,8 @@ ORDER BY `NEW_ENDE` ASC
 ) AS t1
 ) AS t2 ";
 
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-
-        $row = mysql_fetch_assoc($resultat);
-        // echo "<b>";
-        // echo $row['SUMME'];
-        // echo "<br></b>";
+        $resultat = DB::select($db_abfrage);
+        $row = $resultat[0];
         return $row ['SUMME'];
     }
 
@@ -1807,16 +1669,15 @@ concat(year(ANFANG),if(month(ANFANG)<10,'0',''), month(ANFANG)))+1) AS MJESECI
 
 FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='MIETVERTRAG' && `KOSTENTRAEGER_ID`='97' 
    ORDER BY `MJESECI`  ASC";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        $resultat = DB::select($db_abfrage);
 
-        while ($row = mysql_fetch_assoc($resultat)) {
+        foreach ($resultat as $row) {
             print_r($row);
             if ($row ['KOSTENKATEGORIE'] == 'Saldo Vortrag Vorverwaltung') {
                 $this->saldo_vv = $this->saldo_vv + $row ['BETRAG'];
             } else {
                 $this->gesamt_soll = $this->gesamt_soll + ($row ['BETRAG'] * $row ['MJESECI']);
             }
-            // print_r($my_arr);
         }
     }
 
@@ -1835,10 +1696,10 @@ concat(year(ANFANG),if(month(ANFANG)<10,'0',''), month(ANFANG)))+1) AS MJESECI
 
 FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='MIETVERTRAG' && `KOSTENTRAEGER_ID`='$mv_id' 
    ORDER BY `MJESECI`  ASC) AS t1";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        $resultat = DB::select($db_abfrage);
 
         $g_forderung_summe = 0;
-        while ($row = mysql_fetch_assoc($resultat)) {
+        foreach ($resultat as $row) {
             $kostenkat = $row ['KOSTENKATEGORIE'];
             $betrag = $row ['GESAMT'];
             if (preg_match("/Betriebskostenabrechnung/i", $kostenkat)) {
@@ -1884,9 +1745,6 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
             $g_forderung_summe = $g_forderung_summe + $betrag;
         }
 
-        // return $g_forderung_summe;
-        // $b = new mietkonto;
-        // $summe_zahlbetrag = $b->summe_aller_zahlbetraege($mv_id);
         $b = new buchen ();
         $mv = new mietvertraege ();
         $mv->get_mietvertrag_infos_aktuell($mv_id);
@@ -1907,14 +1765,12 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
     {
         $curdate = "$jahr-$monat-28";
 
-        // $db_abfrage = "SELECT KOSTENKATEGORIE, BETRAG * MJESECI AS GESAMT FROM (SELECT KOSTENKATEGORIE, BETRAG, ANFANG, ENDE, IF( ENDE = '0000-00-00' OR ENDE >= '$curdate', '$curdate', ENDE ) AS NEW_ENDE, IF( ENDE <= '$curdate' && ENDE != '0000-00-00', period_diff( concat( year( ENDE ) , if( month( ENDE ) <10, '0', '' ) , month( ENDE ) ) , concat( year( ANFANG ) , if( month( ANFANG ) <10, '0', '' ), month( ANFANG ) ) ) +1, period_diff( concat( year( '$curdate' ) , if( month( '$curdate' ) <10, '0', '' ) , month( '$curdate' ) ) , concat( year( ANFANG ) , if( month( ANFANG ) <10, '0', '' ) , month( ANFANG ) ) ) +1 ) AS MJESECI FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `KOSTENTRAEGER_ID` = '$mv_id' ORDER BY `MJESECI` ASC) AS t1 ";
-
         $db_abfrage = "SELECT KOSTENKATEGORIE, BETRAG * MJESECI AS GESAMT FROM (SELECT KOSTENKATEGORIE, BETRAG, ANFANG, ENDE, IF( ENDE = '0000-00-00' OR ENDE >= '$curdate', '$curdate', ENDE ) AS NEW_ENDE, IF( ENDE <= '$curdate' && ENDE != '0000-00-00', period_diff( concat( year( ENDE ) , if( month( ENDE ) <10, '0', '' ) , month( ENDE ) ) , concat( year( ANFANG ) , if( month( ANFANG ) <10, '0', '' ), month( ANFANG ) ) ) +1, period_diff( concat( year( '$curdate' ) , if( month( '$curdate' ) <10, '0', '' ) , month( '$curdate' ) ) , concat( year( ANFANG ) , if( month( ANFANG ) <10, '0', '' ) , month( ANFANG ) ) ) +1 ) AS MJESECI FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `KOSTENTRAEGER_ID` = '$mv_id' && ANFANG<='$curdate' && KOSTENKATEGORIE !='Ratenzahlung' && KOSTENKATEGORIE NOT LIKE 'Mahngeb%' && KOSTENKATEGORIE NOT LIKE 'Kaltwasserabr%' ORDER BY `MJESECI` ASC) AS t1 ";
 
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        $resultat = DB::select($db_abfrage);
 
         $g_forderung_summe = '0.00';
-        while ($row = mysql_fetch_assoc($resultat)) {
+        foreach ($resultat as $row) {
             $kostenkat = $row ['KOSTENKATEGORIE'];
             $betrag = $row ['GESAMT'];
 
@@ -1942,16 +1798,6 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
                 }
             }
 
-            /*
-			 * if (preg_match("/Kaltwasserabrechnung/i", $kostenkat)) {
-			 * if($betrag<0){
-			 * $betrag = abs($betrag);
-			 * }else{
-			 * $betrag = '-'.$betrag;
-			 * }
-			 * }
-			 */
-
             if (preg_match("/Saldo Vortrag Vorverwaltung/i", $kostenkat)) {
                 if ($betrag < 0) {
                     $betrag = abs($betrag);
@@ -1971,14 +1817,12 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
             $g_forderung_summe = $g_forderung_summe + $betrag;
         }
 
-        // return $g_forderung_summe;
         $b = new mietkonto ();
         $summe_zahlbetrag = $b->summe_aller_zahlbetraege_bis_monat($mv_id, $monat, $jahr, '80001');
         $summe_zahlbetrag = number_format($summe_zahlbetrag, 2, '.', '');
         $g_forderung_summe = number_format($g_forderung_summe, 2, '.', '');
         number_format($this->saldo_vv, 2, '.', '');
         $end_saldo = $summe_zahlbetrag - $g_forderung_summe;
-        // echo "$end_saldo = $summe_zahlbetrag - $g_forderung_summe;";
         return $end_saldo;
     }
 
@@ -1986,14 +1830,12 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
     {
         $curdate = "$jahr-$monat-$tag";
 
-        // $db_abfrage = "SELECT KOSTENKATEGORIE, BETRAG * MJESECI AS GESAMT FROM (SELECT KOSTENKATEGORIE, BETRAG, ANFANG, ENDE, IF( ENDE = '0000-00-00' OR ENDE >= '$curdate', '$curdate', ENDE ) AS NEW_ENDE, IF( ENDE <= '$curdate' && ENDE != '0000-00-00', period_diff( concat( year( ENDE ) , if( month( ENDE ) <10, '0', '' ) , month( ENDE ) ) , concat( year( ANFANG ) , if( month( ANFANG ) <10, '0', '' ), month( ANFANG ) ) ) +1, period_diff( concat( year( '$curdate' ) , if( month( '$curdate' ) <10, '0', '' ) , month( '$curdate' ) ) , concat( year( ANFANG ) , if( month( ANFANG ) <10, '0', '' ) , month( ANFANG ) ) ) +1 ) AS MJESECI FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `KOSTENTRAEGER_ID` = '$mv_id' ORDER BY `MJESECI` ASC) AS t1 ";
-
         $db_abfrage = "SELECT KOSTENKATEGORIE, BETRAG * MJESECI AS GESAMT FROM (SELECT KOSTENKATEGORIE, BETRAG, ANFANG, ENDE, IF( ENDE = '0000-00-00' OR ENDE >= '$curdate', '$curdate', ENDE ) AS NEW_ENDE, IF( ENDE <= '$curdate' && ENDE != '0000-00-00', period_diff( concat( year( ENDE ) , if( month( ENDE ) <10, '0', '' ) , month( ENDE ) ) , concat( year( ANFANG ) , if( month( ANFANG ) <10, '0', '' ), month( ANFANG ) ) ) +1, period_diff( concat( year( '$curdate' ) , if( month( '$curdate' ) <10, '0', '' ) , month( '$curdate' ) ) , concat( year( ANFANG ) , if( month( ANFANG ) <10, '0', '' ) , month( ANFANG ) ) ) +1 ) AS MJESECI FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `KOSTENTRAEGER_ID` = '$mv_id' && ANFANG<='$curdate' && KOSTENKATEGORIE !='Ratenzahlung' && KOSTENKATEGORIE NOT LIKE 'Mahngeb%' && KOSTENKATEGORIE NOT LIKE 'Kaltwasserabrechnung%' ORDER BY `MJESECI` ASC) AS t1 ";
 
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        $resultat = DB::select($db_abfrage);
 
         $g_forderung_summe = '0.00';
-        while ($row = mysql_fetch_assoc($resultat)) {
+        foreach ($resultat as $row) {
             $kostenkat = $row ['KOSTENKATEGORIE'];
             $betrag = $row ['GESAMT'];
 
@@ -2047,14 +1889,11 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
         $g_forderung_summe = number_format($g_forderung_summe, 2, '.', '');
         number_format($this->saldo_vv, 2, '.', '');
         $end_saldo = $summe_zahlbetrag - $g_forderung_summe;
-        // echo "$end_saldo = $summe_zahlbetrag - $g_forderung_summe;";
         return $end_saldo;
     }
 
     function mietkonten_blatt_pdf($mv_id)
     {
-        //ob_clean(); // ausgabepuffer leeren
-
         $pdf = new Cezpdf ('a4', 'portrait');
 
         $bpdf = new b_pdf ();
@@ -4755,13 +4594,11 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
             // $db_abfrage = "SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE `KONTENRAHMEN_KONTO` = '$kto' GK_ID='$gk->geldkonto_id' AND ((KOSTENTRAEGER_TYP='Einheit' && KOSTENTRAEGER_ID='$mvs->einheit_id') OR (KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mv_id')) && `AKTUELL` = '1' ORDER BY `GELD_KONTO_BUCHUNGEN`.`GELD_KONTO_BUCHUNGEN_DAT` ASC";
         }
 
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-
-        if ($numrows) {
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
 
             $zeile = 0;
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach ($result as $row) {
                 $pdf_table [$zeile] ['DATUM'] = $row ['DATUM'];
                 $pdf_table [$zeile] ['KTO'] = $row ['KONTENRAHMEN_KONTO'];
                 $pdf_table [$zeile] ['TXT'] = $row ['VERWENDUNGSZWECK'];
@@ -4811,41 +4648,6 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
                     )
                 )
             ));
-
-            // print_r($pdf_table);
         }
     }
 } // end class
-
-/*
- * $h = new miete('97');
- * $h->insert_saldos();
- * $a = new miete('97');
- *
- * echo "STAND: $a->erg";
- * echo "<pre>";
- * print_r($a);
- * echo "</pre>";
- * /*
- * echo "<table>\n";
- * if(!empty($a->saldo_vv)){
- * echo "<tr><td>SVV ".$a->saldo_vv."</td></tr>\n";
- * }
- * foreach($a->daten_arr as $key=>$value){
- * #echo "$key<br>\n";
- *
- * for($b=0;$b<count($a->daten_arr[$key]['monate']);$b++){
- * echo "<tr><td>".$a->daten_arr[$key]['monate'][$b]['monat']." / $key</td><td>Soll ".$a->daten_arr[$key]['monate'][$b]['soll']."</td></tr>\n";
- *
- * for($c=0;$c<count($a->daten_arr[$key]['monate'][$b]['zahlungen']);$c++){
- * echo "<tr><td>ZB</td><td>".$a->daten_arr[$key]['monate'][$b]['zahlungen'][$c]['BEMERKUNG']." ".$a->daten_arr[$key]['monate'][$b]['zahlungen'][$c]['BETRAG']."</td></tr>\n";
- * }
- * if(count($a->daten_arr[$key]['monate'][$b]['zahlungen'])<1){
- * echo "<tr><td>Keine</td><td>zahlung</td></tr>\n";
- * }
- * echo "<tr><td>Saldo </td><td>".$a->daten_arr[$key]['monate'][$b]['erg']."</td></tr>\n";
- * }
- *
- * }
- * echo "</table>\n";
- */

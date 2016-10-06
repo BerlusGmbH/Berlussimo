@@ -57,7 +57,7 @@ class leerstand
 
     function leerstand_finden_monat($objekt_id, $datum)
     {
-        $result = mysql_query("SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME,  EINHEIT_QM,  EINHEIT.HAUS_ID,  CONCAT(HAUS_STRASSE, HAUS_NUMMER) AS HAUS_STRASSE,  EINHEIT_QM, TRIM(EINHEIT_LAGE) AS EINHEIT_LAGE, EINHEIT.TYP 
+        $result = DB::select("SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME,  EINHEIT_QM,  EINHEIT.HAUS_ID,  CONCAT(HAUS_STRASSE, HAUS_NUMMER) AS HAUS_STRASSE,  EINHEIT_QM, TRIM(EINHEIT_LAGE) AS EINHEIT_LAGE, EINHEIT.TYP 
 FROM `EINHEIT`
 RIGHT JOIN (
 HAUS, OBJEKT
@@ -71,12 +71,7 @@ WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m-%d' ) <=
 OR MIETVERTRAG_BIS = '0000-00-00' )
 )
 GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
-        // echo "<pre>";
-
-        while ($row = mysql_fetch_assoc($result))
-            $my_arr [] = $row;
-        // print_r($my_arr);
-        return $my_arr;
+        return $result;
     }
 
     function pdf_projekt($einheit_id)
@@ -208,7 +203,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         $datum = date("Y-m-d");
         $w_datum_d = date_german2mysql($w_datum);
         $db_abfrage = "INSERT INTO LEERSTAND_INTERESSENT VALUES (NULL, '$name', '$anschrift', '$tel', '$email','$w_datum_d', '$datum', '$zimmer', '$hinweis','1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
         return true;
     }
 
@@ -265,13 +260,8 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
     function interessenten_tab_arr()
     {
         $db_abfrage = "SELECT *, DATE_FORMAT(EINZUG, '%d.%m.%Y') AS W_EINZUG FROM LEERSTAND_INTERESSENT WHERE EINZUG>DATE(NOW()) && AKTUELL='1' ORDER BY ZIMMER, EINZUG ASC";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_arr [] = $row;
-            return $my_arr;
-        }
+        $result = DB::select($db_abfrage);
+        return $result;
     }
 
     function pdf_expose($einheit_id, $return = 0)
@@ -606,13 +596,8 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
     {
         if (!$objekt_id) {
             $db_abfrage = "SELECT DETAIL_ZUORDNUNG_ID AS EINHEIT_ID, DETAIL_INHALT, DETAIL_BEMERKUNG, STR_TO_DATE(DETAIL_INHALT,'%d.%m.%Y') , DATE_FORMAT(NOW(), '%Y-%m-%d')  FROM `DETAIL` WHERE `DETAIL_NAME` = 'Besichtigungstermin' AND `DETAIL_AKTUELL` = '1' AND  (STR_TO_DATE(DETAIL_INHALT,'%d.%m.%Y') $vor_nach= CURDATE()) AND `DETAIL_ZUORDNUNG_TABELLE` = 'EINHEIT' && DETAIL_ZUORDNUNG_ID IN (SELECT EINHEIT_ID FROM `EINHEIT` WHERE `EINHEIT_AKTUELL` = '1')";
-            $result = mysql_query($db_abfrage) or die (mysql_error());
-            $numrows = mysql_numrows($result);
-            if ($numrows) {
-                while ($row = mysql_fetch_assoc($result))
-                    $my_arr [] = $row;
-                return $my_arr;
-            }
+            $result = DB::select($db_abfrage);
+            return $result;
         }
     }
 
@@ -883,8 +868,8 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
     function get_interessenten_infos($id)
     {
         $db_abfrage = "SELECT * FROM `LEERSTAND_INTERESSENT` WHERE `ID` ='$id' AND `AKTUELL` = '1'";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select($db_abfrage);
+        $row = $result[0];
         $this->name = $row ['NAME'];
         $this->email = $row ['EMAIL'];
         $this->anschrift = $row ['ANSCHRIFT'];
@@ -898,14 +883,14 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
     function interessenten_deaktivieren($id)
     {
         $db_abfrage = "UPDATE `LEERSTAND_INTERESSENT` SET AKTUELL='0' WHERE `ID` ='$id'";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
         return true;
     }
 
     function interessenten_updaten($id, $name, $anschrift, $tel, $email, $einzug, $zimmer, $hinweis)
     {
         $db_abfrage = "UPDATE `LEERSTAND_INTERESSENT` SET NAME='$name', ANSCHRIFT='$anschrift', TEL='$tel', EMAIL='$email', EINZUG='$einzug', ZIMMER='$zimmer', HINWEIS='$hinweis' WHERE `ID` ='$id'";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update($db_abfrage);
         return true;
     }
 

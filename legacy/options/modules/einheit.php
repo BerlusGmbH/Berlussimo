@@ -122,65 +122,59 @@ function einheit_kurz($haus_id)
         $db_abfrage = "SELECT EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT_LAGE, EINHEIT_QM, HAUS_ID, TYP FROM EINHEIT WHERE EINHEIT_AKTUELL='1' ORDER BY LENGTH(EINHEIT_KURZNAME), EINHEIT_KURZNAME ASC";
     } else {
         $db_abfrage = "SELECT EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT_LAGE, EINHEIT_QM, HAUS_ID, TYP FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && HAUS_ID='$haus_id' ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1')  ASC";
-        // $db_abfrage = "SELECT EINHEIT_ID, EINHEIT_DAT, EINHEIT_LAGE, HAUS_ID, EINHEIT_KURZNAME, EINHEIT_AUSSTATTUNG FROM EINHEIT where HAUS_ID='$haus_id' && EINHEIT_AKTUELL='1'";
     }
 
-    $resultat = mysql_query($db_abfrage) or die (mysql_error());
+    $result = DB::select($db_abfrage);
 
-    $numrows = mysql_numrows($resultat);
-    if ($numrows < 1) {
-        echo "<h1><b>Keine Einheiten vorhanden!!!</b></h1>";
+    if (empty($result)) {
+        echo "<h5><b>Keine Einheiten vorhanden!!!</b></h5>";
     } else {
-        // echo "<table class=\"tabelle_haus\" width=100%>\n";
-        $objekt_kurzname = objekt_kurzname_of_haus($haus_id);
-        $haus_kurzname = haus_strasse_nr($haus_id);
-
         iframe_start();
         echo "<table class=\"sortable striped\">\n";
-        echo "<tr><th>EINHEIT</th><th>TYP</TH><th>KONTO</th><th>MIETER</th><th>Anschrift</th><th>Lage</th><th>Fläche</th><th>OPTION</th></tr>";
+        echo "<tr><th>Einheit</th><th>Typ</TH><th>Konto</th><th>Mieter</th><th>Anschrift</th><th>Lage</th><th>Fläche</th><th>OPTION</th></tr>";
         $counter = 0;
-        while (list ($EINHEIT_ID, $EINHEIT_KURZNAME, $EINHEIT_LAGE, $EINHEIT_QM, $HAUS_ID, $TYP) = mysql_fetch_row($resultat)) {
-            $mieteranzahl = mieter_anzahl($EINHEIT_ID);
-            $haus_kurzname = haus_strasse_nr($HAUS_ID);
-            if ($TYP != 'Wohneigentum') {
+        foreach($result as $row) {
+            $mieteranzahl = mieter_anzahl($row['EINHEIT_ID']);
+            $haus_kurzname = haus_strasse_nr($row['HAUS_ID']);
+            if ($row['TYP'] != 'Wohneigentum') {
                 if ($mieteranzahl == "unvermietet") {
                     $mieter = "leer";
                     $mietkonto_link = "";
                 } else {
                     $mieter = "Mieter:($mieteranzahl)";
-                    $mietvertrags_id = vertrags_id($EINHEIT_ID);
+                    $mietvertrags_id = vertrags_id($row['EINHEIT_ID']);
                     if (!empty ($mietvertrags_id)) {
                         $mietkonto_link = "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mietkonto_uebersicht_detailiert', 'mietvertrag_id' => $mietvertrags_id]) . "'>MIETKONTO</a>";
                     }
                 }
-                $einheit_link = "<a class=\"table_links\" href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $EINHEIT_ID]) . "'>$EINHEIT_KURZNAME</a>";
+                $einheit_link = "<a class=\"table_links\" href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $row['EINHEIT_ID']]) . "'>$row[EINHEIT_KURZNAME]</a>";
             } // end Mietswohnungen
             if ($TYP == 'Wohneigentum') {
-                $einheit_link = "<a class=\"table_links\" href='" . route('legacy::weg::index' , ['option' => 'einheit_uebersicht', 'einheit_id' => $EINHEIT_ID]) . "'>$EINHEIT_KURZNAME</a>";
+                $einheit_link = "<a class=\"table_links\" href='" . route('legacy::weg::index' , ['option' => 'einheit_uebersicht', 'einheit_id' => $row['EINHEIT_ID']]) . "'>$row[EINHEIT_KURZNAME]</a>";
             }
-            $EINHEIT_QM = nummer_punkt2komma($EINHEIT_QM);
+            $EINHEIT_QM = nummer_punkt2komma($row['EINHEIT_QM']);
 
-            $detail_check = detail_check("EINHEIT", $EINHEIT_ID);
+            $detail_check = detail_check("EINHEIT", $row['EINHEIT_ID']);
             if ($detail_check > 0) {
-                $detail_link = "<a class=\"table_links\" href=\"?daten=details&option=details_anzeigen&detail_tabelle=EINHEIT&detail_id=$EINHEIT_ID\">Details</a>";
+                $detail_link = "<a class=\"table_links\" href=\"?daten=details&option=details_anzeigen&detail_tabelle=EINHEIT&detail_id=$row[EINHEIT_ID]\">Details</a>";
             } else {
-                $detail_link = "<a class=\"table_links\" href=\"?daten=details&option=details_hinzu&detail_tabelle=EINHEIT&detail_id=$EINHEIT_ID\">Neues Detail</a>";
+                $detail_link = "<a class=\"table_links\" href=\"?daten=details&option=details_hinzu&detail_tabelle=EINHEIT&detail_id=$row[EINHEIT_ID]\">Neues Detail</a>";
             }
             if ($TYP != 'Wohneigentum') {
                 $counter++;
                 if ($counter == 1) {
-                    echo "<tr class=\"zeile1\"><td width=150>$einheit_link</td><td>$TYP</td><td> $mietkonto_link</td><td width=200>";
+                    echo "<tr class=\"zeile1\"><td width=150>$einheit_link</td><td>$row[TYP]</td><td>$mietkonto_link</td><td width=200>";
                     if ($mieter != "leer") {
                         echo mieterid_zum_vertrag($mietvertrags_id);
                     }
-                    echo "</td><td width=200>$haus_kurzname</td><td width=100>$EINHEIT_LAGE</td><td width=40>$EINHEIT_QM</td><td>$detail_link</td></tr>\n";
+                    echo "</td><td width=200>$haus_kurzname</td><td width=100>$row[EINHEIT_LAGE]</td><td width=40>$EINHEIT_QM</td><td>$detail_link</td></tr>\n";
                 }
                 if ($counter == 2) {
-                    echo "<tr class=\"zeile2\"><td width=150>$einheit_link</td><td>$TYP</td><td> $mietkonto_link</td><td width=200>";
+                    echo "<tr class=\"zeile2\"><td width=150>$einheit_link</td><td>$row[TYP]</td><td>$mietkonto_link</td><td width=200>";
                     if ($mieter != "leer") {
                         echo mieterid_zum_vertrag($mietvertrags_id);
                     }
-                    echo "</td><td width=200>$haus_kurzname</td><td width=100>$EINHEIT_LAGE</td><td width=40>$EINHEIT_QM</td><td>$detail_link</td></tr>\n";
+                    echo "</td><td width=200>$haus_kurzname</td><td width=100>$row[EINHEIT_LAGE]</td><td width=40>$EINHEIT_QM</td><td>$detail_link</td></tr>\n";
                     $counter = 0;
                 }
             }  // ende if WEG
@@ -188,11 +182,11 @@ function einheit_kurz($haus_id)
                 $counter++;
                 if ($counter == 1) {
                     echo "<tr class=\"zeile1\"><td width=150>$einheit_link</td><td>$TYP</td><td></td><td width=200>";
-                    echo "</td><td width=200>$haus_kurzname</td><td width=100>$EINHEIT_LAGE</td><td width=40>$EINHEIT_QM</td><td>$detail_link</td></tr>\n";
+                    echo "</td><td width=200>$haus_kurzname</td><td width=100>$row[EINHEIT_LAGE]</td><td width=40>$EINHEIT_QM</td><td>$detail_link</td></tr>\n";
                 }
                 if ($counter == 2) {
                     echo "<tr class=\"zeile2\"><td width=150>$einheit_link</td><td>$TYP</td><td></td><td width=200>";
-                    echo "</td><td width=200>$haus_kurzname</td><td width=100>$EINHEIT_LAGE</td><td width=40>$EINHEIT_QM</td><td>$detail_link</td></tr>\n";
+                    echo "</td><td width=200>$haus_kurzname</td><td width=100>$row[EINHEIT_LAGE]</td><td width=40>$EINHEIT_QM</td><td>$detail_link</td></tr>\n";
                     $counter = 0;
                 }
             }
@@ -204,28 +198,25 @@ function einheit_kurz($haus_id)
 
 function einheit_kurz_objekt($objekt_id)
 {
-    $result = mysql_query("SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT_LAGE, EINHEIT_QM,  HAUS_STRASSE, HAUS_NUMMER, TYP
+    $my_arr = DB::select("SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT_LAGE, EINHEIT_QM,  HAUS_STRASSE, HAUS_NUMMER, TYP
 FROM `EINHEIT`
 RIGHT JOIN (
 HAUS, OBJEKT
 ) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID = '$objekt_id' )
 WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC");
-
-    while ($row = mysql_fetch_assoc($result))
-        $my_arr [] = $row;
-
-    $numrows = mysql_numrows($result);
-    if ($numrows < 1) {
-        echo "<h1><b>Keine Einheiten vorhanden!!!</b></h1>";
+    
+    if (empty($my_arr)) {
+        echo "<h5>Keine Einheiten vorhanden.</h5>";
     } else {
         echo "<table class=\"tabelle_haus\" width=100%>\n";
-        $objekt_kurzname = $my_arr ['0'] ['OBJEKT_KURZNAME'];
+        $objekt_kurzname = $my_arr [0] ['OBJEKT_KURZNAME'];
         echo "<tr class=\"feldernamen\"><td colspan=7>Einheiten im Objekt $objekt_kurzname</td></tr>\n";
         echo "<tr class=\"feldernamen\"><td width=150>Kurzname</td><td>OPTION</td><td width=200>Mieter</td><td width=200>Anschrift</td><td width=100>Lage</td><td width=40>m²</td><td>Details</td></tr>\n";
         echo "</table>";
         iframe_start();
         echo "<table width=100%>\n";
         $counter = 0;
+        $numrows = count($my_arr);
         for ($a = 0; $a < $numrows; $a++) {
             $einheit_id = $my_arr [$a] ['EINHEIT_ID'];
             $einheit_kurzname = $my_arr [$a] ['EINHEIT_KURZNAME'];
@@ -318,5 +309,3 @@ WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LPAD(EINHEIT_KURZNAME, LE
     }
     iframe_end();
 }
-
-?>

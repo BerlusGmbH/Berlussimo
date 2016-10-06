@@ -281,8 +281,8 @@ switch ($schritt) {
             $liste_haeuser = $mein_objekt->haeuser_objekt_in_arr($objekt_id);
 
             for ($i = 0; $i < count($liste_haeuser); $i++) {
-                $result = mysql_query("SELECT * FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && HAUS_ID='" . $liste_haeuser [$i] ['HAUS_ID'] . "' ORDER BY EINHEIT_KURZNAME ASC");
-                while ($row = mysql_fetch_assoc($result))
+                $result = DB::select("SELECT * FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && HAUS_ID='" . $liste_haeuser [$i] ['HAUS_ID'] . "' ORDER BY EINHEIT_KURZNAME ASC");
+                foreach($result as $row)
                     $einheiten_array [] = $row;
             }
 
@@ -355,8 +355,8 @@ function einheiten_liste()
 
         for ($i = 0; $i < count($liste_haeuser); $i++) {
             $hh_id = $liste_haeuser [$i] ['HAUS_ID'];
-            $result = mysql_query("SELECT * FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && HAUS_ID='$hh_id' ORDER BY EINHEIT_KURZNAME ASC");
-            while ($row = mysql_fetch_assoc($result))
+            $result = DB::select("SELECT * FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && HAUS_ID='$hh_id' ORDER BY EINHEIT_KURZNAME ASC");
+            foreach($result as $row)
                 $einheiten_array [] = $row;
         }
     } else {

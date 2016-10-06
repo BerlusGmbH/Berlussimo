@@ -65,15 +65,11 @@ class buchen
 
     function alle_geldkonten_arr()
     {
-        $result = mysql_query("SELECT GELD_KONTEN.KONTO_ID,GELD_KONTEN.BEZEICHNUNG, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' GROUP BY GELD_KONTEN.KONTO_ID  ORDER BY GELD_KONTEN.KONTO_ID ASC");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-            return $my_array;
+        $result = DB::select("SELECT GELD_KONTEN.KONTO_ID,GELD_KONTEN.BEZEICHNUNG, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' GROUP BY GELD_KONTEN.KONTO_ID  ORDER BY GELD_KONTEN.KONTO_ID ASC");
+        if (!empty($result)) {
+            return $result;
         } else {
-            return FALSE;
+            return false;
         }
     }
 
@@ -99,12 +95,9 @@ class buchen
 
     function geld_konto_bezeichung($id)
     {
-        $result = mysql_query("SELECT GELD_KONTEN.BEZEICHNUNG FROM GELD_KONTEN WHERE  KONTO_ID='$id' && GELD_KONTEN.AKTUELL = '1' ORDER BY KONTO_DAT DESC LIMIT 0,1");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc($result);
-            return $row ['BEZEICHNUNG'];
+        $result = DB::select("SELECT GELD_KONTEN.BEZEICHNUNG FROM GELD_KONTEN WHERE  KONTO_ID='$id' && GELD_KONTEN.AKTUELL = '1' ORDER BY KONTO_DAT DESC LIMIT 0,1");
+        if (!empty($result)) {
+            return $result[0]['BEZEICHNUNG'];
         } else {
             return FALSE;
         }
@@ -163,14 +156,12 @@ class buchen
     function dropdown_ra_buch($kos_typ, $kos_id, $anzahl = 100, $rnr_kurz)
     {
         $r = new rechnungen ();
-        $result = mysql_query("SELECT * FROM RECHNUNGEN WHERE AUSSTELLER_ID='$kos_id' && AUSSTELLER_TYP='$kos_typ' && AKTUELL = '1' ORDER BY BELEG_NR DESC LIMIT 0,$anzahl");
-        $numrows = mysql_numrows($result);
+        $result = DB::select("SELECT * FROM RECHNUNGEN WHERE AUSSTELLER_ID='$kos_id' && AUSSTELLER_TYP='$kos_typ' && AKTUELL = '1' ORDER BY BELEG_NR DESC LIMIT 0,$anzahl");
         echo "<label for=\"geld_konto_dropdown\">Ausgangsbeleg</label>";
         echo "<select name=\"erf_nr\">";
         echo "<option value=\"OHNE BELEG\">Ohne Beleg</option>";
-        if ($numrows > 0) {
-
-            while ($row = mysql_fetch_assoc($result)) {
+        if (!empty($result)) {
+            foreach($result as $row) {
                 $rnr = ltrim(rtrim($row ['RECHNUNGSNUMMER']));
                 $erf_nr = $row ['BELEG_NR'];
                 if (!empty ($rnr_kurz) && $rnr == $rnr_kurz) {
@@ -238,28 +229,18 @@ class buchen
 
     function konten_aus_buchungen($geldkonto_id)
     {
-        $result = mysql_query("SELECT KONTENRAHMEN_KONTO AS KONTO FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && AKTUELL='1' GROUP BY KONTENRAHMEN_KONTO ORDER BY KONTENRAHMEN_KONTO ASC");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-        }
-        return $my_array;
+        $result = DB::select("SELECT KONTENRAHMEN_KONTO AS KONTO FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && AKTUELL='1' GROUP BY KONTENRAHMEN_KONTO ORDER BY KONTENRAHMEN_KONTO ASC");
+        return $result;
     }
 
     function summe_kontobuchungen_jahr($geldkonto_id, $kostenkonto, $jahr)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y' ) = '$jahr') && AKTUELL='1'");
-
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y' ) = '$jahr') && AKTUELL='1'");
         $this->summe_konto_buchungen = 0.00;
-
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
+        if (!empty($result)) {
             $this->summe_konto_buchungen = 0;
-            $row = mysql_fetch_assoc($result);
+            $row = $result[0];
             $this->summe_konto_buchungen = $row ['SUMME'];
-            // echo "$kostenkonto $this->summe_konto_buchungen<br>";
             return $this->summe_konto_buchungen;
         } else {
             $this->summe_konto_buchungen = 0.00;
@@ -268,15 +249,12 @@ class buchen
 
     function dropdown_re_buch($kos_typ, $kos_id, $anzahl = 100, $rnr_kurz)
     {
-        $r = new rechnungen ();
-        $result = mysql_query("SELECT * FROM RECHNUNGEN WHERE EMPFAENGER_ID='$kos_id' && EMPFAENGER_TYP='$kos_typ' && AKTUELL = '1' ORDER BY BELEG_NR DESC LIMIT 0,$anzahl");
-        $numrows = mysql_numrows($result);
+        $result = DB::select("SELECT * FROM RECHNUNGEN WHERE EMPFAENGER_ID='$kos_id' && EMPFAENGER_TYP='$kos_typ' && AKTUELL = '1' ORDER BY BELEG_NR DESC LIMIT 0,$anzahl");
         echo "<label for=\"geld_konto_dropdown\">Eingangsbeleg</label>";
         echo "<select name=\"erf_nr\">";
         echo "<option value=\"OHNE BELEG\">Ohne Beleg</option>";
-        if ($numrows > 0) {
-
-            while ($row = mysql_fetch_assoc($result)) {
+        if (!empty($result)) {
+            foreach($result as $row) {
                 $rnr = ltrim(rtrim($row ['RECHNUNGSNUMMER']));
                 $erf_nr = $row ['BELEG_NR'];
                 if ($rnr == $rnr_kurz) {
@@ -446,25 +424,22 @@ class buchen
         echo "<option value=\"\">Bitte wählen</option>\n";
         if ($typ == 'Objekt') {
             $db_abfrage = "SELECT OBJEKT_KURZNAME, OBJEKT_ID FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-            // echo "<meta content=\"text/html; charset=ISO-8859-1\" http-equiv=\"content-type\">";
-            while (list ($OBJEKT_KURZNAME, $OBJEKT_ID) = mysql_fetch_row($resultat)) {
-                // echo "$OBJEKT_KURZNAME|";
-
+            $resultat = DB::select($db_abfrage);
+            foreach($resultat as $row) {
                 if (!session()->has('geldkonto_id')) {
                     if ($vorwahl_bez == $OBJEKT_ID) {
-                        echo "<option value=\"$OBJEKT_ID\" selected>$OBJEKT_KURZNAME</option>";
+                        echo "<option value=\"$row[OBJEKT_ID]\" selected>$row[OBJEKT_KURZNAME]</option>";
                     } else {
-                        echo "<option value=\"$OBJEKT_ID\">$OBJEKT_KURZNAME</option>";
+                        echo "<option value=\"$row[OBJEKT_ID]\">$row[OBJEKT_KURZNAME]</option>";
                     }
                 } else {
 
                     $gk = new gk ();
-                    if ($gk->check_zuweisung_kos_typ(session()->get('geldkonto_id'), 'Objekt', $OBJEKT_ID)) {
+                    if ($gk->check_zuweisung_kos_typ(session()->get('geldkonto_id'), 'Objekt', $row['OBJEKT_ID'])) {
                         if ($vorwahl_bez == $OBJEKT_ID) {
-                            echo "<option value=\"$OBJEKT_ID\" selected>$OBJEKT_KURZNAME</option>";
+                            echo "<option value=\"$OBJEKT_ID\" selected>$row[OBJEKT_KURZNAME]</option>";
                         } else {
-                            echo "<option value=\"$OBJEKT_ID\">$OBJEKT_KURZNAME</option>";
+                            echo "<option value=\"$OBJEKT_ID\">$row[OBJEKT_KURZNAME]</option>";
                         }
                     }
                 }
@@ -473,25 +448,20 @@ class buchen
 
         if ($typ == 'Wirtschaftseinheit') {
             $db_abfrage = "SELECT W_NAME FROM WIRT_EINHEITEN WHERE AKTUELL='1' ORDER BY W_NAME ASC";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-            // echo "<meta content=\"text/html; charset=ISO-8859-1\" http-equiv=\"content-type\">";
-            while (list ($W_NAME) = mysql_fetch_row($resultat)) {
-                // echo "$W_NAME|";
-                if ($vorwahl_bez == $W_NAME) {
-                    echo "<option value=\"$W_NAME\" selected>$W_NAME</option>";
+            $resultat = DB::select($db_abfrage);
+            foreach($resultat as $row) {
+                if ($vorwahl_bez == $row['W_NAME']) {
+                    echo "<option value=\"$row[W_NAME]\" selected>$row[W_NAME]</option>";
                 } else {
-                    echo "<option value=\"$W_NAME\">$W_NAME</option>";
+                    echo "<option value=\"$row[W_NAME]\">$row[W_NAME]</option>";
                 }
             }
         }
 
         if ($typ == 'Haus') {
             $db_abfrage = "SELECT HAUS_ID, HAUS_STRASSE, HAUS_NUMMER, OBJEKT_ID FROM HAUS WHERE HAUS_AKTUELL='1' ORDER BY HAUS_STRASSE,  0+HAUS_NUMMER, OBJEKT_ID ASC";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-
-            // while (list ($HAUS_ID, $HAUS_STRASSE, $HAUS_NUMMER, $OBJEKT_ID) = mysql_fetch_row($resultat))
-            while ($row = mysql_fetch_assoc($resultat)) {
-                // echo "$HAUS_STRASSE $HAUS_NUMMER|";
+            $resultat = DB::select($db_abfrage);
+            foreach($resultat as $row) {
                 $haus_id = $row ['HAUS_ID'];
                 print_r($row);
                 $h = new haus ();
@@ -507,59 +477,36 @@ class buchen
 
         if ($typ == 'Einheit') {
             $db_abfrage = "SELECT EINHEIT_KURZNAME, EINHEIT_ID FROM EINHEIT WHERE EINHEIT_AKTUELL='1' ORDER BY EINHEIT_KURZNAME ASC";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-            while (list ($EINHEIT_KURZNAME, $EINHEIT_ID) = mysql_fetch_row($resultat)) {
-                // echo "$EINHEIT_KURZNAME|";
-                if ($vorwahl_bez == $EINHEIT_ID) {
-                    echo "<option value=\"$EINHEIT_ID\" selected>$EINHEIT_KURZNAME</option>";
+            $resultat = DB::select($db_abfrage);
+            foreach($resultat as $row) {
+                if ($vorwahl_bez == $row['EINHEIT_ID']) {
+                    echo "<option value=\"$row[EINHEIT_ID]\" selected>$row[EINHEIT_KURZNAME]</option>";
                 } else {
-                    echo "<option value=\"$EINHEIT_ID\">$EINHEIT_KURZNAME</option>";
+                    echo "<option value=\"$row[EINHEIT_ID]\">$row[EINHEIT_KURZNAME]</option>";
                 }
             }
         }
 
         if ($typ == 'Partner') {
             $db_abfrage = "SELECT PARTNER_NAME, PARTNER_ID FROM PARTNER_LIEFERANT WHERE AKTUELL='1' ORDER BY PARTNER_NAME ASC";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-            while (list ($PARTNER_NAME, $PARTNER_ID) = mysql_fetch_row($resultat)) {
-                $PARTNER_NAME1 = str_replace('<br>', ' ', $PARTNER_NAME);
-                // echo "$PARTNER_NAME1|";
-
+            $resultat = DB::select($db_abfrage);
+            foreach($resultat as $row) {
+                $PARTNER_NAME1 = str_replace('<br>', ' ', $row['PARTNER_NAME']);
                 if (!is_numeric($vorwahl_bez)) {
                     if ($vorwahl_bez == $PARTNER_NAME1) {
-                        echo "<option value=\"$PARTNER_ID\" selected>$PARTNER_NAME1</option>";
+                        echo "<option value=\"$row[PARTNER_ID]\" selected>$PARTNER_NAME1</option>";
                     } else {
-                        echo "<option value=\"$PARTNER_ID\">$PARTNER_NAME1</option>";
+                        echo "<option value=\"$row[PARTNER_ID]\">$PARTNER_NAME1</option>";
                     }
                 } else {
-                    if ($vorwahl_bez == $PARTNER_ID) {
-                        echo "<option value=\"$PARTNER_ID\" selected>$PARTNER_NAME1</option>";
+                    if ($vorwahl_bez == $row['PARTNER_ID']) {
+                        echo "<option value=\"$row[PARTNER_ID]\" selected>$PARTNER_NAME1</option>";
                     } else {
-                        echo "<option value=\"$PARTNER_ID\">$PARTNER_NAME1</option>";
+                        echo "<option value=\"$row[PARTNER_ID]\">$PARTNER_NAME1</option>";
                     }
                 }
             }
         }
-
-        /*
-		 * if($typ == 'Mietvertrag'){
-		 * $db_abfrage = "SELECT MIETVERTRAG_ID, EINHEIT_KURZNAME FROM `MIETVERTRAG` JOIN EINHEIT ON (MIETVERTRAG.EINHEIT_ID=EINHEIT.EINHEIT_ID) WHERE MIETVERTRAG_AKTUELL='1' ORDER BY EINHEIT_KURZNAME ASC";
-		 * $resultat = mysql_query($db_abfrage) or
-		 * die(mysql_error());
-		 * while (list ( $MIETVERTRAG_ID, $EINHEIT_KURZNAME) = mysql_fetch_row($resultat)){
-		 * $mv = new mietvertraege;
-		 * $mv->get_mietvertrag_infos_aktuell($MIETVERTRAG_ID);
-		 *
-		 * #echo " $EINHEIT_KURZNAME * $mv->personen_name_string * $MIETVERTRAG_ID|";
-		 * if($vorwahl_bez == "$EINHEIT_KURZNAME * $mv->personen_name_string * $MIETVERTRAG_ID"){
-		 * echo "<option value=\"$EINHEIT_KURZNAME * $mv->personen_name_string * $MIETVERTRAG_ID\" selected>$EINHEIT_KURZNAME * $mv->personen_name_string * $MIETVERTRAG_ID</option>";
-		 * }else{
-		 * echo "<option value=\"$EINHEIT_KURZNAME * $mv->personen_name_string * $MIETVERTRAG_ID\">$EINHEIT_KURZNAME * $mv->personen_name_string * $MIETVERTRAG_ID</option>";
-		 * }
-		 *
-		 * }
-		 * }
-		 */
 
         if ($typ == 'Mietvertrag') {
 
@@ -574,20 +521,14 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
                     $oo_id = $gk_arr_objekt [$go];
                     $db_abfrage .= "&& HAUS.OBJEKT_ID=$oo_id ";
                 }
-
                 $db_abfrage .= "GROUP BY MIETVERTRAG_ID ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC";
             } else {
-
                 $db_abfrage = "SELECT  HAUS.OBJEKT_ID, OBJEKT_KURZNAME, MIETVERTRAG.EINHEIT_ID, EINHEIT_KURZNAME, MIETVERTRAG_ID FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT, MIETVERTRAG) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && EINHEIT.EINHEIT_ID=MIETVERTRAG.EINHEIT_ID)
 WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERTRAG_AKTUELL='1' GROUP BY MIETVERTRAG_ID ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC";
             }
 
-            // die($db_abfrage);
-
-            // $db_abfrage ="SELECT OBJEKT_KURZNAME, MIETVERTRAG.EINHEIT_ID, EINHEIT_KURZNAME, MIETVERTRAG_ID FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT, MIETVERTRAG) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && EINHEIT.EINHEIT_ID=MIETVERTRAG.EINHEIT_ID)
-            // WHERE HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERTRAG_AKTUELL='1' GROUP BY MIETVERTRAG_ID ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC";
-            $result = mysql_query($db_abfrage) or die (mysql_error());
-            while ($row = mysql_fetch_assoc($result)) {
+            $result = DB::select($db_abfrage);
+            foreach($result as $row) {
                 $mv_id = $row ['MIETVERTRAG_ID'];
                 $mv = new mietvertraege ();
                 $mv->get_mietvertrag_infos_aktuell($mv_id);
@@ -613,86 +554,39 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 
         if ($typ == 'GELDKONTO') {
             $db_abfrage = "SELECT KONTO_ID, BEZEICHNUNG  FROM `GELD_KONTEN`  WHERE AKTUELL='1' ORDER BY BEZEICHNUNG ASC";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-            while (list ($KONTO_ID, $BEZEICHNUNG) = mysql_fetch_row($resultat)) {
-                // echo "$BEZEICHNUNG|";
-                if ($vorwahl_bez == $BEZEICHNUNG) {
-                    echo "<option value=\"$BEZEICHNUNG\" selected>$BEZEICHNUNG</option>";
+            $resultat = DB::select($db_abfrage);
+            foreach($resultat as $row) {
+                if ($vorwahl_bez == $row['BEZEICHNUNG']) {
+                    echo "<option value=\"$row[BEZEICHNUNG]\" selected>$row[BEZEICHNUNG]</option>";
                 } else {
-                    echo "<option value=\"$BEZEICHNUNG\">$BEZEICHNUNG</option>";
+                    echo "<option value=\"$row[BEZEICHNUNG]\">$row[BEZEICHNUNG]</option>";
                 }
             }
         }
 
         if ($typ == 'Lager') {
             $db_abfrage = "SELECT LAGER_ID, LAGER_NAME  FROM `LAGER`  WHERE AKTUELL='1' ORDER BY LAGER_NAME ASC";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-            while (list ($LAGER_ID, $LAGER_NAME) = mysql_fetch_row($resultat)) {
-                // echo "$LAGER_NAME|";
-                if ($vorwahl_bez == $LAGER_NAME) {
-                    echo "<option value=\"$LAGER_ID\" selected>$LAGER_NAME</option>";
+            $resultat = DB::select($db_abfrage);
+            foreach($resultat as $row) {
+                if ($vorwahl_bez == $row['LAGER_NAME']) {
+                    echo "<option value=\"$row[LAGER_ID]\" selected>$row[LAGER_NAME]</option>";
                 } else {
-                    echo "<option value=\"$LAGER_ID\">$LAGER_NAME</option>";
+                    echo "<option value=\"$row[LAGER_ID]\">$row[LAGER_NAME]</option>";
                 }
             }
         }
 
         if ($typ == 'Baustelle_ext') {
             $db_abfrage = "SELECT ID, BEZ  FROM `BAUSTELLEN_EXT`  WHERE AKTUELL='1' ORDER BY BEZ ASC";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
-            while (list ($ID, $BEZ) = mysql_fetch_row($resultat)) {
-                // echo "$BEZ|";
-                if ($vorwahl_bez == $BEZ) {
-                    echo "<option value=\"$BEZ\" selected>$BEZ</option>";
+            $resultat = DB::select($db_abfrage);
+            foreach($resultat as $row) {
+                if ($vorwahl_bez == $row['BEZ']) {
+                    echo "<option value=\"$row[BEZ]\" selected>$row[BEZ]</option>";
                 } else {
-                    echo "<option value=\"$BEZ\">$BEZ</option>";
+                    echo "<option value=\"$row[BEZ]\">$row[BEZ]</option>";
                 }
             }
         }
-
-        /*
-		 * if($typ == 'Eigentuemer'){
-		 * ###ALT OK $db_abfrage = "SELECT ID, EINHEIT_ID FROM `WEG_MITEIGENTUEMER` WHERE AKTUELL='1'";
-		 * $db_abfrage = "SELECT ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME FROM `WEG_MITEIGENTUEMER` , EINHEIT WHERE EINHEIT_AKTUELL = '1' && AKTUELL = '1' && EINHEIT.EINHEIT_ID = WEG_MITEIGENTUEMER.EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC";
-		 *
-		 *
-		 *
-		 *
-		 * $resultat = mysql_query($db_abfrage) or
-		 * die(mysql_error());
-		 * while (list ( $ID, $EINHEIT_ID) = mysql_fetch_row($resultat)){
-		 * $weg = new weg;
-		 * $eig_bez[] = $weg->get_eigentumer_id_infos2($ID).'*'. $ID;
-		 * }
-		 * asort($eig_bez);
-		 * $anz = count($eig_bez);
-		 * if($anz>0){
-		 * for($a=0;$a<$anz;$a++){
-		 * $eig_bez1 = $eig_bez[$a];
-		 * # echo "$eig_bez1|";
-		 *
-		 * if(!is_numeric($vorwahl_bez)){
-		 * if($vorwahl_bez == $eig_bez1){
-		 * echo "<option value=\"$ID\" selected>$eig_bez1</option>";
-		 * }else{
-		 * echo "<option value=\"$ID\">$eig_bez1</option>";
-		 * }
-		 * }else{
-		 *
-		 * $eee_id_arr = explode('*', $eig_bez1);
-		 * $eee_id = $eee_id_arr[1];
-		 * #echo "$eee_id $vorwahl_bez<br>";
-		 * if($vorwahl_bez == $eee_id){
-		 * echo "<option value=\"$ID\" selected>$eig_bez1</option>";
-		 * }else{
-		 * echo "<option value=\"$ID\">$eig_bez1</option>";
-		 * }
-		 * }
-		 * }
-		 * }
-		 *
-		 * }
-		 */
 
         if ($typ == 'Eigentuemer') {
             echo "VORWAHL $vorwahl_bez";
@@ -714,33 +608,20 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
                 $db_abfrage = "SELECT ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT.HAUS_ID, HAUS.OBJEKT_ID FROM `WEG_MITEIGENTUEMER` , EINHEIT, HAUS WHERE EINHEIT_AKTUELL = '1' && HAUS_AKTUELL = '1' && AKTUELL = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && EINHEIT.EINHEIT_ID = WEG_MITEIGENTUEMER.EINHEIT_ID GROUP BY ID ORDER BY  EINHEIT_KURZNAME ASC";
             }
 
-            // echo $db_abfrage;
-
-            // $db_abfrage = "SELECT ID, EINHEIT_ID FROM `WEG_MITEIGENTUEMER` WHERE AKTUELL='1'";
-            /* Mit Haus_id und OBJEKT_ID */
-            // SELECT ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT.HAUS_ID, HAUS.OBJEKT_ID FROM `WEG_MITEIGENTUEMER` , EINHEIT, HAUS WHERE EINHEIT_AKTUELL = '1' && HAUS_AKTUELL = '1' && AKTUELL = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && EINHEIT.EINHEIT_ID = WEG_MITEIGENTUEMER.EINHEIT_ID GROUP BY ID ORDER BY EINHEIT_KURZNAME ASC
-            /* OK ALT */
-            // $db_abfrage = "SELECT ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME FROM `WEG_MITEIGENTUEMER` , EINHEIT WHERE EINHEIT_AKTUELL = '1' && AKTUELL = '1' && EINHEIT.EINHEIT_ID = WEG_MITEIGENTUEMER.EINHEIT_ID GROUP BY ID ORDER BY EINHEIT_KURZNAME ASC";
-            $result = mysql_query($db_abfrage) or die (mysql_error());
-            while ($row = mysql_fetch_assoc($result)) {
+            $result = DB::select($db_abfrage);
+            foreach($result as $row) {
                 $weg = new weg ();
-                // $eig_bez[] = $weg->get_eigentumer_id_infos2($ID).'*'. $ID;
                 $ID = $row ['ID'];
                 $einheit_id = $row ['EINHEIT_ID'];
                 $weg->get_eigentuemer_namen($row ['ID']); // $weg->eigentuemer_name_str
-                // $e = new einheit();
-                // $e->get_einheit_info($EINHEIT_ID);
                 $einheit_kn = $row ['EINHEIT_KURZNAME'];
 
                 if (!session()->has('geldkonto_id')) {
-                    // echo "$einheit_kn*$ID*$weg->eigentuemer_name_str|";
                     if ($vorwahl_bez == $ID) {
                         echo "<option value=\"$ID\" selected>$einheit_kn***$weg->eigentuemer_name_str</option>";
                     } else {
                         echo "<option value=\"$ID\" >$einheit_kn***$weg->eigentuemer_name_str</option>";
                     }
-
-                    // echo "$mv->einheit_kurzname*$mv_id*$mv->personen_name_string|";
                 } else {
                     $eee = new einheit ();
                     $eee->get_einheit_info($einheit_id);
@@ -764,13 +645,9 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
     function get_objekt_arr_gk($gk_id)
     {
         $db_abfrage = "SELECT KOSTENTRAEGER_ID  FROM  GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$gk_id' && KOSTENTRAEGER_TYP='Objekt'";
-        $result = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result)) {
-                $arr [] = $row ['KOSTENTRAEGER_ID'];
-            }
-            return $arr;
+        $result = DB::select($db_abfrage);
+        if (!empty($result)) {
+            return $result;
         } else {
             return false;
         }
@@ -778,8 +655,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 
     function geldbuchungs_dat_deaktivieren($buchungs_dat)
     {
-        $db_abfrage = "UPDATE GELD_KONTO_BUCHUNGEN SET AKTUELL='0' WHERE GELD_KONTO_BUCHUNGEN_DAT='$buchungs_dat'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::update("UPDATE GELD_KONTO_BUCHUNGEN SET AKTUELL='0' WHERE GELD_KONTO_BUCHUNGEN_DAT='$buchungs_dat'");
         protokollieren('GELD_KONTO_BUCHUNGEN_DAT', $buchungs_dat, $buchungs_dat);
         echo "Alter Eintrag deaktiviert<br>";
     }
@@ -798,10 +674,10 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         if (!is_numeric($kostentraeger_id) or $kostentraeger_id == '0' or $kostentraeger_id == null or !$kostentraeger_id) {
             /* deaktivierte Buchung aktivieren */
             $db_abfrage = "UPDATE GELD_KONTO_BUCHUNGEN SET AKTUELL='1' WHERE GELD_KONTO_BUCHUNGEN_DAT='$alt_dat'";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::update($db_abfrage);
             protokollieren('GELD_KONTO_BUCHUNGEN_DAT', $alt_dat, $alt_dat);
             echo "Alter Eintrag Aktiviert<br>";
-            die (fehlermeldung_ausgeben("Fehler mit Kostenträgern, keine Änderung gespeichert!!!!"));
+            throw new Exception("Fehler mit Kostenträgern, keine Änderung gespeichert!!!!");
         }
 
         $datum = date_german2mysql($datum);
@@ -817,7 +693,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         $betrag1 = nummer_komma2punkt($betrag);
         $mwst1 = nummer_komma2punkt($mwst);
         $db_abfrage = "INSERT INTO GELD_KONTO_BUCHUNGEN VALUES (NULL, '$geldbuchung_id', '$g_buchungsnummer', '$kontoauszugsnr', '$erfass_nr','$betrag1', '$mwst1', '$vzweck', '$geldkonto_id', '$kostenkonto', '$datum', '$kostentraeger_typ', '$kostentraeger_id', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        DB::insert($db_abfrage);
         echo "Buchungsnr $geldbuchung_id wurde geändert!<br>";
         echo "Sie werden zum Buchungsjournal weitergeleitet!";
         weiterleiten_in_sec(route('legacy::buchen::index', ['option' => 'buchungs_journal_druckansicht', 'monat' => $t_monat, 'jahr' => $t_jahr], false), 2);
@@ -957,8 +833,8 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 
     function geldbuchungs_dat_infos($buchungs_dat)
     {
-        $result = mysql_query("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE GELD_KONTO_BUCHUNGEN_DAT='$buchungs_dat' && AKTUELL='1' LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE GELD_KONTO_BUCHUNGEN_DAT='$buchungs_dat' && AKTUELL='1' LIMIT 0,1");
+        $row = $result[0];
         $this->akt_buch_dat = $row ['GELD_KONTO_BUCHUNGEN_DAT'];
         $this->akt_buch_id = $row ['GELD_KONTO_BUCHUNGEN_ID'];
         $this->g_buchungsnummer = $row ['G_BUCHUNGSNUMMER'];
@@ -981,8 +857,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
     {
         $kostentraeger_id = $this->kostentraeger_id_ermitteln($kostentraeger_typ, $kostentraeger_bez);
         if (!is_numeric($kostentraeger_id) or $kostentraeger_id == '0' or $kostentraeger_id == null or !$kostentraeger_id) {
-            fehlermeldung_ausgeben("Es wurde nicht gebucht, Kostenträger unbekannt! Zeile. 747 class_buchen");
-            die ();
+            throw new Exception("Es wurde nicht gebucht, Kostenträger unbekannt!");
         }
         /* alt */
         $buchung_id = $this->get_last_geldbuchung_id();
@@ -997,12 +872,11 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         // $db_abfrage = "INSERT INTO GELD_KONTO_BUCHUNGEN VALUES (NULL, '$buchung_id','$kto_auszugsnr', '$rechnungsnr', '$betrag', '$vzweck', '$geldkonto_id', '$kostenkonto', '$datum', '$kostentraeger_typ', '$kostentraeger_id', '1')";
 
         /* neu */
-        $db_abfrage = "INSERT INTO GELD_KONTO_BUCHUNGEN VALUES (NULL, '$buchung_id', '$g_buchungsnummer', '$kto_auszugsnr', '$rechnungsnr', '$betrag', '$mwst', '$vzweck', '$geldkonto_id', '$kostenkonto', '$datum', '$kostentraeger_typ', '$kostentraeger_id', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        echo "<h1>Neue Buchungsnummer erteilt: $g_buchungsnummer</h1>";
+        DB::insert("INSERT INTO GELD_KONTO_BUCHUNGEN VALUES (NULL, '$buchung_id', '$g_buchungsnummer', '$kto_auszugsnr', '$rechnungsnr', '$betrag', '$mwst', ?, '$geldkonto_id', '$kostenkonto', '$datum', '$kostentraeger_typ', '$kostentraeger_id', '1')", [$vzweck]);
+        echo "<h5>Neue Buchungsnummer erteilt: $g_buchungsnummer</h5>";
 
         /* Protokollieren */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('GELD_KONTO_BUCHUNGEN', $last_dat, '0');
         echo "<h3>Betrag von $betrag € wurde gebucht.</h3>";
         weiterleiten_in_sec(route('legacy::buchen::index', ['option' => 'zahlbetrag_buchen']), 1);
@@ -1012,8 +886,8 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 
     function get_last_geldbuchung_id()
     {
-        $result = mysql_query("SELECT GELD_KONTO_BUCHUNGEN_ID FROM GELD_KONTO_BUCHUNGEN ORDER BY GELD_KONTO_BUCHUNGEN_ID DESC LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT GELD_KONTO_BUCHUNGEN_ID FROM GELD_KONTO_BUCHUNGEN ORDER BY GELD_KONTO_BUCHUNGEN_ID DESC LIMIT 0,1");
+        $row = $result[0];
         return $row ['GELD_KONTO_BUCHUNGEN_ID'];
     }
 
@@ -1021,8 +895,8 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 
     function get_last_buchungsnummer_konto($geldkonto_id, $jahr)
     {
-        $result = mysql_query("SELECT G_BUCHUNGSNUMMER FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y' ) = '$jahr'  && `AKTUELL` = '1' ORDER BY G_BUCHUNGSNUMMER DESC LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT G_BUCHUNGSNUMMER FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y' ) = '$jahr'  && `AKTUELL` = '1' ORDER BY G_BUCHUNGSNUMMER DESC LIMIT 0,1");
+        $row = $result[0];
         return $row ['G_BUCHUNGSNUMMER'];
     }
 
@@ -1043,9 +917,9 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         // $db_abfrage = "INSERT INTO GELD_KONTO_BUCHUNGEN VALUES (NULL, '$buchung_id','$kto_auszugsnr', '$rechnungsnr', '$betrag', '$vzweck', '$geldkonto_id', '$kostenkonto', '$datum', '$kostentraeger_typ', '$kostentraeger_id', '1')";
         /* neu */
         $db_abfrage = "INSERT INTO GELD_KONTO_BUCHUNGEN VALUES (NULL, '$buchung_id', '$g_buchungsnummer', '$kto_auszugsnr', '$rechnungsnr', '$betrag','$mwst', '$vzweck', '$geldkonto_id', '$kostenkonto', '$datum', '$kostentraeger_typ', '$kostentraeger_id', '1')";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
+        $resultat = DB::select($db_abfrage);
         /* Protokollieren */
-        $last_dat = mysql_insert_id();
+        $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('GELD_KONTO_BUCHUNGEN', $last_dat, '0');
     }
 
@@ -1077,11 +951,8 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 
     function finde_buchungen_pdf($abfrage)
     {
-        $result = mysql_query("$abfrage");
-        $numrows = mysql_numrows($result);
-
-        if ($numrows) {
-
+        $result = DB::select($abfrage);
+        if (!empty($result)) {
             ob_end_clean(); // ausgabepuffer leeren
             $pdf = new Cezpdf ('a4', 'portrait');
             $bpdf = new b_pdf ();
@@ -1091,7 +962,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             $summe = 0;
 
             $zeile = 0;
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $datum = date_mysql2german($row ['DATUM']);
                 $auszugsnr = $row ['KONTO_AUSZUGSNUMMER'];
                 $g_buchungsnummer = $row ['G_BUCHUNGSNUMMER'];
@@ -1203,8 +1074,8 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 
     function get_last_kontoauszug($geldkonto_id, $jahr)
     {
-        $result = mysql_query("SELECT KONTO_AUSZUGSNUMMER FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y' ) = '$jahr'  && `AKTUELL` = '1' ORDER BY KONTO_AUSZUGSNUMMER DESC LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT KONTO_AUSZUGSNUMMER FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y' ) = '$jahr'  && `AKTUELL` = '1' ORDER BY KONTO_AUSZUGSNUMMER DESC LIMIT 0,1");
+        $row = $result[0];
         return $row ['KONTO_AUSZUGSNUMMER'];
     }
 
@@ -1212,13 +1083,11 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
     {
         $temp_datum_arr = explode('.', session()->get('temp_datum'));
         $temp_jahr = $temp_datum_arr [2];
-        $result = mysql_query("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE DATE_FORMAT( DATUM, '%Y' ) = $temp_jahr   && GELDKONTO_ID='$geldkonto_id' && KONTO_AUSZUGSNUMMER='$kto_auszug' && AKTUELL='1' ORDER BY GELD_KONTO_BUCHUNGEN_ID DESC");
-        $numrows = mysql_numrows($result);
+        $my_array = DB::select("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE DATE_FORMAT( DATUM, '%Y' ) = $temp_jahr   && GELDKONTO_ID='$geldkonto_id' && KONTO_AUSZUGSNUMMER='$kto_auszug' && AKTUELL='1' ORDER BY GELD_KONTO_BUCHUNGEN_ID DESC");
         $link_reset_auszug = "<a href='" . route('legacy::buchen::index', ['option' => 'reset_kontoauszug']) . "'>Ohne Kontoauszug</a>";
         echo $link_reset_auszug;
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
+        $numrows = count($my_array);
+        if (!empty($my_array)) {
             echo "<table classe=\"sortable\">";
 
             // echo "<tr><td colspan=4>$link_reset_auszug</td></tr>";
@@ -1262,20 +1131,17 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         $jahr = $datum_arr [0];
         $monat = $datum_arr [1];
         if (!request()->has('sort')) {
-            $result = mysql_query("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, MWST_ANTEIL, GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y-%m') = '$jahr-$monat' && AKTUELL='1' ORDER BY G_BUCHUNGSNUMMER DESC");
+            $my_array = DB::select("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, MWST_ANTEIL, GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y-%m') = '$jahr-$monat' && AKTUELL='1' ORDER BY G_BUCHUNGSNUMMER DESC");
         } else {
             $sort = request()->input('sort');
-            $result = mysql_query("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, MWST_ANTEIL, GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO,KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y-%m') = '$jahr-$monat' && AKTUELL='1' ORDER BY $sort ASC");
+            $my_array = DB::select("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, MWST_ANTEIL, GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO,KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y-%m') = '$jahr-$monat' && AKTUELL='1' ORDER BY $sort ASC");
         }
 
         $datum_arr = explode("-", $datum);
         $jahr = $datum_arr [0];
         $monat = $datum_arr [1];
-        $numrows = mysql_numrows($result);
+        $numrows = count($my_array);
         if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-
             echo "<table class=\"sortable\">";
 
             echo "<tr><th>DATUM</th><th>ERF/AUSZ</th><th>AUSZUG</th><th>Konto</th><th>Betrag</th><th>MWST</th><th>Verwendung</th><th>BUCHUNGSNR</th><th>Buchungstext</th></tr>";
@@ -1326,16 +1192,13 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         $ta = $dat_arr [2];
 
         if (!request()->has('sort')) {
-            $result = mysql_query("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y-%m') = '$ja-$mo' && AKTUELL='1' ORDER BY G_BUCHUNGSNUMMER ASC");
+            $my_array = DB::select("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y-%m') = '$ja-$mo' && AKTUELL='1' ORDER BY G_BUCHUNGSNUMMER ASC");
         } else {
             $sort = request()->input('sort');
-            $result = mysql_query("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO,KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y-%m') = '$ja-$mo'  && AKTUELL='1' ORDER BY $sort ASC");
+            $my_array = DB::select("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO,KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y-%m') = '$ja-$mo'  && AKTUELL='1' ORDER BY $sort ASC");
         }
-        $numrows = mysql_numrows($result);
+        $numrows = count($my_array);
         if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-
             $sort_datum_link = "<a href='" . route('legacy::buchen::index', ['option' => 'buchungs_journal_druckansicht', 'sort' => 'DATUM']) . "'>Datum</a>";
             $sort_bnr_link = "<a href='" . route('legacy::buchen::index', ['option' => 'buchungs_journal_druckansicht', 'sort' => 'G_BUCHUNGSNUMMER']) . "'>Buchungsnr</a>";
             $sort_betrag_link = "<a href='" . route('legacy::buchen::index', ['option' => 'buchungs_journal_druckansicht', 'sort' => 'BETRAG']) . "'>Betrag</a>";
@@ -1449,11 +1312,10 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
     function kontostand_tagesgenau_bis($geldkonto_id, $datum)
     {
         $datum = date_german2mysql($datum);
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATUM<='$datum' && AKTUELL='1'");
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATUM<='$datum' && AKTUELL='1'");
 
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc($result);
+        if (!empty($result)) {
+            $row = $result[0];
             if ($row ['SUMME'] == null) {
                 $this->summe_konto_buchungen = '0.00';
                 return '0.00';
@@ -1481,16 +1343,13 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         $ta = $dat_arr [2];
 
         if (!request()->has('sort')) {
-            $result = mysql_query("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, MWST_ANTEIL,GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y-%m') = '$ja-$mo' && AKTUELL='1' ORDER BY G_BUCHUNGSNUMMER ASC");
+            $my_array = DB::select("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, MWST_ANTEIL,GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y-%m') = '$ja-$mo' && AKTUELL='1' ORDER BY G_BUCHUNGSNUMMER ASC");
         } else {
             $sort = request()->input('sort');
-            $result = mysql_query("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, MWST_ANTEIL,GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO,KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y-%m') = '$ja-$mo' && AKTUELL='1' ORDER BY $sort ASC");
+            $my_array = DB::select("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, MWST_ANTEIL,GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO,KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y-%m') = '$ja-$mo' && AKTUELL='1' ORDER BY $sort ASC");
         }
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-
+        $numrows = count($my_array);
+        if (!empty($my_array)) {
             /* Kontostand */
             $datum_ger = date_mysql2german(tage_minus($datum, 1));
             $this->kontostand_tagesgenau_bis($geldkonto_id, $datum_ger);
@@ -1723,18 +1582,14 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
 
         if ($monat == null) {
-            $result = mysql_query("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, MWST_ANTEIL,VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y') = '$ja' && AKTUELL='1' ORDER BY G_BUCHUNGSNUMMER ASC");
+            $my_array = DB::select("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, MWST_ANTEIL,VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y') = '$ja' && AKTUELL='1' ORDER BY G_BUCHUNGSNUMMER ASC");
         } else {
-            $result = mysql_query("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, MWST_ANTEIL,VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y-%m') = '$ja-$monat' && AKTUELL='1' ORDER BY G_BUCHUNGSNUMMER ASC");
+            $my_array = DB::select("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, MWST_ANTEIL,VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y-%m') = '$ja-$monat' && AKTUELL='1' ORDER BY G_BUCHUNGSNUMMER ASC");
         }
-        $numrows = mysql_numrows($result);
+        $numrows = count($my_array);
         if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-
             /* Kontostand */
             if ($monat == null) {
-                // $datum_ger = '01.01.'.$ja;
                 $vorjahr = $ja - 1;
                 $datum_ger = "31.12." . $vorjahr;
             } else {
@@ -1747,9 +1602,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
                     $datum_ger = "$ltvm.$vormonat.$ja";
                 }
             }
-            // $datum_ger = date_mysql2german($datum);
             $this->kontostand_tagesgenau_bis($geldkonto_id, $datum_ger);
-            // $this->summe_konto_buchungen;
             $this->summe_konto_buchungen_a = nummer_punkt2komma_t($this->summe_konto_buchungen);
 
             $gk = new geldkonto_info ();
@@ -1976,21 +1829,14 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
                 $str_kos .= "(KOSTENTRAEGER_TYP='$kos_typ' AND KOSTENTRAEGER_ID='$kos_id') ";
             }
         }
-        $result = mysql_query("SELECT KONTENRAHMEN_KONTO AS KONTO FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && AKTUELL='1' $str_kos GROUP BY KONTENRAHMEN_KONTO ORDER BY KONTENRAHMEN_KONTO ASC");
-        // echo "SELECT KONTENRAHMEN_KONTO AS KONTO FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && AKTUELL='1' $str_kos GROUP BY KONTENRAHMEN_KONTO ORDER BY KONTENRAHMEN_KONTO ASC";
-        // die();
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-            return $my_array;
-        }
+        $result = DB::select("SELECT KONTENRAHMEN_KONTO AS KONTO FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && AKTUELL='1' $str_kos GROUP BY KONTENRAHMEN_KONTO ORDER BY KONTENRAHMEN_KONTO ASC");
+        return $result;
     } // end function
 
     function get_buchungen_vor($jahr = '2005')
     {
-        $result = mysql_query("SELECT * FROM  `GELD_KONTO_BUCHUNGEN` WHERE  `DATUM` <  '$jahr-01-01' AND  `AKTUELL` =  '1'");
-        $numrows = mysql_numrows($result);
+        $result = DB::select("SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE  `DATUM` <  '$jahr-01-01' AND  `AKTUELL` =  '1'");
+        $numrows = count($result);
         if ($numrows) {
             return $numrows;
         }
@@ -2072,9 +1918,9 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 
     function kontobuchungen_anzeigen_jahr_monat($geldkonto_id, $kostenkonto, $jahr, $monat)
     {
-        $result = mysql_query("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y-%m' ) = '$jahr-$monat') && AKTUELL='1' ORDER BY GELD_KONTO_BUCHUNGEN_ID DESC");
+        $result = DB::select("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y-%m' ) = '$jahr-$monat') && AKTUELL='1' ORDER BY GELD_KONTO_BUCHUNGEN_ID DESC");
 
-        $numrows = mysql_numrows($result);
+        $numrows = count($result);
         if ($numrows > 0) {
             $k = new kontenrahmen ();
             // $k->konto_informationen($kostenkonto);
@@ -2085,7 +1931,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             echo "</table>";
             echo "<table class=\"sortable\">";
             echo "<tr><th>Datum</th><th>Erfassnr</th><th>Betrag</th><th>ZUWEISUNG</th><th>Buchungsnr</th><th>Vzweck</th></tr>";
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $datum = date_mysql2german($row ['DATUM']);
                 $auszugsnr = $row ['KONTO_AUSZUGSNUMMER'];
                 $erfass_nr = $row ['ERFASS_NR'];
@@ -2104,32 +1950,25 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             echo "<tfoot><tr><td></td><td><b>Summe</b></td><td><b>$this->summe_konto_buchungen €</b></td><td></td><td></td><td></td></tr></tfoot>";
 
             echo "</table><br>";
-        } else {
-            // echo "Geldkonto $geldkonto_id - Kostenkonto $kostenkonto leer<br>";
         }
     }
 
     function summe_kontobuchungen_jahr_monat($geldkonto_id, $kostenkonto, $jahr, $monat)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y-%m' ) = '$jahr-$monat') && AKTUELL='1'");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y-%m' ) = '$jahr-$monat') && AKTUELL='1'");
+        if (!empty($result)) {
             $this->summe_konto_buchungen = 0;
-            $row = mysql_fetch_assoc($result);
+            $row = $result[0];
             $this->summe_konto_buchungen = $row ['SUMME'];
         } else {
             $this->summe_konto_buchungen = 0;
-            // echo "leer";
         }
     }
 
     function kontobuchungen_anzeigen_jahr($geldkonto_id, $kostenkonto, $jahr)
     {
-        $result = mysql_query("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y' ) = '$jahr') && AKTUELL='1' ORDER BY GELD_KONTO_BUCHUNGEN_ID DESC");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
+        $result = DB::select("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y' ) = '$jahr') && AKTUELL='1' ORDER BY GELD_KONTO_BUCHUNGEN_ID DESC");
+        if (!empty($result)) {
             $k = new kontenrahmen ();
             $k->konto_informationen($kostenkonto);
             $kontenrahmen_id = $k->get_kontenrahmen('GELDKONTO', $geldkonto_id);
@@ -2139,7 +1978,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             echo "</table>";
             echo "<table class=\"sortable\">";
             echo "<tr><th>Datum</th><th>Erfassnr</th><th>Betrag</th><th>ZUWEISUNG</th><th>Buchungsnr</th><th>Vzweck</th></tr>";
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $datum = date_mysql2german($row ['DATUM']);
                 $auszugsnr = $row ['KONTO_AUSZUGSNUMMER'];
                 $erfass_nr = $row ['ERFASS_NR'];
@@ -2162,8 +2001,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             echo "<tfoot><tr><td></td><td></td><td><b>Summe</b></td><td><b>$this->summe_konto_buchungen €</b></td><td></td><td></td></tr></tfoot>";
 
             echo "</table><br>";
-        } else {
-            // echo "Geldkonto $geldkonto_id - Kostenkonto $kostenkonto leer<br>";
         }
     }
 
@@ -2225,25 +2062,15 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             $kontenrahmen_id = $k->get_kontenrahmen('GELDKONTO', $geldkonto_id);
             $k->konto_informationen2($kostenkonto, $kontenrahmen_id);
 
-            // $this->kontobuchungen_pdf($geldkonto_id, $kostenkonto, $jahr, $monat);
             if (isset ($monat)) {
                 $monat = sprintf('%02d', $monat);
-                $result1 = mysql_query("SELECT date_format(DATUM,'%d.%m.%Y') AS DATUM, G_BUCHUNGSNUMMER, ERFASS_NR, KONTO_AUSZUGSNUMMER, BETRAG, MWST_ANTEIL, RTRIM(LTRIM(VERWENDUNGSZWECK)) AS VERWENDUNGSZWECK, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y-%m' ) = '$jahr-$monat') && AKTUELL='1' ORDER BY GELD_KONTO_BUCHUNGEN_ID ASC");
+                $table_arr = DB::select("SELECT date_format(DATUM,'%d.%m.%Y') AS DATUM, G_BUCHUNGSNUMMER, ERFASS_NR, KONTO_AUSZUGSNUMMER, BETRAG, MWST_ANTEIL, RTRIM(LTRIM(VERWENDUNGSZWECK)) AS VERWENDUNGSZWECK, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y-%m' ) = '$jahr-$monat') && AKTUELL='1' ORDER BY GELD_KONTO_BUCHUNGEN_ID ASC");
             } else {
-                // die("JAHR: $jahr");
-                $result1 = mysql_query("SELECT date_format(DATUM,'%d.%m.%Y') AS DATUM, G_BUCHUNGSNUMMER, ERFASS_NR, KONTO_AUSZUGSNUMMER, BETRAG, MWST_ANTEIL,RTRIM(LTRIM(VERWENDUNGSZWECK)) AS VERWENDUNGSZWECK, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y' ) = '$jahr') && AKTUELL='1' ORDER BY GELD_KONTO_BUCHUNGEN_ID ASC");
+                $table_arr = DB::select("SELECT date_format(DATUM,'%d.%m.%Y') AS DATUM, G_BUCHUNGSNUMMER, ERFASS_NR, KONTO_AUSZUGSNUMMER, BETRAG, MWST_ANTEIL,RTRIM(LTRIM(VERWENDUNGSZWECK)) AS VERWENDUNGSZWECK, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y' ) = '$jahr') && AKTUELL='1' ORDER BY GELD_KONTO_BUCHUNGEN_ID ASC");
             }
 
-            $numrows = mysql_numrows($result1);
-            // echo "SELECT date_format(DATUM,'%d.%m.%Y') AS DATUM, G_BUCHUNGSNUMMER, ERFASS_NR, KONTO_AUSZUGSNUMMER, BETRAG, MWST_ANTEIL,RTRIM(LTRIM(VERWENDUNGSZWECK)) AS VERWENDUNGSZWECK, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y' ) = '$jahr') && AKTUELL='1' ORDER BY GELD_KONTO_BUCHUNGEN_ID ASC";
-            // die("SANEL $numrows");
-            if ($numrows) {
-                while ($row = mysql_fetch_assoc($result1)) {
-                    $table_arr [] = $row;
-                }
-
-                // print_r($table_arr);
-                // die();
+            $numrows = count($result1);
+            if (!empty($table_arr)) {
                 $L_pos = count($table_arr);
                 $table_arr = $this->vzweck_kuerzen($table_arr);
                 $table_arr [$L_pos] ['DATUM'] = '<b>Summe</b>';
@@ -2265,8 +2092,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
                     'KOS_BEZ' => 'Zuordnung',
                     'VERWENDUNGSZWECK' => 'Buchungstext'
                 );
-                // print_r($table_arr);
-                // die();
                 $pdf->ezTable($table_arr, $cols, "<b>Buchungskonto $kostenkonto - $k->konto_bezeichnung</b>", array(
                     'showHeadings' => 1,
                     'shaded' => 0,
@@ -2295,7 +2120,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 
             unset ($table_arr);
         } // end for
-        // die();
         ob_end_clean();
         $gk_bez = str_replace(' ', '_', $g->geldkonto_bez) . '-Buchungskontenuebersicht_' . "$monat" . "_" . "$jahr.pdf";
         $pdf_opt ['Content-Disposition'] = $gk_bez;
@@ -2305,12 +2129,12 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
     function kontobuchungen_pdf($geldkonto_id, $kostenkonto, $jahr, $monat)
     {
         if ($monat == '') {
-            $result = mysql_query("SELECT DATUM, BETRAG, VERWENDUNGSZWECK FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y' ) = '$jahr') && AKTUELL='1' ORDER BY GELD_KONTO_BUCHUNGEN_ID DESC");
+            $result = DB::select("SELECT DATUM, BETRAG, VERWENDUNGSZWECK FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y' ) = '$jahr') && AKTUELL='1' ORDER BY GELD_KONTO_BUCHUNGEN_ID DESC");
         } else {
-            $result = mysql_query("SELECT DATUM, BETRAG, VERWENDUNGSZWECK FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y-%m' ) = '$jahr-$monat') && AKTUELL='1' ORDER BY GELD_KONTO_BUCHUNGEN_ID DESC");
+            $result = DB::select("SELECT DATUM, BETRAG, VERWENDUNGSZWECK FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y-%m' ) = '$jahr-$monat') && AKTUELL='1' ORDER BY GELD_KONTO_BUCHUNGEN_ID DESC");
         }
 
-        $numrows = mysql_numrows($result);
+        $numrows = count($result);
         if ($numrows > 0) {
             $k = new kontenrahmen ();
             $k->konto_informationen($kostenkonto);
@@ -2329,7 +2153,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             $alle_seiten = $pdf->ezPageCount;
             $pdf->addText(70, 780, 12, "Kostenkonto $kostenkonto");
 
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $datum = date_mysql2german($row ['DATUM']);
                 $betrag = nummer_punkt2komma($row ['BETRAG']);
                 $vzweck = $this->umlaute_anpassen(ltrim(rtrim($row ['VERWENDUNGSZWECK'])));
@@ -2445,24 +2269,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         $f->hidden_feld("option", "buchungen_zu_kostenkonto");
     }
 
-    /*
-	 * function summe_kontobuchungen_jahr($geldkonto_id, $kostenkonto, $jahr){
-	 *
-	 * $result = mysql_query ("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y' ) = '$jahr') && AKTUELL='1'");
-	 *
-	 *
-	 * $numrows = mysql_numrows($result);
-	 * if($numrows>0){
-	 * $this->summe_konto_buchungen = 0;
-	 * $row = mysql_fetch_assoc($result);
-	 * $this->summe_konto_buchungen = $row['SUMME'];
-	 * }else{
-	 * $this->summe_konto_buchungen = 0;
-	 * #echo "leer";
-	 * }
-	 * }
-	 */
-
     function form_kosten_einnahmen()
     {
         $bg = new berlussimo_global ();
@@ -2547,47 +2353,44 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
     function summe_miete_jahr($geldkonto_id, $mieteinnahmen_kostenkonto, $jahr, $monat)
     {
         $ltag = letzter_tag_im_monat($monat, $jahr);
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$mieteinnahmen_kostenkonto' && DATUM BETWEEN '$jahr-01-01' AND '$jahr-$monat-$ltag' && AKTUELL='1'");
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$mieteinnahmen_kostenkonto' && DATUM BETWEEN '$jahr-01-01' AND '$jahr-$monat-$ltag' && AKTUELL='1'");
 
-        $numrows = mysql_numrows($result);
+        $numrows = count($result);
         if ($numrows > 0) {
             $this->summe_konto_buchungen = 0;
-            $row = mysql_fetch_assoc($result);
+            $row = $result[0];
             $this->summe_konto_buchungen = $row ['SUMME'];
         } else {
             $this->summe_konto_buchungen = 0;
-            // echo "leer";
         }
     }
 
     function summe_kosten_jahr_monat($geldkonto_id, $mieteinnahmen_kostenkonto, $jahr, $monat)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO != '$mieteinnahmen_kostenkonto' && ( DATE_FORMAT( DATUM, '%Y-%m' ) = '$jahr-$monat') && AKTUELL='1'");
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO != '$mieteinnahmen_kostenkonto' && ( DATE_FORMAT( DATUM, '%Y-%m' ) = '$jahr-$monat') && AKTUELL='1'");
 
-        $numrows = mysql_numrows($result);
+        $numrows = count($result);
         if ($numrows > 0) {
             $this->summe_konto_buchungen = 0;
-            $row = mysql_fetch_assoc($result);
+            $row = $result[0];
             $this->summe_konto_buchungen = $row ['SUMME'];
         } else {
             $this->summe_konto_buchungen = 0;
-            // echo "leer";
         }
     }
 
     function summe_kosten_jahr($geldkonto_id, $mieteinnahmen_kostenkonto, $jahr, $monat)
     {
         $ltag = letzter_tag_im_monat($monat, $jahr);
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO != '$mieteinnahmen_kostenkonto' && DATUM BETWEEN '$jahr-01-01' AND '$jahr-$monat-$ltag' && AKTUELL='1'");
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO != '$mieteinnahmen_kostenkonto' && DATUM BETWEEN '$jahr-01-01' AND '$jahr-$monat-$ltag' && AKTUELL='1'");
 
-        $numrows = mysql_numrows($result);
+        $numrows = count($result);
         if ($numrows > 0) {
             $this->summe_konto_buchungen = 0;
-            $row = mysql_fetch_assoc($result);
+            $row = $result[0];
             $this->summe_konto_buchungen = $row ['SUMME'];
         } else {
             $this->summe_konto_buchungen = 0;
-            // echo "leer";
         }
     }
 
@@ -2736,22 +2539,21 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 
     function summe_buchungen_kostenkonto_bis_heute($geldkonto_id, $kostenkonto, $kos_typ, $kos_id)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y-%m' ) <= CURDATE()) && AKTUELL='1' && KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID='$kos_id'");
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y-%m' ) <= CURDATE()) && AKTUELL='1' && KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID='$kos_id'");
 
-        $numrows = mysql_numrows($result);
+        $numrows = count($result);
         if ($numrows > 0) {
             $this->summe_konto_buchungen = 0;
-            $row = mysql_fetch_assoc($result);
+            $row = $result[0];
             $this->summe_konto_buchungen = $row ['SUMME'];
         } else {
             $this->summe_konto_buchungen = 0;
-            // echo "leer";
         }
     }
 
     function check_buchung($gk_id, $betrag, $auszug, $datum)
     {
-        $result = mysql_query("SELECT * 
+        $result = DB::select("SELECT * 
 FROM  `GELD_KONTO_BUCHUNGEN` 
 WHERE  `KONTO_AUSZUGSNUMMER` =  '$auszug'
 AND  `BETRAG` =  '$betrag'
@@ -2759,18 +2561,14 @@ AND  `GELDKONTO_ID` =  '$gk_id'
 AND  `DATUM` =  '$datum'
 AND  `AKTUELL` =  '1'
 LIMIT 0 , 1");
-        // echo "SELECT * FROM `SEPA_MANDATE` WHERE `M_REFERENZ` = '$mref' AND M_EDATUM='9999-12-31' AND `AKTUELL` = '1' LIMIT 0 , 1";
-        $numrows = mysql_numrows($result);
-        if ($numrows) {
-            return true;
-        }
+        return !empty($result);
     }
 
     function finde_buchungen_zu_kostenkonto($kostenkonto, $anfangsdatum, $enddatum)
     {
-        $result = mysql_query("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE  KONTENRAHMEN_KONTO = '$kostenkonto' && DATUM BETWEEN '$anfangsdatum' AND '$enddatum' && AKTUELL='1' ORDER BY GELDKONTO_ID, BETRAG, DATUM, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID ASC");
+        $result = DB::select("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE  KONTENRAHMEN_KONTO = '$kostenkonto' && DATUM BETWEEN '$anfangsdatum' AND '$enddatum' && AKTUELL='1' ORDER BY GELDKONTO_ID, BETRAG, DATUM, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID ASC");
 
-        $numrows = mysql_numrows($result);
+        $numrows = count($result);
         if ($numrows) {
             $anfangsdatum = date_mysql2german($anfangsdatum);
             $enddatum = date_mysql2german($enddatum);
@@ -2781,7 +2579,7 @@ LIMIT 0 , 1");
             echo "<tr class=\"feldernamen\"><td colspan=6><b>Alle Buchungen zu $kostenkonto vom $anfangsdatum bis $enddatum<br>$kostenkonto $k->konto_bezeichnung</b></td></tr>";
             echo "<tr class=\"feldernamen\"><td>Geldkonto</td><td>Kostenträger</td><td>Datum</td><td>Buchungsnr</td><td>Betrag</td><td width=70%>Vzweck</td></tr>";
             $g = new geldkonto_info ();
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $datum = date_mysql2german($row ['DATUM']);
                 $auszugsnr = $row ['KONTO_AUSZUGSNUMMER'];
                 $g_buchungsnummer = $row ['G_BUCHUNGSNUMMER'];
@@ -2810,11 +2608,11 @@ LIMIT 0 , 1");
         $enddatum = date_german2mysql($enddatum);
         $kostentraeger_id = $this->kostentraeger_id_ermitteln($kostentraeger_typ, $kostentraeger_bez);
         if (empty ($kostentraeger_id)) {
-            $result = mysql_query("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && DATUM BETWEEN '$anfangsdatum' AND '$enddatum' && AKTUELL='1' ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID ASC");
+            $result = DB::select("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && DATUM BETWEEN '$anfangsdatum' AND '$enddatum' && AKTUELL='1' ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID ASC");
         } else {
-            $result = mysql_query("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && DATUM BETWEEN '$anfangsdatum' AND '$enddatum' && AKTUELL='1' && KOSTENTRAEGER_TYP='$kostentraeger_typ' && KOSTENTRAEGER_ID='$kostentraeger_id' ORDER BY DATUM ASC");
+            $result = DB::select("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && DATUM BETWEEN '$anfangsdatum' AND '$enddatum' && AKTUELL='1' && KOSTENTRAEGER_TYP='$kostentraeger_typ' && KOSTENTRAEGER_ID='$kostentraeger_id' ORDER BY DATUM ASC");
         }
-        $numrows = mysql_numrows($result);
+        $numrows = count($result);
         if ($numrows > 0) {
             $anfangsdatum = date_mysql2german($anfangsdatum);
             $enddatum = date_mysql2german($enddatum);
@@ -2828,7 +2626,7 @@ LIMIT 0 , 1");
                 echo "<tr class=\"feldernamen\"><td colspan=5><b>Kostenträger $kostentraeger_bez vom $anfangsdatum bis $enddatum<br>$kostenkonto $k->konto_bezeichnung</b></td></tr>";
                 echo "<tr><td>Datum</td><td>Erfassnr</td><td>Betrag</td><td width=70%>Vzweck</td></tr>";
             }
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $datum = date_mysql2german($row ['DATUM']);
                 $auszugsnr = $row ['KONTO_AUSZUGSNUMMER'];
                 $erfass_nr = $row ['ERFASS_NR'];
@@ -2863,34 +2661,32 @@ LIMIT 0 , 1");
         $enddatum = date_german2mysql($enddatum);
         $kostentraeger_id = $this->kostentraeger_id_ermitteln($kostentraeger_typ, $kostentraeger_bez);
         if (empty ($kostentraeger_id)) {
-            $result = mysql_query("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && DATUM BETWEEN '$anfangsdatum' AND '$enddatum' && AKTUELL='1'");
+            $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && DATUM BETWEEN '$anfangsdatum' AND '$enddatum' && AKTUELL='1'");
         } else {
-            $result = mysql_query("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && DATUM BETWEEN '$anfangsdatum' AND '$enddatum' && AKTUELL='1' && KOSTENTRAEGER_TYP='$kostentraeger_typ' && KOSTENTRAEGER_ID='$kostentraeger_id'");
+            $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && DATUM BETWEEN '$anfangsdatum' AND '$enddatum' && AKTUELL='1' && KOSTENTRAEGER_TYP='$kostentraeger_typ' && KOSTENTRAEGER_ID='$kostentraeger_id'");
         }
-        $numrows = mysql_numrows($result);
+        $numrows = count($result);
         if ($numrows > 0) {
             $this->summe_konto_buchungen = 0;
-            $row = mysql_fetch_assoc($result);
+            $row = $result[0];
             $this->summe_konto_buchungen = $row ['SUMME'];
         } else {
             $this->summe_konto_buchungen = 0;
-            // echo "leer";
         }
     }
 
     function summe_kontobuchungen_dyn2($geldkonto_id, $kostenkonto, $anfangsdatum, $enddatum, $kostentraeger_typ, $kostentraeger_id)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && DATUM BETWEEN '$anfangsdatum' AND '$enddatum' && AKTUELL='1' && KOSTENTRAEGER_TYP='$kostentraeger_typ' && KOSTENTRAEGER_ID='$kostentraeger_id'");
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && DATUM BETWEEN '$anfangsdatum' AND '$enddatum' && AKTUELL='1' && KOSTENTRAEGER_TYP='$kostentraeger_typ' && KOSTENTRAEGER_ID='$kostentraeger_id'");
 
-        $numrows = mysql_numrows($result);
+        $numrows = count($result);
         if ($numrows > 0) {
             $this->summe_konto_buchungen = 0;
-            $row = mysql_fetch_assoc($result);
+            $row = $result[0];
             $this->summe_konto_buchungen = $row ['SUMME'];
             return $row ['SUMME'];
         } else {
             $this->summe_konto_buchungen = 0;
-            // echo "leer";
         }
     }
 
@@ -2899,19 +2695,19 @@ LIMIT 0 , 1");
     function summe_kontobuchungen_dyn3($geldkonto_id, $monat, $jahr, $bet = null)
     {
         if ($bet == null) {
-            $result = mysql_query("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM,'%Y-%m')='$jahr-$monat' && AKTUELL='1'");
+            $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM,'%Y-%m')='$jahr-$monat' && AKTUELL='1'");
         }
         if ($bet == '-') {
-            $result = mysql_query("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM,'%Y-%m')='$jahr-$monat' && AKTUELL='1' && BETRAG<0");
+            $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM,'%Y-%m')='$jahr-$monat' && AKTUELL='1' && BETRAG<0");
         }
 
         if ($bet == '+') {
-            $result = mysql_query("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM,'%Y-%m')='$jahr-$monat' && AKTUELL='1' && BETRAG>0");
+            $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM,'%Y-%m')='$jahr-$monat' && AKTUELL='1' && BETRAG>0");
         }
 
-        $numrows = mysql_numrows($result);
+        $numrows = count($result);
         if ($numrows) {
-            $row = mysql_fetch_assoc($result);
+            $row = $result[0];
             return number_format($row ['SUMME'], 2, '.', '');
         } else {
             return number_format('0.00', 2, '.', '');
@@ -2920,12 +2716,7 @@ LIMIT 0 , 1");
 
     function monatsbericht_ohne_ausgezogene()
     {
-
-        // echo "Monatsbericht Mieter - Monatsbericht Kostenkonten<br>";
-        echo "<h3>Aktuelle Mieterstatistik ohne ausgezogene Mieter<br></h3>";
-        $s = new statistik ();
-        // $jahr_monat = date("Y-m");
-
+        echo "<h5>Aktuelle Mieterstatistik ohne ausgezogene Mieter<br></h5>";
         $jahr = request()->input('jahr');
         if (empty ($jahr)) {
             $jahr = date("Y");
@@ -2955,13 +2746,9 @@ LIMIT 0 , 1");
             $objekt_name = $o->get_objekt_name($objekt_id);
 
             /* Aktuell bzw. gewünschten Monat berechnen */
-            // $einheiten_array = $s->vermietete_monat_jahr($jahr_monat,$objekt_id, '');
             $o = new objekt ();
             $einheiten_array = $o->einheiten_objekt_arr($objekt_id);
 
-            // echo '<pre>';
-            // print_r($einheiten_array);
-            // die();
             $anzahl_aktuell = count($einheiten_array);
             /* PDF */
 
@@ -3404,14 +3191,10 @@ LIMIT 0 , 1");
 
     function dropdown_geldkonten_alle($label)
     {
-        $result = mysql_query("SELECT GELD_KONTEN.KONTO_ID, GELD_KONTEN.BEZEICHNUNG, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ, GELD_KONTEN.INSTITUT FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' GROUP BY GELD_KONTEN.KONTO_ID ORDER BY GELD_KONTEN.KONTO_ID ASC");
+        $my_array = DB::select("SELECT GELD_KONTEN.KONTO_ID, GELD_KONTEN.BEZEICHNUNG, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ, GELD_KONTEN.INSTITUT FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' GROUP BY GELD_KONTEN.KONTO_ID ORDER BY GELD_KONTEN.KONTO_ID ASC");
 
-        $numrows = mysql_numrows($result);
+        $numrows = count($my_array);
         if ($numrows > 0) {
-
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-
             echo "<label for=\"geld_konto_dropdown\">$label</label>\n<select name=\"geld_konto\" id=\"geld_konto_dropdown\" size=\"1\" >\n";
             echo "<option value=\"alle\" selected>Alle Geldkonten</option>\n";
             for ($a = 0; $a < count($my_array); $a++) {
@@ -3432,8 +3215,8 @@ LIMIT 0 , 1");
 
     function finde_buchungen($abfrage)
     {
-        $result = mysql_query("$abfrage");
-        $numrows = mysql_numrows($result);
+        $result = DB::select($abfrage);
+        $numrows = count($result);
 
         if ($numrows) {
             echo "<table>";
@@ -3441,7 +3224,7 @@ LIMIT 0 , 1");
             echo "<tr class=\"feldernamen\"><td>Geldkonto</td><td>Kostenträger</td><td>Datum</td><td>Kostenkonto</td><td>Buchungsnr</td><td>Betrag</td><td width=70%>Vzweck</td></tr>";
             $g = new geldkonto_info ();
             $summe = 0;
-            while ($row = mysql_fetch_assoc($result)) {
+            foreach($result as $row) {
                 $datum = date_mysql2german($row ['DATUM']);
                 $auszugsnr = $row ['KONTO_AUSZUGSNUMMER'];
                 $g_buchungsnummer = $row ['G_BUCHUNGSNUMMER'];

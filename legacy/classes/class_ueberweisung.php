@@ -117,10 +117,10 @@ class ueberweisung
             $datum = date("Y-m-d");
             $betrag = nummer_komma2punkt($betrag);
             $db_abfrage = "INSERT INTO UEBERWEISUNG VALUES (NULL, NULL, '$datum', '$a_konto_id', '$e_konto_id', '$betrag', '$betrags_art', '$vzweck1', '$vzweck2', '$vzweck3', '$buchungstext','$zahlungart', '$bezugstab', '$bezugsid', NULL, NULL,   '1')";
-            $resultat = mysql_query($db_abfrage) or die (mysql_error());
+            DB::insert($db_abfrage);
 
             /* Protokollieren */
-            $last_dat = mysql_insert_id();
+            $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('UEBERWEISUNG', $last_dat, '0');
             hinweis_ausgeben("EINGABE WURDE IN DEN DTAUS POOL AUFGENOMMEN");
         } else {
@@ -131,13 +131,8 @@ class ueberweisung
     function check_dtaus_vorhanden($a_konto_id, $e_konto_id, $bezugstab, $bezugsid)
     {
         $db_abfrage = "SELECT * FROM UEBERWEISUNG WHERE  A_KONTO_ID='$a_konto_id' && E_KONTO_ID='$e_konto_id' && BEZUGSTAB='$bezugstab' && BEZUGS_ID='$bezugsid'";
-        $resultat = mysql_query($db_abfrage) or die (mysql_error());
-        $numrows = mysql_numrows($resultat);
-        if ($numrows) {
-            return true;
-        } else {
-            return false;
-        }
+        $resultat = DB::select($db_abfrage);
+        return !empty($resultat);
     }
 
     function dtaus_uebersicht()
@@ -163,15 +158,12 @@ class ueberweisung
 
     function dtaus_poll_arr()
     {
-        $result = mysql_query("SELECT A_KONTO_ID FROM `UEBERWEISUNG` WHERE `AKTUELL`='1' && DTAUS_ID IS NULL GROUP BY `A_KONTO_ID`");
+        $result = DB::select("SELECT A_KONTO_ID FROM `UEBERWEISUNG` WHERE `AKTUELL`='1' && DTAUS_ID IS NULL GROUP BY `A_KONTO_ID`");
 
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-            return $my_array;
+        if (!empty($result)) {
+            return $result;
         } else {
-            return FALSE;
+            return false;
         }
     }
 
@@ -202,28 +194,23 @@ class ueberweisung
 
     function dtaus_zeilen_arr($g_konto_id)
     {
-        $result = mysql_query("SELECT A_KONTO_ID, E_KONTO_ID, DATUM, BETRAG, VZWECK1, VZWECK2, VZWECK3, BUCHUNGSTEXT FROM `UEBERWEISUNG` WHERE `A_KONTO_ID` = '$g_konto_id'  AND `AKTUELL` = '1' && DTAUS_ID IS NULL");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-            return $my_array;
+        $result = DB::select("SELECT A_KONTO_ID, E_KONTO_ID, DATUM, BETRAG, VZWECK1, VZWECK2, VZWECK3, BUCHUNGSTEXT FROM `UEBERWEISUNG` WHERE `A_KONTO_ID` = '$g_konto_id'  AND `AKTUELL` = '1' && DTAUS_ID IS NULL");
+        if (!empty($result)) {
+            return $result;
         } else {
-            return FALSE;
+            return false;
         }
     }
 
     function dtaus_summe_geldk($geldkonto_id)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME FROM `UEBERWEISUNG` WHERE `DTAUS_ID`  IS NULL  AND `AKTUELL` = '1' && A_KONTO_ID='$geldkonto_id' ");
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM `UEBERWEISUNG` WHERE `DTAUS_ID`  IS NULL  AND `AKTUELL` = '1' && A_KONTO_ID='$geldkonto_id' ");
 
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc($result);
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['SUMME'];
         } else {
-            return FALSE;
+            return false;
         }
     }
 
@@ -275,14 +262,12 @@ class ueberweisung
 
     function gesamt_summe($g_konto_id)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME FROM `UEBERWEISUNG` WHERE `A_KONTO_ID` = '$g_konto_id'  AND `AKTUELL` = '1' && DTAUS_ID IS NULL");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM `UEBERWEISUNG` WHERE `A_KONTO_ID` = '$g_konto_id'  AND `AKTUELL` = '1' && DTAUS_ID IS NULL");
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['SUMME'];
         } else {
-            return FALSE;
+            return false;
         }
     }
 
@@ -345,8 +330,8 @@ class ueberweisung
 
     function letzte_dtaus_id()
     {
-        $result = mysql_query("SELECT DTAUS_ID  FROM `UEBERWEISUNG` WHERE  `AKTUELL` = '1' && DTAUS_ID IS NOT NULL ORDER BY DTAUS_ID DESC LIMIT 0,1");
-        $row = mysql_fetch_assoc($result);
+        $result = DB::select("SELECT DTAUS_ID  FROM `UEBERWEISUNG` WHERE  `AKTUELL` = '1' && DTAUS_ID IS NOT NULL ORDER BY DTAUS_ID DESC LIMIT 0,1");
+        $row = $result[0];
         return $row ['DTAUS_ID'];
     }
 
@@ -355,7 +340,7 @@ class ueberweisung
         $letzte_dtaus_id = $this->letzte_dtaus_id();
         $letzte_dtaus_id = $letzte_dtaus_id + 1;
         $datum = date("Y-m-d");
-        $result = mysql_query("UPDATE`UEBERWEISUNG`SET DTAUS_ID='$letzte_dtaus_id', DATUM='$datum' WHERE `A_KONTO_ID` = '$g_konto_id'  AND `AKTUELL` = '1' && DTAUS_ID IS NULL");
+        DB::update("UPDATE`UEBERWEISUNG`SET DTAUS_ID='$letzte_dtaus_id', DATUM='$datum' WHERE `A_KONTO_ID` = '$g_konto_id'  AND `AKTUELL` = '1' && DTAUS_ID IS NULL");
         return $letzte_dtaus_id;
     }
 
@@ -395,15 +380,11 @@ class ueberweisung
 
     function dtaus_ids_arr($g_konto_id)
     {
-        $result = mysql_query("SELECT DTAUS_ID, DATUM, BEZUGSTAB  FROM `UEBERWEISUNG` WHERE `AKTUELL`='1' && A_KONTO_ID='$g_konto_id'  && DTAUS_ID IS NOT NULL GROUP BY DTAUS_ID  ORDER BY DATUM DESC");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-            return $my_array;
+        $result = DB::select("SELECT DTAUS_ID, DATUM, BEZUGSTAB  FROM `UEBERWEISUNG` WHERE `AKTUELL`='1' && A_KONTO_ID='$g_konto_id'  && DTAUS_ID IS NOT NULL GROUP BY DTAUS_ID  ORDER BY DATUM DESC");
+        if (!empty($result)) {
+            return $result;
         } else {
-            return FALSE;
+            return false;
         }
     }
 
@@ -454,25 +435,21 @@ class ueberweisung
 
     function dtausdatei_zeilen_arr($dtaus_id)
     {
-        $result = mysql_query("SELECT *  FROM `UEBERWEISUNG` WHERE `DTAUS_ID` = '$dtaus_id'  AND `AKTUELL` = '1'");
+        $result = DB::select("SELECT * FROM `UEBERWEISUNG` WHERE `DTAUS_ID` = '$dtaus_id'  AND `AKTUELL` = '1'");
 
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-            return $my_array;
+        if (!empty($result)) {
+            return $result;
         } else {
-            return FALSE;
+            return false;
         }
     }
 
     function dtaus_gesamt_summe($dtaus_id)
     {
-        $result = mysql_query("SELECT SUM(BETRAG) AS SUMME FROM `UEBERWEISUNG` WHERE `DTAUS_ID` = '$dtaus_id'  AND `AKTUELL` = '1'");
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM `UEBERWEISUNG` WHERE `DTAUS_ID` = '$dtaus_id'  AND `AKTUELL` = '1'");
 
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc($result);
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['SUMME'];
         } else {
             return FALSE;
@@ -618,37 +595,24 @@ class ueberweisung
 
     function check_r_typ($erfass_nr)
     {
-        $result = mysql_query("SELECT RECHNUNGSTYP  FROM  RECHNUNGEN WHERE AKTUELL = '1' && BELEG_NR='$erfass_nr' ");
-        $numrows = mysql_numrows($result);
+        $result = DB::select("SELECT RECHNUNGSTYP  FROM  RECHNUNGEN WHERE AKTUELL = '1' && BELEG_NR='$erfass_nr' ");
 
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc($result);
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['RECHNUNGSTYP'];
         }
     }
 
     function check_buchung($erfass_nr, $geldkonto_id, $buchungstext)
     {
-        $result = mysql_query("SELECT *  FROM  GELD_KONTO_BUCHUNGEN WHERE AKTUELL = '1' && ERFASS_NR='$erfass_nr' && GELDKONTO_ID='$geldkonto_id' && VERWENDUNGSZWECK='$buchungstext'");
-        $numrows = mysql_numrows($result);
-
-        if ($numrows > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select("SELECT *  FROM  GELD_KONTO_BUCHUNGEN WHERE AKTUELL = '1' && ERFASS_NR='$erfass_nr' && GELDKONTO_ID='$geldkonto_id' && VERWENDUNGSZWECK='$buchungstext'");
+        return !empty($result);
     }
 
     function check_mbuchung($geldkonto_id, $buchungstext)
     {
-        $result = mysql_query("SELECT *  FROM  GELD_KONTO_BUCHUNGEN WHERE AKTUELL = '1' && GELDKONTO_ID='$geldkonto_id' && VERWENDUNGSZWECK='$buchungstext'");
-        $numrows = mysql_numrows($result);
-
-        if ($numrows > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        $result = DB::select("SELECT *  FROM  GELD_KONTO_BUCHUNGEN WHERE AKTUELL = '1' && GELDKONTO_ID='$geldkonto_id' && VERWENDUNGSZWECK='$buchungstext'");
+        return !empty($result);
     }
 
     /*
@@ -658,11 +622,9 @@ class ueberweisung
     
     function get_gezahlter_betrag($dtaus_id, $belegnr)
     {
-        $result = mysql_query(" SELECT SUM( BETRAG ) AS SUMME FROM `UEBERWEISUNG` WHERE `DTAUS_ID` = '$dtaus_id' && BEZUGSTAB = 'Rechnung' && BEZUGS_ID = '$belegnr' AND `AKTUELL` = '1' ");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            $row = mysql_fetch_assoc($result);
+        $result = DB::select(" SELECT SUM( BETRAG ) AS SUMME FROM `UEBERWEISUNG` WHERE `DTAUS_ID` = '$dtaus_id' && BEZUGSTAB = 'Rechnung' && BEZUGS_ID = '$belegnr' AND `AKTUELL` = '1' ");
+        if (!empty($result)) {
+            $row = $result[0];
             return $row ['SUMME'];
         }
     } // end function
@@ -697,15 +659,11 @@ class ueberweisung
 
     function dtaus_zeilen_arr_holen($dtaus_id)
     {
-        $result = mysql_query("SELECT *  FROM `UEBERWEISUNG` WHERE `DTAUS_ID` = '$dtaus_id'  AND `AKTUELL` = '1'");
-
-        $numrows = mysql_numrows($result);
-        if ($numrows > 0) {
-            while ($row = mysql_fetch_assoc($result))
-                $my_array [] = $row;
-            return $my_array;
+        $result = DB::select("SELECT *  FROM `UEBERWEISUNG` WHERE `DTAUS_ID` = '$dtaus_id'  AND `AKTUELL` = '1'");
+        if (!empty($result)) {
+            return $result;
         } else {
-            return FALSE;
+            return false;
         }
     }
 
@@ -716,7 +674,7 @@ function ueberwiesene_rechnung_buchen($datum, $kto_auszugsnr, $belegnr, $vorzeic
         $r->rechnung_grunddaten_holen($belegnr);
         $kontierungs_status = $r->rechnung_auf_kontierung_pruefen($belegnr);
         if ($kontierungs_status == 'vollstaendig') {
-            $result = mysql_query("SELECT sum( GESAMT_SUMME - ( GESAMT_SUMME /100 * RABATT_SATZ ) ) AS NETTO, sum( (
+            $result = DB::select("SELECT sum( GESAMT_SUMME - ( GESAMT_SUMME /100 * RABATT_SATZ ) ) AS NETTO, sum( (
 (
 GESAMT_SUMME - ( GESAMT_SUMME /100 * RABATT_SATZ ) ) /100
 ) * ( 100 + MWST_SATZ )
@@ -729,14 +687,10 @@ GESAMT_SUMME - ( GESAMT_SUMME /100 * RABATT_SATZ ) ) /100
 ) AS SKONTO_BETRAG, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, MWST_SATZ
 FROM `KONTIERUNG_POSITIONEN`
 WHERE BELEG_NR = '$belegnr' && AKTUELL = '1'
-GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO") or die (mysql_error());
+GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO");
 
-            $numrows = mysql_numrows($result);
-            if ($numrows > 0) {
-                while ($row = mysql_fetch_assoc($result)) {
-                    // $my_array[] = $row;
-                    // $art_bez = $r->kontierungsartikel_holen($belegnr, $pos);
-                    // $vzweck_neu = "ERFNR:$belegnr, Position $pos,"." $menge x $art_bez";
+            if (!empty($result)) {
+                foreach($result as $row) {
                     $kostentraeger_typ = $row ['KOSTENTRAEGER_TYP'];
                     $kostentraeger_id = $row ['KOSTENTRAEGER_ID'];
                     $kostenkonto = $row ['KONTENRAHMEN_KONTO'];
@@ -769,7 +723,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO") or die (mysql
 
     function update_ueberweisung_dat($u_dat, $datum, $kto_auszugsnr)
     {
-        $result = mysql_query("UPDATE `UEBERWEISUNG` SET AUSZUGSNR='$kto_auszugsnr', AUSZUGS_DATUM='$datum' WHERE `U_DAT` = '$u_dat'");
+        DB::update("UPDATE `UEBERWEISUNG` SET AUSZUGSNR='$kto_auszugsnr', AUSZUGS_DATUM='$datum' WHERE `U_DAT` = '$u_dat'");
     }
 
     function form_ueberweisung_manuell()
