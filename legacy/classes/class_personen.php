@@ -253,6 +253,7 @@ LIMIT 0 , 30";
 
         $buchstaben = array();
         $zeile = 0;
+        $numrows = count($personen_arr);
         for ($a = 0; $a < $numrows; $a++) {
             $zeile++;
             $person_id = $personen_arr [$a] ['PERSON_ID'];
