@@ -98,10 +98,10 @@ function haus_kurz($objekt_id = '')
             $link_haus_aendern = "<a href='" . route('legacy::haeuser::index', ['haus_raus' => 'haus_aendern', 'haus_id' => $row['HAUS_ID']]) . "'>Haus ändern</th>";
 
             if ($counter == 1) {
-                echo "<tr class=\"zeile1\"><td width=150>$row->HAUS_STRASSE</td><td width=60>$row[HAUS_NUMMER]</td><td width=60>$row[HAUS_PLZ]</td><td width=60>$row[HAUS_QM] m²</td><td width=100>$gesammtflaeche_einheiten m²</td><td><a class=\"table_links\" href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_kurz', 'haus_id' => $row['HAUS_ID']]) . "'>Einheiten (<b>$einheiten_im_haus</b>)</a></td><td>$detail_link</td><td>$link_haus_aendern</td></tr>";
+                echo "<tr class=\"zeile1\"><td width=150>$row[HAUS_STRASSE]</td><td width=60>$row[HAUS_NUMMER]</td><td width=60>$row[HAUS_PLZ]</td><td width=60>$row[HAUS_QM] m²</td><td width=100>$gesammtflaeche_einheiten m²</td><td><a class=\"table_links\" href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_kurz', 'haus_id' => $row['HAUS_ID']]) . "'>Einheiten (<b>$einheiten_im_haus</b>)</a></td><td>$detail_link</td><td>$link_haus_aendern</td></tr>";
             }
             if ($counter == 2) {
-                echo "<tr class=\"zeile2\"><td width=150>$row->HAUS_STRASSE</td><td width=60>$row[HAUS_NUMMER]</td><td width=60>$row[HAUS_PLZ]</td><td width=60>$row[HAUS_QM] m²</td><td width=60>$gesammtflaeche_einheiten m²</td><td><a class=\"table_links\" href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_kurz', 'haus_id' => $row['HAUS_ID']]) . "'>Einheiten (<b>$einheiten_im_haus</b>)</a></td><td>$detail_link</td><td>$link_haus_aendern</td></tr>";
+                echo "<tr class=\"zeile2\"><td width=150>$row[HAUS_STRASSE]</td><td width=60>$row[HAUS_NUMMER]</td><td width=60>$row[HAUS_PLZ]</td><td width=60>$row[HAUS_QM] m²</td><td width=60>$gesammtflaeche_einheiten m²</td><td><a class=\"table_links\" href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_kurz', 'haus_id' => $row['HAUS_ID']]) . "'>Einheiten (<b>$einheiten_im_haus</b>)</a></td><td>$detail_link</td><td>$link_haus_aendern</td></tr>";
                 $counter = 0;
             }
         }

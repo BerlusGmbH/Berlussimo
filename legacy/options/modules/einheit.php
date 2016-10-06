@@ -163,7 +163,7 @@ function einheit_kurz($haus_id)
             if ($TYP != 'Wohneigentum') {
                 $counter++;
                 if ($counter == 1) {
-                    echo "<tr class=\"zeile1\"><td width=150>$einheit_link</td><td>$TYP</td><td>$mietkonto_link</td><td width=200>";
+                    echo "<tr class=\"zeile1\"><td width=150>$einheit_link</td><td>$row[TYP]</td><td>$mietkonto_link</td><td width=200>";
                     if ($mieter != "leer") {
                         echo mieterid_zum_vertrag($mietvertrags_id);
                     }
