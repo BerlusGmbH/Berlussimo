@@ -13,7 +13,7 @@ class LegacyController extends Controller
 
     public function __construct()
     {
-        error_reporting(E_ALL ^ E_DEPRECATED ^ E_WARNING ^ E_NOTICE);
+        error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
     }
 
     public function render($view = 'berlussimo')
