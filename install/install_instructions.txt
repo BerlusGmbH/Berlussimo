@@ -22,15 +22,6 @@ sudo apt-get install mysql-server
 sudo apt-get install apache2 php5 php5-gd libapache2-mod-php5 php5-mysql git
 cd /var/www/;sudo git clone https://github.com/BerlusGmbH/Berlussimo berlussimo
 cd /var/www/berlussimo/; sudo git checkout develop
-sudo cp /var/www/berlussimo/legacy/classes/config.inc.php.sample /var/www/berlussimo/legacy/classes/config.inc.php
-
-#edit config to fit your mysql config
-#for example:
-#define ("DB_USER", "root");
-#define ("DB_PASS", "<your_password_set_above>");
-#define ("DB_NAME", "berlussimo");
-#define ("DB_HOST", "localhost");
-sudo nano /var/www/berlussimo/legacy/classes/config.inc.php
 
 #edit config to fit your mysql config
 #'mysql' => [
