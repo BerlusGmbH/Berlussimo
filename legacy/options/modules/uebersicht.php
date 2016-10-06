@@ -362,8 +362,7 @@ function uebersicht_einheit($einheit_id)
 
     echo "</div>";
     if (!empty ($mietvertrag_id)) {
-        $link_mietkonto = "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mietkonto_uebersicht_detailiert', 'mietvertrag_id' => $mietvertrag_id]) . "'>Mietkonto</a>";
-        $link_mietkonto_ab = "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mietkonto_ab', 'mietvertrag_id' => $mietvertrag_id]) . "'>Mietkonto Ab</a>";
+        $link_mietkonto = "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mk_pdf', 'mietvertrag_id' => $mietvertrag_id]) . "'>Mietkonto</a>";
     }
     echo "<div class='card-action'>$link_mietkonto</div>";
     echo "</div>";
