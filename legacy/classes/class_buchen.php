@@ -411,15 +411,8 @@ class buchen
 
     function dropdown_kostentraeger_bez_vw($label, $name, $id, $js_action, $kos_typ, $vorwahl_bez)
     {
-        // echo "$kos_typ $vorwahl_bez";
-        // die();
         $typ = $kos_typ;
-
-        // if(is_numeric($vorwahl_bez)){
-        // $r = new rechnung();
-        // $vorwahl_bez = $r->kostentraeger_ermitteln($kos_typ, $vorwahl_bez);
-        // }
-
+        
         echo "<label for=\"$id\">$label</label><select name=\"$name\" id=\"$id\" size=1 $js_action>\n";
         echo "<option value=\"\">Bitte wählen</option>\n";
         if ($typ == 'Objekt') {
@@ -782,8 +775,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 
         echo '<pre>';
         $this->geldbuchungs_dat_infos($buchungs_dat);
-        // print_r($this);
-        // die();
         $form->hidden_feld("buch_dat_alt", $buchungs_dat);
         $form->hidden_feld("akt_buch_id", $this->akt_buch_id);
         $form->hidden_feld("g_buchungsnummer", $this->g_buchungsnummer);
@@ -814,11 +805,8 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             $buchung->dropdown_kostentreager_typen_vw('Kostenträgertyp wählen', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, $this->kostentraeger_typ);
 
             $js_id = "";
-
-            // $buchung->dropdown_kostentreager_ids('Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id);
             $buchung->dropdown_kostentraeger_bez_vw("Kostenträger $akt_kostentraeger_bez", 'kostentraeger_id', 'dd_kostentraeger_id', $js_id, $this->kostentraeger_typ, $this->kostentraeger_id);
 
-            // die('TEST');
         } else {
             $form->hidden_feld("kostentraeger_typ", $this->kostentraeger_typ);
             $form->hidden_feld("kostentraeger_id", $this->kostentraeger_id);
@@ -943,8 +931,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             $bis = date_german2mysql(request()->input('enddatum'));
             $kostenkonto = request()->input('kostenkonto');
             $abfrage = "SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE AKTUELL='1' && GELDKONTO_ID='" . session()->get('geldkonto_id') . "' && KONTENRAHMEN_KONTO='$kostenkonto' && DATUM BETWEEN '$von' AND '$bis' ORDER BY DATUM ASC";
-            // echo $abfrage;
-            // die();
             $this->finde_buchungen_pdf($abfrage);
         }
     }
@@ -1512,9 +1498,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 
     function vzweck_kuerzen($table_arr)
     {
-        // echo '<pre>';
-        // print_r($table_arr);
-        // die();
         $anzahl_zeilen = count($table_arr);
         $summe = 0;
         $summe_mwst = 0;
@@ -1525,13 +1508,10 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             $kto_auszugsnr = $table_arr [$a] ['KONTO_AUSZUGSNUMMER'];
             $erfass_nr = $table_arr [$a] ['ERFASS_NR'];
             if (isset ($kto_auszugsnr) && isset ($erfass_nr)) {
-
-                // if($erfass_nr == $kto_auszugsnr){
                 if ($erfass_nr != 'MIETE' && $erfass_nr != 'DTAUS' && $erfass_nr != $kto_auszugsnr) {
                     $rr = new rechnung ();
                     $rr->rechnung_grunddaten_holen($erfass_nr);
                     $aussteller_name = $rr->rechnungs_aussteller_name . ',';
-                    // die(" $rr->rechnungs_aussteller_name BITTE DEN HERRN SIVAC INFORMIEREN!!!!!!");
                 }
             } else {
                 $aussteller_name = '';
@@ -1542,19 +1522,11 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             $betrag = nummer_punkt2komma($table_arr [$a] ['BETRAG']);
             $mwst_anteil = nummer_punkt2komma($table_arr [$a] ['MWST_ANTEIL']);
             if (preg_match("/Erfnr:/i", "$vzweck")) {
-                // echo "Es wurde eine Übereinstimmung gefunden.";
-                // $pos = strpos($vzweck, 'Rnr:'); //bis zu Rnr: abschneiden
                 $pos = strpos($vzweck, ' '); // bis zu Rnr: abschneiden
                 if ($pos == true) {
                     $vzweck_neu = substr($vzweck, $pos);
-                    // $vzweck_neu = $vzweck;
-                    // echo $pos.'<br>';
-                    // echo $vzweck.'<br>';
-                    // echo $vzweck_neu.'<br>';
                     $table_arr [$a] ['VERWENDUNGSZWECK'] = $aussteller_name . ' ' . $vzweck_neu;
                 }
-            } else {
-                // echo "Es wurde keine Übereinstimmung gefunden.";
             }
 
             $table_arr [$a] ['BETRAG_O_EUR'] = $betrag;
@@ -1570,7 +1542,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         $summe_mwst_a = nummer_punkt2komma($summe_mwst);
         $table_arr [$anzahl_zeilen] ['BETRAG'] = "<b>$summe €</b>";
         $table_arr [$anzahl_zeilen] ['MWST_ANTEIL'] = "<b>$summe_mwst_a €</b>";
-        // die();
         return $table_arr;
     }
 
@@ -2006,7 +1977,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 
     function buchungskonten_uebersicht_pdf($geldkonto_id)
     {
-        // die('SANEL DEMO');
         $konten_arr = $this->konten_aus_buchungen($geldkonto_id);
         $g = new geldkonto_info ();
         $g->geld_konto_details($geldkonto_id);

@@ -147,8 +147,6 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
             'MIETER' => 'Mieter',
             'KONTAKT' => 'Kontakt'
         );
-        // print_r($table_arr);
-        // die();
         $pdf->ezTable ( $my_arr, $cols, "Alle Einheiten", array (
             'showHeadings' => 1,
             'shaded' => 1,

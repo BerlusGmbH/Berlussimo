@@ -222,9 +222,6 @@ class kautionen
         $von1 = $this->zinstag($von);
         $bis1 = $this->zinstag($bis);
         $differenz = $bis1 - $von1;
-        // if($von == "2010-06-18"){
-        // die("$differenz = $bis1 - $von1;");
-        // }
         return $differenz;
     }
 

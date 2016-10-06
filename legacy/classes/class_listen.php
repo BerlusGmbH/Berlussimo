@@ -14,9 +14,6 @@ class listen
         $gk->geld_konto_ermitteln('OBJEKT', $objekt_id);
         echo '<pre>';
         print_r($gk);
-        if (!$gk->geldkonto_id) {
-            // die("$objekt_id Geldkonto zum Objekt hinzufügen!!!");
-        }
 
         $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT_ID`,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
 WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.OBJEKT_ID='$objekt_id' 
@@ -127,14 +124,9 @@ ORDER BY EINHEIT_KURZNAME";
                     $pdf_tab [$a] ['SUMME_REP_A'] = nummer_punkt2komma_t($summe_rep);
                     $pdf_tab [$a] ['ENDSUMME'] = $pdf_tab [$a] ['ZWISCHENSUMME'] + $summe_rep;
                     $pdf_tab [$a] ['ENDSUMME_A'] = '<b>' . nummer_punkt2komma_t($pdf_tab [$a] ['ZWISCHENSUMME'] + $summe_rep) . '</b>';
-
-                    // $pdf_tab[$a]['EIG_AUSZAHLUNG'] = $this->get_kosten_arr('EINHEIT', $my_arr[$a]['EINHEIT_ID'], $monat, $jahr, $gk->geldkonto_id,80001);
-
+                    
                     $e_nam = $pdf_tab [$a] ['EIGENTUEMER_NAMEN'];
                     $ein_nam = $pdf_tab [$a] ['EINHEIT_KURZNAME'];
-                    // echo '<pre>';
-                    // print_r($pdf_tab);
-                    // die();
                     if ($lang == 'en') {
                         $cols = array(
                             'MIETER_SALDO' => "Saldo",
@@ -215,9 +207,6 @@ ORDER BY EINHEIT_KURZNAME";
                             $pdf->ezText("Keine Auszahlung möglich!", 12);
                         }
                     }
-
-                    // print_r($table_arr);
-                    // die();
 
                     $pdf->ezSetDy(-20); // abstand
                     if (is_array($my_arr [$a] ['AUSGABEN'])) {
@@ -535,7 +524,6 @@ ORDER BY EINHEIT_KURZNAME";
                     /* Auszahlug Nullen wenn Mietersaldo klein */
                     if ($pdf_tab [$a] ['MIETER_SALDO'] < 0) {
                         $tmp_minus = substr($pdf_tab [$a] ['MIETER_SALDO'], 1);
-                        // die($tmp_minus);
                         if ($tmp_minus > $pdf_tab [$a] ['ENDSUMME']) {
                             $pdf_tab [$a] ['ENDSUMME'] = 0.00;
                             $pdf_tab [$a] ['ENDSUMME_A'] = '0,00';
@@ -636,22 +624,7 @@ ORDER BY EINHEIT_KURZNAME";
                             )
                         ));
                     }
-
-                    /*
-					 * if($pdf_tab[$a]['BRUTTO_IST']<$pdf_tab[$a]['ENDSUMME']){
-					 * $pdf->setColor(1.0,0.0,0.0);
-					 * $pdf->ezSetDy(-20); //abstand
-					 * if($lang=='en'){
-					 * $pdf->ezText("no payout possible!", 12);
-					 * }else{
-					 * $pdf->ezText("Keine Auszahlung möglich!", 12);
-					 * }
-					 * }
-					 */
-
-                    // print_r($table_arr);
-                    // die();
-
+                    
                     $pdf->ezSetDy(-20); // abstand
                     if (is_array($my_arr [$a] ['AUSGABEN'])) {
                         if ($lang == 'en') {
@@ -709,9 +682,7 @@ ORDER BY EINHEIT_KURZNAME";
                         $pdf->ezText("Keine Reparaturen", 12);
                     }
                     $pdf->ezSetDy(-20); // abstand
-                    /* TAbelle Auszahlung an Eigentümer */
-                    // print_r($my_arr[$a]['AUSZAHLUNG_ET']);
-                    // die();
+                    /* Tabelle Auszahlung an Eigentümer */
                     if (is_array($my_arr [$a] ['AUSZAHLUNG_ET'])) {
 
                         if ($lang == 'en') {
@@ -727,30 +698,11 @@ ORDER BY EINHEIT_KURZNAME";
                                 'VERWENDUNGSZWECK' => "Buchungstext",
                                 'BETRAG' => "Betrag"
                             );
-                            // $pdf->ezTable($my_arr[$a]['AUSZAHLUNG_ET'], $cols, "<b>$monat_name $jahr - Überweisung 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
                         }
                     }
-                    /*
-					 * if(is_array($my_arr[$a]['IST_EINNAHMEN'])){
-					 * if($lang=='en'){
-					 * $cols = array('DATUM'=>"Date", 'VERWENDUNGSZWECK'=>"Description", 'BETRAG'=>"Amount");
-					 * $pdf->ezTable($my_arr[$a]['IST_EINNAHMEN'], $cols, "<b>$monat_name $jahr - income overview 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
-					 * }else{
-					 * $cols = array('DATUM'=>"Datum", 'VERWENDUNGSZWECK'=>"Buchungstext", 'BETRAG'=>"Betrag");
-					 * $pdf->ezTable($my_arr[$a]['IST_EINNAHMEN'], $cols, "<b>$monat_name $jahr - Einnahmen 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
-					 * }
-					 *
-					 * }else{
-					 * $pdf->ezText("Keine Mieteinnahmen", 12);
-					 * }
-					 */
-
-                    // $cols = array('DATUM'=>"Datum",'VERWENDUNGSZWECK'=>"Buchungstext", 'BETRAG'=>"Betrag");
-                    // $pdf->ezTable($pdf_tab[$a]['EIG_AUSZAHLUNG'], $cols, "<b>$monat_name $jahr - Auszahlung an Eigentümer 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
-
+                    
                     if ($pdf_tab [$a] ['MIETER_SALDO'] < 0) {
                         $tmp_minus = substr($pdf_tab [$a] ['MIETER_SALDO'], 1);
-                        // die($tmp_minus);
                         if ($tmp_minus > $pdf_tab [$a] ['ENDSUMME']) {
                             $pdf_tab [$a] ['ENDSUMME'] = 0.00;
                             $pdf_tab [$a] ['ENDSUMME_A'] = '0,00';
@@ -1058,22 +1010,7 @@ ORDER BY EINHEIT_KURZNAME";
                             )
                         ));
                     }
-
-                    /*
-					 * if($pdf_tab[$a]['BRUTTO_IST']<$pdf_tab[$a]['ENDSUMME']){
-					 * $pdf->setColor(1.0,0.0,0.0);
-					 * $pdf->ezSetDy(-20); //abstand
-					 * if($lang=='en'){
-					 * $pdf->ezText("no payout possible!", 12);
-					 * }else{
-					 * $pdf->ezText("Keine Auszahlung möglich!", 12);
-					 * }
-					 * }
-					 */
-
-                    // print_r($table_arr);
-                    // die();
-
+                    
                     $pdf->ezSetDy(-20); // abstand
                     if (is_array($my_arr [$a] ['AUSGABEN'])) {
                         if ($lang == 'en') {
@@ -1113,9 +1050,7 @@ ORDER BY EINHEIT_KURZNAME";
                         $pdf->ezText("Keine Reparaturen", 12);
                     }
                     $pdf->ezSetDy(-20); // abstand
-                    /* TAbelle Auszahlung an Eigentümer */
-                    // print_r($my_arr[$a]['AUSZAHLUNG_ET']);
-                    // die();
+                    /* Tabelle Auszahlung an Eigentümer */
                     if (is_array($my_arr [$a] ['AUSZAHLUNG_ET'])) {
 
                         if ($lang == 'en') {
@@ -1206,13 +1141,7 @@ ORDER BY EINHEIT_KURZNAME";
                 'xOrientation' => 'right',
                 'width' => 500
             ));
-            // print_r($pdf_tab);
-            // print_r($pdf_tab_soll);
-            // echo '<pre>';
-            // print_r($my_arr);
-
-            // die();
-
+            
             ob_end_clean(); // ausgabepuffer leeren
             $pdf->ezStream();
         } else {
@@ -1257,10 +1186,7 @@ ORDER BY EINHEIT_KURZNAME";
 
                 $sep = new sepa ();
                 $betrag_in_sepa = $sep->get_summe_sepa_sammler($gk->geldkonto_id, 'ET-AUSZAHLUNG', 'Eigentuemer', $eig_id);
-                // echo "<br>$betrag_in_sepa $transfer";
                 if ($betrag_in_sepa < $transfer) {
-                    // echo "<br>$betrag_in_sepa< $transfer";
-                    // die();
                     $link_sepa_ueberweisen = "<a href='" . route('legacy::listen::index', ['option' => 'sepa_ueberweisen', 'eig_et' => $eig_id, 'betrag' => $transfer]) . "'>SEPA-Ü</a>";
                     /* Form */
                     echo "<form name=\"sepa_lg\" method=\"post\" action=\"\">";
@@ -1715,51 +1641,9 @@ ORDER BY EINHEIT_KURZNAME";
                         )
                     ));
                     unset ($trans_tab);
-
-                    /* TAbelle Auszahlung an Eigentümer */
-                    // print_r($my_arr[$a]['AUSZAHLUNG_ET']);
-                    // die();
-                    if (is_array($my_arr [$a] ['AUSZAHLUNG_ET'])) {
-
-                        if ($lang == 'en') {
-                            // $cols = array('DATUM'=>"Date", 'VERWENDUNGSZWECK'=>"Description", 'BETRAG'=>"Amount");
-                            // $pdf->ezTable($my_arr[$a]['AUSZAHLUNG_ET'], $cols, "<b>$monat_name $jahr - transfer 5020 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
-                        } else {
-                            // $cols = array('DATUM'=>"Datum", 'VERWENDUNGSZWECK'=>"Buchungstext", 'BETRAG'=>"Betrag");
-                            // $pdf->ezTable($my_arr[$a]['AUSZAHLUNG_ET'], $cols, "<b>$monat_name $jahr - Überweisung 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
-                        }
-                    }
-                    /*
-					 * if(is_array($my_arr[$a]['IST_EINNAHMEN'])){
-					 * if($lang=='en'){
-					 * $cols = array('DATUM'=>"Date", 'VERWENDUNGSZWECK'=>"Description", 'BETRAG'=>"Amount");
-					 * $pdf->ezTable($my_arr[$a]['IST_EINNAHMEN'], $cols, "<b>$monat_name $jahr - income overview 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
-					 * }else{
-					 * $cols = array('DATUM'=>"Datum", 'VERWENDUNGSZWECK'=>"Buchungstext", 'BETRAG'=>"Betrag");
-					 * $pdf->ezTable($my_arr[$a]['IST_EINNAHMEN'], $cols, "<b>$monat_name $jahr - Einnahmen 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
-					 * }
-					 *
-					 * }else{
-					 * $pdf->ezText("Keine Mieteinnahmen", 12);
-					 * }
-					 */
-
-                    // $cols = array('DATUM'=>"Datum",'VERWENDUNGSZWECK'=>"Buchungstext", 'BETRAG'=>"Betrag");
-                    // $pdf->ezTable($pdf_tab[$a]['EIG_AUSZAHLUNG'], $cols, "<b>$monat_name $jahr - Auszahlung an Eigentümer 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
-                    // $pdf->Cezpdf('a4','landscape');
+                    
                     $pdf->ezNewPage();
-
-                    /*
-					 * $size = array(0,0,595.28,841.89);
-					 * $a_k=$size[3];
-					 * $size[3]=$size[2];
-					 * $size[2]=$a_k;
-					 *
-					 *
-					 * $pdf->ez['pageWidth']=$size[2];
-					 * $pdf->ez['pageHeight']=$size[3];
-					 * #$pdf->ezSetMargins(120,40,30,30);
-					 */
+                    
                     unset ($pdf_tab);
                 }
             }
@@ -1767,9 +1651,7 @@ ORDER BY EINHEIT_KURZNAME";
             $uebersicht [$anz] ['ENDSUMME_A'] = nummer_punkt2komma_t($summe_alle_eigentuemer);
             $uebersicht [$anz + 1] ['EIGENTUEMER_NAMEN'] = 'Auszahlen';
             $uebersicht [$anz + 1] ['TRANSFER_A'] = nummer_punkt2komma_t($summe_transfer);
-            // $uebersicht[$anz+1]['EIGENTUEMER_NAMEN'] = 'Zu erhalten';
-            // $uebersicht[$anz+1]['ENDSUMME_A'] = nummer_punkt2komma_t($summe_nachzahler);
-
+            
             if ($lang == 'en') {
                 $cols = array(
                     'EINHEIT_KURZNAME' => "Apt",
@@ -1798,13 +1680,6 @@ ORDER BY EINHEIT_KURZNAME";
                 'xOrientation' => 'right',
                 'width' => 500
             ));
-            // print_r($pdf_tab);
-            // print_r($pdf_tab_soll);
-            // echo '<pre>';
-            // print_r($my_arr);
-
-            // die();
-
             ob_end_clean(); // ausgabepuffer leeren
             $pdf->ezStream();
         } else {
@@ -1916,8 +1791,6 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                 $einheit_id = $my_arr [$a] ['EINHEIT_ID'];
                 if (isset ($my_arr [$a] ['EIGENTUEMER_ID'])) {
                     $eige_id = $my_arr [$a] ['EIGENTUEMER_ID'];
-                    // echo $my_arr[$a]['EIGENTUEMER_ID'];
-                    // die();
                     $weg1 = new weg ();
                     $ihr_hg = $weg1->get_summe_kostenkat_monat($monat, $jahr, 'Einheit', $einheit_id, '6030');
                     // $my_arr[$a]['ABGABEN'][]['ABGABE_IHR'] = $my_arr[$a]['WEG-FLAECHE'] * -0.4;
