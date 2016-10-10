@@ -4,11 +4,6 @@
 
 class detail
 {
-    function get_detail_ukat_arr($kat_id)
-    {
-        $result = DB::select("SELECT UNTERKATEGORIE_NAME FROM `DETAIL_UNTERKATEGORIEN` WHERE `KATEGORIE_ID` = '$kat_id' AND `AKTUELL` = '1' ORDER BY UNTERKATEGORIE_NAME ASC");
-        return $result;
-    }
 
     function dropdown_optionen($label, $name, $id, $kat_bez, $vorgabe, $js = null)
     {
@@ -39,26 +34,6 @@ class detail
         $numrows = !empty($result);
         if ($numrows) {
             return $result;
-        }
-    }
-
-    function select_unterkats_arr($beschreibung, $name, $id, $js, $selected_value, $arr)
-    {
-        if (is_array($arr)) {
-            echo "<label for=\"$id\" >$beschreibung</label>\n";
-            echo "<select name=\"$name\" id=\"$id\" $js>\n";
-            $anzahl = count($arr);
-            for ($a = 0; $a < $anzahl; $a++) {
-                $kat_name = $arr [$a] ['UNTERKATEGORIE_NAME'];
-                if ($kat_name == $selected_value) {
-                    echo "<option value=\"$kat_id\" selected>$kat_name</option>\n";
-                } else {
-                    echo "<option value=\"$kat_id\">$kat_name</option>\n";
-                }
-            }
-            echo "</select>\n";
-        } else {
-            echo "Fehler beim Lesen aus der DB / Error:D123";
         }
     }
 
@@ -309,15 +284,6 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC");
     function finde_mandanten_nr($partner_id)
     {
         $db_abfrage = "SELECT DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE='PARTNER_LIEFERANT' && DETAIL_NAME='Mandanten-Nr' && DETAIL_ZUORDNUNG_ID='$partner_id' && DETAIL_AKTUELL='1' ORDER BY DETAIL_DAT DESC limit 0,1";
-        $resultat = DB::select($db_abfrage);
-        foreach($resultat as $row)
-            return $row['DETAIL_INHALT'];
-    }
-
-    /* anrede finden falls exisitiert */
-    function finde_person_anrede($person_id)
-    {
-        $db_abfrage = " SELECT DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = 'PERSON' && DETAIL_NAME = 'Anrede' && DETAIL_ZUORDNUNG_ID = '$person_id' && DETAIL_AKTUELL = '1' ORDER BY DETAIL_DAT DESC LIMIT 0 , 1 ";
         $resultat = DB::select($db_abfrage);
         foreach($resultat as $row)
             return $row['DETAIL_INHALT'];

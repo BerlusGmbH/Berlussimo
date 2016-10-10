@@ -70,5 +70,3 @@ switch ($option) {
         $pe->form_finanzamt();
         break;
 }
-
-?>

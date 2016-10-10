@@ -322,49 +322,13 @@ class geldkonto_info {
         }
     }
 
-    /*
-     * var $objekt_id;
-     * var $objekt_name;
-     * var $haus_id;
-     * var $haus_strasse;
-     * var $haus_nummer;
-     * var $einheit_kurzname;
-     * var $einheit_qm;
-     * var $einheit_lage;
-     * var $anzahl_einheiten;
-     * var $haus_plz;
-     * var $haus_stadt;
-     * var $datum_heute;
-     * var $mietvertrag_id;
-     * function get_einheit_info($einheit_id){
-     */
-
     /* Funktionen bezogen auf Geldbewegungen auf dem Geldkonto */
-    function summe_geld_konto_buchungen($geld_konto_id) {
-        $result = DB::select( "SELECT sum( BETRAG ) AS KONTOSTAND_GELDBUCHUNGEN
-FROM `GELD_KONTO_BUCHUNGEN` WHERE GELDKONTO_ID = '$geld_konto_id' && AKTUELL = '1'" );
-        if (!empty($result)) {
-            $row = $result[0];
-            return $row ['KONTOSTAND_GELDBUCHUNGEN'];
-        } else {
-            return false;
-        }
-    }
     function summe_geld_konto_buchungen_kontiert($geld_konto_id, $kontenrahmen_konto) {
         $result = DB::select( "SELECT sum( BETRAG ) AS KONTOSTAND_GELDBUCHUNGEN_KONTIERT
 FROM `GELD_KONTO_BUCHUNGEN` WHERE GELDKONTO_ID = '$geld_konto_id' && AKTUELL = '1' && KONTENRAHMEN_KONTO = '$kontenrahmen_konto'" );
         if (!empty($result)) {
             $row = $result[0];
             return $row ['KONTOSTAND_GELDBUCHUNGEN_KONTIERT'];
-        } else {
-            return false;
-        }
-    }
-    function geld_konto_buchungen_zeitraum($geld_konto_id, $datum_von, $datum_bis) {
-        $result = DB::select( "SELECT * AS KONTOSTAND_GELDBUCHUNGEN
-FROM `GELD_KONTO_BUCHUNGEN` WHERE GELDKONTO_ID = '$geld_konto_id' && AKTUELL = '1' && DATUM BETWEEN '$datum_von' AND '$datum_bis'" );
-        if (!empty($result)) {
-            return $result;
         } else {
             return false;
         }
@@ -379,26 +343,6 @@ FROM `GELD_KONTO_BUCHUNGEN` WHERE GELDKONTO_ID = '$geld_konto_id' && KONTENRAHME
             return $row ['SUMME_MIETEINNAHMEN'];
         } else {
             return false;
-        }
-    }
-    function summe_mieteinnahmen_zeitraum($geld_konto_id, $datum_von, $datum_bis) {
-        $result = DB::select( "SELECT sum( BETRAG ) AS SUMME_MIETEINNAHMEN
-FROM `GELD_KONTO_BUCHUNGEN` WHERE GELDKONTO_ID = '$geld_konto_id' && KONTENRAHMEN_KONTO='80001' && AKTUELL = '1' && DATUM BETWEEN '$datum_von' AND '$datum_bis'" );
-        if (!empty($result)) {
-            $row = $result[0];
-            return $row ['SUMME_MIETEINNAHMEN'];
-        } else {
-            return false;
-        }
-    }
-    function geld_konto_stand_ausgeben($geld_konto_id) {
-        $result = DB::select( "SELECT sum( BETRAG ) AS KONTOSTAND
-FROM `GELD_KONTO_BUCHUNGEN` WHERE GELDKONTO_ID = '$geld_konto_id' && AKTUELL = '1'" );
-        if (!empty($result)) {
-            $row = $result[0];
-            echo "<table><tr><td><h1>Kontostand: $row[KONTOSTAND] €</h1></td></tr></table>";
-        } else {
-            return FALSE;
         }
     }
     function geld_konto_stand($geld_konto_id) {

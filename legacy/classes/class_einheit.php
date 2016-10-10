@@ -305,22 +305,6 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
             return false;
         }
     }
-    function get_mietvertraege_zu2($einheit_id, $jahr, $monat) {
-        if (isset ( $this->mietvertrag_id )) {
-            unset ( $this->mietvertrag_id );
-        }
-
-        if (strlen ( $monat ) < 2) {
-            $monat = '0' . $monat;
-        }
-        $result = DB::select( "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr-$monat' && (DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr-$monat' OR MIETVERTRAG_BIS='0000-00-00') " );
-        $numrows = count( $result );
-        if ($numrows) {
-            return $result;
-        } else {
-            return false;
-        }
-    }
     function get_einheit_haus($einheit_id) {
         $result = DB::select( "SELECT HAUS_ID, EINHEIT_KURZNAME FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID='$einheit_id' ORDER BY EINHEIT_DAT DESC LIMIT 0,1" );
         $row = $result[0];
@@ -388,17 +372,6 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
         $vormieter_array = $mv_info->get_personen_ids_mietvertrag ( $mietvertrag_id );
         return $vormieter_array;
     }
-    function liste_aller_leerstaende() {
-        $alle_einheiten_array = $this->liste_aller_einheiten ();
-    }
-    function liste_vermieteter_einheiten() {
-        $datum_heute = date ( "Y-m-d" );
-        $alle_einheiten_array = $this->liste_aller_einheiten ();
-        for($a = 0; $a < count ( $alle_einheiten_array ); $a ++) {
-            $id = $alle_einheiten_array[$a]['EINHEIT_ID'];
-            DB::select( "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && EINHEIT_ID='$id' && (MIETVERTRAG_BIS>='$datum_heute' OR MIETVERTRAG_BIS = '0000-00-00') ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1" );
-        }
-    }
     function form_einheit_neu($haus_id = '') {
         $f = new formular ();
         if ($haus_id != '') {
@@ -454,12 +427,6 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
         } else {
             fehlermeldung_ausgeben ( "Einheit nicht vorhanden!" );
         }
-    }
-    function form_einheit_session() {
-        $f = new formular ();
-        $f->erstelle_formular ( "Einheit ändern", NULL );
-        $f->send_button ( "submit_einheit", "Änderung speichern" );
-        $f->ende_formular ();
     }
     function einheit_speichern($kurzname, $lage, $qm, $haus_id, $typ) {
         $last_id = last_id2 ( 'EINHEIT', 'EINHEIT_ID' ) + 1;

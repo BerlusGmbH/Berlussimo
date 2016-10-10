@@ -97,5 +97,3 @@ switch ($option) {
 		$d->finde_detail ( $suchtext, $det_name );
 		break;
 }
-
-?>

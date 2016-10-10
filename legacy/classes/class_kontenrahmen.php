@@ -61,13 +61,6 @@ class kontenrahmen {
 		$row = $result[0];
 		return $row ['KONTENRAHMEN_GRUPPEN_ID'];
 	}
-	function get_konten_nach_art($kontoartbez, $k_id) {
-		$kontoart_id = $this->get_kontoart_id ( $kontoartbez );
-		if ($kontoart_id) {
-			$result = DB::select( "SELECT * FROM `KONTENRAHMEN_KONTEN` WHERE `KONTO_ART` ='$kontoart_id' AND `KONTENRAHMEN_ID` ='$k_id' AND `AKTUELL` = '1' ORDER BY KONTO ASC" );
-			return $result;
-		}
-	}
 	function get_konten_nach_art_gruppe($kontoartbez, $gruppenbez, $k_id) {
 		$kontoart_id = $this->get_kontoart_id ( $kontoartbez );
 		$gruppen_id = $this->get_gruppen_id ( $gruppenbez );
@@ -77,23 +70,6 @@ class kontenrahmen {
 				return $result;
 			}
 		}
-	}
-	function kontenrahmen_uebersicht() {
-		$konten_arr = $this->kontorahmen_konten_in_array ( '', '' );
-
-		for($a = 0; $a < count ( $konten_arr ); $a ++) {
-			$this->konto_informationen ( $konten_arr [$a] ['KONTO'] );
-
-			$konten_arr [$a] ['BEZEICHNUNG'] = $this->konto_bezeichnung;
-			$konten_arr [$a] ['GRUPPE'] = $this->konto_gruppen_bezeichnung;
-			$konten_arr [$a] ['KONTOART'] = $this->konto_art_bezeichnung;
-		}
-		/* Feldernamen definieren - Überschrift Tabelle */
-		$ueberschrift_felder_arr [0] = "Konto";
-		$ueberschrift_felder_arr [1] = "Bezeichnung";
-		$ueberschrift_felder_arr [2] = "Gruppe";
-		$ueberschrift_felder_arr [3] = "Kontoart";
-		array_als_tabelle_anzeigen ( $konten_arr, $ueberschrift_felder_arr );
 	}
 
 	/* Liste aller Kontorahmenkonten als array */
@@ -119,18 +95,6 @@ class kontenrahmen {
 				return $row ['KONTENRAHMEN_ID'];
 			}
 		}
-	}
-
-	/* Kontenliste als dropdown */
-	function dropdown_kontorahmen_konten($name, $typ, $typ_id) {
-		$konten_arr = $this->kontorahmen_konten_in_array ( $typ, $typ_id );
-		echo "<select name=\"$name\" size=\"1\" id=\"kontenrahmen_konto\">\n";
-		for($a = 0; $a < count ( $konten_arr ); $a ++) {
-			$konto = $konten_arr [$a] ['KONTO'];
-			$this->konto_informationen ( $konten_arr [$a] ['KONTO'] );
-			echo "<option value=\"$konto\">$konto</option>\n";
-		}
-		echo "</select>\n";
 	}
 
 	/* Kontenrahmenliste als dropdown /kontierung */
@@ -205,15 +169,4 @@ class kontenrahmen {
 		}
 		echo "</select>\n";
 	}
-
-	/*
-	 * SELECT *
-	 * FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN
-	 * WHERE KOSTENTRAEGER_TYP = 'Objekt' && KOSTENTRAEGER_ID = '4' && GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID
-	 * ORDER BY GELD_KONTEN.KONTO_ID ASC
-	 * SELECT KONTO_ID,
-	 * FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN
-	 * WHERE KOSTENTRAEGER_TYP = 'Objekt' && KOSTENTRAEGER_ID = '4' && GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL='1' && GELD_KONTEN.AKTUELL='1'
-	 * ORDER BY GELD_KONTEN.KONTO_ID ASC
-	 */
 } // ende class kontenrahmen

@@ -200,34 +200,6 @@ class todo
         }
     }
 
-    function rss_feed_ok_test($benutzer_id)
-    {
-        ob_clean();
-        echo '<?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0">';
-
-        echo "<channel>\n";
-        echo '<title>Meine Projekte PHP</title>
-  <link>http://www.berlus.de</link>
-  <description>Meine Termine und Projekte</description>';
-
-        echo '<item>
-    <title>Projekt 1</title>
-    <link>http://www.w3schools.com/rss</link>
-    <description>
-	<![CDATA[
-	<!-- ab hier html-->
-	<b>SANEL</b><br>SANELA
-		
-	]]>
-	</description>
-    <enclosure url="http://berlus.de" type="video/mpeg"></enclosure>
-  </item>';
-
-        echo "</channel>\n";
-        echo "</rss>";
-    }
-
     function rss_feed($benutzer_id)
     {
         ob_clean();
@@ -340,14 +312,6 @@ class todo
     function get_my_projekt_arr($benutzer_id, $erl = '0')
     {
         if ($erl == '0') {
-            /*
-			 * $db_abfrage = "SELECT IF( UE_ID = '0', T_ID, UE_ID ) AS PROJ_ID FROM TODO_LISTE WHERE (
-			 * BENUTZER_ID = '$benutzer_id'
-			 * OR VERFASSER_ID = '$benutzer_id'
-			 * ) && ANZEIGEN_AB <= DATE_FORMAT( NOW( ) , '%Y-%m-%d' ) && AKTUELL = '1' && ERLEDIGT='0'
-			 * GROUP BY PROJ_ID
-			 * ORDER BY ANZEIGEN_AB ASC";
-			 */
             $db_abfrage = "SELECT T_ID AS PROJ_ID
 FROM `TODO_LISTE`
 WHERE (
@@ -388,148 +352,8 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         }
     }
 
-    function rss_feed_OK($benutzer_id)
-    {
-        ob_clean();
-        header("Content-Type: application/xml; charset=UTF-8");
-        echo '<?xml version="1.0" encoding="UTF-8" ?>';
-        echo "<rss version=\"2.0\">\n";
-        echo "<channel>\n";
-
-        $my_proj_id_arr = $this->get_my_projekt_arr($benutzer_id);
-        if (!is_array($my_proj_id_arr)) {
-            echo "<title>Keine Projekte und Aufgaben für Sie!</title>\n";
-            echo "<link>https://app.berlussimo.de/rss.php</link>\n";
-        } else {
-            $b = new benutzer ();
-            $b->get_benutzer_infos($benutzer_id);
-            echo "<title>Aufgaben von Benutzer: $b->benutzername</title>\n";
-            echo "<link>https://app.berlussimo.de/rss.php</link>\n";
-            echo "<description>Angezeigt werden Projekte und dazugehürige Aufgaben!</description>\n";
-            $anz_p = count($my_proj_id_arr);
-
-            for ($p = 0; $p < $anz_p; $p++) {
-                $proj_id = $my_proj_id_arr [$p] ['PROJ_ID'];
-                $result = DB::select("SELECT * FROM TODO_LISTE WHERE T_ID='$proj_id' && AKTUELL='1' ORDER BY ANZEIGEN_AB ASC");
-
-                if (!empty($result)) {
-                    $pz = $p + 1;
-                    $f = new formular ();
-                    echo "<item>\n";
-                    echo "<title>Projekt $pz</title>\n";
-                    $link_mp = route('legacy::todo::index');
-                    echo "<link>$link_mp</link>";
-                    $z1 = 0;
-                    foreach($result as $row) {
-                        $z1++;
-                        $t_id = $row ['T_ID'];
-                        $text = $row ['TEXT'];
-                        $edit_text = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $t_id]) . "'>$text</a>";
-                        $anzeigen_ab = date_mysql2german($row ['ANZEIGEN_AB']);
-                        $erledigt = $row ['ERLEDIGT'];
-                        $verfasser_id = $row ['VERFASSER_ID'];
-                        $b = new benutzer ();
-                        $b->get_benutzer_infos($verfasser_id);
-                        $verfasser_name = $b->benutzername;
-                        $beteiligt_id = $row ['BENUTZER_ID'];
-                        $b = new benutzer ();
-                        $b->get_benutzer_infos($beteiligt_id);
-                        $beteiligt_name = $b->benutzername;
-                        if ($erledigt == '1') {
-                            $erledigt = 'erledigt';
-                        } else {
-                            $erledigt = "offen";
-                        }
-
-                        $link_erledigt = "<a href=\"\">";
-                        $o = new objekt ();
-                        $t_vergangen = $o->tage_berechnen_bis_heute($anzeigen_ab);
-
-                        $akut = $row ['AKUT'];
-                        if ($akut == 'JA') {
-                            $c1 = 3;
-                        } else {
-                            $c1 = 4;
-                        }
-
-                        $kos_typ = $row ['KOS_TYP'];
-                        $kos_id = $row ['KOS_ID'];
-                        $r = new rechnung ();
-                        $kos_bez = $r->kostentraeger_ermitteln($kos_typ, $kos_id);
-
-                        echo "<description><![CDATA[ Vergangen: $t_vergangen T | Ab: $anzeigen_ab | Erfasser:$verfasser_name | Beteiligt: $beteiligt_name | Zuweisung:$kos_bez ";
-                        if ($erledigt == 'erledigt') {
-                            echo "| Status: $erledigt |";
-                        } else {
-                            echo "| Status:$erledigt |";
-                        }
-                        echo "Akut: $akut $link_1 ]]</description>\n";
-                        echo "</item>\n";
-
-                        $u_aufgaben_arr = $this->get_unteruafgaben_arr($t_id);
-                        $anz = count($u_aufgaben_arr);
-                        if ($anz) {
-                            $z2 = 0;
-                            for ($a = 0; $a < $anz; $a++) {
-                                $z2++;
-                                $u_t_id = $u_aufgaben_arr [$a] ['T_ID'];
-                                $u_text = $u_aufgaben_arr [$a] ['TEXT'];
-                                $u_edit_text = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $u_t_id]) . "'>$u_text</a>";
-                                $u_anzeigen_ab = date_mysql2german($u_aufgaben_arr [$a] ['ANZEIGEN_AB']);
-                                $u_erledigt = $u_aufgaben_arr [$a] ['ERLEDIGT'];
-                                if ($u_erledigt == '1') {
-                                    $u_erledigt = 'erledigt';
-                                } else {
-                                    $u_erledigt = "offen";
-                                }
-
-                                $u_verfasser_id = $u_aufgaben_arr [$a] ['VERFASSER_ID'];
-                                $b = new benutzer ();
-                                $b->get_benutzer_infos($u_verfasser_id);
-                                $u_verfasser_name = $b->benutzername;
-                                $u_beteiligt_id = $u_aufgaben_arr [$a] ['BENUTZER_ID'];
-                                $b = new benutzer ();
-                                $b->get_benutzer_infos($u_beteiligt_id);
-                                $u_beteiligt_name = $b->benutzername;
-                                $u_akut = $u_aufgaben_arr [$a] ['AKUT'];
-                                if ($u_akut == 'JA') {
-                                    $c = 3;
-                                } else {
-                                    $c = 5;
-                                }
-
-                                $u_kos_typ = $u_aufgaben_arr [$a] ['KOS_TYP'];
-                                $u_kos_id = $u_aufgaben_arr [$a] ['KOS_ID'];
-                                $r = new rechnung ();
-                                $u_kos_bez = $r->kostentraeger_ermitteln($u_kos_typ, $u_kos_id);
-
-                                $u_t_vergangen = $o->tage_berechnen_bis_heute($u_anzeigen_ab);
-                                echo "<item>\n";
-                                echo "<title>$pz.$z2: $u_text -> Vergangen: $u_t_vergangen T | Ab: $u_anzeigen_ab</title>\n";
-                                echo "<description>Erfasser:$u_verfasser_name | Beteiligt: $u_beteiligt_name | Zuweisung:$u_kos_bez ";
-
-                                if ($u_erledigt == 'erledigt') {
-                                    echo "| Status: $erledigt |";
-                                } else {
-                                    echo "| Status: $erledigt |";
-                                }
-                                echo "Akut: $u_akut </description>\n";
-                                $link_2 = route('legacy::todo::index', ['option' => 'edit', 't_id' => $u_t_id]);
-                                echo "<link>$link_2</link>\n";
-                                echo "</item>\n";
-                            }
-                        }
-                    }
-                }
-            }
-        } // end else
-        echo "</channel>\n";
-        echo "</rss>\n";
-    }
-
     function todo_liste($benutzer_id = '0', $erl = '0')
     {
-
         if ($benutzer_id == '') {
             $benutzer_id = '0';
         }
@@ -691,16 +515,6 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         }
     }
 
-    function get_aufgaben($b_id, $erl = '0')
-    {
-        $db_abfrage = "SELECT * FROM TODO_LISTE WHERE (BENUTZER_ID='$b_id' OR VERFASSER_ID='$b_id') && AKTUELL='1' && UE_ID!='0' && ERLEDIGT='$erl' ORDER BY KOS_TYP, KOS_ID, UE_ID, VERFASSER_ID, ANZEIGEN_AB ASC";
-
-        $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        }
-    }
-
     function form_verschieben($t_id)
     {
         $f = new formular ();
@@ -798,16 +612,6 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         // Protokollieren
         protokollieren('TODO_LISTE', $t_dat, $t_dat);
         return true;
-    }
-
-    function get_auftraege($b_id, $erl = '0')
-    {
-        $db_abfrage = "SELECT * FROM TODO_LISTE WHERE (BENUTZER_ID='$b_id' OR VERFASSER_ID='$b_id') && AKTUELL='1' && UE_ID='0' && ERLEDIGT='$erl' && T_ID NOT IN (SELECT UE_ID FROM TODO_LISTE WHERE (BENUTZER_ID='$b_id' OR VERFASSER_ID='$b_id') && AKTUELL='1' && UE_ID!='0' && ERLEDIGT='$erl') ORDER BY KOS_TYP, KOS_ID, UE_ID, VERFASSER_ID, ANZEIGEN_AB ASC";
-
-        $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        }
     }
 
     function todo_liste2($benutzer_id = '0', $erl = '0')
@@ -1108,22 +912,6 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         $result = DB::select($db_abfrage);
         if (!empty($result)) {
             return $result;
-        }
-    }
-
-    function get_kos_typ_id($t_id)
-    {
-        $result = DB::select("SELECT KOS_TYP, KOS_ID FROM TODO_LISTE WHERE T_ID='$t_id' && AKTUELL='1' ORDER BY T_ID DESC LIMIT 0,1");
-        $row = $result[0];
-        if (is_array($row)) {
-            $this->kos_typ = $row ['KOS_TYP'];
-            $this->kos_id = $row ['KOS_ID'];
-            $r = new rechnung ();
-            $this->kos_bez = $r->kostentraeger_ermitteln($this->kos_typ, $this->kos_id);
-        } else {
-            throw new \App\Exceptions\MessageException(
-                new \App\Messages\ErrorMessage('Kostenträger unbekannt')
-            );
         }
     }
 

@@ -111,7 +111,6 @@ switch ($option) {
         $partner = new partners ();
         $arr = $partner->partner_nach_umsatz();
         echo "<pre>";
-        // print_r($arr);
         $anz = count($arr);
         if ($anz) {
             echo "<table class=\"sortable\">";

@@ -438,82 +438,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 		 */
         return $objekte_arr;
     }
-    function objekt_kosten_positionen($objekt_id) {
-        echo "<hr>OBJEKTKOSTEN";
-        $objekte_arr = $this->positions_pool_anzeigen ();
-        for($i = 0; $i < count ( $objekte_arr ); $i ++) {
-            if (in_array ( $objekt_id, $objekte_arr [$i] )) {
-                echo "vorhanden $i<br>";
-                for($a = 0; $a < count ( $objekte_arr [$i] ['OBJEKT_KOSTEN'] ); $a ++) {
-                    $objekt_kosten [] = $objekte_arr [$i] ['OBJEKT_KOSTEN'] [$a];
-                } // end for 1
-            } // end if
-        } // end for 1
-        /*
-		 * echo "<pre>";
-		 * print_r($objekt_kosten);
-		 * echo "</pre>";
-		 */
-        for($b = 0; $b < count ( $objekt_kosten ); $b ++) {
-            $kontierung_id = $objekt_kosten [$b] ['KONTIERUNG_ID'];
-            $objekt_kosten_positionen [] = $this->pool_position_holen ( $kontierung_id );
-        }
-        /*
-		 * echo "<pre>";
-		 * print_r($objekt_kosten_positionen);
-		 * echo "</pre>";
-		 */
-        echo "OBJEKT_ENDE<hr>";
-    }
-    function haus_kosten_positionen($objekt_id) {
-        echo "<hr>HAUSKOSTEN";
-        $objekte_arr = $this->positions_pool_anzeigen ();
-        for($i = 0; $i < count ( $objekte_arr ); $i ++) {
-            if (in_array ( $objekt_id, $objekte_arr [$i] )) {
-                echo "vorhanden $i<br>";
-                for($a = 0; $a < count ( $objekte_arr [$i] ['HAUS_KOSTEN'] ); $a ++) {
-                    $haus_kosten [] = $objekte_arr [$i] ['HAUS_KOSTEN'] [$a];
-                } // end for 1
-            } // end if
-        } // end for 1
-        /*
-		 * echo "<pre>";
-		 * print_r($haus_kosten);
-		 * echo "</pre>";
-		 */
-        for($b = 0; $b < count ( $haus_kosten ); $b ++) {
-            $kontierung_id = $haus_kosten [$b] ['KONTIERUNG_ID'];
-            $haus_kosten_positionen [] = $this->pool_position_holen ( $kontierung_id );
-        }
-        /*
-		 * echo "<pre>";
-		 * print_r($haus_kosten_positionen);
-		 * echo "</pre>";
-		 */
-        echo "HAUSENDE<hr>";
-    }
-    function einheit_kosten_positionen($objekt_id) {
-        echo "<hr>EINHEITKOSTEN";
-        $objekte_arr = $this->positions_pool_anzeigen ();
-        for($i = 0; $i < count ( $objekte_arr ); $i ++) {
-            if (in_array ( $objekt_id, $objekte_arr [$i] )) {
-                echo "vorhanden $i<br>";
-                for($a = 0; $a < count ( $objekte_arr [$i] ['EINHEIT_KOSTEN'] ); $a ++) {
-                    $einheit_kosten [] = $objekte_arr [$i] ['EINHEIT_KOSTEN'] [$a];
-                } // end for 1
-            } // end if
-        } // end for 1
-        /*
-		 * echo "<pre>";
-		 * print_r($einheit_kosten);
-		 * echo "</pre>";
-		 */
-        for($b = 0; $b < count ( $einheit_kosten ); $b ++) {
-            $kontierung_id = $einheit_kosten [$b] ['KONTIERUNG_ID'];
-            $einheit_kosten_positionen [] = $this->pool_position_holen ( $kontierung_id );
-        }
-        echo "EINHEITENDE<hr>";
-    }
     function pool_position_holen($kontierung_id) {
         $result = DB::select( "SELECT * FROM `KONTIERUNG_POSITIONEN` WHERE KONTIERUNG_ID= '$kontierung_id' && AKTUELL='1' ORDER BY KONTIERUNG_DAT DESC LIMIT 0,1" );
         if (!empty($result)) {
@@ -539,26 +463,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         } else {
             return false;
         }
-    }
-    function rechnung_an_haus_zusammenstellen($haus_id) {
-
-        /* Positionen der hausbezogenen Kosten */
-        $haus_rechnung_arr = $this->rechnung_aus_pool_zusammenstellen ( 'Haus', $haus_id );
-        /* Alle einheitsbezogenen Kosten */
-        $einheiten_im_pool = $this->pool_durchsuchen ( 'Einheit' );
-
-        $einheit_info = new einheit ();
-        for($a = 0; $a < count ( $einheiten_im_pool ); $a ++) {
-            $einheit_id = $einheiten_im_pool [$a] ['KOSTENTRAEGER_ID'];
-            $einheit_info->get_einheit_haus ( $einheit_id );
-            $einheit_haus_id = $einheit_info->haus_id;
-            /* Falls Einheit zum gewählten Haus gehört, Pos in Hausrechnung stellen */
-            if ($einheit_haus_id == $haus_id) {
-                $haus_rechnung_arr [] = $this->pool_position_holen ( $einheiten_im_pool [$a] ['KONTIERUNG_ID'] );
-            }
-        }
-        /* Array bestehend aus Haus- und Einheitskosten */
-        return ($haus_rechnung_arr);
     }
     function rechnung_an_objekt_zusammenstellen($objekt_id) {
         /* Positionen der objektbezogenen Kosten */
@@ -617,12 +521,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             return $partner_info->partner_name;
         }
     }
-
-    /*
-	 * Empfängerinformationen d.h. Empfänger der neuen Rechnung aus Pool
-	 * bei Objekt -> Eigentümer
-	 * Haus-Eigentümer ...usw
-	 */
     function get_empfaenger_infos($typ, $id) {
         if ($typ == 'Lager') {
             $lager_info = new lager ();
@@ -691,13 +589,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         echo "<tr><td>$rechnung_von</td><td>$rechnung_an</td></tr>";
         echo "</table>";
     }
-    function rechnung_schreiben_positionen_wahl_ok($kostentraeger_typ, $kostentraeger_id, $positionen, $aussteller_typ, $aussteller_id) {
-        $f = new formular ();
-        $f->erstelle_formular ( "Rechnung aus Pool zusammenstellen TEST", NULL );
-        $f->hidden_feld ( 'option', 'AUTO_RECHNUNG_VORSCHAU' );
-        $f->send_button ( "senden_pos", "Speichern" );
-        $f->ende_formular ();
-    }
 
     /* Funkt. zur Auswahl der Positionen für eine neue Rechnung aus dem Pool */
     function rechnung_schreiben_positionen_wahl($kostentraeger_typ, $kostentraeger_id, $positionen, $aussteller_typ, $aussteller_id) {
@@ -708,7 +599,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         $f = new formular ();
         $f->erstelle_formular ( "Rechnung aus Pool zusammenstellen", NULL );
         $f->hidden_feld ( 'option', 'AUTO_RECHNUNG_VORSCHAU' );
-        
+
         $js_action = 'onmouseover="javascript:pool_berechnung(this.form)" onkeyup="javascript:pool_berechnung(this.form)" onmousedown="javascript:pool_berechnung(this.form)" onmouseup="javascript:pool_berechnung(this.form)" onmousemove="javascript:pool_berechnung(this.form)"';
         $objekt_info = new objekt ();
         if ($kostentraeger_typ == 'Objekt') {
@@ -878,330 +769,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
     }
 
     /* Funkt. zur Auswahl der Positionen für eine neue Rechnung aus dem Pool */
-    function rechnung_schreiben_positionen_wahl_LETZTE($kostentraeger_typ, $kostentraeger_id, $positionen, $aussteller_typ, $aussteller_id) {
-        // echo "<pre>";
-        // print_r($positionen);
-        // echo "</pre>";
-        $f = new formular ();
-        $f->erstelle_formular ( "Rechnung aus Pool zusammenstellen", NULL );
-        $f->hidden_feld ( 'option', 'AUTO_RECHNUNG_VORSCHAU' );
-        $js_action = 'onblur="javascript:rechnung_pool_neuberechnen(this.form)" onchange="javascript:rechnung_pool_neuberechnen(this.form)" onfocus="javascript:rechnung_pool_neuberechnen(this.form)" onmouseover="javascript:rechnung_pool_neuberechnen(this.form)"';
-
-        $objekt_info = new objekt ();
-        if ($kostentraeger_typ == 'Objekt') {
-            $objekt_info->get_objekt_eigentuemer_partner ( $kostentraeger_id );
-            $rechnungs_empfaenger_id = $objekt_info->objekt_eigentuemer_partner_id;
-        }
-
-        if ($kostentraeger_typ == 'Einheit') {
-            $this->get_empfaenger_infos ( $kostentraeger_typ, $kostentraeger_id );
-            $rechnungs_empfaenger_typ = $this->rechnungs_empfaenger_typ;
-            $rechnungs_empfaenger_id = $this->rechnungs_empfaenger_id;
-        }
-
-        if ($kostentraeger_typ == 'Lager') {
-            $rechnungs_empfaenger_id = $kostentraeger_id;
-            /*
-			 * $l = new lager;
-			 * $l->lager_name_partner($kostentraeger_id);
-			 * $rechnungs_empfaenger_typ = 'Partner';
-			 * $rechnungs_empfaenger_id = $l->lager_partner_id;
-			 */
-        }
-
-        if ($kostentraeger_typ == 'Partner') {
-            $rechnungs_empfaenger_id = $kostentraeger_id;
-        }
-
-        $positionen = array_sortByIndex ( $positionen, 'BELEG_NR' );
-
-        $this->rechnungs_kopf_zusammenstellung ( $kostentraeger_typ, $kostentraeger_id, $aussteller_typ, $aussteller_id );
-
-        echo "<table class=rechnungen>";
-        echo "<tr><td colspan=3>";
-        $faellig_am = date ( "Y-m-t" );
-        $faellig_am = date_mysql2german ( $faellig_am );
-        $datum_feld = 'document.getElementById("rechnungsdatum").value';
-        $js_datum = "onchange='check_datum($datum_feld)'";
-        $f->text_feld ( 'Rechnungsdatum:', 'rechnungsdatum', '', '20', 'rechnungsdatum', $js_datum );
-
-        $datum_feld = 'document.getElementById("faellig_am").value';
-        $js_datum = "onchange='check_datum($datum_feld)'";
-        $f->text_feld ( 'Faellig am:', 'faellig_am', "$faellig_am", '20', 'faellig_am', $js_datum );
-        $f->text_feld ( "Skonto in %:", "skonto", "0", "5", "skonto_feld", $js_action );
-
-        echo "</td><td colspan=6>";
-        echo "</td></tr>";
-        // onMouseover=\"BoxenAktivieren(this);
-        echo "<tr class=feldernamen><td width=\"30px\"><input type=\"checkbox\" onClick=\"this.value=check(this.form.positionen_list)\">Alle</td><td>Position</td><td>Menge</td><td>Bezeichnung</td><td>Einzelpreis</td><td>Netto</td><td>Rabatt %</td><td>MWSt</td><td>Kostentraeger</td></tr>";
-        $f->hidden_feld ( 'RECHNUNG_EMPFAENGER_TYP', "$kostentraeger_typ" );
-        $f->hidden_feld ( 'RECHNUNG_EMPFAENGER_ID', "$rechnungs_empfaenger_id" );
-        $f->hidden_feld ( 'RECHNUNG_AUSSTELLER_TYP', "$aussteller_typ" );
-        $f->hidden_feld ( 'RECHNUNG_AUSSTELLER_ID', "$aussteller_id" );
-        $f->hidden_feld ( 'RECHNUNG_KOSTENTRAEGER_ID', "$kostentraeger_id" );
-        $f->hidden_feld ( 'RECHNUNG_KOSTENTRAEGER_TYP', "$kostentraeger_typ" );
-        $f->hidden_feld ( 'RECHNUNG_NETTO_BETRAG', NULL );
-        $f->hidden_feld ( 'RECHNUNG_BRUTTO_BETRAG', NULL );
-        $f->hidden_feld ( 'RECHNUNG_SKONTO_BETRAG', NULL );
-        $rechnungs_summe = 0;
-        for($a = 0; $a < count ( $positionen ); $a ++) {
-            $zeile = $a + 1;
-
-            $belegnr = $positionen [$a] ['BELEG_NR'];
-            $f->hidden_feld ( "positionen[$a][beleg_nr]", "$belegnr" );
-            $position = $positionen [$a] ['POSITION'];
-            $f->hidden_feld ( "positionen[$a][position]", "$position" );
-            $artikel_bezeichnung = $this->kontierungsartikel_holen ( $belegnr, $position );
-            $f->hidden_feld ( "positionen[$a][artikel_nr]", "$this->artikel_nr" );
-            $f->hidden_feld ( "positionen[$a][art_lieferant]", "$this->art_lieferant" );
-
-            $pos_kostentraeger_typ = $positionen [$a] ['KOSTENTRAEGER_TYP'];
-            $f->hidden_feld ( "positionen[$a][position_kostentraeger_typ]", "$pos_kostentraeger_typ" );
-            $pos_kostentraeger_id = $positionen [$a] ['KOSTENTRAEGER_ID'];
-            $f->hidden_feld ( "positionen[$a][position_kostentraeger_id]", "$pos_kostentraeger_id" );
-            $verwendungs_jahr = $positionen [$a] ['VERWENDUNGS_JAHR'];
-            $f->hidden_feld ( "positionen[$a][verwendungs_jahr]", "$verwendungs_jahr" );
-            $kontenrahmen_konto = $positionen [$a] ['KONTENRAHMEN_KONTO'];
-            $f->hidden_feld ( "positionen[$a][kontenrahmen_konto]", "$kontenrahmen_konto" );
-            $kostentraeger = $this->kostentraeger_ermitteln ( $pos_kostentraeger_typ, $pos_kostentraeger_id );
-            // echo "$menge $kontenrahmen_konto $kostentraeger_typ $kostentraeger<br>\n";
-            $menge = $positionen [$a] ['MENGE'];
-            $f->hidden_feld ( "positionen[$a][ursprungs_menge]", "$menge" );
-            $epreis = $positionen [$a] ['EINZEL_PREIS'];
-            $gpreis = $positionen [$a] ['GESAMT_SUMME'];
-            $rabatt_satz = $positionen [$a] ['RABATT_SATZ'];
-            $rechnungs_summe = $rechnungs_summe + ($menge * $epreis);
-            $mwst_satz_in_prozent = $this->mwst_satz_der_position ( $belegnr, $position );
-            // aus Beleg infos holen //
-            $kontierung_id = $positionen [$a] ['KONTIERUNG_ID'];
-            $kontierung_dat = $positionen [$a] ['KONTIERUNG_DAT'];
-            $f->hidden_feld ( "positionen[$a][kontierung_dat]", "$kontierung_dat" );
-
-            echo "<tr><td><input type=\"checkbox\" name=uebernehmen[] id=\"positionen_list\" value=\"$a\" $js_action></td><td>$zeile. ERF:$belegnr</td><td>";
-
-            $f->text_feld ( "Menge:", "positionen[$a][menge]", "$menge", "5", "mengen_feld", $js_action );
-            // $f->hidden_feld("positionen[$a][bezeichnung]", "$artikel_bezeichnung");
-            echo "</td><td>$artikel_bezeichnung</td><td>";
-            $f->text_feld ( "Einzelpreis:", "positionen[$a][preis]", "$epreis", "8", "epreis_feld", $js_action );
-            echo "</td><td>";
-            $f->text_feld ( "Netto:", "positionen[$a][gpreis]", "$gpreis", "8", "netto_feld", $js_action );
-            echo "</td><td>";
-            // $gpreis_brutto = ($gpreis / 100) * (100 + $rechnung->rechnungs_mwst_satz);
-            $gpreis_brutto = ($gpreis / 100) * (100 + $mwst_satz_in_prozent);
-            $gpreis_brutto = ($gpreis_brutto * 100) / 100;
-            $gpreis_brutto = nummer_punkt2komma ( $gpreis_brutto );
-            // $form->text_feld("Brutto:", "positionen[$a][gpreis_brutto]", "$gpreis_brutto", "5");
-
-            $f->text_feld ( "Rabatt:", "positionen[$a][rabatt_satz]", "$rabatt_satz", "5", "rabatt_feld", $js_action );
-            $f->hidden_feld ( "positionen[$a][pos_mwst]", "$mwst_satz_in_prozent" );
-            echo "</td><td>";
-            $f->text_feld ( "Mwst:", "mwst_satz", "$mwst_satz_in_prozent", "3", "mwst_feld", $js_action );
-            echo "$mwst_satz</td><td valign=bottom>$kostentraeger</td></tr>";
-            $f->hidden_feld ( "positionen[$a][kontierung_id]", "$kontierung_id" );
-        }
-
-        echo "<tr><td colspan=9><hr></td></tr></table>";
-        echo "<table><tr><td colspan=\"9\">";
-        // if($aussteller_typ == 'Partner'){
-        $geld_konto_info = new geldkonto_info ();
-        $geld_konto_info->dropdown_geldkonten ( $aussteller_typ, $aussteller_id );
-        // }else{
-        // $form->hidden_feld('geld_konto', '0');
-        // }
-        echo "</td></tr>";
-
-        // echo "<tr><td><input type=\"checkbox\" name=\"in_rechung_stellen\" id=\"in_rechung_stellen\" onclick=\"check_ob_pos_gewaehlt(this, this.form.positionen_list)\"><b>Eingabe beenden</b></td>\n</tr>";
-
-        echo "<tr><td>";
-
-        $f->text_bereich ( 'Kurzbeschreibung', 'kurzbeschreibung', '', 30, 30, 'kurzbeschreibung' );
-        echo "<br>";
-        $f->send_button_disabled ( "senden_pos", "Speichern deaktiviert", "speichern_button2" );
-        echo "</td></tr>";
-
-        echo "<tr><td colspan=9><hr></td></tr>";
-        echo "<tr><td colspan=8 align=right>Netto ausgewählte Positionen</td><td id=\"g_netto_ausgewaehlt\"></td></tr>";
-        echo "<tr><td colspan=8 align=right>Brutto ausgewählte Positionen</td><td id=\"g_brutto_ausgewaehlt\"></td></tr>";
-        echo "<tr><td colspan=8 align=right>Skontonachlass</td><td id=\"g_skonto_nachlass\"></td></tr>";
-        echo "<tr><td colspan=8 align=right>Skontobetrag</td><td id=\"g_skonto_betrag\"></td></tr>";
-        echo "<tr><td colspan=9><hr></td></tr>";
-        echo "<tr><td colspan=8 align=right>Gesamt Netto errechnet</td><td id=\"g_netto_errechnet\"></td></tr>";
-        echo "<tr><td colspan=8 align=right>Gesamt Brutto errechnet</td><td id=\"g_brutto_errechnet\"></td></tr>";
-        echo "<tr><td colspan=8 align=right>Durchschnittsrabatt im Pool</td><td id=\"durchschnitt_rabatt\"></td></tr>";
-        echo "</table>";
-        $f->ende_formular ();
-    }
-    function rechnung_schreiben_positionen_wahl_ALT($kostentraeger_typ, $kostentraeger_id, $positionen, $aussteller_typ, $aussteller_id) {
-        // echo "<pre>";
-        // print_r($positionen);
-        // echo "</pre>";
-        $form = new mietkonto ();
-        $form->erstelle_formular ( "Rechnung aus Pool zusammenstellen", NULL );
-        $js_action = 'onblur="javascript:rechnung_pool_neuberechnen(this.form)" onchange="javascript:rechnung_pool_neuberechnen(this.form)" onfocus="javascript:rechnung_pool_neuberechnen(this.form)" onmouseover="javascript:rechnung_pool_neuberechnen(this.form)"';
-
-        $objekt_info = new objekt ();
-        if ($kostentraeger_typ == 'Objekt') {
-            $objekt_info->get_objekt_eigentuemer_partner ( $kostentraeger_id );
-            $rechnungs_empfaenger_id = $objekt_info->objekt_eigentuemer_partner_id;
-        }
-
-        if ($kostentraeger_typ == 'Einheit') {
-            $this->get_empfaenger_infos ( $kostentraeger_typ, $kostentraeger_id );
-            $rechnungs_empfaenger_typ = $this->rechnungs_empfaenger_typ;
-            $rechnungs_empfaenger_id = $this->rechnungs_empfaenger_id;
-        }
-
-        if ($kostentraeger_typ == 'Lager') {
-            $rechnungs_empfaenger_id = $kostentraeger_id;
-        }
-
-        if ($kostentraeger_typ == 'Partner') {
-            $rechnungs_empfaenger_id = $kostentraeger_id;
-        }
-
-        /*
-		 * $form->hidden_feld("Empfaenger", "$rechnungs_empfaenger_id");
-		 * $form->hidden_feld("empfaenger_typ", "Partner");
-		 * $form->hidden_feld("Aussteller", "$aussteller_id");
-		 * $form->hidden_feld("aussteller_typ", $aussteller_typ);
-		 */
-        /*
-		 * echo "<pre>";
-		 * print_r($positionen);
-		 * echo "</pre>";
-		 */
-        $positionen = array_sortByIndex ( $positionen, 'BELEG_NR' );
-        /*
-		 * echo "<pre>";
-		 * print_r($positionen);
-		 * echo "</pre>";
-		 */
-        // echo "<h1>$kostentraeger_typ, $kostentraeger_id, $aussteller_typ, $aussteller_id</h1>";
-
-        $this->rechnungs_kopf_zusammenstellung ( $kostentraeger_typ, $kostentraeger_id, $aussteller_typ, $aussteller_id );
-
-        echo "<table class=rechnungen>";
-        echo "<tr><td colspan=3>";
-        $faellig_am = date ( "Y-m-t" );
-        $faellig_am = date_mysql2german ( $faellig_am );
-        $datum_feld = 'document.getElementById("rechnungsdatum").value';
-        $formular = new formular ();
-        $js_datum = "onchange='check_datum($datum_feld)'";
-        $formular->text_feld ( 'Rechnungsdatum:', 'rechnungsdatum', '', '20', 'rechnungsdatum', $js_datum );
-
-        // $form->text_feld_js("Rechnungsdatum", "rechnungsdatum", "", "20", "rechnungsdatum", '');
-        $datum_feld = 'document.getElementById("faellig_am").value';
-        $js_datum = "onchange='check_datum($datum_feld)'";
-        $formular->text_feld ( 'Faellig am:', 'faellig_am', "$faellig_am", '20', 'faellig_am', $js_datum );
-        // $form->text_feld_js("Faellig am:", "faellig_am", "$faellig_am", "20", "faellig_am", $js_action);
-
-        // $form->text_feld_js("Skonto in %:", "skonto", "0", "5", "skonto_feld", "$js_action");
-        $form->text_feld_js ( "Skonto in %:", "skonto", "0", "5", "skonto_feld", "" );
-
-        echo "</td><td colspan=6>";
-        echo "</td></tr>";
-        // onMouseover=\"BoxenAktivieren(this);
-        echo "<tr class=feldernamen><td width=\"30px\"><input type=\"checkbox\" onClick=\"this.value=check(this.form.positionen_list)\" $js_action>Alle</td><td>Position</td><td>Menge</td><td>Bezeichnung</td><td>Einzelpreis</td><td>Netto</td><td>Rabatt %</td><td>MWSt</td><td>Kostentraeger</td></tr>";
-
-        $rechnungs_summe = 0;
-        for($a = 0; $a < count ( $positionen ); $a ++) {
-            $zeile = $a + 1;
-
-            $belegnr = $positionen [$a] ['BELEG_NR'];
-            $form->hidden_feld ( "positionen[$a][beleg_nr]", "$belegnr" );
-            $position = $positionen [$a] ['POSITION'];
-            $form->hidden_feld ( "positionen[$a][position]", "$position" );
-            $artikel_bezeichnung = $this->kontierungsartikel_holen ( $belegnr, $position );
-            $form->hidden_feld ( "positionen[$a][artikel_nr]", "$this->artikel_nr" );
-            $form->hidden_feld ( "positionen[$a][art_lieferant]", "$this->art_lieferant" );
-
-            $pos_kostentraeger_typ = $positionen [$a] ['KOSTENTRAEGER_TYP'];
-            $form->hidden_feld ( "positionen[$a][position_kostentraeger_typ]", "$pos_kostentraeger_typ" );
-            $pos_kostentraeger_id = $positionen [$a] ['KOSTENTRAEGER_ID'];
-            $form->hidden_feld ( "positionen[$a][position_kostentraeger_id]", "$pos_kostentraeger_id" );
-            $verwendungs_jahr = $positionen [$a] ['VERWENDUNGS_JAHR'];
-            $form->hidden_feld ( "positionen[$a][verwendungs_jahr]", "$verwendungs_jahr" );
-            $kontenrahmen_konto = $positionen [$a] ['KONTENRAHMEN_KONTO'];
-            $form->hidden_feld ( "positionen[$a][kontenrahmen_konto]", "$kontenrahmen_konto" );
-            $kostentraeger = $this->kostentraeger_ermitteln ( $pos_kostentraeger_typ, $pos_kostentraeger_id );
-            // echo "$menge $kontenrahmen_konto $kostentraeger_typ $kostentraeger<br>\n";
-            $menge = $positionen [$a] ['MENGE'];
-            $form->hidden_feld ( "positionen[$a][ursprungs_menge]", "$menge" );
-            $epreis = $positionen [$a] ['EINZEL_PREIS'];
-            $gpreis = $positionen [$a] ['GESAMT_SUMME'];
-            $rabatt_satz = $positionen [$a] ['RABATT_SATZ'];
-            $rechnungs_summe = $rechnungs_summe + ($menge * $epreis);
-            $mwst_satz_in_prozent = $this->mwst_satz_der_position ( $belegnr, $position );
-            // aus Beleg infos holen //
-            $kontierung_id = $positionen [$a] ['KONTIERUNG_ID'];
-            $kontierung_dat = $positionen [$a] ['KONTIERUNG_DAT'];
-            $form->hidden_feld ( "positionen[$a][kontierung_dat]", "$kontierung_dat" );
-
-            echo "<tr><td><input type=\"checkbox\" name=uebernehmen[] id=\"positionen_list\" value=\"$a\" $js_action></td><td>$zeile.</td><td>ERF $belegnr</td><td>";
-
-            $form->text_feld_js ( "Menge:", "positionen[$a][menge]", "$menge", "5", "mengen_feld", $js_action );
-            $form->hidden_feld ( "positionen[$a][bezeichnung]", "$artikel_bezeichnung" );
-            echo "</td><td>$artikel_bezeichnung</td><td>";
-            $form->text_feld_js ( "Einzelpreis:", "positionen[$a][preis]", "$epreis", "8", "epreis_feld", $js_action );
-            echo "</td><td>";
-            $form->text_feld_js ( "Netto:", "positionen[$a][gpreis]", "$gpreis", "8", "netto_feld", $js_action );
-            echo "</td><td>";
-            // $gpreis_brutto = ($gpreis / 100) * (100 + $rechnung->rechnungs_mwst_satz);
-            $gpreis_brutto = ($gpreis / 100) * (100 + $mwst_satz_in_prozent);
-            $gpreis_brutto = ($gpreis_brutto * 100) / 100;
-            $gpreis_brutto = nummer_punkt2komma ( $gpreis_brutto );
-            // $form->text_feld("Brutto:", "positionen[$a][gpreis_brutto]", "$gpreis_brutto", "5");
-
-            $form->text_feld_js ( "Rabatt:", "positionen[$a][rabatt_satz]", "$rabatt_satz", "5", "rabatt_feld", $js_action );
-            $form->hidden_feld ( "positionen[$a][pos_mwst]", "$mwst_satz_in_prozent" );
-            echo "</td><td>";
-            $form->text_feld_js ( "Mwst:", "mwst_satz", "$mwst_satz_in_prozent", "3", "mwst_feld", $js_action );
-            echo "$mwst_satz</td><td valign=bottom>$kostentraeger</td></tr>";
-            $form->hidden_feld ( "positionen[$a][kontierung_id]", "$kontierung_id" );
-        }
-
-        // $form->hidden_feld('option', 'AUTO_RECHNUNG_VORSCHAU');
-        $form->hidden_feld ( "option", "AUTO_RECHNUNG_VORSCHAU" );
-        $form->hidden_feld ( 'RECHNUNG_EMPFAENGER_TYP', "$kostentraeger_typ" );
-        $form->hidden_feld ( 'RECHNUNG_EMPFAENGER_ID', "$rechnungs_empfaenger_id" );
-        $form->hidden_feld ( 'RECHNUNG_AUSSTELLER_TYP', "$aussteller_typ" );
-        $form->hidden_feld ( 'RECHNUNG_AUSSTELLER_ID', "$aussteller_id" );
-        $form->hidden_feld ( 'RECHNUNG_KOSTENTRAEGER_ID', "$kostentraeger_id" );
-        $form->hidden_feld ( 'RECHNUNG_KOSTENTRAEGER_TYP', "$kostentraeger_typ" );
-        $form->hidden_feld ( 'RECHNUNG_NETTO_BETRAG', NULL );
-        $form->hidden_feld ( 'RECHNUNG_BRUTTO_BETRAG', NULL );
-        $form->hidden_feld ( 'RECHNUNG_SKONTO_BETRAG', NULL );
-        echo "<tr><td colspan=9><hr></td></tr>";
-        echo "<tr><td colspan=\"9\">";
-        // if($aussteller_typ == 'Partner'){
-        $geld_konto_info = new geldkonto_info ();
-        $geld_konto_info->dropdown_geldkonten ( $aussteller_typ, $aussteller_id );
-        // }else{
-        // $form->hidden_feld('geld_konto', '0');
-        // }
-        echo "</td></tr>";
-
-        echo "<tr><td><input type=\"checkbox\" name=in_rechung_stellen id=\"in_rechung_stellen\"  onclick=\"check_ob_pos_gewaehlt(this)\"><b>Eingabe beenden</b></td><td>";
-
-        echo "<tr><td>";
-        $form->text_bereich ( 'Kurzbeschreibung', 'kurzbeschreibung', '', 30, 10 );
-        echo "<br>";
-        // $form->send_button_disabled("senden_pos", "Speichern deaktiviert", "speichern_button2");
-        $form->send_button ( "senden_pos", "Speichern" );
-        echo "</td></tr>";
-
-        echo "<tr><td colspan=9><hr></td></tr>";
-        echo "<tr><td colspan=8 align=right>Netto ausgewählte Positionen</td><td id=\"g_netto_ausgewaehlt\"></td></tr>";
-        echo "<tr><td colspan=8 align=right>Brutto ausgewählte Positionen</td><td id=\"g_brutto_ausgewaehlt\"></td></tr>";
-        echo "<tr><td colspan=8 align=right>Skontonachlass</td><td id=\"g_skonto_nachlass\"></td></tr>";
-        echo "<tr><td colspan=8 align=right>Skontobetrag</td><td id=\"g_skonto_betrag\"></td></tr>";
-        echo "<tr><td colspan=9><hr></td></tr>";
-        echo "<tr><td colspan=8 align=right>Gesamt Netto errechnet</td><td id=\"g_netto_errechnet\"></td></tr>";
-        echo "<tr><td colspan=8 align=right>Gesamt Brutto errechnet</td><td id=\"g_brutto_errechnet\"></td></tr>";
-        echo "<tr><td colspan=8 align=right>Durchschnittsrabatt im Pool</td><td id=\"durchschnitt_rabatt\"></td></tr>";
-        echo "</table>";
-        $form->ende_formular ();
-    }
     function mwst_satz_der_position($belegnr, $position) {
         $result = DB::select( "SELECT MWST_SATZ FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR='$belegnr' && POSITION='$position' && AKTUELL='1' ORDER BY RECHNUNGEN_POS_DAT DESC LIMIT 0,1" );
         $row = $result[0];
@@ -1423,10 +990,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         } // end for
 
         return $neuer_kontierungs_array;
-    }
-    function rechnung_auf_positionen_pruefen($belegnr) {
-        $result = DB::select( "SELECT * FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR='$belegnr' && AKTUELL='1'" );
-        return count($result);
     }
     function rechnung_speichern($clean_arr) {
         $rechnungs_aussteller_typ = $clean_arr ['aussteller_typ'];
@@ -1679,68 +1242,8 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         return $row ['BELEG_NR'];
     }
 
-    /* Letzte Belegnummer */
-    function letzte_beleg_nr_auto($aussteller_id, $empfaenger_id) {
-        $result = DB::select( "SELECT BELEG_NR FROM RECHNUNGEN WHERE AUSSTELLER_TYP='Partner' && AUSSTELLER_ID='$aussteller_id' && EMPFAENGER_ID='$empfaenger_id' ORDER BY BELEG_NR DESC LIMIT 0,1" );
-        $row = $result[0];
-        return $row ['BELEG_NR'];
-    }
-
     /* Rechnungsgrunddaten holen */
-    function rechnung_grunddaten_holen_NOK($belegnr) {
-        $result = DB::select( "SELECT * FROM RECHNUNGEN WHERE BELEG_NR='$belegnr' && AKTUELL='1' ORDER BY BELEG_NR DESC LIMIT 0,1" );
-        if (!empty($result)) {
-            $row = $result[0];
-            $this->belegnr = $row ['BELEG_NR'];
-            /* Skontogesamtbetrag updaten */
-            $rr = new rechnungen ();
-            $rr->update_skontobetrag ( $belegnr );
-            $rr->update_nettobetrag ( $belegnr );
-            $rr->update_bruttobetrag ( $belegnr );
-
-            $this->rechnung_dat = $row ['RECHNUNG_DAT'];
-
-            $this->aussteller_ausgangs_rnr = $row ['AUSTELLER_AUSGANGS_RNR'];
-            $this->empfaenger_eingangs_rnr = $row ['EMPFAENGER_EINGANGS_RNR'];
-            $this->rechnungstyp = $row ['RECHNUNGSTYP'];
-            $this->rechnungsdatum = date_mysql2german ( $row ['RECHNUNGSDATUM'] );
-            $this->eingangsdatum = date_mysql2german ( $row ['EINGANGSDATUM'] );
-            $this->faellig_am = date_mysql2german ( $row ['FAELLIG_AM'] );
-            $this->rechnungsnummer = $row ['RECHNUNGSNUMMER'];
-            $this->rechnungs_netto = $row ['NETTO'];
-            $this->rechnungs_brutto = $row ['BRUTTO'];
-            $this->rechnungs_mwst = $this->rechnungs_brutto - $this->rechnungs_netto;
-
-            $this->rechnungs_skontobetrag = $row ['SKONTOBETRAG'];
-
-            $this->rechnungs_skontoabzug = $this->rechnungs_brutto - $this->rechnungs_skontobetrag;
-            $this->rechnungs_aussteller_typ = $row ['AUSSTELLER_TYP'];
-            $this->rechnungs_aussteller_id = $row ['AUSSTELLER_ID'];
-            $this->rechnungs_empfaenger_typ = $row ['EMPFAENGER_TYP'];
-            $this->rechnungs_empfaenger_id = $row ['EMPFAENGER_ID'];
-
-            /* Rechnungspartner finden und Rechnungstyp ändern falls Aussteller = Empfänger */
-            $this->rechnungs_partner_ermitteln ();
-
-            $this->rechnungs_kuerzel = $this->rechnungs_kuerzel_ermitteln ( $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id, $row ['RECHNUNGSDATUM'] );
-            $this->rechnungsnummer_kuerzel = $this->rechnungs_kuerzel . $this->aussteller_ausgangs_rnr;
-            $this->rechnungs_partner_ermitteln ();
-            $this->status_erfasst = $row ['STATUS_ERFASST'];
-            $this->status_vollstaendig = $row ['STATUS_VOLLSTAENDIG'];
-            $this->status_zugewiesen = $row ['STATUS_ZUGEWIESEN'];
-            $this->kurzbeschreibung = $row ['KURZBESCHREIBUNG'];
-            $this->status_bezahlt = $row ['STATUS_BEZAHLT'];
-            $this->status_zahlung_freigegeben = $row ['STATUS_ZAHLUNG_FREIGEGEBEN'];
-            $this->status_bestaetigt = $row ['STATUS_BESTAETIGT'];
-            $this->bezahlt_am = date_mysql2german ( $row ['BEZAHLT_AM'] );
-            $this->empfangs_geld_konto = $row ['EMPFANGS_GELD_KONTO'];
-
-            /* Infos über Positionen */
-            $rr->rechnung_auf_positionen_pruefen ( $belegnr );
-        } // end if rows>1
-    } // end function rechnung_grunddaten_holen
     function rechnung_grunddaten_holen($belegnr) {
-        // echo "BERLUSSIMO $belegnr<br>";
         $result = DB::select( "SELECT * FROM RECHNUNGEN WHERE BELEG_NR='$belegnr' && AKTUELL='1' ORDER BY BELEG_NR DESC LIMIT 0,1" );
         if (!empty($result)) {
             $row = $result[0];
@@ -1789,31 +1292,9 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             $this->empfangs_geld_konto = $row ['EMPFANGS_GELD_KONTO'];
         }
     } // end function
-    function summe_skonto_positionen($beleg_nr) {
-        $rr = new rechnungen ();
-        return $rr->summe_skonto_positionen ( $beleg_nr );
-    }
-    function update_skontobetrag($beleg_nr) {
-        $rr = new rechnungen ();
-        $betrag = nummer_komma2punkt ( nummer_punkt2komma ( $rr->summe_skonto_positionen ( $beleg_nr ) ) );
-        DB::update("UPDATE RECHNUNGEN SET SKONTOBETRAG='$betrag' WHERE BELEG_NR='$beleg_nr' && AKTUELL='1'" );
-    }
     function summe_netto_positionen($beleg_nr) {
         $rr = new rechnungen ();
         return $rr->summe_netto_positionen ( $beleg_nr );
-    }
-    function update_nettobetrag($beleg_nr) {
-        $betrag = nummer_komma2punkt ( nummer_punkt2komma ( $this->summe_netto_positionen ( $beleg_nr ) ) );
-        DB::update( "UPDATE RECHNUNGEN SET NETTO='$betrag' WHERE BELEG_NR='$beleg_nr' && AKTUELL='1'" );
-    }
-    function summe_brutto_positionen($beleg_nr) {
-        $result = DB::select( "SELECT SUM((MENGE*PREIS/100)*(100+MWST_SATZ) ) AS BRUTTO FROM RECHNUNGEN_POSITIONEN WHERE `BELEG_NR`='$beleg_nr' && AKTUELL='1'" );
-        $row = $result[0];
-        return $row ['BRUTTO'];
-    }
-    function update_bruttobetrag($beleg_nr) {
-        $rr = new rechnungen ();
-        $rr->update_bruttobetrag ( $beleg_nr );
     }
     function footer_zeilen_anzeigen($belegnr) {
         $this->rechnung_grunddaten_holen ( $belegnr );
@@ -2040,9 +1521,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
     function nach_link($u_beleg_nr, $art_nr, $partner_id) {
         $arr = $this->nach_link_arr ( $u_beleg_nr, $art_nr, $partner_id );
         if (is_array ( $arr )) {
-            // echo '<pre>';
-            // print_r($arr);
-            // echo "<hr>";
             $anz = count ( $arr );
             $link = '';
             for($a = 0; $a < $anz; $a ++) {
@@ -2185,39 +1663,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         echo "<p id=\"beschreibung_u\">$this->kurzbeschreibung</p>\n";
         echo "</div>\n";
         /* weiter geht es in function rechnung_anzeigen inkl positionen */
-    }
-    function rechnungs_kopf_kontierung($belegnr, $kostentraeger_typ) {
-        $this->rechnung_grunddaten_holen ( $belegnr );
-        /* Partnernamen holen */
-        $partner_info = new partner ();
-        /* Anschriften holen */
-        // $partner_info->get_aussteller_info($this->rechnungs_aussteller_id);
-        $partner_info->get_empfaenger_info ( $this->rechnungs_empfaenger_id );
-        /* Ende Partnernamen holen */
-
-        /*
-		 * Aussteller Empfänger neu Definieren - wegen der automatischen Erstellung von Rechnungen an Eigentümer nach Kontierung
-		 * Frühere Empfänger wird zu Aussteller
-		 * Empfänger wird aus $objekt - Eigentümer definiert
-		 */
-        $rechnungs_aussteller_id = $this->rechnungs_aussteller_id;
-        $rechnungs_aussteller_name = $this->rechnungs_empfaenger_name;
-        $rechnungs_aussteller_str = $partner_info->rechnungs_empfaenger_strasse;
-        $rechnungs_aussteller_hausnr = $partner_info->rechnungs_empfaenger_hausnr;
-        $rechnungs_aussteller_plz = $partner_info->rechnungs_empfaenger_plz;
-        $rechnungs_aussteller_ort = $partner_info->rechnungs_empfaenger_ort;
-
-        $rechnungs_empfaenger_name = '';
-
-        /* Rechnungskopf mit Grunddaten */
-
-        echo "<table class=rechnung>\n";
-
-        echo "<tr class=feldernamen><td colspan=4><b>Kontierung des Beleges $belegnr</b></td></tr>\n";
-        echo "<tr class=feldernamen><td>VON:</td><td>AN:</td><td colspan=2>Zusatzinfo</td></tr>\n";
-        echo "<tr><td valign=top><b>$rechnungs_aussteller_name</b><br>$rechnungs_aussteller_str $rechnungs_aussteller_hausnr<br><br>$rechnungs_aussteller_plz $rechnungs_aussteller_ort </td><td valign=top>Noch nicht definiert<br>Kostenträger ist ein /-e $kostentraeger_typ</td><td valign=top><b>Ursprungsdaten<hr></b>Belegnr:<br>Rechnungsnr: <br>Rechnungsdatum: <br>Eingangsdatum: <br>Fällig am: </td><td valign=top><br><hr>$this->belegnr<br><b>$this->rechnung_id</b><br> $this->rechnungsdatum<br> $this->eingangsdatum<br> <b>$this->faellig_am</b></td></tr>\n";
-        echo "<tr><td colspan=4><hr>$this->kurzbeschreibung<hr></td></tr>\n";
-        echo "</table>\n";
     }
 
     // ######
@@ -2576,26 +2021,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             return $o->objekt_eigentuemer_partner_id;
         }
     }
-    function update_gsumme_positionen() {
-        /*
-		 * $abfrage = "UPDATE RECHNUNGEN_POSITIONEN AS t1
-		 * JOIN RECHNUNGEN_POSITIONEN AS t2 ON t1.RECHNUNGEN_POS_ID = t2.RECHNUNGEN_POS_ID
-		 * SET t1.GESAMT_NETTO = t2.MENGE*t2.PREIS";
-		 */
-    }
-    function update_gsumme_kontierung() {
-        /*
-		 * $abfrage = "UPDATE KONTIERUNG_POSITIONEN AS t1
-		 * JOIN KONTIERUNG_POSITIONEN AS t2 ON t1.KONTIERUNG_ID = t2.KONTIERUNG_ID
-		 * SET t1.GESAMT_SUMME = t2.MENGE*t2.EINZEL_PREIS";
-		 */
-    }
 
-    /*
-	 * UPDATE RECHNUNGEN_POSITIONEN AS t1 JOIN RECHNUNGEN_POSITIONEN AS t2 ON t1.RECHNUNGEN_POS_ID = t2.RECHNUNGEN_POS_ID SET t1.GESAMT_NETTO = ( (
-	 * t2.MENGE * t2.PREIS
-	 * ) * ( 100 - t2.RABATT_SATZ ) /100 ) WHERE t1.BELEG_NR>='2550'
-	 */
     /* Kostenträger ermitteln */
     function kostentraeger_ermitteln($kostentraeger_typ, $kostentraeger_id) {
         if ($kostentraeger_typ == 'Objekt') {
@@ -3091,26 +2517,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         $this->rechnung_als_vollstaendig ( $belegnr );
         $this->rechnung_als_zugewiesen ( $belegnr );
         weiterleiten_in_sec (route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $belegnr], false), 2 );
-    }
-    function position_kontierung_infos_alt($belegnr, $pos) {
-        unset ( $this->kontierungs_menge );
-        unset ( $this->kostenkonto );
-        unset ( $this->kostentraeger_typ );
-        unset ( $this->kostentraeger_id );
-        unset ( $this->einzel_preis );
-        unset ( $this->verwendungs_jahr );
-        unset ( $this->mwst_satz );
-        unset ( $this->rabatt_satz );
-        $result = DB::select( "SELECT * FROM KONTIERUNG_POSITIONEN WHERE BELEG_NR='$belegnr' && POSITION='$pos' && AKTUELL='1' ORDER BY KONTIERUNG_DAT DESC LIMIT 0,1" );
-        $row = $result[0];
-        $this->kontierungs_menge = $row ['MENGE'];
-        $this->kostenkonto = $row ['KONTENRAHMEN_KONTO'];
-        $this->kostentraeger_typ = $row ['KOSTENTRAEGER_TYP'];
-        $this->kostentraeger_id = $row ['KOSTENTRAEGER_ID'];
-        $this->einzel_preis = $row ['EINZEL_PREIS'];
-        $this->verwendungs_jahr = $row ['VERWENDUNGS_JAHR'];
-        $this->mwst_satz = $row ['MWST_SATZ'];
-        $this->rabatt_satz = $row ['RABATT_SATZ'];
     }
     function position_kontierung_infos_n($dat) {
         unset ( $this->kontierungs_menge );

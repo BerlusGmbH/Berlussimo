@@ -35,27 +35,7 @@ class kautionen
             return false;
         }
     }
-
-    function kautionszahlungen_alle_arr($konto)
-    {
-        if (!session()->has('geldkonto_id')) {
-            throw new \App\Exceptions\MessageException(
-                new \App\Messages\InfoMessage("Bitte Kautionskonto wählen."),
-                0,
-                null,
-                route('legacy::buchen::index', ['option' => 'geldkonto_aendern'])
-            );
-        } else {
-            $gk_id = session()->get('geldkonto_id');
-            $result = DB::select("SELECT DATUM, BETRAG, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN  WHERE   AKTUELL='1' && GELDKONTO_ID='$gk_id' ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, DATUM ASC");
-            if (!empty($result)) {
-                return $result;
-            } else {
-                return false;
-            }
-        }
-    }
-
+    
     function form_hochrechnung_mv($mietvertrag_id)
     {
         $mv = new mietvertraege ();
@@ -208,26 +188,8 @@ class kautionen
         }
     }
 
-    /*
-     *
-     *
-     * $kap = ($zins - $betrag_vormonat)*($kap_prozent/$kap_prozent);
-     * $soli = $kap*$soli_prozent/100;
-     *
-     * #$betrag_ende_monat = $betrag_ende_monat + $kap + $soli;
-     *
-     * $kap_a = nummer_kuerzen($kap,3);
-     * $soli_a = nummer_kuerzen($soli,3);
-     * $b_vm = $betrag_vormonat;
-     * $b_em = nummer_kuerzen($zins,3);
-     * #echo "$a. $betrag_vormonat $betrag_ende_monat<br>";
-     * #echo "<b> REST $zinstage tage<br> $zins $b_vm $kap_a $soli_a $b_em</b><br>";
-     */
-
     function zins_tage($von, $bis)
     {
-        // $von = "2010-06-18";
-        // $bis = "2010-12-31";
         $von1 = $this->zinstag($von);
         $bis1 = $this->zinstag($bis);
         $differenz = $bis1 - $von1;
@@ -463,134 +425,7 @@ class kautionen
             echo "Keine kautionszahlungen auf <b>$gk->geldkonto_bezeichnung</b> gebucht.";
         }
     }
-
-    function zinsen($kaution, $zins_pj, $datum_von, $datum_bis)
-    {
-        // $kaution = '589.27';
-        // $zins_pj ='6'; //%
-
-        // $alt = strtotime("2009-01-01") ;
-        $alt = strtotime("$datum_von");
-        echo "<br>";
-        // $aktuell = strtotime("2009-12-31") ;
-        $aktuell = strtotime("$datum_bis");
-        // $aktuell = strtotime(date("Y-m-d")) ;
-
-        $differenz = $aktuell - $alt;
-        $differenz = $differenz / 86400;
-
-        echo "Tage: $differenz<br>";
-
-        // ###
-        $datum_von_arr = explode('-', $datum_von);
-        $datum_von_jahr = $datum_von_arr [0];
-        $datum_von_monat = $datum_von_arr [1];
-        $datum_von_tag = $datum_von_arr [2];
-
-        $resttage_anfang = 30 - $datum_von_tag + 1;
-
-        $datum_bis_arr = explode('-', $datum_bis);
-        $datum_bis_jahr = $datum_bis_arr [0];
-        $datum_bis_monat = $datum_bis_arr [1];
-        $datum_bis_tag = $datum_bis_arr [2];
-
-        $resttage_ende = 30 - $datum_bis_tag + 1;
-
-        $jahre = $datum_bis_jahr - $datum_von_jahr;
-        if ($jahre > 0) {
-            $monate_1_jahr = 12 - $datum_von_monat;
-            $monate_end_jahr = $datum_bis_monat;
-            $monate_gesamt = $monate_1_jahr + $monate_end_jahr;
-            $jahre = $jahre - 1;
-        } else {
-            $monate_1_jahr = 12 - $datum_von_monat;
-            $monate_end_jahr = $datum_bis_monat;
-            $monate_gesamt = $monate_end_jahr - $monate_1_jahr;
-            $jahre = 0;
-        }
-
-        $tage_gesamt = $resttage_anfang + $resttage_ende;
-
-        echo "<br>M$monate_gesamt = $monate_1_jahr + $monate_end_jahr<br>";
-
-        echo "$tage_gesamt Tage $monate_gesamt Monate $jahre Jahre";
-        $tage_aus_monaten = $monate_gesamt * 30;
-        // $ta
-        $tage_gesamt = $tage_gesamt + $tage_aus_monaten;
-        echo "<br>Gesamttage = $tage_gesamt<br>";
-        // ###
-
-        $anlege_jahre = 1;
-        $anlege_monate = 0;
-        $anlege_tage = 10;
-
-        $kap_prozent = 25;
-        $soli_prozent = 5.5;
-
-        // $gesamt_tage = ($anlege_jahre * 360) + ($anlege_monate * 30) + $anlege_tage;
-        $gesamt_tage = $differenz;
-        $berechnungs_monate = $gesamt_tage / 30;
-        $berechnungs_monate_voll = intval($berechnungs_monate);
-        $rest_tage = $gesamt_tage - ($berechnungs_monate_voll * 30);
-
-        echo "<b>$berechnungs_monate_voll Monate und $rest_tage Tage</b><br>";
-        // =SUMME(C11*0,005*30)/360+C11
-
-        $betrag_vormonat = $kaution;
-        for ($a = 1; $a <= $berechnungs_monate_voll; $a++) {
-            /* =(C11*0,005*30)/360+C11 */
-            $betrag_ende_monat = ($betrag_vormonat * $zins_pj * 30) / 360 + $betrag_vormonat;
-            $kap = ($betrag_ende_monat - $betrag_vormonat) * $kap_prozent / $kap_prozent;
-            $soli = $kap * $soli_prozent / 100;
-
-            // $betrag_ende_monat = $betrag_ende_monat + $kap + $soli;
-
-            $kap_a = nummer_kuerzen($kap, 3);
-            $soli_a = nummer_kuerzen($soli, 3);
-            $b_vm = nummer_kuerzen($betrag_vormonat, 3);
-            $b_em = nummer_kuerzen($betrag_ende_monat, 3);
-            /*
-             * $kap_a = nummer_punkt2komma($kap);
-             * $soli_a = nummer_punkt2komma($soli);
-             * $b_vm = nummer_punkt2komma($betrag_vormonat);
-             * $b_em = nummer_punkt2komma($betrag_ende_monat);
-             */
-
-            // echo "$a. $betrag_vormonat $betrag_ende_monat<br>";
-            echo " Monat $a.           $b_vm      $kap_a      $soli_a   $b_em<br>";
-            // echo "$a. $betrag_vormonat $betrag_ende_monat<br>";
-            $betrag_vormonat = $betrag_ende_monat;
-        }
-
-        if ($rest_tage > 0) {
-
-            $betrag_ende_monat = ($betrag_vormonat * $zins_pj * $rest_tage) / 360 + $betrag_vormonat;
-            $kap = ($betrag_ende_monat - $betrag_vormonat) * $kap_prozent / $kap_prozent;
-            $soli = $kap * $soli_prozent / 100;
-
-            // $betrag_ende_monat = $betrag_ende_monat + $kap + $soli;
-
-            $kap_a = nummer_punkt2komma($kap);
-            $soli_a = nummer_punkt2komma($soli);
-            $b_vm = nummer_punkt2komma($betrag_vormonat);
-            $b_em = nummer_punkt2komma($betrag_ende_monat);
-            // echo "$a. $betrag_vormonat $betrag_ende_monat<br>";
-            echo "<b> REST $rest_tage tage<br>           $b_vm      $kap_a      $soli_a   $b_em</b><br>";
-            // echo "$a. $betrag_vormonat $betrag_ende_monat<br>";
-            $betrag_vormonat = $betrag_ende_monat;
-        }
-
-        return $betrag_ende_monat;
-        /* Beispiel: Kaution Euro 1000 bei Mietdauer 1 Jahr und 14 Tagen: 1000 : 100 : 1 Jahr x Zins 3 x 1 Jahr = Euro 30. Folgejahr: 1030 : 100 : 360 x 3 x 14 Tage = 0,40 Euro - Der Mieter erhält mit Zinseszinses vom Vermieter Euro 1.030,40 zurück! */
-    }
-
-    function zins_tage_alt($datum_von, $datum_bis)
-    {
-        $u = new urlaub ();
-        $tage = $u->tage_zwischen($datum_von, $datum_bis);
-        return $tage;
-    }
-
+    
     function kaution_speichern($datum, $kostentraeger_typ, $kostentraeger_id, $betrag, $text, $konto)
     {
         $db_abfrage = "INSERT INTO KAUTIONS_BUCHUNGEN VALUES (NULL, '$kostentraeger_typ', '$kostentraeger_id','$datum', '$betrag','$text', '$konto')";

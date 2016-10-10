@@ -317,25 +317,6 @@ class benutzer
         }
     }
 
-    function dropdown_module($b_id)
-    {
-        $module_arr = $this->module_arr();
-        $anz = count($module_arr);
-        if ($anz) {
-            echo "<label for=\"modul_name\">Modul wählen</label><select id=\"modul_name\" name=\"modul_name\" size=\"1\">";
-            echo "<option value=\"*\">Vollzugriff</option>";
-            for ($a = 0; $a < $anz; $a++) {
-                $modul_name = $module_arr [$a];
-                // if(!check_user_mod($b_id, $modul_name)){
-                echo "<option value=\"$modul_name\">$modul_name</option>";
-                // }
-            }
-            echo "</select>";
-        } else {
-            echo "Keine Module";
-        }
-    }
-
     function form_neuer_benutzer()
     {
         $f = new formular ();

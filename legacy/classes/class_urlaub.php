@@ -951,16 +951,6 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
         return $morgen;
     }
 
-    function wochentag($datum)
-    {
-        $datum_arr = explode("-", $datum);
-        $jahr = $datum_arr [0];
-        $monat = $datum_arr [1];
-        $tag = $datum_arr [2];
-        $wochentag = date('w', mktime(0, 0, 0, $monat, $tag, $jahr));
-        return $wochentag;
-    }
-
     function urlaubstag_loeschen($dat)
     {
         $db_abfrage = "UPDATE URLAUB SET AKTUELL='0' WHERE U_DAT='$dat'";
@@ -1295,77 +1285,5 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
         } // end for 1
 
         $pdf->ezStream();
-    }
-
-    function zinsen($kaution, $zins_pj)
-    {
-        // $kaution = '589.27';
-        // $zins_pj ='6'; //%
-        $alt = strtotime("2009-01-01");
-        echo "<br>";
-        $aktuell = strtotime("2009-12-31");
-        // $aktuell = strtotime(date("Y-m-d")) ;
-
-        $differenz = $aktuell - $alt;
-        $differenz = $differenz / 86400;
-
-        echo "$differenz";
-
-        $anlege_jahre = 1;
-        $anlege_monate = 0;
-        $anlege_tage = 10;
-
-        $kap_prozent = 25;
-        $soli_prozent = 5.5;
-
-        // $gesamt_tage = ($anlege_jahre * 360) + ($anlege_monate * 30) + $anlege_tage;
-        $gesamt_tage = $differenz;
-        $berechnungs_monate = $gesamt_tage / 30;
-        $berechnungs_monate_voll = intval($berechnungs_monate);
-        $rest_tage = $gesamt_tage - ($berechnungs_monate_voll * 30);
-
-        echo "<b>$berechnungs_monate_voll $rest_tage</b><br>";
-        // =SUMME(C11*0,005*30)/360+C11
-
-        echo "<h1>$gesamt_tage $rest_tage</h1>";
-
-        $betrag_vormonat = $kaution;
-        for ($a = 1; $a <= $berechnungs_monate_voll; $a++) {
-            /* =(C11*0,005*30)/360+C11 */
-            $betrag_ende_monat = ($betrag_vormonat * $zins_pj * 30) / 360 + $betrag_vormonat;
-            $kap = ($betrag_ende_monat - $betrag_vormonat) * $kap_prozent / $kap_prozent;
-            $soli = $kap * $soli_prozent / 100;
-
-            // $betrag_ende_monat = $betrag_ende_monat + $kap + $soli;
-
-            $kap_a = nummer_punkt2komma($kap);
-            $soli_a = nummer_punkt2komma($soli);
-            $b_vm = nummer_punkt2komma($betrag_vormonat);
-            $b_em = nummer_punkt2komma($betrag_ende_monat);
-            // echo "$a. $betrag_vormonat $betrag_ende_monat<br>";
-            echo "$a.           $b_vm      $kap_a      $soli_a   $b_em<br>";
-            // echo "$a. $betrag_vormonat $betrag_ende_monat<br>";
-            $betrag_vormonat = $betrag_ende_monat;
-        }
-
-        if ($rest_tage > 0) {
-
-            $betrag_ende_monat = ($betrag_vormonat * $zins_pj * $rest_tage) / 360 + $betrag_vormonat;
-            $kap = ($betrag_ende_monat - $betrag_vormonat) * $kap_prozent / $kap_prozent;
-            $soli = $kap * $soli_prozent / 100;
-
-            // $betrag_ende_monat = $betrag_ende_monat + $kap + $soli;
-
-            $kap_a = nummer_punkt2komma($kap);
-            $soli_a = nummer_punkt2komma($soli);
-            $b_vm = nummer_punkt2komma($betrag_vormonat);
-            $b_em = nummer_punkt2komma($betrag_ende_monat);
-            // echo "$a. $betrag_vormonat $betrag_ende_monat<br>";
-            echo "<b> REST $rest_tage tage           $b_vm      $kap_a      $soli_a   $b_em</b><br>";
-            // echo "$a. $betrag_vormonat $betrag_ende_monat<br>";
-            $betrag_vormonat = $betrag_ende_monat;
-        }
-
-        /* Beispiel: Kaution Euro 1000 bei Mietdauer 1 Jahr und 14 Tagen: 1000 : 100 : 1 Jahr x Zins 3 x 1 Jahr = Euro 30. Folgejahr: 1030 : 100 : 360 x 3 x 14 Tage = 0,40 Euro - Der Mieter erhält mit Zinseszinses vom Vermieter Euro 1.030,40 zurück! */
     }
 } // end class urlaub

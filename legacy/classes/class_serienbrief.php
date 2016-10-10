@@ -61,7 +61,6 @@ class serienbrief
             echo "Keine Vorlagen AA3";
         }
     } // end function
-
     function erstelle_brief_vorlage($v_dat, $empf_typ, $empf_id_arr, $option = '0')
     {
         $anz_empf = count($empf_id_arr);

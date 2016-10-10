@@ -10,18 +10,6 @@ class berlussimo_global
         $this->datum_heute = date("Y-m-d");
     }
 
-    function unvermietete_einheiten_arr()
-    {
-        $db_abfrage = "SELECT MIETVERTRAG.MIETVERTRAG_ID, EINHEIT.EINHEIT_KURZNAME FROM MIETVERTRAG JOIN EINHEIT ON (EINHEIT.EINHEIT_ID = MIETVERTRAG.EINHEIT_ID) WHERE MIETVERTRAG_AKTUELL='1' && EINHEIT.EINHEIT_AKTUELL='1' &&  MIETVERTRAG.MIETVERTRAG_BIS<'$this->datum_heute' ORDER BY EINHEIT.EINHEIT_KURZNAME ASC,MIETVERTRAG.MIETVERTRAG_BIS  DESC";
-        $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            foreach($result as $row) {
-                $resultrow = ['einheit_kurzname' => $row['EINHEIT_KURZNAME'], 'mv_id' => $row['MIETVERTRAG_ID']];
-                $this->unvermietete_einheiten [] = $resultrow;
-            }
-        }
-    }
-
     function objekt_auswahl_liste()
     {
         session()->put('url.intended', URL::full());

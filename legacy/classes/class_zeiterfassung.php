@@ -513,122 +513,6 @@ class zeiterfassung
         return $zeit;
     }
 
-    function stundenzettel_erfassen_OK($zettel_id)
-    {
-        $this->stundenzettel_anzeigen($zettel_id);
-        $f = new formular ();
-        $b = new buchen ();
-        $f->erstelle_formular("Neue Zeile", NULL);
-        $f->datum_feld("Datum:", "datum", "", "10", 'datum', '');
-        $f->hidden_feld("zettel_id", "$zettel_id");
-        $f->hidden_feld("benutzer_id", "$this->benutzer_id");
-        $this->dropdown_leistungen($this->gewerk_id);
-        $f->text_feld("Leistungsbeschreibung eingeben, falls nicht vorhanden", "leistungs_beschreibung", "", "50", 'leistungsbeschreibung', '');
-        $this->dropdown_dauer_min();
-        $pflicht_felder = 'beginn|ende';
-        $js_check_pflicht = "onmouseout=\"check_pflicht_text(this.id)\"";
-        $f->text_feld('Beginn', 'beginn', '', 6, 'beginn', '');
-        $f->text_feld('Ende', 'ende', '', 6, 'ende', '');
-        $js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
-        $b->dropdown_kostentreager_typen('Kostenträgertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ);
-        $js_id = "";
-        $b->dropdown_kostentreager_ids('Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id);
-        $f->text_bereich('Hinweise / Notizen / Uhrzeiten / Besonderheiten (max. 1000 Zeichen)', 'hinweis', '', 40, 10, 'hinweis');
-        $f->hidden_feld("option", "zettel_eingabe1");
-        $js = "onmouseover=\"check_felder_pflicht($pflicht_felder)\"";
-        $f->send_button_js("submit_zettel", "Speichern", $js);
-        $f->ende_formular();
-    }
-
-    function dropdown_leistungen($gewerk_id)
-    {
-        $result = DB::select("SELECT LK_ID, BEZEICHNUNG FROM `LEISTUNGSKATALOG` WHERE (`GEWERK` ='$gewerk_id' OR `GEWERK` IS NULL) AND `AKTUELL` ='1' ORDER BY BEZEICHNUNG ASC");
-        echo "<label for=\"leistung_id\">Leistung</label><select name=\"leistung_id\" id=\"leistung_id\" size=1>\n";
-        echo "<option value=\"\">Bitte wählen</option>\n";
-        if (!empty($result)) {
-            foreach($result as $row) {
-                $leistung_id = $row ['LK_ID'];
-                $beschreibung = $row ['BEZEICHNUNG'];
-                echo "<option value=\"$leistung_id\">$beschreibung</option>\n";
-            }
-        }
-        echo "</select>\n";
-    }
-
-    function dropdown_dauer_min()
-    {
-        echo "<label for=\"dauer_min\">Dauer in Stunden</label><select name=\"dauer_min\" id=\"dauer_min\" size=1>\n";
-        echo "<option value=\"\">Bitte wählen</option>\n";
-        $dauer = 0;
-        for ($a = 1; $a <= 56; $a++) {
-            $dauer += 15;
-            $dauer_a = $dauer / 60;
-            $dauer_a = $this->decimal2zeit($dauer_a);
-
-            echo "<option value=\"$dauer\">$dauer_a</option>\n";
-        }
-
-        /*
-		 * echo "<option value=\"15\">15 Minuten</option>\n";
-		 * echo "<option value=\"30\">30 Minuten</option>\n";
-		 * echo "<option value=\"45\">45 Minuten</option>\n";
-		 * echo "<option value=\"60\">1 Stunde</option>\n";
-		 * echo "<option value=\"75\">1 Stunde 15 Minuten</option>\n";
-		 * echo "<option value=\"90\">1,5 Stunden</option>\n";
-		 * echo "<option value=\"105\">1:45 Stunden</option>\n";
-		 * echo "<option value=\"120\">2 Stunden</option>\n";
-		 * echo "<option value=\"135\">2:15</option>\n";
-		 * echo "<option value=\"150\">2:30</option>\n";
-		 * echo "<option value=\"165\">2:45</option>\n";
-		 * echo "<option value=\"180\">3 Stunden</option>\n";
-		 * echo "<option value=\"205\">3:15 Stunden</option>\n";
-		 * echo "<option value=\"210\">3,5 Stunden</option>\n";
-		 * echo "<option value=\"225\">3:45 Stunden</option>\n";
-		 * echo "<option value=\"240\">4 Stunden</option>\n";
-		 * echo "<option value=\"240\">4: Stunden</option>\n";
-		 * echo "<option value=\"270\">4,5 Stunden</option>\n";
-		 * echo "<option value=\"300\">5 Stunden</option>\n";
-		 * echo "<option value=\"330\">5,5 Stunden</option>\n";
-		 * echo "<option value=\"360\">6 Stunden</option>\n";
-		 * echo "<option value=\"390\">6,5 Stunden</option>\n";
-		 * echo "<option value=\"420\">7 Stunden</option>\n";
-		 * echo "<option value=\"450\">7,5 Stunden</option>\n";
-		 * echo "<option value=\"480\">8 Stunden</option>\n";
-		 * echo "<option value=\"510\">8,5 Stunden</option>\n";
-		 * echo "<option value=\"540\">9 Stunden</option>\n";
-		 * echo "<option value=\"570\">9,5 Stunden</option>\n";
-		 * echo "<option value=\"600\">10 Stunden</option>\n";
-		 * echo "<option value=\"630\">10,5 Stunden</option>\n";
-		 * echo "<option value=\"660\">11 Stunden</option>\n";
-		 * echo "<option value=\"690\">11,5 Stunden</option>\n";
-		 * echo "<option value=\"720\">12 Stunden</option>\n";
-		 * echo "<option value=\"750\">12,5 Stunden</option>\n";
-		 * echo "<option value=\"780\">13 Stunden</option>\n";
-		 * echo "<option value=\"810\">13,5 Stunden</option>\n";
-		 * echo "<option value=\"840\">14 Stunden</option>\n";
-		 */
-        echo "</select>\n";
-    }
-
-    function dropdown_leistungen_vw($gewerk_id, $lk_id_vorwahl)
-    {
-        $result = DB::select("SELECT LK_ID, BEZEICHNUNG FROM `LEISTUNGSKATALOG` WHERE (`GEWERK` ='$gewerk_id' OR `GEWERK` IS NULL) AND `AKTUELL` ='1' ORDER BY BEZEICHNUNG ASC");
-        echo "<label for=\"leistung_id\">Leistung</label><select name=\"leistung_id\" id=\"leistung_id\" size=1>\n";
-        echo "<option value=\"\">Bitte wählen</option>\n";
-        if (!empty($result)) {
-            foreach($result as $row) {
-                $leistung_id = $row ['LK_ID'];
-                $beschreibung = $row ['BEZEICHNUNG'];
-                if ($lk_id_vorwahl == $leistung_id) {
-                    echo "<option value=\"$leistung_id\" selected>$beschreibung JJJJ</option>\n";
-                } else {
-                    echo "<option value=\"$leistung_id\">$beschreibung</option>\n";
-                }
-            }
-        }
-        echo "</select>\n";
-    }
-
     function stundenzettel_anlegen($benutzer_id)
     {
         $f = new formular ();
@@ -672,50 +556,6 @@ class zeiterfassung
         return $row ['ZETTEL_ID'];
     }
 
-    function stundenzettel_speichern2($benutzer_id, $beschreibung)
-    {
-        $datum = date("Y-m-d");
-        $l_zettel_id = $this->letzte_zettel_id() + 1;
-        $db_abfrage = "INSERT INTO STUNDENZETTEL VALUES (NULL, '$l_zettel_id', '$benutzer_id', '$beschreibung', '$datum',  '1')";
-        DB::insert($db_abfrage);
-
-        /* Protokollieren */
-        $last_dat = DB::getPdo()->lastInsertId();
-        protokollieren('STUNDENZETTEL', $last_dat, '0');
-        $mein_letzerzettel_id = $this->mein_letzer_zettel($benutzer_id);
-        hinweis_ausgeben('Stundennachweis wurde erstellt.');
-        return $mein_letzerzettel_id;
-    }
-
-    function zettel_pos_speichern2($datum, $benutzer_id, $leistung_id, $zettel_id, $dauer_min, $kostentraeger_typ, $kostentraeger_id, $hinweis, $beginn, $ende)
-    {
-        // echo "$datum, $benutzer_id, $leistung_id, $zettel_id, $dauer_min, $kostentraeger_typ, $kostentraeger_bez";
-        $l_id = $this->letzte_zettel_pos_id() + 1;
-        $b = new buchen ();
-
-        $datum = date_german2mysql($datum);
-        $db_abfrage = "INSERT INTO STUNDENZETTEL_POS VALUES (NULL, '$l_id', '$zettel_id', '$datum', '$beginn', '$ende', '$leistung_id', '$dauer_min', '$kostentraeger_typ', '$kostentraeger_id','$hinweis', '0', '1')";
-        DB::insert($db_abfrage);
-
-        /* Protokollieren */
-        $last_dat = DB::getPdo()->lastInsertId();
-        protokollieren('STUNDENZETTEL_POS', $last_dat, '0');
-
-        hinweis_ausgeben('Ihre Eingabe wurde gespeichert!<br>Sie werden weitergeleitet.');
-
-        /* Prüfen ob Leistung in POSITIONEN_KATALOG existiert, falls nicht, hinzufügen */
-        if (!$this->check_leistung_pos_leistung($benutzer_id, $leistung_id)) {
-            $r = new rechnung ();
-
-            /* Leistung ins Lieferkatalog speichern */
-            $bp_partner_id = $this->get_partner_id_benutzer($benutzer_id);
-            $artikel_nr = 'L-' . $benutzer_id . '-' . $leistung_id;
-            $artikel_preis = $this->stundensatz($benutzer_id);
-            $leistungs_beschreibung = $this->get_beschr_by_l_id($leistung_id);
-            $r->artikel_leistung_mit_artikelnr_speichern($bp_partner_id, $leistungs_beschreibung, $artikel_preis, $artikel_nr, '0', 'Std', '19', '0.00');
-        }
-    }
-
     function letzte_zettel_pos_id()
     {
         $result = DB::select("SELECT ST_ID FROM STUNDENZETTEL_POS WHERE AKTUELL = '1' ORDER BY ST_ID DESC LIMIT 0,1");
@@ -742,35 +582,6 @@ class zeiterfassung
         $result = DB::select("SELECT BEZEICHNUNG FROM LEISTUNGSKATALOG WHERE LK_ID='$leistung_id' && AKTUELL = '1' ORDER BY LK_ID DESC LIMIT 0,1");
         $row = $result[0];
         return $row ['BEZEICHNUNG'];
-    }
-
-    function zettel_pos_speichern_dat($dat, $datum, $benutzer_id, $leistung_id, $zettel_id, $dauer_min, $kostentraeger_typ, $kostentraeger_id, $hinweis, $beginn, $ende)
-    {
-        // echo "$datum, $benutzer_id, $leistung_id, $zettel_id, $dauer_min, $kostentraeger_typ, $kostentraeger_bez";
-        $l_id = $this->letzte_zettel_pos_id() + 1;
-        $b = new buchen ();
-
-        $datum = date_german2mysql($datum);
-        $db_abfrage = "INSERT INTO STUNDENZETTEL_POS VALUES ('$dat', '$l_id', '$zettel_id', '$datum', '$beginn', '$ende', '$leistung_id', '$dauer_min', '$kostentraeger_typ', '$kostentraeger_id','$hinweis', '0', '1')";
-        DB::insert($db_abfrage);
-
-        /* Protokollieren */
-        $last_dat = DB::getPdo()->lastInsertId();
-        protokollieren('STUNDENZETTEL_POS', $last_dat, '0');
-
-        hinweis_ausgeben('Ihre Eingabe wurde gespeichert!<br>Sie werden weitergeleitet.');
-
-        /* Prüfen ob Leistung in POSITIONEN_KATALOG existiert, falls nicht, hinzufügen */
-        if (!$this->check_leistung_pos_leistung($benutzer_id, $leistung_id)) {
-            $r = new rechnung ();
-
-            /* Leistung ins Lieferkatalog speichern */
-            $bp_partner_id = $this->get_partner_id_benutzer($benutzer_id);
-            $artikel_nr = 'L-' . $benutzer_id . '-' . $leistung_id;
-            $artikel_preis = $this->stundensatz($benutzer_id);
-            $leistungs_beschreibung = $this->get_beschr_by_l_id($leistung_id);
-            $r->artikel_leistung_mit_artikelnr_speichern($bp_partner_id, $leistungs_beschreibung, $artikel_preis, $artikel_nr, '0', 'Std', '19', '0.00');
-        }
     }
 
     function leistung_in_katalog($datum, $benutzer_id, $leistungs_beschreibung, $zettel_id, $dauer_min, $kostentraeger_typ, $kostentraeger_bez, $hinweis, $beginn, $ende)
@@ -938,166 +749,6 @@ class zeiterfassung
     {
         $db_abfrage = "UPDATE STUNDENZETTEL_POS SET IN_BELEG='$erf_nr' WHERE ST_DAT='$st_dat'";
         DB::update($db_abfrage);
-    }
-
-    function zettel2pdf_altOK($id)
-    {
-        ob_end_clean(); // ausgabepuffer leeren
-
-        $this->stundenzettel_grunddaten($id);
-        $this->bp_partner_id = $this->get_partner_id_benutzer($this->st_benutzer_id);
-
-        $pdf = $this->pdf_header($this->bp_partner_id);
-
-        $p = new partners ();
-        $p->get_partner_name($this->bp_partner_id);
-        $this->partner_name = $p->partner_name;
-        $pdf->ezText("<b>Arbeitszeitnachweis $this->beschreibung vom $this->erf_datum</b> \nErfasst von: <b>$this->st_benutzername</b> \nMitarbeiter von $this->partner_name", 10, array(
-            'left' => '10'
-        ));
-        $pdf->ezSetDy(-20); // abstand
-
-        // echo "Sie sehen den Stundennachweis <b>$this->beschreibung vom $this->erf_datum. Ersteller: $this->st_benutzername</b> Mitarbeiter von $this->partner_name<br>";
-        // echo "<pre>";
-        // print_r($this);
-        $stundenzettel_pos_arr = $this->stundenzettelleistungen_in_arr($id);
-        if (!is_array($stundenzettel_pos_arr)) {
-            // echo "Stundenzettel enthält keine Daten";
-            $pdf->ezText("<b>Stundenzettel enthält keine Daten</b>", 10, array(
-                'left' => '10'
-            ));
-        } else {
-            // echo "Stundenzettelinhalt<br><hr>";
-            $anzahl_pos = count($stundenzettel_pos_arr);
-            $gesamt_min = 0;
-            for ($a = 0; $a < $anzahl_pos; $a++) {
-                $zeile = $a + 1;
-                $beschreibung = $stundenzettel_pos_arr [$a] ['BEZEICHNUNG'];
-                $datum = date_mysql2german($stundenzettel_pos_arr [$a] ['DATUM']);
-                $kostentraeger_typ = $stundenzettel_pos_arr [$a] ['KOSTENTRAEGER_TYP'];
-                $kostentraeger_id = $stundenzettel_pos_arr [$a] ['KOSTENTRAEGER_ID'];
-                $dauer_min = $stundenzettel_pos_arr [$a] ['DAUER_MIN'];
-                $gesamt_min = $gesamt_min + $dauer_min;
-                $leistung_id = $stundenzettel_pos_arr [$a] ['LEISTUNG_ID'];
-                $hinweis = $stundenzettel_pos_arr [$a] ['HINWEIS'];
-
-                $r = new rechnung ();
-                $kostentraeger_bez = $r->kostentraeger_ermitteln($kostentraeger_typ, $kostentraeger_id);
-
-                $kostentraeger_bez = bereinige_string($kostentraeger_bez);
-
-                $dauer_std = $this->min2std($dauer_min);
-                // echo "$zeile. $datum $beschreibung <b>$kostentraeger_typ</b> $kostentraeger_bez $dauer_std / $dauer_min min.<br>";
-
-                $pdf->ezText("$zeile.", 10, array(
-                    'left' => '10'
-                ));
-                $pdf->ezSetDy(11); // zeile zurück
-                $pdf->ezText("$datum", 10, array(
-                    'left' => '25'
-                ));
-                $pdf->ezSetDy(11); // zeile zurück
-                $pdf->ezText("$kostentraeger_typ", 10, array(
-                    'left' => '75'
-                ));
-                $pdf->ezSetDy(11); // zeile zurück
-                $pdf->ezText("$kostentraeger_bez", 10, array(
-                    'left' => '115'
-                ));
-                $pdf->ezSetDy(11); // zeile zurück
-                $pdf->ezSetCmMargins(1, 1, 1, 4);
-                if (!empty ($hinweis)) {
-                    $pdf->ezText("$beschreibung\n$hinweis", 10, array(
-                        'left' => '260'
-                    ));
-                } else {
-                    $pdf->ezText("$beschreibung", 10, array(
-                        'left' => '260'
-                    ));
-                }
-                $pdf->ezSetCmMargins(1, 1, 1, 1);
-                $pdf->ezSetDy(13); // zeile zurück
-                $pdf->ezText("$dauer_std Std. ($dauer_min Min.)", 10, array(
-                    'left' => '450'
-                ));
-                // $pdf->ezText("$zeile. $datum $beschreibung <b>$kostentraeger_typ</b> $kostentraeger_bez $dauer_std / $dauer_min min.",10, array('left'=>'10'));
-            }
-            // echo "<hr>";
-            $stunden_woche = $this->stunden_pro_woche;
-            $stunden_woche_soll = $stunden_woche * 60; // std x min
-            $stundengesamt = $gesamt_min / 60;
-            $stunden_voll = intval($stundengesamt);
-            $restmin = $gesamt_min - ($stunden_voll * 60);
-            $saldo_woche_min = $stunden_woche_soll - $gesamt_min;
-            $saldo_woche_std = intval($saldo_woche_min / 60);
-            $rest_std_in_min = $saldo_woche_std * 60;
-            $restsaldo_min = $saldo_woche_min - $rest_std_in_min;
-
-            if ($gesamt_min < $stunden_woche_soll) {
-                $saldo_woche_std = '-' . $saldo_woche_std;
-            } else {
-                $saldo_woche_std = abs($saldo_woche_std);
-            }
-
-            if ($restsaldo_min < 0) {
-                $restsaldo_min = abs($restsaldo_min);
-            }
-
-            $arbeitsdauer = $this->min2std($gesamt_min);
-
-            $restsaldo_min = sprintf("%02d", $restsaldo_min);
-            $pdf->setLineStyle(0.5);
-            $pdf->ezSetDy(-11); // abstand
-            $pdf->line(475, $pdf->y, 560, $pdf->y);
-            $pdf->ezText("<b>Gesamt: $arbeitsdauer</b>", 10, array(
-                'left' => '450'
-            ));
-            // $pdf->ezSetDy(-11); //abstand
-            $pdf->ezText("<b>Soll/W $stunden_woche:00</b>", 10, array(
-                'left' => '450'
-            ));
-            $pdf->ezText("<b>Saldo  $saldo_woche_std:$restsaldo_min Std</b>", 10, array(
-                'left' => '450'
-            ));
-            $pdf->ezSetDy(-30); // abstand
-            $pdf->ezText("<b>Gesamt bisher: $this->gesamt_azeit_std</b>", 10, array(
-                'left' => '400'
-            ));
-            $pdf->ezText("<b>Gesamtsoll bisher:  $this->gesamt_soll_stunden</b>", 10, array(
-                'left' => '400'
-            ));
-
-            $g_ist_arbeitsdauer = $this->zeit2decimal($this->gesamt_azeit_std); // =80
-            $g_soll_arbeitsdauer = $this->zeit2decimal($this->gesamt_soll_stunden);
-            $stundenkonto_in_std_dec = $g_ist_arbeitsdauer - $g_soll_arbeitsdauer;
-            $stundenkonto_in_std = $this->decimal2zeit($stundenkonto_in_std_dec);
-
-            $pdf->ezText("<b>Stundenkonto: $stundenkonto_in_std</b>", 10, array(
-                'left' => '400'
-            ));
-        }
-        $pdf->ezStream();
-    }
-
-    function pdf_header($partner_id)
-    {
-        $pdf = new Cezpdf ('a4', 'portrait');
-        $pdf->ezSetCmMargins(4.5, 1, 1, 1);
-        $berlus_schrift = 'pdfclass/fonts/Times-Roman.afm';
-        $text_schrift = 'pdfclass/fonts/Arial.afm';
-        $pdf->addJpegFromFile('includes/logos/logo_hv_sw.jpg', 220, 750, 175, 100);
-        // $pdf->addJpgFromFile('pdfclass/logo_262_150_sw1.jpg', 300, 500, 250, 150);
-        $pdf->setLineStyle(0.5);
-        $pdf->selectFont($berlus_schrift);
-        $pdf->addText(42, 743, 6, "BERLUS HAUSVERWALTUNG - Fontanestr. 1 - 14193 Berlin");
-        $pdf->line(42, 750, 550, 750);
-        $pdf->selectFont($berlus_schrift);
-        $pdf->ezSetCmMargins(1, 1, 1, 1);
-        $pdf->setLineStyle(0.5);
-        $pdf->line(42, 50, 550, 50);
-        $pdf->addText(170, 42, 6, "BERLUS HAUSVERWALTUNG |  Fontanestr. 1 | 14193 Berlin | Inhaber Wolfgang Wehrheim");
-        $pdf->addText(150, 35, 6, "Bankverbindung: Dresdner Bank Berlin | BLZ: 100  800  00 | Konto-Nr.: 05 804 000 00 | Steuernummer: 24/582/61188");
-        return $pdf;
     }
 
     function zettel2pdf($id)
@@ -1291,15 +942,6 @@ class zeiterfassung
         }
     }
 
-    function zeit2min($zeit)
-    {
-        $zeit_arr = explode(':', $zeit);
-        $std = $zeit_arr [0];
-        $min = $zeit_arr [1];
-        $g_min = ($std * 60) + $min;
-        return $g_min;
-    }
-
     function mitarbeiter_auswahl($ex = 0)
     {
         $benutzer_arr = $this->mitarbeiter_arr($ex);
@@ -1366,8 +1008,8 @@ class zeiterfassung
 
     function anzahl_zettel_mitarbeiter($benutzer_id)
     {
-        $result = DB::select("SELECT *  FROM STUNDENZETTEL WHERE BENUTZER_ID='$benutzer_id'  && AKTUELL='1'");
-        return count($result);
+        $result = DB::select("SELECT count(*) AS ANZAHL FROM STUNDENZETTEL WHERE BENUTZER_ID='$benutzer_id'  && AKTUELL='1'");
+        return $result[0]['ANZAHL'];
     }
 
     function anzahl_offene_zettel($benutzer_id)
@@ -1644,13 +1286,7 @@ LIMIT 0 , 1";
             $this->z_zettel_id = 'keine Infos';
         }
     }
-
-    function check_if_pos_in_beleg($zettel_id, $pos_id)
-    {
-        $result = DB::select("SELECT IN_BELEG FROM STUNDENZETTEL_POS WHERE ZETTEL_ID='$zettel_id' && ST_DAT='$pos_id' && AKTUELL='1'");
-        return !empty($result);
-    }
-
+    
     function pos_loeschen($zettel_id, $pos_id)
     {
         DB::delete("DELETE FROM STUNDENZETTEL_POS WHERE ZETTEL_ID='$zettel_id' && ST_DAT='$pos_id'");
@@ -1662,77 +1298,7 @@ LIMIT 0 , 1";
     {
         DB::update("UPDATE STUNDENZETTEL_POS SET AKTUELL='0' WHERE ZETTEL_ID='$zettel_id' && ST_DAT='$pos_dat'");
     }
-
-    function einheit_kurz_objekt($objekt_id)
-    {
-        $my_arr = DB::select("SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT_LAGE, EINHEIT_QM,  HAUS_STRASSE, HAUS_NUMMER
-FROM `EINHEIT`
-RIGHT JOIN (
-HAUS, OBJEKT
-) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID = '$objekt_id' )
-WHERE EINHEIT_AKTUELL='1'");
-
-        $numrows = count($my_arr);
-        if ($numrows < 1) {
-            echo "<h1><b>Keine Einheiten vorhanden!!!</b></h1>";
-        } else {
-            echo "<table class=\"tabelle_haus\" width=100%>\n";
-            $objekt_kurzname = $my_arr [0] ['OBJEKT_KURZNAME'];
-            echo "<tr class=\"feldernamen\"><td colspan=6>Einheiten im Objekt $objekt_kurzname</td></tr>\n";
-            echo "<tr class=\"feldernamen\"><td width=150>Kurzname</td><td width=200>Mieter</td><td width=200>Anschrift</td><td width=100>Lage</td><td width=40>m²</td><td>Details</td></tr>\n";
-            echo "</table>";
-            iframe_start();
-            echo "<table width=100%>\n";
-            $counter = 0;
-            for ($a = 0; $a < $numrows; $a++) {
-                $einheit_id = $my_arr [$a] ['EINHEIT_ID'];
-                $einheit_kurzname = $my_arr [$a] ['EINHEIT_KURZNAME'];
-                $einheit_lage = $my_arr [$a] ['EINHEIT_LAGE'];
-                $einheit_qm = $my_arr [$a] ['EINHEIT_QM'];
-                $mieteranzahl = mieter_anzahl($einheit_id);
-                $haus_kurzname = $my_arr [$a] ['HAUS_STRASSE'] . $my_arr [$a] ['HAUS_NUMMER'];
-                if ($mieteranzahl == "unvermietet") {
-                    $mieter = "leer";
-                    $mietkonto_link = "";
-                } else {
-                    $mieter = "Mieter:($mieteranzahl)";
-                    $mietvertrags_id = vertrags_id($einheit_id);
-                    if (!empty ($mietvertrags_id)) {
-                        $mietkonto_link = "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mietkonto_uebersicht_detailiert', 'mietvertrag_id' => $mietvertrags_id]) . "'>MIETKONTO</a>";
-                    }
-                }
-
-                $einheit_link = "<a class=\"table_links\" href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id]) . "'>$einheit_kurzname</a>";
-
-                $detail_check = detail_check("EINHEIT", $einheit_id);
-                if ($detail_check > 0) {
-                    $detail_link = "<a class=\"table_links\" href='" . route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_tabelle' => 'EINHEIT', 'detail_id' => $einheit_id]) . "'>Details</a>";
-                } else {
-                    $detail_link = "<a class=\"table_links\" href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'EINHEIT', 'detail_id' => $einheit_id]) . "'>Neues Detail</a>";
-                }
-
-                $counter++;
-                if ($counter == 1) {
-                    echo "<tr class=\"zeile1\"><td width=150>$einheit_link $mietkonto_link</td><td width=200>$mieter";
-                    if ($mieter != "leer") {
-                        echo mieterid_zum_vertrag($mietvertrags_id);
-                    }
-                    echo "</td><td width=200>$haus_kurzname</td><td width=100>$einheit_lage</td><td width=40>$einheit_qm</td><td>$detail_link</td></tr>\n";
-                }
-                if ($counter == 2) {
-                    echo "<tr class=\"zeile2\"><td width=150>$einheit_link $mietkonto_link</td><td width=200>$mieter";
-                    if ($mieter != "leer") {
-                        echo mieterid_zum_vertrag($mietvertrags_id);
-                    }
-                    echo "</td><td width=200>$haus_kurzname</td><td width=100>$einheit_lage</td><td width=40>$einheit_qm</td><td>$detail_link</td></tr>\n";
-                    $counter = 0;
-                }
-            }
-            echo "</table>";
-        }
-        iframe_end();
-    }
-
+    
     function zettel_loeschen_voll($zettel_id)
     {
         DB::update("UPDATE STUNDENZETTEL SET AKTUELL='0' WHERE ZETTEL_ID='$zettel_id'");
@@ -1761,7 +1327,6 @@ WHERE EINHEIT_AKTUELL='1'");
 
     function stunden_suchen($benutzer_id, $gewerk_id, $kos_typ, $kos_bez, $adatum, $edatum)
     {
-        // echo "$benutzer_id, $gewerk_id, $kos_typ, $kos_bez, $adatum, $edatum";
         $b = new buchen ();
         $r = new rechnung ();
         $von = date_german2mysql($adatum);

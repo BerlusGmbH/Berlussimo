@@ -2,17 +2,6 @@
 
 class werkzeug
 {
-    function form_werkzeug_hizu()
-    {
-        $f = new formular ();
-        $f->erstelle_formular('Werkzeug hinzufügen', '');
-        $f->text_feld('INTBelegnr', 'beleg_id', '', '20', 'beleg_id', '');
-        $f->text_feld('Postition', 'pos', '', '10', 'pos', '');
-        $js = '';
-        $f->button_js('btn_hnz', 'Hinzufügen', $js);
-        $f->ende_formular();
-    }
-
     function werkzeugliste($b_id = NULL)
     {
         $link_NACH_MIT = "<a href='" . route('legacy::benutzer::index', ['option' => 'werkzeugliste_nach_mitarbeiter', 'b_id' => $b_id]) . "'>ÜBERSICHT NACH MITARBEITER</a>";

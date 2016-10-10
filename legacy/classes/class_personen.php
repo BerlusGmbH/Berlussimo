@@ -199,16 +199,6 @@ LIMIT 0 , 30";
         }
     }
 
-    function finde_personen_name($string)
-    {
-        $db_abfrage = "SELECT PERSON_DAT, PERSON_ID, PERSON_NACHNAME, PERSON_VORNAME, PERSON_GEBURTSTAG FROM PERSON WHERE PERSON_AKTUELL='1' && (PERSON_NACHNAME LIKE '%$string%' OR PERSON_VORNAME LIKE '%$string%' )ORDER BY PERSON_NACHNAME, PERSON_VORNAME ASC LIMIT 0,50";
-        $resultat = DB::select($db_abfrage);
-
-        if (!empty($resultat)) {
-            return $resultat;
-        }
-    }
-
     function personen_liste_alle()
     {
         if (request()->has('suchfeld')) {

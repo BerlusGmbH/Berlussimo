@@ -62,24 +62,6 @@ class wirt_e
         }
     }
 
-    function get_wirt_e_infos_ALT($w_id)
-    {
-        $this->w_name = '';
-        $this->g_qm = '0.00';
-        $this->g_qm_gewerbe = '0.00';
-        $db_abfrage = "SELECT  W_NAME FROM `WIRT_EINHEITEN` JOIN WIRT_EIN_TAB ON (WIRT_EINHEITEN.W_ID=WIRT_EIN_TAB.W_ID) JOIN EINHEIT ON (EINHEIT.EINHEIT_ID=WIRT_EIN_TAB.EINHEIT_ID) JOIN HAUS ON (HAUS.HAUS_ID=EINHEIT.HAUS_ID) WHERE  WIRT_EINHEITEN.AKTUELL='1' && WIRT_EIN_TAB.AKTUELL='1' && WIRT_EINHEITEN.W_ID='$w_id' && EINHEIT.EINHEIT_AKTUELL='1' && HAUS_AKTUELL='1'";
-        $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            $row = $result[0];
-            $this->w_name = $row ['W_NAME'];
-            $this->g_qm = $this->get_qm_from_wirte($w_id);
-            $this->g_qm_gewerbe = $this->get_qm_gewerb_from_wirte($w_id);
-            $this->anzahl_e = $this->get_anzahl_e($w_id);
-            $this->anzahl_ge = $this->get_anzahl_einheiten_from_wirte($w_id, 'Gewerbe');
-            $this->anzahl_wo = $this->anzahl_e - $this->anzahl_ge;
-        }
-    }
-
     function get_qm_from_wirte($w_id)
     {
         $db_abfrage = "SELECT SUM(EINHEIT_QM) AS G_QM  FROM `WIRT_EINHEITEN` JOIN WIRT_EIN_TAB ON (WIRT_EINHEITEN.W_ID=WIRT_EIN_TAB.W_ID) JOIN EINHEIT ON (EINHEIT.EINHEIT_ID=WIRT_EIN_TAB.EINHEIT_ID) JOIN HAUS ON (HAUS.HAUS_ID=EINHEIT.HAUS_ID) WHERE  WIRT_EINHEITEN.AKTUELL='1' && WIRT_EIN_TAB.AKTUELL='1' && WIRT_EINHEITEN.W_ID='$w_id' && EINHEIT.EINHEIT_AKTUELL='1' && HAUS_AKTUELL='1' ";

@@ -172,35 +172,6 @@ switch ($option) {
         $u->monatsansicht_pdf_mehrere(1, 12, $jahr);
         break;
 
-    case "test" :
-        $w = new wartung ();
-        $w->test(1);
-
-        // $u = new urlaub;
-        // $u->rest_tage(2007, 1);
-        // $u->rest_tage(2008, 1);
-        // $u->rest_tage(2009, 1);
-        // $u->zinsen(954.14,1.8);
-        // $u->monatsansicht(12, 2009);
-        // $u->zinsen(893.90,4);
-        // $u->zinsen(372.70,0.005);
-        // echo "Anzahl der Tage bis zum Monatsende: ".(date("t") - date("j"));
-        // $k = new kautionen;
-        // datum_bis = '2010-04-31';
-
-        // $k->kautionsberechnung('Mietvertrag', '220', '2010-12-31', 0.005,25,5.5);
-        // echo "<br>";
-        // $k->kautionsberechnung('Mietvertrag', '221', '2010-01-31', 0.005,25,5.5);
-        // echo "<br>";
-        // $k->kautionsberechnung('Mietvertrag', '221', '2010-02-28', 0.005,25,5.5);
-
-        // $k->form_hochrechnung_mv(221);
-
-        // kautionsberechnung($kostentraeger_typ, $kostentraeger_id, $datum_bis, $zins_pj, $kap_prozent, $soli_prozent)
-        // $k->zinstage();
-
-        break;
-
     case "hochrechnung_mv" :
         $k = new kautionen ();
         $datum_bis = date_german2mysql(request()->input('datum_bis'));

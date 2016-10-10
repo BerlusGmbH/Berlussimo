@@ -237,41 +237,6 @@ class gk
         }
     }
 
-    function get_zuweisung_string_kurz($geldkonto_id)
-    {
-        $arr = $this->get_zuweisung_arr($geldkonto_id);
-        if (is_array($arr)) {
-            $anz = count($arr);
-            $kos_bez_alle = '';
-            for ($a = 0; $a < $anz; $a++) {
-                $kos_typ = $arr [$a] ['KOSTENTRAEGER_TYP'];
-                $kos_id = $arr [$a] ['KOSTENTRAEGER_ID'];
-                if ($kos_typ != 'Eigentuemer') {
-                    $r = new rechnung ();
-                    $kos_bez_alle .= $r->kostentraeger_ermitteln($kos_typ, $kos_id) . ', ';
-                } else {
-                    $weg = new weg ();
-                    $weg->get_eigentumer_id_infos4($kos_id);
-                    $kos_bez_alle .= $weg->einheit_kurzname . ', ';
-                }
-                if ($a == $anz - 1) {
-                    $kos_bez_alle = substr($kos_bez_alle, 0, -2);
-                }
-            }
-            return $kos_bez_alle;
-        } else {
-            return 'Keine Zuweisung';
-        }
-    }
-
-    function get_zuweisung_arr($geldkonto_id)
-    {
-        $result = DB::select("SELECT *  FROM  GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id'");
-        if (!empty($result)) {
-            return $result;
-        }
-    }
-
     function get_objekt_id($geldkonto_id)
     {
         $result = DB::select("SELECT KOSTENTRAEGER_ID FROM  GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='Objekt' LIMIT 0,1");

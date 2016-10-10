@@ -1,16 +1,6 @@
 <?php
 
 class haus extends objekt {
-    /*
-     * var $objekt_id;
-     * var $objekt_name;
-     * var $haus_strasse;
-     * var $haus_nummer;
-     * var $anzahl_haeuser;
-     * var $anzahl_einheiten;
-     * var $haus_plz;
-     * var $haus_stadt;
-     */
     public $haus_stadt;
     public $haus_nummer;
     public $haus_strasse;

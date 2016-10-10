@@ -339,9 +339,7 @@ function uebersicht_einheit($einheit_id)
     echo "<div class='card-title'>Miete</div>";
 
     $mietvertrag_info = new mietvertrag ();
-    $anzahl_mietvertraege = $mietvertrag_info->get_anzahl_mietvertrag_id_zu_einheit($einheit_id);
-    $anzahl_mietvertraege = $mietvertrag_info->anzahl_mietvertraege_gesamt;
-
+    
     $buchung = new mietkonto ();
     $monat = date("m");
     $jahr = date("Y");

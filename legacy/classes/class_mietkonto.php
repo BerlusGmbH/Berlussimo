@@ -2,44 +2,12 @@
 
 class mietkonto
 {
-    /* Allgemeine Variablen */
-    /*
-	 * var $datum_heute;
-	 * var $tag_heute;
-	 * var $monat_heute;
-	 * var $jahr_heute;
-	 *
-	 *
-	 *
-	 * /* Diese Variablen werden von mietvertrag_grunddaten_holen($mv) gesetzt
-	 */
-    /*
-	 * var $mietvertrag_von;
-	 * var $mietvertrag_bis;
-	 * var $anzahl_personen_im_vertrag;
-	 * var $einheit_kurzname;
-	 *
-	 * /* Variablen aus Forderungen
-	 */
-    /*
-	 * var $monatsname;
-	 * var $ausgangs_kaltmiete;
-	 * var $betriebskosten;
-	 * var $heizkosten;
-	 * var $miete;
-	 *
-	 * var $einheit_kurzname_von_mv;
-	 * /*Testfunktion
-	 *
-	 */
-
     /* Funktion-Konstruktor der jedes Mal aufgerufen wird für db connect */
     public $ausgangs_kaltmiete;
     public $ausgangs_kaltmiete_a;
 
     function mietkonto()
     {
-        // $this->connectToBase();
         $this->datum_heute = date("Y-m-d");
         $this->tag_heute = date("d");
         $this->monat_heute = date("m");
@@ -198,108 +166,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         echo "</fieldset></form>\n";
     }
 
-    function summen_kontoauszuege_aktuell($konto)
-    {
-        $result = DB::select("SELECT KONTOAUSZUGSNR , SUM( BETRAG ) AS SUMME
-, COUNT(*) AS ZAHLUNGSVORGANG FROM MIETE_ZAHLBETRAG
-WHERE AKTUELL = '1' && KONTO = '$konto' && DATUM >= DATE_SUB( DATE_FORMAT( CURDATE( ) , '%Y-%m-%d' ) , INTERVAL 1 MONTH )
-GROUP BY KONTOAUSZUGSNR
-ORDER BY BUCHUNGSNUMMER DESC");
-        $this->array_anzeigen($result);
-    }
-
     /* Funktion zur Darstellung der letzten Buchungen objektunabhängig aus dem Vormonat und dem aktuellen Monat */
-
-    function array_anzeigen($array)
-    {
-        echo "<pre>";
-        print_r($array);
-        echo "</pre>";
-    }
-
-    /* Funktion zur Berechnung der Summen der gebuchten Zahlbeträge alle Kontoauszüge aus dem aktuellen Monat */
-
-    function letzte_buchungen_anzeigen()
-    {
-        if (session()->has('objekt_id')) {
-            $objekt_info = new objekt ();
-            $objekt_info->get_objekt_geldkonto_nr(session()->get('objekt_id'));
-            $objekt_kontonummer = $objekt_info->objekt_kontonummer;
-            if (isset ($objekt_kontonummer)) {
-                $my_array = DB::select(" SELECT * FROM `MIETE_ZAHLBETRAG` WHERE AKTUELL='1' && KONTO='$objekt_kontonummer' ORDER BY BUCHUNGSNUMMER DESC");
-            }
-        } else {
-            $my_array = DB::select(" SELECT * FROM `MIETE_ZAHLBETRAG` WHERE AKTUELL='1' ORDER BY BUCHUNGSNUMMER DESC");
-        }
-
-        echo "<div class=\"tabelle\">";
-        $this->erstelle_formular("Letzte Buchungen", NULL);
-        if (!empty($my_array)) {
-            echo "<table>";
-            echo "<tr class=\"feldernamen\"><td>BNR</td><td>AUSZUG</td><td>DATUM</td><td>EINHEIT</td><td>BETRAG</td><td>BEMERKUNG</td><td>Optionen</td></tr>\n";
-            $numrows = count($my_array);
-            for ($i = 0; $i < $numrows; $i++) {
-
-                $datum = date_mysql2german($my_array [$i] ['DATUM']);
-                $einheit_info = new mietvertrag ();
-                $einheit_id = $einheit_info->get_einheit_id_von_mietvertrag($my_array [$i] ['mietvertrag_id']);
-
-                $einheit_info = new einheit ();
-                $einheit_info->get_einheit_info($einheit_id);
-                $einheit_kurzname = $einheit_info->einheit_kurzname;
-                $buchungsnummer = $my_array [$i] ['BUCHUNGSNUMMER'];
-                $bemerkung = $my_array [$i] ['BEMERKUNG'];
-                $buchungsdatum = $my_array [$i] ['DATUM'];
-                $buchungsmonat_arr = explode('-', $buchungsdatum);
-                $buchungsmonat = $buchungsmonat_arr [1];
-                $buchungsjahr = $buchungsmonat_arr [0];
-                $kontoauszugsnr = $my_array [$i] ['KONTOAUSZUGSNR'];
-                /* Prüfen ob diesen Monat gebucht wurde */
-                $anzahl_zahlbetraege_diesen_monat = $this->anzahl_zahlungsvorgaenge_objekt_konto(session()->get('objekt_id'));
-                if ($anzahl_zahlbetraege_diesen_monat > 0) {
-                    if ($this->monat_heute > $buchungsmonat) {
-                        $storno_link = '';
-                    } else {
-                        $storno_link = "<a href='" . route('legacy::miete_buchen::index', ['schritt' => 'stornieren', 'bnr' => $buchungsnummer]) . "'>Stornieren</a>";
-                    }
-                } else {
-                    $storno_link = "<a href='" . route('legacy::miete_buchen::index', ['schritt' => 'stornieren', 'bnr' => $buchungsnummer]) . "'>Stornieren</a>";
-                }
-                echo "<tr class=\"zeile1\"><td>$buchungsnummer</td><td>$kontoauszugsnr</td><td>$datum</td><td>$einheit_kurzname</td><td>" . $my_array [$i] ['BETRAG'] . " €</td><td>$bemerkung</td><td>$storno_link</td></tr>\n";
-            }
-            echo "</table>";
-        } else {
-            echo "Keine Buchungen";
-        }
-        $this->ende_formular();
-        echo "</div>";
-    }
-
-    function aufteilung_pruefen()
-    {
-        //TODO: Invertigate string concatination
-        $summe = 0;
-        foreach (request()->input('AUFTEILUNG') as $key => $value) {
-            $value = $this->nummer_komma2punkt($value);
-            $summe = $summe + $value;
-        }
-        if ($summe == request()->input('ZAHLBETRAG')) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    function nummer_komma2punkt($nummer)
-    {
-        $nummer_arr = explode(",", $nummer);
-        if (!isset ($nummer_arr [1])) {
-            $nummer = "" . $nummer_arr [0] . ".00";
-        } else {
-            $nummer = "" . $nummer_arr [0] . "." . $nummer_arr [1] . "";
-        }
-        return $nummer;
-    }
 
     function mieter_informationen_anzeigen($mietvertrag_id)
     {
@@ -344,6 +211,8 @@ ORDER BY BUCHUNGSNUMMER DESC");
         }
     }
 
+    /* Funktion zur Berechnung der Summen der gebuchten Zahlbeträge alle Kontoauszüge aus dem aktuellen Monat */
+
     function summe_forderung_monatlich($mietvertrag_id, $monat, $jahr)
     {
         //TODO: change return value
@@ -371,8 +240,6 @@ ORDER BY BUCHUNGSNUMMER DESC");
         return $a->erg;
     }
 
-    /* Funktion zur Darstellung der Grundinformationen zum Mietvertrag wie z.B. Mieternamen, Saldo, Einheit_kurzname ... */
-
     function nummer_punkt2komma($nummer)
     {
         $nummer_arr = explode(".", $nummer);
@@ -383,8 +250,6 @@ ORDER BY BUCHUNGSNUMMER DESC");
         }
         return $nummer;
     }
-
-    /* Funktion (KURZFORM) zur Darstellung der Grundinformationen zum Mietvertrag wie z.B. Mieternamen, Saldo, Einheit_kurzname ... */
 
     function mieter_infos_vom_mv($mietvertrag_id)
     {
@@ -407,7 +272,8 @@ ORDER BY BUCHUNGSNUMMER DESC");
         echo "</p>";
     }
 
-    /* Funktion mit der ersten Buchungsmaske, d.h. Automatisches Buchen oder manuelle Buchung */
+    /* Funktion zur Darstellung der Grundinformationen zum Mietvertrag wie z.B. Mieternamen, Saldo, Einheit_kurzname ... */
+
     function buchungsauswahl($mietvertrag_id)
     {
         $this->letzte_buchungen_zu_mietvertrag($mietvertrag_id);
@@ -487,6 +353,8 @@ ORDER BY BUCHUNGSNUMMER DESC");
         /* ENDE - Buchungsmaske für andere Beträge */
     }
 
+    /* Funktion (KURZFORM) zur Darstellung der Grundinformationen zum Mietvertrag wie z.B. Mieternamen, Saldo, Einheit_kurzname ... */
+
     function letzte_buchungen_zu_mietvertrag($mietvertrag_id)
     {
         if (session()->has('buchungsanzahl')) {
@@ -535,6 +403,8 @@ ORDER BY BUCHUNGSNUMMER DESC");
         echo "</div>";
     }
 
+    /* Funktion mit der ersten Buchungsmaske, d.h. Automatisches Buchen oder manuelle Buchung */
+
     function anzahl_zahlungsvorgaenge($mietvertrag_id)
     {
         $result = DB::select("SELECT DATUM FROM GELD_KONTO_BUCHUNGEN WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mietvertrag_id' && AKTUELL='1' && DATE_FORMAT( DATUM, '%Y-%m' ) = '" . $this->jahr_heute . "-" . $this->monat_heute . "'");
@@ -577,8 +447,6 @@ ORDER BY BUCHUNGSNUMMER DESC");
         echo "<input type=\"hidden\" id=\"$name\" name=\"$name\" value=\"$wert\" >\n";
     }
 
-    // $this->insert_geldbuchung($geld_konto_id, '80001', $kontoauszugsnr, 'MIETE', $bemerkung, $buchungsdatum, 'Mietvertrag', $mietvertrag_id, $betrag);
-
     function aktuelle_forderungen_array($mietvertrag_id)
     {
         $this->datum_heute;
@@ -586,7 +454,6 @@ ORDER BY BUCHUNGSNUMMER DESC");
         $this->monat_heute;
         $this->jahr_heute;
         $forderungen_diesen_monat_arr = $this->forderung_monatlich($mietvertrag_id, $this->monat_heute, $this->jahr_heute);
-        // echo "$this->monat_heute $this->jahr_heute";
         return $forderungen_diesen_monat_arr;
     }
 
@@ -599,8 +466,6 @@ ORDER BY BUCHUNGSNUMMER DESC");
         $result = DB::select("SELECT KOSTENTRAEGER_ID, ANFANG, ENDE, KOSTENKATEGORIE, BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat'  && KOSTENKATEGORIE NOT LIKE 'RATENZAHLUNG' ORDER BY ANFANG ASC");
         return $result;
     }
-
-    /* Letzte Buchungsnummer vom gebuchten Zahlbetrag zu Mietvertrag finden */
 
     function forderung_aus_vertrag($mietvertrag_id)
     {
@@ -619,6 +484,8 @@ ORDER BY BUCHUNGSNUMMER DESC");
         </div>
         <?php
     }
+
+    /* Letzte Buchungsnummer vom gebuchten Zahlbetrag zu Mietvertrag finden */
 
     function send_button($name, $wert)
     {
@@ -719,6 +586,17 @@ ORDER BY BUCHUNGSNUMMER DESC");
             warnung_ausgeben("Sie werden um einen Schritt zurückversetzt!");
             weiterleiten_in_sec('javascript:history.back();', 5);
         }
+    }
+
+    function nummer_komma2punkt($nummer)
+    {
+        $nummer_arr = explode(",", $nummer);
+        if (!isset ($nummer_arr [1])) {
+            $nummer = "" . $nummer_arr [0] . ".00";
+        } else {
+            $nummer = "" . $nummer_arr [0] . "." . $nummer_arr [1] . "";
+        }
+        return $nummer;
     }
 
     function dropdown_kostenkategorien($beschreibung, $name)
@@ -921,8 +799,6 @@ ORDER BY BUCHUNGSNUMMER DESC");
         }
     }
 
-    // ########### FORDERUNGEN AUS MIETENTWICKLUNG
-
     function suche_nach_vorschuessen($array)
     {
         for ($i = 0; $i < count($array); $i++) {
@@ -937,6 +813,8 @@ ORDER BY BUCHUNGSNUMMER DESC");
             return $vorschuesse;
         }
     }
+
+    // ########### FORDERUNGEN AUS MIETENTWICKLUNG
 
     function buchungsmaske_manuell_gleicher_betrag($mietvertrag_id, $geld_konto_id)
     {
@@ -1091,339 +969,15 @@ ORDER BY BUCHUNGSNUMMER DESC");
         $this->insert_geldbuchung($geldkonto_id, $buchungskonto, $kontoauszugsnr, $kontoauszugsnr, $bemerkung, $buchungsdatum, $kostentraeger_typ, $kostentraeger_id, $betrag);
     }
 
-    // Funktion zur Erstellung eines Arrays mit Monaten und Jahren seit Einzug bis aktuelles Jahr/Monat
-
-    function check_zahlbetrag($kontoauszugsnr, $kostentraeger_typ, $kostentraeger_id, $buchungsdatum, $betrag, $v_zweck, $geld_konto_id, $kontenrahmen_konto)
+function check_zahlbetrag($kontoauszugsnr, $kostentraeger_typ, $kostentraeger_id, $buchungsdatum, $betrag, $v_zweck, $geld_konto_id, $kontenrahmen_konto)
     {
         $result = DB::select("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE KONTO_AUSZUGSNUMMER = '$kontoauszugsnr' && KOSTENTRAEGER_TYP='$kostentraeger_typ' && KOSTENTRAEGER_ID='$kostentraeger_id' && DATUM= '$buchungsdatum' && BETRAG= '$betrag' && VERWENDUNGSZWECK= '$v_zweck' && AKTUELL= '1' && GELDKONTO_ID= '$geld_konto_id' && KONTENRAHMEN_KONTO='$kontenrahmen_konto'");
         return !empty($result);
-    } // end function
-
-    function letzte_buchungsnummer($mietvertrag_id)
-    {
-        $result = DB::select("SELECT BUCHUNGSNUMMER FROM MIETE_ZAHLBETRAG WHERE MIETVERTRAG_ID = '$mietvertrag_id' && AKTUELL = '1' ORDER BY BUCHUNGSNUMMER DESC LIMIT 0,1");
-        $row = $result[0];
-        return $row ['BUCHUNGSNUMMER'];
     }
 
-    function intern_buchen($mietvertrag_id, $buchungsnummer)
-    {
-        foreach (request()->input('AUFTEILUNG') as $key => $value) {
-            if (!empty ($value)) {
-                $value = $this->nummer_komma2punkt($value);
-                $value = number_format($value, 2, ".", "");
-                $db_abfrage = "INSERT INTO MIETBUCHUNGEN VALUES (NULL, '$mietvertrag_id', '$this->datum_heute', '$value', '$buchungsnummer', '$key', '1')";
-                DB::insert($db_abfrage);
-                /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-                $last_dat = DB::getPdo()->lastInsertId();
-                protokollieren('MIETBUCHUNGEN', $last_dat, '0');
-                $wert = $this->nummer_punkt2komma($value);
-                echo "Teilbetrag $wert € für $key wurde intern gebucht<br>";
-            }
-        }
-        if (request()->has('KOSTENKATEGORIE')) {
-            $ueberschuss = $this->nummer_komma2punkt(request()->input('ueberschuss'));
-            $ueberschuss = number_format($ueberschuss, 2, ".", "");
-            $db_abfrage = "INSERT INTO MIETBUCHUNGEN VALUES (NULL, '$mietvertrag_id', '$this->datum_heute', '$ueberschuss', '$buchungsnummer', '" . request()->input('KOSTENKATEGORIE') . "', '1')";
-            DB::insert($db_abfrage);
-        }
-    }
+    // Funktion zur Erstellung eines Arrays mit Monaten und Jahren seit Einzug bis aktuelles Jahr/Monat
 
-    function import_intern_buchen($buchungsdatum, $mietvertrag_id, $buchungsnummer, $betrag, $bemerkung)
-    {
-        $datum = explode("-", $buchungsdatum);
-        $monat = $datum [1];
-        $jahr = $datum [0];
-        /* Wenn Saldovv dann auf Kaltmiete */
-        // #####################################IF 1
-        if (preg_match("/Saldo Vortrag Vorverwaltung/", $bemerkung)) {
-            $db_abfrage = "INSERT INTO MIETBUCHUNGEN VALUES (NULL, '$mietvertrag_id', '$buchungsdatum', '$betrag', '$buchungsnummer', 'Miete kalt - VV', '1')";
-            DB::insert($db_abfrage);
-            /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-            $last_dat = DB::getPdo()->lastInsertId();
-            protokollieren('MIETBUCHUNGEN', $last_dat, '0');
-            echo "$mietvertrag_id - SALDO AUF KM GEBUCHT<br>";
-        }        // #####################################END IF 1
-        /* Sonstige Beträge die keine Saldovortrag sind */
-        // #######################################IF 2 ELSE
-        else {
-            /* Ende Saldo VV */
-            /* liefert true oder false */
-            /* $bkhk_faellig = $this->betriebskosten_heizkosten_fallig($mietvertrag_id, $monat, $jahr); */
-            $hk_info = $this->hk_abrechnung_arr($mietvertrag_id, $jahr);
-            $hk_datum = $hk_info ['ENDE'];
-            $hk_datum_arr = explode("-", $hk_datum);
-            $hk_monat = $hk_datum_arr [1];
-            $hk_betrag = $hk_info ['BETRAG'];
-            $hk_bezeichnung = $hk_info ['KOSTENKATEGORIE'];
-            // print_r($hk_info);
-            $bk_info = $this->bk_abrechnung_arr($mietvertrag_id, $jahr);
-            $bk_datum = $bk_info ['ENDE'];
-            $bk_datum_arr = explode("-", $bk_datum);
-            $bk_monat = $bk_datum_arr [1];
-            $bk_betrag = $bk_info ['BETRAG'];
-            $bk_bezeichnung = $bk_info ['KOSTENKATEGORIE'];
-            $hk_und_bk = $hk_betrag + $bk_betrag;
-            if ($hk_und_bk > '0.00') {
-                $hk_und_bk = $hk_betrag + $bk_betrag;
-            }
-            if ($hk_und_bk < '0.00') {
-                $hk_und_bk = '0.00';
-            }
-
-            $gebucht = false;
-
-            /* Wenn Positivbetrag */
-            $forderung_monatlich = $this->summe_forderung_monatlich($mietvertrag_id, $monat, $jahr);
-            echo "<h1>BETRAG $betrag BK $bk_bezeichnung:$bk_betrag HK$hk_bezeichnung:$hk_betrag WM:$forderung_monatlich $mietvertrag_id, $monat, $jahr</h1>";
-            // ############################1
-
-            /* Monate nach der Betriebs- und Heizkostenabrechnung */
-            /*
-			 * if($monat >= $hk_monat OR $monat >= $bk_monat){
-			 *
-			 * #######/*Regelfall Zahlbetrag = geforderter Betrag
-			 */
-            if ($betrag == $forderung_monatlich && !$gebucht) {
-                echo "$buchungsnummer - betrag == forderung_monatlich<br>";
-                $aktuelle_forderung = $this->import_forderung_monatlich($mietvertrag_id, $monat, $jahr);
-                foreach ($aktuelle_forderung as $key => $value) {
-                    $db_abfrage = "INSERT INTO MIETBUCHUNGEN VALUES (NULL, '$mietvertrag_id', '$buchungsdatum', '$value', '$buchungsnummer', '$key', '1')";
-                    DB::insert($db_abfrage);
-                    /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-                    $last_dat = DB::getPdo()->lastInsertId();
-                    protokollieren('MIETBUCHUNGEN', $last_dat, '0');
-                } /* End foreach */
-                $gebucht = true;
-            } /* End regelfall */
-            // ########
-            /* Zahlbetrag = BK Nachzahlung */
-            if ($betrag == $bk_betrag && !$gebucht) {
-                echo "$buchungsnummer - betrag == bk_betrag<br>";
-                $db_abfrage = "INSERT INTO MIETBUCHUNGEN VALUES (NULL, '$mietvertrag_id', '$buchungsdatum', '$betrag', '$buchungsnummer', 'Betriebskostennachzahlung', '1')";
-                DB::insert($db_abfrage);
-                /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-                $last_dat = DB::getPdo()->lastInsertId();
-                protokollieren('MIETBUCHUNGEN', $last_dat, '0');
-                $gebucht = true;
-            } /* Zahlbetrag = BK Nachzahlung */
-
-            /* Zahlbetrag = HK Nachzahlung */
-            if ($betrag == $hk_betrag && !$gebucht) {
-                echo "$buchungsnummer - betrag == hk_betrag<br>";
-                $db_abfrage = "INSERT INTO MIETBUCHUNGEN VALUES (NULL, '$mietvertrag_id', '$buchungsdatum', '$betrag', '$buchungsnummer', 'Heizkostennachzahlung', '1')";
-                DB::insert($db_abfrage);
-                /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-                $last_dat = DB::getPdo()->lastInsertId();
-                protokollieren('MIETBUCHUNGEN', $last_dat, '0');
-                $gebucht = true;
-            } /* Zahlbetrag = HK Nachzahlung */
-            // ############
-
-            /* Zahlbetrag = HK+BK Nachzahlung */
-            if ($betrag == $hk_und_bk && !$gebucht) {
-                echo "$buchungsnummer - betrag == hk_und_bk<br>";
-                $db_abfrage = "INSERT INTO MIETBUCHUNGEN VALUES (NULL, '$mietvertrag_id', '$buchungsdatum', '$hk_betrag', '$buchungsnummer', 'Heizkostennachzahlung', '1')";
-                DB::insert($db_abfrage);
-                /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-                $last_dat = DB::getPdo()->lastInsertId();
-                protokollieren('MIETBUCHUNGEN', $last_dat, '0');
-                $db_abfrage = "INSERT INTO MIETBUCHUNGEN VALUES (NULL, '$mietvertrag_id', '$buchungsdatum', '$bk_betrag', '$buchungsnummer', 'Betriebskostennachzahlung', '1')";
-                DB::insert($db_abfrage);
-                /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-                $last_dat = DB::getPdo()->lastInsertId();
-                protokollieren('MIETBUCHUNGEN', $last_dat, '0');
-                $gebucht = true;
-            } /* Zahlbetrag = BK+HK Nachzahlung */
-
-            // #############
-            $wm_und_bkhk = $forderung_monatlich + $hk_und_bk;
-            /* Zahlbetrag = BK+HK+WARMMIETE Nachzahlung */
-            if ($betrag == $wm_und_bkhk && !$gebucht) {
-                echo "$buchungsnummer - betrag == wm_und_bkhk<br>";
-                $db_abfrage = "INSERT INTO MIETBUCHUNGEN VALUES (NULL, '$mietvertrag_id', '$buchungsdatum', '$hk_betrag', '$buchungsnummer', '$hk_bezeichnung', '1')";
-                DB::insert($db_abfrage);
-                /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-                $last_dat = DB::getPdo()->lastInsertId();
-                protokollieren('MIETBUCHUNGEN', $last_dat, '0');
-                $db_abfrage = "INSERT INTO MIETBUCHUNGEN VALUES (NULL, '$mietvertrag_id', '$buchungsdatum', '$bk_betrag', '$buchungsnummer', '$bk_bezeichnung', '1')";
-                DB::insert($db_abfrage);
-                /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-                $last_dat = DB::getPdo()->lastInsertId();
-                protokollieren('MIETBUCHUNGEN', $last_dat, '0');
-                $aktuelle_forderung = $this->import_forderung_monatlich($mietvertrag_id, $monat, $jahr);
-                foreach ($aktuelle_forderung as $key => $value) {
-                    $db_abfrage = "INSERT INTO MIETBUCHUNGEN VALUES (NULL, '$mietvertrag_id', '$buchungsdatum', '$value', '$buchungsnummer', '$key', '1')";
-                    DB::insert($db_abfrage);
-                    /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-                    $last_dat = DB::getPdo()->lastInsertId();
-                    protokollieren('MIETBUCHUNGEN', $last_dat, '0');
-                } /* End foreach */
-                $gebucht = true;
-            } /* Zahlbetrag = BK+HK+WARMMIETE Nachzahlung */
-            /* wenn bisher nicht gebucht */
-
-            if (!$gebucht) {
-                /* wenn betrag kleiner als wm größer NULL */
-                if ($betrag < $forderung_monatlich && $betrag > 0) {
-                    echo "$buchungsnummer - betrag < forderung_monatlich NK & HK & REST AUF KM<br>";
-                    $nebenkosten_vz = $this->betriebskosten_monatlich($mietvertrag_id, $monat, $jahr);
-                    $heizkosten_vz = $this->heizkosten_monatlich($mietvertrag_id, $monat, $jahr);
-                    $rest = $betrag - $nebenkosten_vz - $heizkosten_vz;
-
-                    /* Buchung der Einzelnen Positionen, wie manuell */
-                    /* Nebenkosten vorauszahlung */
-                    $db_abfrage = "INSERT INTO MIETBUCHUNGEN VALUES (NULL, '$mietvertrag_id', '$buchungsdatum', '$nebenkosten_vz', '$buchungsnummer', 'Nebenkosten Vorauszahlung111', '1')";
-                    DB::insert($db_abfrage);
-                    /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-                    $last_dat = DB::getPdo()->lastInsertId();
-                    protokollieren('MIETBUCHUNGEN', $last_dat, '0');
-
-                    /* Heizkosten vorauszahlung */
-                    $db_abfrage = "INSERT INTO MIETBUCHUNGEN VALUES (NULL, '$mietvertrag_id', '$buchungsdatum', '$heizkosten_vz', '$buchungsnummer', 'Heizkosten Vorauszahlung111', '1')";
-                    DB::insert($db_abfrage);
-                    /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-                    $last_dat = DB::getPdo()->lastInsertId();
-                    protokollieren('MIETBUCHUNGEN', $last_dat, '0');
-
-                    /* Rest auf Kaltmiete */
-                    $db_abfrage = "INSERT INTO MIETBUCHUNGEN VALUES (NULL, '$mietvertrag_id', '$buchungsdatum', '$rest', '$buchungsnummer', 'Miete kalt REST', '1')";
-                    DB::insert($db_abfrage);
-                    /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-                    $last_dat = DB::getPdo()->lastInsertId();
-                    protokollieren('MIETBUCHUNGEN', $last_dat, '0');
-                    $gebucht = true;
-                } /* ENDE Betrag < Forderung && > 0 */
-
-                /* Betrag > Forderung */
-                if ($betrag > $forderung_monatlich && !$gebucht) {
-                    $rest = $betrag - $forderung_monatlich;
-                    echo "$buchungsnummer - betrag > forderung_monatlich NORMAL + REST AUF KM<br>";
-                    $aktuelle_forderung = $this->import_forderung_monatlich($mietvertrag_id, $monat, $jahr);
-
-                    /* Buchung der regulären Forderung */
-                    foreach ($aktuelle_forderung as $key => $value) {
-                        $db_abfrage = "INSERT INTO MIETBUCHUNGEN VALUES (NULL, '$mietvertrag_id', '$buchungsdatum', '$value', '$buchungsnummer', '$key', '1')";
-                        DB::insert($db_abfrage);
-                        /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-                        $last_dat = DB::getPdo()->lastInsertId();
-                        protokollieren('MIETBUCHUNGEN', $last_dat, '0');
-                    } /* End foreach */
-
-                    /* Buchung des Restes auf Kaltmiete */
-                    $db_abfrage = "INSERT INTO MIETBUCHUNGEN VALUES (NULL, '$mietvertrag_id', '$buchungsdatum', '$rest', '$buchungsnummer', 'Miete kalt ÜBERSCHUSS', '1')";
-                    DB::insert($db_abfrage);
-                    /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-                    $last_dat = DB::getPdo()->lastInsertId();
-                    protokollieren('MIETBUCHUNGEN', $last_dat, '0');
-                    $gebucht = true;
-                } /* End Betrag > Forderung */
-                if ($betrag < 0 && !$gebucht) {
-
-                    $diff = $betrag + $forderung_monatlich;
-                    /* Wenn Minusbetrag = monatliche Forderung */
-                    if ($diff == 0) {
-                        $aktuelle_forderung = $this->import_forderung_monatlich($mietvertrag_id, $monat, $jahr);
-                        echo "MINUS $buchungsnummer - $betrag === $forderung_monatlich DIFF $diff<br>";
-                        /* Buchung der regulären Forderung als MINUS */
-                        foreach ($aktuelle_forderung as $key => $value) {
-                            $db_abfrage = "INSERT INTO MIETBUCHUNGEN VALUES (NULL, '$mietvertrag_id', '$this->datum_heute', '-$value', '$buchungsnummer', '$key', '1')";
-                            DB::insert($db_abfrage);
-                            /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-                            $last_dat = DB::getPdo()->lastInsertId();
-                            protokollieren('MIETBUCHUNGEN', $last_dat, '0');
-                            $gebucht = true;
-                        } /* End foreach */
-                    }
-
-                    if ($diff > 0) {
-                        /* Von der Kaltmiete abziehen */
-                        echo "MINUS $buchungsnummer - $betrag > $forderung_monatlich DIFF $diff<br>";
-                        $db_abfrage = "INSERT INTO MIETBUCHUNGEN VALUES (NULL, '$mietvertrag_id', '$this->datum_heute', '$betrag', '$buchungsnummer', 'Miete kalt', '1')";
-                        DB::insert($db_abfrage);
-                        /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-                        $last_dat = DB::getPdo()->lastInsertId();
-                        protokollieren('MIETBUCHUNGEN', $last_dat, '0');
-                        $gebucht = true;
-                    } /* ENDE Von der Kaltmiete abziehen */
-
-                    if ($diff < 0) {
-                        echo "$buchungsnummer - $betrag < $forderung_monatlich DIFF $diff<br>";
-                        /* Erstmal wie gewöhnlich komplette Forderung abziehen, danach rest von Kaltmiete */
-                        $aktuelle_forderung = $this->import_forderung_monatlich($mietvertrag_id, $monat, $jahr);
-                        /* Buchung der regulären Forderung als MINUS */
-                        foreach ($aktuelle_forderung as $key => $value) {
-                            $db_abfrage = "INSERT INTO MIETBUCHUNGEN VALUES (NULL, '$mietvertrag_id', '$this->datum_heute', '-$value', '$buchungsnummer', '$key', '1')";
-                            DB::insert($db_abfrage);
-                            /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-                            $last_dat = DB::getPdo()->lastInsertId();
-                            protokollieren('MIETBUCHUNGEN', $last_dat, '0');
-                        } /* End foreach */
-                        /* Rest Minus ($diff) Von der Kaltmiete abziehen */
-                        $db_abfrage = "INSERT INTO MIETBUCHUNGEN VALUES (NULL, '$mietvertrag_id', '$this->datum_heute', '$diff', '$buchungsnummer', 'Miete kalt ', '1')";
-                        $resultat = DB::insert($db_abfrage);
-                        /* Zugewiesene MIETBUCHUNG_DAT auslesen */
-                        $last_dat = DB::getPdo()->lastInsertId();
-                        protokollieren('MIETBUCHUNGEN', $last_dat, '0');
-                        $gebucht = true;
-                    } /* ENDE Von der Kaltmiete abziehen */
-                } // ende if betrag < 0
-            } // end if !$gebucht
-        } // end function
-    }
-
-    function hk_abrechnung_arr($mietvertrag_id, $jahr)
-    {
-        $result = DB::select("SELECT ENDE, BETRAG, KOSTENKATEGORIE FROM MIETENTWICKLUNG WHERE MIETVERTRAG_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y' ) >= '$jahr' && DATE_FORMAT( ANFANG, '%Y' ) <= '$jahr' ) && DATE_FORMAT( ANFANG, '%Y' ) <= '$jahr' && KOSTENKATEGORIE LIKE '%Heizkostenabrechnung%' ORDER BY ANFANG ASC LIMIT 0,1");
-        if (empty($result)) {
-            return FALSE;
-        } else {
-            $row = $result[0];
-            return $row;
-        }
-    }
-
-    /* Ausgabe aller Kostenkategorien für gewünschten Monat, Jahr als Array */
-
-    function bk_abrechnung_arr($mietvertrag_id, $jahr)
-    {
-        $result = DB::select("SELECT ENDE, BETRAG, KOSTENKATEGORIE FROM MIETENTWICKLUNG WHERE MIETVERTRAG_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y' ) >= '$jahr' && DATE_FORMAT( ANFANG, '%Y' ) <= '$jahr' ) && DATE_FORMAT( ANFANG, '%Y' ) <= '$jahr' && KOSTENKATEGORIE LIKE '%Betriebskostenabrechnung%' ORDER BY ANFANG ASC LIMIT 0,1");
-        if (empty($result)) {
-            return FALSE;
-        } else {
-            return $result[0];
-        }
-    }
-
-    function import_forderung_monatlich($mietvertrag_id, $monat, $jahr)
-    {
-        $result = DB::select("SELECT KOSTENKATEGORIE, BETRAG FROM MIETENTWICKLUNG WHERE MIETVERTRAG_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && KOSTENKATEGORIE NOT LIKE '%abrechnung%' && KOSTENKATEGORIE NOT LIKE '%rate%' ORDER BY ANFANG ASC");
-
-        foreach($result as $row) {
-            $aktuelle_forderung [$row ['KOSTENKATEGORIE']] = $row ['BETRAG'];
-        }
-        return $aktuelle_forderung;
-    }
-
-    function betriebskosten_monatlich($mietvertrag_id, $monat, $jahr)
-    {
-        $this->betriebskosten = 0.00;
-        $result = DB::select("SELECT BETRAG FROM `MIETENTWICKLUNG` WHERE `KOSTENTRAEGER_TYP` = 'Mietvertrag'  AND `KOSTENTRAEGER_ID` ='$mietvertrag_id' AND `KOSTENKATEGORIE` =  'Betriebskosten Vorauszahlung'  AND `MIETENTWICKLUNG_AKTUELL` = '1'  ORDER BY ANFANG DESC LIMIT 0 , 1) <= '$jahr-$monat'");
-        if (!empty($result)) {
-            $this->betriebskosten = $result[0]['BETRAG'];
-        }
-    }
-
-    function heizkosten_monatlich($mietvertrag_id, $monat, $jahr)
-    {
-        $this->heizkosten = 0.00;
-        $result = DB::select("SELECT BETRAG  FROM `MIETENTWICKLUNG` WHERE `KOSTENTRAEGER_TYP` = 'Mietvertrag'  AND `KOSTENTRAEGER_ID` ='$mietvertrag_id' AND `KOSTENKATEGORIE` =  'Heizkosten Vorauszahlung'  AND `MIETENTWICKLUNG_AKTUELL` = '1'  ORDER BY ANFANG DESC LIMIT 0 , 1");
-        if (!empty($result)) {
-            $this->heizkosten = $result[0]['BETRAG'];
-        }
-    }
-
-    function monatsabschluesse_speichern($mietvertrag_id, $betrag)
+        function monatsabschluesse_speichern($mietvertrag_id, $betrag)
     {
         $datum = $this->datum_heute;
         $db_abfrage = "INSERT INTO MONATSABSCHLUSS VALUES (NULL, '$mietvertrag_id', '$datum', '$betrag', '1', NULL)";
@@ -1431,7 +985,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         if (!$resultat) {
             echo "Monatsabschluss von $betrag für MV $mietvertrag_id wurde nicht gespeichert!";
         }
-    }
+    } // end function
 
     function mietentwicklung_speichern($kostentraeger_typ, $kostentrager_id, $kostenkategorie, $betrag, $anfang, $ende)
     {
@@ -1470,46 +1024,6 @@ ORDER BY BUCHUNGSNUMMER DESC");
         }
     }
 
-    /* Ausgabe der Summe aller Kostenkategorien für gewünschten Monat, Jahr als String */
-
-    function monate_berechnen_bis_heute($start_datum)
-    {
-        echo "SD: $start_datum<br>";
-
-        $letztes_datum_monat = date("Y-m-t");
-        $letztes_datum_monat = explode("-", $letztes_datum_monat);
-        $letztes_datum_monat = mktime(0, 0, 0, $letztes_datum_monat [1], $letztes_datum_monat [2], $letztes_datum_monat [0]);
-
-        $start_datum_arr = explode("-", $start_datum);
-        $tag = $start_datum_arr [2];
-        $monat = $start_datum_arr [1];
-        $jahr = $start_datum_arr [0];
-        echo "$tag $monat $jahr";
-        $beginn_datum = mktime(0, 0, 0, $monat, $tag, $jahr);
-        $tage_vergangen = round(($letztes_datum_monat - $beginn_datum) / (3600 * 24), 0);
-        $monate_vergangen = floor($tage_vergangen / 30);
-        return $monate_vergangen;
-    }
-
-    function forderungen_array_seit_einzug($mietvertrag_id)
-    {
-        $monate_arr = $this->monate_seit_einzug_arr($mietvertrag_id);
-        $this->array_anzeigen($monate_arr);
-        for ($i = 0; $i < count($monate_arr); $i++) {
-            $forderungen [] = $this->forderung_monatlich($mietvertrag_id, $monate_arr [$i] ['monat'], $monate_arr [$i] ['jahr']);
-        }
-        $this->array_anzeigen($forderungen);
-    }
-
-    /* Ausgabe aller Mahngebühren für gewünschten Monat, Jahr als Array */
-    function monate_seit_einzug_arr($mietvertrag_id)
-    {
-        $zeitraum = new zeitraum ();
-        $monate_arr = $zeitraum->zeitraum_arr_seit_einzug($mietvertrag_id);
-        return $monate_arr;
-    }
-
-    /* Ausgabe der Summe aller Kostenkategorien für gewünschten Monat, Jahr als String */
     function summe_forderungen_seit_einzug($mietvertrag_id)
     {
         $monate_arr = $this->monate_seit_einzug_arr($mietvertrag_id);
@@ -1528,93 +1042,16 @@ ORDER BY BUCHUNGSNUMMER DESC");
         return $summe;
     }
 
-    /* Datum der Betriebskostenabrechnung */
+    /* Ausgabe aller Mahngebühren für gewünschten Monat, Jahr als Array */
 
-    function forderungen_seit_einzug($mietvertrag_id)
+    function monate_seit_einzug_arr($mietvertrag_id)
     {
-        $monate_arr = $this->monate_seit_einzug_arr($mietvertrag_id);
-        $this->array_anzeigen($monate_arr);
-        // for($i=0;$i<=count($monate_arr);$i++){
-        // $forderung_arr[] = $this->forderung_monatlich($mietvertrag_id, $monate_arr[$i][monat], $monate_arr[$i][jahr]);
-        // }
-        // $this->array_anzeigen($forderung_arr);
-        echo "#####################################";
-        $this->monate_seit_1buchung_arr($mietvertrag_id);
-    }
-
-    /* Datum der Heizkostenabrechnung */
-
-    function monate_seit_1buchung_arr($mietvertrag_id)
-    {
-        $this->mietvertrag_grunddaten_holen($mietvertrag_id);
-        // $this->datum_heute;
-        // $this->mietvertrag_von;
-        echo "MV $this->datum_heute	$this->mietvertrag_von";
-
-        $letztes_datum_monat = date("Y-m-t");
-        $aktuelles_datum = explode("-", $letztes_datum_monat);
-        $aktuelles_jahr = $aktuelles_datum [0];
-        $aktueller_monat = $aktuelles_datum [1];
-        $aktueller_tag = $aktuelles_datum [2];
-
-        $datum_erste_zahlung = $this->datum_1_zahlung($mietvertrag_id);
-        $datum_letzte_zahlung = $this->datum_letzte_zahlung($mietvertrag_id);
-        $datum_letzte_zahlung_arr = explode("-", "$datum_letzte_zahlung");
-        $monat_letzte_zahlung = $datum_letzte_zahlung_arr [1];
-
-        $datum_einzug = explode("-", "$datum_erste_zahlung");
-        // $datum_einzug = explode("-","2006-06-01");
-        $tag_einzug = $datum_einzug [2];
-        $monat_einzug = $datum_einzug [1];
-        $monat_einzug = substr($monat_einzug, -1);
-        $jahr_einzug = $datum_einzug [0];
-
-        $diff_in_jahren = $aktuelles_jahr - $jahr_einzug;
-        // 2008-2007 = 1
-
-        // if($diff_in_jahren>0){
-        // for($i=0;$i<=$diff_in_jahren;$i++){
-        for ($i = $diff_in_jahren; $i >= 0; $i--) {
-            $jahr = $aktuelles_jahr - $i;
-            if ($jahr == $jahr_einzug) {
-                for ($a = $monat_einzug; $a <= $monat_letzte_zahlung; $a++) {
-                    if ($a < 10) {
-                        $datum_jahr_arr = array(
-                            "monat" => "0$a",
-                            "jahr" => "$jahr"
-                        );
-                    } else {
-                        $datum_jahr_arr = array(
-                            "monat" => "$a",
-                            "jahr" => "$jahr"
-                        );
-                    }
-                    $monate_arr [] = $datum_jahr_arr;
-                }
-            } else {
-                for ($a = 1; $a <= 12; $a++) {
-                    if ($a < 10) {
-                        $datum_jahr_arr = array(
-                            "monat" => "0$a",
-                            "jahr" => "$jahr"
-                        );
-                    } else {
-                        $datum_jahr_arr = array(
-                            "monat" => "$a",
-                            "jahr" => "$jahr"
-                        );
-                    }
-                    $monate_arr [] = $datum_jahr_arr;
-                }
-            }
-            // echo "JAHR $jahr";
-        }
-        $this->array_anzeigen($monate_arr);
-
+        $zeitraum = new zeitraum ();
+        $monate_arr = $zeitraum->zeitraum_arr_seit_einzug($mietvertrag_id);
         return $monate_arr;
     }
 
-    /* Datum der Wasserkostenabrechnung */
+    /* Ausgabe der Summe aller Kostenkategorien für gewünschten Monat, Jahr als String */
 
     function mietvertrag_grunddaten_holen($mietvertrag_id)
     {
@@ -1627,7 +1064,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         $this->get_anzahl_personen_zu_mietvertrag($mietvertrag_id);
     }
 
-    /* Summe der Betriebskostenabrechnung */
+    /* Datum der Wasserkostenabrechnung */
 
     function get_anzahl_personen_zu_mietvertrag($mietvertrag_id)
     {
@@ -1636,7 +1073,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         $this->anzahl_personen_im_vertrag = $anzahl; // Anzahl aller Personen im MV
     }
 
-    /* Summe der Heizkostenabrechnung */
+    /* Summe der Betriebskostenabrechnung */
 
     function datum_1_zahlung($mietvertrag_id)
     {
@@ -1650,13 +1087,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         return $result[0]['DATUM'];
     }
 
-    /* Summe der Wasserkostenabrechnung */
-
-    function datum_letzte_zahlung($mietvertrag_id)
-    {
-        $result = DB::select("SELECT DATUM FROM MIETBUCHUNGEN WHERE MIETVERTRAG_ID = '$mietvertrag_id' && MIETBUCHUNGEN_AKTUELL = '1' ORDER BY DATUM DESC LIMIT 0,1");
-        return $result[0]['DATUM'];
-    }
+    /* Summe der Heizkostenabrechnung */
 
     function buchungen_forderungen_seit_einzug($mietvertrag_id)
     {
@@ -1765,36 +1196,6 @@ ORDER BY BUCHUNGSNUMMER DESC");
         }
     }
 
-    function betriebskosten_heizkosten_fallig($mietvertrag_id, $monat, $jahr)
-    {
-        $result = DB::select("SELECT MIETVERTRAG_ID, ANFANG, ENDE, KOSTENKATEGORIE, BETRAG FROM MIETENTWICKLUNG WHERE MIETVERTRAG_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && KOSTENKATEGORIE LIKE '%abrechnung%' ORDER BY ANFANG ASC");
-        $numrows = count($result);
-        return $numrows;
-    }
-
-    /* Ausgabe aller Mietzahlungen für gewünschten Monat, Jahr als Array */
-    function bk_abrechnung_monat($mietvertrag_id, $jahr)
-    {
-        $result = DB::select("SELECT ENDE FROM MIETENTWICKLUNG WHERE MIETVERTRAG_ID = '1' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y' ) >= '$jahr' && DATE_FORMAT( ANFANG, '%Y' ) <= '$jahr' ) && DATE_FORMAT( ANFANG, '%Y' ) <= '$jahr' && KOSTENKATEGORIE LIKE '%Betriebskostenabrechnung%' ORDER BY ANFANG ASC LIMIT 0,1");
-        $row = $result[0];
-        $datum = explode("-", $row ['ENDE']);
-        $monat = $datum [1];
-        return $monat;
-    }
-
-    /* Ausgabe der Summe aller Zahlungen für gewünschten Monat, Jahr als String */
-
-    function hk_abrechnung_monat($mietvertrag_id, $jahr)
-    {
-        $result = DB::select("SELECT ENDE FROM MIETENTWICKLUNG WHERE MIETVERTRAG_ID = '1' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y' ) >= '$jahr' && DATE_FORMAT( ANFANG, '%Y' ) <= '$jahr' ) && DATE_FORMAT( ANFANG, '%Y' ) <= '$jahr' && KOSTENKATEGORIE LIKE '%Heizkostenabrechnung%' ORDER BY ANFANG ASC LIMIT 0,1");
-        $row = $result[0];
-        $datum = explode("-", $row ['ENDE']);
-        $monat = $datum [1];
-        return $monat;
-    }
-
-    /* Prüfen ob diesen Monat Zahlbetrag zum MV gebucht wurde */
-
     function summe_rate_monatlich($mietvertrag_id, $monat, $jahr)
     {
         $result = DB::select("SELECT SUM(BETRAG) AS SUMME_RATE FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && KOSTENKATEGORIE LIKE 'RATENZAHLUNG' ORDER BY ANFANG ASC");
@@ -1803,7 +1204,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         return $summe;
     }
 
-    /* Prüfen ob diesen Monat Zahlbetrag aufs Geldkonto des Objektes gebucht wurde */
+    /* Prüfen ob diesen Monat Zahlbetrag zum MV gebucht wurde */
 
     function summe_mahngebuehr_im_monat($mietvertrag_id, $monat, $jahr)
     {
@@ -1819,7 +1220,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         }
     }
 
-    /* Prüfen ob diesen Monat überhaupt Zahlbeträge gebucht worden sind. */
+    /* Prüfen ob diesen Monat Zahlbetrag aufs Geldkonto des Objektes gebucht wurde */
 
     function mahngebuehr_monatlich_arr($mietvertrag_id, $monat, $jahr)
     {
@@ -1831,7 +1232,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         }
     }
 
-    /* Geldkontostand vom ausgewählten Objekt anzeigen */
+    /* Prüfen ob diesen Monat überhaupt Zahlbeträge gebucht worden sind. */
 
     function datum_betriebskostenabrechnung($mietvertrag_id, $monat, $jahr)
     {
@@ -1848,7 +1249,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         }
     }
 
-    /* Anzeigen des Mietkontostandes seit Einzug */
+    /* Geldkontostand vom ausgewählten Objekt anzeigen */
 
     function datum_heizkostenabrechnung($mietvertrag_id, $monat, $jahr)
     {
@@ -1865,7 +1266,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         }
     }
 
-    /* Anzeigen des Mietkontostandes seit Einzug neu */
+    /* Anzeigen des Mietkontostandes seit Einzug */
 
     function datum_wasserkostenabrechnung($mietvertrag_id, $monat, $jahr)
     {
@@ -1882,7 +1283,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         }
     }
 
-    /* ermitteln des Kontostandes Mietkonto mit zeitraum */
+    /* Anzeigen des Mietkontostandes seit Einzug neu */
 
     function summe_betriebskostenabrechnung($mietvertrag_id, $monat, $jahr)
     {
@@ -1902,7 +1303,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         }
     }
 
-    /* Ausgabe der Summe aller Zahlungen */
+    /* ermitteln des Kontostandes Mietkonto mit zeitraum */
 
     function summe_heizkostenabrechnung($mietvertrag_id, $monat, $jahr)
     {
@@ -1922,7 +1323,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         }
     }
 
-    /* Ausgabe des Kontostandes */
+    /* Ausgabe der Summe aller Zahlungen */
 
     function summe_wasserkostenabrechnung($mietvertrag_id, $monat, $jahr)
     {
@@ -1942,7 +1343,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         }
     }
 
-    /* Ausgabe des Kontostandes aller Geldkonten */
+    /* Ausgabe des Kontostandes */
 
     function kaltmiete_monatlich($mietvertrag_id, $monat, $jahr)
     {
@@ -1952,7 +1353,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         $this->ausgangs_kaltmiete = $summe;
     }
 
-    /* Ausgabe der Summe aller Zahlbeträge */
+    /* Ausgabe des Kontostandes aller Geldkonten */
 
     function check_vz_anteilig($mietvertrag_id, $monat, $jahr)
     {
@@ -1971,7 +1372,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         }
     }
 
-    /* Ausgabe der Summe aller Zahlbeträge bis monat */
+    /* Ausgabe der Summe aller Zahlbeträge */
 
     function kaltmiete_monatlich_ink_vz($mietvertrag_id, $monat, $jahr)
     {
@@ -1981,7 +1382,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         $this->ausgangs_kaltmiete = $summe;
     }
 
-    /* Alle Zahlbeträge in Array */
+    /* Ausgabe der Summe aller Zahlbeträge bis monat */
 
     function kaltmiete_monatlich_ohne_mod($mietvertrag_id, $monat, $jahr)
     {
@@ -1991,72 +1392,15 @@ ORDER BY BUCHUNGSNUMMER DESC");
         $this->ausgangs_kaltmiete = $summe;
     }
 
-    /* Alle Zahlbeträge vom Monat in Array */
-
-    function geldkonto_stand_anzeigen($objekt_id)
-    {
-        $objekt_info = new objekt ();
-        $objekt_info->get_objekt_geldkonto_nr($objekt_id);
-        $objekt_kontonummer = $objekt_info->objekt_kontonummer;
-
-        if ($objekt_kontonummer) {
-            $kontostand = $this->kontostand_abfragen($objekt_kontonummer);
-            if ($kontostand) {
-                $kontostand = $this->nummer_punkt2komma($kontostand);
-                echo " <b>Kontostand</b> $kontostand €</p> ";
-            } else {
-                echo "<b>Kontostand</b> 0,00 €</p> ";
-            }
-        }
-    }
-
-    function kontostand_abfragen($geld_konto_nr)
-    {
-        $result = DB::select("SELECT SUM(BETRAG) AS KONTOSTAND FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geld_konto_nr' && AKTUELL='1'");
-        return $result[0] ['KONTOSTAND'];
-    }
-
-    function mietkontostand_anzeigen_neu($mietvertrag_id)
-    {
-        $forderungen_gesamt = 0;
-        $stand = 0;
-
-        $monate_arr = $this->monate_seit_einzug_arr($mietvertrag_id);
-
-        for ($a = 0; $a < count($monate_arr); $a++) {
-            $stand_aktuell = $this->monatsstand($mietvertrag_id, $monate_arr [$a] ['jahr'], $monate_arr [$a] ['monat']);
-            $stand = $stand + $stand_aktuell;
-            // ######################
-        }
-        // $zahlungen_gesamt = monatlich_gezahlt($mietvertrag_id, $jahr, $monat);
-        $stand = number_format($stand, 2, ".", "");
-        return $stand;
-    }
-
-    // Summe Vortrag Vorverwaltung
-
-    function mietkontostand_ausrechnen($mietvertrag_id)
-    {
-        $a = new miete ();
-        $a->mietkonto_berechnung($mietvertrag_id);
-        return $a->erg;
-    }
-
-    // DATUM Vortrag Vorverwaltung
-
-    function kontostand_abfragen_gesamt()
-    {
-        $result = DB::select("SELECT SUM(BETRAG) AS KONTOSTAND FROM GELD_KONTO_BUCHUNGEN WHERE AKTUELL='1'");
-        return $result[0] ['KONTOSTAND'];
-    }
-
-    // DATUM ablauf Mietdefinition
+    /* Alle Zahlbeträge in Array */
 
     function summe_aller_zahlbetraege_bis_monat($mietvertrag_id, $monat, $jahr, $kostenkonto)
     {
         $result = DB::select("SELECT SUM(BETRAG) AS SUMME_ZAHLBETRAG FROM GELD_KONTO_BUCHUNGEN WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mietvertrag_id' && KONTENRAHMEN_KONTO='$kostenkonto' && AKTUELL='1' && DATE_FORMAT(DATUM, '%Y-%m')<='$jahr-$monat'");
         return $result[0]['SUMME_ZAHLBETRAG'];
     }
+
+    // DATUM ablauf Mietdefinition
 
     function alle_zahlbetraege_arr($mietvertrag_id)
     {
@@ -2103,22 +1447,6 @@ ORDER BY BUCHUNGSNUMMER DESC");
         }
     }
 
-    function summe_aller_zahlungen_monat($mietvertrag_id, $monat, $jahr)
-    {
-        unset ($this->summe_z_im_monat);
-        $laenge = strlen($monat);
-        if ($laenge == 1 && $monat < 10) {
-            $monat = "0" . $monat;
-        }
-
-        $result = DB::select("SELECT SUM(BETRAG) AS BETRAG FROM GELD_KONTO_BUCHUNGEN WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mietvertrag_id' && AKTUELL='1' && DATE_FORMAT( DATUM, '%Y-%m' ) = '$jahr-$monat'");
-        if (!empty($result)) {
-            $this->summe_z_im_monat = $result[0]['BETRAG'];
-        } else {
-            return '0.00';
-        }
-    }
-
     function saldo_vortrag_vorverwaltung($mietvertrag_id)
     {
         $my_arr = '';
@@ -2128,8 +1456,6 @@ ORDER BY BUCHUNGSNUMMER DESC");
             return $saldo;
         }
     }
-
-    /* Funktion zur Ermittlung von Infos und Details zu einer Buchungsnummer */
 
     function datum_saldo_vortrag_vorverwaltung($mietvertrag_id)
     {
@@ -2141,25 +1467,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         return $row ['DATUM'];
     }
 
-    /* Funktion Buchungsnummerdetails als Array */
-
-    function datum_ablauf_mietdefinition($mietvertrag_id)
-    {
-        $result = DB::select("SELECT ENDE AS DATUM FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id'  && MIETENTWICKLUNG_AKTUELL = '1' ORDER BY DATUM DESC LIMIT 0,1");
-        $row = $result[0];
-        return $row ['DATUM'];
-    }
-
-    /* Buchung Zahlbetrag stornieren */
-
-    function monatliche_miete($mietvertrag_id, $jahr, $monat)
-    {
-        $result = DB::select("SELECT SUM(BETRAG) AS BETRAG FROM MIETENTWICKLUNG WHERE MIETVERTRAG_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat'");
-        $row = $result[0];
-        return $row ['BETRAG'];
-    }
-
-    /* Interne Buchungen der Zahlbetragaufteilung stornieren */
+    /* Funktion zur Ermittlung von Infos und Details zu einer Buchungsnummer */
 
     function alle_buchungen_anzeigen($mietvertrag_id)
     {
@@ -2199,7 +1507,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         }
     }
 
-    /* Letzte Buchungsnummer vom gebuchten Zahlbetrag zu Mietvertrag finden */
+    /* Interne Buchungen der Zahlbetragaufteilung stornieren */
 
     function alle_zahlungen_bisher($mietvertrag_id)
     {
@@ -2209,6 +1517,8 @@ WHERE MIETBUCHUNGEN.MIETVERTRAG_ID = '$mietvertrag_id' && MIETBUCHUNGEN.MIETBUCH
 ORDER BY DATUM ASC ");
         return $result;
     }
+
+    /* Letzte Buchungsnummer vom gebuchten Zahlbetrag zu Mietvertrag finden */
 
     function summe_aller_buchungen($mietvertrag_id)
     {
@@ -2291,7 +1601,7 @@ ORDER BY DATUM ASC ");
     {
         $db_abfrage = "SELECT EINHEIT_KURZNAME FROM EINHEIT where EINHEIT_ID='$einheit_id' && EINHEIT_AKTUELL='1'";
         $resultat = DB::select($db_abfrage);
-        if(!empty($resultat))
+        if (!empty($resultat))
             return $resultat['EINHEIT_KURZNAME'];
     }
 
@@ -2316,100 +1626,6 @@ ORDER BY DATUM ASC ");
         /* Da nur Aktuell von 1 auf 0 gesetzt, ergibt es im Protokoll die gleiche Zeilennummer bzw. Mietbuchungsdat */
         protokollieren('MIETBUCHUNGEN', $mietbuchung_dat, $mietbuchung_dat);
         echo "Interne Buchung $mietbuchung_dat inaktiv <br>";
-    }
-
-    function letzte_dat_miete_zahlbetrag($mietvertrag_id)
-    {
-        $result = DB::select("SELECT BUCHUNGSNUMMER FROM MIETE_ZAHLBETRAG WHERE MIETVERTRAG_ID = '$mietvertrag_id' && AKTUELL = '1' ORDER BY BUCHUNGSNUMMER DESC LIMIT 0,1");
-        return $result[0]['BUCHUNGSNUMMER'];
-    }
-
-    // ########## formular funktionen
-
-    function aktuelle_buchungen_anzeigen($mietvertrag_id)
-    {
-        $this->datum_heute;
-        $this->tag_heute;
-        $this->monat_heute;
-        $this->jahr_heute;
-        $zahlungen_diesen_monat_arr = $this->zahlungen_monatlich($mietvertrag_id, $this->monat_heute, $this->jahr_heute);
-        if (!is_array($zahlungen_diesen_monat_arr)) {
-            echo "<div class=aktuelle_buchungen><b>AKTUELLE BUCHUNGEN AUS $mietvertrag_id<br>";
-            echo "Keine aktuellen Zahlungen in diesem Monat!";
-            echo "</div>";
-            $error = TRUE;
-        } else {
-            // $this->array_anzeigen($zahlungen_diesen_monat_arr);
-
-            echo "<div class=aktuelle_buchungen><b>AKTUELLE BUCHUNGEN 				$this->monat_heute $this->jahr_heute</b><br>";
-            echo "<table class=aktuelle_buchungen>";
-            echo "<tr class=tabelle_ueberschrift_mietkontenblatt><td>B-NR</td><td>ÜBERWIESEN AM</td><td>ZAHLBETRAG</td><td>GEBUCHT AM</td><td>TEILBETRAG</td><td>KOSTENKATEGORIE</td></tr>";
-            for ($i = 0; $i < count($zahlungen_diesen_monat_arr); $i++) {
-                echo "<tr>";
-                $buchungsdatum = $this->date_mysql2german($zahlungen_diesen_monat_arr [$i] ['DATUM']);
-                echo "<td><b>" . $zahlungen_diesen_monat_arr [$i] ['BUCHUNGSNUMMER'] . "</b></td>";
-                $zahldatum = $this->date_mysql2german($zahlungen_diesen_monat_arr [$i] ['ZAHLDATUM']);
-                echo "<td>" . $zahldatum . "</td>";
-                echo "<td><b>" . $zahlungen_diesen_monat_arr [$i] ['ZAHLBETRAG'] . " €</b></td>";
-                echo "<td>" . $buchungsdatum . "</td>";
-                echo "<td><b>" . $zahlungen_diesen_monat_arr [$i] ['BETRAG'] . " €</b></td>";
-                echo "<td>" . $zahlungen_diesen_monat_arr [$i] ['KOSTENKATEGORIE'] . "</td>";
-                echo "</tr>";
-            }
-            $summe_zahlungen = $this->summe_zahlung_monatlich($mietvertrag_id, $this->monat_heute, $this->jahr_heute);
-            echo "<tr><td colspan=5><b> Summe: $summe_zahlungen €</b></td></tr>";
-            echo "</table>";
-            echo "</div>";
-            return $zahlungen_diesen_monat_arr;
-        }
-    }
-
-    function aktuelle_buchungen_array($mietvertrag_id)
-    {
-        $this->datum_heute;
-        $this->tag_heute;
-        $this->monat_heute;
-        $this->jahr_heute;
-        $zahlungen_diesen_monat_arr = $this->zahlungen_monatlich($mietvertrag_id, $this->monat_heute, $this->jahr_heute);
-        return $zahlungen_diesen_monat_arr;
-    }
-
-    function aktuelle_forderungen_anzeigen($mietvertrag_id)
-    {
-        $this->datum_heute;
-        $this->tag_heute;
-        $this->monat_heute;
-        $this->jahr_heute;
-        $forderungen_diesen_monat_arr = $this->forderung_monatlich($mietvertrag_id, $this->monat_heute, $this->jahr_heute);
-        if (!is_array($forderungen_diesen_monat_arr)) {
-            echo "<div class=aktuelle_forderungen><b>AKTUELLE FORDERUNGEN AUS  $mietvertrag_id<br>";
-            echo "Keine Forderungen in diesem Monat!";
-            echo "</div>";
-            $error = TRUE;
-        } else {
-            // $this->array_anzeigen($forderungen_diesen_monat_arr);
-
-            echo "<div class=aktuelle_forderungen><b>AKTUELLE FORDERUNGEN aus $mietvertrag_id 				$this->monat_heute $this->jahr_heute</b><br>";
-            echo "<table class=aktuelle_forderungen>";
-            echo "<tr class=tabelle_ueberschrift_mietkontenblatt><td>MV</td><td>ANFANG</td><td>ENDE</td><td>KOSTENKATEGORIE</td><td>BETRAG</td></tr>";
-            for ($i = 0; $i < count($forderungen_diesen_monat_arr); $i++) {
-                echo "<tr>";
-                echo "<td>" . $forderungen_diesen_monat_arr [$i] ['mietvertrag_id'] . "</td>";
-                $anfangsdatum = $this->date_mysql2german($forderungen_diesen_monat_arr [$i] ['ANFANG']);
-                echo "<td>" . $anfangsdatum . "</td>";
-                $endedatum = $this->date_mysql2german($forderungen_diesen_monat_arr [$i] ['ENDE']);
-                echo "<td>" . $endedatum . "</td>";
-
-                echo "<td>" . $forderungen_diesen_monat_arr [$i] ['KOSTENKATEGORIE'] . "</td>";
-                echo "<td><b>" . $forderungen_diesen_monat_arr [$i] ['BETRAG'] . " €</b></td>";
-                echo "</tr>";
-            }
-            $summe_forderungen = $this->summe_forderung_monatlich($mietvertrag_id, $this->monat_heute, $this->jahr_heute);
-            echo "<tr><td colspan=6><b> Summe: $summe_forderungen €</b></td></tr>";
-            echo "</table>";
-            echo "</div>";
-            return $forderungen_diesen_monat_arr;
-        }
     }
 
     function buchung_zeitraum($mietvertrag_id, $von_datum, $bis_datum)
@@ -2441,24 +1657,11 @@ ORDER BY DATUM ASC ");
         }
     }
 
-    function mieter_mietkonto_stand($mietvertrag_id, $einzugs_monat, $einzugs_jahr)
+    function array_anzeigen($array)
     {
-        $summe_aller_zahlbetraege = $this->summe_aller_zahlbetraege($mietvertrag_id);
-        $zeitraum = new zeitraum ();
-        $aktueller_monat = date("m");
-        $aktuelles_jahr = date("Y");
-        $monate_arr = $zeitraum->zeitraum_generieren($einzugs_monat, $einzugs_jahr, $aktueller_monat, $aktuelles_jahr);
-
-        $forderungen_insgesamt = 0;
-        for ($a = 0; $a < count($monate_arr); $a++) {
-            $berechnungs_monat = $monate_arr [$a] ['monat'];
-            $berechnungs_jahr = $monate_arr [$a] ['jahr'];
-            $summe_forderung_monatlich = $this->summe_forderung_monatlich($mietvertrag_id, $berechnungs_monat, $berechnungs_jahr);
-            $forderungen_insgesamt = $forderungen_insgesamt + $summe_forderung_monatlich;
-        }
-
-        $mietkonto_stand = $summe_aller_zahlbetraege - $forderungen_insgesamt;
-        return $mietkonto_stand;
+        echo "<pre>";
+        print_r($array);
+        echo "</pre>";
     }
 
     function summe_uebersicht_aufteilung($mietvertrag_id, $von_datum, $bis_datum)
@@ -2503,41 +1706,6 @@ ORDER BY DATUM ASC ");
         echo "</div>";
     }
 
-    function mwst_feld($beschreibung, $name, $wert, $size)
-    {
-        echo "<div class=\"input-field\">";
-        echo "<input type=\"text\" id=\"mwst_feld\" name=\"$name\" value=\"$wert\" size=\"$size\"><label for=\"mwst_feld\">$beschreibung</label>\n";
-        echo "</div>";
-    }
-
-    function rabatt_feld($beschreibung, $name, $wert, $size)
-    {
-        echo "<div class=\"input-field\">";
-        echo "<input type=\"text\" id=\"rabatt_feld\" name=\"$name\" value=\"$wert\" size=\"$size\"><label for=\"rabatt_feld\">$beschreibung</label>\n";
-        echo "</div>";
-    }
-
-    function gesamt_errechnet_feld($beschreibung, $name, $wert, $size)
-    {
-        echo "<div class=\"input-field\">";
-        echo "<input type=\"text\" id=\"$name\" name=\"$name\" value=\"$wert\" size=\"$size\"  onfocus=\"gesamt_berechnen()\"><label for=\"$name\">$beschreibung</label>\n";
-        echo "</div>";
-    }
-
-    function mengen_feld($beschreibung, $name, $wert, $size)
-    {
-        echo "<div class=\"input-field\">";
-        echo "<input type=\"text\" id=\"$name\" name=\"$name\" value=\"$wert\" size=\"$size\" onfocus=\"activate(this.id)\" onChange=\"neu_berechnen()\" style=\"text-align:right\"><label for=\"$name\">$beschreibung</label>\n";
-        echo "</div>";
-    }
-
-    function preis_feld($beschreibung, $name, $wert, $size)
-    {
-        echo "<div class=\"input-field\">";
-        echo "<input type=\"text\" id=\"$name\" name=\"$name\" value=\"$wert\" size=\"$size\" onfocus=\"activate(this.id)\"  onChange=\"neu_berechnen_neuer_preis()\" style=\"text-align:right\"><label for=\"$name\">$beschreibung</label>\n";
-        echo "</div>";
-    }
-
     function radio_button($name, $wert, $label)
     {
         //echo "<div class=\"input-field\">";
@@ -2552,21 +1720,9 @@ ORDER BY DATUM ASC ");
         //echo "</div>";
     }
 
-    function radio_button_js($name, $wert, $label, $js, $checked)
-    {
-        //echo "<div class=\"input-field\">";
-        echo "<input type=\"radio\" id=\"$wert\" name=\"$name\" value=\"$wert\" $js $checked><label for=\"$wert\">$label</label>\n";
-        //echo "</div>";
-    }
-
     function send_button_js($name, $wert, $js)
     {
         echo "<button type=\"submit\" name=\"$name\" value=\"$wert\" class=\"btn waves-effect waves-light\" id=\"$name\" $js><i class=\"material-icons right\">send</i>$wert</button>";
-    }
-
-    function send_button_hidden($name, $wert)
-    {
-        echo "<button type=\"submit\" name=\"$name\" value=\"$wert\" class=\"btn waves-effect waves-light\" id=\"$name\" disabled><i class=\"material-icons right\">send</i>$wert</button>";
     }
 
     function send_button_disabled($name, $wert, $id)
@@ -2618,22 +1774,6 @@ ORDER BY DATUM ASC ");
         echo "</div>";
     }
 
-    function dropdown_tag()
-    {
-        $tag = date("d");
-        $monat = date("m");
-        $jahr = date("Y");
-        echo "<select name=\"tag\" width=20>\n";
-        for ($i = 1; $i <= 31; $i++) {
-            if ($tag == $i) {
-                echo "<option value=\"$i\" selected >$i</option>\n";
-            } else {
-                echo "<option value=\"$i\">$i</option>\n";
-            }
-        }
-        echo "</select>";
-    }
-
     function datum_form()
     {
         $this->erstelle_formular("Buchungsdatum und Kontoauszugsnr eingeben...", NULL);
@@ -2679,355 +1819,3 @@ ORDER BY DATUM ASC ");
 
     // ############ ende formular ###########
 } // end class
-
-// Klasse zur Erstellung eines Arrays mit Monaten und Jahren
-// z.B. seit Einzug bis heute
-class zeitraum
-{
-    function check_number($checkValue)
-    {
-        if (abs($checkValue) != $checkValue) {
-            // in this case, the value is negative; return 1
-            return 1;
-        } else {
-            // number is positive; return 0
-            return 0;
-        }
-    }
-
-    function zeitraum_generieren($monat_von, $jahr_von, $monat_bis, $jahr_bis)
-    {
-        $laenge_monat_von = strlen($monat_von);
-        $laenge_monat_bis = strlen($monat_bis);
-        if ($monat_von < 10 && $laenge_monat_von == 2) {
-            $monat_von = substr($monat_von, 1, 1);
-        }
-        if ($monat_bis < 10 && $laenge_monat_von == 2) {
-            $monat_bis = substr($monat_bis, 1, 1);
-        }
-
-        // Aktuelle Datumangaben
-        $letztes_datum_monat = date("Y-m-t"); // letzter Tag im aktuellen Monat, dafür steht (t) z.B. 28 bzw 29 / 30. oder 31.
-        $aktuelles_datum = explode("-", $letztes_datum_monat);
-        $aktuelles_jahr = $aktuelles_datum [0];
-        $aktueller_monat = $aktuelles_datum [1];
-        $aktueller_tag = $aktuelles_datum [2];
-
-        $diff_in_jahren = $jahr_bis - $jahr_von;
-
-        // 1. Regel, falls Einzugs- und aktuelles Jahr identisch z.b. 1.1.2008 und heute 20.5.2008
-        if ($diff_in_jahren == 0) {
-            if ($monat_von > $monat_bis) {
-                return false;
-            } else {
-                for ($monat = $monat_von; $monat <= $monat_bis; $monat++) {
-                    if ($monat < 10) {
-                        $datum_jahr_arr = array(
-                            "monat" => "0$monat",
-                            "jahr" => "$jahr_bis"
-                        );
-                    } else {
-                        $datum_jahr_arr = array(
-                            "monat" => "$monat",
-                            "jahr" => "$jahr_bis"
-                        );
-                    }
-                    $monate_arr [] = $datum_jahr_arr;
-                } // end for
-            } // end else
-        } // end if diff=0
-
-        // 2. Regel, falls Einzugs- und aktuelles Jahr identisch z.b. 1.1.2008 und heute 20.5.2008
-        if ($diff_in_jahren > 0) {
-            // Alle Jahre durchlaufen und hochzählen, Beginn bei Einzugsjahr bis aktuelles Jahr
-            for ($jahr = $jahr_von; $jahr <= $jahr_bis; $jahr++) {
-
-                // Wenn Jahr = Einzugsjahr d.h. erstes bzw Einzugsjahr
-                if ($jahr == $jahr_von) {
-                    for ($monat = $monat_von; $monat <= 12; $monat++) {
-                        if ($monat < 10) {
-                            $datum_jahr_arr = array(
-                                "monat" => "0$monat",
-                                "jahr" => "$jahr"
-                            );
-                        } else {
-                            $datum_jahr_arr = array(
-                                "monat" => "$monat",
-                                "jahr" => "$jahr"
-                            );
-                        }
-                        $monate_arr [] = $datum_jahr_arr;
-                    } // end for $monat=$monat_einzug;$monat<=12;$monat++
-                } // end if $jahr==$jahr_einzug
-
-                // Wenn Jahr aktuelles Jahr z.b 2008 d.h letztes Jahr in der Schleife
-                if ($jahr == $jahr_bis) {
-                    for ($monat = 1; $monat <= $monat_bis; $monat++) {
-                        if ($monat < 10) {
-                            $datum_jahr_arr = array(
-                                "monat" => "0$monat",
-                                "jahr" => "$jahr"
-                            );
-                        } else {
-                            $datum_jahr_arr = array(
-                                "monat" => "$monat",
-                                "jahr" => "$jahr"
-                            );
-                        }
-                        $monate_arr [] = $datum_jahr_arr;
-                    } // end for
-                } // end if
-
-                if ($jahr != $jahr_von && $jahr != $jahr_bis) {
-                    for ($monat = 1; $monat <= 12; $monat++) {
-                        if ($monat < 10) {
-                            $datum_jahr_arr = array(
-                                "monat" => "0$monat",
-                                "jahr" => "$jahr"
-                            );
-                        } else {
-                            $datum_jahr_arr = array(
-                                "monat" => "$monat",
-                                "jahr" => "$jahr"
-                            );
-                        }
-                        $monate_arr [] = $datum_jahr_arr;
-                    } // end for
-                } // end if
-            } // end for
-        } // end if diff=0
-        /*
-		 * echo "<pre>";
-		 * print_r($monate_arr);
-		 * echo "</pre>";
-		 */
-        return $monate_arr;
-    } // ende function "zeitraum_arr_seit_einzug""
-
-    function zeitraum_arr_seit_einzug($mietvertrag_id)
-    {
-        // Mietvertragsdaten ermitteln
-        $mv_info = new mietkonto ();
-        $mv_info->mietvertrag_grunddaten_holen($mietvertrag_id);
-        $mietvertrag_von = $mv_info->mietvertrag_von;
-        $mietvertrag_bis = $mv_info->mietvertrag_bis;
-        $datum_einzug = explode("-", "$mietvertrag_von");
-        $tag_einzug = $datum_einzug [2];
-        $monat_einzug = $datum_einzug [1];
-        if ($monat_einzug < 10) { // bei 01 02 03 die Null abschneiden
-            $monat_einzug = substr($monat_einzug, -1);
-        }
-        $jahr_einzug = $datum_einzug [0];
-
-        // Aktuelle Datumangaben
-        $letztes_datum_monat = date("Y-m-t"); // letzter Tag im aktuellen Monat, dafür steht (t) z.B. 28 bzw 29 / 30. oder 31.
-        $aktuelles_datum = explode("-", $letztes_datum_monat);
-        $aktuelles_jahr = $aktuelles_datum [0];
-        $aktueller_monat = $aktuelles_datum [1];
-        $aktueller_tag = $aktuelles_datum [2];
-        $diff_in_jahren = $aktuelles_jahr - $jahr_einzug;
-
-        // 1. Regel, falls Einzugs- und aktuelles Jahr identisch z.b. 1.1.2008 und heute 20.5.2008
-        if ($diff_in_jahren == "0") {
-            for ($monat = $monat_einzug; $monat <= $aktueller_monat; $monat++) {
-                if ($monat < 10) {
-                    $datum_jahr_arr = array(
-                        "monat" => "0$monat",
-                        "jahr" => "$aktuelles_jahr"
-                    );
-                } else {
-                    $datum_jahr_arr = array(
-                        "monat" => "$monat",
-                        "jahr" => "$aktuelles_jahr"
-                    );
-                }
-                $monate_arr [] = $datum_jahr_arr;
-            } // end for
-        } // end if diff=0
-
-        // 2. Regel, falls Einzugs- und aktuelles Jahr identisch z.b. 1.1.2008 und heute 20.5.2008
-        if ($diff_in_jahren > "0") {
-            // Alle Jahre durchlaufen und hochzählen, Beginn bei Einzugsjahr bis aktuelles Jahr
-            for ($jahr = $jahr_einzug; $jahr <= $aktuelles_jahr; $jahr++) {
-
-                // Wenn Jahr = Einzugsjahr d.h. erstes bzw Einzugsjahr
-                if ($jahr == $jahr_einzug) {
-                    for ($monat = $monat_einzug; $monat <= 12; $monat++) {
-                        if ($monat < 10) {
-                            $datum_jahr_arr = array(
-                                "monat" => "0$monat",
-                                "jahr" => "$jahr"
-                            );
-                        } else {
-                            $datum_jahr_arr = array(
-                                "monat" => "$monat",
-                                "jahr" => "$jahr"
-                            );
-                        }
-                        $monate_arr [] = $datum_jahr_arr;
-                    } // end for $monat=$monat_einzug;$monat<=12;$monat++
-                } // end if $jahr==$jahr_einzug
-
-                // Wenn Jahr aktuelles Jahr z.b 2008 d.h letztes Jahr in der Schleife
-                if ($jahr == $aktuelles_jahr) {
-                    for ($monat = 1; $monat <= $aktueller_monat; $monat++) {
-                        if ($monat < 10) {
-                            $datum_jahr_arr = array(
-                                "monat" => "0$monat",
-                                "jahr" => "$jahr"
-                            );
-                        } else {
-                            $datum_jahr_arr = array(
-                                "monat" => "$monat",
-                                "jahr" => "$jahr"
-                            );
-                        }
-                        $monate_arr [] = $datum_jahr_arr;
-                    } // end for
-                } // end if
-
-                if ($jahr != $jahr_einzug && $jahr != $aktuelles_jahr) {
-                    for ($monat = 1; $monat <= 12; $monat++) {
-                        if ($monat < 10) {
-                            $datum_jahr_arr = array(
-                                "monat" => "0$monat",
-                                "jahr" => "$jahr"
-                            );
-                        } else {
-                            $datum_jahr_arr = array(
-                                "monat" => "$monat",
-                                "jahr" => "$jahr"
-                            );
-                        }
-                        $monate_arr [] = $datum_jahr_arr;
-                    } // end for
-                } // end if
-            } // end for
-        } // end if diff=0
-        /*
-		 * echo "<pre>";
-		 * print_r($monate_arr);
-		 * echo "</pre>";
-		 */
-        return $monate_arr;
-    } // ende function "zeitraum_arr_seit_einzug""
-
-    function zeitraum_arr_seit_uebernahme($mietvertrag_id)
-    {
-        // Mietvertragsdaten ermitteln
-        $mv_info = new mietkonto ();
-        $mv_info->mietvertrag_grunddaten_holen($mietvertrag_id);
-        $mietvertrag_von = $mv_info->mietvertrag_von;
-        $mietvertrag_bis = $mv_info->mietvertrag_bis;
-        $datum_saldo_vorwervaltung = $this->datum_saldo_vorverwaltung($mietvertrag_id);
-        if (!isset ($datum_saldo_vorwervaltung)) {
-            $datum_einzug = explode("-", "$mietvertrag_von");
-        } else {
-            $datum_einzug = explode("-", "$datum_saldo_vorwervaltung");
-        }
-        $tag_einzug = $datum_einzug [2];
-        $monat_einzug = $datum_einzug [1];
-        if ($monat_einzug < 10) { // bei 01 02 03 die Null abschneiden
-            $monat_einzug = substr($monat_einzug, -1);
-        }
-        $jahr_einzug = $datum_einzug [0];
-
-        // Aktuelle Datumangaben
-        $letztes_datum_monat = date("Y-m-t"); // letzter Tag im aktuellen Monat, dafür steht (t) z.B. 28 bzw 29 / 30. oder 31.
-        $aktuelles_datum = explode("-", $letztes_datum_monat);
-        $aktuelles_jahr = $aktuelles_datum [0];
-        $aktueller_monat = $aktuelles_datum [1];
-        $aktueller_tag = $aktuelles_datum [2];
-        $diff_in_jahren = $aktuelles_jahr - $jahr_einzug;
-
-        // 1. Regel, falls Einzugs- und aktuelles Jahr identisch z.b. 1.1.2008 und heute 20.5.2008
-        if ($diff_in_jahren == "0") {
-            for ($monat = $monat_einzug; $monat <= $aktueller_monat; $monat++) {
-                if ($monat < 10) {
-                    $datum_jahr_arr = array(
-                        "monat" => "0$monat",
-                        "jahr" => "$aktuelles_jahr"
-                    );
-                } else {
-                    $datum_jahr_arr = array(
-                        "monat" => "$monat",
-                        "jahr" => "$aktuelles_jahr"
-                    );
-                }
-                $monate_arr [] = $datum_jahr_arr;
-            } // end for
-        } // end if diff=0
-
-        // 2. Regel, falls Einzugs- und aktuelles Jahr identisch z.b. 1.1.2008 und heute 20.5.2008
-        if ($diff_in_jahren > 0) {
-            // Alle Jahre durchlaufen und hochzählen, Beginn bei Einzugsjahr bis aktuelles Jahr
-            for ($jahr == $jahr_einzug; $jahr <= $aktuelles_jahr; $jahr++) {
-
-                // Wenn Jahr = Einzugsjahr d.h. erstes bzw Einzugsjahr
-                if ($jahr == $jahr_einzug) {
-                    for ($monat == $monat_einzug; $monat <= 12; $monat++) {
-                        if ($monat < 10) {
-                            $datum_jahr_arr = array(
-                                "monat" => "0$monat",
-                                "jahr" => "$jahr"
-                            );
-                        } else {
-                            $datum_jahr_arr = array(
-                                "monat" => "$monat",
-                                "jahr" => "$jahr"
-                            );
-                        }
-                        $monate_arr [] = $datum_jahr_arr;
-                    } // end for $monat=$monat_einzug;$monat<=12;$monat++
-                } // end if $jahr==$jahr_einzug
-
-                // Wenn Jahr aktuelles Jahr z.b 2008 d.h letztes Jahr in der Schleife
-                if ($jahr == $aktuelles_jahr) {
-                    for ($monat = 1; $monat <= $aktueller_monat; $monat++) {
-                        if ($monat < 10) {
-                            $datum_jahr_arr = array(
-                                "monat" => "0$monat",
-                                "jahr" => "$jahr"
-                            );
-                        } else {
-                            $datum_jahr_arr = array(
-                                "monat" => "$monat",
-                                "jahr" => "$jahr"
-                            );
-                        }
-                        $monate_arr [] = $datum_jahr_arr;
-                    } // end for
-                } // end if
-
-                if ($jahr != $jahr_einzug && $jahr != $aktuelles_jahr) {
-                    for ($monat = 1; $monat <= 12; $monat++) {
-                        if ($monat < 10) {
-                            $datum_jahr_arr = array(
-                                "monat" => "0$monat",
-                                "jahr" => "$jahr"
-                            );
-                        } else {
-                            $datum_jahr_arr = array(
-                                "monat" => "$monat",
-                                "jahr" => "$jahr"
-                            );
-                        }
-                        $monate_arr [] = $datum_jahr_arr;
-                    } // end for
-                } // end if
-            } // end for
-        } // end if diff=0
-        /*
-		 * echo "<pre>";
-		 * print_r($monate_arr);
-		 * echo "</pre>";
-		 */
-        return $monate_arr;
-    }
-
-    function datum_saldo_vorverwaltung($mietvertrag_id)
-    {
-        $result = DB::select("SELECT DATUM FROM MIETE_ZAHLBETRAG WHERE BEMERKUNG = 'Saldo Vortrag Vorverwaltung' && MIETVERTRAG_ID ='$mietvertrag_id' && AKTUELL = '1'");
-        return $result[0]['DATUM'];
-    } // ende function "zeitraum_arr_seit_einzug""
-} // end class zeitraum

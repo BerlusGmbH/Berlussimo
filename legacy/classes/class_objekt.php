@@ -1,29 +1,5 @@
 <?php
 class objekt {
-    /*
-     * var $sortby;
-     * var $counter;
-     * var $objekt_id;
-     * var $objekt_name;
-     * var $objekt_eigentuemer_partner_id;
-     * var $objekt_kontonummer;
-     * var $anzahl_objekte;
-     * var $anzahl_haeuser;
-     * var $objekt_geld_konto_id;
-     *
-     * ###############
-     * var $anzahl_geld_konten;
-     * var $geld_konten_arr;
-     * ###############
-     *
-     * ####
-     * var $zeilen_pro_seite;
-     * var $aktuelle_seite;
-     * var $start;
-     * var $seiten_anzahl;
-     * ####
-     * var $datum_heute;
-     */
 
     public $geld_konten_arr;
     public $anzahl_geld_konten;
@@ -880,10 +856,6 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
         $this->objekt_id = $row ['OBJEKT_ID'];
         return $this->objekt_id;
     }
-    function get_objekt_anzahl_haeuser($objekt_id) {
-        $result = DB::select( "SELECT HAUS_ID FROM HAUS WHERE HAUS_AKTUELL='1' && OBJEKT_ID='$objekt_id' ORDER BY HAUS_STRASSE, HAUS_NUMMER ASC" );
-        $this->anzahl_haeuser = $result[0];
-    }
     function liste_aller_objekte() {
         $objekte_array = DB::select( "SELECT * FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC" );
         $this->anzahl_objekte = count ( $objekte_array );
@@ -964,60 +936,5 @@ RIGHT JOIN (HAUS, OBJEKT) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID 
 WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC" );
         $anzahl = count( $result );
         return $anzahl;
-    }
-    function leerstand_vom_objekt($objekt_id) {
-
-        // objektnamen holen
-        $this->get_objekt_name ( $objekt_id );
-        $objekt_name = $this->objekt_name;
-        
-        $haeuser_arr = $this->haeuser_objekt_in_arr ( $objekt_id );
-        if (is_array ( $haeuser_arr )) {
-            for($a = 0; $a < count ( $haeuser_arr ); $a ++) {
-                $haus_info = new haus ();
-                $einheiten_arr [] = $haus_info->liste_aller_einheiten_im_haus ( $haeuser_arr [$a] ['HAUS_ID'] );
-            } // end for
-        } // end if
-        return $einheiten_arr;
-    }
-    function navi_links() {
-        $self = $_SERVER ['PHP_SELF'] . "?objekt_id=" . request()->input('objekt_id');
-        $nav = '';
-        if (isset ( $_GET ['page'] )) {
-            $this->aktuelle_seite = $_GET ['page'];
-        }
-        for($page = 1; $page <= $this->seiten_anzahl; $page ++) {
-            if ($page == $this->aktuelle_seite) {
-                $nav .= " $page ";
-                // no need to create a link to current page
-            } else {
-                $nav .= " <a href=\"$self&page=$page\">$page</a> ";
-            }
-        }
-
-        if ($this->aktuelle_seite > 1) {
-            $page = $this->aktuelle_seite - 1;
-            $prev = " <a href=\"$self&page=$page\">[Prev]</a> ";
-
-            $first = " <a href=\"$self&page=1\">[First Page]</a> ";
-        } else {
-            $prev = '&nbsp;';
-            // we're on page one, don't print previous link
-            $first = '&nbsp;';
-            // nor the first page link
-        }
-
-        if ($this->aktuelle_seite < $this->seiten_anzahl) {
-            $page = $this->aktuelle_seite + 1;
-            $next = " <a href=\"$self&page=$page\">[Next]</a> ";
-
-            $last = " <a href=\"$self&page=$this->seiten_anzahl\">[Last Page]</a> ";
-        } else {
-            $next = '&nbsp;';
-            // we're on the last page, don't print next link
-            $last = '&nbsp;';
-            // nor the last page link
-        }
-        echo $first . $prev . $nav . $next . $last;
     }
 } // end class objekt

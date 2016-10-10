@@ -309,7 +309,7 @@ OR  `LAND` LIKE  '%$suchtext%'
 
     /* Letzte Partnergeldkonto ID */
 
-function partner_speichern($clean_arr)
+    function partner_speichern($clean_arr)
     {
         foreach ($clean_arr as $key => $value) {
             $partnername = $clean_arr ['partnername'];
@@ -392,25 +392,7 @@ function partner_speichern($clean_arr)
         $row = $result[0];
         return $row ['PARTNER_ID'];
     }
-
-    /* Letzte Parner Zuweisunggeldkonto ID */
-
-    function letzte_geldkonto_id()
-    {
-        $result = DB::select("SELECT KONTO_ID FROM GELD_KONTEN ORDER BY KONTO_ID DESC LIMIT 0,1");
-        $row = $result[0];
-        return $row ['KONTO_ID'];
-    }
-
-    /* Anzeige der Partnerliste rechts senkrecht */
-
-    function letzte_zuweisung_geldkonto_id()
-    {
-        $result = DB::select("SELECT ZUWEISUNG_ID FROM GELD_KONTEN_ZUWEISUNG ORDER BY ZUWEISUNG_ID DESC LIMIT 0,1");
-        $row = $result[0];
-        return $row ['ZUWEISUNG_ID'];
-    }
-
+    
     /* Alle Partner in ein array laden */
 
     function letzte_konto_geldkonto_id_p($partner_id)
@@ -591,7 +573,7 @@ GROUP BY  `AUSSTELLER_TYP` ,  `AUSSTELLER_ID`
 ORDER BY SUM( BRUTTO ) DESC 
 LIMIT 0 , 80");
         if (!empty($result)) {
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $this->get_partner_name($row ['AUSSTELLER_ID']);
                 $row ['PARTNER_NAME'] = $this->partner_name;
             }
@@ -649,7 +631,7 @@ LIMIT 0 , 80");
 
             echo "<div class='col l3'>";
             if (session()->has('p_ids') && in_array($p_id, session()->get('p_ids'))) {
-                $f->check_box_js1('p_ids[]', 'p_id_'. $p_id, $p_id, "$p_name", '', 'checked');
+                $f->check_box_js1('p_ids[]', 'p_id_' . $p_id, $p_id, "$p_name", '', 'checked');
             } else {
                 $f->check_box_js1('p_ids[]', 'p_id_' . $p_id, $p_id, "$p_name", '', '');
             }

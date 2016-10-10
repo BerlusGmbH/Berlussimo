@@ -103,56 +103,6 @@ class buchen
         }
     }
 
-    function arrayColumnSort()
-    {
-        $args = func_get_args();
-        $array = array_pop($args);
-        if (!is_array($array))
-            return false;
-        // Here we'll sift out the values from the columns we want to sort on, and put them in numbered 'subar' ("sub-array") arrays.
-        // (So when sorting by two fields with two modifiers (sort options) each, this will create $subar0 and $subar3)
-        foreach ($array as $key => $row) // loop through source array
-            foreach ($args as $akey => $val) // loop through args (fields and modifiers)
-                if (is_string($val)) // if the arg's a field, add its value from the source array to a sub-array
-                    ${"subar$akey"} [$key] = $row [$val];
-        // $multisort_args contains the arguments that would (/will) go into array_multisort(): sub-arrays, modifiers and the source array
-        $multisort_args = array();
-        foreach ($args as $key => $val)
-            $multisort_args [] = (is_string($val) ? ${"subar$key"} : $val);
-        $multisort_args [] = &$array; // finally add the source array, by reference
-        call_user_func_array("array_multisort", $multisort_args);
-        return $array;
-    }
-
-    function geldkonto_auswahl_menu($link)
-    {
-        if (session()->has('geldkonto_id')) {
-            session()->put('geldkonto_id', request()->input('geldkonto_id'));
-        }
-
-        if (session()->has('geldkonto_id')) {
-            $aendern_link = "<a href='" . route('legacy::buchen::index', ['option' => 'geldkonto_aendern']) . "'>Geldkonto ändern</a>";
-            $this->akt_konto_bezeichnung = $this->geld_konto_bezeichung(session()->get('geldkonto_id'));
-            echo "Ausgewähltes Geldkonto -> $this->akt_konto_bezeichnung $aendern_link<br>";
-            $geld = new geldkonto_info ();
-            $kontostand_aktuell = nummer_punkt2komma($geld->geld_konto_stand(session()->get('geldkonto_id')));
-        }
-        if (!session()->has('geldkonto_id')) {
-            echo "Geldkonto wählen<br>";
-            $geld_konten_arr = $this->alle_geldkonten_arr();
-            $anzahl_objekte = count($geld_konten_arr);
-            if (is_array($geld_konten_arr)) {
-                echo "<p class=\"geldkonto_auswahl\">";
-                for ($i = 0; $i <= $anzahl_objekte; $i++) {
-                    echo "<a class=\"objekt_auswahl_buchung\" href=\"$link&geldkonto_id=" . $geld_konten_arr [$i] ['KONTO_ID'] . "\">" . $geld_konten_arr [$i] ['BEZEICHNUNG'] . "</a>&nbsp;<br>";
-                }
-                echo "</p>";
-            } else {
-                echo "Keine Geldkonten";
-            }
-        }
-    }
-
     function dropdown_ra_buch($kos_typ, $kos_id, $anzahl = 100, $rnr_kurz)
     {
         $r = new rechnungen ();
@@ -2098,74 +2048,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         $pdf_opt ['Content-Disposition'] = $gk_bez;
         $pdf->ezStream($pdf_opt);
     }
-
-    function kontobuchungen_pdf($geldkonto_id, $kostenkonto, $jahr, $monat)
-    {
-        if ($monat == '') {
-            $result = DB::select("SELECT DATUM, BETRAG, VERWENDUNGSZWECK FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y' ) = '$jahr') && AKTUELL='1' ORDER BY GELD_KONTO_BUCHUNGEN_ID DESC");
-        } else {
-            $result = DB::select("SELECT DATUM, BETRAG, VERWENDUNGSZWECK FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y-%m' ) = '$jahr-$monat') && AKTUELL='1' ORDER BY GELD_KONTO_BUCHUNGEN_ID DESC");
-        }
-
-        $numrows = count($result);
-        if ($numrows > 0) {
-            $k = new kontenrahmen ();
-            $k->konto_informationen($kostenkonto);
-
-            /* PDF */
-            $pdf = new Cezpdf ('a4', 'portrait');
-            $pdf->ezSetCmMargins(4.5, 2.5, 2.5, 2.5);
-            $berlus_schrift = './fonts/Times-Roman.afm';
-            $text_schrift = './fonts/Arial.afm';
-            $pdf->addJpegFromFile('includes/logos/hv_logo198_80.jpg', 450, 780, 100, 42);
-            $pdf->setLineStyle(0.5);
-            $pdf->selectFont($berlus_schrift);
-            $pdf->addText(42, 743, 6, "BERLUS HAUSVERWALTUNG - Fontanestr. 1 - 14193 Berlin");
-            $pdf->line(42, 750, 550, 750);
-            $seite = $pdf->ezGetCurrentPageNumber();
-            $alle_seiten = $pdf->ezPageCount;
-            $pdf->addText(70, 780, 12, "Kostenkonto $kostenkonto");
-
-            foreach($result as $row) {
-                $datum = date_mysql2german($row ['DATUM']);
-                $betrag = nummer_punkt2komma($row ['BETRAG']);
-                $vzweck = $this->umlaute_anpassen(ltrim(rtrim($row ['VERWENDUNGSZWECK'])));
-                $this->summe_kontobuchungen_jahr($geldkonto_id, $kostenkonto, $jahr);
-                echo "<tr></td><td>$datum</td><td>$erfass_nr</td><td>$betrag</td><td>$b_id</td><td>$vzweck</td></tr><br>";
-                $pdf->ezText("$datum", 10, array(
-                    'left' => '0'
-                ));
-                if (strlen($vzweck) > '60') {
-                    $pdf->ezText("$vzweck", 10, array(
-                        'left' => '60'
-                    ));
-                    // $pdf->ezSetDy(-12); //abstand
-                } else {
-                    $pdf->ezText("$vzweck", 10, array(
-                        'left' => '60'
-                    ));
-                }
-                $pdf->ezText("$betrag", 10, array(
-                    'left' => '430'
-                ));
-                $pdf->ezSetDy(-12); // abstand
-            }
-
-            $content = $pdf->output();
-
-            $dateiname_org = 'Kontenbericht';
-            $path = Storage::disk('kontenberichte')->basePath();
-            $dateiname = $this->save_file($dateiname_org, $path, $geldkonto_id, $content, $monat, $jahr);
-
-            // weiterleiten($dateiname);
-            $download_link = "<h3><a href=\"$dateiname\">Monatsbericht $geldkonto_id für $monat/$jahr HIER</a></h3>";
-
-            echo $download_link;
-        } else {
-            // echo "Geldkonto $geldkonto_id - Kostenkonto $kostenkonto leer<br>";
-        }
-    }
-
+    
     function umlaute_anpassen($str)
     {
         $str = str_replace('ä', 'ae', $str);
@@ -2662,31 +2545,7 @@ LIMIT 0 , 1");
             $this->summe_konto_buchungen = 0;
         }
     }
-
-    /* Speichern von PDF_datei */
-
-    function summe_kontobuchungen_dyn3($geldkonto_id, $monat, $jahr, $bet = null)
-    {
-        if ($bet == null) {
-            $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM,'%Y-%m')='$jahr-$monat' && AKTUELL='1'");
-        }
-        if ($bet == '-') {
-            $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM,'%Y-%m')='$jahr-$monat' && AKTUELL='1' && BETRAG<0");
-        }
-
-        if ($bet == '+') {
-            $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM,'%Y-%m')='$jahr-$monat' && AKTUELL='1' && BETRAG>0");
-        }
-
-        $numrows = count($result);
-        if ($numrows) {
-            $row = $result[0];
-            return number_format($row ['SUMME'], 2, '.', '');
-        } else {
-            return number_format('0.00', 2, '.', '');
-        }
-    }
-
+    
     function monatsbericht_ohne_ausgezogene()
     {
         echo "<h5>Aktuelle Mieterstatistik ohne ausgezogene Mieter<br></h5>";

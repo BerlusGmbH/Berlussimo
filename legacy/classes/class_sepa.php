@@ -2,58 +2,6 @@
 
 class sepa
 {
-    function get_iban_bicALTFALSCH($konto_nr, $blz, $land = 'DE')
-    {
-        $this->BIC = '';
-        $this->IBAN = '';
-        $this->IBAN1 = '';
-        $this->BANKNAME = '';
-        $this->BANKNAME_K = '';
-        if ($land == 'DE') {
-            if (!is_numeric($blz) or !is_numeric($konto_nr)) {
-                $this->BIC = ' ';
-                $this->IBAN = ' ';
-                $this->IBAN1 = '  ';
-                return;
-            }
-
-            $result = DB::select("SELECT * FROM `BLZ` WHERE `BLZ` ='$blz' LIMIT 0 , 1");
-            if (!empty($result)) {
-                $row = $result[0];
-                $konto_info = ( object )$row;
-                $this->BIC = $konto_info->BIC;
-                $this->BANKNAME = $konto_info->BEZEICHNUNG;
-                $this->BANKNAME_K = $konto_info->KURZ_BEZ;
-
-                // BBAN: 8-stellige BLZ plus 10-stellige Kontonummer (ggf. führende Nullen hinzufügen)
-                $iban_str = str_pad($blz, 8, "0", STR_PAD_LEFT) . str_pad($konto_nr, 10, "0", STR_PAD_LEFT);
-                // Länderkennzahl:
-                // - Position des Buchstaben im Alphabet plus 9 --> A = 10, B = 11 etc.
-                // - In der ASCII-Tabelle befinden sich Großbuchstaben an den Positionen 65 bis 90. Es wird also die ASCII-Position der Buchstaben ausgelesen und das Ergebnis minus 64 plus 9 (=55) gerechnet
-                // - An die vierstellige Länderkennzahl werden zwei Nullen angehängt.
-                $land_num = strval(ord(substr($land, 0, 1)) - 55) . strval(ord(substr($land, 1, 1)) - 55) . "00";
-
-                // Modulus 97 der aneinandergehängten BBAN und Länderkennzahl ergibt die Prüfzahl als Teil der IBAN:
-                $pz = str_pad(98 - intval(bcmod($iban_str . $land_num, "97")), 2, "0", STR_PAD_LEFT);
-
-                // Die IBAN setzt sich wie folgt zusammen:
-                $iban = $land . $pz . $iban_str;
-
-                // echo "Die IBAN zum angegebenen Konto lautet \"".$iban."\"";
-
-                $iban_1 = chunk_split($iban, 4, ' ');
-                $this->IBAN = $iban;
-                $this->IBAN1 = $iban_1;
-                // $this->pruefziffer($konto_nr);
-            }
-            return true;
-        } else {
-            $this->BIC = $land;
-            $this->IBAN = $land;
-            $this->IBAN1 = $land;
-        }
-    }
-
     function test_sepa()
     {
         $this->import_dtaustn();
@@ -75,7 +23,7 @@ class sepa
         if (!empty($result)) {
             $arr = Array();
             $z = 0;
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $mieter = ( object )$row;
                 $mv_id = $mieter->DETAIL_ZUORDNUNG_ID;
                 $mv = new mietvertraege ();
@@ -145,18 +93,6 @@ class sepa
         return !empty($result);
     }
 
-    function iban_to_human_format($iban)
-    {
-        $human_iban = '';
-        for ($i = 0; $i < strlen($iban); $i++) {
-            $human_iban .= substr($iban, $i, 1);
-            if (($i > 0) && (($i + 1) % 4 == 0)) {
-                $human_iban .= ' ';
-            }
-        }
-        return $human_iban;
-    }
-
     function alle_mandate_anzeigen_kurz($nutzungsart = 'Alle')
     {
         if (!session()->has('geldkonto_id') && $nutzungsart != 'Alle') {
@@ -183,7 +119,7 @@ class sepa
                 $summe_ziehen_alle = 0.00;
                 $summe_saldo_alle = 0.00;
                 $summe_diff_alle = 0.00;
-                foreach($result as $row) {
+                foreach ($result as $row) {
                     $z++;
                     $zz++; // Zeile
 
@@ -227,7 +163,7 @@ class sepa
                 $summe_ziehen_alle = 0.00;
                 $summe_saldo_alle = 0.00;
                 $summe_diff_alle = 0.00;
-                foreach($result as $row) {
+                foreach ($result as $row) {
                     $z++;
                     $mand = ( object )$row;
                     $mand->IBAN1 = chunk_split($mand->IBAN, 4, ' ');
@@ -339,7 +275,7 @@ class sepa
                 $summe_ziehen_alle = 0.00;
                 $summe_saldo_alle = 0.00;
                 $summe_diff_alle = 0.00;
-                foreach($result as $row) {
+                foreach ($result as $row) {
                     $z++;
                     $zz++; // Zeile
 
@@ -1404,11 +1340,6 @@ class sepa
         }
     }
 
-    /*
-	 * UPDATE SEPA_MANDATE_SEQ dest, (SELECT M_REFERENZ, IBAN FROM SEPA_MANDATE WHERE AKTUELL='1') src
-	 * SET dest.IBAN = src.IBAN WHERE AKTUELL='1' && dest.M_REFERENZ = src.M_REFERENZ
-	 */
-
     function iban_checksum_string_replace($string)
     {
         $iban_replace_chars = range('A', 'Z');
@@ -1530,22 +1461,6 @@ class sepa
         }
         $return .= " on line <b>$error->line</b><br>";
         return $return;
-    }
-
-    /* IBM */
-
-    function hed(&$doc, $a)
-    {
-        $root->appendChild($secondNode = $doc->createElement("PmtInf"));
-        $secondNode->appendChild($doc->createElement("PmtInfId", "Einzug.2013-09"));
-        $secondNode->appendChild($doc->createElement("PmtMtd", "Einzug.2013-09"));
-        $secondNode->appendChild($doc->createElement("NbOfTxs", "Einzug.2013-09"));
-        $secondNode->appendChild($doc->createElement("CtrlSum", "Einzug.2013-09"));
-    }
-
-    function xxm()
-    {
-        $this->start('sdhasjd', '2014-02-02', 11, '112112');
     }
 
     function start($MsgId, $CreDtTm, $NbOfTxs, $CtrlSum)
@@ -2808,9 +2723,6 @@ AND  `AKTUELL` =  '1'");
             if ($zahler_iban) {
                 $gk2 = new gk ();
                 $gk2->get_kos_by_iban($zahler_iban);
-                // echo "IBAN $zahler_iban";
-                // echo '<pre>';
-                // print_r($gk2);
                 if (isset ($gk2->iban_kos_typ) && isset ($gk2->iban_kos_typ)) {
                     session()->put('kos_typ', $gk2->iban_kos_typ);
                     session()->put('kos_id', $gk2->iban_kos_id);

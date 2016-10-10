@@ -775,23 +775,6 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
         $f->fieldset_ende();
     }
 
-    function dropdown_ja_nein($label, $name, $id, $vorgabe)
-    {
-        echo "<label for=\"$id\">$label</label><select name=\"$name\" id=\"$id\" size=1 >\n";
-        if ($vorgabe == 'ja') {
-            echo "<option value=\"ja\" selected>ja</option>\n";
-        } else {
-            echo "<option value=\"ja\">ja</option>\n";
-        }
-
-        if ($vorgabe == 'nein') {
-            echo "<option value=\"nein\" selected>nein</option>\n";
-        } else {
-            echo "<option value=\"nein\">nein</option>\n";
-        }
-        echo "</select>\n";
-    }
-
     function expose_aktualisieren($einheit_id, $zimmer, $balkon, $expose_bk, $expose_km, $expose_hk, $heizungsart, $expose_frei, $besichtigungsdatum, $uhrzeit)
     {
         // echo "$einheit_id, $zimmer, $balkon, $expose_bk, $expose_km, $heizungsart, $expose_frei, $besichtigungsdatum, $uhrzeit";

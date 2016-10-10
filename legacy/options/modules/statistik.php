@@ -186,10 +186,6 @@ switch ($option) {
         $f = new formular ();
         $f->erstelle_formular("Baustelenübersicht", NULL);
         $s->baustellen_leistung('Einheit', '166', 25, '2009-11-01', '2009-11-31', 'Plötzer Sansi 53');
-        // $s->baustellen_leistung('Einheit', '168', 25);
-        // $s->baustellen_leistung('Einheit', '304', 25);
-        // $s->baustellen_leistung('Einheit', '32', 25);
-        // $s->baustellen_leistung('Einheit', '368', 25);
         $s->baustellen_leistung('Einheit', '368', 25, '2010-04-12', '2010-05-30', 'Laßnack Badsanierung MODs');
         $f->ende_formular();
 

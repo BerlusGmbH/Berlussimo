@@ -11,9 +11,6 @@ class partner extends rechnung {
     var $rechnungs_empfaenger_hausnr;
     var $rechnungs_empfaenger_plz;
     var $rechnungs_empfaenger_ort;
-    function get_partner_konto_id($partner_id) {
-        return $partner_id;
-    }
 
     function get_aussteller_info($partner_id) {
         $result = DB::select( "SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'" );
@@ -254,33 +251,6 @@ class partner extends rechnung {
         }
         echo "</select><label for=\"$id\">$label</label>";
         echo "<div><br>\n";
-    }
-    function partner_liste() {
-        $partner_arr = $this->partner_in_array ();
-        echo "<table class=\"sortable\">";
-        // echo "<tr class=\"feldernamen\"><td width=\"200px\">Name</td><td>Anschrift</td><td>Details</td></tr>";
-        echo "<tr><th>Partner</th><th>Anschrift</th><th>Details</th></tr>";
-        $zaehler = 0;
-        for($a = 0; $a < count ( $partner_arr ); $a ++) {
-            $zaehler ++;
-            $partner_id = $partner_arr [$a] ['PARTNER_ID'];
-            $partner_name = $partner_arr [$a] ['PARTNER_NAME'];
-            $partner_link_detail = "<a href='" . route('legacy::partner::index', ['option' => 'partner_im_detail', 'partner_id' => $partner_id]) . "'>$partner_name</a>";
-            $link_detail_hinzu = "<a href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'PARTNER_LIEFERANT', 'detail_id' => $partner_id]) . "'>Details</a>";
-            $partner_strasse = $partner_arr [$a] ['STRASSE'];
-            $partner_nr = $partner_arr [$a] ['NUMMER'];
-            $partner_plz = $partner_arr [$a] ['PLZ'];
-            $partner_ort = $partner_arr [$a] ['ORT'];
-            $anschrift = "$partner_strasse $partner_nr, $partner_plz $partner_ort";
-            if ($zaehler == 1) {
-                echo "<tr valign=\"top\" class=\"zeile1\"><td>$partner_link_detail</td><td>$anschrift</td><td>$link_detail_hinzu</td></tr>";
-            }
-            if ($zaehler == 2) {
-                echo "<tr valign=\"top\" class=\"zeile2\"><td>$partner_link_detail</td><td>$anschrift</td><td>$link_detail_hinzu</td></tr>";
-                $zaehler = 0;
-            }
-        }
-        echo "</table><br>\n";
     }
     function partner_auswahl() {
         session()->put('url.intended', URL::previous());

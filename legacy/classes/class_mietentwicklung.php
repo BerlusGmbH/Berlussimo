@@ -56,26 +56,6 @@ class mietentwicklung
         $this->mietvertrag_von = $row ['MIETVERTRAG_VON'];
     }
 
-    /* Liefert ein Array und $this->nebenkosten_gesamt_jahr */
-
-    function nebenkosten_aufstellung_jahr_arr($mv_id, $jahr)
-    {
-        $result = DB::select("SELECT NEW_ANFANG, NEW_ENDE, KOSTENKATEGORIE, BETRAG, DATE_FORMAT(NEW_ENDE,'%m') - DATE_FORMAT(NEW_ANFANG,'%m') + 1  AS MONATE
-
-
- FROM(
-SELECT KOSTENKATEGORIE, BETRAG, ANFANG, ENDE, 
-IF( ANFANG <= '$jahr-01-01', '$jahr-01-01', ANFANG) AS NEW_ANFANG, 
- IF( ENDE = '0000-00-00' OR ENDE >='$jahr-12-31', '$jahr-12-31', ENDE) AS NEW_ENDE
-
-
-FROM MIETENTWICKLUNG
-WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `KOSTENTRAEGER_ID` = '$mv_id') as t1 WHERE DATE_FORMAT(NEW_ANFANG, '%Y') = '$jahr' && DATE_FORMAT(NEW_ENDE, '%Y') = '$jahr' && NEW_ANFANG!=NEW_ENDE && KOSTENKATEGORIE != 'Miete kalt' && KOSTENKATEGORIE != 'Ratenzahlung' && KOSTENKATEGORIE != 'MOD'");
-
-        $this->nebenkosten_gesamt_jahr = 0.00;
-        return $result;
-    }
-
     function gesamtsumme_nebenkosten_jahr($mv_id, $jahr, $kostenkat)
     {
         $this->nebenkosten_gesamt_jahr = '0.00';
@@ -106,116 +86,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
         $this->nebenkosten_gesamt_jahr = 0.00;
         return $result;
     }
-
-    function nebenkosten_monatlich($mietvertrag_id, $monat, $jahr)
-    {
-        $result = DB::select("SELECT BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat'  && KOSTENKATEGORIE='Nebenkosten Vorauszahlung' ORDER BY ANFANG DESC LIMIT 0,1");
-        if (!empty($result)) {
-            $row = $result[0];
-            return $row ['BETRAG'];
-        }
-    }
-
-    function set_datum_block_e()
-    {
-        $my_arr = DB::select("SELECT ANFANG, EINHEIT_KURZNAME, MIETENTWICKLUNG.KOSTENTRAEGER_ID FROM `MIETENTWICKLUNG` JOIN (MIETVERTRAG, EINHEIT) ON (MIETENTWICKLUNG.MIETVERTRAG_ID = MIETVERTRAG.MIETVERTRAG_ID && MIETVERTRAG.EINHEIT_ID = EINHEIT.EINHEIT_ID) WHERE ANFANG<'2008-03-01' && EINHEIT.EINHEIT_KURZNAME LIKE '%E-%' && KOSTENTRAEGER_TYP='Mietvertrag'");
-        $numrows = count($my_arr);
-        for ($a = 0; $a < $numrows; $a++) {
-            echo $my_arr [$a] ['KOSTENTRAEGER_ID'];
-            $e_mv_id = $my_arr [$a] ['KOSTENTRAEGER_ID'];
-            DB::update("UPDATE MIETENTWICKLUNG SET ANFANG='2008-03-01' WHERE MIETVERTRAG_ID='$e_mv_id'");
-        }
-    }
-
-    function update_bk_hk_datum()
-    {
-        DB::update("UPDATE MIETENTWICKLUNG SET ANFANG=ENDE WHERE KOSTENKATEGORIE LIKE '%abrechnung%' && KOSTENTRAEGER_TYP='Mietvertrag'");
-    }
-
-    function set_datum_andere()
-    {
-        $my_arr = DB::select("SELECT ANFANG, EINHEIT_KURZNAME, MIETENTWICKLUNG.KOSTENTRAEGER_ID FROM `MIETENTWICKLUNG` JOIN (MIETVERTRAG, EINHEIT) ON (MIETENTWICKLUNG.MIETVERTRAG_ID = MIETVERTRAG.MIETVERTRAG_ID && MIETVERTRAG.EINHEIT_ID = EINHEIT.EINHEIT_ID) WHERE ANFANG<'2007-01-01' && EINHEIT.EINHEIT_KURZNAME NOT LIKE '%E-%'");
-        $numrows = count($my_arr);
-        for ($a = 0; $a < $numrows; $a++) {
-            echo $my_arr [$a] ['KOSTENTRAEGER_ID'];
-            $e_mv_id = $my_arr [$a] ['KOSTENTRAEGER_ID'];
-            DB::update("UPDATE MIETENTWICKLUNG SET ANFANG='2007-01-01' WHERE MIETVERTRAG_ID='$e_mv_id'");
-        }
-    }
-
-    function mietentwicklung_anzeigen_OK($mietvertrag_id)
-    {
-        $db_abfrage = "SELECT MIETENTWICKLUNG.MIETENTWICKLUNG_DAT, MIETENTWICKLUNG.KOSTENTRAEGER_ID, EINHEIT.EINHEIT_KURZNAME, MIETENTWICKLUNG.KOSTENKATEGORIE, MIETENTWICKLUNG.ANFANG, MIETENTWICKLUNG.ENDE, MIETENTWICKLUNG.BETRAG, MIETENTWICKLUNG.MWST_ANTEIL FROM `MIETENTWICKLUNG` JOIN (MIETVERTRAG, EINHEIT) ON (MIETENTWICKLUNG.KOSTENTRAEGER_ID = MIETVERTRAG.MIETVERTRAG_ID && MIETVERTRAG.EINHEIT_ID = EINHEIT.EINHEIT_ID ) WHERE MIETENTWICKLUNG.KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENTRAEGER_TYP='Mietvertrag' GROUP BY MIETENTWICKLUNG_DAT ORDER BY KOSTENKATEGORIE ASC, ANFANG ASC LIMIT 0,30";
-        $my_arr = DB::select($db_abfrage);
-        $buchung = new mietkonto ();
-        echo "<table class=\"sortable\">";
-        echo "<tr><th>Einheit</th><th>Beginn</th><th>Ende</th><th>Kostenkategorie</th><th align=right>Betrag</th><th>MWST-Anteil</th><th>Optionen</th>";
-        $numrows = count($my_arr);
-        for ($a = 0; $a < $numrows; $a++) {
-            $me_dat = $my_arr [$a] ['MIETENTWICKLUNG_DAT'];
-            $e_mv_id = $my_arr [$a] ['KOSTENTRAEGER_ID'];
-            $e_kurzname = $my_arr [$a] ['EINHEIT_KURZNAME'];
-            $kostenkat = $my_arr [$a] ['KOSTENKATEGORIE'];
-            $betrag = $my_arr [$a] ['BETRAG'];
-            $betrag = number_format($betrag, 2, ",", "");
-            $mwst_anteil = $my_arr [$a] ['MWST_ANTEIL'];
-            $mwst_anteil_a = nummer_punkt2komma($mwst_anteil);
-            $anfang = $my_arr [$a] ['ANFANG'];
-            $anfang = $buchung->date_mysql2german($anfang);
-            $ende = $my_arr [$a] ['ENDE'];
-            $ende = $buchung->date_mysql2german($ende);
-            $aendern_link = "<a href='" . route('legacy::miete_definieren::index', ['option' => 'aendern', 'mietvertrag_id' => $e_mv_id, 'aendern_dat' => $me_dat]) . "'>Ändern</a>";
-            $loeschen_link = "<a href='" . route('legacy::miete_definieren::index', ['option' => 'me_loeschen', 'mietvertrag_id' => $e_mv_id, 'me_dat' => $me_dat]) . "'>Löschen</a>";
-            if ($ende == '00.00.0000') {
-                $ende = 'unbefristet';
-            }
-            echo "<tr class=\"zeile1\"><td>$e_kurzname</td><td>$anfang</td><td>$ende </td><td>$kostenkat</td><td align=right>$betrag €</td><td>$mwst_anteil_a</td><td>$aendern_link $loeschen_link</td></tr>";
-        }
-        echo "</table>";
-    }
-
-    function mietentwicklung_anzeigen_n1($mietvertrag_id)
-    {
-        $db_abfrage = "SELECT KOSTENKATEGORIE FROM `MIETENTWICKLUNG`  WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL='1' && ENDE='0000-00-00' GROUP BY KOSTENKATEGORIE ORDER BY KOSTENKATEGORIE ";
-        $result = DB::select($db_abfrage);
-
-        foreach($result as $row) {
-            $kos_kat = $row ['KOSTENKATEGORIE'];
-            echo "<table class=\"sortable\">";
-            echo "<thead><tr><th colspan=\"5\">$kos_kat</th></tr></thead>";
-            echo "<tbody><tr><th>Beginn</th><th>Ende</th><th align=\"right\">Betrag</th><th>MWST-Anteil</th><th>Optionen</th></tr>";
-
-            $db_abfrage1 = "SELECT * FROM `MIETENTWICKLUNG`  WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL='1' && KOSTENKATEGORIE='$kos_kat' ORDER BY ANFANG";
-            $result1 = DB::select($db_abfrage1);
-
-            foreach($result1 as $row1) {
-                $me_dat = $row1 ['MIETENTWICKLUNG_DAT'];
-                $e_mv_id = $row1 ['KOSTENTRAEGER_ID'];
-                $kostenkat = $row1 ['KOSTENKATEGORIE'];
-                $betrag = $row1 ['BETRAG'];
-                $betrag = number_format($betrag, 2, ",", "");
-                $mwst_anteil = $row1 ['MWST_ANTEIL'];
-                $mwst_anteil_a = nummer_punkt2komma($mwst_anteil);
-                $anfang = $row1 ['ANFANG'];
-                $anfang = date_mysql2german($anfang);
-                $ende = $row1 ['ENDE'];
-                $ende = date_mysql2german($ende);
-
-                $aendern_link = "<a href='" . route('legacy::miete_definieren::index', ['option' => 'aendern', 'mietvertrag_id' => $e_mv_id, 'aendern_dat' => $me_dat]) . "'>Ändern</a>";
-                $loeschen_link = "<a href='" . route('legacy::miete_definieren::index', ['option' => 'me_loeschen', 'mietvertrag_id' => $e_mv_id, 'me_dat' => $me_dat]) . "'>Löschen</a>";
-                if ($ende == '00.00.0000') {
-                    $ende = 'unbefristet';
-                    $css_class = "zeile2";
-                } else {
-                    $css_class = "zeile1";
-                }
-                echo "<tr class=\"$css_class\"><td>$anfang</td><td>$ende </td><td align=right>$betrag €</td><td>$mwst_anteil_a</td><td>$aendern_link $loeschen_link</td></tr>";
-            } // end while 2
-
-            echo "</tbody></table>";
-        } // end while 1
-    }
-
+    
     function mietentwicklung_anzeigen($mietvertrag_id)
     {
         $mvs = new mietvertraege ();
@@ -714,30 +585,6 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
         DB::update($db_abfrage);
     }
 
-    function alle_letzten_kaltmieten_arr()
-    {
-        DB::statement("SET OPTION SQL_BIG_SELECTS=1");
-        $db_abfrage = "SELECT ANFANG, ENDE, EINHEIT_KURZNAME, EINHEIT.EINHEIT_ID, MIETENTWICKLUNG.MIETVERTRAG_ID, KOSTENKATEGORIE, BETRAG FROM `MIETENTWICKLUNG` JOIN (MIETVERTRAG, EINHEIT) ON (MIETENTWICKLUNG.MIETVERTRAG_ID = MIETVERTRAG.MIETVERTRAG_ID && MIETVERTRAG.EINHEIT_ID = EINHEIT.EINHEIT_ID) WHERE KOSTENKATEGORIE='Miete kalt' && MIETENTWICKLUNG_AKTUELL='1' GROUP BY EINHEIT_KURZNAME ORDER BY `EINHEIT`.`EINHEIT_KURZNAME` ASC";
-        $result = DB::select($db_abfrage);
-        return $result;
-    }
-
-    function alle_letzten_nebenkosten_arr()
-    {
-        DB::statement("SET OPTION SQL_BIG_SELECTS=1");
-        $db_abfrage = "SELECT ANFANG, ENDE, EINHEIT_KURZNAME, EINHEIT.EINHEIT_ID, MIETENTWICKLUNG.MIETVERTRAG_ID, KOSTENKATEGORIE, BETRAG FROM `MIETENTWICKLUNG` JOIN (MIETVERTRAG, EINHEIT) ON (MIETENTWICKLUNG.MIETVERTRAG_ID = MIETVERTRAG.MIETVERTRAG_ID && MIETVERTRAG.EINHEIT_ID = EINHEIT.EINHEIT_ID) WHERE KOSTENKATEGORIE='Nebenkosten Vorauszahlung' && MIETENTWICKLUNG_AKTUELL='1' GROUP BY EINHEIT_KURZNAME ORDER BY `EINHEIT`.`EINHEIT_KURZNAME` ASC";
-        $result = DB::select($db_abfrage);
-        return $result;
-    }
-
-    function alle_letzten_heizkosten_arr()
-    {
-        DB::statement("SET OPTION SQL_BIG_SELECTS=1");
-        $db_abfrage = 'SELECT ANFANG, ENDE, EINHEIT_KURZNAME, EINHEIT.EINHEIT_ID, MIETENTWICKLUNG.MIETVERTRAG_ID, KOSTENKATEGORIE, BETRAG FROM `MIETENTWICKLUNG` JOIN (MIETVERTRAG, EINHEIT) ON (MIETENTWICKLUNG.MIETVERTRAG_ID = MIETVERTRAG.MIETVERTRAG_ID && MIETVERTRAG.EINHEIT_ID = EINHEIT.EINHEIT_ID) WHERE KOSTENKATEGORIE=\'Heizkosten Vorauszahlung\' && MIETENTWICKLUNG_AKTUELL=\'1\' GROUP BY EINHEIT_KURZNAME ORDER BY `EINHEIT`.`EINHEIT_KURZNAME` ASC';
-        $result = DB::select($db_abfrage);
-        return $result;
-    }
-
     function mieterlisten_kostenkat($kosten_kat)
     {
         $db_abfrage = "SELECT KOSTENKATEGORIE, ANFANG, ENDE, BETRAG, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, MIETVERTRAG.EINHEIT_ID, EINHEIT_KURZNAME
@@ -763,57 +610,7 @@ AND `MIETENTWICKLUNG_AKTUELL` = '1' && `MIETVERTRAG_AKTUELL` = '1' && `EINHEIT_A
             echo "Keine Mietdefinition zu $kosten_kat";
         }
     }
-
-    function form_staffel($mv_id)
-    {
-        $f = new formular ();
-        echo "<table>";
-        echo "<tr><th>MIETE</th><th>Anfang</th><th>Endjahr</th><th>Betrag</th><th>Prozent oder Betrag</th><th>MWST</th></tr>";
-        echo "<tr><th colspan=\"6\">";
-        $js_staffel = "onclick=\"staffel_berechnen('anfang', 'endjahr', 'betrag', 'prozent_betrag', 'mwst')\"";
-        $f->button_js('berechnen_stf', 'Staffel berechnen', $js_staffel);
-        echo "</th></tr>";
-        echo "<tr>";
-        $form = new mietkonto ();
-
-        echo "<td>";
-        if (!session()->has('me_kostenkat')) {
-            session()->put('me_kostenkat', 'Miete kalt');
-        }
-        $form->dropdown_me_kostenkategorien('Kostenkategorie auswählen', 'kostenkategorie[]', session()->get('me_kostenkat'));
-        echo "</td>";
-        if (session()->has('a_datum')) {
-            $a_datum = session()->get('a_datum');
-        } else {
-            $a_datum = date("d.m.Y");
-        }
-
-        if (session()->has('e_datum')) {
-            $e_datum = session()->get('e_datum');
-        } else {
-            $e_datum = '';
-        }
-
-        echo "<td>";
-        $f->datum_feld('Anfang', 'anfang[]', $a_datum, 'anfang');
-        echo "</td><td>";
-        $jj10 = date("Y") + 10;
-
-        $form->text_feld('Endjahr', 'endjahr', $jj10, '4');
-        echo "</td><td>";
-        $form->text_feld('Betrag', 'betrag', '500,00', '10');
-        echo "</td><td>";
-        $form->text_feld('prozent_betrag', 'prozent_betrag', '3%', '10');
-        echo "</td><td>";
-
-        $js_mwst = "onclick=\"mwst_rechnen('betrag','mwst', '19')\" ondblclick=\"mwst_rechnen('betrag[0]','mwst', '7')\"";
-        $form->text_feld_js('MWST-Anteil', 'mwst', '0,00', 10, 'mwst', $js_mwst);
-        echo "</td>";
-        echo "</tr>";
-        $form->hidden_feld('mv_id', $mv_id);
-        $form->hidden_feld('option', 'me_neu_speichern1');
-    }
-
+    
     function check_me($kos_typ, $kos_id, $kat, $anfang, $ende)
     {
         $result = DB::select("SELECT *

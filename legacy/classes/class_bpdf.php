@@ -4,16 +4,7 @@
 class b_pdf
 {
     public $zahlungshinweis;
-
-    function mietentwicklung_aktuell($pdf, $mv_id)
-    {
-        $me = new mietentwicklung ();
-        /* Aktuelle Miethöhe */
-        $jahr = date("Y");
-        $monat = date("m");
-        $me->get_mietentwicklung_infos($mv_id, $jahr, $monat);
-    }
-
+    
     function erstelle_brief_vorlage($v_dat, $empf_typ, $empf_id_arr, $option = '0')
     {
         $anz_empf = count($empf_id_arr);

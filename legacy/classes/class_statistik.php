@@ -179,36 +179,6 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         }
     }
 
-    function leerstaende_monat_jahr_haus($jahr_monat, $haus_id, $typ_lage)
-    {
-        if ($typ_lage == '') {
-            $m_lage = "(TYP LIKE 'Wohnraum' OR TYP LIKE 'Gewerbe') &&";
-        } else {
-            $m_lage = "TYP LIKE '" . $typ_lage . "%' &&";
-        }
-        $db_abfrage = "SELECT OBJEKT_KURZNAME, EINHEIT.HAUS_ID, EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER FROM `EINHEIT` RIGHT JOIN ( HAUS, OBJEKT ) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID) WHERE EINHEIT.EINHEIT_AKTUELL='1' && HAUS.HAUS_AKTUELL='1' && EINHEIT.HAUS_ID = '$haus_id' && (TYP='Wohnraum' OR TYP='Gewerbe') && EINHEIT_ID NOT IN ( SELECT EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr_monat' && ( DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr_monat' OR MIETVERTRAG_BIS = '0000-00-00' ) ) ORDER BY EINHEIT_KURZNAME ASC";
-
-        $resultat = DB::select($db_abfrage);
-        $numrows = count($resultat);
-
-        return $numrows;
-    }
-
-    function vermietet_monat_jahr_haus($jahr_monat, $haus_id, $typ_lage)
-    {
-        if ($typ_lage == '') {
-            $m_lage = "TYP LIKE 'Wohnraum' OR TYP LIKE 'Gewerbe' && ";
-        } else {
-            $m_lage = "TYP LIKE '" . $typ_lage . "%' &&";
-        }
-        $db_abfrage = "SELECT OBJEKT_KURZNAME, EINHEIT.HAUS_ID, EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER FROM `EINHEIT` RIGHT JOIN ( HAUS, OBJEKT ) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID) WHERE EINHEIT.EINHEIT_AKTUELL='1' && HAUS.HAUS_AKTUELL='1' && EINHEIT.HAUS_ID = '$haus_id' && (TYP='Wohnraum' OR TYP='Gewerbe') && EINHEIT_ID IN ( SELECT EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr_monat' && ( DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr_monat' OR MIETVERTRAG_BIS = '0000-00-00' ) ) ORDER BY EINHEIT_KURZNAME ASC";
-
-        $resultat = DB::select($db_abfrage);
-        $numrows = count($resultat);
-
-        return $numrows;
-    }
-
     function summe_sollmiete_alle()
     {
         $o = new objekt ();
@@ -424,8 +394,6 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
                 unset ($vermietete);
             }
 
-            // print_r($vermietete_arr);
-            // print_r($leerstand_arr);
             $this->berechnung_anzeigen($leerstand_arr, $vermietete_arr, $monat, $jahr);
         } else {
             $h = new haus ();
@@ -751,19 +719,6 @@ ORDER BY EINHEIT_KURZNAME ASC");
             echo "<tr><td>$nutzungsart</td><td>$anzahl</td><td>$prozent %</td></tr>";
         }
         echo "</table>";
-    }
-
-    function stunden_gesamt_mitarbeiter($mitarbeiter_id, $typ, $id)
-    {
-        /* stundenzettel */
-        $db_abfrage = "SELECT SUM(DAUER_MIN)/60 AS STUNDEN  FROM `STUNDENZETTEL_POS` JOIN STUNDENZETTEL ON (STUNDENZETTEL.ZETTEL_ID=STUNDENZETTEL_POS.ZETTEL_ID) WHERE `BENUTZER_ID` = '$mitarbeiter_id' AND STUNDENZETTEL.AKTUELL = '1' && STUNDENZETTEL_POS.AKTUELL = '1' && KOSTENTRAEGER_TYP='$typ' && KOSTENTRAEGER_ID='$id'";
-        $resultat = DB::select($db_abfrage);
-        if (!empty($resultat)) {
-            $row = $resultat[0];
-            return $row ['STUNDEN'];
-        } else {
-            return 0;
-        }
     }
 
     function baustellen_uebersicht()
@@ -1182,71 +1137,4 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
 
         return true;
     }
-
-    function get_fenster_stat($einheit_id)
-    {
-        return $this->ist_fenster($einheit_id) - $this->soll_fenster($einheit_id);
-    }
-
-    function ist_fenster($einheit_id)
-    {
-        return 4;
-    }
-
-    function soll_fenster($einheit_id)
-    {
-        return 5;
-    }
 } // end class
-
-/*
- * MIETVERTRÄGE OHNE MIETDEFINITION
- * SELECT MIETVERTRAG_ID
- * FROM MIETVERTRAG
- * WHERE MIETVERTRAG_AKTUELL = '1' && MIETVERTRAG_ID NOT
- * IN (
- *
- * SELECT KOSTENTRAEGER_ID AS MIETVERTRAG_ID
- * FROM MIETENTWICKLUNG
- * WHERE KOSTENTRAEGER_TYP = 'MIETVERTRAG'
- * )
- * LIMIT 0 , 30
- */
-
-// }//end classs
-/*
- * SET @num =5300;# MySQL lieferte ein leeres Resultat zurück (d.&nbsp;h. null Zeilen).
- * # MySQL lieferte ein leeres Resultat zurück (d.&nbsp;h. null Zeilen).
- * SELECT @num := @num +1 AS ZEILE, GELD_KONTO_BUCHUNGEN_DAT
- * FROM `GELD_KONTO_BUCHUNGEN`
- * WHERE `GELDKONTO_ID` =1
- *
- *
- * SET @num =0;# MySQL lieferte ein leeres Resultat zurück (d.&nbsp;h. null Zeilen).
- * # MySQL lieferte ein leeres Resultat zurück (d.&nbsp;h. null Zeilen).
- * SELECT @num := @num +1 AS ZEILE, BETRAG
- * FROM `GELD_KONTO_BUCHUNGEN`
- * WHERE `GELDKONTO_ID` =1
- * AND `AKTUELL` = '1'
- * AND DATE_FORMAT( DATUM, '%Y' ) = '2009'
- * ORDER BY GELD_KONTO_BUCHUNGEN_DAT ASC
- *
- *
- *
- *
- * SET @num =0;# MySQL lieferte ein leeres Resultat zurück (d.&nbsp;h. null Zeilen).
- * UPDATE GELD_KONTO_BUCHUNGEN SET G_BUCHUNGSNUMMER = @num:= @num +1 WHERE GELD_KONTO_BUCHUNGEN_DAT IN (
- * SELECT GELD_KONTO_BUCHUNGEN_DAT
- * FROM GELD_KONTO_BUCHUNGEN_OK37
- * WHERE GELDKONTO_ID =1
- * AND AKTUELL = '1'
- * AND DATE_FORMAT( DATUM, '%Y' ) = '2009'
- * ORDER BY GELD_KONTO_BUCHUNGEN_DAT ASC
- * )# Betroffene Datensätze: 468
- * # Betroffene Datensätze: 467
- *
- *
- * UPDATE KONTIERUNG_POSITIONEN AS t1
- * JOIN KONTIERUNG_POSITIONEN AS t2 ON t1.KONTIERUNG_ID = t2.KONTIERUNG_ID
- * SET t1.GESAMT_SUMME = t2.MENGE*t2.EINZEL_PREIS
- */

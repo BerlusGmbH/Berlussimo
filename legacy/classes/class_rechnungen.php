@@ -172,47 +172,6 @@ class rechnungen
         }
     }
 
-    function rechnungs_partner_ermitteln_alt()
-    {
-        if ($this->rechnungs_aussteller_typ == 'Partner') {
-
-            /* Partnernamen holen */
-            $this->rechnungs_aussteller_name = $this->get_partner_name($this->rechnungs_aussteller_id);
-            /* Anschriften holen */
-            $this->get_aussteller_info($this->rechnungs_aussteller_id);
-        }
-
-        if ($this->rechnungs_empfaenger_typ == 'Partner') {
-            $this->rechnungs_empfaenger_name = $this->get_partner_name($this->rechnungs_empfaenger_id);
-            /* Anschriften holen */
-            $this->get_empfaenger_info($this->rechnungs_empfaenger_id);
-            /* Ende Partnernamen holen */
-        }
-
-        if ($this->rechnungs_aussteller_typ == 'Kasse') {
-            /* Kassennamen holen */
-            $kassen_info = new kasse ();
-            $kassen_info->get_kassen_info($this->rechnungs_aussteller_id);
-            $this->rechnungs_aussteller_name = "" . $kassen_info->kassen_name . "<br><br>" . $kassen_info->kassen_verwalter . "";
-        }
-
-        if ($this->rechnungs_empfaenger_typ == 'Kasse') {
-            /* Kassennamen holen */
-            $kassen_info = new kasse ();
-            $kassen_info->get_kassen_info($this->rechnungs_empfaenger_id);
-            $this->rechnungs_empfaenger_name = "" . $kassen_info->kassen_name . "<br><br>" . $kassen_info->kassen_verwalter . "";
-        }
-
-        if ($this->rechnungs_aussteller_typ == 'Lager') {
-            $lager_info = new lager ();
-            $this->rechnungs_aussteller_name = $lager_info->lager_bezeichnung($this->rechnungs_aussteller_id);
-        }
-        if ($this->rechnungs_empfaenger_typ == 'Lager') {
-            $lager_info = new lager ();
-            $this->rechnungs_empfaenger_name = $lager_info->lager_bezeichnung($this->rechnungs_empfaenger_id);
-        }
-    }
-
     function form_rechnungsgrunddaten_aendern($belegnr)
     {
         $this->rechnung_grunddaten_holen($belegnr);
@@ -791,34 +750,6 @@ class rechnungen
             $row = $result[0];
             return $row ['ART_LIEFERANT'];
         }
-    }
-
-    function dropdown_v_einheiten_alt($beschreibung, $name, $id)
-    {
-        echo "<label for=\"$id\">$beschreibung</label>\n";
-        echo "<select name=\"$name\" id=\"$id\">\n";
-        echo "<option value=\"Stk\">Stück</option>\n";
-        echo "<option value=\"Std\">Stunden</option>\n";
-        echo "<option value=\"lfm\">Meter</option>\n";
-        echo "<option value=\"m²\">m²</option>\n";
-        echo "<option value=\"m³\">m³</option>\n";
-        echo "<option value=\"KAN\">KAN</option>\n";
-        echo "<option value=\"SCK\">Sack</option>\n";
-        echo "<option value=\"kg\">kg</option>\n";
-        echo "<option value=\"VE\">VE</option>\n";
-        echo "<option value=\"l\">Liter</option>\n";
-        echo "<option value=\"ml\">ml</option>\n";
-        echo "<option value=\"Tonne\">Tonne</option>\n";
-        echo "<option value=\"Rolle\">Rolle</option>\n";
-        echo "<option value=\"Dose\">Dose</option>\n";
-        echo "<option value=\"Pak\">Paket</option>\n";
-        echo "<option value=\"%\">Prozent</option>\n";
-        echo "<option value=\"Tube\">Tube</option>\n";
-        echo "<option value=\"Kartusche\">Kartusche</option>\n";
-        echo "<option value=\"pauschale\">Pauschale</option>\n";
-        echo "<option value=\"Paar\">Paar</option>\n";
-        echo "<option value=\"Set\">Set</option>\n";
-        echo "</select>\n";
     }
 
     function form_lieferschein_erfassen($beleg_nr)
@@ -1754,32 +1685,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     function unbestaetigte_rechnungen_anzeigen()
     {
         echo "UNbestätigte rech";
-    }
-
-    function folge_rechnungs_nr_arr($beleg_nr)
-    {
-        $result = DB::select("SELECT BELEG_NR FROM RECHNUNGEN_POSITIONEN WHERE U_BELEG_NR='$beleg_nr' && U_BELEG_NR IS NOT NULL && AKTUELL='1' GROUP BY U_BELEG_NR");
-        /* Wenn urpsrungsrechnungen vorhanden, ins array hinzufügen */
-        if (!empty($result)) {
-            $this->ursprungs_array [$beleg_nr] = $result;
-        }
-
-        /* Prüfen ob aktuelle rechnung vorrechnungen hat */
-        if (is_array($this->ursprungs_array [$beleg_nr])) {
-            $anzahl_zu_beleg = count($this->ursprungs_array [$beleg_nr]);
-
-            if ($anzahl_zu_beleg > 0) {
-                for ($a = 0; $a < $anzahl_zu_beleg; $a++) {
-                    $u_b_nr = $this->ursprungs_array [$beleg_nr] [$a] ['U_BELEG_NR'];
-                    // echo '<b>'.$u_b_nr." $beleg_nr".'</b><br>';
-                    if ($beleg_nr != $u_b_nr) {
-                        $this->ursprungs_rechnungs_nr_arr($u_b_nr);
-                    } else {
-                        // $this->ursprungs_array[$beleg_nr][][U_BELEG_NR] = $beleg_nr;
-                    }
-                }
-            }
-        }
     }
 
     function ursprungs_rechnungs_nr_arr($beleg_nr)
@@ -3335,7 +3240,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
 
     function eingangsrechnungen_arr_sort($empfaenger_typ, $empfaenger_id, $monat, $jahr, $rechnungstyp, $sort = 'ASC')
     {
-        // echo "<h1>$monat</h1>";
         if ($rechnungstyp == 'Rechnung') {
             $r_sql = "(RECHNUNGSTYP='$rechnungstyp' OR RECHNUNGSTYP='Stornorechnung' OR RECHNUNGSTYP='Gutschrift' OR RECHNUNGSTYP='Teilrechnung' OR RECHNUNGSTYP='Schlussrechnung')";
         } else {
@@ -3479,27 +3383,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $result = DB::select("SELECT EMPFAENGER_EINGANGS_RNR FROM RECHNUNGEN WHERE RECHNUNGSTYP='Angebot' && EMPFAENGER_TYP='$empfaenger_typ' && EMPFAENGER_ID='$empfaenger_id' ORDER BY EMPFAENGER_EINGANGS_RNR DESC LIMIT 0,1");
         $row = $result[0];
         return $row ['EMPFAENGER_EINGANGS_RNR'];
-    }
-
-    function angebot_speichern2($aussteller_typ, $aussteller_id, $empfaenger_typ, $empfaenger_id, $kurzinfo)
-    {
-        $id = last_id2('RECHNUNGEN', 'BELEG_NR') + 1;
-
-        $letzte_aussteller_rnr = $this->letzte_ausgangs_ang_nr($aussteller_typ, $aussteller_id);
-        $n_ang_nr = $letzte_aussteller_rnr + 1;
-        $n_ang_nr_3 = sprintf('%03d', $n_ang_nr);
-        $ang_nr = "AN-$aussteller_id-$n_ang_nr_3"; // A-Angebot dann id dann letze angnr +1 z.B. A-1-001
-
-        $letzte_empfaenger_rnr = $this->letzte_eingangs_ang_nr($empfaenger_typ, $empfaenger_id);
-        $n_empfaenger_rnr = $letzte_empfaenger_rnr + 1;
-        $rechnungsdatum = date("Y-m-d");
-        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$id', '$ang_nr', '$n_ang_nr', '$n_empfaenger_rnr', 'Angebot', '$rechnungsdatum','$rechnungsdatum', '0.00','0.0','0.00', '$aussteller_typ', '$aussteller_id','$empfaenger_typ', '$empfaenger_id','1', '1', '0', '0', '1', '0', '0', '$rechnungsdatum', '$rechnungsdatum', '$kurzinfo', '9999999')";
-        DB::insert($db_abfrage);
-
-        /* Protokollieren */
-        $last_dat = DB::getPdo()->lastInsertId();
-        protokollieren('RECHNUNGEN', $last_dat, '0');
-        return $id;
     }
 
     function rechnung_erstellen_ugl($rnr, $r_typ, $r_datum, $eingangsdatum, $aus_typ, $aus_id, $empf_typ, $empf_id, $faellig, $kurzinfo, $netto_betrag, $brutto_betrag, $skonto_betrag)
@@ -3981,9 +3864,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         }
         $array = ( array )$ths;
         return $array;
-        // echo "<hr>";
-        // echo "<pre>";
-        // print_r($ths);
     }
 
     function position_filtern($pos)
@@ -4204,14 +4084,6 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
     function get_teil_rg_arr($empf_typ, $empf_id, $aus_typ, $aus_id, $r_typ)
     {
         $result = DB::select("SELECT * FROM RECHNUNGEN WHERE EMPFAENGER_TYP='$empf_typ' && EMPFAENGER_ID='$empf_id'  && AUSSTELLER_ID='$aus_id' && AUSSTELLER_TYP='$aus_typ' && RECHNUNGSTYP='$r_typ' && AKTUELL = '1' && BELEG_NR NOT IN (SELECT TEIL_R_ID FROM RECHNUNGEN_SCHLUSS WHERE AKTUELL='1')ORDER BY RECHNUNGSDATUM DESC");
-        if (!empty($result)) {
-            return $result;
-        }
-    }
-
-    function get_rg_arr_ok($empf_typ, $empf_id, $aus_typ, $aus_id, $r_typ)
-    {
-        $result = DB::select("SELECT * FROM RECHNUNGEN WHERE EMPFAENGER_TYP='$empf_typ' && EMPFAENGER_ID='$empf_id'  && AUSSTELLER_ID='$aus_id' && AUSSTELLER_TYP='$aus_typ' && RECHNUNGSTYP='$r_typ' && AKTUELL = '1' ORDER BY RECHNUNGSDATUM DESC");
         if (!empty($result)) {
             return $result;
         }
