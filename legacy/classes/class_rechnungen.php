@@ -42,9 +42,7 @@ class rechnungen
     var $rechnungs_empfaenger_ort;
     public $rechnung_dat;
     public $kb;
-    public $kb;
     public $status_bestaetigt;
-    public $rechnung_dat;
     public $rechnungs_skontoabzug;
 
     function get_summe_kosten_pool($empf_typ, $empf_id)
@@ -58,7 +56,12 @@ class rechnungen
     function verbindlichkeiten($jahr)
     {
         if (!session()->has('partner_id')) {
-            die ('Partner wählen');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Bitte wählen Sie einen Partner.'),
+                0,
+                null,
+                route('legacy::rechnungen::index', ['option' => 'partner_wechseln'])
+            );
         } else {
             $p_id = session()->get('partner_id');
             $abfrage = "SELECT * FROM `RECHNUNGEN` WHERE `RECHNUNGSTYP` IN ('Rechnung') AND `EMPFAENGER_TYP` = 'Partner' AND `EMPFAENGER_ID` = '$p_id' AND `AKTUELL` = '1' AND `STATUS_BESTAETIGT` = '0' && DATE_FORMAT(RECHNUNGSDATUM, '%Y') = '$jahr' ORDER BY `RECHNUNGEN`.`NETTO`  DESC";
@@ -91,7 +94,12 @@ class rechnungen
     function forderungen($jahr)
     {
         if (!session()->has('partner_id')) {
-            die ('Partner wählen');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Bitte wählen Sie einen Partner.'),
+                0,
+                null,
+                route('legacy::rechnungen::index', ['option' => 'partner_wechseln'])
+            );
         } else {
             $p_id = session()->get('partner_id');
             $abfrage = "SELECT * FROM `RECHNUNGEN` WHERE `RECHNUNGSTYP` IN ('Rechnung') AND `AUSSTELLER_TYP` = 'Partner' AND `AUSSTELLER_ID` = '$p_id' AND `AKTUELL` = '1' AND `STATUS_BEZAHLT` = '0' && DATE_FORMAT(RECHNUNGSDATUM, '%Y') = '$jahr' ORDER BY `RECHNUNGEN`.`NETTO`  DESC";
@@ -285,13 +293,9 @@ class rechnungen
             $this->rechnungs_brutto = $row ['BRUTTO'];
             $this->rechnungs_mwst = $this->rechnungs_brutto - $this->rechnungs_netto;
             $this->rechnungs_skontobetrag = $row ['SKONTOBETRAG'];
-
-            // die("$this->rechnungs_brutto = $this->rechnungs_netto + $this->rechnungs_mwst");
             $this->rechnungs_brutto = $this->rechnungs_netto + $this->rechnungs_mwst;
 
             $this->rechnungs_skontoabzug = $this->rechnungs_brutto - $this->rechnungs_skontobetrag;
-
-            // die("$this->rechnungs_mwst = $this->rechnungs_brutto - $this->rechnungs_netto;");
 
             $this->rechnungs_aussteller_typ = $row ['AUSSTELLER_TYP'];
             $this->rechnungs_aussteller_id = $row ['AUSSTELLER_ID'];
@@ -1806,7 +1810,9 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $this->rechnung_grunddaten_holen($beleg_nr);
         /* Prüfen ob Rechnung vorhanden */
         if (!$this->rechnungsnummer) {
-            die ("Rechnung exisitiert nicht");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Rechnung exisitiert nicht")
+            );
         }
 
         /* Partnerinformationen einholen */
@@ -1900,13 +1906,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             }
             $new_pos++;
         }
-        /*
-		 * echo '<pre>';
-		 * print_r($tab_arr);
-		 * die();
-		 */
 
-        // $pdf->ezText(" $this->rechnungs_mwst = $this->rechnungs_brutto - $this->rechnungs_netto $g_netto", 20);
         /* Spaltendefinition */
         $cols = array(
             'POSITION' => "<b>POS.</b>",
@@ -2038,18 +2038,15 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         }
 
         if ($this->check_abschlag($beleg_nr) == false && $this->rechnungstyp == 'Schlussrechnung') {
-            // $pdf->ezSetDy(-10); //abstand
-            // $pdf->ezText("FEHLER TEILRECHNUGEN FEHLEN!!!", 30, array('justification'=>'full'));
-            fehlermeldung_ausgeben('PDF-Ansicht nicht möglich, erst Teilrechnungen zu dieser Schlussrechnung wählen!!');
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('PDF-Ansicht nicht möglich, erst Teilrechnungen zu dieser Schlussrechnung wählen.')
+            );
         }
 
         if ($this->rechnungstyp != 'Angebot') {
             /* Zahlungshinweis bzw mit freudlichen Grössen usw vom Aussteller */
             $zahlungshinweis_org = str_replace("<br>", "\n", $bpdf->zahlungshinweis_org);
-            // $pdf->ezText("$zahlungshinweis_org", 10);
             $r_hinweis = "\n\nWir danken Ihnen für Ihren Auftrag und hören gern von Ihnen. \n";
-            // $r_hinweis .= "Bitte überweisen Sie den fälligen Betrag auf das unten genannte Geldkonto. ";
             $r_hinweis .= "Die gelieferte Ware und die erbrachte Arbeitsleistung bleibt bis zur vollständigen Bezahlung unser Eigentum. ";
             $r_hinweis .= "Lt. Gesetzgeber sind wir zu dem Hinweis verpflichtet: Die gesetzliche Aufbewahrungspflicht für diese Rechnung beträgt für Privatpersonen 2 Jahre / Unternehmen gemäß der gesetzlichen Bestimmungen. Die Aufbewahrungsfrist beginnt mit dem Schluß dieses Kalenderjahres.";
             $r_hinweis .= "\n\n$zahlungshinweis_org";
@@ -2280,21 +2277,21 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $this->rechnung_grunddaten_holen($beleg_nr);
         /* Prüfen ob Rechnung vorhanden */
         if (!$this->rechnungsnummer) {
-            die ("Rechnung exisitiert nicht");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Die Rechnung exisitiert nicht.")
+            );
         }
 
         /* Partnerinformationen einholen */
         $p = new partners ();
         $p->get_partner_info($this->rechnung_aussteller_partner_id);
 
-        /* ezPDF-Klasse laden */
         /* Eigene PDF-Klasse laden */
         /* Neues PDF-Objekt erstellen */
         $pdf = new Cezpdf ('a4', 'portrait');
         /* Neue Instanz von b_pdf */
         $bpdf = new b_pdf ();
         /* Header und Footer des Rechnungsaustellers in alle PDF-Seiten laden */
-        // die("hallo $this->rechnung_aussteller_partner_id");
         $bpdf->b_header($pdf, 'Partner', $this->rechnung_aussteller_partner_id, 'portrait', 'Helvetica.afm', 6);
 
         $table_arr = $this->rechnungs_positionen_arr($beleg_nr);
@@ -2384,13 +2381,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             }
             $new_pos++;
         }
-        /*
-		 * echo '<pre>';
-		 * print_r($tab_arr);
-		 * die();
-		 */
-
-        // $pdf->ezText(" $this->rechnungs_mwst = $this->rechnungs_brutto - $this->rechnungs_netto $g_netto", 20);
+        
         /* Spaltendefinition */
         $cols = array(
             'POSITION' => "<b>POS.</b>",
@@ -2522,10 +2513,9 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         }
 
         if ($this->check_abschlag($beleg_nr) == false && $this->rechnungstyp == 'Schlussrechnung') {
-            // $pdf->ezSetDy(-10); //abstand
-            // $pdf->ezText("FEHLER TEILRECHNUGEN FEHLEN!!!", 30, array('justification'=>'full'));
-            fehlermeldung_ausgeben('PDF-Ansicht nicht möglich, erst Teilrechnungen zu dieser Schlussrechnung wählen!!');
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('PDF-Ansicht nicht möglich, erst Teilrechnungen zu dieser Schlussrechnung wählen!!')
+            );
         }
 
         if ($this->rechnungstyp != 'Angebot') {
@@ -2805,9 +2795,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             $kos_typ_n = 'Partner';
             $kos_id_n = $rr->eigentuemer_ermitteln('Einheit', $kos_id);
         }
-
-        // echo "$kos_typ, $kos_id, $aussteller_typ, $aussteller_id,$r_datum, $f_datum, $kurzinfo";
-        // die();
         if ($kos_typ_n == $aussteller_typ && $aussteller_id == $kos_id_n) {
             $rechnungstyp = 'Buchungsbeleg';
         } else {
@@ -2815,8 +2802,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         }
         $datum_arr = explode('.', $r_datum);
         $jahr = $datum_arr [2];
-
-        // echo "$jahr $rechnungstyp";
 
         $r = new rechnung ();
         $letzte_aussteller_rnr = $r->letzte_aussteller_ausgangs_nr($aussteller_id, $aussteller_typ, $jahr, $rechnungstyp);
@@ -2826,8 +2811,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $rechnungsdatum_sql = date_german2mysql($r_datum);
         $rechnungs_kuerzel = $r->rechnungs_kuerzel_ermitteln($aussteller_typ, $aussteller_id, $rechnungsdatum_sql);
         $rechnungsnummer = $this->rechnungs_kuerzel . ' ' . $letzte_aussteller_rnr1 . '-' . $jahr;
-        // echo "$rechnungs_kuerzel $rechnungsnummer";
-
+        
         /* Prüfen ob Rechnung vorhanden */
         $check_rechnung = $r->check_rechnung_vorhanden($rechnungsnummer, $rechnungsdatum_sql, $aussteller_typ, $aussteller_id, $kos_typ, $kos_id, $rechnungstyp);
 
@@ -2978,8 +2962,10 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         /* Ausgangsbuch */
         $rechnungen_arr = $this->ausgangsrechnungen_arr_sort($von_typ, $von_id, $monat, $jahr, $rechnungstyp, $sort);
 
-        if (!is_array($rechnungen_arr)) {
-            die ("Keine $rechnungstyp vorhanden");
+        if (empty($rechnungen_arr)) {
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Keine $rechnungstyp vorhanden")
+            );
         } else {
             $gesamt_brutto = 0;
             $gesamt_gut_retour = 0;
@@ -3194,7 +3180,9 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $rechnungen_arr = $this->eingangsrechnungen_arr_sort($von_typ, $von_id, $monat, $jahr, $rechnungstyp, $sort);
 
         if (!is_array($rechnungen_arr)) {
-            die ("Keine $rechnungstyp vorhanden");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Keine $rechnungstyp vorhanden")
+            );
         } else {
             $gesamt_brutto = 0;
             $gesamt_gut_retour = 0;
@@ -3690,8 +3678,9 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $kurzbeschreibung = "Buchungsbeleg aus Angebot $r->rechnungsnummer\n$r->kurzbeschreibung";
         $clean_arr ['kurzbeschreibung'] = $kurzbeschreibung;
         if ($bg = $this->check_beleg_exists($kurzbeschreibung)) {
-            $link = "a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $bg]) . "'>Beleg ansehen</a>";
-            die ("Beleg $bg schon erstellt");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Beleg $bg schon erstellt")
+            );
         }
         $clean_arr ['nettobetrag'] = 0.00;
 
@@ -3842,7 +3831,9 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         if (!$kos_id) {
             echo $kos_bez;
             echo "<br>$kos_typ $kos_bez";
-            DIE ('NIX');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Kostenträger konnte nicht gefunden werden.")
+            );
         }
         $pool_arr = $this->get_pools_arr($kos_typ, $kos_id);
         echo "<br><table>";
@@ -3853,8 +3844,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $f->button_js('btn_np', 'Unterpool erstellen', $js);
         echo "</th></tr>";
         if (is_array($pool_arr)) {
-            // echo "<pre>";
-            // print_r($pool_arr);
             $anz = count($pool_arr);
             $temp_akt = '';
 
@@ -3958,11 +3947,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         if ($erste_2_zeichen == 'RG') {
             $anfang_position_KOP = strpos($datei, 'KOP');
             $datei = substr($datei, $anfang_position_KOP);
-            // $datei1 = file("$tmp_datei");
-            // print_r($datei);
-            // echo '<pre>';
-            // print_r($datei1);
-            // die();
         }
 
         $ths = new detail ();
@@ -4209,8 +4193,9 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
             }
             echo "</select>";
         } else {
-            hinweis_ausgeben("Keine $r_typ zum Hinzufügen vorhanden");
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Keine $r_typ zum Hinzufügen vorhanden")
+            );
         }
     }
 

@@ -30,7 +30,9 @@ class lager_v {
             $last_dat = DB::getPdo()->lastInsertId();
             protokollieren ( 'LIEFERSCHEINE', $last_dat, '0' );
         } else {
-            die ( 'Lieferschein existiert bereits' );
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Lieferschein existiert bereits')
+            );
         }
     }
     function lagerbestand_anzeigen_bis_pdf($datum_bis) {

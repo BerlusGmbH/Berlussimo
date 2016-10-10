@@ -49,8 +49,6 @@ OR  `LAND` LIKE  '%$suchtext%'
                 for ($p = 0; $p < $anz_stich; $p++) {
                     $partner_id = $my_array_stich [$p] ['PARTNER_ID'];
                     $this->get_partner_info($partner_id);
-                    // print_r($this);
-                    // die();
                     if (isset ($my_array)) {
                         $anz = count($my_array);
                     } else {
@@ -329,7 +327,6 @@ function partner_speichern($clean_arr)
 
             // print_r($clean_arr);
             if (empty ($partnername) or empty ($str) or empty ($hausnr) or empty ($plz) or empty ($ort) or empty ($land)) {
-                fehlermeldung_ausgeben("Dateneingabe unvollständig!!!<br>Sie werden weitergeleitet.");
                 session()->put('partnername', $partnername);
                 session()->put('strasse', $str);
                 session()->put('hausnummer', $hausnr);
@@ -338,8 +335,9 @@ function partner_speichern($clean_arr)
                 session()->put('land', $land);
 
                 $fehler = true;
-                weiterleiten_in_sec(route('legacy::partner::index', ['option' => 'partner_erfassen'], false), 3);
-                die ();
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\ErrorMessage("Dateneingabe unvollständig.")
+                );
             }
         } // Ende foreach
 
@@ -563,7 +561,9 @@ function partner_speichern($clean_arr)
             $f->send_button("submit", "Änderung speichern");
             $f->ende_formular();
         } else {
-            die ("Partner $partner_id unbekannt");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Partner $partner_id unbekannt")
+            );
         }
     }
 
@@ -618,9 +618,10 @@ LIMIT 0 , 80");
     function form_partner_serienbrief()
     {
         $partner_arr = $this->partner_in_array();
-        if (!is_array($partner_arr)) {
-            fehlermeldung_ausgeben("Keine Partner gefunden!");
-            die();
+        if (empty($partner_arr)) {
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Keine Partner gefunden!")
+            );
         }
 
         $f = new formular ();

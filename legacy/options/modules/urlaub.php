@@ -59,12 +59,14 @@ switch ($option) {
         $e_jahr = $datum_e_arr [0];
         // #echo "$a_jahr $e_jahr";
         if ($e_jahr < $a_jahr) {
-            fehlermeldung_ausgeben("Enddatum kleiner als Anfangsdatum, bitte neu eingeben!");
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Enddatum kleiner als Anfangsdatum, bitte neu eingeben!")
+            );
         }
         if ($e_jahr > $a_jahr) {
-            fehlermeldung_ausgeben("Urlaub erstreckt sich über ein Jahr, bitte nur Urlaub innerhalb eines Kalenderjahres eingeben.");
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Urlaub erstreckt sich über ein Jahr, bitte nur Urlaub innerhalb eines Kalenderjahres eingeben.")
+            );
         } else {
             $art = request()->input('art');
             $u->tage_arr($benutzer_id, $datum_a, $datum_e, $art);

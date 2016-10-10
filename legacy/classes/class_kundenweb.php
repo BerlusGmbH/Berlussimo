@@ -82,8 +82,6 @@ class kundenweb
             if (!is_array($arr_ber)) {
                 die ('Keine Berechtigung für den Kunden');
             } else {
-                // echo '<pre>';
-                // print_r($arr_ber);
                 $anz = count($arr_ber);
                 echo "<table class=\"sortable\"><tr><th>NR</th><th>TYP</th><th>BEZEICHNUNG</th><th>OPTIONEN</th></tr>";
                 $z = 0;

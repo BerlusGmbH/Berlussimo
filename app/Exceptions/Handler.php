@@ -2,8 +2,11 @@
 
 namespace App\Exceptions;
 
+use App\Exceptions\Messages\ErrorMessageException;
+use App\Exceptions\Messages\InfoMessageException;
+use App\Exceptions\Messages\WarningMessageException;
+use App\Messages\ErrorMessage;
 use Exception;
-use URL;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -14,9 +17,14 @@ use Symfony\Component\Debug\Exception\FlattenException;
 use Symfony\Component\HttpFoundation\JsonResponse as SymfonyResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use URL;
 
 class Handler extends ExceptionHandler
 {
+    const ERROR_MESSAGES = 'errors';
+    const WARNING_MESSAGES = 'warnings';
+    const INFO_MESSAGES = 'info';
+
     /**
      * A list of the exception types that should not be reported.
      *
@@ -77,6 +85,8 @@ class Handler extends ExceptionHandler
 
         if ($e instanceof AuthorizationException) {
             return $this->convertAuthorizationExceptionToResponse($e);
+        } elseif ($e instanceof MessageException) {
+            return $this->convertMessageExceptionToResponse($e);
         }
 
         return parent::render($request, $e);
@@ -120,10 +130,22 @@ class Handler extends ExceptionHandler
 
     protected function convertAuthorizationExceptionToResponse(AuthorizationException $e)
     {
-        if (0 === strpos(URL::previous(), request()->root()) && URL::previous() != URL::current()) {
-            return redirect()->to(URL::previous())->with(['errors' => [$e->getMessage()]]);
+        return $this->redirectWithMessage($e->getMessage());
+    }
+
+    protected function redirectWithMessage($message, $messageType = ErrorMessage::TYPE, $redirectTo = null)
+    {
+        if(isset($redirectTo)) {
+            return redirect()->to($redirectTo)->with([$messageType => [$message]]);
+        }elseif (0 === strpos(URL::previous(), request()->root()) && URL::previous() != URL::full()) {
+            return redirect()->to(URL::previous())->with([$messageType => [$message]]);
         } else {
-            return $this->toIlluminateResponse($this->renderHttpException(new HttpException(403, $e->getMessage())), $e);
+            return redirect()->to('/')->with([$messageType => [$message]]);
         }
+    }
+
+    protected function convertMessageExceptionToResponse(MessageException $e)
+    {
+        return $this->redirectWithMessage($e->getMessage(), $e->getMessageObject()->getType(), $e->getRedirectTo());
     }
 }

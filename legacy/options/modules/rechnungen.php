@@ -1,13 +1,5 @@
 <?php
 
-/* überprüfen ob Benutzer Zugriff auf das Modul hat */
-if (!check_user_mod(Auth::user()->id, 'rechnungen')) {
-    echo '<script type="text/javascript">';
-    echo "alert('Keine Berechtigung')";
-    echo '</script>';
-    die ();
-}
-
 if (request()->has('option')) {
     $option = request()->input('option');
 } else {
@@ -962,9 +954,7 @@ switch ($option) {
         break;
 
     case "send_positionen2" :
-
         $clean_arr = post_array_bereinigen();
-        // $clean_positionen_arr = post_unterarray_bereinigen('positionen');
         $rechnung = new rechnung ();
         $form = new mietkonto ();
         $form->erstelle_formular("Rechnung vervollständigen", NULL);
@@ -975,8 +965,9 @@ switch ($option) {
             for ($b = 1; $b <= count(request()->input('positionen')); $b++) {
                 foreach (request()->input('positionen') [$b] as $key1 => $value1) {
                     if ($key1 == 'menge' && empty ($value1)) {
-                        backlink();
-                        die ("<b>Position $b. Die Mengenangabe fehlt</b>\n");
+                        throw new \App\Exceptions\MessageException(
+                            new \App\Messages\ErrorMessage("<b>Position $b. Die Mengenangabe fehlt</b>\n")
+                        );
                     } else {
                         $fehler = false;
                     }
@@ -1868,7 +1859,9 @@ switch ($option) {
             $r_inhaber_id = request()->input('r_inhaber');
 
             if (empty ($r_inhaber_id)) {
-                die ("Datenfehler - Rechnungsinhaber $r_inhaber_t unbekannt");
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\ErrorMessage("Datenfehler - Rechnungsinhaber $r_inhaber_t unbekannt")
+                );
             }
 
             $r_art = request()->input('r_art');
@@ -2047,7 +2040,9 @@ switch ($option) {
             echo "<b>$kurzinfo</b>";
             if ($arr ['a_art'] != 'PA' && $arr ['a_art'] != 'AB' && $arr ['a_art'] != 'RG' && $arr ['a_art'] != 'BE') {
                 $aart = $arr ['a_art'];
-                die ("Abbruch!<br>Die Datei ist kein Angebot, sowie keine Rechnung!!! <b>TYP:$aart</b>");
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\ErrorMessage("Abbruch!<br>Die Datei ist kein Angebot, sowie keine Rechnung!!! <b>TYP:$aart</b>")
+                );
             }
             if ($arr ['a_art'] == 'PA') { // Preisangebot
                 $r_typ = 'Angebot';
@@ -2112,7 +2107,9 @@ switch ($option) {
         if ($handle = fopen($tmp_datei, "r")) {
             $zeilen = file($tmp_datei);
         } else {
-            die ('Datei konnte nicht gelesen werden!');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Datei konnte nicht gelesen werden!')
+            );
         }
         echo '<pre>';
         $arr = $zeilen;
@@ -2237,16 +2234,16 @@ switch ($option) {
 
     case "rgg" :
         if (!request()->has('check')) {
-            fehlermeldung_ausgeben("Einheiten wählen!!!");
-            die();
+            echo "Bitte wählen Sie eine Einheit.";
+            return;
         }
         $einheiten = request()->input('check');
 
         if (request()->has('kostenkonto')) {
             $kostenkonto = request()->input('kostenkonto');
         } else {
-            fehlermeldung_ausgeben("Kostenkonto wählen");
-            die();
+            echo "Bitte wählen Sie ein Kostenkonto.";
+            return;
         }
 
         $anz_e = count($einheiten);
@@ -2324,8 +2321,9 @@ switch ($option) {
         if (request()->has('kostenkonto')) {
             $kostenkonto = request()->input('kostenkonto');
         } else {
-            fehlermeldung_ausgeben("Kostenkonto wählen");
-            die();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Kostenkonto wählen")
+            );
         }
 
         $empf_typ = request()->input('empf_typ');
@@ -2409,8 +2407,8 @@ switch ($option) {
 
     case "rg_aus_beleg" :
         if (!session()->has('partner_id')) {
-            fehlermeldung_ausgeben("Partner (Rechnungssteller) wählen!");
-            die();
+            echo "Partner (Rechnungssteller) wählen!";
+            return;
         }
         echo "<hr>";
         $link_add = "<a href='" . route('legacy::rechnungen::index', ['option' => 'beleg2pool']) . "'>Beleg hinzufügen</a>";
@@ -2418,7 +2416,6 @@ switch ($option) {
         echo "<hr>";
         $r = new rechnungen ();
         $r->liste_beleg2rg();
-
         break;
 
     case "beleg2pool" :
@@ -2497,13 +2494,16 @@ switch ($option) {
 
     case "sepa_druckpool" :
         if (!session()->has('partner_id')) {
-            fehlermeldung_ausgeben("Partner für das RE-Buch wählen!!!");
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Partner für das RE-Buch wählen.")
+            );
+            
         }
 
         if (!session()->has('geldkonto_id')) {
-            fehlermeldung_ausgeben("Abgangsgeldkonto für SEPA Zahlungen wählen!!!");
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Bitte wählen Sie ein Geldkonto.")
+            );
         }
 
         $re = new rechnungen ();
@@ -2559,13 +2559,12 @@ switch ($option) {
         break;
 
     case "rg2sep" :
-
         if (!is_array(request()->input('uebernahme'))) {
-            fehlermeldung_ausgeben("rechnungen wählen!");
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Rechnungen wählen!")
+            );
         } else {
             $anz = count(request()->input('uebernahme'));
-
             for ($a = 0; $a < $anz; $a++) {
 
                 $belegnr = request()->input('uebernahme')[$a];
@@ -2587,8 +2586,9 @@ switch ($option) {
     case "rg2pdf" :
 
         if (!is_array(request()->input('uebernahme'))) {
-            fehlermeldung_ausgeben("rechnungen wählen!");
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Bitte wählen Sie eine Rechnung.")
+            );
         } else {
             $anz = count(request()->input('uebernahme'));
             /* Neues PDF-Objekt erstellen */

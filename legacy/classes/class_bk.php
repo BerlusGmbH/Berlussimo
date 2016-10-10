@@ -885,7 +885,7 @@ class bk
                     $this->status_schritt('gruen', 'Schritt 2 vollständig');
                 } else {
                     $this->status_schritt('rot', 'Schritt 2 unvollständig - Keine Buchungskonten ausgewählt');
-                    die ();
+                    return;
                 }
                 echo "Schritt 3 hier";
                 $this->bk_profil_id = session()->get('profil_id');
@@ -1400,9 +1400,11 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 unset ($my_array_neu);
                 return $arr_sortiert;
             } else {
-                echo "ERROR BERLUSSIMO L501D (TAGE>TAGE IM JAHR) E:$einheit_id $jahr $tage<$tage_im_jahr<br>";
-                echo "Wahrscheinlich 2 Mietverträge zur gleichen Zeit, bitte Anfangsdatum der mietvertraege der Einheit $einheit_id prüfen";
-                die ();
+                $error_msg = "ERROR BERLUSSIMO L501D (TAGE>TAGE IM JAHR) E:$einheit_id $jahr $tage<$tage_im_jahr\n";
+                $error_msg .= "Wahrscheinlich 2 Mietverträge zur gleichen Zeit, bitte Anfangsdatum der mietvertraege der Einheit $einheit_id prüfen";
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\ErrorMessage($error_msg)
+                );
             }
         }  // end if $numrows
         else {
@@ -1602,11 +1604,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
 
     function form_bk_profil_anpassen($profil_id)
     {
-        if (!isset ($profil_id)) {
-            fehlermeldung_ausgeben("Profil auswählen!!!");
-            die ();
-        }
-
         session()->put('profil_id', $profil_id);
         $f = new formular ();
         $f->erstelle_formular("Profil anpassen", NULL);
@@ -2321,18 +2318,18 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                         }
                     }
                 } // end for
-                // echo "<b>SUMME TAGE $summe_tage</b><br>";
                 $arr_sortiert = array_sortByIndex($my_array_neu, 'BERECHNUNG_VON');
                 unset ($my_array_neu);
                 return $arr_sortiert;
             } else {
-                echo "ERROR BERLUSSIMO L501D (TAGE>TAGE IM JAHR) E:$einheit_id $jahr $tage<$tage_im_jahr<br>";
-                echo "Wahrscheinlich 2 Mietverträge zur gleichen Zeit, bitte Anfangsdatum der mietvertraege der Einheit $einheit_id prüfen";
-                die ();
+                $error_msg  = "ERROR BERLUSSIMO L501D (TAGE>TAGE IM JAHR) E:$einheit_id $jahr $tage<$tage_im_jahr\n";
+                $error_msg .= "Wahrscheinlich 2 Mietverträge zur gleichen Zeit, bitte Anfangsdatum der mietvertraege der Einheit $einheit_id prüfen";
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\ErrorMessage($error_msg)
+                );
             }
         }  // end if $numrows
         else {
-            // echo "Leerstand ganzes jahr";
             $tage_im_jahr = $this->tage_im_jahr($jahr);
             $my_array_neu [] = array(
                 'KOS_TYP' => 'Leerstand',
@@ -2347,9 +2344,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
 
     function beteiligung_berechnen($betrag, $mietvertrag_von, $mietvertrag_bis, $g_einheiten, $my_einheiten, $einheit_name)
     {
-        // echo "<b>$betrag, $mietvertrag_von, $mietvertrag_bis, $g_einheiten, $my_einheiten,$einheit_name</b><br>";
         if ($g_einheiten == null or $my_einheiten == null) {
-            // echo "Error 1340 fehler<br><h1>$betrag, $mietvertrag_von, $mietvertrag_bis, $g_einheiten, $my_einheiten $einheit_name</h1>";
             return '0.00';
         } else {
 
@@ -2359,14 +2354,10 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
             $diff_in_tagen = $this->diff_in_tagen($mietvertrag_von, $mietvertrag_bis);
             $berechnungstage = $diff_in_tagen + 1;
             $g_kosten_pro_tag = $betrag / $tage_im_jahr;
-            // 2687,37�/365Tage = 7.36265
 
             $g_kosten_pro_einheit_tag = $g_kosten_pro_tag / $g_einheiten;
-            // 7.36265/160=0,0460166
 
             $beteiligung = $g_kosten_pro_einheit_tag * $my_einheiten * $berechnungstage;
-            // echo "$mietvertrag_von - $mietvertrag_bis = $diff_in_tagen BTage: $berechnungstage<br>";
-            // echo '<h1>'.$beteiligung.'</h1><br>';
             return $beteiligung;
         }
     }
@@ -2383,8 +2374,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 $einheit_id = $einheiten_arr [$a] ['EINHEIT_ID'];
                 $einheit_qm = $einheiten_arr [$a] ['EINHEIT_QM'];
                 $einheit_name = $einheiten_arr [$a] ['EINHEIT_KURZNAME'];
-                // echo"'<br>$einheit_name | ".nummer_punkt2komma($this->beteiligung_berechnen(10749.54, "2008-01-01", "2008-12-31", 2953.20, $einheit_qm)).' euro';
-                // $mvs_arr = $this->finde_mvs_jahr($einheit_id, $jahr);
                 $leerstand_und_mvs = $this->mvs_und_leer_jahr($einheit_id, $jahr);
 
                 $anzahl_berechnungen = count($leerstand_und_mvs);
@@ -2490,22 +2479,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     $berechnung_von = $my_array [$a] ['BERECHNUNG_VON'];
                     $berechnung_bis = $my_array [$a] ['BERECHNUNG_BIS'];
 
-                    /* Wenn etwas am Anfang des Jahres fehlt */
-                    /*
-					 * if($a==0){
-					 * $diff_zwischen_1_1 = $this->diff_in_tagen("$jahr-01-01", $berechnung_von);
-					 * if($diff_zwischen_1_1>0){
-					 * #echo "AM ANFANG FEHLEN $diff_zwischen_1_1 ($jahr-01-01 bis $berechnung_von)<br>";
-					 * $berechnung_von_a = $this->datum_minus_tage($berechnung_von,1);
-					 * $my_array_neu[] = array('KOS_TYP'=>'Leerstand','KOS_ID'=>'Leerstand','BERECHNUNG_VON'=>"$jahr-01-01",'BERECHNUNG_BIS'=>"$berechnung_von_a", 'TAGE'=>$diff_zwischen_1_1);
-					 * $summe_tage += $diff_zwischen_1_1;
-					 * }else{
-					 * #echo "AM ANFANG FEHLEN KEINE TAGE<br>";
-					 * }
-					 * }
-					 */
-
-                    /* Fehlzeiten / leerst�nde zwischen den vertr�gen */
+                    /* Fehlzeiten / leerstände zwischen den Verträgen */
                     /* In allen Zeilen ausser letzte */
 
                     if ($a < $anzahl_zeilen - 1) {
@@ -2568,9 +2542,9 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 unset ($my_array_neu);
                 return $arr_sortiert;
             } else {
-                echo "ERROR BERLUSSIMO L501D (TAGE>TAGE IM JAHR) E:$einheit_id $jahr $tage<$tage_im_jahr<br>";
-                echo "Wahrscheinlich 2 Mietverträge zur gleichen Zeit, bitte Anfangsdatum der mietvertraege der Einheit $einheit_id prüfen";
-                die ();
+                $error_msg = "ERROR BERLUSSIMO L501D (TAGE>TAGE IM JAHR) E:$einheit_id $jahr $tage<$tage_im_jahr\n";
+                $error_msg .= "Wahrscheinlich 2 Mietverträge zur gleichen Zeit, bitte Anfangsdatum der Mietvertraege der Einheit $einheit_id prüfen";
+                throw new \App\Exceptions\MessageException(new \App\Messages\ErrorMessage($error_msg));
             }
         }  // end if $numrows
         else {
@@ -2617,9 +2591,10 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
             $einheiten_arr = $e->get_einheit_as_array($mv->einheit_id);
         }
 
-        if (!is_array($einheiten_arr)) {
-            echo "Keine Einheiten zur Berechnung f�r $this->bk_kos_typ";
-            die ();
+        if (empty($einheiten_arr)) {
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Keine Einheiten zur Berechnung für $this->bk_kos_typ.")
+            );
         }
 
         if (is_array($einheiten_arr)) {
@@ -3586,7 +3561,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
         $tab [$b + 2] ['BET_G'] = '<b>' . nummer_punkt2komma($summe_nebenkosten_jahr) . '</b>';
 
         $ergebnis = $g_beteiligung + $summe_nebenkosten_jahr;
-        // $ergebnis = $summe_nebenkosten_jahr- substr($g_beteiligung,1);
         if ($ergebnis < 0) {
             $txt = 'Nachzahlung';
             $ergebnis_a = substr($ergebnis, 1);
@@ -3606,14 +3580,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
 
         $pdf->ezNewPage();
         $pdf->ezStopPageNumbers();
-        // seitennummerirung beenden
-        /*
-		 * $this->wirt_ges_qm = $wirt->g_qm;
-		 * $this->wirt_g_qm_gewerbe = $wirt->g_qm_gewerbe;
-		 * $this->wirt_g_qm_wohnen = $this->wirt_ges_qm - $this->wirt_g_qm_gewerbe;
-		 */
-        // $cols1 = array('KOSTENART'=>"Betriebskostenart","KOSTEN_GESAMT"=>"Kosten gesamt $QM_G_OBJEKT m²",'KOSTEN_GEWERBE'=>"Gewerbeanteil $QM_G_GEWERBE m²",'KOSTEN_WOHNRAUM'=>"Wohnanteil $QM_G m²");
-        // $cols1 = array('KOSTENART'=>"Betriebskostenart","KOSTEN_GESAMT"=>"Kosten gesamt $this->wirt_ges_qm_a m²",'KOSTEN_GEWERBE'=>"Gewerbeanteil $this->wirt_g_qm_gewerbe_a m²",'KOSTEN_WOHNRAUM'=>"Wohnanteil $this->wirt_g_qm_wohnen_a m²");
         $cols1 = array(
             'KOSTENART' => "Betriebskostenart",
             "KOSTEN_GESAMT" => "Kosten gesamt",
@@ -3713,8 +3679,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
             )
         ));
 
-        // $pdf->ezStopPageNumbers(1,1,$i); // ENDE BERECHNUNGSSEITEN
-
         if ($empf_kos_typ == 'MIETVERTRAG') {
             $mz = new miete ();
             $mk = new mietkonto ();
@@ -3729,9 +3693,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
 
             $mk->kaltmiete_monatlich_ink_vz($empf_kos_id, $monat_b, $jahr_b);
             $mk->ausgangs_kaltmiete_a = nummer_punkt2komma($mk->ausgangs_kaltmiete);
-            // $mk->heizkosten_monatlich($empf_kos_id,$monat,$jahr);
-            // $mk->betriebskosten_monatlich($empf_kos_id,$monat,$jahr);
-            // $mk->nebenkosten_monatlich($empf_kos_id,$monat,$jahr);
 
             $anp_tab [0] ['KOSTENKAT'] = 'Miete kalt';
             $anp_tab [0] ['AKTUELL'] = "$mk->ausgangs_kaltmiete_a €";
@@ -3751,7 +3712,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
 
             $pdf->addText(480, 697, 8, "$p->partner_ort, $this->bk_berechnungs_datum_d");
             /* Wenn MV aktuell anpassen, wenn ausgezogen nicht */
-            // if($mv->mietvertrag_aktuell && $summe_nebenkosten_jahr){
 
             if ($empf_kos_typ != 'Leerstand') {
                 // ##########NEU ENERGIEVERBRAUCH GEGEN VORSCHÜSSE###################
@@ -3853,12 +3813,10 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 }
                 $pdf->ezSetDy(-60);
                 $check_hk = $this->check_hk_abrechnung($empf_kos_typ, $empf_kos_id, $this->bk_jahr);
-                // $check_bk = $this->check_bk_abrechnung($empf_kos_typ,$empf_kos_id,$this->bk_jahr);
                 $bk_summe = $ergebnis;
 
                 /* Summe aus der Abrechnung */
                 $hk_summe = $this->summe_hk_abrechnung($empf_kos_typ, $empf_kos_id, $this->bk_jahr);
-                // $bk_summe = $this->summe_bk_abrechnung($empf_kos_typ,$empf_kos_id,$this->bk_jahr);
                 /* NEU */
                 /* Anpassung Nachzahlung Heizkosten */
                 /* Wenn Nachzahlung, dann mindestens 50/12+1EUR=5.00 EUR */
@@ -3872,7 +3830,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     $hk_anp_betrag_neu = ($hk_summe - 25) / 12;
                     $hk_anp_betrag_neu = intval($hk_anp_betrag_neu - 1);
                     $hk_anp_betrag_neu = substr($hk_anp_betrag_neu, 1);
-                    // echo "$hk_summe $hk_vorschuss_neu $hk_anp_betrag_neu";
                     if ($hk_diff >= 0) {
                         $hk_anp_betrag_neu = '0.00';
                     } else {
@@ -3902,8 +3859,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 /* Anpassung Nachzahlung BK */
 
                 /* Summe aus der Abrechnung */
-                // $bk_summe = $this->summe_bk_abrechnung($empf_kos_typ,$empf_kos_id,$this->bk_jahr);
-                // echo $bk_summe
                 if ($bk_summe < 0) {
                     // echo $hk_summe;
                     $bk_anp_betrag_neu = ($bk_summe - 24) / 12;
@@ -3983,7 +3938,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     $pdf->ergebnis_tab ["$mieternummer - $empf"] ['HK_VORSCHUSS_NEU'] = $hk_vorschuss_neu_a;
 
                     if ($hk_summe > $hk_monatlich_bisher_schnitt * $anzahl_monate) {
-                        die ("$mieternummer $empf -  Summe Hk Abrechnung > eingezahlte Summe für HK im Jahr");
+                        throw new \App\Exceptions\MessageException(new \App\Messages\WarningMessage("$mieternummer $empf -  Summe Hk Abrechnung > eingezahlte Summe für HK im Jahr"));
                     }
                 }
                 if ($check_hk == true) {
@@ -3991,10 +3946,8 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 } else {
                     $pdf->ezText("<b>Anpassung der monatlichen Betriebskostenvorauszahlungen ab $this->bk_verrechnungs_datum_d</b>", 10);
                 }
-                // $pdf->ezText("Objekt: $mv->haus_strasse $mv->haus_nr, $mv->haus_plz $mv->haus_stadt",12);
                 $pdf->ezText("<b>$this->bk_bezeichnung</b>", 10);
                 $pdf->ezText("Wirtschaftseinheit: $this->bk_kos_bez      Einheit: $mv->einheit_kurzname", 10);
-                // $pdf->ezText("Einheit: $mv->einheit_kurzname",12);
                 $pdf->ezSetDy(-10);
                 /* Faltlinie */
                 $pdf->setLineStyle(0.2);
@@ -4002,7 +3955,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 $pdf->ezText("$anrede", 10);
 
                 $pdf->ezText("$mv->mv_anrede", 10);
-                // $text_nachzahlung = "aufgrund der Nachzahlungsbetr�ge aus der letzten Betriebskostenabrechnung und der uns bisher bekannten Erhöhungen der Kosten für die Müllentsorgung durch die BSR, die Be- und Entwässerungskosten durch die Berliner Wasserbetriebe und die Erhöhung der Kosten für die Hausreinigung ändern wir die monatlichen Betriebskostenvorauszahlungen auf der Grundlage des § 560 BGB wie nachfolgend aufgeführt ab dem $this->bk_verrechnungs_datum_d.";
                 $text_nachzahlung = "aufgrund der vorliegenden Nebenkostenabrechnung und zu erwartender Kostensteigerungen, erfolgt hiermit eine Änderung der monatlichen Betriebskostenvorauszahlungen auf der Grundlage des § 560 BGB, wie nachfolgend aufgeführt ab dem $this->bk_verrechnungs_datum_d.";
 
                 $text_guthaben_berlin = "aufgrund der uns bisher bekannten Erhöhungen der Kosten für die Müllentsorgung durch die BSR, die Be- und Entwässerungskosten durch die Berliner Wasserbetriebe und die Erhöhung der Kosten für die Hausreinigung, erfolgt hiermit eine Änderung der monatlichen Betriebskostenvorauszahlungen auf der Grundlage des § 560 BGB wie nachfolgend aufgeführt ab dem $this->bk_verrechnungs_datum_d.";
@@ -4027,10 +3979,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 /* BK NK ANPASSUNG */
 
                 $this->get_anpassung_details(session()->get('profil_id'), 'Nebenkosten Vorauszahlung');
-                // $vorschuesse_aktuell =$summe_nebenkosten_jahr;
                 $men = new mietentwicklung ();
-                // $vorschuesse_aktuell = $men->nebenkosten_monatlich($empf_kos_id,date("m"),date("Y"));
-                // $vorschuesse_aktuell = $mz->letzte_hk_vorauszahlung($empf_kos_typ, $empf_kos_id, $this->bk_jahr, 'Nebenkosten Vorauszahlung');
                 $jahr_vorschuss = date("Y");
                 $vorschuesse_aktuell = $mz->letzte_hk_vorauszahlung($empf_kos_typ, $empf_kos_id, $jahr_vorschuss, 'Nebenkosten Vorauszahlung');
 
@@ -4054,10 +4003,8 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
 
                 if ($ergebnis > 0) {
                     $xbk = intval($vorschuesse_aktuell - $bk_anp_betrag_neu);
-                    // intval($hk_anp_betrag_neu-1)
                 } else {
                     $xbk = intval($vorschuesse_aktuell + $bk_anp_betrag_neu);
-                    // intval($hk_anp_betrag_neu-1)
                 }
                 $bk_anp_betrag_neu = $xbk - $vorschuesse_aktuell;
                 echo "BK: $vorschuesse_aktuell $bk_anp_betrag_neu  $xbk<br>";
@@ -4066,8 +4013,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 /* Wenn keine VZ Anteilig gezahlt, BK Anpassen - Nettomieter!!!!!!!!! */
                 $mkk = new mietkonto ();
                 if ($mkk->check_vz_anteilig($empf_kos_id, $monat, $jahr) == true) {
-                    // $vorschuesse_aktuell_a =nummer_punkt2komma(0);
-                    // $anp_betrag_a = nummer_punkt2komma(0);
                     $anp_betrag_a = nummer_punkt2komma(intval($anp_betrag));
                     $vorschuesse_neu = $vorschuesse_aktuell + intval($anp_betrag);
                     $vorschuesse_neu_a = nummer_punkt2komma($vorschuesse_neu);
@@ -4100,17 +4045,8 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
 
                 $anp_tab [4] ['KOSTENKAT'] = '';
                 $a_km = nummer_punkt2komma($mk->ausgangs_kaltmiete + $vorschuesse_aktuell + $hk_monatlich_letzte);
-                // $n_km= nummer_punkt2komma($mk->ausgangs_kaltmiete + $vorschuesse_neu + $hk_vorschuss_neu);
 
-                // if($bk_summe && $check_hk==true){
                 $n_km = nummer_punkt2komma($mk->ausgangs_kaltmiete + $vorschuesse_neu + $hk_vorschuss_neu);
-                // }
-                // if($check_hk==true && !$bk_summe){
-                // $n_km= nummer_punkt2komma($mk->ausgangs_kaltmiete + $hk_vorschuss_neu);
-                // }
-                // if($check_hk==false && $bk_summe){
-                // $n_km= nummer_punkt2komma($mk->ausgangs_kaltmiete + $vorschuesse_neu);
-                // }
 
                 $anp_tab [4] ['AKTUELL'] = "$a_km €";
                 $anp_tab [4] ['ANPASSUNG'] = "<b>Neue Miete</b>";
@@ -4303,7 +4239,12 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 $g = new geldkonto_info ();
                 $g->geld_konto_details(session()->get('geldkonto_id'));
             } else {
-                die("Bitte Geldkonto auswählen.");
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\InfoMessage("Bitte Geldkonto auswählen."),
+                    0,
+                    null,
+                    route('legacy::buchen::index', ['option' => 'geldkonto_aendern'])
+                );
             }
             $pdf->ezText("Sollte uns keine Einzugsermächtigung vorliegen, bitten wir das Guthaben mit der nächsten Mietzahlung zu\nverrechnen bzw. den Nachzahlungsbetrag unter Angabe Ihrer Mieternummer <b>$mieternummer</b> auf das Konto mit der\n<b>IBAN</b> <b>$g->IBAN1</b> bei der <b>$g->kredit_institut</b> zu überweisen.", 10, array(
                 'justification' => 'left'
@@ -4647,9 +4588,10 @@ GROUP BY BK_K_ID, KEY_ID ORDER BY GELD_KONTO_BUCHUNGEN.KONTENRAHMEN_KONTO ";
                 }
             } // end for $a
         } else {
-            die ('ABBRUCH - KEINE KONTEN DIE MAN KOPIEREN KÖNNTE');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('ABBRUCH - KEINE KONTEN DIE MAN KOPIEREN KÖNNTE')
+            );
         }
-
         echo "Kopieren beendet";
     }
 

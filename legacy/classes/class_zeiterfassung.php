@@ -356,7 +356,9 @@ class zeiterfassung
         }
 
         if ($fehler == 1) {
-            die ('Keine Berechtigung');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Keine Berechtigung')
+            );
         }
 
         $f = new formular ();
@@ -1112,7 +1114,9 @@ class zeiterfassung
         }
 
         if ($fehler == 1) {
-            die ('Keine Berechtigung');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Keine Berechtigung')
+            );
         }
 
         ob_end_clean(); // ausgabepuffer leeren
@@ -1122,8 +1126,7 @@ class zeiterfassung
         $this->stundenzettel_grunddaten($id);
         $this->bp_partner_id = $this->get_partner_id_benutzer($this->st_benutzer_id);
         $bpdf->b_header($pdf, 'Partner', $this->bp_partner_id, 'portrait', 'Helvetica.afm', 6);
-        // $pdf = $this->pdf_header($this->bp_partner_id);
-
+        
         $p = new partners ();
         $p->get_partner_name($this->bp_partner_id);
         $this->partner_name = $p->partner_name;
@@ -1176,8 +1179,6 @@ class zeiterfassung
                 $datum_mysql = $stundenzettel_pos_arr [$a] ['DATUM'];
                 $u = new urlaub ();
                 $status = $u->check_anwesenheit($benutzer_id, $datum_mysql);
-                // echo "$benutzer_id $datum_mysql $status";
-                // die();
                 if (empty ($status)) {
                     $table_arr [$a] ['DATUM'] = $datum;
                 } else {
@@ -1767,12 +1768,10 @@ WHERE EINHEIT_AKTUELL='1'");
         $bis = date_german2mysql($edatum);
         $kos_id = $b->kostentraeger_id_ermitteln($kos_typ, $kos_bez);
         if (!$kos_id) {
-            // die("Kostentraeger unbekannt!");
             $kos_id = '%';
         }
 
         if (!$kos_typ) {
-            // die("Kostentraeger unbekannt!");
             $kos_typ = '%';
         }
 

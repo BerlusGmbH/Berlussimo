@@ -67,7 +67,6 @@ class partner extends rechnung {
 
             print_r ( $clean_arr );
             if (empty ( $partnername ) or empty ( $str ) or empty ( $hausnr ) or empty ( $plz ) or empty ( $ort ) or empty ( $land )) {
-                fehlermeldung_ausgeben ( "Dateneingabe unvollständig!!!<br>Sie werden weitergeleitet." );
                 session()->put('partnername', $partnername);
                 session()->put('strasse', $str);
                 session()->put('hausnummer', $hausnr);
@@ -79,8 +78,12 @@ class partner extends rechnung {
                 session()->put('BLZ', $blz);
 
                 $fehler = true;
-                weiterleiten_in_sec ( route('legacy::rechnungen::index', ['option' => 'partner_erfassen']), 3 );
-                die ();
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\ErrorMessage("Dateneingabe unvollständig."),
+                    0,
+                    null,
+                    route('legacy::rechnungen::index', ['option' => 'partner_erfassen'])
+                );
             }
         } // Ende foreach
 

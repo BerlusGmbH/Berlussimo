@@ -226,7 +226,6 @@ class todo
 
         echo "</channel>\n";
         echo "</rss>";
-        die ();
     }
 
     function rss_feed($benutzer_id)
@@ -336,7 +335,6 @@ class todo
 
         echo "</channel>\n";
         echo "</rss>";
-        die ();
     }
 
     function get_my_projekt_arr($benutzer_id, $erl = '0')
@@ -527,7 +525,6 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         } // end else
         echo "</channel>\n";
         echo "</rss>\n";
-        die (); // wichtig
     }
 
     function todo_liste($benutzer_id = '0', $erl = '0')
@@ -1124,7 +1121,9 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             $r = new rechnung ();
             $this->kos_bez = $r->kostentraeger_ermitteln($this->kos_typ, $this->kos_id);
         } else {
-            die ('Kostenträger unbekannt');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Kostenträger unbekannt')
+            );
         }
     }
 
@@ -1152,11 +1151,11 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
     function form_edit_aufgabe($t_id)
     {
         if (empty ($t_id)) {
-            die ('Aufgabe oder Projekt wählen');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Bitte wählen Sie eine Aufgabe.')
+            );
         }
         $this->get_aufgabe_alles($t_id);
-        // echo '<pre>';
-        // print_r($this);
         $f = new formular ();
         $f->erstelle_formular('Bearbeiten', '');
         $bb = new buchen ();

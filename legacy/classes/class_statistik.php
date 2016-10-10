@@ -967,8 +967,6 @@ ORDER BY EINHEIT_KURZNAME ASC");
                 $lieferant = $gesamt [$art_nr] ['LIEFERANT'];
                 $r = new rechnungen ();
                 $art_info = $r->artikel_info($lieferant_id, $art_nr);
-                // print_r($art_info);
-                // die("$art_nr $lieferant_id");
                 $art_bez = $art_info [0] ['BEZEICHNUNG'];
                 unset ($art_info);
                 $geliefert = $gesamt [$art_nr] ['GELIEFERT'];

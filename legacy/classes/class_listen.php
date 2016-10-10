@@ -22,7 +22,7 @@ ORDER BY EINHEIT_KURZNAME";
         $result = DB::select($db_abfrage);
         if (!empty($result)) {
             $z = 0;
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $my_arr [] = $row;
                 $einheit_id = $row ['EINHEIT_ID'];
                 $e = new einheit ();
@@ -124,7 +124,7 @@ ORDER BY EINHEIT_KURZNAME";
                     $pdf_tab [$a] ['SUMME_REP_A'] = nummer_punkt2komma_t($summe_rep);
                     $pdf_tab [$a] ['ENDSUMME'] = $pdf_tab [$a] ['ZWISCHENSUMME'] + $summe_rep;
                     $pdf_tab [$a] ['ENDSUMME_A'] = '<b>' . nummer_punkt2komma_t($pdf_tab [$a] ['ZWISCHENSUMME'] + $summe_rep) . '</b>';
-                    
+
                     $e_nam = $pdf_tab [$a] ['EIGENTUEMER_NAMEN'];
                     $ein_nam = $pdf_tab [$a] ['EINHEIT_KURZNAME'];
                     if ($lang == 'en') {
@@ -338,7 +338,9 @@ ORDER BY EINHEIT_KURZNAME";
             ob_end_clean(); // ausgabepuffer leeren
             $pdf->ezStream();
         } else {
-            die ("Keine Einheiten im Objekt $objekt_id");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Keine Einheiten im Objekt $objekt_id")
+            );
         }
     }
 
@@ -369,7 +371,8 @@ ORDER BY EINHEIT_KURZNAME";
         echo '<pre>';
         print_r($gk);
         if (!$gk->geldkonto_id) {
-            die ('Geldkonto zum Objekt hinzufügen!!!');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Geldkonto zum Objekt hinzufügen'));
         }
         $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT_ID`,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
 WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.OBJEKT_ID='$objekt_id' 
@@ -378,7 +381,7 @@ ORDER BY EINHEIT_KURZNAME";
         $result = DB::select($db_abfrage);
         if (!empty($result)) {
             $z = 0;
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $my_arr [] = $row;
                 $einheit_id = $row ['EINHEIT_ID'];
                 $e = new einheit ();
@@ -624,7 +627,7 @@ ORDER BY EINHEIT_KURZNAME";
                             )
                         ));
                     }
-                    
+
                     $pdf->ezSetDy(-20); // abstand
                     if (is_array($my_arr [$a] ['AUSGABEN'])) {
                         if ($lang == 'en') {
@@ -700,7 +703,7 @@ ORDER BY EINHEIT_KURZNAME";
                             );
                         }
                     }
-                    
+
                     if ($pdf_tab [$a] ['MIETER_SALDO'] < 0) {
                         $tmp_minus = substr($pdf_tab [$a] ['MIETER_SALDO'], 1);
                         if ($tmp_minus > $pdf_tab [$a] ['ENDSUMME']) {
@@ -752,7 +755,9 @@ ORDER BY EINHEIT_KURZNAME";
             ob_end_clean(); // ausgabepuffer leeren
             $pdf->ezStream();
         } else {
-            die ("Keine Einheiten im Objekt $objekt_id");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Keine Einheiten im Objekt $objekt_id.")
+            );
         }
     }
 
@@ -768,7 +773,9 @@ ORDER BY EINHEIT_KURZNAME";
         echo '<pre>';
         print_r($gk);
         if (!$gk->geldkonto_id) {
-            die ('Geldkonto zum Objekt hinzufügen!!!');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\WarningMessage('Geldkonto zum Objekt hinzufügen.')
+            );
         }
         $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT_ID`,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
 WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.OBJEKT_ID='$objekt_id' 
@@ -777,7 +784,7 @@ ORDER BY EINHEIT_KURZNAME";
         $result = DB::select($db_abfrage);
         if (!empty($result)) {
             $z = 0;
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $my_arr [] = $row;
                 $einheit_id = $row ['EINHEIT_ID'];
                 $einheit_qm = $row ['EINHEIT_QM'];
@@ -1010,7 +1017,7 @@ ORDER BY EINHEIT_KURZNAME";
                             )
                         ));
                     }
-                    
+
                     $pdf->ezSetDy(-20); // abstand
                     if (is_array($my_arr [$a] ['AUSGABEN'])) {
                         if ($lang == 'en') {
@@ -1141,11 +1148,13 @@ ORDER BY EINHEIT_KURZNAME";
                 'xOrientation' => 'right',
                 'width' => 500
             ));
-            
+
             ob_end_clean(); // ausgabepuffer leeren
             $pdf->ezStream();
         } else {
-            die ("Keine Einheiten im Objekt $objekt_id");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Keine Einheiten im Objekt $objekt_id.")
+            );
         }
     }
 
@@ -1154,7 +1163,9 @@ ORDER BY EINHEIT_KURZNAME";
         $gk = new geldkonto_info ();
         $gk->geld_konto_ermitteln('OBJEKT', session()->get('objekt_id'));
         if (!$gk->geldkonto_id) {
-            die ('Geldkonto vom Objekt nicht bekannt!');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Geldkonto vom Objekt nicht bekannt!')
+            );
         }
 
         $monat = date("m");
@@ -1292,7 +1303,9 @@ ORDER BY EINHEIT_KURZNAME";
         echo '<pre>';
         // print_r($gk);
         if (!$gk->geldkonto_id) {
-            die ('Geldkonto zum Objekt hinzufügen!!!');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Geldkonto zum Objekt hinzufügen!!!')
+            );
         }
         $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT_ID`,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
 WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.OBJEKT_ID='$objekt_id' 
@@ -1301,7 +1314,7 @@ ORDER BY EINHEIT_KURZNAME";
         $result = DB::select($db_abfrage);
         if (!empty($result)) {
             $z = 0;
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $my_arr [] = $row;
                 $einheit_id = $row ['EINHEIT_ID'];
                 $einheit_qm = $row ['EINHEIT_QM'];
@@ -1641,9 +1654,9 @@ ORDER BY EINHEIT_KURZNAME";
                         )
                     ));
                     unset ($trans_tab);
-                    
+
                     $pdf->ezNewPage();
-                    
+
                     unset ($pdf_tab);
                 }
             }
@@ -1651,7 +1664,7 @@ ORDER BY EINHEIT_KURZNAME";
             $uebersicht [$anz] ['ENDSUMME_A'] = nummer_punkt2komma_t($summe_alle_eigentuemer);
             $uebersicht [$anz + 1] ['EIGENTUEMER_NAMEN'] = 'Auszahlen';
             $uebersicht [$anz + 1] ['TRANSFER_A'] = nummer_punkt2komma_t($summe_transfer);
-            
+
             if ($lang == 'en') {
                 $cols = array(
                     'EINHEIT_KURZNAME' => "Apt",
@@ -1683,7 +1696,9 @@ ORDER BY EINHEIT_KURZNAME";
             ob_end_clean(); // ausgabepuffer leeren
             $pdf->ezStream();
         } else {
-            die ("Keine Einheiten im Objekt $objekt_id");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Keine Einheiten im Objekt $objekt_id")
+            );
         }
     }
 
@@ -1693,7 +1708,9 @@ ORDER BY EINHEIT_KURZNAME";
     {
         /* Eingrenzung Kostenabragen */
         if (!request()->has('von') or !request()->has('bis')) {
-            die ('Abfragedatum VON BIS in die URL hinzufügen');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Abfragedatum VON BIS in die URL hinzufügen')
+            );
         }
         $von = date_german2mysql(request()->input('von'));
         $bis = date_german2mysql(request()->input('bis'));
@@ -1708,7 +1725,9 @@ ORDER BY EINHEIT_KURZNAME";
         echo '<pre>';
         // print_r($gk);
         if (!$gk->geldkonto_id) {
-            die ('Geldkonto zum Objekt hinzufügen!!!');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Geldkonto zum Objekt hinzufügen.')
+            );
         }
         $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT_ID`,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
 WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.OBJEKT_ID='$objekt_id' 
@@ -1717,7 +1736,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
         $result = DB::select($db_abfrage);
         if (!empty($result)) {
             $z = 0;
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $my_arr [] = $row;
                 $einheit_id = $row ['EINHEIT_ID'];
                 $einheit_qm = $row ['EINHEIT_QM'];
@@ -1757,7 +1776,9 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                             }
                         }
                     } else {
-                        die ("Personen/Eigentümer unbekannt! ET_ID: $weg->eigentuemer_id");
+                        throw new \App\Exceptions\MessageException(
+                            new \App\Messages\ErrorMessage("Personen/Eigentümer unbekannt! ET_ID: $weg->eigentuemer_id")
+                        );
                     }
                 } else {
                     $my_arr [$z] ['EIGENTUEMER'] = 'Unbekannt';
@@ -1899,22 +1920,11 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                     $pdf_tab [$a] ['NETTO_SOLL_MV'] = $my_arr [$a] ['NETTO_SOLL_MV'];
                     $pdf_tab [$a] ['NETTO_SOLL_DIFF'] = $pdf_tab [$a] ['NETTO_SOLL'] - $pdf_tab [$a] ['NETTO_SOLL_MV'];
                     $pdf_tab [$a] ['NETTO_SOLL_A'] = nummer_punkt2komma_t($my_arr [$a] ['NETTO_SOLL']);
-                    // echo '<pre>';
-                    // print_r($my_arr);
-                    // die();
-                    // if(empty($my_arr[$a]['WEG-FLAECHE'])){
-                    // $pdf_tab[$a]['ABGABE_IHR'] = $pdf_tab[$a]['EINHEIT_QM'] * -0.4;
-                    // die('SSS');
-                    // }else{
-                    // $pdf_tab[$a]['ABGABE_IHR'] = $my_arr[$a]['WEG-FLAECHE'] * -0.4;
                     $pdf_tab [$a] ['ABGABE_IHR'] = $my_arr [$a] ['ABGABE_IHR'];
-                    // die('OKOKOK');
-                    // }
 
                     $weg1 = new weg ();
                     $vg = $weg1->get_summe_kostenkat_monat($monat, $jahr, 'Einheit', $einheit_id, '6060');
                     if (!empty ($vg)) {
-                        // die("SSSS $vg");
                         $pdf_tab [$a] ['ABGABE_HV'] = -$vg; // Verwaltergebühr
                         $pdf_tab [$a] ['ABGABE_HV_A'] = nummer_punkt2komma(-$vg); // Verwaltergebühr
                     } else {
@@ -1926,87 +1936,57 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                     $ihr_hg = $weg1->get_summe_kostenkat_monat($monat, $jahr, 'Einheit', $einheit_id, '6030');
 
                     if (!empty ($ihr_hg)) {
-                        // die('SIVAC');
                         $pdf_tab [$a] ['ABGABE_IHR'] = -$ihr_hg;
                     } else {
-                        // echo '<pre>';
-                        // print_r($my_arr);
-                        // die("BLA");
                         $pdf_tab [$a] ['ABGABE_IHR'] = $pdf_tab [$a] ['WEG-FLAECHE'] * -0.4;
                     }
-                    // print_r($pdf_tab);
-                    // die();
-
                     $pdf_tab [$a] ['ABGABE_IHR_A'] = nummer_punkt2komma($pdf_tab [$a] ['ABGABE_IHR']);
 
-                    // $pdf_tab[$a]['ABGABE_HV'] = '-30.00';
-                    // $pdf_tab[$a]['ABGABE_HV_A'] = '-30,00';
                     $pdf_tab [$a] ['ZWISCHENSUMME'] = $my_arr [$a] ['NETTO_SOLL'] + $pdf_tab [$a] ['ABGABE_IHR'] + $pdf_tab [$a] ['ABGABE_HV'];
 
                     $pdf_tab [$a] ['ZWISCHENSUMME_A'] = nummer_punkt2komma($my_arr [$a] ['NETTO_SOLL'] + $pdf_tab [$a] ['ABGABE_IHR'] + $pdf_tab [$a] ['ABGABE_HV']);
-                    // if(nummer_komma2punkt($pdf_tab[$a]['ZWISCHENSUMME_A'])<0.00){
-                    // $pdf_tab[$a]['ZWISCHENSUMME_A'] ='0,00';
-                    // }
 
                     /* Andere Kosten Summieren */
                     // ############################
                     $anz_kk = count($my_arr [$a] ['5500']);
                     if ($anz_kk > 1) {
                         $sum_k = $my_arr [$a] ['5500'] [$anz_kk - 1] ['BETRAG'];
-                        // die($sum_k);
                         $summe_rep += $my_arr [$a] ['5500'] [$anz_kk - 1] ['BETRAG'];
                     }
 
                     $anz_kk = count($my_arr [$a] ['4180']);
                     if ($anz_kk > 1) {
                         $sum_k = $my_arr [$a] ['4180'] [$anz_kk - 1] ['BETRAG'];
-                        // die($sum_k);
                         $summe_rep += $my_arr [$a] ['4180'] [$anz_kk - 1] ['BETRAG'];
                     }
 
                     $anz_kk = count($my_arr [$a] ['4280']);
                     if ($anz_kk > 1) {
                         $sum_k = $my_arr [$a] ['4280'] [$anz_kk - 1] ['BETRAG'];
-                        // die($sum_k);
                         $summe_rep += $my_arr [$a] ['4280'] [$anz_kk - 1] ['BETRAG'];
                     }
 
                     $anz_kk = count($my_arr [$a] ['4281']);
                     if ($anz_kk > 1) {
                         $sum_k = $my_arr [$a] ['4281'] [$anz_kk - 1] ['BETRAG'];
-                        // die($sum_k);
                         $summe_rep += $my_arr [$a] ['4281'] [$anz_kk - 1] ['BETRAG'];
                     }
                     $anz_kk = count($my_arr [$a] ['4282']);
                     if ($anz_kk > 1) {
                         $sum_k = $my_arr [$a] ['4282'] [$anz_kk - 1] ['BETRAG'];
-                        // die($sum_k);
                         $summe_rep += $my_arr [$a] ['4282'] [$anz_kk - 1] ['BETRAG'];
                     }
 
                     $anz_kk = count($my_arr [$a] ['5081']);
                     if ($anz_kk > 1) {
                         $sum_k = $my_arr [$a] ['5081'] [$anz_kk - 1] ['BETRAG'];
-                        // die($sum_k);
                         $summe_rep += $my_arr [$a] ['5081'] [$anz_kk - 1] ['BETRAG'];
                     }
-
-                    // $anz_au = count($my_arr[$a]['5020']);
-                    // if($anz_au>1){
-                    // $sum_k = $my_arr[$a]['5020'][$anz_au-1]['BETRAG'];
-                    // #die($sum_k);
-                    // $summe_rep += $my_arr[$a]['5020'][$anz_au-1]['BETRAG'];
-                    // }
 
                     $pdf_tab [$a] ['SUMME_REP'] = $summe_rep;
                     $pdf_tab [$a] ['SUMME_REP_A'] = nummer_punkt2komma($summe_rep);
                     $pdf_tab [$a] ['ENDSUMME'] = $pdf_tab [$a] ['ZWISCHENSUMME'];
                     $pdf_tab [$a] ['ENDSUMME_A'] = $pdf_tab [$a] ['ZWISCHENSUMME_A'];
-
-                    // $pdf_tab[$a]['ENDSUMME'] = $pdf_tab[$a]['ZWISCHENSUMME'] + $summe_rep;
-                    // $pdf_tab[$a]['ENDSUMME_A'] = '<b>'.nummer_punkt2komma_t($pdf_tab[$a]['ZWISCHENSUMME'] + $summe_rep).'</b>';
-
-                    // $pdf_tab[$a]['EIG_AUSZAHLUNG'] = $this->get_kosten_arr('EINHEIT', $my_arr[$a]['EINHEIT_ID'], $monat, $jahr, $gk->geldkonto_id,80001);
 
                     $e_nam = $pdf_tab [$a] ['EIGENTUEMER_NAMEN'];
                     $ein_nam = $pdf_tab [$a] ['EINHEIT_KURZNAME'];
@@ -2138,33 +2118,14 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                         ));
                     }
 
-                    /*
-					 * if($pdf_tab[$a]['BRUTTO_IST']<$pdf_tab[$a]['ENDSUMME']){
-					 * $pdf->setColor(1.0,0.0,0.0);
-					 * $pdf->ezSetDy(-20); //abstand
-					 * if($lang=='en'){
-					 * $pdf->ezText("no payout possible!", 12);
-					 * }else{
-					 * $pdf->ezText("Keine Auszahlung möglich!", 12);
-					 * }
-					 * }
-					 */
-
-                    // print_r($table_arr);
-                    // die();
-
                     $pdf->ezSetDy(-10); // abstand
                     if (is_array($my_arr [$a] ['AUSGABEN'])) {
-                        // $anzaa = count($my_arr[$a]['AUSGABEN']);
                         array_unshift($my_arr [$a] ['AUSGABEN'], array(
                             'DATUM' => ' '
                         ));
                         array_unshift($my_arr [$a] ['AUSGABEN'], array(
                             'DATUM' => ' '
                         ));
-
-                        // $my_arr[$a]['AUSGABEN'][$anzaa] = ' ';
-                        // $my_arr[$a]['AUSGABEN'][$anzaa+1] = ' ';
 
                         if ($lang == 'en') {
                             $cols = array(
@@ -2511,56 +2472,10 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                         )
                     ));
 
-                    // $pdf->ezSetDy(-10);
-                    // $pdf->ezText("<b>For differences between \"to transfer\" and the actually transfer please ask the customer service
-                    // (fon: +49 30 698 19398-12 or e-mail: service @inspirationgroup.biz)</b>", 10);
-
                     unset ($trans_tab);
 
-                    /* TAbelle Auszahlung an Eigentümer */
-                    // print_r($my_arr[$a]['AUSZAHLUNG_ET']);
-                    // die();
-                    if (is_array($my_arr [$a] ['AUSZAHLUNG_ET'])) {
-
-                        if ($lang == 'en') {
-                            // $cols = array('DATUM'=>"Date", 'VERWENDUNGSZWECK'=>"Description", 'BETRAG'=>"Amount");
-                            // $pdf->ezTable($my_arr[$a]['AUSZAHLUNG_ET'], $cols, "<b>$monat_name $jahr - transfer 5020 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
-                        } else {
-                            // $cols = array('DATUM'=>"Datum", 'VERWENDUNGSZWECK'=>"Buchungstext", 'BETRAG'=>"Betrag");
-                            // $pdf->ezTable($my_arr[$a]['AUSZAHLUNG_ET'], $cols, "<b>$monat_name $jahr - Überweisung 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
-                        }
-                    }
-                    /*
-					 * if(is_array($my_arr[$a]['IST_EINNAHMEN'])){
-					 * if($lang=='en'){
-					 * $cols = array('DATUM'=>"Date", 'VERWENDUNGSZWECK'=>"Description", 'BETRAG'=>"Amount");
-					 * $pdf->ezTable($my_arr[$a]['IST_EINNAHMEN'], $cols, "<b>$monat_name $jahr - income overview 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
-					 * }else{
-					 * $cols = array('DATUM'=>"Datum", 'VERWENDUNGSZWECK'=>"Buchungstext", 'BETRAG'=>"Betrag");
-					 * $pdf->ezTable($my_arr[$a]['IST_EINNAHMEN'], $cols, "<b>$monat_name $jahr - Einnahmen 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
-					 * }
-					 *
-					 * }else{
-					 * $pdf->ezText("Keine Mieteinnahmen", 12);
-					 * }
-					 */
-
-                    // $cols = array('DATUM'=>"Datum",'VERWENDUNGSZWECK'=>"Buchungstext", 'BETRAG'=>"Betrag");
-                    // $pdf->ezTable($pdf_tab[$a]['EIG_AUSZAHLUNG'], $cols, "<b>$monat_name $jahr - Auszahlung an Eigentümer 80001 - $ein_nam</b>", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>65),'DATUM'=>array('justification'=>'left', 'width'=>50))));
-                    // $pdf->Cezpdf('a4','landscape');
                     $pdf->ezNewPage();
 
-                    /*
-					 * $size = array(0,0,595.28,841.89);
-					 * $a_k=$size[3];
-					 * $size[3]=$size[2];
-					 * $size[2]=$a_k;
-					 *
-					 *
-					 * $pdf->ez['pageWidth']=$size[2];
-					 * $pdf->ez['pageHeight']=$size[3];
-					 * #$pdf->ezSetMargins(120,40,30,30);
-					 */
                     unset ($pdf_tab);
                 }
             }
@@ -2568,9 +2483,6 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
             $uebersicht [$anz] ['ENDSUMME_A'] = nummer_punkt2komma_t($summe_alle_eigentuemer);
             $uebersicht [$anz + 1] ['EIGENTUEMER_NAMEN'] = 'Auszahlen';
             $uebersicht [$anz + 1] ['TRANSFER_A'] = nummer_punkt2komma_t($summe_transfer);
-            // $uebersicht[$anz+1]['EIGENTUEMER_NAMEN'] = 'Zu erhalten';
-            // $uebersicht[$anz+1]['ENDSUMME_A'] = nummer_punkt2komma_t($summe_nachzahler);
-
             if ($lang == 'en') {
                 $cols = array(
                     'EINHEIT_KURZNAME' => "Apt",
@@ -2632,70 +2544,12 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                     )
                 )
             ));
-            // print_r($pdf_tab);
-            // print_r($pdf_tab_soll);
-            // echo '<pre>';
-            // print_r($my_arr);
-
-            // die();
-
-            // print_r($pdf);
-            // die();
-            // $pdf->newPage()
 
             $anz_m = count($my_arr);
             $z = 0;
             for ($mm = 0; $mm < $anz_m; $mm++) {
                 $saldo_m_et = 0;
                 $einheit_kn = $my_arr [$mm] ['EINHEIT_KURZNAME'];
-
-                // $et_ue_tab[$einheit_kn][$z]['TXT'] = 'EINHEIT';
-                // #$et_ue_tab[$einheit_kn][$z]['BEZ'] = $my_arr[$mm]['EINHEIT_KURZNAME'];
-                // $et_ue_tab[$einheit_kn][$z]['BET'] = ' ';
-                // $et_ue_tab[$einheit_kn][$z]['DATUM'] = ' ';
-                // $z++;
-
-                /* Soll Miete */
-                /*
-				 * $et_ue_tab[$einheit_kn][$z]['TXT'] = 'Monthly';
-				 * $et_ue_tab[$einheit_kn][$z]['BEZ'] = 'Rent (B)';
-				 * $et_ue_tab[$einheit_kn][$z]['BET'] = $my_arr[$mm]['BRUTTO_SOLL'];
-				 * $et_ue_tab[$einheit_kn][$z]['DATUM'] = 'Monthly';
-				 * $saldo_m_et += $et_ue_tab[$einheit_kn][$z]['BET'];
-				 * $z++;
-				 *
-				 * /*Abgabe IHR / Hausgeld etc
-				 */
-                /*
-				 * $et_ue_tab[$einheit_kn][$z]['TXT'] = 'Monthly';
-				 * $et_ue_tab[$einheit_kn][$z]['BEZ'] = 'for maint.';
-				 * $et_ue_tab[$einheit_kn][$z]['BET'] = nummer_komma2punkt(nummer_punkt2komma($my_arr[$mm]['ABGABE_IHR']));
-				 * $et_ue_tab[$einheit_kn][$z]['DATUM'] = 'Monthly';
-				 * $saldo_m_et += $et_ue_tab[$einheit_kn][$z]['BET'];
-				 * $z++;
-				 *
-				 *
-				 *
-				 * /*Abgaben
-				 */
-                /*
-				 * if(is_array($my_arr[$mm]['ABGABEN'])){
-				 *
-				 * $anz_ab = count($my_arr[$mm]['ABGABEN']);
-				 * for($ab=0;$ab<$anz_ab;$ab++){
-				 * $arr_key = array_keys($my_arr[$mm]['ABGABEN'][$ab]);
-				 * $key = $arr_key[0];
-				 * if($my_arr[$mm]['ABGABEN'][$ab][$key]<>0){
-				 * $et_ue_tab[$einheit_kn][$z]['TXT']= $key;
-				 * $et_ue_tab[$einheit_kn][$z]['BEZ'] = 'Man. Fee';
-				 * $et_ue_tab[$einheit_kn][$z]['BET'] = $my_arr[$mm]['ABGABEN'][$ab][$key]*-1;
-				 * $et_ue_tab[$einheit_kn][$z]['DATUM'] = 'Monthly';
-				 * $saldo_m_et += $et_ue_tab[$einheit_kn][$z]['BET'];
-				 * $z++;
-				 * }
-				 * }
-				 * }
-				 */
 
                 /* Ausgaben 1023 */
                 if (is_array($my_arr [$mm] ['AUSGABEN'])) {
@@ -2936,25 +2790,24 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
             ob_end_clean(); // ausgabepuffer leeren
             $pdf->ezStream();
         } else {
-            die ("Keine Einheiten im Objekt $objekt_id");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Keine Einheiten im Objekt $objekt_id")
+            );
         }
     }
 
     function get_kosten_von_bis($kos_typ, $kos_id, $von, $bis, $gk_id, $konto = null)
     {
-
-        // echo "$kos_typ, $kos_id, $monat, $jahr, $gk_id, $konto=null <br>";
         if ($konto == null) {
             $db_abfrage = "SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` = '$gk_id' AND DATUM BETWEEN '$von' and '$bis' AND `KOSTENTRAEGER_TYP` = '$kos_typ' AND `KOSTENTRAEGER_ID` = '$kos_id' AND `AKTUELL` = '1'  ORDER BY KONTENRAHMEN_KONTO, DATUM";
         } else {
             $db_abfrage = "SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` = '$gk_id' AND DATUM BETWEEN '$von' and '$bis' AND `KOSTENTRAEGER_TYP` = '$kos_typ' AND `KOSTENTRAEGER_ID` = '$kos_id' AND `AKTUELL` = '1' && KONTENRAHMEN_KONTO='$konto' ORDER BY KONTENRAHMEN_KONTO, DATUM";
         }
-        // echo $db_abfrage;
         $result = DB::select($db_abfrage);
         $sum = 0.00;
         if (!empty($result)) {
 
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $my_array [] = $row;
                 $sum += $row ['BETRAG'];
             }
@@ -2967,7 +2820,9 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
     {
         /* Eingrenzung Kostenabragen */
         if (!request()->has('von') or !request()->has('bis')) {
-            die ('Abfragedatum VON BIS in die URL hinzufügen');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Abfragedatum VON BIS in die URL hinzufügen')
+            );
         }
         $von = date_german2mysql(request()->input('von'));
         $bis = date_german2mysql(request()->input('bis'));
@@ -2982,7 +2837,9 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
         echo '<pre>';
         // print_r($gk);
         if (!$gk->geldkonto_id) {
-            die ('Geldkonto zum Objekt hinzufügen!!!');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Geldkonto zum Objekt hinzufügen.')
+            );
         }
         $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT_ID`,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
 	WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.OBJEKT_ID='$objekt_id'
@@ -2991,7 +2848,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
         $result = DB::select($db_abfrage);
         if (!empty($result)) {
             $z = 0;
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $my_arr [] = $row;
                 $einheit_id = $row ['EINHEIT_ID'];
                 $einheit_qm = $row ['EINHEIT_QM'];
@@ -3031,7 +2888,9 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                             }
                         }
                     } else {
-                        die ("Personen/Eigentümer unbekannt! ET_ID: $weg->eigentuemer_id");
+                        throw new \App\Exceptions\MessageException(
+                            new \App\Messages\ErrorMessage("Personen/Eigentümer unbekannt! ET_ID: $weg->eigentuemer_id")
+                        );
                     }
                 } else {
                     $my_arr [$z] ['EIGENTUEMER'] = 'Unbekannt';
@@ -3969,11 +3828,6 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                 $z = 0;
             }
 
-            // echo "<hr>";
-            // echo '<pre>';
-            // print_r($et_ue_tab);
-            // die();
-
             $w_keys = array_unique(array_keys($et_ue_tab));
             $colss = array(
                 'DATUM' => "Date",
@@ -3984,9 +3838,6 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
             $pdf->ezNewPage();
             for ($p = 0; $p < count($w_keys); $p++) {
                 $wohnung = $w_keys [$p];
-                // $pdf->ezNewPage();
-                // $pdf->eztable($et_ue_tab[$wohnung]);
-                // $pdf->ezTable($et_ue_tab[$wohnung], $colss,"$wohnung $monat/$jahr", array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500));
                 $pdf->ezTable($et_ue_tab [$wohnung], $colss, "<b>$wohnung $monat/$jahr</b>", array(
                     'showHeadings' => 1,
                     'shaded' => 1,
@@ -4019,7 +3870,9 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
             ob_end_clean(); // ausgabepuffer leeren
             $pdf->ezStream();
         } else {
-            die ("Keine Einheiten im Objekt $objekt_id");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Keine Einheiten im Objekt $objekt_id")
+            );
         }
     }
 
@@ -4029,7 +3882,9 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
         $gk = new geldkonto_info ();
         $gk->geld_konto_ermitteln('OBJEKT', $objekt_id);
         if (!$gk->geldkonto_id) {
-            die ('Geldkonto zum Objekt hinzufügen!!!');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Geldkonto zum Objekt hinzufügen.')
+            );
         }
         $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT_ID`,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
 WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.OBJEKT_ID='$objekt_id' 
@@ -4039,7 +3894,7 @@ ORDER BY EINHEIT_KURZNAME";
         $numrows = count($result);
         if ($numrows) {
             $z = 0;
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $my_arr [] = $row;
                 $einheit_id = $row ['EINHEIT_ID'];
                 $einheit_qm = $row ['EINHEIT_QM'];
@@ -4118,9 +3973,6 @@ ORDER BY EINHEIT_KURZNAME";
                     $net_ren_garantie_a = $det->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-KaltmieteINS'); // kommt als Kommazahl
                     $net_ren_garantie = nummer_komma2punkt($net_ren_garantie_a);
                     $my_arr [$a] ['NETTO_SOLL_G_A'] = $net_ren_garantie_a;
-                    // if($einheit_id=='945'){
-                    // die("SANEL $einheit_id $net_ren_garantie");
-                    // }
                     if ($net_ren_garantie > $mk->ausgangs_kaltmiete) {
                         $my_arr [$a] ['NETTO_SOLL'] = $net_ren_garantie;
                     } else {
@@ -4129,8 +3981,6 @@ ORDER BY EINHEIT_KURZNAME";
 
                     $my_arr [$a] ['BRUTTO_SOLL'] = $brutto_sollmiete;
                     $my_arr [$a] ['AUSZAHLUNG_ET'] = $this->get_kosten_arr('Eigentuemer', $eige_id, $monat, $jahr, $gk->geldkonto_id, 5020);
-                    // print_r($my_arr[$a]['AUSZAHLUNG_ET']);
-                    // die();
                     $my_arr [$a] ['IST_EINNAHMEN'] = $this->get_kosten_arr('MIETVERTRAG', $my_arr [$a] ['MIETVERTRAG_ID'], $monat, $jahr, $gk->geldkonto_id, 80001);
                     $anz_me = count($my_arr [$a] ['IST_EINNAHMEN']);
                     $summe_einnahmen = 0;
@@ -4140,7 +3990,6 @@ ORDER BY EINHEIT_KURZNAME";
                     $my_arr [$a] ['IST_EINNAHMEN'] [$anz_me] ['BETRAG'] = '<b>' . nummer_punkt2komma_t($summe_einnahmen) . '</b>';
                     $my_arr [$a] ['IST_EINNAHMEN'] [$anz_me] ['VERWENDUNGSZWECK'] = '<b>Summe</b>';
                     $my_arr [$a] ['BRUTTO_IST'] = $summe_einnahmen;
-                    // $my_arr[$a]['SUM_EIN_AUS_MIETE'] =
 
                     $pdf_tab [$a] ['MIETER_SALDO'] = $my_arr [$a] ['MIETER_SALDO'];
                     $pdf_tab [$a] ['EIGENTUEMER_NAMEN'] = $my_arr [$a] ['EIGENTUEMER_NAMEN'];
@@ -4166,15 +4015,10 @@ ORDER BY EINHEIT_KURZNAME";
                     $pdf_tab [$a] ['NETTO_SOLL_MV'] = $my_arr [$a] ['NETTO_SOLL_MV'];
                     $pdf_tab [$a] ['NETTO_SOLL_DIFF'] = $pdf_tab [$a] ['NETTO_SOLL'] - $pdf_tab [$a] ['NETTO_SOLL_MV'];
                     $pdf_tab [$a] ['NETTO_SOLL_A'] = nummer_punkt2komma_t($my_arr [$a] ['NETTO_SOLL']);
-                    // echo '<pre>';
-                    // print_r($my_arr);
-                    // die();
                     if (empty ($my_arr [$a] ['WEG-FLAECHE'])) {
                         $pdf_tab [$a] ['ABGABE_IHR'] = $pdf_tab [$a] ['EINHEIT_QM'] * -0.4;
-                        // die('SSS');
                     } else {
                         $pdf_tab [$a] ['ABGABE_IHR'] = $my_arr [$a] ['WEG-FLAECHE'] * -0.4;
-                        // die('OKOKOK');
                     }
                     $pdf_tab [$a] ['ABGABE_IHR_A'] = nummer_punkt2komma($pdf_tab [$a] ['ABGABE_IHR']);
                     $pdf_tab [$a] ['ABGABE_HV'] = '-30.00';
@@ -4182,19 +4026,10 @@ ORDER BY EINHEIT_KURZNAME";
                     $pdf_tab [$a] ['ZWISCHENSUMME'] = $my_arr [$a] ['NETTO_SOLL'] + $pdf_tab [$a] ['ABGABE_IHR'] + $pdf_tab [$a] ['ABGABE_HV'];
 
                     $pdf_tab [$a] ['ZWISCHENSUMME_A'] = nummer_punkt2komma($my_arr [$a] ['NETTO_SOLL'] + $pdf_tab [$a] ['ABGABE_IHR'] + $pdf_tab [$a] ['ABGABE_HV']);
-                    // if(nummer_komma2punkt($pdf_tab[$a]['ZWISCHENSUMME_A'])<0.00){
-                    // $pdf_tab[$a]['ZWISCHENSUMME_A'] ='0,00';
-                    // }
-
                     $pdf_tab [$a] ['SUMME_REP'] = $summe_rep;
                     $pdf_tab [$a] ['SUMME_REP_A'] = nummer_punkt2komma($summe_rep);
                     $pdf_tab [$a] ['ENDSUMME'] = $pdf_tab [$a] ['ZWISCHENSUMME'];
                     $pdf_tab [$a] ['ENDSUMME_A'] = $pdf_tab [$a] ['ZWISCHENSUMME_A'];
-
-                    // $pdf_tab[$a]['ENDSUMME'] = $pdf_tab[$a]['ZWISCHENSUMME'] + $summe_rep;
-                    // $pdf_tab[$a]['ENDSUMME_A'] = '<b>'.nummer_punkt2komma_t($pdf_tab[$a]['ZWISCHENSUMME'] + $summe_rep).'</b>';
-
-                    // $pdf_tab[$a]['EIG_AUSZAHLUNG'] = $this->get_kosten_arr('EINHEIT', $my_arr[$a]['EINHEIT_ID'], $monat, $jahr, $gk->geldkonto_id,80001);
 
                     $e_nam = $pdf_tab [$a] ['EIGENTUEMER_NAMEN'];
                     $ein_nam = $pdf_tab [$a] ['EINHEIT_KURZNAME'];
@@ -4219,42 +4054,17 @@ ORDER BY EINHEIT_KURZNAME";
                     $uebersicht [$a] ['EINHEIT_QM_A'] = $pdf_tab [$a] ['EINHEIT_QM_A'];
 
                     $uebersicht [$a] ['ENDSUMME_A'] = $pdf_tab [$a] ['ENDSUMME_A'];
-                    // $summe_alle_eigentuemer += $pdf_tab[$a]['ENDSUMME'];
                     $uebersicht [$a] ['TRANSFER'] = $pdf_tab [$a] ['ENDSUMME'] + $pdf_tab [$a] ['SUMME_REP'];
                     $uebersicht [$a] ['TRANSFER_A'] = nummer_punkt2komma_t($pdf_tab [$a] ['ENDSUMME'] + $pdf_tab [$a] ['SUMME_REP']);
-                    /*
-					 * $trans_tab['ENDSUMME_A'] = $pdf_tab[$a]['ENDSUMME_A'];
-					 * $trans_tab['SUMME_REP_A'] = $uebersicht[$a]['SUMME_REP_A'];
-					 * $trans_tab['TRANSFER'] = $uebersicht[$a]['TRANSFER'];
-					 * $trans_tab['TRANSFER_A'] = $uebersicht[$a]['TRANSFER_A'];
-					 */
-                    /*
-					 * $summe_transfer += $uebersicht[$a]['TRANSFER'];
-					 *
-					 * if($pdf_tab[$a]['ENDSUMME']>0){
-					 * $summe_alle_eigentuemer += $pdf_tab[$a]['ENDSUMME'];
-					 * }else{
-					 * $summe_nachzahler += $pdf_tab[$a]['ENDSUMME'];
-					 * }
-					 */
 
                     if (is_array($my_arr [$a] ['AUSGABEN'])) {
-                        // $anzaa = count($my_arr[$a]['AUSGABEN']);
                         array_unshift($my_arr [$a] ['AUSGABEN'], array(
                             'DATUM' => ' '
                         ));
                         array_unshift($my_arr [$a] ['AUSGABEN'], array(
                             'DATUM' => ' '
                         ));
-
-                        // $my_arr[$a]['AUSGABEN'][$anzaa] = ' ';
-                        // $my_arr[$a]['AUSGABEN'][$anzaa+1] = ' ';
-                    } else {
                     }
-
-                    // $cols = array('ENDSUMME_A'=>"Amount1", 'SUMME_REP_A'=>"Amount", 'TRANSFER_A'=>"Transfer");
-                    // $pdf->ezTable($trans_tab, $cols);
-                    // unset($trans_tab);
                     $trans_tab [0] ['TEXT'] = "Amount [€]";
                     $trans_tab [0] ['AM'] = $uebersicht [$a] ['ENDSUMME_A'];
                     $trans_tab [1] ['TEXT'] = "Bills [€]";
@@ -4275,45 +4085,21 @@ ORDER BY EINHEIT_KURZNAME";
                     unset ($pdf_tab);
                 }
             }
-            /*
-			 * $uebersicht[$anz]['EIGENTUEMER_NAMEN'] = 'Soll';
-			 * $uebersicht[$anz]['ENDSUMME_A'] = nummer_punkt2komma_t($summe_alle_eigentuemer);
-			 * $uebersicht[$anz+1]['EIGENTUEMER_NAMEN'] = 'Auszahlen';
-			 * $uebersicht[$anz+1]['TRANSFER_A'] = nummer_punkt2komma_t($summe_transfer);
-			 * #$uebersicht[$anz+1]['EIGENTUEMER_NAMEN'] = 'Zu erhalten';
-			 * #$uebersicht[$anz+1]['ENDSUMME_A'] = nummer_punkt2komma_t($summe_nachzahler);
-			 *
-			 *
-			 * #$pdf->ezTable($uebersicht, $cols,null, array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500));
-			 * #print_r($pdf_tab);
-			 * # print_r($pdf_tab_soll);
-			 * # echo '<pre>';
-			 * # print_r($my_arr);
-			 *
-			 * #die();
-			 *
-			 *
-			 * /*
-			 * ob_clean(); //ausgabepuffer leeren
-			 * header("Content-type: application/pdf"); // wird von MSIE ignoriert
-			 * $pdf->ezStream();
-			 */
             return $uebersicht;
         } else {
-            die ("Keine Einheiten im Objekt $objekt_id");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Keine Einheiten im Objekt $objekt_id")
+            );
         }
     }
 
     function get_kosten_arr_all($kos_typ, $kos_id, $gk_id, $konto = null)
     {
-
-        // echo "$kos_typ, $kos_id, $monat, $jahr, $gk_id, $konto=null <br>";
         if ($konto == null) {
             $db_abfrage = "SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` = '$gk_id' AND  `KOSTENTRAEGER_TYP` = '$kos_typ' AND `KOSTENTRAEGER_ID` = '$kos_id' AND `AKTUELL` = '1' ORDER BY KONTENRAHMEN_KONTO, DATUM DESC";
         } else {
             $db_abfrage = "SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` = '$gk_id' AND  `KOSTENTRAEGER_TYP` = '$kos_typ' AND `KOSTENTRAEGER_ID` = '$kos_id' AND `AKTUELL` = '1' && KONTENRAHMEN_KONTO='$konto' ORDER BY KONTENRAHMEN_KONTO, DATUM DESC";
         }
-        // echo $db_abfrage;
         $result = DB::select($db_abfrage);
         return $result;
     }
@@ -4348,7 +4134,7 @@ ORDER BY EINHEIT_KURZNAME";
         echo $numrows;
         if ($numrows) {
             $z = 0;
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $my_arr [] = $row;
                 $einheit_id = $row ['EINHEIT_ID'];
                 $e = new einheit ();
@@ -4401,8 +4187,6 @@ ORDER BY EINHEIT_KURZNAME";
                 $z++;
             }
             echo '<pre>';
-            // print_r($my_arr);
-
             $leer_jahr = array();
             for ($a = $garantie_m + 1; $a <= 12; $a++) {
                 $le = new leerstand ();
@@ -4417,11 +4201,12 @@ ORDER BY EINHEIT_KURZNAME";
     {
         $mv = new mietvertraege ();
         $arr = $mv->mv_arr_zeitraum($objekt_id, $datum_von, $datum_bis);
-        if (!is_array($arr)) {
-            die ('NISTA');
+        if (empty($arr)) {
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Keine Mietverträge vorhanden.")
+            );
         } else {
             echo "<pre>";
-            // print_r($arr);
             $anz_mvs = count($arr);
             $mz = new miete ();
             $monate = $mz->diff_in_monaten($datum_von, $datum_bis);
@@ -4464,7 +4249,6 @@ ORDER BY EINHEIT_KURZNAME";
                     $n_arr [$b] ['MIETZEIT'] = "$mv->mietvertrag_von_d - $mv->mietvertrag_bis_d";
                     $mietsumme = 0.00;
                     $mietsumme = $mv->summe_forderung_monatlich($mv_id, $monat, $jahr);
-                    // die($mietsumme);
                     $n_arr [$b] ["$monat.$jahr"] = $mietsumme;
 
                     $n_arr [$b] ["$monat.$jahr" . '_IHR'] = $einheit_qm * 0.40;
@@ -4480,10 +4264,7 @@ ORDER BY EINHEIT_KURZNAME";
                     $sum = $n_arr [$b] ["SUMME"];
                     $n_arr [$b] ["SUMME"] = number_format($sum, 2, '.', '');
                     $n_arr [$b] ["SUMME_A"] = nummer_punkt2komma_t($sum);
-
-                    // 1234.57
                 }
-                // $n_arr[$anz_mvs]["$monat.$jahr"] += $n_arr[$a]["$monat.$jahr"];
                 $cols ["$monat.$jahr"] = "$monat.$jahr";
 
                 $monat++;
@@ -4494,8 +4275,6 @@ ORDER BY EINHEIT_KURZNAME";
                     $jahr++;
                 }
             }
-            // print_r($n_arr);
-
             ob_clean(); // ausgabepuffer leeren
             $pdf = new Cezpdf ('a4', 'landscape');
             $bpdf = new b_pdf ();
@@ -4506,23 +4285,12 @@ ORDER BY EINHEIT_KURZNAME";
             $n_arr [$anz_mvs] ['MIETER'] = "<b>Gesamt Sollmieten Nettokalt</b>";
 
             ob_clean(); // ausgabepuffer leeren
-            // $cols = array('MIETER'=>"MIETER", 'MIETER'=>"Mieter",'EINZUG'=>"Einzug",'AUSZUG'=>"Auszug"
-            // ,'BETRIEBSKOSTEN'=>"Betriebskosten $jahr", 'HEIZKOSTEN'=>"Heizkosten $jahr");
             $datum_h = date("d.m.Y");
             $cols1 ['EINHEIT'] = 'Einheit';
             $cols1 ['TYP'] = 'Typ';
             $cols1 ['MIETER'] = 'Mieter';
             $cols1 ['MIETZEIT'] = 'Mietzeit';
-            /*
-			 * $cols1['08.2013'] = '08.2013';
-			 * $cols1['08.2013_IHR_A'] = '08 IHR';
-			 * $cols1['08.2013_HV_A'] = '08 HV';
-			 * $cols1['08.2013_AUS_A'] = 'AUSZAHLUNG';
-			 */
 
-            // echo '<pre>';
-            // print_r($n_arr);
-            // die();
             $monat = $start_m;
             for ($a = 0; $a < $monate; $a++) {
                 $monat = sprintf('%02d', $monat);
@@ -4673,8 +4441,6 @@ ORDER BY EINHEIT_KURZNAME";
 
             unset ($weg);
 
-            // print_r($this->tab);
-            // die();
             // #####################PDF VORBEREITUNG################
             /* Bebuchte Konten finden */
             $bu = new buchen ();
@@ -4683,14 +4449,6 @@ ORDER BY EINHEIT_KURZNAME";
             $kos_ids [] = $et_id;
             $kos_ids [] = $einheit_id;
             $konten = $bu->get_bebuchte_konten($gk->geldkonto_id, $kos_typs, $kos_ids);
-            // print_r($konten);
-            // die();
-            /*
-			 * if(is_array($konten)){
-			 * print_r($konten);
-			 * die("KONTEN");
-			 * }
-			 */
 
             $anz_et = count($this->tab) - 2;
 
@@ -4769,26 +4527,16 @@ ORDER BY EINHEIT_KURZNAME";
                             $mz->mietkonto_berechnung_monatsgenau($mv_id, $jahr, $monat);
 
                             $gom = $this->pdf_tab [$a] [$zeile] ['G_MIETE']; // garatiemiete monat
-                            // echo "$mk->ausgangs_kaltmiete < $gom";
-
                             /* Wenn Garantiemiete > als Kaltmiete */
                             if ($mk->ausgangs_kaltmiete < $gom) {
-                                // die("$mk->ausgangs_kaltmiete < $gom");
                                 $ins_km_diff = ($gom - $mk->ausgangs_kaltmiete);
                                 $this->pdf_tab [$a] [$zeile] ['G_DIFF_KM'] = nummer_komma2punkt(nummer_punkt2komma($ins_km_diff));
                                 $sum_km_diff_gm += $ins_km_diff;
                             } else {
                                 /* Keine Garantiemiete */
-                                // unset($this->pdf_tab[$a][$zeile]['G_MIETE']);
-                                // if($mz->erg<0 && $mz->geleistete_zahlungen<=0){
                                 $this->pdf_tab [$a] [$zeile] ['G_DIFF_KM'] = ($mz->erg * -1);
                                 $sum_km_diff_gm = ($mz->erg * -1);
-                                // }
                             }
-
-                            // echo "$mk->ausgangs_kaltmiete + $mz->erg";
-                            // echo$mk->ausgangs_kaltmiete + $mz->erg;
-                            // die();
 
                             $this->pdf_tab [$a] [$zeile] ['MTR_SLD'] = $mz->erg;
                             $this->pdf_tab [$a] [$zeile] ['MTR_ZB'] = $mz->geleistete_zahlungen;
@@ -4796,8 +4544,6 @@ ORDER BY EINHEIT_KURZNAME";
 
                             /* Fixkosten Hausgeld oder Formel */
                             $hg = new weg ();
-                            // $hausgeld_soll = $hg->get_summe_kostenkat_monat($monat, $jahr, 'Einheit', $einheit_id, 6030);
-                            // $hausgeld_soll = $hg->get_summe_kostenkat_gruppe_m2($monat, $jahr, 'Einheit', $einheit_id, 6000);
                             $hg->get_wg_info($monat, $jahr, 'Einheit', $einheit_id, 'Hausgeld');
                             $hausgeld_soll = $hg->gruppe_erg;
 
@@ -4919,38 +4665,7 @@ ORDER BY EINHEIT_KURZNAME";
                                     // $this->pdf_tab[$a][$zeile]['K_SUM'] = nummer_komma2punkt(nummer_punkt2komma($summe_temp_ein+$summe_temp_et));
                                 }
                                 $this->pdf_tab [$a] [$zeile] ['K_SUM'] = nummer_komma2punkt(nummer_punkt2komma($kost_sum));
-                            } else {
-                                // ##die('KEINE KONTEN');
                             }
-
-                            /*
-							 * KOstenblock
-							 * $summe_kosten_mon = $this->get_kosten_summe_monat('Einheit', $einheit_id, $gk->geldkonto_id, $jahr, $monat, 1023);
-							 * $this->pdf_tab[$a][$zeile]['K1023'] = nummer_punkt2komma($summe_kosten_mon);
-							 *
-							 * $summe_ins_mg = $this->get_kosten_summe_monat('Einheit', $einheit_id, $gk->geldkonto_id, $jahr, $monat, 5500);
-							 * $this->pdf_tab[$a][$zeile]['INSMG'] = nummer_punkt2komma($summe_ins_mg);
-							 *
-							 *
-							 * $summe_4180 = $this->get_kosten_summe_monat('Einheit', $einheit_id, $gk->geldkonto_id, $jahr, $monat, 4180);
-							 * $this->pdf_tab[$a][$zeile]['K4180'] = nummer_punkt2komma($summe_4180);
-							 *
-							 * $summe_4280 = $this->get_kosten_summe_monat('Einheit', $einheit_id, $gk->geldkonto_id, $jahr, $monat, 4280);
-							 * $this->pdf_tab[$a][$zeile]['K4280'] = nummer_punkt2komma($summe_4280);
-							 *
-							 *
-							 * $summe_4281 = $this->get_kosten_summe_monat('Einheit', $einheit_id, $gk->geldkonto_id, $jahr, $monat, 4281);
-							 * $this->pdf_tab[$a][$zeile]['K4281'] = nummer_punkt2komma($summe_4281);
-							 *
-							 * $summe_4282 = $this->get_kosten_summe_monat('Einheit', $einheit_id, $gk->geldkonto_id, $jahr, $monat, 4282);
-							 * $this->pdf_tab[$a][$zeile]['K4282'] = nummer_punkt2komma($summe_4282);
-							 *
-							 * $summe_5081 = $this->get_kosten_summe_monat('Eigentuemer', $weg_et->eigentuemer_id, $gk->geldkonto_id, $jahr, $monat, 5081);
-							 * $this->pdf_tab[$a][$zeile]['K5081'] = nummer_punkt2komma($summe_5081);
-							 *
-							 * $summe_5010 = $this->get_kosten_summe_monat('Eigentuemer', $weg_et->eigentuemer_id, $gk->geldkonto_id, $jahr, $monat, 5010);
-							 * $this->pdf_tab[$a][$zeile]['K5010'] = nummer_punkt2komma($summe_5010);
-							 */
 
                             $this->pdf_tab [$a] [$zeile] ['ETS'] = nummer_komma2punkt(nummer_punkt2komma($this->pdf_tab [$a] [$zeile] ['SOLL_AUSZ_B'] + $this->pdf_tab [$a] [$zeile] ['K_SUM']));
                             $sum_ets += $this->pdf_tab [$a] [$zeile] ['ETS'];
@@ -5300,9 +5015,6 @@ ORDER BY EINHEIT_KURZNAME";
                 $this->et_tab [$a] ['MVS'] = $mv_et_arr;
                 unset ($mv_et_arr);
             } // end for ET SCHLEIFE
-            // echo '<pre>';
-            // print_r($this->et_tab);
-            // die();
 
             // #############################Vorbereitung PDF###########################
             for ($a = 0; $a < $anz_et; $a++) {
@@ -5334,9 +5046,6 @@ ORDER BY EINHEIT_KURZNAME";
                 $sum_INS_ANT = 0;
                 $sum_INS_ANTR = 0;
 
-                // echo "<pre>";
-                // print_r($this->pdf_tab_g);
-                // die();
                 // ######MONATE##########
                 for ($m = 0; $m < $anz_m; $m++) {
                     $monat = $this->et_tab [$a] ['MONATE'] [$m] ['MONAT'];
@@ -5373,9 +5082,7 @@ ORDER BY EINHEIT_KURZNAME";
                     $this->pdf_tab_g [$a] [$zeile] ['GM'] = nummer_komma2punkt(nummer_punkt2komma($garantie_miete / $this->pdf_tab_g [$a] [$zeile] ['TAGE'] * $this->pdf_tab_g [$a] [$zeile] ['N_TAG']));
 
                     /* 1. Et 1. prüfung ob leer, wegen Garantie */
-                    // if($a==0 && $m==0){
                     $ltm = letzter_tag_im_monat($monat, $jahr);
-                    // die($ltm);
                     $mv_et_arr_1_mon = $this->get_mv_et_zeitraum_arr($einheit_id, "$jahr-$monat-01", "$jahr-$monat-$ltm");
                     /* Wenn Wohnung VERMIETET war */
                     if (is_array($mv_et_arr_1_mon)) {
@@ -5385,10 +5092,6 @@ ORDER BY EINHEIT_KURZNAME";
                             $this->kauf_leer = 'N';
                             $this->kauf_vermietet = 'J';
                         }
-                        // $this->pdf_tab_g[$a][$zeile]['INS_ANT']='00000';
-                        // $this->pdf_tab_g[$a][$zeile]['HINWEIS']='CODE_VGOO';
-                        // print_r($mv_et_arr_1_mon);
-                        // die();
                     } else {
                         /* Wenn Wohnung leer im Monat */
                         $this->pdf_tab_g [$a] [$zeile] ['LEER'] = 'J';
@@ -5396,15 +5099,10 @@ ORDER BY EINHEIT_KURZNAME";
                             $this->kauf_leer = 'J';
                             $this->kauf_vermietet = 'N';
                         }
-
-                        // $this->pdf_tab_g[$a][$zeile]['INS_ANT']='000d';
-                        // $this->pdf_tab_g[$a][$zeile]['HINWEIS']='CODE_LEG';
                     }
 
-                    // }
                     /* Bei Leer */
                     if ($this->pdf_tab_g [$a] [$zeile] ['LEER'] == 'J') {
-                        // $this->pdf_tab_g[$a][$zeile]['HINWEIS'] = $this->kauf_vermietet;
                         /* Leer in Garantiezeit */
                         if ($m < $this->gmon_et) {
                             if ($this->kauf_vermietet = 'N') {
@@ -5426,17 +5124,8 @@ ORDER BY EINHEIT_KURZNAME";
                     for ($mv = 0; $mv < $anz_mvs; $mv++) {
                         $mv_id = $this->et_tab [$a] ['MVS'] [$mv] ['MIETVERTRAG_ID'];
 
-                        // $mk = new mietkonto();
-                        // $m_soll = $mk->summe_forderung_monatlich($mv_id, $jahr, $monat);
-                        // $mk->kaltmiete_monatlich_ink_vz($mv_id,$monat,$jahr);
-
                         $mz = new miete ();
                         $mz->mietkonto_berechnung_monatsgenau($mv_id, $jahr, $monat);
-                        // print_r($mz);
-                        // die();
-
-                        // if($mk->ausgangs_kaltmiete){
-                        // if((!empty($mz->sollmiete_warm)) or (!empty($mz->geleistete_zahlungen))){
                         if ((isset ($mz->saldo_vormonat_stand))) {
                             // $this->pdf_tab_g[$a][$zeile]['M_SOLL'] = $mk->ausgangs_kaltmiete;
                             $tmp_soll_arr = explode('|', $mz->sollmiete_warm);
@@ -5531,30 +5220,9 @@ ORDER BY EINHEIT_KURZNAME";
                 $this->pdf_tab_g [$a] [$zeile] ['INS_ANTR'] = "<b>" . nummer_punkt2komma_t($sum_INS_ANTR) . "</b>";
             } // END FOR ET
 
-            /* Jeden GarantieMonat */
-            /*
-			 * if($m<$this->et_tab[$a]['GMON']){
-			 * if($this->pdf_tab_g[$a][$zeile]['GM_D_S']>0){
-			 * $this->pdf_tab_g[$a][$zeile]['EINNAHME'] = 'KU';
-			 * }else{
-			 * $this->pdf_tab_g[$a][$zeile]['EINNAHME'] = 'BA';
-			 * }
-			 * }
-			 */
-
-            // echo '<pre>';
-            // print_r($this);
-            // die();
-            // $sum_INS_ANTR = 0;
             for ($et = 0; $et < $anz_et; $et++) {
-                // if(empty($this->gmon_et)){
-                // $this->gmon_et = $this->et_tab[$et]['GMON_OBJ'];
-                // }
                 $zeilen = count($this->pdf_tab_g [$et]);
-                // die("ZEILEN $zeilen");
                 $sum_KM_I = 0;
-                // $sum_INS_ANT = 0;
-                // $sum_INS_ANTR = 0;
                 for ($z = 0; $z < $zeilen; $z++) {
                     // ##NUR GARANTIEMONATE BERECHNEN#####
 
@@ -5626,20 +5294,7 @@ ORDER BY EINHEIT_KURZNAME";
                             $sum_INS_ANT += $this->pdf_tab_g [$et] [$z] ['INS_ANT'];
                             $sum_KM_I += $this->pdf_tab_g [$et] [$z] ['KM_I'];
                         }
-
-                        // $sum_INS_ANT +=$this->pdf_tab_g[$et][$z]['INS_ANT'];
                     } // ##ende garantiemonate
-
-                    /*
-					 * ob_clean();
-					 * echo '<pre>';
-					 * print_r($this);
-					 * echo $sum_KM_I;
-					 * die();
-					 */
-                    // if(!isset($this->gmon_et)){
-                    // $this->gmon_et = $this->et_tab[0]['GMON'];
-                    // }
 
                     /* Nur wenn Garantie festgelegt ist */
                     if (isset ($this->gmon_et)) {
@@ -5712,12 +5367,6 @@ ORDER BY EINHEIT_KURZNAME";
                 unset ($mv_id);
                 // unset($et_arr);
             }
-
-            // echo '<pre>';
-            // print_r($this);
-            // die();
-
-            // $pdf->ezSetDy(-20);
 
             $cols = array(
                 'Z' => Z,
@@ -5914,9 +5563,6 @@ ORDER BY EINHEIT_KURZNAME";
                 $mv_et_arr = $this->get_mv_et_zeitraum_arr($einheit_id, $weg->eigentuemer_von, $datum_bis);
                 $this->et_tab [$a] ['MVS'] = $mv_et_arr;
             } // end for ET SCHLEIFE
-            // echo '<pre>';
-            // print_r($this->et_tab);
-            // die();
 
             // #############################Vorbereitung PDF###########################
             for ($a = 0; $a < $anz_et; $a++) {
@@ -5979,9 +5625,7 @@ ORDER BY EINHEIT_KURZNAME";
                     $this->pdf_tab_g [$a] [$zeile] ['GM'] = nummer_komma2punkt(nummer_punkt2komma($garantie_miete / $this->pdf_tab_g [$a] [$zeile] ['TAGE'] * $this->pdf_tab_g [$a] [$zeile] ['N_TAG']));
 
                     /* 1. Et 1. prüfung ob leer, wegen Garantie */
-                    // if($a==0 && $m==0){
                     $ltm = letzter_tag_im_monat($monat, $jahr);
-                    // die($ltm);
                     $mv_et_arr_1_mon = $this->get_mv_et_zeitraum_arr($einheit_id, "$jahr-$monat-01", "$jahr-$monat-$ltm");
                     /* Wenn Wohnung VERMIETET war */
                     if (is_array($mv_et_arr_1_mon)) {
@@ -5991,10 +5635,6 @@ ORDER BY EINHEIT_KURZNAME";
                             $this->kauf_leer = 'N';
                             $this->kauf_vermietet = 'J';
                         }
-                        // $this->pdf_tab_g[$a][$zeile]['INS_ANT']='00000';
-                        // $this->pdf_tab_g[$a][$zeile]['HINWEIS']='CODE_VGOO';
-                        // print_r($mv_et_arr_1_mon);
-                        // die();
                     } else {
                         /* Wenn Wohnung leer im Monat */
                         $this->pdf_tab_g [$a] [$zeile] ['LEER'] = 'J';
@@ -6002,15 +5642,10 @@ ORDER BY EINHEIT_KURZNAME";
                             $this->kauf_leer = 'J';
                             $this->kauf_vermietet = 'N';
                         }
-
-                        // $this->pdf_tab_g[$a][$zeile]['INS_ANT']='000d';
-                        // $this->pdf_tab_g[$a][$zeile]['HINWEIS']='CODE_LEG';
                     }
 
-                    // }
                     /* Bei Leer */
                     if ($this->pdf_tab_g [$a] [$zeile] ['LEER'] == 'J') {
-                        // $this->pdf_tab_g[$a][$zeile]['HINWEIS'] = $this->kauf_vermietet;
                         /* Leer in Garantiezeit */
                         if ($m < $this->gmon_et) {
                             if ($this->kauf_vermietet = 'N') {
@@ -6020,7 +5655,6 @@ ORDER BY EINHEIT_KURZNAME";
                                 $sum_GM_D_S += $this->pdf_tab_g [$a] [$zeile] ['GM_D_S'];
                             } else {
                                 $this->pdf_tab_g [$a] [$zeile] ['HINWEIS'] = 'G_NO_GARANTY';
-                                // $this->pdf_tab_g[$a][$zeile]['INS_ANT'] = 'G_NO_GARANTY';
                             }
                         }
                         $zeile++;
@@ -6032,19 +5666,9 @@ ORDER BY EINHEIT_KURZNAME";
                     for ($mv = 0; $mv < $anz_mvs; $mv++) {
                         $mv_id = $this->et_tab [$a] ['MVS'] [$mv] ['MIETVERTRAG_ID'];
 
-                        // $mk = new mietkonto();
-                        // $m_soll = $mk->summe_forderung_monatlich($mv_id, $jahr, $monat);
-                        // $mk->kaltmiete_monatlich_ink_vz($mv_id,$monat,$jahr);
-
                         $mz = new miete ();
                         $mz->mietkonto_berechnung_monatsgenau($mv_id, $jahr, $monat);
-                        // print_r($mz);
-                        // die();
-
-                        // if($mk->ausgangs_kaltmiete){
-                        // if((!empty($mz->sollmiete_warm)) or (!empty($mz->geleistete_zahlungen))){
                         if ((isset ($mz->saldo_vormonat_stand))) {
-                            // $this->pdf_tab_g[$a][$zeile]['M_SOLL'] = $mk->ausgangs_kaltmiete;
                             $tmp_soll_arr = explode('|', $mz->sollmiete_warm);
                             if (is_array($tmp_soll_arr)) {
                                 $wm = $tmp_soll_arr [0];
@@ -6081,15 +5705,6 @@ ORDER BY EINHEIT_KURZNAME";
 
                                 $this->pdf_tab_g [$a] [$zeile] ['GM_D_S'] = $diff_mon_soll;
                                 $sum_GM_D_S += $this->pdf_tab_g [$a] [$zeile] ['GM_D_S'];
-                                /* Garantiemiete IST DIFF */
-
-                                /*
-								 * if($this->pdf_tab_g[$a][$zeile]['G']=='J'){
-								 * $this->pdf_tab_g[$a][$zeile]['GM_D_I'] = $this->pdf_tab_g[$a][$zeile]['GM_D_S'];
-								 * }else{
-								 * $this->pdf_tab_g[$a][$zeile]['GM_D_I'] = '000.00';
-								 * }
-								 */
 
                                 $zeile++;
                             }
@@ -6113,9 +5728,6 @@ ORDER BY EINHEIT_KURZNAME";
                             $zeile++;
                         }
                     }
-
-                    // $this->pdf_tab_g[$a][$zeile]['MVS'] = $this->et_tab[$a]['MONATE'][$m]['MVS'];
-                    // $zeile++;
                 }
 
                 /* Vorletzte Zeile - Summe nach Garantie */
@@ -6136,23 +5748,7 @@ ORDER BY EINHEIT_KURZNAME";
                 $this->pdf_tab_g [$a] [$zeile] ['INS_ANTR'] = "<b>" . nummer_punkt2komma_t($sum_INS_ANTR) . "</b>";
             }
 
-            /* Jeden GarantieMonat */
-            /*
-			 * if($m<$this->et_tab[$a]['GMON']){
-			 * if($this->pdf_tab_g[$a][$zeile]['GM_D_S']>0){
-			 * $this->pdf_tab_g[$a][$zeile]['EINNAHME'] = 'KU';
-			 * }else{
-			 * $this->pdf_tab_g[$a][$zeile]['EINNAHME'] = 'BA';
-			 * }
-			 * }
-			 */
-
-            // print_r($this);
-            // die();
             for ($et = 0; $et < $anz_et; $et++) {
-                // if(empty($this->gmon_et)){
-                // $this->gmon_et = $this->et_tab[$et]['GMON_OBJ'];
-                // }
                 $zeilen = count($this->pdf_tab_g [$et]);
                 $sum_KM_I = 0;
                 $sum_INS_ANT = 0;
@@ -6226,17 +5822,6 @@ ORDER BY EINHEIT_KURZNAME";
                         $sum_INS_ANT += $this->pdf_tab_g [$et] [$z] ['INS_ANT'];
                     } // ##ende garantiemonate
 
-                    /*
-					 * ob_clean();
-					 * echo '<pre>';
-					 * print_r($this);
-					 * echo $sum_KM_I;
-					 * die();
-					 */
-                    // if(!isset($this->gmon_et)){
-                    // $this->gmon_et = $this->et_tab[0]['GMON'];
-                    // }
-
                     /* Nur wenn Garantie festgelegt ist */
                     if (isset ($this->gmon_et)) {
                         if ($z == $this->gmon_et) {
@@ -6285,12 +5870,6 @@ ORDER BY EINHEIT_KURZNAME";
                 /* Nach Schlüssel sortieren wegen PDF */
                 ksort($this->pdf_tab_g [$et]);
             }
-
-            // print_r($this->pdf_tab_g);
-            // die();
-
-            // print_r($this->pdf_tab_g);
-            // die();
 
             $pdf = new Cezpdf ('a4', 'landscape');
             $bpdf = new b_pdf ();
@@ -6448,8 +6027,6 @@ ORDER BY EINHEIT_KURZNAME";
 
             unset ($weg);
 
-            // print_r($this->tab);
-            // die();
             // #####################PDF VORBEREITUNG################
             /* Bebuchte Konten finden */
             $bu = new buchen ();
@@ -6458,24 +6035,14 @@ ORDER BY EINHEIT_KURZNAME";
             $kos_ids [] = $et_id;
             $kos_ids [] = $einheit_id;
             $konten = $bu->get_bebuchte_konten($gk->geldkonto_id, $kos_typs, $kos_ids);
-            // print_r($konten);
-            // die();
-            /*
-			 * if(is_array($konten)){
-			 * print_r($konten);
-			 * die("KONTEN");
-			 * }
-			 */
 
             $anz_et = count($this->tab) - 2;
 
-            // echo $anz_et;
             /* Schleife ET */
 
             for ($a = 0; $a < $anz_et; $a++) {
                 $et_id = $this->tab [$a] ['eigentuemer_id'];
                 $et_name = $this->tab [$a] ['empf_namen'];
-                // $this->tab_pdf[$a]['eigentuemer_id'] = $et_id;
 
                 if ($this->tab [$a] ['GARANTIE_ET'] > $this->tab ['GARANTIE_OBJ']) {
                     $garantie_m = $this->tab [$a] ['GARANTIE_ET'];
@@ -6555,9 +6122,6 @@ ORDER BY EINHEIT_KURZNAME";
                             /* Mietersaldo Monat */
                             $mz = new miete ();
                             $mz->mietkonto_berechnung_monatsgenau($mv_id, $jahr, $monat);
-                            // echo "$mk->ausgangs_kaltmiete + $mz->erg";
-                            // echo$mk->ausgangs_kaltmiete + $mz->erg;
-                            // die();
 
                             $this->pdf_tab [$a] [$zeile] ['MTR_SLD'] = $mz->erg;
                             $this->pdf_tab [$a] [$zeile] ['MTR_ZB'] = $mz->geleistete_zahlungen;
@@ -6565,8 +6129,6 @@ ORDER BY EINHEIT_KURZNAME";
 
                             /* Fixkosten Hausgeld oder Formel */
                             $hg = new weg ();
-                            // $hausgeld_soll = $hg->get_summe_kostenkat_monat($monat, $jahr, 'Einheit', $einheit_id, 6030);
-                            // $hausgeld_soll = $hg->get_summe_kostenkat_gruppe_m2($monat, $jahr, 'Einheit', $einheit_id, 6000);
                             $hg->get_wg_info($monat, $jahr, 'Einheit', $einheit_id, 'Hausgeld');
                             $hausgeld_soll = $hg->gruppe_erg;
 
@@ -6595,17 +6157,6 @@ ORDER BY EINHEIT_KURZNAME";
                                 $sum_soll_ausz_b += $this->pdf_tab [$a] [$zeile] ['SOLL_AUSZ_B'];
                             } else {
                                 // #######################
-                                /* Nach der Garantiezeit */
-                                /* Wenn Differenzen versprochene Miete und tatsächliche Miete */
-                                // if($this->pdf_tab[$a][$zeile]['G_DIFF_KM']>0){
-                                // $this->pdf_tab[$a][$zeile]['SOLL_AUSZ_R'] = $this->pdf_tab[$a][$zeile]['G_MIETE'];
-                                // $this->pdf_tab[$a][$zeile]['SOLL_AUSZ_B'] = $this->pdf_tab[$a][$zeile]['G_MIETE'] - $this->pdf_tab[$a][$zeile]['HG'] - $this->pdf_tab[$a][$zeile]['K_SUM'];
-                                // }else{
-
-                                /* Keine Garantiemiete */
-                                // print_r($mz);
-                                // die("$monat $jahr");
-
                                 if (isset ($this->pdf_tab [$a] [$zeile] ['G_DIFF_KM'])) {
                                     $ins_diff_monat = $this->pdf_tab [$a] [$zeile] ['G_DIFF_KM'];
                                 } else {
@@ -6648,10 +6199,6 @@ ORDER BY EINHEIT_KURZNAME";
                                         // ##################PRÜFEN##############################
                                         /* Wenn MK abgezahlt, diff auszahlen */
                                         if (($mz->erg >= $mz->saldo_vormonat_stand)) {
-
-                                            // echo "HIER TEST SCHULD!!!";
-                                            // die("$mk->ausgangs_kaltmiete + $ins_diff_monat + $mz->erg + ($mz->saldo_vormonat*-1);");
-
                                             $this->pdf_tab [$a] [$zeile] ['SOLL_AUSZ_R'] = $mk->ausgangs_kaltmiete + $ins_diff_monat + $mz->erg + ($mz->saldo_vormonat * -1);
                                             $this->pdf_tab [$a] [$zeile] ['SOLL_AUSZ_B'] = $mk->ausgangs_kaltmiete + $ins_diff_monat + $mz->erg + ($mz->saldo_vormonat * -1) - $this->pdf_tab [$a] [$zeile] ['HG'] - $this->pdf_tab [$a] [$zeile] ['K_SUM'];;
                                         } else {
@@ -6659,7 +6206,6 @@ ORDER BY EINHEIT_KURZNAME";
 
                                             /* Wenn überhaupt was gezahlt und höhe als umlagen */
                                             if ($mz->geleistete_zahlungen > 0 && $mz->geleistete_zahlungen > $mz->davon_umlagen) {
-                                                // $pdf_tab[$pdf_z]['KM_IST'] = $mi_arr['zb'] - $nk;
                                                 $this->pdf_tab [$a] [$zeile] ['SOLL_AUSZ_R'] = $mz->geleistete_zahlungen + $ins_diff_monat - $mz->davon_umlagen + $mz->erg + ($mz->saldo_vormonat_stand * -1);
                                                 $this->pdf_tab [$a] [$zeile] ['SOLL_AUSZ_B'] = $mz->geleistete_zahlungen + $ins_diff_monat - $mz->davon_umlagen + $mz->erg + ($mz->saldo_vormonat_stand * -1) - $this->pdf_tab [$a] [$zeile] ['HG'] - $this->pdf_tab [$a] [$zeile] ['K_SUM'];
                                             } else {
@@ -6669,22 +6215,12 @@ ORDER BY EINHEIT_KURZNAME";
                                             }
                                         }
                                     }
-
-                                    // $sum_km_ist += $pdf_tab[$pdf_z]['KM_IST'];
                                 }
-
-                                // $this->pdf_tab[$a][$zeile]['SOLL_AUSZ_R'] = $mk->ausgangs_kaltmiete;
-                                // $this->pdf_tab[$a][$zeile]['SOLL_AUSZ_B'] = $mk->ausgangs_kaltmiete - $this->pdf_tab[$a][$zeile]['HG'];
-                                // }
                                 $sum_soll_ausz_r += $this->pdf_tab [$a] [$zeile] ['SOLL_AUSZ_R'];
                                 $sum_soll_ausz_b += $this->pdf_tab [$a] [$zeile] ['SOLL_AUSZ_B'];
                             }
 
                             /* Auszahlung IST */
-                            // $summe_auszahlung = nummer_komma2punkt(nummer_punkt2komma($this->get_kosten_summe_monat('Eigentuemer', $et_id, $gk->geldkonto_id, $jahr, $monat, 5020)));
-                            // $this->pdf_tab[$a][$zeile]['AUSZ_IST'] = $summe_auszahlung;
-                            // $sum_ist_ausz+=$summe_auszahlung;
-
                             if (is_array($konten)) {
                                 $anz_konten = count($konten);
                                 $kost_sum = 0;
@@ -6695,41 +6231,9 @@ ORDER BY EINHEIT_KURZNAME";
                                     $this->pdf_tab [$a] [$zeile] ['K' . $b_konto] = nummer_punkt2komma($summe_temp_ein + $summe_temp_et);
                                     $sum_b_konten += $summe_temp_ein + $summe_temp_et;
                                     $kost_sum += $summe_temp_ein + $summe_temp_et;
-                                    // $this->pdf_tab[$a][$zeile]['K_SUM'] = nummer_komma2punkt(nummer_punkt2komma($summe_temp_ein+$summe_temp_et));
                                 }
                                 $this->pdf_tab [$a] [$zeile] ['K_SUM'] = nummer_komma2punkt(nummer_punkt2komma($kost_sum));
-                            } else {
-                                // ##die('KEINE KONTEN');
                             }
-
-                            /*
-							 * KOstenblock
-							 * $summe_kosten_mon = $this->get_kosten_summe_monat('Einheit', $einheit_id, $gk->geldkonto_id, $jahr, $monat, 1023);
-							 * $this->pdf_tab[$a][$zeile]['K1023'] = nummer_punkt2komma($summe_kosten_mon);
-							 *
-							 * $summe_ins_mg = $this->get_kosten_summe_monat('Einheit', $einheit_id, $gk->geldkonto_id, $jahr, $monat, 5500);
-							 * $this->pdf_tab[$a][$zeile]['INSMG'] = nummer_punkt2komma($summe_ins_mg);
-							 *
-							 *
-							 * $summe_4180 = $this->get_kosten_summe_monat('Einheit', $einheit_id, $gk->geldkonto_id, $jahr, $monat, 4180);
-							 * $this->pdf_tab[$a][$zeile]['K4180'] = nummer_punkt2komma($summe_4180);
-							 *
-							 * $summe_4280 = $this->get_kosten_summe_monat('Einheit', $einheit_id, $gk->geldkonto_id, $jahr, $monat, 4280);
-							 * $this->pdf_tab[$a][$zeile]['K4280'] = nummer_punkt2komma($summe_4280);
-							 *
-							 *
-							 * $summe_4281 = $this->get_kosten_summe_monat('Einheit', $einheit_id, $gk->geldkonto_id, $jahr, $monat, 4281);
-							 * $this->pdf_tab[$a][$zeile]['K4281'] = nummer_punkt2komma($summe_4281);
-							 *
-							 * $summe_4282 = $this->get_kosten_summe_monat('Einheit', $einheit_id, $gk->geldkonto_id, $jahr, $monat, 4282);
-							 * $this->pdf_tab[$a][$zeile]['K4282'] = nummer_punkt2komma($summe_4282);
-							 *
-							 * $summe_5081 = $this->get_kosten_summe_monat('Eigentuemer', $weg_et->eigentuemer_id, $gk->geldkonto_id, $jahr, $monat, 5081);
-							 * $this->pdf_tab[$a][$zeile]['K5081'] = nummer_punkt2komma($summe_5081);
-							 *
-							 * $summe_5010 = $this->get_kosten_summe_monat('Eigentuemer', $weg_et->eigentuemer_id, $gk->geldkonto_id, $jahr, $monat, 5010);
-							 * $this->pdf_tab[$a][$zeile]['K5010'] = nummer_punkt2komma($summe_5010);
-							 */
 
                             $this->pdf_tab [$a] [$zeile] ['ETS'] = nummer_komma2punkt(nummer_punkt2komma($this->pdf_tab [$a] [$zeile] ['SOLL_AUSZ_B'] + $this->pdf_tab [$a] [$zeile] ['K_SUM']));
                             $sum_ets += $this->pdf_tab [$a] [$zeile] ['ETS'];
@@ -6752,8 +6256,6 @@ ORDER BY EINHEIT_KURZNAME";
                                     $this->pdf_tab [$a] [$zeile] ['K_SUM'] = "<b>" . nummer_punkt2komma_t($sum_b_konten) . "</b>";
                                     $this->pdf_tab [$a] [$zeile] ['HG'] = "<b>" . nummer_punkt2komma_t($sum_hausgeld) . "</b>";
                                     $this->pdf_tab [$a] [$zeile] ['ETS_P'] = "<b>" . $this->pdf_tab [$a] [$zeile] ['ETS'] + $this->pdf_tab [$a] [$zeile - 1] ['ETS_P'] . "</b>";
-                                    //
-                                    // $sum_ets=0;
                                     $zeile++;
                                 }
                             }
@@ -6771,26 +6273,16 @@ ORDER BY EINHEIT_KURZNAME";
                                 $sum_soll_ausz_r = 0;
                                 $this->pdf_tab [$a] [$zeile] ['SOLL_AUSZ_B'] = "<b>" . nummer_punkt2komma_t($sum_soll_ausz_b) . "</b>";
                                 $sum_soll_ausz_b = 0;
-                                // $this->pdf_tab[$a][$zeile]['AUSZ_IST'] = "<b>".nummer_punkt2komma_t($sum_ist_ausz)."</b>";
 
                                 $this->pdf_tab [$a] [$zeile] ['K_SUM'] = "<b>" . nummer_punkt2komma_t($sum_b_konten) . "</b>";
                                 $sum_b_konten = 0;
                                 $this->pdf_tab [$a] [$zeile] ['HG'] = "<b>" . nummer_punkt2komma_t($sum_hausgeld) . "</b>";
                                 $sum_hausgeld = 0;
                                 $this->pdf_tab [$a] [$zeile] ['ETS_P'] = "<b>" . $this->pdf_tab [$a] [$zeile] ['ETS'] + $this->pdf_tab [$a] [$zeile - 1] ['ETS_P'] . "</b>";
-                                //
-                                // $this->pdf_tab[$a][$zeile]['ETS'] = "<b>".nummer_punkt2komma_t($sum_ets)."</b>";
-                                // $this->pdf_tab[$a][$zeile]['ETS_P'] = "<b>".nummer_punkt2komma_t($sum_soll_ausz_b + $sum_b_konten)."</b>";
                                 $zeile++;
                             }
                         }
-
-                        // $mz = new miete();
-                        // $m_arr =$mz->get_monats_ergebnis($mv_id, $monat,$jahr);
-                        // $this->tab[$a][]
                     }
-
-                    // $zeile++;
                 }
                 $this->pdf_tab [$a] [$zeile] ['MIETER'] = "<b>AKTUELL</b>";
                 $this->pdf_tab [$a] [$zeile] ['KM_SOLL'] = "<b>" . nummer_punkt2komma_t($sum_km_soll) . "</b>";
@@ -6799,10 +6291,7 @@ ORDER BY EINHEIT_KURZNAME";
 
                 $this->pdf_tab [$a] [$zeile] ['SOLL_AUSZ_R'] = "<b>" . nummer_punkt2komma_t($sum_soll_ausz_r) . "</b>";
                 $this->pdf_tab [$a] [$zeile] ['SOLL_AUSZ_B'] = "<b>" . nummer_punkt2komma_t($sum_soll_ausz_b) . "</b>";
-                // $this->pdf_tab[$a][$zeile]['AUSZ_IST'] = "<b>".nummer_punkt2komma_t($sum_ist_ausz)."</b>";
                 $this->pdf_tab [$a] [$zeile] ['K_SUM'] = "<b>" . nummer_punkt2komma_t($sum_b_konten) . "</b>";
-                // $this->pdf_tab[$a][$zeile]['ETS'] = "<b>".nummer_punkt2komma_t($sum_ets)."</b>";
-                // $this->pdf_tab[$a][$zeile]['ETS_P'] = "<b>".nummer_punkt2komma_t($sum_soll_ausz_b + $sum_b_konten)."</b>";
                 $this->pdf_tab [$a] [$zeile] ['ETS_P'] = "<b>" . $this->pdf_tab [$a] [$zeile] ['ETS'] + $this->pdf_tab [$a] [$zeile - 1] ['ETS_P'] . "</b>";
             }
 
@@ -6828,7 +6317,6 @@ ORDER BY EINHEIT_KURZNAME";
             for ($a = 0; $a < $anz_et; $a++) {
                 $pdf->ezText("$et_name $et_id", 16);
                 $pdf->ezSetDy(-5); // abstand
-                // $pdf->ezTable($this->pdf_tab[$a]);
                 $pdf->ezTable($this->pdf_tab [$a], null, EINNAHMEN_REPORT . " $datum_von $datum_bis", array(
                     'showHeadings' => 1,
                     'shaded' => 1,
@@ -6977,11 +6465,8 @@ ORDER BY EINHEIT_KURZNAME";
             die ('GELDKONTO fehlt');
         }
 
-        // echo "$objekt_id $jahr";
         $weg = new weg ();
         $ein_arr = $weg->einheiten_weg_tabelle_arr($objekt_id);
-        // echo '<pre>';
-        // print_r($ein_arr);
         if (is_array($ein_arr)) {
 
             $pdf = new Cezpdf ('a4', 'landscape');
@@ -6993,7 +6478,6 @@ ORDER BY EINHEIT_KURZNAME";
 
             for ($a = 0; $a < $anz_e; $a++) {
                 $einheit_id = $ein_arr [$a] ['EINHEIT_ID'];
-                // echo "$einheit_id<br>";
 
                 $weg_et = new weg ();
                 if (isset ($weg_et->eigentuemer_id)) {
@@ -7001,7 +6485,6 @@ ORDER BY EINHEIT_KURZNAME";
                 }
                 $weg_et->get_last_eigentuemer($einheit_id);
                 $weg_et->get_eigentumer_id_infos3($weg_et->eigentuemer_id);
-                // if($weg->einheit_typ =='Wohnraum'){
                 if (isset ($weg_et->eigentuemer_id)) {
                     /* Garantiemonate Eigentuemer */
                     $d_et = new detail ();
@@ -7046,13 +6529,8 @@ ORDER BY EINHEIT_KURZNAME";
 
                     $pdf_z = 0;
                     for ($b = 0; $b < $anz_m; $b++) {
-                        // $li = new listen();
                         $monat = $m_arr [$b] ['monat'];
                         $jahr = $m_arr [$b] ['jahr'];
-                        // echo "$monat $jahr<br>";
-                        // die();
-                        // $kost_arr = $li->get_kosten_arr('Einheit', $weg->einheit_id, $monat, $jahr, $gk->geldkonto_id,1023);
-                        // $summe_kosten_mon = $this->get_kosten_summe_monat('Einheit', $einheit_id, $monat, $jahr, $gk->geldkonto_id,1023);
                         $summe_kosten_mon = $this->get_kosten_summe_monat('Einheit', $einheit_id, $gk->geldkonto_id, $jahr, $monat, 1023);
                         $garantie_miete = nummer_komma2punkt($d_et->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-KaltmieteINS'));
                         $pdf_tab [$pdf_z] ['GARANTY_KM'] = $garantie_miete;
@@ -7371,15 +6849,11 @@ ORDER BY EINHEIT_KURZNAME";
                     // }
                 }
             }
-            // die();
-
             /* Bericht INS-Beteiligung */
             $pdf->ezNewPage();
             $anz_ins = count($pdf_tab_ergebnis);
             $ins_keys = array_keys($pdf_tab_ergebnis);
             $sum_ins_erg = 0;
-            // print_r($ins_keys);
-            // die();
             for ($in = 0; $in < $anz_ins; $in++) {
                 $key = $ins_keys [$in];
                 $sum_ins_erg += $pdf_tab_ergebnis [$key] ['INS_DIFF'];
@@ -7568,14 +7042,10 @@ ORDER BY EINHEIT_KURZNAME";
                 for ($me = 0; $me < $anz_mon_et; $me++) {
                     $et_mon_arr [] = $m_arr [$me] ['monat'];
                 }
-                // print_r($et_mon_arr);
-                // die();
-
                 /* Datum zurücksetzen auf Jahresanfang bzw. Ganzjahr */
                 $datum_von = "$jahr-01-01";
                 $datum_bis = "$jahr-12-31";
 
-                // print_r($m_arr);
                 $anz_m = count($m_arr_jahr);
                 /* Schlife Monate */
                 $zeile = 0;
@@ -7636,8 +7106,6 @@ ORDER BY EINHEIT_KURZNAME";
                         $mv_arr = $this->get_mv_et_zeitraum_arr($einheit_id, "$et_jahr-$et_monat-01", "$et_jahr-$et_monat-$ltm");
 
                         if (is_array($mv_arr)) {
-                            // print_r($mv_arr);
-                            // die();
                             $pdf_tab [$e] [$et] [$zeile] ['LEER'] = 'N';
                             $anz_mv = count($mv_arr);
                             // #########MIETVERTRÄGE IM MONAT###########
@@ -7671,12 +7139,9 @@ ORDER BY EINHEIT_KURZNAME";
                                 $sum_km_ant += $pdf_tab [$e] [$et] [$zeile] ['KM_SA'];
                                 /* Saldoberechnung wegen SALDO VV nicht möglich */
                                 $mz = new miete ();
-                                // $mz->mietkonto_berechnung($mv_id);
                                 $mz->mietkonto_berechnung_monatsgenau($mv_id, $et_jahr, $et_monat);
                                 $pdf_tab [$e] [$et] [$zeile] ['M_ERG'] = nummer_komma2punkt(nummer_punkt2komma($mz->erg));
                                 $pdf_tab [$e] [$et] [$zeile] ['M_ERGA'] = nummer_komma2punkt(nummer_punkt2komma($mz->erg / $tage * $n_tage));
-                                // print_r($mz);
-                                // die();
                                 if ($anz_mv > 0) {
                                     $zeile++;
                                 }
@@ -7688,7 +7153,6 @@ ORDER BY EINHEIT_KURZNAME";
                     }  // end if monat!!!
 
                     else {
-                        // print_r($m_arr);
                         $pdf_tab [$e] [$et] [$zeile] ['MONAT'] = "<b>" . monat2name($monat) . " $jahr</b>";
                         $pdf_tab [$e] [$et] [$zeile] ['IHR'] = '---';
                         $pdf_tab [$e] [$et] [$zeile] ['HV'] = '---';
@@ -7699,12 +7163,9 @@ ORDER BY EINHEIT_KURZNAME";
                         /* Schleife GELD-Konto */
                         for ($g = 0; $g < $anz_gk; $g++) {
                             $gk_id = $gk_arr [$g] ['KONTO_ID'];
-                            // echo "<b>GK: $gk_id<br></b>";
-                            // $zeile++;
                             if (isset ($buchungen)) {
                                 unset ($buchungen);
                             }
-                            // if(isset($mv_id)){
                             if ($pdf_tab [$e] [$et] [$zeile] ['LEER'] != 'J') {
                                 $buchungen = $this->bebuchte_konten_brutto($gk_id, $einheit_id, $monat, $jahr, $et_id, $mv_id);
                             } else {
@@ -7736,14 +7197,10 @@ ORDER BY EINHEIT_KURZNAME";
                                     }
                                 }
                             }
-                            // print_r($buchungen);
                         } // end for GK
                     }
-                    // die();
-
                     $zeile++;
                 } // end for MONATE
-                // die();
                 /* Summe pro ET */
                 $anz_z = count($pdf_tab [$e] [$et]);
                 $pdf_tab [$e] [$et] [$zeile + 1] ['MONAT'] = 'SUMME';
@@ -7809,10 +7266,6 @@ ORDER BY EINHEIT_KURZNAME";
 
                 /* Legende */
                 $anz_zeilen_et = count($pdf_tab [$e] [$et]);
-                // echo $anz_zeilen_et;
-                // print_r($pdf_tab[$e][$et][$last_z]);
-                // die();
-                // $pdf->ezTable($pdf_tab[$e][$et][$last_z]);
                 $anz_elem = count($pdf_tab [$e] [$et] [$last_z]);
                 $et_tab = array();
                 $et_za = 0;
@@ -7820,9 +7273,6 @@ ORDER BY EINHEIT_KURZNAME";
                 $kosten_ko = array();
                 $ko_z = 0;
                 foreach ($pdf_tab [$e] [$et] [$last_z] as $el_key => $el_value) {
-                    // echo "$el_key $el_value<br>";
-                    // $pdf->ezText("<b>$el_key:</b> $el_value", 9);
-
                     if ($el_key == 'FIX') {
                         $bez = 'Fixed owner costs (Mng. Fee and maintenance fund)';
                         $kosten_ko [$ko_z] ['BEZ'] = $bez;
@@ -7998,15 +7448,8 @@ ORDER BY EINHEIT_KURZNAME";
                 $sum_nk = 0;
                 $sum_mwst = 0;
             } // end for ET
-
-            // echo "<hr>";
-
-            // print_r($pdf_tab[$e]);
-            // die();
-            // $pdf->ezTable($pdf_tab[$e]);
         } // end for Einheit
 
-        // $pdf->ezTable($pdf_last);
         unset ($cols ['M_ERG']);
         unset ($cols ['TXT']);
         unset ($cols ['MV_NAME']);
@@ -8018,21 +7461,13 @@ ORDER BY EINHEIT_KURZNAME";
 
         /* Legende */
         if (is_array($b_konten_arr)) {
-            // echo '<pre>';
-            // print_r($b_konten_arr);
-            // die();
             $b_konten_arr1 = array_unique($b_konten_arr);
-            // echo '<pre>';
-            // print_r($b_konten_arr1);
-            // die();
             $gki = new geldkonto_info ();
             $gki->geld_konto_ermitteln('OBJEKT', $objekt_id);
             $string = '';
             if ($gki->geldkonto_id) {
                 $kr = new kontenrahmen ();
                 $kr_id = $kr->get_kontenrahmen('GELDKONTO', $gki->geldkonto_id);
-                // echo "KR: $kr_id | $gki->geldkonto_id";
-                // die();
                 $bb_keys = array_keys($b_konten_arr1);
                 for ($bb = 0; $bb < count($b_konten_arr1); $bb++) {
                     $ktokey = $bb_keys [$bb];
@@ -8057,9 +7492,6 @@ ORDER BY EINHEIT_KURZNAME";
                 $pdf_last [$anz_sumk + 1000] ['ET'] = 'SUMME';
                 $pdf_last [$anz_sumk + 1000] ['80001'] = $sum_80001;
                 $pdf_last [$anz_sumk + 1000] ['5020'] = $sum_5020;
-                // echo '<pre>';
-                // print_r($pdf_last);
-                // die();
 
                 unset ($cols ['MONAT']);
                 unset ($cols ['IHR']);
@@ -8191,46 +7623,28 @@ ORDER BY EINHEIT_KURZNAME";
         $datum_bis = "$jahr-12-31";
         $weg = new weg ();
         $m_arr_jahr = $weg->monatsarray_erstellen($datum_von, $datum_bis);
-        // echo '<pre>';
-        // print_r($m_arr_jahr);
-        // die();
         $gk = new geldkonto_info ();
         $gk_arr = $gk->geldkonten_arr('OBJEKT', $objekt_id);
         $anz_gk = count($gk_arr);
-
-        // ###
-        // print_r($gk_arr);
-        // die();
-        // ####
 
         $d = new detail ();
         /* Nutzenlastenwechsel */
         $nl_datum = $d->finde_detail_inhalt('Objekt', $objekt_id, 'Nutzen-Lastenwechsel');
         $nl_datum_arr = explode('.', $nl_datum);
-        //$nl_tag = $nl_datum_arr [0];
-        //$nl_monat = $nl_datum_arr [1];
-        //$nl_jahr = $nl_datum_arr [2];
 
         /* Verwaltungsübernahme */
         $vu_datum = $d->finde_detail_inhalt('Objekt', $objekt_id, 'Verwaltungsübernahme');
         $vu_datum_arr = explode('.', $vu_datum);
-        //$vu_tag = $vu_datum_arr [0];
-        //$vu_monat = $vu_datum_arr [1];
-        //$vu_jahr = $vu_datum_arr [2];
-
-        // echo "$objekt_id $jahr";
 
         $ein_arr = $weg->einheiten_weg_tabelle_arr($objekt_id);
 
         $anz_e = count($ein_arr);
 
-        // $cols = array('MONAT'=>MONAT,'NT'=>NT, 'IHR'=>IHR, 'HV'=>HV,'FIX'=>FIX, 'LEER'=>LEER, 'MV_NAME'=>MIETER, 'KM_S'=>KM_S, 'KM_SA'=>KMANT, 'M_ERG'=>ERG, 'M_ERGA'=>ERGA);
         $cols ['MONAT'] = 'MONAT';
         $cols ['NT'] = 'NT';
         $cols ['IHR'] = IHR;
         $cols ['HV'] = HV;
         $cols ['FIX'] = 'FIX';
-        // $cols['LEER'] = LEER;
         $cols ['MV_NAME'] = 'MIETER';
         $cols ['KOS_BEZ'] = 'KOS_BEZ';
         $cols ['WM_S'] = 'WM_S';
@@ -8245,12 +7659,8 @@ ORDER BY EINHEIT_KURZNAME";
         for ($e = 0; $e < $anz_e; $e++) {
             $einheit_id = $ein_arr [$e] ['EINHEIT_ID'];
             $weg = new weg ();
-            // $et_arr = $weg->get_eigentuemer_arr($einheit_id);
             echo '<pre>';
             $et_arr = $weg->get_eigentuemer_arr_jahr($einheit_id, $jahr);
-            // echo "$einheit_id ";
-            // print_r($et_arr);
-            // die();
             $anz_et = count($et_arr);
             /* Schleife für ET */
 
@@ -8265,7 +7675,6 @@ ORDER BY EINHEIT_KURZNAME";
 
             $sum_konten = array();
             for ($et = 0; $et < $anz_et; $et++) {
-                // print_r($et_arr);
                 $et_id = $et_arr [$et] ['ID'];
 
                 /* Personenkontaktdaten Eigentümer */
@@ -8284,14 +7693,12 @@ ORDER BY EINHEIT_KURZNAME";
                                 $em_adr = $email_arr [$ema] ['DETAIL_INHALT'];
                                 $email_arr_a [] = $em_adr;
                             }
-                            // $my_arr[$z]['EMAILS'][] = $detail->finde_detail_inhalt('PERSON', $et_p_id_1, 'Email');
                         }
                     }
                 }
 
                 $et_von_sql = $et_arr [$et] ['VON'];
                 $et_bis_sql = $et_arr [$et] ['BIS'];
-                // echo "$et_id<br>";
                 $weg1 = new weg ();
                 $weg1->get_eigentumer_id_infos4($et_id);
                 $weg->get_eigentumer_id_infos4($et_id);
@@ -8320,8 +7727,6 @@ ORDER BY EINHEIT_KURZNAME";
                     $datum_bis = '0000-00-00';
                 }
 
-                // $m_arr= $weg->monatsarray_erstellen($weg_et->eigentuemer_von,$datum_bis);
-                // echo "$datum_bis - $datum_bis";
                 $m_arr = $weg->monatsarray_erstellen($datum_von, $datum_bis);
 
                 $anz_mon_et = count($m_arr);
@@ -8329,14 +7734,10 @@ ORDER BY EINHEIT_KURZNAME";
                 for ($me = 0; $me < $anz_mon_et; $me++) {
                     $et_mon_arr [] = $m_arr [$me] ['monat'];
                 }
-                // print_r($et_mon_arr);
-                // die();
-
                 /* Datum zurücksetzen auf Jahresanfang bzw. Ganzjahr */
                 $datum_von = "$jahr-01-01";
                 $datum_bis = "$jahr-12-31";
 
-                // print_r($m_arr);
                 $anz_m = count($m_arr_jahr);
                 /* Schlife Monate */
                 $zeile = 0;
@@ -8356,9 +7757,6 @@ ORDER BY EINHEIT_KURZNAME";
                         $n_tage = $m_arr [$key] ['tage_n'];
 
                         $pdf_tab [$e] [$et] [$monat] ['NT'] = $n_tage;
-                        // if($pdf_tab[$e][$et]$et_monat]['IHR']=='---'){
-                        // $n_tage = $tage;
-                        // }
 
                         // ##########ANFANG FIXKOSTEN##########################
                         /* FIXKOSTEN */
@@ -8395,19 +7793,10 @@ ORDER BY EINHEIT_KURZNAME";
                         if (isset ($mv_arr)) {
                             unset ($mv_arr);
                         }
-                        // $mv_arr = array();
                         $ltm = letzter_tag_im_monat($et_monat, $et_jahr);
                         $mv_arr = $this->get_mv_et_zeitraum_arr($einheit_id, "$et_jahr-$et_monat-01", "$et_jahr-$et_monat-$ltm");
 
-                        // if($einheit_id=='1384'){
-                        // echo "<b>"."$et_jahr-$et_monat-01", "$et_jahr-$et_monat-$ltm"."</b>";
-                        // print_r($mv_arr);
-                        // die();
-                        // }
-
                         if (is_array($mv_arr)) {
-                            // print_r($mv_arr);
-                            // die();
                             $pdf_tab [$e] [$et] [$monat] ['LEER'] = 'N';
                             $anz_mv = count($mv_arr);
                             // #########MIETVERTRÄGE IM MONAT###########
@@ -8443,17 +7832,12 @@ ORDER BY EINHEIT_KURZNAME";
                                 $sum_km_ant += $pdf_tab [$e] [$et] [$monat] ['KM_SA'];
                                 /* Saldoberechnung wegen SALDO VV nicht möglich */
                                 $mz = new miete ();
-                                // $mz->mietkonto_berechnung($mv_id);
                                 $mz->mietkonto_berechnung_monatsgenau($mv_id, $et_jahr, $et_monat);
                                 $pdf_tab [$e] [$et] [$monat] ['M_ERG'] = nummer_komma2punkt(nummer_punkt2komma($mz->erg));
                                 $pdf_tab [$e] [$et] [$monat] ['M_ERGA'] = nummer_komma2punkt(nummer_punkt2komma($mz->erg / $tage * $n_tage));
-                                // print_r($mz);
-                                // die();
                                 if ($anz_mv > 0) {
                                     $zeile++;
                                 }
-
-                                // unset($mv_id);
                             }
                         } else {
                             $pdf_tab [$e] [$et] [$monat] ['LEER'] = 'J';
@@ -8463,7 +7847,6 @@ ORDER BY EINHEIT_KURZNAME";
                     }  // end if monat!!!
 
                     else {
-                        // print_r($m_arr);
                         $pdf_tab [$e] [$et] [$monat] ['MONAT'] = "<b>" . monat2name($monat) . " $jahr</b>";
                         $pdf_tab [$e] [$et] [$monat] ['IHR'] = '---';
                         $pdf_tab [$e] [$et] [$monat] ['HV'] = '---';
@@ -8474,12 +7857,9 @@ ORDER BY EINHEIT_KURZNAME";
                         /* Schleife GELD-Konto */
                         for ($g = 0; $g < $anz_gk; $g++) {
                             $gk_id = $gk_arr [$g] ['KONTO_ID'];
-                            // echo "<b>GK: $gk_id<br></b>";
-                            // $zeile++;
                             if (isset ($buchungen)) {
                                 unset ($buchungen);
                             }
-                            // if(isset($mv_id)){
                             if ($pdf_tab [$e] [$et] [$zeile] ['LEER'] != 'J') {
                                 $buchungen = $this->bebuchte_konten_brutto($gk_id, $einheit_id, $monat, $jahr, $et_id, $mv_arr);
                             } else {
@@ -8497,25 +7877,16 @@ ORDER BY EINHEIT_KURZNAME";
                                         $betrag = nummer_komma2punkt(nummer_punkt2komma($buchungen [$b] ['BETRAG']));
                                         if ($bkonto == '5020') {
                                             $betrag = nummer_komma2punkt(nummer_punkt2komma($buchungen [$b] ['BETRAG'])) * -1;
-                                            // $betrag = nummer_komma2punkt(nummer_punkt2komma($buchungen[$b]['BETRAG']));
                                         }
                                         $kos_typ = $buchungen [$b] ['KOSTENTRAEGER_TYP'];
                                         $kos_id = $buchungen [$b] ['KOSTENTRAEGER_ID'];
                                         $vzweck = $buchungen [$b] ['VERWENDUNGSZWECK'];
                                         $datum = $buchungen [$b] ['DATUM'];
-                                        // echo "$betrag<br>";
-
                                         $pdf_tab [$e] [$et] [$monat] [$bkonto] += nummer_komma2punkt(nummer_punkt2komma($betrag)); // NEU
                                         $betrag_p = $pdf_tab [$e] [$et] [$monat] [$bkonto];
                                         $pdf_tab [$e] [$et] [$monat] [$bkonto] = nummer_komma2punkt(nummer_punkt2komma($betrag_p));
-                                        // $pdf_tab[$e][$et][$monat][$bkonto] = nummer_komma2punkt(nummer_punkt2komma($pdf_tab[$e][$et][$monat][$bkonto]));//NEU
-                                        // echo nummer_komma2punkt(nummer_punkt2komma($betrag));//NEU
-                                        // die();
                                         $r = new rechnung ();
                                         $kos_bez = $r->kostentraeger_ermitteln($kos_typ, $kos_id);
-                                        // $pdf_tab[$e][$et][$zeile]['KOS_BEZ'] = str_replace('<br>','',$kos_bez);
-                                        // $pdf_tab[$e][$et][$zeile]['TXT'] = "<b>$gki1->geldkonto_bez | $gki1->kredit_institut</b> - ".$vzweck;
-                                        // $pdf_tab[$e][$et][$zeile]['MONAT'] = date_mysql2german($datum);
                                         $sum_konten [$bkonto] += nummer_komma2punkt(nummer_punkt2komma($betrag));
                                         $sum_konten [$bkonto] = nummer_komma2punkt(nummer_punkt2komma($sum_konten [$bkonto]));
                                         $cols [$bkonto] = $bkonto;
@@ -8523,14 +7894,11 @@ ORDER BY EINHEIT_KURZNAME";
                                     }
                                 }
                             }
-                            // print_r($buchungen);
                         } // end for GK
                     }
-                    // die();
 
                     $zeile++;
                 } // end for MONATE
-                // die();
                 /* Summe pro ET */
                 $anz_z = count($pdf_tab [$e] [$et]);
                 $pdf_tab [$e] [$et] [$monat + 1] ['MONAT'] = "<b>SUMME</b>";
@@ -8544,8 +7912,6 @@ ORDER BY EINHEIT_KURZNAME";
                 $pdf_tab [$e] [$et] [$monat + 1] ['NK'] = "<b>" . nummer_komma2punkt(nummer_punkt2komma($sum_nk)) . "</b>";
                 $pdf_tab [$e] [$et] [$monat + 1] ['EINHEIT'] = "<b>" . $weg1->einheit_kurzname . "</b>";;
                 $pdf_tab [$e] [$et] [$monat + 1] ['ET'] = "<b>" . $weg1->empf_namen . "</b>";;
-
-                // $pdf_last[$et_id] = $pdf_tab[$e][$et][$zeile+1];
 
                 $bb_keys = array_keys($sum_konten);
                 for ($bb = 0; $bb < count($sum_konten); $bb++) {
@@ -8582,24 +7948,15 @@ ORDER BY EINHEIT_KURZNAME";
                 $weg1->empf_namen = str_replace('Herr', 'Mr.', $weg1->empf_namen);
                 $pdf->ezText(WOHNUNG . ": $weg1->einheit_kurzname\n" . LAGE . ": $weg1->einheit_lage\n$weg1->haus_strasse $weg1->haus_nummer, $weg1->haus_plz $weg1->haus_stadt\n\n" . EIGENTUEMER . ":\n$weg1->empf_namen", 10);
 
-                // $cols = array('MONAT'=>MONAT,'NT'=>NT, 'IHR'=>IHR, 'HV'=>HV,'FIX'=>FIX, 'LEER'=>LEER, 'MV_NAME'=>MIETER, 'KM_S'=>KM_S, 'KM_SA'=>KMANT, 'M_ERG'=>ERG, 'M_ERGA'=>ERGA);
-
-                // $pdf->ezTable($pdf_tab[$e][$et], $cols, EINNAHMEN_REPORT." $jahr - $weg->haus_strasse $weg->haus_nummer in $weg->haus_plz $weg->haus_stadt" , array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>40,'xOrientation'=>'right', 'width'=>760,'cols'=>array('TXT'=>array('justification'=>'right'), 'IHR'=>array('justification'=>'right'), 'HV'=>array('justification'=>'right'))));
-                // $pdf->ezTable($pdf_tab[$e][$et]);
                 echo '<pre>';
                 $anz_kkk = count($pdf_tab [$e] [$et]);
                 $cols_arr = array();
                 $cols_arr = array_keys($pdf_tab [$e] [$et] [$anz_kkk]);
-                // print_r($cols_arr);
-                // die();
                 $cols = array();
 
                 $colsnumkeys_arr = array_keys($cols_num);
 
                 $cols_num1 ['MONAT'] = 'Month';
-                // $cols_num1['LEER'] = 'Empty (J/N)';
-                // $cols_num1['WM_S'] = 'WMS';
-                // $cols_num1['MV_NAME'] = 'Tenant';
                 $cols_num1 ['80001'] = $cols_num ['80001'] ['TXT'];
                 $cols_num1 ['FIX'] = $cols_num ['FIX'] ['TXT'];
                 $cols_num1 ['NK'] = $cols_num ['NK'] ['TXT'];
@@ -8610,8 +7967,6 @@ ORDER BY EINHEIT_KURZNAME";
                             if ($vl != '80001' && $vl != '5020') {
                                 $cols_num1 [$vl] = $cols_num [$vl] ['TXT'];
                             }
-                        } else {
-                            // $cols_num1[$vl] = $vl;
                         }
                     } else {
                         $cols_alpha [$vl] = $vl;
@@ -8619,28 +7974,10 @@ ORDER BY EINHEIT_KURZNAME";
                 }
                 $cols_num1 ['5020'] = $cols_num ['5020'] ['TXT'];
 
-                // die('BLA');
-                // $cols_num[5020] = 'TRANSF';
-                // $cols_num[80001] = 'WM';
-
-                // unset($cols['NT']);
-                /* Sanel */
-
                 $anz_s = count($pdf_tab [$e] [$et]);
                 for ($s = 0; $s < $anz_s; $s++) {
                     $s_keys = array_keys($pdf_tab [$e] [$et] [$s]);
                 }
-                // print_r($pdf_tab[$e][$et]);
-                /*
-				 * if($et=='510'){
-				 * print_r($pdf_tab[$e][$et]);
-				 * die();
-				 * }
-				 */
-
-                // $pdf->ezTable($pdf_tab[$e][$et], $cols_alpha, EINNAHMEN_REPORT." $jahr - $weg->haus_strasse $weg->haus_nummer in $weg->haus_plz $weg->haus_stadt" , array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>40,'xOrientation'=>'right', 'width'=>760,'cols'=>array('TXT'=>array('justification'=>'right'), 'IHR'=>array('justification'=>'right'), 'HV'=>array('justification'=>'right'))));
-                // print_r($pdf_tab[$e][$et]);
-                // die();
                 $pdf->ezTable($pdf_tab [$e] [$et], $cols_num1, EINNAHMEN_REPORT . " $jahr  - $weg->haus_strasse $weg->haus_nummer in $weg->haus_plz $weg->haus_stadt", array(
                     'showHeadings' => 1,
                     'shaded' => 1,
@@ -8663,8 +8000,6 @@ ORDER BY EINHEIT_KURZNAME";
                 ));
 
                 $genutzte_ktos = array_keys($cols_num1);
-                // print_r($genutzte_ktos);
-                // die();
                 $pdf->ezSetDy(-15); // abstand
                 foreach ($genutzte_ktos as $keyk) {
                     if ($keyk != 'MONAT' && $keyk != 'LEER' && $keyk != 'MV_NAME') {
@@ -8679,21 +8014,9 @@ ORDER BY EINHEIT_KURZNAME";
                 $sum_keys = array_keys($pdf_tab [$e] [$et]);
                 $anz_etz = count($sum_keys);
                 $last_z = $sum_keys [$anz_etz - 1];
-                // echo $last_z;
                 $pdf->ezSetDy(-30); // abstand
-                // echo '<pre>';
-
-                // $pdf->ezText(EINNAHMEN_REPORT." $jahr", 15);
-                // $pdf->ezSetDy(-20); //abstand
-
-                // print_r($pdf_tab[$e][$et]);
-
                 /* Legende */
                 $anz_zeilen_et = count($pdf_tab [$e] [$et]);
-                // echo $anz_zeilen_et;
-                // print_r($pdf_tab[$e][$et][$last_z]);
-                // die();
-                // $pdf->ezTable($pdf_tab[$e][$et][$last_z]);
                 $anz_elem = count($pdf_tab [$e] [$et] [$last_z]);
                 $et_tab = array();
                 $et_za = 0;
@@ -8701,9 +8024,6 @@ ORDER BY EINHEIT_KURZNAME";
                 $kosten_ko = array();
                 $ko_z = 0;
                 foreach ($pdf_tab [$e] [$et] [$last_z] as $el_key => $el_value) {
-                    // echo "$el_key $el_value<br>";
-                    // $pdf->ezText("<b>$el_key:</b> $el_value", 9);
-
                     if ($el_key == 'FIX') {
                         $bez = 'Fixed owner costs (Mng. Fee and maintenance fund)';
                         $kosten_ko [$ko_z] ['BEZ'] = $bez;
@@ -8733,7 +8053,6 @@ ORDER BY EINHEIT_KURZNAME";
 
                         if ($el_key == '5020') {
                             $bez = "$el_key - Transfer to owner";
-                            // $el_value = $el_value*-1;
                         }
 
                         if ($el_key == '5021') {
@@ -8817,18 +8136,10 @@ ORDER BY EINHEIT_KURZNAME";
 
                 $et_tab_new = array_merge($et_tab1, $kosten_ko1);
                 echo '<pre>';
-
-                // print_r($kosten_ko1);
-                // die();
                 $cols_et = array(
                     'BEZ' => 'Description',
                     'BETRAG' => 'Amount'
                 );
-                // $pdf->ezTable($et_tab_new, $cols_et, EINNAHMEN_REPORT." $jahr - $oo->objekt_kurzname" , array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 9, 'fontSize' => 8, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('BETRAG'=>array('justification'=>'right', 'width'=>100)) ));
-
-                // $pdf->ezTable($et_tab_new);
-
-                // die();
 
                 if (is_array($sum_konten)) {
 
@@ -8844,23 +8155,15 @@ ORDER BY EINHEIT_KURZNAME";
                             $kto = $bb_keys [$bb];
                             $kr->konto_informationen2($kto, $kr_id);
                             $string .= "$kto - $kr->konto_bezeichnung\n";
-                            // $betrag = $pdf_tab[$e][$et][$anz_zeilen_et-1][$kto];
-                            // $pdf->ezText("<b>$string - $betrag</b>", 9);
                             unset ($cols [$kto]);
                         }
-                        // $pdf->ezSetDy(-20); //abstand
-                        // $pdf->ezText("<b>$string</b>", 9);
                     }
                 }
 
                 $pdf_last [$et_id] = $pdf_tab [$e] [$et] [$zeile + 1];
 
                 $sum_konten = array();
-                // $pdf->ezTable($pdf_tab[$e][$et]);
-                // if(isset($et_id)){
                 $pdf->ezNewPage();
-                // $pdf->eztext("Seite Einheit $e/$anz_e $et/$anz_et",20);
-                // }
                 $sum_ihr = 0;
                 $sum_hv = 0;
                 $sum_fix = 0;
@@ -8870,12 +8173,6 @@ ORDER BY EINHEIT_KURZNAME";
                 $sum_nk = 0;
                 $sum_mwst = 0;
             } // end for ET
-
-            // echo "<hr>";
-
-            // print_r($pdf_tab[$e]);
-            // die();
-            // $pdf->ezTable($pdf_tab[$e]);
         } // end for Einheit
 
         // $pdf->ezTable($pdf_last);
@@ -8890,21 +8187,13 @@ ORDER BY EINHEIT_KURZNAME";
 
         /* Legende */
         if (isset($b_konten_arr) && is_array($b_konten_arr)) {
-            // echo '<pre>';
-            // print_r($b_konten_arr);
-            // die();
             $b_konten_arr1 = array_unique($b_konten_arr);
-            // echo '<pre>';
-            // print_r($b_konten_arr1);
-            // die();
             $gki = new geldkonto_info ();
             $gki->geld_konto_ermitteln('OBJEKT', $objekt_id);
             $string = '';
             if ($gki->geldkonto_id) {
                 $kr = new kontenrahmen ();
                 $kr_id = $kr->get_kontenrahmen('GELDKONTO', $gki->geldkonto_id);
-                // echo "KR: $kr_id | $gki->geldkonto_id";
-                // die();
                 $bb_keys = array_keys($b_konten_arr1);
                 for ($bb = 0; $bb < count($b_konten_arr1); $bb++) {
                     $ktokey = $bb_keys [$bb];
@@ -8929,23 +8218,13 @@ ORDER BY EINHEIT_KURZNAME";
                 $pdf_last [$anz_sumk + 1000] ['ET'] = 'SUMME';
                 $pdf_last [$anz_sumk + 1000] ['80001'] = $sum_80001;
                 $pdf_last [$anz_sumk + 1000] ['5020'] = $sum_5020;
-                // echo '<pre>';
-                // print_r($pdf_last);
-                // die();
 
                 unset ($cols ['MONAT']);
                 unset ($cols ['IHR']);
                 unset ($cols ['HV']);
                 unset ($cols ['MWST']);
-
-                // $pdf->ezTable($pdf_last, $cols, UEBERSICHT." $jahr - $oo->objekt_kurzname" , array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 7, 'fontSize' => 5, 'xPos'=>5,'xOrientation'=>'right', 'width'=>600));
-                // $pdf->ezSetDy(-20); //abstand
-                // $pdf->ezText("$string", 9);
             }
         }
-
-        // print_r($pdf_tab);
-        // die();
     }
 
     function pdf_income_reports2015($pdf, $objekt_id, $jahr)
@@ -8956,17 +8235,9 @@ ORDER BY EINHEIT_KURZNAME";
         $datum_bis = "$jahr-12-31";
         $weg = new weg ();
         $m_arr_jahr = $weg->monatsarray_erstellen($datum_von, $datum_bis);
-        // echo '<pre>';
-        // print_r($m_arr_jahr);
-        // die();
         $gk = new geldkonto_info ();
         $gk_arr = $gk->geldkonten_arr('OBJEKT', $objekt_id);
         $anz_gk = count($gk_arr);
-
-        // ###
-        // print_r($gk_arr);
-        // die();
-        // ####
 
         $d = new detail ();
         /* Nutzenlastenwechsel */
@@ -8983,36 +8254,16 @@ ORDER BY EINHEIT_KURZNAME";
         $vu_monat = $vu_datum_arr [1];
         $vu_jahr = $vu_datum_arr [2];
 
-        // echo "$objekt_id $jahr";
-
         $ein_arr = $weg->einheiten_weg_tabelle_arr($objekt_id);
 
         $anz_e = count($ein_arr);
 
-        // $cols = array('MONAT'=>MONAT,'NT'=>NT, 'IHR'=>IHR, 'HV'=>HV,'FIX'=>FIX, 'LEER'=>LEER, 'MV_NAME'=>MIETER, 'KM_S'=>KM_S, 'KM_SA'=>KMANT, 'M_ERG'=>ERG, 'M_ERGA'=>ERGA);
         $cols ['MONAT'] = MONAT;
-        // $cols['MONAT']=MONAT;
-        // #$cols['NT']=NT;
-        // $cols['IHR']=IHR;
-        // $cols['HV']=HV;
-        // $cols['FIX']=FIX;
-        // $cols['LEER'] = LEER;
-        // $cols['MV_NAME'] = MIETER;
-        // $cols['KOS_BEZ']=KOS_BEZ;
-        // $cols['WM_S'] = WM_S;
-        // $cols['MWST'] = MWST;
-        // $cols['NK'] = NK;
-        // $cols['KM_S'] = KM_S;
-        // $cols['KM_SA'] = KM_SA;
-        // $cols['M_ERG'] = M_ERG;
-        // $cols['TXT'] = TXT;
-
         /* schleife Einheiten */
         for ($e = 0; $e < $anz_e; $e++) {
             $einheit_id = $ein_arr [$e] ['EINHEIT_ID'];
             $weg = new weg ();
             $et_arr = $weg->get_eigentuemer_arr($einheit_id);
-            // echo "$einheit_id ";
             $anz_et = count($et_arr);
             /* Schleife für ET */
 
@@ -9069,14 +8320,10 @@ ORDER BY EINHEIT_KURZNAME";
                 for ($me = 0; $me < $anz_mon_et; $me++) {
                     $et_mon_arr [] = $m_arr [$me] ['monat'];
                 }
-                // print_r($et_mon_arr);
-                // die();
-
                 /* Datum zurücksetzen auf Jahresanfang bzw. Ganzjahr */
                 $datum_von = "$jahr-01-01";
                 $datum_bis = "$jahr-12-31";
 
-                // print_r($m_arr);
                 $anz_m = count($m_arr_jahr);
                 /* Schlife Monate */
                 $zeile = 0;
@@ -9137,8 +8384,6 @@ ORDER BY EINHEIT_KURZNAME";
                         $mv_arr = $this->get_mv_et_zeitraum_arr($einheit_id, "$et_jahr-$et_monat-01", "$et_jahr-$et_monat-$ltm");
 
                         if (is_array($mv_arr)) {
-                            // print_r($mv_arr);
-                            // die();
                             $pdf_tab [$e] [$et] [$zeile] ['LEER'] = 'N';
                             $anz_mv = count($mv_arr);
                             // #########MIETVERTRÄGE IM MONAT###########
@@ -9237,14 +8482,10 @@ ORDER BY EINHEIT_KURZNAME";
                                     }
                                 }
                             }
-                            // print_r($buchungen);
                         } // end for GK
                     }
-                    // die();
-
                     $zeile++;
                 } // end for MONATE
-                // die();
                 /* Summe pro ET */
                 $anz_z = count($pdf_tab [$e] [$et]);
                 $pdf_tab [$e] [$et] [$zeile + 1] ['MONAT'] = 'SUMME';
@@ -9292,10 +8533,6 @@ ORDER BY EINHEIT_KURZNAME";
                 if (in_array('5020', $cols)) {
                     $_5020_ok = true;
                     unset ($cols ['5020']);
-                    // ob_clean();
-                    // echo '<pre>';
-                    // print_r($cols);
-                    // die();
                 }
 
                 if ($_5020_ok == true) {
@@ -9350,15 +8587,8 @@ ORDER BY EINHEIT_KURZNAME";
                 // $pdf->ezTable($pdf_tab[$e][$et]);
                 $pdf->ezNewPage();
             } // end for ET
-
-            // echo "<hr>";
-
-            // print_r($pdf_tab[$e]);
-            // die();
-            // $pdf->ezTable($pdf_tab[$e]);
         } // end for Einheit
 
-        // $pdf->ezTable($pdf_last);
         unset ($cols ['M_ERG']);
         unset ($cols ['TXT']);
         unset ($cols ['MV_NAME']);
@@ -9370,21 +8600,13 @@ ORDER BY EINHEIT_KURZNAME";
 
         /* Legende */
         if (is_array($b_konten_arr)) {
-            // echo '<pre>';
-            // print_r($b_konten_arr);
-            // die();
             $b_konten_arr1 = array_unique($b_konten_arr);
-            // echo '<pre>';
-            // print_r($b_konten_arr1);
-            // die();
             $gki = new geldkonto_info ();
             $gki->geld_konto_ermitteln('OBJEKT', $objekt_id);
             $string = '';
             if ($gki->geldkonto_id) {
                 $kr = new kontenrahmen ();
                 $kr_id = $kr->get_kontenrahmen('GELDKONTO', $gki->geldkonto_id);
-                // echo "KR: $kr_id | $gki->geldkonto_id";
-                // die();
                 $bb_keys = array_keys($b_konten_arr1);
                 for ($bb = 0; $bb < count($b_konten_arr1); $bb++) {
                     $ktokey = $bb_keys [$bb];
@@ -9409,9 +8631,6 @@ ORDER BY EINHEIT_KURZNAME";
                 $pdf_last [$anz_sumk + 1000] ['ET'] = 'SUMME';
                 $pdf_last [$anz_sumk + 1000] ['80001'] = $sum_80001;
                 $pdf_last [$anz_sumk + 1000] ['5020'] = $sum_5020;
-                // echo '<pre>';
-                // print_r($pdf_last);
-                // die();
 
                 $pdf->ezTable($pdf_last, $cols, UEBERSICHT . " $jahr  - $oo->objekt_kurzname", array(
                     'showHeadings' => 1,
@@ -9426,8 +8645,6 @@ ORDER BY EINHEIT_KURZNAME";
                 $pdf->ezText("$string", 9);
             }
         }
-
-        // print_r($pdf_tab);
     }
 
     function pdf_income_reports2014($objekt_id, $jahr)
@@ -9485,11 +8702,8 @@ ORDER BY EINHEIT_KURZNAME";
         $vu_monat = $vu_datum_arr [1];
         $vu_jahr = $vu_datum_arr [2];
 
-        // echo "$objekt_id $jahr";
         $weg = new weg ();
         $ein_arr = $weg->einheiten_weg_tabelle_arr($objekt_id);
-        // echo '<pre>';
-        // print_r($ein_arr);
         if (is_array($ein_arr)) {
 
             $gk = new geldkonto_info ();
@@ -9515,15 +8729,12 @@ ORDER BY EINHEIT_KURZNAME";
 
             for ($a = 0; $a < $anz_e; $a++) {
                 $einheit_id = $ein_arr [$a] ['EINHEIT_ID'];
-                // echo "$einheit_id<br>";
-
                 $weg_et = new weg ();
                 if (isset ($weg_et->eigentuemer_id)) {
                     unset ($weg_et->eigentuemer_id);
                 }
                 $weg_et->get_last_eigentuemer($einheit_id);
                 $weg_et->get_eigentumer_id_infos4($weg_et->eigentuemer_id);
-                // if($weg->einheit_typ =='Wohnraum'){
                 if (isset ($weg_et->eigentuemer_id)) {
 
                     $pdf->ezText(EINNAHMEN_REPORT . " $jahr", 14);
@@ -9558,14 +8769,10 @@ ORDER BY EINHEIT_KURZNAME";
                         $datum_bis = $weg_et->eigentuemer_bis;
                     }
 
-                    // $m_arr= $weg->monatsarray_erstellen($weg_et->eigentuemer_von,$datum_bis);
                     $m_arr = $weg->monatsarray_erstellen($datum_von, $datum_bis);
                     $datum_von = "$jahr-01-01";
                     $datum_bis = "$jahr-12-31";
 
-                    // echo '<pre>';
-                    // print_r($m_arr);
-                    // die();
                     $anz_m = count($m_arr);
                     $sum_km = 0;
                     $sum_ihr = 0;
@@ -9577,14 +8784,8 @@ ORDER BY EINHEIT_KURZNAME";
                         $monat = $m_arr [$b] ['monat'];
                         $jahr = $m_arr [$b] ['jahr'];
 
-                        // echo "$monat $jahr";
-                        // die();
-                        // $kost_arr = $li->get_kosten_arr('Einheit', $weg->einheit_id, $monat, $jahr, $gk->geldkonto_id,1023);
-                        // $summe_kosten_mon = $this->get_kosten_summe_monat('Einheit', $einheit_id, $monat, $jahr, $gk->geldkonto_id,1023);
                         $summe_kosten_mon = $this->get_kosten_summe_monat('Einheit', $einheit_id, $gk->geldkonto_id, $jahr, $monat, 1023);
                         $sum_rep += $summe_kosten_mon;
-                        // $pdf->ezText("MOnat $monat.$jahr Kosten $summe_kosten_mon", 11);
-
                         /* FIXKOSTEN */
                         /* Fixkosten Hausgeld oder Formel */
                         $hg = new weg ();
@@ -9672,7 +8873,6 @@ ORDER BY EINHEIT_KURZNAME";
                     // }
                 }
             }
-            // die();
             ob_end_clean(); // ausgabepuffer leeren
             $pdf->ezStream();
         }
@@ -9757,10 +8957,7 @@ ORDER BY EINHEIT_KURZNAME";
                     $pdf->ezText(EIGENTUEMER . ":\n$weg_et->empf_namen_u", 11);
 
                     $datum_von = "$jahr-01-01";
-                    // $m_arr= $weg->monatsarray_erstellen($weg_et->eigentuemer_von,$datum_bis);
                     $m_arr = $weg->monatsarray_erstellen($datum_von, $datum_bis);
-                    // print_r($m_arr);
-                    // die();
                     $anz_m = count($m_arr);
                     $sum_km = 0;
                     $sum_ihr = 0;
@@ -9768,22 +8965,15 @@ ORDER BY EINHEIT_KURZNAME";
                     $sum_rep = 0;
                     $sum_auszahlung = 0;
                     for ($b = 0; $b < $anz_m; $b++) {
-                        // $li = new listen();
                         $monat = $m_arr [$b] ['monat'];
                         $jahr = $m_arr [$b] ['jahr'];
-                        // echo "$monat $jahr";
-                        // die();
-                        // $kost_arr = $li->get_kosten_arr('Einheit', $weg->einheit_id, $monat, $jahr, $gk->geldkonto_id,1023);
-                        // $summe_kosten_mon = $this->get_kosten_summe_monat('Einheit', $einheit_id, $monat, $jahr, $gk->geldkonto_id,1023);
                         $summe_kosten_mon = $this->get_kosten_summe_monat('Einheit', $einheit_id, $gk->geldkonto_id, $jahr, $monat, 1023);
                         $sum_rep += $summe_kosten_mon;
-                        // $pdf->ezText("MOnat $monat.$jahr Kosten $summe_kosten_mon", 11);
 
                         $monat_name = monat2name($monat, $lang);
                         $pdf_tab [$b] ['MONAT_N'] = $monat_name;
                         $pdf_tab [$b] ['MONAT2'] = "$monat_name $jahr";
                         $pdf_tab [$b] ['MON'] = "$monat.$jahr";
-                        // $pdf_tab[$b]['KM'] = '';
                         $pdf_tab [$b] ['IHR'] = nummer_punkt2komma($weg_et->einheit_qm_weg * -0.4);
                         $sum_ihr += nummer_komma2punkt(nummer_punkt2komma($weg_et->einheit_qm_weg * -0.4));
                         $pdf_tab [$b] ['HV'] = nummer_punkt2komma(-30.00);
@@ -9847,7 +9037,6 @@ ORDER BY EINHEIT_KURZNAME";
                     // }
                 }
             }
-            // die();
             ob_end_clean(); // ausgabepuffer leeren
             $pdf->ezStream();
         }
@@ -9855,7 +9044,6 @@ ORDER BY EINHEIT_KURZNAME";
 
     function form_sepa_ueberweisung_et($e_id, $betrag)
     {
-        // echo "$e_id $betrag";
         $gk = new geldkonto_info ();
         $gk->geld_konto_ermitteln('OBJEKT', session()->get('objekt_id'));
         if (!$gk->geldkonto_id) {
@@ -9865,8 +9053,6 @@ ORDER BY EINHEIT_KURZNAME";
         $betrag = nummer_punkt2komma($betrag);
         $weg = new weg ();
         $weg->get_eigentumer_id_infos3($e_id);
-        // echo '<pre>';
-        // print_r($weg);
 
         $f = new formular ();
         $f->erstelle_formular('SEPA ÜBERWEISUNG', null);
@@ -9986,7 +9172,7 @@ ORDER BY EINHEIT_KURZNAME";
         // echo $db_abfrage;
         $result = DB::select($db_abfrage);
         if (!empty($result)) {
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $kos_typ = $row ['KOSTENTRAEGER_TYP'];
                 $kos_id = $row ['KOSTENTRAEGER_ID'];
                 $betrag = $row ['BETRAG'];
@@ -10147,9 +9333,10 @@ ORDER BY EINHEIT_KURZNAME";
         $kr = new kontenrahmen ();
         $kr_id = $kr->get_kontenrahmen('GELDKONTO', $this->gk_id);
         $arr = $kr->konten_in_arr_rahmen($kr_id);
-        if (!is_array(($arr))) {
-            fehlermeldung_ausgeben("Kontenrahmen unbekannt!");
-            die ();
+        if (empty($arr)) {
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Kontenrahmen unbekannt!")
+            );
         } else {
             $anz = count($arr);
             $b_konten = $this->profil_liste_konten_arr($profil_id);
@@ -10190,7 +9377,7 @@ ORDER BY EINHEIT_KURZNAME";
         $db_abfrage = "SELECT KONTO FROM REPORT_PROFILE_K WHERE PROFIL_ID='$profil_id' ORDER BY KONTO ASC";
         $result = DB::select($db_abfrage);
         $arr = array();
-        foreach($result as $row) {
+        foreach ($result as $row) {
             $arr [] = $row ['KONTO'];
         }
         return $arr;
@@ -10764,10 +9951,7 @@ ORDER BY EINHEIT_KURZNAME";
 
         $gk = new geldkonto_info ();
         $gk->geld_konto_ermitteln('Objekt', $e->objekt_id);
-        // $gk->geldkonto_id
-        // $this->eigentuemer_von = $weg->eigentuemer_von;
-        // $this->eigentuemer_bis = $weg->eigentuemer_bis;
-
+        
         /* ET DATEN */
         if ($weg->eigentuemer_bis == '0000-00-00') {
             $weg->eigentuemer_bis = date("Y-m-d");
@@ -10783,7 +9967,7 @@ ORDER BY EINHEIT_KURZNAME";
         /* MIETVERTRAEGE ZEITRAUM ET */
         $mv_arr = $this->get_mv_et_zeitraum_arr($einheit_id, $von, $bis);
         $anz_mv = count($mv_arr);
-        if (is_array($mv_arr)) {
+        if (!empty($mv_arr)) {
             // echo '<pre>';
             // print_r($mv_arr);
         } else {
@@ -10791,8 +9975,6 @@ ORDER BY EINHEIT_KURZNAME";
         }
 
         $zeit_arr = $this->monats_array($von, $bis);
-        // print_r($zeit_arr);
-
         /* Durchlauf alle Monate */
         if (is_array($zeit_arr)) {
             $anz_m = count($zeit_arr);
@@ -10902,28 +10084,12 @@ ORDER BY EINHEIT_KURZNAME";
                         $zeit_arr [$m] ['SALDO_MONAT'] = $this->saldo_et;
                     }
                 }
-
-                /*
-				 * if($this->check_vg($gk->geldkonto_id, $monat, $jahr, $et_id,'-14.99', null, null)=='0'){
-				 * $zeit_arr[$m]['ET'][$k]['DATUM'] ="$jahr-$monat-01";
-				 * $zeit_arr[$m]['ET'][$k]['TXT'] = 'Verwaltergebühr SR';
-				 * $zeit_arr[$m]['ET'][$k]['BETRAG'] = '-14.99';
-				 * $this->saldo_et+=-14.99;
-				 * $zeit_arr[$m]['SALDO_MONAT'] = $this->saldo_et;
-				 * }else{
-				 *
-				 * }
-				 */
             }
         } else {
             die ("Zeitraum falsch $von $bis");
         }
 
         return $zeit_arr;
-        /*
-		 * $this->saldo_et_vm
-		 * $this->saldo_et
-		 */
     }
 
     function auszugtest2($et_id, $von = null, $bis = null, $saldo_et = '0.00')
@@ -10983,14 +10149,11 @@ ORDER BY EINHEIT_KURZNAME";
                     $mv = new mietvertraege ();
                     $mv->get_mietvertrag_infos_aktuell($mv_id);
                     $mk = new mietkonto ();
-                    // $mk->kaltmiete_monatlich($mv_id,$monat,$jahr);
                     $mk->kaltmiete_monatlich_ink_vz($mv_id, $monat, $jahr);
 
                     $mz = new miete ();
                     $m_arr = $mz->get_monats_ergebnis($mv_id, $monat, $jahr);
                     $zeit_arr [$m] ['M_ERG'] = $mz->erg;
-                    // print_r($m_arr);
-                    // die();
 
                     $m_soll_arr = explode('|', $m_arr ['soll']);
                     if (isset ($m_soll_arr [1])) {
@@ -11001,7 +10164,6 @@ ORDER BY EINHEIT_KURZNAME";
                         $m_arr ['soll_mwst'] = '0.00';
                     }
                     $nk = ($m_arr ['soll_wm'] * -1) - $mk->ausgangs_kaltmiete;
-                    // $zeit_arr[$m]['M_ERG'][$a]['M_ERG'] = $mz->erg;
                     $zeit_arr [$m] ['KM_SOLL'] [$a] ['MV_ID'] = $mv_id;
                     $zeit_arr [$m] ['KM_SOLL'] [$a] ['M_NAME'] = $mv->personen_name_string;
                     $zeit_arr [$m] ['KM_SOLL'] [$a] ['BETRAG'] = $mk->ausgangs_kaltmiete;
@@ -11036,9 +10198,6 @@ ORDER BY EINHEIT_KURZNAME";
                 for ($k = 0; $k < $anz_buchungen; $k++) {
                     $txt = $kosten_arr [$k] ['KOSTENKAT'];
                     $betrag = $kosten_arr [$k] ['SUMME'] * -1;
-                    // $auszahlen = $sum_auszahlen+$betrag;
-                    // $saldo_et += $betrag;
-                    // echo "$txt $betrag<br>";
                     $zeit_arr [$m] ['HAUSGELD'] [$txt] = $betragx;
 
                     $this->saldo_et += $betragx;
@@ -11086,10 +10245,6 @@ ORDER BY EINHEIT_KURZNAME";
         }
 
         return $zeit_arr;
-        /*
-		 * $this->saldo_et_vm
-		 * $this->saldo_et
-		 */
     }
 
     function auszugtest3($et_id, $von = null, $bis = null, $saldo_et = '0.00')
@@ -11153,13 +10308,10 @@ ORDER BY EINHEIT_KURZNAME";
         }
 
         $zeit_arr = $this->monats_array($von, $bis);
-        // print_r($zeit_arr);
-        // die();
         /* Durchlauf alle Monate */
         if (is_array($zeit_arr)) {
             $anz_m = count($zeit_arr);
             for ($m = 0; $m < $anz_m; $m++) {
-
                 /* Garantiemonat */
                 if ($m < $garantie) {
                     $zeit_arr [$m] ['GAR_MON'] = 'JA';
@@ -11336,19 +10488,7 @@ ORDER BY EINHEIT_KURZNAME";
         } else {
             die ("Zeitraum falsch $von $bis");
         }
-
-        // echo '<pre>';
-        // print_r($zeit_arr);
-        // die();
-
-        // echo "SANEL";
         $this->ausgabe_saldo_et15($et_id, $zeit_arr);
-        // die();
-        // return $zeit_arr;
-        /*
-		 * $this->saldo_et_vm
-		 * $this->saldo_et
-		 */
     }
 
     function ausgabe_saldo_et15($et_id, $arr)
@@ -11520,9 +10660,6 @@ ORDER BY EINHEIT_KURZNAME";
 
     function pdf_auszug1($et_id, $arr)
     {
-        // echo '<pre>';
-        // print_r($arr);
-        // die();
         $weg = new weg ();
         $weg->get_eigentumer_id_infos3($et_id);
 
@@ -11688,18 +10825,10 @@ ORDER BY EINHEIT_KURZNAME";
                             'justification' => 'right'
                         ));
                         $pdf->ezSetMargins(135, 70, 50, 200);
-                        // echo $arr[$m]['SALDO_MONAT'];
-                        // echo "$hg_betrag<br>";
-                        // $arr[$m]['SALDO_MONAT']+=$hg_betrag;
-                        // echo $arr[$m]['SALDO_MONAT'];
-                        // die();
                     }
                 }
                 $pdf->ezSetDy(-3); // abstand);
-                // $pdf->line(50,$pdf->y,545,$pdf->y); //erste Linie
                 $pdf->ezSetDy(-2); // abstand);
-                // $pdf->line(50,$pdf->y,545,$pdf->y); //zweite Linie
-                // $pdf->ezSetDy(-2); //abstand);
 
                 $pdf->ezText("<b>Zwischensummen</b>", 10, array(
                     'justification' => 'left'
@@ -11708,9 +10837,6 @@ ORDER BY EINHEIT_KURZNAME";
                 $sum_fixkosten_a = nummer_punkt2komma_t($sum_fixkosten);
                 $sum_kaltmiete = nummer_punkt2komma_t($sum_kaltmiete);
                 $sum_zwischen_soll = $sum_km_soll + $sum_fixkosten;
-                // echo "$sum_zwischen_soll = $sum_km_soll+$sum_fixkosten";
-                // echo $sum_fixkosten;
-                // die();
                 $sum_zwischen_soll_a = nummer_punkt2komma_t($sum_zwischen_soll);
                 $pdf->ezText("<b>$sum_zwischen_soll_a EUR</b>", 10, array(
                     'justification' => 'right'

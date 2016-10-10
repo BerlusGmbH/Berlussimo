@@ -2092,7 +2092,9 @@ ORDER BY BUCHUNGSNUMMER DESC");
         if (!empty ($gk->geldkonto_id)) {
             $result = DB::select("SELECT DATUM, BETRAG, VERWENDUNGSZWECK AS BEMERKUNG FROM GELD_KONTO_BUCHUNGEN WHERE  GELDKONTO_ID='$gk->geldkonto_id' $ko_string && KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mietvertrag_id' && AKTUELL='1' && DATE_FORMAT( DATUM, '%Y-%m' ) = '$jahr-$monat' ORDER BY DATUM ASC");
         } else {
-            die ('Kein Geldkonto für das Objekt hinterlegt');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Kein Geldkonto für das Objekt hinterlegt')
+            );
         }
         if (!empty($result)) {
             return $result;

@@ -60,7 +60,9 @@ class b_pdf
                 }
                 $sepa->GLAEUBIGER_ID = $dets->finde_detail_inhalt('GELD_KONTEN', $gk->geldkonto_id, 'GLAEUBIGER_ID');
                 if (!isset ($sepa->GLAEUBIGER_ID)) {
-                    die ("Bei $gk->kontonummer $mv->objekt_kurzname fehlt die Gläubiger ID");
+                    throw new \App\Exceptions\MessageException(
+                        new \App\Messages\ErrorMessage("Bei $gk->kontonummer $mv->objekt_kurzname fehlt die Gläubiger ID")
+                    );
                 }
                 $this->get_texte($v_dat);
 
@@ -208,7 +210,9 @@ class b_pdf
                 $pdf->ezStream($pdf_opt);
             }
         } else {
-            die ('Keine Empfänger gewählt');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\WarningMessage('Keine Empfänger gewählt')
+            );
         }
     }
 
@@ -566,7 +570,9 @@ class b_pdf
                     }
                 }
             } else {
-                die ('Keine Partner im System');
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\WarningMessage('Keine Partner im System')
+                );
             }
         }
         if ($empfaenger == 'Objekt') {

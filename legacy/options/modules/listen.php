@@ -160,7 +160,9 @@ switch ($option) {
         $konto = request()->input('konto');
         $betrag = nummer_komma2punkt(request()->input('betrag'));
         if ($betrag < 0) {
-            die ('ABBRUCH MINUSBETRAG');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('ABBRUCH MINUSBETRAG')
+            );
         }
         if ($sep->sepa_ueberweisung_speichern($von_gk_id, $an_sepa_gk_id, $vzweck_new, $kat, $kos_typ, $kos_id, $konto, $betrag) == false) {
             fehlermeldung_ausgeben("AUFTRAG KONNTE NICHT GESPEICHERT WERDEN!");
@@ -215,8 +217,6 @@ switch ($option) {
     case "sollmieten_zeitraum" :
         $li = new listen ();
         $objekt_id = request()->input('objekt_id');
-
-        // $mv->mieten_tabelle(4, '2011-12-01', '2012-11-31'); //XLS
         $li->mieten_pdf($objekt_id, '2013-08-01', '2013-08-31');
         break;
 
@@ -491,8 +491,6 @@ switch ($option) {
         } else {
             $mwst = '0.00';
         }
-
-        // die();
         $bu = new buchen ();
         $bu->geldbuchung_speichern($datum, $kto_auszugsnr, $rechnungsnr, $betrag, $vzweck, $geldkonto_id, $kostentraeger_typ, $kostentraeger_id, $kostenkonto, $mwst);
         weiterleiten('?daten=listen&option=upload_auszug&next');
@@ -504,7 +502,6 @@ switch ($option) {
         break;
 
     case "exp_obj" :
-
         if (request()->has('objekte_arr')) {
             $weg = new weg ();
             $anz = count(request()->input('objekte_arr'));
@@ -525,10 +522,8 @@ switch ($option) {
             ob_clean();
             header("Content-Disposition: attachment; filename='OBJEKTE.CSV");
             echo $string;
-            die ();
         } else {
             fehlermeldung_ausgeben("Objekte wählen!");
         }
         break;
 }
-?>

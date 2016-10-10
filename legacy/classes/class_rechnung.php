@@ -154,8 +154,8 @@ class rechnung {
     /* Alle Rechnungen werden angezeigt */
     function erfasste_rechungen_anzeigen() {
         /* Zählen aller Zeilen */
-        $result = DB::select( "SELECT * FROM RECHNUNGEN WHERE AKTUELL = '1' ORDER BY BELEG_NR DESC" );
-        $numrows1 = count( $result );
+        $result = DB::selectOne( "SELECT count(*) FROM RECHNUNGEN WHERE AKTUELL = '1' ORDER BY BELEG_NR DESC" );
+        $numrows1 = $result['count(*)'];
         /* Seitennavigation mit Limit erstellen */
         echo "<table><tr><td>Anzahl aller Rechnungen: $numrows1</td></tr><tr><td>\n";
         $navi = new blaettern ( 0, $numrows1, 100, route('legacy::rechnungen::index', ['option' => 'erfasste_rechnungen'], false) );
@@ -345,7 +345,12 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         }
     }
     function rechnung_kontierung_aufheben($belegnr) {
-        DB::update( "UPDATE  `KONTIERUNG_POSITIONEN` SET AKTUELL='0' WHERE `BELEG_NR` ='$belegnr'" ) or die ( 'Kontierungsaufhebung nicht möglich' );
+        $success = DB::update( "UPDATE  `KONTIERUNG_POSITIONEN` SET AKTUELL='0' WHERE `BELEG_NR` ='$belegnr'" );
+        if(!$success) {
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Kontierungsaufhebung nicht möglich')
+            );
+        }
         return true;
     }
     function rechnung_auf_kontierung_pruefen($belegnr) {
@@ -697,15 +702,13 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
     /* Funkt. zur Auswahl der Positionen für eine neue Rechnung aus dem Pool */
     function rechnung_schreiben_positionen_wahl($kostentraeger_typ, $kostentraeger_id, $positionen, $aussteller_typ, $aussteller_id) {
         if (request()->has('csv')) {
-
             $this->pool_csv ( $kos_typ, $kos_id, $positionen, $aussteller_typ, $aussteller_id );
             die ();
         }
         $f = new formular ();
         $f->erstelle_formular ( "Rechnung aus Pool zusammenstellen", NULL );
         $f->hidden_feld ( 'option', 'AUTO_RECHNUNG_VORSCHAU' );
-        // $js_action = 'onblur="javascript:rechnung_pool_neuberechnen(this.form)" onchange="javascript:rechnung_pool_neuberechnen(this.form)" onfocus="javascript:rechnung_pool_neuberechnen(this.form)" onmouseover="javascript:rechnung_pool_neuberechnen(this.form)"';
-
+        
         $js_action = 'onmouseover="javascript:pool_berechnung(this.form)" onkeyup="javascript:pool_berechnung(this.form)" onmousedown="javascript:pool_berechnung(this.form)" onmouseup="javascript:pool_berechnung(this.form)" onmousemove="javascript:pool_berechnung(this.form)"';
         $objekt_info = new objekt ();
         if ($kostentraeger_typ == 'Objekt') {
@@ -721,21 +724,12 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
         if ($kostentraeger_typ == 'Lager') {
             $rechnungs_empfaenger_id = $kostentraeger_id;
-            /*
-			 * $l = new lager;
-			 * $l->lager_name_partner($kostentraeger_id);
-			 * $rechnungs_empfaenger_typ = 'Partner';
-			 * $rechnungs_empfaenger_id = $l->lager_partner_id;
-			 */
         }
 
         if ($kostentraeger_typ == 'Partner') {
             $rechnungs_empfaenger_id = $kostentraeger_id;
         }
 
-        // $positionen = array_sortByIndex($positionen,'BELEG_NR');
-        // $positionen = array_sortByIndex($positionen,'POSITION');
-        // $positionen = array_orderby($positionen, 'BELEG_NR', SORT_DESC, 'POSITION', SORT_DESC);
         $positionen = array_msort ( $positionen, array (
             'BELEG_NR' => array (
                 SORT_ASC
@@ -743,9 +737,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             'POSITION' => SORT_STRING
         ) );
         $this->rechnungs_kopf_zusammenstellung ( $kostentraeger_typ, $kostentraeger_id, $aussteller_typ, $aussteller_id );
-        // echo '<pre>';
-        // print_r($positionen1);
-        // die();
 
         $self = $_SERVER ['QUERY_STRING'];
         echo "<a href=\"?$self&csv\">Als Excel</a>";
@@ -759,21 +750,13 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         $f->datum_feld ( 'Rechnungsdatum', 'rechnungsdatum', "$d_heute", 'rechnungsdatum' );
         $f->datum_feld ( 'Faellig am', 'faellig_am', "$faellig_am", 'faellig_am' );
 
-        // $f->text_feld("Skonto in %:", "skonto", "0", "5", "skonto_feld", $js_action);
-
         echo "</td><td colspan=6>";
         echo "</td></tr>";
         echo "<tr><td colspan=\"6\">";
-        // if($aussteller_typ == 'Partner'){
         $geld_konto_info = new geldkonto_info ();
         $geld_konto_info->dropdown_geldkonten ( $aussteller_typ, $aussteller_id );
-        // }else{
-        // $form->hidden_feld('geld_konto', '0');
-        // }
         echo "</td></tr>";
-        // onMouseover=\"BoxenAktivieren(this);
         echo "<div id=\"pool_tabelle\" $js_action>";
-        // echo "<tr class=feldernamen><td width=\"30px\"><input type=\"checkbox\" onClick=\"this.value=check(this.form.positionen_list)\" $js_action>Alle</td><td>Rechnung</td><td>Position</td><td>Menge</td><td>Bezeichnung</td><td>Einzelpreis</td><td>Netto</td><td>Rabatt %</td><td>Skonto</td><td>MWSt</td><td>Kostentraeger</td></tr>";
         echo "<tr ><th>POOL</th><th><input type=\"checkbox\" onClick=\"this.value=check(this.form.positionen_list)\" $js_action>Alle</th><th>Rechnung</th><th>UPos</th><th>Pos</th><th>Menge</th><th>Bezeichnung</th><th>Einzelpreis</th><th>Netto</th><th>Rabatt %</th><th>Skonto</th><th>MWSt</th><th>Kostentraeger</th></tr>";
         $f->hidden_feld ( 'RECHNUNG_EMPFAENGER_TYP', "$kostentraeger_typ" );
         $f->hidden_feld ( 'RECHNUNG_EMPFAENGER_ID', "$rechnungs_empfaenger_id" );
@@ -870,11 +853,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         $f->ende_formular ();
     }
     function pool_csv($kos_typ, $kos_id, $positionen, $aussteller_typ, $aussteller_id) {
-        /*
-		 * echo '<pre>';
-		 * print_r($positionen);
-		 * die();
-		 */
         ob_clean ();
         // ausgabepuffer leeren
         $fileName = 'pool' . date ( "d-m-Y" ) . '.xls';
@@ -1485,8 +1463,9 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         if (!empty($result_3)) {
             $partner_info = new partner ();
             $von = $partner_info->get_partner_name ( $rechnungs_aussteller_id );
-            fehlermeldung_ausgeben ( "Rechnung von $von mit der Rechnungsnummer $clean_arr[rechnungsnummer] vom $clean_arr[rechnungsdatum] existiert bereits." );
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Rechnung von $von mit der Rechnungsnummer $clean_arr[rechnungsnummer] vom $clean_arr[rechnungsdatum] existiert bereits.")
+            );
         } else {
             /* Letzte Belegnummer holen */
 
@@ -1611,8 +1590,9 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         if ($check_rechnung) {
             $partner_info = new partner ();
             $von = $partner_info->get_partner_name ( $this->rechnungs_aussteller_id );
-            fehlermeldung_ausgeben ( "$this->rechnungs_typ_druck von $von mit der Nummer $this->rechnungs_typ_druck  $rechnungsnummer vom $rechnungsdatum existiert bereits." );
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("$this->rechnungs_typ_druck von $von mit der Nummer $this->rechnungs_typ_druck  $rechnungsnummer vom $rechnungsdatum existiert bereits.")
+            );
         } else {
 
             /* Rechnungsdaten speichern */

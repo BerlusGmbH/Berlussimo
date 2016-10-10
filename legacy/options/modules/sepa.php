@@ -347,7 +347,9 @@ switch ($option) {
         $konto = request()->input('konto');
         $betrag = nummer_komma2punkt(request()->input('betrag'));
         if ($betrag <= 0) {
-            die ('ABBRUCH MINUSBETRAG');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('ABBRUCH MINUSBETRAG')
+            );
         }
         if ($sep->sepa_ueberweisung_speichern($von_gk_id, $an_sepa_gk_id, $vzweck, $kat, $kos_typ, $kos_id, $konto, $betrag) == false) {
             fehlermeldung_ausgeben("AUFTRAG KONNTE NICHT GESPEICHERT WERDEN!");
@@ -363,8 +365,9 @@ switch ($option) {
 
     case "sepa_files" :
         if (!session()->has('geldkonto_id')) {
-            fehlermeldung_ausgeben("Geldkonto wählen");
-            die();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Bitte wählen Sie ein Geldkonto.")
+            );
         } else {
             $sep = new sepa ();
             $sep->sepa_files(session()->get('geldkonto_id'));
@@ -373,8 +376,9 @@ switch ($option) {
 
     case "sepa_files_fremd" :
         if (!session()->has('geldkonto_id')) {
-            fehlermeldung_ausgeben("Geldkonto wählen");
-            die();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Geldkonto wählen")
+            );
         } else {
             $sep = new sepa ();
             $sep->sepa_files(null);
@@ -383,8 +387,9 @@ switch ($option) {
 
     case "sepa_file_buchen_fremd" :
         if (!request()->has('sepa_file')) {
-            fehlermeldung_ausgeben("SEPA-DATEI wählen");
-            die();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("SEPA-DATEI wählen.")
+            );
         } else {
             $sep = new sepa ();
             $sep->sepa_file_buchen_fremd(request()->input('sepa_file'));
@@ -393,10 +398,8 @@ switch ($option) {
 
     case "sepa_ue_buchen_fremd" :
         if (is_array(request()->input('betrag'))) {
-
             $anz = count(request()->input('betrag'));
             for ($a = 0; $a < $anz; $a++) {
-
                 $datum = request()->input('datum');
                 $betrag = request()->input('betrag') [$a];
                 if (request()->has('mwst')) {
@@ -424,8 +427,9 @@ switch ($option) {
 
     case "sepa_file_anzeigen" :
         if (!request()->has('sepa_file')) {
-            fehlermeldung_ausgeben("SEPA-DATEI wählen");
-            die();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("SEPA-DATEI wählen")
+            );
         } else {
             $sep = new sepa ();
             $sep->sepa_file_anzeigen(request()->input('sepa_file'));
@@ -435,8 +439,9 @@ switch ($option) {
     /* Sepafile Inhalt in Pool schieben, als Vorlage nutzen */
     case "sepa_file_kopieren" :
         if (!request()->has('sepa_file')) {
-            fehlermeldung_ausgeben("SEPA-DATEI wählen");
-            die();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("SEPA-DATEI wählen.")
+            );
         } else {
             $sep = new sepa ();
             if ($sep->sepa_file_kopieren(request()->input('sepa_file'))) {
@@ -447,8 +452,9 @@ switch ($option) {
 
     case "sepa_file_buchen" :
         if (!request()->has('sepa_file')) {
-            fehlermeldung_ausgeben("SEPA-DATEI wählen");
-            die();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("SEPA-DATEI wählen.")
+            );
         } else {
             $sep = new sepa ();
             $sep->sepa_file_buchen(request()->input('sepa_file'));
@@ -512,13 +518,19 @@ switch ($option) {
         $betrag = nummer_komma2punkt(request()->input('betrag'));
 
         if (empty ($vzweck)) {
-            die ('Verwendungszweck eingeben!!!!');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\WarningMessage('Verwendungszweck eingeben.')
+            );
         }
         if ($betrag <= 0) {
-            die ('ABBRUCH BETRAG NULL ODER KLEINER');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\WarningMessage('ABBRUCH BETRAG NULL ODER KLEINER')
+            );
         }
         if ($sep->sepa_ueberweisung_speichern($von_gk_id, $an_sepa_gk_id, $vzweck, $kat, $kos_typ, $kos_id, $konto, $betrag) == false) {
-            fehlermeldung_ausgeben("AUFTRAG KONNTE NICHT GESPEICHERT WERDEN!");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("AUFTRAG KONNTE NICHT GESPEICHERT WERDEN!")
+            );
         } else {
             session()->put('kos_typ', $kos_typ);
             session()->put('kos_bez', $kos_id);
@@ -544,13 +556,19 @@ switch ($option) {
         $betrag = nummer_komma2punkt(request()->input('betrag'));
 
         if (empty ($vzweck)) {
-            die ('Verwendungszweck eingeben!!!!');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\WarningMessage('Verwendungszweck eingeben.')
+            );
         }
         if ($betrag <= 0) {
-            die ('ABBRUCH BETRAG NULL ODER KLEINER');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('ABBRUCH BETRAG NULL ODER KLEINER')
+            );
         }
         if ($sep->sepa_ueberweisung_speichern_IBAN($von_gk_id, $iban, $bic, $empfaenger, $bank, $vzweck, $kat, $kos_typ, $kos_id, $konto, $betrag) == false) {
-            fehlermeldung_ausgeben("AUFTRAG KONNTE NICHT GESPEICHERT WERDEN!");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("AUFTRAG KONNTE NICHT GESPEICHERT WERDEN!")
+            );
         } else {
             session()->put('kos_typ', $kos_typ);
             session()->put('kos_bez', $kos_id);
@@ -622,7 +640,9 @@ switch ($option) {
             $kostenkonto = '6020';
         }
         if (!$kostenkonto) {
-            DIE ('Kein Kostenkonto gewählt');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Kein Kostenkonto gewählt.')
+            );
         }
 
         $vzweck = "SEPA-LS $m_ref";
@@ -637,17 +657,14 @@ switch ($option) {
     case "sepa_ue_autobuchen" :
         if (request()->isMethod('post')) {
             if (!session()->has('geldkonto_id')) {
-                fehlermeldung_ausgeben("Geldkonto wählen");
-                die ();
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\InfoMessage("Bitte wählen Sie ein Geldkonto.")
+                );
             }
-
-            if (!session()->has('temp_kontoauszugsnummer')) {
-                fehlermeldung_ausgeben("Kontrolldatein eingeben Kontoauszugsnummer!");
-                die ();
-            }
-            if (!session()->has('temp_datum')) {
-                fehlermeldung_ausgeben("Kontrolldatein eingeben Buchungsdatum!");
-                die ();
+            if (!session()->has('temp_kontoauszugsnummer') || !session()->has('temp_datum')) {
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\WarningMessage("Bitte geben Sie die Kontrolldaten ein.")
+                );
             }
             if (request()->has('mwst')) {
                 $mwst = 1;
@@ -658,7 +675,9 @@ switch ($option) {
             $sep = new sepa ();
             $sep->sepa_file_autobuchen($file, session()->get('temp_datum'), session()->get('geldkonto_id'), session()->get('temp_kontoauszugsnummer'), $mwst);
         } else {
-            fehlermeldung_ausgeben("Fehler beim Verbuchen EC232");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Fehler beim Verbuchen EC232.")
+            );
         }
         break;
 

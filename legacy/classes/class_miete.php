@@ -93,15 +93,11 @@ class miete
                     $this->start_m = $datum_mietdefinition_arr [1];
                     $this->start_j = $datum_mietdefinition_arr [0];
                 }
-
-                // die();
             }
 
             /* ende bis heute setzen */
             $this->end_j = date("Y");
             $this->end_m = date("m");
-
-            // die('ENDE');
         }
 
         /* jahresschleife */
@@ -251,7 +247,6 @@ class miete
         } else {
             $datum_mietdefinition = $this->tage_plus($datum_saldo_vv_org, 28);
         }
-        // die('SxxxIVAC');
         /* Wenn miete über mietentwicklung definiert ist */
         if (!empty ($datum_mietdefinition)) {
             // echo "DEFINITION $datum_mietdefinition";
@@ -592,15 +587,11 @@ class miete
                     $this->start_m = $datum_mietdefinition_arr [1];
                     $this->start_j = $datum_mietdefinition_arr [0];
                 }
-
-                // die();
             }
 
             /* ende bis heute setzen */
             $this->end_j = $jahr;
             $this->end_m = $monat;
-
-            // die('ENDE');
         }
 
         /* jahresschleife */
@@ -751,15 +742,11 @@ class miete
                     $this->start_m = $datum_mietdefinition_arr [1];
                     $this->start_j = $datum_mietdefinition_arr [0];
                 }
-
-                // die();
             }
 
             /* ende bis heute setzen */
             $this->end_j = $jahr;
             $this->end_m = $monat;
-
-            // die('ENDE');
         }
 
         /* jahresschleife */
@@ -851,25 +838,18 @@ class miete
 
         $datum_saldo_vv = $buchung->datum_saldo_vortrag_vorverwaltung($mietvertrag_id);
         $this->saldo_vv = $buchung->saldo_vortrag_vorverwaltung($mietvertrag_id);
-        // echo "$datum_saldo_vv $this->saldo_vv";
         $this->saldo_vv = number_format($this->saldo_vv, 2, '.', '');
 
-        // die();
         /* Saldo Vortrag vorhanden, dann ab Saldo VV rechnen */
-        // echo $datum_saldo_vv;
         if (!empty ($datum_saldo_vv)) {
             /* Saldo Vorvertrag mit 1. Zahlung vergleichen, älteres nehmen */
             $datum_saldo_vv_s = str_replace('-', '', $datum_saldo_vv);
-            // $datums_arr[] = $datum_saldo_vv_s;
-            // echo $datum_saldo_vv_s;
-
+            
             /* Einen Monat nach SALDO VV */
             $anfangs_datum = $this->tage_plus($datum_saldo_vv, 30);
-            // echo "AD $anfangs_datum<br>";
             $anfangs_datum_s = str_replace('-', '', $anfangs_datum);
             $datums_arr [] = $anfangs_datum_s;
-            // echo "1. $anfangs_datum $anfangs_datum_s<br>";
-
+            
             $datum1_zahlung = $buchung->datum_1_zahlung($mietvertrag_id);
             if (!empty ($datum1_zahlung)) {
                 $datum1_zahlung_s = str_replace('-', '', $datum1_zahlung);
@@ -879,11 +859,6 @@ class miete
             $anfangs_datum = min($datums_arr);
             $this->start_m = substr($anfangs_datum, 4, 2);
             $this->start_j = substr($anfangs_datum, 0, 4);
-
-            // echo '<pre>';
-            // print_r($datums_arr);
-            // die("$anfangs_datum $this->start_m $this->start_j");
-            // }
         }  /* Wenn kein Vortrag */
         else {
             /* Datum der 1. Mietdefinition */
@@ -1249,27 +1224,12 @@ class miete
 
                     /* Wenn SaldoVV vor 1. zahlung - Regelfall */
                     if ($datum_saldo_vv_s < $datum1_zahlung_s) {
-                        // if($this->mietvertrag_id='329'){
-                        // echo "<br>1. $datum_saldo_vv_s<$datum1_zahlung_s<br>";
-                        // die();
-                        // }
                         $this->daten_arr [$a] ['monate'] [$m_zaehler] ['soll'] = '-' . $buchung->summe_forderung_monatlich($mietvertrag_id, $b, $a);;
                         $this->temp_soll = $this->daten_arr [$a] ['monate'] [$m_zaehler] ['soll'];
                         $this->daten_arr [$a] ['monate'] [$m_zaehler] ['zahlungen'] = $buchung->zahlbetraege_im_monat_arr($mietvertrag_id, $b, $a);
                     }
 
                     if ($datum_saldo_vv_s >= $datum1_zahlung_s) {
-                        // if($this->mietvertrag_id='1704'){
-                        // echo "<br>2. $datum_saldo_vv_s>=$datum1_zahlung_s $start_m<br>";
-                        // die();
-
-                        // $dif_moo = $this->diff_in_monaten2($datum1_zahlung, $datum_saldo_vv);
-                        // echo "$m_zaehler $dif_moo";
-                        // echo "($a==$this->start_j) && ($m_zaehler==$start_m)";
-                        // die();
-                        // }
-                        // if($m_zaehler<=$dif_moo){
-
                         if (($a == $this->start_j) && ($m_zaehler == '0')) {
                             $this->daten_arr [$a] ['monate'] [$m_zaehler] ['soll'] = '-' . '0.00';
                             // $this->daten_arr[$a]['monate'][$m_zaehler]['soll']= '-'.$buchung->summe_forderung_monatlich($this->mietvertrag_id, $b, $a);;
@@ -2923,7 +2883,6 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
                     $auszugs_datum = explode('-', $mv->mietvertrag_bis);
                     $auszugs_monat = $auszugs_datum [1];
                     $auszugs_jahr = $auszugs_datum [0];
-                    // die("$akt_monat.$key $auszugs_monat.$auszugs_jahr");
                     if ("$akt_monat.$key" == "$auszugs_monat.$auszugs_jahr") {
                         $table_arr [$zeile] ['DATUM'] = '<b>' . date_mysql2german($mv->mietvertrag_bis) . '</b>';
                         $table_arr [$zeile] ['BEMERKUNG'] = "<b>Ende der Mietzeit</b>";
@@ -3630,7 +3589,6 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
                     $auszugs_datum = explode('-', $mv->mietvertrag_bis);
                     $auszugs_monat = $auszugs_datum [1];
                     $auszugs_jahr = $auszugs_datum [0];
-                    // die("$akt_monat.$key $auszugs_monat.$auszugs_jahr");
                     if ("$akt_monat.$key" == "$auszugs_monat.$auszugs_jahr") {
                         $table_arr [$zeile] ['DATUM'] = '<b>' . date_mysql2german($mv->mietvertrag_bis) . '</b>';
                         $table_arr [$zeile] ['BEMERKUNG'] = "<b>Ende der Mietzeit</b>";
@@ -3704,10 +3662,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
 
         $zeile = 0;
         $jahr1 = 0;
-        // echo '<pre>';
-        // print_r($this->daten_arr);
-        // die();
-
+        
         foreach ($this->daten_arr as $key => $value) {
 
             for ($b = 0; $b < count($this->daten_arr [$key] ['monate']); $b++) {
@@ -3834,11 +3789,6 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
         );
         $seit_datum = $tab_neu1 [0] ['DATUM'];
 
-        // $pdf->ezTable($tab_neu1,$cols,"Mietkontenblatt seit $seit_datum",
-        // array('showHeadings'=>1,'shaded'=>0, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500, 'cols'=>array('DATUM'=>array('justification'=>'right', 'width'=>50),'BEMERKUNG'=>array('justification'=>'left', 'width'=>300), 'BETRAG'=>array('justification'=>'right','width'=>75), 'SALDO'=>array('justification'=>'right','width'=>75))));
-        // echo '<pre>';
-        // print_r($tab_neu1);
-        // die();
         $anz = count($tab_neu1);
         $zeilen_pr_seite = 60;
         $seiten = intval($anz / $zeilen_pr_seite) + 1;
@@ -3922,12 +3872,7 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
                 // }
                 // }
             } // end else linie
-
-            // $pdf->ezSetDy(-5);
         }
-        // die();
-
-        // $pdf->ezStream();
     }
 
     function finde_start($tab_neu)
@@ -4061,7 +4006,6 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
                     $auszugs_datum = explode('-', $mv->mietvertrag_bis);
                     $auszugs_monat = $auszugs_datum [1];
                     $auszugs_jahr = $auszugs_datum [0];
-                    // die("$akt_monat.$key $auszugs_monat.$auszugs_jahr");
                     if ("$akt_monat.$key" == "$auszugs_monat.$auszugs_jahr") {
                         $table_arr [$zeile] ['DATUM'] = '<b>' . date_mysql2german($mv->mietvertrag_bis) . '</b>';
                         $table_arr [$zeile] ['BEMERKUNG'] = "<b>Ende der Mietzeit</b>";
@@ -4087,15 +4031,12 @@ FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && `KOSTENTRAEGER_TYP`='M
             $tab_neu [$neu_key] = $table_arr [$alt_key];
         }
 
-        // print_r($tab_neu);
         $start_zeile = $this->finde_start($tab_neu);
 
         $tab_neu1 = $this->start_neu($tab_neu, $start_zeile);
 
         $tab_neu1 = array_values($tab_neu1);
-        // print_r($tab_neu1);
-        // die();
-
+        
         ob_clean(); // ausgabepuffer leeren
 
         $pdf->ezText("Mietkonto Einheit : <b>$mv->einheit_kurzname</b>", 10);

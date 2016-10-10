@@ -80,7 +80,7 @@ switch ($option) {
             $weg = new weg ();
             $weg->uebersicht_einheit(request()->input('einheit_id'));
         } else {
-            die ('Einheit wählen');
+            echo 'Einheit wählen.';
         }
         break;
 
@@ -98,7 +98,7 @@ switch ($option) {
             $weg = new weg ();
             $weg->form_eigentuemer_aendern(request()->input('eigentuemer_id'));
         } else {
-            die ('Bitte den Eigentümer wählen!!!');
+            echo 'Bitte den Eigentümer wählen.';
         }
         break;
 
@@ -108,31 +108,41 @@ switch ($option) {
         if (request()->has('et_id')) {
             $et_id = request()->input('et_id');
         } else {
-            die ('Eigentümer ID fehlt');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Eigentümer ID fehlt')
+            );
         }
 
         if (request()->has('einheit_id')) {
             $einheit_id = request()->input('einheit_id');
         } else {
-            die ('Einheit nicht gewählt');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Einheit nicht gewählt')
+            );
         }
 
         if (request()->has('z_liste')) {
             $eigent_arr = request()->input('z_liste');
         } else {
-            die ('Personen nicht gewählt');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Personen nicht gewählt')
+            );
         }
 
         if (request()->has('eigentuemer_seit')) {
             $eigentuemer_von = request()->input('eigentuemer_seit');
         } else {
-            die ('Datum Eigentümer SEIT fehlt!');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Datum Eigentümer SEIT fehlt!')
+            );
         }
 
         if (request()->has('eigentuemer_bis')) {
             $eigentuemer_bis = request()->input('eigentuemer_bis');
         } else {
-            die ('Datum Eigentümer BIS fehlt!');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Datum Eigentümer BIS fehlt!')
+            );
         }
 
         $weg->eigentuemer_aendern_db($et_id, $einheit_id, $eigent_arr, $eigentuemer_von, $eigentuemer_bis);
@@ -154,7 +164,9 @@ switch ($option) {
                 weiterleiten(route('legacy::weg::index', ['option' => 'einheiten'], false));
             }
         } else {
-            die ('Neue Eigentümer wählen!');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Neue Eigentümer wählen!')
+            );
         }
         break;
 

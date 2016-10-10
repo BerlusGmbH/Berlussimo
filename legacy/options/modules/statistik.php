@@ -213,8 +213,9 @@ switch ($option) {
     case "fenster_zuweisen" :
         if (request()->exists('sndBtn')) {
             if (request()->input('rest') < request()->input('anz_fenster')) {
-                fehlermeldung_ausgeben("Eingegebene Menge größer als Restmenge!");
-                die ();
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\ErrorMessage("Eingegebene Menge größer als Restmenge!")
+                );
             } else {
                 $s = new statistik ();
                 if ($s->fenster_zuweisen(request()->input('beleg_id'), request()->input('pos'), request()->input('anz_fenster'), request()->input('Einheit'))) {

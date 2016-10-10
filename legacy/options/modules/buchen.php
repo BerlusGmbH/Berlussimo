@@ -720,18 +720,6 @@ switch ($option) {
                 }
             }
             $abfrage .= " && AKTUELL='1' ORDER BY DATUM ASC, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID";
-            // echo $abfrage;
-            // die();
-
-            /*
-             * SELECT * FROM articles WHERE MATCH (title,body)
-             * -> AGAINST ('+MySQL -YourSQL' IN BOOLEAN MODE);
-             *
-             * #print_r($where);
-             * #echo $abfrage;
-             * #die();
-             * /*Monitorausgabe
-             */
             if (request()->has('submit_php')) {
                 if ($ausdruck != '' or $betrag != '' or $kostenkonto != '') {
                     $b->finde_buchungen($abfrage);
@@ -784,8 +772,10 @@ switch ($option) {
         }
 
         if (empty ($geldkonto_id) or empty ($partner_id)) {
-            fehlermeldung_ausgeben('Geldkonto und Partner wählen');
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Geldkonto und Partner wählen')
+            );
+            
         }
         if (request()->has('start')) {
             $start = request()->input('start');
@@ -925,8 +915,9 @@ switch ($option) {
                         }
                     } else {
                         $bez = $arr_konten [$a] [0];
-                        fehlermeldung_ausgeben("$bez $kto $blz $IBAN nicht gefunden!!!<br>Schreibweise prüfen!!!");
-                        die();
+                        throw new \App\Exceptions\MessageException(
+                            new \App\Messages\WarningMessage("$bez $kto $blz $IBAN nicht gefunden.<br>Schreibweise prüfen.")
+                        );
                     }
                 }
             }
@@ -1235,17 +1226,15 @@ switch ($option) {
     case "sepa_ue_autobuchen" :
         if (request()->isMethod('post')) {
             if (!session()->has('geldkonto_id')) {
-                fehlermeldung_ausgeben("Geldkonto wählen");
-                die();
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\InfoMessage("Bitte wählen Sie ein Geldkonto.")
+                );
             }
 
-            if (!session()->has('temp_kontoauszugsnummer')) {
-                fehlermeldung_ausgeben("Kontrolldatein eingeben Kontoauszugsnummer!");
-                die();
-            }
-            if (!session()->has('temp_datum')) {
-                fehlermeldung_ausgeben("Kontrolldatein eingeben Buchungsdatum!");
-                die();
+            if (!session()->has('temp_kontoauszugsnummer') || !session()->has('temp_datum')) {
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\ErrorMessage("Bitte geben Sie die Kontrolldaten ein.")
+                );
             }
             if (request()->has('mwst')) {
                 $mwst = 1;

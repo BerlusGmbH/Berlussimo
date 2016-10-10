@@ -68,8 +68,6 @@ class objekt {
             if (! is_array ( $haus_arr )) {
                 fehlermeldung_ausgeben ( "Keine Häuser im Objekt" );
             } else {
-                // print_r($haus_arr);
-                // die();
                 /* Alle Häuser durchlaufen und kopieren */
                 $anz_h = count ( $haus_arr );
                 for($a = 0; $a < $anz_h; $a ++) {
@@ -86,7 +84,6 @@ class objekt {
                     /* Details vom Haus kopieren */
                     $dd = new detail ();
                     $h_det_arr = $dd->finde_alle_details_arr ( 'HAUS', $haus_id );
-                    // print_r($h_det_arr);
                     if (is_array ( $h_det_arr )) {
                         $anz_det_h = count ( $h_det_arr );
                         for($deh = 0; $deh < $anz_det_h; $deh ++) {
@@ -236,8 +233,6 @@ class objekt {
                             } else {
                                 echo "Mv zu $einheit_kurzname nicht gefunden - Leerstand";
                             }
-
-                            // die('ENDE');
                         } // end for einheit
                     } else {
                         echo "Keine Einheiten kopiert";
@@ -245,7 +240,9 @@ class objekt {
                 } // end for haus
             }
         } else {
-            die ( 'Objekt konnte nicht angelegt werden!' );
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Objekt konnte nicht angelegt werden!')
+            );
         }
     }
     function mietauftellung_arr($objekt_id, $monat = null, $jahr = null) {
@@ -369,9 +366,6 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
                 'MIETE_KALT_MON_A' => 'Kaltmiete Monat',
                 'UMLAGEN_A' => 'Nebenkosten'
             );
-            // print_r($table_arr);
-            // die();
-
             $monat = date ( "m" );
             $jahr = date ( "Y" );
             $monatsname = monat2name ( $monat );
@@ -418,7 +412,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
             ob_end_clean ();
             $pdf->ezStream();
         } else {
-            die ( 'Keine Mietaufstellungsdaten' );
+            echo 'Keine Mietaufstellungsdaten';
         }
     }
     function pdf_mietaufstellung_m_j($objekt_id, $monat, $jahr) {
@@ -441,11 +435,6 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
                 'MWST' => 'MWSt',
                 'ZAHLUNGEN' => 'Zahlung'
             );
-            // print_r($table_arr);
-            // die();
-
-            // $monat = date("m");
-            // $jahr = date("Y");
             $monatsname = monat2name ( $monat );
             $oo = new objekt ();
             $oo->get_objekt_infos ( $objekt_id );
@@ -494,9 +483,6 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
                 ob_end_clean ();
                 $pdf->ezStream();
             } else {
-                // echo '<pre>';
-                // print_r($arr);
-                // die();
                 $anz_zeilen = count ( $arr );
 
                 ob_clean ();
@@ -539,10 +525,12 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
                     echo "<tr><td>$einheit_kn</td><td>$nutzung</td><td>$mieter</td><td>$einzug</td><td>$qm</td><td>$km_qm</td><td>$km_mon</td><td>$nk</td><td>$wm</td><td>$mwst</td><td>$zahlung</td></tr>";
                 }
                 echo "</table>";
-                die ();
+                return;
             }
         } else {
-            die ( 'Keine Mietaufstellungsdaten' );
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Keine Mietaufstellungsdaten')
+            );
         }
     }
     function pdf_mietaufstellung_j($objekt_id, $jahr) {
@@ -571,17 +559,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
                     $jtab1 [0] ['BRUTTOM_A'] += nummer_komma2punkt ( $arr [$mo - 1] [$anz_mo] ['BRUTTOM_A'] );
                     $jtab1 [0] ['ZAHLUNGEN_A'] += nummer_komma2punkt ( $arr [$mo - 1] [$anz_mo] ['ZAHLUNGEN_A'] );
 
-                    // $cols = array( 'MIETE_KALT_MON_A'=>'Kaltmiete Monat', 'UMLAGEN_A'=>'Nebenkosten', 'MIETE_BRUTTO'=>'BruttoM', 'ZAHLUNGEN'=>'Zahlung');
-                    // $pdf->ezTable($jtab,$cols,"$oo->objekt_kurzname - Mietaufstellung $monatsname $jahr",
-                    // array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>750,'cols'=>array('EINHEIT_KURZNAME1'=>array('justification'=>'left', 'width'=>55),'TYP'=>array('justification'=>'right', 'width'=>50), 'EINHEIT_QM_A'=>array('justification'=>'right', 'width'=>50), 'MIETE_KALT_MON_A'=>array('justification'=>'right', 'width'=>60), 'MIETER_SEIT'=>array('justification'=>'right', 'width'=>50), 'MIETE_KALT_QM_A'=>array('justification'=>'right', 'width'=>50), 'UMLAGEN_A'=>array('justification'=>'right', 'width'=>55))));
-
-                    // ob_clean(); //ausgabepuffer leeren
-                    // header("Content-type: application/pdf"); // wird von MSIE ignoriert
-                    // $pdf->ezStream();
                 } else {
-                    // echo '<pre>';
-                    // print_r($arr);
-                    // die();
                     $anz_zeilen = count ( $arr );
 
                     ob_clean ();
@@ -624,10 +602,11 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
                         echo "<tr><td>$einheit_kn</td><td>$nutzung</td><td>$mieter</td><td>$einzug</td><td>$qm</td><td>$km_qm</td><td>$km_mon</td><td>$nk</td><td>$wm</td><td>$mwst</td><td>$zahlung</td></tr>";
                     }
                     echo "</table>";
-                    die ();
                 }
             } else {
-                die ( 'Keine Mietaufstellungsdaten' );
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\ErrorMessage('Keine Mietaufstellungsdaten' )
+                );
             }
         }
 
@@ -887,7 +866,6 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
             $rest = stristr ( $this->objekt_eigentuemer_pdf, ' vertreten durch' );
             $this->objekt_eigentuemer_pdf = trim(str_replace ( $rest, '', $this->objekt_eigentuemer_pdf ));
         } else {
-            // die("nOT FOUND $this->objekt_eigentuemer SIVAC");
             $this->objekt_eigentuemer_pdf = $p->partner_name;
         }
     }

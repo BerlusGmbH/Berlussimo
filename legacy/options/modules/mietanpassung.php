@@ -61,17 +61,12 @@ switch ($option) {
                     } else {
                         $erhoeht = 'NEIN';
                     }
-                    // unset($this->naechste_erhoehung_datum);
-                    // unset($this->naechste_erhoehung_betrag);
-
+                    
                     $l_datum = $arr [$a] ['L_ANSTIEG_DATUM'];
                     $l_betrag = $arr [$a] ['L_ANSTIEG_BETRAG'];
                     $l_anstieg_proz = nummer_komma2punkt(nummer_punkt2komma($arr [$a] ['ANSTIEG_3J']));
                     $prozent_neu = nummer_punkt2komma($arr [$a] ['ANSTIEG_UM_PROZENT']);
-                    // echo '<pre>';
-                    // print_r($arr);
-                    // die();
-
+                    
                     $l_anstieg_vor_monaten = $arr [$a] ['L_ANSTIEG_MONATE'];
                     $noch_monate_15 = 36 - $l_anstieg_vor_monaten;
                     $o = new objekt ();
@@ -158,9 +153,6 @@ switch ($option) {
                 $mvv = new mietvertraege ();
                 $mvv->get_mietvertrag_infos_aktuell($mv_id);
                 $tab_ue [$a] ['ANSCHRIFT'] = "$mvv->haus_strasse $mvv->haus_nr";
-                // print_r($mvv);
-                // die();
-
                 $datum_erh_arr = explode('.', $anstiegs_datum);
                 $monat_erhoehung = $datum_erh_arr [1];
                 $jahr_erhoehung = $datum_erh_arr [2];
@@ -185,11 +177,8 @@ switch ($option) {
                     $pdf->ezNewPage();
                 }
                 $ma->pdf_anschreiben_MW_stapel($pdf, $ber_array, $druckdatum);
-                // die();
             }
 
-            // print_r($tab_ue);
-            // die();
             /* übersichtseite */
             $tab_ue [$anz] ['MEHR'] = nummer_punkt2komma_t($sum);
             $pdf->ezNewPage();
@@ -293,7 +282,9 @@ switch ($option) {
             if ($neue_miete > session()->get('ber_arr')['NEUE_MIETE']) {
                 $max_miete = session()->get('ber_arr')['NEUE_MIETE'];
                 echo "Neue Miete = $neue_miete |||  Kappung: $max_miete<br>";
-                die ("NEUE MIETE HÖHER ALS KAPPUNGSGRENZE ODER MIETE NACH MIETSPIEGEL, PROZENTE REDUZIEREN!!!!");
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\ErrorMessage("NEUE MIETE HÖHER ALS KAPPUNGSGRENZE ODER MIETE NACH MIETSPIEGEL, PROZENTE REDUZIEREN.")
+                );
             } else {
                 session()->push('ber_arr.NEUE_MIETE', $neue_miete);
             }

@@ -57,33 +57,23 @@ class ueberweisung
         if ($r->status_bezahlt == '0') {
 
             if ($r->rechnungstyp == 'Rechnung' or $r->rechnungstyp == 'Buchungsbeleg') {
-                // $g->dropdown_geldkonten_k("Überweisen von $r->rechnungs_empfaenger_name -> Geldkonto auswählen", 'a_konto_id', 'a_konto_id', $r->rechnungs_empfaenger_typ, $r->rechnungs_empfaenger_id);
                 $sep = new sepa ();
-                // if($sep->dropdown_sepa_geldkonten('Überweisen von', 'gk_id', 'gk_id', $r->rechnungs_empfaenger_typ, $r->rechnungs_empfaenger_id) ==false){
-                // fehlermeldung_ausgeben("SEPA Kontoverbondung Rg.Empfänger fehlt!!!");
-                // die();
                 $gk_a_id = session()->get('geldkonto_id');
                 $f->hidden_feld('gk_id', $gk_a_id);
 
-                // }
                 if ($sep->dropdown_sepa_geldkonten('Überweisen an', 'empf_sepa_gk_id', 'empf_sepa_gk_id', $r->rechnungs_aussteller_typ, $r->rechnungs_aussteller_id) == false) {
-                    fehlermeldung_ausgeben("SEPA Kontoverbindung Rg. Aussteller fehlt!!!");
-                    die ();
+                    throw new \App\Exceptions\MessageException(
+                        new \App\Messages\ErrorMessage("SEPA Kontoverbindung Rg. Aussteller fehlt.")
+                    );
                 }
 
-                // $g->dropdown_geldkonten_k("Überweisen an $r->rechnungs_aussteller_name -> Geldkonto auswählen", 'e_konto_id', 'e_konto_id', $r->rechnungs_aussteller_typ, $r->rechnungs_aussteller_id);
                 $js_opt = "onchange=\"var betrag_feld = document.getElementById('betrag'); betrag_feld.value=nummer_punkt2komma(this.value);\";";
-                // $js_opt = "onfocus='document.getElementById(\"betrag\").value=this.value);'";
                 $r->dropdown_buchungs_betrag_kurz_sepa('Zu zahlenden Betrag wählen', 'betrags_art', 'betrags_art', $js_opt);
                 $t_betrag = nummer_punkt2komma($r->rechnungs_skontobetrag);
 
                 $f->text_feld('Ausgewählten Betrag eingeben', 'betrag', $t_betrag, '10', 'betrag', '');
-                // $f->text_feld('Verwendungszweck1 (max. 27 Zeichen)', 'vzweck1', "Rechnung $r->rechnungsnummer", '27', 'vzweck1', '');
                 $vzweck_140 = substr("$r->rechnungs_aussteller_name, Rnr:$r->rechnungsnummer, $r->kurzbeschreibung", 0, 140);
                 $f->text_bereich('Verwendungszweck Max 140Zeichen', 'vzweck', "$vzweck_140", 60, 60, 'vzweck');
-                // $f->text_feld('Verwendungszweck2 (max. 27 Zeichen)', 'vzweck2', "", '27', 'vzweck1', '');
-                // $f->text_feld('Verwendungszweck3 (max. 27 Zeichen)', 'vzweck3', "", '27', 'vzweck1', '');
-                // $f->text_feld('Buchungskonto', 'konto', 7000, 20, 'konto', '');
                 $kk = new kontenrahmen ();
                 $kk->dropdown_kontorahmenkonten('Konto', 'konto', 'konto', 'Geldkonto', session()->get('geldkonto_id'), '');
 
@@ -106,8 +96,6 @@ class ueberweisung
             echo "Diese Rechnung wurde am $r->bezahlt_am als bezahlt markiert";
         }
         $f->ende_formular();
-        // echo'<pre>';
-        // print_r($r);
     }
 
     function zahlung2dtaus($a_konto_id, $e_konto_id, $betrag, $betrags_art, $vzweck1, $vzweck2, $vzweck3, $bezugstab, $bezugsid, $buchungstext, $zahlungart)
@@ -653,7 +641,9 @@ class ueberweisung
                 }
             } // end for
         } else {
-            die ("Kein Ihnalt in der DTAUS-DATEI");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Kein Ihnalt in der DTAUS-DATEI.")
+            );
         }
     }
 
@@ -729,7 +719,9 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO");
     function form_ueberweisung_manuell()
     {
         if (!session()->has('geldkonto_id') or !session()->has('partner_id')) {
-            die ('ABBRUCH - Partner und Geldkonto wählen!!!');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Bitte wählen Sie einen Partner und ein Geldkonto.')
+            );
         } else {
             $g = new geldkonto_info ();
             $konto_id = session()->get('geldkonto_id');

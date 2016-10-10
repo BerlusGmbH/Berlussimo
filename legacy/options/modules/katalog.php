@@ -140,11 +140,6 @@ switch ($option) {
             $rg = $arr_pos [$a] ['BELEG_NR'];
             $r = new rechnung ();
             $art_arr = $r->artikel_info($partner_id, $art_nr);
-            /*
-             * echo '<pre>';
-             * print_r($art_arr);
-             * die();
-             */
             $ve = $art_arr [0] ['EINHEIT'];
             $bez = $art_arr [0] ['BEZEICHNUNG'];
             $lp = $art_arr [0] ['LISTENPREIS'];

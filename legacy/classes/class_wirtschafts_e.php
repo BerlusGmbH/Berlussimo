@@ -254,8 +254,6 @@ class wirt_e
 
             /* NEU aus class WEG Function ->key_daten_formel */
             $d = new detail ();
-            // echo "$anteile_g = $d->finde_detail_inhalt('WIRT_EINHEITEN', $w_id, 'Gesamtanteile')";
-            // die();
             $anteile_g = $d->finde_detail_inhalt('WIRT_EINHEITEN', $w_id, 'Gesamtanteile');
             if (empty ($anteile_g)) {
                 $anteile_g = 0.00;
@@ -265,9 +263,6 @@ class wirt_e
             $this->g_anzahl_einheiten = $this->anzahl_e;
             $this->g_verbrauch = '0.00';
         }
-        // echo '<pre>';
-        // print_r($this);
-        // die();
     }
 
     function get_einheiten_from_wirte($w_id)

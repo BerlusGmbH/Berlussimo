@@ -1116,15 +1116,11 @@ ORDER BY KOSTENTRAEGER_TYP,KOSTENTRAEGER_ID, W_GERAETE.IM_EINSATZ ASC
         $thermen_arr = $this->wartungen($gruppen_id, $monate_plus_int);
         if (is_array($thermen_arr)) {
             $anz = count($thermen_arr);
-            // echo "ANZ: $anz<br>";
             for ($a = 0; $a < $anz; $a++) {
                 $einheit_kn = ltrim(rtrim($thermen_arr [$a] ['EINBAUORT']));
                 $e = new einheit ();
                 $e->get_einheit_id($einheit_kn);
                 $e->get_einheit_info($e->einheit_id);
-                // echo "$einheit_kn $e->einheit_id<br>";
-                // echo '<pre>';
-                // print_r($e);
                 $thermen_arr [$a] ['STR'] = "$e->haus_strasse $e->haus_nummer, $e->haus_plz $e->haus_stadt";
                 $thermen_arr [$a] ['LAGE'] = $e->einheit_lage;
 
@@ -1133,9 +1129,6 @@ ORDER BY KOSTENTRAEGER_TYP,KOSTENTRAEGER_ID, W_GERAETE.IM_EINSATZ ASC
                 if ($mv_id) {
                     $mvs = new mietvertraege ();
                     $mvs->get_mietvertrag_infos_aktuell($mv_id);
-                    // print_r($mvs);
-
-                    // $kontaktdaten = $e->kontaktdaten_mieter($mv_id);
                     $thermen_arr [$a] ['KONTAKT'] = $e->kontaktdaten_mieter($mv_id);
                     $thermen_arr [$a] ['MIETER'] = $mvs->personen_name_string_u;
                     $kontaktdaten = '';
@@ -1151,12 +1144,10 @@ ORDER BY KOSTENTRAEGER_TYP,KOSTENTRAEGER_ID, W_GERAETE.IM_EINSATZ ASC
                 unset ($e);
             } // end for
         } else {
-            echo "KEINE WARTUNGEN";
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Keine Wartungen vorhanden.")
+            );
         }
-        // echo '<pre>';
-        // print_r($thermen_arr);
-        // die();
         if ($format == 'PDF') {
             ob_clean();
             $pdf = new Cezpdf ('a4', 'landscape');

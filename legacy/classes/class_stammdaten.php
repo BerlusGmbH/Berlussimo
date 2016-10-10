@@ -88,9 +88,6 @@ class stammdaten {
 				$pdf_gk [$g] ['BEGUENSTIGTER'] = $gki->beguenstigter;
 				$pdf_gk [$g] ['BANK'] = $gki->bankname;
 			}
-			// print_r($gk_ids_arr);
-			// die();
-			
 			$cols = array (
 					'BEGUENSTIGTER' => "Begünstigter",
 					'IBAN' => "IBAN",
@@ -117,18 +114,6 @@ class stammdaten {
 		}
 		
 		$this->pdf_stamm_objekt_haus ( $pdf, $objekt_id );
-		// $this->pdf_stamm_haus($pdf, $objekt_id);
-		// $pdf->ezTable($pdf_tab);
-		// print_r($o);
-		// print_r($pdf_tab);
-		
-		/*
-		 * $p = new partners();
-		 * $p->get_partner_info($o->objekt_eigentuemer_id);
-		 * print_r($p);
-		 */
-		// die();
-		
 		$this->stamm_einheiten_objekt ( $pdf, $objekt_id );
 	}
 	function pdf_stamm_objekt_haus($pdf, $objekt_id) {
@@ -136,8 +121,6 @@ class stammdaten {
 		$o->get_objekt_infos ( $objekt_id );
 		$haus_arr = $o->haeuser_objekt_in_arr ( $objekt_id );
 		if (is_array ( $haus_arr )) {
-			// print_r($haus_arr);
-			// die();
 			$anz_haus = count ( $haus_arr );
 			for($a = 0; $a < $anz_haus; $a ++) {
 				$haus_id = $haus_arr [$a] ['HAUS_ID'];
@@ -179,7 +162,6 @@ class stammdaten {
 				$this->pdf_stamm_haus ( $pdf, $haus_id );
 			}
 		}
-		// die();
 	}
 	function pdf_stamm_haus($pdf, $haus_id) {
 		$h = new haus ();
@@ -366,8 +348,6 @@ class stammdaten {
 					$et_id = $et_arr [$et] ['ID'];
 					$weg = new weg ();
 					$weg->get_eigentumer_id_infos3 ( $et_id );
-					// print_r($weg);
-					// die();
 					
 					$pdf_tab_et [$et] ['ET_NAME'] = $weg->empf_namen;
 					$pdf_tab_et [$et] ['ET_NAME1'] = $weg->empf_namen_u;
@@ -472,9 +452,6 @@ class stammdaten {
 							$pdf_gk [$g] ['BEGUENSTIGTER'] = $gki->beguenstigter;
 							$pdf_gk [$g] ['BANK'] = $gki->bankname;
 						}
-						// print_r($gk_ids_arr);
-						// die();
-						
 						$cols = array (
 								'BEGUENSTIGTER' => "Begünstigter",
 								'IBAN' => "IBAN",
@@ -506,9 +483,6 @@ class stammdaten {
 			$e = new einheit ();
 			$mv_ids = $e->get_mietvertrag_ids ( $einheit_id );
 			if (is_array ( $mv_ids )) {
-				// $pdf->ezNewPage();
-				// print_r($mv_ids);
-				// die();
 				$anz_mv = count ( $mv_ids );
 				for($m = 0; $m < $anz_mv; $m ++) {
 					$mv_id = $mv_ids [$m] ['MIETVERTRAG_ID'];
@@ -607,8 +581,6 @@ class stammdaten {
 					$pdf->ezSetDy ( - 5 ); // abstand
 					unset ( $pdf_mv );
 					
-					// print_r($mv);
-					// die();
 					$z = 0;
 					for($ppe = 0; $ppe < $anz_pmv; $ppe ++) {
 						$person_id_mv = $mv->personen_ids [$ppe] ['PERSON_MIETVERTRAG_PERSON_ID'];
@@ -691,22 +663,10 @@ class stammdaten {
 					$arr_stat = $this->me_12 ( $mv_id, 2016 );
 					$this->plot2pdf ( $pdf, $mv_id, $arr_stat, 2016, 570, 150 );
 					
-					/* Mietkontenblatt */
-					// $pdf->ezNewPage();
-					// $druckdatum = date("d.m.Y");
-					// $pdf->addText(464,730,7,"<b>Druckdatum: $druckdatum</b>");
-					// $mz = new miete();
-					// $mz->mkb2pdf_mahnung_letzter_nullstand($pdf,$mv_id);
-					// unset($mz);
-					// echo '<pre>';
-					// print_r($mz);
-					// die();
-					
 					unset ( $pdf_mv );
 				}
 			}
 		} // ende for Einheiten
-			  // die();
 	}
 	function me_12($mv_id, $jahr) {
 		$mvs = new mietvertraege ();
@@ -775,15 +735,8 @@ class stammdaten {
 		$img = $plot->DrawGraph ();
 		$px = 'px';
 		
-		// echo "<hr>$plot->img ";
-		// $plot->PrintImageFrame();
-		// $hhh = $plot->PrintImage();
 		$ima = $plot->EncodeImage ();
 		
-		// echo "<a style=\"width:$w$px;heigth:$h$px;\" href=\"?option=stat_mv_big&mv_id=$mv_id\"><img style=\"width:$w$px;heigth:$h$px;\" src=\"$plot->img\"></img></a>";
-		// die();
-		// echo "<img src=\"$ima\">";
-		// die();
 		if ($mvs->mietvertrag_aktuell == 1) {
 			$pdf->addPngFromFile ( $ima, $pdf->x + 10, $pdf->y - $h, $w, $h );
 		}
@@ -794,7 +747,6 @@ class stammdaten {
 		$mvs->get_mietvertrag_infos_aktuell ( $mv_id );
 		$mk = new mietkonto ();
 		$datum_mietdefinition = $mk->datum_1_mietdefinition ( $mv_id );
-		// echo "<h1>$datum_mietdefinition</h1>";
 		$a_dat = explode ( '-', $datum_mietdefinition );
 		$jahr_a = date ( "Y" ) - 2;
 		$jahr_e = date ( "Y" ) + 3;
@@ -847,15 +799,8 @@ class stammdaten {
 		$img = $plot->DrawGraph ();
 		$px = 'px';
 		
-		// echo "<hr>$plot->img ";
-		// $plot->PrintImageFrame();
-		// $hhh = $plot->PrintImage();
 		$ima = $plot->EncodeImage ();
 		
-		// echo "<a style=\"width:$w$px;heigth:$h$px;\" href=\"?option=stat_mv_big&mv_id=$mv_id\"><img style=\"width:$w$px;heigth:$h$px;\" src=\"$plot->img\"></img></a>";
-		// die();
-		// echo "<img src=\"$ima\">";
-		// die();
 		if ($mvs->mietvertrag_aktuell == 1) {
 			$pdf->ezNewPage ();
 			$druckdatum = date ( "d.m.Y" );

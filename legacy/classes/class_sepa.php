@@ -101,7 +101,9 @@ class sepa
                     $arr [$z] ['BANKNAME'] = $mv->ls_bankname_sep_k;
                     $arr [$z] ['ANSCHRIFT'] = "$mv->haus_strasse $mv->haus_nr, $mv->haus_plz $mv->haus_stadt";
                     if (!isset ($mv->haus_strasse)) {
-                        die ("MV nicht in Ordnung, strasse prüfen $mv_id");
+                        throw new \App\Exceptions\MessageException(
+                            new \App\Messages\ErrorMessage("MV nicht in Ordnung, strasse prüfen $mv_id")
+                        );
                     }
 
                     $arr [$z] ['mietvertrag_aktuell'] = $mv->mietvertrag_aktuell;
@@ -158,9 +160,7 @@ class sepa
     function alle_mandate_anzeigen_kurz($nutzungsart = 'Alle')
     {
         if (!session()->has('geldkonto_id') && $nutzungsart != 'Alle') {
-            session()->put('last_url', route('legacy::sepa::index', ['option' => 'mandate_mieter',], false));
-            fehlermeldung_ausgeben('Geldkonto wählen');
-            die ();
+            throw new \App\Exceptions\MessageException(new \App\Messages\InfoMessage('Bitte wählen Sie ein Geldkonto.'));
         }
         $datum_heute = date("Y-m-d");
         if ($nutzungsart == 'Alle') {
@@ -544,14 +544,12 @@ class sepa
 
     function dropdown_mieter($objekt_id, $label, $name, $id, $js = '')
     {
-        // echo $objekt_id;
         $ob = new objekt ();
         $e_array = $ob->einheiten_objekt_arr($objekt_id);
-        // echo '<pre>';
-        // print_r($e_array);
         if (!is_array($e_array)) {
-            fehlermeldung_ausgeben("Keine Mieter in diesem Objekt OBJ_ID: $objekt_id");
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Keine Mieter in diesem Objekt OBJ_ID: $objekt_id")
+            );
         }
 
         echo "<label for=\"$name\" id=\"label_$name\">$label</label><select name=\"$name\" size=\"1\" id=\"$id\"  $js>\n";
@@ -580,9 +578,9 @@ class sepa
         }
 
         if ($anz_mv == 0) {
-            echo "<option>Keine Mieter im Objekt</option>\n";
-            fehlermeldung_ausgeben("Keine Mieter in diesem Objekt");
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Keine Mieter in diesem Objekt.")
+            );
         }
         echo "</select>\n";
     }
@@ -608,14 +606,17 @@ class sepa
 
         $objekt_id = $gk->get_objekt_id($gk_id);
         if (!isset ($objekt_id)) {
-            fehlermeldung_ausgeben("Objekt nicht gefunden!!!<br>, siehe Geldkontozuweisung zum Objekt!!!");
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Objekt nicht gefunden, siehe Geldkontozuweisung zum Objekt.")
+            );
         }
         session()->put('objekt_id', $objekt_id);
         $d = new detail ();
         $glaeubiger_id = $d->finde_detail_inhalt('GELD_KONTEN', $gk_id, 'GLAEUBIGER_ID');
         if ($glaeubiger_id == false) {
-            die ('Zum Geldkonto wurde die Gläubiger ID nicht gespeichert, siehe DETAILS vomn GK');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Zum Geldkonto wurde die Gläubiger ID nicht gespeichert. Siehe DETAILS vom GK.')
+            );
         }
         $f->hidden_feld('GLAEUBIGER_ID', $glaeubiger_id);
         $f->text_feld_inaktiv('Begünstigter', 'BEGBEZ', $geld_konto_info->konto_beguenstigter, 35, 'BEGBEZ');
@@ -647,9 +648,10 @@ class sepa
     {
         $weg = new weg ();
         $e_array = $weg->einheiten_weg_tabelle_arr($objekt_id);
-        if (!is_array($e_array)) {
-            fehlermeldung_ausgeben("Keine Eigentümer in diesem Objekt");
-            die ();
+        if (empty($e_array)) {
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Keine Eigentümer in diesem Objekt.")
+            );
         }
         echo "<label for=\"$name\" id=\"label_$name\">$label</label><select name=\"$name\" size=\"1\" id=\"$id\"  $js>\n";
         $anz = count($e_array);
@@ -747,12 +749,11 @@ class sepa
         $e = new einheit ();
         $e_array = $e->liste_aller_einheiten();
         if (!is_array($e_array)) {
-            fehlermeldung_ausgeben("Keine Mieter in diesem Objekt");
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Keine Mieter in diesem Objekt")
+            );
         }
 
-        // print_r($e_array);
-        // die('ENDE');
         echo "<label for=\"$name\" id=\"label_$name\">$label</label><select name=\"$name\" size=\"1\" id=\"$id\"  $js>\n";
         $anz = count($e_array);
         for ($a = 0; $a < $anz; $a++) {
@@ -802,11 +803,15 @@ class sepa
     {
         $this->get_mandat_infos($dat);
         if (!isset ($this->mand)) {
-            die ('Abbruch, interner fehler class_sepa, mandat_aendern');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Abbruch, interner fehler class_sepa, mandat_aendern.')
+            );
         }
         $this->mandat_dat_deaktivieren($dat);
         if ($this->check_m_ref($mref)) {
-            die ('Mandat existiert schon, Ihre eingaben wurden nicht gespeichert');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Mandat existiert schon, ihre eingaben wurden nicht gespeichert.')
+            );
         } else {
             $last_id = $this->mand->M_ID;
             $udatum = date_german2mysql($udatum);
@@ -833,7 +838,9 @@ class sepa
     function mandat_speichern($mref, $glaeubiger_id, $gk_id, $empf, $name, $anschrift, $kto, $blz, $iban, $bic, $bankname, $udatum, $adatum, $edatum, $m_art, $n_art, $e_art, $kos_typ, $kos_id)
     {
         if ($this->check_m_ref($mref)) {
-            die ('Mandat existiert schon, Ihre eingaben wurden nicht gespeichert');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Mandat existiert schon, Ihre eingaben wurden nicht gespeichert.')
+            );
         } else {
             $last_id = last_id2('SEPA_MANDATE', 'M_ID') + 1;
             $udatum = date_german2mysql($udatum);
@@ -851,9 +858,6 @@ class sepa
     function sepa_datei_erstellen($sammelbetrag = 1, $dateiname_msgid, $nutzungsart = 'MIETZAHLUNG', $pdf = 0)
     {
         $arr = $this->get_mandate_arr($nutzungsart);
-        // echo '<pre>';
-        // print_r($mandate_arr);
-        // die();
         $anz = count($arr);
         $myKtoSepaSimple = new KtoSepaSimple ();
         $monat = date("m");
@@ -1101,10 +1105,6 @@ class sepa
             }
             if (is_array($tab_rcur)) {
                 $tab_rcur = array_merge($tab_rcur, Array());
-                // echo '<pre>';
-                // print_r($tab_rcur);
-                // print_r($rcur_arr_new);
-                // die('RCIR');
                 $pdf->ezSetDy(-20);
                 $anz_r = count($tab_rcur);
                 $tab_rcur [$anz_r] ['EINHEIT'] = "<b>SUMME</b>";
@@ -1168,8 +1168,9 @@ class sepa
     {
         if (!session()->has('geldkonto_id') && $nutzungsart != 'Alle') {
             session()->put('last_url', route('legacy::sepa::index', ['option' => 'mandate_mieter'], false));
-            fehlermeldung_ausgeben('Geldkonto wählen');
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Geldkonto wählen')
+            );
         }
         $datum_heute = date("Y-m-d");
         if ($nutzungsart == 'Alle') {
@@ -1478,128 +1479,7 @@ class sepa
         /* TESTEN */
         ob_clean();
         $this->xml_pruef('classes/xsd/cs.xml', 'classes/xsd/pain.008.003.02.xsd');
-        die ();
     }
-
-    /*
-	 *
-	 * $myKtoSepaSimple = new KtoSepaSimple();
-	 * $myKtoSepaSimple->Add('2014-02-01', 119.00, 'Kunde,Konrad', 'DE54100700000190001800', 'DEUTDEBBXXX',
-	 * NULL, NULL, '1111222111', 'Rechnung 111111', 'OOFF', 'KUN1', '2013-09-13');
-	 *
-	 * $myKtoSepaSimple->Add('2014-02-01', 119.00, 'Pero Zdrero', 'DE213123123123123', 'BELADEBEXXX',
-	 * NULL, NULL, '2233222111', 'Rechnung 22222', 'OOFF', 'KUN2', '2013-09-13');
-	 *
-	 * $xmlstring = $myKtoSepaSimple->GetXML('CORE', 'Einzug.2013-09', 'Best.v.13.09.2013',
-	 * 'Berlus GmbH', 'Berlus Gmbh Fon', 'DE10100500000800101561', 'DRESDEFF100',
-	 * 'DE81ZZZ00000825339');
-	 * #print_r($xml);
-	 * ob_clean();
-	 * header('Content-type: text/xml; charset=utf-8');
-	 * echo $xmlstring;
-	 * die();
-	 *
-	 * #$xml = new DOMDocument();
-	 * #$xml->load('classes/xsd/sepaOK.xml');
-	 * /* $xml->loadString($xmlstring);
-	 * if (!$xml->schemaValidate('classes/xsd/pain.008.003.02.xsd')) {
-	 * echo "invalid<p/>";
-	 * }else {
-	 * echo "validated<p/>";
-	 * }
-	 */
-    /*
-	 * <Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.008.003.02"
-	 * xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	 * xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:pain.008.003.02 pain.008.003.02.xsd">
-	 * <Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.008.003.02" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:pain.008.003.02 pain.008.003.02.xsd"/>
-	 *
-	 *
-	 */
-    /*
-	 * $doc = new DOMDocument('1.0', 'utf-8');
-	 * $doc->formatOutput = true;
-	 * $root = $doc->createElementNS('urn:iso:std:iso:20022:tech:xsd:pain.008.003.02', 'Document');
-	 * $root->setAttributeNS('http://www.w3.org/2000/xmlns/' ,'xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
-	 *
-	 * $domAttribute = $doc->createAttribute('xsi:schemaLocation');
-	 * $domAttribute->value = 'urn:iso:std:iso:20022:tech:xsd:pain.008.003.02 pain.008.003.02.xsd';
-	 * $root->appendChild($domAttribute);
-	 * $doc->appendChild($root);
-	 *
-	 *
-	 * $root = $doc->createElement('CstmrDrctDbtInitn');
-	 * $doc->appendChild($root);
-	 *
-	 * $root->appendChild($firstNode = $doc->createElement("GrpHdr"));
-	 * #$firstNode->setAttribute("id", "1");
-	 * #$firstNode->setAttribute("kategorie", "123");
-	 * $firstNode->appendChild($doc->createElement("MsgId", "Einzug.2013-09"));
-	 * $firstNode->appendChild($doc->createElement("CreDtTm", "DATUM MOJ"));
-	 * $firstNode->appendChild($doc->createElement("NbOfTxs", "DATUM MOJ"));
-	 * $firstNode->appendChild($doc->createElement("CtrlSum", "DATUM MOJ"));
-	 * $firstNode->appendChild($firstNode1 = $doc->createElement("InitgPty"));
-	 * $firstNode1->appendChild($doc->createElement("Nm", "Berlus GmbH"));
-	 * $root->appendChild($secondNode = $doc->createElement("PmtInf"));
-	 * $secondNode->appendChild($doc->createElement("PmtInfId", "Einzug.2013-09"));
-	 * $secondNode->appendChild($doc->createElement("PmtMtd", "Einzug.2013-09"));
-	 * $secondNode->appendChild($doc->createElement("NbOfTxs", "Einzug.2013-09"));
-	 * $secondNode->appendChild($doc->createElement("CtrlSum", "Einzug.2013-09"));
-	 * $secondNode->appendChild($secondNode1 = $doc->createElement("PmtTpInf"));
-	 * #SvcLvl
-	 * $secondNode1->appendChild($secondNode2 = $doc->createElement("SvcLvl"));
-	 * $secondNode2->appendChild($doc->createElement("CD", "SEPA"));
-	 * #LclInstrm
-	 * $secondNode1->appendChild($secondNode3 = $doc->createElement("LclInstrm"));
-	 * $secondNode3->appendChild($doc->createElement("CD", "CORE"));
-	 *
-	 * $secondNode->appendChild($doc->createElement("ReqdColltnDt", "2014-12-25"));
-	 * $secondNode1->appendChild($secondNode2 = $doc->createElement("Cdtr"));
-	 * $secondNode2->appendChild($doc->createElement("Nm", "Berlus FON"));
-	 *
-	 * $secondNode1->appendChild($secondNode2 = $doc->createElement("CdtrAcct"));
-	 * $secondNode2->appendChild($secondNode2a = $doc->createElement("Id"));
-	 * $secondNode2a->appendChild($doc->createElement("IBAN", "IBAN8981298392183"));
-	 *
-	 * $secondNode1->appendChild($secondNode2 = $doc->createElement("CdtrAgt"));
-	 * $secondNode2->appendChild($secondNode2a = $doc->createElement("FinInstnId"));
-	 * $secondNode2a->appendChild($doc->createElement("BIC", "BIC7831283912183"));
-	 * #ChrgBr
-	 * $secondNode->appendChild($doc->createElement("ChrgBr", "SLEV"));
-	 */
-
-    // ob_clean();
-    // header('Content-type: text/xml; charset=utf-8');
-    // echo $dom->saveXML();
-    // echo $doc->saveXML();
-    // die();
-    /*
-	 * <CstmrDrctDbtInitn>
-	 * <GrpHdr>
-	 * <MsgId>Einzug.2013-09</MsgId>
-	 * <CreDtTm>DATUM MOJ</CreDtTm>
-	 * <NbOfTxs>DATUM MOJ</NbOfTxs>
-	 * <CtrlSum>DATUM MOJ</CtrlSum>
-	 * <InitgPty>
-	 * <Nm>Berlus GmbH</Nm>
-	 * </InitgPty>
-	 * </GrpHdr>
-	 * <PmtInf>
-	 * <PmtInfId>Einzug.2013-09</PmtInfId>
-	 * <PmtMtd>Einzug.2013-09</PmtMtd>
-	 * <NbOfTxs>Einzug.2013-09</NbOfTxs>
-	 * <CtrlSum>Einzug.2013-09</CtrlSum>
-	 * <PmtTpInf>
-	 * <SvcLvl>
-	 * <CD>SEPA</CD>
-	 * </SvcLvl>
-	 * </PmtTpInf>
-	 * </PmtInf>
-	 *
-	 *
-	 */
-    // $this->xxm();
-    // }
 
     function xml_pruef($xml_datei, $xsd_datei)
     {
@@ -1666,40 +1546,6 @@ class sepa
     function xxm()
     {
         $this->start('sdhasjd', '2014-02-02', 11, '112112');
-        /*
-		 * $doc = new DOMDocument('1.0', 'utf-8');
-		 * $doc->formatOutput = true;
-		 * $root = $doc->createElementNS('urn:iso:std:iso:20022:tech:xsd:pain.008.003.02', 'Document');
-		 * $root->setAttributeNS('http://www.w3.org/2000/xmlns/' ,'xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
-		 *
-		 * $domAttribute = $doc->createAttribute('xsi:schemaLocation');
-		 * $domAttribute->value = 'urn:iso:std:iso:20022:tech:xsd:pain.008.003.02 pain.008.003.02.xsd';
-		 * $root->appendChild($domAttribute);
-		 * $doc->appendChild($root);
-		 *
-		 * $root = $doc->createElement('CstmrDrctDbtInitn');
-		 * $doc->appendChild($root);
-		 *
-		 * $firstNode = $doc->createElement("GrpHdr");
-		 * $firstNode->appendChild($doc->createElement("MsgId", "Einzug.2013-09"));
-		 * $firstNode->appendChild($doc->createElement("CreDtTm", "DATUM MOJ"));
-		 * $firstNode->appendChild($doc->createElement("NbOfTxs", "DATUM MOJ"));
-		 * $firstNode->appendChild($doc->createElement("CtrlSum", "DATUM MOJ"));
-		 *
-		 * $secondNode = $doc->createElement("PmtInf");
-		 * $root->appendChild($firstNode);
-		 * $root->appendChild($secondNode);
-		 */
-
-        // $firstNode->setAttribute("id", "1");
-        // $firstNode->setAttribute("kategorie", "123");
-        // $firstNode->appendChild($doc->createElement("MsgId", "Einzug.2013-09"));
-
-        // ob_clean();
-        // header('Content-type: text/xml; charset=utf-8');
-        // echo $dom->saveXML();
-        // echo $doc->saveXML();
-        // die();
     }
 
     function start($MsgId, $CreDtTm, $NbOfTxs, $CtrlSum)
@@ -1723,17 +1569,12 @@ class sepa
         $firstNode->appendChild($doc->createElement("NbOfTxs", "$NbOfTxs"));
         $firstNode->appendChild($doc->createElement("CtrlSum", "$CtrlSum"));
 
-        // $secondNode = $doc->createElement("PmtInf");
         $root->appendChild($firstNode);
-        // $root->appendChild($secondNode);
 
         ob_clean();
         header('Content-type: text/xml; charset=utf-8');
         $xml = $doc->saveXML();
-        // echo $xml;
         return $doc;
-        // die();
-        // echo $xml;
     }
 
     function dropdown_sepa_geldkonten($label, $name, $id, $kos_typ, $kos_id)
@@ -1782,10 +1623,14 @@ class sepa
 
         $sep = new sepa ();
         if (!$sep->get_sepa_konto_infos($an_sepa_gk_id)) {
-            die (fehlermeldung_ausgeben("EMPFÄNGER SEPAGELDKONTO UNBEKANNT! ID:$an_sepa_gk_id"));
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("EMPFÄNGER SEPAGELDKONTO UNBEKANNT! ID:$an_sepa_gk_id")
+            );
         } else {
             if (empty ($sep->IBAN) or empty ($sep->BIC)) {
-                die (fehlermeldung_ausgeben("$sep->geldkonto_bez hat keine IBAN oder BIC"));
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\ErrorMessage("$sep->geldkonto_bez hat keine IBAN oder BIC")
+                );
             }
             $vzweck = "$sep->beguenstigter, $vzweck";
 
@@ -1863,28 +1708,29 @@ class sepa
             protokollieren('SEPA_UEBERWEISUNG', $last_dat, '0');
             return $last_b_id;
         } else {
-
-            fehlermeldung_ausgeben("Sepa Überweisung | BIC IBAN eingeben!!!");
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Sepa Überweisung | BIC IBAN eingeben!!!")
+            );
         }
     }
 
     function sammler2sepa($von_gk_id, $kat = null, $sammler = 0)
     {
         if (!$von_gk_id) {
-            die (fehlermeldung_ausgeben("Geldkonto wählen"));
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Bitte wählen Sie ein Geldkonto.")
+            );
         }
-        // die("$von_gk_id $kat $sammler");
-
         /* Einzelbetrag oder Sammelbetrag beachten $sammler!!!!! */
 
         $arr = $this->get_sammler_arr($von_gk_id, $kat);
         if (!is_array($arr)) {
-            die (fehlermeldung_ausgeben("Keine Datensätze auf Konto $von_gk_id für $kat"));
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Keine Datensätze auf Konto $von_gk_id für $kat")
+            );
         } else {
             $myKtoSepaSimple = new KtoSepaSimple ();
             $o = new objekt ();
-            // $datum = $o->datum_plus_tage(date("Y-m-d"), 2); //TERMINÜberweisung
             $datum = '1999-01-01';
             $datum_h = date("dmY");
             $time_h = date("His");
@@ -1996,8 +1842,9 @@ class sepa
                         $kos_id = substr($m_ref, 6);
                     }
                     if (!isset ($kos_typ)) {
-                        fehlermeldung_ausgeben("Kostentraeger unbekannt! class_sepa form_ls_datei_ab");
-                        die ('LALALAL');
+                        throw new \App\Exceptions\MessageException(
+                            new \App\Messages\ErrorMessage("Kostentraeger unbekannt.")
+                        );
                     }
                     if ($kos_typ == 'Mietvertrag') {
                         $mv = new mietvertraege ();
@@ -2302,15 +2149,16 @@ AND  `AKTUELL` =  '1'");
         $gk->geld_konto_details(session()->get('geldkonto_id'));
         fehlermeldung_ausgeben("SEPA wird gebucht auf dem Geldkonto $gk->geldkonto_bez");
         if (!session()->has('temp_kontoauszugsnummer')) {
-            fehlermeldung_ausgeben("Kontrolldaten eingeben!!!");
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Kontrolldaten eingeben.")
+            );
         }
-
         $arr = $this->get_sepa_files_daten_arr($file);
         if (!is_array($arr)) {
-            fehlermeldung_ausgeben("Keine Datensätze zur Datei $file");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Keine Datensätze zur Datei $file")
+            );
         } else {
-            // echo "<tr><th>$kat</th></tr>";
             $anz = count($arr);
             for ($a = 0; $a < $anz; $a++) {
                 echo "<table>";
@@ -2334,7 +2182,9 @@ AND  `AKTUELL` =  '1'");
                 $f->text_feld('Buchungstext', 'vzweck', "$empf, $kat, $vzweck", 100, 'vzweck', '');
                 echo "</td><td>$betrag</td><td>$konto<br>$kos_typ:$kos_bez</td><td>";
                 if ($kat == 'RECHNUNG') {
-                    die (fehlermeldung_ausgeben('Rechnungen können nicht automatisch gebucht werden!!!'));
+                    throw new \App\Exceptions\MessageException(
+                        new \App\Messages\ErrorMessage('Rechnungen können nicht automatisch gebucht werden.')
+                    );
                 }
 
                 $m_ref = session()->get('temp_kontoauszugsnummer');
@@ -2389,8 +2239,9 @@ AND  `AKTUELL` =  '1'");
         $gk->geld_konto_details(session()->get('geldkonto_id'));
         fehlermeldung_ausgeben("SEPA wird gebucht auf dem Geldkonto $gk->geldkonto_bez " . session()->get('temp_datum') . " " . session()->get('temp_kontoauszugsnummer') . "]");
         if (!session()->has('temp_kontoauszugsnummer')) {
-            fehlermeldung_ausgeben("Kontrolldaten eingeben!!!");
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Kontrolldaten eingeben.")
+            );
         }
 
         $arr = $this->get_sepa_files_daten_arr($file);
@@ -2432,7 +2283,9 @@ AND  `AKTUELL` =  '1'");
                 $buc->dropdown_kostenrahmen_nr('Kostenkonto', 'konto[]', 'GELDKONTO', session()->get('geldkonto_id'), '', 'konto');
                 echo "</td><td>$kos_typ:$kos_bez</td>";
                 if ($kat == 'RECHNUNG') {
-                    die (fehlermeldung_ausgeben('Rechnungen können nicht automatisch gebucht werden!!!'));
+                    throw new \App\Exceptions\MessageException(
+                        new \App\Messages\ErrorMessage('Rechnungen können nicht automatisch gebucht werden.')
+                    );
                 }
                 $f->hidden_feld('kos_typ[]', $kos_typ);
                 $f->hidden_feld('kos_id[]', $kos_id);
@@ -2454,34 +2307,12 @@ AND  `AKTUELL` =  '1'");
     function sepa_file2pdf($filename)
     {
         echo $filename;
-        // $this->get_sepa_fileinfos($filename);
-        // die();
         $arr = $this->get_sepa_files_daten_arr($filename);
         if (!is_array($arr)) {
-            fehlermeldung_ausgeben("Keine Datensätze zur Datei $file");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Keine Datensätze zur Datei $file")
+            );
         } else {
-
-            /*
-			 * $sum = 0;
-			 * $anz = count($arr);
-			 * for($a=0;$a<$anz;$a++){
-			 * $betrag = $arr[$a]['BETRAG'];
-			 * $sum+=$betrag;
-			 * }
-			 */
-            /*
-			 * if(isset($this->iban)){
-			 * unset($this->iban);
-			 * }
-			 * if(isset($this->bic)){
-			 * unset($this->bic);
-			 * }
-			 * if(isset($this->bankname)){
-			 * unset($this->bankname);
-			 * }
-			 * if(isset($this->beguenstigter)){
-			 */
-
             $this->get_sepa_fileinfos($filename);
 
             $arr [$anz] ['VZWECK'] = "<b>SUMME</b>";
@@ -2554,8 +2385,9 @@ AND  `AKTUELL` =  '1'");
     function form_sammel_ue()
     {
         if (!session()->has('geldkonto_id')) {
-            fehlermeldung_ausgeben("Geldkonto wählen");
-            die();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Bitte wählen Sie ein Geldkonto.")
+            );
         } else {
             $gk = new geldkonto_info ();
             $gk->geld_konto_details(session()->get('geldkonto_id'));
@@ -2663,8 +2495,9 @@ AND  `AKTUELL` =  '1'");
     function form_sammel_ue_IBAN()
     {
         if (!session()->has('geldkonto_id')) {
-            fehlermeldung_ausgeben("Geldkonto wählen");
-            die();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Bitte wählen Sie ein Geldkonto.")
+            );
         } else {
             $gk = new geldkonto_info ();
             $gk->geld_konto_details(session()->get('geldkonto_id'));
@@ -3483,8 +3316,9 @@ AND  `AKTUELL` =  '1'");
             $gk = new gk ();
             $gk_id = $gk->get_geldkonto_id2($kto_nr, $kto_blz);
             if (!$gk_id) {
-                fehlermeldung_ausgeben("Geldkonto <b>$kto_nr - $kto_blz</b> nicht gefunden");
-                die ('Abbruch!!!');
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\ErrorMessage("Geldkonto <b>$kto_nr - $kto_blz</b> nicht gefunden")
+                );
             }
             session()->put('geldkonto_id', $gk_id);
             $gk2 = new geldkonto_info ();

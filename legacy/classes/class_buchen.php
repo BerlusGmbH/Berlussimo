@@ -914,7 +914,10 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
     function form_kostenkonto_pdf()
     {
         if (!session()->has('geldkonto_id')) {
-            die ('Erst Geldkonto wählen');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Erst Geldkonto wählen'), 0, null,
+                route('legacy::buchen::index', ['option' => 'geldkonto_aendern'])
+            );
         }
         if (!request()->has('submit_kostenkonto')) {
             $kr = new kontenrahmen ();
@@ -1750,7 +1753,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
                 }
                 echo "</table>";
                 echo "</body></html>";
-                die ();
+                return;
             }
         } else { // end if numrow
             $pdf->addText(43, 718, 50, "KEINE BUCHUNGEN");

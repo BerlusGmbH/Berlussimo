@@ -4,7 +4,6 @@ class serienbrief
 {
     function vorlage_waehlen($empf_typ = null, $kat = null)
     {
-        // die($empf_typ);
         if ($empf_typ == null && $kat == null) {
             $db_abfrage = "SELECT * FROM PDF_VORLAGEN ORDER BY KURZTEXT ASC";
         }
@@ -201,7 +200,9 @@ class serienbrief
                 $pdf->ezStream($pdf_opt);
             }
         } else {
-            die ('Keine Empfänger gewählt');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\WarningMessage('Keine Empfänger gewählt')
+            );
         }
     }
 } // ENDE CLASS

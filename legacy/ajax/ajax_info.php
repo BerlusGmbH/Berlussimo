@@ -25,7 +25,8 @@ switch ($option) {
         $rabatt = nummer_komma2punkt(request()->input('prozent'));
         $belegnr = request()->input('belegnr');
         if (empty ($rabatt) or empty ($belegnr)) {
-            die ('Kein Beleg oder Rabattprozente');
+            //Kein Beleg oder Rabattprozente
+            return;
         }
         $rr = new rechnungen ();
         $pos_arr = $rr->rechnungs_positionen_arr($belegnr);
@@ -51,7 +52,8 @@ switch ($option) {
         $skonto = request()->input('prozent');
         $belegnr = request()->input('belegnr');
         if (empty ($skonto) or empty ($belegnr)) {
-            die ('Kein Beleg oder Skontiprozente!');
+            //Kein Beleg oder Skontiprozente
+            return;
         }
         $rr = new rechnungen ();
         $pos_arr = $rr->rechnungs_positionen_arr($belegnr);

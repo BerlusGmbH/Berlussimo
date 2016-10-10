@@ -805,8 +805,10 @@ WHERE KOS_TYP='$kos_typ'
         $person_string = '';
         $person_string_u = '';
         $personen_id_arr = $this->get_person_id_eigentuemer_arr($e_id);
-        if (!is_array($personen_id_arr)) {
-            die ("Eigentümer (ID: $e_id) unbekannt");
+        if (empty($personen_id_arr)) {
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Eigentümer (ID: $e_id) unbekannt.")
+            );
         } else {
             $anz = count($personen_id_arr);
             if ($anz) {
@@ -815,8 +817,6 @@ WHERE KOS_TYP='$kos_typ'
                     $this->eigentuemer_person_ids [] = $person_id;
                     $p = new personen ();
                     $p->get_person_infos($person_id);
-                    // echo '<pre>';
-                    // print_r($p);
 
                     if ($a < $anz - 1) {
                         $person_string .= "$p->person_nachname $p->person_vorname, ";
@@ -837,8 +837,10 @@ WHERE KOS_TYP='$kos_typ'
         $person_string = '';
         $person_string_u = '';
         $personen_id_arr = $this->get_person_id_eigentuemer_arr($e_id);
-        if (!is_array($personen_id_arr)) {
-            die ("Eigentümer (ID: $e_id) unbekannt");
+        if (empty($personen_id_arr)) {
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Eigentümer (ID: $e_id) unbekannt")
+            );
         } else {
             $anz = count($personen_id_arr);
             if ($anz) {
@@ -1466,7 +1468,9 @@ WHERE KOS_TYP='$kos_typ'
             }
             echo "</select>\n";
         } else {
-            die ('Keine Einheiten im Objekt');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\WarningMessage('Keine Einheiten im Objekt vorhanden.')
+            );
         }
     }
 
@@ -1503,7 +1507,9 @@ WHERE KOS_TYP='$kos_typ'
             }
             echo "</select>\n";
         } else {
-            die ("Keine Wirtschaftspläne für das Objekt $e->objekt_kurzname");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\WarningMessage("Keine Wirtschaftspläne für das Objekt $e->objekt_kurzname vorhanden.")
+            );
         }
     }
 
@@ -1530,7 +1536,9 @@ WHERE KOS_TYP='$kos_typ'
             }
             echo "</select>\n";
         } else {
-            die ("Keine Wirtschaftspläne für das Objekt $e->objekt_kurzname");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\WarningMessage("Keine Wirtschaftspläne für das Objekt $e->objekt_kurzname")
+            );
         }
     }
 
@@ -1553,14 +1561,18 @@ WHERE KOS_TYP='$kos_typ'
             }
             echo "</table>\n";
         } else {
-            die ("Keine Wirtschaftspläne für das Objekt $obj_name");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\WarningMessage("Keine Wirtschaftspläne für das Objekt $obj_name.")
+            );
         }
     }
 
     function eigentuemer_speichern($einheit_id, $eigent_arr, $eigentuemer_von, $eigentuemer_bis)
     {
         if (!is_array($eigent_arr)) {
-            die ('Eigentümerauswahl nicht vollständig');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Eigentümerauswahl nicht vollständig.')
+            );
         }
 
         $eigentuemer_von = date_german2mysql($eigentuemer_von);
@@ -1598,7 +1610,9 @@ WHERE KOS_TYP='$kos_typ'
     function eigentuemer_speichern_mit_id($et_id, $einheit_id, $eigent_arr, $eigentuemer_von, $eigentuemer_bis)
     {
         if (!is_array($eigent_arr)) {
-            die ('Eigentümerauswahl nicht vollständig');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Eigentümerauswahl nicht vollständig.')
+            );
         }
 
         $eigentuemer_von = date_german2mysql($eigentuemer_von);
@@ -1812,9 +1826,10 @@ WHERE KOS_TYP='$kos_typ'
     {
         $this->get_hausgeld_def($dat);
         if (!isset ($this->wg_def_dat)) {
-            die ('Hausgelddefintion existiert nicht');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Hausgelddefintion existiert nicht.')
+            );
         } else {
-
             $f = new formular ();
             $e = new einheit ();
             $e->get_einheit_info($this->wg_def_kos_id);
@@ -2823,7 +2838,6 @@ WHERE KOS_TYP='$kos_typ'
         $e->get_einheit_info($this->einheit_id);
 
         if ($anschrift != '') {
-            // die("Anschrift $anschrift");
             $standard_anschrift = str_replace('<br />', "\n", $this->postanschrift [$anschrift]);
         } else {
             $standard_anschrift = "$this->eig_namen_u_pdf$e->haus_strasse $e->haus_nummer\n\n$e->haus_plz $e->haus_stadt";
@@ -2956,8 +2970,9 @@ WHERE KOS_TYP='$kos_typ'
             $m = $anfangsdatum_arr [1];
             $j = $anfangsdatum_arr [0];
         } else {
-            echo "Kein eigentuemer_von Datum<br>";
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Kein eigentuemer_von Datum")
+            );
         }
 
         $moegliche_defs = $this->get_moegliche_def('Einheit', $this->einheit_id);
@@ -3309,8 +3324,9 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         $f->erstelle_formular('WP', '');
         $f->fieldset('Wirtschaftsplan bearbeiten', 'wp');
         if (empty ($wp_id)) {
-            echo "Wirtschaftsplan wählen!";
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Bitte wählen Sie einen Wirtschaftsplan.")
+            );
         }
         $k = new kontenrahmen ();
         $kontenrahmen_id = $k->get_kontenrahmen('Objekt', session()->get('objekt_id'));
@@ -3447,7 +3463,9 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         } else {
             $o = new objekt ();
             $objekt_name = $o->get_objekt_name($objekt_id);
-            die ("Wirtschaftsplan $wjahr für $objekt_name existiert bereits!");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Wirtschaftsplan $wjahr für $objekt_name existiert bereits!")
+            );
         }
     }
 
@@ -3551,7 +3569,9 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         if (session()->has('geldkonto_id')) {
             $geldkonto_id = session()->get('geldkonto_id');
         } else {
-            die ('Geldkonto des Objekts wählen!');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Bitte wählen Sie ein Geldkonto.')
+            );
         }
 
         $o = new objekt ();
@@ -3752,7 +3772,9 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         if (session()->has('geldkonto_id')) {
             $geldkonto_id = session()->get('geldkonto_id');
         } else {
-            die ('Geldkonto des Objekts wählen!');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Bitte wählen Sie ein Geldkonto.')
+            );
         }
 
         $o = new objekt ();
@@ -4156,7 +4178,6 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                         $wtab_arr [$c] ['AUFTEILEN_G'] = "100%";
                         $wtab_arr [$c] ['AUFTEILEN_T'] = "$aufzug_prozent%";
                         $beteiligung_ant = nummer_komma2punkt($betrag) / 100 * $aufzug_prozent;
-                        // die("$beteiligung_ant = nummer_komma2punkt($betrag)/100*$aufzug_prozent;");
                     }
 
                     if ($formel == 'WE-PROZENT') {
@@ -4359,7 +4380,9 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
     function get_hgkonten_arr($p_id, $art, $last_year = true)
     {
         if (!session()->has('objekt_id')) {
-            die ('Objekt wählen -> Error 2312x2');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Objekt wählen -> Error 2312x2')
+            );
         }
         $k = new kontenrahmen ();
         $kontenrahmen_id = $k->get_kontenrahmen('Objekt', session()->get('objekt_id'));
@@ -5664,7 +5687,9 @@ ORDER BY KONTO ASC
 
         $anz_k = count($_umlage_ktos);
         if (!$anz_k) {
-            die ('Keine Kosten im Profil. Bitte Kostenkonten hinzufügen');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\WarningMessage('Keine Kosten im Profil. Bitte Kostenkonten hinzufügen')
+            );
         }
 
         $znr = 0;
@@ -5702,7 +5727,9 @@ ORDER BY KONTO ASC
          * **********PROGRAMMABBRUCH OHNE KONTENRAHMEN**************
          */
         if (!$kontenrahmen_id) {
-            die ('Kontenrahmen zum Geldkonto fehlt, bitte zuweisen!');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Kontenrahmen zum Geldkonto fehlt, bitte zuweisen!')
+            );
         }
 
         /* Jeden Eigentuemer für alle Konten durchlaufen */
@@ -5787,7 +5814,6 @@ ORDER BY KONTO ASC
                     $e_anteile = $d->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Anteile');
                 }
                 if ($gen_key_id == 4) {
-                    // die('GenKey 4 nicht definiert');
                     $e_anteile = 0.00;
                 }
                 /* Aufzug nach Prozent */
@@ -6665,7 +6691,6 @@ ORDER BY KONTO ASC
 
         ob_end_clean(); // ausgabepuffer leeren
         $pdf->ezStream();
-        die ();
     }
 
     function get_summe_hk($kos_typ, $kos_id, $hga_id)
@@ -6813,7 +6838,9 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
     function assistent()
     {
         if (!session()->has('geldkonto_id')) {
-            die ('Erst Geldkonto wählen');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Bitte wählen Sie ein Geldkonto.')
+            );
         }
         if (!request()->has('schritt')) {
             $f = new formular ();
@@ -6893,7 +6920,9 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
             $this->p_von_d = date_mysql2german($row ['VON']);
             $this->p_bis_d = date_mysql2german($row ['BIS']);
         } else {
-            die ("Profil $id existiert nicht.");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Profil $id existiert nicht.")
+            );
         }
     }
 
@@ -7353,7 +7382,9 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
     function form_kontostand_erfassen()
     {
         if (!session()->has('geldkonto_id')) {
-            die ("Erst Geldkonto wählen");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Bitte wählen Sie ein Geldkonto.")
+            );
         } else {
             $b = new buchen ();
             $gk_bez = $b->geld_konto_bezeichung(session()->get('geldkonto_id'));
@@ -7685,7 +7716,6 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
             echo "</table>";
             echo "</body></html>";
         }
-        die ();
     }
 
     function pdf_et_liste_alle_kurz($objekt_id)
@@ -7850,9 +7880,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
                 }
                 $arr [$a] ['GK'] = $gk_string;
                 $csv [$a] ['GK'] = $gk_string;
-                // print_r($arr[$a]['GK']);
-                // die();
-
+                
                 $w->get_eigentumer_id_infos3($w->eigentuemer_id);
                 $arr [$a] ['EINHEIT_QM_ET'] = $w->einheit_qm_weg;
                 $csv [$a] ['EINHEIT_QM_ET'] = $w->einheit_qm_weg;
@@ -7867,8 +7895,6 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
                         $p_id = $arr [$a] ['P_INFO_ARR'] [$p] ['PERSON_ID'];
                         $arr [$a] ['P_DETAILS'] [] = $det->get_details('PERSON', $p_id);
                     }
-                    // print_r($arr[$a]['P_DETAILS']);
-                    // die();
                     $det_string = "";
                     $anz_det_et = count($arr [$a] ['P_DETAILS']);
                     for ($dd = 0; $dd < $anz_det_et; $dd++) {
@@ -7924,8 +7950,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
                 }
                 echo "\n";
             }
-
-            die ();
+            return;
         }
 
         $pdf = new Cezpdf ('a4', 'landscape');

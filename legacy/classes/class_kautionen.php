@@ -39,9 +39,13 @@ class kautionen
     function kautionszahlungen_alle_arr($konto)
     {
         if (!session()->has('geldkonto_id')) {
-            die ("Kautionskonto wählen");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Bitte Kautionskonto wählen."),
+                0,
+                null,
+                route('legacy::buchen::index', ['option' => 'geldkonto_aendern'])
+            );
         } else {
-
             $gk_id = session()->get('geldkonto_id');
             $result = DB::select("SELECT DATUM, BETRAG, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN  WHERE   AKTUELL='1' && GELDKONTO_ID='$gk_id' ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, DATUM ASC");
             if (!empty($result)) {
@@ -121,7 +125,12 @@ class kautionen
         if (session()->has('geldkonto_id')) {
             $zahlungen_arr = $this->kautionszahlungen_arr($kostentraeger_typ, $kostentraeger_id, session()->get('geldkonto_id'));
         } else {
-            die ("Kautionskonto wählen");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Bitte Kautionskonto wählen."),
+                0,
+                null,
+                route('legacy::buchen::index', ['option' => 'geldkonto_aendern'])
+            );
         }
         $summe = 0.00;
         $summe_verzinst = 0.00;
@@ -318,7 +327,12 @@ class kautionen
         if (session()->has('geldkonto_id')) {
             $zahlungen_arr = $this->kautionszahlungen_arr($kostentraeger_typ, $kostentraeger_id, session()->get('geldkonto_id'));
         } else {
-            die ("Kautionskonto wählen");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Kautionskonto wählen"),
+                0,
+                null,
+                route('legacy::buchen::index', ['option' => 'geldkonto_aendern'])
+            );
         }
         $summe = 0.00;
         $summe_verzinst = 0.00;

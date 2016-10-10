@@ -224,8 +224,9 @@ ORDER BY KONTO ASC");
             echo "</select>\n<label for=\"$id\">$label</label>\n";
             echo "</div>";
         } else {
-            die ();
-            return FALSE;
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Es existieren keine Kontenrahmen")
+            );
         }
     }
 
@@ -249,13 +250,15 @@ ORDER BY KONTO ASC");
             echo "</select>\n<label for=\"$id\">$label</label>\n";
             echo "</div>";
         } else {
-            die ('"KEINE KONTOARTEN ERSTELLT"');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Bitte fügen Sie Kontoarten hinzu.")
+            );
         }
     }
 
     function dropdown_k_gruppen($label, $name, $id)
     {
-        $my_array = DB::select("SELECT *  FROM  KONTENRAHMEN_GRUPPEN WHERE AKTUELL = '1'  ORDER BY BEZEICHNUNG ASC");
+        $my_array = DB::select("SELECT * FROM KONTENRAHMEN_GRUPPEN WHERE AKTUELL = '1'  ORDER BY BEZEICHNUNG ASC");
 
         $numrows = count($my_array);
         if ($numrows > 0) {
@@ -288,7 +291,9 @@ ORDER BY KONTO ASC");
             $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('KONTENRAHMEN_KONTEN', $last_dat, '0');
         } else {
-            die ("$bez exisitiert schon");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("$bez exisitiert schon")
+            );
         }
     }
 
@@ -355,7 +360,9 @@ ORDER BY KONTO ASC");
             $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('KONTENRAHMEN_KONTEN', $last_dat, $dat);
         } else {
-            die ("$bez exisitiert schon");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("$bez exisitiert schon")
+            );
         }
     }
 

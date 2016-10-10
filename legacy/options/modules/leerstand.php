@@ -69,7 +69,9 @@ if (isset ($option)) {
             echo "<form>";
             if (request()->has('name') && request()->input('anschrift') && request()->input('w_datum')) {
                 if (!request()->has('tel') && !request()->has('email')) {
-                    die ('Telefonnr oder Email notwendig');
+                    throw new \App\Exceptions\MessageException(
+                        new \App\Messages\WarningMessage('Bitte geben Sie eine Telefonnummer oder E-Mail Adresse ein.')
+                    );
                 }
                 $name = request()->input('name');
                 $anschrift = request()->input('anschrift');
@@ -83,7 +85,9 @@ if (isset ($option)) {
                     hinweis_ausgeben("$name gespeichert");
                 }
             } else {
-                fehlermeldung_ausgeben('Name, Anschrift und Wunschdatum sind notwendig!!!');
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\WarningMessage('Name, Anschrift und Wunschdatum sind notwendig.')
+                );
             }
             echo "</form>";
             break;
@@ -258,7 +262,9 @@ if (isset ($option)) {
                         $dateiname = request()->file($images[$a])->getFilename();
                         if (!$dateiname) {
                             $datzahl = $a + 1;
-                            die ("$datzahl Datei nicht gewählt!");
+                            throw new \App\Exceptions\MessageException(
+                                new \App\Messages\ErrorMessage("$datzahl Datei nicht gewählt!")
+                            );
                         }
                         $extension = strtolower(getExtension($dateiname));
                         if (($extension != "jpg") && ($extension != "jpeg")) {
@@ -359,8 +365,6 @@ if (isset ($option)) {
             } else {
                 echo "No file sent ...";
             }
-            die();
-
             break;
 
         case "foto_loeschen" :
@@ -373,8 +377,6 @@ if (isset ($option)) {
                     echo "nicht gelöscht!";
                 }
             }
-            die ();
-
             break;
 
         case "fotos_f_anzeige" :

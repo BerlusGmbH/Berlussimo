@@ -215,8 +215,10 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         if (empty ($tab_arr)) {
             $tab_arr = $this->interessenten_tab_arr();
         }
-        if (!is_array($tab_arr)) {
-            die ('Keine Interessenten');
+        if (empty($tab_arr)) {
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Es sind keine Interessenten vorhanden.')
+            );
         }
         $cols = array(
             'NAME' => "Namen",
@@ -607,7 +609,9 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
         $zimmer = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Zimmeranzahl'))));
         $balkon = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Balkon'))));
         if (!$zimmer) {
-            die ('Zimmerangaben fehlen');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Angaben zur Zimmeranzahl fehlen.')
+            );
         }
         $int_arr = $this->interessenten_tab_arr();
         $anz = count($int_arr);

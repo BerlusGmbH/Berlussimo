@@ -369,7 +369,7 @@ switch ($mietvertrag_raus) {
         $bg->objekt_auswahl_liste();
         if (session()->has('objekt_id')) {
             $ma = new mahnungen ();
-            if (!request()->has('pdf')) {
+            if (!request()->exists('pdf')) {
                 $obj_id = session()->get('objekt_id');
                 $link_pdf = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mahnliste', 'objekt_id' => $obj_id, 'pdf'], false) . "'>Als PDF anzeigen</a>";
                 echo $link_pdf;
@@ -746,7 +746,8 @@ switch ($mietvertrag_raus) {
             $objekt_id = session()->get('objekt_id');
         }
         if (!session()->has('objekt_id')) {
-            die ('Objekt wählen');
+            echo 'Bitte wählen Sie ein Objekt.';
+            return;
         }
 
         $link_pdf = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'nebenkosten_pdf', 'jahr' => $jahr]) . "'><b>PDF-Datei</b></a>";
@@ -770,7 +771,8 @@ switch ($mietvertrag_raus) {
         if (session()->has('objekt_id')) {
             $objekt_id = session()->get('objekt_id');
         } else {
-            die ('Objekt wählen');
+            echo 'Bitte wählen Sie ein Objekt.';
+            return;
         }
 
         $mv_info = new mietvertraege ();
@@ -790,7 +792,8 @@ switch ($mietvertrag_raus) {
         if (session()->has('objekt_id')) {
             $objekt_id = session()->get('objekt_id');
         } else {
-            die ('Objekt wählen');
+            echo 'Bitte wählen Sie ein Objekt.';
+            return;
         }
 
         $mv_info = new mietvertraege ();
