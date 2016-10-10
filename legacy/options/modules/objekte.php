@@ -323,7 +323,7 @@ function objekte_kurz()
                 $detail_link = "<a href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $row['OBJEKT_ID']]) . "'>Neues Detail</a>";
             }
             $aendern_link = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'objekt_aendern', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Ändern</a>";
-            $haus_neu_link = "<a href='" . route('legacy::haeuserform::index', ['daten_rein' => 'haus_neu', 'objekt_id' => $row['OBJEKT_ID']]) . ">Haus erstellen</a>";
+            $haus_neu_link = "<a href='" . route('legacy::haeuserform::index', ['daten_rein' => 'haus_neu', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Haus erstellen</a>";
             $check_liste_link = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'checkliste', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Checkliste HW</a>";
             $mietaufstellung_link = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'mietaufstellung', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Mietaufstellung</a>";
             $monat = date("m");
@@ -337,7 +337,21 @@ function objekte_kurz()
             $link_stammdaten = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'stammdaten_pdf', 'objekt_id' => $row['OBJEKT_ID']]) . "'><img src=\"images/pdf_light.png\"></a>";
             $vorjahr = date("Y") - 1;
             $link_sollist = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'mietaufstellung_j', 'objekt_id' => $row['OBJEKT_ID'], 'jahr' => $vorjahr]) . "'>SOLL/IST $vorjahr</a>";
-            echo "<tr class=\"zeile$counter\"><td>$row[OBJEKT_KURZNAME]<br>$link_stammdaten</td><td>$flaeche m²</td><td sorttable_customkey=\"$anzahl_haeuser\"><a  href='" . route('legacy::haeuser::index', ['haus_raus' => 'haus_kurz', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Häuserliste (<b>$anzahl_haeuser</b>)</a>  $haus_neu_link</td><td><a href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_kurz', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Einheitenliste</a></td><td>$detail_link</td><td>$aendern_link</td><td>$check_liste_link</td><td>$mietaufstellung_link</td><td>$mietaufstellung_link_m_j</td><td>$mietaufstellung_link_m_j_xls</td><td>$alle_mietkontenblatt_link</td><td>$link_mieterliste</td><td>$link_mieteremail</td><td>$link_sollist</td></tr>";
+            echo "<tr class=\"zeile$counter\">
+                    <td>$row[OBJEKT_KURZNAME]<br>$link_stammdaten</td>
+                    <td>$flaeche m²</td>
+                    <td sorttable_customkey=\"$anzahl_haeuser\"><a  href='" . route('legacy::haeuser::index', ['haus_raus' => 'haus_kurz', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Häuserliste&nbsp;<b>($anzahl_haeuser)</b></a><br>$haus_neu_link</td>
+                    <td><a href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_kurz', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Einheitenliste</a></td>
+                    <td>$detail_link</td><td>$aendern_link</td>
+                    <td>$check_liste_link</td>
+                    <td>$mietaufstellung_link</td>
+                    <td>$mietaufstellung_link_m_j</td>
+                    <td>$mietaufstellung_link_m_j_xls</td>
+                    <td>$alle_mietkontenblatt_link</td>
+                    <td>$link_mieterliste</td>
+                    <td>$link_mieteremail</td>
+                    <td>$link_sollist</td>
+                  </tr>";
 
             if ($counter == 2) {
                 $counter = 0;
