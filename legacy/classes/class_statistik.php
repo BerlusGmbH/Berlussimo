@@ -1012,9 +1012,8 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
         $r = new rechnung ();
         $kos_bez = $r->kostentraeger_ermitteln($kos_typ, $kos_id);
         echo "<h1>$kos_bez</h1>";
-        // echo "EDIS";
         $b_arr = $this->get_bau_beleg_arr();
-        if (!is_array($b_arr)) {
+        if (empty($b_arr)) {
             fehlermeldung_ausgeben("Keine Belege in BAU_BELEG DB hinterlegt");
         } else {
             $anz = count($b_arr);
@@ -1042,9 +1041,7 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
     function get_bau_beleg_arr()
     {
         $result = DB::select("SELECT * FROM `BAU_BELEG`");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function get_kontierung($art_nr, $menge, $kos_typ, $kos_id, &$table)
