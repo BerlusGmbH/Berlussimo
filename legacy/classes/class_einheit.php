@@ -19,6 +19,14 @@ class einheit extends haus {
     public $einheit_qm_gewerbe;
     public $einheit_qm;
     public $einheit_kurzname;
+    public $objekt_id;
+    public $typ;
+    public $haus_plz;
+    public $einheit_lage;
+    public $haus_id;
+    public $einheit_qm_d;
+    public $einheit_qm_a;
+    public $aufzug_prozent_d;
 
     function emails_mieter_arr($objekt_id) {
         if ($objekt_id == null) {
@@ -182,7 +190,7 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
             foreach( $result as $row ) {
                 $person_id = $row ['PERSON_MIETVERTRAG_PERSON_ID'];
                 $arr = $this->finde_detail_kontakt_arr ( 'PERSON', $person_id );
-                if (is_array ( $arr )) {
+                if (!empty( $arr )) {
                     $anz = count ( $arr );
                     for($a = 0; $a < $anz; $a ++) {
                         $dname = $arr [$a] ['DETAIL_NAME'];
@@ -197,10 +205,7 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
     function finde_detail_kontakt_arr($tab, $id) {
         $db_abfrage = "SELECT DETAIL_NAME, DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = '$tab' && (DETAIL_NAME LIKE '%tel%'or DETAIL_NAME LIKE '%fax%' or DETAIL_NAME LIKE '%mobil%' or DETAIL_NAME LIKE '%handy%' OR DETAIL_NAME LIKE '%mail%') && DETAIL_ZUORDNUNG_ID = '$id' && DETAIL_AKTUELL = '1' ORDER BY DETAIL_NAME ASC";
         $resultat = DB::select( $db_abfrage );
-        $numrows = count( $resultat );
-        if ($numrows) {
-            return $resultat;
-        }
+        return $resultat;
     }
     function get_einheit_info($einheit_id) {
         unset ( $this->einheit_dat );
@@ -253,11 +258,7 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
     /* Alle Mietverträge einer Einheit */
     function get_mietvertrag_ids($einheit_id) {
         $result = DB::select( "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' ORDER BY MIETVERTRAG_VON ASC" );
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
     function get_einheit_as_array($einheit_id) {
         $result = DB::select( "SELECT * FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID='$einheit_id' ORDER BY EINHEIT_DAT LIMIT 0,1" );
@@ -278,12 +279,7 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
             $monat = '0' . $monat;
         }
         $result = DB::select( "SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr-$monat' ORDER BY MIETVERTRAG_VON ASC" );
-        $numrows = count( $result );
-        if ($numrows) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     /* Mietverträge einer Einheit im Monat(zweistellig*) Jahr(vierstellig) */
@@ -346,8 +342,7 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
     }
     function dropdown_einheit_typen($label, $name, $id, $vorwahl) {
         $arr = $this->get_einheit_typ_arr ();
-        // print_r($arr);
-        if (is_array ( $arr )) {
+        if (is_array( $arr )) {
             echo "<label for=\"$id\">$label</label><select name=\"$name\" size=1 id=\"$id\">\n";
             $anz = count ( $arr );
             for($a = 0; $a < $anz; $a ++) {

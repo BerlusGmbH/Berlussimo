@@ -661,11 +661,10 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
         $f = new formular ();
         $f->fieldset('Interessenten Telefonliste', 'ia');
         if (empty ($tab_arr)) {
-
             echo "<a href='" . route('legacy::leerstand::index', ['option' => 'pdf_interessenten']) . "'>Interessenten PDF</a>&nbsp;";
             $tab_arr = $this->interessenten_tab_arr();
         }
-        if (is_array($tab_arr)) {
+        if (!empty($tab_arr)) {
             $anz = count($tab_arr);
 
             echo "<table class=\"sortable\">";
@@ -937,7 +936,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 /* Zimmeranzahl */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Zimmeranzahl');
-                if (is_array($arr_details)) {
+                if (!empty($arr_details)) {
                     $arr [$a] ['ZIMMER'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['ZIMMER_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['ZIMMER_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
@@ -950,7 +949,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 /* Balkon aus Details */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Balkon');
-                if (is_array($arr_details)) {
+                if (!empty($arr_details)) {
                     $arr [$a] ['BALKON'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['BALKON_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['BALKON_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
@@ -963,7 +962,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 /* Heizungsart aus Details */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Heizungsart');
-                if (is_array($arr_details)) {
+                if (!empty($arr_details)) {
                     $arr [$a] ['HEIZUNGSART'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['HEIZUNGSART_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['HEIZUNGSART_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
@@ -976,7 +975,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 /* Energieausweis aus Details vom Haus */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Haus', $arr [$a] ['HAUS_ID'], 'Energieausweis vorhanden');
-                if (is_array($arr_details)) {
+                if (!empty($arr_details)) {
                     $arr [$a] ['ENERGIEAUS'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['ENERGIEAUS_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['ENERGIEAUS_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
@@ -989,7 +988,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 /* Energieausweis Gültigkeit aus Details vom Haus */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Haus', $arr [$a] ['HAUS_ID'], 'Energieausweis bis');
-                if (is_array($arr_details)) {
+                if (!empty($arr_details)) {
                     $arr [$a] ['ENERGIEAUS_BIS'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['ENERGIEAUS_BIS_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['ENERGIEAUS_BIS_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
@@ -1002,7 +1001,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 /* Letztes Sanierungsjahr */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Jahr der letzten Sanierung');
-                if (is_array($arr_details)) {
+                if (!empty($arr_details)) {
                     $arr [$a] ['JAHR_S'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['JAHR_S_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['JAHR_S_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
@@ -1015,7 +1014,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 /* Fortschritt Bauphase */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Fertigstellung in Prozent');
-                if (is_array($arr_details)) {
+                if (!empty($arr_details)) {
                     $arr [$a] ['FERTIG_BAU'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['FERTIG_BAU_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['FERTIG_BAU_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
@@ -1028,7 +1027,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 /* Notiz */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Sanierung Notiz');
-                if (is_array($arr_details)) {
+                if (!empty($arr_details)) {
                     $arr [$a] ['NOTIZ'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['NOTIZ_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['NOTIZ_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
@@ -1041,7 +1040,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 /* Gereinigt am */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Gereinigt am');
-                if (is_array($arr_details)) {
+                if (!empty($arr_details)) {
                     $arr [$a] ['GEREINIGT'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['GEREINIGT_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['GEREINIGT_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
@@ -1802,7 +1801,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 /* Zimmeranzahl */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Zimmeranzahl');
-                if (is_array($arr_details)) {
+                if (!empty($arr_details)) {
                     $arr [$a] ['ZIMMER'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['ZIMMER_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['ZIMMER_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
@@ -1815,7 +1814,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 /* Balkon aus Details */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Balkon');
-                if (is_array($arr_details)) {
+                if (!empty($arr_details)) {
                     $arr [$a] ['BALKON'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['BALKON_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['BALKON_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
@@ -1828,7 +1827,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 /* Heizungsart aus Details */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Heizungsart');
-                if (is_array($arr_details)) {
+                if (!empty($arr_details)) {
                     $arr [$a] ['HEIZUNGSART'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['HEIZUNGSART_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['HEIZUNGSART_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
@@ -1841,7 +1840,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 /* Energieausweis aus Details vom Haus */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Haus', $arr [$a] ['HAUS_ID'], 'Energieausweis vorhanden');
-                if (is_array($arr_details)) {
+                if (!empty($arr_details)) {
                     $arr [$a] ['ENERGIEAUS'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['ENERGIEAUS_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['ENERGIEAUS_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
@@ -1854,7 +1853,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 /* Energieausweis Gültigkeit aus Details vom Haus */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Haus', $arr [$a] ['HAUS_ID'], 'Energieausweis bis');
-                if (is_array($arr_details)) {
+                if (!empty($arr_details)) {
                     $arr [$a] ['ENERGIEAUS_BIS'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['ENERGIEAUS_BIS_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['ENERGIEAUS_BIS_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
@@ -1867,7 +1866,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 /* Letztes Sanierungsjahr */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Jahr der letzten Sanierung');
-                if (is_array($arr_details)) {
+                if (!empty($arr_details)) {
                     $arr [$a] ['JAHR_S'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['JAHR_S_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['JAHR_S_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
@@ -1880,7 +1879,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 /* Fortschritt Bauphase */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Fertigstellung in Prozent');
-                if (is_array($arr_details)) {
+                if (!empty($arr_details)) {
                     $arr [$a] ['FERTIG_BAU'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['FERTIG_BAU_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['FERTIG_BAU_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
@@ -1893,7 +1892,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 /* Gereinigt am */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Gereinigt am');
-                if (is_array($arr_details)) {
+                if (!empty($arr_details)) {
                     $arr [$a] ['GEREINIGT'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['GEREINIGT_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['GEREINIGT_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
@@ -1906,7 +1905,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 /* Kaltmiete */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Vermietung-Kaltmiete');
-                if (is_array($arr_details)) {
+                if (!empty($arr_details)) {
                     $arr [$a] ['KALTMIETE'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['KALTMIETE_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['KALTMIETE_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
@@ -1919,7 +1918,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 /* Nebenkosten */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Vermietung-BK');
-                if (is_array($arr_details)) {
+                if (!empty($arr_details)) {
                     $arr [$a] ['BK'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['BK_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['BK_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
@@ -1932,7 +1931,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 /* Heizkostenkosten */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Vermietung-HK');
-                if (is_array($arr_details)) {
+                if (!empty($arr_details)) {
                     $arr [$a] ['HK'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['HK_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['HK_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
@@ -1945,7 +1944,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 /* Besichtigunstermin und Zeit aus Details */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Besichtigungstermin');
-                if (is_array($arr_details)) {
+                if (!empty($arr_details)) {
                     $arr [$a] ['B_TERMIN'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['B_TERMIN_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['B_TERMIN_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
@@ -1958,7 +1957,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 /* Reservierung */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Vermietung-Reserviert');
-                if (is_array($arr_details)) {
+                if (!empty($arr_details)) {
                     $arr [$a] ['B_RESERVIERUNG'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['B_RESERVIERUNG_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['B_RESERVIERUNG_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
@@ -2140,9 +2139,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
     {
         $d = new detail ();
         $arr = $d->finde_detail_inhalt_arr('Vermietung-Kaltmiete');
-        // echo '<pre>';
-        // print_r($arr);
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             echo "Keine Wohnungen mit Detail Vermietung-Kaltmiete";
         } else {
             $anz = count($arr);

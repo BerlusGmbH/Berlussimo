@@ -588,7 +588,7 @@ switch ($option) {
     case "ls_auto_buchen" :
         $s = new sepa ();
         $arr = $s->get_sepa_lsfiles_arr();
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             echo "<table class=\"sortable striped\">";
             echo "<tr><th>DATUM</th><th>DATEI</th><th>ANZAHL LS</th><th>SUMME</th><th>OPTIONEN</th></tr>";

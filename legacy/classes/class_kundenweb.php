@@ -5,7 +5,7 @@ class kundenweb
     function kundendaten_anzeigen_alle()
     {
         $arr = $this->get_kundendaten_arr();
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             fehlermeldung_ausgeben("Keine Kundweb Benutzer vorhanden");
         } else {
             $f = new formular ();
@@ -41,17 +41,13 @@ class kundenweb
             $db_abfrage = "SELECT * FROM  `KUNDEN_LOGIN` WHERE ID='$kunden_id' && AKTUELL='1'";
         }
         $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     function kundendaten_anzeigen($kunden_id)
     {
         $arr = $this->get_kundendaten_arr($kunden_id);
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             fehlermeldung_ausgeben("Keine Kundweb Benutzer vorhanden");
         } else {
             $anz = count($arr);
@@ -79,7 +75,7 @@ class kundenweb
 
             /* Berechtigungen */
             $arr_ber = $this->kunden_berr_arr($kunden_id);
-            if (!is_array($arr_ber)) {
+            if (empty($arr_ber)) {
                 die ('Keine Berechtigung für den Kunden');
             } else {
                 $anz = count($arr_ber);
@@ -144,11 +140,7 @@ class kundenweb
             }
             $db_abfrage = "SELECT * FROM  `KUNDEN_LOG_BER` WHERE PERSON_ID='$person_id' && AKTUELL='1'";
             $result = DB::select($db_abfrage);
-            if (!empty($result)) {
-                return $result;
-            } else {
-                return false;
-            }
+            return $result;
         }
     }
 

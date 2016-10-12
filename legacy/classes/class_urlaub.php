@@ -79,10 +79,13 @@ class urlaub
         }
     }
 
+
+    /**
+     * @param $jahr
+     * @return array|\Illuminate\Database\Eloquent\Collection
+     */
     function mitarbeiter_arr($jahr)
     {
-        $datum_h = date("y-m-d");
-        //$result = DB::select("SELECT id, name, holidays, join_date, leave_date FROM users WHERE DATE_FORMAT(join_date, '%Y') <= '$jahr' &&  (DATE_FORMAT(AUSTRITT, '%Y') >= '$jahr' OR AUSTRITT='0000-00-00') && DATE_FORMAT(AUSTRITT, '%Y-%m-%d') < '$datum_h' ORDER BY benutzername ASC ");
         $users = \App\Models\User::whereYear('join_date', '<=', $jahr)->whereYear('leave_date', '>=', $jahr)->orWhereNull('leave_date')->orderBy('name', 'asc')->select(['id', 'name', 'holidays', 'join_date', 'leave_date'])->get();
         return $users;
     }
@@ -178,19 +181,16 @@ class urlaub
         $genommen_arr = $this->anzahl_genommene_tage($jahr, $benutzer_id);
         $geplant_arr = $this->anzahl_geplanter_tage($jahr, $benutzer_id);
         if (isset($geplant_arr)) {
-            $geplant = $geplant_arr->GEPLANT;
+            $geplant = $geplant_arr['GEPLANT'];
         } else {
             $geplant = '0';
         }
         if (isset($genommen_arr)) {
-            $genommen = $genommen_arr->GENOMMEN;
+            $genommen = $genommen_arr['GENOMMEN'];
         } else {
             $genommen = '0';
         }
         $rest_aus_vorjahren = $this->rest_aus_vorjahren($jahr, $benutzer_id);
-        // $anspruch = $anspruch + $rest_aus_vorjahren;
-        // $rest_aktuell = $anspruch - $genommen;
-        // $rest_jahr = $rest_aktuell - $geplant;
 
         if ($austritt != '0000-00-00') {
             $mitarbeiter = "<b>$mitarbeiter</b>";
@@ -386,12 +386,12 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
         $genommen_arr = $this->anzahl_genommene_tage($jahr, $benutzer_id);
         $geplant_arr = $this->anzahl_geplanter_tage($jahr, $benutzer_id);
         if (isset($geplant_arr)) {
-            $geplant = $geplant_arr->GEPLANT;
+            $geplant = $geplant_arr['GEPLANT'];
         } else {
             $geplant = '0.0';
         }
         if (isset($genommen_arr)) {
-            $genommen = $genommen_arr->GENOMMEN;
+            $genommen = $genommen_arr['GENOMMEN'];
         } else {
             $genommen = '0.0';
         }
@@ -524,12 +524,12 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
                 $geplant_arr = $this->anzahl_geplanter_tage($jahr, $benutzer_id);
 
                 if (isset($geplant_arr)) {
-                    $geplant = $geplant_arr->GEPLANT;
+                    $geplant = $geplant_arr['GEPLANT'];
                 } else {
                     $geplant = '0';
                 }
                 if (isset($genommen_arr)) {
-                    $genommen = $genommen_arr->GENOMMEN;
+                    $genommen = $genommen_arr['GENOMMEN'];
                 } else {
                     $genommen = '0';
                 }
@@ -586,16 +586,16 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
             $zeile = 0;
             foreach ($result as $user) {
                 $zeile++;
-                $benutzername = $user->name;
-                $antrag_vom = $user->ANTRAG_D;
-                $urlaubstag = $user->DATUM;
-                $anteil = $user->ANTEIL;
-                $art = $user->ART;
+                $benutzername = $user['name'];
+                $antrag_vom = $user['ANTRAG_D'];
+                $urlaubstag = $user['DATUM'];
+                $anteil = $user['ANTEIL'];
+                $art = $user['ART'];
                 $summe_tage = $summe_tage + $anteil;
                 $antrag_vom = date_mysql2german($antrag_vom);
                 $urlaubstag = date_mysql2german($urlaubstag);
                 $wochentag = $this->tagesname($urlaubstag);
-                $u_dat = $user->U_DAT;
+                $u_dat = $user['U_DAT'];
                 $link_loeschen = "<a href='" . route('legacy::urlaub::index', ['option' => 'urlaubstag_loeschen', 'jahr' => $jahr, 'benutzer_id' => $benutzer_id, 'u_dat' => $u_dat]) . "'>Urlaubstag löschen</a>";
                 echo "<tr class=\"zeile1\"><td>$zeile</td><td>$antrag_vom</td><td>$art</td><td>$urlaubstag, $wochentag</td><td>$anteil</td><td>$link_loeschen</td></tr>";
             }
@@ -604,8 +604,6 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
         } else {
             echo "KEINE URLAUBSDATEN VORHANDEN";
         }
-        // echo '<pre>';
-        // print_r($my_array);
     }
 
     function tagesname($datum)
@@ -675,11 +673,11 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
             );
             foreach ($result as $user) {
                 $zeile++;
-                $benutzername = $user->name;
-                $antrag_vom = $user->ANTRAG_D;
-                $urlaubstag = $user->DATUM;
-                $anteil = $user->ANTEIL;
-                $art = $user->ART;
+                $benutzername = $user['name'];
+                $antrag_vom = $user['ANTRAG_D'];
+                $urlaubstag = $user['DATUM'];
+                $anteil = $user['ANTEIL'];
+                $art = $user['ART'];
                 if ($art == 'Urlaub') {
                     $summe_tage += $anteil;
                 }
@@ -699,7 +697,7 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
                 $antrag_vom = date_mysql2german($antrag_vom);
                 $urlaubstag = date_mysql2german($urlaubstag);
                 $wochentag = $this->tagesname($urlaubstag);
-                $u_dat = $user->U_DAT;
+                $u_dat = $user['U_DAT'];
                 $table_arr [$zeile] ['URLAUBSTAG'] = "$urlaubstag, $wochentag";
                 $table_arr [$zeile] ['ANTEIL'] = "$anteil";
                 $table_arr [$zeile] ['ART'] = "$art";

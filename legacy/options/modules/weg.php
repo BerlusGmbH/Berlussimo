@@ -28,7 +28,7 @@ switch ($option) {
                 if (isset ($weg->eigentuemer_id)) {
 
                     $et_p_id = $weg->get_person_id_eigentuemer_arr($weg->eigentuemer_id);
-                    if (is_array($et_p_id)) {
+                    if (!empty($et_p_id)) {
                         $anz_pp = count($et_p_id);
                         for ($pe = 0; $pe < $anz_pp; $pe++) {
                             $et_p_id_1 = $et_p_id [$pe] ['PERSON_ID'];

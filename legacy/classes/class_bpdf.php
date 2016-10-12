@@ -359,7 +359,7 @@ class b_pdf
         $f = new formular ();
         $m = new mahnungen ();
         $aktuelle_mvs = $m->finde_aktuelle_mvs();
-        if (is_array($aktuelle_mvs)) {
+        if (!empty($aktuelle_mvs)) {
             echo "<div class='row input-field'>";
             echo "<div class='col s12 m6 l2'>";
             $f->check_box_js_alle('nn', 'nn', 'NN', 'Alle markieren', '', '', 'mv_ids');

@@ -2,6 +2,11 @@
 
 class sepa
 {
+    public $mand;
+    public $beguenstigter;
+    public $IBAN1;
+    public $BIC;
+
     function test_sepa()
     {
         $this->import_dtaustn();
@@ -482,7 +487,7 @@ class sepa
     {
         $ob = new objekt ();
         $e_array = $ob->einheiten_objekt_arr($objekt_id);
-        if (!is_array($e_array)) {
+        if (empty($e_array)) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage("Keine Mieter in diesem Objekt OBJ_ID: $objekt_id")
             );
@@ -684,7 +689,7 @@ class sepa
     {
         $e = new einheit ();
         $e_array = $e->liste_aller_einheiten();
-        if (!is_array($e_array)) {
+        if (empty($e_array)) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage("Keine Mieter in diesem Objekt")
             );
@@ -993,12 +998,6 @@ class sepa
                 'BIC' => "BIC",
                 'IBAN' => "IBAN"
             );
-            /*
-			 * $tab_arr[$a]['IBAN'] = $iban;
-			 * $tab_arr[$a]['BIC'] = $bic;
-			 * $tab_arr[$a]['KAT'] = $kat;
-			 * $tab_arr[$a]['IDENT'] = $last_ident;
-			 */
             if (is_array($tab_frst)) {
                 $tab_frst = array_merge($tab_frst, Array());
                 $anz_t = count($tab_frst);
@@ -1363,7 +1362,7 @@ class sepa
     function mandat_nutzungen_anzeigen($m_ref)
     {
         $arr = $this->mandat_nutzungen_arr($m_ref);
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             echo "<table class=\"sortable\">";
             echo "<thead><tr><th>DATUM</th><th>SEQ</th><th>DATEI</th><th>VZWECK</th><th>BETRAG</th></tr></thead>";
@@ -1388,9 +1387,7 @@ class sepa
         $this->get_mandat_infos_mref($m_ref);
         $iban = $this->mand->IBAN;
         $result = DB::select("SELECT * FROM `SEPA_MANDATE_SEQ` WHERE `M_REFERENZ` = '$m_ref' AND IBAN='$iban' AND `AKTUELL` = '1' ORDER BY DATUM");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function get_mandat_infos_mref($m_ref)
@@ -1639,7 +1636,7 @@ class sepa
         /* Einzelbetrag oder Sammelbetrag beachten $sammler!!!!! */
 
         $arr = $this->get_sammler_arr($von_gk_id, $kat);
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\InfoMessage("Keine Datensätze auf Konto $von_gk_id für $kat")
             );
@@ -1694,9 +1691,7 @@ class sepa
         } else {
             $result = DB::select("SELECT * FROM `SEPA_UEBERWEISUNG` WHERE `FILE` IS NULL AND KAT='$kat' AND `GK_ID_AUFTRAG` ='$von_gk_id' AND `AKTUELL` = '1' ORDER BY DAT");
         }
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function sepa_ueberweisung2file($dat, $dateiname)
@@ -1715,9 +1710,7 @@ class sepa
         } else {
             $result = DB::select("SELECT COUNT(BETRAG) AS ANZ, DATEI, SUM(BETRAG) AS SUMME, DATUM FROM `SEPA_MANDATE_SEQ` WHERE AKTUELL='1' GROUP BY DATEI ORDER BY DATUM DESC");
         }
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function form_ls_datei_ab($datei)
@@ -1733,7 +1726,7 @@ class sepa
                 return;
             }
             $arr = $this->get_sepa_lszeilen_arr($datei);
-            if (is_array($arr)) {
+            if (!empty($arr)) {
                 $anz = count($arr);
                 $f = new formular ();
 
@@ -1832,9 +1825,7 @@ class sepa
     function get_sepa_lszeilen_arr($datei)
     {
         $result = DB::select("SELECT * FROM `SEPA_MANDATE_SEQ` WHERE AKTUELL='1' && DATEI='$datei'");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function check_ls_buchung($gk_id, $m_ref, $betrag, $kontoauszug, $datum, $kos_typ, $kos_id)
@@ -1861,7 +1852,7 @@ AND  `AKTUELL` =  '1'");
     function sepa_sammler_alle()
     {
         $arr = $this->sepa_gk_arr();
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             echo "<h2>Zu erstellende SEPA-Dateien</h2>";
             $anz = count($arr);
             echo "<table class=\"sortable\">";
@@ -1885,9 +1876,7 @@ AND  `AKTUELL` =  '1'");
     function sepa_gk_arr()
     {
         $result = DB::select("SELECT GK_ID_AUFTRAG, KAT, SUM(BETRAG) AS SUMME, COUNT(BETRAG) AS ANZ FROM `SEPA_UEBERWEISUNG` WHERE `FILE` IS NULL AND `AKTUELL` = '1' GROUP BY KAT, `GK_ID_AUFTRAG`");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function get_summe_sepa_sammler($von_gk_id, $kat, $kos_typ, $kos_id)
@@ -1903,11 +1892,9 @@ AND  `AKTUELL` =  '1'");
     function sepa_files($von_gk_id)
     {
         $arr = $this->sepa_files_arr($von_gk_id);
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             fehlermeldung_ausgeben("Keine SEPA-Überweisungen vom gewählten Geldkonto!");
         } else {
-            // echo '<pre>';
-            // print_r($arr);
             $anz_f = count($arr);
             echo "<table class=\"sortable\">";
             echo "<tr><th>NR</th><th>KONTO</th><th>DATEINAME</th><th>BESCHREIBUNG</th><th>SUMME</th><th>OPTIONEN</th><th></th><th></th></tr>";
@@ -1943,15 +1930,13 @@ AND  `AKTUELL` =  '1'");
         } else {
             $result = DB::select("SELECT ID, FILE, SUM(BETRAG) AS SUMME FROM `SEPA_UEBERWEISUNG` WHERE `FILE` IS NOT NULL AND `AKTUELL` = '1' GROUP BY FILE ORDER BY DAT DESC LIMIT 0, 300");
         }
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function sepa_file_kopieren($file)
     {
         $arr = $this->get_sepa_files_daten_arr($file);
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             fehlermeldung_ausgeben("Keine Datensätze zur Datei $file");
         } else {
 
@@ -1991,15 +1976,13 @@ AND  `AKTUELL` =  '1'");
     function get_sepa_files_daten_arr($file)
     {
         $result = DB::select("SELECT * FROM `SEPA_UEBERWEISUNG` WHERE `FILE` = '$file' AND `AKTUELL` = '1'");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function sepa_file_autobuchen($file, $datum, $gk_id, $auszug, $mwst = '0')
     {
         $arr = $this->get_sepa_files_daten_arr($file);
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             fehlermeldung_ausgeben("Keine Datensätze zur Datei $file");
         } else {
             $anz = count($arr);
@@ -2069,7 +2052,7 @@ AND  `AKTUELL` =  '1'");
             );
         }
         $arr = $this->get_sepa_files_daten_arr($file);
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage("Keine Datensätze zur Datei $file")
             );
@@ -2160,7 +2143,7 @@ AND  `AKTUELL` =  '1'");
         }
 
         $arr = $this->get_sepa_files_daten_arr($file);
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             fehlermeldung_ausgeben("Keine Datensätze zur Datei $file");
         } else {
 
@@ -2223,7 +2206,7 @@ AND  `AKTUELL` =  '1'");
     {
         echo $filename;
         $arr = $this->get_sepa_files_daten_arr($filename);
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage("Keine Datensätze zur Datei $file")
             );
@@ -2465,7 +2448,7 @@ AND  `AKTUELL` =  '1'");
     function sepa_alle_sammler_anzeigen()
     {
         $arr = $this->get_kats_arr(session()->get('geldkonto_id'));
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             fehlermeldung_ausgeben("Keine Dateien im SEPA-Sammler");
         } else {
             for ($a = 0; $a < count($arr); $a++) {
@@ -2485,15 +2468,13 @@ AND  `AKTUELL` =  '1'");
         } else {
             $result = DB::select("SELECT KAT FROM `SEPA_UEBERWEISUNG` WHERE `FILE` IS NULL AND KAT='$kat' AND `GK_ID_AUFTRAG` ='$von_gk_id' AND `AKTUELL` = '1' GROUP BY KAT ORDER BY DAT");
         }
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function sepa_sammler_anzeigen($von_gk_id, $kat = null)
     {
         $arr = $this->get_sammler_arr($von_gk_id, $kat);
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
 
             echo "<hr>";
@@ -2959,8 +2940,6 @@ AND  `AKTUELL` =  '1'");
                 echo "</th></tr>";
 
                 $arr_ls_zeilen = $this->get_sepa_lszeilen_arr($ls_file);
-                // echo '<pre>';
-                // print_r($arr_ls_zeilen);
                 $anz_ze = count($arr_ls_zeilen);
                 for ($ze = 0; $ze < $anz_ze; $ze++) {
                     $zweck_ls = $arr_ls_zeilen [$ze] ['VZWECK'];
@@ -3121,7 +3100,7 @@ AND  `AKTUELL` =  '1'");
     function sepa_file_anzeigen($file)
     {
         $arr = $this->get_sepa_files_daten_arr($file);
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             fehlermeldung_ausgeben("Keine Datensätze zur Datei $file");
         } else {
             $f = new formular ();
@@ -3162,7 +3141,7 @@ AND  `AKTUELL` =  '1'");
         $mon_jahr = "$monat$jahr";
         $arr = $this->finde_ls_file_by_betrag($gk_id, $betrag);
 
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             for ($a = 0; $a < $anz; $a++) {
                 $datum_xml = explode('-', $arr [$a] ['DATUM']);
@@ -3182,7 +3161,8 @@ AND  `AKTUELL` =  '1'");
     function finde_ls_file_by_betrag($gk_id, $betrag)
     {
         $arr = $this->get_sepa_lsfiles_arr_gk($gk_id);
-        if (is_array($arr)) {
+        $arr_n = [];
+        if (!empty($arr)) {
             $anz = count($arr);
             for ($a = 0; $a < $anz; $a++) {
                 $sum = $arr [$a] ['SUMME'];
@@ -3191,18 +3171,14 @@ AND  `AKTUELL` =  '1'");
                 }
             }
         }
-        if (isset ($arr_n)) {
-            return $arr_n;
-        }
+        return $arr_n;
     }
 
     function get_sepa_lsfiles_arr_gk($gk_id)
     {
         $vorz = $gk_id . '-';
         $result = DB::select("SELECT COUNT(BETRAG) AS ANZ, DATEI, SUM(BETRAG) AS SUMME, DATUM FROM `SEPA_MANDATE_SEQ` WHERE AKTUELL='1' && DATEI LIKE '$vorz%' GROUP BY DATEI ORDER BY DATUM DESC");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function finde_ls_file_by_datum($gk_id, $betrag, $datum)

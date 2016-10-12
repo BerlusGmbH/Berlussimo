@@ -12,7 +12,7 @@ switch ($anzeigen) {
 
     case "einheit" :
         $e = new einheit ();
-        if (is_array($e->get_mietvertrag_ids($einheit_id))) {
+        if (!empty($e->get_mietvertrag_ids($einheit_id))) {
             uebersicht_einheit($einheit_id);
         } else {
             echo "<h2>BISHER LEERSTAND</h2>";
@@ -104,8 +104,7 @@ function uebersicht_einheit($einheit_id)
             $et_p_id = $weg->eigentuemer_person_ids [$be];
             $d_k = new detail ();
             $dt_arr = $d_k->finde_alle_details_grup('PERSON', $et_p_id, 'INS-Kundenbetreuer');
-
-            if (is_array($dt_arr)) {
+            if (!empty($dt_arr)) {
                 $anz_bet = count($dt_arr);
                 for ($bet = 0; $bet < $anz_bet; $bet++) {
                     $bet_str = $dt_arr [$bet] ['DETAIL_INHALT'];

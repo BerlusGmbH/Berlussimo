@@ -11,6 +11,7 @@ class partners
 
     /* Name eines Partner/Lieferand/Eigentümer */
     public $partner_ort;
+    public $partner_name;
 
     function suche_partner_in_array($suchtext)
     {
@@ -24,7 +25,7 @@ OR  `LAND` LIKE  '%$suchtext%'
         if (!empty($my_array)) {
             /* Zusätzlich Stichwortsuche */
             $my_array_stich = $this->suche_partner_stichwort_arr($suchtext);
-            if (is_array($my_array_stich)) {
+            if (!empty($my_array_stich)) {
                 $anz_stich = count($my_array_stich);
                 for ($p = 0; $p < $anz_stich; $p++) {
                     $partner_id = $my_array_stich [$p] ['PARTNER_ID'];
@@ -43,7 +44,7 @@ OR  `LAND` LIKE  '%$suchtext%'
             return $my_array;
         } else {
             $my_array_stich = $this->suche_partner_stichwort_arr($suchtext);
-            if (is_array($my_array_stich)) {
+            if (!empty($my_array_stich)) {
 
                 $anz_stich = count($my_array_stich);
                 for ($p = 0; $p < $anz_stich; $p++) {
@@ -75,11 +76,7 @@ OR  `LAND` LIKE  '%$suchtext%'
     {
         $result = DB::select("SELECT * FROM  `PARTNER_STICHWORT` WHERE  `AKTUELL` =  '1' AND  `STICHWORT` LIKE  '%$stichwort%'
 			ORDER BY STICHWORT ASC");
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     function get_partner_info($partner_id)
@@ -152,7 +149,7 @@ OR  `LAND` LIKE  '%$suchtext%'
             if ($zaehler == 1) {
                 echo "<tr valign=\"top\" class=\"zeile1\"><td>$partner_link_detail</td><td>$anschrift</td><td>";
 
-                if (is_array($stich_arr)) {
+                if (!empty($stich_arr)) {
                     $anz_s = count($stich_arr);
                     for ($s = 0; $s < $anz_s; $s++) {
                         echo $stich_arr [$s] ['STICHWORT'] . ", ";
@@ -164,7 +161,7 @@ OR  `LAND` LIKE  '%$suchtext%'
             }
             if ($zaehler == 2) {
                 echo "<tr valign=\"top\" class=\"zeile2\"><td>$partner_link_detail</td><td>$anschrift</td><td>";
-                if (is_array($stich_arr)) {
+                if (!empty($stich_arr)) {
                     $anz_s = count($stich_arr);
                     for ($s = 0; $s < $anz_s; $s++) {
                         echo $stich_arr [$s] ['STICHWORT'] . ", ";
@@ -183,12 +180,7 @@ OR  `LAND` LIKE  '%$suchtext%'
     {
         $result = DB::select("SELECT * FROM  `PARTNER_STICHWORT` WHERE  `AKTUELL` =  '1' AND  `PARTNER_ID` =  '$partner_id'
 				 ORDER BY STICHWORT ASC");
-
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     function get_partner_id($partner_name)
@@ -206,7 +198,7 @@ OR  `LAND` LIKE  '%$suchtext%'
         $f->erstelle_formular("Partner $this->partner_name Gewerke oder Stichwort eingeben", NULL);
 
         $stich_arr = $this->get_stichwort_arr();
-        if (is_array($stich_arr)) {
+        if (!empty($stich_arr)) {
             $anz = count($stich_arr);
             for ($a = 0; $a < $anz; $a++) {
                 $stich = $stich_arr [$a] ['STICHWORT'];
@@ -231,12 +223,7 @@ OR  `LAND` LIKE  '%$suchtext%'
     function get_stichwort_arr()
     {
         $result = DB::select("SELECT STICHWORT FROM  `PARTNER_STICHWORT` WHERE  `AKTUELL` =  '1'  GROUP BY STICHWORT	ORDER BY STICHWORT ASC");
-
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     /* Partner erfassen Formular */
@@ -392,7 +379,7 @@ OR  `LAND` LIKE  '%$suchtext%'
         $row = $result[0];
         return $row ['PARTNER_ID'];
     }
-    
+
     /* Alle Partner in ein array laden */
 
     function letzte_konto_geldkonto_id_p($partner_id)
@@ -506,7 +493,7 @@ OR  `LAND` LIKE  '%$suchtext%'
 
             $link_stich_hinzu = "<a href='" . route('legacy::partner::index', ['option' => 'partner_stichwort', 'partner_id' => $partner_id]) . "'><b>Stichwort eingeben</b></a>";
 
-            if (is_array($stich_arr)) {
+            if (!empty($stich_arr)) {
                 $anz_s = count($stich_arr);
                 for ($s = 0; $s < $anz_s; $s++) {
                     echo $stich_arr [$s] ['STICHWORT'] . ", ";

@@ -2,6 +2,148 @@
 
 class weg
 {
+    public $weg_anteile;
+    public $e;
+    public $eigentuemer_id;
+    public $gruppe_erg;
+    public $Wohngeld_soll_vj_a;
+    public $Wohngeld_soll_a;
+    public $kostenkat_erg;
+    public $kostenkat_erg_a;
+    public $e_konto;
+    public $von;
+    public $bis;
+    public $eigentuemer_name;
+    public $einheit_kurzname;
+    public $empf_namen_u;
+    public $einheit_id;
+    public $eigentuemer_von;
+    public $eigentuemer_bis;
+    public $et_code;
+    public $einheit_qm;
+    public $einheit_qm_weg_d;
+    public $einheit_qm_weg;
+    public $haus_strasse;
+    public $haus_nummer;
+    public $haus_plz;
+    public $haus_stadt;
+    public $post_anschrift_haus;
+    public $personen_id_arr;
+    public $einheit_lage;
+    public $einheit_qm_d;
+    public $versprochene_miete;
+    public $objekt_id;
+    public $anz_personen;
+    public $anschriften;
+    public $personen_id_arr1;
+    public $anrede_brief;
+    public $anz_zustell;
+    public $anz_anschrift;
+    public $post_anschrift;
+    public $eigentuemer_person_ids;
+    public $eigentuemer_name_str;
+    public $eigentuemer_name_str_u;
+    public $eigentuemer_anzahl;
+    public $eigentuemer_namen;
+    public $eigentuemer_namen2;
+    public $hg_erg_a;
+    public $saldo_jahr;
+    public $zb_bisher;
+    public $hg_erg;
+    public $Wohngeld_soll;
+    public $Wohngeld_soll_g;
+    public $hg_saldo;
+    public $anschriften_p;
+    public $zustellanschriften;
+    public $zustellanschriften_p;
+    public $empf_namen;
+    public $eigentuemer_von_a;
+    public $saldo_jahr_a;
+    public $postanschrift;
+    public $eigentuemer_name_str_u1;
+    public $pdf_anrede;
+    public $eig_namen_u;
+    public $eig_namen_u_pdf;
+    public $wg_def_kos_id;
+    public $wg_def_von_d;
+    public $wg_def_bis_d;
+    public $wg_def_id;
+    public $wg_def_von;
+    public $wg_def_bis;
+    public $wg_def_betrag;
+    public $wg_def_betrag_a;
+    public $wg_def_koskat;
+    public $wg_def_e_konto;
+    public $wg_def_g_konto;
+    public $wg_def_kos_typ;
+    public $wg_def_kos_aktuell;
+    public $wg_def_gruppen_bez;
+    public $hg_saldo_a;
+    public $anrede;
+    public $eigentuemer_namen_a;
+    public $g_konto;
+    public $zahlung_gesamt;
+    public $soll_gesamt;
+    public $soll_aktuell;
+    public $SEPA_MANDAT;
+    public $SEPA_MANDAT_AKTIV;
+    public $MAND;
+    public $hausgeld_einnahmen_summe_a;
+    public $hausgeld_einnahmen_summe;
+    public $summe_kosten_hg;
+    public $summe_kosten_hg_a;
+    public $wp_jahr;
+    public $hausgelder_neu;
+    public $wp_objekt_id;
+    public $wp_objekt_name;
+    public $einheit_anteile;
+    public $einheit_anteile_a;
+    public $geldkonto_id;
+    public $OBJ_KONTONUMMER;
+    public $OBJ_BLZ;
+    public $OBJ_BIC;
+    public $OBJ_IBAN;
+    public $OBJ_IBAN1;
+    public $p_jahr;
+    public $p_gk_id;
+    public $p_objekt_id;
+    public $summe_zeilen;
+    public $summe_zeilen_a;
+    public $footer_zahlungshinweis;
+    public $OBJ_BEGUENSTIGTER;
+    public $OBJ_GELD_INSTITUT;
+    public $BIC;
+    public $IBAN;
+    public $NAME;
+    public $p_bez;
+    public $p_ihr_gk_id;
+    public $p_wplan_id;
+    public $hg_konto;
+    public $hk_konto;
+    public $ihr_konto;
+    public $p_von;
+    public $p_bis;
+    public $p_von_d;
+    public $p_bis_d;
+    public $summe_hndl;
+    public $konto_has_entry;
+    public $man3;
+    public $summe_alle_diff_a;
+    public $summe_alle_ist;
+    public $summe_alle_diff;
+    public $summe_alle_soll;
+    public $ausstehend;
+    public $summe_alle_ist_a;
+    public $summe_alle_soll_a;
+    public $n_tage;
+    public $eigentuemer_von_d;
+    public $eigentuemer_bis_d;
+    public $eigentuemer_von_t;
+    public $eigentuemer_bis_t;
+    public $eigentuemer_bis_t_a;
+    public $eigentuemer_von_t_a;
+    public $summe_hndl_a;
+
     function uebersicht_einheit($einheit_id)
     {
         $f = new formular ();
@@ -21,7 +163,7 @@ class weg
         /* OBJEKT DETAILS */
         $de = new detail ();
         $details_obj = $de->finde_alle_details_arr('Objekt', $e->objekt_id);
-        if (is_array($details_obj)) {
+        if (!empty($details_obj)) {
             echo "<table>";
             echo "<tr><th colspan=\"2\">OBJEKT DETAILS</th></tr>";
             $anz_det = count($details_obj);
@@ -48,11 +190,7 @@ class weg
         /* EINHEIT DETAILS */
         $de = new detail ();
         $details_e = $de->finde_alle_details_arr('Einheit', $einheit_id);
-        if (is_array($details_e)) {
-            /*
-			 * echo '<pre>';
-			 * print_r($details_obj);
-			 */
+        if (!empty($details_e)) {
             echo "<table>";
             echo "<tr><th colspan=\"2\">EINHEIT DETAILS</th></tr>";
             $anz_det = count($details_e);
@@ -73,7 +211,7 @@ class weg
         /* ET DETAILS */
         $de = new detail ();
         $details_et = $de->finde_alle_details_arr('Eigentuemer', $this->eigentuemer_id);
-        if (is_array($details_et)) {
+        if (!empty($details_et)) {
 
             echo "<table>";
             echo "<tr><th colspan=\"2\">ET DETAILS</th></tr>";
@@ -99,7 +237,7 @@ class weg
         $this->Wohngeld_soll_a = nummer_punkt2komma($this->gruppe_erg);
 
         $wg_keys = $this->wg_def_in_array('Einheit', $einheit_id, $monat, $jahr);
-        if (is_array($wg_keys)) {
+        if (!empty($wg_keys)) {
             echo "<tr><th colspan=\"2\">HAUSGELD</th></tr>";
             $anz = count($wg_keys);
             for ($a = 0; $a < $anz; $a++) {
@@ -314,19 +452,16 @@ class weg
 
             $personen_id_arr = $this->get_person_id_eigentuemer_arr($this->eigentuemer_id);
             $anz_p = count($personen_id_arr);
-            if (!$anz_p) {
-            } else {
-                unset ($this->eigentuemer_name);
-                for ($a = 0; $a < $anz_p; $a++) {
-                    $person_id = $personen_id_arr [$a] ['PERSON_ID'];
-                    $p = new personen ();
-                    $p->get_person_infos($person_id);
-                    $this->eigentuemer_name [$a] ['person_id'] = $person_id;
-                    $this->eigentuemer_name [$a] ['Nachname'] = $p->person_nachname;
-                    $this->eigentuemer_name [$a] ['Vorname'] = $p->person_vorname;
-                    $this->eigentuemer_name [$a] ['Geburtstag'] = $p->person_geburtstag;
-                    $this->eigentuemer_name [$a] ['Geschlecht'] = $p->geschlecht;
-                }
+            unset ($this->eigentuemer_name);
+            for ($a = 0; $a < $anz_p; $a++) {
+                $person_id = $personen_id_arr [$a] ['PERSON_ID'];
+                $p = new personen ();
+                $p->get_person_infos($person_id);
+                $this->eigentuemer_name [$a] ['person_id'] = $person_id;
+                $this->eigentuemer_name [$a] ['Nachname'] = $p->person_nachname;
+                $this->eigentuemer_name [$a] ['Vorname'] = $p->person_vorname;
+                $this->eigentuemer_name [$a] ['Geburtstag'] = $p->person_geburtstag;
+                $this->eigentuemer_name [$a] ['Geschlecht'] = $p->geschlecht;
             }
         }
     }
@@ -342,9 +477,7 @@ class weg
     function get_person_id_eigentuemer_arr($id)
     {
         $result = DB::select("SELECT PERSON_ID FROM WEG_EIGENTUEMER_PERSON WHERE WEG_EIG_ID='$id' && AKTUELL='1'");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function get_wg_info($monat, $jahr, $kos_typ, $kos_id, $gruppe)
@@ -365,9 +498,7 @@ class weg
     function wg_def_in_array($kos_typ, $kos_id, $monat, $jahr)
     {
         $result = DB::select("SELECT KOSTENKAT FROM WEG_WG_DEF WHERE KOS_TYP LIKE '$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' GROUP BY KOSTENKAT ORDER BY E_KONTO ASC");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function get_kostenkat_info($monat, $jahr, $kos_typ, $kos_id, $kostenkat)
@@ -419,8 +550,7 @@ class weg
     function dropdown_einheiten($label, $name, $id, $objekt_id, $js)
     {
         $einheiten_arr = $this->einheiten_weg_tabelle_arr($objekt_id);
-
-        if (is_array($einheiten_arr)) {
+        if (!empty($einheiten_arr)) {
             echo "<label for=\"$id\">$label</label>";
             echo "<select name=\"$name\" size=\"1\" id=\"$id\" $js>\n";
             $anz = count($einheiten_arr);
@@ -624,7 +754,6 @@ class weg
     function ausgewahlte_et_liste_aendern($label, $name, $id, $javaaction, $size, $et_arr)
     {
         $person_info = new person ();
-
         echo "<label for=\"$id\">$label</label><select name=\"$name\" id=\"$id\" $javaaction size=\"$size\" style='visibility:visible;'>";
         if (is_array($et_arr)) {
             for ($a = 0; $a < count($et_arr); $a++) {
@@ -712,9 +841,7 @@ class weg
     function get_eigentuemer_id_from_person_arr($person_id)
     {
         $result = DB::select("SELECT WEG_EIG_ID FROM WEG_EIGENTUEMER_PERSON WHERE PERSON_ID='$person_id' && AKTUELL='1'");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function liste_weg_objekte()
@@ -762,7 +889,7 @@ class weg
     function einheiten_weg_tabelle_anzeigen($objekt_id)
     {
         $arr = $this->einheiten_weg_tabelle_arr($objekt_id);
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $o = new objekt ();
             $o->get_objekt_infos($objekt_id);
             $qm_g = nummer_punkt2komma($o->get_qm_gesamt($objekt_id));
@@ -797,7 +924,7 @@ class weg
                 $arr_e = $this->get_eigentuemer_arr($einheit_id);
 
                 $anz_e = count($arr_e);
-                if (is_array($arr_e)) {
+                if (!empty($arr_e)) {
                     for ($e = 0; $e < $anz_e; $e++) {
                         $et_nr = $e + 1;
                         $v_id = $arr_e [$e] ['ID'];
@@ -810,7 +937,7 @@ class weg
                 echo "</td><td>";
 
                 $anz_e = count($arr_e);
-                if (is_array($arr_e)) {
+                if (!empty($arr_e)) {
                     for ($e = 0; $e < $anz_e; $e++) {
                         $v_id = $arr_e [$e] ['ID'];
                         $et_nr = $e + 1;
@@ -864,17 +991,7 @@ class weg
     function get_eigentuemer_arr($einheit_id)
     {
         $result = DB::select("SELECT * FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON ASC");
-        if (!empty($result)) {
-            return $result;
-        }
-    }
-
-    function get_wps_arr($objekt_id)
-    {
-        $result = DB::select("SELECT * FROM WEG_WPLAN WHERE AKTUELL='1' && OBJEKT_ID='$objekt_id' ORDER BY JAHR DESC");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function wp_liste($objekt_id)
@@ -883,7 +1000,7 @@ class weg
         $o = new objekt ();
         $obj_name = $o->get_objekt_name($objekt_id);
 
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             echo "<table>";
             echo "<tr><th>Wirtschaftsjahr</th><th>OBJEKT</th><th>OPTIONEN</th></tr>";
             $anz = count($arr);
@@ -900,6 +1017,12 @@ class weg
                 new \App\Messages\WarningMessage("Keine Wirtschaftspläne für das Objekt $obj_name.")
             );
         }
+    }
+
+    function get_wps_arr($objekt_id)
+    {
+        $result = DB::select("SELECT * FROM WEG_WPLAN WHERE AKTUELL='1' && OBJEKT_ID='$objekt_id' ORDER BY JAHR DESC");
+        return $result;
     }
 
     function eigentuemer_speichern($einheit_id, $eigent_arr, $eigentuemer_von, $eigentuemer_bis)
@@ -1038,11 +1161,9 @@ class weg
 
         $diff_in_jahren = $akt_jahr - $j; // Volle Jahre
         $datum_1_def = $this->datum_erste_hg_def('Einheit', $this->einheit_id);
-        // echo $datum_1_def;
         $datum_1_def_arr = explode('-', $datum_1_def);
         $dat2 = $datum_1_def_arr [0] . $datum_1_def_arr [2] . $datum_1_def_arr [1];
         $dat1 = $j . $t . $m;
-        // echo "<br>$dat1 $dat2<br>";
         if ($dat1 >= $dat2) {
             $datum_ab = "$j-$m-$t";
         } else {
@@ -1290,7 +1411,7 @@ class weg
         $f->text_feld_inaktiv("Eigentuemer aktuell", "eigentuemer_namen", $this->eigentuemer_namen_a, 50, 'eigentuemer_namen');
         $this->dropdown_eigentuemer($einheit_id, 'Eigentümer wählen', 'eigentuemer_id', 'eigentuemer_id');
         $wg_keys = $this->wg_def_in_array('Einheit', $einheit_id, $monat, $jahr);
-        if (is_array($wg_keys)) {
+        if (!empty($wg_keys)) {
             $f->text_feld("Datum", "datum", session()->get('temp_datum'), 10, 'datum', '');
             $f->text_feld("Kontoauszugsnr", "kontoauszugsnr", session()->get('temp_kontoauszugsnummer'), 10, 'kontoauszugsnr', '');
             $anz = count($wg_keys);
@@ -1327,9 +1448,8 @@ class weg
     function dropdown_eigentuemer($einheit_id, $label, $name, $id)
     {
         $arr = $this->get_eigentuemer_arr_2($einheit_id);
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
-            // print_r($arr);
             echo "<label for=\"$id\">$label</label><select name=\"$name\" id=\"$id\">";
             for ($a = 0; $a < $anz; $a++) {
                 $e_id = $arr [$a] ['ID'];
@@ -1343,9 +1463,7 @@ class weg
     function get_eigentuemer_arr_2($einheit_id, $sortvon = 'DESC')
     {
         $result = DB::select("SELECT * FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON $sortvon");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function get_eigentuemer_namen($e_id)
@@ -1471,7 +1589,7 @@ class weg
     function dropdown_def($label, $name, $id, $js)
     {
         $arr = $this->get_definitionen_arr();
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             echo "<label for=\"$id\">$label</label>";
             echo "<select name=\"$name\" size=\"1\" id=\"$id\" $js>\n";
             echo "<option >Bitte wählen</option>\n";
@@ -1490,9 +1608,7 @@ class weg
     function get_definitionen_arr()
     {
         $result = DB::select("SELECT * FROM WEG_WG_DEF WHERE AKTUELL='1' GROUP BY KOSTENKAT ORDER BY E_KONTO, KOSTENKAT ASC");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function form_wg_definition_neu($einheit_id)
@@ -2427,7 +2543,7 @@ class weg
         $pdf->ezStream();
     }
 
-    function hg_ist_soll_pdf($pdf, $eigentuemer_id)
+    function hg_ist_soll_pdf(Cezpdf $pdf, $eigentuemer_id)
     {
         $this->get_eigentumer_id_infos($eigentuemer_id);
         if (request()->has('jahr')) {
@@ -2817,7 +2933,7 @@ ORDER BY HGA;");
     function wp_zeilen_anzeigen($wplan_id)
     {
         $arr = $this->wp_zeilen_arr($wplan_id);
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $k = new kontenrahmen ();
             $kontenrahmen_id = $k->get_kontenrahmen('Objekt', session()->get('objekt_id'));
             // echo "<table>";
@@ -2881,9 +2997,7 @@ ORDER BY HGA;");
     function wp_zeilen_arr($wplan_id)
     {
         $result = DB::select("SELECT * FROM WEG_WPLAN_ZEILEN WHERE AKTUELL='1' && WPLAN_ID='$wplan_id' ORDER BY KOSTENKONTO ASC");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function wp_plan_speichern($wjahr, $objekt_id)
@@ -2996,7 +3110,7 @@ ORDER BY HGA;");
         $pdf->ezStream();
     }
 
-    function pdf_g_wplan($pdf, $wplan_id)
+    function pdf_g_wplan(Cezpdf $pdf, $wplan_id)
     { // ALTE VERSION
         $jahr = $this->get_jahr_wp($wplan_id);
         $vorjahr = $jahr - 1;
@@ -3025,7 +3139,7 @@ ORDER BY HGA;");
         $pdf->ezSetDy(-6);
 
         $arr = $this->wp_zeilen_arr($wplan_id);
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $k = new kontenrahmen ();
             $kontenrahmen_id = $k->get_kontenrahmen('Objekt', session()->get('objekt_id'));
             for ($a = 0; $a < count($arr); $a++) {
@@ -3505,7 +3619,7 @@ ORDER BY HGA;");
         $objekt_name = $o->get_objekt_name($this->wp_objekt_id);
 
         $arr = $this->wp_zeilen_arr($wplan_id);
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $k = new kontenrahmen ();
             $kontenrahmen_id = $k->get_kontenrahmen('Objekt', $this->wp_objekt_id);
             for ($a = 0; $a < count($arr); $a++) {
@@ -3785,15 +3899,6 @@ WHERE KOS_TYP='$kos_typ'
         }
     }
 
-    function get_soll_betrag_wp($konto, $wplan_id)
-    {
-        $result = DB::select("SELECT SUM(BETRAG) AS BETRAG FROM WEG_WPLAN_ZEILEN WHERE AKTUELL='1' && WPLAN_ID='$wplan_id' && KOSTENKONTO='$konto'");
-        if (!empty($result)) {
-            $row = $result[0];
-            return $row ['BETRAG'];
-        }
-    }
-
     function hg_gesamtabrechnung_pdf($p_id = '0')
     {
         /* Art = Ausgaben, Einnahmen, Mittelverwendung */
@@ -3818,7 +3923,7 @@ WHERE KOS_TYP='$kos_typ'
         $kontenrahmen_id = $kk->get_kontenrahmen('Objekt', $this->p_objekt_id);
 
         $einnahme_manuell = $this->get_summe_zahlungen_manuell($p_id);
-        if (!is_array($einnahme_manuell)) {
+        if (empty($einnahme_manuell)) {
             $einnahme_konten_arr = $kk->get_konten_nach_art_gruppe('Einnahmen', 'Einnahmen Hausgeld', $kontenrahmen_id);
 
             $anz_e = count($einnahme_konten_arr);
@@ -4333,9 +4438,7 @@ WHERE KOS_TYP='$kos_typ'
     function get_summe_zahlungen_manuell($p_id)
     {
         $result = DB::select("SELECT KOSTENKONTO, SUM(BUCHUNGS_SUMME) AS SUMME FROM WEG_HG_ZAHLUNGEN WHERE  AKTUELL='1' &&  WEG_HGA_ID='$p_id' GROUP BY KOSTENKONTO ORDER BY `WEG_HG_ZAHLUNGEN`.`KOSTENKONTO` ASC");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function get_hgkonten_arr($p_id, $art, $last_year = true)
@@ -4485,11 +4588,20 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
         }
     }
 
+    function get_soll_betrag_wp($konto, $wplan_id)
+    {
+        $result = DB::select("SELECT SUM(BETRAG) AS BETRAG FROM WEG_WPLAN_ZEILEN WHERE AKTUELL='1' && WPLAN_ID='$wplan_id' && KOSTENKONTO='$konto'");
+        if (!empty($result)) {
+            $row = $result[0];
+            return $row ['BETRAG'];
+        }
+    }
+
     function III_tab_anzeigen($p_id)
     {
         $this->get_hga_profil_infos($p_id);
         $arr = $this->get_summen_konten_arr($this->p_ihr_gk_id, $this->p_jahr);
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             $this->man3 = true;
             echo "MANU $this->p_ihr_gk_id, $this->p_jahr";
             $arr = $this->get_summen_konten_arr_manuell($this->p_ihr_gk_id, $this->p_jahr);
@@ -4497,8 +4609,7 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
             echo "NEMANU";
             print_r($arr);
         }
-        if (is_array($arr)) {
-
+        if (!empty($arr)) {
             $kk = new kontenrahmen ();
             $kontenrahmen_id = $kk->get_kontenrahmen('Geldkonto', $this->p_ihr_gk_id);
             $anz = count($arr);
@@ -4519,9 +4630,7 @@ WHERE Z1.KONTO IS NULL AND Z2.KONTO='$konto'
     function get_summen_konten_arr($gk_id, $jahr)
     {
         $result = DB::select("SELECT `KONTENRAHMEN_KONTO`, SUM(BETRAG) AS SUMME  FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` = '$gk_id' AND `AKTUELL` = '1' && DATE_FORMAT(DATUM, '%Y') = '$jahr' GROUP BY `KONTENRAHMEN_KONTO` ORDER BY DATUM ASC");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function get_summen_konten_arr_manuell($gk_id, $jahr)
@@ -4984,12 +5093,11 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
     {
         $this->get_hga_profil_infos($p_id);
         $arr = $this->get_summen_konten_arr($this->p_ihr_gk_id, $this->p_jahr);
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             $this->man3 = true;
             $arr = $this->get_summen_konten_arr_manuell($this->p_ihr_gk_id, $this->p_jahr);
         }
-        if (is_array($arr)) {
-
+        if (!empty($arr)) {
             $kk = new kontenrahmen ();
             $kontenrahmen_id = $kk->get_kontenrahmen('Geldkonto', $this->p_ihr_gk_id);
             $anz = count($arr);
@@ -5033,7 +5141,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
         echo "Kontenrahmen $kontenrahmen_id<br>";
 
         $einnahme_manuell = $this->get_summe_zahlungen_manuell($p_id);
-        if (!is_array($einnahme_manuell)) {
+        if (empty($einnahme_manuell)) {
             $einnahme_konten_arr = $kk->get_konten_nach_art_gruppe('Einnahmen', 'Einnahmen Hausgeld', $kontenrahmen_id);
 
             $anz_e = count($einnahme_konten_arr);
@@ -6445,7 +6553,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
     {
         $arr = $this->get_wps_alle_arr();
 
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             echo "<label for=\"$id\">$label</label>";
             echo "<select name=\"$name\" size=\"1\" id=\"$id\" $js>\n";
             $anz = count($arr);
@@ -6473,9 +6581,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
     function get_wps_alle_arr()
     {
         $result = DB::select("SELECT * FROM WEG_WPLAN WHERE AKTUELL='1' ORDER BY JAHR DESC");
-        if ($result) {
-            return $result;
-        }
+        return $result;
     }
 
     function tab_konten_auswahl_summen_arr($gk_id, $jahr)
@@ -7042,7 +7148,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
         echo "<h5>OBJEKT:$o->objekt_kurzname</h5>";
         $gk = new geldkonto_info ();
         $gk_ids = $gk->geldkonten_arr('Objekt', $objekt_id);
-        if (is_array($gk_ids)) {
+        if (!empty($gk_ids)) {
             $anz = count($gk_ids);
             echo "<br>$anz Konten<br>";
             for ($a = 0; $a < $anz; $a++) {
@@ -7119,7 +7225,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
         echo "<h1>OBJEKT:$o->objekt_kurzname</h1>";
         $gk = new geldkonto_info ();
         $gk_ids = $gk->geldkonten_arr('Objekt', $objekt_id);
-        if (is_array($gk_ids)) {
+        if (!empty($gk_ids)) {
             $anz = count($gk_ids);
             echo "<br>$anz Konten<br>";
             for ($a = 0; $a < $anz; $a++) {
@@ -7316,11 +7422,10 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
         $arr = $this->einheiten_weg_tabelle_arr($objekt_id);
         $csv = $this->einheiten_weg_tabelle_arr($objekt_id);
 
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             fehlermeldung_ausgeben("Keine Einheiten im Objekt");
         } else {
             $anz_e = count($arr);
-
             for ($a = 0; $a < $anz_e; $a++) {
                 $einheit_id = $arr [$a] ['EINHEIT_ID'];
                 $csv [$a] ['EINHEIT_ID'] = $einheit_id;
@@ -7348,7 +7453,6 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
                 /* Geldkonto infos */
                 $gk = new geldkonto_info ();
                 $gk_arr = $gk->geldkonten_arr('Eigentuemer', $w->eigentuemer_id);
-                // $arr[$a]['GK'] = $gk->geldkonten_arr('Eigentuemer', $w->eigentuemer_id);
                 $anz_gk = count($gk_arr);
                 $gk_string = "";
                 for ($g = 0; $g < $anz_gk; $g++) {
@@ -7495,7 +7599,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
 
         $o = new objekt ();
         $einheiten_arr = $o->einheiten_objekt_arr($objekt_id);
-        if (is_array($einheiten_arr)) {
+        if (!empty($einheiten_arr)) {
             $anz = count($einheiten_arr);
             echo "<table class='striped'><thead>";
             echo "<tr><th>Einheit</th><th>$monat.$vorjahr</th><th>$monat.$jahr</th><th>$monat.$nachjahr</th></tr></thead>";

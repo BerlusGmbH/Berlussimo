@@ -382,7 +382,7 @@ class bk
         $konten_arr = $this->bk_konten($profil_id);
         $anzahl_konten = count($konten_arr);
 
-        if (is_array($konten_arr)) {
+        if (!empty($konten_arr)) {
             echo "<div>";
             echo "<b>Im Profil angelegte Konten</b><br>";
             echo "</div>";
@@ -545,7 +545,7 @@ class bk
         $geldkonto_id = session()->get('geldkonto_id');
         $buchungen_arr = $this->bk_konten_buchungen_alle($geldkonto_id, $this->bk_jahr, $konto, $konto_id, $this->bk_profil_id);
         $anzahl_buchungen = count($buchungen_arr);
-        if (is_array($buchungen_arr)) {
+        if (!empty($buchungen_arr)) {
             echo "<table class=\"striped\" border=\"0\">";
             echo "<thead>";
             echo "<tr class=\"feldernamen\"><th>";
@@ -600,7 +600,7 @@ class bk
         $anzahl_buchungen = count($buchungen_arr);
 
         $f->fieldset('Gewählte Buchungen', 'gb');
-        if (is_array($buchungen_arr)) {
+        if (!empty($buchungen_arr)) {
             echo "<table class=\"striped\" border=\"0\">";
             echo "<thead>";
             echo "<tr><th>BUCHUNGSNR</b></th><th>DATUM</th><th>BU-BETRAG</th><th>UML %</th><th>UMLAGE</th><th>HNDL</th><th>TEXT</th><th>WIRT.EINH.</th><th>KONTIERUNG</th><th>KEY</th><th>OPT.</th></tr>";
@@ -1025,8 +1025,6 @@ class bk
 
                     $me_arr = $me->get_kostenkat_info_aktuell($mv_id, $monat_t, $jahr_t, session()->get('me_kostenkat'));
                     if (is_array($me_arr)) {
-                        // echo '<pre>';
-                        // print_r($me_arr);
                         $betrag_akt = nummer_punkt2komma_t($me_arr ['BETRAG']);
                         $dat = $me_arr ['MIETENTWICKLUNG_DAT'];
                     } else {
@@ -3629,7 +3627,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
         $konten_arr = $this->bk_konten($profil_id);
         $anzahl_konten = count($konten_arr);
 
-        if (is_array($konten_arr)) {
+        if (!empty($konten_arr)) {
             for ($a = 0; $a < $anzahl_konten; $a++) {
                 $konto = $konten_arr [$a] ['KONTO'];
                 $bk_k_id = $konten_arr [$a] ['BK_K_ID'];

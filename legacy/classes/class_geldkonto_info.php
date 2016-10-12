@@ -7,6 +7,13 @@ class geldkonto_info {
     var $blz;
     var $kredit_institut;
     public $IBAN1;
+    public $geldkonto_id;
+    public $BIC;
+    public $beguenstigter;
+    public $geld_institut;
+    public $IBAN;
+    public $geldkonto_bez;
+    public $geldkonto_bezeichnung;
 
     /* Tabelle mit allen Geldkonten */
     function alle_geldkonten_tabelle_kontostand() {
@@ -223,12 +230,7 @@ class geldkonto_info {
     /* Funktion zur Ermittlung der Anzahl der Geldkonten */
     function geldkonten_arr($kostentraeger_typ, $kostentraeger_id) {
         $my_array = DB::select( "SELECT GELD_KONTEN.KONTO_ID, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.IBAN, GELD_KONTEN.BIC, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ, GELD_KONTEN.INSTITUT  FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE KOSTENTRAEGER_TYP = '$kostentraeger_typ' && KOSTENTRAEGER_ID = '$kostentraeger_id' && GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' ORDER BY GELD_KONTEN.KONTO_ID ASC" );
-        $numrows = !empty( $result );
-        if ($numrows) {
-            return $my_array;
-        } else {
-            return FALSE;
-        }
+        return $my_array;
     }
 
     /* Diese Funktion ermittelt Geldkontonummern und zeigt sie im Dropdown */

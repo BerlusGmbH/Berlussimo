@@ -268,7 +268,7 @@ function kontakt_suche($target_id, $string)
             $eigentuemer_p_id = $einheit_info_arr['EIGENTUEMER_PARTNER'];
 
             $g_id_arr = get_g_id_arr('Partner', $eigentuemer_p_id, $einheit_id);
-            if (is_array($g_id_arr)) {
+            if (!empty($g_id_arr)) {
                 for ($a = 0; $a < count($g_id_arr); $a++) {
                     $g_id = $g_id_arr[$a]['GERAETE_ID'];
 
@@ -368,7 +368,7 @@ function str_suche($target_id, $string)
             $eigentuemer_p_id = $einheit_info_arr['EIGENTUEMER_PARTNER'];
 
             $g_id_arr = get_g_id_arr('Partner', $eigentuemer_p_id, $einheit_id);
-            if (is_array($g_id_arr)) {
+            if (!empty($g_id_arr)) {
                 for ($a = 0; $a < count($g_id_arr); $a++) {
                     $g_id = $g_id_arr[$a]['GERAETE_ID'];
 
@@ -396,9 +396,7 @@ function get_g_id_arr($kos_typ, $kos_id, $einheit_id)
     $einheit_kurzname = $einheit_info_arr['EINHEIT_KURZNAME'];
     $db_abfrage = "SELECT GERAETE_ID FROM W_GERAETE WHERE AKTUELL='1' && LAGE_RAUM='$einheit_kurzname' && KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID='$kos_id'";
     $result = DB::select($db_abfrage);
-    if (!empty($result)) {
-        return $result;
-    }
+    return $result;
 }
 
 
@@ -857,7 +855,7 @@ function form_wartungsteil($kos_typ, $kos_id)
     $js_neues_teil = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'wartungsteil erfassen']) . "','leftBox');\"";
     formular('', 'formx1');
 
-    if (is_array($arr)) {
+    if (!empty($arr)) {
         $datum_ab = date("d.m.Y");
         $datum_ab = tage_plus_wp($datum_ab, 1);
         $anz = count($arr);
@@ -1132,7 +1130,7 @@ function form_wt_aendern($g_id)
     } else {
 
         $gereate_info_arr = geraete_info_arr($g_id);
-        if (!is_array($gereate_info_arr)) {
+        if (empty($gereate_info_arr)) {
             die('Gerät unbekannt xsdsdsd');
         } else {
             extract($gereate_info_arr[0]);
@@ -1356,7 +1354,7 @@ function get_hersteller_modelle_arr($hersteller)
 function get_wgeraete_bez($gruppe_id)
 {
     $arr = get_wartungsteile_gruppe_arr($gruppe_id);
-    if (is_array($arr)) {
+    if (!empty($arr)) {
         $anz = count($arr);
         for ($a = 0; $a < $anz; $a++) {
             $g_id = $arr[$a]['GERAETE_ID'];
@@ -1369,7 +1367,7 @@ function get_wgeraete_bez($gruppe_id)
 function get_hersteller_gruppe($gruppe_id)
 {
     $arr = get_wartungsteile_gruppe_arr($gruppe_id);
-    if (is_array($arr)) {
+    if (!empty($arr)) {
         $anz = count($arr);
         for ($a = 0; $a < $anz; $a++) {
             $h_bez = $arr[$a]['HERSTELLER'];
@@ -1387,7 +1385,7 @@ function get_hersteller_gruppe($gruppe_id)
 function get_hersteller_modelle($hersteller)
 {
     $arr = get_hersteller_modelle_arr($hersteller);
-    if (is_array($arr)) {
+    if (!empty($arr)) {
         $anz = count($arr);
         for ($a = 0; $a < $anz; $a++) {
             $bez = $arr[$a]['BEZEICHNUNG'];
@@ -1443,10 +1441,9 @@ function termin_suchen($g_id)
 {
     session()->put('g_id', $g_id);
     $g_info_arr = geraete_info_arr($g_id);
-    if (is_array($g_info_arr)) {
+    if (!empty($g_info_arr)) {
         $gruppe_id = $g_info_arr[0]['GRUPPE_ID'];
         $kos_typ = $g_info_arr[0]['KOSTENTRAEGER_TYP'];
-
     } else {
         die('Keine Geräte Informationen!!! Fehler 43332! Z:945. termin_suchen!');
     }
@@ -1520,7 +1517,7 @@ function termin_suchen3($g_id)
 {
     session()->put('g_id', $g_id);
     $g_info_arr = geraete_info_arr($g_id);
-    if (is_array($g_info_arr)) {
+    if (!empty($g_info_arr)) {
         $gruppe_id = $g_info_arr[0]['GRUPPE_ID'];
         session()->put('gruppe_id', $gruppe_id);
         $kos_typ = $g_info_arr[0]['KOSTENTRAEGER_TYP'];
@@ -1677,7 +1674,7 @@ function besten_termin_suchen($g_id, $datum_df)
 {
     session()->put('g_id', $g_id);
     $g_info_arr = geraete_info_arr($g_id);
-    if (is_array($g_info_arr)) {
+    if (!empty($g_info_arr)) {
 
         $gruppe_id = $g_info_arr[0]['GRUPPE_ID'];
         $kos_typ = $g_info_arr[0]['KOSTENTRAEGER_TYP'];
@@ -2042,7 +2039,7 @@ function kontaktdaten_anzeigen($g_id = 1)
 function kontaktdaten_anzeigen_kunde($kos_id)
 {
     $arr = finde_detail_kontakt_arr('PARTNER_LIEFERANT', $kos_id);
-    if (is_array($arr)) {
+    if (!empty($arr)) {
         $kontaktdaten = '';
         foreach ($arr as $a) {
             $dname = $arr[$a]['DETAIL_NAME'];
@@ -2069,7 +2066,7 @@ function kontaktdaten_anzeigen_mieter($einheit_bez, $hinweis_an = 1)
             Foreach ($result as $row) {
                 $person_id = $row['PERSON_MIETVERTRAG_PERSON_ID'];
                 $arr = finde_detail_kontakt_arr('PERSON', $person_id, $hinweis_an);
-                if (is_array($arr)) {
+                if (!empty($arr)) {
                     $anz = count($arr);
                     for ($a = 0; $a < $anz; $a++) {
                         $dname = $arr[$a]['DETAIL_NAME'];
@@ -2888,13 +2885,13 @@ function termine_tag_kw($benutzer_id, $datum_d)
 
     $luecken_termine = get_luecken_termine($benutzer_id, $datum_d);
 
-    if (is_array($luecken_termine) && is_array($arr)) {
+    if (is_array($luecken_termine) && !empty($arr)) {
         $my_arr = array_sortByIndex(array_merge($arr, $luecken_termine), 'VON');
     }
-    if (is_array($luecken_termine) && !is_array($arr)) {
+    if (is_array($luecken_termine) && empty($arr)) {
         $my_arr = $luecken_termine;
     }
-    if (!is_array($luecken_termine) && is_array($arr)) {
+    if (!is_array($luecken_termine) && !empty($arr)) {
         $my_arr = $arr;
     }
     $arr = $my_arr;
@@ -2977,7 +2974,7 @@ function get_luecken_termine($benutzer_id, $datum_d)
     unset($prof_arr);
 
     $arr = get_termine_tag_arr($benutzer_id, $datum_d);
-    if (is_array($arr)) {
+    if (!empty($arr)) {
         $anz = count($arr);
         $z = 0;
         for ($a = 0; $a < $anz; $a++) {
@@ -3073,7 +3070,7 @@ function get_luecken_termine1($benutzer_id, $datum_d)
     unset($prof_arr);
 
     $arr = get_termine_tag_arr($benutzer_id, $datum_d);
-    if (is_array($arr)) {
+    if (!empty($arr)) {
         $anz = count($arr);
         $z = 0;
         for ($a = 0; $a < $anz; $a++) {
@@ -3788,13 +3785,13 @@ function tages_termine($benutzer_id, $datum_d)
     $arr = get_termine_tag_arr($benutzer_id, $datum_d);
 
     $luecken_termine = get_luecken_termine($benutzer_id, $datum_d);
-    if (is_array($luecken_termine) && is_array($arr)) {
+    if (is_array($luecken_termine) && !empty($arr)) {
         $my_arr = array_sortByIndex(array_merge($arr, $luecken_termine), 'VON');
     }
-    if (is_array($luecken_termine) && !is_array($arr)) {
+    if (is_array($luecken_termine) && empty($arr)) {
         $my_arr = $luecken_termine;
     }
-    if (!is_array($luecken_termine) && is_array($arr)) {
+    if (!is_array($luecken_termine) && !empty($arr)) {
         $my_arr = $arr;
     }
     $arr = $my_arr;
@@ -3929,7 +3926,7 @@ function vorschlag($gruppe_id = '1', $gemacht = 'NOT')
 {
     session()->put('gruppe_id', $gruppe_id);
     $arr = alle_noch_zu_machen_arr($gruppe_id);
-    if (is_array($arr)) {
+    if (!empty($arr)) {
         $anz = count($arr);
         $datum_sql = date("Y-m-d");
         $termine_tag = 5;
@@ -4036,7 +4033,7 @@ function vorschlag_kurz($gruppe_id = '1', $gemacht = 'NOT')
 {
     session()->put('gruppe_id', $gruppe_id);
     $arr = alle_noch_zu_machen_arr($gruppe_id);
-    if (is_array($arr)) {
+    if (!empty($arr)) {
         $anz = count($arr);
         if (!session()->has('datum_df')) {
             $datum_sql = date("Y-m-d");
@@ -4212,7 +4209,7 @@ function vorschlag_kurz_chrono($gruppe_id = '1', $gemacht = 'NOT')
 {
     session()->put('gruppe_id', $gruppe_id);
     $arr = alle_noch_zu_machen_arr_chrono($gruppe_id);
-    if (is_array($arr)) {
+    if (!empty($arr)) {
         $anz = count($arr);
         if (session()->has('datum_df')) {
             $datum_sql = date("Y-m-d");
@@ -4858,7 +4855,7 @@ class general
         echo "<span class=\"$class_f\">";
         echo "<select name=\"$name\" size=\"1\" id=\"$id\" $js>\n";
         $arr = $this->get_teams_arr();
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             for ($a = 0; $a < $anz; $a++) {
                 $t_id = $arr[$a]['TEAM_ID'];
@@ -4888,7 +4885,7 @@ class general
     function dropdown_mitarbeiter($team_id, $label, $id, $name, $selected, $js, $class_r = 'reihe', $class_f = 'feld')
     {
         $arr = $this->get_wteam_benutzer($team_id);
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             echo "<div class=\"$class_r\">";
             echo "<span class=\"label\">$label</span>";
             echo "<span class=\"$class_f\">";
@@ -4931,7 +4928,7 @@ class general
             echo "<select name=\"$name\" size=\"5\" id=\"$id\" $js>\n";
 
             foreach ($arr as $row) {
-                $b_id = $row->BENUTZER_ID;
+                $b_id = $row['BENUTZER_ID'];
                 $b_name = get_benutzername($b_id);
                 if ($selected == $b_id) {
                     echo "<option selected value=\"$b_id\">$b_name</option>";
@@ -4965,7 +4962,7 @@ class general
     function get_team_liste($link)
     {
         $arr = $this->get_teams_arr();
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             for ($a = 0; $a < $anz; $a++) {
                 $t_id = $arr[$a]['TEAM_ID'];

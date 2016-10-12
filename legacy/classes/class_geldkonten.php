@@ -251,11 +251,7 @@ class gk
     {
         $db_abfrage = "SELECT * FROM GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID='$kos_id'";
         $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     function check_zuweisung_kos_typ($geldkonto_id, $kos_typ, $kos_id)

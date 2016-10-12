@@ -28,12 +28,7 @@ class zeiterfassung
     function stundenzettel_in_arr($benutzer_id)
     {
         $result = DB::select("SELECT ZETTEL_ID, BESCHREIBUNG, ERFASSUNGSDATUM FROM STUNDENZETTEL WHERE BENUTZER_ID='$benutzer_id' && AKTUELL = '1' ORDER BY ERFASSUNGSDATUM DESC");
-
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     function anzahl_e_zettel($benutzer_id)
@@ -90,8 +85,7 @@ class zeiterfassung
         $b = new buchen ();
         $f->erstelle_formular('Eintrag ändern', '');
         $zeile_arr = $this->zeile_in_arr($zettel_id, $pos_dat);
-        // print_r($zeile_arr);
-        if (is_array($zeile_arr)) {
+        if (!empty($zeile_arr)) {
             $datum = date_mysql2german($zeile_arr [0] ['DATUM']);
             $f->datum_feld("Datum:", "datum", "$datum", "10", 'datum', '');
             $f->hidden_feld("zettel_id", "$zettel_id");
@@ -150,11 +144,7 @@ class zeiterfassung
     function zeile_in_arr($zettel_id, $pos_dat)
     {
         $result = DB::select("SELECT ST_DAT, ST_ID, ZETTEL_ID, DATUM, LEISTUNG_ID, DAUER_MIN, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, HINWEIS, BEGINN, ENDE, LEISTUNGSKATALOG.BEZEICHNUNG FROM STUNDENZETTEL_POS JOIN LEISTUNGSKATALOG ON (STUNDENZETTEL_POS.LEISTUNG_ID = LEISTUNGSKATALOG.LK_ID) WHERE ZETTEL_ID='$zettel_id' && ST_DAT='$pos_dat' && STUNDENZETTEL_POS.AKTUELL = '1' ORDER BY  DATUM, ST_ID ASC");
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     function get_userid($zettel_id)
@@ -243,9 +233,7 @@ class zeiterfassung
         $f->fieldset("Eigene Stundennachweise", 'z_anlegen');
         $this->benutzer_id = Auth::user()->id;
         $eigene_zettel_arr = $this->stundenzettel_in_arr($this->benutzer_id);
-        // echo "<pre>";
-        // print_r($eigene_zettel_arr);
-        if (!is_array($eigene_zettel_arr)) {
+        if (empty($eigene_zettel_arr)) {
             echo "Sie haben keine Stundennachweise";
         } else {
             $anzahl_stundenzettel = count($eigene_zettel_arr);
@@ -375,7 +363,7 @@ class zeiterfassung
         $f->fieldset("Sie sehen den Stundennachweis <b>$this->beschreibung vom $this->erf_datum. Ersteller: $this->st_benutzername</b> Mitarbeiter von $this->partner_name", 'st_u');
 
         $stundenzettel_pos_arr = $this->stundenzettelleistungen_in_arr($id);
-        if (!is_array($stundenzettel_pos_arr)) {
+        if (empty($stundenzettel_pos_arr)) {
             echo "Stundenzettel enthält keine Daten";
         } else {
             $link_pdf = "<a href='" . route('legacy::zeiterfassung::index', ['option' => 'zettel2pdf', 'zettel_id' => $id]) . "'>PDF-Ansicht</a>";
@@ -472,15 +460,15 @@ class zeiterfassung
         $result = DB::select("SELECT ZETTEL_ID, STUNDENZETTEL.BENUTZER_ID, BESCHREIBUNG, ERFASSUNGSDATUM, name, hourly_rate, hours_per_week FROM STUNDENZETTEL JOIN users ON (STUNDENZETTEL.BENUTZER_ID = users.id) WHERE ZETTEL_ID=? && AKTUELL = '1' LIMIT 0,1", [$id]);
 
         $row = $result[0];
-        $this->stundenzettel_id = $row->ZETTEL_ID;
-        $this->st_benutzer_id = $row->BENUTZER_ID;
-        $this->beschreibung = $row->BESCHREIBUNG;
-        $this->erf_datum_mysql = $row->ERFASSUNGSDATUM;
-        $this->erf_datum = date_mysql2german($row->ERFASSUNGSDATUM);
-        $this->st_benutzername = $row->name;
-        $this->stundensatz = $row->hourly_rate;
+        $this->stundenzettel_id = $row['ZETTEL_ID'];
+        $this->st_benutzer_id = $row['BENUTZER_ID'];
+        $this->beschreibung = $row['BESCHREIBUNG'];
+        $this->erf_datum_mysql = $row['ERFASSUNGSDATUM'];
+        $this->erf_datum = date_mysql2german($row['ERFASSUNGSDATUM']);
+        $this->st_benutzername = $row['name'];
+        $this->stundensatz = $row['hourly_rate'];
         $this->anzahl_eigene_zettel = $this->anzahl_e_zettel($this->st_benutzer_id);
-        $this->stunden_pro_woche = $row->hours_per_week;
+        $this->stunden_pro_woche = $row['hours_per_week'];
         $this->gesamt_azeit_min = $this->gesamt_azeit_min($this->st_benutzer_id);
         $this->gesamt_azeit_std = $this->min2std($this->gesamt_azeit_min);
         $this->gesamt_soll_stunden = $this->stunden_pro_woche * $this->anzahl_eigene_zettel;
@@ -489,11 +477,7 @@ class zeiterfassung
     function stundenzettelleistungen_in_arr($zettel_id)
     {
         $result = DB::select("SELECT ST_DAT, ST_ID, ZETTEL_ID, DATUM, LEISTUNG_ID, DAUER_MIN, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, HINWEIS, BEGINN, ENDE, LEISTUNGSKATALOG.BEZEICHNUNG FROM STUNDENZETTEL_POS JOIN LEISTUNGSKATALOG ON (STUNDENZETTEL_POS.LEISTUNG_ID = LEISTUNGSKATALOG.LK_ID) WHERE ZETTEL_ID='$zettel_id' && STUNDENZETTEL_POS.AKTUELL = '1' ORDER BY  DATUM, ST_ID ASC");
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     function zeit2decimal($zeit)
@@ -574,7 +558,7 @@ class zeiterfassung
     function stundensatz($benutzer_id)
     {
         $result = DB::select("SELECT hourly_rate FROM users WHERE id = ? ORDER BY id DESC LIMIT 0,1", [$benutzer_id]);
-        return !empty($result) ? $esult[0]->STUNDENSATZ : 0;
+        return !empty($result) ? $result[0]['STUNDENSATZ'] : 0;
     }
 
     function get_beschr_by_l_id($leistung_id)
@@ -788,8 +772,7 @@ class zeiterfassung
         $pdf->ezSetDy(-20); // abstand
 
         $stundenzettel_pos_arr = $this->stundenzettelleistungen_in_arr($id);
-        if (!is_array($stundenzettel_pos_arr)) {
-
+        if (empty($stundenzettel_pos_arr)) {
             $pdf->ezText("<b>Stundenzettel enthält keine Daten</b>", 10, array(
                 'left' => '10'
             ));
@@ -999,11 +982,7 @@ class zeiterfassung
         } else {
             $result = DB::select("SELECT users.id, users.name, BP_PARTNER_ID FROM users JOIN BENUTZER_PARTNER ON (users.id=BP_BENUTZER_ID) GROUP BY users.id ORDER BY BENUTZER_PARTNER.BP_PARTNER_ID, users.name ASC");
         }
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     function anzahl_zettel_mitarbeiter($benutzer_id)
@@ -1016,7 +995,6 @@ class zeiterfassung
     {
         $eig_stunden_zettel = $this->stundenzettel_in_arr($benutzer_id);
         $anzahl = count($eig_stunden_zettel);
-        // echo "$benutzer_id e:$anzahl<br>";
         $g_offen = 0;
         if ($anzahl > 0) {
             for ($a = 0; $a < $anzahl; $a++) {
@@ -1039,9 +1017,7 @@ class zeiterfassung
         $f->fieldset("Stundennachweise", 'z_anlegen');
         $this->benutzer_id = Auth::user()->id;
         $eigene_zettel_arr = $this->stundenzettel_in_arr($mitarbeiter_id);
-        // echo "<pre>";
-        // print_r($eigene_zettel_arr);
-        if (!is_array($eigene_zettel_arr)) {
+        if (empty($eigene_zettel_arr)) {
             echo "&nbsp;$benutzer_name hat keine Stundennachweise";
         } else {
             $anzahl_stundenzettel = count($eigene_zettel_arr);
@@ -1071,7 +1047,7 @@ class zeiterfassung
 
                 if ($this->check_if_beleg_erstellt($zettel_id)) {
                     $_beleg_arr = $this->get_beleg_id_erstellt($zettel_id);
-                    if (is_array($_beleg_arr)) {
+                    if (!empty($_beleg_arr)) {
                         $anz = count($_beleg_arr);
                         // $link_zettel2beleg = "Beleg $anz Mal erstellt. ";
                         $link_zettel2beleg = "";
@@ -1114,9 +1090,7 @@ class zeiterfassung
     function get_beleg_id_erstellt($zettel_id)
     {
         $result = DB::select("SELECT IN_BELEG FROM STUNDENZETTEL_POS WHERE ZETTEL_ID='$zettel_id' && (IN_BELEG != '0' OR IN_BELEG != NULL) && AKTUELL='1' GROUP BY IN_BELEG");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function urlaubstage_offen_tab($benutzer_id)
@@ -1370,18 +1344,18 @@ ORDER BY GEWERK_ID ASC, STD DESC", [$von, $bis]);
                 $g_summe = 0;
                 $g_summe_std = 0;
                 foreach ($result as $row) {
-                    $benutzername = $row->name;
-                    $mitarbeiter_ids [] = $row->BENUTZER_ID;
-                    $std = nummer_punkt2komma_t($row->STD);
-                    $eur = nummer_punkt2komma_t($row->LEISTUNG_EUR);
+                    $benutzername = $row['name'];
+                    $mitarbeiter_ids [] = $row['BENUTZER_ID'];
+                    $std = nummer_punkt2komma_t($row['STD']);
+                    $eur = nummer_punkt2komma_t($row['LEISTUNG_EUR']);
 
-                    $kostentraeger_typ = $row->KOSTENTRAEGER_TYP;
-                    $kostentraeger_id = $row->KOSTENTRAEGER_ID;
+                    $kostentraeger_typ = $row['KOSTENTRAEGER_TYP'];
+                    $kostentraeger_id = $row['KOSTENTRAEGER_ID'];
                     $r = new rechnung ();
                     $kosten_bez = $r->kostentraeger_ermitteln($kostentraeger_typ, $kostentraeger_id);
                     echo "<tr><td>$benutzername</td><td>$std Std.</td><td>$eur €</td><td>$kosten_bez</td></tr>";
-                    $g_summe_std += $row->STD;
-                    $g_summe += $row->LEISTUNG_EUR;
+                    $g_summe_std += $row['STD'];
+                    $g_summe += $row['LEISTUNG_EUR'];
                 }
                 $g_summe_a = nummer_punkt2komma_t($g_summe);
                 $g_summe_std_a = nummer_punkt2komma_t($g_summe_std);
@@ -1407,12 +1381,12 @@ ORDER BY STD DESC
                     $g_summe = 0;
                     $g_summe_std = 0;
                     foreach ($result as $row) {
-                        $bez = $row->BEZEICHNUNG;
-                        $std = nummer_punkt2komma_t($row->STD);
-                        $eur = nummer_punkt2komma_t($row->LEISTUNG_EUR);
+                        $bez = $row['BEZEICHNUNG'];
+                        $std = nummer_punkt2komma_t($row['STD']);
+                        $eur = nummer_punkt2komma_t($row['LEISTUNG_EUR']);
                         echo "<tr><td>$bez</td><td>$std Std.</td><td>$eur €</td></tr>";
-                        $g_summe_std += $row->STD;
-                        $g_summe += $row->LEISTUNG_EUR;
+                        $g_summe_std += $row['STD'];
+                        $g_summe += $row['LEISTUNG_EUR'];
                     }
                     $g_summe_a = nummer_punkt2komma_t($g_summe);
                     $g_summe_std_a = nummer_punkt2komma_t($g_summe_std);
@@ -1441,14 +1415,14 @@ WHERE STUNDENZETTEL_POS.AKTUELL = '1'  && STUNDENZETTEL.AKTUELL = '1' && DATUM B
 
                         foreach ($result as $row) {
 
-                            $datum_m = date_mysql2german($row->DATUM);
-                            $beginn = $row->BEGINN;
-                            $ende = $row->ENDE;
-                            $stunden = nummer_punkt2komma_t($row->STUNDEN);
-                            $d_min = $row->DAUER_MIN;
-                            $lbez = $row->BEZEICHNUNG;
-                            $kostentraeger_typ = $row->KOSTENTRAEGER_TYP;
-                            $kostentraeger_id = $row->KOSTENTRAEGER_ID;
+                            $datum_m = date_mysql2german($row['DATUM']);
+                            $beginn = $row['BEGINN'];
+                            $ende = $row['ENDE'];
+                            $stunden = nummer_punkt2komma_t($row['STUNDEN']);
+                            $d_min = $row['DAUER_MIN'];
+                            $lbez = $row['BEZEICHNUNG'];
+                            $kostentraeger_typ = $row['KOSTENTRAEGER_TYP'];
+                            $kostentraeger_id = $row['KOSTENTRAEGER_ID'];
                             $r = new rechnung ();
                             $kosten_bez = $r->kostentraeger_ermitteln($kostentraeger_typ, $kostentraeger_id);
                             echo "<tr><td>$datum_m</td><td>$beginn - $ende</td><td>$d_min Min. / $stunden Std.</td><td>$lbez</td><td>$kosten_bez</td></tr>";
@@ -1477,9 +1451,9 @@ GROUP BY STUNDENZETTEL.BENUTZER_ID LIMIT 0 , 1", [$benutzer_id, $von, $bis]);
                 echo "<table>";
                 echo "<tr><th>Mitarbeiter</th><th>Stunden</th><th>Leistung</th></tr>";
                 foreach ($result as $row) {
-                    $benutzername = $row->name;
-                    $std = nummer_punkt2komma_t($row->STD);
-                    $eur = nummer_punkt2komma_t($row->LEISTUNG_EUR);
+                    $benutzername = $row['name'];
+                    $std = nummer_punkt2komma_t($row['STD']);
+                    $eur = nummer_punkt2komma_t($row['LEISTUNG_EUR']);
                     echo "<tr><td>$benutzername</td><td>$std Std.</td><td>$eur €</td></tr>";
                 }
                 echo "</table>";
@@ -1502,15 +1476,15 @@ DATUM BETWEEN ? AND ? && STUNDENZETTEL.BENUTZER_ID=? $kos_typ_db $kos_id_db ORDE
                 echo "<tr><th>DATUM</th><th>Dauer</th><th>Leistung</th><th>ZUWEISUNG</th></tr>";
 
                 foreach ($result as $row) {
-                    $benutzername = $row->name;
-                    $datum_m = date_mysql2german($row->DATUM);
-                    $beginn = $row->BEGINN;
-                    $ende = $row->ENDE;
-                    $stunden = nummer_punkt2komma_t($row->STUNDEN);
-                    $d_min = $row->DAUER_MIN;
-                    $lbez = $row->BEZEICHNUNG;
-                    $kostentraeger_typ = $row->KOSTENTRAEGER_TYP;
-                    $kostentraeger_id = $row->KOSTENTRAEGER_ID;
+                    $benutzername = $row['name'];
+                    $datum_m = date_mysql2german($row['DATUM']);
+                    $beginn = $row['BEGINN'];
+                    $ende = $row['ENDE'];
+                    $stunden = nummer_punkt2komma_t($row['STUNDEN']);
+                    $d_min = $row['DAUER_MIN'];
+                    $lbez = $row['BEZEICHNUNG'];
+                    $kostentraeger_typ = $row['KOSTENTRAEGER_TYP'];
+                    $kostentraeger_id = $row['KOSTENTRAEGER_ID'];
                     $r = new rechnung ();
                     $kosten_bez = $r->kostentraeger_ermitteln($kostentraeger_typ, $kostentraeger_id);
                     echo "<tr><td>$datum_m</td><td>$d_min Min. / $stunden Std.</td><td>$lbez</td><td>$kosten_bez</td></tr>";
@@ -1540,12 +1514,12 @@ ORDER BY STD DESC, DATUM", [$kos_typ, $kos_id, $gewerk_id, $von, $bis]);
                 $g_summe = 0;
                 $g_summe_std = 0;
                 foreach ($result as $row) {
-                    $bez = $row->BEZEICHNUNG;
-                    $std = nummer_punkt2komma_t($row->STD);
-                    $eur = nummer_punkt2komma_t($row->LEISTUNG_EUR);
+                    $bez = $row['BEZEICHNUNG'];
+                    $std = nummer_punkt2komma_t($row['STD']);
+                    $eur = nummer_punkt2komma_t($row['LEISTUNG_EUR']);
                     echo "<tr><td>$bez</td><td>$std Std.</td><td>$eur €</td></tr>";
-                    $g_summe_std += $row->STD;
-                    $g_summe += $row->LEISTUNG_EUR;
+                    $g_summe_std += $row['STD'];
+                    $g_summe += $row['LEISTUNG_EUR'];
                 }
                 $g_summe_a = nummer_punkt2komma_t($g_summe);
                 $g_summe_std_a = nummer_punkt2komma_t($g_summe_std);
@@ -1564,13 +1538,13 @@ GROUP BY STUNDENZETTEL.BENUTZER_ID ORDER BY DATUM ASC, STD DESC, GEWERK_ID ASC",
                     $g_summe = 0;
                     $g_summe_std = 0;
                     foreach ($result as $row) {
-                        $mitarbeiter_ids [] = $row->BENUTZER_ID;
-                        $benutzername = $row->name;
-                        $std = nummer_punkt2komma_t($row->STD);
-                        $eur = nummer_punkt2komma_t($row->LEISTUNG_EUR);
+                        $mitarbeiter_ids [] = $row['BENUTZER_ID'];
+                        $benutzername = $row['name'];
+                        $std = nummer_punkt2komma_t($row['STD']);
+                        $eur = nummer_punkt2komma_t($row['LEISTUNG_EUR']);
                         echo "<tr><td>$benutzername</td><td>$std Std.</td><td>$eur €</td></tr>";
-                        $g_summe_std += $row->STD;
-                        $g_summe += $row->LEISTUNG_EUR;
+                        $g_summe_std += $row['STD'];
+                        $g_summe += $row['LEISTUNG_EUR'];
                     }
                     $g_summe_a = nummer_punkt2komma_t($g_summe);
                     $g_summe_std_a = nummer_punkt2komma_t($g_summe_std);
@@ -1599,14 +1573,14 @@ DATUM BETWEEN ? AND ? && STUNDENZETTEL.BENUTZER_ID=? $kos_typ_db $kos_id_db ORDE
                         echo "<tr><th>DATUM</th><th>Dauer</th><th>Leistung</th><th>Zuweisung</th></tr>";
 
                         foreach ($result as $row) {
-                            $datum_m = date_mysql2german($row->DATUM);
-                            $beginn = $row->BEGINN;
-                            $ende = $row->ENDE;
-                            $stunden = nummer_punkt2komma_t($row->STUNDEN);
-                            $d_min = $row->DAUER_MIN;
-                            $lbez = $row->BEZEICHNUNG;
-                            $kostentraeger_typ = $row->KOSTENTRAEGER_TYP;
-                            $kostentraeger_id = $row->KOSTENTRAEGER_ID;
+                            $datum_m = date_mysql2german($row['DATUM']);
+                            $beginn = $row['BEGINN'];
+                            $ende = $row['ENDE'];
+                            $stunden = nummer_punkt2komma_t($row['STUNDEN']);
+                            $d_min = $row['DAUER_MIN'];
+                            $lbez = $row['BEZEICHNUNG'];
+                            $kostentraeger_typ = $row['KOSTENTRAEGER_TYP'];
+                            $kostentraeger_id = $row['KOSTENTRAEGER_ID'];
                             $r = new rechnung ();
                             $kosten_bez = $r->kostentraeger_ermitteln($kostentraeger_typ, $kostentraeger_id);
                             echo "<tr><td>$datum_m</td><td>$d_min Min. / $stunden Std.</td><td>$lbez</td><td>$kosten_bez</td></tr>";

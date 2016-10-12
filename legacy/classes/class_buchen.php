@@ -3,6 +3,8 @@
 class buchen
 {
     var $globalMultisortVar = array();
+    public $summe_konto_buchungen;
+    public $akt_betrag_punkt;
 
     function geldkonto_auswahl()
     {
@@ -11,7 +13,7 @@ class buchen
         if (!session()->has('geldkonto_id')) {
             $geld_konten_arr = $this->alle_geldkonten_arr();
             $anzahl_objekte = count($geld_konten_arr);
-            if (is_array($geld_konten_arr)) {
+            if (!empty($geld_konten_arr)) {
                 echo "<p class=\"geldkonto_auswahl\">";
                 for ($i = 0; $i < $anzahl_objekte; $i++) {
                     $konto_id = $geld_konten_arr [$i] ['KONTO_ID'];
@@ -66,11 +68,7 @@ class buchen
     function alle_geldkonten_arr()
     {
         $result = DB::select("SELECT GELD_KONTEN.KONTO_ID,GELD_KONTEN.BEZEICHNUNG, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' GROUP BY GELD_KONTEN.KONTO_ID  ORDER BY GELD_KONTEN.KONTO_ID ASC");
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     function geldkonto_header()
@@ -454,7 +452,7 @@ class buchen
         if ($typ == 'Mietvertrag') {
 
             $gk_arr_objekt = $this->get_objekt_arr_gk(session()->get('geldkonto_id'));
-            if (is_array($gk_arr_objekt)) {
+            if (!empty($gk_arr_objekt)) {
 
                 $db_abfrage = "SELECT  HAUS.OBJEKT_ID, OBJEKT_KURZNAME, MIETVERTRAG.EINHEIT_ID, EINHEIT_KURZNAME, MIETVERTRAG_ID FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT, MIETVERTRAG) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && EINHEIT.EINHEIT_ID=MIETVERTRAG.EINHEIT_ID)
 WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERTRAG_AKTUELL='1' ";
@@ -535,7 +533,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             echo "VORWAHL $vorwahl_bez";
 
             $gk_arr_objekt = $this->get_objekt_arr_gk(session()->get('geldkonto_id'));
-            if (is_array($gk_arr_objekt)) {
+            if (!empty($gk_arr_objekt)) {
 
                 $db_abfrage = "SELECT ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT.HAUS_ID, HAUS.OBJEKT_ID FROM `WEG_MITEIGENTUEMER` , EINHEIT, HAUS WHERE EINHEIT_AKTUELL = '1' && HAUS_AKTUELL = '1' && AKTUELL = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && EINHEIT.EINHEIT_ID = WEG_MITEIGENTUEMER.EINHEIT_ID ";
 
@@ -589,11 +587,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
     {
         $db_abfrage = "SELECT KOSTENTRAEGER_ID  FROM  GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$gk_id' && KOSTENTRAEGER_TYP='Objekt'";
         $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     function geldbuchungs_dat_deaktivieren($buchungs_dat)
@@ -2850,7 +2844,7 @@ LIMIT 0 , 1");
                 $mv_array = $einheit_info->get_mietvertraege_bis("" . $einheiten_array [$i] ['EINHEIT_ID'] . "", $jahr, $monat);
                 $mv_anzahl = count($mv_array);
 
-                if (is_array($mv_array)) {
+                if (!empty($mv_array)) {
                     $zeile = 0;
                     for ($b = 0; $b < $mv_anzahl; $b++) {
                         $mv_id = $mv_array [$b] ['MIETVERTRAG_ID'];

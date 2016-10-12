@@ -30,10 +30,8 @@ function umlautundgross($wort)
 function gib_zahlen($string)
 {
     $arr = explode(' ', $string);
-    // print_r($arr);
     if (is_array($arr)) {
         $anz = count($arr);
-
         for ($a = 0; $a < $anz; $a++) {
             if (($arr [$a]) != '') {
                 if (!ctype_alpha($arr [$a])) {
@@ -42,11 +40,9 @@ function gib_zahlen($string)
             }
         }
         if (isset ($n_arr)) {
-            // $n_arr1 = array_unique($n_arr);
             return $n_arr;
         }
     }
-    // is_
 }
 
 function check_user_mod($benutzer_id, $module_name)

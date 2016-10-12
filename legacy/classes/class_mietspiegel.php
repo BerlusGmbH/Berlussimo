@@ -5,7 +5,7 @@ class mietspiegel
     function liste_mietspiegel()
     {
         $arr = $this->get_ms_arr();
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             echo "Keine Mietspiegeldaten in der Datenbank";
         } else {
             $anz = count($arr);
@@ -25,17 +25,13 @@ class mietspiegel
     function get_ms_arr()
     {
         $result = DB::select("SELECT JAHR, ORT FROM MIETSPIEGEL GROUP BY JAHR, ORT ORDER BY JAHR DESC, ORT ASC");
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     function mietspiegel_anzeigen($jahr, $ort = null)
     {
         $arr = $this->mietspiegel_werte_arr($jahr, $ort);
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             fehlermeldung_ausgeben("Keine Daten im Mietspiegel $jahr");
         } else {
             $this->form_neue_ms_werte($jahr, $ort);
@@ -65,11 +61,7 @@ class mietspiegel
         } else {
             $result = DB::select("SELECT * FROM MIETSPIEGEL WHERE JAHR='$jahr' && ORT='$ort' ORDER BY FELD ASC");
         }
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     function form_neue_ms_werte($jahr, $ort = null)
@@ -114,7 +106,7 @@ class mietspiegel
         $arr = $this->get_merkmale_ms_arr();
 
         echo "<label for=\"$id\">$label</label><select name=\"$name\" id=\"$id\" size=1 $js>\n";
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             for ($a = 0; $a < $anz; $a++) {
                 $merkmal = $arr [$a] ['MERKMAL'];
@@ -131,11 +123,7 @@ class mietspiegel
     function get_merkmale_ms_arr()
     {
         $result = DB::select("SELECT * FROM `MS_SONDERMERKMALE` GROUP BY MERKMAL ORDER BY MERKMAL ASC");
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     function dropdown_klassen($anz, $label, $name, $id)
@@ -150,7 +138,7 @@ class mietspiegel
     function abzuege_anzeigen($jahr, $ort = null)
     {
         $arr = $this->mietspiegel_abzuege_arr($jahr, $ort);
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             fehlermeldung_ausgeben("ABZÜGE NICHT EINGEPFLEGT");
         } else {
             $anz = count($arr);
@@ -176,11 +164,7 @@ class mietspiegel
         } else {
             $result = DB::select("SELECT * FROM `MS_SONDERMERKMALE` WHERE JAHR='$jahr' && ORT='$ort' ORDER BY A_KLASSE ASC");
         }
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     function form_neuer_mietspiegel()

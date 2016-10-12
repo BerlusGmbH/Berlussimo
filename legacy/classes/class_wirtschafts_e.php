@@ -10,6 +10,9 @@ class wirt_e
     public $anzahl_e;
     public $anzahl_wo;
     public $anzahl_ge;
+    public $g_mea;
+    public $g_anzahl_einheiten;
+    public $g_einheit_qm;
 
     function check_einheit_in_we($einheit_id, $w_id)
     {
@@ -153,8 +156,6 @@ class wirt_e
         if ($anzeigen == 'haus') {
             $h = new haus ();
             $h_array = $h->liste_aller_haeuser();
-            // echo '<pre>';
-            // print_r($h_array);
             $anzahl = count($h_array);
             echo "<SELECT SIZE=\"10\" NAME=\"IMPORT_AUS\">";
             for ($a = 0; $a < $anzahl; $a++) {

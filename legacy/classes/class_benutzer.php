@@ -2,6 +2,8 @@
 
 class benutzer
 {
+    public $benutzername;
+
     function get_benutzer_id($benutzername)
     {
         $user = \App\Models\User::where('name', $benutzername)->first();
@@ -97,19 +99,19 @@ class benutzer
     {
         $b = $this->get_user_info($b_id);
         if (isset($b)) {
-            $this->benutzername = $b->name;
-            $this->benutzer_id = $b->id;
-            $this->passwort = $b->password;
+            $this->benutzername = $b['name'];
+            $this->benutzer_id = $b['id'];
+            $this->passwort = $b['password'];
 
-            $this->stundensatz = $b->hourly_rate;
-            $this->geb_datum = $b->birthday;
-            $this->gewerk_id = $b->trade_id;
-            $this->datum_eintritt = $b->join_date;
-            $this->datum_austritt = $b->leave_date;
+            $this->stundensatz = $b['hourly_rate'];
+            $this->geb_datum = $b['birthday'];
+            $this->gewerk_id = $b['trade_id'];
+            $this->datum_eintritt = $b['join_date'];
+            $this->datum_austritt = $b['leave_date'];
 
-            $this->urlaub = $b->holidays;
-            $this->stunden_wo = $b->hours_per_week;
-            $this->benutzer_email = $b->email;
+            $this->urlaub = $b['holidays'];
+            $this->stunden_wo = $b['hours_per_week'];
+            $this->benutzer_email = $b['email'];
         }
     }
 
@@ -303,8 +305,8 @@ class benutzer
             echo "<label for=\"$id\">$label</label><select id=\"$id\" name=\"$name\" size=\"1\" $js>";
             echo "<option value=\"Alle\" selected>Alle</option>";
             foreach ($b as $benutzer) {
-                $benutzername = $b->name;
-                $benutzer_id = $b->id;
+                $benutzername = $benutzer->name;
+                $benutzer_id = $benutzer->id;
                 if (Auth::user()->id == $benutzer_id) {
                     echo "<option value=\"$benutzer_id\" selected>$benutzername</option>";
                 } else {

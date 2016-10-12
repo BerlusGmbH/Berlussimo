@@ -30,8 +30,8 @@ switch ($option) {
         }
         $rr = new rechnungen ();
         $pos_arr = $rr->rechnungs_positionen_arr($belegnr);
-        if (is_array($pos_arr)) {
-            $anz = count($pos_arr);
+        if (!empty($pos_arr)) {
+            $anz = $rr->anzahl_positionen;
             for ($a = 0; $a < $anz; $a++) {
                 $pos = $pos_arr [$a] ['POSITION'];
                 $preis = $pos_arr [$a] ['PREIS'];
@@ -57,8 +57,8 @@ switch ($option) {
         }
         $rr = new rechnungen ();
         $pos_arr = $rr->rechnungs_positionen_arr($belegnr);
-        if (is_array($pos_arr)) {
-            $anz = count($pos_arr);
+        if (!empty($pos_arr)) {
+            $anz = $rr->anzahl_positionen;
             for ($a = 0; $a < $anz; $a++) {
                 $pos = $pos_arr [$a] ['POSITION'];
                 $preis = $pos_arr [$a] ['PREIS'];
@@ -192,7 +192,7 @@ ORDER BY LPAD( EINHEIT_KURZNAME, LENGTH( EINHEIT_KURZNAME ) ,  '1' ) ASC ");
         /* NEU SCHNELL ENDE 2014 */
         if ($typ == 'Mietvertrag') {
             $gk_arr_objekt = get_objekt_arr_gk(session()->get('geldkonto_id'));
-            if (is_array($gk_arr_objekt)) {
+            if (!empty($gk_arr_objekt)) {
 
                 $db_abfrage = "SELECT  HAUS.OBJEKT_ID, OBJEKT_KURZNAME, MIETVERTRAG.EINHEIT_ID, EINHEIT_KURZNAME, MIETVERTRAG_ID FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT, MIETVERTRAG) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && EINHEIT.EINHEIT_ID=MIETVERTRAG.EINHEIT_ID)
 WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERTRAG_AKTUELL='1' ";
@@ -1206,11 +1206,7 @@ function get_eigentuemer($einheit_id)
 function get_objekt_arr_gk($gk_id)
 {
     $result = DB::select("SELECT KOSTENTRAEGER_ID FROM GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='Objekt'");
-    if (!empty($result)) {
-        return $result;
-    } else {
-        return false;
-    }
+    return $result;
 }
 
 function detail_update($detail_dat, $wert_neu, $det_name, $kos_typ, $kos_id)
@@ -1219,12 +1215,10 @@ function detail_update($detail_dat, $wert_neu, $det_name, $kos_typ, $kos_id)
     if ($detail_dat != 0) {
         $row = $d->get_detail_info($detail_dat);
         if (is_array($row)) {
-            // print_r($row);
             $alt_dat = $row ['DETAIL_DAT'];
             $alt_id = $row ['DETAIL_ID'];
             $det_inhalt = $row ['DETAIL_INHALT'];
             $det_name = $row ['DETAIL_NAME'];
-            // $det_bemerkung = $row['DETAIL_BEMERKUNG'];
             $tabelle = $row ['DETAIL_ZUORDNUNG_TABELLE'];
             $tabelle_id = $row ['DETAIL_ZUORDNUNG_ID'];
             $det_bemerkung = Auth::user()->email . '-' . date("d.m.Y H:i");

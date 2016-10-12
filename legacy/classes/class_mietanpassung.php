@@ -1041,7 +1041,6 @@ class mietanpassung
 
                 echo "<tr><th colspan=\"2\">Wertmindernde Faktoren pro m²</th></tr>";
                 if (is_array($abzuege_arr)) {
-
                     $anz = count($abzuege_arr);
                     for ($i = 0; $i < $anz; $i++) {
                         $merkm = $abzuege_arr [$i] ['MERKMAL'];

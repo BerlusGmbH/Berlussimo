@@ -383,10 +383,10 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
                 $haus_id = request()->input('haus') [$a];
                 $vermietete = $this->vermietete_monat_jahr_haus($jahr_monat, $haus_id, '');
                 $leerstand = $this->leerstand_monat_jahr_haus($jahr_monat, $haus_id, '');
-                if (is_array($vermietete)) {
+                if (!empty($vermietete)) {
                     $vermietete_arr = array_merge($vermietete_arr, $vermietete);
                 }
-                if (is_array($leerstand)) {
+                if (!empty($leerstand)) {
                     $leerstand_arr = array_merge($leerstand_arr, $leerstand);
                 }
 
@@ -399,7 +399,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
             $h = new haus ();
             $haus_arr = $h->liste_aller_haeuser();
             $anzahl_haeuser = count($haus_arr);
-            if (is_array($haus_arr)) {
+            if (!empty($haus_arr)) {
                 $f->erstelle_formular("Häuser auswählen", NULL);
                 for ($a = 0; $a < $anzahl_haeuser; $a++) {
                     $objekt_id = $haus_arr [$a] ['OBJEKT_ID'];
@@ -908,10 +908,7 @@ ORDER BY EINHEIT_KURZNAME ASC");
             $rest = 0;
         }
         echo "</table>";
-        // echo '<pre>';
-        // print_r($gesamt);
         $arr_keys = array_keys($gesamt);
-        // print_r($arr_keys);
         $anz = count($arr_keys);
         if (is_array($arr_keys)) {
             echo "<table class=\"sortable\">";
@@ -963,11 +960,9 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
     function wo_eingebaut($beleg_nr, $pos)
     {
         $arr = $this->get_wo_eingebaut_arr($beleg_nr, $pos);
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
-
             $img = "images/del.png";
-
             echo "<table class=\"sortable\">";
             echo "<thead><tr><th>EINHEIT</th><th>EINHEIT_INFO</th><th>MENGE</th></tr></thead>";
             $sum = 0;
@@ -990,9 +985,7 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
     function get_wo_eingebaut_arr($beleg_nr, $pos)
     {
         $result = DB::select("SELECT COUNT(EINHEIT_ID) AS ANZ, EINHEIT_ID  FROM `FENSTER_EINGEBAUT` WHERE `R_BELEG_ID` = '$beleg_nr' AND `POS` ='$pos' GROUP BY EINHEIT_ID");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function form_einheit_suche()
@@ -1023,7 +1016,7 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
                 $r->rechnung_grunddaten_holen($beleg_nr);
                 $table = "<h2><b>$r->kurzbeschreibung</b></h2>";
                 $pos_arr = $r->rechnungs_positionen_arr($beleg_nr);
-                if (is_array($pos_arr)) {
+                if (!empty($pos_arr)) {
                     $anz_p = count($pos_arr);
                     for ($p = 0; $p < $anz_p; $p++) {
                         $art_nr = $pos_arr [$p] ['ARTIKEL_NR'];

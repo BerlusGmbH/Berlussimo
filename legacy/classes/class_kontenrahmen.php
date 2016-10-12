@@ -9,8 +9,9 @@ class kontenrahmen {
 	var $konto_gruppen_bezeichnung;
 	var $konto_art_id;
 	var $konto_art_bezeichnung;
+    public $gruppe_id;
 
-	/* Holt Infos über ein Konto z.B. 5200 */
+    /* Holt Infos über ein Konto z.B. 5200 */
 	function konto_informationen($konto) {
 		$result = DB::select( "SELECT * FROM KONTENRAHMEN_KONTEN WHERE KONTO='$konto' && AKTUELL='1' ORDER BY KONTENRAHMEN_KONTEN_ID DESC LIMIT 0,1" );
 		$row = $result[0];

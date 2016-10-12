@@ -461,15 +461,15 @@ function get_entfernung($lon, $lat)
         $zeile = 0;
         foreach ($result as $row) {
             $zeile++;
-            $str = $row->STR;
-            $nr = $row->NR;
-            $ort = $row->ORT;
-            $entf = $row->ENTF_KM;
-            $datum = $row->DATUM_G;
-            $diff_tage = $row->DIFF;
-            $bn = $row->name;
-            $wertung = $row->WERTUNG;
-            $b_id = $row->BENUTZER_ID;
+            $str = $row['STR'];
+            $nr = $row['NR'];
+            $ort = $row['ORT'];
+            $entf = $row['ENTF_KM'];
+            $datum = $row['DATUM_G'];
+            $diff_tage = $row['DIFF'];
+            $bn = $row['name'];
+            $wertung = $row['WERTUNG'];
+            $b_id = $row['BENUTZER_ID'];
 
             echo "<tr class=\"termin$zeile\" onclick=\"daj2('" . route('legacy::wartungsplaner::indexAjax', ['option' => 'tages_termine', 'datum' => $datum, 'benutzer_id' => $b_id], false) . "',document.getElementById('leftBox1'))\"><td>$diff_tage T</td><td>$datum</td><td>$entf km</td><td>$str</td><td>$nr</td><td>$plz $ort</td><td>$bn</td></tr>";
             if ($zeile == 2) {

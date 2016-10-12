@@ -22,7 +22,7 @@ function ausgabe($gruppen_id, $monate_plus_int, $format = 'tab')
 
 
     $thermen_arr = wartungen($gruppen_id, $monate_plus_int);
-    if (is_array($thermen_arr)) {
+    if (!empty($thermen_arr)) {
         $anz = count($thermen_arr);
         for ($a = 0; $a < $anz; $a++) {
             $einheit_kn = ltrim(rtrim($thermen_arr[$a]['EINBAUORT']));

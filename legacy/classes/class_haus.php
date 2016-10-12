@@ -4,6 +4,7 @@ class haus extends objekt {
     public $haus_stadt;
     public $haus_nummer;
     public $haus_strasse;
+    public $objekt_id;
 
     function get_haus_info($haus_id) {
         $result = DB::select( "SELECT * FROM HAUS WHERE HAUS_AKTUELL='1' && HAUS_ID='$haus_id' ORDER BY HAUS_DAT DESC LIMIT 0,1" );

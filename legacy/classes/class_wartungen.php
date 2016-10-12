@@ -169,13 +169,13 @@ class wartung
     function wartungen_anzeigen($lage)
     {
         $g_arr = $this->get_geraete_arr($lage);
-        if (is_array($g_arr)) {
+        if (!empty($g_arr)) {
             $anz_g = count($g_arr);
             for ($a = 0; $a < $anz_g; $a++) {
                 $g_id = $g_arr [$a] ['GERAETE_ID'];
                 $g_bez = $g_arr [$a] ['BEZEICHNUNG'];
                 $termine = $this->get_termine_($g_id);
-                if (is_array($termine)) {
+                if (!empty($termine)) {
                     $anz_t = count($termine);
                     echo "<table class=\"sortable\">";
                     echo "<tr><th colspan=\"2\">$g_bez</th></tr>";
@@ -205,20 +205,12 @@ class wartung
     function get_geraete_arr($lage)
     {
         $result = DB::select("SELECT * FROM `W_GERAETE` WHERE  `LAGE_RAUM` =  '$lage' AND  `AKTUELL` =  '1'");
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     function get_termine_($g_id)
     {
         $result = DB::select("SELECT * FROM  `GEO_TERMINE` WHERE  `GERAETE_ID` ='$g_id' && AKTUELL='1' ORDER BY DATUM DESC");
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 } // end class wartungen

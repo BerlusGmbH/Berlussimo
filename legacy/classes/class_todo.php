@@ -26,7 +26,7 @@ class todo
     function baustellen_liste($aktiv = 1)
     {
         $arr = $this->baustellen_liste_arr($aktiv);
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             echo "<table class=\"sortable striped\">";
             echo "<thead><tr><th>Baustelle</th><th>Rechnungsempfänger</th><th>Optionen</th></tr></thead>";
@@ -51,10 +51,8 @@ class todo
     function baustellen_liste_arr($aktiv = 1)
     {
         $db_abfrage = "SELECT * FROM BAUSTELLEN_EXT WHERE AKTUELL='1' && AKTIV='$aktiv' ORDER BY BEZ, PARTNER_ID";
-        $result = DB::insert($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        }
+        $result = DB::select($db_abfrage);
+        return $result;
     }
 
     function baustelle_aktivieren($b_id, $aktiv = '1')
@@ -177,7 +175,7 @@ class todo
                 foreach($result as $row) {
                     $person_id = $row ['PERSON_MIETVERTRAG_PERSON_ID'];
                     $arr = $this->finde_detail_kontakt_arr('PERSON', $person_id);
-                    if (is_array($arr)) {
+                    if (!empty($arr)) {
                         $anz = count($arr);
                         for ($a = 0; $a < $anz; $a++) {
                             $dname = $arr [$a] ['DETAIL_NAME'];
@@ -195,9 +193,7 @@ class todo
     {
         $db_abfrage = "SELECT DETAIL_NAME, DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = '$tab' && (DETAIL_NAME LIKE '%tel%'or DETAIL_NAME LIKE '%fax%' or DETAIL_NAME LIKE '%mobil%' or DETAIL_NAME LIKE '%handy%' OR DETAIL_NAME LIKE '%mail%' OR DETAIL_NAME LIKE '%anschrift%') && DETAIL_ZUORDNUNG_ID = '$id' && DETAIL_AKTUELL = '1' ORDER BY DETAIL_NAME ASC";
         $resultat = DB::select($db_abfrage);
-        if (!empty($resultat)) {
-            return $resultat;
-        }
+        return $resultat;
     }
 
     function rss_feed($benutzer_id)
@@ -213,7 +209,7 @@ class todo
         echo "<channel>\n";
 
         $my_proj_id_arr = $this->get_my_projekt_arr($benutzer_id);
-        if (!is_array($my_proj_id_arr)) {
+        if (empty($my_proj_id_arr)) {
             echo "<title>Keine Projekte und Aufgaben für Sie!</title>\n";
             echo "<link>https://app.berlussimo.de/rss.php</link>\n";
             echo "<description>Sie haben keine Projekte und Aufgaben</description>\n";
@@ -320,14 +316,6 @@ OR `VERFASSER_ID` ='$benutzer_id'
 )
 AND `AKTUELL` = '1' && ERLEDIGT='0' && UE_ID='0'";
         } else {
-            /*
-			 * $db_abfrage = "SELECT IF( UE_ID = '0', T_ID, UE_ID ) AS PROJ_ID FROM TODO_LISTE WHERE (
-			 * BENUTZER_ID = '$benutzer_id'
-			 * OR VERFASSER_ID = '$benutzer_id'
-			 * ) && ANZEIGEN_AB <= DATE_FORMAT( NOW( ) , '%Y-%m-%d' ) && AKTUELL = '1' && ERLEDIGT='1'
-			 * GROUP BY PROJ_ID
-			 * ORDER BY ANZEIGEN_AB ASC";
-			 */
             $db_abfrage = "SELECT T_ID AS PROJ_ID
 FROM `TODO_LISTE`
 WHERE (
@@ -338,18 +326,14 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         }
 
         $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function get_unteruafgaben_arr($t_id)
     {
         $db_abfrage = "SELECT * FROM TODO_LISTE WHERE UE_ID ='$t_id' && ANZEIGEN_AB <= DATE_FORMAT(NOW(), '%Y-%m-%d' ) && AKTUELL='1' ORDER BY ERLEDIGT ASC, AKUT ASC, ANZEIGEN_AB ASC";
         $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function todo_liste($benutzer_id = '0', $erl = '0')
@@ -358,7 +342,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             $benutzer_id = '0';
         }
         $my_proj_id_arr = $this->get_my_projekt_arr($benutzer_id, $erl);
-        if (!is_array($my_proj_id_arr)) {
+        if (empty($my_proj_id_arr)) {
             echo 'Keine Projekte und Aufgaben für Sie vohanden!';
             return;
         } else {
@@ -1036,9 +1020,8 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 
     function pdf_projekt($id)
     {
-        // echo "PDF HIER";
         $arr = $this->get_unteruafgaben_arr($id);
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             $projekt_name = $this->get_text($id);
             for ($a = 0; $a < $anz; $a++) {
@@ -1160,7 +1143,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 
         $pp = new benutzer ();
         $b = $pp->get_user_info(session()->get('benutzer_id'));
-        session()->put('partner_id', $b->BP_PARTNER_ID);
+        session()->put('partner_id', $b['BP_PARTNER_ID']);
 
         if ($this->kos_typ == 'Einheit') {
             $kontaktdaten_mieter = $this->kontaktdaten_anzeigen_mieter($this->kos_id);
@@ -1172,7 +1155,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             $p->get_partner_info($this->kos_id);
             $kontaktdaten_mieter = "$p->partner_name\n$p->partner_strasse $p->partner_hausnr\n$p->partner_plz $p->partner_ort\n";
             $det_arr = $this->finde_detail_kontakt_arr('PARTNER_LIEFERANT', $this->kos_id);
-            if (is_array($det_arr)) {
+            if (!empty($det_arr)) {
                 $anzd = count($det_arr);
                 for ($a = 0; $a < $anzd; $a++) {
                     $dname = $this->html2txt($det_arr [$a] ['DETAIL_NAME']);
@@ -1194,7 +1177,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $kontaktdaten_mieter .= rtrim(ltrim($weg->eigentuemer_name [$pe] ['HRFRAU'])) . " ";
                 $kontaktdaten_mieter .= rtrim(ltrim($weg->eigentuemer_name [$pe] ['Nachname'])) . " ";
                 $kontaktdaten_mieter .= rtrim(ltrim($weg->eigentuemer_name [$pe] ['Vorname'])) . "\n";
-                if (is_array($det_arr)) {
+                if (!empty($det_arr)) {
                     $anzd = count($det_arr);
                     for ($ad = 0; $ad < $anzd; $ad++) {
                         $dname = $this->html2txt($det_arr [$ad] ['DETAIL_NAME']);
@@ -1253,13 +1236,12 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 /* ################Betreuer################## */
                 $anz_p = count($weg->eigentuemer_person_ids);
                 $betreuer_str = '';
-                $betreuer_arr;
+                $betreuer_arr = [];
                 for ($be = 0; $be < $anz_p; $be++) {
                     $et_p_id = $weg->eigentuemer_person_ids [$be];
                     $d_k = new detail ();
                     $dt_arr = $d_k->finde_alle_details_grup('PERSON', $et_p_id, 'INS-Kundenbetreuer');
-
-                    if (is_array($dt_arr)) {
+                    if (!empty($dt_arr)) {
                         $anz_bet = count($dt_arr);
                         for ($bet = 0; $bet < $anz_bet; $bet++) {
                             $bet_str = $dt_arr [$bet] ['DETAIL_INHALT'];
@@ -1269,7 +1251,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                     }
                 }
 
-                if (is_array($betreuer_arr)) {
+                if (!empty($betreuer_arr)) {
                     $betreuer_str = '';
                     $betreuer_arr1 = array_unique($betreuer_arr);
                     for ($bbb = 0; $bbb < count($betreuer_arr1); $bbb++) {
@@ -1390,7 +1372,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             $arr = $this->get_auftraege_einheit('Einheit', request()->input('einheit_id'));
             $e = new einheit ();
             $e->get_einheit_info(request()->input('einheit_id'));
-            if (is_array($arr)) {
+            if (!empty($arr)) {
                 echo "<table>";
                 echo "<tr><th colspan=\"4\">EINHEIT $e->einheit_kurzname</th></tr>";
                 echo "<tr><th>TEXT</th><th>VON/AN</th><th>ERLEDIGT</th><th>DATUM</th></tr>";
@@ -1445,12 +1427,11 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             $ha->get_haus_info($haus_id);
             $obj_arr [] = $ha->objekt_id;
             $tmp_arr = $this->get_auftraege_einheit('Haus', $haus_id);
-            if (is_array($tmp_arr)) {
+            if (!empty($tmp_arr)) {
                 $arr = array_merge($arr, $tmp_arr);
             }
         }
-        if (!is_array($arr)) {
-
+        if (empty($arr)) {
             fehlermeldung_ausgeben("Keine Aufträge an Haus $h->haus_strasse $h->haus_nummer");
         } else {
             array_unique($obj_arr);
@@ -1494,7 +1475,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             for ($o = 0; $o < $anz_o; $o++) {
                 $objekt_id = $obj_arr [$o];
                 $tmp_arr = $this->get_auftraege_einheit('Objekt', $objekt_id);
-                if (is_array($tmp_arr)) {
+                if (!empty($tmp_arr)) {
                     $obj_auf = array_merge($obj_auf, $tmp_arr);
                 }
             }
@@ -1554,9 +1535,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         }
 
         $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function get_haus_ids($haus_str, $haus_nr, $haus_plz)
@@ -1571,7 +1550,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
     function liste_auftrage_an($typ, $id, $erl = 0)
     {
         $arr = $this->liste_auftrage_an_arr($typ, $id, $erl);
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             fehlermeldung_ausgeben("Keine Auftrage an $typ $id");
         } else {
             $anz = count($arr);
@@ -1611,8 +1590,6 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
     {
         $db_abfrage = "SELECT * FROM `TODO_LISTE` WHERE BENUTZER_TYP='$typ' && `BENUTZER_ID` ='$id' AND `AKTUELL` = '1' AND ERLEDIGT='$erl' ORDER BY ERSTELLT DESC";
         $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 } // end class todo

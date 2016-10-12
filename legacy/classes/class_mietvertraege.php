@@ -61,7 +61,7 @@ class mietvertraege
     function dropdown_leerstaende($objekt_id, $name, $label, $id)
     {
         $leerstand = $this->leerstand_finden($objekt_id);
-        if (is_array($leerstand)) {
+        if (!empty($leerstand)) {
             echo "<label for=\"$id\">$label</label><select name=\"$name\" id=\"$id\">";
             for ($a = 0; $a < count($leerstand); $a++) {
                 $einheit_id = $leerstand [$a] ['EINHEIT_ID'];
@@ -1212,13 +1212,11 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         $o = new objekt ();
         $o->get_objekt_name($objekt_id);
         echo "Objekt: $o->objekt_name<br>";
-        if (is_array($auszug_arr)) {
+        if (!empty($auszug_arr)) {
             $anzahl_auszuege = count($auszug_arr);
             $e = new einheit ();
-            // $m = new mietvertrag;
             $ka = new kautionen ();
             echo "<table class=\"sortable\" >";
-            // echo "<tr class=\"feldernamen\"><td>Auzug</td><td>Einheit</td><td>Mieter</td><td>Kautionsbetrag</td></tr>";
             echo "<tr><th>Auszug</th><th>Einheit</th><th>Mieter</th><th>Kautionsbetrag</th></tr>";
             for ($a = 0; $a < $anzahl_auszuege; $a++) {
                 $einheit_id = $auszug_arr [$a] ['EINHEIT_ID'];
@@ -1280,7 +1278,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         $o = new objekt ();
         $o->get_objekt_name($objekt_id);
         echo "Objekt: $o->objekt_name<br>";
-        if (is_array($einzug_arr)) {
+        if (!empty($einzug_arr)) {
             $anzahl_einzuege = count($einzug_arr);
             $e = new einheit ();
 
@@ -1349,7 +1347,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         $auszug_arr = $this->alle_ausgezogene_mieter_arr($jahr, $monat);
         $link = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'alle_letzten_auszuege_pdf', 'monat' => $monat, 'jahr' => $jahr]) . "'>Ansicht als PDF</a>";
         echo $link;
-        if (is_array($auszug_arr)) {
+        if (!empty($auszug_arr)) {
             $anzahl_auszuege = count($auszug_arr);
             $e = new einheit ();
             $m = new mietvertrag ();
@@ -1427,7 +1425,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         $auszug_arr = $this->alle_eingezogene_mieter_arr($jahr, $monat);
         $link = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'alle_letzten_einzuege_pdf', 'monat' => $monat, 'jahr' => $jahr]) . "'>Ansicht als PDF</a>";
         echo $link;
-        if (is_array($auszug_arr)) {
+        if (!empty($auszug_arr)) {
             $anzahl_auszuege = count($auszug_arr);
             $e = new einheit ();
             $m = new mietvertrag ();
@@ -1506,7 +1504,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         $pdf->ezSetCmMargins(1.0, 2.0, 2.0, 1.0);
         $pdf->ezText("<b>Auszüge $monat_name $jahr</b> inkl. Kautionshöhe", 11);
         $pdf->ezSetDy(-20);
-        if (is_array($auszug_arr)) {
+        if (!empty($auszug_arr)) {
             $anzahl_auszuege = count($auszug_arr);
             $e = new einheit ();
             $m = new mietvertrag ();
@@ -1599,7 +1597,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         $pdf->ezSetCmMargins(1.0, 2.0, 2.0, 1.0);
         $pdf->ezText("<b>Einzüge $monat_name $jahr</b> inkl. Kautionshöhe", 11);
         $pdf->ezSetDy(-20);
-        if (is_array($auszug_arr)) {
+        if (!empty($auszug_arr)) {
             $anzahl_auszuege = count($auszug_arr);
             $e = new einheit ();
             $m = new mietvertrag ();
@@ -1789,7 +1787,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                 $mv_array = $einheit_info->get_mietvertraege_bis("" . $einheiten_array [$i] ['EINHEIT_ID'] . "", $jahr, $monat);
                 $mv_anzahl = count($mv_array);
 
-                if (is_array($mv_array)) {
+                if (!empty($mv_array)) {
 
                     for ($b = 0; $b < $mv_anzahl; $b++) {
                         $mv_id = $mv_array [$b] ['MIETVERTRAG_ID'];
@@ -2021,7 +2019,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                 $mv_array = $einheit_info->get_mietvertraege_bis("" . $einheiten_array [$i] ['EINHEIT_ID'] . "", $jahr, $monat);
                 $mv_anzahl = count($mv_array);
 
-                if (is_array($mv_array)) {
+                if (!empty($mv_array)) {
 
                     for ($b = 0; $b < $mv_anzahl; $b++) {
                         $mv_id = $mv_array [$b] ['MIETVERTRAG_ID'];
@@ -2339,7 +2337,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         $nl_datum = $deta->finde_detail_inhalt('Objekt', $objekt_id, 'Nutzen-Lastenwechsel');
         $nl_datum_arr = explode('.', strip_tags($nl_datum));
 
-        if (is_array($nl_datum_arr)) {
+        if (!empty($nl_datum_arr)) {
             $nl_tag = $nl_datum_arr [0];
             $nl_monat = $nl_datum_arr [1];
             $nl_jahr = $nl_datum_arr [2];

@@ -2052,7 +2052,7 @@ ORDER BY `NEW_ENDE` ASC
 
     /* Mit dieser Funktion fügt man ein Mitkontenblatt in das vorhandene PDF-Dokument hinzu */
 
-    function mietkontenblatt2pdf($pdf, $mv_id)
+    function mietkontenblatt2pdf(Cezpdf $pdf, $mv_id)
     {
         $a = new miete ();
         $a->mietkonto_berechnung($mv_id);

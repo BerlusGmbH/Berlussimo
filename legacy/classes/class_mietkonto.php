@@ -319,7 +319,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         $this->hidden_feld("MIETVERTRAG_ID", "$mietvertrag_id");
         // ####aufteilung als array senden
         $forderung_arr = $this->aktuelle_forderungen_array($mietvertrag_id);
-        if (!is_array($forderung_arr)) {
+        if (empty($forderung_arr)) {
             $forderung_arr = $this->forderung_aus_vertrag($mietvertrag_id);
         }
         for ($i = 0; $i < count($forderung_arr); $i++) {
@@ -506,7 +506,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
             $this->erstelle_formular("Anderen Betrag teilen und buchen ...", NULL);
             /* Ein Array mit aktuellen Forderungen für aktuellen Monat zusammenstellen */
             $forderung_arr = $this->aktuelle_forderungen_array($mietvertrag_id);
-            if (!is_array($forderung_arr)) {
+            if (empty($forderung_arr)) {
                 $forderung_arr = $this->forderung_aus_vertrag($mietvertrag_id);
             }
             /* Zahlbetrag aus Komma in Punktformat wandeln */
@@ -618,7 +618,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         if (check_datum(request()->input('buchungsdatum'))) {
             $buchungsdatum = date_german2mysql(request()->input('buchungsdatum'));
             $forderung_arr = $this->aktuelle_forderungen_array($mietvertrag_id);
-            if (!is_array($forderung_arr)) {
+            if (empty($forderung_arr)) {
                 $forderung_arr = $this->forderung_aus_vertrag($mietvertrag_id);
             }
             $summe_vorschuesse = $this->summe_vorschuesse($forderung_arr);
@@ -828,7 +828,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
             $buchungsdatum = date_german2mysql(request()->input('buchungsdatum'));
             /* Ein Array mit aktuellen Forderungen für aktuellen Monat zusammenstellen */
             $forderung_arr = $this->aktuelle_forderungen_array($mietvertrag_id);
-            if (!is_array($forderung_arr)) {
+            if (empty($forderung_arr)) {
                 $forderung_arr = $this->forderung_aus_vertrag($mietvertrag_id);
             }
             /* Zahlbetrag aus Komma in Punktformat wandeln */
@@ -881,7 +881,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
             $buchungsdatum = date_german2mysql(request()->input('buchungsdatum'));
             /* Ein Array mit aktuellen Forderungen für aktuellen Monat zusammenstellen */
             $forderung_arr = $this->aktuelle_forderungen_array($mietvertrag_id);
-            if (!is_array($forderung_arr)) {
+            if (empty($forderung_arr)) {
                 $forderung_arr = $this->forderung_aus_vertrag($mietvertrag_id);
             }
             /* Zahlbetrag aus Komma in Punktformat wandeln */
@@ -1161,7 +1161,7 @@ function check_zahlbetrag($kontoauszugsnr, $kostentraeger_typ, $kostentraeger_id
     function monatsforderungen_anzeigen($monat_jahr, $forderungen_diesen_monat_arr)
     {
         // $this->array_anzeigen($forderungen_diesen_monat_arr);
-        if (!is_array($forderungen_diesen_monat_arr)) {
+        if (empty($forderungen_diesen_monat_arr)) {
             // echo "<div class=aktuelle_forderungen><b>AKTUELLE FORDERUNGEN AUS $mietvertrag_id<br>";
             echo "Keine Forderungen in diesem Monat!";
             // echo "</div>";
@@ -1476,7 +1476,7 @@ function check_zahlbetrag($kontoauszugsnr, $kostentraeger_typ, $kostentraeger_id
         $this->monat_heute;
         $this->jahr_heute;
         $zahlungen_diesen_monat_arr = $this->alle_zahlungen_bisher($mietvertrag_id);
-        if (!is_array($zahlungen_diesen_monat_arr)) {
+        if (empty($zahlungen_diesen_monat_arr)) {
             echo "<div class=aktuelle_buchungen><b>ALLE BISHERIGEN BUCHUNGEN UND ZAHLUNGEN ZUM MV: $mietvertrag_id<br>";
             echo "Keine Zahlungen und Buchungen bezogen auf MV: $mietvertrag_id!";
             echo "</div>";
@@ -1635,7 +1635,7 @@ ORDER BY DATUM ASC ");
 
         $this->array_anzeigen($buchungen_arr);
 
-        if (!is_array($buchungen_arr)) {
+        if (empty($buchungen_arr)) {
             echo "Keine aktuellen Zahlungen in diesem Monat!";
             $error = TRUE;
         } else {

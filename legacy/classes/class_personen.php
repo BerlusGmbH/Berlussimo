@@ -2,6 +2,11 @@
 
 class personen
 {
+    public $person_nachname;
+    public $person_geburtstag;
+    public $geschlecht;
+    public $person_vorname;
+
     function form_person_erfassen()
     {
         $f = new formular ();
@@ -123,13 +128,13 @@ class personen
     {
         $treffer ['ANZ'] = 0;
         $personen_ids_arr = $this->get_person_ids_byname_arr($vorname, $nachname);
-        if (is_array($personen_ids_arr)) {
+        if (!empty($personen_ids_arr)) {
             $anz_p = count($personen_ids_arr);
             for ($a = 0; $a < $anz_p; $a++) {
                 /* Mietvertraege */
                 $person_id = $personen_ids_arr [$a] ['PERSON_ID'];
                 $mv_arr = $this->mv_ids_von_person($person_id);
-                if (is_array($mv_arr)) {
+                if (!empty($mv_arr)) {
                     $anz_mv = count($mv_arr);
                     for ($m = 0; $m < $anz_mv; $m++) {
                         $treffer ['ERG'] [$treffer ['ANZ']] ['KOS_TYP'] = 'Mietvertrag';
@@ -140,7 +145,7 @@ class personen
                 /* WEG-ET */
                 $weg = new weg ();
                 $et_arr = $weg->get_eigentuemer_id_from_person_arr($person_id);
-                if (is_array($et_arr)) {
+                if (!empty($et_arr)) {
                     $treffer ['ET'] [] = $et_arr;
                 }
             }
@@ -181,9 +186,7 @@ class personen
 && PERSON_AKTUELL =  '1'
 LIMIT 0 , 30";
         $resultat = DB::select($db_abfrage);
-        if (!empty($resultat)) {
-            return $resultat;
-        }
+        return $resultat;
     }
 
     function mv_ids_von_person($person_id)
@@ -301,7 +304,7 @@ LIMIT 0 , 30";
             $weg = new weg ();
             $eigentuemer_id_arr = $weg->get_eigentuemer_id_from_person_arr($person_id);
             $eigentuemer_link = '';
-            if (is_array($eigentuemer_id_arr)) {
+            if (!empty($eigentuemer_id_arr)) {
                 if ($haus_info_link == 'Kein Mieter') {
                     $haus_info_link = '';
                 }
@@ -377,7 +380,7 @@ AND `DETAIL_ZUORDNUNG_TABELLE` LIKE 'PERSON' && DETAIL_ZUORDNUNG_ID = PERSON_ID 
                 echo "<tr>";
                 $mv_ids_arr = $this->mv_ids_von_person($person_id);
                 echo "<td>";
-                if (is_array($mv_ids_arr)) {
+                if (!empty($mv_ids_arr)) {
                     $anz = count($mv_ids_arr);
                     for ($a = 0; $a < $anz; ++$a) {
                         $mv = new mietvertraege ();
@@ -417,7 +420,7 @@ AND `DETAIL_ZUORDNUNG_TABELLE` LIKE 'PERSON' && DETAIL_ZUORDNUNG_ID = PERSON_ID 
                 echo "<tr>";
                 $mv_ids_arr = $this->mv_ids_von_person($person_id);
                 echo "<td>";
-                if (is_array($mv_ids_arr)) {
+                if (!empty($mv_ids_arr)) {
                     $anz = count($mv_ids_arr);
                     for ($a = 0; $a < $anz; ++$a) {
                         $mv = new mietvertraege ();

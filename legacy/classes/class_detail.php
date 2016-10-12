@@ -8,7 +8,7 @@ class detail
     function dropdown_optionen($label, $name, $id, $kat_bez, $vorgabe, $js = null)
     {
         $arr = $this->detail_optionen_arr($kat_bez);
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             echo "<label for=\"$id\">$label</label><select name=\"$name\" id=\"$id\" size=1 $js>\n";
             $anz = count($arr);
 
@@ -31,10 +31,7 @@ class detail
     {
         $db_abfrage = "SELECT KATEGORIE_ID, UNTERKATEGORIE_NAME FROM `DETAIL_KATEGORIEN` JOIN DETAIL_UNTERKATEGORIEN ON (`DETAIL_KAT_ID`=KATEGORIE_ID) WHERE `DETAIL_KAT_NAME`='$kat_bez'";
         $result = DB::select($db_abfrage);
-        $numrows = !empty($result);
-        if ($numrows) {
-            return $result;
-        }
+        return $result;
     }
 
     function form_detail_hinzu($tab, $id, $vorauswahl = null)
@@ -114,7 +111,7 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC");
 
     function select_hauptkats_arr($beschreibung, $name, $id, $js, $selected_value, $arr)
     {
-        if (is_array($arr)) {
+        if (is_array($arr) && !empty($arr)) {
             echo "<label for=\"$id\">$beschreibung</label>\n";
             echo "<select name=\"$name\" id=\"$id\" $js>\n";
             $anzahl = count($arr);
@@ -303,65 +300,48 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC");
     {
         $db_abfrage = "SELECT DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = '$tab' && DETAIL_NAME = '$detail_name' && DETAIL_ZUORDNUNG_ID = '$id' && DETAIL_AKTUELL = '1' ORDER BY DETAIL_DAT DESC LIMIT 0 , 1";
         $resultat = DB::select($db_abfrage);
-        foreach($resultat as $row)
-            return ltrim(rtrim($row['DETAIL_INHALT']));
+        if(!empty($resultat)) {
+            return ltrim(rtrim($resultat[0]['DETAIL_INHALT']));
+        } else {
+            return '';
+        }
     }
 
     function finde_alle_details_grup($tab, $id, $detail_name)
     {
         $db_abfrage = " SELECT DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = '$tab' && DETAIL_ZUORDNUNG_ID = '$id' && DETAIL_NAME = '$detail_name'  && DETAIL_AKTUELL = '1' ORDER BY DETAIL_INHALT DESC";
         $my_arr = DB::select($db_abfrage);
-
-        if (!empty($my_arr)) {
-            return $my_arr;
-        } else {
-            return false;
-        }
+        return $my_arr;
     }
 
     function finde_detail_inhalt_arr($detail_name)
     {
         $db_abfrage = " SELECT * FROM DETAIL WHERE DETAIL_NAME = '$detail_name'  && DETAIL_AKTUELL = '1' ORDER BY DETAIL_DAT DESC";
         $my_arr = DB::select($db_abfrage);
-        if (!empty($my_arr)) {
-            return $my_arr;
-        } else {
-            return false;
-        }
+        return $my_arr;
     }
 
     function finde_detail_inhalt_last_arr($tab, $id, $detail_name)
     {
         $db_abfrage = " SELECT * FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = '$tab' && DETAIL_ZUORDNUNG_ID = '$id' && DETAIL_NAME = '$detail_name'  && DETAIL_AKTUELL = '1' ORDER BY DETAIL_INHALT DESC LIMIT 0,1";
         $my_arr = DB::select($db_abfrage);
-
-        if (!empty($my_arr)) {
-            return $my_arr;
-        } else {
-            return false;
-        }
+        return $my_arr;
     }
 
     function finde_alle_details_arr($tab, $tab_id)
     {
         $db_abfrage = "SELECT DETAIL_NAME, DETAIL_INHALT,  DETAIL_BEMERKUNG FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = '$tab' && DETAIL_ZUORDNUNG_ID = '$tab_id' && DETAIL_AKTUELL = '1' ORDER BY DETAIL_NAME ASC";
         $my_arr= DB::select($db_abfrage);
-        if (!empty($my_arr)) {
-            return $my_arr;
-        } else {
-            return false;
-        }
+        return $my_arr;
     }
 
     function dropdown_details($label, $name, $id)
     {
         $arr = $this->get_det_arr();
-
         echo "<label for=\"$id\">$label</label><select name=\"$name\" id=\"$id\" size=1 >\n";
         echo "<option value=\"\">Bitte wählen</option>\n";
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
-
             for ($a = 0; $a < $anz; $a++) {
                 $det_name = $arr [$a] ['DETAIL_NAME'];
                 echo "<option value=\"$det_name\">$det_name</option>\n";
@@ -374,11 +354,7 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC");
     {
         $db_abfrage = "SELECT  `DETAIL_NAME` FROM  `DETAIL` WHERE  `DETAIL_AKTUELL` =  '1' GROUP BY DETAIL_NAME";
         $my_arr = DB::select($db_abfrage);
-        if (!empty($my_arr)) {
-            return $my_arr;
-        } else {
-            return false;
-        }
+        return $my_arr;
     }
 
     function finde_detail($suchtext, $det_name = null)
@@ -389,7 +365,7 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC");
             $db_abfrage = "SELECT * FROM  `DETAIL` WHERE  `DETAIL_NAME`='$det_name' && `DETAIL_INHALT` LIKE  '%$suchtext%' AND  `DETAIL_AKTUELL` =  '1'";
         }
         $my_arr = DB::select($db_abfrage);
-        if (is_array($my_arr)) {
+        if (!empty($my_arr)) {
             $anz = count($my_arr);
             echo "<table>";
             echo "<tr><th>DETNAME</th><th>INHALT</th><th>BEZ</th></tr>";

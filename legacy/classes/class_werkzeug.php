@@ -9,7 +9,7 @@ class werkzeug
         $f = new formular ();
         $f->fieldset('Werkzeugliste', 'wl');
         $arr = $this->werkzeugliste_arr($b_id);
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             if ($b_id != NULL) {
                 $link_rueckgabe_alle = "<a href='" . route('legacy::benutzer::index', ['option' => 'werkzeug_rueckgabe_alle', 'b_id' => $b_id]) . "'>Rückgabe vermerken</a>";
@@ -70,9 +70,7 @@ class werkzeug
             $db_abfrage = "SELECT * FROM WERKZEUGE WHERE AKTUELL='1' && BENUTZER_ID='$b_id' ORDER BY ID, ARTIKEL_NR, ID, KURZINFO";
         }
         $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function pdf_werkzeug_rueckgabe_einzel($b_id, $w_id, $scheintext = 'Einzelrückgabeschein')
@@ -402,7 +400,7 @@ class werkzeug
     function werkzeugliste_nach_mitarbeiter()
     {
         $arr = $this->werkzeugliste_verteilt_arr();
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             echo "<table class=\"sortable striped\">";
             echo "<tr><th>LIEFERANT</th><th>WBNR</th><th>BESCHREIBUNG</th><th>KURZINFO</th><th>MENGE</th><th>MITARBITER</th><th>OPTION</th></tr>";
@@ -457,9 +455,7 @@ class werkzeug
     {
         $db_abfrage = "SELECT * FROM WERKZEUGE WHERE AKTUELL='1' && BENUTZER_ID IS NOT NULL ORDER BY BENUTZER_ID, ARTIKEL_NR";
         $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 } // end class
 

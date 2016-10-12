@@ -2083,7 +2083,7 @@ switch ($option) {
                 }
 
                 $r1 = new rechnung ();
-                if (!is_array($r1->artikel_info($aussteller_id, $artikel_nr))) {
+                if (empty($r1->artikel_info($aussteller_id, $artikel_nr))) {
                     $r1->artikel_leistung_mit_artikelnr_speichern($aussteller_id, $bezeichnung, $listenpreis, $artikel_nr, $rabatt1, $vpe, $mwst, $skonto);
                 }
                 echo "$a. $bezeichnung<br>";
@@ -2145,7 +2145,7 @@ switch ($option) {
                     $mwst = $zeile [7];
 
                     $r1 = new rechnung ();
-                    if (!is_array($r1->artikel_info($aussteller_id, $artikel_nr))) {
+                    if (empty($r1->artikel_info($aussteller_id, $artikel_nr))) {
                         $r1->artikel_leistung_mit_artikelnr_speichern($aussteller_id, $bezeichnung, $listenpreis, $artikel_nr, $rabatt1, $vpe, $mwst, $skonto);
                     }
                     echo "$a. $bezeichnung<br>";
@@ -2458,7 +2458,7 @@ switch ($option) {
         }
 
         $arr = $re->ausgangsrechnungen_arr_sort('Partner', session()->get('partner_id'), $monat, $jahr, 'Rechnung', 'ASC');
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             fehlermeldung_ausgeben("Keine Ausgangsrechnungen $monat / $jahr");
         } else {
             $anz = count($arr);
@@ -2520,7 +2520,7 @@ switch ($option) {
         }
 
         $arr = $re->eingangsrechnungen_arr_sort('Partner', session()->get('partner_id'), $monat, $jahr, 'Rechnung', 'ASC');
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             fehlermeldung_ausgeben("Keine Eingangsrechnungen $monat / $jahr");
         } else {
             $anz = count($arr);
@@ -2584,7 +2584,6 @@ switch ($option) {
         break;
 
     case "rg2pdf" :
-
         if (!is_array(request()->input('uebernahme'))) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\InfoMessage("Bitte wählen Sie eine Rechnung.")

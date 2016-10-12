@@ -44,6 +44,7 @@ class rechnungen
     public $kb;
     public $status_bestaetigt;
     public $rechnungs_skontoabzug;
+    public $anzahl_positionen;
 
     function get_summe_kosten_pool($empf_typ, $empf_id)
     {
@@ -454,7 +455,7 @@ class rechnungen
     function drop_rechnungs_typen($beschreibung, $name, $id, $js, $selected_value)
     {
         $enum_arr = $this->enum_typen_arr('RECHNUNGEN', 'RECHNUNGSTYP');
-        if (is_array($enum_arr)) {
+        if (!empty($enum_arr)) {
             $enum_arr = msort($enum_arr);
             echo "<div class='input-field'>";
             echo "<select name=\"$name\" id=\"$id\" $js>\n";
@@ -1725,10 +1726,10 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $p->get_partner_info($this->rechnung_aussteller_partner_id);
 
         $table_arr = $this->rechnungs_positionen_arr($beleg_nr);
-        $anz = count($table_arr);
+        $anz = $this->anzahl_positionen;
         $g_netto = 0;
         $new_pos = 0;
-        for ($index = 0; $index < sizeof($table_arr); $index++) {
+        for ($index = 0; $index < $anz; $index++) {
             $menge = $table_arr [$index] ['MENGE'];
             $preis = $table_arr [$index] ['PREIS'];
             $artikel_nr = $table_arr [$index] ['ARTIKEL_NR'];
@@ -1973,13 +1974,8 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     function rechnungs_positionen_arr($belegnr)
     {
         $result = DB::select("SELECT *, FORMAT((MENGE*PREIS/100)*(100-RABATT_SATZ),2) AS GESAMT_NETTO1 FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR='$belegnr' && AKTUELL='1' ORDER BY POSITION ASC");
-        $numrows = count($result);
-        if ($numrows < 1) {
-            $this->anzahl_positionen = '0';
-        } else {
-            $this->anzahl_positionen = $numrows;
-            return $result;
-        }
+        $this->anzahl_positionen = count($result);
+        return $result;
     } // nd function
 
     /* Folgesrechnungen ermitteln OKAY aber ohne ausgangsrechnungen */
@@ -1998,10 +1994,11 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     function get_ueberschrift($beleg_nr, $pos)
     {
         $result = DB::select("SELECT UEBERSCHRIFT FROM POS_GRUPPE WHERE BELEG_NR='$beleg_nr' && POS='$pos' && AKTUELL = '1' ORDER BY B_DAT DESC");
-        $row = $result[0];
-        if (is_array($row)) {
-            echo $row ['UEBERSCHRIFT'];
-            return $row ['UEBERSCHRIFT'];
+        if (!empty($result[0])) {
+            echo $result[0]['UEBERSCHRIFT'];
+            return $result[0]['UEBERSCHRIFT'];
+        } else {
+            return '';
         }
     }
 
@@ -2200,10 +2197,10 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $bpdf->b_header($pdf, 'Partner', $this->rechnung_aussteller_partner_id, 'portrait', 'Helvetica.afm', 6);
 
         $table_arr = $this->rechnungs_positionen_arr($beleg_nr);
-        $anz = count($table_arr);
+        $anz = $this->anzahl_positionen;
         $g_netto = 0;
         $new_pos = 0;
-        for ($index = 0; $index < sizeof($table_arr); $index++) {
+        for ($index = 0; $index < $anz; $index++) {
             $menge = $table_arr [$index] ['MENGE'];
             $preis = $table_arr [$index] ['PREIS'];
             $artikel_nr = $table_arr [$index] ['ARTIKEL_NR'];
@@ -2454,7 +2451,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     function pool_liste_wahl()
     {
         $kos_arr = $this->get_pool_partner_arr();
-        if (is_array($kos_arr)) {
+        if (!empty($kos_arr)) {
             $anz = count($kos_arr);
             for ($a = 0; $a < $anz; $a++) {
                 $kos_typ = $kos_arr [$a] ['KOS_TYP'];
@@ -2473,9 +2470,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     function get_pool_partner_arr()
     {
         $result = DB::select("SELECT * FROM POS_POOL WHERE AKTUELL = '1' GROUP BY KOS_TYP, KOS_ID, AUSSTELLER_TYP, AUSSTELLER_ID");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function u_pool_edit($kos_typ, $kos_id, $aussteller_typ, $aussteller_id)
@@ -2484,7 +2479,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $kos_bez = $r->kostentraeger_ermitteln($kos_typ, $kos_id);
         echo $kos_bez;
         $pos_arr = $this->get_pool_pos_arr($kos_typ, $kos_id, $aussteller_typ, $aussteller_id);
-        if (is_array($pos_arr)) {
+        if (!empty($pos_arr)) {
             $anz = count($pos_arr);
             $js_prozent_spalte_plus = "<a onclick=\"spalte_prozent('+','V_PREIS')\">+%</a>";
             $js_prozent_spalte_minus = "<a onclick=\"spalte_prozent('-','V_PREIS')\">-%</a>";
@@ -2613,9 +2608,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     function get_pool_pos_arr($kos_typ, $kos_id, $aussteller_typ, $aussteller_id)
     {
         $result = DB::select("SELECT *, (V_PREIS-EINZEL_PREIS)/(EINZEL_PREIS/100) AS PROZENTE FROM POS_POOL WHERE AKTUELL = '1' && KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AUSSTELLER_TYP='$aussteller_typ' && AUSSTELLER_ID='$aussteller_id' ORDER BY POOL_ID, POS, U_BELEG_NR, U_POS ASC");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function get_pool_bez($pool_id)
@@ -2840,8 +2833,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     {
         $f = new formular ();
         $pool_arr = $this->get_pools_arr_aktiv($kos_typ, $kos_id);
-        if (is_array($pool_arr)) {
-
+        if (!empty($pool_arr)) {
             $anz = count($pool_arr);
             for ($a = 0; $a < $anz; $a++) {
                 $pool_id = $pool_arr [$a] ['ID'];
@@ -2857,9 +2849,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     function get_pools_arr_aktiv($kos_typ, $kos_id)
     {
         $result = DB::select("SELECT * FROM POS_POOLS WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' ORDER BY AKTUELL DESC, POOL_NAME ASC");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function rechnungsausgangsbuch_pdf($von_typ, $von_id, $monat, $jahr, $rechnungstyp, $sort = 'ASC')
@@ -3084,7 +3074,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         /* Ausgangsbuch */
         $rechnungen_arr = $this->eingangsrechnungen_arr_sort($von_typ, $von_id, $monat, $jahr, $rechnungstyp, $sort);
 
-        if (!is_array($rechnungen_arr)) {
+        if (empty($rechnungen_arr)) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage("Keine $rechnungstyp vorhanden")
             );
@@ -3482,7 +3472,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     function meine_angebote_anzeigen()
     {
         $arr = $this->meine_angebote_arr();
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             echo "<table>";
             echo "<tr><th>ANGEBOTSNR</th><th>EMPFAENGER</th><th>KURZINFO</th><th>OPTION</th><th>PDF</th><th>BUCHUNGSBELEG</th></tr>";
@@ -3528,9 +3518,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             $aussteller_id = session()->get('partner_id');
             $result = DB::select("SELECT * FROM RECHNUNGEN WHERE  AKTUELL='1' && RECHNUNGSTYP='Angebot' && AUSSTELLER_TYP='Partner' && AUSSTELLER_ID='$aussteller_id' ORDER BY RECHNUNGSDATUM DESC");
         }
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function check_beleg_exists($kurzbeschreibung)
@@ -3616,7 +3604,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     function autokorrektur_pos($belegnr)
     {
         $pos_arr = $this->rechnungs_positionen_arr_99($belegnr);
-        if (is_array($pos_arr)) {
+        if (!empty($pos_arr)) {
             $anz = count($pos_arr);
             for ($a = 0; $a < $anz; $a++) {
                 $_pos = $pos_arr [$a] ['POSITION'];
@@ -3627,7 +3615,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
                 $_preis = $pos_arr [$a] ['PREIS'];
 
                 $_1pos_arr = $this->get_position_artikel_nr($_ubeleg, $_art_nr, $_artlieferant);
-                if (is_array($_1pos_arr)) {
+                if (!empty($_1pos_arr)) {
                     // print_r($_1pos_arr);
                     $u_rabatt = $_1pos_arr ['RABATT_SATZ'];
                     $skonto = $_1pos_arr ['SKONTO'];
@@ -3660,9 +3648,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     function rechnungs_positionen_arr_99($belegnr)
     {
         $result = DB::select("SELECT POSITION, U_BELEG_NR, ART_LIEFERANT, ARTIKEL_NR, MENGE, PREIS FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR='$belegnr' && AKTUELL='1' && (RABATT_SATZ='99.99' OR SKONTO='9.99' OR RABATT_SATZ='999.99') ORDER BY POSITION ASC");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function get_position_artikel_nr($belegnr, $art_nr, $art_lieferant)
@@ -3671,13 +3657,14 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         if (!empty($result)) {
             return $result[0];
         }
+        return [];
     }
 
     function edisp($belegnr)
     {
         $pos_arr = $this->rechnungs_positionen_arr($belegnr);
-        if (is_array($pos_arr)) {
-            $anz = count($pos_arr);
+        if (!empty($pos_arr)) {
+            $anz = $this->anzahl_positionen;
             for ($a = 0; $a < $anz; $a++) {
                 $pos = $pos_arr [$a] ['POSITION'];
                 $preis = $pos_arr [$a] ['PREIS'];
@@ -3726,7 +3713,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $js = "onclick=\"u_pool_erstellen('np','kostentraeger_typ', 'dd_kostentraeger_id')\"";
         $f->button_js('btn_np', 'Unterpool erstellen', $js);
         echo "</th></tr>";
-        if (is_array($pool_arr)) {
+        if (!empty($pool_arr)) {
             $anz = count($pool_arr);
             $temp_akt = '';
 
@@ -3756,9 +3743,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     function get_pools_arr($kos_typ, $kos_id)
     {
         $result = DB::select("SELECT * FROM POS_POOLS WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' ORDER BY AKTUELL DESC, POOL_NAME ASC");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function u_pool_erstellen($pool_bez, $kos_typ, $kos_bez)
@@ -4030,7 +4015,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
     function list_teil_rg_in($empf_typ, $empf_id, $aus_typ, $aus_id, $r_typ, $beleg_id)
     {
         $arr = $this->get_teil_rg_arr_in($empf_typ, $empf_id, $aus_typ, $aus_id, $r_typ);
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             echo "<table class=\"sortable\">";
             echo "<thead><tr><th colspan=\"5\">BEREITS HINZUGEFÜGT</th></tr></thead>";
@@ -4052,15 +4037,13 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
     function get_teil_rg_arr_in($empf_typ, $empf_id, $aus_typ, $aus_id, $r_typ)
     {
         $result = DB::select("SELECT * FROM RECHNUNGEN WHERE EMPFAENGER_TYP='$empf_typ' && EMPFAENGER_ID='$empf_id'  && AUSSTELLER_ID='$aus_id' && AUSSTELLER_TYP='$aus_typ' && RECHNUNGSTYP='$r_typ' && AKTUELL = '1' && BELEG_NR  IN (SELECT TEIL_R_ID FROM RECHNUNGEN_SCHLUSS WHERE AKTUELL='1')ORDER BY RECHNUNGSDATUM DESC");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function list_teil_rg($empf_typ, $empf_id, $aus_typ, $aus_id, $r_typ, $id, $name, $label)
     {
         $arr = $this->get_teil_rg_arr($empf_typ, $empf_id, $aus_typ, $aus_id, $r_typ);
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             echo "<select class=\"select_rg\" name=\"$name\" id=\"$id\" size=\"20\" multiple>";
             for ($a = 0; $a < $anz; $a++) {
@@ -4084,9 +4067,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
     function get_teil_rg_arr($empf_typ, $empf_id, $aus_typ, $aus_id, $r_typ)
     {
         $result = DB::select("SELECT * FROM RECHNUNGEN WHERE EMPFAENGER_TYP='$empf_typ' && EMPFAENGER_ID='$empf_id'  && AUSSTELLER_ID='$aus_id' && AUSSTELLER_TYP='$aus_typ' && RECHNUNGSTYP='$r_typ' && AKTUELL = '1' && BELEG_NR NOT IN (SELECT TEIL_R_ID FROM RECHNUNGEN_SCHLUSS WHERE AKTUELL='1')ORDER BY RECHNUNGSDATUM DESC");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function teilrechnungen_hinzu($beleg_id, $tr_ids_arr)
@@ -4144,7 +4125,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
             // echo $einheit_id;
             $weg = new weg ();
             $et_arr = $weg->get_eigentuemer_arr($einheit_id);
-            if (is_array($et_arr)) {
+            if (!empty($et_arr)) {
                 $le_et = count($et_arr) - 1;
                 $ein_arr [$a] ['ET_ID'] = $et_arr [$le_et] ['ID'];
                 $ein_arr [$a] ['R_EMPFAENGER_TYP'] = 'Eigentuemer';
@@ -4300,8 +4281,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
     function drop_buchungsbelege($p_id, $jahr, $beschreibung, $name, $id, $js, $selected_value)
     {
         $beleg_arr = $this->buchungsbelege_arr('alle', $jahr);
-        // print_r($beleg_arr);
-        if (is_array($beleg_arr)) {
+        if (!empty($beleg_arr)) {
             echo "<label for=\"$id\">$beschreibung</label>\n";
             echo "<select name=\"$name\" id=\"$id\" $js>\n";
             $anzahl_b = count($beleg_arr);

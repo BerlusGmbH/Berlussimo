@@ -809,7 +809,7 @@ switch ($option) {
                     $anz_m = count($_zahlen_arr);
                     for ($m = 0; $m < $anz_m; $m++) {
                         $re = new rechnung ();
-                        if (is_array($re->rechnung_finden_nach_rnr($_zahlen_arr [$m]))) {
+                        if (!empty($re->rechnung_finden_nach_rnr($_zahlen_arr [$m]))) {
                             $rnr_kurz = $_zahlen_arr [$m];
                         }
                     }
@@ -1115,7 +1115,7 @@ switch ($option) {
                             echo "<b>SEPA-LASTSCHRIFT-SAMMLER</b>";
                             $sep = new sepa ();
                             $ls_arr = $sep->get_sepa_lsfiles_arr_gk($gk_id);
-                            if (is_array($ls_arr)) {
+                            if (!empty($ls_arr)) {
                                 $anz_ls = count($ls_arr);
                                 $z = 0;
                                 for ($ls = 0; $ls < $anz_ls; $ls++) {
@@ -1133,8 +1133,7 @@ switch ($option) {
                             echo "<b>SEPA-ÜBERWEISUNG SAMMLER</b>";
                             $sep = new sepa ();
                             $ue_arr = $sep->sepa_files_arr($gk_id);
-                            if (is_array($ue_arr)) {
-                                // print_r($ue_arr);
+                            if (!empty($ue_arr)) {
                                 $anz_ue = count($ue_arr);
                                 $z = 0;
                                 for ($ls = 0; $ls < $anz_ue; $ls++) {

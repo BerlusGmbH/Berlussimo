@@ -904,7 +904,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 
                     /* Personenkontaktdaten Eigentümer */
                     $et_p_id = $weg->get_person_id_eigentuemer_arr($weg->eigentuemer_id);
-                    if (is_array($et_p_id)) {
+                    if (!empty($et_p_id)) {
                         $anz_pp = count($et_p_id);
                         for ($pe = 0; $pe < $anz_pp; $pe++) {
                             $et_p_id_1 = $et_p_id [$pe] ['PERSON_ID'];
@@ -2016,7 +2016,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 
                     /* Personenkontaktdaten Eigentümer */
                     $et_p_id = $weg->get_person_id_eigentuemer_arr($weg->eigentuemer_id);
-                    if (is_array($et_p_id)) {
+                    if (!empty($et_p_id)) {
                         $anz_pp = count($et_p_id);
                         for ($pe = 0; $pe < $anz_pp; $pe++) {
                             $et_p_id_1 = $et_p_id [$pe] ['PERSON_ID'];
@@ -3493,10 +3493,9 @@ ORDER BY EINHEIT_KURZNAME";
         $weg = new weg ();
         $et_arr = $weg->get_eigentuemer_arr($einheit_id);
 
-        if (!is_array($et_arr)) {
+        if (empty($et_arr)) {
             fehlermeldung_ausgeben("Keine Eigentümer zu $e->einheit_kurzname");
         } else {
-            // print_r($et_arr);
             $anz_et = count($et_arr);
             echo "Eigentümeranzahl : $anz_et<hr>";
 
@@ -3657,7 +3656,7 @@ ORDER BY EINHEIT_KURZNAME";
                     $ltm = letzter_tag_im_monat($monat, $jahr);
                     $mv_et_arr_1_mon = $this->get_mv_et_zeitraum_arr($einheit_id, "$jahr-$monat-01", "$jahr-$monat-$ltm");
                     /* Wenn Wohnung VERMIETET war */
-                    if (is_array($mv_et_arr_1_mon)) {
+                    if (!empty($mv_et_arr_1_mon)) {
                         $this->pdf_tab_g [$a] [$zeile] ['LEER'] = 'N';
                         /* Wenn bei Kauf vermietet */
                         if ($a == 0 && $m == 0) {
@@ -4018,7 +4017,7 @@ ORDER BY EINHEIT_KURZNAME";
         return $result;
     }
 
-    function pdf_income_reports2015_3($pdf, $objekt_id, $jahr)
+    function pdf_income_reports2015_3(Cezpdf $pdf, $objekt_id, $jahr)
     {
         $cols_num ['MONAT'] ['TXT'] = 'Month';
 
@@ -4160,7 +4159,7 @@ ORDER BY EINHEIT_KURZNAME";
                 $weg_nn = new weg ();
                 $et_p_id = $weg_nn->get_person_id_eigentuemer_arr($et_id);
                 $email_arr_a = array();
-                if (is_array($et_p_id)) {
+                if (!empty($et_p_id)) {
                     $anz_pp = count($et_p_id);
                     for ($pe = 0; $pe < $anz_pp; $pe++) {
                         $et_p_id_1 = $et_p_id [$pe] ['PERSON_ID'];
@@ -4275,7 +4274,7 @@ ORDER BY EINHEIT_KURZNAME";
                         $ltm = letzter_tag_im_monat($et_monat, $et_jahr);
                         $mv_arr = $this->get_mv_et_zeitraum_arr($einheit_id, "$et_jahr-$et_monat-01", "$et_jahr-$et_monat-$ltm");
 
-                        if (is_array($mv_arr)) {
+                        if (!empty($mv_arr)) {
                             $pdf_tab [$e] [$et] [$monat] ['LEER'] = 'N';
                             $anz_mv = count($mv_arr);
                             // #########MIETVERTRÄGE IM MONAT###########
@@ -4344,7 +4343,7 @@ ORDER BY EINHEIT_KURZNAME";
                             } else {
                                 $buchungen = $this->bebuchte_konten_brutto($gk_id, $einheit_id, $monat, $jahr, $et_id);
                             }
-                            if (is_array($buchungen)) {
+                            if (!empty($buchungen)) {
                                 $anz_bu = count($buchungen);
                                 $gki1 = new geldkonto_info ();
                                 $gki1->geld_konto_details($gk_id);
@@ -4972,7 +4971,7 @@ ORDER BY EINHEIT_KURZNAME";
             session()->put('partner_id', $this->partner_id);
         }
         $arr = $this->profil_liste_arr();
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             echo "<table>";
             echo "<tr><th>NR</th><th>PROFIL</th><th>OBJEKT</th><th>GELDKONTO</th><th>HV LOGO</th><th>OPTIONEN</th></tr>";
@@ -5024,7 +5023,7 @@ ORDER BY EINHEIT_KURZNAME";
     function del_konten($profil_id)
     {
         $b_arr = $this->profil_liste_konten_arr($profil_id);
-        if (is_array($b_arr)) {
+        if (!empty($b_arr)) {
             $db_abfrage = "DELETE FROM REPORT_PROFILE_K WHERE PROFIL_ID='$profil_id'";
             DB::delete($db_abfrage);
         }
@@ -5056,7 +5055,7 @@ ORDER BY EINHEIT_KURZNAME";
         } else {
             fehlermeldung_ausgeben("Keine Email fehler!");
             $bk_konten_arr = $this->bk_konten_arr($profil_id);
-            if (!is_array($bk_konten_arr)) {
+            if (empty($bk_konten_arr)) {
                 fehlermeldung_ausgeben("Keine Kostenkonten gewählt!!!");
             } else {
                 // print_r($bk_konten_arr);
@@ -5118,7 +5117,7 @@ ORDER BY EINHEIT_KURZNAME";
         // echo $objekt_id;
         $weg = new weg ();
         $ein_arr = $weg->einheiten_weg_tabelle_arr($objekt_id);
-        if (!is_array($ein_arr)) {
+        if (empty($ein_arr)) {
             fehlermeldung_ausgeben("Keine Einheiten im Objekt");
         } else {
             $anz_e = count($ein_arr);
@@ -5274,14 +5273,14 @@ ORDER BY EINHEIT_KURZNAME";
                 $ein_arr [$e] [$b_konto] ['EINHEIT'] = $this->get_kosten_von_bis_o_sum('Einheit', $einheit_id, $buchung_von, $buchung_bis, $gk_id, $b_konto);
                 $ein_arr [$e] [$b_konto] ['ET'] = $this->get_kosten_von_bis_o_sum('Eigentuemer', $weg->eigentuemer_id, $buchung_von, $buchung_bis, $gk_id, $b_konto);
 
-                if (is_array($ein_arr [$e] [$b_konto] ['EINHEIT']) && is_array($ein_arr [$e] [$b_konto] ['ET'])) {
+                if (!empty($ein_arr [$e] [$b_konto] ['EINHEIT']) && !empty($ein_arr [$e] [$b_konto] ['ET'])) {
                     $ein_arr [$e] ['KONTEN'] [$b_konto] = array_merge($ein_arr [$e] [$b_konto] ['EINHEIT'], $ein_arr [$e] [$b_konto] ['ET']);
                 }
 
-                if (is_array($ein_arr [$e] [$b_konto] ['EINHEIT']) && !is_array($ein_arr [$e] [$b_konto] ['ET'])) {
+                if (!empty($ein_arr [$e] [$b_konto] ['EINHEIT']) && empty($ein_arr [$e] [$b_konto] ['ET'])) {
                     $ein_arr [$e] ['KONTEN'] [$b_konto] = $ein_arr [$e] [$b_konto] ['EINHEIT'];
                 }
-                if (!is_array($ein_arr [$e] [$b_konto] ['EINHEIT']) && is_array($ein_arr [$e] [$b_konto] ['ET'])) {
+                if (empty($ein_arr [$e] [$b_konto] ['EINHEIT']) && !empty($ein_arr [$e] [$b_konto] ['ET'])) {
                     $ein_arr [$e] ['KONTEN'] [$b_konto] = $ein_arr [$e] [$b_konto] ['ET'];
                 }
 
@@ -5445,10 +5444,7 @@ ORDER BY EINHEIT_KURZNAME";
         /* MIETVERTRAEGE ZEITRAUM ET */
         $mv_arr = $this->get_mv_et_zeitraum_arr($einheit_id, $von, $bis);
         $anz_mv = count($mv_arr);
-        if (is_array($mv_arr)) {
-            // echo '<pre>';
-            // print_r($mv_arr);
-        } else {
+        if (empty($mv_arr)) {
             echo "NO MV - NUR KOSTEN";
         }
 

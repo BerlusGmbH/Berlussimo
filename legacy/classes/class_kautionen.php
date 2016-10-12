@@ -20,7 +20,7 @@ class kautionen
     {
         $this->anzahl_zahlungen = 0;
         unset ($this->kautionszahlungen_array);
-        if (is_array($this->kautionszahlungen_arr($kostentraeger_typ, $kostentraeger_id, $kostenkonto))) {
+        if (!empty($this->kautionszahlungen_arr($kostentraeger_typ, $kostentraeger_id, $kostenkonto))) {
             $this->kautionszahlungen_array = $this->kautionszahlungen_arr($kostentraeger_typ, $kostentraeger_id, $kostenkonto);
             $this->anzahl_zahlungen = count($this->kautionszahlungen_array);
         }
@@ -29,11 +29,7 @@ class kautionen
     function kautionszahlungen_arr($kostentraeger_typ, $kostentraeger_id, $kautions_konto_id)
     {
         $result = DB::select("SELECT DATUM, BETRAG, VERWENDUNGSZWECK FROM GELD_KONTO_BUCHUNGEN WHERE KOSTENTRAEGER_TYP='$kostentraeger_typ' && KOSTENTRAEGER_ID='$kostentraeger_id' && GELDKONTO_ID='$kautions_konto_id' && AKTUELL='1' ORDER BY DATUM");
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
     
     function form_hochrechnung_mv($mietvertrag_id)
@@ -128,7 +124,7 @@ class kautionen
 
         $datum_bis_a = date_mysql2german($datum_bis);
 
-        if (is_array($zahlungen_arr)) {
+        if (!empty($zahlungen_arr)) {
             echo "<table>";
             $pdf_link = "<a href='" . route('legacy::kautionen::index', ['option' => 'hochrechner_pdf', 'mietvertrag_id' => $kostentraeger_id, 'datum_bis' => $datum_bis_a]) . "'>PDF</a>";
             echo "<tr class=\"feldernamen\"><td colspan=\"7\">$mv->einheit_kurzname $mv->personen_name_string $pdf_link</td></tr>";
@@ -306,7 +302,7 @@ class kautionen
 
         $datum_bis_a = date_mysql2german($datum_bis);
 
-        if (is_array($zahlungen_arr)) {
+        if (!empty($zahlungen_arr)) {
 
             $cols = array(
                 'DATUM' => "Einzahlung",
@@ -598,7 +594,6 @@ class kautionen
             echo "Kautionskonto wählen<br>";
             return null;
         } else {
-
             $gk_id = session()->get('geldkonto_id');
             $result = DB::select("SELECT DATUM, BETRAG, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, VERWENDUNGSZWECK FROM GELD_KONTO_BUCHUNGEN  WHERE  DATUM<='$datum_bis' && AKTUELL='1' && GELDKONTO_ID='$gk_id' && KONTENRAHMEN_KONTO!='2002' && KONTENRAHMEN_KONTO!='2003' && KONTENRAHMEN_KONTO!='2004' ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, DATUM ASC");
             if (!empty($result)) {
@@ -612,7 +607,7 @@ class kautionen
     function mieter_ohne_kaution_anzeigen($geldkonto_id, $kostenkonto)
     {
         $mv_ids_arr = $this->mieter_ohne_kaution_arr($geldkonto_id, $kostenkonto);
-        if (!is_array($mv_ids_arr)) {
+        if (empty($mv_ids_arr)) {
             echo "Keine Mieter ohne Buchungen auf Konto $kostenkonto";
         } else {
             $anzahl = count($mv_ids_arr);
@@ -637,23 +632,21 @@ class kautionen
 WHERE `MIETVERTRAG_AKTUELL` = '1' && MIETVERTRAG_ID NOT IN (SELECT KOSTENTRAEGER_ID AS MIETVERTRAG_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='MIETVERTRAG')
     ORDER BY EINHEIT_ID ASC,`MIETVERTRAG`.`MIETVERTRAG_BIS`  ASC";
         $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function kautions_uebersicht($objekt_id, $alle = null)
     {
         $o = new objekt ();
         $ein_arr = $o->einheiten_objekt_arr($objekt_id);
-        if (!is_array($ein_arr)) {
+        if (empty($ein_arr)) {
             fehlermeldung_ausgeben("Keine Einheiten im Objekt");
         } else {
             $anz_e = count($ein_arr);
             echo "<table>";
             echo "<tr><th>EINHEIT</th><th>TYP</th><th>MIETER</th><th>VON</th><th>BIS</th><th>DAUER</th>";
             $felder_arr = $this->get_felder_arr();
-            if (is_array($felder_arr)) {
+            if (!empty($felder_arr)) {
                 $anz_felder = count($felder_arr);
                 $cols = $anz_felder + 6;
                 for ($a = 0; $a < $anz_felder; $a++) {
@@ -672,7 +665,6 @@ WHERE `MIETVERTRAG_AKTUELL` = '1' && MIETVERTRAG_ID NOT IN (SELECT KOSTENTRAEGER
                     $mv_id = $e->get_last_mietvertrag_id($einheit_id);
                     $mv_arr [] ['MIETVERTRAG_ID'] = $mv_id;
                 } else {
-
                     /* alle Mieter */
                     $mv_arr = $e->get_mietvertrag_ids($einheit_id);
                 }
@@ -728,11 +720,7 @@ WHERE `MIETVERTRAG_AKTUELL` = '1' && MIETVERTRAG_ID NOT IN (SELECT KOSTENTRAEGER
     function get_felder_arr()
     {
         $result = DB::select("SELECT * FROM `KAUTION_FELD` WHERE AKTUELL='1' ORDER BY DAT ASC");
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     function feld_speichern($feld)

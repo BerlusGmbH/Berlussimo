@@ -50,7 +50,7 @@ class mahnungen
             if ($schulder_typ == '') {
                 $akt_mvs = $this->finde_alle_mvs();
             }
-            if (is_array($akt_mvs)) {
+            if (!empty($akt_mvs)) {
                 $anzahl_mvs = count($akt_mvs);
                 $jahr = date("Y");
                 $monat = date("m");
@@ -268,7 +268,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
         if ($schulder_typ == '') {
             $akt_mvs = $this->finde_alle_mvs();
         }
-        if (is_array($akt_mvs)) {
+        if (!empty($akt_mvs)) {
             $anzahl_mvs = count($akt_mvs);
             $jahr = date("Y");
             $monat = date("m");
@@ -353,7 +353,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
     {
         $akt_mvs = $this->finde_alle_mvs();
 
-        if (is_array($akt_mvs)) {
+        if (!empty($akt_mvs)) {
             $anzahl_mvs = count($akt_mvs);
             $jahr = date("Y");
             $monat = date("m");
