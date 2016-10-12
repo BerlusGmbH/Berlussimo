@@ -91,25 +91,25 @@
                 @php($now = date_create())
                         @foreach($units as $unit)
                         @php
-                            $end = date_create($unit->MIETVERTRAG_BIS);
+                            $end = date_create($unit['MIETVERTRAG_BIS']);
                             $posttag = '';
-                            switch ($unit->TYP) {
+                            switch ($unit['TYP']) {
                                 case 'Wohnraum' : $posttag .= '<i class="material-icons">home</i> ';
                                     break;
                                 case 'Gewerbe' : $posttag .= '<i class="material-icons">business</i> ';
                                     break;
                                 case 'Stellplatz' : $posttag .= '<i class="material-icons">directions_car</i> ';
                                     break;
-                                default: $posttag .= ' (' . $unit->TYP . ')';
+                                default: $posttag .= ' (' . $unit['TYP'] . ')';
                             }
                             $posttag .= ($end > $now) ? '<i class="material-icons">work</i> ' . date_format($end, 'd.m.Y') : '';
                         @endphp
-                '{!! $unit->EINHEIT_KURZNAME !!}': {
-                    id: {!! $unit->EINHEIT_ID !!},
+                '{!! $unit['EINHEIT_KURZNAME'] !!}': {
+                    id: {!! $unit['EINHEIT_ID'] !!},
                     posttag: '{!! $posttag !!}',
                     icons: [{
                         icon: 'info',
-                        link: '{!! route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $unit->EINHEIT_ID], false) !!}'
+                        link: '{!! route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $unit['EINHEIT_ID']], false) !!}'
                     }]
                 },
                 @endforeach
