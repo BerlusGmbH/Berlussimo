@@ -1091,6 +1091,7 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
             $row = $result[0];
             return $row ['ART'];
         }
+        return '';
     }
 
     function monatsansicht_pdf($monat, $jahr)
@@ -1197,7 +1198,7 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
 
     function monatsansicht_pdf_mehrere($monat_a, $monat_e, $jahr)
     {
-        ob_end_clean(); // ausgabepuffer leeren
+        set_time_limit(240);
         $pdf = new Cezpdf ('a4', 'portrait');
         $bpdf = new b_pdf ();
         $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
@@ -1219,16 +1220,22 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
             );
 
             $mitarbeiter_arr = $this->mitarbeiter_arr($jahr);
+            $table_arr = [];
 
             foreach ($mitarbeiter_arr as $user) {
                 $mitarbeiter = $user->name;
                 $benutzer_id = $user->id;
+
+                $row = [];
+                $row ['MITARBEITER'] = "$mitarbeiter";
 
                 for ($b = 1; $b <= $anzahl_t; $b++) {
                     $tag = sprintf('%02d', $b);
                     $cols ["$tag"] = "$b";
 
                     $datum_a = "$jahr-$monat-$b";
+
+                    $zeichen = '';
 
                     $status = $this->feiertag($datum_a);
                     if ($status == 'Wochenende') {
@@ -1240,8 +1247,9 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
                     if ($status == 'Arbeitstag') {
                         $zeichen = "";
                     }
-                    if (!$this->check_anwesenheit($benutzer_id, $datum_a)) {
-                        $zeichen = 'U';
+                    $status = $this->check_anwesenheit($benutzer_id, $datum_a);
+                    if ($status != '') {
+                        $zeichen = substr($status, 0, 1);
                     }
 
                     $geburtstag = $this->check_geburtstag($benutzer_id, $datum_a);
@@ -1249,10 +1257,9 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
                         $zeichen .= "<b>*G</b>";
                     }
 
-                    $table_arr [$c] ['MITARBEITER'] = "$mitarbeiter</b>";
-                    $table_arr [$c] ["$tag"] = "$zeichen";
-                    $zeichen = '';
+                    $row ["$tag"] = "$zeichen";
                 } // end for 3
+                $table_arr [] = $row;
             } // end for 2
             $pdf->ezTable($table_arr, $cols, "Monatsansicht $monatsname $jahr", array(
                 'showHeadings' => 1,
