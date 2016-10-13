@@ -287,20 +287,15 @@ WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LPAD(EINHEIT_KURZNAME, LE
                 echo "<tr class=\"zeile2\"><td width=150>$einheit_link $mietkonto_link</td><td>$TYP</td><td>$link_aendern</td><td width=200>";
                 if ($mieter != "leer" && !preg_match("/WEG-SELBSTNUTZER/i", $mieter)) {
                     mieterid_zum_vertrag($mietvertrags_id);
-                    // echo $eig_link;
                     if (isset ($eig_link)) {
                         echo $eig_link;
                     } else {
                         echo $mieter;
                     }
-                    // echo $eig_link;
-                } else {
-                    // echo $eig_link;
                 }
                 echo "</td><td width=200>$haus_kurzname</td><td width=100>$einheit_lage</td><td width=40>$einheit_qm</td><td>$detail_link</td></tr>\n";
                 $counter = 0;
             }
-            // echo $counter;
             unset ($mieter);
             unset ($eig_link);
             unset ($link_aendern);

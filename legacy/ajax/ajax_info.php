@@ -197,7 +197,7 @@ ORDER BY LPAD( EINHEIT_KURZNAME, LENGTH( EINHEIT_KURZNAME ) ,  '1' ) ASC ");
                 $db_abfrage = "SELECT  HAUS.OBJEKT_ID, OBJEKT_KURZNAME, MIETVERTRAG.EINHEIT_ID, EINHEIT_KURZNAME, MIETVERTRAG_ID FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT, MIETVERTRAG) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && EINHEIT.EINHEIT_ID=MIETVERTRAG.EINHEIT_ID)
 WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERTRAG_AKTUELL='1' ";
 
-                foreach($gk_arr_objekt as $row) {
+                foreach ($gk_arr_objekt as $row) {
                     $oo_id = $row['KOSTENTRAEGER_ID'];
                     $db_abfrage .= "&& OBJEKT_ID=$oo_id ";
                 }
@@ -257,18 +257,25 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         }
 
         if ($typ == 'Eigentuemer') {
-            ob_clean();
-            $result = DB::select("SELECT ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME FROM `WEG_MITEIGENTUEMER` , EINHEIT WHERE EINHEIT_AKTUELL = '1' && AKTUELL = '1' && EINHEIT.EINHEIT_ID = WEG_MITEIGENTUEMER.EINHEIT_ID GROUP BY ID ORDER BY EINHEIT_KURZNAME ASC");
-            foreach ($result as $row) {
-                $weg = new weg ();
-                $ID = $row ['ID'];
-                $einheit_id = $row ['EINHEIT_ID'];
-                $einheit_kn = $row ['EINHEIT_KURZNAME'];
-
-                if (!session()->has('geldkonto_id')) {
-                    $weg->get_eigentuemer_namen($row ['ID']);
-                    echo "$einheit_kn*$ID*$weg->eigentuemer_name_str|";
-                } else {
+            if (!session()->has('geldkonto_id')) {
+                $result = DB::select(
+                    "SELECT WEG_MITEIGENTUEMER.ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME, GROUP_CONCAT(CONCAT(PERSON.PERSON_NACHNAME, ', ', PERSON.PERSON_VORNAME) SEPARATOR '; ') AS PERSONEN 
+                    FROM PERSON JOIN WEG_EIGENTUEMER_PERSON ON(PERSON.PERSON_ID = WEG_EIGENTUEMER_PERSON.PERSON_ID) 
+	                  JOIN WEG_MITEIGENTUEMER ON(WEG_EIGENTUEMER_PERSON.WEG_EIG_ID = WEG_MITEIGENTUEMER.ID) 
+	                  JOIN EINHEIT ON(EINHEIT.EINHEIT_ID = WEG_MITEIGENTUEMER.EINHEIT_ID) 
+                    WHERE EINHEIT.EINHEIT_AKTUELL = '1' && WEG_MITEIGENTUEMER.AKTUELL = '1'  && WEG_EIGENTUEMER_PERSON.AKTUELL = '1' && PERSON.PERSON_AKTUELL = '1'
+                    GROUP BY WEG_MITEIGENTUEMER.ID 
+                    ORDER BY EINHEIT_KURZNAME ASC"
+                );
+                foreach ($result as $row)
+                    echo "$row[EINHEIT_KURZNAME]*$row[ID]*$row[PERSONEN]|";
+            } else {
+                $result = DB::select("SELECT ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME FROM `WEG_MITEIGENTUEMER` , EINHEIT WHERE EINHEIT_AKTUELL = '1' && AKTUELL = '1' && EINHEIT.EINHEIT_ID = WEG_MITEIGENTUEMER.EINHEIT_ID GROUP BY ID ORDER BY EINHEIT_KURZNAME ASC");
+                foreach ($result as $row) {
+                    $weg = new weg ();
+                    $ID = $row ['ID'];
+                    $einheit_id = $row ['EINHEIT_ID'];
+                    $einheit_kn = $row ['EINHEIT_KURZNAME'];
                     $eee = new einheit ();
                     $eee->get_einheit_info($einheit_id);
                     $gk = new gk ();
@@ -289,91 +296,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             foreach ($users as $user) {
                 echo "$user->name*$user->id*|";
             }
-        }
-
-        break;
-
-    case "list_kostentraeger2" :
-        $typ = request()->input('typ');
-        if ($typ == 'Objekt') {
-            $result = DB::select("SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC");
-            foreach ($result as $row) {
-                echo "$row[OBJEKT_KURZNAME]|";
-            }
-        }
-
-        if ($typ == 'Wirtschaftseinheit') {
-            $result = DB::select("SELECT W_NAME FROM WIRT_EINHEITEN WHERE AKTUELL='1' ORDER BY W_NAME ASC");
-            foreach ($result as $row) {
-                echo "$row[W_NAME]|";
-            }
-        }
-
-        if ($typ == 'Haus') {
-            $result = DB::select("SELECT HAUS_STRASSE, HAUS_NUMMER FROM HAUS WHERE HAUS_AKTUELL='1' ORDER BY HAUS_STRASSE,  0+HAUS_NUMMER, OBJEKT_ID ASC");
-            foreach ($result as $row)
-                echo "$row[HAUS_STRASSE] $row[HAUS_NUMMER]|";
-        }
-
-        if ($typ == 'Einheit') {
-            $result = DB::select("SELECT EINHEIT_KURZNAME FROM EINHEIT WHERE EINHEIT_AKTUELL='1' ORDER BY EINHEIT_KURZNAME ASC");
-            foreach ($result as $row)
-                echo "$row[EINHEIT_KURZNAME]|";
-        }
-
-        if ($typ == 'Partner') {
-            $result = DB::select("SELECT PARTNER_NAME FROM PARTNER_LIEFERANT WHERE AKTUELL='1' ORDER BY PARTNER_NAME ASC");
-            foreach ($result as $row) {
-                $PARTNER_NAME1 = str_replace('<br>', '', $row->PARTNER_NAME);
-                echo "$PARTNER_NAME1|";
-            }
-        }
-
-        if ($typ == 'Mietvertrag') {
-            $result = DB::select("SELECT OBJEKT_KURZNAME, MIETVERTRAG.EINHEIT_ID, EINHEIT_KURZNAME, MIETVERTRAG_ID FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT, MIETVERTRAG) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && EINHEIT.EINHEIT_ID=MIETVERTRAG.EINHEIT_ID)
-WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERTRAG_AKTUELL='1' GROUP BY MIETVERTRAG_ID ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC");
-            foreach ($result as $row) {
-                $mv_id = $row['MIETVERTRAG_ID'];
-                $mv = new mietvertraege ();
-                $mv->get_mietvertrag_infos_aktuell($mv_id);
-                echo "$mv->einheit_kurzname*$mv_id*$mv->personen_name_string|";
-            }
-        }
-
-        if ($typ == 'GELDKONTO') {
-            $result = DB::select("SELECT KONTO_ID, BEZEICHNUNG  FROM `GELD_KONTEN`  WHERE AKTUELL='1' ORDER BY BEZEICHNUNG ASC");
-            foreach ($result as $row) {
-                echo "$row[BEZEICHNUNG]|";
-            }
-        }
-
-        if ($typ == 'Lager') {
-            $result = DB::select("SELECT LAGER_ID, LAGER_NAME FROM LAGER WHERE AKTUELL='1' ORDER BY LAGER_NAME ASC");
-            foreach ($result as $row) {
-                echo "row[$LAGER_NAME]|";
-            }
-        }
-
-        if ($typ == 'Baustelle_ext') {
-            $result = DB::select("SELECT ID, BEZ  FROM BAUSTELLEN_EXT WHERE AKTUELL='1' ORDER BY BEZ ASC");
-            foreach ($result as $row) {
-                echo "$row[BEZ]|";
-            }
-        }
-
-        if ($typ == 'Eigentuemer') {
-            $result = DB::select("SELECT ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME FROM WEG_MITEIGENTUEMER, EINHEIT WHERE EINHEIT_AKTUELL = '1' && AKTUELL = '1' && EINHEIT.EINHEIT_ID = WEG_MITEIGENTUEMER.EINHEIT_ID GROUP BY ID ORDER BY  EINHEIT_KURZNAME ASC");
-            foreach ($result as $row) {
-                $weg = new weg ();
-                $ID = $row['ID'];
-                $weg->get_eigentuemer_namen($row['ID']);
-                $einheit_kn = $row ['EINHEIT_KURZNAME'];
-                echo "$einheit_kn $weg->eigentuemer_name_str*$ID|";
-            }
-        }
-
-        if ($typ == 'ALLE') {
-            echo "ALLE|";
         }
 
         break;
@@ -1078,7 +1000,7 @@ function dropdown_pools($label, $name, $id, $js, $kos_typ, $kos_id)
     $result = DB::select("SELECT * FROM POS_POOLS WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' ORDER BY POOL_NAME ASC");
     if (!empty($result)) {
         echo "<select name=\"$name\" id=\"$id\" size=\"1\" $js>\n";
-        foreach($result as $row) {
+        foreach ($result as $row) {
             $pool_id = $row['ID'];
             $pool_name = $row['POOL_NAME'];
 
@@ -1136,7 +1058,7 @@ function check_konto_exists($konto, $profil_id)
 function get_last_katalog_id()
 {
     $result = DB::select("SELECT KATALOG_ID FROM POSITIONEN_KATALOG WHERE AKTUELL='1' ORDER BY KATALOG_ID DESC LIMIT 0,1");
-    if(!empty($result)) {
+    if (!empty($result)) {
         return $result[0]['KATALOG_ID'];
     } else {
         return 0;
@@ -1148,34 +1070,34 @@ function get_kostentraeger_infos($typ, $id)
 {
     if ($typ == 'Objekt') {
         $result = DB::select("SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' && OBJEKT_ID='$id'");
-        foreach($result as $row) {
+        foreach ($result as $row) {
             return $row['OBJEKT_KURZNAME'];
         }
     }
 
     if ($typ == 'Haus') {
         $result = DB::select("SELECT HAUS_STRASSE, HAUS_NUMMER FROM HAUS WHERE HAUS_AKTUELL='1' && HAUS_ID='$id'");
-        foreach($result as $row)
+        foreach ($result as $row)
             return "$row[HAUS_STRASSE] $row[HAUS_NUMMER]";
     }
 
     if ($typ == 'Einheit') {
         $result = DB::select("SELECT EINHEIT_KURZNAME FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID='$id'");
-        foreach($result as $row)
+        foreach ($result as $row)
             return "$row[EINHEIT_KURZNAME]";
     }
 
     if ($typ == 'Partner') {
         $result = DB::select("SELECT PARTNER_NAME FROM PARTNER_LIEFERANT WHERE AKTUELL='1' && PARTNER_ID='$id'");
         $PARTNER_NAME1 = '';
-        foreach($result as $row)
+        foreach ($result as $row)
             $PARTNER_NAME1 = str_replace('<br>', '', $row['PARTNER_NAME']);
         return "$PARTNER_NAME1";
     }
     if ($typ == 'Lager') {
         $result = DB::select("SELECT LAGER_NAME FROM LAGER WHERE AKTUELL='1' && LAGER_ID='$id'");
         $LAGER_NAME1 = '';
-        foreach($result as $row)
+        foreach ($result as $row)
             $LAGER_NAME1 = str_replace('<br>', '', $row['LAGER_NAME']);
         return "$LAGER_NAME1";
     }
