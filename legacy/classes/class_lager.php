@@ -2,7 +2,10 @@
 
 class lager {
 	var $lagerbestand_arr;
-	function lager_in_array() {
+    public $lager_name;
+    public $lager_partner_id;
+
+    function lager_in_array() {
 		$result = DB::select( "SELECT * FROM LAGER WHERE AKTUELL = '1' ORDER BY LAGER_NAME ASC" );
 		if (!empty($result)) {
 			return $result;

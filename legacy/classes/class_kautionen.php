@@ -2,6 +2,15 @@
 
 class kautionen
 {
+    public $kautions_betrag;
+    public $anzahl_zahlungen;
+    public $kautionszahlungen_array;
+    public $anfangs_summe;
+    public $end_summe;
+    public $kap_g;
+    public $soli_g;
+    public $footer_zahlungshinweis;
+
     function get_kautionsbetrag($mietvertrag_id)
     {
         $this->kautions_betrag = 0;

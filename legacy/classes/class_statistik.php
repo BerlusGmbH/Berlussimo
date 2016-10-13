@@ -2,6 +2,19 @@
 
 class statistik
 {
+    public $bez;
+    public $objekt_name;
+    public $akt_jahr;
+    public $vermietete;
+    public $leer;
+    public $gesamt;
+    public $gesamt_leer;
+    public $pro_v;
+    public $pro_l;
+    public $durchschnitt_leer_jahr;
+    public $summe_konto_buchungen;
+    public $footer_zahlungshinweis;
+
     function get_stat($jahr, $objekt_id, $typ_lage)
     {
         $b = new objekt ();

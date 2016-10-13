@@ -5,6 +5,31 @@
 class mt940
 {
     var $import_filename;
+    public $anzahl_61;
+    public $anzahl_86;
+    public $pos_20;
+    public $pos_25;
+    public $laenge_20;
+    public $pos_28c;
+    public $pos_60;
+    public $laenge_28c;
+    public $pos_61;
+    public $laenge_60;
+    public $pos_N;
+    public $pos_trenn8;
+    public $pos_betrag;
+    public $pos_86_end;
+    public $pos_64;
+    public $pos_62;
+    public $laenge_25;
+    public $pos_86;
+    public $laenge_61;
+    public $pos_end64;
+    public $laenge_64;
+    public $pos_61_end;
+    public $laenge_86;
+    public $pos_end62;
+    public $laenge_62;
 
     function feld_definition($datensatz = '')
     {
@@ -318,7 +343,7 @@ RWALTUNG?3076000000?3176001601?32BUNDESAGENTUR FUER ARBEIT?34000
 
         if ($this->pos_64) {
             $this->pos_end64 = strlen($datensatz);
-            $this->laenge_64 = pos_end64 - $this->pos_64 - 15;
+            $this->laenge_64 = $this->pos_end64 - $this->pos_64 - 15;
             $_64_sub1 = substr($datensatz, $this->pos_64 + 4, 1);
             echo "64-SUB1 $_64_sub1<br>";
             $_64_sub2 = substr($datensatz, $this->pos_64 + 5, 6);

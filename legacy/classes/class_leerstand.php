@@ -2,6 +2,15 @@
 
 class leerstand
 {
+    public $name;
+    public $anschrift;
+    public $tel;
+    public $email;
+    public $zimmer;
+    public $einzug_d;
+    public $hinweis;
+    public $einzug;
+
     function leerstand_objekt_pdf($objekt_id, $monat, $jahr)
     {
         ob_end_clean(); // ausgabepuffer leeren

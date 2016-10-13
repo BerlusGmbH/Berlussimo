@@ -81,6 +81,4 @@ function import_me($tabelle) {
 
 // import_me(objekt);
 // import_me(haus);
-import_me ( einheit );
-
-?>
+import_me ( 'einheit' );

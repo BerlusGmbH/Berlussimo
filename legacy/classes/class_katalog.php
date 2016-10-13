@@ -4,6 +4,21 @@ class katalog
 {
 
     /* Funktion zur Erstellung des Partnerauswahlmenues */
+    public $erst_preis;
+    public $last_preis_;
+    public $vorzeichen;
+    public $preis_diff;
+    public $erst_preis_a;
+    public $last_preis;
+    public $last_preis_a;
+    public $bez;
+    public $listenpreis;
+    public $rabattsatz;
+    public $u_preis;
+    public $u_brutto;
+    public $u_skontiert;
+    public $skonto;
+
     function partner_auswahl_menue($option_link)
     {
         if (request()->has('partner_id')) {

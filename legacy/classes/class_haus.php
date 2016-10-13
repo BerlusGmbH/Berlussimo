@@ -5,6 +5,11 @@ class haus extends objekt {
     public $haus_nummer;
     public $haus_strasse;
     public $objekt_id;
+    public $haus_id;
+    public $haus_plz;
+    public $haus_qm;
+    public $haus_qm_a;
+    public $anzahl_einheiten;
 
     function get_haus_info($haus_id) {
         $result = DB::select( "SELECT * FROM HAUS WHERE HAUS_AKTUELL='1' && HAUS_ID='$haus_id' ORDER BY HAUS_DAT DESC LIMIT 0,1" );
@@ -36,7 +41,7 @@ class haus extends objekt {
         $f->text_feld ( "Grösse in qm", "qm", "$this->haus_qm_a", "10", 'qm', '' );
 
         $o = new objekt ();
-        $o->dropdown_objekte ( 'Objekt', objekt_id, $this->objekt_name );
+        $o->dropdown_objekte ( 'Objekt', $this->objekt_id, $this->objekt_name );
 
         $f->hidden_feld ( "haus_id", "$haus_id" );
         $f->hidden_feld ( "haus_raus", "haus_aend_speichern" );

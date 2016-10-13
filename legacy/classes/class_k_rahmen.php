@@ -2,6 +2,14 @@
 
 class k_rahmen
 {
+    public $name;
+    public $dat;
+    public $kontenrahmen_id;
+    public $kontoart_id;
+    public $gruppen_id;
+    public $konto;
+    public $konto_bez;
+
     function kontenrahmen_liste_anzeigen()
     {
         $arr = $this->kontenrahmen_in_arr();

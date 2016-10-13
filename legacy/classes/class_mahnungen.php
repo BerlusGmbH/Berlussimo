@@ -4,6 +4,12 @@ class mahnungen
 {
 
     /* Liefert Anzeige mit Mietern mit Schulden */
+    public $datum_l_zahl_e;
+    public $saldo_zahl_e;
+    public $saldo_l_mahnung;
+    public $mahn_geb;
+    public $datum_l_mahnung;
+
     function finde_schuldner($schulder_typ)
     {
         $f = new formular ();

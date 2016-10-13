@@ -5,6 +5,16 @@ class mietkonto
     /* Funktion-Konstruktor der jedes Mal aufgerufen wird für db connect */
     public $ausgangs_kaltmiete;
     public $ausgangs_kaltmiete_a;
+    public $mietvertrag_von;
+    public $mietvertrag_bis;
+    public $einheit_kurzname_von_mv;
+    public $anzahl_personen_im_vertrag;
+    public $summe_bk_abrechnung;
+    public $summe_wasser_abrechnung;
+    public $datum_saldo_vv;
+    public $monatsname;
+    public $betriebskosten;
+    public $heizkosten;
 
     function mietkonto()
     {

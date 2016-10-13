@@ -2,6 +2,9 @@
 
 class werkzeug
 {
+    public $werkzeug_bez;
+    public $lieferant;
+
     function werkzeugliste($b_id = NULL)
     {
         $link_NACH_MIT = "<a href='" . route('legacy::benutzer::index', ['option' => 'werkzeugliste_nach_mitarbeiter', 'b_id' => $b_id]) . "'>ÜBERSICHT NACH MITARBEITER</a>";

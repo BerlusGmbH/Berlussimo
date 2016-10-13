@@ -125,11 +125,7 @@ switch ($option) {
                 echo "Bitte Geldkonto auswählen.";
                 return;
             }
-            if (! session()->has($einheit_name . ' ' . $zeitraum)) {
-                $bk->pdf_ausgabe_alle(session()->get('profil_id'));
-            } else {
-                $bk->pdf_ausgabe_bk($einheit_name . ' ' . $zeitraum);
-            }
+            $bk->pdf_ausgabe_alle(session()->get('profil_id'));
         } else {
             echo "Kein Berechnungsprofil gewählt";
         }
@@ -345,7 +341,7 @@ switch ($option) {
                 $bk->bk_profil_kopieren($profil_id, $bezeichung, 0);
             }
             echo "<br><br>Profil kopiert, bitte warten!";
-            weiterleiten_in_sec(route('legacy::bk::index', ['option' => 'profile'],false), 2);
+            weiterleiten_in_sec(route('legacy::bk::index', ['option' => 'profile'], false), 2);
         } else {
             echo "Eingabe unvollständig Err. 72348724";
         }
@@ -357,7 +353,7 @@ switch ($option) {
             session()->put('genkey', request()->input('genkey'));
             session()->put('hndl', request()->input('hndl'));
             session()->put('kontierung', request()->input('kontierung'));
-            if(request()->has('submit_key') && request()->input('submit_key') == "Bestehende Ändern") {
+            if (request()->has('submit_key') && request()->input('submit_key') == "Bestehende Ändern") {
                 $bk->update_genkey(session()->get('bk_konto_id'), session()->get('profil_id'), session()->get('genkey'), session()->get('hndl'));
             }
         }
@@ -408,7 +404,7 @@ switch ($option) {
                 }
             } // end for
         }
-        weiterleiten(route('legacy::bk::index', ['option' => 'energie'],false));
+        weiterleiten(route('legacy::bk::index', ['option' => 'energie'], false));
 
         break;
 
@@ -460,7 +456,7 @@ switch ($option) {
                     }
                 }
             }
-            weiterleiten_in_sec(route('legacy::bk::index', ['option' => 'anpassung_bk_nk'],false), 3);
+            weiterleiten_in_sec(route('legacy::bk::index', ['option' => 'anpassung_bk_nk'], false), 3);
         }
 
         break;

@@ -2,6 +2,26 @@
 
 class listen
 {
+    public $gmon_obj;
+    public $et_tab;
+    public $gmon_et;
+    public $pdf_tab_g;
+    public $kurz_b;
+    public $report_von_neu;
+    public $report_bis_neu;
+    public $kto_bez_en;
+    public $kto_bez_de;
+    public $saldo_et;
+    public $kauf_leer;
+    public $kauf_vermietet;
+    public $gk_id;
+    public $objekt_id;
+    public $partner_id;
+    public $report_von;
+    public $report_von_neu_d;
+    public $report_bis_neu_d;
+    public $saldo_et_vm;
+
     function inspiration_pdf($ausgezogene = 0, $objekt_id, $monat, $jahr, $lang = 'de')
     {
         $monat_name = monat2name($monat);
@@ -959,7 +979,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                     $ihr_hg = $weg1->get_summe_kostenkat_monat($monat, $jahr, 'Einheit', $einheit_id, '6030');
                     // $my_arr[$a]['ABGABEN'][]['ABGABE_IHR'] = $my_arr[$a]['WEG-FLAECHE'] * -0.4;
                     if ($ihr_hg) {
-                        $my_arr [$a] ['ABGABEN'] [] ['ABGABE_IHR'] = -ihr_hg;
+                        $my_arr [$a] ['ABGABEN'] [] ['ABGABE_IHR'] = -$ihr_hg;
                     } else {
                         // if(empty($my_arr[$a]['WEG-FLAECHE'])){
                         $my_arr [$a] ['ABGABEN'] [] ['ABGABE_IHR'] = $einheit_qm * -0.4;
@@ -2071,7 +2091,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                     $weg1 = new weg ();
                     $ihr_hg = $weg1->get_summe_kostenkat_monat($monat, $jahr, 'Einheit', $einheit_id, '6030');
                     if ($ihr_hg) {
-                        $my_arr [$a] ['ABGABEN'] [] ['ABGABE_IHR'] = -ihr_hg;
+                        $my_arr [$a] ['ABGABEN'] [] ['ABGABE_IHR'] = -$ihr_hg;
                     } else {
                         $my_arr [$a] ['ABGABEN'] [] ['ABGABE_IHR'] = $einheit_qm * -0.4;
                     }

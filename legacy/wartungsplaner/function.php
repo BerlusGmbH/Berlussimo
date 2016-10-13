@@ -323,14 +323,14 @@ function test($anfang, $ende)
             $anz = count($db_termine);
             if ($anz > 0) {
                 for ($d = 0; $d < $anz; $d++) {
-                    $text = $db_termine[$d][TEXT];
-                    $von_arr = explode(':', $db_termine[$d][VON]);
+                    $text = $db_termine[$d]['TEXT'];
+                    $von_arr = explode(':', $db_termine[$d]['VON']);
                     $v_std = sprintf("%02d", $von_arr[0]);
                     $v_min = sprintf("%02d", $von_arr[1]);
-                    $bis_arr = explode(':', $db_termine[$d][BIS]);
+                    $bis_arr = explode(':', $db_termine[$d]['BIS']);
                     $b_std = sprintf("%02d", $bis_arr[0]);
                     $b_min = sprintf("%02d", $bis_arr[1]);
-                    $datum = $db_termine[$d][D_GER];
+                    $datum = $db_termine[$d]['D_GER'];
                     $zeit_arr = explode(':', $zeit);
                     $z_std = $zeit_arr[0];
                     $z_min = $zeit_arr[1];

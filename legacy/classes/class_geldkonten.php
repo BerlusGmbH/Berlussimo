@@ -2,6 +2,8 @@
 
 class gk
 {
+    public $iban_kos_id;
+
     function form_geldkonto_neu()
     {
         $f = new formular ();

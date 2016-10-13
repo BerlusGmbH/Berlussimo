@@ -5,6 +5,26 @@ class buchen
     var $globalMultisortVar = array();
     public $summe_konto_buchungen;
     public $akt_betrag_punkt;
+    public $akt_konto_bezeichnung;
+    public $konto_art_bezeichnung;
+    public $akt_buch_id;
+    public $g_buchungsnummer;
+    public $geldkonto_id;
+    public $akt_datum;
+    public $akt_auszugsnr;
+    public $akt_erfass_nr;
+    public $akt_betrag_komma;
+    public $akt_mwst_anteil_komma;
+    public $kostentraeger_typ;
+    public $kostentraeger_id;
+    public $kostenkonto;
+    public $akt_vzweck;
+    public $akt_buch_dat;
+    public $summe_konto_buchungen_a;
+    public $summe_mwst;
+    public $footer_zahlungshinweis;
+    public $akt_mwst_anteil;
+    public $summe_mwst_a;
 
     function geldkonto_auswahl()
     {

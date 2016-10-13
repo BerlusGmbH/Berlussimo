@@ -5,6 +5,29 @@
 class detail
 {
 
+    public $detail_name;
+    public $last_detail_id;
+    public $dat_tabelle;
+    public $dat_id;
+    public $det_tabelle;
+    public $det_id;
+    public $kop;
+    public $knr;
+    public $lnr;
+    public $a_art;
+    public $a_nr_hw;
+    public $kundentext;
+    public $vorgangsnr_gh;
+    public $datum;
+    public $datum_j;
+    public $datum_m;
+    public $datum_t;
+    public $datum_d;
+    public $waehrung;
+    public $version;
+    public $verantw;
+    public $positionen_arr;
+
     function dropdown_optionen($label, $name, $id, $kat_bez, $vorgabe, $js = null)
     {
         $arr = $this->detail_optionen_arr($kat_bez);

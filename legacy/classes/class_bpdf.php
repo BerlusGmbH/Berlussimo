@@ -4,7 +4,20 @@
 class b_pdf
 {
     public $zahlungshinweis;
-    
+    public $aktuelle_g_miete;
+    public $aktuelle_g_miete_arr;
+    public $v_kurztext;
+    public $v_text;
+    public $header_zeile;
+    public $zeile1;
+    public $zeile2;
+    public $footer_typ;
+    public $footer_typ_id;
+    public $zahlungshinweis_org;
+    public $footer_partner;
+    public $v_kat;
+    public $v_empf_typ;
+
     function erstelle_brief_vorlage($v_dat, $empf_typ, $empf_id_arr, $option = '0')
     {
         $anz_empf = count($empf_id_arr);

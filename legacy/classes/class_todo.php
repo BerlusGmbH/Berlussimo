@@ -2,6 +2,26 @@
 
 class todo
 {
+    public $text;
+    public $t_dat;
+    public $t_id;
+    public $ue_id;
+    public $benutzer_typ;
+    public $benutzer_id;
+    public $verfasser_id;
+    public $mitarbeiter_name;
+    public $partner_ans;
+    public $kos_typ;
+    public $kos_id;
+    public $partner_fax;
+    public $partner_email;
+    public $verfasst_von;
+    public $erledigt;
+    public $erledigt_text;
+    public $anzeigen_ab;
+    public $akut;
+    public $kos_bez;
+
     function form_neue_baustelle($t_id = NULL)
     {
         $f = new formular ();

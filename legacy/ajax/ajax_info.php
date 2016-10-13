@@ -632,7 +632,7 @@ WHERE (`ARTIKEL_NR` LIKE ? OR `BEZEICHNUNG` LIKE ?) ORDER BY ART_LIEFERANT ASC, 
 
             foreach ($result as $row) {
                 $p = new partners ();
-                $p->get_partner_name($row[ART_LIEFERANT]);
+                $p->get_partner_name($row['ART_LIEFERANT']);
                 echo "$row[ARTIKEL_NR]??$row[BEZEICHNUNG]??$row[BRUTTO]??$p->partner_name??$row[ART_LIEFERANT]||";
             }
         } else {

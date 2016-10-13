@@ -2,6 +2,27 @@
 
 class wartung
 {
+    public $intervall_period;
+    public $gewerk_id;
+    public $plan_id;
+    public $benutzer_id;
+    public $datum_g;
+    public $kostentraeger_typ;
+    public $kostentraeger_id;
+    public $kostentraeger_bez;
+    public $plan_bez;
+    public $intervall;
+    public $geraet_id;
+    public $wartungsdatum;
+    public $n_wartung;
+    public $bemerkung;
+    public $gewartet_von;
+    public $termin_von;
+    public $termin_g;
+    public $baujahr;
+    public $bezeichnung;
+    public $termin;
+
     function get_wplan_info($plan_id)
     {
         $result = DB::select("SELECT * FROM `WARTUNGSPLAN` WHERE `PLAN_ID` ='$plan_id'   AND `AKTUELL` = '1' ORDER BY DAT DESC LIMIT 0,1");

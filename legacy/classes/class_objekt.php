@@ -7,6 +7,17 @@ class objekt
     public $anzahl_geld_konten;
     public $objekt_name;
     public $objekt_kurzname;
+    public $objekt_eigentuemer_id;
+    public $objekt_id;
+    public $objekt_kontonummer;
+    public $objekt_dat;
+    public $anzahl_objekte;
+    public $objekt_eigentuemer;
+    public $objekt_eigentuemer_pdf;
+    public $objekt_eigentuemer_partner_id;
+    public $anzahl_haeuser;
+    public $zeilen_pro_seite;
+    public $seiten_anzahl;
 
     function form_objekt_kopieren()
     {

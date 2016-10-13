@@ -37,11 +37,45 @@ class rechnung
     var $rechnungs_empfaenger_hausnr;
     var $rechnungs_empfaenger_plz;
     var $rechnungs_empfaenger_ort;
-
-    /* Ende rechnung_grunddaten_holen */
-
-    /* Infos über Positionen */
     var $anzahl_positionen;
+    public $dat;
+    public $beleg_nr;
+    public $pos;
+    public $menge;
+    public $einzel_preis;
+    public $g_summe;
+    public $mwst_satz;
+    public $rabatt_satz;
+    public $kostenkonto;
+    public $kos_typ;
+    public $kos_id;
+    public $summe_mwst;
+    public $rechnungs_skontoabzug;
+    public $rechnungs_kuerzel;
+    public $status_bestaetigt;
+    public $rechnung_aussteller_partner_id;
+    public $rechnung_empfaenger_partner_id;
+    public $rechnungs_typ_druck;
+    public $artikel_nr;
+    public $art_lieferant;
+    public $objekt_name;
+    public $k_kontierungs_menge;
+    public $k_kontenrahmen_konto;
+    public $k_kostentraeger_typ;
+    public $k_kostentraeger_id;
+    public $k_kostentraeger_bez;
+    public $k_kostentraeger_anzahl_konten;
+    public $rechnungs_mwst;
+    public $rechnungsnummer_kuerzel;
+    public $summe_mwst_komma;
+    public $kostentraeger_id;
+    public $kostentraeger_typ;
+    public $verwendungs_jahr;
+    public $kontierungs_menge;
+    public $rechnungs_skontoabzug_a;
+    public $rechnungs_brutto_a;
+    public $rechnungs_brutto_ausgabe;
+    public $rechnungs_skonto_ausgabe;
 
     function get_kontierung_obj($dat)
     {
@@ -2513,7 +2547,7 @@ function rechnung_footer_tabelle_anzeigen_pe()
                 $listenpreis = nummer_punkt2komma($katalog_arr [$a] ['LISTENPREIS']);
                 $rabatt_satz = $katalog_arr [$a] ['RABATT_SATZ'];
                 $unser_preis = $listenpreis - (($listenpreis / 100) * $rabatt_satz);
-                $javascript_link = "<a href=\"javascript:pos_fuellen('" . $katalog_arr [$a] ['ARTIKEL_NR'] . "','" . $katalog_arr [$a] ['BEZEICHNUNG'] . "', '" . $listenpreis . "');\">" . $katalog_arr [$a] [ARTIKEL_NR] . "</a>\n";
+                $javascript_link = "<a href=\"javascript:pos_fuellen('" . $katalog_arr [$a] ['ARTIKEL_NR'] . "','" . $katalog_arr [$a] ['BEZEICHNUNG'] . "', '" . $listenpreis . "');\">" . $katalog_arr [$a] ['ARTIKEL_NR'] . "</a>\n";
                 echo "<tr><td>$javascript_link</td><td>" . $katalog_arr [$a] ['BEZEICHNUNG'] . "</td><td>$listenpreis €</td><td>$unser_preis</td><td><b>$rabatt_satz %</b></td></tr>\n";
             }
             // echo "<tr><td>".$katalog_arr[$a][ARTIKEL_NR]."</td><td>".$katalog_arr[$a][BEZEICHNUNG]."</td><td>".$katalog_arr[$a][LISTENPREIS]."</td></tr>\n";

@@ -12,6 +12,12 @@ class partners
     /* Name eines Partner/Lieferand/Eigentümer */
     public $partner_ort;
     public $partner_name;
+    public $partner_strasse;
+    public $partner_hausnr;
+    public $partner_plz;
+    public $partner_id;
+    public $partner_land;
+    public $partner_dat;
 
     function suche_partner_in_array($suchtext)
     {

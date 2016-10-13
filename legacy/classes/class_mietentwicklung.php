@@ -5,6 +5,8 @@ class mietentwicklung
     var $kostenkategorien;
     var $mietvertrag_von;
     var $forderungs_summe_aktuell = 0;
+    public $anzahl_me;
+    public $nebenkosten_gesamt_jahr;
 
     function get_energieverbrauch($kos_typ, $kos_id, $jahr)
     {

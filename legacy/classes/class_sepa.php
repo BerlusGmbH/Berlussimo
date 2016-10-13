@@ -6,6 +6,23 @@ class sepa
     public $beguenstigter;
     public $IBAN1;
     public $BIC;
+    public $BANKNAME_K;
+    public $IBAN;
+    public $BANKNAME;
+    public $summe_frst;
+    public $summe_rcur;
+    public $footer_zahlungshinweis;
+    public $bankname;
+    public $geldkonto_bez;
+    public $konto_beguenstigter;
+    public $kontonummer;
+    public $blz;
+    public $institut;
+    public $kredit_institut;
+    public $geldkonto_bezeichnung;
+    public $geldkonto_bezeichnung_kurz;
+    public $sepa_summe;
+    public $sepa_gk_id;
 
     function test_sepa()
     {

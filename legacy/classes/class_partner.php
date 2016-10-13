@@ -11,6 +11,13 @@ class partner extends rechnung {
     var $rechnungs_empfaenger_hausnr;
     var $rechnungs_empfaenger_plz;
     var $rechnungs_empfaenger_ort;
+    public $partner_id;
+    public $partner_name;
+    public $partner_str;
+    public $partner_nr;
+    public $partner_plz;
+    public $partner_ort;
+    public $partner_land;
 
     function get_aussteller_info($partner_id) {
         $result = DB::select( "SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'" );

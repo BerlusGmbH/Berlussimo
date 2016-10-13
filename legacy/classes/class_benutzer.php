@@ -3,6 +3,17 @@
 class benutzer
 {
     public $benutzername;
+    public $passwort;
+    public $gewerk_id;
+    public $geb_datum;
+    public $datum_eintritt;
+    public $datum_austritt;
+    public $urlaub;
+    public $stunden_wo;
+    public $stundensatz;
+    public $benutzer_id;
+    public $id;
+    public $benutzer_email;
 
     function get_benutzer_id($benutzername)
     {

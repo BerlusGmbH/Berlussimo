@@ -2,6 +2,23 @@
 
 class urlaub
 {
+    public $benutzername;
+    public $anspruch_monate;
+    public $anspruch_jahr;
+    public $anspruch_vorjahre;
+    public $anspruch_gesamt;
+    public $genommen;
+    public $geplant;
+    public $rest_aktuell;
+    public $rest_jahr;
+    public $eintritt;
+    public $austritt;
+    public $urlaub;
+    public $benutzer_id;
+    public $gewerk_id;
+    public $stunden_pw;
+    public $stundensatz;
+
     function jahresuebersicht_alle_pdf($jahr)
     {
         $users = $this->mitarbeiter_arr($jahr);

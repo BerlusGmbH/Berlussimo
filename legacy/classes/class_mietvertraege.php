@@ -21,6 +21,40 @@ class mietvertraege
     public $personen_name_string;
     public $einheit_id;
     public $mietvertrag_bis_d;
+    public $mietvertrag_von_d;
+    public $ls_konto;
+    public $ls_blz;
+    public $objekt_id;
+    public $objekt_kurzname;
+    public $anzahl_personen;
+    public $personen_ids;
+    public $einheit_qm;
+    public $mietvertrag_von;
+    public $mietvertrag_dat;
+    public $einheit_qm_d;
+    public $haus_id;
+    public $personen_name_string_u2;
+    public $herr_frau;
+    public $personen_anreden;
+    public $mietvertrag_bis;
+    public $alle_teilnehmer;
+    public $ls_einzugsermaechtigung;
+    public $ls_einzugsermaechtigung_dat;
+    public $ls_autoeinzugsart;
+    public $ls_autoeinzugsart_dat;
+    public $ls_konto_inhaber;
+    public $ls_konto_inhaber_dat;
+    public $ls_konto_nummer;
+    public $ls_konto_nummer_dat;
+    public $ls_blz_dat;
+    public $ls_bankname;
+    public $ls_bankname_dat;
+    public $ls_bankname_sep;
+    public $ls_bankname_sep_k;
+    public $ls_iban;
+    public $ls_bic;
+    public $serie;
+    public $ls_iban1;
 
     protected $namen;
 
@@ -2027,7 +2061,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                         $mk = new mietkonto ();
                         $mieter_ids = $mk->get_personen_ids_mietvertrag($mv_id);
                         for ($a = 0; $a < count($mieter_ids); $a++) {
-                            $mieter_daten_arr [] = $mk->get_person_infos($mieter_ids [$a] [PERSON_MIETVERTRAG_PERSON_ID]);
+                            $mieter_daten_arr [] = $mk->get_person_infos($mieter_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID']);
                         }
 
                         // $miete->mietkonto_berechnung_monatsgenau($mv_id, $jahr, $monat);

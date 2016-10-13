@@ -45,6 +45,25 @@ class rechnungen
     public $status_bestaetigt;
     public $rechnungs_skontoabzug;
     public $anzahl_positionen;
+    public $rechnungs_kuerzel;
+    public $rechnungsnummer_kuerzel;
+    public $rechnung_aussteller_partner_id;
+    public $rechnung_empfaenger_partner_id;
+    public $rechnungs_typ_druck;
+    public $anzahl_positionen_aktuell;
+    public $ursprungs_array;
+    public $rg_betrag;
+    public $rg_prozent;
+    public $v_beleg_nr;
+    public $anz_preise;
+    public $v_rabatt_satz;
+    public $v_preis;
+    public $rechnungs_brutto_schluss;
+    public $rechnungs_mwst_schluss;
+    public $rechnungs_netto_schluss;
+    public $rechnungs_skontoabzug_schluss;
+    public $rechnungs_brutto_schluss_a;
+    public $ursprungs_array_a;
 
     function get_summe_kosten_pool($empf_typ, $empf_id)
     {

@@ -2,6 +2,8 @@
 
 class import
 {
+    public $akt_z;
+
     function form_import_gfad($file = null)
     {
         if (!isset ($_SESSION ['objekt_id'])) {

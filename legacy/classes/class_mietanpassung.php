@@ -8,6 +8,30 @@
 class mietanpassung
 {
 
+    public $m_wert;
+    public $o_wert;
+    public $ausstattungsklasse;
+    public $u_wert;
+    public $erhoehungsbetrag;
+    public $erhoehungsdatum;
+    public $naechste_erhoehung_datum;
+    public $naechste_erhoehung_betrag;
+    public $abzug_wert;
+    public $einheit_qm;
+    public $objekt_baujahr;
+    public $objekt_bauart;
+    public $haus_wohnlage;
+    public $u_wert_w;
+    public $m_wert_w;
+    public $o_wert_w;
+    public $objekt_ost;
+    public $monatlich_mehr_mieter;
+    public $zuabschlag;
+    public $zuabschlag_a;
+    public $abzug_wert_a;
+    public $spalte;
+    public $footer_zahlungshinweis;
+
     function get_ms_jahr()
     {
         $db_abfrage = "SELECT JAHR FROM MIETSPIEGEL ORDER BY JAHR DESC LIMIT 0,1";

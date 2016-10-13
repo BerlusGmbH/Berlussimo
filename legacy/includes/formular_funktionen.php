@@ -309,7 +309,7 @@ function person_aendern_from($person_id)
     if (!empty($result)) {
         erstelle_formular(NULL, NULL);
         foreach($result as $row) {
-            $PERSON_GEBURTSTAG = date_mysql2german($row[PERSON_GEBURTSTAG]);
+            $PERSON_GEBURTSTAG = date_mysql2german($row['PERSON_GEBURTSTAG']);
             erstelle_hiddenfeld("person_id", "$row[PERSON_ID]");
             erstelle_eingabefeld("Nachname", "person_nachname", "$row[PERSON_NACHNAME]", "50");
             erstelle_eingabefeld("Vorname", "person_vorname", "$row[PERSON_VORNAME]", "50");

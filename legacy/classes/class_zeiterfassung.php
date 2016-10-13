@@ -2,6 +2,18 @@
 
 class zeiterfassung
 {
+    public $st_benutzer_id;
+    public $beschreibung;
+    public $erf_datum;
+    public $gewerk_id;
+    public $stundensatz;
+    public $BP_PARTNER_ID;
+    public $z_zettel_id;
+    public $z_beschreibung;
+    public $st_benutzername;
+    public $stundenzettel_id;
+    public $erf_datum_mysql;
+
     function zeiterfassung()
     {
         $this->benutzer_id = Auth::user()->id;

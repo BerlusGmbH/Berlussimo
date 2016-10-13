@@ -6,6 +6,10 @@ class personen
     public $person_geburtstag;
     public $geschlecht;
     public $person_vorname;
+    public $person_anzahl_mietvertraege;
+    public $p_mv_ids;
+    public $anschrift;
+    public $zustellanschrift;
 
     function form_person_erfassen()
     {

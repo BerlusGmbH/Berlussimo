@@ -13,6 +13,8 @@ class wirt_e
     public $g_mea;
     public $g_anzahl_einheiten;
     public $g_einheit_qm;
+    public $g_verbrauch;
+    public $anzahl_einheiten;
 
     function check_einheit_in_we($einheit_id, $w_id)
     {

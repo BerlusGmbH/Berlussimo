@@ -43,7 +43,7 @@ if (request()->has('daten_rein')) {
                     }
                 }
                 if (!isset ($error)) {
-                    erstelle_formular(einheit_in_db, NULL); // name, action
+                    erstelle_formular('einheit_in_db', NULL); // name, action
                     echo "<tr><td><h1>Folgende Daten wurden übermittelt:\n</h1></td></tr>\n";
                     echo "<tr><td><h2>Objektkurzname: $objekt_kurzname</h2></td></tr>\n";
                     echo "<tr><td><h2>Haus: $haus_kurzname</h2></td></tr>\n";
@@ -120,7 +120,7 @@ if (request()->has('daten_rein')) {
                     echo "$key $value";
                 }
                 if (!isset ($error)) {
-                    erstelle_formular(einheit_in_db, NULL); // name, action
+                    erstelle_formular('einheit_in_db', NULL); // name, action
                     echo "<tr><td><h1>Folgende Daten wurden übermittelt:\n</h1></td></tr>\n";
                     echo "<tr><td><h2>Objektkurzname: $objekt_kurzname</h2></td></tr>\n";
                     echo "<tr><td><h2>Haus: $haus_kurzname</h2></td></tr>\n";

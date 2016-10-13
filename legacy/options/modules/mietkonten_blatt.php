@@ -520,7 +520,7 @@ if (isset ($anzeigen)) {
                                 if ($zahlungsnummer < $anzahl_zahlungen_im_monat) {
                                     $gesamt_soll = $saldo_vormonat + $differenz_monatlich;
                                     $saldo_vormonat = $gesamt_soll;
-                                    echo "<tr><td>$zahlungsdatum</td><td>1.Zahlbetrag 1.mon</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b></b></td></tr>";
+                                    echo "<tr><td>$zahlungsdatum</td><td>1.Zahlbetrag 1.mon</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] ['BETRAG'] . " € </td><td>$differenz_monatlich €</td><td><b></b></td></tr>";
                                 }
                                 /*
                                  * //letzte Zahlung Einzugsmonat
@@ -539,7 +539,7 @@ if (isset ($anzeigen)) {
                                     $differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] ['BETRAG'];
                                     $gesamt_soll = $gesamt_soll + $alle_zahlbetraege_monat_arr [$a] ['BETRAG'];
                                     $saldo_vormonat = $gesamt_soll;
-                                    echo "<tr><td>$zahlungsdatum</td><td>Zahlbetrag zwischen</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b></b></td></tr>";
+                                    echo "<tr><td>$zahlungsdatum</td><td>Zahlbetrag zwischen</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] ['BETRAG'] . " € </td><td>$differenz_monatlich €</td><td><b></b></td></tr>";
                                 }
                                 // LETZTE ZAHLUNG EINZUGSMONAT
                                 if ($zahlungsnummer == $anzahl_zahlungen_im_monat) {

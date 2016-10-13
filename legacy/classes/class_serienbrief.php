@@ -2,6 +2,9 @@
 
 class serienbrief
 {
+    public $hausgeld_monatlich_de;
+    public $hausgeld_monatlich_en;
+
     function vorlage_waehlen($empf_typ = null, $kat = null)
     {
         if ($empf_typ == null && $kat == null) {

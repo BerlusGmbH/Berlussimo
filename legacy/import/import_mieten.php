@@ -127,7 +127,7 @@ function import_me($tabelle) {
 	}
 }
 
-import_me ( mietentwicklung );
+import_me ( 'mietentwicklung' );
 
 // import_me(objekt);
 // import_me(haus);

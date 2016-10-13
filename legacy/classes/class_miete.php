@@ -18,6 +18,19 @@ class miete
     var $bk_abrechnung = '0.00';
     var $hk_abrechnung = '0.00';
     var $daten_arr;
+    public $sollmiete_warm;
+    public $saldo_vormonat_stand;
+    public $saldo_vormonat_stand_a;
+    public $sollmiete_warm_a;
+    public $davon_umlagen_a;
+    public $erg_a;
+    public $geleistete_zahlungen;
+    public $davon_umlagen;
+    public $saldo_vormonat_end;
+    public $geleistete_zahlungen_a;
+    public $wasser_abrechnung;
+    public $mahngebuehr;
+    public $zb_mon;
 
     function tage_minus($datum, $tage)
     {

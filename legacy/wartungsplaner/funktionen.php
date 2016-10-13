@@ -4582,14 +4582,43 @@ function form_start_stop($tab, $tab_dat)
 
 class general
 {
-
-
-    /*Abfragen*/
-    /*Alle Mitarbeiter eines Teams, die an einem Tag nicht im Urlaub sind und noch freie Termine haben*/
-    #SELECT W_TEAMS_BENUTZER.TEAM_ID, W_TEAMS_BENUTZER.BENUTZER_ID, W_TEAM_PROFILE.1,W_TEAM_PROFILE.2,W_TEAM_PROFILE.3,W_TEAM_PROFILE.4,W_TEAM_PROFILE.5,W_TEAM_PROFILE.6,W_TEAM_PROFILE.7, TERMINE_TAG, START_ADRESSE FROM `W_TEAMS_BENUTZER`, W_TEAM_PROFILE WHERE `TEAM_ID` = '1' AND W_TEAMS_BENUTZER.AKTUELL = '1' AND W_TEAM_PROFILE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID AND W_TEAM_PROFILE.AKTUELL='1' AND W_TEAM_PROFILE.AKTIV='1' AND TERMINE_TAG>(SELECT COUNT(*) AS ANZ FROM GEO_TERMINE WHERE GEO_TERMINE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID && GEO_TERMINE.AKTUELL='1' && DATUM='2011-06-13') && W_TEAMS_BENUTZER.BENUTZER_ID NOT IN(SELECT BENUTZER_ID FROM URLAUB WHERE URLAUB.DATUM='2011-06-13' && URLAUB.AKTUELL='1');
-    /*EIN bestimmter tag nur*/
-    /*DATUM UND WOCHENTAG ERST SETZEN*/
-    #SELECT W_TEAMS_BENUTZER.TEAM_ID, DAYOFWEEK( '2011-06-13' ) +1 AS WOCHENTAG, W_TEAMS_BENUTZER.BENUTZER_ID, W_TEAM_PROFILE.1 AS KANN, TERMINE_TAG, START_ADRESSE FROM `W_TEAMS_BENUTZER`, W_TEAM_PROFILE WHERE  W_TEAM_PROFILE.1='1' AND `TEAM_ID` = '1' AND W_TEAMS_BENUTZER.AKTUELL = '1' AND W_TEAM_PROFILE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID AND W_TEAM_PROFILE.AKTUELL='1' AND W_TEAM_PROFILE.AKTIV='1' AND TERMINE_TAG>(SELECT COUNT(*) AS ANZ FROM GEO_TERMINE WHERE GEO_TERMINE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID && GEO_TERMINE.AKTUELL='1' && DATUM='2011-06-13') && W_TEAMS_BENUTZER.BENUTZER_ID NOT IN(SELECT BENUTZER_ID FROM URLAUB WHERE URLAUB.DATUM='2011-06-13' && URLAUB.AKTUELL='1')
+    public $partner_strasse;
+    public $partner_hausnr;
+    public $partner_plz;
+    public $partner_ort;
+    public $km;
+    public $zeit;
+    public $team_benutzer_ids;
+    public $team_bez;
+    public $partner_name;
+    public $mieter_lat_lon_db_ziel;
+    public $mieter_info;
+    public $mieter_bis_str;
+    public $mieter_name;
+    public $kundschaft;
+    public $fahrzeit;
+    public $gruppe;
+    public $team_id;
+    public $team_profile;
+    public $t_kos_typ;
+    public $t_kos_id;
+    public $t_g_id;
+    public $t_lage_raum;
+    public $v_text;
+    public $v_kurztext;
+    public $status;
+    public $quelle;
+    public $anschrift;
+    public $kontakt;
+    public $partner_dat;
+    public $partner_land;
+    public $gruppe_id;
+    public $t_datum;
+    public $t_von;
+    public $t_bis;
+    public $t_text;
+    public $t_hersteller;
+    public $t_bez;
 
     function route_anzeigen_karte($b_id = '21', $datum_d)
     {

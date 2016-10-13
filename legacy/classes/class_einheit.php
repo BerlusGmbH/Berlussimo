@@ -27,6 +27,13 @@ class einheit extends haus {
     public $einheit_qm_d;
     public $einheit_qm_a;
     public $aufzug_prozent_d;
+    public $mietvertrag_id;
+    public $einheit_id;
+    public $einheit_dat;
+    public $aufzug_prozent;
+    public $datum_heute;
+    public $anzahl_einheiten;
+    public $einheit_qm_k;
 
     function emails_mieter_arr($objekt_id) {
         if ($objekt_id == null) {

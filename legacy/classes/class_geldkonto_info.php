@@ -14,6 +14,11 @@ class geldkonto_info {
     public $IBAN;
     public $geldkonto_bez;
     public $geldkonto_bezeichnung;
+    public $geldkonto_bezeichnung_kurz;
+    public $konto_beguenstigter;
+    public $institut;
+    public $bankname;
+    public $bez;
 
     /* Tabelle mit allen Geldkonten */
     function alle_geldkonten_tabelle_kontostand() {
