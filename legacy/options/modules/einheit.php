@@ -165,14 +165,14 @@ function einheit_kurz($haus_id)
                 if ($counter == 1) {
                     echo "<tr class=\"zeile1\"><td width=150>$einheit_link</td><td>$row[TYP]</td><td>$mietkonto_link</td><td width=200>";
                     if ($mieter != "leer") {
-                        echo mieterid_zum_vertrag($mietvertrags_id);
+                        mieterid_zum_vertrag($mietvertrags_id);
                     }
                     echo "</td><td width=200>$haus_kurzname</td><td width=100>$row[EINHEIT_LAGE]</td><td width=40>$EINHEIT_QM</td><td>$detail_link</td></tr>\n";
                 }
                 if ($counter == 2) {
                     echo "<tr class=\"zeile2\"><td width=150>$einheit_link</td><td>$row[TYP]</td><td>$mietkonto_link</td><td width=200>";
                     if ($mieter != "leer") {
-                        echo mieterid_zum_vertrag($mietvertrags_id);
+                        mieterid_zum_vertrag($mietvertrags_id);
                     }
                     echo "</td><td width=200>$haus_kurzname</td><td width=100>$row[EINHEIT_LAGE]</td><td width=40>$EINHEIT_QM</td><td>$detail_link</td></tr>\n";
                     $counter = 0;
@@ -274,7 +274,7 @@ WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LPAD(EINHEIT_KURZNAME, LE
             if ($counter == 1) {
                 echo "<tr class=\"zeile1\"><td width=150>$einheit_link $mietkonto_link</td><td>$TYP</td><td>$link_aendern</td><td width=200>";
                 if ($mieter != "leer" && !preg_match("/WEG-SELBSTNUTZER/i", $mieter)) {
-                    echo mieterid_zum_vertrag($mietvertrags_id);
+                    mieterid_zum_vertrag($mietvertrags_id);
                 }
                 if (isset ($eig_link)) {
                     echo $eig_link;
@@ -286,7 +286,7 @@ WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LPAD(EINHEIT_KURZNAME, LE
             if ($counter == 2) {
                 echo "<tr class=\"zeile2\"><td width=150>$einheit_link $mietkonto_link</td><td>$TYP</td><td>$link_aendern</td><td width=200>";
                 if ($mieter != "leer" && !preg_match("/WEG-SELBSTNUTZER/i", $mieter)) {
-                    echo mieterid_zum_vertrag($mietvertrags_id);
+                    mieterid_zum_vertrag($mietvertrags_id);
                     // echo $eig_link;
                     if (isset ($eig_link)) {
                         echo $eig_link;

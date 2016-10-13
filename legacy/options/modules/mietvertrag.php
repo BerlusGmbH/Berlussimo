@@ -1084,12 +1084,12 @@ function mietvertrag_kurz($einheit_id)
             }
             if ($counter == 1) {
                 echo "<tr class=\"zeile1\"><td width=100>$einheit_link $mietkonto_link $miete_aendern</td><td width=300>($mieter_im_vetrag)";
-                echo mieterid_zum_vertrag($row['MIETVERTRAG_ID']);
+                mieterid_zum_vertrag($row['MIETVERTRAG_ID']);
                 echo "</td><td width=80>$MIETVERTRAG_VON</td><td width=80>$MIETVERTRAG_BIS</td><td>$detail_link</td><td>$beenden_link $aendern_link $mv_loeschen_link</td></tr>";
             }
             if ($counter == 2) {
                 echo "<tr class=\"zeile2\"><td width=100>$einheit_link $mietkonto_link $miete_aendern</td><td width=300>($mieter_im_vetrag)";
-                echo mieterid_zum_vertrag($row['MIETVERTRAG_ID']);
+                mieterid_zum_vertrag($row['MIETVERTRAG_ID']);
                 echo "</td><td width=80>$MIETVERTRAG_VON</td><td width=80>$MIETVERTRAG_BIS</td><td>$detail_link</td><td>$beenden_link $aendern_link $mv_loeschen_link</td></tr>";
                 $counter = 0;
             }
@@ -1148,12 +1148,12 @@ function mietvertrag_abgelaufen($einheit_id)
             }
             if ($counter == 1) {
                 echo "<tr class=\"zeile1\"><td>$einheit_link</td><td>($mieter_im_vetrag)";
-                echo mieterid_zum_vertrag($row['MIETVERTRAG_ID']);
+                mieterid_zum_vertrag($row['MIETVERTRAG_ID']);
                 echo "</td><td>$mietkonto_link $buchen_link $miete_aendern  $kautionen_link</td><td>$MIETVERTRAG_VON</td><td>$MIETVERTRAG_BIS</td><td>$detail_link</td><td>$beenden_link $aendern_link</td></tr>";
             }
             if ($counter == 2) {
                 echo "<tr class=\"zeile2\"><td>$einheit_link </td><td>($mieter_im_vetrag)";
-                echo mieterid_zum_vertrag($row['MIETVERTRAG_ID']);
+                mieterid_zum_vertrag($row['MIETVERTRAG_ID']);
                 echo "</td><td>$mietkonto_link $buchen_link $miete_aendern  $kautionen_link</td><td>$MIETVERTRAG_VON</td><td>$MIETVERTRAG_BIS</td><td>$detail_link</td><td>$beenden_link $aendern_link</td></tr>";
                 $counter = 0;
             }
@@ -1209,12 +1209,12 @@ function mietvertrag_aktuelle($einheit_id)
             }
             if ($counter == 1) {
                 echo "<tr class=\"zeile1\"><td>$einheit_link $miete_aendern $kautionen_link </td><td>($mieter_im_vetrag)";
-                echo mieterid_zum_vertrag($MIETVERTRAG_ID);
+                mieterid_zum_vertrag($row['MIETVERTRAG_ID']);
                 echo "</td><td>$MIETVERTRAG_VON</td><td>$MIETVERTRAG_BIS</td><td>$detail_link</td><td>$beenden_link $aendern_link</td></tr>";
             }
             if ($counter == 2) {
                 echo "<tr class=\"zeile2\"><td>$einheit_link $miete_aendern $kautionen_link</td><td>($mieter_im_vetrag)";
-                echo mieterid_zum_vertrag($MIETVERTRAG_ID);
+                mieterid_zum_vertrag($row['MIETVERTRAG_ID']);
                 echo "</td><td>$MIETVERTRAG_VON</td><td>$MIETVERTRAG_BIS</td><td>$detail_link</td><td>$beenden_link $aendern_link</td></tr>";
                 $counter = 0;
             }
