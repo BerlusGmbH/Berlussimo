@@ -1623,7 +1623,7 @@ class weg
         echo "<table class=\"sortable\">";
         $link_neu = "<a href='" . route('legacy::weg::index', ['option' => 'wohngeld_definieren', 'einheit_id' => $einheit_id, 'neu']) . "'>Neue Kostenart</a>";
 
-        if ($this->check_def() && !request()->has('neu')) {
+        if ($this->check_def() && !request()->exists('neu')) {
             echo "<tr><th>Datum vom</th><th>Datum bis</th><th>BETRAG</th><th>KOSTENART</th><th></th><th>OPTIONEN</th></tr>";
             echo "<tr valign=\"top\"><td>";
             $f->datum_feld('Vom', 'von', '', 'von');
