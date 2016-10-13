@@ -134,7 +134,7 @@ LIMIT 0 , 1", [$konto_id]);
         }
 
         if ($typ == 'Wirtschaftseinheit') {
-            $result = DB::select("SELECT LTRIM(RTRIM(W_NAME)) FROM WIRT_EINHEITEN WHERE AKTUELL='1' ORDER BY W_NAME ASC");
+            $result = DB::select("SELECT LTRIM(RTRIM(W_NAME)) AS W_NAME FROM WIRT_EINHEITEN WHERE AKTUELL='1' ORDER BY W_NAME ASC");
             foreach ($result as $row) {
                 echo "$row[W_NAME]|";
             }
