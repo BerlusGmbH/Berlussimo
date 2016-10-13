@@ -327,7 +327,6 @@ OR  `LAND` LIKE  '%$suchtext%'
                 session()->put('ort', $ort);
                 session()->put('land', $land);
 
-                $fehler = true;
                 throw new \App\Exceptions\MessageException(
                     new \App\Messages\ErrorMessage("Dateneingabe unvollständig.")
                 );
@@ -602,7 +601,6 @@ LIMIT 0 , 80");
         $f = new formular ();
         $f->erstelle_formular('Serienbrief an Partner', null);
         $f->hidden_feld('option', 'serien_brief_vorlagenwahl');
-        $js = "onclick=\"activate(this.form.elements['p_ids[]']);\"";
         echo "<div class='row'>";
         echo "<div class='col l3'>";
         $f->send_button('Button', 'Vorlage wählen');

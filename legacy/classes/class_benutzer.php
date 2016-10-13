@@ -45,7 +45,6 @@ class benutzer
                 $geb_t = $geb_dat_arr [0];
                 $geb_m = $geb_dat_arr [1];
                 $geb_j = $geb_dat_arr [2];
-                $gewerk_id = $user->trade_id;
                 $eintritt = date_mysql2german($user->join_date);
                 $ein_dat_arr = explode('.', $eintritt);
                 $ein_t = $ein_dat_arr [0];
@@ -201,7 +200,6 @@ class benutzer
             echo "<label for=\"all\">Vollzugriff</label>";
             echo "</div>";
 
-            $pro_reihe = round(($anz + 1) / 5);
             $z = 1;
             for ($a = 0; $a < $anz; $a++) {
                 $z++;
@@ -365,7 +363,7 @@ class benutzer
         $user->api_token = str_random(60);
         $user->save();
 
-        $result = DB::insert("INSERT INTO BENUTZER_PARTNER VALUES (NULL, ?, ?, '1')", [$user->id, $partner_id]);
+        DB::insert("INSERT INTO BENUTZER_PARTNER VALUES (NULL, ?, ?, '1')", [$user->id, $partner_id]);
         /* Benutzer ID zurückgeben */
         return $user->id;
     }

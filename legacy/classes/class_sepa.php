@@ -128,16 +128,12 @@ class sepa
             $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' && M_EDATUM>='$datum_heute' && M_ADATUM<='$datum_heute' AND NUTZUNGSART='$nutzungsart' && GLAEUBIGER_GK_ID='$gk_id' ORDER BY NAME ASC");
         }
 
-        $monat = date("m");
-        $jahr = date("Y");
-
         if (!empty($result)) {
             if ($nutzungsart == 'MIETZAHLUNG') {
                 echo "<table class=\"sortable striped\">";
                 echo "<thead><tr><th>NR</th><th>EINHEIT</th><th>Name</th><th>REF</th><th>NUTZUNG</th><th>EINZUGSART</th><th>Anschrift</th><th>IBAN DB</th><th>BIC</th></tr></thead>";
                 $z = 0;
                 $zz = 0;
-                $datensaetze = 0;
                 $summe_ziehen_alle = 0.00;
                 $summe_saldo_alle = 0.00;
                 $summe_diff_alle = 0.00;
@@ -163,9 +159,6 @@ class sepa
                         $z = 0;
                     }
                 }
-                $summe_ziehen_alle_a = nummer_punkt2komma_t($summe_ziehen_alle);
-                $summe_saldo_alle_a = nummer_punkt2komma_t($summe_saldo_alle);
-                $summe_diff_alle_a = nummer_punkt2komma_t($summe_diff_alle);
 
                 echo "</table>";
             }
@@ -396,7 +389,6 @@ class sepa
                             $summe_zu_ziehen = $weg->soll_aktuell;
                             $diff = 0.00;
                         } else {
-                            $summe_zu_ziehen = $weg->soll_aktuell;
                             $summe_zu_ziehen = 0.00;
                             $diff = 0.00;
                         }
@@ -453,7 +445,6 @@ class sepa
     function form_mandat_mieter_neu($gk_id)
     {
         $f = new formular ();
-        $e = new einheit ();
         $mv = new mietvertraege ();
         $f->erstelle_formular('Neues Mietermandat erfassen', '');
 
@@ -552,7 +543,6 @@ class sepa
     function form_mandat_hausgeld_neu($gk_id)
     {
         $f = new formular ();
-        $e = new einheit ();
         $mv = new mietvertraege ();
         $f->erstelle_formular('Neues Hausgeldmandat erfassen', '');
 
@@ -624,7 +614,6 @@ class sepa
                 $weg->get_last_eigentuemer($einheit_id);
                 $eigentuemer_id = $weg->eigentuemer_id;
 
-                $mref = 'WEG-ET' . $eigentuemer_id;
                 if ($eigentuemer_id == $vorwahl_et_id) {
                     echo "<option value=\"$eigentuemer_id\" selected>$e->einheit_kurzname | $weg->eigentuemer_namen2</option>\n";
                 } else {
@@ -640,7 +629,6 @@ class sepa
         $this->get_mandat_infos($dat);
 
         $f = new formular ();
-        $e = new einheit ();
         $mv = new mietvertraege ();
         $f->erstelle_formular('Mietermandat ändern', '');
         $gk = new gk ();
@@ -723,14 +711,11 @@ class sepa
                 $mv = new mietvertraege ();
                 $mv->get_mietvertrag_infos_aktuell($mv_id);
                 if ($mv->mietvertrag_aktuell == '1') {
-                    $mref = 'MV' . $mv_id;
-                    // if(!$this->check_m_ref($mref)){
                     if ($mv_id == $vorwahl_mv_id) {
                         echo "<option value=\"$mv_id\" selected>$einheit_kn | $mv->personen_name_string</option>\n";
                     } else {
                         echo "<option value=\"$mv_id\">$einheit_kn | $mv->personen_name_string</option>\n";
                     }
-                    // }
                 }
             }
         }
@@ -833,9 +818,7 @@ class sepa
             $mandat_datum = $arr [$a] ['M_UDATUM'];
             $m_ref = $arr [$a] ['M_REFERENZ'];
             $kos_id = $arr [$a] ['M_KOS_ID'];
-            $kos_typ = $arr [$a] ['M_KOS_TYP'];
             $einzugsart = $arr [$a] ['EINZUGSART'];
-
             if ($nutzungsart == 'MIETZAHLUNG') {
                 $mv = new mietvertraege ();
                 $mv->get_mietvertrag_infos_aktuell($kos_id);
@@ -968,16 +951,10 @@ class sepa
                     }
                 }
             }
-
-            // $myKtoSepaSimple->Add('2014-02-01', 119.00, 'Kunde,Konrad', 'DE54100700000190001800', 'DEUTDEBBXXX',
-            // NULL, NULL, '1111222111', 'Rechnung 111111', 'OOFF', 'KUN1', '2013-09-13');
         }
 
         $gk = new geldkonto_info ();
         $gk->geld_konto_details(session()->get('geldkonto_id'));
-        $monat = date("m");
-        $jahr = date("Y");
-        $username = Auth::user()->email;
 
         $seps = new sepa ();
         $seps->get_iban_bic($gk->kontonummer, $gk->blz);
@@ -1002,7 +979,6 @@ class sepa
             $pdf->ezStopPageNumbers(); // seitennummerirung beenden
             $p = new partners ();
             $p->get_partner_info(session()->get('partner_id'));
-            $datum = date("d.m.Y");
 
             $cols = array(
                 'DATUM' => "Datum",
@@ -1517,12 +1493,10 @@ class sepa
             }
             for ($a = 0; $a < $numrows; $a++) {
                 $konto_id = $my_array [$a] ['KONTO_ID'];
-                $beguenstigter = $my_array [$a] ['BEGUENSTIGTER'];
                 $bez = $my_array [$a] ['BEZEICHNUNG'];
                 $iban = $my_array [$a] ['IBAN'];
                 $iban1 = $this->iban_convert($iban, 0);
                 $bic = $my_array [$a] ['BIC'];
-                $bank = $my_array [$a] ['BANKNAME'];
                 echo "<option value=\"$konto_id\" >$bez - $iban1 - $bic</option>\n";
             } // end for
             echo "</select>\n";
@@ -1659,7 +1633,6 @@ class sepa
             );
         } else {
             $myKtoSepaSimple = new KtoSepaSimple ();
-            $o = new objekt ();
             $datum = '1999-01-01';
             $datum_h = date("dmY");
             $time_h = date("His");
@@ -1675,7 +1648,6 @@ class sepa
                 $sum += $betrag;
                 $iban = $arr [$a] ['IBAN'];
                 $bic = $arr [$a] ['BIC'];
-                $konto = $arr [$a] ['KONTO'];
                 $ref_id = $arr [$a] ['ID'];
 
                 /* Überweisungsdatensatz hinzufügen */
@@ -1753,10 +1725,6 @@ class sepa
                     $betrag = $arr [$a] ['BETRAG'];
                     $betrag_a = nummer_punkt2komma($arr [$a] ['BETRAG']);
                     $vzweck = $arr [$a] ['VZWECK'];
-                    $datum = date_mysql2german($arr [$a] ['DATUM']);
-
-                    $lang = strlen($m_ref);
-                    $kt = substr($m_ref, 0, 2);
 
                     if (stristr($m_ref, 'MV') == TRUE) {
                         $kos_typ = 'Mietvertrag';
@@ -1956,12 +1924,9 @@ AND  `AKTUELL` =  '1'");
         if (empty($arr)) {
             fehlermeldung_ausgeben("Keine Datensätze zur Datei $file");
         } else {
-
-            $sum = 0;
             $anz = count($arr);
             for ($a = 0; $a < $anz; $a++) {
                 $kat = $arr [$a] ['KAT'];
-                $empf = $arr [$a] ['BEGUENSTIGTER'];
                 $vzweck = $arr [$a] ['VZWECK'];
                 $betrag = $arr [$a] ['BETRAG'];
                 $iban = $arr [$a] ['IBAN'];
@@ -1973,8 +1938,6 @@ AND  `AKTUELL` =  '1'");
                 $kos_id = $arr [$a] ['KOS_ID'];
                 $vzweckn = "$beguenstigter, $vzweck";
 
-                $z = $a + 1;
-                $sep = new sepa ();
                 $von_gk_id = session()->get('geldkonto_id');
 
                 $bk = new bk ();
@@ -2004,12 +1967,8 @@ AND  `AKTUELL` =  '1'");
         } else {
             $anz = count($arr);
             for ($a = 0; $a < $anz; $a++) {
-                $empf = $arr [$a] ['BEGUENSTIGTER'];
                 $vzweck = $arr [$a] ['VZWECK'];
-                $iban = $arr [$a] ['IBAN'];
-                $bic = $arr [$a] ['BIC'];
                 $konto = $arr [$a] ['KONTO'];
-                $kat = $arr [$a] ['KAT'];
                 $kos_typ = $arr [$a] ['KOS_TYP'];
                 $kos_id = $arr [$a] ['KOS_ID'];
                 $betrag = -$arr [$a] ['BETRAG'];
@@ -2081,8 +2040,6 @@ AND  `AKTUELL` =  '1'");
                 $f = new formular ();
                 $empf = $arr [$a] ['BEGUENSTIGTER'];
                 $vzweck = $arr [$a] ['VZWECK'];
-                $iban = $arr [$a] ['IBAN'];
-                $bic = $arr [$a] ['BIC'];
                 $konto = $arr [$a] ['KONTO'];
                 $kat = $arr [$a] ['KAT'];
                 $kos_typ = $arr [$a] ['KOS_TYP'];
@@ -2165,9 +2122,6 @@ AND  `AKTUELL` =  '1'");
         } else {
 
             $m_ref = session()->get('temp_kontoauszugsnummer');
-            $datum = session()->get('temp_datum');
-
-            // echo "<tr><th>$kat</th></tr>";
             $anz = count($arr);
             $f = new formular ();
             $f->erstelle_formular("SEPA-Überweisung FREMD", null);
@@ -2175,19 +2129,14 @@ AND  `AKTUELL` =  '1'");
             echo "<thead><tr><th>EMPFöNGER</th><th>DATUM</th><th>AUSZUG</th><th>VZWECK</th><th>BETRAG</th><th>KONTO<input type=\"button\" onclick=\"auswahl_alle(this.form.konto)\" value=\"Alle\"></th><th>Zuweisung</th><th></th></tr></thead>";
 
             for ($a = 0; $a < $anz; $a++) {
-
                 $empf = $arr [$a] ['BEGUENSTIGTER'];
                 $vzweck = $arr [$a] ['VZWECK'];
-                $iban = $arr [$a] ['IBAN'];
-                $bic = $arr [$a] ['BIC'];
-                $konto = $arr [$a] ['KONTO'];
                 $kat = $arr [$a] ['KAT'];
                 $kos_typ = $arr [$a] ['KOS_TYP'];
                 $kos_id = $arr [$a] ['KOS_ID'];
                 $rr = new rechnung ();
                 $kos_bez = $rr->kostentraeger_ermitteln($kos_typ, $kos_id);
                 $betrag = session()->get('sep_vorzeichen') . $arr [$a] ['BETRAG'];
-                $betrag_u = $arr [$a] ['BETRAG'];
                 $z = $a + 1;
 
                 echo "<tr><td>$z. $kos_typ<br>$empf</td><td>" . session()->get('temp_datum') . "</td><td>" . session()->get('temp_kontoauszugsnummer') . "</td><td>";
@@ -2306,8 +2255,6 @@ AND  `AKTUELL` =  '1'");
         } else {
             $gk = new geldkonto_info ();
             $gk->geld_konto_details(session()->get('geldkonto_id'));
-            $monat = date("m");
-            $jahr = date("Y");
             $sep = new sepa ();
             $f = new formular ();
             $f->erstelle_formular('SEPA-Sammelüberweisung', null);
@@ -2366,12 +2313,10 @@ AND  `AKTUELL` =  '1'");
             echo "<option selected>Bitte wählen</option>\n";
             for ($a = 0; $a < $numrows; $a++) {
                 $konto_id = $my_array [$a] ['KONTO_ID'];
-                $beguenstigter = $my_array [$a] ['BEGUENSTIGTER'];
                 $bez = $my_array [$a] ['BEZEICHNUNG'];
                 $iban = $my_array [$a] ['IBAN'];
                 $iban1 = $this->iban_convert($iban, 0);
                 $bic = $my_array [$a] ['BIC'];
-                $bank = $my_array [$a] ['BANKNAME'];
                 echo "<option value=\"$konto_id\" >$bez - $iban1 - $bic</option>\n";
             } // end for
             echo "</select>\n";
@@ -2416,9 +2361,6 @@ AND  `AKTUELL` =  '1'");
         } else {
             $gk = new geldkonto_info ();
             $gk->geld_konto_details(session()->get('geldkonto_id'));
-            $monat = date("m");
-            $jahr = date("Y");
-            $sep = new sepa ();
             $f = new formular ();
 
             $f->erstelle_formular('SEPA-Sammelüberweisung an IBAN/BIC', null);
@@ -2593,13 +2535,11 @@ AND  `AKTUELL` =  '1'");
 
     function form_excel_ds($umsatz_id_temp = 0)
     {
-        $kto_verb = session()->get('umsaetze_ok')[$umsatz_id_temp][1];
         $gk_id_t = session()->get('umsaetze_ok')[$umsatz_id_temp]['GK_ID'];
         $this->menue_konten($gk_id_t);
 
         $ksa_bank = session()->get('umsatz_stat')[$gk_id_t]['ksa'];
         $kse_bank = session()->get('umsatz_stat')[$gk_id_t]['kse'];
-        $anz_konten = count(session()->get('umsatz_stat'));
 
         session()->put('temp_kontostand', $kse_bank);
         session()->put('kontostand_temp', $kse_bank);
@@ -2879,16 +2819,11 @@ AND  `AKTUELL` =  '1'");
                             $bu->dropdown_kostentraeger_bez_vw("Kostenträger MV2", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id);
                         } else {
                             if ($art == 'ABSCHLUSS') {
-                                $kos_id = $this->get_etid_from_vzweck($vzweck);
                                 $bu->dropdown_kostenrahmen_nr('Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id, '5060');
                                 $bu->dropdown_kostentreager_typen_vw('ET vorwahl', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Objekt');
                                 $bu->dropdown_kostentraeger_bez_vw("Kostenträger MV2", 'kostentraeger_id', 'dd_kostentraeger_id', '', 'Objekt', session()->get('objekt_id'));
                             } else {
-
-                                $kos_id = $this->get_etid_from_vzweck($vzweck);
-                                // echo "SANEL $kos_id";
                                 $bu->dropdown_kostenrahmen_nr('Kostenkonto NIX3', 'kostenkonto', 'GELDKONTO', $gk_id, '80001');
-                                // $bu->dropdown_kostentreager_typen('Kostenträgertyp NIXX3', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ);
                                 $bu->dropdown_kostentreager_typen_vw('Kostenträgertyp NIXX3', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Mietvertrag');
                                 $bu->dropdown_kostentraeger_bez_vw("Kostenträger NIXX3", 'kostentraeger_id', 'dd_kostentraeger_id', '', 'Mietvertrag', null);
                             }
@@ -2896,28 +2831,11 @@ AND  `AKTUELL` =  '1'");
                     }
                 }
             }
-            // $bu->dropdown_kostentreager_typen('Kostenträgertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ);
-
             $f->hidden_feld('option', 'excel_einzelbuchung');
             $f->hidden_feld('betrag', $betrag_n);
             $f->check_box_js('mwst', 'mwst', 'Mit Mehrwertsteuer buchen', '', '');
             $f->send_button('SndEB', "Buchen [$betrag EUR]");
 
-            // echo "</td><td>";
-
-            /*
-			 * if($art=='SEPA Dauerauftragsgutschrift'){
-			 * $pos_svwz = strpos(strtoupper($vzweck), 'SVWZ+');
-			 * if($pos_svwz==true){
-			 * $vzweck_kurz = substr($vzweck,$pos_svwz+5);
-			 * }
-			 * echo "<br><b>$vzweck_kurz</b>";
-			 * }
-			 */
-
-            // echo "</td><td>";
-
-            // echo $betrag;
             echo "</td>";
         } // ##############ENDE EINZELBUCHUNGEN*/
         if ($art == 'SEPA-UEBERWEIS.SAMMLER-SOLL' or $art == 'SEPA-CT SAMMLER-SOLL') {

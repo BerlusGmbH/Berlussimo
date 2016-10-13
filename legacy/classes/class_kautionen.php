@@ -95,8 +95,6 @@ class kautionen
     function summe_mietekalt($mv_id)
     {
         $result = DB::select("SELECT BETRAG AS SUMME FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mv_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE='Miete kalt' && DATE_FORMAT(ANFANG, '%d') = '01' ORDER BY ANFANG ASC LIMIT 0,1");
-
-        $numrows = count($result);
         if (empty($result)) {
             return false;
         } else {
@@ -218,7 +216,6 @@ class kautionen
         $betrag_rein = nummer_komma2punkt(nummer_punkt2komma(($betrag_verzinst - $kap - $soli)));
 
         $datum_von_a = date_mysql2german($datum_von);
-        $datum_bis_a = date_mysql2german($datum_bis);
         echo "<table>";
         echo "<tr><td>$datum_von_a</td><td>$zinstage</td><td>$betrag</td><td>$betrag_verzinst</td><td>$kap</td><td>$soli</td><td>$betrag_rein</td>";
         echo "</table>";
@@ -238,7 +235,6 @@ class kautionen
 
         /* Gleiches Jahr */
         if ($datum_von_jahr == $datum_bis_jahr) {
-            $jahre = 0;
             if ($datum_bis_monat == $datum_von_monat) {
                 $zinstage = $datum_bis_tag - $datum_von_tag;
                 // echo "<h1>ZINSTAGE gleiches jahr $zinstage</h1>";
@@ -372,9 +368,6 @@ class kautionen
                     $table_arr [$a] ['KAP'] = $kap;
                     $table_arr [$a] ['SOLI'] = $soli;
                     $table_arr [$a] ['BETRAG_REIN'] = $betrag_rein;
-                    $vzweck = $zahlungen_arr [$a] ['VERWENDUNGSZWECK'];
-
-                    // echo "<tr><td>$datum_von_a</td><td>$zinstage</td><td>$betrag</td><td>$betrag_verzinst</td><td>$kap</td><td>$soli</td><td>$betrag_rein</td>";
                     $summe = $summe + $betrag;
                     $summe_verzinst = $summe_verzinst + $betrag_verzinst;
                 }
@@ -390,7 +383,6 @@ class kautionen
             // echo "<tr class=\"feldernamen\"><td colspan=\"5\" >$datum_bis_a</td><td>SUMME</td><td>$endsumme</td></tr>";
 
             $anzahl_zeilen = count($table_arr);
-            $l_zeile = $anzahl_zeilen + 1;
             $table_arr [$a] ['SOLI'] = '<b>GESAMT</b>';
             $endsumme_a = nummer_punkt2komma($endsumme);
             $table_arr [$a] ['BETRAG_REIN'] = "<b>$endsumme_a</b>";
@@ -510,9 +502,6 @@ class kautionen
                 $betrag_rein = nummer_runden($betrag_verzinst - $kap - $soli, 2);
                 $summe_kos_id += $betrag_rein;
 
-                $summe_kos_id_a = nummer_punkt2komma($summe_kos_id);
-
-                // if($kostentraeger_typ == 'MIETVERTRAG' or $kostentraeger_typ == 'Mietvertrag'){
                 if ($mv->einheit_kurzname == '') {
                     $mv->einheit_kurzname = $b_text;
                 }

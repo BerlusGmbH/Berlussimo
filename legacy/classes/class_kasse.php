@@ -316,8 +316,6 @@ class kasse extends rechnung
 
     function kassenbuch_anzeigen($jahr, $kassen_id)
     {
-        $vorjahr = $jahr - 1;
-
         $my_array = DB::select("SELECT * FROM KASSEN_BUCH WHERE KASSEN_ID = '$kassen_id' && AKTUELL='1' && DATUM BETWEEN '$jahr-01-01' AND '$jahr-12-31' ORDER BY DATUM, KASSEN_BUCH_ID ASC");
         $numrows = count($my_array);
         if ($numrows > 0) {
@@ -417,7 +415,6 @@ class kasse extends rechnung
 
     function monatskassenbuch_anzeigen($monat, $jahr, $kassen_id)
     {
-        $vorjahr = $jahr - 1;
         $zeile = $this->anzahl_buchungen_bis_monat($monat, $jahr, $kassen_id);
         $zeile = $zeile + 1;
 
@@ -429,7 +426,6 @@ class kasse extends rechnung
             $vorjahr = $jahr - 1;
             $kassenstand_vorjahr = $this->kassenstand_vorjahr($vorjahr, $kassen_id);
             $kassenstand_vorjahr_komma = nummer_punkt2komma($kassenstand_vorjahr);
-            $kassenstand_vormonat = $this->kassenstand_vormonat($monat, $jahr, $kassen_id);
             echo "<tr><td></td><td>01.01.$jahr</td>";
             echo "<td>$kassenstand_vorjahr_komma</td><td></td>";
             // echo "<td>$kassenstand_vormonat</td><td></td>";
@@ -522,7 +518,6 @@ class kasse extends rechnung
         ob_clean(); // ausgabepuffer leeren
         header("Content-type: application/vnd.ms-excel");
         header("Content-Disposition: attachment; filename=$fileName");
-        $vorjahr = $jahr - 1;
         $my_array = DB::select("SELECT * FROM KASSEN_BUCH WHERE KASSEN_ID = '$kassen_id' && AKTUELL='1' && DATUM BETWEEN '$jahr-01-01' AND '$jahr-12-31' ORDER BY DATUM, KASSEN_BUCH_ID ASC");
         $numrows = count($my_array);
         if ($numrows > 0) {

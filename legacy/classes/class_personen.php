@@ -257,7 +257,6 @@ LIMIT 0 , 30";
             $person_nachname = $personen_arr [$a] ['PERSON_NACHNAME'];
             $person_vorname = $personen_arr [$a] ['PERSON_VORNAME'];
 
-            $person_gebam = date_mysql2german($personen_arr [$a] ['PERSON_GEBURTSTAG']);
             $aendern_link = "<a class=\"table_links\" href='" . route('legacy::personen::index', ['anzeigen' => 'person_aendern', 'person_id' => $person_id]) . "'>Person ändern</a>";
 
             $detail_check = detail_check("PERSON", $person_id);
@@ -307,7 +306,6 @@ LIMIT 0 , 30";
 
             $weg = new weg ();
             $eigentuemer_id_arr = $weg->get_eigentuemer_id_from_person_arr($person_id);
-            $eigentuemer_link = '';
             if (!empty($eigentuemer_id_arr)) {
                 if ($haus_info_link == 'Kein Mieter') {
                     $haus_info_link = '';

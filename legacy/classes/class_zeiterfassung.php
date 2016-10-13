@@ -107,14 +107,8 @@ class zeiterfassung
             $this->benutzer_id = $this->get_userid($zettel_id);
             $f->hidden_feld("benutzer_id", "$this->benutzer_id");
             $this->gewerk_finden($this->benutzer_id); // setzt gewerk_id vom benutzer
-            // $this->dropdown_leistungen($this->gewerk_id);
-            $lk_id_vorwahl = $zeile_arr [0] ['LEISTUNG_ID'];
-            // $this->dropdown_leistungen_vw($this->gewerk_id, $lk_id_vorwahl);
             $f->text_feld("Leistungsbeschreibung eingeben", "leistungs_beschreibung", "", "50", 'leistungsbeschreibung', '');
-            // $this->dropdown_dauer_min();
             $f->hidden_feld('dauer_min', '');
-            $pflicht_felder = 'beginn|ende';
-            $js_check_pflicht = "onmouseout=\"check_pflicht_text(this.id)\"";
             $js_z = "onchange=\"zeitdiff('beginn', 'ende', 'dauer_be', 'dauer_min')\"";
             $js_z1 = "onclick=\"zeitdiff('beginn', 'ende', 'dauer_be', 'dauer_min')\"";
 
@@ -123,8 +117,6 @@ class zeiterfassung
             session()->forget('beginn');
             session()->forget('ende');
             $this->dropdown_zeiten('Beginn', 'beginn', 'beginn', "$beginn", $js_z);
-            // $f->text_feld('Beginn', 'beginn', '', 6, 'beginn', '');
-            // $f->text_feld('Ende', 'ende', '', 6, 'ende', '');
             $this->dropdown_zeiten('Ende', 'ende', 'ende', "$ende", $js_z);
 
             $dauer_min = $this->getzeitdiff_min($beginn, $ende);
@@ -323,8 +315,6 @@ class zeiterfassung
         $f->hidden_feld("benutzer_id", "$this->benutzer_id");
         $f->text_feld("Leistungsbeschreibung eingeben", "leistungs_beschreibung", "", "50", 'leistungsbeschreibung', '');
         $f->hidden_feld('dauer_min', '');
-        $pflicht_felder = 'beginn|ende';
-        $js_check_pflicht = "onmouseout=\"check_pflicht_text(this.id)\"";
         $js_z = "onchange=\"zeitdiff('beginn', 'ende', 'dauer_be', 'dauer_min')\"";
         $js_z1 = "onclick=\"zeitdiff('beginn', 'ende', 'dauer_be', 'dauer_min')\"";
 
@@ -347,7 +337,6 @@ class zeiterfassung
         $benutzer_id = $this->get_userid($id);
         $fehler = 0;
         if ($benutzer_id != Auth::user()->id) {
-            $fehler = 1;
             if (!check_user_mod(Auth::user()->id, '*')) {
                 $fehler = 1;
             } else {
@@ -404,8 +393,6 @@ class zeiterfassung
                 $kostentraeger_id = $stundenzettel_pos_arr [$a] ['KOSTENTRAEGER_ID'];
                 $dauer_min = $stundenzettel_pos_arr [$a] ['DAUER_MIN'];
                 $gesamt_min = $gesamt_min + $dauer_min;
-                $leistung_id = $stundenzettel_pos_arr [$a] ['LEISTUNG_ID'];
-                $pos_id = $stundenzettel_pos_arr [$a] ['ST_ID'];
                 $pos_dat = $stundenzettel_pos_arr [$a] ['ST_DAT'];
                 $hinweis = $stundenzettel_pos_arr [$a] ['HINWEIS'];
                 $beginn = $stundenzettel_pos_arr [$a] ['BEGINN'];
@@ -432,7 +419,6 @@ class zeiterfassung
             $stunden_woche_soll = $stunden_woche * 60; // std x min
             $stundengesamt = $gesamt_min / 60;
             $stunden_voll = intval($stundengesamt);
-            $restmin = $gesamt_min - ($stunden_voll * 60);
             $saldo_woche_min = $stunden_woche_soll - $gesamt_min;
             $saldo_woche_std = intval($saldo_woche_min / 60);
             $rest_std_in_min = $saldo_woche_std * 60;
@@ -512,7 +498,6 @@ class zeiterfassung
     function stundenzettel_anlegen($benutzer_id)
     {
         $f = new formular ();
-        $b = new buchen ();
         $f->erstelle_formular("Neuer Stundenzettel", NULL);
         $f->fieldset("Neuen Stundenzettel anlegen", 'z_anlegen');
         $f->hidden_feld("benutzer_id", "$benutzer_id");
@@ -712,8 +697,6 @@ class zeiterfassung
             $leistung_id = $leistungen_arr [$a] ['LEISTUNG_ID'];
             $dauer_min = $leistungen_arr [$a] ['DAUER_MIN'];
             $menge = $dauer_min / 60;
-            $kostentraeger_typ = $leistungen_arr [$a] ['KOSTENTRAEGER_TYP'];
-            $kostentraeger_id = $leistungen_arr [$a] ['KOSTENTRAEGER_ID'];
             $preis = $this->stundensatz;
             $artikel_nr = 'L-' . $this->st_benutzer_id . '-' . $leistung_id;
             $mwst = 19;
@@ -752,7 +735,6 @@ class zeiterfassung
         $benutzer_id = $this->get_userid($id);
         $fehler = 0;
         if ($benutzer_id != Auth::user()->id) {
-            $fehler = 1;
             if (!check_user_mod(Auth::user()->id, '*')) {
                 $fehler = 1;
             } else {
@@ -809,7 +791,6 @@ class zeiterfassung
                 $kostentraeger_id = $stundenzettel_pos_arr [$a] ['KOSTENTRAEGER_ID'];
                 $dauer_min = $stundenzettel_pos_arr [$a] ['DAUER_MIN'];
                 $gesamt_min = $gesamt_min + $dauer_min;
-                $leistung_id = $stundenzettel_pos_arr [$a] ['LEISTUNG_ID'];
                 $hinweis = $stundenzettel_pos_arr [$a] ['HINWEIS'];
                 $beginn = $stundenzettel_pos_arr [$a] ['BEGINN'];
                 $ende = $stundenzettel_pos_arr [$a] ['ENDE'];
@@ -850,7 +831,6 @@ class zeiterfassung
             $stunden_woche_soll = $stunden_woche * 60; // std x min
             $stundengesamt = $gesamt_min / 60;
             $stunden_voll = intval($stundengesamt);
-            $restmin = $gesamt_min - ($stunden_voll * 60);
             $saldo_woche_min = $stunden_woche_soll - $gesamt_min;
             $saldo_woche_std = intval($saldo_woche_min / 60);
             $rest_std_in_min = $saldo_woche_std * 60;
@@ -869,23 +849,10 @@ class zeiterfassung
             $arbeitsdauer = $this->min2std($gesamt_min);
 
             $restsaldo_min = sprintf("%02d", $restsaldo_min);
-            // $pdf->setLineStyle(0.5);
-            // $pdf->ezSetDy(-11); //abstand
-            // $pdf->line(50,$pdf->y,550,$pdf->y);
-            // $pdf->ezText("<b>Gesamt: $arbeitsdauer</b>",8, array('left'=>'0'));
-            // $pdf->ezSetDy(-11); //abstand
-            // $pdf->ezText("<b>Soll/W $stunden_woche:00</b>",8, array('left'=>'0'));
-            // $pdf->ezText("<b>Saldo $saldo_woche_std:$restsaldo_min Std</b>",8, array('left'=>'0'));
-            // $pdf->ezSetDy(-15); //abstand
-            // $pdf->ezText("<b>Gesamt bisher: $this->gesamt_azeit_std</b>",8, array('left'=>'0'));
-            // $pdf->ezText("<b>Gesamtsoll bisher: $this->gesamt_soll_stunden</b>",8, array('left'=>'0'));
 
             $g_ist_arbeitsdauer = $this->zeit2decimal($this->gesamt_azeit_std); // =80
             $g_soll_arbeitsdauer = $this->zeit2decimal($this->gesamt_soll_stunden);
             $stundenkonto_in_std_dec = $g_ist_arbeitsdauer - $g_soll_arbeitsdauer;
-            $stundenkonto_in_std = $this->decimal2zeit($stundenkonto_in_std_dec);
-
-            // $pdf->ezText("<b>Stundenkonto: $stundenkonto_in_std</b>",8, array('left'=>'0'));
 
             $table_arr [$a + 1] ['DAUER'] = "";
             $table_arr [$a + 2] ['LEISTUNG'] = "<b>Gesamt/Woche</b>";
@@ -897,15 +864,6 @@ class zeiterfassung
 
             $table_arr [$a + 5] ['LEISTUNG'] = "";
             $table_arr [$a + 5] ['DAUER'] = "";
-
-            /*
-			 * $table_arr[$a+6][LEISTUNG] = "Stunden gesamt";
-			 * $table_arr[$a+6][DAUER] = "$this->gesamt_azeit_std";
-			 * $table_arr[$a+7][LEISTUNG] = "Stunden Gesamtsoll";
-			 * $table_arr[$a+7][DAUER] = "$this->gesamt_soll_stunden";
-			 * $table_arr[$a+8][LEISTUNG] = "Stundenkonto";
-			 * $table_arr[$a+8][DAUER] = "$stundenkonto_in_std";
-			 */
 
             $pdf->ezTable($table_arr, $cols, "Stundennachweis $jahr", array(
                 'showHeadings' => 1,
@@ -1054,7 +1012,6 @@ class zeiterfassung
                     $link_stundenzettel_del = '';
                 }
                 $link_stundenzettel_ansehen = "<a href='" . route('legacy::zeiterfassung::index', ['option' => 'zettel_ansehen', 'zettel_id' => $zettel_id]) . "'>Ansehen</a>";
-                $link_stundenzettel_eingabe = "<a href='" . route('legacy::zeiterfassung::index', ['option' => 'zettel_eingabe', 'zettel_id' => $zettel_id]) . "'>Eingabe</a>";
                 $link_pdf = "<a href='" . route('legacy::zeiterfassung::index', ['option' => 'zettel2pdf', 'zettel_id' => $zettel_id]) . "'>PDF-Ansicht</a>";
 
                 if ($this->check_if_beleg_erstellt($zettel_id)) {
@@ -1190,7 +1147,6 @@ ORDER BY `URLAUB`.`DATUM` ASC";
             for ($a = 0; $a < $anz; $a++) {
                 $leistung_id = 18;
                 $l_id = $this->letzte_zettel_pos_id() + 1;
-                $b = new buchen ();
                 $datum = $tage_arr [$a];
                 $u = new urlaub ();
                 $anteil = $u->anteil_datum($datum);
@@ -1314,7 +1270,6 @@ LIMIT 0 , 1";
     function stunden_suchen($benutzer_id, $gewerk_id, $kos_typ, $kos_bez, $adatum, $edatum)
     {
         $b = new buchen ();
-        $r = new rechnung ();
         $von = date_german2mysql($adatum);
         $bis = date_german2mysql($edatum);
         $kos_id = $b->kostentraeger_id_ermitteln($kos_typ, $kos_bez);
@@ -1488,10 +1443,7 @@ DATUM BETWEEN ? AND ? && STUNDENZETTEL.BENUTZER_ID=? $kos_typ_db $kos_id_db ORDE
                 echo "<tr><th>DATUM</th><th>Dauer</th><th>Leistung</th><th>ZUWEISUNG</th></tr>";
 
                 foreach ($result as $row) {
-                    $benutzername = $row['name'];
                     $datum_m = date_mysql2german($row['DATUM']);
-                    $beginn = $row['BEGINN'];
-                    $ende = $row['ENDE'];
                     $stunden = nummer_punkt2komma_t($row['STUNDEN']);
                     $d_min = $row['DAUER_MIN'];
                     $lbez = $row['BEZEICHNUNG'];
@@ -1586,8 +1538,6 @@ DATUM BETWEEN ? AND ? && STUNDENZETTEL.BENUTZER_ID=? $kos_typ_db $kos_id_db ORDE
 
                         foreach ($result as $row) {
                             $datum_m = date_mysql2german($row['DATUM']);
-                            $beginn = $row['BEGINN'];
-                            $ende = $row['ENDE'];
                             $stunden = nummer_punkt2komma_t($row['STUNDEN']);
                             $d_min = $row['DAUER_MIN'];
                             $lbez = $row['BEZEICHNUNG'];

@@ -228,7 +228,6 @@ AND RECHNUNGEN_POSITIONEN.BELEG_NR = RECHNUNGEN.BELEG_NR");
                 $p = new partners ();
                 $r_nr = $row ['RECHNUNGSNUMMER'];
                 $beleg_nr = $row ['BELEG_NR'];
-                $u_beleg_nr = $row ['U_BELEG_NR'];
                 $position = $row ['POSITION'];
                 $art_lieferant = $row ['ART_LIEFERANT'];
                 $p->get_partner_name($art_lieferant);
@@ -236,9 +235,7 @@ AND RECHNUNGEN_POSITIONEN.BELEG_NR = RECHNUNGEN.BELEG_NR");
                 $menge = $row ['MENGE'];
                 $r = new rechnung ();
                 $artikel_info_arr = $r->artikel_info($art_lieferant, $art_nr);
-                $anz_bez = count($artikel_info_arr);
                 $artikel_bez = $artikel_info_arr [0] ['BEZEICHNUNG'];
-                // print_r($artikel_info_arr);
                 $kontierte_menge = nummer_punkt2komma($r->position_auf_kontierung_pruefen($beleg_nr, $position));
                 $g_kontiert += nummer_komma2punkt($kontierte_menge);
                 $g_menge += $menge;
@@ -280,9 +277,7 @@ AND RECHNUNGEN_POSITIONEN.BELEG_NR = RECHNUNGEN.BELEG_NR");
 
                 $r = new rechnung ();
                 $artikel_info_arr = $r->artikel_info($art_lieferant, $art_nr);
-                $anz_bez = count($artikel_info_arr);
                 $artikel_bez = $artikel_info_arr [0] ['BEZEICHNUNG'];
-                $link_preis_info = "<a href='" . route('legacy::katalog::index', ['option' => 'preisentwicklung', 'artikel_nr' => $art_nr, 'lieferant' => $art_lieferant]) . "'>$art_nr</a>";
                 $link_preis_info1 = "<a href='" . route('legacy::katalog::index', ['option' => 'artikel_suche', 'artikel_nr' => $art_nr, 'lieferant' => $art_lieferant]) . "'>$art_nr</a>";
                 echo "<tr><td>$p->partner_name</td><td>$link_preis_info1</td><td>$artikel_bez</td></tr>";
             }

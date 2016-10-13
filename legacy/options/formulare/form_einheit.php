@@ -217,7 +217,6 @@ function einheiten_links($objekt_id, $haus_id)
 
 function einheiten_liste($haus_id)
 {
-    $daten_rein = request()->input('daten_rein');
     $result = DB::select("SELECT EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT_LAGE, EINHEIT_QM FROM EINHEIT WHERE HAUS_ID='$haus_id' && EINHEIT_AKTUELL='1' ORDER BY EINHEIT_KURZNAME ASC ");
     if (empty($result)) {
         fehlermeldung_ausgeben("<h5 class=\"fehler\">Keine Einheiten im ausgewählten Haus</h5>");

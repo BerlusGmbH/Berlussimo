@@ -166,7 +166,6 @@ class b_pdf
                     $pdf_einzeln->ezText("<b>$this->v_kurztext</b>", 11);
                     $pdf_einzeln->ezSetDy(-30);
                     $pdf_einzeln->ezText("$mv->mv_anrede", 11);
-                    $txt_alt = $this->v_text;
                     $pdf_einzeln->ezText("$this->v_text", 11, array(
                         'justification' => 'full'
                     ));
@@ -428,7 +427,6 @@ class b_pdf
             foreach($result as $row) {
                 $dat = $row ['DAT'];
                 $kurztext = $row ['KURZTEXT'];
-                $text = $row ['TEXT'];
                 $kat = $row ['KAT'];
                 $link_erstellen = "<a href='" . route('legacy::bk::index', ['option' => 'serienbrief_pdf', 'vorlagen_dat' => $dat, 'emailsend']) . "'>Serienbrief in mehreren PDFs</a>";
                 $link_ansehen = "<a href='" . route('legacy::bk::index', ['option' => 'serienbrief_pdf', 'vorlagen_dat' => $dat]) . "'>Serienbrief in einem PDF</a>";

@@ -646,13 +646,7 @@ class stammdaten
 
                     /* Mietdefinition zum MV */
                     $me = new mietentwicklung ();
-                    $jahr = date("Y");
-                    $monat = date("m");
-                    // $me->get_mietentwicklung_infos($mv_id, $jahr, $monat);
-                    // natsort($me->kostenkategorien);
                     $me->pdf_mietentwicklung($pdf, $mv_id);
-
-                    // $this->plotfile_me($pdf, $mv_id, 570, 150);
 
                     $pdf->ezNewPage();
                     $druckdatum = date("d.m.Y");
@@ -684,10 +678,7 @@ class stammdaten
         $mvs->get_mietvertrag_infos_aktuell($mv_id);
 
         $mk = new mietkonto ();
-        // $von = date("Y-m-d");
         $von = "$jahr-01-01";
-        $bis_j = date("Y") + 1;
-        $bis = $bis_j . '-' . date("m-d");
         $bis = "$jahr-12-31";
         $mz = new miete ();
 
@@ -743,8 +734,6 @@ class stammdaten
 
         // Draw it
         $plot->SetIsInline(true);
-        $img = $plot->DrawGraph();
-        $px = 'px';
 
         $ima = $plot->EncodeImage();
 

@@ -58,7 +58,6 @@ class mietvertrag extends einheit {
     function summe_aller_zahlungen($mietvertrag_id) {
         $alle_zahlungen = DB::select( "SELECT BETRAG FROM MIETBUCHUNGEN WHERE MIETVERTRAG_ID='$mietvertrag_id' && MIETBUCHUNGEN_AKTUELL='1'" );
         $anzahl_zahlungen = count ( $alle_zahlungen );
-        $ausgabe = "<div align=right>\n";
         $summe = 0;
         for($i = 0; $i < $anzahl_zahlungen; $i ++) {
             $summe = $summe + $alle_zahlungen [$i] ['BETRAG'];

@@ -532,8 +532,6 @@ function leerstand_objekt($objekt_id)
         $link_einheit = "<a href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id]) . "'>" . $leerstand [$a] ['EINHEIT_KURZNAME'] . "</a>";
         $link_projekt_pdf = "<a href='" . route('legacy::leerstand::index', ['option' => 'projekt_pdf', 'einheit_id' => $einheit_id]) . "'><img src=\"images/pdf_light.png\"></a>";
         $link_expose_pdf = "<a href='" . route('legacy::leerstand::index', ['option' => 'expose_pdf', 'einheit_id' => $einheit_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-        $link_expose_eingabe = "<a href='" . route('legacy::leerstand::index', ['option' => 'form_expose', 'einheit_id' => $einheit_id]) . "'>Bearbeiten</a>";
-        $link_fotos = "<a href='" . route('legacy::leerstand::index', ['option' => 'expose_foto_upload', 'einheit_id' => $einheit_id]) . "'>Fotos hochladen</a>";
         echo "<tr><td>" . $leerstand [$a] ['OBJEKT_KURZNAME'] . "</td><td>$link_einheit</td><td>$typ</td><td>$lage</td><td>$qm m²</td><td><a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mietvertrag_neu']) . "'>Vermieten</td></td><td>" . $leerstand [$a] ['HAUS_STRASSE'] . " " . $leerstand [$a] ['HAUS_NUMMER'] . "</td><td>$link_projekt_pdf Projekt<br>$link_expose_pdf Expose</td></tr>";
         $summe_qm += $qm;
     }
@@ -541,22 +539,3 @@ function leerstand_objekt($objekt_id)
     echo "</table>";
     $form->ende_formular();
 }
-
-/*
- * abgelaufen
- * SELECT OBJEKT_KURZNAME, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
- * FROM `EINHEIT`
- * RIGHT JOIN (
- * HAUS, OBJEKT
- * ) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID )
- * WHERE EINHEIT_ID NOT
- * IN (
- *
- * SELECT EINHEIT_ID
- * FROM MIETVERTRAG
- * WHERE MIETVERTRAG_AKTUELL = '1' && MIETVERTRAG_BIS < CURdate( )
- * )
- * ORDER BY EINHEIT_KURZNAME ASC
- * LIMIT 0 , 30
- *
- */

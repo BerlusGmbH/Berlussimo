@@ -26,7 +26,6 @@ class werkzeug
                 $w_id = $arr [$a] ['ID'];
                 $beleg_id = $arr [$a] ['BELEG_ID'];
                 $art_nr = $arr [$a] ['ARTIKEL_NR'];
-                $pos = $arr [$a] ['POS'];
                 $menge = $arr [$a] ['MENGE'];
                 $kurzinfo = $arr [$a] ['KURZINFO'];
 
@@ -87,7 +86,6 @@ class werkzeug
         for ($a = 0; $a < $anz; $a++) {
             $beleg_id = $arr [$a] ['BELEG_ID'];
             $art_nr = $arr [$a] ['ARTIKEL_NR'];
-            $pos = $arr [$a] ['POS'];
             $menge = $arr [$a] ['MENGE'];
             $kurzinfo = $arr [$a] ['KURZINFO'];
             $id = $arr [$a] ['ID'];
@@ -243,7 +241,6 @@ class werkzeug
         for ($a = 0; $a < $anz; $a++) {
             $beleg_id = $arr [$a] ['BELEG_ID'];
             $art_nr = $arr [$a] ['ARTIKEL_NR'];
-            $pos = $arr [$a] ['POS'];
             $menge = $arr [$a] ['MENGE'];
             $kurzinfo = $arr [$a] ['KURZINFO'];
             $w_id = $arr [$a] ['ID'];
@@ -382,9 +379,6 @@ class werkzeug
             $row = $result[0];
             $beleg_id = $row ['BELEG_ID'];
             $art_nr = $row ['ARTIKEL_NR'];
-            $pos = $row ['POS'];
-            $menge = $row ['MENGE'];
-            $kurzinfo = $row ['KURZINFO'];
 
             $r = new rechnung ();
             $r->rechnung_grunddaten_holen($beleg_id);
@@ -412,7 +406,6 @@ class werkzeug
                 $w_id = $arr [$a] ['ID'];
                 $beleg_id = $arr [$a] ['BELEG_ID'];
                 $art_nr = $arr [$a] ['ARTIKEL_NR'];
-                $pos = $arr [$a] ['POS'];
                 $menge = $arr [$a] ['MENGE'];
                 $kurzinfo = $arr [$a] ['KURZINFO'];
 

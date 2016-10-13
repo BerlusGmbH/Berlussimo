@@ -1137,9 +1137,6 @@ function detail_update($detail_dat, $wert_neu, $det_name, $kos_typ, $kos_id)
     if ($detail_dat != 0) {
         $row = $d->get_detail_info($detail_dat);
         if (is_array($row)) {
-            $alt_dat = $row ['DETAIL_DAT'];
-            $alt_id = $row ['DETAIL_ID'];
-            $det_inhalt = $row ['DETAIL_INHALT'];
             $det_name = $row ['DETAIL_NAME'];
             $tabelle = $row ['DETAIL_ZUORDNUNG_TABELLE'];
             $tabelle_id = $row ['DETAIL_ZUORDNUNG_ID'];

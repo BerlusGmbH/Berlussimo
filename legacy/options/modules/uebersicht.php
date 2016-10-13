@@ -337,8 +337,6 @@ function uebersicht_einheit($einheit_id)
     echo "<div class='card-content'>";
     echo "<div class='card-title'>Miete</div>";
 
-    $mietvertrag_info = new mietvertrag ();
-    
     $buchung = new mietkonto ();
     $monat = date("m");
     $jahr = date("Y");
@@ -447,7 +445,6 @@ function render_unit_tasks_table($einheit_id) {
         echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
     }
     echo "</table>";
-    $t_arr = array();
     $t = new todo ();
     $t_arr = $t->get_auftraege_einheit('Einheit', $einheit_id, '1');
 
@@ -530,7 +527,6 @@ function render_house_tasks_table($haus_id) {
         echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
     }
     echo "</table>";
-    $t_arr = array();
     $t = new todo ();
     $t_arr = $t->get_auftraege_einheit('Haus', $e->haus_id, '1');
 
@@ -612,7 +608,6 @@ function render_object_tasks_table($objekt_id) {
         echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
     }
     echo "</table>";
-    $t_arr = array();
     $t = new todo ();
     $t_arr = $t->get_auftraege_einheit('Objekt', $e->objekt_id, '1');
 

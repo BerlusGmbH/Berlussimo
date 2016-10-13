@@ -15,7 +15,6 @@ class kundenweb
             for ($a = 0; $a < $anz; $a++) {
                 $kunden_id = $arr [$a] ['ID'];
                 $username = $arr [$a] ['USERNAME'];
-                $passwd = $arr [$a] ['PASSWORD'];
                 $email = $arr [$a] ['EMAIL'];
                 $person_id = $arr [$a] ['PERSON_ID'];
                 $partner_id = $arr [$a] ['PDF_PARTNER_ID'];
@@ -206,7 +205,7 @@ class kundenweb
     {
         $last_id = last_id2('KUNDEN_LOGIN', 'ID') + 1;
         $sql = "INSERT INTO `KUNDEN_LOGIN` VALUES (NULL, '$last_id', '$username', '$passwd', '$email', '$person_id', '$partner_id','1');";
-        $result = DB::insert($sql);
+        DB::insert($sql);
         /* Protokollieren */
         $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('KUNDEN_LOGIN', $last_dat, '0');

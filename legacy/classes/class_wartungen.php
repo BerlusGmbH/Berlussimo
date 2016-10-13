@@ -202,8 +202,6 @@ class wartung
                     echo "<tr><th colspan=\"2\">$g_bez</th></tr>";
                     for ($t = 0; $t < $anz_t; $t++) {
                         $datum = date_mysql2german($termine [$t] ['DATUM']);
-                        $von = $termine [$t] ['VON'];
-                        $bis = $termine [$t] ['BIS'];
                         $b_id = $termine [$t] ['BENUTZER_ID'];
                         $text = $termine [$t] ['TEXT'];
                         if ($text == 'x' or $text == 'X') {

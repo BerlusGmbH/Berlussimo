@@ -3,12 +3,7 @@
 /* Modulabhängige Dateien d.h. Links und eigene Klasse */
 class dtaus_berlus {
 	function dtaus_datei_speichern($folder, $filename, $string) {
-		$doc_root = $_SERVER ['DOCUMENT_ROOT'];
-		$dtaus_ordner = $folder;
-		
 		$f_arr = explode ( "/", $folder );
-		// echo "<pre>";
-		// print_r($f_arr);
 		$anzahl_ordner = count ( $f_arr );
 		
 		$ordner_temp = '';
@@ -19,8 +14,6 @@ class dtaus_berlus {
 					echo " $o angelegt <br>";
 					mkdir ( "$o", 0777 );
 				}
-				// rmdir($o);
-				
 				$ordner_temp .= $o;
 				$ordner_temp .= '/';
 			} else {
@@ -30,7 +23,6 @@ class dtaus_berlus {
 					echo "$a.  $aktueller_ordner angelegt <br>";
 					mkdir ( "$aktueller_ordner", 0777 );
 				}
-				// rmdir($aktueller_ordner);
 				$ordner_temp .= $o;
 				$ordner_temp .= '/';
 			}
@@ -47,7 +39,6 @@ class dtaus_berlus {
 			fclose ( $fhandle );
 			echo "<br>$filename_neu erstellt";
 			chmod ( $filename_neu, 0644 );
-			// system("rm $dir -R"); //ordner abrechnungsjahr löschen
 			echo "<table  border=3>";
 			echo "<tr class=\"feldernamen\"><td><a href=\"$_SERVER[SCRIPT_ROOT]$filename_neu\"><b>DOWNLOAD ALS DTA-DATEI</a></b></td></tr>";
 			echo "<tr><td>$string</td></tr>";

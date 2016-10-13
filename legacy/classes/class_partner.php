@@ -81,7 +81,6 @@ class partner extends rechnung {
                 session()->put('KONTONUMMER', $kontonummer);
                 session()->put('BLZ', $blz);
 
-                $fehler = true;
                 throw new \App\Exceptions\MessageException(
                     new \App\Messages\ErrorMessage("Dateneingabe unvollständig."),
                     0,

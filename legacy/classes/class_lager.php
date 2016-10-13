@@ -95,7 +95,6 @@ AND RECHNUNGEN.EMPFAENGER_TYP = '$empfaenger_typ' && RECHNUNGEN.EMPFAENGER_ID = 
 
 				$r_nr = $row ['RECHNUNGSNUMMER'];
 				$beleg_nr = $row ['BELEG_NR'];
-				$u_beleg_nr = $row ['U_BELEG_NR'];
 				$position = $row ['POSITION'];
 				$art_lieferant = $row ['ART_LIEFERANT'];
 				$p->get_partner_name ( $art_lieferant );
@@ -103,7 +102,6 @@ AND RECHNUNGEN.EMPFAENGER_TYP = '$empfaenger_typ' && RECHNUNGEN.EMPFAENGER_ID = 
 				$menge = $row ['MENGE'];
 				$r = new rechnung ();
 				$artikel_info_arr = $r->artikel_info ( $art_lieferant, $art_nr );
-				$anz_bez = count ( $artikel_info_arr );
 				$artikel_bez = $artikel_info_arr [0] ['BEZEICHNUNG'];
 				$kontierte_menge = nummer_punkt2komma ( $r->position_auf_kontierung_pruefen ( $beleg_nr, $position ) );
 				$g_kontiert += nummer_komma2punkt ( $kontierte_menge );
@@ -169,13 +167,9 @@ AND RECHNUNGEN.EMPFAENGER_TYP = '$empfaenger_typ' && RECHNUNGEN.EMPFAENGER_ID = 
 					$waren_wert_a = nummer_punkt2komma ( $waren_wert );
 
 					$link_artikel_suche = "<a href='" . route('legacy::lager::index', ['option' => 'artikel_suche', 'artikel_nr' => $artikel_nr]) . "'>$artikel_nr</a>";
-					$beleg_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>Rechnung</a>";
-
 					if ($rest_menge != '0,00') {
 						$zaehler ++;
 						$gesamt_lager_wert = $gesamt_lager_wert + $waren_wert;
-						$beleg_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>Rechnung</a>";
-
 						if ($zaehler == '1') {
 							$beleg_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>Rechnung</a>";
 							echo "<tr class=\"zeile1\" align=\"right\"><td>$datum</td><td>$pp->partner_name</td><td>$beleg_link</td><td>$link_artikel_suche</td><td>$bezeichnung</td><td>$menge</td><td>$rest_menge</td><td>$preis €</td><td>$pos_mwst_satz %</td><td>$waren_wert_a €</td></tr>";

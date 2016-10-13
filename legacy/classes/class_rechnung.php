@@ -284,29 +284,22 @@ function rechnung_grunddaten_holen($belegnr)
         $partner = new partner ();
         $form->erstelle_formular("Bargeldlose Rechnung erfassen", NULL);
         $form->hidden_feld("aussteller_typ", "Partner");
-        $partner_arr = $partner->partner_dropdown('Rechnung ausgestellt von', 'aussteller_id', 'aussteller');
+        $partner->partner_dropdown('Rechnung ausgestellt von', 'aussteller_id', 'aussteller');
         $form->hidden_feld("empfaenger_typ", "Partner");
         $pp = new partners ();
         $pp->partner_dropdown('Rechnung ausgestellt an', 'empfaenger_id', 'empfaenger', session()->get('partner_id'));
 
-        $datum_heute = date("d.m.Y");
         $datum_feld = 'document.getElementById("eingangsdatum").value';
         $js_datum = "onchange='check_datum($datum_feld)'";
         $formular->text_feld('Eingangsdatum:', 'eingangsdatum', '', '10', 'eingangsdatum', $js_datum);
-        // $form->text_feld("Eingangsdatum:", "eingangsdatum", '', "10");
         $form->text_feld("Rechnungsnummer:", "rechnungsnummer", "", "10");
         $form->hidden_feld("rechnungstyp", "Rechnung");
         $datum_feld1 = 'document.getElementById("rechnungsdatum").value';
         $js_datum = "onchange='check_datum($datum_feld1)'";
         $formular->text_feld('Rechnungsdatum:', 'rechnungsdatum', '', '10', 'rechnungsdatum', $js_datum);
-        // $form->text_feld("Rechnungsdatum:", "rechnungsdatum", '', "10");
-        // $form->text_feld("Nettobetrag:", "nettobetrag", "", "10");
         $form->hidden_feld("nettobetrag", "0,00");
-        // $formular->text_feld("Bruttobetrag:", "bruttobetrag", '', '10', 'bruttobetrag', '');
         $form->hidden_feld("bruttobetrag", "0,00");
         $form->hidden_feld("skontobetrag", "0,00");
-        // $form->text_feld("Betrag nach Abzug von Skonto:", "skontobetrag", "", "10");
-        // $formular->text_feld("Skonto in %:", "skonto", '', '10', 'skonto', 'onchange="skonto_berechnen()"');
         $form->text_feld("Fällig am", "faellig_am", '', "10");
         $form->text_bereich("Kurzbeschreibung", "kurzbeschreibung", "", "50", "10");
         $form->send_button("submit_rechnung1", "Rechnung speichern");
@@ -323,23 +316,17 @@ function rechnung_grunddaten_holen($belegnr)
         $partner = new partner ();
         $formular = new formular ();
         $form->erstelle_formular("Bargeldlose Rechnung erfassen", NULL);
-        // echo "Rechnung erfassen<br>\n";
-        $partner_arr = $partner->partner_dropdown('Rechnung ausgestellt von', 'Aussteller', 'aussteller');
-
-        $partner_arr = $partner->partner_dropdown('Rechnung ausgestellt an', 'Empfaenger', 'empfaenger');
+        $partner->partner_dropdown('Rechnung ausgestellt von', 'Aussteller', 'aussteller');
+        $partner->partner_dropdown('Rechnung ausgestellt an', 'Empfaenger', 'empfaenger');
         $datum_heute = date("d.m.Y");
         $form->text_feld("Eingangsdatum:", "eingangsdatum", $datum_heute, "10");
         $form->text_feld("Rechnungsnummer:", "rechnungsnummer", "", "10");
         $form->hidden_feld("rechnungstyp", "Gutschrift");
         $form->text_feld("Rechnungsdatum:", "rechnungsdatum", $datum_heute, "10");
         $form->text_feld("Nettobetrag:", "nettobetrag", "0,00", "10");
-        // $form->text_feld("Bruttobetrag:", "bruttobetrag", "0,00", "10");
-        // $form->text_feld("Skontobetrag:", "skontobetrag", "0,00", "10");
-        // $form->text_feld("Skonto in %:", "skonto", "3", "3");
         $formular->text_feld("Bruttobetrag:", "bruttobetrag", '', '10', 'bruttobetrag', 'onchange="skonto_berechnen()"');
         $form->text_feld("Betrag nach Abzug von Skonto:", "skontobetrag", "", "10");
         $formular->text_feld("Skonto in %:", "skonto", '3', '10', 'skonto', 'onchange="skonto_berechnen()"');
-
         $form->text_feld("Fällig am", "faellig_am", $datum_heute, "10");
         $form->text_bereich("Kurzbeschreibung", "kurzbeschreibung", "", "50", "10");
         $form->send_button("submit_rechnung1", "Rechnung speichern");
@@ -356,11 +343,9 @@ function rechnung_grunddaten_holen($belegnr)
         $form->erstelle_formular("Kasse -> Ausgaben erfassen", NULL);
         echo "<br>\n";
         $form->hidden_feld("aussteller_typ", "Partner");
-        $partner_arr = $partner->partner_dropdown('Rechnung ausgestellt von', 'aussteller_id', 'aussteller');
+        $partner->partner_dropdown('Rechnung ausgestellt von', 'aussteller_id', 'aussteller');
         $form->hidden_feld("empfaenger_typ", "Kasse");
         $kasse_info->dropdown_kassen('Kasse als Empfänger', 'empfaenger_id', 'empfaenger');
-        // $partner_arr=$partner->partner_dropdown('Empfaenger', 'empfaenger');
-        $datum_heute = date("d.m.Y");
         $form->text_feld("Eingangsdatum:", "eingangsdatum", '', "10");
         $form->text_feld("Rechnungsnummer:", "rechnungsnummer", "", "10");
         $form->hidden_feld("rechnungstyp", "Rechnung");
@@ -394,8 +379,6 @@ function rechnung_grunddaten_holen($belegnr)
                 $belegnr = $my_array [$a] ['BELEG_NR'];
                 $this->rechnung_grunddaten_holen($belegnr);
 
-                $e_datum = date_mysql2german($my_array [$a] ['EINGANGSDATUM']);
-                $r_datum = date_mysql2german($my_array [$a] ['RECHNUNGSDATUM']);
                 $faellig_am = date_mysql2german($my_array [$a] ['FAELLIG_AM']);
 
                 $beleg_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $belegnr]) . "'>Ansehen</a>";
@@ -436,11 +419,8 @@ GROUP BY RECHNUNGEN.BELEG_NR ORDER BY BELEG_NR DESC $navi->limit");
             $numrows = count($my_array);
             for ($a = 0; $a < $numrows; $a++) {
                 $belegnr = $my_array [$a] ['BELEG_NR'];
-                $anzahl_positionen = $my_array [$a] ['ANZAHL_POSITIONEN'];
                 $this->rechnung_grunddaten_holen($belegnr);
 
-                $e_datum = date_mysql2german($my_array [$a] ['EINGANGSDATUM']);
-                $r_datum = date_mysql2german($my_array [$a] ['RECHNUNGSDATUM']);
                 $faellig_am = date_mysql2german($my_array [$a] ['FAELLIG_AM']);
                 $beleg_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $my_array [$a] ['BELEG_NR']]) . "'>" . $my_array [$a] ['BELEG_NR'] . "</>\n";
                 $netto = nummer_punkt2komma($my_array [$a] ['NETTO']);
@@ -767,7 +747,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
         if ($kostentraeger_typ == 'Einheit') {
             $this->get_empfaenger_infos($kostentraeger_typ, $kostentraeger_id);
-            $rechnungs_empfaenger_typ = $this->rechnungs_empfaenger_typ;
             $rechnungs_empfaenger_id = $this->rechnungs_empfaenger_id;
         }
 
@@ -837,8 +816,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             $skonto = nummer_punkt2komma($positionen [$a] ['SKONTO']);
             $rechnungs_summe = $rechnungs_summe + (nummer_komma2punkt($menge) * nummer_komma2punkt($epreis));
             $mwst_satz_in_prozent = nummer_punkt2komma($this->mwst_satz_der_position($belegnr, $position));
-            // aus Beleg infos holen //
-            $kontierung_id = $positionen [$a] ['KONTIERUNG_ID'];
             $kontierung_dat = $positionen [$a] ['KONTIERUNG_DAT'];
             $f->hidden_feld("positionen[$a][kontierung_dat]", "$kontierung_dat");
             $link_rechnung_ansehen = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $belegnr]) . "'>$this->rechnungsnummer</a>";
@@ -857,21 +834,15 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             echo "</td><td>";
             $f->text_feld_inaktiv("Netto:", "", "$gpreis", "8", "netto_feld", $js_action);
             echo "</td><td>";
-            // $gpreis_brutto = ($gpreis / 100) * (100 + $rechnung->rechnungs_mwst_satz);
             $gpreis_brutto = ($gpreis / 100) * (100 + $mwst_satz_in_prozent);
             $gpreis_brutto = ($gpreis_brutto * 100) / 100;
-            $gpreis_brutto = nummer_punkt2komma($gpreis_brutto);
-            // $form->text_feld("Brutto:", "positionen[$a][gpreis_brutto]", "$gpreis_brutto", "5");
 
             $f->text_feld("Rabatt:", "positionen[$a][rabatt_satz]", "$rabatt_satz", "5", "rabatt_feld", $js_action);
-            // $f->hidden_feld("positionen[$a][pos_mwst]", "$mwst_satz_in_prozent");
             echo "</td><td>";
             $f->text_feld("Skonto:", "positionen[$a][skonto]", "$skonto", "5", "skonto_feld", $js_action);
-            // $f->hidden_feld("positionen[$a][pos_mwst]", "$mwst_satz_in_prozent");
             echo "</td><td>";
             $f->text_feld("Mwst:", "mwst_satz", "$mwst_satz_in_prozent", "3", "mwst_feld", $js_action);
             echo "</td><td valign=bottom>$kostentraeger</td></tr>";
-            // $f->hidden_feld("positionen[$a][kontierung_id]", "$kontierung_id");
         }
 
         echo "<tr><td colspan=10><hr></td></tr></table>";
@@ -1713,22 +1684,14 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
                         $bezeichnung = $artikel_info_arr [$i] ['BEZEICHNUNG'];
                     } else {
                         $bezeichnung = 'Unbekannt';
-                        $listenpreis = '0,00';
                     }
 
                     $menge = nummer_punkt2komma($menge);
                     $einzel_preis = sprintf("%01.3f", $einzel_preis);
                     $einzel_preis = nummer_punkt2komma($einzel_preis);
 
-                    // $listenpreis = nummer_punkt2komma($listenpreis);
-                    // $rabatt = nummer_punkt2komma($rabatt);
-                    // $gesamt_preis = nummer_punkt2komma($gesamt_preis);
-
                     $r2 = new rechnungen ();
-                    $u_rechnungsnummer = '';
                     $u_rechnungsnummer = $r2->get_rechnungsnummer($u_beleg_nr);
-                    // $f_rechnungsnummer = '';
-                    // $f_rechnungsnummer = $r2->get_rechnungsnummer($belegnr);
 
                     $u_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $u_beleg_nr]) . "'>$u_rechnungsnummer</a>";
                     $ae_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'position_aendern', 'belegnr' => $belegnr, 'pos' => $position]) . "'>Ändern</a>";
@@ -1946,8 +1909,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             $g = new geldkonto_info ();
             for ($a = 0; $a < 1; $a++) {
                 $menge = $my_array [$a] ['MENGE'];
-                $einzel_preis = $my_array [$a] ['EINZEL_PREIS'];
-                $gesamt_preis = $my_array [$a] ['EINZEL_PREIS'];
                 $kontenrahmen_konto = $my_array [$a] ['KONTENRAHMEN_KONTO'];
                 $kostentraeger_typ = $my_array [$a] ['KOSTENTRAEGER_TYP'];
                 $kostentraeger_id = $my_array [$a] ['KOSTENTRAEGER_ID'];
@@ -1976,7 +1937,6 @@ function rechnung_footer_tabelle_anzeigen()
 
         $rechnungs_netto = nummer_punkt2komma($this->rechnungs_netto);
         $rechnungs_mwst = $this->rechnungs_brutto - $rechnungs_netto;
-        $rechnungs_mwst = nummer_punkt2komma($rechnungs_mwst);
 
         $rechnungs_brutto = nummer_punkt2komma($this->rechnungs_brutto);
 
@@ -2185,8 +2145,6 @@ function rechnung_footer_tabelle_anzeigen()
                 $dat = $my_array [$a] ['KONTIERUNG_DAT'];
                 $id = $my_array [$a] ['KONTIERUNG_ID'];
                 $menge = $my_array [$a] ['MENGE'];
-                $einzel_preis = $my_array [$a] ['EINZEL_PREIS'];
-                $gesamt_preis = $my_array [$a] ['EINZEL_PREIS'];
                 $kontenrahmen_konto = $my_array [$a] ['KONTENRAHMEN_KONTO'];
                 $kostentraeger_typ = $my_array [$a] ['KOSTENTRAEGER_TYP'];
                 $kostentraeger_id = $my_array [$a] ['KOSTENTRAEGER_ID'];
@@ -2221,18 +2179,13 @@ function rechnung_footer_tabelle_anzeigen()
 function kontierungstabelle_anzeigen($beleg_nr, $positionen_arr, $kostentraeger_typ)
     {
         $this->rechnung_grunddaten_holen($beleg_nr);
-        // print_r($this);
         $form = new mietkonto ();
         // nur für die formularerstellung
-        $kontenrahmen = new kontenrahmen ();
         // nur kontoliste dropdown
         $rechnung = new rechnung ();
         // für rechnungsmethoden
-        // $this->rechnung_grunddaten_holen($beleg_nr);
-        // $this->rechnungs_kopf_kontierung($beleg_nr, $kostentraeger_typ);
         $this->rechnungs_kopf($beleg_nr, $kostentraeger_typ);
         $rechnungs_positionen_arr = $this->rechnungs_positionen_arr($beleg_nr);
-        $kontierung = new kontenrahmen ();
         $anzahl_pos_beleg = count($rechnungs_positionen_arr);
         $anzahl_pos_zu_kontierung = count($positionen_arr);
         echo "<table>\n";
@@ -2473,14 +2426,6 @@ function rechnung_footer_tabelle_anzeigen_pe()
         if ($this->rechnungstyp == "Rechnung" or $this->rechnungstyp == "Buchungsbeleg") {
             $geld_konto_info = new geldkonto_info ();
             $geld_konto_info->geld_konto_details($this->empfangs_geld_konto);
-            /* Falls rechnung bezahlt */
-            if ($this->status_bezahlt == "1") {
-                $msg = "Rechnungsbetrag wurde am $this->bezahlt_am gezahlt.";
-            } else {
-                /* Falls rechnung unbezahlt */
-                $msg = '';
-                // $msg = "Bitte Rechnungbetrag auf folgendes Konto ".$geld_konto_info->kontonummer." bei ".$geld_konto_info->kredit_institut." BLZ: ".$geld_konto_info->blz." überwiesen.";
-            }
             $msg = 'Den Rechnungsbetrag  bitten wir auf das unten genannte Konto zu überweisen.';
             echo "</table><table width=100% >";
             echo "<tr><td align=right valign=top><b>Netto:</b></td><td align=right valign=top>$rechnungs_netto €</td></tr>";
@@ -2570,13 +2515,11 @@ function rechnung_footer_tabelle_anzeigen_pe()
     function positionen_speichern($belegnr)
     {
         $this->rechnung_grunddaten_holen($belegnr);
-        $clean_arr = post_array_bereinigen();
         $this->rechnung_grunddaten_holen(request()->input('rechnung_id'));
         if ($this->rechnungs_empfaenger_typ != 'Kasse') {
             $empfangs_geld_konto = request()->input('geld_konto');
         } else {
             $empfangs_geld_konto = '0';
-            // NULL BEI KASSE
         }
         if (!isset ($empfangs_geld_konto)) {
             echo "Kein Geldkonto ausgewählt";
@@ -2705,7 +2648,6 @@ function rechnung_footer_tabelle_anzeigen_pe()
             /* Autokontierung der Position */
             $position = $zeile;
             $u_position = $positionen [$a] ['position'];
-            $u_belegnr = $positionen [$a] ['beleg_nr'];
             $dat = $positionen [$a] ['kontierung_dat'];
             $this->position_kontierung_infos_n($dat);
             echo "UBELEG $u_beleg_nr POS $u_position ";
@@ -2718,7 +2660,6 @@ function rechnung_footer_tabelle_anzeigen_pe()
             $kontenrahmen_konto = $this->kostenkonto;
             $kostentraeger_id = $this->kostentraeger_id;
             $kostentraeger_typ = $this->kostentraeger_typ;
-            $kontierungs_pos = $positionen [$a] ['position'];
             $einzel_preis = $positionen [$a] ['preis'];
             $einzel_preis = nummer_komma2punkt($einzel_preis);
 
@@ -2835,7 +2776,6 @@ function rechnung_footer_tabelle_anzeigen_pe()
         $result = DB::select("SELECT * FROM KONTIERUNG_POSITIONEN WHERE KONTIERUNG_DAT='$dat' && AKTUELL='1'");
         $row = $result[0];
         $beleg_nr = $row ['BELEG_NR'];
-        $u_kontierung_id = $row ['KONTIERUNG_ID'];
         $kontierungs_pos = $row ['POSITION'];
         $kontierungs_menge = $row ['MENGE'];
         $einzel_preis = $row ['EINZEL_PREIS'];
@@ -2844,9 +2784,7 @@ function rechnung_footer_tabelle_anzeigen_pe()
         $kontenrahmen_konto = $row ['KONTENRAHMEN_KONTO'];
         $kostentraeger_typ = $row ['KOSTENTRAEGER_TYP'];
         $kostentraeger_id = $row ['KOSTENTRAEGER_ID'];
-        $kontierungsdatum = $row ['KONTIERUNGS_DATUM'];
         $verwendungs_jahr = $row ['VERWENDUNGS_JAHR'];
-        $weiter_verwenden = $row ['WEITER_VERWENDEN'];
 
         $diff_menge = $kontierungs_menge - $neue_menge;
 
@@ -2993,20 +2931,18 @@ function rechnung_footer_tabelle_anzeigen_pe()
         $row = $result[0];
         $beleg_nr = $row ['BELEG_NR'];
         $kontierungs_pos = $row ['POSITION'];
-        $kontierungs_menge = $row ['MENGE'];
         $einzel_preis = $row ['EINZEL_PREIS'];
         $gesamt_preis = $row ['GESAMT_SUMME'];
         $kontenrahmen_konto = $row ['KONTENRAHMEN_KONTO'];
         $kostentraeger_typ = $row ['KOSTENTRAEGER_TYP'];
         $kostentraeger_id = $row ['KOSTENTRAEGER_ID'];
-        $kontierungsdatum = $row ['KONTIERUNGS_DATUM'];
         $verwendungs_jahr = $row ['VERWENDUNGS_JAHR'];
         $weiter_verwenden = $row ['WEITER_VERWENDEN'];
 
         $this->kontierung_dat_id_deaktivieren($dat, $id);
 
         $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$beleg_nr', '$kontierungs_pos','$neue_menge', '$einzel_preis', '$gesamt_preis', '$kontenrahmen_konto', '$kostentraeger_typ', '$kostentraeger_id', '$datum', '$verwendungs_jahr', '$weiter_verwenden', '1')";
-        $resultat = DB::insert($db_abfrage);
+        DB::insert($db_abfrage);
     }
 
     function suche_rechnung_form()
@@ -3015,7 +2951,6 @@ function rechnung_footer_tabelle_anzeigen_pe()
         $partner = new partner ();
 
         $form->erstelle_formular("Rechnung suchen", NULL);
-        $datum_heute = date("d.m.Y");
         echo "<table><tr><td>\n";
         $form->radio_button_checked("suchart", "lieferschein", 'Lieferschein');
         echo "</td><td>\n";
@@ -3031,17 +2966,17 @@ function rechnung_footer_tabelle_anzeigen_pe()
         echo "</td></tr><tr><td>\n";
         $form->radio_button("suchart", "aussteller", 'Ausgestellt von');
         echo "</td><td>\n";
-        $partner_arr = $partner->partner_dropdown('Aussteller wählen', 'aussteller', 'aussteller');
+        $partner->partner_dropdown('Aussteller wählen', 'aussteller', 'aussteller');
         echo "</td></tr><tr><td>\n";
         $form->radio_button("suchart", "empfaenger", 'Ausgestellt an');
         echo "</td><td>\n";
-        $partner_arr = $partner->partner_dropdown('Empfänger wählen', 'empfaenger', 'empfaenger');
+        $partner->partner_dropdown('Empfänger wählen', 'empfaenger', 'empfaenger');
         echo "</td></tr><tr><td>\n";
         $form->radio_button("suchart", "partner_paar", 'Partnerpaar auswählen');
         echo "</td><td>\n";
-        $partner_arr = $partner->partner_dropdown('Von', 'partner_paar1', 'partner_paar1');
+        $partner->partner_dropdown('Von', 'partner_paar1', 'partner_paar1');
         echo "<br>";
-        $partner_arr = $partner->partner_dropdown('An', 'partner_paar2', 'partner_paar2');
+        $partner->partner_dropdown('An', 'partner_paar2', 'partner_paar2');
         echo "</td><td></td></tr><tr><td>\n";
         $form->send_button("submit_rechnungssuche", "Rechnung finden");
         echo "</td></tr></table>\n";
@@ -3098,18 +3033,14 @@ function rechnung_footer_tabelle_anzeigen_pe()
     {
         echo "<table class=rechnungen>\n";
         echo "<tr class=feldernamen><td>ErfNr</td><td>RNr</td><td>TYP</td><td>R-Datum</td><td>Fällig</td><td>Von</td><td>An</td><td width=60>Netto</td><td width=60>Brutto</td></tr>\n";
-        // print_r($my_array);
         for ($a = 0; $a < count($my_array); $a++) {
             $belegnr = $my_array [$a] ['BELEG_NR'];
-            $rechnungs_eingangs_nr = $my_array [$a] ['EMPFAENGER_EINGANGS_RNR'];
             $this->rechnung_grunddaten_holen($belegnr);
 
-            $e_datum = date_mysql2german($my_array [$a] ['EINGANGSDATUM']);
             $r_datum = date_mysql2german($my_array [$a] ['RECHNUNGSDATUM']);
             $faellig_am = date_mysql2german($my_array [$a] ['FAELLIG_AM']);
             $beleg_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $my_array [$a] ['BELEG_NR']]) . "'>Ansehen</a>\n";
             $netto = nummer_punkt2komma($my_array [$a] ['NETTO']);
-            // $mwst = nummer_punkt2komma($my_array[$a]['MWST']);
             $brutto = nummer_punkt2komma($my_array [$a] ['BRUTTO']);
             $rechnungstyp = $my_array [$a] ['RECHNUNGSTYP'];
             $rechnungsnummer = $my_array [$a] ['RECHNUNGSNUMMER'];
@@ -3473,7 +3404,6 @@ function rechnung_footer_tabelle_anzeigen_pe()
 
                     $g_mwst = 0;
                     $g_mwst = $g_mwst + $r->rechnungs_mwst;
-                    $g_mwst = sprintf("%01.2f", $g_mwst);
 
                     $g_brutto_g = 0;
                     $g_brutto = $g_brutto_g + $r->rechnungs_brutto;
@@ -3528,10 +3458,8 @@ function rechnung_footer_tabelle_anzeigen_pe()
             } // end for
             $g_brutto = nummer_punkt2komma($g_brutto);
             $g_brutto_g = nummer_punkt2komma($g_brutto_g);
-            $g_skonto_rg = nummer_punkt2komma($g_skonto_rg);
             $g_skonto = nummer_punkt2komma($g_skonto);
             echo "<tfoot><tr><td colspan=\"9\"><hr></td></tr>";
-            // echo "<tr><td></td><td></td><td></td><td></td><td align=\"right\"><b>$g_brutto_r</b></td><td align=\"right\"><b>$g_skonto_rg</b></td><td align=\"right\">$g_brutto_g</td><td></td><td></td></tr>";
             echo "<tr><td id=\"td_ansehen\"></td><td></td><td></td><td></td><td align=\"right\"><b>$g_brutto</b></td><td align=\"right\"><b>$g_brutto_g</b></td><td></td><td></td><td align=\"right\"><b>$g_skonto</b></td></tr></tfoot>";
         } else {
             echo "<tr><td colspan=10>Keine Rechnungen in diesem Monat</td></tr>";

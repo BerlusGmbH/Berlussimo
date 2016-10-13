@@ -42,7 +42,6 @@ class mahnungen
         } else {
 
             $f = new formular ();
-            $obj_id = session()->get('objekt_id');
             echo "<table>";
             echo "<tr><th>";
             $f->check_box_js_alle('mahnliste', 'mahnliste', '', 'Alle', '', '', 'mahnliste');
@@ -58,8 +57,6 @@ class mahnungen
             }
             if (!empty($akt_mvs)) {
                 $anzahl_mvs = count($akt_mvs);
-                $jahr = date("Y");
-                $monat = date("m");
 
                 $gesamt_verlust = 0;
                 $zeile = 0;
@@ -276,7 +273,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
         }
         if (!empty($akt_mvs)) {
             $anzahl_mvs = count($akt_mvs);
-            $jahr = date("Y");
             $monat = date("m");
 
             $gesamt_verlust = 0;
@@ -285,12 +281,10 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
                 $mz = new miete ();
                 $mv_id = $akt_mvs [$a] ['MIETVERTRAG_ID'];
 
-                $mk = new mietkonto ();
                 $mz->mietkonto_berechnung($mv_id);
                 $zeile = $zeile + 1;
                 $saldo = $mz->erg;
 
-                $doppelte_miete = $mz->sollmiete_warm * 2;
                 if ($saldo < '0.00') {
 
                     $saldo_a = nummer_punkt2komma($saldo);
@@ -324,7 +318,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
                 'SALDO' => "Saldo",
                 'MAHNEN' => "Mahnsperre"
             );
-            $monatsname = monat2name($monat);
             $pdf->ezTable($table_arr, $cols, "Mahnliste $mvs->objekt_kurzname vom $datum_h ", array(
                 'showHeadings' => 1,
                 'shaded' => 0,
@@ -364,7 +357,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
             $jahr = date("Y");
             $monat = date("m");
 
-            $mk = new mietkonto ();
             $e = new einheit ();
             $m = new mietvertrag (); // class mietvertrag aus berlussimo_class.php;
             $m1 = new mietvertraege (); // class mietvertraege NEUE KLASSE;
@@ -405,7 +397,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
         $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
 
         // ###ANSCHREIBEN#####
-        $berlus_schrift = 'pdfclass/fonts/Times-Roman.afm';
         $text_schrift = 'pdfclass/fonts/Arial.afm';
 
         $mv = new mietvertraege ();
@@ -413,8 +404,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
         $d = new detail ();
         $e = new einheit ();
 
-        $jahr = date("Y");
-        $monat = date("m");
         $mz->mietkonto_berechnung($mv_id);
         $saldo = $mz->erg;
 
@@ -537,25 +526,14 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
         $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
         $pdf->ezStopPageNumbers();
         // ###ANSCHREIBEN#####
-        $berlus_schrift = 'pdfclass/fonts/Times-Roman.afm';
-        $text_schrift = 'pdfclass/fonts/Arial.afm';
-
         $anz_empfaenger = count($mahnliste);
         for ($ma = 0; $ma < $anz_empfaenger; $ma++) {
             $mv_id = $mahnliste [$ma];
-            $personen_anrede = '';
-            $anrede = '';
-
             $mz = new miete ();
-            $d = new detail ();
             $e = new einheit ();
 
-            $jahr = date("Y");
-            $monat = date("m");
             $mz->mietkonto_berechnung($mv_id);
             $saldo = $mz->erg;
-
-            $p = new person ();
 
             $mv = new mietvertraege ();
             $mv->get_mietvertrag_infos_aktuell($mv_id);
@@ -640,7 +618,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
                         $anschrift_pdf = $mv->postanschrift [$mm] ['anschrift'];
                         $pdf->ezSetMargins(135, 70, 50, 50);
                         $mz = new miete ();
-                        $d = new detail ();
                         $e = new einheit ();
 
                         $jahr = date("Y");
@@ -648,7 +625,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
                         $mz->mietkonto_berechnung_monatsgenau($mv_id, $jahr, $monat);
                         $saldo = $mz->erg;
                         $e->get_einheit_info($mv->einheit_id);
-                        $p = new person ();
 
                         $anrede = $mv->postanschrift [$mm] ['anrede'];
                         $pdf->ezSetDy(-15);
@@ -801,25 +777,16 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
         $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
         $pdf->ezStopPageNumbers();
         // ###ANSCHREIBEN#####
-        $berlus_schrift = 'pdfclass/fonts/Times-Roman.afm';
-        $text_schrift = 'pdfclass/fonts/Arial.afm';
 
         $anz_empfaenger = count($mahnliste);
         for ($ma = 0; $ma < $anz_empfaenger; $ma++) {
             $mv_id = $mahnliste [$ma];
-            $personen_anrede = '';
-            $anrede = '';
 
             $mz = new miete ();
-            $d = new detail ();
             $e = new einheit ();
 
-            $jahr = date("Y");
-            $monat = date("m");
             $mz->mietkonto_berechnung($mv_id);
             $saldo = $mz->erg;
-
-            $p = new person ();
 
             $mv = new mietvertraege ();
             $mv->get_mietvertrag_infos_aktuell($mv_id);
@@ -940,7 +907,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
                         $anschrift_pdf = $mv->postanschrift [$mm] ['anschrift'];
                         $pdf->ezSetMargins(135, 70, 50, 50);
                         $mz = new miete ();
-                        $d = new detail ();
                         $e = new einheit ();
 
                         $jahr = date("Y");
@@ -948,7 +914,6 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
                         $mz->mietkonto_berechnung_monatsgenau($mv_id, $jahr, $monat);
                         $saldo = $mz->erg;
                         $e->get_einheit_info($mv->einheit_id);
-                        $p = new person ();
 
                         $anrede = $mv->postanschrift [$mm] ['anrede'];
 
@@ -1154,16 +1119,9 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
         $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
 
         $pdf->ezSetCmMargins(4.5, 1, 1, 1);
-        $berlus_schrift = 'pdfclass/fonts/Times-Roman.afm';
-        $text_schrift = 'pdfclass/fonts/Arial.afm';
         $mv = new mietvertraege ();
         $mz = new miete ();
-        $d = new detail ();
-        $e = new einheit ();
-        $jahr = date("Y");
-        $monat = date("m");
         $mz->mietkonto_berechnung($mv_id);
-        $saldo = $mz->erg;
         $mv->get_mietvertrag_infos_aktuell($mv_id);
         echo '<pre>';
         print_r($mv);

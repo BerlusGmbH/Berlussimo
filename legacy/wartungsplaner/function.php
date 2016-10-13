@@ -173,8 +173,6 @@ function get_tages_termine($datum, $benutzer_id)
                 $temp_datum = $datum;
                 $bild = 1;
             }
-            $von = $row['VON'];
-            $bis = $row['BIS'];
             $text = $row['TEXT'];
             $hinweis = $row['HINWEIS'];
             $lonlat_id = $row['GEO_LONLAT_ID'];
@@ -310,7 +308,6 @@ function test($anfang, $ende)
     echo "<tr>";
     for ($a = 0; $a < $anz_tage; $a++) {
         $akt_datum = $datums[$a];
-        $wochentag = wochentag($akt_datum);
         echo "<td>";
 
         $m_termine = count($wochencal[$akt_datum]);
@@ -330,10 +327,7 @@ function test($anfang, $ende)
                     $bis_arr = explode(':', $db_termine[$d]['BIS']);
                     $b_std = sprintf("%02d", $bis_arr[0]);
                     $b_min = sprintf("%02d", $bis_arr[1]);
-                    $datum = $db_termine[$d]['D_GER'];
                     $zeit_arr = explode(':', $zeit);
-                    $z_std = $zeit_arr[0];
-                    $z_min = $zeit_arr[1];
 
                     $von = "$v_std$v_min";
                     $bis = "$b_std$b_min";
@@ -374,7 +368,6 @@ function create_time_array()
 
 function get_montag_vor_kw($datum)
 {
-    $kw = kw($datum);
     $wochentag = get_wochentag($datum);
     $tage_bis_montag = $wochentag - 1;
     $datum_montag = tage_minus_wp($datum, ($tage_bis_montag + 7));
@@ -383,7 +376,6 @@ function get_montag_vor_kw($datum)
 
 function get_montag_nach_kw($datum)
 {
-    $kw = kw($datum);
     $wochentag = get_wochentag($datum);
     $tage_bis_montag = $wochentag - 1;
     $datum_montag = tage_minus_wp($datum, ($tage_bis_montag - 7));
@@ -468,7 +460,6 @@ function get_entfernung($lon, $lat)
             $datum = $row['DATUM_G'];
             $diff_tage = $row['DIFF'];
             $bn = $row['name'];
-            $wertung = $row['WERTUNG'];
             $b_id = $row['BENUTZER_ID'];
 
             echo "<tr class=\"termin$zeile\" onclick=\"daj2('" . route('legacy::wartungsplaner::indexAjax', ['option' => 'tages_termine', 'datum' => $datum, 'benutzer_id' => $b_id], false) . "',document.getElementById('leftBox1'))\"><td>$diff_tage T</td><td>$datum</td><td>$entf km</td><td>$str</td><td>$nr</td><td>$plz $ort</td><td>$bn</td></tr>";
@@ -575,12 +566,9 @@ function zeit_plus_min($zeit, $plusmin)
 
 function termine_frei($datum, $termin_dauer, $benutzer_id)
 {
-    $wochenende = '0';
     $termin_dauer_m = $termin_dauer * 60;
 
-    $arbeitsstunden = 8;
     $arbeitsstunden_sec = 8 * 60 * 60; // in sec ohne pause
-
 
     $datum_heute = date_german2mysql($datum);
     $datum_heute_ger = $datum;
@@ -606,7 +594,6 @@ function termine_frei($datum, $termin_dauer, $benutzer_id)
     $end_min = '15';
 
     $startzeit_m = mktime($start_std, $start_min, 0, $h_monat, $h_tag, $h_jahr);
-    $endzeit_m = mktime($end_std, $end_min, 0, $bis_monat, $bis_tag, $bis_jahr);
 
     $ende_heute = $startzeit_m + $arbeitsstunden_sec + $pause_sec;
 
@@ -767,7 +754,6 @@ function termine_frei($datum, $termin_dauer, $benutzer_id)
                 if ($a < $anz_v_termine - 1) {
                     $n = $a + 1;
                     $anfang_n = $t2a[$n]['A'];
-                    $ende_n = $t2a[$n]['E'];
                     $zaehler++;
                     if ($ende != $anfang_n) {
                         $t2ab[$zaehler]['A'] = $ende;
@@ -784,22 +770,6 @@ function termine_frei($datum, $termin_dauer, $benutzer_id)
 
 
         $arrSXsorted = array_sortByIndex($t2ab, 'A');
-
-        $anz = count($arrSXsorted);
-        for ($a = 0; $a < $anz; $a++) {
-            $anf = $arrSXsorted[$a]['A1'];
-            $end = $arrSXsorted[$a]['E1'];
-            $anf_m = $arrSXsorted[$a]['A'];
-            $end_m = $arrSXsorted[$a]['E'];
-            $dauer = round(($end_m - $anf_m) / 60, 2);
-            $status = $arrSXsorted[$a]['STATUS'];
-            $str = $arrSXsorted[$a]['STR'];
-            if ($status == 'FREI') {
-                #echo "<b>$anf bis $end - FREI $dauer Min.</b><br>";
-            } else {
-                #echo "$anf bis $end - $str $dauer Min.<br>";
-            }
-        }
         return $arrSXsorted;
     }
 }

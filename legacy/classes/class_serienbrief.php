@@ -42,7 +42,6 @@ class serienbrief
             foreach($result as $row) {
                 $dat = $row ['DAT'];
                 $kurztext = $row ['KURZTEXT'];
-                $text = $row ['TEXT'];
                 $kat = $row ['KAT'];
 
                 if ($empf_typ == 'Eigentuemer') {
@@ -87,8 +86,6 @@ class serienbrief
                     $jahr = date("Y");
                     $this->hausgeld_monatlich_de = nummer_punkt2komma($weg->get_sume_hausgeld('Einheit', $weg->einheit_id, $monat, $jahr) * -1);
                     $this->hausgeld_monatlich_en = $weg->get_sume_hausgeld('Einheit', $weg->einheit_id, $monat, $jahr) * -1;
-
-                    $dets = new detail ();
 
                     $gk = new geldkonto_info ();
                     $gk->geld_konto_ermitteln('Objekt', $weg->objekt_id);
@@ -159,8 +156,6 @@ class serienbrief
 
                     $pp = new partners ();
                     $pp->get_partner_info($e_id);
-
-                    $dets = new detail ();
 
                     $bpdf->get_texte($v_dat);
 

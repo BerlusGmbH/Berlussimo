@@ -223,7 +223,6 @@ class bk
 
     function assistent()
     {
-        $f = new formular ();
         erstelle_abschnitt("Assistent für BK");
         /* Überprüfen ob Profil ausgewählt wurde */
         /* Falls nein, neues erstellen */
@@ -268,7 +267,6 @@ class bk
             $bk_konto_id = $this->get_konto_id(session()->get('bk_konto'), session()->get('profil_id'));
             session()->put('bk_konto_id', $bk_konto_id);
             echo "<br>Buchungskonto " . session()->get('bk_konto') . " ausgewählt<br>";
-            $fehler = false;
         }
 
         // ##############
@@ -397,7 +395,6 @@ class bk
                 $konto = $konten_arr [$a] ['KONTO'];
                 $konto_bez = $konten_arr [$a] ['KONTO_BEZ'];
 
-                $img_gruen = "<img src=\"images/bk/gruen.png\" alt=\"Entfernen\">";
                 echo "<div class=\"zeile_gruen\">";
                 $js = "onclick=\"konto_raus($bk_k_id,$profil_id)\"";
                 $k = new kontenrahmen ();
@@ -586,7 +583,6 @@ class bk
             }
 
             echo "<tr><td>";
-            $js2 = "onclick=\"buchungen_hinzu('uebernahme[]', $konto_id,$this->bk_profil_id)\"";
             echo "</td></tr>";
             echo "</table>";
             $f->send_button("submit_key", "Hinzufügen");
@@ -635,7 +631,6 @@ class bk
                 $this->get_genkey_infos($buchung_key_id);
                 $js = "onclick=\"buchung_raus($bk_be_id, $konto_id,$this->bk_profil_id);return;\"";
                 // $js = 'buchung_hinzu($buchung_id, $konto_id,$profil_id)'
-                $img_gruen = "<img src=\"images/bk/gruen.png\" alt=\"Hinzufuegen\">";
                 $datum = date_mysql2german($this->buchungsdatum);
                 $buchung_betrag = nummer_punkt2komma($this->buchung_betrag);
 
@@ -653,7 +648,6 @@ class bk
                 if ($gesamt_anteil > 100) {
                     $gesamt_anteil = "<b>$gesamt_anteil</b>";
                 }
-                // echo "<div class=\"zeile_gruen\">";
                 $classe = 'zeilebk_' . $zeile . '_g';
 
                 if ($hndl_betrag < nummer_komma2punkt($umlagebetrag)) {
@@ -838,7 +832,6 @@ class bk
         $durchschnitt_jetzt = $this->get_durchschnitt_umlegen($profil_id, $bk_konto_id);
         $durchschnitt_jetzt_a = nummer_punkt2komma($durchschnitt_jetzt);
 
-        $js_pro = "onkeyup=\"prozentbetrag('$summe', 'prozent', 'umlagebetrag')\"";
         $f->text_feld("Nach prozent", 'prozent', $durchschnitt_jetzt_a, 15, 'prozent', '');
 
         $umlagebetrag = ($summe / 100) * $durchschnitt_jetzt;
@@ -877,7 +870,6 @@ class bk
             echo "<table>";
             for ($a = 0; $a < $anz; $a++) {
                 $dat = $anp_arr [$a] ['AN_DAT'];
-                $id = $anp_arr [$a] ['AN_ID'];
                 $grund = $anp_arr [$a] ['GRUND'];
                 $festbetrag = nummer_punkt2komma($anp_arr [$a] ['FEST_BETRAG']);
                 $gkey_id = $anp_arr [$a] ['KEY_ID'];
@@ -970,7 +962,6 @@ class bk
         $end_datum_d = date_mysql2german($end_datum);
         $f = new formular ();
         $f->erstelle_formular("Anpassung der Mietdefinition: ($this->bk_bezeichnung für das Jahr $this->bk_jahr)", NULL);
-        $form = new mietkonto ();
         if (!session()->has('me_kostenkat')) {
             session()->put('me_kostenkat', 'Nebenkosten Vorauszahlung');
         }
@@ -1011,15 +1002,12 @@ class bk
                 $mv_id = $arr [$a] ['MVS'] [$b] ['KOS_ID'];
                 $b_von = date_mysql2german($arr [$a] ['MVS'] [$b] ['BERECHNUNG_VON']);
                 $b_bis = date_mysql2german($arr [$a] ['MVS'] [$b] ['BERECHNUNG_BIS']);
-                $tage = $arr [$a] ['MVS'] [$b] ['TAGE'];
 
                 if ($mv_id != 'Leerstand') {
                     $z++;
                     $mv = new mietvertraege ();
                     $mv->get_mietvertrag_infos_aktuell($mv_id);
                     $mz = new miete ();
-                    $summe_nebenkosten_jahr = $mz->summe_nebenkosten_im_jahr('MIETVERTRAG', $mv_id, $jahr);
-                    $summe_hk_jahr = $mz->summe_heizkosten_im_jahr('MIETVERTRAG', $mv_id, $jahr);
 
                     $me = new mietentwicklung ();
 
@@ -1156,8 +1144,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     $berechnung_bis = $my_array [$a] ['BERECHNUNG_BIS'];
                     $tage_vermietet = $my_array [$a] ['TAGE'];
                     $mv_id = $my_array [$a] ['KOS_ID'];
-                    $berechnung_von_a = date_mysql2german($berechnung_von);
-                    $berechnung_bis_a = date_mysql2german($berechnung_bis);
                     $my_array_neu [] = array(
                         'KOS_TYP' => 'MIETVERTRAG',
                         'KOS_ID' => $mv_id,
@@ -1302,13 +1288,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     $mv = new mietvertraege ();
                     $mv->get_mietvertrag_infos_aktuell($mv_id);
                     $mz = new miete ();
-                    $summe_nebenkosten_jahr = $mz->summe_nebenkosten_im_jahr('MIETVERTRAG', $mv_id, $jahr);
                     $summe_hk_jahr = $mz->summe_heizkosten_im_jahr('MIETVERTRAG', $mv_id, $jahr);
-
-                    /* Kaltmiete */
-                    $li = new listen ();
-                    $b_von_2 = date_german2mysql($b_von);
-                    $b_bis_2 = date_german2mysql($b_bis);
 
                     if ($tage < 365) {
                         echo "<tr><td class=\"rot\">$mv->einheit_kurzname</td><td class=\"rot\">$mv->personen_name_string</td><td class=\"rot\">$b_von</td><td class=\"rot\">$b_bis</td><td class=\"rot\">$tage</td><td class=\"rot\">";
@@ -1355,9 +1335,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                         }
                         echo "</td></tr>";
                     }
-
-                    $sm_kalt = 0;
-                    $sm_kalt_a = 0;
                 } else {
                     $einheit_kn = $arr [$a] ['EINHEIT_KURZNAME'];
                     echo "<tr><td class=\"gruen\">$einheit_kn</td><td class=\"gruen\"><b>LEERSTAND</b></td><td>$b_von</td><td>$b_bis</td><td>$tage</td><td></td><td></td><td></td></tr>";
@@ -1485,15 +1462,9 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
             $this->get_genkey_infos($key_id);
 
             $summe_konto = $summen_arr [$a] ['G_SUMME'];
-            /* Positiv machen */
-            // if($summe_konto<0){
-            // $summe_konto = substr($summe_konto,1);
-            // }
-            $summe_konto_a = nummer_punkt2komma($summe_konto);
             $bk_k_id = $summen_arr [$a] ['BK_K_ID'];
 
             $this->get_konto_infos_byid($bk_k_id, $profil_id);
-            $kostenkonto = $this->konto;
             $bk_res ['kontrolle'] [$a] [$bk_k_id] ['KOSTENART'] = $this->konto_bez;
             // neu mit eigenen bezeichnungen der konten
 
@@ -1504,10 +1475,6 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
             $anteil_a = nummer_punkt2komma($anteil);
             $anteil_betrag = $summen_arr [$a] ['A_SUMME'];
 
-            $anteil_betrag_a = nummer_punkt2komma(abs($anteil_betrag));
-
-            $hndl_betrag = $summen_arr [$a] ['HNDL_BETRAG'];
-            // $hndl_anteil_betrag = ($hndl_betrag/100)*$anteil;
             $hndl_anteil_betrag = $summen_arr [$a] ['HNDL_BETRAG'];
             $bk_res ['kontrolle'] [$a] [$bk_k_id] ['SUMME'] = $anteil_betrag;
             $bk_res ['kontrolle'] [$a] [$bk_k_id] ['HNDL'] = $hndl_anteil_betrag;
@@ -1527,11 +1494,9 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
                 $gesamt_qm_gewerbe = $wirt->g_qm_gewerbe;
                 $gesamt_qm = $gesamt_qm_alle - $gesamt_qm_gewerbe;
                 $einheiten_arr = $wirt->get_einheiten_from_wirte($kos_id);
-                $g_kos_bez = $wirt->w_name;
                 $bk_res ['kontrolle'] [$a] [$bk_k_id] ['G_KOS_BEZ'] = $wirt->w_name;
                 $anzahl_ge = $wirt->anzahl_ge;
                 $anzahl_wo = $wirt->anzahl_wo;
-                $anzahl_e = $wirt->anzahl_e;
             }
 
             if ($kos_typ == 'Objekt') {
@@ -1581,11 +1546,7 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
             $bk_res ['kontrolle'] [$a] [$bk_k_id] ['KOSTEN_GEWERBE'] = nummer_punkt2komma(($anteil_betrag / $gesamt_qm_alle) * $gesamt_qm_gewerbe);
             $bk_res ['kontrolle'] [$a] [$bk_k_id] ['KOSTEN_WOHNRAUM'] = nummer_punkt2komma($anteil_betrag - (($anteil_betrag / $gesamt_qm_alle) * $gesamt_qm_gewerbe));
 
-            // $this->key_daten[$key_id][g_einheit_qm] = $gesamt_qm;
             $anzahl_einheiten = count($einheiten_arr);
-            // $this->key_daten[$key_id][g_anzahl_einheiten] = $anzahl_einheiten;
-
-            $beteiligung_gesamt = 0;
             /* Schleife $b, zweite Schleife für jede Einheit */
             for ($b = 0; $b < $anzahl_einheiten; $b++) {
                 $einheit_id = $einheiten_arr [$b] ['EINHEIT_ID'];
@@ -1623,7 +1584,6 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
                     $von = $leerstand_und_mvs [$c] ['BERECHNUNG_VON'];
                     $bis = $leerstand_und_mvs [$c] ['BERECHNUNG_BIS'];
                     $zeitraum = date_mysql2german($leerstand_und_mvs [$c] ['BERECHNUNG_VON']) . ' - ' . date_mysql2german($leerstand_und_mvs [$c] ['BERECHNUNG_BIS']);
-                    $tage = $leerstand_und_mvs [$c] ['TAGE'];
                     if ($kos_typ != 'Mietvertrag') {
                         if ($kos_typ_e == 'Leerstand') {
                             $empfaenger = 'Leerstand';
@@ -1657,7 +1617,6 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
                     $beteiligung = round($beteiligung_genau, 2);
                     // runden
                     /* Eigene Diff */
-                    $alt_diff = $diff;
                     $eig_diff = $beteiligung_genau - $beteiligung;
                     // eigene diff, die weiter gegeben wird
                     $beteiligung_a = nummer_punkt2komma($beteiligung);
@@ -1675,7 +1634,6 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
                     $beteiligung_hndl = round($beteiligung_hndl_genau, 2);
                     // runden
                     /* Eigene Diff */
-                    $hndl_alt_diff = $hndl_diff;
                     $hndl_eig_diff = $beteiligung_hndl_genau - $beteiligung_hndl;
                     // eigene diff, die weiter gegeben wird
                     $beteiligung_hndl_a = nummer_punkt2komma($beteiligung_hndl);
@@ -1830,8 +1788,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     $berechnung_bis = $my_array [$a] ['BERECHNUNG_BIS'];
                     $tage_vermietet = $my_array [$a] ['TAGE'];
                     $mv_id = $my_array [$a] ['KOS_ID'];
-                    $berechnung_von_a = date_mysql2german($berechnung_von);
-                    $berechnung_bis_a = date_mysql2german($berechnung_bis);
                     $my_array_neu [] = array(
                         'KOS_TYP' => 'MIETVERTRAG',
                         'KOS_ID' => $mv_id,
@@ -1935,13 +1891,9 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
 
             /* Nicht ganzes Jahr vermietet */
             if ($tage < $tage_im_jahr) {
-
-                // echo "TEILWEISE VERMIETET = $tage <> $tage_im_jahr<br>";
-
                 $summe_tage = 0;
                 for ($a = 0; $a < $anzahl_zeilen; $a++) {
 
-                    $berechnung_von = $my_array [$a] ['BERECHNUNG_VON'];
                     $berechnung_bis = $my_array [$a] ['BERECHNUNG_BIS'];
 
                     /* Fehlzeiten / leerstände zwischen den Verträgen */
@@ -1969,9 +1921,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     $berechnung_bis = $my_array [$a] ['BERECHNUNG_BIS'];
                     $tage_vermietet = $my_array [$a] ['TAGE'];
                     $mv_id = $my_array [$a] ['KOS_ID'];
-                    $berechnung_von_a = date_mysql2german($berechnung_von);
-                    $berechnung_bis_a = date_mysql2german($berechnung_bis);
-                    // echo "VERMIETET $berechnung_von $berechnung_bis_a $tage_vermietet<br>";
                     $my_array_neu [] = array(
                         'KOS_TYP' => 'MIETVERTRAG',
                         'KOS_ID' => $mv_id,
@@ -2060,7 +2009,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
             $kostenart = $kontroll_arr [$a] [$bk_k_id] ['KOSTENART'];
             $g_kos_bez = $kontroll_arr [$a] [$bk_k_id] ['G_KOS_BEZ'];
             $kos_typ = $kontroll_arr [$a] [$bk_k_id] ['KOS_TYP'];
-            $kos_id = $kontroll_arr [$a] [$bk_k_id] ['KOS_ID'];
 
             $kostenart_summe = nummer_punkt2komma($kontroll_arr [$a] [$bk_k_id] ['SUMME']);
             $kostenart_kontrolliert = nummer_punkt2komma($kontroll_arr [$a] [$bk_k_id] ['SUMME_K']);
@@ -2333,7 +2281,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
             // $this->pdf_zeitraum($pdf, $bk_res_arr[$key_val]);
 
             $abrechnung = $bk_res_arr [$key_val];
-            $empf = $abrechnung ['EMPF'];
             $this->pdf_einzel_tab($pdf, $abrechnung, $label, $kontroll_tab_druck);
         }
 
@@ -2362,7 +2309,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
 
             $pdf_tab [$a] ['ZEITRAUM'] = $pdf->ergebnis_tab [$key] ['ZEITRAUM'];
             $pdf_tab [$a] ['ANZ_MONATE'] = $pdf->ergebnis_tab [$key] ['ANZ_MONATE'];
-            $summe_nk_jahr = $pdf->ergebnis_tab [$key] ['SUMME_NK'];
 
             $pdf_tab [$a] ['A_MIETE'] = $pdf->ergebnis_tab [$key] ['A_MIETE'];
             $pdf_tab [$a] ['N_MIETE'] = $pdf->ergebnis_tab [$key] ['N_MIETE'];
@@ -2641,9 +2587,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
 
         $einheit_typ = $bk_arr ['EINHEIT_TYP'];
         $einheit_qm = $bk_arr ['EINHEIT_QM'];
-        $QM_G_OBJEKT = nummer_punkt2komma($bk_arr ['QM_G_OBJEKT']);
-        $QM_G = nummer_punkt2komma($bk_arr ['QM_G']);
-        $QM_G_GEWERBE = nummer_punkt2komma($bk_arr ['QM_G_GEWERBE']);
 
         $this->bk_profil_infos(session()->get('profil_id'));
 
@@ -2659,7 +2602,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
             'BET_G' => "Beteiligung"
         );
         $g_beteiligung = 0.00;
-        $g_beteiligung_hnd = 0.00;
         for ($b = 0; $b < $anzahl_zeilen; $b++) {
             $tab [$b] ['KOSTENART'] = $bk_arr [$b] ['KOSTENART'];
             $tab [$b] ['G_KOS_BEZ'] = $bk_arr [$b] ['G_KOS_BEZ'];
@@ -2678,19 +2620,12 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
             $g_beteiligung_hndl += nummer_komma2punkt($bk_arr [$b] ['BET_HNDL']);
         }
 
-        /* Pr�fen ob Kaltwasserkosten worden sind */
+        /* Prüfen ob Kaltwasserkosten worden sind */
         $check_kw = $this->check_kw_abrechnung($empf_kos_typ, $empf_kos_id, $this->bk_jahr);
         if ($check_kw == true) {
             $kw_summe = $this->summe_kw_abrechnung($empf_kos_typ, $empf_kos_id, $this->bk_jahr);
             $kw_summe_a = nummer_punkt2komma($kw_summe);
-            // $pdf->ezText("<b>Heiz- und Betriebskostenabrechnung Einheit: $mv->einheit_kurzname</b>",10);
             $tab [$b + 1] ['KOSTENART'] = 'Be- und Entwässerung lt. Kaltwasserabr.';
-            if ($kw_summe < 0) {
-                $kw_erg_a = 'Nachzahlung';
-            } else {
-                $kw_erg_a = 'Guthaben';
-            }
-
             $tab [$b + 1] ['G_KEY'] = 'n. Verbrauch';
             $tab [$b + 1] ['BET_G'] = $kw_summe_a;
             $g_beteiligung += $kw_summe;
@@ -2702,7 +2637,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
         $tab [$b + 1] ['BET_G'] = '<b>' . nummer_punkt2komma($g_beteiligung) . '</b>';
         $tab [$b + 1] ['BET_HNDL'] = '<b>' . nummer_punkt2komma($g_beteiligung_hndl) . '</b>';
 
-        $summe_nebenkosten_jahr = 0.00;
         if ($empf_kos_typ == 'MIETVERTRAG') {
             $mz = new miete ();
             $summe_nebenkosten_jahr = $mz->summe_nebenkosten_im_jahr($empf_kos_typ, $empf_kos_id, $this->bk_jahr);
@@ -2860,7 +2794,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
             $anp_tab [0] ['NEU'] = "$mk1->ausgangs_kaltmiete_a €";
 
             $this->get_anpassung_details(session()->get('profil_id'), 'Nebenkosten Vorauszahlung');
-            $anp_datum = date_mysql2german($this->bk_an_anpassung_ab);
 
             $mv = new mietvertraege();
             $mv->get_mietvertrag_infos_aktuell($empf_kos_id);
@@ -2962,7 +2895,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 $pap = $mv->postanschrift [0] ['anschrift'];
                 if (!empty ($pap)) {
                     $pdf->ezText("$pap", 10);
-                    $pap = '';
                 } else {
                     $pdf->ezText("$mv->personen_name_string_u\n$mv->haus_strasse $mv->haus_nr\n\n$mv->haus_plz $mv->haus_stadt", 10);
                 }
@@ -2984,7 +2916,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     $hk_diff = $hk_jahr_aktuell - (($hk_summe * -1) + ($anzahl_monate * $hk_monatlich_letzte_vj));
                     $hk_anp_betrag_neu = ($hk_summe - 25) / 12;
                     $hk_anp_betrag_neu = intval($hk_anp_betrag_neu - 1);
-                    $hk_anp_betrag_neu = substr($hk_anp_betrag_neu, 1);
                     if ($hk_diff >= 0) {
                         $hk_anp_betrag_neu = '0.00';
                     } else {
@@ -3070,7 +3001,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 echo "HK ANP: $hk_anp_betrag_neu<br><hr>";
 
                 $hk_vorschuss_neu = $x;
-                $hk_monatlich_bisher_schnitt_a = nummer_punkt2komma($hk_monatlich_bisher_schnitt);
                 $hk_monatlich_bisher_a = nummer_punkt2komma($hk_monatlich_letzte);
 
                 $this->get_genkey_infos($this->bk_an_keyid);
@@ -3112,8 +3042,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 $pdf->ezText("$mv->mv_anrede", 10);
                 $text_nachzahlung = "aufgrund der vorliegenden Nebenkostenabrechnung und zu erwartender Kostensteigerungen, erfolgt hiermit eine Änderung der monatlichen Betriebskostenvorauszahlungen auf der Grundlage des § 560 BGB, wie nachfolgend aufgeführt ab dem $this->bk_verrechnungs_datum_d.";
 
-                $text_guthaben_berlin = "aufgrund der uns bisher bekannten Erhöhungen der Kosten für die Müllentsorgung durch die BSR, die Be- und Entwässerungskosten durch die Berliner Wasserbetriebe und die Erhöhung der Kosten für die Hausreinigung, erfolgt hiermit eine Änderung der monatlichen Betriebskostenvorauszahlungen auf der Grundlage des § 560 BGB wie nachfolgend aufgeführt ab dem $this->bk_verrechnungs_datum_d.";
-
                 $text_guthaben = "aufgrund der vorliegenden Nebenkostenabrechnung und zu erwartender Kostensteigerungen, erfolgt hiermit eine Änderung der monatlichen Betriebskostenvorauszahlungen auf der Grundlage des § 560 BGB, wie nachfolgend aufgeführt ab dem $this->bk_verrechnungs_datum_d.";
 
                 if ($txt == 'Nachzahlung') {
@@ -3121,8 +3049,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                         'justification' => 'full'
                     ));
                 }
-
-                $alttext = 'aufgrund der Nachzahlungsbeträge aus der letzten Betriebskostenabrechnung ändern wir die monatlichen Betriebskostenvorauszahlungen auf der Grundlage des § 560 Abs. 4 und 5 BGB wie nachfolgend aufgeführt ab dem $this->bk_verrechnungs_datum_d.';
 
                 if ($txt == 'Guthaben') {
                     $pdf->ezText("$text_guthaben", 10, array(
@@ -3134,7 +3060,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 /* BK NK ANPASSUNG */
 
                 $this->get_anpassung_details(session()->get('profil_id'), 'Nebenkosten Vorauszahlung');
-                $men = new mietentwicklung ();
                 $jahr_vorschuss = date("Y");
                 $vorschuesse_aktuell = $mz->letzte_hk_vorauszahlung($empf_kos_typ, $empf_kos_id, $jahr_vorschuss, 'Nebenkosten Vorauszahlung');
 
@@ -3151,10 +3076,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 if ($this->bk_an_keyid == '2') {
                     $vorschuesse_neu = $vorschuesse_neu + $this->bk_an_fest_betrag;
                 }
-                $vorschuesse_neu_a = nummer_punkt2komma($vorschuesse_neu);
-
                 $anp_betrag = $vorschuesse_neu - $vorschuesse_aktuell;
-                $anp_betrag_a = nummer_punkt2komma($anp_betrag);
 
                 if ($ergebnis > 0) {
                     $xbk = intval($vorschuesse_aktuell - $bk_anp_betrag_neu);
@@ -3173,7 +3095,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     $vorschuesse_neu_a = nummer_punkt2komma($vorschuesse_neu);
                 } else {
                     /* Wenn VZ Anteilig gezahlt, keine BK Anpassen - Bruttomieter!!!!!!!!! */
-                    $anp_betrag = 0;
                     $vorschuesse_aktuell = 0;
                     $vorschuesse_neu = 0;
 
@@ -3255,7 +3176,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 $mv->get_mietvertrag_infos_aktuell($empf_kos_id);
                 /* Wenn Mietvertrag aktuell anpassen, sonst nicht (d.h. Mieter wohnt noch in der Einheit) */
                 $this->get_anpassung_details($this->profil_id, 'Nebenkosten Vorauszahlung');
-                $anp_datum = date_mysql2german($this->bk_an_anpassung_ab);
                 $p = new partners ();
                 $p->get_partner_info(session()->get('partner_id'));
 
@@ -3266,7 +3186,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 $pap = $mv->postanschrift [0] ['anschrift'];
                 if (!empty ($pap)) {
                     $pdf->ezText("$pap", 10);
-                    $pap = '';
                 } else {
                     $pdf->ezText("$mv->personen_name_string_u\n$mv->haus_strasse $mv->haus_nr\n\n$mv->haus_plz $mv->haus_stadt", 10);
                 }
@@ -3323,7 +3242,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     $ergebnis_a_a = nummer_punkt2komma($ergebnis);
                     $tab_ans [0] ['SUMME'] = $ergebnis_a_a . ' €';
                 } else {
-                    $bk_ergebnis = 0.00;
                     $ergebnis_a_a = nummer_punkt2komma(0.00);
                     $tab_ans [0] ['SUMME'] = $ergebnis_a_a . ' €';
                     $ergebnis = 0.00;
@@ -3515,7 +3433,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
             $einheit_qm = $bk_res_arr [$key_val] ['EINHEIT_QM'];
             $zeitraum = $bk_res_arr [$key_val] ['ZEITRAUM'];
             $einheit_name = $bk_res_arr [$key_val] ['EINHEIT_NAME'];
-            $einheit_typ = $bk_res_arr [$key_val] ['EINHEIT_TYP'];
             $empf_kos_typ = $bk_res_arr [$key_val] ['KOS_TYP'];
             $empf_kos_id = $bk_res_arr [$key_val] ['KOS_ID'];
 

@@ -22,7 +22,6 @@ class leerstand
         $monatsname = monat2name($monat);
         $l_tag = letzter_tag_im_monat($monat, $jahr);
         $datum = "$jahr-$monat-$l_tag";
-        $datum_ger = date_mysql2german($datum);
         $table_arr = $this->leerstand_finden_monat($objekt_id, $datum);
 
         $cols = array(
@@ -616,7 +615,6 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
     {
         $d = new detail ();
         $zimmer = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Zimmeranzahl'))));
-        $balkon = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Balkon'))));
         if (!$zimmer) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage('Angaben zur Zimmeranzahl fehlen.')
@@ -745,13 +743,11 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
         $expose_km = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Expose kaltmiete'))));
         $expose_bk = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Expose BK'))));
         $expose_hk = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Expose HK'))));
-        $brutto_miete = nummer_punkt2komma_t(nummer_komma2punkt($expose_km) + nummer_komma2punkt($expose_bk) + nummer_komma2punkt($expose_hk));
 
         $f->text_feld("Miete kalt | MSM:$miete_nach_ms € | MAX:$miete_nach_ms_max € | MS-FELD:$ms_feld, U:$ma->u_wert, M:$ma->m_wert, O:$ma->o_wert", 'expose_km', $expose_km, 8, 'expose_km', '');
         $f->text_feld('BK', 'expose_bk', $expose_bk, 8, 'expose_bk', '');
 
         $heizungsart = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Heizungsart'))));
-        // $f->text_feld('Heizungsart', 'heizungsart', $heizungsart, 50, 'expose_hart', '');
         $d->dropdown_optionen('Heizungsart', 'heizungsart', 'heizungsart', 'Heizungsart', $heizungsart);
 
         if (empty ($expose_hk)) {
@@ -759,8 +755,6 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
         }
         $f->text_feld('HK', 'expose_hk', $expose_hk, 10, 'expose_hk', '');
 
-        $zustand = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Zustand'))));
-        // $f->text_feld('Zustand', 'zustand', $zustand, 80, 'zustand', '');
         $f->hidden_feld('zustand', '');
 
         $expose_frei = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Expose frei ab'))));
@@ -1101,16 +1095,10 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                 $einheit_id = $arr [$a] ['EINHEIT_ID'];
                 $haus_id = $arr [$a] ['HAUS_ID'];
                 $einheit_kurzname = $arr [$a] ['EINHEIT_KURZNAME'];
-                /*
-				 * $e = new einheit;
-				 * $e->get_einheit_info($einheit_id);
-				 */
                 /* FOTO ORDNER ANLEGEN */
                 if (!Storage::disk('fotos')->exists("EINHEIT/$einheit_kurzname/ANZEIGE")) {
                     Storage::disk('fotos')->makeDirectory("EINHEIT/$einheit_kurzname/ANZEIGE");
                 }
-
-                $link_einheit = "<a class=\"einheit\" href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id]) . "'>$einheit_kurzname</a>";
 
                 $fertig_bau = ltrim(rtrim($arr [$a] ['FERTIG_BAU']));
                 $anschrift = $arr [$a] ['HAUS_STRASSE'];
@@ -1125,11 +1113,9 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                 $zimmer_dat = $arr [$a] ['ZIMMER_DAT'];
                 $balkon = $arr [$a] ['BALKON'];
                 $balkon_dat = $arr [$a] ['BALKON_DAT'];
-                $link_balkon = "<a class=\"details\" href=\"#\">&nbsp;$balkon</a>";
 
                 $heizart = $arr [$a] ['HEIZUNGSART'];
                 $heizart_dat = $arr [$a] ['HEIZUNGSART_DAT'];
-                $link_heizart = "<a class=\"details\" href=\"#\">&nbsp;$heizart</a>";
 
                 $l_von = $arr [$a] ['L_VON'];
                 $l_bis = $arr [$a] ['L_BIS'];
@@ -1144,8 +1130,6 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                 echo "<tr><td>Typ:</td><td>$einheit_typ</td></tr>";
                 echo "<tr><td>Letzter Mieter:</td><td>$l_mieter</td></tr>";
                 echo "<tr><td>Mietzeit:</td><td>$l_von - $l_bis</td></tr>";
-                $vermietungs_jahre_arr = explode('|', $arr [$a] ['L_MIETJAHRE']);
-                // $l_jahr = $vermietungs_jahre_arr[0];
                 $l_jahr = $arr [$a] ['L_MIETJAHRE'];
                 $l_monate = $arr [$a] ['L_MIETMONATE'];
 
@@ -1169,21 +1153,15 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 echo "<tr><td>Mietdauer:</td><td><progress max=\"$max\" value=\"$l_jahr\"></progress> $l_jahr" . "J:$l_monate" . "M</td></tr>";
 
-                // echo "Fläche: $einheit_qm m²<br>Lage:$einheit_lage<br>Typ:$einheit_typ<br>Energieausweis vorhanden: $energieausweis<br>Energieausweis bis: $energieausweis_bis</td>";
-                // echo "<td>Balkon: $balkon</td>";
-                // echo "<td>Heizungsart: $heizart</td>";
                 echo "</table></td>";
 
                 echo "<td>";
                 echo "<table class=\"details\">";
                 echo "<tr><td>";
-                // $f->text_feld(' Zimmer ', 'zimmer', $zimmer, strlen($zimmer), 'z', null);
-                $link_zimmer = "<label for=\"lnk_zimmer$objekt_id.'_'.$a\">Zimmeranzahl</label><a id=\"lnk_zimmer$objekt_id.'_'.$a\" class=\"details\" onclick=\"change_detail('Zimmeranzahl', '$zimmer', '$zimmer_dat', 'EINHEIT', '$einheit_id')\">&nbsp;$zimmer</a>";
                 $link_zimmer = "<div class=\"input-field\">
                                     <input id=\"lnk_zimmer$objekt_id.'_'.$a\" value='$zimmer' type=\"text\" onchange=\"change_detail_no_prompt('Zimmeranzahl', this.value, '$zimmer_dat', 'EINHEIT', '$einheit_id')\">
                                     <label for=\"lnk_zimmer$objekt_id.'_'.$a\">Zimmeranzahl</label>
                                 </div>";
-                // $link_reinigen = "<label for=\"link_reinigen..$objekt_id.'_'.$a\">Gereinigt am</label><br><a id=\"link_reinigen.$objekt_id.'_'.$a\" class=\"details\" onclick=\"change_detail('Gereinigt am', '$reinigen', '$reinigen_dat', 'EINHEIT', '$einheit_id')\">&nbsp;$reinigen</a>";
                 echo $link_zimmer;
                 echo "</td></tr>";
                 echo "<tr><td>";
@@ -1192,7 +1170,6 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                 echo "</td></tr>";
 
                 echo "<tr><td>";
-                // <u>Heizung:</u> $link_heizart
                 $js = " onchange=\"change_detail_no_prompt('Heizungsart', this.value, '$heizart_dat', 'EINHEIT', '$einheit_id')\"";
                 $d->dropdown_optionen('Heizungsart', 'dd_heizart' . $objekt_id . '_' . $a, 'dd_heizart' . $objekt_id . '_' . $a, 'Heizungsart', $heizart, $js);
                 echo "</td></tr>";
@@ -1216,13 +1193,8 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                 $sanierungs_jahr_dat = $arr [$a] ['JAHR_S_DAT'];
                 $link_san_jahr = "<a class=\"details\" onclick=\"change_detail('Jahr der letzten Sanierung', '$sanierungs_jahr', '$sanierungs_jahr_dat', 'EINHEIT', '$einheit_id')\">&nbsp;$sanierungs_jahr</a>";
                 echo "<td><center>$link_san_jahr</center></td>";
-
-                $link_eausweis = "<a class=\"details\">&nbsp;$energieausweis</a>";
-
                 echo "<td>";
-                // echo "$link_eausweis";
                 $d = new detail ();
-                // $js = " onchange=alert('SANEL');";
                 $energieausweis_dat = $arr [$a] ['ENERGIEAUS_DAT'];
                 $js = " onchange=\"change_detail_no_prompt('Energieausweis vorhanden', this.value, '$energieausweis_dat', 'HAUS', '$haus_id')\"";
                 $d->dropdown_optionen('Energieausweis', 'dd_ea' . $objekt_id . '_' . $a, 'dd_ea' . $objekt_id . '_' . $a, 'Energieausweis vorhanden', $energieausweis, $js);
@@ -1238,8 +1210,6 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                 echo "<td>";
                 $reinigen = $arr [$a] ['GEREINIGT'];
                 $reinigen_dat = $arr [$a] ['GEREINIGT_DAT'];
-                $link_reinigen = "<label for=\"link_reinigen..$objekt_id.'_'.$a\">Gereinigt am</label><br><br><a id=\"link_reinigen.$objekt_id.'_'.$a\" class=\"details\" onclick=\"change_detail('Gereinigt am', '$reinigen', '$reinigen_dat', 'EINHEIT', '$einheit_id')\">&nbsp;$reinigen</a>";
-                //echo $link_reinigen;
                 echo "<div class='input-field'>
                             <input class='datepicker' value='" . $reinigen . "' id='link_reinigen_" . $objekt_id . '_' . $a . "' type='date' onchange=\"change_detail_no_prompt('Gereinigt am', this.value, '$reinigen_dat', 'EINHEIT', '$einheit_id')\"/>
                             <label for='link_reinigen_" . $objekt_id . '_' . $a . "'>Gereinigt am</label>
@@ -1291,7 +1261,6 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
             for ($a = 0; $a < $monate; $a++) {
                 $monat = $monat_array [$a] ['MONAT'];
                 $jahr = $monat_array [$a] ['JAHR'];
-                $ima = $this->get_png($objekt_id, $monat, $jahr, $w, $h);
                 $ima1 = $this->get_png($objekt_id, $monat, $jahr, 800, 600);
                 echo "<div class='col s12 m4 l3'>";
                 echo "<img class='materialboxed' width='100%' src=\"$ima1\" alt=\"Leerstandsübersicht $a\"></a>";
@@ -1331,7 +1300,6 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
         $arr_leer = $this->leerstand_finden_monat($objekt_id, $datum_heute);
         $anz_leer_akt = count($arr_leer);
-        $anz_vermietet = $anz_einheiten_alle - $anz_leer_akt;
 
         $leere = $this->array_intersect_recursive($arr_leer, $arr, 'EINHEIT_KURZNAME');
         $vermietete = $this->array_intersect_recursive($arr, $arr_leer, 'EINHEIT_KURZNAME');
@@ -1657,9 +1625,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
                 $balkon = $arr [$a] ['BALKON'];
                 $heizungsart = $arr [$a] ['HEIZUNGSART'];
-                $energieausweis = $arr [$a] ['ENERGIEAUS'];
                 $jahr_s = $arr [$a] ['JAHR_S'];
-                $fertig_bau = $arr [$a] ['FERTIG_BAU'];
                 $fertig_bau_bem = $arr [$a] ['FERTIG_BAU_BEM'];
                 $gereinigt = $arr [$a] ['GEREINIGT'];
                 $gereinigt_bem = $arr [$a] ['GEREINIGT_BEM'];
@@ -1676,14 +1642,12 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                 /* BK für vermietung aus Details */
                 $bk = $arr [$a] ['BK'];
                 $bk_dat = $arr [$a] ['BK_DAT'];
-                $bk_bem = $arr [$a] ['BK_BEM'];
                 /* NK SCHNITT */
                 $nk = $arr [$a] ['NK_D'];
 
                 /* HK für vermietung aus Details */
                 $hk = $arr [$a] ['HK'];
                 $hk_dat = $arr [$a] ['HK_DAT'];
-                $hk_bem = $arr [$a] ['HK_BEM'];
 
                 /* HK SCHNITT */
                 $hk_s = $arr [$a] ['HK_D'];
@@ -1695,7 +1659,6 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                 /* Besichtigungstermin für Vermietung aus Details */
                 $b_termin = $arr [$a] ['B_TERMIN'];
                 $b_termin_dat = $arr [$a] ['B_TERMIN_DAT'];
-                $b_termin_bem = $arr [$a] ['B_TERMIN_BEM'];
 
                 /* Reservierung aus Details */
                 $b_reservierung = $arr [$a] ['B_RESERVIERUNG'];
@@ -1785,8 +1748,6 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                 $ltm = letzter_tag_im_monat($monat_neu, $jahr_neu);
                 $datum = "$jahr_neu-$monat_neu-$ltm";
             }
-
-            $datum_d = date_mysql2german($datum);
 
             $arr = $this->leerstand_finden_monat($objekt_id, $datum);
             /* Array vervollständigen */
@@ -2051,7 +2012,6 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
         for ($a = 0; $a < $anz; $a++) {
             $einheit_id = $einheiten_alle [$a] ['EINHEIT_ID'];
-            $einheit_kn = $einheiten_alle [$a] ['EINHEIT_KURZNAME'];
             $einheit_qm = $einheiten_alle [$a] ['EINHEIT_QM'];
 
             $e = new einheit ();
@@ -2129,7 +2089,6 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
         $anz_fotos = count($fotos_arr);
         $f->fieldset("Vorhandene Fotos $e->einheit_kurzname ($anz_fotos)", 'fs');
         echo "<div class='row'>";
-        $umbruch = $anz_pro_zeile;
         $counter = 0;
         for ($a = 0; $a < $anz_fotos; $a++) {
             $counter++;
@@ -2181,15 +2140,9 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                             $mk->kaltmiete_monatlich($mv_id, $monat, $jahr);
 
                             if ($tag > 1) {
-                                $ltm = letzter_tag_im_monat($monat, $jahr);
-
-                                // $qm_preis = nummer_punkt2komma(nummer_komma2punkt($kaltmiete_soll)/$mvs->einheit_qm/$tag*$ltm);
-                                // $qm_preis_ist = nummer_punkt2komma($mk->ausgangs_kaltmiete/$mvs->einheit_qm/$tag*$ltm);
                                 $qm_preis = nummer_punkt2komma(nummer_komma2punkt($kaltmiete_soll) / $mvs->einheit_qm);
-
                                 $qm_preis_ist = nummer_punkt2komma($mk->ausgangs_kaltmiete / $mvs->einheit_qm / $tag * 30);
                             } else {
-
                                 $qm_preis = nummer_punkt2komma(nummer_komma2punkt($kaltmiete_soll) / $mvs->einheit_qm);
                                 $qm_preis_ist = nummer_punkt2komma($mk->ausgangs_kaltmiete / $mvs->einheit_qm);
                             }

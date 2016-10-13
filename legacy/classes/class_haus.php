@@ -74,7 +74,6 @@ class haus extends objekt {
             $f->text_feld ( "Ort", "ort", "", "50", 'ort', '' );
             $f->text_feld ( "Plz", "plz", "", "10", 'plz', '' );
             $f->text_feld ( "Größe in m²", "qm", "", "10", 'qm', '' );
-            $o = new objekt ();
             $this->dropdown_objekte ( 'objekt_id', 'objekt_id' );
             $f->hidden_feld ( "daten_rein", "haus_speichern" );
             $f->send_button ( "submit_haus", "Haus erstellen" );

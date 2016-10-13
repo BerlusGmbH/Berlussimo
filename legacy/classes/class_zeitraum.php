@@ -18,7 +18,6 @@ class zeitraum
     function zeitraum_generieren($monat_von, $jahr_von, $monat_bis, $jahr_bis)
     {
         $laenge_monat_von = strlen($monat_von);
-        $laenge_monat_bis = strlen($monat_bis);
         if ($monat_von < 10 && $laenge_monat_von == 2) {
             $monat_von = substr($monat_von, 1, 1);
         }
@@ -29,9 +28,6 @@ class zeitraum
         // Aktuelle Datumangaben
         $letztes_datum_monat = date("Y-m-t"); // letzter Tag im aktuellen Monat, dafür steht (t) z.B. 28 bzw 29 / 30. oder 31.
         $aktuelles_datum = explode("-", $letztes_datum_monat);
-        $aktuelles_jahr = $aktuelles_datum [0];
-        $aktueller_monat = $aktuelles_datum [1];
-        $aktueller_tag = $aktuelles_datum [2];
 
         $diff_in_jahren = $jahr_bis - $jahr_von;
 
@@ -130,9 +126,7 @@ class zeitraum
         $mv_info = new mietkonto ();
         $mv_info->mietvertrag_grunddaten_holen($mietvertrag_id);
         $mietvertrag_von = $mv_info->mietvertrag_von;
-        $mietvertrag_bis = $mv_info->mietvertrag_bis;
         $datum_einzug = explode("-", "$mietvertrag_von");
-        $tag_einzug = $datum_einzug [2];
         $monat_einzug = $datum_einzug [1];
         if ($monat_einzug < 10) { // bei 01 02 03 die Null abschneiden
             $monat_einzug = substr($monat_einzug, -1);
@@ -144,7 +138,6 @@ class zeitraum
         $aktuelles_datum = explode("-", $letztes_datum_monat);
         $aktuelles_jahr = $aktuelles_datum [0];
         $aktueller_monat = $aktuelles_datum [1];
-        $aktueller_tag = $aktuelles_datum [2];
         $diff_in_jahren = $aktuelles_jahr - $jahr_einzug;
 
         // 1. Regel, falls Einzugs- und aktuelles Jahr identisch z.b. 1.1.2008 und heute 20.5.2008
@@ -238,14 +231,12 @@ class zeitraum
         $mv_info = new mietkonto ();
         $mv_info->mietvertrag_grunddaten_holen($mietvertrag_id);
         $mietvertrag_von = $mv_info->mietvertrag_von;
-        $mietvertrag_bis = $mv_info->mietvertrag_bis;
         $datum_saldo_vorwervaltung = $this->datum_saldo_vorverwaltung($mietvertrag_id);
         if (!isset ($datum_saldo_vorwervaltung)) {
             $datum_einzug = explode("-", "$mietvertrag_von");
         } else {
             $datum_einzug = explode("-", "$datum_saldo_vorwervaltung");
         }
-        $tag_einzug = $datum_einzug [2];
         $monat_einzug = $datum_einzug [1];
         if ($monat_einzug < 10) { // bei 01 02 03 die Null abschneiden
             $monat_einzug = substr($monat_einzug, -1);
@@ -257,7 +248,6 @@ class zeitraum
         $aktuelles_datum = explode("-", $letztes_datum_monat);
         $aktuelles_jahr = $aktuelles_datum [0];
         $aktueller_monat = $aktuelles_datum [1];
-        $aktueller_tag = $aktuelles_datum [2];
         $diff_in_jahren = $aktuelles_jahr - $jahr_einzug;
 
         // 1. Regel, falls Einzugs- und aktuelles Jahr identisch z.b. 1.1.2008 und heute 20.5.2008

@@ -145,10 +145,8 @@ class gk
             echo "<label for=\"$id\">$label</label>\n<select name=\"$name\" id=\"$id\" size=\"1\" >\n";
             for ($a = 0; $a < $numrows; $a++) {
                 $konto_id = $my_array [$a] ['KONTO_ID'];
-                $beguenstigter = $my_array [$a] ['BEGUENSTIGTER'];
                 $kontonummer = $my_array [$a] ['KONTONUMMER'];
                 $blz = $my_array [$a] ['BLZ'];
-                $geld_institut = $my_array [$a] ['INSTITUT'];
                 $bez = $my_array [$a] ['BEZEICHNUNG'];
                 if (session()->has('geldkonto_id') && session()->get('geldkonto_id') == $konto_id) {
                     echo "<option value=\"$konto_id\" selected>$bez - Knr:$kontonummer - Blz: $blz</option>\n";
@@ -171,8 +169,6 @@ class gk
             echo "<label for=\"$id\">$label</label>\n<select name=\"$name\" id=\"$id\" size=\"1\" $js>\n";
             foreach ($result as $row) {
                 $konto_id = $row ['KONTO_ID'];
-                $beguenstigter = $row ['BEGUENSTIGTER'];
-                $geld_institut = $row ['INSTITUT'];
                 $bez = $row ['BEZEICHNUNG'];
                 $iban = $row ['IBAN'];
                 $bic = $row ['BIC'];
@@ -199,12 +195,8 @@ class gk
             echo "<tr><th>BEZEICHNUNG</th><th width=\"200\">IBAN</th><th>BIC</th><th>ZUWEISUNG</th></tr>";
             for ($a = 0; $a < $numrows; $a++) {
                 $konto_id = $my_array [$a] ['KONTO_ID'];
-                $beguenstigter = $my_array [$a] ['BEGUENSTIGTER'];
-                $kontonummer = $my_array [$a] ['KONTONUMMER'];
-                $blz = $my_array [$a] ['BLZ'];
                 $iban = chunk_split($my_array [$a] ['IBAN'], 4, ' ');
                 $bic = $my_array [$a] ['BIC'];
-                $geld_institut = $my_array [$a] ['INSTITUT'];
                 $bez = $my_array [$a] ['BEZEICHNUNG'];
                 $zuweisung_string = $this->check_zuweisung($konto_id);
                 echo "<tr><td>$bez</td><td>$iban</td><td>$bic</td><td>$zuweisung_string</td></tr>";

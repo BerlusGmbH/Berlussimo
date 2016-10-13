@@ -100,12 +100,10 @@ ORDER BY BUCHUNGSNUMMER DESC");
                 $einheit_kurzname = $einheit_info->einheit_kurzname;
                 $buchungsnummer = $my_array [$i] ['BUCHUNGSNUMMER'];
                 $bemerkung = $my_array [$i] ['BEMERKUNG'];
-                $kontoauszugsnr = $my_array [$i] ['KONTOAUSZUGSNR'];
 
                 $buchungsdatum = $my_array [$i] ['DATUM'];
                 $buchungsmonat_arr = explode('-', $buchungsdatum);
                 $buchungsmonat = $buchungsmonat_arr [1];
-                $buchungsjahr = $buchungsmonat_arr [0];
                 $kontoauszugsnr = $my_array [$i] ['KONTOAUSZUGSNR'];
                 /* Prüfen ob diesen Monat gebucht wurde */
                 $anzahl_zahlbetraege_diesen_monat = $this->anzahl_zahlungsvorgaenge_objekt_konto(session()->get('objekt_id'));
@@ -199,13 +197,10 @@ ORDER BY BUCHUNGSNUMMER DESC");
         echo "</p>";
         $einheit_kurzname = $einheit_info->einheit_kurzname;
         $this->einheit_kurzname_von_mv = $einheit_kurzname;
-        $objekt_kurzname = $einheit_info->objekt_name;
         $objekt_id = $einheit_info->objekt_id;
         session()->put('objekt_id', $objekt_id);
-        $summe_forderung_monatlich = $this->summe_forderung_monatlich($mietvertrag_id, $this->monat_heute, $this->jahr_heute);
         $objekt_info = new objekt ();
         $objekt_info->get_objekt_geldkonto_nr($objekt_id);
-        $objekt_kontonummer = $objekt_info->objekt_kontonummer;
 
         $mietkonto = new mietkonto ();
         $saldo_mietkonto = $mietkonto->mietkontostand_anzeigen($mietvertrag_id);
@@ -292,9 +287,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         if ($mv->mietvertrag_bis != '0000-00-00') {
             echo "<p class=\"warnung\">Auzug zum $mv->mietvertrag_bis_d";
         }
-        // $this->array_anzeigen($this);
         $einheit_info = new mietvertrag ();
-        $einheit_id = $einheit_info->get_einheit_id_von_mietvertrag($mietvertrag_id);
         $summe_forderung_monatlich = $this->summe_forderung_monatlich($mietvertrag_id, $this->monat_heute, $this->jahr_heute);
         if ($summe_forderung_monatlich == 0) {
             $summe_forderung_monatlich = $this->summe_forderung_aus_vertrag($mietvertrag_id);
@@ -391,7 +384,6 @@ ORDER BY BUCHUNGSNUMMER DESC");
                 $buchungsdatum = $my_array [$i] ['DATUM'];
                 $buchungsmonat_arr = explode('-', $buchungsdatum);
                 $buchungsmonat = $buchungsmonat_arr [1];
-                $buchungsjahr = $buchungsmonat_arr [0];
                 $kontoauszugsnr = $my_array [$i] ['KONTOAUSZUGSNR'];
                 /* Prüfen ob diesen Monat gebucht wurde */
                 $anzahl_zahlbetraege_diesen_monat = $this->anzahl_zahlungsvorgaenge($my_array [$i] ['mietvertrag_id']);
@@ -430,8 +422,6 @@ ORDER BY BUCHUNGSNUMMER DESC");
         } else {
             $row = $result[0];
             $summe = $row ['SUMME_FORDERUNG'];
-            $summe_mwst = $row ['MWST_ANTEIL'];
-
             $summe = number_format($summe, 2, ".", "");
             $summe_mwst = number_format($summe, 2, ".", "");
             return "$summe|$summe_mwst";
@@ -510,8 +500,6 @@ ORDER BY BUCHUNGSNUMMER DESC");
         }
         /* Datumsformat prüfen, falls i.O wie folgt weiter */
         if (check_datum(request()->input('buchungsdatum'))) {
-
-            $buchungsdatum = date_german2mysql(request()->input('buchungsdatum'));
             /* Variante 1 - Anfang */
             $this->erstelle_formular("Anderen Betrag teilen und buchen ...", NULL);
             /* Ein Array mit aktuellen Forderungen für aktuellen Monat zusammenstellen */
@@ -626,7 +614,6 @@ ORDER BY BUCHUNGSNUMMER DESC");
         }
         // ######anfang
         if (check_datum(request()->input('buchungsdatum'))) {
-            $buchungsdatum = date_german2mysql(request()->input('buchungsdatum'));
             $forderung_arr = $this->aktuelle_forderungen_array($mietvertrag_id);
             if (empty($forderung_arr)) {
                 $forderung_arr = $this->forderung_aus_vertrag($mietvertrag_id);
@@ -634,7 +621,6 @@ ORDER BY BUCHUNGSNUMMER DESC");
             $summe_vorschuesse = $this->summe_vorschuesse($forderung_arr);
             /* Keys sind fest definiert in suche_nach_vorschuessen als BETRIEBSKOSTEN HEIZKOSTEN */
             $vorschuesse_keys = $this->suche_nach_vorschuessen($forderung_arr);
-            $summe_forderung_monatlich = number_format($summe_forderung_monatlich, 2, ".", "");
             $summe_vorschuesse = number_format($summe_vorschuesse, 2, ".", "");
             $zahlbetrag = $this->nummer_komma2punkt(request()->input('ZAHLBETRAG'));
             $zahlbetrag_komma = $this->nummer_punkt2komma($zahlbetrag);
@@ -715,7 +701,6 @@ ORDER BY BUCHUNGSNUMMER DESC");
                 $this->erstelle_formular("Kleineren Betrag prozentual teilen / buchen", NULL);
                 $this->hidden_feld("ZAHLBETRAG", "$zahlbetrag");
                 $this->hidden_feld("MIETVERTRAG_ID", "$mietvertrag_id");
-                $buchungsdatum = date_german2mysql(request()->input('buchungsdatum'));
                 $this->hidden_feld("buchungsdatum", request()->input('buchungsdatum'));
                 echo "Buchungsdatum: " . request()->input('buchungsdatum') . "<br>";
                 $rest = $zahlbetrag - $summe_vorschuesse;
@@ -726,19 +711,12 @@ ORDER BY BUCHUNGSNUMMER DESC");
                 $this->text_feld("Kontoauszugsnr.:", "kontoauszugsnr", session()->get('temp_kontoauszugsnummer'), "10");
                 $this->text_feld_inaktiv("Zahlbetrag:", "ZAHLBETRAG", request()->input('ZAHLBETRAG') . " €", "5");
                 echo "<br>";
-                // echo "<b>SUMME $summe_vorschuesse = rest $rest</b>";
                 $vorschuesse_keys = $this->suche_nach_vorschuessen($forderung_arr);
-                // $this->array_anzeigen($vorschuesse_keys);
                 $rundungsfehler = 0;
                 for ($i = 0; $i < count($vorschuesse_keys); $i++) {
                     $prozentsatz = $zahlbetrag / ($summe_vorschuesse / 100);
                     $prozentualer_anteil = (($forderung_arr [$vorschuesse_keys [$i]] ['BETRAG'] / 100) * $prozentsatz);
-
-                    // echo " PRO VOR rundung OHNE FEHLER: $prozentualer_anteil €";
-
                     $prozentualer_anteil = (($forderung_arr [$vorschuesse_keys [$i]] ['BETRAG'] / 100) * $prozentsatz) + $rundungsfehler;
-                    // echo " PRO VOR rundung INKL FEHLER: $prozentualer_anteil €";
-
                     $prozentualer_anteil = round($prozentualer_anteil, 2);
                     $rundungsfehler = (($forderung_arr [$vorschuesse_keys [$i]] ['BETRAG'] / 100) * $prozentsatz) - $prozentualer_anteil;
                     // echo " PRO nach rundung: $prozentualer_anteil €";
@@ -829,13 +807,8 @@ ORDER BY BUCHUNGSNUMMER DESC");
     function buchungsmaske_manuell_gleicher_betrag($mietvertrag_id, $geld_konto_id)
     {
         $summe_forderung_monatlich = $this->summe_forderung_monatlich($mietvertrag_id, $this->monat_heute, $this->jahr_heute);
-        if ($summe_forderung_monatlich == 0) {
-            $summe_forderung_monatlich = $this->summe_forderung_aus_vertrag($mietvertrag_id);
-        }
         /* Datumsformat prüfen, falls i.O wie folgt weiter */
         if (check_datum(request()->input('buchungsdatum'))) {
-
-            $buchungsdatum = date_german2mysql(request()->input('buchungsdatum'));
             /* Ein Array mit aktuellen Forderungen für aktuellen Monat zusammenstellen */
             $forderung_arr = $this->aktuelle_forderungen_array($mietvertrag_id);
             if (empty($forderung_arr)) {
@@ -882,18 +855,10 @@ ORDER BY BUCHUNGSNUMMER DESC");
     function buchungsmaske_manuell_negativ_betrag($mietvertrag_id, $geld_konto_id)
     {
         $summe_forderung_monatlich = $this->summe_forderung_monatlich($mietvertrag_id, $this->monat_heute, $this->jahr_heute);
-        if ($summe_forderung_monatlich == 0) {
-            $summe_forderung_monatlich = $this->summe_forderung_aus_vertrag($mietvertrag_id);
-        }
         /* Datumsformat prüfen, falls i.O wie folgt weiter */
         if (check_datum(request()->input('buchungsdatum'))) {
-
-            $buchungsdatum = date_german2mysql(request()->input('buchungsdatum'));
             /* Ein Array mit aktuellen Forderungen für aktuellen Monat zusammenstellen */
             $forderung_arr = $this->aktuelle_forderungen_array($mietvertrag_id);
-            if (empty($forderung_arr)) {
-                $forderung_arr = $this->forderung_aus_vertrag($mietvertrag_id);
-            }
             /* Zahlbetrag aus Komma in Punktformat wandeln */
             $zahlbetrag = $this->nummer_komma2punkt(request()->input('ZAHLBETRAG'));
             /* Zahlbetrag aus Punkt in Kommaformat wandeln */
@@ -975,7 +940,6 @@ ORDER BY BUCHUNGSNUMMER DESC");
     function import_miete_zahlbetrag_buchen($kontoauszugsnr, $kostentraeger_typ, $kostentraeger_id, $buchungsdatum, $betrag, $bemerkung, $geldkonto_id, $buchungskonto)
     {
         $buchungsdatum = date_german2mysql($buchungsdatum);
-        $zahlbetrag_exists = $this->check_zahlbetrag($kontoauszugsnr, $kostentraeger_typ, $kostentraeger_id, $buchungsdatum, $betrag, $bemerkung, $geldkonto_id, $buchungskonto);
         $this->insert_geldbuchung($geldkonto_id, $buchungskonto, $kontoauszugsnr, $kontoauszugsnr, $bemerkung, $buchungsdatum, $kostentraeger_typ, $kostentraeger_id, $betrag);
     }
 
@@ -1003,7 +967,6 @@ function check_zahlbetrag($kontoauszugsnr, $kostentraeger_typ, $kostentraeger_id
         if (!$me_exists) {
             $last_id = $this->get_mietentwicklung_last_id();
             $last_id = $last_id + 1;
-            $datum = $this->datum_heute;
             $db_abfrage = "INSERT INTO MIETENTWICKLUNG VALUES (NULL, '$last_id', '$kostentraeger_typ', '$kostentrager_id', '$kostenkategorie', '$anfang', '$ende', '$betrag', '1')";
             DB::insert($db_abfrage);
             /* Zugewiesene MIETBUCHUNG_DAT auslesen */
@@ -1170,16 +1133,9 @@ function check_zahlbetrag($kontoauszugsnr, $kostentraeger_typ, $kostentraeger_id
 
     function monatsforderungen_anzeigen($monat_jahr, $forderungen_diesen_monat_arr)
     {
-        // $this->array_anzeigen($forderungen_diesen_monat_arr);
         if (empty($forderungen_diesen_monat_arr)) {
-            // echo "<div class=aktuelle_forderungen><b>AKTUELLE FORDERUNGEN AUS $mietvertrag_id<br>";
             echo "Keine Forderungen in diesem Monat!";
-            // echo "</div>";
-            $error = TRUE;
         } else {
-            // $this->array_anzeigen($forderungen_diesen_monat_arr);
-
-            // echo "<div class=aktuelle_forderungen><b>AKTUELLE FORDERUNGEN aus $mietvertrag_id $this->monat_heute $this->jahr_heute</b><br>";
             echo "<table class=aktuelle_forderungen>";
             echo "<tr class=tabelle_ueberschrift_mietkontenblatt><td>MV</td><td>ANFANG</td><td>ENDE</td><td>KOSTENKATEGORIE</td><td>BETRAG</td></tr>";
             for ($i = 0; $i < count($forderungen_diesen_monat_arr); $i++) {
@@ -1197,7 +1153,6 @@ function check_zahlbetrag($kontoauszugsnr, $kostentraeger_typ, $kostentraeger_id
                 echo "<td><b>" . $forderungen_diesen_monat_arr [$i] ['BETRAG'] . " €</b></td>";
                 echo "</tr>";
             }
-            // $summe_forderungen = $this->summe_forderung_monatlich($mietvertrag_id, $this->monat_heute, $this->jahr_heute);
             echo "<tr><td colspan=6><b> Summe: $summe_forderungen €</b></td></tr>";
             echo "</table>";
             echo "<br>";
@@ -1459,7 +1414,6 @@ function check_zahlbetrag($kontoauszugsnr, $kostentraeger_typ, $kostentraeger_id
 
     function saldo_vortrag_vorverwaltung($mietvertrag_id)
     {
-        $my_arr = '';
         $result = DB::select("SELECT BETRAG AS SALDO_VORVERWALTUNG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && KOSTENKATEGORIE = 'Saldo Vortrag Vorverwaltung' && MIETENTWICKLUNG_AKTUELL = '1' ORDER BY ANFANG DESC LIMIT 0,1");
         if (!empty($result)) {
             $saldo = $result[0]['SALDO_VORVERWALTUNG'];
@@ -1490,7 +1444,6 @@ function check_zahlbetrag($kontoauszugsnr, $kostentraeger_typ, $kostentraeger_id
             echo "<div class=aktuelle_buchungen><b>ALLE BISHERIGEN BUCHUNGEN UND ZAHLUNGEN ZUM MV: $mietvertrag_id<br>";
             echo "Keine Zahlungen und Buchungen bezogen auf MV: $mietvertrag_id!";
             echo "</div>";
-            $error = TRUE;
         } else {
             echo "<div class=aktuelle_buchungen><b>ALLE BISHERIGEN BUCHUNGEN UND ZAHLUNGEN ZUM MV: $mietvertrag_id</b><br>";
             echo "<table class=aktuelle_buchungen>";
@@ -1647,7 +1600,6 @@ ORDER BY DATUM ASC ");
 
         if (empty($buchungen_arr)) {
             echo "Keine aktuellen Zahlungen in diesem Monat!";
-            $error = TRUE;
         } else {
             echo "<div class=aktuelle_buchungen><b>AKTUELLE BUCHUNGEN 				$von_datum bis $bis_datum</b><br>";
             echo "<table class=aktuelle_buchungen>";

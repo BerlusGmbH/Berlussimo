@@ -79,7 +79,6 @@ class objekt
                 }
             }
 
-            $h = new haus ();
             $haus_arr = $this->haeuser_objekt_in_arr($objekt_id);
             if (empty($haus_arr)) {
                 fehlermeldung_ausgeben("Keine Häuser im Objekt");
@@ -612,7 +611,6 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
                 $bpdf = new b_pdf ();
                 $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'landscape', 'Helvetica.afm', 6);
 
-                $monatsname = monat2name($monat);
                 $oo = new objekt ();
                 $oo->get_objekt_infos($objekt_id);
 
@@ -809,7 +807,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
         $f->erstelle_formular("Neues Objekt erstellen", NULL);
         $f->text_feld("Objekt Kurzname", "objekt_kurzname", "", "30", 'objekt_kurzname', '');
         $partner = new partner ();
-        $partner_arr = $partner->partner_dropdown('Eigentümer', 'eigentuemer', 'eigentuemer');
+        $partner->partner_dropdown('Eigentümer', 'eigentuemer', 'eigentuemer');
         $f->hidden_feld("objekte_raus", "objekt_speichern");
         $f->send_button("submit_obj", "Objekt erstellen");
         $f->ende_formular();
@@ -822,7 +820,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
         $f->erstelle_formular("Objekt $this->objekt_kurzname ändern", NULL);
         $f->text_feld("Objekt Kurzname", "objekt_kurzname", "$this->objekt_kurzname", "30", 'objekt_kurzname', '');
         $partner = new partner ();
-        $partner_arr = $partner->partner_dropdown('Eigentümer', 'eigentuemer', 'eigentuemer');
+        $partner->partner_dropdown('Eigentümer', 'eigentuemer', 'eigentuemer');
         $f->hidden_feld("objekt_id", "$this->objekt_id");
         $f->hidden_feld("objekt_dat", "$this->objekt_dat");
         $f->hidden_feld("objekte_raus", "objekt_aendern_send");

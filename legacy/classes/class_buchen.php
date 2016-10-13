@@ -123,7 +123,6 @@ class buchen
 
     function dropdown_ra_buch($kos_typ, $kos_id, $anzahl = 100, $rnr_kurz)
     {
-        $r = new rechnungen ();
         $result = DB::select("SELECT * FROM RECHNUNGEN WHERE AUSSTELLER_ID='$kos_id' && AUSSTELLER_TYP='$kos_typ' && AKTUELL = '1' ORDER BY BELEG_NR DESC LIMIT 0,$anzahl");
         echo "<label for=\"geld_konto_dropdown\">Ausgangsbeleg</label>";
         echo "<select name=\"erf_nr\">";
@@ -854,22 +853,14 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 
     function geldbuchung_speichern_rechnung($datum, $kto_auszugsnr, $rechnungsnr, $betrag, $vzweck, $geldkonto_id, $kostentraeger_typ, $kostentraeger_id, $kostenkonto, $mwst = '0.00')
     {
-
-        /* alt */
-        $buchung_id = $this->get_last_geldbuchung_id();
-        /* neu */
         $datum_arr = explode('-', $datum);
         $jahr = $datum_arr ['0'];
         $g_buchungsnummer = $this->get_last_buchungsnummer_konto($geldkonto_id, $jahr);
         $g_buchungsnummer = $g_buchungsnummer + 1;
-
         $buchung_id = $this->get_last_geldbuchung_id();
         $buchung_id = $buchung_id + 1;
-        /* alt */
-        // $db_abfrage = "INSERT INTO GELD_KONTO_BUCHUNGEN VALUES (NULL, '$buchung_id','$kto_auszugsnr', '$rechnungsnr', '$betrag', '$vzweck', '$geldkonto_id', '$kostenkonto', '$datum', '$kostentraeger_typ', '$kostentraeger_id', '1')";
-        /* neu */
         $db_abfrage = "INSERT INTO GELD_KONTO_BUCHUNGEN VALUES (NULL, '$buchung_id', '$g_buchungsnummer', '$kto_auszugsnr', '$rechnungsnr', '$betrag','$mwst', '$vzweck', '$geldkonto_id', '$kostenkonto', '$datum', '$kostentraeger_typ', '$kostentraeger_id', '1')";
-        $resultat = DB::select($db_abfrage);
+        DB::insert($db_abfrage);
         /* Protokollieren */
         $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('GELD_KONTO_BUCHUNGEN', $last_dat, '0');
@@ -917,9 +908,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             $zeile = 0;
             foreach($result as $row) {
                 $datum = date_mysql2german($row ['DATUM']);
-                $auszugsnr = $row ['KONTO_AUSZUGSNUMMER'];
                 $g_buchungsnummer = $row ['G_BUCHUNGSNUMMER'];
-                $erfass_nr = $row ['ERFASS_NR'];
                 $betrag = nummer_punkt2komma($row ['BETRAG']);
                 $vzweck = $row ['VERWENDUNGSZWECK'];
                 $kos_typ = $row ['KOSTENTRAEGER_TYP'];
@@ -1011,7 +1000,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         echo "<hr><br>";
         $geldkonto_bezeichnung = $this->geld_konto_bezeichung(session()->get('geldkonto_id'));
         $form = new formular ();
-        $heute_d = date("d.m.Y");
         $heute = date("Y-m-d");
         $gestern = date_mysql2german(tage_minus($heute, 1));
         $form->erstelle_formular("Kontrolldaten eingeben / verändern", NULL);
@@ -1050,7 +1038,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             $g_betrag = 0;
             for ($a = 0; $a < $numrows; $a++) {
 
-                $b_id = $my_array [$a] ['GELD_KONTO_BUCHUNGEN_ID'];
                 $b_dat = $my_array [$a] ['GELD_KONTO_BUCHUNGEN_DAT'];
                 $g_buchungsnummer = $my_array [$a] ['G_BUCHUNGSNUMMER'];
                 $kostenkonto = $my_array [$a] ['KONTENRAHMEN_KONTO'];
@@ -1091,23 +1078,14 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         }
 
         $datum_arr = explode("-", $datum);
-        $jahr = $datum_arr [0];
-        $monat = $datum_arr [1];
         $numrows = count($my_array);
         if ($numrows > 0) {
             echo "<table class=\"sortable\">";
 
             echo "<tr><th>DATUM</th><th>ERF/AUSZ</th><th>AUSZUG</th><th>Konto</th><th>Betrag</th><th>MWST</th><th>Verwendung</th><th>BUCHUNGSNR</th><th>Buchungstext</th></tr>";
-            $sort_datum_link = "<a href='" . route('legacy::buchen::index', ['option' => 'buchungs_journal', 'sort' => 'DATUM']) . "'>Datum</a>";
-            $sort_bnr_link = "<a href='" . route('legacy::buchen::index', ['option' => 'buchungs_journal', 'sort' => 'G_BUCHUNGSNUMMER']) . "'>Buchungsnr</a>";
-            $sort_betrag_link = "<a href='" . route('legacy::buchen::index', ['option' => 'buchungs_journal', 'sort' => 'BETRAG']) . "'>Betrag</a>";
-            $sort_rechnung_link = "<a href='" . route('legacy::buchen::index', ['option' => 'buchungs_journal', 'sort' => 'ERFASS_NR']) . "'>Erfassungsnr.</a>";
-            $sort_auszug_link = "<a href='" . route('legacy::buchen::index', ['option' => 'buchungs_journal', 'sort' => 'KONTO_AUSZUGSNUMMER']) . "'>Kontoauszug</a>";
-            $sort_kostenkonto_link = "<a href='" . route('legacy::buchen::index', ['option' => 'buchungs_journal', 'sort' => 'KONTENRAHMEN_KONTO']) . "'>Konto</a>";
 
             for ($a = 0; $a < $numrows; $a++) {
                 $datum = date_mysql2german($my_array [$a] ['DATUM']);
-                $b_id = $my_array [$a] ['GELD_KONTO_BUCHUNGEN_ID'];
                 $b_dat = $my_array [$a] ['GELD_KONTO_BUCHUNGEN_DAT'];
                 $g_buchungsnummer = $my_array [$a] ['G_BUCHUNGSNUMMER'];
                 $link_buchungsbeleg = "<a href='" . route('legacy::buchen::index', ['option' => 'geldbuchung_aendern', 'geldbuchung_dat' => $b_dat]) . "'>$g_buchungsnummer</a>";
@@ -1142,7 +1120,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         $dat_arr = explode("-", $datum);
         $ja = $dat_arr [0];
         $mo = $dat_arr [1];
-        $ta = $dat_arr [2];
 
         if (!request()->has('sort')) {
             $my_array = DB::select("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y-%m') = '$ja-$mo' && AKTUELL='1' ORDER BY G_BUCHUNGSNUMMER ASC");
@@ -1152,17 +1129,9 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         }
         $numrows = count($my_array);
         if ($numrows > 0) {
-            $sort_datum_link = "<a href='" . route('legacy::buchen::index', ['option' => 'buchungs_journal_druckansicht', 'sort' => 'DATUM']) . "'>Datum</a>";
-            $sort_bnr_link = "<a href='" . route('legacy::buchen::index', ['option' => 'buchungs_journal_druckansicht', 'sort' => 'G_BUCHUNGSNUMMER']) . "'>Buchungsnr</a>";
-            $sort_betrag_link = "<a href='" . route('legacy::buchen::index', ['option' => 'buchungs_journal_druckansicht', 'sort' => 'BETRAG']) . "'>Betrag</a>";
-            $sort_rechnung_link = "<a href='" . route('legacy::buchen::index', ['option' => 'buchungs_journal_druckansicht', 'sort' => 'ERFASS_NR']) . "'>Erfassungsnr.</a>";
-            $sort_auszug_link = "<a href='" . route('legacy::buchen::index', ['option' => 'buchungs_journal_druckansicht', 'sort' => 'KONTO_AUSZUGSNUMMER']) . "'>Kontoauszug</a>";
-            $sort_kostenkonto_link = "<a href='" . route('legacy::buchen::index', ['option' => 'buchungs_journal_druckansicht', 'sort' => 'KONTENRAHMEN_KONTO']) . "'>Konto</a>";
-
             /* Kontostand */
             $datum_ger = date_mysql2german($datum);
             $this->kontostand_tagesgenau_bis($geldkonto_id, $datum_ger);
-            // $this->summe_konto_buchungen;
             $this->summe_konto_buchungen_a = nummer_punkt2komma($this->summe_konto_buchungen);
 
             $gk = new geldkonto_info ();
@@ -1209,10 +1178,8 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             echo "<th scopr=\"col\">SALDO VORTRAG VORMONAT</th>";
             echo "</tr>";
 
-            // echo "<tr class=\"feldernamen\"><td>$sort_datum_link</td><td>$sort_rechnung_link</td><td>$sort_auszug_link</td><td>$sort_kostenkonto_link</td><td>$sort_betrag_link</td><td>Zuordnung</td></td><td>$sort_bnr_link</td><td>Buchungstext</td></tr>";
             for ($a = 0; $a < $numrows; $a++) {
                 $datum = date_mysql2german($my_array [$a] ['DATUM']);
-                $b_id = $my_array [$a] ['GELD_KONTO_BUCHUNGEN_ID'];
                 $b_dat = $my_array [$a] ['GELD_KONTO_BUCHUNGEN_DAT'];
                 $g_buchungsnummer = $my_array [$a] ['G_BUCHUNGSNUMMER'];
                 $betrag = nummer_punkt2komma($my_array [$a] ['BETRAG']);
@@ -1244,7 +1211,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             $d_arr = explode(".", $datum_ger);
             $ja = $d_arr [2];
             $mo = $d_arr [1];
-            $ta = $d_arr [0];
 
             if ($mo > 11) {
                 $mo = 01;
@@ -1293,7 +1259,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         $ja = $dat_arr [0];
         $mo = $dat_arr [1];
         $monatsname = monat2name($mo);
-        $ta = $dat_arr [2];
 
         if (!request()->has('sort')) {
             $my_array = DB::select("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, MWST_ANTEIL,GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y-%m') = '$ja-$mo' && AKTUELL='1' ORDER BY G_BUCHUNGSNUMMER ASC");
@@ -1316,7 +1281,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 
             $p = new partners ();
             $p->get_partner_id($beguenstigter);
-            $partner_id = $p->partner_id;
 
             $table_arr [$a] ['DATUM'] = "<b>$datum_ger</b>";
             $table_arr [$a] ['BETRAG'] = "<b>$this->summe_konto_buchungen_a</b>";
@@ -1324,15 +1288,12 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             $this->summe_mwst = 0;
             for ($a = 0; $a < $numrows; $a++) {
                 $datum = date_mysql2german($my_array [$a] ['DATUM']);
-                $b_id = $my_array [$a] ['GELD_KONTO_BUCHUNGEN_ID'];
-                $b_dat = $my_array [$a] ['GELD_KONTO_BUCHUNGEN_DAT'];
                 $g_buchungsnummer = $my_array [$a] ['G_BUCHUNGSNUMMER'];
                 $betrag = $my_array [$a] ['BETRAG'];
                 $mwst_anteil = $my_array [$a] ['MWST_ANTEIL'];
                 $this->summe_mwst += $mwst_anteil;
                 $vzweck = $my_array [$a] ['VERWENDUNGSZWECK'];
                 $auszug = $my_array [$a] ['KONTO_AUSZUGSNUMMER'];
-                $erfass_nr = $my_array [$a] ['ERFASS_NR'];
                 $kostenkonto = $my_array [$a] ['KONTENRAHMEN_KONTO'];
                 $kostentraeger_typ = $my_array [$a] ['KOSTENTRAEGER_TYP'];
                 $kostentraeger_id = $my_array [$a] ['KOSTENTRAEGER_ID'];
@@ -1367,7 +1328,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             $ja = $d_arr [2];
             $pdf_jahr = $ja;
             $mo = $d_arr [1];
-            $ta = $d_arr [0];
 
             if ($mo > 11) {
                 $mo = 01;
@@ -1550,7 +1510,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 
             $p = new partners ();
             $p->get_partner_id($beguenstigter);
-            $partner_id = $p->partner_id;
 
             $table_arr [$a] ['DATUM'] = "<b>$datum_ger</b>";
             $table_arr [$a] ['BETRAG'] = "<b>$this->summe_konto_buchungen_a</b>";
@@ -1558,14 +1517,11 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 
             for ($a = 0; $a < $numrows; $a++) {
                 $datum = date_mysql2german($my_array [$a] ['DATUM']);
-                $b_id = $my_array [$a] ['GELD_KONTO_BUCHUNGEN_ID'];
-                $b_dat = $my_array [$a] ['GELD_KONTO_BUCHUNGEN_DAT'];
                 $g_buchungsnummer = $my_array [$a] ['G_BUCHUNGSNUMMER'];
                 $betrag = $my_array [$a] ['BETRAG'];
                 $mwst_anteil = $my_array [$a] ['MWST_ANTEIL'];
                 $vzweck = $my_array [$a] ['VERWENDUNGSZWECK'];
                 $auszug = $my_array [$a] ['KONTO_AUSZUGSNUMMER'];
-                $erfass_nr = $my_array [$a] ['ERFASS_NR'];
                 $kostenkonto = $my_array [$a] ['KONTENRAHMEN_KONTO'];
                 $kostentraeger_typ = $my_array [$a] ['KOSTENTRAEGER_TYP'];
                 $kostentraeger_id = $my_array [$a] ['KOSTENTRAEGER_ID'];
@@ -1693,8 +1649,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
                 echo "</thead>";
 
                 $anz_zeilen = count($table_arr);
-                $summe_xls = 0;
-
                 for ($aa = 0; $aa < $anz_zeilen - 4; $aa++) {
                     $datum_d = $table_arr [$aa] ['DATUM'];
                     $bnr = $table_arr [$aa] ['G_BUCHUNGSNUMMER'];
@@ -1784,7 +1738,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
     function buchungskonten_uebersicht($geldkonto_id)
     {
         $konten_arr = $this->konten_aus_buchungen($geldkonto_id);
-        $form = new formular ();
         $jahr = request()->input('jahr');
         $monat = request()->input('monat');
         $link = route('legacy::buchen::index', ['option' => 'konten_uebersicht'], false);
@@ -1871,11 +1824,9 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             echo "<tr><th>Datum</th><th>Erfassnr</th><th>Betrag</th><th>ZUWEISUNG</th><th>Buchungsnr</th><th>Vzweck</th></tr>";
             foreach($result as $row) {
                 $datum = date_mysql2german($row ['DATUM']);
-                $auszugsnr = $row ['KONTO_AUSZUGSNUMMER'];
                 $erfass_nr = $row ['ERFASS_NR'];
                 $betrag = nummer_punkt2komma($row ['BETRAG']);
                 $vzweck = $row ['VERWENDUNGSZWECK'];
-                $b_id = $row ['GELD_KONTO_BUCHUNGEN_ID'];
                 $g_buchungsnummer = $row ['G_BUCHUNGSNUMMER'];
                 $kos_typ = $row ['KOSTENTRAEGER_TYP'];
                 $kos_id = $row ['KOSTENTRAEGER_ID'];
@@ -1918,11 +1869,9 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             echo "<tr><th>Datum</th><th>Erfassnr</th><th>Betrag</th><th>ZUWEISUNG</th><th>Buchungsnr</th><th>Vzweck</th></tr>";
             foreach($result as $row) {
                 $datum = date_mysql2german($row ['DATUM']);
-                $auszugsnr = $row ['KONTO_AUSZUGSNUMMER'];
                 $erfass_nr = $row ['ERFASS_NR'];
                 $betrag = nummer_punkt2komma($row ['BETRAG']);
                 $vzweck = $row ['VERWENDUNGSZWECK'];
-                $b_id = $row ['GELD_KONTO_BUCHUNGEN_ID'];
                 $g_buchungsnummer = $row ['G_BUCHUNGSNUMMER'];
                 $this->summe_kontobuchungen_jahr($geldkonto_id, $kostenkonto, $jahr);
 
@@ -1948,7 +1897,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         $g = new geldkonto_info ();
         $g->geld_konto_details($geldkonto_id);
 
-        $form = new formular ();
         $jahr = request()->input('jahr');
         if (request()->has('monat')) {
             $monat = request()->input('monat');
@@ -2451,9 +2399,7 @@ LIMIT 0 , 1");
             $g = new geldkonto_info ();
             foreach($result as $row) {
                 $datum = date_mysql2german($row ['DATUM']);
-                $auszugsnr = $row ['KONTO_AUSZUGSNUMMER'];
                 $g_buchungsnummer = $row ['G_BUCHUNGSNUMMER'];
-                $erfass_nr = $row ['ERFASS_NR'];
                 $betrag = nummer_punkt2komma($row ['BETRAG']);
                 $vzweck = $row ['VERWENDUNGSZWECK'];
                 $kos_typ = $row ['KOSTENTRAEGER_TYP'];
@@ -2498,7 +2444,6 @@ LIMIT 0 , 1");
             }
             foreach($result as $row) {
                 $datum = date_mysql2german($row ['DATUM']);
-                $auszugsnr = $row ['KONTO_AUSZUGSNUMMER'];
                 $erfass_nr = $row ['ERFASS_NR'];
                 $betrag = nummer_punkt2komma($row ['BETRAG']);
                 $vzweck = $row ['VERWENDUNGSZWECK'];
@@ -2651,9 +2596,6 @@ LIMIT 0 , 1");
                     $vn = $this->umlaute_anpassen($vn);
 
                     $tab_arr [$i] ['EINHEIT'] = $einheit_kurzname;
-                    /* Umbruch wenn Nachname und Vorname zu lang */
-                    $nname_lang = strlen($nn);
-                    $vname_lang = strlen($vn);
                     $tab_arr [$i] ['MIETER'] = "$mv->personen_name_string_u";
 
                     /* Kommazahlen für die Ausgabe im PDF */
@@ -2795,7 +2737,6 @@ LIMIT 0 , 1");
     {
         echo "Monatsbericht Mieter - Monatsbericht Kostenkonten<br>";
         echo "<h3>Aktuelle Mieterstatistik mit ausgezogenen Mietern<br></h3>";
-        $s = new statistik ();
         if (request()->has('jahr')) {
             $jahr = request()->input('jahr');
         }
@@ -2868,8 +2809,6 @@ LIMIT 0 , 1");
                     $zeile = 0;
                     for ($b = 0; $b < $mv_anzahl; $b++) {
                         $mv_id = $mv_array [$b] ['MIETVERTRAG_ID'];
-
-                        $mk = new mietkonto ();
 
                         $mv = new mietvertraege ();
                         $mv->get_mietvertrag_infos_aktuell($mv_id);
@@ -3045,11 +2984,9 @@ LIMIT 0 , 1");
             echo "<option value=\"alle\" selected>Alle Geldkonten</option>\n";
             for ($a = 0; $a < count($my_array); $a++) {
                 $konto_id = $my_array [$a] ['KONTO_ID'];
-                $beguenstigter = $my_array [$a] ['BEGUENSTIGTER'];
                 $bezeichnung = $my_array [$a] ['BEZEICHNUNG'];
                 $kontonummer = $my_array [$a] ['KONTONUMMER'];
                 $blz = $my_array [$a] ['BLZ'];
-                $geld_institut = $my_array [$a] ['INSTITUT'];
                 echo "<option value=\"$konto_id\" >$bezeichnung - Knr:$kontonummer - Blz: $blz</option>\n";
             } // end for
             echo "</select>\n";
@@ -3072,9 +3009,7 @@ LIMIT 0 , 1");
             $summe = 0;
             foreach($result as $row) {
                 $datum = date_mysql2german($row ['DATUM']);
-                $auszugsnr = $row ['KONTO_AUSZUGSNUMMER'];
                 $g_buchungsnummer = $row ['G_BUCHUNGSNUMMER'];
-                $erfass_nr = $row ['ERFASS_NR'];
                 $betrag_a = nummer_punkt2komma($row ['BETRAG']);
                 $betrag = $row ['BETRAG'];
                 $vzweck = $row ['VERWENDUNGSZWECK'];

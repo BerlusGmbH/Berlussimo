@@ -2,14 +2,6 @@
 
 function erstelle_formular($name, $action)
 {
-    if (!isset ($action)) {
-        echo "<form name=\"$name\" action=\"$self\"  method=\"post\">\n";
-    } else {
-        echo "<form name=\"$name\" action=\"$action\" method=\"post\">\n";
-    }
-
-    echo "<table class=\"formular_tabelle\">\n<tr><td>";
-    // $self = $_SERVER['PHP_SELF'];
     $scriptname = $_SERVER ['REQUEST_URI'];
     $servername = $_SERVER ['SERVER_NAME'];
     $serverport = $_SERVER ['SERVER_PORT'];
@@ -20,6 +12,14 @@ function erstelle_formular($name, $action)
     } else {
         $self = "http://$servername:$serverport$scriptname";
     }
+
+    if (!isset ($action)) {
+        echo "<form name=\"$name\" action=\"$self\"  method=\"post\">\n";
+    } else {
+        echo "<form name=\"$name\" action=\"$action\" method=\"post\">\n";
+    }
+
+    echo "<table class=\"formular_tabelle\">\n<tr><td>";
     echo "</td></tr>\n";
 }
 
@@ -309,7 +309,6 @@ function person_aendern_from($person_id)
     if (!empty($result)) {
         erstelle_formular(NULL, NULL);
         foreach($result as $row) {
-            $PERSON_GEBURTSTAG = date_mysql2german($row['PERSON_GEBURTSTAG']);
             erstelle_hiddenfeld("person_id", "$row[PERSON_ID]");
             erstelle_eingabefeld("Nachname", "person_nachname", "$row[PERSON_NACHNAME]", "50");
             erstelle_eingabefeld("Vorname", "person_vorname", "$row[PERSON_VORNAME]", "50");

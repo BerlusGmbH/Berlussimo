@@ -71,9 +71,7 @@ class k_rahmen
                 $dat = $arr [$a] ['KONTENRAHMEN_KONTEN_DAT'];
                 $konto = $arr [$a] ['KONTO'];
                 $bez = $arr [$a] ['BEZEICHNUNG'];
-                $gruppen_id = $arr [$a] ['GRUPPEN_ID'];
                 $gruppe = $arr [$a] ['GRUPPE'];
-                $kontoart_id = $arr [$a] ['KONTOART_ID'];
                 $kontoart = $arr [$a] ['KONTOART'];
 
                 $link = "<a href='" . route('legacy::kontenrahmen::index', ['option' => 'kostenkonto_ae', 'k_dat' => $dat]) . "'>KONTO ÄNDERN</a>";
@@ -294,7 +292,7 @@ ORDER BY KONTO ASC");
         if (!$this->check_konto_exists($konto, $kontenrahmen_id)) {
             $k_id = last_id2("KONTENRAHMEN_KONTEN", "KONTENRAHMEN_KONTEN_ID") + 1;
             $db_abfrage = "INSERT INTO KONTENRAHMEN_KONTEN VALUES (NULL, '$k_id', '$konto','$bez', '$k_gruppe_id', '$kontoart_id', '$kontenrahmen_id',  '1')";
-            $resultat = DB::insert($db_abfrage);
+            DB::insert($db_abfrage);
             /* Protokollieren */
             $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('KONTENRAHMEN_KONTEN', $last_dat, '0');
@@ -383,7 +381,6 @@ ORDER BY KONTO ASC");
             echo "<table class=\"sortable\">";
             echo "<tr><th>Gruppenbezeichnung</th></tr>";
             for ($a = 0; $a < count($my_array); $a++) {
-                $id = $my_array [$a] ['KONTENRAHMEN_GRUPPEN_ID'];
                 $bez = $my_array [$a] ['BEZEICHNUNG'];
                 echo "<tr><td>$bez</td></tr>";
             } // end for
@@ -443,7 +440,6 @@ ORDER BY KONTO ASC");
             echo "<table class=\"sortable\">";
             echo "<tr><th>Kostenkontoarten</th></tr>";
             for ($a = 0; $a < count($my_array); $a++) {
-                $kid = $my_array [$a] ['KONTENRAHMEN_KONTOART_ID'];
                 $bez = $my_array [$a] ['KONTOART'];
                 echo "<tr><td>$bez</td></tr>";
             } // end for

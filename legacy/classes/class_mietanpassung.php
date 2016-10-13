@@ -165,13 +165,11 @@ class mietanpassung
             $tab_arr = $this->get_einheit_daten($einheit_id, $ms_jahr);
             if (isset ($tab_arr ['MIETER_ART'])) {
                 $m_mieter_art = $tab_arr ['MIETER_ART'];
-                $monatlich_mehr_m = $tab_arr ['MONATLICH_MEHR'];
                 if ($einheit_qm > 0.00 && isset ($tab_arr ['MV_ID']) && $tab_arr ['MV_ID'] != '' && $mieterart == $m_mieter_art) {
                     $arr [] = $tab_arr;
                 }
             }
         }
-        $summe_m_mehr_a = nummer_punkt2komma($summe_m_mehr);
         if (isset ($arr)) {
             return $arr;
         }
@@ -297,7 +295,6 @@ class mietanpassung
                     }
 
                     /* Notwendige Datumsvars setzen */
-                    $datum_heute = date("Y-m-d");
                     $o = new objekt ();
                     $datum_n_monat = $o->datum_plus_tage(date("Y-m-d"), 90);
                     $datum_n_monat_arr = explode('-', $datum_n_monat);
@@ -379,12 +376,6 @@ class mietanpassung
 
                     /* Erdgeschoss aus Lage erkennen */
                     $m_buchstabe = substr($e->einheit_lage, 1, 1);
-                    if ($m_buchstabe == 'P') {
-                        $erdgeschoss = 1;
-                        $erdgeschoss_ausgabe = 'Erdgeschossabzug';
-                    } else {
-                        $erdgeschoss = 0;
-                    }
 
                     /* Sondermerkmale finden */
                     $sondermerkmale_arr = $this->get_sondermerkmale_arr($ausstattungsklasse, $jahr);
@@ -465,8 +456,6 @@ class mietanpassung
                     $tab_arr ['L_ANSTIEG_DATUM'] = $this->erhoehungsdatum;
                     $tab_arr ['L_ANSTIEG_BETRAG'] = $this->erhoehungsbetrag;
 
-                    $tag = date("d");
-                    // $datum_vor_3_jahren = "$jahr_minus_3-$monat-$tag";
                     $datum_vor_3_jahren = $datum_miete_v_3_j;
                     $erhoehungen_arr = $this->get_erhoehungen_arr($datum_vor_3_jahren, 'MIETVERTRAG', $mv_id);
                     $tab_arr ['ERHOEHUNGEN_ARR'] = $erhoehungen_arr;
@@ -539,7 +528,6 @@ class mietanpassung
 
     function get_ms_feld($einheit_id)
     {
-        $ms_jahr = $this->get_ms_jahr();
         $e = new einheit ();
         $e->get_einheit_info($einheit_id);
         $this->einheit_qm = $e->einheit_qm;
@@ -710,7 +698,6 @@ class mietanpassung
             $einheit_id = $array ['EINHEIT_ID'];
 
             $einheit_qm = $array ['EINHEIT_QM'];
-            $wohnlage = $array ['WOHNLAGE'];
             $mieter = $array ['MIETER'];
             $mv_id = $array ['MV_ID'];
 
@@ -723,8 +710,6 @@ class mietanpassung
             $u_wert = $array ['U_WERT'];
             $m_wert = $array ['M_WERT'];
             $o_wert = $array ['O_WERT'];
-            $u_spanne = $array ['U_SPANNE'];
-            $o_spanne = $array ['O_SPANNE'];
             $abzug_pro_qm = $array ['ABZUG_PRO_M2'];
 
             if (!empty ($array ['ABZUEGE'])) {
@@ -733,44 +718,27 @@ class mietanpassung
                 $abzuege_arr = '';
             }
             $gesamt_abzug = $array ['GESAMT_ABZUG'];
-            $u_wert_w = $array ['U_WERT_W'];
-            $m_wert_w = $array ['M_WERT_W'];
-            $o_wert_w = $array ['O_WERT_W'];
-            $u_spanne_w = $array ['U_SPANNE_W'];
-            $o_spanne_w = $array ['O_SPANNE_W'];
             $m2_aktuell = nummer_punkt2komma($array ['M2_AKTUELL']);
             $anstieg_3_jahre = nummer_punkt2komma($array ['ANSTIEG_3J']);
             $max_anstieg_prozentual = nummer_punkt2komma($array ['MAX_ANSTIEG_PROZ']);
             $max_anstieg_euro = nummer_punkt2komma($array ['MAX_ANSTIEG_EURO']);
 
-            $letzter_anstieg_monate = $array ['L_ANSTIEG_MONATE'];
             $letzter_anstieg_datum = $array ['L_ANSTIEG_DATUM'];
-            $letzter_anstieg_betrag = $array ['L_ANSTIEG_BETRAG'];
 
             $maximale_miete = nummer_punkt2komma($array ['MAXIMALE_MIETE']);
             $neue_miete_m_wert = $array ['NEUE_MIETE_M_WERT'];
             $neue_miete_m_wert_nach_abzug = $array ['NEUE_MIETE_M_WERT_W'];
 
             $anstiegs_datum = $array ['N_ANSTIEG_DATUM'];
-            $angemessene_neue_miete = $array ['NEUE_MIETE'];
-            if (isset ($array ['ANSTIEG_UM_PROZENT'])) {
-                $anstieg_um_prozent = $array ['ANSTIEG_UM_PROZENT'];
-            } else {
-                $anstieg_um_prozent = 0;
-            }
             $m2_preis_neu = $array ['M2_PREIS_NEU'];
             $m2_preis_neu_a = nummer_punkt2komma($m2_preis_neu);
             $monatlich_mehr = $array ['MONATLICH_MEHR'];
             $monatlich_mehr_a = nummer_punkt2komma($monatlich_mehr);
 
             $status = $array ['STATUS'];
-            $status_datum = $array ['STATUS_DATUM'];
-            $status_betrag = $array ['STATUS_BETRAG'];
             $ausstattungsklasse = $array ['AUSSTATTUNGSKLASSE'];
 
             if ($format == '') {
-                // echo "<tr><th>EIN.</th><th>MIETER</th><th>MS</th><th>U WERT</th><th>M WERT</th><th>O WERT</th><th>m² AKT.</th><th>m²</th><th>MIETE vor 3 Jahren</th><th>MIETE AKT.</th><th>EINZUG</th><th>AN- STIEG in 3 J %</th><th>L. ER- HÖHUNG</th><th>MAX %</th><th>MAXMEHR</th><th>NEUE MIETE MWERT</th><th>NEUE MIETE MAX</th><th>ANGEMESSEN</th><th>ABZUG</th><th>STATUS</th></tr>";
-                // if($maximale_miete<$neue_miete_m_wert){
                 if ($m2_aktuell > $m_wert) {
                     $trstyle = "style=\"border-color:red; border-style: solid;\"";
                 } else {
@@ -792,11 +760,6 @@ class mietanpassung
                 $this->monatlich_mehr_mieter = $monatlich_mehr;
 
                 $datum_erh_arr = explode('.', $anstiegs_datum);
-                /*
-				 * echo '<pre>';
-				 * print_r($datum_erh_arr);
-				 * echo "$anstiegs_datum";
-				 */
 
                 if (is_array($datum_erh_arr) && $datum_erh_arr [0] != "nicht möglich") {
                     $monat_erhoehung = $datum_erh_arr [1];
@@ -809,7 +772,6 @@ class mietanpassung
 
                 $nk_vorauszahlung = $this->kosten_monatlich($mv_id, $monat_erhoehung, $jahr_erhoehung, 'Nebenkosten Vorauszahlung');
                 $hk_vorauszahlung = $this->kosten_monatlich($mv_id, $monat_erhoehung, $jahr_erhoehung, 'Heizkosten Vorauszahlung');
-                // $mod_zuschlag = $this->kosten_monatlich($mv_id,$monat_erhoehung,$jahr_erhoehung, 'MOD');
                 $brutto_miete = $miete_aktuell + $nk_vorauszahlung + $hk_vorauszahlung;
                 $neue_brutto_miete = $brutto_miete + $monatlich_mehr;
                 $brutto_miete_a = nummer_punkt2komma($brutto_miete);
@@ -822,7 +784,6 @@ class mietanpassung
                 }
                 echo "<td $style>$monatlich_mehr_a</td>";
                 $style = '';
-                // echo "<tr><th>EIN.</th><th>MIETER</th><th>MS</th><th>U WERT</th><th>M WERT</th><th>O WERT</th><th>m²</th><th>EINZUG</th><th>AN- STIEG in 3 J %</th><th>L. ER- HÖHUNG</th><th>MAX %</th><th>MAX MEHR €</th><th>MIETE vor 3 Jahren</th><th>MIETE AKT.</th><th>MAX MIETE KAPP</th><th>NEUE MIETE MWERT</th><th>ABZUG m²</th><th>MW NACH ABZUG (ANGEMESSEN)</th><th>MEHR IM MONAT</th><th>ABZÜGE</th><th>m² AKT.</th><th>NEU m²/€</th><th>STATUS</th></tr>";
                 if (is_array($abzuege_arr)) {
                     $anz = count($abzuege_arr);
                     echo "<td>";
@@ -912,16 +873,9 @@ class mietanpassung
             $u_wert = $array ['U_WERT'];
             $m_wert = $array ['M_WERT'];
             $o_wert = $array ['O_WERT'];
-            $u_spanne = $array ['U_SPANNE'];
-            $o_spanne = $array ['O_SPANNE'];
             $abzuege_arr = $array ['ABZUEGE'];
             $abzug_pro_qm = $array ['ABZUG_PRO_M2'];
             $gesamt_abzug = $array ['GESAMT_ABZUG'];
-            $u_wert_w = $array ['U_WERT_W'];
-            $m_wert_w = $array ['M_WERT_W'];
-            $o_wert_w = $array ['O_WERT_W'];
-            $u_spanne_w = $array ['U_SPANNE_W'];
-            $o_spanne_w = $array ['O_SPANNE_W'];
             $m2_aktuell = nummer_punkt2komma($array ['M2_AKTUELL']);
             $anstieg_3_jahre = nummer_punkt2komma($array ['ANSTIEG_3J']);
             $max_anstieg_prozentual = nummer_punkt2komma($array ['MAX_ANSTIEG_PROZ']);
@@ -929,7 +883,6 @@ class mietanpassung
 
             $letzter_anstieg_monate = $array ['L_ANSTIEG_MONATE'];
             $letzter_anstieg_datum = $array ['L_ANSTIEG_DATUM'];
-            $letzter_anstieg_betrag = $array ['L_ANSTIEG_BETRAG'];
             $erhoehungen_arr = $array ['ERHOEHUNGEN_ARR'];
 
             $maximale_miete = nummer_punkt2komma($array ['MAXIMALE_MIETE']);
@@ -938,13 +891,8 @@ class mietanpassung
 
             $anstiegs_datum = $array ['N_ANSTIEG_DATUM'];
             $angemessene_neue_miete = $array ['NEUE_MIETE'];
-            $anstieg_um_prozent = $array ['ANSTIEG_UM_PROZENT'];
             $m2_preis_neu = $array ['M2_PREIS_NEU'];
             $monatlich_mehr = $array ['MONATLICH_MEHR'];
-
-            $status = $array ['STATUS'];
-            $status_datum = $array ['STATUS_DATUM'];
-            $status_betrag = $array ['STATUS_BETRAG'];
 
             if ($letzter_anstieg_monate <= 1) {
                 fehlermeldung_ausgeben("Nicht möglich<br>Letzte Mietdefinition vor weniger als 12 Monaten.");
@@ -983,9 +931,6 @@ class mietanpassung
             $_3_5tel = nummer_punkt2komma($diff_mw_ow / 5 * 3);
             $_4_5tel = nummer_punkt2komma($diff_mw_ow / 5 * 4);
             $_5_5tel = nummer_punkt2komma($diff_mw_ow / 5 * 5);
-
-            $preis_1 = $m_wert + $_1_5tel;
-            $preis_2 = $m_wert + $_2_5tel;
 
             echo "<tr><td>Differenz Mittelwert - Oberwert</td><td><b>$diff_mw_ow</b></td><td></td></tr>";
 
@@ -1052,7 +997,6 @@ class mietanpassung
                 echo "<tr><td>Kappungsgrenze für 3 Jahre in %</td><td>15,00 %</td></tr>";
                 echo "<tr><td>Mieterhöhung in den letzten 3 Jahren in %</td><td>$anstieg_3_jahre %</td></tr>";
                 echo "<tr><td>Max. mögliche Mieterhöhung in %</td><td>$max_anstieg_prozentual %</td></tr>";
-                $maximale_miete_a = nummer_punkt2komma($maximale_miete);
                 echo "<tr><td>Max. mögliche Mieterhöhung in Euro</td><td><b>$max_anstieg_euro €</b></td></tr>";
                 echo "<tr><td>Max. mögliche Miete kalt in Euro</td><td><b>$maximale_miete €</b></td></tr>";
 
@@ -1129,7 +1073,6 @@ class mietanpassung
                 $f->datum_feld('Druckdatum PDF', 'druckdatum', '', 'druckdatum');
                 $f->send_button("ber_uebernehmen_netto", "Übernehmen->PDF");
                 echo "</td></tr>";
-                $link = "<a href='" . route('legacy::mietanpassungen::index', ['option' => 'miete_anpassen_mw', 'einheit_id' => $einheit_id]) . "'>Anpassen</a>";
             }  // ende Nettomieter
 
             /* Bruttomieter */
@@ -1161,7 +1104,6 @@ class mietanpassung
                     $f->hidden_feld("ber_array[TAT_KOST_J]", "$nk_anteil_j");
                     echo "<tr><td>Tatsächliche Nebenkosten monatlich</td><td>$nk_anteil €</td></tr>";
                     echo "<tr><td>Max. mögliche Mieterhöhung in %</td><td>$max_anstieg_prozentual %</td></tr>";
-                    $maximale_miete_a = nummer_punkt2komma($maximale_miete);
                     echo "<tr><td>Max. mögliche Mieterhöhung in Euro</td><td><b>$max_anstieg_euro €</b></td></tr>";
                     echo "<tr><td>Max. mögliche Miete kalt in Euro</td><td><b>$maximale_miete €</b></td></tr>";
                     echo "<tr><th colspan=\"2\">Berechnung der Miete nach Mietspiegelmittelwert</th></tr>";
@@ -1172,10 +1114,8 @@ class mietanpassung
                     echo "<tr><td>Neue Miete nach Mietspiegel</td><td><b>$neue_miete_m_wert_a €</b></td></tr>";
 
                     echo "<tr><th colspan=\"2\">Wertmindernde Faktoren pro m²</th></tr>";
-                    // echo "<tr><td>Gesamtminderung</td><td><b>$einheit_qm m² * $abzug_pro_qm = $gesamt_abzug</b></td></tr>";
 
                     if (is_array($abzuege_arr)) {
-
                         $anz = count($abzuege_arr);
                         for ($i = 0; $i < $anz; $i++) {
                             $merkm = $abzuege_arr [$i] ['MERKMAL'];
@@ -1213,8 +1153,6 @@ class mietanpassung
 
                     echo "<tr><td>Neue Miete kalt</td><td>$angemessene_neue_miete_a €</td></tr>";
                     $datum_erh_arr = explode('.', $anstiegs_datum);
-                    $monat_erhoehung = $datum_erh_arr [1];
-                    $jahr_erhoehung = $datum_erh_arr [2];
                     $nk_vorauszahlung = nummer_komma2punkt(request()->input('nk_anteil')) / 12;
                     $nk_vorauszahlung_a = nummer_punkt2komma($nk_vorauszahlung);
                     echo "<tr><td>Tatsächliche Kosten</td><td>$nk_vorauszahlung_a €</td></tr>";
@@ -1551,10 +1489,8 @@ class mietanpassung
                 )
             )
         ));
-        // $pdf->ezSetDy(-10);
         $o = new objekt ();
         $mysql_date_anstieg = date_german2mysql($ber->N_ANSTIEG_DATUM);
-        $datum_minus_1_tag = $o->datum_minus_tage($mysql_date_anstieg, 1);
         $datum_zustimmung_frist = date_mysql2german($mysql_date_anstieg);
         $brief_text = "\nGemäß § 558b BGB sind wir berechtigt, gegen Sie Klage auf Zustimmung zur Mieterhöhung zu erheben, falls Sie nicht bis zum Ablauf des zweiten Kalendermonats nach Zugang dieses Erhöhungsverlangens die Zustimmung erteilen. Die Klage muss hierbei innerhalb einer Frist von weiteren drei Monaten erhoben werden. Wir sehen daher Ihrer Zustimmung zur Mieterhöhung gemäß diesem Schreiben bis zum $datum_zustimmung_frist entgegen.\n";
         $pdf->ezText("$brief_text", 11, array(
@@ -2187,7 +2123,7 @@ class mietanpassung
 
         $pdf->ezSetDy(-10);
         if ($ber->MG_SALDO > 0) {
-            $pdf->eztext("Als Anlage erhalten Sie die Online-Berechnung der Stadtentwicklung Berlin.", 12);
+            $pdf->ezText("Als Anlage erhalten Sie die Online-Berechnung der Stadtentwicklung Berlin.", 12);
             $brief_text = "\nAufgrund dieser Merkmalsgruppen ergibt sich ein Zu-/Abschlag für Ihre Wohnung in Höhe von $ber->MG_SALDO_PROZ_A % bzw. $ber->MG_ZUSCHLAG_MAX_QM_A EUR von $ber->O_SPANNE_W_A EUR/m² -von der Differenz Mittel-/Oberwert ($ber->O_WERT_A € - $ber->M_WERT_A €).";
             $pdf->ezText("$brief_text", 11, array(
                 'justification' => 'full'
@@ -2366,7 +2302,6 @@ class mietanpassung
         // $pdf->ezSetDy(-10);
         $o = new objekt ();
         $mysql_date_anstieg = date_german2mysql($ber->N_ANSTIEG_DATUM);
-        $datum_minus_1_tag = $o->datum_minus_tage($mysql_date_anstieg, 1);
         $datum_zustimmung_frist = date_mysql2german($mysql_date_anstieg);
         $brief_text = "\nGemäß § 558b BGB sind wir berechtigt, gegen Sie Klage auf Zustimmung zur Mieterhöhung zu erheben, falls Sie nicht bis zum Ablauf des zweiten Kalendermonats nach Zugang dieses Erhöhungsverlangens die Zustimmung erteilen. Die Klage muss hierbei innerhalb einer Frist von weiteren drei Monaten erhoben werden. Wir sehen daher Ihrer Zustimmung zur Mieterhöhung gemäß diesem Schreiben bis zum $datum_zustimmung_frist entgegen.\n";
         $pdf->ezText("$brief_text", 11, array(
@@ -2552,7 +2487,7 @@ class mietanpassung
         $pdf->ezText("Unterschrift", 10, array(
             'aleft' => '100'
         ));
-        $pdf->ezSety($hoehe);
+        $pdf->ezSetY($hoehe);
         $pdf->ezText("____________________", 11, array(
             'left' => '320'
         ));
@@ -2902,10 +2837,7 @@ class mietanpassung
                 )
             )
         ));
-        // $pdf->ezSetDy(-10);
-        $o = new objekt ();
         $mysql_date_anstieg = date_german2mysql($ber->N_ANSTIEG_DATUM);
-        $datum_minus_1_tag = $o->datum_minus_tage($mysql_date_anstieg, 1);
         $datum_zustimmung_frist = date_mysql2german($mysql_date_anstieg);
 
         /* Dritte Seite */
@@ -3436,10 +3368,8 @@ class mietanpassung
                 )
             )
         ));
-        // $pdf->ezSetDy(-10);
         $o = new objekt ();
         $mysql_date_anstieg = date_german2mysql($ber->N_ANSTIEG_DATUM);
-        $datum_minus_1_tag = $o->datum_minus_tage($mysql_date_anstieg, 1);
         $datum_zustimmung_frist = date_mysql2german($mysql_date_anstieg);
         $brief_text = "\nGemäß § 558b BGB sind wir berechtigt, gegen Sie Klage auf Zustimmung zur Mieterhöhung zu erheben, falls Sie nicht bis zum Ablauf des zweiten Kalendermonats nach Zugang dieses Erhöhungsverlangens die Zustimmung erteilen. Die Klage muss hierbei innerhalb einer Frist von weiteren drei Monaten erhoben werden. Wir sehen daher Ihrer Zustimmung zur Mieterhöhung gemäß diesem Schreiben bis zum $datum_zustimmung_frist entgegen.\n";
         $pdf->ezText("$brief_text", 11, array(
@@ -3530,7 +3460,7 @@ class mietanpassung
         $pdf->ezText("Unterschrift", 10, array(
             'aleft' => '100'
         ));
-        $pdf->ezSety($hoehe);
+        $pdf->ezSetY($hoehe);
         $pdf->ezText("____________________", 11, array(
             'left' => '320'
         ));
@@ -3545,7 +3475,7 @@ class mietanpassung
         $pdf->ezText("Unterschrift", 10, array(
             'aleft' => '100'
         ));
-        $pdf->ezSety($hoehe);
+        $pdf->ezSetY($hoehe);
         $pdf->ezText("____________________", 11, array(
             'left' => '320'
         ));
@@ -3606,7 +3536,7 @@ class mietanpassung
         $pdf->ezText("Unterschrift", 10, array(
             'aleft' => '100'
         ));
-        $pdf->ezSety($hoehe);
+        $pdf->ezSetY($hoehe);
         $pdf->ezText("____________________", 11, array(
             'left' => '320'
         ));
@@ -3621,25 +3551,13 @@ class mietanpassung
         $pdf->ezText("Unterschrift", 10, array(
             'aleft' => '100'
         ));
-        $pdf->ezSety($hoehe);
+        $pdf->ezSetY($hoehe);
         $pdf->ezText("____________________", 11, array(
             'left' => '320'
         ));
         $pdf->ezText("Datum", 10, array(
             'left' => '370'
         ));
-
-        // $pdf->ezNewPage();
-        /*
-		 * $im = new imagick();
-		 * $im->setResolution(600,600);
-		 * $im->readImage('Mietspiegeltabelle2009.pdf[0]');
-		 * $im->setImageFormat(�png�);
-		 * $im->setImageDepth(8);
-		 * $im->setImageCompressionQuality(90);
-		 * $im->scaleImage(500,0);
-		 */
-        //
 
         /* Ausgabe */
         ob_end_clean(); // ausgabepuffer leeren

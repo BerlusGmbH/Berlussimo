@@ -39,7 +39,6 @@ function ausgabe($gruppen_id, $monate_plus_int, $format = 'tab')
                 $mvs->get_mietvertrag_infos_aktuell($mv_id);
                 $thermen_arr[$a]['KONTAKT'] = $e->kontaktdaten_mieter($mv_id);
                 $thermen_arr[$a]['MIETER'] = $mvs->personen_name_string_u;
-                $kontaktdaten = '';
             } else {
                 $thermen_arr[$a]['KONTAKT'] = 'Hausverwaltung!!';
                 $thermen_arr[$a]['MIETER'] = 'Leerstand';

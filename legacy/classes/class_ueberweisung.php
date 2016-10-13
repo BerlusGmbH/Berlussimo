@@ -9,7 +9,6 @@ class ueberweisung
         }
         $f = new formular ();
         $r = new rechnungen ();
-        $g = new geldkonto_info ();
         $r->rechnung_grunddaten_holen($belegnr);
 
         $f->erstelle_formular("Rechnung über SEPA zahlen", NULL);

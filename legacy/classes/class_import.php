@@ -43,14 +43,6 @@ class import
                 $strasse = $zeile [7];
                 $ort_plz = $zeile [8];
 
-                $wm = $zeile [17];
-                $mwst = $zeile [18]; // J/N
-
-                $km = $zeile [17]; // miete vor 3 Jahren
-                $km_3 = $zeile [17]; // miete vor 3 Jahren
-                $nk = $zeile [17]; // miete vor 3 Jahren
-                $hk = $zeile [17]; // miete vor 3 Jahren
-
                 $kto = $zeile [37];
                 $blz = $zeile [35];
                 $sep = new sepa ();
@@ -99,7 +91,6 @@ class import
                         $new_arr [$we] ['ET'] ['GES'] [] = 'weiblich';
                     }
                     if (empty ($anrede)) {
-                        $anz_m = count($new_arr [$we] ['ET'] ['NAMEN']);
                         $new_arr [$we] ['ET'] ['GES'] [] = 'unbekannt';
                         $new_arr [$we] ['ET'] ['GES'] [] = 'unbekannt';
                     }
@@ -147,7 +138,6 @@ class import
                         $new_arr [$we] ['MIETER'] ['GES'] [] = 'weiblich';
                     }
                     if (empty ($anrede)) {
-                        $anz_m = count($new_arr [$we] ['MIETER'] ['NAMEN']);
                         $new_arr [$we] ['MIETER'] ['GES'] [] = 'unbekannt';
                         $new_arr [$we] ['MIETER'] ['GES'] [] = 'unbekannt';
                     }
@@ -195,18 +185,10 @@ class import
                         $new_arr [$we] ['SMIETER'] ['GES'] [] = 'weiblich';
                     }
                     if (empty ($anrede)) {
-                        $anz_m = count($new_arr [$we] ['SMIETER'] ['NAMEN']);
                         $new_arr [$we] ['SMIETER'] ['GES'] [] = 'unbekannt';
                         $new_arr [$we] ['SMIETER'] ['GES'] [] = 'unbekannt';
                     }
                 }
-
-                // print_r($zeile);
-                /*
-                 * $new_arr[$z][$we]['QM'] = $qm;
-                 * $new_arr[$z][$we]['LAGE'] = $lage;
-                 * $new_arr[$z][$we]['TYP'] = $typ;
-                 */
                 $z++;
             }
             // print_r($zeile);
@@ -284,7 +266,6 @@ class import
                     echo "<td>";
                     $f->text_feld("qm", "qm", "$qm", "10", 'qm', '');
                     echo "</td>";
-                    $h = new haus ();
                     echo "<td>";
                     $o->dropdown_haeuser_objekt($o->objekt_id, 'Haus', 'haus_id', 'haus_id', '');
                     echo "</td>";
@@ -508,23 +489,15 @@ class import
 
         $gew_z = 101;
         $woh_z = 201;
-        $pp_z = 601;
         for ($a = 2; $a < $anz_a; $a++) {
             $z_arr = explode('*', $arr [$a]);
-            /* Debug */
-            // echo '<pre>';
-            // print_r($z_arr);
-
             $etyp = $z_arr [1];
             $wtyp = ltrim(rtrim($z_arr [37]));
             $we_bez_alt = $z_arr [2];
-            $name1 = ltrim(rtrim($z_arr [4]));
-            $name2 = ltrim(rtrim($z_arr [5]));
             $lage = ltrim(rtrim($z_arr [14]));
 
             $we_nr = substr($we_bez_alt, 0, -2);
 
-            // echo "$we_nr $etyp $wtyp<br>";
             $ein_arr [$we_nr] ['EINHEIT'] ['WTYP'] = $wtyp;
             $ein_arr [$we_nr] ['EINHEIT'] ['BEZ_ALT'] = $we_bez_alt;
             $ein_arr [$we_nr] ['EINHEIT'] ['WE_NR'] = $we_nr;
@@ -594,7 +567,6 @@ class import
         $f->text_feld("qm", "qm", "$qm", "10", 'qm', '');
         $f->text_feld("Eigentümer m²", "weg_qm", "", "10", 'weg_qm', '');
         $f->text_feld("WEG MAE", "weg_mea", "", "10", 'weg_mae', '');
-        $h = new haus ();
         $o->dropdown_haeuser_objekt($o->objekt_id, 'Haus', 'haus_id', 'haus_id', '');
         $e = new einheit ();
         $e->dropdown_einheit_typen("Typ $lage $wtyp", 'typ', 'typ', $wtyp);
@@ -910,7 +882,6 @@ class import
                         $new_arr [$a] ['MIETER'] ['NAMEN'] [$n] = ltrim(rtrim(str_replace('Frau', '', $new_arr [$a] ['MIETER'] ['NAMEN'] [$n])));
                         $new_arr [$a] ['MIETER'] ['NAMEN'] [$n] = ltrim(rtrim(str_replace('Herr', '', $new_arr [$a] ['MIETER'] ['NAMEN'] [$n])));
 
-                        $name_full = $new_arr [$a] ['MIETER'] ['NAMEN'] [$n];
                         $name_arr = explode(' ', $new_arr [$a] ['MIETER'] ['NAMEN'] [$n]);
                         $vorname = $name_arr [0];
                         $nachname = $name_arr [1];

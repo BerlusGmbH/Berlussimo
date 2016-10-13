@@ -575,7 +575,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
         $last_id = last_id2('MIETENTWICKLUNG', 'MIETENTWICKLUNG_ID') + 1;
 
         $db_abfrage = "INSERT INTO MIETENTWICKLUNG VALUES (NULL, '$last_id', '$kos_typ', '$kos_id', '$kat', '$anfang', '$ende', '$mwst_anteil', '$betrag', '1')";
-        $resultat = DB::insert($db_abfrage);
+        DB::insert($db_abfrage);
         /* Zugewiesene MIETBUCHUNG_DAT auslesen */
         $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('MIETENTWICKLUNG', '0', $last_dat);

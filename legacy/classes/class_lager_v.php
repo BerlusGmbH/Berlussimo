@@ -49,7 +49,6 @@ class lager_v {
             if ($az) {
                 $gesamt_lager_wert = 0;
                 $zaehler = 0;
-                $rechnung_info = new rechnung ();
                 for($a = 0; $a < $az; $a ++) {
 
                     $datum = date_mysql2german ( $my_array [$a] ['EINGANGSDATUM'] );
@@ -106,7 +105,6 @@ class lager_v {
                 $bpdf->b_header ( $pdf, 'Partner', session()->get('partner_id'), 'landscape', 'Helvetica.afm', 6 );
                 $p = new partners ();
                 $p->get_partner_info ( session()->get('partner_id'));
-                $datum = date ( "d.m.Y" );
                 $cols = array (
                     'DATUM' => "Datum",
                     'LIEFERANT' => "Lieferant",
@@ -211,13 +209,9 @@ class lager_v {
                     $waren_wert_a = nummer_punkt2komma ( $waren_wert );
 
                     $link_artikel_suche = "<a href='" . route('legacy::lager::index', ['option' => 'artikel_suche', 'artikel_nr' => $artikel_nr]) . "'>$artikel_nr</a>";
-                    $beleg_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>Rechnung</a>";
-
                     if ($rest_menge != '0,00') {
                         $zaehler ++;
                         $gesamt_lager_wert = $gesamt_lager_wert + $waren_wert;
-                        $beleg_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>Rechnung</a>";
-
                         if ($zaehler == '1') {
                             $beleg_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>Rechnung</a>";
                             echo "<tr class=\"zeile1\" align=\"right\"><td>$datum</td><td>$pp->partner_name</td><td>$beleg_link</td><td>$link_artikel_suche</td><td>$bezeichnung</td><td>$menge</td><td>$rest_menge</td><td>$preis €</td><td>$pos_mwst_satz %</td><td>$waren_wert_a €</td></tr>";
@@ -250,7 +244,6 @@ class lager_v {
         if ($numrows > 0) {
             for($a = 0; $a < $numrows; $a ++) {
                 $dat = $my_arr [$a] ['KONTIERUNG_DAT'];
-                $id = $my_arr [$a] ['KONTIERUNG_ID'];
                 $datum = $this->get_date_from_protokoll ( 'KONTIERUNG_POSITIONEN', $dat );
                 echo "$dat, $datum<br>";
                 DB::update( "UPDATE KONTIERUNG_POSITIONEN SET KONTIERUNGS_DATUM='$datum' WHERE KONTIERUNG_DAT='$dat' && KONTIERUNGS_DATUM='0000-00-00'" );

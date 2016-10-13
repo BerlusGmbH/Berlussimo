@@ -220,19 +220,13 @@ RWALTUNG?3076000000?3176001601?32BUNDESAGENTUR FUER ARBEIT?34000
             // echo "61_sub6 $_61_sub6<br>";
 
             $_61_ZEILE = substr($datensatz, $this->pos_61, $this->laenge_61);
-            $akt_pos = $this->pos_61 + $pos;
-            // echo "<h1>$_61_ZEILE ###AKT POS $pos####</h1><br>";
             $rest = substr($_61_ZEILE, $pos, $this->laenge_61);
 
             $this->pos_trenn8 = strpos($rest, '//');
             if ($this->pos_trenn8) {
                 $_61_sub7 = substr($rest, 0, $this->pos_trenn8);
-                // echo "Postoji // sub7 = $_61_sub7<br>";
                 $erg [':61:'] ['SUB7'] = $_61_sub7;
-                // echo "REST $rest<br>";
             } else {
-                $_61_sub7 = 'NULL';
-                // echo "NE Postoji // sub7 = $_61_sub7<br>";
                 $erg [':61:'] ['SUB7'] = '';
             }
 
@@ -244,19 +238,12 @@ RWALTUNG?3076000000?3176001601?32BUNDESAGENTUR FUER ARBEIT?34000
             if (!$this->pos_betrag) {
                 $this->pos_betrag = strpos($rest, '/CHGS/');
             }
-            $_61_sub8 = substr($rest, 2, $this->pos_betrag - 2); // 2 wegen // trennzeichen
-            // echo "sub8 = $_61_sub8 P betrag = $this->pos_betrag<br>";
-
             $rest = substr($rest, $this->pos_betrag, 34);
-            // echo "REST3 $rest<br>";
             $waehrung_iso = substr($rest, 6, 3);
-            // echo "WÄHRUNG $waehrung_iso<br>";
             $laenge_rest = strlen($rest);
             $rest = substr($rest, 9, $laenge_rest);
-            // echo "REST3 $rest<br>";
             $laenge_rest = strlen($rest);
             $betrag = substr($rest, 0, $laenge_rest);
-            // echo "BETRAG $betrag<br>";
             $erg [':61:'] ['SUB8'] = $betrag . ' ' . $waehrung_iso;
 
             // ########86###########
@@ -294,8 +281,6 @@ RWALTUNG?3076000000?3176001601?32BUNDESAGENTUR FUER ARBEIT?34000
                 $this->pos_61 = strpos($datensatz_neu, ':61'); // 0
                 $this->pos_61_end = strpos($datensatz_neu, ':86:'); // 10
                 $this->laenge_61 = $this->pos_61_end - $this->pos_61 - 4; // 10 - 0 - 4 = 6
-                $_61_sub1 = substr($datensatz_neu, $this->pos_61 + 4, $this->laenge_61); // 4 +6 = 10
-                // $erg[':61:'][$c]['SUB1'] = $_61_sub1;
                 $erg [':61:'] [$c] = $this->extract_61($datensatz_neu);
                 $datensatz_neu = substr($datensatz_neu, $this->pos_61_end);
 
@@ -307,8 +292,6 @@ RWALTUNG?3076000000?3176001601?32BUNDESAGENTUR FUER ARBEIT?34000
                     $this->pos_86_end = strpos($datensatz_neu, ':62'); // 10
                 }
                 $this->laenge_86 = $this->pos_86_end - $this->pos_86 - 4; // 10 - 0 - 4 = 6
-                $_86_sub1 = substr($datensatz_neu, $this->pos_86 + 4, $this->laenge_86); // 4 +6 = 10
-                // $erg[':86:'][$c]['SUB1'] = $_86_sub1;
                 $erg [':86:'] [$c] = $this->extract_86($datensatz_neu);
                 $datensatz_neu = substr($datensatz_neu, $this->pos_86_end);
             }
@@ -355,9 +338,6 @@ RWALTUNG?3076000000?3176001601?32BUNDESAGENTUR FUER ARBEIT?34000
         }
 
         echo '<pre>';
-        // print_r($erg);
-        $keys = array_keys($erg);
-        // print_r($keys);
         $anz = count($erg [':86:']);
 
         // print_r($erg[':86:']);
@@ -442,19 +422,13 @@ RWALTUNG?3076000000?3176001601?32BUNDESAGENTUR FUER ARBEIT?34000
         // echo "61_sub6 $_61_sub6<br>";
 
         $_61_ZEILE = substr($datensatz, $this->pos_61, $this->laenge_61);
-        $akt_pos = $this->pos_61 + $pos;
-        // echo "<h1>$_61_ZEILE ###AKT POS $pos####</h1><br>";
         $rest = substr($_61_ZEILE, $pos, $this->laenge_61);
 
         $this->pos_trenn8 = strpos($rest, '//');
         if ($this->pos_trenn8) {
             $_61_sub7 = substr($rest, 0, $this->pos_trenn8);
-            // echo "Postoji // sub7 = $_61_sub7<br>";
             $erg ['SUB7'] = $_61_sub7;
-            // echo "REST $rest<br>";
         } else {
-            $_61_sub7 = 'NULL';
-            // echo "NE Postoji // sub7 = $_61_sub7<br>";
             $erg ['SUB7'] = '';
         }
 
@@ -466,19 +440,12 @@ RWALTUNG?3076000000?3176001601?32BUNDESAGENTUR FUER ARBEIT?34000
         if (!$this->pos_betrag) {
             $this->pos_betrag = strpos($rest, '/CHGS/');
         }
-        $_61_sub8 = substr($rest, 2, $this->pos_betrag - 2); // 2 wegen // trennzeichen
-        // echo "sub8 = $_61_sub8 P betrag = $this->pos_betrag<br>";
-
         $rest = substr($rest, $this->pos_betrag, 34);
-        // echo "REST3 $rest<br>";
         $waehrung_iso = substr($rest, 6, 3);
-        // echo "WÄHRUNG $waehrung_iso<br>";
         $laenge_rest = strlen($rest);
         $rest = substr($rest, 9, $laenge_rest);
-        // echo "REST3 $rest<br>";
         $laenge_rest = strlen($rest);
         $betrag = substr($rest, 0, $laenge_rest);
-        // echo "BETRAG $betrag<br>";
         $erg ['SUB8'] = $betrag . ' ' . $waehrung_iso;
         return $erg;
     }

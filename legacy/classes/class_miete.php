@@ -34,28 +34,20 @@ class miete
 
     function tage_minus($datum, $tage)
     {
-        // echo "<br>D:$datum T$tage<br>";
         $dat_arr = explode('-', $datum);
         $j = $dat_arr [0];
         $m = $dat_arr [1];
         $d = $dat_arr [2];
-        $new = date('Y-m-d', mktime(0, 0, 0, $m, $d - $tage, $j));
-        // echo "NEW: $new<br>";
         return date('Y-m-d', mktime(0, 0, 0, $m, $d - $tage, $j));
-        // $gestern = date('d.m.Y',mktime(0,0,0,$m,$d-1,$j));
     }
 
     function tage_plus($datum, $tage)
     {
-        // echo "<br>D:$datum T$tage<br>";
         $dat_arr = explode('-', $datum);
         $j = $dat_arr [0];
         $m = $dat_arr [1];
         $d = $dat_arr [2];
-        $new = date('Y-m-d', mktime(0, 0, 0, $m, $d + $tage, $j));
-        // echo "NEW: $new<br>";
         return date('Y-m-d', mktime(0, 0, 0, $m, $d + $tage, $j));
-        // $gestern = date('d.m.Y',mktime(0,0,0,$m,$d-1,$j));
     }
 
     /* Diese funktion liefert uns den aktuellen stand und den stand des Vormonats, inkl geleistete Zahlungen usw für den MOnatsbericht */
@@ -78,8 +70,6 @@ class miete
         /* Saldo Vortrag vorhanden, dann ab Saldo VV rechnen */
         if (!empty ($datum_saldo_vv)) {
             /* Saldo Vorvertrag mit 1. Zahlung vergleichen, älteres nehmen */
-            $datum_saldo_vv_s = str_replace('-', '', $datum_saldo_vv);
-            
             /* Einen Monat nach SALDO VV */
             $anfangs_datum = $this->tage_plus($datum_saldo_vv, 30);
             $anfangs_datum_s = str_replace('-', '', $anfangs_datum);
@@ -525,9 +515,7 @@ class miete
 
         for ($index = 0; $index < count($my_arr1); $index++) {
             $anfang = $my_arr1 [$index] ['ANFANG'];
-            $ende = $my_arr1 [$index] ['ENDE'];
             $betrag = $my_arr1 [$index] ['BETRAG'];
-            $kostenkat = $my_arr1 [$index] ['KOSTENKATEGORIE'];
 
             if ($ende = '0000-00-00') {
                 $ende = '';
@@ -731,8 +719,6 @@ ORDER BY `NEW_ENDE` ASC
         /* MV INFO */
         $buchung->ein_auszugsdatum_mietvertrag($mv_id);
         $einzugsdatum = explode("-", $buchung->mietvertrag_von);
-        $einzugs_jahr = $einzugsdatum ['0'];
-        $einzugs_monat = $einzugsdatum ['1'];
 
         $auszugsdatum = explode("-", $buchung->mietvertrag_bis);
         $auszugs_jahr = $auszugsdatum ['0'];
@@ -1167,7 +1153,6 @@ ORDER BY `NEW_ENDE` ASC
 
         /* Monate davor weg */
         $jahre = array_keys($this->daten_arr);
-        $anzahl_jahre = count($jahre);
         $erstes_jahr = $jahre [0];
         $anz_monate = count($this->daten_arr [$erstes_jahr] ['monate']);
         for ($a = 0; $a < $anz_monate; $a++) {
@@ -1259,7 +1244,6 @@ ORDER BY `NEW_ENDE` ASC
                     if ("$akt_monat.$key" != date("m.Y")) {
                         $zeile++;
                         $table_arr [$zeile] ['DATUM'] = "__________";
-                        $monatsname = monat2name($akt_monat);
                         $table_arr [$zeile] ['BEMERKUNG'] = "__________________________________________________________________________";
                         $table_arr [$zeile] ['BETRAG'] = '________________';
                         $table_arr [$zeile] ['SALDO'] = '________________';
@@ -1404,8 +1388,6 @@ ORDER BY `NEW_ENDE` ASC
         /* MV INFO */
         $buchung->ein_auszugsdatum_mietvertrag($mv_id);
         $einzugsdatum = explode("-", $buchung->mietvertrag_von);
-        $einzugs_jahr = $einzugsdatum ['0'];
-        $einzugs_monat = $einzugsdatum ['1'];
 
         $auszugsdatum = explode("-", $buchung->mietvertrag_bis);
         $auszugs_jahr = $auszugsdatum ['0'];
@@ -1968,7 +1950,6 @@ ORDER BY `NEW_ENDE` ASC
                     if ("$akt_monat.$key" != date("m.Y")) {
                         $zeile++;
                         $table_arr [$zeile] ['DATUM'] = "<b><u><i>__________</i></u></b>";
-                        $monatsname = monat2name($akt_monat);
                         $table_arr [$zeile] ['BEMERKUNG'] = "<b><u><i>__________________________________________________________________________</i></u></b>";
                         $table_arr [$zeile] ['BETRAG'] = '<b><u><i>________________</i></u></b>';
                         $table_arr [$zeile] ['SALDO'] = '<b><u><i>________________</i></u></b>';
@@ -2085,8 +2066,6 @@ ORDER BY `NEW_ENDE` ASC
         /* MV INFO */
         $buchung->ein_auszugsdatum_mietvertrag($mv_id);
         $einzugsdatum = explode("-", $buchung->mietvertrag_von);
-        $einzugs_jahr = $einzugsdatum ['0'];
-        $einzugs_monat = $einzugsdatum ['1'];
 
         $auszugsdatum = explode("-", $buchung->mietvertrag_bis);
         $auszugs_jahr = $auszugsdatum ['0'];

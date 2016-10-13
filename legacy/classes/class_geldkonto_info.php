@@ -35,9 +35,6 @@ class geldkonto_info {
                 $konto_id = $my_array [$a] ['KONTO_ID'];
                 $konto_bezeichnung = $my_array [$a] ['BEZEICHNUNG'];
                 $beguenstigter = $my_array [$a] ['BEGUENSTIGTER'];
-                $kontonummer = $my_array [$a] ['KONTONUMMER'];
-                $blz = $my_array [$a] ['BLZ'];
-                $geld_institut = $my_array [$a] ['INSTITUT'];
                 $iban = chunk_split ( $my_array [$a] ['IBAN'], 4, ' ' );
                 $bic = $my_array [$a] ['BIC'];
                 $konto_stand_aktuell = nummer_punkt2komma_t ( $this->geld_konto_stand ( $konto_id ) );
@@ -109,11 +106,7 @@ class geldkonto_info {
             for($a = 0; $a < $numrows; $a ++) {
                 $konto_id = $my_array [$a] ['KONTO_ID'];
                 $konto_bezeichnung = $my_array [$a] ['BEZEICHNUNG'];
-                $beguenstigter = $my_array [$a] ['BEGUENSTIGTER'];
                 $kontonummer = $my_array [$a] ['KONTONUMMER'];
-                $blz = $my_array [$a] ['BLZ'];
-                $geld_institut = $my_array [$a] ['INSTITUT'];
-                $summe_mieteinnahmen = $this->summe_mieteinnahmen ( $konto_id );
                 $kostengesamt = $this->summe_kosten_objekt_zeitraum ( $konto_id, '1', '2006', '4', '2009' );
                 $mietengesamt = $this->summe_mieten_objekt_zeitraum ( $konto_id, '1', '2006', '4', '2009' );
                 $konto_stand_monatsende = $mietengesamt + $kostengesamt;
@@ -135,7 +128,6 @@ class geldkonto_info {
             echo "<label for=\"geld_konto_dropdown\">&nbsp;Bankverbindung - $kostentraeger_typ &nbsp;</label><select name=\"geld_konto\" id=\"geld_konto_dropdown\" size=\"1\" >";
             for($a = 0; $a < $numrows; $a ++) {
                 $konto_id = $my_array [$a] ['KONTO_ID'];
-                $beguenstigter = $my_array [$a] ['BEGUENSTIGTER'];
                 $kontonummer = $my_array [$a] ['KONTONUMMER'];
                 $blz = $my_array [$a] ['BLZ'];
                 $geld_institut = $my_array [$a] ['INSTITUT'];
@@ -161,10 +153,8 @@ class geldkonto_info {
             echo "<label for=\"geld_konto_dropdown\">$label</label>\n<select name=\"geld_konto\" id=\"geld_konto_dropdown\" size=\"1\" >\n";
             for($a = 0; $a < $numrows; $a ++) {
                 $konto_id = $my_array [$a] ['KONTO_ID'];
-                $beguenstigter = $my_array [$a] ['BEGUENSTIGTER'];
                 $kontonummer = $my_array [$a] ['KONTONUMMER'];
                 $blz = $my_array [$a] ['BLZ'];
-                $geld_institut = $my_array [$a] ['INSTITUT'];
                 if (session()->has('geldkonto_id') && session()->get('geldkonto_id') == $konto_id) {
                     echo "<option value=\"$konto_id\" selected>Knr:$kontonummer - Blz: $blz</option>\n";
                 } else {
@@ -187,10 +177,8 @@ class geldkonto_info {
             echo "<label for=\"$id\">$label</label>\n<select name=\"$name\" id=\"$id\" size=\"1\" >\n";
             for($a = 0; $a < count ( $my_array ); $a ++) {
                 $konto_id = $my_array [$a] ['KONTO_ID'];
-                $beguenstigter = $my_array [$a] ['BEGUENSTIGTER'];
                 $kontonummer = $my_array [$a] ['KONTONUMMER'];
                 $blz = $my_array [$a] ['BLZ'];
-                $geld_institut = $my_array [$a] ['INSTITUT'];
                 if (session()->has('geldkonto_id') && session()->get('geldkonto_id') == $konto_id) {
                     echo "<option value=\"$konto_id\" selected>Knr:$kontonummer - Blz: $blz</option>\n";
                 } else {

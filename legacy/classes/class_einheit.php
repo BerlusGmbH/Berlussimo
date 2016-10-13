@@ -48,7 +48,6 @@ ORDER BY HAUS_STRASSE, HAUS_NUMMER, OBJEKT_KURZNAME, EINHEIT_LAGE";
         $result = DB::select( $db_abfrage );
         $numrows = count( $result );
         if ($numrows) {
-            $z = 0;
             $emails_arr = '';
             foreach( $result as $row ) {
 
@@ -147,9 +146,6 @@ ORDER BY EINHEIT_KURZNAME";
         $pdf = new Cezpdf ( 'a4', 'portrait' );
         $bpdf = new b_pdf ();
         $bpdf->b_header ( $pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6 );
-        $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` ,EINHEIT_ID,  `EINHEIT_LAGE` , `EINHEIT_QM`, TYP FROM EINHEIT , HAUS, OBJEKT
-WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1'
-ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
         $cols = array (
             'OBJEKT_KURZNAME' => "Objekt",
             'HAUS_STRASSE' => "Strasse",
@@ -324,7 +320,6 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
     function get_einheit_status($einheit_id) {
         $this->datum_heute = date ( "Y-m-d" );
         $result = DB::select( "SELECT * FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' && ( MIETVERTRAG_BIS >= '$this->datum_heute' OR MIETVERTRAG_BIS = '0000-00-00' ) LIMIT 0 , 1 " );
-        $numrows = count( $result );
         return !empty($result);
     }
     function liste_aller_einheiten() {
@@ -396,7 +391,6 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
             $f->text_feld ( "Kurzname", "kurzname", "", "50", 'kurzname', '' );
             $f->text_feld ( "Lage", "lage", "", "10", 'lage', '' );
             $f->text_feld ( "m²", "qm", "", "10", 'qm', '' );
-            $h = new haus ();
             echo "<br>";
             $h = new haus ();
             $h->dropdown_haeuser_2 ( 'Haus wählen', 'haus_id', 'haus_id' );
@@ -417,12 +411,10 @@ ORDER BY OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, EINHEIT_LAGE";
             $f->text_feld ( "Lage", "lage", "$e->einheit_lage", "30", 'lage', '' );
             $e->einheit_qm_k = nummer_punkt2komma ( $e->einheit_qm );
             $f->text_feld ( "m²", "qm", "$e->einheit_qm_k", "10", 'qm', '' );
-            $h = new haus ();
             echo "<br>";
             $h = new haus ();
             $h->dropdown_haeuser_2 ( 'Haus wählen', 'haus_id', 'haus_id', $e->haus_id );
             $this->dropdown_einheit_typen ( 'Typ', 'typ', 'typ', $e->typ );
-            // dropdown_einheit_typen($label, $name, $id, $vorwahl)
             $f->hidden_feld ( "einheit_raus", "einheit_speichern_ae" );
             $f->send_button ( "submit_einheit", "Änderung speichern" );
             $f->ende_formular ();

@@ -21,8 +21,6 @@ class personal
                 $b_id = $benutzer->id;
                 $b_name_g = strtoupper($benutzer->name);
                 $b_name = $benutzer->name;
-                $b_eintritt = $benutzer->join_date;
-                $b_austritt = $benutzer->leave_date;
                 $ze = new zeiterfassung ();
                 $partner_id = $ze->get_partner_id_benutzer($b_id);
                 if ($partner_id) {

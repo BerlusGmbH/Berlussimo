@@ -204,7 +204,6 @@ class wirt_e
             for ($a = 0; $a < $anzahl; $a++) {
                 $e_id = $einheiten_arr [$a] ['EINHEIT_ID'];
                 $e_name = $einheiten_arr [$a] ['EINHEIT_KURZNAME'];
-                $haus_info = $einheiten_arr [$a] ['HAUS_STRASSE'] . $einheiten_arr [$a] ['HAUS_NUMMER'];;
                 echo "<OPTION value=\"$e_id\">$e_name</OPTION>";
             }
             echo "</SELECT>";
