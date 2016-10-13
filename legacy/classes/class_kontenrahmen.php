@@ -75,17 +75,15 @@ class kontenrahmen {
 
 	/* Liste aller Kontorahmenkonten als array */
 	function kontorahmen_konten_in_array($typ, $typ_id) {
-		// echo "<h1>$typ $typ_id</h1>";
 		$kontenrahmen_id = $this->get_kontenrahmen ( $typ, $typ_id );
-
-		$result = DB::select( "SELECT KONTO, BEZEICHNUNG FROM KONTENRAHMEN_KONTEN WHERE KONTENRAHMEN_ID='$kontenrahmen_id' && AKTUELL='1' ORDER BY KONTO ASC" );
+        $result = DB::select( "SELECT KONTO, BEZEICHNUNG FROM KONTENRAHMEN_KONTEN WHERE KONTENRAHMEN_ID='$kontenrahmen_id' && AKTUELL='1' ORDER BY KONTO ASC" );
 		return $result;
 	}
 
 	/* Den dazugehörigen Kontenrahmen finden, egal ob Geldkonto, Partner usw. */
 	function get_kontenrahmen($typ, $typ_id) {
 		$result = DB::select( "SELECT KONTENRAHMEN_ID FROM `KONTENRAHMEN_ZUWEISUNG` WHERE TYP='$typ' && TYP_ID='$typ_id' && AKTUELL='1' ORDER BY DAT DESC LIMIT 0,1" );
-		if (!empty($numrows)) {
+		if (!empty($result)) {
 			$row = $result[0];
 			return $row ['KONTENRAHMEN_ID'];
 		} else {
