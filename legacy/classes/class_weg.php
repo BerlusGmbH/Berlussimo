@@ -913,8 +913,8 @@ class weg
                 $et_qm = $d->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Fläche');
                 $def_link = "<a href='" . route('legacy::weg::index', ['option' => 'wohngeld_definieren', 'einheit_id' => $einheit_id]) . "'>Wohngeld bestimmen</a>";
                 $hg_auszug_link = "<a href='" . route('legacy::weg::index', ['option' => 'hausgeld_kontoauszug', 'eigentuemer_id' => $this->eigentuemer_id]) . "'>Hausgeld Kontoauszug</a>";
-                $hg_auszug_link1 = "<a href='" . route('legacy::weg::index', ['option' => 'hg_kontoauszug', 'eigentuemer_id' => $this->eigentuemer_id]) . "'><img src=\"images/pdf_light.png\"></a>";
-                $hg_auszug_link2 = "<a href='" . route('legacy::weg::index', ['option' => 'hg_kontoauszug', 'eigentuemer_id' => $this->eigentuemer_id, 'no_logo']) . "'><img src=\"images/pdf_dark.png\"></a>";
+                $hg_auszug_link1 = "<a href='" . route('legacy::weg::index', ['option' => 'hg_kontoauszug', 'eigentuemer_id' => $this->eigentuemer_id, 'jahr' => date('Y')]) . "'><img src=\"images/pdf_light.png\"></a>";
+                $hg_auszug_link2 = "<a href='" . route('legacy::weg::index', ['option' => 'hg_kontoauszug', 'eigentuemer_id' => $this->eigentuemer_id, 'jahr' => date('Y'), 'no_logo']) . "'><img src=\"images/pdf_dark.png\"></a>";
 
                 echo "<tr><td>$u_link</td><td>$this->eigentuemer_namen</td><td>$e->haus_strasse $e->haus_nummer, $e->haus_plz $e->haus_stadt</td><td>$e->einheit_qm_a m²</td><td>$et_qm</td><td>$e->einheit_lage</td><td>$this->weg_anteile</td><td>$def_link<hr>$hg_auszug_link<br>$hg_auszug_link1 $hg_auszug_link2</td>";
                 echo "<td>";
@@ -927,7 +927,7 @@ class weg
                         $v_id = $arr_e [$e] ['ID'];
                         $v_von = date_mysql2german($arr_e [$e] ['VON']);
                         $v_bis = date_mysql2german($arr_e [$e] ['BIS']);
-                        $hg_auszug_link_ve = "<a href='" . route('legacy::weg::index', ['option' => 'hg_kontoauszug', 'eigentuemer_id' => $v_id]) . "'>$et_nr. <img src=\"images/pdf_dark.png\"></a>";
+                        $hg_auszug_link_ve = "<a href='" . route('legacy::weg::index', ['option' => 'hg_kontoauszug', 'eigentuemer_id' => $v_id, 'jahr' => date('Y')]) . "'>$et_nr. <img src=\"images/pdf_dark.png\"></a>";
                         echo "$hg_auszug_link_ve $v_von - $v_bis<br>";
                     }
                 }
@@ -1222,110 +1222,6 @@ class weg
 
         $this->saldo_jahr = $this->zb_bisher - $this->Wohngeld_soll_g;
         return $this->saldo_jahr;
-    }
-
-    function get_eigentumer_id_infos($e_id)
-    {
-        $einheit_id = $this->get_einheit_id_from_eigentuemer($e_id);
-        $this->einheit_id = $einheit_id;
-        $e = new einheit ();
-        $e->get_einheit_info($einheit_id);
-        $this->haus_strasse = $e->haus_strasse;
-        $this->haus_nummer = $e->haus_nummer;
-        $this->einheit_kurzname = $e->einheit_kurzname;
-        $this->objekt_id = $e->objekt_id;
-        $this->get_last_eigentuemer_namen($einheit_id);
-        $miteigentuemer_namen = strip_tags($this->eigentuemer_namen2);
-        $this->get_anrede_eigentuemer($e_id);
-        return "$e->einheit_kurzname $miteigentuemer_namen";
-    }
-
-    function get_anrede_eigentuemer($e_id)
-    {
-        unset ($this->postanschrift);
-        unset ($this->eig_namen_u);
-        unset ($this->eig_namen_u_pdf);
-        $this->eigentuemer_id = $e_id;
-
-        $personen_id_arr = $this->get_person_id_eigentuemer_arr($this->eigentuemer_id);
-        $anz_p = count($personen_id_arr);
-        if (!$anz_p) {
-        } else {
-            unset ($this->eigentuemer_name);
-
-            for ($a = 0; $a < $anz_p; $a++) {
-                $person_id = $personen_id_arr [$a] ['PERSON_ID'];
-                $p = new personen ();
-                $p->get_person_infos($person_id);
-                $this->eigentuemer_name [$a] ['person_id'] = $person_id;
-                $this->eigentuemer_name [$a] ['Nachname'] = $p->person_nachname;
-                $this->eigentuemer_name [$a] ['Vorname'] = $p->person_vorname;
-                $this->eigentuemer_name [$a] ['Geburtstag'] = $p->person_geburtstag;
-                $this->eigentuemer_name [$a] ['Geschlecht'] = $p->geschlecht;
-                if ($p->geschlecht == 'weiblich') {
-                    $this->eigentuemer_name [$a] ['Anrede'] = "geehrte Frau $p->person_nachname";
-                    $this->eigentuemer_name [$a] ['HRFRAU'] = "Frau";
-                }
-
-                if ($p->geschlecht == 'männlich') {
-                    $this->eigentuemer_name [$a] ['Anrede'] = "geehrter Herr $p->person_nachname";
-                    $this->eigentuemer_name [$a] ['HRFRAU'] = "Herrn";
-                }
-
-                if (!$p->geschlecht) {
-                    $this->eigentuemer_name [$a] ['Anrede'] = "geehrte Damen und Herren";
-                }
-                if (isset ($this->eigentuemer_name [$a] ['HRFRAU'])) {
-                    $anrede = $this->eigentuemer_name [$a] ['HRFRAU'];
-                } else {
-                    $anrede = '';
-                }
-
-                $d = new detail ();
-                if ($d->finde_detail_inhalt('PERSON', $person_id, 'Anschrift')) {
-                    $this->postanschrift [$a] = $d->finde_detail_inhalt('PERSON', $person_id, 'Anschrift');
-                } else {
-                    $this->postanschrift [$a] = "$this->haus_strasse $this->haus_nummer\n<b>$this->haus_plz $this->haus_stadt</b>";
-                    $this->eigentuemer_name_str_u1 .= "$anrede $p->person_nachname $p->person_vorname\n";
-                }
-            }
-
-            $arr = array_sortByIndex($this->eigentuemer_name, 'Geschlecht', 'DESC');
-            unset ($this->eigentuemer_name);
-            $this->eigentuemer_name = $arr;
-            $this->pdf_anrede = 'Sehr ';
-            for ($a = 0; $a < $anz_p; $a++) {
-                if ($a == 0) {
-                    $this->pdf_anrede .= $this->eigentuemer_name [$a] ['Anrede'] . ',<br>';
-                } else {
-                    $this->pdf_anrede .= 'sehr ' . $this->eigentuemer_name [$a] ['Anrede'] . ',<br>';
-                }
-                if ($anz_p == 1) {
-                    $this->eig_namen_u .= $this->eigentuemer_name [$a] ['HRFRAU'] . '<br>' . $this->eigentuemer_name [$a] ['Vorname'] . ' ' . $this->eigentuemer_name [$a] ['Nachname'] . '<br>';
-                    $this->eig_namen_u_pdf .= $this->eigentuemer_name [$a] ['HRFRAU'] . "\n" . $this->eigentuemer_name [$a] ['Vorname'] . ' ' . $this->eigentuemer_name [$a] ['Nachname'] . "\n";
-                } else {
-
-                    if (!isset ($this->eigentuemer_name [$a] ['HRFRAU'])) {
-                        $this->eigentuemer_name [$a] ['HRFRAU'] = '';
-                    }
-
-                    $this->eig_namen_u .= $this->eigentuemer_name [$a] ['HRFRAU'] . ' ' . $this->eigentuemer_name [$a] ['Vorname'] . ' ' . $this->eigentuemer_name [$a] ['Nachname'] . '<br>';
-                    $this->eig_namen_u_pdf .= $this->eigentuemer_name [$a] ['HRFRAU'] . ' ' . $this->eigentuemer_name [$a] ['Vorname'] . ' ' . $this->eigentuemer_name [$a] ['Nachname'] . "\n";
-                }
-
-                $this->eigentuemer_name_str_u1 = '';
-                $d = new detail ();
-                if ($d->finde_detail_inhalt('PERSON', $person_id, 'Anschrift')) {
-                    $this->postanschrift [$a] = $d->finde_detail_inhalt('PERSON', $person_id, 'Anschrift');
-                } else {
-                    $this->postanschrift [$a] = "$this->eig_namen_u_pdf$this->haus_strasse $this->haus_nummer\n<b>$this->haus_plz $this->haus_stadt</b>";
-                    $this->eigentuemer_name_str_u1 .= "$anrede $p->person_nachname $p->person_vorname\n";
-                }
-            }
-
-            $this->anrede = $this->pdf_anrede;
-            $this->pdf_anrede = str_replace("<br>", "\n", $this->anrede);
-        }
     }
 
     function datum_erste_hg_def($kos_typ, $kos_id)
@@ -1904,6 +1800,110 @@ class weg
         echo "</table>";
     }
 
+    function get_eigentumer_id_infos($e_id)
+    {
+        $einheit_id = $this->get_einheit_id_from_eigentuemer($e_id);
+        $this->einheit_id = $einheit_id;
+        $e = new einheit ();
+        $e->get_einheit_info($einheit_id);
+        $this->haus_strasse = $e->haus_strasse;
+        $this->haus_nummer = $e->haus_nummer;
+        $this->einheit_kurzname = $e->einheit_kurzname;
+        $this->objekt_id = $e->objekt_id;
+        $this->get_last_eigentuemer_namen($einheit_id);
+        $miteigentuemer_namen = strip_tags($this->eigentuemer_namen2);
+        $this->get_anrede_eigentuemer($e_id);
+        return "$e->einheit_kurzname $miteigentuemer_namen";
+    }
+
+    function get_anrede_eigentuemer($e_id)
+    {
+        unset ($this->postanschrift);
+        unset ($this->eig_namen_u);
+        unset ($this->eig_namen_u_pdf);
+        $this->eigentuemer_id = $e_id;
+
+        $personen_id_arr = $this->get_person_id_eigentuemer_arr($this->eigentuemer_id);
+        $anz_p = count($personen_id_arr);
+        if (!$anz_p) {
+        } else {
+            unset ($this->eigentuemer_name);
+
+            for ($a = 0; $a < $anz_p; $a++) {
+                $person_id = $personen_id_arr [$a] ['PERSON_ID'];
+                $p = new personen ();
+                $p->get_person_infos($person_id);
+                $this->eigentuemer_name [$a] ['person_id'] = $person_id;
+                $this->eigentuemer_name [$a] ['Nachname'] = $p->person_nachname;
+                $this->eigentuemer_name [$a] ['Vorname'] = $p->person_vorname;
+                $this->eigentuemer_name [$a] ['Geburtstag'] = $p->person_geburtstag;
+                $this->eigentuemer_name [$a] ['Geschlecht'] = $p->geschlecht;
+                if ($p->geschlecht == 'weiblich') {
+                    $this->eigentuemer_name [$a] ['Anrede'] = "geehrte Frau $p->person_nachname";
+                    $this->eigentuemer_name [$a] ['HRFRAU'] = "Frau";
+                }
+
+                if ($p->geschlecht == 'männlich') {
+                    $this->eigentuemer_name [$a] ['Anrede'] = "geehrter Herr $p->person_nachname";
+                    $this->eigentuemer_name [$a] ['HRFRAU'] = "Herrn";
+                }
+
+                if (!$p->geschlecht) {
+                    $this->eigentuemer_name [$a] ['Anrede'] = "geehrte Damen und Herren";
+                }
+                if (isset ($this->eigentuemer_name [$a] ['HRFRAU'])) {
+                    $anrede = $this->eigentuemer_name [$a] ['HRFRAU'];
+                } else {
+                    $anrede = '';
+                }
+
+                $d = new detail ();
+                if ($d->finde_detail_inhalt('PERSON', $person_id, 'Anschrift')) {
+                    $this->postanschrift [$a] = $d->finde_detail_inhalt('PERSON', $person_id, 'Anschrift');
+                } else {
+                    $this->postanschrift [$a] = "$this->haus_strasse $this->haus_nummer\n<b>$this->haus_plz $this->haus_stadt</b>";
+                    $this->eigentuemer_name_str_u1 .= "$anrede $p->person_nachname $p->person_vorname\n";
+                }
+            }
+
+            $arr = array_sortByIndex($this->eigentuemer_name, 'Geschlecht', 'DESC');
+            unset ($this->eigentuemer_name);
+            $this->eigentuemer_name = $arr;
+            $this->pdf_anrede = 'Sehr ';
+            for ($a = 0; $a < $anz_p; $a++) {
+                if ($a == 0) {
+                    $this->pdf_anrede .= $this->eigentuemer_name [$a] ['Anrede'] . ',<br>';
+                } else {
+                    $this->pdf_anrede .= 'sehr ' . $this->eigentuemer_name [$a] ['Anrede'] . ',<br>';
+                }
+                if ($anz_p == 1) {
+                    $this->eig_namen_u .= $this->eigentuemer_name [$a] ['HRFRAU'] . '<br>' . $this->eigentuemer_name [$a] ['Vorname'] . ' ' . $this->eigentuemer_name [$a] ['Nachname'] . '<br>';
+                    $this->eig_namen_u_pdf .= $this->eigentuemer_name [$a] ['HRFRAU'] . "\n" . $this->eigentuemer_name [$a] ['Vorname'] . ' ' . $this->eigentuemer_name [$a] ['Nachname'] . "\n";
+                } else {
+
+                    if (!isset ($this->eigentuemer_name [$a] ['HRFRAU'])) {
+                        $this->eigentuemer_name [$a] ['HRFRAU'] = '';
+                    }
+
+                    $this->eig_namen_u .= $this->eigentuemer_name [$a] ['HRFRAU'] . ' ' . $this->eigentuemer_name [$a] ['Vorname'] . ' ' . $this->eigentuemer_name [$a] ['Nachname'] . '<br>';
+                    $this->eig_namen_u_pdf .= $this->eigentuemer_name [$a] ['HRFRAU'] . ' ' . $this->eigentuemer_name [$a] ['Vorname'] . ' ' . $this->eigentuemer_name [$a] ['Nachname'] . "\n";
+                }
+
+                $this->eigentuemer_name_str_u1 = '';
+                $d = new detail ();
+                if ($d->finde_detail_inhalt('PERSON', $person_id, 'Anschrift')) {
+                    $this->postanschrift [$a] = $d->finde_detail_inhalt('PERSON', $person_id, 'Anschrift');
+                } else {
+                    $this->postanschrift [$a] = "$this->eig_namen_u_pdf$this->haus_strasse $this->haus_nummer\n<b>$this->haus_plz $this->haus_stadt</b>";
+                    $this->eigentuemer_name_str_u1 .= "$anrede $p->person_nachname $p->person_vorname\n";
+                }
+            }
+
+            $this->anrede = $this->pdf_anrede;
+            $this->pdf_anrede = str_replace("<br>", "\n", $this->anrede);
+        }
+    }
+
     function get_monatliche_def($monat, $jahr, $kos_typ, $kos_id)
     {
         $result = DB::select("SELECT SUM(BETRAG) AS SUMME, E_KONTO, KOSTENKAT FROM WEG_WG_DEF WHERE KOS_TYP LIKE '$kos_typ' && KOS_ID='$kos_id' && E_KONTO!=6050 && AKTUELL='1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' GROUP BY KOSTENKAT ORDER BY E_KONTO ASC");
@@ -2474,7 +2474,6 @@ class weg
             $this->hg_ist_soll_pdf($pdf, $eigentuemer_id);
             $this->hga_uebersicht_pdf($pdf, $eigentuemer_id);
         }
-        ob_end_clean(); // ausgabepuffer leeren
         $pdf->ezStream();
     }
 
@@ -2551,28 +2550,46 @@ class weg
             for ($b = 0; $b < $anz_defs; $b++) {
                 $e_konto = $moegliche_defs [$b] ['E_KONTO'];
                 $kostenkat = $moegliche_defs [$b] ['KOSTENKAT'];
-                $soll_ist_arr [$b] ['KONTO'] = $e_konto;
                 $soll_ist_arr [$b] ['KOSTENKAT'] = $kostenkat;
                 $summe_kostenkat = $this->get_summe_kostenkat($monat, $jahr, 'Einheit', $this->einheit_id, $kostenkat);
                 $soll_ist_arr [$b] ['SUMME_SOLL'] += $summe_kostenkat;
-                $summe_ist_zahlungen = $this->get_summe_zahlungen_kostenkonto('Eigentuemer', $eigentuemer_id, $monat, $jahr, $geldkonto_id, $e_konto);
+                if ($b > 0 && $moegliche_defs [$b] ['E_KONTO'] == $moegliche_defs [$b - 1] ['E_KONTO']) {
+                    $soll_ist_arr [$b] ['KONTO'] = '';
+                    $summe_ist_zahlungen = 0;
+                } else {
+                    $soll_ist_arr [$b] ['KONTO'] = $e_konto;
+                    $summe_ist_zahlungen = $this->get_summe_zahlungen_kostenkonto('Eigentuemer', $eigentuemer_id, $monat, $jahr, $geldkonto_id, $e_konto);
+                }
                 $soll_ist_arr [$b] ['SUMME_IST'] += $summe_ist_zahlungen;
             }
         }
 
         $anz_konten = count($soll_ist_arr);
+        $g_ist = 0;
         $g_soll = 0;
         $g_saldo = 0;
+        $aggregate_saldo = 0;
+        $aggregate_saldo_row = 0;
         for ($a = 0; $a < $anz_konten; $a++) {
             $soll = $soll_ist_arr [$a] ['SUMME_SOLL'];
             $soll_ist_arr [$a] ['SUMME_SOLL'] = nummer_punkt2komma($soll);
             $g_soll += $soll;
-            $ist = $soll_ist_arr [$a] ['SUMME_IST'];
-            $soll_ist_arr [$a] ['SUMME_IST'] = nummer_punkt2komma($ist);
-            $g_ist += $ist;
-            $saldo = $ist - $soll;
-            $g_saldo += $saldo;
-            $soll_ist_arr [$a] ['SALDO'] = nummer_punkt2komma($saldo);
+            if ($soll_ist_arr [$a] ['KONTO'] == '') {
+                $soll_ist_arr [$a] ['SUMME_IST'] = '';
+                $soll_ist_arr [$a] ['SALDO'] = '';
+                $aggregate_saldo -= $soll;
+                $g_saldo -= $soll;
+                $soll_ist_arr [$aggregate_saldo_row] ['SALDO'] = nummer_punkt2komma($aggregate_saldo);
+            } else {
+                $ist = $soll_ist_arr [$a] ['SUMME_IST'];
+                $soll_ist_arr [$a] ['SUMME_IST'] = nummer_punkt2komma($ist);
+                $g_ist += $ist;
+                $saldo = $ist - $soll;
+                $g_saldo += $saldo;
+                $aggregate_saldo = $saldo;
+                $aggregate_saldo_row = $a;
+                $soll_ist_arr [$a] ['SALDO'] = nummer_punkt2komma($saldo);
+            }
         }
 
         $soll_ist_arr [$a + 1] ['KOSTENKAT'] = '<b>Summen</b>';
@@ -2623,14 +2640,14 @@ class weg
     {
         $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE DATE_FORMAT(DATUM, '%Y-%m') = '$jahr-$monat' && KOSTENTRAEGER_TYP LIKE '$kos_typ' && KOSTENTRAEGER_ID='$kos_id' && AKTUELL='1' && GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO='$buchungskonto' ORDER BY DATUM ASC");
         if (!empty($result)) {
-            return $result['SUMME'];
+            return $result[0]['SUMME'];
         }
+        return 0;
     }
 
     function hga_uebersicht_pdf(Cezpdf $pdf, $eigentuemer_id)
     {
         $e_konto = 6050;
-        // echo "funkt $eigentuemer_id";
         $this->get_eigentumer_id_infos($eigentuemer_id);
         if (request()->has('jahr')) {
             $jahr = request()->input('jahr');
@@ -2759,15 +2776,16 @@ class weg
 
     function get_ergebnis_hga_ist($kos_id_ist, $jahr, $geldkonto, $buchungskonto)
     {
-        $result = DB::select("
-SELECT IF(SUM(BETRAG) IS NULL,0,SUM(BETRAG)) AS IST
-FROM GELD_KONTO_BUCHUNGEN 
-WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr' 
-	&& KOSTENTRAEGER_TYP LIKE 'Eigentuemer' 
-	&& KOSTENTRAEGER_ID=$kos_id_ist
-	&& AKTUELL='1' 
-	&& GELDKONTO_ID=$geldkonto
-	&& KONTENRAHMEN_KONTO=$buchungskonto;");
+        $result = DB::select(
+            "SELECT IF(SUM(BETRAG) IS NULL,0,SUM(BETRAG)) AS IST
+            FROM GELD_KONTO_BUCHUNGEN 
+            WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr' 
+	          && KOSTENTRAEGER_TYP LIKE 'Eigentuemer' 
+	          && KOSTENTRAEGER_ID=$kos_id_ist
+	          && AKTUELL='1' 
+	          && GELDKONTO_ID=$geldkonto
+	          && KONTENRAHMEN_KONTO=$buchungskonto;"
+        );
         if (!empty($result)) {
             $row = $result[0];
             return $row['IST'];
@@ -3592,18 +3610,6 @@ ORDER BY HGA;");
             $tab_arr [$zeile_tab] ['BETRAG'] = "<b>" . nummer_punkt2komma($summe_g) . "</b>";
         }
         return $tab_arr;
-    }
-
-    function get_last_eigentuemer_id($einheit_id)
-    {
-        $arr = $this->get_last_eigentuemer_arr($einheit_id);
-        $anz = count($arr);
-        if (!$anz) {
-            // $this->eigentuemer_name[0]['Nachname'] = 'unbekannt';
-            $this->eigentuemer_id = 'unbekannt';
-        } else {
-            $this->eigentuemer_id = $arr ['ID'];
-        }
     }
 
     function get_eigentumer_id_infos3($e_id)
@@ -6947,8 +6953,6 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
         }
     }
 
-    /* Serienbriefe */
-
     function form_eigentuemer_checkliste($objekt_id)
     {
         $o = new objekt ();
@@ -7002,6 +7006,8 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
         echo "</div>";
         $f->ende_formular();
     }
+
+    /* Serienbriefe */
 
     function form_hausgeldzahlungen($objekt_id)
     {
@@ -7451,6 +7457,18 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
         ));
         ob_end_clean(); // ausgabepuffer leeren
         $pdf->ezStream();
+    }
+
+    function get_last_eigentuemer_id($einheit_id)
+    {
+        $arr = $this->get_last_eigentuemer_arr($einheit_id);
+        $anz = count($arr);
+        if (!$anz) {
+            // $this->eigentuemer_name[0]['Nachname'] = 'unbekannt';
+            $this->eigentuemer_id = 'unbekannt';
+        } else {
+            $this->eigentuemer_id = $arr ['ID'];
+        }
     } // end function
 
     function pdf_hausgelder($objekt_id, $jahr)

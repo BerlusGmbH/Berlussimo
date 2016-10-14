@@ -316,7 +316,7 @@ LIMIT 0 , 30";
                     $weg->get_eigentumer_id_infos($eig_id);
                     $einheit_link .= "<a href='" . route('legacy::weg::index', ['option' => 'einheit_uebersicht', 'einheit_id' => $weg->einheit_id]) . "'>$weg->einheit_kurzname</a><br>";
                     $haus_info_link .= "$weg->haus_strasse $weg->haus_nummer<br>";
-                    $mietkonto_link .= "<a href='" . route('legacy::weg::index', ['option' => 'hg_kontoauszug', 'einheit_id' => $weg->einheit_id]) . "'><img src=\"images/pdf_light.png\"></a> <a href='" . route('legacy::weg::index', ['option' => 'hg_kontoauszug', 'einheit_id' => $weg->einheit_id, 'no_logo']) . "'><img src=\"images/pdf_dark.png\"></a><br>";
+                    $mietkonto_link .= "<a href='" . route('legacy::weg::index', ['option' => 'hg_kontoauszug', 'eigentuemer_id' => $weg->eigentuemer_id, 'jahr' => date('Y')]) . "'><img src=\"images/pdf_light.png\"></a> <a href='" . route('legacy::weg::index', ['option' => 'hg_kontoauszug', 'eigentuemer_id' => $weg->eigentuemer_id, 'jahr' => date('Y'), 'no_logo']) . "'><img src=\"images/pdf_dark.png\"></a><br>";
                 }
             }
 
