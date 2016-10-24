@@ -2,11 +2,11 @@
     <div class="row">
         <div class="col s12">
             <div class="card grey">
-                <div class="card-content white-text">
+                <div class="card-content">
                     <div class="row">
                         @if(check_user_links(Auth::user()->id, 'partner'))
                             <div class="col s4 m3 l1">
-                                <a href='{{route('legacy::partner::index')}}'>Partner</a>
+                                <a class="white-text" href='{{route('legacy::partner::index')}}'>Partner</a>
                             </div>
                         @endif
 
@@ -60,7 +60,7 @@
 
                         @if(check_user_links(Auth::user()->id, 'rechnungen'))
                             <div class="col s4 m3 l1">
-                                <a href='{{route('legacy::rechnungen::index', ['option' => 'erfasste_rechnungen'])}}'><b>Rechnungen</b></a>
+                                <a href='{{route('legacy::rechnungen::index', ['option' => 'erfasste_rechnungen'])}}'>Rechnungen</a>
                             </div>
                         @endif
 
@@ -96,7 +96,7 @@
 
                         @if(check_user_links(Auth::user()->id, 'buchen'))
                             <div class="col s4 m3 l1">
-                                <a href='{{route('legacy::buchen::index')}}'><b>Buchen</b></a>
+                                <a href='{{route('legacy::buchen::index')}}'>Buchen</a>
                             </div>
                         @endif
 
@@ -138,31 +138,31 @@
 
                         @if(check_user_links( Auth::user()->id, 'sepa'))
                             <div class="col s4 m3 l1">
-                                <a href='{{route('legacy::sepa::index')}}'><b>SEPA</b></a>
+                                <a href='{{route('legacy::sepa::index')}}'>SEPA</a>
                             </div>
                         @endif
 
                         @if (check_user_links(Auth::user()->id, 'benutzer'))
                             <div class="col s4 m3 l1">
-                                <a href='{{route('legacy::benutzer::index')}}'><b>Benutzer</b></a>
+                                <a href='{{route('legacy::benutzer::index')}}'>Benutzer</a>
                             </div>
                         @endif
 
                         @if (check_user_links(Auth::user()->id, 'weg'))
                             <div class="col s4 m3 l1">
-                                <a class='WEG' href='{{route('legacy::weg::index')}}'><b>WEG</b></a>
+                                <a class='WEG' href='{{route('legacy::weg::index')}}'>WEG</a>
                             </div>
                         @endif
 
                         @if(check_user_links(Auth::user()->id, 'todo' ))
                             <div class="col s4 m3 l1">
-                                <a href='{{route('legacy::todo::index')}}'>P & A</a>
+                                <a href='{{route('legacy::todo::index')}}'>Aufträge</a>
                             </div>
                         @endif
 
                         @if(check_user_links(Auth::user()->id, 'Wartung'))
                             <div class="col s4 m3 l1">
-                                <a href='/wartungsplaner/' target='new'><b>Wartungsplaner</b></a>
+                                <a href='/wartungsplaner/' target='new'>Wartungsplaner</a>
                             </div>
                         @endif
 

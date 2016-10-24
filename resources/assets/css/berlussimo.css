@@ -12,6 +12,9 @@ main {
     margin-bottom: 0;
 }
 
+.mainmenu a {
+    color: #FFFFFF; }
+
 .row {
     margin-bottom: 10px;
 }
