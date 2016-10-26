@@ -14,7 +14,7 @@ switch ($option) {
         $ma = new mietanpassung ();
         $bg = new berlussimo_global ();
         $bg->objekt_auswahl_liste();
-        if (request()->has('objekt_id')) {
+        if (session()->has('objekt_id')) {
             $ma->liste_anzeigen(session()->get('objekt_id'));
         }
         break;
