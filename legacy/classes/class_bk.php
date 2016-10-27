@@ -1074,7 +1074,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
         $my_array = DB::select($abfrage);
 
         /* Wenn überhaupt vermietet, sonst Leerstand ganzes Jahr, siehe unten nach ELSE */
-        if (!empty($result)) {
+        if (!empty($my_array)) {
             $anzahl_zeilen = count($my_array);
             $tage = 0;
             for ($a = 0; $a < $anzahl_zeilen; $a++) {
@@ -1717,20 +1717,20 @@ IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jahr-12-31')
 DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jahr-12-31'), IF(DATE_FORMAT(MIETVERTRAG_VON, '%Y') < '$jahr', '$jahr-01-01', MIETVERTRAG_VON))+1 AS TAGE FROM `MIETVERTRAG` WHERE `MIETVERTRAG_AKTUELL`='1' 
 && DATE_FORMAT(MIETVERTRAG_VON,'%Y') <= '$jahr' && (DATE_FORMAT(MIETVERTRAG_BIS,'%Y') >='$jahr' OR DATE_FORMAT(MIETVERTRAG_BIS,'%Y') ='0000') && MIETVERTRAG_ID='$mv1_id' ORDER BY MIETVERTRAG_VON ASC";
 
-        $result = DB::select($abfrage);
+        $my_array = DB::select($abfrage);
 
         /* Wenn überhaupt vermietet, sonst Leerstand ganzes Jahr, siehe unten nach ELSE */
-        if (!empty($result)) {
-            $anzahl_zeilen = count($result);
+        if (!empty($my_array)) {
+            $anzahl_zeilen = count($my_array);
             $tage = 0;
             for ($a = 0; $a < $anzahl_zeilen; $a++) {
-                $tage = $tage + $result [$a] ['TAGE'];
+                $tage = $tage + $my_array [$a] ['TAGE'];
             }
 
             $tage_im_jahr = $this->tage_im_jahr($jahr);
             /* Voll vermietet */
             if ($tage == $tage_im_jahr) {
-                return $result;
+                return $my_array;
             }
 
             /* Nicht ganzes Jahr vermietet */
@@ -1741,8 +1741,8 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 $summe_tage = 0;
                 for ($a = 0; $a < $anzahl_zeilen; $a++) {
 
-                    $berechnung_von = $result [$a] ['BERECHNUNG_VON'];
-                    $berechnung_bis = $result [$a] ['BERECHNUNG_BIS'];
+                    $berechnung_von = $my_array [$a] ['BERECHNUNG_VON'];
+                    $berechnung_bis = $my_array [$a] ['BERECHNUNG_BIS'];
 
                     /* Wenn etwas am Anfang des Jahres fehlt */
                     if ($a == 0) {
@@ -1767,7 +1767,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     /* In allen Zeilen ausser letzte */
 
                     if ($a < $anzahl_zeilen - 1) {
-                        $berechnung_von_next = $result [$a + 1]['BERECHNUNG_VON'];
+                        $berechnung_von_next = $my_array [$a + 1]['BERECHNUNG_VON'];
                         $diff_zw_mvs = $this->diff_in_tagen($berechnung_bis, $berechnung_von_next) - 1;
                         if ($diff_zw_mvs > 1) {
                             // echo "ES FEHLEN $berechnung_bis $berechnung_von_next $diff_zw_mvs<br>";
@@ -1986,8 +1986,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
 
     function pdf_ausgabe_alle($profil_id)
     {
-        ob_clean();
-        // ausgabepuffer leeren
         $pdf = new Cezpdf ('a4', 'portrait');
         $bpdf = new b_pdf ();
         $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
@@ -2058,12 +2056,8 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
         $keys = array_keys($bk_res_arr);
         // unsortiert mit Kontrolle!!!!
 
-        /* Sortierung der Seiten für PDF Ausgabe */
-        // echo "'<pre>";
-
         unset ($keys [0]);
         // Kontolle rausnehmen
-        // print_r($keys);
         natsort($keys);
 
         $ind = array_values($keys);
@@ -2102,9 +2096,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     $liste_abrechnungen [$a] ['ZUSTELLEN'] = 'VERSCHICKEN';
                     $liste_abrechnungen [$a] ['ZUSTELLER'] = 'POSTWEG';
                 }
-                /* Aktuelle Mieter */
-                // if($mvv->mietvertrag_aktuell=='1'){
-
                 /* Zustelladresse oder ins Haus?!? */
                 if ($mvv->anz_zustellanschriften > 0 or $mvv->anz_verzugsanschriften > 0) {
                     $liste_abrechnungen [$a] ['ZUSTELLEN'] = 'VERSENDEN Z/V';
@@ -2166,13 +2157,11 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
         $anp_arr = $this->get_anpassung_infos2($profil_id);
         $anz = count($anp_arr);
         if ($anz) {
-
             for ($a = 0; $a < $anz; $a++) {
                 $grund = $anp_arr [$a] ['GRUND'];
                 $festbetrag = $anp_arr [$a] ['FEST_BETRAG'];
                 $gkey_id = $anp_arr [$a] ['KEY_ID'];
                 $this->get_genkey_infos($gkey_id);
-                // echo "<tr><td>$grund</td><td> $festbetrag / $this->g_key_me</td><br>";
                 $anp_tab [$a] ['GRUND'] = $grund;
                 $anp_tab [$a] ['BETRAG'] = nummer_punkt2komma($festbetrag) . ' €';
                 $anp_tab [$a] ['ME'] = $this->g_key_me . ' / Monat';
@@ -2206,8 +2195,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 )
             ));
             $pdf->ezSetDy(-20);
-        } else {
-            // echo "Keine Anpassung im Profil eingetragen";
         }
 
         $pdf->ezNewPage();
@@ -2249,31 +2236,11 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 )
             )
         ));
-        // $pdf->ezNewPage();
-
-        /* Ende Kontrolldatenblatt */
+       /* Ende Kontrolldatenblatt */
 
         /* Zusammenstellung des Profils */
         $this->pdf_uebersicht_profil($pdf, $profil_id);
-        // mit pdf;
 
-        /*
-		 * $g_summen_arr = $this->get_buchungssummen_konto_arr_2($profil_id);
-		 * $anz_zeilen = count($g_summen_arr);
-		 * for($a=0;$a<$anz_zeilen;$a++){
-		 * $kostenart = $g_summen_arr[$a][$bk_k_id][KOSTENART];
-		 * $gesamt_kosten = $g_summen_arr[$a][$bk_k_id][KOSTEN_GESAMT];
-		 * $gesamt_gewerbe = $g_summen_arr[$a][$bk_k_id][KOSTEN_GEWERBE];
-		 * $gesamt_wohnraum = $g_summen_arr[$a][$bk_k_id][KOSTEN_WOHNRAUM];
-		 * $kontroll_tab_druck1[$a][KOSTENART] = $kostenart;
-		 * $kontroll_tab_druck1[$a][KOSTEN_GESAMT] = $gesamt_kosten.' €';
-		 * $kontroll_tab_druck1[$a][KOSTEN_GEWERBE] = $gesamt_gewerbe.' €';
-		 * $kontroll_tab_druck1[$a][KOSTEN_WOHNRAUM] = $gesamt_wohnraum.' €';
-		 * }
-		 *
-		 */
-
-        // echo "BK Abrechnungen: $anzahl_abr<br>";
         for ($a = 0; $a < $anzahl_abr; $a++) { // $a=1 weil [kontrolle] übersprungen werden soll
             /* Kopfdaten */
             $key_val = $keys [$a];
