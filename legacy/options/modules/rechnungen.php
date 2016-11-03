@@ -2431,9 +2431,9 @@ switch ($option) {
         break;
 
     case "neue_rg" :
-        if (request()->has('belegnr') && request()->has('empf_p_id') && request()->has('partner_id')) {
+        if (request()->has('belegnr') && request()->has('empf_p_id') && session()->has('partner_id')) {
             $r = new rechnungen ();
-            $r->rechnung_aus_beleg(request()->input('partner_id'), request()->input('belegnr'), request()->input('empf_p_id'));
+            $r->rechnung_aus_beleg(session()->input('partner_id'), request()->input('belegnr'), request()->input('empf_p_id'));
         } else {
             fehlermeldung_ausgeben("FEHLER xo");
         }

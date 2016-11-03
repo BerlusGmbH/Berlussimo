@@ -247,7 +247,6 @@ class rechnungen
     {
         $result = DB::select("SELECT * FROM RECHNUNGEN WHERE BELEG_NR='$belegnr' && AKTUELL='1' ORDER BY BELEG_NR DESC LIMIT 0,1");
         if (!empty($result)) {
-
             /* Skontogesamtbetrag updaten */
             $this->update_skontobetrag($belegnr);
             $this->update_nettobetrag($belegnr);
@@ -904,15 +903,12 @@ class rechnungen
     {
         $this->rechnung_grunddaten_holen($belegnr);
         $f = new formular ();
-        // print_r($this);
         if ($this->status_bezahlt == '1') {
             $f->fieldset("Rechnung $this->rechnungsnummer von $this->rechnungs_aussteller_name an $this->rechnungs_empfaenger_name ", 'xxx');
             echo "<h1>Rechnung $this->rechnungsnummer von $this->rechnungs_aussteller_name an $this->rechnungs_empfaenger_name wurde gezahlt</h1>";
             $f->fieldset_ende();
         } else {
-
             if ($this->status_zahlung_freigegeben == '1') {
-                // echo "<h1>BITTE NICHT BUCHEN, WIRD BEARBEITET - SIVAC</h1>";
                 $g = new geldkonto_info ();
                 $b = new buchen ();
                 $f->fieldset("Rechnung von $this->rechnungs_aussteller_name an $this->rechnungs_empfaenger_name, Rechnungsnr: $this->rechnungsnummer,  Erfassungsnummer: $this->belegnr", 'rech_buchen');
@@ -4348,7 +4344,6 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
             if ($anz_k < 1) {
                 fehlermeldung_ausgeben("Position $pos ist nicht kontiert");
             } else {
-
                 for ($p = 0; $p < $anz_k; $p++) {
                     $k_menge = $kont_arr [$p] ['MENGE'];
                     $k_preis = $kont_arr [$p] ['EINZEL_PREIS'];
@@ -4369,6 +4364,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
                     $last_dat = DB::getPdo()->lastInsertId();
                     protokollieren('KONTIERUNG_POSITIONEN', $last_dat, '0');
                 } // end for2
+                $r->rechnung_als_vollstaendig($letzte_belegnr);
             } // end if
         } // end for
 
