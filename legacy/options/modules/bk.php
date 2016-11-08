@@ -266,11 +266,13 @@ switch ($option) {
         $bpdf = new b_pdf ();
         $ber = new berlussimo_global ();
         $ber->objekt_auswahl_liste();
-        if (!request()->has('empfaenger')) {
-            $bpdf->form_mieter2sess();
-        } else {
-            $empfaenger = request()->input('empfaenger');
-            $bpdf->form_serienbrief_an($empfaenger);
+        if (session()->has('objekt_id')) {
+            if (!request()->has('empfaenger')) {
+                $bpdf->form_mieter2sess();
+            } else {
+                $empfaenger = request()->input('empfaenger');
+                $bpdf->form_serienbrief_an($empfaenger);
+            }
         }
         break;
 
