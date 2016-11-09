@@ -10,25 +10,18 @@ if (request()->has('option') && !empty (request()->input('option'))) {
 switch ($option) {
 
     default :
-        if (!session()->has('partner_id')) {
-            $p = new partners ();
-            $p_id = session()->get('partner_id');
-            $p->get_partner_info($p_id);
-            echo "<h3>Preisentwicklung im Katalog von $p->partner_name</h3>";
-        }
         break;
 
     case "katalog_anzeigen" :
         ini_set('memory_limit', '256M');
         if (!session()->has('partner_id')) {
-            $k = new katalog ();
-            $k->partner_auswahl_menue(route('legacy::katalog::index', [], false));
-            break;
+            weiterleiten(route('legacy::rechnungen::index', ['option' => 'partner_wechseln'], false));
+            return;
         }
         $p_id = session()->get('partner_id');
         $p = new partners ();
         $p->get_partner_info($p_id);
-        echo "<h3>Katalog von $p->partner_name</h3>";
+        echo "<h5>Katalog von $p->partner_name</h5>";
 
         $k = new katalog ();
         $k->katalog_artikel_anzeigen($p_id);
@@ -36,7 +29,7 @@ switch ($option) {
 
     case "preisentwicklung" :
         if (!request()->has('lieferant') && !session()->has('partner_id') && !request()->has('artikel_nr')) {
-            echo "Erst Lieferanten wählen";
+            weiterleiten(route('legacy::rechnungen::index', ['option' => 'partner_wechseln'], false));
             return;
         }
         if (!request()->has('lieferant')) {
@@ -57,12 +50,6 @@ switch ($option) {
             $artikel_nr = request()->input('artikel_nr');
             $k->preisentwicklung_anzeigen($p_id, $artikel_nr);
         }
-        break;
-
-    case "partner_wechseln" :
-        session()->forget('partner_id');
-        hinweis_ausgeben("Lieferantauswahl aufgehoben, Sie werden weitergeleitet");
-        weiterleiten_in_sec(route('legacy::katalog::index', [], false), 2);
         break;
 
     case "artikelsuche" :
@@ -158,26 +145,3 @@ switch ($option) {
 
         break;
 } // end switch
-
-/*
- * Preisentwicklung
- * SELECT `LISTENPREIS` , (
- * LISTENPREIS /100
- * ) * ( 100 - `RABATT_SATZ` )
- * FROM `POSITIONEN_KATALOG`
- * WHERE ARTIKEL_NR = '025150102101'
- * ORDER BY (
- * LISTENPREIS /100
- * ) * ( 100 - `RABATT_SATZ` ) ASC
- * LIMIT 0 , 30
- *
- *
- * SELECT ARTIKEL_NR, BEZEICHNUNG, MIN( LISTENPREIS ) , MAX( LISTENPREIS )
- * FROM `POSITIONEN_KATALOG`
- * GROUP BY ARTIKEL_NR, LISTENPREIS
- * LIMIT 0 , 30
- *
- *
- */
-
-?>

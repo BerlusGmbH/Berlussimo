@@ -19,25 +19,6 @@ class katalog
     public $u_skontiert;
     public $skonto;
 
-    function partner_auswahl_menue($option_link)
-    {
-        if (request()->has('partner_id')) {
-            session()->put('partner_id', request()->input('partner_id'));
-        }
-
-        if (session()->has('partner_id')) {
-            echo "<p><a href='" . route('legacy::katalog::index', ['option' => 'partner_wechseln']) . "'>Lieferanten wechseln</a><br></p>";
-        } else {
-            $result = DB::select("SELECT PARTNER_ID, PARTNER_NAME FROM PARTNER_LIEFERANT WHERE AKTUELL='1' ORDER BY PARTNER_NAME ASC");
-            foreach($result as $row) {
-                $p_id = $row ['PARTNER_ID'];
-                $p_name = $row ['PARTNER_NAME'];
-                $link = "<a href=\"$option_link?partner_id=$p_id&option=katalog_anzeigen\">$p_name</a><br>\n";
-                echo $link;
-            }
-        }
-    }
-
     /* Funktion zur Darstellung der Artikel und Leistungen eines Partners */
     function katalog_artikel_anzeigen($partner_id)
     {
