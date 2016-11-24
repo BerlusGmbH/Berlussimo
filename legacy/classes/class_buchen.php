@@ -479,7 +479,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
                 $anz_gk = count($gk_arr_objekt);
                 for ($go = 0; $go < $anz_gk; $go++) {
                     $oo_id = $gk_arr_objekt [$go];
-                    $db_abfrage .= "&& HAUS.OBJEKT_ID=$oo_id ";
+                    $db_abfrage .= "&& HAUS.OBJEKT_ID=$oo_id[KOSTENTRAEGER_ID] ";
                 }
                 $db_abfrage .= "GROUP BY MIETVERTRAG_ID ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC";
             } else {
@@ -559,7 +559,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
                 $anz_gk = count($gk_arr_objekt);
                 for ($go = 0; $go < $anz_gk; $go++) {
                     $oo_id = $gk_arr_objekt [$go];
-                    $db_abfrage .= "&& HAUS.OBJEKT_ID=$oo_id ";
+                    $db_abfrage .= "&& HAUS.OBJEKT_ID=$oo_id[KOSTENTRAEGER_ID] ";
                 }
 
                 $db_abfrage .= "GROUP BY ID ORDER BY  EINHEIT_KURZNAME ASC ";
