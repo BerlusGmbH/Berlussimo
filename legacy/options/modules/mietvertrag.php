@@ -363,6 +363,7 @@ switch ($mietvertrag_raus) {
 
     /* aktuelle Mietverträge */
     case "mahnliste" :
+        set_time_limit(240);
         $f = new formular ();
         $f->fieldset("Mahnliste aktuell", 'mahnliste');
         $bg = new berlussimo_global ();

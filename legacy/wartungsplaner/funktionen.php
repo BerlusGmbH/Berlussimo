@@ -177,7 +177,7 @@ function check_mietvertrag_aktuell($mv_id)
 function kontakt_suche($target_id, $string)
 {
     $datum_d = date("d.m.Y");
-    echo "<p class=\"zeile_ueber\">Suchergebnisse, auf Datensatz klicken um zu äbernehmen</p>";
+    echo "<p class=\"zeile_ueber\">Suchergebnisse, auf Datensatz klicken um zu übernehmen</p>";
     echo "<table>";
     $db_abfrage = "SELECT * FROM PERSON WHERE (PERSON_NACHNAME LIKE '$string%' OR PERSON_VORNAME LIKE '%$string%')  && PERSON_AKTUELL='1'";
     $result = DB::select($db_abfrage);
@@ -293,7 +293,7 @@ function kontakt_suche($target_id, $string)
 function str_suche($target_id, $string)
 {
     $datum_d = date("d.m.Y");
-    echo "<p class=\"zeile_ueber\">Suchergebnisse, auf Datensatz klicken um zu äbernehmen</p>";
+    echo "<p class=\"zeile_ueber\">Suchergebnisse, auf Datensatz klicken um zu übernehmen</p>";
     echo "<table>";
     $db_abfrage = "SELECT * FROM PERSON WHERE (PERSON_NACHNAME LIKE '$string%' OR PERSON_VORNAME LIKE '%$string%')  && PERSON_AKTUELL='1'";
     $result = DB::select($db_abfrage);
@@ -4308,7 +4308,7 @@ function get_mieter_infos($mv_id)
     if (!empty($result)) {
         $person_string = '';
         foreach($result as $row) {
-            $person_id = $row->PERSON_MIETVERTRAG_PERSON_ID;
+            $person_id = $row['PERSON_MIETVERTRAG_PERSON_ID'];
             $result1 = DB::select("SELECT PERSON_NACHNAME, PERSON_VORNAME FROM PERSON WHERE PERSON_ID='$person_id' && PERSON_AKTUELL='1' ORDER BY PERSON_VORNAME, PERSON_VORNAME ASC");
             if (!empty($result1)) {
                 foreach($result1 as $row1) {
