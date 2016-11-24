@@ -126,7 +126,7 @@ LIMIT 0 , 1", [$konto_id]);
                 $result = DB::select("SELECT OBJEKT_KURZNAME, OBJEKT_ID FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC");
                 foreach ($result as $row) {
                     $gk = new gk ();
-                    if ($gk->check_zuweisung_kos_typ(session()->get('geldkonto_id'), 'Objekt', $row->OBJEKT_ID)) {
+                    if ($gk->check_zuweisung_kos_typ(session()->get('geldkonto_id'), 'Objekt', $row['OBJEKT_ID'])) {
                         echo "$row[OBJEKT_KURZNAME]*$row[OBJEKT_ID]*|";
                     }
                 }
