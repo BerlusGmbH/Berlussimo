@@ -176,14 +176,11 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         }
         $javaaction = 'onchange="mieter_auswaehlen()"';
         $this->dropdown_personen_liste('Mieter auswählen', 'alle_mieter_list', 'alle_mieter_list', $javaaction);
-        $javaaction1 = 'onchange="mieter_entfernen()"';
-
         $mieter_arr = $form->get_personen_ids_mietvertrag($mietvertrag_id);
-        $this->ausgewahlte_mieter_liste_aendern('Ausgewählte Mieter', 'mieter_liste[]', 'mieter_liste', $javaaction1, '5', $mieter_arr);
+        $this->ausgewahlte_mieter_liste_aendern('Ausgewählte Mieter', 'mieter_liste[]', 'mieter_liste', null, '5', $mieter_arr);
 
         $form->hidden_feld('mietvertrag_raus', 'mv_aenderung_pruefen');
-        $sendbutton_js = "onclick=\"alle_mieter_auswaehlen()\"";
-        $form->send_button_js('btn_mv_updaten', 'Mietvertrag ändern', $sendbutton_js);
+        $form->send_button_js('btn_mv_updaten', 'Mietvertrag ändern', null);
         $form->ende_formular();
     }
 
@@ -548,7 +545,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
             $person_id = $mieter_arr [$a] ['PERSON_MIETVERTRAG_PERSON_ID'];
             $person_info->get_person_infos($person_id);
 
-            echo "<option value=\"$person_id\">$person_info->person_nachname $person_info->person_vorname</option>";
+            echo "<option selected value=\"$person_id\">$person_info->person_nachname $person_info->person_vorname</option>";
         }
         echo "</select>";
     }
@@ -578,7 +575,6 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
 
     function mv_personen_anzeigen_form($arr)
     {
-        // print_r($arr);
         for ($a = 0; $a < count($arr); $a++) {
             $person_id = $arr [$a];
             $db_abfrage = "SELECT PERSON_NACHNAME, PERSON_VORNAME FROM PERSON WHERE PERSON_AKTUELL='1' && PERSON_ID='$person_id' LIMIT 0,1";

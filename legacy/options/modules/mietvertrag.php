@@ -489,7 +489,6 @@ switch ($mietvertrag_raus) {
             $mv_info = new mietvertraege ();
             $mv_info->mv_aendern_formular(request()->input('mietvertrag_id'));
         } else {
-
             fehlermeldung_ausgeben("Mietvertrag zum ändern auswählen");
             weiterleiten_in_sec(route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mietvertrag_kurz'], false), '2');
         }
@@ -523,7 +522,7 @@ switch ($mietvertrag_raus) {
         if (isset ($error)) {
             echo $error;
         } else {
-            echo "<p><h1>GEÄNDERTE VERTRAGSDATEN:</h1><br>";
+            echo "<p><h5>Geänderte Vertragsdaten:</h5><br>";
             $einheit_kurzname = einheit_kurzname(request()->input('einheit_id'));
             $haus_id = haus_id(request()->input('einheit_id'));
             $anschrift = haus_strasse_nr($haus_id);
