@@ -1039,8 +1039,6 @@ function mietvertrag_aktualisieren($mietvertrag_dat, $mietvertrag_bis, $mietvert
 function mietvertrag_kurz($einheit_id)
 {
     if (empty ($einheit_id)) {
-        // $db_abfrage = "SELECT DISTINCT MIETVERTRAG.MIETVERTRAG_ID, MIETVERTRAG.MIETVERTRAG_VON, MIETVERTRAG.MIETVERTRAG_BIS, MIETVERTRAG.EINHEIT_ID, EINHEIT.EINHEIT_KURZNAME FROM MIETVERTRAG, EINHEIT WHERE MIETVERTRAG_AKTUELL='1' && EINHEIT.EINHEIT_AKTUELL='1' && EINHEIT.EINHEIT_ID = MIETVERTRAG.EINHEIT_ID ORDER BY EINHEIT.EINHEIT_KURZNAME ASC";
-
         $db_abfrage = "SELECT MIETVERTRAG.MIETVERTRAG_ID, MIETVERTRAG.MIETVERTRAG_VON, MIETVERTRAG.MIETVERTRAG_BIS, MIETVERTRAG.EINHEIT_ID, EINHEIT.EINHEIT_KURZNAME FROM MIETVERTRAG JOIN(EINHEIT) ON (EINHEIT.EINHEIT_ID = MIETVERTRAG.EINHEIT_ID) WHERE MIETVERTRAG_AKTUELL='1' && EINHEIT.EINHEIT_AKTUELL='1' ORDER BY EINHEIT.EINHEIT_KURZNAME,MIETVERTRAG.MIETVERTRAG_VON  ASC";
     } else {
         $db_abfrage = "SELECT MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM MIETVERTRAG where EINHEIT_ID='$einheit_id' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_VON DESC";
@@ -1062,11 +1060,11 @@ function mietvertrag_kurz($einheit_id)
             $counter++;
             $datum_heute = date("Y-m-d");
             if (($row['MIETVERTRAG_BIS'] > $datum_heute) or ($row['MIETVERTRAG_BIS'] == "0000-00-00")) {
-                $beenden_link = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mietvertrag_beenden', 'mietvertrag_id' => $MIETVERTRAG_ID]) . "'>Beenden</a>";
-                $aendern_link = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mietvertrag_aendern', 'mietvertrag_id' => $MIETVERTRAG_ID]) . "'>Ändern</a>";
+                $beenden_link = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mietvertrag_beenden', 'mietvertrag_id' => $row['MIETVERTRAG_ID']]) . "'>Beenden</a>";
+                $aendern_link = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mietvertrag_aendern', 'mietvertrag_id' => $row['MIETVERTRAG_ID']]) . "'>Ändern</a>";
             } else {
                 $beenden_link = "Abgelaufen";
-                $aendern_link = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mietvertrag_aendern', 'mietvertrag_id' => $MIETVERTRAG_ID]) . "'>Ändern</a>";
+                $aendern_link = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mietvertrag_aendern', 'mietvertrag_id' => $row['MIETVERTRAG_ID']]) . "'>Ändern</a>";
             }
             $MIETVERTRAG_BIS = date_mysql2german($row['MIETVERTRAG_BIS']);
             $MIETVERTRAG_VON = date_mysql2german($row['MIETVERTRAG_VON']);
