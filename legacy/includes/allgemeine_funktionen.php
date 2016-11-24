@@ -402,7 +402,7 @@ function einheiten_ids_by_objekt($objekt_id)
     $result = DB::select("SELECT HAUS_ID FROM HAUS where OBJEKT_ID='$objekt_id' && HAUS_AKTUELL='1'");
     $einheit_ids = [];
     foreach ($result as $row) {
-        $result1 = DB::select("SELECT EINHEIT_ID, EINHEIT_KURZNAME FROM EINHEIT WHERE HAUS_ID='" . $row->HAUS_ID . "' && EINHEIT_AKTUELL='1' ORDER BY EINHEIT_KURZNAME ASC");
+        $result1 = DB::select("SELECT EINHEIT_ID, EINHEIT_KURZNAME FROM EINHEIT WHERE HAUS_ID='" . $row['HAUS_ID'] . "' && EINHEIT_AKTUELL='1' ORDER BY EINHEIT_KURZNAME ASC");
         foreach ($result1 as $row1)
             $einheit_ids [] = $row1;
     }

@@ -57,7 +57,7 @@ function letzte_haus_id()
 {
     $result = DB::select("SELECT HAUS_ID FROM HAUS ORDER BY HAUS_ID DESC LIMIT 0,1");
     foreach($result as $row)
-        return $row->HAUS_ID;
+        return $row['HAUS_ID'];
 }
 
 function haus_in_db_eintragen($strasse, $nummer, $stadt, $plz, $qm, $objekt_id)

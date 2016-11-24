@@ -176,7 +176,7 @@ ORDER BY LPAD( EINHEIT_KURZNAME, LENGTH( EINHEIT_KURZNAME ) ,  '1' ) ASC ");
                     echo "$row[EINHEIT_KURZNAME]*$row[EINHEIT_ID]*|";
                 } else {
                     $gk = new gk ();
-                    if ($gk->check_zuweisung_kos_typ(session()->get('geldkonto_id'), 'Objekt', $row->OBJEKT_ID)) {
+                    if ($gk->check_zuweisung_kos_typ(session()->get('geldkonto_id'), 'Objekt', $row['OBJEKT_ID'])) {
                         echo "$row[EINHEIT_KURZNAME]*$row[EINHEIT_ID]*|";
                     }
                 }
