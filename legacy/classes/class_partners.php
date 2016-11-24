@@ -422,7 +422,7 @@ OR  `LAND` LIKE  '%$suchtext%'
     function partner_dropdown($label, $name, $id, $vorwahl = null)
     {
         $partner_arr = $this->partner_in_array();
-        echo "<label for=\"$id\">$label</label><select name=\"$name\" size=\"1\" id=\"$id\">";
+        echo "<div class=\"input-field\"><select name=\"$name\" size=\"1\" id=\"$id\">";
         for ($a = 0; $a < count($partner_arr); $a++) {
             $partner_id = $partner_arr [$a] ['PARTNER_ID'];
             $partner_name = $partner_arr [$a] ['PARTNER_NAME'];
@@ -432,7 +432,7 @@ OR  `LAND` LIKE  '%$suchtext%'
                 echo "<option value=\"$partner_id\">$partner_name</OPTION>\n";
             }
         }
-        echo "</select><br>\n";
+        echo "</select><label for=\"$id\">$label</label>\n";
     }
 
     /* Dropdownfeld mit Gewerken */
