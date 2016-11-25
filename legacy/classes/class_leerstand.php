@@ -65,20 +65,16 @@ class leerstand
 
     function leerstand_finden_monat($objekt_id, $datum)
     {
-        $result = DB::select("SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME,  EINHEIT_QM,  EINHEIT.HAUS_ID,  CONCAT(HAUS_STRASSE, HAUS_NUMMER) AS HAUS_STRASSE,  EINHEIT_QM, TRIM(EINHEIT_LAGE) AS EINHEIT_LAGE, EINHEIT.TYP 
-FROM `EINHEIT`
-RIGHT JOIN (
-HAUS, OBJEKT
-) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID='$objekt_id' )
-WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID NOT
-IN (
-
-SELECT EINHEIT_ID
-FROM MIETVERTRAG
-WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m-%d' ) <= '$datum' && ( DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m-%d' ) >= '$datum'
-OR MIETVERTRAG_BIS = '0000-00-00' )
-)
-GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
+        $result = DB::select("
+          SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME,  EINHEIT_QM,  EINHEIT.HAUS_ID,  CONCAT(HAUS_STRASSE, HAUS_NUMMER) AS HAUS_STRASSE,  EINHEIT_QM, TRIM(EINHEIT_LAGE) AS EINHEIT_LAGE, EINHEIT.TYP 
+          FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID='$objekt_id' )
+          WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID NOT IN (
+            SELECT EINHEIT_ID
+            FROM MIETVERTRAG
+            WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m-%d' ) <= '$datum' && ( DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m-%d' ) >= '$datum' OR MIETVERTRAG_BIS = '0000-00-00' )
+          )
+          GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC
+        ");
         return $result;
     }
 
@@ -1767,7 +1763,21 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                 }
 
                 $d = new detail ();
-                // $arr[$a]['ZIMMER'] = $d->finde_detail_inhalt('Einheit', $einheit_id, 'Zimmeranzahl');
+                /* Fortschritt Bauphase */
+                $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Fertigstellung in Prozent');
+                if (!empty($arr_details)) {
+                    $arr [$a] ['FERTIG_BAU'] = $arr_details [0] ['DETAIL_INHALT'];
+                    $arr [$a] ['FERTIG_BAU_DAT'] = $arr_details [0] ['DETAIL_DAT'];
+                    $arr [$a] ['FERTIG_BAU_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
+                } else {
+                    $arr [$a] ['FERTIG_BAU'] = '0';
+                    $arr [$a] ['FERTIG_BAU_DAT'] = 0;
+                    $arr [$a] ['FERTIG_BAU_BEM'] = '';
+                }
+                if ($arr_details [0] ['DETAIL_INHALT'] < 100) {
+                    continue;
+                }
+                unset ($arr_details);
 
                 /* Zimmeranzahl */
                 $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Zimmeranzahl');
@@ -1844,19 +1854,6 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                     $arr [$a] ['JAHR_S'] = '------';
                     $arr [$a] ['JAHR_S_DAT'] = 0;
                     $arr [$a] ['JAHR_S_BEM'] = '';
-                }
-                unset ($arr_details);
-
-                /* Fortschritt Bauphase */
-                $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Fertigstellung in Prozent');
-                if (!empty($arr_details)) {
-                    $arr [$a] ['FERTIG_BAU'] = $arr_details [0] ['DETAIL_INHALT'];
-                    $arr [$a] ['FERTIG_BAU_DAT'] = $arr_details [0] ['DETAIL_DAT'];
-                    $arr [$a] ['FERTIG_BAU_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
-                } else {
-                    $arr [$a] ['FERTIG_BAU'] = '0';
-                    $arr [$a] ['FERTIG_BAU_DAT'] = 0;
-                    $arr [$a] ['FERTIG_BAU_BEM'] = '';
                 }
                 unset ($arr_details);
 

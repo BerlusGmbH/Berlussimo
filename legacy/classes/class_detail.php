@@ -346,7 +346,7 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC");
 
     function finde_detail_inhalt_last_arr($tab, $id, $detail_name)
     {
-        $db_abfrage = " SELECT * FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = '$tab' && DETAIL_ZUORDNUNG_ID = '$id' && DETAIL_NAME = '$detail_name'  && DETAIL_AKTUELL = '1' ORDER BY DETAIL_INHALT DESC LIMIT 0,1";
+        $db_abfrage = "SELECT * FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = '$tab' && DETAIL_ZUORDNUNG_ID = '$id' && DETAIL_NAME = '$detail_name'  && DETAIL_AKTUELL = '1' ORDER BY DETAIL_INHALT DESC LIMIT 0,1";
         $my_arr = DB::select($db_abfrage);
         return $my_arr;
     }
