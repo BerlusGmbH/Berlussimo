@@ -1018,7 +1018,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                     $arr [$a] ['FERTIG_BAU_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['FERTIG_BAU_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
                 } else {
-                    $arr [$a] ['FERTIG_BAU'] = '0';
+                    $arr [$a] ['FERTIG_BAU'] = '-1';
                     $arr [$a] ['FERTIG_BAU_DAT'] = 0;
                     $arr [$a] ['FERTIG_BAU_BEM'] = '';
                 }
@@ -1770,7 +1770,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                     $arr [$a] ['FERTIG_BAU_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['FERTIG_BAU_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
                 } else {
-                    $arr [$a] ['FERTIG_BAU'] = '0';
+                    $arr [$a] ['FERTIG_BAU'] = '-1';
                     $arr [$a] ['FERTIG_BAU_DAT'] = 0;
                     $arr [$a] ['FERTIG_BAU_BEM'] = '';
                 }
