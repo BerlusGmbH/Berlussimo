@@ -110,7 +110,7 @@ switch ($schritt) {
         if ($me_dat) {
             $me->me_dat_loeschen($me_dat);
             $mv_id = request()->input('mietvertrag_id');
-            weiterleiten_in_sec(route('legacy::miete_definieren::index', ['option' => 'miethoehe', 'mietvertrag_id' => request()->input('mv_id')], false), 1);
+            weiterleiten(route('legacy::miete_definieren::index', ['option' => 'miethoehe', 'mietvertrag_id' => $mv_id], false));
         }
         break;
 
