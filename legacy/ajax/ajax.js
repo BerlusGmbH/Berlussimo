@@ -105,11 +105,10 @@ function ajax_check_art(lieferant, artikel_nr) {
 								document.getElementById("einheit")[i].focus();
 							}
 						}
-						alert('Artikel übernommen, Menge & Preise prüfen');
-						document.getElementById('artikel_vorhanden').innerHTML = '';
-
+                        Materialize.toast('Artikel übernommen, Menge & Preise prüfen', 4000)
+                        document.getElementById('artikel_vorhanden').innerHTML = '';
 					} else {
-						alert(artikel_nr + ' L: ' + lieferant + ' Artikel nicht vorhanden');
+                        Materialize.toast(artikel_nr + ' L: ' + lieferant + ' Artikel nicht vorhanden', 4000)
 						document.getElementById("textf_artikelnr").value = artikel_nr;
 						document.getElementById("bezeichnung").value = '';
 						document.getElementById("lp").value = '';
@@ -120,6 +119,7 @@ function ajax_check_art(lieferant, artikel_nr) {
 						document.getElementById("brutto_gesamt").value = '';
 						document.getElementById("menge").focus();
 					}
+                    Materialize.updateTextFields();
 				}
 				break;
 
@@ -656,6 +656,12 @@ function list_detail_ukats_drop() {
 			detail_inhalt_feld.style.visibility = 'visible';
 		}
 	}
+}
+
+var t_id;
+function autovervoll_with_delay(lieferant_id, string) {
+    clearTimeout(t_id);
+    t_id = setTimeout(autovervoll, 500, lieferant_id, string);
 }
 
 function autovervoll(lieferant_id, string) {

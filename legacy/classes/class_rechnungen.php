@@ -617,7 +617,7 @@ class rechnungen
         echo "Lieferant: $this->rechnungs_aussteller_name<br>";
 
         // $f->text_feld($beschreibung, $name, $wert, $size, $id, $js_action);
-        $js_autovv = "onkeyup=\"autovervoll($this->rechnungs_aussteller_id, this.value);\"";
+        $js_autovv = "onkeyup=\"autovervoll_with_delay($this->rechnungs_aussteller_id, this.value);\"";
         echo "<div>";
         $f->text_feld('Artikelnr/Leistungnr', 'suche_artikelnr', '', '25', 'suche_artikelnr', $js_autovv);
 
@@ -631,8 +631,6 @@ class rechnungen
 
         $js_neu_berechnen = "onKeyUp=\"refresh_preise()\" onmouseover=\"refresh_preise()\" ";
         $js_listenpreis_berechnen_von_enetto = "onKeyUp=\"listen_stueckpreis_rabatt()\" onclick=\"listen_stueckpreis_rabatt()\"";
-
-        echo "</div>";
 
         $f->erstelle_formular("Positionen erfassen für Rechnung $this->rechnungsnummer", NULL);
         echo "<table><tr>";
