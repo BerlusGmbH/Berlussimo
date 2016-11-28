@@ -138,7 +138,7 @@ function uebersicht_einheit($einheit_id)
     $oo = new objekt ();
     $oo->get_objekt_infos($e->objekt_id);
     echo "<b>OBJEKT-ET</b>:<br>$oo->objekt_eigentuemer";
-    $link_objekt_details = "<a href='" . route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_hinzu' => 'OBJEKT', 'detail_id' => $e->objekt_id]) . "'>Detail hinzufügen</a>";
+    $link_objekt_details = "<a href='" . route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $e->objekt_id]) . "'>Detail hinzufügen</a>";
     echo "</div>";
     echo "<div class='card-action'>$link_objekt_details</div>";
     echo "</div>";
