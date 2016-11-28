@@ -94,8 +94,8 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
         $mvs = new mietvertraege ();
         $mvs->get_mietvertrag_infos_aktuell($mietvertrag_id);
         echo "<table id=\"t12\" class=\"sortable\">";
-        echo "<tr><th colspan=\"6\">AKTUELL $mvs->einheit_kurzname - $mvs->personen_name_string</th></tr>";
-        echo "<tr><th>BEZEICHNUNG</th><th>Beginn</th><th>Ende</th><th align=\"right\">Betrag</th><th>MWST-Anteil</th><th>Optionen</th></tr>";
+        echo "<thead><tr><th colspan=\"6\">AKTUELL $mvs->einheit_kurzname - $mvs->personen_name_string</th></tr>";
+        echo "<tr><th style='width: 45%'>BEZEICHNUNG</th><th style='width: 10%'>Beginn</th><th style='width: 10%'>Ende</th><th style='width: 10%'>Betrag</th><th style='width: 10%'>MWST-Anteil</th><th style='width: 15%'>Optionen</th></tr></thead>";
 
         $heute = date("Y-m-d");
         $db_abfrage1 = "SELECT * FROM `MIETENTWICKLUNG`  WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL='1' && (ENDE='0000-00-00' OR ENDE>='$heute') && ANFANG <= '$heute' ORDER BY KOSTENKATEGORIE, ANFANG, ENDE ASC";
@@ -124,22 +124,21 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
             $aendern_link = "<a href='" . route('legacy::miete_definieren::index', ['option' => 'aendern', 'mietvertrag_id' => $e_mv_id, 'aendern_dat' => $me_dat]) . "'>Ändern</a>";
             $loeschen_link = "<a href='" . route('legacy::miete_definieren::index', ['option' => 'me_loeschen', 'mietvertrag_id' => $e_mv_id, 'me_dat' => $me_dat]) . "'>Löschen</a>";
             if (($anfang_ser <= $heute_ser) && ($ende == '00.00.0000' or ($ende_ser > $heute_ser))) {
-                // $ende = 'unbefristet';
-                $css_class = "zeile2";
                 $summe_aktuell += $betrag;
-            } else {
-                $css_class = "zeile1";
             }
-            echo "<tr class=\"$css_class\"><td>$kostenkat</td><td>$anfang</td><td>$ende </td><td align=right>$betrag_a €</td><td>$mwst_anteil_a</td><td>$aendern_link $loeschen_link</td></tr>";
+            if ($ende == '00.00.0000') {
+                $ende = 'unbefristet';
+            }
+            echo "<tr><td>$kostenkat</td><td>$anfang</td><td>$ende </td><td style='text-align: right'>$betrag_a €</td><td style='text-align: right'>$mwst_anteil_a €</td><td style='width: 20%'>$aendern_link $loeschen_link</td></tr>";
         } // end while 2
         $summe_aktuell_a = nummer_punkt2komma_t($summe_aktuell);
         $summe_mwst_a = nummer_punkt2komma_t($summe_mwst);
-        echo "<tr class=\"zeile1\"><td colspan=\"3\"><b>Gesamt aktuell</b></td><td align=right><b>$summe_aktuell_a €</b></td><td><b>$summe_mwst_a €</b></td><td></td></tr>";
-        echo "</table>";
+        echo "<tr class=\"zeile1\"><td colspan=\"3\"><b>Gesamt aktuell</b></td><td style='text-align: right'><b>$summe_aktuell_a €</b></td><td style='text-align: right'><b>$summe_mwst_a €</b></td><td></td></tr>";
+        echo "</table><hr>";
 
         echo "<table id=\"t2\" class=\"sortable\">";
-        echo "<tr><th colspan=\"6\">ANSTEHEND $mvs->einheit_kurzname - $mvs->personen_name_string</th></tr>";
-        echo "<tr><th>BEZEICHNUNG</th><th>Beginn</th><th>Ende</th><th align=\"right\">Betrag</th><th>MWST-Anteil</th><th>Optionen</th></tr>";
+        echo "<thead><tr><th colspan=\"6\">ANSTEHEND $mvs->einheit_kurzname - $mvs->personen_name_string</th></tr>";
+        echo "<tr><th style='width: 45%'>BEZEICHNUNG</th><th style='width: 10%'>Beginn</th><th style='width: 10%'>Ende</th><th style='width: 10%'>Betrag</th><th style='width: 10%'>MWST-Anteil</th><th style='width: 15%'>Optionen</th></tr></thead>";
 
         $db_abfrage1 = "SELECT * FROM `MIETENTWICKLUNG`  WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL='1' && (ENDE='0000-00-00' OR ENDE>'$heute') && ANFANG>='$heute' ORDER BY KOSTENKATEGORIE, ANFANG, ENDE ASC";
         $result1 = DB::select($db_abfrage1);
@@ -172,14 +171,14 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
             if ($ende == '00.00.0000') {
                 $ende = 'unbefristet';
             }
-            echo "<tr class=\"zeile$z\"><td>$kostenkat</td><td>$anfang</td><td>$ende </td><td align=right>$betrag €</td><td>$mwst_anteil_a</td><td>$aendern_link $loeschen_link</td></tr>";
+            echo "<tr><td>$kostenkat</td><td>$anfang</td><td>$ende </td><td style='text-align: right'>$betrag €</td><td style='text-align: right'>$mwst_anteil_a €</td><td>$aendern_link $loeschen_link</td></tr>";
         } // end while 2
 
-        echo "</table>";
+        echo "</table><hr>";
 
         echo "<table id=\"t2\" class=\"sortable\">";
-        echo "<tr><th colspan=\"6\">ABGELAUFEN $mvs->einheit_kurzname - $mvs->personen_name_string</th></tr>";
-        echo "<tr><th>BEZEICHNUNG</th><th>Beginn</th><th>Ende</th><th align=\"right\">Betrag</th><th>MWST-Anteil</th><th>Optionen</th></tr>";
+        echo "<thead><tr><th colspan=\"6\">ABGELAUFEN $mvs->einheit_kurzname - $mvs->personen_name_string</th></tr>";
+        echo "<tr><th style='width: 45%'>BEZEICHNUNG</th><th style='width: 10%'>Beginn</th><th style='width: 10%'>Ende</th><th  style='width: 10%'>Betrag</th><th style='width: 10%'>MWST-Anteil</th><th style='width: 15%'>Optionen</th></tr></thead>";
 
         $db_abfrage1 = "SELECT * FROM `MIETENTWICKLUNG`  WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL='1' && (ENDE!='0000-00-00' && ENDE<'$heute') ORDER BY ENDE DESC";
         $result1 = DB::select($db_abfrage1);
@@ -209,7 +208,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
 
             $aendern_link = "<a href='" . route('legacy::miete_definieren::index', ['option' => 'aendern', 'mietvertrag_id' => $e_mv_id, 'aendern_dat' => $me_dat]) . "'>Ändern</a>";
             $loeschen_link = "<a href='" . route('legacy::miete_definieren::index', ['option' => 'me_loeschen', 'mietvertrag_id' => $e_mv_id, 'me_dat' => $me_dat]) . "'>Löschen</a>";
-            echo "<tr class=\"zeile1\"><td>$kostenkat</td><td>$anfang</td><td>$ende </td><td align=right>$betrag €</td><td>$mwst_anteil_a</td><td>$aendern_link $loeschen_link</td></tr>";
+            echo "<tr class=\"zeile1\"><td>$kostenkat</td><td>$anfang</td><td>$ende </td><td style='text-align: right'>$betrag €</td><td style='text-align: right'>$mwst_anteil_a €</td><td>$aendern_link $loeschen_link</td></tr>";
         } // end while 2
 
         echo "</table>";
@@ -221,8 +220,8 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
         $mvs->get_mietvertrag_infos_aktuell($mietvertrag_id);
 
         echo "<table id=\"t12\" class=\"sortable\">";
-        echo "<tr><th colspan=\"6\">AKTUELL $mvs->einheit_kurzname - $mvs->personen_name_string</th></tr>";
-        echo "<tr><th>BEZEICHNUNG</th><th>Beginn</th><th>Ende</th><th align=\"right\">Betrag</th><th>MWST-Anteil</th><th>Optionen</th></tr>";
+        echo "<thead><tr><th colspan=\"6\">AKTUELL $mvs->einheit_kurzname - $mvs->personen_name_string</th></tr>";
+        echo "<tr><th>BEZEICHNUNG</th><th>Beginn</th><th>Ende</th><th align=\"right\">Betrag</th><th>MWST-Anteil</th><th>Optionen</th></tr></thead>";
 
         $heute = date("Y-m-d");
         $db_abfrage1 = "SELECT * FROM `MIETENTWICKLUNG`  WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL='1' && (ENDE='0000-00-00' OR ENDE>='$heute') && ANFANG <= '$heute' ORDER BY KOSTENKATEGORIE, ANFANG, ENDE ASC";
@@ -300,8 +299,8 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
         }
 
         echo "<table id=\"t2\" class=\"sortable\">";
-        echo "<tr><th colspan=\"6\">ANSTEHEND $mvs->einheit_kurzname - $mvs->personen_name_string</th></tr>";
-        echo "<tr><th>BEZEICHNUNG</th><th>Beginn</th><th>Ende</th><th align=\"right\">Betrag</th><th>MWST-Anteil</th><th>Optionen</th></tr>";
+        echo "<thead><tr><th colspan=\"6\">ANSTEHEND $mvs->einheit_kurzname - $mvs->personen_name_string</th></tr>";
+        echo "<tr><th>BEZEICHNUNG</th><th>Beginn</th><th>Ende</th><th align=\"right\">Betrag</th><th>MWST-Anteil</th><th>Optionen</th></tr></thead>";
 
         $db_abfrage1 = "SELECT * FROM `MIETENTWICKLUNG`  WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL='1' && (ENDE='0000-00-00' OR ENDE>'$heute') && ANFANG>='$heute' ORDER BY KOSTENKATEGORIE, ANFANG, ENDE ASC";
         $result1 = DB::select($db_abfrage1);
@@ -368,8 +367,8 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
         echo "</table>";
 
         echo "<table id=\"t2\" class=\"sortable\">";
-        echo "<tr><th colspan=\"6\">ABGELAUFEN $mvs->einheit_kurzname - $mvs->personen_name_string</th></tr>";
-        echo "<tr><th>BEZEICHNUNG</th><th>Beginn</th><th>Ende</th><th align=\"right\">Betrag</th><th>MWST-Anteil</th><th>Optionen</th></tr>";
+        echo "<thead><tr><th colspan=\"6\">ABGELAUFEN $mvs->einheit_kurzname - $mvs->personen_name_string</th></tr>";
+        echo "<tr><th>BEZEICHNUNG</th><th>Beginn</th><th>Ende</th><th align=\"right\">Betrag</th><th>MWST-Anteil</th><th>Optionen</th></tr></thead>";
 
         $db_abfrage1 = "SELECT * FROM `MIETENTWICKLUNG`  WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL='1' && (ENDE!='0000-00-00' && ENDE<'$heute') ORDER BY ENDE DESC";
         $result1 = DB::select($db_abfrage1);

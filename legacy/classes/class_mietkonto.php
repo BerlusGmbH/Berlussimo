@@ -431,14 +431,16 @@ ORDER BY BUCHUNGSNUMMER DESC");
     function text_feld($beschreibung, $name, $wert, $size)
     {
         echo "<div class='input-field'>";
-        echo "<label for=\"$name\">$beschreibung</label> <input type=\"text\" id=\"$name\" name=\"$name\" value=\"$wert\" size=\"$size\" style=\"text-align:right\" onblur=\"javascript:activate(this.id)\" >\n";
+        echo "<input type=\"text\" id=\"$name\" name=\"$name\" value=\"$wert\" size=\"$size\" onblur=\"javascript:activate(this.id)\" >\n";
+        echo "<label for=\"$name\">$beschreibung</label>\n";
         echo "</div>";
     }
 
     function text_feld_inaktiv($beschreibung, $name, $wert, $size)
     {
         echo "<div class='input-field'>";
-        echo "<label for=\"$beschreibung.$name\">$beschreibung</label> <input type=\"text\" id=\"$beschreibung.$name\" name=\"$beschreibung.$name\" value=\"$wert\" size=\"$size\" disabled>\n";
+        echo "<input type=\"text\" id=\"$beschreibung.$name\" name=\"$beschreibung.$name\" value=\"$wert\" size=\"$size\" disabled>\n";
+        echo "<label for=\"$beschreibung.$name\">$beschreibung</label>\n";
         echo "</div>";
     }
 
@@ -1664,7 +1666,8 @@ ORDER BY DATUM ASC ");
     function text_feld_js($beschreibung, $name, $wert, $size, $id, $js_action)
     {
         echo "<div class=\"input-field\">";
-        echo "<input type=\"text\" id=\"$id\" name=\"$name\" value=\"$wert\" size=\"$size\" style=\"text-align:right\"  $js_action ><label for=\"$id\">$beschreibung</label>\n";
+        echo "<input type=\"text\" id=\"$id\" name=\"$name\" value=\"$wert\" size=\"$size\" $js_action >\n";
+        echo "<label for=\"$id\">$beschreibung</label>\n";
         echo "</div>";
     }
 

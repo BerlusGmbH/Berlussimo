@@ -40,6 +40,7 @@ switch ($schritt) {
             if (count($me->kostenkategorien) > 0) {
                 $form->erstelle_formular("Aktuelle Mietdefinition", NULL);
                 $me->me_dat_neu_form($mietvertrag_id);
+                echo "<hr>";
                 $me->mietentwicklung_anzeigen($mietvertrag_id);
             } else { // end if
                 $me->me_dat_neu_form($mietvertrag_id);
