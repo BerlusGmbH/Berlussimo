@@ -2519,17 +2519,17 @@ AND  `AKTUELL` =  '1'");
                 $kontostand_aktuell = nummer_punkt2komma_t($gk->geld_konto_stand($gk_id));
 
                 if ($kontostand_aktuell == $kse) {
-                    $ks_aktuell = "<span style=\"color:green;\"><b>$kontostand_aktuell EUR</b></span>";
+                    $ks_aktuell = "<span style=\"color:green;\"><b>$kontostand_aktuell €</b></span>";
                 } else {
-                    $ks_aktuell = "<span style=\"color:red;\"><b>$kontostand_aktuell EUR</b></span>";
+                    $ks_aktuell = "<span style=\"color:red;\"><b>$kontostand_aktuell €</b></span>";
                 }
 
                 $link_start = "<a href='" . route('legacy::buchen::index', ['option' => 'excel_buchen_session', 'ds_id' => $start_ds_id]) . "'>$gk->geldkonto_bez</a>";
-                echo "<tr><td>$z</td><td>$link_start</td><td>$auszug</td><td>$ksa EUR</td><td>$kse EUR</td><td>$ks_aktuell</td></tr>";
+                echo "<tr><td>$z</td><td>$link_start</td><td>$auszug</td><td>$ksa €</td><td>$kse €</td><td>$ks_aktuell</td></tr>";
             }
             echo "</table>";
         } else {
-            fehlermeldung_ausgeben('Keine Konten aus Excelimport!!!');
+            echo 'Bitte laden Sie zuerst einen Kontoauszug.';
         }
     }
 
