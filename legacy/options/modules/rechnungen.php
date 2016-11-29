@@ -1164,8 +1164,8 @@ switch ($option) {
         $form = new mietkonto ();
         $form->erstelle_formular("Rechnungsübersicht", NULL);
         if (!request()->has('positionen_list')) {
-            $rechnung = new rechnung ();
-            if (request()->has('belegnr') && request()->has('belegnr')) {
+            if (request()->has('belegnr')) {
+                $rechnung = new rechnung ();
                 $rechnung->rechnung_zum_kontieren_anzeigen(request()->input('belegnr'));
             }
         } else {
@@ -1176,9 +1176,9 @@ switch ($option) {
         break;
 
     case "rechnung_kontierung_aufheben" :
-        if (request()->has('belegnr') && request()->has('belegnr')) {
+        if (request()->has('belegnr')) {
             $r = new rechnung ();
-            if ($r->rechnung_kontierung_aufheben(request()->input('belegnr') == true)) {
+            if ($r->rechnung_kontierung_aufheben(request()->input('belegnr'))) {
                 $belegnr = request()->input('belegnr');
                 weiterleiten(route('legacy::rechnungen::index', ['option' => 'rechnung_kontieren', 'belegnr' => $belegnr], false));
             }

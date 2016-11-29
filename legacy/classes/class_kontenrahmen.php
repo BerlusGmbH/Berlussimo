@@ -114,7 +114,7 @@ class kontenrahmen {
 
 		// $kt->dropdown_konten_vom_rahmen('Kostenkonto', "kontenrahmen_konto", "kontenrahmen_konto", '', $kontenrahmen_id );
 		$konten_arr = $this->konten_in_arr_rahmen ( $kontenrahmen_id );
-		echo "<label for=\"$name\" id=\"$id\">$label</label><select name=\"$name\" size=\"1\" id=\"$id\"  $js>\n";
+		echo "<div class='input-field'><select name=\"$name\" size=\"1\" id=\"$id\"  $js>\n";
 
 		for($a = 0; $a < count ( $konten_arr ); $a ++) {
 			$konto = $konten_arr [$a] ['KONTO'];
@@ -122,7 +122,7 @@ class kontenrahmen {
 
 			echo "<option value=\"$konto\">$konto $this->konto_bezeichnung</option>\n";
 		}
-		echo "</select>\n";
+		echo "</select><label for=\"$id\">$label</label></div>\n";
 	}
 	function kontenrahmen_in_arr() {
 		$result = DB::select( "SELECT KONTENRAHMEN_ID, NAME FROM KONTENRAHMEN WHERE  AKTUELL='1' ORDER BY NAME ASC" );

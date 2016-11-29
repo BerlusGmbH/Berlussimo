@@ -98,7 +98,7 @@ class rechnung
         }
     }
 
-function rechnung_grunddaten_holen($belegnr)
+    function rechnung_grunddaten_holen($belegnr)
     {
         $result = DB::select("SELECT * FROM RECHNUNGEN WHERE BELEG_NR='$belegnr' && AKTUELL='1' ORDER BY BELEG_NR DESC LIMIT 0,1");
         if (!empty($result)) {
@@ -580,10 +580,10 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
     function rechnung_kontierung_aufheben($belegnr)
     {
-        $success = DB::update("UPDATE  `KONTIERUNG_POSITIONEN` SET AKTUELL='0' WHERE `BELEG_NR` ='$belegnr'");
-        if (!$success) {
+        $success = DB::update("UPDATE `KONTIERUNG_POSITIONEN` SET AKTUELL='0' WHERE `BELEG_NR` = '$belegnr'");
+        if ($success == 0) {
             throw new \App\Exceptions\MessageException(
-                new \App\Messages\ErrorMessage('Kontierungsaufhebung nicht möglich')
+                new \App\Messages\ErrorMessage('Kontierungsaufhebung nicht möglich.')
             );
         }
         return true;
@@ -1619,7 +1619,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         return $row ['RECHNUNG_ID'];
     }
 
-        function summe_netto_positionen($beleg_nr)
+    function summe_netto_positionen($beleg_nr)
     {
         $rr = new rechnungen ();
         return $rr->summe_netto_positionen($beleg_nr);
@@ -1927,7 +1927,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         }
     }
 
-function rechnung_footer_tabelle_anzeigen()
+    function rechnung_footer_tabelle_anzeigen()
     {
         $skonto_in_eur = $this->rechnungs_skontoabzug;
 
@@ -1977,14 +1977,14 @@ function rechnung_footer_tabelle_anzeigen()
             }
 
             echo "<tr><td colspan=$colspan><hr></td></tr>";
-            echo "<tr><td colspan=$colspan1 align=right valign=top><b>Netto:</b></td><td colspan=2 align=right>$rechnungs_netto €</td></tr>";
+            echo "<tr><td colspan=$colspan1 style='text-align: right'><b>Netto:</b></td><td colspan=2 style='text-align: right'>$rechnungs_netto €</td></tr>";
             $this->summe_mwst_komma = nummer_punkt2komma($this->summe_mwst);
-            echo "<tr><td colspan=$colspan1 align=right valign=top><b>MwSt:</b></td><td colspan=2 align=right>$this->summe_mwst_komma €</td></tr>";
-            echo "<tr><td colspan=$colspan1 align=right valign=top><b>Brutto:</b></td><td colspan=2 align=right>$rechnungs_brutto €</td></tr>";
-            echo "<tr><td colspan=$colspan1 align=right valign=top><b>Skonto:</b></td><td colspan=2 align=right>$skonto_in_eur €</td></tr>";
-            echo "<tr><td colspan=$colspan1 align=right valign=top><b>Nach Abzug Skontobetrag:</b></td><td colspan=2 align=right>$skontobetrag €</td></tr>";
+            echo "<tr><td colspan=$colspan1 style='text-align: right'><b>MwSt:</b></td><td colspan=2 style='text-align: right'>$this->summe_mwst_komma €</td></tr>";
+            echo "<tr><td colspan=$colspan1 style='text-align: right'><b>Brutto:</b></td><td colspan=2 style='text-align: right'>$rechnungs_brutto €</td></tr>";
+            echo "<tr><td colspan=$colspan1 style='text-align: right'><b>Skonto:</b></td><td colspan=2 style='text-align: right'>$skonto_in_eur €</td></tr>";
+            echo "<tr><td colspan=$colspan1 style='text-align: right'><b>Nach Abzug Skontobetrag:</b></td><td colspan=2 style='text-align: right'>$skontobetrag €</td></tr>";
 
-            echo "<tr><td  colspan=$colspan valign=top id=\"footer_msg\"><br>$msg</td></tr></table>";
+            echo "<tr><td  colspan=$colspan id=\"footer_msg\"><br>$msg</td></tr></table>";
         }
         echo "</div>";
         // ende div_positionen für druck
@@ -2037,16 +2037,16 @@ function rechnung_footer_tabelle_anzeigen()
         /* Rechnungspositionen Überschrift */
         if ($this->anzahl_positionen > 0) {
             echo "<table class=positionen>\n";
-            echo "<form method=\"post\" name=\"myform\">\n";
-            echo "<tr><td colspan=9><b>Kostenträger wählen</b>\n";
+            //echo "<form method=\"post\" name=\"myform\">\n";
+            echo "<tr>\n";
             $this->dropdown_kostentreager_typen();
-            echo "</td></tr>\n";
+            echo "</tr>\n";
             $kt = new kontenrahmen ();
-            echo "<tr><td colspan=9><b>Kostenträger wählen</b>\n";
-            $kt->dropdown_kontenrahmen('Kontenrahmen wählen', 'kontenrahmen', 'kontenrahmen', '');
-            echo "</td></tr>\n";
+            echo "<tr>\n";
+            $kt->dropdown_kontenrahmen('Kontenrahmen', 'kontenrahmen', 'kontenrahmen', '');
+            echo "</tr>\n";
             echo "<tr><td colspan=9><b>Für die Kontierung wählen Sie bitte alle zusammenhängenden Positionen aus!!!</b></td></tr>\n";
-            echo "<tr class=feldernamen><td><input type=\"checkbox\" onClick=\"this.value=check(this.form.positionen_list)\"><b>Alle</b></td><td>Pos</td><td>Artikelnr</td><td>Bezeichnung</td><td>Menge</td><td>Restmenge</td><td width=80>LP</td><td width=80>EP</td><td>Rabatt</td><td>Skonto</td><td align=right>MWSt %</td><td width=80>Netto</td></tr>\n";
+            echo "<tr class=feldernamen><td><input type=\"checkbox\" id='alle' onClick=\"this.value=check(document.forms[0].elements['positionen_list[]'])\"><label for='alle'>Alle</label></td><td>Pos</td><td>Artikelnr</td><td>Bezeichnung</td><td>Menge</td><td>Restmenge</td><td width=80>LP</td><td width=80>EP</td><td>Rabatt</td><td>Skonto</td><td align=right>MWSt %</td><td width=80>Netto</td></tr>\n";
 
             /* Rechnungspositionen */
             for ($a = 0; $a < count($rechnungs_positionen_arr); $a++) {
@@ -2081,7 +2081,7 @@ function rechnung_footer_tabelle_anzeigen()
                     $gesamt_preis = nummer_punkt2komma($gesamt_preis);
                     echo "<tr border=1><td>\n";
                     if ($restmenge > 0) {
-                        echo "<input type=\"checkbox\" id=\"positionen_list\" name=\"positionen_list[]\" value=\"$position\">\n";
+                        echo "<input type=\"checkbox\" id='positionen_list_$position' name=\"positionen_list[]\" value=\"$position\"><label for='positionen_list_$position'>$position</label>\n";
                         $send_button_anzeigen = true;
                     }
                     $restmenge = nummer_punkt2komma($restmenge);
@@ -2095,8 +2095,9 @@ function rechnung_footer_tabelle_anzeigen()
             } // end for 1
             if (isset ($send_button_anzeigen)) {
                 echo "<input type=\"hidden\" name=\"beleg_nr\" value=\"$this->belegnr\">\n";
-                echo "<tr><td><input type=\"submit\" value=\" KONTIEREN \"></td></tr>\n";
-                echo "</form></table>\n";
+                echo "<tr><td colspan='4'><button class='btn waves-effect waves-light' type='submit' name='action'>Kontieren
+                <i class='material-icons right'>send</i>
+                </button></td></tr>\n";
             }
         }  // ende if $this->anzahl_positionen >0 d.h. Rechnung wurde nur kurz erfasst, positionen fehlen
         /* Positionen erfassen */
@@ -2114,13 +2115,15 @@ function rechnung_footer_tabelle_anzeigen()
 
     function dropdown_kostentreager_typen()
     {
-        echo "<select name=\"kosten_traeger_typ\" size=1>\n";
+        echo "<div class='input-field'>";
+        echo "<select id='kosten_traeger_typ' name=\"kosten_traeger_typ\" size=1>\n";
         echo "<option value=\"Objekt\">Objekt</option>\n";
         echo "<option value=\"Haus\">Haus</option>\n";
         echo "<option value=\"Einheit\">Einheit</option>\n";
         echo "<option value=\"Partner\">Partner/Mieter</option>\n";
         echo "<option value=\"Lager\">Lager</option>\n";
-        echo "</select>\n";
+        echo "</select><label for='kosten_traeger_typ'>Kostenträger-Typ</label>\n";
+        echo "</div>";
     } /* ende rechnungsfootoer */
 
     /* Rechnungspositionen finden */
@@ -2176,7 +2179,7 @@ function rechnung_footer_tabelle_anzeigen()
 
     /* Artikelnummern aus dem Katalog des Partner/Lieferanten holen */
 
-function kontierungstabelle_anzeigen($beleg_nr, $positionen_arr, $kostentraeger_typ)
+    function kontierungstabelle_anzeigen($beleg_nr, $positionen_arr, $kostentraeger_typ)
     {
         $this->rechnung_grunddaten_holen($beleg_nr);
         $form = new mietkonto ();
@@ -2191,11 +2194,9 @@ function kontierungstabelle_anzeigen($beleg_nr, $positionen_arr, $kostentraeger_
         echo "<table>\n";
         echo "<tr class=feldernamen><td>Pos</td><td>Artikelnr</td><td>Bezeichnung</td><td>Menge</td><td>LP </td><td>EP</td><td align=right>Rabatt</td><td align=right>MWSt</td><td width=90>Gesamt</td><td>Konto</td><td>Kostenträger</td><td>Weiter verwenden</td><td>Verwendung im Jahr</td></tr>\n";
 
-        echo "<tr class=feldernamen><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td align=right></td><td width=90></td><td><input type=\"button\" onclick=\"auswahl_alle(this.form.kontenrahmen_konto)\" value=\"Alle\">
-	</td><td><input type=\"button\" onclick=\"auswahl_alle(this.form.kostentraeger)\" value=\"Alle\"></td><td><input type=\"button\" onclick=\"auswahl_alle(this.form.weiter_verwenden)\" value=\"Alle\"></td><td><input type=\"button\" onclick=\"auswahl_alle(this.form.verwendungs_jahr)\" value=\"Alle\">
+        echo "<tr class=feldernamen><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td align=right></td><td width=90></td><td><a class='waves-effect waves-teal btn' onclick=\"auswahl_alle(document.forms[0].elements['kontenrahmen_konto'])\">Alle</a>  
+	</td><td><a class='waves-effect waves-teal btn' onclick=\"auswahl_alle(document.forms[0].elements['kostentraeger'])\">Alle</a></td><td><a class='waves-effect waves-teal btn' onclick=\"auswahl_alle(document.forms[0].elements['weiter_verwenden'])\">Alle</a></td><td><a class='waves-effect waves-teal btn' onclick=\"auswahl_alle(document.forms[0].elements['verwendungs_jahr'])\">Alle</a>
 	</td></tr>\n";
-
-        // echo "<input type=\"checkbox\" id=\"positionen_list\" name=\"positionen_list[]\" value=\"$position\">\n";
 
         for ($a = 0; $a < $anzahl_pos_zu_kontierung; $a++) {
             $zeilennr = $a;
@@ -2203,8 +2204,6 @@ function kontierungstabelle_anzeigen($beleg_nr, $positionen_arr, $kostentraeger_
 
             for ($i = 0; $i < $anzahl_pos_beleg; $i++) {
                 if ($kontierungs_position == $rechnungs_positionen_arr [$i] ['POSITION']) {
-                    // echo "PPPPPP $i<br>\n";
-
                     $position = $rechnungs_positionen_arr [$i] ['POSITION'];
                     $ursprungs_menge = $rechnungs_positionen_arr [$i] ['MENGE'];
                     $kontierte_menge = $this->position_auf_kontierung_pruefen($beleg_nr, $position);
@@ -2223,9 +2222,6 @@ function kontierungstabelle_anzeigen($beleg_nr, $positionen_arr, $kostentraeger_
 
                     /* Infos aus Katalog zu Artikelnr */
                     $artikel_info_arr = $this->artikel_info($this->rechnungs_aussteller_id, $artikel_nr);
-                    // echo "<pre>\n";
-                    // print_r($artikel_info_arr);
-                    // echo "</pre>\n";
                     if (isset ($artikel_info_arr [0] ['BEZEICHNUNG'])) {
                         $bezeichnung = $artikel_info_arr [0] ['BEZEICHNUNG'];
                         $listenpreis = $artikel_info_arr [0] ['LISTENPREIS'];
@@ -2234,18 +2230,15 @@ function kontierungstabelle_anzeigen($beleg_nr, $positionen_arr, $kostentraeger_
                         $bezeichnung = 'Unbekannt';
                         $listenpreis = '0,00';
                     }
-                    // echo "<tr class=feldernamen><td>Pos</td><td>Artikelnr</td><td>Bezeichnung</td><td>Menge</td><td>EP </td><td>LP</td><td align=right>MWSt</td><td width=90>Gesamt</td><td>Konto</td><td>Kostenst.</td></tr>\n";
                     $neue_position = $a + 1;
                     echo "<tr><td valign=top>$neue_position.$kontierungs_position</td><td valign=top>$artikel_nr</td><td valign=top>$bezeichnung</td><td align=right valign=top>\n";
                     $form->text_feld("Menge ($menge)", "gesendet[$neue_position][KONTIERUNGS_MENGE]=>'$neue_position'", $menge, 5);
                     echo "</td><td align=right valign=top>$listenpreis €</td><td align=right valign=top>$einzel_preis €</td><td align=right valign=top>$rabatt_satz %</td><td align=right valign=top>$mwst_satz %</td><td width=90 align=right valign=top>$gesamt_preis €</td><td>\n";
 
                     /* Wegen der Rechnungskontierung muss hier der Kontenrahmen für alle angezeigt werden */
-                    // $kontenrahmen->dropdown_kontorahmen_konten("gesendet[$neue_position][KONTENRAHMEN_KONTO]=>'$neue_position'", 'ALLE','0');
                     $bu = new buchen ();
                     $kontenrahmen_id = request()->input('kontenrahmen');
                     if (!empty ($kontenrahmen_id)) {
-                        // $bu->dropdown_kostenrahmen_nr('Kostenkonto', "kontenrahmen_konto", 'Partner', $this->rechnungs_empfaenger_id, '');
                         $kt = new kontenrahmen ();
                         $kt->dropdown_konten_vom_rahmen('Kostenkonto', "gesendet[$neue_position][KONTENRAHMEN_KONTO]=>'$neue_position", "kontenrahmen_konto", '', $kontenrahmen_id);
                     } else {
@@ -2259,24 +2252,21 @@ function kontierungstabelle_anzeigen($beleg_nr, $positionen_arr, $kostentraeger_
                     $form->hidden_feld("gesendet[$neue_position][MWST_SATZ]=>'$neue_position'", $mwst_satz);
                     $form->hidden_feld("gesendet[$neue_position][RABATT_SATZ]=>'$neue_position'", $rabatt_satz);
                     $form->hidden_feld("gesendet[$neue_position][SKONTO]=>'$neue_position'", $skonto);
-                    // $form->hidden_feld("gesendet[$neue_position][ARTIKEL_NR]=>'$neue_position'", $artikel_nr);
                     $form->hidden_feld("gesendet[$neue_position][EINZEL_PREIS]=>'$neue_position'", $einzel_preis);
                     $form->hidden_feld("gesendet[$neue_position][GESAMT_PREIS]=>'$neue_position'", $gesamt_preis);
                     echo "</td><td>";
                     $this->weiter_verwenden_dropdown("gesendet[$neue_position][WEITER_VERWENDEN]=>'$neue_position'");
-                    // "<input type=\"checkbox\" id=\"positionen_list\" name=\"positionen_list[]\" value=\"$kontierungs_position\">";
                     echo "</td><td>";
                     $this->verwendungs_jahr_dropdown("gesendet[$neue_position][VERWENDUNGS_JAHR]=>'$neue_position'");
-                    // verwendungs_jahr_dropdown
                     echo "</td></tr>\n";
                 } // end if
             } // end for $i
         } // end for $a
 
-        echo "<tr><td>\n";
+        echo "<tr><td colspan='3'>\n";
         $form->hidden_feld('BELEG_NR', $beleg_nr);
         $form->hidden_feld('option', 'KONTIERUNG_SENDEN');
-        $form->send_button('', 'SEND');
+        $form->send_button('', 'Kontierung übernehmen');
         echo "</td></tr>\n";
         echo "</table>\n";
         echo "<table>\n";
@@ -2301,7 +2291,6 @@ function kontierungstabelle_anzeigen($beleg_nr, $positionen_arr, $kostentraeger_
             $einheiten = new einheit ();
             $einheiten->dropdown_einheiten($name, 'kostentraeger');
         }
-
         if ($kostentraeger_typ == 'Partner') {
             $partner_info = new partner ();
             $partner_info->partner_dropdown('Kostenträger', $name, 'kostentraeger', $vorwahl_id);
@@ -2320,7 +2309,7 @@ function kontierungstabelle_anzeigen($beleg_nr, $positionen_arr, $kostentraeger_
 
         echo "<option name=\"$name\" value=\"1\" selected>JA</OPTION>\n";
         echo "<option name=\"$name\" value=\"0\">NEIN</OPTION>\n";
-        echo "</select><br>\n";
+        echo "</select>\n";
     }
 
     /* Ermitteln der letzten Artikel_nr/Leistungnr eines Lieferanten nach Bezeichnung */
@@ -2338,7 +2327,7 @@ function kontierungstabelle_anzeigen($beleg_nr, $positionen_arr, $kostentraeger_
                 echo "<option name=\"$name\" value=\"$a\">$a</OPTION>\n";
             }
         }
-        echo "</select><br>\n";
+        echo "</select>\n";
     }
 
     /* Ermitteln der letzten katalog_id */
@@ -2405,7 +2394,7 @@ function kontierungstabelle_anzeigen($beleg_nr, $positionen_arr, $kostentraeger_
 
     /* Funktion zur Darstellung der Artikel bzw. (Leistungen) eines Lieferanten/Partners in einer Tabelle */
 
-function rechnung_footer_tabelle_anzeigen_pe()
+    function rechnung_footer_tabelle_anzeigen_pe()
     {
         $skonto_in_eur = $this->rechnungs_skontoabzug;
 
