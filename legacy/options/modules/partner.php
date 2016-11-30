@@ -38,15 +38,14 @@ switch ($option) {
         break;
 
     case "partner_gesendet" :
-        $partners = new partners ();
-        $partners->partner_rechts_anzeigen();
+        //$partners = new partners ();
+        //$partners->partner_rechts_anzeigen();
         $form = new formular ();
         $form->erstelle_formular("Partnerdaten überprüfen", NULL);
-        echo "<p><b>Übermittelte Partnerdaten:</b></p>";
         $clean_arr = $form->post_array_bereinigen();
         foreach ($clean_arr as $key => $value) {
             if (($key != 'submit_partner') and ($key != 'option')) {
-                echo "" . $value . "<br>";
+                echo $key . ": " . $value . "<br>";
                 $form->hidden_feld($key, $value);
             }
         }
