@@ -208,13 +208,10 @@ WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LPAD(EINHEIT_KURZNAME, LE
     if (empty($my_arr)) {
         echo "<h5>Keine Einheiten vorhanden.</h5>";
     } else {
-        echo "<table class=\"tabelle_haus\" width=100%>\n";
+        echo "<table class=\"striped sortable\" width=100%>\n";
         $objekt_kurzname = $my_arr [0] ['OBJEKT_KURZNAME'];
-        echo "<tr class=\"feldernamen\"><td colspan=7>Einheiten im Objekt $objekt_kurzname</td></tr>\n";
-        echo "<tr class=\"feldernamen\"><td width=150>Kurzname</td><td>OPTION</td><td width=200>Mieter</td><td width=200>Anschrift</td><td width=100>Lage</td><td width=40>m²</td><td>Details</td></tr>\n";
-        echo "</table>";
-        iframe_start();
-        echo "<table width=100%>\n";
+        echo "<thead><tr class=\"feldernamen\"><td colspan=7>Einheiten im Objekt $objekt_kurzname</td></tr>\n";
+        echo "<tr class=\"feldernamen\"><td style='width: 10%'>Kurzname</td><td style='width: 5%'>OPTION</td><td style='width: 5%'>Ändern</td><td style='width: 20%'>Mieter</td><td style='width: 20%'>Anschrift</td><td style='width: 5%'>Lage</td><td style='width: 5%'>m²</td><td style='width: 5%'>Details</td></tr></thead>\n";
         $counter = 0;
         $numrows = count($my_arr);
         for ($a = 0; $a < $numrows; $a++) {
@@ -302,5 +299,4 @@ WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LPAD(EINHEIT_KURZNAME, LE
         }
         echo "</table>";
     }
-    iframe_end();
 }
