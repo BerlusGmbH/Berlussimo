@@ -147,6 +147,12 @@ function anzahl_haeuser_im_objekt($obj_id)
     return $result[0]['ANZAHL'];
 }
 
+function anzahl_einheiten_im_objekt($obj_id)
+{
+    $result = DB::select("SELECT COUNT(EINHEIT_ID) AS ANZAHL FROM HAUS JOIN EINHEIT ON(EINHEIT.HAUS_ID = HAUS.HAUS_ID) WHERE OBJEKT_ID='$obj_id' && HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1'");
+    return $result[0]['ANZAHL'];
+}
+
 function objekt_kurzname($obj_id)
 {
     $result = DB::select("SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_ID='$obj_id' && OBJEKT_AKTUELL='1' ORDER BY OBJEKT_DAT DESC LIMIT 0,1");
