@@ -117,7 +117,7 @@ function last_id2($tab, $spalte)
 
 function backlink()
 {
-    echo "<hr class=\"backlink\"><a class=\"backlink\" href=\"javascript:history.back()\"><b>Zurück</b></a><hr class=\"backlink\">\n";
+    echo "<a class='btn waves-effect waves-light' href=\"javascript:history.back()\">Zurück</a>\n";
 }
 
 function letzte_objekt_dat()

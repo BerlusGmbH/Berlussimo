@@ -40,25 +40,26 @@ function erstelle_button($name, $wert, $onclick)
 
 function erstelle_back_button()
 {
-    echo "<input type=\"button\" name=\"zurueck\" value=\"Abbrechen und Zurück\" onclick=\"javascript:history.back()\" class=\"buttons\">";
+    echo "<a class='btn waves-effect waves-light' href='javascript:history.back()'>Abbrechen und Zurück</a>\n";
 }
 
 function erstelle_eingabefeld($beschreibung, $name, $wert, $size)
 {
-    echo "<tr><td>$beschreibung:</td><td><input type=\"text\" name=\"$name\" value=\"$wert\" size=\"$size\"></td></tr>\n";
+    echo "<div class='input-field'>
+            <input type='text' id='$name' name='$name' value='$wert' size='$size'>
+            <label for='$name'>$beschreibung</label>
+          </div>\n";
 }
 
 function erstelle_submit_button($name, $wert)
 {
-    echo "<tr><td colspan=2><input type=\"submit\" name=\"$name\" value=\"$wert\" class=\"buttons\">";
+    echo "<button class='btn waves-effect waves-light' type='submit' name='$name' value='$wert'>$wert</button>&nbsp;";
     erstelle_back_button();
-    echo "</td></tr>\n";
 }
 
 function erstelle_submit_button_nur($name, $wert)
 {
-    echo "<tr><td colspan=2><button class='btn waves-effect waves-light' type='submit' name='$name' value='$wert'>$wert<i class=\"material-icons right\">send</i></button>";
-    echo "</td></tr>\n";
+    echo "<button class='btn waves-effect waves-light' type='submit' name='$name' value='$wert'>$wert<i class=\"material-icons right\">send</i></button>";
 }
 
 function objekt_kurzname_anzahl($kurzname)
@@ -307,15 +308,14 @@ function person_aendern_from($person_id)
 {
     $result = DB::select("SELECT PERSON_ID, PERSON_NACHNAME, PERSON_VORNAME, PERSON_GEBURTSTAG FROM PERSON WHERE PERSON_ID='$person_id' && PERSON_AKTUELL='1'");
     if (!empty($result)) {
-        erstelle_formular(NULL, NULL);
         foreach($result as $row) {
             erstelle_hiddenfeld("person_id", "$row[PERSON_ID]");
             erstelle_eingabefeld("Nachname", "person_nachname", "$row[PERSON_NACHNAME]", "50");
             erstelle_eingabefeld("Vorname", "person_vorname", "$row[PERSON_VORNAME]", "50");
-            erstelle_eingabefeld("Geburtstag (dd.mm.jjjj)", "person_geburtstag", "$row[PERSON_GEBURTSTAG]", "10");
+            $birthdate = date_format(new DateTime($row['PERSON_GEBURTSTAG']), "d.m.Y");
+            erstelle_eingabefeld("Geburtstag (dd.mm.jjjj)", "person_geburtstag", $birthdate, "10");
         }
-        erstelle_submit_button("submit_person_aendern", "Aendern");
-        ende_formular();
+        erstelle_submit_button("submit_person_aendern", "Ändern");
     } else {
         hinweis_ausgeben("Person mit der Person ID $person_id existiert nicht!");
     }

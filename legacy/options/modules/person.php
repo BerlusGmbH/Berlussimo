@@ -151,8 +151,6 @@ switch ($anzeigen) {
     case "person_aendern" :
         $form = new mietkonto ();
         $form->erstelle_formular("Person ändern", NULL);
-        iframe_start();
-        echo "Person aendern";
         if (request()->has('person_id') && !isset ($submit_person_aendern) && !request()->exists('person_definitiv_speichern')) {
             person_aendern_from(request()->input('person_id'));
         }
@@ -162,7 +160,6 @@ switch ($anzeigen) {
         if (request()->exists('person_definitiv_speichern')) {
             check_fields_nach_aenderung(); // Änderung anzeigen prüfen und eintragen
         }
-        iframe_end();
         $form->ende_formular();
         break;
 
@@ -272,17 +269,11 @@ function check_fields_nach_aenderung()
     } // end for
     if (!isset ($myerror)) {
         if (!request()->exists('person_definitiv_speichern')) {
-            erstelle_formular(NULL, NULL); // name, action
-            echo "<tr><td><h1>Folgende Daten wurden übermittelt:\n</h1></td></tr>\n";
-            echo "<tr><td><h2>Personendaten: $objekt_kurzname</h2></td></tr>\n";
-            echo "<tr><td>";
-            warnung_ausgeben("Sind Sie sicher, daß Sie die Person " . request()->input('person_nachname') . " " . request()->input('person_vorname') . " geb. am " . request()->input('person_geburtstag') . " ändern wollen?");
-            echo "</td></tr>";
+            echo "<h5>Sind Sie sicher, daß Sie die Person " . request()->input('person_nachname') . " " . request()->input('person_vorname') . " geb. am " . request()->input('person_geburtstag') . " ändern wollen?</h5>";
             erstelle_hiddenfeld("person_nachname", request()->input('person_nachname'));
             erstelle_hiddenfeld("person_vorname", request()->input('person_vorname'));
             erstelle_hiddenfeld("person_geburtstag", request()->input('person_geburtstag'));
             erstelle_submit_button("person_definitiv_speichern", "Speichern"); // name, wert
-            ende_formular();
         }
     }
     if (request()->has('person_definitiv_speichern')) {
