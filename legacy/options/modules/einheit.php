@@ -127,13 +127,11 @@ function einheit_kurz($haus_id)
     $result = DB::select($db_abfrage);
 
     if (empty($result)) {
-        echo "<h5><b>Keine Einheiten vorhanden!!!</b></h5>";
+        echo "<h5><b>Keine Einheiten vorhanden.</b></h5>";
     } else {
-        iframe_start();
         echo "<table class=\"sortable striped\">\n";
-        echo "<tr><th>Einheit</th><th>Typ</TH><th>Konto</th><th>Mieter</th><th>Anschrift</th><th>Lage</th><th>Fläche</th><th>OPTION</th></tr>";
-        $counter = 0;
-        foreach($result as $row) {
+        echo "<tr><th style='width: 10%'>Einheit</th><th style='width: 5%'>Typ</th><th style='width: 5%'>Mietkonto</th><th style='width: 20%'>Mieter</th><th style='width: 20%'>Anschrift</th><th style='width: 5%'>Lage</th><th style='width: 5%'>Fläche</th><th style='width: 6%'>Optionen</th></tr>";
+        foreach ($result as $row) {
             $mieteranzahl = mieter_anzahl($row['EINHEIT_ID']);
             $haus_kurzname = haus_strasse_nr($row['HAUS_ID']);
             if ($row['TYP'] != 'Wohneigentum') {
@@ -144,13 +142,13 @@ function einheit_kurz($haus_id)
                     $mieter = "Mieter:($mieteranzahl)";
                     $mietvertrags_id = vertrags_id($row['EINHEIT_ID']);
                     if (!empty ($mietvertrags_id)) {
-                        $mietkonto_link = "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mietkonto_uebersicht_detailiert', 'mietvertrag_id' => $mietvertrags_id]) . "'>MIETKONTO</a>";
+                        $mietkonto_link = "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mietkonto_uebersicht_detailiert', 'mietvertrag_id' => $mietvertrags_id]) . "'>Mietkonto</a>";
                     }
                 }
                 $einheit_link = "<a class=\"table_links\" href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $row['EINHEIT_ID']]) . "'>$row[EINHEIT_KURZNAME]</a>";
             } // end Mietswohnungen
-            if ($TYP == 'Wohneigentum') {
-                $einheit_link = "<a class=\"table_links\" href='" . route('legacy::weg::index' , ['option' => 'einheit_uebersicht', 'einheit_id' => $row['EINHEIT_ID']]) . "'>$row[EINHEIT_KURZNAME]</a>";
+            if ($row['TYP'] == 'Wohneigentum') {
+                $einheit_link = "<a class=\"table_links\" href='" . route('legacy::weg::index', ['option' => 'einheit_uebersicht', 'einheit_id' => $row['EINHEIT_ID']]) . "'>$row[EINHEIT_KURZNAME]</a>";
             }
             $EINHEIT_QM = nummer_punkt2komma($row['EINHEIT_QM']);
 
@@ -160,40 +158,21 @@ function einheit_kurz($haus_id)
             } else {
                 $detail_link = "<a class=\"table_links\" href=\"?daten=details&option=details_hinzu&detail_tabelle=EINHEIT&detail_id=$row[EINHEIT_ID]\">Neues Detail</a>";
             }
+            $link_aendern = "<a class=\"table_links\" href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_aendern', 'einheit_id' => $einheit_id]) . "'>Ändern</a>";
             if ($TYP != 'Wohneigentum') {
-                $counter++;
-                if ($counter == 1) {
-                    echo "<tr class=\"zeile1\"><td width=150>$einheit_link</td><td>$row[TYP]</td><td>$mietkonto_link</td><td width=200>";
-                    if ($mieter != "leer") {
-                        mieterid_zum_vertrag($mietvertrags_id);
-                    }
-                    echo "</td><td width=200>$haus_kurzname</td><td width=100>$row[EINHEIT_LAGE]</td><td width=40>$EINHEIT_QM</td><td>$detail_link</td></tr>\n";
+                echo "<tr><td>$einheit_link</td><td>$row[TYP]</td><td>$mietkonto_link</td><td>";
+                if ($mieter != "leer") {
+                    mieterid_zum_vertrag($mietvertrags_id);
                 }
-                if ($counter == 2) {
-                    echo "<tr class=\"zeile2\"><td width=150>$einheit_link</td><td>$row[TYP]</td><td>$mietkonto_link</td><td width=200>";
-                    if ($mieter != "leer") {
-                        mieterid_zum_vertrag($mietvertrags_id);
-                    }
-                    echo "</td><td width=200>$haus_kurzname</td><td width=100>$row[EINHEIT_LAGE]</td><td width=40>$EINHEIT_QM</td><td>$detail_link</td></tr>\n";
-                    $counter = 0;
-                }
+                echo "</td><td>$haus_kurzname</td><td>$row[EINHEIT_LAGE]</td><td>$EINHEIT_QM</td><td>$detail_link $link_aendern</td></tr>\n";
             }  // ende if WEG
             else {
-                $counter++;
-                if ($counter == 1) {
-                    echo "<tr class=\"zeile1\"><td width=150>$einheit_link</td><td>$TYP</td><td></td><td width=200>";
-                    echo "</td><td width=200>$haus_kurzname</td><td width=100>$row[EINHEIT_LAGE]</td><td width=40>$EINHEIT_QM</td><td>$detail_link</td></tr>\n";
-                }
-                if ($counter == 2) {
-                    echo "<tr class=\"zeile2\"><td width=150>$einheit_link</td><td>$TYP</td><td></td><td width=200>";
-                    echo "</td><td width=200>$haus_kurzname</td><td width=100>$row[EINHEIT_LAGE]</td><td width=40>$EINHEIT_QM</td><td>$detail_link</td></tr>\n";
-                    $counter = 0;
-                }
+                echo "<tr><td>$einheit_link</td><td>$TYP</td><td></td><td>";
+                echo "</td><td>$haus_kurzname</td><td>$row[EINHEIT_LAGE]</td><td>$EINHEIT_QM</td><td>$detail_link $link_aendern</td></tr>\n";
             }
         }
         echo "</table>";
     }
-    iframe_end();
 }
 
 function einheit_kurz_objekt($objekt_id)
@@ -204,15 +183,14 @@ RIGHT JOIN (
 HAUS, OBJEKT
 ) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID = '$objekt_id' )
 WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC");
-    
+
     if (empty($my_arr)) {
         echo "<h5>Keine Einheiten vorhanden.</h5>";
     } else {
         echo "<table class=\"striped sortable\" width=100%>\n";
         $objekt_kurzname = $my_arr [0] ['OBJEKT_KURZNAME'];
-        echo "<thead><tr class=\"feldernamen\"><td colspan=7>Einheiten im Objekt $objekt_kurzname</td></tr>\n";
-        echo "<tr class=\"feldernamen\"><td style='width: 10%'>Kurzname</td><td style='width: 5%'>OPTION</td><td style='width: 5%'>Ändern</td><td style='width: 20%'>Mieter</td><td style='width: 20%'>Anschrift</td><td style='width: 5%'>Lage</td><td style='width: 5%'>m²</td><td style='width: 5%'>Details</td></tr></thead>\n";
-        $counter = 0;
+        echo "<thead>";
+        echo "<tr><th style='width: 10%'>Einheit</th><th style='width: 5%'>Typ</th><th style='width: 5%'>Mietkonto</th><th style='width: 20%'>Mieter</th><th style='width: 20%'>Anschrift</th><th style='width: 5%'>Lage</th><th style='width: 5%'>Fläche</th><th style='width: 6%'>Optionen</th></tr></thead>\n";
         $numrows = count($my_arr);
         for ($a = 0; $a < $numrows; $a++) {
             $einheit_id = $my_arr [$a] ['EINHEIT_ID'];
@@ -239,7 +217,7 @@ WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LPAD(EINHEIT_KURZNAME, LE
                     if ($nk_vorschuss_sn) {
                         $weg->get_eigentumer_id_infos3($weg->eigentuemer_id);
                         $mieter_name = "<b>WEG-SELBSTNUTZER:</b><br> $weg->empf_namen_u";
-                        $eig_link = "<a href='" . route('legacy::weg::index' , ['option' => 'einheit_uebersicht', 'einheit_id' => $einheit_id]) . "'>$mieter_name</a>";
+                        $eig_link = "<a href='" . route('legacy::weg::index', ['option' => 'einheit_uebersicht', 'einheit_id' => $einheit_id]) . "'>$mieter_name</a>";
                     } else {
                         /* Eigentpmer zahlt keine Vorschüsse, dann vermietet er und ist kein Selbstnutzer */
                         $mieter = "leer";
@@ -249,16 +227,16 @@ WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LPAD(EINHEIT_KURZNAME, LE
                 $mieter = "Mieter:($mieteranzahl)";
                 $mietvertrags_id = vertrags_id($einheit_id);
                 if (!empty ($mietvertrags_id)) {
-                    $mietkonto_link = "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mietkonto_uebersicht_detailiert', 'mietvertrag_id' => $mietvertrags_id]) . "'>MIETKONTO</a>";
+                    $mietkonto_link = "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mietkonto_uebersicht_detailiert', 'mietvertrag_id' => $mietvertrags_id]) . "'>Mietkonto</a>";
                 }
             }
             if ($TYP != 'Wohneigentum') {
                 $einheit_link = "<a class=\"table_links\" href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id]) . "'>$einheit_kurzname</a>";
             } else {
-                $einheit_link = "<a class=\"table_links\" href='" . route('legacy::weg::index' , ['option' => 'einheit_uebersicht', 'einheit_id' => $einheit_id]) . "'>$einheit_kurzname</a>";
+                $einheit_link = "<a class=\"table_links\" href='" . route('legacy::weg::index', ['option' => 'einheit_uebersicht', 'einheit_id' => $einheit_id]) . "'>$einheit_kurzname</a>";
             }
 
-            $link_aendern = "<a class=\"table_links\" href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_aendern' , 'einheit_id' => $einheit_id]) . "'>ÄNDERN</a>";
+            $link_aendern = "<a class=\"table_links\" href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_aendern', 'einheit_id' => $einheit_id]) . "'>Ändern</a>";
 
             $detail_check = detail_check("EINHEIT", $einheit_id);
             if ($detail_check > 0) {
@@ -267,32 +245,17 @@ WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LPAD(EINHEIT_KURZNAME, LE
                 $detail_link = "<a class=\"table_links\" href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'EINHEIT', 'detail_id' => $einheit_id]) . "'>Neues Detail</a>";
             }
 
-            $counter++;
-            if ($counter == 1) {
-                echo "<tr class=\"zeile1\"><td width=150>$einheit_link $mietkonto_link</td><td>$TYP</td><td>$link_aendern</td><td width=200>";
-                if ($mieter != "leer" && !preg_match("/WEG-SELBSTNUTZER/i", $mieter)) {
-                    mieterid_zum_vertrag($mietvertrags_id);
-                }
-                if (isset ($eig_link)) {
-                    echo $eig_link;
-                } else {
-                    echo $mieter;
-                }
-                echo "</td><td width=200>$haus_kurzname</td><td width=100>$einheit_lage</td><td width=40>$einheit_qm</td><td>$detail_link</td></tr>\n";
+            echo "<tr><td>$einheit_link</td><td>$TYP</td><td>$mietkonto_link</td><td>";
+            if ($mieter != "leer" && !preg_match("/WEG-SELBSTNUTZER/i", $mieter)) {
+                mieterid_zum_vertrag($mietvertrags_id);
             }
-            if ($counter == 2) {
-                echo "<tr class=\"zeile2\"><td width=150>$einheit_link $mietkonto_link</td><td>$TYP</td><td>$link_aendern</td><td width=200>";
-                if ($mieter != "leer" && !preg_match("/WEG-SELBSTNUTZER/i", $mieter)) {
-                    mieterid_zum_vertrag($mietvertrags_id);
-                    if (isset ($eig_link)) {
-                        echo $eig_link;
-                    } else {
-                        echo $mieter;
-                    }
-                }
-                echo "</td><td width=200>$haus_kurzname</td><td width=100>$einheit_lage</td><td width=40>$einheit_qm</td><td>$detail_link</td></tr>\n";
-                $counter = 0;
+            if (isset ($eig_link)) {
+                echo $eig_link;
+            } else {
+                echo $mieter;
             }
+            echo "</td><td>$haus_kurzname</td><td>$einheit_lage</td><td>$einheit_qm</td><td>$detail_link $link_aendern</td></tr>\n";
+
             unset ($mieter);
             unset ($eig_link);
             unset ($link_aendern);
