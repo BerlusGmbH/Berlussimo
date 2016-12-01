@@ -214,7 +214,7 @@ ORDER BY KONTO ASC");
     function dropdown_kontenrahmen($label, $name, $id)
     {
         $my_array = DB::select("SELECT * FROM KONTENRAHMEN WHERE AKTUELL='1' ORDER BY NAME ASC");
-        if (!empty($result)) {
+        if (!empty($my_array)) {
             echo "<div class='input-field'>";
             echo "<select name=\"$name\" id=\"$id\" size=\"1\" >\n";
             $numrows = count($my_array);
