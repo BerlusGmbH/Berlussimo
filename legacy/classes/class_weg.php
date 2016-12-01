@@ -2658,6 +2658,11 @@ class weg
         $gg = new geldkonto_info ();
         $gg->geld_konto_ermitteln('Objekt', $this->objekt_id);
         $geldkonto_id = $gg->geldkonto_id;
+        if(!isset($geldkonto_id)) {
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Es existiert kein Geldkonto für das Objekt.")
+            );
+        }
 
         $eigentuemer_ids = $this->get_eigentuemer_arr($this->einheit_id);
 
