@@ -3650,6 +3650,9 @@ ORDER BY HGA;");
             $this->einheit_qm_weg_d = $this->einheit_qm_d;
         }
 
+        $this->weg_anteile = $det->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Anteile');
+
+
         $this->haus_strasse = $e->haus_strasse;
         $this->haus_nummer = $e->haus_nummer;
         $this->haus_plz = $e->haus_plz;

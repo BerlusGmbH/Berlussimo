@@ -521,8 +521,8 @@ class b_pdf
 
     function vorlage_update($dat, $kurztext, $text, $kat = 'Alle', $empf_typ = 'Mieter')
     {
-        $db_abfrage = "UPDATE PDF_VORLAGEN SET KURZTEXT= '$kurztext', TEXT= '$text', KAT='$kat', EMPF_TYP='$empf_typ' WHERE DAT='$dat'";
-        DB::update($db_abfrage);
+        $db_abfrage = "UPDATE PDF_VORLAGEN SET KURZTEXT=?, TEXT=?, KAT='$kat', EMPF_TYP='$empf_typ' WHERE DAT='$dat'";
+        DB::update($db_abfrage, [$kurztext, $text]);
         /* Protokollieren */
         protokollieren('PDF_VORLAGEN', $dat, $dat);
     }
