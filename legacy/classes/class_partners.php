@@ -261,28 +261,19 @@ OR  `LAND` LIKE  '%$suchtext%'
     {
         $form = new mietkonto ();
         $form->erstelle_formular("Partner erfassen", NULL);
-        // $form->text_feld("Partnername:", "partnername", "", "10");
-        // $js = "onkeyup=\"alert('SANEL');\"";
         $js = "onkeyup=\"daj3('ajax/ajax_info.php?option=finde_partner&suchstring='+this.value, 'p_fund');\"";
 
         $f = new formular ();
-
-        // $f->text_feld_inaktiv('Partner gefunden', 'p_fund', '', 70, 'p_fund');
-        // echo "<div id=\"p_fund\" style=\"color=#ff0000;\"></div>";#
-        $f->text_bereich_js('Partnername', 'partnername', '', '20', '3', 'partner_name', $js);
+        $f->text_bereich_js('Partnername', 'partnername', old('partnername'), '20', '3', 'partner_name', $js);
         echo "<div id=\"p_fund\" style=\"color:#ff0000;border:3px;border-color=#ff0000;\"></div>"; //
-        // $f->text_bereich_js("Partnername", "partnername", '', "20", "3", $js);
-        $form->text_feld("Strasse:", "strasse", '', "50");
-        $form->text_feld("Hausnummer:", "hausnummer", '', "10");
-        $form->text_feld("Postleitzahl:", "plz", '', "10");
-        $form->text_feld("Ort:", "ort", '', "25");
-        $form->text_feld("Land:", "land", '', "25");
-        // $form->text_feld("Kreditinstitut:", "kreditinstitut", "", "10");
-        // $form->text_feld("Kontonummer:", "kontonummer", "", "10");
-        // $form->text_feld("Bankleitzahl:", "blz", "", "10");
-        $form->text_feld("Telefon:", "tel", "", "25");
-        $form->text_feld("Fax:", "fax", "", "25");
-        $form->text_feld("Email:", "email", "", "30");
+        $form->text_feld("Strasse:", "strasse", old('strasse'), "50");
+        $form->text_feld("Hausnummer:", "hausnummer", old('hausnummer'), "10");
+        $form->text_feld("Postleitzahl:", "plz", old('plz'), "10");
+        $form->text_feld("Ort:", "ort", old('ort'), "25");
+        $form->text_feld("Land:", "land", old('land'), "25");
+        $form->text_feld("Telefon:", "tel", old('tel'), "25");
+        $form->text_feld("Fax:", "fax", old('fax'), "25");
+        $form->text_feld("Email:", "email", old('email'), "30");
         $form->send_button("submit_partner", "Partner speichern");
         $form->hidden_feld("option", "partner_gesendet");
         $form->ende_formular();
@@ -320,13 +311,6 @@ OR  `LAND` LIKE  '%$suchtext%'
 
             // print_r($clean_arr);
             if (empty ($partnername) or empty ($str) or empty ($hausnr) or empty ($plz) or empty ($ort) or empty ($land)) {
-                session()->put('partnername', $partnername);
-                session()->put('strasse', $str);
-                session()->put('hausnummer', $hausnr);
-                session()->put('plz', $plz);
-                session()->put('ort', $ort);
-                session()->put('land', $land);
-
                 throw new \App\Exceptions\MessageException(
                     new \App\Messages\ErrorMessage("Dateneingabe unvollständig.")
                 );
@@ -344,18 +328,19 @@ OR  `LAND` LIKE  '%$suchtext%'
             $partner_id = $this->letzte_partner_id();
             $partner_id = $partner_id + 1;
             $db_abfrage = "INSERT INTO PARTNER_LIEFERANT VALUES (NULL, $partner_id, '$clean_arr[partnername]','$clean_arr[strasse]', '$clean_arr[hausnummer]','$clean_arr[plz]','$clean_arr[ort]','$clean_arr[land]','1')";
-            DB::insert($db_abfrage);
+            $resultat = DB::insert($db_abfrage);
             /* Protokollieren */
             $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('PARTNER_LIEFERANT', $last_dat, '0');
-            if (isset ($resultat)) {
-                hinweis_ausgeben("Partner $clean_arr[partnername] wurde gespeichert.");
-                weiterleiten_in_sec(route('legacy::partner::index', ['option' => 'partner_erfassen'], false), 2);
+            if ($resultat) {
+                session()->flash('info', ["Partner $clean_arr[partnername] wurde gespeichert."]);
+                weiterleiten(route('legacy::partner::index', ['option' => 'partner_liste'], false));
             }
         } // ende fehler
         if ($numrows_3 > 0) {
-            fehlermeldung_ausgeben("Partner $clean_arr[partnername] exisitiert bereits.");
-            weiterleiten_in_sec(route('legacy::partner::index', ['option' => 'partner_erfassen'], false), 2);
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Partner $clean_arr[partnername] exisitiert bereits.")
+            );
         }
         session()->forget('partnername');
         session()->forget('strasse');
@@ -476,7 +461,7 @@ OR  `LAND` LIKE  '%$suchtext%'
     function partner_liste()
     {
         $partner_arr = $this->partner_in_array();
-        echo "<table class=\"sortable\">";
+        echo "<table class=\"sortable striped\">";
         echo "<tr><th>Partner</th><th>Anschrift</th><th>Gewerk / Stichwort</th><th>Details</th></tr>";
         $zaehler = 0;
         for ($a = 0; $a < count($partner_arr); $a++) {

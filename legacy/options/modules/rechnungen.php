@@ -861,47 +861,6 @@ switch ($option) {
         $form->ende_formular();
         break;
 
-    case "partner_erfassen" :
-        $partner_form = new partner ();
-        $partner_form->partner_rechts_anzeigen();
-        $partner_form->form_partner_erfassen();
-        break;
-
-    case "partner_gesendet" :
-        $partner_form = new partner ();
-        $partner_form->partner_rechts_anzeigen();
-        $form = new mietkonto ();
-        $form->erstelle_formular("Partnerdaten überprüfen", NULL);
-        echo "<p><b>Übermittelte Partnerdaten:</b></p>";
-        $clean_arr = post_array_bereinigen();
-        foreach ($clean_arr as $key => $value) {
-            if (empty ($value)) {
-                echo "<b>$key wurde nicht eingegeben</b>";
-                $fehler = true;
-            }
-            if (($key != 'submit_partner') and ($key != 'option')) {
-                echo "" . $value . "<br>";
-                $form->hidden_feld($key, $value);
-            }
-        }
-        if (!$fehler) {
-            $form->hidden_feld("option", "partner_gesendet1");
-            $form->send_button("submit_partner1", "Speichern");
-        } else {
-            backlink();
-        }
-        $form->ende_formular();
-        break;
-
-    case "partner_gesendet1" :
-        $clean_arr = post_array_bereinigen();
-        $form = new mietkonto ();
-        $form->erstelle_formular("Partnerdaten speichern", NULL);
-        $partner = new partner ();
-        $partner->partner_speichern($clean_arr);
-        $form->ende_formular();
-        break;
-
     case "send_positionen" :
         $clean_arr = post_array_bereinigen();
         $rechnung = new rechnung ();

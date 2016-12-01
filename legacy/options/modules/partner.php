@@ -41,7 +41,7 @@ switch ($option) {
         //$partners = new partners ();
         //$partners->partner_rechts_anzeigen();
         $form = new formular ();
-        $form->erstelle_formular("Partnerdaten überprüfen", NULL);
+        $form->erstelle_formular("Partnerdaten überprüfen", route('legacy::partner::index', ['option' => 'partner_gesendet1'], false));
         $clean_arr = $form->post_array_bereinigen();
         foreach ($clean_arr as $key => $value) {
             if (($key != 'submit_partner') and ($key != 'option')) {
@@ -50,7 +50,6 @@ switch ($option) {
             }
         }
         if (!$fehler) {
-            $form->hidden_feld("option", "partner_gesendet1");
             $form->send_button("submit_partner1", "Speichern");
         } else {
             echo "Daten unvollständig";
@@ -59,13 +58,12 @@ switch ($option) {
         break;
 
     case "partner_gesendet1" :
-        $form = new formular ();
+        $form = new formular();
+        request()->flash();
         $clean_arr = $form->post_array_bereinigen();
-        $form->erstelle_formular("Partnerdaten speichern", NULL);
-        // print_r($clean_arr);
         $partners = new partners ();
         $partners->partner_speichern($clean_arr);
-        $form->ende_formular();
+        weiterleiten(route('legacy::partner::index', ['option' => 'partner_liste'], false));
         break;
 
     case "partner_liste" :
