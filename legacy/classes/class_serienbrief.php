@@ -121,7 +121,7 @@ class serienbrief
                     $pdf->ezSetDy(-30);
                     $pdf->ezText("$weg->anrede_brief", 10);
 
-                    eval ("\$bpdf->v_text = \"$bpdf->v_text\";");; // Variable ausm Text füllen
+                    eval ('$bpdf->v_text = "' . str_replace( "\"", "\\\"", $bpdf->v_text ) . '";'); // Variable ausm Text füllen
 
                     $pdf->ezText("$bpdf->v_text", 10, array(
                         'justification' => 'left'
