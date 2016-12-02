@@ -146,7 +146,7 @@ switch ($option) {
 
         if (request()->has('w_name')) {
             $wirt->neue_we_speichern(request()->input('w_name'));
-            header("Location: " . route('legacy::bk::index', ['option' => 'wirtschaftseinheiten']));
+            weiterleiten(route('legacy::bk::index', ['option' => 'wirtschaftseinheiten'],false));
         } else {
             fehlermeldung_ausgeben("Fehler: Wirtschaftseinheit braucht eine Bezeichnung!");
         }
@@ -171,7 +171,9 @@ switch ($option) {
             $w_id = request()->input('w_id');
             $anzeigen = request()->input('anzeigen');
             $wirt = new wirt_e ();
-            $wirt->del_eine($w_id, request()->input('IMPORT_AUS'));
+            foreach (request()->input('IMPORT_AUS') as $e_id) {
+                $wirt->del_eine($w_id, $e_id);
+            }
         }
 
         weiterleiten(route('legacy::bk::index', ['option' => 'wirt_einheiten_hinzu', 'w_id' => $w_id, 'anzeigen' => $anzeigen], false));
