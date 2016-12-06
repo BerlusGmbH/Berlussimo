@@ -1191,13 +1191,8 @@ function get_iban_bic(kto_feld, blz_feld) {
 		switch(req.readyState) {
 
 		case 4:
-			if (req.status != 200) {
-				//alert("Fehler:"+req.status);
-			} else {
-				//alert(req.responseText);
+			if (req.status == 200) {
 				if (req.responseText) {
-					//reload_me();   hier nicht, sonst sendet doppelt
-					//alert(req.responseText);
 					iban_bic_arr = req.responseText.split('|');
 					iban = iban_bic_arr[0];
 					bic = iban_bic_arr[1];
@@ -1205,9 +1200,7 @@ function get_iban_bic(kto_feld, blz_feld) {
 					document.getElementById('iban').value = iban;
 					document.getElementById('bic').value = bic;
 					document.getElementById('institut').value = bankname;
-
-				} else {
-					//reload_me();
+					Materialize.updateTextFields();
 				}
 			}
 			break;
