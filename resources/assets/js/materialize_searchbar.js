@@ -58,31 +58,31 @@ $(document).ready(function () {
                         if ($.isArray(data['objekte']) && !$.isEmptyObject(data['objekte'])) {
                             items.push("<li><span class='grey accent-3 white-text'>Objekte<span class='new badge' data-badge-caption=''>" + data['objekte'].length + "</span></span></li>");
                             $.each(data['objekte'], function (key, val) {
-                                items.push("<li id='" + val['OBJEKT_ID'] + "'><span>" + val['OBJEKT_KURZNAME'] + "</span></li>");
+                                items.push("<li id='" + val['OBJEKT_ID'] + "'><a href='" + objekturl + val['OBJEKT_ID'] + "'><span>" + val['OBJEKT_KURZNAME'] + "</span></a></li>");
                             });
                         }
                         if ($.isArray(data['haeuser']) && !$.isEmptyObject(data['haeuser'])) {
                             items.push("<li><span class='grey accent-3 white-text'>Häuser<span class='new badge' data-badge-caption=''>" + data['haeuser'].length + "</span></span></li>");
                             $.each(data['haeuser'], function (key, val) {
-                                items.push("<li id='" + val['HAUS_ID'] + "'><span>" + val['HAUS_STRASSE'] + " " + val['HAUS_NUMMER'] + "</span></li>");
+                                items.push("<li id='" + val['HAUS_ID'] + "'><a href='" + hausurl + val['HAUS_ID'] + "'><span>" + val['HAUS_STRASSE'] + " " + val['HAUS_NUMMER'] + "</span></a></li>");
                             });
                         }
                         if ($.isArray(data['einheiten']) && !$.isEmptyObject(data['einheiten'])) {
                             items.push("<li><span class='grey accent-3 white-text'>Einheiten<span class='new badge' data-badge-caption=''>" + data['einheiten'].length + "</span></span></li>");
                             $.each(data['einheiten'], function (key, val) {
-                                items.push("<li id='" + val['EINHEIT_ID'] + "'><span>" + val['EINHEIT_KURZNAME'] + "</span></li>");
+                                items.push("<li id='" + val['EINHEIT_ID'] + "'><a href='" + einheiturl + val['EINHEIT_ID'] + "'><span>" + val['EINHEIT_KURZNAME'] + "</span></a></li>");
                             });
                         }
                         if ($.isArray(data['personen']) && !$.isEmptyObject(data['personen'])) {
                             items.push("<li><span class='grey accent-3 white-text'>Personen<span class='new badge' data-badge-caption=''>" + data['personen'].length + "</span></span></li>");
                             $.each(data['personen'], function (key, val) {
-                                items.push("<li id='" + val['PERSON_ID'] + "'><span>" + val['PERSON_NACHNAME'] + ", " + val['PERSON_VORNAME'] + "</span></li>");
+                                items.push("<li id='" + val['PERSON_ID'] + "'><a href='" + personurl + val['PERSON_ID'] + "'><span>" + val['PERSON_NACHNAME'] + ", " + val['PERSON_VORNAME'] + "</span></a></li>");
                             });
                         }
                         if ($.isArray(data['partner']) && !$.isEmptyObject(data['partner'])) {
                             items.push("<li><span class='grey accent-3 white-text'>Partner<span class='new badge' data-badge-caption=''>" + data['partner'].length + "</span></span></li>");
                             $.each(data['partner'], function (key, val) {
-                                items.push("<li id='" + val['PARTNER_ID'] + "'><span>" + val['PARTNER_NAME'] + "</span></li>");
+                                items.push("<li id='" + val['PARTNER_ID'] + "'><a href='" + partnerurl + val['PARTNER_ID'] + "'><span>" + val['PARTNER_NAME'] + "</span></a></li>");
                             });
                         }
                         $autocomplete.append(items.join(""));
@@ -113,7 +113,10 @@ $(document).ready(function () {
                 $input.val('');
                 $autocomplete.empty();
             });
-            $input.on('focusout', function () {
+            $input.on('focusout', function (event) {
+                if(event.relatedTarget) {
+                    $(event.relatedTarget)[0].click();
+                }
                 $autocomplete.empty();
             });
             $input.on('focusin', function () {
