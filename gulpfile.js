@@ -48,7 +48,8 @@ elixir(function(mix) {
             'materialize_chips_autocomplete.js',
             'materialize_autocomplete.js',
             'materialize_datepicker_defaults.js',
-            'materialize_init.js'
+            'materialize_init.js',
+            'materialize_searchbar.js'
         ],
         'public/js/berlussimo.js'
     );

@@ -4,6 +4,9 @@
     <a href='' data-activates="berlussimo-sidenav" class="button-collapse right" xmlns="http://www.w3.org/1999/html"><i
                 class="material-icons">menu</i></a>
     <ul class="right hide-on-med-and-down">
+        <li style="height: 64px">
+            @include('shared.searchbar')
+        </li>
         @if(check_user_links(Auth::user()->id, 'rechnungen'))
             <li>
                 @if(session()->has('partner_id'))

@@ -83,10 +83,6 @@ Route::group(['prefix' => config('app.legacy.prefix'), 'namespace' => 'Legacy', 
         Route::match(['get', 'post'], '/', 'KontenrahmenController@request')->name('index');
     });
 
-    Route::group(['prefix' => 'kundenweb', 'as' => 'kundenweb::'], function () {
-        Route::match(['get', 'post'], '/', 'KundenwebController@request')->name('index');
-    });
-
     Route::group(['prefix' => 'lager', 'as' => 'lager::'], function () {
         Route::match(['get', 'post'], '/', 'LagerController@request')->name('index');
     });
@@ -155,10 +151,6 @@ Route::group(['prefix' => config('app.legacy.prefix'), 'namespace' => 'Legacy', 
         Route::match(['get', 'post'], '/', 'StatistikController@request')->name('index');
     });
 
-    Route::group(['prefix' => 'tickets', 'as' => 'tickets::'], function () {
-        Route::match(['get', 'post'], '/', 'TicketsController@request')->name('index');
-    });
-
     Route::group(['prefix' => 'todo', 'as' => 'todo::'], function () {
         Route::match(['get', 'post'], '/', 'ToDoController@request')->name('index');
     });
@@ -188,4 +180,8 @@ Route::group(['prefix' => config('app.legacy.prefix'), 'namespace' => 'Legacy', 
 
 Route::group(['prefix' => 'storage', 'namespace' => 'Storage', 'middleware' => ['web', 'auth']], function () {
     Route::get('{path}', 'StorageController@asset')->where('path', '.+');
+});
+
+Route::group(['prefix' => 'api/v1', 'namespace' => 'Api\v1', 'middleware' => ['web', 'auth']], function () {
+    Route::get('/search', 'SearchBarController@search')->name('search');
 });
