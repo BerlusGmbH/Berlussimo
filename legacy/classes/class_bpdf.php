@@ -248,7 +248,7 @@ class b_pdf
             $pdf->ezStartPageNumbers(545, 715, $f_size, '', 'Seite {PAGENUM} von {TOTALPAGENUM}', 1);
             $pdf->setLineStyle(0.5);
 
-            if (!request()->has('no_logo')) {
+            if (!request()->exists('no_logo')) {
                 $pdf->addText($pdf->ez['pageWidth'] / 2, 42, $f_size, "$this->zeile1", 0, 'center');
                 $pdf->addText($pdf->ez['pageWidth'] / 2, 35, $f_size, "$this->zeile2", 0, 'center');
             }
