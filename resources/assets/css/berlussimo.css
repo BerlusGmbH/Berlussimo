@@ -46,8 +46,7 @@ main {
 /* right width for autocomplete windows */
 .autocomplete-content {
     position: absolute;
-    width: 92%;
-    width: calc(100% - 4.5rem);
+    width: 100%;
 }
 
 .input-field .prefix ~ .autocomplete-content {
