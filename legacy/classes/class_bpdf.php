@@ -234,7 +234,7 @@ class b_pdf
 
         if ($orientation == 'portrait') {
             $pdf->ezSetMargins(135, 70, 50, 50);
-            if (!request()->has('no_logo')) {
+            if (!request()->exists('no_logo')) {
                 $logo_file = "$partner_typ/$partner_id" . "_logo.png";
                 if (Storage::disk('logos')->exists($logo_file)) {
                     $pdf->addPngFromFile(Storage::disk('logos')->fullPath($logo_file), 200, 730, 200, 80);
