@@ -19,9 +19,9 @@ switch ($option) {
         }
         $vorjahr = $jahr - 1;
         $nachjahr = $jahr + 1;
-        $link_vorjahr = "<a class='waves-effect waves-light btn' href='" . route('legacy::urlaub::index', ['option' => 'uebersicht', 'jahr' => $vorjahr]) . "'><i class=\"material-icons left\">keyboard_arrow_left</i>$vorjahr</a>";
-        $link_nachjahr = "<a class='waves-effect waves-light btn' href='" . route('legacy::urlaub::index', ['option' => 'uebersicht', 'jahr' => $nachjahr]) . "'><i class=\"material-icons right\">keyboard_arrow_right</i>$nachjahr</a>";
-        $pdf_link = "<a class='waves-effect waves-light btn' href='" . route('legacy::urlaub::index', ['option' => 'uebersicht_pdf', 'jahr' => $jahr]) . "'>PDF</a>";
+        $link_vorjahr = "<a class='waves-effect waves-light btn' href='" . route('web::urlaub::legacy', ['option' => 'uebersicht', 'jahr' => $vorjahr]) . "'><i class=\"material-icons left\">keyboard_arrow_left</i>$vorjahr</a>";
+        $link_nachjahr = "<a class='waves-effect waves-light btn' href='" . route('web::urlaub::legacy', ['option' => 'uebersicht', 'jahr' => $nachjahr]) . "'><i class=\"material-icons right\">keyboard_arrow_right</i>$nachjahr</a>";
+        $pdf_link = "<a class='waves-effect waves-light btn' href='" . route('web::urlaub::legacy', ['option' => 'uebersicht_pdf', 'jahr' => $jahr]) . "'>PDF</a>";
         echo "<div class='left-align'>";
         echo "$link_vorjahr &nbsp;<b>Übersicht $jahr</b>&nbsp; $link_nachjahr $pdf_link";
         echo " </div>";
@@ -71,7 +71,7 @@ switch ($option) {
             $art = request()->input('art');
             $u->tage_arr($benutzer_id, $datum_a, $datum_e, $art);
         }
-        weiterleiten_in_sec(route('legacy::urlaub::index', ['option' => 'urlaubsantrag', 'benutzer_id' => $benutzer_id], false), 1);
+        weiterleiten_in_sec(route('web::urlaub::legacy', ['option' => 'urlaubsantrag', 'benutzer_id' => $benutzer_id], false), 1);
         break;
 
     case "jahresansicht" :
@@ -99,7 +99,7 @@ switch ($option) {
         $jahr = request()->input('jahr');
         if (!empty ($dat)) {
             $u->urlaubstag_loeschen($dat);
-            weiterleiten_in_sec(route('legacy::urlaub::index', ['option' => 'jahresansicht', 'benutzer_id' => $benutzer_id, 'jahr' => $jahr], false), 1);
+            weiterleiten_in_sec(route('web::urlaub::legacy', ['option' => 'jahresansicht', 'benutzer_id' => $benutzer_id, 'jahr' => $jahr], false), 1);
         } else {
             echo "Urlaubstag auswählen";
         }
@@ -156,8 +156,8 @@ switch ($option) {
         }
         $vorjahr = $jahr - 1;
         $nachjahr = $jahr + 1;
-        echo "<a href='" . route('legacy::urlaub::index', ['option' => 'monatsansicht_jahr', 'jahr' => $vorjahr], false) . "'> Übersicht $vorjahr </a> |  ";
-        echo "<a href='" . route('legacy::urlaub::index', ['option' => 'monatsansicht_jahr', 'jahr' => $machjahr], false) . "'> Übersicht $nachjahr </a> ";
+        echo "<a href='" . route('web::urlaub::legacy', ['option' => 'monatsansicht_jahr', 'jahr' => $vorjahr], false) . "'> Übersicht $vorjahr </a> |  ";
+        echo "<a href='" . route('web::urlaub::legacy', ['option' => 'monatsansicht_jahr', 'jahr' => $machjahr], false) . "'> Übersicht $nachjahr </a> ";
         for ($a = 1; $a <= 12; $a++) {
             $u->monatsansicht($a, $jahr);
         }

@@ -370,8 +370,8 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
                     $listenpreis = nummer_punkt2komma($listenpreis);
                     // $rabatt = nummer_punkt2komma($rabatt);
                     $gesamt_preis = nummer_punkt2komma($gesamt_preis);
-                    $aendern_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'position_aendern', 'pos' => $position, 'belegnr' => $belegnr]) . "'>Ändern</a>";
-                    $loeschen_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'position_loeschen', 'pos' => $position, 'belegnr' => $belegnr]) . "'>Löschen</a>";
+                    $aendern_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'position_aendern', 'pos' => $position, 'belegnr' => $belegnr]) . "'>Ändern</a>";
+                    $loeschen_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'position_loeschen', 'pos' => $position, 'belegnr' => $belegnr]) . "'>Löschen</a>";
                     echo "<tr><td valign=top>$aendern_link $loeschen_link</td><td valign=top>$position.</td><td valign=top>$artikel_nr</td><td valign=top>$bezeichnung</td><td align=right valign=top>$menge</td><td>$v_einheit</td><td align=right valign=top>$listenpreis €</td><td align=right valign=top>$einzel_preis €</td><td align=right valign=top>$rabatt %</td><td align=right valign=top>$mwst_satz %</td><td align=right valign=top>$pos_skonto %</td><td align=right valign=top>$gesamt_netto_ausgabe €</td></tr>\n";
                     $g_netto = $g_netto + $gesamt_netto;
                     $g_mwst1 = ($gesamt_netto / 100) * (100 + $mwst_satz);
@@ -1013,7 +1013,7 @@ function dropdown_pools($label, $name, $id, $js, $kos_typ, $kos_id)
         echo "</select><label for=\"$id\">$label</label>\n";
     } else {
         echo "<b>Keine Unterpools hinterlegt oder aktiviert</b>";
-        $link = "<br><a href='" . route('legacy::rechnungen::index', ['option' => 'u_pool_erstellen']) . "'>Hier Pools erstellen</a>";
+        $link = "<br><a href='" . route('web::rechnungen::legacy', ['option' => 'u_pool_erstellen']) . "'>Hier Pools erstellen</a>";
         echo $link;
         return false;
     }

@@ -19,6 +19,6 @@ class ObjekteController extends LegacyController
     {
         session()->put('objekt_id', $id);
 
-        return redirect()->intended(route('legacy::index', [], false));
+        return redirect()->intended(route('web::legacy', [], false));
     }
 }

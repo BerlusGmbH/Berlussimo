@@ -5,7 +5,7 @@ function objekt_liste_links()
     $result = DB::select("SELECT OBJEKT_DAT, OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC ");
     echo "<b>Objekt auswählen:</b><br>\n ";
     foreach($result as $row) {
-        echo "<a class='objekt_links' href='" . route('legacy::haeuserform::index', ['daten_rein' => 'anlegen', 'haus_objekt' => $row['OBJEKT_ID']]) . "'>$row[OBJEKT_KURZNAME]</a><br>\n";
+        echo "<a class='objekt_links' href='" . route('web::haeuserform::legacy', ['daten_rein' => 'anlegen', 'haus_objekt' => $row['OBJEKT_ID']]) . "'>$row[OBJEKT_KURZNAME]</a><br>\n";
     }
 }
 
@@ -14,7 +14,7 @@ function objekt_liste_links_aenderung()
     $result = DB::select("SELECT OBJEKT_DAT, OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC ");
     echo "<b>Objekt auswählen:</b><br>\n ";
     foreach($result as $row) {
-        echo "<a class='objekt_links' href='" . route('legacy::haeuserform::index', ['daten_rein' => 'aendern_liste', 'objekt_id' => $row['OBJEKT_ID']]) . "'>$row[OBJEKT_KURZNAME]</a><br>\n";
+        echo "<a class='objekt_links' href='" . route('web::haeuserform::legacy', ['daten_rein' => 'aendern_liste', 'objekt_id' => $row['OBJEKT_ID']]) . "'>$row[OBJEKT_KURZNAME]</a><br>\n";
     }
 }
 
@@ -36,7 +36,7 @@ function haus_eingabe_formular($objekt_id)
 
 function haus_aendern_formular($haus_id)
 {
-    erstelle_formular("haus_aendern_form", route('legacy::haeuserform::index', ['daten_rein' => 'aendern'], false));
+    erstelle_formular("haus_aendern_form", route('web::haeuserform::legacy', ['daten_rein' => 'aendern'], false));
     $result = DB::select("SELECT HAUS_DAT, HAUS_STRASSE, HAUS_NUMMER, HAUS_STADT, HAUS_PLZ, HAUS_QM, OBJEKT_ID FROM HAUS WHERE HAUS_ID='$haus_id' && HAUS_AKTUELL='1' ORDER BY HAUS_DAT DESC LIMIT 0,1");
 
     foreach($result as $row) {
@@ -70,7 +70,7 @@ function haus_in_db_eintragen($strasse, $nummer, $stadt, $plz, $qm, $objekt_id)
         $aktuelle_haus_dat = zugeteilte_haus_dat($strasse, $nummer, $stadt, $plz);
         protokollieren("HAUS", $aktuelle_haus_dat, 0);
         hinweis_ausgeben("Haus $haus_id wurde eingetragen");
-        weiterleiten(route('legacy::haeuser::index', ['haus_raus' => 'haus_kurz', 'objekt_id' => $objekt_id], false));
+        weiterleiten(route('web::haeuser::legacy', ['haus_raus' => 'haus_kurz', 'objekt_id' => $objekt_id], false));
     } else {
         fehlermeldung_ausgeben("Haus in der $strasse $nummer in $stadt $plz existiert bereits.");
         weiterleiten("javascript:history.back()");
@@ -83,7 +83,7 @@ function haus_geaendert_eintragen($haus_dat, $haus_id, $strasse, $nummer, $stadt
     $aktuelle_haus_dat = zugeteilte_haus_dat($strasse, $nummer, $stadt, $plz);
     protokollieren("HAUS", $aktuelle_haus_dat, $haus_dat);
     hinweis_ausgeben("Haus wurde geändert");
-    weiterleiten(route('legacy::haeuser::index', ['haus_raus' => 'haus_kurz'], false));
+    weiterleiten(route('web::haeuser::legacy', ['haus_raus' => 'haus_kurz'], false));
 }
 
 function zugeteilte_haus_dat($strasse, $nummer, $stadt, $plz)

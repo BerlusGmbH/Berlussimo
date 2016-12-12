@@ -52,11 +52,11 @@ switch ($haus_raus) {
             $h = new haus ();
             $h->haus_aenderung_in_db($strasse, $haus_nr, $ort, $plz, $qm, $objekt_id, $haus_id);
             fehlermeldung_ausgeben("Haus geändert!");
-            weiterleiten_in_sec(route('legacy::haeuser::index', ['haus_raus' => 'haus_kurz', 'objekt_id' => $objekt_id], false), 3);
+            weiterleiten_in_sec(route('web::haeuser::legacy', ['haus_raus' => 'haus_kurz', 'objekt_id' => $objekt_id], false), 3);
         } else {
             fehlermeldung_ausgeben("Eingegebene Daten unvollständig, erneut versuchen bitte!");
             $haus_id = request()->input('haus_id');
-            weiterleiten_in_sec(route('legacy::haeuser::index', ['haus_raus' => 'haus_aendern', 'haus_id' => $haus_id], false), 3);
+            weiterleiten_in_sec(route('web::haeuser::legacy', ['haus_raus' => 'haus_aendern', 'haus_id' => $haus_id], false), 3);
         }
         break;
 }
@@ -80,9 +80,9 @@ function haus_kurz($objekt_id = '')
         foreach($result as $row) {
             $detail_check = detail_check("HAUS", $row['HAUS_ID']);
             if ($detail_check > 0) {
-                $detail_link = "<a class=\"table_links\" href='" . route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_tabelle' => 'HAUS', 'detail_id' => $row['HAUS_ID']]) . "'>Details</a>";
+                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'HAUS', 'detail_id' => $row['HAUS_ID']]) . "'>Details</a>";
             } else {
-                $detail_link = "<a class=\"table_links\" href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'HAUS', 'detail_id' => $row['HAUS_ID']]) . "'>Neues Detail</a>";
+                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'HAUS', 'detail_id' => $row['HAUS_ID']]) . "'>Neues Detail</a>";
             }
             $einheiten_im_haus = anzahl_einheiten_im_haus($row['HAUS_ID']);
             $gesammtflaeche_einheiten = einheiten_gesamt_qm($row['HAUS_ID']);
@@ -91,13 +91,13 @@ function haus_kurz($objekt_id = '')
             }
             $counter++;
 
-            $link_haus_aendern = "<a href='" . route('legacy::haeuser::index', ['haus_raus' => 'haus_aendern', 'haus_id' => $row['HAUS_ID']]) . "'>Haus ändern</th>";
+            $link_haus_aendern = "<a href='" . route('web::haeuser::legacy', ['haus_raus' => 'haus_aendern', 'haus_id' => $row['HAUS_ID']]) . "'>Haus ändern</th>";
 
             if ($counter == 1) {
-                echo "<tr class=\"zeile1\"><td width=150>$row[HAUS_STRASSE]</td><td width=60>$row[HAUS_NUMMER]</td><td width=60>$row[HAUS_PLZ]</td><td width=60>$row[HAUS_QM] m²</td><td width=100>$gesammtflaeche_einheiten m²</td><td><a class=\"table_links\" href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_kurz', 'haus_id' => $row['HAUS_ID']]) . "'>Einheiten (<b>$einheiten_im_haus</b>)</a></td><td>$detail_link</td><td>$link_haus_aendern</td></tr>";
+                echo "<tr class=\"zeile1\"><td width=150>$row[HAUS_STRASSE]</td><td width=60>$row[HAUS_NUMMER]</td><td width=60>$row[HAUS_PLZ]</td><td width=60>$row[HAUS_QM] m²</td><td width=100>$gesammtflaeche_einheiten m²</td><td><a class=\"table_links\" href='" . route('web::einheiten::legacy', ['einheit_raus' => 'einheit_kurz', 'haus_id' => $row['HAUS_ID']]) . "'>Einheiten (<b>$einheiten_im_haus</b>)</a></td><td>$detail_link</td><td>$link_haus_aendern</td></tr>";
             }
             if ($counter == 2) {
-                echo "<tr class=\"zeile2\"><td width=150>$row[HAUS_STRASSE]</td><td width=60>$row[HAUS_NUMMER]</td><td width=60>$row[HAUS_PLZ]</td><td width=60>$row[HAUS_QM] m²</td><td width=60>$gesammtflaeche_einheiten m²</td><td><a class=\"table_links\" href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_kurz', 'haus_id' => $row['HAUS_ID']]) . "'>Einheiten (<b>$einheiten_im_haus</b>)</a></td><td>$detail_link</td><td>$link_haus_aendern</td></tr>";
+                echo "<tr class=\"zeile2\"><td width=150>$row[HAUS_STRASSE]</td><td width=60>$row[HAUS_NUMMER]</td><td width=60>$row[HAUS_PLZ]</td><td width=60>$row[HAUS_QM] m²</td><td width=60>$gesammtflaeche_einheiten m²</td><td><a class=\"table_links\" href='" . route('web::einheiten::legacy', ['einheit_raus' => 'einheit_kurz', 'haus_id' => $row['HAUS_ID']]) . "'>Einheiten (<b>$einheiten_im_haus</b>)</a></td><td>$detail_link</td><td>$link_haus_aendern</td></tr>";
                 $counter = 0;
             }
         }

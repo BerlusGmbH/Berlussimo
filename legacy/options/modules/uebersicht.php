@@ -83,7 +83,7 @@ function uebersicht_einheit($einheit_id)
       <p>Sind Sie sicher, dass Sie den Vertrag beenden möchten?</p>
     </div>
     <div class='modal-footer'>
-      <a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mietvertrag_beenden', 'mietvertrag_id' => $mietvertrag_id]) . "' class='modal-action modal-close waves-effect btn-flat white-text red'>Ja</a>
+      <a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mietvertrag_beenden', 'mietvertrag_id' => $mietvertrag_id]) . "' class='modal-action modal-close waves-effect btn-flat white-text red'>Ja</a>
       <a href='#!' class='modal-action modal-close waves-effect btn-flat'>Nein</a>
     </div>
   </div>";
@@ -138,7 +138,7 @@ function uebersicht_einheit($einheit_id)
     $oo = new objekt ();
     $oo->get_objekt_infos($e->objekt_id);
     echo "<b>OBJEKT-ET</b>:<br>$oo->objekt_eigentuemer";
-    $link_objekt_details = "<a href='" . route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $e->objekt_id]) . "'>Detail hinzufügen</a>";
+    $link_objekt_details = "<a href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $e->objekt_id]) . "'>Detail hinzufügen</a>";
     echo "</div>";
     echo "<div class='card-action'>$link_objekt_details</div>";
     echo "</div>";
@@ -173,8 +173,8 @@ function uebersicht_einheit($einheit_id)
     } else {
         echo "k.A zur Ausstattung";
     }
-    $link_einheit_details = "<a href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'EINHEIT', 'detail_id' => $einheit_id]) . "'>Detail hinzufügen</a>";
-    $link_einheit_alle_mietvertraege = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mietvertrag_kurz', 'einheit_id' => $einheit_id]) . "'>Alle Mietverträge</a>";
+    $link_einheit_details = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'EINHEIT', 'detail_id' => $einheit_id]) . "'>Detail hinzufügen</a>";
+    $link_einheit_alle_mietvertraege = "<a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mietvertrag_kurz', 'einheit_id' => $einheit_id]) . "'>Alle Mietverträge</a>";
     echo "</div>";
     echo "<div class='card-action'>$link_einheit_details<br>$link_einheit_alle_mietvertraege</div>";
     echo "</div>";
@@ -219,9 +219,9 @@ function uebersicht_einheit($einheit_id)
             $p_einheit_kurzname = $mietvertrag_info2->einheit_kurzname;
 
             if ($mv_status == TRUE) {
-                $aktuelle_einheit_link .= "<a href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $p_einheit_id]) . "'>$p_einheit_kurzname</a>&nbsp;";
+                $aktuelle_einheit_link .= "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $p_einheit_id]) . "'>$p_einheit_kurzname</a>&nbsp;";
             } else {
-                $alte_einheit_link .= "<a href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $p_einheit_id]) . "'>$p_einheit_kurzname</a>&nbsp;";
+                $alte_einheit_link .= "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $p_einheit_id]) . "'>$p_einheit_kurzname</a>&nbsp;";
             }
         }
         echo "$mieternamen_str";
@@ -236,7 +236,7 @@ function uebersicht_einheit($einheit_id)
             echo "$alte_einheit_link<br>";
         }
         echo "</div>";
-        $link_person_details = "<a href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'PERSON', 'detail_id' => $akt_person_id]) . "'>Detail hinzufügen</a>";
+        $link_person_details = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'PERSON', 'detail_id' => $akt_person_id]) . "'>Detail hinzufügen</a>";
         echo "<div class='card-action'>$link_person_details</div>";
         echo "</div>";
     }
@@ -287,7 +287,7 @@ function uebersicht_einheit($einheit_id)
     for ($i = 0; $i < count($mv_details_arr); $i++) {
         echo "<b>" . $mv_details_arr [$i] ['DETAIL_NAME'] . "</b>:<br>" . $mv_details_arr [$i] ['DETAIL_INHALT'] . "<br>";
     }
-    $link_mv_details = "<a href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'MIETVERTRAG', 'detail_id' => $mietvertrag_id]) . "'>Detail hinzufügen</a>";
+    $link_mv_details = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'MIETVERTRAG', 'detail_id' => $mietvertrag_id]) . "'>Detail hinzufügen</a>";
     echo "</div>";
     echo "<div class='card-action'>$link_mv_details<br>$link_vertrag_beenden</div>";
     echo "</div>";
@@ -357,8 +357,8 @@ function uebersicht_einheit($einheit_id)
 
     echo "</div>";
     if (!empty ($mietvertrag_id)) {
-        $link_mietkonto = "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mk_pdf', 'mietvertrag_id' => $mietvertrag_id]) . "'>Mietkonto</a>";
-        $link_mietkonto_ab = "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mietkonto_ab', 'mietvertrag_id' => $mietvertrag_id]) . "'>Mietkonto ab</a>";
+        $link_mietkonto = "<a href='" . route('web::mietkontenblatt::legacy', ['anzeigen' => 'mk_pdf', 'mietvertrag_id' => $mietvertrag_id]) . "'>Mietkonto</a>";
+        $link_mietkonto_ab = "<a href='" . route('web::mietkontenblatt::legacy', ['anzeigen' => 'mietkonto_ab', 'mietvertrag_id' => $mietvertrag_id]) . "'>Mietkonto ab</a>";
     }
     echo "<div class='card-action'>$link_mietkonto<br>$link_mietkonto_ab</div>";
     echo "</div>";
@@ -389,8 +389,8 @@ function uebersicht_einheit($einheit_id)
         echo "Keine Kautionsbuchungen vorhanden";
     }
     echo "</div>";
-    $link_kaution_buchen = "<a href='" . route('legacy::kautionen::index', ['option' => 'kautionen_buchen', 'mietvertrag_id' => $mietvertrag_id]) . "'>Buchen</a>";
-    $link_kaution_hochrechnen = "<a href='" . route('legacy::kautionen::index', ['option' => 'hochrechner', 'mietvertrag_id' => $mietvertrag_id]) . "'>Hochrechnen</a>";
+    $link_kaution_buchen = "<a href='" . route('web::kautionen::legacy', ['option' => 'kautionen_buchen', 'mietvertrag_id' => $mietvertrag_id]) . "'>Buchen</a>";
+    $link_kaution_hochrechnen = "<a href='" . route('web::kautionen::legacy', ['option' => 'hochrechner', 'mietvertrag_id' => $mietvertrag_id]) . "'>Hochrechnen</a>";
     echo "<div class='card-action'>$link_kaution_buchen<br>$link_kaution_hochrechnen</div>";
 
     echo "</div>";
@@ -409,8 +409,8 @@ function render_unit_tasks_table($einheit_id) {
     $t = new todo ();
     $t_arr = $t->get_auftraege_einheit('Einheit', $einheit_id, '0');
 
-    $link_neuer_auftrag_int = "<a class='waves-effect waves-light btn' href='" . route('legacy::todo::index', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => 'Einheit', 'kos_id' => $einheit_id]) . "'>Neuer Auftrag INT</a>";
-    $link_neuer_auftrag_ext = "<a class='waves-effect waves-light btn' href='" . route('legacy::todo::index', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => 'Einheit', 'kos_id' => $einheit_id]) . "'>Neuer Auftrag EXT</a>";
+    $link_neuer_auftrag_int = "<a class='waves-effect waves-light btn' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => 'Einheit', 'kos_id' => $einheit_id]) . "'>Neuer Auftrag INT</a>";
+    $link_neuer_auftrag_ext = "<a class='waves-effect waves-light btn' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => 'Einheit', 'kos_id' => $einheit_id]) . "'>Neuer Auftrag EXT</a>";
     echo "<div class='input-field right-align'>$link_neuer_auftrag_int $link_neuer_auftrag_ext</div>";
 
     $anz_t = count($t_arr);
@@ -440,8 +440,8 @@ function render_unit_tasks_table($einheit_id) {
             $pp->get_partner_info($beteiligt_id);
             $beteiligt_name = "<b>$pp->partner_name</b>";
         }
-        $link_pdf = "<a href='" . route('legacy::todo::index', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-        $link_txt = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
+        $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+        $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
 
         echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
     }
@@ -476,8 +476,8 @@ function render_unit_tasks_table($einheit_id) {
             $beteiligt_name = "<b>$pp->partner_name</b>";
         }
 
-        $link_pdf = "<a href='" . route('legacy::todo::index', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-        $link_txt = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
+        $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+        $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
 
         echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
     }
@@ -490,8 +490,8 @@ function render_house_tasks_table($haus_id) {
     $t = new todo ();
     $t_arr = $t->get_auftraege_einheit('Haus', $haus_id, '0');
 
-    $link_neuer_auftrag_int = "<a class='waves-effect waves-light btn' href='" . route('legacy::todo::index', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => 'Haus', 'kos_id' => $haus_id]) . "'>Neuer Auftrag INT</a>";
-    $link_neuer_auftrag_ext = "<a class='waves-effect waves-light btn' href='" . route('legacy::todo::index', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => 'Haus', 'kos_id' => $haus_id]) . "'>Neuer Auftrag EXT</a>";
+    $link_neuer_auftrag_int = "<a class='waves-effect waves-light btn' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => 'Haus', 'kos_id' => $haus_id]) . "'>Neuer Auftrag INT</a>";
+    $link_neuer_auftrag_ext = "<a class='waves-effect waves-light btn' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => 'Haus', 'kos_id' => $haus_id]) . "'>Neuer Auftrag EXT</a>";
     echo "<div class='input-field right-align'>$link_neuer_auftrag_int $link_neuer_auftrag_ext</div>";
 
 
@@ -522,8 +522,8 @@ function render_house_tasks_table($haus_id) {
             $pp->get_partner_info($beteiligt_id);
             $beteiligt_name = "<b>$pp->partner_name</b>";
         }
-        $link_pdf = "<a href='" . route('legacy::todo::index', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-        $link_txt = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
+        $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+        $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
 
         echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
     }
@@ -558,8 +558,8 @@ function render_house_tasks_table($haus_id) {
             $beteiligt_name = "<b>$pp->partner_name</b>";
         }
 
-        $link_pdf = "<a href='" . route('legacy::todo::index', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-        $link_txt = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
+        $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+        $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
 
         echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
     }
@@ -572,8 +572,8 @@ function render_object_tasks_table($objekt_id) {
     $t = new todo ();
     $t_arr = $t->get_auftraege_einheit('Objekt', $objekt_id, '0');
 
-    $link_neuer_auftrag_int = "<a class='waves-effect waves-light btn' href='" . route('legacy::todo::index', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => 'Objekt', 'kos_id' => $objekt_id]) . "'>Neuer Auftrag INT</a>";
-    $link_neuer_auftrag_ext = "<a class='waves-effect waves-light btn' href='" . route('legacy::todo::index', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => 'Objekt', 'kos_id' => $objekt_id]) . "'>Neuer Auftrag EXT</a>";
+    $link_neuer_auftrag_int = "<a class='waves-effect waves-light btn' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => 'Objekt', 'kos_id' => $objekt_id]) . "'>Neuer Auftrag INT</a>";
+    $link_neuer_auftrag_ext = "<a class='waves-effect waves-light btn' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => 'Objekt', 'kos_id' => $objekt_id]) . "'>Neuer Auftrag EXT</a>";
     echo "<div class='input-field right-align'>$link_neuer_auftrag_int $link_neuer_auftrag_ext</div>";
 
     $anz_t = count($t_arr);
@@ -603,8 +603,8 @@ function render_object_tasks_table($objekt_id) {
             $pp->get_partner_info($beteiligt_id);
             $beteiligt_name = "<b>$pp->partner_name</b>";
         }
-        $link_pdf = "<a href='" . route('legacy::todo::index', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-        $link_txt = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
+        $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+        $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
 
         echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
     }
@@ -639,8 +639,8 @@ function render_object_tasks_table($objekt_id) {
             $beteiligt_name = "<b>$pp->partner_name</b>";
         }
 
-        $link_pdf = "<a href='" . route('legacy::todo::index', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-        $link_txt = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
+        $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+        $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
 
         echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
     }

@@ -523,8 +523,8 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
                 }
                 $rest_aus_vorjahren = $this->rest_aus_vorjahren($jahr, $benutzer_id);
 
-                $link_urlaubsantrag = "<a href='" . route('legacy::urlaub::index', ['option' => 'urlaubsantrag', 'benutzer_id' => $benutzer_id]) . "'>Abwesenheit eintragen</a>&nbsp;";
-                $link_jahresansicht = "<a href='" . route('legacy::urlaub::index', ['option' => 'jahresansicht', 'jahr' => $jahr, 'benutzer_id' => $benutzer_id]) . "'>Jahresansicht</a>&nbsp;";
+                $link_urlaubsantrag = "<a href='" . route('web::urlaub::legacy', ['option' => 'urlaubsantrag', 'benutzer_id' => $benutzer_id]) . "'>Abwesenheit eintragen</a>&nbsp;";
+                $link_jahresansicht = "<a href='" . route('web::urlaub::legacy', ['option' => 'jahresansicht', 'jahr' => $jahr, 'benutzer_id' => $benutzer_id]) . "'>Jahresansicht</a>&nbsp;";
 
                 if ($austritt != '0000-00-00') {
                     $mitarbeiter = "<b>$mitarbeiter</b>";
@@ -566,7 +566,7 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
         $result = collect($result);
 
         if (!$result->isEmpty()) {
-            $link_benutzer_jahr_pdf = "<a href='" . route('legacy::urlaub::index', ['option' => 'jahresansicht_pdf', 'jahr' => $jahr, 'benutzer_id' => $benutzer_id]) . "'>PDF-Ansicht</a>";
+            $link_benutzer_jahr_pdf = "<a href='" . route('web::urlaub::legacy', ['option' => 'jahresansicht_pdf', 'jahr' => $jahr, 'benutzer_id' => $benutzer_id]) . "'>PDF-Ansicht</a>";
             echo "<table><tr class=\"feldernamen\"><td colspan=\"6\">$link_benutzer_jahr_pdf</td></tr>";
             echo "<tr class=\"feldernamen\"><td>Zeile</td><td>Antrag vom</td><td>Art</td><td>Datum, Wochentag</td><td>Anteil</td><td>Option</td></tr>";
             $summe_tage = 0;
@@ -583,7 +583,7 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
                 $urlaubstag = date_mysql2german($urlaubstag);
                 $wochentag = $this->tagesname($urlaubstag);
                 $u_dat = $user['U_DAT'];
-                $link_loeschen = "<a href='" . route('legacy::urlaub::index', ['option' => 'urlaubstag_loeschen', 'jahr' => $jahr, 'benutzer_id' => $benutzer_id, 'u_dat' => $u_dat]) . "'>Urlaubstag löschen</a>";
+                $link_loeschen = "<a href='" . route('web::urlaub::legacy', ['option' => 'urlaubstag_loeschen', 'jahr' => $jahr, 'benutzer_id' => $benutzer_id, 'u_dat' => $u_dat]) . "'>Urlaubstag löschen</a>";
                 echo "<tr class=\"zeile1\"><td>$zeile</td><td>$antrag_vom</td><td>$art</td><td>$urlaubstag, $wochentag</td><td>$anteil</td><td>$link_loeschen</td></tr>";
             }
             echo "$benutzername Gesamt: $summe_tage Tage";
@@ -964,9 +964,9 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
             }
 
             $monatsname = monat2name($monat);
-            $link_vormonat = "<a class='waves-effect waves-light btn' href='" . route('legacy::urlaub::index', ['option' => 'monatsansicht', 'jahr' => $v_jahr, 'monat' => $vormonat]) . "'><i class=\"material-icons left\">keyboard_arrow_left</i>$vormonatname</a>";
-            $link_nachmonat = "<a class='waves-effect waves-light btn' href='" . route('legacy::urlaub::index', ['option' => 'monatsansicht', 'jahr' => $n_jahr, 'monat' => $nachmonat]) . "'><i class=\"material-icons right\">keyboard_arrow_right</i>$nachmonatname</a>";
-            $link_pdf = "<a class='waves-effect waves-light btn' href='" . route('legacy::urlaub::index', ['option' => 'monatsansicht_pdf', 'jahr' => $n_jahr, 'monat' => $monat]) . "'>PDF</a>";
+            $link_vormonat = "<a class='waves-effect waves-light btn' href='" . route('web::urlaub::legacy', ['option' => 'monatsansicht', 'jahr' => $v_jahr, 'monat' => $vormonat]) . "'><i class=\"material-icons left\">keyboard_arrow_left</i>$vormonatname</a>";
+            $link_nachmonat = "<a class='waves-effect waves-light btn' href='" . route('web::urlaub::legacy', ['option' => 'monatsansicht', 'jahr' => $n_jahr, 'monat' => $nachmonat]) . "'><i class=\"material-icons right\">keyboard_arrow_right</i>$nachmonatname</a>";
+            $link_pdf = "<a class='waves-effect waves-light btn' href='" . route('web::urlaub::legacy', ['option' => 'monatsansicht_pdf', 'jahr' => $n_jahr, 'monat' => $monat]) . "'>PDF</a>";
 
             /* Ausgabe der Tage */
 

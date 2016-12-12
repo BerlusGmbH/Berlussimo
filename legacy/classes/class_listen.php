@@ -814,7 +814,7 @@ ORDER BY EINHEIT_KURZNAME";
                 $sep = new sepa ();
                 $betrag_in_sepa = $sep->get_summe_sepa_sammler($gk->geldkonto_id, 'ET-AUSZAHLUNG', 'Eigentuemer', $eig_id);
                 if ($betrag_in_sepa < $transfer) {
-                    $link_sepa_ueberweisen = "<a href='" . route('legacy::listen::index', ['option' => 'sepa_ueberweisen', 'eig_et' => $eig_id, 'betrag' => $transfer]) . "'>SEPA-Ü</a>";
+                    $link_sepa_ueberweisen = "<a href='" . route('web::listen::legacy', ['option' => 'sepa_ueberweisen', 'eig_et' => $eig_id, 'betrag' => $transfer]) . "'>SEPA-Ü</a>";
                     /* Form */
                     echo "<form name=\"sepa_lg\" method=\"post\" action=\"\">";
 
@@ -4893,9 +4893,9 @@ ORDER BY EINHEIT_KURZNAME";
                 $partner_name = $pp->get_partner_name($partner_id);
                 $oo = new objekt ();
                 $objekt_name = $oo->get_objekt_name($objekt_id);
-                $link_profil_wahl = "<a href='" . route('legacy::listen::index', ['option' => 'profil_wahl', 'profil_id' => $profil_id]) . "'>$text</a>";
-                $link_profil_edit = "<a href='" . route('legacy::listen::index', ['option' => 'profil_edit', 'profil_id' => $profil_id]) . "'>Konten ändern</a>";
-                $link_bericht = "<a href='" . route('legacy::listen::index', ['option' => 'pruefung_bericht', 'profil_id' => $profil_id]) . "'>Bericht erstellen</a>";
+                $link_profil_wahl = "<a href='" . route('web::listen::legacy', ['option' => 'profil_wahl', 'profil_id' => $profil_id]) . "'>$text</a>";
+                $link_profil_edit = "<a href='" . route('web::listen::legacy', ['option' => 'profil_edit', 'profil_id' => $profil_id]) . "'>Konten ändern</a>";
+                $link_bericht = "<a href='" . route('web::listen::legacy', ['option' => 'pruefung_bericht', 'profil_id' => $profil_id]) . "'>Bericht erstellen</a>";
                 if (session()->has('r_profil_id') && session()->get('r_profil_id') == $profil_id) {
                     echo "<tr class=\"zeile2\"><td>$profil_id</td><td>$link_profil_wahl</td><td>$objekt_name</td><td>$gk_info->geldkonto_bezeichnung_kurz</td><td>$partner_name</td><td>$link_profil_edit $link_bericht</td></tr>";
                 } else {

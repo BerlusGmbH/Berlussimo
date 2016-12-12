@@ -97,7 +97,7 @@ ORDER BY HAUS_STRASSE, HAUS_NUMMER, OBJEKT_KURZNAME, EINHEIT_LAGE";
         } else {
             echo "k.A zur Ausstattung";
         }
-        $link_einheit_details = "<a href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'EINHEIT', 'detail_id' => $einheit_id]) . "'>NEUES DETAIL ZUR EINHEIT $e->einheit_kurzname</a>";
+        $link_einheit_details = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'EINHEIT', 'detail_id' => $einheit_id]) . "'>NEUES DETAIL ZUR EINHEIT $e->einheit_kurzname</a>";
         echo "<hr>$link_einheit_details<hr>";
         $details_info = new details ();
         $objekt_details_arr = $details_info->get_details ( 'OBJEKT', $e->objekt_id );
@@ -105,7 +105,7 @@ ORDER BY HAUS_STRASSE, HAUS_NUMMER, OBJEKT_KURZNAME, EINHEIT_LAGE";
         for($i = 0; $i < count ( $objekt_details_arr ); $i ++) {
             echo "<b>" . $objekt_details_arr [$i] ['DETAIL_NAME'] . "</b><br>" . $objekt_details_arr [$i] ['DETAIL_INHALT'] . "<br>";
         }
-        $link_objekt_details = "<a href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $e->objekt_id]) . "'>NEUES DETAIL ZUM OBJEKT $e->objekt_name</a>";
+        $link_objekt_details = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $e->objekt_id]) . "'>NEUES DETAIL ZUM OBJEKT $e->objekt_name</a>";
         echo "<hr>$link_objekt_details<hr>";
         echo "</div>";
         // #ende spalte objekt und einheit####

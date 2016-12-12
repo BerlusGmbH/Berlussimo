@@ -45,7 +45,7 @@ class katalog
                 $rabatt = nummer_punkt2komma($row ['RABATT_SATZ']);
                 $unser_preis = nummer_punkt2komma(($lp / 100) * (100 - $rabatt));
                 $ve = $row ['EINHEIT']; // ve steht für verpackungseinheit
-                $link_pe = "<a href='" . route('legacy::katalog::index', ['option' => 'preisentwicklung', 'artikel_nr' => $artnr]) . "'>$artnr</a>";
+                $link_pe = "<a href='" . route('web::katalog::legacy', ['option' => 'preisentwicklung', 'artikel_nr' => $artnr]) . "'>$artnr</a>";
 
                 echo "<tr><td valign=top>$link_pe</td><td valign=top>$bez</td><td valign=top>$lp</td><td valign=top>$rabatt %</td><td valign=top>$unser_preis</td><td valign=top>$ve</td></tr>";
             }
@@ -228,7 +228,7 @@ AND RECHNUNGEN_POSITIONEN.BELEG_NR = RECHNUNGEN.BELEG_NR");
                 $skontiert = nummer_punkt2komma($row ['SKONTIERT']);
                 $mwst_satz = nummer_punkt2komma($row ['MWST_SATZ']);
 
-                $r_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>$r_nr</a>";
+                $r_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>$r_nr</a>";
                 echo "<tr><td>$p->partner_name</td><td>$art_nr</td><td>$r_link</td><td>$position</td><td>$artikel_bez</td><td>$menge</td><td>$kontierte_menge</td><td>$rest_menge_pos</td><td>$preis</td><td>$mwst_satz</td><td>$brutto</td><td>$skonto</td><td>$skontiert</td></tr>";
             }
             $g_rest = nummer_punkt2komma($g_menge - $g_kontiert);
@@ -259,7 +259,7 @@ AND RECHNUNGEN_POSITIONEN.BELEG_NR = RECHNUNGEN.BELEG_NR");
                 $r = new rechnung ();
                 $artikel_info_arr = $r->artikel_info($art_lieferant, $art_nr);
                 $artikel_bez = $artikel_info_arr [0] ['BEZEICHNUNG'];
-                $link_preis_info1 = "<a href='" . route('legacy::katalog::index', ['option' => 'artikel_suche', 'artikel_nr' => $art_nr, 'lieferant' => $art_lieferant]) . "'>$art_nr</a>";
+                $link_preis_info1 = "<a href='" . route('web::katalog::legacy', ['option' => 'artikel_suche', 'artikel_nr' => $art_nr, 'lieferant' => $art_lieferant]) . "'>$art_nr</a>";
                 echo "<tr><td>$p->partner_name</td><td>$link_preis_info1</td><td>$artikel_bez</td></tr>";
             }
             echo "</table>";

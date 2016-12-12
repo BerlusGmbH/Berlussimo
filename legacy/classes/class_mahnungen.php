@@ -86,15 +86,15 @@ class mahnungen
                         /* Mahnsperre */
                         $dd = new detail ();
                         $mahnsperre = $dd->finde_detail_inhalt('MIETVERTRAG', $mv_id, 'Mahnsperre');
-                        $link_mkb = "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mk_pdf', 'mietvertrag_id' => $mv_id]) . "'>Mietkonto</a>";
-                        $link_ue = "<a href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $mvs->einheit_id, 'mietvertrag_id' => $mv_id]) . "'>Übersicht</a>";
+                        $link_mkb = "<a href='" . route('web::mietkontenblatt::legacy', ['anzeigen' => 'mk_pdf', 'mietvertrag_id' => $mv_id]) . "'>Mietkonto</a>";
+                        $link_ue = "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $mvs->einheit_id, 'mietvertrag_id' => $mv_id]) . "'>Übersicht</a>";
 
                         if (empty ($mahnsperre)) {
 
                             $f->check_box_js1('mahnliste[]', 'mahnliste', $mv_id, "&nbsp;$mvs->einheit_kurzname&nbsp;", '', '');
 
-                            $link_erinnerung = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'zahlungserinnerung', 'mietvertrag_id' => $mv_id]) . "'>Erinnerung PDF</a>";
-                            $link_mahnung = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mahnung', 'mietvertrag_id' => $mv_id]) . "'>Mahnung PDF</a>";
+                            $link_erinnerung = "<a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'zahlungserinnerung', 'mietvertrag_id' => $mv_id]) . "'>Erinnerung PDF</a>";
+                            $link_mahnung = "<a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mahnung', 'mietvertrag_id' => $mv_id]) . "'>Mahnung PDF</a>";
                         } else {
                             $mahnsperre = "<p style=\"color:red;\"><b>Mahnsperre:</b> $mahnsperre</p>";
                             $link_erinnerung = '';

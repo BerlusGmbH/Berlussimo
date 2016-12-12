@@ -61,7 +61,7 @@ class mietvertraege
     function neuer_mv_form()
     {
         $this->datum_heute = date("d.m.Y");
-        $link = route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mietvertrag_neu'], false);
+        $link = route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mietvertrag_neu'], false);
         $this->objekt_auswahl_liste($link);
         $form = new mietkonto ();
         $form->erstelle_formular("Neuen Mietvertrag erstellen", NULL);
@@ -741,12 +741,12 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
             person_zu_mietvertrag($person_id, $mietvertrag_id_alt);
         }
         hinweis_ausgeben("Mietvertrag wurde geändert");
-        weiterleiten_in_sec(route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id], false), "2");
+        weiterleiten_in_sec(route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id], false), "2");
     }
 
     function ls_akt_teilnehmer()
     {
-        $link = route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'ls_teilnehmer'], false);
+        $link = route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'ls_teilnehmer'], false);
         $this->objekt_auswahl_liste($link);
         $form = new mietkonto ();
         $form->erstelle_formular("Aktuelle Teilnehmer am Lastschriftverfahren", NULL);
@@ -768,7 +768,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
                 $einheit_kurzname = $teilnehmer_arr [$a] ['EINHEIT_KURZNAME'];
                 $anzahl_mieter = $teilnehmer_arr [$a] ['MIETER_ANZAHL'];
                 $erster_mieter = $teilnehmer_arr [$a] ['MIETER'] [0] ['NACHNAME'] . ' ' . $teilnehmer_arr [$a] ['MIETER'] [0] ['VORNAME'];
-                $link_deaktivieren = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'ls_teilnehmer_deaktivieren', 'mietvertrag_id' => $mv_id]) . "'>Deaktivieren</a>";
+                $link_deaktivieren = "<a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'ls_teilnehmer_deaktivieren', 'mietvertrag_id' => $mv_id]) . "'>Deaktivieren</a>";
 
                 if ($anzahl_mieter == 1) {
                     echo "<tr class=\"zeile$zaehler\"><td>$einheit_kurzname</td><td>$erster_mieter</td><td>$link_deaktivieren</td></tr>";
@@ -846,7 +846,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='JA' && DETAIL_ZUORD
 
     function ls_akt_teilnehmer_ausgesetzt()
     {
-        $link = route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'ls_teilnehmer_inaktiv', false]);
+        $link = route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'ls_teilnehmer_inaktiv', false]);
         $this->objekt_auswahl_liste($link);
         $form = new mietkonto ();
         $form->erstelle_formular("Inaktive Teilnehmer am Lastschriftverfahren", NULL);
@@ -867,7 +867,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='JA' && DETAIL_ZUORD
                 $einheit_kurzname = $teilnehmer_arr [$a] ['EINHEIT_KURZNAME'];
                 $anzahl_mieter = $teilnehmer_arr [$a] ['MIETER_ANZAHL'];
                 $erster_mieter = $teilnehmer_arr [$a] ['MIETER'] [0] ['NACHNAME'] . ' ' . $teilnehmer_arr [$a] ['MIETER'] [0] ['VORNAME'];
-                $link_aktivieren = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'ls_teilnehmer_aktivieren', 'mietvertrag_id' => $mv_id]) . "'>Aktivieren</a>";
+                $link_aktivieren = "<a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'ls_teilnehmer_aktivieren', 'mietvertrag_id' => $mv_id]) . "'>Aktivieren</a>";
                 $zaehler++;
 
                 if ($anzahl_mieter == 1) {
@@ -972,7 +972,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
 
     function neuer_ls_teilnehmer()
     {
-        $link = route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'ls_teilnehmer_neu'], false);
+        $link = route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'ls_teilnehmer_neu'], false);
         $this->objekt_auswahl_liste($link);
 
         if (!request()->has('mietvertrag_id')) {
@@ -1357,7 +1357,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
     function alle_ausgezogene_mieter_anzeigen($jahr, $monat)
     {
         $auszug_arr = $this->alle_ausgezogene_mieter_arr($jahr, $monat);
-        $link = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'alle_letzten_auszuege_pdf', 'monat' => $monat, 'jahr' => $jahr]) . "'>Ansicht als PDF</a>";
+        $link = "<a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'alle_letzten_auszuege_pdf', 'monat' => $monat, 'jahr' => $jahr]) . "'>Ansicht als PDF</a>";
         echo $link;
         if (!empty($auszug_arr)) {
             $anzahl_auszuege = count($auszug_arr);
@@ -1373,9 +1373,9 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                 $mv_id = $auszug_arr [$a] ['MIETVERTRAG_ID'];
                 $e->get_einheit_info($einheit_id);
 
-                $link_pdf = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'abnahmeprotokoll', 'einheit_id' => $einheit_id, 'mv_id' => $mv_id]) . "'><img src=\"images/pdf_light.png\"></a>";
-                $link_einheit = "<a href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id, 'mietvertrag_id' => $mv_id]) . "'>$e->einheit_kurzname</a>";
-                $link_abnahme = "<a href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'MIETVERTRAG', 'detail_id' => $mv_id, 'vorauswahl' => 'Abnahmetermin']) . "'><b>Termin eingeben</b></a>";
+                $link_pdf = "<a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'abnahmeprotokoll', 'einheit_id' => $einheit_id, 'mv_id' => $mv_id]) . "'><img src=\"images/pdf_light.png\"></a>";
+                $link_einheit = "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id, 'mietvertrag_id' => $mv_id]) . "'>$e->einheit_kurzname</a>";
+                $link_abnahme = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'MIETVERTRAG', 'detail_id' => $mv_id, 'vorauswahl' => 'Abnahmetermin']) . "'><b>Termin eingeben</b></a>";
 
                 $det = new detail ();
                 $abnahme_termin = $det->finde_detail_inhalt('MIETVERTRAG', $mv_id, 'Abnahmetermin');
@@ -1434,7 +1434,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
     function alle_eingezogene_mieter_anzeigen($jahr, $monat)
     {
         $auszug_arr = $this->alle_eingezogene_mieter_arr($jahr, $monat);
-        $link = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'alle_letzten_einzuege_pdf', 'monat' => $monat, 'jahr' => $jahr]) . "'>Ansicht als PDF</a>";
+        $link = "<a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'alle_letzten_einzuege_pdf', 'monat' => $monat, 'jahr' => $jahr]) . "'>Ansicht als PDF</a>";
         echo $link;
         if (!empty($auszug_arr)) {
             $anzahl_auszuege = count($auszug_arr);
@@ -1449,9 +1449,9 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                 $mv_id = $auszug_arr [$a] ['MIETVERTRAG_ID'];
                 $e->get_einheit_info($einheit_id);
 
-                $link_pdf = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'abnahmeprotokoll', 'einheit_id' => $einheit_id, 'mv_id' => $mv_id, 'einzug' => 'JA']) . "'><img src=\"images/pdf_light.png\"></a>";
-                $link_einheit = "<a href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id, 'mietvertrag_id' => $mv_id]) . "'>$e->einheit_kurzname</a>";
-                $link_abnahme = "<a href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'MIETVERTRAG', 'detail_id' => $mv_id, 'vorauswahl' => 'Abnahmetermin']) . "'><b>Termin eingeben</b></a>";
+                $link_pdf = "<a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'abnahmeprotokoll', 'einheit_id' => $einheit_id, 'mv_id' => $mv_id, 'einzug' => 'JA']) . "'><img src=\"images/pdf_light.png\"></a>";
+                $link_einheit = "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id, 'mietvertrag_id' => $mv_id]) . "'>$e->einheit_kurzname</a>";
+                $link_abnahme = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'MIETVERTRAG', 'detail_id' => $mv_id, 'vorauswahl' => 'Abnahmetermin']) . "'><b>Termin eingeben</b></a>";
                 $det = new detail ();
                 $abnahme_termin = $det->finde_detail_inhalt('MIETVERTRAG', $mv_id, 'Abnahmetermin');
                 $einzug = date_mysql2german($auszug_arr [$a] ['MIETVERTRAG_VON']);
@@ -1697,7 +1697,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             }
         }
         $bg = new berlussimo_global ();
-        $link = route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'saldenliste'], false);
+        $link = route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'saldenliste'], false);
         $bg->objekt_auswahl_liste();
         $bg->monate_jahres_links($jahr, $link);
         if (session()->has('objekt_id')) {
@@ -1946,7 +1946,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             }
         }
         $bg = new berlussimo_global ();
-        $link = route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'saldenliste'], false);
+        $link = route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'saldenliste'], false);
         $bg->objekt_auswahl_liste();
         $bg->monate_jahres_links($jahr, $link);
         if (session()->has('objekt_id')) {
@@ -1954,7 +1954,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             $einheit_info = new einheit ();
             $o = new objekt ();
 
-            $link_pdf = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'saldenliste_pdf', 'monat' => $monat, 'jahr' => $jahr], false) . "'><b>PDF-Datei</b></a>";
+            $link_pdf = "<a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'saldenliste_pdf', 'monat' => $monat, 'jahr' => $jahr], false) . "'><b>PDF-Datei</b></a>";
             echo '<hr>' . $link_pdf . '<hr>';
             /* Aktuell bzw. gewünschten Monat berechnen */
             $ob = new objekt ();
@@ -3026,7 +3026,7 @@ GROUP BY  `KOSTENTRAEGER_TYP` ,  `KOSTENTRAEGER_ID` ";
             $f->fieldset_ende();
         }
         if (request()->has('send_nein')) {
-            weiterleiten(route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mietvertrag_kurz'], false));
+            weiterleiten(route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mietvertrag_kurz'], false));
         }
         if (request()->has('send_ja')) {
             $this->mv_loeschen_alles($mv_id);

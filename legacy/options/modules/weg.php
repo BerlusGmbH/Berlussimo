@@ -71,7 +71,7 @@ switch ($option) {
             $weg = new weg ();
             $weg->einheiten_weg_tabelle_anzeigen(session()->get('objekt_id'));
         } else {
-            weiterleiten(route('legacy::weg::index', ['option' => 'objekt_auswahl'], false));
+            weiterleiten(route('web::weg::legacy', ['option' => 'objekt_auswahl'], false));
         }
         break;
 
@@ -146,7 +146,7 @@ switch ($option) {
         }
 
         $weg->eigentuemer_aendern_db($et_id, $einheit_id, $eigent_arr, $eigentuemer_von, $eigentuemer_bis);
-        weiterleiten(route('legacy::weg::index', ['option' => 'einheiten'], false));
+        weiterleiten(route('web::weg::legacy', ['option' => 'einheiten'], false));
         break;
 
     case "eigentuemer_send" :
@@ -161,7 +161,7 @@ switch ($option) {
                     $eigentuemer_bis = '00.00.0000';
                 }
                 $weg->eigentuemer_speichern($einheit_id, $eigent_arr, $eigentuemer_seit, $eigentuemer_bis);
-                weiterleiten(route('legacy::weg::index', ['option' => 'einheiten'], false));
+                weiterleiten(route('web::weg::legacy', ['option' => 'einheiten'], false));
             }
         } else {
             throw new \App\Exceptions\MessageException(
@@ -233,7 +233,7 @@ switch ($option) {
         }
         if (request()->has('einheit_id')) {
             $einheit_id = request()->input('einheit_id');
-            weiterleiten_in_sec(route('legacy::weg::index', ['option' => 'wohngeld_definieren', 'einheit_id' => $einheit_id], false), 2);
+            weiterleiten_in_sec(route('web::weg::legacy', ['option' => 'wohngeld_definieren', 'einheit_id' => $einheit_id], false), 2);
         }
 
         break;
@@ -265,7 +265,7 @@ switch ($option) {
 
         if (request()->has('einheit_id')) {
             $einheit_id = request()->input('einheit_id');
-            weiterleiten_in_sec(route('legacy::weg::index', ['option' => 'wohngeld_definieren', 'einheit_id' => $einheit_id], false), 2);
+            weiterleiten_in_sec(route('web::weg::legacy', ['option' => 'wohngeld_definieren', 'einheit_id' => $einheit_id], false), 2);
         }
         break;
 
@@ -312,7 +312,7 @@ switch ($option) {
             $w = new weg ();
             $w->wohngeld_def_delete(request()->input('dat'));
             $einheit_id = request()->input('einheit_id');
-            weiterleiten(route('legacy::weg::index', ['option' => 'wohngeld_definieren', 'einheit_id' => $einheit_id], false));
+            weiterleiten(route('web::weg::legacy', ['option' => 'wohngeld_definieren', 'einheit_id' => $einheit_id], false));
         } else {
             echo "Hausgelddefintion wählen!";
         }
@@ -346,10 +346,10 @@ switch ($option) {
             $w->wohngeld_def_delete(request()->input('dat'));
             /* Neu speichern */
             $w->wohngeld_def_speichern($von, $bis, $betrag, $kostenkat, $e_konto, $gruppe, $g_konto, $kos_id);
-            weiterleiten(route('legacy::weg::index', ['option' => 'wohngeld_definieren', 'einheit_id' => $kos_id], false));
+            weiterleiten(route('web::weg::legacy', ['option' => 'wohngeld_definieren', 'einheit_id' => $kos_id], false));
         } else {
             fehlermeldung_ausgeben("Eingabe unvollständig");
-            weiterleiten_in_sec(route('legacy::weg::index', ['option' => 'wohngeld_definieren', 'einheit_id' => request()->input('kos_id')], false), 2);
+            weiterleiten_in_sec(route('web::weg::legacy', ['option' => 'wohngeld_definieren', 'einheit_id' => request()->input('kos_id')], false), 2);
         }
         break;
 
@@ -439,7 +439,7 @@ switch ($option) {
             $formel = request()->input('formel');
             $wirt_id = request()->input('wirt_id');
             $weg->wp_zeile_speichern(session()->get('wp_id'), request()->input('bkonto'), request()->input('vsumme'), $betrag_vj, $formel, $wirt_id);
-            weiterleiten(route('legacy::weg::index', ['option' => 'wp_zeile_neu', 'wp_id' => session()->get('wp_id')], false));
+            weiterleiten(route('web::weg::legacy', ['option' => 'wp_zeile_neu', 'wp_id' => session()->get('wp_id')], false));
         }
         break;
 
@@ -460,7 +460,7 @@ switch ($option) {
     case "hga_profile_del" :
         $w = new weg ();
         $w->hga_profil_del(request()->input('profil_id'));
-        weiterleiten(route('legacy::weg::index', ['option' => 'hga_profile'], false));
+        weiterleiten(route('web::weg::legacy', ['option' => 'hga_profile'], false));
         break;
 
     case "hga_profile_wahl" :
@@ -506,7 +506,7 @@ switch ($option) {
             );
             fehlermeldung_ausgeben("Profil geändert, bitte warten!!!!");
             $profil_id = request()->input('profil_id');
-            weiterleiten_in_sec(route('legacy::weg::index', ['option' => 'grunddaten_profil', 'profil_id' => $profil_id], false), 2);
+            weiterleiten_in_sec(route('web::weg::legacy', ['option' => 'grunddaten_profil', 'profil_id' => $profil_id], false), 2);
         } else {
             fehlermeldung_ausgeben("Profil nicht geändert, Daten unvollständig!!!!");
         }
@@ -603,13 +603,13 @@ switch ($option) {
             $weg->konto_loeschen(request()->input('profil_id'), request()->input('konto'));
             fehlermeldung_ausgeben("Konto $konto wurde gelöscht!");
         }
-        weiterleiten_in_sec(route('legacy::weg::index', ['option' => 'assistent', 'schritt' => 2], false), 2);
+        weiterleiten_in_sec(route('web::weg::legacy', ['option' => 'assistent', 'schritt' => 2], false), 2);
         break;
 
     case "konto_zu_zeilen" :
         $w = new weg ();
         $w->hga_zeile_speichern(session()->get('hga_profil_id'), request()->input('konto'), request()->input('art'), request()->input('textbez'), request()->input('genkey'), request()->input('summe'), request()->input('summe_hndl'), 'Wirtschaftseinheit', request()->input('wirt_id'));
-        weiterleiten(route('legacy::weg::index', ['option' => 'assistent', 'schritt' => 2], false));
+        weiterleiten(route('web::weg::legacy', ['option' => 'assistent', 'schritt' => 2], false));
         break;
 
     case "hk_verbrauch_send" :
@@ -622,7 +622,7 @@ switch ($option) {
             $betrag = request()->input('hk_verbrauch') [$a];
             $w->hk_verbrauch_eintragen($p_id, $eig_id, $betrag);
         }
-        weiterleiten(route('legacy::weg::index', ['option' => 'hk_verbrauch_tab'], false));
+        weiterleiten(route('web::weg::legacy', ['option' => 'hk_verbrauch_tab'], false));
         break;
 
     case "hk_verbrauch_tab" :
@@ -647,7 +647,7 @@ switch ($option) {
             $betrag = request()->input('betrag');
             if ($w->kontostand_speichern($gk_id, $datum, $betrag)) {
                 echo "Kontostand eingegeben!";
-                weiterleiten_in_sec(route('legacy::weg::index', ['option' => 'kontostaende'], false), 3);
+                weiterleiten_in_sec(route('web::weg::legacy', ['option' => 'kontostaende'], false), 3);
             }
         } else {
             echo "Daten unvollständig eingegeben";
@@ -724,7 +724,7 @@ switch ($option) {
         $betrag = request()->input('betrag');
         $weg = new weg ();
         $weg->autokorr_hga($profil_id, $konto, $betrag);
-        weiterleiten_in_sec(route('legacy::weg::index', ['option' => 'assistent', 'schritt' => 2, 'profil_id' => $profil_id], false), 1);
+        weiterleiten_in_sec(route('web::weg::legacy', ['option' => 'assistent', 'schritt' => 2, 'profil_id' => $profil_id], false), 1);
         break;
 
     case "stammdaten_weg" :
@@ -764,7 +764,7 @@ switch ($option) {
             $weg = new weg ();
             if ($weg->wp_zeile_loeschen(request()->input('dat')) == true) {
                 $wp_id = session()->get('wp_id');
-                weiterleiten_in_sec(route('legacy::weg::index', ['option' => 'wp_zeile_neu', 'wp_id' => $wp_id], false), 0);
+                weiterleiten_in_sec(route('web::weg::legacy', ['option' => 'wp_zeile_neu', 'wp_id' => $wp_id], false), 0);
             }
         } else {
             fehlermeldung_ausgeben("Zeile aus dem WP wählen!!!");

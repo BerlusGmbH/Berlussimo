@@ -11,11 +11,11 @@
             <li>
                 @if(session()->has('partner_id'))
                     <?php $p = new partners (); $p->get_partner_name(session()->get('partner_id')); ?>
-                    <a href='{{route('legacy::rechnungen::index', ['option' => 'partner_wechseln'])}}'>
+                    <a href='{{route('web::rechnungen::legacy', ['option' => 'partner_wechseln'])}}'>
                         <i class="material-icons left">perm_identity</i>
                         Partner: <b>{{str_limit($p->partner_name, 20)}}</b></a>
                 @else
-                    <a href='{{route('legacy::rechnungen::index', ['option' => 'partner_wechseln'])}}'>
+                    <a href='{{route('web::rechnungen::legacy', ['option' => 'partner_wechseln'])}}'>
                         <i class="material-icons left">perm_identity</i>
                         Partner wählen</a>
                 @endif
@@ -25,11 +25,11 @@
             <li>
                 @if(session()->has('geldkonto_id'))
                     <?php $g = new geldkonto_info(); $g->geld_konto_details(session()->get('geldkonto_id')); ?>
-                    <a href='{{route('legacy::buchen::index', ['option' => 'geldkonto_aendern'])}}'>
+                    <a href='{{route('web::buchen::legacy', ['option' => 'geldkonto_aendern'])}}'>
                         <i class="material-icons left">euro_symbol</i>
                         Geldkonto: <b>{{$g->geldkonto_bezeichnung_kurz}}</b></a>
                 @else
-                    <a href='{{route('legacy::buchen::index', ['option' => 'geldkonto_aendern'])}}'>
+                    <a href='{{route('web::buchen::legacy', ['option' => 'geldkonto_aendern'])}}'>
                         <i class="material-icons left">euro_symbol</i>
                         Geldkonto wählen</a>
                 @endif
@@ -52,11 +52,11 @@
             <li>
                 @if(session()->has('partner_id'))
                     <?php $p = new partners (); $p->get_partner_name(session()->get('partner_id')); ?>
-                    <a href='{{route('legacy::rechnungen::index', ['option' => 'partner_wechseln'])}}'>
+                    <a href='{{route('web::rechnungen::legacy', ['option' => 'partner_wechseln'])}}'>
                         <i class="material-icons left">perm_identity</i>
                         Partner: <b>{{str_limit($p->partner_name, 20)}}</b></a>
                 @else
-                    <a href='{{route('legacy::rechnungen::index', ['option' => 'partner_wechseln'])}}'>
+                    <a href='{{route('web::rechnungen::legacy', ['option' => 'partner_wechseln'])}}'>
                         <i class="material-icons left">perm_identity</i>
                         Partner wählen</a>
                 @endif
@@ -66,11 +66,11 @@
             <li>
                 @if(session()->has('geldkonto_id'))
                     <?php $g = new geldkonto_info(); $g->geld_konto_details(session()->get('geldkonto_id')); ?>
-                    <a href='{{route('legacy::buchen::index', ['option' => 'geldkonto_aendern'])}}'><i
+                    <a href='{{route('web::buchen::legacy', ['option' => 'geldkonto_aendern'])}}'><i
                                 class="material-icons left">euro_symbol</i>Geldkonto:
                         <b>{{$g->geldkonto_bezeichnung_kurz}}</b></a>
                 @else
-                    <a href='{{route('legacy::buchen::index', ['option' => 'geldkonto_aendern'])}}'><i
+                    <a href='{{route('web::buchen::legacy', ['option' => 'geldkonto_aendern'])}}'><i
                                 class="material-icons left small">euro_symbol</i>Geldkonto wählen</a>
                 @endif
             </li>

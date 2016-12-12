@@ -112,10 +112,10 @@ ORDER BY BUCHUNGSNUMMER DESC");
                         $storno_link = '';
                     } else {
 
-                        $storno_link = "<a href='" . route('legacy::miete_buchen::index', ['schritt' => 'stornieren', 'bnr' => $buchungsnummer]) . "'>Stornieren</a>";
+                        $storno_link = "<a href='" . route('web::miete_buchen::legacy', ['schritt' => 'stornieren', 'bnr' => $buchungsnummer]) . "'>Stornieren</a>";
                     }
                 } else {
-                    $storno_link = "<a href='" . route('legacy::miete_buchen::index', ['schritt' => 'stornieren', 'bnr' => $buchungsnummer]) . "'>Stornieren</a>";
+                    $storno_link = "<a href='" . route('web::miete_buchen::legacy', ['schritt' => 'stornieren', 'bnr' => $buchungsnummer]) . "'>Stornieren</a>";
                 }
 
                 echo "<tr class=\"zeile1\"><td>$buchungsnummer</td><td>$kontoauszugsnr</td><td>$datum</td><td>$einheit_kurzname</td><td>" . $my_array [$i] ['BETRAG'] . " €</td><td>$bemerkung</td><td>$storno_link</td></tr>\n";
@@ -193,7 +193,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
             $nachname = $person_info->person_nachname;
             echo "$nachname $vorname ";
         }
-        echo "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mietkonto_uebersicht_detailiert', 'mietvertrag_id' => $mietvertrag_id]) . "'>Mietkontenblatt für $einheit_info->einheit_kurzname</a>";
+        echo "<a href='" . route('web::mietkontenblatt::legacy', ['anzeigen' => 'mietkonto_uebersicht_detailiert', 'mietvertrag_id' => $mietvertrag_id]) . "'>Mietkontenblatt für $einheit_info->einheit_kurzname</a>";
         echo "</p>";
         $einheit_kurzname = $einheit_info->einheit_kurzname;
         $this->einheit_kurzname_von_mv = $einheit_kurzname;
@@ -391,10 +391,10 @@ ORDER BY BUCHUNGSNUMMER DESC");
                     if ($this->monat_heute > $buchungsmonat) {
                         $storno_link = '';
                     } else {
-                        $storno_link = "<a href='" . route('legacy::miete_buchen::index', ['schritt' => 'stornieren', 'bnr' => $buchungsnummer]) . "'>Stornieren</a>";
+                        $storno_link = "<a href='" . route('web::miete_buchen::legacy', ['schritt' => 'stornieren', 'bnr' => $buchungsnummer]) . "'>Stornieren</a>";
                     }
                 } else {
-                    $storno_link = "<a href='" . route('legacy::miete_buchen::index', ['schritt' => 'stornieren', 'bnr' => $buchungsnummer]) . "'>Stornieren</a>";
+                    $storno_link = "<a href='" . route('web::miete_buchen::legacy', ['schritt' => 'stornieren', 'bnr' => $buchungsnummer]) . "'>Stornieren</a>";
                 }
                 echo "<tr class=\"zeile1\"><td>$buchungsnummer</td><td>$kontoauszugsnr</td><td>$datum</td><td>$einheit_kurzname</td><td>" . $my_array [$i] ['BETRAG'] . " €</td><td>$bemerkung</td><td>$storno_link</td></tr>\n";
             }
@@ -912,7 +912,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         $betrag = $this->nummer_punkt2komma($betrag);
         echo "<p><b>Zahlbetrag $betrag € wurde auf das Konto $geld_konto_id gebucht.<br></b></p>";
 
-        weiterleiten_in_sec(route('legacy::miete_buchen::index', [], false), 2);
+        weiterleiten_in_sec(route('web::miete_buchen::legacy', [], false), 2);
     }
 
     function date_mysql2german($date)
@@ -1644,7 +1644,7 @@ ORDER BY DATUM ASC ");
             if ($buchungen_existieren == NULL) {
                 $einheit_kurzname = $this->einheit_kurzname_finden($mv_arr [$i] ['EINHEIT_ID']);
                 $mietvertrag_id = $mv_arr [$i] ['mietvertrag_id'];
-                $link = "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'miete_manuell_buchen', 'mietvertrag_id' => $mietvertrag_id]) . "'>$einheit_kurzname</a>";
+                $link = "<a href='" . route('web::mietkontenblatt::legacy', ['anzeigen' => 'miete_manuell_buchen', 'mietvertrag_id' => $mietvertrag_id]) . "'>$einheit_kurzname</a>";
                 echo "<br>$link";
             }
         }

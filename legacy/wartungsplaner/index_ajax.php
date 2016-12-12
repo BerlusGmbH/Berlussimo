@@ -30,10 +30,10 @@ if (request()->has('option')) {
             $nach_kw = $kw + 1;
             $montag_vor_kw = get_montag_vor_kw($datum);
             $montag_nach_kw = get_montag_nach_kw($datum);
-            $link_vor_kw = "<a href=\"javascript:daj2('" . route('legacy::wartungsplaner::indexAjax', ['option' => 'tages_termine', 'datum' => $montag_vor_kw, 'benutzer_id' => $benutzer_id], false) . "',document.getElementById('leftBox1'))\"><img src=\"images/wartungsplaner/vor.png\" border=\"0\"></a>";
-            $link_nach_kw = "<a href=\"javascript:daj2('" . route('legacy::wartungsplaner::indexAjax', ['option' => 'tages_termine', 'datum' => $montag_nach_kw, 'benutzer_id' => $benutzer_id], false) . "',document.getElementById('leftBox1'))\"><img src=\"images/wartungsplaner/nach.png\" border=\"0\"></a>";
-            $link_tag_vor = "<a href=\"javascript:daj2('" . route('legacy::wartungsplaner::indexAjax', ['option' => 'tages_termine', 'datum' => $gestern, 'benutzer_id' => $benutzer_id], false) . "',document.getElementById('leftBox1'))\"><img src=\"images/wartungsplaner/vor.png\" border=\"0\"></a>";
-            $link_tag_nach = "<a href=\"javascript:daj2('" . route('legacy::wartungsplaner::indexAjax', ['option' => 'tages_termine', 'datum' => $morgen, 'benutzer_id' => $benutzer_id], false) . "',document.getElementById('leftBox1'))\"><img src=\"images/wartungsplaner/nach.png\" border=\"0\"></a>";
+            $link_vor_kw = "<a href=\"javascript:daj2('" . route('web::wartungsplaner::legacyAjax', ['option' => 'tages_termine', 'datum' => $montag_vor_kw, 'benutzer_id' => $benutzer_id], false) . "',document.getElementById('leftBox1'))\"><img src=\"images/wartungsplaner/vor.png\" border=\"0\"></a>";
+            $link_nach_kw = "<a href=\"javascript:daj2('" . route('web::wartungsplaner::legacyAjax', ['option' => 'tages_termine', 'datum' => $montag_nach_kw, 'benutzer_id' => $benutzer_id], false) . "',document.getElementById('leftBox1'))\"><img src=\"images/wartungsplaner/nach.png\" border=\"0\"></a>";
+            $link_tag_vor = "<a href=\"javascript:daj2('" . route('web::wartungsplaner::legacyAjax', ['option' => 'tages_termine', 'datum' => $gestern, 'benutzer_id' => $benutzer_id], false) . "',document.getElementById('leftBox1'))\"><img src=\"images/wartungsplaner/vor.png\" border=\"0\"></a>";
+            $link_tag_nach = "<a href=\"javascript:daj2('" . route('web::wartungsplaner::legacyAjax', ['option' => 'tages_termine', 'datum' => $morgen, 'benutzer_id' => $benutzer_id], false) . "',document.getElementById('leftBox1'))\"><img src=\"images/wartungsplaner/nach.png\" border=\"0\"></a>";
             echo "<table>";
             echo "<tr class=\"tag_datum\" valign=\"center\"><td colspan=\"4\"><center>KW:$vor_kw $link_vor_kw | $link_tag_vor $wochentag, $datum (KW:$kw) - $benutzername $link_tag_nach | $link_nach_kw KW:$nach_kw</center></td></tr>";
             echo "</table>";
@@ -62,7 +62,7 @@ if (request()->has('option')) {
                         $partner_name = $tages_termine_arr[$a]['PARTNER_NAME'];
                         if ($status == 'FREI' or $status == 'PAUSE') {
                             $class = 'frei';
-                            $link_neu = "<a href=\"javascript:daj2('" . route('legacy::wartungsplaner::indexAjax', ['option' => 'termin_eintragen', 'datum' => $datum, 'benutzer_id' => $benutzer_id, 'von' => $an, 'bis' => $en], false) . "',document.getElementById('leftBox1'))\">NEU</a>";
+                            $link_neu = "<a href=\"javascript:daj2('" . route('web::wartungsplaner::legacyAjax', ['option' => 'termin_eintragen', 'datum' => $datum, 'benutzer_id' => $benutzer_id, 'von' => $an, 'bis' => $en], false) . "',document.getElementById('leftBox1'))\">NEU</a>";
                             echo "<tr class=\"$class$z\"><td>$an<br>$en</td><td>$link_neu</td><td>$status</td></tr>";
                         } else {
                             echo "<tr class=\"$class$z\"><td>$an<br>$en</td><td>BEARBEITEN</td><td>$str $partner_name</td></tr>";
@@ -93,9 +93,9 @@ if (request()->has('option')) {
         case "suche_termine":
             echo "<table>";
             echo "<tr class=\"tag_datum\"><td colspan=\"4\">Terminvorschläge</td></tr>";
-            echo "<tr class=\"termin1\" onclick=\"daj2('" . route('legacy::wartungsplaner::indexAjax', ['option' => 'tages_termine', 'datum' => '24.12.2010'], false) . "',document.getElementById('leftBox1'))\"><td>2,5 km</td><td>24.12.2010</td><td>9:00</td><td>HIER CODE Erdmann</td></tr>";
-            echo "<tr class=\"termin2\" onclick=\"daj2('" . route('legacy::wartungsplaner::indexAjax', ['option' => 'tages_termine', 'datum' => '25.12.2010'], false) . "',document.getElementById('leftBox1'))\"><td>2,6 km</td><td>25.12.2010</td><td>9:00</td><td>HIER CODE Erdmann</td></tr>";
-            echo "<tr class=\"termin1\" onclick=\"daj2('" . route('legacy::wartungsplaner::indexAjax', ['option' => 'test_vars'], false) . "',document.getElementById('rightBox1'))\"><td>2,6 km</td><td>25.12.2010</td><td>9:00</td><td>HIER CODE Erdmann</td></tr>";
+            echo "<tr class=\"termin1\" onclick=\"daj2('" . route('web::wartungsplaner::legacyAjax', ['option' => 'tages_termine', 'datum' => '24.12.2010'], false) . "',document.getElementById('leftBox1'))\"><td>2,5 km</td><td>24.12.2010</td><td>9:00</td><td>HIER CODE Erdmann</td></tr>";
+            echo "<tr class=\"termin2\" onclick=\"daj2('" . route('web::wartungsplaner::legacyAjax', ['option' => 'tages_termine', 'datum' => '25.12.2010'], false) . "',document.getElementById('leftBox1'))\"><td>2,6 km</td><td>25.12.2010</td><td>9:00</td><td>HIER CODE Erdmann</td></tr>";
+            echo "<tr class=\"termin1\" onclick=\"daj2('" . route('web::wartungsplaner::legacyAjax', ['option' => 'test_vars'], false) . "',document.getElementById('rightBox1'))\"><td>2,6 km</td><td>25.12.2010</td><td>9:00</td><td>HIER CODE Erdmann</td></tr>";
             echo "<tr class=\"termin2\"><td>6,5 km</td><td>18.11.2010</td><td>9:00</td><td>Erdmann</td></tr>";
             echo "<tr class=\"termin1\"><td>7,2 km</td><td>13.11.2010</td><td>9:00</td><td>Sivac</td></tr>";
             echo "<tr class=\"termin2\"><td>8,5 km</td><td>13.11.2010</td><td>9:00</td><td>Erdmann</td></tr>";
@@ -172,7 +172,7 @@ if (request()->has('option')) {
                         $namen_arr = explode(' ', $p_name);
                         $p_vorname = $namen_arr[0];
                         $p_nachname = $namen_arr[1];
-                        echo "<tr class=\"termin$zaehler\" onclick=\"form_fuellen('$p_nachname', '$p_vorname', '$str', '$nr', '$plz', '$ort', '$partner_id')\" ondblclick=\"get_ergebnis('" . route('legacy::wartungsplaner::indexAjax', ['option' => 'get_lon_lat_osm', 'str' => $str, 'nr' => $nr, 'plz' => $plz, 'ort' => $ort], false) . "');\"><td>$p_nachname $p_vorname</td><td>$str</td><td>$nr</td><td>$plz</td><td>$ort</td></tr>";
+                        echo "<tr class=\"termin$zaehler\" onclick=\"form_fuellen('$p_nachname', '$p_vorname', '$str', '$nr', '$plz', '$ort', '$partner_id')\" ondblclick=\"get_ergebnis('" . route('web::wartungsplaner::legacyAjax', ['option' => 'get_lon_lat_osm', 'str' => $str, 'nr' => $nr, 'plz' => $plz, 'ort' => $ort], false) . "');\"><td>$p_nachname $p_vorname</td><td>$str</td><td>$nr</td><td>$plz</td><td>$ort</td></tr>";
                     }
                     if ($zaehler == 2) {
                         $zaehler = 0;
@@ -255,8 +255,8 @@ if (request()->has('option')) {
             $wochentag = wochentag($datum);
             $kw = kw($datum);
             session()->put('kw', $kw);
-            $link_tag_vor = "<a href=\"javascript:daj2('" . route('legacy::wartungsplaner::indexAjax', ['option' => 'tages_termine', 'datum' => $gestern, 'benutzer_id' => $benutzer_id], false) . "',document.getElementById('leftBox1'))\"><img src=\"images/wartungsplaner/vor.png\" border=\"0\"></a>";
-            $link_tag_nach = "<a href=\"javascript:daj2('" . route('legacy::wartungsplaner::indexAjax', ['option' => 'tages_termine', 'datum' => $morgen, 'benutzer_id' => $benutzer_id], false) . "',document.getElementById('leftBox1'))\"><img src=\"images/wartungsplaner/nach.png\" border=\"0\"></a>";
+            $link_tag_vor = "<a href=\"javascript:daj2('" . route('web::wartungsplaner::legacyAjax', ['option' => 'tages_termine', 'datum' => $gestern, 'benutzer_id' => $benutzer_id], false) . "',document.getElementById('leftBox1'))\"><img src=\"images/wartungsplaner/vor.png\" border=\"0\"></a>";
+            $link_tag_nach = "<a href=\"javascript:daj2('" . route('web::wartungsplaner::legacyAjax', ['option' => 'tages_termine', 'datum' => $morgen, 'benutzer_id' => $benutzer_id], false) . "',document.getElementById('leftBox1'))\"><img src=\"images/wartungsplaner/nach.png\" border=\"0\"></a>";
             echo "<table>";
             echo "<tr class=\"tag_datum\"><td colspan=\"4\"><center>$link_tag_vor $wochentag, $datum (KW:$kw) - Sivac $link_tag_nach</center></td></tr>";
             $geo_lonlat_id = get_lonlat_id(session()->put('z_lon'), session()->put('z_lat'));

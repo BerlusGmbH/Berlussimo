@@ -7,7 +7,7 @@ class werkzeug
 
     function werkzeugliste($b_id = NULL)
     {
-        $link_NACH_MIT = "<a href='" . route('legacy::benutzer::index', ['option' => 'werkzeugliste_nach_mitarbeiter', 'b_id' => $b_id]) . "'>ÜBERSICHT NACH MITARBEITER</a>";
+        $link_NACH_MIT = "<a href='" . route('web::benutzer::legacy', ['option' => 'werkzeugliste_nach_mitarbeiter', 'b_id' => $b_id]) . "'>ÜBERSICHT NACH MITARBEITER</a>";
         echo $link_NACH_MIT . '<br>';
         $f = new formular ();
         $f->fieldset('Werkzeugliste', 'wl');
@@ -15,9 +15,9 @@ class werkzeug
         if (!empty($arr)) {
             $anz = count($arr);
             if ($b_id != NULL) {
-                $link_rueckgabe_alle = "<a href='" . route('legacy::benutzer::index', ['option' => 'werkzeug_rueckgabe_alle', 'b_id' => $b_id]) . "'>Rückgabe vermerken</a>";
-                $link_rueckgabe_alle_pdf = "<a href='" . route('legacy::benutzer::index', ['option' => 'werkzeug_rueckgabe_alle_pdf', 'b_id' => $b_id]) . "'>Rückgabe PDF</a>";
-                $link_ausgabe_alle_pdf = "<a href='" . route('legacy::benutzer::index', ['option' => 'werkzeug_ausgabe_alle_pdf', 'b_id' => $b_id]) . "'>Ausgabeschein PDF</a>";
+                $link_rueckgabe_alle = "<a href='" . route('web::benutzer::legacy', ['option' => 'werkzeug_rueckgabe_alle', 'b_id' => $b_id]) . "'>Rückgabe vermerken</a>";
+                $link_rueckgabe_alle_pdf = "<a href='" . route('web::benutzer::legacy', ['option' => 'werkzeug_rueckgabe_alle_pdf', 'b_id' => $b_id]) . "'>Rückgabe PDF</a>";
+                $link_ausgabe_alle_pdf = "<a href='" . route('web::benutzer::legacy', ['option' => 'werkzeug_ausgabe_alle_pdf', 'b_id' => $b_id]) . "'>Ausgabeschein PDF</a>";
                 echo "$link_ausgabe_alle_pdf | $link_rueckgabe_alle_pdf | $link_rueckgabe_alle<br><br>";
             }
             echo "<table class=\"sortable striped\">";
@@ -35,7 +35,7 @@ class werkzeug
                 $art_info = $katalog_info [0] ['BEZEICHNUNG'];
 
                 $lieferant = $r->rechnungs_aussteller_name;
-                $link_beleg = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_id]) . "'>$lieferant</a>";
+                $link_beleg = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_id]) . "'>$lieferant</a>";
                 $wb_nr = 'W-' . $w_id;
                 echo "<tr><td>$link_beleg</td><td>$wb_nr</td><td>$art_info</td><td>$kurzinfo</td><td>$menge</td>";
 
@@ -43,16 +43,16 @@ class werkzeug
                 if ($b_id) {
                     $bb = new benutzer ();
                     $bb->get_benutzer_infos($b_id);
-                    $link_mitarbeiter_liste = "<a href='" . route('legacy::benutzer::index', ['option' => 'werkzeuge_mitarbeiter', 'b_id' => $b_id]) . "'>$bb->benutzername</a>";
+                    $link_mitarbeiter_liste = "<a href='" . route('web::benutzer::legacy', ['option' => 'werkzeuge_mitarbeiter', 'b_id' => $b_id]) . "'>$bb->benutzername</a>";
                     echo "<td>$link_mitarbeiter_liste</td>";
                 } else {
-                    $link_frei = "<a href='" . route('legacy::benutzer::index', ['option' => 'werkzeug_zuweisen', 'w_id' => $w_id]) . "'>Zuweisen</a>";
+                    $link_frei = "<a href='" . route('web::benutzer::legacy', ['option' => 'werkzeug_zuweisen', 'w_id' => $w_id]) . "'>Zuweisen</a>";
                     echo "<td>FREI $link_frei</td>";
                 }
                 if ($b_id == NULL) {
-                    $link_loeschen = "<a href='" . route('legacy::benutzer::index', ['option' => 'werkzeug_raus', 'w_id' => $w_id]) . "'>Aus Liste Löschen</a>";
+                    $link_loeschen = "<a href='" . route('web::benutzer::legacy', ['option' => 'werkzeug_raus', 'w_id' => $w_id]) . "'>Aus Liste Löschen</a>";
                 } else {
-                    $link_loeschen = "<a href='" . route('legacy::benutzer::index', ['option' => 'werkzeug_rueckgabe', 'b_id' => $b_id, 'w_id' => $w_id]) . "'>Einzelrückgabe</a>";
+                    $link_loeschen = "<a href='" . route('web::benutzer::legacy', ['option' => 'werkzeug_rueckgabe', 'b_id' => $b_id, 'w_id' => $w_id]) . "'>Einzelrückgabe</a>";
                 }
                 echo "<td>$link_loeschen</td>";
                 echo "</tr>";
@@ -415,7 +415,7 @@ class werkzeug
                 $art_info = $katalog_info [0] ['BEZEICHNUNG'];
 
                 $lieferant = $r->rechnungs_aussteller_name;
-                $link_beleg = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_id]) . "'>$lieferant</a>";
+                $link_beleg = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_id]) . "'>$lieferant</a>";
                 $wb_nr = 'W-' . $w_id;
                 $b_id = $arr [$a] ['BENUTZER_ID'];
                 if ($tmp_b_id != $b_id && $a != 0) {
@@ -429,16 +429,16 @@ class werkzeug
                 if ($b_id) {
                     $bb = new benutzer ();
                     $bb->get_benutzer_infos($b_id);
-                    $link_mitarbeiter_liste = "<a href='" . route('legacy::benutzer::index', ['option' => 'werkzeuge_mitarbeiter', 'b_id' => $b_id]) . "'>$bb->benutzername</a>";
+                    $link_mitarbeiter_liste = "<a href='" . route('web::benutzer::legacy', ['option' => 'werkzeuge_mitarbeiter', 'b_id' => $b_id]) . "'>$bb->benutzername</a>";
                     echo "<td>$link_mitarbeiter_liste</td>";
                 } else {
-                    $link_frei = "<a href='" . route('legacy::benutzer::index', ['option' => 'werkzeug_zuweisen', 'w_id' => $w_id]) . "'>Zuweisen</a>";
+                    $link_frei = "<a href='" . route('web::benutzer::legacy', ['option' => 'werkzeug_zuweisen', 'w_id' => $w_id]) . "'>Zuweisen</a>";
                     echo "<td>FREI $link_frei</td>";
                 }
                 if ($b_id == NULL) {
-                    $link_loeschen = "<a href='" . route('legacy::benutzer::index', ['option' => 'werkzeug_raus', 'w_id' => $w_id]) . "'>Aus Liste Löschen</td>";
+                    $link_loeschen = "<a href='" . route('web::benutzer::legacy', ['option' => 'werkzeug_raus', 'w_id' => $w_id]) . "'>Aus Liste Löschen</td>";
                 } else {
-                    $link_loeschen = "<a href='" . route('legacy::benutzer::index', ['option' => 'werkzeug_rueckgabe', 'b_id' => $b_id, 'w_id' => $w_id]) . "'>Einzelrückgabe</td>";
+                    $link_loeschen = "<a href='" . route('web::benutzer::legacy', ['option' => 'werkzeug_rueckgabe', 'b_id' => $b_id, 'w_id' => $w_id]) . "'>Einzelrückgabe</td>";
                 }
                 echo "<td>$link_loeschen</td>";
                 echo "</tr>";

@@ -280,7 +280,7 @@ function check_fields_nach_aenderung()
         person_aendern_in_db(request()->input('person_id'));
         hinweis_ausgeben("Person: " . request()->input('person_nachname') . " " . request()->input('person_vorname') . " wurde geändert !");
         hinweis_ausgeben("Sie werden weitergeleitet.");
-        weiterleiten(route('legacy::personen::index', ['anzeigen' => 'alle_personen'], false));
+        weiterleiten(route('web::personen::legacy', ['anzeigen' => 'alle_personen'], false));
     }
 }
 

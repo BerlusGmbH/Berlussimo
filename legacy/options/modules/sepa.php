@@ -355,10 +355,10 @@ switch ($option) {
             fehlermeldung_ausgeben("AUFTRAG KONNTE NICHT GESPEICHERT WERDEN!");
         } else {
             if ($kat == 'RECHNUNG') {
-                weiterleiten(route('legacy::sepa::index', ['option' => 'sammler_anzeigen'], false));
+                weiterleiten(route('web::sepa::legacy', ['option' => 'sammler_anzeigen'], false));
             }
             if ($kat == 'ET-AUSZAHLUNG') {
-                weiterleiten(route('legacy::listen::index', ['option' => 'sammler_anzeigen'], false));
+                weiterleiten(route('web::listen::legacy', ['option' => 'sammler_anzeigen'], false));
             }
         }
         break;
@@ -445,7 +445,7 @@ switch ($option) {
         } else {
             $sep = new sepa ();
             if ($sep->sepa_file_kopieren(request()->input('sepa_file'))) {
-                weiterleiten(route('legacy::sepa::index', ['option' => 'sammler_anzeigen'], false));
+                weiterleiten(route('web::sepa::legacy', ['option' => 'sammler_anzeigen'], false));
             }
         }
         break;
@@ -480,7 +480,7 @@ switch ($option) {
         $s = new sepa ();
         $s->betrag_buchen($datum, $kto_auszugsnr, $m_ref, $betrag, $vzweck, $geldkonto_id, $kos_typ, $kos_id, $kostenkonto, $mwst);
         $datei = request()->input('sepa_file');
-        weiterleiten(route('legacy::sepa::index', ['option' => 'sepa_file_buchen', 'sepa_file' => $datei], false));
+        weiterleiten(route('web::sepa::legacy', ['option' => 'sepa_file_buchen', 'sepa_file' => $datei], false));
         break;
 
     case "sepa_file_pdf" :
@@ -534,7 +534,7 @@ switch ($option) {
         } else {
             session()->put('kos_typ', $kos_typ);
             session()->put('kos_bez', $kos_id);
-            weiterleiten(route('legacy::sepa::index', ['option' => 'sammel_ue'], false));
+            weiterleiten(route('web::sepa::legacy', ['option' => 'sammel_ue'], false));
         }
         break;
 
@@ -572,7 +572,7 @@ switch ($option) {
         } else {
             session()->put('kos_typ', $kos_typ);
             session()->put('kos_bez', $kos_id);
-            weiterleiten(route('legacy::sepa::index', ['option' => 'sammel_ue'], false));
+            weiterleiten(route('web::sepa::legacy', ['option' => 'sammel_ue'], false));
         }
         break;
 
@@ -580,7 +580,7 @@ switch ($option) {
         if (request()->has('dat')) {
             $sep = new sepa ();
             if ($sep->datensatz_entfernen(request()->input('dat'))) {
-                weiterleiten(route('legacy::sepa::index', ['option' => 'sammler_anzeigen'], false));
+                weiterleiten(route('web::sepa::legacy', ['option' => 'sammler_anzeigen'], false));
             }
         }
         break;
@@ -599,7 +599,7 @@ switch ($option) {
                 $datei = $arr [$a] ['DATEI'];
                 $summe_a = nummer_punkt2komma_t($arr [$a] ['SUMME']);
                 $datum = date_mysql2german($arr [$a] ['DATUM']);
-                $link_ab = "<a href='" . route('legacy::sepa::index', ['option' => 'ls_auto_buchen_file', 'datei' => $datei]) . "'>Autobuchen</a>";
+                $link_ab = "<a href='" . route('web::sepa::legacy', ['option' => 'ls_auto_buchen_file', 'datei' => $datei]) . "'>Autobuchen</a>";
                 echo "<tr class=\"zeile$z\"><td>$datum</td><td>$datei</td><td>$anzahl</td><td>$summe_a</td><td>$link_ab</td></tr>";
                 if ($z == 2) {
                     $z = 0;
@@ -651,7 +651,7 @@ switch ($option) {
         $kto_auszugsnr = request()->input('kontoauszug');
         $s = new sepa ();
         $s->betrag_buchen($datum, $kto_auszugsnr, $m_ref, $betrag, $vzweck, $geldkonto_id, $kos_typ, $kos_id, $kostenkonto, $mwst);
-        weiterleiten(route('legacy::sepa::index', ['option' => 'ls_auto_buchen_file', 'datei' => $datei], false));
+        weiterleiten(route('web::sepa::legacy', ['option' => 'ls_auto_buchen_file', 'datei' => $datei], false));
         break;
 
     case "sepa_ue_autobuchen" :

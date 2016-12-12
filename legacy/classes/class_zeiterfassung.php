@@ -258,14 +258,14 @@ class zeiterfassung
                 $zettel_id = $eigene_zettel_arr [$a] ['ZETTEL_ID'];
 
                 if (!$this->check_if_beleg_erstellt($zettel_id)) {
-                    $link_stundenzettel_del = "<a href='" . route('legacy::zeiterfassung::index', ['option' => 'zettel_loeschen', 'zettel_id' => $zettel_id]) . "'>Löschen</a>";
+                    $link_stundenzettel_del = "<a href='" . route('web::zeiterfassung::legacy', ['option' => 'zettel_loeschen', 'zettel_id' => $zettel_id]) . "'>Löschen</a>";
                 } else {
                     $link_stundenzettel_del = '';
                 }
 
-                $link_stundenzettel_ansehen = "<a href='" . route('legacy::zeiterfassung::index', ['option' => 'zettel_ansehen', 'zettel_id' => $zettel_id]) . "'>Ansehen</a>";
-                $link_stundenzettel_eingabe = "<a href='" . route('legacy::zeiterfassung::index', ['option' => 'zettel_eingabe', 'zettel_id' => $zettel_id]) . "'>Eingabe</a>";
-                $link_pdf = "<a href='" . route('legacy::zeiterfassung::index', ['option' => 'zettel2pdf', 'zettel_id' => $zettel_id]) . "'>PDF-Ansicht</a>";
+                $link_stundenzettel_ansehen = "<a href='" . route('web::zeiterfassung::legacy', ['option' => 'zettel_ansehen', 'zettel_id' => $zettel_id]) . "'>Ansehen</a>";
+                $link_stundenzettel_eingabe = "<a href='" . route('web::zeiterfassung::legacy', ['option' => 'zettel_eingabe', 'zettel_id' => $zettel_id]) . "'>Eingabe</a>";
+                $link_pdf = "<a href='" . route('web::zeiterfassung::legacy', ['option' => 'zettel2pdf', 'zettel_id' => $zettel_id]) . "'>PDF-Ansicht</a>";
                 $beschreibung = $eigene_zettel_arr [$a] ['BESCHREIBUNG'];
                 $datum = date_mysql2german($eigene_zettel_arr [$a] ['ERFASSUNGSDATUM']);
 
@@ -367,7 +367,7 @@ class zeiterfassung
         if (empty($stundenzettel_pos_arr)) {
             echo "Stundenzettel enthält keine Daten";
         } else {
-            $link_pdf = "<a href='" . route('legacy::zeiterfassung::index', ['option' => 'zettel2pdf', 'zettel_id' => $id]) . "'>PDF-Ansicht</a>";
+            $link_pdf = "<a href='" . route('web::zeiterfassung::legacy', ['option' => 'zettel2pdf', 'zettel_id' => $id]) . "'>PDF-Ansicht</a>";
             echo "<br>Stundenzettelinhalt $link_pdf<br><hr>";
             $anzahl_pos = count($stundenzettel_pos_arr);
             $gesamt_min = 0;
@@ -398,8 +398,8 @@ class zeiterfassung
                 $beginn = $stundenzettel_pos_arr [$a] ['BEGINN'];
                 $ende = $stundenzettel_pos_arr [$a] ['ENDE'];
 
-                $link_loschen = "<a href='" . route('legacy::zeiterfassung::index', ['option' => 'loeschen', 'zettel_id' => $id, 'pos_id' => $pos_dat]) . "'>Löschen</a>";
-                $link_aendern = "<a href='" . route('legacy::zeiterfassung::index', ['option' => 'aendern', 'zettel_id' => $id, 'pos_id' => $pos_dat]) . "'>Ändern</a>";
+                $link_loschen = "<a href='" . route('web::zeiterfassung::legacy', ['option' => 'loeschen', 'zettel_id' => $id, 'pos_id' => $pos_dat]) . "'>Löschen</a>";
+                $link_aendern = "<a href='" . route('web::zeiterfassung::legacy', ['option' => 'aendern', 'zettel_id' => $id, 'pos_id' => $pos_dat]) . "'>Ändern</a>";
 
                 if ($kostentraeger_typ == 'Mietvertrag') {
                     $mv = new mietvertraege ();
@@ -520,7 +520,7 @@ class zeiterfassung
         protokollieren('STUNDENZETTEL', $last_dat, '0');
         $mein_letzerzettel_id = $this->mein_letzer_zettel($benutzer_id);
         hinweis_ausgeben('Stundennachweis wurde gespeichert!<br>Sie werden weitergeleitet.');
-        weiterleiten_in_sec(route('legacy::zeiterfassung::index', ['option' => 'zettel_eingabe', 'zettel_id' => $mein_letzerzettel_id]), 2);
+        weiterleiten_in_sec(route('web::zeiterfassung::legacy', ['option' => 'zettel_eingabe', 'zettel_id' => $mein_letzerzettel_id]), 2);
     }
 
     function letzte_zettel_id()
@@ -596,7 +596,7 @@ class zeiterfassung
             $zugewiesene_l_id = $this->get_leistung_id_by_beschr($this->gewerk_id, $leistungs_beschreibung);
             $datum = date_mysql2german($datum); // weil die nachfolgende funktion deutsches datumsformat erwartet
             $this->zettel_pos_speichern($datum, $benutzer_id, $zugewiesene_l_id, $zettel_id, $dauer_min, $kostentraeger_typ, $kostentraeger_bez, $hinweis, $beginn, $ende);
-            weiterleiten_in_sec(route('legacy::zeiterfassung::index', ['option' => 'zettel_eingabe', 'zettel_id' => $zettel_id]), 1);
+            weiterleiten_in_sec(route('web::zeiterfassung::legacy', ['option' => 'zettel_eingabe', 'zettel_id' => $zettel_id]), 1);
         } else {
             hinweis_ausgeben("Leistungsbeschreibung zu lang, max 160 zeichen");
         }
@@ -643,7 +643,7 @@ class zeiterfassung
             $r->artikel_leistung_mit_artikelnr_speichern($bp_partner_id, $leistungs_beschreibung, $artikel_preis, $artikel_nr, '0', 'Std', '19', '0.00');
         }
 
-        weiterleiten(route('legacy::zeiterfassung::index', ['option' => 'zettel_eingabe', 'zettel_id' => $zettel_id], false));
+        weiterleiten(route('web::zeiterfassung::legacy', ['option' => 'zettel_eingabe', 'zettel_id' => $zettel_id], false));
     }
 
     // ###ZEIT METHODEN#########
@@ -899,9 +899,9 @@ class zeiterfassung
     {
         $benutzer_arr = $this->mitarbeiter_arr($ex);
         if ($ex == 0) {
-            echo "<a href='" . route('legacy::zeiterfassung::index', ['option' => 'stundennachweise_ex']) . "'>Ex-Mitarbeiter</a>";
+            echo "<a href='" . route('web::zeiterfassung::legacy', ['option' => 'stundennachweise_ex']) . "'>Ex-Mitarbeiter</a>";
         } else {
-            echo "<a href='" . route('legacy::zeiterfassung::index', ['option' => 'stundennachweise']) . "'>Aktuelle Mitarbeiter</a>";
+            echo "<a href='" . route('web::zeiterfassung::legacy', ['option' => 'stundennachweise']) . "'>Aktuelle Mitarbeiter</a>";
         }
 
         $partner_name = '';
@@ -928,7 +928,7 @@ class zeiterfassung
                 $anzahl_offene_zettel = 0;
                 $anzahl_in_beleg = 0;
             }
-            $link = "<a href='" . route('legacy::zeiterfassung::index', ['option' => 'nachweisliste', 'mitarbeiter_id' => $benutzer_id]) . "'><b> $benutzername</b></a>";
+            $link = "<a href='" . route('web::zeiterfassung::legacy', ['option' => 'nachweisliste', 'mitarbeiter_id' => $benutzer_id]) . "'><b> $benutzername</b></a>";
 
             if ($anzahl_offene_zettel > 0) {
                 $o = "<b>$anzahl_offene_zettel </b>";
@@ -1007,12 +1007,12 @@ class zeiterfassung
                 $zeile = $a + 1;
                 $zettel_id = $eigene_zettel_arr [$a] ['ZETTEL_ID'];
                 if ($this->check_if_beleg_erstellt($zettel_id)) {
-                    $link_stundenzettel_del = "<a href='" . route('legacy::zeiterfassung::index', ['option' => 'zettel_loeschen', 'zettel_id' => $zettel_id]) . "'>Löschen</a>";
+                    $link_stundenzettel_del = "<a href='" . route('web::zeiterfassung::legacy', ['option' => 'zettel_loeschen', 'zettel_id' => $zettel_id]) . "'>Löschen</a>";
                 } else {
                     $link_stundenzettel_del = '';
                 }
-                $link_stundenzettel_ansehen = "<a href='" . route('legacy::zeiterfassung::index', ['option' => 'zettel_ansehen', 'zettel_id' => $zettel_id]) . "'>Ansehen</a>";
-                $link_pdf = "<a href='" . route('legacy::zeiterfassung::index', ['option' => 'zettel2pdf', 'zettel_id' => $zettel_id]) . "'>PDF-Ansicht</a>";
+                $link_stundenzettel_ansehen = "<a href='" . route('web::zeiterfassung::legacy', ['option' => 'zettel_ansehen', 'zettel_id' => $zettel_id]) . "'>Ansehen</a>";
+                $link_pdf = "<a href='" . route('web::zeiterfassung::legacy', ['option' => 'zettel2pdf', 'zettel_id' => $zettel_id]) . "'>PDF-Ansicht</a>";
 
                 if ($this->check_if_beleg_erstellt($zettel_id)) {
                     $_beleg_arr = $this->get_beleg_id_erstellt($zettel_id);
@@ -1022,7 +1022,7 @@ class zeiterfassung
                         $link_zettel2beleg = "";
                         for ($g = 0; $g < $anz; $g++) {
                             $in_belegnr = $_beleg_arr [$g] ['IN_BELEG'];
-                            $link_zettel2beleg .= "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $in_belegnr]) . "'><b>BELEG ERSTELLT</b></a><br>";
+                            $link_zettel2beleg .= "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $in_belegnr]) . "'><b>BELEG ERSTELLT</b></a><br>";
                         }
 
                         $anzahl_pos_in_zettel = $this->anzahl_pos_zettel($zettel_id);
@@ -1031,7 +1031,7 @@ class zeiterfassung
                         }
                     }
                 } else {
-                    $link_zettel2beleg = "<a href='" . route('legacy::zeiterfassung::index', ['option' => 'zettel_zu_beleg', 'zettel_id' => $zettel_id]) . "'>BELEG ERSTELLEN</a>";
+                    $link_zettel2beleg = "<a href='" . route('web::zeiterfassung::legacy', ['option' => 'zettel_zu_beleg', 'zettel_id' => $zettel_id]) . "'>BELEG ERSTELLEN</a>";
                 }
 
                 $beschreibung = $eigene_zettel_arr [$a] ['BESCHREIBUNG'];
@@ -1094,7 +1094,7 @@ class zeiterfassung
                 if (request()->has('speichern')) {
                     echo '<pre>';
                     $this->urlaub2zettel(request()->input('benutzer_id'), request()->input('beschreibung'), request()->input('tage'));
-                    weiterleiten(route('legacy::zeiterfassung::index', ['option' => 'nachweisliste', 'mitarbeiter_id' => $benutzer_id], false));
+                    weiterleiten(route('web::zeiterfassung::legacy', ['option' => 'nachweisliste', 'mitarbeiter_id' => $benutzer_id], false));
                 }
                 if (request()->has('erstellen')) {
                     $f->hidden_feld('benutzer_id', $benutzer_id);
@@ -1184,7 +1184,7 @@ ORDER BY `URLAUB`.`DATUM` ASC";
                 $datum_mysql = date_german2mysql($datum);
                 $anteil = $url_tage [$a] ['ANTEIL'];
                 $this->get_zettel_infos_of($datum_mysql, $benutzer_id);
-                $link_stundenzettel_ansehen = "<a href='" . route('legacy::zeiterfassung::index', ['option' => 'zettel_ansehen', 'zettel_id' => $this->z_zettel_id], false) . "'>Eingetragen in $this->z_beschreibung</a>";
+                $link_stundenzettel_ansehen = "<a href='" . route('web::zeiterfassung::legacy', ['option' => 'zettel_ansehen', 'zettel_id' => $this->z_zettel_id], false) . "'>Eingetragen in $this->z_beschreibung</a>";
 
                 echo "<tr><td>$z</td><td>$datum</td><td>$anteil Tag (-e)</td><td>$link_stundenzettel_ansehen</td></tr>";
             }
@@ -1233,7 +1233,7 @@ LIMIT 0 , 1";
     {
         DB::delete("DELETE FROM STUNDENZETTEL_POS WHERE ZETTEL_ID='$zettel_id' && ST_DAT='$pos_id'");
         hinweis_ausgeben("Zeile gelöscht, Sie werden weitergeleitet!");
-        weiterleiten_in_sec(route('legacy::zeiterfassung::index', ['option' => 'zettel_eingabe', 'zettel_id' => $zettel_id], false), 2);
+        weiterleiten_in_sec(route('web::zeiterfassung::legacy', ['option' => 'zettel_eingabe', 'zettel_id' => $zettel_id], false), 2);
     }
 
     function pos_deaktivieren($zettel_id, $pos_dat)

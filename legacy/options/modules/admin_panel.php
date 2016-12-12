@@ -123,7 +123,7 @@ function liste_detail_kat()
     echo "<tr class=\"feldernamen\"><th>Detailname</th><th>Kategorie</th></tr></thead>\n";
     $counter = 0;
     foreach($result as $row) {
-        $auswahl_link = "<a href='" . route('legacy::admin::index', ['admin_panel' => 'details_neue_kat', 'table' => $row['DETAIL_KAT_KATEGORIE']]) . "'>" . $row['DETAIL_KAT_KATEGORIE'] . "</a>";
+        $auswahl_link = "<a href='" . route('web::admin::legacy', ['admin_panel' => 'details_neue_kat', 'table' => $row['DETAIL_KAT_KATEGORIE']]) . "'>" . $row['DETAIL_KAT_KATEGORIE'] . "</a>";
 
         $counter++;
         if ($counter == 1) {

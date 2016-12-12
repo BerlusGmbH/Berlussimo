@@ -102,7 +102,7 @@ switch ($option) {
             $ze->pos_loeschen($zettel_id, $pos_id);
         } else {
             hinweis_ausgeben("FEHLER BEIM LÖSCHEN");
-            weiterleiten_in_sec(route('legacy::zeiterfassung::index', ['option' => 'zettel_eingabe', 'zettel_id' => $zettel_id], false), 2);
+            weiterleiten_in_sec(route('web::zeiterfassung::legacy', ['option' => 'zettel_eingabe', 'zettel_id' => $zettel_id], false), 2);
         }
         break;
 
@@ -114,7 +114,7 @@ switch ($option) {
             $ze->form_zeile_aendern($zettel_id, $pos_id);
         } else {
             hinweis_ausgeben("FEHLER BEIM ÄNDERN");
-            weiterleiten_in_sec(route('legacy::zeiterfassung::index', ['option' => 'zettel_eingabe', 'zettel_id' => $zettel_id], false), 2);
+            weiterleiten_in_sec(route('web::zeiterfassung::legacy', ['option' => 'zettel_eingabe', 'zettel_id' => $zettel_id], false), 2);
         }
         break;
 
@@ -197,7 +197,7 @@ switch ($option) {
 
     case "einheitenliste" :
         $bg = new berlussimo_global ();
-        $link = route('legacy::zeiterfassung::index', ['option' => 'einheitenliste'], false);
+        $link = route('web::zeiterfassung::legacy', ['option' => 'einheitenliste'], false);
         break;
 
     case "zettel_loeschen" :
@@ -207,7 +207,7 @@ switch ($option) {
             $benutzer_id = $z->get_userid($zettel_id);
             if ($benutzer_id == Auth::user()->id or check_user_mod(Auth::user()->id, '*')) {
                 $z->zettel_loeschen_voll($zettel_id);
-                weiterleiten(route('legacy::zeiterfassung::index', ['option' => 'nachweisliste', 'mitarbeiter_id' => $benutzer_id], false));
+                weiterleiten(route('web::zeiterfassung::legacy', ['option' => 'nachweisliste', 'mitarbeiter_id' => $benutzer_id], false));
             } else {
                 throw new \App\Exceptions\MessageException(
                     new \App\Messages\ErrorMessage("Sie haben keine Berechtigung fremde Stundennachweise zu löschen, da sie keine Vollrechte haben.")

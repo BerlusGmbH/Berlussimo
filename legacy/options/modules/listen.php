@@ -167,7 +167,7 @@ switch ($option) {
         if ($sep->sepa_ueberweisung_speichern($von_gk_id, $an_sepa_gk_id, $vzweck_new, $kat, $kos_typ, $kos_id, $konto, $betrag) == false) {
             fehlermeldung_ausgeben("AUFTRAG KONNTE NICHT GESPEICHERT WERDEN!");
         } else {
-            weiterleiten(route('legacy::listen::index', ['option' => 'inspiration_sepa'], false));
+            weiterleiten(route('web::listen::legacy', ['option' => 'inspiration_sepa'], false));
         }
         break;
 
@@ -230,7 +230,7 @@ switch ($option) {
             $jahr = request()->input('jahr');
         }
 
-        $bg->jahres_links($jahr, route('legacy::listen::index', ['option' => 'income_report'], false));
+        $bg->jahres_links($jahr, route('web::listen::legacy', ['option' => 'income_report'], false));
 
         if (request()->has('objekt_id')) {
             session()->put('objekt_id', request()->input('objekt_id'));
@@ -338,7 +338,7 @@ switch ($option) {
         if (request()->has('profil_id')) {
             session()->put('r_profil_id', request()->input('profil_id'));
         }
-        weiterleiten(route('legacy::listen::index', ['option' => 'profil_liste'], false));
+        weiterleiten(route('web::listen::legacy', ['option' => 'profil_liste'], false));
         break;
 
     case "profil_edit" :
@@ -356,7 +356,7 @@ switch ($option) {
             $l->b_konten_edit(request()->input('profil_id'), request()->input('b_konten'), request()->input('bez_arr'));
             session()->put('r_profil_id', request()->input('profil_id'));
             $profil_id = session()->get('r_profil_id');
-            weiterleiten(route('legacy::listen::index', ['option' => 'profil_edit', 'profil_id' => $profil_id], false));
+            weiterleiten(route('web::listen::legacy', ['option' => 'profil_edit', 'profil_id' => $profil_id], false));
         } else {
             fehlermeldung_ausgeben("Buchungskonten für den Bericht wählen!!!");
         }

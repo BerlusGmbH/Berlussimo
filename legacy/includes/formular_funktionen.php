@@ -96,7 +96,7 @@ function liste_aktueller_objekte_edit()
 {
     $result = DB::select("SELECT OBJEKT_DAT, OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC ");
     foreach ($result as $row)
-        echo "$row[OBJEKT_KURZNAME] - <a href='" . route('legacy::objekteform::index', ['daten_rein' => 'aendern', 'obj_id' => $row['OBJEKT_ID']]) . "'>Edit </a> - <a href='" . route('legacy::objekteform::index', ['daten_rein' => 'loeschen', 'obj_dat' => $row['OBJEKT_DAT']]) . "'>Löschen</a><br>\n";
+        echo "$row[OBJEKT_KURZNAME] - <a href='" . route('web::objekteform::legacy', ['daten_rein' => 'aendern', 'obj_id' => $row['OBJEKT_ID']]) . "'>Edit </a> - <a href='" . route('web::objekteform::legacy', ['daten_rein' => 'loeschen', 'obj_dat' => $row['OBJEKT_DAT']]) . "'>Löschen</a><br>\n";
 }
 
 function objekt_zum_aendern_holen($obj_id)
@@ -223,7 +223,7 @@ function einheit_liste_dropdown($haus_id)
     $result = DB::select($db_abfrage);
     if (empty($result)) {
         echo "<h2 class=\"fehler\">Keine Einheiten im ausgewählten Haus</h2>";
-        echo "<p class=\"hinweis\">Bitte zuerst Einheit im Haus anlegen - <a href='" . route('legacy::einheitenform::index', ['daten_rein' => 'anlegen']) . "'>Einheit anlegen HIER&nbsp;</a></p><br>";
+        echo "<p class=\"hinweis\">Bitte zuerst Einheit im Haus anlegen - <a href='" . route('web::einheitenform::legacy', ['daten_rein' => 'anlegen']) . "'>Einheit anlegen HIER&nbsp;</a></p><br>";
     } else {
         echo "<b>Einheit auswählen:</b><br>\n ";
         echo "<select name=\"einheiten\" size=\"1\">\n";
@@ -390,6 +390,6 @@ function mietvertrag_form_neu()
         }
         hinweis_ausgeben("Mietvertrag wurde erstellt!");
         hinweis_ausgeben("Sie werden zur Mietdefinition weitergeleitet!");
-        weiterleiten_in_sec(route('legacy::miete_definieren::index', ['option' => 'miethoehe', 'mietvertrag_id' => $zugewiesene_vetrags_id], false), "2");
+        weiterleiten_in_sec(route('web::miete_definieren::legacy', ['option' => 'miethoehe', 'mietvertrag_id' => $zugewiesene_vetrags_id], false), "2");
     }
 }

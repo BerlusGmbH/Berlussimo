@@ -427,7 +427,7 @@ function einheiten_ids_by_objekt($objekt_id)
     $leerstand = msort($leerstand, "EINHEIT_KURZNAME", false);
     $anzahl_leer = count($leerstand);
     for ($i = 0; $i < $anzahl_leer; $i++) {
-        $link = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mietvertrag_neu', 'einheit_id' => $leerstand [$i] ['EINHEIT_ID']]);
+        $link = "<a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mietvertrag_neu', 'einheit_id' => $leerstand [$i] ['EINHEIT_ID']]);
         $link .= "'>" . $leerstand [$i] ['EINHEIT_KURZNAME'] . "</a>\n<br>\n";
         echo $link;
     }
@@ -616,7 +616,7 @@ function person_loeschen($person_dat)
     protokollieren('PERSON', $dat_neu, $dat_alt);
 
     hinweis_ausgeben("Person gelöscht!");
-    echo "<a href='" . route('legacy::personen::index', ['anzeigen' => 'alle_personen']) . "'>Zurück zu Personenliste</a>";
+    echo "<a href='" . route('web::personen::legacy', ['anzeigen' => 'alle_personen']) . "'>Zurück zu Personenliste</a>";
 }
 
 function person_aendern_in_db($person_id)

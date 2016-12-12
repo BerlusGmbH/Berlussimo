@@ -57,9 +57,9 @@ class todo
                 $p->get_partner_name($p_id);
                 $partner_name = $p->partner_name;
                 if ($aktiv == '1') {
-                    $link = "<a href='" . route('legacy::todo::index', ['option' => 'baustelle_deaktivieren', 'bau_id' => $bau_id]) . "'>Deaktivieren</a>";
+                    $link = "<a href='" . route('web::todo::legacy', ['option' => 'baustelle_deaktivieren', 'bau_id' => $bau_id]) . "'>Deaktivieren</a>";
                 } else {
-                    $link = "<a href='" . route('legacy::todo::index', ['option' => 'baustelle_aktivieren', 'bau_id' => $bau_id]) . "'>Aktivieren</a>";
+                    $link = "<a href='" . route('web::todo::legacy', ['option' => 'baustelle_aktivieren', 'bau_id' => $bau_id]) . "'>Aktivieren</a>";
                 }
                 echo "<tr><td>$bez</td><td>$partner_name</td><td>$link</td></tr>";
             }
@@ -140,7 +140,7 @@ class todo
                 $db_abfrage = "INSERT INTO TODO_LISTE VALUES (NULL, '$last_id', '$t_id', '" . request()->input('text') . "', NULL, '$anz_ab','$typ', '" . request()->input('benutzer_id') . "','$benutzer_id', '0','" . request()->input('akut') . "','" . request()->input('kostentraeger_typ') . "','$kostentraeger_id', '$wert_eur','1')";
                 DB::insert($db_abfrage);
                 ob_clean();
-                weiterleiten(route('legacy::todo::index', ['option' => 'pdf_auftrag', 'proj_id' => $last_id], false));
+                weiterleiten(route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $last_id], false));
             }
         }
         $f->ende_formular();
@@ -270,7 +270,7 @@ class todo
                                 $z2++;
                                 $u_t_id = $u_aufgaben_arr [$a] ['T_ID'];
                                 $u_text = $u_aufgaben_arr [$a] ['TEXT'];
-                                $link_aendern = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $u_t_id]) . "'>$u_text</a>";
+                                $link_aendern = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $u_t_id]) . "'>$u_text</a>";
                                 echo "<b>$z2.</b> $link_aendern<hr>";
                             }
                         }
@@ -375,10 +375,10 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                         $z1++;
                         $t_dat = $row ['T_DAT'];
                         $t_id = $row ['T_ID'];
-                        $link_pdf = "<a href='" . route('legacy::todo::index', ['option' => 'pdf_projekt', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_light.png\"></a>";
-                        $link_pdf_1 = "<a href='" . route('legacy::todo::index', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_light.png\"></a>";
+                        $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_projekt', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_light.png\"></a>";
+                        $link_pdf_1 = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_light.png\"></a>";
                         $text = $row ['TEXT'];
-                        $edit_text = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $t_id], false) . "'>$text</a>";
+                        $edit_text = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id], false) . "'>$text</a>";
                         $anzeigen_ab = date_mysql2german($row ['ANZEIGEN_AB']);
                         $erledigt = $row ['ERLEDIGT'];
                         $verfasser_id = $row ['VERFASSER_ID'];
@@ -446,9 +446,9 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                                 $z2++;
                                 $u_t_id = $u_aufgaben_arr [$a] ['T_ID'];
                                 $u_text = $u_aufgaben_arr [$a] ['TEXT'];
-                                $u_edit_text = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $u_t_id]) . "'>$u_text</a>";
+                                $u_edit_text = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $u_t_id]) . "'>$u_text</a>";
                                 $u_anzeigen_ab = date_mysql2german($u_aufgaben_arr [$a] ['ANZEIGEN_AB']);
-                                $u_link_pdf = "<a href='" . route('legacy::todo::index', ['option' => 'pdf_auftrag', 'proj_id' => $u_t_id]) . "'><img src=\"images/pdf_light.png\"></a>";
+                                $u_link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $u_t_id]) . "'><img src=\"images/pdf_light.png\"></a>";
                                 $u_erledigt = $u_aufgaben_arr [$a] ['ERLEDIGT'];
                                 if ($u_erledigt == '1') {
                                     $u_erledigt = 'erledigt';
@@ -638,9 +638,9 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 
                 $z1++;
                 $t_id = $row ['T_ID'];
-                $link_pdf_1 = "<a href='" . route('legacy::todo::index', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_light.png\"></a>";
+                $link_pdf_1 = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_light.png\"></a>";
                 $text = $row ['TEXT'];
-                $edit_text = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $t_id]) . "'>$text</a>";
+                $edit_text = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$text</a>";
                 $anzeigen_ab = date_mysql2german($row ['ANZEIGEN_AB']);
                 $erledigt = $row ['ERLEDIGT'];
                 $verfasser_id = $row ['VERFASSER_ID'];
@@ -738,9 +738,9 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 
                 $z1++;
                 $t_id = $row ['T_ID'];
-                $link_pdf_1 = "<a href='" . route('legacy::todo::index', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_light.png\"></a>";
+                $link_pdf_1 = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_light.png\"></a>";
                 $text = $row ['TEXT'];
-                $edit_text = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $t_id]) . "'>$text</a>";
+                $edit_text = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$text</a>";
                 $anzeigen_ab = date_mysql2german($row ['ANZEIGEN_AB']);
                 $erledigt = $row ['ERLEDIGT'];
                 $verfasser_id = $row ['VERFASSER_ID'];
@@ -815,9 +815,9 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $t_dat = $u_aufgaben_arr [$a] ['T_DAT'];
                 $u_t_id = $u_aufgaben_arr [$a] ['T_ID'];
                 $u_text = $u_aufgaben_arr [$a] ['TEXT'];
-                $u_edit_text = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $u_t_id]) . "'>$u_text</a>";
+                $u_edit_text = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $u_t_id]) . "'>$u_text</a>";
                 $u_anzeigen_ab = date_mysql2german($u_aufgaben_arr [$a] ['ANZEIGEN_AB']);
-                $u_link_pdf = "<a href='" . route('legacy::todo::index', ['option' => 'pdf_auftrag', 'proj_id' => $u_t_id]) . "'><img src=\"images/pdf_light.png\"></a>";
+                $u_link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $u_t_id]) . "'><img src=\"images/pdf_light.png\"></a>";
                 $u_erledigt = $u_aufgaben_arr [$a] ['ERLEDIGT'];
                 if ($u_erledigt == '1') {
                     $u_erledigt = 'erledigt';
@@ -860,7 +860,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $o = new objekt ();
                 $u_t_vergangen = $o->tage_berechnen_bis_heute($u_anzeigen_ab);
 
-                $link_auftraege_an = "<a href='" . route('legacy::todo::index', ['option' => 'auftraege_an', 'typ' => $benutzer_typ, 'id' => $beteiligt_id]) . "'>$u_beteiligt_name</a>";
+                $link_auftraege_an = "<a href='" . route('web::todo::legacy', ['option' => 'auftraege_an', 'typ' => $benutzer_typ, 'id' => $beteiligt_id]) . "'>$u_beteiligt_name</a>";
 
                 echo "<tr class=\"zeile$c\"><td>$z.</td><td>";
                 $f->check_box_js('t_dats[]', $t_dat, 'Erledigt', null, null);
@@ -904,12 +904,12 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         $f->erstelle_formular("Auftragsuche $typ_int_ext", null);
         if ($typ_int_ext == 'intern') {
             $be = new benutzer ();
-            $f->check_box_js('check_int_ext', 1, 'Externe Aufträge suchen', 'onchange="redirect_to("' . route('legacy::todo::index', ['option' => 'auftrag_suche', 'typ_int_ext' => 'extern']) . '")', null);
+            $f->check_box_js('check_int_ext', 1, 'Externe Aufträge suchen', 'onchange="redirect_to("' . route('web::todo::legacy', ['option' => 'auftrag_suche', 'typ_int_ext' => 'extern']) . '")', null);
             $be->dropdown_benutzer2('Mitarbeiter wählen', 'benutzer_id', 'benutzer_id', null);
             $f->hidden_feld('benutzer_typ', 'benutzer');
         } else {
             $p = new partner ();
-            $f->check_box_js('check_int_ext', 1, 'Interne Aufträge suchen', 'onchange="redirect_to("' . route('legacy::todo::index', ['option' => 'auftrag_suche', 'typ_int_ext' => 'intern']) . '")', null);
+            $f->check_box_js('check_int_ext', 1, 'Interne Aufträge suchen', 'onchange="redirect_to("' . route('web::todo::legacy', ['option' => 'auftrag_suche', 'typ_int_ext' => 'intern']) . '")', null);
             echo "<br>";
             $p->partner_dropdown('Externe Firma/Partner wählen', 'benutzer_id', 'benutzer_id', null);
             $f->hidden_feld('benutzer_typ', 'Partner');
@@ -967,7 +967,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $erledigt = request()->input('status');
                 $db_abfrage = "UPDATE TODO_LISTE SET TEXT='" . request()->input('text') . "', ANZEIGEN_AB='$anz_ab', BENUTZER_ID='" . request()->input('benutzer_id') ."', ERLEDIGT='$erledigt', AKUT='" . request()->input('akut') . "', KOS_TYP='" . request()->input('kostentraeger_typ'). "', KOS_ID='$kostentraeger_id' WHERE T_DAT='$this->t_dat'";
                 DB::update($db_abfrage);
-                weiterleiten(route('legacy::todo::index', [], false));
+                weiterleiten(route('web::todo::legacy', [], false));
             }
         }
     }
@@ -1014,7 +1014,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             $db_abfrage = "DELETE FROM TODO_LISTE WHERE T_ID ='$t_id' OR UE_ID='$t_id'";
         }
         DB::delete($db_abfrage);
-        weiterleiten(route('legacy::todo::index', [], false));
+        weiterleiten(route('web::todo::legacy', [], false));
     }
 
     function pdf_projekt($id)
@@ -1396,8 +1396,8 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                         $erl = 'NEIN';
                     }
                     $erstellt = $arr [$a] ['ERSTELLT'];
-                    $link_pdf = "<a href='" . route('legacy::todo::index', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-                    $link_txt = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $t_id]) . "'>$text</a>";
+                    $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+                    $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$text</a>";
 
                     echo "<tr><td>$link_txt $link_pdf</td><td>$verfasser_name<br>$benutzer_name</td><td>$erl</td><td>$erstellt</td></tr>";
                 }
@@ -1458,8 +1458,8 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                     $erl = 'NEIN';
                 }
                 $erstellt = $arr [$a] ['ERSTELLT'];
-                $link_pdf = "<a href='" . route('legacy::todo::index', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-                $link_txt = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $t_id]) . "'>$text</a>";
+                $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+                $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$text</a>";
                 echo "<tr><td>$link_txt $link_pdf</td><td>$verfasser_name<br>$benutzer_name</td><td>$erl</td><td>$erstellt</td></tr>";
             }
             echo "</table>";
@@ -1505,8 +1505,8 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                         $erl = 'NEIN';
                     }
                     $erstellt = $arr [$a] ['ERSTELLT'];
-                    $link_pdf = "<a href='" . route('legacy::todo::index', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-                    $link_txt = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $t_id]) . "'>$text</a>";
+                    $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+                    $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$text</a>";
                     echo "<tr><td>$link_txt $link_pdf</td><td>$verfasser_name<br>$benutzer_name</td><td>$erl</td><td>$erstellt</td></tr>";
                 }
                 echo "</table>";
@@ -1562,7 +1562,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $t_dat = $arr [$a] ['T_DAT'];
                 $t_id = $arr [$a] ['T_ID'];
                 $this->get_aufgabe_alles($t_id);
-                $u_link_pdf = "<a href='" . route('legacy::todo::index', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_light.png\"></a>";
+                $u_link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_light.png\"></a>";
 
                 echo "<tr><td>$z.<br>$u_link_pdf</td><td>";
                 if ($this->erledigt == '0') {

@@ -41,7 +41,7 @@ switch ($option) {
         //$partners = new partners ();
         //$partners->partner_rechts_anzeigen();
         $form = new formular ();
-        $form->erstelle_formular("Partnerdaten überprüfen", route('legacy::partner::index', ['option' => 'partner_gesendet1'], false));
+        $form->erstelle_formular("Partnerdaten überprüfen", route('web::partner::legacy', ['option' => 'partner_gesendet1'], false));
         $clean_arr = $form->post_array_bereinigen();
         foreach ($clean_arr as $key => $value) {
             if (($key != 'submit_partner') and ($key != 'option')) {
@@ -63,7 +63,7 @@ switch ($option) {
         $clean_arr = $form->post_array_bereinigen();
         $partners = new partners ();
         $partners->partner_speichern($clean_arr);
-        weiterleiten(route('legacy::partner::index', ['option' => 'partner_liste'], false));
+        weiterleiten(route('web::partner::legacy', ['option' => 'partner_liste'], false));
         break;
 
     case "partner_liste" :
@@ -88,7 +88,7 @@ switch ($option) {
             $partner_id = request()->input('partner_id');
             $pp = new partners ();
             $pp->stichworte_speichern($partner_id, request()->input('stichworte'));
-            weiterleiten(route('legacy::partner::index', ['option' => 'partner_stichwort', 'partner_id' => $partner_id], false));
+            weiterleiten(route('web::partner::legacy', ['option' => 'partner_stichwort', 'partner_id' => $partner_id], false));
         }
         break;
 
@@ -98,7 +98,7 @@ switch ($option) {
             $partner_id = request()->input('partner_id');
             $pp = new partners ();
             $pp->stichwort_speichern($partner_id, $stichwort);
-            weiterleiten(route('legacy::partner::index', ['option' => 'partner_stichwort', 'partner_id' => $partner_id], false));
+            weiterleiten(route('web::partner::legacy', ['option' => 'partner_stichwort', 'partner_id' => $partner_id], false));
         }
         break;
 
@@ -150,7 +150,7 @@ switch ($option) {
                 echo "alles OK";
                 $p = new partners ();
                 $p->partner_aendern(request()->input('partner_dat'), request()->input('partner_id'), request()->input('partnername'), request()->input('strasse'), request()->input('hausnummer'), request()->input('plz'), request()->input('ort'), request()->input('land'));
-                weiterleiten(route('legacy::partner::index', ['option' => 'partner_im_detail', 'partner_id' => request()->input('partner_id')], false));
+                weiterleiten(route('web::partner::legacy', ['option' => 'partner_im_detail', 'partner_id' => request()->input('partner_id')], false));
             } else {
                 echo "DATEN UNVOLLSTÄNDIG";
             }

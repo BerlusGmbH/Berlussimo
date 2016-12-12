@@ -21,6 +21,6 @@ class GeldkontenController extends LegacyController
         $gk = new gk();
         session()->put('objekt_id', $gk->get_objekt_id($id));
 
-        return redirect()->intended(route('legacy::index', [], false));
+        return redirect()->intended(route('web::legacy', [], false));
     }
 }

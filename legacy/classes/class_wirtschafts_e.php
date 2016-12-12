@@ -127,9 +127,9 @@ class wirt_e
         echo "</td><td>";
         $f = new formular ();
         $f->erstelle_formular("Vorauswahl / Einheiten aus ...", NULL);
-        $link_o = "<a href='" . route('legacy::bk::index', ['option' => 'wirt_einheiten_hinzu', 'w_id' => $w_id, 'anzeigen' => 'objekt']) . "'>Objekt</a>";
-        $link_h = "<a href='" . route('legacy::bk::index', ['option' => 'wirt_einheiten_hinzu', 'w_id' => $w_id, 'anzeigen' => 'haus']) . "'>Häuser</a>";
-        $link_e = "<a href='" . route('legacy::bk::index', ['option' => 'wirt_einheiten_hinzu', 'w_id' => $w_id, 'anzeigen' => 'einheit']) . "'>Einheiten</a>";
+        $link_o = "<a href='" . route('web::bk::legacy', ['option' => 'wirt_einheiten_hinzu', 'w_id' => $w_id, 'anzeigen' => 'objekt']) . "'>Objekt</a>";
+        $link_h = "<a href='" . route('web::bk::legacy', ['option' => 'wirt_einheiten_hinzu', 'w_id' => $w_id, 'anzeigen' => 'haus']) . "'>Häuser</a>";
+        $link_e = "<a href='" . route('web::bk::legacy', ['option' => 'wirt_einheiten_hinzu', 'w_id' => $w_id, 'anzeigen' => 'einheit']) . "'>Einheiten</a>";
         echo "$link_o<br>";
         echo "$link_h<br>";
         echo "$link_e<br>";
@@ -315,7 +315,7 @@ class wirt_e
             }
         }
 
-        header("Location: " . route('legacy::bk::index', ['option' => 'wirt_einheiten_hinzu', 'w_id' => $w_id, 'anzeigen' => $anzeigen], false));
+        header("Location: " . route('web::bk::legacy', ['option' => 'wirt_einheiten_hinzu', 'w_id' => $w_id, 'anzeigen' => $anzeigen], false));
     }
 
     function liste_aller_einheiten_haus($w_id, $haus_id)
@@ -340,13 +340,13 @@ class wirt_e
     {
         $db_abfrage = "DELETE FROM WIRT_EIN_TAB WHERE W_ID='$w_id'";
         DB::delete($db_abfrage);
-        header("Location: " . route('legacy::bk::index', ['option' => 'wirt_einheiten_hinzu', 'w_id' => $w_id], false));
+        header("Location: " . route('web::bk::legacy', ['option' => 'wirt_einheiten_hinzu', 'w_id' => $w_id], false));
     }
 
     function del_eine($w_id, $e_id)
     {
         $db_abfrage = "DELETE FROM WIRT_EIN_TAB WHERE W_ID='$w_id' && EINHEIT_ID='$e_id'";
         DB::delete($db_abfrage);
-        weiterleiten(route('legacy::bk::index', ['option' => 'wirt_einheiten_hinzu', 'w_id' => $w_id], false));
+        weiterleiten(route('web::bk::legacy', ['option' => 'wirt_einheiten_hinzu', 'w_id' => $w_id], false));
     }
 } // end class wirt_e

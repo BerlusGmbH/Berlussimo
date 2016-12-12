@@ -145,11 +145,11 @@ switch ($option) {
 		$vorjahr = $jahr - 1;
 		$jahr_aktuell = date ( "Y" );
 		$kassen_id = session()->get('kasse');
-		echo "<a href='" . route('legacy::kassen::index', ['option' => 'kassenbuch', 'kasse' => $kassen_id, 'jahr' => $jahr_aktuell]) . "'>Kassenbuch aktuell</a>&nbsp;";
-		echo "<a href='" . route('legacy::kassen::index', ['option' => 'kassenbuch', 'kasse' => $kassen_id, 'jahr' => $vorjahr]) . "'>Kassenbuch $vorjahr</a>&nbsp;";
-		echo "<a href='" . route('legacy::kassen::index', ['option' => 'kassenbuch_xls', 'kasse' => $kassen_id, 'jahr' => $jahr]) . "'>Exceldatei</a>&nbsp;<hr>";
+		echo "<a href='" . route('web::kassen::legacy', ['option' => 'kassenbuch', 'kasse' => $kassen_id, 'jahr' => $jahr_aktuell]) . "'>Kassenbuch aktuell</a>&nbsp;";
+		echo "<a href='" . route('web::kassen::legacy', ['option' => 'kassenbuch', 'kasse' => $kassen_id, 'jahr' => $vorjahr]) . "'>Kassenbuch $vorjahr</a>&nbsp;";
+		echo "<a href='" . route('web::kassen::legacy', ['option' => 'kassenbuch_xls', 'kasse' => $kassen_id, 'jahr' => $jahr]) . "'>Exceldatei</a>&nbsp;<hr>";
 		$g = new berlussimo_global ();
-		$link = route('legacy::kassen::index', ['option' => 'kassenbuch', 'kasse' => $kassen_id], false);
+		$link = route('web::kassen::legacy', ['option' => 'kassenbuch', 'kasse' => $kassen_id], false);
 		$g->monate_jahres_links ( $jahr, $link );
 		$kasse = new kasse ();
 		$monat = request()->input('monat');
@@ -193,6 +193,6 @@ switch ($option) {
 	case "kasseneintrag_loeschen" :
 		$k = new kasse ();
 		$k->kassenbuch_dat_deaktivieren ( request()->input('eintrag_dat') );
-		weiterleiten_in_sec ( route('legacy::kassen::index', ['option' => 'kassenbuch', 'kasse' => 1], false), '1' );
+		weiterleiten_in_sec ( route('web::kassen::legacy', ['option' => 'kassenbuch', 'kasse' => 1], false), '1' );
 		break;
 }

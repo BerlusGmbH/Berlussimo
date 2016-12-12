@@ -427,7 +427,7 @@ if (request()->has('option')) {
             }
             if (!session()->has('mitarbeiter_id')) {
                 $g = new general();
-                $link = route('legacy::wartungsplaner::ajax', ['option' => 'wochenkalender']);
+                $link = route('web::wartungsplaner::ajax', ['option' => 'wochenkalender']);
                 $g->get_team_liste($link);
                 echo "<br>";
                 if (request()->has('team_id')) {
@@ -890,7 +890,7 @@ if (request()->has('option')) {
         case "mitarbeiter":
 
             $g = new general();
-            $link = route('legacy::wartungsplaner::ajax', ['option' => 'mitarbeiter'], false);
+            $link = route('web::wartungsplaner::ajax', ['option' => 'mitarbeiter'], false);
             $js = "onchange='daj3(\"/wartungsplaner/ajax?option=mitarbeiter_wahl&team_id=\" + this.value, \"rightBox\");daj3(\"/wartungsplaner/ajax?option=mitarbeiter_n_team&team_id=\" + this.value, \"rightBox1\");'";
             $g->dropdown_teams('Team wählen', 'team_id', 'team_id', '', $js);
             $js = "onclick='neues_team();";

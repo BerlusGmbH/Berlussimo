@@ -70,7 +70,7 @@ function form_intern($target_id)
 {
     echo "FORMULAR fär Interne Wartungen<br>";
     /*Infos vom Gerät holen und irgendwo anzeigen*/
-    $js = "onchange=\"daj2('" . route('legacy::wartungsplaner::ajax', ['option' => 'form_extern'], false) . "',document.getElementById('rightBox'))\" ";
+    $js = "onchange=\"daj2('" . route('web::wartungsplaner::ajax', ['option' => 'form_extern'], false) . "',document.getElementById('rightBox'))\" ";
     dropdown_w_geraete('Wartungsteil wählen', 'w_geraet', 'wg', $js);
 
 
@@ -130,7 +130,7 @@ function text_feld1($label, $name, $id, $js = '', $wert)
 /*Formular fär externe Wartungen*/
 function form_extern($target_id)
 {
-    $funk1 = "partner_pruefen|" . route('legacy::wartungsplaner::ajax', ['option' => 'partner_save'], false) . "|rightBox";
+    $funk1 = "partner_pruefen|" . route('web::wartungsplaner::ajax', ['option' => 'partner_save'], false) . "|rightBox";
     $funk2 = "partner_form_del_value|";
 
     $js_onsubmit = "onclick='yes_no(\"$funk1\", \"$funk2\")'";
@@ -197,11 +197,11 @@ function kontakt_suche($target_id, $string)
 
                         extract($einheit_info_arr);
                         $z++;
-                        $js = "onclick=\"setTimeout('daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'kos_typ_register', 'kos_typ' => 'Partner', 'kos_id' => $EIGENTUEMER_PARTNER], false) . "', 'leftBox1')', 100);";
-                        $js .= "setTimeout('daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'unset_g_id'], false) . "', 'rightBox')', 100);";
-                        $js .= "setTimeout('daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'wartungsteil_waehlen'], false) . "', 'leftBox')', 1000);";
-                        $js .= "setTimeout('daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'einheit_register', 'einheit_id' => $einheit_id, 'einheit_bez' => $EINHEIT_KURZNAME], false) . "', 'rightBox')', 500);";
-                        $js .= "setTimeout('daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'get_partner_info'], false) . "', 'rightBox')', 1000);\"";
+                        $js = "onclick=\"setTimeout('daj3('" . route('web::wartungsplaner::ajax', ['option' => 'kos_typ_register', 'kos_typ' => 'Partner', 'kos_id' => $EIGENTUEMER_PARTNER], false) . "', 'leftBox1')', 100);";
+                        $js .= "setTimeout('daj3('" . route('web::wartungsplaner::ajax', ['option' => 'unset_g_id'], false) . "', 'rightBox')', 100);";
+                        $js .= "setTimeout('daj3('" . route('web::wartungsplaner::ajax', ['option' => 'wartungsteil_waehlen'], false) . "', 'leftBox')', 1000);";
+                        $js .= "setTimeout('daj3('" . route('web::wartungsplaner::ajax', ['option' => 'einheit_register', 'einheit_id' => $einheit_id, 'einheit_bez' => $EINHEIT_KURZNAME], false) . "', 'rightBox')', 500);";
+                        $js .= "setTimeout('daj3('" . route('web::wartungsplaner::ajax', ['option' => 'get_partner_info'], false) . "', 'rightBox')', 1000);\"";
 
                         $p_nachname = $row['PERSON_NACHNAME'];
                         $p_vorname = $row['PERSON_VORNAME'];
@@ -768,7 +768,7 @@ function alle_details_anzeigen_br($tab, $tab_id)
 
 function form_detail_hinzu2($tab, $tab_id)
 {
-    $funk1 = "detail_speichern2|" . route('legacy::wartungsplaner::ajax', ['option' => 'detail_speichern2', 'tab' => $tab, 'tab_id' => $tab_id]) . "|rightBox1|$tab";
+    $funk1 = "detail_speichern2|" . route('web::wartungsplaner::ajax', ['option' => 'detail_speichern2', 'tab' => $tab, 'tab_id' => $tab_id]) . "|rightBox1|$tab";
     $funk2 = "detail_form_del_value|";
 
     $js_onsubmit = "onclick='yes_no(\"$funk1\", \"$funk2\")'";
@@ -782,7 +782,7 @@ function form_detail_hinzu2($tab, $tab_id)
 
 function form_detail_hinzu($tab, $tab_id)
 {
-    $funk1 = "detail_speichern|" . route('legacy::wartungsplaner::ajax', ['option' => 'detail_speichern']) . "|rightBox";
+    $funk1 = "detail_speichern|" . route('web::wartungsplaner::ajax', ['option' => 'detail_speichern']) . "|rightBox";
     $funk2 = "detail_form_del_value|";
 
     $js_onsubmit = "onclick='yes_no(\"$funk1\", \"$funk2\")'";
@@ -826,7 +826,7 @@ function partner_2_session($kos_typ, $kos_id)
 function form_wartungsteil($kos_typ, $kos_id)
 {
     $arr = get_wartungsteile_arr($kos_typ, $kos_id);
-    $js_neues_teil = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'wartungsteil erfassen']) . "','leftBox');\"";
+    $js_neues_teil = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'wartungsteil erfassen']) . "','leftBox');\"";
     formular('', 'formx1');
 
     if (!empty($arr)) {
@@ -1052,13 +1052,13 @@ function form_wartungsteil_erfassen($kos_typ, $kos_id)
     $arr = get_wartungsgruppen_arr();
     formular('', 'formx');
     echo "<p class=\"zeile_ueber\">Neues Wartungsteil erfassen</p>";
-    $js = "onchange=\"drop_change_check('w_gruppe_id', 'gbez');lade_dropdown('w_gruppe_id', 'g_bez', 'g_hersteller', '" . route('legacy::wartungsplaner::ajax', ['option' => 'get_hersteller_gruppe'], false) . "')\"";
+    $js = "onchange=\"drop_change_check('w_gruppe_id', 'gbez');lade_dropdown('w_gruppe_id', 'g_bez', 'g_hersteller', '" . route('web::wartungsplaner::ajax', ['option' => 'get_hersteller_gruppe'], false) . "')\"";
     dropdown_w_gruppen($arr, 'Wartungsgruppe wählen oder ...', 'w_gruppe_id', 'w_gruppe_id', $js);
     $js_gbez = "onkeyup='text_kuerzen(\"gbez\", \"50\")'";
     text_feld('Gruppenbezeichnung eingeben', 'gbez', 'gbez', 30, $js_gbez, '');
 
     $arr = get_wartungsteile_hersteller_arr();
-    $js = " onchange=\"drop_change_check('g_hersteller', 'hersteller');lade_dropdown('g_hersteller', 'hersteller', 'modell', '" . route('legacy::wartungsplaner::ajax', ['option' => 'get_hersteller_modelle'], false) . "')\"";
+    $js = " onchange=\"drop_change_check('g_hersteller', 'hersteller');lade_dropdown('g_hersteller', 'hersteller', 'modell', '" . route('web::wartungsplaner::ajax', ['option' => 'get_hersteller_modelle'], false) . "')\"";
     dropdown_hersteller($arr, 'Hersteller wählen oder ...', 'g_hersteller', 'g_hersteller', $js);
     $js_hersteller = "onkeyup='text_kuerzen(\"hersteller\", \"50\")'";
     text_feld('Hersteller', 'hersteller', 'hersteller', 30, $js_hersteller, '');
@@ -1078,16 +1078,16 @@ function form_wartungsteil_erfassen($kos_typ, $kos_id)
     dropdown_monate('Wartungsintervall', 'wartungsintervall', 'wartungsintervall', '');
 
     echo "<br><br><hr>";
-    $onclick = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'form_abweichende_r_anschrift', false]) . "','rightBox')\"";
+    $onclick = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'form_abweichende_r_anschrift', false]) . "','rightBox')\"";
     echo "<label for=\"rech_ansch_ab_ja\">Abweichende Rechnungsanschrift JA</label>";
     echo "<input type=\"radio\" id=\"rech_ansch_ab_ja\" name=\"rech_ansch_ab_ja\" $onclick />";
 
-    $onclick1 = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'get_partner_info_r_an'], false) . "','rightBox')\" ";
+    $onclick1 = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'get_partner_info_r_an'], false) . "','rightBox')\" ";
     echo "<label for=\"rech_ansch_ab_no\">Abweichende Rechnungsanschrift NEIN</label>";
     echo "<input type=\"radio\" id=\"rech_ansch_ab_no\" name=\"rech_ansch_ab_ja\" $onclick1/>";
     echo "<hr>";
 
-    $funk1 = "wgeraet_pruefen|" . route('legacy::wartungsplaner::ajax', ['option' => 'wgeraet_save'], false) . "|leftBox";
+    $funk1 = "wgeraet_pruefen|" . route('web::wartungsplaner::ajax', ['option' => 'wgeraet_save'], false) . "|leftBox";
     $funk2 = "w_geraet_form_del|";
     $js_onsubmit = "onclick='yes_no(\"$funk1\", \"$funk2\")'";
     button('btn_speichern', 'btn_speichern', 'Neues Wartungsteil speichern', $js_onsubmit);
@@ -1114,14 +1114,14 @@ function form_wt_aendern($g_id)
         echo "<input type=\"hidden\" value=\"$g_id\">";
         $p_info = get_partner_name($KOSTENTRAEGER_ID);
         echo "<p class=\"zeile_hinweis\">Wartungsteil ändern / $p_info / $LAGE_RAUM</p>";
-        $js = " onchange=\"drop_change_check('w_gruppe_id', 'gbez');lade_dropdown('w_gruppe_id', 'g_bez', 'g_hersteller', '" . route('legacy::wartungsplaner::ajax', ['option' => 'get_hersteller_gruppe'], false) . "')\"";
+        $js = " onchange=\"drop_change_check('w_gruppe_id', 'gbez');lade_dropdown('w_gruppe_id', 'g_bez', 'g_hersteller', '" . route('web::wartungsplaner::ajax', ['option' => 'get_hersteller_gruppe'], false) . "')\"";
         dropdown_w_gruppen($arr, 'Wartungsgruppe wählen oder ...', 'w_gruppe_id', 'w_gruppe_id', $js);
         $js_gbez = "onkeyup='text_kuerzen(\"gbez\", \"50\")'";
         $gruppen_bez = get_gruppen_bez($GRUPPE_ID);
         text_feld('Gruppenbezeichnung eingeben', 'gbez', 'gbez', 30, $js_gbez, $gruppen_bez);
 
         $arr = get_wartungsteile_hersteller_arr();
-        $js = " onchange=\"drop_change_check('g_hersteller', 'hersteller');lade_dropdown('g_hersteller', 'hersteller', 'modell', '" . route('legacy::wartungsplaner::ajax', ['option' => 'get_hersteller_modelle'], false) . "')\"";
+        $js = " onchange=\"drop_change_check('g_hersteller', 'hersteller');lade_dropdown('g_hersteller', 'hersteller', 'modell', '" . route('web::wartungsplaner::ajax', ['option' => 'get_hersteller_modelle'], false) . "')\"";
         dropdown_hersteller($arr, 'Hersteller wählen oder ...', 'g_hersteller', 'g_hersteller', $js);
         $js_hersteller = "onkeyup='text_kuerzen(\"hersteller\", \"50\")'";
         text_feld('Hersteller', 'hersteller', 'hersteller', 30, $js_hersteller, $HERSTELLER);
@@ -1141,17 +1141,17 @@ function form_wt_aendern($g_id)
         dropdown_monate('Wartungsintervall', 'wartungsintervall', 'wartungsintervall', '');
 
         echo "<br><br><hr>";
-        $onclick = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'form_abweichende_r_anschrift', 'g_id' => $g_id], false) . "','leftBox')\"";
+        $onclick = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'form_abweichende_r_anschrift', 'g_id' => $g_id], false) . "','leftBox')\"";
         echo "<label for=\"rech_ansch_ab_ja\">Abweichende Rechnungsanschrift JA</label>";
         echo "<input type=\"radio\" id=\"rech_ansch_ab_ja\" name=\"rech_ansch_ab_ja\"   $onclick />";
 
-        $onclick1 = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'get_partner_info_r_an', 'g_id' => $g_id], false) . "','leftBox')\" ";
+        $onclick1 = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'get_partner_info_r_an', 'g_id' => $g_id], false) . "','leftBox')\" ";
         echo "<label for=\"rech_ansch_ab_no\">Abweichende Rechnungsanschrift NEIN</label>";
         echo "<input type=\"radio\" id=\"rech_ansch_ab_no\" name=\"rech_ansch_ab_ja\"  $onclick1/>";
 
         echo "<hr>";
 
-        $funk1 = "wgeraet_pruefen|" . route('legacy::wartungsplaner::ajax', ['option' => 'wgeraet_aendern', 'g_id' => $g_id, 'kos_typ' => $KOSTENTRAEGER_TYP, 'kos_id' => $KOSTENTRAEGER_ID], false) . "|leftBox";
+        $funk1 = "wgeraet_pruefen|" . route('web::wartungsplaner::ajax', ['option' => 'wgeraet_aendern', 'g_id' => $g_id, 'kos_typ' => $KOSTENTRAEGER_TYP, 'kos_id' => $KOSTENTRAEGER_ID], false) . "|leftBox";
         $funk2 = "w_geraet_form_del|";
         $js_onsubmit = "onclick='yes_no(\"$funk1\", \"$funk2\")'";
         button('btn_speichern', 'btn_speichern', 'Wartungsteil ändern', $js_onsubmit);
@@ -1759,7 +1759,7 @@ function freie_termine_tab($arr)
             $wochentag = get_wochentag_name($DATUM);
             $wt = get_wochentag($DATUM);
             $kw = get_kw($DATUM);
-            $js_neues_teil = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $BENUTZER_ID, 'datum' => $DATUM], false) . "','rightBox1');daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'karte', 'b_id' => $BENUTZER_ID, 'datum_d' => $DATUM], false) . "','rightBox');\"";
+            $js_neues_teil = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $BENUTZER_ID, 'datum' => $DATUM], false) . "','rightBox1');daj3('" . route('web::wartungsplaner::ajax', ['option' => 'karte', 'b_id' => $BENUTZER_ID, 'datum_d' => $DATUM], false) . "','rightBox');\"";
             if ($wt == 6 or $wt == 7) {
                 echo "<tr $js_neues_teil class=\"zeile$z\"><td>$kw. KW</td><td>$DATUM</td><td class=\"zeile_belegt\">$wochentag</td><td>$benutzername</td><td>$D_KM km</td><td>$FREI/$TERMINE_TAG</td></tr>";
             } else {
@@ -1786,7 +1786,7 @@ function freie_termine_tab($arr)
 
 function freie_termine_tab3($arr)
 {
-    $sort_js = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'reg_sortieren', 'sortby' => 'DATUMZ'], false) . "', 'rightBox1');termin_suchen_btn1();\"";
+    $sort_js = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'reg_sortieren', 'sortby' => 'DATUMZ'], false) . "', 'rightBox1');termin_suchen_btn1();\"";
     button('btn_sortby', 'btn_sortby', 'NACH DATUM', $sort_js);
     if (!is_array($arr)) {
         die('Keine freien Termine verfägbar');
@@ -1828,7 +1828,7 @@ function freie_termine_tab3($arr)
             $wochentag = get_wochentag_name($DATUM);
             $wt = get_wochentag($DATUM);
             $kw = get_kw($DATUM);
-            $js_neues_teil = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $BENUTZER_ID, 'datum' => $DATUM], false) . "','rightBox1');daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'karte', 'b_id' => $BENUTZER_ID, 'datum_d' => $DATUM], false) . "','rightBox');\"";
+            $js_neues_teil = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $BENUTZER_ID, 'datum' => $DATUM], false) . "','rightBox1');daj3('" . route('web::wartungsplaner::ajax', ['option' => 'karte', 'b_id' => $BENUTZER_ID, 'datum_d' => $DATUM], false) . "','rightBox');\"";
 
             $anz_freie = count($arr[$a]['LUECKEN']);
 
@@ -1941,7 +1941,7 @@ function freie_termine_tab2($arr)
                 for ($b = 0; $b < $freie_t; $b++) {
                     $von = $arr[$a]['LUECKEN'][$b]['VON'];
                     $bis = $arr[$a]['LUECKEN'][$b]['BIS'];
-                    $js_neues_teil = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termine_tag_tab2', 'b_id' => $BENUTZER_ID, 'datum' => $DATUM], false) . "','rightBox1');daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'karte', 'b_id' => $BENUTZER_ID, 'datum_d' => $DATUM], false) . "','leftBox1');zumAnker('$von-$bis')\"";
+                    $js_neues_teil = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termine_tag_tab2', 'b_id' => $BENUTZER_ID, 'datum' => $DATUM], false) . "','rightBox1');daj3('" . route('web::wartungsplaner::ajax', ['option' => 'karte', 'b_id' => $BENUTZER_ID, 'datum_d' => $DATUM], false) . "','leftBox1');zumAnker('$von-$bis')\"";
                     echo "<tr $js_neues_teil class=\"zeile3\"><td>$von-$bis</td>";
                     echo get_entf_vor_nach($ganzer_tag_arr, $von, $bis) . '</tr>';
                 }
@@ -2040,8 +2040,8 @@ function tages_ansicht($benutzer_id, $datum_d)
     $kw = get_kw($datum_d);
     $tag_davor = tage_minus_wp($datum_d, 1);
     $tag_danach = tage_plus_wp($datum_d, 1);
-    $link_tag_davor = "<a class=\"rot\" onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $benutzer_id, 'datum' => $tag_davor], false) . "', 'rightBox1');daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'karte', 'b_id' => $benutzer_id, 'datum_d' => $tag_davor], false) . "','rightBox')\">$tag_davor</a>";
-    $link_tag_danach = "<a class=\"rot\"  onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $benutzer_id, 'datum' => $tag_danach], false) . "', 'rightBox1');daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'karte', 'b_id' => $benutzer_id, 'datum_d' => $tag_danach], false) . "','rightBox')\">$tag_danach</a>";
+    $link_tag_davor = "<a class=\"rot\" onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $benutzer_id, 'datum' => $tag_davor], false) . "', 'rightBox1');daj3('" . route('web::wartungsplaner::ajax', ['option' => 'karte', 'b_id' => $benutzer_id, 'datum_d' => $tag_davor], false) . "','rightBox')\">$tag_davor</a>";
+    $link_tag_danach = "<a class=\"rot\"  onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $benutzer_id, 'datum' => $tag_danach], false) . "', 'rightBox1');daj3('" . route('web::wartungsplaner::ajax', ['option' => 'karte', 'b_id' => $benutzer_id, 'datum_d' => $tag_danach], false) . "','rightBox')\">$tag_danach</a>";
     echo "<p class=\"zeile_hinweis\"><b>$link_tag_davor | Kalender von $benutzername (KW: $kw) Datum: $wochentag, $datum_d | <b>$link_tag_danach</b></p>";
     $arr = tages_termine_arr_b($benutzer_id, $datum_d);
     $anz = count($arr);
@@ -2131,7 +2131,7 @@ function tages_ansicht($benutzer_id, $datum_d)
 
 
         if ($status == 'frei') {
-            $js_termin = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'form_termin_eintragen', 'b_id' => $benutzer_id, 'datum' => $datum_d, 'von' => $von, 'bis' => $bis], false) . "','rightBox1');\"";
+            $js_termin = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'form_termin_eintragen', 'b_id' => $benutzer_id, 'datum' => $datum_d, 'von' => $von, 'bis' => $bis], false) . "','rightBox1');\"";
             $link_neuer_termin = "<button type=\"button\" $js_termin value=\"Termin eintragen\">Termin eintragen</button>";
             $g_id = session()->get('g_id');
             $g_info_arr = geraete_info_arr($g_id);
@@ -2143,7 +2143,7 @@ function tages_ansicht($benutzer_id, $datum_d)
             $link_neuer_termin = '';
             $termin_dat = $arr[$a]['DAT'];
             $funk1 = "termin_loeschen|$termin_dat";
-            $funk2 = "daj3|" . route('legacy::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $benutzer_id, 'datum' => $datum_d, 'von' => $von, 'bis' => $bis], false) . "|rightBox1";
+            $funk2 = "daj3|" . route('web::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $benutzer_id, 'datum' => $datum_d, 'von' => $von, 'bis' => $bis], false) . "|rightBox1";
             $js_onsubmit = "onclick='yes_no(\"$funk1\", \"$funk2\")'";
         }
         echo "<tr class=\"zeile_$status\"><td>$von<br>$bis";
@@ -2170,9 +2170,9 @@ function tages_ansicht($benutzer_id, $datum_d)
         }
         echo "</td><td valign=\"top\">$g_info";
         if ($status == 'frei') {
-            $js_aendern = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'wt_aendern', 'g_id' => session()->get('g_id')], false) . "', 'rightBox')\"";
+            $js_aendern = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'wt_aendern', 'g_id' => session()->get('g_id')], false) . "', 'rightBox')\"";
         } else {
-            $js_aendern = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'wt_aendern', 'g_id' => $g_id], false) . "', 'rightBox')\"";
+            $js_aendern = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'wt_aendern', 'g_id' => $g_id], false) . "', 'rightBox')\"";
 
         }
         echo "<br>";
@@ -2299,7 +2299,7 @@ function tages_ansicht_neu($benutzer_id, $datum_d, $hinweis_an = 1)
     $arr = tages_termine_arr_b($benutzer_id, $datum_d);
     $anz = count($arr);
     echo "<table height=\"100%\"><tr height=\"20px\" ><th>ZEIT</th><th>TERMIN";
-    $js_pdf = "onclick=\"window.location='" . route('legacy::wartungsplaner::ajax', ['option' => 'pdf_wp', 'datum_d' => $datum_d, 'benutzer_id' => $benutzer_id], false) . "'\" target=\"_blank\"";
+    $js_pdf = "onclick=\"window.location='" . route('web::wartungsplaner::ajax', ['option' => 'pdf_wp', 'datum_d' => $datum_d, 'benutzer_id' => $benutzer_id], false) . "'\" target=\"_blank\"";
     button('btn_pdf', 'btn_pdf', 'PDF', $js_pdf);
     echo "</th><th>INFOS</th></tr>";
     echo "<tr><td height=\"20px\" colspan=\"3\"><b>$wochentag, $datum_d</b></td></tr>";
@@ -2374,7 +2374,7 @@ function tages_ansicht_neu($benutzer_id, $datum_d, $hinweis_an = 1)
             $link_neuer_termin = ' ';
             $termin_dat = $arr[$a]['DAT'];
             $funk1 = "termin_loeschen|$termin_dat";
-            $funk2 = "daj3|" . route('legacy::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $benutzer_id, 'datum' => $datum_d], false) . "|rightBox1";
+            $funk2 = "daj3|" . route('web::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $benutzer_id, 'datum' => $datum_d], false) . "|rightBox1";
         }
         $von_arr = explode(':', $von);
         $bis_arr = explode(':', $bis);
@@ -2403,8 +2403,8 @@ function tages_ansicht_umkreis($benutzer_id, $datum_d)
     $kw = get_kw($datum_d);
     $tag_davor = tage_minus_wp($datum_d, 1);
     $tag_danach = tage_plus_wp($datum_d, 1);
-    $link_tag_davor = "<a class=\"rot\" onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $benutzer_id, 'datum' => $tag_davor], false) . "', 'rightBox1')\">$tag_davor</a>";
-    $link_tag_danach = "<a class=\"rot\"  onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $benutzer_id, 'datum' => $tag_danach], false) . "', 'rightBox1')\">$tag_danach</a>";
+    $link_tag_davor = "<a class=\"rot\" onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $benutzer_id, 'datum' => $tag_davor], false) . "', 'rightBox1')\">$tag_davor</a>";
+    $link_tag_danach = "<a class=\"rot\"  onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $benutzer_id, 'datum' => $tag_danach], false) . "', 'rightBox1')\">$tag_danach</a>";
     echo "<p class=\"zeile_ueber\"><b>$link_tag_davor | Kalender von $benutzername (KW: $kw) Datum: $wochentag, $datum_d | <b>$link_tag_danach</b></p>";
     $arr = tages_termine_arr_b($benutzer_id, $datum_d);
     $anz = count($arr);
@@ -2631,8 +2631,8 @@ function tages_ansicht_gross($benutzer_id, $datum_d)
     $kw = get_kw($datum_d);
     $tag_davor = tage_minus_wp($datum_d, 1);
     $tag_danach = tage_plus_wp($datum_d, 1);
-    $link_tag_davor = "<a class=\"rot\" onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $benutzer_id, 'datum' => $tag_davor], false) . "', 'rightBox1')\">$tag_davor</a>";
-    $link_tag_danach = "<a class=\"rot\"  onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $benutzer_id, 'datum' => $tag_danach], false) . "', 'rightBox1')\">$tag_danach</a>";
+    $link_tag_davor = "<a class=\"rot\" onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $benutzer_id, 'datum' => $tag_davor], false) . "', 'rightBox1')\">$tag_davor</a>";
+    $link_tag_danach = "<a class=\"rot\"  onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $benutzer_id, 'datum' => $tag_danach], false) . "', 'rightBox1')\">$tag_danach</a>";
     echo "<p class=\"zeile_ueber\"><b>Kalender von $benutzername (KW: $kw) Datum: $wochentag, $datum_d</b></p>";
     $arr = tages_termine_arr_b($benutzer_id, $datum_d);
     $anz = count($arr);
@@ -2724,7 +2724,7 @@ function tages_ansicht_gross($benutzer_id, $datum_d)
 
 
         if ($status == 'frei') {
-            $js_termin = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'form_termin_eintragen', 'b_id' => $benutzer_id, 'datum' => $datum_d, 'von' => $von, 'bis' => $bis], false) . "','rightBox1');\"";
+            $js_termin = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'form_termin_eintragen', 'b_id' => $benutzer_id, 'datum' => $datum_d, 'von' => $von, 'bis' => $bis], false) . "','rightBox1');\"";
             $g_id = session()->get('g_id');
             $g_info_arr = geraete_info_arr($g_id);
             $g_info = $g_info_arr[0]['HERSTELLER'] . '<br>' . $g_info_arr[0]['BEZEICHNUNG'];
@@ -2735,7 +2735,7 @@ function tages_ansicht_gross($benutzer_id, $datum_d)
             $link_neuer_termin = '';
             $termin_dat = $arr[$a]['DAT'];
             $funk1 = "termin_loeschen|$termin_dat";
-            $funk2 = "daj3|" . route('legacy::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $benutzer_id, 'datum' => $datum_d], false) . "|rightBox1";
+            $funk2 = "daj3|" . route('web::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $benutzer_id, 'datum' => $datum_d], false) . "|rightBox1";
             $js_onsubmit = "onclick='yes_no(\"$funk1\", \"$funk2\")'";
         }
         echo "<tr class=\"zeile_$status\"><td>$von<br>$bis";
@@ -2747,9 +2747,9 @@ function tages_ansicht_gross($benutzer_id, $datum_d)
         }
         echo "</td><td valign=\"top\">$kunden_info<br>$link_neuer_termin<br></td><td valign=\"top\">$g_info";
         if ($status == 'frei') {
-            $js_aendern = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'wt_aendern', 'g_id' => session()->get('g_id')], false) . "', 'rightBox')\"";
+            $js_aendern = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'wt_aendern', 'g_id' => session()->get('g_id')], false) . "', 'rightBox')\"";
         } else {
-            $js_aendern = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'wt_aendern', 'g_id' => $g_id], false) . "', 'rightBox')\"";
+            $js_aendern = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'wt_aendern', 'g_id' => $g_id], false) . "', 'rightBox')\"";
         }
         echo "<br>";
         echo "</td></tr>";
@@ -2800,7 +2800,7 @@ function termine_tag_kw($benutzer_id, $datum_d)
     if (is_array($arr)) {
         $anz = count($arr);
         echo "<table height=\"100%\">";
-        $link_tages_kal = "<a href=\"" . route('legacy::wartungsplaner::ajax', ['option' => 'tageskalender', 'g_id' => $g_id, 'b_id' => $benutzer_id, 'datum' => $datum_d], false) . "\">$wochentag</a>";
+        $link_tages_kal = "<a href=\"" . route('web::wartungsplaner::ajax', ['option' => 'tageskalender', 'g_id' => $g_id, 'b_id' => $benutzer_id, 'datum' => $datum_d], false) . "\">$wochentag</a>";
         echo "<tr height=\"20px\"><th colspan=\"2\">$link_tages_kal</th></tr>";
         echo "<tr height=\"20px\"><th colspan=\"2\">$datum_d</th></tr>";
         echo "<tr height=\"20px\"><th>VON:BIS</th><th>TERMIN</th></tr>";
@@ -3464,7 +3464,7 @@ function get_datum_lw($g_id)
             $datum = $row['DATUM'];
             $b_id = $row['BENUTZER_ID'];
             $b_name = get_benutzername($b_id);
-            $link .= "<input type=\"button\" onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $b_id, 'datum' => $datum], false) . "','rightBox1');daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'karte', 'b_id' => $b_id, 'datum_d' => $datum], false) . "','rightBox');\" value=\"Wartung: $datum\">$b_name<br>";
+            $link .= "<input type=\"button\" onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $b_id, 'datum' => $datum], false) . "','rightBox1');daj3('" . route('web::wartungsplaner::ajax', ['option' => 'karte', 'b_id' => $b_id, 'datum_d' => $datum], false) . "','rightBox');\" value=\"Wartung: $datum\">$b_name<br>";
         }
         return $link;
     }
@@ -3484,7 +3484,7 @@ function get_datum_nw($g_id)
             $von = substr($row['VON'], 0, 5);
             $bis = substr($row['BIS'], 0, 5);
             $b_name = get_benutzername($b_id);
-            $link .= "<input type=\"button\" onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $b_id, 'datum' => $datum], false) . "','rightBox1');daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'karte', 'b_id' => $b_id, 'datum_d' => $datum], false) . "','rightBox');\" value=\"Nächste Wartung: $datum\">$b_name $von - $bis<br>";
+            $link .= "<input type=\"button\" onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $b_id, 'datum' => $datum], false) . "','rightBox1');daj3('" . route('web::wartungsplaner::ajax', ['option' => 'karte', 'b_id' => $b_id, 'datum_d' => $datum], false) . "','rightBox');\" value=\"Nächste Wartung: $datum\">$b_name $von - $bis<br>";
         }
         return $link;
     }
@@ -3701,7 +3701,7 @@ function tages_termine($benutzer_id, $datum_d)
 
         $anz = count($arr);
         echo "<table height=\"100%\">";
-        $link_wochen_kal = "<a href=\"" . route('legacy::wartungsplaner::ajax', ['option' => 'wochenkalender', 'b_id' => $benutzer_id, 'kw' => $kw], false) . "\">KW: $kw</a>";
+        $link_wochen_kal = "<a href=\"" . route('web::wartungsplaner::ajax', ['option' => 'wochenkalender', 'b_id' => $benutzer_id, 'kw' => $kw], false) . "\">KW: $kw</a>";
         echo "<tr height=\"20px\"><th colspan=\"2\">$link_wochen_kal</th></tr>";
         echo "<tr height=\"20px\"><th colspan=\"2\">$kw KW, $datum_d</th></tr>";
         echo "<tr height=\"20px\"><th>VON:BIS</th><th>TERMIN</th></tr>";
@@ -3953,7 +3953,7 @@ function vorschlag_kurz($gruppe_id = '1', $gemacht = 'NOT')
         $selected_index = $gruppe_element . '.selectedIndex';
         $vorschlag_gruppe_id = $gruppe_element . ".options[$selected_index].value";
         $d_onchange = "onChange=\"daj3('/wartungsplaner/ajax?option=detail_geraet&tab=W_GERAETE&tab_id='+this.value,'rightBox1');daj3('/wartungsplaner/ajax?option=geraete_info_anzeigen&g_id='+this.value,'rightBox');daj3('/wartungsplaner/ajax?option=termin_suchen&g_id='+this.value,'leftBox1');daj3('/wartunsplaner/ajax?option=get_datum_lw&g_id='+this.value,'lw_datum')\"";
-        $js_suche = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termin_vorschlaege_kurz', 'datum_d' => $datum_feld, 'vorschlag_gruppe_id' => $vorschlag_gruppe_id], false) . ", 'leftBox1');\"";
+        $js_suche = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termin_vorschlaege_kurz', 'datum_d' => $datum_feld, 'vorschlag_gruppe_id' => $vorschlag_gruppe_id], false) . ", 'leftBox1');\"";
         button('btn_heute', 'btn_heute', 'Erneut vorschlagen', $js_suche, '');
         $tt = 1;
         if (request()->has('vorschlaege_anzeigen')) {
@@ -4013,7 +4013,7 @@ function vorschlag_kurz($gruppe_id = '1', $gemacht = 'NOT')
         if ($weiter_stueck > $anz) {
             $weiter_stueck = 0;
         }
-        $js_weiter = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termin_vorschlaege_kurz', 'vorschlaege_anzeigen' => $weiter_stueck], false) . "','leftBox1');\"";
+        $js_weiter = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termin_vorschlaege_kurz', 'vorschlaege_anzeigen' => $weiter_stueck], false) . "','leftBox1');\"";
         button('btn_weiter', 'btn_w', 'Weitere anzeigen', $js_weiter);
         echo "<table class=\"sortable\">";
         echo "<tr><th class=\"sorttable_numeric\">Z</th><th>Mitarbeiter</th><th class=\"sorttable_numeric\">DATUM</th><th>LETZTE</th><th class=\"sorttable_numeric\">Entf</th><th>Kunde</th><th>Hersteller<br>Bezeichnung</th><th class=\"sorttable_numeric\">Alle</th></tr>";
@@ -4065,7 +4065,7 @@ function vorschlag_kurz($gruppe_id = '1', $gemacht = 'NOT')
                 }
                 echo "<tr valign=\"top\" class=\"zeile$ze\" $js_tages_ansicht><td>$z.";
                 $art_id = $arr_sort[$a]['EINHEIT_ID'];
-                $url = route('legacy::wartungsplaner::ajax', ['option' => 'pdf_anschreiben', 'art' => 'Mieter', 'art_id' => $art_id], false);
+                $url = route('web::wartungsplaner::ajax', ['option' => 'pdf_anschreiben', 'art' => 'Mieter', 'art_id' => $art_id], false);
                 $js_pdf_zettel = "onclick=\"window.open('$url');\"";
                 button('btn_pdf_a', 'btn_pdf_a', 'Einwurfzettel', $js_pdf_zettel);
                 echo "</td><td>$mitarbeiter_name</td><td>$datum</td><td>$l_wartung</td><td>$km km</td><td><b>Einheit: $einheit_name</b><br><b>MIETER:</b> $mietername<br>$str $nr $plz<br><b>Kunde</b>:$kos_bez</td><td>$hersteller<br>$g_bez<br>$einbauort</td><td>Alle $intervall M.</td></tr>";
@@ -4077,7 +4077,7 @@ function vorschlag_kurz($gruppe_id = '1', $gemacht = 'NOT')
                 echo "<tr valign=\"top\" class=\"zeile$ze\" $js_tages_ansicht><td>$z.";
 
                 $art_id = $arr_sort[$a]['KOSTENTRAEGER_ID'];
-                $url = route('legacy::wartungsplaner::ajax', ['option' => 'pdf_anschreiben', 'art' => 'Partner', 'art_id' => $art_id], false);
+                $url = route('web::wartungsplaner::ajax', ['option' => 'pdf_anschreiben', 'art' => 'Partner', 'art_id' => $art_id], false);
                 $js_pdf_zettel = "onclick=\"window.open('$url');\"";
                 button('btn_pdf_a', 'btn_pdf_a', 'Einwurfzettel', $js_pdf_zettel);
 
@@ -4094,7 +4094,7 @@ function vorschlag_kurz($gruppe_id = '1', $gemacht = 'NOT')
         if ($weiter_stueck > $anz) {
             $weiter_stueck = 0;
         }
-        $js_weiter = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termin_vorschlaege_kurz', 'vorschlaege_anzeigen' => $weiter_stueck], false) . "','leftBox1');\"";
+        $js_weiter = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termin_vorschlaege_kurz', 'vorschlaege_anzeigen' => $weiter_stueck], false) . "','leftBox1');\"";
         button('btn_weiter', 'btn_w', 'Weitere anzeigen', $js_weiter);
     } else {
         echo "Keine Vorschläge";
@@ -4129,7 +4129,7 @@ function vorschlag_kurz_chrono($gruppe_id = '1', $gemacht = 'NOT')
         $selected_index = $gruppe_element . '.selectedIndex';
         $vorschlag_gruppe_id = $gruppe_element . ".options[$selected_index].value";
         $d_onchange = "onChange=\"daj3('/wartungsplaner/ajax?option=detail_geraet&tab=W_GERAETE&tab_id='+this.value,'rightBox1');daj3('/wartungsplaner/ajax?option=geraete_info_anzeigen&g_id='+this.value,'rightBox');daj3('/wartungsplaner/ajax?option=termin_suchen&g_id='+this.value,'leftBox1');daj3('/wartungsplaner/ajax?option=get_datum_lw&g_id='+this.value,'lw_datum')\"";
-        $js_suche = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termin_vorschlaege_kurz', 'datum_d' => $datum_feld, 'vorschlag_gruppe_id' => $vorschlag_gruppe_id], false) . ", 'leftBox1');\"";
+        $js_suche = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termin_vorschlaege_kurz', 'datum_d' => $datum_feld, 'vorschlag_gruppe_id' => $vorschlag_gruppe_id], false) . ", 'leftBox1');\"";
         button('btn_heute', 'btn_heute', 'Erneut vorschlagen', $js_suche, '');
         $tt = 1;
         if (request()->has('vorschlaege_anzeigen')) {
@@ -4190,7 +4190,7 @@ function vorschlag_kurz_chrono($gruppe_id = '1', $gemacht = 'NOT')
         if ($weiter_stueck > $anz) {
             $weiter_stueck = 0;
         }
-        $js_weiter = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termin_vorschlaege_kurz', 'vorschlaege_anzeigen' => $weiter_stueck], false) . "','leftBox1');\"";
+        $js_weiter = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termin_vorschlaege_kurz', 'vorschlaege_anzeigen' => $weiter_stueck], false) . "','leftBox1');\"";
         button('btn_weiter', 'btn_w', 'Weitere anzeigen', $js_weiter);
         echo "<table class=\"sortable\">";
         echo "<tr><th class=\"sorttable_numeric\">Z</th><th>Mitarbeiter</th><th class=\"sorttable_numeric\">DATUM</th><th>LETZTE</th><th class=\"sorttable_numeric\">Entf</th><th>Kunde</th><th>Hersteller<br>Bezeichnung</th><th class=\"sorttable_numeric\">Alle</th></tr>";
@@ -4246,7 +4246,7 @@ function vorschlag_kurz_chrono($gruppe_id = '1', $gemacht = 'NOT')
                 }
                 echo "<tr valign=\"top\" class=\"zeile$ze\" $js_tages_ansicht><td>$z.";
                 $art_id = $arr_sort[$a]['EINHEIT_ID'];
-                $url = route('legacy::wartungsplaner::ajax', ['option' => 'pdf_anschreiben', 'art' => 'Mieter', 'art_id' => $art_id], false);
+                $url = route('web::wartungsplaner::ajax', ['option' => 'pdf_anschreiben', 'art' => 'Mieter', 'art_id' => $art_id], false);
                 $js_pdf_zettel = "onclick=\"window.open('$url');\"";
                 button('btn_pdf_a', 'btn_pdf_a', 'Einwurfzettel', $js_pdf_zettel);
                 echo "</td><td>$mitarbeiter_name</td><td>$datum</td><td>$l_wartung</td><td>$km km</td><td><b>Einheit: $einheit_name</b><br><b>MIETER:</b> $mietername<br>$str $nr $plz<br><b>Kunde</b>:$kos_bez</td><td>$hersteller<br>$g_bez<br>$einbauort</td><td>Alle $intervall M.</td></tr>";
@@ -4256,7 +4256,7 @@ function vorschlag_kurz_chrono($gruppe_id = '1', $gemacht = 'NOT')
                 $ku->get_partner_info($arr_sort[$a]['KOSTENTRAEGER_ID']);
                 echo "<tr valign=\"top\" class=\"zeile$ze\" $js_tages_ansicht><td>$z.";
                 $art_id = $arr_sort[$a]['KOSTENTRAEGER_ID'];
-                $url = route('legacy::wartungsplaner::ajax', ['option' => 'pdf_anschreiben', 'art' => 'Partner', 'art_id' => $art_id], false);
+                $url = route('web::wartungsplaner::ajax', ['option' => 'pdf_anschreiben', 'art' => 'Partner', 'art_id' => $art_id], false);
                 $js_pdf_zettel = "onclick=\"window.open('$url');\"";
                 button('btn_pdf_a', 'btn_pdf_a', 'Einwurfzettel', $js_pdf_zettel);
                 echo "</td><td>$mitarbeiter_name</td><td>$datum</td><td>$l_wartung</td><td>$km km</td><td><b>KUNDE: $kos_bez</b><br>$ku->partner_strasse $ku->partner_hausnr<br>$ku->partner_plz $ku->partner_ort</td><td>$hersteller<br>$g_bez<br>$einbauort</td><td>Alle $intervall M.</td></tr>";
@@ -4270,7 +4270,7 @@ function vorschlag_kurz_chrono($gruppe_id = '1', $gemacht = 'NOT')
         if ($weiter_stueck > $anz) {
             $weiter_stueck = 0;
         }
-        $js_weiter = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termin_vorschlaege_kurz', 'vorschlaege_anzeigen' => $weiter_stueck], false) . "','leftBox1');\"";
+        $js_weiter = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termin_vorschlaege_kurz', 'vorschlaege_anzeigen' => $weiter_stueck], false) . "','leftBox1');\"";
         button('btn_weiter', 'btn_w', 'Weitere anzeigen', $js_weiter);
     } else {
         echo "Keine Vorschläge";
@@ -4353,7 +4353,7 @@ function handy($datum_d)
 
     $datum_gestern = tage_minus_wp($datum_d, 1);
     $datum_morgen = tage_plus_wp($datum_d, 1);
-    echo "<p class=\"zeile_ueber\"><a href=\"" . route('legacy::wartungsplaner::ajax', ['option' => 'handy', 'datum_d' => $datum_gestern], false) . "\">GESTERN $datum_gestern</a></p>";
+    echo "<p class=\"zeile_ueber\"><a href=\"" . route('web::wartungsplaner::ajax', ['option' => 'handy', 'datum_d' => $datum_gestern], false) . "\">GESTERN $datum_gestern</a></p>";
 
     $arr = tages_termine_arr_b(session()->get('mitarbeiter_id'), $datum_d);
     $anz = count($arr);
@@ -4387,12 +4387,12 @@ function handy($datum_d)
                 $g_info = "<b>$HERSTELLER / $BEZEICHNUNG</b>";
 
             }
-            echo "<a class=\"handy\" href=\"" . route('legacy::wartungsplaner::ajax', ['option' => 'form_start_stop', 'tab' => 'GEO_TERMINE', 'tab_dat' => $dat], false) . "\"><p class=\"zeile_belegt\">$von - $bis<br>$kunden_info<br>$g_info</p></a>";
+            echo "<a class=\"handy\" href=\"" . route('web::wartungsplaner::ajax', ['option' => 'form_start_stop', 'tab' => 'GEO_TERMINE', 'tab_dat' => $dat], false) . "\"><p class=\"zeile_belegt\">$von - $bis<br>$kunden_info<br>$g_info</p></a>";
         } else {
             echo "<p class=\"zeile_frei\">$von - $bis<br>$txt</p>";
         }
     }//end for
-    echo "<p class=\"zeile_ueber\"><a href=\"" . route('legacy::wartungsplaner::ajax', ['option' => 'handy', 'datum_d' => $datum_morgen], false) . "\">MORGEN $datum_morgen</a></p>";
+    echo "<p class=\"zeile_ueber\"><a href=\"" . route('web::wartungsplaner::ajax', ['option' => 'handy', 'datum_d' => $datum_morgen], false) . "\">MORGEN $datum_morgen</a></p>";
 
 
 }
@@ -4439,34 +4439,34 @@ function form_start_stop($tab, $tab_dat)
     $gg->check_status($tab, $tab_dat);
     if ($gg->status == 'nicht angefangen') {
         echo "<p class=\"zeile_hinweis\">STATUS: NICHT ANGEFANGEN</p>";
-        $js_start = "onclick=\"wopen('" . route('legacy::wartungsplaner::ajax', ['option' => 't_starten', 'tab' => $tab, 'tab_dat' => $tab_dat], false) . "','');\"";
+        $js_start = "onclick=\"wopen('" . route('web::wartungsplaner::ajax', ['option' => 't_starten', 'tab' => $tab, 'tab_dat' => $tab_dat], false) . "','');\"";
         echo "<p $js_start class=\"zeile_frei\">STARTEN</p>";
     }
 
     if ($gg->status == 'erledigt') {
         echo "<p class=\"zeile_hinweis\">STATUS: ERLEDIGT</p>";
-        $js_druck = "onclick=\"wopen('" . route('legacy::wartungsplaner::ajax', ['option' => 't_drucken', 'tab' => $tab, 'tab_dat' => $tab_dat], false) . "','');\"";
+        $js_druck = "onclick=\"wopen('" . route('web::wartungsplaner::ajax', ['option' => 't_drucken', 'tab' => $tab, 'tab_dat' => $tab_dat], false) . "','');\"";
         echo "<p $js_druck class=\"zeile_frei\">DRUCKEN</p>";
     }
 
     if ($gg->status == 'unterbrochen') {
         echo "<p class=\"zeile_hinweis\">STATUS: UNTERBROCHEN</p>";
-        $js_neustart = "onclick=\"wopen('" . route('legacy::wartungsplaner::ajax', ['option' => 't_neustart', 'tab' => $tab, 'tab_dat' => $tab_dat], false) . "','');\"";
+        $js_neustart = "onclick=\"wopen('" . route('web::wartungsplaner::ajax', ['option' => 't_neustart', 'tab' => $tab, 'tab_dat' => $tab_dat], false) . "','');\"";
         echo "<p $js_neustart class=\"zeile_frei\">NEUSTARTEN</p>";
 
-        $js_druck = "onclick=\"wopen('" . route('legacy::wartungsplaner::ajax', ['option' => 't_drucken', 'tab' => $tab, 'tab_dat' => $tab_dat], false) . "','');\"";
+        $js_druck = "onclick=\"wopen('" . route('web::wartungsplaner::ajax', ['option' => 't_drucken', 'tab' => $tab, 'tab_dat' => $tab_dat], false) . "','');\"";
         echo "<p $js_druck class=\"zeile_frei\">DRUCKEN</p>";
     }
 
     if ($gg->status == 'aktiv') {
         echo "<p class=\"zeile_hinweis\">STATUS: AKTIV/LäUFT</p>";
-        $js_ende = "onclick=\"wopen('" . route('legacy::wartungsplaner::ajax', ['option' => 't_beenden', 'tab' => $tab, 'tab_dat' => $tab_dat], false) . "','');\"";
+        $js_ende = "onclick=\"wopen('" . route('web::wartungsplaner::ajax', ['option' => 't_beenden', 'tab' => $tab, 'tab_dat' => $tab_dat], false) . "','');\"";
         echo "<p $js_ende class=\"zeile_frei\">BEENDEN</p>";
 
-        $js_ab = "onclick=\"wopen('" . route('legacy::wartungsplaner::ajax', ['option' => 't_abbruch', 'tab' => $tab, 'tab_dat' => $tab_dat], false) . "','');\"";
+        $js_ab = "onclick=\"wopen('" . route('web::wartungsplaner::ajax', ['option' => 't_abbruch', 'tab' => $tab, 'tab_dat' => $tab_dat], false) . "','');\"";
         echo "<p $js_ab class=\"zeile_frei\">ABBRECHEN</p>";
 
-        $js_druck = "onclick=\"wopen('" . route('legacy::wartungsplaner::ajax', ['option' => 't_drucken', 'tab' => $tab, 'tab_dat' => $tab_dat], false) . "','');\"";
+        $js_druck = "onclick=\"wopen('" . route('web::wartungsplaner::ajax', ['option' => 't_drucken', 'tab' => $tab, 'tab_dat' => $tab_dat], false) . "','');\"";
         echo "<p $js_druck class=\"zeile_frei\">DRUCKEN</p>";
     }
     $js = '';
@@ -4618,7 +4618,7 @@ class general
         }
 
 
-        echo "<center><a href=\"" . route('legacy::wartungsplaner::ajax', ['option' => 'karte_gross', 'b_id' => $b_id, 'datum_d' => $datum_d], false) . "\" target=\"_blank\"><img border=\"0\" src =\"$map_berlin$map_markers\"></a></center>";
+        echo "<center><a href=\"" . route('web::wartungsplaner::ajax', ['option' => 'karte_gross', 'b_id' => $b_id, 'datum_d' => $datum_d], false) . "\" target=\"_blank\"><img border=\"0\" src =\"$map_berlin$map_markers\"></a></center>";
     }
 
     function get_wteam_profil($benutzer_id)

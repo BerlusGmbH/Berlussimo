@@ -33,7 +33,7 @@ class serienbrief
 
         if (!empty($result)) {
             echo "<table class=\"striped\">\n";
-            $link_kat = "<a href='" . route('legacy::weg::index', ['option' => 'serien_brief_vorlagenwahl']) . "'>Alle Kats anzeigen</a>";
+            $link_kat = "<a href='" . route('web::weg::legacy', ['option' => 'serien_brief_vorlagenwahl']) . "'>Alle Kats anzeigen</a>";
             echo "<thead>";
             echo "<tr><th>Vorlage / Betreff</th><th>KAT</th><th>BEARBEITEN</th><th>ANSEHEN</th></tr>";
             echo "<tr><th><b>$empf_typ<b></th><th>$link_kat</th><th></th><th></th></tr>";
@@ -45,16 +45,16 @@ class serienbrief
                 $kat = $row ['KAT'];
 
                 if ($empf_typ == 'Eigentuemer') {
-                    $link_ansehen = "<a href='" . route('legacy::weg::index', ['option' => 'serienbrief_pdf', 'vorlagen_dat' => $dat]) . "'>Serienbrief als PDF</a>";
-                    $link_kat = "<a href='" . route('legacy::weg::index', ['option' => 'serien_brief_vorlagenwahl', 'kat' => $kat]) . "'>$kat</a>";
+                    $link_ansehen = "<a href='" . route('web::weg::legacy', ['option' => 'serienbrief_pdf', 'vorlagen_dat' => $dat]) . "'>Serienbrief als PDF</a>";
+                    $link_kat = "<a href='" . route('web::weg::legacy', ['option' => 'serien_brief_vorlagenwahl', 'kat' => $kat]) . "'>$kat</a>";
                 }
 
                 if ($empf_typ == 'Partner') {
-                    $link_ansehen = "<a href='" . route('legacy::partner::index', ['option' => 'serienbrief_pdf', 'vorlagen_dat' => $dat]) . "'>Serienbrief als PDF</a>";
-                    $link_kat = "<a href='" . route('legacy::partner::index', ['option' => 'serien_brief_vorlagenwahl', 'kat' => $kat]) . "'>$kat</a>";
+                    $link_ansehen = "<a href='" . route('web::partner::legacy', ['option' => 'serienbrief_pdf', 'vorlagen_dat' => $dat]) . "'>Serienbrief als PDF</a>";
+                    $link_kat = "<a href='" . route('web::partner::legacy', ['option' => 'serien_brief_vorlagenwahl', 'kat' => $kat]) . "'>$kat</a>";
                 }
 
-                $link_bearbeiten = "<a href='" . route('legacy::bk::index', ['option' => 'vorlage_bearbeiten', 'vorlagen_dat' => $dat]) . "'>Vorlage bearbeiten</a>";
+                $link_bearbeiten = "<a href='" . route('web::bk::legacy', ['option' => 'vorlage_bearbeiten', 'vorlagen_dat' => $dat]) . "'>Vorlage bearbeiten</a>";
 
                 echo "<tr><td>$kurztext</td><td>$link_kat</td><td>$link_bearbeiten</td><td>$link_ansehen</td></tr>";
             }

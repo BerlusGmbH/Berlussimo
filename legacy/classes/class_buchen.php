@@ -56,7 +56,7 @@ class buchen
                     $z++;
                     $konto_id = $sortiert [$i] ['KONTO_ID'];
                     $bez = $sortiert [$i] ['BEZEICHNUNG'];
-                    echo "<tr class=\"zeile$z\"><td><a class=\"objekt_auswahl_buchung\" href='" . route('legacy::geldkonten::select', [$konto_id]) . "'>$bez</a>&nbsp;</td></tr>";
+                    echo "<tr class=\"zeile$z\"><td><a class=\"objekt_auswahl_buchung\" href='" . route('web::geldkonten::select', [$konto_id]) . "'>$bez</a>&nbsp;</td></tr>";
                     if ($z == 2) {
                         $z = 0;
                     }
@@ -72,7 +72,7 @@ class buchen
                     $z++;
                     $konto_id = $unsortiert [$i] ['KONTO_ID'];
                     $bez = $unsortiert [$i] ['BEZEICHNUNG'];
-                    echo "<tr class=\"zeile$z\"><td><a class=\"objekt_auswahl_buchung\" href='" . route('legacy::geldkonten::select', [$konto_id]) . "'>$bez</a>&nbsp;</td></tr>";
+                    echo "<tr class=\"zeile$z\"><td><a class=\"objekt_auswahl_buchung\" href='" . route('web::geldkonten::select', [$konto_id]) . "'>$bez</a>&nbsp;</td></tr>";
                     if ($z == 2) {
                         $z = 0;
                     }
@@ -93,9 +93,9 @@ class buchen
 
     function geldkonto_header()
     {
-        $link_kontoauszug = "<a href='" . route('legacy::buchen::index', ['option' => 'kontoauszug_form']) . "'>Kontrolldaten zum Kontoauszug eingeben</a>";
-        $link_sepa_ls = "<a href='" . route('legacy::sepa::index', ['option' => 'ls_auto_buchen']) . "'>LS-Autobuchen</a>";
-        $aendern_link = "<a href='" . route('legacy::buchen::index', ['option' => 'geldkonto_aendern']) . "'>Geldkonto ändern</a>";
+        $link_kontoauszug = "<a href='" . route('web::buchen::legacy', ['option' => 'kontoauszug_form']) . "'>Kontrolldaten zum Kontoauszug eingeben</a>";
+        $link_sepa_ls = "<a href='" . route('web::sepa::legacy', ['option' => 'ls_auto_buchen']) . "'>LS-Autobuchen</a>";
+        $aendern_link = "<a href='" . route('web::buchen::legacy', ['option' => 'geldkonto_aendern']) . "'>Geldkonto ändern</a>";
         $this->akt_konto_bezeichnung = $this->geld_konto_bezeichung(session()->get('geldkonto_id'));
         echo "Ausgewähltes Geldkonto -> $this->akt_konto_bezeichnung $aendern_link $link_kontoauszug $link_sepa_ls<br>";
         $geld = new geldkonto_info ();
@@ -245,7 +245,7 @@ class buchen
             $heute = session()->get('temp_datum');
         }
 
-        session()->put('last_url', route('legacy::buchen::index', ['option' => 'kontoauszug_form'], false));
+        session()->put('last_url', route('web::buchen::legacy', ['option' => 'kontoauszug_form'], false));
 
         $form->text_feld("Datum:", "datum", $heute, "10", 'datum', '');
         $form->text_feld("Kontoauszugsnummer:", "kontoauszugsnummer", session()->get('temp_kontoauszugsnummer'), "10", 'kontoauszugsnummer', '');
@@ -652,7 +652,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         DB::insert($db_abfrage);
         echo "Buchungsnr $geldbuchung_id wurde geändert!<br>";
         echo "Sie werden zum Buchungsjournal weitergeleitet!";
-        weiterleiten_in_sec(route('legacy::buchen::index', ['option' => 'buchungs_journal_druckansicht', 'monat' => $t_monat, 'jahr' => $t_jahr], false), 2);
+        weiterleiten_in_sec(route('web::buchen::legacy', ['option' => 'buchungs_journal_druckansicht', 'monat' => $t_monat, 'jahr' => $t_jahr], false), 2);
     }
 
     function kostentraeger_id_ermitteln($kostentraeger_typ, $kostentraeger_bez)
@@ -830,7 +830,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('GELD_KONTO_BUCHUNGEN', $last_dat, '0');
         echo "<h3>Betrag von $betrag € wurde gebucht.</h3>";
-        weiterleiten_in_sec(route('legacy::buchen::index', ['option' => 'zahlbetrag_buchen']), 1);
+        weiterleiten_in_sec(route('web::buchen::legacy', ['option' => 'zahlbetrag_buchen']), 1);
     }
 
     /* Ermitteln der letzten geldbuchungs_id ALT, buchungsnummer nacheinander */
@@ -871,7 +871,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         if (!session()->has('geldkonto_id')) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\InfoMessage('Erst Geldkonto wählen'), 0, null,
-                route('legacy::buchen::index', ['option' => 'geldkonto_aendern'])
+                route('web::buchen::legacy', ['option' => 'geldkonto_aendern'])
             );
         }
         if (!request()->has('submit_kostenkonto')) {
@@ -1025,7 +1025,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         $temp_datum_arr = explode('.', session()->get('temp_datum'));
         $temp_jahr = $temp_datum_arr [2];
         $my_array = DB::select("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE DATE_FORMAT( DATUM, '%Y' ) = $temp_jahr   && GELDKONTO_ID='$geldkonto_id' && KONTO_AUSZUGSNUMMER='$kto_auszug' && AKTUELL='1' ORDER BY GELD_KONTO_BUCHUNGEN_ID DESC");
-        $link_reset_auszug = "<a href='" . route('legacy::buchen::index', ['option' => 'reset_kontoauszug']) . "'>Ohne Kontoauszug</a>";
+        $link_reset_auszug = "<a href='" . route('web::buchen::legacy', ['option' => 'reset_kontoauszug']) . "'>Ohne Kontoauszug</a>";
         echo $link_reset_auszug;
         $numrows = count($my_array);
         if (!empty($my_array)) {
@@ -1041,7 +1041,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
                 $b_dat = $my_array [$a] ['GELD_KONTO_BUCHUNGEN_DAT'];
                 $g_buchungsnummer = $my_array [$a] ['G_BUCHUNGSNUMMER'];
                 $kostenkonto = $my_array [$a] ['KONTENRAHMEN_KONTO'];
-                $link_buchungsbeleg = "<a href='" . route('legacy::buchen::index', ['option' => 'geldbuchung_aendern', 'geldbuchung_dat' => $b_dat]) . "'>$g_buchungsnummer ändern</a>";
+                $link_buchungsbeleg = "<a href='" . route('web::buchen::legacy', ['option' => 'geldbuchung_aendern', 'geldbuchung_dat' => $b_dat]) . "'>$g_buchungsnummer ändern</a>";
                 $betrag = nummer_punkt2komma($my_array [$a] ['BETRAG']);
                 $mwst = nummer_punkt2komma($my_array [$a] ['MWST_ANTEIL']);
                 $g_betrag += $my_array [$a] ['BETRAG'];
@@ -1088,7 +1088,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
                 $datum = date_mysql2german($my_array [$a] ['DATUM']);
                 $b_dat = $my_array [$a] ['GELD_KONTO_BUCHUNGEN_DAT'];
                 $g_buchungsnummer = $my_array [$a] ['G_BUCHUNGSNUMMER'];
-                $link_buchungsbeleg = "<a href='" . route('legacy::buchen::index', ['option' => 'geldbuchung_aendern', 'geldbuchung_dat' => $b_dat]) . "'>$g_buchungsnummer</a>";
+                $link_buchungsbeleg = "<a href='" . route('web::buchen::legacy', ['option' => 'geldbuchung_aendern', 'geldbuchung_dat' => $b_dat]) . "'>$g_buchungsnummer</a>";
                 $betrag = nummer_punkt2komma($my_array [$a] ['BETRAG']);
                 $mwst_anteil = nummer_punkt2komma($my_array [$a] ['MWST_ANTEIL']);
                 $vzweck = $my_array [$a] ['VERWENDUNGSZWECK'];
@@ -1202,7 +1202,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
                 // $kostentraeger_bez = $r->kostentraeger_ermitteln($kostentraeger_typ, $kostentraeger_id);
                 $kostentraeger_bez = substr($kostentraeger_bez, 0, 50);
 
-                $link_buchungsbeleg = "<a href='" . route('legacy::buchen::index', ['option' => 'geldbuchung_aendern', 'geldbuchung_dat' => $b_dat]) . "'>$g_buchungsnummer</a>";
+                $link_buchungsbeleg = "<a href='" . route('web::buchen::legacy', ['option' => 'geldbuchung_aendern', 'geldbuchung_dat' => $b_dat]) . "'>$g_buchungsnummer</a>";
 
                 echo "<tr><td>$datum</td><td>$erfass_nr</td><td>$auszug</td><td>$kostenkonto</td><td>$betrag</td><td>$kostentraeger_bez</td><td><b>$link_buchungsbeleg</b></td><td>$vzweck</td></tr>";
             }
@@ -1740,7 +1740,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         $konten_arr = $this->konten_aus_buchungen($geldkonto_id);
         $jahr = request()->input('jahr');
         $monat = request()->input('monat');
-        $link = route('legacy::buchen::index', ['option' => 'konten_uebersicht'], false);
+        $link = route('web::buchen::legacy', ['option' => 'konten_uebersicht'], false);
 
         if (isset ($jahr) && isset ($monat)) {
             $this->monate_jahres_links($jahr, $link);
@@ -1757,11 +1757,11 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         $form = new formular ();
         $form->fieldset("Kostenbericht $monat $jahr", 'kostenbericht');
         if (isset ($monat) && isset ($jahr)) {
-            $pdf_link = "<a href='" . route('legacy::buchen::index', ['option' => 'konten_uebersicht_pdf', 'monat' => $monat, 'jahr' => $jahr]) . "'>PDF ERSTELLEN</a>";
+            $pdf_link = "<a href='" . route('web::buchen::legacy', ['option' => 'konten_uebersicht_pdf', 'monat' => $monat, 'jahr' => $jahr]) . "'>PDF ERSTELLEN</a>";
         }
 
         if (!isset ($monat) && isset ($jahr)) {
-            $pdf_link = "<a href='" . route('legacy::buchen::index', ['option' => 'konten_uebersicht_pdf', 'jahr' => $jahr]) . "'>PDF ERSTELLEN</a>";
+            $pdf_link = "<a href='" . route('web::buchen::legacy', ['option' => 'konten_uebersicht_pdf', 'jahr' => $jahr]) . "'>PDF ERSTELLEN</a>";
         }
         echo $pdf_link;
 
@@ -1833,7 +1833,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
                 $this->summe_kontobuchungen_jahr_monat($geldkonto_id, $kostenkonto, $jahr, $monat);
                 $r = new rechnung ();
                 $kos_bez = $r->kostentraeger_ermitteln($kos_typ, $kos_id);
-                echo "<tr></td><td>$datum</td><td><a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $erfass_nr]) . "'>$erfass_nr</a></td><td>$betrag</td><td>$kos_bez</td><td>$g_buchungsnummer</td><td>$vzweck</td></tr>";
+                echo "<tr></td><td>$datum</td><td><a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $erfass_nr]) . "'>$erfass_nr</a></td><td>$betrag</td><td>$kos_bez</td><td>$g_buchungsnummer</td><td>$vzweck</td></tr>";
             }
             $this->summe_konto_buchungen = nummer_punkt2komma($this->summe_konto_buchungen);
             echo "<tfoot><tr><td></td><td><b>Summe</b></td><td><b>$this->summe_konto_buchungen €</b></td><td></td><td></td><td></td></tr></tfoot>";
@@ -1881,7 +1881,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
                 $r = new rechnung ();
                 $kos_bez = $r->kostentraeger_ermitteln($kos_typ, $kos_id);
 
-                echo "<tr></td><td>$datum</td><td><a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $erfass_nr]) . "'>$erfass_nr</a></td><td>$betrag</td><td>$kos_bez</td><td>$g_buchungsnummer</td><td>$vzweck</td></tr>";
+                echo "<tr></td><td>$datum</td><td><a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $erfass_nr]) . "'>$erfass_nr</a></td><td>$betrag</td><td>$kos_bez</td><td>$g_buchungsnummer</td><td>$vzweck</td></tr>";
             }
             $this->summe_konto_buchungen = nummer_punkt2komma($this->summe_konto_buchungen);
 
@@ -1901,7 +1901,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         if (request()->has('monat')) {
             $monat = request()->input('monat');
         }
-        $link = route('legacy::buchen::index', ['option' => 'konten_uebersicht_pdf'] . false);
+        $link = route('web::buchen::legacy', ['option' => 'konten_uebersicht_pdf'] . false);
 
         if (isset ($jahr) && isset ($monat)) {
             $this->monate_jahres_links($jahr, $link);
@@ -2090,7 +2090,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
     function form_kosten_einnahmen()
     {
         $bg = new berlussimo_global ();
-        $link = route('legacy::buchen::index', ['option' => 'kosten_einnahmen'] . false);
+        $link = route('web::buchen::legacy', ['option' => 'kosten_einnahmen'] . false);
         if (request()->has('monat') && request()->has('jahr')) {
             if (request()->input('monat') != 'alle') {
                 session()->put('monat', sprintf('%02d', request()->input('monat')));
@@ -2108,7 +2108,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
 
         $bg->monate_jahres_links($jahr, $link);
         /* PDF LINK */
-        echo "<a href='" . route('legacy::buchen::index', ['option' => 'kosten_einnahmen_pdf', 'monat' => $monat, 'jahr' => $jahr]) . "'>PDF ÜBERSICHT</a>";
+        echo "<a href='" . route('web::buchen::legacy', ['option' => 'kosten_einnahmen_pdf', 'monat' => $monat, 'jahr' => $jahr]) . "'>PDF ÜBERSICHT</a>";
 
         echo "<h1>Block II</h1>";
         $this->kosten_einnahmen($monat, $jahr, '4');
@@ -2527,7 +2527,7 @@ LIMIT 0 , 1");
         }
 
         $bg = new berlussimo_global ();
-        $link = route('legacy::buchen::index', ['option' => 'monatsbericht_o_a'], false);
+        $link = route('web::buchen::legacy', ['option' => 'monatsbericht_o_a'], false);
         $bg->objekt_auswahl_liste();
         $bg->monate_jahres_links($jahr, $link);
         if (session()->has('objekt_id')) {
@@ -2759,7 +2759,7 @@ LIMIT 0 , 1");
         }
 
         $bg = new berlussimo_global ();
-        $link = route('legacy::buchen::index', ['option' => 'monatsbericht_m_a'] . false);
+        $link = route('web::buchen::legacy', ['option' => 'monatsbericht_m_a'] . false);
         $bg->objekt_auswahl_liste();
         $bg->monate_jahres_links($jahr, $link);
         if (session()->has('objekt_id')) {
@@ -3021,7 +3021,7 @@ LIMIT 0 , 1");
                 $r = new rechnung ();
                 $kostentraeger_bezeichnung = $r->kostentraeger_ermitteln($kos_typ, $kos_id);
                 $dat_bu = $row ['GELD_KONTO_BUCHUNGEN_DAT'];
-                $link_aendern = "<a href='" . route('legacy::buchen::index', ['option' => 'geldbuchung_aendern', 'geldbuchung_dat' => $dat_bu]) . "'>$g_buchungsnummer ändern</a>";
+                $link_aendern = "<a href='" . route('web::buchen::legacy', ['option' => 'geldbuchung_aendern', 'geldbuchung_dat' => $dat_bu]) . "'>$g_buchungsnummer ändern</a>";
 
                 echo "<tr><td>$g->geldkonto_bezeichnung<td>$kostentraeger_bezeichnung</td><td>$datum</td><td><b>$kostenkonto</b></td><td><b>$link_aendern</b></td><td>$betrag_a</td><td>$vzweck</td></tr>";
                 $summe = $summe + $betrag;

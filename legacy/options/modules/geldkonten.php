@@ -37,7 +37,7 @@ switch ($option) {
 			$kostentraeger_bez = request()->input('kostentraeger_id');
 			$kos_id = $b->kostentraeger_id_ermitteln($kostentraeger_typ, $kostentraeger_bez);
 			$gk->geldkonto_speichern($kostentraeger_typ, $kos_id, $g_bez, $beguenstigter, $kontonummer, $blz, $institut, $iban_mysql, $bic);
-			weiterleiten(route('legacy::geldkonten::index', ['option' => 'uebersicht_zuweisung'], false));
+			weiterleiten(route('web::geldkonten::legacy', ['option' => 'uebersicht_zuweisung'], false));
 		} else {
             echo "Eingabe unvollständig Error: 621ghp";
         }
@@ -68,7 +68,7 @@ switch ($option) {
             $sep = new sepa();
             $iban_mysql = $sep->iban_convert($iban, 1);
             $gk->geldkonto_update($gk_id, $g_bez, $beguenstigter, $kontonummer, $blz, $institut, $iban_mysql, $bic);
-            weiterleiten(route('legacy::geldkonten::index', false));
+            weiterleiten(route('web::geldkonten::legacy', false));
         } else {
             echo "Eingabe unvollständig Error: Modul GK 115";
         }
@@ -102,7 +102,7 @@ switch ($option) {
                 echo "Zuweisung existiert bereits.";
             } else {
                 $gk->zuweisung_speichern($kostentraeger_typ, $kos_id, $geldkonto_id);
-                weiterleiten(route('legacy::geldkonten::index', ['option' => 'uebersicht_zuweisung'], false));
+                weiterleiten(route('web::geldkonten::legacy', ['option' => 'uebersicht_zuweisung'], false));
             }
         } else {
             echo "Eingabe unvollständig Error: 623gd";
@@ -116,7 +116,7 @@ switch ($option) {
             $kos_typ = request()->input('kos_typ');
             $kos_id = request()->input('kos_id');
             $gk->zuweisung_aufheben($kos_typ, $kos_id, $geldkonto_id);
-            weiterleiten(route('legacy::geldkonten::index', ['option' => 'uebersicht_zuweisung'], false));
+            weiterleiten(route('web::geldkonten::legacy', ['option' => 'uebersicht_zuweisung'], false));
         } else {
             echo "Eingabe unvollständig Error: 623gf1";
         }

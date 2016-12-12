@@ -260,7 +260,7 @@ class kasse extends rechnung
         DB::insert($db_abfrage);
         echo "Betrag von $betrag € wurde ins Kassenbuch eingetragen!<br>";
         echo "Sie werden zum Kassenbuch weitergeleitet!";
-        weiterleiten_in_sec(route('legacy::kassen::index', ['option' => 'kassenbuch'], false), 2);
+        weiterleiten_in_sec(route('web::kassen::legacy', ['option' => 'kassenbuch'], false), 2);
     }
 
     function letzte_kassenbuch_id($kassen_id)
@@ -285,7 +285,7 @@ class kasse extends rechnung
         DB::insert($db_abfrage);
         echo "Betrag von $betrag € wurde ins Kassenbuch eingetragen!<br>";
         echo "Sie werden zum Kassenbuch weitergeleitet!";
-        weiterleiten_in_sec(route('legacy::kassen::index', ['option' => 'kassenbuch'], false), 2);
+        weiterleiten_in_sec(route('web::kassen::legacy', ['option' => 'kassenbuch'], false), 2);
     }
 
     function kassenbuch_dat_deaktivieren($buchungs_dat)
@@ -341,12 +341,12 @@ class kasse extends rechnung
                 $kostentraeger_typ = $my_array [$a] ['KOSTENTRAEGER_TYP'];
                 $kostentraeger_id = $my_array [$a] ['KOSTENTRAEGER_ID'];
                 if ($kostentraeger_typ == 'Rechnung') {
-                    $info_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $kostentraeger_id]) . "'>$kostentraeger_typ</a>";
+                    $info_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $kostentraeger_id]) . "'>$kostentraeger_typ</a>";
                 } else {
                     $info_link = $this->kostentraeger_beschreibung($kostentraeger_typ, $kostentraeger_id);
                 }
-                $aendern_link = "<a href='" . route('legacy::kassen::index', ['option' => 'kasseneintrag_aendern', 'eintrag_dat' => $dat]) . "'>Ändern</a>";
-                $loeschen_link = "<a href='" . route('legacy::kassen::index', ['option' => 'kasseneintrag_loeschen', 'eintrag_dat' => $dat]) . "'>Löschen</a>";
+                $aendern_link = "<a href='" . route('web::kassen::legacy', ['option' => 'kasseneintrag_aendern', 'eintrag_dat' => $dat]) . "'>Ändern</a>";
+                $loeschen_link = "<a href='" . route('web::kassen::legacy', ['option' => 'kasseneintrag_loeschen', 'eintrag_dat' => $dat]) . "'>Löschen</a>";
                 if ($zaehler == 1) {
                     echo "<tr class=\"zeile1\"><td>$zeile</td><td>$datum</td>";
                 }
@@ -443,12 +443,12 @@ class kasse extends rechnung
                 $kostentraeger_typ = $my_array [$a] ['KOSTENTRAEGER_TYP'];
                 $kostentraeger_id = $my_array [$a] ['KOSTENTRAEGER_ID'];
                 if ($kostentraeger_typ == 'Rechnung') {
-                    $info_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $kostentraeger_id]) . "'>$kostentraeger_typ</a>";
+                    $info_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $kostentraeger_id]) . "'>$kostentraeger_typ</a>";
                 } else {
                     $info_link = $this->kostentraeger_beschreibung($kostentraeger_typ, $kostentraeger_id);
                 }
-                $aendern_link = "<a href='" . route('legacy::kassen::index', ['option' => 'kasseneintrag_aendern', 'eintrag_dat' => $dat]) . "'>Ändern</a>";
-                $loeschen_link = "<a href='" . route('legacy::kassen::index', ['option' => 'kasseneintrag_loeschen', 'eintrag_dat' => $dat]) . "'>Löschen</a>";
+                $aendern_link = "<a href='" . route('web::kassen::legacy', ['option' => 'kasseneintrag_aendern', 'eintrag_dat' => $dat]) . "'>Ändern</a>";
+                $loeschen_link = "<a href='" . route('web::kassen::legacy', ['option' => 'kasseneintrag_loeschen', 'eintrag_dat' => $dat]) . "'>Löschen</a>";
                 if ($zaehler == 1) {
                     echo "<tr class=\"zeile1\"><td>$zeile</td><td>$datum</td>";
                 }
@@ -542,12 +542,12 @@ class kasse extends rechnung
                 $kostentraeger_typ = $my_array [$a] ['KOSTENTRAEGER_TYP'];
                 $kostentraeger_id = $my_array [$a] ['KOSTENTRAEGER_ID'];
                 if ($kostentraeger_typ == 'Rechnung') {
-                    $info_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $kostentraeger_id]) . "'>$kostentraeger_typ</a>";
+                    $info_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $kostentraeger_id]) . "'>$kostentraeger_typ</a>";
                 } else {
                     $info_link = $this->kostentraeger_beschreibung($kostentraeger_typ, $kostentraeger_id);
                 }
-                $aendern_link = "<a href='" . route('legacy::kassen::index', ['option' => 'kasseneintrag_aendern', 'eintrag_dat' => $dat]) . "'>Ändern</a>";
-                $loeschen_link = "<a href='" . route('legacy::kassen::index', ['option' => 'kasseneintrag_loeschen', 'eintrag_dat' => $dat]) . "'>Löschen</a>";
+                $aendern_link = "<a href='" . route('web::kassen::legacy', ['option' => 'kasseneintrag_aendern', 'eintrag_dat' => $dat]) . "'>Ändern</a>";
+                $loeschen_link = "<a href='" . route('web::kassen::legacy', ['option' => 'kasseneintrag_loeschen', 'eintrag_dat' => $dat]) . "'>Löschen</a>";
                 if ($zaehler == 1) {
                     echo "<tr class=\"zeile1\"><td>$zeile</td><td>$datum</td>";
                 }
@@ -594,7 +594,7 @@ class kasse extends rechnung
         echo "<p class=\"objekt_auswahl\">";
         if (!empty($result)) {
             foreach($result as $row) {
-                $kassen_link = "<a class=\"objekt_auswahl_buchung\" href='" . route('legacy::kassen::index', ['kasse' => $row['KASSEN_ID'], 'option' => 'kassenbuch']) . "'>$row[KASSEN_NAME] - $row[KASSEN_VERWALTER]</a>";
+                $kassen_link = "<a class=\"objekt_auswahl_buchung\" href='" . route('web::kassen::legacy', ['kasse' => $row['KASSEN_ID'], 'option' => 'kassenbuch']) . "'>$row[KASSEN_NAME] - $row[KASSEN_VERWALTER]</a>";
                 echo "| $kassen_link ";
             }
             echo "</p>";

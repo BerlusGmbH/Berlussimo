@@ -21,8 +21,8 @@ class k_rahmen
             for ($a = 0; $a < $anz; $a++) {
                 $id = $arr [$a] ['KONTENRAHMEN_ID'];
                 $bez = $arr [$a] ['NAME'];
-                $pdf_link = "<a href='" . route('legacy::kontenrahmen::index', ['option' => 'konten_anzeigen', 'k_id' => $id, 'pdf']) . "'>PDF ANSICHT</a>";
-                $link = "<a href='" . route('legacy::kontenrahmen::index', ['option' => 'konten_anzeigen', 'k_id' => $id]) . "'>Kostenkonten anzeigen</a>";
+                $pdf_link = "<a href='" . route('web::kontenrahmen::legacy', ['option' => 'konten_anzeigen', 'k_id' => $id, 'pdf']) . "'>PDF ANSICHT</a>";
+                $link = "<a href='" . route('web::kontenrahmen::legacy', ['option' => 'konten_anzeigen', 'k_id' => $id]) . "'>Kostenkonten anzeigen</a>";
                 echo "<tr><td>$id</td><td>$bez";
                 $this->zuweisung_anzeigen($id);
                 echo "</td><td>$link $pdf_link</td></tr>";
@@ -49,7 +49,7 @@ class k_rahmen
                 $id = $row ['TYP_ID'];
                 $r = new rechnung ();
                 $kos_bez = $r->kostentraeger_ermitteln($typ, $id);
-                $link_zuweis_loeschen = "<a href='" . route('legacy::kontenrahmen::index', ['option' => 'zuweisung_del', 'dat' => $dat]) . "'>Zuweisung löschen</a>";
+                $link_zuweis_loeschen = "<a href='" . route('web::kontenrahmen::legacy', ['option' => 'zuweisung_del', 'dat' => $dat]) . "'>Zuweisung löschen</a>";
                 echo "<br><b>$typ: $kos_bez</b> - $link_zuweis_loeschen";
             }
         } else {
@@ -74,7 +74,7 @@ class k_rahmen
                 $gruppe = $arr [$a] ['GRUPPE'];
                 $kontoart = $arr [$a] ['KONTOART'];
 
-                $link = "<a href='" . route('legacy::kontenrahmen::index', ['option' => 'kostenkonto_ae', 'k_dat' => $dat]) . "'>KONTO ÄNDERN</a>";
+                $link = "<a href='" . route('web::kontenrahmen::legacy', ['option' => 'kostenkonto_ae', 'k_dat' => $dat]) . "'>KONTO ÄNDERN</a>";
                 echo "<tr><td>$konto</td><td>$bez</td><td>$gruppe</td><td>$kontoart</td><td>$link</td></tr>";
             }
             echo "</TABLE>";

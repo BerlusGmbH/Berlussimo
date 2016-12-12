@@ -148,10 +148,10 @@ class sepa
                     $mv->get_mietvertrag_infos_aktuell($row ['M_KOS_ID']);
 
                     $mandat_status = $this->get_mandat_seq_status($row ['M_REFERENZ'], $row ['IBAN']);
-                    $link_nutzungen = "<a href='" . route('legacy::sepa::index', ['option' => 'mandat_nutzungen_anzeigen', 'm_ref' => $row['M_REFERENZ']]) . "'>$mandat_status</a>";
+                    $link_nutzungen = "<a href='" . route('web::sepa::legacy', ['option' => 'mandat_nutzungen_anzeigen', 'm_ref' => $row['M_REFERENZ']]) . "'>$mandat_status</a>";
                     /* Saldo berechnen */
 
-                    echo "<tr class=\"zeile$z\"><td>$zz.</td><td><a href='" . route('legacy::sepa::index', ['option' => 'mandat_edit_mieter', 'mref_dat' => $row['DAT']]) . "'>$mv->einheit_kurzname</a></td><td>$row[NAME]</td><td>$row[M_REFERENZ]</td><td>$link_nutzungen</td><td>$row[EINZUGSART]</td></td><td>$row[ANSCHRIFT]</td><td>$row[IBAN]<br>$row[IBAN1]</td><td>$row[BIC]</td></tr>";
+                    echo "<tr class=\"zeile$z\"><td>$zz.</td><td><a href='" . route('web::sepa::legacy', ['option' => 'mandat_edit_mieter', 'mref_dat' => $row['DAT']]) . "'>$mv->einheit_kurzname</a></td><td>$row[NAME]</td><td>$row[M_REFERENZ]</td><td>$link_nutzungen</td><td>$row[EINZUGSART]</td></td><td>$row[ANSCHRIFT]</td><td>$row[IBAN]<br>$row[IBAN1]</td><td>$row[BIC]</td></tr>";
                     $diff = 0.00;
 
                     /* Zeilenfarbetausch */
@@ -183,7 +183,7 @@ class sepa
                     $mand = ( object )$row;
                     $mand->IBAN1 = chunk_split($mand->IBAN, 4, ' ');
                     $mandat_status = $this->get_mandat_seq_status($mand->M_REFERENZ, $mand->IBAN);
-                    $link_nutzungen = "<a href='" . route('legacy::sepa::index', ['option' => 'mandat_nutzungen_anzeigen', 'm_ref' => $mand->M_REFERENZ]) . "'>$mandat_status</a>";
+                    $link_nutzungen = "<a href='" . route('web::sepa::legacy', ['option' => 'mandat_nutzungen_anzeigen', 'm_ref' => $mand->M_REFERENZ]) . "'>$mandat_status</a>";
 
                     $weg = new weg ();
                     $einheit_id = $weg->get_einheit_id_from_eigentuemer($mand->M_KOS_ID);
@@ -212,7 +212,7 @@ class sepa
                     $summe_ziehen_alle += $summe_zu_ziehen;
                     $summe_diff_alle += $diff;
                     $diff_a = nummer_punkt2komma($diff);
-                    echo "<tr class=\"zeile$z\"><td><a href='" . route('legacy::sepa::index', ['option' => 'mandat_edit_mieter', 'mref_dat' => $mand->DAT]) . "'>$e->einheit_kurzname</a></td><td>$mand->NAME</td><td>$mand->M_REFERENZ</td><td>$link_nutzungen</td><td>$mand->EINZUGSART</td></td><td>$summe_zu_ziehen_a</td><td>$weg->hg_erg_a</td><td>$diff_a</td><td>$mand->ANSCHRIFT</td><td>$mand->IBAN<br>$mand->IBAN1</td><td>$mand->BIC</td></tr>";
+                    echo "<tr class=\"zeile$z\"><td><a href='" . route('web::sepa::legacy', ['option' => 'mandat_edit_mieter', 'mref_dat' => $mand->DAT]) . "'>$e->einheit_kurzname</a></td><td>$mand->NAME</td><td>$mand->M_REFERENZ</td><td>$link_nutzungen</td><td>$mand->EINZUGSART</td></td><td>$summe_zu_ziehen_a</td><td>$weg->hg_erg_a</td><td>$diff_a</td><td>$mand->ANSCHRIFT</td><td>$mand->IBAN<br>$mand->IBAN1</td><td>$mand->BIC</td></tr>";
                     /* Zeilenfarbetausch */
                     if ($z == 2) {
                         $z = 0;
@@ -265,7 +265,7 @@ class sepa
     function alle_mandate_anzeigen($nutzungsart = 'Alle')
     {
         if (!session()->has('geldkonto_id') && $nutzungsart != 'Alle') {
-            session()->put('last_url', route('legacy::sepa::index', ['option' => 'mandate_mieter'], false));
+            session()->put('last_url', route('web::sepa::legacy', ['option' => 'mandate_mieter'], false));
             fehlermeldung_ausgeben('Geldkonto wählen');
             return;
         }
@@ -300,7 +300,7 @@ class sepa
                     $mv = new mietvertraege ();
                     $mv->get_mietvertrag_infos_aktuell($row ['M_KOS_ID']);
                     $mandat_status = $this->get_mandat_seq_status($row ['M_REFERENZ'], $row ['IBAN']);
-                    $link_nutzungen = "<a href='" . route('legacy::sepa::index', ['option' => 'mandat_nutzungen_anzeigen', 'm_ref' => $row['M_REFERENZ']]) . "'>$mandat_status</a>";
+                    $link_nutzungen = "<a href='" . route('web::sepa::legacy', ['option' => 'mandat_nutzungen_anzeigen', 'm_ref' => $row['M_REFERENZ']]) . "'>$mandat_status</a>";
                     /* Saldo berechnen */
                     $mz = new miete ();
                     $mz->mietkonto_berechnung($row ['M_KOS_ID']);
@@ -340,7 +340,7 @@ class sepa
                     $summe_saldo_alle += $mz->erg;
                     $summe_ziehen_alle += $summe_zu_ziehen;
                     $summe_diff_alle += $diff;
-                    echo "<tr class=\"zeile$z\"><td>$zz.</td><td><a href='" . route('legacy::sepa::index', ['option' => 'mandat_edit_mieter', 'mref_dat' => $row['DAT']]) . "'>$mv->einheit_kurzname</a></td><td>$row[NAME]</td><td>$row[M_REFERENZ]</td><td>$link_nutzungen</td><td>$row[EINZUGSART]</td></td><td>$summe_zu_ziehen_a</td><td>$mz->erg</td><td>$diff</td><td>$row[ANSCHRIFT]</td><td>$row[IBAN]<br>$row[IBAN1]</td><td>$row[BIC]</td></tr>";
+                    echo "<tr class=\"zeile$z\"><td>$zz.</td><td><a href='" . route('web::sepa::legacy', ['option' => 'mandat_edit_mieter', 'mref_dat' => $row['DAT']]) . "'>$mv->einheit_kurzname</a></td><td>$row[NAME]</td><td>$row[M_REFERENZ]</td><td>$link_nutzungen</td><td>$row[EINZUGSART]</td></td><td>$summe_zu_ziehen_a</td><td>$mz->erg</td><td>$diff</td><td>$row[ANSCHRIFT]</td><td>$row[IBAN]<br>$row[IBAN1]</td><td>$row[BIC]</td></tr>";
                     $mz->erg = 0.00;
                     $diff = 0.00;
 
@@ -376,7 +376,7 @@ class sepa
                     $mand = ( object )$row;
                     $mand->IBAN1 = chunk_split($mand->IBAN, 4, ' ');
                     $mandat_status = $this->get_mandat_seq_status($mand->M_REFERENZ, $mand->IBAN);
-                    $link_nutzungen = "<a href='" . route('legacy::sepa::index', ['option' => 'mandat_nutzungen_anzeigen', 'm_ref' => $mand->M_REFERENZ]) . "'>$mandat_status</a>";
+                    $link_nutzungen = "<a href='" . route('web::sepa::legacy', ['option' => 'mandat_nutzungen_anzeigen', 'm_ref' => $mand->M_REFERENZ]) . "'>$mandat_status</a>";
 
                     $weg = new weg ();
                     $einheit_id = $weg->get_einheit_id_from_eigentuemer($mand->M_KOS_ID);
@@ -405,7 +405,7 @@ class sepa
                     $summe_ziehen_alle += $summe_zu_ziehen;
                     $summe_diff_alle += $diff;
                     $diff_a = nummer_punkt2komma($diff);
-                    echo "<tr class=\"zeile$z\"><td><a href='" . route('legacy::sepa::index', ['option' => 'mandat_edit_mieter', 'mref_dat' => $mand->DAT]) . "'>$e->einheit_kurzname</a></td><td>$mand->NAME</td><td>$mand->M_REFERENZ</td><td>$link_nutzungen</td><td>$mand->EINZUGSART</td></td><td>$summe_zu_ziehen_a</td><td>$weg->hg_erg_a</td><td>$diff_a</td><td>$mand->ANSCHRIFT</td><td>$mand->IBAN<br>$mand->IBAN1</td><td>$mand->BIC</td></tr>";
+                    echo "<tr class=\"zeile$z\"><td><a href='" . route('web::sepa::legacy', ['option' => 'mandat_edit_mieter', 'mref_dat' => $mand->DAT]) . "'>$e->einheit_kurzname</a></td><td>$mand->NAME</td><td>$mand->M_REFERENZ</td><td>$link_nutzungen</td><td>$mand->EINZUGSART</td></td><td>$summe_zu_ziehen_a</td><td>$weg->hg_erg_a</td><td>$diff_a</td><td>$mand->ANSCHRIFT</td><td>$mand->IBAN<br>$mand->IBAN1</td><td>$mand->BIC</td></tr>";
                     /* Zeilenfarbetausch */
                     if ($z == 2) {
                         $z = 0;
@@ -1095,7 +1095,7 @@ class sepa
     function get_mandate_arr($nutzungsart = 'Alle')
     {
         if (!session()->has('geldkonto_id') && $nutzungsart != 'Alle') {
-            session()->put('last_url', route('legacy::sepa::index', ['option' => 'mandate_mieter'], false));
+            session()->put('last_url', route('web::sepa::legacy', ['option' => 'mandate_mieter'], false));
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\InfoMessage('Geldkonto wählen')
             );
@@ -1893,13 +1893,13 @@ AND  `AKTUELL` =  '1'");
 
                 $sep_id = $arr [$a] ['ID'];
                 $summe_t = nummer_punkt2komma_t($arr [$a] ['SUMME']);
-                $link_anzeigen = "<a href='" . route('legacy::sepa::index', ['option' => 'sepa_file_anzeigen', 'sepa_file' => $dateiname]) . "'>ANZEIGEN</a>";
-                $link_autobuchen = "<a href='" . route('legacy::sepa::index', ['option' => 'sepa_file_buchen', 'sepa_file' => $dateiname]) . "'>BUCHEN</a>";
-                $link_autobuchen1 = "<a href='" . route('legacy::sepa::index', ['option' => 'sepa_file_buchen_fremd', 'sepa_file' => $dateiname]) . "'>BUCHEN FREMDKONTO</a>";
-                $link_pdf = "<a href='" . route('legacy::sepa::index', ['option' => 'sepa_file_pdf', 'sepa_file' => $dateiname]) . "'><img src=\"images/pdf_light.png\"></a>";
-                $link_pdf1 = "<a href='" . route('legacy::sepa::index', ['option' => 'sepa_file_pdf', 'sepa_file' => $dateiname, 'no_logo']) . "'><img src=\"images/pdf_dark.png\"></a>";
-                $link_als_vorlage = "<a href='" . route('legacy::sepa::index', ['option' => 'sepa_file_kopieren', 'sepa_file' => $dateiname]) . "'>ALS VORLAGE</a>";
-                $link_details = "<a href='" . route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_tabelle' => 'SEPA_UEBERWEISUNG', 'detail_id' => $sep_id]) . "'>DETAILS</a>";
+                $link_anzeigen = "<a href='" . route('web::sepa::legacy', ['option' => 'sepa_file_anzeigen', 'sepa_file' => $dateiname]) . "'>ANZEIGEN</a>";
+                $link_autobuchen = "<a href='" . route('web::sepa::legacy', ['option' => 'sepa_file_buchen', 'sepa_file' => $dateiname]) . "'>BUCHEN</a>";
+                $link_autobuchen1 = "<a href='" . route('web::sepa::legacy', ['option' => 'sepa_file_buchen_fremd', 'sepa_file' => $dateiname]) . "'>BUCHEN FREMDKONTO</a>";
+                $link_pdf = "<a href='" . route('web::sepa::legacy', ['option' => 'sepa_file_pdf', 'sepa_file' => $dateiname]) . "'><img src=\"images/pdf_light.png\"></a>";
+                $link_pdf1 = "<a href='" . route('web::sepa::legacy', ['option' => 'sepa_file_pdf', 'sepa_file' => $dateiname, 'no_logo']) . "'><img src=\"images/pdf_dark.png\"></a>";
+                $link_als_vorlage = "<a href='" . route('web::sepa::legacy', ['option' => 'sepa_file_kopieren', 'sepa_file' => $dateiname]) . "'>ALS VORLAGE</a>";
+                $link_details = "<a href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'SEPA_UEBERWEISUNG', 'detail_id' => $sep_id]) . "'>DETAILS</a>";
                 $de = new detail ();
                 $beschr = $de->finde_detail_inhalt('SEPA_UEBERWEISUNG', $sep_id, 'Beschreibung');
                 echo "<tr><td>$z</td><td>$gk->geldkonto_bez</td><td>$dateiname</td><td>$beschr</td><td>$summe_t</td><td>$link_anzeigen $link_pdf $link_pdf1 $link_autobuchen $link_details</td><td>$link_als_vorlage</td><td>$link_autobuchen1</td></tr>";
@@ -2414,7 +2414,7 @@ AND  `AKTUELL` =  '1'");
                 $kat = $arr [$a] ['KAT'];
                 if ($this->sepa_sammler_anzeigen(session()->get('geldkonto_id'), $kat) == true) {
                     $gk_id = session()->get('geldkonto_id');
-                    echo "<a href='" . route('legacy::sepa::index', ['option' => 'sammler2sepa', 'gk_id' => $gk_id, 'kat' => $kat]) . "'>SEPA-Datei für $kat erstellen</a>";
+                    echo "<a href='" . route('web::sepa::legacy', ['option' => 'sammler2sepa', 'gk_id' => $gk_id, 'kat' => $kat]) . "'>SEPA-Datei für $kat erstellen</a>";
                 }
             }
         }
@@ -2459,7 +2459,7 @@ AND  `AKTUELL` =  '1'");
                 $kos_bez = $re->kostentraeger_ermitteln($kos_typ, $kos_id);
                 $kos_bez1 = "$kos_typ: $kos_bez";
 
-                $link_del = "<a href='" . route('legacy::sepa::index', ['option' => 'sepa_datensatz_del', 'dat' => $dat]) . "'>Entfernen</a>";
+                $link_del = "<a href='" . route('web::sepa::legacy', ['option' => 'sepa_datensatz_del', 'dat' => $dat]) . "'>Entfernen</a>";
                 echo "<tr><td>$z. $empf</td><td>$vzweck</td><td>$kos_bez1</td><td>$iban</td><td>$bic</td><td>$betrag</td><td>$konto</td><td>$link_del</td></tr>";
             }
             echo "<tfoot><tr><th colspan=\"3\">SUMME</th><th><th>$sum</th><th></th><th></th></tr></tfoot>";
@@ -2481,7 +2481,7 @@ AND  `AKTUELL` =  '1'");
     {
         if (session()->has('umsaetze_nok')) {
             $anz_nok = count(session()->get('umsaetze_nok'));
-            $link_nok = "<a href='" . route('legacy::buchen::index', ['option' => 'excel_nok']) . "'>NOK: $anz_nok</a>";
+            $link_nok = "<a href='" . route('web::buchen::legacy', ['option' => 'excel_nok']) . "'>NOK: $anz_nok</a>";
             echo "<span style=\"color:red;\">$link_nok</span>";
         }
 
@@ -2495,7 +2495,7 @@ AND  `AKTUELL` =  '1'");
             echo "&nbsp;|&nbsp;<span style=\"color:blue;\">DS: $akt/$anz_ok</span>";
         }
 
-        $link_konten = "<a href='" . route('legacy::buchen::index', ['option' => 'uebersicht_excel_konten']) . "'>Übersicht Geldkonten</a>";
+        $link_konten = "<a href='" . route('web::buchen::legacy', ['option' => 'uebersicht_excel_konten']) . "'>Übersicht Geldkonten</a>";
         echo "&nbsp;|&nbsp;<span style=\"color:yellow;\">$link_konten</span>";
     }
 
@@ -2524,7 +2524,7 @@ AND  `AKTUELL` =  '1'");
                     $ks_aktuell = "<span style=\"color:red;\"><b>$kontostand_aktuell €</b></span>";
                 }
 
-                $link_start = "<a href='" . route('legacy::buchen::index', ['option' => 'excel_buchen_session', 'ds_id' => $start_ds_id]) . "'>$gk->geldkonto_bez</a>";
+                $link_start = "<a href='" . route('web::buchen::legacy', ['option' => 'excel_buchen_session', 'ds_id' => $start_ds_id]) . "'>$gk->geldkonto_bez</a>";
                 echo "<tr><td>$z</td><td>$link_start</td><td>$auszug</td><td>$ksa €</td><td>$kse €</td><td>$ks_aktuell</td></tr>";
             }
             echo "</table>";

@@ -23,7 +23,7 @@ switch ($objekte_raus) {
                 echo "ALLES OK";
                 $o = new objekt ();
                 $o->objekt_speichern(request()->input('objekt_kurzname'), request()->input('eigentuemer'));
-                weiterleiten(route('legacy::objekte::index', ['objekte_raus' => 'objekt_kurz'], false));
+                weiterleiten(route('web::objekte::legacy', ['objekte_raus' => 'objekt_kurz'], false));
             }
         } else {
             echo "DATEN UNVOLLSTÄNDIG";
@@ -41,7 +41,7 @@ switch ($objekte_raus) {
                 echo "ALLES OK";
                 $o = new objekt ();
                 $o->objekt_aendern(request()->input('objekt_dat'), request()->input('objekt_id'), request()->input('objekt_kurzname'), request()->input('eigentuemer'));
-                weiterleiten(route('legacy::objekte::index', ['objekte_raus' => 'objekt_kurz'], false));
+                weiterleiten(route('web::objekte::legacy', ['objekte_raus' => 'objekt_kurz'], false));
             }
         } else {
             echo "DATEN UNVOLLSTÄNDIG";
@@ -170,7 +170,7 @@ switch ($objekte_raus) {
         $weg->wohngeld_def_speichern('01.01.2014', '00.00.0000', $ihr, 'Instandhaltungsrücklage', 6030, 'Hausgeld', 6000, $einheit_id);
         $weg->wohngeld_def_speichern('01.01.2014', '00.00.0000', 30, 'WEG-Verwaltergebühr', 6060, 'Hausgeld', 6000, $einheit_id);
 
-        weiterleiten(route('legacy::objekte::index', ['objekte_raus' => 'import'], false));
+        weiterleiten(route('web::objekte::legacy', ['objekte_raus' => 'import'], false));
         break;
 
     case "person_speichern" :
@@ -200,7 +200,7 @@ switch ($objekte_raus) {
             }
         }
 
-        weiterleiten(route('legacy::objekte::index', ['objekte_raus' => 'import'], false));
+        weiterleiten(route('web::objekte::legacy', ['objekte_raus' => 'import'], false));
         break;
 
     case "person_et" :
@@ -219,7 +219,7 @@ switch ($objekte_raus) {
             }
             $im->et_person_hinzu($et_id, $person_id);
         }
-        weiterleiten(route('legacy::objekte::index', ['objekte_raus' => 'import'], false));
+        weiterleiten(route('web::objekte::legacy', ['objekte_raus' => 'import'], false));
         break;
 
     case "stammdaten_pdf" :
@@ -299,7 +299,7 @@ switch ($objekte_raus) {
             $d = new detail ();
             $d->detail_speichern_2('MIETVERTRAG', $mv_id, 'Zusatzinfo', request()->input('zusatzinfo'), 'Importiert');
         }
-        weiterleiten(route('legacy::objekte::index', ['objekte_raus' => 'import'], false));
+        weiterleiten(route('web::objekte::legacy', ['objekte_raus' => 'import'], false));
         break;
 }
 function objekte_kurz()
@@ -319,29 +319,29 @@ function objekte_kurz()
             $flaeche = nummer_punkt2komma(objekt_flaeche($row['OBJEKT_ID']));
             $detail_check = detail_check("OBJEKT", $row['OBJEKT_ID']);
             if ($detail_check > 0) {
-                $detail_link = "<a  href='" . route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $row['OBJEKT_ID']]) . "'>Details</a>";
+                $detail_link = "<a  href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $row['OBJEKT_ID']]) . "'>Details</a>";
             } else {
-                $detail_link = "<a href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $row['OBJEKT_ID']]) . "'>Neues Detail</a>";
+                $detail_link = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $row['OBJEKT_ID']]) . "'>Neues Detail</a>";
             }
-            $aendern_link = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'objekt_aendern', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Ändern</a>";
-            $check_liste_link = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'checkliste', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Checkliste HW</a>";
-            $mietaufstellung_link = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'mietaufstellung', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Mietaufstellung</a>";
+            $aendern_link = "<a href='" . route('web::objekte::legacy', ['objekte_raus' => 'objekt_aendern', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Ändern</a>";
+            $check_liste_link = "<a href='" . route('web::objekte::legacy', ['objekte_raus' => 'checkliste', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Checkliste HW</a>";
+            $mietaufstellung_link = "<a href='" . route('web::objekte::legacy', ['objekte_raus' => 'mietaufstellung', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Mietaufstellung</a>";
             $monat = date("m");
             $jahr = date("Y");
-            $mietaufstellung_link_m_j = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'mietaufstellung_m_j', 'objekt_id' => $row['OBJEKT_ID'], 'monat' => $monat, 'jahr' => $jahr]) . "'>Mietaufstellung MJ</a>";
-            $mietaufstellung_link_m_j_xls = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'mietaufstellung_m_j', 'objekt_id' => $row['OBJEKT_ID'], 'monat' => $monat, 'jahr' => $jahr, 'XLS']) . "'>Mietaufstellung MJ-XLS</a>";
+            $mietaufstellung_link_m_j = "<a href='" . route('web::objekte::legacy', ['objekte_raus' => 'mietaufstellung_m_j', 'objekt_id' => $row['OBJEKT_ID'], 'monat' => $monat, 'jahr' => $jahr]) . "'>Mietaufstellung MJ</a>";
+            $mietaufstellung_link_m_j_xls = "<a href='" . route('web::objekte::legacy', ['objekte_raus' => 'mietaufstellung_m_j', 'objekt_id' => $row['OBJEKT_ID'], 'monat' => $monat, 'jahr' => $jahr, 'XLS']) . "'>Mietaufstellung MJ-XLS</a>";
 
-            $alle_mietkontenblatt_link = "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'alle_mkb', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Alle MKB-PDF</a>";
-            $link_mieterliste = "<a href='" . route('legacy::einheiten::index', ['einheit_raus' => 'mieterliste_aktuell', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Mieterliste PDF</a>";
-            $link_mieteremail = "<a href='" . route('legacy::einheiten::index', ['einheit_raus' => 'mieteremail_aktuell', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Mieter-Email</a>";
-            $link_stammdaten = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'stammdaten_pdf', 'objekt_id' => $row['OBJEKT_ID']]) . "'><img src=\"images/pdf_light.png\"></a>";
+            $alle_mietkontenblatt_link = "<a href='" . route('web::mietkontenblatt::legacy', ['anzeigen' => 'alle_mkb', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Alle MKB-PDF</a>";
+            $link_mieterliste = "<a href='" . route('web::einheiten::legacy', ['einheit_raus' => 'mieterliste_aktuell', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Mieterliste PDF</a>";
+            $link_mieteremail = "<a href='" . route('web::einheiten::legacy', ['einheit_raus' => 'mieteremail_aktuell', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Mieter-Email</a>";
+            $link_stammdaten = "<a href='" . route('web::objekte::legacy', ['objekte_raus' => 'stammdaten_pdf', 'objekt_id' => $row['OBJEKT_ID']]) . "'><img src=\"images/pdf_light.png\"></a>";
             $vorjahr = date("Y") - 1;
-            $link_sollist = "<a href='" . route('legacy::objekte::index', ['objekte_raus' => 'mietaufstellung_j', 'objekt_id' => $row['OBJEKT_ID'], 'jahr' => $vorjahr]) . "'>SOLL/IST $vorjahr</a>";
+            $link_sollist = "<a href='" . route('web::objekte::legacy', ['objekte_raus' => 'mietaufstellung_j', 'objekt_id' => $row['OBJEKT_ID'], 'jahr' => $vorjahr]) . "'>SOLL/IST $vorjahr</a>";
             echo "<tr class=\"zeile$counter\">
                     <td>$row[OBJEKT_KURZNAME] $link_stammdaten</td>
                     <td>$flaeche m²</td>
-                    <td sorttable_customkey=\"$anzahl_haeuser\"><a  href='" . route('legacy::haeuser::index', ['haus_raus' => 'haus_kurz', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Häuserliste&nbsp;($anzahl_haeuser)</a></td>
-                    <td><a href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_kurz', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Einheitenliste ($anzahl_einheiten)</a></td>
+                    <td sorttable_customkey=\"$anzahl_haeuser\"><a  href='" . route('web::haeuser::legacy', ['haus_raus' => 'haus_kurz', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Häuserliste&nbsp;($anzahl_haeuser)</a></td>
+                    <td><a href='" . route('web::einheiten::legacy', ['einheit_raus' => 'einheit_kurz', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Einheitenliste ($anzahl_einheiten)</a></td>
                     <td>$detail_link</td><td>$aendern_link</td>
                     <td>$check_liste_link</td>
                     <td>$mietaufstellung_link</td>

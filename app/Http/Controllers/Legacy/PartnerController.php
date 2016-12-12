@@ -14,7 +14,7 @@ class PartnerController extends LegacyController
     {
         session()->put('partner_id', $id);
 
-        return redirect()->intended(route('legacy::index', [], false));
+        return redirect()->intended(route('web::legacy', [], false));
     }
 
     public function serienbrief() {

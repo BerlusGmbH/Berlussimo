@@ -121,8 +121,8 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
             $ende_ser = str_replace('-', '', date_german2mysql($ende));
             $heute_ser = date("Ymd");
 
-            $aendern_link = "<a href='" . route('legacy::miete_definieren::index', ['option' => 'aendern', 'mietvertrag_id' => $e_mv_id, 'aendern_dat' => $me_dat]) . "'>Ändern</a>";
-            $loeschen_link = "<a href='" . route('legacy::miete_definieren::index', ['option' => 'me_loeschen', 'mietvertrag_id' => $e_mv_id, 'me_dat' => $me_dat]) . "'>Löschen</a>";
+            $aendern_link = "<a href='" . route('web::miete_definieren::legacy', ['option' => 'aendern', 'mietvertrag_id' => $e_mv_id, 'aendern_dat' => $me_dat]) . "'>Ändern</a>";
+            $loeschen_link = "<a href='" . route('web::miete_definieren::legacy', ['option' => 'me_loeschen', 'mietvertrag_id' => $e_mv_id, 'me_dat' => $me_dat]) . "'>Löschen</a>";
             if (($anfang_ser <= $heute_ser) && ($ende == '00.00.0000' or ($ende_ser > $heute_ser))) {
                 $summe_aktuell += $betrag;
             }
@@ -166,8 +166,8 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
             $ende = $row1 ['ENDE'];
             $ende = date_mysql2german($ende);
 
-            $aendern_link = "<a href='" . route('legacy::miete_definieren::index', ['option' => 'aendern', 'mietvertrag_id' => $e_mv_id, 'aendern_dat' => $me_dat]) . "'>Ändern</a>";
-            $loeschen_link = "<a href='" . route('legacy::miete_definieren::index', ['option' => 'me_loeschen', 'mietvertrag_id' => $e_mv_id, 'me_dat' => $me_dat]) . "'>Löschen</a>";
+            $aendern_link = "<a href='" . route('web::miete_definieren::legacy', ['option' => 'aendern', 'mietvertrag_id' => $e_mv_id, 'aendern_dat' => $me_dat]) . "'>Ändern</a>";
+            $loeschen_link = "<a href='" . route('web::miete_definieren::legacy', ['option' => 'me_loeschen', 'mietvertrag_id' => $e_mv_id, 'me_dat' => $me_dat]) . "'>Löschen</a>";
             if ($ende == '00.00.0000') {
                 $ende = 'unbefristet';
             }
@@ -206,8 +206,8 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
             $ende = $row1 ['ENDE'];
             $ende = date_mysql2german($ende);
 
-            $aendern_link = "<a href='" . route('legacy::miete_definieren::index', ['option' => 'aendern', 'mietvertrag_id' => $e_mv_id, 'aendern_dat' => $me_dat]) . "'>Ändern</a>";
-            $loeschen_link = "<a href='" . route('legacy::miete_definieren::index', ['option' => 'me_loeschen', 'mietvertrag_id' => $e_mv_id, 'me_dat' => $me_dat]) . "'>Löschen</a>";
+            $aendern_link = "<a href='" . route('web::miete_definieren::legacy', ['option' => 'aendern', 'mietvertrag_id' => $e_mv_id, 'aendern_dat' => $me_dat]) . "'>Ändern</a>";
+            $loeschen_link = "<a href='" . route('web::miete_definieren::legacy', ['option' => 'me_loeschen', 'mietvertrag_id' => $e_mv_id, 'me_dat' => $me_dat]) . "'>Löschen</a>";
             echo "<tr class=\"zeile1\"><td>$kostenkat</td><td>$anfang</td><td>$ende </td><td style='text-align: right'>$betrag €</td><td style='text-align: right'>$mwst_anteil_a €</td><td>$aendern_link $loeschen_link</td></tr>";
         } // end while 2
 
@@ -250,8 +250,8 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
             $ende_ser = str_replace('-', '', date_german2mysql($ende));
             $heute_ser = date("Ymd");
 
-            $aendern_link = "<a href='" . route('legacy::miete_definieren::index', ['option' => 'aendern', 'mietvertrag_id' => $e_mv_id, 'aendern_dat' => $me_dat]) . "'>Ändern</a>";
-            $loeschen_link = "<a href='" . route('legacy::miete_definieren::index', ['option' => 'me_loeschen', 'mietvertrag_id' => $e_mv_id, 'me_dat' => $me_dat]) . "'>Löschen</a>";
+            $aendern_link = "<a href='" . route('web::miete_definieren::legacy', ['option' => 'aendern', 'mietvertrag_id' => $e_mv_id, 'aendern_dat' => $me_dat]) . "'>Ändern</a>";
+            $loeschen_link = "<a href='" . route('web::miete_definieren::legacy', ['option' => 'me_loeschen', 'mietvertrag_id' => $e_mv_id, 'me_dat' => $me_dat]) . "'>Löschen</a>";
             if (($anfang_ser <= $heute_ser) && ($ende == '00.00.0000' or ($ende_ser > $heute_ser))) {
                 // $ende = 'unbefristet';
                 $css_class = "zeile2";
@@ -328,8 +328,8 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
             $ende = $row1 ['ENDE'];
             $ende = date_mysql2german($ende);
 
-            $aendern_link = "<a href='" . route('legacy::miete_definieren::index', ['option' => 'aendern', 'mietvertrag_id' => $e_mv_id, 'aendern_dat' => $me_dat]) . "'>Ändern</a>";
-            $loeschen_link = "<a href='" . route('legacy::miete_definieren::index', ['option' => 'me_loeschen', 'mietvertrag_id' => $e_mv_id, 'me_dat' => $me_dat]) . "'>Löschen</a>";
+            $aendern_link = "<a href='" . route('web::miete_definieren::legacy', ['option' => 'aendern', 'mietvertrag_id' => $e_mv_id, 'aendern_dat' => $me_dat]) . "'>Ändern</a>";
+            $loeschen_link = "<a href='" . route('web::miete_definieren::legacy', ['option' => 'me_loeschen', 'mietvertrag_id' => $e_mv_id, 'me_dat' => $me_dat]) . "'>Löschen</a>";
             if ($ende == '00.00.0000') {
                 $ende = 'unbefristet';
             }
@@ -396,8 +396,8 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
             $ende = $row1 ['ENDE'];
             $ende = date_mysql2german($ende);
 
-            $aendern_link = "<a href='" . route('legacy::miete_definieren::index', ['option' => 'aendern', 'mietvertrag_id' => $e_mv_id, 'aendern_dat' => $me_dat]) . "'>Ändern</a>";
-            $loeschen_link = "<a href='" . route('legacy::miete_definieren::index', ['option' => 'me_loeschen', 'mietvertrag_id' => $e_mv_id, 'me_dat' => $me_dat]) . "'>Löschen</a>";
+            $aendern_link = "<a href='" . route('web::miete_definieren::legacy', ['option' => 'aendern', 'mietvertrag_id' => $e_mv_id, 'aendern_dat' => $me_dat]) . "'>Ändern</a>";
+            $loeschen_link = "<a href='" . route('web::miete_definieren::legacy', ['option' => 'me_loeschen', 'mietvertrag_id' => $e_mv_id, 'me_dat' => $me_dat]) . "'>Löschen</a>";
             echo "<tr class=\"zeile1\"><td>$kostenkat</td><td>$anfang</td><td>$ende </td><td align=right>$betrag €</td><td>$mwst_anteil_a</td><td>$aendern_link $loeschen_link</td></tr>";
 
             $pdf_abgelaufen [] = $row1;
@@ -515,7 +515,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
 
     function me_dat_neu_form($mv_id)
     {
-        echo "<a href='" . route('legacy::miete_definieren::index', ['option' => 'staffel_eingabe', 'mv_id' => $mv_id]) . "'>Staffel eingeben</a><hr>";
+        echo "<a href='" . route('web::miete_definieren::legacy', ['option' => 'staffel_eingabe', 'mv_id' => $mv_id]) . "'>Staffel eingeben</a><hr>";
         $form = new mietkonto ();
         $f = new formular ();
         $form->dropdown_me_kostenkategorien('Kostenkategorie auswählen', 'kostenkategorie', session()->get('me_kostenkat'));

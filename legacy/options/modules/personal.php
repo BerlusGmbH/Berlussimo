@@ -39,19 +39,19 @@ switch ($option) {
             fehlermeldung_ausgeben("AUFTRAG KONNTE NICHT GESPEICHERT WERDEN!");
         } else {
             if ($kat == 'RECHNUNG') {
-                weiterleiten(route('legacy::sepa::index', ['option' => 'sammler_anzeigen'], false));
+                weiterleiten(route('web::sepa::legacy', ['option' => 'sammler_anzeigen'], false));
             }
             if ($kat == 'ET-AUSZAHLUNG') {
-                weiterleiten(route('legacy::listen::index', ['option' => 'sammler_anzeigen'], false));
+                weiterleiten(route('web::listen::legacy', ['option' => 'sammler_anzeigen'], false));
             }
             if ($kat == 'LOHN') {
-                weiterleiten(route('legacy::personal::index', ['option' => 'lohn_gehalt_sepa'],false));
+                weiterleiten(route('web::personal::legacy', ['option' => 'lohn_gehalt_sepa'],false));
             }
             if ($kat == 'KK') {
-                weiterleiten(route('legacy::personal::index', ['option' => 'kk'],false));
+                weiterleiten(route('web::personal::legacy', ['option' => 'kk'],false));
             }
             if ($kat == 'STEUERN') {
-                weiterleiten(route('legacy::personal::index', ['option' => 'steuern'],false));
+                weiterleiten(route('web::personal::legacy', ['option' => 'steuern'],false));
             }
         }
         break;

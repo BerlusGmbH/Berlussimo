@@ -257,13 +257,13 @@ LIMIT 0 , 30";
             $person_nachname = $personen_arr [$a] ['PERSON_NACHNAME'];
             $person_vorname = $personen_arr [$a] ['PERSON_VORNAME'];
 
-            $aendern_link = "<a class=\"table_links\" href='" . route('legacy::personen::index', ['anzeigen' => 'person_aendern', 'person_id' => $person_id]) . "'>Person ändern</a>";
+            $aendern_link = "<a class=\"table_links\" href='" . route('web::personen::legacy', ['anzeigen' => 'person_aendern', 'person_id' => $person_id]) . "'>Person ändern</a>";
 
             $detail_check = detail_check("PERSON", $person_id);
             if ($detail_check > 0) {
-                $detail_link = "<a class=\"table_links\" href='" . route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_tabelle' => 'PERSON', 'detail_id' => $person_id]) . "'>Details</a>";
+                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'PERSON', 'detail_id' => $person_id]) . "'>Details</a>";
             } else {
-                $detail_link = "<a class=\"table_links\" href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'PERSON', 'detail_id' => $person_id]) . "'>Neues Detail</a>";
+                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'PERSON', 'detail_id' => $person_id]) . "'>Neues Detail</a>";
             }
 
             $erster_buchstabe = substr($person_nachname, 0, 1);
@@ -284,13 +284,13 @@ LIMIT 0 , 30";
                     $mv = new mietvertraege ();
                     $mv_id = $this->p_mv_ids [$b];
                     $mv->get_mietvertrag_infos_aktuell($mv_id);
-                    $haus_info_link .= "<a href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_kurz', 'haus_id' => $mv->haus_id]) . "'>$mv->haus_strasse $mv->haus_nr</a><br>";
+                    $haus_info_link .= "<a href='" . route('web::einheiten::legacy', ['einheit_raus' => 'einheit_kurz', 'haus_id' => $mv->haus_id]) . "'>$mv->haus_strasse $mv->haus_nr</a><br>";
                     if ($mv->mietvertrag_aktuell) {
-                        $einheit_link .= "<a  href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $mv->einheit_id, 'mietvertrag_id' => $mv_id]) . "'><b>$mv->einheit_kurzname</b></a><br>";
+                        $einheit_link .= "<a  href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $mv->einheit_id, 'mietvertrag_id' => $mv_id]) . "'><b>$mv->einheit_kurzname</b></a><br>";
                     } else {
-                        $einheit_link .= "<a id=\"link_rot_fett\" href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $mv->einheit_id, 'mietvertrag_id' => $mv_id]) . "'>$mv->einheit_kurzname</a><br>";
+                        $einheit_link .= "<a id=\"link_rot_fett\" href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $mv->einheit_id, 'mietvertrag_id' => $mv_id]) . "'>$mv->einheit_kurzname</a><br>";
                     }
-                    $mietkonto_link .= "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mk_pdf', 'mietvertrag_id' => $mv_id]) . "'><img src=\"images/pdf_light.png\"></a>&nbsp;<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mietkonto_ab', 'mietvertrag_id' => $mv_id]) . "'><img src=\"images/pdf_dark.png\"></a><br>";
+                    $mietkonto_link .= "<a href='" . route('web::mietkontenblatt::legacy', ['anzeigen' => 'mk_pdf', 'mietvertrag_id' => $mv_id]) . "'><img src=\"images/pdf_light.png\"></a>&nbsp;<a href='" . route('web::mietkontenblatt::legacy', ['anzeigen' => 'mietkonto_ab', 'mietvertrag_id' => $mv_id]) . "'><img src=\"images/pdf_dark.png\"></a><br>";
 
                     if ($b < $this->person_anzahl_mietvertraege - 1) {
                         // $haus_info_link .= "<br>";
@@ -314,9 +314,9 @@ LIMIT 0 , 30";
                 for ($ee = 0; $ee < $anz_e; $ee++) {
                     $eig_id = $eigentuemer_id_arr [$ee] ['WEG_EIG_ID'];
                     $weg->get_eigentumer_id_infos($eig_id);
-                    $einheit_link .= "<a href='" . route('legacy::weg::index', ['option' => 'einheit_uebersicht', 'einheit_id' => $weg->einheit_id]) . "'>$weg->einheit_kurzname</a><br>";
+                    $einheit_link .= "<a href='" . route('web::weg::legacy', ['option' => 'einheit_uebersicht', 'einheit_id' => $weg->einheit_id]) . "'>$weg->einheit_kurzname</a><br>";
                     $haus_info_link .= "$weg->haus_strasse $weg->haus_nummer<br>";
-                    $mietkonto_link .= "<a href='" . route('legacy::weg::index', ['option' => 'hg_kontoauszug', 'eigentuemer_id' => $weg->eigentuemer_id, 'jahr' => date('Y')]) . "'><img src=\"images/pdf_light.png\"></a> <a href='" . route('legacy::weg::index', ['option' => 'hg_kontoauszug', 'eigentuemer_id' => $weg->eigentuemer_id, 'jahr' => date('Y'), 'no_logo']) . "'><img src=\"images/pdf_dark.png\"></a><br>";
+                    $mietkonto_link .= "<a href='" . route('web::weg::legacy', ['option' => 'hg_kontoauszug', 'eigentuemer_id' => $weg->eigentuemer_id, 'jahr' => date('Y')]) . "'><img src=\"images/pdf_light.png\"></a> <a href='" . route('web::weg::legacy', ['option' => 'hg_kontoauszug', 'eigentuemer_id' => $weg->eigentuemer_id, 'jahr' => date('Y'), 'no_logo']) . "'><img src=\"images/pdf_dark.png\"></a><br>";
                 }
             }
 

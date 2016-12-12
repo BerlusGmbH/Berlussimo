@@ -53,7 +53,7 @@ if (request()->has('daten_rein')) {
                     echo "alles ok";
                     $h = new haus ();
                     $h->haus_speichern(request()->input('strasse'), request()->input('haus_nr'), request()->input('ort'), request()->input('plz'), request()->input('qm'), request()->input('objekt_id'));
-                    weiterleiten(route('legacy::haeuser::index', ['haus_raus' => 'haus_kurz', 'objekt_id' => request()->input('objekt_id')], false));
+                    weiterleiten(route('web::haeuser::legacy', ['haus_raus' => 'haus_kurz', 'objekt_id' => request()->input('objekt_id')], false));
                 } else {
                     echo "Daten unvollständig";
                 }
@@ -146,10 +146,10 @@ function haus_liste_links_aenderung($objekt_id)
     $result = DB::select("SELECT HAUS_DAT, HAUS_ID, HAUS_STRASSE, HAUS_NUMMER FROM HAUS WHERE OBJEKT_ID='$objekt_id' && HAUS_AKTUELL='1' ORDER BY HAUS_STRASSE, HAUS_NUMMER ASC");
     if (empty($result)) {
         echo "<h5 class=\"fehler\">Keine Häuser im ausgewählten Objekt</h5><br>\n";
-        echo "Erst Haus im Objekt anlegen - <a href='" . route('legacy::haeuserform::index', ['daten_rein' => 'anlegen']) . "'>Hauseningabe hier&nbsp;</a>\n<br>\n";
+        echo "Erst Haus im Objekt anlegen - <a href='" . route('web::haeuserform::legacy', ['daten_rein' => 'anlegen']) . "'>Hauseningabe hier&nbsp;</a>\n<br>\n";
     } else {
         foreach ($result as $row) {
-            echo "<a class=\"objekt_links\" href='" . route('legacy::haeuserform::index', ['daten_rein' => $daten_rein, 'objekt_id' => $objekt_id, 'haus_id' => $row['HAUS_ID']]) . "'>$row[HAUS_STRASSE] $row[HAUS_NUMMER]</a><br>\n";
+            echo "<a class=\"objekt_links\" href='" . route('web::haeuserform::legacy', ['daten_rein' => $daten_rein, 'objekt_id' => $objekt_id, 'haus_id' => $row['HAUS_ID']]) . "'>$row[HAUS_STRASSE] $row[HAUS_NUMMER]</a><br>\n";
         }
     }
 }

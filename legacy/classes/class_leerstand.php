@@ -585,7 +585,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
             $zimmer = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Zimmeranzahl'))));
             $balkon = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Balkon'))));
             $e->get_einheit_info($einheit_id);
-            $link_einladen = "<a href='" . route('legacy::leerstand::index', ['option' => 'einladungen', 'einheit_id' => $einheit_id]) . "'>Einladen</a>";
+            $link_einladen = "<a href='" . route('web::leerstand::legacy', ['option' => 'einladungen', 'einheit_id' => $einheit_id]) . "'>Einladen</a>";
             echo "<tr><td>$e->einheit_kurzname $e->haus_strasse $e->haus_nummer, $e->einheit_lage</td><td>$termin</td><td>$e->einheit_qm m²</td><td>$zimmer</td><td>$balkon</td>";
             if ($vor_nach == '>') {
                 echo "<td>$link_einladen</td>";
@@ -664,7 +664,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
         $f = new formular ();
         $f->fieldset('Interessenten Telefonliste', 'ia');
         if (empty ($tab_arr)) {
-            echo "<a href='" . route('legacy::leerstand::index', ['option' => 'pdf_interessenten']) . "'>Interessenten PDF</a>&nbsp;";
+            echo "<a href='" . route('web::leerstand::legacy', ['option' => 'pdf_interessenten']) . "'>Interessenten PDF</a>&nbsp;";
             $tab_arr = $this->interessenten_tab_arr();
         }
         if (!empty($tab_arr)) {
@@ -675,7 +675,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
             for ($a = 0; $a < $anz; $a++) {
                 $id = $tab_arr [$a] ['ID'];
                 $name = $tab_arr [$a] ['NAME'];
-                $link_edit = "<a href='" . route('legacy::leerstand::index', ['option' => 'interessenten_edit', 'id' => $id]) . "'>$name</a>";
+                $link_edit = "<a href='" . route('web::leerstand::legacy', ['option' => 'interessenten_edit', 'id' => $id]) . "'>$name</a>";
                 $ans = $tab_arr [$a] ['ANSCHRIFT'];
                 $email = $tab_arr [$a] ['EMAIL'];
                 $tel = $tab_arr [$a] ['TEL'];
@@ -786,7 +786,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
         $d->detail_aktualisieren('EINHEIT', $einheit_id, 'Expose HK', $expose_hk, '');
         $d->detail_aktualisieren('EINHEIT', $einheit_id, 'Expose frei ab', $expose_frei, '');
         $d->detail_aktualisieren('EINHEIT', $einheit_id, 'Expose Kaltmiete', $expose_km, '');
-        weiterleiten(route('legacy::leerstand::index', ['option' => 'expose_pdf', 'einheit_id' => $einheit_id], false));
+        weiterleiten(route('web::leerstand::legacy', ['option' => 'expose_pdf', 'einheit_id' => $einheit_id], false));
     }
 
     /* Email mit Attachment */
@@ -1222,7 +1222,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                             <input disabled value='" . $fotos_vorhanden . "' id='link_foto_" . $objekt_id . '_' . $a . "' type='text'>
                             <label class='active' for='link_foto_" . $objekt_id . '_' . $a . "'>Fotos vorhanden</label>
                       </div>";
-                $link_foto_upload = "<a class='waves-effect waves-light btn' id='link_foto_up.$objekt_id.'_'.$a' href='" . route('legacy::leerstand::index', ['option' => 'fotos_upload', 'einheit_id' => $einheit_id]) . "'><i class=\"material-icons left\">file_upload</i>Hochladen</a>";
+                $link_foto_upload = "<a class='waves-effect waves-light btn' id='link_foto_up.$objekt_id.'_'.$a' href='" . route('web::leerstand::legacy', ['option' => 'fotos_upload', 'einheit_id' => $einheit_id]) . "'><i class=\"material-icons left\">file_upload</i>Hochladen</a>";
                 echo $link_foto_upload;
 
                 echo "</td>";
@@ -1607,8 +1607,8 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                 $ms_20proz = nummer_komma2punkt(nummer_punkt2komma($ma->o_wert * 1.2));
 
                 $einheit_kn = $arr [$a] ['EINHEIT_KURZNAME'];
-                $link_einheit = "<a class=\"einheit\" href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id]) . "'>$einheit_kn</a>";
-                $link_expose_pdf = "<a href='" . route('legacy::leerstand::index', ['option' => 'expose_pdf', 'einheit_id' => $einheit_id]) . "'><img src=\"images/pdf_dark.png\">EXPOSE</a>";
+                $link_einheit = "<a class=\"einheit\" href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id]) . "'>$einheit_kn</a>";
+                $link_expose_pdf = "<a href='" . route('web::leerstand::legacy', ['option' => 'expose_pdf', 'einheit_id' => $einheit_id]) . "'><img src=\"images/pdf_dark.png\">EXPOSE</a>";
                 $einheit_qm = $arr [$a] ['EINHEIT_QM'];
                 $einheit_qm_a = nummer_punkt2komma($arr [$a] ['EINHEIT_QM']);
                 $einheit_lage = $arr [$a] ['EINHEIT_LAGE'];
@@ -1695,8 +1695,8 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                     $link_bk = "<a class=\"details\" onclick=\"change_detail('Vermietung-BK', '$bk', '$bk_dat', 'EINHEIT', '$einheit_id')\">$bk</a>";
                     $link_hk = "<a class=\"details\" onclick=\"change_detail('Vermietung-HK', '$hk', '$hk_dat', 'EINHEIT', '$einheit_id')\">$hk</a>";
                     $link_termin = "<a class=\"details\" onclick=\"change_detail('Besichtigungstermin', '$b_termin', '$b_termin_dat', 'EINHEIT', '$einheit_id')\">$b_termin</a>";
-                    $link_fotos = "<a href='" . route('legacy::leerstand::index', ['option' => 'fotos_upload', 'einheit_id' => $einheit_id]) . "'>Fotos: $anz_fotos</a>";
-                    $link_expose_text = "<a href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'EINHEIT', 'detail_id' => $einheit_id, 'vorauswahl' => 'Exposetext']) . "'>Exposetext</a>";
+                    $link_fotos = "<a href='" . route('web::leerstand::legacy', ['option' => 'fotos_upload', 'einheit_id' => $einheit_id]) . "'>Fotos: $anz_fotos</a>";
+                    $link_expose_text = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'EINHEIT', 'detail_id' => $einheit_id, 'vorauswahl' => 'Exposetext']) . "'>Exposetext</a>";
 
                     if ($b_reservierung != '') {
                         $link_reservierung = "<a class=\"details\" onclick=\"change_detail('Vermietung-Reserviert', '$b_reservierung', '$b_reservierung_dat', 'EINHEIT', '$einheit_id')\">$b_reservierung<hr>$b_reservierung_bem</a>";

@@ -796,7 +796,7 @@ class mietanpassung
                 } else {
                     echo "<td>keine</td>";
                 }
-                $link = "<a href='" . route('legacy::mietanpassungen::index', ['option' => 'miete_anpassen_mw', 'einheit_id' => $einheit_id]) . "'>Anpassen</a>";
+                $link = "<a href='" . route('web::mietanpassungen::legacy', ['option' => 'miete_anpassen_mw', 'einheit_id' => $einheit_id]) . "'>Anpassen</a>";
                 if ($m2_aktuell > $m_wert) {
                     // $style = "style=\"background:red\"";
                 } else {
