@@ -105,11 +105,10 @@ function ajax_check_art(lieferant, artikel_nr) {
 								document.getElementById("einheit")[i].focus();
 							}
 						}
-						alert('Artikel übernommen, Menge & Preise prüfen');
-						document.getElementById('artikel_vorhanden').innerHTML = '';
-
+                        Materialize.toast('Artikel übernommen, Menge & Preise prüfen', 4000)
+                        document.getElementById('artikel_vorhanden').innerHTML = '';
 					} else {
-						alert(artikel_nr + ' L: ' + lieferant + ' Artikel nicht vorhanden');
+                        Materialize.toast(artikel_nr + ' L: ' + lieferant + ' Artikel nicht vorhanden', 4000)
 						document.getElementById("textf_artikelnr").value = artikel_nr;
 						document.getElementById("bezeichnung").value = '';
 						document.getElementById("lp").value = '';
@@ -120,6 +119,7 @@ function ajax_check_art(lieferant, artikel_nr) {
 						document.getElementById("brutto_gesamt").value = '';
 						document.getElementById("menge").focus();
 					}
+                    Materialize.updateTextFields();
 				}
 				break;
 
@@ -658,6 +658,12 @@ function list_detail_ukats_drop() {
 	}
 }
 
+var t_id;
+function autovervoll_with_delay(lieferant_id, string) {
+    clearTimeout(t_id);
+    t_id = setTimeout(autovervoll, 500, lieferant_id, string);
+}
+
 function autovervoll(lieferant_id, string) {
 	artikelvorhanden_feld = document.getElementById('artikel_vorhanden');
 
@@ -1185,13 +1191,8 @@ function get_iban_bic(kto_feld, blz_feld) {
 		switch(req.readyState) {
 
 		case 4:
-			if (req.status != 200) {
-				//alert("Fehler:"+req.status);
-			} else {
-				//alert(req.responseText);
+			if (req.status == 200) {
 				if (req.responseText) {
-					//reload_me();   hier nicht, sonst sendet doppelt
-					//alert(req.responseText);
 					iban_bic_arr = req.responseText.split('|');
 					iban = iban_bic_arr[0];
 					bic = iban_bic_arr[1];
@@ -1199,9 +1200,7 @@ function get_iban_bic(kto_feld, blz_feld) {
 					document.getElementById('iban').value = iban;
 					document.getElementById('bic').value = bic;
 					document.getElementById('institut').value = bankname;
-
-				} else {
-					//reload_me();
+					Materialize.updateTextFields();
 				}
 			}
 			break;

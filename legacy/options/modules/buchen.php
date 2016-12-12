@@ -720,18 +720,6 @@ switch ($option) {
                 }
             }
             $abfrage .= " && AKTUELL='1' ORDER BY DATUM ASC, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID";
-            // echo $abfrage;
-            // die();
-
-            /*
-             * SELECT * FROM articles WHERE MATCH (title,body)
-             * -> AGAINST ('+MySQL -YourSQL' IN BOOLEAN MODE);
-             *
-             * #print_r($where);
-             * #echo $abfrage;
-             * #die();
-             * /*Monitorausgabe
-             */
             if (request()->has('submit_php')) {
                 if ($ausdruck != '' or $betrag != '' or $kostenkonto != '') {
                     $b->finde_buchungen($abfrage);
@@ -784,8 +772,10 @@ switch ($option) {
         }
 
         if (empty ($geldkonto_id) or empty ($partner_id)) {
-            fehlermeldung_ausgeben('Geldkonto und Partner wählen');
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Geldkonto und Partner wählen')
+            );
+            
         }
         if (request()->has('start')) {
             $start = request()->input('start');
@@ -819,7 +809,7 @@ switch ($option) {
                     $anz_m = count($_zahlen_arr);
                     for ($m = 0; $m < $anz_m; $m++) {
                         $re = new rechnung ();
-                        if (is_array($re->rechnung_finden_nach_rnr($_zahlen_arr [$m]))) {
+                        if (!empty($re->rechnung_finden_nach_rnr($_zahlen_arr [$m]))) {
                             $rnr_kurz = $_zahlen_arr [$m];
                         }
                     }
@@ -855,6 +845,10 @@ switch ($option) {
         $sep = new sepa ();
 
         if (request()->exists('upload')) {
+            $sep->form_upload_excel_ktoauszug();
+        }
+
+        if (request()->hasFile('file')) {
             session()->forget('umsaetze_nok');
             session()->forget('umsaetze_ok');
             session()->forget('umsatz_konten');
@@ -868,10 +862,6 @@ switch ($option) {
             session()->forget('kos_typ');
             session()->forget('kos_id');
 
-            $sep->form_upload_excel_ktoauszug();
-        }
-
-        if (request()->hasFile('file')) {
             $xlsx = new SimpleXLSX(request()->file('file')->getRealPath());
 
             /* Kontostände abrufen */
@@ -925,8 +915,9 @@ switch ($option) {
                         }
                     } else {
                         $bez = $arr_konten [$a] [0];
-                        fehlermeldung_ausgeben("$bez $kto $blz $IBAN nicht gefunden!!!<br>Schreibweise prüfen!!!");
-                        die();
+                        throw new \App\Exceptions\MessageException(
+                            new \App\Messages\WarningMessage("$bez $kto $blz $IBAN nicht gefunden.<br>Schreibweise prüfen.")
+                        );
                     }
                 }
             }
@@ -996,6 +987,10 @@ switch ($option) {
         break;
 
     case "excel_buchen_session" :
+        if(!session()->has('umsatz_konten')){
+            echo "Bitte laden Sie zuerst einen Kontoauszug.";
+            break;
+        }
         if (request()->has('next')) {
             session()->put('umsatz_id_temp', session()->get('umsatz_id_temp') + 1);
         }
@@ -1031,184 +1026,6 @@ switch ($option) {
 
         break;
 
-    case "excel_buchen_ALT" :
-        if (!request()->hasFile('file')) {
-            echo '<h1>Upload</h1>
-		<form method="post" enctype="multipart/form-data">
-		*.XLSX <input type="file" name="file"  />&nbsp;&nbsp;<input type="submit" value="Parse" />
-		</form>';
-        } else {
-            $xlsx = new SimpleXLSX(request()->file('file')->getRealPath());
-
-            echo '<pre>';
-            // print_r($xlsx->rows(5));
-
-            echo '<h1>Parsing Result</h1>';
-
-            echo "<table border=\"1\" cellpadding=\"3\" style=\"border-collapse: collapse\">";
-            $arr = $xlsx->rows(5);
-            $anz = count($arr);
-            for ($a = 2; $a < $anz; $a++) {
-                if (empty ($arr [$a] [3])) { // Kontoauszug
-                    // echo $arr[$a][0]."<br>";
-                } else {
-                    echo "<tr><td>";
-                    echo $arr [$a] [0] . "<br>"; // Kontobez
-                    $gk = new gk ();
-                    // $gk_id = $gk->get_geldkonto_id($arr[$a][0]);
-                    // echo "<b>$gk_id</b>";
-                    echo "</td><td>";
-                    $ktnr_arr = explode('/', $arr [$a] [1]); // KTO BLZ
-                    $blz = $ktnr_arr [0];
-
-                    $kto_full = $ktnr_arr [1];
-                    if (strpos($kto_full, 'EUR')) {
-                        $kto_arr = explode('EUR', $kto_full);
-                        $kto = $kto_arr [0];
-                    } else {
-                        $kto = substr($kto_full, 0, -3);
-                    }
-
-                    $gk_id = $gk->get_geldkonto_id2($kto, $blz);
-                    if (!$gk_id) {
-                        $sep = new sepa ();
-                        $IBAN = $sep->get_iban_bic($kto, $blz);
-                        // $kto = substr($ktnr_arr[1],0,-3);
-                        $gk_id = $gk->get_geldkonto_id2($kto, $blz, $IBAN);
-                    }
-
-                    if (!$gk_id) {
-                        $gk_id = $gk->get_geldkonto_id($arr [$a] [0]);
-                        if (!$gk_id) {
-                            echo "Kein Konto mit BEZ " . $arr [$a] [0] . "<br>";
-                            echo "$kto $blz " . $arr [$a] [0] . " prüfen!!!";
-                        }
-                    }
-                    if ($gk_id) {
-                        echo $gk_id;
-                    }
-
-                    // echo "</td><td>";
-                    // echo "$kto $blz<br>";
-                    echo "</td><td>";
-                    echo $arr [$a] [6] . "<br>"; // DatumVALUTE
-                    $datum = $arr [$a] [6];
-                    echo "</td><td>";
-                    $auszug = sprintf('%01d', $arr [$a] [3]);
-                    echo "$auszug<br>"; // Auszug
-                    echo "</td><td>";
-
-                    $betrag = str_replace('.', '', $arr [$a] [7]);
-                    echo $betrag . "<br>"; // BETRAG
-                    echo "</td><td>";
-                    // echo $arr[$a][13]."<br>";//Buchungstext
-                    echo "</td><td>";
-                    // echo $arr[$a][14]."<br>";//vZweck###############################################
-
-                    $pos_svwz = strpos(strtoupper($arr [$a] [14]), 'SVWZ+');
-                    if ($pos_svwz == true) {
-
-                        // echo $arr[$a][14]."<br>";//vZweck###############################################
-                        // $arr[$a][14] = substr($arr[$a][14],$pos_svwz+5);
-                    }
-
-                    echo $arr [$a] [14] . "<br>"; // vZweck###############################################
-                    // SVWZ+
-
-                    /* Suche nach SEPA-Dateien */
-
-                    /* LASTSCHRIFTEN MIETEN UND HAUSGELD */
-                    if ($gk_id) {
-
-                        if ($arr [$a] [13] == 'SEPA-LS SAMMLER-HABEN') {
-                            echo "<b>SEPA-LASTSCHRIFT-SAMMLER</b>";
-                            $sep = new sepa ();
-                            $ls_arr = $sep->get_sepa_lsfiles_arr_gk($gk_id);
-                            if (is_array($ls_arr)) {
-                                $anz_ls = count($ls_arr);
-                                $z = 0;
-                                for ($ls = 0; $ls < $anz_ls; $ls++) {
-                                    $summe = nummer_punkt2komma($ls_arr [$ls] ['SUMME']);
-                                    $datei = $ls_arr [$ls] ['DATEI'];
-                                    if ($summe == $betrag) {
-                                        $z++;
-                                        echo "<hr>$z. <a href='" . route('legacy::sepa::index', ['option' => 'ls_auto_buchen_file', 'datei' => $datei]) . "'>AUTOBUCHEN $datei $summe</a>";
-                                    }
-                                }
-                            }
-                        }
-                        /* ÜBERWEISUNGSAMMLER SEPA */
-                        if ($arr [$a] [13] == 'SEPA-UEBERWEIS.SAMMLER-SOLL') {
-                            echo "<b>SEPA-ÜBERWEISUNG SAMMLER</b>";
-                            $sep = new sepa ();
-                            $ue_arr = $sep->sepa_files_arr($gk_id);
-                            if (is_array($ue_arr)) {
-                                // print_r($ue_arr);
-                                $anz_ue = count($ue_arr);
-                                $z = 0;
-                                for ($ls = 0; $ls < $anz_ue; $ls++) {
-                                    $summe = nummer_punkt2komma($ue_arr [$ls] ['SUMME']);
-                                    $datei = $ue_arr [$ls] ['FILE'];
-                                    if ($summe == ($betrag * -1)) {
-                                        $z++;
-                                        echo "<hr>$z. <a href='" . route('legacy::sepa::index', ['option' => 'excel_ue_autobuchen', 'datei' => $datei, 'auszug' => $auszug, 'gk_id' => $gk_id, 'datum' => $datum]) . "'>AUTOBUCHEN $datei $summe</a>";
-                                    }
-                                }
-                            }
-                        }
-
-                        /* EINZELÜBERWEISUNGEN HABEN */
-                        if ($arr [$a] [13] == 'SEPA-UEBERWEIS.HABEN EINZEL') {
-                            echo "<b>EINNAHME EINZELBUCHUNG</b><br>";
-                            /* Mietzahlungen */
-                            if (strpos(strtolower($arr [$a] [14]), 'miete')) {
-                                echo "--MIETE--";
-                            }
-
-                            if (strpos(strtolower($arr [$a] [14]), 'hausgeld') or strpos(strtolower($arr [$a] [14]), 'wohngeld')) {
-                                echo "--HAUSGELD--";
-                            }
-
-                            $pos_svwz = strpos(strtoupper($arr [$a] [14]), 'SVWZ+');
-                            if ($pos_svwz == true) {
-
-                                echo $arr [$a] [14] . "<br>"; // vZweck###############################################
-                                $arr [$a] [14] = substr($arr [$a] [14], $pos_svwz + 5);
-                            }
-                            echo $arr [$a] [14] . "<br>"; // vZweck###############################################
-                        }
-
-                        /* EINZELÜBERWEISUNGEN DAUERAUFTRAG HABEN */
-                        if ($arr [$a] [13] == 'SEPA Dauerauftragsgutschrift') {
-                            echo "<b>DAUERAUFTRAG EINNAHME EINZELBUCHUNG</b>";
-                        }
-
-                        /* EINZELABBUCHUNG LASTSCHRIFFT SOLL */
-                        if ($arr [$a] [13] == 'SEPA DIRECT DEBIT (EINZELBUCHUNG-SOLL, B2B)') {
-                            echo "<b>B2B ABBUCHUNG EINZELN</b>";
-                        }
-
-                        /* EINZELABBUCHUNG LASTSCHRIFFT SOLL */
-                        if ($arr [$a] [13] == 'SEPA-LS EINZELBUCHUNG SOLL') {
-                            echo "<b>SEPA-LS ABBUCHUNG EINZELN</b>";
-                        }
-                    } // ENDE IF GK VORHANDEN
-
-                    echo "</td><td>";
-                    echo $arr [$a] [25] . "<br>"; // Ktoinh
-                    echo "</td><td>";
-                    echo $arr [$a] [26] . "<br>"; // IBAN
-                    echo $arr [$a] [27] . "<br>"; // BIC
-                    echo "</td><td>";
-
-                    echo "</td><tr>";
-                }
-            }
-            echo "</table>";
-        }
-
-        break;
-
     case "excel_einzelbuchung" :
         $kostentraeger_typ = request()->input('kostentraeger_typ');
         $kostentraeger_id = request()->input('kostentraeger_id');
@@ -1235,17 +1052,15 @@ switch ($option) {
     case "sepa_ue_autobuchen" :
         if (request()->isMethod('post')) {
             if (!session()->has('geldkonto_id')) {
-                fehlermeldung_ausgeben("Geldkonto wählen");
-                die();
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\InfoMessage("Bitte wählen Sie ein Geldkonto.")
+                );
             }
 
-            if (!session()->has('temp_kontoauszugsnummer')) {
-                fehlermeldung_ausgeben("Kontrolldatein eingeben Kontoauszugsnummer!");
-                die();
-            }
-            if (!session()->has('temp_datum')) {
-                fehlermeldung_ausgeben("Kontrolldatein eingeben Buchungsdatum!");
-                die();
+            if (!session()->has('temp_kontoauszugsnummer') || !session()->has('temp_datum')) {
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\ErrorMessage("Bitte geben Sie die Kontrolldaten ein.")
+                );
             }
             if (request()->has('mwst')) {
                 $mwst = 1;

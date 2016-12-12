@@ -185,24 +185,10 @@ class formular
         echo "</div>";
     }
 
-    function button_alle_waehlen($name, $wert, $id, $feld, $js)
-    {
-        echo "<input type=button name=\"$name\" value=\"$wert\" class=\"submit\" id=\"$name\" $js>";
-    }
-
     /* AB HIER NUR ZUSATZFUNKTIONEN DIE AN FORMULARE ANLEHNEN */
     function post_array_bereinigen()
     {
         foreach (request()->request->all() as $key => $value) {
-            $clean_value = trim(strip_tags($value));
-            $clean_arr [$key] = "$clean_value";
-        }
-        return $clean_arr;
-    }
-
-    function post_unterarray_bereinigen($arrayname)
-    {
-        foreach (request()->input($arrayname) as $key => $value) {
             $clean_value = trim(strip_tags($value));
             $clean_arr [$key] = "$clean_value";
         }

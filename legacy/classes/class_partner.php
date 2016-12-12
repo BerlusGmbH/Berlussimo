@@ -11,9 +11,13 @@ class partner extends rechnung {
     var $rechnungs_empfaenger_hausnr;
     var $rechnungs_empfaenger_plz;
     var $rechnungs_empfaenger_ort;
-    function get_partner_konto_id($partner_id) {
-        return $partner_id;
-    }
+    public $partner_id;
+    public $partner_name;
+    public $partner_str;
+    public $partner_nr;
+    public $partner_plz;
+    public $partner_ort;
+    public $partner_land;
 
     function get_aussteller_info($partner_id) {
         $result = DB::select( "SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'" );
@@ -33,107 +37,6 @@ class partner extends rechnung {
         $this->rechnungs_empfaenger_plz = $row ['PLZ'];
         $this->rechnungs_empfaenger_ort = $row ['ORT'];
     }
-
-    /* Partner erfassen Formular */
-    function form_partner_erfassen() {
-        $form = new mietkonto ();
-        $form->erstelle_formular ( "Partner erfassen", NULL );
-        $form->text_bereich ( "Partnername", "partnername", session()->get('partnername'), "20", "3" );
-        $form->text_feld ( "Strasse:", "strasse", session()->get('strasse'), "50" );
-        $form->text_feld ( "Nummer:", "hausnummer", session()->get('hausnummer'), "10" );
-        $form->text_feld ( "Postleitzahl:", "plz", session()->get('plz'), "10" );
-        $form->text_feld ( "Ort:", "ort", session()->get('ort'), "10" );
-        $form->text_feld ( "Land:", "land", session()->get('land'), "10" );
-        $form->text_feld ( "Kreditinstitut:", "kreditinstitut", "", "10" );
-        $form->text_feld ( "Kontonummer:", "kontonummer", "", "10" );
-        $form->text_feld ( "Bankleitzahl:", "blz", "", "10" );
-        $form->send_button ( "submit_partner", "Partner speichern" );
-        $form->hidden_feld ( "option", "partner_gesendet" );
-        $form->ende_formular ();
-    }
-
-    /* Partner in Datenbank speichern */
-    function partner_speichern($clean_arr) {
-        foreach ( $clean_arr as $key => $value ) {
-            $partnername = $clean_arr ['partnername'];
-            $str = $clean_arr ['strasse'];
-            $hausnr = $clean_arr ['hausnummer'];
-            $plz = $clean_arr ['plz'];
-            $ort = $clean_arr ['ort'];
-            $land = $clean_arr ['land'];
-            $kreditinstitut = $clean_arr ['kreditinstitut'];
-            $kontonummer = $clean_arr ['KONTONUMMER'];
-            $blz = $clean_arr ['BLZ'];
-
-            print_r ( $clean_arr );
-            if (empty ( $partnername ) or empty ( $str ) or empty ( $hausnr ) or empty ( $plz ) or empty ( $ort ) or empty ( $land )) {
-                fehlermeldung_ausgeben ( "Dateneingabe unvollständig!!!<br>Sie werden weitergeleitet." );
-                session()->put('partnername', $partnername);
-                session()->put('strasse', $str);
-                session()->put('hausnummer', $hausnr);
-                session()->put('plz', $plz);
-                session()->put('ort', $ort);
-                session()->put('land', $land);
-                session()->put('kreditinstitut', $kreditinstitut);
-                session()->put('KONTONUMMER', $kontonummer);
-                session()->put('BLZ', $blz);
-
-                $fehler = true;
-                weiterleiten_in_sec ( route('legacy::rechnungen::index', ['option' => 'partner_erfassen']), 3 );
-                die ();
-            }
-        } // Ende foreach
-
-        /* Prüfen ob Partner/Liefernat vorhanden */
-        $result_3 = DB::select( "SELECT * FROM PARTNER_LIEFERANT WHERE PARTNER_NAME = '$clean_arr[partnername]' && STRASSE='$clean_arr[strasse]' && NUMMER='$clean_arr[hausnummer]' && PLZ='$clean_arr[plz]' && AKTUELL = '1' ORDER BY PARTNER_NAME" );
-        $numrows_3 = count($result_3);
-
-        /* Wenn kein Fehler durch eingabe oder partner in db nicht vorhanden wird neuer datensatz gespeichert */
-
-        if (! $fehler && $numrows_3 < 1) {
-            /* Partnerdaten ohne Kontoverbindung */
-            $partner_id = $this->letzte_partner_id ();
-            $partner_id = $partner_id + 1;
-            $db_abfrage = "INSERT INTO PARTNER_LIEFERANT VALUES (NULL, $partner_id, '$clean_arr[partnername]','$clean_arr[strasse]', '$clean_arr[hausnummer]','$clean_arr[plz]','$clean_arr[ort]','$clean_arr[land]','1')";
-            DB::insert( $db_abfrage );
-            /* Protokollieren */
-            $last_dat = DB::getPdo()->lastInsertId();
-            protokollieren ( 'PARTNER_LIEFERANT', $last_dat, '0' );
-
-            if (! empty ( $kreditinstitut ) or ! empty ( $kontonummer ) or ! empty ( $blz )) {
-                /* Kontodaten speichern */
-                $konto_id = $this->letzte_geldkonto_id ();
-                $konto_id = $konto_id + 1;
-                $db_abfrage = "INSERT INTO GELD_KONTEN VALUES (NULL, '$konto_id','$clean_arr[partnername] - Konto','$clean_arr[partnername]', '$clean_arr[KONTONUMMER]','$clean_arr[BLZ]', '$clean_arr[kreditinstitut]','1')";
-                DB::insert( $db_abfrage );
-                /* Protokollieren */
-                $last_dat = DB::getPdo()->lastInsertId();
-                protokollieren ( 'GELD_KONTEN', $last_dat, '0' );
-                /* Geldkonto dem Partner zuweisen */
-                $letzte_zuweisung_id = $this->letzte_zuweisung_geldkonto_id ();
-                $letzte_zuweisung_id = $letzte_zuweisung_id + 1;
-                $db_abfrage = "INSERT INTO GELD_KONTEN_ZUWEISUNG VALUES (NULL, '$letzte_zuweisung_id','$konto_id', 'Partner','$partner_id', '1')";
-                DB::insert( $db_abfrage );
-            }
-            if (isset ( $resultat )) {
-                hinweis_ausgeben ( "Partner $clean_arr[partnername] wurde gespeichert." );
-                weiterleiten_in_sec ( route('legacy::rechnungen::index', ['option' => 'partner_erfassen'], false), 2 );
-            }
-        } // ende fehler
-        if ($numrows_3 > 0) {
-            fehlermeldung_ausgeben ( "Partner $clean_arr[partnername] exisitiert bereits." );
-            weiterleiten_in_sec ( route('legacy::rechnungen::index', ['option' => 'partner_erfassen'], false), 2 );
-        }
-        session()->forget('partnername');
-        session()->forget('strasse');
-        session()->forget('hausnummer');
-        session()->forget('plz');
-        session()->forget('ort');
-        session()->forget('land');
-        session()->forget('kreditinstitut');
-        session()->forget('KONTONUMMER');
-        session()->forget('BLZ');
-    } // Ende funktion
 
     /* Letzte Partner ID */
     function letzte_partner_id() {
@@ -251,33 +154,6 @@ class partner extends rechnung {
         }
         echo "</select><label for=\"$id\">$label</label>";
         echo "<div><br>\n";
-    }
-    function partner_liste() {
-        $partner_arr = $this->partner_in_array ();
-        echo "<table class=\"sortable\">";
-        // echo "<tr class=\"feldernamen\"><td width=\"200px\">Name</td><td>Anschrift</td><td>Details</td></tr>";
-        echo "<tr><th>Partner</th><th>Anschrift</th><th>Details</th></tr>";
-        $zaehler = 0;
-        for($a = 0; $a < count ( $partner_arr ); $a ++) {
-            $zaehler ++;
-            $partner_id = $partner_arr [$a] ['PARTNER_ID'];
-            $partner_name = $partner_arr [$a] ['PARTNER_NAME'];
-            $partner_link_detail = "<a href='" . route('legacy::partner::index', ['option' => 'partner_im_detail', 'partner_id' => $partner_id]) . "'>$partner_name</a>";
-            $link_detail_hinzu = "<a href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'PARTNER_LIEFERANT', 'detail_id' => $partner_id]) . "'>Details</a>";
-            $partner_strasse = $partner_arr [$a] ['STRASSE'];
-            $partner_nr = $partner_arr [$a] ['NUMMER'];
-            $partner_plz = $partner_arr [$a] ['PLZ'];
-            $partner_ort = $partner_arr [$a] ['ORT'];
-            $anschrift = "$partner_strasse $partner_nr, $partner_plz $partner_ort";
-            if ($zaehler == 1) {
-                echo "<tr valign=\"top\" class=\"zeile1\"><td>$partner_link_detail</td><td>$anschrift</td><td>$link_detail_hinzu</td></tr>";
-            }
-            if ($zaehler == 2) {
-                echo "<tr valign=\"top\" class=\"zeile2\"><td>$partner_link_detail</td><td>$anschrift</td><td>$link_detail_hinzu</td></tr>";
-                $zaehler = 0;
-            }
-        }
-        echo "</table><br>\n";
     }
     function partner_auswahl() {
         session()->put('url.intended', URL::previous());

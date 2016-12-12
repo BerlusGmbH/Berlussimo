@@ -42,10 +42,28 @@ class rechnungen
     var $rechnungs_empfaenger_ort;
     public $rechnung_dat;
     public $kb;
-    public $kb;
     public $status_bestaetigt;
-    public $rechnung_dat;
     public $rechnungs_skontoabzug;
+    public $anzahl_positionen;
+    public $rechnungs_kuerzel;
+    public $rechnungsnummer_kuerzel;
+    public $rechnung_aussteller_partner_id;
+    public $rechnung_empfaenger_partner_id;
+    public $rechnungs_typ_druck;
+    public $anzahl_positionen_aktuell;
+    public $ursprungs_array;
+    public $rg_betrag;
+    public $rg_prozent;
+    public $v_beleg_nr;
+    public $anz_preise;
+    public $v_rabatt_satz;
+    public $v_preis;
+    public $rechnungs_brutto_schluss;
+    public $rechnungs_mwst_schluss;
+    public $rechnungs_netto_schluss;
+    public $rechnungs_skontoabzug_schluss;
+    public $rechnungs_brutto_schluss_a;
+    public $ursprungs_array_a;
 
     function get_summe_kosten_pool($empf_typ, $empf_id)
     {
@@ -58,7 +76,12 @@ class rechnungen
     function verbindlichkeiten($jahr)
     {
         if (!session()->has('partner_id')) {
-            die ('Partner wählen');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Bitte wählen Sie einen Partner.'),
+                0,
+                null,
+                route('legacy::rechnungen::index', ['option' => 'partner_wechseln'])
+            );
         } else {
             $p_id = session()->get('partner_id');
             $abfrage = "SELECT * FROM `RECHNUNGEN` WHERE `RECHNUNGSTYP` IN ('Rechnung') AND `EMPFAENGER_TYP` = 'Partner' AND `EMPFAENGER_ID` = '$p_id' AND `AKTUELL` = '1' AND `STATUS_BESTAETIGT` = '0' && DATE_FORMAT(RECHNUNGSDATUM, '%Y') = '$jahr' ORDER BY `RECHNUNGEN`.`NETTO`  DESC";
@@ -91,7 +114,12 @@ class rechnungen
     function forderungen($jahr)
     {
         if (!session()->has('partner_id')) {
-            die ('Partner wählen');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Bitte wählen Sie einen Partner.'),
+                0,
+                null,
+                route('legacy::rechnungen::index', ['option' => 'partner_wechseln'])
+            );
         } else {
             $p_id = session()->get('partner_id');
             $abfrage = "SELECT * FROM `RECHNUNGEN` WHERE `RECHNUNGSTYP` IN ('Rechnung') AND `AUSSTELLER_TYP` = 'Partner' AND `AUSSTELLER_ID` = '$p_id' AND `AKTUELL` = '1' AND `STATUS_BEZAHLT` = '0' && DATE_FORMAT(RECHNUNGSDATUM, '%Y') = '$jahr' ORDER BY `RECHNUNGEN`.`NETTO`  DESC";
@@ -132,15 +160,12 @@ class rechnungen
             $s = 0;
             $s_brutto = 0;
             for ($a = 0; $a < $anz; $a++) {
-                $beleg_nr = $artikel_arr [$a] ['BELEG_NR'];
-                $pos = $artikel_arr [$a] ['POSITION'];
                 $einzel_preis = $artikel_arr [$a] ['EINZEL_PREIS'];
                 $menge = $artikel_arr [$a] ['MENGE'];
                 $g_summe_pos = $artikel_arr [$a] ['GESAMT_SUMME'];
                 $mwst = $artikel_arr [$a] ['MWST_SATZ'];
                 $kurz_b = $artikel_arr [$a] ['KURZBESCHREIBUNG'];
                 $r_nr = $artikel_arr [$a] ['RECHNUNGSNUMMER'];
-                $r_datum = $artikel_arr [$a] ['RECHNUNGSDATUM'];
                 $skonto_proz = $artikel_arr [$a] ['SKONTO'];
                 $rabatt = $artikel_arr [$a] ['RABATT_SATZ'];
                 $pos_brutto = ((($g_summe_pos / 100) * $rabatt) / 100 * $mwst + $g_summe_pos) / 100 * (100 - $skonto_proz);
@@ -149,7 +174,6 @@ class rechnungen
                 $s_brutto += $pos_brutto;
             }
             echo "<tr><td><b>$s</td><td><b>NETTO</td><td><b>BRUTTO</td><td><b>$s_brutto</td><td><b>$kos_bez</td><td></td></tr>";
-            // echo "<tr><td><b>$s</b></td><td>SUMME</td><td></td></tr>";
             echo "</table>";
         }
     }
@@ -161,47 +185,6 @@ class rechnungen
             return $result;
         } else {
             echo "keine daten";
-        }
-    }
-
-    function rechnungs_partner_ermitteln_alt()
-    {
-        if ($this->rechnungs_aussteller_typ == 'Partner') {
-
-            /* Partnernamen holen */
-            $this->rechnungs_aussteller_name = $this->get_partner_name($this->rechnungs_aussteller_id);
-            /* Anschriften holen */
-            $this->get_aussteller_info($this->rechnungs_aussteller_id);
-        }
-
-        if ($this->rechnungs_empfaenger_typ == 'Partner') {
-            $this->rechnungs_empfaenger_name = $this->get_partner_name($this->rechnungs_empfaenger_id);
-            /* Anschriften holen */
-            $this->get_empfaenger_info($this->rechnungs_empfaenger_id);
-            /* Ende Partnernamen holen */
-        }
-
-        if ($this->rechnungs_aussteller_typ == 'Kasse') {
-            /* Kassennamen holen */
-            $kassen_info = new kasse ();
-            $kassen_info->get_kassen_info($this->rechnungs_aussteller_id);
-            $this->rechnungs_aussteller_name = "" . $kassen_info->kassen_name . "<br><br>" . $kassen_info->kassen_verwalter . "";
-        }
-
-        if ($this->rechnungs_empfaenger_typ == 'Kasse') {
-            /* Kassennamen holen */
-            $kassen_info = new kasse ();
-            $kassen_info->get_kassen_info($this->rechnungs_empfaenger_id);
-            $this->rechnungs_empfaenger_name = "" . $kassen_info->kassen_name . "<br><br>" . $kassen_info->kassen_verwalter . "";
-        }
-
-        if ($this->rechnungs_aussteller_typ == 'Lager') {
-            $lager_info = new lager ();
-            $this->rechnungs_aussteller_name = $lager_info->lager_bezeichnung($this->rechnungs_aussteller_id);
-        }
-        if ($this->rechnungs_empfaenger_typ == 'Lager') {
-            $lager_info = new lager ();
-            $this->rechnungs_empfaenger_name = $lager_info->lager_bezeichnung($this->rechnungs_empfaenger_id);
         }
     }
 
@@ -264,7 +247,6 @@ class rechnungen
     {
         $result = DB::select("SELECT * FROM RECHNUNGEN WHERE BELEG_NR='$belegnr' && AKTUELL='1' ORDER BY BELEG_NR DESC LIMIT 0,1");
         if (!empty($result)) {
-
             /* Skontogesamtbetrag updaten */
             $this->update_skontobetrag($belegnr);
             $this->update_nettobetrag($belegnr);
@@ -285,13 +267,9 @@ class rechnungen
             $this->rechnungs_brutto = $row ['BRUTTO'];
             $this->rechnungs_mwst = $this->rechnungs_brutto - $this->rechnungs_netto;
             $this->rechnungs_skontobetrag = $row ['SKONTOBETRAG'];
-
-            // die("$this->rechnungs_brutto = $this->rechnungs_netto + $this->rechnungs_mwst");
             $this->rechnungs_brutto = $this->rechnungs_netto + $this->rechnungs_mwst;
 
             $this->rechnungs_skontoabzug = $this->rechnungs_brutto - $this->rechnungs_skontobetrag;
-
-            // die("$this->rechnungs_mwst = $this->rechnungs_brutto - $this->rechnungs_netto;");
 
             $this->rechnungs_aussteller_typ = $row ['AUSSTELLER_TYP'];
             $this->rechnungs_aussteller_id = $row ['AUSSTELLER_ID'];
@@ -340,7 +318,6 @@ class rechnungen
 
     function summe_netto_positionen($beleg_nr)
     {
-        $nsum = 0;
         $result = DB::select("SELECT SUM(GESAMT_NETTO) AS NETTO_BETRAG FROM RECHNUNGEN_POSITIONEN WHERE `BELEG_NR`='$beleg_nr' && AKTUELL='1'");
         return $result[0]['NETTO_BETRAG'];
     }
@@ -491,7 +468,7 @@ class rechnungen
     function drop_rechnungs_typen($beschreibung, $name, $id, $js, $selected_value)
     {
         $enum_arr = $this->enum_typen_arr('RECHNUNGEN', 'RECHNUNGSTYP');
-        if (is_array($enum_arr)) {
+        if (!empty($enum_arr)) {
             $enum_arr = msort($enum_arr);
             echo "<div class='input-field'>";
             echo "<select name=\"$name\" id=\"$id\" $js>\n";
@@ -530,7 +507,6 @@ class rechnungen
         $rb = new rechnung ();
         $rb->rechnungs_kopf($belegnr);
         $beleg_feld = "document.getElementById('belegnr').value";
-        $js_display_pos = "onLoad=\"display_positionen($beleg_feld)\"";
         echo "<div id=\"positionen\" >";
         echo "<script type=\"text/javascript\">display_positionen($belegnr)</script>\n";
         /* Rechnungsfooter d.h. Netto Brutto usw. */
@@ -539,17 +515,12 @@ class rechnungen
 
         $f = new formular ();
         $f->erstelle_formular("Artikelsuche  $this->rechnungs_aussteller_name", NULL);
-        // echo "Rechnung $this->rechnungsnummer hat $this->anzahl_positionen_aktuell Positionen<br>";
         echo "Lieferant: $this->rechnungs_aussteller_name<br>";
-        // $f->text_feld($beschreibung, $name, $wert, $size, $id, $js_action);
         $f->text_feld('Artikelnr/Leistungnr', 'suche_artikelnr', '', '15', 'suche_artikelnr', '');
         $art_feld = "document.getElementById('suche_artikelnr').value";
-        // $js_check_art = "onclick='checkartikel($this->rechnungs_aussteller_id, $art_feld)'";
         $js_check_art = "onclick=\"ajax_check_art($this->rechnungs_aussteller_id, $art_feld)\";";
         $f->button_js('suchen_btn', 'Suchen', $js_check_art);
-        $pos = $this->anzahl_positionen_aktuell + 1;
         $js_neu_berechnen = "onKeyUp=\"refresh_preise()\" onmouseover=\"refresh_preise()\" ";
-        $js_listenpreis_berechnen = "onKeyUp=\"listen_stueckpreis()\" ";
         $js_listenpreis_berechnen_von_enetto = "onKeyUp=\"listen_stueckpreis_rabatt()\" onclick=\"listen_stueckpreis_rabatt()\"";
         $f->erstelle_formular("Positionen erfassen für Rechnung $this->rechnungsnummer", NULL);
 
@@ -616,7 +587,6 @@ class rechnungen
         $rb = new rechnung ();
         $rb->rechnungs_kopf($belegnr);
         $beleg_feld = "document.getElementById('belegnr').value";
-        $js_display_pos = "onLoad=\"display_positionen($beleg_feld)\"";
         $fo = new formular ();
 
         echo "</p>";
@@ -647,7 +617,7 @@ class rechnungen
         echo "Lieferant: $this->rechnungs_aussteller_name<br>";
 
         // $f->text_feld($beschreibung, $name, $wert, $size, $id, $js_action);
-        $js_autovv = "onkeyup=\"autovervoll($this->rechnungs_aussteller_id, this.value);\"";
+        $js_autovv = "onkeyup=\"autovervoll_with_delay($this->rechnungs_aussteller_id, this.value);\"";
         echo "<div>";
         $f->text_feld('Artikelnr/Leistungnr', 'suche_artikelnr', '', '25', 'suche_artikelnr', $js_autovv);
 
@@ -659,24 +629,14 @@ class rechnungen
         echo "</div>";
         echo "<div id=\"artikel_vorhanden\" class=\"artikel_vorhanden\"></div>";
 
-        // $js_check_art = "onclick='checkartikel($this->rechnungs_aussteller_id, $art_feld)'";
-        // $js_check_art = "onclick=\"ajax_check_art($this->rechnungs_aussteller_id, $art_feld)\";";
-        // $f->button_js('suchen_btn', 'Suchen', $js_check_art);
-        $pos = $this->anzahl_positionen_aktuell + 1;
         $js_neu_berechnen = "onKeyUp=\"refresh_preise()\" onmouseover=\"refresh_preise()\" ";
-        $js_listenpreis_berechnen = "onKeyUp=\"listen_stueckpreis()\" ";
         $js_listenpreis_berechnen_von_enetto = "onKeyUp=\"listen_stueckpreis_rabatt()\" onclick=\"listen_stueckpreis_rabatt()\"";
-
-        echo "</div>";
-        // echo "<br>";
 
         $f->erstelle_formular("Positionen erfassen für Rechnung $this->rechnungsnummer", NULL);
         echo "<table><tr>";
         echo "<td>";
         $f->hidden_feld('belegnr', $belegnr);
         $f->hidden_feld('lieferant_id', $this->rechnungs_aussteller_id);
-        // $f->text_feld('Pos', 'pos', $pos, '3', 'pos', '');
-        // echo "</td><td>";
         $f->text_feld('Artikelnr/Leistungnr', 'textf_artikelnr', '', '20', 'textf_artikelnr', '');
         echo "</td><td>";
         $f->text_feld('Menge', 'menge', '', '10', 'menge', $js_neu_berechnen);
@@ -735,7 +695,6 @@ class rechnungen
         $js_check_art = "onclick=\"ajax_check_art($artikel_lieferant, $art_feld)\";";
         $f->button_js('suchen_btn', 'Suchen', $js_check_art);
         $js_neu_berechnen = "onKeyUp=\"refresh_preise()\" onmouseover=\"refresh_preise()\" ";
-        $js_listenpreis_berechnen = "onKeyUp=\"listen_stueckpreis()\" ";
         $js_listenpreis_berechnen_von_enetto = "onKeyUp=\"listen_stueckpreis_rabatt()\" onclick=\"listen_stueckpreis_rabatt()\"";
         $f->erstelle_formular("Position $pos ändern in Rechnung $this->rechnungsnummer", NULL);
 
@@ -744,8 +703,6 @@ class rechnungen
         $f->hidden_feld('pos', $pos);
         $f->hidden_feld('belegnr', $belegnr);
         $f->hidden_feld('lieferant_id', $artikel_lieferant);
-        // $f->text_feld('Pos', 'pos', $pos, '3', 'pos', '');
-        // echo "</td><td>";
         $f->text_feld('Artikelnr/Leistungnr', 'textf_artikelnr', '', '20', 'textf_artikelnr', '');
         echo "</td><td>";
         $f->text_feld('Menge', 'menge', '', '10', 'menge', $js_neu_berechnen);
@@ -787,34 +744,6 @@ class rechnungen
             $row = $result[0];
             return $row ['ART_LIEFERANT'];
         }
-    }
-
-    function dropdown_v_einheiten_alt($beschreibung, $name, $id)
-    {
-        echo "<label for=\"$id\">$beschreibung</label>\n";
-        echo "<select name=\"$name\" id=\"$id\">\n";
-        echo "<option value=\"Stk\">Stück</option>\n";
-        echo "<option value=\"Std\">Stunden</option>\n";
-        echo "<option value=\"lfm\">Meter</option>\n";
-        echo "<option value=\"m²\">m²</option>\n";
-        echo "<option value=\"m³\">m³</option>\n";
-        echo "<option value=\"KAN\">KAN</option>\n";
-        echo "<option value=\"SCK\">Sack</option>\n";
-        echo "<option value=\"kg\">kg</option>\n";
-        echo "<option value=\"VE\">VE</option>\n";
-        echo "<option value=\"l\">Liter</option>\n";
-        echo "<option value=\"ml\">ml</option>\n";
-        echo "<option value=\"Tonne\">Tonne</option>\n";
-        echo "<option value=\"Rolle\">Rolle</option>\n";
-        echo "<option value=\"Dose\">Dose</option>\n";
-        echo "<option value=\"Pak\">Paket</option>\n";
-        echo "<option value=\"%\">Prozent</option>\n";
-        echo "<option value=\"Tube\">Tube</option>\n";
-        echo "<option value=\"Kartusche\">Kartusche</option>\n";
-        echo "<option value=\"pauschale\">Pauschale</option>\n";
-        echo "<option value=\"Paar\">Paar</option>\n";
-        echo "<option value=\"Set\">Set</option>\n";
-        echo "</select>\n";
     }
 
     function form_lieferschein_erfassen($beleg_nr)
@@ -882,9 +811,6 @@ class rechnungen
                     if ($this->rechnungstyp == 'Gutschrift') {
                         $g->dropdown_geldkonten_alle("$this->rechnungs_aussteller_name -> Geldkonto auswählen", $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id);
                     }
-                    $js_buchungsopt = "onChange=\"buchungsart(auswahl)\"";
-                    $js_optionen = 'TEST';
-                    // $this->dropdown_buchungsoptionen('Buchungsart wählen', 'buchungsart', 'buchungsart', 'BLABLA');
                     $this->dropdown_buchungs_art('Buchungsart wählen', 'buchungsart', 'buchungsart', 'BLABLA');
                     if ($this->rechnungstyp == 'Rechnung' or $this->rechnungstyp == 'Buchungsbeleg') {
                         $b->dropdown_kostenrahmen_nr('kontenrahmen', $this->rechnungs_empfaenger_typ, $this->rechnungs_empfaenger_id);
@@ -899,9 +825,6 @@ class rechnungen
                     $f->hidden_feld("belegnr", "$belegnr");
                     $f->text_feld('Datum (dd.mm.jjjj)', 'datum', session()->get('temp_datum'), '10', 'datum', '');
                     $f->text_feld('Kontoauszugsnr', 'kontoauszugsnr', session()->get('temp_kontoauszugsnummer'), '10', 'kontoauszugsnr', '');
-                    // $f->text_feld_inaktiv("Kontobezeichnung", "kontobezeichnung", "", "20", 'kontobezeichnung');
-                    // $f->text_feld_inaktiv("Kontoart", "kontoart", "", "20", 'kontoart');
-                    // $f->text_feld_inaktiv("Kostengruppe", "kostengruppe", "", "20", 'kostengruppe');
                     $this->kb = str_replace("<br>", "\n", $this->kurzbeschreibung);
                     $f->text_bereich('Buchungstext', 'vzweck', "Erfnr:$this->belegnr, WE:$this->empfaenger_eingangs_rnr Zahlungsausgang Rnr:$this->rechnungsnummer, $this->kb", 60, 60, 'v_zweck_buchungstext');
                     $pruefen = "onClick=\"felder_pruefen(this.form);return false;\"";
@@ -978,15 +901,12 @@ class rechnungen
     {
         $this->rechnung_grunddaten_holen($belegnr);
         $f = new formular ();
-        // print_r($this);
         if ($this->status_bezahlt == '1') {
             $f->fieldset("Rechnung $this->rechnungsnummer von $this->rechnungs_aussteller_name an $this->rechnungs_empfaenger_name ", 'xxx');
             echo "<h1>Rechnung $this->rechnungsnummer von $this->rechnungs_aussteller_name an $this->rechnungs_empfaenger_name wurde gezahlt</h1>";
             $f->fieldset_ende();
         } else {
-
             if ($this->status_zahlung_freigegeben == '1') {
-                // echo "<h1>BITTE NICHT BUCHEN, WIRD BEARBEITET - SIVAC</h1>";
                 $g = new geldkonto_info ();
                 $b = new buchen ();
                 $f->fieldset("Rechnung von $this->rechnungs_aussteller_name an $this->rechnungs_empfaenger_name, Rechnungsnr: $this->rechnungsnummer,  Erfassungsnummer: $this->belegnr", 'rech_buchen');
@@ -1153,13 +1073,13 @@ class rechnungen
     function rechnung_als_gezahlt($belegnr, $datum)
     {
         $db_abfrage = "UPDATE RECHNUNGEN SET STATUS_BEZAHLT='1', BEZAHLT_AM='$datum' WHERE BELEG_NR='$belegnr' && AKTUELL='1'";
-        $resultat = DB::update($db_abfrage);
+        DB::update($db_abfrage);
     }
 
     function rechnung_als_bestaetigt($belegnr, $datum)
     {
         $db_abfrage = "UPDATE RECHNUNGEN SET STATUS_BESTAETIGT='1', BEZAHLT_AM='$datum' WHERE BELEG_NR='$belegnr' && AKTUELL='1'";
-        $resultat = DB::update($db_abfrage);
+        DB::update($db_abfrage);
     }
 
     function rechnung_deaktivieren($rechnung_dat)
@@ -1387,7 +1307,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         /* Druck LOGO */
 
         $d = new detail ();
-        $mandanten_nr = $d->finde_mandanten_nr($partner_id);
 
         $this->rechnungsbuch_anzeigen_ein_kurz_zahlung($rechnungen_arr);
         $form->ende_formular();
@@ -1467,7 +1386,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         /* Druck LOGO */
 
         $d = new detail ();
-        $mandanten_nr = $d->finde_mandanten_nr($partner_id);
 
         $this->rechnungsbuch_anzeigen_ein_kurz_zahlung_sepa($rechnungen_arr);
         $form->ende_formular();
@@ -1548,7 +1466,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         /* Druck LOGO */
 
         $d = new detail ();
-        $mandanten_nr = $d->finde_mandanten_nr($partner_id);
 
         $this->rechnungsbuch_anzeigen_aus_kurz_zahlung_sepa($rechnungen_arr);
         $form->ende_formular();
@@ -1752,32 +1669,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         echo "UNbestätigte rech";
     }
 
-    function folge_rechnungs_nr_arr($beleg_nr)
-    {
-        $result = DB::select("SELECT BELEG_NR FROM RECHNUNGEN_POSITIONEN WHERE U_BELEG_NR='$beleg_nr' && U_BELEG_NR IS NOT NULL && AKTUELL='1' GROUP BY U_BELEG_NR");
-        /* Wenn urpsrungsrechnungen vorhanden, ins array hinzufügen */
-        if (!empty($result)) {
-            $this->ursprungs_array [$beleg_nr] = $result;
-        }
-
-        /* Prüfen ob aktuelle rechnung vorrechnungen hat */
-        if (is_array($this->ursprungs_array [$beleg_nr])) {
-            $anzahl_zu_beleg = count($this->ursprungs_array [$beleg_nr]);
-
-            if ($anzahl_zu_beleg > 0) {
-                for ($a = 0; $a < $anzahl_zu_beleg; $a++) {
-                    $u_b_nr = $this->ursprungs_array [$beleg_nr] [$a] ['U_BELEG_NR'];
-                    // echo '<b>'.$u_b_nr." $beleg_nr".'</b><br>';
-                    if ($beleg_nr != $u_b_nr) {
-                        $this->ursprungs_rechnungs_nr_arr($u_b_nr);
-                    } else {
-                        // $this->ursprungs_array[$beleg_nr][][U_BELEG_NR] = $beleg_nr;
-                    }
-                }
-            }
-        }
-    }
-
     function ursprungs_rechnungs_nr_arr($beleg_nr)
     {
         $result = DB::select("SELECT U_BELEG_NR FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR='$beleg_nr' && U_BELEG_NR IS NOT NULL && AKTUELL='1' GROUP BY U_BELEG_NR");
@@ -1806,7 +1697,9 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $this->rechnung_grunddaten_holen($beleg_nr);
         /* Prüfen ob Rechnung vorhanden */
         if (!$this->rechnungsnummer) {
-            die ("Rechnung exisitiert nicht");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Rechnung exisitiert nicht")
+            );
         }
 
         /* Partnerinformationen einholen */
@@ -1814,10 +1707,10 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $p->get_partner_info($this->rechnung_aussteller_partner_id);
 
         $table_arr = $this->rechnungs_positionen_arr($beleg_nr);
-        $anz = count($table_arr);
+        $anz = $this->anzahl_positionen;
         $g_netto = 0;
         $new_pos = 0;
-        for ($index = 0; $index < sizeof($table_arr); $index++) {
+        for ($index = 0; $index < $anz; $index++) {
             $menge = $table_arr [$index] ['MENGE'];
             $preis = $table_arr [$index] ['PREIS'];
             $artikel_nr = $table_arr [$index] ['ARTIKEL_NR'];
@@ -1900,13 +1793,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             }
             $new_pos++;
         }
-        /*
-		 * echo '<pre>';
-		 * print_r($tab_arr);
-		 * die();
-		 */
 
-        // $pdf->ezText(" $this->rechnungs_mwst = $this->rechnungs_brutto - $this->rechnungs_netto $g_netto", 20);
         /* Spaltendefinition */
         $cols = array(
             'POSITION' => "<b>POS.</b>",
@@ -2038,18 +1925,15 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         }
 
         if ($this->check_abschlag($beleg_nr) == false && $this->rechnungstyp == 'Schlussrechnung') {
-            // $pdf->ezSetDy(-10); //abstand
-            // $pdf->ezText("FEHLER TEILRECHNUGEN FEHLEN!!!", 30, array('justification'=>'full'));
-            fehlermeldung_ausgeben('PDF-Ansicht nicht möglich, erst Teilrechnungen zu dieser Schlussrechnung wählen!!');
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('PDF-Ansicht nicht möglich, erst Teilrechnungen zu dieser Schlussrechnung wählen.')
+            );
         }
 
         if ($this->rechnungstyp != 'Angebot') {
             /* Zahlungshinweis bzw mit freudlichen Grössen usw vom Aussteller */
             $zahlungshinweis_org = str_replace("<br>", "\n", $bpdf->zahlungshinweis_org);
-            // $pdf->ezText("$zahlungshinweis_org", 10);
             $r_hinweis = "\n\nWir danken Ihnen für Ihren Auftrag und hören gern von Ihnen. \n";
-            // $r_hinweis .= "Bitte überweisen Sie den fälligen Betrag auf das unten genannte Geldkonto. ";
             $r_hinweis .= "Die gelieferte Ware und die erbrachte Arbeitsleistung bleibt bis zur vollständigen Bezahlung unser Eigentum. ";
             $r_hinweis .= "Lt. Gesetzgeber sind wir zu dem Hinweis verpflichtet: Die gesetzliche Aufbewahrungspflicht für diese Rechnung beträgt für Privatpersonen 2 Jahre / Unternehmen gemäß der gesetzlichen Bestimmungen. Die Aufbewahrungsfrist beginnt mit dem Schluß dieses Kalenderjahres.";
             $r_hinweis .= "\n\n$zahlungshinweis_org";
@@ -2071,13 +1955,8 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     function rechnungs_positionen_arr($belegnr)
     {
         $result = DB::select("SELECT *, FORMAT((MENGE*PREIS/100)*(100-RABATT_SATZ),2) AS GESAMT_NETTO1 FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR='$belegnr' && AKTUELL='1' ORDER BY POSITION ASC");
-        $numrows = count($result);
-        if ($numrows < 1) {
-            $this->anzahl_positionen = '0';
-        } else {
-            $this->anzahl_positionen = $numrows;
-            return $result;
-        }
+        $this->anzahl_positionen = count($result);
+        return $result;
     } // nd function
 
     /* Folgesrechnungen ermitteln OKAY aber ohne ausgangsrechnungen */
@@ -2096,10 +1975,11 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     function get_ueberschrift($beleg_nr, $pos)
     {
         $result = DB::select("SELECT UEBERSCHRIFT FROM POS_GRUPPE WHERE BELEG_NR='$beleg_nr' && POS='$pos' && AKTUELL = '1' ORDER BY B_DAT DESC");
-        $row = $result[0];
-        if (is_array($row)) {
-            echo $row ['UEBERSCHRIFT'];
-            return $row ['UEBERSCHRIFT'];
+        if (!empty($result[0])) {
+            echo $result[0]['UEBERSCHRIFT'];
+            return $result[0]['UEBERSCHRIFT'];
+        } else {
+            return '';
         }
     }
 
@@ -2179,9 +2059,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             $z++;
             $this->get_sicherheitseinbehalt($beleg_nr);
             if ($this->rg_betrag > '0.00') {
-                $g_brutto_a = nummer_punkt2komma_t($rr->rechnungs_brutto);
                 $pdf_tab [$z] ['RDATUM'] = "<b>abzüglich</b>";
-                // $pdf_tab[$z]['RNR'] = "<b>Sicherheitseinbehalt von $this->rg_prozent % auf die Bruttosumme von $g_brutto_a €</b>";
                 $pdf_tab [$z] ['RNR'] = "<b>SEB von $this->rg_prozent %</b>";
 
                 $pdf_tab [$z] ['BRUTTO'] = "<b>" . nummer_punkt2komma_t($this->rg_betrag) . "€</b>";
@@ -2280,28 +2158,28 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $this->rechnung_grunddaten_holen($beleg_nr);
         /* Prüfen ob Rechnung vorhanden */
         if (!$this->rechnungsnummer) {
-            die ("Rechnung exisitiert nicht");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Die Rechnung exisitiert nicht.")
+            );
         }
 
         /* Partnerinformationen einholen */
         $p = new partners ();
         $p->get_partner_info($this->rechnung_aussteller_partner_id);
 
-        /* ezPDF-Klasse laden */
         /* Eigene PDF-Klasse laden */
         /* Neues PDF-Objekt erstellen */
         $pdf = new Cezpdf ('a4', 'portrait');
         /* Neue Instanz von b_pdf */
         $bpdf = new b_pdf ();
         /* Header und Footer des Rechnungsaustellers in alle PDF-Seiten laden */
-        // die("hallo $this->rechnung_aussteller_partner_id");
         $bpdf->b_header($pdf, 'Partner', $this->rechnung_aussteller_partner_id, 'portrait', 'Helvetica.afm', 6);
 
         $table_arr = $this->rechnungs_positionen_arr($beleg_nr);
-        $anz = count($table_arr);
+        $anz = $this->anzahl_positionen;
         $g_netto = 0;
         $new_pos = 0;
-        for ($index = 0; $index < sizeof($table_arr); $index++) {
+        for ($index = 0; $index < $anz; $index++) {
             $menge = $table_arr [$index] ['MENGE'];
             $preis = $table_arr [$index] ['PREIS'];
             $artikel_nr = $table_arr [$index] ['ARTIKEL_NR'];
@@ -2384,13 +2262,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             }
             $new_pos++;
         }
-        /*
-		 * echo '<pre>';
-		 * print_r($tab_arr);
-		 * die();
-		 */
-
-        // $pdf->ezText(" $this->rechnungs_mwst = $this->rechnungs_brutto - $this->rechnungs_netto $g_netto", 20);
+        
         /* Spaltendefinition */
         $cols = array(
             'POSITION' => "<b>POS.</b>",
@@ -2522,10 +2394,9 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         }
 
         if ($this->check_abschlag($beleg_nr) == false && $this->rechnungstyp == 'Schlussrechnung') {
-            // $pdf->ezSetDy(-10); //abstand
-            // $pdf->ezText("FEHLER TEILRECHNUGEN FEHLEN!!!", 30, array('justification'=>'full'));
-            fehlermeldung_ausgeben('PDF-Ansicht nicht möglich, erst Teilrechnungen zu dieser Schlussrechnung wählen!!');
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('PDF-Ansicht nicht möglich, erst Teilrechnungen zu dieser Schlussrechnung wählen!!')
+            );
         }
 
         if ($this->rechnungstyp != 'Angebot') {
@@ -2559,7 +2430,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     function pool_liste_wahl()
     {
         $kos_arr = $this->get_pool_partner_arr();
-        if (is_array($kos_arr)) {
+        if (!empty($kos_arr)) {
             $anz = count($kos_arr);
             for ($a = 0; $a < $anz; $a++) {
                 $kos_typ = $kos_arr [$a] ['KOS_TYP'];
@@ -2578,9 +2449,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     function get_pool_partner_arr()
     {
         $result = DB::select("SELECT * FROM POS_POOL WHERE AKTUELL = '1' GROUP BY KOS_TYP, KOS_ID, AUSSTELLER_TYP, AUSSTELLER_ID");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function u_pool_edit($kos_typ, $kos_id, $aussteller_typ, $aussteller_id)
@@ -2589,7 +2458,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $kos_bez = $r->kostentraeger_ermitteln($kos_typ, $kos_id);
         echo $kos_bez;
         $pos_arr = $this->get_pool_pos_arr($kos_typ, $kos_id, $aussteller_typ, $aussteller_id);
-        if (is_array($pos_arr)) {
+        if (!empty($pos_arr)) {
             $anz = count($pos_arr);
             $js_prozent_spalte_plus = "<a onclick=\"spalte_prozent('+','V_PREIS')\">+%</a>";
             $js_prozent_spalte_minus = "<a onclick=\"spalte_prozent('-','V_PREIS')\">-%</a>";
@@ -2600,7 +2469,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             echo "</thead>";
             $pool_id_temp = '';
             $summ = 0;
-            $virt_pos = 0;
             $pool_sum = 0;
             for ($a = 0; $a < $anz; $a++) {
 
@@ -2718,9 +2586,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     function get_pool_pos_arr($kos_typ, $kos_id, $aussteller_typ, $aussteller_id)
     {
         $result = DB::select("SELECT *, (V_PREIS-EINZEL_PREIS)/(EINZEL_PREIS/100) AS PROZENTE FROM POS_POOL WHERE AKTUELL = '1' && KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AUSSTELLER_TYP='$aussteller_typ' && AUSSTELLER_ID='$aussteller_id' ORDER BY POOL_ID, POS, U_BELEG_NR, U_POS ASC");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function get_pool_bez($pool_id)
@@ -2805,9 +2671,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             $kos_typ_n = 'Partner';
             $kos_id_n = $rr->eigentuemer_ermitteln('Einheit', $kos_id);
         }
-
-        // echo "$kos_typ, $kos_id, $aussteller_typ, $aussteller_id,$r_datum, $f_datum, $kurzinfo";
-        // die();
         if ($kos_typ_n == $aussteller_typ && $aussteller_id == $kos_id_n) {
             $rechnungstyp = 'Buchungsbeleg';
         } else {
@@ -2816,18 +2679,14 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $datum_arr = explode('.', $r_datum);
         $jahr = $datum_arr [2];
 
-        // echo "$jahr $rechnungstyp";
-
         $r = new rechnung ();
         $letzte_aussteller_rnr = $r->letzte_aussteller_ausgangs_nr($aussteller_id, $aussteller_typ, $jahr, $rechnungstyp);
         $letzte_aussteller_rnr = $letzte_aussteller_rnr + 1;
         $letzte_aussteller_rnr1 = sprintf('%03d', $letzte_aussteller_rnr);
         /* Kürzel */
         $rechnungsdatum_sql = date_german2mysql($r_datum);
-        $rechnungs_kuerzel = $r->rechnungs_kuerzel_ermitteln($aussteller_typ, $aussteller_id, $rechnungsdatum_sql);
         $rechnungsnummer = $this->rechnungs_kuerzel . ' ' . $letzte_aussteller_rnr1 . '-' . $jahr;
-        // echo "$rechnungs_kuerzel $rechnungsnummer";
-
+        
         /* Prüfen ob Rechnung vorhanden */
         $check_rechnung = $r->check_rechnung_vorhanden($rechnungsnummer, $rechnungsdatum_sql, $aussteller_typ, $aussteller_id, $kos_typ, $kos_id, $rechnungstyp);
 
@@ -2951,8 +2810,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     {
         $f = new formular ();
         $pool_arr = $this->get_pools_arr_aktiv($kos_typ, $kos_id);
-        if (is_array($pool_arr)) {
-
+        if (!empty($pool_arr)) {
             $anz = count($pool_arr);
             for ($a = 0; $a < $anz; $a++) {
                 $pool_id = $pool_arr [$a] ['ID'];
@@ -2968,9 +2826,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     function get_pools_arr_aktiv($kos_typ, $kos_id)
     {
         $result = DB::select("SELECT * FROM POS_POOLS WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' ORDER BY AKTUELL DESC, POOL_NAME ASC");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function rechnungsausgangsbuch_pdf($von_typ, $von_id, $monat, $jahr, $rechnungstyp, $sort = 'ASC')
@@ -2978,8 +2834,10 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         /* Ausgangsbuch */
         $rechnungen_arr = $this->ausgangsrechnungen_arr_sort($von_typ, $von_id, $monat, $jahr, $rechnungstyp, $sort);
 
-        if (!is_array($rechnungen_arr)) {
-            die ("Keine $rechnungstyp vorhanden");
+        if (empty($rechnungen_arr)) {
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Keine $rechnungstyp vorhanden")
+            );
         } else {
             $gesamt_brutto = 0;
             $gesamt_gut_retour = 0;
@@ -3193,8 +3051,10 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         /* Ausgangsbuch */
         $rechnungen_arr = $this->eingangsrechnungen_arr_sort($von_typ, $von_id, $monat, $jahr, $rechnungstyp, $sort);
 
-        if (!is_array($rechnungen_arr)) {
-            die ("Keine $rechnungstyp vorhanden");
+        if (empty($rechnungen_arr)) {
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Keine $rechnungstyp vorhanden")
+            );
         } else {
             $gesamt_brutto = 0;
             $gesamt_gut_retour = 0;
@@ -3347,7 +3207,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
 
     function eingangsrechnungen_arr_sort($empfaenger_typ, $empfaenger_id, $monat, $jahr, $rechnungstyp, $sort = 'ASC')
     {
-        // echo "<h1>$monat</h1>";
         if ($rechnungstyp == 'Rechnung') {
             $r_sql = "(RECHNUNGSTYP='$rechnungstyp' OR RECHNUNGSTYP='Stornorechnung' OR RECHNUNGSTYP='Gutschrift' OR RECHNUNGSTYP='Teilrechnung' OR RECHNUNGSTYP='Schlussrechnung')";
         } else {
@@ -3493,33 +3352,10 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         return $row ['EMPFAENGER_EINGANGS_RNR'];
     }
 
-    function angebot_speichern2($aussteller_typ, $aussteller_id, $empfaenger_typ, $empfaenger_id, $kurzinfo)
-    {
-        $id = last_id2('RECHNUNGEN', 'BELEG_NR') + 1;
-
-        $letzte_aussteller_rnr = $this->letzte_ausgangs_ang_nr($aussteller_typ, $aussteller_id);
-        $n_ang_nr = $letzte_aussteller_rnr + 1;
-        $n_ang_nr_3 = sprintf('%03d', $n_ang_nr);
-        $ang_nr = "AN-$aussteller_id-$n_ang_nr_3"; // A-Angebot dann id dann letze angnr +1 z.B. A-1-001
-
-        $letzte_empfaenger_rnr = $this->letzte_eingangs_ang_nr($empfaenger_typ, $empfaenger_id);
-        $n_empfaenger_rnr = $letzte_empfaenger_rnr + 1;
-        $rechnungsdatum = date("Y-m-d");
-        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$id', '$ang_nr', '$n_ang_nr', '$n_empfaenger_rnr', 'Angebot', '$rechnungsdatum','$rechnungsdatum', '0.00','0.0','0.00', '$aussteller_typ', '$aussteller_id','$empfaenger_typ', '$empfaenger_id','1', '1', '0', '0', '1', '0', '0', '$rechnungsdatum', '$rechnungsdatum', '$kurzinfo', '9999999')";
-        DB::insert($db_abfrage);
-
-        /* Protokollieren */
-        $last_dat = DB::getPdo()->lastInsertId();
-        protokollieren('RECHNUNGEN', $last_dat, '0');
-        return $id;
-    }
-
     function rechnung_erstellen_ugl($rnr, $r_typ, $r_datum, $eingangsdatum, $aus_typ, $aus_id, $empf_typ, $empf_id, $faellig, $kurzinfo, $netto_betrag, $brutto_betrag, $skonto_betrag)
     {
-        // echo "$rnr, $r_typ, $r_datum, $eingangsdatum, $aus_typ, $aus_id, $empf_typ, $empf_id, $faellig, $kurzinfo, $netto_betrag,$brutto_betrag,$skonto_betrag";
         $beleg_nr = last_id2('RECHNUNGEN', 'BELEG_NR') + 1;
         $e_dat_arr = explode('.', $eingangsdatum);
-        $e_jahr = $e_dat_arr [2];
 
         $a_dat_arr = explode('.', $r_datum);
         $a_jahr = $a_dat_arr [2];
@@ -3572,7 +3408,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         echo "$rnr, $r_typ, $r_datum, $eingangsdatum, $aus_typ, $aus_id, $empf_typ, $empf_id, $faellig, $kurzinfo, $netto_betrag,$brutto_betrag,$skonto_betrag";
         $beleg_nr = last_id2('RECHNUNGEN', 'BELEG_NR') + 1;
         $e_dat_arr = explode('.', $eingangsdatum);
-        $e_jahr = $e_dat_arr [2];
 
         $a_dat_arr = explode('.', $r_datum);
         $a_jahr = $a_dat_arr [2];
@@ -3581,11 +3416,9 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $l_empf_e_nr = $this->letzte_empfaenger_eingangs_nr2($empf_typ, $empf_id, $a_jahr, $r_typ) + 1;
         $l_ausg_rnr = $this->letzte_aussteller_ausgangs_nr2($aus_typ, $aus_id, $a_jahr, $r_typ) + 1;
 
-        // $rnr = "$l_ausg_rnr-$a_jahr";
         $letzte_aussteller_rnr = sprintf('%03d', $l_ausg_rnr);
         /* Kürzel */
         $r = new rechnung ();
-        $rechnungs_kuerzel = $r->rechnungs_kuerzel_ermitteln('Partner', $aus_id, $r_datum_sql);
 
         if ($r_typ == 'Angebot') {
             $rnr = "AN-$aus_id-$letzte_aussteller_rnr"; // A-Angebot dann id dann letze angnr +1 z.B. A-1-001
@@ -3611,7 +3444,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     function meine_angebote_anzeigen()
     {
         $arr = $this->meine_angebote_arr();
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             echo "<table>";
             echo "<tr><th>ANGEBOTSNR</th><th>EMPFAENGER</th><th>KURZINFO</th><th>OPTION</th><th>PDF</th><th>BUCHUNGSBELEG</th></tr>";
@@ -3657,9 +3490,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             $aussteller_id = session()->get('partner_id');
             $result = DB::select("SELECT * FROM RECHNUNGEN WHERE  AKTUELL='1' && RECHNUNGSTYP='Angebot' && AUSSTELLER_TYP='Partner' && AUSSTELLER_ID='$aussteller_id' ORDER BY RECHNUNGSDATUM DESC");
         }
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function check_beleg_exists($kurzbeschreibung)
@@ -3690,12 +3521,12 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $kurzbeschreibung = "Buchungsbeleg aus Angebot $r->rechnungsnummer\n$r->kurzbeschreibung";
         $clean_arr ['kurzbeschreibung'] = $kurzbeschreibung;
         if ($bg = $this->check_beleg_exists($kurzbeschreibung)) {
-            $link = "a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $bg]) . "'>Beleg ansehen</a>";
-            die ("Beleg $bg schon erstellt");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Beleg $bg schon erstellt")
+            );
         }
         $clean_arr ['nettobetrag'] = 0.00;
 
-        $brutto_betrag = 0.00;
         $clean_arr ['bruttobetrag'] = 0.00;
 
         $clean_arr ['skonto'] = 0.00;
@@ -3708,7 +3539,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $zeilen_arr = $r->rechnungs_positionen_arr($belegnr);
         $anz = count($zeilen_arr);
         for ($a = 0; $a < $anz; $a++) {
-            $pos = $zeilen_arr [$a] ['POSITION'];
             $art_lieferant = $zeilen_arr [$a] ['ART_LIEFERANT'];
             $art_nr = $zeilen_arr [$a] ['ARTIKEL_NR'];
             $menge = $zeilen_arr [$a] ['MENGE'];
@@ -3733,7 +3563,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             foreach($result as $row) {
                 $b_nr = $row ['BELEG_NR'];
                 $betrag = $row ['BETRAG'];
-                $prozent = $row ['PROZENT'];
                 $bis = date_mysql2german($row ['EINBEHALT_BIS']);
                 $this->rechnung_grunddaten_holen($b_nr);
                 echo "$this->rechnungs_empfaenger_name|$this->rechnungsnummer|BETRAG:$betrag € | $bis<br>";
@@ -3744,7 +3573,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     function autokorrektur_pos($belegnr)
     {
         $pos_arr = $this->rechnungs_positionen_arr_99($belegnr);
-        if (is_array($pos_arr)) {
+        if (!empty($pos_arr)) {
             $anz = count($pos_arr);
             for ($a = 0; $a < $anz; $a++) {
                 $_pos = $pos_arr [$a] ['POSITION'];
@@ -3755,7 +3584,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
                 $_preis = $pos_arr [$a] ['PREIS'];
 
                 $_1pos_arr = $this->get_position_artikel_nr($_ubeleg, $_art_nr, $_artlieferant);
-                if (is_array($_1pos_arr)) {
+                if (!empty($_1pos_arr)) {
                     // print_r($_1pos_arr);
                     $u_rabatt = $_1pos_arr ['RABATT_SATZ'];
                     $skonto = $_1pos_arr ['SKONTO'];
@@ -3788,9 +3617,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     function rechnungs_positionen_arr_99($belegnr)
     {
         $result = DB::select("SELECT POSITION, U_BELEG_NR, ART_LIEFERANT, ARTIKEL_NR, MENGE, PREIS FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR='$belegnr' && AKTUELL='1' && (RABATT_SATZ='99.99' OR SKONTO='9.99' OR RABATT_SATZ='999.99') ORDER BY POSITION ASC");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function get_position_artikel_nr($belegnr, $art_nr, $art_lieferant)
@@ -3799,13 +3626,14 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         if (!empty($result)) {
             return $result[0];
         }
+        return [];
     }
 
     function edisp($belegnr)
     {
         $pos_arr = $this->rechnungs_positionen_arr($belegnr);
-        if (is_array($pos_arr)) {
-            $anz = count($pos_arr);
+        if (!empty($pos_arr)) {
+            $anz = $this->anzahl_positionen;
             for ($a = 0; $a < $anz; $a++) {
                 $pos = $pos_arr [$a] ['POSITION'];
                 $preis = $pos_arr [$a] ['PREIS'];
@@ -3842,7 +3670,9 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         if (!$kos_id) {
             echo $kos_bez;
             echo "<br>$kos_typ $kos_bez";
-            DIE ('NIX');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Kostenträger konnte nicht gefunden werden.")
+            );
         }
         $pool_arr = $this->get_pools_arr($kos_typ, $kos_id);
         echo "<br><table>";
@@ -3852,9 +3682,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $js = "onclick=\"u_pool_erstellen('np','kostentraeger_typ', 'dd_kostentraeger_id')\"";
         $f->button_js('btn_np', 'Unterpool erstellen', $js);
         echo "</th></tr>";
-        if (is_array($pool_arr)) {
-            // echo "<pre>";
-            // print_r($pool_arr);
+        if (!empty($pool_arr)) {
             $anz = count($pool_arr);
             $temp_akt = '';
 
@@ -3884,9 +3712,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     function get_pools_arr($kos_typ, $kos_id)
     {
         $result = DB::select("SELECT * FROM POS_POOLS WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' ORDER BY AKTUELL DESC, POOL_NAME ASC");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function u_pool_erstellen($pool_bez, $kos_typ, $kos_bez)
@@ -3895,7 +3721,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $kos_id = $b->kostentraeger_id_ermitteln($kos_typ, $kos_bez);
         $l_pool_id = last_id2('POS_POOLS', 'ID') + 1;
         $db_abfrage = "INSERT INTO POS_POOLS VALUES (NULL, '$l_pool_id', '$pool_bez', '$kos_typ','$kos_id','1')";
-        $resultat = DB::insert($db_abfrage);
+        DB::insert($db_abfrage);
     }
 
     function pool_act_deactivate($pool_id, $kos_typ, $kos_id)
@@ -3958,11 +3784,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         if ($erste_2_zeichen == 'RG') {
             $anfang_position_KOP = strpos($datei, 'KOP');
             $datei = substr($datei, $anfang_position_KOP);
-            // $datei1 = file("$tmp_datei");
-            // print_r($datei);
-            // echo '<pre>';
-            // print_r($datei1);
-            // die();
         }
 
         $ths = new detail ();
@@ -3986,7 +3807,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
 
         /* Positionsdaten */
         $ths->verantw = substr($datei, 121, 40);
-        $pos_anfang_positionen = strpos($datei, 'POA');
         $anz_pos = preg_match_all('/POA/i', $datei, $arrResult);
 
         $pos_arr = explode('POA', $datei);
@@ -3997,9 +3817,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         }
         $array = ( array )$ths;
         return $array;
-        // echo "<hr>";
-        // echo "<pre>";
-        // print_r($ths);
     }
 
     function position_filtern($pos)
@@ -4107,7 +3924,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
     function kosten_einkauf($kos_typ, $kos_id, $empf_typ, $empf_id)
     {
         $r = new rechnung ();
-        $bez = $r->kostentraeger_ermitteln($kos_typ, $kos_id);
         $arr = $this->kosten_einkauf_arr($kos_typ, $kos_id, $empf_typ, $empf_id);
         $anz = count($arr);
         echo "<table>";
@@ -4166,7 +3982,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
     function list_teil_rg_in($empf_typ, $empf_id, $aus_typ, $aus_id, $r_typ, $beleg_id)
     {
         $arr = $this->get_teil_rg_arr_in($empf_typ, $empf_id, $aus_typ, $aus_id, $r_typ);
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             echo "<table class=\"sortable\">";
             echo "<thead><tr><th colspan=\"5\">BEREITS HINZUGEFÜGT</th></tr></thead>";
@@ -4188,15 +4004,13 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
     function get_teil_rg_arr_in($empf_typ, $empf_id, $aus_typ, $aus_id, $r_typ)
     {
         $result = DB::select("SELECT * FROM RECHNUNGEN WHERE EMPFAENGER_TYP='$empf_typ' && EMPFAENGER_ID='$empf_id'  && AUSSTELLER_ID='$aus_id' && AUSSTELLER_TYP='$aus_typ' && RECHNUNGSTYP='$r_typ' && AKTUELL = '1' && BELEG_NR  IN (SELECT TEIL_R_ID FROM RECHNUNGEN_SCHLUSS WHERE AKTUELL='1')ORDER BY RECHNUNGSDATUM DESC");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function list_teil_rg($empf_typ, $empf_id, $aus_typ, $aus_id, $r_typ, $id, $name, $label)
     {
         $arr = $this->get_teil_rg_arr($empf_typ, $empf_id, $aus_typ, $aus_id, $r_typ);
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             echo "<select class=\"select_rg\" name=\"$name\" id=\"$id\" size=\"20\" multiple>";
             for ($a = 0; $a < $anz; $a++) {
@@ -4209,8 +4023,9 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
             }
             echo "</select>";
         } else {
-            hinweis_ausgeben("Keine $r_typ zum Hinzufügen vorhanden");
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Keine $r_typ zum Hinzufügen vorhanden")
+            );
         }
     }
 
@@ -4219,17 +4034,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
     function get_teil_rg_arr($empf_typ, $empf_id, $aus_typ, $aus_id, $r_typ)
     {
         $result = DB::select("SELECT * FROM RECHNUNGEN WHERE EMPFAENGER_TYP='$empf_typ' && EMPFAENGER_ID='$empf_id'  && AUSSTELLER_ID='$aus_id' && AUSSTELLER_TYP='$aus_typ' && RECHNUNGSTYP='$r_typ' && AKTUELL = '1' && BELEG_NR NOT IN (SELECT TEIL_R_ID FROM RECHNUNGEN_SCHLUSS WHERE AKTUELL='1')ORDER BY RECHNUNGSDATUM DESC");
-        if (!empty($result)) {
-            return $result;
-        }
-    }
-
-    function get_rg_arr_ok($empf_typ, $empf_id, $aus_typ, $aus_id, $r_typ)
-    {
-        $result = DB::select("SELECT * FROM RECHNUNGEN WHERE EMPFAENGER_TYP='$empf_typ' && EMPFAENGER_ID='$empf_id'  && AUSSTELLER_ID='$aus_id' && AUSSTELLER_TYP='$aus_typ' && RECHNUNGSTYP='$r_typ' && AKTUELL = '1' ORDER BY RECHNUNGSDATUM DESC");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function teilrechnungen_hinzu($beleg_id, $tr_ids_arr)
@@ -4287,7 +4092,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
             // echo $einheit_id;
             $weg = new weg ();
             $et_arr = $weg->get_eigentuemer_arr($einheit_id);
-            if (is_array($et_arr)) {
+            if (!empty($et_arr)) {
                 $le_et = count($et_arr) - 1;
                 $ein_arr [$a] ['ET_ID'] = $et_arr [$le_et] ['ID'];
                 $ein_arr [$a] ['R_EMPFAENGER_TYP'] = 'Eigentuemer';
@@ -4304,10 +4109,8 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
         unset ($ein_arr);
 
         $empf_kat = array_unique($empf_typen);
-        $anz_kat = count($empf_kat);
 
         $keys = array_keys($n_ein_arr);
-        // print_r($keys);
         $anz_keys = count($keys);
 
         if (in_array('Eigentuemer', $empf_kat)) {
@@ -4327,7 +4130,6 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
                 echo "<tr><th>EINHEIT</th><th>EMPFÄNGER</th><th>BEZ</th></tr>";
                 $anz_e = count($n_ein_arr [$key]);
                 for ($a = 0; $a < $anz_e; $a++) {
-                    $einheit_id = $n_ein_arr [$key] [$a] ['EINHEIT_ID'];
                     $et_id = $n_ein_arr [$key] [$a] ['ET_ID'];
                     $r_empf_typ = $n_ein_arr [$key] [$a] ['R_EMPFAENGER_TYP'];
 
@@ -4429,7 +4231,6 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
         } else {
             $jahr = date("Y");
         }
-        $b = new buchen ();
         $f = new formular ();
         $f->erstelle_formular("Beleg einem Empfänger zuweisen", null);
         $this->drop_buchungsbelege(session()->get('partner_id'), $jahr, 'Beleg wählen', 'beleg_nr', 'beleg_nr', null, null);
@@ -4443,8 +4244,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
     function drop_buchungsbelege($p_id, $jahr, $beschreibung, $name, $id, $js, $selected_value)
     {
         $beleg_arr = $this->buchungsbelege_arr('alle', $jahr);
-        // print_r($beleg_arr);
-        if (is_array($beleg_arr)) {
+        if (!empty($beleg_arr)) {
             echo "<label for=\"$id\">$beschreibung</label>\n";
             echo "<select name=\"$name\" id=\"$id\" $js>\n";
             $anzahl_b = count($beleg_arr);
@@ -4454,7 +4254,6 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
                 $anr = $beleg_arr [$a] ['AUSTELLER_AUSGANGS_RNR'];
                 $enr = $beleg_arr [$a] ['EMPFAENGER_EINGANGS_RNR'];
                 $beleg_nr = $beleg_arr [$a] ['BELEG_NR'];
-                $ausg_nr = $beleg_arr [$a] ['AUSTELLER_AUSGANGS_RNR'];
                 $bez = "$rnr (RA:$anr-RE:$enr) - $text";
                 if ($beleg_nr == $selected_value) {
                     echo "<option value=\"$beleg_nr\" selected>$bez</option>\n";
@@ -4521,7 +4320,6 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
         $anz_p = count($arr);
         for ($a = 0; $a < $anz_p; $a++) {
             $pos = $arr [$a] ['POSITION'];
-            $art_lieferant = $arr [$a] ['ART_LIEFERANT'];
             $art_nr = $arr [$a] ['ARTIKEL_NR'];
             $menge = $arr [$a] ['MENGE'];
             $preis = $arr [$a] ['PREIS'];
@@ -4544,7 +4342,6 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
             if ($anz_k < 1) {
                 fehlermeldung_ausgeben("Position $pos ist nicht kontiert");
             } else {
-
                 for ($p = 0; $p < $anz_k; $p++) {
                     $k_menge = $kont_arr [$p] ['MENGE'];
                     $k_preis = $kont_arr [$p] ['EINZEL_PREIS'];
@@ -4565,6 +4362,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
                     $last_dat = DB::getPdo()->lastInsertId();
                     protokollieren('KONTIERUNG_POSITIONEN', $last_dat, '0');
                 } // end for2
+                $r->rechnung_als_vollstaendig($letzte_belegnr);
             } // end if
         } // end for
 

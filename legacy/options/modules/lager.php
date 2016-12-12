@@ -24,13 +24,13 @@ switch ($option) {
 		$link = route('legacy::lager::index', ['option' => 'lagerbestand_bis_form'], false);
 		$lager_info->lager_auswahl_liste ( $link );
 		if (! session()->has('lager_id')) {
-			die ( "Lager wählen" );
+			echo "Bitte wählen Sie ein Lager.";
 		} else {
 			$f = new formular ();
 			$lager_bez = $lager_info->lager_bezeichnung ( session()->get('lager_id') );
 			$f->erstelle_formular ( "Lagerbestand vom $lager_bez bis zum... anzeigen", '' );
 			$f->datum_feld ( 'Datum bis', 'datum', '', 'datum' );
-			$f->check_box_js ( 'pdf_check', '', 'PDF-Ausgabe', '', 'checked' );
+			$f->check_box_js ( 'pdf_check', '1', 'PDF-Ausgabe', '', 'checked' );
 			$f->hidden_feld ( 'option', 'lagerbestand_bis' );
 			$f->send_button ( 'send', 'Lagerbestand anzeigen' );
 			$f->ende_formular ();

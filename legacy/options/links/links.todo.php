@@ -2,13 +2,13 @@
     <div class="col s4">
         <h6>Aufgaben und Projekte</h6>
         <div class='col s4 m3 l4'>
-            <a href='<?php echo route('legacy::todo::index', ['option' => 'neue_auftraege']) ?>'><b>Alle</b></a>
+            <a href='<?php echo route('legacy::todo::index', ['option' => 'neue_auftraege']) ?>'>Alle</a>
         </div>
         <div class='col s4 m3 l4'>
-            <a href='<?php echo route('legacy::todo::index', ['option' => 'offene_auftraege']) ?>'><b>Offene</b></a>
+            <a href='<?php echo route('legacy::todo::index', ['option' => 'offene_auftraege']) ?>'>Offene</a>
         </div>
         <div class='col s4 m3 l4'>
-            <a href='<?php echo route('legacy::todo::index', ['option' => 'erledigte_auftraege']) ?>'><b>Erledigte</b></a>
+            <a href='<?php echo route('legacy::todo::index', ['option' => 'erledigte_auftraege']) ?>'>Erledigte</a>
         </div>
     </div>
     <div class="col s4">

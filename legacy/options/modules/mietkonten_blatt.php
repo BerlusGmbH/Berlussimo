@@ -520,7 +520,7 @@ if (isset ($anzeigen)) {
                                 if ($zahlungsnummer < $anzahl_zahlungen_im_monat) {
                                     $gesamt_soll = $saldo_vormonat + $differenz_monatlich;
                                     $saldo_vormonat = $gesamt_soll;
-                                    echo "<tr><td>$zahlungsdatum</td><td>1.Zahlbetrag 1.mon</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b></b></td></tr>";
+                                    echo "<tr><td>$zahlungsdatum</td><td>1.Zahlbetrag 1.mon</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] ['BETRAG'] . " € </td><td>$differenz_monatlich €</td><td><b></b></td></tr>";
                                 }
                                 /*
                                  * //letzte Zahlung Einzugsmonat
@@ -539,7 +539,7 @@ if (isset ($anzeigen)) {
                                     $differenz_monatlich = $alle_zahlbetraege_monat_arr [$a] ['BETRAG'];
                                     $gesamt_soll = $gesamt_soll + $alle_zahlbetraege_monat_arr [$a] ['BETRAG'];
                                     $saldo_vormonat = $gesamt_soll;
-                                    echo "<tr><td>$zahlungsdatum</td><td>Zahlbetrag zwischen</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] [BETRAG] . " € </td><td>$differenz_monatlich €</td><td><b></b></td></tr>";
+                                    echo "<tr><td>$zahlungsdatum</td><td>Zahlbetrag zwischen</td><td></td><td>" . $alle_zahlbetraege_monat_arr [$a] ['BETRAG'] . " € </td><td>$differenz_monatlich €</td><td><b></b></td></tr>";
                                 }
                                 // LETZTE ZAHLUNG EINZUGSMONAT
                                 if ($zahlungsnummer == $anzahl_zahlungen_im_monat) {
@@ -944,7 +944,6 @@ if (isset ($anzeigen)) {
 function mietvertrags_grunddaten($mietvertrag_id, $monat, $jahr)
 {
     $mietkonto_info = new mietkonto ();
-    $mieterids_arr = $mietkonto_info->mietvertrag_grunddaten_holen($mietvertrag_id);
     echo "Jahr $jahr Monat $monat<br>";
     echo $mietkonto_info->mietvertrag_von;
     echo "<br>";
@@ -958,7 +957,6 @@ function mietvertrags_grunddaten($mietvertrag_id, $monat, $jahr)
     echo "<br>pERSONEN IM mv";
     echo $mietkonto_info->anzahl_personen_im_vertrag;
     echo "<pre>";
-    // print_r($mieterids_arr);
     echo "</pre>";
     echo "<hr>";
 }
@@ -972,22 +970,14 @@ function mietkonto_monats_uebersicht_ORG($mietvertrag_id, $monat, $jahr, $vormon
     }
     $mietkonto_info = new mietkonto ();
     $forderungen_arr = $mietkonto_info->forderung_monatlich($mietvertrag_id, $monat, $jahr);
-
-    $forderungen_arr = $mietkonto_info->forderung_monatlich($mietvertrag_id, $monat, $jahr);
     $summe_forderungen = $mietkonto_info->summe_forderung_monatlich($mietvertrag_id, $monat, $jahr);
     echo "<pre>";
-    // print_r($forderungen_arr);
     echo "</pre>";
-    // echo "SUMME FORDERUNGEN: $summe_forderungen";
-
     $zahlungen_arr = $mietkonto_info->zahlungen_monatlich($mietvertrag_id, $monat, $jahr);
     $summe_zahlungen = $mietkonto_info->summe_zahlung_monatlich($mietvertrag_id, $monat, $jahr);
     echo "<pre>";
-    // print_r($zahlungen_arr);
     echo "</pre>";
-    // echo "SUMME ZAHLUNGEN: $summe_zahlungen";
     echo "<table width=100% border=1>";
-    $monatsname = $mietkonto_info->monatsname;
     echo "<tr><td colspan=6>$monat $jahr</td></tr>";
     echo "<tr><td><b>FORDERUNGEN</td><td><b>ZAHLUNGEN</td><td><b>AUFTEILUNG</td><td><b>BERECHNUNG</td><td><b>KONTOSTAND_VOR</td><td><b>KONTOSTAND_NACH</td></tr>";
     echo "<tr><td align=right valign=top>"; // Zelle1
@@ -1050,7 +1040,6 @@ function mietkonto_monats_uebersicht($mietvertrag_id, $monat, $jahr, $vormonat_s
         $konto_vormonat = $vormonat_stand;
     }
     $mietkonto_info = new mietkonto ();
-    $forderungen_arr = $mietkonto_info->forderung_monatlich($mietvertrag_id, $monat, $jahr);
 
     $forderungen_arr = $mietkonto_info->forderung_monatlich($mietvertrag_id, $monat, $jahr);
     $summe_forderungen = $mietkonto_info->summe_forderung_monatlich($mietvertrag_id, $monat, $jahr);
@@ -1059,20 +1048,14 @@ function mietkonto_monats_uebersicht($mietvertrag_id, $monat, $jahr, $vormonat_s
     $heizkosten = $mietkonto_info->heizkosten;
     $extras = $summe_forderungen - $ausgangs_kaltmiete - $betriebskosten - $heizkosten;
     echo "<pre>";
-    // print_r($forderungen_arr);
     echo "</pre>";
-    // echo "SUMME FORDERUNGEN: $summe_forderungen";
 
     $zahlungen_arr = $mietkonto_info->zahlungen_monatlich($mietvertrag_id, $monat, $jahr);
     $summe_zahlungen = $mietkonto_info->summe_zahlung_monatlich($mietvertrag_id, $monat, $jahr);
     $anzahl_zahlungen_im_monat = count($zahlungen_arr);
-    $anzahl_forderungen_im_monat = count($forderungen_arr);
     echo "<pre>";
-    // print_r($zahlungen_arr);
     echo "</pre>";
-    // echo "SUMME ZAHLUNGEN: $summe_zahlungen";
     echo "<table width=100% class=table_form >";
-    $monatsname = $mietkonto_info->monatsname;
     echo "<tr class=\"zeile1\"><td colspan=5>$monat $jahr</td></tr>";
     echo "<tr class=\"zeile1\"><td><b>FORDERUNGEN</td><td><b>ZAHLUNGEN</td><td><b>AUFTEILUNG</td><td><b>BERECHNUNG</td><td><b>KONTOSTAND</td></tr>";
     echo "<tr class=\"zeile1\"><td align=right valign=top>"; // Zelle1
@@ -1158,11 +1141,9 @@ function mietkonto_monats_uebersicht($mietvertrag_id, $monat, $jahr, $vormonat_s
                 echo "Übertrag:\n $konto_vormonat  €<br>";
                 echo "HK = -$heizkosten €<br>";
                 $rest = $rest - $heizkosten;
-                $rest = $rest - $ausgangs_kaltmiete;
                 echo "KALTMIETE = -$ausgangs_kaltmiete €<br>";
                 echo "Extras: -$extras €";
                 $ueberschuss = $summe_zahlungen - $betriebskosten - $heizkosten - $ausgangs_kaltmiete - $extras + $konto_vormonat;
-                // echo "<hr><hr>ÜBERSCHUSS = $ueberschuss €";
             }
         }
     }
@@ -1188,8 +1169,6 @@ function mietkonto_uebersicht($mietvertrag_id)
 
     $mietvertrag_info = new mietvertrag ();
     $mietvertrag_info->get_anzahl_personen_zu_mietvertrag($mietvertrag_id);
-    $anzahl_personen_im_mv = $mietvertrag_info->anzahl_personen_im_vertrag;
-    $personen_ids_arr = $mietvertrag_info->get_personen_ids_mietvertrag($mietvertrag_id);
 
     $mietvertrag_info->alle_zahlungen($mietvertrag_id);
     $mietvertrag_info->liste_der_forderungen($mietvertrag_id);
@@ -1213,16 +1192,10 @@ function mietkonto_uebersicht_test($mietvertrag_id)
     $einzugsdatum_arr = explode("-", $einzugsdatum);
     $jahr = $einzugsdatum_arr [0];
     $monat = $einzugsdatum_arr [1];
-    $tag = $einzugsdatum_arr [2];
 
     $datum = getdate();
-    $aktueller_monat = $datum ['mon'];
     $aktuelles_jahr = $datum ['year'];
     $differenz_in_jahren = $aktuelles_jahr - $jahr;
-
-    // $jahr = "2006";
-    // echo "$jahr $monat $tag";
-    // echo "<br>$aktueller_monat $aktuelles_jahr<br>";
 
     if ($differenz_in_jahren > 0) {
         for ($i = 0; $i <= $differenz_in_jahren; $i++) {
@@ -1250,5 +1223,3 @@ function mietkonto_uebersicht_test($mietvertrag_id)
 
     echo "</div>"; // ende balken5
 } // end funktion
-
-?>

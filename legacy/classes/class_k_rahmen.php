@@ -2,6 +2,14 @@
 
 class k_rahmen
 {
+    public $name;
+    public $dat;
+    public $kontenrahmen_id;
+    public $kontoart_id;
+    public $gruppen_id;
+    public $konto;
+    public $konto_bez;
+
     function kontenrahmen_liste_anzeigen()
     {
         $arr = $this->kontenrahmen_in_arr();
@@ -63,9 +71,7 @@ class k_rahmen
                 $dat = $arr [$a] ['KONTENRAHMEN_KONTEN_DAT'];
                 $konto = $arr [$a] ['KONTO'];
                 $bez = $arr [$a] ['BEZEICHNUNG'];
-                $gruppen_id = $arr [$a] ['GRUPPEN_ID'];
                 $gruppe = $arr [$a] ['GRUPPE'];
-                $kontoart_id = $arr [$a] ['KONTOART_ID'];
                 $kontoart = $arr [$a] ['KONTOART'];
 
                 $link = "<a href='" . route('legacy::kontenrahmen::index', ['option' => 'kostenkonto_ae', 'k_dat' => $dat]) . "'>KONTO ÄNDERN</a>";
@@ -208,7 +214,7 @@ ORDER BY KONTO ASC");
     function dropdown_kontenrahmen($label, $name, $id)
     {
         $my_array = DB::select("SELECT * FROM KONTENRAHMEN WHERE AKTUELL='1' ORDER BY NAME ASC");
-        if (!empty($result)) {
+        if (!empty($my_array)) {
             echo "<div class='input-field'>";
             echo "<select name=\"$name\" id=\"$id\" size=\"1\" >\n";
             $numrows = count($my_array);
@@ -224,8 +230,9 @@ ORDER BY KONTO ASC");
             echo "</select>\n<label for=\"$id\">$label</label>\n";
             echo "</div>";
         } else {
-            die ();
-            return FALSE;
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Es existieren keine Kontenrahmen")
+            );
         }
     }
 
@@ -249,13 +256,15 @@ ORDER BY KONTO ASC");
             echo "</select>\n<label for=\"$id\">$label</label>\n";
             echo "</div>";
         } else {
-            die ('"KEINE KONTOARTEN ERSTELLT"');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Bitte fügen Sie Kontoarten hinzu.")
+            );
         }
     }
 
     function dropdown_k_gruppen($label, $name, $id)
     {
-        $my_array = DB::select("SELECT *  FROM  KONTENRAHMEN_GRUPPEN WHERE AKTUELL = '1'  ORDER BY BEZEICHNUNG ASC");
+        $my_array = DB::select("SELECT * FROM KONTENRAHMEN_GRUPPEN WHERE AKTUELL = '1'  ORDER BY BEZEICHNUNG ASC");
 
         $numrows = count($my_array);
         if ($numrows > 0) {
@@ -283,12 +292,14 @@ ORDER BY KONTO ASC");
         if (!$this->check_konto_exists($konto, $kontenrahmen_id)) {
             $k_id = last_id2("KONTENRAHMEN_KONTEN", "KONTENRAHMEN_KONTEN_ID") + 1;
             $db_abfrage = "INSERT INTO KONTENRAHMEN_KONTEN VALUES (NULL, '$k_id', '$konto','$bez', '$k_gruppe_id', '$kontoart_id', '$kontenrahmen_id',  '1')";
-            $resultat = DB::insert($db_abfrage);
+            DB::insert($db_abfrage);
             /* Protokollieren */
             $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('KONTENRAHMEN_KONTEN', $last_dat, '0');
         } else {
-            die ("$bez exisitiert schon");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("$bez exisitiert schon")
+            );
         }
     }
 
@@ -355,7 +366,9 @@ ORDER BY KONTO ASC");
             $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('KONTENRAHMEN_KONTEN', $last_dat, $dat);
         } else {
-            die ("$bez exisitiert schon");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("$bez exisitiert schon")
+            );
         }
     }
 
@@ -368,7 +381,6 @@ ORDER BY KONTO ASC");
             echo "<table class=\"sortable\">";
             echo "<tr><th>Gruppenbezeichnung</th></tr>";
             for ($a = 0; $a < count($my_array); $a++) {
-                $id = $my_array [$a] ['KONTENRAHMEN_GRUPPEN_ID'];
                 $bez = $my_array [$a] ['BEZEICHNUNG'];
                 echo "<tr><td>$bez</td></tr>";
             } // end for
@@ -428,7 +440,6 @@ ORDER BY KONTO ASC");
             echo "<table class=\"sortable\">";
             echo "<tr><th>Kostenkontoarten</th></tr>";
             for ($a = 0; $a < count($my_array); $a++) {
-                $kid = $my_array [$a] ['KONTENRAHMEN_KONTOART_ID'];
                 $bez = $my_array [$a] ['KONTOART'];
                 echo "<tr><td>$bez</td></tr>";
             } // end for

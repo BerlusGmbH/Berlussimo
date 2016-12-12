@@ -10,6 +10,11 @@ class wirt_e
     public $anzahl_e;
     public $anzahl_wo;
     public $anzahl_ge;
+    public $g_mea;
+    public $g_anzahl_einheiten;
+    public $g_einheit_qm;
+    public $g_verbrauch;
+    public $anzahl_einheiten;
 
     function check_einheit_in_we($einheit_id, $w_id)
     {
@@ -59,24 +64,6 @@ class wirt_e
         $result = DB::select($db_abfrage);
         if (!empty($result)) {
             return $result;
-        }
-    }
-
-    function get_wirt_e_infos_ALT($w_id)
-    {
-        $this->w_name = '';
-        $this->g_qm = '0.00';
-        $this->g_qm_gewerbe = '0.00';
-        $db_abfrage = "SELECT  W_NAME FROM `WIRT_EINHEITEN` JOIN WIRT_EIN_TAB ON (WIRT_EINHEITEN.W_ID=WIRT_EIN_TAB.W_ID) JOIN EINHEIT ON (EINHEIT.EINHEIT_ID=WIRT_EIN_TAB.EINHEIT_ID) JOIN HAUS ON (HAUS.HAUS_ID=EINHEIT.HAUS_ID) WHERE  WIRT_EINHEITEN.AKTUELL='1' && WIRT_EIN_TAB.AKTUELL='1' && WIRT_EINHEITEN.W_ID='$w_id' && EINHEIT.EINHEIT_AKTUELL='1' && HAUS_AKTUELL='1'";
-        $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            $row = $result[0];
-            $this->w_name = $row ['W_NAME'];
-            $this->g_qm = $this->get_qm_from_wirte($w_id);
-            $this->g_qm_gewerbe = $this->get_qm_gewerb_from_wirte($w_id);
-            $this->anzahl_e = $this->get_anzahl_e($w_id);
-            $this->anzahl_ge = $this->get_anzahl_einheiten_from_wirte($w_id, 'Gewerbe');
-            $this->anzahl_wo = $this->anzahl_e - $this->anzahl_ge;
         }
     }
 
@@ -135,7 +122,7 @@ class wirt_e
 
     function form_einheit_hinzu($w_id)
     {
-        echo "<table><tr valign=\"top\" border=\"0\"><td>";
+        echo "<table><tr><td>";
         $this->liste_einh_in($w_id);
         echo "</td><td>";
         $f = new formular ();
@@ -155,32 +142,36 @@ class wirt_e
         if ($anzeigen == 'objekt') {
             $o = new objekt ();
             $o_array = $o->liste_aller_objekte();
-            // echo '<pre>';
-            // print_r($o_array);
             $anzahl = count($o_array);
             echo "<SELECT SIZE=\"10\" NAME=\"IMPORT_AUS\">";
             for ($a = 0; $a < $anzahl; $a++) {
                 $objekt_n = $o_array [$a] ['OBJEKT_KURZNAME'];
                 $objekt_id = $o_array [$a] ['OBJEKT_ID'];
-                echo "<OPTION  value=\"$objekt_id\">$objekt_n</OPTION>";
+                if ($a == 0) {
+                    echo "<OPTION  value='$objekt_id' selected>$objekt_n</OPTION>";
+                } else {
+                    echo "<OPTION  value='$objekt_id'>$objekt_n</OPTION>";
+                }
             }
-            echo "</SELECT";
+            echo "</SELECT>";
             $f->hidden_feld("anzeigen", "$anzeigen");
             $f->send_button("submit_we", "Übernehmen");
         }
         if ($anzeigen == 'haus') {
             $h = new haus ();
             $h_array = $h->liste_aller_haeuser();
-            // echo '<pre>';
-            // print_r($h_array);
             $anzahl = count($h_array);
             echo "<SELECT SIZE=\"10\" NAME=\"IMPORT_AUS\">";
             for ($a = 0; $a < $anzahl; $a++) {
                 $haus_n = $h_array [$a] ['HAUS_STRASSE'] . $h_array [$a] ['HAUS_NUMMER'];
                 $haus_id = $h_array [$a] ['HAUS_ID'];
-                echo "<OPTION  value=\"$haus_id\">$haus_n</OPTION>";
+                if($a == 0) {
+                    echo "<OPTION  value=\"$haus_id\" selected>$haus_n</OPTION>";
+                } else {
+                    echo "<OPTION  value=\"$haus_id\">$haus_n</OPTION>";
+                }
             }
-            echo "</SELECT";
+            echo "</SELECT>";
             $f->hidden_feld("anzeigen", "$anzeigen");
             $f->send_button("submit_we", "Übernehmen");
         }
@@ -191,10 +182,13 @@ class wirt_e
             for ($a = 0; $a < $anzahl; $a++) {
                 $ein_id = $e_array [$a] ['EINHEIT_ID'];
                 $ein_n = $e_array [$a] ['EINHEIT_KURZNAME'];
-
-                echo "<OPTION value=\"$ein_id\">$ein_n</OPTION>";
+                if($a == 0) {
+                    echo "<OPTION value=\"$ein_id\" selected>$ein_n</OPTION>";
+                } else {
+                    echo "<OPTION value=\"$ein_id\">$ein_n</OPTION>";
+                }
             }
-            echo "</SELECT";
+            echo "</SELECT>";
             $f->hidden_feld("anzeigen", "$anzeigen");
 
             $f->send_button("submit_we", "Übernehmen");
@@ -214,20 +208,25 @@ class wirt_e
         $f->erstelle_formular("Liste der Einheiten in $this->w_name", NULL);
         $einheiten_arr = $this->get_einheiten_from_wirte($w_id);
         $anzahl = count($einheiten_arr);
+        echo "<div class='row'>
+                <div class='col s8'>";
         if ($anzahl) {
-            echo "<SELECT SIZE=\"10\" NAME=\"IMPORT_AUS\">";
+            echo "<SELECT class='browser-default' style='height: 200px' NAME='IMPORT_AUS[]' multiple>";
             for ($a = 0; $a < $anzahl; $a++) {
                 $e_id = $einheiten_arr [$a] ['EINHEIT_ID'];
                 $e_name = $einheiten_arr [$a] ['EINHEIT_KURZNAME'];
-                $haus_info = $einheiten_arr [$a] ['HAUS_STRASSE'] . $einheiten_arr [$a] ['HAUS_NUMMER'];;
-                echo "<OPTION value=\"$e_id\">$e_name</OPTION>";
+                echo "<OPTION value='$e_id'>$e_name</OPTION>";
             }
             echo "</SELECT>";
+            echo "</div><div class='col s4'>";
             echo "<p>Einheiten: $this->anzahl_e</p>";
             echo "<p>QM: $this->g_qm m²</p>";
             echo "<p>Gew.: $this->g_qm_gewerbe m²</p>";
-            $f->send_button("submit_del", "Löschen");
-            $f->send_button("submit_del_all", "Alle löschen");
+            echo "</div></div>";
+            $f->send_button("submit_del", "Auswahl Entfernen");
+            echo "&nbsp;";
+            $f->send_button("submit_del_all", "Alle Entfernen");
+            //echo "</div></div>";
         } else {
             echo "Keine Einheiten in der Wirtschafseinheit $this->w_name";
         }
@@ -254,8 +253,6 @@ class wirt_e
 
             /* NEU aus class WEG Function ->key_daten_formel */
             $d = new detail ();
-            // echo "$anteile_g = $d->finde_detail_inhalt('WIRT_EINHEITEN', $w_id, 'Gesamtanteile')";
-            // die();
             $anteile_g = $d->finde_detail_inhalt('WIRT_EINHEITEN', $w_id, 'Gesamtanteile');
             if (empty ($anteile_g)) {
                 $anteile_g = 0.00;
@@ -265,9 +262,6 @@ class wirt_e
             $this->g_anzahl_einheiten = $this->anzahl_e;
             $this->g_verbrauch = '0.00';
         }
-        // echo '<pre>';
-        // print_r($this);
-        // die();
     }
 
     function get_einheiten_from_wirte($w_id)
@@ -353,6 +347,6 @@ class wirt_e
     {
         $db_abfrage = "DELETE FROM WIRT_EIN_TAB WHERE W_ID='$w_id' && EINHEIT_ID='$e_id'";
         DB::delete($db_abfrage);
-        header("Location: " . route('legacy::bk::index', ['option' => 'wirt_einheiten_hinzu', 'w_id' => $w_id], false));
+        weiterleiten(route('legacy::bk::index', ['option' => 'wirt_einheiten_hinzu', 'w_id' => $w_id], false));
     }
 } // end class wirt_e

@@ -7,6 +7,18 @@ class geldkonto_info {
     var $blz;
     var $kredit_institut;
     public $IBAN1;
+    public $geldkonto_id;
+    public $BIC;
+    public $beguenstigter;
+    public $geld_institut;
+    public $IBAN;
+    public $geldkonto_bez;
+    public $geldkonto_bezeichnung;
+    public $geldkonto_bezeichnung_kurz;
+    public $konto_beguenstigter;
+    public $institut;
+    public $bankname;
+    public $bez;
 
     /* Tabelle mit allen Geldkonten */
     function alle_geldkonten_tabelle_kontostand() {
@@ -23,9 +35,6 @@ class geldkonto_info {
                 $konto_id = $my_array [$a] ['KONTO_ID'];
                 $konto_bezeichnung = $my_array [$a] ['BEZEICHNUNG'];
                 $beguenstigter = $my_array [$a] ['BEGUENSTIGTER'];
-                $kontonummer = $my_array [$a] ['KONTONUMMER'];
-                $blz = $my_array [$a] ['BLZ'];
-                $geld_institut = $my_array [$a] ['INSTITUT'];
                 $iban = chunk_split ( $my_array [$a] ['IBAN'], 4, ' ' );
                 $bic = $my_array [$a] ['BIC'];
                 $konto_stand_aktuell = nummer_punkt2komma_t ( $this->geld_konto_stand ( $konto_id ) );
@@ -97,11 +106,7 @@ class geldkonto_info {
             for($a = 0; $a < $numrows; $a ++) {
                 $konto_id = $my_array [$a] ['KONTO_ID'];
                 $konto_bezeichnung = $my_array [$a] ['BEZEICHNUNG'];
-                $beguenstigter = $my_array [$a] ['BEGUENSTIGTER'];
                 $kontonummer = $my_array [$a] ['KONTONUMMER'];
-                $blz = $my_array [$a] ['BLZ'];
-                $geld_institut = $my_array [$a] ['INSTITUT'];
-                $summe_mieteinnahmen = $this->summe_mieteinnahmen ( $konto_id );
                 $kostengesamt = $this->summe_kosten_objekt_zeitraum ( $konto_id, '1', '2006', '4', '2009' );
                 $mietengesamt = $this->summe_mieten_objekt_zeitraum ( $konto_id, '1', '2006', '4', '2009' );
                 $konto_stand_monatsende = $mietengesamt + $kostengesamt;
@@ -123,7 +128,6 @@ class geldkonto_info {
             echo "<label for=\"geld_konto_dropdown\">&nbsp;Bankverbindung - $kostentraeger_typ &nbsp;</label><select name=\"geld_konto\" id=\"geld_konto_dropdown\" size=\"1\" >";
             for($a = 0; $a < $numrows; $a ++) {
                 $konto_id = $my_array [$a] ['KONTO_ID'];
-                $beguenstigter = $my_array [$a] ['BEGUENSTIGTER'];
                 $kontonummer = $my_array [$a] ['KONTONUMMER'];
                 $blz = $my_array [$a] ['BLZ'];
                 $geld_institut = $my_array [$a] ['INSTITUT'];
@@ -149,10 +153,8 @@ class geldkonto_info {
             echo "<label for=\"geld_konto_dropdown\">$label</label>\n<select name=\"geld_konto\" id=\"geld_konto_dropdown\" size=\"1\" >\n";
             for($a = 0; $a < $numrows; $a ++) {
                 $konto_id = $my_array [$a] ['KONTO_ID'];
-                $beguenstigter = $my_array [$a] ['BEGUENSTIGTER'];
                 $kontonummer = $my_array [$a] ['KONTONUMMER'];
                 $blz = $my_array [$a] ['BLZ'];
-                $geld_institut = $my_array [$a] ['INSTITUT'];
                 if (session()->has('geldkonto_id') && session()->get('geldkonto_id') == $konto_id) {
                     echo "<option value=\"$konto_id\" selected>Knr:$kontonummer - Blz: $blz</option>\n";
                 } else {
@@ -175,10 +177,8 @@ class geldkonto_info {
             echo "<label for=\"$id\">$label</label>\n<select name=\"$name\" id=\"$id\" size=\"1\" >\n";
             for($a = 0; $a < count ( $my_array ); $a ++) {
                 $konto_id = $my_array [$a] ['KONTO_ID'];
-                $beguenstigter = $my_array [$a] ['BEGUENSTIGTER'];
                 $kontonummer = $my_array [$a] ['KONTONUMMER'];
                 $blz = $my_array [$a] ['BLZ'];
-                $geld_institut = $my_array [$a] ['INSTITUT'];
                 if (session()->has('geldkonto_id') && session()->get('geldkonto_id') == $konto_id) {
                     echo "<option value=\"$konto_id\" selected>Knr:$kontonummer - Blz: $blz</option>\n";
                 } else {
@@ -223,12 +223,7 @@ class geldkonto_info {
     /* Funktion zur Ermittlung der Anzahl der Geldkonten */
     function geldkonten_arr($kostentraeger_typ, $kostentraeger_id) {
         $my_array = DB::select( "SELECT GELD_KONTEN.KONTO_ID, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.IBAN, GELD_KONTEN.BIC, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ, GELD_KONTEN.INSTITUT  FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE KOSTENTRAEGER_TYP = '$kostentraeger_typ' && KOSTENTRAEGER_ID = '$kostentraeger_id' && GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' ORDER BY GELD_KONTEN.KONTO_ID ASC" );
-        $numrows = !empty( $result );
-        if ($numrows) {
-            return $my_array;
-        } else {
-            return FALSE;
-        }
+        return $my_array;
     }
 
     /* Diese Funktion ermittelt Geldkontonummern und zeigt sie im Dropdown */
@@ -322,49 +317,13 @@ class geldkonto_info {
         }
     }
 
-    /*
-     * var $objekt_id;
-     * var $objekt_name;
-     * var $haus_id;
-     * var $haus_strasse;
-     * var $haus_nummer;
-     * var $einheit_kurzname;
-     * var $einheit_qm;
-     * var $einheit_lage;
-     * var $anzahl_einheiten;
-     * var $haus_plz;
-     * var $haus_stadt;
-     * var $datum_heute;
-     * var $mietvertrag_id;
-     * function get_einheit_info($einheit_id){
-     */
-
     /* Funktionen bezogen auf Geldbewegungen auf dem Geldkonto */
-    function summe_geld_konto_buchungen($geld_konto_id) {
-        $result = DB::select( "SELECT sum( BETRAG ) AS KONTOSTAND_GELDBUCHUNGEN
-FROM `GELD_KONTO_BUCHUNGEN` WHERE GELDKONTO_ID = '$geld_konto_id' && AKTUELL = '1'" );
-        if (!empty($result)) {
-            $row = $result[0];
-            return $row ['KONTOSTAND_GELDBUCHUNGEN'];
-        } else {
-            return false;
-        }
-    }
     function summe_geld_konto_buchungen_kontiert($geld_konto_id, $kontenrahmen_konto) {
         $result = DB::select( "SELECT sum( BETRAG ) AS KONTOSTAND_GELDBUCHUNGEN_KONTIERT
 FROM `GELD_KONTO_BUCHUNGEN` WHERE GELDKONTO_ID = '$geld_konto_id' && AKTUELL = '1' && KONTENRAHMEN_KONTO = '$kontenrahmen_konto'" );
         if (!empty($result)) {
             $row = $result[0];
             return $row ['KONTOSTAND_GELDBUCHUNGEN_KONTIERT'];
-        } else {
-            return false;
-        }
-    }
-    function geld_konto_buchungen_zeitraum($geld_konto_id, $datum_von, $datum_bis) {
-        $result = DB::select( "SELECT * AS KONTOSTAND_GELDBUCHUNGEN
-FROM `GELD_KONTO_BUCHUNGEN` WHERE GELDKONTO_ID = '$geld_konto_id' && AKTUELL = '1' && DATUM BETWEEN '$datum_von' AND '$datum_bis'" );
-        if (!empty($result)) {
-            return $result;
         } else {
             return false;
         }
@@ -379,26 +338,6 @@ FROM `GELD_KONTO_BUCHUNGEN` WHERE GELDKONTO_ID = '$geld_konto_id' && KONTENRAHME
             return $row ['SUMME_MIETEINNAHMEN'];
         } else {
             return false;
-        }
-    }
-    function summe_mieteinnahmen_zeitraum($geld_konto_id, $datum_von, $datum_bis) {
-        $result = DB::select( "SELECT sum( BETRAG ) AS SUMME_MIETEINNAHMEN
-FROM `GELD_KONTO_BUCHUNGEN` WHERE GELDKONTO_ID = '$geld_konto_id' && KONTENRAHMEN_KONTO='80001' && AKTUELL = '1' && DATUM BETWEEN '$datum_von' AND '$datum_bis'" );
-        if (!empty($result)) {
-            $row = $result[0];
-            return $row ['SUMME_MIETEINNAHMEN'];
-        } else {
-            return false;
-        }
-    }
-    function geld_konto_stand_ausgeben($geld_konto_id) {
-        $result = DB::select( "SELECT sum( BETRAG ) AS KONTOSTAND
-FROM `GELD_KONTO_BUCHUNGEN` WHERE GELDKONTO_ID = '$geld_konto_id' && AKTUELL = '1'" );
-        if (!empty($result)) {
-            $row = $result[0];
-            echo "<table><tr><td><h1>Kontostand: $row[KONTOSTAND] €</h1></td></tr></table>";
-        } else {
-            return FALSE;
         }
     }
     function geld_konto_stand($geld_konto_id) {

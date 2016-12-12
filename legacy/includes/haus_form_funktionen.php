@@ -1,22 +1,5 @@
 <?php
-/**
- * BERLUSSIMO
- *
- * Hausverwaltungssoftware
- *
- *
- * @copyright    Copyright (c) 2010, Berlus GmbH, Fontanestr. 1, 14193 Berlin
- * @link         http://www.berlus.de
- * @author       Sanel Sivac & Wolfgang Wehrheim
- * @contact         software(@)berlus.de
- * @license     http://www.gnu.org/licenses/agpl.html AGPL Version 3
- *
- * @filesource   $HeadURL: http://192.168.2.52/svn/berlussimo_1/tags/02.11.2010 - Downloadversion 0.27/includes/haus_form_funktionen.php $
- * @version      $Revision: 6 $
- * @modifiedby   $LastChangedBy: sivac $
- * @lastmodified $Date: 2010-09-21 10:34:50 +0200 (Di, 21 Sep 2010) $
- *
- */
+
 function objekt_liste_links()
 {
     $result = DB::select("SELECT OBJEKT_DAT, OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC ");
@@ -74,7 +57,7 @@ function letzte_haus_id()
 {
     $result = DB::select("SELECT HAUS_ID FROM HAUS ORDER BY HAUS_ID DESC LIMIT 0,1");
     foreach($result as $row)
-        return $row->HAUS_ID;
+        return $row['HAUS_ID'];
 }
 
 function haus_in_db_eintragen($strasse, $nummer, $stadt, $plz, $qm, $objekt_id)
@@ -114,58 +97,6 @@ function haus_exists($strasse, $nummer, $stadt, $plz)
 {
     $result = DB::select("SELECT COUNT(HAUS_DAT) AS ANZAHL FROM HAUS WHERE HAUS_STRASSE='$strasse' && HAUS_NUMMER='$nummer' && HAUS_STADT='$stadt' && HAUS_PLZ='$plz' ORDER BY HAUS_DAT DESC LIMIT 0,1");
     return $result[0]['ANZAHL'];
-}
-
-function objekt_auswahl_form1()
-{
-    erstelle_formular("objekt_auswahl", NULL);
-    objekt_liste_dropdown();
-    erstelle_submit_button("submit_objekt", "Senden");
-    ende_formular();
-}
-
-function haeuser_liste_dropdown1($obj_id)
-{
-    erstelle_formular("haus_auswahl", NULL);
-
-    $result = DB::select("SELECT HAUS_DAT, HAUS_ID, HAUS_STRASSE, HAUS_NUMMER FROM HAUS WHERE OBJEKT_ID='$obj_id' && HAUS_AKTUELL='1' ORDER BY HAUS_NUMMER ASC");
-    if (empty($result)) {
-        echo "<h1>Keine Häuser im ausgewählten Objekt</h1><br>";
-        echo "Erst Haus im Objekt anlegen - <a href='" . route('legacy::haeuserform::index', ['daten_rein' => 'aendern']) . "'>Hauseningabe hier&nbsp;</a>";
-    } else {
-        echo "<select name=\"haeuser\" size=\"1\">";
-        foreach ($result as $row) {
-            echo "<option value=\"$row[HAUS_ID]\">$row[HAUS_STRASSE] $row[HAUS_NUMMER]</option>\n";
-        }
-        echo "</select>";
-
-        erstelle_submit_button("haus_auswahl", "Senden");
-        ende_formular();
-    }
-}
-
-function haeuser_liste_tabellealt($objekt_id)
-{
-    $objekt_kurzname = objekt_kurzname($objekt_id);
-    $result = DB::select("SELECT HAUS_DAT, HAUS_ID, HAUS_STRASSE, HAUS_NUMMER FROM HAUS WHERE OBJEKT_ID='$objekt_id' && HAUS_AKTUELL='1' ORDER BY HAUS_NUMMER ASC");
-    if (!empty($result)) {
-
-        echo "<table width=100%>\n";
-        echo "<tr class=\"feldernamen\"><td colspan=7>Objekt: $objekt_kurzname</td></tr>\n";
-        echo "<tr class=\"feldernamen\"><td>Straße</td><td>Nummer</td><td colspan=6></td></tr>\n";
-        $counter = 0;
-        foreach($result as $row) {
-            $counter++;
-            if ($counter == 1) {
-                echo "<tr class=\"zeile1\"><td>$row[HAUS_STRASSE]</td><td>$row[HAUS_NUMMER]</td><td>Details</td><td><a href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_kurz', 'haus_id' => $row['HAUS_ID']]) . "'>Einheiten</a></td><td>Mieter</td><td>Ändern</td><td><a href='" . route('legacy::haeuserform::index', ['daten_rein' => 'aendern_liste']) . "'>Löschen</a></td></tr>\n";
-            }
-            if ($counter == 2) {
-                echo "<tr class=\"zeile2\"><td>$row[HAUS_STRASSE]</td><td>$row[HAUS_NUMMER]</td><td>Details</td><td><a href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_kurz', 'haus_id' => $row['HAUS_ID']]) . "'>Einheiten</a></td><td>Mieter</td><td>Ändern</td><td><a href='" . route('legacy::haeuserform::index', ['daten_rein' => 'aendern_liste']) . "'>Löschen</a></td></tr>\n";
-                $counter = 0;
-            }
-        }
-        echo "</table>";
-    }
 }
 
 function haeuser_liste_tabelle($objekt_id)

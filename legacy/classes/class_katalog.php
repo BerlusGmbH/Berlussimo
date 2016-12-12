@@ -4,24 +4,20 @@ class katalog
 {
 
     /* Funktion zur Erstellung des Partnerauswahlmenues */
-    function partner_auswahl_menue($option_link)
-    {
-        if (request()->has('partner_id')) {
-            session()->put('partner_id', request()->input('partner_id'));
-        }
-
-        if (session()->has('partner_id')) {
-            echo "<p><a href='" . route('legacy::katalog::index', ['option' => 'partner_wechseln']) . "'>Lieferanten wechseln</a><br></p>";
-        } else {
-            $result = DB::select("SELECT PARTNER_ID, PARTNER_NAME FROM PARTNER_LIEFERANT WHERE AKTUELL='1' ORDER BY PARTNER_NAME ASC");
-            foreach($result as $row) {
-                $p_id = $row ['PARTNER_ID'];
-                $p_name = $row ['PARTNER_NAME'];
-                $link = "<a href=\"$option_link?partner_id=$p_id&option=katalog_anzeigen\">$p_name</a><br>\n";
-                echo $link;
-            }
-        }
-    }
+    public $erst_preis;
+    public $last_preis_;
+    public $vorzeichen;
+    public $preis_diff;
+    public $erst_preis_a;
+    public $last_preis;
+    public $last_preis_a;
+    public $bez;
+    public $listenpreis;
+    public $rabattsatz;
+    public $u_preis;
+    public $u_brutto;
+    public $u_skontiert;
+    public $skonto;
 
     /* Funktion zur Darstellung der Artikel und Leistungen eines Partners */
     function katalog_artikel_anzeigen($partner_id)
@@ -213,7 +209,6 @@ AND RECHNUNGEN_POSITIONEN.BELEG_NR = RECHNUNGEN.BELEG_NR");
                 $p = new partners ();
                 $r_nr = $row ['RECHNUNGSNUMMER'];
                 $beleg_nr = $row ['BELEG_NR'];
-                $u_beleg_nr = $row ['U_BELEG_NR'];
                 $position = $row ['POSITION'];
                 $art_lieferant = $row ['ART_LIEFERANT'];
                 $p->get_partner_name($art_lieferant);
@@ -221,9 +216,7 @@ AND RECHNUNGEN_POSITIONEN.BELEG_NR = RECHNUNGEN.BELEG_NR");
                 $menge = $row ['MENGE'];
                 $r = new rechnung ();
                 $artikel_info_arr = $r->artikel_info($art_lieferant, $art_nr);
-                $anz_bez = count($artikel_info_arr);
                 $artikel_bez = $artikel_info_arr [0] ['BEZEICHNUNG'];
-                // print_r($artikel_info_arr);
                 $kontierte_menge = nummer_punkt2komma($r->position_auf_kontierung_pruefen($beleg_nr, $position));
                 $g_kontiert += nummer_komma2punkt($kontierte_menge);
                 $g_menge += $menge;
@@ -265,9 +258,7 @@ AND RECHNUNGEN_POSITIONEN.BELEG_NR = RECHNUNGEN.BELEG_NR");
 
                 $r = new rechnung ();
                 $artikel_info_arr = $r->artikel_info($art_lieferant, $art_nr);
-                $anz_bez = count($artikel_info_arr);
                 $artikel_bez = $artikel_info_arr [0] ['BEZEICHNUNG'];
-                $link_preis_info = "<a href='" . route('legacy::katalog::index', ['option' => 'preisentwicklung', 'artikel_nr' => $art_nr, 'lieferant' => $art_lieferant]) . "'>$art_nr</a>";
                 $link_preis_info1 = "<a href='" . route('legacy::katalog::index', ['option' => 'artikel_suche', 'artikel_nr' => $art_nr, 'lieferant' => $art_lieferant]) . "'>$art_nr</a>";
                 echo "<tr><td>$p->partner_name</td><td>$link_preis_info1</td><td>$artikel_bez</td></tr>";
             }

@@ -186,10 +186,6 @@ switch ($option) {
         $f = new formular ();
         $f->erstelle_formular("Baustelenübersicht", NULL);
         $s->baustellen_leistung('Einheit', '166', 25, '2009-11-01', '2009-11-31', 'Plötzer Sansi 53');
-        // $s->baustellen_leistung('Einheit', '168', 25);
-        // $s->baustellen_leistung('Einheit', '304', 25);
-        // $s->baustellen_leistung('Einheit', '32', 25);
-        // $s->baustellen_leistung('Einheit', '368', 25);
         $s->baustellen_leistung('Einheit', '368', 25, '2010-04-12', '2010-05-30', 'Laßnack Badsanierung MODs');
         $f->ende_formular();
 
@@ -213,8 +209,9 @@ switch ($option) {
     case "fenster_zuweisen" :
         if (request()->exists('sndBtn')) {
             if (request()->input('rest') < request()->input('anz_fenster')) {
-                fehlermeldung_ausgeben("Eingegebene Menge größer als Restmenge!");
-                die ();
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\ErrorMessage("Eingegebene Menge größer als Restmenge!")
+                );
             } else {
                 $s = new statistik ();
                 if ($s->fenster_zuweisen(request()->input('beleg_id'), request()->input('pos'), request()->input('anz_fenster'), request()->input('Einheit'))) {

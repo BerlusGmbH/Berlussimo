@@ -2,6 +2,19 @@
 
 class statistik
 {
+    public $bez;
+    public $objekt_name;
+    public $akt_jahr;
+    public $vermietete;
+    public $leer;
+    public $gesamt;
+    public $gesamt_leer;
+    public $pro_v;
+    public $pro_l;
+    public $durchschnitt_leer_jahr;
+    public $summe_konto_buchungen;
+    public $footer_zahlungshinweis;
+
     function get_stat($jahr, $objekt_id, $typ_lage)
     {
         $b = new objekt ();
@@ -40,7 +53,6 @@ class statistik
         echo "<p><iframe src=\"svgraph/pie.svg?leerstand=$this->durchschnitt_leer_jahr&vermietet=$vermietet&objekt=$this->objekt_name&jahr=$jahr\" width=\"50%\" height=\"300\" ></iframe></p>";
         $this->gesamt_leer = 0;
         $this->durchschnitt_leer_jahr = 0;
-        $vermietet = 0;
         echo "<hr>";
     }
 
@@ -124,12 +136,8 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
             $leer_qm += $leer;
             $verm_qm += $verm;
             echo "<tr><td>$a.</td><td>$leer</td><td>$verm</td></tr>";
-            // echo "$a. $leer_qm $verm_qm<br>";
         }
         echo "</table>";
-
-        $lj = $leer_qm / 12;
-        $vj = $verm_qm / 12;
 
         $ges = $leer_qm + $verm_qm;
 
@@ -143,15 +151,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
 
     function leer_monat_jahr_haus_m2($jahr_monat, $haus_id, $typ_lage)
     {
-        if ($typ_lage == '') {
-            $m_lage = "TYP LIKE 'Wohnraum' OR TYP LIKE 'Gewerbe' && ";
-        } else {
-            $m_lage = "TYP LIKE '" . $typ_lage . "%' &&";
-        }
         $db_abfrage = "SELECT SUM(EINHEIT_QM) AS QM FROM `EINHEIT` RIGHT JOIN ( HAUS, OBJEKT ) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID) WHERE EINHEIT.EINHEIT_AKTUELL='1' && HAUS.HAUS_AKTUELL='1' && EINHEIT.HAUS_ID = '$haus_id' && (TYP='Wohnraum' OR TYP='Gewerbe') && EINHEIT_ID NOT IN ( SELECT EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr_monat' && ( DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr_monat' OR MIETVERTRAG_BIS = '0000-00-00' ) ) ORDER BY EINHEIT_KURZNAME ASC";
-
-        // echo $db_abfrage;
-
         $resultat = DB::select($db_abfrage);
         if (!empty($resultat)) {
             $row = $resultat[0];
@@ -163,13 +163,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
 
     function vermietet_monat_jahr_haus_m2($jahr_monat, $haus_id, $typ_lage)
     {
-        if ($typ_lage == '') {
-            $m_lage = "TYP LIKE 'Wohnraum' OR TYP LIKE 'Gewerbe' && ";
-        } else {
-            $m_lage = "TYP LIKE '" . $typ_lage . "%' &&";
-        }
         $db_abfrage = "SELECT SUM(EINHEIT_QM) AS QM FROM `EINHEIT` RIGHT JOIN ( HAUS, OBJEKT ) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID) WHERE EINHEIT.EINHEIT_AKTUELL='1' && HAUS.HAUS_AKTUELL='1' && EINHEIT.HAUS_ID = '$haus_id' && (TYP='Wohnraum' OR TYP='Gewerbe') && EINHEIT_ID IN ( SELECT EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr_monat' && ( DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr_monat' OR MIETVERTRAG_BIS = '0000-00-00' ) ) ORDER BY EINHEIT_KURZNAME ASC";
-
         $resultat = DB::select($db_abfrage);
         if (!empty($resultat)) {
             $row = $resultat[0];
@@ -177,36 +171,6 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         } else {
             return '0.00';
         }
-    }
-
-    function leerstaende_monat_jahr_haus($jahr_monat, $haus_id, $typ_lage)
-    {
-        if ($typ_lage == '') {
-            $m_lage = "(TYP LIKE 'Wohnraum' OR TYP LIKE 'Gewerbe') &&";
-        } else {
-            $m_lage = "TYP LIKE '" . $typ_lage . "%' &&";
-        }
-        $db_abfrage = "SELECT OBJEKT_KURZNAME, EINHEIT.HAUS_ID, EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER FROM `EINHEIT` RIGHT JOIN ( HAUS, OBJEKT ) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID) WHERE EINHEIT.EINHEIT_AKTUELL='1' && HAUS.HAUS_AKTUELL='1' && EINHEIT.HAUS_ID = '$haus_id' && (TYP='Wohnraum' OR TYP='Gewerbe') && EINHEIT_ID NOT IN ( SELECT EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr_monat' && ( DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr_monat' OR MIETVERTRAG_BIS = '0000-00-00' ) ) ORDER BY EINHEIT_KURZNAME ASC";
-
-        $resultat = DB::select($db_abfrage);
-        $numrows = count($resultat);
-
-        return $numrows;
-    }
-
-    function vermietet_monat_jahr_haus($jahr_monat, $haus_id, $typ_lage)
-    {
-        if ($typ_lage == '') {
-            $m_lage = "TYP LIKE 'Wohnraum' OR TYP LIKE 'Gewerbe' && ";
-        } else {
-            $m_lage = "TYP LIKE '" . $typ_lage . "%' &&";
-        }
-        $db_abfrage = "SELECT OBJEKT_KURZNAME, EINHEIT.HAUS_ID, EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER FROM `EINHEIT` RIGHT JOIN ( HAUS, OBJEKT ) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID) WHERE EINHEIT.EINHEIT_AKTUELL='1' && HAUS.HAUS_AKTUELL='1' && EINHEIT.HAUS_ID = '$haus_id' && (TYP='Wohnraum' OR TYP='Gewerbe') && EINHEIT_ID IN ( SELECT EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr_monat' && ( DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr_monat' OR MIETVERTRAG_BIS = '0000-00-00' ) ) ORDER BY EINHEIT_KURZNAME ASC";
-
-        $resultat = DB::select($db_abfrage);
-        $numrows = count($resultat);
-
-        return $numrows;
     }
 
     function summe_sollmiete_alle()
@@ -362,13 +326,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         $pdf->ezStopPageNumbers(); // seitennummerirung beenden
 
         $berlus_schrift = 'pdfclass/fonts/Times-Roman.afm';
-        $text_schrift = 'pdfclass/fonts/Arial.afm';
-        // $pdf->addJpegFromFile('includes/logos/logo_hv_sw.jpg', 220, 750, 175, 100);
-        // $pdf->addJpgFromFile('pdfclass/logo_262_150_sw1.jpg', 300, 500, 250, 150);
-        // $pdf->setLineStyle(0.5);
         $pdf->selectFont($berlus_schrift);
-        // $pdf->addText(42,743,6,"BERLUS HAUSVERWALTUNG - Fontanestr. 1 - 14193 Berlin");
-        // $pdf->line(42,750,550,750);
         $monatsname = monat2name($monat);
         $pdf->addText(42, 700, 12, "Berechnungsbogen für die Verwaltergebühr <b>$objekt_name $monatsname $jahr</b>");
 
@@ -413,10 +371,10 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
                 $haus_id = request()->input('haus') [$a];
                 $vermietete = $this->vermietete_monat_jahr_haus($jahr_monat, $haus_id, '');
                 $leerstand = $this->leerstand_monat_jahr_haus($jahr_monat, $haus_id, '');
-                if (is_array($vermietete)) {
+                if (!empty($vermietete)) {
                     $vermietete_arr = array_merge($vermietete_arr, $vermietete);
                 }
-                if (is_array($leerstand)) {
+                if (!empty($leerstand)) {
                     $leerstand_arr = array_merge($leerstand_arr, $leerstand);
                 }
 
@@ -424,25 +382,21 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
                 unset ($vermietete);
             }
 
-            // print_r($vermietete_arr);
-            // print_r($leerstand_arr);
             $this->berechnung_anzeigen($leerstand_arr, $vermietete_arr, $monat, $jahr);
         } else {
             $h = new haus ();
             $haus_arr = $h->liste_aller_haeuser();
             $anzahl_haeuser = count($haus_arr);
-            if (is_array($haus_arr)) {
+            if (!empty($haus_arr)) {
                 $f->erstelle_formular("Häuser auswählen", NULL);
                 for ($a = 0; $a < $anzahl_haeuser; $a++) {
                     $objekt_id = $haus_arr [$a] ['OBJEKT_ID'];
-                    $haus_id = $haus_arr [$a] ['HAUS_ID'];
                     $haus_id = $haus_arr [$a] ['HAUS_ID'];
                     $haus_str = $haus_arr [$a] ['HAUS_STRASSE'];
                     $haus_nr = $haus_arr [$a] ['HAUS_NUMMER'];
                     if (session()->has('objekt_id') && $objekt_id == session()->get('objekt_id')) {
                         $f->check_box_js('haus[]', $haus_id, $haus_str . ' ' . $haus_nr, '', 'checked');
                     }
-                    // echo "$haus_id $haus_str $haus_nr<br>";
                 }
                 $f->send_button('btn_send', 'Berechnen');
                 $f->ende_formular();
@@ -456,11 +410,6 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
 
     function vermietete_monat_jahr_haus($jahr_monat, $haus_id, $typ_lage)
     {
-        if ($typ_lage != '') {
-            $m_lage = "EINHEIT_LAGE LIKE '" . $typ_lage . "%' &&";
-        } else {
-            $m_lage = '';
-        }
         $result = DB::select(" SELECT EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
 FROM `EINHEIT`
 RIGHT JOIN (
@@ -476,7 +425,6 @@ OR MIETVERTRAG_BIS = '0000-00-00' )
 )
 ORDER BY EINHEIT_KURZNAME ASC
 LIMIT 0 , 30 ");
-
         $this->vermietete = 0;
         $this->vermietete = count($result);
         return $result;
@@ -484,11 +432,6 @@ LIMIT 0 , 30 ");
 
     function leerstand_monat_jahr_haus($jahr_monat, $haus_id, $typ_lage)
     {
-        if ($typ_lage != '') {
-            $m_lage = "EINHEIT_LAGE LIKE '" . $typ_lage . "%' &&";
-        } else {
-            $m_lage = '';
-        }
         $result = DB::select(" SELECT EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
 FROM `EINHEIT`
 RIGHT JOIN (
@@ -577,9 +520,7 @@ LIMIT 0 , 30 ");
             $pdf = new Cezpdf ('a4', 'portrait');
             $pdf->ezSetCmMargins(4.5, 1, 1, 1);
             $berlus_schrift = 'pdfclass/fonts/Times-Roman.afm';
-            $text_schrift = 'pdfclass/fonts/Arial.afm';
             $pdf->addJpegFromFile('includes/logos/logo_hv_sw.jpg', 220, 750, 175, 100);
-            // $pdf->addJpgFromFile('pdfclass/logo_262_150_sw1.jpg', 300, 500, 250, 150);
             $pdf->setLineStyle(0.5);
             $pdf->selectFont($berlus_schrift);
             $pdf->addText(42, 743, 6, "BERLUS HAUSVERWALTUNG - Fontanestr. 1 - 14193 Berlin");
@@ -664,11 +605,7 @@ ORDER BY EINHEIT_KURZNAME ASC");
 
         $datum_jahresanfang = "01.01.$jahr";
         $b->kontostand_tagesgenau_bis($geldkonto_id, $datum_jahresanfang);
-        $kontostand_jahresanfang = $this->summe_konto_buchungen;
-
         /* Alle Monate durchlaufen */
-        // $daten_arr = array();
-
         for ($a = 1; $a <= 12; $a++) {
             $monat = $a;
             if (strlen($monat) == 1) {
@@ -676,7 +613,6 @@ ORDER BY EINHEIT_KURZNAME ASC");
             }
 
             $b->summe_kontobuchungen_jahr_monat($geldkonto_id, '80001', $jahr, $monat);
-            $summe_mieteinnahmen_monat = $b->summe_konto_buchungen;
             $daten_arr ['me_monat'] [] = $b->summe_konto_buchungen;
 
             $b->summe_miete_jahr($geldkonto_id, '80001', $jahr, $monat);
@@ -694,8 +630,6 @@ ORDER BY EINHEIT_KURZNAME ASC");
             $monatname = monat2name($monat);
             $daten_arr ['monate'] [] = $monatname;
         } // end for
-        // echo '<pre>';
-        // print_r($daten_arr);
         return $daten_arr;
     }
 
@@ -751,19 +685,6 @@ ORDER BY EINHEIT_KURZNAME ASC");
             echo "<tr><td>$nutzungsart</td><td>$anzahl</td><td>$prozent %</td></tr>";
         }
         echo "</table>";
-    }
-
-    function stunden_gesamt_mitarbeiter($mitarbeiter_id, $typ, $id)
-    {
-        /* stundenzettel */
-        $db_abfrage = "SELECT SUM(DAUER_MIN)/60 AS STUNDEN  FROM `STUNDENZETTEL_POS` JOIN STUNDENZETTEL ON (STUNDENZETTEL.ZETTEL_ID=STUNDENZETTEL_POS.ZETTEL_ID) WHERE `BENUTZER_ID` = '$mitarbeiter_id' AND STUNDENZETTEL.AKTUELL = '1' && STUNDENZETTEL_POS.AKTUELL = '1' && KOSTENTRAEGER_TYP='$typ' && KOSTENTRAEGER_ID='$id'";
-        $resultat = DB::select($db_abfrage);
-        if (!empty($resultat)) {
-            $row = $resultat[0];
-            return $row ['STUNDEN'];
-        } else {
-            return 0;
-        }
     }
 
     function baustellen_uebersicht()
@@ -839,8 +760,6 @@ ORDER BY EINHEIT_KURZNAME ASC");
                 $kos_id = $row ['KOSTENTRAEGER_ID'];
                 $datum_a = $row ['A_DATUM'];
                 $datum_e = $row ['E_DATUM'];
-                $beschreibung = $row ['BESCHREIBUNG'];
-                $g_stunden = 0;
                 $g_stunden = $this->gesamt_stunden($kos_typ, $kos_id, $datum_a, $datum_e);
                 // echo "Einheit $kos_id $g_stunden".'<br>';
                 $rest_std = $soll_std - $g_stunden;
@@ -948,15 +867,9 @@ ORDER BY EINHEIT_KURZNAME ASC");
             echo "</td><td colspan=\"4\">";
             $this->wo_eingebaut($beleg_id, $pos);
             echo "</td></tr>";
-            // echo $einheit_kn . $this->get_fenster_stat($einheit_id) .'<br>';
-            $eingebaut = 0;
-            $rest = 0;
         }
         echo "</table>";
-        // echo '<pre>';
-        // print_r($gesamt);
         $arr_keys = array_keys($gesamt);
-        // print_r($arr_keys);
         $anz = count($arr_keys);
         if (is_array($arr_keys)) {
             echo "<table class=\"sortable\">";
@@ -964,11 +877,8 @@ ORDER BY EINHEIT_KURZNAME ASC");
             for ($a = 0; $a < $anz; $a++) {
                 $art_nr = $arr_keys [$a];
                 $lieferant_id = $gesamt [$art_nr] ['LIEFERANT_ID'];
-                $lieferant = $gesamt [$art_nr] ['LIEFERANT'];
                 $r = new rechnungen ();
                 $art_info = $r->artikel_info($lieferant_id, $art_nr);
-                // print_r($art_info);
-                // die("$art_nr $lieferant_id");
                 $art_bez = $art_info [0] ['BEZEICHNUNG'];
                 unset ($art_info);
                 $geliefert = $gesamt [$art_nr] ['GELIEFERT'];
@@ -1010,11 +920,9 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
     function wo_eingebaut($beleg_nr, $pos)
     {
         $arr = $this->get_wo_eingebaut_arr($beleg_nr, $pos);
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
-
             $img = "images/del.png";
-
             echo "<table class=\"sortable\">";
             echo "<thead><tr><th>EINHEIT</th><th>EINHEIT_INFO</th><th>MENGE</th></tr></thead>";
             $sum = 0;
@@ -1037,9 +945,7 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
     function get_wo_eingebaut_arr($beleg_nr, $pos)
     {
         $result = DB::select("SELECT COUNT(EINHEIT_ID) AS ANZ, EINHEIT_ID  FROM `FENSTER_EINGEBAUT` WHERE `R_BELEG_ID` = '$beleg_nr' AND `POS` ='$pos' GROUP BY EINHEIT_ID");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function form_einheit_suche()
@@ -1059,9 +965,8 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
         $r = new rechnung ();
         $kos_bez = $r->kostentraeger_ermitteln($kos_typ, $kos_id);
         echo "<h1>$kos_bez</h1>";
-        // echo "EDIS";
         $b_arr = $this->get_bau_beleg_arr();
-        if (!is_array($b_arr)) {
+        if (empty($b_arr)) {
             fehlermeldung_ausgeben("Keine Belege in BAU_BELEG DB hinterlegt");
         } else {
             $anz = count($b_arr);
@@ -1071,7 +976,7 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
                 $r->rechnung_grunddaten_holen($beleg_nr);
                 $table = "<h2><b>$r->kurzbeschreibung</b></h2>";
                 $pos_arr = $r->rechnungs_positionen_arr($beleg_nr);
-                if (is_array($pos_arr)) {
+                if (!empty($pos_arr)) {
                     $anz_p = count($pos_arr);
                     for ($p = 0; $p < $anz_p; $p++) {
                         $art_nr = $pos_arr [$p] ['ARTIKEL_NR'];
@@ -1089,9 +994,7 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
     function get_bau_beleg_arr()
     {
         $result = DB::select("SELECT * FROM `BAU_BELEG`");
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function get_kontierung($art_nr, $menge, $kos_typ, $kos_id, &$table)
@@ -1184,71 +1087,4 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
 
         return true;
     }
-
-    function get_fenster_stat($einheit_id)
-    {
-        return $this->ist_fenster($einheit_id) - $this->soll_fenster($einheit_id);
-    }
-
-    function ist_fenster($einheit_id)
-    {
-        return 4;
-    }
-
-    function soll_fenster($einheit_id)
-    {
-        return 5;
-    }
 } // end class
-
-/*
- * MIETVERTRÄGE OHNE MIETDEFINITION
- * SELECT MIETVERTRAG_ID
- * FROM MIETVERTRAG
- * WHERE MIETVERTRAG_AKTUELL = '1' && MIETVERTRAG_ID NOT
- * IN (
- *
- * SELECT KOSTENTRAEGER_ID AS MIETVERTRAG_ID
- * FROM MIETENTWICKLUNG
- * WHERE KOSTENTRAEGER_TYP = 'MIETVERTRAG'
- * )
- * LIMIT 0 , 30
- */
-
-// }//end classs
-/*
- * SET @num =5300;# MySQL lieferte ein leeres Resultat zurück (d.&nbsp;h. null Zeilen).
- * # MySQL lieferte ein leeres Resultat zurück (d.&nbsp;h. null Zeilen).
- * SELECT @num := @num +1 AS ZEILE, GELD_KONTO_BUCHUNGEN_DAT
- * FROM `GELD_KONTO_BUCHUNGEN`
- * WHERE `GELDKONTO_ID` =1
- *
- *
- * SET @num =0;# MySQL lieferte ein leeres Resultat zurück (d.&nbsp;h. null Zeilen).
- * # MySQL lieferte ein leeres Resultat zurück (d.&nbsp;h. null Zeilen).
- * SELECT @num := @num +1 AS ZEILE, BETRAG
- * FROM `GELD_KONTO_BUCHUNGEN`
- * WHERE `GELDKONTO_ID` =1
- * AND `AKTUELL` = '1'
- * AND DATE_FORMAT( DATUM, '%Y' ) = '2009'
- * ORDER BY GELD_KONTO_BUCHUNGEN_DAT ASC
- *
- *
- *
- *
- * SET @num =0;# MySQL lieferte ein leeres Resultat zurück (d.&nbsp;h. null Zeilen).
- * UPDATE GELD_KONTO_BUCHUNGEN SET G_BUCHUNGSNUMMER = @num:= @num +1 WHERE GELD_KONTO_BUCHUNGEN_DAT IN (
- * SELECT GELD_KONTO_BUCHUNGEN_DAT
- * FROM GELD_KONTO_BUCHUNGEN_OK37
- * WHERE GELDKONTO_ID =1
- * AND AKTUELL = '1'
- * AND DATE_FORMAT( DATUM, '%Y' ) = '2009'
- * ORDER BY GELD_KONTO_BUCHUNGEN_DAT ASC
- * )# Betroffene Datensätze: 468
- * # Betroffene Datensätze: 467
- *
- *
- * UPDATE KONTIERUNG_POSITIONEN AS t1
- * JOIN KONTIERUNG_POSITIONEN AS t2 ON t1.KONTIERUNG_ID = t2.KONTIERUNG_ID
- * SET t1.GESAMT_SUMME = t2.MENGE*t2.EINZEL_PREIS
- */

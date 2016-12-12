@@ -4,15 +4,19 @@
 class b_pdf
 {
     public $zahlungshinweis;
-
-    function mietentwicklung_aktuell($pdf, $mv_id)
-    {
-        $me = new mietentwicklung ();
-        /* Aktuelle Miethöhe */
-        $jahr = date("Y");
-        $monat = date("m");
-        $me->get_mietentwicklung_infos($mv_id, $jahr, $monat);
-    }
+    public $aktuelle_g_miete;
+    public $aktuelle_g_miete_arr;
+    public $v_kurztext;
+    public $v_text;
+    public $header_zeile;
+    public $zeile1;
+    public $zeile2;
+    public $footer_typ;
+    public $footer_typ_id;
+    public $zahlungshinweis_org;
+    public $footer_partner;
+    public $v_kat;
+    public $v_empf_typ;
 
     function erstelle_brief_vorlage($v_dat, $empf_typ, $empf_id_arr, $option = '0')
     {
@@ -60,7 +64,9 @@ class b_pdf
                 }
                 $sepa->GLAEUBIGER_ID = $dets->finde_detail_inhalt('GELD_KONTEN', $gk->geldkonto_id, 'GLAEUBIGER_ID');
                 if (!isset ($sepa->GLAEUBIGER_ID)) {
-                    die ("Bei $gk->kontonummer $mv->objekt_kurzname fehlt die Gläubiger ID");
+                    throw new \App\Exceptions\MessageException(
+                        new \App\Messages\ErrorMessage("Bei $gk->kontonummer $mv->objekt_kurzname fehlt die Gläubiger ID")
+                    );
                 }
                 $this->get_texte($v_dat);
 
@@ -160,7 +166,6 @@ class b_pdf
                     $pdf_einzeln->ezText("<b>$this->v_kurztext</b>", 11);
                     $pdf_einzeln->ezSetDy(-30);
                     $pdf_einzeln->ezText("$mv->mv_anrede", 11);
-                    $txt_alt = $this->v_text;
                     $pdf_einzeln->ezText("$this->v_text", 11, array(
                         'justification' => 'full'
                     ));
@@ -208,7 +213,9 @@ class b_pdf
                 $pdf->ezStream($pdf_opt);
             }
         } else {
-            die ('Keine Empfänger gewählt');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\WarningMessage('Keine Empfänger gewählt')
+            );
         }
     }
 
@@ -364,7 +371,7 @@ class b_pdf
         $f = new formular ();
         $m = new mahnungen ();
         $aktuelle_mvs = $m->finde_aktuelle_mvs();
-        if (is_array($aktuelle_mvs)) {
+        if (!empty($aktuelle_mvs)) {
             echo "<div class='row input-field'>";
             echo "<div class='col s12 m6 l2'>";
             $f->check_box_js_alle('nn', 'nn', 'NN', 'Alle markieren', '', '', 'mv_ids');
@@ -420,7 +427,6 @@ class b_pdf
             foreach($result as $row) {
                 $dat = $row ['DAT'];
                 $kurztext = $row ['KURZTEXT'];
-                $text = $row ['TEXT'];
                 $kat = $row ['KAT'];
                 $link_erstellen = "<a href='" . route('legacy::bk::index', ['option' => 'serienbrief_pdf', 'vorlagen_dat' => $dat, 'emailsend']) . "'>Serienbrief in mehreren PDFs</a>";
                 $link_ansehen = "<a href='" . route('legacy::bk::index', ['option' => 'serienbrief_pdf', 'vorlagen_dat' => $dat]) . "'>Serienbrief in einem PDF</a>";
@@ -515,8 +521,8 @@ class b_pdf
 
     function vorlage_update($dat, $kurztext, $text, $kat = 'Alle', $empf_typ = 'Mieter')
     {
-        $db_abfrage = "UPDATE PDF_VORLAGEN SET KURZTEXT= '$kurztext', TEXT= '$text', KAT='$kat', EMPF_TYP='$empf_typ' WHERE DAT='$dat'";
-        DB::update($db_abfrage);
+        $db_abfrage = "UPDATE PDF_VORLAGEN SET KURZTEXT=?, TEXT=?, KAT='$kat', EMPF_TYP='$empf_typ' WHERE DAT='$dat'";
+        DB::update($db_abfrage, [$kurztext, $text]);
         /* Protokollieren */
         protokollieren('PDF_VORLAGEN', $dat, $dat);
     }
@@ -566,7 +572,9 @@ class b_pdf
                     }
                 }
             } else {
-                die ('Keine Partner im System');
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\WarningMessage('Keine Partner im System')
+                );
             }
         }
         if ($empfaenger == 'Objekt') {
@@ -1092,19 +1100,13 @@ class b_pdf
             $pdf->addText(65, $pdf->y + 2, 9, "<b>Der Mieter hat die Auszugsbestätigung erhalten.</b>");
         }
         $pdf->ezSetDy(-10); // Abstand
-        $pdf->ezText("$mv->haus_stadt, __________________", 9, array(
+        $pdf->ezText("$mv->haus_stadt, __________________    ___________________________________    ____________________________________", 9, array(
             'justification' => 'left'
         ));
         $pdf->ezSetDy(-7); // Abstand
-        $pdf->addText(125, $pdf->y, 6, "Datum");
-
-        $pdf->ezSetDy(-14); // Abstand
-        $pdf->ezText("____________________________________________      _____________________________________________", 9, array(
-            'justification' => 'left'
-        ));
-        $pdf->ezSetDy(-7); // Abstand
-        $pdf->addText(150, $pdf->y, 6, "Mieter");
-        $pdf->addText(400, $pdf->y, 6, "Vermieter");
+        $pdf->addText(112, $pdf->y, 6, "Datum");
+        $pdf->addText(255, $pdf->y, 6, "Mieter");
+        $pdf->addText(440, $pdf->y, 6, "Vermieter");
     }
 
     function kasten(Cezpdf &$pdf, $anz_felder, $startx, $h, $b, $abstand_zw = null)

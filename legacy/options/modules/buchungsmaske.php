@@ -70,21 +70,19 @@ switch ($schritt) {
             $buchungsdatum = date_german2mysql(request()->input('buchungsdatum'));
             if (request()->input('ZAHLBETRAG') === 0) {
                 //TODO: check if condition
-                warnung_ausgeben("Die Miete ist in der Mietentwicklung nicht definiert!");
-                warnung_ausgeben("Sie werden um einen Schritt zurückversetzt!");
-                weiterleiten_in_sec('javascript:history.back();', 5);
-                die ();
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\WarningMessage("Die Miete ist in der Mietentwicklung nicht definiert!")
+                );
             } else {
-
                 /* Buchungsprozedur */
                 $buchen = new mietkonto ();
                 $mwst_anteil = request()->input('MWST_ANTEIL');
                 $buchen->miete_zahlbetrag_buchen(request()->input('kontoauszugsnr'), request()->input('MIETVERTRAG_ID'), $buchungsdatum, request()->input('ZAHLBETRAG'), request()->input('bemerkung'), request()->input('geld_konto'), $mwst_anteil);
             }
         } else {
-            warnung_ausgeben("Datumsformat nicht korrekt!");
-            warnung_ausgeben("Sie werden um einen Schritt zurückversetzt!");
-            weiterleiten_in_sec('javascript:history.back();', 3);
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\WarningMessage("Datumsformat nicht korrekt!")
+            );
         }
         break;
     /* Ende Case */

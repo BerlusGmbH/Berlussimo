@@ -2,10 +2,29 @@
 
 class todo
 {
+    public $text;
+    public $t_dat;
+    public $t_id;
+    public $ue_id;
+    public $benutzer_typ;
+    public $benutzer_id;
+    public $verfasser_id;
+    public $mitarbeiter_name;
+    public $partner_ans;
+    public $kos_typ;
+    public $kos_id;
+    public $partner_fax;
+    public $partner_email;
+    public $verfasst_von;
+    public $erledigt;
+    public $erledigt_text;
+    public $anzeigen_ab;
+    public $akut;
+    public $kos_bez;
+
     function form_neue_baustelle($t_id = NULL)
     {
         $f = new formular ();
-        $bb = new buchen ();
         $f->erstelle_formular('Neue Baustelle erstellen', '');
         $f->text_feld('Bezeichnung', 'bau_bez', '', 50, 'bau_bez', '');
         $f->hidden_feld('option', 'neue_baustelle');
@@ -26,7 +45,7 @@ class todo
     function baustellen_liste($aktiv = 1)
     {
         $arr = $this->baustellen_liste_arr($aktiv);
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             echo "<table class=\"sortable striped\">";
             echo "<thead><tr><th>Baustelle</th><th>Rechnungsempfänger</th><th>Optionen</th></tr></thead>";
@@ -51,10 +70,8 @@ class todo
     function baustellen_liste_arr($aktiv = 1)
     {
         $db_abfrage = "SELECT * FROM BAUSTELLEN_EXT WHERE AKTUELL='1' && AKTIV='$aktiv' ORDER BY BEZ, PARTNER_ID";
-        $result = DB::insert($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        }
+        $result = DB::select($db_abfrage);
+        return $result;
     }
 
     function baustelle_aktivieren($b_id, $aktiv = '1')
@@ -118,13 +135,7 @@ class todo
                 if (!is_numeric($kostentraeger_id)) {
                     $kostentraeger_bez = request()->input('kostentraeger_id');
                     $kostentraeger_id = $bb->kostentraeger_id_ermitteln($kostentraeger_typ, $kostentraeger_bez);
-                    $mail_subj = "Neues Projekt " . request()->input('text');
-                } else {
-                    $r = new rechnung ();
-                    $kostentraeger_bez = $r->kostentraeger_ermitteln($kostentraeger_typ, $kostentraeger_id);
-                    $mail_subj = "Neue Aufgabe ";
                 }
-
                 $benutzer_id = Auth::user()->id;
                 $db_abfrage = "INSERT INTO TODO_LISTE VALUES (NULL, '$last_id', '$t_id', '" . request()->input('text') . "', NULL, '$anz_ab','$typ', '" . request()->input('benutzer_id') . "','$benutzer_id', '0','" . request()->input('akut') . "','" . request()->input('kostentraeger_typ') . "','$kostentraeger_id', '$wert_eur','1')";
                 DB::insert($db_abfrage);
@@ -177,7 +188,7 @@ class todo
                 foreach($result as $row) {
                     $person_id = $row ['PERSON_MIETVERTRAG_PERSON_ID'];
                     $arr = $this->finde_detail_kontakt_arr('PERSON', $person_id);
-                    if (is_array($arr)) {
+                    if (!empty($arr)) {
                         $anz = count($arr);
                         for ($a = 0; $a < $anz; $a++) {
                             $dname = $arr [$a] ['DETAIL_NAME'];
@@ -195,38 +206,7 @@ class todo
     {
         $db_abfrage = "SELECT DETAIL_NAME, DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = '$tab' && (DETAIL_NAME LIKE '%tel%'or DETAIL_NAME LIKE '%fax%' or DETAIL_NAME LIKE '%mobil%' or DETAIL_NAME LIKE '%handy%' OR DETAIL_NAME LIKE '%mail%' OR DETAIL_NAME LIKE '%anschrift%') && DETAIL_ZUORDNUNG_ID = '$id' && DETAIL_AKTUELL = '1' ORDER BY DETAIL_NAME ASC";
         $resultat = DB::select($db_abfrage);
-        if (!empty($resultat)) {
-            return $resultat;
-        }
-    }
-
-    function rss_feed_ok_test($benutzer_id)
-    {
-        ob_clean();
-        echo '<?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0">';
-
-        echo "<channel>\n";
-        echo '<title>Meine Projekte PHP</title>
-  <link>http://www.berlus.de</link>
-  <description>Meine Termine und Projekte</description>';
-
-        echo '<item>
-    <title>Projekt 1</title>
-    <link>http://www.w3schools.com/rss</link>
-    <description>
-	<![CDATA[
-	<!-- ab hier html-->
-	<b>SANEL</b><br>SANELA
-		
-	]]>
-	</description>
-    <enclosure url="http://berlus.de" type="video/mpeg"></enclosure>
-  </item>';
-
-        echo "</channel>\n";
-        echo "</rss>";
-        die ();
+        return $resultat;
     }
 
     function rss_feed($benutzer_id)
@@ -242,7 +222,7 @@ class todo
         echo "<channel>\n";
 
         $my_proj_id_arr = $this->get_my_projekt_arr($benutzer_id);
-        if (!is_array($my_proj_id_arr)) {
+        if (empty($my_proj_id_arr)) {
             echo "<title>Keine Projekte und Aufgaben für Sie!</title>\n";
             echo "<link>https://app.berlussimo.de/rss.php</link>\n";
             echo "<description>Sie haben keine Projekte und Aufgaben</description>\n";
@@ -258,15 +238,12 @@ class todo
                 $proj_id = $my_proj_id_arr [$p] ['PROJ_ID'];
                 $result = DB::select("SELECT * FROM TODO_LISTE WHERE T_ID='$proj_id' && AKTUELL='1' ORDER BY ANZEIGEN_AB ASC");
                 if (!empty($result)) {
-                    $pz = $p + 1;
                     $z1 = 0;
                     foreach ($result as $row) {
                         $z1++;
                         $t_id = $row ['T_ID'];
                         $text = $row ['TEXT'];
-                        $edit_text = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $t_id], false) . "'>$text</a>";
                         $anzeigen_ab = date_mysql2german($row ['ANZEIGEN_AB']);
-                        $erledigt = $row ['ERLEDIGT'];
                         $verfasser_id = $row ['VERFASSER_ID'];
                         $b = new benutzer ();
                         $b->get_benutzer_infos($verfasser_id);
@@ -336,20 +313,11 @@ class todo
 
         echo "</channel>\n";
         echo "</rss>";
-        die ();
     }
 
     function get_my_projekt_arr($benutzer_id, $erl = '0')
     {
         if ($erl == '0') {
-            /*
-			 * $db_abfrage = "SELECT IF( UE_ID = '0', T_ID, UE_ID ) AS PROJ_ID FROM TODO_LISTE WHERE (
-			 * BENUTZER_ID = '$benutzer_id'
-			 * OR VERFASSER_ID = '$benutzer_id'
-			 * ) && ANZEIGEN_AB <= DATE_FORMAT( NOW( ) , '%Y-%m-%d' ) && AKTUELL = '1' && ERLEDIGT='0'
-			 * GROUP BY PROJ_ID
-			 * ORDER BY ANZEIGEN_AB ASC";
-			 */
             $db_abfrage = "SELECT T_ID AS PROJ_ID
 FROM `TODO_LISTE`
 WHERE (
@@ -358,14 +326,6 @@ OR `VERFASSER_ID` ='$benutzer_id'
 )
 AND `AKTUELL` = '1' && ERLEDIGT='0' && UE_ID='0'";
         } else {
-            /*
-			 * $db_abfrage = "SELECT IF( UE_ID = '0', T_ID, UE_ID ) AS PROJ_ID FROM TODO_LISTE WHERE (
-			 * BENUTZER_ID = '$benutzer_id'
-			 * OR VERFASSER_ID = '$benutzer_id'
-			 * ) && ANZEIGEN_AB <= DATE_FORMAT( NOW( ) , '%Y-%m-%d' ) && AKTUELL = '1' && ERLEDIGT='1'
-			 * GROUP BY PROJ_ID
-			 * ORDER BY ANZEIGEN_AB ASC";
-			 */
             $db_abfrage = "SELECT T_ID AS PROJ_ID
 FROM `TODO_LISTE`
 WHERE (
@@ -376,168 +336,23 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         }
 
         $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function get_unteruafgaben_arr($t_id)
     {
         $db_abfrage = "SELECT * FROM TODO_LISTE WHERE UE_ID ='$t_id' && ANZEIGEN_AB <= DATE_FORMAT(NOW(), '%Y-%m-%d' ) && AKTUELL='1' ORDER BY ERLEDIGT ASC, AKUT ASC, ANZEIGEN_AB ASC";
         $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        }
-    }
-
-    function rss_feed_OK($benutzer_id)
-    {
-        ob_clean();
-        header("Content-Type: application/xml; charset=UTF-8");
-        echo '<?xml version="1.0" encoding="UTF-8" ?>';
-        echo "<rss version=\"2.0\">\n";
-        echo "<channel>\n";
-
-        $my_proj_id_arr = $this->get_my_projekt_arr($benutzer_id);
-        if (!is_array($my_proj_id_arr)) {
-            echo "<title>Keine Projekte und Aufgaben für Sie!</title>\n";
-            echo "<link>https://app.berlussimo.de/rss.php</link>\n";
-        } else {
-            $b = new benutzer ();
-            $b->get_benutzer_infos($benutzer_id);
-            echo "<title>Aufgaben von Benutzer: $b->benutzername</title>\n";
-            echo "<link>https://app.berlussimo.de/rss.php</link>\n";
-            echo "<description>Angezeigt werden Projekte und dazugehürige Aufgaben!</description>\n";
-            $anz_p = count($my_proj_id_arr);
-
-            for ($p = 0; $p < $anz_p; $p++) {
-                $proj_id = $my_proj_id_arr [$p] ['PROJ_ID'];
-                $result = DB::select("SELECT * FROM TODO_LISTE WHERE T_ID='$proj_id' && AKTUELL='1' ORDER BY ANZEIGEN_AB ASC");
-
-                if (!empty($result)) {
-                    $pz = $p + 1;
-                    $f = new formular ();
-                    echo "<item>\n";
-                    echo "<title>Projekt $pz</title>\n";
-                    $link_mp = route('legacy::todo::index');
-                    echo "<link>$link_mp</link>";
-                    $z1 = 0;
-                    foreach($result as $row) {
-                        $z1++;
-                        $t_id = $row ['T_ID'];
-                        $text = $row ['TEXT'];
-                        $edit_text = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $t_id]) . "'>$text</a>";
-                        $anzeigen_ab = date_mysql2german($row ['ANZEIGEN_AB']);
-                        $erledigt = $row ['ERLEDIGT'];
-                        $verfasser_id = $row ['VERFASSER_ID'];
-                        $b = new benutzer ();
-                        $b->get_benutzer_infos($verfasser_id);
-                        $verfasser_name = $b->benutzername;
-                        $beteiligt_id = $row ['BENUTZER_ID'];
-                        $b = new benutzer ();
-                        $b->get_benutzer_infos($beteiligt_id);
-                        $beteiligt_name = $b->benutzername;
-                        if ($erledigt == '1') {
-                            $erledigt = 'erledigt';
-                        } else {
-                            $erledigt = "offen";
-                        }
-
-                        $link_erledigt = "<a href=\"\">";
-                        $o = new objekt ();
-                        $t_vergangen = $o->tage_berechnen_bis_heute($anzeigen_ab);
-
-                        $akut = $row ['AKUT'];
-                        if ($akut == 'JA') {
-                            $c1 = 3;
-                        } else {
-                            $c1 = 4;
-                        }
-
-                        $kos_typ = $row ['KOS_TYP'];
-                        $kos_id = $row ['KOS_ID'];
-                        $r = new rechnung ();
-                        $kos_bez = $r->kostentraeger_ermitteln($kos_typ, $kos_id);
-
-                        echo "<description><![CDATA[ Vergangen: $t_vergangen T | Ab: $anzeigen_ab | Erfasser:$verfasser_name | Beteiligt: $beteiligt_name | Zuweisung:$kos_bez ";
-                        if ($erledigt == 'erledigt') {
-                            echo "| Status: $erledigt |";
-                        } else {
-                            echo "| Status:$erledigt |";
-                        }
-                        echo "Akut: $akut $link_1 ]]</description>\n";
-                        echo "</item>\n";
-
-                        $u_aufgaben_arr = $this->get_unteruafgaben_arr($t_id);
-                        $anz = count($u_aufgaben_arr);
-                        if ($anz) {
-                            $z2 = 0;
-                            for ($a = 0; $a < $anz; $a++) {
-                                $z2++;
-                                $u_t_id = $u_aufgaben_arr [$a] ['T_ID'];
-                                $u_text = $u_aufgaben_arr [$a] ['TEXT'];
-                                $u_edit_text = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $u_t_id]) . "'>$u_text</a>";
-                                $u_anzeigen_ab = date_mysql2german($u_aufgaben_arr [$a] ['ANZEIGEN_AB']);
-                                $u_erledigt = $u_aufgaben_arr [$a] ['ERLEDIGT'];
-                                if ($u_erledigt == '1') {
-                                    $u_erledigt = 'erledigt';
-                                } else {
-                                    $u_erledigt = "offen";
-                                }
-
-                                $u_verfasser_id = $u_aufgaben_arr [$a] ['VERFASSER_ID'];
-                                $b = new benutzer ();
-                                $b->get_benutzer_infos($u_verfasser_id);
-                                $u_verfasser_name = $b->benutzername;
-                                $u_beteiligt_id = $u_aufgaben_arr [$a] ['BENUTZER_ID'];
-                                $b = new benutzer ();
-                                $b->get_benutzer_infos($u_beteiligt_id);
-                                $u_beteiligt_name = $b->benutzername;
-                                $u_akut = $u_aufgaben_arr [$a] ['AKUT'];
-                                if ($u_akut == 'JA') {
-                                    $c = 3;
-                                } else {
-                                    $c = 5;
-                                }
-
-                                $u_kos_typ = $u_aufgaben_arr [$a] ['KOS_TYP'];
-                                $u_kos_id = $u_aufgaben_arr [$a] ['KOS_ID'];
-                                $r = new rechnung ();
-                                $u_kos_bez = $r->kostentraeger_ermitteln($u_kos_typ, $u_kos_id);
-
-                                $u_t_vergangen = $o->tage_berechnen_bis_heute($u_anzeigen_ab);
-                                echo "<item>\n";
-                                echo "<title>$pz.$z2: $u_text -> Vergangen: $u_t_vergangen T | Ab: $u_anzeigen_ab</title>\n";
-                                echo "<description>Erfasser:$u_verfasser_name | Beteiligt: $u_beteiligt_name | Zuweisung:$u_kos_bez ";
-
-                                if ($u_erledigt == 'erledigt') {
-                                    echo "| Status: $erledigt |";
-                                } else {
-                                    echo "| Status: $erledigt |";
-                                }
-                                echo "Akut: $u_akut </description>\n";
-                                $link_2 = route('legacy::todo::index', ['option' => 'edit', 't_id' => $u_t_id]);
-                                echo "<link>$link_2</link>\n";
-                                echo "</item>\n";
-                            }
-                        }
-                    }
-                }
-            }
-        } // end else
-        echo "</channel>\n";
-        echo "</rss>\n";
-        die (); // wichtig
+        return $result;
     }
 
     function todo_liste($benutzer_id = '0', $erl = '0')
     {
-
         if ($benutzer_id == '') {
             $benutzer_id = '0';
         }
         $my_proj_id_arr = $this->get_my_projekt_arr($benutzer_id, $erl);
-        if (!is_array($my_proj_id_arr)) {
+        if (empty($my_proj_id_arr)) {
             echo 'Keine Projekte und Aufgaben für Sie vohanden!';
             return;
         } else {
@@ -590,7 +405,6 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                             $erledigt = "offen";
                         }
 
-                        $link_erledigt = "<a href=\"\">";
                         $o = new objekt ();
                         $t_vergangen = $o->tage_berechnen_bis_heute($anzeigen_ab);
 
@@ -622,7 +436,6 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                         }
                         echo "$link_pdf_1 </td>";
                         echo "</tr>";
-                        $link_neue_u_aufgabe = "<a href='" . route('legacy::todo::index', ['option' => 'neues_projekt', 't_id' => $t_id]) . "'>Neue Aufgabe erstellen</a>";
 
                         $u_aufgaben_arr = $this->get_unteruafgaben_arr($t_id);
                         $anz = count($u_aufgaben_arr);
@@ -691,16 +504,6 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             $f->hidden_feld('option', 'erledigt_alle');
             $f->send_button_js('BTN_alle_erl', 'Markierte als ERLDIGT kennzeichnen!!!', null);
             $f->ende_formular();
-        }
-    }
-
-    function get_aufgaben($b_id, $erl = '0')
-    {
-        $db_abfrage = "SELECT * FROM TODO_LISTE WHERE (BENUTZER_ID='$b_id' OR VERFASSER_ID='$b_id') && AKTUELL='1' && UE_ID!='0' && ERLEDIGT='$erl' ORDER BY KOS_TYP, KOS_ID, UE_ID, VERFASSER_ID, ANZEIGEN_AB ASC";
-
-        $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            return $result;
         }
     }
 
@@ -803,16 +606,6 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         return true;
     }
 
-    function get_auftraege($b_id, $erl = '0')
-    {
-        $db_abfrage = "SELECT * FROM TODO_LISTE WHERE (BENUTZER_ID='$b_id' OR VERFASSER_ID='$b_id') && AKTUELL='1' && UE_ID='0' && ERLEDIGT='$erl' && T_ID NOT IN (SELECT UE_ID FROM TODO_LISTE WHERE (BENUTZER_ID='$b_id' OR VERFASSER_ID='$b_id') && AKTUELL='1' && UE_ID!='0' && ERLEDIGT='$erl') ORDER BY KOS_TYP, KOS_ID, UE_ID, VERFASSER_ID, ANZEIGEN_AB ASC";
-
-        $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        }
-    }
-
     function todo_liste2($benutzer_id = '0', $erl = '0')
     {
         $arr_n = $this->get_alle_auftraege($erl);
@@ -834,7 +627,6 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         $p = 0;
         if ($anz) {
 
-            $pz = $p + 1;
             $f = new formular ();
             $f->fieldset("Meine Aufträge", 'ana');
 
@@ -865,7 +657,6 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                     $erledigt = "offen";
                 }
 
-                $link_erledigt = "<a href=\"\">";
                 $o = new objekt ();
                 $t_vergangen = $o->tage_berechnen_bis_heute($anzeigen_ab);
 
@@ -898,7 +689,6 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 }
                 echo "$link_pdf_1 </td>";
                 echo "</tr>";
-                $link_neue_u_aufgabe = "<a href='" . route('legacy::todo::index', ['option' => 'neues_projekt', 't_id' => $t_id]) . "'>Neue Aufgabe erstellen</a>";
             }
         } else {
             hinweis_ausgeben("Keine gefunden!");
@@ -937,8 +727,6 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         $anz = count($arr);
         $p = 0;
         if ($anz) {
-
-            $pz = $p + 1;
             $f = new formular ();
             $f->fieldset("Meine Aufträge", 'ana');
 
@@ -968,8 +756,6 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 } else {
                     $erledigt = "offen";
                 }
-
-                $link_erledigt = "<a href=\"\">";
                 $o = new objekt ();
                 $t_vergangen = $o->tage_berechnen_bis_heute($anzeigen_ab);
 
@@ -1002,7 +788,6 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 }
                 echo "$link_pdf_1 </td>";
                 echo "</tr>";
-                $link_neue_u_aufgabe = "<a href='" . route('legacy::todo::index', ['option' => 'neues_projekt', 't_id' => $t_id]) . "'>Neue Aufgabe erstellen</a>";
             }
         } else {
             hinweis_ausgeben("Keine gefunden!");
@@ -1033,7 +818,6 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $u_edit_text = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $u_t_id]) . "'>$u_text</a>";
                 $u_anzeigen_ab = date_mysql2german($u_aufgaben_arr [$a] ['ANZEIGEN_AB']);
                 $u_link_pdf = "<a href='" . route('legacy::todo::index', ['option' => 'pdf_auftrag', 'proj_id' => $u_t_id]) . "'><img src=\"images/pdf_light.png\"></a>";
-                $link_auftraege_an = "<a href='" . route('legacy::todo::index', ['option' => 'auftraege_an', 'typ' => $benutzer_typ, 'id' => $beteiligt_id]) . "'><img src=\"images/pdf_light.png\"></a>";
                 $u_erledigt = $u_aufgaben_arr [$a] ['ERLEDIGT'];
                 if ($u_erledigt == '1') {
                     $u_erledigt = 'erledigt';
@@ -1114,20 +898,6 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         }
     }
 
-    function get_kos_typ_id($t_id)
-    {
-        $result = DB::select("SELECT KOS_TYP, KOS_ID FROM TODO_LISTE WHERE T_ID='$t_id' && AKTUELL='1' ORDER BY T_ID DESC LIMIT 0,1");
-        $row = $result[0];
-        if (is_array($row)) {
-            $this->kos_typ = $row ['KOS_TYP'];
-            $this->kos_id = $row ['KOS_ID'];
-            $r = new rechnung ();
-            $this->kos_bez = $r->kostentraeger_ermitteln($this->kos_typ, $this->kos_id);
-        } else {
-            die ('Kostenträger unbekannt');
-        }
-    }
-
     function form_suche($typ_int_ext = 'intern')
     {
         $f = new formular ();
@@ -1152,11 +922,11 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
     function form_edit_aufgabe($t_id)
     {
         if (empty ($t_id)) {
-            die ('Aufgabe oder Projekt wählen');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Bitte wählen Sie eine Aufgabe.')
+            );
         }
         $this->get_aufgabe_alles($t_id);
-        // echo '<pre>';
-        // print_r($this);
         $f = new formular ();
         $f->erstelle_formular('Bearbeiten', '');
         $bb = new buchen ();
@@ -1249,9 +1019,8 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 
     function pdf_projekt($id)
     {
-        // echo "PDF HIER";
         $arr = $this->get_unteruafgaben_arr($id);
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             $projekt_name = $this->get_text($id);
             for ($a = 0; $a < $anz; $a++) {
@@ -1373,7 +1142,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 
         $pp = new benutzer ();
         $b = $pp->get_user_info(session()->get('benutzer_id'));
-        session()->put('partner_id', $b->BP_PARTNER_ID);
+        session()->put('partner_id', $b['BP_PARTNER_ID']);
 
         if ($this->kos_typ == 'Einheit') {
             $kontaktdaten_mieter = $this->kontaktdaten_anzeigen_mieter($this->kos_id);
@@ -1385,7 +1154,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             $p->get_partner_info($this->kos_id);
             $kontaktdaten_mieter = "$p->partner_name\n$p->partner_strasse $p->partner_hausnr\n$p->partner_plz $p->partner_ort\n";
             $det_arr = $this->finde_detail_kontakt_arr('PARTNER_LIEFERANT', $this->kos_id);
-            if (is_array($det_arr)) {
+            if (!empty($det_arr)) {
                 $anzd = count($det_arr);
                 for ($a = 0; $a < $anzd; $a++) {
                     $dname = $this->html2txt($det_arr [$a] ['DETAIL_NAME']);
@@ -1398,16 +1167,14 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         if ($this->kos_typ == 'Eigentuemer') {
             $weg = new weg ();
             $weg->get_eigentumer_id_infos2($this->kos_id);
-            $miteigentuemer_namen = strip_tags($weg->eigentuemer_name_str_u);
             $kontaktdaten_mieter = "$weg->haus_strasse $weg->haus_nummer\n<b>$weg->haus_plz $weg->haus_stadt</b>\n\n";
             for ($pe = 0; $pe < count($weg->eigentuemer_person_ids); $pe++) {
                 $et_p_id = $weg->eigentuemer_person_ids [$pe];
                 $det_arr = $this->finde_detail_kontakt_arr('Person', $et_p_id);
-                // echo strtoupper($this->kos_typ);
                 $kontaktdaten_mieter .= rtrim(ltrim($weg->eigentuemer_name [$pe] ['HRFRAU'])) . " ";
                 $kontaktdaten_mieter .= rtrim(ltrim($weg->eigentuemer_name [$pe] ['Nachname'])) . " ";
                 $kontaktdaten_mieter .= rtrim(ltrim($weg->eigentuemer_name [$pe] ['Vorname'])) . "\n";
-                if (is_array($det_arr)) {
+                if (!empty($det_arr)) {
                     $anzd = count($det_arr);
                     for ($ad = 0; $ad < $anzd; $ad++) {
                         $dname = $this->html2txt($det_arr [$ad] ['DETAIL_NAME']);
@@ -1425,7 +1192,6 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $h->get_haus_info($this->kos_id);
                 $kontaktdaten_mieter = "Haus:\n$h->haus_strasse $h->haus_nummer\n<b>$h->haus_plz $h->haus_stadt</b>";
             } else {
-                $d = new detail ();
                 $kontaktdaten_mieter = $this->kos_bez;
             }
         }
@@ -1461,18 +1227,16 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             if (isset ($weg->eigentuemer_id)) {
                 $e_id = $weg->eigentuemer_id;
                 $weg->get_eigentuemer_namen($e_id);
-                $miteigentuemer_namen = strip_tags($weg->eigentuemer_name_str);
 
                 /* ################Betreuer################## */
                 $anz_p = count($weg->eigentuemer_person_ids);
                 $betreuer_str = '';
-                $betreuer_arr;
+                $betreuer_arr = [];
                 for ($be = 0; $be < $anz_p; $be++) {
                     $et_p_id = $weg->eigentuemer_person_ids [$be];
                     $d_k = new detail ();
                     $dt_arr = $d_k->finde_alle_details_grup('PERSON', $et_p_id, 'INS-Kundenbetreuer');
-
-                    if (is_array($dt_arr)) {
+                    if (!empty($dt_arr)) {
                         $anz_bet = count($dt_arr);
                         for ($bet = 0; $bet < $anz_bet; $bet++) {
                             $bet_str = $dt_arr [$bet] ['DETAIL_INHALT'];
@@ -1482,7 +1246,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                     }
                 }
 
-                if (is_array($betreuer_arr)) {
+                if (!empty($betreuer_arr)) {
                     $betreuer_str = '';
                     $betreuer_arr1 = array_unique($betreuer_arr);
                     for ($bbb = 0; $bbb < count($betreuer_arr1); $bbb++) {
@@ -1490,8 +1254,6 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                     }
                     $pdf->addText(252, 635, 8, "<b>Erledigt</b>:$erledigt");
                 }
-            } else {
-                $miteigentuemer_namen = "UNBEKANNT";
             }
         } else {
             $pdf->addText(252, 635, 8, "<b>Erledigt</b>: $erledigt");
@@ -1603,7 +1365,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             $arr = $this->get_auftraege_einheit('Einheit', request()->input('einheit_id'));
             $e = new einheit ();
             $e->get_einheit_info(request()->input('einheit_id'));
-            if (is_array($arr)) {
+            if (!empty($arr)) {
                 echo "<table>";
                 echo "<tr><th colspan=\"4\">EINHEIT $e->einheit_kurzname</th></tr>";
                 echo "<tr><th>TEXT</th><th>VON/AN</th><th>ERLEDIGT</th><th>DATUM</th></tr>";
@@ -1658,12 +1420,11 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             $ha->get_haus_info($haus_id);
             $obj_arr [] = $ha->objekt_id;
             $tmp_arr = $this->get_auftraege_einheit('Haus', $haus_id);
-            if (is_array($tmp_arr)) {
+            if (!empty($tmp_arr)) {
                 $arr = array_merge($arr, $tmp_arr);
             }
         }
-        if (!is_array($arr)) {
-
+        if (empty($arr)) {
             fehlermeldung_ausgeben("Keine Aufträge an Haus $h->haus_strasse $h->haus_nummer");
         } else {
             array_unique($obj_arr);
@@ -1707,7 +1468,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             for ($o = 0; $o < $anz_o; $o++) {
                 $objekt_id = $obj_arr [$o];
                 $tmp_arr = $this->get_auftraege_einheit('Objekt', $objekt_id);
-                if (is_array($tmp_arr)) {
+                if (!empty($tmp_arr)) {
                     $obj_auf = array_merge($obj_auf, $tmp_arr);
                 }
             }
@@ -1767,9 +1528,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         }
 
         $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function get_haus_ids($haus_str, $haus_nr, $haus_plz)
@@ -1784,7 +1543,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
     function liste_auftrage_an($typ, $id, $erl = 0)
     {
         $arr = $this->liste_auftrage_an_arr($typ, $id, $erl);
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             fehlermeldung_ausgeben("Keine Auftrage an $typ $id");
         } else {
             $anz = count($arr);
@@ -1824,8 +1583,6 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
     {
         $db_abfrage = "SELECT * FROM `TODO_LISTE` WHERE BENUTZER_TYP='$typ' && `BENUTZER_ID` ='$id' AND `AKTUELL` = '1' AND ERLEDIGT='$erl' ORDER BY ERSTELLT DESC";
         $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 } // end class todo

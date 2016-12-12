@@ -31,7 +31,9 @@ switch ($option) {
         $konto = request()->input('konto');
         $betrag = nummer_komma2punkt(request()->input('betrag'));
         if ($betrag < 0) {
-            die ('ABBRUCH MINUSBETRAG');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('ABBRUCH MINUSBETRAG')
+            );
         }
         if ($sep->sepa_ueberweisung_speichern($von_gk_id, $an_sepa_gk_id, $vzweck, $kat, $kos_typ, $kos_id, $konto, $betrag) == false) {
             fehlermeldung_ausgeben("AUFTRAG KONNTE NICHT GESPEICHERT WERDEN!");
@@ -68,5 +70,3 @@ switch ($option) {
         $pe->form_finanzamt();
         break;
 }
-
-?>

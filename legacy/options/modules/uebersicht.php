@@ -12,7 +12,7 @@ switch ($anzeigen) {
 
     case "einheit" :
         $e = new einheit ();
-        if (is_array($e->get_mietvertrag_ids($einheit_id))) {
+        if (!empty($e->get_mietvertrag_ids($einheit_id))) {
             uebersicht_einheit($einheit_id);
         } else {
             echo "<h2>BISHER LEERSTAND</h2>";
@@ -104,8 +104,7 @@ function uebersicht_einheit($einheit_id)
             $et_p_id = $weg->eigentuemer_person_ids [$be];
             $d_k = new detail ();
             $dt_arr = $d_k->finde_alle_details_grup('PERSON', $et_p_id, 'INS-Kundenbetreuer');
-
-            if (is_array($dt_arr)) {
+            if (!empty($dt_arr)) {
                 $anz_bet = count($dt_arr);
                 for ($bet = 0; $bet < $anz_bet; $bet++) {
                     $bet_str = $dt_arr [$bet] ['DETAIL_INHALT'];
@@ -139,7 +138,7 @@ function uebersicht_einheit($einheit_id)
     $oo = new objekt ();
     $oo->get_objekt_infos($e->objekt_id);
     echo "<b>OBJEKT-ET</b>:<br>$oo->objekt_eigentuemer";
-    $link_objekt_details = "<a href='" . route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_hinzu' => 'OBJEKT', 'detail_id' => $e->objekt_id]) . "'>Detail hinzufügen</a>";
+    $link_objekt_details = "<a href='" . route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $e->objekt_id]) . "'>Detail hinzufügen</a>";
     echo "</div>";
     echo "<div class='card-action'>$link_objekt_details</div>";
     echo "</div>";
@@ -338,10 +337,6 @@ function uebersicht_einheit($einheit_id)
     echo "<div class='card-content'>";
     echo "<div class='card-title'>Miete</div>";
 
-    $mietvertrag_info = new mietvertrag ();
-    $anzahl_mietvertraege = $mietvertrag_info->get_anzahl_mietvertrag_id_zu_einheit($einheit_id);
-    $anzahl_mietvertraege = $mietvertrag_info->anzahl_mietvertraege_gesamt;
-
     $buchung = new mietkonto ();
     $monat = date("m");
     $jahr = date("Y");
@@ -362,10 +357,10 @@ function uebersicht_einheit($einheit_id)
 
     echo "</div>";
     if (!empty ($mietvertrag_id)) {
-        $link_mietkonto = "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mietkonto_uebersicht_detailiert', 'mietvertrag_id' => $mietvertrag_id]) . "'>Mietkonto</a>";
-        $link_mietkonto_ab = "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mietkonto_ab', 'mietvertrag_id' => $mietvertrag_id]) . "'>Mietkonto Ab</a>";
+        $link_mietkonto = "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mk_pdf', 'mietvertrag_id' => $mietvertrag_id]) . "'>Mietkonto</a>";
+        $link_mietkonto_ab = "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mietkonto_ab', 'mietvertrag_id' => $mietvertrag_id]) . "'>Mietkonto ab</a>";
     }
-    echo "<div class='card-action'>$link_mietkonto</div>";
+    echo "<div class='card-action'>$link_mietkonto<br>$link_mietkonto_ab</div>";
     echo "</div>";
 
     $k = new kautionen ();
@@ -451,7 +446,6 @@ function render_unit_tasks_table($einheit_id) {
         echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
     }
     echo "</table>";
-    $t_arr = array();
     $t = new todo ();
     $t_arr = $t->get_auftraege_einheit('Einheit', $einheit_id, '1');
 
@@ -534,7 +528,6 @@ function render_house_tasks_table($haus_id) {
         echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
     }
     echo "</table>";
-    $t_arr = array();
     $t = new todo ();
     $t_arr = $t->get_auftraege_einheit('Haus', $e->haus_id, '1');
 
@@ -616,7 +609,6 @@ function render_object_tasks_table($objekt_id) {
         echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
     }
     echo "</table>";
-    $t_arr = array();
     $t = new todo ();
     $t_arr = $t->get_auftraege_einheit('Objekt', $e->objekt_id, '1');
 

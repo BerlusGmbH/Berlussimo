@@ -102,13 +102,19 @@ switch ($option) {
                     $benutzer_id = $b->benutzer_speichern($benutzername, $passwort, $partner_id, $stundensatz, $geb_dat, $gewerk_id, $eintritt, $austritt, $urlaub, $stunden_pw);
                     weiterleiten(route('legacy::benutzer::index', ['option' => 'berechtigungen', 'b_id' => $benutzer_id], false));
                 } else {
-                    die ('Datumsangaben falsch');
+                    throw new \App\Exceptions\MessageException(
+                        new \App\Messages\ErrorMessage('Datumsangaben falsch')
+                    );
                 }
             } else {
-                die ('Fehler xg763663 - Daten unvollständig');
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\ErrorMessage('Daten unvollständig')
+                );
             }
         } else {
-            die ('Fehler xg763664');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage('Fehler xg763664')
+            );
         }
         break;
 

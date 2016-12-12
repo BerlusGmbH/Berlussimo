@@ -5,7 +5,7 @@ class kundenweb
     function kundendaten_anzeigen_alle()
     {
         $arr = $this->get_kundendaten_arr();
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             fehlermeldung_ausgeben("Keine Kundweb Benutzer vorhanden");
         } else {
             $f = new formular ();
@@ -15,7 +15,6 @@ class kundenweb
             for ($a = 0; $a < $anz; $a++) {
                 $kunden_id = $arr [$a] ['ID'];
                 $username = $arr [$a] ['USERNAME'];
-                $passwd = $arr [$a] ['PASSWORD'];
                 $email = $arr [$a] ['EMAIL'];
                 $person_id = $arr [$a] ['PERSON_ID'];
                 $partner_id = $arr [$a] ['PDF_PARTNER_ID'];
@@ -41,17 +40,13 @@ class kundenweb
             $db_abfrage = "SELECT * FROM  `KUNDEN_LOGIN` WHERE ID='$kunden_id' && AKTUELL='1'";
         }
         $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     function kundendaten_anzeigen($kunden_id)
     {
         $arr = $this->get_kundendaten_arr($kunden_id);
-        if (!is_array($arr)) {
+        if (empty($arr)) {
             fehlermeldung_ausgeben("Keine Kundweb Benutzer vorhanden");
         } else {
             $anz = count($arr);
@@ -79,11 +74,9 @@ class kundenweb
 
             /* Berechtigungen */
             $arr_ber = $this->kunden_berr_arr($kunden_id);
-            if (!is_array($arr_ber)) {
+            if (empty($arr_ber)) {
                 die ('Keine Berechtigung für den Kunden');
             } else {
-                // echo '<pre>';
-                // print_r($arr_ber);
                 $anz = count($arr_ber);
                 echo "<table class=\"sortable\"><tr><th>NR</th><th>TYP</th><th>BEZEICHNUNG</th><th>OPTIONEN</th></tr>";
                 $z = 0;
@@ -146,11 +139,7 @@ class kundenweb
             }
             $db_abfrage = "SELECT * FROM  `KUNDEN_LOG_BER` WHERE PERSON_ID='$person_id' && AKTUELL='1'";
             $result = DB::select($db_abfrage);
-            if (!empty($result)) {
-                return $result;
-            } else {
-                return false;
-            }
+            return $result;
         }
     }
 
@@ -216,7 +205,7 @@ class kundenweb
     {
         $last_id = last_id2('KUNDEN_LOGIN', 'ID') + 1;
         $sql = "INSERT INTO `KUNDEN_LOGIN` VALUES (NULL, '$last_id', '$username', '$passwd', '$email', '$person_id', '$partner_id','1');";
-        $result = DB::insert($sql);
+        DB::insert($sql);
         /* Protokollieren */
         $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('KUNDEN_LOGIN', $last_dat, '0');
