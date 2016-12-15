@@ -12,7 +12,7 @@ class Partner extends Model
 
     public $timestamps = false;
     protected $table = 'PARTNER_LIEFERANT';
-    protected $primaryKey = 'PARTNER_DAT';
+    protected $primaryKey = 'PARTNER_ID';
     protected $searchableFields = ['PARTNER_NAME', 'STRASSE', 'NUMMER', 'PLZ', 'ORT'];
 
     protected static function boot()

@@ -8,7 +8,7 @@ trait Searchable
     public static function search($query) {
         $tokens = static::tokenize($query);
         $builder = static::buildQuery($tokens);
-        return $builder->get();
+        return $builder;
     }
 
     protected static function tokenize($query) {

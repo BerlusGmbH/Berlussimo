@@ -18,6 +18,6 @@ class AktuellScope implements Scope
      */
     public function apply(Builder $builder, Model $model)
     {
-        $builder->where('AKTUELL', '1');
+        $builder->where($model->getTable() . '.AKTUELL', '1');
     }
 }

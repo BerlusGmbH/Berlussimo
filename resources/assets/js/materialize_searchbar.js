@@ -5,10 +5,15 @@ $(document).ready(function () {
             data: {},
             loginurl: '/',
             objekturl: '/',
+            objektlisturl: '/',
             hausurl: '/',
+            hauslisturl: '/',
             einheiturl: '/',
+            einheitlisturl: '/',
             personurl: '/',
-            partnerurl: '/'
+            personlisturl: '/',
+            partnerurl: '/',
+            partnerlisturl: '/'
         };
 
         options = $.extend(defaults, options);
@@ -21,10 +26,15 @@ $(document).ready(function () {
                 $indicator = $('#searchbarIndicator'),
                 loginurl = options.loginurl,
                 objekturl = options.objekturl,
+                objektlisturl = options.objektlisturl,
                 hausurl = options.hausurl,
+                hauslisturl = options.hauslisturl,
                 einheiturl = options.einheiturl,
+                einheitlisturl = options.einheitlisturl,
                 personurl = options.personurl,
-                partnerurl = options.partnerurl;
+                personlisturl = options.personlisturl,
+                partnerurl = options.partnerurl,
+                partnerlisturl = options.partnerlisturl;
 
             // Create autocomplete element
             var $autocomplete = $('<ul class="autocomplete-content dropdown-content"></ul>');
@@ -54,31 +64,31 @@ $(document).ready(function () {
                     $autocomplete.empty();
                     var items = [];
                     if ($.isArray(data['objekte']) && !$.isEmptyObject(data['objekte'])) {
-                        items.push("<li><span class='grey accent-3 white-text'>Objekte<span class='new badge' data-badge-caption=''>" + data['objekte'].length + "</span></span></li>");
+                        items.push("<li><a class='grey accent-3 white-text' href='" + objektlisturl + query + "'>Objekte<span class='new badge' data-badge-caption=''>" + data['objekte'].length + "</span></a></li>");
                         $.each(data['objekte'], function (key, val) {
                             items.push("<li id='" + val['OBJEKT_ID'] + "'><a href='" + objekturl + val['OBJEKT_ID'] + "'><span>" + val['OBJEKT_KURZNAME'] + "</span></a></li>");
                         });
                     }
                     if ($.isArray(data['haeuser']) && !$.isEmptyObject(data['haeuser'])) {
-                        items.push("<li><span class='grey accent-3 white-text'>Häuser<span class='new badge' data-badge-caption=''>" + data['haeuser'].length + "</span></span></li>");
+                        items.push("<li><a class='grey accent-3 white-text' href='" + hauslisturl + query + "'><span class='grey accent-3 white-text'>Häuser<span class='new badge' data-badge-caption=''>" + data['haeuser'].length + "</span></span></a></li>");
                         $.each(data['haeuser'], function (key, val) {
                             items.push("<li id='" + val['HAUS_ID'] + "'><a href='" + hausurl + val['HAUS_ID'] + "'><span>" + val['HAUS_STRASSE'] + " " + val['HAUS_NUMMER'] + "</span></a></li>");
                         });
                     }
                     if ($.isArray(data['einheiten']) && !$.isEmptyObject(data['einheiten'])) {
-                        items.push("<li><span class='grey accent-3 white-text'>Einheiten<span class='new badge' data-badge-caption=''>" + data['einheiten'].length + "</span></span></li>");
+                        items.push("<li><a class='grey accent-3 white-text' href='" + einheitlisturl + query + "'>Einheiten<span class='new badge' data-badge-caption=''>" + data['einheiten'].length + "</span></a></li>");
                         $.each(data['einheiten'], function (key, val) {
                             items.push("<li id='" + val['EINHEIT_ID'] + "'><a href='" + einheiturl + val['EINHEIT_ID'] + "'><span>" + val['EINHEIT_KURZNAME'] + "</span></a></li>");
                         });
                     }
                     if ($.isArray(data['personen']) && !$.isEmptyObject(data['personen'])) {
-                        items.push("<li><span class='grey accent-3 white-text'>Personen<span class='new badge' data-badge-caption=''>" + data['personen'].length + "</span></span></li>");
+                        items.push("<li><a class='grey accent-3 white-text' href='" + personlisturl + query + "'>Personen<span class='new badge' data-badge-caption=''>" + data['personen'].length + "</span></a></li>");
                         $.each(data['personen'], function (key, val) {
                             items.push("<li id='" + val['PERSON_ID'] + "'><a href='" + personurl + val['PERSON_ID'] + "'><span>" + val['PERSON_NACHNAME'] + ", " + val['PERSON_VORNAME'] + "</span></a></li>");
                         });
                     }
                     if ($.isArray(data['partner']) && !$.isEmptyObject(data['partner'])) {
-                        items.push("<li><span class='grey accent-3 white-text'>Partner<span class='new badge' data-badge-caption=''>" + data['partner'].length + "</span></span></li>");
+                        items.push("<li><a class='grey accent-3 white-text' href='" + partnerlisturl + query + "'>Partner<span class='new badge' data-badge-caption=''>" + data['partner'].length + "</span></a></li>");
                         $.each(data['partner'], function (key, val) {
                             items.push("<li id='" + val['PARTNER_ID'] + "'><a href='" + partnerurl + val['PARTNER_ID'] + "'><span>" + val['PARTNER_NAME'] + "</span></a></li>");
                         });

@@ -75,3 +75,8 @@ main {
 .warnung {
     color: #F44336 !important;
 }
+
+.fixed-action-btn {
+    right: 10px;
+    bottom: 80px;
+}

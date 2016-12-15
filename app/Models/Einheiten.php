@@ -12,7 +12,7 @@ class Einheiten extends Model
 
     public $timestamps = false;
     protected $table = 'EINHEIT';
-    protected $primaryKey = 'EINHEIT_DAT';
+    protected $primaryKey = 'EINHEIT_ID';
     protected $searchableFields = ['EINHEIT_KURZNAME', 'EINHEIT_LAGE'];
 
     protected static function boot()
@@ -22,5 +22,10 @@ class Einheiten extends Model
         static::addGlobalScope('aktuell', function (Builder $builder) {
             $builder->where('EINHEIT_AKTUELL', '1');
         });
+    }
+
+    public function haus()
+    {
+        return $this->belongsTo('App\Models\Haeuser', 'HAUS_ID', 'HAUS_ID');
     }
 }

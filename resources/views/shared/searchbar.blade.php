@@ -23,10 +23,15 @@
         $('#searchbar').searchbar({
             loginurl: '{{ url('/login') }}',
             objekturl: '{{ route('web::haeuser::legacy', ['haus_raus' => 'haus_kurz', 'objekt_id' => '']) }}',
+            objektlisturl: '/',
             hausurl: '{{ route('web::einheiten::legacy', ['einheit_raus' => 'einhiet_kurz', 'haus_id' => '']) }}',
+            hauslisturl: '/',
             einheiturl: '{{ route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => '']) }}',
+            einheitlisturl: '/',
             personurl: '/',
-            partnerurl: '{{ route('web::partner::legacy', ['option' => 'partner_im_detail', 'partner_id' => '']) }}'
+            personlisturl: '{{ route('web::personen::index', ['q' => '']) }}',
+            partnerurl: '{{ route('web::partner::legacy', ['option' => 'partner_im_detail', 'partner_id' => '']) }}',
+            partnerlisturl: '/'
         });
     });
 </script>

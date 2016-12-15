@@ -12,7 +12,7 @@ class Objekte extends Model
 
     public $timestamps = false;
     protected $table = 'OBJEKT';
-    protected $primaryKey = 'OBJEKT_DAT';
+    protected $primaryKey = 'OBJEKT_ID';
     protected $searchableFields = ['OBJEKT_KURZNAME'];
 
     protected static function boot()

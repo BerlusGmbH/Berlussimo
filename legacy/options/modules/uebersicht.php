@@ -46,16 +46,16 @@ function uebersicht_einheit($einheit_id)
         $mv->get_mietvertrag_infos_aktuell($mietvertrag_id);
     }
 
-    echo "<div class=\"fixed-action-btn\" style=\"bottom: 45px; right: 24px;\">
-    <a href='#tasks' class=\"btn-floating btn-large modal-trigger\">
-      <i class=\"large material-icons\">list</i>
+    echo "<div class='fixed-action-btn'>
+    <a href='#tasks' class='btn-floating btn-large modal-trigger'>
+      <i class='large material-icons'>list</i>
     </a>
   </div>
-  <div id=\"tasks\" class=\"modal bottom-sheet\">
-    <div class=\"modal-content\">";
-    echo "<div class=\"row\">
-    <div class=\"col s12\">
-      <ul class=\"tabs\">
+  <div id='tasks' class='modal bottom-sheet'>
+    <div class='modal-content'>";
+    echo "<div class='row'>
+    <div class='col s12'>
+      <ul class='tabs'>
         <li class='tab col s4'><a class='active' href='#unit'>Einheit</a></li>
         <li class='tab col s4'><a href='#house'>Haus</a></li>
         <li class='tab col s4'><a href='#object'>Objekt</a></li>
