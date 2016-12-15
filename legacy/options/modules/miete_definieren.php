@@ -40,6 +40,7 @@ switch ($schritt) {
             if (count($me->kostenkategorien) > 0) {
                 $form->erstelle_formular("Aktuelle Mietdefinition", NULL);
                 $me->me_dat_neu_form($mietvertrag_id);
+                echo "<hr>";
                 $me->mietentwicklung_anzeigen($mietvertrag_id);
             } else { // end if
                 $me->me_dat_neu_form($mietvertrag_id);
@@ -110,7 +111,7 @@ switch ($schritt) {
         if ($me_dat) {
             $me->me_dat_loeschen($me_dat);
             $mv_id = request()->input('mietvertrag_id');
-            weiterleiten_in_sec(route('legacy::miete_definieren::index', ['option' => 'miethoehe', 'mietvertrag_id' => request()->input('mv_id')], false), 1);
+            weiterleiten(route('legacy::miete_definieren::index', ['option' => 'miethoehe', 'mietvertrag_id' => $mv_id], false));
         }
         break;
 

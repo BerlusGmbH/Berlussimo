@@ -21,6 +21,40 @@ class mietvertraege
     public $personen_name_string;
     public $einheit_id;
     public $mietvertrag_bis_d;
+    public $mietvertrag_von_d;
+    public $ls_konto;
+    public $ls_blz;
+    public $objekt_id;
+    public $objekt_kurzname;
+    public $anzahl_personen;
+    public $personen_ids;
+    public $einheit_qm;
+    public $mietvertrag_von;
+    public $mietvertrag_dat;
+    public $einheit_qm_d;
+    public $haus_id;
+    public $personen_name_string_u2;
+    public $herr_frau;
+    public $personen_anreden;
+    public $mietvertrag_bis;
+    public $alle_teilnehmer;
+    public $ls_einzugsermaechtigung;
+    public $ls_einzugsermaechtigung_dat;
+    public $ls_autoeinzugsart;
+    public $ls_autoeinzugsart_dat;
+    public $ls_konto_inhaber;
+    public $ls_konto_inhaber_dat;
+    public $ls_konto_nummer;
+    public $ls_konto_nummer_dat;
+    public $ls_blz_dat;
+    public $ls_bankname;
+    public $ls_bankname_dat;
+    public $ls_bankname_sep;
+    public $ls_bankname_sep_k;
+    public $ls_iban;
+    public $ls_bic;
+    public $serie;
+    public $ls_iban1;
 
     protected $namen;
 
@@ -61,7 +95,7 @@ class mietvertraege
     function dropdown_leerstaende($objekt_id, $name, $label, $id)
     {
         $leerstand = $this->leerstand_finden($objekt_id);
-        if (is_array($leerstand)) {
+        if (!empty($leerstand)) {
             echo "<label for=\"$id\">$label</label><select name=\"$name\" id=\"$id\">";
             for ($a = 0; $a < count($leerstand); $a++) {
                 $einheit_id = $leerstand [$a] ['EINHEIT_ID'];
@@ -142,14 +176,11 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         }
         $javaaction = 'onchange="mieter_auswaehlen()"';
         $this->dropdown_personen_liste('Mieter auswählen', 'alle_mieter_list', 'alle_mieter_list', $javaaction);
-        $javaaction1 = 'onchange="mieter_entfernen()"';
-
         $mieter_arr = $form->get_personen_ids_mietvertrag($mietvertrag_id);
-        $this->ausgewahlte_mieter_liste_aendern('Ausgewählte Mieter', 'mieter_liste[]', 'mieter_liste', $javaaction1, '5', $mieter_arr);
+        $this->ausgewahlte_mieter_liste_aendern('Ausgewählte Mieter', 'mieter_liste[]', 'mieter_liste', null, '5', $mieter_arr);
 
         $form->hidden_feld('mietvertrag_raus', 'mv_aenderung_pruefen');
-        $sendbutton_js = "onclick=\"alle_mieter_auswaehlen()\"";
-        $form->send_button_js('btn_mv_updaten', 'Mietvertrag ändern', $sendbutton_js);
+        $form->send_button_js('btn_mv_updaten', 'Mietvertrag ändern', null);
         $form->ende_formular();
     }
 
@@ -207,7 +238,6 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
 
             /* ANREDE */
             $d = new detail ();
-            $e = new einheit ();
             $p = new person ();
             if ($this->anzahl_personen == 1) {
                 $p->get_person_infos($this->personen_ids ['0'] ['PERSON_MIETVERTRAG_PERSON_ID']);
@@ -515,7 +545,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
             $person_id = $mieter_arr [$a] ['PERSON_MIETVERTRAG_PERSON_ID'];
             $person_info->get_person_infos($person_id);
 
-            echo "<option value=\"$person_id\">$person_info->person_nachname $person_info->person_vorname</option>";
+            echo "<option selected value=\"$person_id\">$person_info->person_nachname $person_info->person_vorname</option>";
         }
         echo "</select>";
     }
@@ -545,7 +575,6 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
 
     function mv_personen_anzeigen_form($arr)
     {
-        // print_r($arr);
         for ($a = 0; $a < count($arr); $a++) {
             $person_id = $arr [$a];
             $db_abfrage = "SELECT PERSON_NACHNAME, PERSON_VORNAME FROM PERSON WHERE PERSON_AKTUELL='1' && PERSON_ID='$person_id' LIMIT 0,1";
@@ -557,52 +586,6 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
                 echo "$nn $vn<br>";
             }
         }
-    }
-
-    function mv_personen_anzeigen($arr)
-    {
-        for ($a = 0; $a < count($arr); $a++) {
-            $person_id = $arr [$a] ['PERSON_MIETVERTRAG_PERSON_ID'];
-            $db_abfrage = "SELECT PERSON_NACHNAME, PERSON_VORNAME FROM PERSON WHERE PERSON_AKTUELL='1' && PERSON_ID='$person_id' LIMIT 0,1";
-            $result = DB::select($db_abfrage);
-            $numrows = count($result);
-            if ($numrows == 1) {
-                $row = $result[0];
-                $nn = $row ['PERSON_NACHNAME'];
-                $vn = $row ['PERSON_VORNAME'];
-                echo "$vn $nn ";
-            }
-            if ($numrows > 1) {
-                $row = $result[0];
-                $nn = $row ['PERSON_NACHNAME'];
-                $vn = $row ['PERSON_VORNAME'];
-                echo "$vn $nn, ";
-            }
-        }
-    }
-
-    function mv_personennamen_als_string($arr)
-    {
-        $mystring = '';
-        for ($a = 0; $a < count($arr); $a++) {
-            $person_id = $arr [$a] ['PERSON_MIETVERTRAG_PERSON_ID'];
-            $db_abfrage = "SELECT PERSON_NACHNAME, PERSON_VORNAME FROM PERSON WHERE PERSON_AKTUELL='1' && PERSON_ID='$person_id' LIMIT 0,1";
-            $result = DB::select($db_abfrage);
-            $numrows = $result[0];
-            if ($numrows == 1) {
-                $row = $result[0];
-                $nn = $row ['PERSON_NACHNAME'];
-                $vn = $row ['PERSON_VORNAME'];
-                $mystring = $mystring . "$nn $vn";
-            }
-            if ($numrows > 1) {
-                $row = $result[0];
-                $nn = $row ['PERSON_NACHNAME'];
-                $vn = $row ['PERSON_VORNAME'];
-                $mystring = $mystring . "$vn $nn, ";
-            }
-        }
-        return $mystring;
     }
 
     function mieten_speichern($mv_id, $anfang, $ende, $kostenkat, $betrag, $mwst = 0)
@@ -620,7 +603,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
             $mwst_betrag = 0.00;
         }
         $db_abfrage = "INSERT INTO MIETENTWICKLUNG VALUES (NULL, '$me_id', 'MIETVERTRAG', '$mv_id', '$kostenkat', '$anfang', '$ende', '$mwst_betrag', '$betrag', '1')";
-        $resultat = DB::insert($db_abfrage);
+        DB::insert($db_abfrage);
         /* Zugewiesene MIETBUCHUNG_DAT auslesen */
         $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('MIETENTWICKLUNG', '0', $last_dat);
@@ -738,7 +721,6 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
     {
         $mietvertrag_bis = date_german2mysql($mietvertrag_bis);
         $mietvertrag_von = date_german2mysql($mietvertrag_von);
-        $dat_alt = $mietvertrag_dat;
         $db_abfrage = "UPDATE MIETVERTRAG SET MIETVERTRAG_AKTUELL='0' where MIETVERTRAG_DAT='$mietvertrag_dat'";
         DB::update($db_abfrage); // aktuell auf 0 gesetzt
         protokollieren('MIETVERTRAG', $mietvertrag_dat, $mietvertrag_dat);
@@ -779,16 +761,10 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
             echo "<table class=\"sortable\">";
             echo "<tr><th>EINHEIT</th><th>MIETER</th><th>OPTIONEN</th></tr>";
 
-            /*
-			 * echo "<table>";
-			 * echo "<tr class=\"feldernamen\"><td colspan=3>Objekt $teilnehmer_arr['OBJEKT_KURZNAME']</td></tr>";
-			 * echo "<tr class=\"feldernamen\"><td>EINHEIT</td><td>MIETER</td><td>OPTIONEN</td></tr>";
-			 */
             $zaehler = 0;
             for ($a = 0; $a < $anzahl_tln; $a++) {
                 $zaehler++;
                 $mv_id = $teilnehmer_arr [$a] ['MV_ID'];
-                $einheit_id = $teilnehmer_arr [$a] ['EINHEIT_ID'];
                 $einheit_kurzname = $teilnehmer_arr [$a] ['EINHEIT_KURZNAME'];
                 $anzahl_mieter = $teilnehmer_arr [$a] ['MIETER_ANZAHL'];
                 $erster_mieter = $teilnehmer_arr [$a] ['MIETER'] [0] ['NACHNAME'] . ' ' . $teilnehmer_arr [$a] ['MIETER'] [0] ['VORNAME'];
@@ -825,12 +801,9 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
                 $this->get_mietvertrag_infos_aktuell($mietvertrag_id);
                 if ($this->objekt_id == session()->get('objekt_id')) {
                     $mietvertrag_info = new mietvertrag();
-                    $person_info = new person();
-                    // print_r($this);
                     $teilnehmer_objekt_arr ['objekt_id'] = $this->objekt_id;
                     $teilnehmer_objekt_arr ['OBJEKT_KURZNAME'] = $this->objekt_kurzname;
 
-                    // $teilnehmer_arr_z ist der arrayzähler
                     $teilnehmer_objekt_arr [$teilnehmer_arr_z] ['MV_ID'] = $this->mietvertrag_id;
                     $teilnehmer_objekt_arr [$teilnehmer_arr_z] ['EINHEIT_KURZNAME'] = $this->einheit_kurzname;
                     $teilnehmer_objekt_arr [$teilnehmer_arr_z] ['EINHEIT_ID'] = $this->einheit_id;
@@ -838,14 +811,10 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
                     $teilnehmer_objekt_arr [$teilnehmer_arr_z] ['PERSONEN_IDS'] = $mietvertrag_info->get_personen_ids_mietvertrag($mietvertrag_id);
                     $teilnehmer_objekt_arr [$teilnehmer_arr_z] ['MIETER_ANZAHL'] = count($teilnehmer_objekt_arr [$teilnehmer_arr_z] ['PERSONEN_IDS']);
                     for ($i = 0; $i < count($teilnehmer_objekt_arr [$teilnehmer_arr_z] ['PERSONEN_IDS']); $i++) {
-                        // $person_info->get_person_infos($teilnehmer_objekt_arr[$teilnehmer_arr_z][PERSONEN_IDS][$i][PERSON_MIETVERTRAG_PERSON_ID]);
-                        // $teilnehmer_objekt_arr[$teilnehmer_arr_z]['MIETER'][$i]['NACHNAME'] = $person_info->person_nachname;
-                        // $teilnehmer_objekt_arr[$teilnehmer_arr_z]['MIETER'][$i][VORNAME] = $person_info->person_vorname;
                         $d = new detail ();
                         $konto_inhaber_autoeinzug = $d->finde_detail_inhalt('MIETVERTRAG', $mietvertrag_id, 'Kontoinhaber-AutoEinzug');
                         $teilnehmer_objekt_arr [$teilnehmer_arr_z] ['MIETER'] [$i] ['VORNAME'] = $konto_inhaber_autoeinzug;
                     }
-
                     $teilnehmer_arr_z++;
                 }
             }
@@ -895,7 +864,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='JA' && DETAIL_ZUORD
             $zaehler = 0;
             for ($a = 0; $a < $anzahl_tln; $a++) {
                 $mv_id = $teilnehmer_arr [$a] ['MV_ID'];
-                $einheit_id = $teilnehmer_arr [$a] ['EINHEIT_ID'];
                 $einheit_kurzname = $teilnehmer_arr [$a] ['EINHEIT_KURZNAME'];
                 $anzahl_mieter = $teilnehmer_arr [$a] ['MIETER_ANZAHL'];
                 $erster_mieter = $teilnehmer_arr [$a] ['MIETER'] [0] ['NACHNAME'] . ' ' . $teilnehmer_arr [$a] ['MIETER'] [0] ['VORNAME'];
@@ -1069,7 +1037,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
 
             for ($i = 0; $i < count($liste_haeuser); $i++) {
                 $result = DB::select("SELECT * FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && HAUS_ID='" . $liste_haeuser [$i] ['HAUS_ID'] . "' ORDER BY EINHEIT_KURZNAME ASC");
-                foreach($result as $row)
+                foreach ($result as $row)
                     $einheiten_array [] = $row;
             }
         } else {
@@ -1252,98 +1220,27 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         DB::update("UPDATE MIETENTWICKLUNG SET ENDE='$mietvertrag_bis' WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$mv_id' && (ENDE='0000-00-00' OR ENDE>='$mietvertrag_bis') && MIETENTWICKLUNG_AKTUELL='1'");
     }
 
-    function lastschrift_beenden($mv_id)
-    {
-        DB::update("UPDATE `DETAIL` SET DETAIL_INHALT='NEIN' WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='JA' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG' && DETAIL_ZUORDNUNG_ID='$mv_id' && DETAIL_AKTUELL = '1' ");
-    }
-
-    function anzahl_eingezogene_mieter($objekt_id, $jahr, $monat)
-    {
-        $mon_laenge = strlen($monat);
-        if ($mon_laenge == 1) {
-            $monat = '0' . $monat;
-        }
-        if (empty ($monat)) {
-            $result = DB::select("SELECT MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM `MIETVERTRAG` WHERE DATE_FORMAT( MIETVERTRAG_VON, '%Y' ) = '$jahr' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_BIS DESC");
-        } else {
-
-            $result = DB::select("SELECT MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM `MIETVERTRAG` WHERE DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) = '$jahr-$monat' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_BIS DESC");
-        }
-        $e = new einheit ();
-        if (!empty($result)) {
-            foreach($result as $row) {
-                $einheit_id = $row ['EINHEIT_ID'];
-                $e->get_einheit_info($einheit_id);
-                if ($e->objekt_id == $objekt_id) {
-                    $my_array [] = $row;
-                }
-            }
-            if (isset ($my_array)) {
-                return count($my_array);
-            } else {
-                return 0;
-            }
-        } else {
-            return 0;
-        }
-    }
-
-    function anzahl_ausgezogene_mieter($objekt_id, $jahr, $monat)
-    {
-        $mon_laenge = strlen($monat);
-        if ($mon_laenge == 1) {
-            $monat = '0' . $monat;
-        }
-        if (empty ($monat)) {
-            $result = DB::select("SELECT MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM `MIETVERTRAG` WHERE DATE_FORMAT( MIETVERTRAG_BIS, '%Y' ) = '$jahr' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_BIS DESC");
-        } else {
-
-            $result = DB::select("SELECT MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM `MIETVERTRAG` WHERE DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) = '$jahr-$monat' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_BIS DESC");
-        }
-        $e = new einheit ();
-        if (!empty($result)) {
-            foreach($result as $row) {
-                $einheit_id = $row ['EINHEIT_ID'];
-                $e->get_einheit_info($einheit_id);
-                if ($e->objekt_id == $objekt_id) {
-                    $my_array [] = $row;
-                }
-            }
-            if (isset ($my_array)) {
-                return count($my_array);
-            } else {
-                return 0;
-            }
-        } else {
-            return 0;
-        }
-    }
-
     function ausgezogene_mieter_anzeigen($objekt_id, $jahr, $monat)
     {
         $auszug_arr = $this->ausgezogene_mieter_arr($objekt_id, $jahr, $monat);
         $o = new objekt ();
         $o->get_objekt_name($objekt_id);
         echo "Objekt: $o->objekt_name<br>";
-        if (is_array($auszug_arr)) {
+        if (!empty($auszug_arr)) {
             $anzahl_auszuege = count($auszug_arr);
             $e = new einheit ();
-            // $m = new mietvertrag;
             $ka = new kautionen ();
             echo "<table class=\"sortable\" >";
-            // echo "<tr class=\"feldernamen\"><td>Auzug</td><td>Einheit</td><td>Mieter</td><td>Kautionsbetrag</td></tr>";
             echo "<tr><th>Auszug</th><th>Einheit</th><th>Mieter</th><th>Kautionsbetrag</th></tr>";
             for ($a = 0; $a < $anzahl_auszuege; $a++) {
                 $einheit_id = $auszug_arr [$a] ['EINHEIT_ID'];
                 $mv_id = $auszug_arr [$a] ['MIETVERTRAG_ID'];
-                $einzug = date_mysql2german($auszug_arr [$a] ['MIETVERTRAG_VON']);
                 $auszug = date_mysql2german($auszug_arr [$a] ['MIETVERTRAG_BIS']);
                 $e->get_einheit_info($einheit_id);
                 $this->get_mietvertrag_infos_aktuell($mv_id);
                 $personen_string = $this->personen_name_string;
                 $ka->get_kautionsbetrag($mv_id);
                 $auszugs_dat_arr = explode('.', $auszug);
-                $d = $auszugs_dat_arr [0];
                 $m = $auszugs_dat_arr [1];
                 $j = $auszugs_dat_arr [2];
 
@@ -1371,7 +1268,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         }
         $e = new einheit ();
         if (!empty($result)) {
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $einheit_id = $row ['EINHEIT_ID'];
                 $e->get_einheit_info($einheit_id);
                 if ($e->objekt_id == $objekt_id) {
@@ -1381,8 +1278,9 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             unset ($e);
             return $my_array;
         } else {
-            hinweis_ausgeben("Keine Auszüge im $monat/$jahr");
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Keine Auszüge im $monat/$jahr")
+            );
         }
     }
 
@@ -1392,7 +1290,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         $o = new objekt ();
         $o->get_objekt_name($objekt_id);
         echo "Objekt: $o->objekt_name<br>";
-        if (is_array($einzug_arr)) {
+        if (!empty($einzug_arr)) {
             $anzahl_einzuege = count($einzug_arr);
             $e = new einheit ();
 
@@ -1440,7 +1338,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         }
         $e = new einheit ();
         if (!empty($result)) {
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $einheit_id = $row ['EINHEIT_ID'];
                 $e->get_einheit_info($einheit_id);
                 if ($e->objekt_id == $objekt_id) {
@@ -1450,8 +1348,9 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             unset ($e);
             return $my_array;
         } else {
-            hinweis_ausgeben("Keine Einzüge im $monat/$jahr");
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Keine Einzüge im $monat/$jahr")
+            );
         }
     }
 
@@ -1460,7 +1359,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         $auszug_arr = $this->alle_ausgezogene_mieter_arr($jahr, $monat);
         $link = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'alle_letzten_auszuege_pdf', 'monat' => $monat, 'jahr' => $jahr]) . "'>Ansicht als PDF</a>";
         echo $link;
-        if (is_array($auszug_arr)) {
+        if (!empty($auszug_arr)) {
             $anzahl_auszuege = count($auszug_arr);
             $e = new einheit ();
             $m = new mietvertrag ();
@@ -1480,7 +1379,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
 
                 $det = new detail ();
                 $abnahme_termin = $det->finde_detail_inhalt('MIETVERTRAG', $mv_id, 'Abnahmetermin');
-                $einzug = date_mysql2german($auszug_arr [$a] ['MIETVERTRAG_VON']);
                 $auszug = date_mysql2german($auszug_arr [$a] ['MIETVERTRAG_BIS']);
 
                 $personen_arr = $m->get_personen_ids_mietvertrag($mv_id);
@@ -1519,7 +1417,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         }
         $e = new einheit ();
         if (!empty($result)) {
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $einheit_id = $row ['EINHEIT_ID'];
                 $e->get_einheit_info($einheit_id);
                 $my_array [] = $row;
@@ -1527,8 +1425,9 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             unset ($e);
             return $my_array;
         } else {
-            hinweis_ausgeben("Keine Auszüge im $monat/$jahr");
-            die ();
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Keine Auszüge im $monat/$jahr")
+            );
         }
     }
 
@@ -1537,7 +1436,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         $auszug_arr = $this->alle_eingezogene_mieter_arr($jahr, $monat);
         $link = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'alle_letzten_einzuege_pdf', 'monat' => $monat, 'jahr' => $jahr]) . "'>Ansicht als PDF</a>";
         echo $link;
-        if (is_array($auszug_arr)) {
+        if (!empty($auszug_arr)) {
             $anzahl_auszuege = count($auszug_arr);
             $e = new einheit ();
             $m = new mietvertrag ();
@@ -1556,7 +1455,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                 $det = new detail ();
                 $abnahme_termin = $det->finde_detail_inhalt('MIETVERTRAG', $mv_id, 'Abnahmetermin');
                 $einzug = date_mysql2german($auszug_arr [$a] ['MIETVERTRAG_VON']);
-                $auszug = date_mysql2german($auszug_arr [$a] ['MIETVERTRAG_BIS']);
 
                 $personen_arr = $m->get_personen_ids_mietvertrag($mv_id);
                 $personen_string = $this->mv_personen_als_string($personen_arr);
@@ -1594,23 +1492,19 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         }
         $e = new einheit ();
         if (!empty($result)) {
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $einheit_id = $row ['EINHEIT_ID'];
                 $e->get_einheit_info($einheit_id);
                 $my_array [] = $row;
             }
             unset ($e);
             return $my_array;
-        } else {
-            hinweis_ausgeben("Keine Einzüge im $monat/$jahr");
-            die ();
         }
     }
 
     function alle_ausgezogenen_pdf($jahr, $monat)
     {
         $pdf = new Cezpdf ('a4', 'portrait');
-        $bpdf = new b_pdf ();
         $pdf->addInfo('Author', Auth::user()->email);
 
         $monat_name = monat2name($monat);
@@ -1619,7 +1513,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         $pdf->ezSetCmMargins(1.0, 2.0, 2.0, 1.0);
         $pdf->ezText("<b>Auszüge $monat_name $jahr</b> inkl. Kautionshöhe", 11);
         $pdf->ezSetDy(-20);
-        if (is_array($auszug_arr)) {
+        if (!empty($auszug_arr)) {
             $anzahl_auszuege = count($auszug_arr);
             $e = new einheit ();
             $m = new mietvertrag ();
@@ -1627,28 +1521,14 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             for ($a = 0; $a < $anzahl_auszuege; $a++) {
                 $einheit_id = $auszug_arr [$a] ['EINHEIT_ID'];
                 $mv_id = $auszug_arr [$a] ['MIETVERTRAG_ID'];
-                $einzug = date_mysql2german($auszug_arr [$a] ['MIETVERTRAG_VON']);
                 $auszug = date_mysql2german($auszug_arr [$a] ['MIETVERTRAG_BIS']);
                 $e->get_einheit_info($einheit_id);
                 $personen_arr = $m->get_personen_ids_mietvertrag($mv_id);
                 $personen_string = $this->mv_personen_als_string($personen_arr);
                 $personen_string = str_replace("\n", " ", htmlspecialchars($personen_string));
                 $ka->get_kautionsbetrag($mv_id);
-                // echo "<tr class=\"zeile2\"><td>$auszug</td><td>$e->einheit_kurzname</td><td>$personen_string</td><td> $ka->kautions_betrag</td></tr>";
-                // echo "<h3>$auszug $e->einheit_kurzname $personen_string Kautionsbetrag:$ka->kautions_betrag</h3>";
                 $det = new detail ();
                 $abnahme_termin = bereinige_string($det->finde_detail_inhalt('MIETVERTRAG', $mv_id, 'Abnahmetermin'));
-                // $pdf->ezText("$auszug",10);
-                // $pdf->ezSetDy(10);
-                // $pdf->ezSetCmMargins(1.0,2.0,4.0,1.0);
-                // $pdf->ezText("$e->einheit_kurzname",10, array('justification'=>'left'));
-                // $pdf->ezSetDy(10);
-                // $pdf->ezSetCmMargins(2.0,2.0,7.0,3.0);
-                // $pdf->ezText("$personen_string",10, array('justification'=>'left'));
-                // $pdf->ezSetDy(10);
-                // $pdf->ezText("$ka->kautions_betrag",10, array('justification'=>'right'));
-                // $pdf->ezSetCmMargins(1.0,2.0,2.0,1.0);
-
                 $pdf_tab [$a] ['EINHEIT'] = $e->einheit_kurzname;
                 $pdf_tab [$a] ['MIETER'] = $personen_string;
                 $pdf_tab [$a] ['AUSZUG'] = $auszug;
@@ -1657,8 +1537,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
 
                 unset ($personen_string);
             }
-            // echo "</table>";
-            // $pdf->ezTable($pdf_tab);
             $cols = array(
                 'EINHEIT' => "EINHEIT",
                 'MIETER' => "MIETER",
@@ -1712,7 +1590,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         $pdf->ezSetCmMargins(1.0, 2.0, 2.0, 1.0);
         $pdf->ezText("<b>Einzüge $monat_name $jahr</b> inkl. Kautionshöhe", 11);
         $pdf->ezSetDy(-20);
-        if (is_array($auszug_arr)) {
+        if (!empty($auszug_arr)) {
             $anzahl_auszuege = count($auszug_arr);
             $e = new einheit ();
             $m = new mietvertrag ();
@@ -1801,10 +1679,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         $pdf->addInfo('Author', Auth::user()->email);
         $pdf->ezStartPageNumbers(550, 755, 7, '', "Seite {PAGENUM} von {TOTALPAGENUM}");
 
-        // echo "Monatsbericht Mieter - Monatsbericht Kostenkonten<br>";
-        // echo "<h3>Aktuelle Mieterstatistik mit ausgezogene Mieter<br></h3>";
-        $s = new statistik ();
-
         $jahr = request()->input('jahr');
         if (empty ($jahr)) {
             $jahr = date("Y");
@@ -1822,10 +1696,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                 $monat = '0' . $monat;
             }
         }
-        // $monat = '04';
-        $jahr_monat = $jahr . '-' . $monat;
-        // $jahr_vormonat = mktime(0, 0, 0, date("m")-1, date("d"), date("Y"));
-        // $jahr_vormonat = date("Y-m",$jahr_vormonat);
         $bg = new berlussimo_global ();
         $link = route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'saldenliste'], false);
         $bg->objekt_auswahl_liste();
@@ -1874,22 +1744,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             $ob = new objekt ();
 
             $einheiten_array = $ob->einheiten_objekt_arr($objekt_id);
-            // $einheiten_array = $s->vermietete_monat_jahr($jahr_monat,$objekt_id, '');
-
-            /*
-			 * echo "<pre>";
-			 * print_r($einheiten_array);
-			 * echo "<h1> EINHEITEN: $anzahl_aktuell</h1>";
-			 * $mv_array = $einheit_info->get_mietvertrag_ids('7');
-			 * print_r($mv_array);
-			 */
-
-            $summe_sv = 0;
-            $summe_mieten = 0;
-            $summe_umlagen = 0;
-            $summe_akt_gsoll = 0;
-            $summe_g_zahlungen = 0;
-            $summe_saldo_neu = 0;
 
             $anzahl_aktuell = count($einheiten_array);
             $miete = new miete ();
@@ -1902,7 +1756,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                 $mv_array = $einheit_info->get_mietvertraege_bis("" . $einheiten_array [$i] ['EINHEIT_ID'] . "", $jahr, $monat);
                 $mv_anzahl = count($mv_array);
 
-                if (is_array($mv_array)) {
+                if (!empty($mv_array)) {
 
                     for ($b = 0; $b < $mv_anzahl; $b++) {
                         $mv_id = $mv_array [$b] ['MIETVERTRAG_ID'];
@@ -1913,13 +1767,11 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                             $mieter_daten_arr [] = $mk->get_person_infos($mieter_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID']);
                         }
 
-                        // $miete->mietkonto_berechnung_monatsgenau($mv_id, $jahr, $monat);
                         $end_saldoo = $miete->saldo_berechnen_monatsgenau($mv_id, $monat, $jahr);
                         $zeile = $zeile + 1;
                         $einheit_kurzname = $einheiten_array [$i] ['EINHEIT_KURZNAME'];
                         $vn = rtrim(ltrim($mieter_daten_arr ['0'] ['0'] ['PERSON_VORNAME']));
                         $nn = rtrim(ltrim($mieter_daten_arr ['0'] ['0'] ['PERSON_NACHNAME']));
-                        $akt_gesamt_soll = $miete->saldo_vormonat_stand + $miete->sollmiete_warm;
 
                         $this->get_mietvertrag_infos_aktuell($mv_id);
                         $l_tag_akt_monat = letzter_tag_im_monat($monat, $jahr);
@@ -1935,8 +1787,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
 
                         $end_saldoo = nummer_punkt2komma($end_saldoo);
                         if ($mv_bis == 'aktuell') {
-                            // echo "$zeile. $einheit_kurzname $nn $vn SALDO NEU: $end_saldoo <br>";
-
                             $pdf->ezSetCmMargins(3, 3, 3, 3);
                             $text_options = array(
                                 'left' => 0,
@@ -2078,8 +1928,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
 
     function saldenliste_mv($monat, $jahr)
     {
-        $s = new statistik ();
-
         $jahr = request()->input('jahr');
         if (empty ($jahr)) {
             $jahr = date("Y");
@@ -2097,7 +1945,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                 $monat = '0' . $monat;
             }
         }
-        $jahr_monat = $jahr . '-' . $monat;
         $bg = new berlussimo_global ();
         $link = route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'saldenliste'], false);
         $bg->objekt_auswahl_liste();
@@ -2106,8 +1953,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             $objekt_id = session()->get('objekt_id');
             $einheit_info = new einheit ();
             $o = new objekt ();
-            $objekt_name = $o->get_objekt_name($objekt_id);
-            $monatname = monat2name($monat);
 
             $link_pdf = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'saldenliste_pdf', 'monat' => $monat, 'jahr' => $jahr], false) . "'><b>PDF-Datei</b></a>";
             echo '<hr>' . $link_pdf . '<hr>';
@@ -2115,13 +1960,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             $ob = new objekt ();
 
             $einheiten_array = $ob->einheiten_objekt_arr($objekt_id);
-
-            $summe_sv = 0;
-            $summe_mieten = 0;
-            $summe_umlagen = 0;
-            $summe_akt_gsoll = 0;
-            $summe_g_zahlungen = 0;
-            $summe_saldo_neu = 0;
 
             $anzahl_aktuell = count($einheiten_array);
             $miete = new miete ();
@@ -2134,7 +1972,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                 $mv_array = $einheit_info->get_mietvertraege_bis("" . $einheiten_array [$i] ['EINHEIT_ID'] . "", $jahr, $monat);
                 $mv_anzahl = count($mv_array);
 
-                if (is_array($mv_array)) {
+                if (!empty($mv_array)) {
 
                     for ($b = 0; $b < $mv_anzahl; $b++) {
                         $mv_id = $mv_array [$b] ['MIETVERTRAG_ID'];
@@ -2142,7 +1980,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                         $mk = new mietkonto ();
                         $mieter_ids = $mk->get_personen_ids_mietvertrag($mv_id);
                         for ($a = 0; $a < count($mieter_ids); $a++) {
-                            $mieter_daten_arr [] = $mk->get_person_infos($mieter_ids [$a] [PERSON_MIETVERTRAG_PERSON_ID]);
+                            $mieter_daten_arr [] = $mk->get_person_infos($mieter_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID']);
                         }
 
                         // $miete->mietkonto_berechnung_monatsgenau($mv_id, $jahr, $monat);
@@ -2151,7 +1989,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                         $einheit_kurzname = $einheiten_array [$i] ['EINHEIT_KURZNAME'];
                         $vn = rtrim(ltrim($mieter_daten_arr ['0'] ['0'] ['PERSON_VORNAME']));
                         $nn = rtrim(ltrim($mieter_daten_arr ['0'] ['0'] ['PERSON_NACHNAME']));
-                        $akt_gesamt_soll = $miete->saldo_vormonat_stand + $miete->sollmiete_warm;
 
                         $this->get_mietvertrag_infos_aktuell($mv_id);
                         $l_tag_akt_monat = letzter_tag_im_monat($monat, $jahr);
@@ -2253,9 +2090,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
 
                         echo "<tr ><td>$mv->einheit_kurzname</td><td>$mv->personen_name_string</td><td>$b_von</td><td>$b_bis</td><td>$tage</td><td>$summe_nebenkosten_jahr</td><td>$summe_hk_jahr</td><td>$sm_kalt_a</td></tr>";
                     }
-
-                    $sm_kalt = 0;
-                    $sm_kalt_a = 0;
                 } else {
                     $einheit_kn = $arr [$a] ['EINHEIT_KURZNAME'];
                     echo "<tr><td class=\"gruen\">$einheit_kn</td><td class=\"gruen\"><b>LEERSTAND</b></td><td>$b_von</td><td>$b_bis</td><td>$tage</td><td></td><td></td><td></td></tr>";
@@ -2265,147 +2099,10 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         echo "</table>";
     }
 
-    function nebenkosten_ok($monat, $jahr)
-    {
-        $s = new statistik ();
-
-        $jahr = request()->input('jahr');
-        if (empty ($jahr)) {
-            $jahr = date("Y");
-        } else {
-            if (strlen($jahr) < 4) {
-                $jahr = date("Y");
-            }
-        }
-
-        $monat = request()->input('monat');
-        if (empty ($monat)) {
-            $monat = date("m");
-        } else {
-            if (strlen($monat) < 2) {
-                $monat = '0' . $monat;
-            }
-        }
-        // $monat = '04';
-        $jahr_monat = $jahr . '-' . $monat;
-        // $jahr_vormonat = mktime(0, 0, 0, date("m")-1, date("d"), date("Y"));
-        // $jahr_vormonat = date("Y-m",$jahr_vormonat);
-        $bg = new berlussimo_global ();
-        $link = route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'nebenkosten'], false);
-        $bg->objekt_auswahl_liste();
-        $bg->jahres_links($jahr, $link);
-        if (session()->has('objekt_id')) {
-            $objekt_id = session()->get('objekt_id');
-            $einheit_info = new einheit ();
-            $o = new objekt ();
-            $objekt_name = $o->get_objekt_name($objekt_id);
-            $monatname = monat2name($monat);
-
-            $link_pdf = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'nebenkosten_pdf', 'monat' => $monat, 'jahr' => $jahr], false) . "'><b>PDF-Datei</b></a>";
-            echo '<hr>' . $link_pdf . '<hr>';
-            /* Aktuell bzw. gewünschten Monat berechnen */
-            $ob = new objekt ();
-
-            $einheiten_array = $ob->einheiten_objekt_arr($objekt_id);
-
-            $summe_sv = 0;
-            $summe_mieten = 0;
-            $summe_umlagen = 0;
-            $summe_akt_gsoll = 0;
-            $summe_g_zahlungen = 0;
-            $summe_saldo_neu = 0;
-
-            $anzahl_aktuell = count($einheiten_array);
-            $miete = new miete ();
-
-            $zeilen_pro_seite = 47;
-            $aktuelle_zeile = 0;
-            echo "<table>";
-            echo "<tr><td>Zeile</td><td>Einheit</td><td>Mieter</td><td>EINZUG</td><td>AUSZUG</td><td>BETRIEBSKOSTEN $jahr</td><td>HEIZKOSTEN $jahr</td></tr>";
-            for ($i = 0; $i < $anzahl_aktuell; $i++) {
-
-                $mv_array = $einheit_info->get_mietvertraege_bis("" . $einheiten_array [$i] ['EINHEIT_ID'] . "", $jahr, $monat);
-                $mv_anzahl = count($mv_array);
-
-                if (is_array($mv_array)) {
-
-                    for ($b = 0; $b < $mv_anzahl; $b++) {
-                        $mv_id = $mv_array [$b] ['MIETVERTRAG_ID'];
-
-                        $mk = new mietkonto ();
-                        $mieter_ids = $mk->get_personen_ids_mietvertrag($mv_id);
-                        for ($a = 0; $a < count($mieter_ids); $a++) {
-                            $mieter_daten_arr [] = $mk->get_person_infos($mieter_ids [$a] [PERSON_MIETVERTRAG_PERSON_ID]);
-                        }
-
-                        // $miete->mietkonto_berechnung_monatsgenau($mv_id, $jahr, $monat);
-                        $end_saldoo = $miete->saldo_berechnen_monatsgenau($mv_id, $monat, $jahr);
-                        $zeile = $zeile + 1;
-                        $einheit_kurzname = $einheiten_array [$i] ['EINHEIT_KURZNAME'];
-                        $vn = rtrim(ltrim($mieter_daten_arr ['0'] ['0'] ['PERSON_VORNAME']));
-                        $nn = rtrim(ltrim($mieter_daten_arr ['0'] ['0'] ['PERSON_NACHNAME']));
-                        $akt_gesamt_soll = $miete->saldo_vormonat_stand + $miete->sollmiete_warm;
-
-                        $this->get_mietvertrag_infos_aktuell($mv_id);
-                        $me = new mietentwicklung ();
-                        $me->gesamtsumme_nebenkosten_jahr($mv_id, $jahr, 'Nebenkosten Vorauszahlung');
-                        $me->nebenkosten_gesamt_jahr_a = nummer_punkt2komma($me->nebenkosten_gesamt_jahr);
-                        $betriebskosten_vorauszahlung = $me->nebenkosten_gesamt_jahr_a;
-                        $me->gesamtsumme_nebenkosten_jahr($mv_id, $jahr, 'Heizkosten Vorauszahlung');
-                        $me->nebenkosten_gesamt_jahr_a = nummer_punkt2komma($me->nebenkosten_gesamt_jahr);
-                        $heizkosten_vorauszahlung = $me->nebenkosten_gesamt_jahr_a;
-
-                        // echo '<pre>';
-                        // print_r($me);
-
-                        $l_tag_akt_monat = letzter_tag_im_monat($monat, $jahr);
-                        $l_datum = "$jahr-$monat-$l_tag_akt_monat";
-
-                        if ($this->mietvertrag_bis == '0000-00-00' or $this->mietvertrag_bis > $l_datum) {
-                            $mv_bis = 'aktuell';
-                        } else {
-                            $mv_bis = date_mysql2german($this->mietvertrag_bis);
-                        }
-
-                        $end_saldoo = nummer_punkt2komma($end_saldoo);
-
-                        $mv_von = date_mysql2german($this->mietvertrag_von);
-
-                        if ($mv_bis == 'aktuell') {
-                            echo "<tr><td>$zeile</td><td>$einheit_kurzname</td><td> $nn $vn</td><td>$mv_von</td><td>$mv_bis</td><td>$betriebskosten_vorauszahlung</td><td>$heizkosten_vorauszahlung</td></tr>";
-
-                            $aktuelle_zeile++;
-                        } else {
-                            echo "<tr><td>$zeile</td><td>$einheit_kurzname</td><td> $nn $vn</td><td>$mv_von</td><td>$mv_bis</td><td>$betriebskosten_vorauszahlung</td><td>$heizkosten_vorauszahlung</td></tr>";
-                            $aktuelle_zeile++;
-                        }
-
-                        if ($zeilen_pro_seite == $aktuelle_zeile) {
-
-                            $aktuelle_zeile = 0;
-                        }
-
-                        unset ($mieter_daten_arr);
-                        unset ($nn);
-                        unset ($vn);
-                    }
-                } // end if is_array mv_ids
-            }
-            echo "</table>";
-            // hinweis_ausgeben("Saldenliste mit Vormieter für $objekt_name wurde erstellt<br>");
-
-            /* Falls kein Objekt ausgewählt */
-        } else {
-            echo "Objekt auswählen";
-        }
-    }
-
     function nebenkosten_pdf($objekt_id, $jahr)
     {
         $ob = new objekt ();
         $einheiten_array = $ob->einheiten_objekt_arr($objekt_id);
-        // print_r($einheiten_array);
-        // die();
         $anz = count($einheiten_array);
         for ($a = 0; $a < $anz; $a++) {
             $bk = new bk ();
@@ -2431,8 +2128,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             $anz1 = count($arr [$a] ['MVS']);
             for ($b = 0; $b < $anz1; $b++) {
                 $mz = new miete ();
-                $summe_nebenkosten_jahr = 0;
-                $summe_hk_jahr = 0;
                 $mv_id = $arr [$a] ['MVS'] [$b] ['KOS_ID'];
                 $b_von = date_mysql2german($arr [$a] ['MVS'] [$b] ['BERECHNUNG_VON']);
                 $b_bis = date_mysql2german($arr [$a] ['MVS'] [$b] ['BERECHNUNG_BIS']);
@@ -2490,9 +2185,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                         $table_arr [$z] ['KM'] = "<b>$sm_kalt_a</b>";
                         $z++;
                     }
-
-                    $sm_kalt = 0;
-                    $sm_kalt_a = 0;
                 } else {
                     $einheit_kn = $arr [$a] ['EINHEIT_KURZNAME'];
                     // echo "<tr><td class=\"gruen\">$einheit_kn</td><td class=\"gruen\"><b>LEERSTAND</b></td><td>$b_von</td><td>$b_bis</td><td>$tage</td><td></td><td></td></tr>";
@@ -2589,52 +2281,31 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         $nl_datum = $deta->finde_detail_inhalt('Objekt', $objekt_id, 'Nutzen-Lastenwechsel');
         $nl_datum_arr = explode('.', strip_tags($nl_datum));
 
-        if (is_array($nl_datum_arr)) {
-            $nl_tag = $nl_datum_arr [0];
-            $nl_monat = $nl_datum_arr [1];
+        if (!empty($nl_datum_arr)) {
             $nl_jahr = $nl_datum_arr [2];
-            // echo "NLW: $nl_datum";
-            // die();
         }
 
         if ($nl_jahr == $jahr) {
             echo "NLBBB $nl_datum $nl_jahr<br>";
             $datum_von_ber = date_german2mysql($nl_datum);
             $bkk = new bk ();
-            $tage_im_jahr = $bkk->tage_im_jahr($jahr);
             $wegg = new weg ();
-            $tage_nutzung_davor = $wegg->tage_zwischen("01.01.$jahr", $nl_datum) + 1;
-            $tage_nutzung_danach = $wegg->tage_zwischen($nl_datum, "31.12.$jahr") + 1;
-            // echo "$tage_im_jahr im Jahr $jahr<br>";
-            // echo " $tage_nutzung von 01.01.$jahr bis $nl_datum <br>";
-            // echo "$tage_nutzung1 von $nl_datum bis 31.12.$jahr<br>";
-
-            // die();
-
             $ob = new objekt ();
             $einheiten_array = $ob->einheiten_objekt_arr($objekt_id);
-            // print_r($einheiten_array);
-            // die();
             $anz = count($einheiten_array);
             for ($a = 0; $a < $anz; $a++) {
                 $bk = new bk ();
                 $einheit_id = $einheiten_array [$a] ['EINHEIT_ID'];
                 $einheit_kn = $einheiten_array [$a] ['EINHEIT_KURZNAME'];
-                // $arr[$a]['MVS'] = $bk->mvs_und_leer_jahr($einheit_id, $jahr);
                 $arr [$a] ['MVS'] = $bk->mvs_und_leer_jahr_zeitraum($einheit_id, $datum_von_ber, $jahr);
                 $arr [$a] ['EINHEIT_KURZNAME'] = $einheit_kn;
             }
-
-            $anz = count($arr);
 
             $li = new listen ();
             $b_von_2 = $datum_von_ber;
             $b_bis_2 = "$jahr-12-31";
             $km_mon_array = $li->monats_array($b_von_2, $b_bis_2);
             $anz_m = count($km_mon_array);
-
-            // echo '<pre>';
-            // print_r($km_mon_array);
 
             $anz = count($einheiten_array);
             $z = 0;
@@ -2651,8 +2322,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                 $einheit_kn = $arr [$a] ['EINHEIT_KURZNAME'];
 
                 for ($b = 0; $b < $anz1; $b++) {
-                    $mz = new miete ();
-                    $summe_nebenkosten_jahr = 0;
                     $summe_hk_jahr = 0;
                     $mv_id = $arr [$a] ['MVS'] [$b] ['KOS_ID'];
                     $b_von = date_mysql2german($arr [$a] ['MVS'] [$b] ['BERECHNUNG_VON']);
@@ -2662,10 +2331,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
 
                         $mv = new mietvertraege ();
                         $mv->get_mietvertrag_infos_aktuell($mv_id);
-
-                        /* Kaltmiete */
-                        $li = new listen ();
-                        /* Anteilig */
 
                         $sm_kalt = 0;
                         $summe_nk_einheit = 0;
@@ -2678,9 +2343,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                             $miete_arr = explode('|', $m_soll);
                             $wm = $miete_arr [0];
                             $nebenkosten_m = $wm - $mk->ausgangs_kaltmiete;
-                            // echo "MV $mv_id $sm,$sj ---> $mk->ausgangs_kaltmiete $m_soll<br>";
-                            // print_r($mk);
-                            // die();
                             $sm_kalt += $mk->ausgangs_kaltmiete;
                             $summe_nk_einheit += $nebenkosten_m;
                             $summe_nebenkosten_jahr_alle += $nebenkosten_m;
@@ -2690,8 +2352,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                         $sm_kalt_a = nummer_punkt2komma_t($sm_kalt);
                         $summe_nk_einheit_a = nummer_punkt2komma_t($summe_nk_einheit);
 
-                        // die();
-
                         if ($tage < 365) {
                             $table_arr [$z] ['EINHEIT'] = "<b>$mv->einheit_kurzname</b>";
                             $table_arr [$z] ['MIETER'] = "$mv->personen_name_string";
@@ -2700,11 +2360,8 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                             $table_arr [$z] ['BETRIEBSKOSTEN'] = "<b>$summe_nk_einheit_a</b>";
                             $table_arr [$z] ['HEIZKOSTEN'] = "";
                             $table_arr [$z] ['KM'] = "<b>$sm_kalt_a</b>";
-                            // echo "<tr><td class=\"rot\">$mv->einheit_kurzname</td><td class=\"rot\">$mv->personen_name_string</td><td class=\"rot\">$b_von</td><td class=\"rot\">$b_bis</td><td class=\"rot\">$tage</td><td class=\"rot\">$summe_nebenkosten_jahr</td><td class=\"rot\">$summe_hk_jahr</td></tr>";
-                            // $summe_km_jahr_alle += $sm_kalt;
                             $z++;
                         } else {
-                            // echo "<tr ><td>$mv->einheit_kurzname</td><td>$mv->personen_name_string</td><td>$b_von</td><td>$b_bis</td><td>$tage</td><td>$summe_nebenkosten_jahr</td><td>$summe_hk_jahr</td></tr>";
                             $table_arr [$z] ['EINHEIT'] = $mv->einheit_kurzname;
                             $table_arr [$z] ['MIETER'] = $mv->personen_name_string;
                             $table_arr [$z] ['EINZUG'] = $b_von;
@@ -2712,15 +2369,11 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                             $table_arr [$z] ['BETRIEBSKOSTEN'] = $summe_nk_einheit_a;
                             $table_arr [$z] ['HEIZKOSTEN'] = '';
                             $table_arr [$z] ['KM'] = "<b>$sm_kalt_a</b>";
-                            // $summe_km_jahr_alle += $sm_kalt;
                             $z++;
                         }
                         $sum_km_einheit_jahr += $sm_kalt;
                         $sum_bk_einheit_jahr += $summe_nk_einheit;
                         $sum_hk_einheit_jahr += $summe_hk_jahr;
-
-                        $sm_kalt = 0;
-                        $sm_kalt_a = 0;
                     } else {
                         $einheit_kn = $arr [$a] ['EINHEIT_KURZNAME'];
                         // echo "<tr><td class=\"gruen\">$einheit_kn</td><td class=\"gruen\"><b>LEERSTAND</b></td><td>$b_von</td><td>$b_bis</td><td>$tage</td><td></td><td></td></tr>";
@@ -2752,9 +2405,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                     $table_arr [$z] ['KM'] = "<u><b>$sum_km_einheit_jahr_a</b></u>";
                     $z++;
                 }
-
-                // $table_arr[$z]['EINHEIT'] = ' ';
-                // $z++;
             }
             $summe_nebenkosten_jahr_alle_a = nummer_punkt2komma_t($summe_nebenkosten_jahr_alle);
             $summe_hk_jahr_alle_a = nummer_punkt2komma_t($summe_hk_jahr_alle);
@@ -2762,10 +2412,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             $table_arr [$z] ['BETRIEBSKOSTEN'] = "<u><b>$summe_nebenkosten_jahr_alle_a</b></u>";
             $table_arr [$z] ['HEIZKOSTEN'] = "<u><b>$summe_hk_jahr_alle_a</b></u>";
             $table_arr [$z] ['KM'] = "<u><b>$summe_km_jahr_alle_a</b></u>";
-
-            // echo '<pre>';
-            // print_r($table_arr);
-            // die();
 
             ob_clean(); // ausgabepuffer leeren
             $pdf = new Cezpdf ('a4', 'portrait');
@@ -2781,8 +2427,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                 'BETRIEBSKOSTEN' => "Nebenkosten",
                 'KM' => "Kaltmiete"
             );
-            $datum_h = date("d.m.Y");
-
             $datum_von_ber_d = date_mysql2german($datum_von_ber);
             $pdf->ezText("<b>Lastenutzenwechsel efolgte  am $datum_von_ber_d</b>", 8);
             $pdf->ezTable($table_arr, $cols, "Soll - Nebenkosten/Kaltmiete $datum_von_ber_a bis 31.12.$jahr", array(
@@ -2896,10 +2540,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                     echo "<tr><td>$einheit_kn</td><td>$mieter_n</td><td>$von</td><td>$bis</td><td>$bk</td><td>$hk</td><td>$km</td></tr>";
                 }
                 echo "</table>";
-                die ();
-
-                print_r($table_arr);
-                print_r($arr);
             }
         } else {
             /* Ganzes Jahr ohne NLW */
@@ -2936,8 +2576,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
 
             for ($b = 0; $b < $anz1; $b++) {
                 $mz = new miete ();
-                $summe_nebenkosten_jahr = 0;
-                $summe_hk_jahr = 0;
                 $mv_id = $arr [$a] ['MVS'] [$b] ['KOS_ID'];
                 $b_von = date_mysql2german($arr [$a] ['MVS'] [$b] ['BERECHNUNG_VON']);
                 $b_bis = date_mysql2german($arr [$a] ['MVS'] [$b] ['BERECHNUNG_BIS']);
@@ -2996,9 +2634,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                     $sum_km_einheit_jahr += $sm_kalt;
                     $sum_bk_einheit_jahr += $summe_nebenkosten_jahr;
                     $sum_hk_einheit_jahr += $summe_hk_jahr;
-
-                    $sm_kalt = 0;
-                    $sm_kalt_a = 0;
                 } else {
                     $einheit_kn = $arr [$a] ['EINHEIT_KURZNAME'];
                     // echo "<tr><td class=\"gruen\">$einheit_kn</td><td class=\"gruen\"><b>LEERSTAND</b></td><td>$b_von</td><td>$b_bis</td><td>$tage</td><td></td><td></td></tr>";
@@ -3057,8 +2692,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             'HEIZKOSTEN' => "HK",
             'KM' => "Kaltmiete"
         );
-        $datum_h = date("d.m.Y");
-
         $pdf->ezTable($table_arr, $cols, "Soll - Nebenkosten/Kaltmiete für das Jahr $jahr", array(
             'showHeadings' => 1,
             'shaded' => 1,
@@ -3165,7 +2798,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                 echo "<tr><td>$einheit_kn</td><td>$mieter_n</td><td>$von</td><td>$bis</td><td>$bk</td><td>$hk</td><td>$km</td></tr>";
             }
             echo "</table>";
-            die ();
         }
     }
 
@@ -3173,11 +2805,12 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
     {
         echo "VARS: $objekt_id, $datum_von, $datum_bis";
         $arr = $this->mv_arr_zeitraum($objekt_id, $datum_von, $datum_bis);
-        if (!is_array($arr)) {
-            die ('NISTA');
+        if (empty($arr)) {
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Bitte wählen Sie ein Objekt und einen Zeitraum.")
+            );
         } else {
             echo "<pre>";
-            // print_r($arr);
             $anz_mvs = count($arr);
             $mz = new miete ();
             $monate = $mz->diff_in_monaten($datum_von, $datum_bis);
@@ -3186,8 +2819,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             $start_j = $datum_von_arr [0];
 
             $datum_bis_arr = explode('-', $datum_bis);
-            $end_m = $datum_bis_arr [1];
-            $end_j = $datum_bis_arr [0];
 
             /* Schleife für jeden Monat */
             $monat = $start_m;
@@ -3208,9 +2839,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                         $this->mietvertrag_bis_d = '';
                     }
                     $n_arr [$b] ['MIETZEIT'] = "$this->mietvertrag_von_d - $this->mietvertrag_bis_d";
-                    $mietsumme = 0.00;
                     $mietsumme = $this->summe_forderung_monatlich($mv_id, $monat, $jahr);
-                    // die($mietsumme);
                     $n_arr [$b] ["$monat.$jahr"] = $mietsumme;
                     $n_arr [$b] ["SUMME"] += $mietsumme;
                     $summe_g += $mietsumme;
@@ -3238,13 +2867,11 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             $bpdf = new b_pdf ();
             $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'landscape', 'Helvetica.afm', 6);
 
-            $count = count($n_arr);
             $n_arr [$anz_mvs] ['SUMME_A'] = "<b>" . nummer_punkt2komma_t($summe_g) . "</b>";
             $n_arr [$anz_mvs] ['MIETER'] = "<b>Gesamt Sollmieten Nettokalt</b>";
 
             ob_clean(); // ausgabepuffer leeren
 
-            $datum_h = date("d.m.Y");
             $cols1 ['EINHEIT'] = 'Einheit';
             $cols1 ['TYP'] = 'Typ';
             $cols1 ['MIETER'] = 'Mieter';
@@ -3323,11 +2950,8 @@ GROUP BY  `KOSTENTRAEGER_TYP` ,  `KOSTENTRAEGER_ID` ";
             $z = 0;
             $summe = 0;
             foreach ($result as $row) {
-                $kos_typ = $row ['KOSTENTRAEGER_TYP'];
                 $kos_id = $row ['KOSTENTRAEGER_ID'];
                 $summe += $row ['SUMME'];
-                // $rr = new rechnung();
-                // $kos_bez = $rr->kostentraeger_ermitteln($kos_typ, $kos_id);
                 $this->get_mietvertrag_infos_aktuell($kos_id);
                 print_r($this);
 
@@ -3377,324 +3001,11 @@ GROUP BY  `KOSTENTRAEGER_TYP` ,  `KOSTENTRAEGER_ID` ";
         ));
 
         ob_end_clean(); // ausgabepuffer leeren
-        // echo '<pre>';
-        // print_r($n_arr);
-        // die();
         $pdf->ezSetDy(-20);
         $pdf->ezText("     Druckdatum: " . date("d.m.Y"), 9);
         $pdf->ezStream();
     }
-
-    function ist_mieten_pdf($objekt_id, $datum_von, $datum_bis)
-    {
-        echo "VARS: $objekt_id, $datum_von, $datum_bis";
-        $arr = $this->mv_arr_zeitraum($objekt_id, $datum_von, $datum_bis);
-        if (!is_array($arr)) {
-            die ('NISTA');
-        } else {
-            echo "<pre>";
-            // print_r($arr);
-            $anz_mvs = count($arr);
-            $mz = new miete ();
-            $monate = $mz->diff_in_monaten($datum_von, $datum_bis);
-            $datum_von_arr = explode('-', $datum_von);
-            $start_m = $datum_von_arr [1];
-            $start_j = $datum_von_arr [0];
-
-            $datum_bis_arr = explode('-', $datum_bis);
-            $end_m = $datum_bis_arr [1];
-            $end_j = $datum_bis_arr [0];
-
-            /* Schleife für jeden Monat */
-            $monat = $start_m;
-            $jahr = $start_j;
-            $summe_g = 0.00;
-            for ($a = 0; $a < $monate; $a++) {
-                $monat = sprintf('%02d', $monat);
-                for ($b = 0; $b < $anz_mvs; $b++) {
-                    $mv_id = $arr [$b] ['MIETVERTRAG_ID'];
-                    // echo "$monat.$jahr = $mv_id<br>";
-                    // $n_arr[$b]['MV_ID']=$mv_id;
-                    // $mk = new mietkonto();
-                    $this->get_mietvertrag_infos_aktuell($mv_id);
-                    $n_arr [$b] ['EINHEIT'] = $this->einheit_kurzname;
-                    $n_arr [$b] ['TYP'] = $this->einheit_typ;
-                    $n_arr [$b] ['MIETER'] = $this->personen_name_string;
-                    if ($this->mietvertrag_bis_d == '00.00.0000') {
-                        $this->mietvertrag_bis_d = '';
-                    }
-                    $n_arr [$b] ['MIETZEIT'] = "$this->mietvertrag_von_d - $this->mietvertrag_bis_d";
-                    $mietsumme = 0.00;
-                    $mz = new miete ();
-                    $mz->mietkonto_berechnung_monatsgenau($mv_id, $jahr, $monat);
-                    /*
-					 * $tab_arr[$anz_tab]['SALDO_VM'] = nummer_punkt2komma_t($miete->saldo_vormonat_stand);
-					 * $tab_arr[$anz_tab]['G_SOLL_AKT'] = nummer_punkt2komma_t($miete->saldo_vormonat_stand + $miete->sollmiete_warm);
-					 * $tab_arr[$anz_tab]['SOLL_WM'] = nummer_punkt2komma_t($miete->sollmiete_warm);
-					 * $tab_arr[$anz_tab]['UMLAGEN'] = nummer_punkt2komma_t($miete->davon_umlagen);
-					 * $tab_arr[$anz_tab]['ZAHLUNGEN'] = nummer_punkt2komma_t($miete->geleistete_zahlungen);
-					 */
-                    $mietsumme = $mz->geleistete_zahlungen - $mz->davon_umlagen;
-                    // if($mietsumme<=0){
-                    // $mietsumme = '0.00';
-                    // }
-                    // $mietsumme = $this->summe_forderung_monatlich($mv_id, $monat, $jahr);
-                    // die($mietsumme);
-                    $n_arr [$b] ["$monat.$jahr"] = $mietsumme;
-                    $n_arr [$b] ["SUMME"] += $mietsumme;
-                    $summe_g += $mietsumme;
-                    $sum = $n_arr [$b] ["SUMME"];
-                    $n_arr [$b] ["SUMME"] = number_format($sum, 2, '.', '');
-                    $n_arr [$b] ["SUMME_A"] = nummer_punkt2komma_t($sum);
-
-                    // 1234.57
-                }
-                // $n_arr[$anz_mvs]["$monat.$jahr"] += $n_arr[$a]["$monat.$jahr"];
-                $cols ["$monat.$jahr"] = "$monat.$jahr";
-
-                $monat++;
-                $monat = sprintf('%02d', $monat);
-
-                if ($monat > 12) {
-                    $monat = 1;
-                    $jahr++;
-                }
-            }
-            // print_r($n_arr);
-
-            ob_clean(); // ausgabepuffer leeren
-            $pdf = new Cezpdf ('a4', 'landscape');
-            $bpdf = new b_pdf ();
-            $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'landscape', 'Helvetica.afm', 6);
-
-            $count = count($n_arr);
-            $n_arr [$anz_mvs] ['SUMME_A'] = "<b>" . nummer_punkt2komma_t($summe_g) . "</b>";
-            $n_arr [$anz_mvs] ['MIETER'] = "<b>Summen $datum_von - $datum_bis</b>";
-
-            ob_clean(); // ausgabepuffer leeren
-            // $cols = array('MIETER'=>"MIETER", 'MIETER'=>"Mieter",'EINZUG'=>"Einzug",'AUSZUG'=>"Auszug"
-            // ,'BETRIEBSKOSTEN'=>"Betriebskosten $jahr", 'HEIZKOSTEN'=>"Heizkosten $jahr");
-            $datum_h = date("d.m.Y");
-            $cols1 ['EINHEIT'] = 'Einheit';
-            $cols1 ['TYP'] = 'Typ';
-            $cols1 ['MIETER'] = 'Mieter';
-            $cols1 ['MIETZEIT'] = 'Mietzeit';
-            // $cols1['01.2013'] = '01.2013';
-            $cols1 ['02.2013'] = '02.2013';
-            $cols1 ['03.2013'] = '03.2013';
-            $cols1 ['04.2013'] = '04.2013';
-            $cols1 ['05.2013'] = '05.2013';
-            $cols1 ['06.2013'] = '06.2013';
-            $cols1 ['07.2013'] = '07.2013';
-            $cols1 ['08.2013'] = '08.2013';
-            $cols1 ['09.2013'] = '09.2013';
-            $cols1 ['10.2013'] = '10.2013';
-            $cols1 ['11.2013'] = '11.2013';
-            $cols1 ['12.2013'] = '12.2013';
-            $cols1 ['SUMME_A'] = 'BETRAG';
-
-            // $pdf->ezTable($n_arr,$cols1,"Nebenkostenhochrechnung für das Jahr $jahr vom $datum_h",array('showHeadings'=>1,'shaded'=>1, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'width'=>500,'cols'=>array('EINHEIT'=>array('justification'=>'left', 'width'=>75),'MIETER'=>array('justification'=>'left', 'width'=>175), 'EINZUG'=>array('justification'=>'right','width'=>50),'AUSZUG'=>array('justification'=>'right','width'=>50),'BETRIEBSKOSTEN'=>array('justification'=>'right','width'=>75), 'HEIZKOSTEN'=>array('justification'=>'right','width'=>75))));
-            $datum_von_d = date_mysql2german($datum_von);
-            $datum_bis_d = date_mysql2german($datum_bis);
-            // $pdf->ezTable($n_arr, $cols1, "Vereinbarte Sollkaltmieten im Zeitraum: $datum_von_d - $datum_bis_d", array('showHeadings'=>1,'shaded'=>1, 'width'=>500, 'titleFontSize' => 8, 'fontSize' => 7, 'xPos'=>50,'xOrientation'=>'right', 'cols'=>array('SUMME_A'=>array('justification'=>'right'))));
-            // sort($n_arr);
-            $pdf->ezTable($n_arr, $cols1, "IST-Einnahmen Kaltmieten im Zeitraum: $datum_von_d - $datum_bis_d", array(
-                'showHeadings' => 1,
-                'shaded' => 1,
-                'titleFontSize' => 8,
-                'fontSize' => 6.5,
-                'xPos' => 50,
-                'xOrientation' => 'right',
-                'cols' => array(
-                    'SUMME_A' => array(
-                        'justification' => 'right'
-                    )
-                )
-            ));
-            ob_end_clean(); // ausgabepuffer leeren
-            // echo '<pre>';
-            // print_r($n_arr);
-            // die();
-            $pdf->ezSetDy(-20);
-            $pdf->ezText("     Druckdatum: " . date("d.m.Y"), 11);
-            $pdf->ezStream();
-        }
-    }
-
-    function mieten_tabelle($objekt_id, $datum_von, $datum_bis)
-    {
-        // echo "VARS: $objekt_id, $datum_von, $datum_bis";
-        $arr = $this->mv_arr_zeitraum($objekt_id, $datum_von, $datum_bis);
-        if (!is_array($arr)) {
-            die ('NISTA');
-        } else {
-            // echo "<pre>";
-            // print_r($arr);
-            $anz_mvs = count($arr);
-            $mz = new miete ();
-            $monate = $mz->diff_in_monaten($datum_von, $datum_bis);
-            $datum_von_arr = explode('-', $datum_von);
-            $start_m = $datum_von_arr [1];
-            $start_j = $datum_von_arr [0];
-
-            $datum_bis_arr = explode('-', $datum_bis);
-            $end_m = $datum_bis_arr [1];
-            $end_j = $datum_bis_arr [0];
-
-            /* Schleife für jeden Monat */
-            $monat = $start_m;
-            $jahr = $start_j;
-            $summe_g = 0.00;
-            for ($a = 0; $a < $monate; $a++) {
-                $monat = sprintf('%02d', $monat);
-                for ($b = 0; $b < $anz_mvs; $b++) {
-                    $mv_id = $arr [$b] ['MIETVERTRAG_ID'];
-                    // echo "$monat.$jahr = $mv_id<br>";
-                    $n_arr [$b] ['MV_ID'] = $mv_id;
-                    // $mk = new mietkonto();
-                    $this->get_mietvertrag_infos_aktuell($mv_id);
-                    $n_arr [$b] ['EINHEIT_KURZNAME'] = $this->einheit_kurzname;
-                    $n_arr [$b] ['EINHEIT_TYP'] = $this->einheit_typ;
-                    $n_arr [$b] ['MIETER'] = $this->personen_name_string;
-                    $n_arr [$b] ['MIETZEIT'] = "$this->mietvertrag_von_d - $this->mietvertrag_bis_d";
-                    $mietsumme = 0.00;
-                    $mietsumme = $this->summe_forderung_monatlich($mv_id, $monat, $jahr);
-                    $n_arr [$b] ["$monat.$jahr"] = $mietsumme;
-                    $n_arr [$b] ["SUMME"] += $mietsumme;
-                    $summe_g += $mietsumme;
-                    $sum = $n_arr [$b] ["SUMME"];
-                    $n_arr [$b] ["SUMME"] = number_format($sum, 2, '.', '');
-                    $n_arr [$b] ["SUMME_A"] = nummer_punkt2komma_t($sum);
-                    // 1234.57
-                }
-                $cols ["$monat.$jahr"] = "$monat.$jahr";
-
-                $monat++;
-                $monat = sprintf('%02d', $monat);
-
-                if ($monat > 12) {
-                    $monat = 1;
-                    $jahr++;
-                }
-            }
-            // print_r($n_arr);
-            $count = count($n_arr);
-            $n_arr [$count] ['SUMME_A'] = "<b>" . nummer_punkt2komma_t($summe_g) . "</b>";
-            $n_arr [$count] ['MIETER'] = "<b>Gesamt Sollmieten Nettokalt</b>";
-
-            // ob_clean(); //ausgabepuffer leeren
-            // $cols = array('MIETER'=>"MIETER", 'MIETER'=>"Mieter",'EINZUG'=>"Einzug",'AUSZUG'=>"Auszug"
-            // ,'BETRIEBSKOSTEN'=>"Betriebskosten $jahr", 'HEIZKOSTEN'=>"Heizkosten $jahr");
-            $datum_h = date("d.m.Y");
-            $datum_von_d = date_mysql2german($datum_von);
-            $datum_bis_d = date_mysql2german($datum_bis);
-
-            // ob_clean(); //ausgabepuffer leeren
-            // echo '<pre>';
-            // print_r($n_arr);
-            // die();
-            $anz = count($n_arr);
-            ob_clean(); // ausgabepuffer leeren
-
-            $fileName = 'Sollmieten' . date("d-m-Y") . '.xls';
-            header("Content-type: application/vnd.ms-excel");
-            header("Content-Disposition: attachment; filename=$fileName");
-            header('Pragma: no-cache');
-
-            // echo "<table>";
-            // echo "<tr><th>EINHEIT</th><th>TYP</th><th>MIETER</th><th>MIETZEIT</th>";
-            echo "EINHEIT\tTYP\tMIETER\tMIETZEIT\t";
-            $keys_arr = array_keys($n_arr [0]);
-            // print_r($keys_arr);
-            for ($a = 0; $a < count($keys_arr); $a++) {
-                $key = $keys_arr [$a];
-                if (strpos($key, '.')) {
-                    echo "$key\t";
-                    $spalten_arr [] = $key;
-                }
-            }
-            echo "SUMME\t\n"; // Neue zeile \n
-            $anz_spalten = count($spalten_arr);
-
-            for ($a = 0; $a < $anz - 1; $a++) {
-                $mieter = $n_arr [$a] ['MIETER'];
-                $einheit = $n_arr [$a] ['EINHEIT_KURZNAME'];
-                $typ = $n_arr [$a] ['EINHEIT_TYP'];
-                $mieter = $n_arr [$a] ['MIETER'];
-                $mietzeit = $n_arr [$a] ['MIETZEIT'];
-
-                // echo "<tr><td>$einheit</td><td>$typ</td><td>$mieter</td><td>$mietzeit</td>";
-                echo "$einheit\t$typ\t$mieter\t$mietzeit\t";
-                for ($b = 0; $b < $anz_spalten; $b++) {
-                    $spaltenname = $spalten_arr [$b];
-                    $wert = nummer_punkt2komma(number_format($n_arr [$a] ["$spaltenname"], '2', '.', ''));
-                    echo "$wert\t";
-                }
-                $summe_m = $n_arr [$a] ['SUMME_A'];
-                echo "$summe_m\t\n";
-            }
-
-            $summe_a = strip_tags($n_arr [$anz - 1] ['SUMME_A']);
-            $txt = strip_tags($n_arr [$anz - 1] ['MIETER']);
-            $anz_spalten1 = $anz_spalten + 3;
-            // echo "<tr><td colspan=\"$anz_spalten1\">$txt</td><td>$summe_a</td></tr>";
-            for ($a = 0; $a < $anz_spalten1; $a++) {
-                echo "\t";
-            }
-            echo "$txt\t$summe_a";
-        }
-
-        die ();
-    }
-
-    /* Ausgabe der Summe aller Kostenkategorien für gewünschten Monat, Jahr als String */
-
-    function update_ME($objekt_id, $datum_von, $datum_bis)
-    {
-        echo "VARS: $objekt_id, $datum_von, $datum_bis";
-        $arr = $this->mv_arr_zeitraum($objekt_id, $datum_von, $datum_bis);
-        if (!is_array($arr)) {
-            die ('NISTA');
-        } else {
-            echo "<pre>";
-            // print_r($arr);
-            $anz_mvs = count($arr);
-            for ($b = 0; $b < $anz_mvs; $b++) {
-                $mv_id = $arr [$b] ['MIETVERTRAG_ID'];
-            }
-        }
-    }
-
-    /* Speichern von PDF_datei */
-    function save_file($dateiname, $hauptordner, $unterordner, $content, $monat, $jahr)
-    {
-        $dir = "$hauptordner/$unterordner";
-
-        if (!file_exists($hauptordner)) {
-            mkdir($hauptordner, 0777);
-        }
-        if (!file_exists($dir)) {
-            mkdir($dir, 0777);
-        }
-        $filename = $dateiname . '_' . $monat . '_' . $jahr . '.pdf';
-        $filename = "$dir/$filename";
-
-        if (file_exists($filename)) {
-            fehlermeldung_ausgeben("Saldenliste exisitiert bereits, keine Überschreibung möglich");
-            $fhandle = fopen($filename, "w");
-            fwrite($fhandle, $content);
-            fclose($fhandle);
-            chmod($filename, 0755);
-            return $filename;
-        } else {
-            $fhandle = fopen($filename, "w");
-            fwrite($fhandle, $content);
-            fclose($fhandle);
-            chmod($filename, 0755);
-            return $filename;
-        }
-    }
-
+    
     function form_mietvertrag_loeschen($mv_id)
     {
         if (!request()->has('send_ja') && !request()->has('send_nein')) {

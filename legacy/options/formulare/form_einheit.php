@@ -43,7 +43,7 @@ if (request()->has('daten_rein')) {
                     }
                 }
                 if (!isset ($error)) {
-                    erstelle_formular(einheit_in_db, NULL); // name, action
+                    erstelle_formular('einheit_in_db', NULL); // name, action
                     echo "<tr><td><h1>Folgende Daten wurden übermittelt:\n</h1></td></tr>\n";
                     echo "<tr><td><h2>Objektkurzname: $objekt_kurzname</h2></td></tr>\n";
                     echo "<tr><td><h2>Haus: $haus_kurzname</h2></td></tr>\n";
@@ -120,7 +120,7 @@ if (request()->has('daten_rein')) {
                     echo "$key $value";
                 }
                 if (!isset ($error)) {
-                    erstelle_formular(einheit_in_db, NULL); // name, action
+                    erstelle_formular('einheit_in_db', NULL); // name, action
                     echo "<tr><td><h1>Folgende Daten wurden übermittelt:\n</h1></td></tr>\n";
                     echo "<tr><td><h2>Objektkurzname: $objekt_kurzname</h2></td></tr>\n";
                     echo "<tr><td><h2>Haus: $haus_kurzname</h2></td></tr>\n";
@@ -217,7 +217,6 @@ function einheiten_links($objekt_id, $haus_id)
 
 function einheiten_liste($haus_id)
 {
-    $daten_rein = request()->input('daten_rein');
     $result = DB::select("SELECT EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT_LAGE, EINHEIT_QM FROM EINHEIT WHERE HAUS_ID='$haus_id' && EINHEIT_AKTUELL='1' ORDER BY EINHEIT_KURZNAME ASC ");
     if (empty($result)) {
         fehlermeldung_ausgeben("<h5 class=\"fehler\">Keine Einheiten im ausgewählten Haus</h5>");

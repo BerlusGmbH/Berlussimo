@@ -60,7 +60,7 @@ class ClassBenutzerTest extends TestCase
     public function testGetUserInfo()
     {
         $benutzer = new benutzer();
-        $users = $benutzer->get_user_info(1);
-        $this->assertEquals(1, $users->id);
+        $user = $benutzer->get_user_info(1);
+        $this->assertEquals(1, $user['id']);
     }
 }

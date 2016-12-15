@@ -2,13 +2,29 @@
 
 class urlaub
 {
+    public $benutzername;
+    public $anspruch_monate;
+    public $anspruch_jahr;
+    public $anspruch_vorjahre;
+    public $anspruch_gesamt;
+    public $genommen;
+    public $geplant;
+    public $rest_aktuell;
+    public $rest_jahr;
+    public $eintritt;
+    public $austritt;
+    public $urlaub;
+    public $benutzer_id;
+    public $gewerk_id;
+    public $stunden_pw;
+    public $stundensatz;
+
     function jahresuebersicht_alle_pdf($jahr)
     {
         $users = $this->mitarbeiter_arr($jahr);
         if ($users->isEmpty()) {
             echo "Keine Mitarbeiter vorhanden, Eintrittsdaten erst nach $jahr";
         } else {
-            $anzahl_daten = count($mitarbeiter_arr);
             $zaehler = 0;
 
             ob_end_clean(); // ausgabepuffer leeren
@@ -79,33 +95,29 @@ class urlaub
         }
     }
 
+
+    /**
+     * @param $jahr
+     * @return array|\Illuminate\Database\Eloquent\Collection
+     */
     function mitarbeiter_arr($jahr)
     {
-        $datum_h = date("y-m-d");
-        //$result = DB::select("SELECT id, name, holidays, join_date, leave_date FROM users WHERE DATE_FORMAT(join_date, '%Y') <= '$jahr' &&  (DATE_FORMAT(AUSTRITT, '%Y') >= '$jahr' OR AUSTRITT='0000-00-00') && DATE_FORMAT(AUSTRITT, '%Y-%m-%d') < '$datum_h' ORDER BY benutzername ASC ");
         $users = \App\Models\User::whereYear('join_date', '<=', $jahr)->whereYear('leave_date', '>=', $jahr)->orWhereNull('leave_date')->orderBy('name', 'asc')->select(['id', 'name', 'holidays', 'join_date', 'leave_date'])->get();
         return $users;
     }
 
     function jahresuebersicht_mitarbeiter_kurz($benutzer_id, $jahr)
     {
-        $vorjahr = $jahr - 1;
-        // echo "<table><tr class=\"feldernamen\"><td>ddddddddMITARBEITER</td><td>OPTIONEN</td><td>MONATE $jahr</td><td>TAGE $jahr</td><td>REST $vorjahr</td><td>G. ANSPRUCH</td><td>GENOMMEN</td><td>GEPLANT</td><td>RESTURLAUB</td></tr>";
-
         $this->mitarbeiter_details($benutzer_id);
         $mitarbeiter = $this->benutzername;
 
         $eintritt = $this->eintritt;
         $eintritt_arr = explode("-", $eintritt);
         $eintritt_jahr = $eintritt_arr [0];
-        $eintritt_monat = $eintritt_arr [1];
-        $eintritt_tag = $eintritt_arr [2];
 
         $austritt = $this->austritt;
         $austritt_arr = explode("-", $austritt);
         $austritt_jahr = $austritt_arr [0];
-        $austritt_monat = $austritt_arr [1];
-        $austritt_tag = $austritt_arr [2];
 
         $anspruch = $this->urlaub;
         $anspruch_pro_m = $anspruch / 12;
@@ -169,7 +181,6 @@ class urlaub
 
         // $monate = floor($monate);
         $anspruch = $monate * $anspruch_pro_m;
-        $anspruch1 = $tage * $anspruch_pro_tag;
         /* Jahr vor Eintritt in die Firma */
         if ($eintritt_jahr > $jahr) {
             $anspruch = '0.0';
@@ -178,23 +189,17 @@ class urlaub
         $genommen_arr = $this->anzahl_genommene_tage($jahr, $benutzer_id);
         $geplant_arr = $this->anzahl_geplanter_tage($jahr, $benutzer_id);
         if (isset($geplant_arr)) {
-            $geplant = $geplant_arr->GEPLANT;
+            $geplant = $geplant_arr['GEPLANT'];
         } else {
             $geplant = '0';
         }
         if (isset($genommen_arr)) {
-            $genommen = $genommen_arr->GENOMMEN;
+            $genommen = $genommen_arr['GENOMMEN'];
         } else {
             $genommen = '0';
         }
         $rest_aus_vorjahren = $this->rest_aus_vorjahren($jahr, $benutzer_id);
-        // $anspruch = $anspruch + $rest_aus_vorjahren;
-        // $rest_aktuell = $anspruch - $genommen;
-        // $rest_jahr = $rest_aktuell - $geplant;
 
-        if ($austritt != '0000-00-00') {
-            $mitarbeiter = "<b>$mitarbeiter</b>";
-        }
         $g_anspruch = $anspruch + $rest_aus_vorjahren;
         $g_anspruch = $this->runden($g_anspruch);
         $rest_aktuell = $g_anspruch - $genommen;
@@ -276,15 +281,9 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
         $eintritt = $mitarbeiter_arr->join_date;
         $eintritt_arr = explode("-", $eintritt);
         $eintritt_jahr = $eintritt_arr [0];
-        $eintritt_monat = $eintritt_arr [1];
 
         $austritt = $mitarbeiter_arr->leave_date;
         $austritt_arr = explode("-", $austritt);
-        $austritt_jahr = $austritt_arr [0];
-        $austritt_monat = $austritt_arr [1];
-
-        $anspruch = $mitarbeiter_arr->holidays;
-
         $vorjahr = $jahr - 1;
 
         $rest_tage = 0;
@@ -307,12 +306,10 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
         $eintritt = $mitarbeiter_arr->join_date;
         $eintritt_arr = explode("-", $eintritt);
         $eintritt_jahr = $eintritt_arr [0];
-        $eintritt_monat = $eintritt_arr [1];
 
         $austritt = $mitarbeiter_arr->leave_date;
         $austritt_arr = explode("-", $austritt);
         $austritt_jahr = $austritt_arr [0];
-        $austritt_monat = $austritt_arr [1];
 
         $anspruch = $mitarbeiter_arr->holidays;
 
@@ -377,7 +374,6 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
 
         // $monate = floor($monate);
         $anspruch = $monate * $anspruch_pro_m;
-        $anspruch1 = $tage * $anspruch_pro_tag;
         /* Jahr vor Eintritt in die Firma */
         if ($eintritt_jahr > $jahr) {
             $anspruch = '0.0';
@@ -386,19 +382,17 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
         $genommen_arr = $this->anzahl_genommene_tage($jahr, $benutzer_id);
         $geplant_arr = $this->anzahl_geplanter_tage($jahr, $benutzer_id);
         if (isset($geplant_arr)) {
-            $geplant = $geplant_arr->GEPLANT;
+            $geplant = $geplant_arr['GEPLANT'];
         } else {
             $geplant = '0.0';
         }
         if (isset($genommen_arr)) {
-            $genommen = $genommen_arr->GENOMMEN;
+            $genommen = $genommen_arr['GENOMMEN'];
         } else {
             $genommen = '0.0';
         }
         $rest_aktuell = $anspruch - $genommen;
-        $rest_jahr = $rest_aktuell - $geplant;
         $r1 = $anspruch - $genommen - $geplant;
-        // echo "<br>BEN$benutzer_id:$jahr $r1 = $anspruch - $genommen - $geplant<br>";
         return $r1;
     }
 
@@ -406,7 +400,6 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
     {
         $zahl = sprintf('%01.2f', $zahl);
         $zahl_arr = explode(".", $zahl);
-        $vorkomma = $zahl_arr [0];
         $nachkomma = $zahl_arr [1];
         if ($nachkomma == '50') {
             $neue_zahl = $zahl;
@@ -443,14 +436,10 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
                 $eintritt = $user->join_date;
                 $eintritt_arr = explode("-", $eintritt);
                 $eintritt_jahr = $eintritt_arr [0];
-                $eintritt_monat = $eintritt_arr [1];
-                $eintritt_tag = $eintritt_arr [2];
 
                 $austritt = $user->leave_date;
                 $austritt_arr = explode("-", $austritt);
                 $austritt_jahr = $austritt_arr [0];
-                $austritt_monat = $austritt_arr [1];
-                $austritt_tag = $austritt_arr [2];
 
                 $anspruch = $user->holidays;
                 $anspruch_pro_m = $anspruch / 12;
@@ -514,7 +503,6 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
 
                 // $monate = floor($monate);
                 $anspruch = $monate * $anspruch_pro_m;
-                $anspruch1 = $tage * $anspruch_pro_tag;
                 /* Jahr vor Eintritt in die Firma */
                 if ($eintritt_jahr > $jahr) {
                     $anspruch = '0.0';
@@ -524,17 +512,16 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
                 $geplant_arr = $this->anzahl_geplanter_tage($jahr, $benutzer_id);
 
                 if (isset($geplant_arr)) {
-                    $geplant = $geplant_arr->GEPLANT;
+                    $geplant = $geplant_arr['GEPLANT'];
                 } else {
                     $geplant = '0';
                 }
                 if (isset($genommen_arr)) {
-                    $genommen = $genommen_arr->GENOMMEN;
+                    $genommen = $genommen_arr['GENOMMEN'];
                 } else {
                     $genommen = '0';
                 }
                 $rest_aus_vorjahren = $this->rest_aus_vorjahren($jahr, $benutzer_id);
-                $rest_jahr = $rest_aktuell - $geplant;
 
                 $link_urlaubsantrag = "<a href='" . route('legacy::urlaub::index', ['option' => 'urlaubsantrag', 'benutzer_id' => $benutzer_id]) . "'>Abwesenheit eintragen</a>&nbsp;";
                 $link_jahresansicht = "<a href='" . route('legacy::urlaub::index', ['option' => 'jahresansicht', 'jahr' => $jahr, 'benutzer_id' => $benutzer_id]) . "'>Jahresansicht</a>&nbsp;";
@@ -586,16 +573,16 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
             $zeile = 0;
             foreach ($result as $user) {
                 $zeile++;
-                $benutzername = $user->name;
-                $antrag_vom = $user->ANTRAG_D;
-                $urlaubstag = $user->DATUM;
-                $anteil = $user->ANTEIL;
-                $art = $user->ART;
+                $benutzername = $user['name'];
+                $antrag_vom = $user['ANTRAG_D'];
+                $urlaubstag = $user['DATUM'];
+                $anteil = $user['ANTEIL'];
+                $art = $user['ART'];
                 $summe_tage = $summe_tage + $anteil;
                 $antrag_vom = date_mysql2german($antrag_vom);
                 $urlaubstag = date_mysql2german($urlaubstag);
                 $wochentag = $this->tagesname($urlaubstag);
-                $u_dat = $user->U_DAT;
+                $u_dat = $user['U_DAT'];
                 $link_loeschen = "<a href='" . route('legacy::urlaub::index', ['option' => 'urlaubstag_loeschen', 'jahr' => $jahr, 'benutzer_id' => $benutzer_id, 'u_dat' => $u_dat]) . "'>Urlaubstag löschen</a>";
                 echo "<tr class=\"zeile1\"><td>$zeile</td><td>$antrag_vom</td><td>$art</td><td>$urlaubstag, $wochentag</td><td>$anteil</td><td>$link_loeschen</td></tr>";
             }
@@ -604,8 +591,6 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
         } else {
             echo "KEINE URLAUBSDATEN VORHANDEN";
         }
-        // echo '<pre>';
-        // print_r($my_array);
     }
 
     function tagesname($datum)
@@ -675,11 +660,11 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
             );
             foreach ($result as $user) {
                 $zeile++;
-                $benutzername = $user->name;
-                $antrag_vom = $user->ANTRAG_D;
-                $urlaubstag = $user->DATUM;
-                $anteil = $user->ANTEIL;
-                $art = $user->ART;
+                $benutzername = $user['name'];
+                $antrag_vom = $user['ANTRAG_D'];
+                $urlaubstag = $user['DATUM'];
+                $anteil = $user['ANTEIL'];
+                $art = $user['ART'];
                 if ($art == 'Urlaub') {
                     $summe_tage += $anteil;
                 }
@@ -696,14 +681,11 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
                 }
 
                 // echo "$zeile. $antrag_vom $urlaubstag $anteil Tag(-e)<br>";
-                $antrag_vom = date_mysql2german($antrag_vom);
                 $urlaubstag = date_mysql2german($urlaubstag);
                 $wochentag = $this->tagesname($urlaubstag);
-                $u_dat = $user->U_DAT;
                 $table_arr [$zeile] ['URLAUBSTAG'] = "$urlaubstag, $wochentag";
                 $table_arr [$zeile] ['ANTEIL'] = "$anteil";
                 $table_arr [$zeile] ['ART'] = "$art";
-                // echo "<tr class=\"zeile1\"><td>$zeile</td><td>$antrag_vom</td><td>$urlaubstag, $wochentag</td><td>$anteil</td><td>$link_loeschen</td></tr>";
                 $table_arr [$zeile] ['ZEILE'] = "$zeile";
             }
             // echo "$benutzername Gesamt: $summe_tage Tage";
@@ -741,24 +723,6 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
             $zz++;
             $table_arr [$zz] ['URLAUBSTAG'] = "Krank im Jahr $jahr";
             $table_arr [$zz] ['ANTEIL'] = "$summe_krank Tage";
-            $zz++;
-            /*
-             * $table_arr[$zeile+6][URLAUBSTAG] = "Geplant: $this->geplant Tage";
-             * $table_arr[$zeile+8][URLAUBSTAG] = "Resttage aktuell: $this->rest_aktuell Tage";
-             * $table_arr[$zeile+9][URLAUBSTAG] = "<b>Resttage Jahr: $this->rest_jahr Tage</b>";
-             * $datum_heute = date("d.m.Y H:i");
-             * $table_arr[$zeile+10][URLAUBSTAG] = "Druck erfolgte am $datum_heute Uhr </b>";
-             */
-            /*
-             * $this->anspruch_jahr = $anspruch;
-             * $this->anspruch_monate = $monate;
-             * $this->anspruch_gesamt = $g_anspruch;
-             * $this->anspruch_vorjahre = $rest_aus_vorjahren;
-             * $this->genommen = $genommen;
-             * $this->geplant = $geplant;
-             * $this->rest_aktuell = $rest_aktuell;
-             * $this->rest_jahr = $rest_jahr;
-             */
 
             $pdf->ezTable($table_arr, $cols, "Abwesenheit $benutzername  $jahr", array(
                 'showHeadings' => 1,
@@ -951,16 +915,6 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
         return $morgen;
     }
 
-    function wochentag($datum)
-    {
-        $datum_arr = explode("-", $datum);
-        $jahr = $datum_arr [0];
-        $monat = $datum_arr [1];
-        $tag = $datum_arr [2];
-        $wochentag = date('w', mktime(0, 0, 0, $monat, $tag, $jahr));
-        return $wochentag;
-    }
-
     function urlaubstag_loeschen($dat)
     {
         $db_abfrage = "UPDATE URLAUB SET AKTUELL='0' WHERE U_DAT='$dat'";
@@ -1073,7 +1027,6 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
                     } else {
 
                         echo "<td id=\"$feld_id\" class=\"gruen\" onclick=\"urlaub_buttons('$feld_id', '$benutzer_id', '$datum_j')\">";
-                        $f = new formular ();
                         echo "</td>";
                     }
                 }
@@ -1089,7 +1042,6 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
         $datum_arr = explode("-", $datum);
         $jahr = $datum_arr [0];
         $monat = $datum_arr [1];
-        $tag = $datum_arr [2];
 
         $tage = date("t", mktime(0, 0, 0, $monat, 1, $jahr));
 
@@ -1103,6 +1055,7 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
             $row = $result[0];
             return $row ['ART'];
         }
+        return '';
     }
 
     function monatsansicht_pdf($monat, $jahr)
@@ -1209,7 +1162,7 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
 
     function monatsansicht_pdf_mehrere($monat_a, $monat_e, $jahr)
     {
-        ob_end_clean(); // ausgabepuffer leeren
+        set_time_limit(240);
         $pdf = new Cezpdf ('a4', 'portrait');
         $bpdf = new b_pdf ();
         $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
@@ -1231,16 +1184,22 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
             );
 
             $mitarbeiter_arr = $this->mitarbeiter_arr($jahr);
+            $table_arr = [];
 
             foreach ($mitarbeiter_arr as $user) {
                 $mitarbeiter = $user->name;
                 $benutzer_id = $user->id;
+
+                $row = [];
+                $row ['MITARBEITER'] = "$mitarbeiter";
 
                 for ($b = 1; $b <= $anzahl_t; $b++) {
                     $tag = sprintf('%02d', $b);
                     $cols ["$tag"] = "$b";
 
                     $datum_a = "$jahr-$monat-$b";
+
+                    $zeichen = '';
 
                     $status = $this->feiertag($datum_a);
                     if ($status == 'Wochenende') {
@@ -1252,8 +1211,9 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
                     if ($status == 'Arbeitstag') {
                         $zeichen = "";
                     }
-                    if (!$this->check_anwesenheit($benutzer_id, $datum_a)) {
-                        $zeichen = 'U';
+                    $status = $this->check_anwesenheit($benutzer_id, $datum_a);
+                    if ($status != '') {
+                        $zeichen = substr($status, 0, 1);
                     }
 
                     $geburtstag = $this->check_geburtstag($benutzer_id, $datum_a);
@@ -1261,10 +1221,9 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
                         $zeichen .= "<b>*G</b>";
                     }
 
-                    $table_arr [$c] ['MITARBEITER'] = "$mitarbeiter</b>";
-                    $table_arr [$c] ["$tag"] = "$zeichen";
-                    $zeichen = '';
+                    $row ["$tag"] = "$zeichen";
                 } // end for 3
+                $table_arr [] = $row;
             } // end for 2
             $pdf->ezTable($table_arr, $cols, "Monatsansicht $monatsname $jahr", array(
                 'showHeadings' => 1,
@@ -1295,77 +1254,5 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
         } // end for 1
 
         $pdf->ezStream();
-    }
-
-    function zinsen($kaution, $zins_pj)
-    {
-        // $kaution = '589.27';
-        // $zins_pj ='6'; //%
-        $alt = strtotime("2009-01-01");
-        echo "<br>";
-        $aktuell = strtotime("2009-12-31");
-        // $aktuell = strtotime(date("Y-m-d")) ;
-
-        $differenz = $aktuell - $alt;
-        $differenz = $differenz / 86400;
-
-        echo "$differenz";
-
-        $anlege_jahre = 1;
-        $anlege_monate = 0;
-        $anlege_tage = 10;
-
-        $kap_prozent = 25;
-        $soli_prozent = 5.5;
-
-        // $gesamt_tage = ($anlege_jahre * 360) + ($anlege_monate * 30) + $anlege_tage;
-        $gesamt_tage = $differenz;
-        $berechnungs_monate = $gesamt_tage / 30;
-        $berechnungs_monate_voll = intval($berechnungs_monate);
-        $rest_tage = $gesamt_tage - ($berechnungs_monate_voll * 30);
-
-        echo "<b>$berechnungs_monate_voll $rest_tage</b><br>";
-        // =SUMME(C11*0,005*30)/360+C11
-
-        echo "<h1>$gesamt_tage $rest_tage</h1>";
-
-        $betrag_vormonat = $kaution;
-        for ($a = 1; $a <= $berechnungs_monate_voll; $a++) {
-            /* =(C11*0,005*30)/360+C11 */
-            $betrag_ende_monat = ($betrag_vormonat * $zins_pj * 30) / 360 + $betrag_vormonat;
-            $kap = ($betrag_ende_monat - $betrag_vormonat) * $kap_prozent / $kap_prozent;
-            $soli = $kap * $soli_prozent / 100;
-
-            // $betrag_ende_monat = $betrag_ende_monat + $kap + $soli;
-
-            $kap_a = nummer_punkt2komma($kap);
-            $soli_a = nummer_punkt2komma($soli);
-            $b_vm = nummer_punkt2komma($betrag_vormonat);
-            $b_em = nummer_punkt2komma($betrag_ende_monat);
-            // echo "$a. $betrag_vormonat $betrag_ende_monat<br>";
-            echo "$a.           $b_vm      $kap_a      $soli_a   $b_em<br>";
-            // echo "$a. $betrag_vormonat $betrag_ende_monat<br>";
-            $betrag_vormonat = $betrag_ende_monat;
-        }
-
-        if ($rest_tage > 0) {
-
-            $betrag_ende_monat = ($betrag_vormonat * $zins_pj * $rest_tage) / 360 + $betrag_vormonat;
-            $kap = ($betrag_ende_monat - $betrag_vormonat) * $kap_prozent / $kap_prozent;
-            $soli = $kap * $soli_prozent / 100;
-
-            // $betrag_ende_monat = $betrag_ende_monat + $kap + $soli;
-
-            $kap_a = nummer_punkt2komma($kap);
-            $soli_a = nummer_punkt2komma($soli);
-            $b_vm = nummer_punkt2komma($betrag_vormonat);
-            $b_em = nummer_punkt2komma($betrag_ende_monat);
-            // echo "$a. $betrag_vormonat $betrag_ende_monat<br>";
-            echo "<b> REST $rest_tage tage           $b_vm      $kap_a      $soli_a   $b_em</b><br>";
-            // echo "$a. $betrag_vormonat $betrag_ende_monat<br>";
-            $betrag_vormonat = $betrag_ende_monat;
-        }
-
-        /* Beispiel: Kaution Euro 1000 bei Mietdauer 1 Jahr und 14 Tagen: 1000 : 100 : 1 Jahr x Zins 3 x 1 Jahr = Euro 30. Folgejahr: 1030 : 100 : 360 x 3 x 14 Tage = 0,40 Euro - Der Mieter erhält mit Zinseszinses vom Vermieter Euro 1.030,40 zurück! */
     }
 } // end class urlaub

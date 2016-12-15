@@ -2,6 +2,15 @@
 
 class personen
 {
+    public $person_nachname;
+    public $person_geburtstag;
+    public $geschlecht;
+    public $person_vorname;
+    public $person_anzahl_mietvertraege;
+    public $p_mv_ids;
+    public $anschrift;
+    public $zustellanschrift;
+
     function form_person_erfassen()
     {
         $f = new formular ();
@@ -123,13 +132,13 @@ class personen
     {
         $treffer ['ANZ'] = 0;
         $personen_ids_arr = $this->get_person_ids_byname_arr($vorname, $nachname);
-        if (is_array($personen_ids_arr)) {
+        if (!empty($personen_ids_arr)) {
             $anz_p = count($personen_ids_arr);
             for ($a = 0; $a < $anz_p; $a++) {
                 /* Mietvertraege */
                 $person_id = $personen_ids_arr [$a] ['PERSON_ID'];
                 $mv_arr = $this->mv_ids_von_person($person_id);
-                if (is_array($mv_arr)) {
+                if (!empty($mv_arr)) {
                     $anz_mv = count($mv_arr);
                     for ($m = 0; $m < $anz_mv; $m++) {
                         $treffer ['ERG'] [$treffer ['ANZ']] ['KOS_TYP'] = 'Mietvertrag';
@@ -140,7 +149,7 @@ class personen
                 /* WEG-ET */
                 $weg = new weg ();
                 $et_arr = $weg->get_eigentuemer_id_from_person_arr($person_id);
-                if (is_array($et_arr)) {
+                if (!empty($et_arr)) {
                     $treffer ['ET'] [] = $et_arr;
                 }
             }
@@ -181,9 +190,7 @@ class personen
 && PERSON_AKTUELL =  '1'
 LIMIT 0 , 30";
         $resultat = DB::select($db_abfrage);
-        if (!empty($resultat)) {
-            return $resultat;
-        }
+        return $resultat;
     }
 
     function mv_ids_von_person($person_id)
@@ -196,16 +203,6 @@ LIMIT 0 , 30";
                 array_push($mietvertraege, "$row[PERSON_MIETVERTRAG_MIETVERTRAG_ID]");
             }
             return $mietvertraege;
-        }
-    }
-
-    function finde_personen_name($string)
-    {
-        $db_abfrage = "SELECT PERSON_DAT, PERSON_ID, PERSON_NACHNAME, PERSON_VORNAME, PERSON_GEBURTSTAG FROM PERSON WHERE PERSON_AKTUELL='1' && (PERSON_NACHNAME LIKE '%$string%' OR PERSON_VORNAME LIKE '%$string%' )ORDER BY PERSON_NACHNAME, PERSON_VORNAME ASC LIMIT 0,50";
-        $resultat = DB::select($db_abfrage);
-
-        if (!empty($resultat)) {
-            return $resultat;
         }
     }
 
@@ -253,13 +250,13 @@ LIMIT 0 , 30";
 
         $buchstaben = array();
         $zeile = 0;
+        $numrows = count($personen_arr);
         for ($a = 0; $a < $numrows; $a++) {
             $zeile++;
             $person_id = $personen_arr [$a] ['PERSON_ID'];
             $person_nachname = $personen_arr [$a] ['PERSON_NACHNAME'];
             $person_vorname = $personen_arr [$a] ['PERSON_VORNAME'];
 
-            $person_gebam = date_mysql2german($personen_arr [$a] ['PERSON_GEBURTSTAG']);
             $aendern_link = "<a class=\"table_links\" href='" . route('legacy::personen::index', ['anzeigen' => 'person_aendern', 'person_id' => $person_id]) . "'>Person ändern</a>";
 
             $detail_check = detail_check("PERSON", $person_id);
@@ -309,8 +306,7 @@ LIMIT 0 , 30";
 
             $weg = new weg ();
             $eigentuemer_id_arr = $weg->get_eigentuemer_id_from_person_arr($person_id);
-            $eigentuemer_link = '';
-            if (is_array($eigentuemer_id_arr)) {
+            if (!empty($eigentuemer_id_arr)) {
                 if ($haus_info_link == 'Kein Mieter') {
                     $haus_info_link = '';
                 }
@@ -320,7 +316,7 @@ LIMIT 0 , 30";
                     $weg->get_eigentumer_id_infos($eig_id);
                     $einheit_link .= "<a href='" . route('legacy::weg::index', ['option' => 'einheit_uebersicht', 'einheit_id' => $weg->einheit_id]) . "'>$weg->einheit_kurzname</a><br>";
                     $haus_info_link .= "$weg->haus_strasse $weg->haus_nummer<br>";
-                    $mietkonto_link .= "<a href='" . route('legacy::weg::index', ['option' => 'hg_kontoauszug', 'einheit_id' => $weg->einheit_id]) . "'><img src=\"images/pdf_light.png\"></a> <a href='" . route('legacy::weg::index', ['option' => 'hg_kontoauszug', 'einheit_id' => $weg->einheit_id, 'no_logo']) . "'><img src=\"images/pdf_dark.png\"></a><br>";
+                    $mietkonto_link .= "<a href='" . route('legacy::weg::index', ['option' => 'hg_kontoauszug', 'eigentuemer_id' => $weg->eigentuemer_id, 'jahr' => date('Y')]) . "'><img src=\"images/pdf_light.png\"></a> <a href='" . route('legacy::weg::index', ['option' => 'hg_kontoauszug', 'eigentuemer_id' => $weg->eigentuemer_id, 'jahr' => date('Y'), 'no_logo']) . "'><img src=\"images/pdf_dark.png\"></a><br>";
                 }
             }
 
@@ -386,7 +382,7 @@ AND `DETAIL_ZUORDNUNG_TABELLE` LIKE 'PERSON' && DETAIL_ZUORDNUNG_ID = PERSON_ID 
                 echo "<tr>";
                 $mv_ids_arr = $this->mv_ids_von_person($person_id);
                 echo "<td>";
-                if (is_array($mv_ids_arr)) {
+                if (!empty($mv_ids_arr)) {
                     $anz = count($mv_ids_arr);
                     for ($a = 0; $a < $anz; ++$a) {
                         $mv = new mietvertraege ();
@@ -426,7 +422,7 @@ AND `DETAIL_ZUORDNUNG_TABELLE` LIKE 'PERSON' && DETAIL_ZUORDNUNG_ID = PERSON_ID 
                 echo "<tr>";
                 $mv_ids_arr = $this->mv_ids_von_person($person_id);
                 echo "<td>";
-                if (is_array($mv_ids_arr)) {
+                if (!empty($mv_ids_arr)) {
                     $anz = count($mv_ids_arr);
                     for ($a = 0; $a < $anz; ++$a) {
                         $mv = new mietvertraege ();

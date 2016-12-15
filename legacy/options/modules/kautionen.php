@@ -130,9 +130,7 @@ switch ($option) {
         $f->hidden_feld("option", "feld_hinzu");
         $f->send_button("submit", "Feld hinzufügen");
         $f->ende_formular();
-        if (is_array($arr)) {
-            // echo '<pre>';
-            // print_r($arr);
+        if (!empty($arr)) {
             $anz = count($arr);
 
             $f->fieldset("Kautionsfelder", null);

@@ -97,7 +97,7 @@ switch ($option) {
 	
 	case "buchungsmaske_kasse" :
 		$form = new mietkonto ();
-		$form->erstelle_formular ( "Buchungsformular Kasse " . session()->get(kasse), NULL );
+		$form->erstelle_formular ( "Buchungsformular Kasse " . session()->get('kasse'), NULL );
 		$kasse = new kasse ();
 		$kasse->buchungsmaske_kasse ( session()->get('kasse'));
 		$form->ende_formular ();

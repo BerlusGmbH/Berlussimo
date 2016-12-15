@@ -4,7 +4,6 @@ $admin_panel = request()->input('admin_panel');
 if (isset ($admin_panel)) {
 
     switch ($admin_panel) {
-
         case "menu" :
             break;
 

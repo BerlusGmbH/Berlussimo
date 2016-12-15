@@ -2,16 +2,8 @@
 
 class werkzeug
 {
-    function form_werkzeug_hizu()
-    {
-        $f = new formular ();
-        $f->erstelle_formular('Werkzeug hinzufügen', '');
-        $f->text_feld('INTBelegnr', 'beleg_id', '', '20', 'beleg_id', '');
-        $f->text_feld('Postition', 'pos', '', '10', 'pos', '');
-        $js = '';
-        $f->button_js('btn_hnz', 'Hinzufügen', $js);
-        $f->ende_formular();
-    }
+    public $werkzeug_bez;
+    public $lieferant;
 
     function werkzeugliste($b_id = NULL)
     {
@@ -20,7 +12,7 @@ class werkzeug
         $f = new formular ();
         $f->fieldset('Werkzeugliste', 'wl');
         $arr = $this->werkzeugliste_arr($b_id);
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             if ($b_id != NULL) {
                 $link_rueckgabe_alle = "<a href='" . route('legacy::benutzer::index', ['option' => 'werkzeug_rueckgabe_alle', 'b_id' => $b_id]) . "'>Rückgabe vermerken</a>";
@@ -34,7 +26,6 @@ class werkzeug
                 $w_id = $arr [$a] ['ID'];
                 $beleg_id = $arr [$a] ['BELEG_ID'];
                 $art_nr = $arr [$a] ['ARTIKEL_NR'];
-                $pos = $arr [$a] ['POS'];
                 $menge = $arr [$a] ['MENGE'];
                 $kurzinfo = $arr [$a] ['KURZINFO'];
 
@@ -81,9 +72,7 @@ class werkzeug
             $db_abfrage = "SELECT * FROM WERKZEUGE WHERE AKTUELL='1' && BENUTZER_ID='$b_id' ORDER BY ID, ARTIKEL_NR, ID, KURZINFO";
         }
         $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function pdf_werkzeug_rueckgabe_einzel($b_id, $w_id, $scheintext = 'Einzelrückgabeschein')
@@ -97,7 +86,6 @@ class werkzeug
         for ($a = 0; $a < $anz; $a++) {
             $beleg_id = $arr [$a] ['BELEG_ID'];
             $art_nr = $arr [$a] ['ARTIKEL_NR'];
-            $pos = $arr [$a] ['POS'];
             $menge = $arr [$a] ['MENGE'];
             $kurzinfo = $arr [$a] ['KURZINFO'];
             $id = $arr [$a] ['ID'];
@@ -253,7 +241,6 @@ class werkzeug
         for ($a = 0; $a < $anz; $a++) {
             $beleg_id = $arr [$a] ['BELEG_ID'];
             $art_nr = $arr [$a] ['ARTIKEL_NR'];
-            $pos = $arr [$a] ['POS'];
             $menge = $arr [$a] ['MENGE'];
             $kurzinfo = $arr [$a] ['KURZINFO'];
             $w_id = $arr [$a] ['ID'];
@@ -392,9 +379,6 @@ class werkzeug
             $row = $result[0];
             $beleg_id = $row ['BELEG_ID'];
             $art_nr = $row ['ARTIKEL_NR'];
-            $pos = $row ['POS'];
-            $menge = $row ['MENGE'];
-            $kurzinfo = $row ['KURZINFO'];
 
             $r = new rechnung ();
             $r->rechnung_grunddaten_holen($beleg_id);
@@ -413,7 +397,7 @@ class werkzeug
     function werkzeugliste_nach_mitarbeiter()
     {
         $arr = $this->werkzeugliste_verteilt_arr();
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             echo "<table class=\"sortable striped\">";
             echo "<tr><th>LIEFERANT</th><th>WBNR</th><th>BESCHREIBUNG</th><th>KURZINFO</th><th>MENGE</th><th>MITARBITER</th><th>OPTION</th></tr>";
@@ -422,7 +406,6 @@ class werkzeug
                 $w_id = $arr [$a] ['ID'];
                 $beleg_id = $arr [$a] ['BELEG_ID'];
                 $art_nr = $arr [$a] ['ARTIKEL_NR'];
-                $pos = $arr [$a] ['POS'];
                 $menge = $arr [$a] ['MENGE'];
                 $kurzinfo = $arr [$a] ['KURZINFO'];
 
@@ -468,9 +451,7 @@ class werkzeug
     {
         $db_abfrage = "SELECT * FROM WERKZEUGE WHERE AKTUELL='1' && BENUTZER_ID IS NOT NULL ORDER BY BENUTZER_ID, ARTIKEL_NR";
         $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 } // end class
 

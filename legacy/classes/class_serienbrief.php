@@ -2,9 +2,11 @@
 
 class serienbrief
 {
+    public $hausgeld_monatlich_de;
+    public $hausgeld_monatlich_en;
+
     function vorlage_waehlen($empf_typ = null, $kat = null)
     {
-        // die($empf_typ);
         if ($empf_typ == null && $kat == null) {
             $db_abfrage = "SELECT * FROM PDF_VORLAGEN ORDER BY KURZTEXT ASC";
         }
@@ -40,7 +42,6 @@ class serienbrief
             foreach($result as $row) {
                 $dat = $row ['DAT'];
                 $kurztext = $row ['KURZTEXT'];
-                $text = $row ['TEXT'];
                 $kat = $row ['KAT'];
 
                 if ($empf_typ == 'Eigentuemer') {
@@ -62,7 +63,6 @@ class serienbrief
             echo "Keine Vorlagen AA3";
         }
     } // end function
-
     function erstelle_brief_vorlage($v_dat, $empf_typ, $empf_id_arr, $option = '0')
     {
         $anz_empf = count($empf_id_arr);
@@ -86,8 +86,6 @@ class serienbrief
                     $jahr = date("Y");
                     $this->hausgeld_monatlich_de = nummer_punkt2komma($weg->get_sume_hausgeld('Einheit', $weg->einheit_id, $monat, $jahr) * -1);
                     $this->hausgeld_monatlich_en = $weg->get_sume_hausgeld('Einheit', $weg->einheit_id, $monat, $jahr) * -1;
-
-                    $dets = new detail ();
 
                     $gk = new geldkonto_info ();
                     $gk->geld_konto_ermitteln('Objekt', $weg->objekt_id);
@@ -123,7 +121,7 @@ class serienbrief
                     $pdf->ezSetDy(-30);
                     $pdf->ezText("$weg->anrede_brief", 10);
 
-                    eval ("\$bpdf->v_text = \"$bpdf->v_text\";");; // Variable ausm Text füllen
+                    eval ('$bpdf->v_text = "' . str_replace( "\"", "\\\"", $bpdf->v_text ) . '";'); // Variable ausm Text füllen
 
                     $pdf->ezText("$bpdf->v_text", 10, array(
                         'justification' => 'left'
@@ -158,8 +156,6 @@ class serienbrief
 
                     $pp = new partners ();
                     $pp->get_partner_info($e_id);
-
-                    $dets = new detail ();
 
                     $bpdf->get_texte($v_dat);
 
@@ -201,7 +197,9 @@ class serienbrief
                 $pdf->ezStream($pdf_opt);
             }
         } else {
-            die ('Keine Empfänger gewählt');
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\WarningMessage('Keine Empfänger gewählt')
+            );
         }
     }
 } // ENDE CLASS

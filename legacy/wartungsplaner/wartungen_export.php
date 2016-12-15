@@ -22,7 +22,7 @@ function ausgabe($gruppen_id, $monate_plus_int, $format = 'tab')
 
 
     $thermen_arr = wartungen($gruppen_id, $monate_plus_int);
-    if (is_array($thermen_arr)) {
+    if (!empty($thermen_arr)) {
         $anz = count($thermen_arr);
         for ($a = 0; $a < $anz; $a++) {
             $einheit_kn = ltrim(rtrim($thermen_arr[$a]['EINBAUORT']));
@@ -39,7 +39,6 @@ function ausgabe($gruppen_id, $monate_plus_int, $format = 'tab')
                 $mvs->get_mietvertrag_infos_aktuell($mv_id);
                 $thermen_arr[$a]['KONTAKT'] = $e->kontaktdaten_mieter($mv_id);
                 $thermen_arr[$a]['MIETER'] = $mvs->personen_name_string_u;
-                $kontaktdaten = '';
             } else {
                 $thermen_arr[$a]['KONTAKT'] = 'Hausverwaltung!!';
                 $thermen_arr[$a]['MIETER'] = 'Leerstand';

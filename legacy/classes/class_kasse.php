@@ -46,25 +46,6 @@ class kasse extends rechnung
         }
     }
 
-    function kassen_ueberblick()
-    {
-        $result = DB::select("SELECT KASSEN_ID FROM `KASSEN` WHERE AKTUELL = '1'");
-        if (!empty($result)) {
-            echo "<table>";
-            echo "<tr><td>Kasse</td><td>Verwalter</td><td></td><td></td><td>Kassenstand</td><td>Ausgaben</td><td>Einnahmen</td><td>I.R. gestellt</td><td>Einnahmen Offen</td><td>Ausgaben Offen</td></tr>";
-            foreach ($result as $row) {
-                $this->kassen_id = $row ['KASSEN_ID'];
-                $this->get_kassen_info($this->kassen_id);
-                $link_eingang = "<a href='" . route('legacy::kassen::index', ['option' => 'kassenbeleg_eingang', 'kasse' => $this->kassen_id]) . "'>Ausgaben</a>";
-                $link_ausgang = "<a href='" . route('legacy::kassen::index', ['option' => 'kassenbeleg_ausgang', 'kasse' => $this->kassen_id]) . "'>Einnahmen</a>";
-                echo "<tr><td><a href='" . route('legacy::kassen::index', ['option' => 'kassen_uebersicht', 'kasse' => $this->kassen_id]) . "'>$this->kassen_name</a></td><td>$this->kassen_verwalter</td><td>$link_eingang</td><td>$link_ausgang</td><td>$this->kassen_stand</td><td>$this->kasse_direkt_gezahlt</td><td>$this->kasse_aus_rechnung_erhalten</td><td>$this->kasse_in_rechnung_gestellt</td><td>$this->kassen_forderung_offen </td><td>$this->kassen_ausgaben_offen</td></tr>";
-            }
-            echo "</table>";
-        } else {
-            return false;
-        }
-    }
-
     function get_kassen_info($kassen_id)
     {
         $result = DB::select("SELECT KASSEN_NAME, KASSEN_VERWALTER, PARTNER_ID FROM `KASSEN` RIGHT JOIN (KASSEN_PARTNER) ON (KASSEN.KASSEN_ID = KASSEN_PARTNER.KASSEN_ID) WHERE KASSEN.AKTUELL = '1' && KASSEN_PARTNER.AKTUELL = '1' && KASSEN.KASSEN_ID='1' ORDER BY KASSEN_DAT DESC LIMIT 0,1");
@@ -144,155 +125,7 @@ class kasse extends rechnung
             return false;
         }
     }
-
-    function einnahmen($kassen_id)
-    {
-        $result = DB::select("SELECT BEZAHLT_AM, BELEG_NR,  EMPFAENGER_TYP, EMPFAENGER_ID, NETTO, BRUTTO, SKONTOBETRAG FROM `RECHNUNGEN` WHERE AKTUELL = '1' && AUSSTELLER_TYP='Kasse' && AUSSTELLER_ID='$kassen_id' && STATUS_BEZAHLT='1' ORDER BY BEZAHLT_AM ASC");
-        if (!empty($result)) {
-            echo "<table>";
-            echo "<table>";
-            echo "<tr><td colspan=6><b>BISHERIGE EINNAHMEN</b></td></tr>";
-            echo "<tr><td>$this->kassen_name</td><td>$this->kassen_verwalter</td><td>Stand: $this->kassen_stand</td><td>Einnahmen offen: $this->kassen_forderung_offen</td><td></td><td></td></tr>";
-            echo "<tr><td>BEZAHLT AM</td><td>BELEG</td><td>VON</td><td>NETTO</td><td>BRUTTO</td><td>SKONTO</td></tr>";
-            foreach ($result as $row) {
-                $rechnung = new rechnung ();
-                $rechnung->rechnung_grunddaten_holen($row ['BELEG_NR']);
-                $beleg_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $row['BELEG_NR']]) . "'>Ansehen</a>";
-                echo "<tr><td>$row[BEZAHLT_AM]</td><td>$beleg_link</td><td>$rechnung->rechnungs_empfaenger_name</td><td>$row[NETTO]</td><td>$row[BRUTTO]</td><td>$row[SKONTOBETRAG]</td>";
-            }
-            echo "</table>";
-        } else {
-            return false;
-        }
-    }
-
-    function offene_einnahmen($kassen_id)
-    {
-        $result = DB::select("SELECT FAELLIG_AM, BELEG_NR,  EMPFAENGER_TYP, EMPFAENGER_ID, NETTO, BRUTTO, SKONTOBETRAG FROM `RECHNUNGEN` WHERE AKTUELL = '1' && AUSSTELLER_TYP='Kasse' && AUSSTELLER_ID='$kassen_id' && STATUS_BEZAHLT='0' ORDER BY FAELLIG_AM ASC");
-        if (!empty($result)) {
-            echo "<table>";
-            echo "<table>";
-            echo "<tr><td colspan=6><b>EINNAHMEN</b></td></tr>";
-
-            echo "<tr><td>FÄLLIG AM</td><td>BELEG</td><td>VON</td><td>NETTO</td><td>BRUTTO</td><td align=right>SKONTO</td></tr>";
-            foreach ($result as $row) {
-                echo "<tr><td>$row[FAELLIG_AM]</td><td>$row[BELEG_NR]</td><td>$row[EMPFAENGER_TYP] $row[EMPFAENGER_ID]</td><td>$row[NETTO]</td><td>$row[BRUTTO]</td><td align=right>$row[SKONTOBETRAG]</td>";
-            }
-            echo "<tr><td colspan=5 align=right><hr>Stand: $this->kassen_stand</td><td align=right><hr>Ausgaben offen: $this->kassen_forderung_offen</td></tr>";
-            echo "</table>";
-        } else {
-            return false;
-        }
-    }
-
-    function ausgaben($kassen_id)
-    {
-        $result = DB::select("SELECT BEZAHLT_AM, BELEG_NR,  AUSSTELLER_TYP, AUSSTELLER_ID, NETTO, BRUTTO, SKONTOBETRAG FROM `RECHNUNGEN` WHERE AKTUELL = '1' && EMPFAENGER_TYP='Kasse' && EMPFAENGER_ID='$kassen_id' && STATUS_BEZAHLT='1' ORDER BY BEZAHLT_AM ASC");
-        if (!empty($result)) {
-            echo "<table>";
-            echo "<tr><td colspan=6><b>BISHERIGE AUSGABEN</b></td></tr>";
-            echo "<tr><td>$this->kassen_name</td><td>$this->kassen_verwalter</td><td>Stand: $this->kassen_stand</td><td>Ausgaben offen: $this->kassen_ausgaben_offen</td><td></td><td></td></tr>";
-            echo "<tr><td>BEZAHLT AM</td><td>BELEG</td><td>VON</td><td>NETTO</td><td>BRUTTO</td><td>SKONTO</td></tr>";
-            foreach ($result as $row) {
-                $rechnung = new rechnung ();
-                $rechnung->rechnung_grunddaten_holen($row ['BELEG_NR']);
-                $beleg_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $row['BELEG_NR']]) . "'>Ansehen</a>";
-                echo "<tr><td>$row[BEZAHLT_AM]</td><td>$beleg_link</td><td>$rechnung->rechnungs_aussteller_name</td><td>$row[NETTO]</td><td>$row[BRUTTO]</td><td>$row[SKONTOBETRAG]</td>";
-            }
-            echo "</table>";
-        } else {
-            return FALSE;
-        }
-    }
-
-    function offene_ausgaben($kassen_id)
-    {
-        $result = DB::select("SELECT FAELLIG_AM, BELEG_NR,  AUSSTELLER_TYP, AUSSTELLER_ID, NETTO, BRUTTO, SKONTOBETRAG FROM `RECHNUNGEN` WHERE AKTUELL = '1' && EMPFAENGER_TYP='Kasse' && EMPFAENGER_ID='$kassen_id' && STATUS_BEZAHLT='0' ORDER BY FAELLIG_AM ASC");
-        if (!empty($result)) {
-            echo "<table>";
-            echo "<tr><td colspan=6><b>AUSGABEN</b></td></tr>";
-
-            echo "<tr><td>FÄLLIG AM</td><td>BELEG</td><td>VON</td><td>NETTO</td><td>BRUTTO</td><td align=right>SKONTO</td></tr>";
-            foreach ($result as $row) {
-                echo "<tr><td>$row[FAELLIG_AM]</td><td>$row[BELEG_NR]</td><td>$row[AUSSTELLER_TYP] $row[AUSSTELLER_ID]</td><td>$row[NETTO]</td><td>$row[BRUTTO]</td><td align=right>$row[SKONTOBETRAG]</td>";
-            }
-            echo "<tr><td colspan=5 align=right><hr>Stand: $this->kassen_stand</td><td align=right><hr>Ausgaben offen: $this->kassen_ausgaben_offen</td></tr>";
-            echo "</table>";
-        } else {
-            return false;
-        }
-    }
-
-    /* Alle Eingangskassenbelege werden angezeigt */
-    function kassenbelege_anzeigen_eingang($kassen_id)
-    {
-        /* Zählen aller Zeilen */
-        $result = DB::select("SELECT * FROM RECHNUNGEN WHERE AKTUELL = '1' AND RECHNUNGSTYP='Kassenbeleg' AND EMPFAENGER_TYP='Kasse' AND EMPFAENGER_ID='$kassen_id' ORDER BY BELEG_NR DESC");
-        $numrows1 = count($result);
-        /* Seitennavigation mit Limit erstellen */
-        echo "<table><tr><td>Anzahl aller Belege: $numrows1</td></tr><tr><td>\n";
-        $navi = new blaettern (0, $numrows1, 14, route('legacy::kassen::index', ['option' => 'erfasste_belege'], false));
-        echo "</td></tr></table>\n";
-        $my_array = DB::select("SELECT * FROM RECHNUNGEN WHERE AKTUELL = '1' AND RECHNUNGSTYP='Kassenbeleg' AND EMPFAENGER_TYP='Kasse' AND EMPFAENGER_ID='$kassen_id' ORDER BY BELEG_NR DESC " . $navi->limit . "");
-        $numrows = count($my_array);
-
-        if (!empty($my_array)) {
-            echo "<table class=rechnungen>\n";
-            echo "<tr class=feldernamen><td>BNr</td><td>TYP</td><td>Beleg.Nr</td><td>Fällig</td><td>Von</td><td>An</td><td width=80>Netto</td><td width=80>Brutto</td><td width=80>Skonto</td></tr>\n";
-            for ($a = 0; $a < $numrows; $a++) {
-                $belegnr = $my_array [$a] ['BELEG_NR'];
-                $this->rechnung_grunddaten_holen($belegnr);
-
-                $e_datum = date_mysql2german($my_array [$a] ['EINGANGSDATUM']);
-                $r_datum = date_mysql2german($my_array [$a] ['RECHNUNGSDATUM']);
-                $faellig_am = date_mysql2german($my_array [$a] ['FAELLIG_AM']);
-                $beleg_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $my_array[$a]['BELEG_NR']]) . "'>" . $my_array [$a] ['BELEG_NR'] . "</>\n";
-                $netto = nummer_punkt2komma($my_array [$a] ['NETTO']);
-                $brutto = nummer_punkt2komma($my_array [$a] ['BRUTTO']);
-                $skonto_betrag = nummer_punkt2komma($my_array [$a] ['SKONTOBETRAG']);
-                $rechnungsnummer = $my_array [$a] ['RECHNUNGSNUMMER'];
-                $rechnungstyp = $my_array [$a] ['RECHNUNGSTYP'];
-                $kassenbeleg_eingangsnr = $my_array [$a] ['EMPFAENGER_EINGANGS_RNR'];
-                echo "<tr><td>$beleg_link</td><td>$rechnungstyp</td><td>$kassenbeleg_eingangsnr</td><td><b>$faellig_am</b></td><td>" . $this->rechnungs_aussteller_name . "</td><td>" . $this->rechnungs_empfaenger_name . "</td><td align=right>$netto €</td><td align=right>$brutto €</td><td align=right>$skonto_betrag €</td></tr>\n";
-            }
-            echo "</table>\n";
-        }
-    }
-
-    /* Alle Eingangskassenbelege werden angezeigt */
-    function kassenbelege_anzeigen_ausgang($kassen_id)
-    {
-        /* Zählen aller Zeilen */
-        $result = DB::select("SELECT * FROM RECHNUNGEN WHERE AKTUELL = '1' AND RECHNUNGSTYP='Kassenbeleg' AND AUSSTELLER_TYP='Kasse' AND AUSSTELLER_ID='$kassen_id' ORDER BY BELEG_NR DESC");
-        $numrows1 = count($result);
-        /* Seitennavigation mit Limit erstellen */
-        echo "<table><tr><td>Anzahl aller Belege: $numrows1</td></tr><tr><td>\n";
-        $navi = new blaettern (0, $numrows1, 14, route('legacy::kassen::index', ['option' => 'erfasste_belege'], false));
-        echo "</td></tr></table>\n";
-        $my_array = DB::select("SELECT * FROM RECHNUNGEN WHERE AKTUELL = '1' AND RECHNUNGSTYP='Kassenbeleg' AND AUSSTELLER_TYP='Kasse' AND AUSSTELLER_ID='$kassen_id' ORDER BY BELEG_NR DESC " . $navi->limit . "");
-        $numrows = DB::select($my_array);
-        if ($numrows > 0) {
-            echo "<table class=rechnungen>\n";
-            echo "<tr class=feldernamen><td>BNr</td><td>TYP</td><td>Beleg.Nr</td><td>Fällig</td><td>Von</td><td>An</td><td width=80>Netto</td><td width=80>Brutto</td><td width=80>Skonto</td></tr>\n";
-            for ($a = 0; $a < $numrows; $a++) {
-                $belegnr = $my_array [$a] ['BELEG_NR'];
-                $this->rechnung_grunddaten_holen($belegnr);
-                $e_datum = date_mysql2german($my_array [$a] ['EINGANGSDATUM']);
-                $r_datum = date_mysql2german($my_array [$a] ['RECHNUNGSDATUM']);
-                $faellig_am = date_mysql2german($my_array [$a] ['FAELLIG_AM']);
-                $beleg_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $my_array[$a]['BELEG_NR']]) . "'>" . $my_array [$a] ['BELEG_NR'] . "</>\n";
-                $netto = nummer_punkt2komma($my_array [$a] ['NETTO']);
-                $brutto = nummer_punkt2komma($my_array [$a] ['BRUTTO']);
-                $skonto_betrag = nummer_punkt2komma($my_array [$a] ['SKONTOBETRAG']);
-                $rechnungsnummer = $my_array [$a] ['RECHNUNGSNUMMER'];
-                $rechnungstyp = $my_array [$a] ['RECHNUNGSTYP'];
-                echo "<tr><td>$beleg_link</td><td>$rechnungstyp</td><td>$rechnungsnummer</td><td><b>$faellig_am</b></td><td>" . $this->rechnungs_aussteller_name . "</td><td>" . $this->rechnungs_empfaenger_name . "</td><td align=right>$netto €</td><td align=right>$brutto €</td><td align=right>$skonto_betrag €</td></tr>\n";
-            }
-
-            echo "</table>\n";
-        }
-    }
-
+    
     function buchungsmaske_kasse($kassen_id)
     {
         $form = new formular ();
@@ -328,8 +161,6 @@ class kasse extends rechnung
         $form = new formular ();
         $form->erstelle_formular("Buchungsmaske Kasseneinnahmen und Ausgaben", NULL);
         $this->kassenbuch_dat_infos($buchungs_dat);
-        // print_r($this);
-
         $form->hidden_feld("kassen_dat_alt", $buchungs_dat);
         $form->hidden_feld("kassen_buch_id", $this->akt_kassenbuch_id);
         if (!empty ($this->kostentraeger_typ) && $this->kostentraeger_typ == 'Rechnung') {
@@ -485,8 +316,6 @@ class kasse extends rechnung
 
     function kassenbuch_anzeigen($jahr, $kassen_id)
     {
-        $vorjahr = $jahr - 1;
-
         $my_array = DB::select("SELECT * FROM KASSEN_BUCH WHERE KASSEN_ID = '$kassen_id' && AKTUELL='1' && DATUM BETWEEN '$jahr-01-01' AND '$jahr-12-31' ORDER BY DATUM, KASSEN_BUCH_ID ASC");
         $numrows = count($my_array);
         if ($numrows > 0) {
@@ -586,7 +415,6 @@ class kasse extends rechnung
 
     function monatskassenbuch_anzeigen($monat, $jahr, $kassen_id)
     {
-        $vorjahr = $jahr - 1;
         $zeile = $this->anzahl_buchungen_bis_monat($monat, $jahr, $kassen_id);
         $zeile = $zeile + 1;
 
@@ -598,7 +426,6 @@ class kasse extends rechnung
             $vorjahr = $jahr - 1;
             $kassenstand_vorjahr = $this->kassenstand_vorjahr($vorjahr, $kassen_id);
             $kassenstand_vorjahr_komma = nummer_punkt2komma($kassenstand_vorjahr);
-            $kassenstand_vormonat = $this->kassenstand_vormonat($monat, $jahr, $kassen_id);
             echo "<tr><td></td><td>01.01.$jahr</td>";
             echo "<td>$kassenstand_vorjahr_komma</td><td></td>";
             // echo "<td>$kassenstand_vormonat</td><td></td>";
@@ -642,10 +469,6 @@ class kasse extends rechnung
             $summe_einnahmen = $summe_einnahmen + $kassenstand_vorjahr;
             $summe_ausgaben = $this->summe_ausgaben($jahr, $kassen_id);
             $kassenstand = $summe_einnahmen - $summe_ausgaben;
-            // $kassenstand = number_format($kassenstand, ',' , '2', '');
-            // $summe_einnahmen = nummer_punkt2komma($summe_einnahmen);
-            // $summe_ausgaben = nummer_punkt2komma($summe_ausgaben);
-            // $kassenstand = sprintf("%01.2f", $kassenstand);
             $kassenstand = nummer_punkt2komma($kassenstand);
             echo "<tr class=feldernamen><td></td><td></td><td>$summe_einnahmen €</td><td>$summe_ausgaben €</td><td>Kassenstand: $kassenstand €</td><td></td><td></td></tr>";
             echo "</table>";
@@ -695,7 +518,6 @@ class kasse extends rechnung
         ob_clean(); // ausgabepuffer leeren
         header("Content-type: application/vnd.ms-excel");
         header("Content-Disposition: attachment; filename=$fileName");
-        $vorjahr = $jahr - 1;
         $my_array = DB::select("SELECT * FROM KASSEN_BUCH WHERE KASSEN_ID = '$kassen_id' && AKTUELL='1' && DATUM BETWEEN '$jahr-01-01' AND '$jahr-12-31' ORDER BY DATUM, KASSEN_BUCH_ID ASC");
         $numrows = count($my_array);
         if ($numrows > 0) {

@@ -508,7 +508,7 @@ if (request()->has('option')) {
             }
 
             $arr = get_wartungsgruppen_arr();
-            if (is_array($arr)) {
+            if (!empty($arr)) {
                 $gruppen_bez = get_gruppen_bez(session()->get('vorschlag_gruppe_id'));
                 echo "<p class=\"zeile_ueber\"><b>Terminvorschläge für die Wartungsgruppe $gruppen_bez</b></p>";
 
@@ -536,7 +536,7 @@ if (request()->has('option')) {
             }
 
             $arr = get_wartungsgruppen_arr();
-            if (is_array($arr)) {
+            if (!empty($arr)) {
                 $gruppen_bez = get_gruppen_bez(session()->get('vorschlag_gruppe_id'));
                 echo "<p class=\"zeile_ueber\"><b>Terminvorschläge für die Wartungsgruppe $gruppen_bez</b></p>";
 

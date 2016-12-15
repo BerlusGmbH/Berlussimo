@@ -181,9 +181,7 @@ switch ($option) {
         $todo = new todo ();
         $auftraege_arr = $todo->get_alle_auftraege(0);
 
-        // print_r($auftraege_arr);
         $anz_a = count($auftraege_arr);
-        // die("ANZAHL :$anz_a");
 
         for ($a = 0; $a < $anz_a; $a++) {
             $t_id = $auftraege_arr [$a] ['T_ID'];
@@ -208,19 +206,6 @@ switch ($option) {
             $data ['created'] = $datum;
             $data ['attachments'] = array();
 
-            // print_r($data);
-            // die();
-
-            /*
-             * Add in attachments here if necessary
-             *
-             * $data['attachments'][] =
-             * array('filename.pdf' =>
-             * 'data:image/png;base64,' .
-             * base64_encode(file_get_contents('/path/to/filename.pdf')));
-             */
-
-            // pre-checks
             function_exists('curl_version') or die ('CURL support required');
             function_exists('json_encode') or die ('JSON support required');
 
@@ -245,13 +230,12 @@ switch ($option) {
             curl_close($ch);
 
             if ($code != 201)
-                die ('Unable to create ticket: ' . $result);
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\ErrorMessage('Unable to create ticket: ' . $result)
+                );
 
             $ticket_id = ( int )$result;
             echo "Ticket $ticket_id erstellt<br>";
-
-            // Continue onward here if necessary. $ticket_id has the ID number of the
-            // newly-created ticket
         }
         break;
 

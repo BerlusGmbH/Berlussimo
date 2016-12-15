@@ -363,13 +363,14 @@ switch ($mietvertrag_raus) {
 
     /* aktuelle Mietverträge */
     case "mahnliste" :
+        set_time_limit(240);
         $f = new formular ();
         $f->fieldset("Mahnliste aktuell", 'mahnliste');
         $bg = new berlussimo_global ();
         $bg->objekt_auswahl_liste();
         if (session()->has('objekt_id')) {
             $ma = new mahnungen ();
-            if (!request()->has('pdf')) {
+            if (!request()->exists('pdf')) {
                 $obj_id = session()->get('objekt_id');
                 $link_pdf = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mahnliste', 'objekt_id' => $obj_id, 'pdf'], false) . "'>Als PDF anzeigen</a>";
                 echo $link_pdf;
@@ -488,7 +489,6 @@ switch ($mietvertrag_raus) {
             $mv_info = new mietvertraege ();
             $mv_info->mv_aendern_formular(request()->input('mietvertrag_id'));
         } else {
-
             fehlermeldung_ausgeben("Mietvertrag zum ändern auswählen");
             weiterleiten_in_sec(route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mietvertrag_kurz'], false), '2');
         }
@@ -522,7 +522,7 @@ switch ($mietvertrag_raus) {
         if (isset ($error)) {
             echo $error;
         } else {
-            echo "<p><h1>GEÄNDERTE VERTRAGSDATEN:</h1><br>";
+            echo "<p><h5>Geänderte Vertragsdaten:</h5><br>";
             $einheit_kurzname = einheit_kurzname(request()->input('einheit_id'));
             $haus_id = haus_id(request()->input('einheit_id'));
             $anschrift = haus_strasse_nr($haus_id);
@@ -746,7 +746,8 @@ switch ($mietvertrag_raus) {
             $objekt_id = session()->get('objekt_id');
         }
         if (!session()->has('objekt_id')) {
-            die ('Objekt wählen');
+            echo 'Bitte wählen Sie ein Objekt.';
+            return;
         }
 
         $link_pdf = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'nebenkosten_pdf', 'jahr' => $jahr]) . "'><b>PDF-Datei</b></a>";
@@ -770,7 +771,8 @@ switch ($mietvertrag_raus) {
         if (session()->has('objekt_id')) {
             $objekt_id = session()->get('objekt_id');
         } else {
-            die ('Objekt wählen');
+            echo 'Bitte wählen Sie ein Objekt.';
+            return;
         }
 
         $mv_info = new mietvertraege ();
@@ -790,7 +792,8 @@ switch ($mietvertrag_raus) {
         if (session()->has('objekt_id')) {
             $objekt_id = session()->get('objekt_id');
         } else {
-            die ('Objekt wählen');
+            echo 'Bitte wählen Sie ein Objekt.';
+            return;
         }
 
         $mv_info = new mietvertraege ();
@@ -1035,8 +1038,6 @@ function mietvertrag_aktualisieren($mietvertrag_dat, $mietvertrag_bis, $mietvert
 function mietvertrag_kurz($einheit_id)
 {
     if (empty ($einheit_id)) {
-        // $db_abfrage = "SELECT DISTINCT MIETVERTRAG.MIETVERTRAG_ID, MIETVERTRAG.MIETVERTRAG_VON, MIETVERTRAG.MIETVERTRAG_BIS, MIETVERTRAG.EINHEIT_ID, EINHEIT.EINHEIT_KURZNAME FROM MIETVERTRAG, EINHEIT WHERE MIETVERTRAG_AKTUELL='1' && EINHEIT.EINHEIT_AKTUELL='1' && EINHEIT.EINHEIT_ID = MIETVERTRAG.EINHEIT_ID ORDER BY EINHEIT.EINHEIT_KURZNAME ASC";
-
         $db_abfrage = "SELECT MIETVERTRAG.MIETVERTRAG_ID, MIETVERTRAG.MIETVERTRAG_VON, MIETVERTRAG.MIETVERTRAG_BIS, MIETVERTRAG.EINHEIT_ID, EINHEIT.EINHEIT_KURZNAME FROM MIETVERTRAG JOIN(EINHEIT) ON (EINHEIT.EINHEIT_ID = MIETVERTRAG.EINHEIT_ID) WHERE MIETVERTRAG_AKTUELL='1' && EINHEIT.EINHEIT_AKTUELL='1' ORDER BY EINHEIT.EINHEIT_KURZNAME,MIETVERTRAG.MIETVERTRAG_VON  ASC";
     } else {
         $db_abfrage = "SELECT MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM MIETVERTRAG where EINHEIT_ID='$einheit_id' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_VON DESC";
@@ -1058,11 +1059,11 @@ function mietvertrag_kurz($einheit_id)
             $counter++;
             $datum_heute = date("Y-m-d");
             if (($row['MIETVERTRAG_BIS'] > $datum_heute) or ($row['MIETVERTRAG_BIS'] == "0000-00-00")) {
-                $beenden_link = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mietvertrag_beenden', 'mietvertrag_id' => $MIETVERTRAG_ID]) . "'>Beenden</a>";
-                $aendern_link = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mietvertrag_aendern', 'mietvertrag_id' => $MIETVERTRAG_ID]) . "'>Ändern</a>";
+                $beenden_link = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mietvertrag_beenden', 'mietvertrag_id' => $row['MIETVERTRAG_ID']]) . "'>Beenden</a>";
+                $aendern_link = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mietvertrag_aendern', 'mietvertrag_id' => $row['MIETVERTRAG_ID']]) . "'>Ändern</a>";
             } else {
                 $beenden_link = "Abgelaufen";
-                $aendern_link = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mietvertrag_aendern', 'mietvertrag_id' => $MIETVERTRAG_ID]) . "'>Ändern</a>";
+                $aendern_link = "<a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mietvertrag_aendern', 'mietvertrag_id' => $row['MIETVERTRAG_ID']]) . "'>Ändern</a>";
             }
             $MIETVERTRAG_BIS = date_mysql2german($row['MIETVERTRAG_BIS']);
             $MIETVERTRAG_VON = date_mysql2german($row['MIETVERTRAG_VON']);
@@ -1081,12 +1082,12 @@ function mietvertrag_kurz($einheit_id)
             }
             if ($counter == 1) {
                 echo "<tr class=\"zeile1\"><td width=100>$einheit_link $mietkonto_link $miete_aendern</td><td width=300>($mieter_im_vetrag)";
-                echo mieterid_zum_vertrag($row['MIETVERTRAG_ID']);
+                mieterid_zum_vertrag($row['MIETVERTRAG_ID']);
                 echo "</td><td width=80>$MIETVERTRAG_VON</td><td width=80>$MIETVERTRAG_BIS</td><td>$detail_link</td><td>$beenden_link $aendern_link $mv_loeschen_link</td></tr>";
             }
             if ($counter == 2) {
                 echo "<tr class=\"zeile2\"><td width=100>$einheit_link $mietkonto_link $miete_aendern</td><td width=300>($mieter_im_vetrag)";
-                echo mieterid_zum_vertrag($row['MIETVERTRAG_ID']);
+                mieterid_zum_vertrag($row['MIETVERTRAG_ID']);
                 echo "</td><td width=80>$MIETVERTRAG_VON</td><td width=80>$MIETVERTRAG_BIS</td><td>$detail_link</td><td>$beenden_link $aendern_link $mv_loeschen_link</td></tr>";
                 $counter = 0;
             }
@@ -1145,12 +1146,12 @@ function mietvertrag_abgelaufen($einheit_id)
             }
             if ($counter == 1) {
                 echo "<tr class=\"zeile1\"><td>$einheit_link</td><td>($mieter_im_vetrag)";
-                echo mieterid_zum_vertrag($row['MIETVERTRAG_ID']);
+                mieterid_zum_vertrag($row['MIETVERTRAG_ID']);
                 echo "</td><td>$mietkonto_link $buchen_link $miete_aendern  $kautionen_link</td><td>$MIETVERTRAG_VON</td><td>$MIETVERTRAG_BIS</td><td>$detail_link</td><td>$beenden_link $aendern_link</td></tr>";
             }
             if ($counter == 2) {
                 echo "<tr class=\"zeile2\"><td>$einheit_link </td><td>($mieter_im_vetrag)";
-                echo mieterid_zum_vertrag($row['MIETVERTRAG_ID']);
+                mieterid_zum_vertrag($row['MIETVERTRAG_ID']);
                 echo "</td><td>$mietkonto_link $buchen_link $miete_aendern  $kautionen_link</td><td>$MIETVERTRAG_VON</td><td>$MIETVERTRAG_BIS</td><td>$detail_link</td><td>$beenden_link $aendern_link</td></tr>";
                 $counter = 0;
             }
@@ -1206,12 +1207,12 @@ function mietvertrag_aktuelle($einheit_id)
             }
             if ($counter == 1) {
                 echo "<tr class=\"zeile1\"><td>$einheit_link $miete_aendern $kautionen_link </td><td>($mieter_im_vetrag)";
-                echo mieterid_zum_vertrag($MIETVERTRAG_ID);
+                mieterid_zum_vertrag($row['MIETVERTRAG_ID']);
                 echo "</td><td>$MIETVERTRAG_VON</td><td>$MIETVERTRAG_BIS</td><td>$detail_link</td><td>$beenden_link $aendern_link</td></tr>";
             }
             if ($counter == 2) {
                 echo "<tr class=\"zeile2\"><td>$einheit_link $miete_aendern $kautionen_link</td><td>($mieter_im_vetrag)";
-                echo mieterid_zum_vertrag($MIETVERTRAG_ID);
+                mieterid_zum_vertrag($row['MIETVERTRAG_ID']);
                 echo "</td><td>$MIETVERTRAG_VON</td><td>$MIETVERTRAG_BIS</td><td>$detail_link</td><td>$beenden_link $aendern_link</td></tr>";
                 $counter = 0;
             }

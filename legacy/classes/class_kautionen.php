@@ -2,6 +2,15 @@
 
 class kautionen
 {
+    public $kautions_betrag;
+    public $anzahl_zahlungen;
+    public $kautionszahlungen_array;
+    public $anfangs_summe;
+    public $end_summe;
+    public $kap_g;
+    public $soli_g;
+    public $footer_zahlungshinweis;
+
     function get_kautionsbetrag($mietvertrag_id)
     {
         $this->kautions_betrag = 0;
@@ -20,7 +29,7 @@ class kautionen
     {
         $this->anzahl_zahlungen = 0;
         unset ($this->kautionszahlungen_array);
-        if (is_array($this->kautionszahlungen_arr($kostentraeger_typ, $kostentraeger_id, $kostenkonto))) {
+        if (!empty($this->kautionszahlungen_arr($kostentraeger_typ, $kostentraeger_id, $kostenkonto))) {
             $this->kautionszahlungen_array = $this->kautionszahlungen_arr($kostentraeger_typ, $kostentraeger_id, $kostenkonto);
             $this->anzahl_zahlungen = count($this->kautionszahlungen_array);
         }
@@ -29,29 +38,9 @@ class kautionen
     function kautionszahlungen_arr($kostentraeger_typ, $kostentraeger_id, $kautions_konto_id)
     {
         $result = DB::select("SELECT DATUM, BETRAG, VERWENDUNGSZWECK FROM GELD_KONTO_BUCHUNGEN WHERE KOSTENTRAEGER_TYP='$kostentraeger_typ' && KOSTENTRAEGER_ID='$kostentraeger_id' && GELDKONTO_ID='$kautions_konto_id' && AKTUELL='1' ORDER BY DATUM");
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
-
-    function kautionszahlungen_alle_arr($konto)
-    {
-        if (!session()->has('geldkonto_id')) {
-            die ("Kautionskonto wählen");
-        } else {
-
-            $gk_id = session()->get('geldkonto_id');
-            $result = DB::select("SELECT DATUM, BETRAG, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN  WHERE   AKTUELL='1' && GELDKONTO_ID='$gk_id' ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, DATUM ASC");
-            if (!empty($result)) {
-                return $result;
-            } else {
-                return false;
-            }
-        }
-    }
-
+    
     function form_hochrechnung_mv($mietvertrag_id)
     {
         $mv = new mietvertraege ();
@@ -106,8 +95,6 @@ class kautionen
     function summe_mietekalt($mv_id)
     {
         $result = DB::select("SELECT BETRAG AS SUMME FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mv_id' && MIETENTWICKLUNG_AKTUELL = '1' && KOSTENKATEGORIE='Miete kalt' && DATE_FORMAT(ANFANG, '%d') = '01' ORDER BY ANFANG ASC LIMIT 0,1");
-
-        $numrows = count($result);
         if (empty($result)) {
             return false;
         } else {
@@ -121,7 +108,12 @@ class kautionen
         if (session()->has('geldkonto_id')) {
             $zahlungen_arr = $this->kautionszahlungen_arr($kostentraeger_typ, $kostentraeger_id, session()->get('geldkonto_id'));
         } else {
-            die ("Kautionskonto wählen");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Bitte Kautionskonto wählen."),
+                0,
+                null,
+                route('legacy::buchen::index', ['option' => 'geldkonto_aendern'])
+            );
         }
         $summe = 0.00;
         $summe_verzinst = 0.00;
@@ -139,7 +131,7 @@ class kautionen
 
         $datum_bis_a = date_mysql2german($datum_bis);
 
-        if (is_array($zahlungen_arr)) {
+        if (!empty($zahlungen_arr)) {
             echo "<table>";
             $pdf_link = "<a href='" . route('legacy::kautionen::index', ['option' => 'hochrechner_pdf', 'mietvertrag_id' => $kostentraeger_id, 'datum_bis' => $datum_bis_a]) . "'>PDF</a>";
             echo "<tr class=\"feldernamen\"><td colspan=\"7\">$mv->einheit_kurzname $mv->personen_name_string $pdf_link</td></tr>";
@@ -199,32 +191,11 @@ class kautionen
         }
     }
 
-    /*
-     *
-     *
-     * $kap = ($zins - $betrag_vormonat)*($kap_prozent/$kap_prozent);
-     * $soli = $kap*$soli_prozent/100;
-     *
-     * #$betrag_ende_monat = $betrag_ende_monat + $kap + $soli;
-     *
-     * $kap_a = nummer_kuerzen($kap,3);
-     * $soli_a = nummer_kuerzen($soli,3);
-     * $b_vm = $betrag_vormonat;
-     * $b_em = nummer_kuerzen($zins,3);
-     * #echo "$a. $betrag_vormonat $betrag_ende_monat<br>";
-     * #echo "<b> REST $zinstage tage<br> $zins $b_vm $kap_a $soli_a $b_em</b><br>";
-     */
-
     function zins_tage($von, $bis)
     {
-        // $von = "2010-06-18";
-        // $bis = "2010-12-31";
         $von1 = $this->zinstag($von);
         $bis1 = $this->zinstag($bis);
         $differenz = $bis1 - $von1;
-        // if($von == "2010-06-18"){
-        // die("$differenz = $bis1 - $von1;");
-        // }
         return $differenz;
     }
 
@@ -245,7 +216,6 @@ class kautionen
         $betrag_rein = nummer_komma2punkt(nummer_punkt2komma(($betrag_verzinst - $kap - $soli)));
 
         $datum_von_a = date_mysql2german($datum_von);
-        $datum_bis_a = date_mysql2german($datum_bis);
         echo "<table>";
         echo "<tr><td>$datum_von_a</td><td>$zinstage</td><td>$betrag</td><td>$betrag_verzinst</td><td>$kap</td><td>$soli</td><td>$betrag_rein</td>";
         echo "</table>";
@@ -265,7 +235,6 @@ class kautionen
 
         /* Gleiches Jahr */
         if ($datum_von_jahr == $datum_bis_jahr) {
-            $jahre = 0;
             if ($datum_bis_monat == $datum_von_monat) {
                 $zinstage = $datum_bis_tag - $datum_von_tag;
                 // echo "<h1>ZINSTAGE gleiches jahr $zinstage</h1>";
@@ -321,7 +290,12 @@ class kautionen
         if (session()->has('geldkonto_id')) {
             $zahlungen_arr = $this->kautionszahlungen_arr($kostentraeger_typ, $kostentraeger_id, session()->get('geldkonto_id'));
         } else {
-            die ("Kautionskonto wählen");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Kautionskonto wählen"),
+                0,
+                null,
+                route('legacy::buchen::index', ['option' => 'geldkonto_aendern'])
+            );
         }
         $summe = 0.00;
         $summe_verzinst = 0.00;
@@ -333,7 +307,7 @@ class kautionen
 
         $datum_bis_a = date_mysql2german($datum_bis);
 
-        if (is_array($zahlungen_arr)) {
+        if (!empty($zahlungen_arr)) {
 
             $cols = array(
                 'DATUM' => "Einzahlung",
@@ -394,9 +368,6 @@ class kautionen
                     $table_arr [$a] ['KAP'] = $kap;
                     $table_arr [$a] ['SOLI'] = $soli;
                     $table_arr [$a] ['BETRAG_REIN'] = $betrag_rein;
-                    $vzweck = $zahlungen_arr [$a] ['VERWENDUNGSZWECK'];
-
-                    // echo "<tr><td>$datum_von_a</td><td>$zinstage</td><td>$betrag</td><td>$betrag_verzinst</td><td>$kap</td><td>$soli</td><td>$betrag_rein</td>";
                     $summe = $summe + $betrag;
                     $summe_verzinst = $summe_verzinst + $betrag_verzinst;
                 }
@@ -412,7 +383,6 @@ class kautionen
             // echo "<tr class=\"feldernamen\"><td colspan=\"5\" >$datum_bis_a</td><td>SUMME</td><td>$endsumme</td></tr>";
 
             $anzahl_zeilen = count($table_arr);
-            $l_zeile = $anzahl_zeilen + 1;
             $table_arr [$a] ['SOLI'] = '<b>GESAMT</b>';
             $endsumme_a = nummer_punkt2komma($endsumme);
             $table_arr [$a] ['BETRAG_REIN'] = "<b>$endsumme_a</b>";
@@ -452,134 +422,7 @@ class kautionen
             echo "Keine kautionszahlungen auf <b>$gk->geldkonto_bezeichnung</b> gebucht.";
         }
     }
-
-    function zinsen($kaution, $zins_pj, $datum_von, $datum_bis)
-    {
-        // $kaution = '589.27';
-        // $zins_pj ='6'; //%
-
-        // $alt = strtotime("2009-01-01") ;
-        $alt = strtotime("$datum_von");
-        echo "<br>";
-        // $aktuell = strtotime("2009-12-31") ;
-        $aktuell = strtotime("$datum_bis");
-        // $aktuell = strtotime(date("Y-m-d")) ;
-
-        $differenz = $aktuell - $alt;
-        $differenz = $differenz / 86400;
-
-        echo "Tage: $differenz<br>";
-
-        // ###
-        $datum_von_arr = explode('-', $datum_von);
-        $datum_von_jahr = $datum_von_arr [0];
-        $datum_von_monat = $datum_von_arr [1];
-        $datum_von_tag = $datum_von_arr [2];
-
-        $resttage_anfang = 30 - $datum_von_tag + 1;
-
-        $datum_bis_arr = explode('-', $datum_bis);
-        $datum_bis_jahr = $datum_bis_arr [0];
-        $datum_bis_monat = $datum_bis_arr [1];
-        $datum_bis_tag = $datum_bis_arr [2];
-
-        $resttage_ende = 30 - $datum_bis_tag + 1;
-
-        $jahre = $datum_bis_jahr - $datum_von_jahr;
-        if ($jahre > 0) {
-            $monate_1_jahr = 12 - $datum_von_monat;
-            $monate_end_jahr = $datum_bis_monat;
-            $monate_gesamt = $monate_1_jahr + $monate_end_jahr;
-            $jahre = $jahre - 1;
-        } else {
-            $monate_1_jahr = 12 - $datum_von_monat;
-            $monate_end_jahr = $datum_bis_monat;
-            $monate_gesamt = $monate_end_jahr - $monate_1_jahr;
-            $jahre = 0;
-        }
-
-        $tage_gesamt = $resttage_anfang + $resttage_ende;
-
-        echo "<br>M$monate_gesamt = $monate_1_jahr + $monate_end_jahr<br>";
-
-        echo "$tage_gesamt Tage $monate_gesamt Monate $jahre Jahre";
-        $tage_aus_monaten = $monate_gesamt * 30;
-        // $ta
-        $tage_gesamt = $tage_gesamt + $tage_aus_monaten;
-        echo "<br>Gesamttage = $tage_gesamt<br>";
-        // ###
-
-        $anlege_jahre = 1;
-        $anlege_monate = 0;
-        $anlege_tage = 10;
-
-        $kap_prozent = 25;
-        $soli_prozent = 5.5;
-
-        // $gesamt_tage = ($anlege_jahre * 360) + ($anlege_monate * 30) + $anlege_tage;
-        $gesamt_tage = $differenz;
-        $berechnungs_monate = $gesamt_tage / 30;
-        $berechnungs_monate_voll = intval($berechnungs_monate);
-        $rest_tage = $gesamt_tage - ($berechnungs_monate_voll * 30);
-
-        echo "<b>$berechnungs_monate_voll Monate und $rest_tage Tage</b><br>";
-        // =SUMME(C11*0,005*30)/360+C11
-
-        $betrag_vormonat = $kaution;
-        for ($a = 1; $a <= $berechnungs_monate_voll; $a++) {
-            /* =(C11*0,005*30)/360+C11 */
-            $betrag_ende_monat = ($betrag_vormonat * $zins_pj * 30) / 360 + $betrag_vormonat;
-            $kap = ($betrag_ende_monat - $betrag_vormonat) * $kap_prozent / $kap_prozent;
-            $soli = $kap * $soli_prozent / 100;
-
-            // $betrag_ende_monat = $betrag_ende_monat + $kap + $soli;
-
-            $kap_a = nummer_kuerzen($kap, 3);
-            $soli_a = nummer_kuerzen($soli, 3);
-            $b_vm = nummer_kuerzen($betrag_vormonat, 3);
-            $b_em = nummer_kuerzen($betrag_ende_monat, 3);
-            /*
-             * $kap_a = nummer_punkt2komma($kap);
-             * $soli_a = nummer_punkt2komma($soli);
-             * $b_vm = nummer_punkt2komma($betrag_vormonat);
-             * $b_em = nummer_punkt2komma($betrag_ende_monat);
-             */
-
-            // echo "$a. $betrag_vormonat $betrag_ende_monat<br>";
-            echo " Monat $a.           $b_vm      $kap_a      $soli_a   $b_em<br>";
-            // echo "$a. $betrag_vormonat $betrag_ende_monat<br>";
-            $betrag_vormonat = $betrag_ende_monat;
-        }
-
-        if ($rest_tage > 0) {
-
-            $betrag_ende_monat = ($betrag_vormonat * $zins_pj * $rest_tage) / 360 + $betrag_vormonat;
-            $kap = ($betrag_ende_monat - $betrag_vormonat) * $kap_prozent / $kap_prozent;
-            $soli = $kap * $soli_prozent / 100;
-
-            // $betrag_ende_monat = $betrag_ende_monat + $kap + $soli;
-
-            $kap_a = nummer_punkt2komma($kap);
-            $soli_a = nummer_punkt2komma($soli);
-            $b_vm = nummer_punkt2komma($betrag_vormonat);
-            $b_em = nummer_punkt2komma($betrag_ende_monat);
-            // echo "$a. $betrag_vormonat $betrag_ende_monat<br>";
-            echo "<b> REST $rest_tage tage<br>           $b_vm      $kap_a      $soli_a   $b_em</b><br>";
-            // echo "$a. $betrag_vormonat $betrag_ende_monat<br>";
-            $betrag_vormonat = $betrag_ende_monat;
-        }
-
-        return $betrag_ende_monat;
-        /* Beispiel: Kaution Euro 1000 bei Mietdauer 1 Jahr und 14 Tagen: 1000 : 100 : 1 Jahr x Zins 3 x 1 Jahr = Euro 30. Folgejahr: 1030 : 100 : 360 x 3 x 14 Tage = 0,40 Euro - Der Mieter erhält mit Zinseszinses vom Vermieter Euro 1.030,40 zurück! */
-    }
-
-    function zins_tage_alt($datum_von, $datum_bis)
-    {
-        $u = new urlaub ();
-        $tage = $u->tage_zwischen($datum_von, $datum_bis);
-        return $tage;
-    }
-
+    
     function kaution_speichern($datum, $kostentraeger_typ, $kostentraeger_id, $betrag, $text, $konto)
     {
         $db_abfrage = "INSERT INTO KAUTIONS_BUCHUNGEN VALUES (NULL, '$kostentraeger_typ', '$kostentraeger_id','$datum', '$betrag','$text', '$konto')";
@@ -659,9 +502,6 @@ class kautionen
                 $betrag_rein = nummer_runden($betrag_verzinst - $kap - $soli, 2);
                 $summe_kos_id += $betrag_rein;
 
-                $summe_kos_id_a = nummer_punkt2komma($summe_kos_id);
-
-                // if($kostentraeger_typ == 'MIETVERTRAG' or $kostentraeger_typ == 'Mietvertrag'){
                 if ($mv->einheit_kurzname == '') {
                     $mv->einheit_kurzname = $b_text;
                 }
@@ -752,7 +592,6 @@ class kautionen
             echo "Kautionskonto wählen<br>";
             return null;
         } else {
-
             $gk_id = session()->get('geldkonto_id');
             $result = DB::select("SELECT DATUM, BETRAG, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, VERWENDUNGSZWECK FROM GELD_KONTO_BUCHUNGEN  WHERE  DATUM<='$datum_bis' && AKTUELL='1' && GELDKONTO_ID='$gk_id' && KONTENRAHMEN_KONTO!='2002' && KONTENRAHMEN_KONTO!='2003' && KONTENRAHMEN_KONTO!='2004' ORDER BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, DATUM ASC");
             if (!empty($result)) {
@@ -766,7 +605,7 @@ class kautionen
     function mieter_ohne_kaution_anzeigen($geldkonto_id, $kostenkonto)
     {
         $mv_ids_arr = $this->mieter_ohne_kaution_arr($geldkonto_id, $kostenkonto);
-        if (!is_array($mv_ids_arr)) {
+        if (empty($mv_ids_arr)) {
             echo "Keine Mieter ohne Buchungen auf Konto $kostenkonto";
         } else {
             $anzahl = count($mv_ids_arr);
@@ -791,23 +630,21 @@ class kautionen
 WHERE `MIETVERTRAG_AKTUELL` = '1' && MIETVERTRAG_ID NOT IN (SELECT KOSTENTRAEGER_ID AS MIETVERTRAG_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='MIETVERTRAG')
     ORDER BY EINHEIT_ID ASC,`MIETVERTRAG`.`MIETVERTRAG_BIS`  ASC";
         $result = DB::select($db_abfrage);
-        if (!empty($result)) {
-            return $result;
-        }
+        return $result;
     }
 
     function kautions_uebersicht($objekt_id, $alle = null)
     {
         $o = new objekt ();
         $ein_arr = $o->einheiten_objekt_arr($objekt_id);
-        if (!is_array($ein_arr)) {
+        if (empty($ein_arr)) {
             fehlermeldung_ausgeben("Keine Einheiten im Objekt");
         } else {
             $anz_e = count($ein_arr);
             echo "<table>";
             echo "<tr><th>EINHEIT</th><th>TYP</th><th>MIETER</th><th>VON</th><th>BIS</th><th>DAUER</th>";
             $felder_arr = $this->get_felder_arr();
-            if (is_array($felder_arr)) {
+            if (!empty($felder_arr)) {
                 $anz_felder = count($felder_arr);
                 $cols = $anz_felder + 6;
                 for ($a = 0; $a < $anz_felder; $a++) {
@@ -826,7 +663,6 @@ WHERE `MIETVERTRAG_AKTUELL` = '1' && MIETVERTRAG_ID NOT IN (SELECT KOSTENTRAEGER
                     $mv_id = $e->get_last_mietvertrag_id($einheit_id);
                     $mv_arr [] ['MIETVERTRAG_ID'] = $mv_id;
                 } else {
-
                     /* alle Mieter */
                     $mv_arr = $e->get_mietvertrag_ids($einheit_id);
                 }
@@ -882,11 +718,7 @@ WHERE `MIETVERTRAG_AKTUELL` = '1' && MIETVERTRAG_ID NOT IN (SELECT KOSTENTRAEGER
     function get_felder_arr()
     {
         $result = DB::select("SELECT * FROM `KAUTION_FELD` WHERE AKTUELL='1' ORDER BY DAT ASC");
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     function feld_speichern($feld)

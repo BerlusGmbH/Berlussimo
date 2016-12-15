@@ -1,32 +1,7 @@
 <?php
-/**
- * BERLUSSIMO
- *
- * Hausverwaltungssoftware
- *
- *
- * @copyright    Copyright (c) 2010, Berlus GmbH, Fontanestr. 1, 14193 Berlin
- * @link         http://www.berlus.de
- * @author       Sanel Sivac & Wolfgang Wehrheim
- * @contact         software(@)berlus.de
- * @license     http://www.gnu.org/licenses/agpl.html AGPL Version 3
- *
- * @filesource   $HeadURL: http://192.168.2.52/svn/berlussimo_1/tags/02.11.2010 - Downloadversion 0.27/includes/formular_funktionen.php $
- * @version      $Revision: 15 $
- * @modifiedby   $LastChangedBy: sivac $
- * @lastmodified $Date: 2011-07-07 10:41:33 +0200 (Do, 07 Jul 2011) $
- *
- */
+
 function erstelle_formular($name, $action)
 {
-    if (!isset ($action)) {
-        echo "<form name=\"$name\" action=\"$self\"  method=\"post\">\n";
-    } else {
-        echo "<form name=\"$name\" action=\"$action\" method=\"post\">\n";
-    }
-
-    echo "<table class=\"formular_tabelle\">\n<tr><td>";
-    // $self = $_SERVER['PHP_SELF'];
     $scriptname = $_SERVER ['REQUEST_URI'];
     $servername = $_SERVER ['SERVER_NAME'];
     $serverport = $_SERVER ['SERVER_PORT'];
@@ -37,6 +12,14 @@ function erstelle_formular($name, $action)
     } else {
         $self = "http://$servername:$serverport$scriptname";
     }
+
+    if (!isset ($action)) {
+        echo "<form name=\"$name\" action=\"$self\"  method=\"post\">\n";
+    } else {
+        echo "<form name=\"$name\" action=\"$action\" method=\"post\">\n";
+    }
+
+    echo "<table class=\"formular_tabelle\">\n<tr><td>";
     echo "</td></tr>\n";
 }
 
@@ -57,25 +40,26 @@ function erstelle_button($name, $wert, $onclick)
 
 function erstelle_back_button()
 {
-    echo "<input type=\"button\" name=\"zurueck\" value=\"Abbrechen und Zurück\" onclick=\"javascript:history.back()\" class=\"buttons\">";
+    echo "<a class='btn waves-effect waves-light' href='javascript:history.back()'>Abbrechen und Zurück</a>\n";
 }
 
 function erstelle_eingabefeld($beschreibung, $name, $wert, $size)
 {
-    echo "<tr><td>$beschreibung:</td><td><input type=\"text\" name=\"$name\" value=\"$wert\" size=\"$size\"></td></tr>\n";
+    echo "<div class='input-field'>
+            <input type='text' id='$name' name='$name' value='$wert' size='$size'>
+            <label for='$name'>$beschreibung</label>
+          </div>\n";
 }
 
 function erstelle_submit_button($name, $wert)
 {
-    echo "<tr><td colspan=2><input type=\"submit\" name=\"$name\" value=\"$wert\" class=\"buttons\">";
+    echo "<button class='btn waves-effect waves-light' type='submit' name='$name' value='$wert'>$wert</button>&nbsp;";
     erstelle_back_button();
-    echo "</td></tr>\n";
 }
 
 function erstelle_submit_button_nur($name, $wert)
 {
-    echo "<tr><td colspan=2><button class='btn waves-effect waves-light' type='submit' name='$name' value='$wert'>$wert<i class=\"material-icons right\">send</i></button>";
-    echo "</td></tr>\n";
+    echo "<button class='btn waves-effect waves-light' type='submit' name='$name' value='$wert'>$wert<i class=\"material-icons right\">send</i></button>";
 }
 
 function objekt_kurzname_anzahl($kurzname)
@@ -186,34 +170,6 @@ function detail_drop_down_kategorie_db()
     }
 }
 
-function objekt_auswahl_form()
-{
-    erstelle_formular(NULL, NULL);
-    objekt_liste_dropdown();
-    erstelle_submit_button("submit_objekt_auswahl", "Auswählen");
-    ende_formular();
-}
-
-function haeuser_liste_dropdown($obj_id)
-{
-    erstelle_formular("haus_auswahl", NULL);
-
-    $result = DB::select("SELECT HAUS_DAT, HAUS_ID, HAUS_STRASSE, HAUS_NUMMER FROM HAUS WHERE OBJEKT_ID='$obj_id' && HAUS_AKTUELL='1' ORDER BY HAUS_NUMMER ASC");
-    if (empty($result)) {
-        echo "<h5 class=\"fehler\">Keine Häuser im ausgewählten Objekt</h5><br>\n";
-        echo "Erst Haus im Objekt anlegen - <a href='" . route('legacy::haeuserform::index', ['daten_rein' => 'anlegen']) . "'>Hauseingabe hier&nbsp;</a>\n<br>\n";
-    } else {
-        echo "<select name=\"haeuser\" size=\"1\">\n";
-        foreach ($result as $row) {
-            echo "<option value=\"$row[HAUS_ID]\">$row[HAUS_STRASSE] $row[HAUS_NUMMER]</option>\n";
-        }
-        echo "</select>\n";
-
-        erstelle_submit_button("haus_auswahl", "Senden");
-        ende_formular();
-    }
-}
-
 function einheit_eingabe_form($haus_id)
 {
     erstelle_formular(NULL, NULL);
@@ -278,22 +234,6 @@ function einheit_liste_dropdown($haus_id)
     }
 }
 
-function einheit_auswahl_form($haus_id)
-{
-    erstelle_formular(NULL, NULL);
-    einheit_liste_dropdown($haus_id);
-    erstelle_submit_button("submit_einheit", "Bearbeiten");
-    ende_formular();
-}
-
-function einheit_auswaehlen($haus_id)
-{
-    erstelle_formular(NULL, NULL);
-    einheit_liste_dropdown($haus_id);
-    erstelle_submit_button("submit_einheit", "Auswählen");
-    ende_formular();
-}
-
 function einheit_aendern_form($einheit_id)
 {
     erstelle_formular(NULL, NULL);
@@ -329,52 +269,6 @@ function einheit_geandert_in_db($einheit_dat, $einheit_id, $haus_id, $einheit_ku
     protokollieren("EINHEIT", $akt_einheit_dat, $einheit_dat);
 }
 
-function detail_kategorien_form($kategorie)
-{
-    if (!request()->has('submit_kat') && !request()->has('submit_ukat')) {
-        $result = DB::select("SELECT DETAIL_KAT_ID, DETAIL_KAT_NAME FROM DETAIL_KATEGORIEN WHERE DETAIL_KAT_KATEGORIE='$kategorie' && DETAIL_KAT_AKTUELL='1' ORDER BY DETAIL_KAT_NAME ASC");
-        if (!empty($result)) {
-            erstelle_formular(NULL, NULL);
-            echo "<tr><td>";
-            echo "<select name=\"detail_kat_id\" size=1>";
-            foreach ($result as $row) {
-                echo "<option value=\"$row[DETAIL_KAT_ID]\">$row[DETAIL_KAT_NAME]</option>";
-            }
-            echo "</select>";
-            echo "</td></tr>";
-            erstelle_submit_button("submit_kat", "Weiter");
-            ende_formular();
-        }
-    }
-    // ##############step 2############
-    if (request()->has('submit_kat')) {
-        $kat_id = request()->input("detail_kat_id");
-        $kat_name = get_kategorie_name(request()->input('detail_kat_id'));
-        $anzahl_ukat = check_unterkategorie($kat_id);
-        if ($anzahl_ukat > 0) {
-            unterkategorien_form($kat_id);
-        }
-        if ($anzahl_ukat < 1) {
-            haupt_kategorie_form($kat_id);
-        }
-    }
-    if (request()->has('submit_hauptkat')) {
-        detail_in_db_eintragen(request()->input('kat_name'), request()->input('kat_wert'), request()->input('Bemerkung'), request()->input('detail_tabelle'), request()->input('detail_id'));
-    }
-
-    if (request()->has('submit_ukat')) {
-        detail_in_db_eintragen(request()->input('kat_name'), request()->input('detail_ukat_name'), request()->input('Bemerkung'), request()->input('detail_tabelle'), request()->input('detail_id'));
-    }
-}
-
-function get_kategorie_id($kategorie_name)
-{
-    $result = DB::select("SELECT DETAIL_KAT_ID FROM DETAIL_KATEGORIEN WHERE DETAIL_KAT_NAME='$kategorie_name' && DETAIL_KAT_AKTUELL='1' ORDER BY DETAIL_KAT_ID DESC limit 0,1");
-    foreach ($result as $row) {
-        return $row['DETAIL_KAT_ID'];
-    }
-}
-
 // ##neu
 function get_kategorie_name($kategorie_id)
 {
@@ -384,62 +278,9 @@ function get_kategorie_name($kategorie_id)
     }
 }
 
-function check_unterkategorie($kategorie_id)
-{
-    $result = DB::select("SELECT COUNT(UNTERKATEGORIE_NAME) AS ANZAHL FROM DETAIL_UNTERKATEGORIEN WHERE KATEGORIE_ID='$kategorie_id' ORDER BY UNTERKATEGORIE_NAME ASC");
-    return $result[0]['ANZAHL'];
-}
-
-function unterkategorien_form($kat_id)
-{
-    $kat_name = get_kategorie_name($kat_id);
-    $result = DB::select("SELECT UNTERKATEGORIE_NAME FROM DETAIL_UNTERKATEGORIEN WHERE KATEGORIE_ID='$kat_id' ORDER BY UNTERKATEGORIE_NAME ASC");
-    erstelle_formular(NULL, NULL);
-    erstelle_hiddenfeld("kat_name", "$kat_name");
-    echo "<tr><td>";
-    echo "<select name=\"detail_ukat_name\" size=1>\n";
-    foreach ($result as $row) {
-        echo "<option value=\"$row[UNTERKATEGORIE_NAME]\">$row[UNTERKATEGORIE_NAME]</option>\n";
-    }
-    echo "</select>\n";
-    echo "</td></tr>";
-    echo "<tr><td>";
-    text_area("Bemerkung", "30", "6");
-    echo "</td></tr>";
-    echo "<tr><td>";
-    erstelle_submit_button("submit_ukat", "Eintragen");
-    echo "</td></tr>";
-    ende_formular();
-}
-
-function detail_in_db_eintragen($kat_name, $kat_uname, $bemerkung, $table, $id)
-{
-    if (isset ($kat_name) && isset ($kat_uname) && isset ($table) && isset ($id)) {
-        $dat_alt = "0"; // weil, neues detail hinzugefügt wurde
-        DB::insert("INSERT INTO DETAIL (`DETAIL_DAT`, `DETAIL_ID`, `DETAIL_NAME`, `DETAIL_INHALT`, `DETAIL_BEMERKUNG`, `DETAIL_AKTUELL`, `DETAIL_ZUORDNUNG_TABELLE`, `DETAIL_ZUORDNUNG_ID`) VALUES (NULL, '', '$kat_name', '$kat_uname', '$bemerkung', '1', '$table', '$id')");
-        $dat_neu = letzte_detail_dat($table, $id);
-        protokollieren('DETAIL', $dat_neu, $dat_alt);
-    }
-}
-
 function text_area($name, $breite, $hoehe)
 {
     echo "<br>$name:<br> <textarea name=\"$name\" cols=\"$breite\" rows=\"$hoehe\"></textarea><br>\n";
-}
-
-function haupt_kategorie_form($kat_id)
-{
-    erstelle_formular(NULL, NULL);
-    $kat_name = get_kategorie_name($kat_id);
-    erstelle_hiddenfeld("kat_name", "$kat_name");
-    echo "<tr><td>";
-    echo "<br>$kat_name:<br> <textarea name=\"kat_wert\" cols=\"30\" rows=\"7\"></textarea><br>\n";
-    echo "</td></tr>";
-    echo "<tr><td>";
-    echo "<br>Bemerkung:<br> <textarea name=\"Bemerkung\" cols=\"30\" rows=\"7\"></textarea><br>\n";
-    echo "</td></tr>";
-    erstelle_submit_button("submit_hauptkat", "Eintragen");
-    ende_formular();
 }
 
 // #### person
@@ -467,16 +308,14 @@ function person_aendern_from($person_id)
 {
     $result = DB::select("SELECT PERSON_ID, PERSON_NACHNAME, PERSON_VORNAME, PERSON_GEBURTSTAG FROM PERSON WHERE PERSON_ID='$person_id' && PERSON_AKTUELL='1'");
     if (!empty($result)) {
-        erstelle_formular(NULL, NULL);
         foreach($result as $row) {
-            $PERSON_GEBURTSTAG = date_mysql2german($row[PERSON_GEBURTSTAG]);
             erstelle_hiddenfeld("person_id", "$row[PERSON_ID]");
             erstelle_eingabefeld("Nachname", "person_nachname", "$row[PERSON_NACHNAME]", "50");
             erstelle_eingabefeld("Vorname", "person_vorname", "$row[PERSON_VORNAME]", "50");
-            erstelle_eingabefeld("Geburtstag (dd.mm.jjjj)", "person_geburtstag", "$row[PERSON_GEBURTSTAG]", "10");
+            $birthdate = date_format(new DateTime($row['PERSON_GEBURTSTAG']), "d.m.Y");
+            erstelle_eingabefeld("Geburtstag (dd.mm.jjjj)", "person_geburtstag", $birthdate, "10");
         }
-        erstelle_submit_button("submit_person_aendern", "Aendern");
-        ende_formular();
+        erstelle_submit_button("submit_person_aendern", "Ändern");
     } else {
         hinweis_ausgeben("Person mit der Person ID $person_id existiert nicht!");
     }

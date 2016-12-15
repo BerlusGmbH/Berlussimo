@@ -3,7 +3,7 @@
     <div class="navbar-fixed">
         <nav>
             <div class="nav-wrapper">
-                <a href='http://www.berlus.de'><img style="height:100%; padding: 5px" src="/images/berlus_logo.svg"></a>
+                <a href='/'><img style="height:100%; padding: 5px" src="/images/berlus_logo.svg"></a>
                 @yield('navbar')
             </div>
         </nav>

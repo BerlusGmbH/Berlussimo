@@ -64,11 +64,8 @@ function haus_kurz($objekt_id = '')
 {
     if (empty ($objekt_id)) {
         $db_abfrage = "SELECT OBJEKT_ID, HAUS_ID, HAUS_STRASSE, HAUS_NUMMER, HAUS_PLZ, HAUS_QM FROM HAUS WHERE HAUS_AKTUELL='1' ORDER BY HAUS_STRASSE,  0+HAUS_NUMMER, OBJEKT_ID ASC";
-        $title = "Alle Häuser";
     } else {
         $db_abfrage = "SELECT OBJEKT_ID, HAUS_ID, HAUS_STRASSE, HAUS_NUMMER, HAUS_PLZ, HAUS_QM FROM HAUS where OBJEKT_ID='$objekt_id' && HAUS_AKTUELL='1' ORDER BY HAUS_STRASSE, 0+HAUS_NUMMER, OBJEKT_ID ASC";
-        $objekt_kurzname = objekt_namen_by_id($objekt_id);
-        $title = "Häuser vom Objekt:  $objekt_kurzname";
     }
 
     $result = DB::select($db_abfrage);
@@ -79,7 +76,6 @@ function haus_kurz($objekt_id = '')
         iframe_start();
         echo "<table class=\"sortable striped\">\n";
         echo "<tr><th>Strasse</th><th>Nr.</th><th>PLZ</th><th>m²</th><th>Em²</th><th>Einheiten</th><th>INFOS</th><th>OPTION</th></tr>";
-
         $counter = 0;
         foreach($result as $row) {
             $detail_check = detail_check("HAUS", $row['HAUS_ID']);

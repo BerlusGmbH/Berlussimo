@@ -11,6 +11,13 @@ class partners
 
     /* Name eines Partner/Lieferand/Eigentümer */
     public $partner_ort;
+    public $partner_name;
+    public $partner_strasse;
+    public $partner_hausnr;
+    public $partner_plz;
+    public $partner_id;
+    public $partner_land;
+    public $partner_dat;
 
     function suche_partner_in_array($suchtext)
     {
@@ -24,7 +31,7 @@ OR  `LAND` LIKE  '%$suchtext%'
         if (!empty($my_array)) {
             /* Zusätzlich Stichwortsuche */
             $my_array_stich = $this->suche_partner_stichwort_arr($suchtext);
-            if (is_array($my_array_stich)) {
+            if (!empty($my_array_stich)) {
                 $anz_stich = count($my_array_stich);
                 for ($p = 0; $p < $anz_stich; $p++) {
                     $partner_id = $my_array_stich [$p] ['PARTNER_ID'];
@@ -43,14 +50,12 @@ OR  `LAND` LIKE  '%$suchtext%'
             return $my_array;
         } else {
             $my_array_stich = $this->suche_partner_stichwort_arr($suchtext);
-            if (is_array($my_array_stich)) {
+            if (!empty($my_array_stich)) {
 
                 $anz_stich = count($my_array_stich);
                 for ($p = 0; $p < $anz_stich; $p++) {
                     $partner_id = $my_array_stich [$p] ['PARTNER_ID'];
                     $this->get_partner_info($partner_id);
-                    // print_r($this);
-                    // die();
                     if (isset ($my_array)) {
                         $anz = count($my_array);
                     } else {
@@ -77,11 +82,7 @@ OR  `LAND` LIKE  '%$suchtext%'
     {
         $result = DB::select("SELECT * FROM  `PARTNER_STICHWORT` WHERE  `AKTUELL` =  '1' AND  `STICHWORT` LIKE  '%$stichwort%'
 			ORDER BY STICHWORT ASC");
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     function get_partner_info($partner_id)
@@ -154,7 +155,7 @@ OR  `LAND` LIKE  '%$suchtext%'
             if ($zaehler == 1) {
                 echo "<tr valign=\"top\" class=\"zeile1\"><td>$partner_link_detail</td><td>$anschrift</td><td>";
 
-                if (is_array($stich_arr)) {
+                if (!empty($stich_arr)) {
                     $anz_s = count($stich_arr);
                     for ($s = 0; $s < $anz_s; $s++) {
                         echo $stich_arr [$s] ['STICHWORT'] . ", ";
@@ -166,7 +167,7 @@ OR  `LAND` LIKE  '%$suchtext%'
             }
             if ($zaehler == 2) {
                 echo "<tr valign=\"top\" class=\"zeile2\"><td>$partner_link_detail</td><td>$anschrift</td><td>";
-                if (is_array($stich_arr)) {
+                if (!empty($stich_arr)) {
                     $anz_s = count($stich_arr);
                     for ($s = 0; $s < $anz_s; $s++) {
                         echo $stich_arr [$s] ['STICHWORT'] . ", ";
@@ -185,12 +186,7 @@ OR  `LAND` LIKE  '%$suchtext%'
     {
         $result = DB::select("SELECT * FROM  `PARTNER_STICHWORT` WHERE  `AKTUELL` =  '1' AND  `PARTNER_ID` =  '$partner_id'
 				 ORDER BY STICHWORT ASC");
-
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     function get_partner_id($partner_name)
@@ -208,7 +204,7 @@ OR  `LAND` LIKE  '%$suchtext%'
         $f->erstelle_formular("Partner $this->partner_name Gewerke oder Stichwort eingeben", NULL);
 
         $stich_arr = $this->get_stichwort_arr();
-        if (is_array($stich_arr)) {
+        if (!empty($stich_arr)) {
             $anz = count($stich_arr);
             for ($a = 0; $a < $anz; $a++) {
                 $stich = $stich_arr [$a] ['STICHWORT'];
@@ -233,12 +229,7 @@ OR  `LAND` LIKE  '%$suchtext%'
     function get_stichwort_arr()
     {
         $result = DB::select("SELECT STICHWORT FROM  `PARTNER_STICHWORT` WHERE  `AKTUELL` =  '1'  GROUP BY STICHWORT	ORDER BY STICHWORT ASC");
-
-        if (!empty($result)) {
-            return $result;
-        } else {
-            return false;
-        }
+        return $result;
     }
 
     /* Partner erfassen Formular */
@@ -270,28 +261,19 @@ OR  `LAND` LIKE  '%$suchtext%'
     {
         $form = new mietkonto ();
         $form->erstelle_formular("Partner erfassen", NULL);
-        // $form->text_feld("Partnername:", "partnername", "", "10");
-        // $js = "onkeyup=\"alert('SANEL');\"";
         $js = "onkeyup=\"daj3('ajax/ajax_info.php?option=finde_partner&suchstring='+this.value, 'p_fund');\"";
 
         $f = new formular ();
-
-        // $f->text_feld_inaktiv('Partner gefunden', 'p_fund', '', 70, 'p_fund');
-        // echo "<div id=\"p_fund\" style=\"color=#ff0000;\"></div>";#
-        $f->text_bereich_js('Partnername', 'partnername', '', '20', '3', 'partner_name', $js);
+        $f->text_bereich_js('Partnername', 'partnername', old('partnername'), '20', '3', 'partner_name', $js);
         echo "<div id=\"p_fund\" style=\"color:#ff0000;border:3px;border-color=#ff0000;\"></div>"; //
-        // $f->text_bereich_js("Partnername", "partnername", '', "20", "3", $js);
-        $form->text_feld("Strasse:", "strasse", '', "50");
-        $form->text_feld("Hausnummer:", "hausnummer", '', "10");
-        $form->text_feld("Postleitzahl:", "plz", '', "10");
-        $form->text_feld("Ort:", "ort", '', "25");
-        $form->text_feld("Land:", "land", '', "25");
-        // $form->text_feld("Kreditinstitut:", "kreditinstitut", "", "10");
-        // $form->text_feld("Kontonummer:", "kontonummer", "", "10");
-        // $form->text_feld("Bankleitzahl:", "blz", "", "10");
-        $form->text_feld("Telefon:", "tel", "", "25");
-        $form->text_feld("Fax:", "fax", "", "25");
-        $form->text_feld("Email:", "email", "", "30");
+        $form->text_feld("Strasse:", "strasse", old('strasse'), "50");
+        $form->text_feld("Hausnummer:", "hausnummer", old('hausnummer'), "10");
+        $form->text_feld("Postleitzahl:", "plz", old('plz'), "10");
+        $form->text_feld("Ort:", "ort", old('ort'), "25");
+        $form->text_feld("Land:", "land", old('land'), "25");
+        $form->text_feld("Telefon:", "tel", old('tel'), "25");
+        $form->text_feld("Fax:", "fax", old('fax'), "25");
+        $form->text_feld("Email:", "email", old('email'), "30");
         $form->send_button("submit_partner", "Partner speichern");
         $form->hidden_feld("option", "partner_gesendet");
         $form->ende_formular();
@@ -311,7 +293,7 @@ OR  `LAND` LIKE  '%$suchtext%'
 
     /* Letzte Partnergeldkonto ID */
 
-function partner_speichern($clean_arr)
+    function partner_speichern($clean_arr)
     {
         foreach ($clean_arr as $key => $value) {
             $partnername = $clean_arr ['partnername'];
@@ -329,17 +311,9 @@ function partner_speichern($clean_arr)
 
             // print_r($clean_arr);
             if (empty ($partnername) or empty ($str) or empty ($hausnr) or empty ($plz) or empty ($ort) or empty ($land)) {
-                fehlermeldung_ausgeben("Dateneingabe unvollständig!!!<br>Sie werden weitergeleitet.");
-                session()->put('partnername', $partnername);
-                session()->put('strasse', $str);
-                session()->put('hausnummer', $hausnr);
-                session()->put('plz', $plz);
-                session()->put('ort', $ort);
-                session()->put('land', $land);
-
-                $fehler = true;
-                weiterleiten_in_sec(route('legacy::partner::index', ['option' => 'partner_erfassen'], false), 3);
-                die ();
+                throw new \App\Exceptions\MessageException(
+                    new \App\Messages\ErrorMessage("Dateneingabe unvollständig.")
+                );
             }
         } // Ende foreach
 
@@ -354,18 +328,19 @@ function partner_speichern($clean_arr)
             $partner_id = $this->letzte_partner_id();
             $partner_id = $partner_id + 1;
             $db_abfrage = "INSERT INTO PARTNER_LIEFERANT VALUES (NULL, $partner_id, '$clean_arr[partnername]','$clean_arr[strasse]', '$clean_arr[hausnummer]','$clean_arr[plz]','$clean_arr[ort]','$clean_arr[land]','1')";
-            DB::insert($db_abfrage);
+            $resultat = DB::insert($db_abfrage);
             /* Protokollieren */
             $last_dat = DB::getPdo()->lastInsertId();
             protokollieren('PARTNER_LIEFERANT', $last_dat, '0');
-            if (isset ($resultat)) {
-                hinweis_ausgeben("Partner $clean_arr[partnername] wurde gespeichert.");
-                weiterleiten_in_sec(route('legacy::partner::index', ['option' => 'partner_erfassen'], false), 2);
+            if ($resultat) {
+                session()->flash('info', ["Partner $clean_arr[partnername] wurde gespeichert."]);
+                weiterleiten(route('legacy::partner::index', ['option' => 'partner_liste'], false));
             }
         } // ende fehler
         if ($numrows_3 > 0) {
-            fehlermeldung_ausgeben("Partner $clean_arr[partnername] exisitiert bereits.");
-            weiterleiten_in_sec(route('legacy::partner::index', ['option' => 'partner_erfassen'], false), 2);
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Partner $clean_arr[partnername] exisitiert bereits.")
+            );
         }
         session()->forget('partnername');
         session()->forget('strasse');
@@ -393,24 +368,6 @@ function partner_speichern($clean_arr)
         $result = DB::select("SELECT PARTNER_ID FROM PARTNER_LIEFERANT  ORDER BY PARTNER_ID DESC LIMIT 0,1");
         $row = $result[0];
         return $row ['PARTNER_ID'];
-    }
-
-    /* Letzte Parner Zuweisunggeldkonto ID */
-
-    function letzte_geldkonto_id()
-    {
-        $result = DB::select("SELECT KONTO_ID FROM GELD_KONTEN ORDER BY KONTO_ID DESC LIMIT 0,1");
-        $row = $result[0];
-        return $row ['KONTO_ID'];
-    }
-
-    /* Anzeige der Partnerliste rechts senkrecht */
-
-    function letzte_zuweisung_geldkonto_id()
-    {
-        $result = DB::select("SELECT ZUWEISUNG_ID FROM GELD_KONTEN_ZUWEISUNG ORDER BY ZUWEISUNG_ID DESC LIMIT 0,1");
-        $row = $result[0];
-        return $row ['ZUWEISUNG_ID'];
     }
 
     /* Alle Partner in ein array laden */
@@ -450,7 +407,7 @@ function partner_speichern($clean_arr)
     function partner_dropdown($label, $name, $id, $vorwahl = null)
     {
         $partner_arr = $this->partner_in_array();
-        echo "<label for=\"$id\">$label</label><select name=\"$name\" size=\"1\" id=\"$id\">";
+        echo "<div class=\"input-field\"><select name=\"$name\" size=\"1\" id=\"$id\">";
         for ($a = 0; $a < count($partner_arr); $a++) {
             $partner_id = $partner_arr [$a] ['PARTNER_ID'];
             $partner_name = $partner_arr [$a] ['PARTNER_NAME'];
@@ -460,7 +417,7 @@ function partner_speichern($clean_arr)
                 echo "<option value=\"$partner_id\">$partner_name</OPTION>\n";
             }
         }
-        echo "</select><br>\n";
+        echo "</select><label for=\"$id\">$label</label>\n";
     }
 
     /* Dropdownfeld mit Gewerken */
@@ -504,7 +461,7 @@ function partner_speichern($clean_arr)
     function partner_liste()
     {
         $partner_arr = $this->partner_in_array();
-        echo "<table class=\"sortable\">";
+        echo "<table class=\"sortable striped\">";
         echo "<tr><th>Partner</th><th>Anschrift</th><th>Gewerk / Stichwort</th><th>Details</th></tr>";
         $zaehler = 0;
         for ($a = 0; $a < count($partner_arr); $a++) {
@@ -526,7 +483,7 @@ function partner_speichern($clean_arr)
 
             $link_stich_hinzu = "<a href='" . route('legacy::partner::index', ['option' => 'partner_stichwort', 'partner_id' => $partner_id]) . "'><b>Stichwort eingeben</b></a>";
 
-            if (is_array($stich_arr)) {
+            if (!empty($stich_arr)) {
                 $anz_s = count($stich_arr);
                 for ($s = 0; $s < $anz_s; $s++) {
                     echo $stich_arr [$s] ['STICHWORT'] . ", ";
@@ -563,7 +520,9 @@ function partner_speichern($clean_arr)
             $f->send_button("submit", "Änderung speichern");
             $f->ende_formular();
         } else {
-            die ("Partner $partner_id unbekannt");
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Partner $partner_id unbekannt")
+            );
         }
     }
 
@@ -591,7 +550,7 @@ GROUP BY  `AUSSTELLER_TYP` ,  `AUSSTELLER_ID`
 ORDER BY SUM( BRUTTO ) DESC 
 LIMIT 0 , 80");
         if (!empty($result)) {
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $this->get_partner_name($row ['AUSSTELLER_ID']);
                 $row ['PARTNER_NAME'] = $this->partner_name;
             }
@@ -618,15 +577,15 @@ LIMIT 0 , 80");
     function form_partner_serienbrief()
     {
         $partner_arr = $this->partner_in_array();
-        if (!is_array($partner_arr)) {
-            fehlermeldung_ausgeben("Keine Partner gefunden!");
-            die();
+        if (empty($partner_arr)) {
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage("Keine Partner gefunden!")
+            );
         }
 
         $f = new formular ();
         $f->erstelle_formular('Serienbrief an Partner', null);
         $f->hidden_feld('option', 'serien_brief_vorlagenwahl');
-        $js = "onclick=\"activate(this.form.elements['p_ids[]']);\"";
         echo "<div class='row'>";
         echo "<div class='col l3'>";
         $f->send_button('Button', 'Vorlage wählen');
@@ -648,7 +607,7 @@ LIMIT 0 , 80");
 
             echo "<div class='col l3'>";
             if (session()->has('p_ids') && in_array($p_id, session()->get('p_ids'))) {
-                $f->check_box_js1('p_ids[]', 'p_id_'. $p_id, $p_id, "$p_name", '', 'checked');
+                $f->check_box_js1('p_ids[]', 'p_id_' . $p_id, $p_id, "$p_name", '', 'checked');
             } else {
                 $f->check_box_js1('p_ids[]', 'p_id_' . $p_id, $p_id, "$p_name", '', '');
             }

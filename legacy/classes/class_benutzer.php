@@ -2,6 +2,19 @@
 
 class benutzer
 {
+    public $benutzername;
+    public $passwort;
+    public $gewerk_id;
+    public $geb_datum;
+    public $datum_eintritt;
+    public $datum_austritt;
+    public $urlaub;
+    public $stunden_wo;
+    public $stundensatz;
+    public $benutzer_id;
+    public $id;
+    public $benutzer_email;
+
     function get_benutzer_id($benutzername)
     {
         $user = \App\Models\User::where('name', $benutzername)->first();
@@ -32,7 +45,6 @@ class benutzer
                 $geb_t = $geb_dat_arr [0];
                 $geb_m = $geb_dat_arr [1];
                 $geb_j = $geb_dat_arr [2];
-                $gewerk_id = $user->trade_id;
                 $eintritt = date_mysql2german($user->join_date);
                 $ein_dat_arr = explode('.', $eintritt);
                 $ein_t = $ein_dat_arr [0];
@@ -97,19 +109,19 @@ class benutzer
     {
         $b = $this->get_user_info($b_id);
         if (isset($b)) {
-            $this->benutzername = $b->name;
-            $this->benutzer_id = $b->id;
-            $this->passwort = $b->password;
+            $this->benutzername = $b['name'];
+            $this->benutzer_id = $b['id'];
+            $this->passwort = $b['password'];
 
-            $this->stundensatz = $b->hourly_rate;
-            $this->geb_datum = $b->birthday;
-            $this->gewerk_id = $b->trade_id;
-            $this->datum_eintritt = $b->join_date;
-            $this->datum_austritt = $b->leave_date;
+            $this->stundensatz = $b['hourly_rate'];
+            $this->geb_datum = $b['birthday'];
+            $this->gewerk_id = $b['trade_id'];
+            $this->datum_eintritt = $b['join_date'];
+            $this->datum_austritt = $b['leave_date'];
 
-            $this->urlaub = $b->holidays;
-            $this->stunden_wo = $b->hours_per_week;
-            $this->benutzer_email = $b->email;
+            $this->urlaub = $b['holidays'];
+            $this->stunden_wo = $b['hours_per_week'];
+            $this->benutzer_email = $b['email'];
         }
     }
 
@@ -188,7 +200,6 @@ class benutzer
             echo "<label for=\"all\">Vollzugriff</label>";
             echo "</div>";
 
-            $pro_reihe = round(($anz + 1) / 5);
             $z = 1;
             for ($a = 0; $a < $anz; $a++) {
                 $z++;
@@ -303,8 +314,8 @@ class benutzer
             echo "<label for=\"$id\">$label</label><select id=\"$id\" name=\"$name\" size=\"1\" $js>";
             echo "<option value=\"Alle\" selected>Alle</option>";
             foreach ($b as $benutzer) {
-                $benutzername = $b->name;
-                $benutzer_id = $b->id;
+                $benutzername = $benutzer->name;
+                $benutzer_id = $benutzer->id;
                 if (Auth::user()->id == $benutzer_id) {
                     echo "<option value=\"$benutzer_id\" selected>$benutzername</option>";
                 } else {
@@ -314,25 +325,6 @@ class benutzer
             echo "</select>";
         } else {
             echo "Keine Mitarbeiter, bitte mitarbeiter unter Menüpunkt -> Benutzer anlegen";
-        }
-    }
-
-    function dropdown_module($b_id)
-    {
-        $module_arr = $this->module_arr();
-        $anz = count($module_arr);
-        if ($anz) {
-            echo "<label for=\"modul_name\">Modul wählen</label><select id=\"modul_name\" name=\"modul_name\" size=\"1\">";
-            echo "<option value=\"*\">Vollzugriff</option>";
-            for ($a = 0; $a < $anz; $a++) {
-                $modul_name = $module_arr [$a];
-                // if(!check_user_mod($b_id, $modul_name)){
-                echo "<option value=\"$modul_name\">$modul_name</option>";
-                // }
-            }
-            echo "</select>";
-        } else {
-            echo "Keine Module";
         }
     }
 
@@ -371,7 +363,7 @@ class benutzer
         $user->api_token = str_random(60);
         $user->save();
 
-        $result = DB::insert("INSERT INTO BENUTZER_PARTNER VALUES (NULL, ?, ?, '1')", [$user->id, $partner_id]);
+        DB::insert("INSERT INTO BENUTZER_PARTNER VALUES (NULL, ?, ?, '1')", [$user->id, $partner_id]);
         /* Benutzer ID zurückgeben */
         return $user->id;
     }

@@ -20,11 +20,11 @@
             <a href='<?php echo route('legacy::bk::index', ['option' => 'anpassung_bk_hk']) ?>'>BK/HK Anpassung</a>
         </div>
         <div class='col s4 m3 l2'>
-            <a href='<?php echo route('legacy::bk::index', ['option' => 'energie']) ?>'><b>Energiewerte</b></a>
+            <a href='<?php echo route('legacy::bk::index', ['option' => 'energie']) ?>'>Energiewerte</a>
         </div>
         <div class='col s4 m3 l2'>
-            <a href='<?php echo route('legacy::bk::index', ['option' => 'anpassung_bk_nk']) ?>'><b>NK-BK
-                    eingeben</b></a>
+            <a href='<?php echo route('legacy::bk::index', ['option' => 'anpassung_bk_nk']) ?>'>NK-BK
+                    eingeben</a>
         </div>
         <div class='col s4 m3 l2'>
             <a href='<?php echo route('legacy::bk::index', ['option' => 'form_profil_kopieren']) ?>'>Profile

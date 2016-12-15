@@ -27,8 +27,8 @@
     <div class='col s6'>
         <h6>Suchen & Filtern</h6>
         <div class='col s12 m12 l4'>
-            <a href='<?php echo route('legacy::rechnungen::index', ['option' => 'rechnung_suchen']) ?>'><b>Rechnung
-                    suchen</b></a>
+            <a href='<?php echo route('legacy::rechnungen::index', ['option' => 'rechnung_suchen']) ?>'>Rechnung
+                    suchen</a>
         </div>
         <div class='col s12 m12 l4'>
             <a href='<?php echo route('legacy::rechnungen::index', ['option' => 'kosten_einkauf']) ?>'>Kosten
@@ -109,7 +109,7 @@
     <div class='col s12 m4'>
         <h6>Sonstige</h6>
         <div class='col s12 m12 l6'>
-            <a href='<?php echo route('legacy::zeiterfassung::index', ['option' => 'stundennachweise']) ?>'><b>Stundennachweise</b></a>
+            <a href='<?php echo route('legacy::zeiterfassung::index', ['option' => 'stundennachweise']) ?>'>Stundennachweise</a>
         </div>
         <div class='col s12 m12 l6'>
             <a href='<?php echo route('legacy::rechnungen::index', ['option' => 'vg_rechnungen']) ?>'>Verwaltergebühren</a>

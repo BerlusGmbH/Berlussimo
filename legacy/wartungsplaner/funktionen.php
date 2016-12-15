@@ -28,9 +28,6 @@ function form_termin_eintragen($benutzer_id, $datum_d, $VON, $BIS)
     if ($VON{0} == '0') {
         $VON = substr($VON, 1);
     }
-    if ($BIS{0} == '0') {
-        $BIS = substr($BIS, 1);
-    }
 
     $von_arr = explode(':', $VON);
     $von_std = $von_arr[0];
@@ -40,8 +37,6 @@ function form_termin_eintragen($benutzer_id, $datum_d, $VON, $BIS)
     $vs1 = $von_std + 1;
     $BIS = "$vs1:$von_min";
     $bis_arr = explode(':', $BIS);
-    $bis_std = $bis_arr[0];
-    $bis_min = $bis_arr[1];
 
     dropdown_zeiten('Von', 'von', 'von', $VON, $js_z);
     echo "<br>";
@@ -182,7 +177,7 @@ function check_mietvertrag_aktuell($mv_id)
 function kontakt_suche($target_id, $string)
 {
     $datum_d = date("d.m.Y");
-    echo "<p class=\"zeile_ueber\">Suchergebnisse, auf Datensatz klicken um zu äbernehmen</p>";
+    echo "<p class=\"zeile_ueber\">Suchergebnisse, auf Datensatz klicken um zu übernehmen</p>";
     echo "<table>";
     $db_abfrage = "SELECT * FROM PERSON WHERE (PERSON_NACHNAME LIKE '$string%' OR PERSON_VORNAME LIKE '%$string%')  && PERSON_AKTUELL='1'";
     $result = DB::select($db_abfrage);
@@ -268,7 +263,7 @@ function kontakt_suche($target_id, $string)
             $eigentuemer_p_id = $einheit_info_arr['EIGENTUEMER_PARTNER'];
 
             $g_id_arr = get_g_id_arr('Partner', $eigentuemer_p_id, $einheit_id);
-            if (is_array($g_id_arr)) {
+            if (!empty($g_id_arr)) {
                 for ($a = 0; $a < count($g_id_arr); $a++) {
                     $g_id = $g_id_arr[$a]['GERAETE_ID'];
 
@@ -298,7 +293,7 @@ function kontakt_suche($target_id, $string)
 function str_suche($target_id, $string)
 {
     $datum_d = date("d.m.Y");
-    echo "<p class=\"zeile_ueber\">Suchergebnisse, auf Datensatz klicken um zu äbernehmen</p>";
+    echo "<p class=\"zeile_ueber\">Suchergebnisse, auf Datensatz klicken um zu übernehmen</p>";
     echo "<table>";
     $db_abfrage = "SELECT * FROM PERSON WHERE (PERSON_NACHNAME LIKE '$string%' OR PERSON_VORNAME LIKE '%$string%')  && PERSON_AKTUELL='1'";
     $result = DB::select($db_abfrage);
@@ -368,7 +363,7 @@ function str_suche($target_id, $string)
             $eigentuemer_p_id = $einheit_info_arr['EIGENTUEMER_PARTNER'];
 
             $g_id_arr = get_g_id_arr('Partner', $eigentuemer_p_id, $einheit_id);
-            if (is_array($g_id_arr)) {
+            if (!empty($g_id_arr)) {
                 for ($a = 0; $a < count($g_id_arr); $a++) {
                     $g_id = $g_id_arr[$a]['GERAETE_ID'];
 
@@ -396,9 +391,7 @@ function get_g_id_arr($kos_typ, $kos_id, $einheit_id)
     $einheit_kurzname = $einheit_info_arr['EINHEIT_KURZNAME'];
     $db_abfrage = "SELECT GERAETE_ID FROM W_GERAETE WHERE AKTUELL='1' && LAGE_RAUM='$einheit_kurzname' && KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID='$kos_id'";
     $result = DB::select($db_abfrage);
-    if (!empty($result)) {
-        return $result;
-    }
+    return $result;
 }
 
 
@@ -410,23 +403,8 @@ function form_inaktiv($kos_typ, $kos_id)
     }
     formular('', 'inaktiv');
     get_entfernung_km($anschrift);
-    $anschrift_arr = explode(' ', $anschrift);
-    $s_str = $anschrift_arr['0'];
-    $s_nr = $anschrift_arr['1'];
-    $s_plz = $anschrift_arr['2'];
-    $s_ort = $anschrift_arr['3'];
-
-    $anschrift_arr = explode(' ', START_ADRESSE);
-#print_r($anschrift_arr);
-
-    $z_str = $anschrift_arr['0'];
-    $z_nr = $anschrift_arr['1'];
-    $z_plz = $anschrift_arr['2'];
-    $z_ort = $anschrift_arr['3'];
-
     echo "<h1>Terminplanung bei $kos_bez</h1>";
     formular_ende();
-
 }
 
 function get_partner_name($partner_id)
@@ -520,8 +498,6 @@ function get_entfernung_km($start, $destination = START_ADRESSE)
 
         $status = $xml->status;
         if ($status == 'OK') {
-            $lat = $xml->route->leg->step->start_location->lat;
-            $lon = $xml->route->leg->step->start_location->lng;
             $start_a = $xml->route->leg->start_address;
             $end_a = $xml->route->leg->end_address;
             $km = $xml->route->leg->distance->text;
@@ -736,14 +712,10 @@ GERAETE_ID NOT IN
                     if (!in_array("$lat_lon_db_start|$lat_lon_db_ziel", session()->get('kreuz'))) {
                         session()->push('kreuz', "$lat_lon_db_start|$lat_lon_db_ziel");
                         $start_arr = explode(',', $lat_lon_db_start);
-                        $x1 = ltrim(rtrim($start_arr[0]));
-                        $x2 = ltrim(rtrim($start_arr[1]));
                         $von_str = "$g->partner_strasse $g->partner_hausnr";
 
 
                         $ziel_arr = explode(',', $lat_lon_db_ziel);
-                        $y1 = ltrim(rtrim($ziel_arr[0]));
-                        $y2 = ltrim(rtrim($ziel_arr[1]));
                         $bis_str = "$g1->partner_strasse $g1->partner_hausnr";
 
                         $en = new general();
@@ -857,7 +829,7 @@ function form_wartungsteil($kos_typ, $kos_id)
     $js_neues_teil = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'wartungsteil erfassen']) . "','leftBox');\"";
     formular('', 'formx1');
 
-    if (is_array($arr)) {
+    if (!empty($arr)) {
         $datum_ab = date("d.m.Y");
         $datum_ab = tage_plus_wp($datum_ab, 1);
         $anz = count($arr);
@@ -884,10 +856,8 @@ function form_wartungsteil($kos_typ, $kos_id)
             $dauer = 90;
         }
         dropdown_dauer('Termin Dauer', 'termin_dauer', 'termin_dauer', $dauer, $js, $class_r = 'reihe', $class_f = 'feld');
-        $js = "onclick=\"termin_suchen_btn()\"";
         $js1 = "onclick=\"termin_suchen_btn1()\"";
         button('Suchen', 'suchen', 'Termine suchen', $js1);
-        $js2 = "onclick=\"termin_suchen_btn2()\"";
         echo "<br><hr>";
         $d_onchange = "onChange=\"daj3('/wartungsplaner/ajax?option=detail_geraet&tab=W_GERAETE&tab_id='+this.value,'rightBox1');daj3('/wartungsplaner/ajax?option=geraete_info_anzeigen&g_id='+this.value,'rightBox');daj3('/wartungsplaner/ajax?option=termin_suchen_neu&g_id='+this.value,'leftBox1');daj3('/wartungsplaner/ajax?option=get_datum_lw&g_id='+this.value,'lw_datum')\"";
         dropdown_wgeraet($arr, 'Wartungsteil wählen', 'g_id', 'g_id', $d_onchange);
@@ -1132,7 +1102,7 @@ function form_wt_aendern($g_id)
     } else {
 
         $gereate_info_arr = geraete_info_arr($g_id);
-        if (!is_array($gereate_info_arr)) {
+        if (empty($gereate_info_arr)) {
             die('Gerät unbekannt xsdsdsd');
         } else {
             extract($gereate_info_arr[0]);
@@ -1229,16 +1199,13 @@ function geraete_liste()
         $g_id = $arr[$a]['GERAETE_ID'];
         $lage_raum = $arr[$a]['LAGE_RAUM'];
         $bj = $arr[$a]['BAUJAHR'];
-        $int = $arr[$a]['INTERVAL_M'];
         $gruppe_id = $arr[$a]['GRUPPE_ID'];
         $gruppen_bez = get_gruppen_bez($gruppe_id);
-        $kos_typ = $arr[$a]['KOSTENTRAEGER_TYP'];
         $kos_id = $arr[$a]['KOSTENTRAEGER_ID'];
         $g_bez = $arr[$a]['BEZEICHNUNG'];
         $l_w_datum = get_datum_lw($g_id);
         $n_w_datum = get_datum_nw($g_id);
         if (!check_is_eigentuemer($kos_id)) {
-            #$pa_name = get_partner_name($kos_id);
             $g = new general();
             $g->get_partner_info($kos_id);
             $pa_name = "$g->partner_name, $g->partner_strasse $g->partner_hausnr, $g->partner_plz $g->partner_ort";
@@ -1250,8 +1217,6 @@ function geraete_liste()
             $haus_str = $einheit_info_arr['HAUS_STRASSE'];
             $haus_nr = $einheit_info_arr['HAUS_NUMMER'];
             $e_lage = $einheit_info_arr['EINHEIT_LAGE'];
-            $objekt_id = $einheit_info_arr['OBJEKT_ID'];
-            $eigentuemer_p_id = $einheit_info_arr['EIGENTUEMER_PARTNER'];
             $p_name = "<b>MIETER:</b> $lage_raum $mietername $haus_str $haus_nr $e_lage";
 
 
@@ -1276,8 +1241,6 @@ function geraete_info_anzeigen($g_id)
     $result = DB::select("SELECT * FROM W_GERAETE WHERE AKTUELL='1' && GERAETE_ID='$g_id' LIMIT 0,1");
     if (!empty($result)) {
         foreach($result as $row) {
-            $dat = $row['DAT'];
-            $gruppe_id = $row['GRUPPE_ID'];
             $bezeichnung = $row['BEZEICHNUNG'];
             $hersteller = $row['HERSTELLER'];
             $baujahr = $row['BAUJAHR'];
@@ -1356,7 +1319,7 @@ function get_hersteller_modelle_arr($hersteller)
 function get_wgeraete_bez($gruppe_id)
 {
     $arr = get_wartungsteile_gruppe_arr($gruppe_id);
-    if (is_array($arr)) {
+    if (!empty($arr)) {
         $anz = count($arr);
         for ($a = 0; $a < $anz; $a++) {
             $g_id = $arr[$a]['GERAETE_ID'];
@@ -1369,7 +1332,7 @@ function get_wgeraete_bez($gruppe_id)
 function get_hersteller_gruppe($gruppe_id)
 {
     $arr = get_wartungsteile_gruppe_arr($gruppe_id);
-    if (is_array($arr)) {
+    if (!empty($arr)) {
         $anz = count($arr);
         for ($a = 0; $a < $anz; $a++) {
             $h_bez = $arr[$a]['HERSTELLER'];
@@ -1387,7 +1350,7 @@ function get_hersteller_gruppe($gruppe_id)
 function get_hersteller_modelle($hersteller)
 {
     $arr = get_hersteller_modelle_arr($hersteller);
-    if (is_array($arr)) {
+    if (!empty($arr)) {
         $anz = count($arr);
         for ($a = 0; $a < $anz; $a++) {
             $bez = $arr[$a]['BEZEICHNUNG'];
@@ -1443,10 +1406,9 @@ function termin_suchen($g_id)
 {
     session()->put('g_id', $g_id);
     $g_info_arr = geraete_info_arr($g_id);
-    if (is_array($g_info_arr)) {
+    if (!empty($g_info_arr)) {
         $gruppe_id = $g_info_arr[0]['GRUPPE_ID'];
         $kos_typ = $g_info_arr[0]['KOSTENTRAEGER_TYP'];
-
     } else {
         die('Keine Geräte Informationen!!! Fehler 43332! Z:945. termin_suchen!');
     }
@@ -1457,13 +1419,11 @@ function termin_suchen($g_id)
 
     /*Präfen ob Therme einem Eigentuemer gehärt*/
     /*Bei true is der Eigentämer auch Eigentämer eines Wohnobjektes*/
-    $p_anschrift = get_partner_anschrift($kos_id);
     $g = new general();
     $g->get_partner_info($kos_id);
     $g->get_gruppen_info($gruppe_id);
 
     /*OPTIMIERUNG gleich bei OSM fragen, da ist db abfrage integriert*/
-    $lat_lon_db_start = get_lat_lon_db_osm(START_STRASSE, START_NR, START_PLZ, START_ORT);
 
     if (!check_is_eigentuemer($kos_id)) {
         $g_z = new general();
@@ -1499,9 +1459,6 @@ function termin_suchen($g_id)
     $tages_arr = $tt->get_termin_arr($g->team_id, $datum_df, 90);
 
     if (is_array($tages_arr)) {
-
-        $anz_tage = count($tages_arr);
-
         $srt = new arr_multisort();
         $srt->setArray($tages_arr);
         $srt->addColumn("D_KM", SRT_ASC);
@@ -1520,7 +1477,7 @@ function termin_suchen3($g_id)
 {
     session()->put('g_id', $g_id);
     $g_info_arr = geraete_info_arr($g_id);
-    if (is_array($g_info_arr)) {
+    if (!empty($g_info_arr)) {
         $gruppe_id = $g_info_arr[0]['GRUPPE_ID'];
         session()->put('gruppe_id', $gruppe_id);
         $kos_typ = $g_info_arr[0]['KOSTENTRAEGER_TYP'];
@@ -1540,8 +1497,6 @@ function termin_suchen3($g_id)
     $g->get_gruppen_info($gruppe_id);
 
     /*OPTIMIERUNG gleich bei OSM fragen, da ist db abfrage integriert*/
-    $lat_lon_db_start = get_lat_lon_db_osm(START_STRASSE, START_NR, START_PLZ, START_ORT);
-
     if (!check_is_eigentuemer($kos_id)) {
         $g_z = new general();
         $g_z->get_partner_info($kos_id);
@@ -1576,9 +1531,6 @@ function termin_suchen3($g_id)
     $tages_arr = $tt->get_termin_arr($g->team_id, $datum_df, 90);
 
     if (is_array($tages_arr)) {
-
-        $anz_tage = count($tages_arr);
-
         $srt = new arr_multisort();
         //	Set the array to be sorted
         $srt->setArray($tages_arr);
@@ -1611,7 +1563,6 @@ function termin_suchen4($g_id, $team_id = '1')
     $tt = new general();
     $tages_arr = $tt->get_termin_arr1($team_id, $datum_df, 90);
     if (is_array($tages_arr)) {
-        $anz_tage = count($tages_arr);
         echo "<pre>";
         print_r($tages_arr); /*WENN Termin-Dauer gewählt schon mit passenden Läcken*/
     } else {
@@ -1631,9 +1582,7 @@ function termin_suchen2($str, $nr, $plz, $ort, $team_id = '1')
         dropdown_dauer('Termindauer', 'termin_dauer', 'termin_dauer', 60, $js_termn_dauer);
     }
 
-    #echo "$str, $nr, $plz, $ort";
     /*OPTIMIERUNG gleich bei OSM fragen, da ist db abfrage integriert*/
-    $lat_lon_db_start = get_lat_lon_db_osm(START_STRASSE, START_NR, START_PLZ, START_ORT);
     $lat_lon_db_ziel = get_lat_lon_db_osm(umlaute_anpassen($str), $nr, $plz, umlaute_anpassen($ort));
     session()->put('ziel_str', $str);
     session()->put('ziel_nr', $nr);
@@ -1657,7 +1606,6 @@ function termin_suchen2($str, $nr, $plz, $ort, $team_id = '1')
     $tages_arr = $tt->get_termin_arr($team_id, $datum_df, 90);
 
     if (is_array($tages_arr)) {
-        $anz_tage = count($tages_arr);
         $srt = new arr_multisort();
         $srt->setArray($tages_arr);
 
@@ -1677,7 +1625,7 @@ function besten_termin_suchen($g_id, $datum_df)
 {
     session()->put('g_id', $g_id);
     $g_info_arr = geraete_info_arr($g_id);
-    if (is_array($g_info_arr)) {
+    if (!empty($g_info_arr)) {
 
         $gruppe_id = $g_info_arr[0]['GRUPPE_ID'];
         $kos_typ = $g_info_arr[0]['KOSTENTRAEGER_TYP'];
@@ -1695,7 +1643,6 @@ function besten_termin_suchen($g_id, $datum_df)
     /*Bei true is der Eigentämer auch Eigentämer eines Wohnobjektes*/
     $g = new general();
     if (!check_is_eigentuemer($kos_id)) {
-        $p_anschrift = get_partner_anschrift($kos_id);
         $g->get_partner_info($kos_id);
         $lat_lon_db_ziel = get_lat_lon_db_osm($g->partner_strasse, $g->partner_hausnr, $g->partner_plz, $g->partner_ort);
     } else {
@@ -1728,8 +1675,6 @@ function besten_termin_suchen($g_id, $datum_df)
     $g->get_gruppen_info($gruppe_id);
 
     /*OPTIMIERUNG gleich bei OSM fragen, da ist db abfrage integriert*/
-    $lat_lon_db_start = get_lat_lon_db_osm(START_STRASSE, START_NR, START_PLZ, START_ORT);
-
     $ziel_arr = explode(',', $lat_lon_db_ziel);
     session()->put('ziel_lon', $ziel_arr[0]);
     session()->put('ziel_lat', $ziel_arr[1]);
@@ -1996,7 +1941,6 @@ function freie_termine_tab2($arr)
                 for ($b = 0; $b < $freie_t; $b++) {
                     $von = $arr[$a]['LUECKEN'][$b]['VON'];
                     $bis = $arr[$a]['LUECKEN'][$b]['BIS'];
-                    $dauer = $arr[$a]['LUECKEN'][$b]['DAUER'];
                     $js_neues_teil = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'termine_tag_tab2', 'b_id' => $BENUTZER_ID, 'datum' => $DATUM], false) . "','rightBox1');daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'karte', 'b_id' => $BENUTZER_ID, 'datum_d' => $DATUM], false) . "','leftBox1');zumAnker('$von-$bis')\"";
                     echo "<tr $js_neues_teil class=\"zeile3\"><td>$von-$bis</td>";
                     echo get_entf_vor_nach($ganzer_tag_arr, $von, $bis) . '</tr>';
@@ -2042,7 +1986,7 @@ function kontaktdaten_anzeigen($g_id = 1)
 function kontaktdaten_anzeigen_kunde($kos_id)
 {
     $arr = finde_detail_kontakt_arr('PARTNER_LIEFERANT', $kos_id);
-    if (is_array($arr)) {
+    if (!empty($arr)) {
         $kontaktdaten = '';
         foreach ($arr as $a) {
             $dname = $arr[$a]['DETAIL_NAME'];
@@ -2069,7 +2013,7 @@ function kontaktdaten_anzeigen_mieter($einheit_bez, $hinweis_an = 1)
             Foreach ($result as $row) {
                 $person_id = $row['PERSON_MIETVERTRAG_PERSON_ID'];
                 $arr = finde_detail_kontakt_arr('PERSON', $person_id, $hinweis_an);
-                if (is_array($arr)) {
+                if (!empty($arr)) {
                     $anz = count($arr);
                     for ($a = 0; $a < $anz; $a++) {
                         $dname = $arr[$a]['DETAIL_NAME'];
@@ -2105,8 +2049,6 @@ function tages_ansicht($benutzer_id, $datum_d)
     echo "<table><tr><th>ZEIT</th><th>TERMIN</th><th>INFOS</th></tr>";
 
     $von_str = '';
-    $bis_str = '';
-    $kunden_info = '';
 
     for ($a = 0; $a < $anz; $a++) {
         /*Zeile TERMIN FREI*/
@@ -2118,7 +2060,6 @@ function tages_ansicht($benutzer_id, $datum_d)
         }
         /*Alle Termine ohne Vortermin, also nur erster Termin*/
         if ($a == 0) {
-            $start = 'BASIS/HAUS';
             /*Von zu Hause*/
             $ggg = new general();
             $ben_profil = $ggg->get_wteam_profil($benutzer_id);
@@ -2134,7 +2075,6 @@ function tages_ansicht($benutzer_id, $datum_d)
                 /*Aus der Basis*/
                 $lat_lon_db_start = get_lat_lon_db_osm(START_STRASSE, START_NR, START_PLZ, START_ORT);
                 $von_str = START_STRASSE . ' ' . START_NR;
-                $kunden_info = "BASIS/HAUS";
             }
         }
 
@@ -2168,7 +2108,6 @@ function tages_ansicht($benutzer_id, $datum_d)
                 $lat_lon_db_ziel = get_lat_lon_db_osm($g_z->partner_strasse, $g_z->partner_hausnr, $g_z->partner_plz, $g_z->partner_ort);
                 $bis_str = "$g_z->partner_strasse $g_z->partner_hausnr";
                 $kunden_info = "$g_z->partner_name<br>$g_z->partner_strasse $g_z->partner_hausnr, $g_z->partner_plz $g_z->partner_ort";
-                $g_id = $arr[$a]['GERAETE_ID'];
                 $kunden_info .= kontaktdaten_anzeigen_kunde($arr[$a]['KOSTENTRAEGER_ID']);
             } else {
                 /*Mieterinformationen holen*/
@@ -2251,31 +2190,19 @@ function tages_ansicht($benutzer_id, $datum_d)
 function tages_ansicht_arr($benutzer_id, $datum_d)
 {
     session()->put('mitarbeiter_id', $benutzer_id);
-    $benutzername = get_benutzername($benutzer_id);
-    $wochentag = get_wochentag_name($datum_d);
-    $kw = get_kw($datum_d);
-    $tag_davor = tage_minus_wp($datum_d, 1);
-    $tag_danach = tage_plus_wp($datum_d, 1);
 
     $arr = tages_termine_arr_b($benutzer_id, $datum_d);
     $anz = count($arr);
 
 
     $von_str = '';
-    $bis_str = '';
-    $kunden_info = '';
 
     for ($a = 0; $a < $anz; $a++) {
         /*Zeile TERMIN FREI*/
         $von = $arr[$a]['VON'];
         $bis = $arr[$a]['BIS'];
-        $txt = $arr[$a]['TEXT'];
-        if (!empty($arr[$a]['HINWEIS'])) {
-            $hinweis = $arr[$a]['HINWEIS'];
-        }
         /*Alle Termine ohne Vortermin, also nur erster Termin*/
         if ($a == 0) {
-            $start = 'BASIS/HAUS';
             /*Von zu Hause*/
             $ggg = new general();
             $ben_profil = $ggg->get_wteam_profil($benutzer_id);
@@ -2291,19 +2218,16 @@ function tages_ansicht_arr($benutzer_id, $datum_d)
                 /*Aus der Basis*/
                 $lat_lon_db_start = get_lat_lon_db_osm(START_STRASSE, START_NR, START_PLZ, START_ORT);
                 $von_str = START_STRASSE . ' ' . START_NR;
-                $kunden_info = "BASIS/HAUS";
             }
         }
 
         /*Aktueller Termin ist frei*/
         if (!isset($arr[$a]['KOSTENTRAEGER_TYP'])) {
-            $status = 'frei';
             if (!check_is_eigentuemer(session()->get('kos_id'))) {
                 $g_z = new general();
                 $g_z->get_partner_info(session()->get('kos_id'));
                 $lat_lon_db_ziel = get_lat_lon_db_osm($g_z->partner_strasse, $g_z->partner_hausnr, $g_z->partner_plz, $g_z->partner_ort);
                 $bis_str = "$g_z->partner_strasse $g_z->partner_hausnr";
-                #$kunden_info= "$g_z->partner_name $bis_str" ;
                 $kunden_info = "$g_z->partner_name<br>$g_z->partner_strasse $g_z->partner_hausnr, $g_z->partner_plz $g_z->partner_ort";
                 $kunden_info .= kontaktdaten_anzeigen_kunde(session()->get('kos_id'));
             } else {
@@ -2326,7 +2250,6 @@ function tages_ansicht_arr($benutzer_id, $datum_d)
                 $lat_lon_db_ziel = get_lat_lon_db_osm($g_z->partner_strasse, $g_z->partner_hausnr, $g_z->partner_plz, $g_z->partner_ort);
                 $bis_str = "$g_z->partner_strasse $g_z->partner_hausnr";
                 $kunden_info = "$g_z->partner_name<br>$g_z->partner_strasse $g_z->partner_hausnr, $g_z->partner_plz $g_z->partner_ort";
-                $g_id = $arr[$a]['GERAETE_ID'];
                 $kunden_info .= kontaktdaten_anzeigen_kunde($arr[$a]['KOSTENTRAEGER_ID']);
             } else {
                 /*Mieterinformationen holen*/
@@ -2372,12 +2295,7 @@ function get_fahrzeit($g = 50, $km)
 function tages_ansicht_neu($benutzer_id, $datum_d, $hinweis_an = 1)
 {
     session()->put('mitarbeiter_id', $benutzer_id);
-    $benutzername = get_benutzername($benutzer_id);
     $wochentag = get_wochentag_name($datum_d);
-    $kw = get_kw($datum_d);
-    $tag_davor = tage_minus_wp($datum_d, 1);
-    $tag_danach = tage_plus_wp($datum_d, 1);
-
     $arr = tages_termine_arr_b($benutzer_id, $datum_d);
     $anz = count($arr);
     echo "<table height=\"100%\"><tr height=\"20px\" ><th>ZEIT</th><th>TERMIN";
@@ -2385,7 +2303,6 @@ function tages_ansicht_neu($benutzer_id, $datum_d, $hinweis_an = 1)
     button('btn_pdf', 'btn_pdf', 'PDF', $js_pdf);
     echo "</th><th>INFOS</th></tr>";
     echo "<tr><td height=\"20px\" colspan=\"3\"><b>$wochentag, $datum_d</b></td></tr>";
-    $von_str = '';
     $bis_str = '';
     $kunden_info = '';
 
@@ -2433,7 +2350,6 @@ function tages_ansicht_neu($benutzer_id, $datum_d, $hinweis_an = 1)
                 $g_z->get_partner_info($arr[$a]['KOSTENTRAEGER_ID']);
                 $bis_str = "$g_z->partner_strasse $g_z->partner_hausnr";
                 $kunden_info = "$g_z->partner_name<br>$g_z->partner_strasse $g_z->partner_hausnr, $g_z->partner_plz $g_z->partner_ort";
-                $g_id = $arr[$a]['GERAETE_ID'];
                 $kunden_info .= kontaktdaten_anzeigen_kunde($arr[$a]['KOSTENTRAEGER_ID']);
             } else {
                 /*Mieterinformationen holen*/
@@ -2459,7 +2375,6 @@ function tages_ansicht_neu($benutzer_id, $datum_d, $hinweis_an = 1)
             $termin_dat = $arr[$a]['DAT'];
             $funk1 = "termin_loeschen|$termin_dat";
             $funk2 = "daj3|" . route('legacy::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $benutzer_id, 'datum' => $datum_d], false) . "|rightBox1";
-            $js_onsubmit = "onclick='yes_no(\"$funk1\", \"$funk2\")'";
         }
         $von_arr = explode(':', $von);
         $bis_arr = explode(':', $bis);
@@ -2476,9 +2391,6 @@ function tages_ansicht_neu($benutzer_id, $datum_d, $hinweis_an = 1)
         echo "</td><td valign=\"top\">$g_info";
         echo "<br>";
         echo "</td></tr>";
-        $von_str = $bis_str;
-        $lat_lon_db_start = $lat_lon_db_ziel;
-
     }//end for
     echo "</table>";
 }
@@ -2499,9 +2411,6 @@ function tages_ansicht_umkreis($benutzer_id, $datum_d)
     echo "<table><tr><th>ZEIT</th><th>TERMIN</th><th>OPTION</th></tr>";
 
     $von_str = '';
-    $bis_str = '';
-    $kunden_info = '';
-
     for ($a = 0; $a < $anz; $a++) {
         /*Zeile TERMIN FREI*/
         $von = $arr[$a]['VON'];
@@ -2584,11 +2493,6 @@ function tages_ansicht_umkreis($benutzer_id, $datum_d)
             echo "<tr class=\"zeile_detail\"><td colspan=\"3\">$von_str bis $bis_str | <b>Entfernung: $g_e->km | Fahrzeit: $g_e->fahrzeit</b> |</td></tr>";
         }
 
-
-        if ($status == 'frei') {
-            $js_termin = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'form_termin_eintragen', 'b_id' => $benutzer_id, 'datum' => $datum_d, 'von' => $von, 'bis' => $bis], false) . "','rightBox1');\"";
-
-        }
         echo "<tr class=\"zeile_$status\"><td id=\"$von-$bis\" name=\"$von-$bis\">$von<br>$bis";
 
         echo "</td><td valign=\"top\">$kunden_info<br><br></td>";
@@ -2604,8 +2508,6 @@ function tages_ansicht_umkreis($benutzer_id, $datum_d)
                 button('btn_reserve', "btn_reserve$von$bis", 'Termin vormerken', $js_res);
             }
             echo "</td>";
-        } else {
-            $js_aendern = "onclick=\"daj3('" . route('legacy::wartungsplaner::ajax', ['option' => 'wt_aendern', 'g_id' => $g_id], false) . "', 'rightBox')\"";
         }
         echo "<br>";
         echo "</tr>";
@@ -2621,17 +2523,10 @@ function tages_ansicht_umkreis($benutzer_id, $datum_d)
 function tages_ansicht_umkreis_arr($benutzer_id, $datum_d)
 {
     session()->put('mitarbeiter_id', $benutzer_id);
-    $benutzername = get_benutzername($benutzer_id);
-    $wochentag = get_wochentag_name($datum_d);
-    $kw = get_kw($datum_d);
-    $tag_davor = tage_minus_wp($datum_d, 1);
-    $tag_danach = tage_plus_wp($datum_d, 1);
     $arr = tages_termine_arr_b($benutzer_id, $datum_d);
     $anz = count($arr);
 
     $von_str = '';
-    $bis_str = '';
-    $kunden_info = '';
 
     for ($a = 0; $a < $anz; $a++) {
         /*Zeile TERMIN FREI*/
@@ -2888,13 +2783,13 @@ function termine_tag_kw($benutzer_id, $datum_d)
 
     $luecken_termine = get_luecken_termine($benutzer_id, $datum_d);
 
-    if (is_array($luecken_termine) && is_array($arr)) {
+    if (is_array($luecken_termine) && !empty($arr)) {
         $my_arr = array_sortByIndex(array_merge($arr, $luecken_termine), 'VON');
     }
-    if (is_array($luecken_termine) && !is_array($arr)) {
+    if (is_array($luecken_termine) && empty($arr)) {
         $my_arr = $luecken_termine;
     }
-    if (!is_array($luecken_termine) && is_array($arr)) {
+    if (!is_array($luecken_termine) && !empty($arr)) {
         $my_arr = $arr;
     }
     $arr = $my_arr;
@@ -2977,7 +2872,7 @@ function get_luecken_termine($benutzer_id, $datum_d)
     unset($prof_arr);
 
     $arr = get_termine_tag_arr($benutzer_id, $datum_d);
-    if (is_array($arr)) {
+    if (!empty($arr)) {
         $anz = count($arr);
         $z = 0;
         for ($a = 0; $a < $anz; $a++) {
@@ -3073,7 +2968,7 @@ function get_luecken_termine1($benutzer_id, $datum_d)
     unset($prof_arr);
 
     $arr = get_termine_tag_arr($benutzer_id, $datum_d);
-    if (is_array($arr)) {
+    if (!empty($arr)) {
         $anz = count($arr);
         $z = 0;
         for ($a = 0; $a < $anz; $a++) {
@@ -3788,13 +3683,13 @@ function tages_termine($benutzer_id, $datum_d)
     $arr = get_termine_tag_arr($benutzer_id, $datum_d);
 
     $luecken_termine = get_luecken_termine($benutzer_id, $datum_d);
-    if (is_array($luecken_termine) && is_array($arr)) {
+    if (is_array($luecken_termine) && !empty($arr)) {
         $my_arr = array_sortByIndex(array_merge($arr, $luecken_termine), 'VON');
     }
-    if (is_array($luecken_termine) && !is_array($arr)) {
+    if (is_array($luecken_termine) && empty($arr)) {
         $my_arr = $luecken_termine;
     }
-    if (!is_array($luecken_termine) && is_array($arr)) {
+    if (!is_array($luecken_termine) && !empty($arr)) {
         $my_arr = $arr;
     }
     $arr = $my_arr;
@@ -3929,7 +3824,7 @@ function vorschlag($gruppe_id = '1', $gemacht = 'NOT')
 {
     session()->put('gruppe_id', $gruppe_id);
     $arr = alle_noch_zu_machen_arr($gruppe_id);
-    if (is_array($arr)) {
+    if (!empty($arr)) {
         $anz = count($arr);
         $datum_sql = date("Y-m-d");
         $termine_tag = 5;
@@ -4036,7 +3931,7 @@ function vorschlag_kurz($gruppe_id = '1', $gemacht = 'NOT')
 {
     session()->put('gruppe_id', $gruppe_id);
     $arr = alle_noch_zu_machen_arr($gruppe_id);
-    if (is_array($arr)) {
+    if (!empty($arr)) {
         $anz = count($arr);
         if (!session()->has('datum_df')) {
             $datum_sql = date("Y-m-d");
@@ -4212,7 +4107,7 @@ function vorschlag_kurz_chrono($gruppe_id = '1', $gemacht = 'NOT')
 {
     session()->put('gruppe_id', $gruppe_id);
     $arr = alle_noch_zu_machen_arr_chrono($gruppe_id);
-    if (is_array($arr)) {
+    if (!empty($arr)) {
         $anz = count($arr);
         if (session()->has('datum_df')) {
             $datum_sql = date("Y-m-d");
@@ -4413,7 +4308,7 @@ function get_mieter_infos($mv_id)
     if (!empty($result)) {
         $person_string = '';
         foreach($result as $row) {
-            $person_id = $row->PERSON_MIETVERTRAG_PERSON_ID;
+            $person_id = $row['PERSON_MIETVERTRAG_PERSON_ID'];
             $result1 = DB::select("SELECT PERSON_NACHNAME, PERSON_VORNAME FROM PERSON WHERE PERSON_ID='$person_id' && PERSON_AKTUELL='1' ORDER BY PERSON_VORNAME, PERSON_VORNAME ASC");
             if (!empty($result1)) {
                 foreach($result1 as $row1) {
@@ -4585,14 +4480,43 @@ function form_start_stop($tab, $tab_dat)
 
 class general
 {
-
-
-    /*Abfragen*/
-    /*Alle Mitarbeiter eines Teams, die an einem Tag nicht im Urlaub sind und noch freie Termine haben*/
-    #SELECT W_TEAMS_BENUTZER.TEAM_ID, W_TEAMS_BENUTZER.BENUTZER_ID, W_TEAM_PROFILE.1,W_TEAM_PROFILE.2,W_TEAM_PROFILE.3,W_TEAM_PROFILE.4,W_TEAM_PROFILE.5,W_TEAM_PROFILE.6,W_TEAM_PROFILE.7, TERMINE_TAG, START_ADRESSE FROM `W_TEAMS_BENUTZER`, W_TEAM_PROFILE WHERE `TEAM_ID` = '1' AND W_TEAMS_BENUTZER.AKTUELL = '1' AND W_TEAM_PROFILE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID AND W_TEAM_PROFILE.AKTUELL='1' AND W_TEAM_PROFILE.AKTIV='1' AND TERMINE_TAG>(SELECT COUNT(*) AS ANZ FROM GEO_TERMINE WHERE GEO_TERMINE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID && GEO_TERMINE.AKTUELL='1' && DATUM='2011-06-13') && W_TEAMS_BENUTZER.BENUTZER_ID NOT IN(SELECT BENUTZER_ID FROM URLAUB WHERE URLAUB.DATUM='2011-06-13' && URLAUB.AKTUELL='1');
-    /*EIN bestimmter tag nur*/
-    /*DATUM UND WOCHENTAG ERST SETZEN*/
-    #SELECT W_TEAMS_BENUTZER.TEAM_ID, DAYOFWEEK( '2011-06-13' ) +1 AS WOCHENTAG, W_TEAMS_BENUTZER.BENUTZER_ID, W_TEAM_PROFILE.1 AS KANN, TERMINE_TAG, START_ADRESSE FROM `W_TEAMS_BENUTZER`, W_TEAM_PROFILE WHERE  W_TEAM_PROFILE.1='1' AND `TEAM_ID` = '1' AND W_TEAMS_BENUTZER.AKTUELL = '1' AND W_TEAM_PROFILE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID AND W_TEAM_PROFILE.AKTUELL='1' AND W_TEAM_PROFILE.AKTIV='1' AND TERMINE_TAG>(SELECT COUNT(*) AS ANZ FROM GEO_TERMINE WHERE GEO_TERMINE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID && GEO_TERMINE.AKTUELL='1' && DATUM='2011-06-13') && W_TEAMS_BENUTZER.BENUTZER_ID NOT IN(SELECT BENUTZER_ID FROM URLAUB WHERE URLAUB.DATUM='2011-06-13' && URLAUB.AKTUELL='1')
+    public $partner_strasse;
+    public $partner_hausnr;
+    public $partner_plz;
+    public $partner_ort;
+    public $km;
+    public $zeit;
+    public $team_benutzer_ids;
+    public $team_bez;
+    public $partner_name;
+    public $mieter_lat_lon_db_ziel;
+    public $mieter_info;
+    public $mieter_bis_str;
+    public $mieter_name;
+    public $kundschaft;
+    public $fahrzeit;
+    public $gruppe;
+    public $team_id;
+    public $team_profile;
+    public $t_kos_typ;
+    public $t_kos_id;
+    public $t_g_id;
+    public $t_lage_raum;
+    public $v_text;
+    public $v_kurztext;
+    public $status;
+    public $quelle;
+    public $anschrift;
+    public $kontakt;
+    public $partner_dat;
+    public $partner_land;
+    public $gruppe_id;
+    public $t_datum;
+    public $t_von;
+    public $t_bis;
+    public $t_text;
+    public $t_hersteller;
+    public $t_bez;
 
     function route_anzeigen_karte($b_id = '21', $datum_d)
     {
@@ -4858,7 +4782,7 @@ class general
         echo "<span class=\"$class_f\">";
         echo "<select name=\"$name\" size=\"1\" id=\"$id\" $js>\n";
         $arr = $this->get_teams_arr();
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             for ($a = 0; $a < $anz; $a++) {
                 $t_id = $arr[$a]['TEAM_ID'];
@@ -4888,7 +4812,7 @@ class general
     function dropdown_mitarbeiter($team_id, $label, $id, $name, $selected, $js, $class_r = 'reihe', $class_f = 'feld')
     {
         $arr = $this->get_wteam_benutzer($team_id);
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             echo "<div class=\"$class_r\">";
             echo "<span class=\"label\">$label</span>";
             echo "<span class=\"$class_f\">";
@@ -4931,7 +4855,7 @@ class general
             echo "<select name=\"$name\" size=\"5\" id=\"$id\" $js>\n";
 
             foreach ($arr as $row) {
-                $b_id = $row->BENUTZER_ID;
+                $b_id = $row['BENUTZER_ID'];
                 $b_name = get_benutzername($b_id);
                 if ($selected == $b_id) {
                     echo "<option selected value=\"$b_id\">$b_name</option>";
@@ -4965,7 +4889,7 @@ class general
     function get_team_liste($link)
     {
         $arr = $this->get_teams_arr();
-        if (is_array($arr)) {
+        if (!empty($arr)) {
             $anz = count($arr);
             for ($a = 0; $a < $anz; $a++) {
                 $t_id = $arr[$a]['TEAM_ID'];

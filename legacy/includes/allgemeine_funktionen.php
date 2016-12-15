@@ -1,22 +1,5 @@
 <?php
-/**
- * BERLUSSIMO
- *
- * Hausverwaltungssoftware
- *
- *
- * @copyright    Copyright (c) 2010, Berlus GmbH, Fontanestr. 1, 14193 Berlin
- * @link         http://www.berlus.de
- * @author       Sanel Sivac & Wolfgang Wehrheim
- * @contact         software(@)berlus.de
- * @license     http://www.gnu.org/licenses/agpl.html AGPL Version 3
- *
- * @filesource   $HeadURL: http://192.168.2.52/svn/berlussimo_1/tags/02.11.2010 - Downloadversion 0.27/includes/allgemeine_funktionen.php $
- * @version      $Revision: 15 $
- * @modifiedby   $LastChangedBy: sivac $
- * @lastmodified $Date: 2011-07-07 10:41:33 +0200 (Do, 07 Jul 2011) $
- *
- */
+
 function umlautundgross($wort)
 {
     $tmp = strtoupper($wort);
@@ -47,10 +30,8 @@ function umlautundgross($wort)
 function gib_zahlen($string)
 {
     $arr = explode(' ', $string);
-    // print_r($arr);
     if (is_array($arr)) {
         $anz = count($arr);
-
         for ($a = 0; $a < $anz; $a++) {
             if (($arr [$a]) != '') {
                 if (!ctype_alpha($arr [$a])) {
@@ -59,17 +40,9 @@ function gib_zahlen($string)
             }
         }
         if (isset ($n_arr)) {
-            // $n_arr1 = array_unique($n_arr);
             return $n_arr;
         }
     }
-    // is_
-}
-
-function p($arr)
-{
-    echo '<pre>';
-    print_r($arr);
 }
 
 function check_user_mod($benutzer_id, $module_name)
@@ -92,24 +65,20 @@ function check_user_mod($benutzer_id, $module_name)
 
 function tage_plus($datum, $tage)
 {
-    // echo "$datum T$tage<br>";
     $dat_arr = explode('-', $datum);
     $j = $dat_arr [0];
     $m = $dat_arr [1];
     $d = $dat_arr [2];
     return date('Y-m-d', mktime(0, 0, 0, $m, $d + $tage, $j));
-    // $gestern = date('d.m.Y',mktime(0,0,0,$m,$d-1,$j));
 }
 
 function tage_minus($datum, $tage)
 {
-    // echo "$datum T$tage<br>";
     $dat_arr = explode('-', $datum);
     $j = $dat_arr [0];
     $m = $dat_arr [1];
     $d = $dat_arr [2];
     return date('Y-m-d', mktime(0, 0, 0, $m, $d - $tage, $j));
-    // $gestern = date('d.m.Y',mktime(0,0,0,$m,$d-1,$j));
 }
 
 function tage_plus_wp($datum, $tage)
@@ -148,7 +117,7 @@ function last_id2($tab, $spalte)
 
 function backlink()
 {
-    echo "<hr class=\"backlink\"><a class=\"backlink\" href=\"javascript:history.back()\"><b>Zurück</b></a><hr class=\"backlink\">\n";
+    echo "<a class='btn waves-effect waves-light' href=\"javascript:history.back()\">Zurück</a>\n";
 }
 
 function letzte_objekt_dat()
@@ -178,22 +147,17 @@ function anzahl_haeuser_im_objekt($obj_id)
     return $result[0]['ANZAHL'];
 }
 
+function anzahl_einheiten_im_objekt($obj_id)
+{
+    $result = DB::select("SELECT COUNT(EINHEIT_ID) AS ANZAHL FROM HAUS JOIN EINHEIT ON(EINHEIT.HAUS_ID = HAUS.HAUS_ID) WHERE OBJEKT_ID='$obj_id' && HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1'");
+    return $result[0]['ANZAHL'];
+}
+
 function objekt_kurzname($obj_id)
 {
     $result = DB::select("SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_ID='$obj_id' && OBJEKT_AKTUELL='1' ORDER BY OBJEKT_DAT DESC LIMIT 0,1");
     foreach ($result as $row)
         return $row['OBJEKT_KURZNAME'];
-}
-
-function objekt_kurzname_of_haus($haus_id)
-{
-    $result = DB::select("SELECT OBJEKT_ID FROM HAUS WHERE HAUS_ID='$haus_id' && HAUS_AKTUELL='1' ORDER BY HAUS_DAT DESC LIMIT 0,1");
-    foreach ($result as $row) {
-        $result1 = DB::select("SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_ID='$row[OBJEKT_ID]' && OBJEKT_AKTUELL='1' ORDER BY OBJEKT_DAT DESC LIMIT 0,1");
-        foreach ($result1 as $row1) {
-            return $row1['OBJEKT_KURZNAME'];
-        }
-    }
 }
 
 function last_id($tabelle)
@@ -383,14 +347,6 @@ function iframe_start()
     echo "<div class=\"scrollbarabstand\">\n";
 }
 
-function iframe_start_skaliert($breite, $hoehe)
-{
-    echo "<div id=\"iframe_4\" class=\"iframe_1\" style=\"width:$breite; height:$hoehe;\">\n";
-    echo "<div class=\"abstand_iframe\">\n";
-    echo "<div class=\"scrollbereich\">\n";
-    echo "<div class=\"scrollbarabstand\">\n";
-}
-
 function iframe_end()
 {
     echo "</div>\n";
@@ -409,109 +365,6 @@ function erstelle_abschnitt($ueberschrift)
 function ende_abschnitt()
 {
     echo "</div></div>";
-}
-
-function personen_liste_alle()
-{
-    if (request()->has('person_finden')) {
-        if (request()->input('suche_nach') == "Nachname") {
-            $such_tabelle = "PERSON_NACHNAME";
-        }
-        if (request()->input('suche_nach') == "Vorname") {
-            $such_tabelle = "PERSON_VORNAME";
-        }
-        $suchbegriff = request()->input('suchfeld');
-        // echo "$such_tabelle=$suchbegriff";
-        $db_abfrage = "SELECT PERSON_DAT, PERSON_ID, PERSON_NACHNAME, PERSON_VORNAME, PERSON_GEBURTSTAG FROM PERSON WHERE PERSON_AKTUELL='1' && $such_tabelle LIKE '$suchbegriff%' ORDER BY PERSON_NACHNAME ASC";
-    } else {
-        $db_abfrage = "SELECT PERSON_DAT, PERSON_ID, PERSON_NACHNAME, PERSON_VORNAME, PERSON_GEBURTSTAG FROM PERSON WHERE PERSON_AKTUELL='1' ORDER BY PERSON_NACHNAME ASC";
-    }
-    $result = DB::select($db_abfrage);
-
-    if (!empty($result)) {
-        echo "<table>";
-        echo "<tr ><th>Personenliste</th><th  colspan=\"5\">";
-        sprungmarken_links();
-        echo "</th></tr>\n";
-        // echo "</table>";
-        // echo "<table>";
-        echo "<tr><th >Nachname</th><th>Vorname</th><th>Anschrift</th><th>Einheit</th><th>Geburtstag</th><th>Zusatzinformationen</th></tr>\n";
-        echo "</table>";
-        iframe_start();
-        echo "<table width=100% >";
-
-        $counter = 0;
-        $buchstaben = array();
-
-        foreach ($result as $row) {
-            $PERSON_GEBURTSTAG = date_mysql2german($row['PERSON_GEBURTSTAG']);
-            $erster_buchstabe = substr($row['PERSON_NACHNAME'], 0, 1);
-
-            if (!in_array($erster_buchstabe, $buchstaben)) {
-                $buchstaben [] = $erster_buchstabe;
-                $sprung_marke_link = "<a name=\"$erster_buchstabe\"><b>$row[PERSON_NACHNAME]</b></a>";
-            } else {
-                $sprung_marke_link = "$row[PERSON_NACHNAME]";
-            }
-
-            $counter++;
-            $mietvertraege_arr = mietvertraege_ids_vom_mieter($row['PERSON_ID']);
-            $anzahl_mv = count($mietvertraege_arr);
-
-            $detail_check = detail_check("PERSON", $row['PERSON_ID']);
-            $delete_link = "<a class=\"table_links\" href='" . route('legacy::personen::index', ['anzeigen' => 'person_loeschen', 'person_dat' => $row['PERSON_DAT']]) . "'>Löschen</a>";
-            $aendern_link = "<a class=\"table_links\" href='" . route('legacy::personen::index', ['anzeigen' => 'person_aendern', 'person_id' => $row['PERSON_ID']]) . "'>Ändern</a>";
-            $mietvertrag_link = "";
-            $haus_info = "";
-            $haus_info_link = "";
-
-            if ($anzahl_mv > 0) {
-
-                for ($i = 0; $i < $anzahl_mv; $i++) {
-                    $mietvertrags_nr = $mietvertraege_arr [$i];
-                    $mv = new mietvertraege ();
-                    $mv->get_mietvertrag_infos_aktuell($mietvertrags_nr);
-                    $einheit_id = einheit_id($mietvertrags_nr);
-                    $einheit_kurzname = einheit_kurzname($einheit_id);
-                    $haus_id = haus_id($einheit_id);
-                    $haus_info = haus_strasse_nr($haus_id);
-                    if ($mv->mietvertrag_aktuell) {
-                        $haus_info_link .= "<a href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_kurz', 'haus_id' => $haus_id]) . "'>$haus_info</a><br>";
-
-                        $mietvertrag_link .= "<a class=\"table_links\" href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mietkonto_uebersicht_detailiert', 'mietvertrag_id' => $mietvertrags_nr]) . "'>MIETKONTO</a><br>";
-                        $einheit_link .= "<a class=\"table_links\" href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id, 'mietvertrag_id' => $mietvertrags_nr]) . "'>$einheit_kurzname</a> <br>";
-                    } else {
-                        $haus_info_link .= "<a class=\"table_links_2\" href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_kurz', 'haus_id' => $haus_id]) . "'>$haus_info</a><br>";
-
-                        $mietvertrag_link .= "<a class=\"table_links_2\" href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mietkonto_uebersicht_detailiert', 'mietvertrag_id' => $mietvertrags_nr]) . "'>MIETKONTO</a><br>";
-                        $einheit_link .= "<a class=\"table_links_2\" href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id, 'mietvertrag_id' => $mietvertrags_nr]) . "'>$einheit_kurzname</a> <br>";
-                    }
-                }
-            } else {
-                $mietvertrag_link = "Kein Mieter";
-            }
-
-            if ($detail_check > 0) {
-                $detail_link = "<a class=\"table_links\" href='" . route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_tabelle' => 'PERSON', 'detail_id' => $row['PERSON_ID']]) . "'>Details</a>";
-            } else {
-                $detail_link = "<a class=\"table_links\" href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'PERSON', 'detail_id' => $row['PERSON_ID']]) . "'>Neues Detail</a>";
-            }
-
-            if ($counter == 1) {
-                echo "<tr class=\"zeile1\"><td width=15%>$sprung_marke_link</td><td width=15%>$row[PERSON_VORNAME]</td><td width=20%>$haus_info_link</td><td>$einheit_link</td><td>$mietvertrag_link </td><td width=10%>$row[PERSON_GEBURTSTAG]</td><td width=10%>$aendern_link</td><td width=10%>$delete_link</td><td width=10%>$detail_link</td></tr>";
-                $mietvertrag_link = "";
-                $einheit_link = "";
-            }
-            if ($counter == 2) {
-                echo "<tr class=\"zeile2\"><td width=15%>$sprung_marke_link</td><td width=15%>$row[PERSON_VORNAME]</td><td width=20%>$haus_info_link</td><td>$einheit_link</td><td> $mietvertrag_link </td><td width=10%>$row[PERSON_GEBURTSTAG]</td><td width=10%>$aendern_link</td><td width=10%>$delete_link</td><td width=10%>$detail_link</td></tr>";
-                $counter = 0;
-                $mietvertrag_link = "";
-                $einheit_link = "";
-            }
-        }
-        iframe_end();
-        echo "</table>";
-    }
 }
 
 function sprungmarken_links()
@@ -555,7 +408,7 @@ function einheiten_ids_by_objekt($objekt_id)
     $result = DB::select("SELECT HAUS_ID FROM HAUS where OBJEKT_ID='$objekt_id' && HAUS_AKTUELL='1'");
     $einheit_ids = [];
     foreach ($result as $row) {
-        $result1 = DB::select("SELECT EINHEIT_ID, EINHEIT_KURZNAME FROM EINHEIT WHERE HAUS_ID='" . $row->HAUS_ID . "' && EINHEIT_AKTUELL='1' ORDER BY EINHEIT_KURZNAME ASC");
+        $result1 = DB::select("SELECT EINHEIT_ID, EINHEIT_KURZNAME FROM EINHEIT WHERE HAUS_ID='" . $row['HAUS_ID'] . "' && EINHEIT_AKTUELL='1' ORDER BY EINHEIT_KURZNAME ASC");
         foreach ($result1 as $row1)
             $einheit_ids [] = $row1;
     }
@@ -650,124 +503,6 @@ function mieternamen_in_string($mieter_id)
     }
 }
 
-function mieternamen_liste_alle()
-{
-    $person_ids_string = personen_ids_der_mieter();
-    $person_ids_array = explode(",", $person_ids_string);
-    $anzahl_mieter = count($person_ids_array);
-
-    $mieter_liste = array();
-    $mieter_liste1 = array();
-    echo "<table width=100%>\n";
-    echo "<tr class=\"feldernamen\"><td colspan=3>Mieterliste</td></tr>\n";
-    echo "<tr class=\"feldernamen\"><td>Namen</td><td>Vertrag</td><td>Info</td></tr>\n";
-    for ($a = 0; $a < $anzahl_mieter; $a++) {
-        $mieternamen = mieternamen_in_string($person_ids_array [$a]);
-        array_push($mieter_liste, "$mieternamen");
-        $mieter_liste1 [$a] ['personen_id'] = $person_ids_array [$a];
-        $mieter_liste1 [$a] ['namen'] = $mieternamen;
-
-        $mieter_vertrag_string = mietvertrag_id_vom_mieter($person_ids_array [$a]);
-        $mieter_vertraege = explode(",", $mieter_vertrag_string);
-        $anz_vertraege = count($mieter_vertraege);
-        // echo $anz_vertraege;
-        $mieter_liste1 [$a] ['vertrags_anzahl'] = $anz_vertraege;
-        for ($i = 0; $i < $anz_vertraege; $i++) {
-            $mieter_liste1 [$a] ['vertrags_id'] [$i] = $mieter_vertraege [$i];
-        }
-    }
-    sort($mieter_liste);
-    sort($mieter_liste1);
-
-    usort($mieter_liste1, "cmp");
-
-    // print_r($mieter_liste);
-    // echo "<pre>";
-    // print_r($mieter_liste1);
-    // echo "</pre>";
-    $anz = count($mieter_liste1);
-
-    $anzahl_mieter_in_liste = count($mieter_liste1);
-    $counter = 0;
-    for ($a = 0; $a < $anzahl_mieter_in_liste; $a++) {
-        $counter++;
-        $detail_check = detail_check("PERSON", $mieter_liste1 [$a] ['personen_id']);
-        $mid = $mieter_liste1 [$a] ['personen_id'];
-        if ($detail_check > 0) {
-            $detail_link = "<a class=\"table_links\" href='" . route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_tabelle' => 'PERSON', 'detail_id' => $mid]) . "'>Details</a>";
-        } else {
-            $detail_link = "<a class=\"table_links\" href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'PERSON', 'detail_id' => $mid]) . "'>Neues Detail</a>";
-        }
-
-        if ($counter == 1) {
-            for ($b = 0; $b < $mieter_liste1 [$a] ['vertrags_anzahl']; $b++) {
-                $akt_vertrag_id = $mieter_liste1 [$a] ['vertrags_id'] [$b];
-                $vertrag_detail_check = detail_check("MIETVERTRAG", $akt_vertrag_id);
-                $einheit_id = einheit_id($akt_vertrag_id);
-                $einheit_kurzname = einheit_kurzname($einheit_id);
-                if ($vertrag_detail_check > 0) {
-                    $vertrags_link = "<a href='" . route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_tabelle' => 'MIETVERTRAG', 'detail_id' => $akt_vertrag_id]) . "'>Vertrag:$akt_vertrag_id</a>&nbsp;\n";
-                } else {
-                    $vertrags_link = "Vertrag: $einheit_kurzname \n";
-                }
-                $namen_link = "<a href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id]) . "'>$mieter_liste1[$a][namen]</a>";
-                echo "<tr class=\"zeile1\"><td>$namen_link</td>";
-                echo "<td>$vertrags_link</td><td>$detail_link</td></tr>\n";
-            }
-        }
-
-        if ($counter == 2) {
-            echo "<tr class=\"zeile1\"><td>$namen_link</td>";;
-            echo "<td>";
-            // echo $mieter_liste1[$a][vertrags_anzahl];
-            for ($b = 0; $b < $mieter_liste1 [$a] ['vertrags_anzahl']; $b++) {
-                $akt_vertrag_id = $mieter_liste1 [$a] ['vertrags_id'] [$b];
-                $vertrag_detail_check = detail_check("MIETVERTRAG", $akt_vertrag_id);
-                $einheit_id = einheit_id($akt_vertrag_id);
-                $einheit_kurzname = einheit_kurzname($einheit_id);
-                if ($vertrag_detail_check > 0) {
-                    $vertrags_link = "<a href='" . route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_tabelle' => 'MIETVERTRAG', 'detail_id' => $akt_vertrag_id]) . "'>$einheit_kurzname Vertrag:$akt_vertrag_id</a>&nbsp;\n";
-                } else {
-                    $vertrags_link = "Vertrag: $einheit_kurzname &nbsp;\n";
-                }
-                // echo $mieter_liste1[$a][vertrags_id][$b];
-                echo "$vertrags_link";
-            }
-            echo "</td><td>$detail_link</td></tr>\n";
-
-            $counter = 0;
-        }
-    }
-    echo "</table>";
-}
-
-function cmp($a, $b)
-{
-    return strcmp($a ["namen"], $b ["namen"]);
-}
-
-function mietvertrag_id_vom_mieter($mieter_id)
-{
-    $result = DB::select("SELECT PERSON_MIETVERTRAG_MIETVERTRAG_ID FROM PERSON_MIETVERTRAG where PERSON_MIETVERTRAG_PERSON_ID='$mieter_id' && PERSON_MIETVERTRAG_AKTUELL='1'");
-    $mietvertraege = array();
-    foreach ($result as $row) {
-        array_push($mietvertraege, "$row[PERSON_MIETVERTRAG_MIETVERTRAG_ID]");
-    }
-    $mietervertrag_ids_string = implode(",", $mietvertraege);
-    return $mietervertrag_ids_string;
-}
-
-function mietvertraege_ids_vom_mieter($mieter_id)
-{
-    $datum_heute = date("Y-m-d");
-    $result = DB::select("SELECT PERSON_MIETVERTRAG_MIETVERTRAG_ID FROM PERSON_MIETVERTRAG where PERSON_MIETVERTRAG_PERSON_ID='$mieter_id' && PERSON_MIETVERTRAG_AKTUELL='1' ORDER BY PERSON_MIETVERTRAG_MIETVERTRAG_ID DESC");
-    $mietvertraege = array();
-    foreach ($result as $row) {
-        array_push($mietvertraege, "$row[PERSON_MIETVERTRAG_MIETVERTRAG_ID]");
-    }
-    return $mietvertraege;
-}
-
 function date_mysql2german($date)
 {
     $d = explode("-", $date);
@@ -790,70 +525,49 @@ function letzte_person_id()
 function letzte_person_dat_of_person_id($person_id)
 {
     $result = DB::select("SELECT PERSON_DAT FROM PERSON WHERE PERSON_ID='$person_id' ORDER BY PERSON_DAT DESC LIMIT 0,1");
-    foreach($result as $row)
+    foreach ($result as $row)
         return $row['PERSON_DAT'];
-}
-
-function letzte_objekt_dat_of_objekt_id($objekt_id)
-{
-    $result = DB::select("SELECT OBJEKT_DAT FROM OBJEKT WHERE OBJEKT_ID='$objekt_id' ORDER BY OBJEKT_DAT DESC LIMIT 0,1");
-    foreach($result as $row)
-        return $row['OBJEKT_DAT'];
-}
-
-function letzte_haus_dat_of_haus_id($haus_id)
-{
-    $result = DB::select("SELECT HAUS_DAT FROM HAUS WHERE HAUS_ID='$haus_id' ORDER BY HAUS_DAT DESC LIMIT 0,1");
-    foreach($result as $row)
-        return $row['HAUS_DAT'];
 }
 
 function letzte_einheit_dat_of_einheit_id($einheit_id)
 {
     $result = DB::select("SELECT EINHEIT_DAT FROM EINHEIT WHERE EINHEIT_ID='$einheit_id' ORDER BY EINHEIT_DAT DESC LIMIT 0,1");
-    foreach($result as $row)
+    foreach ($result as $row)
         return $row['EINHEIT_DAT'];
 }
 
 function objekt_kurzname_finden($objekt_dat)
 {
     $result = DB::select("SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_DAT='$objekt_dat' && OBJEKT_AKTUELL='1' ORDER BY OBJEKT_DAT DESC LIMIT 0,1");
-    foreach($result as $row)
+    foreach ($result as $row)
         return $row['OBJEKT_KURZNAME'];
 }
 
 function letzte_mietvertrag_dat_of_mietvertrag_id($mietvertrag_id)
 {
     $result = DB::select("SELECT MIETVERTRAG_DAT FROM MIETVERTRAG WHERE MIETVERTRAG_ID='$mietvertrag_id' ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1");
-    foreach($result as $row)
+    foreach ($result as $row)
         return $row['MIETVERTRAG_DAT'];
 }
 
 function letzte_person_mietvertrag_dat_by_mietvertrags_id($person_id, $PERSON_MIETVERTRAG_MIETVERTRAG_ID)
 {
     $result = DB::select("SELECT PERSON_MIETVERTRAG_DAT FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_MIETVERTRAG_ID='$PERSON_MIETVERTRAG_MIETVERTRAG_ID' && PERSON_MIETVERTRAG_PERSON_ID='$person_id' ORDER BY PERSON_MIETVERTRAG_DAT DESC LIMIT 0,1");
-    foreach($result as $row)
+    foreach ($result as $row)
         return $row['PERSON_MIETVERTRAG_DAT'];
 }
 
 function letzte_detail_dat($tabelle, $zuordnungs_id)
 {
     $result = DB::select("SELECT DETAIL_DAT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE='$tabelle' && DETAIL_ZUORDNUNG_ID='$zuordnungs_id' ORDER BY DETAIL_DAT DESC LIMIT 0,1");
-    foreach($result as $row)
+    foreach ($result as $row)
         return $row['DETAIL_DAT'];
-}
-
-function letzte_person_mietvertrag_dat()
-{
-    $result = DB::select("SELECT PERSON_MIETVERTRAG_DAT FROM PERSON_MIETVERTRAG ORDER BY PERSON_MIETVERTRAG_DAT DESC LIMIT 0,1");
-    foreach($result as $row)
-        return $row['PERSON_MIETVERTRAG_DAT'];
 }
 
 function letzte_person_mietvertrag_id()
 {
     $result = DB::select("SELECT PERSON_MIETVERTRAG_ID FROM PERSON_MIETVERTRAG ORDER BY PERSON_MIETVERTRAG_ID DESC LIMIT 0,1");
-    foreach($result as $row)
+    foreach ($result as $row)
         return $row['PERSON_MIETVERTRAG_ID'];
 }
 
@@ -879,14 +593,14 @@ function person_pruefen($nachname, $vorname, $geburtstag)
     if (empty($result)) {
         $result = DB::select("SELECT PERSON_ID, PERSON_NACHNAME, PERSON_VORNAME, PERSON_GEBURTSTAG FROM PERSON WHERE PERSON_NACHNAME='$nachname' && PERSON_VORNAME='$vorname' && PERSON_GEBURTSTAG='$geburtstag' && PERSON_AKTUELL='1' ORDER BY PERSON_ID ASC");
         if (!empty($result)) {
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 echo "$row[PERSON_ID], $row[PERSON_NACHNAME], $row[PERSON_VORNAME], $row[PERSON_GEBURTSTAG] ";
             }
             return "error";
         }
     } else {
         hinweis_ausgeben("Person existiert!!!<br>Ihre Eingaben sind 100%-ig identisch mit folgenden Datenbankeinträgen:");
-        foreach($result as $row) {
+        foreach ($result as $row) {
             echo "$row[PERSON_ID], $row[PERSON_NACHNAME], $row[PERSON_VORNAME], $row[PERSON_GEBURTSTAG] <br>";
         }
         return "error";
@@ -924,14 +638,6 @@ function weiterleiten($ziel)
     header("Location: $ziel");
 }
 
-function weiterleiten_alt($ziel)
-{
-    $wartezeit = "2";
-    echo "<head>";
-    echo "<meta http-equiv=\"refresh\" content=\"$wartezeit; URL=$ziel\">";
-    echo "</head>";
-}
-
 function weiterleiten_in_sec($ziel, $sec)
 {
     echo "<head>";
@@ -942,15 +648,6 @@ function weiterleiten_in_sec($ziel, $sec)
 function post_array_bereinigen()
 {
     foreach (request()->all() as $key => $value) {
-        $clean_value = trim(strip_tags($value));
-        $clean_arr [$key] = "$clean_value";
-    }
-    return $clean_arr;
-}
-
-function post_unterarray_bereinigen($arrayname)
-{
-    foreach (request()->input($arrayname) as $key => $value) {
         $clean_value = trim(strip_tags($value));
         $clean_arr [$key] = "$clean_value";
     }
@@ -1024,7 +721,7 @@ function mietvertrag_anlegen($von, $bis, $einheit_id)
 function mietvertrag_id_letzte()
 {
     $result = DB::select("SELECT MIETVERTRAG_ID FROM MIETVERTRAG ORDER BY MIETVERTRAG_ID DESC LIMIT 0,1");
-    foreach($result as $row) {
+    foreach ($result as $row) {
         return $row['MIETVERTRAG_ID'];
     }
 }
@@ -1032,7 +729,7 @@ function mietvertrag_id_letzte()
 function mietvertrag_id_by_dat($mietvertrag_dat)
 {
     $result = DB::select("SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE MIETVERTRAG_DAT='$mietvertrag_dat'");
-    foreach($result as $row) {
+    foreach ($result as $row) {
         return $row['MIETVERTRAG_ID'];
     }
 }
@@ -1040,7 +737,7 @@ function mietvertrag_id_by_dat($mietvertrag_dat)
 function einheit_id_by_mietvertrag($mietvertrag_dat)
 {
     $result = DB::select("SELECT EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_DAT='$mietvertrag_dat'");
-    foreach($result as $row) {
+    foreach ($result as $row) {
         return $row['EINHEIT_ID'];
     }
 }
@@ -1063,7 +760,7 @@ function br2n($my_str)
 function mietvertrag_by_einheit($einheit_id)
 {
     $result = DB::select("SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID='$einheit_id' && MIETVERTRAG_AKTUELL='1' order by MIETVERTRAG_ID DESC limit 0,1");
-    foreach($result as $row) {
+    foreach ($result as $row) {
         return $row['MIETVERTRAG_ID'];
     }
 }
@@ -1139,40 +836,6 @@ function array_orderby()
     return array_pop($args);
 }
 
-// $sorted = array_orderby($data, 'volume', SORT_DESC, 'edition', SORT_ASC);
-function array_msort_old($array, $cols)
-{
-    $colarr = array();
-    foreach ($cols as $col => $order) {
-        $colarr [$col] = array();
-        foreach ($array as $k => $row) {
-            $colarr [$col] ['_' . $k] = strtolower($row [$col]);
-        }
-    }
-    $params = array();
-    foreach ($cols as $col => $order) {
-        $params [] = &$colarr [$col];
-        $params = array_merge($params, ( array )$order);
-    }
-    call_user_func_array('array_multisort', $params);
-    $ret = array();
-    $keys = array();
-    $first = true;
-    foreach ($colarr as $col => $arr) {
-        foreach ($arr as $k => $v) {
-            if ($first) {
-                $keys [$k] = substr($k, 1);
-            }
-            $k = $keys [$k];
-            if (!isset ($ret [$k]))
-                $ret [$k] = $array [$k];
-            $ret [$k] [$col] = $array [$k] [$col];
-        }
-        $first = false;
-    }
-    return $ret;
-}
-
 // $arr2 = array_msort($arr1, array('name'=>array(SORT_DESC,SORT_REGULAR), 'cat'=>SORT_ASC));
 function array_msort($array, $cols)
 {
@@ -1213,11 +876,6 @@ function array_msort($array, $cols)
         $first = false;
     }
     return $ret;
-}
-
-function isNumeric($num)
-{
-    return preg_match("/[0-9]+/", $num);
 }
 
 function punkt_zahl($zahl)
@@ -1284,37 +942,6 @@ function nummer_kuerzen($zahl, $nachkommastellen)
 
     $nummer = "$vorkomma.$nachkomma";
     return $nummer;
-}
-
-function array_als_tabelle_anzeigen($my_array, $ueberschrift_felder_arr)
-{
-    /*
-     * $ueberschrift_felder_arr[0] = "Konto";
-     * $ueberschrift_felder_arr[1] = "Bezeichnung";
-     * $ueberschrift_felder_arr[2] = "Gruppe";
-     */
-    echo "<table class=rechnungen>";
-    echo "<tr class=feldernamen>";
-
-    $anzahl_spalten = count($my_array [0]);
-    $anzahl_felder = count($ueberschrift_felder_arr);
-    // echo "$anzahl_spalten $anzahl_felder";
-    foreach ($ueberschrift_felder_arr as $key => $value) {
-        echo "<td>$value</td>";
-    }
-    echo "</tr>";
-
-    for ($a = 0; $a < count($my_array); $a++) {
-        echo "<tr>";
-
-        foreach ($my_array [$a] as $key => $value) {
-            echo "<td>$value</td>";
-        }
-
-        echo "</tr>";
-    }
-
-    echo "</table>";
 }
 
 function letzter_tag_im_monat($monat, $jahr)
