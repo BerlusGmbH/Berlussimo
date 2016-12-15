@@ -234,7 +234,7 @@ class b_pdf
 
         if ($orientation == 'portrait') {
             $pdf->ezSetMargins(135, 70, 50, 50);
-            if (!request()->has('no_logo')) {
+            if (!request()->exists('no_logo')) {
                 $logo_file = "$partner_typ/$partner_id" . "_logo.png";
                 if (Storage::disk('logos')->exists($logo_file)) {
                     $pdf->addPngFromFile(Storage::disk('logos')->fullPath($logo_file), 200, 730, 200, 80);
@@ -248,7 +248,7 @@ class b_pdf
             $pdf->ezStartPageNumbers(545, 715, $f_size, '', 'Seite {PAGENUM} von {TOTALPAGENUM}', 1);
             $pdf->setLineStyle(0.5);
 
-            if (!request()->has('no_logo')) {
+            if (!request()->exists('no_logo')) {
                 $pdf->addText($pdf->ez['pageWidth'] / 2, 42, $f_size, "$this->zeile1", 0, 'center');
                 $pdf->addText($pdf->ez['pageWidth'] / 2, 35, $f_size, "$this->zeile2", 0, 'center');
             }
