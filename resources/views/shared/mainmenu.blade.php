@@ -36,7 +36,7 @@
 
                         @if(check_user_links(Auth::user()->id, 'person' ))
                             <div class="col s4 m3 l1">
-                                <a href='{{route('web::personen::legacy', ['anzeigen' => 'alle_personen'])}}'>Personen</a>
+                                <a href='{{route('web::personen::index')}}'>Personen</a>
                             </div>
                         @endif
 

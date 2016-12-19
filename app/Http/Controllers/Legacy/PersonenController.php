@@ -22,11 +22,12 @@ class PersonenController extends LegacyController
         } else {
             $builder = Personen::query();
         }
-        $personen = $builder->with(['mietvertraege' => function($builder) {
-            $builder->wherePivot('PERSON_MIETVERTRAG_AKTUELL', '1');
-        }, 'mietvertraege.einheit.haus.objekt', 'eigentuemer' => function($builder) {
-            $builder->wherePivot('AKTUELL', '1');
-        }, 'eigentuemer.einheit.haus.objekt'])->paginate(6);
+        $personen = $builder->with(['mietvertraege.einheit.haus.objekt', 'kaufvertraege.einheit.haus.objekt'])->paginate(6);
         return view('modules.personen.index', ['personen' => $personen]);
+    }
+
+    public function show($id) {
+        $person = Personen::with(['mietvertraege.einheit.haus.objekt', 'kaufvertraege.einheit.haus.objekt', 'details'])->find($id);
+        return view('modules.personen.show', ['person' => $person]);
     }
 }

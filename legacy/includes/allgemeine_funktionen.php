@@ -616,7 +616,7 @@ function person_loeschen($person_dat)
     protokollieren('PERSON', $dat_neu, $dat_alt);
 
     hinweis_ausgeben("Person gelöscht!");
-    echo "<a href='" . route('web::personen::legacy', ['anzeigen' => 'alle_personen']) . "'>Zurück zu Personenliste</a>";
+    echo "<a href='" . route('web::personen::index') . "'>Zurück zu Personenliste</a>";
 }
 
 function person_aendern_in_db($person_id)

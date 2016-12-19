@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Pagination\Paginator;
 use App\Pagination\MaterializeCssPresenter;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\ServiceProvider;
+use Carbon\Carbon;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,7 +17,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Relation::morphMap([
+            'PERSON' => \App\Models\Personen::class
+        ]);
     }
 
     /**
@@ -25,8 +29,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        Paginator::presenter(function($paginator)
-        {
+        Paginator::presenter(function ($paginator) {
             return new MaterializeCssPresenter($paginator);
         });
     }

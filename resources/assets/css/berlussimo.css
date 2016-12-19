@@ -80,3 +80,13 @@ main {
     right: 10px;
     bottom: 80px;
 }
+
+.detail > i {
+    position: absolute;
+    left: 2px;
+}
+
+.detail {
+    padding-left: 20px;
+    position: relative;
+}

@@ -11,12 +11,15 @@ var elixir = require('laravel-elixir');
  |
  */
 
-elixir(function(mix) {
+elixir(function (mix) {
     mix.styles(['berlussimo.css'], 'public/css/berlussimo.css');
 
     mix.copy('resources/assets/sass/materialize-css/_variables.scss', 'node_modules/materialize-css/sass/components/_variables.scss');
 
-    mix.sass('./node_modules/materialize-css/sass/materialize.scss', 'public/css/vendor.css');
+    mix.sass(['./node_modules/materialize-css/sass/materialize.scss',
+        './node_modules/flexboxgrid/dist/flexboxgrid.css',
+        './node_modules/mdi/scss/materialdesignicons.scss'
+    ], 'public/css/vendor.css');
 
     mix.styles(
         [
@@ -74,6 +77,7 @@ elixir(function(mix) {
     mix.copy('legacy/graph/js/LineGraph.js', 'public/js/LineGraph.js');
     mix.copy('legacy/graph/js/PieGraph.js', 'public/js/PieGraph.js');
     mix.copy('legacy/graph/img/', 'public/images/');
+    mix.copy('node_modules/mdi/fonts', 'public/build/fonts');
 
     mix.version(
         ['public/css/berlussimo.css',

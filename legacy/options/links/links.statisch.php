@@ -24,7 +24,7 @@ if (check_user_links ( Auth::user()->id, 'mietvertrag_raus' )) {
 }
 
 if (check_user_links ( Auth::user()->id, 'person' )) {
-	echo "<a href='" . route('web::personen::legacy', ['anzeigen' => 'alle_personen']) . "'>Personen</a>&nbsp;<b>| </b>&nbsp;";
+	echo "<a href='" . route('web::personen::index') . "'>Personen</a>&nbsp;<b>| </b>&nbsp;";
 }
 
 if (check_user_links ( Auth::user()->id, 'details' )) {

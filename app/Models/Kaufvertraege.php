@@ -7,7 +7,7 @@ use App\Models\Traits\Searchable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
-class WEGEigentuemer extends Model
+class Kaufvertraege extends Model
 {
     public $timestamps = false;
     protected $table = 'WEG_MITEIGENTUEMER';

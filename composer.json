@@ -13,7 +13,8 @@
     "rospdf/pdf-php": "0.12.22",
     "barryvdh/laravel-ide-helper": "v2.1.4",
     "doctrine/dbal": "^2.5",
-    "spatie/laravel-permission": "^1.4"
+    "spatie/laravel-permission": "^1.4",
+    "barryvdh/laravel-debugbar": "^2.3"
   },
   "require-dev": {
     "fzaninotto/faker": "~1.4",
