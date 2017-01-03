@@ -16,7 +16,8 @@ elixir(function (mix) {
 
     mix.copy('resources/assets/sass/materialize-css/_variables.scss', 'node_modules/materialize-css/sass/components/_variables.scss');
 
-    mix.sass(['./node_modules/materialize-css/sass/materialize.scss',
+    mix.sass(['./node_modules/normalize.css/normalize.css',
+        './node_modules/materialize-css/sass/materialize.scss',
         './node_modules/flexboxgrid/dist/flexboxgrid.css',
         './node_modules/mdi/scss/materialdesignicons.scss'
     ], 'public/css/vendor.css');
@@ -65,6 +66,7 @@ elixir(function (mix) {
     );
     mix.scripts(
         [
+            'node_modules/keycode-js/dist/keycode.js',
             'node_modules/jquery/dist/jquery.js',
             'node_modules/materialize-css/dist/js/materialize.js'
         ],

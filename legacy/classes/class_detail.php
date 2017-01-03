@@ -165,11 +165,8 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC");
 
     function detailsanzeigen($detail_tabelle, $detail_id)
     {
-        $f = new formular ();
-        $f->fieldset("Details menü", 'details_menue');
         $link = route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => $detail_tabelle, 'detail_id' => $detail_id]);
-        echo "<a href=\"$link\">Neues Detail hinzufügen</a>&nbsp;";
-        $f->fieldset_ende();
+        echo "<a class='btn waves-effect waves-light' href=\"$link\"><i class=\"material-icons left\">add</i>Neues Detail</a>";
 
         $db_abfrage = "SELECT DETAIL_DAT, DETAIL_ID, DETAIL_NAME, DETAIL_INHALT, DETAIL_BEMERKUNG FROM DETAIL WHERE DETAIL_AKTUELL='1' && DETAIL_ZUORDNUNG_TABELLE = '$detail_tabelle' && DETAIL_ZUORDNUNG_ID = '$detail_id' ORDER BY DETAIL_NAME ASC";
         $resultat = DB::select($db_abfrage);
@@ -177,10 +174,12 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC");
         $numrows = count($resultat);
 
         if ($numrows) {
-            echo "<table>\n";
+            echo "<table class='striped'>\n";
             $kurzinfo = $this->get_info_detail($detail_tabelle, $detail_id);
-            echo "<tr class=\"feldernamen\"><td colspan=4>Details über $kurzinfo</td></tr>\n";
-            echo "<tr class=\"feldernamen\"><td>Beschreibung</td><td>Inhalt</td><td>Bemerkung</td><td>Optionen</td></tr>\n";
+            echo "<thead>";
+            echo "<tr class=\"feldernamen\"><th colspan=4>Details über $kurzinfo</th></tr>\n";
+            echo "<tr class=\"feldernamen\"><th>Beschreibung</th><th>Inhalt</th><th>Bemerkung</th><th>Optionen</th></tr>\n";
+            echo "</thead>";
 
             $counter = 0;
             foreach ($resultat as $row) {

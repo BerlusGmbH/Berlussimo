@@ -2,11 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Personen;
 use App\Pagination\MaterializeCssPresenter;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
-use Carbon\Carbon;
+use App\Services\PhoneLocator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Relation::morphMap([
-            'PERSON' => \App\Models\Personen::class
+            'PERSON' => Personen::class
         ]);
     }
 
@@ -31,6 +32,9 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::presenter(function ($paginator) {
             return new MaterializeCssPresenter($paginator);
+        });
+        $this->app->singleton(PhoneLocator::class, function() {
+            return new PhoneLocator(config('phonelocator.map'));
         });
     }
 }

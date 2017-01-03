@@ -90,3 +90,29 @@ main {
     padding-left: 20px;
     position: relative;
 }
+
+nav .autocomplete-content a span.badge {
+    position: absolute;
+    line-height: unset;
+}
+
+nav .autocomplete-content  li a {
+    margin: 2px;
+}
+
+nav .autocomplete-content  li a.active {
+    outline: 2px solid black;
+}
+
+nav .autocomplete-content  li a.active.active-alternative {
+    outline: 2px solid black;
+}
+
+nav .autocomplete-content  li:hover {
+    background: unset;
+}
+
+nav .autocomplete-content  li a:hover {
+    outline: 2px solid black;
+    background: unset;
+}

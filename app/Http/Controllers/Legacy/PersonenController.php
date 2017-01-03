@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Legacy;
 
 use App\Http\Requests\Legacy\PersonenRequest;
 use App\Models\Personen;
+use App\Services\SearchParser\SearchLexer;
+use App\Services\SearchParser\SearchParser;
 
 class PersonenController extends LegacyController
 {
@@ -17,12 +19,16 @@ class PersonenController extends LegacyController
     }
 
     public function index() {
+        $builder = Personen::with(['mietvertraege.einheit.haus.objekt', 'kaufvertraege.einheit.haus.objekt']);
         if (request()->has('q')) {
-            $builder = Personen::search(request()->input('q'));
-        } else {
-            $builder = Personen::query();
+            $lexer = new SearchLexer(request()->input('q'));
+            $parser = new SearchParser($lexer, $builder);
+            while ($lexer->yylex())  {
+                $parser->doParse($lexer->token, $lexer->value);
+            }
+            $parser->doParse(0, 0);
         }
-        $personen = $builder->with(['mietvertraege.einheit.haus.objekt', 'kaufvertraege.einheit.haus.objekt'])->paginate(6);
+        $personen = $builder->paginate(6);
         return view('modules.personen.index', ['personen' => $personen]);
     }
 
