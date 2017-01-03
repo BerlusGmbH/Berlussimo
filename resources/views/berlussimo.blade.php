@@ -6,12 +6,8 @@
 
 @section('content')
     @if($content != "")
-        <div class="row">
-            <div class="col s12">
-                <div class="card-panel">
-                    {!! $content !!}
-                </div>
-            </div>
+        <div class="card-panel">
+            {!! $content !!}
         </div>
     @endif
 @endsection

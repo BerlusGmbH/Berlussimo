@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('submenu')
-    <?php include(base_path('legacy/options/links/links.person.php')); ?>
+    @php(include(base_path('legacy/options/links/links.person.php')))
 @endsection
 
 @section('content')
@@ -15,14 +15,22 @@
                         @else
                             @php($margin_bot = '12px')
                         @endif
-                        <div style="line-height: 24px; margin-bottom: {{ $margin_bot }}; margin-top: 12px">
-                            {{ $person->PERSON_NACHNAME }},
-                            {{ $person->PERSON_VORNAME }}
-                            @if($person->sex[0]->DETAIL_INHALT == 'männlich')
-                                <i class="mdi mdi-gender-male"></i>
-                            @elseif($person->sex[0]->DETAIL_INHALT == 'weiblich')
-                                <i class="mdi mdi-gender-female"></i>
-                            @endif
+                        <div class="row" style="line-height: 24px; margin-bottom: {{ $margin_bot }}; margin-top: 12px">
+                            <div class="col-xs-10" >
+                                {{ $person->PERSON_NACHNAME }},
+                                {{ $person->PERSON_VORNAME }}
+                                @if($person->sex[0]->DETAIL_INHALT == 'männlich')
+                                    <i class="mdi mdi-gender-male"></i>
+                                @elseif($person->sex[0]->DETAIL_INHALT == 'weiblich')
+                                    <i class="mdi mdi-gender-female"></i>
+                                @endif
+                            </div>
+                            <div class="col-xs-1 end-xs">
+                                <a href="{{ route('web::personen::legacy', ['anzeigen' => 'person_aendern', 'person_id' => $person->PERSON_ID]) }}"><i class="mdi mdi-pencil"></i></a>
+                            </div>
+                            <div class="col-xs-1 end-xs">
+                                <a href="{{ route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'PERSON', 'detail_id' => $person->PERSON_ID]) }}"><i class="mdi mdi-table-edit"></i></a>
+                            </div>
                         </div>
                         @if($person->PERSON_GEBURTSTAG->year > 1902)
                             <div style="font-size: small; line-height: 24px; margin-bottom:12px;">
@@ -31,16 +39,17 @@
                         @endif
                     </div>
                     <div class="row">
+                        @inject('phonelocator', 'App\Services\PhoneLocator')
                         @foreach($person->phones as $phone)
                             <div class="col-xs-6 detail">
                                 <i class="mdi mdi-phone"></i>
-                                <a href="tel:{{ $phone->DETAIL_INHALT }}">{{ $phone->DETAIL_INHALT }}{{ $phone->DETAIL_BEMERKUNG !== '' ? ', ' . $phone->DETAIL_BEMERKUNG : '' }}</a>
+                                {!! $phonelocator->url(e($phone->DETAIL_INHALT), e($phone->DETAIL_BEMERKUNG)) !!}
                             </div>
                         @endforeach
                         @foreach($person->faxs as $fax)
                             <div class="col-xs-6 detail">
                                 <i class="mdi mdi-fax"></i>
-                                {{ $fax->DETAIL_INHALT }}{{ $fax->DETAIL_BEMERKUNG !== '' ? ', ' . $fax->DETAIL_BEMERKUNG : '' }}
+                                <a href="fax:{{ $fax->DETAIL_INHALT }}">{{ $fax->DETAIL_INHALT }}{{ $fax->DETAIL_BEMERKUNG !== '' ? ', ' . $fax->DETAIL_BEMERKUNG : '' }}</a>
                             </div>
                         @endforeach
                         @foreach($person->emails as $email)
@@ -63,7 +72,7 @@
             <div class="col-xs-12 col-sm-6">
                 <div class="card">
                     <div class="card-content">
-                        <span class="card-title">Allgemeine Details ({{ $person->commonDetails->count() }})</span>
+                        <div class="card-title">Allgemeine Details ({{ $person->commonDetails->count() }})</div>
                         <table class="striped">
                             <thead>
                             <th>Typ</th>

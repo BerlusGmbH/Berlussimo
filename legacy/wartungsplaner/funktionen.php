@@ -197,11 +197,11 @@ function kontakt_suche($target_id, $string)
 
                         extract($einheit_info_arr);
                         $z++;
-                        $js = "onclick=\"setTimeout('daj3('" . route('web::wartungsplaner::ajax', ['option' => 'kos_typ_register', 'kos_typ' => 'Partner', 'kos_id' => $EIGENTUEMER_PARTNER], false) . "', 'leftBox1')', 100);";
-                        $js .= "setTimeout('daj3('" . route('web::wartungsplaner::ajax', ['option' => 'unset_g_id'], false) . "', 'rightBox')', 100);";
-                        $js .= "setTimeout('daj3('" . route('web::wartungsplaner::ajax', ['option' => 'wartungsteil_waehlen'], false) . "', 'leftBox')', 1000);";
-                        $js .= "setTimeout('daj3('" . route('web::wartungsplaner::ajax', ['option' => 'einheit_register', 'einheit_id' => $einheit_id, 'einheit_bez' => $EINHEIT_KURZNAME], false) . "', 'rightBox')', 500);";
-                        $js .= "setTimeout('daj3('" . route('web::wartungsplaner::ajax', ['option' => 'get_partner_info'], false) . "', 'rightBox')', 1000);\"";
+                        $js = "onclick=\"setTimeout('daj3(\'" . route('web::wartungsplaner::ajax', ['option' => 'kos_typ_register', 'kos_typ' => 'Partner', 'kos_id' => $EIGENTUEMER_PARTNER], false) . "\', \'leftBox1\')', 100);";
+                        $js .= "setTimeout('daj3(\'" . route('web::wartungsplaner::ajax', ['option' => 'unset_g_id'], false) . "\', \'rightBox\')', 100);";
+                        $js .= "setTimeout('daj3(\'" . route('web::wartungsplaner::ajax', ['option' => 'wartungsteil_waehlen'], false) . "\', \'leftBox\')', 1000);";
+                        $js .= "setTimeout('daj3(\'" . route('web::wartungsplaner::ajax', ['option' => 'einheit_register', 'einheit_id' => $einheit_id, 'einheit_bez' => $EINHEIT_KURZNAME], false) . "\', \'rightBox\')', 500);";
+                        $js .= "setTimeout('daj3(\'" . route('web::wartungsplaner::ajax', ['option' => 'get_partner_info'], false) . "\', \'rightBox\')', 1000);\"";
 
                         $p_nachname = $row['PERSON_NACHNAME'];
                         $p_vorname = $row['PERSON_VORNAME'];

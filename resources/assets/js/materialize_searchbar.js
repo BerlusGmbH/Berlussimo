@@ -59,63 +59,151 @@ $(document).ready(function () {
                 }
             };
 
+            var wait = function (time) {
+                var deferred = $.Deferred();
+                var timeout = setTimeout(function () {
+                    deferred.resolve();
+                }, time);
+                var promise = {
+                    abort: function () {
+                        deferred.reject();
+                        clearTimeout(timeout);
+                    }
+                };
+                return deferred.promise(promise);
+            };
+
+            var $items = [];
+            var focusItem = 1;
+
             var search = function (query) {
-                $.getJSON("/api/v1/search?q=" + query, function (data) {
+                return $.getJSON("/api/v1/search?q=" + query).done(function (data) {
                     $autocomplete.empty();
-                    var items = [];
+                    $items = [];
+                    var $item;
                     if ($.isArray(data['objekte']) && !$.isEmptyObject(data['objekte'])) {
-                        items.push("<li><a class='grey accent-3 white-text' href='" + objektlisturl + query + "'>Objekte<span class='new badge' data-badge-caption=''>" + data['objekte'].length + "</span></a></li>");
+                        $items.push($("<li class='grey accent-3'><a tabindex='-1' class='white-text active-alternative' href='" + objektlisturl + query + "'>Objekte<span class='new badge' data-badge-caption=''>" + data['objekte'].length + "</span></a></li>"));
                         $.each(data['objekte'], function (key, val) {
-                            items.push("<li id='" + val['OBJEKT_ID'] + "'><a href='" + objekturl + val['OBJEKT_ID'] + "'><span>" + val['OBJEKT_KURZNAME'] + "</span></a></li>");
+                            $items.push($("<li id='" + val['OBJEKT_ID'] + "'><a tabindex='-1' href='" + objekturl + val['OBJEKT_ID'] + "'>" + val['OBJEKT_KURZNAME'] + "</a></li>"));
                         });
                     }
                     if ($.isArray(data['haeuser']) && !$.isEmptyObject(data['haeuser'])) {
-                        items.push("<li><a class='grey accent-3 white-text' href='" + hauslisturl + query + "'><span class='grey accent-3 white-text'>Häuser<span class='new badge' data-badge-caption=''>" + data['haeuser'].length + "</span></span></a></li>");
+                        $items.push($("<li class='grey accent-3'><a tabindex='-1' class='white-text active-alternative' href='" + hauslisturl + query + "'>Häuser<span class='new badge' data-badge-caption=''>" + data['haeuser'].length + "</span></a></li>"));
                         $.each(data['haeuser'], function (key, val) {
-                            items.push("<li id='" + val['HAUS_ID'] + "'><a href='" + hausurl + val['HAUS_ID'] + "'><span>" + val['HAUS_STRASSE'] + " " + val['HAUS_NUMMER'] + "</span></a></li>");
+                            $items.push($("<li id='" + val['HAUS_ID'] + "'><a tabindex='-1' href='" + hausurl + val['HAUS_ID'] + "'>" + val['HAUS_STRASSE'] + " " + val['HAUS_NUMMER'] + "</a></li>"));
                         });
                     }
                     if ($.isArray(data['einheiten']) && !$.isEmptyObject(data['einheiten'])) {
-                        items.push("<li><a class='grey accent-3 white-text' href='" + einheitlisturl + query + "'>Einheiten<span class='new badge' data-badge-caption=''>" + data['einheiten'].length + "</span></a></li>");
+                        $items.push($("<li class='grey accent-3'><a tabindex='-1' class='white-text active-alternative' href='" + einheitlisturl + query + "'>Einheiten<span class='new badge' data-badge-caption=''>" + data['einheiten'].length + "</span></a></li>"));
                         $.each(data['einheiten'], function (key, val) {
-                            items.push("<li id='" + val['EINHEIT_ID'] + "'><a href='" + einheiturl + val['EINHEIT_ID'] + "'><span>" + val['EINHEIT_KURZNAME'] + "</span></a></li>");
+                            $items.push($("<li id='" + val['EINHEIT_ID'] + "'><a tabindex='-1' href='" + einheiturl + val['EINHEIT_ID'] + "'>" + val['EINHEIT_KURZNAME'] + "</a></li>"));
                         });
                     }
                     if ($.isArray(data['personen']) && !$.isEmptyObject(data['personen'])) {
-                        items.push("<li><a class='grey accent-3 white-text' href='" + personlisturl + query + "'>Personen<span class='new badge' data-badge-caption=''>" + data['personen'].length + "</span></a></li>");
+                        $items.push($("<li class='grey accent-3'><a tabindex='-1' class='white-text active-alternative' href='" + personlisturl + query + "'>Personen<span class='new badge' data-badge-caption=''>" + data['personen'].length + "</span></a></li>"));
                         $.each(data['personen'], function (key, val) {
-                            items.push("<li id='" + val['PERSON_ID'] + "'><a href='" + personurl + val['PERSON_ID'] + "'><span>" + val['PERSON_NACHNAME'] + ", " + val['PERSON_VORNAME'] + "</span></a></li>");
+                            $items.push($("<li id='" + val['PERSON_ID'] + "'><a tabindex='-1' href='" + personurl + val['PERSON_ID'] + "'>" + val['PERSON_NACHNAME'] + ", " + val['PERSON_VORNAME'] + "</a></li>"));
                         });
                     }
                     if ($.isArray(data['partner']) && !$.isEmptyObject(data['partner'])) {
-                        items.push("<li><a class='grey accent-3 white-text' href='" + partnerlisturl + query + "'>Partner<span class='new badge' data-badge-caption=''>" + data['partner'].length + "</span></a></li>");
+                        $items.push($("<li class='grey accent-3'><a tabindex='-1' class='white-text active-alternative' href='" + partnerlisturl + query + "'>Partner<span class='new badge' data-badge-caption=''>" + data['partner'].length + "</span></a></li>"));
                         $.each(data['partner'], function (key, val) {
-                            items.push("<li id='" + val['PARTNER_ID'] + "'><a href='" + partnerurl + val['PARTNER_ID'] + "'><span>" + val['PARTNER_NAME'] + "</span></a></li>");
+                            $items.push($("<li id='" + val['PARTNER_ID'] + "'><a tabindex='-1' href='" + partnerurl + val['PARTNER_ID'] + "'>" + val['PARTNER_NAME'] + "</a></li>"));
                         });
                     }
-                    $autocomplete.append(items.join(""));
+                    $.each($items, function (index, $item) {
+                        $item.hover(function () {
+                            $items[focusItem].find('a').first().removeClass('active');
+                            focusItem = index;
+                        }, function () {
+                            $item.find('a').first().addClass('active')
+                        });
+                    });
+                    $autocomplete.append($items);
                     $indicator.hide();
                     $close.show();
+                    if(!$.isEmptyObject($items)) {
+                        $items[focusItem].find('a').first().addClass('active');
+                    }
+                    focusItem = 1;
                 });
             };
 
-            var queryTimeout = null;
+            var timeout = null;
             var query = '';
+            var when = null;
+
+            $input.on('keydown', function (e) {
+                if (e.which === KeyCode.KEY_RETURN
+                    || e.which === KeyCode.KEY_ENTER
+                    || e.which === KeyCode.KEY_UP
+                    || e.which === KeyCode.KEY_DOWN
+                ) {
+                    e.preventDefault();
+                }
+            });
 
             // Perform search
             $input.on('keyup', function (e) {
+                if (e.which === KeyCode.KEY_RETURN || e.which === KeyCode.KEY_ENTER) {
+                    if (when) {
+                        when.then(function () {
+                            if (!$.isEmptyObject($items)) {
+                                var a = $items[focusItem].find('a').first();
+                                if (a) {
+                                     $(a)[0].click()
+                                }
+                            }
+                        });
+                    }
+                    return;
+                }
+
+                if (e.which === KeyCode.KEY_UP) {
+                    if (!$.isEmptyObject($items)) {
+                        $items[focusItem].find('a').first().removeClass('active');
+                        if (focusItem === 0) {
+                            focusItem = $items.length - 1;
+                        } else {
+                            focusItem--;
+                        }
+                        $autocomplete.animate({
+                            scrollTop: $autocomplete.scrollTop() - 200 + $items[focusItem].position().top
+                        }, 100);
+                        $items[focusItem].find('a').first().addClass('active');
+                    }
+                    return;
+                }
+
+                if (e.which === KeyCode.KEY_DOWN) {
+                    if (!$.isEmptyObject($items)) {
+                        $items[focusItem].find('a').first().removeClass('active');
+                        if (focusItem === $items.length - 1) {
+                            focusItem = 0;
+                        } else {
+                            focusItem++;
+                        }
+                        $autocomplete.animate({
+                            scrollTop: $autocomplete.scrollTop() - 200 + $items[focusItem].position().top
+                        }, 100);
+                        $items[focusItem].find('a').first().addClass('active');
+                    }
+                    return;
+                }
+
                 var val = $input.val().toLowerCase().trim();
                 if (val !== query) {
                     query = val;
                     $indicator.show();
                     $close.hide();
-                    if (queryTimeout !== null) {
-                        clearTimeout(queryTimeout);
+                    if (timeout && timeout.state() === "pending") {
+                        timeout.abort();
                     }
                     if (val !== '') {
-                        queryTimeout = setTimeout(function () {
-                            search(val);
-                        }, 300);
+                        timeout = wait(300);
+                        when = timeout.then(function () {
+                            return search(val);
+                        });
                     } else {
                         $indicator.hide();
                         $close.show();
@@ -128,16 +216,16 @@ $(document).ready(function () {
                 $input.val('');
                 $autocomplete.empty();
             });
+
             $input.on('focusout', function (event) {
-                if (event.relatedTarget) {
-                    $(event.relatedTarget)[0].click();
+                var $related = $(event.relatedTarget);
+                if ($.contains($autocomplete[0], $related[0])) {
+                    $related[0].click();
                 }
-                $autocomplete.empty();
+                $autocomplete.hide();
             });
             $input.on('focusin', function () {
-                if ($input.val().length !== 0) {
-                    search($input.val());
-                }
+                $autocomplete.show();
             });
         });
     };
