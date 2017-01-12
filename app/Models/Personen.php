@@ -2,18 +2,22 @@
 
 namespace App\Models;
 
+use App\Facades\Relations;
 use App\Models\Traits\Searchable;
+use App\Models\Traits\DefaultOrder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Personen extends Model
 {
     use Searchable;
+    use DefaultOrder;
 
     public $timestamps = false;
     protected $table = 'PERSON';
     protected $primaryKey = 'PERSON_ID';
     protected $searchableFields = ['PERSON_VORNAME', 'PERSON_NACHNAME'];
+    protected $defaultOrder = ['PERSON_NACHNAME' => 'asc', 'PERSON_VORNAME' => 'asc', 'PERSON_GEBURTSTAG' => 'asc'];
     protected $dates = ['PERSON_GEBURTSTAG'];
 
     protected static function boot()
@@ -64,11 +68,15 @@ class Personen extends Model
         return $this->details()->where('DETAIL_NAME', 'Geschlecht');
     }
 
-    public function anschriften() {
+    public function hinweise() {
+        return $this->details()->where('DETAIL_NAME', 'Hinweis');
+    }
+
+    public function adressen() {
         return $this->details()->whereIn('DETAIL_NAME', ['Zustellanschrift', 'Verzugsanschrift', 'Anschrift']);
     }
 
     public function commonDetails() {
-        return $this->details()->whereNotIn('DETAIL_NAME', ['Geschlecht', 'Email', 'Fax', 'Telefon', 'Handy', 'Zustellanschrift', 'Verzugsanschrift', 'Anschrift']);
+        return $this->details()->whereNotIn('DETAIL_NAME', ['Geschlecht', 'Hinweis', 'Email', 'Fax', 'Telefon', 'Handy', 'Zustellanschrift', 'Verzugsanschrift', 'Anschrift']);
     }
 }

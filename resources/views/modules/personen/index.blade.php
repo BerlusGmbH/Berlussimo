@@ -1,116 +1,99 @@
 @extends('layouts.main')
 
-@section('submenu')
-    <?php include(base_path('legacy/options/links/links.person.php')); ?>
-@endsection
-
 @section('content')
     <div class="card-panel white">
-        <div class="row">
-            <div class="input-field col-xs-4 col-md-4">
-                <a class="btn waves-effect waves-light"
-                   href="{{ route('web::personen::legacy', ['anzeigen' => 'person_erfassen']) }}"><i
-                            class="material-icons left">add</i>Neu</a>
-            </div>
-            <div class="input-field col-xs-12 col-md-offset-2 col-md-6 col-lg-offset-4 col-lg-4">
-                <form method="get">
-                    <i class="material-icons prefix">filter_list</i>
+        <form id="filter-form" method="get">
+            <div class="row">
+                <div class="input-field col-xs-6 col-md-2">
+                    <a class="btn waves-effect waves-light"
+                       href="{{ route('web::personen::legacy', ['anzeigen' => 'person_erfassen']) }}"><i
+                                class="material-icons left">add</i>Neu</a>
+                </div>
+                <div class="input-field col-xs-12 col-md-6">
+                    <i class="mdi mdi-filter-variant prefix"></i>
                     <input id="filter" name="q" value="{{ request()->input('q') }}" type="text"
-                           class="validate" autocomplete="off">
+                           autocomplete="off">
                     <label for="filter">Filter</label>
-
-                </form>
+                </div>
+                <div class="input-field col-xs-12 col-md-3">
+                    <select id="view" name="v">
+                        <option value="" {{ !request()->has('v') ? 'selected' : '' }}>(ohne)
+                        </option>
+                        <option value="person(hinweis) hinweis" {{ request()->input('v') == 'person(hinweis) hinweis' ? 'selected' : '' }}>Personen mit Hinweisen
+                        </option>
+                        <option value="person(adresse) adresse" {{ request()->input('v') == 'person(adresse) adresse' ? 'selected' : '' }}>Personen mit Anschriften
+                        </option>
+                    </select>
+                    <label>Ansicht</label>
+                </div>
+                <div class="input-field col-xs-6 col-md-1">
+                    <select id="size" name="s">
+                        <option value="5" {{ request()->input('s') == 5 ? 'selected' : '' }}>5
+                        </option>
+                        <option value="10" {{ request()->input('s') == 10 ? 'selected' : '' }}>10</option>
+                        <option value="20" {{ (request()->input('s') == 20 | !request()->has('s')) ? 'selected' : '' }}>20
+                        </option>
+                        <option value="50" {{ request()->input('s') == 50 ? 'selected' : '' }}>50</option>
+                        <option value="100" {{ request()->input('s') == 100 ? 'selected' : '' }}>100</option>
+                        <option value="all" {{ request()->input('s') == 'all' ? 'selected' : '' }}>Alle</option>
+                    </select>
+                    <label>Anzahl</label>
+                </div>
             </div>
+        </form>
+        <div class="row center-xs">
+            @if(!request()->has('s') || (request()->has('s') && request()->input('s') != 'all'))
+                @php
+                    if(request()->has('q'))
+                        $personen->appends(['q' => request()->input('q')]);
+                    if(request()->has('s'))
+                        $personen->appends(['s' => request()->input('s')]);
+                    if(request()->has('v'))
+                        $personen->appends(['v' => request()->input('v')]);
+                @endphp
+                {!! $personen->render() !!}
+            @endif
         </div>
         <div class="row">
             <div class="col col-xs-12">
-                <table class="striped">
-                    <thead>
-                    <th>Name</th>
-                    <th>Einheiten</th>
-                    <th>Häuser</th>
-                    <th>Objekte</th>
-                    </thead>
-                    <tbody>
-                    @foreach( $personen as $person )
-                        <tr>
-                            <td>
-                                <a href="{{ route('web::personen::show', ['id' => $person->PERSON_ID]) }}">{{ $person->PERSON_NACHNAME }}
-                                    , {{ $person->PERSON_VORNAME }}</a></td>
-                            <td>
-                                @php($firstMietvertrag = true)
-                                @foreach($person->mietvertraege as $mietvertrag)
-                                    @if(isset($mietvertrag->einheit))
-                                        @if($firstMietvertrag)
-                                            @php($firstMietvertrag = false)
-                                            <b>Mietverträge</b><br>
-                                        @endif
-                                        @include('shared.namedentity', [ 'entity' => $mietvertrag->einheit]) <br>
-                                    @endif
-                                @endforeach
-                                @php($firstKaufvertrag = true)
-                                @foreach($person->kaufvertraege as $kaufvertrag)
-                                    @if(isset($kaufvertrag->einheit))
-                                        @if($firstKaufvertrag)
-                                            @php($firstKaufvertrag = false)
-                                            <b>Wohneigentum</b><br>
-                                        @endif
-                                        @include('shared.namedentity', [ 'entity' => $kaufvertrag->einheit]) <br>
-                                    @endif
-                                @endforeach
-                            </td>
-                            <td>
-                                @if(!$person->mietvertraege->isEmpty())
-                                    <br>
-                                @endif
-                                @foreach($person->mietvertraege as $mietvertrag)
-                                    @if(isset($mietvertrag->einheit))
-                                        @include('shared.namedentity', [ 'entity' => $mietvertrag->einheit->haus])
-                                        <br>
-                                    @endif
-                                @endforeach
-                                @if(!$person->kaufvertraege->isEmpty())
-                                    <br>
-                                @endif
-                                @foreach($person->kaufvertraege as $kaufvertrag)
-                                    @if(isset($kaufvertrag->einheit))
-                                        @include('shared.namedentity', [ 'entity' => $kaufvertrag->einheit->haus])
-                                        <br>
-                                    @endif
-                                @endforeach
-                            </td>
-                            <td>
-                                @if(!$person->mietvertraege->isEmpty())
-                                    <br>
-                                @endif
-                                @foreach($person->mietvertraege as $mietvertrag)
-                                    @if(isset($mietvertrag->einheit))
-                                        @include('shared.namedentity', [ 'entity' => $mietvertrag->einheit->haus->objekt])
-                                        <br>
-                                    @endif
-                                @endforeach
-                                @if(!$person->kaufvertraege->isEmpty())
-                                    <br>
-                                @endif
-                                @foreach($person->kaufvertraege as $kaufvertrag)
-                                    @if(isset($kaufvertrag->einheit))
-                                        @include('shared.namedentity', [ 'entity' => $kaufvertrag->einheit->haus->objekt])
-                                        <br>
-                                    @endif
-                                @endforeach
-                            </td>
-                        </tr>
-                    @endforeach
-                    </tbody>
-                </table>
+                @include('shared.entitytable', ['columns' => $columns, 'entities' => $personen, 'class' => \App\Models\Personen::class])
             </div>
         </div>
         <div class="row center-xs">
-            @if(request()->has('q'))
-                {!! $personen->addQuery('q',request()->input('q'))->render() !!}
-            @else
+            @if(!request()->has('s') || (request()->has('s') && request()->input('s') != 'all'))
+                @php
+                    if(request()->has('q'))
+                        $personen->appends(['q' => request()->input('q')]);
+                    if(request()->has('s'))
+                        $personen->appends(['s' => request()->input('s')]);
+                    if(request()->has('v'))
+                        $personen->appends(['v' => request()->input('v')]);
+                @endphp
                 {!! $personen->render() !!}
             @endif
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var submit = function(target) {
+            target.form.submit();
+        };
+
+        $('#filter').keypress(function (e) {
+            if (e.which == KeyCode.KEY_ENTER || e.which == KeyCode.KEY_RETURN) {
+                submit(this);
+            }
+        });
+        $('#size').on('change', function (e) {
+            submit(this);
+        });
+        $('#view').on('change', function (e) {
+            submit(this);
+        });
+    });
+</script>
+@endpush

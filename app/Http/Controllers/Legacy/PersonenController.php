@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Legacy;
 
 use App\Http\Requests\Legacy\PersonenRequest;
 use App\Models\Personen;
-use App\Services\SearchParser\SearchLexer;
-use App\Services\SearchParser\SearchParser;
+use App\Services\Parser\Personen\View\Lexer as VLexer;
+use App\Services\Parser\Personen\View\Parser as VParser;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class PersonenController extends LegacyController
 {
@@ -18,21 +19,42 @@ class PersonenController extends LegacyController
         return $this->render();
     }
 
-    public function index() {
-        $builder = Personen::with(['mietvertraege.einheit.haus.objekt', 'kaufvertraege.einheit.haus.objekt']);
+    public function index()
+    {
+        $builder = Personen::with(['sex']);
+        $columns = [];
+        $query = "";
+        if (request()->has('v')) {
+            $query = request()->input('v');
+        }
         if (request()->has('q')) {
-            $lexer = new SearchLexer(request()->input('q'));
-            $parser = new SearchParser($lexer, $builder);
-            while ($lexer->yylex())  {
+            $query .= " " . request()->input('q');
+        }
+        if (!empty($query)) {
+            $trace = fopen(storage_path('logs/vparser.log'), 'w');
+            $lexer = new VLexer($query, $trace);
+            $parser = new VParser($lexer, $builder);
+            $parser->Trace($trace, "\n");
+            while ($lexer->yylex()) {
                 $parser->doParse($lexer->token, $lexer->value);
             }
             $parser->doParse(0, 0);
+            $columns = $parser->retvalue;
         }
-        $personen = $builder->paginate(6);
-        return view('modules.personen.index', ['personen' => $personen]);
+        if (request()->has('s')) {
+            if (request()->input('s') != 'all') {
+                $personen = $builder->paginate(request()->input('s'));
+            } else {
+                $personen = $builder->get();
+            }
+        } else {
+            $personen = $builder->paginate(5);
+        }
+        return view('modules.personen.index', ['personen' => $personen, 'columns' => $columns]);
     }
 
-    public function show($id) {
+    public function show($id)
+    {
         $person = Personen::with(['mietvertraege.einheit.haus.objekt', 'kaufvertraege.einheit.haus.objekt', 'details'])->find($id);
         return view('modules.personen.show', ['person' => $person]);
     }

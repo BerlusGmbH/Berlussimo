@@ -28,4 +28,11 @@ class Einheiten extends Model
     {
         return $this->belongsTo('App\Models\Haeuser', 'HAUS_ID', 'HAUS_ID');
     }
+
+    public function mietvertraege()
+    {
+        return $this->hasMany('App\Models\Mietvertraege',
+            'EINHEIT_ID', 'EINHEIT_ID'
+        );
+    }
 }

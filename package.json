@@ -14,6 +14,7 @@
     "keycode-js": "0.0.4",
     "materialize-css": "^0.97.7",
     "mdi": "^1.7.22",
-    "normalize.css": "^5.0.0"
+    "normalize.css": "^5.0.0",
+    "urijs": "^1.18.4"
   }
 }

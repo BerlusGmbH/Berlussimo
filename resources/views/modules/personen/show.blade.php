@@ -16,7 +16,7 @@
                             @php($margin_bot = '12px')
                         @endif
                         <div class="row" style="line-height: 24px; margin-bottom: {{ $margin_bot }}; margin-top: 12px">
-                            <div class="col-xs-10" >
+                            <div class="col-xs-10">
                                 {{ $person->PERSON_NACHNAME }},
                                 {{ $person->PERSON_VORNAME }}
                                 @if($person->sex[0]->DETAIL_INHALT == 'männlich')
@@ -26,10 +26,12 @@
                                 @endif
                             </div>
                             <div class="col-xs-1 end-xs">
-                                <a href="{{ route('web::personen::legacy', ['anzeigen' => 'person_aendern', 'person_id' => $person->PERSON_ID]) }}"><i class="mdi mdi-pencil"></i></a>
+                                <a href="{{ route('web::personen::legacy', ['anzeigen' => 'person_aendern', 'person_id' => $person->PERSON_ID]) }}"><i
+                                            class="mdi mdi-pencil"></i></a>
                             </div>
                             <div class="col-xs-1 end-xs">
-                                <a href="{{ route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'PERSON', 'detail_id' => $person->PERSON_ID]) }}"><i class="mdi mdi-table-edit"></i></a>
+                                <a href="{{ route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'PERSON', 'detail_id' => $person->PERSON_ID]) }}"><i
+                                            class="mdi mdi-table-edit"></i></a>
                             </div>
                         </div>
                         @if($person->PERSON_GEBURTSTAG->year > 1902)
@@ -58,7 +60,7 @@
                                 <a href="mailto:{{ $person->PERSON_VORNAME }} {{ $person->PERSON_NACHNAME }} <{{ $email->DETAIL_INHALT }}>">{{ $email->DETAIL_INHALT }}{{ $email->DETAIL_BEMERKUNG !== '' ? ', ' . $email->DETAIL_BEMERKUNG : '' }}</a>
                             </div>
                         @endforeach
-                        @foreach($person->anschriften as $anschrift)
+                        @foreach($person->adressen as $anschrift)
                             <div class="col-xs-6 detail">
                                 <i class="mdi mdi-email"></i>
                                 {{ $anschrift->detail_inhalt_with_br }}{{ $anschrift->DETAIL_BEMERKUNG !== '' ? ', ' . $anschrift->DETAIL_BEMERKUNG : '' }}
@@ -115,16 +117,16 @@
                             @foreach( $person->mietvertraege as $mietvertrag )
                                 <tr>
                                     <td>
-                                        @include('shared.namedentity', [ 'entity' => $mietvertrag])
+                                        @include('shared.entity', [ 'entity' => $mietvertrag])
                                     </td>
                                     <td>
-                                        @include('shared.namedentity', [ 'entity' => $mietvertrag->einheit])
+                                        @include('shared.entity', [ 'entity' => $mietvertrag->einheit])
                                     </td>
                                     <td>
-                                        @include('shared.namedentity', [ 'entity' => $mietvertrag->einheit->haus])
+                                        @include('shared.entity', [ 'entity' => $mietvertrag->einheit->haus])
                                     </td>
                                     <td>
-                                        @include('shared.namedentity', [ 'entity' => $mietvertrag->einheit->haus->objekt])
+                                        @include('shared.entity', [ 'entity' => $mietvertrag->einheit->haus->objekt])
                                     </td>
                                 </tr>
                             @endforeach
@@ -150,16 +152,16 @@
                             @foreach( $person->kaufvertraege as $kaufvertrag )
                                 <tr>
                                     <td>
-                                        @include('shared.namedentity', [ 'entity' => $kaufvertrag])
+                                        @include('shared.entity', [ 'entity' => $kaufvertrag])
                                     </td>
                                     <td>
-                                        @include('shared.namedentity', [ 'entity' => $kaufvertrag->einheit])
+                                        @include('shared.entity', [ 'entity' => $kaufvertrag->einheit])
                                     </td>
                                     <td>
-                                        @include('shared.namedentity', [ 'entity' => $kaufvertrag->einheit->haus])
+                                        @include('shared.entity', [ 'entity' => $kaufvertrag->einheit->haus])
                                     </td>
                                     <td>
-                                        @include('shared.namedentity', [ 'entity' => $kaufvertrag->einheit->haus->objekt])
+                                        @include('shared.entity', [ 'entity' => $kaufvertrag->einheit->haus->objekt])
                                     </td>
                                 </tr>
                             @endforeach

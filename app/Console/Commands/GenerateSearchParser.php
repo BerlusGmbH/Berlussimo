@@ -5,7 +5,9 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use PHP_LexerGenerator;
-use PHP_ParserGenerator;
+use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 class GenerateSearchParser extends Command
 {
@@ -32,19 +34,35 @@ class GenerateSearchParser extends Command
     {
         chdir(base_path('vendor/smarty/smarty-lexer/'));
         require_once(base_path('vendor/smarty/smarty-lexer/LexerGenerator.php'));
-        require_once(base_path('vendor/smarty/smarty-lexer/ParserGenerator.php'));
-        chdir(app_path('Services/SearchParser'));
-        new PHP_LexerGenerator(resource_path('parser/SearchLexer.plex'));
-        $content = file_get_contents(resource_path('parser/SearchLexer.php'));
-        $content = str_replace('/isS', '/isSu', $content);
-        file_put_contents(resource_path('parser/SearchLexer.php'), $content);
-        $parser = new PHP_ParserGenerator();
-        $parser->main(resource_path('parser/SearchParser.y'));
-        $content = file_get_contents(resource_path('parser/SearchParser.php'));
-        $content = str_replace('<?php', "<?php\n\nnamespace App\\Services\\SearchParser;\n\nuse ArrayAccess;\nuse Exception;\n", $content);
-        file_put_contents(resource_path('parser/SearchParser.php'), $content);
-        rename(resource_path('parser/SearchLexer.php'), app_path('Services/SearchParser/SearchLexer.php'));
-        rename(resource_path('parser/SearchParser.php'), app_path('Services/SearchParser/SearchParser.php'));
-        unlink(resource_path('parser/SearchParser.out'));
+        //require_once(base_path('vendor/smarty/smarty-lexer/ParserGenerator.php'));
+        chdir(resource_path('parser/'));
+        foreach ($iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(resource_path('parser/'), RecursiveDirectoryIterator::SKIP_DOTS)) as $file) {
+            if ($file->getExtension() === 'plex') {
+                $this->info('Generating Lexer: ' . $file->getFilename());
+                $lex = new PHP_LexerGenerator($file->getPathname());
+                $content = file_get_contents($file->getPath() . DIRECTORY_SEPARATOR . $file->getBasename('.plex') . '.php');
+                $content = str_replace('/isS', '/isSu', $content);
+                file_put_contents($file->getPath() . DIRECTORY_SEPARATOR . $file->getBasename('.plex') . '.php', $content);
+                unset($lex);
+            }
+        }
+        chdir(base_path('vendor/smarty/smarty-lexer/'));
+        foreach ($iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(resource_path('parser/'), RecursiveDirectoryIterator::SKIP_DOTS)) as $file) {
+            if ($file->getExtension() === 'y') {
+                $this->info('Generating Parser: ' . $file->getFilename());
+                passthru('/usr/bin/php "' . resource_path('parser' . DIRECTORY_SEPARATOR . 'script.php') . '" "' . $file->getPathname() . '" "' . base_path('vendor/smarty/smarty-lexer/LexerGenerator.php') . '" "' . base_path('vendor/smarty/smarty-lexer/ParserGenerator.php') . '" "' . $iterator->getSubPath() . '"');
+            }
+        }
+        foreach ($iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(resource_path('parser/'), RecursiveDirectoryIterator::SKIP_DOTS)) as $file) {
+            if ($file->getExtension() === 'php' && $file->getFilename() !== 'script.php') {
+                if(!file_exists(app_path('Services' . DIRECTORY_SEPARATOR . 'Parser' . DIRECTORY_SEPARATOR . $iterator->getSubPath()))) {
+                    mkdir(app_path('Services' . DIRECTORY_SEPARATOR . 'Parser' . DIRECTORY_SEPARATOR . $iterator->getSubPath()), 0777, true);
+                }
+                rename($file->getPathname(), app_path('Services' . DIRECTORY_SEPARATOR . 'Parser' . DIRECTORY_SEPARATOR . $iterator->getSubPathname()));
+            }
+        }
     }
 }

@@ -1,0 +1,140 @@
+<?php
+
+namespace App\Services\Parser\Personen\View;
+
+use Exception;
+
+class Lexer
+{
+    public $counter;
+    public $token;
+    public $value;
+    public $node;
+    public $line;
+    private $data;
+    private $state = 1;
+    public $yyTraceFILE;
+
+    function __construct($data, $trace = null)
+    {
+        $this->data = $data;
+        $this->counter = 0;
+        $this->line = 1;
+        $this->yyTraceFILE = $trace;
+    }
+
+    /*!lex2php
+    %input $this->data
+    %counter $this->counter
+    %token $this->token
+    %value $this->value
+    %line $this->line
+    column = ~person|mietvertrag|kaufvertrag|einheit|haus|objekt|hinweis|telefon|email|detail|adresse~
+    field = ~id|name|vorname|lage|str|nr|plz|ort|von|bis|typ|geb|bemerkung|qm|inhalt~
+    laufzeit = ~laufzeit~
+    comparator = /=|<|<=|=<|>|>=|=>/
+    like = /~/
+    and = ~and~
+    or = ~or~
+    not = ~\!~
+    openp = ~\(~
+    closep = ~\)~
+    order = ~asc|desc~
+    colon = ~:~
+    openb = ~\[~
+    closeb = ~\]~
+    opencb =~\{~
+    closecb =~\}~
+    value = ~("(\pL|\pN|\pS|\pP|\pZ)+"|(\pL|\pN|\pS|\p{Pd}|\p{Po})+)~
+    whitespace = /\pZ+/
+    */
+    /*!lex2php
+    whitespace {
+        return false;
+    }
+    column {
+        $this->token = Parser::COLUMN;
+    }
+    and {
+        $this->token = Parser::AND;
+    }
+    or {
+        $this->token = Parser::OR;
+    }
+    openp {
+        $this->token = Parser::OPENP;
+        $this->yypushstate(self::CLAUSE);
+    }
+    openb {
+        $this->token = Parser::OPENB;
+        $this->yypushstate(self::VIEW);
+    }
+    not {
+        $this->token = Parser::NOT;
+    }
+    */
+    /*!lex2php
+    %statename CLAUSE
+    whitespace {
+        return false;
+    }
+    column {
+        $this->token = Parser::COLUMN;
+    }
+    field {
+        $this->token = Parser::FIELD;
+    }
+    laufzeit {
+        $this->token = Parser::LAUFZEIT;
+    }
+    comparator {
+        $this->token = Parser::COMPARATOR;
+    }
+    like {
+        $this->token = Parser::LIKE;
+    }
+    and {
+        $this->token = Parser::AND;
+    }
+    or {
+        $this->token = Parser::OR;
+    }
+    openp {
+        $this->token = Parser::OPENP;
+        $this->yypushstate(self::CLAUSE);
+    }
+    closep {
+        $this->token = Parser::CLOSEP;
+        $this->yypopstate();
+    }
+    value {
+        $this->token = Parser::VALUE;
+        $before = strlen($this->value);
+        $this->value = trim($this->value, '"');
+        $after = strlen($this->value);
+        $this->counter += $before - $after;
+    }
+    */
+    /*!lex2php
+        %statename VIEW
+        whitespace {
+            return false;
+        }
+        column {
+            $this->token = Parser::COLUMN;
+        }
+        colon {
+            $this->token = Parser::COLON;
+        }
+        field {
+            $this->token = Parser::FIELD;
+        }
+        order {
+            $this->token = Parser::ORDER;
+        }
+        closeb {
+            $this->token = Parser::CLOSEB;
+            $this->yypopstate();
+        }
+    */
+}

@@ -10,7 +10,7 @@
   "require": {
     "php": ">=5.5.9",
     "laravel/framework": "5.2.*",
-    "rospdf/pdf-php": "0.12.22",
+    "rospdf/pdf-php": "0.12.*",
     "barryvdh/laravel-ide-helper": "v2.1.4",
     "doctrine/dbal": "^2.5",
     "spatie/laravel-permission": "^1.4",
