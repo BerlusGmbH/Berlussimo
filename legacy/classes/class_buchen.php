@@ -204,7 +204,7 @@ class buchen
     {
         $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y' ) = '$jahr') && AKTUELL='1'");
         $this->summe_konto_buchungen = 0.00;
-        if (!empty($result)) {
+        if (!empty($result) && isset($result[0]['SUMME'])) {
             $this->summe_konto_buchungen = 0;
             $row = $result[0];
             $this->summe_konto_buchungen = $row ['SUMME'];

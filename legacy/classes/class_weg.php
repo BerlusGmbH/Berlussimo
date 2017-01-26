@@ -4402,7 +4402,7 @@ ORDER BY KONTO ASC
     function get_pid_lastyear($p_id)
     {
         $p_id_vorjahr = null;
-        $result = DB::select("SELECT P2.ID FROM WEG_HGA_PROFIL AS P1 JOIN WEG_HGA_PROFIL AS P2 ON(P1.OBJEKT_ID = P2.OBJEKT_ID) WHERE P1.AKTUELL='1' && P1.AKTUELL='1' && P1.ID='$p_id' && P2.JAHR = P1.JAHR - 1");
+        $result = DB::select("SELECT P2.ID FROM WEG_HGA_PROFIL AS P1 JOIN WEG_HGA_PROFIL AS P2 ON(P1.OBJEKT_ID = P2.OBJEKT_ID) WHERE P1.AKTUELL='1' && P2.AKTUELL='1' && P1.ID='$p_id' && P2.JAHR = P1.JAHR - 1");
         if (!empty($result)) {
             $p_id_vorjahr = $result[0];
             $p_id_vorjahr = $p_id_vorjahr['ID'];
