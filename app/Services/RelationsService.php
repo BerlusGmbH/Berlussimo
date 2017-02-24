@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RelationsService
 {
-    const CLASS_FIELD_TO_FIELD = [
+    static $CLASS_FIELD_TO_FIELD = [
         Mietvertraege::class => [
             'id' => 'MIETVERTRAG_ID',
             'von' => 'MIETVERTRAG_VON',
@@ -69,7 +69,7 @@ class RelationsService
         ]
     ];
 
-    const CLASS_COLUMN_TO_RELATIONS = [
+    static $CLASS_COLUMN_TO_RELATIONS = [
         Personen::class => [
             'objekt' => ['mietvertraege.einheit.haus.objekt', 'kaufvertraege.einheit.haus.objekt'],
             'haus' => ['mietvertraege.einheit.haus','kaufvertraege.einheit.haus'],
@@ -137,7 +137,7 @@ class RelationsService
         ]
     ];
 
-    const CLASS_RELATION_TO_MANY = [
+    static $CLASS_RELATION_TO_MANY = [
         Personen::class => [
             'mietvertraege.einheit.haus.objekt' => [-4, Mietvertraege::class],
             'kaufvertraege.einheit.haus.objekt' => [-4, Kaufvertraege::class],
@@ -152,7 +152,7 @@ class RelationsService
         ],
     ];
 
-    const COLUMN_TO_CLASS = [
+    static $COLUMN_TO_CLASS = [
         'objekt' => Objekte::class,
         'haus' => Haeuser::class,
         'einheit' => Einheiten::class,
@@ -171,7 +171,7 @@ class RelationsService
         'mitarbeiter' => User::class
     ];
 
-    const CLASS_TO_COLUMN = [
+    static $CLASS_TO_COLUMN = [
         Objekte::class => 'objekt',
         Haeuser::class => 'haus',
         Einheiten::class => 'einheit',
@@ -194,12 +194,12 @@ class RelationsService
 
     public function classFieldToField($class, $field)
     {
-        return self::CLASS_FIELD_TO_FIELD[$class][$field];
+        return self::$CLASS_FIELD_TO_FIELD[$class][$field];
     }
 
     public function classColumnToRelations($baseclass, $column)
     {
-        $relationships = self::CLASS_COLUMN_TO_RELATIONS[$baseclass][$column];
+        $relationships = self::$CLASS_COLUMN_TO_RELATIONS[$baseclass][$column];
         if (!is_array($relationships)) {
             $relationships = [ $relationships ];
         }
@@ -207,17 +207,17 @@ class RelationsService
     }
 
     public function classRelationToMany($class, $relation) {
-        $toMany = self::CLASS_RELATION_TO_MANY[$class][$relation];
+        $toMany = self::$CLASS_RELATION_TO_MANY[$class][$relation];
         return isset($toMany) ? $toMany : [0, $class];
     }
 
     public function columnToClass($column)
     {
-        return self::COLUMN_TO_CLASS[$column];
+        return self::$COLUMN_TO_CLASS[$column];
     }
 
     public function classToColumn($column)
     {
-        return self::CLASS_TO_COLUMN[$column];
+        return self::$CLASS_TO_COLUMN[$column];
     }
 }
