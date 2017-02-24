@@ -139,8 +139,8 @@ OR  `LAND` LIKE  '%$suchtext%'
             $zaehler++;
             $partner_id = $partner_arr [$a] ['PARTNER_ID'];
             $partner_name = $partner_arr [$a] ['PARTNER_NAME'];
-            $partner_link_detail = "<a href='" . route('legacy::partner::index', ['option' => 'partner_im_detail', 'partner_id' => $partner_id]) . "'>$partner_name</a>";
-            $link_detail_hinzu = "<a href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'PARTNER_LIEFERANT', 'detail_id' => $partner_id]) . "'>Details</a>";
+            $partner_link_detail = "<a href='" . route('web::partner::legacy', ['option' => 'partner_im_detail', 'partner_id' => $partner_id]) . "'>$partner_name</a>";
+            $link_detail_hinzu = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'PARTNER_LIEFERANT', 'detail_id' => $partner_id]) . "'>Details</a>";
             $partner_strasse = $partner_arr [$a] ['STRASSE'];
             $partner_nr = $partner_arr [$a] ['NUMMER'];
             $partner_plz = $partner_arr [$a] ['PLZ'];
@@ -150,7 +150,7 @@ OR  `LAND` LIKE  '%$suchtext%'
             $pp = new partners ();
             $stich_arr = $pp->get_partner_stichwort_arr($partner_id);
 
-            $link_stich_hinzu = "<a href='" . route('legacy::partner::index', ['option' => 'partner_stichwort', 'partner_id' => $partner_id]) . "'><b>Stichwort eingeben</b></a>";
+            $link_stich_hinzu = "<a href='" . route('web::partner::legacy', ['option' => 'partner_stichwort', 'partner_id' => $partner_id]) . "'><b>Stichwort eingeben</b></a>";
 
             if ($zaehler == 1) {
                 echo "<tr valign=\"top\" class=\"zeile1\"><td>$partner_link_detail</td><td>$anschrift</td><td>";
@@ -334,7 +334,7 @@ OR  `LAND` LIKE  '%$suchtext%'
             protokollieren('PARTNER_LIEFERANT', $last_dat, '0');
             if ($resultat) {
                 session()->flash('info', ["Partner $clean_arr[partnername] wurde gespeichert."]);
-                weiterleiten(route('legacy::partner::index', ['option' => 'partner_liste'], false));
+                weiterleiten(route('web::partner::legacy', ['option' => 'partner_liste'], false));
             }
         } // ende fehler
         if ($numrows_3 > 0) {
@@ -412,9 +412,9 @@ OR  `LAND` LIKE  '%$suchtext%'
             $partner_id = $partner_arr [$a] ['PARTNER_ID'];
             $partner_name = $partner_arr [$a] ['PARTNER_NAME'];
             if ($vorwahl == $partner_id) {
-                echo "<option value=\"$partner_id\" selected>$partner_name</OPTION>\n";
+                echo "<option value=\"$partner_id\" selected>$partner_name</option>\n";
             } else {
-                echo "<option value=\"$partner_id\">$partner_name</OPTION>\n";
+                echo "<option value=\"$partner_id\">$partner_name</option>\n";
             }
         }
         echo "</select><label for=\"$id\">$label</label>\n";
@@ -468,9 +468,9 @@ OR  `LAND` LIKE  '%$suchtext%'
             $zaehler++;
             $partner_id = $partner_arr [$a] ['PARTNER_ID'];
             $partner_name = $partner_arr [$a] ['PARTNER_NAME'];
-            $partner_link_detail = "<a href='" . route('legacy::partner::index', ['option' => 'partner_im_detail', 'partner_id' => $partner_id]) . "'>$partner_name</a>";
-            $link_detail_hinzu = "<a href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'PARTNER_LIEFERANT', 'detail_id' => $partner_id]) . "'>Details</a>";
-            $link_aendern = "<a href='" . route('legacy::partner::index', ['option' => 'partner_aendern', 'partner_id' => $partner_id]) . "'>Ändern</a>";
+            $partner_link_detail = "<a href='" . route('web::partner::legacy', ['option' => 'partner_im_detail', 'partner_id' => $partner_id]) . "'>$partner_name</a>";
+            $link_detail_hinzu = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'PARTNER_LIEFERANT', 'detail_id' => $partner_id]) . "'>Details</a>";
+            $link_aendern = "<a href='" . route('web::partner::legacy', ['option' => 'partner_aendern', 'partner_id' => $partner_id]) . "'>Ändern</a>";
             $partner_strasse = $partner_arr [$a] ['STRASSE'];
             $partner_nr = $partner_arr [$a] ['NUMMER'];
             $partner_plz = $partner_arr [$a] ['PLZ'];
@@ -481,7 +481,7 @@ OR  `LAND` LIKE  '%$suchtext%'
             $pp = new partners ();
             $stich_arr = $pp->get_partner_stichwort_arr($partner_id);
 
-            $link_stich_hinzu = "<a href='" . route('legacy::partner::index', ['option' => 'partner_stichwort', 'partner_id' => $partner_id]) . "'><b>Stichwort eingeben</b></a>";
+            $link_stich_hinzu = "<a href='" . route('web::partner::legacy', ['option' => 'partner_stichwort', 'partner_id' => $partner_id]) . "'><b>Stichwort eingeben</b></a>";
 
             if (!empty($stich_arr)) {
                 $anz_s = count($stich_arr);

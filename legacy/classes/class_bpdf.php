@@ -419,7 +419,7 @@ class b_pdf
         $result = DB::select($db_abfrage);
         if (!empty($result)) {
             echo "<table class=\"sortable striped\">\n";
-            $link_kat = "<a href='" . route('legacy::bk::index', ['option' => 'serienbrief', 'vorlage' => 1]) . "'>Alle Kats anzeigen</a>";
+            $link_kat = "<a href='" . route('web::bk::legacy', ['option' => 'serienbrief', 'vorlage' => 1]) . "'>Alle Kats anzeigen</a>";
             echo "<thead>";
             echo "<tr><th>Vorlage / Betreff</th><th>KAT</th><th>BEARBEITEN</th><th>EINZELPDF</th><th>MEHRERE PDFs</th></tr>";
             echo "</thead>";
@@ -428,10 +428,10 @@ class b_pdf
                 $dat = $row ['DAT'];
                 $kurztext = $row ['KURZTEXT'];
                 $kat = $row ['KAT'];
-                $link_erstellen = "<a href='" . route('legacy::bk::index', ['option' => 'serienbrief_pdf', 'vorlagen_dat' => $dat, 'emailsend']) . "'>Serienbrief in mehreren PDFs</a>";
-                $link_ansehen = "<a href='" . route('legacy::bk::index', ['option' => 'serienbrief_pdf', 'vorlagen_dat' => $dat]) . "'>Serienbrief in einem PDF</a>";
-                $link_bearbeiten = "<a href='" . route('legacy::bk::index', ['option' => 'vorlage_bearbeiten', 'vorlagen_dat' => $dat]) . "'>Vorlage bearbeiten</a>";
-                $link_kat = "<a href='" . route('legacy::bk::index', ['option' => 'serienbrief', 'kat' => $kat, 'vorlage' => 1]) . "'>$kat</a>";
+                $link_erstellen = "<a href='" . route('web::bk::legacy', ['option' => 'serienbrief_pdf', 'vorlagen_dat' => $dat, 'emailsend']) . "'>Serienbrief in mehreren PDFs</a>";
+                $link_ansehen = "<a href='" . route('web::bk::legacy', ['option' => 'serienbrief_pdf', 'vorlagen_dat' => $dat]) . "'>Serienbrief in einem PDF</a>";
+                $link_bearbeiten = "<a href='" . route('web::bk::legacy', ['option' => 'vorlage_bearbeiten', 'vorlagen_dat' => $dat]) . "'>Vorlage bearbeiten</a>";
+                $link_kat = "<a href='" . route('web::bk::legacy', ['option' => 'serienbrief', 'kat' => $kat, 'vorlage' => 1]) . "'>$kat</a>";
 
                 echo "<tr><td>$kurztext</td><td>$link_kat</td><td>$link_bearbeiten</td><td>$link_ansehen</td><td>$link_erstellen</td></tr>";
             }

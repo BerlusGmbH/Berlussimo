@@ -34,9 +34,9 @@ if (check_user_links(Auth::user()->id, 'rechnungen')) {
     if (session()->has('partner_id')) {
         $p = new partners ();
         $p->get_partner_name(session()->get('partner_id'));
-        $link_partner = "<a href='" . route('legacy::rechnungen::index', ['option' => 'partner_wechseln']) . "'>Partner wechseln: <b>$p->partner_name</b></a>&nbsp;&nbsp;";
+        $link_partner = "<a href='" . route('web::rechnungen::legacy', ['option' => 'partner_wechseln']) . "'>Partner wechseln: <b>$p->partner_name</b></a>&nbsp;&nbsp;";
     } else {
-        $link_partner = "<a href='" . route('legacy::rechnungen::index', ['option' => 'partner_wechseln']) . "'>Partner wählen</b></a>&nbsp;&nbsp;";
+        $link_partner = "<a href='" . route('web::rechnungen::legacy', ['option' => 'partner_wechseln']) . "'>Partner wählen</b></a>&nbsp;&nbsp;";
     }
 } else {
     $link_partner = '';
@@ -46,9 +46,9 @@ if (check_user_links(Auth::user()->id, 'buchen')) {
     if (session()->has('geldkonto_id')) {
         $g = new geldkonto_info ();
         $g->geld_konto_details(session()->get('geldkonto_id'));
-        $link_geldkonto = "<a href='" . route('legacy::buchen::index', ['option' => 'geldkonto_aendern']) . "'>Geldkonto: $g->geldkonto_bezeichnung_kurz</a>&nbsp;&nbsp;";
+        $link_geldkonto = "<a href='" . route('web::buchen::legacy', ['option' => 'geldkonto_aendern']) . "'>Geldkonto: $g->geldkonto_bezeichnung_kurz</a>&nbsp;&nbsp;";
     } else {
-        $link_geldkonto = "<a href='" . route('legacy::buchen::index', ['option' => 'geldkonto_aendern']) . "'>Geldkonto wählen</a>&nbsp;&nbsp;";
+        $link_geldkonto = "<a href='" . route('web::buchen::legacy', ['option' => 'geldkonto_aendern']) . "'>Geldkonto wählen</a>&nbsp;&nbsp;";
     }
 } else {
     $link_geldkonto = '';

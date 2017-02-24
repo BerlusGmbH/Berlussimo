@@ -253,7 +253,7 @@ class weg
         echo "<tr><td>HAUSGELD $v_monat_name $vorjahr</td><td>$this->Wohngeld_soll_vj_a €</td></tr>";
         echo "</table>";
 
-        $link_auftrage_im_haus_objekt = "<a href='" . route('legacy::todo::index', ['option' => 'auftrag_haus', 'haus_id' => $e->haus_id, 'einheit_id' => $einheit_id]) . "'>Aufträge im Haus - > HIER KLICKEN!!!!</a>";
+        $link_auftrage_im_haus_objekt = "<a href='" . route('web::todo::legacy', ['option' => 'auftrag_haus', 'haus_id' => $e->haus_id, 'einheit_id' => $einheit_id]) . "'>Aufträge im Haus - > HIER KLICKEN!!!!</a>";
 
         echo "<table><tr><th>$link_auftrage_im_haus_objekt</th></tr></table>";
 
@@ -287,8 +287,8 @@ class weg
                 $beteiligt_name = "<b>$pp->partner_name</b>";
             }
 
-            $link_pdf = "<a href='" . route('legacy::todo::index', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-            $link_txt = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
+            $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+            $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
 
             echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
         }
@@ -323,8 +323,8 @@ class weg
                 $beteiligt_name = "<b>$pp->partner_name</b>";
             }
 
-            $link_pdf = "<a href='" . route('legacy::todo::index', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-            $link_txt = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
+            $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+            $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
 
             echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
         }
@@ -360,8 +360,8 @@ class weg
                 $beteiligt_name = "<b>$pp->partner_name</b>";
             }
 
-            $link_pdf = "<a href='" . route('legacy::todo::index', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-            $link_txt = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
+            $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+            $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
 
             echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
         }
@@ -397,8 +397,8 @@ class weg
                 $beteiligt_name = "<b>$pp->partner_name</b>";
             }
 
-            $link_pdf = "<a href='" . route('legacy::todo::index', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-            $link_txt = "<a href='" . route('legacy::todo::index', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
+            $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+            $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
 
             echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
         }
@@ -853,7 +853,7 @@ class weg
                 $o = new objekt ();
                 $o->get_objekt_infos($objekt_id);
                 echo "<div class='col s12 m6 l3'>";
-                echo "<a href='" . route('legacy::objekte::select', ['objekt_id' => $objekt_id]) . "'>$o->objekt_kurzname</a>";
+                echo "<a href='" . route('web::objekte::legacy', ['objekt_id' => $objekt_id]) . "'>$o->objekt_kurzname</a>";
                 echo "</div>";
             }
             echo "</div>";
@@ -905,16 +905,16 @@ class weg
                 $e = new einheit ();
                 $d = new detail ();
                 $e->get_einheit_info($einheit_id);
-                $u_link = "<a href='" . route('legacy::weg::index', ['option' => 'einheit_uebersicht', 'einheit_id' => $einheit_id]) . "'>$e->einheit_kurzname</a>";
+                $u_link = "<a href='" . route('web::weg::legacy', ['option' => 'einheit_uebersicht', 'einheit_id' => $einheit_id]) . "'>$e->einheit_kurzname</a>";
                 $this->get_last_eigentuemer_namen($einheit_id);
                 $this->weg_anteile = $d->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Anteile');
                 $e->einheit_qm_a = nummer_punkt2komma($e->einheit_qm);
                 $g_qm += $e->einheit_qm;
                 $et_qm = $d->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Fläche');
-                $def_link = "<a href='" . route('legacy::weg::index', ['option' => 'wohngeld_definieren', 'einheit_id' => $einheit_id]) . "'>Wohngeld bestimmen</a>";
-                $hg_auszug_link = "<a href='" . route('legacy::weg::index', ['option' => 'hausgeld_kontoauszug', 'eigentuemer_id' => $this->eigentuemer_id]) . "'>Hausgeld Kontoauszug</a>";
-                $hg_auszug_link1 = "<a href='" . route('legacy::weg::index', ['option' => 'hg_kontoauszug', 'eigentuemer_id' => $this->eigentuemer_id, 'jahr' => date('Y')]) . "'><img src=\"images/pdf_light.png\"></a>";
-                $hg_auszug_link2 = "<a href='" . route('legacy::weg::index', ['option' => 'hg_kontoauszug', 'eigentuemer_id' => $this->eigentuemer_id, 'jahr' => date('Y'), 'no_logo']) . "'><img src=\"images/pdf_dark.png\"></a>";
+                $def_link = "<a href='" . route('web::weg::legacy', ['option' => 'wohngeld_definieren', 'einheit_id' => $einheit_id]) . "'>Wohngeld bestimmen</a>";
+                $hg_auszug_link = "<a href='" . route('web::weg::legacy', ['option' => 'hausgeld_kontoauszug', 'eigentuemer_id' => $this->eigentuemer_id]) . "'>Hausgeld Kontoauszug</a>";
+                $hg_auszug_link1 = "<a href='" . route('web::weg::legacy', ['option' => 'hg_kontoauszug', 'eigentuemer_id' => $this->eigentuemer_id, 'jahr' => date('Y')]) . "'><img src=\"images/pdf_light.png\"></a>";
+                $hg_auszug_link2 = "<a href='" . route('web::weg::legacy', ['option' => 'hg_kontoauszug', 'eigentuemer_id' => $this->eigentuemer_id, 'jahr' => date('Y'), 'no_logo']) . "'><img src=\"images/pdf_dark.png\"></a>";
 
                 echo "<tr><td>$u_link</td><td>$this->eigentuemer_namen</td><td>$e->haus_strasse $e->haus_nummer, $e->haus_plz $e->haus_stadt</td><td>$e->einheit_qm_a m²</td><td>$et_qm</td><td>$e->einheit_lage</td><td>$this->weg_anteile</td><td>$def_link<hr>$hg_auszug_link<br>$hg_auszug_link1 $hg_auszug_link2</td>";
                 echo "<td>";
@@ -927,7 +927,7 @@ class weg
                         $v_id = $arr_e [$e] ['ID'];
                         $v_von = date_mysql2german($arr_e [$e] ['VON']);
                         $v_bis = date_mysql2german($arr_e [$e] ['BIS']);
-                        $hg_auszug_link_ve = "<a href='" . route('legacy::weg::index', ['option' => 'hg_kontoauszug', 'eigentuemer_id' => $v_id, 'jahr' => date('Y')]) . "'>$et_nr. <img src=\"images/pdf_dark.png\"></a>";
+                        $hg_auszug_link_ve = "<a href='" . route('web::weg::legacy', ['option' => 'hg_kontoauszug', 'eigentuemer_id' => $v_id, 'jahr' => date('Y')]) . "'>$et_nr. <img src=\"images/pdf_dark.png\"></a>";
                         echo "$hg_auszug_link_ve $v_von - $v_bis<br>";
                     }
                 }
@@ -938,7 +938,7 @@ class weg
                     for ($e = 0; $e < $anz_e; $e++) {
                         $v_id = $arr_e [$e] ['ID'];
                         $et_nr = $e + 1;
-                        $et_aendern = "<a href='" . route('legacy::weg::index', ['option' => 'eigentuemer_aendern', 'eigentuemer_id' => $v_id]) . "'>$et_nr. ET-Daten ändern</a>";
+                        $et_aendern = "<a href='" . route('web::weg::legacy', ['option' => 'eigentuemer_aendern', 'eigentuemer_id' => $v_id]) . "'>$et_nr. ET-Daten ändern</a>";
                         echo "$et_aendern<br>";
                     }
                 }
@@ -1003,8 +1003,8 @@ class weg
             for ($a = 0; $a < $anz; $a++) {
                 $plan_id = $arr [$a] ['PLAN_ID'];
                 $jahr = $arr [$a] ['JAHR'];
-                $link_zeile_hinzu = "<a href='" . route('legacy::weg::index', ['option' => 'wp_zeile_neu', 'wp_id' => $plan_id]) . "'>Bearbeiten</a>";
-                $link_pdf = "<a href='" . route('legacy::weg::index', ['option' => 'wplan_pdf', 'wp_id' => $plan_id]) . "'><img src=\"images/pdf_light.png\"></a>";
+                $link_zeile_hinzu = "<a href='" . route('web::weg::legacy', ['option' => 'wp_zeile_neu', 'wp_id' => $plan_id]) . "'>Bearbeiten</a>";
+                $link_pdf = "<a href='" . route('web::weg::legacy', ['option' => 'wplan_pdf', 'wp_id' => $plan_id]) . "'><img src=\"images/pdf_light.png\"></a>";
                 echo "<tr><td>$jahr</td><td>$obj_name</td><td>$link_zeile_hinzu $link_pdf</td></tr>";
             }
             echo "</table>\n";
@@ -1103,11 +1103,11 @@ class weg
                 $einheit_id = $arr [$a] ['EINHEIT_ID'];
                 $e = new einheit ();
                 $e->get_einheit_info($einheit_id);
-                $u_link = "<a href='" . route('legacy::weg::index', ['option' => 'einheit_uebersicht', 'einheit_id' => $einheit_id]) . "'>$e->einheit_kurzname</a>";
+                $u_link = "<a href='" . route('web::weg::legacy', ['option' => 'einheit_uebersicht', 'einheit_id' => $einheit_id]) . "'>$e->einheit_kurzname</a>";
                 $this->get_last_eigentuemer_namen($einheit_id);
                 $this->get_wg_info($monat, $jahr, 'Einheit', $einheit_id, 'Hausgeld');
                 $this->Wohngeld_soll_a = nummer_punkt2komma($this->gruppe_erg);
-                $b_link = "<a href='" . route('legacy::weg::index', ['option' => 'wohngeld_buchen_maske', 'einheit_id' => $einheit_id]) . "'>Hausgeld buchen</a>";
+                $b_link = "<a href='" . route('web::weg::legacy', ['option' => 'wohngeld_buchen_maske', 'einheit_id' => $einheit_id]) . "'>Hausgeld buchen</a>";
 
                 $this->hausgeld_kontoauszug_stand($this->eigentuemer_id);
                 echo "<tr><td>$u_link</td><td>$this->eigentuemer_namen</td><td>$b_link</td><td>$this->Wohngeld_soll_a</td><td>$this->hg_erg_a €</td></tr>";
@@ -1258,7 +1258,7 @@ class weg
         $f->erstelle_formular('Buchen', '');
         $e = new einheit ();
         $bg = new berlussimo_global ();
-        $bg->monate_jahres_links($jahr, route('legacy::weg::index', ['option' => 'wohngeld_buchen_maske', 'einheit_id' => $einheit_id], false));
+        $bg->monate_jahres_links($jahr, route('web::weg::legacy', ['option' => 'wohngeld_buchen_maske', 'einheit_id' => $einheit_id], false));
         $e->get_einheit_info($einheit_id);
         $this->get_last_eigentuemer($einheit_id);
         $this->get_last_eigentuemer_namen($einheit_id);
@@ -1493,7 +1493,7 @@ class weg
         $f->erstelle_formular('Hausgeld', '');
         $f->fieldset('Hausgeld definieren', 'ee_id');
         echo "<table class=\"sortable\">";
-        $link_neu = "<a href='" . route('legacy::weg::index', ['option' => 'wohngeld_definieren', 'einheit_id' => $einheit_id, 'neu']) . "'>Neue Kostenart</a>";
+        $link_neu = "<a href='" . route('web::weg::legacy', ['option' => 'wohngeld_definieren', 'einheit_id' => $einheit_id, 'neu']) . "'>Neue Kostenart</a>";
 
         if ($this->check_def() && !request()->exists('neu')) {
             echo "<tr><th>Datum vom</th><th>Datum bis</th><th>BETRAG</th><th>KOSTENART</th><th></th><th>OPTIONEN</th></tr>";
@@ -1568,8 +1568,8 @@ class weg
                 $g_konto = $arr [$a] ['G_KONTO'];
                 $gruppe = $arr [$a] ['GRUPPE'];
 
-                $link_del = "<a href='" . route('legacy::weg::index', ['option' => 'wohngeld_def_del', 'dat' => $dat, 'einheit_id' => $kos_id]) . "'>Löschen</a>";
-                $link_aendern = "<a href='" . route('legacy::weg::index', ['option' => 'wohngeld_def_aendern', 'dat' => $dat]) . "'>Ändern</a>";
+                $link_del = "<a href='" . route('web::weg::legacy', ['option' => 'wohngeld_def_del', 'dat' => $dat, 'einheit_id' => $kos_id]) . "'>Löschen</a>";
+                $link_aendern = "<a href='" . route('web::weg::legacy', ['option' => 'wohngeld_def_aendern', 'dat' => $dat]) . "'>Ändern</a>";
 
                 echo "<tr><td>$von</td><td>$bis</td><td>$betrag_a</td><td>$kostenkat</td><td>$e_konto</td><td>$gruppe</td><td>$g_konto</td><td>$link_aendern<br>$link_del</td></tr>";
             }
@@ -1670,7 +1670,7 @@ class weg
             echo "<h3 style=\"color:red\">Kontostand aktuell: $kontostand_aktuell €</h3>";
         }
         $f->fieldset_ende();
-        weiterleiten_in_sec(route('legacy::weg::index', ['option' => 'wohngeld_buchen_auswahl_e'], false), 3);
+        weiterleiten_in_sec(route('web::weg::legacy', ['option' => 'wohngeld_buchen_auswahl_e'], false), 3);
     }
 
     function hausgeld_kontoauszug($eigentuemer_id)
@@ -1972,11 +1972,11 @@ class weg
                 $einheit_id = $arr [$a] ['EINHEIT_ID'];
                 $e = new einheit ();
                 $e->get_einheit_info($einheit_id);
-                $u_link = "<a href='" . route('legacy::weg::index', ['option' => 'einheit_uebersicht', 'einheit_id' => $einheit_id]) . "'>$e->einheit_kurzname</a>";
+                $u_link = "<a href='" . route('web::weg::legacy', ['option' => 'einheit_uebersicht', 'einheit_id' => $einheit_id]) . "'>$e->einheit_kurzname</a>";
                 $this->get_last_eigentuemer_namen($einheit_id);
                 $this->get_wg_info($monat, $jahr, 'Einheit', $einheit_id, 'Hausgeld');
                 $this->Wohngeld_soll_a = nummer_punkt2komma($this->gruppe_erg);
-                $mahn_link = "<a href='" . route('legacy::weg::index', ['option' => 'mahnen', 'eig' => $this->eigentuemer_id]) . "'>Mahnen</a>";
+                $mahn_link = "<a href='" . route('web::weg::legacy', ['option' => 'mahnen', 'eig' => $this->eigentuemer_id]) . "'>Mahnen</a>";
 
                 $this->hausgeld_kontoauszug_stand($this->eigentuemer_id);
                 echo "<tr><td>$u_link</td><td>$this->eigentuemer_namen</td><td>$this->Wohngeld_soll_a</td><td><b>$this->hg_erg_a €</b><td>$mahn_link</td></tr>";
@@ -2916,7 +2916,7 @@ ORDER BY HGA;");
                 $kontoart_bez = $arr [$a] ['KONTOART_BEZ'];
                 $konto_bez = $arr [$a] ['KONTO_BEZ'];
 
-                $link_loeschen = "<a href='" . route('legacy::weg::index', ['option' => 'wp_zeile_del', 'dat' => $dat]) . "'>Löschen</a>";
+                $link_loeschen = "<a href='" . route('web::weg::legacy', ['option' => 'wp_zeile_del', 'dat' => $dat]) . "'>Löschen</a>";
 
                 if ($temp_g_id != $gruppe_id) {
                     $temp_g_id = $gruppe_id;
@@ -5026,7 +5026,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
 
     function hg_gesamtabrechnung($p_id = '0')
     {
-        echo "<a href='" . route('legacy::weg::index', ['option' => 'testhgg_pdf']) . "'>PDF</a>";
+        echo "<a href='" . route('web::weg::legacy', ['option' => 'testhgg_pdf']) . "'>PDF</a>";
         /* Art = Ausgaben, Einnahmen, Mittelverwendung */
         $_umlage_ktos = $this->get_hgkonten_arr($p_id, 'Ausgaben/Einnahmen');
         $_umlage_ktos = array_orderby($_umlage_ktos, 'GRUPPE', SORT_DESC, 'KONTO', SORT_ASC);
@@ -6496,9 +6496,9 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
                 $this->summe_hndl_a = nummer_punkt2komma($this->summe_hndl);
                 $summe_g_u += $this->summe_zeilen;
                 $summe_g_hndl_u += $this->summe_hndl;
-                $link_del = "<a href='" . route('legacy::weg::index', ['option' => 'konto_del', 'konto' => $konto, 'profil_id' => session()->get('hga_profil_id')]) . "'>Löschen</a>";
+                $link_del = "<a href='" . route('web::weg::legacy', ['option' => 'konto_del', 'konto' => $konto, 'profil_id' => session()->get('hga_profil_id')]) . "'>Löschen</a>";
                 if ($summe > $this->summe_zeilen) {
-                    $link_u = "<a href='" . route('legacy::weg::index', ['option' => 'konto_hinzu', 'schritt' => 2, 'konto' => $konto]) . "'>Übernehmen</a>";
+                    $link_u = "<a href='" . route('web::weg::legacy', ['option' => 'konto_hinzu', 'schritt' => 2, 'konto' => $konto]) . "'>Übernehmen</a>";
                 } else {
                     $link_u = "";
                 }
@@ -6617,7 +6617,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
                 $kontenrahmen_id = $k->get_kontenrahmen('Geldkonto', $gk_id);
                 $k->konto_informationen2($konto, $kontenrahmen_id);
 
-                $link_del = "<a href='" . route('legacy::weg::index', ['option' => 'konto_del', 'konto' => $konto, 'profil_id' => session()->get('hga_profil_id')]) . "'>Löschen</a>";
+                $link_del = "<a href='" . route('web::weg::legacy', ['option' => 'konto_del', 'konto' => $konto, 'profil_id' => session()->get('hga_profil_id')]) . "'>Löschen</a>";
 
                 echo "<tr><td>$konto</td><td>$k->konto_bezeichnung</td><td>$bez_pdf</td><td>$k->konto_art_bezeichnung | $k->konto_gruppen_bezeichnung</td><td>$summe</td><td>$hndl</td><td>";
 
@@ -6760,9 +6760,9 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
                 $jahr = $row ['JAHR'];
                 $o = new objekt ();
                 $o->get_objekt_infos($objekt_id);
-                $link_del = "<a href='" . route('legacy::weg::index', ['option' => 'hga_profile_del', 'profil_id' => $id]) . "'>Löschen</a>";
-                $link_s2 = "<a href='" . route('legacy::weg::index', ['option' => 'assistent', 'schritt' => 2, 'profil_id' => $id]) . "'>Bearbeiten</a>";
-                $link_gd = "<a href='" . route('legacy::weg::index', ['option' => 'grunddaten_profil', 'profil_id' => $id]) . "'>Grunddaten des Profils ändern</a>";
+                $link_del = "<a href='" . route('web::weg::legacy', ['option' => 'hga_profile_del', 'profil_id' => $id]) . "'>Löschen</a>";
+                $link_s2 = "<a href='" . route('web::weg::legacy', ['option' => 'assistent', 'schritt' => 2, 'profil_id' => $id]) . "'>Bearbeiten</a>";
+                $link_gd = "<a href='" . route('web::weg::legacy', ['option' => 'grunddaten_profil', 'profil_id' => $id]) . "'>Grunddaten des Profils ändern</a>";
                 echo "<tr><td>$bez</td><td>$jahr</td><td>$o->objekt_kurzname</td><td>$link_s2 | $link_del | $link_gd</td></tr>";
             }
             echo "<table>";

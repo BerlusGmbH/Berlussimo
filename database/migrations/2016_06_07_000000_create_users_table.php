@@ -35,25 +35,23 @@ class CreateUsersTable extends Migration
 
         $table = DB::table('BENUTZER');
         if ($table->exists()) {
-            DB::transaction(function () use ($table) {
-                $benutzers = $table->get();
-                foreach ($benutzers as $benutzer) {
-                    $user = new User();
-                    $user->id = $benutzer->benutzer_id;
-                    $user->name = $benutzer->benutzername;
-                    $user->email = Str::lower($benutzer->benutzername) . "@berlussimo";
-                    $user->password = Hash::make($benutzer->passwort);
-                    $user->api_token = str_random(60);
-                    $user->birthday = $benutzer->GEB_DAT;
-                    $user->join_date = $benutzer->EINTRITT;
-                    $user->leave_date = $benutzer->AUSTRITT;
-                    $user->hourly_rate = $benutzer->STUNDENSATZ;
-                    $user->hours_per_week = $benutzer->STUNDEN_PW;
-                    $user->holidays = $benutzer->URLAUB;
-                    $user->trade_id = $benutzer->GEWERK_ID;
-                    $user->save();
-                }
-            });
+            $benutzers = $table->get();
+            foreach ($benutzers as $benutzer) {
+                $user = new User();
+                $user->id = $benutzer['benutzer_id'];
+                $user->name = $benutzer['benutzername'];
+                $user->email = Str::lower($benutzer['benutzername']) . "@berlussimo";
+                $user->password = Hash::make($benutzer['passwort']);
+                $user->api_token = str_random(60);
+                $user->birthday = $benutzer['GEB_DAT'];
+                $user->join_date = $benutzer['EINTRITT'];
+                $user->leave_date = $benutzer['AUSTRITT'];
+                $user->hourly_rate = $benutzer['STUNDENSATZ'];
+                $user->hours_per_week = $benutzer['STUNDEN_PW'];
+                $user->holidays = $benutzer['URLAUB'];
+                $user->trade_id = $benutzer['GEWERK_ID'];
+                $user->save();
+            }
         } else {
             $user = new User();
             $user->name = 'admin';

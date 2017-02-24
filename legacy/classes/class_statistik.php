@@ -203,10 +203,10 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         }
 
         $bg = new berlussimo_global ();
-        $link = route('legacy::statistik::index', ['option' => 'sollmieten_aktuell'], false);
+        $link = route('web::statistik::legacy', ['option' => 'sollmieten_aktuell'], false);
         $bg->monate_jahres_links($jahr, $link);
 
-        echo "<a href='" . route('legacy::statistik::index', ['option' => 'verwaltergebuehr_objekt_pdf', 'objekt_id' => $objekt_id]) . "'>Berechnung für $objekt_name als PDF</a><hr>";
+        echo "<a href='" . route('web::statistik::legacy', ['option' => 'verwaltergebuehr_objekt_pdf', 'objekt_id' => $objekt_id]) . "'>Berechnung für $objekt_name als PDF</a><hr>";
         echo "<b>OBJEKT $objekt_name $monat/$jahr</b><br>";
         $typ_lage = '';
         $vermietete_arr = $this->vermietete_monat_jahr($datum, $objekt_id, $typ_lage);
@@ -832,8 +832,8 @@ ORDER BY EINHEIT_KURZNAME ASC");
             $pos = $arr [$a] ['POS'];
             $art_nr = $arr [$a] ['ARTIKEL_NR'];
             $img = "images/del.png";
-            $link_rnr = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnung_kontieren', 'belegnr' => $beleg_id]) . "'>$rnr</a>";
-            $link_del = "<a href='" . route('legacy::statistik::index', ['option' => 'lieferung_loeschen', 'beleg_id' => $beleg_id, 'pos' => $pos]) . "'><img src=\"$img\"></a>";
+            $link_rnr = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnung_kontieren', 'belegnr' => $beleg_id]) . "'>$rnr</a>";
+            $link_del = "<a href='" . route('web::statistik::legacy', ['option' => 'lieferung_loeschen', 'beleg_id' => $beleg_id, 'pos' => $pos]) . "'><img src=\"$img\"></a>";
             $preis = $arr [$a] ['PREIS'];
             $menge = $arr [$a] ['MENGE'];
             $lieferant_id = $arr [$a] ['ART_LIEFERANT'];
@@ -932,7 +932,7 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
                 $einheit_id = $arr [$a] ['EINHEIT_ID'];
                 $e = new einheit ();
                 $e->get_einheit_info($einheit_id);
-                $link_del = "<a href='" . route('legacy::statistik::index', ['option' => 'zuweisung_loeschen', 'beleg_id' => $beleg_nr, 'pos' => $pos, 'einheit_id' => $einheit_id]) . "'><img src=\"$img\"></a>";
+                $link_del = "<a href='" . route('web::statistik::legacy', ['option' => 'zuweisung_loeschen', 'beleg_id' => $beleg_nr, 'pos' => $pos, 'einheit_id' => $einheit_id]) . "'><img src=\"$img\"></a>";
                 echo "<tr><td>$link_del $e->einheit_kurzname</td><td>$e->haus_strasse $e->haus_nummer <br>$e->einheit_lage</td><td>$menge</td></tr>";
             }
             echo "<tfoot><tr><th colspan=\"2\">Summe eingebaut</th><th>$sum</th></tr></tfoot>";
@@ -1018,8 +1018,8 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
                 $a_arr = $r->artikel_info($lieferant_id, $art_nr);
                 $bez = $a_arr [0] ['BEZEICHNUNG'];
                 $r->rechnung_grunddaten_holen($beleg_nr);
-                $link_beleg = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnung_kontieren', 'belegnr' => $beleg_id]) . "'>$r->rechnungsnummer</a>";
-                $link_katalog = "<a href='" . route('legacy::katalog::index', ['option' => 'artikel_suche', 'artikel_nr' => $art_nr]) . "'>$art_nr</a>";
+                $link_beleg = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnung_kontieren', 'belegnr' => $beleg_id]) . "'>$r->rechnungsnummer</a>";
+                $link_katalog = "<a href='" . route('web::katalog::legacy', ['option' => 'artikel_suche', 'artikel_nr' => $art_nr]) . "'>$art_nr</a>";
                 $table_tmp .= "<tr><td>$link_beleg</td><td>$link_katalog</td><td>$bez</td><td>$r->rechnungs_aussteller_name</td><td>$r->rechnungs_empfaenger_name</td><td>$menge</td><td>$menge_kont</td></tr>";
             }
         }

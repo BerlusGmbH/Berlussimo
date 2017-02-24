@@ -222,7 +222,7 @@ class gk
                 $kos_id = $my_array [$a] ['KOSTENTRAEGER_ID'];
                 $r = new rechnung ();
                 $kos_bez = $r->kostentraeger_ermitteln($kos_typ, $kos_id);
-                $link_loeschen = "<a href='" . route('legacy::geldkonten::index', ['option' => 'zuweisung_loeschen', 'geldkonto_id' => $geldkonto_id, 'kos_typ' => $kos_typ, 'kos_id' => $kos_id]) . "'><b>Aufheben</b></a>";
+                $link_loeschen = "<a href='" . route('web::geldkonten::legacy', ['option' => 'zuweisung_loeschen', 'geldkonto_id' => $geldkonto_id, 'kos_typ' => $kos_typ, 'kos_id' => $kos_id]) . "'><b>Aufheben</b></a>";
                 $kos_bez_string .= "$zaehler. " . $kos_bez . "  |  $link_loeschen<br>";
             }
             return $kos_bez_string;

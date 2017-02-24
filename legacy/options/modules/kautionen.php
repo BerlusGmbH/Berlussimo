@@ -144,7 +144,7 @@ switch ($option) {
                 $z++;
                 $feld = $arr [$a] ['FELD'];
                 $dat = $arr [$a] ['DAT'];
-                $link_del = "<a href='" . route('legacy::kautionen::index', ['option' => 'feld_del', 'dat' => $dat]) . "'>Löschen</a>";
+                $link_del = "<a href='" . route('web::kautionen::legacy', ['option' => 'feld_del', 'dat' => $dat]) . "'>Löschen</a>";
                 echo "<tr><td>$z. $feld</td>";
                 echo "<td>$link_del</td>";
                 echo "</tr>";
@@ -161,14 +161,14 @@ switch ($option) {
             $k = new kautionen ();
             $k->feld_speichern(request()->input('feld'));
         }
-        weiterleiten(route('legacy::kautionen::index', ['option' => 'kautionsfelder'], false));
+        weiterleiten(route('web::kautionen::legacy', ['option' => 'kautionsfelder'], false));
         break;
 
     case "feld_del" :
         if (request()->has('dat')) {
             $k = new kautionen ();
             $k->feld_del(request()->input('dat'));
-            weiterleiten(route('legacy::kautionen::index', ['option' => 'kautionsfelder'], false));
+            weiterleiten(route('web::kautionen::legacy', ['option' => 'kautionsfelder'], false));
         }
 
         break;

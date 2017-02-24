@@ -58,7 +58,7 @@ if (isset ($anzeigen)) {
             $a->mietkonto_berechnung(request()->input('mietvertrag_id'));
             $form->erstelle_formular("Mietkonto $a->erg €", NULL);
             echo "<a href=\"?daten=drucken&option=mietkonto_drucken_css&mietvertrag_id=" . request()->input('mietvertrag_id') . "\">Druckansicht</a>&nbsp;&nbsp;";
-            echo "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mk_pdf', 'mietvertrag_id' => request()->input('mietvertrag_id')]) . "'>PDF</a>&nbsp;&nbsp;";
+            echo "<a href='" . route('web::mietkontenblatt::legacy', ['anzeigen' => 'mk_pdf', 'mietvertrag_id' => request()->input('mietvertrag_id')]) . "'>PDF</a>&nbsp;&nbsp;";
             iframe_start();
             $a->mietkonten_blatt_anzeigen(request()->input('mietvertrag_id'));
 
@@ -921,7 +921,7 @@ if (isset ($anzeigen)) {
                 $buchung->buchung_form($mietvertrag_id);
             } else {
                 // fals keine MV_ID eingegeben wurde, weiterleiten
-                weiterleiten(route('legacy::mietkontenblatt::index', ['anzeigen' => 'liste'], false));
+                weiterleiten(route('web::mietkontenblatt::legacy', ['anzeigen' => 'liste'], false));
             }
             iframe_end();
             break;

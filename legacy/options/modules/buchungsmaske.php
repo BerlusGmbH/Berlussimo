@@ -44,7 +44,7 @@ switch ($schritt) {
             } else {
                 echo "<h3 style=\"color:red\">Kontrolldaten zum Kontoauszug fehlen</h3>";
                 echo "<h3 style=\"color:red\">Weiterleitung erfolgt</h3>";
-                weiterleiten_in_sec(route('legacy::buchen::index', ['option' => 'kontoauszug_form'], false), 1);
+                weiterleiten_in_sec(route('web::buchen::legacy', ['option' => 'kontoauszug_form'], false), 1);
             }
             if ($kontostand_aktuell == $kontostand_temp) {
                 echo "<h3>Kontostand aktuell: $kontostand_aktuell €</h3>";
@@ -56,7 +56,7 @@ switch ($schritt) {
         } else {
             // fals keine MV_ID eingegeben wurde, weiterleiten
             warnung_ausgeben("Fehler : Bitte eine Einheit auswählen!");
-            weiterleiten(route('legacy::miete_buchen::index', false));
+            weiterleiten(route('web::miete_buchen::legacy', false));
         }
         $form->ende_formular();
         break;
@@ -172,7 +172,7 @@ switch ($schritt) {
     case "datum_aendern" :
         session()->forget('buchungsdatum');
         session()->forget('temp_kontoauszugsnummer');
-        weiterleiten(route('legacy::miete_buchen::index', false));
+        weiterleiten(route('web::miete_buchen::legacy', false));
         break;
 
     default :
@@ -203,7 +203,7 @@ switch ($schritt) {
             if (session()->has('buchungsdatum')) {
 
                 echo "<b>Buchungsdatum:</b> " . session()->get('buchungsdatum');
-                echo "&nbsp;<a href='" . route('legacy::miete_buchen::index', ['schritt' => 'datum_aendern']) . "'>Datum ändern</a>&nbsp;";
+                echo "&nbsp;<a href='" . route('web::miete_buchen::legacy', ['schritt' => 'datum_aendern']) . "'>Datum ändern</a>&nbsp;";
             } else {
                 echo "<b>Datum eingeben !</b>";
             }
@@ -215,7 +215,7 @@ switch ($schritt) {
             } else {
                 echo "<h3 style=\"color:red\">Kontrolldaten zum Kontoauszug fehlen</h3>";
                 echo "<h3 style=\"color:red\">Weiterleitung erfolgt</h3>";
-                weiterleiten_in_sec(route('legacy::buchen::index', ['option' => 'kontoauszug_form'], false), 1);
+                weiterleiten_in_sec(route('web::buchen::legacy', ['option' => 'kontoauszug_form'], false), 1);
             }
             if ($kontostand_aktuell == $kontostand_temp) {
                 echo "<h3>Kontostand aktuell: $kontostand_aktuell €</h3>";
@@ -244,7 +244,7 @@ switch ($schritt) {
         $form->erstelle_formular("Sicherheitsabfrage", NULL);
         /* Falls NEIN gedrückt */
         if (request()->has('submit_storno_nein')) {
-            weiterleiten_in_sec(route('legacy::miete_buchen::index', [], false), 2);
+            weiterleiten_in_sec(route('web::miete_buchen::legacy', [], false), 2);
             warnung_ausgeben(("Der Vorgang wurde vom Benutzer abgebrochen. <br> Die Buchung wurde nicht storniert. <br>Bitte warten, Sie werden weitergeleitet."));
         }
         /* Sicherheitsabfrage vor dem Absenden oder Abbrechen */
@@ -265,7 +265,7 @@ switch ($schritt) {
                 $form->mietbuchung_stornieren_intern(request()->input('MIETBUCHUNGEN')[$a]);
             }
             /* Nach dem Stornieren weiterleiten */
-            weiterleiten(route('legacy::miete_buchen::index', false), 3);
+            weiterleiten(route('web::miete_buchen::legacy', false), 3);
         }
         $form->ende_formular();
         break;
@@ -315,7 +315,7 @@ function objekt_auswahl()
         $objekt_kurzname = new objekt ();
         $objekt_kurzname->get_objekt_name(session()->get('objekt_id'));
         echo "<p>&nbsp;<b>Ausgewähltes Objekt</b> -> $objekt_kurzname->objekt_name ->";
-        echo "->&nbsp;<a href='" . route('legacy::miete_buchen::index', ['schritt' => 'monatsabschluss']) . "'>Monatsabschluss</a>";
+        echo "->&nbsp;<a href='" . route('web::miete_buchen::legacy', ['schritt' => 'monatsabschluss']) . "'>Monatsabschluss</a>";
         echo " </p>";
         echo "<div class=\"info_feld_oben\">Ausgewähltes Objekt " . $objekt_kurzname->objekt_name . "<br><b>Einheit auswählen</b><br>WEISS: keine Zahlung im aktuellen Monat.<br>GRAU: Zahlungen wurden gebucht.</div>";
     }
@@ -327,7 +327,7 @@ function objekt_auswahl()
     // print_r($objekte_arr);
     $c = 0;
     for ($i = 0; $i < $anzahl_objekte; $i++) {
-        echo "<a class=\"objekt_auswahl_buchung\" href='" . route('legacy::miete_buchen::index', ['objekt_id' => $objekte_arr[$i]['OBJEKT_ID']]) . "'>" . $objekte_arr [$i] ['OBJEKT_KURZNAME'] . "</a>&nbsp;<b>|</b>&nbsp;";
+        echo "<a class=\"objekt_auswahl_buchung\" href='" . route('web::miete_buchen::legacy', ['objekt_id' => $objekte_arr[$i]['OBJEKT_ID']]) . "'>" . $objekte_arr [$i] ['OBJEKT_KURZNAME'] . "</a>&nbsp;<b>|</b>&nbsp;";
         $c++;
         if ($c == 10) {
             echo "<br>";
@@ -402,9 +402,9 @@ function einheiten_liste()
             $ekn = $einheiten_array [$i] ['EINHEIT_KURZNAME'];
             if ($anzahl_zahlungsvorgaenge < 1) {
 
-                echo "<a href='" . route('legacy::miete_buchen::index', ['schritt' => 'buchungsauswahl', 'mietvertrag_id' => $einheit_info->mietvertrag_id]) . "' class=\"nicht_gebucht_links\">$ekn</a> $mietkonto_status&nbsp;";
+                echo "<a href='" . route('web::miete_buchen::legacy', ['schritt' => 'buchungsauswahl', 'mietvertrag_id' => $einheit_info->mietvertrag_id]) . "' class=\"nicht_gebucht_links\">$ekn</a> $mietkonto_status&nbsp;";
             } else {
-                echo "<a href='" . route('legacy::miete_buchen::index', ['schritt' => 'buchungsauswahl', 'mietvertrag_id' => $einheit_info->mietvertrag_id]) . "' class=\"gebucht_links\">$ekn</a> $mietkonto_status&nbsp;";
+                echo "<a href='" . route('web::miete_buchen::legacy', ['schritt' => 'buchungsauswahl', 'mietvertrag_id' => $einheit_info->mietvertrag_id]) . "' class=\"gebucht_links\">$ekn</a> $mietkonto_status&nbsp;";
             }
             echo "<br>"; // Nach jeder Einheit Neuzeile
             $m = new mietvertrag (); // class mietvertrag aus berlussimo_class.php;

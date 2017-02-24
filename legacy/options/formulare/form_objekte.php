@@ -44,7 +44,7 @@ switch ($daten_rein) {
         if (isset ($submit_obj_erstellen)) {
             $objekt_kurzname = trim($objekt_kurzname);
             if ($objekt_kurzname != '') {
-                $form->erstelle_formular("Wohnobjekt anlegen", route('legacy::objekteform::index', ['daten_rein' => 'objekt_in_db'], false));
+                $form->erstelle_formular("Wohnobjekt anlegen", route('web::objekteform::legacy', ['daten_rein' => 'objekt_in_db'], false));
                 echo "<tr><td><h1>Folgende Daten wurden übermittelt:\n</h1></td></tr>\n";
                 echo "<tr><td><h2>Objektkurzname: $objekt_kurzname</h2></td></tr>\n";
                 echo "<tr><td>";
@@ -73,7 +73,7 @@ switch ($daten_rein) {
             if ($kurzname_existiert < 1) {
                 neues_objekt_anlegen($objekt_kurzname, $eigentuemer); // obj_id, kurzname - id muß eingegeben werden
                 hinweis_ausgeben("$objekt_kurzname wurde als Verwaltungsobjekt angelegt.");
-                weiterleiten_in_sec(route('legacy::objekte::index', ['objekte_raus' => 'objekte_kurz'], false), 2);
+                weiterleiten_in_sec(route('web::objekte::legacy', ['objekte_raus' => 'objekte_kurz'], false), 2);
             } else {
                 fehlermeldung_ausgeben("Objekt $objekt_kurzname existiert schon!!!");
             }
@@ -107,7 +107,7 @@ switch ($daten_rein) {
         if (isset ($submit_update_objekt)) {
             if ($neu_objekt_kurzname != '') {
                 echo "$neu_objekt_kurzname $objekt_dat";
-                erstelle_formular($objekt_in_db, route('legacy::objekteform::index', ['daten_rein' => 'aendern_in_db'], false)); // name, action
+                erstelle_formular($objekt_in_db, route('web::objekteform::legacy', ['daten_rein' => 'aendern_in_db'], false)); // name, action
                 echo "<tr><td><h1>Folgende Daten wurden übermittelt:\n</h1></td></tr>\n";
                 echo "<tr><td><h2>Objektkurzname: $objekt_kurzname</h2></td></tr>\n";
                 echo "<tr><td>";
@@ -141,7 +141,7 @@ switch ($daten_rein) {
             if ($kurzname_existiert < 1) {
                 objekt_update_kurzname($objekt_dat, $obj_id, $neu_objekt_kurzname);
                 hinweis_ausgeben("objekt_kurzname wurde in $neu_objekt_kurzname umbenannt.");
-                weiterleiten(route('legacy::objekte::index', ['objekte_raus' => 'objekte_kurz'], false));
+                weiterleiten(route('web::objekte::legacy', ['objekte_raus' => 'objekte_kurz'], false));
             } else {
                 fehlermeldung_ausgeben("Objekt $objekt_kurzname existiert schon!!!");
                 hinweis_ausgeben("Keine änderungen wurden vorgenommen!!!");
@@ -169,7 +169,7 @@ switch ($daten_rein) {
         if (request()->has('obj_loeschen')) {
             objekt_loeschen($obj_dat);
             hinweis_ausgeben("$objekt_kurzname wurde gelöscht!");
-            weiterleiten(route('legacy::objekte::index', ['objekte_raus' => 'objekte_kurz'], false));
+            weiterleiten(route('web::objekte::legacy', ['objekte_raus' => 'objekte_kurz'], false));
         }
         iframe_end();
         break;

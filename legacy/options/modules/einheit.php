@@ -53,7 +53,7 @@ switch ($einheit_raus) {
             $typ = request()->input('typ');
             $e->einheit_speichern($kurzname, $lage, $qm, $haus_id, $typ);
             echo "Einheit $kurzname wurde erstellt.";
-            weiterleiten_in_sec(route('legacy::einheiten::index', ['einheit_raus' => 'einheit_kurz', 'haus_id' => $haus_id], false), 2);
+            weiterleiten_in_sec(route('web::einheiten::legacy', ['einheit_raus' => 'einheit_kurz', 'haus_id' => $haus_id], false), 2);
         } else {
             echo "Dateneingabe zur Einheit unvollständig";
         }
@@ -142,13 +142,13 @@ function einheit_kurz($haus_id)
                     $mieter = "Mieter:($mieteranzahl)";
                     $mietvertrags_id = vertrags_id($row['EINHEIT_ID']);
                     if (!empty ($mietvertrags_id)) {
-                        $mietkonto_link = "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mietkonto_uebersicht_detailiert', 'mietvertrag_id' => $mietvertrags_id]) . "'>Mietkonto</a>";
+                        $mietkonto_link = "<a href='" . route('web::mietkontenblatt::legacy', ['anzeigen' => 'mietkonto_uebersicht_detailiert', 'mietvertrag_id' => $mietvertrags_id]) . "'>Mietkonto</a>";
                     }
                 }
-                $einheit_link = "<a class=\"table_links\" href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $row['EINHEIT_ID']]) . "'>$row[EINHEIT_KURZNAME]</a>";
+                $einheit_link = "<a class=\"table_links\" href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $row['EINHEIT_ID']]) . "'>$row[EINHEIT_KURZNAME]</a>";
             } // end Mietswohnungen
             if ($row['TYP'] == 'Wohneigentum') {
-                $einheit_link = "<a class=\"table_links\" href='" . route('legacy::weg::index', ['option' => 'einheit_uebersicht', 'einheit_id' => $row['EINHEIT_ID']]) . "'>$row[EINHEIT_KURZNAME]</a>";
+                $einheit_link = "<a class=\"table_links\" href='" . route('web::weg::legacy', ['option' => 'einheit_uebersicht', 'einheit_id' => $row['EINHEIT_ID']]) . "'>$row[EINHEIT_KURZNAME]</a>";
             }
             $EINHEIT_QM = nummer_punkt2komma($row['EINHEIT_QM']);
 
@@ -158,7 +158,7 @@ function einheit_kurz($haus_id)
             } else {
                 $detail_link = "<a class=\"table_links\" href=\"?daten=details&option=details_hinzu&detail_tabelle=EINHEIT&detail_id=$row[EINHEIT_ID]\">Neues Detail</a>";
             }
-            $link_aendern = "<a class=\"table_links\" href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_aendern', 'einheit_id' => $einheit_id]) . "'>Ändern</a>";
+            $link_aendern = "<a class=\"table_links\" href='" . route('web::einheiten::legacy', ['einheit_raus' => 'einheit_aendern', 'einheit_id' => $einheit_id]) . "'>Ändern</a>";
             if ($TYP != 'Wohneigentum') {
                 echo "<tr><td>$einheit_link</td><td>$row[TYP]</td><td>$mietkonto_link</td><td>";
                 if ($mieter != "leer") {
@@ -217,7 +217,7 @@ WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LPAD(EINHEIT_KURZNAME, LE
                     if ($nk_vorschuss_sn) {
                         $weg->get_eigentumer_id_infos3($weg->eigentuemer_id);
                         $mieter_name = "<b>WEG-SELBSTNUTZER:</b><br> $weg->empf_namen_u";
-                        $eig_link = "<a href='" . route('legacy::weg::index', ['option' => 'einheit_uebersicht', 'einheit_id' => $einheit_id]) . "'>$mieter_name</a>";
+                        $eig_link = "<a href='" . route('web::weg::legacy', ['option' => 'einheit_uebersicht', 'einheit_id' => $einheit_id]) . "'>$mieter_name</a>";
                     } else {
                         /* Eigentpmer zahlt keine Vorschüsse, dann vermietet er und ist kein Selbstnutzer */
                         $mieter = "leer";
@@ -227,22 +227,22 @@ WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LPAD(EINHEIT_KURZNAME, LE
                 $mieter = "Mieter:($mieteranzahl)";
                 $mietvertrags_id = vertrags_id($einheit_id);
                 if (!empty ($mietvertrags_id)) {
-                    $mietkonto_link = "<a href='" . route('legacy::mietkontenblatt::index', ['anzeigen' => 'mietkonto_uebersicht_detailiert', 'mietvertrag_id' => $mietvertrags_id]) . "'>Mietkonto</a>";
+                    $mietkonto_link = "<a href='" . route('web::mietkontenblatt::legacy', ['anzeigen' => 'mietkonto_uebersicht_detailiert', 'mietvertrag_id' => $mietvertrags_id]) . "'>Mietkonto</a>";
                 }
             }
             if ($TYP != 'Wohneigentum') {
-                $einheit_link = "<a class=\"table_links\" href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id]) . "'>$einheit_kurzname</a>";
+                $einheit_link = "<a class=\"table_links\" href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id]) . "'>$einheit_kurzname</a>";
             } else {
-                $einheit_link = "<a class=\"table_links\" href='" . route('legacy::weg::index', ['option' => 'einheit_uebersicht', 'einheit_id' => $einheit_id]) . "'>$einheit_kurzname</a>";
+                $einheit_link = "<a class=\"table_links\" href='" . route('web::weg::legacy', ['option' => 'einheit_uebersicht', 'einheit_id' => $einheit_id]) . "'>$einheit_kurzname</a>";
             }
 
-            $link_aendern = "<a class=\"table_links\" href='" . route('legacy::einheiten::index', ['einheit_raus' => 'einheit_aendern', 'einheit_id' => $einheit_id]) . "'>Ändern</a>";
+            $link_aendern = "<a class=\"table_links\" href='" . route('web::einheiten::legacy', ['einheit_raus' => 'einheit_aendern', 'einheit_id' => $einheit_id]) . "'>Ändern</a>";
 
             $detail_check = detail_check("EINHEIT", $einheit_id);
             if ($detail_check > 0) {
-                $detail_link = "<a class=\"table_links\" href='" . route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_tabelle' => 'EINHEIT', 'detail_id' => $einheit_id]) . "'>Details</a>";
+                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'EINHEIT', 'detail_id' => $einheit_id]) . "'>Details</a>";
             } else {
-                $detail_link = "<a class=\"table_links\" href='" . route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => 'EINHEIT', 'detail_id' => $einheit_id]) . "'>Neues Detail</a>";
+                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'EINHEIT', 'detail_id' => $einheit_id]) . "'>Neues Detail</a>";
             }
 
             echo "<tr><td>$einheit_link</td><td>$TYP</td><td>$mietkonto_link</td><td>";

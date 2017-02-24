@@ -30,7 +30,7 @@ switch ($option) {
                 $buchung->zb_buchen_form(session()->get('geldkonto_id'));
                 $form->ende_formular();
             } else {
-                weiterleiten(route('legacy::buchen::index', ['option' => 'kontoauszug_form'], false));
+                weiterleiten(route('web::buchen::legacy', ['option' => 'kontoauszug_form'], false));
             }
         } else {
             $buchung->geldkonto_auswahl();
@@ -56,7 +56,7 @@ switch ($option) {
 
     case "buchung_gesendet" :
 
-        $link_kontoauszug = "<a href='" . route('legacy::buchen::index', ['option' => 'kontoauszug_form'], false) . "'>Kontrolldaten zum Kontoauszug eingeben</a>";
+        $link_kontoauszug = "<a href='" . route('web::buchen::legacy', ['option' => 'kontoauszug_form'], false) . "'>Kontrolldaten zum Kontoauszug eingeben</a>";
         $form = new formular ();
         $form->erstelle_formular("Buchungsinformationen prüfen", NULL);
         $kostentraeger_typ = request()->input('kostentraeger_typ');
@@ -86,7 +86,7 @@ switch ($option) {
             $error = "Fehler - Rechnungsnummer";
         }
         if ($datum != session()->get('temp_datum')) {
-            $link_kontoauszug = "<a href='" . route('legacy::buchen::index', ['option' => 'kontoauszug_form'], false) . "'>Kontrolldaten zum Kontoauszug eingeben</a>";
+            $link_kontoauszug = "<a href='" . route('web::buchen::legacy', ['option' => 'kontoauszug_form'], false) . "'>Kontrolldaten zum Kontoauszug eingeben</a>";
             $error = "Sie haben das Buchungsdatum verändert.<br>";
             $error .= "Bitte die Kontrolldaten zur Kontoauszugsnummer " . session()->get('temp_kontoauszugsnummer') . " verändern.";
             $error .= "<br>$link_kontoauszug";
@@ -202,7 +202,7 @@ switch ($option) {
         session()->put('temp_kontostand', $kontostand_punkt);
         echo "Kontoauszugsdaten wurden temporär gespeichert.<br>";
         echo "Sie werden weitergeleitet.";
-        weiterleiten_in_sec(route('legacy::buchen::index', ['option' => 'zahlbetrag_buchen'], false), 1);
+        weiterleiten_in_sec(route('web::buchen::legacy', ['option' => 'zahlbetrag_buchen'], false), 1);
         $form->ende_formular();
         break;
 
@@ -230,15 +230,15 @@ switch ($option) {
             }
             $form->erstelle_formular("$buchung->akt_konto_bezeichnung -> Buchungsjournal seit $datum", NULL);
             $bg = new berlussimo_global ();
-            $link = route('legacy::buchen::index', ['option' => 'buchungs_journal'], false);
+            $link = route('web::buchen::legacy', ['option' => 'buchungs_journal'], false);
             $bg->monate_jahres_links($jahr, $link);
-            echo "<a href='" . route('legacy::buchen::index', ['option' => 'buchungs_journal_druckansicht']) . "'>Druckansicht</a>&nbsp;";
+            echo "<a href='" . route('web::buchen::legacy', ['option' => 'buchungs_journal_druckansicht']) . "'>Druckansicht</a>&nbsp;";
             if (request()->has('monat')) {
                 $aktueller_monat = request()->input('monat');
             } else {
                 $aktueller_monat = date("m");
             }
-            echo "<a href='" . route('legacy::buchen::index', ['option' => 'buchungs_journal_pdf', 'monat' => $aktueller_monat, 'jahr' => $jahr]) . "'>PDF-Ansicht</a>&nbsp;";
+            echo "<a href='" . route('web::buchen::legacy', ['option' => 'buchungs_journal_pdf', 'monat' => $aktueller_monat, 'jahr' => $jahr]) . "'>PDF-Ansicht</a>&nbsp;";
             $buchung->buchungsjournal_startzeit(session()->get('geldkonto_id'), $datum);
             $form->ende_formular();
         }
@@ -268,7 +268,7 @@ switch ($option) {
             }
             $form->erstelle_formular("$buchung->akt_konto_bezeichnung -> Buchungsjournal seit $datum", NULL);
             $bg = new berlussimo_global ();
-            $link = route('legacy::buchen::index', ['option' => 'buchungs_journal_druckansicht'], false);
+            $link = route('web::buchen::legacy', ['option' => 'buchungs_journal_druckansicht'], false);
             $bg->monate_jahres_links($jahr, $link);
             $buchung->buchungsjournal_startzeit_druck(session()->get('geldkonto_id'), $datum);
             $form->ende_formular();
@@ -313,7 +313,7 @@ switch ($option) {
         session()->forget('temp_kontoauszugsnummer');
         echo "Temporäre Kontoauszugsnummer wurde gelöscht.<br>";
         echo "Sie werden weitergeleitet.";
-        weiterleiten_in_sec(route('legacy::buchen::index', ['option' => 'buchungs_journal'], false), 1);
+        weiterleiten_in_sec(route('web::buchen::legacy', ['option' => 'buchungs_journal'], false), 1);
         break;
 
     case "buchungsbeleg_ansicht" :
@@ -339,7 +339,7 @@ switch ($option) {
         break;
 
     case "konten_uebersicht_pdf" :
-        $link = route('legacy::buchen::index', ['option' => 'konten_uebersicht'], false);
+        $link = route('web::buchen::legacy', ['option' => 'konten_uebersicht'], false);
         $form = new formular ();
         $form->fieldset("Buchungen -> Kostenkontenübersicht als PDF", 'kostenkonten');
         $geldkonto_id = session()->get('geldkonto_id');
@@ -382,7 +382,7 @@ switch ($option) {
 
     case "kostenkonto_suchen" :
         $b = new buchen ();
-        $link = route('legacy::buchen::index', ['option' => 'konto'], false);
+        $link = route('web::buchen::legacy', ['option' => 'konto'], false);
         $form = new formular ();
         $form->fieldset("Buchungen -> Kostenkontenübersicht dynamisch", 'kostenkonten_dyn');
         $kostentraeger_typ = request()->input('kostentraeger_typ');
@@ -398,7 +398,7 @@ switch ($option) {
     /* Einsicht aller Buchungen zu einem Kostenkonto unabhängig vom Geldkonto */
     case "buchungen_zu_kostenkonto" :
         $b = new buchen ();
-        $link = route('legacy::buchen::index', ['option' => 'konto'], false);
+        $link = route('web::buchen::legacy', ['option' => 'konto'], false);
         $f = new formular ();
         $f->erstelle_formular("Buchungen -> Buchungen zu einem Kostenkonto finden", null);
         if (!request()->isMethod('post')) {
@@ -492,7 +492,7 @@ switch ($option) {
     /* Monatsbericht ohne ausgezogene Mietern */
     case "monatsbericht_o_a" :
         $b = new buchen ();
-        $link = route('legacy::buchen::index', ['option' => 'konto'], false);
+        $link = route('web::buchen::legacy', ['option' => 'konto'], false);
         $form = new formular ();
         $form->fieldset("Monatsbericht", 'monatsbericht');
         $b->monatsbericht_ohne_ausgezogene();
@@ -501,7 +501,7 @@ switch ($option) {
     /* Monatsbericht mit ausgezogenen Mietern */
     case "monatsbericht_m_a" :
         $b = new buchen ();
-        $link = route('legacy::buchen::index', ['option' => 'konto'], false);
+        $link = route('web::buchen::legacy', ['option' => 'konto'], false);
         $form = new formular ();
         $form->fieldset("Monatsbericht", 'monatsbericht');
         $b->monatsbericht_mit_ausgezogenen();
@@ -971,7 +971,7 @@ switch ($option) {
                     }
                 }
                 if (is_array(session()->get('umsaetze_nok')) or is_array(session()->get('umsaetze_ok'))) {
-                    weiterleiten(route('legacy::buchen::index', ['option' => 'excel_buchen_session'], false));
+                    weiterleiten(route('web::buchen::legacy', ['option' => 'excel_buchen_session'], false));
                 } else {
                     fehlermeldung_ausgeben("Keine Daten aus der Importdatei übernommen!");
                 }
@@ -1011,7 +1011,7 @@ switch ($option) {
                 session()->put('umsatz_id_temp', 0);
             }
             ob_clean();
-            weiterleiten(route('legacy::buchen::index', ['option' => 'excel_buchen_session'], false));
+            weiterleiten(route('web::buchen::legacy', ['option' => 'excel_buchen_session'], false));
         }
 
         if (!session()->has('umsatz_id_temp')) {
@@ -1046,7 +1046,7 @@ switch ($option) {
         $bu = new buchen ();
         $bu->geldbuchung_speichern($datum, $kto_auszugsnr, $rechnungsnr, $betrag, $vzweck, $geldkonto_id, $kostentraeger_typ, $kostentraeger_id, $kostenkonto, $mwst);
 
-        weiterleiten(route('legacy::buchen::index', ['option' => 'excel_buchen_session'], false));
+        weiterleiten(route('web::buchen::legacy', ['option' => 'excel_buchen_session'], false));
         break;
 
     case "sepa_ue_autobuchen" :
@@ -1070,7 +1070,7 @@ switch ($option) {
             $file = request()->input('file');
             $sep = new sepa ();
             $sep->sepa_file_autobuchen($file, session()->get('temp_datum'), session()->get('geldkonto_id'), session()->get('temp_kontoauszugsnummer'), $mwst);
-            weiterleiten(route('legacy::buchen::index', ['option' => 'excel_buchen_session'], false));
+            weiterleiten(route('web::buchen::legacy', ['option' => 'excel_buchen_session'], false));
         } else {
             fehlermeldung_ausgeben("Fehler beim Verbuchen EC232");
         }
@@ -1082,7 +1082,7 @@ switch ($option) {
         $s = new sepa ();
         $s->form_ls_datei_ab($ls_file);
 
-        weiterleiten_in_sec(route('legacy::buchen::index', ['option' => 'excel_buchen_session'], false), 3);
+        weiterleiten_in_sec(route('web::buchen::legacy', ['option' => 'excel_buchen_session'], false), 3);
         break;
 
     case "excel_nok" :

@@ -63,7 +63,7 @@ class detail
         $form = new formular ();
         $link = '';
         if ($tab == 'EINHEIT') {
-            $link = "<a href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $id]) . "'>Zurück zu Einheit</a>";
+            $link = "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $id]) . "'>Zurück zu Einheit</a>";
         }
         $form->erstelle_formular('Detail hinzufügen', '');
         echo "$link<br>";
@@ -165,11 +165,8 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC");
 
     function detailsanzeigen($detail_tabelle, $detail_id)
     {
-        $f = new formular ();
-        $f->fieldset("Details menü", 'details_menue');
-        $link = route('legacy::details::index', ['option' => 'details_hinzu', 'detail_tabelle' => $detail_tabelle, 'detail_id' => $detail_id]);
-        echo "<a href=\"$link\">Neues Detail hinzufügen</a>&nbsp;";
-        $f->fieldset_ende();
+        $link = route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => $detail_tabelle, 'detail_id' => $detail_id]);
+        echo "<a class='btn waves-effect waves-light' href=\"$link\"><i class=\"material-icons left\">add</i>Neues Detail</a>";
 
         $db_abfrage = "SELECT DETAIL_DAT, DETAIL_ID, DETAIL_NAME, DETAIL_INHALT, DETAIL_BEMERKUNG FROM DETAIL WHERE DETAIL_AKTUELL='1' && DETAIL_ZUORDNUNG_TABELLE = '$detail_tabelle' && DETAIL_ZUORDNUNG_ID = '$detail_id' ORDER BY DETAIL_NAME ASC";
         $resultat = DB::select($db_abfrage);
@@ -177,15 +174,17 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC");
         $numrows = count($resultat);
 
         if ($numrows) {
-            echo "<table>\n";
+            echo "<table class='striped'>\n";
             $kurzinfo = $this->get_info_detail($detail_tabelle, $detail_id);
-            echo "<tr class=\"feldernamen\"><td colspan=4>Details über $kurzinfo</td></tr>\n";
-            echo "<tr class=\"feldernamen\"><td>Beschreibung</td><td>Inhalt</td><td>Bemerkung</td><td>Optionen</td></tr>\n";
+            echo "<thead>";
+            echo "<tr class=\"feldernamen\"><th colspan=4>Details über $kurzinfo</th></tr>\n";
+            echo "<tr class=\"feldernamen\"><th>Beschreibung</th><th>Inhalt</th><th>Bemerkung</th><th>Optionen</th></tr>\n";
+            echo "</thead>";
 
             $counter = 0;
             foreach ($resultat as $row) {
                 $counter++;
-                $loeschen_link = "<a href='" . route('legacy::details::index', ['option' => 'detail_loeschen', 'detail_dat' => $row['DETAIL_DAT']]) . "'>Löschen</a>";
+                $loeschen_link = "<a href='" . route('web::details::legacy', ['option' => 'detail_loeschen', 'detail_dat' => $row['DETAIL_DAT']]) . "'>Löschen</a>";
 
                 if ($counter == 1) {
                     echo "<tr class=\"zeile1\"><td>$row[DETAIL_NAME]</td><td>$row[DETAIL_INHALT]</td><td>$row[DETAIL_BEMERKUNG]</td><td>$loeschen_link</td></tr>\n";
@@ -222,7 +221,7 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC");
         } else {
             echo "<br>FEHLER: Detail wurde NICHT gespeichert";
         }
-        weiterleiten_in_sec(route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_tabelle' => $tabelle, 'detail_id' => $id]), 2);
+        weiterleiten_in_sec(route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => $tabelle, 'detail_id' => $id]), 2);
     }
 
     function letzte_detail_id()
@@ -275,7 +274,7 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC");
             echo "<br>FEHLER: Detail wurde NICHT gelöscht";
         }
         $this->finde_tab_id($detail_dat);
-        $link = route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_tabelle' => $this->dat_tabelle, 'detail_id' => $this->dat_id], false);
+        $link = route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => $this->dat_tabelle, 'detail_id' => $this->dat_id], false);
         weiterleiten_in_sec($link, 2);
     }
 
@@ -400,19 +399,19 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC");
                 if (strtolower($my_arr [$a] ['DETAIL_ZUORDNUNG_TABELLE']) == 'objekt') {
                     $o = new objekt ();
                     $o->get_objekt_infos($det_tab_id);
-                    $link_e = "<a href='" . route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $det_tab_id]) . "'>Objekt: $o->objekt_kurzname</a>";
+                    $link_e = "<a href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $det_tab_id]) . "'>Objekt: $o->objekt_kurzname</a>";
                 }
                 if (strtolower($my_arr [$a] ['DETAIL_ZUORDNUNG_TABELLE']) == 'einheit') {
                     $e = new einheit ();
                     $e->get_einheit_info($det_tab_id);
-                    $link_e = "<a href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $det_tab_id]) . "'>Einheit: $e->einheit_kurzname</a>";
+                    $link_e = "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $det_tab_id]) . "'>Einheit: $e->einheit_kurzname</a>";
                 }
 
                 if (strtolower($my_arr [$a] ['DETAIL_ZUORDNUNG_TABELLE']) == 'mietvertrag') {
                     $mvs = new mietvertraege ();
                     $mvs->get_mietvertrag_infos_aktuell($det_tab_id);
 
-                    $link_e = "<a href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $mvs->einheit_id, 'mietvertrag_id' => $det_tab_id]) . "'>Mieter: $mvs->einheit_kurzname $mvs->personen_name_string</a>";
+                    $link_e = "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $mvs->einheit_id, 'mietvertrag_id' => $det_tab_id]) . "'>Mieter: $mvs->einheit_kurzname $mvs->personen_name_string</a>";
                 }
 
                 if (strtolower($my_arr [$a] ['DETAIL_ZUORDNUNG_TABELLE']) == 'person') {

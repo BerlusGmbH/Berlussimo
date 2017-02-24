@@ -46,8 +46,7 @@ main {
 /* right width for autocomplete windows */
 .autocomplete-content {
     position: absolute;
-    width: 92%;
-    width: calc(100% - 4.5rem);
+    width: 100%;
 }
 
 .input-field .prefix ~ .autocomplete-content {
@@ -75,4 +74,53 @@ main {
 
 .warnung {
     color: #F44336 !important;
+}
+
+.fixed-action-btn {
+    right: 10px;
+    bottom: 80px;
+}
+
+.detail > i {
+    position: absolute;
+    left: 2px;
+}
+
+.detail {
+    padding-left: 20px;
+    position: relative;
+}
+
+nav .autocomplete-content a span.badge {
+    position: absolute;
+    line-height: unset;
+}
+
+nav .autocomplete-content  li a {
+    margin: 2px;
+}
+
+nav .autocomplete-content  li a.active {
+    outline: 2px solid black;
+}
+
+nav .autocomplete-content  li a.active.active-alternative {
+    outline: 2px solid black;
+}
+
+nav .autocomplete-content  li:hover {
+    background: unset;
+}
+
+nav .autocomplete-content  li a:hover {
+    outline: 2px solid black;
+    background: unset;
+}
+
+.card-expandable {
+    overflow: hidden;
+}
+
+.card-expandable > .card-content {
+    height: 100%;
 }

@@ -13,7 +13,9 @@ class IndexController extends LegacyController
 
     public function ajax()
     {
-        return response()->legacy('legacy/ajax/ajax_info.php');
+        return response()->legacy('legacy/ajax/ajax_info.php')->withHeaders(
+            ['Content-Type' => 'text/plain']
+        );
     }
 
     public function pie()

@@ -56,9 +56,9 @@ class benutzer
                     $p = new partners ();
                     $p->get_partner_name($partner_id);
                 }
-                $link_ber = "<a href='" . route('legacy::benutzer::index', ['option' => 'berechtigungen', 'b_id' => $b_id]) . "'>Berechtigungen</a>";
-                $link_aendern = "<a href='" . route('legacy::benutzer::index', ['option' => 'aendern', 'b_id' => $b_id]) . "'>Ändern</a>";
-                $link_details = "<a href='" . route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_tabelle' => 'BENUTZER', 'detail_id' => $b_id]) . "'>Details</a>";
+                $link_ber = "<a href='" . route('web::benutzer::legacy', ['option' => 'berechtigungen', 'b_id' => $b_id]) . "'>Berechtigungen</a>";
+                $link_aendern = "<a href='" . route('web::benutzer::legacy', ['option' => 'aendern', 'b_id' => $b_id]) . "'>Ändern</a>";
+                $link_details = "<a href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'BENUTZER', 'detail_id' => $b_id]) . "'>Details</a>";
                 echo "<tr class=\"zeile$z\"><td>$benutzername</td><td sorttable_customkey=\"$geb_j$geb_m$geb_t\">$geb_dat</td><td sorttable_customkey=\"$ein_j$ein_m$ein_t\">$eintritt</td><td>$p->partner_name</td><td>$link_ber $link_aendern $link_details</td></tr>";
 
                 if ($z == 2) {

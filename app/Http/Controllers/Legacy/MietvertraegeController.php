@@ -63,6 +63,6 @@ class MietvertraegeController extends LegacyController
             $k->feld_wert_speichern($contract_id, 'SOLL', request()->input('deposit'));
         }
 
-        return redirect(route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => request()->input('unit')], false));
+        return redirect(route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => request()->input('unit')], false));
     }
 }

@@ -208,17 +208,17 @@ class lager_v {
                     $rest_menge = nummer_punkt2komma ( $rest_menge );
                     $waren_wert_a = nummer_punkt2komma ( $waren_wert );
 
-                    $link_artikel_suche = "<a href='" . route('legacy::lager::index', ['option' => 'artikel_suche', 'artikel_nr' => $artikel_nr]) . "'>$artikel_nr</a>";
+                    $link_artikel_suche = "<a href='" . route('web::lager::legacy', ['option' => 'artikel_suche', 'artikel_nr' => $artikel_nr]) . "'>$artikel_nr</a>";
                     if ($rest_menge != '0,00') {
                         $zaehler ++;
                         $gesamt_lager_wert = $gesamt_lager_wert + $waren_wert;
                         if ($zaehler == '1') {
-                            $beleg_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>Rechnung</a>";
+                            $beleg_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>Rechnung</a>";
                             echo "<tr class=\"zeile1\" align=\"right\"><td>$datum</td><td>$pp->partner_name</td><td>$beleg_link</td><td>$link_artikel_suche</td><td>$bezeichnung</td><td>$menge</td><td>$rest_menge</td><td>$preis €</td><td>$pos_mwst_satz %</td><td>$waren_wert_a €</td></tr>";
                         }
 
                         if ($zaehler == '2') {
-                            $beleg_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>Rechnung</a>";
+                            $beleg_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>Rechnung</a>";
                             echo "<tr class=\"zeile2\" align=\"right\"><td>$datum</td><td>$pp->partner_name</td><td>$beleg_link</td><td>$link_artikel_suche</td><td>$bezeichnung</td><td>$menge</td><td>$rest_menge</td><td>$preis €</td><td>$pos_mwst_satz %</td><td>$waren_wert_a €</td></tr>";
                         }
                     }

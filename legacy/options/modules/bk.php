@@ -25,7 +25,7 @@ switch ($option) {
     case "profil_reset" :
         $bk = new bk ();
         $bk->profil_reset();
-        weiterleiten_in_sec(route('legacy::bk::index', ['option' => 'assistent'], false), 1);
+        weiterleiten_in_sec(route('web::bk::legacy', ['option' => 'assistent'], false), 1);
         break;
 
     case "profile" :
@@ -57,7 +57,7 @@ switch ($option) {
 
     case "profil_set" :
         session()->put('profil_id', request()->input('profil_id'));
-        weiterleiten_in_sec(route('legacy::bk::index', ['option' => 'assistent'], false), 0);
+        weiterleiten_in_sec(route('web::bk::legacy', ['option' => 'assistent'], false), 0);
         break;
 
     case "buchung_anpassen" :
@@ -73,7 +73,7 @@ switch ($option) {
         if (request()->has('buchung_id') && request()->has('bk_be_id') && request()->has('umlagebetrag') && request()->has('kostentraeger_typ') && request()->has('kostentraeger_id') && request()->has('genkey') && request()->has('hndl_betrag')) {
             $bk = new bk ();
             $bk->update_bk_buchung(request()->input('bk_be_id'), request()->input('umlagebetrag'), request()->input('kostentraeger_typ'), request()->input('kostentraeger_id'), request()->input('genkey'), nummer_komma2punkt(request()->input('hndl_betrag')));
-            weiterleiten_in_sec(route('legacy::bk::index', ['option' => 'assistent'], false), 0);
+            weiterleiten_in_sec(route('web::bk::legacy', ['option' => 'assistent'], false), 0);
         } else {
             echo "DATEN UNVOLLSTäNDIG ERROR 505e7";
         }
@@ -87,7 +87,7 @@ switch ($option) {
         } else {
             fehlermeldung_ausgeben("Fehler bk.php, 96");
         }
-        header("Location: " . route('legacy::bk::index', ['option' => 'assistent'], false));
+        header("Location: " . route('web::bk::legacy', ['option' => 'assistent'], false));
         break;
 
     case "neues_bk_konto" :
@@ -103,14 +103,14 @@ switch ($option) {
         session()->forget('bk_konto'); // 1020
         session()->forget('bk_konto_id'); // 2
         session()->forget('genkey'); // 1
-        weiterleiten_in_sec(route('legacy::bk::index', ['option' => 'assistent'], false), 0);
+        weiterleiten_in_sec(route('web::bk::legacy', ['option' => 'assistent'], false), 0);
         break;
 
     case "konto_auswahl" :
         session()->put('bk_konto', request()->input('bk_konto')); // 1020
         session()->put('bk_konto_id', request()->input('bk_konto_id')); // 1
         session()->forget('genkey'); // 1
-        weiterleiten_in_sec(route('legacy::bk::index', ['option' => 'assistent'], false), 0);
+        weiterleiten_in_sec(route('web::bk::legacy', ['option' => 'assistent'], false), 0);
         break;
 
     case "zusammenfassung" :
@@ -146,7 +146,7 @@ switch ($option) {
 
         if (request()->has('w_name')) {
             $wirt->neue_we_speichern(request()->input('w_name'));
-            weiterleiten(route('legacy::bk::index', ['option' => 'wirtschaftseinheiten'],false));
+            weiterleiten(route('web::bk::legacy', ['option' => 'wirtschaftseinheiten'],false));
         } else {
             fehlermeldung_ausgeben("Fehler: Wirtschaftseinheit braucht eine Bezeichnung!");
         }
@@ -176,7 +176,7 @@ switch ($option) {
             }
         }
 
-        weiterleiten(route('legacy::bk::index', ['option' => 'wirt_einheiten_hinzu', 'w_id' => $w_id, 'anzeigen' => $anzeigen], false));
+        weiterleiten(route('web::bk::legacy', ['option' => 'wirt_einheiten_hinzu', 'w_id' => $w_id, 'anzeigen' => $anzeigen], false));
         break;
 
     case "wirt_einheiten_hinzu" :
@@ -219,7 +219,7 @@ switch ($option) {
         if (!empty ($prozent) && !empty ($profil_id) && !empty ($bk_konto_id)) {
             $bk = new bk ();
             $bk->update_prozent_umlage($profil_id, $bk_konto_id, $prozent);
-            weiterleiten(route('legacy::bk::index', ['option' => 'assistent'], false));
+            weiterleiten(route('web::bk::legacy', ['option' => 'assistent'], false));
         } else {
             echo "Daten unvollständig fehler 247832748";
         }
@@ -243,7 +243,7 @@ switch ($option) {
         if (!empty ($profil_id) && !empty ($kostenart) && !empty ($betrag) && !empty ($genkey)) {
             $bk = new bk ();
             $bk->bk_hk_anpassung_speichern($profil_id, $kostenart, $betrag, $genkey);
-            weiterleiten(route('legacy::bk::index', ['option' => 'anpassung_bk_hk'], false));
+            weiterleiten(route('web::bk::legacy', ['option' => 'anpassung_bk_hk'], false));
         } else {
             echo "Daten unvollständig Error:jk3434";
         }
@@ -253,7 +253,7 @@ switch ($option) {
         if (request()->has('an_dat')) {
             $bk = new bk ();
             $bk->bk_hk_anpassung_loeschen(request()->input('an_dat'));
-            weiterleiten(route('legacy::bk::index', ['option' => 'anpassung_bk_hk'], false));
+            weiterleiten(route('web::bk::legacy', ['option' => 'anpassung_bk_hk'], false));
         } else {
             echo "Anpassungszeile wählen";
         }
@@ -345,7 +345,7 @@ switch ($option) {
                 $bk->bk_profil_kopieren($profil_id, $bezeichung, 0);
             }
             echo "<br><br>Profil kopiert, bitte warten!";
-            weiterleiten_in_sec(route('legacy::bk::index', ['option' => 'profile'], false), 2);
+            weiterleiten_in_sec(route('web::bk::legacy', ['option' => 'profile'], false), 2);
         } else {
             echo "Eingabe unvollständig Err. 72348724";
         }
@@ -370,7 +370,7 @@ switch ($option) {
                 $bk->buchungen_hinzu($buchung_id);
             }
         }
-        weiterleiten(route('legacy::bk::index', ['option' => 'assistent'], false));
+        weiterleiten(route('web::bk::legacy', ['option' => 'assistent'], false));
         break;
 
     case "energie" :
@@ -408,7 +408,7 @@ switch ($option) {
                 }
             } // end for
         }
-        weiterleiten(route('legacy::bk::index', ['option' => 'energie'], false));
+        weiterleiten(route('web::bk::legacy', ['option' => 'energie'], false));
 
         break;
 
@@ -460,7 +460,7 @@ switch ($option) {
                     }
                 }
             }
-            weiterleiten_in_sec(route('legacy::bk::index', ['option' => 'anpassung_bk_nk'], false), 3);
+            weiterleiten_in_sec(route('web::bk::legacy', ['option' => 'anpassung_bk_nk'], false), 3);
         }
 
         break;

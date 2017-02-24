@@ -185,7 +185,7 @@ ORDER BY RECHNUNGEN DESC, PARTNER_NAME ASC;
         echo "<p class=\"objekt_auswahl\">";
         if (!empty($result)) {
             foreach( $result as $row ) {
-                $partner_link = "<a class=\"objekt_auswahl_buchung\" href='" . route('legacy::partner::select', [$row['PARTNER_ID']]) . "'>$row[PARTNER_NAME]</a>";
+                $partner_link = "<a class=\"objekt_auswahl_buchung\" href='" . route('web::partner::select', [$row['PARTNER_ID']]) . "'>$row[PARTNER_NAME]</a>";
 				echo "$partner_link<hr>";
 			}
 			echo "</p>";

@@ -9,8 +9,12 @@
     "laravel-elixir": "^5.0.0"
   },
   "dependencies": {
+    "flexboxgrid": "^6.3.1",
     "jquery": "^2.2.4",
-    "lightbox2": "^2.8.2",
-    "materialize-css": "^0.97.7"
+    "keycode-js": "0.0.4",
+    "materialize-css": "^0.97.7",
+    "mdi": "^1.7.22",
+    "normalize.css": "^5.0.0",
+    "urijs": "^1.18.4"
   }
 }

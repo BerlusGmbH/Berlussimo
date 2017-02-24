@@ -38,8 +38,8 @@ class geldkonto_info {
                 $iban = chunk_split ( $my_array [$a] ['IBAN'], 4, ' ' );
                 $bic = $my_array [$a] ['BIC'];
                 $konto_stand_aktuell = nummer_punkt2komma_t ( $this->geld_konto_stand ( $konto_id ) );
-                $detail_link = "<a class=\"table_links\" href='" . route('legacy::details::index', ['option' => 'details_anzeigen', 'detail_tabelle' => 'GELD_KONTEN', 'detail_id' => $konto_id]) . "'>Details</a>";
-                $link_aendern = "<a class=\"table_links\" href='" . route('legacy::geldkonten::index', ['option' => 'gk_aendern', 'gk_id' => $konto_id]) . "'>GK ändern</a>";
+                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'GELD_KONTEN', 'detail_id' => $konto_id]) . "'>Details</a>";
+                $link_aendern = "<a class=\"table_links\" href='" . route('web::geldkonten::legacy', ['option' => 'gk_aendern', 'gk_id' => $konto_id]) . "'>GK ändern</a>";
                 if ($zaehler == 1) {
                     echo "<tr class=\"zeile1\"><td>$konto_id</td><td>$konto_bezeichnung</td><td>$beguenstigter</td><td>$iban</td><td>$bic</td><td align=right>$konto_stand_aktuell €</td><td>$detail_link</td><td>$link_aendern</td></tr>";
                 }

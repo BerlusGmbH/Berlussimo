@@ -226,13 +226,13 @@ if (isset ($option)) {
                     $l = new leerstand ();
                     if ($l->interessenten_updaten($id, $name, $anschrift, $tel, $email, $einzug, $zimmer, $hinweis)) {
                         echo "$name wurde aktualisiert!";
-                        weiterleiten_in_sec(route('legacy::leerstand::index', ['option' => 'interessentenliste'], false), 2);
+                        weiterleiten_in_sec(route('web::leerstand::legacy', ['option' => 'interessentenliste'], false), 2);
                     } else {
                         fehlermeldung_ausgeben("$name konnte nicht aktualisiert werden.");
                     }
                 } else {
                     echo "Bitte alle Datein eingeben!";
-                    weiterleiten_in_sec(route('legacy::leerstand::index', ['option' => 'interessentenliste'], false), 3);
+                    weiterleiten_in_sec(route('web::leerstand::legacy', ['option' => 'interessentenliste'], false), 3);
                 }
             }
             echo "</form>";
@@ -489,7 +489,7 @@ function leerstand_objekt($objekt_id)
     $form = new formular ();
     $form->erstelle_formular("Leerstände", NULL);
     $b = new berlussimo_global ();
-    $link = route('legacy::leerstand::index', ['option' => 'objekt', 'objekt_id' => $objekt_id], false);
+    $link = route('web::leerstand::legacy', ['option' => 'objekt', 'objekt_id' => $objekt_id], false);
 
     if (request()->has('monat')) {
         $monat = request()->input('monat');
@@ -515,7 +515,7 @@ function leerstand_objekt($objekt_id)
     }
     $monat_name = monat2name($monat);
     echo "<table class=\"sortable\">";
-    $link_pdf = "<a href='" . route('legacy::leerstand::index', ['option' => 'objekt_pdf', 'objekt_id' => $objekt_id, 'monat' => $monat, 'jahr' => $jahr]) . "'>PDF-Ansicht</a>";
+    $link_pdf = "<a href='" . route('web::leerstand::legacy', ['option' => 'objekt_pdf', 'objekt_id' => $objekt_id, 'monat' => $monat, 'jahr' => $jahr]) . "'>PDF-Ansicht</a>";
     echo "<tr><td colspan=\"6\">$link_pdf</td></tr>";
     echo "<tr><td colspan=\"6\">Leerstand $monat_name $jahr</td></tr>";
     echo "</table>";
@@ -529,10 +529,10 @@ function leerstand_objekt($objekt_id)
         $lage = $leerstand [$a] ['EINHEIT_LAGE'];
         $qm = $leerstand [$a] ['EINHEIT_QM'];
         $typ = $leerstand [$a] ['TYP'];
-        $link_einheit = "<a href='" . route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id]) . "'>" . $leerstand [$a] ['EINHEIT_KURZNAME'] . "</a>";
-        $link_projekt_pdf = "<a href='" . route('legacy::leerstand::index', ['option' => 'projekt_pdf', 'einheit_id' => $einheit_id]) . "'><img src=\"images/pdf_light.png\"></a>";
-        $link_expose_pdf = "<a href='" . route('legacy::leerstand::index', ['option' => 'expose_pdf', 'einheit_id' => $einheit_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-        echo "<tr><td>" . $leerstand [$a] ['OBJEKT_KURZNAME'] . "</td><td>$link_einheit</td><td>$typ</td><td>$lage</td><td>$qm m²</td><td><a href='" . route('legacy::mietvertraege::index', ['mietvertrag_raus' => 'mietvertrag_neu']) . "'>Vermieten</td></td><td>" . $leerstand [$a] ['HAUS_STRASSE'] . " " . $leerstand [$a] ['HAUS_NUMMER'] . "</td><td>$link_projekt_pdf Projekt<br>$link_expose_pdf Expose</td></tr>";
+        $link_einheit = "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id]) . "'>" . $leerstand [$a] ['EINHEIT_KURZNAME'] . "</a>";
+        $link_projekt_pdf = "<a href='" . route('web::leerstand::legacy', ['option' => 'projekt_pdf', 'einheit_id' => $einheit_id]) . "'><img src=\"images/pdf_light.png\"></a>";
+        $link_expose_pdf = "<a href='" . route('web::leerstand::legacy', ['option' => 'expose_pdf', 'einheit_id' => $einheit_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+        echo "<tr><td>" . $leerstand [$a] ['OBJEKT_KURZNAME'] . "</td><td>$link_einheit</td><td>$typ</td><td>$lage</td><td>$qm m²</td><td><a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mietvertrag_neu']) . "'>Vermieten</td></td><td>" . $leerstand [$a] ['HAUS_STRASSE'] . " " . $leerstand [$a] ['HAUS_NUMMER'] . "</td><td>$link_projekt_pdf Projekt<br>$link_expose_pdf Expose</td></tr>";
         $summe_qm += $qm;
     }
     echo "<tr><td></td><td></td><td></td><td></td><td>$summe_qm m²</td><td></td><td></td><td></td></tr>";

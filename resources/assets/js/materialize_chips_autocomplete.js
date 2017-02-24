@@ -281,7 +281,7 @@
         // Check if data isn't empty
         if (!$.isEmptyObject(data)) {
             // Create autocomplete element
-            var $autocomplete = $('<ul class="autocomplete-content dropdown-content"></ul>');
+            var $autocomplete = $('<ul class="autocomplete-content dropdown-content" style="width: calc(100% - 4.5rem)"></ul>');
 
             // Append autocomplete element
             //if ($inputDiv.length) {

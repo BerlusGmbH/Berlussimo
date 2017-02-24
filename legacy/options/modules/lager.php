@@ -11,7 +11,7 @@ switch ($option) {
 	
 	case "lagerbestand" :
 		session()->forget('objekt_id');
-		$link = route('legacy::lager::index', ['option' => 'lagerbestand'], false);
+		$link = route('web::lager::legacy', ['option' => 'lagerbestand'], false);
 		$lager_info->lager_auswahl_liste ( $link );
 		$form = new mietkonto ();
 		$form->erstelle_formular ( "Lagerbestand ->", NULL );
@@ -21,7 +21,7 @@ switch ($option) {
 	
 	case "lagerbestand_bis_form" :
 		$l = new lager_v ();
-		$link = route('legacy::lager::index', ['option' => 'lagerbestand_bis_form'], false);
+		$link = route('web::lager::legacy', ['option' => 'lagerbestand_bis_form'], false);
 		$lager_info->lager_auswahl_liste ( $link );
 		if (! session()->has('lager_id')) {
 			echo "Bitte wählen Sie ein Lager.";
@@ -39,7 +39,7 @@ switch ($option) {
 	
 	case "lagerbestand_bis" :
 		session()->forget('objekt_id');
-		$link = route('legacy::lager::index', ['option' => 'lagerbestand'], false);
+		$link = route('web::lager::legacy', ['option' => 'lagerbestand'], false);
 		$lager_info->lager_auswahl_liste ( $link );
 		$form = new mietkonto ();
 		$form->erstelle_formular ( "Lagerbestand ->", NULL );
@@ -58,7 +58,7 @@ switch ($option) {
 		break;
 	
 	case "ra" :
-		$link = route('legacy::lager::index', ['option' => 'ra'], false);
+		$link = route('web::lager::legacy', ['option' => 'ra'], false);
 		$lager_info->lager_auswahl_liste ( $link );
 		if (session()->has('lager_id')) {
 			$monat = request()->input('monat');
@@ -76,7 +76,7 @@ switch ($option) {
 		break;
 	
 	case "re" :
-		$link = route('legacy::lager::index', ['option' => 're'], false);
+		$link = route('web::lager::legacy', ['option' => 're'], false);
 		$lager_info->lager_auswahl_liste ( $link );
 		if (session()->has('lager_id')) {
 			$monat = request()->input('monat');

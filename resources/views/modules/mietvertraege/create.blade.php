@@ -9,7 +9,7 @@
         <div class="col s12">
             <div class="card-panel">
                 <div class="row">
-                    <form action="{{ route('legacy::mietvertraege::store') }}" method="post">
+                    <form action="{{ route('web::mietvertraege::store') }}" method="post">
                         <div class="input-field col s12 m6">
                             <i class="material-icons prefix">people</i>
                             <div id="tenant-autocomplete" class="chips invalid" style="margin-left: 3rem">
@@ -115,7 +115,7 @@
                     posttag: '{!! $posttag !!}',
                     icons: [{
                         icon: 'info',
-                        link: '{!! route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $unit['EINHEIT_ID']], false) !!}'
+                        link: '{!! route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $unit['EINHEIT_ID']], false) !!}'
                     }]
                 },
                 @endforeach

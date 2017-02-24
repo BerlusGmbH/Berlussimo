@@ -240,14 +240,14 @@ class bk
                 $ver_datum = request()->input('verrechnungsdatum');
                 $this->profil_speichern($bez, $w_id, $jahr, $ber_datum, $ver_datum);
                 $fehler = false;
-                header('Location: ' . route('legacy::bk::index', ['option' => 'assistent'], false));
+                header('Location: ' . route('web::bk::legacy', ['option' => 'assistent'], false));
             }
         } else {
             $this->bk_profil_infos(session()->get('profil_id'));
             echo "Sie arbeiten im Profil für $this->bk_kos_bez<hr>";
         }
         // ##ende profil
-        $link_neues_konto = "<a href='" . route('legacy::bk::index', ['option' => 'neues_bk_konto']) . "'>Neues Konto erstellen</b></a>";
+        $link_neues_konto = "<a href='" . route('web::bk::legacy', ['option' => 'neues_bk_konto']) . "'>Neues Konto erstellen</b></a>";
         echo $link_neues_konto . '<hr>';
 
         if (!isset ($fehler)) {
@@ -403,13 +403,13 @@ class bk
                 $this->summe_kosten_ausgewaehlt($profil_id, $bk_k_id);
                 $t_umlage = $this->summe_kosten_umgelegt($profil_id, $bk_k_id);
 
-                $link_konto_pro_anpassen = "<a href='" . route('legacy::bk::index', ['option' => 'konto_pro_anpassen', 'bk_konto' => $konto, 'bk_konto_id' => $bk_k_id]) . "'>Umlage % anpassen</a>";
+                $link_konto_pro_anpassen = "<a href='" . route('web::bk::legacy', ['option' => 'konto_pro_anpassen', 'bk_konto' => $konto, 'bk_konto_id' => $bk_k_id]) . "'>Umlage % anpassen</a>";
                 $link_konto_raus = "<a $js><img src=\"images/x.png\" align=\"right\"></a><b>$konto</b>";
                 $this->summe_kosten_konto_a = nummer_punkt2komma($this->summe_kosten_konto);
 
                 $t_umlage_a = nummer_punkt2komma($t_umlage);
 
-                echo "<tr><td>$link_konto_raus</td><td>$konto_bez</td><td  align=\"right\">$this->summe_kosten_konto_a </td><td  align=\"right\">$link_konto_pro_anpassen</td><td  align=\"right\">$t_umlage_a</td><td><a href='" . route('legacy::bk::index', ['option' => 'konto_auswahl', 'bk_konto' => $konto, 'bk_konto_id' => $bk_k_id]) . "'>Buchungen bearbeiten</a></td></tr>";
+                echo "<tr><td>$link_konto_raus</td><td>$konto_bez</td><td  align=\"right\">$this->summe_kosten_konto_a </td><td  align=\"right\">$link_konto_pro_anpassen</td><td  align=\"right\">$t_umlage_a</td><td><a href='" . route('web::bk::legacy', ['option' => 'konto_auswahl', 'bk_konto' => $konto, 'bk_konto_id' => $bk_k_id]) . "'>Buchungen bearbeiten</a></td></tr>";
                 $g_summe += $t_umlage;
                 $g_summe1 += $this->summe_kosten_konto;
             }
@@ -490,7 +490,7 @@ class bk
                     session()->put('konto_anzeigen', request()->input('konto_anzeigen'));
                 }
             }
-            header("Location: " . route('legacy::bk::index', ['option' => 'assistent'], false));
+            header("Location: " . route('web::bk::legacy', ['option' => 'assistent'], false));
         }
         $this->get_genkey_infos(session()->get('genkey'));
         $this->bk_profil_id = session()->get('profil_id');
@@ -610,7 +610,7 @@ class bk
                 $zeile++;
                 $bk_be_id = $buchungen_arr [$g] ['BK_BE_ID'];
                 $buchung_id = $buchungen_arr [$g] ['BUCHUNG_ID'];
-                $link_anpassen = "<a href='" . route('legacy::bk::index', ['option' => 'buchung_anpassen', 'bk_be_id' => $bk_be_id, 'profil_id' => $p_id]) . "'><b>Berechnung anpassen</b></a>";
+                $link_anpassen = "<a href='" . route('web::bk::legacy', ['option' => 'buchung_anpassen', 'bk_be_id' => $bk_be_id, 'profil_id' => $p_id]) . "'><b>Berechnung anpassen</b></a>";
                 $buchung_key_id = $buchungen_arr [$g] ['KEY_ID'];
                 $anteil = $buchungen_arr [$g] ['ANTEIL'];
                 $gesamt_anteil = $this->gesamt_anteil($buchung_id, $this->bk_profil_id, $konto_id);
@@ -725,8 +725,8 @@ class bk
             foreach ($result as $row) {
                 $profil_id = $row ['BK_ID'];
                 $bez = $row ['BEZEICHNUNG'];
-                $link = "<a href='" . route('legacy::bk::index', ['option' => 'profil_set', 'profil_id' => $profil_id]) . "'>$bez</a><br>";
-                $link_anpassen = "<a href='" . route('legacy::bk::index', ['option' => 'profil_anpassen', 'profil_id' => $profil_id]) . "'>Anpassen</a><br>";
+                $link = "<a href='" . route('web::bk::legacy', ['option' => 'profil_set', 'profil_id' => $profil_id]) . "'>$bez</a><br>";
+                $link_anpassen = "<a href='" . route('web::bk::legacy', ['option' => 'profil_anpassen', 'profil_id' => $profil_id]) . "'>Anpassen</a><br>";
                 echo "<tr><td width=\"30px\">$profil_id</td><td>$link</td><td>$link_anpassen</td></tr>";
             }
             echo "</table>";
@@ -874,7 +874,7 @@ class bk
                 $festbetrag = nummer_punkt2komma($anp_arr [$a] ['FEST_BETRAG']);
                 $gkey_id = $anp_arr [$a] ['KEY_ID'];
                 $this->get_genkey_infos($gkey_id);
-                $link_loeschen = "<a href='" . route('legacy::bk::index', ['option' => 'anpassung_bk_hk_del', 'an_dat' => $dat]) . "'>Löschen</a>";
+                $link_loeschen = "<a href='" . route('web::bk::legacy', ['option' => 'anpassung_bk_hk_del', 'an_dat' => $dat]) . "'>Löschen</a>";
                 echo "<tr><td>$grund</td><td> $festbetrag €/ $this->g_key_me / Monat</td><td>$link_loeschen</td><br>";
             }
             echo "</table>";
@@ -3283,7 +3283,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     new \App\Messages\InfoMessage("Bitte Geldkonto auswählen."),
                     0,
                     null,
-                    route('legacy::buchen::index', ['option' => 'geldkonto_aendern'])
+                    route('web::buchen::legacy', ['option' => 'geldkonto_aendern'])
                 );
             }
             $pdf->ezText("Sollte uns keine Einzugsermächtigung vorliegen, bitten wir das Guthaben mit der nächsten Mietzahlung zu\nverrechnen bzw. den Nachzahlungsbetrag unter Angabe Ihrer Mieternummer <b>$mieternummer</b> auf das Konto mit der\n<b>IBAN</b> <b>$g->IBAN1</b> bei der <b>$g->kredit_institut</b> zu überweisen.", 10, array(
@@ -3352,7 +3352,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
             $w_name = $wirt_einheiten_arr [$a] ['W_NAME'];
             $wirt->get_wirt_e_infos($w_id);
             // echo "$w_name (Qm: $wirt->g_qm m² | Gew:$wirt->g_qm_gewerbe m²)<br>";
-            $link_hinzu = "<a href='" . route('legacy::bk::index', ['option' => 'wirt_einheiten_hinzu', 'w_id' => $w_id]) . "'>Einheiten bearbeiten</a>";
+            $link_hinzu = "<a href='" . route('web::bk::legacy', ['option' => 'wirt_einheiten_hinzu', 'w_id' => $w_id]) . "'>Einheiten bearbeiten</a>";
             $wirt->g_qm_gewerbe_a = nummer_punkt2komma($wirt->g_qm_gewerbe);
             $wirt->g_qm_a = nummer_punkt2komma($wirt->g_qm);
             if ($zeile == '1') {

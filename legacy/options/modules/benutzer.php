@@ -51,7 +51,7 @@ switch ($option) {
             $be = new benutzer ();
             $be->benutzer_aenderungen_speichern($b_id, $benutzer_name, $passwort, $partner_id, $stundensatz, $geburtstag, $gewerk_id, $eintritt, $austritt, $urlaub, $stunden_pw);
             fehlermeldung_ausgeben("Bitte warten...");
-            weiterleiten_in_sec(route('legacy::benutzer::index', ['option' => 'aendern', 'b_id' => $b_id], false), 2);
+            weiterleiten_in_sec(route('web::benutzer::legacy', ['option' => 'aendern', 'b_id' => $b_id], false), 2);
         } else {
             fehlermeldung_ausgeben("Benutzerdaten unvollständig");
         }
@@ -69,7 +69,7 @@ switch ($option) {
             if (request()->has('submit_no')) {
                 $b->berechtigungen_entziehen($b_id, $modul_name);
             }
-            weiterleiten(route('legacy::benutzer::index', ['option' => 'berechtigungen', 'b_id' => $b_id], false));
+            weiterleiten(route('web::benutzer::legacy', ['option' => 'berechtigungen', 'b_id' => $b_id], false));
         }
         break;
 
@@ -100,7 +100,7 @@ switch ($option) {
                     }
                     $stundensatz = nummer_komma2punkt($stundensatz);
                     $benutzer_id = $b->benutzer_speichern($benutzername, $passwort, $partner_id, $stundensatz, $geb_dat, $gewerk_id, $eintritt, $austritt, $urlaub, $stunden_pw);
-                    weiterleiten(route('legacy::benutzer::index', ['option' => 'berechtigungen', 'b_id' => $benutzer_id], false));
+                    weiterleiten(route('web::benutzer::legacy', ['option' => 'berechtigungen', 'b_id' => $benutzer_id], false));
                 } else {
                     throw new \App\Exceptions\MessageException(
                         new \App\Messages\ErrorMessage('Datumsangaben falsch')
@@ -183,7 +183,7 @@ switch ($option) {
             $w = new werkzeug ();
             $w->werkzeug_zuweisen($b_id, $w_id);
             echo "Zugewiesen";
-            weiterleiten_in_sec(route('legacy::benutzer::index', ['option' => 'werkzeuge']), 1);
+            weiterleiten_in_sec(route('web::benutzer::legacy', ['option' => 'werkzeuge']), 1);
         } else {
             fehlermeldung_ausgeben("Mitarbeiter und Werkzeug wählen!");
         }

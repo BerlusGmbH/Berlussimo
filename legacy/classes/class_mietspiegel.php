@@ -13,9 +13,9 @@ class mietspiegel
                 $jahr = $arr [$a] ['JAHR'];
                 $ort = $arr [$a] ['ORT'];
                 if (empty ($ort)) {
-                    $link_anzeigen = "<a href='" . route('legacy::mietspiegel::index', ['option' => 'mietspiegel_anzeigen', 'jahr' => $jahr]) . "'>$jahr - Ohne Ortsangabe</a><br>";
+                    $link_anzeigen = "<a href='" . route('web::mietspiegel::legacy', ['option' => 'mietspiegel_anzeigen', 'jahr' => $jahr]) . "'>$jahr - Ohne Ortsangabe</a><br>";
                 } else {
-                    $link_anzeigen = "<a href='" . route('legacy::mietspiegel::index', ['option' => 'mietspiegel_anzeigen', 'jahr' => $jahr, 'ort' => $ort]) . "'>$jahr - $ort</a><br>";
+                    $link_anzeigen = "<a href='" . route('web::mietspiegel::legacy', ['option' => 'mietspiegel_anzeigen', 'jahr' => $jahr, 'ort' => $ort]) . "'>$jahr - $ort</a><br>";
                 }
                 echo $link_anzeigen;
             }
@@ -47,7 +47,7 @@ class mietspiegel
                 $u_wert = nummer_punkt2komma($arr [$a] ['U_WERT']);
                 $m_wert = nummer_punkt2komma($arr [$a] ['M_WERT']);
                 $o_wert = nummer_punkt2komma($arr [$a] ['O_WERT']);
-                $link_loeschen = "<a href='" . route('legacy::mietspiegel::index', ['option' => 'ms_wert_del', 'dat' => $dat]) . "'>Löschen</a>";
+                $link_loeschen = "<a href='" . route('web::mietspiegel::legacy', ['option' => 'ms_wert_del', 'dat' => $dat]) . "'>Löschen</a>";
                 echo "<tr><td><b>$feld</b></td><td>$u_wert</td><td><b>$m_wert</b></td><td>$o_wert</td><td>$link_loeschen</td></tr>";
             }
             echo "</table>";
@@ -150,7 +150,7 @@ class mietspiegel
                 $merkmal = $arr [$a] ['MERKMAL'];
                 $wert = $arr [$a] ['WERT'];
                 $ausstattungsklasse = $arr [$a] ['A_KLASSE'];
-                $link_del = "<a href='" . route('legacy::mietspiegel::index', ['option' => 'del_sonderabzug', 'dat' => $dat]) . "'>Löschen</a>";
+                $link_del = "<a href='" . route('web::mietspiegel::legacy', ['option' => 'del_sonderabzug', 'dat' => $dat]) . "'>Löschen</a>";
                 echo "<tr><td><b>$ausstattungsklasse</b></td><td>$merkmal</td><td><b>$wert</b></td><td>$link_del</td></tr>";
             }
             echo "</table>";

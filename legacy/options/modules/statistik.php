@@ -166,7 +166,7 @@ switch ($option) {
     case "testen" :
         $s = new statistik ();
         $bg = new berlussimo_global ();
-        $link = route('legacy::statistik::index', ['option' => 'testen'], false);
+        $link = route('web::statistik::legacy', ['option' => 'testen'], false);
         if (request()->has('jahr')) {
             $jahr = request()->input('jahr');
         } else {
@@ -215,7 +215,7 @@ switch ($option) {
             } else {
                 $s = new statistik ();
                 if ($s->fenster_zuweisen(request()->input('beleg_id'), request()->input('pos'), request()->input('anz_fenster'), request()->input('Einheit'))) {
-                    weiterleiten(route('legacy::statistik::index', ['option' => 'fenster'], false));
+                    weiterleiten(route('web::statistik::legacy', ['option' => 'fenster'], false));
                 }
             }
         }
@@ -226,9 +226,9 @@ switch ($option) {
             if (request()->has('beleg_id_l') && request()->has('pos_l')) {
                 $s = new statistik ();
                 if ($s->lieferung_speichern(request()->input('beleg_id_l'), request()->input('pos_l'))) {
-                    weiterleiten(route('legacy::statistik::index', ['option' => 'fenster'], false));
+                    weiterleiten(route('web::statistik::legacy', ['option' => 'fenster'], false));
                 } else {
-                    weiterleiten_in_sec(route('legacy::statistik::index', ['option' => 'fenster'], false), 3);
+                    weiterleiten_in_sec(route('web::statistik::legacy', ['option' => 'fenster'], false), 3);
                 }
             } else {
                 fehlermeldung_ausgeben("BelegID und Position eingeben");
@@ -240,13 +240,13 @@ switch ($option) {
         if (request()->has('beleg_id') && request()->has('pos')) {
             $s = new statistik ();
             if ($s->lieferung_loeschen(request()->input('beleg_id'), request()->input('pos'))) {
-                weiterleiten(route('legacy::statistik::index', ['option' => 'fenster'], false));
+                weiterleiten(route('web::statistik::legacy', ['option' => 'fenster'], false));
             } else {
-                weiterleiten_in_sec(route('legacy::statistik::index', ['option' => 'fenster'], false), 3);
+                weiterleiten_in_sec(route('web::statistik::legacy', ['option' => 'fenster'], false), 3);
             }
         } else {
             fehlermeldung_ausgeben("Eingabe unvollständig Z261");
-            weiterleiten_in_sec(route('legacy::statistik::index', ['option' => 'fenster'], false), 3);
+            weiterleiten_in_sec(route('web::statistik::legacy', ['option' => 'fenster'], false), 3);
         }
         break;
 
@@ -254,13 +254,13 @@ switch ($option) {
         if (request()->has('beleg_id') && request()->has('pos') && request()->has('einheit_id')) {
             $s = new statistik ();
             if ($s->zuweisung_loeschen(request()->input('beleg_id'), request()->input('pos'), request()->input('einheit_id'))) {
-                weiterleiten(route('legacy::statistik::index', ['option' => 'fenster'], false));
+                weiterleiten(route('web::statistik::legacy', ['option' => 'fenster'], false));
             } else {
-                weiterleiten_in_sec(route('legacy::statistik::index', ['option' => 'fenster'], false), 3);
+                weiterleiten_in_sec(route('web::statistik::legacy', ['option' => 'fenster'], false), 3);
             }
         } else {
             fehlermeldung_ausgeben("Eingabe unvollständig Z262");
-            weiterleiten_in_sec(route('legacy::statistik::index', ['option' => 'fenster'], false), 3);
+            weiterleiten_in_sec(route('web::statistik::legacy', ['option' => 'fenster'], false), 3);
         }
         break;
 

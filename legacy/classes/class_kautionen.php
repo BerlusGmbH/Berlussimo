@@ -112,7 +112,7 @@ class kautionen
                 new \App\Messages\InfoMessage("Bitte Kautionskonto wählen."),
                 0,
                 null,
-                route('legacy::buchen::index', ['option' => 'geldkonto_aendern'])
+                route('web::buchen::legacy', ['option' => 'geldkonto_aendern'])
             );
         }
         $summe = 0.00;
@@ -133,7 +133,7 @@ class kautionen
 
         if (!empty($zahlungen_arr)) {
             echo "<table>";
-            $pdf_link = "<a href='" . route('legacy::kautionen::index', ['option' => 'hochrechner_pdf', 'mietvertrag_id' => $kostentraeger_id, 'datum_bis' => $datum_bis_a]) . "'>PDF</a>";
+            $pdf_link = "<a href='" . route('web::kautionen::legacy', ['option' => 'hochrechner_pdf', 'mietvertrag_id' => $kostentraeger_id, 'datum_bis' => $datum_bis_a]) . "'>PDF</a>";
             echo "<tr class=\"feldernamen\"><td colspan=\"7\">$mv->einheit_kurzname $mv->personen_name_string $pdf_link</td></tr>";
             echo "<tr class=\"feldernamen\"><td>EINZAHLUNG</td><td>ZINSTAGE</td><td>BETRAG</td><td>VERZINST BIS $datum_bis_a</td><td>KAP $kap_prozent %</td><td>SOLI $soli_prozent %</td><td>BETRAG</td></tr>";
             $anzahl_zahlungen = count($zahlungen_arr);
@@ -294,7 +294,7 @@ class kautionen
                 new \App\Messages\InfoMessage("Kautionskonto wählen"),
                 0,
                 null,
-                route('legacy::buchen::index', ['option' => 'geldkonto_aendern'])
+                route('web::buchen::legacy', ['option' => 'geldkonto_aendern'])
             );
         }
         $summe = 0.00;
@@ -440,7 +440,7 @@ class kautionen
     function kontohochrechnung($datum_bis, $zins_pj, $kap_prozent, $soli_prozent)
     {
         $bg = new berlussimo_global ();
-        $link = route('legacy::kautionen::index', ['option' => 'kontohochrechnung'], false);
+        $link = route('web::kautionen::legacy', ['option' => 'kontohochrechnung'], false);
 
         $jahr = date("Y");
 
@@ -462,7 +462,7 @@ class kautionen
 
         $zahlungen_arr = $this->kautionszahlungen_alle_arr_bis($datum_bis);
 
-        $pdf_link = "<a href='" . route('legacy::kautionen::index', ['option' => 'kontohochrechnung', 'datum_bis' => $datum_bis_a, 'pdf']) . "'><img src=\"images/pdf_light.png\"></a>";
+        $pdf_link = "<a href='" . route('web::kautionen::legacy', ['option' => 'kontohochrechnung', 'datum_bis' => $datum_bis_a, 'pdf']) . "'><img src=\"images/pdf_light.png\"></a>";
 
         if (is_array($zahlungen_arr)) {
             echo "<table>";

@@ -23,8 +23,8 @@ class kundenweb
                 $p->get_person_infos($person_id);
                 $pa = new partners ();
                 $pa->get_partner_info($partner_id);
-                $link_ber = "<a href='" . route('legacy::kundenweb::index', ['option' => 'berechtigung', 'kunden_id' => $kunden_id]) . "'>Berechtigung</a>";
-                $link_deakt = "<a href='" . route('legacy::kundenweb::index', ['option' => 'deaktivieren', 'kunden_id' => $kunden_id]) . "'>Deaktivieren/Löschen</a>";
+                $link_ber = "<a href='" . route('web::kundenweb::legacy', ['option' => 'berechtigung', 'kunden_id' => $kunden_id]) . "'>Berechtigung</a>";
+                $link_deakt = "<a href='" . route('web::kundenweb::legacy', ['option' => 'deaktivieren', 'kunden_id' => $kunden_id]) . "'>Deaktivieren/Löschen</a>";
                 echo "<tr><td>$p->person_nachname $p->person_vorname</td><td>$pa->partner_name</td><td>$username</td><td>$email</td><td>$link_ber</td><td>$link_deakt</td></tr>";
             }
             echo "</table>";
@@ -86,7 +86,7 @@ class kundenweb
                     $ber_id = $arr_ber [$a] ['ZUGRIFF_ID'];
                     $r = new rechnung ();
                     $kos_bez = $r->kostentraeger_ermitteln($ber_obj, $ber_id);
-                    $link_loeschen = "<a href='" . route('legacy::kundenweb::index', ['option' => 'berechtigung_del', 'kunden_id' => $kunden_id, 'ber_obj' => $ber_obj, 'ber_id' => $ber_id]) . "'>Löschen</a>";
+                    $link_loeschen = "<a href='" . route('web::kundenweb::legacy', ['option' => 'berechtigung_del', 'kunden_id' => $kunden_id, 'ber_obj' => $ber_obj, 'ber_id' => $ber_id]) . "'>Löschen</a>";
                     echo "<tr><td>$z</td><td>$ber_obj</td><td>$kos_bez</td><td>$link_loeschen</td></tr>";
                 }
                 echo "</table>";

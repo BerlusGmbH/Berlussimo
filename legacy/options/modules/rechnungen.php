@@ -205,12 +205,12 @@ switch ($option) {
                 $objekt_info->get_objekt_name($objekt_id);
                 $objekt_name = $objekt_info->objekt_name;
                 $kontierung_id_arr = $rechnung->rechnung_aus_pool_zusammenstellen('Objekt', $objekt_id);
-                $objekt_link_rechnung = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnung_an_objekt', 'objekt_id' => $objekt_id]) . "'>Rechnung erstellen</a>";
+                $objekt_link_rechnung = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnung_an_objekt', 'objekt_id' => $objekt_id]) . "'>Rechnung erstellen</a>";
 
                 $rrg = new rechnungen ();
                 $summe_pool = $rrg->get_summe_kosten_pool('Objekt', $objekt_id);
                 if ($summe_pool > 0) {
-                    $objektkosten_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'objektkosten_in_rechnung', 'objekt_id' => $objekt_id]) . "' style='color:blue;'>Rechnung erstellen ($summe_pool)</a>";
+                    $objektkosten_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'objektkosten_in_rechnung', 'objekt_id' => $objekt_id]) . "' style='color:blue;'>Rechnung erstellen ($summe_pool)</a>";
                 } else {
                     $objektkosten_link = '';
                 }
@@ -232,9 +232,9 @@ switch ($option) {
 
                         $haus_info->get_haus_info($haus_id);
                         $haus_objekt_id = $haus_info->objekt_id;
-                        $haus_link_rechnung = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnung_an_haus', 'haus_id' => $haus_id]) . "'>Rechnung inkl. Einheiten</a>";
+                        $haus_link_rechnung = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnung_an_haus', 'haus_id' => $haus_id]) . "'>Rechnung inkl. Einheiten</a>";
                         if ($summe_pool > 0) {
-                            $hauskosten_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'hauskosten_in_rechnung', 'haus_id' => $haus_id]) . "' style='color:red;'>Nur Hauskosten ($summe_pool)</a>";
+                            $hauskosten_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'hauskosten_in_rechnung', 'haus_id' => $haus_id]) . "' style='color:red;'>Nur Hauskosten ($summe_pool)</a>";
                         } else {
                             $hauskosten_link = '';
                         }
@@ -257,7 +257,7 @@ switch ($option) {
 
                         if ($einheit_objekt_id == $objekt_id) {
                             if ($summe_pool > 0) {
-                                $einheit_link_rechnung = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnung_an_einheit', 'einheit_id' => $einheit_id]) . "' style='color:green;'>Rechnung erstellen ($summe_pool)</a>";
+                                $einheit_link_rechnung = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnung_an_einheit', 'einheit_id' => $einheit_id]) . "' style='color:green;'>Rechnung erstellen ($summe_pool)</a>";
                             } else {
                                 $einheit_link_rechnung = '';
                             }
@@ -278,7 +278,7 @@ switch ($option) {
                 $rrg = new rechnungen ();
                 $summe_pool = $rrg->get_summe_kosten_pool('Lager', $lager_id);
                 if ($summe_pool > 0) {
-                    $lager_link_rechnung = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnung_an_lager', 'lager_id' => $lager_id]) . "' style='color:white;'>Rechnung erstellen ($summe_pool)</a>";
+                    $lager_link_rechnung = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnung_an_lager', 'lager_id' => $lager_id]) . "' style='color:white;'>Rechnung erstellen ($summe_pool)</a>";
                 } else {
                     $lager_link_csv = '';
                 }
@@ -301,7 +301,7 @@ switch ($option) {
                 $rrg = new rechnungen ();
                 $summe_pool = $rrg->get_summe_kosten_pool('Partner', $partner_id);
                 if ($summe_pool > 0) {
-                    $partner_link_rechnung = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnung_an_partner', 'partner_id' => $partner_id]) . "' style='color:green;'>Rechnung erstellen ($summe_pool)</a>";
+                    $partner_link_rechnung = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnung_an_partner', 'partner_id' => $partner_id]) . "' style='color:green;'>Rechnung erstellen ($summe_pool)</a>";
                 } else {
                     $partner_link_rechnung = '';
                 }
@@ -365,7 +365,7 @@ switch ($option) {
                     $partner_info = new partner ();
                     $partner_info->get_aussteller_info($aussteller_arr_sortiert [$a]);
                     $aussteller_id = $aussteller_arr_sortiert [$a];
-                    $rechnung_von_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnung_an_objekt', 'objekt_id' => request()->input('objekt_id'), 'aussteller_typ' => $rechnung->rechnungs_empfaenger_typ, 'aussteller_id' => $aussteller_id]) . "'>$rechnung->rechnungs_empfaenger_name</a>";
+                    $rechnung_von_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnung_an_objekt', 'objekt_id' => request()->input('objekt_id'), 'aussteller_typ' => $rechnung->rechnungs_empfaenger_typ, 'aussteller_id' => $aussteller_id]) . "'>$rechnung->rechnungs_empfaenger_name</a>";
 
                     echo "<tr><td>$rechnung_von_link</td></tr>";
                 }
@@ -375,7 +375,7 @@ switch ($option) {
                     $kassen_info = new kasse ();
                     $kassen_info->get_kassen_info($kassen_arr_sortiert [$a]);
                     $aussteller_id = $kassen_arr_sortiert [$a];
-                    $rechnung_von_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnung_an_objekt', 'objekt_id' => request()->input('objekt_id'), 'aussteller_typ' => 'Kasse', 'aussteller_id' => $aussteller_id]) . "'>" . $kassen_info->kassen_name . " - " . $kassen_info->kassen_verwalter . "</a>";
+                    $rechnung_von_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnung_an_objekt', 'objekt_id' => request()->input('objekt_id'), 'aussteller_typ' => 'Kasse', 'aussteller_id' => $aussteller_id]) . "'>" . $kassen_info->kassen_name . " - " . $kassen_info->kassen_verwalter . "</a>";
                     echo "<tr><td>$rechnung_von_link</td></tr>";
                 }
             }
@@ -443,7 +443,7 @@ switch ($option) {
                     $partner_info = new partner ();
                     $partner_info->get_aussteller_info($aussteller_arr_sortiert [$a]);
                     $aussteller_id = $aussteller_arr_sortiert [$a];
-                    $rechnung_von_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'objektkosten_in_rechnung', 'objekt_id' => request()->input('objekt_id'), 'aussteller_typ' => $rechnung->rechnungs_empfaenger_typ, 'aussteller_id' => $aussteller_id]) . "'>$rechnung->rechnungs_empfaenger_name</a>";
+                    $rechnung_von_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'objektkosten_in_rechnung', 'objekt_id' => request()->input('objekt_id'), 'aussteller_typ' => $rechnung->rechnungs_empfaenger_typ, 'aussteller_id' => $aussteller_id]) . "'>$rechnung->rechnungs_empfaenger_name</a>";
 
                     echo "<tr><td>$rechnung_von_link</td></tr>";
                 }
@@ -453,7 +453,7 @@ switch ($option) {
                     $kassen_info = new kasse ();
                     $kassen_info->get_kassen_info($kassen_arr_sortiert [$a]);
                     $aussteller_id = $kassen_arr_sortiert [$a];
-                    $rechnung_von_link = "<a href='" . route('legacy::rechnungen::index', ['option' => 'objektkosten_in_rechnung', 'objekt_id' => request()->input('objekt_id'), 'aussteller_typ' => 'Kasse', 'aussteller_id' => $aussteller_id]) . "'>" . $kassen_info->kassen_name . " - " . $kassen_info->kassen_verwalter . "</a>";
+                    $rechnung_von_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'objektkosten_in_rechnung', 'objekt_id' => request()->input('objekt_id'), 'aussteller_typ' => 'Kasse', 'aussteller_id' => $aussteller_id]) . "'>" . $kassen_info->kassen_name . " - " . $kassen_info->kassen_verwalter . "</a>";
                     echo "<tr><td>$rechnung_von_link</td></tr>";
                 }
             }
@@ -521,7 +521,7 @@ switch ($option) {
                     $partner_info = new partner ();
                     $partner_info->get_aussteller_info($aussteller_arr_sortiert [$a]);
                     $aussteller_id = $aussteller_arr_sortiert [$a];
-                    $rechnung_von_link = "<a href='" . route('legacy::rechnungen::index',
+                    $rechnung_von_link = "<a href='" . route('web::rechnungen::legacy',
                             ['option' => 'rechnung_an_einheit',
                                 'einheit_id' => request()->input('einheit_id'),
                                 'aussteller_typ' => $rechnung->rechnungs_empfaenger_typ,
@@ -535,7 +535,7 @@ switch ($option) {
                     $kassen_info = new kasse ();
                     $kassen_info->get_kassen_info($kassen_arr_sortiert [$a]);
                     $aussteller_id = $kassen_arr_sortiert [$a];
-                    $rechnung_von_link = "<a href'" . route('legacy::rechnungen::index',
+                    $rechnung_von_link = "<a href'" . route('web::rechnungen::legacy',
                             ['option' => 'rechnung_an_einheit',
                                 'einheit_id' => request()->input('einheit_id'),
                                 'aussteller_typ' => 'Kasse',
@@ -609,7 +609,7 @@ switch ($option) {
                 $partner_info = new partner ();
                 $partner_info->get_aussteller_info($aussteller_arr_sortiert [$a]);
                 $aussteller_id = $aussteller_arr_sortiert [$a];
-                $rechnung_von_link = "<a href='" . route('legacy::rechnungen::index',
+                $rechnung_von_link = "<a href='" . route('web::rechnungen::legacy',
                         ['option' => 'rechnung_an_haus',
                             'haus_id' => request()->input('haus_id'),
                             'aussteller_typ' => $rechnung->rechnungs_empfaenger_typ,
@@ -623,7 +623,7 @@ switch ($option) {
                 $kassen_info = new kasse ();
                 $kassen_info->get_kassen_info($kassen_arr_sortiert [$a]);
                 $aussteller_id = $kassen_arr_sortiert [$a];
-                $rechnung_von_link = "<a href='" . route('legacy::rechnungen::index',
+                $rechnung_von_link = "<a href='" . route('web::rechnungen::legacy',
                         ['option' => 'rechnung_an_haus',
                             'haus_id' => request()->input('haus_id'),
                             'aussteller_typ' => 'Kasse',
@@ -732,7 +732,7 @@ switch ($option) {
                     $partner_info->get_aussteller_info($aussteller_arr_sortiert [$a]);
                     $aussteller_id = $aussteller_arr_sortiert [$a];
 
-                    $rechnung_von_link = "<a href='" . route('legacy::rechnungen::index',
+                    $rechnung_von_link = "<a href='" . route('web::rechnungen::legacy',
                             ['option' => 'rechnung_an_lager',
                                 'lager_id' => request()->input('lager_id'),
                                 'aussteller_typ' => $rechnung->rechnungs_empfaenger_typ,
@@ -745,7 +745,7 @@ switch ($option) {
                     $kassen_info = new kasse ();
                     $kassen_info->get_kassen_info($kassen_arr_sortiert [$a]);
                     $aussteller_id = $kassen_arr_sortiert [$a];
-                    $rechnung_von_link = "<a href='" . route('legacy::rechnungen::index',
+                    $rechnung_von_link = "<a href='" . route('web::rechnungen::legacy',
                             ['option' => 'rechnung_an_lager',
                                 'lager_id' => request()->input('lager_id'),
                                 'aussteller_typ' => 'Kasse',
@@ -815,7 +815,7 @@ switch ($option) {
                     $partner_info->get_aussteller_info($aussteller_arr_sortiert [$a]);
                     $aussteller_id = $aussteller_arr_sortiert [$a];
 
-                    $rechnung_von_link = "<a href='" . route('legacy::rechnungen::index',
+                    $rechnung_von_link = "<a href='" . route('web::rechnungen::legacy',
                             ['option' => 'rechnung_an_partner',
                                 'partner_id' => request()->input('partner_id'),
                                 'aussteller_typ' => $rechnung->rechnungs_empfaenger_typ,
@@ -828,7 +828,7 @@ switch ($option) {
                     $kassen_info = new kasse ();
                     $kassen_info->get_kassen_info($kassen_arr_sortiert [$a]);
                     $aussteller_id = $kassen_arr_sortiert [$a];
-                    $rechnung_von_link = "<a href='" . route('legacy::rechnungen::index',
+                    $rechnung_von_link = "<a href='" . route('web::rechnungen::legacy',
                             ['option' => 'rechnung_an_partner',
                                 'partner_id' => request()->input('partner_id'),
                                 'aussteller_typ' => 'Kasse',
@@ -908,7 +908,7 @@ switch ($option) {
             $form->ende_formular();
         } else {
             fehlermeldung_ausgeben("Bitte Rechnung auswählen!");
-            weiterleiten_in_sec(route('legacy::rechnungen::index', ['option' => 'erfasste_rechnungen'], false), 2);
+            weiterleiten_in_sec(route('web::rechnungen::legacy', ['option' => 'erfasste_rechnungen'], false), 2);
         }
         break;
 
@@ -1030,7 +1030,7 @@ switch ($option) {
             $form->ende_formular();
         } else {
             fehlermeldung_ausgeben("Bitte Rechnung auswählen!");
-            weiterleiten_in_sec(route('legacy::rechnungen::index', ['option' => 'erfasste_rechnungen'], false), 2);
+            weiterleiten_in_sec(route('web::rechnungen::legacy', ['option' => 'erfasste_rechnungen'], false), 2);
         }
         /* Block mit Artikeln und Leistungen des Rechnungsaustellers */
         $rechnung->artikel_leistungen_block($rechnung->rechnungs_aussteller_id);
@@ -1076,7 +1076,7 @@ switch ($option) {
                     $beleg_nr = $ergebnis [$a] ['DETAIL_ZUORDNUNG_ID'];
                     $r = new rechnungen ();
                     $r->rechnung_grunddaten_holen($beleg_nr);
-                    $link_rechnung = "<a href='" . route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>$r->rechnungsdatum $r->rechnungs_aussteller_name Rechnungsnr: $r->rechnungsnummer WE: $r->empfaenger_eingangs_rnr WA: $r->aussteller_ausgangs_rnr</a>";
+                    $link_rechnung = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>$r->rechnungsdatum $r->rechnungs_aussteller_name Rechnungsnr: $r->rechnungsnummer WE: $r->empfaenger_eingangs_rnr WA: $r->aussteller_ausgangs_rnr</a>";
                     echo "$link_rechnung<br>";
                 }
             } else {
@@ -1139,7 +1139,7 @@ switch ($option) {
             $r = new rechnung ();
             if ($r->rechnung_kontierung_aufheben(request()->input('belegnr'))) {
                 $belegnr = request()->input('belegnr');
-                weiterleiten(route('legacy::rechnungen::index', ['option' => 'rechnung_kontieren', 'belegnr' => $belegnr], false));
+                weiterleiten(route('web::rechnungen::legacy', ['option' => 'rechnung_kontieren', 'belegnr' => $belegnr], false));
             }
         } else {
             fehlermeldung_ausgeben("Rechnunt wählen x777");
@@ -1356,7 +1356,7 @@ switch ($option) {
         $belegnr = request()->input('belegnr');
         $r->rechnung_als_freigegeben($belegnr);
         hinweis_ausgeben("Rechnung wurde zur Zahlung freigegeben!");
-        weiterleiten_in_sec(route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $in_belegnr]), 2);
+        weiterleiten_in_sec(route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $in_belegnr]), 2);
         break;
 
     case "als_bezahlt_markieren" :
@@ -1364,7 +1364,7 @@ switch ($option) {
         $belegnr = request()->input('belegnr');
         $r->rechnung_als_freigegeben($belegnr);
         hinweis_ausgeben("Rechnung wurde zur Zahlung freigegeben!");
-        weiterleiten_in_sec(route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $in_belegnr]), 2);
+        weiterleiten_in_sec(route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $in_belegnr]), 2);
         break;
 
     case "partner_wechseln" :
@@ -1512,7 +1512,7 @@ switch ($option) {
         if (!empty ($belegnr) && !empty ($pos)) {
             $r->position_deaktivieren($pos, $belegnr);
             echo "POSITION GELÖSCHT";
-            weiterleiten_in_sec(route('legacy::rechnungen::index', ['option' => 'positionen_erfassen', 'belegnr' => $belegnr], false), 1);
+            weiterleiten_in_sec(route('web::rechnungen::legacy', ['option' => 'positionen_erfassen', 'belegnr' => $belegnr], false), 1);
         }
         break;
 
@@ -1639,7 +1639,7 @@ switch ($option) {
             $r = new rechnung ();
             $r->pos_kontierung_aufheben($dat, $id);
             hinweis_ausgeben("Kontierung wurde aufgehoben");
-            weiterleiten_in_sec(route('legacy::rechnungen::index', ['option' => 'rechnung_kontieren', 'belegnr' => $belegnr], false), 2);
+            weiterleiten_in_sec(route('web::rechnungen::legacy', ['option' => 'rechnung_kontieren', 'belegnr' => $belegnr], false), 2);
         }
         break;
 
@@ -1685,7 +1685,7 @@ switch ($option) {
         $r = new rechnungen ();
         $r->rechnung_deaktivieren($rechnung_dat);
         $r->rechnungs_aenderungen_speichern($rechnung_dat, $belegnr, $rechnungsnummer, $a_ausnr, $e_einnr, $rechnungs_typ, $r_datum, $ein_datum, $netto, $brutto, $skontobetrag, $aussteller_typ, $aussteller_id, $empfaenger_typ, $empfaenger_id, $stat_erfasst, $stat_voll, $stat_zugew, $stat_z_frei, $stat_bezahlt, $faellig_am, $bezahlt_am, $kurzb, $empfangs_gkonto);
-        weiterleiten_in_sec(route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $belegnr], false), 2);
+        weiterleiten_in_sec(route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $belegnr], false), 2);
         $form->fieldset_ende();
 
         break;
@@ -1746,7 +1746,7 @@ switch ($option) {
         $r = new rechnungen ();
         $buchungsbelege_arr = $r->buchungsbelege_arr($monat, $jahr);
         $bg = new berlussimo_global ();
-        $link = route('legacy::rechnungen::index', ['option' => 'buchungsbelege'], false);
+        $link = route('web::rechnungen::legacy', ['option' => 'buchungsbelege'], false);
         $bg->monate_jahres_links($jahr, $link);
         $r->rechnungsbuch_anzeigen_ein_kurz($buchungsbelege_arr);
         break;
@@ -2049,7 +2049,7 @@ switch ($option) {
 
                 $r->position_speichern($beleg_nr, $beleg_nr, $aussteller_id, $artikel_nr, $menge, $listenpreis, $mwst, $skonto, $rabatt1, $pos_netto);
             }
-            weiterleiten_in_sec(route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]), 3);
+            weiterleiten_in_sec(route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]), 3);
         }
 
         break;
@@ -2119,7 +2119,7 @@ switch ($option) {
                     $rr->insert_pool_bez_in_gruppe($pool_bez, $beleg_nr, $b_pos);
                 }
             } // end for
-            weiterleiten_in_sec(route('legacy::rechnungen::index', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]), 3);
+            weiterleiten_in_sec(route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]), 3);
         }
 
         break;
@@ -2160,7 +2160,7 @@ switch ($option) {
             $r = new rechnungen ();
             $r->teilrechnungen_hinzu(request()->input('beleg_id'), request()->input('tr_ids'));
             $beleg_id = request()->input('beleg_id');
-            weiterleiten(route('legacy::rechnungen::index', ['option' => 'teil_rg_hinzu', 'beleg_id' => $beleg_id], false));
+            weiterleiten(route('web::rechnungen::legacy', ['option' => 'teil_rg_hinzu', 'beleg_id' => $beleg_id], false));
         } else {
             echo "Auswahl unvollständig err:RGSJH2000";
         }
@@ -2171,7 +2171,7 @@ switch ($option) {
             $r = new rechnungen ();
             $r->teilrechnungen_loeschen(request()->input('beleg_id'), request()->input('t_beleg_id'));
             $beleg_id = request()->input('beleg_id');
-            weiterleiten(route('legacy::rechnungen::index', ['option' => 'teil_rg_hinzu', 'beleg_id' => $beleg_id], false));
+            weiterleiten(route('web::rechnungen::legacy', ['option' => 'teil_rg_hinzu', 'beleg_id' => $beleg_id], false));
         } else {
             echo "Auswahl unvollständig err:RGSJH3000";
         }
@@ -2370,7 +2370,7 @@ switch ($option) {
             return;
         }
         echo "<hr>";
-        $link_add = "<a href='" . route('legacy::rechnungen::index', ['option' => 'beleg2pool']) . "'>Beleg hinzufügen</a>";
+        $link_add = "<a href='" . route('web::rechnungen::legacy', ['option' => 'beleg2pool']) . "'>Beleg hinzufügen</a>";
         echo $link_add;
         echo "<hr>";
         $r = new rechnungen ();
@@ -2490,8 +2490,8 @@ switch ($option) {
             $f->check_box_js_alle('uebernahme_alle[]', 'ue', '', 'Alle', '', '', 'uebernahme');
             $vormonat = sprintf('%02d', $monat - 1);
             $nachmonat = sprintf('%02d', $monat + 1);
-            $link_vormonat = "<a href='" . route('legacy::rechnungen::index', ['option' => 'sepa_druckpool', 'monat' => $vormonat]) . "'>Rechnungen $vormonat/$jahr</a>";
-            $link_nachmonat = "<a href='" . route('legacy::rechnungen::index', ['option' => 'sepa_druckpool', 'monat' => $nachmonat]) . "'>Rechnungen $nachmonat/$jahr</a>";
+            $link_vormonat = "<a href='" . route('web::rechnungen::legacy', ['option' => 'sepa_druckpool', 'monat' => $vormonat]) . "'>Rechnungen $vormonat/$jahr</a>";
+            $link_nachmonat = "<a href='" . route('web::rechnungen::legacy', ['option' => 'sepa_druckpool', 'monat' => $nachmonat]) . "'>Rechnungen $nachmonat/$jahr</a>";
             echo "</td><td colspan=\"30\">$link_vormonat<br><b>RECHNUNGEN $monat/$jahr</b><br>$link_nachmonat</td></tr>";
             $spalte = 0;
             echo "<tr>";
@@ -2538,7 +2538,7 @@ switch ($option) {
 
                 $sep->sepa_ueberweisung_speichern(session()->get('geldkonto_id'), $re->empfangs_geld_konto, "$vzweck", 'RECHNUNGP', $re->rechnungs_aussteller_typ, $re->rechnungs_aussteller_id, '0', $re->rechnungs_skontobetrag);
             }
-            weiterleiten(route('legacy::sepa::index', ['option' => 'sammler_anzeigen'], false));
+            weiterleiten(route('web::sepa::legacy', ['option' => 'sammler_anzeigen'], false));
         }
         break;
 

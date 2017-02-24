@@ -45,7 +45,7 @@ switch ($option) {
             $k_bez = request()->input('k_bez');
             $k = new k_rahmen ();
             if ($k->kontenrahmen_speichern($k_bez)) {
-                weiterleiten(route('legacy::kontenrahmen::index', [], false));
+                weiterleiten(route('web::kontenrahmen::legacy', [], false));
             }
         } else {
             echo "Geben Sie bitte eine Kontenrahmenbezeichnung ein.";
@@ -64,7 +64,7 @@ switch ($option) {
             session()->put('k_gruppen_id', request()->input('k_gruppe'));
             session()->put('k_kontoart_id', request()->input('kontoart_id'));
             $k->kostenkonto_speichern(request()->input('kontenrahmen_id'), request()->input('konto'), request()->input('bez'), request()->input('kontoart_id'), request()->input('k_gruppe'));
-            weiterleiten(route('legacy::kontenrahmen::index', ['option' => 'konten_anzeigen', 'k_id' => session()->get('kontenrahmen_id')], false));
+            weiterleiten(route('web::kontenrahmen::legacy', ['option' => 'konten_anzeigen', 'k_id' => session()->get('kontenrahmen_id')], false));
         } else {
             echo "Eingabe unvollständig. Error: S562q357";
         }
@@ -84,7 +84,7 @@ switch ($option) {
             session()->put('k_gruppen_id', request()->input('k_gruppe'));
             session()->put('k_kontoart_id', request()->input('kontoart_id'));
             $k->kostenkonto_aendern(request()->input('dat'), request()->input('kontenrahmen_id'), request()->input('konto'), request()->input('bez'), request()->input('kontoart_id'), request()->input('k_gruppe'));
-            weiterleiten(route('legacy::kontenrahmen::index', ['option' => 'konten_anzeigen', 'k_id' => session()->get('kontenrahmen_id')], false));
+            weiterleiten(route('web::kontenrahmen::legacy', ['option' => 'konten_anzeigen', 'k_id' => session()->get('kontenrahmen_id')], false));
         } else {
             echo "Eingabe unvollständig. Error: S56sdf7";
         }
@@ -106,7 +106,7 @@ switch ($option) {
         if (request()->has('g_bez')) {
             $k = new k_rahmen ();
             $k->gruppe_speichern(request()->input('g_bez'));
-            weiterleiten(route('legacy::kontenrahmen::index', ['option' => 'gruppe_neu'], false));
+            weiterleiten(route('web::kontenrahmen::legacy', ['option' => 'gruppe_neu'], false));
         } else {
             echo "Eingabe unvollständig. Error: 123sdf7";
         }
@@ -127,7 +127,7 @@ switch ($option) {
         if (request()->has('kontoart')) {
             $k = new k_rahmen ();
             $k->kontoart_speichern(request()->input('kontoart'));
-            weiterleiten(route('legacy::kontenrahmen::index', ['option' => 'kontoart_neu'], false));
+            weiterleiten(route('web::kontenrahmen::legacy', ['option' => 'kontoart_neu'], false));
         } else {
             echo "Eingabe unvollständig. Error: 94555f7";
         }
@@ -142,7 +142,7 @@ switch ($option) {
         if (request()->has('kostentraeger_typ') && request()->has('kostentraeger_id') && request()->has('kontenrahmen_id')) {
             $k = new k_rahmen ();
             $k->zuweisung_speichern(request()->input('kostentraeger_typ'), request()->input('kostentraeger_id'), request()->input('kontenrahmen_id'));
-            weiterleiten(route('legacy::kontenrahmen::index', [], false));
+            weiterleiten(route('web::kontenrahmen::legacy', [], false));
         } else {
             echo "Eingabe unvollständig. Error: 42gsbx3f7";
         }
@@ -152,7 +152,7 @@ switch ($option) {
         if (request()->has('dat')) {
             $k = new k_rahmen ();
             $k->zuweisung_loeschen(request()->input('dat'));
-            weiterleiten(route('legacy::kontenrahmen::index', [], false));
+            weiterleiten(route('web::kontenrahmen::legacy', [], false));
         } else {
             echo "Eingabe unvollständig. Error: 42gsjklasd7";
         }

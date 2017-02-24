@@ -71,7 +71,7 @@ if (request()->has('daten_rein')) {
             hinweis_ausgeben("Objekt: $objekt_kurzname");
             hinweis_ausgeben("Haus: $haus_kurzname");
             neue_einheit_in_db(request()->input('haus_id'), request()->input('einheit_kurzname'), request()->input('einheit_lage'), request()->input('einheit_qm'));
-            weiterleiten(route('legacy::einheiten::index', ['einheit_raus' => 'einheit_kurz', 'haus_id' => request()->input('haus_id')], false));
+            weiterleiten(route('web::einheiten::legacy', ['einheit_raus' => 'einheit_kurz', 'haus_id' => request()->input('haus_id')], false));
             iframe_end();
             $form->ende_formular();
             break;
@@ -163,7 +163,7 @@ function objekt_links()
     $result = DB::select("SELECT OBJEKT_DAT, OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC ");
     echo "<b>Objekt auswählen:</b><br>\n ";
     foreach ($result as $row) {
-        echo "<a class=\"objekt_links\" href='" . route('legacy::einheitenform::index', ['daten_rein' => $daten_rein, 'objekt_id' => $row['OBJEKT_ID']]) . ">$row[OBJEKT_KURZNAME]</a><br>\n";
+        echo "<a class=\"objekt_links\" href='" . route('web::einheitenform::legacy', ['daten_rein' => $daten_rein, 'objekt_id' => $row['OBJEKT_ID']]) . ">$row[OBJEKT_KURZNAME]</a><br>\n";
     }
 }
 
@@ -173,10 +173,10 @@ function haeuser_links($obj_id)
     $result = DB::select("SELECT HAUS_DAT, HAUS_ID, HAUS_STRASSE, HAUS_NUMMER FROM HAUS WHERE OBJEKT_ID='$obj_id' && HAUS_AKTUELL='1' ORDER BY HAUS_STRASSE, HAUS_NUMMER ASC");
     if (empty($result)) {
         echo "<h5 class=\"fehler\">Keine Häuser im ausgewählten Objekt</h5><br>\n";
-        echo "Erst Haus im Objekt anlegen - <a href='" . route('legacy::haeuserform::index', ['daten_rein' => 'anlegen']) . "'>Hauseningabe hier&nbsp;</a>\n<br>\n";
+        echo "Erst Haus im Objekt anlegen - <a href='" . route('web::haeuserform::legacy', ['daten_rein' => 'anlegen']) . "'>Hauseningabe hier&nbsp;</a>\n<br>\n";
     } else {
         foreach ($result as $row) {
-            echo "<a class=\"objekt_links\" href='" . route('legacy::einheitenform::index', ['daten_rein' => $daten_rein, 'objekt_id' => $obj_id, 'haus_id' => $row['HAUS_ID']]) . "'>$row[HAUS_STRASSE] $row[HAUS_NUMMER]</a><br>\n";
+            echo "<a class=\"objekt_links\" href='" . route('web::einheitenform::legacy', ['daten_rein' => $daten_rein, 'objekt_id' => $obj_id, 'haus_id' => $row['HAUS_ID']]) . "'>$row[HAUS_STRASSE] $row[HAUS_NUMMER]</a><br>\n";
         }
     }
 }
@@ -207,10 +207,10 @@ function einheiten_links($objekt_id, $haus_id)
     $result = DB::select("SELECT EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT_LAGE FROM EINHEIT WHERE HAUS_ID='$haus_id' && EINHEIT_AKTUELL='1' ORDER BY EINHEIT_KURZNAME ASC ");
     if (empty($result)) {
         echo "<h5 class=\"fehler\">Keine Einheiten im ausgewählten Haus</h5>";
-        echo "<p class=\"hinweis\">Bitte zuerst Einheit im Haus anlegen - <a href='" . route('legacy::einheitenform::index', ['daten_rein' => 'anlegen']) . "'>Einheit anlegen HIER&nbsp;</a></p><br>";
+        echo "<p class=\"hinweis\">Bitte zuerst Einheit im Haus anlegen - <a href='" . route('web::einheitenform::legacy', ['daten_rein' => 'anlegen']) . "'>Einheit anlegen HIER&nbsp;</a></p><br>";
     } else {
         foreach($result as $row) {
-            echo "<a class=\"objekt_links\" href='" . route('legacy::einheitenform::index', ['daten_rein' => $daten_rein, 'objekt_id' => $objekt_id, 'haus_id' => $haus_id, 'einheit_id' => $row['EINHEIT_ID']]) . "'>$row[EINHEIT_KURZNAME] - $row[EINHEIT_LAGE]</a><br>\n";
+            echo "<a class=\"objekt_links\" href='" . route('web::einheitenform::legacy', ['daten_rein' => $daten_rein, 'objekt_id' => $objekt_id, 'haus_id' => $haus_id, 'einheit_id' => $row['EINHEIT_ID']]) . "'>$row[EINHEIT_KURZNAME] - $row[EINHEIT_LAGE]</a><br>\n";
         }
     }
 }

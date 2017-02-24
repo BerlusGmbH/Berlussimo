@@ -29,7 +29,7 @@ class berlussimo_global
         for ($i = 0; $i < $anzahl_objekte; $i++) {
             $objekt_kurzname = ltrim(rtrim(htmlspecialchars($objekte_arr [$i] ["OBJEKT_KURZNAME"])));
             echo "<div class='col s6 m4 l2'>";
-            echo "<a href='" . route('legacy::objekte::select', ['objekt_id' => $objekte_arr [$i] ['OBJEKT_ID']]) . "'>" . $objekt_kurzname . "</a>&nbsp;";
+            echo "<a href='" . route('web::objekte::select', ['objekt_id' => $objekte_arr [$i] ['OBJEKT_ID']]) . "'>" . $objekt_kurzname . "</a>&nbsp;";
             echo "</div>";
         }
         echo "</div>";

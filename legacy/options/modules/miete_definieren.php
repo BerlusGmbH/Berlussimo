@@ -49,7 +49,7 @@ switch ($schritt) {
         } else {
             // fals keine MV_ID eingegeben wurde, weiterleiten
             warnung_ausgeben("Fehler : Bitte eine Einheit auswählen!");
-            weiterleiten(route('legacy::miete_definieren::index', [], false));
+            weiterleiten(route('web::miete_definieren::legacy', [], false));
         }
         $form->ende_formular();
         break;
@@ -89,7 +89,7 @@ switch ($schritt) {
         $form->erstelle_formular("Aktuelle Mietdefinition wird gespeichert", NULL);
         $me = new mietentwicklung ();
         $me->me_dat_aendern();
-        weiterleiten_in_sec(route('legacy::miete_definieren::index', ['option' => 'miethoehe', 'mietvertrag_id' => request()->input('mv_id')], false), 1);
+        weiterleiten_in_sec(route('web::miete_definieren::legacy', ['option' => 'miethoehe', 'mietvertrag_id' => request()->input('mv_id')], false), 1);
         $form->ende_formular();
         break;
 
@@ -101,7 +101,7 @@ switch ($schritt) {
         session()->put('e_datum', request()->input('ende'));
         session()->put('me_kostenkat', request()->input('kostenkategorie'));
         $me->me_dat_neu_speichern();
-        weiterleiten_in_sec(route('legacy::miete_definieren::index', ['option' => 'miethoehe', 'mietvertrag_id' => request()->input('mv_id')], false), 1);
+        weiterleiten_in_sec(route('web::miete_definieren::legacy', ['option' => 'miethoehe', 'mietvertrag_id' => request()->input('mv_id')], false), 1);
         $form->ende_formular();
         break;
 
@@ -111,7 +111,7 @@ switch ($schritt) {
         if ($me_dat) {
             $me->me_dat_loeschen($me_dat);
             $mv_id = request()->input('mietvertrag_id');
-            weiterleiten(route('legacy::miete_definieren::index', ['option' => 'miethoehe', 'mietvertrag_id' => $mv_id], false));
+            weiterleiten(route('web::miete_definieren::legacy', ['option' => 'miethoehe', 'mietvertrag_id' => $mv_id], false));
         }
         break;
 
@@ -131,7 +131,7 @@ switch ($schritt) {
         hinweis_ausgeben("Miete wurde definiert, Sie werden gleich zur übersicht weitergeleit!");
         $mv_info = new mietvertrag ();
         $einheit_id = $mv_info->get_einheit_id_von_mietvertrag(request()->input('mietvertrag_id'));
-        weiterleiten_in_sec(route('legacy::uebersicht::index', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id], false), "2");
+        weiterleiten_in_sec(route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id], false), "2");
         $form->ende_formular();
         break;
 
@@ -164,7 +164,7 @@ function objekt_auswahl()
     // print_r($objekte_arr);
     $c = 0;
     for ($i = 0; $i < $anzahl_objekte; $i++) {
-        echo "<a class=\"objekt_auswahl_buchung\" href='" . route('legacy::miete_definieren::index', ['objekt_id' => $objekte_arr[$i]['OBJEKT_ID']], false) . "'>" . $objekte_arr[$i]['OBJEKT_KURZNAME'] . "</a>&nbsp;";
+        echo "<a class=\"objekt_auswahl_buchung\" href='" . route('web::miete_definieren::legacy', ['objekt_id' => $objekte_arr[$i]['OBJEKT_ID']], false) . "'>" . $objekte_arr[$i]['OBJEKT_KURZNAME'] . "</a>&nbsp;";
         $c++;
         if ($c == 10) {
             echo "<br>";
@@ -217,7 +217,7 @@ function einheiten_liste()
         if ($einheit_vermietet) {
             // if(isset($einheit_info->mietvertrag_id)){
 
-            echo "<a href='" . route('legacy::miete_definieren::index', ['option' => 'miethoehe', 'mietvertrag_id' => $einheit_info->mietvertrag_id], false) . "' class=\"nicht_gebucht_links\">" . $einheiten_array [$i] ['EINHEIT_KURZNAME'] . "</a>&nbsp;";
+            echo "<a href='" . route('web::miete_definieren::legacy', ['option' => 'miethoehe', 'mietvertrag_id' => $einheit_info->mietvertrag_id], false) . "' class=\"nicht_gebucht_links\">" . $einheiten_array [$i] ['EINHEIT_KURZNAME'] . "</a>&nbsp;";
 
             echo "<br>"; // Nach jeder Einheit Neuzeile
             $m = new mietvertrag (); // class mietvertrag aus berlussimo_class.php;
