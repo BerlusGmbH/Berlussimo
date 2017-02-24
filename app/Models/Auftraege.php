@@ -16,7 +16,7 @@ class Auftraege extends Model
     protected $table = 'TODO_LISTE';
     protected $primaryKey = 'T_ID';
     protected $searchableFields = ['TEXT'];
-    protected $defaultOrder = ['ERLEDIGT' => 'asc', 'AKUT' => 'asc', 'ERSTELLT' => 'asc'];
+    protected $defaultOrder = ['ERLEDIGT' => 'asc', 'AKUT' => 'asc', 'ERSTELLT' => 'desc'];
 
     protected static function boot()
     {

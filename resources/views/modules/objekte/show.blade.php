@@ -87,7 +87,9 @@
             <div class="col-xs-12 col-sm-3">
                 <div class="card card-expandable">
                     <div class="card-content">
-                        <span class="card-title"><a href="{{ route('web::haeuser::index', ['q' => '!haus(objekt(id=' . $objekt->OBJEKT_ID . '))']) }}">Häuser ({{ $objekt->haeuser->count() }})</a></span>
+                        <span class="card-title"><a
+                                    href="{{ route('web::haeuser::index', ['q' => '!haus(objekt(id=' . $objekt->OBJEKT_ID . '))']) }}">Häuser ({{ $objekt->haeuser->count() }})
+                            </a></span>
                         <table class="striped">
                             <thead>
                             <th>Haus</th>
@@ -110,7 +112,9 @@
             <div class="col-xs-12 col-sm-3">
                 <div class="card card-expandable">
                     <div class="card-content">
-                        <span class="card-title"><a href="{{ route('web::einheiten::index', ['q' => '!einheit(objekt(id=' . $objekt->OBJEKT_ID . '))']) }}">Einheiten ({{ $objekt->einheiten->count() }})</a></span>
+                        <span class="card-title"><a
+                                    href="{{ route('web::einheiten::index', ['q' => '!einheit(objekt(id=' . $objekt->OBJEKT_ID . '))']) }}">Einheiten ({{ $objekt->einheiten->count() }})
+                            </a></span>
                         <table class="striped">
                             <thead>
                             <th>Einheit</th>
@@ -133,7 +137,9 @@
             <div class="col-xs-12 col-sm-3">
                 <div class="card card-expandable">
                     <div class="card-content">
-                        <span class="card-title"><a href="{{ route('web::personen::index', ['q' => '!person(mietvertrag(objekt(id=' . $objekt->OBJEKT_ID . ') laufzeit=' . \Carbon\Carbon::today()->toDateString() . '))']) }}">Mieter ({{ $objekt->mieter()->get()->count() }})</a></span>
+                        <span class="card-title"><a
+                                    href="{{ route('web::personen::index', ['q' => '!person(mietvertrag(objekt(id=' . $objekt->OBJEKT_ID . ') laufzeit=' . \Carbon\Carbon::today()->toDateString() . '))']) }}">Mieter ({{ $objekt->mieter()->get()->count() }})
+                            </a></span>
                         <table class="striped">
                             <thead>
                             <th>Mieter</th>
@@ -240,44 +246,8 @@
                 </div>
             </div>
         </div>
-        @if(!$objekt->auftraege->isEmpty())
-            <div class="col-xs-12">
-                <div class="card card-expandable">
-                    <div class="card-content">
-                        <span class="card-title">Aufträge ({{ $objekt->auftraege->count() }})</span>
-                        <table class="striped">
-                            <thead>
-                            <th>Auftrag</th>
-                            <th>Erstellt</th>
-                            <th>Von</th>
-                            <th>An</th>
-                            <th>Text</th>
-                            </thead>
-                            <tbody>
-                            @foreach( $objekt->auftraege()->defaultOrder()->get() as $auftrag )
-                                <tr>
-                                    <td>
-                                        @include('shared.entities.auftrag', [ 'entity' => $auftrag ])
-                                    </td>
-                                    <td>
-                                        {{  $auftrag->ERSTELLT }}
-                                    </td>
-                                    <td>
-                                        @include('shared.entity', [ 'entity' => $auftrag->von ])
-                                    </td>
-                                    <td>
-                                        @include('shared.entity', [ 'entity' => $auftrag->an ])
-                                    </td>
-                                    <td>
-                                        {{  $auftrag->TEXT }}
-                                    </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        @endif
+        <div class="col-xs-12">
+            @include('shared.cards.auftraege', ['auftraege' => $objekt->auftraege()->defaultOrder()->get(), 'type' => 'Objekt'])
+        </div>
     </div>
 @endsection

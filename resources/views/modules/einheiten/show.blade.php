@@ -90,7 +90,9 @@
             <div class="col-xs-12 col-sm-3">
                 <div class="card card-expandable">
                     <div class="card-content">
-                        <span class="card-title"><a href="{{ route('web::personen::index', ['q' => '!person(mietvertrag(einheit(id=' . $einheit->EINHEIT_ID . ') laufzeit=' . \Carbon\Carbon::today()->toDateString() . '))']) }}">Mieter ({{ $einheit->mieter()->get()->count() }})</a></span>
+                        <span class="card-title"><a
+                                    href="{{ route('web::personen::index', ['q' => '!person(mietvertrag(einheit(id=' . $einheit->EINHEIT_ID . ') laufzeit=' . \Carbon\Carbon::today()->toDateString() . '))']) }}">Mieter ({{ $einheit->mieter()->get()->count() }})
+                            </a></span>
                         <table class="striped">
                             <thead>
                             <th>Mieter</th>
@@ -109,44 +111,8 @@
                 </div>
             </div>
         @endif
-        @if(!$einheit->auftraege->isEmpty())
-            <div class="col-xs-12">
-                <div class="card card-expandable">
-                    <div class="card-content">
-                        <span class="card-title">Aufträge ({{ $einheit->auftraege->count() }})</span>
-                        <table class="striped">
-                            <thead>
-                            <th>Auftrag</th>
-                            <th>Erstellt</th>
-                            <th>Von</th>
-                            <th>An</th>
-                            <th>Text</th>
-                            </thead>
-                            <tbody>
-                            @foreach( $einheit->auftraege()->defaultOrder()->get() as $auftrag )
-                                <tr>
-                                    <td>
-                                        @include('shared.entities.auftrag', [ 'entity' => $auftrag ])
-                                    </td>
-                                    <td>
-                                        {{  $auftrag->ERSTELLT }}
-                                    </td>
-                                    <td>
-                                        @include('shared.entity', [ 'entity' => $auftrag->von ])
-                                    </td>
-                                    <td>
-                                        @include('shared.entity', [ 'entity' => $auftrag->an ])
-                                    </td>
-                                    <td>
-                                        {{  $auftrag->TEXT }}
-                                    </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        @endif
+        <div class="col-xs-12">
+            @include('shared.cards.auftraege', ['auftraege' => $einheit->auftraege()->defaultOrder()->get(), 'type' => 'Einheit'])
+        </div>
     </div>
 @endsection

@@ -90,7 +90,9 @@
             <div class="col-xs-12 col-sm-3">
                 <div class="card card-expandable">
                     <div class="card-content">
-                        <span class="card-title"><a href="{{ route('web::einheiten::index', ['q' => '!einheit(haus(id=' . $haus->HAUS_ID . '))']) }}">Einheiten ({{ $haus->einheiten->count() }})</a></span>
+                        <span class="card-title"><a
+                                    href="{{ route('web::einheiten::index', ['q' => '!einheit(haus(id=' . $haus->HAUS_ID . '))']) }}">Einheiten ({{ $haus->einheiten->count() }})
+                            </a></span>
                         <table class="striped">
                             <thead>
                             <th>Einheit</th>
@@ -113,7 +115,9 @@
             <div class="col-xs-12 col-sm-3">
                 <div class="card card-expandable">
                     <div class="card-content">
-                        <span class="card-title"><a href="{{ route('web::personen::index', ['q' => '!person(mietvertrag(haus(id=' . $haus->HAUS_ID . ') laufzeit=' . \Carbon\Carbon::today()->toDateString() . '))']) }}">Mieter ({{ $haus->mieter()->get()->count() }})</a></span>
+                        <span class="card-title"><a
+                                    href="{{ route('web::personen::index', ['q' => '!person(mietvertrag(haus(id=' . $haus->HAUS_ID . ') laufzeit=' . \Carbon\Carbon::today()->toDateString() . '))']) }}">Mieter ({{ $haus->mieter()->get()->count() }})
+                            </a></span>
                         <table class="striped">
                             <thead>
                             <th>Mieter</th>
@@ -132,44 +136,8 @@
                 </div>
             </div>
         @endif
-        @if(!$haus->auftraege->isEmpty())
-            <div class="col-xs-12">
-                <div class="card card-expandable">
-                    <div class="card-content">
-                        <span class="card-title">Aufträge ({{ $haus->auftraege->count() }})</span>
-                        <table class="striped">
-                            <thead>
-                            <th>Auftrag</th>
-                            <th>Erstellt</th>
-                            <th>Von</th>
-                            <th>An</th>
-                            <th>Text</th>
-                            </thead>
-                            <tbody>
-                            @foreach( $haus->auftraege()->defaultOrder()->get() as $auftrag )
-                                <tr>
-                                    <td>
-                                        @include('shared.entities.auftrag', [ 'entity' => $auftrag ])
-                                    </td>
-                                    <td>
-                                        {{  $auftrag->ERSTELLT }}
-                                    </td>
-                                    <td>
-                                        @include('shared.entity', [ 'entity' => $auftrag->von ])
-                                    </td>
-                                    <td>
-                                        @include('shared.entity', [ 'entity' => $auftrag->an ])
-                                    </td>
-                                    <td>
-                                        {{  $auftrag->TEXT }}
-                                    </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        @endif
+        <div class="col-xs-12">
+            @include('shared.cards.auftraege', ['auftraege' => $haus->auftraege()->defaultOrder()->get(), 'type' => 'Haus'])
+        </div>
     </div>
 @endsection

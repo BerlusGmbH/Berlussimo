@@ -140,8 +140,10 @@ class todo
                 $db_abfrage = "INSERT INTO TODO_LISTE VALUES (NULL, '$last_id', '$t_id', '" . request()->input('text') . "', NULL, '$anz_ab','$typ', '" . request()->input('benutzer_id') . "','$benutzer_id', '0','" . request()->input('akut') . "','" . request()->input('kostentraeger_typ') . "','$kostentraeger_id', '$wert_eur','1')";
                 DB::insert($db_abfrage);
                 ob_clean();
-                weiterleiten(route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $last_id], false));
+                weiterleiten(redirect()->intended()->getTargetUrl());
             }
+        } else {
+            session()->put('url.intended', URL::previous());
         }
         $f->ende_formular();
     }
