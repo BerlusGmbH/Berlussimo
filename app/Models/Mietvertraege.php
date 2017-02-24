@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\DefaultOrder;
 use App\Models\Traits\Searchable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -9,11 +10,13 @@ use Illuminate\Database\Eloquent\Model;
 class Mietvertraege extends Model
 {
     use Searchable;
+    use DefaultOrder;
 
     public $timestamps = false;
     protected $table = 'MIETVERTRAG';
     protected $primaryKey = 'MIETVERTRAG_ID';
     protected $searchableFields = ['MIETVERTRAG_VON', 'MIETVERTRAG_BIS'];
+    protected $defaultOrder = ['MIETVERTRAG_VON' => 'desc', 'MIETVERTRAG_BIS' => 'desc'];
 
     protected static function boot()
     {

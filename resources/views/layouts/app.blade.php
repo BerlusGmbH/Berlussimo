@@ -3,7 +3,10 @@
     <div class="navbar-fixed">
         <nav>
             <div class="nav-wrapper">
-                <a href='/'><img style="height:100%; padding: 5px" src="/images/berlus_logo.svg"></a>
+                <a href='/'><img class="left" style="height:100%; padding: 5px" src="/images/berlus_logo.svg"></a>
+                <div class="left">
+                    @yield('breadcrumbs')
+                </div>
                 @yield('navbar')
             </div>
         </nav>

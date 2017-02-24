@@ -3,14 +3,16 @@
 namespace App\Http\Controllers\Legacy;
 
 
+use App\Http\Controllers\Traits\Indexable;
 use App\Http\Requests\Legacy\PersonenRequest;
 use App\Models\Personen;
-use App\Services\Parser\Personen\View\Lexer as VLexer;
-use App\Services\Parser\Personen\View\Parser as VParser;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use App\Services\Parser\Personen\View\Lexer;
+use App\Services\Parser\Personen\View\Parser;
 
 class PersonenController extends LegacyController
 {
+    use Indexable;
+
     protected $submenu = 'legacy/options/links/links.person.php';
     protected $include = 'legacy/options/modules/person.php';
 
@@ -19,28 +21,30 @@ class PersonenController extends LegacyController
         return $this->render();
     }
 
-    public function index()
+    public function index(PersonenRequest $request)
     {
         $builder = Personen::with(['sex']);
-        $columns = [];
         $query = "";
-        if (request()->has('v')) {
-            $query = request()->input('v');
-        }
         if (request()->has('q')) {
-            $query .= " " . request()->input('q');
+            $query = request()->input('q');
         }
-        if (!empty($query)) {
+        if (request()->has('v')) {
+            $query .= " " . request()->input('v');
+        }
+
+        $trace = null;
+        if (config('app.debug')) {
             $trace = fopen(storage_path('logs/vparser.log'), 'w');
-            $lexer = new VLexer($query, $trace);
-            $parser = new VParser($lexer, $builder);
-            $parser->Trace($trace, "\n");
-            while ($lexer->yylex()) {
-                $parser->doParse($lexer->token, $lexer->value);
-            }
-            $parser->doParse(0, 0);
-            $columns = $parser->retvalue;
         }
+        $lexer = new Lexer($query, $trace);
+        $parser = new Parser($lexer, $builder);
+        $parser->Trace($trace, "\n");
+        while ($lexer->yylex()) {
+            $parser->doParse($lexer->token, $lexer->value);
+        }
+        $parser->doParse(0, 0);
+        $columns = $parser->retvalue;
+
         if (request()->has('s')) {
             if (request()->input('s') != 'all') {
                 $personen = $builder->paginate(request()->input('s'));
@@ -48,12 +52,13 @@ class PersonenController extends LegacyController
                 $personen = $builder->get();
             }
         } else {
-            $personen = $builder->paginate(5);
+            $personen = $builder->paginate(20);
         }
-        return view('modules.personen.index', ['personen' => $personen, 'columns' => $columns]);
+        list($index, $wantedRelations) = $this->generateIndex($personen, $columns);
+        return view('modules.personen.index', ['columns' => $columns, 'entities' => $personen, 'index' => $index, 'wantedRelations' => $wantedRelations]);
     }
 
-    public function show($id)
+    public function show($id, PersonenRequest $request)
     {
         $person = Personen::with(['mietvertraege.einheit.haus.objekt', 'kaufvertraege.einheit.haus.objekt', 'details'])->find($id);
         return view('modules.personen.show', ['person' => $person]);

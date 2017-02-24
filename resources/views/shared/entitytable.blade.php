@@ -19,97 +19,79 @@
                         }
                     }
                 }
-                if(isset($fields) && isset($fields[$column]) && !$fields[$column]['columns']->isEmpty()) {
+                if(isset($fields[$column]['columns']) && (!$fields[$column]['columns']->isEmpty() || !$fields[$column]['aggregates']->isEmpty())) {
                     echo '<br>[';
-                    $last = $fields[$column]['columns']->last();
-                    foreach ($fields[$column]['columns'] as $col)
-                    {
-                        echo  e(ucfirst($col));
-                        if($last != $col) {
-                            echo e(', ');
-                        } elseif ($last == $col) {
-                            echo e(']');
+                    if(!$fields[$column]['aggregates']->isEmpty()) {
+                        $last = $fields[$column]['aggregates']->last();
+                        foreach ($fields[$column]['aggregates'] as $col)
+                        {
+                            echo  e(ucfirst($col));
+                            if($last != $col || !$fields[$column]['columns']->isEmpty()) {
+                                echo e(', ');
+                            }
                         }
                     }
+                    if(!$fields[$column]['columns']->isEmpty()) {
+                        $last = $fields[$column]['columns']->last();
+                        foreach ($fields[$column]['columns'] as $col)
+                        {
+                            echo  e(ucfirst($col));
+                            if($last != $col) {
+                                echo e(', ');
+                            }
+                        }
+                    }
+                    echo e(']');
                 }
             @endphp
         </th>
     @endforeach
     </thead>
     <tbody>
-    @php
-        $wanted = [];
-        foreach ($columns as $fields) {
-            $column = key($fields);
-            $rs = $relations->classColumnToRelations($class, $column);
-            foreach ($rs as $r) {
-                $notWanted = false;
-                if(isset($fields[$column]['columns']) && !$fields[$column]['columns']->isEmpty()) {
-                    $notWanted = true;
-                    foreach($fields[$column]['columns'] as $co) {
-                        $ccs = Relations::classColumnToRelations($class, $co);
-                        foreach($ccs as $cc) {
-                            if(strpos($r, $cc) !== false) {
-                                $notWanted = false;
-                            }
-                        }
-                    }
-                }
-                $wanted[$column][$r] = !$notWanted;
-            }
-        }
-    @endphp
-    @foreach( $entities as $entity )
+    @php($id = $relations->classFieldToField($class, 'id'))
+    @foreach( $index as $entity )
         <tr>
-            @foreach($columns as $fields)
+            @foreach($columns as $key => $fields)
                 <td>
                     @php
                         $column = key($fields);
                         $rs = $relations->classColumnToRelations($class, $column);
-                        $stack = [];
                         foreach ($rs as $r) {
-                            if(!$wanted[$column][$r]) {
-                                continue;
-                            }
-                            $parts = explode('.', $r);
-                            $max = count($parts);
-                            $stack = collect([['entity' => $entity, 'pos' => 0]]);
-                            while(!$stack->isEmpty()) {
-                                $entry = $stack->pop();
-                                if($entry['pos'] == $max) {
-                                    if(isset($fields) && isset($fields[$column]['fields']) && !$fields[$column]['fields']->isEmpty()) {
-                                        $last = $fields[$column]['fields']->last()['field'];
-                                        foreach ($fields[$column]['fields'] as $field)
-                                        {
-                                            $dbField = $relations->classFieldToField(get_class($entry['entity']), $field['field']);
-                                            if(trim($entry['entity']->{$dbField}) != '' && $last != $field['field']) {
-                                                echo e($entry['entity']->{$dbField} . ', ');
-                                            } elseif ($last == $field['field']) {
-                                                echo e($entry['entity']->{$dbField}) . '<br>';
-                                            }
-                                        }
-                                    } else {
+                            if($wantedRelations[$key]->contains($r)) {
+                                $c = 0;
+                                if(isset($fields[$column]['columns'])) {
+                                    $c = $fields[$column]['columns']->count();
+                                }
+                                if($c > 1 || ($c == 0 && count($rs) > 1 && isset($entity[$r])))
+                                    echo ucfirst($relations->classToColumn($relations->classRelationToMany($class, $r)[1])) . '<br>';
+                                if(isset($fields[$column]['aggregates']) && !$fields[$column]['aggregates']->isEmpty()) {
+                                    foreach ($fields[$column]['aggregates'] as $aggregate) {
                     @endphp
-                    @include('shared.entity', ['entity' => $entry['entity']] )<br>
+                    @include('shared.entities.aggregates.count', ['entities' => $entity[$r], 'aggregate' => $aggregate] )<br>
                     @php
-                        }
-                    } else {
-                        if($parts[$entry['pos']] !== '') {
-                            $es = $entry['entity']->{$parts[$entry['pos']]};
+                                    }
+                                } else {
+                    foreach ($entity[$r] as $value) {
+                        if(isset($fields[$column]['fields']) && !$fields[$column]['fields']->isEmpty()) {
+                            $last = $fields[$column]['fields']->last()['field'];
+                            foreach ($fields[$column]['fields'] as $field)
+                            {
+                                $dbField = $relations->classFieldToField(get_class($value), $field['field']);
+                                if(trim($value->{$dbField}) != '' && $last != $field['field']) {
+                                    echo e($value->{$dbField} . ', ');
+                                } elseif ($last == $field['field']) {
+                                    echo e($value->{$dbField}) . '<br>';
+                                }
+                            }
                         } else {
-                            $es = $entry['entity'];
-                        }
-                        if(!$es instanceof \Illuminate\Database\Eloquent\Collection) {
-                            $es = [$es];
-                        } else {
-                            $es = $es->reverse();
-                        }
-                        foreach ($es as $e) {
-                            $stack->push(['entity' => $e, 'pos' => $entry['pos'] + 1]);
+                    @endphp
+                    @include('shared.entity', ['entity' => $value] )<br>
+                    @php
+                                    }
+                                }
+                            }
                         }
                     }
-                }
-            }
                     @endphp
                 </td>
             @endforeach

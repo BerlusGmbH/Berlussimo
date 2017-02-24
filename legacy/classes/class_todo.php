@@ -155,7 +155,8 @@ class todo
 
     function dropdown_akut($akut = 'NEIN')
     {
-        echo "<label for=\"akut\">Akut / Wichtig</label><select id=\"akut\" name=\"akut\" size=\"1\">";
+        echo "<div class='input-field'>";
+        echo "<select id=\"akut\" name=\"akut\" size=\"1\">";
         if ($akut == 'NEIN') {
             echo "<option value=\"Nein\" selected>Nein</option>";
             echo "<option value=\"Ja\">Ja</option>";
@@ -163,7 +164,8 @@ class todo
             echo "<option value=\"Nein\">Nein</option>";
             echo "<option value=\"Ja\" selected>Ja</option>";
         }
-        echo "</select>";
+        echo "</select><label for=\"akut\">Akut / Wichtig</label>";
+        echo "</div>";
     }
 
     function kontaktdaten_anzeigen_mieter($einheit_id)
@@ -931,9 +933,9 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         $f->erstelle_formular('Bearbeiten', '');
         $bb = new buchen ();
         if ($this->ue_id == '0') {
-            $f->fieldset("Projekt bearbeiten:$this->text", 'na');
+            $f->fieldset("Projekt bearbeiten:", 'na');
         } else {
-            $f->fieldset("Aufgabe bearbeiten:$this->text", 'na');
+            $f->fieldset("Aufgabe bearbeiten:", 'na');
         }
         $f->text_bereich('Beschreibung', 'text', $this->text, 5, 20, 'aufgabe');
 
@@ -967,14 +969,17 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $erledigt = request()->input('status');
                 $db_abfrage = "UPDATE TODO_LISTE SET TEXT='" . request()->input('text') . "', ANZEIGEN_AB='$anz_ab', BENUTZER_ID='" . request()->input('benutzer_id') ."', ERLEDIGT='$erledigt', AKUT='" . request()->input('akut') . "', KOS_TYP='" . request()->input('kostentraeger_typ'). "', KOS_ID='$kostentraeger_id' WHERE T_DAT='$this->t_dat'";
                 DB::update($db_abfrage);
-                weiterleiten(route('web::todo::legacy', [], false));
+                weiterleiten(redirect()->intended()->getTargetUrl());
             }
+        } else {
+            session()->put('url.intended', URL::previous());
         }
     }
 
     function dropdown_erledigt($erl = 0)
     {
-        echo "<label for=\"status\">Status</label><select id=\"status\" name=\"status\" size=\"1\">";
+        echo "<div class='input-field'>";
+        echo "<select id=\"status\" name=\"status\" size=\"1\">";
         if ($erl == 0) {
             echo "<option value=\"1\">Erledigt</option>";
             echo "<option value=\"0\"  selected>Offen</option>";
@@ -982,7 +987,8 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             echo "<option value=\"1\" selected>Erledigt</option>";
             echo "<option value=\"0\" >Offen</option>";
         }
-        echo "</select>";
+        echo "</select><label for=\"status\">Status</label>";
+        echo "</div>";
     }
 
     function projekt_aufgabe_loeschen($t_id)

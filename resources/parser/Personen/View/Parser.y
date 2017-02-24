@@ -81,7 +81,19 @@ start(res) ::= expressions(e).
         }
     }
     $q->with($withs);
-    res = e;
+    $columns = e;
+    if(!isset($columns) || $columns->isEmpty()) {
+        $column = Relations::classToColumn($this->class);
+        $columns = collect([[$column => null]]);
+    }
+    res = $columns;
+}
+
+start(res) ::= .
+{
+    $this->query->defaultOrder();
+    $column = Relations::classToColumn($this->class);
+    res = collect([[$column => null]]);
 }
 
 expressions(res) ::= expressions(e1) expression(e2).
@@ -111,9 +123,9 @@ expression(res) ::= COLUMN(co) clauseexpression(cl) viewexpression(v).
     $relationships = Relations::classColumnToRelations($this->class, $column);
     $views = v;
     foreach($relationships as $r) {
-        if(isset($views) && !$views['columns']->isEmpty()) {
+        if(isset($views['columns']) && !$views['columns']->isEmpty()) {
             $notWanted = true;
-            foreach($views['columns'] as $col) {
+            foreach($cols as $col) {
                 $rs = Relations::classColumnToRelations($this->class, $col);
                 foreach($rs as $s) {
                     if(strpos($r, $s) !== false) {
@@ -145,6 +157,17 @@ expression(res) ::= COLUMN(co) clauseexpression(cl) viewexpression(v).
     }
     res = [co => v];
 }
+expression(res) ::= VALUE(v). {
+    $value = v;
+    $query = $this->r[''];
+    if(isset($query)) {
+        $query->search($value);
+    } else {
+        $class = $this->class;
+        $this->r[''] = $class::search($value);
+    }
+    res = null;
+}
 clauseexpression(res) ::= .
 {
     $class = Relations::columnToClass($this->stack(self::COLUMN));
@@ -166,10 +189,11 @@ clause(res) ::= OR clause(c).
 clause(res) ::= AND clause(c). { res = c; }
 clauses(res) ::= clauses(e) clause(t). { e->getQuery()->mergeWheres(t->getQuery()->wheres, t->getQuery()->getRawBindings()['where']); res = e; }
 clauses(res) ::= clause(c). { res = c; }
-clause(res) ::= term(t). { res = t; }
-clause(res) ::= OR OPENP clauses(e) CLOSEP. { res = e->getModel()->newQuery()->orWhere(function($query) { $query->getQuery()->mergeWheres(e->getQuery()->wheres, e->getQuery()->getRawBindings()['where']); }); }
-clause(res) ::= AND OPENP clauses(e) CLOSEP. { res = e->getModel()->newQuery()->where(function($query) { $query->getQuery()->mergeWheres(e->getQuery()->wheres, e->getQuery()->getRawBindings()['where']); }); }
-clause(res) ::= COLUMN(co) OPENP clauses(cl) CLOSEP.
+clause(res) ::= fterm(t). { res = t; }
+clause(res) ::= cterm(t). { res = t; }
+//clause(res) ::= OR OPENP clauses(e) CLOSEP. { res = e->getModel()->newQuery()->orWhere(function($query) { $query->getQuery()->mergeWheres(e->getQuery()->wheres, e->getQuery()->getRawBindings()['where']); }); }
+clause(res) ::= OPENP clauses(e) CLOSEP. { res = e->getModel()->newQuery()->where(function($query) { $query->getQuery()->mergeWheres(e->getQuery()->wheres, e->getQuery()->getRawBindings()['where']); }); }
+cterm(res) ::= COLUMN(co) OPENP clauses(cl) CLOSEP.
 {
     $clause = cl;
     $column = co;
@@ -191,7 +215,7 @@ clause(res) ::= COLUMN(co) OPENP clauses(cl) CLOSEP.
     });
     res = $query;
 }
-clause(res) ::= COLUMN(co).
+cterm(res) ::= COLUMN(co).
 {
     $column = co;
     $class = Relations::columnToClass($this->stack(self::COLUMN, 2));
@@ -206,45 +230,69 @@ clause(res) ::= COLUMN(co).
     });
     res = $query;
 }
-term(res) ::= FIELD LIKE VALUE(v).
+fterm(res) ::= FIELD LIKE VALUE(v).
 {
     $field = $this->stack(self::FIELD);
     $dbField = Relations::columnFieldToField($this->stack(self::COLUMN), $field);
     $class = Relations::columnToClass($this->stack(self::COLUMN));
     res = $class::where($dbField, 'like', '%' . v . '%');
 }
-term(res) ::= FIELD COMPARATOR(c) VALUE(v).
+fterm(res) ::= FIELD COMPARATOR(c) VALUE(v).
 {
     $field = $this->stack(self::FIELD);
     $dbField = Relations::columnFieldToField($this->stack(self::COLUMN), $field);
     $class = Relations::columnToClass($this->stack(self::COLUMN));
     res = $class::where($dbField, c, v);
 }
-term(res) ::= LAUFZEIT EQ VALUE(v).
+fterm(res) ::= LAUFZEIT COMPARATOR(c) VALUE(v).
 {
-    $class = Relations::columnToClass($this->stack(self::COLUMN));
-    res = $class::where(function($query) {
-        $query->where(function($query) {
-            $query->where('VON', '<=', v)->where('BIS', '>=', v);
-        })->orWhere(function($query) {
-            $query->where('VON', '<=', v)->whereNull('BIS');
+    $column = $this->stack(self::COLUMN);
+    $class = Relations::columnToClass($column);
+    $comparator = c;
+    $von = Relations::classFieldToField($class, 'von');
+    $bis = Relations::classFieldToField($class, 'bis');
+    if($comparator == '=') {
+        res = $class::where(function($query) use ($von, $bis) {
+            $query->where(function($query) use ($von, $bis) {
+                $query->where($von, '<=', v)->where($bis, '>=', v);
+            })->orWhere(function($query) use($von, $bis) {
+                $query->where($von, '<=', v)->whereNull($bis);
+            });
+        });
+    }
+}
+fterm(res) ::= LAUFZEIT LIKE VALUE(v).
+{
+    $column = $this->stack(self::COLUMN);
+    $class = Relations::columnToClass($column);
+    $von = Relations::classFieldToField($class, 'von');
+    $bis = Relations::classFieldToField($class, 'bis');
+    res = $class::where(function($query) use ($von, $bis) {
+        $query->where(function($query) use ($von, $bis) {
+            $query->where($von, 'like', '%' . v . '%')->where($bis, 'like', '%' . v . '%');
+        })->orWhere(function($query) use($von, $bis) {
+            $query->where($von, 'like', '%' . v . '%')->whereNull($bis);
         });
     });
 }
-
-views(res) ::= columnsorfields(v1) columnorfield(v2).
-{
-    v1['columns'] = v1['columns']->merge(v2['columns']);
-    v1['fields'] = v1['fields']->merge(v2['fields']);
-    res = v1;
-}
-columnsorfields(res) ::= columnorfield(v).
+views(res) ::= constraints(v).
 {
     res = v;
 }
-columnorfield(res) ::= field(v).
+constraints(res) ::= constraints(v1) constraint(v2).
 {
-    res =  collect(['columns' => collect(), 'fields' => collect([v])]);
+    v1['columns'] = v1['columns']->merge(v2['columns']);
+    v1['fields'] = v1['fields']->merge(v2['fields']);
+    v1['aggregates'] = v1['aggregates']->merge(v2['aggregates']);
+    res = v1;
+}
+constraints(res) ::= constraint(v).
+{
+    res = v;
+}
+constraint(res) ::= field(v).
+{
+    res =  collect(['aggregates' => collect(), 'columns' => collect(), 'fields' => collect([v])]);
 }
 field(res)  ::= FIELD(f).
 {
@@ -254,11 +302,19 @@ field(res)  ::= FIELD(f) COLON ORDER(o).
 {
     res = [ 'field' => f, 'order' => o ];
 }
-columnorfield(res) ::= column(v).
+constraint(res) ::= column(v).
 {
-    res =  collect(['columns' => v, 'fields' => collect()]);
+    res =  collect(['aggregates' => collect(), 'columns' => collect(v), 'fields' => collect()]);
 }
 column(res)  ::= COLUMN(f).
+{
+    res = collect(f);
+}
+constraint(res) ::= aggregate(v).
+{
+    res =  collect(['aggregates' => collect(v), 'columns' => collect(), 'fields' => collect()]);
+}
+aggregate(res)  ::= AGGREGATE(f).
 {
     res = collect(f);
 }

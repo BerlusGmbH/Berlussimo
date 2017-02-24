@@ -1,17 +1,20 @@
 @extends('layouts.main-without-menu')
 
 @section('breadcrumbs')
-    <a href="{{ route('web::personen::index') }}" class="breadcrumb">Personen</a>
+    <a href="{{ route('web::objekte::index') }}" class="breadcrumb">Objekte</a>
 @endsection
 
 @section('content')
     <div class="card-panel white">
         <form id="filter-form" method="get">
             <div class="row">
-                <div class="input-field col-xs-6 col-md-2">
+                <div class="input-field col-xs-6 col-md-3">
                     <a class="btn waves-effect waves-light"
-                       href="{{ route('web::personen::legacy', ['anzeigen' => 'person_erfassen']) }}"><i
-                                class="material-icons left">add</i>Neu</a>
+                       href="{{ route('web::objekte::legacy', ['objekte_raus' => 'objekt_anlegen']) }}"><i
+                                class="mdi mdi-plus left"></i>Neu</a>
+                    <a class="btn waves-effect waves-light"
+                       href="{{ route('web::objekte::legacy', ['objekte_raus' => 'objekt_kopieren']) }}"><i
+                                class="mdi mdi-content-copy left"></i>Kopieren</a>
                 </div>
                 <div class="input-field col-xs-12 col-md-6">
                     <i class="mdi mdi-filter-variant prefix"></i>
@@ -19,15 +22,11 @@
                            autocomplete="off">
                     <label for="filter">Filter</label>
                 </div>
-                <div class="input-field col-xs-12 col-md-3">
+                <div class="input-field col-xs-12 col-md-2">
                     <select id="view" name="v">
                         <option value="" {{ !request()->has('v') ? 'selected' : '' }}>(ohne)
                         </option>
-                        <option value="person(mietvertrag) mietvertrag einheit[mietvertrag] haus[mietvertrag] objekt[mietvertrag] detail[count]" {{ request()->input('v') == 'person(mietvertrag) mietvertrag einheit[mietvertrag] haus[mietvertrag] objekt[mietvertrag] detail[count]' ? 'selected' : '' }}>Mieter
-                        </option>
-                        <option value="person(hinweis) hinweis" {{ request()->input('v') == 'person(hinweis) hinweis' ? 'selected' : '' }}>Personen mit Hinweisen
-                        </option>
-                        <option value="person(adresse) adresse" {{ request()->input('v') == 'person(adresse) adresse' ? 'selected' : '' }}>Personen mit Anschriften
+                        <option value="objekt haus[count] einheit[count] detail[count]" {{ request()->input('v') == 'objekt haus[count] einheit[count] detail[count]' ? 'selected' : '' }}>Listenansicht
                         </option>
                     </select>
                     <label>Ansicht</label>
@@ -37,7 +36,8 @@
                         <option value="5" {{ request()->input('s') == 5 ? 'selected' : '' }}>5
                         </option>
                         <option value="10" {{ request()->input('s') == 10 ? 'selected' : '' }}>10</option>
-                        <option value="20" {{ (request()->input('s') == 20 | !request()->has('s')) ? 'selected' : '' }}>20
+                        <option value="20" {{ (request()->input('s') == 20 | !request()->has('s')) ? 'selected' : '' }}>
+                            20
                         </option>
                         <option value="50" {{ request()->input('s') == 50 ? 'selected' : '' }}>50</option>
                         <option value="100" {{ request()->input('s') == 100 ? 'selected' : '' }}>100</option>
@@ -62,7 +62,7 @@
         </div>
         <div class="row">
             <div class="col col-xs-12">
-                @include('shared.entitytable', ['columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Personen::class])
+                @include('shared.entitytable', ['columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Objekte::class])
             </div>
         </div>
         <div class="row center-xs">
@@ -85,7 +85,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-        var submit = function(target) {
+        var submit = function (target) {
             target.form.submit();
         };
 

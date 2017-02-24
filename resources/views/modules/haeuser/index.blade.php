@@ -1,7 +1,7 @@
 @extends('layouts.main-without-menu')
 
 @section('breadcrumbs')
-    <a href="{{ route('web::personen::index') }}" class="breadcrumb">Personen</a>
+    <a href="{{ route('web::haeuser::index') }}" class="breadcrumb">Häuser</a>
 @endsection
 
 @section('content')
@@ -10,8 +10,8 @@
             <div class="row">
                 <div class="input-field col-xs-6 col-md-2">
                     <a class="btn waves-effect waves-light"
-                       href="{{ route('web::personen::legacy', ['anzeigen' => 'person_erfassen']) }}"><i
-                                class="material-icons left">add</i>Neu</a>
+                       href="{{ route('web::haeuserform::legacy', ['daten_rein' => 'haus_neu']) }}"><i
+                                class="mdi mdi-plus left"></i>Neu</a>
                 </div>
                 <div class="input-field col-xs-12 col-md-6">
                     <i class="mdi mdi-filter-variant prefix"></i>
@@ -23,11 +23,7 @@
                     <select id="view" name="v">
                         <option value="" {{ !request()->has('v') ? 'selected' : '' }}>(ohne)
                         </option>
-                        <option value="person(mietvertrag) mietvertrag einheit[mietvertrag] haus[mietvertrag] objekt[mietvertrag] detail[count]" {{ request()->input('v') == 'person(mietvertrag) mietvertrag einheit[mietvertrag] haus[mietvertrag] objekt[mietvertrag] detail[count]' ? 'selected' : '' }}>Mieter
-                        </option>
-                        <option value="person(hinweis) hinweis" {{ request()->input('v') == 'person(hinweis) hinweis' ? 'selected' : '' }}>Personen mit Hinweisen
-                        </option>
-                        <option value="person(adresse) adresse" {{ request()->input('v') == 'person(adresse) adresse' ? 'selected' : '' }}>Personen mit Anschriften
+                        <option value="haus !haus[str:asc nr:asc] haus[plz] haus[ort] einheit[count] detail[count]" {{ request()->input('v') == 'haus !haus[str:asc nr:asc] haus[plz] haus[ort] einheit[count] detail[count]' ? 'selected' : '' }}>Listenansicht
                         </option>
                     </select>
                     <label>Ansicht</label>
@@ -62,7 +58,7 @@
         </div>
         <div class="row">
             <div class="col col-xs-12">
-                @include('shared.entitytable', ['columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Personen::class])
+                @include('shared.entitytable', ['columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Haeuser::class])
             </div>
         </div>
         <div class="row center-xs">

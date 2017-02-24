@@ -412,9 +412,9 @@ OR  `LAND` LIKE  '%$suchtext%'
             $partner_id = $partner_arr [$a] ['PARTNER_ID'];
             $partner_name = $partner_arr [$a] ['PARTNER_NAME'];
             if ($vorwahl == $partner_id) {
-                echo "<option value=\"$partner_id\" selected>$partner_name</OPTION>\n";
+                echo "<option value=\"$partner_id\" selected>$partner_name</option>\n";
             } else {
-                echo "<option value=\"$partner_id\">$partner_name</OPTION>\n";
+                echo "<option value=\"$partner_id\">$partner_name</option>\n";
             }
         }
         echo "</select><label for=\"$id\">$label</label>\n";

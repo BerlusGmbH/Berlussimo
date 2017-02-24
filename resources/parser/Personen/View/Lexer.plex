@@ -29,10 +29,11 @@ class Lexer
     %token $this->token
     %value $this->value
     %line $this->line
-    column = ~person|mietvertrag|kaufvertrag|einheit|haus|objekt|hinweis|telefon|email|detail|adresse~
-    field = ~id|name|vorname|lage|str|nr|plz|ort|von|bis|typ|geb|bemerkung|qm|inhalt~
+    aggregate = ~count~
+    column = ~person|mietvertrag|kaufvertrag|einheit|haus|objekt|hinweis|telefon|email|detail|adresse|auftrag|an|von|kostenträger|mitarbeiter~
+    field = ~id|name|vorname|lage|str|nr|plz|ort|von|bis|typ|geb|bemerkung|qm|inhalt|text|akut|erstellt|erledigt~
     laufzeit = ~laufzeit~
-    comparator = /=|<|<=|=<|>|>=|=>/
+    comparator = /<=|>=|!=|=|<|>/
     like = /~/
     and = ~and~
     or = ~or~
@@ -45,7 +46,7 @@ class Lexer
     closeb = ~\]~
     opencb =~\{~
     closecb =~\}~
-    value = ~("(\pL|\pN|\pS|\pP|\pZ)+"|(\pL|\pN|\pS|\p{Pd}|\p{Po})+)~
+    value = ~("(\pL|\pN|\pS|\pP|\pZ)+?"|(\pL|\pN|\pS|\p{Pd}|\p{Po})+)~
     whitespace = /\pZ+/
     */
     /*!lex2php
@@ -71,6 +72,13 @@ class Lexer
     }
     not {
         $this->token = Parser::NOT;
+    }
+    value {
+        $this->token = Parser::VALUE;
+        $before = strlen($this->value);
+        $this->value = trim($this->value, '"');
+        $after = strlen($this->value);
+        $this->counter += $before - $after;
     }
     */
     /*!lex2php
@@ -119,6 +127,9 @@ class Lexer
         %statename VIEW
         whitespace {
             return false;
+        }
+        aggregate {
+            $this->token = Parser::AGGREGATE;
         }
         column {
             $this->token = Parser::COLUMN;
