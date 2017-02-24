@@ -47,7 +47,7 @@ function uebersicht_einheit($einheit_id)
     }
 
     echo "<div class='fixed-action-btn'>
-    <a href='#tasks' class='btn-floating btn-large modal-trigger'>
+    <a href='#tasks' data-target='tasks' class='btn-floating btn-large modal-trigger'>
       <i class='large material-icons'>list</i>
     </a>
   </div>

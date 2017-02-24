@@ -635,7 +635,8 @@ function person_aendern_in_db($person_id)
 
 function weiterleiten($ziel)
 {
-    header("Location: $ziel");
+    $ziel = parse_url($ziel);
+    header("Location: " . $ziel['path'] . "?" . $ziel['query']);
 }
 
 function weiterleiten_in_sec($ziel, $sec)

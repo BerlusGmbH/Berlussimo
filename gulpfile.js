@@ -68,6 +68,8 @@ elixir(function (mix) {
         [
             'node_modules/keycode-js/dist/keycode.js',
             'node_modules/jquery/dist/jquery.js',
+            'node_modules/urijs/src/URI.js',
+            'node_modules/urijs/src/jquery.URI.js',
             'node_modules/materialize-css/dist/js/materialize.js'
         ],
         'public/js/vendor.js', '.'

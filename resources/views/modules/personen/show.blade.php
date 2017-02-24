@@ -1,7 +1,12 @@
-@extends('layouts.main')
+@extends('layouts.main-without-menu')
 
-@section('submenu')
-    @php(include(base_path('legacy/options/links/links.person.php')))
+@section('breadcrumbs')
+    @if(starts_with(URL::previous(), route('web::personen::index')))
+        <a href="{{ URL::previous() }}" class="breadcrumb">Personen</a>
+    @else
+        <a href="{{ route('web::personen::index') }}" class="breadcrumb">Personen</a>
+    @endif
+    <span class="breadcrumb">@include('shared.entities.person', ['entity' => $person, 'icons' => false])</span>
 @endsection
 
 @section('content')
@@ -16,24 +21,18 @@
                             @php($margin_bot = '12px')
                         @endif
                         <div class="row" style="line-height: 24px; margin-bottom: {{ $margin_bot }}; margin-top: 12px">
-                            <div class="col-xs-10" >
-                                {{ $person->PERSON_NACHNAME }},
-                                {{ $person->PERSON_VORNAME }}
-                                @if($person->sex[0]->DETAIL_INHALT == 'männlich')
-                                    <i class="mdi mdi-gender-male"></i>
-                                @elseif($person->sex[0]->DETAIL_INHALT == 'weiblich')
-                                    <i class="mdi mdi-gender-female"></i>
-                                @endif
+                            <div class="col-xs-10">
+                                @include('shared.entities.person', ['entity' => $person])
                             </div>
-                            <div class="col-xs-1 end-xs">
-                                <a href="{{ route('web::personen::legacy', ['anzeigen' => 'person_aendern', 'person_id' => $person->PERSON_ID]) }}"><i class="mdi mdi-pencil"></i></a>
-                            </div>
-                            <div class="col-xs-1 end-xs">
-                                <a href="{{ route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'PERSON', 'detail_id' => $person->PERSON_ID]) }}"><i class="mdi mdi-table-edit"></i></a>
+                            <div class="col-xs-2 end-xs">
+                                <a href="{{ route('web::personen::legacy', ['anzeigen' => 'person_aendern', 'person_id' => $person->PERSON_ID]) }}"><i
+                                            class="mdi mdi-pencil"></i></a>
+                                <a href="{{ route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'PERSON', 'detail_id' => $person->PERSON_ID]) }}"><i
+                                            class="mdi mdi-table-edit"></i></a>
                             </div>
                         </div>
                         @if($person->PERSON_GEBURTSTAG->year > 1902)
-                            <div style="font-size: small; line-height: 24px; margin-bottom:12px;">
+                            <div style="font-size: small; line-height: 24px; margin-bottom:12px; margin-left: 6px">
                                 <i class="mdi mdi-star"></i> {{ $person->PERSON_GEBURTSTAG->formatLocalized("%d.%m.%Y") }}
                             </div>
                         @endif
@@ -58,7 +57,7 @@
                                 <a href="mailto:{{ $person->PERSON_VORNAME }} {{ $person->PERSON_NACHNAME }} <{{ $email->DETAIL_INHALT }}>">{{ $email->DETAIL_INHALT }}{{ $email->DETAIL_BEMERKUNG !== '' ? ', ' . $email->DETAIL_BEMERKUNG : '' }}</a>
                             </div>
                         @endforeach
-                        @foreach($person->anschriften as $anschrift)
+                        @foreach($person->adressen as $anschrift)
                             <div class="col-xs-6 detail">
                                 <i class="mdi mdi-email"></i>
                                 {{ $anschrift->detail_inhalt_with_br }}{{ $anschrift->DETAIL_BEMERKUNG !== '' ? ', ' . $anschrift->DETAIL_BEMERKUNG : '' }}
@@ -70,7 +69,7 @@
         </div>
         @if(!$person->commonDetails->isEmpty())
             <div class="col-xs-12 col-sm-6">
-                <div class="card">
+                <div class="card card-expandable">
                     <div class="card-content">
                         <div class="card-title">Allgemeine Details ({{ $person->commonDetails->count() }})</div>
                         <table class="striped">
@@ -101,7 +100,7 @@
         @endif
         @if(!$person->mietvertraege->isEmpty())
             <div class="col-xs-12 col-sm-6">
-                <div class="card">
+                <div class="card card-expandable">
                     <div class="card-content">
                         <span class="card-title">Mietverträge ({{ $person->mietvertraege->count() }})</span>
                         <table class="striped">
@@ -112,19 +111,19 @@
                             <th>Objekt</th>
                             </thead>
                             <tbody>
-                            @foreach( $person->mietvertraege as $mietvertrag )
+                            @foreach( $person->mietvertraege()->defaultOrder()->with('einheit.haus.objekt')->get() as $mietvertrag )
                                 <tr>
                                     <td>
-                                        @include('shared.namedentity', [ 'entity' => $mietvertrag])
+                                        @include('shared.entity', [ 'entity' => $mietvertrag])
                                     </td>
                                     <td>
-                                        @include('shared.namedentity', [ 'entity' => $mietvertrag->einheit])
+                                        @include('shared.entity', [ 'entity' => $mietvertrag->einheit])
                                     </td>
                                     <td>
-                                        @include('shared.namedentity', [ 'entity' => $mietvertrag->einheit->haus])
+                                        @include('shared.entity', [ 'entity' => $mietvertrag->einheit->haus])
                                     </td>
                                     <td>
-                                        @include('shared.namedentity', [ 'entity' => $mietvertrag->einheit->haus->objekt])
+                                        @include('shared.entity', [ 'entity' => $mietvertrag->einheit->haus->objekt])
                                     </td>
                                 </tr>
                             @endforeach
@@ -136,7 +135,7 @@
         @endif
         @if(!$person->kaufvertraege->isEmpty())
             <div class="col-xs-12 col-sm-6">
-                <div class="card">
+                <div class="card card-expandable">
                     <div class="card-content">
                         <span class="card-title">Eigentum ({{ $person->kaufvertraege->count() }})</span>
                         <table class="striped">
@@ -147,19 +146,19 @@
                             <th>Objekt</th>
                             </thead>
                             <tbody>
-                            @foreach( $person->kaufvertraege as $kaufvertrag )
+                            @foreach( $person->kaufvertraege()->defaultOrder()->with('einheit.haus.objekt')->get() as $kaufvertrag )
                                 <tr>
                                     <td>
-                                        @include('shared.namedentity', [ 'entity' => $kaufvertrag])
+                                        @include('shared.entity', [ 'entity' => $kaufvertrag])
                                     </td>
                                     <td>
-                                        @include('shared.namedentity', [ 'entity' => $kaufvertrag->einheit])
+                                        @include('shared.entity', [ 'entity' => $kaufvertrag->einheit])
                                     </td>
                                     <td>
-                                        @include('shared.namedentity', [ 'entity' => $kaufvertrag->einheit->haus])
+                                        @include('shared.entity', [ 'entity' => $kaufvertrag->einheit->haus])
                                     </td>
                                     <td>
-                                        @include('shared.namedentity', [ 'entity' => $kaufvertrag->einheit->haus->objekt])
+                                        @include('shared.entity', [ 'entity' => $kaufvertrag->einheit->haus->objekt])
                                     </td>
                                 </tr>
                             @endforeach

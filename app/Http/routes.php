@@ -44,6 +44,8 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['web', 'auth'], 'as' => 
 
     Route::group(['prefix' => 'einheiten', 'as' => 'einheiten::'], function () {
         Route::match(['get', 'post'], '/', 'EinheitenController@request')->name('legacy');
+        Route::get('index', 'EinheitenController@index')->name('index');
+        Route::get('{id}', 'EinheitenController@show')->name('show');
     });
 
     Route::group(['prefix' => 'einheitenform', 'as' => 'einheitenform::'], function () {
@@ -65,6 +67,8 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['web', 'auth'], 'as' => 
 
     Route::group(['prefix' => 'haeuser', 'as' => 'haeuser::'], function () {
         Route::match(['get', 'post'], '/', 'HaeuserController@request')->name('legacy');
+        Route::get('index', 'HaeuserController@index')->name('index');
+        Route::get('{id}', 'HaeuserController@show')->name('show');
     });
 
     Route::group(['prefix' => 'kassen', 'as' => 'kassen::'], function () {
@@ -124,6 +128,8 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['web', 'auth'], 'as' => 
     Route::group(['prefix' => 'objekte', 'as' => 'objekte::'], function () {
         Route::match(['get', 'post'], '/', 'ObjekteController@request')->name('legacy');
         Route::get('{id}/select', 'ObjekteController@select')->name('select');
+        Route::get('index', 'ObjekteController@index')->name('index');
+        Route::get('{id}', 'ObjekteController@show')->name('show');
     });
 
     Route::group(['prefix' => 'partner', 'as' => 'partner::'], function () {
@@ -155,6 +161,7 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['web', 'auth'], 'as' => 
 
     Route::group(['prefix' => 'todo', 'as' => 'todo::'], function () {
         Route::match(['get', 'post'], '/', 'ToDoController@request')->name('legacy');
+        Route::get('index', 'ToDoController@index')->name('index');
     });
 
     Route::group(['prefix' => 'uebersicht', 'as' => 'uebersicht::'], function () {

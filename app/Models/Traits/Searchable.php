@@ -5,26 +5,20 @@ namespace App\Models\Traits;
 
 trait Searchable
 {
-    public static function search($query) {
-        $tokens = static::tokenize($query);
-        $builder = static::buildQuery($tokens);
-        return $builder;
+    public function scopeSearch($query, $string)
+    {
+        $this->buildQuery($query, $string);
+        return $query;
     }
 
-    protected static function tokenize($query) {
-        return explode(' ', $query);
-    }
-
-    protected static function buildQuery($tokens) {
-        $builder = static::query();
-        $model = $builder->getModel();
-        foreach ($tokens as $token) {
-            $builder->where(function ($q) use ($token, $model){
-                foreach ($model->searchableFields as $field) {
-                    $q->orWhere($field, 'like', '%' . $token . '%');
-                }
-            });
-        }
-        return $builder;
+    protected function buildQuery($query, $string)
+    {
+        $model = $query->getModel();
+        $query->where(function ($q) use ($string, $model) {
+            foreach ($model->searchableFields as $field) {
+                $q->orWhere($field, 'like', '%' . $string . '%');
+            }
+        });
+        return $query;
     }
 }

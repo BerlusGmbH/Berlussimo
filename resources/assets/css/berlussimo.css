@@ -116,3 +116,11 @@ nav .autocomplete-content  li a:hover {
     outline: 2px solid black;
     background: unset;
 }
+
+.card-expandable {
+    overflow: hidden;
+}
+
+.card-expandable > .card-content {
+    height: 100%;
+}

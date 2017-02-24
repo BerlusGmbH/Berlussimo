@@ -2,6 +2,16 @@
 
 namespace App\Providers;
 
+use App\Models\BaustellenExtern;
+use App\Models\Einheiten;
+use App\Models\Haeuser;
+use App\Models\Kaufvertraege;
+use App\Models\Mietvertraege;
+use App\Models\Objekte;
+use App\Models\Partner;
+use App\Models\Personen;
+use App\Models\User;
+use App\Models\Wirtschaftseinheiten;
 use App\Pagination\MaterializeCssPresenter;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\Paginator;
@@ -18,7 +28,19 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Relation::morphMap([
-            'PERSON' => \App\Models\Personen::class
+            'PERSON' => Personen::class,
+            'OBJEKT' => Objekte::class,
+            'HAUS' => Haeuser::class,
+            'EINHEIT' => Einheiten::class,
+            'Benutzer' => User::class,
+            'Partner' => Partner::class,
+            'Einheit' => Einheiten::class,
+            'Haus' => Haeuser::class,
+            'Objekt' => Objekte::class,
+            'Eigentuemer' => Kaufvertraege::class,
+            'Baustelle_ext' => BaustellenExtern::class,
+            'Mietvertrag' => Mietvertraege::class,
+            'Wirtschaftseinheit' => Wirtschaftseinheiten::class
         ]);
     }
 

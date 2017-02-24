@@ -22,12 +22,12 @@
     $(document).ready(function () {
         $('#searchbar').searchbar({
             loginurl: '{{ url('/login') }}',
-            objekturl: '{{ route('web::haeuser::legacy', ['haus_raus' => 'haus_kurz', 'objekt_id' => '']) }}',
-            objektlisturl: '/',
-            hausurl: '{{ route('web::einheiten::legacy', ['einheit_raus' => 'einheit_kurz', 'haus_id' => '']) }}',
-            hauslisturl: '/',
-            einheiturl: '{{ route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => '']) }}',
-            einheitlisturl: '/',
+            objekturl: '{{ route('web::objekte::show', ['id' => '']) }}/',
+            objektlisturl: '{{ route('web::objekte::index', ['q' => '']) }}',
+            hausurl: '{{ route('web::haeuser::show', ['id' => '']) }}/',
+            hauslisturl: '{{ route('web::haeuser::index', ['q' => '']) }}',
+            einheiturl: '{{ route('web::einheiten::show', ['id' => '']) }}/',
+            einheitlisturl: '{{ route('web::einheiten::index', ['q' => '']) }}',
             personurl: '{{ route('web::personen::show', ['id' => '']) }}/',
             personlisturl: '{{ route('web::personen::index', ['q' => '']) }}',
             partnerurl: '{{ route('web::partner::legacy', ['option' => 'partner_im_detail', 'partner_id' => '']) }}',

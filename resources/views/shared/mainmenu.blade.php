@@ -10,19 +10,19 @@
 
                 @if(check_user_links(Auth::user()->id, 'objekte_raus'))
                     <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
-                        <a href='{{route('web::objekte::legacy', ['objekte_raus' => 'objekte_kurz'])}}'>Objekte</a>
+                        <a href='{{route('web::objekte::index')}}'>Objekte</a>
                     </div>
                 @endif
 
                 @if(check_user_links(Auth::user()->id, 'haus_raus'))
                     <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
-                        <a href='{{route('web::haeuser::legacy', ['haus_raus' => 'haus_kurz'])}}'>Häuser</a>
+                        <a href='{{route('web::haeuser::index')}}'>Häuser</a>
                     </div>
                 @endif
 
                 @if(check_user_links(Auth::user()->id, 'einheit_raus'))
                     <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
-                        <a href='{{route('web::einheiten::legacy')}}'>Einheiten</a>
+                        <a href='{{route('web::einheiten::index')}}'>Einheiten</a>
                     </div>
                 @endif
 

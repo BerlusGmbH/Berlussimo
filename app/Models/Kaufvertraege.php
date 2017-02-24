@@ -3,15 +3,17 @@
 namespace App\Models;
 
 use App\Models\Scopes\AktuellScope;
-use App\Models\Traits\Searchable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
+use App\Models\Traits\DefaultOrder;
 
 class Kaufvertraege extends Model
 {
+    use DefaultOrder;
+
     public $timestamps = false;
     protected $table = 'WEG_MITEIGENTUEMER';
     protected $primaryKey = 'ID';
+    protected $defaultOrder = ['VON' => 'desc', 'BIS' => 'desc'];
 
     protected static function boot()
     {

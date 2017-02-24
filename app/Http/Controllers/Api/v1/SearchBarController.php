@@ -20,12 +20,28 @@ class SearchBarController extends Controller
         if (!request()->has('q')) {
             return Response::json($response);
         }
-        $query = request()->input('q');
-        $response['objekte'] = Objekte::search($query)->get();
-        $response['haeuser'] = Haeuser::search($query)->get();
-        $response['einheiten'] = Einheiten::search($query)->get();
-        $response['partner'] = Partner::search($query)->get();
-        $response['personen'] = Personen::search($query)->get();
+        $tokens = explode(' ',request()->input('q'));
+
+        $response['objekte'] = Objekte::query();
+        $response['haeuser'] = Haeuser::query();
+        $response['einheiten'] = Einheiten::query();
+        $response['partner'] = Partner::query();
+        $response['personen'] = Personen::query();
+
+        foreach ($tokens as $token) {
+            $response['objekte'] = $response['objekte']->search($token);
+            $response['haeuser'] = $response['haeuser']->search($token);
+            $response['einheiten'] = $response['einheiten']->search($token);
+            $response['partner'] = $response['partner']->search($token);
+            $response['personen'] = $response['personen']->search($token);
+        }
+
+        $response['objekte'] = $response['objekte']->get();
+        $response['haeuser'] = $response['haeuser']->get();
+        $response['einheiten'] = $response['einheiten']->get();
+        $response['partner'] = $response['partner']->get();
+        $response['personen'] = $response['personen']->get();
+
         return Response::json($response);
     }
 }
