@@ -65,4 +65,8 @@ class Objekte extends Model
     public function commonDetails() {
         return $this->details()->whereNotIn('DETAIL_NAME', ['']);
     }
+
+    public function eigentuemer() {
+        return $this->belongsTo(Partner::class, 'EIGENTUEMER_PARTNER', 'PARTNER_ID');
+    }
 }

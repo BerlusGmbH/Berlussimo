@@ -31,7 +31,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-6 detail">
+                        <div class="col-xs-6 col-sm-3 detail">
                             <i class="mdi mdi-mail-ru"></i>
                             @php
                                 $emails = collect();
@@ -50,6 +50,12 @@
                                 }
                             @endphp
                             <a href="{{ $href }}">E-Mail an Mieter ({{ $emails->count() }})</a>
+                        </div>
+                        <div class="col-xs-6 col-sm-3 detail">
+                            <i class="mdi mdi-compass tooltipped" data-position="bottom" data-delay="50" data-tooltip="Lage"></i> {{ $einheit->EINHEIT_LAGE }}
+                        </div>
+                        <div class="col-xs-6 col-sm-3 detail">
+                            <i class="mdi mdi-arrow-expand-all tooltipped" data-position="bottom" data-delay="50" data-tooltip="Fläche"></i> {{ $einheit->EINHEIT_QM }} m²
                         </div>
                     </div>
                 </div>
@@ -88,27 +94,12 @@
         @endif
         @if(!$einheit->mieter()->get()->isEmpty())
             <div class="col-xs-12 col-sm-3">
-                <div class="card card-expandable">
-                    <div class="card-content">
-                        <span class="card-title"><a
-                                    href="{{ route('web::personen::index', ['q' => '!person(mietvertrag(einheit(id=' . $einheit->EINHEIT_ID . ') laufzeit=' . \Carbon\Carbon::today()->toDateString() . '))']) }}">Mieter ({{ $einheit->mieter()->get()->count() }})
-                            </a></span>
-                        <table class="striped">
-                            <thead>
-                            <th>Mieter</th>
-                            </thead>
-                            <tbody>
-                            @foreach( $einheit->mieter()->defaultOrder()->with('sex')->get() as $mieter )
-                                <tr>
-                                    <td>
-                                        @include('shared.entities.person', [ 'entity' => $mieter ])
-                                    </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                @include('shared.cards.mieter', ['mieter' => $einheit->mieter()->defaultOrder()->with('sex')->get()])
+            </div>
+        @endif
+        @if(!$einheit->mietvertraege()->get()->isEmpty())
+            <div class="col-xs-12 col-sm-3">
+                @include('shared.cards.mietvertraege', ['mietvertraege' => $einheit->mietvertraege()->defaultOrder()->get()])
             </div>
         @endif
         <div class="col-xs-12">

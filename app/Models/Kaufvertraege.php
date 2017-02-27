@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Scopes\AktuellScope;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\DefaultOrder;
+use Carbon\Carbon;
 
 class Kaufvertraege extends Model
 {
@@ -30,5 +31,10 @@ class Kaufvertraege extends Model
     public function einheit()
     {
         return $this->belongsTo('App\Models\Einheiten', 'EINHEIT_ID', 'EINHEIT_ID');
+    }
+
+    public function isActive() {
+        $today = Carbon::today();
+        return $this->VON <= $today && ($this->BIS >= $today || $this->BIS == '0000-00-00');
     }
 }

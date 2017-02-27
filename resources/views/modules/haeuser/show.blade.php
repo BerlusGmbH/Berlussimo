@@ -31,8 +31,8 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-6 detail">
-                            <i class="mdi mdi-mail-ru"></i>
+                        <div class="col-xs-6 col-sm-3 detail">
+                            <i class="mdi mdi-mail-ru tooltipped" data-position="bottom" data-delay="50" data-tooltip="E-Mail"></i>
                             @php
                                 $emails = collect();
                                 foreach($haus->mieter()->with('emails')->get() as $mieter) {
@@ -50,6 +50,10 @@
                                 }
                             @endphp
                             <a href="{{ $href }}">E-Mail an Mieter ({{ $emails->count() }})</a>
+                        </div>
+                        <div class="col-xs-6 col-sm-3 detail">
+                            <i class="mdi mdi-email tooltipped" data-position="bottom" data-delay="50" data-tooltip="Postleitzahl und Ort"></i>
+                            {{$haus->HAUS_PLZ}} {{$haus->HAUS_STADT}}
                         </div>
                     </div>
                 </div>

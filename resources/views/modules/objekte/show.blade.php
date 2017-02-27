@@ -28,7 +28,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-6 detail">
+                        <div class="col-xs-6 col-sm-3 detail">
                             <i class="mdi mdi-mail-ru"></i>
                             @php
                                 $emails = collect();
@@ -47,6 +47,10 @@
                                 }
                             @endphp
                             <a href="{{ $href }}">E-Mail an Mieter ({{ $emails->count() }})</a>
+                        </div>
+                        <div class="col-xs-6 col-sm-3 detail">
+                            <i class="mdi mdi-key tooltipped" data-position="bottom" data-delay="50" data-tooltip="Eigentümer"></i>
+                            @include('shared.entities.partner', ['entity' => $objekt->eigentuemer])
                         </div>
                     </div>
                 </div>
