@@ -63,38 +63,12 @@
         </div>
         @if(!$einheit->commonDetails->isEmpty())
             <div class="col-xs-12 col-sm-6">
-                <div class="card card-expandable">
-                    <div class="card-content">
-                        <div class="card-title">Allgemeine Details ({{ $einheit->commonDetails->count() }})</div>
-                        <table class="striped">
-                            <thead>
-                            <th>Typ</th>
-                            <th>Wert</th>
-                            <th>Bemerkung</th>
-                            </thead>
-                            <tbody>
-                            @foreach( $einheit->commonDetails as $detail )
-                                <tr>
-                                    <td>
-                                        {{ $detail->DETAIL_NAME }}
-                                    </td>
-                                    <td>
-                                        {{ $detail->DETAIL_INHALT }}
-                                    </td>
-                                    <td>
-                                        {{ $detail->DETAIL_BEMERKUNG }}
-                                    </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                @include('shared.cards.details', ['details' => $einheit->commonDetails()->defaultOrder()->get(), 'title' => 'Allgemeine Details'])
             </div>
         @endif
         @if(!$einheit->mieter()->get()->isEmpty())
             <div class="col-xs-12 col-sm-3">
-                @include('shared.cards.mieter', ['mieter' => $einheit->mieter()->defaultOrder()->with('sex')->get()])
+                @include('shared.cards.mieter', ['mieter' => $einheit->mieter()->defaultOrder()->with('sex')->get(), 'title' => 'Mieter', 'href' => route('web::personen::index', ['q' => '!person(mietvertrag(einheit(id=' . $einheit->EINHEIT_ID . ') laufzeit=' . \Carbon\Carbon::today()->toDateString() . '))'])])
             </div>
         @endif
         @if(!$einheit->mietvertraege()->get()->isEmpty())

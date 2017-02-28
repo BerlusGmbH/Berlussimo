@@ -1,19 +1,19 @@
 <div class="card card-expandable">
     <div class="card-content">
         <span class="card-title">
-            <a href="{{ $href }}">
-                {{$title}} ({{$mieter->count()}})
+            <a href="{{$href}}">
+                {{$title}} ({{ $objekt->haeuser->count() }})
             </a>
         </span>
         <table class="striped">
             <thead>
-            <th>Mieter</th>
+            <th>Haus</th>
             </thead>
             <tbody>
-            @foreach( $mieter as $einMieter )
+            @foreach( $haeuser as $haus )
                 <tr>
                     <td>
-                        @include('shared.entities.person', [ 'entity' => $einMieter ])
+                        @include('shared.entities.haus', [ 'entity' => $haus])
                     </td>
                 </tr>
             @endforeach

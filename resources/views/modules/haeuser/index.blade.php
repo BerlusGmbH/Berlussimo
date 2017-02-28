@@ -23,7 +23,7 @@
                     <select id="view" name="v">
                         <option value="" {{ !request()->has('v') ? 'selected' : '' }}>(ohne)
                         </option>
-                        <option value="haus !haus[str:asc nr:asc] haus[plz] haus[ort] einheit[count] detail[count]" {{ request()->input('v') == 'haus !haus[str:asc nr:asc] haus[plz] haus[ort] einheit[count] detail[count]' ? 'selected' : '' }}>Listenansicht
+                        <option value="haus !haus[str:asc nr:asc] haus[plz] haus[ort] detail[count] objekt einheit[count]" {{ request()->input('v') == 'haus !haus[str:asc nr:asc] haus[plz] haus[ort] detail[count] objekt einheit[count]' ? 'selected' : '' }}>Listenansicht
                         </option>
                     </select>
                     <label>Ansicht</label>
