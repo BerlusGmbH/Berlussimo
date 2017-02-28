@@ -28,8 +28,8 @@ class berlussimo_global
         $anzahl_objekte = count($objekte_arr);
         for ($i = 0; $i < $anzahl_objekte; $i++) {
             $objekt_kurzname = ltrim(rtrim(htmlspecialchars($objekte_arr [$i] ["OBJEKT_KURZNAME"])));
-            echo "<div class='col s6 m4 l2'>";
-            echo "<a href='" . route('web::objekte::select', ['objekt_id' => $objekte_arr [$i] ['OBJEKT_ID']]) . "'>" . $objekt_kurzname . "</a>&nbsp;";
+            echo "<div class='col-xs-12 col-sm-6 col-md-4 col-lg-2'>";
+            echo "<a href='" . route('web::objekte::select', ['objekt_id' => $objekte_arr [$i] ['OBJEKT_ID']]) . "'>" . trim($objekt_kurzname) . "</a>&nbsp;";
             echo "</div>";
         }
         echo "</div>";
