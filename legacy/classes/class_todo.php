@@ -1148,9 +1148,15 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
     {
         $this->get_aufgabe_alles($id);
 
-        $pp = new benutzer ();
-        $b = $pp->get_user_info(session()->get('benutzer_id'));
-        session()->put('partner_id', $b['BP_PARTNER_ID']);
+        $partner_id = null;
+
+        try {
+            $partner_id = \App\Models\Auftraege::find($id)->von->arbeitgeber()->first()->PARTNER_ID;
+        } catch(Exception $e) {
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Arbeitgeber des Verfassers kann nicht gefunden werden. Briefkopf kann nicht gewählt werden.')
+            );
+        }
 
         if ($this->kos_typ == 'Einheit') {
             $kontaktdaten_mieter = $this->kontaktdaten_anzeigen_mieter($this->kos_id);
@@ -1209,7 +1215,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         ob_clean(); // ausgabepuffer leeren
         $pdf = new Cezpdf ('a4', 'portrait');
         $bpdf = new b_pdf ();
-        $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
+        $bpdf->b_header($pdf, 'Partner', $partner_id, 'portrait', 'Helvetica.afm', 6);
 
         $pdf->Rectangle(250, 630, 305, 80);
         $pdf->addText(252, 700, 10, "Arbeitsauftrag Nr: <b>$id</b> an");

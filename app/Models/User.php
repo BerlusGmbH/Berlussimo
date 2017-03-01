@@ -38,6 +38,10 @@ class User extends Authenticatable
         return $this->belongsTo('App\Models\MenuNodes', 'menu_nodes_id');
     }
 
+    public function arbeitgeber() {
+        return $this->belongsToMany(Partner::class, 'BENUTZER_PARTNER', 'BP_BENUTZER_ID', 'BP_PARTNER_ID');
+    }
+
     /**
      * @param $label
      * @param $icon
