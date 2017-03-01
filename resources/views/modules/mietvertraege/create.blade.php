@@ -17,7 +17,7 @@
                             <span class="error-block">{{ $errors->has('tenants') ? $errors->first('tenants') : '' }}</span>
                         </div>
                         <div class="input-field col s12 m6">
-                            <i class="material-icons prefix">business</i>
+                            <i class="mdi mdi-cube-outline prefix"></i>
                             <input type="text" id="unit-autocomplete"
                                    class="autocomplete validate {{ $errors->has('unit') ? 'invalid' : '' }}"
                                    name="unit_name"

@@ -6,7 +6,11 @@
         };
     @endphp
     @if($icons)
-        <i class="mdi mdi-cube-outline tooltipped" data-position="bottom" data-delay="50" data-tooltip="Einheit"></i>
+        @if($entity->vermietet())
+            <i class="mdi mdi-cube tooltipped" data-position="bottom" data-delay="50" data-tooltip="Einheit (Vermietet)"></i>
+        @else
+            <i class="mdi mdi-cube-outline tooltipped" data-position="bottom" data-delay="50" data-tooltip="Einheit (Leer)"></i>
+        @endif
         @if($entity->TYP == 'Wohnraum')
             <i class="mdi mdi-home tooltipped" data-position="bottom" data-delay="50" data-tooltip="Wohnraum"></i>
         @elseif($entity->TYP == 'Gewerbe')
