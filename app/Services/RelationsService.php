@@ -47,6 +47,7 @@ class RelationsService
         ],
         Details::class => [
             'id' => 'DETAIL_ID',
+            'name' => 'DETAIL_NAME',
             'inhalt' => 'DETAIL_INHALT',
             'bemerkung' => 'DETAIL_BEMERKUNG'
         ],
@@ -129,7 +130,7 @@ class RelationsService
         Auftraege::class => [
             'auftrag' => '',
             'von' => 'von',
-            'an' => 'an',
+            'an' => ['anMitarbeiter', 'anPartner'],
             'kostenträger' => 'kostentraeger'
         ],
         User::class => [
