@@ -95,6 +95,9 @@
             <div class='col-xs-12 col-md-6 col-lg-2'>
                 <a href='<?php echo route('web::rechnungen::legacy', ['option' => 'pdf_druckpool', 'no_logo']) ?>'>PDF-Druckpool</a>
             </div>
+            <div class='col-xs-12 col-md-6 col-lg-2'>
+                <a href='<?php echo route('web::rechnungen::legacy', ['option' => 'sepa_druckpool']) ?>'>SEPA-Druckpool</a>
+            </div>
         </div>
     </div>
     <div class='col-xs-6 col-md-4'>
