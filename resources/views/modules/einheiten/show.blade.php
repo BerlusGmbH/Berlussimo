@@ -77,7 +77,7 @@
             </div>
         @endif
         <div class="col-xs-12">
-            @include('shared.cards.auftraege', ['auftraege' => $einheit->auftraege()->defaultOrder()->get(), 'type' => 'Einheit'])
+            @include('shared.cards.auftraege', ['auftraege' => $einheit->auftraege()->orderBy('ERSTELLT', 'desc')->get(), 'type' => 'Einheit'])
         </div>
     </div>
 @endsection

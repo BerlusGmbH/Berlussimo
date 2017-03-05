@@ -145,7 +145,7 @@ expression(res) ::= COLUMN(co) clauseexpression(cl) viewexpression(v).
         }
         $query = $this->r[$r];
         foreach($views['fields'] as $view) {
-            $class = Relations::columnToClass($column);
+            $class = Relations::classColumnToClass($this->class, $column);
             $field = Relations::classFieldToField($class, $view['field']);
             if(isset($view['order'])) {
                 $query->orderBy($field, $view['order']);
@@ -170,7 +170,7 @@ expression(res) ::= VALUE(v). {
 }
 clauseexpression(res) ::= .
 {
-    $class = Relations::columnToClass($this->stack(self::COLUMN));
+    $class = Relations::classColumnToClass($this->class, $this->stack(self::COLUMN));
     res = $class::query();
 }
 clauseexpression(res) ::= OPENP clauses(cl) CLOSEP.
@@ -197,57 +197,94 @@ cterm(res) ::= COLUMN(co) OPENP clauses(cl) CLOSEP.
 {
     $clause = cl;
     $column = co;
-    $class = Relations::columnToClass($this->stack(self::COLUMN, 2));
-    $relationships = Relations::classColumnToRelations($class, $column);
-    $query = $class::query();
-    $query->where(function($query) use ($relationships, $clause) {
-        foreach($relationships as $r) {
-            if($r === '') {
-                $query->orWhere(function($query) use ($clause) {
-                    $query->mergeWheres($clause->getQuery()->wheres, $clause->getQuery()->getRawBindings()['where']);
-                });
-            } else {
-                $query->orWhereHas($r, function($query) use ($clause) {
-                    $query->mergeWheres($clause->getQuery()->wheres, $clause->getQuery()->getRawBindings()['where']);
-                });
+    if(Relations::classColumnToPoly($this->class, $this->stack(self::COLUMN, 2))) {
+        $class = Relations::classColumnToClass($this->class, $this->stack(self::COLUMN, 3));
+        $class = is_null($class) ? $this->class : $class;
+        $query = $class::query();
+        $locale = setlocale(LC_ALL, '0');
+        setlocale(LC_ALL, 'de_DE.utf8');
+        $query->whereHas(iconv("UTF-8", "ASCII//TRANSLIT", $this->stack(self::COLUMN, 2)) . ucfirst($column), function ($query) use ($clause) {
+            $query->mergeWheres($clause->getQuery()->wheres, $clause->getQuery()->getRawBindings()['where']);
+        });
+        setlocale(LC_ALL, $locale);
+    } elseif(Relations::classColumnToPoly($this->class, $column)) {
+        $query = $clause;
+    } else {
+        $class = Relations::classColumnToClass($this->class, $this->stack(self::COLUMN, 2));
+        $relationships = Relations::classColumnToRelations($class, $column);
+        $query = $class::query();
+        $query->where(function ($query) use ($relationships, $clause) {
+            foreach ($relationships as $r) {
+                if ($r === '') {
+                    $query->orWhere(function ($query) use ($clause) {
+                        $query->mergeWheres($clause->getQuery()->wheres, $clause->getQuery()->getRawBindings()['where']);
+                    });
+                } else {
+                    $query->orWhereHas($r, function ($query) use ($clause) {
+                        $query->mergeWheres($clause->getQuery()->wheres, $clause->getQuery()->getRawBindings()['where']);
+                    });
+                }
             }
-        }
-    });
+        });
+    }
     res = $query;
 }
 cterm(res) ::= COLUMN(co).
 {
     $column = co;
-    $class = Relations::columnToClass($this->stack(self::COLUMN, 2));
-    $relationships = Relations::classColumnToRelations($class, $column);
-    $query = $class::query();
-    $query->where(function($query) use ($relationships) {
-       foreach($relationships as $r) {
-            if($r !== '') {
-                $query->orHas($r);
+    if(Relations::classColumnToPoly($this->class, $this->stack(self::COLUMN, 2))) {
+        $class = Relations::classColumnToClass($this->class, $this->stack(self::COLUMN, 3));
+        $class = is_null($class) ? $this->class : $class;
+        $query = $class::query();
+        $locale = setlocale(LC_ALL, '0');
+        setlocale(LC_ALL, 'de_DE.utf8');
+        $query->has(iconv("UTF-8", "ASCII//TRANSLIT", $this->stack(self::COLUMN, 2)) . ucfirst($column));
+        setlocale(LC_ALL, $locale);
+    } elseif(Relations::classColumnToPoly($this->class, $column)) {
+        $class = Relations::classColumnToClass($this->class, $column);
+        $query = $class::query();
+        $locale = setlocale(LC_ALL, '0');
+        $query->where(function($query) use ($class, $column) {
+            setlocale(LC_ALL, 'de_DE.utf8');
+            $column = iconv("UTF-8", "ASCII//TRANSLIT", $column);
+            setlocale(LC_ALL, $locale);
+            foreach(get_class_methods($class) as $method) {
+                if(starts_with($method, $column) && $method != $column)
+                $query->orHas($method);
             }
-        }
-    });
+        });
+    } else {
+        $class = Relations::classColumnToClass($this->class, $this->stack(self::COLUMN, 2));
+        $relationships = Relations::classColumnToRelations($class, $column);
+        $query = $class::query();
+        $query->where(function($query) use ($relationships) {
+            foreach($relationships as $r) {
+                if($r !== '') {
+                    $query->orHas($r);
+                }
+            }
+        });
+    }
     res = $query;
 }
 fterm(res) ::= FIELD LIKE VALUE(v).
 {
     $field = $this->stack(self::FIELD);
-    $dbField = Relations::columnFieldToField($this->stack(self::COLUMN), $field);
-    $class = Relations::columnToClass($this->stack(self::COLUMN));
+    $dbField = Relations::classColumnFieldToField($this->class, $this->stack(self::COLUMN), $field);
+    $class = Relations::classColumnToClass($this->class, $this->stack(self::COLUMN));
     res = $class::where($dbField, 'like', '%' . v . '%');
 }
 fterm(res) ::= FIELD COMPARATOR(c) VALUE(v).
 {
     $field = $this->stack(self::FIELD);
-    $dbField = Relations::columnFieldToField($this->stack(self::COLUMN), $field);
-    $class = Relations::columnToClass($this->stack(self::COLUMN));
+    $dbField = Relations::classColumnFieldToField($this->class, $this->stack(self::COLUMN), $field);
+    $class = Relations::classColumnToClass($this->class, $this->stack(self::COLUMN));
     res = $class::where($dbField, c, v);
 }
 fterm(res) ::= LAUFZEIT COMPARATOR(c) VALUE(v).
 {
     $column = $this->stack(self::COLUMN);
-    $class = Relations::columnToClass($column);
+    $class = Relations::classColumnToClass($this->class, $column);
     $comparator = c;
     $von = Relations::classFieldToField($class, 'von');
     $bis = Relations::classFieldToField($class, 'bis');
@@ -264,7 +301,7 @@ fterm(res) ::= LAUFZEIT COMPARATOR(c) VALUE(v).
 fterm(res) ::= LAUFZEIT LIKE VALUE(v).
 {
     $column = $this->stack(self::COLUMN);
-    $class = Relations::columnToClass($column);
+    $class = Relations::classColumnToClass($this->class, $column);
     $von = Relations::classFieldToField($class, 'von');
     $bis = Relations::classFieldToField($class, 'bis');
     res = $class::where(function($query) use ($von, $bis) {

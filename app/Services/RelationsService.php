@@ -3,15 +3,16 @@
 namespace App\Services;
 
 use App\Models\Auftraege;
+use App\Models\BaustellenExtern;
 use App\Models\Details;
 use App\Models\Einheiten;
 use App\Models\Haeuser;
 use App\Models\Kaufvertraege;
 use App\Models\Mietvertraege;
 use App\Models\Objekte;
+use App\Models\Partner;
 use App\Models\Personen;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
 
 
 class RelationsService
@@ -67,13 +68,20 @@ class RelationsService
         User::class => [
             'id' => 'id',
             'name' => 'name'
+        ],
+        Partner::class => [
+            'id' => 'PARTNER_ID',
+            'name' => 'PARTNER_NAME'
+        ],
+        BaustellenExtern::class => [
+            'id' => 'ID'
         ]
     ];
 
     static $CLASS_COLUMN_TO_RELATIONS = [
         Personen::class => [
             'objekt' => ['mietvertraege.einheit.haus.objekt', 'kaufvertraege.einheit.haus.objekt'],
-            'haus' => ['mietvertraege.einheit.haus','kaufvertraege.einheit.haus'],
+            'haus' => ['mietvertraege.einheit.haus', 'kaufvertraege.einheit.haus'],
             'einheit' => ['mietvertraege.einheit', 'kaufvertraege.einheit'],
             'mietvertrag' => 'mietvertraege',
             'kaufvertrag' => 'kaufvertraege',
@@ -129,12 +137,16 @@ class RelationsService
         ],
         Auftraege::class => [
             'auftrag' => '',
+            'an' => 'an',
             'von' => 'von',
-            'an' => ['anMitarbeiter', 'anPartner'],
             'kostenträger' => 'kostentraeger'
         ],
         User::class => [
-            'mitarbeiter' => ''
+            'mitarbeiter' => '',
+            'name' => 'name'
+        ],
+        Partner::class => [
+            'partner' => ''
         ]
     ];
 
@@ -153,23 +165,37 @@ class RelationsService
         ],
     ];
 
-    static $COLUMN_TO_CLASS = [
-        'objekt' => Objekte::class,
-        'haus' => Haeuser::class,
-        'einheit' => Einheiten::class,
-        'mietvertrag' => Mietvertraege::class,
-        'kaufvertrag' => Kaufvertraege::class,
-        'hinweis' => Details::class,
-        'telefon' => Details::class,
-        'email' => Details::class,
-        'person' => Personen::class,
-        'detail' => Details::class,
-        'adresse' => Details::class,
-        'auftrag' => Auftraege::class,
-        'an' => User::class,
-        'von' => User::class,
-        'kostenträger' => Einheiten::class,
-        'mitarbeiter' => User::class
+    static $CLASS_COLUMN_TO_CLASS = [
+        Auftraege::class => [
+            'an' => Auftraege::class,
+            'von' => User::class,
+            'kostenträger' => Auftraege::class
+        ],
+        'default' => [
+            'objekt' => Objekte::class,
+            'haus' => Haeuser::class,
+            'einheit' => Einheiten::class,
+            'mietvertrag' => Mietvertraege::class,
+            'kaufvertrag' => Kaufvertraege::class,
+            'hinweis' => Details::class,
+            'telefon' => Details::class,
+            'email' => Details::class,
+            'person' => Personen::class,
+            'detail' => Details::class,
+            'adresse' => Details::class,
+            'auftrag' => Auftraege::class,
+            'kostenträger' => Einheiten::class,
+            'mitarbeiter' => User::class,
+            'partner' => Partner::class,
+            'baustelle' => BaustellenExtern::class
+        ]
+    ];
+
+    static $CLASS_COLUMN_TO_POLY = [
+        Auftraege::class => [
+            'an' => true,
+            'kostenträger' => true
+        ]
     ];
 
     static $CLASS_TO_COLUMN = [
@@ -184,13 +210,24 @@ class RelationsService
         Personen::class => 'person',
         Details::class => 'detail',
         Auftraege::class => 'auftrag',
-        User::class => 'mitarbeiter'
+        User::class => 'mitarbeiter',
+        Partner::class => 'partner'
     ];
 
-    public function columnFieldToField($column, $field)
+    public function classColumnFieldToField($class, $column, $field)
     {
-        $class = $this->columnToClass($column);
+        $class = $this->classColumnToClass($class, $column);
         return $this->classFieldToField($class, $field);
+    }
+
+    public function classColumnToClass($class, $column)
+    {
+        return is_null(self::$CLASS_COLUMN_TO_CLASS[$class][$column]) ? self::$CLASS_COLUMN_TO_CLASS['default'][$column] : self::$CLASS_COLUMN_TO_CLASS[$class][$column];
+    }
+
+    public function classColumnToPoly($class, $column)
+    {
+        return is_null(self::$CLASS_COLUMN_TO_POLY[$class][$column]) ? false : self::$CLASS_COLUMN_TO_POLY[$class][$column];
     }
 
     public function classFieldToField($class, $field)
@@ -202,19 +239,15 @@ class RelationsService
     {
         $relationships = self::$CLASS_COLUMN_TO_RELATIONS[$baseclass][$column];
         if (!is_array($relationships)) {
-            $relationships = [ $relationships ];
+            $relationships = [$relationships];
         }
         return $relationships;
     }
 
-    public function classRelationToMany($class, $relation) {
+    public function classRelationToMany($class, $relation)
+    {
         $toMany = self::$CLASS_RELATION_TO_MANY[$class][$relation];
         return isset($toMany) ? $toMany : [0, $class];
-    }
-
-    public function columnToClass($column)
-    {
-        return self::$COLUMN_TO_CLASS[$column];
     }
 
     public function classToColumn($column)

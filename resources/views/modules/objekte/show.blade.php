@@ -165,7 +165,7 @@
             </div>
         </div>
         <div class="col-xs-12">
-            @include('shared.cards.auftraege', ['auftraege' => $objekt->auftraege()->defaultOrder()->get(), 'type' => 'Objekt'])
+            @include('shared.cards.auftraege', ['auftraege' => $objekt->auftraege()->orderBy('ERSTELLT', 'desc')->get(), 'type' => 'Objekt'])
         </div>
     </div>
 @endsection

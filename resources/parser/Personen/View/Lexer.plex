@@ -30,7 +30,7 @@ class Lexer
     %value $this->value
     %line $this->line
     aggregate = ~count~
-    column = ~person|mietvertrag|kaufvertrag|einheit|haus|objekt|hinweis|telefon|email|detail|adresse|auftrag|an|von|kostenträger|mitarbeiter~
+    column = ~person|partner|mietvertrag|kaufvertrag|einheit|haus|objekt|hinweis|telefon|email|detail|adresse|auftrag|an(?!d)|von|mitarbeiter|kostenträger|baustelle~
     field = ~id|name|vorname|lage|str|nr|plz|ort|von|bis|typ|geb|bemerkung|qm|inhalt|text|akut|erstellt|erledigt~
     laufzeit = ~laufzeit~
     comparator = /<=|>=|!=|=|<|>/
