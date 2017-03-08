@@ -26,10 +26,13 @@ class ToDoController extends LegacyController
         if (request()->has('v')) {
             $query .= " " . request()->input('v');
         }
+        if (request()->has('f')) {
+            $query .= " " . implode(' ', request()->input('f'));
+        }
 
         $trace = null;
         if (config('app.debug')) {
-            $trace = fopen(storage_path('logs/vparser.log'), 'w');
+            $trace = fopen(storage_path('logs/parser.log'), 'w');
         }
         $lexer = new Lexer($query, $trace);
         $parser = new Parser($lexer, $builder);
@@ -40,15 +43,8 @@ class ToDoController extends LegacyController
         $parser->doParse(0, 0);
         $columns = $parser->retvalue;
 
-        if (request()->has('s')) {
-            if (request()->input('s') != 'all') {
-                $auftraege = $builder->paginate(request()->input('s'));
-            } else {
-                $auftraege = $builder->get();
-            }
-        } else {
-            $auftraege = $builder->paginate(20);
-        }
+        $auftraege = $builder->paginate(request()->input('s', 20));
+
         list($index, $wantedRelations) = $this->generateIndex($auftraege, $columns);
         return view('modules.auftraege.index', ['columns' => $columns, 'entities' => $auftraege, 'index' => $index, 'wantedRelations' => $wantedRelations]);
     }

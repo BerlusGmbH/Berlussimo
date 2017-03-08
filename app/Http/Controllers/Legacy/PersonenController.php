@@ -34,7 +34,7 @@ class PersonenController extends LegacyController
 
         $trace = null;
         if (config('app.debug')) {
-            $trace = fopen(storage_path('logs/vparser.log'), 'w');
+            $trace = fopen(storage_path('logs/parser.log'), 'w');
         }
         $lexer = new Lexer($query, $trace);
         $parser = new Parser($lexer, $builder);
@@ -45,15 +45,8 @@ class PersonenController extends LegacyController
         $parser->doParse(0, 0);
         $columns = $parser->retvalue;
 
-        if (request()->has('s')) {
-            if (request()->input('s') != 'all') {
-                $personen = $builder->paginate(request()->input('s'));
-            } else {
-                $personen = $builder->get();
-            }
-        } else {
-            $personen = $builder->paginate(20);
-        }
+        $personen = $builder->paginate(request()->input('s', 20));
+
         list($index, $wantedRelations) = $this->generateIndex($personen, $columns);
         return view('modules.personen.index', ['columns' => $columns, 'entities' => $personen, 'index' => $index, 'wantedRelations' => $wantedRelations]);
     }

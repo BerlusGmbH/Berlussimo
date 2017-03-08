@@ -34,7 +34,7 @@ class EinheitenController extends LegacyController
 
         $trace = null;
         if (config('app.debug')) {
-            $trace = fopen(storage_path('logs/vparser.log'), 'w');
+            $trace = fopen(storage_path('logs/parser.log'), 'w');
         }
         $lexer = new Lexer($query, $trace);
         $parser = new Parser($lexer, $builder);
@@ -45,15 +45,8 @@ class EinheitenController extends LegacyController
         $parser->doParse(0, 0);
         $columns = $parser->retvalue;
 
-        if (request()->has('s')) {
-            if (request()->input('s') != 'all') {
-                $einheiten = $builder->paginate(request()->input('s'));
-            } else {
-                $einheiten = $builder->get();
-            }
-        } else {
-            $einheiten = $builder->paginate(20);
-        }
+        $einheiten = $builder->paginate(request()->input('s', 20));
+
         list($index, $wantedRelations) = $this->generateIndex($einheiten, $columns);
         return view('modules.einheiten.index', ['columns' => $columns, 'entities' => $einheiten, 'index' => $index, 'wantedRelations' => $wantedRelations]);
     }

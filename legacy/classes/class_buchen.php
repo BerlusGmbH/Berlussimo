@@ -361,18 +361,17 @@ class buchen
         if ($js_action == '') {
             $js_action = "onchange=\"drop_kos_register('kostentraeger_typ', 'dd_kostentraeger_id');\"";
         }
-        if (!session()->has('kos_typ') && !session()->has('kos_id')) {
+        if (session()->has('kos_typ') && session()->has('kos_bez')) {
+            $kostentraeger_bez = session()->get('kos_bez');
+            $kostentraeger_typ = session()->get('kos_typ');
+            $this->dropdown_kostentraeger_bez_vw($label, $name, $id, $js_action, $kostentraeger_typ, $kostentraeger_bez);
+        } else {
             echo "<div class='input-field'>";
             echo "<select name=\"$name\" id=\"$id\" size=1 $js_action>\n";
             echo "<option value=\"\">Bitte wählen</option>\n";
             echo "</select>\n";
             echo "<label for=\"$id\">$label</label>";
             echo "</div>";
-        } else {
-            if (!session()->has('kos_id')) {
-                $kos_id = null;
-            }
-            $this->dropdown_kostentraeger_bez_vw($label, $name, $id, $js_action, session()->get('kos_typ'), $kos_id);
         }
     }
 
@@ -387,7 +386,7 @@ class buchen
             $resultat = DB::select($db_abfrage);
             foreach($resultat as $row) {
                 if (!session()->has('geldkonto_id')) {
-                    if ($vorwahl_bez == $OBJEKT_ID) {
+                    if ($vorwahl_bez == $row['OBJEKT_ID']) {
                         echo "<option value=\"$row[OBJEKT_ID]\" selected>$row[OBJEKT_KURZNAME]</option>";
                     } else {
                         echo "<option value=\"$row[OBJEKT_ID]\">$row[OBJEKT_KURZNAME]</option>";
@@ -396,7 +395,7 @@ class buchen
 
                     $gk = new gk ();
                     if ($gk->check_zuweisung_kos_typ(session()->get('geldkonto_id'), 'Objekt', $row['OBJEKT_ID'])) {
-                        if ($vorwahl_bez == $OBJEKT_ID) {
+                        if ($vorwahl_bez == $row['OBJEKT_ID']) {
                             echo "<option value=\"$OBJEKT_ID\" selected>$row[OBJEKT_KURZNAME]</option>";
                         } else {
                             echo "<option value=\"$OBJEKT_ID\">$row[OBJEKT_KURZNAME]</option>";
@@ -407,13 +406,23 @@ class buchen
         }
 
         if ($typ == 'Wirtschaftseinheit') {
-            $db_abfrage = "SELECT W_NAME FROM WIRT_EINHEITEN WHERE AKTUELL='1' ORDER BY W_NAME ASC";
+            $db_abfrage = "SELECT W_NAME, W_ID FROM WIRT_EINHEITEN WHERE AKTUELL='1' ORDER BY W_NAME ASC";
             $resultat = DB::select($db_abfrage);
-            foreach($resultat as $row) {
-                if ($vorwahl_bez == $row['W_NAME']) {
-                    echo "<option value=\"$row[W_NAME]\" selected>$row[W_NAME]</option>";
-                } else {
-                    echo "<option value=\"$row[W_NAME]\">$row[W_NAME]</option>";
+            if(is_numeric($vorwahl_bez)) {
+                foreach($resultat as $row) {
+                    if ($vorwahl_bez == $row['W_ID']) {
+                        echo "<option value=\"$row[W_NAME]\" selected>$row[W_NAME]</option>";
+                    } else {
+                        echo "<option value=\"$row[W_NAME]\">$row[W_NAME]</option>";
+                    }
+                }
+            } else {
+                foreach($resultat as $row) {
+                    if ($vorwahl_bez == $row['W_NAME']) {
+                        echo "<option value=\"$row[W_NAME]\" selected>$row[W_NAME]</option>";
+                    } else {
+                        echo "<option value=\"$row[W_NAME]\">$row[W_NAME]</option>";
+                    }
                 }
             }
         }
@@ -527,11 +536,21 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         if ($typ == 'Lager') {
             $db_abfrage = "SELECT LAGER_ID, LAGER_NAME  FROM `LAGER`  WHERE AKTUELL='1' ORDER BY LAGER_NAME ASC";
             $resultat = DB::select($db_abfrage);
-            foreach($resultat as $row) {
-                if ($vorwahl_bez == $row['LAGER_NAME']) {
-                    echo "<option value=\"$row[LAGER_ID]\" selected>$row[LAGER_NAME]</option>";
-                } else {
-                    echo "<option value=\"$row[LAGER_ID]\">$row[LAGER_NAME]</option>";
+            if(is_numeric($vorwahl_bez)) {
+                foreach($resultat as $row) {
+                    if ($vorwahl_bez == $row['LAGER_ID']) {
+                        echo "<option value=\"$row[LAGER_ID]\" selected>$row[LAGER_NAME]</option>";
+                    } else {
+                        echo "<option value=\"$row[LAGER_ID]\">$row[LAGER_NAME]</option>";
+                    }
+                }
+            } else {
+                foreach($resultat as $row) {
+                    if ($vorwahl_bez == $row['LAGER_NAME']) {
+                        echo "<option value=\"$row[LAGER_ID]\" selected>$row[LAGER_NAME]</option>";
+                    } else {
+                        echo "<option value=\"$row[LAGER_ID]\">$row[LAGER_NAME]</option>";
+                    }
                 }
             }
         }
@@ -539,11 +558,21 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         if ($typ == 'Baustelle_ext') {
             $db_abfrage = "SELECT ID, BEZ  FROM `BAUSTELLEN_EXT`  WHERE AKTUELL='1' ORDER BY BEZ ASC";
             $resultat = DB::select($db_abfrage);
-            foreach($resultat as $row) {
-                if ($vorwahl_bez == $row['BEZ']) {
-                    echo "<option value=\"$row[BEZ]\" selected>$row[BEZ]</option>";
-                } else {
-                    echo "<option value=\"$row[BEZ]\">$row[BEZ]</option>";
+            if(is_numeric($vorwahl_bez)) {
+                foreach($resultat as $row) {
+                    if ($vorwahl_bez == $row['ID']) {
+                        echo "<option value=\"$row[BEZ]\" selected>$row[BEZ]</option>";
+                    } else {
+                        echo "<option value=\"$row[BEZ]\">$row[BEZ]</option>";
+                    }
+                }
+            } else {
+                foreach($resultat as $row) {
+                    if ($vorwahl_bez == $row['BEZ']) {
+                        echo "<option value=\"$row[BEZ]\" selected>$row[BEZ]</option>";
+                    } else {
+                        echo "<option value=\"$row[BEZ]\">$row[BEZ]</option>";
+                    }
                 }
             }
         }

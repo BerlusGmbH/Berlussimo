@@ -16,8 +16,8 @@ class Auftraege extends Model
     public $timestamps = false;
     protected $table = 'TODO_LISTE';
     protected $primaryKey = 'T_ID';
-    protected $searchableFields = ['TEXT'];
-    protected $defaultOrder = ['ERLEDIGT' => 'asc', 'AKUT' => 'asc', 'ERSTELLT' => 'desc'];
+    protected $searchableFields = ['TEXT', 'ERSTELLT'];
+    protected $defaultOrder = ['ERSTELLT' => 'desc'];
 
     protected static function boot()
     {
@@ -36,7 +36,7 @@ class Auftraege extends Model
         return $this->morphTo('an', 'BENUTZER_TYP', 'BENUTZER_ID');
     }
 
-    public function anMitarbeiter()
+    public function anUser()
     {
         return BelongsToMorph::build($this, User::class, 'an', 'BENUTZER_TYP', 'BENUTZER_ID');
     }
@@ -51,12 +51,12 @@ class Auftraege extends Model
         return $this->morphTo('kostentraeger', 'KOS_TYP', 'KOS_ID');
     }
 
-    public function kostentraegerBaustelle()
+    public function kostentraegerBaustellenExtern()
     {
         return BelongsToMorph::build($this, BaustellenExtern::class, 'kostentraegerBaustelle', 'KOS_TYP', 'KOS_ID');
     }
 
-    public function kostentraegerMitarbeiter()
+    public function kostentraegerUser()
     {
         return BelongsToMorph::build($this, User::class, 'kostentraegerMitarbeiter', 'KOS_TYP', 'KOS_ID');
     }
@@ -66,32 +66,32 @@ class Auftraege extends Model
         return BelongsToMorph::build($this, Partner::class, 'kostentraegerPartner', 'KOS_TYP', 'KOS_ID');
     }
 
-    public function kostentraegerKaufvertrag()
+    public function kostentraegerKaufvertraege()
     {
         return BelongsToMorph::build($this, Kaufvertraege::class, 'kostentraegerKaufvertrag', 'KOS_TYP', 'KOS_ID');
     }
 
-    public function kostentraegerMietvertrag()
+    public function kostentraegerMietvertraege()
     {
         return BelongsToMorph::build($this, Mietvertraege::class, 'kostentraegerMietvertrag', 'KOS_TYP', 'KOS_ID');
     }
 
-    public function kostentraegerWirtschaftseinheit()
+    public function kostentraegerWirtschaftseinheiten()
     {
         return BelongsToMorph::build($this, Wirtschaftseinheiten::class, 'kostentraegerWirtschaftseinheit', 'KOS_TYP', 'KOS_ID');
     }
 
-    public function kostentraegerObjekt()
+    public function kostentraegerObjekte()
     {
         return BelongsToMorph::build($this, Objekte::class, 'kostentraegerObjekt', 'KOS_TYP', 'KOS_ID');
     }
 
-    public function kostentraegerHaus()
+    public function kostentraegerHaeuser()
     {
         return BelongsToMorph::build($this, Haeuser::class, 'kostentraegerHaus', 'KOS_TYP', 'KOS_ID');
     }
 
-    public function kostentraegerEinheit()
+    public function kostentraegerEinheiten()
     {
         return BelongsToMorph::build($this, Einheiten::class, 'kostentraegerEinheit', 'KOS_TYP', 'KOS_ID');
     }

@@ -75,7 +75,7 @@
             </div>
         @endif
         <div class="col-xs-12">
-            @include('shared.cards.auftraege', ['auftraege' => $haus->auftraege()->orderBy('ERSTELLT', 'desc')->get(), 'type' => 'Haus'])
+            @include('shared.cards.auftraege', ['auftraege' => $haus->auftraege()->orderBy('ERSTELLT', 'desc')->get(), 'title' => 'Aufträge', 'type' => 'Haus', 'id' => $haus->HAUS_ID, 'href' => route('web::todo::index', ['q' => '!auftrag(kostenträger(haus(id=' . $haus->HAUS_ID . ')))'])])
         </div>
     </div>
 @endsection

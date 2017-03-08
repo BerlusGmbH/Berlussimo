@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Traits;
 
-use App\Facades\Relations;
+use Relations;
 use Illuminate\Support\Collection;
 
 trait Indexable
@@ -18,14 +18,14 @@ trait Indexable
         $result = [];
         foreach ($columns as $key => $filters) {
             $column = key($filters);
-            $relations = Relations::classColumnToRelations($class, $column);
+            $relations = Relations::columnColumnToRelations(Relations::classToColumn($class), $column);
             if (isset($filters[$column]['columns']) && !$filters[$column]['columns']->isEmpty()) {
                 foreach ($relations as $relation) {
                     $notWanted = false;
                     if (isset($filters[$column]['columns']) && !$filters[$column]['columns']->isEmpty()) {
                         $notWanted = true;
                         foreach ($filters[$column]['columns'] as $c) {
-                            $ccs = Relations::classColumnToRelations($class, $c);
+                            $ccs = Relations::columnColumnToRelations(Relations::classToColumn($class), $c);
                             foreach ($ccs as $cc) {
                                 if (strpos($relation, $cc) !== false) {
                                     $notWanted = false;

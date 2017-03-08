@@ -77,7 +77,7 @@
             </div>
         @endif
         <div class="col-xs-12">
-            @include('shared.cards.auftraege', ['auftraege' => $einheit->auftraege()->orderBy('ERSTELLT', 'desc')->get(), 'type' => 'Einheit'])
+            @include('shared.cards.auftraege', ['auftraege' => $einheit->auftraege()->orderBy('ERSTELLT', 'desc')->get(), 'title' => 'Aufträge', 'type' => 'Einheit', 'id' => $einheit->EINHEIT_ID, 'href' => route('web::todo::index', ['q' => '!auftrag(kostenträger(einheit(id=' . $einheit->EINHEIT_ID . ')))'])])
         </div>
     </div>
 @endsection

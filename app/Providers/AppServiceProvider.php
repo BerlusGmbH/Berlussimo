@@ -6,6 +6,7 @@ use App\Models\BaustellenExtern;
 use App\Models\Einheiten;
 use App\Models\Haeuser;
 use App\Models\Kaufvertraege;
+use App\Models\Lager;
 use App\Models\Mietvertraege;
 use App\Models\Objekte;
 use App\Models\Partner;
@@ -40,7 +41,8 @@ class AppServiceProvider extends ServiceProvider
             'Eigentuemer' => Kaufvertraege::class,
             'Baustelle_ext' => BaustellenExtern::class,
             'Mietvertrag' => Mietvertraege::class,
-            'Wirtschaftseinheit' => Wirtschaftseinheiten::class
+            'Wirtschaftseinheit' => Wirtschaftseinheiten::class,
+            'Lager' => Lager::class
         ]);
     }
 

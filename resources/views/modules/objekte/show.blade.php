@@ -165,7 +165,7 @@
             </div>
         </div>
         <div class="col-xs-12">
-            @include('shared.cards.auftraege', ['auftraege' => $objekt->auftraege()->orderBy('ERSTELLT', 'desc')->get(), 'type' => 'Objekt'])
+            @include('shared.cards.auftraege', ['auftraege' => $objekt->auftraege()->orderBy('ERSTELLT', 'desc')->get(), 'title' => 'Aufträge', 'type' => 'Objekt', 'id' => $objekt->OBJEKT_ID, 'href' => route('web::todo::index', ['q' => '!auftrag(kostenträger(objekt(id=' . $objekt->OBJEKT_ID . ')))'])])
         </div>
     </div>
 @endsection

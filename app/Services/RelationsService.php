@@ -8,11 +8,13 @@ use App\Models\Details;
 use App\Models\Einheiten;
 use App\Models\Haeuser;
 use App\Models\Kaufvertraege;
+use App\Models\Lager;
 use App\Models\Mietvertraege;
 use App\Models\Objekte;
 use App\Models\Partner;
 use App\Models\Personen;
 use App\Models\User;
+use App\Models\Wirtschaftseinheiten;
 
 
 class RelationsService
@@ -75,78 +77,90 @@ class RelationsService
         ],
         BaustellenExtern::class => [
             'id' => 'ID'
+        ],
+        Lager::class => [
+            'id' => 'LAGER_ID'
         ]
     ];
 
-    static $CLASS_COLUMN_TO_RELATIONS = [
-        Personen::class => [
-            'objekt' => ['mietvertraege.einheit.haus.objekt', 'kaufvertraege.einheit.haus.objekt'],
-            'haus' => ['mietvertraege.einheit.haus', 'kaufvertraege.einheit.haus'],
-            'einheit' => ['mietvertraege.einheit', 'kaufvertraege.einheit'],
-            'mietvertrag' => 'mietvertraege',
-            'kaufvertrag' => 'kaufvertraege',
-            'telefon' => 'phones',
-            'email' => 'emails',
-            'hinweis' => 'hinweise',
-            'person' => '',
-            'detail' => 'commonDetails',
-            'adresse' => 'adressen'
+    static $COLUMN_COLUMN_TO_RELATIONS = [
+        'person' => [
+            'objekt' => [['mietvertraege.einheit.haus.objekt', 'kaufvertraege.einheit.haus.objekt'], Objekte::class],
+            'haus' => [['mietvertraege.einheit.haus', 'kaufvertraege.einheit.haus'], Haeuser::class],
+            'einheit' => [['mietvertraege.einheit', 'kaufvertraege.einheit'], Einheiten::class],
+            'mietvertrag' => ['mietvertraege', Mietvertraege::class],
+            'kaufvertrag' => ['kaufvertraege', Kaufvertraege::class],
+            'telefon' => ['phones', Details::class],
+            'email' => ['emails', Details::class],
+            'hinweis' => ['hinweise', Details::class],
+            'person' => ['', Personen::class],
+            'detail' => ['commonDetails', Details::class],
+            'adresse' => ['adressen', Details::class]
         ],
-        Mietvertraege::class => [
-            'objekt' => 'einheit.haus.objekt',
-            'haus' => 'einheit.haus',
-            'einheit' => 'einheit',
-            'mietvertrag' => '',
-            'telefon' => 'personen.phones',
-            'email' => 'personen.emails',
-            'person' => 'mieter'
+        'mietvertrag' => [
+            'objekt' => ['einheit.haus.objekt', Objekte::class],
+            'haus' => ['einheit.haus', Haeuser::class],
+            'einheit' => ['einheit', Einheiten::class],
+            'mietvertrag' => ['', Mietvertraege::class],
+            'telefon' => ['personen.phones', Details::class],
+            'email' => ['personen.emails', Details::class],
+            'person' => ['mieter', Personen::class]
         ],
-        Kaufvertraege::class => [
-            'objekt' => 'einheit.haus.objekt',
-            'haus' => 'einheit.haus',
-            'einheit' => 'einheit',
-            'mietvertrag' => '',
-            'telefon' => 'personen.phones',
-            'email' => 'personen.emails',
-            'person' => 'personen'
+        'kaufvertrag' => [
+            'objekt' => ['einheit.haus.objekt', Objekte::class],
+            'haus' => ['einheit.haus', Haeuser::class],
+            'einheit' => ['einheit', Einheiten::class],
+            'mietvertrag' => ['', Mietvertraege::class],
+            'telefon' => ['personen.phones', Details::class],
+            'email' => ['personen.emails', Details::class],
+            'person' => ['personen', Personen::class]
         ],
-        Einheiten::class => [
-            'objekt' => 'haus.objekt',
-            'haus' => 'haus',
-            'einheit' => '',
-            'mietvertrag' => 'mietvertraege',
-            'kaufvertrag' => 'kaufvertraege',
-            'person' => ['mietvertraege.mieter', 'kaufvertraege.eigentuemer'],
-            'detail' => 'details'
+        'einheit' => [
+            'objekt' => ['haus.objekt', Objekte::class],
+            'haus' => ['haus', Haeuser::class],
+            'einheit' => ['', Einheiten::class],
+            'mietvertrag' => ['mietvertraege', Mietvertraege::class],
+            'kaufvertrag' => ['kaufvertraege', Kaufvertraege::class],
+            'person' => [['mietvertraege.mieter', 'kaufvertraege.eigentuemer'], Personen::class],
+            'detail' => ['details', Details::class]
         ],
-        Haeuser::class => [
-            'objekt' => 'objekt',
-            'haus' => '',
-            'einheit' => 'einheiten',
-            'mietvertrag' => 'einheiten.mietvertraege',
-            'kaufvertrag' => 'einheiten.kaufvertraege',
-            'detail' => 'details'
+        'haus' => [
+            'objekt' => ['objekt', Objekte::class],
+            'haus' => ['', Haeuser::class],
+            'einheit' => ['einheiten', Einheiten::class],
+            'mietvertrag' => ['einheiten.mietvertraege', Mietvertraege::class],
+            'kaufvertrag' => ['einheiten.kaufvertraege', Kaufvertraege::class],
+            'detail' => ['details', Details::class]
         ],
-        Objekte::class => [
-            'objekt' => '',
-            'haus' => 'haeuser',
-            'einheit' => 'haeuser.einheiten',
-            'mietvertrag' => 'haeuser.einheiten.mietvertraege',
-            'kaufvertrag' => 'haeuser.einheiten.kaufvertraege',
-            'detail' => 'details'
+        'objekt' => [
+            'objekt' => ['', Objekte::class],
+            'haus' => ['haeuser', Haeuser::class],
+            'einheit' => ['haeuser.einheiten', Einheiten::class],
+            'mietvertrag' => ['haeuser.einheiten.mietvertraege', Mietvertraege::class],
+            'kaufvertrag' => ['haeuser.einheiten.kaufvertraege', Kaufvertraege::class],
+            'detail' => ['details', Details::class]
         ],
-        Auftraege::class => [
-            'auftrag' => '',
-            'an' => 'an',
-            'von' => 'von',
-            'kostenträger' => 'kostentraeger'
+        'auftrag' => [
+            'auftrag' => ['', Auftraege::class],
+            'an' => ['an', [User::class, Partner::class]],
+            'von' => ['von', User::class],
+            'kostenträger' => [
+                'kostentraeger', [
+                    BaustellenExtern::class, Partner::class, User::class,
+                    Mietvertraege::class, Kaufvertraege::class, Objekte::class,
+                    Haeuser::class, Einheiten::class, Wirtschaftseinheiten::class
+                ]
+            ],
+            'mitarbeiter' => [['anUser', 'von'], User::class]
         ],
-        User::class => [
-            'mitarbeiter' => '',
-            'name' => 'name'
+        'mitarbeiter' => [
+            'mitarbeiter' => ['', User::class]
         ],
-        Partner::class => [
-            'partner' => ''
+        'partner' => [
+            'partner' => ['', Partner::class]
+        ],
+        'baustelle' => [
+            'baustelle' => ['', BaustellenExtern::class]
         ]
     ];
 
@@ -163,38 +177,9 @@ class RelationsService
             'mietvertraege.mieter' => [-4, Mietvertraege::class],
             'kaufvertraege.eigentuemer' => [-4, Kaufvertraege::class],
         ],
-    ];
-
-    static $CLASS_COLUMN_TO_CLASS = [
         Auftraege::class => [
-            'an' => Auftraege::class,
-            'von' => User::class,
-            'kostenträger' => Auftraege::class
-        ],
-        'default' => [
-            'objekt' => Objekte::class,
-            'haus' => Haeuser::class,
-            'einheit' => Einheiten::class,
-            'mietvertrag' => Mietvertraege::class,
-            'kaufvertrag' => Kaufvertraege::class,
-            'hinweis' => Details::class,
-            'telefon' => Details::class,
-            'email' => Details::class,
-            'person' => Personen::class,
-            'detail' => Details::class,
-            'adresse' => Details::class,
-            'auftrag' => Auftraege::class,
-            'kostenträger' => Einheiten::class,
-            'mitarbeiter' => User::class,
-            'partner' => Partner::class,
-            'baustelle' => BaustellenExtern::class
-        ]
-    ];
-
-    static $CLASS_COLUMN_TO_POLY = [
-        Auftraege::class => [
-            'an' => true,
-            'kostenträger' => true
+            'anUser' => [-4, User::class],
+            'von' => [-4, User::class]
         ]
     ];
 
@@ -204,30 +189,22 @@ class RelationsService
         Einheiten::class => 'einheit',
         Mietvertraege::class => 'mietvertrag',
         Kaufvertraege::class => 'kaufvertrag',
-        Details::class => 'hinweis',
-        Details::class => 'telefon',
-        Details::class => 'email',
         Personen::class => 'person',
         Details::class => 'detail',
         Auftraege::class => 'auftrag',
         User::class => 'mitarbeiter',
-        Partner::class => 'partner'
+        Partner::class => 'partner',
+        Auftraege::class => 'auftrag'
     ];
 
-    public function classColumnFieldToField($class, $column, $field)
+    public function columnColumnToClass($outer, $inner)
     {
-        $class = $this->classColumnToClass($class, $column);
-        return $this->classFieldToField($class, $field);
+        return self::$COLUMN_COLUMN_TO_RELATIONS[$outer][$inner][1];
     }
 
-    public function classColumnToClass($class, $column)
+    public function columnToClass($class)
     {
-        return is_null(self::$CLASS_COLUMN_TO_CLASS[$class][$column]) ? self::$CLASS_COLUMN_TO_CLASS['default'][$column] : self::$CLASS_COLUMN_TO_CLASS[$class][$column];
-    }
-
-    public function classColumnToPoly($class, $column)
-    {
-        return is_null(self::$CLASS_COLUMN_TO_POLY[$class][$column]) ? false : self::$CLASS_COLUMN_TO_POLY[$class][$column];
+        return $this->columnColumnToClass($class, $class);
     }
 
     public function classFieldToField($class, $field)
@@ -235,9 +212,12 @@ class RelationsService
         return self::$CLASS_FIELD_TO_FIELD[$class][$field];
     }
 
-    public function classColumnToRelations($baseclass, $column)
+    public function columnColumnToRelations($outer, $inner)
     {
-        $relationships = self::$CLASS_COLUMN_TO_RELATIONS[$baseclass][$column];
+        $relationships = self::$COLUMN_COLUMN_TO_RELATIONS[$outer][$inner][0];
+        if(is_null($relationships)) {
+            return [];
+        }
         if (!is_array($relationships)) {
             $relationships = [$relationships];
         }
