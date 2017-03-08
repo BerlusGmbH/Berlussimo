@@ -67,6 +67,33 @@
                 </div>
             </div>
         </div>
+        @if(!$person->hinweise->isEmpty())
+            <div class="col-xs-12 col-sm-6">
+                <div class="card card-expandable">
+                    <div class="card-content">
+                        <div class="card-title">Hinweise ({{ $person->hinweise->count() }})</div>
+                        <table class="striped">
+                            <thead>
+                            <th>Wert</th>
+                            <th>Bemerkung</th>
+                            </thead>
+                            <tbody>
+                            @foreach( $person->hinweise as $detail )
+                                <tr>
+                                    <td>
+                                        {{ $detail->DETAIL_INHALT }}
+                                    </td>
+                                    <td>
+                                        {{ $detail->DETAIL_BEMERKUNG }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        @endif
         @if(!$person->commonDetails->isEmpty())
             <div class="col-xs-12 col-sm-6">
                 <div class="card card-expandable">
