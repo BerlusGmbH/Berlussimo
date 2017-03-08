@@ -33,7 +33,7 @@
                 </div>
             </div>
         </form>
-        @include('shared.tables.entities-with-paginator', ['parametes' => ['q', 's', 'v', 'f'] ,'columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Personen::class])
+        @include('shared.tables.entities-with-paginator', ['parameters' => ['q', 's', 'v', 'f'] ,'columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Personen::class])
     </div>
 @endsection
 

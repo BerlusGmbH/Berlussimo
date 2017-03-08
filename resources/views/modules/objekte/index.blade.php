@@ -31,7 +31,7 @@
                 </div>
             </div>
         </form>
-        @include('shared.tables.entities-with-paginator', ['parametes' => ['q', 's', 'v', 'f'] ,'columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Objekte::class])
+        @include('shared.tables.entities-with-paginator', ['parameters' => ['q', 's', 'v', 'f'] ,'columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Objekte::class])
     </div>
 @endsection
 
