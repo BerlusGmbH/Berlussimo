@@ -24,7 +24,7 @@
 
                     <div class="row">
                         <div class="col s6">
-                            <input type="checkbox" name="remember" id="remember">
+                            <input type="checkbox" class='filled-in' name="remember" id="remember">
                             <label for="remember">Angemeldet bleiben</label>
                         </div>
                         <div class="col s6">

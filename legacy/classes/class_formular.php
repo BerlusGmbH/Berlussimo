@@ -84,14 +84,14 @@ class formular
     /* Checkboxauswahl mit JS-Action */
     function check_box_js($name, $wert, $label, $js, $checked)
     {
-        echo "<input type=\"checkbox\" id=\"$wert\" name=\"$name\" value=\"$wert\" $js $checked>\n";
+        echo "<input type=\"checkbox\" class='filled-in' id=\"$wert\" name=\"$name\" value=\"$wert\" $js $checked>\n";
         echo "<label for=\"$wert\">$label</label>\n";
     }
 
     /* Checkboxauswahl mit JS-Action */
     function check_box_js1($name, $id, $wert, $label, $js, $checked)
     {
-        echo "<input type=\"checkbox\" id=\"$id\" name=\"$name\" value=\"$wert\" $js $checked>\n";
+        echo "<input type=\"checkbox\" class='filled-in' id=\"$id\" name=\"$name\" value=\"$wert\" $js $checked>\n";
         echo "<label for=\"$id\">$label</label>\n";
     }
 
@@ -100,7 +100,7 @@ class formular
     {
         // echo "<input type=\"button\" name=\"button\" onclick='activate(this.form.elements[\"mv_ids[]\"]);' value=\"Alle wählen\">";
         $feld_arr = $feld . '[]';
-        echo "<input type=\"checkbox\" id=\"$id\" name=\"$name\" value=\"$wert\" $js $checked onclick='activate(this.form.elements[\"$feld_arr\"]);'>\n";
+        echo "<input type=\"checkbox\" class='filled-in' id=\"$id\" name=\"$name\" value=\"$wert\" $js $checked onclick='activate(this.form.elements[\"$feld_arr\"]);'>\n";
         echo "<label for=\"$id\">$label</label>\n";
     }
 

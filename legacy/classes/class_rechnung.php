@@ -785,7 +785,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         $geld_konto_info->dropdown_geldkonten($aussteller_typ, $aussteller_id);
         echo "</td></tr>";
         echo "<div id=\"pool_tabelle\" $js_action>";
-        echo "<tr ><th>POOL</th><th><input type=\"checkbox\" onClick=\"this.value=check(this.form.positionen_list)\" $js_action>Alle</th><th>Rechnung</th><th>UPos</th><th>Pos</th><th>Menge</th><th>Bezeichnung</th><th>Einzelpreis</th><th>Netto</th><th>Rabatt %</th><th>Skonto</th><th>MWSt</th><th>Kostentraeger</th></tr>";
+        echo "<tr ><th>POOL</th><th><input type=\"checkbox\" class='filled-in' onClick=\"this.value=check(this.form.positionen_list)\" $js_action>Alle</th><th>Rechnung</th><th>UPos</th><th>Pos</th><th>Menge</th><th>Bezeichnung</th><th>Einzelpreis</th><th>Netto</th><th>Rabatt %</th><th>Skonto</th><th>MWSt</th><th>Kostentraeger</th></tr>";
         $f->hidden_feld('RECHNUNG_EMPFAENGER_TYP', "$kostentraeger_typ");
         $f->hidden_feld('RECHNUNG_EMPFAENGER_ID', "$rechnungs_empfaenger_id");
         $f->hidden_feld('RECHNUNG_AUSSTELLER_TYP', "$aussteller_typ");
@@ -825,7 +825,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             $rrr = new rechnungen ();
             $rrr->btn_pool($kostentraeger_typ, $kostentraeger_id, $kontierung_dat, 'this');
 
-            echo "</td><td>$zeile<input type=\"checkbox\" name=uebernehmen[] id=\"positionen_list\" value=\"$a\" $js_action></td><td>$link_rechnung_ansehen</td><td>$position</td><td>$zeile.</td><td>";
+            echo "</td><td>$zeile<input type=\"checkbox\" class='filled-in' name=uebernehmen[] id=\"positionen_list\" value=\"$a\" $js_action></td><td>$link_rechnung_ansehen</td><td>$position</td><td>$zeile.</td><td>";
 
             $f->text_feld("Menge:", "positionen[$a][menge]", "$menge", "5", "mengen_feld", $js_action);
             // $f->hidden_feld("positionen[$a][bezeichnung]", "$artikel_bezeichnung");
@@ -847,8 +847,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
         echo "<tr><td colspan=10><hr></td></tr></table>";
         echo "<table>";
-
-        // echo "<tr><td><input type=\"checkbox\" name=\"in_rechung_stellen\" id=\"in_rechung_stellen\" onclick=\"check_ob_pos_gewaehlt(this, this.form.positionen_list)\"><b>Eingabe beenden</b></td>\n</tr>";
 
         echo "<tr><td>";
 
@@ -2081,7 +2079,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
                     $gesamt_preis = nummer_punkt2komma($gesamt_preis);
                     echo "<tr border=1><td>\n";
                     if ($restmenge > 0) {
-                        echo "<input type=\"checkbox\" id='positionen_list_$position' name=\"positionen_list[]\" value=\"$position\"><label for='positionen_list_$position'>$position</label>\n";
+                        echo "<input type=\"checkbox\" class='filled-in' id='positionen_list_$position' name=\"positionen_list[]\" value=\"$position\"><label for='positionen_list_$position'>$position</label>\n";
                         $send_button_anzeigen = true;
                     }
                     $restmenge = nummer_punkt2komma($restmenge);
