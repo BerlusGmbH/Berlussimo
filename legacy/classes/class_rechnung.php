@@ -785,7 +785,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         $geld_konto_info->dropdown_geldkonten($aussteller_typ, $aussteller_id);
         echo "</td></tr>";
         echo "<div id=\"pool_tabelle\" $js_action>";
-        echo "<tr ><th>POOL</th><th><input type=\"checkbox\" onClick=\"this.value=check(this.form.positionen_list)\" $js_action>Alle</th><th>Rechnung</th><th>UPos</th><th>Pos</th><th>Menge</th><th>Bezeichnung</th><th>Einzelpreis</th><th>Netto</th><th>Rabatt %</th><th>Skonto</th><th>MWSt</th><th>Kostentraeger</th></tr>";
+        echo "<tr ><th>POOL</th><th><input type=\"checkbox\" class='filled-in' onClick=\"this.value=check(this.form.positionen_list)\" $js_action>Alle</th><th>Rechnung</th><th>UPos</th><th>Pos</th><th>Menge</th><th>Bezeichnung</th><th>Einzelpreis</th><th>Netto</th><th>Rabatt %</th><th>Skonto</th><th>MWSt</th><th>Kostentraeger</th></tr>";
         $f->hidden_feld('RECHNUNG_EMPFAENGER_TYP', "$kostentraeger_typ");
         $f->hidden_feld('RECHNUNG_EMPFAENGER_ID', "$rechnungs_empfaenger_id");
         $f->hidden_feld('RECHNUNG_AUSSTELLER_TYP', "$aussteller_typ");
@@ -825,7 +825,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             $rrr = new rechnungen ();
             $rrr->btn_pool($kostentraeger_typ, $kostentraeger_id, $kontierung_dat, 'this');
 
-            echo "</td><td>$zeile<input type=\"checkbox\" name=uebernehmen[] id=\"positionen_list\" value=\"$a\" $js_action></td><td>$link_rechnung_ansehen</td><td>$position</td><td>$zeile.</td><td>";
+            echo "</td><td>$zeile<input type=\"checkbox\" class='filled-in' name=uebernehmen[] id=\"positionen_list\" value=\"$a\" $js_action></td><td>$link_rechnung_ansehen</td><td>$position</td><td>$zeile.</td><td>";
 
             $f->text_feld("Menge:", "positionen[$a][menge]", "$menge", "5", "mengen_feld", $js_action);
             // $f->hidden_feld("positionen[$a][bezeichnung]", "$artikel_bezeichnung");
@@ -847,8 +847,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
         echo "<tr><td colspan=10><hr></td></tr></table>";
         echo "<table>";
-
-        // echo "<tr><td><input type=\"checkbox\" name=\"in_rechung_stellen\" id=\"in_rechung_stellen\" onclick=\"check_ob_pos_gewaehlt(this, this.form.positionen_list)\"><b>Eingabe beenden</b></td>\n</tr>";
 
         echo "<tr><td>";
 
@@ -2081,7 +2079,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
                     $gesamt_preis = nummer_punkt2komma($gesamt_preis);
                     echo "<tr border=1><td>\n";
                     if ($restmenge > 0) {
-                        echo "<input type=\"checkbox\" id='positionen_list_$position' name=\"positionen_list[]\" value=\"$position\"><label for='positionen_list_$position'>$position</label>\n";
+                        echo "<input type=\"checkbox\" class='filled-in' id='positionen_list_$position' name=\"positionen_list[]\" value=\"$position\"><label for='positionen_list_$position'>$position</label>\n";
                         $send_button_anzeigen = true;
                     }
                     $restmenge = nummer_punkt2komma($restmenge);
@@ -3059,22 +3057,11 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         echo "<table id=\"monate_links\"><tr><td>";
         $this->r_eingang_monate_links($monat, $jahr);
         echo "</td></tr>";
-        $pdf_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungsbuch_eingang', 'monat' => $monat, 'jahr' => $jahr, 'r_typ' => 'Rechnung']) . "'>PDF-Ansicht</a>";
-        echo "<tr><td>$pdf_link</td></tr>";
+        $pdf_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungsbuch_eingang', 'monat' => $monat, 'jahr' => $jahr, 'r_typ' => 'Rechnung']) . "'>Als PDF</a>";
+        $self = $_SERVER ['QUERY_STRING'];
+        echo "<tr><td>$pdf_link <a href='?$self&xls'>Als Excel</a></td></tr>";
         echo "</table>";
         $rechnungen_arr = $this->eingangsrechnungen_arr($typ, $partner_id, $monat, $jahr, $rechnungstyp);
-        /* Druck LOGO */
-
-        $d = new detail ();
-        $mandanten_nr = $d->finde_mandanten_nr($partner_id);
-
-        $logo_file = $typ . "/" . $partner_id . "_logo.png";
-        if (Storage::disk('logos')->exists($logo_file)) {
-            $logo_file = Storage::disk('logos')->url($logo_file);
-            echo "<div id=\"div_logo\"><img src='$logo_file'><br>$p->partner_name Rechnungseingangsbuch $monatname $jahr Mandanten-Nr.: $mandanten_nr Blatt: $monat<hr></div>\n";
-        } else {
-            echo "<div id=\"div_logo\">KEIN LOGO<br>Folgende Datei erstellen: " . Storage::disk('logos')->fullPath($logo_file) . "<hr></div>";
-        }
 
         $this->rechnungsbuch_anzeigen_ein($rechnungen_arr);
         $form->ende_formular();
@@ -3093,9 +3080,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         $bg = new berlussimo_global ();
         $link = route('web::rechnungen::legacy', ['option' => 'eingangsbuch'], false);
         $bg->monate_jahres_links($jahr, $link);
-
-        $self = $_SERVER ['QUERY_STRING'];
-        echo "<a href=\"?$self&xls\">Als Excel</a>";
     }
 
     function eingangsrechnungen_arr($empfaenger_typ, $empfaenger_id, $monat, $jahr, $rechnungstyp)
@@ -3115,7 +3099,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
     function rechnungsbuch_anzeigen_ein($arr)
     {
-        if (request()->has('xls')) {
+        if (request()->exists('xls')) {
             ob_clean();
             // ausgabepuffer leeren
             $fileName = 'rechnungseingangsbuch' . date("d-m-Y") . '.xls';
@@ -3273,21 +3257,12 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         echo "<table id=\"monate_links\"><tr><td>";
         $this->r_ausgang_monate_links($monat, $jahr);
         echo "</td></tr>";
-        $pdf_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungsbuch_ausgang', 'monat' => $monat, 'jahr' => $jahr, 'r_typ' => 'Rechnung']) . "'>PDF-Ansicht</a>";
-        echo "<tr><td>$pdf_link</td></tr>";
+        $pdf_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungsbuch_ausgang', 'monat' => $monat, 'jahr' => $jahr, 'r_typ' => 'Rechnung']) . "'>Als PDF</a>";
+        $self = $_SERVER ['QUERY_STRING'];
+        echo "<tr><td>$pdf_link <a href='?$self&xls'>Als Excel</a></td></tr>";
         echo "</table>";
         $rechnungen_arr = $this->ausgangsrechnungen_arr($typ, $partner_id, $monat, $jahr, $rechnungstyp);
-        /* Druck LOGO */
-        $d = new detail ();
-        $mandanten_nr = $d->finde_mandanten_nr($partner_id);
 
-        $logo_file = $typ . "/" . $partner_id . "_logo.png";
-        if (Storage::disk('logos')->exists($logo_file)) {
-            $logo_file = Storage::disk('logos')->url($logo_file);
-            echo "<div id=\"div_logo\"><img src='$logo_file'><br>$p->partner_name Rechnungsausgangsbuch $monatname $jahr Mandanten-Nr.: $mandanten_nr Blatt: $monat<hr></div>\n";
-        } else {
-            echo "<div id=\"div_logo\">KEIN LOGO<br>Folgende Datei erstellen: " . Storage::disk('logos')->fullPath($logo_file) . "<hr></div>";
-        }
         $this->rechnungsbuch_anzeigen_aus($rechnungen_arr);
         $form->ende_formular();
         $form->ende_formular();
@@ -3302,8 +3277,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         $bg = new berlussimo_global ();
         $link = route('web::rechnungen::legacy', ['option' => 'ausgangsbuch'], false);
         $bg->monate_jahres_links($jahr, $link);
-        $self = $_SERVER ['QUERY_STRING'];
-        echo "<a href=\"?$self&xls\">Als Excel</a>";
     }
 
     function ausgangsrechnungen_arr($aussteller_typ, $aussteller_id, $monat, $jahr, $rechnungstyp)
@@ -3324,7 +3297,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
     function rechnungsbuch_anzeigen_aus($arr)
     {
-        if (request()->has('xls')) {
+        if (request()->exists('xls')) {
             ob_clean();
             // ausgabepuffer leeren
             $fileName = 'rechnungsausgangsbuch' . date("d-m-Y") . '.xls';
@@ -3452,83 +3425,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             echo "<tr><td id=\"td_ansehen\"></td><td></td><td></td><td></td><td align=\"right\"><b>$g_brutto</b></td><td align=\"right\"><b>$g_brutto_g</b></td><td></td><td></td><td align=\"right\"><b>$g_skonto</b></td></tr></tfoot>";
         } else {
             echo "<tr><td colspan=10>Keine Rechnungen in diesem Monat</td></tr>";
-        }
-        echo "</table>";
-    }
-
-    function rechnungsbuch_anzeigen_ein_ALTOK($arr)
-    {
-        if (request()->has('xls')) {
-            ob_clean();
-            // ausgabepuffer leeren
-            $fileName = 'rechnungseingangsbuch' . date("d-m-Y") . '.xls';
-            header("Content-type: application/vnd.ms-excel");
-            header("Content-Disposition: attachment; filename=$fileName");
-            $beleg_link = '';
-        }
-        echo "<table class=\"sortable\">";
-        echo "<thead>";
-        echo "<tr>";
-        echo "<th id=\"tr_ansehen\">Ansehen</th>";
-        echo "<th >LFDNR</th>";
-        echo "<th >Rechnungssteller</th>";
-        echo "<th >Leistung/Ware</th>";
-        echo "<th >Brutto</th>";
-        echo "<th >Gutschriften und Returen</th>";
-        echo "<th >RECHUNGSNR</th>";
-        echo "<th >R-Datum</th>";
-        echo "<th >Skonto</th>";
-        echo "</tr>";
-        echo "</thead>";
-
-        $r = new rechnung ();
-
-        $anzahl = count($arr);
-        if ($anzahl > 0) {
-            for ($a = 0; $a < $anzahl; $a++) {
-
-                $belegnr = $arr [$a] ['BELEG_NR'];
-
-                if (!isset ($fileName)) {
-                    $beleg_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $belegnr]) . "'>Ansehen</a>";
-                    $pdf_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'anzeigen_pdf', 'belegnr' => $belegnr]) . "'><img src=\"images/pdf_light.png\"></a>";
-                    $pdf_link1 = "<a href='" . route('web::rechnungen::legacy', ['option' => 'anzeigen_pdf', 'belegnr' => $belegnr, 'no_logo']) . "'><img src=\"images/pdf_dark.png\"></a>";
-                }
-
-                $r->rechnung_grunddaten_holen($belegnr);
-                $r->rechnungs_aussteller_name = substr($r->rechnungs_aussteller_name, 0, 48);
-                echo "<tr><td id=\"td_ansehen\">$beleg_link $pdf_link $pdf_link1</td><td valign=\"top\">$r->empfaenger_eingangs_rnr</td><td valign=\"top\">$r->rechnungs_aussteller_name</td>";
-                echo "<td valign=\"top\">$r->kurzbeschreibung</td>";
-                if ($r->rechnungstyp == 'Rechnung' or $r->rechnungstyp == 'Teilrechnung' or $r->rechnungstyp == 'Schlussrechnung') {
-                    $r->rechnungs_brutto_a = nummer_punkt2komma($r->rechnungs_brutto);
-                    echo "<td align=\"right\" valign=\"top\">$r->rechnungs_brutto_a </td><td></td>";
-                    $g_brutto_r += $r->rechnungs_brutto;
-                    // $g_brutto_r= sprintf("%01.2f", $g_brutto_r);
-                }
-                if ($r->rechnungstyp == 'Gutschrift' or $r->rechnungstyp == 'Stornorechnung') {
-                    $r->rechnungs_brutto_a = nummer_punkt2komma($r->rechnungs_brutto);
-                    echo "<td></td><td align=\"right\" valign=\"top\">$r->rechnungs_brutto_a €</td>";
-                    $g_brutto_g = $g_brutto_g + $r->rechnungs_brutto;
-                    // $g_brutto_g= sprintf("%01.2f", $g_brutto_g);
-                }
-
-                $r->rechnungs_skontoabzug_a = nummer_punkt2komma($r->rechnungs_skontoabzug);
-                echo "<td valign=\"top\"><b>$r->rechnungsnummer</b></td><td valign=\"top\">$r->rechnungsdatum</td><td align=\"right\" valign=\"top\">$r->rechnungs_skontoabzug_a</td></tr>";
-                $g_netto += $r->rechnungs_netto;
-                // $g_netto= sprintf("%01.2f", $g_netto);
-                $g_mwst = $g_mwst + $r->rechnungs_mwst;
-                // $g_mwst= sprintf("%01.2f", $g_mwst);
-
-                $g_skonto = $g_skonto + $r->rechnungs_skontoabzug;
-                // $g_skonto= sprintf("%01.2f", $g_skonto);
-            }
-            // echo "<tr><td colspan=\"9\"><hr></td></tr>";
-            $g_brutto_r = nummer_punkt2komma($g_brutto_r);
-            $g_brutto_g = nummer_punkt2komma($g_brutto_g);
-            $g_skonto = nummer_punkt2komma($g_skonto);
-            echo "<tfoot><tr><td id=\"td_ansehen\"></td><td></td><td></td><td></td><td align=\"right\"><b>$g_brutto_r</b></td><td align=\"right\"><b>$g_brutto_g</b></td><td><b></b></td><td></td><td align=\"right\"><b>$g_skonto</b></td></tr></tfoot>";
-        } else {
-            echo "<tr><td colspan=9>Keine Rechnungen in diesem Monat</td></tr>";
         }
         echo "</table>";
     }

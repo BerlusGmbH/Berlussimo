@@ -34,7 +34,7 @@ class zeiterfassung
     function gewerk_finden($benutzer_id)
     {
         $result = \App\Models\User::find($benutzer_id);
-        return isset($result) ? $result->trade_id : null;
+        $this->gewerk_id = isset($result) ? $result->trade_id : null;
     }
 
     function stundenzettel_in_arr($benutzer_id)
@@ -310,13 +310,13 @@ class zeiterfassung
         $f = new formular ();
         $b = new buchen ();
         $f->erstelle_formular("Neue Zeile", NULL);
-        $f->datum_feld("Datum:", "datum", "", "10", 'datum', '');
+        $f->datum_feld("Datum:", "datum", '', "datum");
         $f->hidden_feld("zettel_id", "$zettel_id");
         $f->hidden_feld("benutzer_id", "$this->benutzer_id");
         $f->text_feld("Leistungsbeschreibung eingeben", "leistungs_beschreibung", "", "50", 'leistungsbeschreibung', '');
         $f->hidden_feld('dauer_min', '');
-        $js_z = "onchange=\"zeitdiff('beginn', 'ende', 'dauer_be', 'dauer_min')\"";
-        $js_z1 = "onclick=\"zeitdiff('beginn', 'ende', 'dauer_be', 'dauer_min')\"";
+        $js_z = "onchange=\"zeitdiff('beginn', 'ende', 'dauer_be', 'dauer_min');Materialize.updateTextFields();\"";
+        $js_z1 = "onclick=\"zeitdiff('beginn', 'ende', 'dauer_be', 'dauer_min');Materialize.updateTextFields();\"";
 
         $this->dropdown_zeiten('Beginn', 'beginn', 'beginn', '6:45', $js_z);
         $this->dropdown_zeiten('Ende', 'ende', 'ende', '15:15', $js_z);
@@ -327,7 +327,7 @@ class zeiterfassung
         $b->dropdown_kostentreager_ids('Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id);
         $f->text_bereich('Hinweise / Notizen / Uhrzeiten / Besonderheiten (max. 1000 Zeichen)', 'hinweis', '', 40, 10, 'hinweis');
         $f->hidden_feld("option", "zettel_eingabe1");
-        $js = "onmouseover=\"zeitdiff('beginn', 'ende', 'dauer_be', 'dauer_min')\"";
+        $js = "onmouseover=\"zeitdiff('beginn', 'ende', 'dauer_be', 'dauer_min');Materialize.updateTextFields();\"";
         $f->send_button_js("submit_zettel", "Speichern", $js);
         $f->ende_formular();
     }
@@ -604,7 +604,7 @@ class zeiterfassung
 
     function letzte_leistung_id()
     {
-        DB::select("SELECT LK_ID FROM LEISTUNGSKATALOG WHERE AKTUELL = '1' ORDER BY LK_ID DESC LIMIT 0,1");
+        $result = DB::select("SELECT LK_ID FROM LEISTUNGSKATALOG WHERE AKTUELL = '1' ORDER BY LK_ID DESC LIMIT 0,1");
         $row = $result[0];
         return $row ['LK_ID'];
     }
@@ -909,9 +909,9 @@ class zeiterfassung
         $z = 0;
         foreach ($benutzer_arr as $user) {
             $z++;
-            $benutzer_id = $user->id;
-            $benutzername = $user->name;
-            $this->BP_PARTNER_ID = $user->BP_PARTNER_ID;
+            $benutzer_id = $user['id'];
+            $benutzername = $user['name'];
+            $this->BP_PARTNER_ID = $user['BP_PARTNER_ID'];
             $p = new partners ();
             $p->get_partner_name($this->BP_PARTNER_ID);
             if ($partner_name != $p->partner_name) {

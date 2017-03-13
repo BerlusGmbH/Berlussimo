@@ -83,6 +83,29 @@ class todo
     function form_neue_aufgabe($t_id = NULL, $typ = 'Benutzer')
     {
         $bb = new buchen ();
+        if (request()->has('submit_n')) {
+            if (request()->has('benutzer_id') && request()->has('submit_n') && request()->has('anzeigen_ab') && request()->has('text')) {
+                $last_id = last_id2('TODO_LISTE', 'T_ID') + 1;
+                $anz_ab = date_german2mysql(request()->input('anzeigen_ab'));
+                $typ = request()->input('typ');
+                $wert_eur = nummer_komma2punkt(request()->input('wert_eur'));
+                $kostentraeger_typ = request()->input('kostentraeger_typ');
+                $kostentraeger_id = request()->input('kostentraeger_id');
+                if (!is_numeric($kostentraeger_id)) {
+                    $kostentraeger_bez = request()->input('kostentraeger_id');
+                    $kostentraeger_id = $bb->kostentraeger_id_ermitteln($kostentraeger_typ, $kostentraeger_bez);
+                }
+                $benutzer_id = Auth::user()->id;
+                $db_abfrage = "INSERT INTO TODO_LISTE VALUES (NULL, '$last_id', '$t_id', '" . request()->input('text') . "', NULL, '$anz_ab','$typ', '" . request()->input('benutzer_id') . "','$benutzer_id', '0','" . request()->input('akut') . "','" . request()->input('kostentraeger_typ') . "','$kostentraeger_id', '$wert_eur','1')";
+                DB::insert($db_abfrage);
+                ob_clean();
+                weiterleiten(redirect()->intended()->getTargetUrl());
+                return;
+            }
+        } else {
+            session()->put('url.intended', URL::previous());
+        }
+
         $f = new formular ();
         $f->erstelle_formular('Neues Projekt oder Aufgabe', '');
         $f->hidden_feld('typ', $typ);
@@ -124,27 +147,6 @@ class todo
 
         $f->send_button('submit_n', 'Speichern');
         $f->fieldset_ende();
-        if (request()->has('submit_n')) {
-            if (request()->has('benutzer_id') && request()->has('submit_n') && request()->has('anzeigen_ab') && request()->has('text')) {
-                $last_id = last_id2('TODO_LISTE', 'T_ID') + 1;
-                $anz_ab = date_german2mysql(request()->input('anzeigen_ab'));
-                $typ = request()->input('typ');
-                $wert_eur = nummer_komma2punkt(request()->input('wert_eur'));
-                $kostentraeger_typ = request()->input('kostentraeger_typ');
-                $kostentraeger_id = request()->input('kostentraeger_id');
-                if (!is_numeric($kostentraeger_id)) {
-                    $kostentraeger_bez = request()->input('kostentraeger_id');
-                    $kostentraeger_id = $bb->kostentraeger_id_ermitteln($kostentraeger_typ, $kostentraeger_bez);
-                }
-                $benutzer_id = Auth::user()->id;
-                $db_abfrage = "INSERT INTO TODO_LISTE VALUES (NULL, '$last_id', '$t_id', '" . request()->input('text') . "', NULL, '$anz_ab','$typ', '" . request()->input('benutzer_id') . "','$benutzer_id', '0','" . request()->input('akut') . "','" . request()->input('kostentraeger_typ') . "','$kostentraeger_id', '$wert_eur','1')";
-                DB::insert($db_abfrage);
-                ob_clean();
-                weiterleiten(redirect()->intended()->getTargetUrl());
-            }
-        } else {
-            session()->put('url.intended', URL::previous());
-        }
         $f->ende_formular();
     }
 
@@ -1148,9 +1150,15 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
     {
         $this->get_aufgabe_alles($id);
 
-        $pp = new benutzer ();
-        $b = $pp->get_user_info(session()->get('benutzer_id'));
-        session()->put('partner_id', $b['BP_PARTNER_ID']);
+        $partner_id = null;
+
+        try {
+            $partner_id = \App\Models\Auftraege::find($id)->von->arbeitgeber()->first()->PARTNER_ID;
+        } catch(Exception $e) {
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Arbeitgeber des Verfassers kann nicht gefunden werden. Briefkopf kann nicht gewählt werden.')
+            );
+        }
 
         if ($this->kos_typ == 'Einheit') {
             $kontaktdaten_mieter = $this->kontaktdaten_anzeigen_mieter($this->kos_id);
@@ -1209,7 +1217,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         ob_clean(); // ausgabepuffer leeren
         $pdf = new Cezpdf ('a4', 'portrait');
         $bpdf = new b_pdf ();
-        $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
+        $bpdf->b_header($pdf, 'Partner', $partner_id, 'portrait', 'Helvetica.afm', 6);
 
         $pdf->Rectangle(250, 630, 305, 80);
         $pdf->addText(252, 700, 10, "Arbeitsauftrag Nr: <b>$id</b> an");

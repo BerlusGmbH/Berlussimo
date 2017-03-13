@@ -292,7 +292,7 @@ if (request()->has('option')) {
             $lr = request()->input('lage_raum');
             $wartungsintervall = request()->input('wartungsintervall');
             $zustell_ans = request()->input('zustell_ans');
-            $values = "'$gruppe_id','$mod', '$her', '$bj', '$lr', " . session()->get('kos_typ') . ", " . session()->get('kos_id') . ", '$zustell_ans', '$wartungsintervall', '1'";
+            $values = "'$gruppe_id','$mod', '$her', '$bj', '$lr', '" . session()->get('kos_typ') . "', " . session()->get('kos_id') . ", '$zustell_ans', '$wartungsintervall', '1'";
             if (save_to_db('W_GERAETE', $values, 'GERAETE_ID') == true) {
                 #echo "Gerät gespeichert!";
                 form_wartungsteil(session()->get('kos_typ'), session()->get('kos_id'));

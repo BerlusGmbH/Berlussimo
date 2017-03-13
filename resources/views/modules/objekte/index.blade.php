@@ -9,12 +9,12 @@
         <form id="filter-form" method="get">
             <div class="row">
                 <div class="input-field col-xs-6 col-md-3">
-                    <a class="btn waves-effect waves-light"
+                    <a class="btn waves-effect waves-light tooltipped" data-position="bottom" data-delay="50" data-tooltip="Neues Objekt"
                        href="{{ route('web::objekte::legacy', ['objekte_raus' => 'objekt_anlegen']) }}"><i
-                                class="mdi mdi-plus left"></i>Neu</a>
-                    <a class="btn waves-effect waves-light"
+                                class="mdi mdi-plus"></i><i class="mdi mdi-city"></i></a>
+                    <a class="btn waves-effect waves-light tooltipped" data-position="bottom" data-delay="50" data-tooltip="Objekt kopieren"
                        href="{{ route('web::objekte::legacy', ['objekte_raus' => 'objekt_kopieren']) }}"><i
-                                class="mdi mdi-content-copy left"></i>Kopieren</a>
+                                class="mdi mdi-content-copy"></i><i class="mdi mdi-city"></i></a>
                 </div>
                 <div class="input-field col-xs-12 col-md-6">
                     <i class="mdi mdi-filter-variant prefix"></i>
@@ -23,61 +23,15 @@
                     <label for="filter">Filter</label>
                 </div>
                 <div class="input-field col-xs-12 col-md-2">
-                    <select id="view" name="v">
-                        <option value="" {{ !request()->has('v') ? 'selected' : '' }}>(ohne)
-                        </option>
-                        <option value="objekt haus[count] einheit[count] detail[count]" {{ request()->input('v') == 'objekt haus[count] einheit[count] detail[count]' ? 'selected' : '' }}>Listenansicht
-                        </option>
-                    </select>
-                    <label>Ansicht</label>
+                    @php($options = ['(ohne)' => '', 'Listenansicht' => 'objekt haus[count] einheit[count] detail[count]'])
+                    @include('shared.listview.views', ['id' => 'view', 'name' => 'v', 'label' => 'Ansicht', 'options' => $options])
                 </div>
                 <div class="input-field col-xs-6 col-md-1">
-                    <select id="size" name="s">
-                        <option value="5" {{ request()->input('s') == 5 ? 'selected' : '' }}>5
-                        </option>
-                        <option value="10" {{ request()->input('s') == 10 ? 'selected' : '' }}>10</option>
-                        <option value="20" {{ (request()->input('s') == 20 | !request()->has('s')) ? 'selected' : '' }}>
-                            20
-                        </option>
-                        <option value="50" {{ request()->input('s') == 50 ? 'selected' : '' }}>50</option>
-                        <option value="100" {{ request()->input('s') == 100 ? 'selected' : '' }}>100</option>
-                        <option value="all" {{ request()->input('s') == 'all' ? 'selected' : '' }}>Alle</option>
-                    </select>
-                    <label>Anzahl</label>
+                    @include('shared.listview.resultsize', ['name' => 's', 'id' => 'size', 'label' => 'Anzahl'])
                 </div>
             </div>
         </form>
-        <div class="row center-xs">
-            @if(!request()->has('s') || (request()->has('s') && request()->input('s') != 'all'))
-                @php
-                    if(request()->has('q'))
-                        $entities->appends(['q' => request()->input('q')]);
-                    if(request()->has('s'))
-                        $entities->appends(['s' => request()->input('s')]);
-                    if(request()->has('v'))
-                        $entities->appends(['v' => request()->input('v')]);
-                @endphp
-                {!! $entities->render() !!}
-            @endif
-        </div>
-        <div class="row">
-            <div class="col col-xs-12">
-                @include('shared.entitytable', ['columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Objekte::class])
-            </div>
-        </div>
-        <div class="row center-xs">
-            @if(!request()->has('s') || (request()->has('s') && request()->input('s') != 'all'))
-                @php
-                    if(request()->has('q'))
-                        $entities->appends(['q' => request()->input('q')]);
-                    if(request()->has('s'))
-                        $entities->appends(['s' => request()->input('s')]);
-                    if(request()->has('v'))
-                        $entities->appends(['v' => request()->input('v')]);
-                @endphp
-                {!! $entities->render() !!}
-            @endif
-        </div>
+        @include('shared.tables.entities-with-paginator', ['parameters' => ['q', 's', 'v', 'f'] ,'columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Objekte::class])
     </div>
 @endsection
 

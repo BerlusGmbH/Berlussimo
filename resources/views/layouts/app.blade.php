@@ -17,9 +17,11 @@
     </main>
 
     <footer class="page-footer">
-        <div class="footer-copyright center">
-            <b>Berlussimo</b> wird von der <a target='_new' href='http://www.berlus.de'>Berlus GmbH</a> -
-            Hausverwaltung zur Verfügung gestellt.
+        <div class="footer-copyright">
+            <div class="container center">
+                <b>Berlussimo</b> wird von der <a target='_new' href='http://www.berlus.de'>Berlus GmbH</a> -
+                Hausverwaltung zur Verfügung gestellt.
+            </div>
         </div>
     </footer>
 @endsection

@@ -2,18 +2,19 @@
 
 namespace App\Models;
 
+use App\Models\Traits\DefaultOrder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Details extends Model
 {
-    //use Searchable;
+    use DefaultOrder;
 
     public $timestamps = false;
     protected $table = 'DETAIL';
     protected $primaryKey = 'DETAIL_ID';
+    protected $defaultOrder = ['DETAIL_NAME' => 'asc', 'DETAIL_INHALT' => 'asc', 'DETAIL_BEMERKUNG' => 'asc'];
 
-    //protected $searchableFields = ['HAUS_STRASSE', 'HAUS_NUMMER', 'HAUS_PLZ', 'HAUS_STADT'];
 
     protected static function boot()
     {

@@ -1,79 +1,52 @@
 @extends('layouts.main-without-menu')
 
 @section('breadcrumbs')
-    <a href="{{ route('web::einheiten::index') }}" class="breadcrumb">Aufträge</a>
+    <a href="{{ route('web::todo::index') }}" class="breadcrumb">Aufträge</a>
 @endsection
 
 @section('content')
     <div class="card-panel white">
         <form id="filter-form" method="get">
             <div class="row">
-                <div class="input-field col-xs-6 col-md-2">
-                    <a class="btn waves-effect waves-light"
-                       href="{{ route('web::einheiten::legacy', ['einheit_raus' => 'einheit_neu']) }}"><i
-                                class="mdi mdi-plus left"></i>Neu</a>
+                <div class="input-field col-xs-6 col-md-3">
+                    <a class='waves-effect waves-light btn tooltipped' data-position="bottom" data-delay="50" data-tooltip="Auftrag an Mitarbeiter"
+                           href='{{ route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Benutzer']) }}'>
+                        <i class="mdi mdi-plus"></i><i class="mdi mdi-clipboard"></i><i class="mdi mdi-worker"></i></a>
+                    <a class='waves-effect waves-light btn tooltipped' data-position="bottom" data-delay="50" data-tooltip="Auftrag an Partner"
+                           href='{{ route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Partner']) }}'>
+                        <i class="mdi mdi-plus"></i><i class="mdi mdi-clipboard"></i><i class="mdi mdi-account-multiple"></i></a>
                 </div>
-                <div class="input-field col-xs-12 col-md-6">
+                <div class="input-field col-xs-12 col-md-9">
                     <i class="mdi mdi-filter-variant prefix"></i>
-                    <input id="filter" name="q" value="{{ request()->input('q') }}" type="text"
+                    <input id="query" name="q" value="{{ request()->input('q') }}" type="text"
                            autocomplete="off">
-                    <label for="filter">Filter</label>
+                    <label for="query">Abfrage</label>
                 </div>
-                <div class="input-field col-xs-12 col-md-3">
-                    <select id="view" name="v">
-                        <option value="" {{ !request()->has('v') ? 'selected' : '' }}>(ohne)
-                        </option>
-                        <option value="!auftrag[erledigt akut erstellt:desc] auftrag auftrag[erstellt] auftrag[text] von an kostenträger" {{ request()->input('v') == '!auftrag[erledigt akut erstellt:desc] auftrag auftrag[erstellt] auftrag[text] von an kostenträger' ? 'selected' : '' }}>Alle
-                        </option>
-                    </select>
-                    <label>Ansicht</label>
+                <div class="input-field col-xs-12 col-md-offset-5 col-md-3">
+                    @php($options = [
+                        '(ohne)' => '',
+                        'Aufgabenliste' => 'auftrag auftrag[erstellt:desc] auftrag[text] von an kostenträger'
+                    ])
+                    @include('shared.listview.views', ['id' => 'view', 'name' => 'v', 'label' => 'Ansicht', 'options' => $options])
+                </div>
+                <div class="input-field col-md-3">
+                    @php($options = [
+                        'Eigene' => '!auftrag(mitarbeiter(id=' . Auth::user()->id . '))',
+                        'Von Mir' => '!auftrag(von(id=' . Auth::user()->id . '))',
+                        'An Mich' => '!auftrag(an(mitarbeiter(id=' . Auth::user()->id . ')))',
+                        'Akut' => '!auftrag(akut=JA)',
+                        'Nicht Akut' => '!auftrag(akut=NEIN)',
+                        'Erledigt' => '!auftrag(erledigt="1")',
+                        'Nicht Erledigt' => '!auftrag(erledigt="0")'
+                    ])
+                    @include('shared.listview.filters', ['name' => 'f', 'id' => 'filter', 'label' => 'Filter', 'options' => $options])
                 </div>
                 <div class="input-field col-xs-6 col-md-1">
-                    <select id="size" name="s">
-                        <option value="5" {{ request()->input('s') == 5 ? 'selected' : '' }}>5
-                        </option>
-                        <option value="10" {{ request()->input('s') == 10 ? 'selected' : '' }}>10</option>
-                        <option value="20" {{ (request()->input('s') == 20 | !request()->has('s')) ? 'selected' : '' }}>20
-                        </option>
-                        <option value="50" {{ request()->input('s') == 50 ? 'selected' : '' }}>50</option>
-                        <option value="100" {{ request()->input('s') == 100 ? 'selected' : '' }}>100</option>
-                        <option value="all" {{ request()->input('s') == 'all' ? 'selected' : '' }}>Alle</option>
-                    </select>
-                    <label>Anzahl</label>
+                    @include('shared.listview.resultsize', ['name' => 's', 'id' => 'size', 'label' => 'Anzahl'])
                 </div>
             </div>
         </form>
-        <div class="row center-xs">
-            @if(!request()->has('s') || (request()->has('s') && request()->input('s') != 'all'))
-                @php
-                    if(request()->has('q'))
-                        $entities->appends(['q' => request()->input('q')]);
-                    if(request()->has('s'))
-                        $entities->appends(['s' => request()->input('s')]);
-                    if(request()->has('v'))
-                        $entities->appends(['v' => request()->input('v')]);
-                @endphp
-                {!! $entities->render() !!}
-            @endif
-        </div>
-        <div class="row">
-            <div class="col col-xs-12">
-                @include('shared.entitytable', ['columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Auftraege::class])
-            </div>
-        </div>
-        <div class="row center-xs">
-            @if(!request()->has('s') || (request()->has('s') && request()->input('s') != 'all'))
-                @php
-                    if(request()->has('q'))
-                        $entities->appends(['q' => request()->input('q')]);
-                    if(request()->has('s'))
-                        $entities->appends(['s' => request()->input('s')]);
-                    if(request()->has('v'))
-                        $entities->appends(['v' => request()->input('v')]);
-                @endphp
-                {!! $entities->render() !!}
-            @endif
-        </div>
+        @include('shared.tables.entities-with-paginator', ['parameters' => ['q', 's', 'v', 'f'] ,'columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Auftraege::class])
     </div>
 @endsection
 
@@ -85,16 +58,26 @@
             target.form.submit();
         };
 
-        $('#filter').keypress(function (e) {
+        var hasChanged = false;
+
+        $('#query').keypress(function (e) {
             if (e.which == KeyCode.KEY_ENTER || e.which == KeyCode.KEY_RETURN) {
                 submit(this);
             }
         });
-        $('#size').on('change', function (e) {
+        $('#size').on('change', function () {
             submit(this);
         });
-        $('#view').on('change', function (e) {
+        $('#view').on('change', function () {
             submit(this);
+        });
+        var $filter = $('#filter');
+        $filter.on('change', function () {
+           hasChanged = true;
+        });
+        $filter.siblings('input.select-dropdown').first().on('close', function () {
+            if(hasChanged)
+                submit(this);
         });
     });
 </script>

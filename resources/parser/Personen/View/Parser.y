@@ -17,6 +17,7 @@
         $this->lex = $lex;
         $this->query = $query;
         $this->class = get_class($query->getModel());
+        $this->column = Relations::classToColumn($this->class);
     }
 
     function stack($major, $count = 1) {
@@ -83,8 +84,7 @@ start(res) ::= expressions(e).
     $q->with($withs);
     $columns = e;
     if(!isset($columns) || $columns->isEmpty()) {
-        $column = Relations::classToColumn($this->class);
-        $columns = collect([[$column => null]]);
+        $columns = collect([[$this->column => null]]);
     }
     res = $columns;
 }
@@ -92,8 +92,7 @@ start(res) ::= expressions(e).
 start(res) ::= .
 {
     $this->query->defaultOrder();
-    $column = Relations::classToColumn($this->class);
-    res = collect([[$column => null]]);
+    res = collect([[$this->column => null]]);
 }
 
 expressions(res) ::= expressions(e1) expression(e2).
@@ -120,13 +119,13 @@ expression(res) ::= COLUMN(co) clauseexpression(cl) viewexpression(v).
 {
     $column = co;
     $clause = cl;
-    $relationships = Relations::classColumnToRelations($this->class, $column);
+    $relationships = Relations::columnColumnToRelations($this->column, $column);
     $views = v;
     foreach($relationships as $r) {
         if(isset($views['columns']) && !$views['columns']->isEmpty()) {
             $notWanted = true;
             foreach($cols as $col) {
-                $rs = Relations::classColumnToRelations($this->class, $col);
+                $rs = Relations::columnColumnToRelations($this->column, $col);
                 foreach($rs as $s) {
                     if(strpos($r, $s) !== false) {
                         $notWanted = false;
@@ -145,7 +144,7 @@ expression(res) ::= COLUMN(co) clauseexpression(cl) viewexpression(v).
         }
         $query = $this->r[$r];
         foreach($views['fields'] as $view) {
-            $class = Relations::columnToClass($column);
+            $class = Relations::columnColumnToClass($this->column, $column);
             $field = Relations::classFieldToField($class, $view['field']);
             if(isset($view['order'])) {
                 $query->orderBy($field, $view['order']);
@@ -170,7 +169,10 @@ expression(res) ::= VALUE(v). {
 }
 clauseexpression(res) ::= .
 {
-    $class = Relations::columnToClass($this->stack(self::COLUMN));
+    $class = Relations::columnColumnToClass($this->column, $this->stack(self::COLUMN));
+    if(is_array($class)) {
+        $class = Relations::columnToClass($this->column);
+    }
     res = $class::query();
 }
 clauseexpression(res) ::= OPENP clauses(cl) CLOSEP.
@@ -197,57 +199,109 @@ cterm(res) ::= COLUMN(co) OPENP clauses(cl) CLOSEP.
 {
     $clause = cl;
     $column = co;
-    $class = Relations::columnToClass($this->stack(self::COLUMN, 2));
-    $relationships = Relations::classColumnToRelations($class, $column);
-    $query = $class::query();
-    $query->where(function($query) use ($relationships, $clause) {
-        foreach($relationships as $r) {
-            if($r === '') {
-                $query->orWhere(function($query) use ($clause) {
-                    $query->mergeWheres($clause->getQuery()->wheres, $clause->getQuery()->getRawBindings()['where']);
-                });
-            } else {
-                $query->orWhereHas($r, function($query) use ($clause) {
+    if(is_array(Relations::columnColumnToClass($this->stack(self::COLUMN, 3), $this->stack(self::COLUMN, 2)))) {
+        $relations = Relations::columnColumnToRelations($this->stack(self::COLUMN, 3), $this->stack(self::COLUMN, 2));
+        $class = Relations::columnToClass($this->stack(self::COLUMN, 3));
+        $relatedClass = Relations::columnToClass($column);
+        $query = $class::query();
+        $query->where(function($query) use ($query, $relatedClass, $relations, $clause) {
+            foreach($relations as $relation) {
+                $short = new \ReflectionClass($relatedClass);
+                $query->whereHas($relation . $short->getShortName(), function ($query) use ($clause) {
                     $query->mergeWheres($clause->getQuery()->wheres, $clause->getQuery()->getRawBindings()['where']);
                 });
             }
-        }
-    });
+        });
+    } elseif(is_array(Relations::columnColumnToClass($this->stack(self::COLUMN, 2), $column))) {
+        $query = $clause;
+    } else {
+        $class = Relations::columnToClass($this->stack(self::COLUMN, 2));
+        $relationships = Relations::columnColumnToRelations($this->stack(self::COLUMN, 2), $column);
+        $query = $class::query();
+        $query->where(function ($query) use ($relationships, $clause) {
+            foreach ($relationships as $r) {
+                if ($r === '') {
+                    $query->orWhere(function ($query) use ($clause) {
+                        $query->mergeWheres($clause->getQuery()->wheres, $clause->getQuery()->getRawBindings()['where']);
+                    });
+                } else {
+                    $query->orWhereHas($r, function ($query) use ($clause) {
+                        $query->mergeWheres($clause->getQuery()->wheres, $clause->getQuery()->getRawBindings()['where']);
+                    });
+                }
+            }
+        });
+    }
     res = $query;
 }
 cterm(res) ::= COLUMN(co).
 {
     $column = co;
-    $class = Relations::columnToClass($this->stack(self::COLUMN, 2));
-    $relationships = Relations::classColumnToRelations($class, $column);
-    $query = $class::query();
-    $query->where(function($query) use ($relationships) {
-       foreach($relationships as $r) {
-            if($r !== '') {
-                $query->orHas($r);
+    if(is_array(Relations::columnColumnToClass($this->stack(self::COLUMN, 3), $this->stack(self::COLUMN, 2)))) {
+        $relations = Relations::columnColumnToRelations($this->stack(self::COLUMN, 3), $this->stack(self::COLUMN, 2));
+        $class = Relations::columnToClass($this->stack(self::COLUMN, 3));
+        $relatedClass = Relations::columnToClass($column);
+        $query = $class::query();
+        $query->where(function($query) use ($query, $relatedClass, $relations) {
+            foreach($relations as $relation) {
+                $short = new \ReflectionClass($relatedClass);
+                $query->orHas($relation . $short->getShortName());
             }
-        }
-    });
+        });
+    } elseif(is_array(Relations::columnColumnToClass($this->stack(self::COLUMN, 2), $column))) {
+        $classes = Relations::columnColumnToClass($this->stack(self::COLUMN, 2), $column);
+        $relations = Relations::columnColumnToRelations($this->stack(self::COLUMN, 2), $column);
+        $class = Relations::columnColumnToClass($this->stack(self::COLUMN, 2), $this->stack(self::COLUMN, 2));
+        $query = $class::query();
+        $query->where(function($query) use ($query, $classes, $relations) {
+            foreach($relations as $relation) {
+                foreach($classes as $class) {
+                    $short = new \ReflectionClass($class);
+                    $query->orHas($relation . $short->getShortName());
+                }
+            }
+        });
+    } else {
+        $class = Relations::columnToClass($this->stack(self::COLUMN, 2));
+        $relationships = Relations::columnColumnToRelations($this->stack(self::COLUMN, 2), $column);
+        $query = $class::query();
+        $query->where(function($query) use ($relationships) {
+            foreach($relationships as $r) {
+                if($r !== '') {
+                    $query->orHas($r);
+                }
+            }
+        });
+    }
     res = $query;
 }
-fterm(res) ::= FIELD LIKE VALUE(v).
+fterm(res) ::= FIELD(f) LIKE VALUE(v).
 {
-    $field = $this->stack(self::FIELD);
-    $dbField = Relations::columnFieldToField($this->stack(self::COLUMN), $field);
+    $field = f;
     $class = Relations::columnToClass($this->stack(self::COLUMN));
+    if(is_null($class)) {
+        $class = Relations::columnColumnToClass($this->stack(self::COLUMN, 2),$this->stack(self::COLUMN));
+    }
+    $dbField = Relations::classFieldToField($class, $field);
     res = $class::where($dbField, 'like', '%' . v . '%');
 }
-fterm(res) ::= FIELD COMPARATOR(c) VALUE(v).
+fterm(res) ::= FIELD(f) COMPARATOR(c) VALUE(v).
 {
-    $field = $this->stack(self::FIELD);
-    $dbField = Relations::columnFieldToField($this->stack(self::COLUMN), $field);
+    $field = f;
     $class = Relations::columnToClass($this->stack(self::COLUMN));
+    if(is_null($class)) {
+        $class = Relations::columnColumnToClass($this->stack(self::COLUMN, 2),$this->stack(self::COLUMN));
+    }
+    $dbField = Relations::classFieldToField($class, $field);
     res = $class::where($dbField, c, v);
 }
 fterm(res) ::= LAUFZEIT COMPARATOR(c) VALUE(v).
 {
     $column = $this->stack(self::COLUMN);
-    $class = Relations::columnToClass($column);
+    $class = Relations::columnToClass($this->stack(self::COLUMN));
+    if(is_null($class)) {
+        $class = Relations::columnColumnToClass($this->stack(self::COLUMN, 2),$this->stack(self::COLUMN));
+    }
     $comparator = c;
     $von = Relations::classFieldToField($class, 'von');
     $bis = Relations::classFieldToField($class, 'bis');
@@ -264,7 +318,10 @@ fterm(res) ::= LAUFZEIT COMPARATOR(c) VALUE(v).
 fterm(res) ::= LAUFZEIT LIKE VALUE(v).
 {
     $column = $this->stack(self::COLUMN);
-    $class = Relations::columnToClass($column);
+    $class = Relations::columnToClass($this->stack(self::COLUMN));
+    if(is_null($class)) {
+        $class = Relations::columnColumnToClass($this->stack(self::COLUMN, 2),$this->stack(self::COLUMN));
+    }
     $von = Relations::classFieldToField($class, 'von');
     $bis = Relations::classFieldToField($class, 'bis');
     res = $class::where(function($query) use ($von, $bis) {

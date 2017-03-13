@@ -196,7 +196,7 @@ class benutzer
         if ($anz) {
             echo "<div class='row'>";
             echo "<div class='input-field col s12 m4 l2'>";
-            echo "<input type=\"checkbox\" name=\"modul_name[]\" value=\"*\" id='all'/>";
+            echo "<input type=\"checkbox\" class='filled-in' name=\"modul_name[]\" value=\"*\" id='all'/>";
             echo "<label for=\"all\">Vollzugriff</label>";
             echo "</div>";
 
@@ -208,9 +208,9 @@ class benutzer
 
                 echo "<div class='input-field col s12 m4 l2'>";
                 if (check_user_mod($b_id, $modul_name)) {
-                    echo "<input type=\"checkbox\" name=\"modul_name[]\" value=\"$modul_name\" id=\"$modul_name\" checked />";
+                    echo "<input type=\"checkbox\" class='filled-in' name=\"modul_name[]\" value=\"$modul_name\" id=\"$modul_name\" checked />";
                 } else {
-                    echo "<input type=\"checkbox\" name=\"modul_name[]\" value=\"$modul_name\" id=\"$modul_name\"/>";
+                    echo "<input type=\"checkbox\" class='filled-in' name=\"modul_name[]\" value=\"$modul_name\" id=\"$modul_name\"/>";
                 }
                 echo "<label for=\"$modul_name\">$modul_name_a</label>";
                 echo "</div>";

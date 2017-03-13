@@ -34,7 +34,7 @@ class ObjekteController extends LegacyController
 
         $trace = null;
         if (config('app.debug')) {
-            $trace = fopen(storage_path('logs/vparser.log'), 'w');
+            $trace = fopen(storage_path('logs/parser.log'), 'w');
         }
         $lexer = new Lexer($query, $trace);
         $parser = new Parser($lexer, $builder);
@@ -45,15 +45,8 @@ class ObjekteController extends LegacyController
         $parser->doParse(0, 0);
         $columns = $parser->retvalue;
 
-        if (request()->has('s')) {
-            if (request()->input('s') != 'all') {
-                $objekte = $builder->paginate(request()->input('s'));
-            } else {
-                $objekte = $builder->get();
-            }
-        } else {
-            $objekte = $builder->paginate(20);
-        }
+        $objekte = $builder->paginate(request()->input('s', 20));
+
         list($index, $wantedRelations) = $this->generateIndex($objekte, $columns);
         return view('modules.objekte.index', ['columns' => $columns, 'entities' => $objekte, 'index' => $index, 'wantedRelations' => $wantedRelations]);
     }

@@ -18,6 +18,8 @@ class MietvertraegeController extends LegacyController
 
     public function request(MietvertraegeRequest $request)
     {
+        ini_set('max_execution_time', 600);
+        ini_set('memory_limit', '512M');
         return $this->render();
     }
 

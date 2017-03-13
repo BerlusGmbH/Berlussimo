@@ -44,10 +44,10 @@ class Objekte extends Model
         if(is_null($date)) {
             $date = Carbon::today();
         }
-        return Personen::whereHas('mietvertraege.einheit.haus.objekt', function ($query) {
-            $query->where('OBJEKT_ID', $this->OBJEKT_ID);
-        })->whereHas('mietvertraege', function ($query) use ($date){
-            $query->whereDate('MIETVERTRAG_VON', '<=', $date)->where(function ($query) use($date) {
+        return Personen::whereHas('mietvertraege', function ($query) use ($date){
+            $query->whereHas('einheit.haus.objekt', function ($query) {
+                $query->where('OBJEKT_ID', $this->OBJEKT_ID);
+            })->whereDate('MIETVERTRAG_VON', '<=', $date)->where(function ($query) use($date) {
                 $query->whereDate('MIETVERTRAG_BIS', '>=', $date)->orWhereDate('MIETVERTRAG_BIS', '=', '0000-00-00');
             });
         });
@@ -64,5 +64,9 @@ class Objekte extends Model
 
     public function commonDetails() {
         return $this->details()->whereNotIn('DETAIL_NAME', ['']);
+    }
+
+    public function eigentuemer() {
+        return $this->belongsTo(Partner::class, 'EIGENTUEMER_PARTNER', 'PARTNER_ID');
     }
 }

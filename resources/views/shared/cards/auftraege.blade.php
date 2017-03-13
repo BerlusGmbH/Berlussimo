@@ -3,15 +3,17 @@
         <span class="card-title">
             <div class="row">
                 <div class="col-xs-8">
-                    Aufträge ({{ $auftraege->count() }})
+                    <a href="{{$href}}">
+                        {{ $title }} ({{ $auftraege->count() }})
+                    </a>
                 </div>
                 <div class="col-xs-4 end-xs">
                     <a class='waves-effect waves-light btn tooltipped' data-position="bottom" data-delay="50" data-tooltip="Auftrag an Mitarbeiter"
-                       href='{{ route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => $type, 'kos_typ' => 'Objekt', 'kos_id' => $objekt->OBJEKT_ID]) }}'><i
-                                class="mdi mdi-clipboard"></i><i class="mdi mdi-worker"></i></a>
+                       href='{{ route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => $type, 'kos_id' => $id]) }}'>
+                        <i class="mdi mdi-plus"></i><i class="mdi mdi-clipboard"></i><i class="mdi mdi-worker"></i></a>
                     <a class='waves-effect waves-light btn tooltipped' data-position="bottom" data-delay="50" data-tooltip="Auftrag an Partner"
-                       href='{{ route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => $type, 'kos_typ' => 'Objekt', 'kos_id' => $objekt->OBJEKT_ID]) }}'><i
-                                class="mdi mdi-clipboard"></i><i class="mdi mdi-account-multiple"></i></a>
+                       href='{{ route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => $type, 'kos_id' => $id]) }}'>
+                        <i class="mdi mdi-plus"></i><i class="mdi mdi-clipboard"></i><i class="mdi mdi-account-multiple"></i></a>
                 </div>
             </div>
         </span>

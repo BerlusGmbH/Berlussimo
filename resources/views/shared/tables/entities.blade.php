@@ -55,7 +55,7 @@
                 <td>
                     @php
                         $column = key($fields);
-                        $rs = $relations->classColumnToRelations($class, $column);
+                        $rs = $relations->columnColumnToRelations($relations->classToColumn($class), $column);
                         foreach ($rs as $r) {
                             if($wantedRelations[$key]->contains($r)) {
                                 $c = 0;

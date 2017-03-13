@@ -179,7 +179,7 @@ switch ($option) {
         } else {
             $pdf = '0';
         }
-        $dateiname_msgid = session()->get('geldkonto_id') . '-' . Auth::user()->email . '-' . microtime(1) . '.xml';
+        $dateiname_msgid = session()->get('geldkonto_id') . '-' . str_limit(umlautundgross(Auth::user()->name),35) . '-' . microtime(1) . '.xml';
         $sep = new sepa ();
         if (request()->has('sammelbetrag')) {
             $sammelbetrag = request()->input('sammelbetrag');

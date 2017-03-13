@@ -28,7 +28,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-6 detail">
+                        <div class="col-xs-6 col-sm-3 detail">
                             <i class="mdi mdi-mail-ru"></i>
                             @php
                                 $emails = collect();
@@ -48,114 +48,32 @@
                             @endphp
                             <a href="{{ $href }}">E-Mail an Mieter ({{ $emails->count() }})</a>
                         </div>
+                        <div class="col-xs-6 col-sm-3 detail">
+                            <i class="mdi mdi-key tooltipped" data-position="bottom" data-delay="50" data-tooltip="Eigentümer"></i>
+                            @include('shared.entities.partner', ['entity' => $objekt->eigentuemer])
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         @if(!$objekt->commonDetails->isEmpty())
             <div class="col-xs-12 col-sm-6">
-                <div class="card card-expandable">
-                    <div class="card-content">
-                        <div class="card-title">Allgemeine Details ({{ $objekt->commonDetails->count() }})</div>
-                        <table class="striped">
-                            <thead>
-                            <th>Typ</th>
-                            <th>Wert</th>
-                            <th>Bemerkung</th>
-                            </thead>
-                            <tbody>
-                            @foreach( $objekt->commonDetails as $detail )
-                                <tr>
-                                    <td>
-                                        {{ $detail->DETAIL_NAME }}
-                                    </td>
-                                    <td>
-                                        {{ $detail->DETAIL_INHALT }}
-                                    </td>
-                                    <td>
-                                        {{ $detail->DETAIL_BEMERKUNG }}
-                                    </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                @include('shared.cards.details', ['details' => $objekt->commonDetails()->defaultOrder()->get(), 'title' => 'Allgemeine Details'])
             </div>
         @endif
         @if(!$objekt->haeuser->isEmpty())
             <div class="col-xs-12 col-sm-3">
-                <div class="card card-expandable">
-                    <div class="card-content">
-                        <span class="card-title"><a
-                                    href="{{ route('web::haeuser::index', ['q' => '!haus(objekt(id=' . $objekt->OBJEKT_ID . '))']) }}">Häuser ({{ $objekt->haeuser->count() }})
-                            </a></span>
-                        <table class="striped">
-                            <thead>
-                            <th>Haus</th>
-                            </thead>
-                            <tbody>
-                            @foreach( $objekt->haeuser()->defaultOrder()->get() as $haus )
-                                <tr>
-                                    <td>
-                                        @include('shared.entities.haus', [ 'entity' => $haus])
-                                    </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                @include('shared.cards.haeuser', [ 'haeuser' => $objekt->haeuser()->defaultOrder()->get(), 'title' => 'Häuser', 'href' => route('web::haeuser::index', ['q' => '!haus(objekt(id=' . $objekt->OBJEKT_ID . '))'])])
             </div>
         @endif
         @if(!$objekt->einheiten->isEmpty())
             <div class="col-xs-12 col-sm-3">
-                <div class="card card-expandable">
-                    <div class="card-content">
-                        <span class="card-title"><a
-                                    href="{{ route('web::einheiten::index', ['q' => '!einheit(objekt(id=' . $objekt->OBJEKT_ID . '))']) }}">Einheiten ({{ $objekt->einheiten->count() }})
-                            </a></span>
-                        <table class="striped">
-                            <thead>
-                            <th>Einheit</th>
-                            </thead>
-                            <tbody>
-                            @foreach( $objekt->einheiten()->defaultOrder()->get() as $einheit )
-                                <tr>
-                                    <td>
-                                        @include('shared.entities.einheit', [ 'entity' => $einheit])
-                                    </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                @include('shared.cards.einheiten', [ 'einheiten' => $objekt->einheiten()->defaultOrder()->get(), 'title' => 'Einheiten', 'href' => route('web::einheiten::index', ['q' => '!einheit(objekt(id=' . $objekt->OBJEKT_ID . '))'])])
             </div>
         @endif
         @if(!$objekt->mieter()->get()->isEmpty())
             <div class="col-xs-12 col-sm-3">
-                <div class="card card-expandable">
-                    <div class="card-content">
-                        <span class="card-title"><a
-                                    href="{{ route('web::personen::index', ['q' => '!person(mietvertrag(objekt(id=' . $objekt->OBJEKT_ID . ') laufzeit=' . \Carbon\Carbon::today()->toDateString() . '))']) }}">Mieter ({{ $objekt->mieter()->get()->count() }})
-                            </a></span>
-                        <table class="striped">
-                            <thead>
-                            <th>Mieter</th>
-                            </thead>
-                            <tbody>
-                            @foreach( $objekt->mieter()->defaultOrder()->with('sex')->get() as $mieter )
-                                <tr>
-                                    <td>
-                                        @include('shared.entities.person', [ 'entity' => $mieter ])
-                                    </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                @include('shared.cards.mieter', [ 'mieter' => $objekt->mieter()->defaultOrder()->with('sex')->get(), 'title' => 'Mieter', 'href' => route('web::personen::index', ['q' => '!person(mietvertrag(objekt(id=' . $objekt->OBJEKT_ID . ') laufzeit=' . \Carbon\Carbon::today()->toDateString() . '))'])])
             </div>
         @endif
         <div class="col-xs-12 col-sm-6">
@@ -247,7 +165,7 @@
             </div>
         </div>
         <div class="col-xs-12">
-            @include('shared.cards.auftraege', ['auftraege' => $objekt->auftraege()->defaultOrder()->get(), 'type' => 'Objekt'])
+            @include('shared.cards.auftraege', ['auftraege' => $objekt->auftraege()->orderBy('ERSTELLT', 'desc')->get(), 'title' => 'Aufträge', 'type' => 'Objekt', 'id' => $objekt->OBJEKT_ID, 'href' => route('web::todo::index', ['q' => '!auftrag(kostenträger(objekt(id=' . $objekt->OBJEKT_ID . ')))'])])
         </div>
     </div>
 @endsection

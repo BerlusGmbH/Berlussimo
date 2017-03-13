@@ -1638,9 +1638,9 @@ class sepa
             $time_h = date("His");
 
             $anz = count($arr);
-            $benutzername = Auth::user()->email;
-            $msg_id = "$von_gk_id-$datum_h-$time_h-$benutzername";
-            $dateiname = "$von_gk_id-$datum_h-$time_h-$benutzername.xml";
+            $benutzername = Auth::user()->name;
+            $msg_id = "$von_gk_id-$datum_h-$time_h-" . str_limit(umlautundgross($benutzername), 35);
+            $dateiname = "$von_gk_id-$datum_h-$time_h-" . str_limit(umlautundgross($benutzername), 35) . ".xml";
             for ($a = 0; $a < $anz; $a++) {
                 $empf = $this->umlautundgross($arr [$a] ['BEGUENSTIGTER']);
                 $vzweck = substr($this->umlautundgross($arr [$a] ['VZWECK']), 0, 140);

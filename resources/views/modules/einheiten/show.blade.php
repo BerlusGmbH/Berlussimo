@@ -31,7 +31,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-6 detail">
+                        <div class="col-xs-6 col-sm-3 detail">
                             <i class="mdi mdi-mail-ru"></i>
                             @php
                                 $emails = collect();
@@ -51,68 +51,33 @@
                             @endphp
                             <a href="{{ $href }}">E-Mail an Mieter ({{ $emails->count() }})</a>
                         </div>
+                        <div class="col-xs-6 col-sm-3 detail">
+                            <i class="mdi mdi-compass tooltipped" data-position="bottom" data-delay="50" data-tooltip="Lage"></i> {{ $einheit->EINHEIT_LAGE }}
+                        </div>
+                        <div class="col-xs-6 col-sm-3 detail">
+                            <i class="mdi mdi-arrow-expand-all tooltipped" data-position="bottom" data-delay="50" data-tooltip="Fläche"></i> {{ $einheit->EINHEIT_QM }} m²
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         @if(!$einheit->commonDetails->isEmpty())
             <div class="col-xs-12 col-sm-6">
-                <div class="card card-expandable">
-                    <div class="card-content">
-                        <div class="card-title">Allgemeine Details ({{ $einheit->commonDetails->count() }})</div>
-                        <table class="striped">
-                            <thead>
-                            <th>Typ</th>
-                            <th>Wert</th>
-                            <th>Bemerkung</th>
-                            </thead>
-                            <tbody>
-                            @foreach( $einheit->commonDetails as $detail )
-                                <tr>
-                                    <td>
-                                        {{ $detail->DETAIL_NAME }}
-                                    </td>
-                                    <td>
-                                        {{ $detail->DETAIL_INHALT }}
-                                    </td>
-                                    <td>
-                                        {{ $detail->DETAIL_BEMERKUNG }}
-                                    </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                @include('shared.cards.details', ['details' => $einheit->commonDetails()->defaultOrder()->get(), 'title' => 'Allgemeine Details'])
             </div>
         @endif
         @if(!$einheit->mieter()->get()->isEmpty())
             <div class="col-xs-12 col-sm-3">
-                <div class="card card-expandable">
-                    <div class="card-content">
-                        <span class="card-title"><a
-                                    href="{{ route('web::personen::index', ['q' => '!person(mietvertrag(einheit(id=' . $einheit->EINHEIT_ID . ') laufzeit=' . \Carbon\Carbon::today()->toDateString() . '))']) }}">Mieter ({{ $einheit->mieter()->get()->count() }})
-                            </a></span>
-                        <table class="striped">
-                            <thead>
-                            <th>Mieter</th>
-                            </thead>
-                            <tbody>
-                            @foreach( $einheit->mieter()->defaultOrder()->with('sex')->get() as $mieter )
-                                <tr>
-                                    <td>
-                                        @include('shared.entities.person', [ 'entity' => $mieter ])
-                                    </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                @include('shared.cards.mieter', ['mieter' => $einheit->mieter()->defaultOrder()->with('sex')->get(), 'title' => 'Mieter', 'href' => route('web::personen::index', ['q' => '!person(mietvertrag(einheit(id=' . $einheit->EINHEIT_ID . ') laufzeit=' . \Carbon\Carbon::today()->toDateString() . '))'])])
+            </div>
+        @endif
+        @if(!$einheit->mietvertraege()->get()->isEmpty())
+            <div class="col-xs-12 col-sm-3">
+                @include('shared.cards.mietvertraege', ['mietvertraege' => $einheit->mietvertraege()->defaultOrder()->get()])
             </div>
         @endif
         <div class="col-xs-12">
-            @include('shared.cards.auftraege', ['auftraege' => $einheit->auftraege()->defaultOrder()->get(), 'type' => 'Einheit'])
+            @include('shared.cards.auftraege', ['auftraege' => $einheit->auftraege()->orderBy('ERSTELLT', 'desc')->get(), 'title' => 'Aufträge', 'type' => 'Einheit', 'id' => $einheit->EINHEIT_ID, 'href' => route('web::todo::index', ['q' => '!auftrag(kostenträger(einheit(id=' . $einheit->EINHEIT_ID . ')))'])])
         </div>
     </div>
 @endsection

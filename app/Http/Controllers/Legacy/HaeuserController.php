@@ -34,7 +34,7 @@ class HaeuserController extends LegacyController
 
         $trace = null;
         if (config('app.debug')) {
-            $trace = fopen(storage_path('logs/vparser.log'), 'w');
+            $trace = fopen(storage_path('logs/parser.log'), 'w');
         }
         $lexer = new Lexer($query, $trace);
         $parser = new Parser($lexer, $builder);
@@ -45,15 +45,8 @@ class HaeuserController extends LegacyController
         $parser->doParse(0, 0);
         $columns = $parser->retvalue;
 
-        if (request()->has('s')) {
-            if (request()->input('s') != 'all') {
-                $haeuser = $builder->paginate(request()->input('s'));
-            } else {
-                $haeuser = $builder->get();
-            }
-        } else {
-            $haeuser = $builder->paginate(20);
-        }
+        $haeuser = $builder->paginate(request()->input('s', 20));
+
         list($index, $wantedRelations) = $this->generateIndex($haeuser, $columns);
         return view('modules.haeuser.index', ['columns' => $columns, 'entities' => $haeuser, 'index' => $index, 'wantedRelations' => $wantedRelations]);
     }
