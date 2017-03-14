@@ -23,7 +23,7 @@
                     <label for="filter">Filter</label>
                 </div>
                 <div class="input-field col-xs-12 col-md-2">
-                    @php($options = ['(ohne)' => '', 'Listenansicht' => 'objekt haus[count] einheit[count] detail[count]'])
+                    @php($options = ['(ohne)' => '""', 'Listenansicht' => 'objekt haus[count] einheit[count] detail[count]'])
                     @include('shared.listview.views', ['id' => 'view', 'name' => 'v', 'label' => 'Ansicht', 'options' => $options])
                 </div>
                 <div class="input-field col-xs-6 col-md-1">

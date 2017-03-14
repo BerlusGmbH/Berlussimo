@@ -21,7 +21,7 @@
                 </div>
                 <div class="input-field col-xs-12 col-md-3">
                     @php($options = [
-                        '(ohne)' => '',
+                        '(ohne)' => '""',
                         'Mieter' => 'person(mietvertrag) mietvertrag einheit[mietvertrag] haus[mietvertrag] objekt[mietvertrag] detail[count]',
                         'Personen mit Hinweisen' => 'person(hinweis) hinweis',
                         'Personen mit Anschriften' => 'person(adresse) adresse'

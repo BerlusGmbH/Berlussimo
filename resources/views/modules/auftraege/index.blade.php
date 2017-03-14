@@ -24,7 +24,7 @@
                 </div>
                 <div class="input-field col-xs-12 col-md-offset-5 col-md-3">
                     @php($options = [
-                        '(ohne)' => '',
+                        '(ohne)' => '""',
                         'Aufgabenliste' => 'auftrag auftrag[erstellt:desc] auftrag[text] von an kostenträger'
                     ])
                     @include('shared.listview.views', ['id' => 'view', 'name' => 'v', 'label' => 'Ansicht', 'options' => $options])

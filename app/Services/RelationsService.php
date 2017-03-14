@@ -130,6 +130,7 @@ class RelationsService
             'einheit' => ['einheiten', Einheiten::class],
             'mietvertrag' => ['einheiten.mietvertraege', Mietvertraege::class],
             'kaufvertrag' => ['einheiten.kaufvertraege', Kaufvertraege::class],
+            'person' => [['einheiten.mietvertraege.mieter','einheiten.kaufvertraege.eigentuemer'], Personen::class],
             'detail' => ['details', Details::class]
         ],
         'objekt' => [
@@ -176,6 +177,10 @@ class RelationsService
         Einheiten::class => [
             'mietvertraege.mieter' => [-4, Mietvertraege::class],
             'kaufvertraege.eigentuemer' => [-4, Kaufvertraege::class],
+        ],
+        Haeuser::class => [
+            'einheiten.mietvertraege.mieter' => [-4, Mietvertraege::class],
+            'einheiten.kaufvertraege.eigentuemer' => [-4, Kaufvertraege::class],
         ],
         Auftraege::class => [
             'anUser' => [-4, User::class],
