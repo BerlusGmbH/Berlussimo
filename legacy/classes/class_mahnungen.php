@@ -42,10 +42,10 @@ class mahnungen
         } else {
 
             $f = new formular ();
-            echo "<table>";
-            echo "<tr><th>";
-            $f->check_box_js_alle('mahnliste', 'mahnliste', '', 'Alle', '', '', 'mahnliste');
-            echo "</th><th></th><th>MIETER</th><th>SALDO</th><th>1. FRIST</th><th>2. FRIST</th><th>OPTIONEN</th>";
+            echo "<table class='striped'>";
+            echo "<thead><th>";
+            $f->check_box_js_alle('mahnliste', 'mahnliste_alle', '', 'Alle', '', '', 'mahnliste');
+            echo "</th><th></th><th>MIETER</th><th>SALDO</th><th>1. FRIST</th><th>2. FRIST</th><th>OPTIONEN</th></thead>";
             if ($schulder_typ == 'aktuelle') {
                 $akt_mvs = $this->finde_aktuelle_mvs();
             }
@@ -91,7 +91,7 @@ class mahnungen
 
                         if (empty ($mahnsperre)) {
 
-                            $f->check_box_js1('mahnliste[]', 'mahnliste', $mv_id, "&nbsp;$mvs->einheit_kurzname&nbsp;", '', '');
+                            $f->check_box_js1('mahnliste[]', 'mahnliste' . $mv_id, $mv_id, "&nbsp;$mvs->einheit_kurzname&nbsp;", '', '');
 
                             $link_erinnerung = "<a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'zahlungserinnerung', 'mietvertrag_id' => $mv_id]) . "'>Erinnerung PDF</a>";
                             $link_mahnung = "<a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mahnung', 'mietvertrag_id' => $mv_id]) . "'>Mahnung PDF</a>";
@@ -114,7 +114,7 @@ class mahnungen
                 }
                 $gesamt_verlust_a = nummer_punkt2komma($gesamt_verlust);
 
-                echo "<tr><td colspan=\"2\"><b>Summe Schulden</b></td><td><b>$gesamt_verlust_a €</td><td></td><td></td><td></td></tr>";
+                echo "<tr><td colspan=\"2\"><b>Summe Schulden</b></td><td><b>$gesamt_verlust_a €</td><td></td><td></td><td></td><td></td></tr>";
                 echo "<tr><td colspan=\"3\">";
                 $f->send_button_js('send_mahnen', 'Mahnen', '');
                 echo "</td><td colspan=\"3\">";
