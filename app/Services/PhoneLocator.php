@@ -23,20 +23,20 @@ class PhoneLocator
         && !empty($this->config[$this->client]['url']);
     }
 
-    public function url($number, $comment)
+    public function url($number)
     {
         if ($this->hasPhone()) {
-            return $this->dialUrl($number, $comment);
+            return $this->dialUrl($number);
         } else {
-            return $this->defaultUrl($number, $comment);
+            return $this->defaultUrl($number);
         }
     }
 
-    protected function dialUrl($number, $comment)
+    protected function dialUrl($number)
     {
         $url = $this->decoratePhoneUrl($number);
         $attributes = 'href="tel: ' . $number . '" onclick="$.get(\'' . $url . '\'); return false;"';
-        return $this->renderUrl($number, $attributes, $comment);
+        return $this->renderUrl($number, $attributes);
     }
 
     protected function decoratePhoneUrl($number)
@@ -46,19 +46,14 @@ class PhoneLocator
         return $url;
     }
 
-    protected function renderUrl($number, $attributes, $comment)
+    protected function renderUrl($number, $attributes)
     {
-        $url = '<a ' . $attributes . '>' . $number;
-        if ($comment !== '') {
-            $url .= ', ' . $comment;
-        }
-        $url .= '</a>';
-        return $url;
+        return '<a ' . $attributes . '>' . $number . '</a>';
     }
 
-    protected function defaultUrl($number, $comment)
+    protected function defaultUrl($number)
     {
         $attributes = 'href="tel: ' . $number . '"';
-        return $this->renderUrl($number, $attributes, $comment);
+        return $this->renderUrl($number, $attributes);
     }
 }

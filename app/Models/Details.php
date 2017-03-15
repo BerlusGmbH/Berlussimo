@@ -28,9 +28,10 @@ class Details extends Model
     public function getDetailInhaltWithBrAttribute()
     {
         $content = $this->DETAIL_INHALT;
-        $content = str_replace('\r\n', '<br>', $content);
-        $content = str_replace('\r', '<br>', $content);
-        $content = str_replace('\n', '<br>', $content);
+        $content = str_replace("\r\n", "<br>", $content);
+        $content = str_replace("\r", "<br>", $content);
+        $content = str_replace("\n", "<br>", $content);
+        $content = trim($content, "<br>");
         return $content;
     }
 

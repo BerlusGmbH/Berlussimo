@@ -40,27 +40,23 @@
                     <div class="row">
                         @inject('phonelocator', 'App\Services\PhoneLocator')
                         @foreach($person->phones as $phone)
-                            <div class="col-xs-6 detail">
-                                <i class="mdi mdi-phone"></i>
-                                {!! $phonelocator->url(e($phone->DETAIL_INHALT), e($phone->DETAIL_BEMERKUNG)) !!}
+                            <div class="col-xs-6">
+                                @include('shared.entities.details.telefon', ['entity' => $phone])
                             </div>
                         @endforeach
                         @foreach($person->faxs as $fax)
-                            <div class="col-xs-6 detail">
-                                <i class="mdi mdi-fax"></i>
-                                <a href="fax:{{ $fax->DETAIL_INHALT }}">{{ $fax->DETAIL_INHALT }}{{ $fax->DETAIL_BEMERKUNG !== '' ? ', ' . $fax->DETAIL_BEMERKUNG : '' }}</a>
+                            <div class="col-xs-6">
+                                @include('shared.entities.details.fax', ['entity' => $fax])
                             </div>
                         @endforeach
                         @foreach($person->emails as $email)
-                            <div class="col-xs-6 detail">
-                                <i class="mdi mdi-mail-ru"></i>
-                                <a href="mailto:{{ $person->PERSON_VORNAME }} {{ $person->PERSON_NACHNAME }} <{{ $email->DETAIL_INHALT }}>">{{ $email->DETAIL_INHALT }}{{ $email->DETAIL_BEMERKUNG !== '' ? ', ' . $email->DETAIL_BEMERKUNG : '' }}</a>
+                            <div class="col-xs-6">
+                                @include('shared.entities.details.email', ['entity' => $email])
                             </div>
                         @endforeach
                         @foreach($person->adressen as $anschrift)
-                            <div class="col-xs-6 detail">
-                                <i class="mdi mdi-email"></i>
-                                {{ $anschrift->detail_inhalt_with_br }}{{ $anschrift->DETAIL_BEMERKUNG !== '' ? ', ' . $anschrift->DETAIL_BEMERKUNG : '' }}
+                            <div class="col-xs-6">
+                                @include('shared.entities.details.adresse', ['entity' => $anschrift])
                             </div>
                         @endforeach
                     </div>
@@ -71,7 +67,7 @@
             <div class="col-xs-12 col-sm-6">
                 <div class="card card-expandable">
                     <div class="card-content">
-                        <div class="card-title">Hinweise ({{ $person->hinweise->count() }})</div>
+                        <div class="card-title">Hinweise ({{$person->hinweise->count()}})</div>
                         <table class="striped">
                             <thead>
                             <th>Wert</th>
@@ -81,10 +77,10 @@
                             @foreach( $person->hinweise as $detail )
                                 <tr>
                                     <td>
-                                        {{ $detail->DETAIL_INHALT }}
+                                        {{$detail->DETAIL_INHALT}}
                                     </td>
                                     <td>
-                                        {{ $detail->DETAIL_BEMERKUNG }}
+                                        {{$detail->DETAIL_BEMERKUNG}}
                                     </td>
                                 </tr>
                             @endforeach
@@ -98,7 +94,7 @@
             <div class="col-xs-12 col-sm-6">
                 <div class="card card-expandable">
                     <div class="card-content">
-                        <div class="card-title">Allgemeine Details ({{ $person->commonDetails->count() }})</div>
+                        <div class="card-title">Allgemeine Details ({{$person->commonDetails->count()}})</div>
                         <table class="striped">
                             <thead>
                             <th>Typ</th>
@@ -109,13 +105,13 @@
                             @foreach( $person->commonDetails as $detail )
                                 <tr>
                                     <td>
-                                        {{ $detail->DETAIL_NAME }}
+                                        {{$detail->DETAIL_NAME}}
                                     </td>
                                     <td>
-                                        {{ $detail->DETAIL_INHALT }}
+                                        {{$detail->DETAIL_INHALT}}
                                     </td>
                                     <td>
-                                        {{ $detail->DETAIL_BEMERKUNG }}
+                                        {{$detail->DETAIL_BEMERKUNG}}
                                     </td>
                                 </tr>
                             @endforeach
@@ -129,7 +125,7 @@
             <div class="col-xs-12 col-sm-6">
                 <div class="card card-expandable">
                     <div class="card-content">
-                        <span class="card-title">Mietverträge ({{ $person->mietvertraege->count() }})</span>
+                        <span class="card-title">Mietverträge ({{$person->mietvertraege->count()}})</span>
                         <table class="striped">
                             <thead>
                             <th>Mietvertrag</th>
@@ -164,7 +160,7 @@
             <div class="col-xs-12 col-sm-6">
                 <div class="card card-expandable">
                     <div class="card-content">
-                        <span class="card-title">Eigentum ({{ $person->kaufvertraege->count() }})</span>
+                        <span class="card-title">Eigentum ({{$person->kaufvertraege->count()}})</span>
                         <table class="striped">
                             <thead>
                             <th>Kaufvertrag</th>

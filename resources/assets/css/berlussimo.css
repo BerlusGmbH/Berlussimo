@@ -91,6 +91,7 @@ main {
 .detail {
     padding-left: 20px;
     position: relative;
+    display: inline-block
 }
 
 nav .autocomplete-content a span.badge {
