@@ -91,7 +91,9 @@ start(res) ::= expressions(e).
 
 start(res) ::= .
 {
-    $this->query->defaultOrder();
+    if(in_array('App\Models\Traits\DefaultOrder', class_uses($this->query->getModel()))) {
+        $this->query->defaultOrder();
+    }
     res = collect([[$this->column => null]]);
 }
 
@@ -295,42 +297,49 @@ fterm(res) ::= FIELD(f) COMPARATOR(c) VALUE(v).
     $dbField = Relations::classFieldToField($class, $field);
     res = $class::where($dbField, c, v);
 }
-fterm(res) ::= LAUFZEIT COMPARATOR(c) VALUE(v).
+fterm(res) ::= AKTIV.
 {
     $column = $this->stack(self::COLUMN);
     $class = Relations::columnToClass($this->stack(self::COLUMN));
     if(is_null($class)) {
         $class = Relations::columnColumnToClass($this->stack(self::COLUMN, 2),$this->stack(self::COLUMN));
     }
-    $comparator = c;
-    $von = Relations::classFieldToField($class, 'von');
-    $bis = Relations::classFieldToField($class, 'bis');
-    if($comparator == '=') {
-        res = $class::where(function($query) use ($von, $bis) {
-            $query->where(function($query) use ($von, $bis) {
-                $query->where($von, '<=', v)->where($bis, '>=', v);
-            })->orWhere(function($query) use($von, $bis) {
-                $query->where($von, '<=', v)->whereNull($bis);
-            });
-        });
-    }
+
+    res = $class::aktiv();
 }
-fterm(res) ::= LAUFZEIT LIKE VALUE(v).
+fterm(res) ::= NOT AKTIV.
 {
     $column = $this->stack(self::COLUMN);
     $class = Relations::columnToClass($this->stack(self::COLUMN));
     if(is_null($class)) {
         $class = Relations::columnColumnToClass($this->stack(self::COLUMN, 2),$this->stack(self::COLUMN));
     }
-    $von = Relations::classFieldToField($class, 'von');
-    $bis = Relations::classFieldToField($class, 'bis');
-    res = $class::where(function($query) use ($von, $bis) {
-        $query->where(function($query) use ($von, $bis) {
-            $query->where($von, 'like', '%' . v . '%')->where($bis, 'like', '%' . v . '%');
-        })->orWhere(function($query) use($von, $bis) {
-            $query->where($von, 'like', '%' . v . '%')->whereNull($bis);
-        });
-    });
+
+    res = $class::notAktiv();
+}
+fterm(res) ::= AKTIV COMPARATOR(c) VALUE(v).
+{
+    $column = $this->stack(self::COLUMN);
+    $comparator = c;
+    $value = v;
+    $class = Relations::columnToClass($this->stack(self::COLUMN));
+    if(is_null($class)) {
+        $class = Relations::columnColumnToClass($this->stack(self::COLUMN, 2),$this->stack(self::COLUMN));
+    }
+
+    res = $class::aktiv($comparator, $value);
+}
+fterm(res) ::= NOT AKTIV COMPARATOR(c) VALUE(v).
+{
+    $column = $this->stack(self::COLUMN);
+    $comparator = c;
+    $value = v;
+    $class = Relations::columnToClass($this->stack(self::COLUMN));
+    if(is_null($class)) {
+        $class = Relations::columnColumnToClass($this->stack(self::COLUMN, 2),$this->stack(self::COLUMN));
+    }
+
+    res = $class::notAktiv($comparator, $value);
 }
 views(res) ::= constraints(v).
 {

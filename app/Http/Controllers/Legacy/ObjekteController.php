@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Legacy;
 
 use App\Http\Controllers\Traits\Indexable;
 use App\Http\Requests\Legacy\ObjekteRequest;
-use App\Services\Parser\Personen\View\Lexer;
-use App\Services\Parser\Personen\View\Parser;
+use App\Services\Parser\Lexer;
+use App\Services\Parser\Parser;
 use App\Models\Objekte;
 
 class ObjekteController extends LegacyController

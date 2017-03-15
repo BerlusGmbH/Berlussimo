@@ -42,4 +42,40 @@ class Mietvertraege extends Model
     {
         return $this->belongsTo('App\Models\Einheiten', 'EINHEIT_ID', 'EINHEIT_ID');
     }
+
+    public function scopeAktiv($query, $comparator = '=', $date = null) {
+        if(is_null($date)) {
+            $date = Carbon::today();
+        }
+        if($comparator == '=') {
+            $query->where(function($query) use ($date) {
+                $query->where(function($query) use ($date) {
+                    $query->whereDate('MIETVERTRAG_VON', '<=', $date)->whereDate('MIETVERTRAG_BIS', '>=', $date);
+                })->orWhere(function($query) use($date) {
+                    $query->where('MIETVERTRAG_VON', '<=', $date)->whereDate('MIETVERTRAG_BIS', '=', '0000-00-00');
+                });
+            });
+        } elseif ($comparator == '>') {
+            $query->where(function($query) use ($date) {
+                $query->whereDate('MIETVERTRAG_BIS', '>=', $date)->orWhereDate('MIETVERTRAG_BIS', '=', '0000-00-00');
+            });
+        } elseif ($comparator == '<') {
+            $query->whereDate('MIETVERTRAG_VON', '<=', $date);
+        }
+    }
+
+    public function scopeNotAktiv($query, $comparator = '=', $date = null) {
+        if(is_null($date)) {
+            $date = Carbon::today();
+        }
+        if($comparator == '=') {
+            $query->where(function ($query) use ($date) {
+                $query->whereDate('MIETVERTRAG_VON', '>', $date)->orWhereDate('MIETVERTRAG_BIS', '<', $date)->where('MIETVERTRAG_BIS', '<>', '0000-00-00');
+            });
+        } elseif ($comparator == '>') {
+            $query->whereDate('MIETVERTRAG_BIS', '<', $date)->where('MIETVERTRAG_BIS', '<>', '0000-00-00');
+        } elseif ($comparator == '<') {
+            $query->whereDate('MIETVERTRAG_VON', '>', $date);
+        }
+    }
 }

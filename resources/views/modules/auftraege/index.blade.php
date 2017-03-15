@@ -39,7 +39,7 @@
                         'Erledigt' => '!auftrag(erledigt="1")',
                         'Nicht Erledigt' => '!auftrag(erledigt="0")'
                     ])
-                    @include('shared.listview.filters', ['name' => 'f', 'id' => 'filter', 'label' => 'Filter', 'options' => $options])
+                    @include('shared.listview.filters', ['name' => 'f', 'id' => 'filter', 'label' => 'Filter', 'multiple' => true, 'options' => $options])
                 </div>
                 <div class="input-field col-xs-6 col-md-1">
                     @include('shared.listview.resultsize', ['name' => 's', 'id' => 'size', 'label' => 'Anzahl'])

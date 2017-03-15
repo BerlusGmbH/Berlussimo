@@ -71,7 +71,7 @@
         @endif
         @if(!$haus->mieter()->get()->isEmpty())
             <div class="col-xs-12 col-sm-3">
-                @include('shared.cards.mieter', [ 'mieter' => $haus->mieter()->defaultOrder()->with('sex')->get(), 'title' => 'Mieter', 'href' => route('web::personen::index', ['q' => '!person(mietvertrag(haus(id=' . $haus->HAUS_ID . ') laufzeit=' . \Carbon\Carbon::today()->toDateString() . '))'])])
+                @include('shared.cards.mieter', [ 'mieter' => $haus->mieter()->defaultOrder()->with('sex')->get(), 'title' => 'Mieter', 'href' => route('web::personen::index', ['q' => '!person(mietvertrag(haus(id=' . $haus->HAUS_ID . ') aktiv))'])])
             </div>
         @endif
         <div class="col-xs-12">

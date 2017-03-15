@@ -24,4 +24,6 @@
     @include('shared.entities.baustelle_extern')
 @elseif($entity instanceof \App\Models\Lager)
     @include('shared.entities.lager')
+@elseif($entity instanceof \App\Models\Gewerke)
+    @include('shared.entities.gewerk')
 @endif

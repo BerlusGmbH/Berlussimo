@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Models\Traits\Searchable;
+use App\Models\Traits\DefaultOrder;
 
 /**
  * App\Models\User
@@ -12,6 +15,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  */
 class User extends Authenticatable
 {
+    use Searchable;
+    use DefaultOrder;
+
+    protected $searchableFields = ['name', 'email'];
+    protected $defaultOrder = ['name' => 'asc'];
+
     /**
      * The attributes that are not mass assignable.
      *
@@ -40,6 +49,47 @@ class User extends Authenticatable
 
     public function arbeitgeber() {
         return $this->belongsToMany(Partner::class, 'BENUTZER_PARTNER', 'BP_BENUTZER_ID', 'BP_PARTNER_ID');
+    }
+
+    public function gewerk()
+    {
+        return $this->hasOne(Gewerke::class, 'G_ID', 'trade_id');
+    }
+
+    public function scopeAktiv($query, $comparator = '=', $date = null) {
+        if(is_null($date)) {
+            $date = Carbon::today();
+        }
+        if($comparator == '=') {
+            $query->where(function($query) use ($date) {
+                $query->where(function($query) use ($date) {
+                    $query->whereDate('join_date', '<=', $date)->whereDate('leave_date', '>=', $date);
+                })->orWhere(function($query) use($date) {
+                    $query->where('join_date', '<=', $date)->whereDate('leave_date', '=', '0000-00-00');
+                });
+            });
+        } elseif ($comparator == '>') {
+            $query->where(function($query) use ($date) {
+                $query->whereDate('leave_date', '>=', $date)->orWhereDate('leave_date', '=', '0000-00-00');
+            });
+        } elseif ($comparator == '<') {
+            $query->whereDate('join_date', '<=', $date);
+        }
+    }
+
+    public function scopeNotAktiv($query, $comparator = '=', $date = null) {
+        if(is_null($date)) {
+            $date = Carbon::today();
+        }
+        if($comparator == '=') {
+            $query->where(function ($query) use ($date) {
+                $query->whereDate('join_date', '>', $date)->orWhereDate('leave_date', '<', $date)->where('leave_date', '<>', '0000-00-00');
+            });
+        } elseif ($comparator == '>') {
+            $query->whereDate('leave_date', '<', $date)->where('leave_date', '<>', '0000-00-00');
+        } elseif ($comparator == '<') {
+            $query->whereDate('join_date', '>', $date);
+        }
     }
 
     /**

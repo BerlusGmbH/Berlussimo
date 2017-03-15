@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use PHP_LexerGenerator;
-use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -16,7 +15,7 @@ class GenerateSearchParser extends Command
      *
      * @var string
      */
-    protected $signature = 'search:parser';
+    protected $signature = 'parser:generate';
 
     /**
      * The console command description.
@@ -34,7 +33,6 @@ class GenerateSearchParser extends Command
     {
         chdir(base_path('vendor/smarty/smarty-lexer/'));
         require_once(base_path('vendor/smarty/smarty-lexer/LexerGenerator.php'));
-        //require_once(base_path('vendor/smarty/smarty-lexer/ParserGenerator.php'));
         chdir(resource_path('parser/'));
         foreach ($iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(resource_path('parser/'), RecursiveDirectoryIterator::SKIP_DOTS)) as $file) {

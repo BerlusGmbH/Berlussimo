@@ -6,8 +6,8 @@ namespace App\Http\Controllers\Legacy;
 use App\Http\Controllers\Traits\Indexable;
 use App\Http\Requests\Legacy\PersonenRequest;
 use App\Models\Personen;
-use App\Services\Parser\Personen\View\Lexer;
-use App\Services\Parser\Personen\View\Parser;
+use App\Services\Parser\Lexer;
+use App\Services\Parser\Parser;
 
 class PersonenController extends LegacyController
 {

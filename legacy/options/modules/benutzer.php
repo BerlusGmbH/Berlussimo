@@ -26,6 +26,7 @@ switch ($option) {
 
     case "aendern" :
         if (request()->has('b_id')) {
+            session()->put('url.intended', URL::previous());
             $b_id = request()->input('b_id');
             $b = new benutzer ();
             $b->form_benutzer_aendern($b_id);
@@ -35,10 +36,13 @@ switch ($option) {
         break;
 
     case "benutzer_aendern_send" :
-        if (request()->has('b_id') && !empty (request()->input('b_id'))) {
+        if (request()->has('b_id')) {
             $benutzer_name = request()->input('benutzername');
             $b_id = request()->input('b_id');
-            $passwort = request()->input('passwort');
+            $passwort = null;
+            if(request()->has('passwort')) {
+                $passwort = Hash::make(request()->input('passwort'));
+            }
             $partner_id = request()->input('partner_id');
             $gewerk_id = request()->input('gewerk_id');
             $geburtstag = request()->input('geburtstag');
@@ -50,8 +54,7 @@ switch ($option) {
             $stundensatz = request()->input('stundensatz');
             $be = new benutzer ();
             $be->benutzer_aenderungen_speichern($b_id, $benutzer_name, $passwort, $partner_id, $stundensatz, $geburtstag, $gewerk_id, $eintritt, $austritt, $urlaub, $stunden_pw);
-            fehlermeldung_ausgeben("Bitte warten...");
-            weiterleiten_in_sec(route('web::benutzer::legacy', ['option' => 'aendern', 'b_id' => $b_id], false), 2);
+            weiterleiten(redirect()->intended()->getTargetUrl());
         } else {
             fehlermeldung_ausgeben("Benutzerdaten unvollständig");
         }

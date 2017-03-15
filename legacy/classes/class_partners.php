@@ -435,17 +435,19 @@ OR  `LAND` LIKE  '%$suchtext%'
     function gewerke_dropdown($label, $name, $id, $vorwahl = null)
     {
         $gewerk_arr = $this->gewerke_in_array();
-        echo "<label for=\"$id\">$label</label><select name=\"$name\" size=\"1\" id=\"$id\">";
+        echo "<div class='input-field'>";
+        echo "<select name=\"$name\" size=\"1\" id=\"$id\">";
         for ($a = 0; $a < count($gewerk_arr); $a++) {
             $gewerk_id = $gewerk_arr [$a] ['G_ID'];
             $bezeichnung = $gewerk_arr [$a] ['BEZEICHNUNG'];
             if ($vorwahl == $gewerk_id) {
-                echo "<option value=\"$gewerk_id\" selected>$bezeichnung</OPTION>\n";
+                echo "<option value='$gewerk_id' selected>$bezeichnung</option>\n";
             } else {
-                echo "<option value=\"$gewerk_id\">$bezeichnung</OPTION>\n";
+                echo "<option value='$gewerk_id'>$bezeichnung</option>\n";
             }
         }
-        echo "</select><br>\n";
+        echo "</select><label for='$id'>$label</label>\n";
+        echo "</div>";
     }
 
     function gewerke_in_array()

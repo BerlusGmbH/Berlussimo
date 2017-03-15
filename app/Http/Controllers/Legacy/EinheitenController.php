@@ -6,8 +6,8 @@ namespace App\Http\Controllers\Legacy;
 use App\Http\Controllers\Traits\Indexable;
 use App\Http\Requests\Legacy\EinheitenRequest;
 use App\Models\Einheiten;
-use App\Services\Parser\Personen\View\Lexer;
-use App\Services\Parser\Personen\View\Parser;
+use App\Services\Parser\Lexer;
+use App\Services\Parser\Parser;
 
 class EinheitenController extends LegacyController
 {

@@ -68,7 +68,7 @@
         @endif
         @if(!$einheit->mieter()->get()->isEmpty())
             <div class="col-xs-12 col-sm-3">
-                @include('shared.cards.mieter', ['mieter' => $einheit->mieter()->defaultOrder()->with('sex')->get(), 'title' => 'Mieter', 'href' => route('web::personen::index', ['q' => '!person(mietvertrag(einheit(id=' . $einheit->EINHEIT_ID . ') laufzeit=' . \Carbon\Carbon::today()->toDateString() . '))'])])
+                @include('shared.cards.mieter', ['mieter' => $einheit->mieter()->defaultOrder()->with('sex')->get(), 'title' => 'Mieter', 'href' => route('web::personen::index', ['q' => '!person(mietvertrag(einheit(id=' . $einheit->EINHEIT_ID . ') aktiv))'])])
             </div>
         @endif
         @if(!$einheit->mietvertraege()->get()->isEmpty())

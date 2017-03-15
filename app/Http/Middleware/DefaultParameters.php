@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Controllers\Legacy\BenutzerController;
 use App\Http\Controllers\Legacy\EinheitenController;
 use App\Http\Controllers\Legacy\HaeuserController;
 use App\Http\Controllers\Legacy\ObjekteController;
@@ -31,6 +32,10 @@ class DefaultParameters
         ],
         PersonenController::class . '@index' => [
             'v' => 'person(mietvertrag) mietvertrag einheit[mietvertrag] haus[mietvertrag] objekt[mietvertrag] detail[count]',
+            's' => 20
+        ],
+        BenutzerController::class . '@index' => [
+            'v' => 'mitarbeiter !mitarbeiter[name:asc] mitarbeiter[id] mitarbeiter[email] mitarbeiter[geburtstag] gewerk mitarbeiter[von bis] mitarbeiter[stundensatz] mitarbeiter[wochenstunden] mitarbeiter[urlaubstage] partner',
             's' => 20
         ]
     ];

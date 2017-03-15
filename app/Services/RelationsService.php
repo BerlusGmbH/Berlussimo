@@ -6,6 +6,7 @@ use App\Models\Auftraege;
 use App\Models\BaustellenExtern;
 use App\Models\Details;
 use App\Models\Einheiten;
+use App\Models\Gewerke;
 use App\Models\Haeuser;
 use App\Models\Kaufvertraege;
 use App\Models\Lager;
@@ -58,7 +59,7 @@ class RelationsService
             'id' => 'PERSON_ID',
             'vorname' => 'PERSON_VORNAME',
             'name' => 'PERSON_NACHNAME',
-            'geb' => 'PERSON_GEBURTSTAG'
+            'geburtstag' => 'PERSON_GEBURTSTAG'
         ],
         Auftraege::class => [
             'id' => 'T_ID',
@@ -69,7 +70,14 @@ class RelationsService
         ],
         User::class => [
             'id' => 'id',
-            'name' => 'name'
+            'name' => 'name',
+            'geburtstag' => 'birthday',
+            'von' => 'join_date',
+            'bis' => 'leave_date',
+            'stundensatz' => 'hourly_rate',
+            'wochenstunden' => 'hours_per_week',
+            'urlaubstage' => 'holidays',
+            'email' => 'email'
         ],
         Partner::class => [
             'id' => 'PARTNER_ID',
@@ -122,7 +130,9 @@ class RelationsService
             'mietvertrag' => ['mietvertraege', Mietvertraege::class],
             'kaufvertrag' => ['kaufvertraege', Kaufvertraege::class],
             'person' => [['mietvertraege.mieter', 'kaufvertraege.eigentuemer'], Personen::class],
-            'detail' => ['details', Details::class]
+            'detail' => [['mietvertraege.mieter.commonDetails', 'kaufvertraege.eigentuemer.commonDetails', 'details'], Details::class],
+            'telefon' => [['mietvertraege.mieter.phones', 'kaufvertraege.eigentuemer.phones'], Details::class],
+            'email' => [['mietvertraege.mieter.emails', 'kaufvertraege.eigentuemer.emails'], Details::class]
         ],
         'haus' => [
             'objekt' => ['objekt', Objekte::class],
@@ -155,7 +165,9 @@ class RelationsService
             'mitarbeiter' => [['anUser', 'von'], User::class]
         ],
         'mitarbeiter' => [
-            'mitarbeiter' => ['', User::class]
+            'mitarbeiter' => ['', User::class],
+            'partner' => ['arbeitgeber', Partner::class],
+            'gewerk' => ['gewerk', Gewerke::class]
         ],
         'partner' => [
             'partner' => ['', Partner::class]
@@ -177,10 +189,18 @@ class RelationsService
         Einheiten::class => [
             'mietvertraege.mieter' => [-4, Mietvertraege::class],
             'kaufvertraege.eigentuemer' => [-4, Kaufvertraege::class],
+            'mietvertraege.mieter.commonDetails' => [-2, Mietvertraege::class],
+            'kaufvertraege.eigentuemer.commonDetails' => [-2, Kaufvertraege::class],
+            'mietvertraege.mieter.phones' => [-1, Mietvertraege::class],
+            'kaufvertraege.eigentuemer.phones' => [-1, Kaufvertraege::class],
+            'details' => [-1, Einheiten::class]
         ],
         Haeuser::class => [
             'einheiten.mietvertraege.mieter' => [-4, Mietvertraege::class],
             'einheiten.kaufvertraege.eigentuemer' => [-4, Kaufvertraege::class],
+            'einheiten.mietvertraege.mieter.commonDetails' => [-4, Mietvertraege::class],
+            'einheiten.kaufvertraege.eigentuemer.commonDetails' => [-4, Kaufvertraege::class],
+            'details' => [-4, Haeuser::class]
         ],
         Auftraege::class => [
             'anUser' => [-4, User::class],

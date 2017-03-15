@@ -142,7 +142,13 @@
 
                 @if (check_user_links(Auth::user()->id, 'benutzer'))
                     <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
-                        <a href='{{route('web::benutzer::legacy')}}'>Benutzer</a>
+                        <a href='{{route('web::benutzer::index')}}'>Mitarbeiter</a>
+                    </div>
+                @endif
+
+                @if (check_user_links(Auth::user()->id, 'benutzer'))
+                    <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
+                        <a href='{{route('web::benutzer::legacy', ['option' => 'werkzeuge'])}}'>Werkzeuge</a>
                     </div>
                 @endif
 
@@ -161,12 +167,6 @@
                 @if(check_user_links(Auth::user()->id, 'Wartung'))
                     <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
                         <a href='/wartungsplaner/' target='new'>Wartungsplaner</a>
-                    </div>
-                @endif
-
-                @if(check_user_links(Auth::user()->id, 'admin_panel'))
-                    <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
-                        <a href='{{route('web::admin::legacy', ['admin_panel' => 'menu'])}}'>Administration</a>
                     </div>
                 @endif
 

@@ -1,7 +1,2 @@
 *
 !.gitignore
-!Personen
-!**/Filter
-!**/View
-!**/Base.php
-!DummyModel.php

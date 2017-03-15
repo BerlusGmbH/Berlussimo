@@ -89,13 +89,13 @@ class benutzer
         $f = new formular ();
         $f->erstelle_formular("Benutzerdaten von Benutzer $this->benutzername ändern", NULL);
         $f->text_feld("Benutzername", "benutzername", "$this->benutzername", "20", 'benutzername', '');
-        $f->passwort_feld("Passwort", "passwort", "$this->passwort", "20", 'passwort', '');
+        $f->passwort_feld("Neues Passwort", "passwort", "", "20", 'passwort', '');
         $p = new partners ();
         $p->partner_dropdown('Mitarbeiter von', 'partner_id', 'partner_id', $partner_id);
         $p->gewerke_dropdown('Gewerk/Abteilung', 'gewerk_id', 'gewerk_id', $this->gewerk_id);
-        $f->datum_feld("Geb. am", "geburtstag", date_mysql2german($this->geb_datum), "10", 'geburtstag', '');
-        $f->datum_feld("Eintritt", "eintritt", date_mysql2german($this->datum_eintritt), "10", 'eintritt', '');
-        $f->datum_feld("Austritt", "austritt", date_mysql2german($this->datum_austritt), "10", 'austritt', '');
+        $f->datum_feld("Geb. am", "geburtstag", date_mysql2german($this->geb_datum), 'geburtstag');
+        $f->datum_feld("Eintritt", "eintritt", date_mysql2german($this->datum_eintritt), 'eintritt');
+        $f->datum_feld("Austritt", "austritt", date_mysql2german($this->datum_austritt), 'austritt');
         $f->text_feld("urlaubstage im Jahr", "urlaub", "$this->urlaub", "5", 'urlaub', '');
         $f->text_feld("Stunden/Wochen", "stunden_pw", nummer_punkt2komma($this->stunden_wo), "5", 'stunden_pw', '');
         $f->text_feld("Stundensatz", "stundensatz", nummer_punkt2komma($this->stundensatz), "5", 'stundensatz', '');
@@ -378,7 +378,9 @@ class benutzer
 
         /* Updaten */
         $user->name = $benutzername;
-        $user->password = $passwort;
+        if(!empty($passwort)) {
+            $user->password = $passwort;
+        }
         $user->hourly_rate = $stundensatz;
         $user->birthday = $geb_dat;
         $user->trade_id = $gewerk_id;

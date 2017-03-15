@@ -1,5 +1,5 @@
 @extends('layouts.main-without-menu')
 
 @section('mainmenu')
-    @include("shared.mainmenu")
+    @include("shared.menus.main")
 @endsection
