@@ -209,7 +209,7 @@ class wirt_e
         $einheiten_arr = $this->get_einheiten_from_wirte($w_id);
         $anzahl = count($einheiten_arr);
         echo "<div class='row'>
-                <div class='col s8'>";
+                <div class='col-xs-8'>";
         if ($anzahl) {
             echo "<SELECT class='browser-default' style='height: 200px' NAME='IMPORT_AUS[]' multiple>";
             for ($a = 0; $a < $anzahl; $a++) {
@@ -218,7 +218,7 @@ class wirt_e
                 echo "<OPTION value='$e_id'>$e_name</OPTION>";
             }
             echo "</SELECT>";
-            echo "</div><div class='col s4'>";
+            echo "</div><div class='col-xs-4'>";
             echo "<p>Einheiten: $this->anzahl_e</p>";
             echo "<p>QM: $this->g_qm m²</p>";
             echo "<p>Gew.: $this->g_qm_gewerbe m²</p>";

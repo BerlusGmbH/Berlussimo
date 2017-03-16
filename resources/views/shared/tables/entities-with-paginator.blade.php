@@ -2,7 +2,7 @@
     @include('shared.tables.paginator', ['paginator' => $entities])
 </div>
 <div class="row">
-    <div class="col col-xs-12">
+    <div class="col-xs-12">
         @include('shared.tables.entities')
     </div>
 </div>

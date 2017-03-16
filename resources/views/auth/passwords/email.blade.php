@@ -4,7 +4,7 @@
 @section('app-content')
     <div class="container">
         <div class="row">
-            <div class="col s12 m10 l8 offset-m1 offset-l2">
+            <div class="col-xs-12 col-md-10 col-lg-8 col-md-offset-1 col-lg-offset-2">
                 <div class="card">
                     <div class="card-content">
                         <div class="card-title">Reset Password</div>

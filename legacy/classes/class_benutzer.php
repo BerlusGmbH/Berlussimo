@@ -195,7 +195,7 @@ class benutzer
         $anz = count($module_arr);
         if ($anz) {
             echo "<div class='row'>";
-            echo "<div class='input-field col s12 m4 l2'>";
+            echo "<div class='input-field col-xs-12 col-md-4 col-lg-2'>";
             echo "<input type=\"checkbox\" class='filled-in' name=\"modul_name[]\" value=\"*\" id='all'/>";
             echo "<label for=\"all\">Vollzugriff</label>";
             echo "</div>";
@@ -206,7 +206,7 @@ class benutzer
                 $modul_name = $module_arr [$a];
                 $modul_name_a = ' &nbsp ' . strtoupper($modul_name) . ' &nbsp ';
 
-                echo "<div class='input-field col s12 m4 l2'>";
+                echo "<div class='input-field col-xs-12 col-md-4 col-lg-2'>";
                 if (check_user_mod($b_id, $modul_name)) {
                     echo "<input type=\"checkbox\" class='filled-in' name=\"modul_name[]\" value=\"$modul_name\" id=\"$modul_name\" checked />";
                 } else {

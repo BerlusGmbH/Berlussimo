@@ -589,16 +589,16 @@ LIMIT 0 , 80");
         $f->erstelle_formular('Serienbrief an Partner', null);
         $f->hidden_feld('option', 'serien_brief_vorlagenwahl');
         echo "<div class='row'>";
-        echo "<div class='col l3'>";
+        echo "<div class='col-lg-l3'>";
         $f->send_button('Button', 'Vorlage wählen');
         echo "</div>";
-        echo "<div class='col l3'>";
+        echo "<div class='col-lg-3'>";
         $f->send_button("delete", "Auswahl entfernen");
         echo "</div>";
         echo "</div>";
 
         echo "<div class='row'>";
-        echo "<div class='col l3'>";
+        echo "<div class='col-lg-3'>";
         $f->check_box_js_alle('c_alle', 'c_alle', 1, 'Alle', '', '', 'p_ids');
         echo "</div>";
 
@@ -607,7 +607,7 @@ LIMIT 0 , 80");
             $p_id = $partner_arr [$a] ['PARTNER_ID'];
             $p_name = $partner_arr [$a] ['PARTNER_NAME'];
 
-            echo "<div class='col l3'>";
+            echo "<div class='col-lg-3'>";
             if (session()->has('p_ids') && in_array($p_id, session()->get('p_ids'))) {
                 $f->check_box_js1('p_ids[]', 'p_id_' . $p_id, $p_id, "$p_name", '', 'checked');
             } else {

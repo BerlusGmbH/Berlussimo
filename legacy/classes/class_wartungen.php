@@ -198,7 +198,7 @@ class wartung
                 $termine = $this->get_termine_($g_id);
                 if (!empty($termine)) {
                     $anz_t = count($termine);
-                    echo "<table class=\"sortable\">";
+                    echo "<table class=\"sortable striped\">";
                     echo "<tr><th colspan=\"2\">$g_bez</th></tr>";
                     for ($t = 0; $t < $anz_t; $t++) {
                         $datum = date_mysql2german($termine [$t] ['DATUM']);

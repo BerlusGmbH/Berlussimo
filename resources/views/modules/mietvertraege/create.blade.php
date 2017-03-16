@@ -6,17 +6,17 @@
 
 @section('content')
     <div class="row">
-        <div class="col s12">
+        <div class="col-xs-12">
             <div class="card-panel">
                 <div class="row">
                     <form action="{{ route('web::mietvertraege::store') }}" method="post">
-                        <div class="input-field col s12 m6">
+                        <div class="input-field col-xs-12 col-md-6">
                             <i class="material-icons prefix">people</i>
                             <div id="tenant-autocomplete" class="chips invalid" style="margin-left: 3rem">
                             </div>
                             <span class="error-block">{{ $errors->has('tenants') ? $errors->first('tenants') : '' }}</span>
                         </div>
-                        <div class="input-field col s12 m6">
+                        <div class="input-field col-xs-12 col-md-6">
                             <i class="mdi mdi-cube-outline prefix"></i>
                             <input type="text" id="unit-autocomplete"
                                    class="autocomplete validate {{ $errors->has('unit') ? 'invalid' : '' }}"
@@ -25,7 +25,7 @@
                             <span class="error-block">{{ $errors->has('unit') ? $errors->first('unit') : '' }}</span>
                             <label for="unit-autocomplete">Einheit</label>
                         </div>
-                        <div class="input-field col s12 m6">
+                        <div class="input-field col-xs-12 col-md-6">
                             <i class="material-icons prefix">today</i>
                             <input type="date" class="datepicker {{ $errors->has('move-in-date') ? 'invalid' : '' }}"
                                    id="move-in-date" name="move-in-date"
@@ -33,7 +33,7 @@
                             <span class="error-block">{{ $errors->has('move-in-date') ? $errors->first('move-in-date') : '' }}</span>
                             <label for="move-in-date">Einzugsdatum</label>
                         </div>
-                        <div class="input-field col s12 m6">
+                        <div class="input-field col-xs-12 col-md-6">
                             <i class="material-icons prefix">date_range</i>
                             <input type="date" class="datepicker {{ $errors->has('move-out-date') ? 'invalid' : '' }}"
                                    id="move-out-date" name="move-out-date"
@@ -41,7 +41,7 @@
                             <span class="error-block">{{ $errors->has('move-out-date') ? $errors->first('move-out-date') : '' }}</span>
                             <label for="move-out-date">Auszugsdatum</label>
                         </div>
-                        <div class="input-field col s12 m6">
+                        <div class="input-field col-xs-12 col-md-6">
                             <i class="material-icons prefix">euro_symbol</i>
                             <input type="number" step="0.01" min="0" id="rent" name="rent"
                                    class="validate {{ $errors->has('rent') ? 'invalid' : '' }}"
@@ -49,7 +49,7 @@
                             <span class="error-block">{{ $errors->has('rent') ? $errors->first('rent') : '' }}</span>
                             <label for="rent">Kaltmiete</label>
                         </div>
-                        <div class="input-field col s12 m6">
+                        <div class="input-field col-xs-12 col-md-6">
                             <i class="material-icons prefix">euro_symbol</i>
                             <input type="number" step="0.01" min="0" id="deposit" name="deposit"
                                    class="validate {{ $errors->has('deposit') ? 'invalid' : '' }}"
@@ -58,7 +58,7 @@
                             <label for="deposit"
                                    data-error="{{ $errors->has('deposit') ? $errors->first('deposit') : '' }}">Sollkaution</label>
                         </div>
-                        <div class="input-field col s12 m6">
+                        <div class="input-field col-xs-12 col-md-6">
                             <i class="material-icons prefix">euro_symbol</i>
                             <input type="number" step="0.01" min="0" id="bk-advance" name="bk-advance"
                                    class="validate {{ $errors->has('bk-advance') ? 'invalid' : '' }}"
@@ -66,7 +66,7 @@
                             <span class="error-block">{{ $errors->has('bk-advance') ? $errors->first('bk-advance') : '' }}</span>
                             <label for="bk-advance">Nebenkosten Vorauszahlung</label>
                         </div>
-                        <div class="input-field col s12 m6">
+                        <div class="input-field col-xs-12 col-md-6">
                             <i class="material-icons prefix">euro_symbol</i>
                             <input type="number" step="0.01" min="0" id="hk-advance" name="hk-advance"
                                    class="validate {{ $errors->has('hk-advance') ? 'invalid' : '' }}"
@@ -74,7 +74,7 @@
                             <span class="error-block">{{ $errors->has('hk-advance') ? $errors->first('hk-advance') : '' }}</span>
                             <label for="nk-advance">Heizkosten Vorauszahlung</label>
                         </div>
-                        <div class="input-field col s12">
+                        <div class="input-field col-xs-12">
                             <button class="btn waves-effect waves-light" type="submit">Erfassen
                                 <i class="material-icons right">send</i>
                             </button>

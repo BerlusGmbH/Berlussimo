@@ -20,7 +20,11 @@
                     <label for="filter">Filter</label>
                 </div>
                 <div class="input-field col-xs-12 col-md-3">
-                    @php($options = ['(ohne)' => '""', 'Listenansicht' => 'einheit !einheit[name] mietvertrag person[mietvertrag] einheit[typ] einheit[qm] einheit[lage] haus objekt'])
+                    @php($options = [
+                        '(ohne)' => '""',
+                        'Listenansicht' => 'einheit !einheit[name] mietvertrag person[mietvertrag] einheit[typ] einheit[qm] einheit[lage] haus objekt',
+                        'Mieterkontakte' => 'objekt haus !einheit[name] einheit einheit[lage] mietvertrag person[mietvertrag] telefon[mietvertrag] email[mietvertrag]'
+                    ])
                     @include('shared.listview.views', ['id' => 'view', 'name' => 'v', 'label' => 'Ansicht', 'options' => $options])
                 </div>
                 <div class="input-field col-xs-6 col-md-1">

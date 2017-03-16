@@ -2,7 +2,7 @@
 
 @section('app-content')
     <div class="row">
-        <div class="card col s12 m10 l8 offset-m1 offset-l2">
+        <div class="card col-xs-12 col-md-10 col-lg-8 col-md-offset-1 col-lg-offset-2">
             <div class="card-content">
                 <span class="card-title">Login</span>
                 <form role="form" method="POST" action="{{ url('/login') }}">
@@ -23,14 +23,14 @@
                     </div>
 
                     <div class="row">
-                        <div class="col s6">
+                        <div class="col-xs-6">
                             <input type="checkbox" class='filled-in' name="remember" id="remember">
                             <label for="remember">Angemeldet bleiben</label>
                         </div>
-                        <div class="col s6">
+                        <div class="col-xs-6">
                             <a class="right" href="{{ url('/password/reset') }}">Password vergessen</a>
                         </div>
-                        <div class="col s12">
+                        <div class="col-xs-12">
                             <button type="submit" class="btn right">
                                 <i class="fa fa-btn fa-sign-in"></i>Anmelden
                             </button>

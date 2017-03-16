@@ -479,7 +479,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
     function text_bereich($beschreibung, $name, $wert, $cols, $rows)
     {
         ?>
-        <div class="input-field col s12">
+        <div class="input-field col-xs-12">
             <textarea id="<?php echo $name ?>" class="materialize-textarea" name="<?php echo $name ?>"
                       cols="<?php echo $cols ?>" rows="<?php echo $rows ?>"><?php echo $wert ?></textarea>
             <label for="<?php echo $name ?>"><?php echo $beschreibung ?></label>

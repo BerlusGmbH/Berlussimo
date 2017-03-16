@@ -373,7 +373,7 @@ class b_pdf
         $aktuelle_mvs = $m->finde_aktuelle_mvs();
         if (!empty($aktuelle_mvs)) {
             echo "<div class='row input-field'>";
-            echo "<div class='col s12 m6 l2'>";
+            echo "<div class='col-xs-12 col-md-6 col-lg-2'>";
             $f->check_box_js_alle('nn', 'nn', 'NN', 'Alle markieren', '', '', 'mv_ids');
             echo "</div>";
             for ($index = 0; $index < sizeof($aktuelle_mvs); $index++) {
@@ -382,12 +382,12 @@ class b_pdf
                 $mv->get_mietvertrag_infos_aktuell($mv_id);
                 if (session()->has('serienbrief_mvs')) {
                     if (!in_array($mv_id, session()->get('serienbrief_mvs'))) {
-                        echo "<div class='col s12 m6 l2'>";
+                        echo "<div class='col-xs-12 col-md-6 col-lg-2'>";
                         $f->check_box_js1('mv_ids[]', 'mv_id_' . $mv_id, $mv_id, "$mv->einheit_kurzname - $mv->personen_name_string", '', '');
                         echo "</div>";
                     }
                 } else {
-                    echo "<div class='col s12 m6 l2'>";
+                    echo "<div class='col-xs-12 col-md-6 col-lg-2'>";
                     $f->check_box_js1('mv_ids[]', 'mv_id_' . $mv_id, $mv_id, "$mv->einheit_kurzname - $mv->personen_name_string", '', '');
                     echo "</div>";
                 }

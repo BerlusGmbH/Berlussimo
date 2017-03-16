@@ -54,20 +54,20 @@ function uebersicht_einheit($einheit_id)
   <div id='tasks' class='modal bottom-sheet'>
     <div class='modal-content'>";
     echo "<div class='row'>
-    <div class='col s12'>
+    <div class='col-xs-12'>
       <ul class='tabs'>
-        <li class='tab col s4'><a class='active' href='#unit'>Einheit</a></li>
-        <li class='tab col s4'><a href='#house'>Haus</a></li>
-        <li class='tab col s4'><a href='#object'>Objekt</a></li>
+        <li class='tab col-xs-4'><a class='active' href='#unit'>Einheit</a></li>
+        <li class='tab col-xs-4'><a href='#house'>Haus</a></li>
+        <li class='tab col-xs-4'><a href='#object'>Objekt</a></li>
       </ul>
     </div>
-    <div id='unit' class='col s12'>";
+    <div id='unit' class='col-xs-12'>";
     render_unit_tasks_table($einheit_id);
     echo "</div>
-    <div id='house' class='col s12'>";
+    <div id='house' class='col-xs-12'>";
     render_house_tasks_table($e->haus_id);
     echo"</div>
-    <div id='object' class='col s12'>";
+    <div id='object' class='col-xs-12'>";
     render_object_tasks_table($e->objekt_id);
     echo "</div>
   </div>";
@@ -128,7 +128,7 @@ function uebersicht_einheit($einheit_id)
     $details_info = new details ();
     $objekt_details_arr = $details_info->get_details('OBJEKT', $e->objekt_id);
     echo "<div class='yellow-page row'>";
-    echo "<div class='col s12 m6 l3'>";
+    echo "<div class='col-xs-12 col-md-6 col-lg-3'>";
     echo "<div class='card'>";
     echo "<div class='card-content'>";
     echo "<div class='card-title'>Objekt: <b>$e->objekt_name</b></div>";
@@ -144,7 +144,7 @@ function uebersicht_einheit($einheit_id)
     echo "</div>";
     echo "</div>";
 
-    echo "<div class='col s12 m6 l3'>";
+    echo "<div class='col-xs-12 col-md-6 col-lg-3'>";
     echo "<div class='card'>";
     echo "<div class='card-content'>";
     echo "<div class='card-title'>Einheit: <b>$e->einheit_kurzname</b></div>";
@@ -186,7 +186,7 @@ function uebersicht_einheit($einheit_id)
     }
     // ####INFOS ÜBER PERSON/MIETER
     $person_info = new person ();
-    echo "<div class='col s12 m4 l2'>";
+    echo "<div class='col-xs-12 col-md-4 col-lg-2'>";
     for ($i = 0; $i < $mv->anzahl_personen; $i++) {
         $person_info->get_person_infos($mv->personen_ids [$i] ['PERSON_MIETVERTRAG_PERSON_ID']);
         $akt_person_id = $mv->personen_ids [$i] ['PERSON_MIETVERTRAG_PERSON_ID'];
@@ -264,7 +264,7 @@ function uebersicht_einheit($einheit_id)
     $mv_details_info = new details ();
     $mv_details_arr = $mv_details_info->get_details('MIETVERTRAG', $mietvertrag_id);
 
-    echo "<div class='col s12 m4 l2'>";
+    echo "<div class='col-xs-12 col-md-4 col-lg-2'>";
     echo "<div class='card'>";
     echo "<div class='card-content'>";
     echo "<div class='card-title'>Mietvertrag</div>";
@@ -332,7 +332,7 @@ function uebersicht_einheit($einheit_id)
 
     echo "</div>";
 
-    echo "<div class='col s12 m4 l2'>";
+    echo "<div class='col-xs-12 col-md-4 col-lg-2'>";
     echo "<div class='card'>";
     echo "<div class='card-content'>";
     echo "<div class='card-title'>Miete</div>";
@@ -395,13 +395,6 @@ function uebersicht_einheit($einheit_id)
 
     echo "</div>";
     echo "</div>";
-    //    $det = new detail ();
-//    $hinw_einheit = $det->finde_detail_inhalt('Einheit', $einheit_id, 'Hinweis_zu_Einheit');
-//    if (!empty ($hinw_einheit)) {
-//        $tmps = str_replace('nils@inspirationgroup.biz', 'alon@inspirationgroup.biz', $hinw_einheit);
-//        echo str_replace('chen@inspirationgroup.biz', 'alon@inspirationgroup.biz', $tmps) . "<br>";
-//    }
-
     echo "</div>";
 }
 

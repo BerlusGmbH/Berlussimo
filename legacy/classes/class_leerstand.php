@@ -1258,7 +1258,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                 $monat = $monat_array [$a] ['MONAT'];
                 $jahr = $monat_array [$a] ['JAHR'];
                 $ima1 = $this->get_png($objekt_id, $monat, $jahr, 800, 600);
-                echo "<div class='col s12 m4 l3'>";
+                echo "<div class='col-xs-12 col-md-4 col-lg-3'>";
                 echo "<img class='materialboxed' width='100%' src=\"$ima1\" alt=\"Leerstandsübersicht $a\"></a>";
                 echo "</div>";
             }
@@ -2059,7 +2059,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
         $f->hidden_feld("einheit_id_foto", $einheit_id);
         //echo "<input type=\"file\" id=\"fileinput\" multiple=\"multiple\" accept=\"image/*\" />";
         echo "<div class='row'>";
-        echo "<div class=\"file-field input-field col s12 m7 l9\">
+        echo "<div class=\"file-field input-field col-xs-12 col-md-9 col-lg-9\">
                 <div class=\"btn\">
                 <span>Fotos</span>
                     <input type=\"file\" id=\"fileinput\" accept=\"image/*\" multiple>
@@ -2068,7 +2068,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                     <input class=\"file-path validate\" type=\"text\" placeholder=\"Ein Foto oder mehrere Fotos hochladen\">
                 </div>
             </div>";
-        echo "<div class='input-field col s12 m5 l3'><a class='waves-effect waves-light btn' id='BTN_UPLOAD' onclick='upload_files()'><i class='material-icons left'>file_upload</i>Hochladen</a></div>";
+        echo "<div class='input-field col-xs-12 col-md-5 col-lg-3'><a class='waves-effect waves-light btn' id='BTN_UPLOAD' onclick='upload_files()'><i class='material-icons left'>file_upload</i>Hochladen</a></div>";
         echo "</div>";
         echo "<div id=\"gallery\" class='row input-field'></div>";
         $f->fieldset_ende();
@@ -2091,7 +2091,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
             $counter++;
             $url = $storage->url($fotos_arr[$a]);
             $path = $storage->fullPath($fotos_arr[$a]);
-            echo "<div class='col s12 m6 l4'>";
+            echo "<div class='col-xs-12 col-md-6 col-lg-4'>";
             echo "<img class='materialboxed' width='250' height='188' src='$url' alt='Wohnungsbild $a'>";
             $url = asset('images/x.png');
             echo "<img onclick=\"del_file('$path');reload_me();\" src='$url'></div>\n";

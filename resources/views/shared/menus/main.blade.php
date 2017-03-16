@@ -181,11 +181,6 @@
                         <a class='WEG' href='{{route('web::mietspiegel::legacy')}}'>Mietspiegel</a>
                     </div>
                 @endif
-
-                <div class="col-xs-4 col-sm-4 col-md-2 col-lg-1">
-                    <a target='_new'
-                       href='http://www.hausverwaltung.de/software/schnelleinstieg.html'>Handbuch</a>
-                </div>
             </div>
             @yield('submenu')
         </div>

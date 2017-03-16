@@ -3,7 +3,7 @@
 @section('app-content')
     <div class="container">
         <div class="row">
-            <div class="col s12 m10 l8 offset-m1 offset-l2">
+            <div class="col-xs-12 col-md-10 col-lg-8 col-md-offset-1 col-lg-offset-2">
                 <div class="card">
                     <div class="card-title">Reset Password</div>
 
@@ -12,7 +12,7 @@
                             {!! csrf_field() !!}
                             <input type="hidden" name="token" value="{{ $token }}">
                             <div class="row">
-                                <div class="input-field col s12">
+                                <div class="input-field col-xs-12">
                                     <i class="material-icons prefix">email</i>
                                     <input type="email" id="email" name="email"
                                            class="validate {{ $errors->has('email') ? 'invalid' : '' }}"
@@ -21,7 +21,7 @@
                                     <label for="email">E-Mail Address</label>
                                 </div>
 
-                                <div class="input-field col s12">
+                                <div class="input-field col-xs-12">
                                     <i class="material-icons prefix">lock</i>
                                     <input type="email" id="password" name="password"
                                            class="validate {{ $errors->has('password') ? 'invalid' : '' }}">
@@ -29,7 +29,7 @@
                                     <label for="password">Password</label>
                                 </div>
 
-                                <div class="input-field col s12">
+                                <div class="input-field col-xs-12">
                                     <i class="material-icons prefix">lock</i>
                                     <input type="email" id="password_confirmation" name="password_confirmation"
                                            class="validate {{ $errors->has('password_confirmation') ? 'invalid' : '' }}">
@@ -37,7 +37,7 @@
                                     <label for="password_confirmation">Confirm Password</label>
                                 </div>
 
-                                <div class="input-field col s12">
+                                <div class="input-field col-xs-12">
                                     <button class="btn waves-effect waves-light" type="submit">Reset Password
                                         <i class="material-icons right">send</i>
                                     </button>

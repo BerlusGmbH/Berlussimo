@@ -526,17 +526,17 @@ class bk
         /* Buchungen zur Auswahl */
         $f->erstelle_formular('buchungen_hinzufuegen', '', 'Buchungen hinzufügen');
         echo "<div class='row'>";
-        echo "<div class='col s12 m6 l3'>";
+        echo "<div class='col-xs-12 col-md-6 col-lg-3'>";
         $this->dropdown_gen_keys();
         echo "</div>";
-        echo "<div class='col s12 m3 l3'>";
+        echo "<div class='col-xs-12 col-md-3 col-lg-3'>";
         $this->dropdown_hndl();
         echo "</div>";
-        echo "<div class='col s12 m3 l3'>";
+        echo "<div class='col-xs-12 col-md-3 col-lg-3'>";
         $this->dropdown_uebernahme_kontierung();
         echo "</div>";
         $f->hidden_feld('option', 'buchungen_hinzu');
-        echo "<div class='input-field col s12 m12 l3 right-align'>";
+        echo "<div class='input-field col-xs-12 col-md-12 col-lg-3 right-align'>";
         $f->send_button("submit_key", "Bestehende Ändern");
         echo "</div>";
         $geldkonto_id = session()->get('geldkonto_id');

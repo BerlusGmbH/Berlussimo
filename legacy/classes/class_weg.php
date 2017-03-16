@@ -852,8 +852,8 @@ class weg
                 $objekt_id = $arr [$a];
                 $o = new objekt ();
                 $o->get_objekt_infos($objekt_id);
-                echo "<div class='col s12 m6 l3'>";
-                echo "<a href='" . route('web::objekte::legacy', ['objekt_id' => $objekt_id]) . "'>$o->objekt_kurzname</a>";
+                echo "<div class='col-xs-12 col-md-6 col-lg-3'>";
+                echo "<a href='" . route('web::objekte::select', ['id' => $objekt_id]) . "'>$o->objekt_kurzname</a>";
                 echo "</div>";
             }
             echo "</div>";
@@ -2658,7 +2658,7 @@ class weg
         $gg = new geldkonto_info ();
         $gg->geld_konto_ermitteln('Objekt', $this->objekt_id);
         $geldkonto_id = $gg->geldkonto_id;
-        if(!isset($geldkonto_id)) {
+        if (!isset($geldkonto_id)) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\InfoMessage("Es existiert kein Geldkonto für das Objekt.")
             );
@@ -6977,38 +6977,34 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
         $f = new formular ();
         $f->erstelle_formular('Serienbrief an Eigentümer', null);
         echo "<div class='row'>";
-        echo "<div class='input-field col s12 m6 l3'>";
+        echo "<div class='input-field col-xs-12 col-md-6 col-lg-3'>";
         $f->send_button('Button', 'Vorlage wählen');
         echo "</div>";
-        echo "<div class='input-field col s12 m6 l3'>";
+        echo "<div class='input-field col-xs-12 col-md-6 col-lg-3'>";
         $f->send_button("delete", "Alle Löschen");
         echo "</div>";
         echo "</div>";
         echo "<div class='row'>";
-        echo "<div class='col s12 m6 l3'>";
+        echo "<div class='input-field col-xs-12 col-md-6 col-lg-3'>";
         $f->check_box_js_alle('c_alle', 'c_alle', 1, 'Alle', '', '', 'eig_ids');
         echo "</div>";
         $anz_einheit = count($eigent_arr);
         for ($a = 0; $a < $anz_einheit; $a++) {
-            echo "<div class='col s12 m6 l3'>";
-            $anz_eig = count($eigent_arr [$a]);
-            for ($b = 0; $b < $anz_eig; $b++) {
+            echo "<div class='input-field col-xs-12 col-md-6 col-lg-3'>";
+            $eig_id = $eigent_arr [$a] [0] ['ID'];
+            $this->get_eigentumer_id_infos2($eig_id);
 
-                $eig_id = $eigent_arr [$a] [$b] ['ID'];
-                $this->get_eigentumer_id_infos2($eig_id);
-
-                if (session()->has('eig_ids') && in_array($eig_id, session()->get('eig_ids'))) {
-                    $f->check_box_js1('eig_ids[]', 'eig_id_' . $eig_id, $eig_id, "$this->einheit_kurzname $this->eigentuemer_name_str", '', 'checked');
-                } else {
-                    $f->check_box_js1('eig_ids[]', 'eig_id' . $eig_id, $eig_id, "$this->einheit_kurzname $this->eigentuemer_name_str", '', '');
-                }
+            if (session()->has('eig_ids') && in_array($eig_id, session()->get('eig_ids'))) {
+                $f->check_box_js1('eig_ids[]', 'eig_id_' . $eig_id, $eig_id, "$this->einheit_kurzname $this->eigentuemer_name_str", '', 'checked');
+            } else {
+                $f->check_box_js1('eig_ids[]', 'eig_id' . $eig_id, $eig_id, "$this->einheit_kurzname $this->eigentuemer_name_str", '', '');
             }
             echo "</div>";
         }
         echo "</div>";
         $f->hidden_feld('option', 'serien_brief_vorlagenwahl');
         echo "<div class='row'>";
-        echo "<div class='input-flied col s12 m6 l3'>";
+        echo "<div class='input-field col-xs-12 col-md-6 col-lg-3'>";
         $f->send_button('Button', 'Vorlage wählen');
         echo "</div>";
         echo "</div>";
