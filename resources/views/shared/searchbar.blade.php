@@ -1,8 +1,8 @@
 <form>
     <div class="input-field">
         <input id="searchbar" type="search" required autocomplete="off">
-        <label for="searchbar"><i class="mdi mdi-magnify"></i></label>
-        <i id="searchbarClose" class="mdi mdi-close"></i>
+        <label for="searchbar"><i class="material-icons">search</i></label>
+        <i id="searchbarClose" class="material-icons">close</i>
         <div id="searchbarIndicator" class="preloader-wrapper small active" style="position: absolute; top: 14px; right: 0.8rem; display: none">
             <div class="spinner-layer spinner-gray-only">
                 <div class="circle-clipper left">

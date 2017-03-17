@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href='{{ elixir('css/vendor.css') }}' rel='stylesheet' type='text/css'>
     <link href='{{ elixir('css/berlussimo.css') }}' rel='stylesheet' type='text/css'>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>

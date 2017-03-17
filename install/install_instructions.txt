@@ -60,6 +60,7 @@ sudo php artisan key:generate
 sudo php artisan migrate
 sudo php artisan optimize
 sudo php artisan route:cache
+sudo php artisan parser:generate
 
 sudo npm install
 sudo npm install --global gulp-cli
