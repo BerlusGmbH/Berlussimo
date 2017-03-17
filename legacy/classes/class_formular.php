@@ -53,18 +53,18 @@ class formular
     /* Sendenbutton mit JS-Action */
     function send_button_js($name, $wert, $js)
     {
-        echo "<button type=\"submit\" name=\"$name\" value=\"$wert\" class=\"btn waves-effect waves-light\" id=\"$name\" $js><i class=\"material-icons right\">send</i>$wert</button>";
+        echo "<button type=\"submit\" name=\"$name\" value=\"$wert\" class=\"btn waves-effect waves-light\" id=\"$name\" $js><i class=\"mdi mdi-send right\"></i>$wert</button>";
     }
 
     function send_button_disabled($name, $wert, $id)
     {
-        echo "<button type=\"submit\" name=\"$name\" value=\"$wert\" id=\"$id\" class=\"submit\" disabled><i class=\"material-icons right\">send</i>$wert</button>";
+        echo "<button type=\"submit\" name=\"$name\" value=\"$wert\" id=\"$id\" class=\"submit\" disabled><i class=\"mdi mdi-send right\"></i>$wert</button>";
     }
 
     /* Sendenbutton normal */
     function send_button($name, $wert, $icon = 'send', $allignment = 'right')
     {
-        echo "<button type=\"submit\" name=\"$name\" value=\"$wert\" class=\"btn waves-effect waves-light\" id=\"$name\"><i class=\"material-icons $allignment\">$icon</i>$wert</button>";
+        echo "<button type=\"submit\" name=\"$name\" value=\"$wert\" class=\"btn waves-effect waves-light\" id=\"$name\"><i class=\"mdi mdi-$icon $allignment\"></i>$wert</button>";
     }
 
     /* Radioauswahl normal */

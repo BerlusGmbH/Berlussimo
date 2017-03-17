@@ -19,8 +19,8 @@ switch ($option) {
         }
         $vorjahr = $jahr - 1;
         $nachjahr = $jahr + 1;
-        $link_vorjahr = "<a class='waves-effect waves-light btn' href='" . route('web::urlaub::legacy', ['option' => 'uebersicht', 'jahr' => $vorjahr]) . "'><i class=\"material-icons left\">keyboard_arrow_left</i>$vorjahr</a>";
-        $link_nachjahr = "<a class='waves-effect waves-light btn' href='" . route('web::urlaub::legacy', ['option' => 'uebersicht', 'jahr' => $nachjahr]) . "'><i class=\"material-icons right\">keyboard_arrow_right</i>$nachjahr</a>";
+        $link_vorjahr = "<a class='waves-effect waves-light btn' href='" . route('web::urlaub::legacy', ['option' => 'uebersicht', 'jahr' => $vorjahr]) . "'><i class=\"mdi mdi-arrow-left left\"></i>$vorjahr</a>";
+        $link_nachjahr = "<a class='waves-effect waves-light btn' href='" . route('web::urlaub::legacy', ['option' => 'uebersicht', 'jahr' => $nachjahr]) . "'><i class=\"mdi mdi-arrow-right right\"></i>$nachjahr</a>";
         $pdf_link = "<a class='waves-effect waves-light btn' href='" . route('web::urlaub::legacy', ['option' => 'uebersicht_pdf', 'jahr' => $jahr]) . "'>PDF</a>";
         echo "<div class='left-align'>";
         echo "$link_vorjahr &nbsp;<b>Übersicht $jahr</b>&nbsp; $link_nachjahr $pdf_link";

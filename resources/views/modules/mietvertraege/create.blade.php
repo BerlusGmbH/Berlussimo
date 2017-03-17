@@ -11,7 +11,7 @@
                 <div class="row">
                     <form action="{{ route('web::mietvertraege::store') }}" method="post">
                         <div class="input-field col-xs-12 col-md-6">
-                            <i class="material-icons prefix">people</i>
+                            <i class="mdi mdi-account prefix"></i>
                             <div id="tenant-autocomplete" class="chips invalid" style="margin-left: 3rem">
                             </div>
                             <span class="error-block">{{ $errors->has('tenants') ? $errors->first('tenants') : '' }}</span>
@@ -26,7 +26,7 @@
                             <label for="unit-autocomplete">Einheit</label>
                         </div>
                         <div class="input-field col-xs-12 col-md-6">
-                            <i class="material-icons prefix">today</i>
+                            <i class="mdi mdi-calendar-today prefix"></i>
                             <input type="date" class="datepicker {{ $errors->has('move-in-date') ? 'invalid' : '' }}"
                                    id="move-in-date" name="move-in-date"
                                    value="{{ old('move-in-date') }}">
@@ -34,7 +34,7 @@
                             <label for="move-in-date">Einzugsdatum</label>
                         </div>
                         <div class="input-field col-xs-12 col-md-6">
-                            <i class="material-icons prefix">date_range</i>
+                            <i class="mdi mdi-calendar-range prefix"></i>
                             <input type="date" class="datepicker {{ $errors->has('move-out-date') ? 'invalid' : '' }}"
                                    id="move-out-date" name="move-out-date"
                                    value="{{ old('move-out-date') }}">
@@ -42,7 +42,7 @@
                             <label for="move-out-date">Auszugsdatum</label>
                         </div>
                         <div class="input-field col-xs-12 col-md-6">
-                            <i class="material-icons prefix">euro_symbol</i>
+                            <i class="mdi mdi-currency-eur prefix"></i>
                             <input type="number" step="0.01" min="0" id="rent" name="rent"
                                    class="validate {{ $errors->has('rent') ? 'invalid' : '' }}"
                                    value="{{ old('rent') }}">
@@ -50,7 +50,7 @@
                             <label for="rent">Kaltmiete</label>
                         </div>
                         <div class="input-field col-xs-12 col-md-6">
-                            <i class="material-icons prefix">euro_symbol</i>
+                            <i class="mdi mdi-currency-eur prefix"></i>
                             <input type="number" step="0.01" min="0" id="deposit" name="deposit"
                                    class="validate {{ $errors->has('deposit') ? 'invalid' : '' }}"
                                    value="{{ old('deposit') }}">
@@ -59,7 +59,7 @@
                                    data-error="{{ $errors->has('deposit') ? $errors->first('deposit') : '' }}">Sollkaution</label>
                         </div>
                         <div class="input-field col-xs-12 col-md-6">
-                            <i class="material-icons prefix">euro_symbol</i>
+                            <i class="mdi mdi-currency-eur prefix"></i>
                             <input type="number" step="0.01" min="0" id="bk-advance" name="bk-advance"
                                    class="validate {{ $errors->has('bk-advance') ? 'invalid' : '' }}"
                                    value="{{ old('bk-advance') }}">
@@ -67,7 +67,7 @@
                             <label for="bk-advance">Nebenkosten Vorauszahlung</label>
                         </div>
                         <div class="input-field col-xs-12 col-md-6">
-                            <i class="material-icons prefix">euro_symbol</i>
+                            <i class="mdi mdi-currency-eur prefix"></i>
                             <input type="number" step="0.01" min="0" id="hk-advance" name="hk-advance"
                                    class="validate {{ $errors->has('hk-advance') ? 'invalid' : '' }}"
                                    value="{{ old('hk-advance') }}">
@@ -76,7 +76,7 @@
                         </div>
                         <div class="input-field col-xs-12">
                             <button class="btn waves-effect waves-light" type="submit">Erfassen
-                                <i class="material-icons right">send</i>
+                                <i class="mdi mdi-send right"></i>
                             </button>
                         </div>
                         <input type="hidden" name="unit" id="unit" value="{{ old('unit') }}">
@@ -100,15 +100,15 @@
                             $end = date_create($unit['MIETVERTRAG_BIS']);
                             $posttag = '';
                             switch ($unit['TYP']) {
-                                case 'Wohnraum' : $posttag .= '<i class="material-icons">home</i> ';
+                                case 'Wohnraum' : $posttag .= '<i class="mdi mdi-home"></i> ';
                                     break;
-                                case 'Gewerbe' : $posttag .= '<i class="material-icons">business</i> ';
+                                case 'Gewerbe' : $posttag .= '<i class="mdi mdi-store"></i> ';
                                     break;
-                                case 'Stellplatz' : $posttag .= '<i class="material-icons">directions_car</i> ';
+                                case 'Stellplatz' : $posttag .= '<i class="mdi mdi-car"></i> ';
                                     break;
                                 default: $posttag .= ' (' . $unit['TYP'] . ')';
                             }
-                            $posttag .= ($end > $now) ? '<i class="material-icons">work</i> ' . date_format($end, 'd.m.Y') : '';
+                            $posttag .= ($end > $now) ? '<i class="mdi mdi-briefcase"></i> ' . date_format($end, 'd.m.Y') : '';
                         @endphp
                 '{!! $unit['EINHEIT_KURZNAME'] !!}': {
                     id: {!! $unit['EINHEIT_ID'] !!},

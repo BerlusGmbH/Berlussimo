@@ -166,7 +166,7 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC");
     function detailsanzeigen($detail_tabelle, $detail_id)
     {
         $link = route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => $detail_tabelle, 'detail_id' => $detail_id]);
-        echo "<a class='btn waves-effect waves-light' href=\"$link\"><i class=\"material-icons left\">add</i>Neues Detail</a>";
+        echo "<a class='btn waves-effect waves-light' href=\"$link\"><i class=\"mdi mdi-plus left\"></i>Neues Detail</a>";
 
         $db_abfrage = "SELECT DETAIL_DAT, DETAIL_ID, DETAIL_NAME, DETAIL_INHALT, DETAIL_BEMERKUNG FROM DETAIL WHERE DETAIL_AKTUELL='1' && DETAIL_ZUORDNUNG_TABELLE = '$detail_tabelle' && DETAIL_ZUORDNUNG_ID = '$detail_id' ORDER BY DETAIL_NAME ASC";
         $resultat = DB::select($db_abfrage);

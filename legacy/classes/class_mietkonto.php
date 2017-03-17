@@ -491,7 +491,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
 
     function send_button($name, $wert)
     {
-        echo "<button type=\"submit\" name=\"$name\" value=\"$wert\" class=\"btn waves-effect waves-light\" id=\"$name\"><i class=\"material-icons right\">send</i>$wert</button>";
+        echo "<button type=\"submit\" name=\"$name\" value=\"$wert\" class=\"btn waves-effect waves-light\" id=\"$name\"><i class=\"mdi mdi-send right\"></i>$wert</button>";
     }
 
     function buchungsmaske_manuell_gross_betrag($mietvertrag_id, $geld_konto_id)
@@ -1687,12 +1687,12 @@ ORDER BY DATUM ASC ");
 
     function send_button_js($name, $wert, $js)
     {
-        echo "<button type=\"submit\" name=\"$name\" value=\"$wert\" class=\"btn waves-effect waves-light\" id=\"$name\" $js><i class=\"material-icons right\">send</i>$wert</button>";
+        echo "<button type=\"submit\" name=\"$name\" value=\"$wert\" class=\"btn waves-effect waves-light\" id=\"$name\" $js><i class=\"mdi mdi-send right\"></i>$wert</button>";
     }
 
     function send_button_disabled($name, $wert, $id)
     {
-        echo "<button type=\"submit\" name=\"$name\" value=\"$wert\" class=\"btn waves-effect waves-light\" id=\"$id\" disabled><i class=\"material-icons right\">send</i>$wert</button>";
+        echo "<button type=\"submit\" name=\"$name\" value=\"$wert\" class=\"btn waves-effect waves-light\" id=\"$id\" disabled><i class=\"mdi mdi-send right\"></i>$wert</button>";
     }
 
     function dropdown_me_kostenkategorien($beschreibung, $name, $kostenkategorie)

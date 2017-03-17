@@ -2094,7 +2094,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             if (isset ($send_button_anzeigen)) {
                 echo "<input type=\"hidden\" name=\"beleg_nr\" value=\"$this->belegnr\">\n";
                 echo "<tr><td colspan='4'><button class='btn waves-effect waves-light' type='submit' name='action'>Kontieren
-                <i class='material-icons right'>send</i>
+                <i class='mdi mdi-send right'></i>
                 </button></td></tr>\n";
             }
         }  // ende if $this->anzahl_positionen >0 d.h. Rechnung wurde nur kurz erfasst, positionen fehlen

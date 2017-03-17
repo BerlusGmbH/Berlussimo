@@ -11,7 +11,7 @@ trait MaterializeCssNextPreviousButtonRenderTrait
      * @param  string  $text
      * @return string
      */
-    public function getPreviousButton($text = '<i class="material-icons">chevron_left</i>')
+    public function getPreviousButton($text = '<i class="mdi mdi-chevron-left"></i>')
     {
         // If the current page is less than or equal to one, it means we can't go any
         // further back in the pages, so we will render a disabled previous button
@@ -33,7 +33,7 @@ trait MaterializeCssNextPreviousButtonRenderTrait
      * @param  string  $text
      * @return string
      */
-    public function getNextButton($text = '<i class="material-icons">chevron_right</i>')
+    public function getNextButton($text = '<i class="mdi mdi-chevron-right"></i>')
     {
         // If the current page is greater than or equal to the last page, it means we
         // can't go any further into the pages, as we're already on this last page

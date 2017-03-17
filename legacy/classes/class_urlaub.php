@@ -964,8 +964,8 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
             }
 
             $monatsname = monat2name($monat);
-            $link_vormonat = "<a class='waves-effect waves-light btn' href='" . route('web::urlaub::legacy', ['option' => 'monatsansicht', 'jahr' => $v_jahr, 'monat' => $vormonat]) . "'><i class=\"material-icons left\">keyboard_arrow_left</i>$vormonatname</a>";
-            $link_nachmonat = "<a class='waves-effect waves-light btn' href='" . route('web::urlaub::legacy', ['option' => 'monatsansicht', 'jahr' => $n_jahr, 'monat' => $nachmonat]) . "'><i class=\"material-icons right\">keyboard_arrow_right</i>$nachmonatname</a>";
+            $link_vormonat = "<a class='waves-effect waves-light btn' href='" . route('web::urlaub::legacy', ['option' => 'monatsansicht', 'jahr' => $v_jahr, 'monat' => $vormonat]) . "'><i class=\"mdi mdi-arrow-left left\"></i>$vormonatname</a>";
+            $link_nachmonat = "<a class='waves-effect waves-light btn' href='" . route('web::urlaub::legacy', ['option' => 'monatsansicht', 'jahr' => $n_jahr, 'monat' => $nachmonat]) . "'><i class=\"mdi mdi-arrow-right right\"></i>$nachmonatname</a>";
             $link_pdf = "<a class='waves-effect waves-light btn' href='" . route('web::urlaub::legacy', ['option' => 'monatsansicht_pdf', 'jahr' => $n_jahr, 'monat' => $monat]) . "'>PDF</a>";
 
             /* Ausgabe der Tage */

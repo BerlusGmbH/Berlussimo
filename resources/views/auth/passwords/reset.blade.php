@@ -13,7 +13,7 @@
                             <input type="hidden" name="token" value="{{ $token }}">
                             <div class="row">
                                 <div class="input-field col-xs-12">
-                                    <i class="material-icons prefix">email</i>
+                                    <i class="mdi mdi-email prefix"></i>
                                     <input type="email" id="email" name="email"
                                            class="validate {{ $errors->has('email') ? 'invalid' : '' }}"
                                            value="{{ $email || old('email') }}">
@@ -22,7 +22,7 @@
                                 </div>
 
                                 <div class="input-field col-xs-12">
-                                    <i class="material-icons prefix">lock</i>
+                                    <i class="mdi mdi-lock prefix"></i>
                                     <input type="email" id="password" name="password"
                                            class="validate {{ $errors->has('password') ? 'invalid' : '' }}">
                                     <span class="error-block">{{ $errors->has('password') ? $errors->first('password') : '' }}</span>
@@ -30,7 +30,7 @@
                                 </div>
 
                                 <div class="input-field col-xs-12">
-                                    <i class="material-icons prefix">lock</i>
+                                    <i class="mdi mdi-lock prefix"></i>
                                     <input type="email" id="password_confirmation" name="password_confirmation"
                                            class="validate {{ $errors->has('password_confirmation') ? 'invalid' : '' }}">
                                     <span class="error-block">{{ $errors->has('password_confirmation') ? $errors->first('password_confirmation') : '' }}</span>
@@ -39,7 +39,7 @@
 
                                 <div class="input-field col-xs-12">
                                     <button class="btn waves-effect waves-light" type="submit">Reset Password
-                                        <i class="material-icons right">send</i>
+                                        <i class="mdi mdi-send right"></i>
                                     </button>
                                 </div>
                             </div>

@@ -8,7 +8,7 @@
                 <form role="form" method="POST" action="{{ url('/login') }}">
                     {!! csrf_field() !!}
                     <div class="input-field">
-                        <i class="material-icons prefix">email</i>
+                        <i class="mdi mdi-emial prefix"></i>
                         <input type="email" id="email" name="email"
                                class="validate {{ $errors->has('email') ? 'invalid' : '' }}"
                                value="{{ old('email') }}">
@@ -17,7 +17,7 @@
                     </div>
 
                     <div class="input-field">
-                        <i class="material-icons prefix">lock</i>
+                        <i class="mdi mdi-lock prefix"></i>
                         <input type="password" id="password" name="password">
                         <label for="password">Passwort</label>
                     </div>

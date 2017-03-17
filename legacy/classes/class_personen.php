@@ -221,7 +221,7 @@ LIMIT 0 , 30";
         echo "<option value=\"Nachname\">Nachname</option>";
         echo "<option value=\"Vorname\">Vorname</option>";
         echo "</select></td>";
-        echo "<td width=20% align=left><button type=\"submit\" name=\"person_finden\" value=\"Finden\" class=\"btn waves-effect waves-light\" id=\"person_finden\"><i class=\"material-icons right\">send</i>Finden</button></td></tr>";
+        echo "<td width=20% align=left><button type=\"submit\" name=\"person_finden\" value=\"Finden\" class=\"btn waves-effect waves-light\" id=\"person_finden\"><i class=\"mdi mdi-send right\"></i>Finden</button></td></tr>";
         echo "</table>";
         echo "</form>";
         

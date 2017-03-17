@@ -3246,7 +3246,7 @@ AND  `AKTUELL` =  '1'");
             </div>
         </div>
         <button class="btn waves-effect waves-light" type="submit">Hochladen
-            <i class="material-icons right">send</i>
+            <i class="mdi mdi-send right"></i>
         </button>
         <?php
         echo "</form>";

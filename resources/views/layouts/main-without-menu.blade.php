@@ -2,7 +2,7 @@
 
 @section('navbar')
     <a href='' data-activates="berlussimo-sidenav" class="button-collapse right" xmlns="http://www.w3.org/1999/html"><i
-                class="material-icons">menu</i></a>
+                class="mdi mdi-menu"></i></a>
     <ul class="right hide-on-med-and-down">
         <li style="height: 64px">
             @include('shared.searchbar')
@@ -12,11 +12,11 @@
                 @if(session()->has('partner_id'))
                     <?php $p = new partners (); $p->get_partner_name(session()->get('partner_id')); ?>
                     <a href='{{route('web::rechnungen::legacy', ['option' => 'partner_wechseln'])}}'>
-                        <i class="material-icons left">perm_identity</i>
+                        <i class="mdi mdi-account-multiple left"></i>
                         Partner: <b>{{str_limit($p->partner_name, 20)}}</b></a>
                 @else
                     <a href='{{route('web::rechnungen::legacy', ['option' => 'partner_wechseln'])}}'>
-                        <i class="material-icons left">perm_identity</i>
+                        <i class="mdi mdi-account-multiple left">perm_identity</i>
                         Partner wählen</a>
                 @endif
             </li>
@@ -26,16 +26,16 @@
                 @if(session()->has('geldkonto_id'))
                     <?php $g = new geldkonto_info(); $g->geld_konto_details(session()->get('geldkonto_id')); ?>
                     <a href='{{route('web::buchen::legacy', ['option' => 'geldkonto_aendern'])}}'>
-                        <i class="material-icons left">euro_symbol</i>
+                        <i class="mdi mdi-currency-eur left"></i>
                         Geldkonto: <b>{{$g->geldkonto_bezeichnung_kurz}}</b></a>
                 @else
                     <a href='{{route('web::buchen::legacy', ['option' => 'geldkonto_aendern'])}}'>
-                        <i class="material-icons left">euro_symbol</i>
+                        <i class="mdi mdi-currency-eur left"></i>
                         Geldkonto wählen</a>
                 @endif
             </li>
         @endif
-        <li><a href="/logout"><i class="material-icons left">exit_to_app</i>Abmelden</a></li>
+        <li><a href="/logout"><i class="mdi mdi-exit-to-app left"></i>Abmelden</a></li>
     </ul>
 @endsection
 
@@ -53,11 +53,11 @@
                 @if(session()->has('partner_id'))
                     <?php $p = new partners (); $p->get_partner_name(session()->get('partner_id')); ?>
                     <a href='{{route('web::rechnungen::legacy', ['option' => 'partner_wechseln'])}}'>
-                        <i class="material-icons left">perm_identity</i>
+                        <i class="mdi mdi-account-multiple left"></i>
                         Partner: <b>{{str_limit($p->partner_name, 20)}}</b></a>
                 @else
                     <a href='{{route('web::rechnungen::legacy', ['option' => 'partner_wechseln'])}}'>
-                        <i class="material-icons left">perm_identity</i>
+                        <i class="mdi mdi-account-multiple left"></i>
                         Partner wählen</a>
                 @endif
             </li>
@@ -67,11 +67,11 @@
                 @if(session()->has('geldkonto_id'))
                     <?php $g = new geldkonto_info(); $g->geld_konto_details(session()->get('geldkonto_id')); ?>
                     <a href='{{route('web::buchen::legacy', ['option' => 'geldkonto_aendern'])}}'><i
-                                class="material-icons left">euro_symbol</i>Geldkonto:
+                                class="mdi mdi-currency-eur left"></i>Geldkonto:
                         <b>{{$g->geldkonto_bezeichnung_kurz}}</b></a>
                 @else
                     <a href='{{route('web::buchen::legacy', ['option' => 'geldkonto_aendern'])}}'><i
-                                class="material-icons left small">euro_symbol</i>Geldkonto wählen</a>
+                                class="mdi mdi-currency-eur left small"></i>Geldkonto wählen</a>
                 @endif
             </li>
         @endif
@@ -79,7 +79,7 @@
             <div class="divider"></div>
         </li>
         <li>
-            <a href="/logout"><i class="material-icons left">exit_to_app</i>Abmelden</a>
+            <a href="/logout"><i class="mdi mdi-exit-to-app left"></i>Abmelden</a>
         </li>
     </ul>
     @yield('mainmenu')

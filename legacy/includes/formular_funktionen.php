@@ -59,7 +59,7 @@ function erstelle_submit_button($name, $wert)
 
 function erstelle_submit_button_nur($name, $wert)
 {
-    echo "<button class='btn waves-effect waves-light' type='submit' name='$name' value='$wert'>$wert<i class=\"material-icons right\">send</i></button>";
+    echo "<button class='btn waves-effect waves-light' type='submit' name='$name' value='$wert'>$wert<i class=\"mdi mdi-send right\"></i></button>";
 }
 
 function objekt_kurzname_anzahl($kurzname)

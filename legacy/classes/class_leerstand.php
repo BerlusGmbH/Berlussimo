@@ -1222,7 +1222,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                             <input disabled value='" . $fotos_vorhanden . "' id='link_foto_" . $objekt_id . '_' . $a . "' type='text'>
                             <label class='active' for='link_foto_" . $objekt_id . '_' . $a . "'>Fotos vorhanden</label>
                       </div>";
-                $link_foto_upload = "<a class='waves-effect waves-light btn' id='link_foto_up.$objekt_id.'_'.$a' href='" . route('web::leerstand::legacy', ['option' => 'fotos_upload', 'einheit_id' => $einheit_id]) . "'><i class=\"material-icons left\">file_upload</i>Hochladen</a>";
+                $link_foto_upload = "<a class='waves-effect waves-light btn' id='link_foto_up.$objekt_id.'_'.$a' href='" . route('web::leerstand::legacy', ['option' => 'fotos_upload', 'einheit_id' => $einheit_id]) . "'><i class=\"mdi mdi-upload left\"></i>Hochladen</a>";
                 echo $link_foto_upload;
 
                 echo "</td>";
@@ -2068,7 +2068,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                     <input class=\"file-path validate\" type=\"text\" placeholder=\"Ein Foto oder mehrere Fotos hochladen\">
                 </div>
             </div>";
-        echo "<div class='input-field col-xs-12 col-md-5 col-lg-3'><a class='waves-effect waves-light btn' id='BTN_UPLOAD' onclick='upload_files()'><i class='material-icons left'>file_upload</i>Hochladen</a></div>";
+        echo "<div class='input-field col-xs-12 col-md-5 col-lg-3'><a class='waves-effect waves-light btn' id='BTN_UPLOAD' onclick='upload_files()'><i class='mdi mdi-upload left'></i>Hochladen</a></div>";
         echo "</div>";
         echo "<div id=\"gallery\" class='row input-field'></div>";
         $f->fieldset_ende();

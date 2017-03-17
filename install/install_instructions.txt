@@ -1,4 +1,4 @@
-### These instructions assume that you are running Ubuntu 14.04. After completing these instructions
+### These instructions assume that you are running Ubuntu 16.04. After completing these instructions
 ### you will have a basic installation with database and webserver.
 
 ### setup berlussimo web app on apache2
@@ -12,16 +12,25 @@ sudo apt-get dist-upgrade
 sudo shutdown -r now
 
 #install npm
-curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 sudo apt-get install -y nodejs
+
+#install apache2 and dependencies
+sudo apt-get install apache2 php7.0 php7.0-gd libapache2-mod-php7.0 php7.0-mysql php7.0-xml php7.0-mbstring php7.0-bcmath php7.0-zip git
+cd /var/www/;sudo git clone https://github.com/BerlusGmbH/Berlussimo berlussimo
+cd /var/www/berlussimo/; sudo git checkout develop
 
 #install mySQL. The setup will let you set a root password for the mySQL server. You will need this later.
 sudo apt-get install mysql-server
 
-#install apache2 and dependencies
-sudo apt-get install apache2 php5 php5-gd libapache2-mod-php5 php5-mysql git
-cd /var/www/;sudo git clone https://github.com/BerlusGmbH/Berlussimo berlussimo
-cd /var/www/berlussimo/; sudo git checkout develop
+### import database schema. Theese instructions will create a database named berlussimo.
+### Set this name to reflect your settings from config.inc.php
+### You will be prompted for the root password set above.
+mysqladmin create -u root -p berlussimo
+mysql -u root -p berlussimo < /var/www/berlussimo/install/DB-Version-0.4.0/berlussimo_db_0.4.0.sql
+mysql -u root -p berlussimo < /var/www/berlussimo/install/DB-Version-0.4.0/berlussimo_db_0.4.1.sql
+mysql -u root -p berlussimo < /var/www/berlussimo/install/DB-Version-0.4.0/berlussimo_db_0.4.2.sql
+mysql -u root -p berlussimo < /var/www/berlussimo/install/DB-Version-0.4.0/berlussimo_db_0.4.3.sql
 
 #edit config to fit your mysql config
 #'mysql' => [
@@ -45,14 +54,8 @@ cd /var/www/berlussimo/
 
 sudo composer install
 
-### import database schema. Theese instructions will create a database named berlussimo.
-### Set this name to reflect your settings from config.inc.php
-### You will be prompted for the root password set above.
-mysqladmin create -u root -p berlussimo
-mysql -u root -p berlussimo < /var/www/berlussimo/install/DB-Version-0.4.0/berlussimo_db_0.4.0.sql
-mysql -u root -p berlussimo < /var/www/berlussimo/install/DB-Version-0.4.0/berlussimo_db_0.4.1.sql
-mysql -u root -p berlussimo < /var/www/berlussimo/install/DB-Version-0.4.0/berlussimo_db_0.4.2.sql
-mysql -u root -p berlussimo < /var/www/berlussimo/install/DB-Version-0.4.0/berlussimo_db_0.4.3.sql
+sudo sh -c 'echo "APP_KEY=" > .env'
+sudo php artisan key:generate
 
 sudo php artisan migrate
 sudo php artisan optimize
@@ -61,9 +64,6 @@ sudo php artisan route:cache
 sudo npm install
 sudo npm install --global gulp-cli
 sudo gulp
-
-sudo sh -c 'echo "APP_KEY=" > .env'
-sudo php artisan key:generate
 
 #make web directory writeable by apache2
 sudo chown -R www-data:www-data /var/www/berlussimo

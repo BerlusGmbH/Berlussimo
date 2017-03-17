@@ -17,7 +17,7 @@
                         <form role="form" method="POST" action="{{ url('/password/email') }}">
                             {!! csrf_field() !!}
                             <div class="input-field">
-                                <i class="material-icons prefix">email</i>
+                                <i class="mdi mdi-email prefix"></i>
                                 <input type="email" id="email" name="email"
                                        class="validate {{ $errors->has('email') ? 'invalid' : '' }}"
                                        value="{{ old('email') }}">
@@ -27,7 +27,7 @@
 
                             <div class="input-field">
                                 <button class="btn waves-effect waves-light" type="submit">Send Reset Link
-                                    <i class="material-icons right">send</i>
+                                    <i class="mdi mdi-send right"></i>
                                 </button>
                             </div>
                         </form>
