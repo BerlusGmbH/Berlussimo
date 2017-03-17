@@ -16,7 +16,7 @@
                         Partner: <b>{{str_limit($p->partner_name, 20)}}</b></a>
                 @else
                     <a href='{{route('web::rechnungen::legacy', ['option' => 'partner_wechseln'])}}'>
-                        <i class="mdi mdi-account-multiple left">perm_identity</i>
+                        <i class="mdi mdi-account-multiple left"></i>
                         Partner wählen</a>
                 @endif
             </li>
