@@ -8,7 +8,7 @@
                 <form role="form" method="POST" action="{{ url('/login') }}">
                     {!! csrf_field() !!}
                     <div class="input-field">
-                        <i class="mdi mdi-emial prefix"></i>
+                        <i class="mdi mdi-email prefix"></i>
                         <input type="email" id="email" name="email"
                                class="validate {{ $errors->has('email') ? 'invalid' : '' }}"
                                value="{{ old('email') }}">
