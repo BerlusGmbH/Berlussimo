@@ -402,8 +402,15 @@ function render_unit_tasks_table($einheit_id) {
     $t = new todo ();
     $t_arr = $t->get_auftraege_einheit('Einheit', $einheit_id, '0');
 
-    $link_neuer_auftrag_int = "<a class='waves-effect waves-light btn' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => 'Einheit', 'kos_id' => $einheit_id]) . "'>Neuer Auftrag INT</a>";
-    $link_neuer_auftrag_ext = "<a class='waves-effect waves-light btn' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => 'Einheit', 'kos_id' => $einheit_id]) . "'>Neuer Auftrag EXT</a>";
+    if(\App\Models\Einheiten::find($einheit_id)->hasHinweis()) {
+        $link_neuer_auftrag_int = '<i style="font-size: xx-large" class="mdi mdi-alert red-text tooltipped"
+                       data-tooltip="Hinweise beachten"></i> ';
+    } else {
+        $link_neuer_auftrag_int = '';
+    }
+
+    $link_neuer_auftrag_int .= "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Mitarbeiter' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => 'Einheit', 'kos_id' => $einheit_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-worker'></i></a>";
+    $link_neuer_auftrag_ext = "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Partner' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => 'Einheit', 'kos_id' => $einheit_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-account-multiple'></i></a>";
     echo "<div class='input-field right-align'>$link_neuer_auftrag_int $link_neuer_auftrag_ext</div>";
 
     $anz_t = count($t_arr);
@@ -478,13 +485,19 @@ function render_unit_tasks_table($einheit_id) {
 }
 
 function render_house_tasks_table($haus_id) {
-    $e = new einheit ();
-    $e->get_einheit_info($einheit_id);
     $t = new todo ();
     $t_arr = $t->get_auftraege_einheit('Haus', $haus_id, '0');
 
-    $link_neuer_auftrag_int = "<a class='waves-effect waves-light btn' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => 'Haus', 'kos_id' => $haus_id]) . "'>Neuer Auftrag INT</a>";
-    $link_neuer_auftrag_ext = "<a class='waves-effect waves-light btn' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => 'Haus', 'kos_id' => $haus_id]) . "'>Neuer Auftrag EXT</a>";
+    if(\App\Models\Haeuser::find($haus_id)->hasHinweis()) {
+        $link_neuer_auftrag_int = '<i style="font-size: xx-large" class="mdi mdi-alert red-text tooltipped"
+                       data-tooltip="Hinweise beachten"></i> ';
+    } else {
+        $link_neuer_auftrag_int = '';
+    }
+
+    $link_neuer_auftrag_int .= "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Mitarbeiter' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => 'Haus', 'kos_id' => $haus_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-worker'></i></a>";
+    $link_neuer_auftrag_ext = "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Partner' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => 'Haus', 'kos_id' => $haus_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-account-multiple'></i></a>";
+
     echo "<div class='input-field right-align'>$link_neuer_auftrag_int $link_neuer_auftrag_ext</div>";
 
 
@@ -560,13 +573,18 @@ function render_house_tasks_table($haus_id) {
 }
 
 function render_object_tasks_table($objekt_id) {
-    $e = new einheit();
-    $e->get_einheit_info($einheit_id);
     $t = new todo ();
     $t_arr = $t->get_auftraege_einheit('Objekt', $objekt_id, '0');
 
-    $link_neuer_auftrag_int = "<a class='waves-effect waves-light btn' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => 'Objekt', 'kos_id' => $objekt_id]) . "'>Neuer Auftrag INT</a>";
-    $link_neuer_auftrag_ext = "<a class='waves-effect waves-light btn' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => 'Objekt', 'kos_id' => $objekt_id]) . "'>Neuer Auftrag EXT</a>";
+    if(\App\Models\Objekte::find($objekt_id)->hasHinweis()) {
+        $link_neuer_auftrag_int = '<i style="font-size: xx-large" class="mdi mdi-alert red-text tooltipped"
+                       data-tooltip="Hinweise beachten"></i> ';
+    } else {
+        $link_neuer_auftrag_int = '';
+    }
+    $link_neuer_auftrag_int .= "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Mitarbeiter' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => 'Objekt', 'kos_id' => $objekt_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-worker'></i></a>";
+    $link_neuer_auftrag_ext = "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Partner' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => 'Objekt', 'kos_id' => $objekt_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-account-multiple'></i></a>";
+
     echo "<div class='input-field right-align'>$link_neuer_auftrag_int $link_neuer_auftrag_ext</div>";
 
     $anz_t = count($t_arr);

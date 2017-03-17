@@ -60,7 +60,13 @@ class ObjekteController extends LegacyController
 
     public function show($id, ObjekteRequest $request)
     {
-        $objekt = Objekte::find($id);
+        $objekt = Objekte::with(['hinweise', 'commonDetails' => function($query) {
+            $query->defaultOrder();
+        }, 'haeuser' => function($query) {
+            $query->defaultOrder();
+        }, 'haeuser.hinweise', 'einheiten' => function($query) {
+            $query->defaultOrder();
+        }, 'einheiten.hinweise'])->find($id);
         return view('modules.objekte.show', ['objekt' => $objekt]);
     }
 }

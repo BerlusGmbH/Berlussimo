@@ -11,7 +11,7 @@
 
 @section('content')
     <div class="row">
-        <div class="col-xs-12 col-sm-6">
+        <div class="col-xs-6">
             <div class="card">
                 <div class="card-content">
                     <div class="card-title">
@@ -40,22 +40,22 @@
                     <div class="row">
                         @inject('phonelocator', 'App\Services\PhoneLocator')
                         @foreach($person->phones as $phone)
-                            <div class="col-xs-6">
+                            <div class="col-xs-12 col-sm-6">
                                 @include('shared.entities.details.telefon', ['entity' => $phone])
                             </div>
                         @endforeach
-                        @foreach($person->faxs as $fax)
-                            <div class="col-xs-6">
-                                @include('shared.entities.details.fax', ['entity' => $fax])
-                            </div>
-                        @endforeach
                         @foreach($person->emails as $email)
-                            <div class="col-xs-6">
+                            <div class="col-xs-12 col-sm-6">
                                 @include('shared.entities.details.email', ['entity' => $email])
                             </div>
                         @endforeach
+                        @foreach($person->faxs as $fax)
+                            <div class="col-xs-12 col-sm-6">
+                                @include('shared.entities.details.fax', ['entity' => $fax])
+                            </div>
+                        @endforeach
                         @foreach($person->adressen as $anschrift)
-                            <div class="col-xs-6">
+                            <div class="col-xs-12 col-sm-6">
                                 @include('shared.entities.details.adresse', ['entity' => $anschrift])
                             </div>
                         @endforeach
@@ -65,60 +65,12 @@
         </div>
         @if(!$person->hinweise->isEmpty())
             <div class="col-xs-12 col-sm-6">
-                <div class="card card-expandable">
-                    <div class="card-content">
-                        <div class="card-title">Hinweise ({{$person->hinweise->count()}})</div>
-                        <table class="striped">
-                            <thead>
-                            <th>Wert</th>
-                            <th>Bemerkung</th>
-                            </thead>
-                            <tbody>
-                            @foreach( $person->hinweise as $detail )
-                                <tr>
-                                    <td>
-                                        {{$detail->DETAIL_INHALT}}
-                                    </td>
-                                    <td>
-                                        {{$detail->DETAIL_BEMERKUNG}}
-                                    </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                @include('shared.cards.hinweise', ['hinweise' => $person->hinweise()->defaultOrder()->get(), 'title' => 'Hinweise'])
             </div>
         @endif
         @if(!$person->commonDetails->isEmpty())
             <div class="col-xs-12 col-sm-6">
-                <div class="card card-expandable">
-                    <div class="card-content">
-                        <div class="card-title">Allgemeine Details ({{$person->commonDetails->count()}})</div>
-                        <table class="striped">
-                            <thead>
-                            <th>Typ</th>
-                            <th>Wert</th>
-                            <th>Bemerkung</th>
-                            </thead>
-                            <tbody>
-                            @foreach( $person->commonDetails as $detail )
-                                <tr>
-                                    <td>
-                                        {{$detail->DETAIL_NAME}}
-                                    </td>
-                                    <td>
-                                        {{$detail->DETAIL_INHALT}}
-                                    </td>
-                                    <td>
-                                        {{$detail->DETAIL_BEMERKUNG}}
-                                    </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                @include('shared.cards.details', ['details' => $person->commonDetails()->defaultOrder()->get(), 'title' => 'Allgemeine Details'])
             </div>
         @endif
         @if(!$person->mietvertraege->isEmpty())

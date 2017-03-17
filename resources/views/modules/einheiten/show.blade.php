@@ -11,7 +11,7 @@
 
 @section('content')
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-xs-6">
             <div class="card">
                 <div class="card-content">
                     <div class="card-title">
@@ -31,7 +31,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-6 col-sm-3 detail">
+                        <div class="col-xs-12 col-sm-6 detail">
                             <i class="mdi mdi-mail-ru"></i>
                             @php
                                 $emails = collect();
@@ -51,16 +51,21 @@
                             @endphp
                             <a href="{{ $href }}">E-Mail an Mieter ({{ $emails->count() }})</a>
                         </div>
-                        <div class="col-xs-6 col-sm-3 detail">
+                        <div class="col-xs-12 col-sm-6 detail">
                             <i class="mdi mdi-compass tooltipped" data-position="bottom" data-delay="50" data-tooltip="Lage"></i> {{ $einheit->EINHEIT_LAGE }}
                         </div>
-                        <div class="col-xs-6 col-sm-3 detail">
+                        <div class="col-xs-12 col-sm-6 detail">
                             <i class="mdi mdi-arrow-expand-all tooltipped" data-position="bottom" data-delay="50" data-tooltip="Fläche"></i> {{ $einheit->EINHEIT_QM }} m²
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        @if(!$einheit->hinweise->isEmpty())
+            <div class="col-xs-12 col-sm-6">
+                @include('shared.cards.hinweise', ['hinweise' => $einheit->hinweise()->defaultOrder()->get(), 'title' => 'Hinweise'])
+            </div>
+        @endif
         @if(!$einheit->commonDetails->isEmpty())
             <div class="col-xs-12 col-sm-6">
                 @include('shared.cards.details', ['details' => $einheit->commonDetails()->defaultOrder()->get(), 'title' => 'Allgemeine Details'])
@@ -77,7 +82,14 @@
             </div>
         @endif
         <div class="col-xs-12">
-            @include('shared.cards.auftraege', ['auftraege' => $einheit->auftraege()->orderBy('ERSTELLT', 'desc')->get(), 'title' => 'Aufträge', 'type' => 'Einheit', 'id' => $einheit->EINHEIT_ID, 'href' => route('web::todo::index', ['q' => '!auftrag(kostenträger(einheit(id=' . $einheit->EINHEIT_ID . ')))'])])
+            @include('shared.cards.auftraege', [
+                'auftraege' => $einheit->auftraege()->orderBy('ERSTELLT', 'desc')->get(),
+                'title' => 'Aufträge',
+                'type' => 'Einheit',
+                'id' => $einheit->EINHEIT_ID,
+                'href' => route('web::todo::index', ['q' => '!auftrag(kostenträger(einheit(id=' . $einheit->EINHEIT_ID . ')))']),
+                'hasHinweis' => $einheit->hasHinweis()
+            ])
         </div>
     </div>
 @endsection

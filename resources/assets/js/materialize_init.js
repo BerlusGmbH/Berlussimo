@@ -10,6 +10,11 @@ $(document).ready(function() {
     });
     $('.modal').modal();
     Materialize.updateTextFields();
+    $('.tooltipped').tooltip({
+        delay: 50,
+        html: true,
+        position: 'bottom'
+    });
 });
 $(document).ready(function () {
     var $card_expandable = $('.card-expandable');

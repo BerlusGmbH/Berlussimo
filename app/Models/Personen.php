@@ -79,4 +79,8 @@ class Personen extends Model
     public function commonDetails() {
         return $this->details()->whereNotIn('DETAIL_NAME', ['Geschlecht', 'Hinweis', 'Email', 'Fax', 'Telefon', 'Handy', 'Zustellanschrift', 'Verzugsanschrift', 'Anschrift']);
     }
+
+    public function hasHinweis() {
+        return $this->hinweise->count() > 0;
+    }
 }

@@ -63,7 +63,15 @@ class Objekte extends Model
     }
 
     public function commonDetails() {
-        return $this->details()->whereNotIn('DETAIL_NAME', ['']);
+        return $this->details()->whereNotIn('DETAIL_NAME', ['Hinweis_zum_Objekt']);
+    }
+
+    public function hinweise() {
+        return $this->details()->where('DETAIL_NAME', 'Hinweis_zum_Objekt');
+    }
+
+    public function hasHinweis() {
+        return $this->hinweise->count() > 0;
     }
 
     public function eigentuemer() {

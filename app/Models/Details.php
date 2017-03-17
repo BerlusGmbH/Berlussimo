@@ -35,6 +35,11 @@ class Details extends Model
         return $content;
     }
 
+    public function getDETAILINHALTAttribute($value)
+    {
+        return strip_tags($value);
+    }
+
     public function from()
     {
         return $this->morphTo('details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID');

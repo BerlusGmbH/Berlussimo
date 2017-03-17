@@ -11,7 +11,7 @@
 
 @section('content')
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-xs-6">
             <div class="card">
                 <div class="card-content">
                     <div class="card-title">
@@ -31,7 +31,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-6 col-sm-3 detail">
+                        <div class="col-xs-12 col-sm-6 detail">
                             <i class="mdi mdi-mail-ru tooltipped" data-position="bottom" data-delay="50" data-tooltip="E-Mail"></i>
                             @php
                                 $emails = collect();
@@ -51,7 +51,7 @@
                             @endphp
                             <a href="{{ $href }}">E-Mail an Mieter ({{ $emails->count() }})</a>
                         </div>
-                        <div class="col-xs-6 col-sm-3 detail">
+                        <div class="col-xs-12 col-sm-6 detail">
                             <i class="mdi mdi-email tooltipped" data-position="bottom" data-delay="50" data-tooltip="Postleitzahl und Ort"></i>
                             {{$haus->HAUS_PLZ}} {{$haus->HAUS_STADT}}
                         </div>
@@ -59,6 +59,11 @@
                 </div>
             </div>
         </div>
+        @if(!$haus->hinweise->isEmpty())
+            <div class="col-xs-12 col-sm-6">
+                @include('shared.cards.hinweise', ['hinweise' => $haus->hinweise()->defaultOrder()->get(), 'title' => 'Hinweise'])
+            </div>
+        @endif
         @if(!$haus->commonDetails->isEmpty())
             <div class="col-xs-12 col-sm-6">
                 @include('shared.cards.details', ['details' => $haus->commonDetails()->defaultOrder()->get(), 'title' => 'Allgemeine Details'])
@@ -75,7 +80,14 @@
             </div>
         @endif
         <div class="col-xs-12">
-            @include('shared.cards.auftraege', ['auftraege' => $haus->auftraege()->orderBy('ERSTELLT', 'desc')->get(), 'title' => 'Aufträge', 'type' => 'Haus', 'id' => $haus->HAUS_ID, 'href' => route('web::todo::index', ['q' => '!auftrag(kostenträger(haus(id=' . $haus->HAUS_ID . ')))'])])
+            @include('shared.cards.auftraege', [
+                'auftraege' => $haus->auftraege()->orderBy('ERSTELLT', 'desc')->get(),
+                'title' => 'Aufträge',
+                'type' => 'Haus',
+                'id' => $haus->HAUS_ID,
+                'href' => route('web::todo::index', ['q' => '!auftrag(kostenträger(haus(id=' . $haus->HAUS_ID . ')))']),
+                'hasHinweis' => $haus->hasHinweis()
+            ])
         </div>
     </div>
 @endsection

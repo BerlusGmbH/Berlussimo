@@ -11,7 +11,7 @@
 
 @section('content')
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-xs-6">
             <div class="card">
                 <div class="card-content">
                     <div class="card-title">
@@ -28,7 +28,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-6 col-sm-3 detail">
+                        <div class="col-xs-12 col-sm-6 detail">
                             <i class="mdi mdi-mail-ru"></i>
                             @php
                                 $emails = collect();
@@ -48,7 +48,7 @@
                             @endphp
                             <a href="{{ $href }}">E-Mail an Mieter ({{ $emails->count() }})</a>
                         </div>
-                        <div class="col-xs-6 col-sm-3 detail">
+                        <div class="col-xs-12 col-sm-6 detail">
                             <i class="mdi mdi-key tooltipped" data-position="bottom" data-delay="50" data-tooltip="Eigentümer"></i>
                             @include('shared.entities.partner', ['entity' => $objekt->eigentuemer])
                         </div>
@@ -56,19 +56,24 @@
                 </div>
             </div>
         </div>
+        @if(!$objekt->hinweise->isEmpty())
+            <div class="col-xs-12 col-sm-6">
+                @include('shared.cards.hinweise', ['hinweise' => $objekt->hinweise, 'title' => 'Hinweise'])
+            </div>
+        @endif
         @if(!$objekt->commonDetails->isEmpty())
             <div class="col-xs-12 col-sm-6">
-                @include('shared.cards.details', ['details' => $objekt->commonDetails()->defaultOrder()->get(), 'title' => 'Allgemeine Details'])
+                @include('shared.cards.details', ['details' => $objekt->commonDetails, 'title' => 'Allgemeine Details'])
             </div>
         @endif
         @if(!$objekt->haeuser->isEmpty())
             <div class="col-xs-12 col-sm-3">
-                @include('shared.cards.haeuser', [ 'haeuser' => $objekt->haeuser()->defaultOrder()->get(), 'title' => 'Häuser', 'href' => route('web::haeuser::index', ['q' => '!haus(objekt(id=' . $objekt->OBJEKT_ID . '))'])])
+                @include('shared.cards.haeuser', [ 'haeuser' => $objekt->haeuser, 'title' => 'Häuser', 'href' => route('web::haeuser::index', ['q' => '!haus(objekt(id=' . $objekt->OBJEKT_ID . '))'])])
             </div>
         @endif
         @if(!$objekt->einheiten->isEmpty())
             <div class="col-xs-12 col-sm-3">
-                @include('shared.cards.einheiten', [ 'einheiten' => $objekt->einheiten()->defaultOrder()->get(), 'title' => 'Einheiten', 'href' => route('web::einheiten::index', ['q' => '!einheit(objekt(id=' . $objekt->OBJEKT_ID . '))'])])
+                @include('shared.cards.einheiten', [ 'einheiten' => $objekt->einheiten, 'title' => 'Einheiten', 'href' => route('web::einheiten::index', ['q' => '!einheit(objekt(id=' . $objekt->OBJEKT_ID . '))'])])
             </div>
         @endif
         @if(!$objekt->mieter()->get()->isEmpty())
@@ -165,7 +170,14 @@
             </div>
         </div>
         <div class="col-xs-12">
-            @include('shared.cards.auftraege', ['auftraege' => $objekt->auftraege()->orderBy('ERSTELLT', 'desc')->get(), 'title' => 'Aufträge', 'type' => 'Objekt', 'id' => $objekt->OBJEKT_ID, 'href' => route('web::todo::index', ['q' => '!auftrag(kostenträger(objekt(id=' . $objekt->OBJEKT_ID . ')))'])])
+            @include('shared.cards.auftraege', [
+                'auftraege' => $objekt->auftraege()->orderBy('ERSTELLT', 'desc')->get(),
+                'title' => 'Aufträge',
+                'type' => 'Objekt',
+                'id' => $objekt->OBJEKT_ID,
+                'href' => route('web::todo::index', ['q' => '!auftrag(kostenträger(objekt(id=' . $objekt->OBJEKT_ID . ')))']),
+                'hasHinweis' => $objekt->hasHinweis()]
+            )
         </div>
     </div>
 @endsection
