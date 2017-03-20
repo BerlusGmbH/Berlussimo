@@ -16,18 +16,18 @@
                 <div class="card-content">
                     <div class="card-title">
                         <div class="row" style="line-height: 24px; margin-bottom: 0px; margin-top: 12px">
-                            <div class="col-xs-10">
+                            <div class="col-xs-12 col-sm-8">
                                 @include('shared.entities.haus', ['entity' => $haus])
+                                <div style="font-size: small; line-height: 24px; margin-left: 6px">
+                                    @include('shared.entities.objekt', ['entity' => $haus->objekt])
+                                </div>
                             </div>
-                            <div class="col-xs-2 end-xs">
+                            <div class="col-xs-12 col-sm-4 end-xs">
                                 <a href="{{ route('web::haeuser::legacy', ['haus_raus' => 'haus_aendern', 'haus_id' => $haus->HAUS_ID]) }}"><i
                                             class="mdi mdi-pencil"></i></a>
                                 <a href="{{ route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'HAUS', 'detail_id' => $haus->HAUS_ID]) }}"><i
                                             class="mdi mdi-table-edit"></i></a>
                             </div>
-                        </div>
-                        <div style="font-size: small; line-height: 24px; margin-bottom:12px; margin-left: 6px">
-                            @include('shared.entities.objekt', ['entity' => $haus->objekt])
                         </div>
                     </div>
                     <div class="row">

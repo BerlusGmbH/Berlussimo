@@ -8,7 +8,7 @@
     <div class="card-panel white">
         <form id="filter-form" method="get">
             <div class="row">
-                <div class="input-field col-xs-6 col-md-3">
+                <div class="input-field col-xs-12 col-md-3">
                     <a class="btn waves-effect waves-light tooltipped" data-position="bottom" data-delay="50" data-tooltip="Neues Objekt"
                        href="{{ route('web::objekte::legacy', ['objekte_raus' => 'objekt_anlegen']) }}"><i
                                 class="mdi mdi-plus"></i><i class="mdi mdi-city"></i></a>

@@ -16,10 +16,10 @@
                 <div class="card-content">
                     <div class="card-title">
                         <div class="row" style="line-height: 24px; margin-bottom: 12px; margin-top: 12px">
-                            <div class="col-xs-9">
+                            <div class="col-xs-8">
                                 @include('shared.entities.objekt', ['entity' => $objekt])
                             </div>
-                            <div class="col-xs-3 end-xs">
+                            <div class="col-xs-4 end-xs">
                                 <a href="{{ route('web::objekte::legacy', ['objekte_raus' => 'objekt_aendern', 'objekt_id' => $objekt->OBJEKT_ID]) }}"><i
                                             class="mdi mdi-pencil"></i></a>
                                 <a href="{{ route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $objekt->OBJEKT_ID]) }}"><i

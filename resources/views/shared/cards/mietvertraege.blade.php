@@ -1,7 +1,7 @@
 <div class="card card-expandable">
     <div class="card-content">
         <span class="card-title">Mietverträge ({{ $mietvertraege->count() }})</span>
-        <table class="striped">
+        <table class="striped responsive-table">
             <thead>
             <th>Mietvertrag</th>
             <th>Von</th>

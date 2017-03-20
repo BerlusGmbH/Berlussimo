@@ -21,21 +21,21 @@
                             @php($margin_bot = '12px')
                         @endif
                         <div class="row" style="line-height: 24px; margin-bottom: {{ $margin_bot }}; margin-top: 12px">
-                            <div class="col-xs-10">
+                            <div class="col-xs-12 col-sm-8">
                                 @include('shared.entities.person', ['entity' => $person])
+                                @if($person->PERSON_GEBURTSTAG->year > 1902)
+                                    <div style="font-size: small; line-height: 24px; margin-left: 6px">
+                                        <i class="mdi mdi-star"></i> {{ $person->PERSON_GEBURTSTAG->formatLocalized("%d.%m.%Y") }}
+                                    </div>
+                                @endif
                             </div>
-                            <div class="col-xs-2 end-xs">
+                            <div class="col-xs-12 col-sm-4 end-xs">
                                 <a href="{{ route('web::personen::legacy', ['anzeigen' => 'person_aendern', 'person_id' => $person->PERSON_ID]) }}"><i
                                             class="mdi mdi-pencil"></i></a>
                                 <a href="{{ route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'PERSON', 'detail_id' => $person->PERSON_ID]) }}"><i
                                             class="mdi mdi-table-edit"></i></a>
                             </div>
                         </div>
-                        @if($person->PERSON_GEBURTSTAG->year > 1902)
-                            <div style="font-size: small; line-height: 24px; margin-bottom:12px; margin-left: 6px">
-                                <i class="mdi mdi-star"></i> {{ $person->PERSON_GEBURTSTAG->formatLocalized("%d.%m.%Y") }}
-                            </div>
-                        @endif
                     </div>
                     <div class="row">
                         @inject('phonelocator', 'App\Services\PhoneLocator')
@@ -78,7 +78,7 @@
                 <div class="card card-expandable">
                     <div class="card-content">
                         <span class="card-title">Mietverträge ({{$person->mietvertraege->count()}})</span>
-                        <table class="striped">
+                        <table class="striped responsive-table">
                             <thead>
                             <th>Mietvertrag</th>
                             <th>Einheit</th>
@@ -113,7 +113,7 @@
                 <div class="card card-expandable">
                     <div class="card-content">
                         <span class="card-title">Eigentum ({{$person->kaufvertraege->count()}})</span>
-                        <table class="striped">
+                        <table class="striped responsive-table">
                             <thead>
                             <th>Kaufvertrag</th>
                             <th>Einheit</th>

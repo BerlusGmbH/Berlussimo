@@ -1,5 +1,5 @@
 @inject('relations', '\App\Services\RelationsService')
-<table class="striped">
+<table class="striped responsive-table">
     <thead>
     @foreach( $columns as $fields)
         <th>

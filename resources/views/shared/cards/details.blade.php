@@ -1,7 +1,7 @@
 <div class="card card-expandable">
     <div class="card-content">
         <div class="card-title">{{$title}} ({{$details->count()}})</div>
-        <table class="striped">
+        <table class="striped responsive-table">
             <thead>
             <th>Typ</th>
             <th>Wert</th>
