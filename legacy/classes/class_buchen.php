@@ -379,7 +379,7 @@ class buchen
     {
         $typ = $kos_typ;
         
-        echo "<label for=\"$id\">$label</label><select name=\"$name\" id=\"$id\" size=1 $js_action>\n";
+        echo "<select name=\"$name\" id=\"$id\" size=1 $js_action>\n";
         echo "<option value=\"\">Bitte wählen</option>\n";
         if ($typ == 'Objekt') {
             $db_abfrage = "SELECT OBJEKT_KURZNAME, OBJEKT_ID FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC";
@@ -396,9 +396,9 @@ class buchen
                     $gk = new gk ();
                     if ($gk->check_zuweisung_kos_typ(session()->get('geldkonto_id'), 'Objekt', $row['OBJEKT_ID'])) {
                         if ($vorwahl_bez == $row['OBJEKT_ID']) {
-                            echo "<option value=\"$OBJEKT_ID\" selected>$row[OBJEKT_KURZNAME]</option>";
+                            echo "<option value=\"$row[OBJEKT_ID]\" selected>$row[OBJEKT_KURZNAME]</option>";
                         } else {
-                            echo "<option value=\"$OBJEKT_ID\">$row[OBJEKT_KURZNAME]</option>";
+                            echo "<option value=\"$row[OBJEKT_ID]\">$row[OBJEKT_KURZNAME]</option>";
                         }
                     }
                 }
@@ -626,7 +626,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             }
         }
 
-        echo "</select>\n";
+        echo "<label for=\"$id\">$label</label></select>\n";
     }
 
     /* Kostenträgerliste als dropdown */

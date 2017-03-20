@@ -2592,12 +2592,12 @@ AND  `AKTUELL` =  '1'");
         echo "<table style=\"border:0px;padding:1px;><tr><td padding:1px;\"><tr><td>";
         echo "<form method=\"post\" >";
         $f->hidden_feld('vor', '1');
-        $f->send_button('SndNEXT', '', 'keyboard_arrow_left', '');
+        $f->send_button('SndNEXT', '', 'arrow-left', '');
         $f->ende_formular();
 
         echo "</td><td><form method=\"post\">";
         $f->hidden_feld('next', '1');
-        $f->send_button('SndNEXT', '', 'keyboard_arrow_right', '');
+        $f->send_button('SndNEXT', '', 'arrow-right', '');
         $f->ende_formular();
         echo "</td></tr></table>";
         // $f->fieldset_ende();
