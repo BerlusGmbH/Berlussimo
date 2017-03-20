@@ -20,9 +20,9 @@
                                 @include('shared.entities.einheit', ['entity' => $einheit])
                             </div>
                             <div class="col-xs-2 end-xs">
-                                <a href="{{ route('web::haeuser::legacy', ['haus_raus' => 'haus_aendern', 'haus_id' => $einheit->HAUS_ID]) }}"><i
+                                <a href="{{ route('web::einheiten::legacy', ['einheit_raus' => 'einheit_aendern', 'einheit_id' => $einheit->EINHEIT_ID]) }}"><i
                                             class="mdi mdi-pencil"></i></a>
-                                <a href="{{ route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'HAUS', 'detail_id' => $einheit->HAUS_ID]) }}"><i
+                                <a href="{{ route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'EINHEIT', 'detail_id' => $einheit->EINHEIT_ID]) }}"><i
                                             class="mdi mdi-table-edit"></i></a>
                             </div>
                         </div>
