@@ -2073,7 +2073,7 @@ AND  `AKTUELL` =  '1'");
                     $f->hidden_feld('konto', $konto);
                     $f->hidden_feld('betrag', $betrag);
                     $f->hidden_feld('option', 'sepa_ue_buchen');
-                    $f->check_box_js('mwst', 'mwst', 'MWSt buchen', '', '');
+                    $f->check_box_js('mwst', 'mwst' . $z, 'MWSt buchen', '', '');
                     $f->send_button('BuchenBtn', 'Buchen');
                     echo "Zahlungen: $anz_zeilen<br>Buchungen:$anz_buchungen";
                 } else {
