@@ -22,7 +22,8 @@ $(document).ready(function () {
     $card_expandable.each(function () {
         var $value = $(this);
         if ($value.height() >= height) {
-            var $chevron = $('<i class="right mdi mdi-chevron-down"></i>');
+            var $row = $('<div class="row"><div class="col-xs-12 end-xs"><i class="right mdi mdi-chevron-down"></i></div></div>');
+            var $chevron = $row.find('.mdi-chevron-down').first();
             $chevron.click(function () {
                 var $this = $(this);
                 $this.toggleClass('mdi-chevron-down');
@@ -38,7 +39,7 @@ $(document).ready(function () {
                 }
             });
             var $title = $value.find('.card-title').first();
-            $title.append($chevron);
+            $title.append($row);
             $value.find('.card-content').css('height', height);
         }
     });

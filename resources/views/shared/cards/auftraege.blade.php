@@ -2,12 +2,12 @@
     <div class="card-content">
         <span class="card-title">
             <div class="row">
-                <div class="col-xs-8">
+                <div class="col-xs-12 col-sm-8">
                     <a href="{{$href}}">
-                        {{ $title }} ({{ $auftraege->count() }})
+                        {{$title}} ({{$auftraege->count()}})
                     </a>
                 </div>
-                <div class="col-xs-4 end-xs">
+                <div class="col-xs-12 col-sm-4 end-xs">
                     @if($hasHinweis)
                         <i class="mdi mdi-alert red-text tooltipped"
                        data-tooltip="Hinweise beachten"></i>
@@ -25,7 +25,7 @@
             </div>
         </span>
         @if(!$auftraege->isEmpty())
-            <table class="striped">
+            <table class="striped responsive-table">
                 <thead>
                 <th>Auftrag</th>
                 <th>Erstellt</th>
@@ -48,7 +48,7 @@
                         <td>
                             @include('shared.entity', [ 'entity' => $auftrag->an ])
                         </td>
-                        <td>
+                        <td style="white-space: normal">
                             {{  $auftrag->TEXT }}
                         </td>
                     </tr>
