@@ -1521,6 +1521,7 @@ switch ($option) {
         $r = new rechnungen ();
         $belegnr = request()->input('belegnr');
         if (!empty ($belegnr)) {
+            session()->put('url.intended', URL::previous());
             $r->form_rechnung_buchen($belegnr);
         } else {
             hinweis_ausgeben('Keine Rechung gewählt!');
@@ -1533,6 +1534,7 @@ switch ($option) {
 
         $r = new rechnungen ();
         if (!empty ($belegnr)) {
+            session()->put('url.intended', URL::previous());
             $r1 = new rechnung ();
             $r1->rechnung_als_freigegeben($belegnr);
             $r->form_rechnung_zahlung_buchen($belegnr);
@@ -1547,6 +1549,7 @@ switch ($option) {
         $belegnr = request()->input('belegnr');
 
         if (!empty ($belegnr)) {
+            session()->put('url.intended', URL::previous());
             $r1 = new rechnung ();
             $r1->rechnung_als_freigegeben($belegnr);
             $r->form_rechnung_empfang_buchen($belegnr);
@@ -1628,7 +1631,7 @@ switch ($option) {
             }
         }
 
-        weiterleiten_in_sec(session()->get('last_url'), 1);
+        weiterleiten(redirect()->intended()->getTargetUrl());
         break;
 
     case "pos_kontierung_aufheben" :

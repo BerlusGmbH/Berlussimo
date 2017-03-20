@@ -845,8 +845,6 @@ class rechnungen
                         $g->dropdown_geldkonten_alle("$this->rechnungs_empfaenger_name -> Geldkonto auswählen", $this->rechnungs_empfaenger_typ, $this->rechnungs_empfaenger_id);
                     }
 
-                    // $this->dropdown_buchungsoptionen('Buchungsart wählen', 'buchungsart', 'buchungsart', '');
-
                     if ($this->rechnungstyp == 'Rechnung' or $this->rechnungstyp == 'Buchungsbeleg') {
                         $b->dropdown_kostenrahmen_nr('kontenrahmen', $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id);
                     }
@@ -861,21 +859,12 @@ class rechnungen
                     $f->hidden_feld("belegnr", "$belegnr");
                     $f->text_feld('Datum (dd.mm.jjjj)', 'datum', session()->get('temp_datum'), '10', 'datum', '');
                     $f->text_feld('Kontoauszugsnr', 'kontoauszugsnr', session()->get('temp_kontoauszugsnummer'), '10', 'kontoauszugsnr', '');
-                    // $f->text_feld_inaktiv("Kontobezeichnung", "kontobezeichnung", "", "20", 'kontobezeichnung');
-                    // $f->text_feld_inaktiv("Kontoart", "kontoart", "", "20", 'kontoart');
-                    // $f->text_feld_inaktiv("Kostengruppe", "kostengruppe", "", "20", 'kostengruppe');
                     $this->kb = str_replace("<br>", "\n", $this->kurzbeschreibung);
                     $f->text_bereich('Buchungstext', 'vzweck', "Erfnr:$this->belegnr, WA:$this->aussteller_ausgangs_rnr Zahlungseingang Rnr:$this->rechnungsnummer, $this->kb", 30, 30, 'v_zweck_buchungstext');
                     $pruefen = "onClick=\"felder_pruefen(this.form);return false;\"";
                     $f->send_button_js("submit_rbb", "Buchen", $pruefen);
                     $f->hidden_feld("option", "rechnung_buchen_gesendet");
-
-                    // echo "<h1>KOSTENTR $this->rechnungs_aussteller_typ $this->rechnungs_aussteller_id</h1>";
                 }
-                // $js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
-                // $b->dropdown_kostentreager_typen('Kostenträgertyp', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ);
-                // $js_id = "";
-                // $b->dropdown_kostentreager_ids('Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id);
 
                 $f->ende_formular();
                 $f->fieldset_ende();
@@ -889,12 +878,13 @@ class rechnungen
 
     function dropdown_buchungs_art($beschreibung, $name, $id, $js_optionen)
     {
-        echo "<label for=\"$id\">$beschreibung</label>\n";
-
+        echo "<div class='input-field'>";
         echo "<select name=\"$name\" id=\"$id\" size=\"2\" $js_optionen >\n";
         echo "<option value=\"Teilbetraege\">Wie kontiert buchen</option>\n";
         echo "<option value=\"Gesamtbetrag\" selected>Gesamtbetrag buchen</option>\n";
         echo "</select>\n";
+        echo "<label for=\"$id\">$beschreibung</label>\n";
+        echo "</div>";
     }
 
     function form_rechnung_zahlung_buchen($belegnr)
@@ -921,7 +911,6 @@ class rechnungen
                         $g->dropdown_geldkonten_alle("$this->rechnungs_aussteller_name -> Geldkonto auswählen", $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id);
                     }
 
-                    // $js_optionen = "onclick=\"alert(document.getElementById('buchungsart').options[buchungsart.selectedIndex].value)\"";
                     $js_optionen = "onclick=\"buchungs_infos(document.getElementById('buchungsart').options[buchungsart.selectedIndex].value)\"";
                     $this->dropdown_buchungs_betrag('Buchungsbetrag wählen', 'buchungsbetrag', 'buchungsbetrag', $js_optionen);
 
@@ -933,7 +922,6 @@ class rechnungen
                         $b->dropdown_kostenrahmen_nr('Kostenkonto', 'kostenkonto', $this->rechnungs_empfaenger_typ, $this->rechnungs_empfaenger_id, '7001');
                     }
                     if ($this->rechnungstyp == 'Gutschrift') {
-                        // $b->dropdown_kostenrahmen_nr('kontenrahmen', $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id,'');
                         $b->dropdown_kostenrahmen_nr('Kostenkonto', 'kostenkonto', $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id, '');
                     }
 
@@ -952,8 +940,6 @@ class rechnungen
                 else {
                     echo "NICHT VOLLSTÄNDIG ERFASST/KONTIERT!";
                 }
-
-                echo "<div id=\"info_feld_kostentraeger\">INFOFELD</div>";
                 $f->ende_formular();
                 $f->fieldset_ende();
             }  // ende status freigegeben
@@ -965,20 +951,20 @@ class rechnungen
 
     function dropdown_buchungs_betrag($beschreibung, $name, $id, $js_optionen)
     {
-        echo "<label for=\"$id\">$beschreibung</label>\n";
-
+        echo "<div class='input-field'>";
         echo "<select name=\"$name\" id=\"$id\" size=\"3\" $js_optionen >\n";
         echo "<option value=\"Skontobetrag\" selected>Skontobetrag $this->rechnungs_skontobetrag buchen</option>\n";
         echo "<option value=\"Bruttobetrag\">Bruttobetrag $this->rechnungs_brutto buchen</option>\n";
         echo "<option value=\"Nettobetrag\">Nettobetrag $this->rechnungs_netto buchen</option>\n";
         echo "</select>\n";
+        echo "<label for=\"$id\">$beschreibung</label>\n";
+        echo "</div>";
     }
 
     function form_rechnung_empfang_buchen($belegnr)
     {
         $this->rechnung_grunddaten_holen($belegnr);
         $f = new formular ();
-        // print_r($this);
         if ($this->status_bestaetigt == '1') {
             $f->fieldset("Rechnung $this->rechnungsnummer von $this->rechnungs_aussteller_name an $this->rechnungs_empfaenger_name ", 'xxx');
             echo "<h3>Rechnung $this->rechnungsnummer von $this->rechnungs_aussteller_name an $this->rechnungs_empfaenger_name wurde schon gebucht</h3>";
@@ -1002,12 +988,6 @@ class rechnungen
                     $g->dropdown_geldkonten_alle("$this->rechnungs_empfaenger_name -> Geldkonto auswählen", $this->rechnungs_empfaenger_typ, $this->rechnungs_empfaenger_id);
                 }
 
-                /*
-				 * $this->dropdown_buchungs_betrag('Buchungsbetrag wählen', 'buchungsbetrag', 'buchungsbetrag', '');
-				 * $js_optionen = "onChange=\"buchungs_infos(this.value)\"";
-				 * $this->dropdown_buchungs_art('Buchungsart wählen', 'buchungsart', 'buchungsart', $js_optionen);
-				 */
-
                 $js_optionen = "onclick=\"buchungs_infos(document.getElementById('buchungsart').options[buchungsart.selectedIndex].value)\"";
                 $this->dropdown_buchungs_betrag('Buchungsbetrag wählen', 'buchungsbetrag', 'buchungsbetrag', $js_optionen);
 
@@ -1021,24 +1001,18 @@ class rechnungen
                     $b->dropdown_kostenrahmen_nr('Kostenkonto', 'kostenkonto', $this->rechnungs_empfaenger_typ, $this->rechnungs_empfaenger_id, '');
                 }
 
-                // dropdown_kostenrahmen_nr($label, $name, $typ, $typ_id, $vorwahl_konto)
-
                 $f->hidden_feld("kostentraeger_typ", $this->rechnungs_empfaenger_typ);
                 $f->hidden_feld("kostentraeger_id", $this->rechnungs_empfaenger_id);
 
                 $f->hidden_feld("belegnr", "$belegnr");
                 $f->text_feld('Datum (dd.mm.jjjj)', 'datum', session()->get('temp_datum'), '10', 'datum', '');
                 $f->text_feld('Kontoauszugsnr', 'kontoauszugsnr', session()->get('temp_kontoauszugsnummer'), '10', 'kontoauszugsnr', '');
-                // $f->text_feld_inaktiv("Kontobezeichnung", "kontobezeichnung", "", "20", 'kontobezeichnung');
-                // $f->text_feld_inaktiv("Kontoart", "kontoart", "", "20", 'kontoart');
-                // $f->text_feld_inaktiv("Kostengruppe", "kostengruppe", "", "20", 'kostengruppe');
                 $this->kb = str_replace("<br>", "\n", $this->kurzbeschreibung);
                 $f->text_bereich('Buchungstext', 'vzweck', "Erfnr:$this->belegnr, WA:$this->aussteller_ausgangs_rnr, Zahlungseingang Rnr:$this->rechnungsnummer, $this->kb", 30, 30, 'v_zweck_buchungstext');
                 $pruefen = "onClick=\"felder_pruefen(this.form);return false;\"";
                 $f->send_button_js("submit_rbb", "Buchen", $pruefen);
                 $f->hidden_feld("option", "rechnung_buchen_gesendet");
 
-                echo "<div id=\"info_feld_kostentraeger\">INFOFELD</div>";
                 $f->ende_formular();
                 $f->fieldset_ende();
             }  // ende status freigegeben
@@ -1177,22 +1151,8 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $bg = new berlussimo_global ();
         $link = route('web::buchen::legacy', ['option' => 'eingangsbuch_kurz'], false);
         $bg->monate_jahres_links($jahr, $link);
-        // $this->r_eingang_monate_links($monat, $jahr);
         echo "</td></tr></table>";
         $rechnungen_arr = $this->eingangsrechnungen_arr($typ, $partner_id, $monat, $jahr, $rechnungstyp);
-        /* Druck LOGO */
-
-        $d = new detail ();
-        $mandanten_nr = $d->finde_mandanten_nr($partner_id);
-
-
-        $logo_file = $typ . "/" . $partner_id . "_logo.png";
-        if (Storage::disk('logos')->exists($logo_file)) {
-            $logo_file = Storage::disk('logos')->url($logo_file);
-            echo "<div id=\"div_logo\"><img src='$logo_file'><br>$p->partner_name Rechnungseingangsbuch $monatname $jahr Mandanten-Nr.: $mandanten_nr Blatt: $monat<hr></div>\n";
-        } else {
-            echo "<div id=\"div_logo\">KEIN LOGO<br>Folgende Datei erstellen: " . Storage::disk('logos')->fullPath($logo_file) . "<hr></div>";
-        }
 
         $this->rechnungsbuch_anzeigen_ein_kurz($rechnungen_arr);
         $form->ende_formular();

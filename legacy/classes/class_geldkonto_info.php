@@ -150,7 +150,8 @@ class geldkonto_info {
 
         $numrows = count( $my_array );
         if ($numrows > 0) {
-            echo "<label for=\"geld_konto_dropdown\">$label</label>\n<select name=\"geld_konto\" id=\"geld_konto_dropdown\" size=\"1\" >\n";
+            echo "<div class='input-field'>";
+            echo "<select name=\"geld_konto\" id=\"geld_konto_dropdown\" size=\"1\" >\n";
             for($a = 0; $a < $numrows; $a ++) {
                 $konto_id = $my_array [$a] ['KONTO_ID'];
                 $kontonummer = $my_array [$a] ['KONTONUMMER'];
@@ -161,7 +162,8 @@ class geldkonto_info {
                     echo "<option value=\"$konto_id\" >Knr:$kontonummer - Blz: $blz</option>\n";
                 }
             } // end for
-            echo "</select>\n";
+            echo "</select>\n<label for=\"geld_konto_dropdown\">$label</label>\n";
+            echo "</div>";
         } else {
             echo "<b>Kein Geldkonto hinterlegt bzw zugewiesen</b>";
             return FALSE;

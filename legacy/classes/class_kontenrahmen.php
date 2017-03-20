@@ -150,22 +150,21 @@ class kontenrahmen {
 	}
 	function dropdown_kontorahmenkonten_vorwahl($label, $id, $name, $typ, $typ_id, $js, $vorwahl_konto) {
 		$konten_arr = $this->kontorahmen_konten_in_array ( $typ, $typ_id );
-		// $js = "onchange=\"alert(this.form.name)\"";
-		echo "<label for=\"$name\" id=\"label_$name\">$label</label><select name=\"$name\" size=\"1\" id=\"$id\"  $js>\n";
+        echo "<div class='input-field'>";
+		echo "<select name=\"$name\" size=\"1\" id=\"$id\"  $js>\n";
 		echo "<option value=\"\">Bitte wählen</option>\n";
-		// echo "<option value=\"0\">Konto 0</option>\n";
 		for($a = 0; $a < count ( $konten_arr ); $a ++) {
 			$konto = $konten_arr [$a] ['KONTO'];
 			$bez = $konten_arr [$a] ['BEZEICHNUNG'];
 			$this->konto_informationen ( $konten_arr [$a] ['KONTO'] );
 
-			// echo "<option value=\"$konto\">".$konto." - ".$this->konto_bezeichnung."</option>\n";
 			if ($vorwahl_konto == $konto) {
 				echo "<option value=\"$konto\" selected>$konto $bez</option>\n";
 			} else {
 				echo "<option value=\"$konto\">$konto $bez</option>\n";
 			}
 		}
-		echo "</select>\n";
+		echo "</select><label for=\"$id\" id=\"label_$name\">$label</label>\n";
+		echo "</div>";
 	}
 } // ende class kontenrahmen
