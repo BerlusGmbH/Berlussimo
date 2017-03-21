@@ -58,7 +58,7 @@ class formular
 
     function send_button_disabled($name, $wert, $id)
     {
-        echo "<button type=\"submit\" name=\"$name\" value=\"$wert\" id=\"$id\" class=\"submit\" disabled><i class=\"mdi mdi-send right\"></i>$wert</button>";
+        echo "<button type=\"submit\" name=\"$name\" value=\"$wert\" id=\"$id\" class=\"btn waves-effect waves-light\" disabled><i class=\"mdi mdi-send right\"></i>$wert</button>";
     }
 
     /* Sendenbutton normal */
