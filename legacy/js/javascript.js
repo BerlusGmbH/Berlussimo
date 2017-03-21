@@ -212,6 +212,11 @@ function auswahl_alle(dropdown) {
     $('select').material_select();
 }
 
+function check_all_boxes(check, prefix) {
+    var $boxes = $("[id^='" + prefix + "']");
+    $boxes.prop('checked', check);
+}
+
 function auswahl_alle2(form, dropdown) {
     // alert(dropdown);
     var laenge = form.dropdown.length;
@@ -363,9 +368,7 @@ function pool_berechnung(form) {
 
     if (laenge > 0) {
         for (var i = 0; i < laenge; i++) {
-            var check_box_status = form.positionen_list[i].checked;
-            // alert(check_box_status);
-
+            var check_box_status = form['positionen_list_' + i].checked;
             var epreis_wert = form.epreis_feld[i].value;
             var mengen_wert = form.mengen_feld[i].value;
             var rabatt_wert = form.rabatt_feld[i].value;
@@ -375,7 +378,6 @@ function pool_berechnung(form) {
 
             epreis_wert = epreis_wert.replace(",", ".");
             form.epreis_feld[i].value = epreis_wert.replace(".", ",");
-            ;
             mengen_wert = mengen_wert.replace(",", ".");
             form.mengen_feld[i].value = mengen_wert.replace(".", ",");
             rabatt_wert = rabatt_wert.replace(",", ".");
@@ -478,129 +480,9 @@ function pool_berechnung(form) {
          */
     }// ende if zeilen existieren
     if (ausgewaehlte_zeilen > 0) {
-        document.getElementById('speichern_button2').value = 'Speichern und in Rechnung stellen';
         document.getElementById('speichern_button2').disabled = false;
     } else {
-
-        /* Wenn nur eine Zeile ausgewählt */
-
-        var g_brutto_ausgewaehlt = 0.00;
-
-        var check_box_status = form.positionen_list.checked;
-        // alert(check_box_status);
-
-        var epreis_wert = form.epreis_feld.value;
-        var mengen_wert = form.mengen_feld.value;
-        var rabatt_wert = form.rabatt_feld.value;
-        var netto_wert = form.netto_feld.value;
-        var mwst_wert = form.mwst_feld.value;
-        var skonto_wert = form.skonto_feld.value;
-
-        epreis_wert = epreis_wert.replace(",", ".");
-        form.epreis_feld.value = epreis_wert.replace(".", ",");
-        mengen_wert = mengen_wert.replace(",", ".");
-        form.mengen_feld.value = mengen_wert.replace(".", ",");
-        rabatt_wert = rabatt_wert.replace(",", ".");
-        rabatt_wert = rabatt_wert.replace(",", ".");
-        mwst_wert = parseInt(mwst_wert.replace(",", "."));
-        skonto_wert = skonto_wert.replace(",", ".");
-
-        pos_gesamt_netto = (mengen_wert * epreis_wert / 100)
-            * (100 - rabatt_wert);
-        pos_gesamt_br = (pos_gesamt_netto / 100) * (100 + mwst_wert);
-        pos_gesamt_skontiert = (pos_gesamt_br / 100) * (100 - skonto_wert);
-        pos_skonto_nachlass = (pos_gesamt_br / 100) * skonto_wert;
-
-        /* Netto zeile updaten */
-        pos_gesamt_netto_a = pos_gesamt_netto.toFixed(2);
-        pos_gesamt_netto_a = pos_gesamt_netto_a.replace(".", ",");
-        form.netto_feld.value = pos_gesamt_netto_a;
-        // var netto_new = netto.toFixed(2);
-        // alert(pos_gesamt_netto + ' ' + pos_gesamt_br + ' ' +
-        // pos_gesamt_skontiert);
-
-        /*
-         * Summen aller Zeilen im Pool bilden, wenn alle ausgewählt =
-         * summe_ausgewaehlt
-         */
-        g_netto_errechnet = g_netto_errechnet + pos_gesamt_netto;
-        g_brutto_errechnet = g_brutto_errechnet + pos_gesamt_br;
-        g_skonto_n_errechnet = g_skonto_n_errechnet + pos_skonto_nachlass;
-        g_skonto_betrag_errechnet = g_brutto_errechnet - g_skonto_n;
-
-        /* Durchschnitsrabatt */
-        durchschnitt_rabatt = durchschnitt_rabatt + rabatt_wert;
-
-        /* Wenn zeile ausgewählt, Gesamtsummen ausgewählter Zeilen anzeigen */
-        var ausgewaehlte_zeilen = 0;
-        if (check_box_status) {
-            g_netto_ausgewaehlt = g_netto_ausgewaehlt + pos_gesamt_netto;
-            g_brutto_ausgewaehlt = g_brutto_ausgewaehlt + pos_gesamt_br;
-            g_skonto_n = g_skonto_n + pos_skonto_nachlass;
-            ausgewaehlte_zeilen = ausgewaehlte_zeilen + 1;
-        }
-
-        g_netto_ausgewaehlt = g_netto_ausgewaehlt.toFixed(2);
-        g_brutto_ausgewaehlt = g_brutto_ausgewaehlt.toFixed(2);
-        g_skonto_n = g_skonto_n.toFixed(2);
-        g_skonto_betrag = g_brutto_ausgewaehlt - g_skonto_n;
-
-        /* Ausgabewerte ins Kommaformat */
-        var g_netto_ausgewaehlt_a = nummer_punkt2komma(g_netto_ausgewaehlt);
-        g_brutto_ausgewaehlt_a = nummer_punkt2komma(g_brutto_ausgewaehlt);
-        g_skonto_n_a = nummer_punkt2komma(g_skonto_n);
-        /* g_skonto_betrag_a = nummer_punkt2komma(g_skonto_betrag); */
-
-        /*
-         * var g_netto_errechnet_a = nummer_punkt2komma(g_netto_errechnet); var
-         * g_brutto_errechnet_a = nummer_punkt2komma(g_brutto_errechnet); var
-         * g_skonto_n_errechnet_a = nummer_punkt2komma(g_skonto_n_errechnet);
-         * var g_skonto_betrag_errechnet_a =
-         * nummer_punkt2komma(g_brutto_errechnet); durchschnitt_rabatt =
-         * durchschnitt_rabatt/laenge; durchschnitt_rabatt_a =
-         * nummer_punkt2komma(durchschnitt_rabatt);
-         */
-
-        /* Update von Ausgewählten Summen */
-        document.getElementById('g_netto_ausgewaehlt').innerHTML = g_netto_ausgewaehlt_a
-            + '&nbsp€';
-        document.getElementById('g_brutto_ausgewaehlt').innerHTML = g_brutto_ausgewaehlt_a
-            + '&nbsp€';
-        document.getElementById('g_skonto_nachlass').innerHTML = g_skonto_n_a
-            + '&nbsp€';
-        document.getElementById('g_skonto_betrag').innerHTML = g_skonto_betrag
-            + '&nbsp€';
-
-        /* Update von Ausgewählten Summen */
-        /*
-         * document.getElementById('g_netto_errechnet').innerHTML =
-         * g_netto_errechnet_a + '&nbsp€';
-         * document.getElementById('g_brutto_errechnet').innerHTML =
-         * g_brutto_errechnet_a + '&nbsp€';
-         * document.getElementById('durchschnitt_rabatt').innerHTML =
-         * durchschnitt_rabatt_a + '&nbsp%';
-         */
-
-        /*
-         * Update von Ausgewählten Summen versteckte Felder für Weitergabe per
-         * FORM
-         */
-        /*
-         * document.getElementById('RECHNUNG_NETTO_BETRAG').value =
-         * g_netto_ausgewaehlt;
-         * document.getElementById('RECHNUNG_BRUTTO_BETRAG').value =
-         * g_brutto_ausgewaehlt;
-         * document.getElementById('RECHNUNG_SKONTO_BETRAG').value =
-         * g_skonto_betrag;
-         */
-
-        if (ausgewaehlte_zeilen > 0) {
-            document.getElementById('speichern_button2').value = 'Speichern und in Rechnung stellen';
-            document.getElementById('speichern_button2').disabled = false;
-        } else {
-            document.getElementById('speichern_button2').value = 'Zeilen auswählen';
-            document.getElementById('speichern_button2').disabled = true;
-        }
+        document.getElementById('speichern_button2').disabled = true;
     }
 
 }// end function
@@ -630,7 +512,7 @@ function rechnung_pool_neuberechnen(form) {
 
         for (var i = 0; i < laenge; i++) {
 
-            var check_box_status = form.positionen_list[i].checked;
+            var check_box_status = form['positionen_list_' + i].checked;
             var epreis_wert = form.epreis_feld[i].value;
             var mengen_wert = form.mengen_feld[i].value;
             var rabatt_wert = form.rabatt_feld[i].value;
@@ -710,7 +592,6 @@ function rechnung_pool_neuberechnen(form) {
 
     else {
 
-        var check_box_status = form.positionen_list.checked;
         var epreis_wert = form.epreis_feld.value;
         var mengen_wert = form.mengen_feld.value;
         var rabatt_wert = form.rabatt_feld.value;

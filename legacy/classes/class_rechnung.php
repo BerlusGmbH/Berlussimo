@@ -706,10 +706,10 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
     {
         $result = DB::select("SELECT KONTIERUNG_DAT, KONTIERUNG_ID, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM `KONTIERUNG_POSITIONEN` WHERE KOSTENTRAEGER_TYP = '$kostentraeger_typ' && KOSTENTRAEGER_ID='$kostentraeger_id' && WEITER_VERWENDEN='1' && AKTUELL='1' ORDER BY BELEG_NR DESC, POSITION ASC");
         if (!empty($result)) {
-            $numrows = count($my_array);
+            $numrows = count($result);
             $positionen_detailiert = [];
             for ($a = 0; $a < $numrows; $a++) {
-                $positionen_detailiert [] = $this->pool_position_holen($my_array [$a] ['KONTIERUNG_ID']);
+                $positionen_detailiert [] = $this->pool_position_holen($result [$a] ['KONTIERUNG_ID']);
             }
             return $positionen_detailiert;
         } else {
@@ -785,7 +785,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         $geld_konto_info->dropdown_geldkonten($aussteller_typ, $aussteller_id);
         echo "</td></tr>";
         echo "<div id=\"pool_tabelle\" $js_action>";
-        echo "<tr ><th>POOL</th><th><input type=\"checkbox\" class='filled-in' onClick=\"this.value=check(this.form.positionen_list)\" $js_action>Alle</th><th>Rechnung</th><th>UPos</th><th>Pos</th><th>Menge</th><th>Bezeichnung</th><th>Einzelpreis</th><th>Netto</th><th>Rabatt %</th><th>Skonto</th><th>MWSt</th><th>Kostentraeger</th></tr>";
+        echo "<tr><th>POOL</th><th><input type=\"checkbox\" class='filled-in' id='alle' onClick=\"check_all_boxes(this.checked, 'positionen_list_')\" $js_action><label for='alle'>Alle</label></th><th>Rechnung</th><th>UPos</th><th>Pos</th><th>Menge</th><th>Bezeichnung</th><th>Einzelpreis</th><th>Netto</th><th>Rabatt %</th><th>Skonto</th><th>MWSt</th><th>Kostentraeger</th></tr>";
         $f->hidden_feld('RECHNUNG_EMPFAENGER_TYP', "$kostentraeger_typ");
         $f->hidden_feld('RECHNUNG_EMPFAENGER_ID', "$rechnungs_empfaenger_id");
         $f->hidden_feld('RECHNUNG_AUSSTELLER_TYP', "$aussteller_typ");
@@ -825,10 +825,9 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             $rrr = new rechnungen ();
             $rrr->btn_pool($kostentraeger_typ, $kostentraeger_id, $kontierung_dat, 'this');
 
-            echo "</td><td>$zeile<input type=\"checkbox\" class='filled-in' name=uebernehmen[] id=\"positionen_list\" value=\"$a\" $js_action></td><td>$link_rechnung_ansehen</td><td>$position</td><td>$zeile.</td><td>";
+            echo "</td><td><input type=\"checkbox\" class='filled-in' name=uebernehmen[] id=\"positionen_list_$a\" value=\"$a\" $js_action><label for='positionen_list_$a'>$zeile</label></td><td>$link_rechnung_ansehen</td><td>$position</td><td>$zeile.</td><td>";
 
             $f->text_feld("Menge:", "positionen[$a][menge]", "$menge", "5", "mengen_feld", $js_action);
-            // $f->hidden_feld("positionen[$a][bezeichnung]", "$artikel_bezeichnung");
             echo "</td><td>$artikel_bezeichnung</td><td>";
             $f->text_feld("Einzelpreis:", "positionen[$a][preis]", "$epreis", "8", "epreis_feld", $js_action);
             echo "</td><td>";
@@ -852,7 +851,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
         $f->text_bereich('Kurzbeschreibung', 'kurzbeschreibung', '', 30, 30, 'kurzbeschreibung');
         echo "<br>";
-        $f->send_button_disabled("senden_pos", "Speichern deaktiviert", "speichern_button2");
+        $f->send_button_disabled("senden_pos", "Speichern", "speichern_button2");
         echo "</td></tr>";
 
         echo "<tr><td colspan=9><hr></td></tr>";
@@ -861,11 +860,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         echo "<tr><td colspan=8 align=right>Skontonachlass</td><td id=\"g_skonto_nachlass\"></td></tr>";
         echo "<tr><td colspan=8 align=right>Skontobetrag</td><td id=\"g_skonto_betrag\"></td></tr>";
         echo "<tr><td colspan=9><hr></td></tr>";
-        /*
-		 * echo "<tr><td colspan=8 align=right>Gesamt Netto errechnet</td><td id=\"g_netto_errechnet\"></td></tr>";
-		 * echo "<tr><td colspan=8 align=right>Gesamt Brutto errechnet</td><td id=\"g_brutto_errechnet\"></td></tr>";
-		 * echo "<tr><td colspan=8 align=right>Durchschnittsrabatt im Pool</td><td id=\"durchschnitt_rabatt\"></td></tr>";
-		 */
         echo "</table>";
         echo "</div>";
         $f->ende_formular();
