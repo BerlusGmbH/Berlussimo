@@ -1969,12 +1969,12 @@ class weg
             echo "<tr><th>einheit</th><th>Eigentümer</th><th>Hausgeld soll</th><th>Saldo</th><th>OPTIONEN</th></tr>";
             $summe = 0;
             for ($a = 0; $a < $anz; $a++) {
-                $einheit_id = $arr [$a] ['EINHEIT_ID'];
+                $this->einheit_id = $arr [$a] ['EINHEIT_ID'];
                 $e = new einheit ();
-                $e->get_einheit_info($einheit_id);
-                $u_link = "<a href='" . route('web::weg::legacy', ['option' => 'einheit_uebersicht', 'einheit_id' => $einheit_id]) . "'>$e->einheit_kurzname</a>";
-                $this->get_last_eigentuemer_namen($einheit_id);
-                $this->get_wg_info($monat, $jahr, 'Einheit', $einheit_id, 'Hausgeld');
+                $e->get_einheit_info($this->einheit_id);
+                $u_link = "<a href='" . route('web::weg::legacy', ['option' => 'einheit_uebersicht', 'einheit_id' => $this->einheit_id]) . "'>$e->einheit_kurzname</a>";
+                $this->get_last_eigentuemer_namen($this->einheit_id);
+                $this->get_wg_info($monat, $jahr, 'Einheit', $this->einheit_id, 'Hausgeld');
                 $this->Wohngeld_soll_a = nummer_punkt2komma($this->gruppe_erg);
                 $mahn_link = "<a href='" . route('web::weg::legacy', ['option' => 'mahnen', 'eig' => $this->eigentuemer_id]) . "'>Mahnen</a>";
 
