@@ -219,7 +219,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
                     if ($mv->mietvertrag_aktuell == 1) {
                         echo "$mv->einheit_kurzname*$mv_id*$mv->personen_name_string|";
                     } else {
-                        echo "ALTMIETER:$mv->einheit_kurzname*$mv_id*$mv->personen_name_string|";
+                        echo "ALTMIETER: $mv->einheit_kurzname*$mv_id*$mv->personen_name_string|";
                     }
                 } else {
                     $gk = new gk ();
@@ -228,7 +228,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
                         if ($mv->mietvertrag_aktuell == 1) {
                             echo "$mv->einheit_kurzname*$mv_id*$mv->personen_name_string|";
                         } else {
-                            echo "$mv->einheit_kurzname ###ALTMIETER###:*$mv_id*$mv->personen_name_string|";
+                            echo "ALTMIETER: $mv->einheit_kurzname*$mv_id*$mv->personen_name_string|";
                         }
                     }
                 }

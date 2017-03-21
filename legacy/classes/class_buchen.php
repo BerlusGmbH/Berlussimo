@@ -500,20 +500,29 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             foreach($result as $row) {
                 $mv_id = $row ['MIETVERTRAG_ID'];
                 $mv = new mietvertraege ();
-                $mv->get_mietvertrag_infos_aktuell($mv_id);
                 if (!session()->has('geldkonto_id')) {
+                    $mv->get_mietvertrag_infos_aktuell($mv_id);
                     if ($vorwahl_bez == "$mv_id") {
-                        echo "<option value=\"$mv_id\" selected>$mv->einheit_kurzname***$mv->personen_name_string</option>\n";
+                        echo "<option value=\"$mv_id\" selected>$mv->einheit_kurzname*$mv->personen_name_string</option>\n";
                     } else {
-                        echo "<option value=\"$mv_id\">$mv->einheit_kurzname***$mv->personen_name_string</option>\n";
+                        echo "<option value=\"$mv_id\">$mv->einheit_kurzname*$mv->personen_name_string</option>\n";
                     }
                 } else {
                     $gk = new gk ();
                     if ($gk->check_zuweisung_kos_typ(session()->get('geldkonto_id'), 'Objekt', $mv->objekt_id)) {
-                        if ($vorwahl_bez == "$mv_id") {
-                            echo "<option value=\"$mv_id\" selected>$mv->einheit_kurzname***$mv->personen_name_string</option>\n";
+                        $mv->get_mietvertrag_infos_aktuell($mv_id);
+                        if ($mv->mietvertrag_aktuell == 1) {
+                            if ($vorwahl_bez == "$mv_id") {
+                                echo "<option value=\"$mv_id\" selected>$mv->einheit_kurzname | $mv->personen_name_string</option>\n";
+                            } else {
+                                echo "<option value=\"$mv_id\">$mv->einheit_kurzname | $mv->personen_name_string</option>\n";
+                            }
                         } else {
-                            echo "<option value=\"$mv_id\">$mv->einheit_kurzname***$mv->personen_name_string</option>\n";
+                            if ($vorwahl_bez == "$mv_id") {
+                                echo "<option value=\"$mv_id\" selected>ALTMIETER: $mv->einheit_kurzname | $mv->personen_name_string</option>\n";
+                            } else {
+                                echo "<option value=\"$mv_id\">ALTMIETER: $mv->einheit_kurzname | $mv->personen_name_string</option>\n";
+                            }
                         }
                     }
                 }
