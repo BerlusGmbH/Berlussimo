@@ -343,17 +343,8 @@ function wert_uebertragen(text_feld) {
 }
 
 function pool_berechnung(form) {
-    // alert ('POOL NEU');
-    // var position = document.getElementById('positionen[1][position]').value;
-    // var anz_pos = document.getElementById('positionen_list').checked;
-    var epreis_feld = form.epreis_feld;
-    /* Anzahl Zeilen im Pool */
-    var laenge = epreis_feld.length;
-    /*
-     * if(!laenge){ laenge =1; }else{ alert(laenge); }
-     */
-    /* Status des Häkchen, true oder 1 wenn ja, sonst null */
-    // var check_box_status = form.positionen_list[0].checked;
+    var laenge = $("[id^='positionen_list_']").length;
+
     /* Alle Zeilen durchlaufen, prüfen was ausgewählt */
     /* SUMMENVARIABLEN DEFINIEREN */
     var g_netto_ausgewaehlt = 0.00;
@@ -369,26 +360,22 @@ function pool_berechnung(form) {
     if (laenge > 0) {
         for (var i = 0; i < laenge; i++) {
             var check_box_status = form['positionen_list_' + i].checked;
-            var epreis_wert = form.epreis_feld[i].value;
-            var mengen_wert = form.mengen_feld[i].value;
-            var rabatt_wert = form.rabatt_feld[i].value;
-            var netto_wert = form.netto_feld[i].value;
-            var mwst_wert = form.mwst_feld[i].value;
-            var skonto_wert = form.skonto_feld[i].value;
+            var epreis_wert = form['epreis_feld_' + i].value;
+            var mengen_wert = form['mengen_feld_' + i].value;
+            var rabatt_wert = form['rabatt_feld_' + i].value;
+            var netto_wert = form['netto_feld_' + i].value;
+            var mwst_wert = form['mwst_feld_' + i].value;
+            var skonto_wert = form['skonto_feld_' + i].value;
 
             epreis_wert = epreis_wert.replace(",", ".");
-            form.epreis_feld[i].value = epreis_wert.replace(".", ",");
+            form['epreis_feld_' + i].value = epreis_wert.replace(".", ",");
             mengen_wert = mengen_wert.replace(",", ".");
-            form.mengen_feld[i].value = mengen_wert.replace(".", ",");
+            form['mengen_feld_' + i].value = mengen_wert.replace(".", ",");
             rabatt_wert = rabatt_wert.replace(",", ".");
             rabatt_wert = rabatt_wert.replace(",", ".");
             mwst_wert = parseInt(mwst_wert.replace(",", "."));
             skonto_wert = skonto_wert.replace(",", ".");
 
-            /*
-             * rabatt_wert = parseInt(rabatt_wert); mwst_wert =
-             * parseInt(mwst_wert); skonto_wert = parseInt(skonto_wert);
-             */
             pos_gesamt_netto = (mengen_wert * epreis_wert / 100)
                 * (100 - rabatt_wert);
             pos_gesamt_br = (pos_gesamt_netto / 100) * (100 + mwst_wert);
@@ -398,10 +385,7 @@ function pool_berechnung(form) {
             /* Netto zeile updaten */
             pos_gesamt_netto_a = pos_gesamt_netto.toFixed(2);
             pos_gesamt_netto_a = pos_gesamt_netto_a.replace(".", ",");
-            form.netto_feld[i].value = pos_gesamt_netto_a;
-            // var netto_new = netto.toFixed(2);
-            // alert(pos_gesamt_netto + ' ' + pos_gesamt_br + ' ' +
-            // pos_gesamt_skontiert);
+            form['netto_feld_' + i].value = pos_gesamt_netto_a;
 
             /*
              * Summen aller Zeilen im Pool bilden, wenn alle ausgewählt =
@@ -436,16 +420,6 @@ function pool_berechnung(form) {
         g_skonto_n_a = nummer_punkt2komma(g_skonto_n);
         g_skonto_betrag_a = nummer_punkt2komma(g_brutto_ausgewaehlt);
 
-        /*
-         * var g_netto_errechnet_a = nummer_punkt2komma(g_netto_errechnet); var
-         * g_brutto_errechnet_a = nummer_punkt2komma(g_brutto_errechnet); var
-         * g_skonto_n_errechnet_a = nummer_punkt2komma(g_skonto_n_errechnet);
-         * var g_skonto_betrag_errechnet_a =
-         * nummer_punkt2komma(g_brutto_errechnet); durchschnitt_rabatt =
-         * durchschnitt_rabatt/laenge; durchschnitt_rabatt_a =
-         * nummer_punkt2komma(durchschnitt_rabatt);
-         */
-
         /* Update von Ausgewählten Summen */
         document.getElementById('g_netto_ausgewaehlt').innerHTML = g_netto_ausgewaehlt_a
             + '&nbsp€';
@@ -456,28 +430,6 @@ function pool_berechnung(form) {
         document.getElementById('g_skonto_betrag').innerHTML = g_skonto_betrag
             + '&nbsp€';
 
-        /* Update von Ausgewählten Summen */
-        /*
-         * document.getElementById('g_netto_errechnet').innerHTML =
-         * g_netto_errechnet_a + '&nbsp€';
-         * document.getElementById('g_brutto_errechnet').innerHTML =
-         * g_brutto_errechnet_a + '&nbsp€';
-         * document.getElementById('durchschnitt_rabatt').innerHTML =
-         * durchschnitt_rabatt_a + '&nbsp%';
-         */
-
-        /*
-         * Update von Ausgewählten Summen versteckte Felder für Weitergabe per
-         * FORM
-         */
-        /*
-         * document.getElementById('RECHNUNG_NETTO_BETRAG').value =
-         * g_netto_ausgewaehlt;
-         * document.getElementById('RECHNUNG_BRUTTO_BETRAG').value =
-         * g_brutto_ausgewaehlt;
-         * document.getElementById('RECHNUNG_SKONTO_BETRAG').value =
-         * g_skonto_betrag;
-         */
     }// ende if zeilen existieren
     if (ausgewaehlte_zeilen > 0) {
         document.getElementById('speichern_button2').disabled = false;

@@ -827,20 +827,20 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
             echo "</td><td><input type=\"checkbox\" class='filled-in' name=uebernehmen[] id=\"positionen_list_$a\" value=\"$a\" $js_action><label for='positionen_list_$a'>$zeile</label></td><td>$link_rechnung_ansehen</td><td>$position</td><td>$zeile.</td><td>";
 
-            $f->text_feld("Menge:", "positionen[$a][menge]", "$menge", "5", "mengen_feld", $js_action);
+            $f->text_feld("Menge:", "positionen[$a][menge]", "$menge", "5", "mengen_feld_" . $a, $js_action);
             echo "</td><td>$artikel_bezeichnung</td><td>";
-            $f->text_feld("Einzelpreis:", "positionen[$a][preis]", "$epreis", "8", "epreis_feld", $js_action);
+            $f->text_feld("Einzelpreis:", "positionen[$a][preis]", "$epreis", "8", "epreis_feld_" . $a, $js_action);
             echo "</td><td>";
-            $f->text_feld_inaktiv("Netto:", "", "$gpreis", "8", "netto_feld", $js_action);
+            $f->text_feld_inaktiv("Netto:", "", "$gpreis", "8", "netto_feld_" . $a, $js_action);
             echo "</td><td>";
             $gpreis_brutto = ($gpreis / 100) * (100 + $mwst_satz_in_prozent);
             $gpreis_brutto = ($gpreis_brutto * 100) / 100;
 
-            $f->text_feld("Rabatt:", "positionen[$a][rabatt_satz]", "$rabatt_satz", "5", "rabatt_feld", $js_action);
+            $f->text_feld("Rabatt:", "positionen[$a][rabatt_satz]", "$rabatt_satz", "5", "rabatt_feld_" . $a, $js_action);
             echo "</td><td>";
-            $f->text_feld("Skonto:", "positionen[$a][skonto]", "$skonto", "5", "skonto_feld", $js_action);
+            $f->text_feld("Skonto:", "positionen[$a][skonto]", "$skonto", "5", "skonto_feld_" . $a, $js_action);
             echo "</td><td>";
-            $f->text_feld("Mwst:", "mwst_satz", "$mwst_satz_in_prozent", "3", "mwst_feld", $js_action);
+            $f->text_feld("Mwst:", "mwst_satz", "$mwst_satz_in_prozent", "3", "mwst_feld_" . $a, $js_action);
             echo "</td><td valign=bottom>$kostentraeger</td></tr>";
         }
 
