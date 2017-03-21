@@ -612,9 +612,7 @@ switch ($option) {
     case "buchung_suchen" :
         $f = new formular ();
         $b = new buchen ();
-        //$f->fieldset("Buchung suchen", 'buchung_suchen');
         $b->form_buchung_suchen();
-        //$f->fieldset_ende();
         break;
 
     case "buchung_suchen_1" :
