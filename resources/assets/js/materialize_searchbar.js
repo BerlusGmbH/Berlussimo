@@ -80,7 +80,9 @@ $(document).ready(function () {
                 return $.getJSON("/api/v1/search?q=" + query).done(function (data) {
                     $autocomplete.empty();
                     $items = [];
-                    var $item;
+                    query = $.map(query.split(' '), function (item) {
+                        return '"' + item + '"';
+                    }).join(' ');
                     if ($.isArray(data['objekte']) && !$.isEmptyObject(data['objekte'])) {
                         $items.push($("<li class='grey accent-3'><a tabindex='-1' class='white-text active-alternative' href='" + objektlisturl + query + "'>Objekte<span class='new badge' data-badge-caption=''>" + data['objekte'].length + "</span></a></li>"));
                         $.each(data['objekte'], function (key, val) {
