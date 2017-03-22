@@ -2038,7 +2038,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             $kt->dropdown_kontenrahmen('Kontenrahmen', 'kontenrahmen', 'kontenrahmen', '');
             echo "</tr>\n";
             echo "<tr><td colspan=9><b>Für die Kontierung wählen Sie bitte alle zusammenhängenden Positionen aus!!!</b></td></tr>\n";
-            echo "<tr class=feldernamen><td><input type=\"checkbox\" id='alle' onClick=\"this.value=check(document.forms[0].elements['positionen_list[]'])\"><label for='alle'>Alle</label></td><td>Pos</td><td>Artikelnr</td><td>Bezeichnung</td><td>Menge</td><td>Restmenge</td><td width=80>LP</td><td width=80>EP</td><td>Rabatt</td><td>Skonto</td><td align=right>MWSt %</td><td width=80>Netto</td></tr>\n";
+            echo "<tr class=feldernamen><td><input type=\"checkbox\" class='filled-in' id='alle' onClick=\"check_all_boxes(this.checked, 'positionen_list_')\"><label for='alle'>Alle</label></td><td>Pos</td><td>Artikelnr</td><td>Bezeichnung</td><td>Menge</td><td>Restmenge</td><td width=80>LP</td><td width=80>EP</td><td>Rabatt</td><td>Skonto</td><td align=right>MWSt %</td><td width=80>Netto</td></tr>\n";
 
             /* Rechnungspositionen */
             for ($a = 0; $a < count($rechnungs_positionen_arr); $a++) {
@@ -2175,10 +2175,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
     {
         $this->rechnung_grunddaten_holen($beleg_nr);
         $form = new mietkonto ();
-        // nur für die formularerstellung
-        // nur kontoliste dropdown
         $rechnung = new rechnung ();
-        // für rechnungsmethoden
         $this->rechnungs_kopf($beleg_nr, $kostentraeger_typ);
         $rechnungs_positionen_arr = $this->rechnungs_positionen_arr($beleg_nr);
         $anzahl_pos_beleg = count($rechnungs_positionen_arr);
@@ -2186,8 +2183,8 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         echo "<table>\n";
         echo "<tr class=feldernamen><td>Pos</td><td>Artikelnr</td><td>Bezeichnung</td><td>Menge</td><td>LP </td><td>EP</td><td align=right>Rabatt</td><td align=right>MWSt</td><td width=90>Gesamt</td><td>Konto</td><td>Kostenträger</td><td>Weiter verwenden</td><td>Verwendung im Jahr</td></tr>\n";
 
-        echo "<tr class=feldernamen><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td align=right></td><td width=90></td><td><a class='waves-effect waves-teal btn' onclick=\"auswahl_alle(document.forms[0].elements['kontenrahmen_konto'])\">Alle</a>  
-	</td><td><a class='waves-effect waves-teal btn' onclick=\"auswahl_alle(document.forms[0].elements['kostentraeger'])\">Alle</a></td><td><a class='waves-effect waves-teal btn' onclick=\"auswahl_alle(document.forms[0].elements['weiter_verwenden'])\">Alle</a></td><td><a class='waves-effect waves-teal btn' onclick=\"auswahl_alle(document.forms[0].elements['verwendungs_jahr'])\">Alle</a>
+        echo "<tr class=feldernamen><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td align=right></td><td width=90></td><td><a class='waves-effect waves-teal btn' onclick=\"auswahl_alle(document.getElementsByClassName('Rechnungsübersicht')[1]['kontenrahmen_konto'])\">Alle</a>  
+	</td><td><a class='waves-effect waves-teal btn' onclick=\"auswahl_alle(document.getElementsByClassName('Rechnungsübersicht')[1]['kostentraeger'])\">Alle</a></td><td><a class='waves-effect waves-teal btn' onclick=\"auswahl_alle(document.getElementsByClassName('Rechnungsübersicht')[1]['weiter_verwenden'])\">Alle</a></td><td><a class='waves-effect waves-teal btn' onclick=\"auswahl_alle(document.getElementsByClassName('Rechnungsübersicht')[1]['verwendungs_jahr'])\">Alle</a>
 	</td></tr>\n";
 
         for ($a = 0; $a < $anzahl_pos_zu_kontierung; $a++) {
