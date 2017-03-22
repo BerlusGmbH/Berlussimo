@@ -1766,9 +1766,9 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         // if($this->rechnungstyp == "Gutschrift"){
         // echo "<tr class=feldernamen><td>Gutschrift von</td><td>Gutschrift an</td><td colspan=2>Zusatzinfo</td></tr>\n";
         // }
-        echo "<tr><td valign=top >" . $this->rechnungs_aussteller_name . "<br>" . $this->rechnungs_aussteller_strasse . " " . $this->rechnungs_aussteller_hausnr . "<br><br>" . $this->rechnungs_aussteller_plz . " " . $this->rechnungs_aussteller_ort . " </td><td valign=top><b>" . $this->rechnungs_empfaenger_name . "</b><br>" . $this->rechnungs_empfaenger_strasse . " " . $this->rechnungs_empfaenger_hausnr . "<br><br>" . $this->rechnungs_empfaenger_plz . " " . $this->rechnungs_empfaenger_ort . "</td>";
+        echo "<tr><td style='vertical-align: top'>" . $this->rechnungs_aussteller_name . "<br>" . $this->rechnungs_aussteller_strasse . " " . $this->rechnungs_aussteller_hausnr . "<br><br>" . $this->rechnungs_aussteller_plz . " " . $this->rechnungs_aussteller_ort . " </td><td style='vertical-align: top'><b>" . $this->rechnungs_empfaenger_name . "</b><br>" . $this->rechnungs_empfaenger_strasse . " " . $this->rechnungs_empfaenger_hausnr . "<br><br>" . $this->rechnungs_empfaenger_plz . " " . $this->rechnungs_empfaenger_ort . "</td>";
 
-        echo "<td valign=top><b>ERFASSUNGSNR:</b><br>Rechnungsnr:<br>Rechnungsdatum:<br>Eingangsdatum:<br>Fällig am:";
+        echo "<td style='vertical-align: top'><b>ERFASSUNGSNR:</b><br>Rechnungsnr:<br>Rechnungsdatum:<br>Eingangsdatum:<br>Fällig am:";
         $link_pdf = "<a href='" . route('web::rechnungen::legacy', ['option' => 'anzeigen_pdf', 'belegnr' => $belegnr]) . "'><img src=\"images/pdf_light.png\"></a>";
         $link_pdf1 = "<a href='" . route('web::rechnungen::legacy', ['option' => 'anzeigen_pdf', 'belegnr' => $belegnr, 'no_logo']) . "'><img src=\"images/pdf_dark.png\"></a>";
         if ($this->status_bezahlt == '1') {
@@ -1786,10 +1786,11 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             $link_empfang_buchen = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnung_empfang_buchen', 'belegnr' => $belegnr]) . "'><b>Geldempfang buchen</b></a>";
         }
 
-        echo "</td><td valign=top align=\"left\"><b>$this->belegnr</b><br> $this->rechnungsnummer<br>$this->rechnungsdatum<br>$this->eingangsdatum<br>$this->faellig_am<br>Gezahlt:  $status_gezahlt";
+        echo "</td><td valign=top align=\"left\"><b>$this->belegnr</b><br>$this->rechnungsnummer<br>$this->rechnungsdatum<br>$this->eingangsdatum<br>$this->faellig_am";
         if ($this->status_bezahlt == '1') {
             echo "<br><b>$this->bezahlt_am</b>";
         }
+        echo "<br>Gezahlt:  $status_gezahlt";
 
         $link_details_hinzu = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'RECHNUNGEN', 'detail_id' => $belegnr]) . "'>Lieferschein hinzufügen</a>";
 
