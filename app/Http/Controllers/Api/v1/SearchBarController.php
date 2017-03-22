@@ -22,11 +22,11 @@ class SearchBarController extends Controller
         }
         $tokens = explode(' ',request()->input('q'));
 
-        $response['objekte'] = Objekte::query();
-        $response['haeuser'] = Haeuser::query();
-        $response['einheiten'] = Einheiten::query();
-        $response['partner'] = Partner::query();
-        $response['personen'] = Personen::query();
+        $response['objekte'] = Objekte::defaultOrder();
+        $response['haeuser'] = Haeuser::defaultOrder();
+        $response['einheiten'] = Einheiten::defaultOrder();
+        $response['partner'] = Partner::defaultOrder();
+        $response['personen'] = Personen::defaultOrder();
 
         foreach ($tokens as $token) {
             $response['objekte'] = $response['objekte']->search($token);
