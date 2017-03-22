@@ -83,4 +83,15 @@ class Personen extends Model
     public function hasHinweis() {
         return $this->hinweise->count() > 0;
     }
+
+    public function getFullNameAttribute() {
+        $full_name = '';
+        if(!empty($this->PERSON_NACHNAME))
+            $full_name .= trim($this->PERSON_NACHNAME);
+        if(!empty($this->PERSON_NACHNAME) && !empty($this->PERSON_VORNAME))
+            $full_name .= ', ';
+        if(!empty($this->PERSON_VORNAME))
+            $full_name .= trim($this->PERSON_VORNAME);
+        return $full_name;
+    }
 }

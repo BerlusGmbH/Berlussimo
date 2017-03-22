@@ -128,7 +128,7 @@ class buchen
         echo "<select name=\"erf_nr\">";
         echo "<option value=\"OHNE BELEG\">Ohne Beleg</option>";
         if (!empty($result)) {
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $rnr = ltrim(rtrim($row ['RECHNUNGSNUMMER']));
                 $erf_nr = $row ['BELEG_NR'];
                 if (!empty ($rnr_kurz) && $rnr == $rnr_kurz) {
@@ -221,7 +221,7 @@ class buchen
         echo "<select name=\"erf_nr\">";
         echo "<option value=\"OHNE BELEG\">Ohne Beleg</option>";
         if (!empty($result)) {
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $rnr = ltrim(rtrim($row ['RECHNUNGSNUMMER']));
                 $erf_nr = $row ['BELEG_NR'];
                 if ($rnr == $rnr_kurz) {
@@ -378,13 +378,13 @@ class buchen
     function dropdown_kostentraeger_bez_vw($label, $name, $id, $js_action, $kos_typ, $vorwahl_bez)
     {
         $typ = $kos_typ;
-        
+
         echo "<select name=\"$name\" id=\"$id\" size=1 $js_action>\n";
         echo "<option value=\"\">Bitte wählen</option>\n";
         if ($typ == 'Objekt') {
             $db_abfrage = "SELECT OBJEKT_KURZNAME, OBJEKT_ID FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC";
             $resultat = DB::select($db_abfrage);
-            foreach($resultat as $row) {
+            foreach ($resultat as $row) {
                 if (!session()->has('geldkonto_id')) {
                     if ($vorwahl_bez == $row['OBJEKT_ID']) {
                         echo "<option value=\"$row[OBJEKT_ID]\" selected>$row[OBJEKT_KURZNAME]</option>";
@@ -408,8 +408,8 @@ class buchen
         if ($typ == 'Wirtschaftseinheit') {
             $db_abfrage = "SELECT W_NAME, W_ID FROM WIRT_EINHEITEN WHERE AKTUELL='1' ORDER BY W_NAME ASC";
             $resultat = DB::select($db_abfrage);
-            if(is_numeric($vorwahl_bez)) {
-                foreach($resultat as $row) {
+            if (is_numeric($vorwahl_bez)) {
+                foreach ($resultat as $row) {
                     if ($vorwahl_bez == $row['W_ID']) {
                         echo "<option value=\"$row[W_NAME]\" selected>$row[W_NAME]</option>";
                     } else {
@@ -417,7 +417,7 @@ class buchen
                     }
                 }
             } else {
-                foreach($resultat as $row) {
+                foreach ($resultat as $row) {
                     if ($vorwahl_bez == $row['W_NAME']) {
                         echo "<option value=\"$row[W_NAME]\" selected>$row[W_NAME]</option>";
                     } else {
@@ -430,7 +430,7 @@ class buchen
         if ($typ == 'Haus') {
             $db_abfrage = "SELECT HAUS_ID, HAUS_STRASSE, HAUS_NUMMER, OBJEKT_ID FROM HAUS WHERE HAUS_AKTUELL='1' ORDER BY HAUS_STRASSE,  0+HAUS_NUMMER, OBJEKT_ID ASC";
             $resultat = DB::select($db_abfrage);
-            foreach($resultat as $row) {
+            foreach ($resultat as $row) {
                 $haus_id = $row ['HAUS_ID'];
                 print_r($row);
                 $h = new haus ();
@@ -447,7 +447,7 @@ class buchen
         if ($typ == 'Einheit') {
             $db_abfrage = "SELECT EINHEIT_KURZNAME, EINHEIT_ID FROM EINHEIT WHERE EINHEIT_AKTUELL='1' ORDER BY EINHEIT_KURZNAME ASC";
             $resultat = DB::select($db_abfrage);
-            foreach($resultat as $row) {
+            foreach ($resultat as $row) {
                 if ($vorwahl_bez == $row['EINHEIT_ID']) {
                     echo "<option value=\"$row[EINHEIT_ID]\" selected>$row[EINHEIT_KURZNAME]</option>";
                 } else {
@@ -459,7 +459,7 @@ class buchen
         if ($typ == 'Partner') {
             $db_abfrage = "SELECT PARTNER_NAME, PARTNER_ID FROM PARTNER_LIEFERANT WHERE AKTUELL='1' ORDER BY PARTNER_NAME ASC";
             $resultat = DB::select($db_abfrage);
-            foreach($resultat as $row) {
+            foreach ($resultat as $row) {
                 $PARTNER_NAME1 = str_replace('<br>', ' ', $row['PARTNER_NAME']);
                 if (!is_numeric($vorwahl_bez)) {
                     if ($vorwahl_bez == $PARTNER_NAME1) {
@@ -478,62 +478,37 @@ class buchen
         }
 
         if ($typ == 'Mietvertrag') {
-
-            $gk_arr_objekt = $this->get_objekt_arr_gk(session()->get('geldkonto_id'));
-            if (!empty($gk_arr_objekt)) {
-
-                $db_abfrage = "SELECT  HAUS.OBJEKT_ID, OBJEKT_KURZNAME, MIETVERTRAG.EINHEIT_ID, EINHEIT_KURZNAME, MIETVERTRAG_ID FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT, MIETVERTRAG) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && EINHEIT.EINHEIT_ID=MIETVERTRAG.EINHEIT_ID)
-WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERTRAG_AKTUELL='1' ";
-
-                $anz_gk = count($gk_arr_objekt);
-                for ($go = 0; $go < $anz_gk; $go++) {
-                    $oo_id = $gk_arr_objekt [$go];
-                    $db_abfrage .= "&& HAUS.OBJEKT_ID=$oo_id[KOSTENTRAEGER_ID] ";
-                }
-                $db_abfrage .= "GROUP BY MIETVERTRAG_ID ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC";
+            $einheiten = null;
+            if(session()->has('geldkonto_id')) {
+                $einheiten = \App\Models\Einheiten::whereHas('haus.objekt.bankkonten', function ($query) {
+                    $query->where('KONTO_ID', session()->get('geldkonto_id'));
+                })->has('mietvertraege')->with(['mietvertraege.mieter'])->get();
             } else {
-                $db_abfrage = "SELECT  HAUS.OBJEKT_ID, OBJEKT_KURZNAME, MIETVERTRAG.EINHEIT_ID, EINHEIT_KURZNAME, MIETVERTRAG_ID FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT, MIETVERTRAG) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && EINHEIT.EINHEIT_ID=MIETVERTRAG.EINHEIT_ID)
-WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERTRAG_AKTUELL='1' GROUP BY MIETVERTRAG_ID ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC";
+                $einheiten = \App\Models\Einheiten::has('mietvertraege')->get();
             }
-
-            $result = DB::select($db_abfrage);
-            foreach($result as $row) {
-                $mv_id = $row ['MIETVERTRAG_ID'];
-                $mv = new mietvertraege ();
-                if (!session()->has('geldkonto_id')) {
-                    $mv->get_mietvertrag_infos_aktuell($mv_id);
-                    if ($vorwahl_bez == "$mv_id") {
-                        echo "<option value=\"$mv_id\" selected>$mv->einheit_kurzname*$mv->personen_name_string</option>\n";
-                    } else {
-                        echo "<option value=\"$mv_id\">$mv->einheit_kurzname*$mv->personen_name_string</option>\n";
-                    }
-                } else {
-                    $gk = new gk ();
-                    if ($gk->check_zuweisung_kos_typ(session()->get('geldkonto_id'), 'Objekt', $mv->objekt_id)) {
-                        $mv->get_mietvertrag_infos_aktuell($mv_id);
-                        if ($mv->mietvertrag_aktuell == 1) {
-                            if ($vorwahl_bez == "$mv_id") {
-                                echo "<option value=\"$mv_id\" selected>$mv->einheit_kurzname | $mv->personen_name_string</option>\n";
-                            } else {
-                                echo "<option value=\"$mv_id\">$mv->einheit_kurzname | $mv->personen_name_string</option>\n";
-                            }
+            foreach ($einheiten as $einheit) {
+                foreach ($einheit->mietvertraege as $mietvertrag) {
+                    if ($mietvertrag->isActive()) {
+                        if ($vorwahl_bez == $mietvertrag->MIETVERTRAG_ID) {
+                            echo "<option value='$mietvertrag->MIETVERTRAG_ID' selected>$einheit->EINHEIT_KURZNAME | $mietvertrag->mieter_namen</option>\n";
                         } else {
-                            if ($vorwahl_bez == "$mv_id") {
-                                echo "<option value=\"$mv_id\" selected>ALTMIETER: $mv->einheit_kurzname | $mv->personen_name_string</option>\n";
-                            } else {
-                                echo "<option value=\"$mv_id\">ALTMIETER: $mv->einheit_kurzname | $mv->personen_name_string</option>\n";
-                            }
+                            echo "<option value='$mietvertrag->MIETVERTRAG_ID'>$einheit->EINHEIT_KURZNAME | $mietvertrag->mieter_namen</option>\n";
+                        }
+                    } else {
+                        if ($vorwahl_bez == $mietvertrag->MIETVERTRAG_ID) {
+                            echo "<option value='$mietvertrag->MIETVERTRAG_ID' selected>ALTMIETER: $einheit->EINHEIT_KURZNAME | $mietvertrag->mieter_namen</option>\n";
+                        } else {
+                            echo "<option value='$mietvertrag->MIETVERTRAG_ID'>ALTMIETER: $einheit->EINHEIT_KURZNAME | $mietvertrag->mieter_namen</option>\n";
                         }
                     }
                 }
-                // echo "$mv->einheit_kurzname*$mv_id*$mv->personen_name_string|";
             }
         }
 
         if ($typ == 'GELDKONTO') {
             $db_abfrage = "SELECT KONTO_ID, BEZEICHNUNG  FROM `GELD_KONTEN`  WHERE AKTUELL='1' ORDER BY BEZEICHNUNG ASC";
             $resultat = DB::select($db_abfrage);
-            foreach($resultat as $row) {
+            foreach ($resultat as $row) {
                 if ($vorwahl_bez == $row['BEZEICHNUNG']) {
                     echo "<option value=\"$row[BEZEICHNUNG]\" selected>$row[BEZEICHNUNG]</option>";
                 } else {
@@ -545,8 +520,8 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         if ($typ == 'Lager') {
             $db_abfrage = "SELECT LAGER_ID, LAGER_NAME  FROM `LAGER`  WHERE AKTUELL='1' ORDER BY LAGER_NAME ASC";
             $resultat = DB::select($db_abfrage);
-            if(is_numeric($vorwahl_bez)) {
-                foreach($resultat as $row) {
+            if (is_numeric($vorwahl_bez)) {
+                foreach ($resultat as $row) {
                     if ($vorwahl_bez == $row['LAGER_ID']) {
                         echo "<option value=\"$row[LAGER_ID]\" selected>$row[LAGER_NAME]</option>";
                     } else {
@@ -554,7 +529,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
                     }
                 }
             } else {
-                foreach($resultat as $row) {
+                foreach ($resultat as $row) {
                     if ($vorwahl_bez == $row['LAGER_NAME']) {
                         echo "<option value=\"$row[LAGER_ID]\" selected>$row[LAGER_NAME]</option>";
                     } else {
@@ -567,8 +542,8 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         if ($typ == 'Baustelle_ext') {
             $db_abfrage = "SELECT ID, BEZ  FROM `BAUSTELLEN_EXT`  WHERE AKTUELL='1' ORDER BY BEZ ASC";
             $resultat = DB::select($db_abfrage);
-            if(is_numeric($vorwahl_bez)) {
-                foreach($resultat as $row) {
+            if (is_numeric($vorwahl_bez)) {
+                foreach ($resultat as $row) {
                     if ($vorwahl_bez == $row['ID']) {
                         echo "<option value=\"$row[BEZ]\" selected>$row[BEZ]</option>";
                     } else {
@@ -576,7 +551,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
                     }
                 }
             } else {
-                foreach($resultat as $row) {
+                foreach ($resultat as $row) {
                     if ($vorwahl_bez == $row['BEZ']) {
                         echo "<option value=\"$row[BEZ]\" selected>$row[BEZ]</option>";
                     } else {
@@ -607,7 +582,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             }
 
             $result = DB::select($db_abfrage);
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $weg = new weg ();
                 $ID = $row ['ID'];
                 $einheit_id = $row ['EINHEIT_ID'];
@@ -944,7 +919,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             $summe = 0;
 
             $zeile = 0;
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $datum = date_mysql2german($row ['DATUM']);
                 $g_buchungsnummer = $row ['G_BUCHUNGSNUMMER'];
                 $betrag = nummer_punkt2komma($row ['BETRAG']);
@@ -1860,7 +1835,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             echo "</table>";
             echo "<table class=\"sortable\">";
             echo "<tr><th>Datum</th><th>Erfassnr</th><th>Betrag</th><th>ZUWEISUNG</th><th>Buchungsnr</th><th>Vzweck</th></tr>";
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $datum = date_mysql2german($row ['DATUM']);
                 $erfass_nr = $row ['ERFASS_NR'];
                 $betrag = nummer_punkt2komma($row ['BETRAG']);
@@ -1905,7 +1880,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
             echo "</table>";
             echo "<table class=\"sortable\">";
             echo "<tr><th>Datum</th><th>Erfassnr</th><th>Betrag</th><th>ZUWEISUNG</th><th>Buchungsnr</th><th>Vzweck</th></tr>";
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $datum = date_mysql2german($row ['DATUM']);
                 $erfass_nr = $row ['ERFASS_NR'];
                 $betrag = nummer_punkt2komma($row ['BETRAG']);
@@ -2048,53 +2023,6 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         $pdf_opt ['Content-Disposition'] = $gk_bez;
         $pdf->ezStream($pdf_opt);
     }
-    
-    function umlaute_anpassen($str)
-    {
-        $str = str_replace('ä', 'ae', $str);
-        $str = str_replace('ö', 'oe', $str);
-        $str = str_replace('ü', 'ue', $str);
-        $str = str_replace('Ä', 'Ae', $str);
-        $str = str_replace('Ö', 'Oe', $str);
-        $str = str_replace('Ü', 'Ue', $str);
-        $str = str_replace('ß', 'ss', $str);
-
-        return $str;
-    }
-
-    /* Funktion für die Kosten und Einnahmenübersicht */
-
-    function save_file($dateiname, $hauptordner, $unterordner, $content, $monat, $jahr)
-    {
-        $dir = "$hauptordner/$unterordner";
-
-        if (!file_exists($hauptordner)) {
-            mkdir($hauptordner, 0777);
-        }
-        if (!file_exists($dir)) {
-            mkdir($dir, 0777);
-        }
-        $filename = $dateiname . '_' . $monat . '_' . $jahr . '.pdf';
-        $filename = "$dir/$filename";
-
-        if (file_exists($filename)) {
-            fehlermeldung_ausgeben("Datei exisitiert bereits, keine Überschreibung möglich");
-            $fhandle = fopen($filename, "w");
-            fwrite($fhandle, $content);
-            fclose($fhandle);
-            chmod($filename, 0777);
-            return $filename;
-        } else {
-            $fhandle = fopen($filename, "w");
-            fwrite($fhandle, $content);
-            fclose($fhandle);
-            chmod($filename, 0777);
-            return $filename;
-        }
-    }
-
-    /* erwartet array mit geldkonto_ids und objekt_namen */
-    /* array[][] */
 
     function form_kontouebersicht()
     {
@@ -2114,6 +2042,8 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         $form->ende_formular();
     }
 
+    /* Funktion für die Kosten und Einnahmenübersicht */
+
     function form_buchungen_zu_kostenkonto()
     {
         $f = new formular ();
@@ -2124,6 +2054,9 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         $f->send_button("submit_kostenkonto", "Suchen");
         $f->hidden_feld("option", "buchungen_zu_kostenkonto");
     }
+
+    /* erwartet array mit geldkonto_ids und objekt_namen */
+    /* array[][] */
 
     function form_kosten_einnahmen()
     {
@@ -2250,9 +2183,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         }
     }
 
-    /* Unabhängig vom Geldkonto */
-
-    function kosten_einnahmen_pdf($geldkontos_arr, $monat, $jahr)
+function kosten_einnahmen_pdf($geldkontos_arr, $monat, $jahr)
     {
         $anzahl_konten = count($geldkontos_arr);
         $datum_jahresanfang = "01.01.$jahr";
@@ -2391,7 +2322,7 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         } else {
             echo "Keine Daten Error 65922";
         }
-    } // end function
+    }
 
     function summe_buchungen_kostenkonto_bis_heute($geldkonto_id, $kostenkonto, $kos_typ, $kos_id)
     {
@@ -2407,7 +2338,9 @@ WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERT
         }
     }
 
-    function check_buchung($gk_id, $betrag, $auszug, $datum)
+    /* Unabhängig vom Geldkonto */
+
+        function check_buchung($gk_id, $betrag, $auszug, $datum)
     {
         $result = DB::select("SELECT * 
 FROM  `GELD_KONTO_BUCHUNGEN` 
@@ -2418,7 +2351,7 @@ AND  `DATUM` =  '$datum'
 AND  `AKTUELL` =  '1'
 LIMIT 0 , 1");
         return !empty($result);
-    }
+    } // end function
 
     function finde_buchungen_zu_kostenkonto($kostenkonto, $anfangsdatum, $enddatum)
     {
@@ -2435,7 +2368,7 @@ LIMIT 0 , 1");
             echo "<tr class=\"feldernamen\"><td colspan=6><b>Alle Buchungen zu $kostenkonto vom $anfangsdatum bis $enddatum<br>$kostenkonto $k->konto_bezeichnung</b></td></tr>";
             echo "<tr class=\"feldernamen\"><td>Geldkonto</td><td>Kostenträger</td><td>Datum</td><td>Buchungsnr</td><td>Betrag</td><td width=70%>Vzweck</td></tr>";
             $g = new geldkonto_info ();
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $datum = date_mysql2german($row ['DATUM']);
                 $g_buchungsnummer = $row ['G_BUCHUNGSNUMMER'];
                 $betrag = nummer_punkt2komma($row ['BETRAG']);
@@ -2480,7 +2413,7 @@ LIMIT 0 , 1");
                 echo "<tr class=\"feldernamen\"><td colspan=5><b>Kostenträger $kostentraeger_bez vom $anfangsdatum bis $enddatum<br>$kostenkonto $k->konto_bezeichnung</b></td></tr>";
                 echo "<tr><td>Datum</td><td>Erfassnr</td><td>Betrag</td><td width=70%>Vzweck</td></tr>";
             }
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $datum = date_mysql2german($row ['DATUM']);
                 $erfass_nr = $row ['ERFASS_NR'];
                 $betrag = nummer_punkt2komma($row ['BETRAG']);
@@ -2542,7 +2475,7 @@ LIMIT 0 , 1");
             $this->summe_konto_buchungen = 0;
         }
     }
-    
+
     function monatsbericht_ohne_ausgezogene()
     {
         echo "<h5>Aktuelle Mieterstatistik ohne ausgezogene Mieter<br></h5>";
@@ -2768,6 +2701,48 @@ LIMIT 0 , 1");
             // $pdf->ezStream();
         } else {
             echo "Objekt auswählen";
+        }
+    }
+
+    function umlaute_anpassen($str)
+    {
+        $str = str_replace('ä', 'ae', $str);
+        $str = str_replace('ö', 'oe', $str);
+        $str = str_replace('ü', 'ue', $str);
+        $str = str_replace('Ä', 'Ae', $str);
+        $str = str_replace('Ö', 'Oe', $str);
+        $str = str_replace('Ü', 'Ue', $str);
+        $str = str_replace('ß', 'ss', $str);
+
+        return $str;
+    }
+
+    function save_file($dateiname, $hauptordner, $unterordner, $content, $monat, $jahr)
+    {
+        $dir = "$hauptordner/$unterordner";
+
+        if (!file_exists($hauptordner)) {
+            mkdir($hauptordner, 0777);
+        }
+        if (!file_exists($dir)) {
+            mkdir($dir, 0777);
+        }
+        $filename = $dateiname . '_' . $monat . '_' . $jahr . '.pdf';
+        $filename = "$dir/$filename";
+
+        if (file_exists($filename)) {
+            fehlermeldung_ausgeben("Datei exisitiert bereits, keine Überschreibung möglich");
+            $fhandle = fopen($filename, "w");
+            fwrite($fhandle, $content);
+            fclose($fhandle);
+            chmod($filename, 0777);
+            return $filename;
+        } else {
+            $fhandle = fopen($filename, "w");
+            fwrite($fhandle, $content);
+            fclose($fhandle);
+            chmod($filename, 0777);
+            return $filename;
         }
     }
 
@@ -3045,7 +3020,7 @@ LIMIT 0 , 1");
             echo "<tr class=\"feldernamen\"><td>Geldkonto</td><td>Kostenträger</td><td>Datum</td><td>Kostenkonto</td><td>Buchungsnr</td><td>Betrag</td><td width=70%>Vzweck</td></tr>";
             $g = new geldkonto_info ();
             $summe = 0;
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $datum = date_mysql2german($row ['DATUM']);
                 $g_buchungsnummer = $row ['G_BUCHUNGSNUMMER'];
                 $betrag_a = nummer_punkt2komma($row ['BETRAG']);

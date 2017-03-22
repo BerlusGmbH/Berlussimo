@@ -77,4 +77,8 @@ class Objekte extends Model
     public function eigentuemer() {
         return $this->belongsTo(Partner::class, 'EIGENTUEMER_PARTNER', 'PARTNER_ID');
     }
+
+    public function bankkonten() {
+        return $this->belongsToMany(Objekte::class, 'GELD_KONTEN_ZUWEISUNG', 'KOSTENTRAEGER_ID', 'KONTO_ID')->wherePivot('KOSTENTRAEGER_TYP', 'OBJEKT')->wherePivot('AKTUELL', '1');
+    }
 }

@@ -24,9 +24,4 @@ class BaustellenExtern extends Model
 
         static::addGlobalScope(new AktuellScope());
     }
-
-    public function kostentraeger()
-    {
-        return $this->morphTo('kostentraeger', 'KOSTENTRAEGER_TYP', 'KOSTENTRAEGER_ID');
-    }
 }

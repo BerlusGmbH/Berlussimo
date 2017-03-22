@@ -2365,7 +2365,6 @@ AND  `AKTUELL` =  '1'");
 
             $f->erstelle_formular('SEPA-Sammelüberweisung an IBAN/BIC', null);
             $f->text_feld_inaktiv('Vom Geldkonto', 'vmgk', $gk->geldkonto_bez, 80, 'vmgkid');
-            // $sep->dropdown_sepa_geldkonten_filter('Empfängerkonto wählen', 'empf_sepa_gk_id', 'empf_sepa_gk_id', $filter);
             $f->text_feld('Empfänger', 'empfaenger', "", 50, 'empfaenger', '');
             $f->iban_feld('IBAN', 'iban', "", 30, 'iban', '');
             $f->text_feld('BIC', 'bic', "", 15, 'betrag', '');
@@ -2374,16 +2373,11 @@ AND  `AKTUELL` =  '1'");
             $f->text_feld('Betrag', 'betrag', "", 10, 'betrag', '');
             $f->text_feld('VERWENDUNG', 'vzweck', "", 80, 'vzweck', '');
             $f->hidden_feld('option', 'sepa_sammler_hinzu_ue_IBAN');
-            // $f->hidden_feld('kat', 'SAMMLER');
             $this->dropdown_sammler_typ('Sammlerkategorie wählen!!!', 'kat', 'kat', '', 'SONSTIGES');
             $f->hidden_feld('gk_id', session()->get('geldkonto_id'));
 
             $js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
-            // $js_typ='';
             $bb = new buchen ();
-            // dropdown_kostentreager_typen($label, $name, $id, $js_action){
-
-            // dropdown_kostentreager_typen_vw($label, $name, $id, $js_action, $vorwahl_typ){
             if (session()->has('kos_typ')) {
                 $bb->dropdown_kostentreager_typen_vw('Kostenträgertyp wählen', 'kos_typ', 'kostentraeger_typ', $js_typ, session()->get('kos_typ'));
             } else {
