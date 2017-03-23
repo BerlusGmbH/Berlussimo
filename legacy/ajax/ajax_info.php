@@ -475,7 +475,7 @@ ORDER BY LPAD( EINHEIT_KURZNAME, LENGTH( EINHEIT_KURZNAME ) ,  '1' ) ASC ");
         $r->position_deaktivieren($pos, $belegnr);
         /* Psition neu speichern */
         DB::insert("INSERT INTO RECHNUNGEN_POSITIONEN VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,'1')",
-            [$letzte_rech_pos_id, $pos, $belegnr, $lieferant_id, $artikel_nr, $menge, $preis, $pos_mwst, $rabatt, $pos_skonto, $g_netto]);
+            [$letzte_rech_pos_id, $pos, $belegnr, $belegnr, $lieferant_id, $artikel_nr, $menge, $preis, $pos_mwst, $rabatt, $pos_skonto, $g_netto]);
         break;
 
     case "get_kontierungs_infos" :

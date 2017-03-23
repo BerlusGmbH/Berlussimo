@@ -679,7 +679,9 @@ class rechnungen
         $beleg_feld = "document.getElementById('belegnr').value";
         $js_display_pos = "onLoad=\"display_positionen($beleg_feld)\"";
         echo "<div id=\"positionen\" >";
-        echo "<script type=\"text/javascript\">display_positionen($belegnr)</script>\n";
+        echo "<script type=\"text/javascript\">document.addEventListener(\"DOMContentLoaded\", function(event) { 
+                display_positionen($belegnr);
+        });</script>\n";
         /* Rechnungsfooter d.h. Netto Brutto usw. */
         echo "</div>";
         $rb->rechnung_footer_tabelle_anzeigen_pe();
@@ -692,9 +694,9 @@ class rechnungen
         $f->text_feld('Artikelnr/Leistungnr', 'suche_artikelnr', '', '15', 'suche_artikelnr', '');
         $art_feld = "document.getElementById('suche_artikelnr').value";
         // $js_check_art = "onclick='checkartikel($this->rechnungs_aussteller_id, $art_feld)'";
-        $js_check_art = "onclick=\"ajax_check_art($artikel_lieferant, $art_feld)\";";
+        $js_check_art = "onclick=\"ajax_check_art($artikel_lieferant, $art_feld);\"";
         $f->button_js('suchen_btn', 'Suchen', $js_check_art);
-        $js_neu_berechnen = "onKeyUp=\"refresh_preise()\" onmouseover=\"refresh_preise()\" ";
+        $js_neu_berechnen = "onKeyUp=\"refresh_preise()\" onmouseover=\"refresh_preise();\"";
         $js_listenpreis_berechnen_von_enetto = "onKeyUp=\"listen_stueckpreis_rabatt()\" onclick=\"listen_stueckpreis_rabatt()\"";
         $f->erstelle_formular("Position $pos ändern in Rechnung $this->rechnungsnummer", NULL);
 
