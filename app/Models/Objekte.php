@@ -37,7 +37,9 @@ class Objekte extends Model
         return $this->hasManyThrough(
             Einheiten::class, Haeuser::class,
             'OBJEKT_ID', 'HAUS_ID', 'OBJEKT_ID'
-        );
+        )->whereHas('haus', function ($query){
+            $query->where('HAUS_AKTUELL', '1');
+        })->distinct();
     }
 
     public function mieter($date = null) {
