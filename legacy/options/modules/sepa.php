@@ -540,7 +540,7 @@ switch ($option) {
 
     case "sepa_sammler_hinzu_ue_IBAN" :
         $sep = new sepa ();
-        $vzweck = request()->input('vzweck');
+        $vzweck = request()->input('empfaenger') . ', ' . request()->input('vzweck');
         $von_gk_id = request()->input('gk_id');
         session()->put('geldkonto_id', $von_gk_id);
         $iban = request()->input('iban');
