@@ -78,4 +78,8 @@ class Mietvertraege extends Model
             $query->whereDate('MIETVERTRAG_VON', '>', $date);
         }
     }
+
+    public function getMieterNamenAttribute() {
+        return $this->mieter->implode('full_name', '; ');
+    }
 }

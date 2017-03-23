@@ -540,7 +540,7 @@ switch ($option) {
 
     case "sepa_sammler_hinzu_ue_IBAN" :
         $sep = new sepa ();
-        $vzweck = request()->input('vzweck');
+        $vzweck = request()->input('empfaenger') . ', ' . request()->input('vzweck');
         $von_gk_id = request()->input('gk_id');
         session()->put('geldkonto_id', $von_gk_id);
         $iban = request()->input('iban');
@@ -572,7 +572,7 @@ switch ($option) {
         } else {
             session()->put('kos_typ', $kos_typ);
             session()->put('kos_bez', $kos_id);
-            weiterleiten(route('web::sepa::legacy', ['option' => 'sammel_ue'], false));
+            weiterleiten(route('web::sepa::legacy', ['option' => 'sammel_ue_IBAN'], false));
         }
         break;
 

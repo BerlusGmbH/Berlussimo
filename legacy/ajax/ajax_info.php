@@ -189,46 +189,34 @@ ORDER BY LPAD( EINHEIT_KURZNAME, LENGTH( EINHEIT_KURZNAME ) ,  '1' ) ASC ");
                 echo "$PARTNER_NAME1*$row[PARTNER_ID]*|";
             }
         }
-        /* NEU SCHNELL ENDE 2014 */
+
         if ($typ == 'Mietvertrag') {
-            $gk_arr_objekt = get_objekt_arr_gk(session()->get('geldkonto_id'));
-            if (!empty($gk_arr_objekt)) {
-
-                $db_abfrage = "SELECT  HAUS.OBJEKT_ID, OBJEKT_KURZNAME, MIETVERTRAG.EINHEIT_ID, EINHEIT_KURZNAME, MIETVERTRAG_ID FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT, MIETVERTRAG) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && EINHEIT.EINHEIT_ID=MIETVERTRAG.EINHEIT_ID)
-WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERTRAG_AKTUELL='1' ";
-
-                foreach ($gk_arr_objekt as $row) {
-                    $oo_id = $row['KOSTENTRAEGER_ID'];
-                    $db_abfrage .= "&& OBJEKT_ID=$oo_id ";
-                }
-
-                $db_abfrage .= "GROUP BY MIETVERTRAG_ID ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC";
-            } else {
-
-                $db_abfrage = "SELECT  HAUS.OBJEKT_ID, OBJEKT_KURZNAME, MIETVERTRAG.EINHEIT_ID, EINHEIT_KURZNAME, MIETVERTRAG_ID FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT, MIETVERTRAG) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && EINHEIT.EINHEIT_ID=MIETVERTRAG.EINHEIT_ID)
-WHERE  HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERTRAG_AKTUELL='1' GROUP BY MIETVERTRAG_ID ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC";
+            $einheiten = \App\Models\Einheiten::defaultOrder()
+                ->has('mietvertraege')
+                ->with(['mietvertraege' => function ($query) {
+                    $query->defaultOrder();
+                }, 'mietvertraege.mieter' => function ($query) {
+                    $query->defaultOrder();
+                }]);
+            if(session()->has('geldkonto_id')) {
+                $einheiten->whereHas('haus.objekt.bankkonten', function ($query) {
+                    $query->where('KONTO_ID', session()->get('geldkonto_id'));
+                });
             }
-            $result = DB::select($db_abfrage);
-            foreach ($result as $row) {
-                $mv_id = $row['MIETVERTRAG_ID'];
-                $objekt_id = $row['OBJEKT_ID'];
-                $mv = new mietvertraege ();
-
-                if (!session()->has('geldkonto_id')) {
-                    $mv->get_mietvertrag_infos_aktuell($mv_id);
-                    if ($mv->mietvertrag_aktuell == 1) {
-                        echo "$mv->einheit_kurzname*$mv_id*$mv->personen_name_string|";
-                    } else {
-                        echo "ALTMIETER: $mv->einheit_kurzname*$mv_id*$mv->personen_name_string|";
-                    }
-                } else {
-                    $gk = new gk ();
-                    if ($gk->check_zuweisung_kos_typ(session()->get('geldkonto_id'), 'Objekt', $objekt_id)) {
-                        $mv->get_mietvertrag_infos_aktuell($mv_id);
-                        if ($mv->mietvertrag_aktuell == 1) {
-                            echo "$mv->einheit_kurzname*$mv_id*$mv->personen_name_string|";
+            $einheiten = $einheiten->get();
+            foreach ($einheiten as $einheit) {
+                foreach ($einheit->mietvertraege as $mietvertrag) {
+                    if ($mietvertrag->isActive()) {
+                        if ($vorwahl_bez == $mietvertrag->MIETVERTRAG_ID) {
+                            echo "$einheit->EINHEIT_KURZNAME*$mietvertrag->MIETVERTRAG_ID*$mietvertrag->mieter_namen|";
                         } else {
-                            echo "ALTMIETER: $mv->einheit_kurzname*$mv_id*$mv->personen_name_string|";
+                            echo "$einheit->EINHEIT_KURZNAME*$mietvertrag->MIETVERTRAG_ID*$mietvertrag->mieter_namen|";
+                        }
+                    } else {
+                        if ($vorwahl_bez == $mietvertrag->MIETVERTRAG_ID) {
+                            echo "ALTMIETER: $einheit->EINHEIT_KURZNAME*$mietvertrag->MIETVERTRAG_ID*$mietvertrag->mieter_namen|";
+                        } else {
+                            echo "ALTMIETER: $einheit->EINHEIT_KURZNAME*$mietvertrag->MIETVERTRAG_ID*$mietvertrag->mieter_namen|";
                         }
                     }
                 }
@@ -1125,7 +1113,7 @@ function get_eigentuemer($einheit_id)
     }
 }
 
-function get_objekt_arr_gk($gk_id)
+function get_objekt_arr_gk($geldkonto_id)
 {
     $result = DB::select("SELECT KOSTENTRAEGER_ID FROM GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='Objekt'");
     return $result;
