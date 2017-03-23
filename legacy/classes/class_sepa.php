@@ -2431,7 +2431,7 @@ AND  `AKTUELL` =  '1'");
             $anz = count($arr);
 
             echo "<hr>";
-            echo "<h2><b>$kat</b></h2>";
+            echo "<h5><b>$kat</b></h5>";
             echo "<hr>";
             echo "<table class=\"sortable\">";
 

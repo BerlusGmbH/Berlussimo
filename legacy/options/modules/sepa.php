@@ -572,7 +572,7 @@ switch ($option) {
         } else {
             session()->put('kos_typ', $kos_typ);
             session()->put('kos_bez', $kos_id);
-            weiterleiten(route('web::sepa::legacy', ['option' => 'sammel_ue'], false));
+            weiterleiten(route('web::sepa::legacy', ['option' => 'sammel_ue_IBAN'], false));
         }
         break;
 

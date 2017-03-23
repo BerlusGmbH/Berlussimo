@@ -478,14 +478,19 @@ class buchen
         }
 
         if ($typ == 'Mietvertrag') {
-            $einheiten = null;
+            $einheiten = \App\Models\Einheiten::defaultOrder()
+                ->has('mietvertraege')
+                ->with(['mietvertraege' => function ($query) {
+                    $query->defaultOrder();
+                }, 'mietvertraege.mieter' => function ($query) {
+                    $query->defaultOrder();
+                }]);
             if(session()->has('geldkonto_id')) {
-                $einheiten = \App\Models\Einheiten::whereHas('haus.objekt.bankkonten', function ($query) {
+                $einheiten->whereHas('haus.objekt.bankkonten', function ($query) {
                     $query->where('KONTO_ID', session()->get('geldkonto_id'));
-                })->has('mietvertraege')->with(['mietvertraege.mieter'])->get();
-            } else {
-                $einheiten = \App\Models\Einheiten::has('mietvertraege')->get();
+                });
             }
+            $einheiten = $einheiten->get();
             foreach ($einheiten as $einheit) {
                 foreach ($einheit->mietvertraege as $mietvertrag) {
                     if ($mietvertrag->isActive()) {
