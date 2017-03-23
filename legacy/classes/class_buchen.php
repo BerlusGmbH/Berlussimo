@@ -361,8 +361,8 @@ class buchen
         if ($js_action == '') {
             $js_action = "onchange=\"drop_kos_register('kostentraeger_typ', 'dd_kostentraeger_id');\"";
         }
-        if (session()->has('kos_typ') && session()->has('kos_bez')) {
-            $kostentraeger_bez = session()->get('kos_bez');
+        if (session()->has('kos_typ') && session()->has('kos_id')) {
+            $kostentraeger_bez = session()->get('kos_id');
             $kostentraeger_typ = session()->get('kos_typ');
             $this->dropdown_kostentraeger_bez_vw($label, $name, $id, $js_action, $kostentraeger_typ, $kostentraeger_bez);
         } else {

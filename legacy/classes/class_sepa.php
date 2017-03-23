@@ -2384,7 +2384,7 @@ AND  `AKTUELL` =  '1'");
                 $bb->dropdown_kostentreager_typen('Kostenträgertyp norm', 'kos_typ', 'kostentraeger_typ', $js_typ);
             }
 
-            $js_id = "";
+            $js_id = "onchange=\"drop_kos_register('kostentraeger_typ', 'dd_kostentraeger_id');\"";
 
             if (session()->has('kos_bez')) {
                 $bb->dropdown_kostentraeger_bez_vw("Kostenträger C1 ", 'kos_id', 'dd_kostentraeger_id', $js_id, session()->get('kos_typ'), session()->get('kos_bez'));
