@@ -95,7 +95,6 @@ function ajax_check_art(lieferant, artikel_nr) {
                             document.getElementById("lp").value = lp.replace(".", ",");
                             document.getElementById("rabattsatz").value = rab.replace(".", ",");
                             document.getElementById("mwst_satz").value = mwst_satz.replace(".", ",");
-                            ;
                             document.getElementById("einheit").value = einheit;
                             document.getElementById("pos_skonto").value = pos_skonto;
                             refresh_preise();
@@ -105,10 +104,10 @@ function ajax_check_art(lieferant, artikel_nr) {
                                     document.getElementById("einheit")[i].focus();
                                 }
                             }
-                            Materialize.toast('Artikel übernommen, Menge & Preise prüfen', 4000)
+                            Materialize.toast('Artikel übernommen, Menge & Preise prüfen', 4000);
                             document.getElementById('artikel_vorhanden').innerHTML = '';
                         } else {
-                            Materialize.toast(artikel_nr + ' L: ' + lieferant + ' Artikel nicht vorhanden', 4000)
+                            Materialize.toast(artikel_nr + ' L: ' + lieferant + ' Artikel nicht vorhanden', 4000);
                             document.getElementById("textf_artikelnr").value = artikel_nr;
                             document.getElementById("bezeichnung").value = '';
                             document.getElementById("lp").value = '';

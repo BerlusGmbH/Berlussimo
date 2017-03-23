@@ -724,7 +724,6 @@ function refresh_preise() {
     menge = document.getElementById("menge").value;
     menge = menge.replace(",", ".");
     listenpreis = document.getElementById("lp").value;
-    // listenpreis = runde_kaufm(listenpreis);
     listenpreis = listenpreis.replace(",", ".");
     rabatt_satz = document.getElementById("rabattsatz").value;
     rabatt_satz = rabatt_satz.replace(",", ".");
@@ -748,7 +747,7 @@ function refresh_preise() {
 
     gesamt_brutto = gesamt_brutto.replace(".", ",");
     document.getElementById("brutto_gesamt").value = gesamt_brutto + ' EUR';
-
+    Materialize.updateTextFields();
 }
 
 function listen_stueckpreis() {
