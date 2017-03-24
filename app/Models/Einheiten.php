@@ -80,11 +80,11 @@ class Einheiten extends Model
     }
 
     public function vermietet() {
-        $date = Carbon::today();
-        return !$this->mietvertraege()->where(function ($query) use ($date){
-            $query->whereDate('MIETVERTRAG_VON', '<=', $date)->where(function ($query) use($date) {
-                $query->whereDate('MIETVERTRAG_BIS', '>=', $date)->orWhereDate('MIETVERTRAG_BIS', '=', '0000-00-00');
-            });
-        })->get()->isEmpty();
+        foreach($this->mietvertraege as $mietvertrag) {
+            if($mietvertrag->isActive()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

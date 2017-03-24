@@ -8,32 +8,31 @@
     @if($icons)
         @if($entity->hasHinweis())
             @php($tooltip = $entity->hinweise->implode('DETAIL_INHALT', '<hr>'))
-            <i class="mdi mdi-alert tooltipped red-text" data-position="bottom" data-delay="50"
-               data-tooltip="{{$tooltip}}"></i><i
+            <i class="mdi mdi-alert tooltipped red-text" data-tooltip="{{$tooltip}}"></i><i
         @else
             <i
         @endif
         @if($entity->vermietet())
-            class="mdi mdi-cube tooltipped" data-position="bottom" data-delay="50" data-tooltip="Einheit (Vermietet)"></i><i
+            class="mdi mdi-cube tooltipped" data-tooltip="Einheit (Vermietet)"></i><i
         @else
-            class="mdi mdi-cube-outline tooltipped" data-position="bottom" data-delay="50" data-tooltip="Einheit (Leer)"></i><i
+            class="mdi mdi-cube-outline tooltipped" data-tooltip="Einheit (Leer)"></i><i
         @endif
         @if($entity->TYP == 'Wohnraum')
-            class="mdi mdi-home tooltipped" data-position="bottom" data-delay="50" data-tooltip="Wohnraum"></i>
+            class="mdi mdi-home tooltipped" data-tooltip="Wohnraum"></i>
         @elseif($entity->TYP == 'Gewerbe')
-            class="mdi mdi-store tooltipped" data-position="bottom" data-delay="50" data-tooltip="Gewerbe"></i>
+            class="mdi mdi-store tooltipped" data-tooltip="Gewerbe"></i>
         @elseif($entity->TYP == 'Stellplatz')
-            class="mdi mdi-car tooltipped" data-position="bottom" data-delay="50" data-tooltip="Stellplatz"></i>
+            class="mdi mdi-car tooltipped" data-tooltip="Stellplatz"></i>
         @elseif($entity->TYP == 'Garage')
-            class="mdi mdi-garage tooltipped" data-position="bottom" data-delay="50" data-tooltip="Garage"></i>
+            class="mdi mdi-garage tooltipped" data-tooltip="Garage"></i>
         @elseif($entity->TYP == 'Keller')
-            class="mdi mdi-ghost tooltipped" data-position="bottom" data-delay="50" data-tooltip="Keller"></i>
+            class="mdi mdi-ghost tooltipped" data-tooltip="Keller"></i>
         @elseif($entity->TYP == 'Freiflaeche')
-            class="mdi mdi-nature-people tooltipped" data-position="bottom" data-delay="50" data-tooltip="Freifläche"></i>
+            class="mdi mdi-nature-people tooltipped" data-tooltip="Freifläche"></i>
         @elseif($entity->TYP == 'Wohneigentum')
-            class="mdi mdi-home-variant tooltipped" data-position="bottom" data-delay="50" data-tooltip="Wohneigentum"></i>
+            class="mdi mdi-home-variant tooltipped" data-tooltip="Wohneigentum"></i>
         @elseif($entity->TYP == 'Werbeflaeche')
-            class="mdi mdi-newspaper tooltipped" data-position="bottom" data-delay="50" data-tooltip="Werbefläche"></i>
+            class="mdi mdi-newspaper tooltipped" data-tooltip="Werbefläche"></i>
         @else
             ></i>
         @endif

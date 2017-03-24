@@ -66,7 +66,7 @@ class ObjekteController extends LegacyController
             $query->defaultOrder();
         }, 'haeuser.hinweise', 'einheiten' => function($query) {
             $query->defaultOrder();
-        }, 'einheiten.hinweise'])->find($id);
+        }, 'einheiten.hinweise', 'einheiten.mietvertraege'])->find($id);
         return view('modules.objekte.show', ['objekt' => $objekt]);
     }
 }
