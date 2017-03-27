@@ -1482,24 +1482,34 @@ class sepa
         return $doc;
     }
 
-    function dropdown_sepa_geldkonten($label, $name, $id, $kos_typ, $kos_id)
+    function dropdown_sepa_geldkonten($label, $name, $id, $kos_typ, $kos_id, $form = null)
     {
         $my_array = DB::select("SELECT GELD_KONTEN.KONTO_ID, GELD_KONTEN.IBAN, GELD_KONTEN.BIC, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ, GELD_KONTEN.INSTITUT, GELD_KONTEN.BEZEICHNUNG FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE KOSTENTRAEGER_TYP = '$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' GROUP BY GELD_KONTEN.KONTO_ID ORDER BY GELD_KONTEN.KONTO_ID ASC");
         $numrows = count($my_array);
         if ($numrows) {
-            echo "<label for=\"$id\">$label (Konten:$numrows)</label>\n<select name=\"$name\" id=\"$id\" size=\"1\" >\n";
-            if ($numrows > 1) {
-                echo "<option>Bitte wählen</option>\n";
+            echo "<div class='input-field'>";
+            if(!is_null($form)) {
+                echo "<select name=\"$name\" id=\"$id\" size=\"1\" form=\"$form\">\n";
+            } else {
+                echo "<select name=\"$name\" id=\"$id\" size=\"1\">\n";
             }
+
+            echo "<option>Bitte wählen</option>\n";
             for ($a = 0; $a < $numrows; $a++) {
                 $konto_id = $my_array [$a] ['KONTO_ID'];
                 $bez = $my_array [$a] ['BEZEICHNUNG'];
                 $iban = $my_array [$a] ['IBAN'];
                 $iban1 = $this->iban_convert($iban, 0);
                 $bic = $my_array [$a] ['BIC'];
-                echo "<option value=\"$konto_id\" >$bez - $iban1 - $bic</option>\n";
+                if($numrows == 1) {
+                    echo "<option value=\"$konto_id\" selected>$bez - $iban1 - $bic</option>\n";
+                } else {
+                    echo "<option value=\"$konto_id\">$bez - $iban1 - $bic</option>\n";
+                }
+
             } // end for
-            echo "</select>\n";
+            echo "</select>\n<label for=\"$id\">$label (Konten:$numrows)</label>\n";
+            echo "</div>";
             return true;
         } else {
             fehlermeldung_ausgeben("Kein SEPA-Geldkonto hinterlegt");

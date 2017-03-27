@@ -11,12 +11,10 @@ class personal
         if ($b->isEmpty()) {
             fehlermeldung_ausgeben("Keine Benutzer/Mitarbeiter gefunden!");
         } else {
-            $f = new formular ();
-
-            echo "<table class=\"sortable\">";
+            echo "<table class=\"sortable striped\">";
             $z = 0;
-            echo "<tr><th>MITARBEITER</th><th>AG</th><th>SEPA GK</th><th>BETRAG</th><th>VZWECK</th><th>KONTO</th><th>OPTION</th></tr>";
-            foreach ($b as $benutzer) {
+            echo "<thead><th>MITARBEITER</th><th>AG</th><th>SEPA GK</th><th>BETRAG</th><th>VZWECK</th><th>KONTO</th><th>OPTION</th></thead>";
+            foreach ($b as $index => $benutzer) {
                 $z++;
                 $b_id = $benutzer->id;
                 $b_name_g = strtoupper($benutzer->name);
@@ -28,42 +26,43 @@ class personal
                     $p->get_partner_name($partner_id);
                 }
                 if (!$this->check_datensatz_sepa(session()->get('geldkonto_id'), "Lohn $monat/$jahr, $b_name_g", 'Benutzer', $b_id, 4000)) {
-                    echo "<tr class=\"zeile$z\"><td>$b_name_g</td><td>$p->partner_name</td>";
+                    echo "<tr class=\"zeile$z\">";
+                    echo "<td><form id=\"sepa_lg_$index\"></form>$b_name_g</td><td>$p->partner_name</td>";
                     $sep = new sepa ();
-                    echo "<form name=\"sepa_lg\" method=\"post\" action=\"\">";
                     echo "<td>";
-                    if ($sep->dropdown_sepa_geldkonten('Überweisen an', 'empf_sepa_gk_id', 'empf_sepa_gk_id', 'Benutzer', $b_id) == true) {
+                    if ($sep->dropdown_sepa_geldkonten('Überweisen an', 'empf_sepa_gk_id', "empf_sepa_gk_id", 'Benutzer', $b_id, "sepa_lg_" . $index) == true) {
                         echo "</td>";
                         echo "<td>";
                         $lohn = $this->get_mitarbeiter_summe(session()->get('geldkonto_id'), 4000, $b_name);
                         $js_action = "onfocus=\"this.value='';\"";
                         $lohn_a = nummer_punkt2komma($lohn * -1);
-                        $f->text_feld('Betrag', 'betrag', $lohn_a, 10, 'betrag', $js_action);
+                        echo "<div class=\"input-field\">";
+                        echo "<input type=\"text\" id=\"betrag\" name=\"betrag\" value=\"$lohn_a\" size=\"10\" $js_action form=\"sepa_lg_$index\">\n";
+                        echo "<label for=\"$id\">Betrag</label>\n";
+                        echo "</div>";
                         echo "</td>";
                         echo "<td>";
 
-                        $f->text_feld('VERWENDUNG', 'vzweck', "Lohn $monat/$jahr, $b_name_g", 25, 'vzweck', '');
-                        echo "</td>";
-                        // echo nummer_punkt2komma($lohn*-1);
-                        // $f->hidden_feld('option', 'lohn2sepa');
+                        echo "<div class=\"input-field\">";
+                        echo "<input type=\"text\" id=\"vzweck\" name=\"vzweck\" value=\"Lohn $monat/$jahr, $b_name_g\" size=\"25\" form=\"sepa_lg_$index\">\n";
+                        echo "<label for=\"$id\">VERWENDUNG</label>\n";
+                        echo "</div>";
                         echo "</td>";
                         echo "<td>";
 
-                        $f->hidden_feld('option', 'sepa_sammler_hinzu');
-                        $f->hidden_feld('kat', 'LOHN');
-                        $f->hidden_feld('gk_id', session()->get('geldkonto_id'));
-                        $f->hidden_feld('kos_typ', 'Benutzer');
-                        $f->hidden_feld('kos_id', $b_id);
-                        // $f->text_feld('Buchungskonto', 'konto', 4000, 5, 'konto', '');
+                        echo "<input type=\"hidden\" id=\"option\" name=\"option\" value=\"sepa_sammler_hinzu\" form=\"sepa_lg_$index\">\n";
+                        echo "<input type=\"hidden\" id=\"kat\" name=\"kat\" value=\"LOHN\" form=\"sepa_lg_$index\">\n";
+                        echo "<input type=\"hidden\" id=\"gk_id\" name=\"gk_id\" value=\"" . session()->get('geldkonto_id') . "\" form=\"sepa_lg_$index\">\n";
+                        echo "<input type=\"hidden\" id=\"kos_typ\" name=\"kos_typ\" value=\"Benutzer\" form=\"sepa_lg_$index\">\n";
+                        echo "<input type=\"hidden\" id=\"kos_id\" name=\"kos_id\" value=\"$b_id\" form=\"sepa_lg_$index\">\n";
                         $kk = new kontenrahmen ();
-                        $kk->dropdown_kontorahmenkonten_vorwahl('Buchungskonto', 'konto', 'konto', 'GELDKONTO', session()->get('geldkonto_id'), '', 4000);
+                        $kk->dropdown_kontorahmenkonten_vorwahl('Buchungskonto', 'konto', 'konto', 'GELDKONTO', session()->get('geldkonto_id'), '', 4000, "sepa_lg_" . $index);
                         echo "</td>";
                         echo "<td>";
-                        $f->send_button('btn_Sepa', 'Ü-SEPA');
-                        echo "</td>";
-                        $f->ende_formular();
+                        echo "<button type=\"submit\" name=\"btn_Sepa\" value=\"Ü-SEPA\" class=\"btn waves-effect waves-light\" id=\"btn_Sepa\" form=\"sepa_lg_$index\"><i class=\"mdi mdi-send right\"></i>Ü-SEPA</button>";
                         echo "</td>";
                     }
+                    echo "</td>";
                     echo "</tr>";
                 }
                 if ($z == 2) {
@@ -82,7 +81,7 @@ class personal
 
     function get_mitarbeiter_summe($gk_id, $konto, $benutzername, $kos_typ = null, $kos_id = null)
     {
-        $result = DB::select("SELECT BETRAG FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$gk_id' && `AKTUELL` = '1' && VERWENDUNGSZWECK LIKE '%$benutzername%' && KONTENRAHMEN_KONTO='$konto' ORDER BY G_BUCHUNGSNUMMER DESC LIMIT 0,1");
+        $result = DB::select("SELECT BETRAG FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$gk_id' && `AKTUELL` = '1' && VERWENDUNGSZWECK LIKE '%$benutzername%' && KONTENRAHMEN_KONTO='$konto' ORDER BY DATUM DESC LIMIT 0,1");
         $row = $result[0];
         return $row ['BETRAG'];
     }
