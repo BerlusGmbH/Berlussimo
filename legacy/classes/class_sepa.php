@@ -2279,18 +2279,14 @@ AND  `AKTUELL` =  '1'");
             $f->hidden_feld('gk_id', session()->get('geldkonto_id'));
 
             $js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
-            // $js_typ='';
             $bb = new buchen ();
-            // dropdown_kostentreager_typen($label, $name, $id, $js_action){
-
-            // dropdown_kostentreager_typen_vw($label, $name, $id, $js_action, $vorwahl_typ){
             if (session()->has('kos_typ')) {
                 $bb->dropdown_kostentreager_typen_vw('Kostenträgertyp wählen', 'kos_typ', 'kostentraeger_typ', $js_typ, session()->get('kos_typ'));
             } else {
                 $bb->dropdown_kostentreager_typen('Kostenträgertyp norm', 'kos_typ', 'kostentraeger_typ', $js_typ);
             }
 
-            $js_id = "";
+            $js_id = "onchange=\"drop_kos_register('kostentraeger_typ', 'dd_kostentraeger_id');\"";
 
             if (session()->has('kos_bez')) {
                 $bb->dropdown_kostentraeger_bez_vw("Kostenträger C1 ", 'kos_id', 'dd_kostentraeger_id', $js_id, session()->get('kos_typ'), session()->get('kos_bez'));

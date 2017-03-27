@@ -379,6 +379,7 @@ class buchen
     {
         $typ = $kos_typ;
 
+        echo "<div class='input-field'>";
         echo "<select name=\"$name\" id=\"$id\" size=1 $js_action>\n";
         echo "<option value=\"\">Bitte wählen</option>\n";
         if ($typ == 'Objekt') {
@@ -615,7 +616,19 @@ class buchen
             }
         }
 
-        echo "<label for=\"$id\">$label</label></select>\n";
+        if ($typ == 'Benutzer') {
+            $users = \App\Models\User::all();
+            foreach ($users as $user) {
+                if($vorwahl_bez == $user->id) {
+                    echo "<option value='$user->id' selected>$user->name</option>";
+                } else {
+                    echo "<option value='$user->id'>$user->name</option>";
+                }
+            }
+        }
+
+        echo "</select>\n<label for=\"$id\">$label</label>";
+        echo "</div>";
     }
 
     /* Kostenträgerliste als dropdown */
