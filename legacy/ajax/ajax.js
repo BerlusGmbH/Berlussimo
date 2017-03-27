@@ -116,9 +116,10 @@ function ajax_check_art(lieferant, artikel_nr) {
                             document.getElementById("bruttopreis").value = '';
                             document.getElementById("netto_gesamt").value = '';
                             document.getElementById("brutto_gesamt").value = '';
-                            document.getElementById("menge").focus();
                         }
                         Materialize.updateTextFields();
+                        $('select').material_select();
+                        document.getElementById("menge").focus();
                     }
                     break;
 
