@@ -164,7 +164,7 @@ class personen
                         $mv = new mietvertraege ();
                         $mv->get_mietvertrag_infos_aktuell($kos_id);
                         $gk = new gk ();
-                        if ($gk->check_zuweisung_kos_typ(session()->has('geldkonto_id'), 'Objekt', $mv->objekt_id)) {
+                        if ($gk->check_zuweisung_kos_typ(session()->get('geldkonto_id'), 'Objekt', $mv->objekt_id)) {
                             $treffer ['ERG_F'] [$treffer_f] ['KOS_TYP'] = 'Mietvertrag';
                             $treffer ['ERG_F'] [$treffer_f] ['KOS_ID'] = $kos_id;
                             $treffer_f++;

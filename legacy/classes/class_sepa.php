@@ -2572,18 +2572,18 @@ AND  `AKTUELL` =  '1'");
         }
 
         if ($kontostand_aktuell == session()->get('temp_kontostand')) {
-            echo "&nbsp;|&nbsp;<span style=\"color:green;\"><b>KSAKT: $kontostand_aktuell EUR</b></span>";
+            echo "&nbsp;|&nbsp;<span style=\"color:green;\"><b>KSAKT: $kontostand_aktuell €</b></span>";
         } else {
-            echo "&nbsp;|&nbsp;<span style=\"color:red;\"><b>KSAKT: $kontostand_aktuell EUR</b></span>";
+            echo "&nbsp;|&nbsp;<span style=\"color:red;\"><b>KSAKT: $kontostand_aktuell €</b></span>";
         }
 
-        echo "&nbsp;|&nbsp;<span style=\"color:blue;\">KSA BANK: $ksa_bank | KSE BANK(TEMP): " . session()->get('temp_kontostand') . " €</span>";
+        echo "&nbsp;|&nbsp;<span style=\"color:blue;\">KSA BANK: $ksa_bank € | KSE BANK(TEMP): " . session()->get('temp_kontostand') . " €</span>";
 
         session()->put('temp_kontoauszugsnummer', sprintf('%01d', session()->get('umsaetze_ok')[$umsatz_id_temp][3]));
         session()->put('temp_datum', session()->get('umsaetze_ok')[$umsatz_id_temp][6]);
 
         // $f->fieldset('NAVI', 'navi');
-        echo "<table style=\"border:0px;padding:1px;><tr><td padding:1px;\"><tr><td>";
+        echo "<table style=\"border:0; padding:1px;\"><tr><td style='padding:1px;'><tr><td>";
         echo "<form method=\"post\" >";
         $f->hidden_feld('vor', '1');
         $f->send_button('SndNEXT', '', 'arrow-left', '');
