@@ -148,10 +148,14 @@ class kontenrahmen {
 		echo "</select><label for=\"$id\" id=\"label_$name\">$label</label>\n";
         echo "</div>";
 	}
-	function dropdown_kontorahmenkonten_vorwahl($label, $id, $name, $typ, $typ_id, $js, $vorwahl_konto) {
+	function dropdown_kontorahmenkonten_vorwahl($label, $id, $name, $typ, $typ_id, $js, $vorwahl_konto, $form = null) {
 		$konten_arr = $this->kontorahmen_konten_in_array ( $typ, $typ_id );
         echo "<div class='input-field'>";
-		echo "<select name=\"$name\" size=\"1\" id=\"$id\"  $js>\n";
+		if(!is_null($form)) {
+            echo "<select name=\"$name\" size=\"1\" id=\"$id\" $js form=\"$form\">\n";
+        } else {
+            echo "<select name=\"$name\" size=\"1\" id=\"$id\" $js>\n";
+        }
 		echo "<option value=\"\">Bitte wählen</option>\n";
 		for($a = 0; $a < count ( $konten_arr ); $a ++) {
 			$konto = $konten_arr [$a] ['KONTO'];
