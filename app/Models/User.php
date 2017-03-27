@@ -48,7 +48,7 @@ class User extends Authenticatable
     }
 
     public function arbeitgeber() {
-        return $this->belongsToMany(Partner::class, 'BENUTZER_PARTNER', 'BP_BENUTZER_ID', 'BP_PARTNER_ID');
+        return $this->belongsToMany(Partner::class, 'BENUTZER_PARTNER', 'BP_BENUTZER_ID', 'BP_PARTNER_ID')->wherePivot('AKTUELL', '1');
     }
 
     public function gewerk()

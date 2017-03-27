@@ -27,8 +27,6 @@ class Wirtschaftseinheiten extends Model
 
     public function einheiten()
     {
-        return $this->belongsToMany(
-            'App\Models\Einheiten', 'WIRT_EIN_TAB', 'W_ID', 'EINHEIT_ID'
-        );
+        return $this->belongsToMany('App\Models\Einheiten', 'WIRT_EIN_TAB', 'W_ID', 'EINHEIT_ID')->wherePivot('AKTUELL', '1');
     }
 }
