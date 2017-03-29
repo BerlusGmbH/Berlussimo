@@ -13,7 +13,7 @@ use App\Models\Lager;
 use App\Models\Mietvertraege;
 use App\Models\Objekte;
 use App\Models\Partner;
-use App\Models\Personen;
+use App\Models\Person;
 use App\Models\User;
 use App\Models\Wirtschaftseinheiten;
 
@@ -55,11 +55,11 @@ class RelationsService
             'inhalt' => 'DETAIL_INHALT',
             'bemerkung' => 'DETAIL_BEMERKUNG'
         ],
-        Personen::class => [
-            'id' => 'PERSON_ID',
-            'vorname' => 'PERSON_VORNAME',
-            'name' => 'PERSON_NACHNAME',
-            'geburtstag' => 'PERSON_GEBURTSTAG'
+        Person::class => [
+            'id' => 'id',
+            'vorname' => 'first_name',
+            'name' => 'name',
+            'geburtstag' => 'birthday'
         ],
         Auftraege::class => [
             'id' => 'T_ID',
@@ -101,7 +101,7 @@ class RelationsService
             'telefon' => ['phones', Details::class],
             'email' => ['emails', Details::class],
             'hinweis' => ['hinweise', Details::class],
-            'person' => ['', Personen::class],
+            'person' => ['', Person::class],
             'detail' => ['commonDetails', Details::class],
             'adresse' => ['adressen', Details::class]
         ],
@@ -112,7 +112,7 @@ class RelationsService
             'mietvertrag' => ['', Mietvertraege::class],
             'telefon' => ['personen.phones', Details::class],
             'email' => ['personen.emails', Details::class],
-            'person' => ['mieter', Personen::class]
+            'person' => ['mieter', Person::class]
         ],
         'kaufvertrag' => [
             'objekt' => ['einheit.haus.objekt', Objekte::class],
@@ -121,7 +121,7 @@ class RelationsService
             'mietvertrag' => ['', Mietvertraege::class],
             'telefon' => ['personen.phones', Details::class],
             'email' => ['personen.emails', Details::class],
-            'person' => ['personen', Personen::class]
+            'person' => ['personen', Person::class]
         ],
         'einheit' => [
             'objekt' => ['haus.objekt', Objekte::class],
@@ -129,7 +129,7 @@ class RelationsService
             'einheit' => ['', Einheiten::class],
             'mietvertrag' => ['mietvertraege', Mietvertraege::class],
             'kaufvertrag' => ['kaufvertraege', Kaufvertraege::class],
-            'person' => [['mietvertraege.mieter', 'kaufvertraege.eigentuemer'], Personen::class],
+            'person' => [['mietvertraege.mieter', 'kaufvertraege.eigentuemer'], Person::class],
             'detail' => [['mietvertraege.mieter.commonDetails', 'kaufvertraege.eigentuemer.commonDetails', 'details'], Details::class],
             'telefon' => [['mietvertraege.mieter.phones', 'kaufvertraege.eigentuemer.phones'], Details::class],
             'email' => [['mietvertraege.mieter.emails', 'kaufvertraege.eigentuemer.emails'], Details::class]
@@ -140,7 +140,7 @@ class RelationsService
             'einheit' => ['einheiten', Einheiten::class],
             'mietvertrag' => ['einheiten.mietvertraege', Mietvertraege::class],
             'kaufvertrag' => ['einheiten.kaufvertraege', Kaufvertraege::class],
-            'person' => [['einheiten.mietvertraege.mieter','einheiten.kaufvertraege.eigentuemer'], Personen::class],
+            'person' => [['einheiten.mietvertraege.mieter','einheiten.kaufvertraege.eigentuemer'], Person::class],
             'detail' => ['details', Details::class]
         ],
         'objekt' => [
@@ -178,7 +178,7 @@ class RelationsService
     ];
 
     static $CLASS_RELATION_TO_MANY = [
-        Personen::class => [
+        Person::class => [
             'mietvertraege.einheit.haus.objekt' => [-4, Mietvertraege::class],
             'kaufvertraege.einheit.haus.objekt' => [-4, Kaufvertraege::class],
             'mietvertraege.einheit.haus' => [-3, Mietvertraege::class],
@@ -214,7 +214,7 @@ class RelationsService
         Einheiten::class => 'einheit',
         Mietvertraege::class => 'mietvertrag',
         Kaufvertraege::class => 'kaufvertrag',
-        Personen::class => 'person',
+        Person::class => 'person',
         Details::class => 'detail',
         Auftraege::class => 'auftrag',
         User::class => 'mitarbeiter',

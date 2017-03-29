@@ -104,7 +104,7 @@ $(document).ready(function () {
                     if ($.isArray(data['personen']) && !$.isEmptyObject(data['personen'])) {
                         $items.push($("<li class='grey accent-3'><a tabindex='-1' class='white-text active-alternative' href='" + personlisturl + query + "'>Personen<span class='new badge' data-badge-caption=''>" + data['personen'].length + "</span></a></li>"));
                         $.each(data['personen'], function (key, val) {
-                            $items.push($("<li id='" + val['PERSON_ID'] + "'><a tabindex='-1' href='" + personurl + val['PERSON_ID'] + "'>" + val['PERSON_NACHNAME'] + ", " + val['PERSON_VORNAME'] + "</a></li>"));
+                            $items.push($("<li id='" + val['id'] + "'><a tabindex='-1' href='" + personurl + val['id'] + "'>" + val['name'] + ", " + val['first_name'] + "</a></li>"));
                         });
                     }
                     if ($.isArray(data['partner']) && !$.isEmptyObject(data['partner'])) {

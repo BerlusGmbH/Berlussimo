@@ -145,6 +145,8 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['web', 'auth'], 'as' => 
     Route::group(['prefix' => 'personen', 'as' => 'personen::'], function () {
         Route::match(['get', 'post'], '/', 'PersonenController@request')->name('legacy');
         Route::get('index', 'PersonenController@index')->name('index');
+        Route::get('create', 'PersonenController@create')->name('create');
+        Route::post('store', 'PersonenController@store')->name('store');
         Route::get('{id}', 'PersonenController@show')->name('show');
     });
 

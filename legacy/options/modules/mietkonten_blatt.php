@@ -165,7 +165,7 @@ if (isset ($anzeigen)) {
             // ####Ausgabe von Personendaten####################
             echo "<b>Mieter:</b>";
             for ($i = 0; $i < count($mieter_daten_arr); $i++) {
-                echo " " . $mieter_daten_arr [$i] [0] ['PERSON_NACHNAME'] . " " . $mieter_daten_arr [$i] [0] ['PERSON_VORNAME'] . " ";
+                echo " " . $mieter_daten_arr [$i] [0] ['name'] . " " . $mieter_daten_arr [$i] [0] ['first_name'] . " ";
             }
             echo " </p>";
             echo "<hr>";
@@ -439,7 +439,7 @@ if (isset ($anzeigen)) {
             // ####Ausgabe von Personendaten####################
             echo "<p class=\"mieterdaten_mietkonto\"><b>Mieter:</b>";
             for ($i = 0; $i < count($mieter_daten_arr); $i++) {
-                echo " " . $mieter_daten_arr [$i] [0] ['PERSON_NACHNAME'] . " " . $mieter_daten_arr [$i] [0] ['PERSON_VORNAME'] . " ";
+                echo " " . $mieter_daten_arr [$i] [0] ['name'] . " " . $mieter_daten_arr [$i] [0] ['first_name'] . " ";
             }
             echo "</p>";
             echo "<p><a href=\"mietkonto_pdf.php?mietvertrag_id=$mietvertrag_id\"><img src=\"includes/logos/pdf_logo.gif\" width=30 ></a></p>";

@@ -8,11 +8,11 @@ class person extends einheit {
     var $person_anzahl_mietvertraege;
     var $person_anzahl_mietvertraege_alt;
     function get_person_infos($person_id) {
-        $result = DB::select( "SELECT * FROM PERSON WHERE PERSON_AKTUELL='1' && PERSON_ID='$person_id' ORDER BY PERSON_DAT DESC LIMIT 0,1" );
+        $result = DB::select( "SELECT * FROM persons WHERE id='$person_id'" );
         $row = $result[0];
-        $this->person_nachname = ltrim ( rtrim ( $row ['PERSON_NACHNAME'] ) );
-        $this->person_vorname = ltrim ( rtrim ( $row ['PERSON_VORNAME'] ) );
-        $this->person_geburtstag = ltrim ( rtrim ( $row ['PERSON_GEBURTSTAG'] ) );
+        $this->person_nachname = ltrim ( rtrim ( $row ['name'] ) );
+        $this->person_vorname = ltrim ( rtrim ( $row ['first_name'] ) );
+        $this->person_geburtstag = ltrim ( rtrim ( $row ['birthday'] ) );
     }
     function get_person_anzahl_mietvertraege_aktuell($person_id) {
         $result = DB::select( "SELECT PERSON_MIETVERTRAG_MIETVERTRAG_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_PERSON_ID='$person_id' && PERSON_MIETVERTRAG_AKTUELL='1'" );

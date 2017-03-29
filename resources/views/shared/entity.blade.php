@@ -8,7 +8,7 @@
     @include('shared.entities.kaufvertrag')
 @elseif($entity instanceof \App\Models\Mietvertraege)
     @include('shared.entities.mietvertrag')
-@elseif($entity instanceof \App\Models\Personen)
+@elseif($entity instanceof \App\Models\Person)
     @include('shared.entities.person')
 @elseif($entity instanceof \App\Models\Details)
     @include('shared.entities.detail')

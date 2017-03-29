@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Legacy;
 
 use App\Http\Controllers\Traits\Indexable;
 use App\Http\Requests\Legacy\PersonenRequest;
-use App\Models\Personen;
+use App\Http\Requests\Modules\Person\StorePersonRequest;
+use App\Models\Person;
 use App\Services\Parser\Lexer;
 use App\Services\Parser\Parser;
 
@@ -23,7 +24,7 @@ class PersonenController extends LegacyController
 
     public function index(PersonenRequest $request)
     {
-        $builder = Personen::with(['sex']);
+        $builder = Person::with(['sex']);
         $query = "";
         if (request()->has('q')) {
             $query = request()->input('q');
@@ -53,7 +54,30 @@ class PersonenController extends LegacyController
 
     public function show($id, PersonenRequest $request)
     {
-        $person = Personen::with(['mietvertraege.einheit.haus.objekt', 'kaufvertraege.einheit.haus.objekt', 'details'])->find($id);
+        $person = Person::with(['mietvertraege.einheit.haus.objekt', 'kaufvertraege.einheit.haus.objekt', 'details'])->findOrFail($id);
         return view('modules.personen.show', ['person' => $person]);
+    }
+
+    public function create(PersonenRequest $request)
+    {
+        return view('modules.personen.create');
+    }
+
+    public function store(StorePersonRequest $request)
+    {
+        $person = new Person();
+        $person->name = trim(request()->input('name'));
+        if(request()->has('first_name')) {
+            $person->first_name = trim(request()->input('first_name'));
+        }
+        if(request()->has('birthday')) {
+            $person->birthday = request()->input('birthday');
+        }
+        if(request()->has('sex')) {
+            $person->first_name = trim(request()->input('first_name'));
+        }
+        $person->saveOrFail();
+        $phone = phone($request->input('phone'));
+        return $this->show($person->id, $request);
     }
 }

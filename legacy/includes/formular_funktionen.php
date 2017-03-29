@@ -306,13 +306,13 @@ function person_hidden_form($nachname, $vorname, $geburtstag)
 
 function person_aendern_from($person_id)
 {
-    $result = DB::select("SELECT PERSON_ID, PERSON_NACHNAME, PERSON_VORNAME, PERSON_GEBURTSTAG FROM PERSON WHERE PERSON_ID='$person_id' && PERSON_AKTUELL='1'");
+    $result = DB::select("SELECT id, name, first_name, birthday FROM persons WHERE id='$person_id'");
     if (!empty($result)) {
         foreach($result as $row) {
-            erstelle_hiddenfeld("person_id", "$row[PERSON_ID]");
-            erstelle_eingabefeld("Nachname", "person_nachname", "$row[PERSON_NACHNAME]", "50");
-            erstelle_eingabefeld("Vorname", "person_vorname", "$row[PERSON_VORNAME]", "50");
-            $birthdate = date_format(new DateTime($row['PERSON_GEBURTSTAG']), "d.m.Y");
+            erstelle_hiddenfeld("person_id", $row['id']);
+            erstelle_eingabefeld("Nachname", "person_nachname", $row['name'], "50");
+            erstelle_eingabefeld("Vorname", "person_vorname", $row['first_name'], "50");
+            $birthdate = date_format(new DateTime($row['birthday']), "d.m.Y");
             erstelle_eingabefeld("Geburtstag (dd.mm.jjjj)", "person_geburtstag", $birthdate, "10");
         }
         erstelle_submit_button("submit_person_aendern", "Ändern");

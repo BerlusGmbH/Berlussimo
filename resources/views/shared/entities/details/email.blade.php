@@ -4,8 +4,8 @@
     @endif
     <span>
         @if(!empty(trim($entity->DETAIL_INHALT)))
-            @if($entity->from instanceof \App\Models\Personen)
-                <a href="mailto:{{trim($entity->from->PERSON_VORNAME)}} {{trim($entity->from->PERSON_NACHNAME)}} <{{trim($entity->DETAIL_INHALT)}}>">{{trim($entity->DETAIL_INHALT)}}</a>
+            @if($entity->from instanceof \App\Models\Person)
+                <a href="mailto:{{trim($entity->from->first_name)}} {{trim($entity->from->name)}} <{{trim($entity->DETAIL_INHALT)}}>">{{trim($entity->DETAIL_INHALT)}}</a>
             @else
                 <a href="mailto:{{trim($entity->DETAIL_INHALT)}}>">{{trim($entity->DETAIL_INHALT)}}</a>
             @endif

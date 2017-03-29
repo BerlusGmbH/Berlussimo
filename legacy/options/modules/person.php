@@ -286,7 +286,7 @@ function check_fields_nach_aenderung()
 
 function personen_liste()
 {
-    $db_abfrage = "SELECT PERSON_NACHNAME, PERSON_VORNAME, PERSON_GEBURTSTAG FROM PERSON WHERE PERSON_AKTUELL='1' ORDER BY PERSON_NACHNAME, PERSON_VORNAME ASC";
+    $db_abfrage = "SELECT name, first_name, birthday FROM persons WHERE ORDER BY name, first_name ASC";
     $result = DB::select($db_abfrage);
     echo "<div class=\"tabelle_personen\"><table>\n";
     echo "<tr class=\"feldernamen\"><td colspan=3>Personenliste</td></tr>\n";
@@ -295,10 +295,10 @@ function personen_liste()
     foreach ($result as $row) {
         $counter++;
         if ($counter == 1) {
-            echo "<tr class=\"zeile1\"><td>$row[PERSON_NACHNAME]</td><td>$row[PERSON_VORNAME]</td><td>$row[PERSON_GEBURTSTAG]</td></tr>\n";
+            echo "<tr class=\"zeile1\"><td>$row[name]</td><td>$row[first_name]</td><td>$row[birthday]</td></tr>\n";
         }
         if ($counter == 2) {
-            echo "<tr class=\"zeile2\"><td>$row[PERSON_NACHNAME]</td><td>$row[PERSON_VORNAME]</td><td>$row[PERSON_GEBURTSTAG]</td></tr>\n";
+            echo "<tr class=\"zeile2\"><td>$row[name]</td><td>$row[first_name]</td><td>$row[birthday]</td></tr>\n";
             $counter = 0;
         }
     }

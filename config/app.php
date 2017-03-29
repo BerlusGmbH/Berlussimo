@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'locale' => 'de',
+    'locale' => 'DE',
 
     /*
     |--------------------------------------------------------------------------
@@ -78,7 +78,7 @@ return [
     |
     */
 
-    'fallback_locale' => 'en',
+    'fallback_locale' => 'EN',
 
     'legacy' => ['prefix' => '/'],
 
@@ -156,6 +156,8 @@ return [
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
+        OwenIt\Auditing\AuditingServiceProvider::class,
+        Propaganistas\LaravelPhone\LaravelPhoneServiceProvider::class,
 
         /*
          * Application Service Providers...

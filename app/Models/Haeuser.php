@@ -62,7 +62,7 @@ class Haeuser extends Model
         if(is_null($date)) {
             $date = Carbon::today();
         }
-        return Personen::whereHas('mietvertraege', function ($query) use ($date){
+        return Person::whereHas('mietvertraege', function ($query) use ($date){
             $query->whereHas('einheit.haus', function ($query) {
                     $query->where('HAUS_ID', $this->HAUS_ID);
             })->whereDate('MIETVERTRAG_VON', '<=', $date)->where(function ($query) use($date) {

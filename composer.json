@@ -15,7 +15,9 @@
     "doctrine/dbal": "^2.5",
     "spatie/laravel-permission": "^1.4",
     "barryvdh/laravel-debugbar": "^2.3",
-    "smarty/smarty-lexer": "^3.1"
+    "smarty/smarty-lexer": "^3.1",
+    "owen-it/laravel-auditing": "^4.0",
+    "propaganistas/laravel-phone": "^2.8"
   },
   "require-dev": {
     "fzaninotto/faker": "~1.4",

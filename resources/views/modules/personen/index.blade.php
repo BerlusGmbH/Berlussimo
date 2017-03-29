@@ -9,8 +9,8 @@
         <form id="filter-form" method="get">
             <div class="row">
                 <div class="input-field col-xs-6 col-md-2">
-                    <a class="btn waves-effect waves-light tooltipped" data-position="bottom" data-delay="50" data-tooltip="Neue Person"
-                       href="{{ route('web::personen::legacy', ['anzeigen' => 'person_erfassen']) }}">
+                    <a class="btn waves-effect waves-light tooltipped" data-tooltip="Neue Person"
+                       href="{{ route('web::personen::create') }}">
                         <i class="mdi mdi-plus"></i><i class="mdi mdi-account"></i></a>
                 </div>
                 <div class="input-field col-xs-12 col-md-6">
@@ -33,7 +33,7 @@
                 </div>
             </div>
         </form>
-        @include('shared.tables.entities-with-paginator', ['parameters' => ['q', 's', 'v', 'f'] ,'columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Personen::class])
+        @include('shared.tables.entities-with-paginator', ['parameters' => ['q', 's', 'v', 'f'] ,'columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Person::class])
     </div>
 @endsection
 

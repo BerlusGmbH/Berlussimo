@@ -225,7 +225,7 @@ class miete
             echo "<th scopr=\"col\" colspan=4 align=left>Einheit $einheit_info->einheit_kurzname <br>";
             for ($i = 0; $i < count($mieter_daten_arr); $i++) {
                 $mieternr = $i + 1;
-                echo "$mieternr. " . $mieter_daten_arr [$i] [0] ['PERSON_VORNAME'] . " " . $mieter_daten_arr [$i] [0] ['PERSON_NACHNAME'] . " ";
+                echo "$mieternr. " . $mieter_daten_arr [$i] [0] ['first_name'] . " " . $mieter_daten_arr [$i] [0] ['name'] . " ";
             }
 
             echo "</th>";

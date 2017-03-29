@@ -15,7 +15,7 @@
             <div class="card">
                 <div class="card-content">
                     <div class="card-title">
-                        @if($person->PERSON_GEBURTSTAG->year > 1902)
+                        @if(!is_null($person->birthday))
                             @php($margin_bot = '0px')
                         @else
                             @php($margin_bot = '12px')
@@ -23,16 +23,16 @@
                         <div class="row" style="line-height: 24px; margin-bottom: {{ $margin_bot }}; margin-top: 12px">
                             <div class="col-xs-12 col-sm-8">
                                 @include('shared.entities.person', ['entity' => $person])
-                                @if($person->PERSON_GEBURTSTAG->year > 1902)
+                                @if(!is_null($person->birthday))
                                     <div style="font-size: small; line-height: 24px; margin-left: 6px">
-                                        <i class="mdi mdi-star"></i> {{ $person->PERSON_GEBURTSTAG->formatLocalized("%d.%m.%Y") }}
+                                        <i class="mdi mdi-star"></i> {{ $person->birthday->formatLocalized("%d.%m.%Y") }}
                                     </div>
                                 @endif
                             </div>
                             <div class="col-xs-12 col-sm-4 end-xs">
-                                <a href="{{ route('web::personen::legacy', ['anzeigen' => 'person_aendern', 'person_id' => $person->PERSON_ID]) }}"><i
+                                <a href="{{ route('web::personen::legacy', ['anzeigen' => 'person_aendern', 'person_id' => $person->id]) }}"><i
                                             class="mdi mdi-pencil"></i></a>
-                                <a href="{{ route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'PERSON', 'detail_id' => $person->PERSON_ID]) }}"><i
+                                <a href="{{ route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'PERSON', 'detail_id' => $person->id]) }}"><i
                                             class="mdi mdi-table-edit"></i></a>
                             </div>
                         </div>

@@ -751,7 +751,8 @@ class weg
     function ausgewahlte_et_liste_aendern($label, $name, $id, $javaaction, $size, $et_arr)
     {
         $person_info = new person ();
-        echo "<label for=\"$id\">$label</label><select name=\"$name\" id=\"$id\" $javaaction size=\"$size\" style='visibility:visible;' multiple>";
+        echo "<div class='input-field'>";
+        echo "<select name=\"$name\" id=\"$id\" $javaaction size=\"$size\" style='visibility:visible;' multiple>";
         if (is_array($et_arr)) {
             for ($a = 0; $a < count($et_arr); $a++) {
                 $person_id = $et_arr [$a] ['PERSON_ID'];
@@ -759,7 +760,8 @@ class weg
                 echo "<option value=\"$person_id\">$person_info->person_nachname $person_info->person_vorname</option>";
             }
         }
-        echo "</select>";
+        echo "</select><label for=\"$id\">$label</label>";
+        echo "</div>";
     }
 
     function eigentuemer_aendern_db($et_id, $einheit_id, $eigent_arr, $eigentuemer_von, $eigentuemer_bis)

@@ -10,7 +10,7 @@ use App\Models\Lager;
 use App\Models\Mietvertraege;
 use App\Models\Objekte;
 use App\Models\Partner;
-use App\Models\Personen;
+use App\Models\Person;
 use App\Models\User;
 use App\Models\Wirtschaftseinheiten;
 use App\Pagination\MaterializeCssPresenter;
@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Relation::morphMap([
-            'PERSON' => Personen::class,
+            'PERSON' => Person::class,
             'OBJEKT' => Objekte::class,
             'HAUS' => Haeuser::class,
             'EINHEIT' => Einheiten::class,

@@ -2578,8 +2578,8 @@ LIMIT 0 , 1");
                     $einheit_id = $einheiten_array [$i] ['EINHEIT_ID'];
 
                     $einheit_kurzname = $einheiten_array [$i] ['EINHEIT_KURZNAME'];
-                    $vn = rtrim(ltrim($mieter_daten_arr ['0'] ['0'] ['PERSON_VORNAME']));
-                    $nn = rtrim(ltrim($mieter_daten_arr ['0'] ['0'] ['PERSON_NACHNAME']));
+                    $vn = rtrim(ltrim($mieter_daten_arr ['0'] ['0'] ['first_name']));
+                    $nn = rtrim(ltrim($mieter_daten_arr ['0'] ['0'] ['name']));
                     $akt_gesamt_soll = $miete->sollmiete_warm - $miete->saldo_vormonat_stand;
                     $nn = $this->umlaute_anpassen($nn);
                     $vn = $this->umlaute_anpassen($vn);

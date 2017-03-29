@@ -133,8 +133,8 @@
             ],
             auto: {
                 @foreach($tenants as $tenant)
-                '{!! trim($tenant['PERSON_NACHNAME']) !!}, {!! trim($tenant['PERSON_VORNAME']) !!}': {
-                    id: {{ $tenant['PERSON_ID'] }},
+                '{!! trim($tenant['name']) !!}, {!! trim($tenant['first_name']) !!}': {
+                    id: {{ $tenant['id'] }},
                     img: null
                 },
                 @endforeach

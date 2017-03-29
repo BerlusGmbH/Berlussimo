@@ -33,7 +33,7 @@
         @include('shared.entities.count.kaufvertrag')
     @elseif($entity instanceof \App\Models\Mietvertraege)
         @include('shared.entities.count.mietvertrag')
-    @elseif($entity instanceof \App\Models\Personen)
+    @elseif($entity instanceof \App\Models\Person)
         @php($href = route('web::personen::index', ['q' => $query], false))
     @elseif($entity instanceof \App\Models\Details)
         @php($href = route('web::details::legacy', ['q' => $query], false))

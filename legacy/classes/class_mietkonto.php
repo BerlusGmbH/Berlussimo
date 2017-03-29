@@ -45,7 +45,7 @@ class mietkonto
 
     function get_person_infos($person_id)
     {
-        $result = DB::select("SELECT * FROM PERSON WHERE PERSON_AKTUELL='1' && PERSON_ID='$person_id' ORDER BY PERSON_DAT DESC LIMIT 0,1");
+        $result = DB::select("SELECT * FROM persons WHERE id='$person_id'");
         return $result;
     }
 

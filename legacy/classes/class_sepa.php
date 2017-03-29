@@ -2717,9 +2717,6 @@ AND  `AKTUELL` =  '1'");
                     $bu->dropdown_kostentreager_typen_vw('Kostenträgertyp PERSON', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, $kos_typ);
                     $bu->dropdown_kostentraeger_bez_vw("Kostenträger PERSON", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id);
                 } else {
-                    // $bu->dropdown_kostenrahmen_nr('Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id, '80001');
-                    // $bu->dropdown_kostentreager_typen_vw('Kostenträgertyp vorwahl', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Mietvertrag');
-
                     $kos_id = $this->get_mvid_from_vzweck($vzweck);
                     if (!isset ($kos_id)) {
                         /* ET_ID from* */
