@@ -53,9 +53,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        Paginator::presenter(function ($paginator) {
-            return new MaterializeCssPresenter($paginator);
-        });
         $this->app->singleton(PhoneLocator::class, function() {
             return new PhoneLocator(config('phonelocator'));
         });

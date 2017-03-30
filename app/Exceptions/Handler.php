@@ -2,16 +2,13 @@
 
 namespace App\Exceptions;
 
-use App\Exceptions\Messages\ErrorMessageException;
-use App\Exceptions\Messages\InfoMessageException;
-use App\Exceptions\Messages\WarningMessageException;
 use App\Messages\ErrorMessage;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Http\Exception\HttpResponseException;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\Debug\Exception\FlattenException;
 use Symfony\Component\HttpFoundation\JsonResponse as SymfonyResponse;
@@ -106,6 +103,22 @@ class Handler extends ExceptionHandler
     }
 
     /**
+     * Convert an authentication exception into an unauthenticated response.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Illuminate\Auth\AuthenticationException $exception
+     * @return \Illuminate\Http\Response
+     */
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['error' => 'Unauthenticated.'], 401);
+        }
+
+        return redirect()->guest('login');
+    }
+
+    /**
      * Create a Symfony response for the given exception.
      *
      * @param  \Exception $e
@@ -135,9 +148,9 @@ class Handler extends ExceptionHandler
 
     protected function redirectWithMessage($message, $messageType = ErrorMessage::TYPE, $redirectTo = null)
     {
-        if(isset($redirectTo)) {
+        if (isset($redirectTo)) {
             return redirect()->to($redirectTo)->with([$messageType => [$message]]);
-        }elseif (0 === strpos(URL::previous(), request()->root()) && URL::previous() != URL::full()) {
+        } elseif (0 === strpos(URL::previous(), request()->root()) && URL::previous() != URL::full()) {
             return redirect()->to(URL::previous())->with([$messageType => [$message]]);
         } else {
             return redirect()->to('/')->with([$messageType => [$message]]);

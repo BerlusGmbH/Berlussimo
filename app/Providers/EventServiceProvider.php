@@ -4,6 +4,9 @@ namespace App\Providers;
 
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Event;
+use Illuminate\Database\Events\StatementPrepared;
+use PDO;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -21,13 +24,13 @@ class EventServiceProvider extends ServiceProvider
     /**
      * Register any other events for your application.
      *
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
      * @return void
      */
-    public function boot(DispatcherContract $events)
+    public function boot()
     {
-        parent::boot($events);
-
-        //
+        parent::boot();
+        Event::listen(StatementPrepared::class, function ($event) {
+            $event->statement->setFetchMode(PDO::FETCH_ASSOC);
+        });
     }
 }
