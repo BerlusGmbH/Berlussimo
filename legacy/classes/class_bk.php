@@ -654,7 +654,7 @@ class bk
                     $classe = 'zeilebk_' . $zeile . '_r';
                     $hndl_betrag_a = "<b>$hndl_betrag_a</b>";
                 }
-                echo "<tr class=\"$classe\"><td><a $js><b>$buchung_id</b></a></td><td> $datum </td><td>$buchung_betrag</td><td>$anteil%</td><td>$umlagebetrag</td><td>$hndl_betrag_a</td><td>$this->vzweck</td><td>  $kos_bez</td><td>$this->u_kontierung</td>";
+                echo "<tr class=\"$classe\"><td><a href='' $js><b>$buchung_id</b></a></td><td> $datum </td><td>$buchung_betrag</td><td>$anteil%</td><td>$umlagebetrag</td><td>$hndl_betrag_a</td><td>$this->vzweck</td><td>  $kos_bez</td><td>$this->u_kontierung</td>";
                 echo "<td>$this->g_key_name</td><td>$link_anpassen</td></tr>";
                 if ($zeile == 2) {
                     $zeile = 0;
@@ -1358,8 +1358,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
             $b_datum_sql = date_german2mysql($b_datum);
             $v_datum_sql = date_german2mysql($v_datum);
             DB::insert("INSERT INTO BK_PROFILE VALUES(NULL, '$profil_id', '$bez', '$typ', '$typ_id', '$jahr', '$b_datum_sql', '$v_datum_sql', '1')");
-        } else {
-            fehlermeldung_ausgeben("Änderung fehlgeschlagen!");
         }
     }
 
@@ -1393,19 +1391,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
         $f->ende_formular();
     }
 
-    function summe_konto_von_bis($von, $bis, $kostenkonto, $geldkonto_id)
-    {
-        $result = DB::select("SELECT SUM(BETRAG) AS SUMME  FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` = '$geldkonto_id' AND `KONTENRAHMEN_KONTO` = '$kostenkonto' AND DATUM BETWEEN '$von' AND '$bis' AND `AKTUELL` ='1'");
-        return $result[0]['SUMME'];
-    }
-
-    function get_konten_nach_gruppe($gruppenbez)
-    {
-        $result = DB::select("SELECT KONTENRAHMEN_GRUPPEN.BEZEICHNUNG AS G_BEZEICHNUNG, KONTO, KONTENRAHMEN_KONTEN.BEZEICHNUNG, KONTO_ART FROM `KONTENRAHMEN_GRUPPEN` INNER JOIN (KONTENRAHMEN_KONTEN) ON ( KONTENRAHMEN_GRUPPEN_ID = GRUPPE )
-WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KONTEN`.`KONTO` ASC");
-        return $result;
-    }
-
     function zeige()
     {
         $konto_arr = $this->get_konten_nach_gruppe('Umlagefähige Kosten');
@@ -1426,6 +1411,19 @@ WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KO
             }
         }
         echo "GESAMT Umlagefähige Kosten $g_summe €";
+    }
+
+    function get_konten_nach_gruppe($gruppenbez)
+    {
+        $result = DB::select("SELECT KONTENRAHMEN_GRUPPEN.BEZEICHNUNG AS G_BEZEICHNUNG, KONTO, KONTENRAHMEN_KONTEN.BEZEICHNUNG, KONTO_ART FROM `KONTENRAHMEN_GRUPPEN` INNER JOIN (KONTENRAHMEN_KONTEN) ON ( KONTENRAHMEN_GRUPPEN_ID = GRUPPE )
+WHERE KONTENRAHMEN_GRUPPEN.BEZEICHNUNG = '$gruppenbez' ORDER BY `KONTENRAHMEN_KONTEN`.`KONTO` ASC");
+        return $result;
+    }
+
+    function summe_konto_von_bis($von, $bis, $kostenkonto, $geldkonto_id)
+    {
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME  FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` = '$geldkonto_id' AND `KONTENRAHMEN_KONTO` = '$kostenkonto' AND DATUM BETWEEN '$von' AND '$bis' AND `AKTUELL` ='1'");
+        return $result[0]['SUMME'];
     }
 
     function zusammenfassung($profil_id)
@@ -1975,15 +1973,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
         }
     }
 
-    function bk_berechnung_arr($profil_id, $bk_k_id)
-    {
-        $db_abfrage = "SELECT * FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE `BK_K_ID` ='$bk_k_id' AND `BK_PROFIL_ID` ='$profil_id' AND `AKTUELL` ='1' ";
-        $result = DB::select($db_abfrage);
-        return $result;
-    }
-
-    /* objekte, haus usw, vor wirtschaftseinheiten implementation */
-
     function pdf_ausgabe_alle($profil_id)
     {
         $pdf = new Cezpdf ('a4', 'portrait');
@@ -2450,6 +2439,8 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
         $pdf_opt ['Content-Disposition'] = $dateiname;
         $pdf->ezStream($pdf_opt);
     }
+
+    /* objekte, haus usw, vor wirtschaftseinheiten implementation */
 
     function bk_abrechnung_speichern($profil_id, $profil_bez, $profil_jahr, $wirt_e, $wirt_name, $datum, $anz_einheiten, $qm_gesamt, $qm_wohnraum, $qm_gewerbe, $anz_konten, $anz_abrechnungen, $ersteller, $partner_id, $kontenrahmen_id)
     {
@@ -3333,8 +3324,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
         return !empty($result);
     }
 
-    /* NEU */
-
     function wirtschaftseinheiten()
     {
         $f = new formular ();
@@ -3365,6 +3354,8 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
         echo "</table>";
         $f->ende_formular();
     }
+
+    /* NEU */
 
     function bk_konto_speichern($profil_id, $kostenkonto, $konto_bez)
     {
@@ -3555,6 +3546,13 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
         return $last_id;
     }
 
+    function bk_berechnung_arr($profil_id, $bk_k_id)
+    {
+        $db_abfrage = "SELECT * FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE `BK_K_ID` ='$bk_k_id' AND `BK_PROFIL_ID` ='$profil_id' AND `AKTUELL` ='1' ";
+        $result = DB::select($db_abfrage);
+        return $result;
+    }
+
     function bk_buchung_speichern($buchung_id, $profil_id, $bk_konto_id, $key_id, $anteil, $kos_typ, $kos_id, $hndl_betrag)
     {
         $last_bk_be_id = $this->last_id('BK_BERECHNUNG_BUCHUNGEN', 'BK_BE_ID') + 1;
@@ -3568,7 +3566,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
         $f->erstelle_formular("BK Profil kopieren", NULL);
         $this->dropdown_profile();
         $f->text_feld("Neue Profilbezeichnung", "profil_bez", "", "50", 'profil_bez', '');
-        // $f->check_box_js('buchungen_kopieren', '', 'Alle Buchungen kopieren', '', 'checked');
         $f->hidden_feld("option", "profil_kopieren");
         $f->send_button("submit_prof", "Profil kopieren");
         $f->ende_formular();
@@ -3576,7 +3573,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
 
     function dropdown_profile()
     {
-        $result = DB::select("SELECT BK_ID AS PROFIL_ID, BEZEICHNUNG FROM BK_PROFILE WHERE  AKTUELL='1' ORDER BY BEZEICHNUNG ASC");
+        $result = DB::select("SELECT BK_ID AS PROFIL_ID, BEZEICHNUNG FROM BK_PROFILE WHERE  AKTUELL='1' ORDER BY JAHR DESC, BEZEICHNUNG ASC");
         if (!empty($result)) {
             echo "<label for=\"profil_id\">Profil wählen</label><select id=\"profil_id\" name=\"profil_id\" size=\"1\">";
             foreach ($result as $row) {

@@ -14,10 +14,8 @@ var elixir = require('laravel-elixir');
 elixir(function (mix) {
     mix.styles(['berlussimo.css'], 'public/css/berlussimo.css');
 
-    mix.copy('resources/assets/sass/materialize-css/_variables.scss', 'node_modules/materialize-css/sass/components/_variables.scss');
-
     mix.sass(['./node_modules/normalize.css/normalize.css',
-        './node_modules/materialize-css/sass/materialize.scss',
+        'materialize-css.scss',
         './node_modules/flexboxgrid/dist/flexboxgrid.css',
         './node_modules/mdi/scss/materialdesignicons.scss'
     ], 'public/css/vendor.css');

@@ -53,6 +53,7 @@ switch ($option) {
         $b_datum = request()->input('berechnungsdatum');
         $v_datum = request()->input('verrechnungsdatum');
         $bk->profil_aendern_db($profil_id, $bez, $jahr, $typ, $typ_id, $b_datum, $v_datum);
+        weiterleiten(route('web::bk::legacy', ['option' => 'profile']));
         break;
 
     case "profil_set" :
@@ -110,7 +111,10 @@ switch ($option) {
         session()->put('bk_konto', request()->input('bk_konto')); // 1020
         session()->put('bk_konto_id', request()->input('bk_konto_id')); // 1
         session()->forget('genkey'); // 1
-        weiterleiten_in_sec(route('web::bk::legacy', ['option' => 'assistent'], false), 0);
+        session()->forget('anzeigen_von');
+        session()->forget('anzeigen_bis');
+        session()->forget('konto_anzeigen');
+        weiterleiten(route('web::bk::legacy', ['option' => 'assistent'], false));
         break;
 
     case "zusammenfassung" :
