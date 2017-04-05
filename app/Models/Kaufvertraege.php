@@ -25,7 +25,7 @@ class Kaufvertraege extends Model
 
     public function eigentuemer()
     {
-        return $this->belongsToMany('App\Models\Personen', 'WEG_EIGENTUEMER_PERSON', 'WEG_EIG_ID', 'PERSON_ID');
+        return $this->belongsToMany('App\Models\Personen', 'WEG_EIGENTUEMER_PERSON', 'WEG_EIG_ID', 'PERSON_ID')->wherePivot('AKTUELL', '1');
     }
 
     public function einheit()

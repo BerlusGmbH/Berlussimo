@@ -748,6 +748,7 @@ function refresh_preise() {
     gesamt_brutto = gesamt_brutto.replace(".", ",");
     document.getElementById("brutto_gesamt").value = gesamt_brutto + ' EUR';
     Materialize.updateTextFields();
+    $('select').material_select();
 }
 
 function listen_stueckpreis() {

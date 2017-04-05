@@ -26,7 +26,7 @@ class Partner extends Model
     }
 
     public function mitarbeiter() {
-        return $this->belongsToMany(User::class, 'BENUTZER_PARTNER', 'BP_PARTNER_ID', 'BP_BENUTZER_ID');
+        return $this->belongsToMany(User::class, 'BENUTZER_PARTNER', 'BP_PARTNER_ID', 'BP_BENUTZER_ID')->wherePivot('AKTUELL', '1');
     }
 
 }

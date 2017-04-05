@@ -1694,8 +1694,8 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
                         echo "<td valign=top>";
                         $this->position_kontierung_infos($belegnr, $position);
                         echo "<b>$this->k_kontenrahmen_konto $this->k_kostentraeger_bez</b>";
+                        echo "</td>";
                     }
-                    echo "</td>";
                     $js_wb = "onclick=\"wb_hinzufuegen($belegnr, $position)\"";
                     $wb = "<img src=\"images/wb.png\" $js_wb>";
                     echo "<td align=right valign=top>&nbsp;&nbsp;$menge&nbsp;</td><td align=right valign=top>$einzel_preis&nbsp;</td><td align=left valign=top>&nbsp;&nbsp;$rabatt%</td><td align=left valign=top>&nbsp;&nbsp;$mwst_satz%&nbsp;</td><td align=right valign=top>$pos_skonto%&nbsp;&nbsp;</td><td align=right valign=top>$gesamt_netto €</td><td>$wb</td></tr>\n\n";
@@ -1706,7 +1706,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         }  // ende if $this->anzahl_positionen >0 d.h. Rechnung wurde nur kurz erfasst, positionen fehlen
         /* Positionen erfassen */
         else {
-
             echo "<tr><td><a href='" . route('web::rechnungen::legacy', ['option' => 'positionen_erfassen', 'belegnr' => $belegnr]) . "'>Positioneneigabe hier</a></td><td></td></tr>\n\n";
         }
 
@@ -1805,15 +1804,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
         echo "<tr><td colspan=4><div id=\"rechnung_beschreibung\">$this->kurzbeschreibung</div><b>$kontierungsstatus_link<hr>$kontierung_aufheben_link</b></td></tr>\n";
         echo "</table>\n";
-        /* DRUCKEN ab hier */
-        /* Logo zum Drucken hinzufügen */
-        $logo_file = $this->rechnungs_aussteller_typ . "/" . $this->rechnungs_aussteller_id . "_logo.png";
-        if (Storage::disk('logos')->exists($logo_file)) {
-            $logo_file = Storage::disk('logos')->url($logo_file);
-            echo "<div id=\"div_logo\"><img src='$logo_file'><hr></div>\n";
-        } else {
-            echo "<div id=\"div_logo\">KEIN LOGO<br>Folgende Datei erstellen: " . Storage::disk('logos')->fullPath($logo_file) . "<hr></div>";
-        }
         /* Div Firma */
         $r_rechnungs_aussteller_name = preg_replace('/<br>/', ' ', $this->rechnungs_aussteller_name);
         echo "<div id=\"div_firma\">$r_rechnungs_aussteller_name $this->rechnungs_aussteller_strasse $this->rechnungs_aussteller_hausnr - $this->rechnungs_aussteller_plz $this->rechnungs_aussteller_ort</div>";
@@ -1977,9 +1967,9 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             echo "<tr><td colspan=$colspan1 style='text-align: right'><b>Skonto:</b></td><td colspan=2 style='text-align: right'>$skonto_in_eur €</td></tr>";
             echo "<tr><td colspan=$colspan1 style='text-align: right'><b>Nach Abzug Skontobetrag:</b></td><td colspan=2 style='text-align: right'>$skontobetrag €</td></tr>";
 
-            echo "<tr><td  colspan=$colspan id=\"footer_msg\"><br>$msg</td></tr></table>";
+            echo "<tr><td  colspan=$colspan id=\"footer_msg\"><br>$msg</td></tr>";
         }
-        echo "</div>";
+        echo "</table></div>";
         // ende div_positionen für druck
     }
 

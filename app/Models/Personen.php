@@ -35,7 +35,7 @@ class Personen extends Model
             'PERSON_MIETVERTRAG',
             'PERSON_MIETVERTRAG_PERSON_ID',
             'PERSON_MIETVERTRAG_MIETVERTRAG_ID'
-        )->wherePivot('PERSON_MIETVERTRAG_AKTUELL', '=', '1');
+        )->wherePivot('PERSON_MIETVERTRAG_AKTUELL', '1');
     }
 
     public function kaufvertraege()
@@ -44,7 +44,7 @@ class Personen extends Model
             'WEG_EIGENTUEMER_PERSON',
             'PERSON_ID',
             'WEG_EIG_ID'
-        )->wherePivot('AKTUELL', '=', '1');
+        )->wherePivot('AKTUELL', '1');
     }
 
     public function details()

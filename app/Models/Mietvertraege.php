@@ -30,7 +30,7 @@ class Mietvertraege extends Model
 
     public function mieter()
     {
-        return $this->belongsToMany('App\Models\Personen', 'PERSON_MIETVERTRAG', 'PERSON_MIETVERTRAG_MIETVERTRAG_ID', 'PERSON_MIETVERTRAG_PERSON_ID')->wherePivot('PERSON_MIETVERTRAG_AKTUELL', '=', '1');
+        return $this->belongsToMany('App\Models\Personen', 'PERSON_MIETVERTRAG', 'PERSON_MIETVERTRAG_MIETVERTRAG_ID', 'PERSON_MIETVERTRAG_PERSON_ID')->wherePivot('PERSON_MIETVERTRAG_AKTUELL', '1');
     }
 
     public function isActive() {

@@ -2079,7 +2079,7 @@ class buchen
     function form_kosten_einnahmen()
     {
         $bg = new berlussimo_global ();
-        $link = route('web::buchen::legacy', ['option' => 'kosten_einnahmen'] . false);
+        $link = route('web::buchen::legacy', ['option' => 'kosten_einnahmen'], false);
         if (request()->has('monat') && request()->has('jahr')) {
             if (request()->input('monat') != 'alle') {
                 session()->put('monat', sprintf('%02d', request()->input('monat')));

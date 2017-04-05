@@ -842,8 +842,8 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
 
         $datum_arr = getdate(mktime(0, 0, 0, $datum [1], $datum [2], $datum [0]));
 
-        $easter_d = date("d", easter_date($datum [0]));
-        $easter_m = date("m", easter_date($datum [0]));
+        $easter_d = date("d", strtotime("$datum[0]-03-21 +" . easter_days($datum[0]) . " days"));
+        $easter_m = date("m", strtotime("$datum[0]-03-21 +" . easter_days($datum[0]) . " days"));
 
         $status = 'Arbeitstag';
         if ($datum_arr ['wday'] == 0 || $datum_arr ['wday'] == 6)

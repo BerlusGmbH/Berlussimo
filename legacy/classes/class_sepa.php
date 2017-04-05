@@ -1488,7 +1488,7 @@ class sepa
         $numrows = count($my_array);
         if ($numrows) {
             echo "<div class='input-field'>";
-            if(!is_null($form)) {
+            if (!is_null($form)) {
                 echo "<select name=\"$name\" id=\"$id\" size=\"1\" form=\"$form\">\n";
             } else {
                 echo "<select name=\"$name\" id=\"$id\" size=\"1\">\n";
@@ -1501,7 +1501,7 @@ class sepa
                 $iban = $my_array [$a] ['IBAN'];
                 $iban1 = $this->iban_convert($iban, 0);
                 $bic = $my_array [$a] ['BIC'];
-                if($numrows == 1) {
+                if ($numrows == 1) {
                     echo "<option value=\"$konto_id\" selected>$bez - $iban1 - $bic</option>\n";
                 } else {
                     echo "<option value=\"$konto_id\">$bez - $iban1 - $bic</option>\n";
@@ -2718,33 +2718,11 @@ AND  `AKTUELL` =  '1'");
                     $bu->dropdown_kostentraeger_bez_vw("Kostenträger PERSON", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id);
                 } else {
                     $kos_id = $this->get_mvid_from_vzweck($vzweck);
-                    if (!isset ($kos_id)) {
-                        /* ET_ID from* */
-                        // $kos_id = $this->get_etid_from_vzweck($vzweck);
-                        // $kos_typ = 'Eigentuemer';
-                        // $bu->dropdown_kostenrahmen_nr('Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id, '6020');
-                        // $bu->dropdown_kostentreager_typen_vw('ET vorwahl C', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Eigentuemer');
-                    } else {
-                        $kos_typ = 'Mietvertrag';
-                        $bu->dropdown_kostenrahmen_nr('Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id, '80001');
-                        $bu->dropdown_kostentreager_typen_vw('Kostenträgertyp vorwahl', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Mietvertrag');
-                    }
-
-                    if (isset ($kos_id)) {
-                        $bu->dropdown_kostentraeger_bez_vw("Kostenträger MV2", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id);
-                    } else {
-                        $bu->dropdown_kostenrahmen_nr('Kostenkonto MMM', 'kostenkonto', 'GELDKONTO', $gk_id, '80001');
-                        $bu->dropdown_kostentreager_typen_vw('Kostenträger TYP - UNBEKANNT', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Mietvertrag');
-                        $bu->dropdown_kostentreager_ids('Kostenträger UNBEKANNT1', 'kostentraeger_id', 'dd_kostentraeger_id', '');
-                    }
+                    $kos_typ = 'Mietvertrag';
+                    $bu->dropdown_kostenrahmen_nr('Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id, '80001');
+                    $bu->dropdown_kostentreager_typen_vw('Kostenträgertyp vorwahl', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, 'Mietvertrag');
+                    $bu->dropdown_kostentraeger_bez_vw('Kostenträger UNBEKANNT1', 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id);
                 }
-
-                /*
-				 * if($kos_typ=='Mieter'){
-				 * $me = new mietentwicklung;
-				 * $me->mietentwicklung_anzeigen($kos_id);
-				 * }
-				 */
 
                 $treffer [] = 'Mieter';
             }
