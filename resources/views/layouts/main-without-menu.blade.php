@@ -7,7 +7,7 @@
         <li style="height: 64px">
             @include('shared.searchbar')
         </li>
-        @if(check_user_links(Auth::user()->id, 'rechnungen'))
+        @can(\App\Libraries\Permission::PERMISSION_MODUL_RECHNUNG)
             <li>
                 @if(session()->has('partner_id'))
                     <?php $p = new partners (); $p->get_partner_name(session()->get('partner_id')); ?>
@@ -20,8 +20,8 @@
                         Partner wählen</a>
                 @endif
             </li>
-        @endif
-        @if(check_user_links(Auth::user()->id, 'buchen' ))
+        @endcan
+        @can(\App\Libraries\Permission::PERMISSION_MODUL_BUCHEN)
             <li>
                 @if(session()->has('geldkonto_id'))
                     <?php $g = new geldkonto_info(); $g->geld_konto_details(session()->get('geldkonto_id')); ?>
@@ -34,7 +34,7 @@
                         Geldkonto wählen</a>
                 @endif
             </li>
-        @endif
+        @endcan
         <li><a href="/logout"><i class="mdi mdi-exit-to-app left"></i>Abmelden</a></li>
     </ul>
 @endsection
@@ -48,7 +48,7 @@
                 <a href="#!email"><span class="white-text email">{{Auth::user()->email}}</span></a>
             </div>
         </li>
-        @if(check_user_links(Auth::user()->id, 'rechnungen'))
+        @can(\App\Libraries\Permission::PERMISSION_MODUL_RECHNUNG)
             <li>
                 @if(session()->has('partner_id'))
                     <?php $p = new partners (); $p->get_partner_name(session()->get('partner_id')); ?>
@@ -61,8 +61,8 @@
                         Partner wählen</a>
                 @endif
             </li>
-        @endif
-        @if(check_user_links(Auth::user()->id, 'buchen' ))
+        @endcan
+        @can(\App\Libraries\Permission::PERMISSION_MODUL_BUCHEN)
             <li>
                 @if(session()->has('geldkonto_id'))
                     <?php $g = new geldkonto_info(); $g->geld_konto_details(session()->get('geldkonto_id')); ?>
@@ -74,7 +74,7 @@
                                 class="mdi mdi-currency-eur left small"></i>Geldkonto wählen</a>
                 @endif
             </li>
-        @endif
+        @endcan
         <li>
             <div class="divider"></div>
         </li>

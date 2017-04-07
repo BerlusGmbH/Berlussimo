@@ -337,10 +337,12 @@ class zeiterfassung
         $benutzer_id = $this->get_userid($id);
         $fehler = 0;
         if ($benutzer_id != Auth::user()->id) {
-            if (!check_user_mod(Auth::user()->id, '*')) {
+            if (!Auth::user()->hasAnyRole([
+                \App\Libraries\Role::ROLE_BUCHHALTER,
+                \App\Libraries\Role::ROLE_ADMINISTRATOR
+            ])
+            ) {
                 $fehler = 1;
-            } else {
-                $fehler = 0;
             }
         }
 
@@ -537,34 +539,6 @@ class zeiterfassung
         return $row ['ZETTEL_ID'];
     }
 
-    function letzte_zettel_pos_id()
-    {
-        $result = DB::select("SELECT ST_ID FROM STUNDENZETTEL_POS WHERE AKTUELL = '1' ORDER BY ST_ID DESC LIMIT 0,1");
-
-        $row = $result[0];
-        return $row ['ST_ID'];
-    }
-
-    function check_leistung_pos_leistung($benutzer_id, $leistung_id)
-    {
-        $artikel_nr = 'L-' . $benutzer_id . '-' . $leistung_id;
-        $result = DB::select("SELECT ARTIKEL_NR FROM POSITIONEN_KATALOG WHERE ARTIKEL_NR='$artikel_nr' && AKTUELL = '1'");
-        return !empty($result);
-    }
-
-    function stundensatz($benutzer_id)
-    {
-        $result = DB::select("SELECT hourly_rate FROM users WHERE id = ? ORDER BY id DESC LIMIT 0,1", [$benutzer_id]);
-        return !empty($result) ? $result[0]['STUNDENSATZ'] : 0;
-    }
-
-    function get_beschr_by_l_id($leistung_id)
-    {
-        $result = DB::select("SELECT BEZEICHNUNG FROM LEISTUNGSKATALOG WHERE LK_ID='$leistung_id' && AKTUELL = '1' ORDER BY LK_ID DESC LIMIT 0,1");
-        $row = $result[0];
-        return $row ['BEZEICHNUNG'];
-    }
-
     function leistung_in_katalog($datum, $benutzer_id, $leistungs_beschreibung, $zettel_id, $dauer_min, $kostentraeger_typ, $kostentraeger_bez, $hinweis, $beginn, $ende)
     {
         // echo "$datum, $benutzer_id, $leistungs_beschreibung, $zettel_id, $dauer_min, $kostentraeger_typ, $kostentraeger_bez GW $this->gewerk_id ";
@@ -609,6 +583,12 @@ class zeiterfassung
         return $row ['LK_ID'];
     }
 
+    function stundensatz($benutzer_id)
+    {
+        $result = DB::select("SELECT hourly_rate FROM users WHERE id = ? ORDER BY id DESC LIMIT 0,1", [$benutzer_id]);
+        return !empty($result) ? $result[0]['STUNDENSATZ'] : 0;
+    }
+
     function get_leistung_id_by_beschr($gewerk_id, $beschreibung)
     {
         $result = DB::select("SELECT LK_ID FROM LEISTUNGSKATALOG WHERE GEWERK='$gewerk_id' && BEZEICHNUNG='$beschreibung' && AKTUELL = '1' ORDER BY LK_ID DESC LIMIT 0,1");
@@ -644,6 +624,28 @@ class zeiterfassung
         }
 
         weiterleiten(route('web::zeiterfassung::legacy', ['option' => 'zettel_eingabe', 'zettel_id' => $zettel_id], false));
+    }
+
+    function letzte_zettel_pos_id()
+    {
+        $result = DB::select("SELECT ST_ID FROM STUNDENZETTEL_POS WHERE AKTUELL = '1' ORDER BY ST_ID DESC LIMIT 0,1");
+
+        $row = $result[0];
+        return $row ['ST_ID'];
+    }
+
+    function check_leistung_pos_leistung($benutzer_id, $leistung_id)
+    {
+        $artikel_nr = 'L-' . $benutzer_id . '-' . $leistung_id;
+        $result = DB::select("SELECT ARTIKEL_NR FROM POSITIONEN_KATALOG WHERE ARTIKEL_NR='$artikel_nr' && AKTUELL = '1'");
+        return !empty($result);
+    }
+
+    function get_beschr_by_l_id($leistung_id)
+    {
+        $result = DB::select("SELECT BEZEICHNUNG FROM LEISTUNGSKATALOG WHERE LK_ID='$leistung_id' && AKTUELL = '1' ORDER BY LK_ID DESC LIMIT 0,1");
+        $row = $result[0];
+        return $row ['BEZEICHNUNG'];
     }
 
     // ###ZEIT METHODEN#########
@@ -735,10 +737,12 @@ class zeiterfassung
         $benutzer_id = $this->get_userid($id);
         $fehler = 0;
         if ($benutzer_id != Auth::user()->id) {
-            if (!check_user_mod(Auth::user()->id, '*')) {
+            if (!Auth::user()->hasAnyRole([
+                \App\Libraries\Role::ROLE_BUCHHALTER,
+                \App\Libraries\Role::ROLE_ADMINISTRATOR
+            ])
+            ) {
                 $fehler = 1;
-            } else {
-                $fehler = 0;
             }
         }
 

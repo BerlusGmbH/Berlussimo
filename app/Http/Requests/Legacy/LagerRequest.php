@@ -3,16 +3,19 @@
 namespace App\Http\Requests\Legacy;
 
 
-use App\Http\Requests\Request;
+use App\Libraries\Permission;
 use Auth;
+use Illuminate\Foundation\Http\FormRequest;
 
-class LagerRequest extends Request
+class LagerRequest extends FormRequest
 {
-    public function authorize() {
-        return check_user_mod(Auth::user()->id, 'lager');
+    public function authorize()
+    {
+        return Auth::user()->can(Permission::PERMISSION_MODUL_LAGER);
     }
 
-    public function rules() {
+    public function rules()
+    {
         return [];
     }
 }

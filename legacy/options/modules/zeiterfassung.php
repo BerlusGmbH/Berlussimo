@@ -205,7 +205,10 @@ switch ($option) {
             $z = new zeiterfassung ();
             $zettel_id = request()->input('zettel_id');
             $benutzer_id = $z->get_userid($zettel_id);
-            if ($benutzer_id == Auth::user()->id or check_user_mod(Auth::user()->id, '*')) {
+            if ($benutzer_id == Auth::user()->id or Auth::user()->hasAnyRole([
+                    \App\Libraries\Role::ROLE_BUCHHALTER, \App\Libraries\Role::ROLE_ADMINISTRATOR
+                ])
+            ) {
                 $z->zettel_loeschen_voll($zettel_id);
                 weiterleiten(route('web::zeiterfassung::legacy', ['option' => 'nachweisliste', 'mitarbeiter_id' => $benutzer_id], false));
             } else {

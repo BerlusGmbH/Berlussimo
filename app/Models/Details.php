@@ -14,6 +14,7 @@ class Details extends Model
     protected $table = 'DETAIL';
     protected $primaryKey = 'DETAIL_ID';
     protected $defaultOrder = ['DETAIL_NAME' => 'asc', 'DETAIL_INHALT' => 'asc', 'DETAIL_BEMERKUNG' => 'asc'];
+    protected $fillable = ['DETAIL_ID', 'DETAIL_NAME', 'DETAIL_INHALT', 'DETAIL_BEMERKUNG', 'DETAIL_AKTUELL'];
 
 
     protected static function boot()

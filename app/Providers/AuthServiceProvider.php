@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use Illuminate\Contracts\Auth\Access\Gate as GateContract;
+use Auth;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -17,12 +17,15 @@ class AuthServiceProvider extends ServiceProvider
     ];
 
     /**
-     * Register any application authentication / authorization services.
+     * Register any authentication / authorization services.
      *
      * @return void
      */
     public function boot()
     {
         $this->registerPolicies();
+        Auth::provider('berlussimo', function ($app, $config) {
+            return new BerlussimoUserProvider($app['hash'], $config['model']);
+        });
     }
 }

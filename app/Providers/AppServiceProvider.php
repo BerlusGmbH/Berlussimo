@@ -13,11 +13,10 @@ use App\Models\Partner;
 use App\Models\Person;
 use App\Models\User;
 use App\Models\Wirtschaftseinheiten;
-use App\Pagination\MaterializeCssPresenter;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\ServiceProvider;
 use App\Services\PhoneLocator;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
+use Schema;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -44,6 +43,8 @@ class AppServiceProvider extends ServiceProvider
             'Wirtschaftseinheit' => Wirtschaftseinheiten::class,
             'Lager' => Lager::class
         ]);
+
+        Schema::defaultStringLength(191);
     }
 
     /**
@@ -53,7 +54,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(PhoneLocator::class, function() {
+        $this->app->singleton(PhoneLocator::class, function () {
             return new PhoneLocator(config('phonelocator'));
         });
     }

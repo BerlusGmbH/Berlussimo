@@ -17,7 +17,7 @@ elixir(function (mix) {
     mix.sass(['./node_modules/normalize.css/normalize.css',
         'materialize-css.scss',
         './node_modules/flexboxgrid/dist/flexboxgrid.css',
-        './node_modules/mdi/scss/materialdesignicons.scss'
+        './node_modules/mdi/css/materialdesignicons.css'
     ], 'public/css/vendor.css');
 
     mix.styles(

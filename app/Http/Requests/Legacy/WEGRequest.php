@@ -3,16 +3,19 @@
 namespace App\Http\Requests\Legacy;
 
 
-use App\Http\Requests\Request;
+use App\Libraries\Permission;
 use Auth;
+use Illuminate\Foundation\Http\FormRequest;
 
-class WEGRequest extends Request
+class WEGRequest extends FormRequest
 {
-    public function authorize() {
-        return check_user_mod(Auth::user()->id, 'weg');
+    public function authorize()
+    {
+        return Auth::user()->can(Permission::PERMISSION_MODUL_WEG);
     }
 
-    public function rules() {
+    public function rules()
+    {
         return [];
     }
 }

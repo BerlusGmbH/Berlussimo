@@ -1,16 +1,28 @@
 <?php
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
 Route::group(['namespace' => 'Auth', 'middleware' => ['web']], function () {
     // Authentication Routes...
-    Route::get('login', 'AuthController@showLoginForm');
-    Route::post('login', 'AuthController@login');
-    Route::get('logout', 'AuthController@logout');
+    Route::get('login', 'LoginController@showLoginForm')->name('login');
+    Route::post('login', 'LoginController@login');
+    Route::get('logout', 'LoginController@logout');
     // Registration Routes...
     //Route::get('register', 'AuthController@showRegistrationForm');
     //Route::post('register', 'AuthController@register');
     // Password Reset Routes...
-    Route::get('password/reset/{token?}', 'PasswordController@showResetForm');
-    Route::post('password/email', 'PasswordController@sendResetLinkEmail');
-    Route::post('password/reset', 'PasswordController@reset');
+    Route::get('password/reset/{token?}', 'ResetPasswordController@showResetForm');
+    Route::post('password/email', 'ResetPasswordController@sendResetLinkEmail');
+    Route::post('password/reset', 'ResetPasswordController@reset');
 });
 
 Route::group(['namespace' => 'Legacy', 'middleware' => ['web', 'auth'], 'as' => 'web::'], function () {
@@ -147,6 +159,8 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['web', 'auth'], 'as' => 
         Route::get('index', 'PersonenController@index')->name('index');
         Route::get('create', 'PersonenController@create')->name('create');
         Route::post('store', 'PersonenController@store')->name('store');
+        Route::get('{id}/edit', 'PersonenController@edit')->name('edit');
+        Route::match(['put', 'patch'], '{id}', 'PersonenController@update')->name('update');
         Route::get('{id}', 'PersonenController@show')->name('show');
     });
 

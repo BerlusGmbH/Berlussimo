@@ -3,12 +3,17 @@
 namespace App\Http\Controllers\Legacy;
 
 
+use App;
 use App\Http\Controllers\Traits\Indexable;
 use App\Http\Requests\Legacy\PersonenRequest;
 use App\Http\Requests\Modules\Person\StorePersonRequest;
+use App\Models\Details;
 use App\Models\Person;
 use App\Services\Parser\Lexer;
 use App\Services\Parser\Parser;
+use Carbon\Carbon;
+use DB;
+use URL;
 
 class PersonenController extends LegacyController
 {
@@ -54,30 +59,76 @@ class PersonenController extends LegacyController
 
     public function show($id, PersonenRequest $request)
     {
-        $person = Person::with(['mietvertraege.einheit.haus.objekt', 'kaufvertraege.einheit.haus.objekt', 'details'])->findOrFail($id);
+        $person = Person::with(['mietvertraege.einheit.haus.objekt', 'kaufvertraege.einheit.haus.objekt', 'details', 'audits'])->findOrFail($id);
         return view('modules.personen.show', ['person' => $person]);
     }
 
     public function create(PersonenRequest $request)
     {
-        return view('modules.personen.create');
+        if (session()->has('dublicates')) {
+            $dublicates = session()->get('dublicates');
+            return response()
+                ->view('modules.personen.create_verify', ['dublicates' => $dublicates])
+                ->header('Cache-Control', 'no-store');
+        } else {
+            return response()
+                ->view('modules.personen.create')
+                ->header('Cache-Control', 'no-store');
+        }
     }
 
     public function store(StorePersonRequest $request)
     {
-        $person = new Person();
-        $person->name = trim(request()->input('name'));
-        if(request()->has('first_name')) {
-            $person->first_name = trim(request()->input('first_name'));
-        }
-        if(request()->has('birthday')) {
-            $person->birthday = request()->input('birthday');
-        }
-        if(request()->has('sex')) {
-            $person->first_name = trim(request()->input('first_name'));
-        }
-        $person->saveOrFail();
-        $phone = phone($request->input('phone'));
-        return $this->show($person->id, $request);
+        return DB::transaction(function () {
+            $person = Person::create(
+                request()->only(['name', 'first_name', 'birthday'])
+            );
+            if (request()->has('phone')) {
+                $phone = phone(request()->input('phone'), strtoupper(App::getLocale()));
+                $person->details()->create([
+                    'DETAIL_ID' => Details::max('DETAIL_ID') + 1,
+                    'DETAIL_NAME' => 'Telefon',
+                    'DETAIL_INHALT' => $phone,
+                    'DETAIL_BEMERKUNG' => 'Stand: ' . Carbon::today()->toDateString(),
+                    'DETAIL_AKTUELL' => '1'
+                ]);
+            }
+            if (request()->has('email')) {
+                $person->details()->create([
+                    'DETAIL_ID' => Details::max('DETAIL_ID') + 1,
+                    'DETAIL_NAME' => 'Email',
+                    'DETAIL_INHALT' => request()->input('email'),
+                    'DETAIL_BEMERKUNG' => 'Stand: ' . Carbon::today()->toDateString(),
+                    'DETAIL_AKTUELL' => '1'
+                ]);
+            }
+            if (request()->has('sex')) {
+                $person->details()->create([
+                    'DETAIL_ID' => Details::max('DETAIL_ID') + 1,
+                    'DETAIL_NAME' => 'Geschlecht',
+                    'DETAIL_INHALT' => request()->input('sex'),
+                    'DETAIL_BEMERKUNG' => 'Stand: ' . Carbon::today()->toDateString(),
+                    'DETAIL_AKTUELL' => '1'
+                ]);
+            }
+            return redirect(route('web::personen::show', ['id' => $person->id]));
+        });
+    }
+
+    public function edit($id, PersonenRequest $request)
+    {
+        session()->put('url.intended', URL::previous());
+        $person = Person::findOrFail($id);
+        return response()
+            ->view('modules.personen.edit', ['person' => $person])
+            ->header('Cache-Control', 'no-store');
+    }
+
+    public function update($id, PersonenRequest $request)
+    {
+        $person = Person::findOrFail($id);
+        $person->fill(request()->only(['name', 'first_name', 'birthday']));
+        $person->save();
+        return redirect()->intended(route('web::personen::show', ['id' => $person->id]));
     }
 }
