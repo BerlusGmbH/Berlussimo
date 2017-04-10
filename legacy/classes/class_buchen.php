@@ -2210,20 +2210,10 @@ function kosten_einnahmen_pdf($geldkontos_arr, $monat, $jahr)
             ob_clean(); // ausgabepuffer leeren
             /* PDF AUSGABE */
             $pdf = new Cezpdf ('a4', 'portrait');
-            $pdf->selectFont('Helvetica.afm');
-            $pdf->ezSetCmMargins(4.5, 0, 0, 0);
-            /* Kopfzeile */
-            $pdf->addJpegFromFile('includes/logos/logo_hv_sw.jpg', 220, 750, 175, 100);
-            $pdf->setLineStyle(0.5);
-            $pdf->addText(86, 743, 6, "BERLUS HAUSVERWALTUNG * Fontanestr. 1 * 14193 Berlin * Inhaber Wolfgang Wehrheim * Telefon: 89784477 * Fax: 89784479 * Email: info@berlus.de");
-            $pdf->line(42, 750, 550, 750);
-            /* Footer */
-            $pdf->line(42, 50, 550, 50);
-            $pdf->addText(170, 42, 6, "BERLUS HAUSVERWALTUNG *  Fontanestr. 1 * 14193 Berlin * Inhaber Wolfgang Wehrheim");
-            $pdf->addText(150, 35, 6, "Bankverbindung: Dresdner Bank Berlin * BLZ: 100  800  00 * Konto-Nr.: 05 804 000 00 * Steuernummer: 24/582/61188");
+            $bpdf = new b_pdf ();
+            $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
             $pdf->addInfo('Title', "Monatsbericht $objekt_name $monatname $jahr");
             $pdf->addInfo('Author', Auth::user()->email);
-            $pdf->ezStartPageNumbers(100, 760, 8, '', 'Seite {PAGENUM} von {TOTALPAGENUM}', 1);
 
             $g_kosten_jahr = 0.00;
 
