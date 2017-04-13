@@ -486,7 +486,7 @@ class buchen
                 }, 'mietvertraege.mieter' => function ($query) {
                     $query->defaultOrder();
                 }]);
-            if(session()->has('geldkonto_id')) {
+            if (session()->has('geldkonto_id')) {
                 $einheiten->whereHas('haus.objekt.bankkonten', function ($query) {
                     $query->where('KONTO_ID', session()->get('geldkonto_id'));
                 });
@@ -494,13 +494,19 @@ class buchen
             $einheiten = $einheiten->get();
             foreach ($einheiten as $einheit) {
                 foreach ($einheit->mietvertraege as $mietvertrag) {
-                    if ($mietvertrag->isActive()) {
+                    if (!$mietvertrag->isActive('<=')) {
+                        if ($vorwahl_bez == $mietvertrag->MIETVERTRAG_ID) {
+                            echo "<option value='$mietvertrag->MIETVERTRAG_ID' selected>NEUMIETER: $einheit->EINHEIT_KURZNAME | $mietvertrag->mieter_namen</option>\n";
+                        } else {
+                            echo "<option value='$mietvertrag->MIETVERTRAG_ID'>NEUMIETER: $einheit->EINHEIT_KURZNAME | $mietvertrag->mieter_namen</option>\n";
+                        }
+                    } elseif ($mietvertrag->isActive()) {
                         if ($vorwahl_bez == $mietvertrag->MIETVERTRAG_ID) {
                             echo "<option value='$mietvertrag->MIETVERTRAG_ID' selected>$einheit->EINHEIT_KURZNAME | $mietvertrag->mieter_namen</option>\n";
                         } else {
                             echo "<option value='$mietvertrag->MIETVERTRAG_ID'>$einheit->EINHEIT_KURZNAME | $mietvertrag->mieter_namen</option>\n";
                         }
-                    } else {
+                    } elseif ($mietvertrag->isActive('<')) {
                         if ($vorwahl_bez == $mietvertrag->MIETVERTRAG_ID) {
                             echo "<option value='$mietvertrag->MIETVERTRAG_ID' selected>ALTMIETER: $einheit->EINHEIT_KURZNAME | $mietvertrag->mieter_namen</option>\n";
                         } else {
@@ -619,7 +625,7 @@ class buchen
         if ($typ == 'Benutzer') {
             $users = \App\Models\User::all();
             foreach ($users as $user) {
-                if($vorwahl_bez == $user->id) {
+                if ($vorwahl_bez == $user->id) {
                     echo "<option value='$user->id' selected>$user->name</option>";
                 } else {
                     echo "<option value='$user->id'>$user->name</option>";
@@ -2201,7 +2207,7 @@ class buchen
         }
     }
 
-function kosten_einnahmen_pdf($geldkontos_arr, $monat, $jahr)
+    function kosten_einnahmen_pdf($geldkontos_arr, $monat, $jahr)
     {
         $anzahl_konten = count($geldkontos_arr);
         $datum_jahresanfang = "01.01.$jahr";
@@ -2348,7 +2354,7 @@ function kosten_einnahmen_pdf($geldkontos_arr, $monat, $jahr)
 
     /* Unabhängig vom Geldkonto */
 
-        function check_buchung($gk_id, $betrag, $auszug, $datum)
+    function check_buchung($gk_id, $betrag, $auszug, $datum)
     {
         $result = DB::select("SELECT * 
 FROM  `GELD_KONTO_BUCHUNGEN` 

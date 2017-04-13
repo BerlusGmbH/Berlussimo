@@ -2,21 +2,23 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
+use App\Models\Contracts\Active as ActiveContract;
+use App\Models\Traits\Active;
+use App\Models\Traits\DefaultOrder;
+use App\Models\Traits\Searchable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use App\Models\Traits\Searchable;
-use App\Models\Traits\DefaultOrder;
 
 /**
  * App\Models\User
  *
  * @mixin \Eloquent
  */
-class User extends Authenticatable
+class User extends Authenticatable implements ActiveContract
 {
     use Searchable;
     use DefaultOrder;
+    use Active;
 
     protected $searchableFields = ['name', 'email'];
     protected $defaultOrder = ['name' => 'asc'];
@@ -39,15 +41,8 @@ class User extends Authenticatable
         'password', 'remember_token', 'api_token'
     ];
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function menus()
+    public function arbeitgeber()
     {
-        return $this->belongsTo('App\Models\MenuNodes', 'menu_nodes_id');
-    }
-
-    public function arbeitgeber() {
         return $this->belongsToMany(Partner::class, 'BENUTZER_PARTNER', 'BP_BENUTZER_ID', 'BP_PARTNER_ID')->wherePivot('AKTUELL', '1');
     }
 
@@ -56,65 +51,23 @@ class User extends Authenticatable
         return $this->hasOne(Gewerke::class, 'G_ID', 'trade_id');
     }
 
-    public function scopeAktiv($query, $comparator = '=', $date = null) {
-        if(is_null($date)) {
-            $date = Carbon::today();
-        }
-        if($comparator == '=') {
-            $query->where(function($query) use ($date) {
-                $query->where(function($query) use ($date) {
-                    $query->whereDate('join_date', '<=', $date)->whereDate('leave_date', '>=', $date);
-                })->orWhere(function($query) use($date) {
-                    $query->where('join_date', '<=', $date)->whereDate('leave_date', '=', '0000-00-00');
-                });
-            });
-        } elseif ($comparator == '>') {
-            $query->where(function($query) use ($date) {
-                $query->whereDate('leave_date', '>=', $date)->orWhereDate('leave_date', '=', '0000-00-00');
-            });
-        } elseif ($comparator == '<') {
-            $query->whereDate('join_date', '<=', $date);
-        }
-    }
-
-    public function scopeNotAktiv($query, $comparator = '=', $date = null) {
-        if(is_null($date)) {
-            $date = Carbon::today();
-        }
-        if($comparator == '=') {
-            $query->where(function ($query) use ($date) {
-                $query->whereDate('join_date', '>', $date)->orWhereDate('leave_date', '<', $date)->where('leave_date', '<>', '0000-00-00');
-            });
-        } elseif ($comparator == '>') {
-            $query->whereDate('leave_date', '<', $date)->where('leave_date', '<>', '0000-00-00');
-        } elseif ($comparator == '<') {
-            $query->whereDate('join_date', '>', $date);
-        }
-    }
-
     /**
      * @param $label
      * @param $icon
      * @return mixed
      */
-    public function addMenu($label, $icon) {
+    public function addMenu($label, $icon)
+    {
         $item = MenuItems::createForMenuRoot($label, $icon);
         return $this->menus->addChild($item);
     }
 
-
     /**
      * @return Collection
      */
-    public function getMenus() {
+    public function getMenus()
+    {
         return $this->menus->getChildren(1)->with('item')->get();
-    }
-
-    /**
-     * @return \App\Models\MenuNodes
-     */
-    private static function addUserToTree(MenuNodes $node) {
-        return MenuNodes::getRoot()->addChild($node);
     }
 
     /**
@@ -125,7 +78,7 @@ class User extends Authenticatable
      */
     public function save(array $options = [])
     {
-        if(!$this->exists) {
+        if (!$this->exists) {
             $item = MenuItems::newForUser();
             $item->save();
             $node = new MenuNodes();
@@ -136,5 +89,30 @@ class User extends Authenticatable
         return parent::save($options);
     }
 
+    /**
+     * @return \App\Models\MenuNodes
+     */
+    private static function addUserToTree(MenuNodes $node)
+    {
+        return MenuNodes::getRoot()->addChild($node);
+    }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function menus()
+    {
+        return $this->belongsTo('App\Models\MenuNodes', 'menu_nodes_id');
+    }
+
+
+    public function getStartDateFieldName()
+    {
+        return 'join_date';
+    }
+
+    public function getEndDateFieldName()
+    {
+        return 'leave_date';
+    }
 }
