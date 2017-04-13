@@ -1663,7 +1663,7 @@ class buchen
             } else {
                 ob_clean(); // ausgabepuffer leeren
                 $fileName = "$gk->geldkonto_bezeichnung - Buchungsjournal $ja" . '.xls';
-                header("Content-type: application/vnd.ms-excel");
+                header("Content-Type: application/vnd.ms-excel");
                 // header("Content-Disposition: attachment; filename=$fileName");
                 header("Content-Disposition: inline; filename=$fileName");
                 echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">";
@@ -2331,7 +2331,7 @@ class buchen
             ));
 
             ob_end_clean(); // ausgabepuffer leeren
-            header("Content-type: application/pdf"); // wird von MSIE ignoriert
+            header("Content-Type: application/pdf"); // wird von MSIE ignoriert
             $pdf->ezStream();
         } else {
             echo "Keine Daten Error 65922";

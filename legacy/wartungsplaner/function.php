@@ -256,7 +256,7 @@ function get_lonlat_id($lon, $lat)
 
 function erstelle_icon($zahl, $h_farbe)
 {
-    header("Content-type: image/png");
+    header("Content-Type: image/png");
     $bild = imagecreate(15, 15);
     $farben[0]['r'] = '3';
     $farben[0]['g'] = '70';

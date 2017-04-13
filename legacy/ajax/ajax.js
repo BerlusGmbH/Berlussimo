@@ -197,15 +197,15 @@ function position_speichern_testOK() {
     http.open("POST", url, true);
 
     //Send the proper header information along with the request
-    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    http.setRequestHeader("Content-length", params.length);
+    http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    http.setRequestHeader("Content-Length", params.length);
     http.setRequestHeader("Connection", "close");
 
     http.onreadystatechange = function () {//Call a function when the state changes.
         if (http.readyState == 4 && http.status == 200) {
             alert(http.responseText);
         }
-    }
+    };
     http.send(params);
 
 }
@@ -1445,7 +1445,7 @@ function pool_wahl(ziel, check_list_id, kos_typ, kos_id) {
         alert("Konnte Ajax-Objekt nicht erzeugen!");
 
     //Anfrageurl zusammenstellen
-    var dat_array = new Array();
+    var dat_array = [];
     alert(document.getElementsByName(check_list_id).length);
     return;
     for (a = 0; a < check_list_id.length; a++) {
@@ -1453,7 +1453,7 @@ function pool_wahl(ziel, check_list_id, kos_typ, kos_id) {
     if (a = 1) {
 
         alert('Wählen bitte');
-        return;
+
     } else {
 
         var my_url = 'ajax/ajax_info.php?option=pool_auswahl&kontierung_dat=' + dat + '&kos_typ=' + kos_typ + '&kos_id=' + kos_id;
@@ -1580,7 +1580,7 @@ function daj3(url, targ) {
     preloading(targ, 'Lade, bitte warten!!!');
 
     xmlhttp.open("get", url);
-    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded;charset=UTF-8");
+    xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 
     xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200 && targ) {
@@ -1827,7 +1827,7 @@ function u_pool_rechnung_pool_wahl(name, kos_typ, kos_id, aussteller_typ, ausste
 
     if (check_liste.length != undefined) {
         var anz = check_liste.length;
-        var pool_ids = new Array();
+        var pool_ids = [];
         var z = 0;
         for (i = 0; i < anz; i++) {
             if (check_liste[i].checked == true) {
@@ -1838,7 +1838,7 @@ function u_pool_rechnung_pool_wahl(name, kos_typ, kos_id, aussteller_typ, ausste
         }
         if (pool_ids.length < 1) {
             alert('Pools für die Rechnung wählen');
-            return;
+
         } else {
             //	alert(pool_ids.length);
             var anz = pool_ids.length;

@@ -872,7 +872,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         ob_clean();
         // ausgabepuffer leeren
         $fileName = 'pool' . date("d-m-Y") . '.xls';
-        header("Content-type: application/vnd.ms-excel");
+        header("Content-Type: application/vnd.ms-excel");
         header("Content-Disposition: attachment; filename=$fileName");
         header("Content-Disposition: inline; filename=$fileName");
 
@@ -3085,7 +3085,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             ob_clean();
             // ausgabepuffer leeren
             $fileName = 'rechnungseingangsbuch' . date("d-m-Y") . '.xls';
-            header("Content-type: application/vnd.ms-excel");
+            header("Content-Type: application/vnd.ms-excel");
             header("Content-Disposition: attachment; filename=$fileName");
             $beleg_link = '';
         }
@@ -3283,7 +3283,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             ob_clean();
             // ausgabepuffer leeren
             $fileName = 'rechnungsausgangsbuch' . date("d-m-Y") . '.xls';
-            header("Content-type: application/vnd.ms-excel");
+            header("Content-Type: application/vnd.ms-excel");
             header("Content-Disposition: inline; filename=$fileName");
             $beleg_link = '';
         }

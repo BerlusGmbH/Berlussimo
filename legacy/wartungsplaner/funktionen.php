@@ -5294,7 +5294,7 @@ class general
             }
         }
         ob_clean(); //ausgabepuffer leeren
-        header("Content-type: application/pdf");  // wird von MSIE ignoriert
+        header("Content-Type: application/pdf");  // wird von MSIE ignoriert
         $pdf->ezStream();
     }
 
@@ -5584,19 +5584,19 @@ class general
                     exec("rm $tar_dir_name/Serienbrief.tar.gz");
                     /*Ausgabe*/
                     ob_clean(); //ausgabepuffer leeren
-                    header("Content-type: application/pdf");  // wird von MSIE ignoriert
+                    header("Content-Type: application/pdf");  // wird von MSIE ignoriert
                     $pdf->ezStream();
                 }
                 /*das Raus*/
                 ob_clean(); //ausgabepuffer leeren
-                header("Content-type: application/pdf");  // wird von MSIE ignoriert
+                header("Content-Type: application/pdf");  // wird von MSIE ignoriert
                 $pdf->ezStream();
 
             } else { //emalsend
                 /*Kein Emailversand angefordert, nur ansehen*/
                 /*Ausgabe*/
                 ob_clean(); //ausgabepuffer leeren
-                header("Content-type: application/pdf");  // wird von MSIE ignoriert
+                header("Content-Type: application/pdf");  // wird von MSIE ignoriert
                 $pdf->ezStream();
             }
         } else {
@@ -5681,7 +5681,7 @@ class general
 
         /*Ausgabe*/
         ob_clean();
-        header("Content-type: application/pdf");  // wird von MSIE ignoriert
+        header("Content-Type: application/pdf");  // wird von MSIE ignoriert
         $pdf->ezStream();
 
 

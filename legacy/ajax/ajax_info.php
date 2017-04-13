@@ -304,7 +304,6 @@ ORDER BY LPAD( EINHEIT_KURZNAME, LENGTH( EINHEIT_KURZNAME ) ,  '1' ) ASC ");
         $result = DB::select("SELECT * FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR=? && AKTUELL='1' ORDER BY POSITION ASC", [$belegnr]);
         if (!empty($result)) {
             $rechnungs_positionen_arr = $result;
-            header('Content-Type: text/html; charset=UTF-8');
             echo "<table id='positionen_tab'>\n";
             echo "<tr>";
             echo "<th>Ändern</th>";

@@ -966,7 +966,7 @@ class sepa
 
             /* SEPA AUSGABE */
             ob_clean();
-            header('Content-type: text/xml; charset=utf-8');
+            header('Content-Type: text/xml; charset=utf-8');
             header("Content-disposition: attachment;filename=$dateiname_msgid");
             echo $xmlstring;
             die ();
@@ -1477,7 +1477,7 @@ class sepa
         $root->appendChild($firstNode);
 
         ob_clean();
-        header('Content-type: text/xml; charset=utf-8');
+        header('Content-Type: text/xml; charset=utf-8');
         $xml = $doc->saveXML();
         return $doc;
     }
@@ -1676,8 +1676,8 @@ class sepa
             // $xmlstring = $myKtoSepaSimple->GetXML('CORE', $dateiname_msgid , $PmtInfId, $this->umlautundgross($gk->konto_beguenstigter), $this->umlautundgross("$gk->konto_beguenstigter - $username"), $seps->IBAN, $seps->BIC, $glaeubiger_id, $sammelbetrag);
             /* SEPA AUSGABE */
             ob_clean();
-            header('Content-type: text/xml; charset=utf-8');
-            header("Content-disposition: attachment;filename=$dateiname");
+            header('Content-Type: text/xml; charset=utf-8');
+            header("Content-Disposition: attachment;filename=$dateiname");
             echo $xml_string;
             die ();
         }

@@ -2480,7 +2480,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                 $oo = new objekt ();
                 $oo->get_objekt_infos($objekt_id);
                 $fileName = "$oo->objekt_kurzname Sollhochrechnung $jahr" . '.xls';
-                header("Content-type: application/vnd.ms-excel");
+                header("Content-Type: application/vnd.ms-excel");
                 // header("Content-Disposition: attachment; filename=$fileName");
                 header("Content-Disposition: inline; filename=$fileName");
                 ob_clean(); // ausgabepuffer leeren
@@ -2740,7 +2740,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             $oo = new objekt ();
             $oo->get_objekt_infos($objekt_id);
             $fileName = "$oo->objekt_kurzname Sollhochrechnung $jahr" . '.xls';
-            header("Content-type: application/vnd.ms-excel");
+            header("Content-Type: application/vnd.ms-excel");
             header("Content-Disposition: inline; filename=$fileName");
             ob_clean(); // ausgabepuffer leeren
             echo "<table class=\"sortable\" id=\"positionen_tab\">";
