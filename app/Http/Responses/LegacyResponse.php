@@ -7,7 +7,7 @@ use Illuminate\Http\Response;
 
 class LegacyResponse extends Response
 {
-    protected $filter = ['Content-Type', 'Content-Length', 'Location'];
+    protected $filter = ['content-type', 'content-disposition', 'content-length', 'location'];
 
     /**
      * @param mixed|string $include
@@ -34,7 +34,7 @@ class LegacyResponse extends Response
         $headers_count = count($headers);
         for($i = 0; $i < $headers_count; $i++) {
             $head = explode(':', $headers[$i]);
-            if(in_array(trim($head[0]),$this->filter)) {
+            if (in_array(strtolower(trim($head[0])), $this->filter)) {
                 $headers[trim($head[0])] = trim($head[1]);
             }
             unset($headers[$i]);

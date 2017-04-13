@@ -344,8 +344,8 @@ function daj2(url, targ) {
                 targ.innerHTML = xmlhttp.responseText;
             }
             return true;
-        }
-        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded;charset=UTF-8");
+        };
+        xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
         xmlhttp.setRequestHeader("Connection", "close");
         xmlhttp.send(null);
     }
@@ -381,8 +381,8 @@ function daj3(url, targ) {
             return false;
         }
         return false;
-    }
-    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded;charset=UTF-8");
+    };
+    xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
     xmlhttp.setRequestHeader("Connection", "close");
     xmlhttp.send(null);
 
@@ -397,9 +397,7 @@ function Pause(Zeit) {
 
     }
     while (Dauer2 <= Dauer);
-};
-
-
+}
 function check_datum(id) {
 //		alert(id);
     datum = document.getElementById(id).value;
@@ -534,7 +532,6 @@ function yes_no(on_yes, on_no, frage) {
         var on_no_arr = on_no.split("|");
 
         var funktion = on_no_arr[0];
-        ;
         var zahl_no = on_no_arr.length;
         var parameter = '';
         for (i = 1; i < zahl_no; i++) {
@@ -591,7 +588,6 @@ function yes_no_frage(on_yes, on_no, frage) {
         var on_no_arr = on_no.split("|");
 
         var funktion = on_no_arr[0];
-        ;
         var zahl_no = on_no_arr.length;
         var parameter = '';
         for (i = 1; i < zahl_no; i++) {
@@ -642,11 +638,9 @@ function partner_pruefen(url, target) {
     }
     if (!check_value('strasse')) {
         merror += 'Strassennamen eingeben!\n';
-        ;
     }
     if (!check_value('nr')) {
         merror += 'Hausnummer eingeben!\n';
-        ;
     }
 
     if (!check_value('plz')) {
@@ -777,7 +771,7 @@ function lade_dropdown2(drop_id, drop_new, url_param) {
             //alert(anz);
             for (e = 0; e < anz + 1; e++) {
                 if (e == 0) {
-                    element1.options[e].value = null
+                    element1.options[e].value = null;
                     element1.options[e].text = 'Bitte wählen';
                 } else {
                     element1.options[e].value = my_arr[e - 1][0];
@@ -847,7 +841,7 @@ function lade_dropdown(drop_id, drop_text, drop_new, url_param) {
             element1.options.length = anz + 1;
             for (e = 0; e < anz + 1; e++) {
                 if (e == 0) {
-                    element1.options[e].value = null
+                    element1.options[e].value = null;
                     element1.options[e].text = 'Bitte wählen';
                 } else {
                     element1.options[e].value = my_arr[e - 1][0];
@@ -1045,7 +1039,7 @@ function termin_suchen_btn(datum_ab) {
 
     if (err != '') {
         alert(err);
-        return;
+
     } else {
         //alert('Termin wird gesucht' + element1.options[selected_index].text + document.getElementById("datum_ab").value );
         var g_id = element1.options[selected_index].value;
@@ -1080,7 +1074,7 @@ function termin_suchen_btn1(datum_ab) {
 
     if (err != '') {
         alert(err);
-        return;
+
     } else {
         //alert('Termin wird gesucht' + element1.options[selected_index].text + document.getElementById("datum_ab").value );
         var g_id = element1.options[selected_index].value;
@@ -1116,7 +1110,7 @@ function termin_suchen_btn2(datum_ab) {
 
     if (err != '') {
         alert(err);
-        return;
+
     } else {
         //alert('Termin wird gesucht' + element1.options[selected_index].text + document.getElementById("datum_ab").value );
         var g_id = element1.options[selected_index].value;

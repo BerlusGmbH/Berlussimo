@@ -281,7 +281,7 @@ function uebersicht_einheit($einheit_id)
             echo "AUSZUG: <b>ungekündigt</b><br>";
             $link_vertrag_beenden =  "<a class='modal-trigger red-text' href='#terminate-contract'>Vertrag Beenden</a><br>";
         } else {
-            echo "<p class=auszug_bald>AUSZUG: $mietvertrag_bis_datum</p>";
+            echo "<p>AUSZUG: <span class='red-text'><b>$mietvertrag_bis_datum</b></span></p>";
         }
     }
     for ($i = 0; $i < count($mv_details_arr); $i++) {

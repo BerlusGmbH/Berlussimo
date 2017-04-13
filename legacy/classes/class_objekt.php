@@ -529,7 +529,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
                 ob_clean();
                 // ausgabepuffer leeren
                 $fileName = "$oo->objekt_kurzname - Mietaufstellung $monat-$jahr" . '.xls';
-                header("Content-type: application/vnd.ms-excel");
+                header("Content-Type: application/vnd.ms-excel");
                 header("Content-Disposition: attachment; filename=$fileName");
                 header("Content-Disposition: inline; filename=$fileName");
                 ob_clean();
@@ -631,7 +631,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
                     ob_clean();
                     // ausgabepuffer leeren
                     $fileName = "$oo->objekt_kurzname - Mietaufstellung $monat-$jahr" . '.xls';
-                    header("Content-type: application/vnd.ms-excel");
+                    header("Content-Type: application/vnd.ms-excel");
                     header("Content-Disposition: attachment; filename=$fileName");
                     header("Content-Disposition: inline; filename=$fileName");
                     ob_clean();

@@ -265,7 +265,7 @@ switch ($schritt) {
                 $form->mietbuchung_stornieren_intern(request()->input('MIETBUCHUNGEN')[$a]);
             }
             /* Nach dem Stornieren weiterleiten */
-            weiterleiten(route('web::miete_buchen::legacy', false), 3);
+            weiterleiten(route('web::miete_buchen::legacy', false));
         }
         $form->ende_formular();
         break;

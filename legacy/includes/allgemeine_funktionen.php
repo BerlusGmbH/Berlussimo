@@ -167,7 +167,7 @@ function last_id($tabelle)
     $select_spaltenname = $spaltenname_in_gross . $zusatz;
     $result = DB::select("SELECT $select_spaltenname FROM $spaltenname_in_gross ORDER BY $select_spaltenname DESC LIMIT 0,1");
     foreach ($result as $row)
-        return $row['$select_spaltenname'];
+        return $row[$select_spaltenname];
 }
 
 /* liefert true wenn datum1, kleiner als datum 2 */

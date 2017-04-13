@@ -7128,7 +7128,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
             $gk = new geldkonto_info ();
             $gk->geld_konto_details($geldkonto_id);
             $fileName = "$gk->geldkonto_bezeichnung - Buchungskonten summiert $jahr" . '.xls';
-            header("Content-type: application/vnd.ms-excel");
+            header("Content-Type: application/vnd.ms-excel");
             header("Content-Disposition: inline; filename=$fileName");
 
             echo "<html><head>";

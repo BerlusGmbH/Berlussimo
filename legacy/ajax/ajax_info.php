@@ -206,19 +206,13 @@ ORDER BY LPAD( EINHEIT_KURZNAME, LENGTH( EINHEIT_KURZNAME ) ,  '1' ) ASC ");
             $einheiten = $einheiten->get();
             foreach ($einheiten as $einheit) {
                 foreach ($einheit->mietvertraege as $mietvertrag) {
-                    if ($mietvertrag->isActive()) {
-                        if ($vorwahl_bez == $mietvertrag->MIETVERTRAG_ID) {
-                            echo "$einheit->EINHEIT_KURZNAME*$mietvertrag->MIETVERTRAG_ID*$mietvertrag->mieter_namen|";
-                        } else {
-                            echo "$einheit->EINHEIT_KURZNAME*$mietvertrag->MIETVERTRAG_ID*$mietvertrag->mieter_namen|";
-                        }
-                    } else {
-                        if ($vorwahl_bez == $mietvertrag->MIETVERTRAG_ID) {
-                            echo "ALTMIETER: $einheit->EINHEIT_KURZNAME*$mietvertrag->MIETVERTRAG_ID*$mietvertrag->mieter_namen|";
-                        } else {
-                            echo "ALTMIETER: $einheit->EINHEIT_KURZNAME*$mietvertrag->MIETVERTRAG_ID*$mietvertrag->mieter_namen|";
-                        }
+                    $prefix = '';
+                    if (!$mietvertrag->isActive('<=')) {
+                        $prefix = 'NEUMIETER: ';
+                    } elseif (!$mietvertrag->isActive('>=')) {
+                        $prefix = 'ALTMIETER: ';
                     }
+                    echo $prefix . "$einheit->EINHEIT_KURZNAME*$mietvertrag->MIETVERTRAG_ID*$mietvertrag->mieter_namen|";
                 }
             }
         }
@@ -310,7 +304,6 @@ ORDER BY LPAD( EINHEIT_KURZNAME, LENGTH( EINHEIT_KURZNAME ) ,  '1' ) ASC ");
         $result = DB::select("SELECT * FROM RECHNUNGEN_POSITIONEN WHERE BELEG_NR=? && AKTUELL='1' ORDER BY POSITION ASC", [$belegnr]);
         if (!empty($result)) {
             $rechnungs_positionen_arr = $result;
-            header('Content-Type: text/html; charset=UTF-8');
             echo "<table id='positionen_tab'>\n";
             echo "<tr>";
             echo "<th>Ändern</th>";

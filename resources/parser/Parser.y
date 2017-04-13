@@ -305,7 +305,7 @@ fterm(res) ::= AKTIV.
         $class = Relations::columnColumnToClass($this->stack(self::COLUMN, 2),$this->stack(self::COLUMN));
     }
 
-    res = $class::aktiv();
+    res = $class::active();
 }
 fterm(res) ::= NOT AKTIV.
 {
@@ -315,7 +315,7 @@ fterm(res) ::= NOT AKTIV.
         $class = Relations::columnColumnToClass($this->stack(self::COLUMN, 2),$this->stack(self::COLUMN));
     }
 
-    res = $class::notAktiv();
+    res = $class::notActive();
 }
 fterm(res) ::= AKTIV COMPARATOR(c) VALUE(v).
 {
@@ -327,7 +327,7 @@ fterm(res) ::= AKTIV COMPARATOR(c) VALUE(v).
         $class = Relations::columnColumnToClass($this->stack(self::COLUMN, 2),$this->stack(self::COLUMN));
     }
 
-    res = $class::aktiv($comparator, $value);
+    res = $class::active($comparator, $value);
 }
 fterm(res) ::= NOT AKTIV COMPARATOR(c) VALUE(v).
 {
@@ -339,7 +339,7 @@ fterm(res) ::= NOT AKTIV COMPARATOR(c) VALUE(v).
         $class = Relations::columnColumnToClass($this->stack(self::COLUMN, 2),$this->stack(self::COLUMN));
     }
 
-    res = $class::notAktiv($comparator, $value);
+    res = $class::notActive($comparator, $value);
 }
 views(res) ::= constraints(v).
 {

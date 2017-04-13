@@ -202,7 +202,7 @@ if (request()->has('option')) {
             fputs($fp, "$ausgabe");
             fclose($fp);
             ob_clean(); //ausgabepuffer leeren
-            header("Content-type: text/plain; charset=UTF-8");
+            header("Content-Type: text/plain; charset=UTF-8");
             readfile("$doc_r/cal/textfile2.txt");
             break;
 

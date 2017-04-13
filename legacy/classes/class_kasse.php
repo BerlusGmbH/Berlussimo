@@ -516,7 +516,7 @@ class kasse extends rechnung
     {
         $fileName = 'kasse.xls';
         ob_clean(); // ausgabepuffer leeren
-        header("Content-type: application/vnd.ms-excel");
+        header("Content-Type: application/vnd.ms-excel");
         header("Content-Disposition: attachment; filename=$fileName");
         $my_array = DB::select("SELECT * FROM KASSEN_BUCH WHERE KASSEN_ID = '$kassen_id' && AKTUELL='1' && DATUM BETWEEN '$jahr-01-01' AND '$jahr-12-31' ORDER BY DATUM, KASSEN_BUCH_ID ASC");
         $numrows = count($my_array);
