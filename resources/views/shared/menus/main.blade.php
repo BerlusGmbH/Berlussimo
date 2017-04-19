@@ -1,5 +1,5 @@
 <div class="mainmenu">
-    <div class="card grey">
+    <div class="card grey darken-3">
         <div class="card-content">
             <div class="row">
                 @if(check_user_links(Auth::user()->id, 'partner'))

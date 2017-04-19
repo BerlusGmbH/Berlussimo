@@ -33,16 +33,23 @@
 // 1. Colors
 // ==========================================================================
 
-$primary-color: color("grey", "base") !default;
+$primary-color: color("grey", "darken-3") !default;
 $primary-color-dark: darken($primary-color, 15%) !default;
+$primary-color-light: lighten($primary-color, 15%) !default;
 
-$secondary-color: color("grey", "darken-1") !default;
-$link-color: color("grey", "darken-2") !default;
+$secondary-color: color("blue", "darken-2") !default;
+$link-color: $secondary-color !default;
 
 // 4. Cards
 // ==========================================================================
 
-$card-link-color: color("grey", "darken-2") !default;
+$card-link-color: $secondary-color !default;
+
+// 10. Forms
+// ==========================================================================
+
+// Text Inputs + Textarea
+$input-border-color: $primary-color !default;
 
 // 17. Tabs
 // ==========================================================================
