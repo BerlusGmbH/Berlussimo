@@ -73,7 +73,7 @@
                                    class="validate {{$errors->has('hk-advance') ? 'invalid' : ''}}"
                                    value="{{old('hk-advance')}}">
                             <span class="error-block">{{$errors->has('hk-advance') ? $errors->first('hk-advance') : ''}}</span>
-                            <label for="nk-advance">Heizkosten Vorauszahlung</label>
+                            <label for="hk-advance">Heizkosten Vorauszahlung</label>
                         </div>
                         <div class="input-field col-xs-12 end-xs">
                             <button class="btn waves-effect waves-light" type="submit">Erfassen
