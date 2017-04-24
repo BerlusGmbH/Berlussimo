@@ -14,8 +14,6 @@
     @include('shared.entities.detail')
 @elseif($entity instanceof \App\Models\Auftraege)
     @include('shared.entities.auftrag')
-@elseif($entity instanceof \App\Models\User)
-    @include('shared.entities.benutzer')
 @elseif($entity instanceof \App\Models\Partner)
     @include('shared.entities.partner')
 @elseif($entity instanceof \App\Models\Wirtschaftseinheiten)

@@ -2037,10 +2037,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
             $kontroll_tab [$a] ['G_KOS_BEZ'] = $g_kos_bez;
         }
 
-        if (session()->get('berechnung_ok') == 'OK') {
-            $this->bk_abrechnung_speichern($this->profil_id, session()->get('partner_id'), $this->bk_jahr, $wirt_e, $wirt_name, $datum, $anz_einheiten, $qm_gesamt, $qm_wohnraum, $qm_gewerbe, $anz_konten, $anz_abrechnungen, $ersteller, $partner_id, $kontenrahmen_id);
-        }
-
         /* Anfang BK-Abrechnungsseiten */
         $keys = array_keys($bk_res_arr);
         // unsortiert mit Kontrolle!!!!
@@ -2438,16 +2434,6 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
         $dateiname = "$this->bk_berechnungs_datum $this->bk_bezeichnung - $this->bk_jahr.pdf";
         $pdf_opt ['Content-Disposition'] = $dateiname;
         $pdf->ezStream($pdf_opt);
-    }
-
-    /* objekte, haus usw, vor wirtschaftseinheiten implementation */
-
-    function bk_abrechnung_speichern($profil_id, $profil_bez, $profil_jahr, $wirt_e, $wirt_name, $datum, $anz_einheiten, $qm_gesamt, $qm_wohnraum, $qm_gewerbe, $anz_konten, $anz_abrechnungen, $ersteller, $partner_id, $kontenrahmen_id)
-    {
-        $last_b_id = $this->last_id('BK_ABRECHNUNGEN', 'B_ID') + 1;
-
-        DB::insert("INSERT INTO BK_ABRECHNUNGEN VALUES (NULL, '$last_b_id', '$profil_id', '$profil_bez','$profil_jahr', '$wirt_e', '$wirt_name', '$datum', '$anz_einheiten', '$qm_gesamt', '$qm_wohnraum', '$qm_gewerbe', '$anz_konten', '$anz_abrechnungen', '$ersteller', '$partner_id','$kontenrahmen_id','1')");
-        return $last_b_id;
     }
 
     function pdf_uebersicht_profil($pdf, $profil_id)

@@ -3,14 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * App\Models\User
  *
  * @mixin \Eloquent
  */
-class Credential extends Model
+class Credential extends Model implements AuditableContract
 {
+    use Auditable;
+    use SoftDeletes;
+
     /**
      * The attributes that are not mass assignable.
      *
@@ -28,6 +34,4 @@ class Credential extends Model
     protected $hidden = [
         'password', 'remember_token', 'api_token'
     ];
-
-
 }

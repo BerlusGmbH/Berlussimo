@@ -623,7 +623,7 @@ class buchen
         }
 
         if ($typ == 'Benutzer') {
-            $users = \App\Models\User::all();
+            $users = \App\Models\Person::has('jobsAsEmployee')->defaultOrder()->get();
             foreach ($users as $user) {
                 if ($vorwahl_bez == $user->id) {
                     echo "<option value='$user->id' selected>$user->name</option>";

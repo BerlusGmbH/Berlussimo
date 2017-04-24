@@ -94,10 +94,40 @@
                 </div>
             </div>
         @endif
+        @if(!$person->jobsAsEmployee->isEmpty())
+            <div class="col-xs-12 col-sm-6">
+                @include('shared.cards.jobs', ['jobs' => $person->jobsAsEmployee, 'title' => 'Anstellungen'])
+            </div>
+        @endif
+        @if(!$person->roles->isEmpty())
+            <div class="col-xs-12 col-sm-6">
+                @include('shared.cards.roles', ['roles' => $person->roles, 'title' => 'Rollen'])
+            </div>
+        @endif
         @if(!$person->audits->isEmpty())
             <div class="col-xs-12 col-sm-6">
                 @include('shared.cards.audits', ['audits' => $person->audits, 'title' => 'Historie'])
             </div>
         @endif
     </div>
+    <div class="fixed-action-btn">
+        <a class="btn-floating btn-large">
+            <i class="large mdi mdi-account-edit"></i>
+        </a>
+        <ul>
+            <li><a class="btn-floating" href="#credentials"><i class="mdi mdi-lock"></i></a></li>
+            <li><a class="btn-floating" href="#jobs"><i class="mdi mdi-worker"></i></a></li>
+            <li><a class="btn-floating"
+                   href="{{route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'PERSON', 'detail_id' => $person->id])}}"><i
+                            class="mdi mdi-table"></i></a></li>
+            <li><a class="btn-floating" href="#edit"><i class="mdi mdi-pencil"></i></a></li>
+        </ul>
+    </div>
+    @if(is_null($person->credential))
+        @include('modules.personen.credentials.create', ['person' => $person, 'id' => 'credentials'])
+    @else
+        @include('modules.personen.credentials.edit', ['person' => $person, 'id' => 'credentials'])
+    @endif
+    @include('modules.personen.edit', ['person' => $person, 'id' => 'edit'])
+    @include('modules.personen.jobs.create', ['person' => $person, 'id' => 'jobs'])
 @endsection

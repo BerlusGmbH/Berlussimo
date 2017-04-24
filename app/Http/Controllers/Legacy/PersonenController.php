@@ -6,14 +6,14 @@ namespace App\Http\Controllers\Legacy;
 use App;
 use App\Http\Controllers\Traits\Indexable;
 use App\Http\Requests\Legacy\PersonenRequest;
-use App\Http\Requests\Modules\Person\StorePersonRequest;
+use App\Http\Requests\Modules\Persons\StoreRequest;
+use App\Http\Requests\Modules\Persons\UpdateRequest;
 use App\Models\Details;
 use App\Models\Person;
 use App\Services\Parser\Lexer;
 use App\Services\Parser\Parser;
 use Carbon\Carbon;
 use DB;
-use URL;
 
 class PersonenController extends LegacyController
 {
@@ -59,7 +59,14 @@ class PersonenController extends LegacyController
 
     public function show($id, PersonenRequest $request)
     {
-        $person = Person::with(['mietvertraege.einheit.haus.objekt', 'kaufvertraege.einheit.haus.objekt', 'details', 'audits'])->findOrFail($id);
+        $person = Person::with([
+            'mietvertraege.einheit.haus.objekt',
+            'kaufvertraege.einheit.haus.objekt',
+            'details', 'audits', 'roles',
+            'credential' => function ($query) {
+                $query->withTrashed();
+            }
+        ])->findOrFail($id);
         return view('modules.personen.show', ['person' => $person]);
     }
 
@@ -77,7 +84,7 @@ class PersonenController extends LegacyController
         }
     }
 
-    public function store(StorePersonRequest $request)
+    public function store(StoreRequest $request)
     {
         return DB::transaction(function () {
             $person = Person::create(
@@ -115,20 +122,9 @@ class PersonenController extends LegacyController
         });
     }
 
-    public function edit($id, PersonenRequest $request)
+    public function update(UpdateRequest $request, Person $person)
     {
-        session()->put('url.intended', URL::previous());
-        $person = Person::findOrFail($id);
-        return response()
-            ->view('modules.personen.edit', ['person' => $person])
-            ->header('Cache-Control', 'no-store');
-    }
-
-    public function update($id, PersonenRequest $request)
-    {
-        $person = Person::findOrFail($id);
-        $person->fill(request()->only(['name', 'first_name', 'birthday']));
-        $person->save();
-        return redirect()->intended(route('web::personen::show', ['id' => $person->id]));
+        $person->update(request()->only(['name', 'first_name', 'birthday']));
+        return redirect()->back();
     }
 }

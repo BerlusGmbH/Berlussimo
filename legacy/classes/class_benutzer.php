@@ -17,7 +17,7 @@ class benutzer
 
     function get_benutzer_id($benutzername)
     {
-        $user = \App\Models\User::where('name', $benutzername)->first();
+        $user = \App\Models\Person::where('name', $benutzername)->has('jobsAsEmployee')->first();
         return $user == null ? null : $user->id;
     }
 
@@ -58,7 +58,7 @@ class benutzer
                 }
                 $link_ber = "<a href='" . route('web::benutzer::legacy', ['option' => 'berechtigungen', 'b_id' => $b_id]) . "'>Berechtigungen</a>";
                 $link_aendern = "<a href='" . route('web::benutzer::legacy', ['option' => 'aendern', 'b_id' => $b_id]) . "'>Ändern</a>";
-                $link_details = "<a href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'BENUTZER', 'detail_id' => $b_id]) . "'>Details</a>";
+                $link_details = "<a href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'PERSON', 'detail_id' => $b_id]) . "'>Details</a>";
                 echo "<tr class=\"zeile$z\"><td>$benutzername</td><td sorttable_customkey=\"$geb_j$geb_m$geb_t\">$geb_dat</td><td sorttable_customkey=\"$ein_j$ein_m$ein_t\">$eintritt</td><td>$p->partner_name</td><td>$link_ber $link_aendern $link_details</td></tr>";
 
                 if ($z == 2) {
@@ -76,7 +76,7 @@ class benutzer
      */
     function get_all_users_arr()
     {
-        $users = \App\Models\User::orderBy('name', 'asc')->get();
+        $users = \App\Models\Person::has('jobsAsEmployee')->defaultOrder()->get();
         return $users;
     }
 
@@ -107,37 +107,26 @@ class benutzer
 
     function get_benutzer_infos($b_id)
     {
-        $b = $this->get_user_info($b_id);
+        $b = \App\Models\Person::with(['jobsAsEmployee', 'emails'])->findOrFail($b_id);;
         if (isset($b)) {
-            $this->benutzername = $b['name'];
-            $this->benutzer_id = $b['id'];
-            $this->passwort = $b['password'];
+            $this->benutzername = $b->name;
+            $this->benutzer_id = $b->id;
+            $this->geb_datum = $b->birthday;
 
-            $this->stundensatz = $b['hourly_rate'];
-            $this->geb_datum = $b['birthday'];
-            $this->gewerk_id = $b['trade_id'];
-            $this->datum_eintritt = $b['join_date'];
-            $this->datum_austritt = $b['leave_date'];
+            if (isset($b->jobsAsEmployee[0])) {
+                $job = $b->jobsAsEmployee[0];
+                $this->stundensatz = $job->hourly_rate;
+                $this->gewerk_id = $job->job_title_id;
+                $this->datum_eintritt = $job->join_date;
+                $this->datum_austritt = $job->leave_date;
+                $this->urlaub = $job->holidays;
+                $this->stunden_wo = $job->hours_per_week;
+            }
 
-            $this->urlaub = $b['holidays'];
-            $this->stunden_wo = $b['hours_per_week'];
-            $this->benutzer_email = $b['email'];
-        }
-    }
-
-    function get_user_info($b_id)
-    {
-        $result = DB::select("SELECT * FROM users JOIN BENUTZER_PARTNER ON (users.id=BP_BENUTZER_ID)  WHERE users.id=? GROUP BY users.id  ORDER BY `BP_PARTNER_ID`, trade_id, users.name ASC LIMIT 0,1", [$b_id]);
-
-        if (!empty($result)) {
-            return $result[0];
-        } else {
-            $result = DB::select("SELECT * FROM users WHERE users.id=? LIMIT 0,1", [$b_id]);
-            if (!empty($result)) {
-                return $result[0];
+            if (isset($b->emails[0])) {
+                $this->benutzer_email = $b->emails[0];
             }
         }
-        return null;
     }
 
     function berechtigungen($b_id)
@@ -299,23 +288,26 @@ class benutzer
      */
     function get_all_users_arr2($alle = 1)
     {
-        $users = \App\Models\User::orderBy('name', 'asc');
+        $users = \App\Models\Person::defaultOrder();
         if ($alle != 1) {
-            $heute = date("Y-m-d");
-            $users = $users->where('leave_date', '>', $heute)->orWhereNull('leave_date');
+            $users->whereHas('jobsAsEmployee', function ($query) {
+                $query->active();
+            });
+        } else {
+            $users->has('jobsAsEmployee');
         }
         return $users->get();
     }
 
     function dropdown_benutzer2($label, $name, $id, $js)
     {
-        $b = $this->get_all_users_arr();
-        if (!$b->isEmpty()) {
+        $users = $this->get_all_users_arr();
+        if (!$users->isEmpty()) {
             echo "<label for=\"$id\">$label</label><select id=\"$id\" name=\"$name\" size=\"1\" $js>";
             echo "<option value=\"Alle\" selected>Alle</option>";
-            foreach ($b as $benutzer) {
-                $benutzername = $benutzer->name;
-                $benutzer_id = $benutzer->id;
+            foreach ($users as $user) {
+                $benutzername = $user->name;
+                $benutzer_id = $user->id;
                 if (Auth::user()->id == $benutzer_id) {
                     echo "<option value=\"$benutzer_id\" selected>$benutzername</option>";
                 } else {

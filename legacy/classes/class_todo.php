@@ -172,49 +172,6 @@ class todo
         echo "</div>";
     }
 
-    function kontaktdaten_anzeigen_mieter($einheit_id)
-    {
-        $ee = new einheit ();
-        $status = $ee->get_einheit_status($einheit_id);
-        if ($status == true) {
-            $mv_id = $ee->get_last_mietvertrag_id($einheit_id);
-        } else {
-            $mv_id = null;
-        }
-        if (empty ($mv_id)) {
-            /* Nie vermietet */
-            $ee->get_einheit_info($einheit_id);
-            return "<b>Leerstand</b>\n$ee->haus_strasse $ee->haus_nummer\n<b>Lage: $ee->einheit_lage</b>\n$ee->haus_plz $ee->haus_stadt";
-        } else {
-            $m = new mietvertraege ();
-            $m->get_mietvertrag_infos_aktuell($mv_id);
-            $result = DB::select("SELECT PERSON_MIETVERTRAG_PERSON_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_MIETVERTRAG_ID='$mv_id' && PERSON_MIETVERTRAG_AKTUELL='1' ORDER BY PERSON_MIETVERTRAG_ID ASC");
-            if (!empty($result)) {
-                $kontaktdaten = "Lage: $m->einheit_lage<br>$m->personen_name_string_u<br>$m->haus_strasse $m->haus_nr, $m->haus_plz $m->haus_stadt<br>";
-                foreach($result as $row) {
-                    $person_id = $row ['PERSON_MIETVERTRAG_PERSON_ID'];
-                    $arr = $this->finde_detail_kontakt_arr('PERSON', $person_id);
-                    if (!empty($arr)) {
-                        $anz = count($arr);
-                        for ($a = 0; $a < $anz; $a++) {
-                            $dname = $arr [$a] ['DETAIL_NAME'];
-                            $dinhalt = $arr [$a] ['DETAIL_INHALT'];
-                            $kontaktdaten .= "<br><b>$dname</b>:$dinhalt";
-                        }
-                    }
-                }
-                return $kontaktdaten;
-            }
-        }
-    }
-
-    function finde_detail_kontakt_arr($tab, $id)
-    {
-        $db_abfrage = "SELECT DETAIL_NAME, DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = '$tab' && (DETAIL_NAME LIKE '%tel%'or DETAIL_NAME LIKE '%fax%' or DETAIL_NAME LIKE '%mobil%' or DETAIL_NAME LIKE '%handy%' OR DETAIL_NAME LIKE '%mail%' OR DETAIL_NAME LIKE '%anschrift%') && DETAIL_ZUORDNUNG_ID = '$id' && DETAIL_AKTUELL = '1' ORDER BY DETAIL_NAME ASC";
-        $resultat = DB::select($db_abfrage);
-        return $resultat;
-    }
-
     function rss_feed($benutzer_id)
     {
         ob_clean();
@@ -511,6 +468,49 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             $f->send_button_js('BTN_alle_erl', 'Markierte als ERLDIGT kennzeichnen!!!', null);
             $f->ende_formular();
         }
+    }
+
+    function kontaktdaten_anzeigen_mieter($einheit_id)
+    {
+        $ee = new einheit ();
+        $status = $ee->get_einheit_status($einheit_id);
+        if ($status == true) {
+            $mv_id = $ee->get_last_mietvertrag_id($einheit_id);
+        } else {
+            $mv_id = null;
+        }
+        if (empty ($mv_id)) {
+            /* Nie vermietet */
+            $ee->get_einheit_info($einheit_id);
+            return "<b>Leerstand</b>\n$ee->haus_strasse $ee->haus_nummer\n<b>Lage: $ee->einheit_lage</b>\n$ee->haus_plz $ee->haus_stadt";
+        } else {
+            $m = new mietvertraege ();
+            $m->get_mietvertrag_infos_aktuell($mv_id);
+            $result = DB::select("SELECT PERSON_MIETVERTRAG_PERSON_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_MIETVERTRAG_ID='$mv_id' && PERSON_MIETVERTRAG_AKTUELL='1' ORDER BY PERSON_MIETVERTRAG_ID ASC");
+            if (!empty($result)) {
+                $kontaktdaten = "Lage: $m->einheit_lage<br>$m->personen_name_string_u<br>$m->haus_strasse $m->haus_nr, $m->haus_plz $m->haus_stadt<br>";
+                foreach ($result as $row) {
+                    $person_id = $row ['PERSON_MIETVERTRAG_PERSON_ID'];
+                    $arr = $this->finde_detail_kontakt_arr('PERSON', $person_id);
+                    if (!empty($arr)) {
+                        $anz = count($arr);
+                        for ($a = 0; $a < $anz; $a++) {
+                            $dname = $arr [$a] ['DETAIL_NAME'];
+                            $dinhalt = $arr [$a] ['DETAIL_INHALT'];
+                            $kontaktdaten .= "<br><b>$dname</b>:$dinhalt";
+                        }
+                    }
+                }
+                return $kontaktdaten;
+            }
+        }
+    }
+
+    function finde_detail_kontakt_arr($tab, $id)
+    {
+        $db_abfrage = "SELECT DETAIL_NAME, DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = '$tab' && (DETAIL_NAME LIKE '%tel%'or DETAIL_NAME LIKE '%fax%' or DETAIL_NAME LIKE '%mobil%' or DETAIL_NAME LIKE '%handy%' OR DETAIL_NAME LIKE '%mail%' OR DETAIL_NAME LIKE '%anschrift%') && DETAIL_ZUORDNUNG_ID = '$id' && DETAIL_AKTUELL = '1' ORDER BY DETAIL_NAME ASC";
+        $resultat = DB::select($db_abfrage);
+        return $resultat;
     }
 
     function form_verschieben($t_id)
@@ -1339,7 +1339,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $pdf->ezText("<b>Freigabe bis: $rep_eur EUR Netto</b>");
             }
             $dd = new detail ();
-            $b_tel = $dd->finde_detail_inhalt('BENUTZER', session()->get('benutzer_id'), 'Telefon');
+            $b_tel = $dd->finde_detail_inhalt('PERSON', session()->get('benutzer_id'), 'Telefon');
             if (empty ($b_tel)) {
                 $b_tel = $dd->finde_detail_inhalt('PARTNER_LIEFERANT', session()->get('partner_id'), 'Telefon');
             }

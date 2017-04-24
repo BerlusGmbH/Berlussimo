@@ -11,7 +11,6 @@ use App\Models\Mietvertraege;
 use App\Models\Objekte;
 use App\Models\Partner;
 use App\Models\Person;
-use App\Models\User;
 use App\Models\Wirtschaftseinheiten;
 use App\Services\PhoneLocator;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -28,11 +27,12 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Relation::morphMap([
+            'Person' => Person::class,
             'PERSON' => Person::class,
             'OBJEKT' => Objekte::class,
             'HAUS' => Haeuser::class,
             'EINHEIT' => Einheiten::class,
-            'Benutzer' => User::class,
+            'Benutzer' => Person::class,
             'Partner' => Partner::class,
             'Einheit' => Einheiten::class,
             'Haus' => Haeuser::class,

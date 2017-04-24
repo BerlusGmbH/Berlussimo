@@ -25,6 +25,14 @@ Route::group(['namespace' => 'Auth', 'middleware' => ['web']], function () {
     Route::post('password/reset', 'ResetPasswordController@reset');
 });
 
+Route::group(['namespace' => 'Modules', 'middleware' => ['web', 'auth'], 'as' => 'web::'], function () {
+    Route::group(['namespace' => 'Persons'], function () {
+        Route::match(['put', 'patch'], 'persons/{person}/credential', 'CredentialController@update')->name('persons.credentials.update');
+        Route::post('persons/{person}/credential', 'CredentialController@store')->name('persons.credentials.store');
+        Route::resource('persons.jobs', 'JobController', ['only' => ['store', 'update']]);
+    });
+});
+
 Route::group(['namespace' => 'Legacy', 'middleware' => ['web', 'auth'], 'as' => 'web::'], function () {
     Route::match(['get', 'post'], '/', 'IndexController@request')->name('legacy');
 
@@ -108,10 +116,6 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['web', 'auth'], 'as' => 
         Route::match(['get', 'post'], '/', 'LeerstandController@request')->name('legacy');
     });
 
-    Route::group(['prefix' => 'listen', 'as' => 'listen::'], function () {
-        Route::match(['get', 'post'], '/', 'ListenController@request')->name('legacy');
-    });
-
     Route::group(['prefix' => 'mietanpassungen', 'as' => 'mietanpassungen::'], function () {
         Route::match(['get', 'post'], '/', 'MietanpassungenController@request')->name('legacy');
     });
@@ -159,8 +163,7 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['web', 'auth'], 'as' => 
         Route::get('index', 'PersonenController@index')->name('index');
         Route::get('create', 'PersonenController@create')->name('create');
         Route::post('store', 'PersonenController@store')->name('store');
-        Route::get('{id}/edit', 'PersonenController@edit')->name('edit');
-        Route::match(['put', 'patch'], '{id}', 'PersonenController@update')->name('update');
+        Route::match(['put', 'patch'], '{person}', 'PersonenController@update')->name('update');
         Route::get('{id}', 'PersonenController@show')->name('show');
     });
 

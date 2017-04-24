@@ -25,12 +25,12 @@ class personal
                     $p = new partners ();
                     $p->get_partner_name($partner_id);
                 }
-                if (!$this->check_datensatz_sepa(session()->get('geldkonto_id'), "Lohn $monat/$jahr, $b_name_g", 'Benutzer', $b_id, 4000)) {
+                if (!$this->check_datensatz_sepa(session()->get('geldkonto_id'), "Lohn $monat/$jahr, $b_name_g", 'Person', $b_id, 4000)) {
                     echo "<tr class=\"zeile$z\">";
                     echo "<td><form id=\"sepa_lg_$index\"></form>$b_name_g</td><td>$p->partner_name</td>";
                     $sep = new sepa ();
                     echo "<td>";
-                    if ($sep->dropdown_sepa_geldkonten('Überweisen an', 'empf_sepa_gk_id', "empf_sepa_gk_id", 'Benutzer', $b_id, "sepa_lg_" . $index) == true) {
+                    if ($sep->dropdown_sepa_geldkonten('Überweisen an', 'empf_sepa_gk_id', "empf_sepa_gk_id", 'Person', $b_id, "sepa_lg_" . $index) == true) {
                         echo "</td>";
                         echo "<td>";
                         $lohn = $this->get_mitarbeiter_summe(session()->get('geldkonto_id'), 4000, $b_name);

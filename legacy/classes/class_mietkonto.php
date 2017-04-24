@@ -218,26 +218,6 @@ ORDER BY BUCHUNGSNUMMER DESC");
 
     /* Funktion zur Berechnung der Summen der gebuchten Zahlbeträge alle Kontoauszüge aus dem aktuellen Monat */
 
-    function summe_forderung_monatlich($mietvertrag_id, $monat, $jahr)
-    {
-        //TODO: change return value
-        $laenge = strlen($monat);
-        if ($laenge == 1) {
-            $monat = '0' . $monat;
-        }
-        $result = DB::select("SELECT SUM(BETRAG) AS SUMME_FORDERUNG, SUM(MWST_ANTEIL) AS MWST_ANTEIL FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat'  && KOSTENKATEGORIE NOT LIKE '%rate%' && KOSTENKATEGORIE NOT LIKE '%abrechnung%' && KOSTENKATEGORIE NOT LIKE '%mahngebühr%' && KOSTENKATEGORIE NOT LIKE 'Saldo Vortrag Vorverwaltung' && KOSTENKATEGORIE NOT LIKE '%energie%' ORDER BY ANFANG ASC");
-        if (empty($result)) {
-            return '0.00';
-        } else {
-            $row = $result[0];
-            if ($row ['SUMME_FORDERUNG'] != null) {
-                return $row ['SUMME_FORDERUNG'] . '|' . $row ['MWST_ANTEIL'];
-            } else {
-                return 0.00;
-            }
-        }
-    }
-
     function mietkontostand_anzeigen($mietvertrag_id)
     {
         $a = new miete ();
@@ -276,8 +256,6 @@ ORDER BY BUCHUNGSNUMMER DESC");
         }
         echo "</p>";
     }
-
-    /* Funktion zur Darstellung der Grundinformationen zum Mietvertrag wie z.B. Mieternamen, Saldo, Einheit_kurzname ... */
 
     function buchungsauswahl($mietvertrag_id)
     {
@@ -356,7 +334,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         /* ENDE - Buchungsmaske für andere Beträge */
     }
 
-    /* Funktion (KURZFORM) zur Darstellung der Grundinformationen zum Mietvertrag wie z.B. Mieternamen, Saldo, Einheit_kurzname ... */
+    /* Funktion zur Darstellung der Grundinformationen zum Mietvertrag wie z.B. Mieternamen, Saldo, Einheit_kurzname ... */
 
     function letzte_buchungen_zu_mietvertrag($mietvertrag_id)
     {
@@ -405,12 +383,34 @@ ORDER BY BUCHUNGSNUMMER DESC");
         echo "</div>";
     }
 
-    /* Funktion mit der ersten Buchungsmaske, d.h. Automatisches Buchen oder manuelle Buchung */
+    /* Funktion (KURZFORM) zur Darstellung der Grundinformationen zum Mietvertrag wie z.B. Mieternamen, Saldo, Einheit_kurzname ... */
 
     function anzahl_zahlungsvorgaenge($mietvertrag_id)
     {
         $result = DB::select("SELECT DATUM FROM GELD_KONTO_BUCHUNGEN WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mietvertrag_id' && AKTUELL='1' && DATE_FORMAT( DATUM, '%Y-%m' ) = '" . $this->jahr_heute . "-" . $this->monat_heute . "'");
         return count($result);
+    }
+
+    /* Funktion mit der ersten Buchungsmaske, d.h. Automatisches Buchen oder manuelle Buchung */
+
+    function summe_forderung_monatlich($mietvertrag_id, $monat, $jahr)
+    {
+        //TODO: change return value
+        $laenge = strlen($monat);
+        if ($laenge == 1) {
+            $monat = '0' . $monat;
+        }
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME_FORDERUNG, SUM(MWST_ANTEIL) AS MWST_ANTEIL FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat'  && KOSTENKATEGORIE NOT LIKE '%rate%' && KOSTENKATEGORIE NOT LIKE '%abrechnung%' && KOSTENKATEGORIE NOT LIKE '%mahngebühr%' && KOSTENKATEGORIE NOT LIKE 'Saldo Vortrag Vorverwaltung' && KOSTENKATEGORIE NOT LIKE '%energie%' ORDER BY ANFANG ASC");
+        if (empty($result)) {
+            return '0.00';
+        } else {
+            $row = $result[0];
+            if ($row ['SUMME_FORDERUNG'] != null) {
+                return $row ['SUMME_FORDERUNG'] . '|' . $row ['MWST_ANTEIL'];
+            } else {
+                return 0.00;
+            }
+        }
     }
 
     function summe_forderung_aus_vertrag($mietvertrag_id)
@@ -945,7 +945,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         $this->insert_geldbuchung($geldkonto_id, $buchungskonto, $kontoauszugsnr, $kontoauszugsnr, $bemerkung, $buchungsdatum, $kostentraeger_typ, $kostentraeger_id, $betrag);
     }
 
-function check_zahlbetrag($kontoauszugsnr, $kostentraeger_typ, $kostentraeger_id, $buchungsdatum, $betrag, $v_zweck, $geld_konto_id, $kontenrahmen_konto)
+    function check_zahlbetrag($kontoauszugsnr, $kostentraeger_typ, $kostentraeger_id, $buchungsdatum, $betrag, $v_zweck, $geld_konto_id, $kontenrahmen_konto)
     {
         $result = DB::select("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE KONTO_AUSZUGSNUMMER = '$kontoauszugsnr' && KOSTENTRAEGER_TYP='$kostentraeger_typ' && KOSTENTRAEGER_ID='$kostentraeger_id' && DATUM= '$buchungsdatum' && BETRAG= '$betrag' && VERWENDUNGSZWECK= '$v_zweck' && AKTUELL= '1' && GELDKONTO_ID= '$geld_konto_id' && KONTENRAHMEN_KONTO='$kontenrahmen_konto'");
         return !empty($result);
@@ -953,7 +953,7 @@ function check_zahlbetrag($kontoauszugsnr, $kostentraeger_typ, $kostentraeger_id
 
     // Funktion zur Erstellung eines Arrays mit Monaten und Jahren seit Einzug bis aktuelles Jahr/Monat
 
-        function monatsabschluesse_speichern($mietvertrag_id, $betrag)
+    function monatsabschluesse_speichern($mietvertrag_id, $betrag)
     {
         $datum = $this->datum_heute;
         $db_abfrage = "INSERT INTO MONATSABSCHLUSS VALUES (NULL, '$mietvertrag_id', '$datum', '$betrag', '1', NULL)";

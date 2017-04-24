@@ -87,6 +87,16 @@ class Person extends Authenticatable implements AuditableContract
         return $this->hasOne(Credential::class, 'id');
     }
 
+    public function jobsAsEmployee()
+    {
+        return $this->hasMany(Job::class, 'employee_id');
+    }
+
+    public function arbeitgeber()
+    {
+        return $this->belongsToMany(Partner::class, 'jobs', 'employee_id', 'employer_id');
+    }
+
     public function hasHinweis()
     {
         return $this->hinweise->count() > 0;

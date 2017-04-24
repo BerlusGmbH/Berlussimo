@@ -78,14 +78,18 @@ function get_partner_info($partner_id)
 
 function get_benutzername($benutzer_id)
 {
-    $user = \App\Models\User::find($benutzer_id);
+    $user = \App\Models\Person::find($benutzer_id);
     return isset($user) ? $user->name : null;
 }
 
 function get_gewerk_id($benutzer_id)
 {
-    $user = \App\Models\User::find($benutzer_id);
-    return isset($user) ? $user->trade_id : null;
+    $result = \App\Models\Person::find($benutzer_id);
+    if (isset($result) && isset($result->jobsAsEmplyee[0])) {
+        return $result->jobsAsEmplyee[0]->job_title_id;
+    } else {
+        return null;
+    }
 }
 
 
@@ -442,10 +446,10 @@ function get_termine_von_1tag($benutzer_id, $datum)
 function get_entfernung($lon, $lat)
 {
     if (session()->has('w_datum')) {
-        $result = DB::select("SELECT name, GEO_TERMINE.*, GEO_LON_LAT.*, DATE_FORMAT(GEO_TERMINE.DATUM, '%d.%m.%Y') AS DATUM_G, DATEDIFF(DATUM, DATE(NOW())) AS DIFF,round( acos( sin( $lat * ( pi( ) /180 ) ) * sin( LAT * ( pi( ) /180 ) ) + cos( $lat * ( pi( ) /180 ) ) * cos( LAT * ( pi( ) /180 ) ) * cos( ( $lon * ( pi( ) /180 ) ) - ( LON * ( pi( ) /180 ) ) ) ) *6370, 2 ) AS ENTF_KM, DATEDIFF(DATUM, DATE(NOW())) * round( acos( sin( $lat * ( pi( ) /180 ) ) * sin( LAT * ( pi( ) /180 ) ) + cos( $lat * ( pi( ) /180 ) ) * cos( LAT * ( pi( ) /180 ) ) * cos( ( $lon * ( pi( ) /180 ) ) - ( LON * ( pi( ) /180 ) ) ) ) *6370, 2 ) AS WERTUNG FROM `GEO_TERMINE`, GEO_LON_LAT, users WHERE GEO_LONLAT_ID = GEO_LON_LAT.DAT && DATUM >= DATE(NOW()) && users.id=GEO_TERMINE.BENUTZER_ID GROUP BY DATUM ORDER BY WERTUNG ASC, `ENTF_KM` ASC, DATUM ASC");
+        $result = DB::select("SELECT name, GEO_TERMINE.*, GEO_LON_LAT.*, DATE_FORMAT(GEO_TERMINE.DATUM, '%d.%m.%Y') AS DATUM_G, DATEDIFF(DATUM, DATE(NOW())) AS DIFF,round( acos( sin( $lat * ( pi( ) /180 ) ) * sin( LAT * ( pi( ) /180 ) ) + cos( $lat * ( pi( ) /180 ) ) * cos( LAT * ( pi( ) /180 ) ) * cos( ( $lon * ( pi( ) /180 ) ) - ( LON * ( pi( ) /180 ) ) ) ) *6370, 2 ) AS ENTF_KM, DATEDIFF(DATUM, DATE(NOW())) * round( acos( sin( $lat * ( pi( ) /180 ) ) * sin( LAT * ( pi( ) /180 ) ) + cos( $lat * ( pi( ) /180 ) ) * cos( LAT * ( pi( ) /180 ) ) * cos( ( $lon * ( pi( ) /180 ) ) - ( LON * ( pi( ) /180 ) ) ) ) *6370, 2 ) AS WERTUNG FROM `GEO_TERMINE`, GEO_LON_LAT, persons WHERE GEO_LONLAT_ID = GEO_LON_LAT.DAT && DATUM >= DATE(NOW()) && persons.id=GEO_TERMINE.BENUTZER_ID GROUP BY DATUM ORDER BY WERTUNG ASC, `ENTF_KM` ASC, DATUM ASC");
     } else {
         $wunschdatum = date_german2mysql(session()->get('w_datum'));
-        $result = DB::select("SELECT name, GEO_TERMINE.*, GEO_LON_LAT.*, DATE_FORMAT(GEO_TERMINE.DATUM, '%d.%m.%Y') AS DATUM_G, DATEDIFF(DATUM, '$wunschdatum') AS DIFF,round( acos( sin( $lat * ( pi( ) /180 ) ) * sin( LAT * ( pi( ) /180 ) ) + cos( $lat * ( pi( ) /180 ) ) * cos( LAT * ( pi( ) /180 ) ) * cos( ( $lon * ( pi( ) /180 ) ) - ( LON * ( pi( ) /180 ) ) ) ) *6370, 2 ) AS ENTF_KM, DATEDIFF(DATUM, '$wunschdatum') * round( acos( sin( $lat * ( pi( ) /180 ) ) * sin( LAT * ( pi( ) /180 ) ) + cos( $lat * ( pi( ) /180 ) ) * cos( LAT * ( pi( ) /180 ) ) * cos( ( $lon * ( pi( ) /180 ) ) - ( LON * ( pi( ) /180 ) ) ) ) *6370, 2 ) AS WERTUNG FROM `GEO_TERMINE`, GEO_LON_LAT, users WHERE GEO_LONLAT_ID = GEO_LON_LAT.DAT && DATUM >= '$wunschdatum' && users.id=GEO_TERMINE.BENUTZER_ID GROUP BY DATUM ORDER BY WERTUNG ASC, `ENTF_KM` ASC, DATUM ASC");
+        $result = DB::select("SELECT name, GEO_TERMINE.*, GEO_LON_LAT.*, DATE_FORMAT(GEO_TERMINE.DATUM, '%d.%m.%Y') AS DATUM_G, DATEDIFF(DATUM, '$wunschdatum') AS DIFF,round( acos( sin( $lat * ( pi( ) /180 ) ) * sin( LAT * ( pi( ) /180 ) ) + cos( $lat * ( pi( ) /180 ) ) * cos( LAT * ( pi( ) /180 ) ) * cos( ( $lon * ( pi( ) /180 ) ) - ( LON * ( pi( ) /180 ) ) ) ) *6370, 2 ) AS ENTF_KM, DATEDIFF(DATUM, '$wunschdatum') * round( acos( sin( $lat * ( pi( ) /180 ) ) * sin( LAT * ( pi( ) /180 ) ) + cos( $lat * ( pi( ) /180 ) ) * cos( LAT * ( pi( ) /180 ) ) * cos( ( $lon * ( pi( ) /180 ) ) - ( LON * ( pi( ) /180 ) ) ) ) *6370, 2 ) AS WERTUNG FROM `GEO_TERMINE`, GEO_LON_LAT, persons WHERE GEO_LONLAT_ID = GEO_LON_LAT.DAT && DATUM >= '$wunschdatum' && persons.id=GEO_TERMINE.BENUTZER_ID GROUP BY DATUM ORDER BY WERTUNG ASC, `ENTF_KM` ASC, DATUM ASC");
     }
 
     if (!empty($result)) {

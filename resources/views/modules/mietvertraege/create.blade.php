@@ -76,7 +76,7 @@
                             <label for="hk-advance">Heizkosten Vorauszahlung</label>
                         </div>
                         <div class="input-field col-xs-12 end-xs">
-                            <button class="btn waves-effect waves-light" type="submit">Erfassen
+                            <button class="btn waves-effect waves-light" type="submit">Hinzufügen
                                 <i class="mdi mdi-plus left"></i>
                             </button>
                         </div>

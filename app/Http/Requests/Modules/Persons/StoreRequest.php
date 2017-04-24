@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests\Modules\Person;
+namespace App\Http\Requests\Modules\Persons;
 
 
 use App\Http\Requests\Legacy\PersonenRequest;
 use App\Models\Person;
 use Illuminate\Validation\ValidationException;
 
-class StorePersonRequest extends PersonenRequest
+class StoreRequest extends PersonenRequest
 {
     public function rules()
     {

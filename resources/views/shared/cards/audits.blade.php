@@ -1,7 +1,7 @@
 <div class="card card-expandable">
     <div class="card-content">
         <div class="card-title">{{$title}} ({{$audits->count()}})</div>
-        <table class="striped">
+        <table class="striped responsive-table">
             <thead>
             <th>Datum</th>
             <th>Ereignis</th>
@@ -20,7 +20,7 @@
                     </td>
                     <td>
                         @if(!is_null($audit->user_id))
-                            @include('shared.entities.benutzer', ['entity' => $audit->user])
+                            @include('shared.entities.person', ['entity' => $audit->user])
                         @endif
                     </td>
                     <td>

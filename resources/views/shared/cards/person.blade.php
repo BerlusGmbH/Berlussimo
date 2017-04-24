@@ -7,19 +7,13 @@
                 @php($margin_bot = '12px')
             @endif
             <div class="row" style="line-height: 24px; margin-bottom: {{$margin_bot}}; margin-top: 12px">
-                <div class="col-xs-12 col-sm-8">
+                <div class="col-xs-12">
                     @include('shared.entities.person', ['entity' => $person])
                     @if(!is_null($person->birthday))
                         <div style="font-size: small; line-height: 24px; margin-left: 6px">
                             <i class="mdi mdi-star"></i> {{ $person->birthday->formatLocalized("%d.%m.%Y") }}
                         </div>
                     @endif
-                </div>
-                <div class="col-xs-12 col-sm-4 end-xs">
-                    <a href="{{route('web::personen::edit', ['id' => $person->id])}}"><i
-                                class="mdi mdi-pencil"></i></a>
-                    <a href="{{route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'PERSON', 'detail_id' => $person->id])}}"><i
-                                class="mdi mdi-table-edit"></i></a>
                 </div>
             </div>
         </div>

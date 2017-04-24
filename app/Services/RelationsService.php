@@ -6,15 +6,14 @@ use App\Models\Auftraege;
 use App\Models\BaustellenExtern;
 use App\Models\Details;
 use App\Models\Einheiten;
-use App\Models\Gewerke;
 use App\Models\Haeuser;
+use App\Models\Job;
 use App\Models\Kaufvertraege;
 use App\Models\Lager;
 use App\Models\Mietvertraege;
 use App\Models\Objekte;
 use App\Models\Partner;
 use App\Models\Person;
-use App\Models\User;
 use App\Models\Wirtschaftseinheiten;
 
 
@@ -59,7 +58,7 @@ class RelationsService
             'id' => 'id',
             'vorname' => 'first_name',
             'name' => 'name',
-            'geburtstag' => 'birthday'
+            'geburtstag' => 'birthday',
         ],
         Auftraege::class => [
             'id' => 'T_ID',
@@ -67,17 +66,6 @@ class RelationsService
             'akut' => 'AKUT',
             'erstellt' => 'ERSTELLT',
             'erledigt' => 'ERLEDIGT'
-        ],
-        User::class => [
-            'id' => 'id',
-            'name' => 'name',
-            'geburtstag' => 'birthday',
-            'von' => 'join_date',
-            'bis' => 'leave_date',
-            'stundensatz' => 'hourly_rate',
-            'wochenstunden' => 'hours_per_week',
-            'urlaubstage' => 'holidays',
-            'email' => 'email'
         ],
         Partner::class => [
             'id' => 'PARTNER_ID',
@@ -88,6 +76,13 @@ class RelationsService
         ],
         Lager::class => [
             'id' => 'LAGER_ID'
+        ],
+        Job::class => [
+            'von' => 'join_date',
+            'bis' => 'leave_date',
+            'stundensatz' => 'hourly_rate',
+            'wochenstunden' => 'hours_per_week',
+            'urlaubstage' => 'holidays'
         ]
     ];
 
@@ -153,21 +148,21 @@ class RelationsService
         ],
         'auftrag' => [
             'auftrag' => ['', Auftraege::class],
-            'an' => ['an', [User::class, Partner::class]],
-            'von' => ['von', User::class],
+            'an' => ['an', [Person::class, Partner::class]],
+            'von' => ['von', Person::class],
             'kostenträger' => [
                 'kostentraeger', [
-                    BaustellenExtern::class, Partner::class, User::class,
+                    BaustellenExtern::class, Partner::class, Person::class,
                     Mietvertraege::class, Kaufvertraege::class, Objekte::class,
                     Haeuser::class, Einheiten::class, Wirtschaftseinheiten::class
                 ]
             ],
-            'mitarbeiter' => [['anUser', 'von'], User::class]
+            'mitarbeiter' => [['anUser', 'von'], Person::class]
         ],
         'mitarbeiter' => [
-            'mitarbeiter' => ['', User::class],
+            'mitarbeiter' => ['', Person::class],
             'partner' => ['arbeitgeber', Partner::class],
-            'gewerk' => ['gewerk', Gewerke::class]
+            'job' => ['job', Job::class]
         ],
         'partner' => [
             'partner' => ['', Partner::class]
@@ -203,8 +198,8 @@ class RelationsService
             'details' => [-4, Haeuser::class]
         ],
         Auftraege::class => [
-            'anUser' => [-4, User::class],
-            'von' => [-4, User::class]
+            'anUser' => [-4, Person::class],
+            'von' => [-4, Person::class]
         ]
     ];
 
@@ -217,19 +212,18 @@ class RelationsService
         Person::class => 'person',
         Details::class => 'detail',
         Auftraege::class => 'auftrag',
-        User::class => 'mitarbeiter',
         Partner::class => 'partner',
         Auftraege::class => 'auftrag'
     ];
 
-    public function columnColumnToClass($outer, $inner)
-    {
-        return self::$COLUMN_COLUMN_TO_RELATIONS[$outer][$inner][1];
-    }
-
     public function columnToClass($class)
     {
         return $this->columnColumnToClass($class, $class);
+    }
+
+    public function columnColumnToClass($outer, $inner)
+    {
+        return self::$COLUMN_COLUMN_TO_RELATIONS[$outer][$inner][1];
     }
 
     public function classFieldToField($class, $field)
