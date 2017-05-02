@@ -2604,8 +2604,8 @@ LIMIT 0 , 1");
                     $optiert = $dd->finde_detail_inhalt('OBJEKT', session()->get('objekt_id'), 'Optiert');
                     if ($optiert == 'JA') {
                         if ($ee->typ == 'Gewerbe') {
-                            $tab_arr [$i] ['MWST'] = nummer_punkt2komma($miete->geleistete_zahlungen - ($miete->geleistete_zahlungen / 1.19));
-                            $summe_mwst = $summe_mwst + $miete->geleistete_zahlungen - ($miete->geleistete_zahlungen / 1.19);
+                            $tab_arr [$i] ['MWST'] = nummer_punkt2komma($miete->geleistete_zahlungen_mwst);
+                            $summe_mwst += $miete->geleistete_zahlungen_mwst;
                         } else {
                             $tab_arr [$i] ['MWST'] = '';
                         }
@@ -2859,11 +2859,16 @@ LIMIT 0 , 1");
                         $tab_arr [$anz_tab] ['SOLL_WM'] = nummer_punkt2komma_t($miete->sollmiete_warm);
                         $tab_arr [$anz_tab] ['UMLAGEN'] = nummer_punkt2komma_t($miete->davon_umlagen);
                         $tab_arr [$anz_tab] ['ZAHLUNGEN'] = nummer_punkt2komma_t($miete->geleistete_zahlungen);
-                        if ($mv->einheit_typ == 'Gewerbe') {
-                            $tab_arr [$anz_tab] ['MWST'] = nummer_punkt2komma_t($miete->geleistete_zahlungen / 119 * 19);
-                            $summe_mwst += $miete->geleistete_zahlungen / 119 * 19;
-                        } else {
-                            $tab_arr [$anz_tab] ['MWST'] = nummer_punkt2komma_t(0);
+
+                        $dd = new detail ();
+                        $optiert = $dd->finde_detail_inhalt('OBJEKT', session()->get('objekt_id'), 'Optiert');
+                        if ($optiert == 'JA') {
+                            if ($mv->einheit_typ == 'Gewerbe') {
+                                $tab_arr [$anz_tab] ['MWST'] = nummer_punkt2komma($miete->geleistete_zahlungen_mwst);
+                                $summe_mwst += $miete->geleistete_zahlungen_mwst;
+                            } else {
+                                $tab_arr [$anz_tab] ['MWST'] = nummer_punkt2komma_t(0);
+                            }
                         }
 
                         $tab_arr [$anz_tab] ['ERG'] = nummer_punkt2komma_t($miete->erg);

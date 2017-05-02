@@ -25,6 +25,7 @@ class miete
     public $davon_umlagen_a;
     public $erg_a;
     public $geleistete_zahlungen;
+    public $geleistete_zahlungen_mwst;
     public $davon_umlagen;
     public $saldo_vormonat_end;
     public $geleistete_zahlungen_a;
@@ -40,17 +41,6 @@ class miete
         $d = $dat_arr [2];
         return date('Y-m-d', mktime(0, 0, 0, $m, $d - $tage, $j));
     }
-
-    function tage_plus($datum, $tage)
-    {
-        $dat_arr = explode('-', $datum);
-        $j = $dat_arr [0];
-        $m = $dat_arr [1];
-        $d = $dat_arr [2];
-        return date('Y-m-d', mktime(0, 0, 0, $m, $d + $tage, $j));
-    }
-
-    /* Diese funktion liefert uns den aktuellen stand und den stand des Vormonats, inkl geleistete Zahlungen usw für den MOnatsbericht */
 
     function mietkonto_berechnung_monatsgenau($mietvertrag_id, $jahr, $monat)
     {
@@ -74,7 +64,7 @@ class miete
             $anfangs_datum = $this->tage_plus($datum_saldo_vv, 30);
             $anfangs_datum_s = str_replace('-', '', $anfangs_datum);
             $datums_arr [] = $anfangs_datum_s;
-            
+
             $datum1_zahlung = $buchung->datum_1_zahlung($mietvertrag_id);
             if (!empty ($datum1_zahlung)) {
                 $datum1_zahlung_s = str_replace('-', '', $datum1_zahlung);
@@ -165,11 +155,14 @@ class miete
 				 * $this->daten_arr[$a]['monate'][$m_zaehler]['zahlungen'][1][b]= $this->temp_zb;
 				 */
                 $sum_mon = 0;
+                $sum_mwst = 0;
                 $z_arr = $this->daten_arr [$a] ['monate'] [$m_zaehler] ['zahlungen'];
                 for ($c = 0; $c < count($z_arr); $c++) {
                     $sum_mon = $sum_mon + $z_arr [$c] ['BETRAG'];
+                    $sum_mwst += $z_arr [$c] ['MWST_ANTEIL'];
                 }
                 $this->geleistete_zahlungen = $sum_mon;
+                $this->geleistete_zahlungen_mwst = $sum_mwst;
 
                 $sum_mon = number_format($sum_mon, 2, '.', '');
 
@@ -185,6 +178,17 @@ class miete
                 $m_zaehler++;
             }
         }
+    }
+
+    /* Diese funktion liefert uns den aktuellen stand und den stand des Vormonats, inkl geleistete Zahlungen usw für den MOnatsbericht */
+
+    function tage_plus($datum, $tage)
+    {
+        $dat_arr = explode('-', $datum);
+        $j = $dat_arr [0];
+        $m = $dat_arr [1];
+        $d = $dat_arr [2];
+        return date('Y-m-d', mktime(0, 0, 0, $m, $d + $tage, $j));
     }
 
     /* Gegenüberdarstellung von intern und extern buchung */
@@ -1831,34 +1835,6 @@ ORDER BY `NEW_ENDE` ASC
         // return $pdf->Output();
     }
     
-    function finde_start($tab_neu)
-    {
-        $anz_zeilen = count($tab_neu);
-        for ($a = $anz_zeilen; $a >= 0; $a--) {
-            $bemerkung = $tab_neu [$a] ['BEMERKUNG'];
-            $saldo = $tab_neu [$a] ['SALDO'];
-
-            if (preg_match('/Saldo/i', $bemerkung)) {
-
-                if (!preg_match('/-/i', $saldo)) {
-                    echo "$a = $bemerkung $saldo<br>";
-                    return $a;
-                }
-            }
-        }
-    }
-
-    function start_neu($tab_neu, $start)
-    {
-        $anz_zeilen = count($tab_neu);
-        for ($a = $anz_zeilen; $a >= 0; $a--) {
-            if ($a < $start) {
-                unset ($tab_neu [$a]);
-            }
-        }
-        return $tab_neu;
-    }
-
     function mkb2pdf_mahnung_letzter_nullstand($pdf, $mv_id)
     {
         $mv = new mietvertraege ();
@@ -1991,7 +1967,7 @@ ORDER BY `NEW_ENDE` ASC
         $tab_neu1 = $this->start_neu($tab_neu, $start_zeile);
 
         $tab_neu1 = array_values($tab_neu1);
-        
+
         ob_clean(); // ausgabepuffer leeren
 
         $pdf->ezText("Mietkonto Einheit : <b>$mv->einheit_kurzname</b>", 10);
@@ -2042,6 +2018,34 @@ ORDER BY `NEW_ENDE` ASC
         ));
 
         // $pdf->ezStream();
+    }
+
+    function finde_start($tab_neu)
+    {
+        $anz_zeilen = count($tab_neu);
+        for ($a = $anz_zeilen; $a >= 0; $a--) {
+            $bemerkung = $tab_neu [$a] ['BEMERKUNG'];
+            $saldo = $tab_neu [$a] ['SALDO'];
+
+            if (preg_match('/Saldo/i', $bemerkung)) {
+
+                if (!preg_match('/-/i', $saldo)) {
+                    echo "$a = $bemerkung $saldo<br>";
+                    return $a;
+                }
+            }
+        }
+    }
+
+    function start_neu($tab_neu, $start)
+    {
+        $anz_zeilen = count($tab_neu);
+        for ($a = $anz_zeilen; $a >= 0; $a--) {
+            if ($a < $start) {
+                unset ($tab_neu [$a]);
+            }
+        }
+        return $tab_neu;
     }
 
     /* Mit dieser Funktion fügt man ein Mitkontenblatt in das vorhandene PDF-Dokument hinzu */
