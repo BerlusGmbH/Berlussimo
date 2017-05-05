@@ -198,7 +198,7 @@
                 </div>
             </div>
             <div class="collapsible-body secondary-color">
-                <div class="col col-xs-12 hide-on-large-only">
+                <div class="col col-xs-12 end-xs hide-on-large-only">
                     @include('shared.menus.partner_account_select')
                 </div>
                 <div class="col col-xs-12 secondary-color text-variation-2">
