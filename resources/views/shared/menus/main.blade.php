@@ -2,7 +2,7 @@
     <ul class="collapsible" style="margin: 0" data-collapsible="accordion">
         <li>
             <div class="collapsible-header primary-color text-variation-3">@yield('breadcrumbs')</div>
-            <div class="collapsible-body primary-color">
+            <div class="collapsible-body primary-color text-variation-2">
                 <div class="row">
                     @if(check_user_links(Auth::user()->id, 'partner'))
                         <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
