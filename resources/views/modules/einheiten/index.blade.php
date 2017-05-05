@@ -1,7 +1,7 @@
-@extends('layouts.main-without-menu')
+@extends('layouts.main')
 
 @section('breadcrumbs')
-    <a href="{{ route('web::einheiten::index') }}" class="breadcrumb">Einheiten</a>
+    <i class="mdi mdi-subdirectory-arrow-right"></i>Einheiten
 @endsection
 
 @section('content')

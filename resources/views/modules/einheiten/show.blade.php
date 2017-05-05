@@ -1,10 +1,11 @@
-@extends('layouts.main-without-menu')
+@extends('layouts.main')
 
 @section('breadcrumbs')
+    <i class="mdi mdi-subdirectory-arrow-right"></i>
     @if(starts_with(URL::previous(), route('web::einheiten::index')))
-        <a href="{{ URL::previous() }}" class="breadcrumb">Einheiten</a>
+        <a href="{{ URL::previous() }}">Einheiten</a>
     @else
-        <a href="{{ route('web::einheiten::index') }}" class="breadcrumb">Einheiten</a>
+        <a href="{{ route('web::einheiten::index') }}">Einheiten</a>
     @endif
     <span class="breadcrumb">@include('shared.entities.einheit', ['entity' => $einheit, 'icons' => false])</span>
 @endsection
