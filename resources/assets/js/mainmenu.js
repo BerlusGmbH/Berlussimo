@@ -8,7 +8,7 @@ $('document').ready(function () {
             $header = $target.parents('li').first().find('.collapsible-header').first();
         }
         var $collapsible = $target.parents('.collapsible');
-        if ($header.text() === "Tools") {
+        if ($.trim($header.text()).startsWith("Tools")) {
             $collapsible.collapsible('open', 1);
         } else {
             $collapsible.collapsible('open', 0);
@@ -22,7 +22,7 @@ $('document').ready(function () {
             $header = $target.parents('li').first().find('.collapsible-header').first();
         }
         var $collapsible = $target.parents('.collapsible');
-        if ($header.text() === "Tools") {
+        if ($.trim($header.text()).startsWith("Tools")) {
             $collapsible.collapsible('close', 1);
         } else {
             $collapsible.collapsible('close', 0);

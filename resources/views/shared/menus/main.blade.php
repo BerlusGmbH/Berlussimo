@@ -187,42 +187,22 @@
             </div>
         </li>
         <li>
-            <div class="collapsible-header secondary-color text-variation-1"><i class="mdi mdi-settings"></i>Tools</div>
-            <div class="collapsible-body secondary-color">
+            <div class="collapsible-header secondary-color text-variation-1">
                 <div class="row">
-                    <div class="col col-xs-12">
-                        @if(check_user_links(Auth::user()->id, 'rechnungen'))
-                            @if(session()->has('partner_id'))
-                                <?php $p = new partners (); $p->get_partner_name(session()->get('partner_id')); ?>
-                                <a class="btn waves-effect primary-color"
-                                   href='{{route('web::rechnungen::legacy', ['option' => 'partner_wechseln'])}}'>
-                                    <i class="mdi mdi-account-multiple left"></i>
-                                    <b>{{str_limit($p->partner_name, 20)}}</b></a>
-                            @else
-                                <a class="btn waves-effect primary-color"
-                                   href='{{route('web::rechnungen::legacy', ['option' => 'partner_wechseln'])}}'>
-                                    <i class="mdi mdi-account-multiple left"></i>
-                                    Partner wählen</a>
-                            @endif
-                        @endif
-                        @if(check_user_links(Auth::user()->id, 'buchen' ))
-                            @if(session()->has('geldkonto_id'))
-                                <?php $g = new geldkonto_info(); $g->geld_konto_details(session()->get('geldkonto_id')); ?>
-                                <a class="btn waves-effect primary-color"
-                                   href='{{route('web::buchen::legacy', ['option' => 'geldkonto_aendern'])}}'>
-                                    <i class="mdi mdi-currency-eur left"></i>
-                                    <b>{{str_limit($g->geldkonto_bezeichnung_kurz, 20)}}</b></a>
-                            @else
-                                <a class="btn waves-effect primary-color"
-                                   href='{{route('web::buchen::legacy', ['option' => 'geldkonto_aendern'])}}'>
-                                    <i class="mdi mdi-currency-eur left"></i>
-                                    Geldkonto wählen</a>
-                            @endif
-                        @endif
+                    <div style="padding: 0" class="col col-xs-4">
+                        <i class="mdi mdi-settings"></i>Tools
                     </div>
-                    <div class="col col-xs-12 secondary-color text-variation-2">
-                        @yield('submenu')
+                    <div style="padding: 0" class="col col-xs-8 end-xs hide-on-med-and-down">
+                        @include('shared.menus.partner_account_select')
                     </div>
+                </div>
+            </div>
+            <div class="collapsible-body secondary-color">
+                <div class="col col-xs-12 hide-on-large-only">
+                    @include('shared.menus.partner_account_select')
+                </div>
+                <div class="col col-xs-12 secondary-color text-variation-2">
+                    @yield('submenu')
                 </div>
             </div>
         </li>

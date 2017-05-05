@@ -152,7 +152,7 @@ nav .autocomplete-content li a:hover {
   background: unset;
 }
 
-nav .collapsible-header a {
+nav .collapsible-header a:not(.btn) {
   display: unset;
   padding: unset;
   font-size: 18px;
@@ -160,6 +160,10 @@ nav .collapsible-header a {
 
 nav .collapsible-header i {
   height: unset;
+}
+
+nav .collapsible-header a i {
+  line-height: unset;
 }
 
 nav .collapsible-body a:not(.btn) {
