@@ -12,9 +12,7 @@ class WartungsplanerController extends Controller
     }
 
     public function ajax() {
-        return response()->legacy('legacy/wartungsplaner/ajax.php')->withHeaders(
-            ['Content-Type' => 'text/plain']
-        );
+        return response()->legacy('legacy/wartungsplaner/ajax.php');
     }
 
     public function indexAjax() {

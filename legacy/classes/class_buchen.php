@@ -361,7 +361,7 @@ class buchen
         if ($js_action == '') {
             $js_action = "onchange=\"drop_kos_register('kostentraeger_typ', 'dd_kostentraeger_id');\"";
         }
-        if (session()->has('kos_typ') && (session()->has('kos_id') || session()->has('kos_bez'))) {
+        if (session()->has('kos_typ')) {
             $kostentraeger_bez = session()->has('kos_bez') ? session()->get('kos_bez') : session()->get('kos_id');
             $kostentraeger_typ = session()->get('kos_typ');
             $this->dropdown_kostentraeger_bez_vw($label, $name, $id, $js_action, $kostentraeger_typ, $kostentraeger_bez);
@@ -603,9 +603,9 @@ class buchen
 
                 if (!session()->has('geldkonto_id')) {
                     if ($vorwahl_bez == $ID) {
-                        echo "<option value=\"$ID\" selected>$einheit_kn***$weg->eigentuemer_name_str</option>";
+                        echo "<option value=\"$ID\" selected>$einheit_kn | $weg->eigentuemer_name_str</option>";
                     } else {
-                        echo "<option value=\"$ID\" >$einheit_kn***$weg->eigentuemer_name_str</option>";
+                        echo "<option value=\"$ID\" >$einheit_kn | $weg->eigentuemer_name_str</option>";
                     }
                 } else {
                     $eee = new einheit ();
@@ -613,9 +613,9 @@ class buchen
                     $gk = new gk ();
                     if ($gk->check_zuweisung_kos_typ(session()->get('geldkonto_id'), 'Objekt', $eee->objekt_id)) {
                         if ($vorwahl_bez == $ID) {
-                            echo "<option value=\"$ID\" selected>$einheit_kn***$weg->eigentuemer_name_str</option>";
+                            echo "<option value=\"$ID\" selected>$einheit_kn | $weg->eigentuemer_name_str</option>";
                         } else {
-                            echo "<option value=\"$ID\" >$einheit_kn***$weg->eigentuemer_name_str</option>";
+                            echo "<option value=\"$ID\" >$einheit_kn | $weg->eigentuemer_name_str</option>";
                         }
                     }
                 }
@@ -2786,7 +2786,7 @@ LIMIT 0 , 1");
         }
 
         $bg = new berlussimo_global ();
-        $link = route('web::buchen::legacy', ['option' => 'monatsbericht_m_a'] . false);
+        $link = route('web::buchen::legacy', ['option' => 'monatsbericht_m_a'], false);
         $bg->objekt_auswahl_liste();
         $bg->monate_jahres_links($jahr, $link);
         if (session()->has('objekt_id')) {
