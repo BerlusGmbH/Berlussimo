@@ -33,6 +33,7 @@
       "App\\": "app/"
     },
     "files": [
+      "config/phpsettings.php",
       "legacy/includes/allgemeine_funktionen.php",
       "legacy/includes/formular_funktionen.php",
       "legacy/includes/haus_form_funktionen.php"
