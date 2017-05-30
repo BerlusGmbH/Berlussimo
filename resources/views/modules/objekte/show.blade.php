@@ -53,6 +53,16 @@
                             <i class="mdi mdi-key tooltipped" data-position="bottom" data-delay="50" data-tooltip="Eigentümer"></i>
                             @include('shared.entities.partner', ['entity' => $objekt->eigentuemer])
                         </div>
+                        <div class="col-xs-12 col-sm-6 detail">
+                            <i class="mdi mdi-home tooltipped" data-tooltip="Wohnfläche"></i>
+                            <a href="{{ route('web::einheiten::index', ['q' => '!einheit(objekt(id=' . $objekt->OBJEKT_ID . ') (typ=Wohnraum or typ=Wohneigentum))']) }}">{{$objekt->wohnflaeche}}
+                                m²</a>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 detail">
+                            <i class="mdi mdi-store tooltipped" data-tooltip="Gewerbefläche"></i>
+                            <a href="{{ route('web::einheiten::index', ['q' => '!einheit(objekt(id=' . $objekt->OBJEKT_ID . ') typ=Gewerbe)']) }}">{{$objekt->gewerbeflaeche}}
+                                m²</a>
+                        </div>
                     </div>
                 </div>
             </div>

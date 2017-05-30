@@ -56,6 +56,16 @@
                             <i class="mdi mdi-email tooltipped" data-position="bottom" data-delay="50" data-tooltip="Postleitzahl und Ort"></i>
                             {{$haus->HAUS_PLZ}} {{$haus->HAUS_STADT}}
                         </div>
+                        <div class="col-xs-12 col-sm-6 detail">
+                            <i class="mdi mdi-home tooltipped" data-tooltip="Wohnfläche"></i>
+                            <a href="{{ route('web::einheiten::index', ['q' => '!einheit(haus(id=' . $haus->HAUS_ID . ') (typ=Wohnraum or typ=Wohneigentum))']) }}">{{$haus->wohnflaeche}}
+                                m²</a>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 detail">
+                            <i class="mdi mdi-store tooltipped" data-tooltip="Gewerbefläche"></i>
+                            <a href="{{ route('web::einheiten::index', ['q' => '!einheit(haus(id=' . $haus->HAUS_ID . ') typ=Gewerbe)']) }}">{{$haus->gewerbeflaeche}}
+                                m²</a>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -4,9 +4,9 @@ namespace App\Models;
 
 use App\Models\Traits\DefaultOrder;
 use App\Models\Traits\Searchable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class Haeuser extends Model
 {
@@ -41,13 +41,13 @@ class Haeuser extends Model
         return $this->morphMany(Auftraege::class, 'kostentraeger', 'KOS_TYP', 'KOS_ID');
     }
 
+    public function commonDetails() {
+        return $this->details()->whereNotIn('DETAIL_NAME', ['Hinweis_zum_Haus']);
+    }
+
     public function details()
     {
         return $this->morphMany('App\Models\Details', 'details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID');
-    }
-
-    public function commonDetails() {
-        return $this->details()->whereNotIn('DETAIL_NAME', ['Hinweis_zum_Haus']);
     }
 
     public function hinweise() {
@@ -69,5 +69,21 @@ class Haeuser extends Model
                 $query->whereDate('MIETVERTRAG_BIS', '>=', $date)->orWhereDate('MIETVERTRAG_BIS', '=', '0000-00-00');
             });
         });
+    }
+
+    public function getWohnflaecheAttribute()
+    {
+        $flaeche = Einheiten::whereHas('haus', function ($query) {
+            $query->where('HAUS_ID', $this->HAUS_ID);
+        })->whereIn('TYP', ['Wohnraum', 'Wohneigentum'])->sum('EINHEIT_QM');
+        return isset($flaeche) ? $flaeche : 0;
+    }
+
+    public function getGewerbeflaecheAttribute()
+    {
+        $flaeche = Einheiten::whereHas('haus', function ($query) {
+            $query->where('HAUS_ID', $this->HAUS_ID);
+        })->where('TYP', 'Gewerbe')->sum('EINHEIT_QM');
+        return isset($flaeche) ? $flaeche : 0;
     }
 }
