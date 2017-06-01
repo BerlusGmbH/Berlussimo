@@ -11,15 +11,6 @@ switch ($option) {
     default :
         break;
 
-    case "mieterliste_aktuell" :
-        $e = new einheit ();
-        if (request()->has('objekt_id')) {
-            $e->pdf_mieterliste(0, request()->input('objekt_id'));
-        } else {
-            $e->pdf_mieterliste(0);
-        }
-        break;
-
     case "inspiration_pdf" :
         $li = new listen ();
         if (request()->has('objekt_id')) {

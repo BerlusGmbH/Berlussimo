@@ -172,12 +172,6 @@
                         </div>
                     @endif
 
-                    @if(check_user_links(Auth::user()->id, 'listen'))
-                        <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
-                            <a class='WEG' href='{{route('web::listen::legacy')}}'>Listen</a>
-                        </div>
-                    @endif
-
                     @if(check_user_links(Auth::user()->id, 'mietspiegel'))
                         <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
                             <a class='WEG' href='{{route('web::mietspiegel::legacy')}}'>Mietspiegel</a>
