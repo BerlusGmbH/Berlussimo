@@ -150,6 +150,7 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['web', 'auth'], 'as' => 
 
     Route::group(['prefix' => 'rechnungen', 'as' => 'rechnungen::'], function () {
         Route::match(['get', 'post'], '/', 'RechnungenController@request')->name('legacy');
+        Route::delete('/belegpool/{id}', 'RechnungenController@belegpool_destroy')->name('belegpool.destroy');
     });
 
     Route::group(['prefix' => 'sepa', 'as' => 'sepa::'], function () {
