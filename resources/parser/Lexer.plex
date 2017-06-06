@@ -36,6 +36,7 @@ class Lexer
     column = ~person|partner|mietvertrag|kaufvertrag|einheit|haus|objekt|hinweis|telefon|gewerk|detail|adresse|auftrag|an(?!d)|mitarbeiter|kostenträger|baustelle~
     field = ~id|name|vorname|lage|str|nr|plz|ort|bis|typ|geburtstag|bemerkung|qm|inhalt|text|akut|erstellt|erledigt|urlaubstage|wochenstunden|stundensatz~
     columnorfield = ~von|email~
+    vermietet = ~vermietet~
     aktiv = ~aktiv~
     comparator = /<=|>=|!=|=|<|>/
     like = /~/
@@ -114,6 +115,9 @@ class Lexer
     }
     not {
         $this->token = Parser::NOT;
+    }
+    vermietet {
+        $this->token = Parser::VERMIETET;
     }
     aktiv {
         $this->token = Parser::AKTIV;

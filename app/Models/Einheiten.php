@@ -4,9 +4,9 @@ namespace App\Models;
 
 use App\Models\Traits\DefaultOrder;
 use App\Models\Traits\Searchable;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
 
 class Einheiten extends Model
 {
@@ -62,13 +62,13 @@ class Einheiten extends Model
         });
     }
 
+    public function commonDetails() {
+        return $this->details()->whereNotIn('DETAIL_NAME', ['Hinweis_zu_Einheit']);
+    }
+
     public function details()
     {
         return $this->morphMany('App\Models\Details', 'details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID');
-    }
-
-    public function commonDetails() {
-        return $this->details()->whereNotIn('DETAIL_NAME', ['Hinweis_zu_Einheit']);
     }
 
     public function hinweise() {
@@ -79,7 +79,8 @@ class Einheiten extends Model
         return $this->hinweise->count() > 0;
     }
 
-    public function vermietet() {
+    public function getVermietetAttribute()
+    {
         foreach($this->mietvertraege as $mietvertrag) {
             if($mietvertrag->isActive()) {
                 return true;

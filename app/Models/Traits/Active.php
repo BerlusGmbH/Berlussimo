@@ -43,10 +43,12 @@ trait Active
         }
     }
 
-    public function scopeActive($query, $comparator = '=', Carbon $date = null)
+    public function scopeActive($query, $comparator = '=', $date = null)
     {
         if (is_null($date)) {
             $date = Carbon::today();
+        } else {
+            $date = Carbon::parse($date);
         }
         $start = $this->getStartDateFieldName();
         $end = $this->getEndDateFieldName();
@@ -89,6 +91,8 @@ trait Active
     {
         if (is_null($date)) {
             $date = Carbon::today();
+        } else {
+            $date = Carbon::parse($date);
         }
         $start = $this->getStartDateFieldName();
         $end = $this->getEndDateFieldName();

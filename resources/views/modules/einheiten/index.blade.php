@@ -23,7 +23,8 @@
                     @php($options = [
                         '(ohne)' => '""',
                         'Listenansicht' => 'einheit !einheit[name] mietvertrag person[mietvertrag] einheit[typ] einheit[qm] einheit[lage] haus objekt',
-                        'Mieterkontakte' => 'objekt haus !einheit[name] einheit einheit[lage] mietvertrag person[mietvertrag] telefon[mietvertrag] email[mietvertrag]'
+                        'Mieterkontakte' => 'objekt haus !einheit[name] einheit einheit[lage] mietvertrag person[mietvertrag] telefon[mietvertrag] email[mietvertrag]',
+                        'Leerstand' => '!einheit(!vermietet)[name] einheit einheit[lage] einheit[qm] haus objekt'
                     ])
                     @include('shared.listview.views', ['id' => 'view', 'name' => 'v', 'label' => 'Ansicht', 'options' => $options])
                 </div>
