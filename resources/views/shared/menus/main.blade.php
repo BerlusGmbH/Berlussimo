@@ -187,16 +187,22 @@
                         <i class="mdi mdi-settings"></i>Tools
                     </div>
                     <div style="padding: 0" class="col col-xs-8 end-xs hide-on-med-and-down">
-                        @include('shared.menus.partner_account_select')
+                        @include('shared.menus.partner_select')
+                        @include('shared.menus.account_select')
                     </div>
                 </div>
             </div>
             <div class="collapsible-body secondary-color">
-                <div class="col col-xs-12 end-xs hide-on-large-only">
-                    @include('shared.menus.partner_account_select')
-                </div>
-                <div class="col col-xs-12 secondary-color text-variation-2">
-                    @yield('submenu')
+                <div class="row">
+                    <div style="padding: 3px" class="col col-xs-12 col-sm-7 end-xs hide-on-large-only">
+                        @include('shared.menus.partner_select')
+                    </div>
+                    <div style="padding: 3px" class="col col-xs-12 col-sm-5 end-xs hide-on-large-only">
+                        @include('shared.menus.account_select')
+                    </div>
+                    <div class="col col-xs-12 secondary-color text-variation-2">
+                        @yield('submenu')
+                    </div>
                 </div>
             </div>
         </li>
