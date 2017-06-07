@@ -4,8 +4,8 @@ $('document').ready(function () {
         var $target = $(e.target);
         var $header;
         var $body = $target.parents('li').first().find('.collapsible-body').first();
-        var $partner_account_select = $($body.find('div')[0]);
-        var $submenu = $($body.find('div')[1]);
+        var $partner_account_select = $($body.find('.row').children()[0]);
+        var $submenu = $($body.children()[1]);
         if ($target.hasClass('collapsible-header')) {
             $header = $target;
         } else {

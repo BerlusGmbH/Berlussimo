@@ -200,9 +200,9 @@
                     <div style="padding: 3px" class="col col-xs-12 col-sm-5 end-xs hide-on-large-only">
                         @include('shared.menus.account_select')
                     </div>
-                    <div class="col col-xs-12 secondary-color text-variation-2">
-                        @yield('submenu')
-                    </div>
+                </div>
+                <div class="secondary-color text-variation-2">
+                    @yield('submenu')
                 </div>
             </div>
         </li>
