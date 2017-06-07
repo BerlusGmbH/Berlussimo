@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
-use App\Facades\Relations;
-use App\Models\Traits\Searchable;
 use App\Models\Traits\DefaultOrder;
+use App\Models\Traits\Searchable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -47,13 +46,13 @@ class Personen extends Model
         )->wherePivot('AKTUELL', '1');
     }
 
+    public function emails() {
+        return $this->details()->where('DETAIL_NAME', 'Email');
+    }
+
     public function details()
     {
         return $this->morphMany('App\Models\Details', 'details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID');
-    }
-
-    public function emails() {
-        return $this->details()->where('DETAIL_NAME', 'Email');
     }
 
     public function faxs() {
@@ -92,6 +91,22 @@ class Personen extends Model
             $full_name .= ', ';
         if(!empty($this->PERSON_VORNAME))
             $full_name .= trim($this->PERSON_VORNAME);
+        return $full_name;
+    }
+
+    public function getPrettyFullNameAttribute()
+    {
+        $full_name = '';
+        if ($this->sex[0]['DETAIL_INHALT'] == 'männlich')
+            $full_name .= 'Herr ';
+        if ($this->sex[0]['DETAIL_INHALT'] == 'weiblich')
+            $full_name .= 'Frau ';
+        if (!empty($this->PERSON_VORNAME))
+            $full_name .= trim($this->PERSON_VORNAME);
+        if (!empty($this->PERSON_NACHNAME) && !empty($this->PERSON_VORNAME))
+            $full_name .= ' ';
+        if (!empty($this->PERSON_NACHNAME))
+            $full_name .= trim($this->PERSON_NACHNAME);
         return $full_name;
     }
 }

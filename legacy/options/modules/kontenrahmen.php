@@ -58,12 +58,15 @@ switch ($option) {
         break;
 
     case "konto_neu" :
-        if (request()->has('konto') && request()->has('bez') && request()->has('kontenrahmen_id')) {
+        if (request()->has('konto')
+            && request()->has('bez')
+            && request()->has('kontenrahmen_id')
+        ) {
             $k = new k_rahmen ();
             session()->put('kontenrahmen_id', request()->input('kontenrahmen_id'));
             session()->put('k_gruppen_id', request()->input('k_gruppe'));
             session()->put('k_kontoart_id', request()->input('kontoart_id'));
-            $k->kostenkonto_speichern(request()->input('kontenrahmen_id'), request()->input('konto'), request()->input('bez'), request()->input('kontoart_id'), request()->input('k_gruppe'));
+            $k->kostenkonto_speichern(request()->input('kontenrahmen_id'), request()->input('konto'), request()->input('bez'), request()->input('kontoart_id'), request()->input('k_gruppe'), request()->has('su'));
             weiterleiten(route('web::kontenrahmen::legacy', ['option' => 'konten_anzeigen', 'k_id' => session()->get('kontenrahmen_id')], false));
         } else {
             echo "Eingabe unvollständig. Error: S562q357";
@@ -78,12 +81,16 @@ switch ($option) {
         break;
 
     case "konto_ae_send" :
-        if (request()->has('dat') && request()->has('konto') && request()->has('bez') && session()->has('kontenrahmen_id')) {
+        if (request()->has('dat')
+            && request()->has('konto')
+            && request()->has('bez')
+            && session()->has('kontenrahmen_id')
+        ) {
             $k = new k_rahmen ();
             session()->put('kontenrahmen_id', request()->input('kontenrahmen_id'));
             session()->put('k_gruppen_id', request()->input('k_gruppe'));
             session()->put('k_kontoart_id', request()->input('kontoart_id'));
-            $k->kostenkonto_aendern(request()->input('dat'), request()->input('kontenrahmen_id'), request()->input('konto'), request()->input('bez'), request()->input('kontoart_id'), request()->input('k_gruppe'));
+            $k->kostenkonto_aendern(request()->input('dat'), request()->input('kontenrahmen_id'), request()->input('konto'), request()->input('bez'), request()->input('kontoart_id'), request()->input('k_gruppe'), request()->has('su'));
             weiterleiten(route('web::kontenrahmen::legacy', ['option' => 'konten_anzeigen', 'k_id' => session()->get('kontenrahmen_id')], false));
         } else {
             echo "Eingabe unvollständig. Error: S56sdf7";

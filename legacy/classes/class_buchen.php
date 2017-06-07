@@ -204,14 +204,12 @@ class buchen
     {
         $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y' ) = '$jahr') && AKTUELL='1'");
         $this->summe_konto_buchungen = 0.00;
-        if (!empty($result) && isset($result[0]['SUMME'])) {
-            $this->summe_konto_buchungen = 0;
-            $row = $result[0];
-            $this->summe_konto_buchungen = $row ['SUMME'];
-            return $this->summe_konto_buchungen;
+        if (isset($result)) {
+            $this->summe_konto_buchungen = $result[0]['SUMME'];
         } else {
             $this->summe_konto_buchungen = 0.00;
         }
+        return $this->summe_konto_buchungen;
     }
 
     function dropdown_re_buch($kos_typ, $kos_id, $anzahl = 100, $rnr_kurz)
@@ -773,7 +771,6 @@ class buchen
         $form = new formular ();
         $form->erstelle_formular("Buchung ändern", NULL);
 
-        echo '<pre>';
         $this->geldbuchungs_dat_infos($buchungs_dat);
         $form->hidden_feld("buch_dat_alt", $buchungs_dat);
         $form->hidden_feld("akt_buch_id", $this->akt_buch_id);
@@ -1179,15 +1176,7 @@ class buchen
             $p->get_partner_id($beguenstigter);
             $partner_id = $p->partner_id;
 
-            $logo_file = "Partner/" . $partner_id . "_logo.png";
-            if (Storage::disk('logos')->exists($logo_file)) {
-                $logo_file = Storage::disk('logos')->url($logo_file);
-                echo "<div id='div_logo'><img src='$logo_file'><br>$p->partner_name Rechnungseingangsbuch $monatname $jahr Mandanten-Nr.: $mandanten_nr Blatt: $monat<hr></div>\n";
-            } else {
-                echo "<div id=\"div_logo\">KEIN LOGO<br>Folgende Datei erstellen: " . Storage::disk('logos')->fullPath($logo_file) . "<hr></div>";
-            }
-
-            echo "<table id=\"positionen_tab\">\n";
+            echo "<table id=\"positionen_tab\" class='striped'>\n";
             echo "<thead>";
             echo "<tr class=feldernamen>";
             echo "<th scopr=\"col\" id=\"tr_ansehen\">Datum</th>";
@@ -1201,8 +1190,6 @@ class buchen
             echo "<th scopr=\"col\">Buchungstext</th>";
             echo "</tr>";
 
-            echo "</thead>";
-
             echo "<tr class=feldernamen>";
             echo "<th scopr=\"col\" id=\"tr_ansehen\">$datum_ger</th>";
             echo "<th ></th>";
@@ -1214,6 +1201,8 @@ class buchen
             echo "<th scopr=\"col\"></th>";
             echo "<th scopr=\"col\">SALDO VORTRAG VORMONAT</th>";
             echo "</tr>";
+
+            echo "</thead>";
 
             for ($a = 0; $a < $numrows; $a++) {
                 $datum = date_mysql2german($my_array [$a] ['DATUM']);

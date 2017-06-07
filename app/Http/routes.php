@@ -176,6 +176,7 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['web', 'auth'], 'as' => 
 
     Route::group(['prefix' => 'weg', 'as' => 'weg::'], function () {
         Route::match(['get', 'post'], '/', 'WEGController@request')->name('legacy');
+        Route::post('hga/change-su', 'WEGController@change_su')->name('hga::change-su');
     });
 
     Route::group(['prefix' => 'zeiterfassung', 'as' => 'zeiterfassung::'], function () {
