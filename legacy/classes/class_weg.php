@@ -1862,7 +1862,7 @@ class weg
                 if ($d->finde_detail_inhalt('PERSON', $person_id, 'Anschrift')) {
                     $this->postanschrift [$a] = $d->finde_detail_inhalt('PERSON', $person_id, 'Anschrift');
                 } else {
-                    $this->postanschrift [$a] = "$this->haus_strasse $this->haus_nummer\n<b>$this->haus_plz $this->haus_stadt</b>";
+                    $this->postanschrift [$a] = "$this->haus_strasse $this->haus_nummer\n$this->haus_plz $this->haus_stadt";
                     $this->eigentuemer_name_str_u1 .= "$anrede $p->person_nachname $p->person_vorname\n";
                 }
             }
@@ -1895,7 +1895,7 @@ class weg
                 if ($d->finde_detail_inhalt('PERSON', $person_id, 'Anschrift')) {
                     $this->postanschrift [$a] = $d->finde_detail_inhalt('PERSON', $person_id, 'Anschrift');
                 } else {
-                    $this->postanschrift [$a] = "$this->eig_namen_u_pdf$this->haus_strasse $this->haus_nummer\n<b>$this->haus_plz $this->haus_stadt</b>";
+                    $this->postanschrift [$a] = "$this->eig_namen_u_pdf$this->haus_strasse $this->haus_nummer\n$this->haus_plz $this->haus_stadt";
                     $this->eigentuemer_name_str_u1 .= "$anrede $p->person_nachname $p->person_vorname\n";
                 }
             }
@@ -5416,12 +5416,10 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 /* Prüfen ob Einheit im Array der Aufteilung */
                 if ($this->berechnen == 0) {
                     $e_anteile = 0;
-                    $tab_arr [$a] ['ZEILEN'] [$b] ['G_KEY_A'] = number_format($g_value, 3, ',', '') . ' ' . $bk->g_key_me . ' ';
-                    $tab_arr [$a] ['ZEILEN'] [$b] ['E_KEY_A'] = number_format($e_anteile, 3, ',', '') . ' ' . $bk->g_key_me . ' ';
+                    $tab_arr [$a] ['ZEILEN'] [$b] ['G_KEY_A'] = number_format($g_value, 3, ',', '') . ' ' . $bk->g_key_me;
+                    $tab_arr [$a] ['ZEILEN'] [$b] ['E_KEY_A'] = number_format($e_anteile, 3, ',', '') . ' ' . $bk->g_key_me;
                     $tab_arr [$a] ['ZEILEN'] [$b] ['KEY_A'] = $tab_arr [$a] ['ZEILEN'] [$b] ['E_KEY_A'] . ' / ' . $tab_arr [$a] ['ZEILEN'] [$b] ['G_KEY_A'];
                 }
-
-                //TODO: entnahme anteil
 
                 if ($this->berechnen == 1) {
                     $betrag = number_format($betrag, 2, '.', '');
@@ -5495,6 +5493,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                     $hndl_arr [$eigent_id] ['ZEILEN'] [$hndl_z] ['KOS_BEZ'] = $r->kostentraeger_ermitteln($kos_typ, $kos_id);
                     $hndl_arr [$eigent_id] ['ZEILEN'] [$hndl_z] ['BEZ'] = $betraege_arr [$b] ['0'] ['TEXT'] . ' *';
                     $hndl_arr [$eigent_id] ['ZEILEN'] [$hndl_z] ['G_KEY_A'] = $g_value_a . ' ' . $bk->g_key_me;
+                    $hndl_arr [$eigent_id] ['ZEILEN'] [$hndl_z] ['SCHLUESSEL'] = $e_anteile_a . ' ' . $bk->g_key_me . ' / ' . $g_value_a . ' ' . $bk->g_key_me;
                     $hndl_z++;
                 }
             } // end for Konten $b
@@ -5576,7 +5575,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $this->get_eigentumer_id_infos2($eig_id);
             $this->get_anrede_eigentuemer($eig_id);
 
-            $standard_anschrift = str_replace('<br />', "\n", $this->postanschrift [0]);
+            $standard_anschrift = str_replace('<br>', "\n", end($this->postanschrift));
             if (!empty ($standard_anschrift)) {
                 $pdf->ezText("$standard_anschrift", 10);
             } else {
@@ -5641,6 +5640,8 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
 
             $pdf->ezText("$this->pdf_anrede", 10);
             $pdf->ezText("beiliegend übersenden wir Ihnen die Hausgeld-Einzelabrechnung zur Jahresabrechnung $jahr.", 10);
+
+            $pdf->ezSetDy(-10);
 
             $zeilen = array_orderby($tab_arr [$a] ['ZEILEN'], 'GRUPPE', SORT_DESC, 'KONTO', SORT_ASC);
 
@@ -5755,12 +5756,11 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 $ru_zeile = [];
                 $su_kosten_soll = $this->hg_tab_soll_ist_einnahmen($su['E_KONTO'], 'Einheit', $this->einheit_id, $this->eigentuemer_von_t, $this->eigentuemer_bis_t);
                 $su_kosten_summe += $su_kosten_soll;
-                $ru_zeile['ART'] = "Zuführung aus Sonderumlage ($su[KOSTENKAT])";
+                $ru_zeile['ART'] = "Zuführung zur Rücklage aus Sonderumlage ($su[KOSTENKAT])";
                 $ru_zeile['ANTEIL'] = '-' . nummer_punkt2komma($su_kosten_soll);
                 $ru_tab[] = $ru_zeile;
             }
 
-            //TODO: entnahme
             $su_ausgaben_summe = 0;
 
             $su_def_zeilen_alle = DB::table('WEG_WG_DEF')
@@ -5795,7 +5795,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                         }
                         $su_ausgaben_summe += $betrag;
                         $ru_zeile = [];
-                        $ru_zeile['ART'] = "Entnahme aus Sonderumlage ($su[KOSTENKAT])";
+                        $ru_zeile['ART'] = "Entnahme aus Rücklage zur Sonderumlage ($su[KOSTENKAT])";
                         $ru_zeile['ANTEIL'] = number_format($betrag, 2, ',', '.');
                         $ru_tab[] = $ru_zeile;
                     }
@@ -5984,9 +5984,14 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
 
                 $pdf->ezSetDy(-10);
 
+                $pdf->setColor(0, 0, 0);
+                $pdf->setStrokeColor(0, 0, 0);
+                $pdf->setLineStyle(0.5);
+                $pdf->rectangle(400, 601, 165, 87);
                 $this->get_eigentumer_id_infos2($eig_id);
+                $this->get_anrede_eigentuemer($eig_id);
 
-                $standard_anschrift = str_replace('<br />', "\n", $this->postanschrift [0]);
+                $standard_anschrift = str_replace('<br>', "\n", end($this->postanschrift));
                 if (!empty ($standard_anschrift)) {
                     $pdf->ezText("$standard_anschrift", 10);
                 } else {
@@ -5997,19 +6002,57 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                     $pdf->ezText("$this->haus_plz $this->haus_stadt", 10);
                 }
 
-                $pdf->ezSetDy(-30);
+                $d = new detail ();
+                $anteile_g = $d->finde_detail_inhalt('OBJEKT', $e->objekt_id, 'Gesamtanteile');
+                $pdf->addText(405, 680, 8, "Einheiten:");
+                $pdf->addText(465, 680, 8, "$anz_einheiten");
+                $pdf->addText(405, 670, 8, "Einheit:");
+                $pdf->addText(465, 670, 8, "$e->einheit_kurzname");
+                $pdf->addText(405, 660, 8, "Gesamtanteile:");
+                $pdf->addText(465, 660, 8, "$anteile_g");
+                $this->einheit_anteile = $d->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Anteile');
+                $pdf->addText(405, 650, 8, "Ihre MEA:");
+                $pdf->addText(465, 650, 8, "$this->einheit_anteile");
 
-                $pdf->setColor(0.6, 0.6, 0.6);
-                $pdf->filledRectangle(50, 600, 500, 15);
-                $pdf->setColor(0, 0, 0);
+                $e->einheit_qm_a = nummer_punkt2komma($e->einheit_qm);
+                $pdf->addText(405, 640, 8, "Fläche:");
+                $pdf->addText(465, 640, 8, "$e->einheit_qm_a m²");
 
-                $pdf->ezSetY(650);
+                $pdf->addText(405, 630, 8, "Aufzug %:");
+                $pdf->addText(465, 630, 8, "$e->aufzug_prozent_d");
+
+                $this->eigentuemer_von_d = date_mysql2german($this->eigentuemer_von);
+                $this->eigentuemer_bis_d = date_mysql2german($this->eigentuemer_bis);
+                if ($this->eigentuemer_bis_d == '00.00.0000') {
+                    $this->eigentuemer_bis_d = "31.12.$jahr";
+                }
+                $e_jahr_arr = explode(".", $this->eigentuemer_bis_d);
+                $e_jahr = $e_jahr_arr [2];
+                if ($e_jahr > $jahr) {
+                    $this->eigentuemer_bis_d = "31.12.$jahr";
+                }
+
+                $e_ajahr_arr = explode(".", $this->eigentuemer_von_d);
+                $e_ajahr = $e_ajahr_arr [2];
+                if ($e_ajahr < $jahr) {
+                    $this->eigentuemer_von_d = "01.01.$jahr";
+                }
+
+                $pdf->addText(405, 618, 7, "Zeitraum:");
+                if ($this->p_von && $this->p_bis) {
+                    $pdf->addText(465, 618, 7, "$this->p_von_d - $this->p_bis_d");
+                } else {
+                    $pdf->addText(465, 618, 7, "01.01.$jahr - 31.12.$jahr");
+                }
+                $pdf->addText(405, 611, 7, "Nutzungszeitraum: ");
+                $pdf->addText(465, 611, 7, "$this->eigentuemer_von_d - $this->eigentuemer_bis_d");
+                $pdf->addText(405, 604, 7, "Tage:");
+                $pdf->addText(465, 604, 7, "$this->n_tage von $tj");
+                $pdf->ezSetY(590);
                 $pdf->ezText("$p->partner_ort, $datum", 10, array(
                     'justification' => 'right'
                 ));
-                $pdf->ezSetY(650);
 
-                $pdf->ezSety(615);
                 $pdf->ezText("<b>Nachweis der haushaltsnahen Dienstleistungen im Sinne §35a EStG. für das Jahr $jahr</b>", 10);
                 $pdf->ezSetDy(-20);
                 $zeilen = $hndl_arr [$eig_id] ['ZEILEN'];
@@ -6021,10 +6064,9 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                     'BEZ' => "Kontobezeichnung",
                     'GRUPPE' => "Kontoart",
                     'KOS_BEZ' => "Aufteilung",
-                    'BETRAG_HNDL' => "HNDL Gesamt € ",
-                    'G_KEY_A' => "Gesamt",
-                    'E_KEY_A' => "Ihr Anteil",
-                    'E_BETRAG_HNDL' => "Ihre Beteiligung € "
+                    'SCHLUESSEL' => "Verteilungsschlüssel (Ihr Anteil / Gesamt)",
+                    'BETRAG_HNDL' => "Gesamt € ",
+                    'E_BETRAG_HNDL' => "Ihr Anteil € "
                 );
                 $pdf->ezTable($zeilen, $cols, "<b>Haushaltsnahe- und Handwerkerdienstleistungen </b>", array(
                     'rowGap' => 1.5,
@@ -6058,13 +6100,9 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                             'justification' => 'left',
                             'width' => 60
                         ),
-                        'G_KEY_A' => array(
+                        'SCHLUESSEL' => array(
                             'justification' => 'right',
-                            'width' => 45
-                        ),
-                        'E_KEY_A' => array(
-                            'justification' => 'right',
-                            'width' => 45
+                            'width' => 80
                         ),
                         'E_BETRAG_HNDL' => array(
                             'justification' => 'right',
