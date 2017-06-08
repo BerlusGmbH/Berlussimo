@@ -2349,13 +2349,27 @@ class weg
                 }
             }
 
+            $k = new kontenrahmen ();
+            $kontenrahmen_id = $k->get_kontenrahmen('Geldkonto', $geldkonto_id);
+
+            $su_konten_im_kontenrahmen = DB::table('KONTENRAHMEN_KONTEN')
+                ->where('AKTUELL', '1')
+                ->where('SONDERUMLAGE', '1')
+                ->where('KONTO_ART', 4)
+                ->where('KONTENRAHMEN_ID', $kontenrahmen_id)
+                ->get(['KONTO']);
+
             /* Wenn Zahlungen im Monat vorhanden */
             $summe_zahlungen_6 = $this->get_summe_zahlungen('Eigentuemer', $eigentuemer_id, $monat, $jahr, $geldkonto_id, 6000);
             $summe_zahlungen_hz = $this->get_summe_zahlungen('Eigentuemer', $eigentuemer_id, $monat, $jahr, $geldkonto_id, 6010);
             $summe_zahlungen_hg = $this->get_summe_zahlungen('Eigentuemer', $eigentuemer_id, $monat, $jahr, $geldkonto_id, 6020);
             $summe_zahlungen_ihr = $this->get_summe_zahlungen('Eigentuemer', $eigentuemer_id, $monat, $jahr, $geldkonto_id, 6030);
             $summe_zahlungen_vg = $this->get_summe_zahlungen('Eigentuemer', $eigentuemer_id, $monat, $jahr, $geldkonto_id, 6060);
-            $summe_zahlungen = $summe_zahlungen_hz + $summe_zahlungen_hg + $summe_zahlungen_ihr + $summe_zahlungen_vg + $summe_zahlungen_6;
+            $summe_zahlungen_su = 0;
+            foreach ($su_konten_im_kontenrahmen as $konto) {
+                $summe_zahlungen_su += $this->get_summe_zahlungen('Eigentuemer', $eigentuemer_id, $monat, $jahr, $geldkonto_id, $konto['KONTO']);
+            }
+            $summe_zahlungen = $summe_zahlungen_hz + $summe_zahlungen_hg + $summe_zahlungen_ihr + $summe_zahlungen_vg + $summe_zahlungen_6 + $summe_zahlungen_su;
             if ($summe_zahlungen) {
 
                 $this->hg_saldo += $summe_zahlungen;
