@@ -9,6 +9,7 @@ class k_rahmen
     public $gruppen_id;
     public $konto;
     public $konto_bez;
+    public $sonderumlage;
 
     function kontenrahmen_liste_anzeigen()
     {
@@ -64,18 +65,19 @@ class k_rahmen
         $arr = $this->konten_in_arr_rahmen($kontenrahmen_id);
         $anz = count($arr);
         if ($anz > 0) {
-            echo "<TABLE class=\"sortable\">";
-            echo "<tr><th colspan=\"5\">$this->name</th></tr>";
-            echo "<tr><th>KONTO</th><th>BEZEICHNUNG</th><th>GRUPPE</th><th>KOntoart</th><th>OPTIONEN</th></tr>";
+            echo "<TABLE class=\"sortable striped\">";
+            echo "<thead><tr><th colspan=\"5\">$this->name</th></tr>";
+            echo "<tr><th>Konto</th><th>Bezeichnung</th><th>Gruppe</th><th>Kontoart</th><th>Sonderumlage</th><th>Optionen</th></tr></thead>";
             for ($a = 0; $a < $anz; $a++) {
                 $dat = $arr [$a] ['KONTENRAHMEN_KONTEN_DAT'];
                 $konto = $arr [$a] ['KONTO'];
                 $bez = $arr [$a] ['BEZEICHNUNG'];
                 $gruppe = $arr [$a] ['GRUPPE'];
                 $kontoart = $arr [$a] ['KONTOART'];
+                $su = $arr[$a] ['SONDERUMLAGE'] == '1' ? 'Ja' : 'Nein';
 
-                $link = "<a href='" . route('web::kontenrahmen::legacy', ['option' => 'kostenkonto_ae', 'k_dat' => $dat]) . "'>KONTO ÄNDERN</a>";
-                echo "<tr><td>$konto</td><td>$bez</td><td>$gruppe</td><td>$kontoart</td><td>$link</td></tr>";
+                $link = "<a href='" . route('web::kontenrahmen::legacy', ['option' => 'kostenkonto_ae', 'k_dat' => $dat]) . "'>Ändern</a>";
+                echo "<tr><td>$konto</td><td>$bez</td><td>$gruppe</td><td>$kontoart</td><td>$su</td><td>$link</td></tr>";
             }
             echo "</TABLE>";
         } else {
@@ -97,7 +99,7 @@ class k_rahmen
 
     function konten_in_arr_rahmen($kontenrahmen_id)
     {
-        $result = DB::select("SELECT KONTENRAHMEN_KONTEN_DAT, KONTO, KONTENRAHMEN_KONTEN.BEZEICHNUNG, GRUPPE AS GRUPPEN_ID, KONTENRAHMEN_GRUPPEN.BEZEICHNUNG AS GRUPPE, KONTO_ART AS KONTOART_ID, KONTOART
+        $result = DB::select("SELECT KONTENRAHMEN_KONTEN_DAT, KONTO, KONTENRAHMEN_KONTEN.BEZEICHNUNG, GRUPPE AS GRUPPEN_ID, KONTENRAHMEN_GRUPPEN.BEZEICHNUNG AS GRUPPE, KONTO_ART AS KONTOART_ID, KONTOART, SONDERUMLAGE
 FROM KONTENRAHMEN_KONTEN, KONTENRAHMEN_GRUPPEN, KONTENRAHMEN_KONTOARTEN
 WHERE KONTENRAHMEN_ID = '$kontenrahmen_id' && KONTENRAHMEN_GRUPPEN.AKTUELL = '1' && KONTENRAHMEN_KONTEN.AKTUELL = '1' && KONTENRAHMEN_KONTOARTEN.AKTUELL = '1' && KONTENRAHMEN_KONTEN.GRUPPE = KONTENRAHMEN_GRUPPEN.KONTENRAHMEN_GRUPPEN_ID && KONTO_ART = KONTENRAHMEN_KONTOART_ID
 ORDER BY KONTO ASC");
@@ -206,6 +208,8 @@ ORDER BY KONTO ASC");
         $f->text_feld("Kostenkontobezeichnung", "bez", "", "50", 'bez', '');
         $this->dropdown_k_arten('Kontoart', 'kontoart_id', 'kontoart_id');
         $this->dropdown_k_gruppen('Gruppe', 'k_gruppe', 'k_gruppe');
+        echo "<input type='checkbox' id='su' name='su' class='filled-in'>";
+        echo "<label for='su'>Sonderumlage</label><br>";
         $f->hidden_feld("option", "konto_neu");
         $f->send_button("submit_konto", "Erstellen");
         $f->ende_formular();
@@ -287,11 +291,11 @@ ORDER BY KONTO ASC");
         }
     }
 
-    function kostenkonto_speichern($kontenrahmen_id, $konto, $bez, $kontoart_id, $k_gruppe_id)
+    function kostenkonto_speichern($kontenrahmen_id, $konto, $bez, $kontoart_id, $k_gruppe_id, $su)
     {
         if (!$this->check_konto_exists($konto, $kontenrahmen_id)) {
             $k_id = last_id2("KONTENRAHMEN_KONTEN", "KONTENRAHMEN_KONTEN_ID") + 1;
-            $db_abfrage = "INSERT INTO KONTENRAHMEN_KONTEN VALUES (NULL, '$k_id', '$konto','$bez', '$k_gruppe_id', '$kontoart_id', '$kontenrahmen_id',  '1')";
+            $db_abfrage = "INSERT INTO KONTENRAHMEN_KONTEN VALUES (NULL, '$k_id', '$konto','$bez', '$k_gruppe_id', '$kontoart_id', '$kontenrahmen_id',  '1', '$su')";
             DB::insert($db_abfrage);
             /* Protokollieren */
             $last_dat = DB::getPdo()->lastInsertId();
@@ -324,6 +328,12 @@ ORDER BY KONTO ASC");
         $this->dropdown_k_gruppen('Gruppe', 'k_gruppe', 'k_gruppe');
         $f->hidden_feld("dat", "$konto_dat");
         $f->hidden_feld("option", "konto_ae_send");
+        if ($this->sonderumlage) {
+            echo "<input type='checkbox' id='su' name='su' class='filled-in' checked>";
+        } else {
+            echo "<input type='checkbox' id='su' name='su' class='filled-in'>";
+        }
+        echo "<label for='su'>Sonderumlage</label><br>";
         $f->send_button("submit_konto", "Änderung speichern");
         $f->ende_formular();
     }
@@ -348,10 +358,11 @@ ORDER BY KONTO ASC");
             $this->kontoart_id = $row ['KONTO_ART'];
             $this->kontenrahmen_id = $row ['KONTENRAHMEN_ID'];
             $this->gruppen_id = $row ['GRUPPE'];
+            $this->sonderumlage = $row['SONDERUMLAGE'] == '1';
         }
     }
 
-    function kostenkonto_aendern($dat, $kontenrahmen_id, $konto, $bez, $kontoart_id, $k_gruppe_id)
+    function kostenkonto_aendern($dat, $kontenrahmen_id, $konto, $bez, $kontoart_id, $k_gruppe_id, $su)
     {
 
         /* Deaktivieren von DAT */
@@ -360,7 +371,7 @@ ORDER BY KONTO ASC");
 
         if (!$this->check_konto_exists($konto, $kontenrahmen_id)) {
             $k_id = last_id2("KONTENRAHMEN_KONTEN", "KONTENRAHMEN_KONTEN_ID") + 1;
-            $db_abfrage = "INSERT INTO KONTENRAHMEN_KONTEN VALUES (NULL, '$k_id', '$konto','$bez', '$k_gruppe_id', '$kontoart_id', '$kontenrahmen_id',  '1')";
+            $db_abfrage = "INSERT INTO KONTENRAHMEN_KONTEN VALUES (NULL, '$k_id', '$konto','$bez', '$k_gruppe_id', '$kontoart_id', '$kontenrahmen_id',  '1', '$su')";
             DB::insert($db_abfrage);
             /* Protokollieren */
             $last_dat = DB::getPdo()->lastInsertId();

@@ -603,7 +603,7 @@ switch ($option) {
             $weg->konto_loeschen(request()->input('profil_id'), request()->input('konto'));
             fehlermeldung_ausgeben("Konto $konto wurde gelöscht!");
         }
-        weiterleiten_in_sec(route('web::weg::legacy', ['option' => 'assistent', 'schritt' => 2], false), 2);
+        weiterleiten(route('web::weg::legacy', ['option' => 'assistent', 'schritt' => 2], false));
         break;
 
     case "konto_zu_zeilen" :
@@ -724,7 +724,7 @@ switch ($option) {
         $betrag = request()->input('betrag');
         $weg = new weg ();
         $weg->autokorr_hga($profil_id, $konto, $betrag);
-        weiterleiten_in_sec(route('web::weg::legacy', ['option' => 'assistent', 'schritt' => 2, 'profil_id' => $profil_id], false), 1);
+        weiterleiten(route('web::weg::legacy', ['option' => 'assistent', 'schritt' => 2, 'profil_id' => $profil_id], false));
         break;
 
     case "stammdaten_weg" :
