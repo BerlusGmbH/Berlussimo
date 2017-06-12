@@ -8,6 +8,7 @@ use App\Http\Requests\Legacy\HaeuserRequest;
 use App\Models\Haeuser;
 use App\Services\Parser\Lexer;
 use App\Services\Parser\Parser;
+use ListViews;
 
 class HaeuserController extends LegacyController
 {
@@ -29,7 +30,7 @@ class HaeuserController extends LegacyController
             $query = request()->input('q');
         }
         if (request()->has('v')) {
-            $query .= " " . request()->input('v');
+            $query .= " " . ListViews::getView('v', request()->input('v'));
         }
 
         $trace = null;

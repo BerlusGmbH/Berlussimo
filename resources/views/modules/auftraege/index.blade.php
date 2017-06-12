@@ -23,22 +23,12 @@
                     <label for="query">Abfrage</label>
                 </div>
                 <div class="input-field col-xs-12 col-md-offset-5 col-md-3">
-                    @php($options = [
-                        '(ohne)' => '""',
-                        'Aufgabenliste' => 'auftrag auftrag[erstellt:desc] auftrag[text] von an kostenträger'
-                    ])
+                    @inject('listViews', "App\Services\ListViewsService")
+                    @php($options = $listViews->getViewNames('v'))
                     @include('shared.listview.views', ['id' => 'view', 'name' => 'v', 'label' => 'Ansicht', 'options' => $options])
                 </div>
                 <div class="input-field col-md-3">
-                    @php($options = [
-                        'Eigene' => '!auftrag(mitarbeiter(id=' . Auth::user()->id . '))',
-                        'Von Mir' => '!auftrag(von(id=' . Auth::user()->id . '))',
-                        'An Mich' => '!auftrag(an(mitarbeiter(id=' . Auth::user()->id . ')))',
-                        'Akut' => '!auftrag(akut=JA)',
-                        'Nicht Akut' => '!auftrag(akut=NEIN)',
-                        'Erledigt' => '!auftrag(erledigt="1")',
-                        'Nicht Erledigt' => '!auftrag(erledigt="0")'
-                    ])
+                    @php($options = $listViews->getViewNames('f'))
                     @include('shared.listview.filters', ['name' => 'f', 'id' => 'filter', 'label' => 'Filter', 'multiple' => true, 'options' => $options])
                 </div>
                 <div class="input-field col-xs-6 col-md-1">

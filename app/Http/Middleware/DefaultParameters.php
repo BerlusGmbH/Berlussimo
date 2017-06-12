@@ -2,53 +2,20 @@
 
 namespace App\Http\Middleware;
 
-use App\Http\Controllers\Legacy\BenutzerController;
-use App\Http\Controllers\Legacy\EinheitenController;
-use App\Http\Controllers\Legacy\HaeuserController;
-use App\Http\Controllers\Legacy\ObjekteController;
-use App\Http\Controllers\Legacy\PersonenController;
-use App\Http\Controllers\Legacy\ToDoController;
 use Closure;
-use Route;
+use ListViews;
 
 class DefaultParameters
 {
-    protected $defaults = [
-        ToDoController::class . '@index' => [
-            'v' => 'auftrag auftrag[erstellt:desc] auftrag[text] von an kostenträger',
-            's' => 20
-        ],
-        ObjekteController::class . '@index' => [
-            'v' => 'objekt haus[count] einheit[count] detail[count]',
-            's' => 20
-        ],
-        HaeuserController::class . '@index' => [
-            'v' => 'haus !haus[str:asc nr:asc] haus[plz] haus[ort] detail[count] einheit[count] objekt',
-            's' => 20
-        ],
-        EinheitenController::class . '@index' => [
-            'v' => 'einheit !einheit[name] mietvertrag person[mietvertrag] einheit[typ] einheit[qm] einheit[lage] haus objekt',
-            's' => 20
-        ],
-        PersonenController::class . '@index' => [
-            'v' => 'person(mietvertrag) mietvertrag einheit[mietvertrag] haus[mietvertrag] objekt[mietvertrag] detail[count]',
-            's' => 20
-        ],
-        BenutzerController::class . '@index' => [
-            'v' => 'mitarbeiter !mitarbeiter[name:asc] mitarbeiter[id] mitarbeiter[email] mitarbeiter[geburtstag] gewerk mitarbeiter[von bis] mitarbeiter[stundensatz] mitarbeiter[wochenstunden] mitarbeiter[urlaubstage] partner',
-            's' => 20
-        ]
-    ];
 
     public function handle($request, Closure $next)
     {
-        $action = Route::currentRouteAction();
-        if(key_exists($action, $this->defaults)) {
+        if (ListViews::hasParameters()) {
             $missingParameters = [];
-            $parameters = $this->defaults[$action];
-            foreach ($parameters as $key => $value) {
-                if (!request()->exists($key)) {
-                    $missingParameters = array_merge($missingParameters, [$key => $value]);
+            $parameters = ListViews::getParameters();
+            foreach ($parameters as $parameter) {
+                if (!request()->exists($parameter) && ListViews::hasDefault($parameter)) {
+                    $missingParameters = array_merge($missingParameters, [$parameter => ListViews::getDefault($parameter)]);
                 }
             }
             if (!empty($missingParameters)) {

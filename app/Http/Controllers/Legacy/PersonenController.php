@@ -8,6 +8,7 @@ use App\Http\Requests\Legacy\PersonenRequest;
 use App\Models\Personen;
 use App\Services\Parser\Lexer;
 use App\Services\Parser\Parser;
+use ListViews;
 
 class PersonenController extends LegacyController
 {
@@ -29,7 +30,7 @@ class PersonenController extends LegacyController
             $query = request()->input('q');
         }
         if (request()->has('v')) {
-            $query .= " " . request()->input('v');
+            $query .= " " . ListViews::getView('v', request()->input('v'));
         }
 
         $trace = null;

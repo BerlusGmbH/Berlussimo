@@ -56,9 +56,17 @@ class Einheiten extends Model
             $date = Carbon::today();
         }
         return Personen::whereHas('mietvertraege', function ($query) use ($date){
-            $query->where('EINHEIT_ID', $this->EINHEIT_ID)->whereDate('MIETVERTRAG_VON', '<=', $date)->where(function ($query) use($date) {
-                $query->whereDate('MIETVERTRAG_BIS', '>=', $date)->orWhereDate('MIETVERTRAG_BIS', '=', '0000-00-00');
-            });
+            $query->where('EINHEIT_ID', $this->EINHEIT_ID)->active('=', $date);
+        });
+    }
+
+    public function WEGEigentuemer($date = null)
+    {
+        if (is_null($date)) {
+            $date = Carbon::today();
+        }
+        return Personen::whereHas('kaufvertraege', function ($query) use ($date) {
+            $query->where('EINHEIT_ID', $this->EINHEIT_ID)->active('=', $date);
         });
     }
 

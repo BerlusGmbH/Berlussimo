@@ -20,35 +20,24 @@
                     <label for="query">Abfrage</label>
                 </div>
                 <div class="input-field col-xs-12 col-md-2">
-                    @php($options = [
-                        '(ohne)' => '""',
-                        'Mitarbeiterliste' => 'mitarbeiter !mitarbeiter[name:asc] mitarbeiter[id] mitarbeiter[email] mitarbeiter[geburtstag] gewerk mitarbeiter[von bis] mitarbeiter[stundensatz] mitarbeiter[wochenstunden] mitarbeiter[urlaubstage] partner'
-                    ])
+                    @inject('listViews', "App\Services\ListViewsService")
+                    @php($options = $listViews->getViewNames('v'))
                     @include('shared.listview.views', ['id' => 'view', 'name' => 'v', 'label' => 'Ansicht', 'options' => $options])
                 </div>
                 <div class="input-field col-xs-6 col-md-1">
                     @include('shared.listview.resultsize', ['name' => 's', 'id' => 'size', 'label' => 'Anzahl'])
                 </div>
                 <div class="input-field col-md-2 col-md-offset-8">
-                    @php($options = [
-                        '(nicht gesetzt)' => '""',
-                        'Ja' => '!mitarbeiter(aktiv)',
-                        'Nein' => '!mitarbeiter(!aktiv)'
-                    ])
-                    @include('shared.listview.filters', ['name' => 'f[1]', 'id' => 'filter1', 'label' => 'Aktiv', 'multiple' => false, 'options' => $options])
+                    @php($options = $listViews->getViewNames('f1'))
+                    @include('shared.listview.filters', ['name' => 'f1', 'id' => 'filter1', 'label' => 'Aktiv', 'multiple' => false, 'options' => $options])
                 </div>
                 <div class="input-field col-md-2">
-                    @php($options = [
-                        '(nicht gesetzt)' => ''
-                    ])
-                    @foreach($arbeitgeber as $einArbeitgeber)
-                        @php($options = array_add($options, str_limit($einArbeitgeber->PARTNER_NAME, 40), '!mitarbeiter(partner(id=' . $einArbeitgeber->PARTNER_ID . '))'))
-                    @endforeach
-                    @include('shared.listview.filters', ['name' => 'f[2]', 'id' => 'filter2', 'label' => 'Arbeitgeber', 'multiple' => false, 'options' => $options])
+                    @php($options = $listViews->getViewNames('f2'))
+                    @include('shared.listview.filters', ['name' => 'f2', 'id' => 'filter2', 'label' => 'Arbeitgeber', 'multiple' => false, 'options' => $options])
                 </div>
             </div>
         </form>
-        @include('shared.tables.entities-with-paginator', ['parameters' => ['q', 's', 'v', 'f'] ,'columns' => $columns, 'entities' => $entities, 'class' => \App\Models\User::class])
+        @include('shared.tables.entities-with-paginator', ['parameters' => ['q', 's', 'v', 'f1', 'f2'] ,'columns' => $columns, 'entities' => $entities, 'class' => \App\Models\User::class])
     </div>
 @endsection
 

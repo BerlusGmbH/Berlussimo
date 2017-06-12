@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Legacy;
 
 
-use App\Http\Requests\Legacy\ToDoRequest;
 use App\Http\Controllers\Traits\Indexable;
+use App\Http\Requests\Legacy\ToDoRequest;
 use App\Models\Auftraege;
 use App\Services\Parser\Lexer;
 use App\Services\Parser\Parser;
+use ListViews;
 
 class ToDoController extends LegacyController
 {
@@ -15,6 +16,7 @@ class ToDoController extends LegacyController
 
     protected $submenu = 'legacy/options/links/links.todo.php';
     protected $include = 'legacy/options/modules/todo.php';
+
 
     public function index(ToDoRequest $request)
     {
@@ -24,10 +26,12 @@ class ToDoController extends LegacyController
             $query = request()->input('q');
         }
         if (request()->has('v')) {
-            $query .= " " . request()->input('v');
+            $query .= " " . ListViews::getView('v', request()->input('v'));
         }
         if (request()->has('f')) {
-            $query .= " " . implode(' ', request()->input('f'));
+            foreach (request()->input('f') as $f) {
+                $query .= " " . ListViews::getView('f', $f);
+            }
         }
 
         $trace = null;

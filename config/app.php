@@ -212,8 +212,8 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'Relations' => App\Facades\Relations::class
-        
+        'Relations' => App\Facades\Relations::class,
+        'ListViews' => App\Facades\ListViews::class
     ],
 
 ];

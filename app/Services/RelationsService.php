@@ -118,7 +118,7 @@ class RelationsService
             'objekt' => ['einheit.haus.objekt', Objekte::class],
             'haus' => ['einheit.haus', Haeuser::class],
             'einheit' => ['einheit', Einheiten::class],
-            'mietvertrag' => ['', Mietvertraege::class],
+            'kaufvertrag' => ['', Kaufvertraege::class],
             'telefon' => ['personen.phones', Details::class],
             'email' => ['personen.emails', Details::class],
             'person' => ['personen', Personen::class]
@@ -222,14 +222,17 @@ class RelationsService
         Auftraege::class => 'auftrag'
     ];
 
-    public function columnColumnToClass($outer, $inner)
-    {
-        return self::$COLUMN_COLUMN_TO_RELATIONS[$outer][$inner][1];
-    }
-
     public function columnToClass($class)
     {
         return $this->columnColumnToClass($class, $class);
+    }
+
+    public function columnColumnToClass($outer, $inner)
+    {
+        if (is_null($inner) || is_null($outer)) {
+            return null;
+        }
+        return self::$COLUMN_COLUMN_TO_RELATIONS[$outer][$inner][1];
     }
 
     public function classFieldToField($class, $field)

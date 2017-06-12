@@ -14,10 +14,11 @@ use App\Models\Personen;
 use App\Models\User;
 use App\Models\Wirtschaftseinheiten;
 use App\Pagination\MaterializeCssPresenter;
+use App\Services\ListViewsService;
+use App\Services\PhoneLocator;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
-use App\Services\PhoneLocator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -58,6 +59,9 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->singleton(PhoneLocator::class, function() {
             return new PhoneLocator(config('phonelocator'));
+        });
+        $this->app->singleton(ListViewsService::class, function () {
+            return new ListViewsService(config('listviews'));
         });
     }
 }
