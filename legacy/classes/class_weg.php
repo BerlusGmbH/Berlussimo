@@ -5940,17 +5940,20 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             ));
 
             /* Zweite Seite */
-            // $pdf->ezNewPage();
             $pdf->ezSetDy(-30);
-            $pdf->ezText("Sollte Ihre Abrechnung ein Guthaben ausweisen, dann werden wir nach Genehmigung der Jahresabrechnung auf der diesjährigen Eigentümerversammlung den Guthabenbetrag auf Ihr Konto überweisen, soweit es nicht zum Ausgleich von Rückständen benötigt wird.", 10, array(
+            $pdf->ezText("Sollte Ihre Abrechnung ein Guthaben ausweisen, werden wir nach der Genehmigung der Jahresabrechnung durch die Eigentümerversammlung den Guthabenbetrag auf Ihr Konto überweisen, soweit es nicht zum Ausgleich von aktuellen Rückständen benötigt wird. Wir bitten um die Mitteilung ihrer derzeitigen Kontoverbindung, auch wenn sich diese seit der letzten Abrechnung nicht geändert hat.", 10, array(
                 'justification' => 'full'
             ));
             $pdf->ezSetDy(-10);
-            $pdf->ezText("Bei einer Nachzahlung überweisen Sie bitte den Nachzahlungsbetrag nach Genehmingung der Jahresabrechnung auf der diesjährigen Eigentümerversammlung auf das Hasusgeldkonto. Als Verwendungszweck geben Sie bitte <b>Hausgeldabrechnung $jahr  $e->einheit_kurzname</b> ein.", 10, array(
+            $pdf->ezText("Sollte Ihre Abrechnung eine Nachzahlung ausweisen, überweisen Sie bitte den Nachzahlungsbetrag nach der Genehmigung der Jahresabrechnung durch die Eigentümerversammlung auf das Ihnen bekannte Hausgeldkonto (Inh.: $g->beguenstigter, IBAN: $g->IBAN1 bei der $g->bankname). Als <b>Verwendungszweck</b> geben Sie bitte <b>Hausgeldabrechnung $jahr $e->einheit_kurzname</b> an.", 10, array(
                 'justification' => 'full'
             ));
             $pdf->ezSetDy(-10);
-            $pdf->ezText("Wir behalten uns eine Berichtigung dieser Abrechnung vor, falls nachträglich Rechnungen Dritter für den Abrechnungszeitraum eingehen, die bei der Abrechnung hätten berücksichtigt werden müssen, Fehler anerkannt werden, welche zunächst nicht ohne weiteres erkennbar waren (z. B. Fehler von Messdiensten) oder der Abrechnungsfehler zu einem schlechthin unzumutbaren Nachteil für einen Vertragspartei führt.", 10, array(
+            $pdf->ezText("Den Zeitpunkt der Fälligkeit der Guthabenauszahlung bzw. der Nachzahlung entnehmen Sie bitte dem entsprechenden Genehmigungsbeschluss.", 10, array(
+                'justification' => 'full'
+            ));
+            $pdf->ezSetDy(-10);
+            $pdf->ezText("Wir behalten uns eine Berichtigung dieser Abrechnung vor, falls nachträglich Rechnungen Dritter für den Abrechnungszeitraum eingehen, die bei der Abrechnung hätten berücksichtigt werden müssen, Fehler anerkannt werden, welche zunächst nicht ohne weiteres erkennbar waren (z. B. Fehler von Messdiensten) oder der Abrechnungsfehler zu einem schlechthin unzumutbaren Nachteil für eine Vertragspartei führt.", 10, array(
                 'justification' => 'full'
             ));
             $pdf->ezSetDy(-25);
