@@ -5843,6 +5843,11 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 $hg_ist_summe = $this->get_summe_zahlungen_hga('Eigentuemer', $eig_id, $p_id, $this->hg_konto);
             }
 
+            $inst_ist_summe = $this->get_summe_zahlungen_arr_jahr('Eigentuemer', $eig_id, $jahr, $geldkonto_id, $this->ihr_konto);
+            if (!$inst_ist_summe) {
+                $inst_ist_summe = $this->get_summe_zahlungen_hga('Eigentuemer', $eig_id, $p_id, $this->ihr_konto);
+            }
+
             $su_ist_summe = 0;
             foreach ($su_im_wirtschaftsjahr as $su) {
                 $su_ist = $this->get_summe_zahlungen_arr_jahr('Eigentuemer', $eig_id, $jahr, $geldkonto_id, $su['E_KONTO']);
@@ -5852,7 +5857,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 $su_ist_summe += $su_ist;
             }
 
-            $hg_saldo = $hg_ist_summe - $hg_kosten_soll - $inst_kosten_soll + $su_ist_summe - $su_kosten_summe;
+            $hg_saldo = $hg_ist_summe - $hg_kosten_soll + $inst_ist_summe - $inst_kosten_soll + $su_ist_summe - $su_kosten_summe;
 
             $ge_tab [5] ['ART'] = "Saldo ihres Hausgeldkontos (- = Rückstände / + = Überzahlung)";
             $ge_tab [5] ['ANTEIL'] = nummer_punkt2komma_t($hg_saldo);
