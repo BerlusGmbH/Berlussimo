@@ -1187,7 +1187,7 @@ class mietanpassung
 
             // $f->send_button("ber_prozent", "Manuelle Prozenteingabe");
         } else {
-            "Keine Berechnungsdaten";
+            echo "Keine Berechnungsdaten";
         }
     }
     
@@ -2371,6 +2371,10 @@ class mietanpassung
         $tab_arr [2] ['BETRAG'] = "$ber->B_AKT_NK €";
         $tab_arr [3] ['BEZ'] = 'Heizkosten Vorauszahlung';
         $tab_arr [3] ['BETRAG'] = "$ber->B_AKT_HK €</b>";
+        if (nummer_komma2punkt($ber->B_AKT_SP) != 0) {
+            $tab_arr [4] ['BEZ'] = '<b>Stellplatzmiete</b>';
+            $tab_arr [4] ['BETRAG'] = "<b>$ber->B_AKT_SP €</b>";
+        }
         $cols = array(
             'BEZ' => "BEZ",
             'BETRAG' => "BETRAG"
@@ -2451,6 +2455,10 @@ class mietanpassung
         $tab_arr [2] ['BETRAG'] = "$ber->B_AKT_NK €";
         $tab_arr [3] ['BEZ'] = 'Heizkosten Vorauszahlung';
         $tab_arr [3] ['BETRAG'] = "$ber->B_AKT_HK €</b>";
+        if (nummer_komma2punkt($ber->B_AKT_SP) != 0) {
+            $tab_arr [4] ['BEZ'] = '<b>Stellplatzmiete</b>';
+            $tab_arr [4] ['BETRAG'] = "<b>$ber->B_AKT_SP €</b>";
+        }
         $cols = array(
             'BEZ' => "BEZ",
             'BETRAG' => "BETRAG"
@@ -2509,18 +2517,6 @@ class mietanpassung
 
         $pdf->ezNewPage();
         $this->widerrufsseite($pdf);
-
-        // $pdf->ezNewPage();
-        /*
-		 * $im = new imagick();
-		 * $im->setResolution(600,600);
-		 * $im->readImage('Mietspiegeltabelle2009.pdf[0]');
-		 * $im->setImageFormat(�png�);
-		 * $im->setImageDepth(8);
-		 * $im->setImageCompressionQuality(90);
-		 * $im->scaleImage(500,0);
-		 */
-        //
 
         /* Ausgabe */
         ob_end_clean(); // ausgabepuffer leeren
@@ -2909,6 +2905,10 @@ class mietanpassung
         $tab_arr [1] ['BETRAG'] = "$ber->TAT_KOST_M €";
         $tab_arr [2] ['BEZ'] = 'Heizkosten Vorauszahlung';
         $tab_arr [2] ['BETRAG'] = "$ber->B_AKT_HK €";
+        if (nummer_komma2punkt($ber->B_AKT_SP) != 0) {
+            $tab_arr [3] ['BEZ'] = 'Stellplatzmiete';
+            $tab_arr [3] ['BETRAG'] = "$ber->B_AKT_SP €";
+        }
 
         $cols = array(
             'BEZ' => "BEZ",
