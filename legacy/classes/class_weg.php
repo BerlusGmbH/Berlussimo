@@ -5418,6 +5418,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 }
                 if ($gen_key_id == 4) {
                     $e_anteile = 0.00;
+                    $g_value = $betrag;
                 }
                 /* Aufzug nach Prozent */
                 if ($gen_key_id == 5) {
@@ -5430,8 +5431,8 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 /* Prüfen ob Einheit im Array der Aufteilung */
                 if ($this->berechnen == 0) {
                     $e_anteile = 0;
-                    $tab_arr [$a] ['ZEILEN'] [$b] ['G_KEY_A'] = number_format($g_value, 3, ',', '') . ' ' . $bk->g_key_me;
-                    $tab_arr [$a] ['ZEILEN'] [$b] ['E_KEY_A'] = number_format($e_anteile, 3, ',', '') . ' ' . $bk->g_key_me;
+                    $tab_arr [$a] ['ZEILEN'] [$b] ['G_KEY_A'] = number_format($g_value, 2, ',', '') . ' ' . $bk->g_key_me;
+                    $tab_arr [$a] ['ZEILEN'] [$b] ['E_KEY_A'] = number_format($e_anteile, 2, ',', '') . ' ' . $bk->g_key_me;
                     $tab_arr [$a] ['ZEILEN'] [$b] ['KEY_A'] = $tab_arr [$a] ['ZEILEN'] [$b] ['E_KEY_A'] . ' / ' . $tab_arr [$a] ['ZEILEN'] [$b] ['G_KEY_A'];
                 }
 
@@ -5443,10 +5444,10 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                         $su_soll_abrechnungsjahr = $su_soll_alle - $su_soll_vorjahre;
                     }
                     $e_anteile = punkt_zahl($e_anteile);
-                    $e_anteile_a = number_format($e_anteile, 3, ',', '.');
+                    $e_anteile_a = number_format($e_anteile, 2, ',', '.');
 
                     $g_value = punkt_zahl($g_value);
-                    $g_value_a = number_format($g_value, 3, ',', '.');
+                    $g_value_a = number_format($g_value, 2, ',', '.');
 
                     $bet = ((($betrag * $e_anteile) / $g_value) * $tage) / $tj;
                     $bet = number_format($bet, 2, '.', '');
@@ -5746,7 +5747,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             /* Instandhaltungstabelle */
             $inst_kosten_soll = $this->hg_tab_soll_ist_einnahmen($this->ihr_konto, 'Einheit', $this->einheit_id, $this->eigentuemer_von_t, $this->eigentuemer_bis_t);
             $ru_tab = [];
-            $ru_tab [0] ['ART'] = "Zuführung zur Instanhaltungsrücklage";
+            $ru_tab [0] ['ART'] = "Zuführung zur Instandhaltungsrücklage";
             $ru_tab [0] ['ANTEIL'] = '-' . nummer_punkt2komma($inst_kosten_soll);
 
             $su_im_wirtschaftsjahr = DB::table('WEG_WG_DEF')
