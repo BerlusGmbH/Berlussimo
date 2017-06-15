@@ -2372,10 +2372,12 @@ switch ($option) {
             echo "Partner (Rechnungssteller) wählen!";
             return;
         }
-        echo "<hr>";
-        $link_add = "<a href='" . route('web::rechnungen::legacy', ['option' => 'beleg2pool']) . "'>Beleg hinzufügen</a>";
+        echo "<div class='row'>";
+        echo "<div class='col-xs-12'>";
+        $link_add = "<a href='" . route('web::rechnungen::legacy', ['option' => 'beleg2pool']) . "' class='btn waves-light waves-effect'><i class=\"mdi mdi-plus left\"></i>Vorlage</a>";
         echo $link_add;
-        echo "<hr>";
+        echo "</div>";
+        echo "</div>";
         $r = new rechnungen ();
         $r->liste_beleg2rg();
         break;

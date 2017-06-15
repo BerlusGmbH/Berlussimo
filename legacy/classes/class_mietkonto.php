@@ -1401,7 +1401,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         $gk = new geldkonto_info ();
         $gk->geld_konto_ermitteln('Objekt', $mv->objekt_id);
         if (!empty ($gk->geldkonto_id)) {
-            $result = DB::select("SELECT DATUM, BETRAG, VERWENDUNGSZWECK AS BEMERKUNG FROM GELD_KONTO_BUCHUNGEN WHERE  GELDKONTO_ID='$gk->geldkonto_id' $ko_string && KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mietvertrag_id' && AKTUELL='1' && DATE_FORMAT( DATUM, '%Y-%m' ) = '$jahr-$monat' ORDER BY DATUM ASC");
+            $result = DB::select("SELECT DATUM, BETRAG, VERWENDUNGSZWECK AS BEMERKUNG, MWST_ANTEIL FROM GELD_KONTO_BUCHUNGEN WHERE  GELDKONTO_ID='$gk->geldkonto_id' $ko_string && KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mietvertrag_id' && AKTUELL='1' && DATE_FORMAT( DATUM, '%Y-%m' ) = '$jahr-$monat' ORDER BY DATUM ASC");
         } else {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage('Kein Geldkonto für das Objekt hinterlegt')
@@ -1714,6 +1714,7 @@ ORDER BY DATUM ASC ");
         $kostenkategorien_arr [] = 'Ratenzahlung';
         $kostenkategorien_arr [] = 'Saldo Vortrag Vorverwaltung';
         $kostenkategorien_arr [] = 'Mietminderung';
+        $kostenkategorien_arr [] = 'Stellplatzmiete';
 
         for ($a = $jahr; $a >= $vorjahr; $a--) {
             $kostenkategorien_arr [] = "Betriebskostenabrechnung $a";

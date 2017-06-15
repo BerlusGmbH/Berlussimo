@@ -154,12 +154,9 @@ switch ($option) {
         break;
 
     case "geldbuchung_aendern" :
-        $form = new formular ();
-        $form->erstelle_formular("Geldbuchung ändern", NULL);
         $buchung = new buchen ();
         $geldbuchung_dat = request()->input('geldbuchung_dat');
         $buchung->buchungsmaske_buchung_aendern($geldbuchung_dat);
-        $form->ende_formular();
         break;
 
     case "geldbuchung_aendern1" :

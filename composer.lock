@@ -4,8 +4,8 @@
     "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
     "This file is @generated automatically"
   ],
-  "hash": "88cdf946ccdefb2b27a7a84152484864",
-  "content-hash": "65acafe854895d8d1e96a5607d4ecfac",
+  "hash": "41a030134bab0d44c2a6de991bead483",
+  "content-hash": "bd58afac3d8b934c62dec7cca1100b45",
   "packages": [
     {
       "name": "barryvdh/laravel-debugbar",
@@ -968,16 +968,16 @@
     },
     {
       "name": "laravel/framework",
-      "version": "v5.4.25",
+      "version": "v5.4.26",
       "source": {
         "type": "git",
         "url": "https://github.com/laravel/framework.git",
-        "reference": "6bcc9b1f542b3deed16d51f6aa1fe318ab407c2a"
+        "reference": "a7ebbfab64111e24f8e584db64e2be9279ded357"
       },
       "dist": {
         "type": "zip",
-        "url": "https://api.github.com/repos/laravel/framework/zipball/6bcc9b1f542b3deed16d51f6aa1fe318ab407c2a",
-        "reference": "6bcc9b1f542b3deed16d51f6aa1fe318ab407c2a",
+        "url": "https://api.github.com/repos/laravel/framework/zipball/a7ebbfab64111e24f8e584db64e2be9279ded357",
+        "reference": "a7ebbfab64111e24f8e584db64e2be9279ded357",
         "shasum": ""
       },
       "require": {
@@ -1093,7 +1093,7 @@
         "framework",
         "laravel"
       ],
-      "time": "2017-06-07 13:35:12"
+      "time": "2017-06-13 18:58:49"
     },
     {
       "name": "laravel/tinker",
@@ -1919,16 +1919,16 @@
     },
     {
       "name": "rospdf/pdf-php",
-      "version": "0.12.36",
+      "version": "0.12.34",
       "source": {
         "type": "git",
         "url": "https://github.com/rospdf/pdf-php.git",
-        "reference": "45c49d545dd084c14e81cf0cc747b97ac1e6ae72"
+        "reference": "dd5fee2f8a3aee120df541bb935befcf4cbe91c7"
       },
       "dist": {
         "type": "zip",
-        "url": "https://api.github.com/repos/rospdf/pdf-php/zipball/45c49d545dd084c14e81cf0cc747b97ac1e6ae72",
-        "reference": "45c49d545dd084c14e81cf0cc747b97ac1e6ae72",
+        "url": "https://api.github.com/repos/rospdf/pdf-php/zipball/dd5fee2f8a3aee120df541bb935befcf4cbe91c7",
+        "reference": "dd5fee2f8a3aee120df541bb935befcf4cbe91c7",
         "shasum": ""
       },
       "require": {
@@ -1952,38 +1952,28 @@
       },
       "notification-url": "https://packagist.org/downloads/",
       "license": [
-        "MIT"
+        "GPL-3.0"
       ],
       "authors": [
+        {
+          "name": "Ole Koeckemann",
+          "email": "ole1986@users.sourceforge.net",
+          "role": "Developer"
+        },
         {
           "name": "Lars Olesen",
           "email": "lars@intraface.dk",
           "role": "Developer"
         },
         {
-          "name": "Ole Koeckemann",
-          "email": "ole.k@web.de",
-          "role": "Project Head / Developer"
-        },
-        {
-          "name": "Sune Jensen",
-          "email": "sj@sunet.dk",
-          "role": "Developer"
-        },
-        {
-          "name": "Nicola Asuni",
-          "email": "info@tecnick.com",
-          "role": "Developer"
-        },
-        {
           "name": "Wayne Munro",
           "email": "pdf@ros.co.nz",
-          "role": "Founder / Inactive"
+          "role": "Inactive"
         }
       ],
       "description": "The R&OS Pdf class supports the creation of PDF documents without any adiditional modules or extensions.",
       "homepage": "https://github.com/rospdf/pdf-php",
-      "time": "2017-05-28 12:10:42"
+      "time": "2017-05-20 19:17:40"
     },
     {
       "name": "smarty/smarty-lexer",

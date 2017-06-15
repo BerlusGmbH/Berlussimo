@@ -8,6 +8,7 @@ use App\Http\Requests\Legacy\EinheitenRequest;
 use App\Models\Einheiten;
 use App\Services\Parser\Lexer;
 use App\Services\Parser\Parser;
+use ListViews;
 
 class EinheitenController extends LegacyController
 {
@@ -29,7 +30,7 @@ class EinheitenController extends LegacyController
             $query = request()->input('q');
         }
         if (request()->has('v')) {
-            $query .= " " . request()->input('v');
+            $query .= " " . ListViews::getView('v', request()->input('v'));
         }
 
         $trace = null;

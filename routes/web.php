@@ -169,6 +169,7 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['web', 'auth'], 'as' => 
 
     Route::group(['prefix' => 'rechnungen', 'as' => 'rechnungen::'], function () {
         Route::match(['get', 'post'], '/', 'RechnungenController@request')->name('legacy');
+        Route::delete('/belegpool/{id}', 'RechnungenController@belegpool_destroy')->name('belegpool.destroy');
     });
 
     Route::group(['prefix' => 'sepa', 'as' => 'sepa::'], function () {
@@ -194,6 +195,7 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['web', 'auth'], 'as' => 
 
     Route::group(['prefix' => 'weg', 'as' => 'weg::'], function () {
         Route::match(['get', 'post'], '/', 'WEGController@request')->name('legacy');
+        Route::post('hga/change-su', 'WEGController@change_su')->name('hga::change-su');
     });
 
     Route::group(['prefix' => 'zeiterfassung', 'as' => 'zeiterfassung::'], function () {

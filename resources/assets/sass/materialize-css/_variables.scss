@@ -28,21 +28,74 @@
 //  23. Collections
 //  24. Progress Bar
 
-
-
 // 1. Colors
 // ==========================================================================
 
-$primary-color: color("grey", "base") !default;
-$primary-color-dark: darken($primary-color, 15%) !default;
+$primary-colors: (
+        "base": #333333,
+        "dark": #191919,
+        "light": #3c3c3c
+);
 
-$secondary-color: color("grey", "darken-1") !default;
-$link-color: color("grey", "darken-2") !default;
+$primary-colors-text: (
+        "base": (#ffffff, #a3a3a3, #28b8b4),
+        "dark": (#ffffff, #a3a3a3),
+        "light": (#ffffff, #323232)
+);
+
+$secondary-colors: (
+        "base": #28b8b4,
+        "dark": #235f9b,
+        "light": #a8e4e1,
+);
+
+$secondary-colors-text: (
+        "base": (#ffffff, #191919),
+        "dark": (#ffffff),
+        "light": (#323232)
+);
+
+$berlussimo-colors: (
+        "primary": (
+                "color": $primary-colors,
+                "text": $primary-colors-text
+        ),
+        "secondary": (
+                "color": $secondary-colors,
+                "text": $secondary-colors-text
+        )
+);
+
+$primary-color: map-get($primary-colors, "base") !default;
+$primary-color-dark: map-get($primary-colors, "dark") !default;
+$primary-color-light: map-get($primary-colors, "light") !default;
+
+$secondary-color: map-get($secondary-colors, "base") !default;
+$secondary-color-dark: map-get($secondary-colors, "dark") !default;
+$secondary-color-light: map-get($secondary-colors, "light") !default;
+
+$link-color: $primary-color !default;
 
 // 4. Cards
 // ==========================================================================
 
-$card-link-color: color("grey", "darken-2") !default;
+$card-link-color: $secondary-color !default;
+
+// 8. Dropdown
+// ==========================================================================
+
+$dropdown-color: $primary-color !default;
+
+// 10. Forms
+// ==========================================================================
+
+// Text Inputs + Textarea
+$input-border-color: $primary-color !default;
+
+// 13. Navigation Bar
+// ==========================================================================
+
+$navbar-font-color: nth(map-get($primary-colors-text, "dark"), 2) !default;
 
 // 17. Tabs
 // ==========================================================================

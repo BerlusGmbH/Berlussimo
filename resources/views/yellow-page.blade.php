@@ -1,5 +1,5 @@
-@extends('layouts.main-without-menu')
-@section('app-content')
+@extends('layouts.main')
+@section('content')
     @if($content != "")
         {!! $content !!}
     @endif

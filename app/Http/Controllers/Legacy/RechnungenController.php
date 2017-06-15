@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Legacy;
 
 
 use App\Http\Requests\Legacy\RechnungenRequest;
+use DB;
+use URL;
 
 class RechnungenController extends LegacyController
 {
@@ -13,5 +15,11 @@ class RechnungenController extends LegacyController
     public function request(RechnungenRequest $request)
     {
         return $this->render();
+    }
+
+    public function belegpool_destroy(RechnungenRequest $request, $id)
+    {
+        DB::delete('DELETE FROM BELEG2RG WHERE DAT=' . $id);
+        return redirect(URL::previous());
     }
 }

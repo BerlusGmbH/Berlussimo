@@ -4,9 +4,9 @@ namespace App\Models;
 
 use App\Models\Traits\DefaultOrder;
 use App\Models\Traits\Searchable;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
 
 class Einheiten extends Model
 {
@@ -56,19 +56,27 @@ class Einheiten extends Model
             $date = Carbon::today();
         }
         return Person::whereHas('mietvertraege', function ($query) use ($date){
-            $query->where('EINHEIT_ID', $this->EINHEIT_ID)->whereDate('MIETVERTRAG_VON', '<=', $date)->where(function ($query) use($date) {
-                $query->whereDate('MIETVERTRAG_BIS', '>=', $date)->orWhereDate('MIETVERTRAG_BIS', '=', '0000-00-00');
-            });
+            $query->where('EINHEIT_ID', $this->EINHEIT_ID)->active('=', $date);
         });
+    }
+
+    public function WEGEigentuemer($date = null)
+    {
+        if (is_null($date)) {
+            $date = Carbon::today();
+        }
+        return Person::whereHas('kaufvertraege', function ($query) use ($date) {
+            $query->where('EINHEIT_ID', $this->EINHEIT_ID)->active('=', $date);
+        });
+    }
+
+    public function commonDetails() {
+        return $this->details()->whereNotIn('DETAIL_NAME', ['Hinweis_zu_Einheit']);
     }
 
     public function details()
     {
         return $this->morphMany('App\Models\Details', 'details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID');
-    }
-
-    public function commonDetails() {
-        return $this->details()->whereNotIn('DETAIL_NAME', ['Hinweis_zu_Einheit']);
     }
 
     public function hinweise() {
@@ -79,7 +87,8 @@ class Einheiten extends Model
         return $this->hinweise->count() > 0;
     }
 
-    public function vermietet() {
+    public function getVermietetAttribute()
+    {
         foreach($this->mietvertraege as $mietvertrag) {
             if($mietvertrag->isActive()) {
                 return true;

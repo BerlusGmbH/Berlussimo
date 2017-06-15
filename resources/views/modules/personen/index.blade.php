@@ -1,7 +1,7 @@
-@extends('layouts.main-without-menu')
+@extends('layouts.main')
 
 @section('breadcrumbs')
-    <a href="{{ route('web::personen::index') }}" class="breadcrumb">Personen</a>
+    <i class="mdi mdi-subdirectory-arrow-right"></i>Personen
 @endsection
 
 @section('content')
@@ -20,12 +20,8 @@
                     <label for="filter">Filter</label>
                 </div>
                 <div class="input-field col-xs-12 col-md-3">
-                    @php($options = [
-                        '(ohne)' => '""',
-                        'Mieter' => 'person(mietvertrag) mietvertrag einheit[mietvertrag] haus[mietvertrag] objekt[mietvertrag] detail[count]',
-                        'Personen mit Hinweisen' => 'person(hinweis) hinweis',
-                        'Personen mit Anschriften' => 'person(adresse) adresse'
-                    ])
+                    @inject('listViews', "App\Services\ListViewsService")
+                    @php($options = $listViews->getViewNames('v'))
                     @include('shared.listview.views', ['id' => 'view', 'name' => 'v', 'label' => 'Ansicht', 'options' => $options])
                 </div>
                 <div class="input-field col-xs-6 col-md-1">

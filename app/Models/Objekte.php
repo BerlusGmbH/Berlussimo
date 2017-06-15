@@ -4,9 +4,9 @@ namespace App\Models;
 
 use App\Models\Traits\DefaultOrder;
 use App\Models\Traits\Searchable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class Objekte extends Model
 {
@@ -49,9 +49,19 @@ class Objekte extends Model
         return Person::whereHas('mietvertraege', function ($query) use ($date){
             $query->whereHas('einheit.haus.objekt', function ($query) {
                 $query->where('OBJEKT_ID', $this->OBJEKT_ID);
-            })->whereDate('MIETVERTRAG_VON', '<=', $date)->where(function ($query) use($date) {
-                $query->whereDate('MIETVERTRAG_BIS', '>=', $date)->orWhereDate('MIETVERTRAG_BIS', '=', '0000-00-00');
-            });
+            })->active('=', $date);
+        });
+    }
+
+    public function WEGEigentuemer($date = null)
+    {
+        if (is_null($date)) {
+            $date = Carbon::today();
+        }
+        return Person::whereHas('kaufvertraege', function ($query) use ($date) {
+            $query->whereHas('einheit.haus.objekt', function ($query) {
+                $query->where('OBJEKT_ID', $this->OBJEKT_ID);
+            })->active('=', $date);
         });
     }
 
@@ -59,13 +69,13 @@ class Objekte extends Model
         return $this->morphMany(Auftraege::class, 'kostentraeger', 'KOS_TYP', 'KOS_ID');
     }
 
+    public function commonDetails() {
+        return $this->details()->whereNotIn('DETAIL_NAME', ['Hinweis_zum_Objekt']);
+    }
+
     public function details()
     {
         return $this->morphMany('App\Models\Details', 'details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID');
-    }
-
-    public function commonDetails() {
-        return $this->details()->whereNotIn('DETAIL_NAME', ['Hinweis_zum_Objekt']);
     }
 
     public function hinweise() {
@@ -82,5 +92,21 @@ class Objekte extends Model
 
     public function bankkonten() {
         return $this->belongsToMany(Objekte::class, 'GELD_KONTEN_ZUWEISUNG', 'KOSTENTRAEGER_ID', 'KOSTENTRAEGER_ID')->wherePivot('KOSTENTRAEGER_TYP', 'OBJEKT')->wherePivot('AKTUELL', '1');
+    }
+
+    public function getWohnflaecheAttribute()
+    {
+        $flaeche = Einheiten::whereHas('haus.objekt', function ($query) {
+            $query->where('OBJEKT_ID', $this->OBJEKT_ID);
+        })->whereIn('TYP', ['Wohnraum', 'Wohneigentum'])->sum('EINHEIT_QM');
+        return isset($flaeche) ? $flaeche : 0;
+    }
+
+    public function getGewerbeflaecheAttribute()
+    {
+        $flaeche = Einheiten::whereHas('haus.objekt', function ($query) {
+            $query->where('OBJEKT_ID', $this->OBJEKT_ID);
+        })->where('TYP', 'Gewerbe')->sum('EINHEIT_QM');
+        return isset($flaeche) ? $flaeche : 0;
     }
 }

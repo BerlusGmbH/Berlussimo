@@ -1,10 +1,11 @@
-@extends('layouts.main-without-menu')
+@extends('layouts.main')
 
 @section('breadcrumbs')
+    <i class="mdi mdi-subdirectory-arrow-right"></i>
     @if(starts_with(URL::previous(), route('web::haeuser::index')))
-        <a href="{{ URL::previous() }}" class="breadcrumb">Häuser</a>
+        <a href="{{ URL::previous() }}">Häuser</a>
     @else
-        <a href="{{ route('web::haeuser::index') }}" class="breadcrumb">Häuser</a>
+        <a href="{{ route('web::haeuser::index') }}">Häuser</a>
     @endif
     <span class="breadcrumb">@include('shared.entities.haus', ['entity' => $haus, 'icons' => false])</span>
 @endsection
@@ -55,6 +56,16 @@
                             <i class="mdi mdi-email tooltipped" data-position="bottom" data-delay="50" data-tooltip="Postleitzahl und Ort"></i>
                             {{$haus->HAUS_PLZ}} {{$haus->HAUS_STADT}}
                         </div>
+                        <div class="col-xs-12 col-sm-6 detail">
+                            <i class="mdi mdi-home tooltipped" data-tooltip="Wohnfläche"></i>
+                            <a href="{{ route('web::einheiten::index', ['q' => '!einheit(haus(id=' . $haus->HAUS_ID . ') (typ=Wohnraum or typ=Wohneigentum))']) }}">{{$haus->wohnflaeche}}
+                                m²</a>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 detail">
+                            <i class="mdi mdi-store tooltipped" data-tooltip="Gewerbefläche"></i>
+                            <a href="{{ route('web::einheiten::index', ['q' => '!einheit(haus(id=' . $haus->HAUS_ID . ') typ=Gewerbe)']) }}">{{$haus->gewerbeflaeche}}
+                                m²</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -77,6 +88,11 @@
         @if(!$haus->mieter()->get()->isEmpty())
             <div class="col-xs-12 col-sm-3">
                 @include('shared.cards.mieter', [ 'mieter' => $haus->mieter()->defaultOrder()->with('sex')->get(), 'title' => 'Mieter', 'href' => route('web::personen::index', ['q' => '!person(mietvertrag(haus(id=' . $haus->HAUS_ID . ') aktiv))'])])
+            </div>
+        @endif
+        @if(!$haus->WEGEigentuemer()->get()->isEmpty())
+            <div class="col-xs-12 col-sm-3">
+                @include('shared.cards.eigentuemer', [ 'eigentuemer' => $haus->WEGEigentuemer()->defaultOrder()->with('sex', 'hinweise')->get(), 'title' => 'WEG-Eigentümer', 'href' => route('web::personen::index', ['q' => '!person(kaufvertrag(objekt(id=' . $haus->HAUS_ID . ') aktiv))'])])
             </div>
         @endif
         <div class="col-xs-12">

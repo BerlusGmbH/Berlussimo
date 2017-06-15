@@ -5,9 +5,10 @@ namespace App\Http\Controllers\Legacy;
 
 use App\Http\Controllers\Traits\Indexable;
 use App\Http\Requests\Legacy\ObjekteRequest;
+use App\Models\Objekte;
 use App\Services\Parser\Lexer;
 use App\Services\Parser\Parser;
-use App\Models\Objekte;
+use ListViews;
 
 class ObjekteController extends LegacyController
 {
@@ -15,6 +16,7 @@ class ObjekteController extends LegacyController
 
     protected $submenu = 'legacy/options/links/links.form_objekte.php';
     protected $include = 'legacy/options/modules/objekte.php';
+
 
     public function request(ObjekteRequest $request)
     {
@@ -28,8 +30,9 @@ class ObjekteController extends LegacyController
         if (request()->has('q')) {
             $query = request()->input('q');
         }
+
         if (request()->has('v')) {
-            $query .= " " . request()->input('v');
+            $query .= " " . ListViews::getView('v', request()->input('v'));
         }
 
         $trace = null;
@@ -60,11 +63,11 @@ class ObjekteController extends LegacyController
 
     public function show($id, ObjekteRequest $request)
     {
-        $objekt = Objekte::with(['hinweise', 'commonDetails' => function($query) {
+        $objekt = Objekte::with(['hinweise', 'commonDetails' => function ($query) {
             $query->defaultOrder();
-        }, 'haeuser' => function($query) {
+        }, 'haeuser' => function ($query) {
             $query->defaultOrder();
-        }, 'haeuser.hinweise', 'einheiten' => function($query) {
+        }, 'haeuser.hinweise', 'einheiten' => function ($query) {
             $query->defaultOrder();
         }, 'einheiten.hinweise', 'einheiten.mietvertraege'])->find($id);
         return view('modules.objekte.show', ['objekt' => $objekt]);

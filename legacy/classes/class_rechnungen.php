@@ -4154,10 +4154,9 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
     function liste_beleg2rg()
     {
         $arr = $this->beleg_pool_arr();
-        // print_r($arr);
         $anz = count($arr);
-        echo "<table>";
-        echo "<tr><th>EMPFÄNGER</th><th>BELEG</th><th>INFO</th><th>BRUTTO</th><th>OPTIONEN</th></tr>";
+        echo "<table class='striped'>";
+        echo "<thead><th>EMPFÄNGER</th><th>BELEG</th><th>INFO</th><th>BRUTTO</th><th>OPTIONEN</th></thead>";
         for ($a = 0; $a < $anz; $a++) {
             $p_id = $arr [$a] ['EMPF_P_ID'];
             $p = new partner ();
@@ -4165,13 +4164,26 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
             $beleg_nr = $arr [$a] ['BELEG_NR'];
             $r = new rechnung ();
             $r->rechnung_grunddaten_holen($beleg_nr);
-            // print_r($r);
             $a_partner_name = $p->get_partner_name(session()->get('partner_id'));
             $link_rg = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>$r->rechnungsnummer</a>";
             $link_rg_neu = "<a href='" . route('web::rechnungen::legacy', ['option' => 'neue_rg', 'belegnr' => $beleg_nr, 't_beleg_id' => $t_beleg_id, 'empf_p_id' => $p_id]) . "'>Neue RG von $a_partner_name erstellen</a>";
             if (session()->get('partner_id') == $r->rechnungs_aussteller_id) {
                 echo "<tr><td>$partner_name</td><td>$link_rg</td><td>$r->kurzbeschreibung</td><td>$r->rechnungs_brutto</td><td>";
-                echo "$link_rg_neu";
+                echo $link_rg_neu . "<br>";
+                echo "<a href=\"#destroy_$a\">Vorlage entfernen</a>";
+                echo "<div id=\"destroy_$a\" class=\"modal\">";
+                echo "<div class=\"modal-content\">";
+                echo "<h4>Beleg \"$r->kurzbeschreibung\" entfernen?</h4>";
+                echo "<p>Sie können Vorlagen, die aus Belegen vergangener Jahre erzeugt wurden <b>nicht</b> wieder erstellen.</p>";
+                echo "</div>";
+                echo "<div class=\"modal-footer\">";
+                echo "<form method='post' action='" . route('web::rechnungen::belegpool.destroy', ['id' => $arr[$a]['DAT']]) . "'>";
+                echo "<a href=\"javascript:;\" onclick=\"parentNode.submit();\" class='modal-action modal-close waves-effect waves-red btn-flat red-text'>Entfernen</a>";
+                echo method_field('delete');
+                echo "</form>";
+                echo "<a href='' class=\"modal-action modal-close waves-effect waves-green btn-flat\">Abbrechen</a>";
+                echo "</div>";
+                echo "</div>";
                 echo "</td></tr>";
             }
         }
@@ -4180,7 +4192,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
 
     function beleg_pool_arr()
     {
-        $result = DB::select("SELECT * FROM  `BELEG2RG` ORDER BY EMPF_P_ID ASC");
+        $result = DB::select("SELECT * FROM `BELEG2RG` ORDER BY EMPF_P_ID ASC");
         if (!empty($result)) {
             return $result;
         }

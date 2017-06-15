@@ -1,7 +1,7 @@
-@extends('layouts.main-without-menu')
+@extends('layouts.main')
 
 @section('breadcrumbs')
-    <a href="{{ route('web::haeuser::index') }}" class="breadcrumb">Häuser</a>
+    <i class="mdi mdi-subdirectory-arrow-right"></i>Häuser
 @endsection
 
 @section('content')
@@ -19,7 +19,8 @@
                     <label for="filter">Filter</label>
                 </div>
                 <div class="input-field col-xs-12 col-md-3">
-                    @php($options = ['(ohne)' => '""', 'Listenansicht' => 'haus !haus[str:asc nr:asc] haus[plz] haus[ort] detail[count] einheit[count] objekt'])
+                    @inject('listViews', "App\Services\ListViewsService")
+                    @php($options = $listViews->getViewNames('v'))
                     @include('shared.listview.views', ['id' => 'view', 'name' => 'v', 'label' => 'Ansicht', 'options' => $options])
                 </div>
                 <div class="input-field col-xs-6 col-md-1">

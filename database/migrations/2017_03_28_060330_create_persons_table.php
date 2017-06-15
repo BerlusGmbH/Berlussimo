@@ -51,7 +51,7 @@ class CreatePersonsTable extends Migration
                             ->where('PROTOKOLL_DAT_NEU', $old_person['PERSON_DAT'])
                             ->where('PROTOKOLL_DAT_ALT', $previous_dat)->first();
                         if ($protokoll) {
-                            $audit = $new_person->audits()->first();
+                            $audit = $new_person->audits()->orderBy('created_at', 'desc')->orderBy('id', 'desc')->first();
                             $audit->created_at = $protokoll['PROTOKOLL_WANN'];
                             $audit->ip_address = $protokoll['PROTOKOLL_COMPUTER'];
                             $user_id = DB::table('BENUTZER')
@@ -67,6 +67,10 @@ class CreatePersonsTable extends Migration
                             if ($user_id) {
                                 $audit->user_id = $user_id;
                             }
+                            $audit->save();
+                        } else {
+                            $audit = $new_person->audits()->orderBy('created_at', 'desc')->orderBy('id', 'desc')->first();
+                            $audit->created_at = '1970-01-01 12:00:00';
                             $audit->save();
                         }
                         $previous_dat = $old_person['PERSON_DAT'];
@@ -86,7 +90,7 @@ class CreatePersonsTable extends Migration
                         ->where('PROTOKOLL_DAT_NEU', $person['PERSON_DAT'])
                         ->where('PROTOKOLL_DAT_ALT', $previous_dat)->first();
                     if ($protokoll) {
-                        $audit = $new_person->audits()->first();
+                        $audit = $new_person->audits()->orderBy('created_at', 'desc')->orderBy('id', 'desc')->first();
                         $audit->created_at = $protokoll['PROTOKOLL_WANN'];
                         $audit->ip_address = $protokoll['PROTOKOLL_COMPUTER'];
                         $user_id = DB::table('BENUTZER')
@@ -102,6 +106,10 @@ class CreatePersonsTable extends Migration
                         if ($user_id) {
                             $audit->user_id = $user_id;
                         }
+                        $audit->save();
+                    } else {
+                        $audit = $new_person->audits()->orderBy('created_at', 'desc')->orderBy('id', 'desc')->first();
+                        $audit->created_at = '1970-01-01 12:00:00';
                         $audit->save();
                     }
                 }

@@ -4,9 +4,9 @@ namespace App\Models;
 
 use App\Models\Traits\DefaultOrder;
 use App\Models\Traits\Searchable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class Haeuser extends Model
 {
@@ -41,13 +41,13 @@ class Haeuser extends Model
         return $this->morphMany(Auftraege::class, 'kostentraeger', 'KOS_TYP', 'KOS_ID');
     }
 
+    public function commonDetails() {
+        return $this->details()->whereNotIn('DETAIL_NAME', ['Hinweis_zum_Haus']);
+    }
+
     public function details()
     {
         return $this->morphMany('App\Models\Details', 'details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID');
-    }
-
-    public function commonDetails() {
-        return $this->details()->whereNotIn('DETAIL_NAME', ['Hinweis_zum_Haus']);
     }
 
     public function hinweise() {
@@ -65,9 +65,35 @@ class Haeuser extends Model
         return Person::whereHas('mietvertraege', function ($query) use ($date){
             $query->whereHas('einheit.haus', function ($query) {
                     $query->where('HAUS_ID', $this->HAUS_ID);
-            })->whereDate('MIETVERTRAG_VON', '<=', $date)->where(function ($query) use($date) {
-                $query->whereDate('MIETVERTRAG_BIS', '>=', $date)->orWhereDate('MIETVERTRAG_BIS', '=', '0000-00-00');
-            });
+            })->active('=', $date);
         });
+    }
+
+    public function WEGEigentuemer($date = null)
+    {
+        if (is_null($date)) {
+            $date = Carbon::today();
+        }
+        return Person::whereHas('kaufvertraege', function ($query) use ($date) {
+            $query->whereHas('einheit.haus', function ($query) {
+                $query->where('HAUS_ID', $this->HAUS_ID);
+            })->active('=', $date);
+        });
+    }
+
+    public function getWohnflaecheAttribute()
+    {
+        $flaeche = Einheiten::whereHas('haus', function ($query) {
+            $query->where('HAUS_ID', $this->HAUS_ID);
+        })->whereIn('TYP', ['Wohnraum', 'Wohneigentum'])->sum('EINHEIT_QM');
+        return isset($flaeche) ? $flaeche : 0;
+    }
+
+    public function getGewerbeflaecheAttribute()
+    {
+        $flaeche = Einheiten::whereHas('haus', function ($query) {
+            $query->where('HAUS_ID', $this->HAUS_ID);
+        })->where('TYP', 'Gewerbe')->sum('EINHEIT_QM');
+        return isset($flaeche) ? $flaeche : 0;
     }
 }

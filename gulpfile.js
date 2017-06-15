@@ -12,7 +12,7 @@ var elixir = require('laravel-elixir');
  */
 
 elixir(function (mix) {
-    mix.styles(['berlussimo.css'], 'public/css/berlussimo.css');
+    mix.sass(['berlussimo.scss'], 'public/css/berlussimo.css');
 
     mix.sass(['./node_modules/normalize.css/normalize.css',
         'materialize-css.scss',
@@ -51,7 +51,8 @@ elixir(function (mix) {
             'materialize_autocomplete.js',
             'materialize_datepicker_defaults.js',
             'materialize_init.js',
-            'materialize_searchbar.js'
+            'materialize_searchbar.js',
+            'mainmenu.js'
         ],
         'public/js/berlussimo.js'
     );

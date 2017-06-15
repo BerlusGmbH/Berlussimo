@@ -10,6 +10,7 @@ $(document).ready(function() {
     });
     $('.modal').modal();
     Materialize.updateTextFields();
+    $(".dropdown-button").dropdown({hover: true, belowOrigin: true});
     $('.tooltipped').tooltip({
         delay: 50,
         html: true,

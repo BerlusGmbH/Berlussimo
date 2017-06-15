@@ -307,6 +307,32 @@ fterm(res) ::= AKTIV.
 
     res = $class::active();
 }
+fterm(res) ::= VERMIETET.
+{
+    $column = $this->stack(self::COLUMN);
+    $class = Relations::columnToClass($column);
+    if(is_null($class)) {
+        $class = Relations::columnColumnToClass($this->stack(self::COLUMN, 2),$this->stack(self::COLUMN));
+    }
+
+    res = $class::whereHas('mietvertraege', function($query) {
+        $query->active();
+    });
+}
+fterm(res) ::= NOT VERMIETET.
+{
+    $column = $this->stack(self::COLUMN);
+    $class = Relations::columnToClass($column);
+    if(is_null($class)) {
+        $class = Relations::columnColumnToClass($this->stack(self::COLUMN, 2),$this->stack(self::COLUMN));
+    }
+
+    $vermietet = $class::whereHas('mietvertraege', function($query) {
+            $query->active();
+    })->get(['EINHEIT_ID']);
+
+    res = $class::whereNotIn('EINHEIT_ID', $vermietet);
+}
 fterm(res) ::= NOT AKTIV.
 {
     $column = $this->stack(self::COLUMN);

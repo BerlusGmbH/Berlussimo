@@ -1,10 +1,11 @@
-@extends('layouts.main-without-menu')
+@extends('layouts.main')
 
 @section('breadcrumbs')
+    <i class="mdi mdi-subdirectory-arrow-right"></i>
     @if(starts_with(URL::previous(), route('web::einheiten::index')))
-        <a href="{{ URL::previous() }}" class="breadcrumb">Einheiten</a>
+        <a href="{{ URL::previous() }}">Einheiten</a>
     @else
-        <a href="{{ route('web::einheiten::index') }}" class="breadcrumb">Einheiten</a>
+        <a href="{{ route('web::einheiten::index') }}">Einheiten</a>
     @endif
     <span class="breadcrumb">@include('shared.entities.einheit', ['entity' => $einheit, 'icons' => false])</span>
 @endsection
@@ -73,12 +74,22 @@
         @endif
         @if(!$einheit->mieter()->get()->isEmpty())
             <div class="col-xs-12 col-sm-3">
-                @include('shared.cards.mieter', ['mieter' => $einheit->mieter()->defaultOrder()->with('sex')->get(), 'title' => 'Mieter', 'href' => route('web::personen::index', ['q' => '!person(mietvertrag(einheit(id=' . $einheit->EINHEIT_ID . ') aktiv))'])])
+                @include('shared.cards.mieter', ['mieter' => $einheit->mieter()->defaultOrder()->with(['sex', 'details'])->get(), 'title' => 'Mieter', 'href' => route('web::personen::index', ['q' => '!person(mietvertrag(einheit(id=' . $einheit->EINHEIT_ID . ') aktiv))'])])
+            </div>
+        @endif
+        @if(!$einheit->WEGEigentuemer()->get()->isEmpty())
+            <div class="col-xs-12 col-sm-3">
+                @include('shared.cards.eigentuemer', ['eigentuemer' => $einheit->WEGEigentuemer()->defaultOrder()->with(['sex', 'details'])->get(), 'title' => 'WEG-Eigentümer', 'href' => route('web::personen::index', ['q' => '!person(kaufvertrag(einheit(id=' . $einheit->EINHEIT_ID . ') aktiv))'])])
             </div>
         @endif
         @if(!$einheit->mietvertraege()->get()->isEmpty())
             <div class="col-xs-12 col-sm-3">
                 @include('shared.cards.mietvertraege', ['mietvertraege' => $einheit->mietvertraege()->defaultOrder()->get()])
+            </div>
+        @endif
+        @if(!$einheit->kaufvertraege()->get()->isEmpty())
+            <div class="col-xs-12 col-sm-3">
+                @include('shared.cards.kaufvertraege', ['kaufvertraege' => $einheit->kaufvertraege()->defaultOrder()->get()])
             </div>
         @endif
         <div class="col-xs-12">

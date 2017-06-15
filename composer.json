@@ -11,7 +11,7 @@
     "php": ">=5.6.4",
     "laravel/framework": "5.4.*",
     "laravel/tinker": "~1.0",
-    "rospdf/pdf-php": "0.12.*",
+    "rospdf/pdf-php": "0.12.34",
     "barryvdh/laravel-ide-helper": "v2.*",
     "doctrine/dbal": "^2.5",
     "spatie/laravel-permission": "^1.4",
@@ -34,6 +34,7 @@
       "App\\": "app/"
     },
     "files": [
+      "config/phpsettings.php",
       "legacy/includes/allgemeine_funktionen.php",
       "legacy/includes/formular_funktionen.php",
       "legacy/includes/haus_form_funktionen.php"

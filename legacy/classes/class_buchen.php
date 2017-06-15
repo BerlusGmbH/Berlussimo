@@ -204,14 +204,12 @@ class buchen
     {
         $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KONTENRAHMEN_KONTO = '$kostenkonto' && ( DATE_FORMAT( DATUM, '%Y' ) = '$jahr') && AKTUELL='1'");
         $this->summe_konto_buchungen = 0.00;
-        if (!empty($result) && isset($result[0]['SUMME'])) {
-            $this->summe_konto_buchungen = 0;
-            $row = $result[0];
-            $this->summe_konto_buchungen = $row ['SUMME'];
-            return $this->summe_konto_buchungen;
+        if (isset($result)) {
+            $this->summe_konto_buchungen = $result[0]['SUMME'];
         } else {
             $this->summe_konto_buchungen = 0.00;
         }
+        return $this->summe_konto_buchungen;
     }
 
     function dropdown_re_buch($kos_typ, $kos_id, $anzahl = 100, $rnr_kurz)
@@ -361,7 +359,7 @@ class buchen
         if ($js_action == '') {
             $js_action = "onchange=\"drop_kos_register('kostentraeger_typ', 'dd_kostentraeger_id');\"";
         }
-        if (session()->has('kos_typ') && (session()->has('kos_id') || session()->has('kos_bez'))) {
+        if (session()->has('kos_typ')) {
             $kostentraeger_bez = session()->has('kos_bez') ? session()->get('kos_bez') : session()->get('kos_id');
             $kostentraeger_typ = session()->get('kos_typ');
             $this->dropdown_kostentraeger_bez_vw($label, $name, $id, $js_action, $kostentraeger_typ, $kostentraeger_bez);
@@ -603,9 +601,9 @@ class buchen
 
                 if (!session()->has('geldkonto_id')) {
                     if ($vorwahl_bez == $ID) {
-                        echo "<option value=\"$ID\" selected>$einheit_kn***$weg->eigentuemer_name_str</option>";
+                        echo "<option value=\"$ID\" selected>$einheit_kn | $weg->eigentuemer_name_str</option>";
                     } else {
-                        echo "<option value=\"$ID\" >$einheit_kn***$weg->eigentuemer_name_str</option>";
+                        echo "<option value=\"$ID\" >$einheit_kn | $weg->eigentuemer_name_str</option>";
                     }
                 } else {
                     $eee = new einheit ();
@@ -613,9 +611,9 @@ class buchen
                     $gk = new gk ();
                     if ($gk->check_zuweisung_kos_typ(session()->get('geldkonto_id'), 'Objekt', $eee->objekt_id)) {
                         if ($vorwahl_bez == $ID) {
-                            echo "<option value=\"$ID\" selected>$einheit_kn***$weg->eigentuemer_name_str</option>";
+                            echo "<option value=\"$ID\" selected>$einheit_kn | $weg->eigentuemer_name_str</option>";
                         } else {
-                            echo "<option value=\"$ID\" >$einheit_kn***$weg->eigentuemer_name_str</option>";
+                            echo "<option value=\"$ID\" >$einheit_kn | $weg->eigentuemer_name_str</option>";
                         }
                     }
                 }
@@ -773,7 +771,6 @@ class buchen
         $form = new formular ();
         $form->erstelle_formular("Buchung ändern", NULL);
 
-        echo '<pre>';
         $this->geldbuchungs_dat_infos($buchungs_dat);
         $form->hidden_feld("buch_dat_alt", $buchungs_dat);
         $form->hidden_feld("akt_buch_id", $this->akt_buch_id);
@@ -1179,15 +1176,7 @@ class buchen
             $p->get_partner_id($beguenstigter);
             $partner_id = $p->partner_id;
 
-            $logo_file = "Partner/" . $partner_id . "_logo.png";
-            if (Storage::disk('logos')->exists($logo_file)) {
-                $logo_file = Storage::disk('logos')->url($logo_file);
-                echo "<div id='div_logo'><img src='$logo_file'><br>$p->partner_name Rechnungseingangsbuch $monatname $jahr Mandanten-Nr.: $mandanten_nr Blatt: $monat<hr></div>\n";
-            } else {
-                echo "<div id=\"div_logo\">KEIN LOGO<br>Folgende Datei erstellen: " . Storage::disk('logos')->fullPath($logo_file) . "<hr></div>";
-            }
-
-            echo "<table id=\"positionen_tab\">\n";
+            echo "<table id=\"positionen_tab\" class='striped'>\n";
             echo "<thead>";
             echo "<tr class=feldernamen>";
             echo "<th scopr=\"col\" id=\"tr_ansehen\">Datum</th>";
@@ -1201,8 +1190,6 @@ class buchen
             echo "<th scopr=\"col\">Buchungstext</th>";
             echo "</tr>";
 
-            echo "</thead>";
-
             echo "<tr class=feldernamen>";
             echo "<th scopr=\"col\" id=\"tr_ansehen\">$datum_ger</th>";
             echo "<th ></th>";
@@ -1214,6 +1201,8 @@ class buchen
             echo "<th scopr=\"col\"></th>";
             echo "<th scopr=\"col\">SALDO VORTRAG VORMONAT</th>";
             echo "</tr>";
+
+            echo "</thead>";
 
             for ($a = 0; $a < $numrows; $a++) {
                 $datum = date_mysql2german($my_array [$a] ['DATUM']);
@@ -2604,8 +2593,8 @@ LIMIT 0 , 1");
                     $optiert = $dd->finde_detail_inhalt('OBJEKT', session()->get('objekt_id'), 'Optiert');
                     if ($optiert == 'JA') {
                         if ($ee->typ == 'Gewerbe') {
-                            $tab_arr [$i] ['MWST'] = nummer_punkt2komma($miete->geleistete_zahlungen - ($miete->geleistete_zahlungen / 1.19));
-                            $summe_mwst = $summe_mwst + $miete->geleistete_zahlungen - ($miete->geleistete_zahlungen / 1.19);
+                            $tab_arr [$i] ['MWST'] = nummer_punkt2komma($miete->geleistete_zahlungen_mwst);
+                            $summe_mwst += $miete->geleistete_zahlungen_mwst;
                         } else {
                             $tab_arr [$i] ['MWST'] = '';
                         }
@@ -2786,7 +2775,7 @@ LIMIT 0 , 1");
         }
 
         $bg = new berlussimo_global ();
-        $link = route('web::buchen::legacy', ['option' => 'monatsbericht_m_a'] . false);
+        $link = route('web::buchen::legacy', ['option' => 'monatsbericht_m_a'], false);
         $bg->objekt_auswahl_liste();
         $bg->monate_jahres_links($jahr, $link);
         if (session()->has('objekt_id')) {
@@ -2859,11 +2848,16 @@ LIMIT 0 , 1");
                         $tab_arr [$anz_tab] ['SOLL_WM'] = nummer_punkt2komma_t($miete->sollmiete_warm);
                         $tab_arr [$anz_tab] ['UMLAGEN'] = nummer_punkt2komma_t($miete->davon_umlagen);
                         $tab_arr [$anz_tab] ['ZAHLUNGEN'] = nummer_punkt2komma_t($miete->geleistete_zahlungen);
-                        if ($mv->einheit_typ == 'Gewerbe') {
-                            $tab_arr [$anz_tab] ['MWST'] = nummer_punkt2komma_t($miete->geleistete_zahlungen / 119 * 19);
-                            $summe_mwst += $miete->geleistete_zahlungen / 119 * 19;
-                        } else {
-                            $tab_arr [$anz_tab] ['MWST'] = nummer_punkt2komma_t(0);
+
+                        $dd = new detail ();
+                        $optiert = $dd->finde_detail_inhalt('OBJEKT', session()->get('objekt_id'), 'Optiert');
+                        if ($optiert == 'JA') {
+                            if ($mv->einheit_typ == 'Gewerbe') {
+                                $tab_arr [$anz_tab] ['MWST'] = nummer_punkt2komma($miete->geleistete_zahlungen_mwst);
+                                $summe_mwst += $miete->geleistete_zahlungen_mwst;
+                            } else {
+                                $tab_arr [$anz_tab] ['MWST'] = nummer_punkt2komma_t(0);
+                            }
                         }
 
                         $tab_arr [$anz_tab] ['ERG'] = nummer_punkt2komma_t($miete->erg);

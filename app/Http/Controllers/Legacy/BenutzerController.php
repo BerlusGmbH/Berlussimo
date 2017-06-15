@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Legacy;
 
 use App\Http\Controllers\Traits\Indexable;
 use App\Http\Requests\Legacy\BenutzerRequest;
-use App\Models\Partner;
 use App\Models\User;
 use App\Services\Parser\Lexer;
 use App\Services\Parser\Parser;
+use ListViews;
 
 class BenutzerController extends LegacyController
 {
@@ -30,10 +30,13 @@ class BenutzerController extends LegacyController
             $query = request()->input('q');
         }
         if (request()->has('v')) {
-            $query .= " " . request()->input('v');
+            $query .= " " . ListViews::getView('v', request()->input('v'));
         }
-        if (request()->has('f')) {
-            $query .= " " . implode(' ', request()->input('f'));
+        if (request()->has('f1')) {
+            $query .= " " . ListViews::getView('f1', request()->input('f1'));
+        }
+        if (request()->has('f2')) {
+            $query .= " " . ListViews::getView('f2', request()->input('f2'));
         }
 
         $trace = null;
@@ -51,9 +54,7 @@ class BenutzerController extends LegacyController
 
         $user = $builder->paginate(request()->input('s', 20));
 
-        $arbeitgeber = Partner::has('mitarbeiter')->get();
-
         list($index, $wantedRelations) = $this->generateIndex($user, $columns);
-        return view('modules.benutzer.index', ['columns' => $columns, 'entities' => $user, 'index' => $index, 'wantedRelations' => $wantedRelations, 'arbeitgeber' => $arbeitgeber]);
+        return view('modules.benutzer.index', ['columns' => $columns, 'entities' => $user, 'index' => $index, 'wantedRelations' => $wantedRelations]);
     }
 }

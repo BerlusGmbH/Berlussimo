@@ -114,6 +114,34 @@ class Person extends Authenticatable implements AuditableContract
         return $full_name;
     }
 
+    public function getAddressNameAttribute()
+    {
+        $full_name = '';
+        if ($this->sex[0]['DETAIL_INHALT'] == 'männlich')
+            $full_name .= 'Herr ';
+        if ($this->sex[0]['DETAIL_INHALT'] == 'weiblich')
+            $full_name .= 'Frau ';
+        if (!empty($this->first_name))
+            $full_name .= $this->first_name;
+        if (!empty($this->name) && !empty($this->first_name))
+            $full_name .= ' ';
+        if (!empty($this->name))
+            $full_name .= $this->name;
+        return $full_name;
+    }
+
+    public function getPrettyNameAttribute()
+    {
+        $full_name = '';
+        if (!empty($this->first_name))
+            $full_name .= $this->first_name;
+        if (!empty($this->name) && !empty($this->first_name))
+            $full_name .= ' ';
+        if (!empty($this->name))
+            $full_name .= $this->name;
+        return $full_name;
+    }
+
     /**
      * Get the password for the user.
      *

@@ -12,7 +12,7 @@
         @else
             <i
         @endif
-        @if($entity->vermietet())
+        @if($entity->vermietet)
             class="mdi mdi-cube tooltipped" data-tooltip="Einheit (Vermietet)"></i><i
         @else
             class="mdi mdi-cube-outline tooltipped" data-tooltip="Einheit (Leer)"></i><i

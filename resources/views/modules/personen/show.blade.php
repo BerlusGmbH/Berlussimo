@@ -1,10 +1,11 @@
-@extends('layouts.main-without-menu')
+@extends('layouts.main')
 
 @section('breadcrumbs')
+    <i class="mdi mdi-subdirectory-arrow-right"></i>
     @if(starts_with(URL::previous(), route('web::personen::index')))
-        <a href="{{ URL::previous() }}" class="breadcrumb">Personen</a>
+        <a href="{{ URL::previous() }}">Personen</a>
     @else
-        <a href="{{ route('web::personen::index') }}" class="breadcrumb">Personen</a>
+        <a href="{{ route('web::personen::index') }}">Personen</a>
     @endif
     <span class="breadcrumb">@include('shared.entities.person', ['entity' => $person, 'icons' => false])</span>
 @endsection

@@ -12,6 +12,7 @@ use App\Models\Objekte;
 use App\Models\Partner;
 use App\Models\Person;
 use App\Models\Wirtschaftseinheiten;
+use App\Services\ListViewsService;
 use App\Services\PhoneLocator;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
@@ -56,6 +57,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(PhoneLocator::class, function () {
             return new PhoneLocator(config('phonelocator'));
+        });
+        $this->app->singleton(ListViewsService::class, function () {
+            return new ListViewsService(config('listviews'));
         });
     }
 }

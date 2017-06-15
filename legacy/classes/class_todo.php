@@ -386,7 +386,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                         echo "<tr class=\"zeile$c1\"><td>";
                         $f->check_box_js('t_dats[]', $t_dat, 'Erledigt', null, null);
                         echo "</td><td>$t_vergangen T</td><td>$anzeigen_ab</td><td>$edit_text $link_pdf</td>";
-                        echo "<td>$verfasser_name</td><td>$beteiligt_name</td><td>$kos_bez<br>";
+                        echo "<td>$verfasser_name</td><td>$beteiligt_name</td><td>";
                         if ($kos_typ == 'Einheit') {
                             $kontaktdaten_mieter = $this->kontaktdaten_anzeigen_mieter($kos_id);
                             echo $kontaktdaten_mieter;
@@ -443,7 +443,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                                 echo "<tr class=\"zeile$c\"><td>";
                                 $f->check_box_js('t_dats[]', $t_dat, 'Erledigt', null, null);
                                 echo "</td><td>$u_t_vergangen T</td><td>$u_anzeigen_ab</td><td>$u_edit_text</td>";
-                                echo "<td>$u_verfasser_name</td><td>$u_beteiligt_name</td><td>$u_kos_bez<br>";
+                                echo "<td>$u_verfasser_name</td><td>$u_beteiligt_name</td><td>";
                                 if ($u_kos_typ == 'Einheit') {
                                     $ukontaktdaten_mieter = $this->kontaktdaten_anzeigen_mieter(ltrim(rtrim($u_kos_id)));
                                     echo $ukontaktdaten_mieter;
@@ -482,22 +482,23 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         if (empty ($mv_id)) {
             /* Nie vermietet */
             $ee->get_einheit_info($einheit_id);
-            return "<b>Leerstand</b>\n$ee->haus_strasse $ee->haus_nummer\n<b>Lage: $ee->einheit_lage</b>\n$ee->haus_plz $ee->haus_stadt";
+            return "$ee->haus_strasse $ee->haus_nummer, $ee->haus_plz $ee->haus_stadt\n<b>Lage:</b> $ee->einheit_lage\n<b>Leerstand</b>";
         } else {
             $m = new mietvertraege ();
             $m->get_mietvertrag_infos_aktuell($mv_id);
             $result = DB::select("SELECT PERSON_MIETVERTRAG_PERSON_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_MIETVERTRAG_ID='$mv_id' && PERSON_MIETVERTRAG_AKTUELL='1' ORDER BY PERSON_MIETVERTRAG_ID ASC");
             if (!empty($result)) {
-                $kontaktdaten = "Lage: $m->einheit_lage<br>$m->personen_name_string_u<br>$m->haus_strasse $m->haus_nr, $m->haus_plz $m->haus_stadt<br>";
+                $kontaktdaten = "$m->haus_strasse $m->haus_nr, $m->haus_plz $m->haus_stadt<br><br><b>Lage:</b> $m->einheit_lage<br><b>Einheit:</b> $m->einheit_kurzname<br>";
                 foreach ($result as $row) {
                     $person_id = $row ['PERSON_MIETVERTRAG_PERSON_ID'];
+                    $kontaktdaten .= "<br><b>" . \App\Models\Person::find($person_id)->address_name . "</b>";
                     $arr = $this->finde_detail_kontakt_arr('PERSON', $person_id);
                     if (!empty($arr)) {
                         $anz = count($arr);
                         for ($a = 0; $a < $anz; $a++) {
                             $dname = $arr [$a] ['DETAIL_NAME'];
                             $dinhalt = $arr [$a] ['DETAIL_INHALT'];
-                            $kontaktdaten .= "<br><b>$dname</b>:$dinhalt";
+                            $kontaktdaten .= "<br>    <b>$dname</b>: $dinhalt";
                         }
                     }
                 }
@@ -682,10 +683,10 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                     $kos_bez = "$kos_typ $kos_id Unbekannt";
                 }
                 echo "<tr class=\"zeile$c1\"><td>$z1</td><td>$t_vergangen T</td><td>$anzeigen_ab</td><td>$edit_text</td>";
-                echo "<td>$verfasser_name</td><td>$beteiligt_name</td><td>$kos_bez<br>";
+                echo "<td>$verfasser_name</td><td>$beteiligt_name</td><td>";
                 if ($kos_typ == 'Einheit') {
                     $kontaktdaten_mieter = $this->kontaktdaten_anzeigen_mieter($kos_id);
-                    echo "$kos_bez $kontaktdaten_mieter";
+                    echo "$kontaktdaten_mieter";
                 }
                 echo "</td>";
                 if ($erledigt == 'erledigt') {
@@ -781,10 +782,10 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                     $kos_bez = "$kos_typ $kos_id Unbekannt";
                 }
                 echo "<tr class=\"zeile$c1\"><td>$z1</td><td>$t_vergangen T</td><td>$anzeigen_ab</td><td>$edit_text</td>";
-                echo "<td>$verfasser_name</td><td>$beteiligt_name</td><td>$kos_bez<br>";
+                echo "<td>$verfasser_name</td><td>$beteiligt_name</td><td>";
                 if ($kos_typ == 'Einheit') {
                     $kontaktdaten_mieter = $this->kontaktdaten_anzeigen_mieter($kos_id);
-                    echo "$kos_bez $kontaktdaten_mieter";
+                    echo "$kontaktdaten_mieter";
                 }
                 echo "</td>";
                 if ($erledigt == 'erledigt') {
@@ -871,7 +872,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 echo "<tr class=\"zeile$c\"><td>$z.</td><td>";
                 $f->check_box_js('t_dats[]', $t_dat, 'Erledigt', null, null);
                 echo "</td><td>$u_t_vergangen T</td><td>$u_anzeigen_ab</td><td><b>Auftragsnr.:$u_t_id</b>: $u_edit_text</td>";
-                echo "<td>$u_verfasser_name</td><td>$link_auftraege_an</td><td>$u_kos_bez<br>";
+                echo "<td>$u_verfasser_name</td><td>$link_auftraege_an</td><td>";
                 if ($u_kos_typ == 'Einheit') {
                     $ukontaktdaten_mieter = $this->kontaktdaten_anzeigen_mieter(ltrim(rtrim($u_kos_id)));
                     echo $ukontaktdaten_mieter;
@@ -1055,7 +1056,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $kos_bez = $r->kostentraeger_ermitteln($kos_typ, $kos_id);
                 if ($kos_typ == 'Einheit') {
                     $kontaktdaten_mieter = $this->kontaktdaten_anzeigen_mieter($kos_id);
-                    $arr [$a] ['KOS_BEZ'] = $kos_bez . "\n" . str_replace('<br>', "\n", $kontaktdaten_mieter);
+                    $arr [$a] ['KOS_BEZ'] = str_replace('<br>', "\n", $kontaktdaten_mieter);
                 } else {
                     $arr [$a] ['KOS_BEZ'] = $kos_bez;
                 }
@@ -1070,7 +1071,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             if ($this->kos_typ == 'Einheit') {
                 $kontaktdaten_mieter = $this->kontaktdaten_anzeigen_mieter($this->kos_id);
                 // echo $kontaktdaten_mieter;
-                $arr [0] ['KOS_BEZ'] = $kos_bez . "\n" . str_replace('<br>', "\n", $kontaktdaten_mieter);
+                $arr [0] ['KOS_BEZ'] = str_replace('<br>', "\n", $kontaktdaten_mieter);
             } else {
                 $arr [0] ['KOS_BEZ'] = $kos_bez;
             }
@@ -1162,7 +1163,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 
         if ($this->kos_typ == 'Einheit') {
             $kontaktdaten_mieter = $this->kontaktdaten_anzeigen_mieter($this->kos_id);
-            $kontaktdaten_mieter = "<b>Einheit</b>: $this->kos_bez" . "\n" . str_replace('<br>', "\n", $kontaktdaten_mieter);
+            $kontaktdaten_mieter = str_replace('<br>', "\n", $kontaktdaten_mieter);
         }
 
         if ($this->kos_typ == 'Partner') {
@@ -1211,8 +1212,8 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $kontaktdaten_mieter = $this->kos_bez;
             }
         }
-        $kontaktdaten_mieter = str_replace('<br />', "\n", $kontaktdaten_mieter);
-        $kontaktdaten_mieter = $this->html2txt($kontaktdaten_mieter);
+        //$kontaktdaten_mieter = str_replace('<br />', "\n", $kontaktdaten_mieter);
+        //$kontaktdaten_mieter = $this->html2txt($kontaktdaten_mieter);
 
         ob_clean(); // ausgabepuffer leeren
         $pdf = new Cezpdf ('a4', 'portrait');
@@ -1334,19 +1335,19 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             $rr->get_empfaenger_info($rr->rechnungs_empfaenger_id);
             $pdf->ezSetDy(-10); // abstand
             if (empty ($rep_eur)) {
-                $pdf->ezText("<b>Freigabe bis: ______ EUR Netto</b>");
+                $pdf->ezText("<b>Freigabe bis: ______ € Netto</b>");
             } else {
-                $pdf->ezText("<b>Freigabe bis: $rep_eur EUR Netto</b>");
+                $pdf->ezText("<b>Freigabe bis: $rep_eur € Netto</b>");
             }
             $dd = new detail ();
-            $b_tel = $dd->finde_detail_inhalt('PERSON', session()->get('benutzer_id'), 'Telefon');
+            $b_tel = $dd->finde_detail_inhalt('BENUTZER', Auth::user()->id, 'Telefon');
             if (empty ($b_tel)) {
-                $b_tel = $dd->finde_detail_inhalt('PARTNER_LIEFERANT', session()->get('partner_id'), 'Telefon');
+                $b_tel = $dd->finde_detail_inhalt('PARTNER_LIEFERANT', $partner_id, 'Telefon');
             }
             $pdf->ezSetDy(-10); // abstand
             $pdf->ezText("<b>Bei Kosten über Freigabesumme bitten wir um Rückmeldung unter $b_tel.</b>");
             $pdf->ezSetDy(-10); // abstand
-            $pdf->ezText("Rechnung bitte unter Angabe der <u><b>Auftragsnummer $id</b></u> und <u><b>$this->kos_typ $this->kos_bez</b></u>   an:", 10);
+            $pdf->ezText("Rechnung bitte unter Angabe der <u><b>Auftragsnummer $id</b></u> und <u><b>$this->kos_typ $this->kos_bez</b></u> an:", 10);
             $pdf->ezSetDy(-10); // abstand
             $pdf->ezText("<b>$rr->rechnungs_empfaenger_name\n$rr->rechnungs_empfaenger_strasse  $rr->rechnungs_empfaenger_hausnr\n$rr->rechnungs_empfaenger_plz  $rr->rechnungs_empfaenger_ort</b>", 12);
             $pdf->ezSetDy(-25); // abstand
