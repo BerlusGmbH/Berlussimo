@@ -166,11 +166,11 @@
                         </div>
                     @endcan
 
-                @can(\App\Libraries\Permission::PERMISSION_MODUL_WARTUNG)
-                    <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
-                        <a href='/wartungsplaner/' target='new'>Wartungsplaner</a>
-                    </div>
-                @endcan
+                    @can(\App\Libraries\Permission::PERMISSION_MODUL_WARTUNG)
+                        <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
+                            <a href='/wartungsplaner/' target='new'>Wartungsplaner</a>
+                        </div>
+                    @endcan
                 </div>
             </div>
         </li>

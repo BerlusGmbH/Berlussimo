@@ -8,7 +8,7 @@
             @include('shared.searchbar')
         </li>
         <li><a class="dropdown-button" data-activates="user-dropdown"><i
-                        class="mdi mdi-account left"></i>{{Auth::user()->pretty_name}}<i class="material-icons right">arrow_drop_down</i></a>
+                        class="mdi mdi-account left"></i>{{Auth::user()->name}}<i class="material-icons right">arrow_drop_down</i></a>
         </li>
     </ul>
 @endsection
