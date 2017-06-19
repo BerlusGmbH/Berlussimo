@@ -418,8 +418,8 @@ if (request()->has('option')) {
             ?>
             <head>
                 <title>Wartungskalender Berlussimo</title>
-                <link rel="stylesheet" type="text/css" href="<?php echo elixir('css/wp_form.css') ?>"/>
-                <script type="text/javascript" src="<?php echo elixir('js/wartungsplaner.js') ?>"></script>
+                <link rel="stylesheet" type="text/css" href="<?php echo mix('css/wp_form.css') ?>"/>
+                <script type="text/javascript" src="<?php echo mix('js/wartungsplaner.js') ?>"></script>
             </head>
             <?php
             if (request()->has('mitarbeiter_id')) {
@@ -470,8 +470,8 @@ if (request()->has('option')) {
             ?>
             <head>
                 <title>Wartungskalender Berlussimo</title>
-                <link rel="stylesheet" type="text/css" href="<?php echo elixir('css/wp_form.css') ?>"/>
-                <script type="text/javascript" src="<?php echo elixir('js/wartungsplaner.js') ?>"></script>
+                <link rel="stylesheet" type="text/css" href="<?php echo mix('css/wp_form.css') ?>"/>
+                <script type="text/javascript" src="<?php echo mix('js/wartungsplaner.js') ?>"></script>
             </head>
             <?php
             if (session()->has('mitarbeiter_id')) {
@@ -489,8 +489,8 @@ if (request()->has('option')) {
             ?>
             <head>
                 <title>Wartungskalender Berlussimo</title>
-                <link rel="stylesheet" type="text/css" href="<?php echo elixir('css/wp_form.css') ?>"/>
-                <script type="text/javascript" src="<?php echo elixir('js/wartungsplaner.js') ?>"></script>
+                <link rel="stylesheet" type="text/css" href="<?php echo mix('css/wp_form.css') ?>"/>
+                <script type="text/javascript" src="<?php echo mix('js/wartungsplaner.js') ?>"></script>
             </head>
             <body>
             <?php
@@ -620,8 +620,8 @@ if (request()->has('option')) {
         ?>
         <head>
             <title>Wartungskalender Berlussimo</title>
-            <link rel="stylesheet" type="text/css" href="<?php echo elixir('css/wp_form.css') ?>"/>
-            <script type="text/javascript" src="<?php echo elixir('js/wartungsplaner.js') ?>"></script>
+            <link rel="stylesheet" type="text/css" href="<?php echo mix('css/wp_form.css') ?>"/>
+            <script type="text/javascript" src="<?php echo mix('js/wartungsplaner.js') ?>"></script>
         </head>
     <body>
         <?php
@@ -635,8 +635,8 @@ if (request()->has('option')) {
         ?>
         <head>
             <title>Wartungskalender Berlussimo</title>
-            <link rel="stylesheet" type="text/css" href="<?php echo elixir('css/wp_form.css') ?>"/>
-            <script type="text/javascript" src="<?php echo elixir('js/wartungsplaner.js') ?>"></script>
+            <link rel="stylesheet" type="text/css" href="<?php echo mix('css/wp_form.css') ?>"/>
+            <script type="text/javascript" src="<?php echo mix('js/wartungsplaner.js') ?>"></script>
         </head>
     <body>
         <?php
@@ -653,8 +653,8 @@ if (request()->has('option')) {
         ?>
         <head>
             <title>Wartungskalender Berlussimo</title>
-            <link rel="stylesheet" type="text/css" href="<?php echo elixir('css/wp_form.css') ?>"/>
-            <script type="text/javascript" src="<?php echo elixir('js/wartungsplaner.js') ?>"></script>
+            <link rel="stylesheet" type="text/css" href="<?php echo mix('css/wp_form.css') ?>"/>
+            <script type="text/javascript" src="<?php echo mix('js/wartungsplaner.js') ?>"></script>
         </head>
     <body>
         <?php
@@ -665,8 +665,8 @@ if (request()->has('option')) {
         ?>
         <head>
             <title>Wartungskalender Berlussimo</title>
-            <link rel="stylesheet" type="text/css" href="<?php echo elixir('css/wp_form.css') ?>"/>
-            <script type="text/javascript" src="<?php echo elixir('js/wartungsplaner.js') ?>"></script>
+            <link rel="stylesheet" type="text/css" href="<?php echo mix('css/wp_form.css') ?>"/>
+            <script type="text/javascript" src="<?php echo mix('js/wartungsplaner.js') ?>"></script>
         </head>
     <body>
         <?php
@@ -678,8 +678,8 @@ if (request()->has('option')) {
         ?>
         <head>
             <title>Wartungskalender Berlussimo</title>
-            <link rel="stylesheet" type="text/css" href="<?php echo elixir('css/wp_form.css') ?>"/>
-            <script type="text/javascript" src="<?php echo elixir('js/wartungsplaner.js') ?>"></script>
+            <link rel="stylesheet" type="text/css" href="<?php echo mix('css/wp_form.css') ?>"/>
+            <script type="text/javascript" src="<?php echo mix('js/wartungsplaner.js') ?>"></script>
         </head>
     <body>
         <?php
@@ -691,8 +691,8 @@ if (request()->has('option')) {
         ?>
         <head>
             <title>Wartungskalender Berlussimo</title>
-            <link rel="stylesheet" type="text/css" href="<?php echo elixir('css/wp_form.css') ?>"/>
-            <script type="text/javascript" src="<?php echo elixir('js/wartungsplaner.js') ?>"></script>
+            <link rel="stylesheet" type="text/css" href="<?php echo mix('css/wp_form.css') ?>"/>
+            <script type="text/javascript" src="<?php echo mix('js/wartungsplaner.js') ?>"></script>
         </head>
     <body>
         <?php
@@ -704,8 +704,8 @@ if (request()->has('option')) {
         ?>
         <head>
             <title>Wartungskalender Berlussimo</title>
-            <link rel="stylesheet" type="text/css" href="<?php echo elixir('css/wp_form.css') ?>"/>
-            <script type="text/javascript" src="<?php echo elixir('js/wartungsplaner.js') ?>"></script>
+            <link rel="stylesheet" type="text/css" href="<?php echo mix('css/wp_form.css') ?>"/>
+            <script type="text/javascript" src="<?php echo mix('js/wartungsplaner.js') ?>"></script>
         </head>
     <body>
         <?php
@@ -717,8 +717,8 @@ if (request()->has('option')) {
             ?>
             <head>
                 <title>Wartungskalender Berlussimo</title>
-                <link rel="stylesheet" type="text/css" href="<?php echo elixir('css/wp_form.css') ?>"/>
-                <script type="text/javascript" src="<?php echo elixir('js/wartungsplaner.js') ?>"></script>
+                <link rel="stylesheet" type="text/css" href="<?php echo mix('css/wp_form.css') ?>"/>
+                <script type="text/javascript" src="<?php echo mix('js/wartungsplaner.js') ?>"></script>
             </head>
             <body>
             <?php
