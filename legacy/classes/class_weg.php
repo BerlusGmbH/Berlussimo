@@ -6182,6 +6182,8 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $einheit_id_n = $uebersicht [$a] ['EINHEIT_ID'];
             $betrag = nummer_komma2punkt($uebersicht [$a] ['ERGEBNIS']);
 
+            $sum_pro_einheit += $betrag;
+
             if ($a == 0) {
                 $einheit_temp = $einheit_id_n;
                 $summe_einheit += $betrag;
@@ -6192,16 +6194,13 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                     $summe_einheit += $betrag;
                 } else {
                     $uebersicht [$a - 1] ['ERGEBNIS_E'] = nummer_punkt2komma_t($summe_einheit);
-                    $sum_pro_einheit += $summe_einheit;
                     $summe_einheit = 0;
                     $einheit_temp = $einheit_id_n;
                     $summe_einheit += $betrag;
-
-                    /* Letzte Zeile/Einheit */
-                    if ($a == $anz_u - 1) {
-                        $uebersicht [$a] ['ERGEBNIS_E'] = nummer_punkt2komma_t($summe_einheit);
-                        $sum_pro_einheit += $summe_einheit;
-                    }
+                }
+                /* Letzte Zeile/Einheit */
+                if ($a == $anz_u - 1) {
+                    $uebersicht [$a] ['ERGEBNIS_E'] = nummer_punkt2komma_t($summe_einheit);
                 }
             }
 
