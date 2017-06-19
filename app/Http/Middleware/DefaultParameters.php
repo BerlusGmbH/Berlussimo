@@ -12,13 +12,22 @@ class DefaultParameters
     {
         if (ListViews::hasParameters()) {
             $missingParameters = [];
+            $missingDependency = false;
             $parameters = ListViews::getParameters();
             foreach ($parameters as $parameter) {
-                if (!request()->exists($parameter) && ListViews::hasDefault($parameter)) {
+                if (!request()->exists($parameter) && ListViews::hasDefault($parameter) && !ListViews::missingDependency($parameter, $request)) {
                     $missingParameters = array_merge($missingParameters, [$parameter => ListViews::getDefault($parameter)]);
                 }
             }
-            if (!empty($missingParameters)) {
+            foreach (array_keys(request()->all()) as $parameter) {
+                if (ListViews::missingDependency($parameter, $request)) {
+                    $missingDependency = true;
+                    $requestParameters = request()->all();
+                    unset($requestParameters[$parameter]);
+                    request()->replace($requestParameters);
+                }
+            }
+            if (!empty($missingParameters) || $missingDependency) {
                 return redirect(request()->fullUrlWithQuery($missingParameters));
             }
         }

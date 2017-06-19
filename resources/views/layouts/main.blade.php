@@ -8,7 +8,7 @@
             @include('shared.searchbar')
         </li>
         <li><a class="dropdown-button" data-activates="user-dropdown"><i
-                        class="mdi mdi-account left"></i>{{Auth::user()->name}}<i class="material-icons right">arrow_drop_down</i></a>
+                        class="mdi mdi-account left"></i>{{Auth::user()->pretty_name}}<i class="material-icons right">arrow_drop_down</i></a>
         </li>
     </ul>
 @endsection
@@ -18,7 +18,7 @@
         <li>
             <div class="userView primary-color">
                 <a href="#!user"><img class="circle" src="/images/berlus_logo.svg"></a>
-                <a href="#!name"><span class="white-text name">{{Auth::user()->name}}</span></a>
+                <a href="#!name"><span class="white-text name">{{Auth::user()->pretty_name}}</span></a>
                 <a href="#!email"><span class="white-text email">{{Auth::user()->email}}</span></a>
             </div>
         </li>

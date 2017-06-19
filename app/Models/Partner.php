@@ -24,4 +24,14 @@ class Partner extends Model
 
         static::addGlobalScope(new AktuellScope());
     }
+
+    public function jobsAsEmployer()
+    {
+        return $this->hasMany(Job::class, 'employer_id');
+    }
+
+    public function arbeitnehmer()
+    {
+        return $this->belongsToMany(Person::class, 'jobs', 'employer_id', 'employee_id');
+    }
 }

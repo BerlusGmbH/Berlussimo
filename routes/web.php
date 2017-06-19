@@ -48,7 +48,6 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['web', 'auth'], 'as' => 
 
     Route::group(['prefix' => 'benutzer', 'as' => 'benutzer::'], function () {
         Route::match(['get', 'post'], '/', 'BenutzerController@request')->name('legacy');
-        Route::get('index', 'BenutzerController@index')->name('index');
     });
 
     Route::group(['prefix' => 'bk', 'as' => 'bk::'], function () {

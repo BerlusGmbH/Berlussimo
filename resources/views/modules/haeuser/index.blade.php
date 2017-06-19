@@ -21,14 +21,15 @@
                 <div class="input-field col-xs-12 col-md-3">
                     @inject('listViews', "App\Services\ListViewsService")
                     @php($options = $listViews->getViewNames('v'))
-                    @include('shared.listview.views', ['id' => 'view', 'name' => 'v', 'label' => 'Ansicht', 'options' => $options])
+                    @include('shared.listview.dropdown', ['id' => 'view', 'name' => 'v', 'label' => 'Ansicht', 'options' => $options])
                 </div>
                 <div class="input-field col-xs-6 col-md-1">
-                    @include('shared.listview.resultsize', ['name' => 's', 'id' => 'size', 'label' => 'Anzahl'])
+                    @php($options = $listViews->getViewNames('s'))
+                    @include('shared.listview.dropdown', ['name' => 's', 'id' => 'size', 'label' => 'Anzahl', 'options' => $options])
                 </div>
             </div>
         </form>
-        @include('shared.tables.entities-with-paginator', ['parameters' => ['q', 's', 'v', 'f'] ,'columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Haeuser::class])
+        @include('shared.tables.entities-with-paginator', ['parameters' => $listViews->getParameters('q') ,'columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Haeuser::class])
     </div>
 @endsection
 

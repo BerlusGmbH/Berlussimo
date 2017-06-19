@@ -7,8 +7,6 @@ class werkzeug
 
     function werkzeugliste($b_id = NULL)
     {
-        $link_NACH_MIT = "<a href='" . route('web::benutzer::legacy', ['option' => 'werkzeugliste_nach_mitarbeiter', 'b_id' => $b_id]) . "'>ÜBERSICHT NACH MITARBEITER</a>";
-        echo $link_NACH_MIT . '<br>';
         $f = new formular ();
         $f->fieldset('Werkzeugliste', 'wl');
         $arr = $this->werkzeugliste_arr($b_id);

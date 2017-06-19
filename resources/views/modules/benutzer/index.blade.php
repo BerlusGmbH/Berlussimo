@@ -22,22 +22,23 @@
                 <div class="input-field col-xs-12 col-md-2">
                     @inject('listViews', "App\Services\ListViewsService")
                     @php($options = $listViews->getViewNames('v'))
-                    @include('shared.listview.views', ['id' => 'view', 'name' => 'v', 'label' => 'Ansicht', 'options' => $options])
+                    @include('shared.listview.dropdown', ['id' => 'view', 'name' => 'v', 'label' => 'Ansicht', 'options' => $options])
                 </div>
                 <div class="input-field col-xs-6 col-md-1">
-                    @include('shared.listview.resultsize', ['name' => 's', 'id' => 'size', 'label' => 'Anzahl'])
+                    @php($options = $listViews->getViewNames('s'))
+                    @include('shared.listview.dropdown', ['name' => 's', 'id' => 'size', 'label' => 'Anzahl', 'options' => $options])
                 </div>
                 <div class="input-field col-md-2 col-md-offset-8">
                     @php($options = $listViews->getViewNames('f1'))
-                    @include('shared.listview.filters', ['name' => 'f1', 'id' => 'filter1', 'label' => 'Aktiv', 'multiple' => false, 'options' => $options])
+                    @include('shared.listview.dropdown', ['name' => 'f1', 'id' => 'filter1', 'label' => 'Aktiv', 'multiple' => false, 'options' => $options])
                 </div>
                 <div class="input-field col-md-2">
                     @php($options = $listViews->getViewNames('f2'))
-                    @include('shared.listview.filters', ['name' => 'f2', 'id' => 'filter2', 'label' => 'Arbeitgeber', 'multiple' => false, 'options' => $options])
+                    @include('shared.listview.dropdown', ['name' => 'f2', 'id' => 'filter2', 'label' => 'Arbeitgeber', 'multiple' => false, 'options' => $options])
                 </div>
             </div>
         </form>
-        @include('shared.tables.entities-with-paginator', ['parameters' => ['q', 's', 'v', 'f1', 'f2'] ,'columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Person::class])
+        @include('shared.tables.entities-with-paginator', ['parameters' => $listViews->getParameters('q') ,'columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Person::class])
     </div>
 @endsection
 

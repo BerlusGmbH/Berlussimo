@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Auftraege;
 use App\Models\BaustellenExtern;
+use App\Models\Credential;
 use App\Models\Details;
 use App\Models\Einheiten;
 use App\Models\Haeuser;
@@ -98,7 +99,10 @@ class RelationsService
             'hinweis' => ['hinweise', Details::class],
             'person' => ['', Person::class],
             'detail' => ['commonDetails', Details::class],
-            'adresse' => ['adressen', Details::class]
+            'adresse' => ['adressen', Details::class],
+            'job' => ['jobsAsEmployee', Job::class],
+            'arbeitgeber' => ['arbeitgeber', Partner::class],
+            'login' => ['credential', Credential::class]
         ],
         'mietvertrag' => [
             'objekt' => ['einheit.haus.objekt', Objekte::class],
@@ -157,18 +161,21 @@ class RelationsService
                     Haeuser::class, Einheiten::class, Wirtschaftseinheiten::class
                 ]
             ],
-            'mitarbeiter' => [['anUser', 'von'], Person::class]
-        ],
-        'mitarbeiter' => [
-            'mitarbeiter' => ['', Person::class],
-            'partner' => ['arbeitgeber', Partner::class],
-            'job' => ['job', Job::class]
+            'person' => [['anPerson', 'von'], Person::class]
         ],
         'partner' => [
-            'partner' => ['', Partner::class]
+            'partner' => ['', Partner::class],
+            'mitarbeiter' => ['arbeitnehmer', Person::class],
+            'job' => ['jobsAsEmployer', Job::class]
         ],
         'baustelle' => [
             'baustelle' => ['', BaustellenExtern::class]
+        ],
+        'job' => [
+            'job' => ['', Job::class],
+            'arbeitgeber' => ['employer', Partner::class],
+            'arbeitnehmer' => ['employee', Person::class]
+
         ]
     ];
 
@@ -213,7 +220,8 @@ class RelationsService
         Details::class => 'detail',
         Auftraege::class => 'auftrag',
         Partner::class => 'partner',
-        Auftraege::class => 'auftrag'
+        Auftraege::class => 'auftrag',
+        Job::class => 'job'
     ];
 
     public function columnToClass($class)

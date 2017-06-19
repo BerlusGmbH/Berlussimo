@@ -22,14 +22,39 @@
                 <div class="input-field col-xs-12 col-md-3">
                     @inject('listViews', "App\Services\ListViewsService")
                     @php($options = $listViews->getViewNames('v'))
-                    @include('shared.listview.views', ['id' => 'view', 'name' => 'v', 'label' => 'Ansicht', 'options' => $options])
+                    @include('shared.listview.dropdown', ['id' => 'view', 'name' => 'v', 'label' => 'Ansicht', 'multiple' => false, 'options' => $options])
                 </div>
                 <div class="input-field col-xs-6 col-md-1">
-                    @include('shared.listview.resultsize', ['name' => 's', 'id' => 'size', 'label' => 'Anzahl'])
+                    @php($options = $listViews->getViewNames('s'))
+                    @include('shared.listview.dropdown', ['name' => 's', 'id' => 'size', 'label' => 'Anzahl', 'multiple' => false, 'options' => $options])
                 </div>
             </div>
+            <div class="row end-xs">
+                <div class="input-field col-md-2">
+                    @php($options = $listViews->getViewNames('c'))
+                    @include('shared.listview.dropdown', ['name' => 'c', 'id' => 'class', 'label' => 'Klasse', 'multiple' => true, 'options' => $options])
+                </div>
+                @if(request()->has('c'))
+                    @if(in_array('Arbeitnehmer', request()->input('c')))
+                        <div class="input-field col-md-2">
+                            @php($options = $listViews->getViewNames('f1'))
+                            @include('shared.listview.dropdown', ['name' => 'f1', 'id' => 'filter1', 'label' => 'Arbeitsverhältnis-Aktiv', 'multiple' => false, 'options' => $options])
+                        </div>
+                        <div class="input-field col-md-2">
+                            @php($options = $listViews->getViewNames('f2'))
+                            @include('shared.listview.dropdown', ['name' => 'f2', 'id' => 'filter2', 'label' => 'Arbeitgeber', 'multiple' => false, 'options' => $options])
+                        </div>
+                    @endif
+                    @if(in_array('Mieter', request()->input('c')))
+                        <div class="input-field col-md-2">
+                            @php($options = $listViews->getViewNames('f3'))
+                            @include('shared.listview.dropdown', ['name' => 'f3', 'id' => 'filter3', 'label' => 'Mietvertrag-Aktiv', 'multiple' => false, 'options' => $options])
+                        </div>
+                    @endif
+                @endif
+            </div>
         </form>
-        @include('shared.tables.entities-with-paginator', ['parameters' => ['q', 's', 'v', 'f'] ,'columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Person::class])
+        @include('shared.tables.entities-with-paginator', ['parameters' => $listViews->getParameters('q') ,'columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Person::class])
     </div>
 @endsection
 
@@ -37,7 +62,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-        var submit = function(target) {
+        var submit = function (target) {
             target.form.submit();
         };
 
@@ -46,11 +71,22 @@
                 submit(this);
             }
         });
-        $('#size').on('change', function (e) {
+        var $filter = $('select.listview-filter');
+        $filter.on('change', function () {
             submit(this);
         });
-        $('#view').on('change', function (e) {
-            submit(this);
+        $filter.siblings('input.select-dropdown').first().on('close', function () {
+            if (hasChanged)
+                submit(this);
+        });
+        $filter = $('select.listview-filter-multiple');
+        var hasChanged = false;
+        $filter.on('change', function () {
+            hasChanged = true;
+        });
+        $filter.siblings('input.select-dropdown').first().on('close', function () {
+            if (hasChanged)
+                submit(this);
         });
     });
 </script>

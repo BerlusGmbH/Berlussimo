@@ -6,7 +6,7 @@
         };
     @endphp
     @if($icons)
-        <i class="mdi mdi-library tooltipped" data-position="bottom" data-delay="50" data-tooltip="Gewerk"></i>
+        <i class="mdi mdi-key tooltipped" data-position="bottom" data-delay="50" data-tooltip="Login"></i>
     @endif
-    {{ $entity->BEZEICHNUNG }}
+    Aktiv: {{$entity->trashed() ? 'Nein' : 'Ja'}}
 </span>

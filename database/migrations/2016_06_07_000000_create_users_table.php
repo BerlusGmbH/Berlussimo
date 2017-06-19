@@ -52,7 +52,6 @@ class CreateUsersTable extends Migration
                 $user->trade_id = $benutzer['GEWERK_ID'];
                 $user->save();
             }
-            Schema::dropIfExists('BENUTZER');
         } else {
             $user = new User();
             $user->name = 'admin';

@@ -22,6 +22,10 @@
     @include('shared.entities.baustelle_extern')
 @elseif($entity instanceof \App\Models\Lager)
     @include('shared.entities.lager')
-@elseif($entity instanceof \App\Models\Gewerke)
-    @include('shared.entities.gewerk')
+@elseif($entity instanceof \App\Models\JobTitle)
+    @include('shared.entities.jobtitel')
+@elseif($entity instanceof \App\Models\Job)
+    @include('shared.entities.job')
+@elseif($entity instanceof \App\Models\Credential)
+    @include('shared.entities.login')
 @endif

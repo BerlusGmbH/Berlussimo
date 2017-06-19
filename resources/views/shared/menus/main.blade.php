@@ -144,12 +144,6 @@
 
                     @can(\App\Libraries\Permission::PERMISSION_MODUL_BENUTZER)
                         <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
-                            <a href='{{route('web::benutzer::index')}}'>Mitarbeiter</a>
-                        </div>
-                    @endcan
-
-                    @can(\App\Libraries\Permission::PERMISSION_MODUL_BENUTZER)
-                        <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
                             <a href='{{route('web::benutzer::legacy', ['option' => 'werkzeuge'])}}'>Werkzeuge</a>
                         </div>
                     @endcan
