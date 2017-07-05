@@ -25,7 +25,7 @@ class PersonenController extends LegacyController
 
     public function index(PersonenRequest $request)
     {
-        $builder = Person::with(['sex']);
+        $builder = Person::query();
 
         list($columns, $personen, $index, $wantedRelations) = ListViews::calculateResponseData($request, $builder);
 

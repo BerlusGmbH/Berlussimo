@@ -1222,7 +1222,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                             <input disabled value='" . $fotos_vorhanden . "' id='link_foto_" . $objekt_id . '_' . $a . "' type='text'>
                             <label class='active' for='link_foto_" . $objekt_id . '_' . $a . "'>Fotos vorhanden</label>
                       </div>";
-                $link_foto_upload = "<a class='waves-effect waves-light btn' id='link_foto_up.$objekt_id.'_'.$a' href='" . route('web::leerstand::legacy', ['option' => 'fotos_upload', 'einheit_id' => $einheit_id]) . "'><i class=\"mdi mdi-upload left\"></i>Hochladen</a>";
+                $link_foto_upload = "<a class='waves-effect waves-light btn' href='" . route('web::leerstand::legacy', ['option' => 'fotos_upload', 'einheit_id' => $einheit_id]) . "'><i class=\"mdi mdi-upload left\"></i>Hochladen</a>";
                 echo $link_foto_upload;
 
                 echo "</td>";
@@ -1259,7 +1259,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                 $jahr = $monat_array [$a] ['JAHR'];
                 $ima1 = $this->get_png($objekt_id, $monat, $jahr, 800, 600);
                 echo "<div class='col-xs-12 col-md-4 col-lg-3'>";
-                echo "<img class='materialboxed' width='100%' src=\"$ima1\" alt=\"Leerstandsübersicht $a\"></a>";
+                echo "<img class='materialboxed' width='100%' src=\"$ima1\" alt=\"Leerstandsübersicht $a\">";
                 echo "</div>";
             }
             echo "</div>";

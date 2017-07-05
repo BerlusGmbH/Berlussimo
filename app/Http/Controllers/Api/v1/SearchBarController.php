@@ -14,31 +14,52 @@ class SearchBarController extends Controller
 {
     public function search()
     {
-        $response = ['objekte' => [], 'haeuser' => [], 'einheiten' => [], 'partner' => [], 'personen' => []];
+        if (!request()->has('e')) {
+            $classes = ['objekt', 'haus', 'einheit', 'person', 'partner'];
+            $response = ['objekt' => [], 'haus' => [], 'einheit' => [], 'person' => [], 'partner' => []];
+        } else {
+            $response = [];
+            if (is_array(request()->input('e'))) {
+                $classes = request()->input('e');
+            } else {
+                $classes = [request()->input('e')];
+            }
+        }
         if (!request()->has('q')) {
             return Response::json($response);
         }
         $tokens = explode(' ', request()->input('q'));
 
-        $response['objekte'] = Objekte::defaultOrder();
-        $response['haeuser'] = Haeuser::defaultOrder();
-        $response['einheiten'] = Einheiten::defaultOrder();
-        $response['partner'] = Partner::defaultOrder();
-        $response['personen'] = Person::defaultOrder();
-
-        foreach ($tokens as $token) {
-            $response['objekte'] = $response['objekte']->search($token);
-            $response['haeuser'] = $response['haeuser']->search($token);
-            $response['einheiten'] = $response['einheiten']->search($token);
-            $response['partner'] = $response['partner']->search($token);
-            $response['personen'] = $response['personen']->search($token);
+        foreach ($classes as $class) {
+            switch ($class) {
+                case 'objekt':
+                    $response['objekt'] = Objekte::defaultOrder();
+                    break;
+                case 'haus':
+                    $response['haus'] = Haeuser::defaultOrder();
+                    break;
+                case 'einheit':
+                    $response['einheit'] = Einheiten::defaultOrder();
+                    break;
+                case 'person':
+                    $response['person'] = Person::defaultOrder();
+                    break;
+                case 'partner':
+                    $response['partner'] = Partner::defaultOrder();
+                    break;
+            }
         }
 
-        $response['objekte'] = $response['objekte']->get();
-        $response['haeuser'] = $response['haeuser']->get();
-        $response['einheiten'] = $response['einheiten']->get();
-        $response['partner'] = $response['partner']->get();
-        $response['personen'] = $response['personen']->get();
+        $count = 0;
+        foreach ($classes as $class) {
+            foreach ($tokens as $token) {
+                $response[$class] = $response[$class]->search($token);
+            }
+            $response[$class] = $response[$class]->get();
+            $count += $response[$class]->count();
+        }
+
+        $response['count'] = $count;
 
         return Response::json($response);
     }

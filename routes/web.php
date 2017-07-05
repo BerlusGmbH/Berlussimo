@@ -214,4 +214,5 @@ Route::group(['prefix' => 'storage', 'namespace' => 'Storage', 'middleware' => [
 
 Route::group(['prefix' => 'api/v1', 'namespace' => 'Api\v1', 'middleware' => ['web', 'auth']], function () {
     Route::get('/search', 'SearchBarController@search')->name('search');
+    Route::get('/personen/{left}/merge/{right}', 'Modules\PersonenController@merge')->name('merge');
 });

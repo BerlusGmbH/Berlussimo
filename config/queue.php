@@ -12,7 +12,7 @@ return [
     | Supported: "sync", "database", "beanstalkd", "sqs", "redis", "null"
     |
     */
-    'default' => env('QUEUE_DRIVER', 'sync'),
+    'default' => env('QUEUE_DRIVER', 'database'),
     /*
     |--------------------------------------------------------------------------
     | Queue Connections
@@ -29,7 +29,7 @@ return [
         ],
         'database' => [
             'driver' => 'database',
-            'table' => 'jobs',
+            'table' => 'queued_jobs',
             'queue' => 'default',
             'retry_after' => 90,
         ],

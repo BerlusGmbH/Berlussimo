@@ -11,6 +11,14 @@ const {mix} = require('laravel-mix');
  |
  */
 
+mix.webpackConfig({
+    resolve: {
+        alias: {
+            'jquery': path.join(__dirname, 'node_modules/jquery/dist/jquery')
+        }
+    }
+});
+
 mix.sass('resources/assets/sass/berlussimo.scss', 'public/css');
 
 mix.styles(['node_modules/normalize.css/normalize.css',
@@ -32,6 +40,13 @@ mix.styles(
     ],
     'public/css/wp_form.css');
 
+mix.js(
+    [
+        'resources/assets/js/app.js'
+    ],
+    'public/js/berlussimo.js'
+);
+
 mix.scripts(
     [
         'legacy/ajax/ajax.js',
@@ -44,33 +59,13 @@ mix.scripts(
     ],
     'public/js/legacy.js'
 );
-mix.scripts(
-    [
-        'resources/assets/js/materialize_chips_autocomplete.js',
-        'resources/assets/js/materialize_autocomplete.js',
-        'resources/assets/js/materialize_datepicker_defaults.js',
-        'resources/assets/js/materialize_init.js',
-        'resources/assets/js/materialize_searchbar.js',
-        'resources/assets/js/mainmenu.js'
-    ],
-    'public/js/berlussimo.js'
-);
+
 mix.scripts(
     [
         'legacy/js/wartungsplaner.js',
         'legacy/js/sorttable.js'
     ],
     'public/js/wartungsplaner.js'
-);
-mix.scripts(
-    [
-        'node_modules/keycode-js/dist/keycode.js',
-        'node_modules/jquery/dist/jquery.js',
-        'node_modules/urijs/src/URI.js',
-        'node_modules/urijs/src/jquery.URI.js',
-        'node_modules/materialize-css/dist/js/materialize.js'
-    ],
-    'public/js/vendor.js'
 );
 
 mix.copyDirectory('legacy/images/', 'public/images/');
@@ -81,4 +76,8 @@ mix.copy('legacy/graph/js/PieGraph.js', 'public/js/PieGraph.js');
 mix.copyDirectory('legacy/graph/img/', 'public/images/');
 mix.copyDirectory('node_modules/mdi/fonts', 'public/fonts');
 
-mix.version();
+mix.extract(['jquery', 'keycode-js', 'urijs', 'lodash', 'vue']);
+
+if (mix.config.inProduction) {
+    mix.version();
+}

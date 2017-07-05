@@ -116,6 +116,7 @@
             <i class="large mdi mdi-account-edit"></i>
         </a>
         <ul>
+            <li><a class="btn-floating" href="#merge"><i class="mdi mdi-call-merge"></i></a></li>
             <li><a class="btn-floating" href="#credentials"><i class="mdi mdi-lock"></i></a></li>
             <li><a class="btn-floating" href="#jobs"><i class="mdi mdi-worker"></i></a></li>
             <li><a class="btn-floating"
@@ -124,6 +125,7 @@
             <li><a class="btn-floating" href="#edit"><i class="mdi mdi-pencil"></i></a></li>
         </ul>
     </div>
+    <person-merge-dialog id="merge" :person="{{$person->toJson()}}"></person-merge-dialog>
     @if(is_null($person->credential))
         @include('modules.personen.credentials.create', ['person' => $person, 'id' => 'credentials'])
     @else

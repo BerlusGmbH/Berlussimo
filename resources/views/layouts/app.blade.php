@@ -19,7 +19,7 @@
         </nav>
     </div>
 
-    @yield('nav-content')
+    @yield('sidenav')
 
     <main>
         <div style="margin-top: 10px" class="center-align">

@@ -1,4 +1,4 @@
-@extends('layouts.main-without-menu')
+@extends('layouts.main')
 
 @section('breadcrumbs')
     <a href="{{ route('web::personen::index') }}" class="breadcrumb">Personen</a>

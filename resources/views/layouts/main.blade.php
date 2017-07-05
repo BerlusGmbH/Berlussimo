@@ -5,7 +5,19 @@
                 class="mdi mdi-menu"></i></a>
     <ul class="right hide-on-med-and-down">
         <li style="height: 64px">
-            @include('shared.searchbar')
+            <searchbar :options="{
+            loginurl: '{{ url('/login') }}',
+            objekturl: '{{ route('web::objekte::show', ['id' => '']) }}/',
+            objektlisturl: '{{ route('web::objekte::index', ['q' => '']) }}',
+            hausurl: '{{ route('web::haeuser::show', ['id' => '']) }}/',
+            hauslisturl: '{{ route('web::haeuser::index', ['q' => '']) }}',
+            einheiturl: '{{ route('web::einheiten::show', ['id' => '']) }}/',
+            einheitlisturl: '{{ route('web::einheiten::index', ['q' => '']) }}',
+            personurl: '{{ route('web::personen::show', ['id' => '']) }}/',
+            personlisturl: '{{ route('web::personen::index', ['q' => '']) }}',
+            partnerurl: '{{ route('web::partner::legacy', ['option' => 'partner_im_detail', 'partner_id' => '']) }}',
+            partnerlisturl: '/'
+        }"></searchbar>
         </li>
         <li><a class="dropdown-button" data-activates="user-dropdown"><i
                         class="mdi mdi-account left"></i>{{Auth::user()->pretty_name}}<i class="material-icons right">arrow_drop_down</i></a>
@@ -13,7 +25,7 @@
     </ul>
 @endsection
 
-@section('nav-content')
+@section('sidenav')
     <ul class="side-nav" id="berlussimo-sidenav">
         <li>
             <div class="userView primary-color">

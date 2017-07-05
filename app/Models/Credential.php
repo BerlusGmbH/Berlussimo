@@ -34,4 +34,9 @@ class Credential extends Model implements AuditableContract
     protected $hidden = [
         'password', 'remember_token', 'api_token'
     ];
+
+    public function person()
+    {
+        return $this->belongsTo(Person::class);
+    }
 }

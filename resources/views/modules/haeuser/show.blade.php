@@ -87,12 +87,12 @@
         @endif
         @if(!$haus->mieter()->get()->isEmpty())
             <div class="col-xs-12 col-sm-3">
-                @include('shared.cards.mieter', [ 'mieter' => $haus->mieter()->defaultOrder()->with('sex')->get(), 'title' => 'Mieter', 'href' => route('web::personen::index', ['q' => '!person(mietvertrag(haus(id=' . $haus->HAUS_ID . ') aktiv))'])])
+                @include('shared.cards.mieter', [ 'mieter' => $haus->mieter()->defaultOrder()->with('hinweise')->get(), 'title' => 'Mieter', 'href' => route('web::personen::index', ['q' => '!person(mietvertrag(haus(id=' . $haus->HAUS_ID . ') aktiv))'])])
             </div>
         @endif
         @if(!$haus->WEGEigentuemer()->get()->isEmpty())
             <div class="col-xs-12 col-sm-3">
-                @include('shared.cards.eigentuemer', [ 'eigentuemer' => $haus->WEGEigentuemer()->defaultOrder()->with('sex', 'hinweise')->get(), 'title' => 'WEG-Eigentümer', 'href' => route('web::personen::index', ['q' => '!person(kaufvertrag(objekt(id=' . $haus->HAUS_ID . ') aktiv))'])])
+                @include('shared.cards.eigentuemer', [ 'eigentuemer' => $haus->WEGEigentuemer()->defaultOrder()->with('hinweise')->get(), 'title' => 'WEG-Eigentümer', 'href' => route('web::personen::index', ['q' => '!person(kaufvertrag(objekt(id=' . $haus->HAUS_ID . ') aktiv))'])])
             </div>
         @endif
         <div class="col-xs-12">

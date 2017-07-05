@@ -231,6 +231,12 @@ nav .brand-logo {
   height: 100%;
 }
 
+.chips .chip:focus {
+  background-color: $chip-selected-color;
+  color: #fff;
+  outline-width: 0;
+}
+
 .mainmenu a {
   color: inherit;
 }
@@ -241,4 +247,14 @@ nav .brand-logo {
 
 .mainmenu .breadcrumb:before {
   color: nth(map-get($primary-colors-text, "base"), 3);
+}
+
+#toast-container {
+  top: unset;
+  bottom: 10%;
+  right: 50%;
+}
+
+.toast {
+  right: -50%;
 }

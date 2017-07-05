@@ -4,8 +4,11 @@ namespace App\Models;
 
 use App\Models\Traits\DefaultOrder;
 use App\Models\Traits\Searchable;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use InvalidArgumentException;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Permission\Traits\HasRoles;
@@ -23,6 +26,16 @@ class Person extends Authenticatable implements AuditableContract
     protected $defaultOrder = ['name' => 'asc', 'first_name' => 'asc', 'birthday' => 'asc'];
     protected $dates = ['birthday', 'created_at', 'updated_at', 'deleted_at'];
     protected $fillable = ['name', 'first_name', 'birthday'];
+    protected $appends = ['sex'];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope('sex', function (Builder $builder) {
+            $builder->with('sexDetail');
+        });
+    }
 
     public function mietvertraege()
     {
@@ -62,7 +75,7 @@ class Person extends Authenticatable implements AuditableContract
         return $this->details()->whereIn('DETAIL_NAME', ['Telefon', 'Handy']);
     }
 
-    public function sex()
+    public function sexDetail()
     {
         return $this->details()->where('DETAIL_NAME', 'Geschlecht');
     }
@@ -114,12 +127,37 @@ class Person extends Authenticatable implements AuditableContract
         return $full_name;
     }
 
+    public function getSexAttribute()
+    {
+        return ($this->sexDetail->isNotEmpty() ? $this->sexDetail[0]['DETAIL_INHALT'] : null);
+    }
+
+    public function setSexAttribute($value)
+    {
+        if (!in_array($value, ['männlich', 'weiblich'])) {
+            throw new InvalidArgumentException('Value has to be one of "männlich" or "weiblich".');
+        }
+
+        if ($this->sexDetail->isNotEmpty()) {
+            $this->sexDetail[0]->DETAIL_AKTUELL = '0';
+            $this->sexDetail[0]->save();
+        }
+
+        $this->details()->create([
+            'DETAIL_ID' => Details::max('DETAIL_ID') + 1,
+            'DETAIL_NAME' => 'Geschlecht',
+            'DETAIL_INHALT' => $value,
+            'DETAIL_BEMERKUNG' => 'Stand: ' . Carbon::today()->toDateString(),
+            'DETAIL_AKTUELL' => '1'
+        ]);
+    }
+
     public function getAddressNameAttribute()
     {
         $full_name = '';
-        if ($this->sex[0]['DETAIL_INHALT'] == 'männlich')
+        if ($this->sex == 'männlich')
             $full_name .= 'Herr ';
-        if ($this->sex[0]['DETAIL_INHALT'] == 'weiblich')
+        if ($this->sex == 'weiblich')
             $full_name .= 'Frau ';
         if (!empty($this->first_name))
             $full_name .= $this->first_name;
