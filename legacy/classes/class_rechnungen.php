@@ -1981,66 +1981,71 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             }
             $z++;
 
-            $pdf_tab [$z] ['RDATUM'] = '___________________';
-            $pdf_tab [$z] ['NETTO'] = '__________________________';
-            $pdf_tab [$z] ['MWST'] = '____________________';
-            $pdf_tab [$z] ['BRUTTO'] = '__________________________';
-            $pdf_tab [$z] ['RNR'] = '_____________________';
+            $pdf_tab [$z] ['RDATUM'] = '_______________';
+            $pdf_tab [$z] ['NETTO'] = '___________________';
+            $pdf_tab [$z] ['MWST'] = '__________________';
+            $pdf_tab [$z] ['BRUTTO'] = '___________________';
+            $pdf_tab [$z] ['RNR'] = '___________________';
+            $pdf_tab [$z] ['SKONTO'] = '___________________';
             $z++;
 
             $pdf_tab [$z] ['RDATUM'] = "<b>Teilsummen</b>";
-            $pdf_tab [$z] ['NETTO'] = "<b>" . nummer_punkt2komma_t($summe_netto) . "€</b>";
-            $pdf_tab [$z] ['BRUTTO'] = "<b>" . nummer_punkt2komma_t($summe_brutto) . "€</b>";
-            $pdf_tab [$z] ['MWST'] = "<b>" . nummer_punkt2komma_t($summe_mwst) . "€</b>";
+            $pdf_tab [$z] ['NETTO'] = "<b>" . nummer_punkt2komma_t($summe_netto) . " € </b>";
+            $pdf_tab [$z] ['BRUTTO'] = "<b>" . nummer_punkt2komma_t($summe_brutto) . " € </b>";
+            $pdf_tab [$z] ['MWST'] = "<b>" . nummer_punkt2komma_t($summe_mwst) . " € </b>";
+            $pdf_tab [$z] ['SKONTO'] = "<b>" . nummer_punkt2komma_t($summe_skontiert) . " € </b>";
             $z++;
 
-            $pdf_tab [$z] ['RDATUM'] = '==================';
-            $pdf_tab [$z] ['NETTO'] = '=========================';
-            $pdf_tab [$z] ['MWST'] = '====================';
-            $pdf_tab [$z] ['BRUTTO'] = '=========================';
-            $pdf_tab [$z] ['RNR'] = '====================';
+            $pdf_tab [$z] ['RDATUM'] = '==============';
+            $pdf_tab [$z] ['NETTO'] = '==================';
+            $pdf_tab [$z] ['MWST'] = '==================';
+            $pdf_tab [$z] ['BRUTTO'] = '=================';
+            $pdf_tab [$z] ['RNR'] = '==================';
+            $pdf_tab [$z] ['SKONTO'] = '==================';
             $z++;
 
             $rr->rechnung_grunddaten_holen($beleg_nr);
             $pdf_tab [$z] ['RDATUM'] = "<b>Schlußrechnung</b>";
             $n_a = nummer_punkt2komma_t($rr->rechnungs_netto - $summe_netto);
-            $pdf_tab [$z] ['NETTO'] = "<b>$n_a €</b>";
-            $pdf_tab [$z] ['MWST'] = "<b>" . nummer_punkt2komma_t($rr->rechnungs_mwst - $summe_mwst) . "€</b>";
-            $pdf_tab [$z] ['BRUTTO'] = "<b>" . nummer_punkt2komma_t($rr->rechnungs_brutto - $summe_brutto) . "€</b>";
+            $pdf_tab [$z] ['NETTO'] = "<b>$n_a € </b>";
+            $pdf_tab [$z] ['MWST'] = "<b>" . nummer_punkt2komma_t($rr->rechnungs_mwst - $summe_mwst) . " € </b>";
+            $pdf_tab [$z] ['BRUTTO'] = "<b>" . nummer_punkt2komma_t($rr->rechnungs_brutto - $summe_brutto) . " € </b>";
+            $pdf_tab [$z] ['SKONTO'] = "<b>" . nummer_punkt2komma_t($rr->rechnungs_brutto - $summe_skontiert) . " € </b>";
             $z++;
-            $pdf_tab [$z] ['RDATUM'] = '==================';
-            $pdf_tab [$z] ['NETTO'] = '=========================';
-            $pdf_tab [$z] ['MWST'] = '====================';
-            $pdf_tab [$z] ['BRUTTO'] = '=========================';
-            $pdf_tab [$z] ['RNR'] = '====================';
+            $pdf_tab [$z] ['RDATUM'] = '==============';
+            $pdf_tab [$z] ['NETTO'] = '==================';
+            $pdf_tab [$z] ['MWST'] = '==================';
+            $pdf_tab [$z] ['BRUTTO'] = '==================';
+            $pdf_tab [$z] ['RNR'] = '==================';
+            $pdf_tab [$z] ['SKONTO'] = '==================';
             $z++;
             $pdf_tab [$z] ['RDATUM'] = "<b>verbleibende</b>";
             $pdf_tab [$z] ['RNR'] = "<b>Restforderung</b>";
-            $pdf_tab [$z] ['BRUTTO'] = "<b>" . nummer_punkt2komma_t($rr->rechnungs_brutto - $summe_brutto) . "€</b>";
-            $rest_forderung = $rr->rechnungs_brutto - $summe_brutto;
+            $pdf_tab [$z] ['SKONTO'] = "<b>" . nummer_punkt2komma_t($rr->rechnungs_brutto - $summe_skontiert) . " € </b>";
+            $rest_forderung = $rr->rechnungs_brutto - $summe_skontiert;
             $z++;
             $this->get_sicherheitseinbehalt($beleg_nr);
             if ($this->rg_betrag > '0.00') {
                 $pdf_tab [$z] ['RDATUM'] = "<b>abzüglich</b>";
                 $pdf_tab [$z] ['RNR'] = "<b>SEB von $this->rg_prozent %</b>";
 
-                $pdf_tab [$z] ['BRUTTO'] = "<b>" . nummer_punkt2komma_t($this->rg_betrag) . "€</b>";
+                $pdf_tab [$z] ['SKONTO'] = "<b>" . nummer_punkt2komma_t($this->rg_betrag) . " € </b>";
                 $z++;
                 $pdf_tab [$z] ['RDATUM'] = "<b>zu zahlender Betrag</b>";
                 $pdf_tab [$z] ['RNR'] = "<b></b>";
                 $zu_zahlen = $rest_forderung - $this->rg_betrag;
                 $zu_zahlen_a = nummer_punkt2komma_t($zu_zahlen);
-                $pdf_tab [$z] ['BRUTTO'] = "<b>" . $zu_zahlen_a . "€</b>";
+                $pdf_tab [$z] ['SKONTO'] = "<b>" . $zu_zahlen_a . " € </b>";
                 $z++;
-                $pdf_tab [$z] ['RDATUM'] = "<b>Nach Skontoabzug</b>";
+                $pdf_tab [$z] ['RDATUM'] = "<b>Skontoabzug</b>";
                 $summe_skonto_alle_a = nummer_punkt2komma_t($rr->rechnungs_skontoabzug);
-                $pdf_tab [$z] ['RNR'] = "<b>i.H. von $summe_skonto_alle_a €</b>";
-                $pdf_tab [$z] ['BRUTTO'] = "<b>" . nummer_punkt2komma_t(($zu_zahlen - $rr->rechnungs_skontoabzug)) . "€</b>";
+                $pdf_tab [$z] ['RNR'] = "<b>i.H. von $summe_skonto_alle_a € </b>";
+                $pdf_tab [$z] ['SKONTO'] = "<b>" . nummer_punkt2komma_t(($zu_zahlen - $rr->rechnungs_skontoabzug)) . " € </b>";
             } else {
-                $pdf_tab [$z] ['RDATUM'] = "<b>Nach Skontoabzug</b>";
+                $pdf_tab [$z] ['RDATUM'] = "<b>Skontoabzug</b>";
                 $summe_skonto_alle_a = nummer_punkt2komma_t($rr->rechnungs_skontoabzug);
-                $pdf_tab [$z] ['RNR'] = "<b>i.H. von $summe_skonto_alle_a €</b>";
-                $pdf_tab [$z] ['BRUTTO'] = "<b>" . nummer_punkt2komma_t($rr->rechnungs_brutto - $summe_brutto - $rr->rechnungs_skontoabzug) . "€</b>";
+                $pdf_tab [$z] ['RNR'] = "<b>i.H. von $summe_skonto_alle_a € </b>";
+                $pdf_tab [$z] ['SKONTO'] = "<b>" . nummer_punkt2komma_t($rr->rechnungs_brutto - $summe_skontiert - $rr->rechnungs_skontoabzug) . " € </b>";
             }
 
             $cols = array(
@@ -2048,7 +2053,8 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
                 'RNR' => "<b>Rechnungsnr</b>",
                 'NETTO' => "<b>Betrag Netto</b>",
                 'MWST' => "<b>Betrag MwSt</b>",
-                'BRUTTO' => "<b>Betrag Brutto</b>"
+                'BRUTTO' => "<b>Betrag Brutto</b>",
+                'SKONTO' => "<b>Betrag Skonto</b>"
             );
 
             /* Tabellenparameter */
@@ -2074,23 +2080,27 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
                 'cols' => array(
                     'RDATUM' => array(
                         'justification' => 'left',
-                        'width' => 90
+                        'width' => 70
                     ),
                     'RNR' => array(
                         'justification' => 'left',
-                        'width' => 100
+                        'width' => 90
                     ),
                     'NETTO' => array(
                         'justification' => 'right',
-                        'width' => 120
+                        'width' => 90
                     ),
                     'BRUTTO' => array(
                         'justification' => 'right',
-                        'width' => 120
+                        'width' => 90
                     ),
                     'MWST' => array(
                         'justification' => 'right',
-                        'width' => 100
+                        'width' => 90
+                    ),
+                    'SKONTO' => array(
+                        'justification' => 'right',
+                        'width' => 90
                     )
                 )
 
