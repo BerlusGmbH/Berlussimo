@@ -22,11 +22,19 @@
     @yield('sidenav')
 
     <main>
-        <div style="margin-top: 10px" class="center-align">
-            @include("shared.messages")
-        </div>
-        @yield("content")
+        <v-app>
+            <div style="margin-top: 10px" class="center-align">
+                @include("shared.messages")
+            </div>
+            @yield("content")
+            @if(Auth::check())
+                <notifications id="notifications" :user="{{Auth::id()}}"
+                               :init-notifications="{{Auth::user()->notifications->toJson()}}"></notifications>
+            @endif
+        </v-app>
     </main>
+
+
 
     <footer class="page-footer">
         <div class="footer-copyright">
@@ -38,3 +46,13 @@
         </div>
     </footer>
 @endsection
+
+@if(Auth::check())
+    @push('scripts')
+    <script>
+        Echo.private('test').listen('TestEvent', function (e) {
+            Materialize.toast(JSON.stringify(e), 5000);
+        });
+    </script>
+    @endpush
+@endif

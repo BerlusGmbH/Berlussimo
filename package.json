@@ -15,21 +15,29 @@
     "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
   },
   "devDependencies": {
+    "ajv": "^5.2.2",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "cross-env": "^3.2.3",
+    "events": "^1.1.1",
     "flexboxgrid": "^6.3.1",
     "jquery": "^3.1.1",
     "keycode-js": "0.0.4",
-    "laravel-mix": "0.*",
+    "laravel-echo": "github:berlusgmbh/echo",
+    "laravel-mix": "^1.2.2",
     "lodash": "^4.17.4",
     "materialize-css": "^0.98.2",
     "mdi": "^1.9.32",
     "normalize.css": "^5.0.0",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.1",
+    "ts-loader": "^2.2.2",
+    "typescript": "^2.4.1",
     "urijs": "^1.18.4",
     "velocity-animate": "^1.5.0",
-    "vue": "^2.1.10"
+    "vue": "^2.4.1",
+    "vuetify": "^0.14.1",
+    "vuex": "^2.3.1",
+    "webpack": "^3.3.0"
   },
-  "dependencies": {
-    "vuex": "^2.3.1"
-  }
+  "dependencies": {}
 }

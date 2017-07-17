@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Events\Models\PersonUpdated;
 use App\Models\Traits\DefaultOrder;
+use App\Models\Traits\Mergeable;
+use App\Models\Traits\MergePersons;
 use App\Models\Traits\Searchable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use InvalidArgumentException;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -15,11 +19,8 @@ use Spatie\Permission\Traits\HasRoles;
 
 class Person extends Authenticatable implements AuditableContract
 {
-    use Searchable;
-    use DefaultOrder;
-    use SoftDeletes;
-    use Auditable;
-    use HasRoles;
+    use Searchable, DefaultOrder, SoftDeletes, Auditable, HasRoles, Notifiable, MergePersons, Mergeable;
+
 
     protected $table = 'persons';
     protected $searchableFields = ['name', 'first_name'];
@@ -27,6 +28,9 @@ class Person extends Authenticatable implements AuditableContract
     protected $dates = ['birthday', 'created_at', 'updated_at', 'deleted_at'];
     protected $fillable = ['name', 'first_name', 'birthday'];
     protected $appends = ['sex'];
+    protected $events = [
+        'updated' => PersonUpdated::class
+    ];
 
     protected static function boot()
     {
@@ -113,6 +117,16 @@ class Person extends Authenticatable implements AuditableContract
     public function hasHinweis()
     {
         return $this->hinweise->count() > 0;
+    }
+
+    /**
+     * The channels the user receives notification broadcasts on.
+     *
+     * @return string
+     */
+    public function receivesBroadcastNotificationsOn()
+    {
+        return 'Notification.Person.' . $this->id;
     }
 
     public function getFullNameAttribute()

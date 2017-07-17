@@ -76,11 +76,7 @@ class Handler extends ExceptionHandler
                 return $exception->getResponse();
             }
 
-            if ($this->isHttpException($exception)) {
-                return $this->toIlluminateResponse($this->renderHttpException($exception), $exception);
-            } else {
-                return $this->toIlluminateResponse($this->convertExceptionToJsonResponse($exception), $exception);
-            }
+            return $this->toIlluminateResponse($this->convertExceptionToJsonResponse($exception), $exception);
         }
 
         if ($exception instanceof AuthorizationException) {
@@ -133,7 +129,7 @@ class Handler extends ExceptionHandler
 
         $json = ['error' => [
             'status' => (string)$e->getStatusCode(),
-            'title' => $e->getMessage()
+            'message' => $e->getMessage()
         ]];
 
         if (config('app.debug')) {

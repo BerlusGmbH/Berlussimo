@@ -3,21 +3,32 @@
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
+import Vue from "vue";
+import Vuex from "vuex";
+import Vuetify from "vuetify";
+import store from "./store.js";
 
 window.$ = window.jQuery = require('jquery');
 window._ = require('lodash');
 window.KeyCode = require('keycode-js');
 require('urijs');
 require('materialize-css');
-window.Vue = require('vue');
-window.Vuex = require('vuex');
+window.Vue = Vue;
+window.Vuex = Vuex;
 window.Models = require('./models.js');
+window.Notifications = require('./notifications.js');
 
 require('./materialize_chips_autocomplete.js');
 require('./materialize_autocomplete.js');
 require('./materialize_datepicker_defaults.js');
 require('./materialize_init.js');
 require('./mainmenu.js');
+
+window.Echo = require("laravel-echo");
+window.Echo = new Echo({
+    broadcaster: 'nchan',
+    host: '/broadcasting/events'
+});
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -26,8 +37,7 @@ require('./mainmenu.js');
  */
 
 Vue.use(Vuex);
-
-import store from "./store.js";
+Vue.use(Vuetify);
 
 const nav = new Vue({
     el: 'nav',
@@ -38,9 +48,10 @@ const nav = new Vue({
 });
 
 const main = new Vue({
-    el: 'main',
+    el: 'v-app',
     store,
     components: {
-        'person-merge-dialog': require('./components/modules/person/merge/Dialog.vue')
+        'person-merge-dialog': require('./components/modules/person/merge/Dialog.vue'),
+        'notifications': require('./components/common/Notifications.vue')
     }
 });

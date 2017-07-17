@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('BROADCAST_DRIVER', 'null'),
+    'default' => env('BROADCAST_DRIVER', 'nchan'),
 
     /*
     |--------------------------------------------------------------------------
@@ -45,6 +45,11 @@ return [
         ],
         'null' => [
             'driver' => 'null',
+        ],
+        'nchan' => [
+            'driver' => 'nchan',
+            'url' => env('NCHAN_URL'),
+            'options' => [],
         ],
     ],
 

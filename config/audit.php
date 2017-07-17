@@ -16,6 +16,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Audit implementation
+    |--------------------------------------------------------------------------
+    |
+    | Define which Audit model implementation should be used.
+    |
+    */
+
+    'implementation' => OwenIt\Auditing\Models\Audit::class,
+
+    /*
+    |--------------------------------------------------------------------------
     | User Model & Resolver
     |--------------------------------------------------------------------------
     |
@@ -24,10 +35,12 @@ return [
     */
 
     'user' => [
+        'primary_key' => 'id',
+        'foreign_key' => 'person_id',
         'model' => App\Models\Person::class,
         'resolver' => function () {
             return Auth::check() ? Auth::user()->getAuthIdentifier() : null;
-        },
+        }
     ],
 
     /*

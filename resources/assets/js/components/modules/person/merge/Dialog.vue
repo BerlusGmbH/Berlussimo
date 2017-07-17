@@ -150,7 +150,14 @@
                         data: this.merged
                     }
                 ).done(function () {
-                    Materialize.toast('Personen werden zusammengeführt.', 3000, 'rounded');
+                    if (vm.person.id > vm.right.id) {
+                        let goto = window.location.protocol
+                            + '//'
+                            + window.location.host
+                            + '/personen/'
+                            + vm.right.id;
+                        window.location = goto;
+                    }
                     $('#' + vm.id).modal('close');
                 }).fail(function (jqXHR, status, error) {
                     Materialize.toast(

@@ -19,6 +19,7 @@
             partnerlisturl: '/'
         }"></searchbar>
         </li>
+        <li><a href="#notifications"><i class="mdi mdi-message"></i></a></li>
         <li><a class="dropdown-button" data-activates="user-dropdown"><i
                         class="mdi mdi-account left"></i>{{Auth::user()->pretty_name}}<i class="material-icons right">arrow_drop_down</i></a>
         </li>

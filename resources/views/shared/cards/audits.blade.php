@@ -19,7 +19,7 @@
                         {{$audit->event}}
                     </td>
                     <td>
-                        @if(!is_null($audit->user_id))
+                        @if(!is_null($audit->person_id))
                             @include('shared.entities.person', ['entity' => $audit->user])
                         @endif
                     </td>

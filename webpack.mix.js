@@ -11,6 +11,9 @@ const {mix} = require('laravel-mix');
  |
  */
 
+mix.version();
+mix.sourceMaps();
+
 mix.webpackConfig({
     resolve: {
         alias: {
@@ -21,10 +24,10 @@ mix.webpackConfig({
 
 mix.sass('resources/assets/sass/berlussimo.scss', 'public/css');
 
+mix.stylus('node_modules/vuetify/src/stylus/main.styl', 'public/css');
+
 mix.styles(['node_modules/normalize.css/normalize.css',
-    'public/css/materialize-css.css',
     'node_modules/flexboxgrid/dist/flexboxgrid.css',
-    'node_modules/mdi/css/materialdesignicons.css'
 ], 'public/css/vendor.css');
 
 mix.styles(
@@ -53,9 +56,7 @@ mix.scripts(
         'legacy/ajax/dd_kostenkonto.js',
         'legacy/js/javascript.js',
         'legacy/js/sorttable.js',
-        'legacy/js/foto_upload.js',
-        'legacy/graph/js/LineGraph.js',
-        'legacy/graph/js/PieGraph.js'
+        'legacy/js/foto_upload.js'
     ],
     'public/js/legacy.js'
 );
@@ -74,10 +75,5 @@ mix.copy('legacy/graph/css/PieGraph.css', 'public/css/PieGraph.css');
 mix.copy('legacy/graph/js/LineGraph.js', 'public/js/LineGraph.js');
 mix.copy('legacy/graph/js/PieGraph.js', 'public/js/PieGraph.js');
 mix.copyDirectory('legacy/graph/img/', 'public/images/');
-mix.copyDirectory('node_modules/mdi/fonts', 'public/fonts');
 
-mix.extract(['jquery', 'keycode-js', 'urijs', 'lodash', 'vue']);
-
-if (mix.config.inProduction) {
-    mix.version();
-}
+mix.extract(['jquery', 'keycode-js', 'urijs', 'lodash', 'vue', 'vuex', 'vuetify']);

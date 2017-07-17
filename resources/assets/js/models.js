@@ -11,6 +11,28 @@ Person.prototype.toString = function () {
     return full_name;
 };
 
+Person.prototype.toIdentificator = function () {
+    let id = this.getEntityIcon() + ' ' + String(this);
+    if (this.getSexIcon() !== '') {
+        id += ' ' + this.getSexIcon()
+    }
+    return id;
+};
+
+Person.prototype.getEntityIcon = function () {
+    return '<i class="mdi ' + this.icon + '"></i>';
+};
+
+Person.prototype.getSexIcon = function () {
+    if (this.sex === 'männlich') {
+        return '<i class="mdi mdi-gender-male"></i>';
+    }
+    if (this.sex === 'weiblich') {
+        return '<i class="mdi mdi-gender-female"></i>';
+    }
+    return '';
+};
+
 Person.prototype.getDetailUrl = function () {
     return base_url + '/personen/' + this.id;
 };

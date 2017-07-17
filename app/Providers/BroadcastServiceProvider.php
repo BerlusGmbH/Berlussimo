@@ -1,18 +1,24 @@
 <?php
+
 namespace App\Providers;
-use Illuminate\Support\Facades\Broadcast;
+
+use App\Libraries\NchanBroadcaster;
+use Illuminate\Broadcasting\BroadcastManager;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
 class BroadcastServiceProvider extends ServiceProvider
 {
     /**
-     * Bootstrap any application services.
+     * Bootstrap the application services.
      *
-     * @return void
+     * @param BroadcastManager $broadcastManager
      */
-    public function boot()
+    public function boot(BroadcastManager $broadcastManager)
     {
-        Broadcast::routes();
+        $broadcastManager->extend('nchan', function (Application $app, array $config) {
+            return new NchanBroadcaster($config);
+        });
         require base_path('routes/channels.php');
     }
 }
