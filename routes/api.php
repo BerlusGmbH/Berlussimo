@@ -16,3 +16,9 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::group(['prefix' => 'v1', 'namespace' => 'Api\v1', 'middleware' => ['auth:api']], function () {
+    Route::get('/search', 'SearchBarController@search')->name('search');
+    Route::get('/personen/{left}/merge/{right}', 'Modules\PersonenController@merge')->name('merge');
+    Route::get('/personen/{person}', 'Modules\PersonenController@show')->name('show');
+});

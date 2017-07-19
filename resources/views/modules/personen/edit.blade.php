@@ -24,7 +24,7 @@
                     <i class="mdi mdi-cake prefix"></i>
                     <input type="date" id="birthday" name="birthday"
                            class="validate {{$errors->has('birthday') ? 'invalid' : ''}}"
-                           value="{{old('birthday', $person->birthday ? $person->birthday->toDateString() : '')}}">
+                           value="{{old('birthday', $person->birthday ? $person->birthday : '')}}">
                     <span class="error-block">{{$errors->has('birthday') ? $errors->first('birthday') : ''}}</span>
                     <label class="active" for="birthday" data-error="{{$errors->has('birthday')}}">Geburtstag</label>
                 </div>

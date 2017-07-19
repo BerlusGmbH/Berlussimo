@@ -11,41 +11,42 @@ const {mix} = require('laravel-mix');
  |
  */
 
-mix.version();
-mix.sourceMaps();
+if (mix.inProduction()) {
+    mix.version();
+}
 
-mix.webpackConfig({
-    resolve: {
-        alias: {
-            'jquery': path.join(__dirname, 'node_modules/jquery/dist/jquery')
-        }
-    }
-});
+mix.sourceMaps();
 
 mix.sass('resources/assets/sass/berlussimo.scss', 'public/css');
 
-mix.stylus('node_modules/vuetify/src/stylus/main.styl', 'public/css');
+mix.stylus('resources/assets/stylus/main.styl', 'public/css');
 
-mix.styles(['node_modules/normalize.css/normalize.css',
-    'node_modules/flexboxgrid/dist/flexboxgrid.css',
-], 'public/css/vendor.css');
+mix.styles(
+    [
+        'node_modules/normalize.css/normalize.css',
+        'node_modules/flexboxgrid/dist/flexboxgrid.css',
+    ],
+    'public/css/vendor.css'
+);
 
 mix.styles(
     [
         'legacy/wartungsplaner/index.css'
     ],
-    'public/css/wartungsplaner.css');
+    'public/css/wartungsplaner.css'
+);
 
 mix.styles(
     [
         'legacy/wartungsplaner/main.css',
         'legacy/wartungsplaner/form.css'
     ],
-    'public/css/wp_form.css');
+    'public/css/wp_form.css'
+);
 
-mix.js(
+mix.ts(
     [
-        'resources/assets/js/app.js'
+        'resources/assets/js/app.ts'
     ],
     'public/js/berlussimo.js'
 );
@@ -76,4 +77,15 @@ mix.copy('legacy/graph/js/LineGraph.js', 'public/js/LineGraph.js');
 mix.copy('legacy/graph/js/PieGraph.js', 'public/js/PieGraph.js');
 mix.copyDirectory('legacy/graph/img/', 'public/images/');
 
-mix.extract(['jquery', 'keycode-js', 'urijs', 'lodash', 'vue', 'vuex', 'vuetify']);
+mix.extract(
+    [
+        'jquery',
+        'keycode-js',
+        'urijs',
+        'lodash',
+        'vue',
+        'vuex',
+        'vuetify'
+    ],
+    'public/js/vendor.js'
+);

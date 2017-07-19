@@ -13,19 +13,20 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use InvalidArgumentException;
+use Laravel\Passport\HasApiTokens;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Permission\Traits\HasRoles;
 
 class Person extends Authenticatable implements AuditableContract
 {
-    use Searchable, DefaultOrder, SoftDeletes, Auditable, HasRoles, Notifiable, MergePersons, Mergeable;
+    use Searchable, DefaultOrder, SoftDeletes, Auditable, HasRoles, Notifiable, MergePersons, Mergeable, HasApiTokens;
 
 
     protected $table = 'persons';
     protected $searchableFields = ['name', 'first_name'];
     protected $defaultOrder = ['name' => 'asc', 'first_name' => 'asc', 'birthday' => 'asc'];
-    protected $dates = ['birthday', 'created_at', 'updated_at', 'deleted_at'];
+    protected $dates = ['created_at', 'updated_at', 'deleted_at'];
     protected $fillable = ['name', 'first_name', 'birthday'];
     protected $appends = ['sex'];
     protected $events = [

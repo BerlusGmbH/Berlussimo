@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Auth;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -27,5 +28,6 @@ class AuthServiceProvider extends ServiceProvider
         Auth::provider('berlussimo', function ($app, $config) {
             return new BerlussimoUserProvider($app['hash'], $config['model']);
         });
+        Passport::routes();
     }
 }

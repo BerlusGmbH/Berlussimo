@@ -1,3 +1,7 @@
+import _ from "lodash";
+import $ from "jquery";
+import {Einheit, Haus, Objekt, Partner, Person} from "../../server/resources/models";
+
 export default {
     namespaced: true,
     state() {
@@ -55,7 +59,7 @@ export default {
         answerHasPartners: (state) => {
             return state.answer['partner'] && state.answer['partner'].length > 0
         },
-        answerHasResults: (state, getters) => {
+        answerHasResults: (_state, getters) => {
             return getters.answerHasObjects
                 || getters.answerHasHouses
                 || getters.answerHasUnits
@@ -86,27 +90,27 @@ export default {
                         switch (key) {
                             case 'objekt':
                                 $.each(val, function (objekt_key, objekt) {
-                                    data[key][objekt_key] = Object.setPrototypeOf(objekt, Models.Objekt.prototype);
+                                    data[key][objekt_key] = Object.setPrototypeOf(objekt, Objekt.prototype);
                                 });
                                 break;
                             case 'haus':
                                 $.each(val, function (haus_key, haus) {
-                                    data[key][haus_key] = Object.setPrototypeOf(haus, Models.Haus.prototype);
+                                    data[key][haus_key] = Object.setPrototypeOf(haus, Haus.prototype);
                                 });
                                 break;
                             case 'einheit':
                                 $.each(val, function (einheit_key, einheit) {
-                                    data[key][einheit_key] = Object.setPrototypeOf(einheit, Models.Einheit.prototype);
+                                    data[key][einheit_key] = Object.setPrototypeOf(einheit, Einheit.prototype);
                                 });
                                 break;
                             case 'person':
                                 $.each(val, function (person_key, person) {
-                                    data[key][person_key] = Object.setPrototypeOf(person, Models.Person.prototype);
+                                    data[key][person_key] = Object.setPrototypeOf(person, Person.prototype);
                                 });
                                 break;
                             case 'partner':
                                 $.each(val, function (partner_key, partner) {
-                                    data[key][partner_key] = Object.setPrototypeOf(partner, Models.Partner.prototype);
+                                    data[key][partner_key] = Object.setPrototypeOf(partner, Partner.prototype);
                                 });
                                 break;
                         }
@@ -119,7 +123,7 @@ export default {
                         commit('updateWaiting', false);
                         dispatch('select');
                     }
-                }).fail(function (jqxhr, textStatus) {
+                }).fail(function (_jqxhr, textStatus) {
                     if (textStatus !== "abort") {
                         commit('updateSearching', false);
                         commit('updateRequest', null);

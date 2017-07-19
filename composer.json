@@ -13,11 +13,12 @@
     "barryvdh/laravel-ide-helper": "v2.*",
     "doctrine/dbal": "^2.5",
     "laravel/framework": "5.4.*",
+    "laravel/passport": "^3.0",
     "laravel/tinker": "~1.0",
     "mashape/unirest-php": "^3.0",
     "owen-it/laravel-auditing": "^4.0",
     "propaganistas/laravel-phone": "^2.8",
-    "rospdf/pdf-php": "0.12.34",
+    "rospdf/pdf-php": "0.12.40",
     "smarty/smarty-lexer": "^3.1",
     "spatie/laravel-permission": "^1.4"
   },

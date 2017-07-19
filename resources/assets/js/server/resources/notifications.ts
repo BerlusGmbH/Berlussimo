@@ -1,20 +1,22 @@
-PersonMerged.prototype.toString = function () {
-    return 'Personen ('
-        + this.data.left.toIdentificator()
-        + ' und '
-        + this.data.right.toIdentificator()
-        + ') zusammengeführt: '
-        + '<a href="' + this.data.left.getDetailUrl() + '">'
-        + this.data.merged.toIdentificator()
-        + '</a>';
-};
+import {Person} from "./models";
 
-PersonMerged.prototype.icon = 'mdi-cube';
+class PersonMerged {
+    icon: string = 'mdi-account-multiple';
+    data: any;
 
-export function PersonMerged() {
+    toString(): string {
+        return 'Personen ('
+            + this.data.left.toIdentificator()
+            + ' und '
+            + this.data.right.toIdentificator()
+            + ') zusammengeführt: '
+            + '<a href="' + this.data.left.getDetailUrl() + '">'
+            + this.data.merged.toIdentificator()
+            + '</a>';
+    }
 }
 
-export function type(notifications) {
+function type(notifications) {
     let keys = Object.keys(notifications);
     keys.forEach(function (key) {
         switch (notifications[key].type) {
@@ -23,13 +25,13 @@ export function type(notifications) {
                     notifications[key], PersonMerged.prototype
                 );
                 notifications[key].data.left = Object.setPrototypeOf(
-                    notifications[key].data.left, Models.Person.prototype
+                    notifications[key].data.left, Person.prototype
                 );
                 notifications[key].data.right = Object.setPrototypeOf(
-                    notifications[key].data.right, Models.Person.prototype
+                    notifications[key].data.right, Person.prototype
                 );
                 notifications[key].data.merged = Object.setPrototypeOf(
-                    notifications[key].data.merged, Models.Person.prototype
+                    notifications[key].data.merged, Person.prototype
                 );
                 break;
         }
@@ -37,22 +39,24 @@ export function type(notifications) {
     return notifications;
 }
 
-export function typeOne(notification) {
+function typeOne(notification) {
     switch (notification.type) {
         case 'App\\Notifications\\PersonMerged':
             notification = Object.setPrototypeOf(
                 notification, PersonMerged.prototype
             );
             notification.data.left = Object.setPrototypeOf(
-                notification.data.left, Models.Person.prototype
+                notification.data.left, Person.prototype
             );
             notification.data.right = Object.setPrototypeOf(
-                notification.data.right, Models.Person.prototype
+                notification.data.right, Person.prototype
             );
             notification.data.merged = Object.setPrototypeOf(
-                notification.data.merged, Models.Person.prototype
+                notification.data.merged, Person.prototype
             );
             break;
     }
     return notification;
 }
+
+export {PersonMerged, type, typeOne};

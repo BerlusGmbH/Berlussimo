@@ -1,6 +1,6 @@
 <?php
 return [
-    'unavailable_audits' => 'No Post Audits available',
+    'unavailable_audits' => 'No Person Audits available',
 
     'updated' => [
         'metadata' => 'On :audit_created_at, :user_name [:audit_ip_address] updated this record via :audit_url',
