@@ -12,15 +12,10 @@ class stammdaten
         $druckdatum = date("d.m.Y");
         $pdf->addText(464, 730, 7, "<b>Druckdatum: $druckdatum</b>");
 
-        // echo "<hr>pdf_stamm_objekt($pdf, $objekt_id)<hr>";
         $o = new objekt ();
         $o->get_objekt_infos($objekt_id);
         $o->anzahl_haeuser_objekt($objekt_id);
         $anz_einheiten = $o->anzahl_einheiten_objekt($objekt_id);
-
-        echo '<pre>';
-        // print_r($o);
-        echo "<hr>";
 
         $pdf_tab [0] ['BEZ'] = 'Objekt Kurzname';
         $pdf_tab [0] ['TXT'] = $o->objekt_kurzname;
@@ -48,7 +43,6 @@ class stammdaten
         $anz_details = count($details_arr);
 
         if ($anz_details) {
-            // print_r($details_arr);
             $z = 6;
             for ($a = 0; $a < $anz_details; $a++) {
                 $pdf_tab [$z] ['BEZ'] = $details_arr [$a] ['DETAIL_NAME'];
@@ -136,8 +130,6 @@ class stammdaten
                 $pdf_tab [$a] ['HAUS_ID'] = $haus_id;
                 $pdf_tab [$a] ['BEZ'] = "Haus $z";
                 $pdf_tab [$a] ['TXT'] = "$h->haus_strasse $h->haus_nummer, $h->haus_plz $h->haus_stadt";
-
-                // print_r($h);
             }
 
             $cols = array(
@@ -231,7 +223,6 @@ class stammdaten
         $o->get_objekt_infos($objekt_id);
         $einheit_arr = $o->einheiten_objekt_arr($objekt_id);
         $anz_einheiten = count($einheit_arr);
-        // print_r($einheit_arr);
 
         /* Liste Einheiten */
         $cols = array(
@@ -641,32 +632,6 @@ class stammdaten
                             )
                         )
                     ));
-                    $pdf->ezSetDy(-5); // abstand
-                    unset ($pdf_pe);
-
-                    /* Mietdefinition zum MV */
-                    $me = new mietentwicklung ();
-                    $me->pdf_mietentwicklung($pdf, $mv_id);
-
-                    $pdf->ezNewPage();
-                    $druckdatum = date("d.m.Y");
-                    $pdf->addText(464, 730, 7, "<b>Druckdatum: $druckdatum</b>");
-                    $arr_stat = $this->me_12($mv_id, 2013);
-                    $this->plot2pdf($pdf, $mv_id, $arr_stat, 2013, 570, 150);
-
-                    $pdf->ezSetDy(-160); // abstand
-                    $arr_stat = $this->me_12($mv_id, 2014);
-                    $this->plot2pdf($pdf, $mv_id, $arr_stat, 2014, 570, 150);
-
-                    $pdf->ezSetDy(-160); // abstand
-                    $arr_stat = $this->me_12($mv_id, 2015);
-                    $this->plot2pdf($pdf, $mv_id, $arr_stat, 2015, 570, 150);
-
-                    $pdf->ezSetDy(-160); // abstand
-                    $arr_stat = $this->me_12($mv_id, 2016);
-                    $this->plot2pdf($pdf, $mv_id, $arr_stat, 2016, 570, 150);
-
-                    unset ($pdf_mv);
                 }
             }
         } // ende for Einheiten
