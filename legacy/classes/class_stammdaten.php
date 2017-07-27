@@ -632,6 +632,7 @@ class stammdaten
                             )
                         )
                     ));
+                    unset ($pdf_pe);
                 }
             }
         } // ende for Einheiten
