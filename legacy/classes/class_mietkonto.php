@@ -134,20 +134,10 @@ ORDER BY BUCHUNGSNUMMER DESC");
     {
         echo "<fieldset class=\"$name\" >";
         echo "<legend>$name</legend>";
-        // $self = $_SERVER['PHP_SELF'];
         $scriptname = $_SERVER ['REQUEST_URI'];
-        $servername = $_SERVER ['SERVER_NAME'];
-        $serverport = $_SERVER ['SERVER_PORT'];
-        $https = array_key_exists('HTTPS', $_SERVER) ? $_SERVER ['HTTPS'] : 'off';
-
-        if (isset($https) && $https !== 'off') {
-            $self = "https://$servername:$serverport$scriptname";
-        } else {
-            $self = "http://$servername:$serverport$scriptname";
-        }
 
         if (!isset ($action)) {
-            echo "<form class=\"$name\" name=\"$name\" action=\"$self\"  method=\"post\">\n";
+            echo "<form class=\"$name\" name=\"$name\" action=\"$scriptname\"  method=\"post\">\n";
         } else {
             echo "<form name=\"$name\" action=\"$action\" method=\"post\">\n";
         }
@@ -1720,6 +1710,8 @@ ORDER BY DATUM ASC ");
             $kostenkategorien_arr [] = "Betriebskostenabrechnung $a";
             $kostenkategorien_arr [] = "Heizkostenabrechnung $a";
             $kostenkategorien_arr [] = "Kaltwasserabrechnung $a";
+            $kostenkategorien_arr [] = "Kabel TV $a";
+            $kostenkategorien_arr [] = "Thermenwartung $a";
         }
 
         for ($a = $jahr; $a >= $vorjahr; $a--) {
