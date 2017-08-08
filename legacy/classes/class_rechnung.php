@@ -1794,7 +1794,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         $link_details_hinzu = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'RECHNUNGEN', 'detail_id' => $belegnr]) . "'>Lieferschein hinzufügen</a>";
 
         if ($this->rechnungstyp == 'Schlussrechnung') {
-            $link_teilrg_hinzu = "<a href='" . route('web::rechnungen::legacy', ['option' => 'teil_rg_hinzu', 'belegnr' => $belegnr]) . "'>Teilrechnung hinzufügen</a>";
+            $link_teilrg_hinzu = "<a href='" . route('web::rechnungen::legacy', ['option' => 'teil_rg_hinzu', 'beleg_id' => $belegnr]) . "'>Teilrechnung hinzufügen</a>";
         } else {
             $link_teilrg_hinzu = '';
         }
@@ -2919,7 +2919,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         $form = new mietkonto ();
         $partner = new partner ();
 
-        $form->erstelle_formular("Rechnung suchen", NULL);
+        $form->erstelle_formular("Rechnung suchen", null);
         echo "<table><tr><td>\n";
         $form->radio_button_checked("suchart", "lieferschein", 'Lieferschein');
         echo "</td><td>\n";
