@@ -3289,6 +3289,7 @@ ORDER BY HGA;");
 			 * ohne die davor, weil nur letzter den Wirtschaftsplan bekommt
 			 */
 
+            $this->get_last_eigentuemer_id($einheit_id);
             $eig_id = $this->eigentuemer_id;
 
             $this->get_eigentumer_id_infos3($eig_id);
@@ -3630,6 +3631,18 @@ ORDER BY HGA;");
             $tab_arr [$zeile_tab] ['BETRAG'] = "<b>" . nummer_punkt2komma($summe_g) . "</b>";
         }
         return $tab_arr;
+    }
+
+    function get_last_eigentuemer_id($einheit_id)
+    {
+        $arr = $this->get_last_eigentuemer_arr($einheit_id);
+        $anz = count($arr);
+        if (!$anz) {
+            // $this->eigentuemer_name[0]['Nachname'] = 'unbekannt';
+            $this->eigentuemer_id = 'unbekannt';
+        } else {
+            $this->eigentuemer_id = $arr ['ID'];
+        }
     }
 
     function get_eigentumer_id_infos3($e_id)
@@ -7037,6 +7050,8 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
         }
     }
 
+    /* Serienbriefe */
+
     function form_eigentuemer_checkliste($objekt_id)
     {
         $o = new objekt ();
@@ -7086,8 +7101,6 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
         echo "</div>";
         $f->ende_formular();
     }
-
-    /* Serienbriefe */
 
     function form_hausgeldzahlungen($objekt_id)
     {
@@ -7537,18 +7550,6 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
         ));
         ob_end_clean(); // ausgabepuffer leeren
         $pdf->ezStream();
-    }
-
-    function get_last_eigentuemer_id($einheit_id)
-    {
-        $arr = $this->get_last_eigentuemer_arr($einheit_id);
-        $anz = count($arr);
-        if (!$anz) {
-            // $this->eigentuemer_name[0]['Nachname'] = 'unbekannt';
-            $this->eigentuemer_id = 'unbekannt';
-        } else {
-            $this->eigentuemer_id = $arr ['ID'];
-        }
     } // end function
 
     function pdf_hausgelder($objekt_id, $jahr)
