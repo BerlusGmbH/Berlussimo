@@ -7,10 +7,11 @@
         <v-spacer></v-spacer>
         <v-toolbar-side-icon class="hidden-md-and-up"></v-toolbar-side-icon>
         <app-searchbar v-if="authCheck"></app-searchbar>
-        <v-menu v-if="authCheck" offset-y open-on-hover :nudge-width="100">
+        <app-notifications-toggle v-if="authCheck"></app-notifications-toggle>
+        <v-menu v-if="authCheck" offset-y open-on-hover>
             <v-toolbar-title slot="activator">
                 <app-identifier :entity="user"></app-identifier>
-                <v-icon dark>arrow_drop_down</v-icon>
+                <v-icon>arrow_drop_down</v-icon>
             </v-toolbar-title>
             <v-list>
                 <v-list-tile @click="onLogout">
@@ -26,12 +27,14 @@
     import Component from 'vue-class-component';
     import {Getter, namespace} from 'vuex-class';
     import searchbar from "./Searchbar.vue";
+    import notificationsToggle from "./NotificationsToggle.vue";
 
     const AuthGetter = namespace('auth', Getter);
 
     @Component({
         components: {
-            'app-searchbar': searchbar
+            'app-searchbar': searchbar,
+            'app-notifications-toggle': notificationsToggle
         }
     })
     export default class Toolbar extends Vue {

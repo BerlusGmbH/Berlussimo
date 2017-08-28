@@ -2,7 +2,7 @@
     <v-layout row>
         <v-flex xs12 md10 lg8 offset-md1 offset-lg2>
             <v-card>
-                <v-card-title primary-title><h3 class="headline mb-0">Login</h3></v-card-title>
+                <v-card-title primary-title><h3 class="display-1 mb-0">Login</h3></v-card-title>
                 <v-card-text>
                     <form role="form" method="POST" action="/login">
                         <slot name="csrf_token"></slot>

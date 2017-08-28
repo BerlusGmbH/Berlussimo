@@ -6,18 +6,18 @@
     </div>
 </template>
 
-<script>
-    export default {
-        props: {
-            'entity': Object
-        },
-        data: function () {
-            return {}
-        },
-        methods: {
-            remove() {
-                this.$emit('remove');
-            }
+<script lang="ts">
+    import Vue from "vue";
+    import Component from "vue-class-component";
+    import {Prop} from "vue-property-decorator";
+
+    @Component
+    export default class Chip extends Vue {
+        @Prop()
+        entity: Object;
+
+        remove() {
+            this.$emit('remove');
         }
     }
 </script>

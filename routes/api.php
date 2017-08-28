@@ -21,4 +21,6 @@ Route::group(['prefix' => 'v1', 'namespace' => 'Api\v1', 'middleware' => ['auth:
     Route::get('/search', 'SearchBarController@search')->name('search');
     Route::get('/personen/{left}/merge/{right}', 'Modules\PersonenController@merge')->name('merge');
     Route::get('/personen/{person}', 'Modules\PersonenController@show')->name('show');
+    Route::get('/personen/{person}/notifications', 'Modules\PersonenController@notifications')->name('notifications');
+    Route::get('/call/{detail}', 'CallController@call')->name('call');
 });

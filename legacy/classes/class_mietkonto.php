@@ -141,7 +141,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         } else {
             echo "<form name=\"$name\" action=\"$action\" method=\"post\">\n";
         }
-        echo "\n";
+        echo csrf_field() . "\n";
     }
 
     /* Einheit_id aus dem MV auslesen */

@@ -2136,7 +2136,7 @@ AND  `AKTUELL` =  '1'");
             $f = new formular ();
             $f->erstelle_formular("SEPA-Überweisung FREMD", null);
             echo "<table>";
-            echo "<thead><tr><th>EMPFöNGER</th><th>DATUM</th><th>AUSZUG</th><th>VZWECK</th><th>BETRAG</th><th>KONTO<input type=\"button\" onclick=\"auswahl_alle(this.form.konto)\" value=\"Alle\"></th><th>Zuweisung</th><th></th></tr></thead>";
+            echo "<thead><tr><th>EMPFÄNGER</th><th>DATUM</th><th>AUSZUG</th><th>VZWECK</th><th>BETRAG</th><th>KONTO<input type=\"button\" onclick=\"auswahl_alle(this.form.konto)\" value=\"Alle\"></th><th>Zuweisung</th><th></th></tr></thead>";
 
             for ($a = 0; $a < $anz; $a++) {
                 $empf = $arr [$a] ['BEGUENSTIGTER'];

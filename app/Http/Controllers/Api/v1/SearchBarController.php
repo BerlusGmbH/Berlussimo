@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bankkonten;
 use App\Models\Einheiten;
 use App\Models\Haeuser;
 use App\Models\Objekte;
@@ -15,8 +16,14 @@ class SearchBarController extends Controller
     public function search()
     {
         if (!request()->has('e')) {
-            $classes = ['objekt', 'haus', 'einheit', 'person', 'partner'];
-            $response = ['objekt' => [], 'haus' => [], 'einheit' => [], 'person' => [], 'partner' => []];
+            $classes = ['objekt', 'haus', 'einheit', 'person', 'partner', 'bankkonto'];
+            $response = [
+                'objekt' => [],
+                'haus' => [],
+                'einheit' => [],
+                'person' => [],
+                'partner' => [],
+                'bankkonto' => []];
         } else {
             $response = [];
             if (is_array(request()->input('e'))) {
@@ -47,19 +54,18 @@ class SearchBarController extends Controller
                 case 'partner':
                     $response['partner'] = Partner::defaultOrder();
                     break;
+                case 'bankkonto':
+                    $response['bankkonto'] = Bankkonten::defaultOrder();
+                    break;
             }
         }
 
-        $count = 0;
         foreach ($classes as $class) {
             foreach ($tokens as $token) {
                 $response[$class] = $response[$class]->search($token);
             }
             $response[$class] = $response[$class]->get();
-            $count += $response[$class]->count();
         }
-
-        $response['count'] = $count;
 
         return Response::json($response);
     }

@@ -1,6 +1,6 @@
 <template>
     <div class="identifier">
-        <v-icon class="identifier-icon">{{icon}}</v-icon>
+        <v-icon class="identifier-icon">{{entity.getEntityIcon()}}</v-icon>
         <a :href="entity.getDetailUrl()">{{String(entity)}}</a>
         <v-icon v-if="entity.getSexIcon()">{{entity.getSexIcon()}}</v-icon>
     </div>
@@ -10,16 +10,11 @@
     import Component from "vue-class-component";
     import Vue from "vue";
     import {Prop} from "vue-property-decorator";
-    import {Person} from "../../../server/resources/models";
 
     @Component
     export default class PersonIdentifier extends Vue {
         @Prop()
         entity;
-
-        get icon() {
-            return Person.getEntityIcon();
-        }
     }
 </script>
 

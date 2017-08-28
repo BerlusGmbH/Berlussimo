@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\AktuellScope;
 use App\Models\Traits\DefaultOrder;
 use App\Models\Traits\Searchable;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Scopes\AktuellScope;
 
 class Bankkonten extends Model
 {
@@ -15,7 +15,7 @@ class Bankkonten extends Model
     public $timestamps = false;
     protected $table = 'GELD_KONTEN';
     protected $primaryKey = 'KONTO_ID';
-    protected $searchableFields = ['BEZEICHNUNG', 'BEGUENSTIGTER', 'IBAN', 'BIC', 'INSTITUT'];
+    protected $searchableFields = ['BEZEICHNUNG', 'IBAN', 'BIC', 'KONTONUMMER', 'BLZ'];
     protected $defaultOrder = ['BEZEICHNUNG' => 'asc'];
 
     protected static function boot()

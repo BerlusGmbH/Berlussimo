@@ -11,7 +11,7 @@
 |
 */
 
-Route::group(['namespace' => 'Auth', 'middleware' => ['web']], function () {
+Route::group(['namespace' => 'Auth'], function () {
     // Authentication Routes...
     Route::get('login', 'LoginController@showLoginForm')->name('login');
     Route::post('login', 'LoginController@login');
@@ -25,7 +25,24 @@ Route::group(['namespace' => 'Auth', 'middleware' => ['web']], function () {
     Route::post('password/reset', 'ResetPasswordController@reset');
 });
 
-Route::group(['namespace' => 'Modules', 'middleware' => ['web', 'auth'], 'as' => 'web::'], function () {
+Route::group(['prefix' => 'api/v1', 'namespace' => 'Api\v1', 'middleware' => ['api', 'auth']], function () {
+    Route::group(['prefix' => 'partners', 'as' => 'partner::', 'namespace' => 'Modules'], function () {
+        Route::get('{partner}/select', 'PartnerController@select')->name('select');
+        Route::get('unselect', 'PartnerController@unselect')->name('unselect');
+    });
+
+    Route::group(['prefix' => 'objects', 'as' => 'object::', 'namespace' => 'Modules'], function () {
+        Route::get('{object}/select', 'ObjectController@select')->name('select');
+        Route::get('unselect', 'ObjectController@unselect')->name('unselect');
+    });
+
+    Route::group(['prefix' => 'bankaccounts', 'as' => 'bankaccount::', 'namespace' => 'Modules'], function () {
+        Route::get('{bankaccount}/select', 'BankAccountController@select')->name('select');
+        Route::get('unselect', 'BankAccountController@unselect')->name('unselect');
+    });
+});
+
+Route::group(['namespace' => 'Modules', 'middleware' => ['auth'], 'as' => 'web::'], function () {
     Route::group(['namespace' => 'Persons'], function () {
         Route::match(['put', 'patch'], 'persons/{person}/credential', 'CredentialController@update')->name('persons.credentials.update');
         Route::post('persons/{person}/credential', 'CredentialController@store')->name('persons.credentials.store');
@@ -33,7 +50,7 @@ Route::group(['namespace' => 'Modules', 'middleware' => ['web', 'auth'], 'as' =>
     });
 });
 
-Route::group(['namespace' => 'Legacy', 'middleware' => ['web', 'auth'], 'as' => 'web::'], function () {
+Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'], function () {
     Route::match(['get', 'post'], '/', 'IndexController@request')->name('legacy');
 
     Route::match(['get', 'post'], 'ajax/ajax_info.php', 'IndexController@ajax')->name('ajax');
@@ -214,6 +231,6 @@ Route::group(['prefix' => 'broadcasting', 'middleware' => ['api']], function () 
     Route::get('unsub', 'Broadcasting\NchanPresenceController@unsubscribe')->name('unsubscribe');
 });
 
-Route::group(['prefix' => 'storage', 'namespace' => 'Storage', 'middleware' => ['web', 'auth']], function () {
+Route::group(['prefix' => 'storage', 'namespace' => 'Storage', 'middleware' => ['auth']], function () {
     Route::get('{path}', 'StorageController@asset')->where('path', '.+');
 });

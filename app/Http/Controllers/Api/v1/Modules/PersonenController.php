@@ -42,4 +42,9 @@ class PersonenController extends Controller
         ]);
         return $person;
     }
+
+    public function notifications(PersonenRequest $request, Person $person)
+    {
+        return $person->notifications;
+    }
 }

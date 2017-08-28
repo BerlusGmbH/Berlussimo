@@ -10,6 +10,8 @@ function erstelle_formular($name, $action)
         echo "<form name=\"$name\" action=\"$action\" method=\"post\">\n";
     }
 
+    echo csrf_field() . "\n";
+
     echo "<table class=\"formular_tabelle\">\n<tr><td>";
     echo "</td></tr>\n";
 }

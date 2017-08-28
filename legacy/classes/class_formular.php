@@ -23,7 +23,7 @@ class formular
         } else {
             echo "<form class='$name' name=\"$name\" action=\"$action\" method=\"post\">\n";
         }
-        echo "\n";
+        echo csrf_field() . "\n";
 
         echo "<fieldset class=\"$name\" id=\"$name\">\n";
         echo "<legend>" . ((!is_null($legend)) ? $legend : $name) . "</legend>\n";

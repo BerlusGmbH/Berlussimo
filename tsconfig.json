@@ -7,12 +7,13 @@
     /* Specify module code generation: 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */
     "lib": [
       "dom",
+      "dom.iterable",
       "es5",
       "es2015",
-      "es2015.promise"
+      "es2017"
     ],
     /* Specify library files to be included in the compilation:  */
-    // "allowJs": false,
+    "allowJs": true,
     /* Allow javascript files to be compiled. */
     // "checkJs": true,                       /* Report errors in .js files. */
     // "jsx": "preserve",                     /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */

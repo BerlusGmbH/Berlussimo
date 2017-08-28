@@ -1,7 +1,7 @@
 const base_url = window.location.origin;
 
 export class Person {
-    static icon: string = 'mdi-account';
+    icon: string = 'mdi-account';
     sex: string = '';
     id: number = -1;
     name: string = '';
@@ -19,8 +19,8 @@ export class Person {
         return full_name;
     }
 
-    static getEntityIcon() {
-        return Person.icon;
+    getEntityIcon() {
+        return 'mdi-account';
     }
 
     getSexIcon() {
@@ -41,6 +41,11 @@ export class Person {
 export class Partner {
     PARTNER_NAME: string = '';
     PARTNER_ID: number = -1;
+    STRASSE: string = '';
+    NUMMER: string = '';
+    PLZ: string = '';
+    ORT: string = '';
+    LAND: string = '';
 
     toString(): string {
         return this.PARTNER_NAME;
@@ -48,6 +53,10 @@ export class Partner {
 
     getEntityIcon(): string {
         return 'mdi-account-multiple';
+    }
+
+    getAddress(): string {
+        return this.STRASSE + ' ' + this.NUMMER + ', ' + this.PLZ + ' ' + this.ORT + ', ' + this.LAND;
     }
 
     getDetailUrl() {
@@ -76,11 +85,17 @@ export class Haus {
     HAUS_ID: number = -1;
     HAUS_STRASSE: string = '';
     HAUS_NUMMER: string = '';
+    HAUS_PLZ: number;
+    HAUS_STADT: string = '';
 
     icon: string = 'mdi-domain';
 
     toString(): string {
         return this.HAUS_STRASSE + ' ' + this.HAUS_NUMMER;
+    }
+
+    getLocation() {
+        return this.HAUS_PLZ + ' ' + this.HAUS_STADT;
     }
 
     getEntityIcon(): string {
@@ -189,5 +204,33 @@ export class JobTitle {
 
     getEntityIcon(): string {
         return 'mdi-book-open-variant';
+    }
+}
+
+export class Bankkonto {
+    KONTO_ID: number = -1;
+    BEZEICHNUNG: string = '';
+    BEGUENSTIGTER: string = '';
+    KONTONUMMER: string = '';
+    BLZ: string = '';
+    IBAN: string = '';
+    BIC: string = '';
+    INSTITUT: string = '';
+
+
+    toString(): string {
+        return this.BEZEICHNUNG;
+    }
+
+    getEntityIcon(): string {
+        return 'mdi-currency-eur';
+    }
+
+    getAccount(): string {
+        return 'IBAN: ' + this.IBAN + ' BIC: ' + this.BIC;
+    }
+
+    getDetailUrl() {
+        return base_url;
     }
 }

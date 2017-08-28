@@ -40,6 +40,6 @@ class MergePersons extends UserJob
         $left = $this->left->attributesToArray();
         $right = $this->right->attributesToArray();
         $this->left->merge($this->right, $this->attributes);
-        $this->user->notify(new PersonMerged($left, $right, $this->attributes));
+        $this->user->notify(new PersonMerged($left, $right, $this->left->toArray()));
     }
 }

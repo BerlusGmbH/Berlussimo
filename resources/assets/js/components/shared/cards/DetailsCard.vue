@@ -19,15 +19,12 @@
                     :hide-actions="details.length <= 5"
                     class="elevation-1"
             >
-                <template slot="headerCell" scope="props">
-                    <span class="primary--text">{{props.header.text}}</span>
-                </template>
                 <template slot="items" scope="props">
                     <td>{{props.item.DETAIL_INHALT}}</td>
                     <td>{{props.item.DETAIL_BEMERKUNG}}</td>
                 </template>
                 <template slot="pageText" scope="{ pageStart, pageStop }">
-                    From {{ pageStart }} to {{ pageStop }}
+                    Von {{ pageStart }} bis {{ pageStop }}
                 </template>
             </v-data-table>
         </v-card-text>

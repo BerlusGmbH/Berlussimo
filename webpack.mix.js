@@ -15,9 +15,19 @@ if (mix.inProduction()) {
     mix.version();
 }
 
+mix.webpackConfig({
+    resolve: {
+        alias: {
+            'jquery': path.join(__dirname, 'node_modules/jquery/dist/jquery')
+        }
+    }
+});
+
 mix.sourceMaps();
 
 mix.sass('resources/assets/sass/berlussimo.scss', 'public/css');
+
+mix.sass('resources/assets/sass/materialize-css.scss', 'public/css');
 
 mix.stylus('resources/assets/stylus/main.styl', 'public/css');
 
@@ -48,7 +58,21 @@ mix.ts(
     [
         'resources/assets/js/app.ts'
     ],
-    'public/js/berlussimo.js'
+    'public/js/'
+);
+
+mix.ts(
+    [
+        'resources/assets/js/app-materialize.ts'
+    ],
+    'public/js/'
+);
+
+mix.js(
+    [
+        'resources/assets/js/materialize.js'
+    ],
+    'public/js/'
 );
 
 mix.scripts(
@@ -79,7 +103,6 @@ mix.copyDirectory('legacy/graph/img/', 'public/images/');
 
 mix.extract(
     [
-        'jquery',
         'keycode-js',
         'urijs',
         'lodash',

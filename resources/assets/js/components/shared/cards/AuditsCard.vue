@@ -19,14 +19,11 @@
                     :hide-actions="audits.length <= 5"
                     class="elevation-1"
             >
-                <template slot="headerCell" scope="props">
-                    <span class="primary--text">{{props.header.text}}</span>
-                </template>
                 <template slot="items" scope="props">
                     <td class="text-xs-right">{{props.item.created_at}}</td>
                     <td class="text-xs-right">{{props.item.event}}</td>
                     <td>
-                        <app-identifier :entity="props.item.user"></app-identifier>
+                        <app-identifier v-if="props.item.user" :entity="props.item.user"></app-identifier>
                     </td>
                     <td class="text-xs-right">{{props.item.ip_address}}</td>
                     <td>
@@ -41,7 +38,7 @@
                     </td>
                 </template>
                 <template slot="pageText" scope="{ pageStart, pageStop }">
-                    From {{ pageStart }} to {{ pageStop }}
+                    Von {{ pageStart }} bis {{ pageStop }}
                 </template>
             </v-data-table>
         </v-card-text>
@@ -60,7 +57,7 @@
 
         search: string = '';
         headers = [
-            {text: 'Datum', value: 'created_at'},
+            {text: 'Datum', sortable: false, value: 'created_at'},
             {text: 'Ereignis', value: 'event'},
             {text: 'Person', value: 'person'},
             {text: 'IP', value: 'ip'},

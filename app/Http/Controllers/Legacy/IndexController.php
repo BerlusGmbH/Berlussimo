@@ -8,7 +8,7 @@ class IndexController extends LegacyController
 
     public function request()
     {
-        return view('berlussimo');
+        return view('layouts.legacy');
     }
 
     public function ajax()
