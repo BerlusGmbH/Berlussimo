@@ -3440,12 +3440,16 @@ ORDER BY HGA;");
                     $wtab_arr [$c] ['BETEILIGUNG_ANT'] = nummer_punkt2komma_t($beteiligung_ant);
                     $jahres_beteiligung = $jahres_beteiligung + nummer_komma2punkt(nummer_punkt2komma($beteiligung_ant));
                     $gruppen_summe += $beteiligung_ant;
-                    $wtab_arr [$c] ['BETRAG'] = nummer_punkt2komma_t(strip_tags($wtab_arr [$c] ['BETRAG']));
+                    if ($a == 0) {
+                        $wtab_arr [$c] ['BETRAG'] = nummer_punkt2komma_t($betrag);
+                    }
                 } else {
                     if (strip_tags($wtab_arr [$c] ['KONTOART_BEZ']) == 'Zwischensumme') {
                         $gruppen_summe_a = nummer_punkt2komma_t($gruppen_summe);
                         $wtab_arr [$c] ['KONTO_BEZ'] = "<b>Zwischensumme</b>";
-                        $wtab_arr [$c] ['BETRAG'] = '<b>' . nummer_punkt2komma_t(strip_tags($wtab_arr [$c] ['BETRAG'])) . '</b>';
+                        if ($a == 0) {
+                            $wtab_arr [$c] ['BETRAG'] = '<b>' . nummer_punkt2komma_t($betrag) . '</b>';
+                        }
                         $wtab_arr [$c] ['BETEILIGUNG_ANT'] = "<b>$gruppen_summe_a</b>";
                         $gruppen_summe = 0;
                         $wtab_arr [$c] ['AUFTEILEN_G'] = "";
@@ -3454,7 +3458,9 @@ ORDER BY HGA;");
                     if (strip_tags($wtab_arr [$c] ['KONTOART_BEZ']) == 'SALDO') {
                         $jahres_beteiligung_a = nummer_punkt2komma_t($jahres_beteiligung);
                         $wtab_arr [$c] ['KONTO_BEZ'] = "<b>Gesamtsumme</b>";
-                        $wtab_arr [$c] ['BETRAG'] = '<b>' . nummer_punkt2komma_t(strip_tags($wtab_arr [$c] ['BETRAG'])) . '</b>';
+                        if ($a == 0) {
+                            $wtab_arr [$c] ['BETRAG'] = '<b>' . nummer_punkt2komma_t($betrag) . '</b>';
+                        }
                         $wtab_arr [$c] ['BETEILIGUNG_ANT'] = "<b>$jahres_beteiligung_a</b>";
                         $wtab_arr [$c] ['AUFTEILEN_G'] = "";
                         $wtab_arr [$c] ['AUFTEILEN_T'] = "";
