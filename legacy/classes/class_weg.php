@@ -3314,12 +3314,12 @@ ORDER BY HGA;");
             $this->einheit_anteile_a = nummer_punkt2komma_t($this->einheit_anteile);
             $pdf->addText(465, 640, 8, "$this->einheit_anteile_a");
 
-            $e->einheit_qm_a = nummer_punkt2komma($e->einheit_qm);
+            $e->einheit_qm_a = nummer_punkt2komma_t($e->einheit_qm);
             $pdf->addText(405, 630, 8, "Ihre Fläche:");
             $pdf->addText(465, 630, 8, "$e->einheit_qm_a m²");
             $oo = new objekt ();
             $qm_gesamt = $oo->get_qm_gesamt($e->objekt_id);
-            $qm_gesamt_a = nummer_punkt2komma($qm_gesamt);
+            $qm_gesamt_a = nummer_punkt2komma_t($qm_gesamt);
             $pdf->addText(405, 620, 8, "Gesamtfläche:");
             $pdf->addText(465, 620, 8, "$qm_gesamt_a m²");
 
