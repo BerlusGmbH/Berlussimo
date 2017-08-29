@@ -3158,7 +3158,7 @@ ORDER BY HGA;");
 
                 if ($temp_g_id != $gruppe_id) {
                     if (is_array($tab_arr)) {
-                        $tab_arr [$zeile_tab] ['KONTOART_BEZ'] = '<b>Zwischensumme</b>';
+                        $tab_arr [$zeile_tab] ['KONTO_BEZ'] = '<b>Zwischensumme</b>';
                         $summe_gruppe_a = nummer_punkt2komma_t($summe_gruppe);
 
                         $tab_arr [$zeile_tab] ['BETRAG'] = "<b>$summe_gruppe_a</b>";
@@ -3192,7 +3192,7 @@ ORDER BY HGA;");
                 $zeile_tab++;
             } // end for
 
-            $tab_arr [$zeile_tab] ['KONTOART_BEZ'] = '<b>Zwischensumme</b>';
+            $tab_arr [$zeile_tab] ['KONTO_BEZ'] = '<b>Zwischensumme</b>';
             $summe_gruppe_a = nummer_punkt2komma_t($summe_gruppe);
             $summe_gruppe_vj_a = nummer_punkt2komma_t($summe_gruppe_vj);
             $tab_arr [$zeile_tab] ['BETRAG_VJ'] = "<b>$summe_gruppe_vj_a</b>";
@@ -3200,7 +3200,7 @@ ORDER BY HGA;");
             $zeile_tab++;
 
             $zeile_tab++;
-            $tab_arr [$zeile_tab] ['KONTOART_BEZ'] = '<b>SUMME</b>';
+            $tab_arr [$zeile_tab] ['KONTO_BEZ'] = '<b>Gesamtsumme</b>';
             $summe_g += $energie_alle;
             $tab_arr [$zeile_tab] ['BETRAG_VJ'] = "<b>" . nummer_punkt2komma_t($summe_g_vj) . "</b>";
             $tab_arr [$zeile_tab] ['BETRAG'] = "<b>" . nummer_punkt2komma_t($summe_g) . "</b>";
@@ -3212,7 +3212,7 @@ ORDER BY HGA;");
                 'KONTOART_BEZ' => "Kontoart",
                 'WIRT_E' => "Aufteilung",
                 'FORMEL' => "SCHL.",
-                'BETRAG' => "Betrag"
+                'BETRAG' => "Betrag (€)"
             );
             $pdf->ezSetDy(-6);
             $pdf->ezTable($tab_arr, $cols, "", array(
@@ -3298,7 +3298,6 @@ ORDER BY HGA;");
             $pdf->ezText("$this->empf_namen_u");
 
             $pdf->ezText("$this->haus_strasse $this->haus_nummer");
-            $pdf->ezSetDy(-10);
             $pdf->ezText("$this->haus_plz $this->haus_stadt");
 
             $d = new detail ();
@@ -3311,7 +3310,7 @@ ORDER BY HGA;");
             $pdf->addText(405, 650, 8, "Gesamtanteile:");
             $pdf->addText(465, 650, 8, "$anteile_g_a");
             $this->einheit_anteile = $d->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Anteile');
-            $pdf->addText(405, 640, 8, "Ihre MAE:");
+            $pdf->addText(405, 640, 8, "Ihre MEA:");
             $this->einheit_anteile_a = nummer_punkt2komma_t($this->einheit_anteile);
             $pdf->addText(465, 640, 8, "$this->einheit_anteile_a");
 
@@ -3438,13 +3437,15 @@ ORDER BY HGA;");
                 }
 
                 if (!empty ($kkonto)) {
-                    $wtab_arr [$c] ['BETEILIGUNG_ANT'] = nummer_punkt2komma($beteiligung_ant);
+                    $wtab_arr [$c] ['BETEILIGUNG_ANT'] = nummer_punkt2komma_t($beteiligung_ant);
                     $jahres_beteiligung = $jahres_beteiligung + nummer_komma2punkt(nummer_punkt2komma($beteiligung_ant));
                     $gruppen_summe += $beteiligung_ant;
-                    // }
+                    $wtab_arr [$c] ['BETRAG'] = nummer_punkt2komma_t(strip_tags($wtab_arr [$c] ['BETRAG']));
                 } else {
                     if (strip_tags($wtab_arr [$c] ['KONTOART_BEZ']) == 'Zwischensumme') {
                         $gruppen_summe_a = nummer_punkt2komma_t($gruppen_summe);
+                        $wtab_arr [$c] ['KONTO_BEZ'] = "<b>Zwischensumme</b>";
+                        $wtab_arr [$c] ['BETRAG'] = '<b>' . nummer_punkt2komma_t(strip_tags($wtab_arr [$c] ['BETRAG'])) . '</b>';
                         $wtab_arr [$c] ['BETEILIGUNG_ANT'] = "<b>$gruppen_summe_a</b>";
                         $gruppen_summe = 0;
                         $wtab_arr [$c] ['AUFTEILEN_G'] = "";
@@ -3452,6 +3453,8 @@ ORDER BY HGA;");
                     }
                     if (strip_tags($wtab_arr [$c] ['KONTOART_BEZ']) == 'SALDO') {
                         $jahres_beteiligung_a = nummer_punkt2komma_t($jahres_beteiligung);
+                        $wtab_arr [$c] ['KONTO_BEZ'] = "<b>Gesamtsumme</b>";
+                        $wtab_arr [$c] ['BETRAG'] = '<b>' . nummer_punkt2komma_t(strip_tags($wtab_arr [$c] ['BETRAG'])) . '</b>';
                         $wtab_arr [$c] ['BETEILIGUNG_ANT'] = "<b>$jahres_beteiligung_a</b>";
                         $wtab_arr [$c] ['AUFTEILEN_G'] = "";
                         $wtab_arr [$c] ['AUFTEILEN_T'] = "";
@@ -3461,20 +3464,11 @@ ORDER BY HGA;");
                 $beteiligung_ant = 0;
             }
 
-            $gko = strip_tags(nummer_komma2punkt($wtab_arr [$c - 1] ['BETRAG']));
-
-            $jahres_beteiligung_a = nummer_punkt2komma_t($jahres_beteiligung);
-
-            $wtab_arr [$c + 2] ['KONTO_BEZ'] = "<b>Gesamtkosten Jahr</b>";
-            $wtab_arr [$c + 2] ['BETEILIGUNG_ANT'] = "<b>$jahres_beteiligung_a</b>";
-            $gesamtkosten = nummer_punkt2komma_t($energie_alle + $gko);
-            $wtab_arr [$c + 2] ['BETRAG'] = "$gesamtkosten";
-
-            $hausgeld_neu_genau = nummer_punkt2komma($jahres_beteiligung / 12);
+            $hausgeld_neu_genau = nummer_punkt2komma_t($jahres_beteiligung / 12);
             $hausgeld_neu = round(($jahres_beteiligung / 12), 0, PHP_ROUND_HALF_DOWN);
-            $hausgeld_neu_a = nummer_punkt2komma($hausgeld_neu);
+            $hausgeld_neu_a = nummer_punkt2komma_t($hausgeld_neu);
             $wtab_arr [$c + 4] ['KONTO_BEZ'] = "<b>Hausgeld $this->wp_jahr\nGerundet auf vollen Euro-Betrag</b>";
-            $wtab_arr [$c + 4] ['BETEILIGUNG_ANT'] = "<b>$hausgeld_neu_genau €\n$hausgeld_neu_a €</b>";
+            $wtab_arr [$c + 4] ['BETEILIGUNG_ANT'] = "<b>$hausgeld_neu_genau\n$hausgeld_neu_a</b>";
 
             $monat = sprintf('%02d', date("m"));
             $hausgeld_aktuell_a = nummer_punkt2komma_t($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $this->wp_jahr) * -1);
@@ -3487,19 +3481,19 @@ ORDER BY HGA;");
             $this->hausgelder_neu [$a] ['BETRAG_ALT'] = "$hausgeld_aktuell_a €";
             $this->hausgelder_neu [$a] ['BETRAG'] = "$hausgeld_neu_a €";
 
-            $this->hausgelder_neu [$a] ['DIFF'] = nummer_punkt2komma($hausgeld_neu - ($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $this->wp_jahr) * -1));
-            $this->hausgelder_neu [$a] ['DIFF2M'] = nummer_punkt2komma(($hausgeld_neu - ($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $this->wp_jahr) * -1)) * 2);
+            $this->hausgelder_neu [$a] ['DIFF'] = nummer_punkt2komma_t($hausgeld_neu - ($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $this->wp_jahr) * -1));
+            $this->hausgelder_neu [$a] ['DIFF2M'] = nummer_punkt2komma_t(($hausgeld_neu - ($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $this->wp_jahr) * -1)) * 2);
             $this->hausgelder_neu [$a] ['SE'] = nummer_punkt2komma($hausgeld_neu + ($hausgeld_neu - ($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $this->wp_jahr) * -1)) * 2);
 
             //
             $cols = array(
                 'KONTO' => "Konto",
                 'KONTO_BEZ' => "Bezeichnung",
-                'BETRAG' => "Betrag",
+                'BETRAG' => "Betrag (€)",
                 'AUFTEILEN' => "",
                 'AUFTEILEN_G' => "",
                 'AUFTEILEN_T' => "",
-                'BETEILIGUNG_ANT' => "Ihr Anteil"
+                'BETEILIGUNG_ANT' => "Ihr Anteil (€)"
             );
             $pdf->ezSetDy(-10);
             $pdf->ezTable($wtab_arr, $cols, "", array(
