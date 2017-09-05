@@ -238,12 +238,12 @@ switch ($option) {
         }
         $ber = request()->input('ber_array');
         if (request()->has('ber_uebernehmen_netto')) {
-            $ma = new mietanpassung ();
             if (request()->has('druckdatum')) {
                 $datum_d = request()->input('druckdatum');
             } else {
                 $datum_d = date("d.m.Y");
             }
+            $ma = new mietanpassung ();
             $ma->pdf_anschreiben($ber, $datum_d);
         }
 
@@ -263,9 +263,13 @@ switch ($option) {
 
         echo "<legend>";
         echo "</legend>";
-        $ma = new mietanpassung ();
-        $datum = date("d.m.Y");
+        if (request()->has('druckdatum')) {
+            $datum = request()->input('druckdatum');
+        } else {
+            $datum = date("d.m.Y");
+        }
         $ber_array = request()->input('ber_array');
+        $ma = new mietanpassung ();
         $ma->pdf_anschreiben_bruttomieter($ber_array, $datum);
         break;
 
