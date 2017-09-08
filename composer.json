@@ -15,7 +15,8 @@
     "doctrine/dbal": "^2.5",
     "spatie/laravel-permission": "^1.4",
     "barryvdh/laravel-debugbar": "^2.3",
-    "smarty/smarty-lexer": "^3.1"
+    "smarty/smarty-lexer": "^3.1",
+    "kingsquare/php-mt940": "dev-berlussimo"
   },
   "require-dev": {
     "fzaninotto/faker": "~1.4",
@@ -45,6 +46,12 @@
       "tests/TestCase.php"
     ]
   },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/BerlusGmbH/php-mt940.git"
+    }
+  ],
   "scripts": {
     "post-root-package-install": [
       "php -r \"copy('.env.example', '.env');\""

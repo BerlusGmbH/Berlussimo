@@ -1063,7 +1063,7 @@ class buchen
         echo $link_reset_auszug;
         $numrows = count($my_array);
         if (!empty($my_array)) {
-            echo "<table classe=\"sortable\">";
+            echo "<table class=\"sortable striped\">";
 
             // echo "<tr><td colspan=4>$link_reset_auszug</td></tr>";
             // echo "<tr class=\"feldernamen\"><td>Auzugsnr</td><td>Betrag</td><td>Konto</td><td>Buchungsnr</td><td>Verwendung</td><td>Buchungstext</td></tr>";

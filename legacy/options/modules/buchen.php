@@ -770,7 +770,7 @@ switch ($option) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\InfoMessage('Geldkonto und Partner wählen')
             );
-            
+
         }
         if (request()->has('start')) {
             $start = request()->input('start');
@@ -837,13 +837,13 @@ switch ($option) {
 
     case "excel_buchen" :
         session()->put('umsatz_id_temp', 0);
-        $sep = new sepa ();
+        $sepa = new sepa ();
 
         if (request()->exists('upload')) {
-            $sep->form_upload_excel_ktoauszug();
+            $sepa->form_upload_excel_ktoauszug();
         }
 
-        if (request()->hasFile('file')) {
+        if (request()->hasFile('file') && request()->file('file')->isValid()) {
             session()->forget('umsaetze_nok');
             session()->forget('umsaetze_ok');
             session()->forget('umsatz_konten');
@@ -857,119 +857,48 @@ switch ($option) {
             session()->forget('kos_typ');
             session()->forget('kos_id');
 
-            $xlsx = new SimpleXLSX(request()->file('file')->getRealPath());
+            $parsedStatements = [];
 
-            /* Kontostände abrufen */
-            $arr_konten = $xlsx->rows(4);
-            $anz_konten = count($arr_konten);
-            for ($a = 2; $a < $anz_konten; $a++) {
-                $kto_auszug_1 = $arr_konten [$a] [3];
-                if (!empty ($kto_auszug_1)) {
-                    $kto_nr = $arr_konten [$a] [1];
-                    $ksa = str_replace('.', '', $arr_konten [$a] [7]);
-                    $kse = str_replace('.', '', $arr_konten [$a] [9]);
-                    $ktnr_arr = explode('/', $arr_konten [$a] [1]); // KTO BLZ
-                    $blz = $ktnr_arr [0];
-                    $kto_full = $ktnr_arr [1];
-
-                    if (strpos($kto_full, 'EUR')) {
-                        $kto_arr = explode('EUR', $kto_full);
-                        $kto = $kto_arr [0];
-                    } else {
-                        $kto = substr($kto_full, 0, -3);
+            if (request()->file('file')->getClientOriginalExtension() == 'zip') {
+                $zip = new ZipArchive();
+                if ($zip->open(request()->file('file')->getRealPath())) {
+                    $temp = tempnam(sys_get_temp_dir(), 'berlussimo_');
+                    if (file_exists($temp)) {
+                        unlink($temp);
+                        mkdir($temp, 0777, true);
                     }
-
-                    /* Suche nach KTO und BLZ */
-                    $gk = new gk ();
-                    $gk_id = $gk->get_geldkonto_id2($kto, $blz);
-                    /* Suche nach generierte IBAN */
-                    if (!$gk_id) {
-                        $sep = new sepa ();
-                        $IBAN = $sep->get_iban_bic($kto, $blz);
-                        $gk_id = $gk->get_geldkonto_id2($kto, $blz, $IBAN);
+                    $zip->extractTo($temp);
+                    $statementFiles = new FilesystemIterator(
+                        $temp, FilesystemIterator::NEW_CURRENT_AND_KEY | FilesystemIterator::SKIP_DOTS
+                    );
+                    $parser = new \Kingsquare\Parser\Banking\Mt940();
+                    $engine = new \Kingsquare\Parser\Banking\Mt940\Engine\Coba();
+                    foreach ($statementFiles as $file) {
+                        $content = file_get_contents($file->getRealPath());
+                        $content = mb_convert_encoding($content, 'UTF-8', mb_detect_encoding($content, 'UTF-8, ISO-8859-1', true));
+                        $parsedStatements[] = $parser->parse($content, $engine);
+                        unlink($file->getRealPath());
                     }
-                    /* Nach Bezeichnung */
-                    if (!$gk_id) {
-                        $gk_id = $gk->get_geldkonto_id($arr_konten [$a] [0]);
-                    }
-
-                    if ($gk_id) {
-                        session()->put("umsatz_stat.$gk_id.kontonr", $kto_nr);
-                        session()->put("umsatz_stat.$gk_id.auszug", $kto_auszug_1);
-                        session()->put("umsatz_stat.$gk_id.ksa", $ksa);
-                        session()->put("umsatz_stat.$gk_id.kse", $kse);
-
-                        // #########
-
-                        if (!session()->has('umsatz_konten')) {
-                            session()->push('umsatz_konten', $gk_id);
-                        } else {
-                            if (!in_array($gk_id, session()->get('umsatz_konten'))) {
-                                session()->push('umsatz_konten', $gk_id);
-                            }
-                        }
-                    } else {
-                        $bez = $arr_konten [$a] [0];
-                        throw new \App\Exceptions\MessageException(
-                            new \App\Messages\WarningMessage("$bez $kto $blz $IBAN nicht gefunden.<br>Schreibweise prüfen.")
-                        );
+                    if (file_exists($temp)) {
+                        rmdir($temp);
                     }
                 }
+            } else {
+                $parser = new \Kingsquare\Parser\Banking\Mt940();
+                $engine = new \Kingsquare\Parser\Banking\Mt940\Engine\Coba();
+                $content = file_get_contents(request()->file('file')->getRealPath());
+                $content = mb_convert_encoding($content, 'UTF-8', mb_detect_encoding($content, 'UTF-8, ISO-8859-1', true));
+                $parsedStatements[] = $parser->parse($content, $engine);
             }
 
-            $arr = $xlsx->rows(5);
-            if (is_array($arr)) {
-                $anz = count($arr);
-
-                $tmp_konto_nr = '';
-                for ($a = 2; $a < $anz; $a++) {
-                    if (!empty ($arr [$a] [3])) { // Kontoauszug
-
-                        $ktnr_arr = explode('/', $arr [$a] [1]); // KTO BLZ
-                        $blz = $ktnr_arr [0];
-
-                        $kto_full = $ktnr_arr [1];
-
-                        if (strpos($kto_full, 'EUR')) {
-                            $kto_arr = explode('EUR', $kto_full);
-                            $kto = $kto_arr [0];
-                        } else {
-                            $kto = substr($kto_full, 0, -3);
-                        }
-
-                        /* Suche nach KTO und BLZ */
-                        $gk = new gk ();
-                        $gk_id = $gk->get_geldkonto_id2($kto, $blz);
-                        /* Suche nach generierte IBAN */
-                        if (!$gk_id) {
-                            $sep = new sepa ();
-                            $IBAN = $sep->get_iban_bic($kto, $blz);
-                            $gk_id = $gk->get_geldkonto_id2($kto, $blz, $IBAN);
-                        }
-                        /* Nach Bezeichnung */
-                        if (!$gk_id) {
-                            $gk_id = $gk->get_geldkonto_id($arr [$a] [0]);
-                        }
-
-                        if ($gk_id) {
-                            $arr [$a] ['GK_ID'] = $gk_id;
-                            session()->push('umsaetze_ok', $arr [$a]);
-
-                            /* Startdatensätze */
-                            if ($arr [$a] [1] != $tmp_konto_nr) {
-                                $tmp_konto_nr = $arr [$a] [1];
-                                session()->put("umsatz_konten_start.$gk_id", count(session()->get('umsaetze_ok')));
-                            }
-                        } else {
-                            session()->push('umsaetze_nok', $arr [$a]);
-                        }
-                    }
-                }
-                if (is_array(session()->get('umsaetze_nok')) or is_array(session()->get('umsaetze_ok'))) {
-                    weiterleiten(route('web::buchen::legacy', ['option' => 'excel_buchen_session'], false));
-                } else {
-                    fehlermeldung_ausgeben("Keine Daten aus der Importdatei übernommen!");
-                }
+            if (count($parsedStatements) > 0) {
+                $parsedStatements = $sepa->mergeStatements($parsedStatements);
+                $parsedStatements = $sepa->indexStatementsOnGID($parsedStatements);
+                session()->put("statements", $parsedStatements);
+                $bankAccounts = array_keys($parsedStatements);
+                session()->put('statements_bankaccount', $bankAccounts[0]);
+                session()->put('statements_transaction', 0);
+                weiterleiten(route('web::buchen::legacy', ['option' => 'excel_buchen_session'], false));
             } else {
                 fehlermeldung_ausgeben("Keine Daten in der Importdatei");
             }
@@ -977,45 +906,46 @@ switch ($option) {
         break;
 
     case "uebersicht_excel_konten" :
-        $sep = new sepa ();
-        $sep->uebersicht_excel_konten();
+        $sepa = new sepa ();
+        $sepa->uebersicht_excel_konten();
         break;
 
     case "excel_buchen_session" :
-        if(!session()->has('umsatz_konten')){
+        if (!session()->has('statements')) {
             echo "Bitte laden Sie zuerst einen Kontoauszug.";
             break;
         }
+        if (!session()->has('statements_bankaccount')
+            || !session()->has('statements_transaction')
+            || !session()->has('statements_bankaccount_index')
+        ) {
+            session()->put('statements_bankaccount_index', 0);
+            session()->put('statements_transaction', 0);
+            $bankAccounts = array_keys(session()->get('statements'));
+            session()->put('statements_bankaccount', $bankAccounts[0]);
+        }
+
+        if (request()->has('gindex')) {
+            $gindex = request()->get('gindex');
+            session()->put('statements_bankaccount_index', $gindex);
+            $bankAccounts = array_keys(session()->get('statements'));
+            session()->put('statements_bankaccount', $bankAccounts[$gindex]);
+            session()->put('statements_transaction', 0);
+            weiterleiten(route('web::buchen::legacy', ['option' => 'excel_buchen_session'], false));
+            break;
+        }
+
+        $sepa = new sepa();
         if (request()->has('next')) {
-            session()->put('umsatz_id_temp', session()->get('umsatz_id_temp') + 1);
+            $sepa->select_next_statement();
         }
 
         if (request()->has('vor')) {
-            session()->put('umsatz_id_temp', session()->get('umsatz_id_temp') - 1);
+            $sepa->select_previous_statement();
         }
 
-        $anz_ok = count(session()->get('umsaetze_ok'));
-        if (session()->get('umsatz_id_temp') >= $anz_ok or session()->get('umsatz_id_temp') < 0) {
-            session()->put('umsatz_id_temp', 0);
-        }
-
-        if (request()->has('ds_id') && is_numeric(request()->input('ds_id'))) {
-            if (request()->input('ds_id') > 0 && request()->input('ds_id') <= count(session()->get('umsaetze_ok'))) {
-                session()->put('umsatz_id_temp', request()->input('ds_id') - 1);
-            } else {
-                session()->put('umsatz_id_temp', 0);
-            }
-            ob_clean();
-            weiterleiten(route('web::buchen::legacy', ['option' => 'excel_buchen_session'], false));
-        }
-
-        if (!session()->has('umsatz_id_temp')) {
-            session()->put('umsatz_id_temp', '0');
-        }
-
-        $sep = new sepa ();
-        $sep->status_excelsession();
-        $sep->form_excel_ds(session()->get('umsatz_id_temp'));
+        $sepa->status_excelsession();
+        $sepa->form_excel_ds();
         $bu = new buchen ();
         $bu->buchungsjournal_auszug(session()->get('geldkonto_id'), session()->get('temp_kontoauszugsnummer'));
 
@@ -1026,7 +956,7 @@ switch ($option) {
         $kostentraeger_id = request()->input('kostentraeger_id');
         $kto_auszugsnr = session()->get('temp_kontoauszugsnummer');
         $datum = date_german2mysql(session()->get('temp_datum'));
-        $betrag = nummer_komma2punkt(request()->input('betrag'));
+        $betrag = request()->input('betrag');
         $kostenkonto = request()->input('kostenkonto');
         $vzweck = request()->input('text');
         $geldkonto_id = session()->get('geldkonto_id');
@@ -1063,8 +993,8 @@ switch ($option) {
                 $mwst = '0';
             }
             $file = request()->input('file');
-            $sep = new sepa ();
-            $sep->sepa_file_autobuchen($file, session()->get('temp_datum'), session()->get('geldkonto_id'), session()->get('temp_kontoauszugsnummer'), $mwst);
+            $sepa = new sepa ();
+            $sepa->sepa_file_autobuchen($file, session()->get('temp_datum'), session()->get('geldkonto_id'), session()->get('temp_kontoauszugsnummer'), $mwst);
             weiterleiten(route('web::buchen::legacy', ['option' => 'excel_buchen_session'], false));
         } else {
             fehlermeldung_ausgeben("Fehler beim Verbuchen EC232");
