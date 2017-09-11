@@ -66,7 +66,7 @@
         </div>
     </div>
     <div class="col-xs-6">
-        <h6>Commerzbank Kontoauszüge</h6>
+        <h6>Kontoauszüge</h6>
         <div class="row">
             <div class='col-xs-12 col-md-4'>
                 <a href='<?php echo route('web::buchen::legacy', ['option' => 'excel_buchen', 'upload']) ?>'>Hochladen</a>
