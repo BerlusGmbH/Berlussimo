@@ -206,70 +206,52 @@ switch ($option) {
     case "buchungs_journal" :
         $form = new formular ();
         echo "<body onload=\"JavaScript:seite_aktualisieren(10000);\">";
-        if (session()->has('temp_kontoauszugsnummer') && session()->has('geldkonto_id')) {
-            $buchung = new buchen ();
-            $buchung->akt_konto_bezeichnung = $buchung->geld_konto_bezeichung(session()->get('geldkonto_id'));
-            $form->erstelle_formular("$buchung->akt_konto_bezeichnung -> Buchungsjournal vom Kontoauszug " . session()->get('temp_kontoauszugsnummer'), NULL);
-            $buchung->buchungsjournal_auszug(session()->get('geldkonto_id'), session()->get('temp_kontoauszugsnummer'));
-            $form->ende_formular();
+        $buchung = new buchen ();
+        $buchung->akt_konto_bezeichnung = $buchung->geld_konto_bezeichung(session()->get('geldkonto_id'));
+        if (request()->has('jahr') && request()->has('monat')) {
+            $jahr = request()->input('jahr');
+            $monat = sprintf("%02d", request()->input('monat'));
+            $datum = "$jahr-$monat-01";
+        } else {
+            $jahr = date("Y");
+            $monat = sprintf("%02d", date("m"));
+            $datum = "$jahr-$monat-01";
         }
-        if (!session()->has('temp_kontoauszugsnummer')) {
-            $buchung = new buchen ();
-            $buchung->akt_konto_bezeichnung = $buchung->geld_konto_bezeichung(session()->get('geldkonto_id'));
-            if (request()->has('jahr') && request()->has('monat')) {
-                $jahr = request()->input('jahr');
-                $monat = sprintf("%02d", request()->input('monat'));
-                $datum = "$jahr-$monat-01";
-            } else {
-                $jahr = date("Y");
-                $monat = sprintf("%02d", date("m"));
-                $datum = "$jahr-$monat-01";
-            }
-            $form->erstelle_formular("$buchung->akt_konto_bezeichnung -> Buchungsjournal seit $datum", NULL);
-            $bg = new berlussimo_global ();
-            $link = route('web::buchen::legacy', ['option' => 'buchungs_journal'], false);
-            $bg->monate_jahres_links($jahr, $link);
-            echo "<a href='" . route('web::buchen::legacy', ['option' => 'buchungs_journal_druckansicht']) . "'>Druckansicht</a>&nbsp;";
-            if (request()->has('monat')) {
-                $aktueller_monat = request()->input('monat');
-            } else {
-                $aktueller_monat = date("m");
-            }
-            echo "<a href='" . route('web::buchen::legacy', ['option' => 'buchungs_journal_pdf', 'monat' => $aktueller_monat, 'jahr' => $jahr]) . "'>PDF-Ansicht</a>&nbsp;";
-            $buchung->buchungsjournal_startzeit(session()->get('geldkonto_id'), $datum);
-            $form->ende_formular();
+        $form->erstelle_formular("$buchung->akt_konto_bezeichnung -> Buchungsjournal seit $datum", NULL);
+        $bg = new berlussimo_global ();
+        $link = route('web::buchen::legacy', ['option' => 'buchungs_journal'], false);
+        $bg->monate_jahres_links($jahr, $link);
+        echo "<a href='" . route('web::buchen::legacy', ['option' => 'buchungs_journal_druckansicht']) . "'>Druckansicht</a>&nbsp;";
+        if (request()->has('monat')) {
+            $aktueller_monat = request()->input('monat');
+        } else {
+            $aktueller_monat = date("m");
         }
+        echo "<a href='" . route('web::buchen::legacy', ['option' => 'buchungs_journal_pdf', 'monat' => $aktueller_monat, 'jahr' => $jahr]) . "'>PDF-Ansicht</a>&nbsp;";
+        $buchung->buchungsjournal_startzeit(session()->get('geldkonto_id'), $datum);
+        $form->ende_formular();
         break;
 
     case "buchungs_journal_druckansicht" :
 
         $form = new formular ();
-        if (session()->has('temp_kontoauszugsnummer') && session()->has('geldkonto_id')) {
-            $buchung = new buchen ();
-            $buchung->akt_konto_bezeichnung = $buchung->geld_konto_bezeichung(session()->get('geldkonto_id'));
-            $form->erstelle_formular("$buchung->akt_konto_bezeichnung -> Buchungsjournal vom Kontoauszug " . session()->get('temp_kontoauszugsnummer'), NULL);
-            $buchung->buchungsjournal_auszug(session()->get('geldkonto_id'), session()->get('temp_kontoauszugsnummer'));
-            $form->ende_formular();
+        $buchung = new buchen ();
+        $buchung->akt_konto_bezeichnung = $buchung->geld_konto_bezeichung(session()->get('geldkonto_id'));
+        if (request()->has('jahr') && request()->input('monat')) {
+            $jahr = request()->input('jahr');
+            $monat = sprintf("%02d", request()->input('monat'));
+            $datum = "$jahr-$monat-01";
+        } else {
+            $jahr = date("Y");
+            $monat = sprintf("%02d", date("m"));
+            $datum = "$jahr-$monat-01";
         }
-        if (!session()->has('temp_kontoauszugsnummer')) {
-            $buchung = new buchen ();
-            $buchung->akt_konto_bezeichnung = $buchung->geld_konto_bezeichung(session()->get('geldkonto_id'));
-            if (request()->has('jahr') && request()->input('monat')) {
-                $jahr = request()->input('jahr');
-                $monat = sprintf("%02d", request()->input('monat'));
-                $datum = "$jahr-$monat-01";
-            } else {
-                $jahr = date("Y");
-                $monat = sprintf("%02d", date("m"));
-                $datum = "$jahr-$monat-01";
-            }
-            $form->erstelle_formular("$buchung->akt_konto_bezeichnung -> Buchungsjournal seit $datum", NULL);
-            $bg = new berlussimo_global ();
-            $link = route('web::buchen::legacy', ['option' => 'buchungs_journal_druckansicht'], false);
-            $bg->monate_jahres_links($jahr, $link);
-            $buchung->buchungsjournal_startzeit_druck(session()->get('geldkonto_id'), $datum);
-            $form->ende_formular();
-        }
+        $form->erstelle_formular("$buchung->akt_konto_bezeichnung -> Buchungsjournal seit $datum", NULL);
+        $bg = new berlussimo_global ();
+        $link = route('web::buchen::legacy', ['option' => 'buchungs_journal_druckansicht'], false);
+        $bg->monate_jahres_links($jahr, $link);
+        $buchung->buchungsjournal_startzeit_druck(session()->get('geldkonto_id'), $datum);
+        $form->ende_formular();
         break;
 
     case "buchungs_journal_pdf" :
@@ -843,7 +825,7 @@ switch ($option) {
             $sepa->form_upload_excel_ktoauszug();
         }
 
-        if (request()->hasFile('file') && request()->file('file')->isValid()) {
+        if (request()->hasFile('file')) {
             session()->forget('umsaetze_nok');
             session()->forget('umsaetze_ok');
             session()->forget('umsatz_konten');
@@ -859,36 +841,41 @@ switch ($option) {
 
             $parsedStatements = [];
 
-            if (request()->file('file')->getClientOriginalExtension() == 'zip') {
-                $zip = new ZipArchive();
-                if ($zip->open(request()->file('file')->getRealPath())) {
-                    $temp = tempnam(sys_get_temp_dir(), 'berlussimo_');
-                    if (file_exists($temp)) {
-                        unlink($temp);
-                        mkdir($temp, 0777, true);
+            foreach (request()->file('file') as $uploadedFile) {
+                if (!$uploadedFile->isValid()) {
+                    continue;
+                }
+                if ($uploadedFile->getClientOriginalExtension() == 'zip') {
+                    $zip = new ZipArchive();
+                    if ($zip->open($uploadedFile->getRealPath())) {
+                        $temp = tempnam(sys_get_temp_dir(), 'berlussimo_');
+                        if (file_exists($temp)) {
+                            unlink($temp);
+                            mkdir($temp, 0777, true);
+                        }
+                        $zip->extractTo($temp);
+                        $statementFiles = new FilesystemIterator(
+                            $temp, FilesystemIterator::NEW_CURRENT_AND_KEY | FilesystemIterator::SKIP_DOTS
+                        );
+                        $parser = new \Kingsquare\Parser\Banking\Mt940();
+                        $engine = new \Kingsquare\Parser\Banking\Mt940\Engine\Coba();
+                        foreach ($statementFiles as $file) {
+                            $content = file_get_contents($file->getRealPath());
+                            $content = mb_convert_encoding($content, 'UTF-8', mb_detect_encoding($content, 'UTF-8, ISO-8859-1', true));
+                            $parsedStatements[] = $parser->parse($content, $engine);
+                            unlink($file->getRealPath());
+                        }
+                        if (file_exists($temp)) {
+                            rmdir($temp);
+                        }
                     }
-                    $zip->extractTo($temp);
-                    $statementFiles = new FilesystemIterator(
-                        $temp, FilesystemIterator::NEW_CURRENT_AND_KEY | FilesystemIterator::SKIP_DOTS
-                    );
+                } else {
                     $parser = new \Kingsquare\Parser\Banking\Mt940();
                     $engine = new \Kingsquare\Parser\Banking\Mt940\Engine\Coba();
-                    foreach ($statementFiles as $file) {
-                        $content = file_get_contents($file->getRealPath());
-                        $content = mb_convert_encoding($content, 'UTF-8', mb_detect_encoding($content, 'UTF-8, ISO-8859-1', true));
-                        $parsedStatements[] = $parser->parse($content, $engine);
-                        unlink($file->getRealPath());
-                    }
-                    if (file_exists($temp)) {
-                        rmdir($temp);
-                    }
+                    $content = file_get_contents($uploadedFile->getRealPath());
+                    $content = mb_convert_encoding($content, 'UTF-8', mb_detect_encoding($content, 'UTF-8, ISO-8859-1', true));
+                    $parsedStatements[] = $parser->parse($content, $engine);
                 }
-            } else {
-                $parser = new \Kingsquare\Parser\Banking\Mt940();
-                $engine = new \Kingsquare\Parser\Banking\Mt940\Engine\Coba();
-                $content = file_get_contents(request()->file('file')->getRealPath());
-                $content = mb_convert_encoding($content, 'UTF-8', mb_detect_encoding($content, 'UTF-8, ISO-8859-1', true));
-                $parsedStatements[] = $parser->parse($content, $engine);
             }
 
             if (count($parsedStatements) > 0) {
@@ -946,8 +933,14 @@ switch ($option) {
 
         $sepa->status_excelsession();
         $sepa->form_excel_ds();
+
+        $statements = session()->get('statements');
+        $gk_id = session()->get('statements_bankaccount');
+        $statement = $statements[$gk_id];
+        $transactions = $statement->getTransactions();
+        $transaction = $transactions[session()->get('statements_transaction')];
         $bu = new buchen ();
-        $bu->buchungsjournal_auszug(session()->get('geldkonto_id'), session()->get('temp_kontoauszugsnummer'));
+        $bu->buchungsjournal_auszug(session()->get('geldkonto_id'), $transaction->getValueTimestamp('Y-m-d'));
 
         break;
 

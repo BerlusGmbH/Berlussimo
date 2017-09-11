@@ -2622,7 +2622,7 @@ AND  `AKTUELL` =  '1'");
 
         $datum_sql = date_german2mysql($datum);
         $bu = new buchen ();
-        if ($bu->check_buchung(session()->get('geldkonto_id'), $betrag, $statement->getNumber(), $datum_sql)) {
+        if ($bu->check_buchung(session()->get('geldkonto_id'), $betrag, $datum_sql)) {
             echo "<br><br>";
             fehlermeldung_ausgeben("Betrag bereits gebucht!");
         }
@@ -3162,7 +3162,7 @@ AND  `AKTUELL` =  '1'");
     function form_upload_excel_ktoauszug($action = null)
     {
         $f = new formular ();
-        $f->fieldset('Upload Excel-Kontoauszüge aus Bank *.XLSX', 'upxel');
+        $f->fieldset('Kontoauszüge (MT940) von einer Bank hochladen (.mta, .zip)', 'upxel');
         if ($action == null) {
             echo "<form method=\"post\" enctype=\"multipart/form-data\">";
         } else {
@@ -3172,10 +3172,10 @@ AND  `AKTUELL` =  '1'");
         <div class="file-field input-field">
             <div class="btn">
                 <span>Datei</span>
-                <input type="file" name="file">
+                <input type="file" name="file[]" multiple>
             </div>
             <div class="file-path-wrapper">
-                <input class="file-path validate" type="text" placeholder="Bitte laden Sie einen Kontoauszug hoch.">
+                <input class="file-path validate" type="text" placeholder="Bitte laden Sie Kontoauszüge hoch.">
             </div>
         </div>
         <button class="btn waves-effect waves-light" type="submit">Hochladen

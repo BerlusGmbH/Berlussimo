@@ -1054,20 +1054,12 @@ class buchen
         return $row ['KONTO_AUSZUGSNUMMER'];
     }
 
-    function buchungsjournal_auszug($geldkonto_id, $kto_auszug)
+    function buchungsjournal_auszug($geldkonto_id, $date)
     {
-        $temp_datum_arr = explode('.', session()->get('temp_datum'));
-        $temp_jahr = $temp_datum_arr [2];
-        $my_array = DB::select("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE DATE_FORMAT( DATUM, '%Y' ) = $temp_jahr   && GELDKONTO_ID='$geldkonto_id' && KONTO_AUSZUGSNUMMER='$kto_auszug' && AKTUELL='1' ORDER BY GELD_KONTO_BUCHUNGEN_ID DESC");
-        $link_reset_auszug = "<a href='" . route('web::buchen::legacy', ['option' => 'reset_kontoauszug']) . "'>Ohne Kontoauszug</a>";
-        echo $link_reset_auszug;
+        $my_array = DB::select("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE DATUM = '$date' && GELDKONTO_ID='$geldkonto_id' && AKTUELL='1' ORDER BY GELD_KONTO_BUCHUNGEN_ID DESC");
         $numrows = count($my_array);
         if (!empty($my_array)) {
             echo "<table class=\"sortable striped\">";
-
-            // echo "<tr><td colspan=4>$link_reset_auszug</td></tr>";
-            // echo "<tr class=\"feldernamen\"><td>Auzugsnr</td><td>Betrag</td><td>Konto</td><td>Buchungsnr</td><td>Verwendung</td><td>Buchungstext</td></tr>";
-
             echo "<tr><th>AUSZUG</th><th>DATUM</th><th>BETRAG</th><th>MWST</th><th>KONTO</th><th>BUCHUNGSNR</th><th>Verwendung</th><th>BUCHUNGSTEXT</th></tr>";
             $g_betrag = 0;
             for ($a = 0; $a < $numrows; $a++) {
@@ -2343,12 +2335,11 @@ class buchen
 
     /* Unabhängig vom Geldkonto */
 
-    function check_buchung($gk_id, $betrag, $auszug, $datum)
+    function check_buchung($gk_id, $betrag, $datum)
     {
         $result = DB::select("SELECT * 
 FROM  `GELD_KONTO_BUCHUNGEN` 
-WHERE  `KONTO_AUSZUGSNUMMER` =  '$auszug'
-AND  `BETRAG` =  '$betrag'
+WHERE  `BETRAG` =  '$betrag'
 AND  `GELDKONTO_ID` =  '$gk_id'
 AND  `DATUM` =  '$datum'
 AND  `AKTUELL` =  '1'
