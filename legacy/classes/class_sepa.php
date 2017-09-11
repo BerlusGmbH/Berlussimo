@@ -2623,8 +2623,7 @@ AND  `AKTUELL` =  '1'");
         $datum_sql = date_german2mysql($datum);
         $bu = new buchen ();
         if ($bu->check_buchung(session()->get('geldkonto_id'), $betrag, $datum_sql)) {
-            echo "<br><br>";
-            fehlermeldung_ausgeben("Betrag bereits gebucht!");
+            echo " <i class='mdi mdi-alert-circle red-text' style='font-size: 1.2em'></i>";
         }
 
         echo "<br><hr><u>Buchungstext: </u><hr>";
@@ -2813,7 +2812,7 @@ AND  `AKTUELL` =  '1'");
             $f->hidden_feld('option', 'excel_einzelbuchung');
             $f->hidden_feld('betrag', $betrag);
             $f->check_box_js('mwst', 'mwst', 'Mit Mehrwertsteuer buchen', '', '');
-            $f->send_button('SndEB', "Buchen [$betrag EUR]");
+            $f->send_button('SndEB', "Buchen");
 
             echo "</td>";
             // ##############ENDE EINZELBUCHUNGEN*/
