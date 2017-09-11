@@ -87,8 +87,8 @@
         }
 
         checkReload(event) {
-            if (this.isLegacy && this.dirty && (event.target.tagName === 'A' || event.target.tagName === 'INPUT')) {
-                window.location.reload();
+            if (this.isLegacy && this.dirty && (event === false || event.target.tagName === 'A' || event.target.tagName === 'INPUT')) {
+                setTimeout(() => window.location.reload(), 300);
             }
         }
     }
