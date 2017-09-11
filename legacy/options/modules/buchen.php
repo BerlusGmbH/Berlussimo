@@ -995,12 +995,9 @@ switch ($option) {
         break;
 
     case "excel_ls_sammler_buchung" :
-        hinweis_ausgeben("Bitte warten...3...2...1...");
         $ls_file = request()->input('ls_file');
         $s = new sepa ();
         $s->form_ls_datei_ab($ls_file);
-
-        weiterleiten_in_sec(route('web::buchen::legacy', ['option' => 'excel_buchen_session'], false), 3);
         break;
 
     case "excel_nok" :

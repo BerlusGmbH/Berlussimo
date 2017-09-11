@@ -2570,7 +2570,7 @@ AND  `AKTUELL` =  '1'");
 
         echo "&nbsp;|&nbsp;<span style=\"color:blue;\">Anfangssaldo: " . number_format($ksa_bank, 2, ',', '.') . " € | Schlusssaldo: " . number_format(session()->get('temp_kontostand'), 2, ',', '.') . " €</span>";
 
-        if ($kontostand_aktuell == session()->get('temp_kontostand')) {
+        if ($kontostand_aktuell == number_format(session()->get('temp_kontostand'), 2, ',', '.')) {
             echo "&nbsp;|&nbsp;<span style=\"color:green;\"><b>Kontostand: $kontostand_aktuell €</b></span>";
         } else {
             echo "&nbsp;|&nbsp;<span style=\"color:red;\"><b>Kontostand: $kontostand_aktuell €</b></span>";
@@ -2630,32 +2630,7 @@ AND  `AKTUELL` =  '1'");
 
         $vzweck = $transaction->getDescription()->getUsageText();
 
-        $art = trim($art);
-        if ($art == 'ABSCHLUSS'
-            or $art == 'SEPA-GUTSCHRIFT'
-            or $art == 'SEPA-UEBERWEIS.HABEN EINZEL'
-            or $art == 'SEPA-CT HABEN EINZELBUCHUNG'
-            or $art == 'SEPA-DD EINZELB.-SOLL B2B'
-            or $art == 'SEPA-DD EINZELB.SOLL B2B'
-            or $art == 'SEPA-DD EINZELB. SOLL B2B'
-            or $art == 'SEPA-DD EINZELB. SOLL CORE'
-            or $art == 'SEPA-CC EINZELB.SOLL'
-            or $art == 'SEPA-CC EINZELB.SOLL KARTE'
-            or $art == 'SEPA-DD EINZELB.SOLL CORE'
-            or $art == 'SEPA Dauerauftragsgutschrift'
-            or $art == 'SEPA DAUERAUFTRAGSGUTSCHR'
-            or $art == 'SEPA-LS EINZELBUCHUNG SOLL'
-            or $art == 'SEPA-UEBERWEIS.HABEN RETOUR'
-            or $art == 'SEPA-CT HABEN RETOUR'
-            or $art == 'ZAHLEINGUEBELEKTRMEDIEN'
-            or $art == 'SCHECKKARTE'
-            or $art == 'ZAHLUNG UEB ELEKTR MEDIEN'
-            or $art == 'LASTSCHRIFT EINZUGSERM'
-            or $art == 'GEBUEHREN'
-            or $art == 'EINZAHLUNG'
-            or $art == 'DAUERAUFTRAG'
-            or $art == 'GUTSCHRIFT'
-        ) {
+        if (in_array($artCode, [104, 105, 106, 109, 152, 166, 177, 805, 808, 809])) {
             $treffer = array();
             $vzweck_kurz = $vzweck;
             if ($art == 'ABSCHLUSS') {
@@ -2816,39 +2791,29 @@ AND  `AKTUELL` =  '1'");
 
             echo "</td>";
             // ##############ENDE EINZELBUCHUNGEN*/
-        } elseif ($art == 'SEPA-UEBERWEIS.SAMMLER-SOLL' or $art == 'SEPA-CT SAMMLER-SOLL') {
-            echo $vzweck;
+        } elseif (in_array($artCode, [190, 191, 195, 197])) {
+            $vzweck = $transaction->getDescription()->getCustomerReference();
             $pos_svwz = strpos(strtoupper($vzweck), '.XML');
             if ($pos_svwz == true) {
-                $vzweck_kurz = substr($vzweck, 0, $pos_svwz + 4);
-                $sepa_ue__file = str_replace(' ', '', substr($vzweck_kurz, 5));
+                $sepa_ue__file = $vzweck;
             } else {
-                $vzweck_kurz = $vzweck;
                 $sepa_ue__file = ' ----> SEPA-UEBERWEIS.SAMMLER - DATEI - UNBEKANNT!!!!';
             }
-            echo "<br><b>$vzweck_kurz $betrag</b><br>$sepa_ue__file";
+            echo "$sepa_ue__file";
             echo "</td></tr>";
             echo "<tr><td colspan=\"2\">";
             $sep = new sepa ();
             $sep->sepa_file_anzeigen($sepa_ue__file);
-        } elseif ($art == 'SEPA-LS SAMMLER-HABEN') {
+        } elseif (in_array($artCode, [192, 194, 196, 198])) {
             /* LASTSCHRIFTEN LS */
-            echo "<b>$vzweck<br>";
-            echo "<h1>LASTSCHRIFTEN</h1>";
-            $betrag_punkt = nummer_komma2punkt($betrag);
-            $arr_ls_files = $this->finde_ls_file_by_monat(session()->get('geldkonto_id'), $betrag_punkt, session()->get('temp_datum'));
+            echo "<b>$vzweck</b>";
+            echo "<h5>LASTSCHRIFTEN</h5>";
+            $arr_ls_files = $this->finde_ls_file_by_monat(session()->get('geldkonto_id'), $betrag, session()->get('temp_datum'));
             $anz_lf = count($arr_ls_files);
             for ($lf = 0; $lf < $anz_lf; $lf++) {
                 $ls_file = $arr_ls_files [$lf] ['DATEI'];
-                echo "<form method=\"post\">";
                 echo "<table>";
                 echo "<tr><th colspan=\"1\">$ls_file</th><th>";
-                $f->hidden_feld('ls_file', $ls_file);
-                $f->hidden_feld('option', 'excel_ls_sammler_buchung');
-                $f->hidden_feld('betrag', $betrag);
-                $f->check_box_js('mwst', 'mwst', 'Mit Mehrwertsteuer buchen', '', '');
-                $f->send_button('SndEB', "Buchen [$betrag EUR]");
-
                 echo "</th></tr>";
 
                 $arr_ls_zeilen = $this->get_sepa_lszeilen_arr($ls_file);
@@ -2858,18 +2823,8 @@ AND  `AKTUELL` =  '1'");
                     $betrag_ls = $arr_ls_zeilen [$ze] ['BETRAG'];
                     echo "<tr><td>$zweck_ls</td><td>$betrag_ls</td></tr>";
                 }
-                echo "</table></form>";
+                echo "</table>";
             }
-        } elseif ($art == 'SEPA-LS SOLL RUECKBELASTUNG') {
-            /* LASTSCHRIFTEN LS */
-            echo "<b>$vzweck";
-            echo "$betrag</b>";
-            $betrag_punkt = nummer_komma2punkt($betrag);
-            $arr_ls_files = $this->finde_ls_file_by_datum(session()->get('geldkonto_id'), $betrag_punkt, session()->get('temp_datum'));
-        } elseif ($art == 'SEPA DIRECT DEBIT (EINZELBUCHUNG-SOLL, B2B)') {
-            echo "<b>$vzweck";
-            echo "$betrag</b>";
-            fehlermeldung_ausgeben("Abbuchung bzw. Rechnungen manuell buchen!!!");
         } else {
             echo "<b>$zahler, $vzweck</b>";
         }
