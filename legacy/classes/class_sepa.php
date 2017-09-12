@@ -2630,12 +2630,18 @@ AND  `AKTUELL` =  '1'");
 
         $vzweck = $transaction->getDescription()->getUsageText();
 
-        if (in_array($artCode, [82, 83, 104, 105, 106, 108, 109, 152, 159, 166, 177, 805, 808, 809])) {
+        if (in_array($artCode, [82, 83, 104, 105, 106, 108, 109, 152, 159, 166, 177, 211, 805, 808, 809])) {
             $treffer = array();
             $vzweck_kurz = $vzweck;
-            if ($art == 'ABSCHLUSS') {
+            if (in_array($artCode, [805, 808])) {
                 $zahler = "Bank";
                 $vzweck_kurz = "Kontoführungsgebühr, $vzweck_kurz";
+            }
+            if ($artCode == 82) {
+                $zahler = "Einzahlung";
+            }
+            if ($artCode == 83) {
+                $zahler = "Auszahlung";
             }
             $f->hidden_feld('text', "$zahler, $vzweck_kurz");
 
