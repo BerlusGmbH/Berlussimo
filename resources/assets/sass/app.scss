@@ -1,22 +1,5 @@
 @charset "UTF-8";
 
-/* datatable dark mode */
-.datatable thead th.column, .datatable thead th.column i {
-  color: inherit !important;
-}
-
-table.table tbody tr:hover {
-  background: rgba(238, 238, 238, 0.2) !important;
-}
-
-.datatable__actions {
-  color: inherit;
-}
-
-.datatable__actions__select .input-group--select .input-group__selections__comma, .datatable__actions__select .input-group--select .input-group__append-icon {
-  color: inherit !important;
-}
-
 /* reset main container height */
 .application > main > .container {
   min-height: inherit;

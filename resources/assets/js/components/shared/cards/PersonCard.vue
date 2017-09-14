@@ -1,7 +1,7 @@
 <template>
     <v-card>
         <v-card-title>
-            <v-layout row>
+            <v-layout row wrap>
                 <v-flex xs12>
                     <app-identifier class="headline" :entity="person"></app-identifier>
                 </v-flex>

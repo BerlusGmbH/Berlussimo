@@ -10,6 +10,8 @@ import menu from "./components/shared/Menu.vue";
 import notifications from "./components/shared/Notifications.vue";
 import globalSelectLoader from "./components/shared/GlobalSelectLoader.vue";
 import workplaceLoader from "./components/shared/WorkplaceLoader.vue";
+import messagesLoader from "./components/shared/MessagesLoader.vue";
+import messages from "./components/shared/Messages.vue";
 import snackbar from "./components/shared/Snackbar.vue";
 import personShow from "./components/modules/person/Show.vue";
 import identifier from "./components/common/identifiers/Identifier.vue";
@@ -35,6 +37,8 @@ new Vue({
         'app-footer': footer,
         'app-menu': menu,
         'app-user-loader': userLoader,
+        'app-messages-loader': messagesLoader,
+        'app-messages': messages,
         'app-global-select-loader': globalSelectLoader,
         'app-workplace-loader': workplaceLoader,
         'app-person-show': personShow

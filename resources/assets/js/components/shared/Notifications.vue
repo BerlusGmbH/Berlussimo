@@ -13,7 +13,7 @@
         </v-card-title>
         <v-data-table
                 v-bind:headers="headers"
-                v-bind:items="notifications"
+                v-bind:items="messages"
                 v-bind:search="search"
         >
             <template slot="items" scope="props">

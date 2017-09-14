@@ -13,7 +13,7 @@
 
 <body style="background: #303030; display: flex; min-height: 100vh; flex-direction: column;">
 
-<div id="top">
+<div id="top" style="position: sticky; top: 0; z-index: 1">
     <v-app dark style="min-height: auto">
         @if(Auth::check())
             <app-user-loader :user="{{Auth::user()}}"></app-user-loader>
@@ -26,21 +26,18 @@
         @endif
         <app-toolbar></app-toolbar>
         <app-menu>
-            <div slot="breadcrumbs">
-                <i class="mdi mdi-home"></i>Bereiche
-            </div>
             <div slot="mainmenu">@include('shared.menus.main')</div>
             <div slot="submenu">
                 <?php include(base_path($submenu)); ?>
             </div>
         </app-menu>
+        <div>
+            @include("shared.messages")
+        </div>
     </v-app>
 </div>
 
 <main class="application--dark" style="flex: 1 0 auto;">
-    <div style="margin-top: 10px" class="center-align">
-        @include("shared.messages")
-    </div>
     @if($content != "")
         <div class="berlussimo-materialize container-fluid">
             {!!$content!!}

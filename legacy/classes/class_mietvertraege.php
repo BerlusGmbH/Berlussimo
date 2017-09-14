@@ -61,8 +61,8 @@ class mietvertraege
     function neuer_mv_form()
     {
         $this->datum_heute = date("d.m.Y");
-        $link = route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mietvertrag_neu'], false);
-        $this->objekt_auswahl_liste($link);
+        $bg = new berlussimo_global ();
+        $bg->objekt_auswahl_liste();
         $form = new mietkonto ();
         $form->erstelle_formular("Neuen Mietvertrag erstellen", NULL);
         if (session()->has('objekt_id')) {
@@ -84,12 +84,6 @@ class mietvertraege
             echo "<h1>KEINE LEERSTÄNDE IM OBJEKT</h1>";
         }
         $form->ende_formular();
-    }
-
-    function objekt_auswahl_liste($link)
-    {
-        $bg = new berlussimo_global ();
-        $bg->objekt_auswahl_liste();
     }
 
     function dropdown_leerstaende($objekt_id, $name, $label, $id)
@@ -746,8 +740,9 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
 
     function ls_akt_teilnehmer()
     {
-        $link = route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'ls_teilnehmer'], false);
-        $this->objekt_auswahl_liste($link);
+        $bg = new berlussimo_global ();
+        $bg->objekt_auswahl_liste();
+
         $form = new mietkonto ();
         $form->erstelle_formular("Aktuelle Teilnehmer am Lastschriftverfahren", NULL);
 
@@ -846,8 +841,8 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='JA' && DETAIL_ZUORD
 
     function ls_akt_teilnehmer_ausgesetzt()
     {
-        $link = route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'ls_teilnehmer_inaktiv', false]);
-        $this->objekt_auswahl_liste($link);
+        $bg = new berlussimo_global ();
+        $bg->objekt_auswahl_liste();
         $form = new mietkonto ();
         $form->erstelle_formular("Inaktive Teilnehmer am Lastschriftverfahren", NULL);
 
@@ -972,8 +967,8 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
 
     function neuer_ls_teilnehmer()
     {
-        $link = route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'ls_teilnehmer_neu'], false);
-        $this->objekt_auswahl_liste($link);
+        $bg = new berlussimo_global ();
+        $bg->objekt_auswahl_liste();
 
         if (!request()->has('mietvertrag_id')) {
             $this->einheiten_liste($link);
@@ -1921,8 +1916,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             $pdf->ezStream();
 
             /* Falls kein Objekt ausgewählt */
-        } else {
-            echo "Objekt auswählen";
         }
     }
 
@@ -2029,8 +2022,6 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             // hinweis_ausgeben("Saldenliste mit Vormieter für $objekt_name wurde erstellt<br>");
 
             /* Falls kein Objekt ausgewählt */
-        } else {
-            echo "Objekt auswählen";
         }
     }
 

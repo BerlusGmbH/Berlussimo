@@ -25,17 +25,18 @@
             </app-global-select-loader>
             <app-workplace-loader :has-phone="{{json_encode($locator->workplaceHasPhone())}}"></app-workplace-loader>
         @endif
-        <app-toolbar></app-toolbar>
-        <app-menu>
-            <template slot="breadcrumbs">@yield('breadcrumbs')</template>
-            <template slot="mainmenu">@include('shared.menus.main')</template>
-            <template slot="submenu">@yield('submenu')</template>
-        </app-menu>
-
-        <main style="flex: 1 0 auto;">
-            <div style="margin-top: 10px" class="center-align">
+        <div style="position: sticky; top: 0; z-index: 1">
+            <app-toolbar></app-toolbar>
+            <app-menu>
+                <template slot="breadcrumbs">@yield('breadcrumbs')</template>
+                <template slot="mainmenu">@include('shared.menus.main')</template>
+                <template slot="submenu">@yield('submenu')</template>
+            </app-menu>
+            <div>
                 @include("shared.messages")
             </div>
+        </div>
+        <main style="flex: 1 0 auto">
             @yield("content")
             @if(Auth::check())
                 <app-notifications id="notifications"></app-notifications>

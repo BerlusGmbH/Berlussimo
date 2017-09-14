@@ -1,11 +1,12 @@
 <template>
-    <app-select @search="onSearch" :value="value" @input="$emit('input', $event)" @change="$emit('change', $event)"
-                item-text="name" item-value="id" :items="items" autocomplete :multiple="multiple"
-                :hide-details="hideDetails" return-object :no-data-text="status" :prepend-icon="icon"
-                :append-icon="appendIcon">
+    <app-select :search-input.sync="query" :value="inputValue"
+                @change="emit('change', $event)" @input="emit('input', $event)" :async-loading="searching"
+                :items="items" autocomplete multiple
+                :hide-details="hideDetails" returnObject :no-data-text="status" :prepend-icon="icon"
+                :append-icon="appendIcon" :filter="() => true" :solo="solo">
         <template slot="selection" scope="data">
             <app-chip @input="data.parent.selectItem(data.item); $emit('chip-close', $event)"
-                      :multiple="multiple" :entity="data.item"></app-chip>
+                      :multiple="multiple" :entity="data.item" :selected="data.selected"></app-chip>
         </template>
         <template slot="item" scope="data">
             <template v-if="typeof data.item !== 'object'">
@@ -20,10 +21,9 @@
 <script lang="ts">
     import Vue from "vue";
     import Vuetify from "vuetify";
-    import _ from "lodash";
     import $ from "jquery";
     import Component from "vue-class-component";
-    import {Prop} from "vue-property-decorator";
+    import {Prop, Watch} from "vue-property-decorator";
     import {Bankkonto, Einheit, Haus, Objekt, Partner, Person} from "../../server/resources/models";
     import VSelect from "./VSelect.vue"
 
@@ -40,8 +40,13 @@
 
         query: string = '';
 
-        @Prop({type: [Object, Array]})
+        inputValue: Array<any> = [];
+
+        @Prop({type: [Object, Array], default: () => []})
         value;
+
+        @Prop({type: Boolean, default: false})
+        solo;
 
         @Prop({type: Boolean, default: false})
         hideDetails;
@@ -60,6 +65,24 @@
 
         @Prop({type: String})
         appendIcon;
+
+        @Watch('query')
+        onQueryChanged(query: string) {
+            if (query) {
+                this.goSearch(query);
+            } else {
+                this.items = [];
+            }
+        }
+
+        @Watch('value')
+        onValueChanged(val) {
+            this.inputValue = val;
+        }
+
+        created() {
+            this.inputValue = this.value;
+        }
 
         get status(): string {
             if (this.searching) {
@@ -83,17 +106,25 @@
             }
         }
 
-        onSearch(query) {
-            this.query = query;
-            this.searching = true;
-            this.items = [];
-            this.goSearch(query);
+        emit(type, entities) {
+            if (Array.isArray(entities)) {
+                if (!this.multiple && entities.length > 1) {
+                    this.inputValue = entities.slice(-1);
+                } else if (!this.multiple && entities.length == 1) {
+                    this.$emit(type, entities[entities.length - 1]);
+                } else if (this.multiple) {
+                    this.$emit(type, entities);
+                }
+            } else {
+                this.$emit(type, entities);
+            }
         }
 
-        goSearch: Function = _.debounce(function (this: EntitySelect, query) {
+        goSearch(query) {
             if (this.request && this.request.state() === "pending") {
                 this.request.abort();
             }
+            this.searching = true;
             let vm = this;
             if (query !== '') {
                 let token = document.head.querySelector('meta[name="csrf-token"]');
@@ -142,21 +173,21 @@
                                 break;
                         }
                     });
-                    vm.searching = false;
                     let total: Array<Object> = [];
                     Object.keys(data).forEach((key) => {
                         total = total.concat(data[key]);
                     });
                     vm.items = total;
+                    vm.searching = false;
                 }).fail(function (_jqxhr, textStatus) {
                     if (textStatus !== "abort") {
                         vm.searching = false;
                     }
                 });
             } else {
-                vm.searching = false;
                 vm.items = [];
+                vm.searching = false;
             }
-        }, 400);
+        }
     }
 </script>

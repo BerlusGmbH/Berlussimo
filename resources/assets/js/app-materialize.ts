@@ -9,6 +9,8 @@ import menu from "./components/shared/Menu.vue";
 import notifications from "./components/shared/Notifications.vue";
 import globalSelectLoader from "./components/shared/GlobalSelectLoader.vue";
 import legacyLoader from "./components/shared/LegacyLoader.vue";
+import messagesLoader from "./components/shared/MessagesLoader.vue";
+import messages from "./components/shared/Messages.vue";
 import snackbar from "./components/shared/Snackbar.vue";
 import identifier from "./components/common/identifiers/Identifier.vue";
 import tile from "./components/common/tiles/Tile.vue";
@@ -31,7 +33,9 @@ new Vue({
         'app-menu': menu,
         'app-user-loader': userLoader,
         'app-global-select-loader': globalSelectLoader,
-        'app-legacy-loader': legacyLoader
+        'app-legacy-loader': legacyLoader,
+        'app-messages-loader': messagesLoader,
+        'app-messages': messages,
     }
 });
 

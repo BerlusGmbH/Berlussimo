@@ -16,7 +16,7 @@
                             <app-entity-select v-model="right" :entities="['person']"></app-entity-select>
                         </v-flex>
                     </v-layout>
-                    <v-layout align-center row>
+                    <v-layout align-center row wrap>
                         <v-flex xs3>
                             <h5>Links</h5>
                         </v-flex>

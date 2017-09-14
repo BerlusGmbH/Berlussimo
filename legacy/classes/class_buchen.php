@@ -2702,8 +2702,6 @@ LIMIT 0 , 1");
             // $pdf->ezTable($tab_arr);
             // ob_clean(); //ausgabepuffer leeren
             // $pdf->ezStream();
-        } else {
-            echo "Objekt auswählen";
         }
     }
 
@@ -2965,8 +2963,6 @@ LIMIT 0 , 1");
             hinweis_ausgeben("Monatsbericht ohne Vormieter für $objekt_name wurde erstellt<br>");
             echo $download_link;
             /* Falls kein Objekt ausgewählt */
-        } else {
-            echo "Objekt auswählen";
         }
     }
 

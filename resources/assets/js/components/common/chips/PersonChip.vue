@@ -1,6 +1,7 @@
 <template>
     <v-chip
             :close="multiple"
+            :selected="selected"
             @input="$emit('input', $event)"
             @click.native.stop
             :class="{'chip--select-multi': multiple}"
@@ -26,5 +27,8 @@
 
         @Prop()
         entity;
+
+        @Prop()
+        selected;
     }
 </script>

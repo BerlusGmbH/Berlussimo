@@ -2,7 +2,7 @@
     <v-expansion-panel v-if="authCheck" class="extension-panel__menu">
         <v-expansion-panel-content v-model="mainmenuOpen">
             <div slot="header">
-                <slot name="breadcrumbs"><i class="mdi mdi-home"></i>Bereiche</slot>
+                <slot name="breadcrumbs"><i class="mdi mdi-home" style="padding-right: 14px"></i>Bereiche</slot>
             </div>
             <v-card>
                 <v-card-text>
@@ -12,13 +12,13 @@
         </v-expansion-panel-content>
         <v-expansion-panel-content class="primary" v-model="submenuOpen">
             <template slot="header">
-                <v-layout row align-center style="width: 100%">
-                    <v-flex xs3 md4 lg6 class="pa-0">
-                        <i class="mdi mdi-settings"></i>Tools
+                <v-layout row align-center class="ma-0">
+                    <v-flex xs3 md4 lg6>
+                        <i class="mdi mdi-settings"></i><span style="padding-left: 14px">Tools</span>
                     </v-flex>
-                    <v-flex xs9 md8 lg6 class="pa-0">
+                    <v-flex xs9 md8 lg6>
                         <app-global-select
-                                style="padding-right: 3em; padding-top: 8px; padding-bottom: 8px">
+                                style="padding-top: 2px; padding-bottom: 2px">
                         </app-global-select>
                     </v-flex>
                 </v-layout>
@@ -87,6 +87,7 @@
     .extension-panel__menu .expansion-panel__header {
         min-height: 48px;
         height: initial;
+        padding: 0 0 0 24px;
     }
 
     .extension-panel__menu .expansion-panel__header .chip i {

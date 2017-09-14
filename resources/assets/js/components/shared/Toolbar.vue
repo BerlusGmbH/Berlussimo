@@ -6,7 +6,7 @@
         </v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-side-icon class="hidden-md-and-up"></v-toolbar-side-icon>
-        <app-searchbar v-if="authCheck"></app-searchbar>
+        <app-searchbar v-if="authCheck" class="pt-0"></app-searchbar>
         <app-notifications-toggle v-if="authCheck"></app-notifications-toggle>
         <v-menu v-if="authCheck" offset-y open-on-hover>
             <v-toolbar-title slot="activator">

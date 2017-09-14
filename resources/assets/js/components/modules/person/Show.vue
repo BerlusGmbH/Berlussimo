@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid>
+    <v-container grid-list-md fluid>
         <transition name="fade" mode="out-in">
             <v-layout v-if="person" :key="key" row wrap>
                 <v-flex xs12 sm6>
@@ -92,10 +92,6 @@
 </script>
 
 <style>
-    .flex {
-        padding-bottom: 8px;
-    }
-
     .fade-enter-active {
         transition: all .3s ease;
     }

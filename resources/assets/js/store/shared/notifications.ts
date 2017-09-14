@@ -7,7 +7,7 @@ export default {
         return {
             open: false,
             unread: 0,
-            notifications: []
+            messages: []
         }
     },
     mutations: {
@@ -19,10 +19,10 @@ export default {
             state.open = !state.open;
         },
         updateNotifications(state, notifocations) {
-            state.notifications = notifocations;
+            state.messages = notifocations;
         },
         appendNotification(state, notification) {
-            state.notifications.unshift(PersonMerged.typeOne(notification));
+            state.messages.unshift(PersonMerged.typeOne(notification));
             state.unread++;
         }
     },

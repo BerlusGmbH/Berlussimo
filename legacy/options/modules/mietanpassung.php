@@ -104,8 +104,6 @@ switch ($option) {
             $f->datum_feld('Druckdatum', 'druckdatum', $datum_h, 'dddd');
             $f->send_button('BTN_Netto', 'PDF-Erstellen');
             $f->hidden_feld('option', 'nettostapel');
-        } else {
-            fehlermeldung_ausgeben("Objekt wählen");
         }
         $f->ende_formular();
         break;

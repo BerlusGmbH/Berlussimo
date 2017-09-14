@@ -111,13 +111,15 @@ switch ($option) {
         $k = new kautionen ();
         $f = new formular ();
 
-        if (session()->has('ansicht_k')) {
-            $k->kautions_uebersicht(session()->get('objekt_id'), session()->get('ansicht_k'));
-        } else {
-            $js = "onclick=\"window.location.href += '&ansicht_k=alle'\"";
-            $f->button_js('BtN_alle', 'Alle Altmieter anzeigen', $js);
+        if (session()->has('objekt_id')) {
+            if (session()->has('ansicht_k')) {
+                $k->kautions_uebersicht(session()->get('objekt_id'), session()->get('ansicht_k'));
+            } else {
+                $js = "onclick=\"window.location.href += '&ansicht_k=alle'\"";
+                $f->button_js('BtN_alle', 'Alle Altmieter anzeigen', $js);
 
-            $k->kautions_uebersicht(session()->get('objekt_id'), null);
+                $k->kautions_uebersicht(session()->get('objekt_id'), null);
+            }
         }
         break;
 

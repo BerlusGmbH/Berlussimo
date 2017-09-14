@@ -1,5 +1,5 @@
 <template>
-    <app-entity-select :value="selected" @change="select" hide-details :entities="['partner', 'bankkonto', 'objekt']"
+    <app-entity-select :value="selected" @input="select" hide-details :entities="['partner', 'bankkonto', 'objekt']"
                        append-icon="" multiple class="global-select" @focusout.native="checkReload"
                        @keydown.native.esc="checkReload" @chip-close="checkReload">
     </app-entity-select>
@@ -43,6 +43,7 @@
         dirty: boolean = false;
 
         select(entities) {
+            if (entities instanceof Event) return;
             let partner = null;
             let objekt = null;
             let bankkonto = null;
