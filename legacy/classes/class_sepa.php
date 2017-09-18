@@ -2618,7 +2618,56 @@ AND  `AKTUELL` =  '1'");
         if ($transaction->getDebitCredit() == 'D') {
             $betrag *= -1;
         }
-        echo "<b>$zahler</b><br>$zahler_iban<br>$zahler_bic<br><br><b>BETRAG: " . number_format($betrag, 2, ',', '.') . " €</b>";
+        echo "<b>$zahler</b><br>$zahler_iban<br>$zahler_bic<br><br>";
+
+        if ($transaction->getDescription()->getEndToEndReference()
+            && $transaction->getDescription()->getEndToEndReference() !== 'NOTPROVIDED'
+        ) {
+            echo "Ende-zu-Ende Referenz: ";
+            echo $transaction->getDescription()->getEndToEndReference() . "<br>";
+        }
+
+        if ($transaction->getDescription()->getCustomerReference()) {
+            echo "Kundenreferenz: ";
+            echo $transaction->getDescription()->getCustomerReference() . "<br>";
+        }
+
+        if ($transaction->getDescription()->getMandateReference()) {
+            echo "Mandatsreferenz: ";
+            echo $transaction->getDescription()->getMandateReference() . "<br>";
+        }
+
+        if ($transaction->getDescription()->getCreditorId()) {
+            echo "Gläubiger ID: ";
+            echo $transaction->getDescription()->getCreditorId() . "<br>";
+        }
+
+        if ($transaction->getDescription()->getOriginatorsId()) {
+            echo "Lastschriftteilnehmernummer: ";
+            echo $transaction->getDescription()->getOriginatorsId() . "<br>";
+        }
+
+        if ($transaction->getDescription()->getCompensationAmount()) {
+            echo "Compensation Amount: ";
+            echo $transaction->getDescription()->getCompensationAmount() . "<br>";
+        }
+
+        if ($transaction->getDescription()->getOriginalAmount()) {
+            echo "Original Amount: ";
+            echo $transaction->getDescription()->getOriginalAmount() . "<br>";
+        }
+
+        if ($transaction->getDescription()->getAltOriginator()) {
+            echo "Abweichender Überweisender: ";
+            echo $transaction->getDescription()->getAltOriginator() . "<br>";
+        }
+
+        if ($transaction->getDescription()->getAltReceiver()) {
+            echo "Abweichender Zahlungsempfänger: ";
+            echo $transaction->getDescription()->getAltReceiver() . "<br>";
+        }
+
+        echo "<br><b>BETRAG: " . number_format($betrag, 2, ',', '.') . " €</b>";
 
         $datum_sql = date_german2mysql($datum);
         $bu = new buchen ();
