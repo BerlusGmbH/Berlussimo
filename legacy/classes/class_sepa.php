@@ -2479,21 +2479,12 @@ AND  `AKTUELL` =  '1'");
 
     function status_excelsession()
     {
-        if (session()->has('umsaetze_nok')) {
-            $anz_nok = count(session()->get('umsaetze_nok'));
-            $link_nok = "<a href='" . route('web::buchen::legacy', ['option' => 'excel_nok']) . "'>NOK: $anz_nok</a>";
-            echo "<span style=\"color:red;\">$link_nok</span>";
-        }
-
-        if (is_array(session()->get('umsaetze_ok'))) {
-            $anz_ok = count(session()->get('umsaetze_ok'));
-            echo "&nbsp;|<span style=\"color:green;\">OK: $anz_ok</span>";
-        }
-
-        if (session()->has('umsatz_id_temp')) {
-            $akt = session()->get('umsatz_id_temp') + 1;
-            echo "&nbsp;|&nbsp;<span style=\"color:blue;\">DS: $akt/$anz_ok</span>";
-        }
+        $statements = session()->get('statements');
+        $bankAccountIndex = session()->get('statements_bankaccount_index');
+        $transactions = $statements[session()->get('statements_bankaccount')]->getTransactions();
+        $transactionIndex = session()->get('statements_transaction');
+        echo "<span style=\"color:blue;\">Konto: " . ($bankAccountIndex + 1) . "/" . count($statements) . "</span>";
+        echo "&nbsp;|&nbsp;<span style=\"color:blue;\">Transaktion: " . ($transactionIndex + 1) . "/" . count($transactions) . "</span>";
 
         $link_konten = "<a href='" . route('web::buchen::legacy', ['option' => 'uebersicht_excel_konten']) . "'>Übersicht Geldkonten</a>";
         echo "&nbsp;|&nbsp;<span style=\"color:yellow;\">$link_konten</span>";
@@ -2501,20 +2492,21 @@ AND  `AKTUELL` =  '1'");
 
     function uebersicht_excel_konten()
     {
-        if (is_array(session()->get('umsatz_konten'))) {
+        if (is_array(session()->get('statements'))) {
             echo "<table class=\"sortable striped\">";
-            echo "<thead><tr><th>NR</th><th>GELDKONTO</th><th>Auszug</th><th>ANFANGSSALDO</th><th>ENDSALDO</th><th>AKTUELL</th></tr></thead>";
-            $anz_konten = count(session()->get('umsatz_konten'));
+            echo "<thead><tr><th>NR</th><th>Bankkonto</th><th>Auszug</th><th>Anfangssaldo</th><th>Schlusssaldo</th><th>Kontostand</th></tr></thead>";
+            $statements = session()->get('statements');
+            $bankAccounts = array_keys($statements);
+            $anz_konten = count($statements);
             for ($a = 0; $a < $anz_konten; $a++) {
                 $z = $a + 1;
-                $gk_id = session()->get('umsatz_konten')[$a];
-                $start_ds_id = session()->get('umsatz_konten_start')[$gk_id];
+                $gk_id = $bankAccounts[$a];
                 $gk = new geldkonto_info ();
                 $gk->geld_konto_details($gk_id);
 
-                $auszug = sprintf('%01d', session()->get('umsatz_stat')[$gk_id]['auszug']);
-                $ksa = nummer_punkt2komma_t(nummer_komma2punkt(session()->get('umsatz_stat')[$gk_id]['ksa']));
-                $kse = nummer_punkt2komma_t(nummer_komma2punkt(session()->get('umsatz_stat')[$gk_id]['kse']));
+                $auszug = $statements[$gk_id]->getNumber();
+                $ksa = number_format($statements[$gk_id]->getStartPrice(), 2, ',', '.');
+                $kse = number_format($statements[$gk_id]->getEndPrice(), 2, ',', '.');
 
                 $kontostand_aktuell = nummer_punkt2komma_t($gk->geld_konto_stand($gk_id));
 
@@ -2524,7 +2516,7 @@ AND  `AKTUELL` =  '1'");
                     $ks_aktuell = "<span style=\"color:red;\"><b>$kontostand_aktuell €</b></span>";
                 }
 
-                $link_start = "<a href='" . route('web::buchen::legacy', ['option' => 'excel_buchen_session', 'ds_id' => $start_ds_id]) . "'>$gk->geldkonto_bez</a>";
+                $link_start = "<a href='" . route('web::buchen::legacy', ['option' => 'excel_buchen_session', 'gindex' => $a]) . "'>$gk->geldkonto_bez</a>";
                 echo "<tr><td>$z</td><td>$link_start</td><td>$auszug</td><td>$ksa €</td><td>$kse €</td><td>$ks_aktuell</td></tr>";
             }
             echo "</table>";
@@ -2533,13 +2525,16 @@ AND  `AKTUELL` =  '1'");
         }
     }
 
-    function form_excel_ds($umsatz_id_temp = 0)
+    function form_excel_ds()
     {
-        $gk_id_t = session()->get('umsaetze_ok')[$umsatz_id_temp]['GK_ID'];
-        $this->menue_konten($gk_id_t);
+        $statements = session()->get('statements');
+        $gk_id = session()->get('statements_bankaccount');
+        $statement = $statements[$gk_id];
+        $transactions = $statement->getTransactions();
+        $transaction = $transactions[session()->get('statements_transaction')];
 
-        $ksa_bank = session()->get('umsatz_stat')[$gk_id_t]['ksa'];
-        $kse_bank = session()->get('umsatz_stat')[$gk_id_t]['kse'];
+        $ksa_bank = $statement->getStartPrice();
+        $kse_bank = $statement->getEndPrice();
 
         session()->put('temp_kontostand', $kse_bank);
         session()->put('kontostand_temp', $kse_bank);
@@ -2556,13 +2551,9 @@ AND  `AKTUELL` =  '1'");
             session()->forget('kos_bez');
         }
 
-        session()->put('temp_datum', $umsatz_id_temp);
-        $akt = $umsatz_id_temp + 1;
-        $gesamt = count(session()->get('umsaetze_ok'));
         $f = new formular ();
 
         $gk = new geldkonto_info ();
-        $gk_id = session()->get('umsaetze_ok')[$umsatz_id_temp]['GK_ID'];
         session()->put('geldkonto_id', $gk_id);
 
         /* Passendes Objekt wählen */
@@ -2571,24 +2562,23 @@ AND  `AKTUELL` =  '1'");
         session()->put('objekt_id', $temp_objekt_id);
 
         $gk->geld_konto_details($gk_id);
-        $kontostand_aktuell = nummer_punkt2komma($gk->geld_konto_stand($gk_id));
+        $kontostand_aktuell = nummer_punkt2komma_t($gk->geld_konto_stand($gk_id));
 
         if (!session()->has('temp_kontostand')) {
             session()->put('temp_kontostand', '0,00');
         }
 
-        if ($kontostand_aktuell == session()->get('temp_kontostand')) {
-            echo "&nbsp;|&nbsp;<span style=\"color:green;\"><b>KSAKT: $kontostand_aktuell €</b></span>";
+        echo "&nbsp;|&nbsp;<span style=\"color:blue;\">Anfangssaldo: " . number_format($ksa_bank, 2, ',', '.') . " € | Schlusssaldo: " . number_format(session()->get('temp_kontostand'), 2, ',', '.') . " €</span>";
+
+        if ($kontostand_aktuell == number_format(session()->get('temp_kontostand'), 2, ',', '.')) {
+            echo "&nbsp;|&nbsp;<span style=\"color:green;\"><b>Kontostand: $kontostand_aktuell €</b></span>";
         } else {
-            echo "&nbsp;|&nbsp;<span style=\"color:red;\"><b>KSAKT: $kontostand_aktuell €</b></span>";
+            echo "&nbsp;|&nbsp;<span style=\"color:red;\"><b>Kontostand: $kontostand_aktuell €</b></span>";
         }
 
-        echo "&nbsp;|&nbsp;<span style=\"color:blue;\">KSA BANK: $ksa_bank € | KSE BANK(TEMP): " . session()->get('temp_kontostand') . " €</span>";
+        session()->put('temp_kontoauszugsnummer', sprintf('%01d', $statement->getNumber()));
+        session()->put('temp_datum', $transaction->getValueTimestamp('d.m.Y'));
 
-        session()->put('temp_kontoauszugsnummer', sprintf('%01d', session()->get('umsaetze_ok')[$umsatz_id_temp][3]));
-        session()->put('temp_datum', session()->get('umsaetze_ok')[$umsatz_id_temp][6]);
-
-        // $f->fieldset('NAVI', 'navi');
         echo "<table style=\"border:0; padding:1px;\"><tr><td style='padding:1px;'><tr><td>";
         echo "<form method=\"post\" >";
         $f->hidden_feld('vor', '1');
@@ -2600,16 +2590,16 @@ AND  `AKTUELL` =  '1'");
         $f->send_button('SndNEXT', '', 'arrow-right', '');
         $f->ende_formular();
         echo "</td></tr></table>";
-        // $f->fieldset_ende();
 
-        $art = session()->get('umsaetze_ok')[$umsatz_id_temp][13];
-        $datum = session()->get('umsaetze_ok')[$umsatz_id_temp][6];
+        $art = $transaction->getDescription()->getPostingText();
+        $artCode = $transaction->getDescription()->getPostingCode();
+        $datum = $transaction->getValueTimestamp('d.m.Y');
         /* FORMULAR */
-        $f->erstelle_formular("$art - Nummer:$akt/$gesamt | $gk->geldkonto_bez | AUSZUG: " . session()->get('temp_kontoauszugsnummer') . " | DATUM: $datum ", null);
+        $f->erstelle_formular("$art ($artCode) | $gk->geldkonto_bez | AUSZUG: " . $statement->getNumber() . " | DATUM: $datum ", null);
 
         echo "<table >";
         echo "<tr><td valign=\"top\">";
-        $zahler = session()->get('umsaetze_ok')[$umsatz_id_temp][25];
+        $zahler = $transaction->getDescription()->getName();
 
         $namen_arr = explode(',', $zahler);
         if (!isset ($namen_arr [1])) {
@@ -2622,33 +2612,85 @@ AND  `AKTUELL` =  '1'");
         }
         $nachname = ltrim(rtrim($namen_arr [0]));
 
-        $zahler_iban = session()->get('umsaetze_ok')[$umsatz_id_temp][26];
-        $zahler_bic = session()->get('umsaetze_ok')[$umsatz_id_temp][27];
-        $betrag = session()->get('umsaetze_ok')[$umsatz_id_temp][7];
-        $betrag_n = str_replace('.', '', $betrag);
-        echo "<b>$zahler</b><br>$zahler_iban<br>$zahler_bic<br><br><b>BETRAG: $betrag €</b>";
+        $zahler_iban = $transaction->getDescription()->getIBAN();
+        $zahler_bic = $transaction->getDescription()->getBIC();
+        $betrag = $transaction->getPrice();
+        if ($transaction->getDebitCredit() == 'D') {
+            $betrag *= -1;
+        }
+        echo "<b>$zahler</b><br>$zahler_iban<br>$zahler_bic<br><br>";
 
-        $betrag_punkt = nummer_komma2punkt($betrag_n);
+        if ($transaction->getDescription()->getEndToEndReference()
+            && $transaction->getDescription()->getEndToEndReference() !== 'NOTPROVIDED'
+        ) {
+            echo "Ende-zu-Ende Referenz: ";
+            echo $transaction->getDescription()->getEndToEndReference() . "<br>";
+        }
+
+        if ($transaction->getDescription()->getCustomerReference()) {
+            echo "Kundenreferenz: ";
+            echo $transaction->getDescription()->getCustomerReference() . "<br>";
+        }
+
+        if ($transaction->getDescription()->getMandateReference()) {
+            echo "Mandatsreferenz: ";
+            echo $transaction->getDescription()->getMandateReference() . "<br>";
+        }
+
+        if ($transaction->getDescription()->getCreditorId()) {
+            echo "Gläubiger ID: ";
+            echo $transaction->getDescription()->getCreditorId() . "<br>";
+        }
+
+        if ($transaction->getDescription()->getOriginatorsId()) {
+            echo "Lastschriftteilnehmernummer: ";
+            echo $transaction->getDescription()->getOriginatorsId() . "<br>";
+        }
+
+        if ($transaction->getDescription()->getCompensationAmount()) {
+            echo "Compensation Amount: ";
+            echo $transaction->getDescription()->getCompensationAmount() . "<br>";
+        }
+
+        if ($transaction->getDescription()->getOriginalAmount()) {
+            echo "Original Amount: ";
+            echo $transaction->getDescription()->getOriginalAmount() . "<br>";
+        }
+
+        if ($transaction->getDescription()->getAltOriginator()) {
+            echo "Abweichender Überweisender: ";
+            echo $transaction->getDescription()->getAltOriginator() . "<br>";
+        }
+
+        if ($transaction->getDescription()->getAltReceiver()) {
+            echo "Abweichender Zahlungsempfänger: ";
+            echo $transaction->getDescription()->getAltReceiver() . "<br>";
+        }
+
+        echo "<br><b>BETRAG: " . number_format($betrag, 2, ',', '.') . " €</b>";
+
         $datum_sql = date_german2mysql($datum);
         $bu = new buchen ();
-        if ($bu->check_buchung(session()->get('geldkonto_id'), $betrag_punkt, session()->get('temp_kontoauszugsnummer'), $datum_sql)) {
-
-            echo "<br><br>";
-            fehlermeldung_ausgeben("Betrag bereits gebucht!!!");
+        if ($bu->check_buchung(session()->get('geldkonto_id'), $betrag, $datum_sql)) {
+            echo " <i class='mdi mdi-alert-circle red-text' style='font-size: 1.2em'></i>";
         }
 
         echo "<br><hr><u>Buchungstext: </u><hr>";
 
-        $vzweck = session()->get('umsaetze_ok')[$umsatz_id_temp][14];
+        $vzweck = $transaction->getDescription()->getUsageText();
 
-        $art = ltrim(rtrim($art));
-        if (ltrim(rtrim($art)) == 'ABSCHLUSS' or $art == 'SEPA-UEBERWEIS.HABEN EINZEL' or $art == 'SEPA-CT HABEN EINZELBUCHUNG' or $art == 'SEPA-DD EINZELB.-SOLL B2B' or $art == 'SEPA-DD EINZELB.SOLL B2B' or $art == 'SEPA-DD EINZELB. SOLL CORE' or $art == 'SEPA-CC EINZELB.SOLL' or $art == 'SEPA-CC EINZELB.SOLL KARTE' or $art == 'SEPA-DD EINZELB.SOLL CORE' or $art == 'SEPA Dauerauftragsgutschrift' or $art == 'SEPA DAUERAUFTRAGSGUTSCHR' or $art == 'SEPA-LS EINZELBUCHUNG SOLL' or $art == 'SEPA-UEBERWEIS.HABEN RETOUR' or $art == 'SEPA-CT HABEN RETOUR' or $art == 'ZAHLEINGUEBELEKTRMEDIEN' or $art == 'SCHECKKARTE' or $art == 'ZAHLUNG UEB ELEKTR MEDIEN' or $art == 'LASTSCHRIFT EINZUGSERM') {
+        if (in_array($artCode, [82, 83, 104, 105, 106, 107, 108, 109, 152, 159, 166, 177, 211, 805, 808, 809])) {
             $treffer = array();
             $vzweck_kurz = $vzweck;
-            echo $vzweck;
-            if (ltrim(rtrim($art)) == 'ABSCHLUSS') {
+            if (in_array($artCode, [805, 808])) {
                 $zahler = "Bank";
                 $vzweck_kurz = "Kontoführungsgebühr, $vzweck_kurz";
+            }
+            if ($artCode == 82) {
+                $zahler = "Einzahlung";
+            }
+            if ($artCode == 83) {
+                $zahler = "Auszahlung";
             }
             $f->hidden_feld('text', "$zahler, $vzweck_kurz");
 
@@ -2767,15 +2809,6 @@ AND  `AKTUELL` =  '1'");
 
                     $bu->dropdown_kostentreager_typen_vw('Kostenträgertyp PERSON2', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, $kos_typ);
                     $bu->dropdown_kostentraeger_bez_vw("Kostenträger PERSON2", 'kostentraeger_id', 'dd_kostentraeger_id', '', $kos_typ, $kos_id);
-
-                    //echo "</td></tr><tr><td>";
-
-                    /*
-					 * if($kos_typ=='Mietvertrag'){
-					 * $me = new mietentwicklung();
-					 * $me->mietentwicklung_anzeigen($kos_id);
-					 * }
-					 */
                 }
 
                 if ($treffer ['ANZ'] < 1) {
@@ -2807,46 +2840,35 @@ AND  `AKTUELL` =  '1'");
                 }
             }
             $f->hidden_feld('option', 'excel_einzelbuchung');
-            $f->hidden_feld('betrag', $betrag_n);
+            $f->hidden_feld('betrag', $betrag);
             $f->check_box_js('mwst', 'mwst', 'Mit Mehrwertsteuer buchen', '', '');
-            $f->send_button('SndEB', "Buchen [$betrag EUR]");
+            $f->send_button('SndEB', "Buchen");
 
             echo "</td>";
-        } // ##############ENDE EINZELBUCHUNGEN*/
-        if ($art == 'SEPA-UEBERWEIS.SAMMLER-SOLL' or $art == 'SEPA-CT SAMMLER-SOLL') {
-            echo $vzweck;
+            // ##############ENDE EINZELBUCHUNGEN*/
+        } elseif (in_array($artCode, [190, 191, 195, 197])) {
+            $vzweck = $transaction->getDescription()->getCustomerReference();
             $pos_svwz = strpos(strtoupper($vzweck), '.XML');
             if ($pos_svwz == true) {
-                $vzweck_kurz = substr($vzweck, 0, $pos_svwz + 4);
-                $sepa_ue__file = str_replace(' ', '', substr($vzweck_kurz, 5));
+                $sepa_ue__file = $vzweck;
             } else {
-                $vzweck_kurz = $vzweck;
                 $sepa_ue__file = ' ----> SEPA-UEBERWEIS.SAMMLER - DATEI - UNBEKANNT!!!!';
             }
-            echo "<br><b>$vzweck_kurz $betrag</b><br>$sepa_ue__file";
+            echo "$sepa_ue__file";
             echo "</td></tr>";
             echo "<tr><td colspan=\"2\">";
             $sep = new sepa ();
             $sep->sepa_file_anzeigen($sepa_ue__file);
-        }
-        /* LASTSCHRIFTEN LS */
-        if ($art == 'SEPA-LS SAMMLER-HABEN') {
-            echo "<b>$vzweck<br>";
-            echo "<h1>LASTSCHRIFTEN</h1>";
-            $betrag_punkt = nummer_komma2punkt($betrag_n);
-            $arr_ls_files = $this->finde_ls_file_by_monat(session()->get('geldkonto_id'), $betrag_punkt, session()->get('temp_datum'));
+        } elseif (in_array($artCode, [192, 194, 196, 198])) {
+            /* LASTSCHRIFTEN LS */
+            echo "<b>$vzweck</b>";
+            echo "<h5>LASTSCHRIFTEN</h5>";
+            $arr_ls_files = $this->finde_ls_file_by_monat(session()->get('geldkonto_id'), $betrag, session()->get('temp_datum'));
             $anz_lf = count($arr_ls_files);
             for ($lf = 0; $lf < $anz_lf; $lf++) {
                 $ls_file = $arr_ls_files [$lf] ['DATEI'];
-                echo "<form method=\"post\">";
                 echo "<table>";
                 echo "<tr><th colspan=\"1\">$ls_file</th><th>";
-                $f->hidden_feld('ls_file', $ls_file);
-                $f->hidden_feld('option', 'excel_ls_sammler_buchung');
-                $f->hidden_feld('betrag', $betrag_n);
-                $f->check_box_js('mwst', 'mwst', 'Mit Mehrwertsteuer buchen', '', '');
-                $f->send_button('SndEB', "Buchen [$betrag EUR]");
-
                 echo "</th></tr>";
 
                 $arr_ls_zeilen = $this->get_sepa_lszeilen_arr($ls_file);
@@ -2856,21 +2878,10 @@ AND  `AKTUELL` =  '1'");
                     $betrag_ls = $arr_ls_zeilen [$ze] ['BETRAG'];
                     echo "<tr><td>$zweck_ls</td><td>$betrag_ls</td></tr>";
                 }
-                echo "</table></form>";
+                echo "</table>";
             }
-        }
-        /* LASTSCHRIFTEN LS */
-        if ($art == 'SEPA-LS SOLL RUECKBELASTUNG') {
-            echo "<b>$vzweck";
-            echo "$betrag</b>";
-            $betrag_punkt = nummer_komma2punkt($betrag_n);
-            $arr_ls_files = $this->finde_ls_file_by_datum(session()->get('geldkonto_id'), $betrag_punkt, session()->get('temp_datum'));
-        }
-
-        if ($art == 'SEPA DIRECT DEBIT (EINZELBUCHUNG-SOLL, B2B)') {
-            echo "<b>$vzweck";
-            echo "$betrag</b>";
-            fehlermeldung_ausgeben("Abbuchung bzw. Rechnungen manuell buchen!!!");
+        } else {
+            echo "<b>$zahler, $vzweck</b>";
         }
 
         echo "</td>";
@@ -2878,20 +2889,12 @@ AND  `AKTUELL` =  '1'");
         $f->ende_formular();
     }
 
-    function menue_konten($gk_id)
-    {
-        $akt_key_int = array_search($gk_id, session()->get('umsatz_konten'));
-        $akt_key_aus = $akt_key_int + 1;
-        $anz_konten = count(session()->get('umsatz_konten'));
-        echo "  <b>Geldkonto: $akt_key_aus/$anz_konten</b>";
-    }
-
     function get_mvid_from_vzweck($vzweck)
     {
         $vzweck = str_replace(',', ' ', $vzweck);
         $vzweck = str_replace('.', ' ', $vzweck);
         $vzweck = str_replace(' -', ' ', $vzweck);
-        // echo $vzweck;
+
         $pos_svwz = strpos(strtoupper($vzweck), 'SVWZ+');
         if ($pos_svwz == true) {
             $vzweck_kurz = str_replace(')', ' ', str_replace('(', ' ', substr($vzweck, $pos_svwz + 5)));
@@ -2922,30 +2925,12 @@ AND  `AKTUELL` =  '1'");
             $new_arr1 [] = $new_arr [$key1];
         }
 
-        /*
-		 * echo '<pre>';
-		 * print_r($new_arr);
-		 * print_r($new_arr1);
-		 */
         if (isset ($new_arr1 [0])) {
             $anfang = $new_arr1 [0];
             $einheit_id_n = $ein->finde_einheit_id_by_kurz($anfang);
 
             $ein->get_mietvertrag_id($einheit_id_n);
-            // echo "$anfang $einheit_id_n $ein->mietvertrag_id";
-            // $mvs = new mietvertraege();
-            // $mvs->get_mietvertrag_infos_aktuell($ein->mietvertrag_id);
 
-            /*
-			 * echo '<pre>';
-			 * print_r($mvs);
-			 * #print_r($array3);
-			 * print_r($new_arr1);
-			 * #print_r($new_arr1);
-			 *
-			 * print_r($vzweck_arr);
-			 * print_r($ein_arr);
-			 */
             if (isset ($ein->mietvertrag_id)) {
                 return $ein->mietvertrag_id;
             }
@@ -2957,7 +2942,7 @@ AND  `AKTUELL` =  '1'");
         $vzweck = str_replace(',', ' ', $vzweck);
         $vzweck = str_replace('.', ' ', $vzweck);
         $vzweck = str_replace(' -', ' ', $vzweck);
-        // echo $vzweck;
+
         $pos_svwz = strpos(strtoupper($vzweck), 'SVWZ+');
         if ($pos_svwz == true) {
             $vzweck_kurz = str_replace(')', ' ', str_replace('(', ' ', substr($vzweck, $pos_svwz + 5)));
@@ -2987,13 +2972,6 @@ AND  `AKTUELL` =  '1'");
             $key1 = $arr_keys [$tt];
             $new_arr1 [] = $new_arr [$key1];
         }
-
-        /*
-		 * echo '<pre>';
-		 * print_r($vzweck_arr);
-		 * print_r($new_arr);
-		 * print_r($new_arr1);
-		 */
 
         if (isset ($new_arr1 [0])) {
             $anfang = $new_arr1 [0];
@@ -3017,7 +2995,6 @@ AND  `AKTUELL` =  '1'");
             $f->erstelle_formular('SEPA-Datei Vorschau / Autobuchen', null);
             echo "<table class=\"sortable\">";
             echo "<thead><tr><th>EMPFÄNGER</th><th>VZWECK</th><th>IBAN</th><th>BIC</th><th>BETRAG</th><th>KONTO</th></tr></thead>";
-            // echo "<tr><th>$kat</th></tr>";
             $sum = 0;
             $anz = count($arr);
             for ($a = 0; $a < $anz; $a++) {
@@ -3179,16 +3156,6 @@ AND  `AKTUELL` =  '1'");
                         $bu->dropdown_kostentreager_typen('Kostenträgertyp NIXX', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ);
                         $bu->dropdown_kostentreager_ids('Kostenträger NIXX', 'kostentraeger_id', 'dd_kostentraeger_id', '');
                     }
-
-                    /*
-					 * if(!$kos_typ && !$kos_id){
-					 *
-					 * $bu->dropdown_kostenrahmen_nr('Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id, '');
-					 * $bu->dropdown_kostentreager_typen('Kostenträgertyp NIXX', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ);
-					 * $bu->dropdown_kostentreager_ids('Kostenträger NIXX', 'kostentraeger_id', 'dd_kostentraeger_id', '');
-					 *
-					 * }
-					 */
                 }
             }
             $f->hidden_feld('option', 'excel_einzelbuchung');
@@ -3204,7 +3171,7 @@ AND  `AKTUELL` =  '1'");
     function form_upload_excel_ktoauszug($action = null)
     {
         $f = new formular ();
-        $f->fieldset('Upload Excel-Kontoauszüge aus Bank *.XLSX', 'upxel');
+        $f->fieldset('Kontoauszüge (MT940) von einer Bank hochladen (.mta, .zip)', 'upxel');
         if ($action == null) {
             echo "<form method=\"post\" enctype=\"multipart/form-data\">";
         } else {
@@ -3214,10 +3181,10 @@ AND  `AKTUELL` =  '1'");
         <div class="file-field input-field">
             <div class="btn">
                 <span>Datei</span>
-                <input type="file" name="file">
+                <input type="file" name="file[]" multiple>
             </div>
             <div class="file-path-wrapper">
-                <input class="file-path validate" type="text" placeholder="Bitte laden Sie einen Kontoauszug hoch.">
+                <input class="file-path validate" type="text" placeholder="Bitte laden Sie Kontoauszüge hoch.">
             </div>
         </div>
         <button class="btn waves-effect waves-light" type="submit">Hochladen
@@ -3226,5 +3193,120 @@ AND  `AKTUELL` =  '1'");
         <?php
         echo "</form>";
         $f->fieldset_ende();
+    }
+
+    function mergeStatements($files)
+    {
+        $merged = [];
+        foreach ($files as $statements) {
+            $c = count($statements);
+            if ($c > 1) {
+                $first = $statements[0];
+                $number = $first->getNumber();
+                $first->setNumber($this->splitNumber($number));
+                for ($i = 1; $i < $c; $i++) {
+                    $transactions = array_merge($first->getTransactions(), $statements[$i]->getTransactions());
+                    $first->setTransactions($transactions);
+                    $first->setEndPrice($statements[$i]->getEndPrice());
+                    $first->setEndTimestamp($statements[$i]->getEndTimestamp());
+                }
+                $merged[] = $first;
+            } else {
+                $number = $statements[0]->getNumber();
+                $statements[0]->setNumber($this->splitNumber($number));
+                $merged[] = $statements[0];
+            }
+        }
+        return $merged;
+    }
+
+    function splitNumber($number)
+    {
+        $result = [];
+        if (preg_match('/(.*)\/.*/', $number, $result)) {
+            return $result[1];
+        }
+        return $number;
+    }
+
+    function indexStatementsOnGID($statements)
+    {
+        $result = [];
+        foreach ($statements as $statement) {
+            $gk = new gk();
+            $gk_id = $gk->get_geldkonto_id2($statement->getAccount(), $statement->getBank());
+            if (!isset($gk_id)) {
+                $gk_id = $gk->get_geldkonto_id_from_approximation($statement->getAccount(), $statement->getBank());
+            }
+            if ($gk_id) {
+                $result[$gk_id] = $statement;
+            }
+        }
+        return $result;
+    }
+
+    function select_next_statement()
+    {
+        if (session()->has('statements')
+            && session()->has('statements_bankaccount_index')
+            && session()->has('statements_bankaccount')
+            && session()->has('statements_transaction')
+        ) {
+            $bankAccountIndex = session()->get('statements_bankaccount_index');
+            $transactionIndex = session()->get('statements_transaction');
+            $statements = session()->get('statements');
+            $bankAccounts = array_keys($statements);
+            $bankAccountsCount = count($bankAccounts);
+            if ($bankAccountIndex >= $bankAccountsCount) {
+                $bankAccountIndex = 0;
+            }
+            $bankAccount = $bankAccounts[$bankAccountIndex];
+            $transactions = $statements[$bankAccount]->getTransactions();
+            $transactionsCount = count($transactions);
+            if ($transactionsCount > $transactionIndex + 1) {
+                $transactionIndex++;
+            } elseif ($transactionsCount == $transactionIndex + 1) {
+                $transactionIndex = 0;
+                if ($bankAccountsCount > $bankAccountIndex + 1) {
+                    $bankAccountIndex++;
+                } elseif ($bankAccountsCount == $bankAccountIndex + 1) {
+                    $bankAccountIndex = 0;
+                }
+            }
+            session()->put('statements_transaction', $transactionIndex);
+            session()->put('statements_bankaccount_index', $bankAccountIndex);
+            session()->put('statements_bankaccount', $bankAccounts[$bankAccountIndex]);
+        }
+    }
+
+    function select_previous_statement()
+    {
+        if (session()->has('statements')
+            && session()->has('statements_bankaccount_index')
+            && session()->has('statements_bankaccount')
+            && session()->has('statements_transaction')
+        ) {
+            $bankAccountIndex = session()->get('statements_bankaccount_index');
+            $transactionIndex = session()->get('statements_transaction');
+            $statements = session()->get('statements');
+            $bankAccounts = array_keys($statements);
+            $bankAccountsCount = count($bankAccounts);
+            if ($bankAccountIndex >= $bankAccountsCount) {
+                $bankAccountIndex = 0;
+            }
+            if (0 < $transactionIndex) {
+                $transactionIndex--;
+            } elseif (0 == $transactionIndex) {
+                if (0 < $bankAccountIndex) {
+                    $bankAccountIndex--;
+                } elseif (0 == $bankAccountIndex) {
+                    $bankAccountIndex = $bankAccountsCount - 1;
+                }
+                $transactionIndex = count($statements[$bankAccounts[$bankAccountIndex]]->getTransactions()) - 1;
+            }
+            session()->put('statements_transaction', $transactionIndex);
+            session()->put('statements_bankaccount_index', $bankAccountIndex);
+            session()->put('statements_bankaccount', $bankAccounts[$bankAccountIndex]);
+        }
     }
 } // end class sepa

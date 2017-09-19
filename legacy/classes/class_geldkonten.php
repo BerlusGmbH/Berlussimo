@@ -291,6 +291,24 @@ class gk
         }
     }
 
+    function get_geldkonto_id_from_approximation($kto, $blz)
+    {
+        $kto = trim($kto, '0');
+        $result = DB::select("SELECT KONTO_ID  FROM GELD_KONTEN WHERE KONTONUMMER like '%$kto%' && BLZ='$blz' &&  AKTUELL='1' ORDER BY KONTO_DAT DESC LIMIT 0,2");
+
+        $numrows = count($result);
+        if ($numrows == 1) {
+            $row = $result[0];
+            return $row ['KONTO_ID'];
+        }
+
+        if ($numrows > 1) {
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("$kto $blz $iban\nexistiert in Geldkonten $numrows mal.")
+            );
+        }
+    }
+
     function get_kos_by_iban($iban)
     {
         if (isset ($this->iban_kos_typ)) {
