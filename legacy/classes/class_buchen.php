@@ -656,7 +656,6 @@ class buchen
         $buchung = new buchen ();
 
         if ($kostentraeger_typ != 'Rechnung' && $kostentraeger_typ != 'Mietvertrag') {
-            // if($kostentraeger_typ !=='Rechnung'){
             $kostentraeger_id = $buchung->kostentraeger_id_ermitteln($kostentraeger_typ, $kostentraeger_bez);
         } else {
             $kostentraeger_id = $kostentraeger_bez;
@@ -667,7 +666,6 @@ class buchen
             $db_abfrage = "UPDATE GELD_KONTO_BUCHUNGEN SET AKTUELL='1' WHERE GELD_KONTO_BUCHUNGEN_DAT='$alt_dat'";
             DB::update($db_abfrage);
             protokollieren('GELD_KONTO_BUCHUNGEN_DAT', $alt_dat, $alt_dat);
-            echo "Alter Eintrag Aktiviert<br>";
             throw new Exception("Fehler mit Kostenträgern, keine Änderung gespeichert!!!!");
         }
 
@@ -685,9 +683,7 @@ class buchen
         $mwst1 = nummer_komma2punkt($mwst);
         $db_abfrage = "INSERT INTO GELD_KONTO_BUCHUNGEN VALUES (NULL, '$geldbuchung_id', '$g_buchungsnummer', '$kontoauszugsnr', '$erfass_nr','$betrag1', '$mwst1', '$vzweck', '$geldkonto_id', '$kostenkonto', '$datum', '$kostentraeger_typ', '$kostentraeger_id', '1')";
         DB::insert($db_abfrage);
-        echo "Buchungsnr $geldbuchung_id wurde geändert!<br>";
-        echo "Sie werden zum Buchungsjournal weitergeleitet!";
-        weiterleiten_in_sec(route('web::buchen::legacy', ['option' => 'buchungs_journal_druckansicht', 'monat' => $t_monat, 'jahr' => $t_jahr], false), 2);
+        weiterleiten(route('web::buchen::legacy', ['option' => 'buchungs_journal', 'monat' => $t_monat, 'jahr' => $t_jahr], false));
     }
 
     function kostentraeger_id_ermitteln($kostentraeger_typ, $kostentraeger_bez)
@@ -1106,7 +1102,7 @@ class buchen
         $datum_arr = explode("-", $datum);
         $numrows = count($my_array);
         if ($numrows > 0) {
-            echo "<table class=\"sortable\">";
+            echo "<table class=\"sortable striped\">";
 
             echo "<tr><th>DATUM</th><th>ERF/AUSZ</th><th>AUSZUG</th><th>Konto</th><th>Betrag</th><th>MWST</th><th>Verwendung</th><th>BUCHUNGSNR</th><th>Buchungstext</th></tr>";
 
