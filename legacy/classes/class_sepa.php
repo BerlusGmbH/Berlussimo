@@ -724,7 +724,7 @@ class sepa
 
     function check_m_ref_alle($mref)
     {
-        $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `M_REFERENZ` = '$mref' AND `AKTUELL` = '1' LIMIT 0 , 1");
+        $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `M_REFERENZ` = '$mref' AND `AKTUELL` = '1' ORDER BY M_ADATUM DESC LIMIT 0 , 1");
         return !empty($result);
     }
 
@@ -1388,7 +1388,7 @@ class sepa
         if (isset ($this->mand)) {
             unset ($this->mand);
         }
-        $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `M_REFERENZ` ='$m_ref' && AKTUELL='1' ORDER BY DAT LIMIT 0,1");
+        $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `M_REFERENZ` ='$m_ref' && AKTUELL='1' ORDER BY M_ADATUM DESC LIMIT 0,1");
         if (!empty($result)) {
             $row = $result[0];
             $this->mand = ( object )$row;
