@@ -1,7 +1,7 @@
 <template>
     <app-select :search-input.sync="query" :value="inputValue"
                 @change="emit('change', $event)" @input="emit('input', $event)" :async-loading="searching"
-                :items="items" autocomplete multiple
+                :items="items" autocomplete multiple @click.native.stop
                 :hide-details="hideDetails" returnObject :no-data-text="status" :prepend-icon="icon"
                 :append-icon="appendIcon" :filter="() => true" :solo="solo">
         <template slot="selection" scope="data">

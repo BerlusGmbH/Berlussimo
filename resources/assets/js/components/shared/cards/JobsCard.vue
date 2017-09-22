@@ -22,25 +22,12 @@
                 <template slot="items" scope="props">
                     <td>{{props.item.title.title}}</td>
                     <td>
-                        <app-identifier style="width: 9em" :entity="props.item.employer"></app-identifier>
+                        <app-identifier style="width: 9em" v-model="props.item.employer"></app-identifier>
                     </td>
-                    <td>
-                        <v-edit-dialog
-                                @open="props.item._join_date = props.item.join_date"
-                                @cancel="props.item.join_date = props.item.join_date || props.item._join_date"
-                                lazy
-                        >
-                            <span class="white--text" style="width: 5.3em">{{ props.item.join_date }}</span>
-                            <v-text-field
-                                    light
-                                    slot="input"
-                                    type="date"
-                                    v-bind:value="props.item.join_date"
-                                    @change.native="event => props.item.join_date = event.target.value"
-                                    single-line
-                                    hide-details
-                            ></v-text-field>
-                        </v-edit-dialog>
+                    <td style="white-space: nowrap">
+                        <app-text-field-edit-dialog large type="date" v-model="props.item.join_date">
+                            {{props.item.join_date}}
+                        </app-text-field-edit-dialog>
                     </td>
                     <td>
                         <v-edit-dialog lazy>

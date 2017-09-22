@@ -23,7 +23,7 @@
                     <td class="text-xs-right">{{props.item.created_at}}</td>
                     <td class="text-xs-right">{{props.item.event}}</td>
                     <td>
-                        <app-identifier v-if="props.item.user" :entity="props.item.user"></app-identifier>
+                        <app-identifier v-if="props.item.user" v-model="props.item.user"></app-identifier>
                     </td>
                     <td class="text-xs-right">{{props.item.ip_address}}</td>
                     <td>

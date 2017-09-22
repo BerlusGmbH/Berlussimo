@@ -1,7 +1,7 @@
 <template>
     <div class="identifier">
-        <v-icon class="identifier-icon">{{entity.getEntityIcon()}}</v-icon>
-        <a :href="entity.getDetailUrl()">{{String(entity)}}</a>
+        <v-icon class="identifier-icon">{{value.getEntityIcon()}}</v-icon>
+        <a :href="value.getDetailUrl()">{{String(value)}}</a>
     </div>
 </template>
 
@@ -13,7 +13,7 @@
     @Component
     export default class ObjectIdentifier extends Vue {
         @Prop()
-        entity;
+        value;
     }
 </script>
 

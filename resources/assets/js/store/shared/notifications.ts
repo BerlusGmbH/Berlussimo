@@ -7,7 +7,7 @@ export default {
         return {
             open: false,
             unread: 0,
-            messages: []
+            notifications: []
         }
     },
     mutations: {
@@ -19,16 +19,16 @@ export default {
             state.open = !state.open;
         },
         updateNotifications(state, notifocations) {
-            state.messages = notifocations;
+            state.notifications = notifocations;
         },
         appendNotification(state, notification) {
-            state.messages.unshift(PersonMerged.typeOne(notification));
+            state.notifications.unshift(PersonMerged.typeOne(notification));
             state.unread++;
         }
     },
     actions: {
         getNotifications({dispatch}, user) {
-            axios.get('/api/v1/personen/' + user + '/notifications').then((reply) => {
+            axios.get('/api/v1/persons/' + user + '/notifications').then((reply) => {
                 dispatch('typeNotifications', reply.data);
             });
         },

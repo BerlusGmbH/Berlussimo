@@ -20,7 +20,6 @@
                     class="elevation-1"
             >
                 <template slot="items" scope="props">
-                    <td>{{props.item.DETAIL_NAME}}</td>
                     <td>{{props.item.DETAIL_INHALT}}</td>
                     <td>{{props.item.DETAIL_BEMERKUNG}}</td>
                     <td class="text-xs-right">
@@ -52,9 +51,9 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import {Mutation, namespace} from "vuex-class";
     import detailDeleteDialog from "../../common/dialogs/DetailDeleteDialog.vue";
     import detailEditDialog from "../../common/dialogs/DetailEditDialog.vue";
+    import {Mutation, namespace} from "vuex-class";
     import {Detail} from "../../../server/resources/models";
 
     const SnackbarMutation = namespace('shared/snackbar', Mutation);
@@ -66,14 +65,12 @@
             'app-detail-edit-dialog': detailEditDialog
         }
     })
-    export default class DetailsCard extends Vue {
+    export default class NotesCard extends Vue {
         @Prop({type: Array})
-        details: Array<any>;
+        details: any;
 
         @Prop({type: String})
         headline;
-
-        models: Array<boolean> = [];
 
         @Watch('details')
         onDetailsChange(val) {
@@ -88,11 +85,9 @@
         @RefreshMutation('requestRefresh')
         requestRefresh: Function;
 
-        deleteDialog: boolean = false;
-
+        models: Array<boolean> = [];
         search: string = '';
         headers = [
-            {text: 'Art', value: 'DETAIL_NAME'},
             {text: 'Eintrag', value: 'DETAIL_INHALT'},
             {text: 'Bemerkung', value: 'DETAIL_BEMERKUNG'},
             {text: '', value: '', sortable: false}

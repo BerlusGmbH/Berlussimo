@@ -16,6 +16,8 @@ import identifier from "./components/common/identifiers/Identifier.vue";
 import tile from "./components/common/tiles/Tile.vue";
 import chip from "./components/common/chips/Chip.vue";
 import {substituteNewlineWithBr} from "./filters";
+import VSelect from "./libraries/vuetify/VSelect.vue";
+import VEditDialog from "./components/common/VEditDialog.vue";
 
 
 Vue.use(Vuex);
@@ -23,6 +25,8 @@ Vue.use(Vuetify);
 Vue.component('app-identifier', identifier);
 Vue.component('app-tile', tile);
 Vue.component('app-chip', chip);
+Vue.component('app-select', VSelect);
+Vue.component('app-edit-dialog', VEditDialog);
 Vue.filter('substituteNewlineWithBr', substituteNewlineWithBr);
 
 new Vue({

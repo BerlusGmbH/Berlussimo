@@ -6,6 +6,7 @@ import workplaceStore from "./store/shared/workplace";
 import legacyStore from "./store/shared/legacy";
 import messagesStore from "./store/shared/messages";
 import snackbarStore from "./store/shared/snackbar";
+import refreshStore from "./store/shared/refresh";
 import personenStore from "./store/modules/personen/store";
 
 import Vue from "vue";
@@ -29,7 +30,8 @@ const store = new Vuex.Store({
                 globalSelect: globalSelectStore,
                 legacy: legacyStore,
                 workplace: workplaceStore,
-                messages: messagesStore
+                messages: messagesStore,
+                refresh: refreshStore
             }
         },
         auth: authStore

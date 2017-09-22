@@ -36,7 +36,7 @@
                 @include("shared.messages")
             </div>
         </div>
-        <main style="flex: 1 0 auto">
+        <main style="flex: 1 0 auto; z-index: 0">
             @yield("content")
             @if(Auth::check())
                 <app-notifications id="notifications"></app-notifications>

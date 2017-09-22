@@ -10,7 +10,7 @@
         <app-notifications-toggle v-if="authCheck"></app-notifications-toggle>
         <v-menu v-if="authCheck" offset-y open-on-hover>
             <v-toolbar-title slot="activator">
-                <app-identifier :entity="user"></app-identifier>
+                <app-identifier v-model="user"></app-identifier>
                 <v-icon>arrow_drop_down</v-icon>
             </v-toolbar-title>
             <v-list>

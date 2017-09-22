@@ -50,7 +50,7 @@ export default {
                 axios.defaults.headers.common['X-CSRF-TOKEN'] = token['content'];
             }
             axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-            return axios.get('/api/v1/personen/' + id);
+            return axios.get('/api/v1/persons/' + id);
         },
         prototypePerson(_context, person: any): Person {
             Object.setPrototypeOf(person, Person.prototype);

@@ -1,7 +1,7 @@
 <template>
     <div class="identifier">
-        <v-icon class="identifier-icon">{{entity.getEntityIcon()}}</v-icon>
-        String(entity)
+        <v-icon class="identifier-icon">{{value.getEntityIcon()}}</v-icon>
+        String(value)
     </div>
 </template>
 
@@ -13,7 +13,7 @@
     @Component
     export default class PurchaseContractIdentifier extends Vue {
         @Prop()
-        entity;
+        value;
     }
 </script>
 

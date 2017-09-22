@@ -1,3 +1,5 @@
+import axios from "../../libraries/axios";
+
 const base_url = window.location.origin;
 
 export class Person {
@@ -35,6 +37,18 @@ export class Person {
 
     getDetailUrl() {
         return base_url + '/personen/' + this.id;
+    }
+
+    getMorphName() {
+        return 'PERSON';
+    }
+
+    getID() {
+        return this.id;
+    }
+
+    save() {
+        return axios.patch('/api/v1/persons/' + this.id, this);
     }
 }
 
@@ -135,6 +149,8 @@ export class Detail {
     DETAIL_NAME: string = '';
     DETAIL_INHALT: string = '';
     DETAIL_BEMERKUNG: string = '';
+    DETAIL_ZUORDNUNG_TABELLE: string = '';
+    DETAIL_ZUORDNUNG_ID: string = '';
 
     icon: string = 'mdi-note';
 
@@ -144,6 +160,18 @@ export class Detail {
 
     getDetailUrl(): string {
         return '';
+    }
+
+    save() {
+        return axios.patch('/api/v1/details/' + this.DETAIL_ID, this);
+    }
+
+    create() {
+        return axios.post('/api/v1/details', this);
+    }
+
+    delete() {
+        return axios.delete('/api/v1/details/' + this.DETAIL_ID);
     }
 }
 

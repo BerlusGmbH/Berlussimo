@@ -37,7 +37,7 @@
     </v-app>
 </div>
 
-<main class="application--dark" style="flex: 1 0 auto;">
+<main class="application--dark" style="flex: 1 0 auto; z-index: 0">
     @if($content != "")
         <div class="berlussimo-materialize container-fluid">
             {!!$content!!}

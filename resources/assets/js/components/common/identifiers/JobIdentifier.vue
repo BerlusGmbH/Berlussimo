@@ -1,8 +1,8 @@
 <template>
     <div class="identifier">
-        <app-identifier :entity="entity.title"></app-identifier>
+        <app-identifier :value="value.title"></app-identifier>
         bei
-        <app-identifier :entity="entity.employer"></app-identifier>
+        <app-identifier :value="value.employer"></app-identifier>
     </div>
 </template>
 
@@ -14,7 +14,7 @@
     @Component
     export default class JobIdentifier extends Vue {
         @Prop()
-        entity;
+        value;
     }
 </script>
 

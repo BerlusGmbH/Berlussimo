@@ -12,18 +12,18 @@
             ></v-text-field>
         </v-card-title>
         <v-data-table
-                v-bind:headers="headers"
-                v-bind:items="messages"
-                v-bind:search="search"
+                :headers="headers"
+                :items="notifications"
+                :search="search"
         >
             <template slot="items" scope="props">
                 <td class="text-xs-right">{{ props.item.created_at }}</td>
                 <td class="text-xs-right">Personen (
-                    <app-identifier :entity="props.item.data.left"></app-identifier>
+                    <app-identifier v-model="props.item.data.left"></app-identifier>
                     und
-                    <app-identifier :entity="props.item.data.right"></app-identifier>
+                    <app-identifier v-model="props.item.data.right"></app-identifier>
                     ) zusammengeführt:
-                    <app-identifier :entity="props.item.data.merged"></app-identifier>
+                    <app-identifier v-model="props.item.data.merged"></app-identifier>
                 </td>
             </template>
             <template slot="pageText" scope="{ pageStart, pageStop }">
@@ -47,7 +47,7 @@
     const PersonShowAction = namespace('modules/personen/show', Action);
 
     @Component
-    export default class NotificationsList extends Vue {
+    export default class Notifications extends Vue {
         @NotificationsState('open')
         open: boolean;
 

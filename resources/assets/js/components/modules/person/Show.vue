@@ -3,10 +3,10 @@
         <transition name="fade" mode="out-in">
             <v-layout v-if="person" :key="key" row wrap>
                 <v-flex xs12 sm6>
-                    <app-person-card :key="key" :person="person"></app-person-card>
+                    <app-person-card :key="key" :value="person"></app-person-card>
                 </v-flex>
                 <v-flex v-if="person && person.hinweise.length > 0" xs12 sm6>
-                    <app-details-card headline="Hinweise" :details="person.hinweise"></app-details-card>
+                    <app-notes-card headline="Hinweise" :details="person.hinweise"></app-notes-card>
                 </v-flex>
                 <v-flex v-if="person && person.common_details.length > 0" xs12 sm6>
                     <app-details-card headline="Details"
@@ -32,17 +32,17 @@
                 </v-flex>
             </v-layout>
         </transition>
-        <app-merge-dialog v-model="showMergeDialog"></app-merge-dialog>
-        <app-show-fab v-model="showFab" @openMergeDialog="showMergeDialog = true"></app-show-fab>
+        <app-show-fab v-model="showFab"></app-show-fab>
     </v-container>
 </template>
 
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {Action, namespace, State} from "vuex-class";
-    import {Prop} from "vue-property-decorator";
+    import {Action, Mutation, namespace, State} from "vuex-class";
+    import {Prop, Watch} from "vue-property-decorator";
     import personCard from "../../shared/cards/PersonCard.vue";
+    import notesCard from "../../shared/cards/NotesCard.vue";
     import detailsCard from "../../shared/cards/DetailsCard.vue";
     import rolesCard from "../../shared/cards/RolesCard.vue";
     import auditsCard from "../../shared/cards/AuditsCard.vue";
@@ -55,9 +55,13 @@
     const ShowAction = namespace('modules/personen/show', Action);
     const ShowState = namespace('modules/personen/show', State);
 
+    const RefreshState = namespace('shared/refresh', State);
+    const RefreshMutation = namespace('shared/refresh', Mutation);
+
     @Component({
         components: {
             'app-person-card': personCard,
+            'app-notes-card': notesCard,
             'app-details-card': detailsCard,
             'app-rental-contracts-card': rentalContractsCard,
             'app-purchase-contracts-card': purchaseContractsCard,
@@ -73,20 +77,37 @@
         personId: number;
 
         @ShowAction('updatePerson')
-        updatePerson;
+        fetchPerson;
 
         @ShowState('person')
         person;
+
+        @RefreshState('dirty')
+        dirty;
+
+        @RefreshMutation('refreshFinished')
+        refreshFinished: Function;
+
+        @Watch('dirty')
+        onDirtyChange(val) {
+            if (val) {
+                this.fetchPerson(this.personId).then(() => {
+                    this.refreshFinished();
+                }).catch(() => {
+                    this.refreshFinished();
+                })
+            }
+        }
 
         showMergeDialog: boolean = false;
         showFab: boolean = false;
 
         created() {
-            this.updatePerson(this.personId);
+            this.fetchPerson(this.personId);
         }
 
         get key() {
-            return btoa('person-' + this.person.id + '-' + Math.random());
+            return btoa('person-' + this.person.id);
         }
     }
 </script>

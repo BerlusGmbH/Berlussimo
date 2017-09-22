@@ -1,6 +1,11 @@
 <template>
     <div style="display: inline-block">
-        <component :entity="entity" :is="entity.constructor.name"></component>
+        <component :value="value"
+                   @input="$emit('input', $event)"
+                   @update="$emit('update', $event)"
+                   :is="value.constructor.name"
+                   @delete="$emit('delete', $event)"
+        ></component>
     </div>
 </template>
 
@@ -35,6 +40,6 @@
     })
     export default class Identifier extends Vue {
         @Prop()
-        entity;
+        value;
     }
 </script>

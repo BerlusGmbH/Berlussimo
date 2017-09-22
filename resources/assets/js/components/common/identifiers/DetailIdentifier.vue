@@ -1,5 +1,7 @@
 <template>
-    <component :entity="entity" :is="entity.DETAIL_NAME"></component>
+    <component :value="value" @input="$emit('input', $event)"
+               :is="identifier" @delete="$emit('delete', $event)"
+    ></component>
 </template>
 
 <script lang="ts">
@@ -9,6 +11,7 @@
     import emailIdentifier from "./details/EmailIdentifier.vue";
     import faxIdentifier from "./details/FaxIdentifier.vue";
     import addressIdentifier from "./details/AddressIdentifier.vue"
+    import defaultIdentifier from "./details/DefaultIdentifier.vue"
     import {Prop} from "vue-property-decorator";
 
     @Component({
@@ -19,11 +22,23 @@
             'Fax': faxIdentifier,
             'Zustellanschrift': addressIdentifier,
             'Verzugsanschrift': addressIdentifier,
-            'Anschrift': addressIdentifier
+            'Anschrift': addressIdentifier,
+            'default': defaultIdentifier
         }
     })
     export default class Identifier extends Vue {
         @Prop()
-        entity;
+        value;
+
+        get identifier() {
+            return ['Telefon',
+                'Handy',
+                'Email',
+                'Fax',
+                'Zustellanschrift',
+                'Verzugsanschrift',
+                'Anschrift'
+            ].includes(this.value.DETAIL_NAME) ? this.value.DETAIL_NAME : 'default';
+        }
     }
 </script>

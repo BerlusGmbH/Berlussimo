@@ -149,7 +149,7 @@ class Person extends Authenticatable implements AuditableContract
 
     public function setSexAttribute($value)
     {
-        if (!in_array($value, ['männlich', 'weiblich'])) {
+        if (!in_array($value, ['männlich', 'weiblich', null])) {
             throw new InvalidArgumentException('Value has to be one of "männlich" or "weiblich".');
         }
 
@@ -158,13 +158,15 @@ class Person extends Authenticatable implements AuditableContract
             $this->sexDetail[0]->save();
         }
 
-        $this->details()->create([
-            'DETAIL_ID' => Details::max('DETAIL_ID') + 1,
-            'DETAIL_NAME' => 'Geschlecht',
-            'DETAIL_INHALT' => $value,
-            'DETAIL_BEMERKUNG' => 'Stand: ' . Carbon::today()->toDateString(),
-            'DETAIL_AKTUELL' => '1'
-        ]);
+        if ($value) {
+            $this->details()->create([
+                'DETAIL_ID' => Details::max('DETAIL_ID') + 1,
+                'DETAIL_NAME' => 'Geschlecht',
+                'DETAIL_INHALT' => $value,
+                'DETAIL_BEMERKUNG' => 'Stand: ' . Carbon::today()->toDateString(),
+                'DETAIL_AKTUELL' => '1'
+            ]);
+        }
     }
 
     public function getAddressNameAttribute()

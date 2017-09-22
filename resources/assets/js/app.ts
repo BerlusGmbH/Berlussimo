@@ -17,13 +17,19 @@ import personShow from "./components/modules/person/Show.vue";
 import identifier from "./components/common/identifiers/Identifier.vue";
 import tile from "./components/common/tiles/Tile.vue";
 import chip from "./components/common/chips/Chip.vue";
+import textFieldEditDialog from "./components/common/TextFieldEditDialog.vue";
+import VEditDialog from "./components/common/VEditDialog.vue";
 import {substituteNewlineWithBr} from "./filters";
+import VSelect from "./libraries/vuetify/VSelect.vue";
 
 Vue.use(Vuex);
 Vue.use(Vuetify);
 Vue.component('app-identifier', identifier);
 Vue.component('app-tile', tile);
 Vue.component('app-chip', chip);
+Vue.component('app-select', VSelect);
+Vue.component('app-text-field-edit-dialog', textFieldEditDialog);
+Vue.component('app-edit-dialog', VEditDialog);
 Vue.filter('substituteNewlineWithBr', substituteNewlineWithBr);
 
 new Vue({
@@ -41,6 +47,6 @@ new Vue({
         'app-messages': messages,
         'app-global-select-loader': globalSelectLoader,
         'app-workplace-loader': workplaceLoader,
-        'app-person-show': personShow
+        'app-person-show': personShow,
     }
 });

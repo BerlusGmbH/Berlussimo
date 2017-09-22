@@ -133,14 +133,13 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {Mutation, namespace, State} from "vuex-class";
+    import {Mutation, namespace} from "vuex-class";
     import {Prop, Watch} from "vue-property-decorator";
     import EntitySelect from '../../../common/EntitySelect.vue';
     import {Person} from "../../../../server/resources/models";
     import axios from "../../../../libraries/axios";
     import {AxiosError} from "axios";
 
-    const ShowState = namespace('modules/personen/show', State);
     const SnackbarMutation = namespace('shared/snackbar', Mutation);
 
     @Component({
@@ -159,7 +158,7 @@
         @SnackbarMutation('updateMessage')
         showSnack: Function;
 
-        @ShowState('person')
+        @Prop({type: Object, default: () => new Person()})
         left: Person;
 
         right: Person | null = null;
@@ -179,7 +178,7 @@
             this.loading = true;
             let vm = this;
             if (this.right) {
-                axios.get('/api/v1/personen/' + this.left.id + '/merge/' + this.right.id,
+                axios.get('/api/v1/persons/' + this.left.id + '/merge/' + this.right.id,
                         {
                             params: this.merged
                         }

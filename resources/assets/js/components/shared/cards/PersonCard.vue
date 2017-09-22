@@ -3,28 +3,30 @@
         <v-card-title>
             <v-layout row wrap>
                 <v-flex xs12>
-                    <app-identifier class="headline" :entity="person"></app-identifier>
+                    <app-identifier class="headline"
+                                    :value="value"
+                    ></app-identifier>
                 </v-flex>
-                <v-flex xs12 v-if="person.birthday">
+                <v-flex xs12 v-if="value.birthday">
                     <v-icon style="font-size: inherit">mdi-star</v-icon>
-                    {{person.birthday}}
+                    {{value.birthday}}
                 </v-flex>
             </v-layout>
         </v-card-title>
         <v-card-text>
             <v-container fluid grid-list-sm>
                 <v-layout row wrap>
-                    <v-flex xs12 sm6 v-for="phone in person.phones" :key="'detail-' + phone.DETAIL_ID">
-                        <app-identifier :entity="phone"></app-identifier>
+                    <v-flex xs12 sm6 v-for="(phone, i) in value.phones" :key="'detail-' + phone.DETAIL_ID">
+                        <app-identifier v-model="value.phones[i]"></app-identifier>
                     </v-flex>
-                    <v-flex xs12 sm6 v-for="email in person.emails" :key="'detail-' + email.DETAIL_ID">
-                        <app-identifier :entity="email"></app-identifier>
+                    <v-flex xs12 sm6 v-for="(email, i) in value.emails" :key="'detail-' + email.DETAIL_ID">
+                        <app-identifier v-model="value.emails[i]"></app-identifier>
                     </v-flex>
-                    <v-flex xs12 sm6 v-for="fax in person.faxs" :key="'detail-' + fax.DETAIL_ID">
-                        <app-identifier :entity="fax"></app-identifier>
+                    <v-flex xs12 sm6 v-for="(fax, i) in value.faxs" :key="'detail-' + fax.DETAIL_ID">
+                        <app-identifier v-model="value.faxs[i]"></app-identifier>
                     </v-flex>
-                    <v-flex xs12 sm6 v-for="address in person.adressen" :key="'detail-' + address.DETAIL_ID">
-                        <app-identifier :entity="address"></app-identifier>
+                    <v-flex xs12 sm6 v-for="(address, i) in value.adressen" :key="'detail-' + address.DETAIL_ID">
+                        <app-identifier v-model="value.adressen[i]"></app-identifier>
                     </v-flex>
                 </v-layout>
             </v-container>
@@ -40,6 +42,6 @@
     @Component
     export default class PersonCard extends Vue {
         @Prop()
-        person;
+        value;
     }
 </script>

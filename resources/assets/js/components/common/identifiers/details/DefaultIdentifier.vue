@@ -2,7 +2,7 @@
     <div style="display: flex">
         <div style="margin-right: 0.2rem; display: flex; flex-direction: column">
             <div class="identifier" style="display: block">
-                <v-icon class="identifier-icon">mdi-fax</v-icon>
+                <v-icon class="identifier-icon">mdi-table</v-icon>
                 <div @click="copyToClipboard(value.DETAIL_INHALT)"
                      style="display: inline-block; cursor: pointer; vertical-align: middle" ref="detail">
                     {{value.DETAIL_INHALT}}
@@ -26,7 +26,8 @@
                                 :position-y="y"
                                 :value="value"
                                 @input="$emit('input', $event); saveDetail($event)"
-                                prepend-icon="mdi-fax"
+                                prepend-icon="mdi-table"
+                                large
         >
         </app-detail-edit-dialog>
         <v-menu offset-y v-model="show" :position-absolutely="true" style="vertical-align: top">
@@ -60,7 +61,7 @@
     @Component({
         extends: detailIdentifier
     })
-    export default class FaxIdentifier extends Vue {
+    export default class DefaultIdentifier extends Vue {
         value: Detail;
 
         show: boolean;
