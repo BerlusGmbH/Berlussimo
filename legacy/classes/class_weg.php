@@ -4063,9 +4063,6 @@ WHERE KOS_TYP='$kos_typ'
         $zz++;
         $berechnung_tab [$zz] ['BEZ'] = "<b>Saldo aus Hausgeldabrechnung ($erg_text)</b>";
         $berechnung_tab [$zz] ['BETRAG'] = "<b>$ergebnis_a</b>";
-        $zz++;
-        $berechnung_tab [$zz] ['BEZ'] = "";
-        $berechnung_tab [$zz] ['BETRAG'] = "";
 
         /* Kontoentwicklung */
         $zz = 0;
@@ -4173,11 +4170,11 @@ WHERE KOS_TYP='$kos_typ'
                 ),
                 'BETRAG' => array(
                     'justification' => 'right',
-                    'width' => 50
+                    'width' => 55
                 ),
                 'BETRAG_VORJAHR' => array(
                     'justification' => 'right',
-                    'width' => 50
+                    'width' => 55
                 )
             )
         ));
@@ -4218,11 +4215,11 @@ WHERE KOS_TYP='$kos_typ'
                 ),
                 'BETRAG_VORJAHR' => array(
                     'justification' => 'right',
-                    'width' => 50
+                    'width' => 55
                 ),
                 'BETRAG' => array(
                     'justification' => 'right',
-                    'width' => 50
+                    'width' => 55
                 )
 
             )
@@ -4265,11 +4262,11 @@ WHERE KOS_TYP='$kos_typ'
                 ),
                 'BETRAG' => array(
                     'justification' => 'right',
-                    'width' => 50
+                    'width' => 55
                 ),
                 'BETRAG_VORJAHR' => array(
                     'justification' => 'right',
-                    'width' => 50
+                    'width' => 55
                 )
             )
         ));
@@ -4297,11 +4294,10 @@ WHERE KOS_TYP='$kos_typ'
             'cols' => array(
                 'BEZ' => array(
                     'justification' => 'left',
-                    'width' => 450
                 ),
                 'BETRAG' => array(
                     'justification' => 'right',
-                    'width' => 50
+                    'width' => 55
                 )
             )
         ));
@@ -4328,7 +4324,7 @@ WHERE KOS_TYP='$kos_typ'
                 ),
                 'BETRAG' => array(
                     'justification' => 'right',
-                    'width' => 50
+                    'width' => 55
                 )
             )
         ));
