@@ -48,14 +48,14 @@
             let objekt = null;
             let bankkonto = null;
             entities.forEach(function (entity) {
-                switch (entity.constructor.name) {
-                    case "Partner":
+                switch (entity.constructor.type) {
+                    case Partner.type:
                         partner = entity;
                         break;
-                    case "Objekt":
+                    case Objekt.type:
                         objekt = entity;
                         break;
-                    case "Bankkonto":
+                    case Bankkonto.type:
                         bankkonto = entity;
                 }
             });

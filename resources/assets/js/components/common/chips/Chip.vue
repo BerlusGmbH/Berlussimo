@@ -1,6 +1,6 @@
 <template>
     <component @input="$emit('input', $event)" :multiple="multiple" :entity="entity"
-               :is="entity.constructor.name"></component>
+               :is="entity.constructor.type"></component>
 </template>
 
 <script lang="ts">
@@ -13,15 +13,16 @@
     import unitChip from "./UnitChip.vue";
     import bankAccountChip from "./BankAccountChip.vue";
     import {Prop} from "vue-property-decorator";
+    import {Bankkonto, Einheit, Haus, Objekt, Partner, Person} from "../../../server/resources/models";
 
     @Component({
         components: {
-            'Person': personChip,
-            'Partner': partnerChip,
-            'Objekt': objectChip,
-            'Haus': houseChip,
-            'Einheit': unitChip,
-            'Bankkonto': bankAccountChip
+            [Person.type]: personChip,
+            [Partner.type]: partnerChip,
+            [Objekt.type]: objectChip,
+            [Haus.type]: houseChip,
+            [Einheit.type]: unitChip,
+            [Bankkonto.type]: bankAccountChip
         }
     })
     export default class Chip extends Vue {

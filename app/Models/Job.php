@@ -23,7 +23,7 @@ class Job extends Model implements ActiveContract
 
     public function employee()
     {
-        return $this->hasOne(Person::class, 'employee_id');
+        return $this->hasOne(Person::class, 'id', 'employee_id');
     }
 
     public function title()

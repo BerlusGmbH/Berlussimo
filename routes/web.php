@@ -42,14 +42,6 @@ Route::group(['prefix' => 'api/v1', 'namespace' => 'Api\v1', 'middleware' => ['a
     });
 });
 
-Route::group(['namespace' => 'Modules', 'middleware' => ['auth'], 'as' => 'web::'], function () {
-    Route::group(['namespace' => 'Persons'], function () {
-        Route::match(['put', 'patch'], 'persons/{person}/credential', 'CredentialController@update')->name('persons.credentials.update');
-        Route::post('persons/{person}/credential', 'CredentialController@store')->name('persons.credentials.store');
-        Route::resource('persons.jobs', 'JobController', ['only' => ['store', 'update']]);
-    });
-});
-
 Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'], function () {
     Route::match(['get', 'post'], '/', 'IndexController@request')->name('legacy');
 

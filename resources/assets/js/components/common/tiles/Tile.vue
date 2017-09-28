@@ -1,5 +1,5 @@
 <template>
-    <component :entity="entity" :is="entity.constructor.name"></component>
+    <component :entity="entity" :is="entity.constructor.type"></component>
 </template>
 
 <script lang="ts">
@@ -12,15 +12,16 @@
     import unitTile from "./UnitTile.vue";
     import bankAccountTile from "./BankAccountTile.vue";
     import {Prop} from "vue-property-decorator";
+    import {Bankkonto, Einheit, Haus, Objekt, Partner, Person} from "../../../server/resources/models";
 
     @Component({
         components: {
-            'Person': personTile,
-            'Partner': partnerIdentifier,
-            'Objekt': objectTile,
-            'Haus': houseTile,
-            'Einheit': unitTile,
-            'Bankkonto': bankAccountTile
+            [Person.type]: personTile,
+            [Partner.type]: partnerIdentifier,
+            [Objekt.type]: objectTile,
+            [Haus.type]: houseTile,
+            [Einheit.type]: unitTile,
+            [Bankkonto.type]: bankAccountTile
         }
     })
     export default class Tile extends Vue {

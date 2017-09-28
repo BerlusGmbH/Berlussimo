@@ -5,20 +5,23 @@
             berlussimo
         </v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-toolbar-side-icon class="hidden-md-and-up"></v-toolbar-side-icon>
-        <app-searchbar v-if="authCheck" class="pt-0"></app-searchbar>
+        <app-search-dialog v-if="authCheck && $vuetify.breakpoint.smAndDown" v-model="search"></app-search-dialog>
+        <app-user-menu-dialog v-if="authCheck && $vuetify.breakpoint.smAndDown" :userId="user.id"
+                              v-model="userMenu"></app-user-menu-dialog>
+        <app-searchbar v-if="authCheck && $vuetify.breakpoint.mdAndUp" class="pt-0"></app-searchbar>
+        <v-btn icon v-if="authCheck && $vuetify.breakpoint.smAndDown" @click.stop="search = true">
+            <v-icon>search</v-icon>
+        </v-btn>
         <app-notifications-toggle v-if="authCheck"></app-notifications-toggle>
-        <v-menu v-if="authCheck" offset-y open-on-hover>
+        <v-menu v-if="authCheck && $vuetify.breakpoint.mdAndUp" offset-y open-on-hover>
             <v-toolbar-title slot="activator">
                 <app-identifier v-model="user"></app-identifier>
                 <v-icon>arrow_drop_down</v-icon>
             </v-toolbar-title>
-            <v-list>
-                <v-list-tile @click="onLogout">
-                    <v-list-tile-title>Abmelden</v-list-tile-title>
-                </v-list-tile>
-            </v-list>
+            <app-user-menu-list></app-user-menu-list>
         </v-menu>
+        <v-toolbar-side-icon v-if="authCheck && $vuetify.breakpoint.smAndDown"
+                             @click.stop="userMenu = true"></v-toolbar-side-icon>
     </v-toolbar>
 </template>
 
@@ -28,13 +31,19 @@
     import {Getter, namespace} from 'vuex-class';
     import searchbar from "./Searchbar.vue";
     import notificationsToggle from "./NotificationsToggle.vue";
+    import searchDialog from "../common/dialogs/SearchDialog.vue";
+    import userMenuDialog from "../common/dialogs/UserMenuDialog.vue";
+    import userMenuList from "./UserMenuList.vue";
 
     const AuthGetter = namespace('auth', Getter);
 
     @Component({
         components: {
             'app-searchbar': searchbar,
-            'app-notifications-toggle': notificationsToggle
+            'app-notifications-toggle': notificationsToggle,
+            'app-search-dialog': searchDialog,
+            'app-user-menu-dialog': userMenuDialog,
+            'app-user-menu-list': userMenuList
         }
     })
     export default class Toolbar extends Vue {
@@ -43,9 +52,8 @@
         @AuthGetter('user')
         user;
 
-        onLogout() {
-            window.location.assign('/logout');
-        }
+        search: boolean = false;
+        userMenu: boolean = false;
     }
 </script>
 

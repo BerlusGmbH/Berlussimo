@@ -21,4 +21,9 @@ class PartnerController extends Controller
         session()->forget('partner_id');
         return ['status' => 'ok'];
     }
+
+    public function availableTitles(PartnerRequest $request, Partner $partner)
+    {
+        return response()->json($partner->availableJobTitles()->defaultOrder()->get());
+    }
 }

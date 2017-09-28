@@ -3,7 +3,7 @@
         <component :value="value"
                    @input="$emit('input', $event)"
                    @update="$emit('update', $event)"
-                   :is="value.constructor.name"
+                   :is="value.constructor.type"
                    @delete="$emit('delete', $event)"
         ></component>
     </div>
@@ -23,19 +23,27 @@
     import houseIdentifier from "./HouseIdentifier.vue";
     import unitIdentifier from "./UnitIdentifier.vue";
     import {Prop} from "vue-property-decorator";
+    import {
+        Detail, Einheit,
+        Haus, Job, JobTitle,
+        Objekt,
+        Partner, Person,
+        PurchaseContract,
+        RentalContract
+    } from "../../../server/resources/models";
 
     @Component({
         components: {
-            'Person': personIdentifier,
-            'Partner': partnerIdentifier,
-            'Detail': detailIdentifier,
-            'RentalContract': rentalContractIdentifier,
-            'PurchaseContract': purchaseContractIdentifier,
-            'Objekt': objectIdentifier,
-            'Haus': houseIdentifier,
-            'Einheit': unitIdentifier,
-            'Job': jobIdentifier,
-            'JobTitle': jobTitleIdentifier
+            [Person.type]: personIdentifier,
+            [Partner.type]: partnerIdentifier,
+            [Detail.type]: detailIdentifier,
+            [RentalContract.type]: rentalContractIdentifier,
+            [PurchaseContract.type]: purchaseContractIdentifier,
+            [Objekt.type]: objectIdentifier,
+            [Haus.type]: houseIdentifier,
+            [Einheit.type]: unitIdentifier,
+            [Job.type]: jobIdentifier,
+            [JobTitle.type]: jobTitleIdentifier
         }
     })
     export default class Identifier extends Vue {

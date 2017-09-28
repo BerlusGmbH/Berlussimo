@@ -11,10 +11,11 @@ class StoreRequest extends PersonenRequest
     public function rules()
     {
         return [
-            'employer' => ['required', Rule::exists('PARTNER_LIEFERANT', 'PARTNER_NAME', function ($query) {
-                $query->orWhere('PARTNER_AKTUELL', '1');
+            'employer_id' => ['required', Rule::exists('PARTNER_LIEFERANT', 'PARTNER_ID', function ($query) {
+                $query->where('PARTNER_AKTUELL', '1');
             })],
-            'title' => 'required|exists:job_titles,title',
+            'employee_id' => 'required|exists:persons,id',
+            'job_title_id' => 'required|exists:job_titles,id',
             'join_date' => 'required|date',
             'leave_date' => 'nullable|date|after:join_date',
             'hours_per_week' => 'nullable|numeric',

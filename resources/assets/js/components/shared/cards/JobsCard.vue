@@ -46,6 +46,13 @@
                     <td>{{props.item.hours_per_week}}</td>
                     <td>{{props.item.holidays}}</td>
                     <td>{{props.item.hourly_rate}}</td>
+                    <td class="text-xs-right">
+                        <div style="display: flex">
+                            <v-icon style="cursor: pointer" @click.stop="$set(models, props.index, true)">mdi-pencil
+                            </v-icon>
+                            <app-job-edit-dialog v-model="models[props.index]" :job="props.item"></app-job-edit-dialog>
+                        </div>
+                    </td>
                 </template>
                 <template slot="pageText" scope="{ pageStart, pageStop }">
                     Von {{ pageStart }} bis {{ pageStop }}
@@ -59,16 +66,24 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
+    import jobEditDialog from "../../../components/common/dialogs/JobEditDialog.vue"
 
-    @Component
+    @Component({
+        'components': {
+            'app-job-edit-dialog': jobEditDialog
+        }
+    })
     export default class JobsCard extends Vue {
         @Prop({type: Array})
-        jobs: any;
+        jobs: Array<any>;
 
         @Prop({type: String})
         headline: string;
 
+        models: Array<Boolean> = [];
+
         search: string = '';
+
         headers = [
             {text: 'Titel', value: 'title'},
             {text: 'Arbeitgeber', value: 'partner'},
@@ -76,7 +91,8 @@
             {text: 'Austritt', value: 'leave_date'},
             {text: 'Wochenstunden', value: 'hours_per_week'},
             {text: 'Urlaubstage', value: 'holidays'},
-            {text: 'Stundensatz', value: 'hourly_rate'}
+            {text: 'Stundensatz', value: 'hourly_rate'},
+            {text: '', value: '', sortable: false}
         ];
     }
 </script>

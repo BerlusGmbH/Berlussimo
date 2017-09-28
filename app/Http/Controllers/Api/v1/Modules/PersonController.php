@@ -48,7 +48,7 @@ class PersonController extends Controller
             'kaufvertraege.einheit.haus.objekt',
             'commonDetails',
             'jobsAsEmployee' => function ($query) {
-                $query->with(['title', 'employer']);
+                $query->with(['title', 'employer', 'employee']);
             },
             'roles',
             'audits' => function ($query) {
@@ -96,5 +96,10 @@ class PersonController extends Controller
                 );
             })->defaultOrder()->get()
         );
+    }
+
+    public function roles(PersonenRequest $request, Person $person)
+    {
+        return response()->json($person->roles);
     }
 }

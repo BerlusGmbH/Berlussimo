@@ -11,19 +11,17 @@ const {mix} = require('laravel-mix');
  |
  */
 
-if (mix.inProduction()) {
-    mix.version();
-}
-
 mix.webpackConfig({
     resolve: {
+        modules: [
+            path.resolve('./resources/assets/js'),
+            path.resolve('./node_modules')
+        ],
         alias: {
             'jquery': path.join(__dirname, 'node_modules/jquery/dist/jquery')
         }
     }
 });
-
-mix.sourceMaps();
 
 mix.sass('resources/assets/sass/berlussimo.scss', 'public/css');
 
@@ -112,3 +110,9 @@ mix.extract(
     ],
     'public/js/vendor.js'
 );
+
+mix.sourceMaps();
+
+if (mix.inProduction()) {
+    mix.version();
+}

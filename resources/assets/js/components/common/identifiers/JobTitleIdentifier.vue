@@ -1,7 +1,7 @@
 <template>
     <div class="identifier">
         <v-icon class="identifier-icon">{{value.getEntityIcon()}}</v-icon>
-        String(value)
+        {{String(value)}}
     </div>
 </template>
 

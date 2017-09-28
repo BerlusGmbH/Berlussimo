@@ -5,24 +5,6 @@
         <div>
             <v-icon v-if="value.getSexIcon()">{{value.getSexIcon()}}</v-icon>
         </div>
-        <app-person-edit-dialog :position-absolutely="true"
-                                :show="edit"
-                                @show="val => {edit = val}"
-                                :position-x="x"
-                                :position-y="y"
-                                :value="value"
-                                @input="savePerson($event); $emit('input', $event)"
-        >
-        </app-person-edit-dialog>
-        <app-detail-add-dialog :position-absolutely="true"
-                               :show="add"
-                               @show="val => {add = val}"
-                               :position-x="x"
-                               :position-y="y"
-                               :parent="value"
-                               @input="saveDetail($event); $emit('update')"
-        >
-        </app-detail-add-dialog>
         <v-menu offset-y v-model="show" :position-absolutely="true">
             <v-icon slot="activator" style="font-size: inherit">mdi-arrow-down-drop-circle</v-icon>
             <v-list>
@@ -45,9 +27,44 @@
                     </v-list-tile-avatar>
                     <v-list-tile-title>Detail</v-list-tile-title>
                 </v-list-tile>
+                <v-list-tile @click="login = true">
+                    <v-list-tile-avatar>
+                        <v-icon>mdi-pencil</v-icon>
+                    </v-list-tile-avatar>
+                    <v-list-tile-title>Login</v-list-tile-title>
+                </v-list-tile>
+                <v-list-tile @click="job = true">
+                    <v-list-tile-avatar>
+                        <v-icon>add</v-icon>
+                    </v-list-tile-avatar>
+                    <v-list-tile-title>Anstellung</v-list-tile-title>
+                </v-list-tile>
             </v-list>
         </v-menu>
-        <app-merge-dialog v-model="merge" :left="value"></app-merge-dialog>
+        <app-person-edit-dialog v-if="show || edit"
+                                :position-absolutely="true"
+                                :show="edit"
+                                @show="val => {edit = val}"
+                                :position-x="x"
+                                :position-y="y"
+                                :value="value"
+                                @input="savePerson($event); $emit('input', $event)"
+        >
+        </app-person-edit-dialog>
+        <app-detail-add-dialog v-if="show || add"
+                               :position-absolutely="true"
+                               :show="add"
+                               @show="val => {add = val}"
+                               :position-x="x"
+                               :position-y="y"
+                               :parent="value"
+                               @input="saveDetail($event); $emit('update')"
+        >
+        </app-detail-add-dialog>
+        <app-person-merge-dialog v-if="show || merge" v-model="merge" :left="value"></app-person-merge-dialog>
+        <app-job-add-dialog v-if="show || job" v-model="job" :employee="value"></app-job-add-dialog>
+        <app-login-edit-dialog v-if="show || login" v-model="login" :left="value"
+                               :person="value"></app-login-edit-dialog>
     </div>
 </template>
 
@@ -56,10 +73,12 @@
     import Vue from "vue";
     import {Prop} from "vue-property-decorator";
     import personEditDialog from "../dialogs/PersonEditDialog.vue"
+    import jobAddDialog from "../dialogs/JobAddDialog.vue"
     import detailAddDialog from "../dialogs/DetailAddDialog.vue"
+    import loginEditDialog from "../dialogs/LoginEditDialog.vue"
     import {Mutation, namespace} from "vuex-class";
     import {Detail, Person} from "../../../server/resources/models";
-    import mergeDialog from "../../modules/person/show/Merge.vue";
+    import personMergeDialog from "../dialogs/PersonMergeDialog.vue";
 
     const SnackbarMutation = namespace('shared/snackbar', Mutation);
     const RefreshMutation = namespace('shared/refresh', Mutation);
@@ -67,8 +86,10 @@
     @Component({
         'components': {
             'app-person-edit-dialog': personEditDialog,
+            'app-job-add-dialog': jobAddDialog,
             'app-detail-add-dialog': detailAddDialog,
-            'app-merge-dialog': mergeDialog
+            'app-person-merge-dialog': personMergeDialog,
+            'app-login-edit-dialog': loginEditDialog
         }
     })
     export default class PersonIdentifier extends Vue {
@@ -85,6 +106,8 @@
         edit: boolean = false;
         add: boolean = false;
         merge: boolean = false;
+        login: boolean = false;
+        job: boolean = false;
 
         x: Number = 0;
         y: Number = 0;

@@ -51,7 +51,7 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {Prop, Watch} from "vue-property-decorator";
+    import {Prop} from "vue-property-decorator";
     import {Mutation, namespace} from "vuex-class";
     import detailDeleteDialog from "../../common/dialogs/DetailDeleteDialog.vue";
     import detailEditDialog from "../../common/dialogs/DetailEditDialog.vue";
@@ -74,13 +74,6 @@
         headline;
 
         models: Array<boolean> = [];
-
-        @Watch('details')
-        onDetailsChange(val) {
-            this.models = val.map(() => {
-                return false;
-            });
-        }
 
         @SnackbarMutation('updateMessage')
         updateMessage: Function;

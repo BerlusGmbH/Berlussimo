@@ -32,7 +32,6 @@
                 </v-flex>
             </v-layout>
         </transition>
-        <app-show-fab v-model="showFab"></app-show-fab>
     </v-container>
 </template>
 
@@ -49,8 +48,6 @@
     import rentalContractsCard from "../../shared/cards/RentalContractsCard.vue";
     import purchaseContractsCard from "../../shared/cards/PurchaseContractsCard.vue";
     import jobsCard from "../../shared/cards/JobsCard.vue";
-    import mergeDialog from "./show/Merge.vue";
-    import fab from "./show/Fab.vue";
 
     const ShowAction = namespace('modules/personen/show', Action);
     const ShowState = namespace('modules/personen/show', State);
@@ -67,9 +64,7 @@
             'app-purchase-contracts-card': purchaseContractsCard,
             'app-jobs-card': jobsCard,
             'app-audits-card': auditsCard,
-            'app-roles-card': rolesCard,
-            'app-merge-dialog': mergeDialog,
-            'app-show-fab': fab
+            'app-roles-card': rolesCard
         }
     })
     export default class Show extends Vue {
@@ -98,9 +93,6 @@
                 })
             }
         }
-
-        showMergeDialog: boolean = false;
-        showFab: boolean = false;
 
         created() {
             this.fetchPerson(this.personId);

@@ -9,6 +9,12 @@ export class Person {
     name: string = '';
     first_name: string | null = null;
     birthday: Date;
+    mietvertraege: Array<RentalContract>;
+    kaufvertraege: Array<PurchaseContract>;
+    jobs_as_employee: Array<Job>;
+    audits: Array<Object>;
+
+    static type = 'Person';
 
     toString() {
         let full_name = '';
@@ -50,6 +56,57 @@ export class Person {
     save() {
         return axios.patch('/api/v1/persons/' + this.id, this);
     }
+
+    static prototypePerson(person: Person): Person {
+        Object.setPrototypeOf(person, Person.prototype);
+        Array.prototype.forEach.call(['common_details', 'hinweise', 'adressen', 'emails', 'faxs', 'phones'], (details) => {
+            Array.prototype.forEach.call(person[details], (detail) => {
+                Object.setPrototypeOf(detail, Detail.prototype);
+            });
+        });
+        Array.prototype.forEach.call(person.audits, (audit) => {
+            if (audit.user) {
+                Object.setPrototypeOf(audit.user, Person.prototype);
+            }
+        });
+        Array.prototype.forEach.call(person.mietvertraege, (mietvertrag) => {
+            Object.setPrototypeOf(mietvertrag, RentalContract.prototype);
+            if (mietvertrag.einheit) {
+                Object.setPrototypeOf(mietvertrag.einheit, Einheit.prototype);
+                if (mietvertrag.einheit.haus) {
+                    Object.setPrototypeOf(mietvertrag.einheit.haus, Haus.prototype);
+                    if (mietvertrag.einheit.haus.objekt) {
+                        Object.setPrototypeOf(mietvertrag.einheit.haus.objekt, Objekt.prototype);
+                    }
+                }
+            }
+        });
+        Array.prototype.forEach.call(person.kaufvertraege, (kaufvertrag) => {
+            Object.setPrototypeOf(kaufvertrag, PurchaseContract.prototype);
+            if (kaufvertrag.einheit) {
+                Object.setPrototypeOf(kaufvertrag.einheit, Einheit.prototype);
+                if (kaufvertrag.einheit.haus) {
+                    Object.setPrototypeOf(kaufvertrag.einheit.haus, Haus.prototype);
+                    if (kaufvertrag.einheit.haus.objekt) {
+                        Object.setPrototypeOf(kaufvertrag.einheit.haus.objekt, Objekt.prototype);
+                    }
+                }
+            }
+        });
+        Array.prototype.forEach.call(person.jobs_as_employee, (job) => {
+            Object.setPrototypeOf(job, Job.prototype);
+            if (job.employer) {
+                Object.setPrototypeOf(job.employer, Partner.prototype);
+            }
+            if (job.employee) {
+                Object.setPrototypeOf(job.employee, Person.prototype);
+            }
+            if (job.title) {
+                Object.setPrototypeOf(job.title, JobTitle.prototype);
+            }
+        });
+        return person;
+    }
 }
 
 export class Partner {
@@ -60,6 +117,8 @@ export class Partner {
     PLZ: string = '';
     ORT: string = '';
     LAND: string = '';
+
+    static type = 'Partner';
 
     toString(): string {
         return this.PARTNER_NAME;
@@ -82,6 +141,8 @@ export class Objekt {
     OBJEKT_ID: number = -1;
     OBJEKT_KURZNAME: string = '';
 
+    static type = 'HVObject';
+
     toString(): string {
         return this.OBJEKT_KURZNAME;
     }
@@ -101,6 +162,8 @@ export class Haus {
     HAUS_NUMMER: string = '';
     HAUS_PLZ: number;
     HAUS_STADT: string = '';
+
+    static type = 'House';
 
     icon: string = 'mdi-domain';
 
@@ -129,6 +192,8 @@ export class Einheit {
     HAUS_ID: number = -1;
     TYP: string = '';
 
+    static type = 'Unit';
+
     icon: string = 'mdi-cube';
 
     toString(): string {
@@ -151,6 +216,8 @@ export class Detail {
     DETAIL_BEMERKUNG: string = '';
     DETAIL_ZUORDNUNG_TABELLE: string = '';
     DETAIL_ZUORDNUNG_ID: string = '';
+
+    static type = 'Detail';
 
     icon: string = 'mdi-note';
 
@@ -181,6 +248,8 @@ export class RentalContract {
     MIETVERTRAG_BIS: Date;
     EINHEIT_ID: number = -1;
 
+    static type = 'RentalContract';
+
     toString(): string {
         return "MV-" + this.MIETVERTRAG_ID;
     }
@@ -203,6 +272,8 @@ export class PurchaseContract {
     BIS: Date;
     EINHEIT_ID: number = -1;
 
+    static type = 'PurchaseContract';
+
     toString(): string {
         return "KV-" + this.ID;
     }
@@ -219,16 +290,22 @@ export class PurchaseContract {
 
 export class Job {
     id: number = -1;
+    employer_id: number = -1;
+    employee_id: number = -1;
     join_date: Date;
     leave_date: Date;
     holidays: number = 0;
     hourly_rate: number = 0;
     hours_per_week: number = 0;
+
+    static type = 'Job';
 }
 
 export class JobTitle {
     id: number = -1;
     title: string = '';
+
+    static type = 'JobTitle';
 
     getEntityIcon(): string {
         return 'mdi-book-open-variant';
@@ -244,6 +321,8 @@ export class Bankkonto {
     IBAN: string = '';
     BIC: string = '';
     INSTITUT: string = '';
+
+    static type = 'BankAccount';
 
 
     toString(): string {

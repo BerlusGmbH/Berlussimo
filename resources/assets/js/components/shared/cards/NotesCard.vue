@@ -50,7 +50,7 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {Prop, Watch} from "vue-property-decorator";
+    import {Prop} from "vue-property-decorator";
     import detailDeleteDialog from "../../common/dialogs/DetailDeleteDialog.vue";
     import detailEditDialog from "../../common/dialogs/DetailEditDialog.vue";
     import {Mutation, namespace} from "vuex-class";
@@ -71,13 +71,6 @@
 
         @Prop({type: String})
         headline;
-
-        @Watch('details')
-        onDetailsChange(val) {
-            this.models = val.map(() => {
-                return false;
-            });
-        }
 
         @SnackbarMutation('updateMessage')
         updateMessage: Function;

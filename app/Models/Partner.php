@@ -30,6 +30,11 @@ class Partner extends Model
         return $this->hasMany(Job::class, 'employer_id');
     }
 
+    public function availableJobTitles()
+    {
+        return $this->hasMany(JobTitle::class, 'employer_id');
+    }
+
     public function arbeitnehmer()
     {
         return $this->belongsToMany(Person::class, 'jobs', 'employer_id', 'employee_id');

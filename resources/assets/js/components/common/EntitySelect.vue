@@ -1,9 +1,9 @@
 <template>
-    <app-select :search-input.sync="query" :value="inputValue"
+    <app-select :search-input.sync="query" :value="value" :disabled="disabled"
                 @change="emit('change', $event)" @input="emit('input', $event)" :async-loading="searching"
-                :items="items" autocomplete multiple @click.native.stop
-                :hide-details="hideDetails" returnObject :no-data-text="status" :prepend-icon="icon"
-                :append-icon="appendIcon" :filter="() => true" :solo="solo">
+                :items="items" autocomplete @click.native.stop :multiple="multiple"
+                :hide-details="hideDetails" return-object :no-data-text="status" :prepend-icon="icon"
+                :append-icon="appendIcon" :filter="() => true" :solo="solo" :label="label">
         <template slot="selection" scope="data">
             <app-chip @input="data.parent.selectItem(data.item); $emit('chip-close', $event)"
                       :multiple="multiple" :entity="data.item" :selected="data.selected"></app-chip>
@@ -40,13 +40,17 @@
 
         query: string = '';
 
-        inputValue: Array<any> = [];
-
         @Prop({type: [Object, Array], default: () => []})
         value;
 
         @Prop({type: Boolean, default: false})
         solo;
+
+        @Prop({type: Boolean, default: false})
+        disabled;
+
+        @Prop({type: String, default: ''})
+        label;
 
         @Prop({type: Boolean, default: false})
         hideDetails;
@@ -67,21 +71,10 @@
         appendIcon;
 
         @Watch('query')
-        onQueryChanged(query: string) {
-            if (query) {
+        onQueryChanged(query: any) {
+            if (typeof query === 'string') {
                 this.goSearch(query);
-            } else {
-                this.items = [];
             }
-        }
-
-        @Watch('value')
-        onValueChanged(val) {
-            this.inputValue = val;
-        }
-
-        created() {
-            this.inputValue = this.value;
         }
 
         get status(): string {
@@ -108,9 +101,7 @@
 
         emit(type, entities) {
             if (Array.isArray(entities)) {
-                if (!this.multiple && entities.length > 1) {
-                    this.inputValue = entities.slice(-1);
-                } else if (!this.multiple && entities.length == 1) {
+                if (!this.multiple && entities.length == 1) {
                     this.$emit(type, entities[entities.length - 1]);
                 } else if (this.multiple) {
                     this.$emit(type, entities);
