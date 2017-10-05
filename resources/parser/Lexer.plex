@@ -16,6 +16,8 @@ class Lexer
     private $state = 1;
     private $colstack;
     public $yyTraceFILE;
+    private $yyTracePrompt;
+    private $state_name;
 
     function __construct($data, $trace = null)
     {

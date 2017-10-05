@@ -60,51 +60,59 @@ export class Person {
     static prototypePerson(person: Person): Person {
         Object.setPrototypeOf(person, Person.prototype);
         Array.prototype.forEach.call(['common_details', 'hinweise', 'adressen', 'emails', 'faxs', 'phones'], (details) => {
-            Array.prototype.forEach.call(person[details], (detail) => {
-                Object.setPrototypeOf(detail, Detail.prototype);
+            if (person[details]) {
+                Object.setPrototypeOf(person[details], Detail.prototype);
+            }
+        });
+        if (person.audits) {
+            Array.prototype.forEach.call(person.audits, (audit) => {
+                if (audit.user) {
+                    Object.setPrototypeOf(audit.user, Person.prototype);
+                }
             });
-        });
-        Array.prototype.forEach.call(person.audits, (audit) => {
-            if (audit.user) {
-                Object.setPrototypeOf(audit.user, Person.prototype);
-            }
-        });
-        Array.prototype.forEach.call(person.mietvertraege, (mietvertrag) => {
-            Object.setPrototypeOf(mietvertrag, RentalContract.prototype);
-            if (mietvertrag.einheit) {
-                Object.setPrototypeOf(mietvertrag.einheit, Einheit.prototype);
-                if (mietvertrag.einheit.haus) {
-                    Object.setPrototypeOf(mietvertrag.einheit.haus, Haus.prototype);
-                    if (mietvertrag.einheit.haus.objekt) {
-                        Object.setPrototypeOf(mietvertrag.einheit.haus.objekt, Objekt.prototype);
+        }
+        if (person.mietvertraege) {
+            Array.prototype.forEach.call(person.mietvertraege, (mietvertrag) => {
+                Object.setPrototypeOf(mietvertrag, RentalContract.prototype);
+                if (mietvertrag.einheit) {
+                    Object.setPrototypeOf(mietvertrag.einheit, Einheit.prototype);
+                    if (mietvertrag.einheit.haus) {
+                        Object.setPrototypeOf(mietvertrag.einheit.haus, Haus.prototype);
+                        if (mietvertrag.einheit.haus.objekt) {
+                            Object.setPrototypeOf(mietvertrag.einheit.haus.objekt, Objekt.prototype);
+                        }
                     }
                 }
-            }
-        });
-        Array.prototype.forEach.call(person.kaufvertraege, (kaufvertrag) => {
-            Object.setPrototypeOf(kaufvertrag, PurchaseContract.prototype);
-            if (kaufvertrag.einheit) {
-                Object.setPrototypeOf(kaufvertrag.einheit, Einheit.prototype);
-                if (kaufvertrag.einheit.haus) {
-                    Object.setPrototypeOf(kaufvertrag.einheit.haus, Haus.prototype);
-                    if (kaufvertrag.einheit.haus.objekt) {
-                        Object.setPrototypeOf(kaufvertrag.einheit.haus.objekt, Objekt.prototype);
+            });
+        }
+        if (person.kaufvertraege) {
+            Array.prototype.forEach.call(person.kaufvertraege, (kaufvertrag) => {
+                Object.setPrototypeOf(kaufvertrag, PurchaseContract.prototype);
+                if (kaufvertrag.einheit) {
+                    Object.setPrototypeOf(kaufvertrag.einheit, Einheit.prototype);
+                    if (kaufvertrag.einheit.haus) {
+                        Object.setPrototypeOf(kaufvertrag.einheit.haus, Haus.prototype);
+                        if (kaufvertrag.einheit.haus.objekt) {
+                            Object.setPrototypeOf(kaufvertrag.einheit.haus.objekt, Objekt.prototype);
+                        }
                     }
                 }
-            }
-        });
-        Array.prototype.forEach.call(person.jobs_as_employee, (job) => {
-            Object.setPrototypeOf(job, Job.prototype);
-            if (job.employer) {
-                Object.setPrototypeOf(job.employer, Partner.prototype);
-            }
-            if (job.employee) {
-                Object.setPrototypeOf(job.employee, Person.prototype);
-            }
-            if (job.title) {
-                Object.setPrototypeOf(job.title, JobTitle.prototype);
-            }
-        });
+            });
+        }
+        if (person.jobs_as_employee) {
+            Array.prototype.forEach.call(person.jobs_as_employee, (job) => {
+                Object.setPrototypeOf(job, Job.prototype);
+                if (job.employer) {
+                    Object.setPrototypeOf(job.employer, Partner.prototype);
+                }
+                if (job.employee) {
+                    Object.setPrototypeOf(job.employee, Person.prototype);
+                }
+                if (job.title) {
+                    Object.setPrototypeOf(job.title, JobTitle.prototype);
+                }
+            });
+        }
         return person;
     }
 }
@@ -135,6 +143,11 @@ export class Partner {
     getDetailUrl() {
         return base_url + '/partner?option=partner_im_detail&partner_id=' + this.PARTNER_ID;
     }
+
+    static prototypePartner(partner: Partner) {
+        Object.setPrototypeOf(partner, Partner.prototype);
+        return partner;
+    }
 }
 
 export class Objekt {
@@ -153,6 +166,11 @@ export class Objekt {
 
     getDetailUrl() {
         return base_url + '/objekte/' + this.OBJEKT_ID;
+    }
+
+    static prototypeObjekt(objekt: Objekt) {
+        Object.setPrototypeOf(objekt, Objekt.prototype);
+        return objekt;
     }
 }
 
@@ -182,6 +200,11 @@ export class Haus {
     getDetailUrl(): string {
         return base_url + '/haeuser/' + this.HAUS_ID;
     }
+
+    static prototypeHaus(haus: Haus) {
+        Object.setPrototypeOf(haus, Haus.prototype);
+        return haus;
+    }
 }
 
 export class Einheit {
@@ -206,6 +229,11 @@ export class Einheit {
 
     getDetailUrl(): string {
         return base_url + '/einheiten/' + this.EINHEIT_ID;
+    }
+
+    static prototypeEinheit(einheit: Einheit) {
+        Object.setPrototypeOf(einheit, Einheit.prototype);
+        return einheit;
     }
 }
 
@@ -240,6 +268,11 @@ export class Detail {
     delete() {
         return axios.delete('/api/v1/details/' + this.DETAIL_ID);
     }
+
+    static prototypeDetail(detail: Detail) {
+        Object.setPrototypeOf(detail, Detail.prototype);
+        return detail;
+    }
 }
 
 export class RentalContract {
@@ -264,6 +297,11 @@ export class RentalContract {
             + '&mietvertrag_id='
             + this.MIETVERTRAG_ID;
     }
+
+    static prototypeRentalContract(contract: RentalContract) {
+        Object.setPrototypeOf(contract, RentalContract.prototype);
+        return contract;
+    }
 }
 
 export class PurchaseContract {
@@ -286,6 +324,11 @@ export class PurchaseContract {
         return base_url + '/weg?option=einheit_uebersicht&einheit_id='
             + this.EINHEIT_ID;
     }
+
+    static prototypePurchaseContract(contract: PurchaseContract) {
+        Object.setPrototypeOf(contract, PurchaseContract.prototype);
+        return contract;
+    }
 }
 
 export class Job {
@@ -297,8 +340,25 @@ export class Job {
     holidays: number = 0;
     hourly_rate: number = 0;
     hours_per_week: number = 0;
+    employer: any;
+    employee: any;
+    title: any;
 
     static type = 'Job';
+
+    static prototypeJob(job: Job) {
+        Object.setPrototypeOf(job, Job.prototype);
+        if (job.employer) {
+            Object.setPrototypeOf(job.employer, Partner.prototype);
+        }
+        if (job.employee) {
+            Object.setPrototypeOf(job.employee, Person.prototype);
+        }
+        if (job.title) {
+            Object.setPrototypeOf(job.title, JobTitle.prototype);
+        }
+        return job;
+    }
 }
 
 export class JobTitle {
@@ -306,6 +366,10 @@ export class JobTitle {
     title: string = '';
 
     static type = 'JobTitle';
+
+    toString(): string {
+        return this.title;
+    }
 
     getEntityIcon(): string {
         return 'mdi-book-open-variant';

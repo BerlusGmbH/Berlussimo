@@ -17,6 +17,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.v1.', 'namespace' => 'Api\v1', 'mid
 
     Route::group(['namespace' => 'Modules'], function () {
         Route::get('/partners/{partner}/available-job-titles', 'PartnerController@availableTitles')->name('partners.available-job-titles');
+        Route::get('/persons/parameters', 'PersonController@parameters')->name('persons.parameters');
         Route::get('/persons/details/categories', 'PersonController@detailsCategories')->name('details.categories');
         Route::get('/persons/details/categories/{category}/subcategories', 'PersonController@detailsSubcategories')->name('details.subcategories');
         Route::get('/persons/{left}/merge/{right}', 'PersonController@merge')->name('merge');
@@ -24,7 +25,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.v1.', 'namespace' => 'Api\v1', 'mid
         Route::get('/persons/{person}/roles', 'PersonController@roles')->name('persons.roles');
         Route::resource('jobs', 'JobController', ['only' => ['update', 'store']]);
         Route::resource('details', 'DetailController', ['only' => ['update', 'destroy', 'store']]);
-        Route::resource('persons', 'PersonController', ['only' => ['update', 'show']]);
+        Route::resource('persons', 'PersonController', ['only' => ['update', 'show', 'index']]);
         Route::resource('roles', 'RoleController', ['only' => ['index']]);
         Route::resource('persons.credential', 'CredentialController', ['only' => ['store', 'index']]);
     });

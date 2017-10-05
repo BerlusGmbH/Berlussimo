@@ -90,7 +90,7 @@ return [
             'default' => '20'
         ],
         [
-            'action' => \App\Http\Controllers\Legacy\PersonenController::class . '@index',
+            'action' => \App\Http\Controllers\Api\v1\Modules\PersonController::class . '@index',
             'parameter' => 'v',
             'views' => [
                 '(ohne)' => '',
@@ -102,7 +102,7 @@ return [
             'default' => 'Mieter'
         ],
         [
-            'action' => \App\Http\Controllers\Legacy\PersonenController::class . '@index',
+            'action' => \App\Http\Controllers\Api\v1\Modules\PersonController::class . '@index',
             'parameter' => 'c',
             'views' => [
                 'Mieter' => '!person(mietvertrag)',
@@ -114,7 +114,7 @@ return [
             'default' => null
         ],
         [
-            'action' => \App\Http\Controllers\Legacy\PersonenController::class . '@index',
+            'action' => \App\Http\Controllers\Api\v1\Modules\PersonController::class . '@index',
             'parameter' => 'f1',
             'views' => [
                 '(leer)' => '',
@@ -125,7 +125,7 @@ return [
             'default' => 'Ja'
         ],
         [
-            'action' => \App\Http\Controllers\Legacy\PersonenController::class . '@index',
+            'action' => \App\Http\Controllers\Api\v1\Modules\PersonController::class . '@index',
             'parameter' => 'f2',
             'views' => function () {
                 $views = ['(leer)' => ''];
@@ -138,7 +138,7 @@ return [
             'default' => null
         ],
         [
-            'action' => \App\Http\Controllers\Legacy\PersonenController::class . '@index',
+            'action' => \App\Http\Controllers\Api\v1\Modules\PersonController::class . '@index',
             'parameter' => 'f3',
             'views' => [
                 '(leer)' => '',
@@ -149,7 +149,7 @@ return [
             'default' => null
         ],
         [
-            'action' => \App\Http\Controllers\Legacy\PersonenController::class . '@index',
+            'action' => \App\Http\Controllers\Api\v1\Modules\PersonController::class . '@index',
             'parameter' => 's',
             'views' => [
                 '5' => 5,

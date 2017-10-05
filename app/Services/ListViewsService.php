@@ -83,6 +83,12 @@ class ListViewsService
         return isset($this->parameters[$action]);
     }
 
+    public function getParameters($action = null)
+    {
+        $action = $this->resolveAction($action);
+        return $this->views[$action];
+    }
+
     public function calculateResponseData($request, $builder)
     {
         list($query, $size) = $this->parseParameters($request);
@@ -103,7 +109,7 @@ class ListViewsService
         if ($request->has('q')) {
             $query = $request->input('q');
         }
-        foreach ($this->getParameters() as $parameter) {
+        foreach ($this->getParameterNames() as $parameter) {
             if (request()->has($parameter) && $parameter != 's') {
                 if (is_array($request->input($parameter))) {
                     foreach ($request->input($parameter) as $subparameter) {
@@ -117,7 +123,7 @@ class ListViewsService
         return [$query, $size];
     }
 
-    public function getParameters($additionalParameters = null, $action = null)
+    public function getParameterNames($additionalParameters = null, $action = null)
     {
         $action = $this->resolveAction($action);
         if (is_array($additionalParameters)) {
@@ -230,13 +236,17 @@ class ListViewsService
         while (!$relations->isEmpty()) {
             $r1 = $relations->shift();
             $c = count($combinedRelations);
-            for ($i = 0; $i < $c; $i++) {
-                if (strpos($r1, $combinedRelations[$i]->first()) === 0) {
-                    $combinedRelations[$i]->prepend($r1);
-                    continue 2;
-                } elseif (strpos($combinedRelations[$i]->first(), $r1) === 0) {
-                    $combinedRelations[$i]->push($r1);
-                    continue 2;
+            if ($r1 !== '') {
+                for ($i = 0; $i < $c; $i++) {
+                    if ($combinedRelations[$i]->first() !== '') {
+                        if (substr($r1, 0, strlen($combinedRelations[$i]->first())) === $combinedRelations[$i]->first()) {
+                            $combinedRelations[$i]->prepend($r1);
+                            continue 2;
+                        } elseif (substr($combinedRelations[$i]->first(), 0, strlen($r1)) === $r1) {
+                            $combinedRelations[$i]->push($r1);
+                            continue 2;
+                        }
+                    }
                 }
             }
             $combinedRelations[] = collect($r1);
@@ -289,6 +299,94 @@ class ListViewsService
             }
         }
         return [$result, $wantedRelations];
+    }
+
+    public function response($columns, $index, $wantedRelations, $paginator, $class)
+    {
+        $headers = [];
+        foreach ($columns as $fields) {
+            $column = key($fields);
+            $header = e(ucfirst($column));
+            if (isset($fields) && isset($fields[$column]) && !$fields[$column]['fields']->isEmpty()) {
+                $header .= '<br>(';
+                $last = $fields[$column]['fields']->last()['field'];
+                foreach ($fields[$column]['fields'] as $field) {
+                    $header .= e(ucfirst($field['field']));
+                    if ($last != $field['field']) {
+                        $header .= e(', ');
+                    } elseif ($last == $field['field']) {
+                        $header .= e(')');
+                    }
+                }
+            }
+            if (isset($fields[$column]['columns']) && (!$fields[$column]['columns']->isEmpty() || !$fields[$column]['aggregates']->isEmpty())) {
+                $header .= '<br>[';
+                if (!$fields[$column]['aggregates']->isEmpty()) {
+                    $last = $fields[$column]['aggregates']->last();
+                    foreach ($fields[$column]['aggregates'] as $col) {
+                        $header .= e(ucfirst($col));
+                        if ($last != $col || !$fields[$column]['columns']->isEmpty()) {
+                            $header .= e(', ');
+                        }
+                    }
+                }
+                if (!$fields[$column]['columns']->isEmpty()) {
+                    $last = $fields[$column]['columns']->last();
+                    foreach ($fields[$column]['columns'] as $col) {
+                        $header .= e(ucfirst($col));
+                        if ($last != $col) {
+                            $header .= e(', ');
+                        }
+                    }
+                }
+                $header .= e(']');
+            }
+            $headers[] = $header;
+        }
+
+        $items = [];
+        foreach ($index as $entity) {
+            $row = [];
+            foreach ($columns as $key => $fields) {
+                $column = key($fields);
+                $rs = Relations::columnColumnToRelations(Relations::classToColumn($class), $column);
+                $cell = [];
+                foreach ($rs as $r) {
+                    if ($wantedRelations[$key]->contains($r)) {
+                        //$c = 0;
+                        //if (isset($fields[$column]['columns'])) {
+                        //    $c = $fields[$column]['columns']->count();
+                        //}
+                        //if ($c > 1 || ($c == 0 && count($rs) > 1 && isset($entity[$r])))
+                        //    echo ucfirst(Relations::classToColumn(Relations::classRelationToMany($class, $r)[1])) . '<br>';
+                        if (isset($fields[$column]['aggregates']) && !$fields[$column]['aggregates']->isEmpty()) {
+                            foreach ($fields[$column]['aggregates'] as $aggregate) {
+                                $cell[] = ['type' => 'aggregate', 'entities' => $entity[$r]];
+                                //@include('shared.entities.aggregates.count', ['entities' => $entity[$r], 'aggregate' => $aggregate] )<br >
+                            }
+                        } else {
+                            if (isset($entity[$r])) {
+                                foreach ($entity[$r] as $value) {
+                                    if (isset($fields[$column]['fields']) && !$fields[$column]['fields']->isEmpty()) {
+                                        $lines = [];
+                                        foreach ($fields[$column]['fields'] as $field) {
+                                            $dbField = Relations::classFieldToField(get_class($value), $field['field']);
+                                            $lines[] = e($value->{$dbField});
+                                        }
+                                        $cell[] = ['type' => 'prerendered', 'lines' => $lines];
+                                    } else {
+                                        $cell[] = ['type' => 'entity', 'entity' => $value, 'class' => get_class($value)];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                $row[] = $cell;
+            }
+            $items[] = $row;
+        }
+        return ['headers' => $headers, 'items' => $items, 'total' => $paginator->total()];
     }
 
     public function missingDependency($parameter, $request, $action = null)

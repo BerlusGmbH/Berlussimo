@@ -14,6 +14,7 @@ import messagesLoader from "./components/shared/MessagesLoader.vue";
 import messages from "./components/shared/Messages.vue";
 import snackbar from "./components/shared/Snackbar.vue";
 import personDetailView from "./components/modules/person/DetailView.vue";
+import personListView from "./components/modules/person/ListView.vue";
 import identifier from "./components/common/identifiers/Identifier.vue";
 import tile from "./components/common/tiles/Tile.vue";
 import chip from "./components/common/chips/Chip.vue";
@@ -48,5 +49,6 @@ new Vue({
         'app-global-select-loader': globalSelectLoader,
         'app-workplace-loader': workplaceLoader,
         'app-person-detail-view': personDetailView,
+        'app-person-list-view': personListView
     }
 });

@@ -67,7 +67,7 @@
             'app-roles-card': rolesCard
         }
     })
-    export default class Show extends Vue {
+    export default class DetailView extends Vue {
         @Prop()
         personId: number;
 

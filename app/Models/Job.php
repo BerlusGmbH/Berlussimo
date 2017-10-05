@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Contracts\Active as ActiveContract;
 use App\Models\Traits\Active;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -15,6 +16,15 @@ class Job extends Model implements ActiveContract
     public $timestamps = true;
     protected $table = 'jobs';
     protected $guarded = [];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope('employer_and_title', function (Builder $builder) {
+            $builder->with(['employer', 'title']);
+        });
+    }
 
     public function employer()
     {

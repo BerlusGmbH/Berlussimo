@@ -244,7 +244,8 @@ class RelationsService
 
     public function columnColumnToRelations($outer, $inner)
     {
-        $relationships = self::$COLUMN_COLUMN_TO_RELATIONS[$outer][$inner][0];
+        $relationships = isset(self::$COLUMN_COLUMN_TO_RELATIONS[$outer][$inner][0]) ?
+            self::$COLUMN_COLUMN_TO_RELATIONS[$outer][$inner][0] : null;
         if(is_null($relationships)) {
             return [];
         }

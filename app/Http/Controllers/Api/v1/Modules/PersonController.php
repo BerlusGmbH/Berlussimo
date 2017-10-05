@@ -10,10 +10,20 @@ use App\Jobs\MergePersons;
 use App\Models\DetailCategory;
 use App\Models\DetailSubcategory;
 use App\Models\Person;
+use App\Services\ListViewsService;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class PersonController extends Controller
 {
+    public function index(PersonenRequest $request, ListViewsService $listViewsService)
+    {
+        $builder = Person::query();
+
+        list($columns, $paginator, $index, $wantedRelations) = $listViewsService->calculateResponseData($request, $builder);
+
+        return response()->json($listViewsService->response($columns, $index, $wantedRelations, $paginator, Person::class));
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -101,5 +111,10 @@ class PersonController extends Controller
     public function roles(PersonenRequest $request, Person $person)
     {
         return response()->json($person->roles);
+    }
+
+    public function parameters(PersonenRequest $request, ListViewsService $listViewsService)
+    {
+        return response()->json($listViewsService->getParameters(PersonController::class . '@index'));
     }
 }
