@@ -1,10 +1,5 @@
 @charset "UTF-8";
 
-/* reset main container height */
-.application > main > .container {
-  min-height: inherit;
-}
-
 /* ajust line heiht of v-text-field with prepended mdi icon */
 .input-group__prepend-icon.mdi:before {
   line-height: normal;

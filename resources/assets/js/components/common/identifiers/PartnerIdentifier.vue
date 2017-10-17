@@ -16,20 +16,3 @@
         value;
     }
 </script>
-
-<style>
-    .identifier-icon {
-        position: absolute;
-        left: 0;
-    }
-
-    .identifier i {
-        font-size: inherit;
-    }
-
-    .identifier {
-        padding-left: 1.2em;
-        position: relative;
-        display: inline-block
-    }
-</style>

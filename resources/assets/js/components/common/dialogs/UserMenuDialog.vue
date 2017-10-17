@@ -3,7 +3,7 @@
               @input="$emit('input', $event)"
               fullscreen
               lazy
-              transition="dialog-bottom-transition"
+              transition="fade"
               :overlay="false"
     >
         <v-card style="background: #303030">
@@ -59,7 +59,7 @@
         onValueChange(val) {
             if (val && this.userId) {
                 axios.get('/api/v1/persons/' + this.userId).then((result) => {
-                    this.user = Person.prototypePerson(result.data);
+                    this.user = Person.applyPrototype(result.data);
                 });
             }
         }

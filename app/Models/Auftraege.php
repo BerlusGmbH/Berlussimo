@@ -18,6 +18,12 @@ class Auftraege extends Model
     protected $primaryKey = 'T_ID';
     protected $searchableFields = ['TEXT', 'ERSTELLT'];
     protected $defaultOrder = ['ERSTELLT' => 'desc'];
+    protected $appends = ['type'];
+
+    static public function getTypeAttribute()
+    {
+        return 'assignment';
+    }
 
     protected static function boot()
     {

@@ -2,6 +2,73 @@ import axios from "../../libraries/axios";
 
 const base_url = window.location.origin;
 
+export class Model {
+    static applyPrototype(model) {
+        switch (model.type) {
+            case Assignment.type:
+                return Assignment.applyPrototype(model);
+            case Bankkonto.type:
+                return Bankkonto.applyPrototype(model);
+            case Detail.type:
+                return Detail.applyPrototype(model);
+            case Einheit.type:
+                return Einheit.applyPrototype(model);
+            case Haus.type:
+                return Haus.applyPrototype(model);
+            case Job.type:
+                return Job.applyPrototype(model);
+            case JobTitle.type:
+                return JobTitle.applyPrototype(model);
+            case RentalContract.type:
+                return RentalContract.applyPrototype(model);
+            case PurchaseContract.type:
+                return PurchaseContract.applyPrototype(model);
+            case Objekt.type:
+                return Objekt.applyPrototype(model);
+            case Partner.type:
+                return Partner.applyPrototype(model);
+            case Person.type:
+                return Person.applyPrototype(model);
+        }
+    }
+}
+
+export class Assignment {
+    static type: string = 'assignment';
+    T_ID: number;
+    TEXT: string | null = null;
+    ERSTELLT: string | null = null;
+    AKUT: string = '';
+    ERLEDIGT: string = '';
+    von: Person;
+    an: Person | Partner;
+    kostentraeger: any;
+
+    static applyPrototype(assignment) {
+        Object.setPrototypeOf(assignment, Assignment.prototype);
+        if (assignment.von) {
+            Model.applyPrototype(assignment.von);
+        }
+        if (assignment.an) {
+            Model.applyPrototype(assignment.an);
+        }
+        return assignment;
+    }
+
+    getEntityIcon(): string {
+        if (this.ERLEDIGT === '1') {
+            return 'mdi-clipboard-check';
+        } else if (this.AKUT === 'JA') {
+            return 'mdi-clipboard-alert';
+        }
+        return 'mdi-clipboard';
+    }
+
+    toString() {
+        return 'A-' + this.T_ID;
+    }
+}
+
 export class Person {
     icon: string = 'mdi-account';
     sex: string = '';
@@ -14,7 +81,7 @@ export class Person {
     jobs_as_employee: Array<Job>;
     audits: Array<Object>;
 
-    static type = 'Person';
+    static type = 'person';
 
     toString() {
         let full_name = '';
@@ -45,6 +112,10 @@ export class Person {
         return base_url + '/personen/' + this.id;
     }
 
+    getApiBaseUrl() {
+        return base_url + '/api/v1/persons'
+    }
+
     getMorphName() {
         return 'PERSON';
     }
@@ -57,11 +128,17 @@ export class Person {
         return axios.patch('/api/v1/persons/' + this.id, this);
     }
 
-    static prototypePerson(person: Person): Person {
+    create() {
+        return axios.post('/api/v1/persons', this);
+    }
+
+    static applyPrototype(person: Person): Person {
         Object.setPrototypeOf(person, Person.prototype);
-        Array.prototype.forEach.call(['common_details', 'hinweise', 'adressen', 'emails', 'faxs', 'phones'], (details) => {
+        ['common_details', 'hinweise', 'adressen', 'emails', 'faxs', 'phones'].forEach((details) => {
             if (person[details]) {
-                Object.setPrototypeOf(person[details], Detail.prototype);
+                person[details].forEach((detail) => {
+                    Detail.applyPrototype(detail);
+                });
             }
         });
         if (person.audits) {
@@ -73,44 +150,17 @@ export class Person {
         }
         if (person.mietvertraege) {
             Array.prototype.forEach.call(person.mietvertraege, (mietvertrag) => {
-                Object.setPrototypeOf(mietvertrag, RentalContract.prototype);
-                if (mietvertrag.einheit) {
-                    Object.setPrototypeOf(mietvertrag.einheit, Einheit.prototype);
-                    if (mietvertrag.einheit.haus) {
-                        Object.setPrototypeOf(mietvertrag.einheit.haus, Haus.prototype);
-                        if (mietvertrag.einheit.haus.objekt) {
-                            Object.setPrototypeOf(mietvertrag.einheit.haus.objekt, Objekt.prototype);
-                        }
-                    }
-                }
+                RentalContract.applyPrototype(mietvertrag);
             });
         }
         if (person.kaufvertraege) {
             Array.prototype.forEach.call(person.kaufvertraege, (kaufvertrag) => {
-                Object.setPrototypeOf(kaufvertrag, PurchaseContract.prototype);
-                if (kaufvertrag.einheit) {
-                    Object.setPrototypeOf(kaufvertrag.einheit, Einheit.prototype);
-                    if (kaufvertrag.einheit.haus) {
-                        Object.setPrototypeOf(kaufvertrag.einheit.haus, Haus.prototype);
-                        if (kaufvertrag.einheit.haus.objekt) {
-                            Object.setPrototypeOf(kaufvertrag.einheit.haus.objekt, Objekt.prototype);
-                        }
-                    }
-                }
+                PurchaseContract.applyPrototype(kaufvertrag);
             });
         }
         if (person.jobs_as_employee) {
             Array.prototype.forEach.call(person.jobs_as_employee, (job) => {
-                Object.setPrototypeOf(job, Job.prototype);
-                if (job.employer) {
-                    Object.setPrototypeOf(job.employer, Partner.prototype);
-                }
-                if (job.employee) {
-                    Object.setPrototypeOf(job.employee, Person.prototype);
-                }
-                if (job.title) {
-                    Object.setPrototypeOf(job.title, JobTitle.prototype);
-                }
+                Job.applyPrototype(job);
             });
         }
         return person;
@@ -126,7 +176,7 @@ export class Partner {
     ORT: string = '';
     LAND: string = '';
 
-    static type = 'Partner';
+    static type = 'partner';
 
     toString(): string {
         return this.PARTNER_NAME;
@@ -144,7 +194,7 @@ export class Partner {
         return base_url + '/partner?option=partner_im_detail&partner_id=' + this.PARTNER_ID;
     }
 
-    static prototypePartner(partner: Partner) {
+    static applyPrototype(partner: Partner) {
         Object.setPrototypeOf(partner, Partner.prototype);
         return partner;
     }
@@ -153,8 +203,20 @@ export class Partner {
 export class Objekt {
     OBJEKT_ID: number = -1;
     OBJEKT_KURZNAME: string = '';
+    EIGENTUEMER_PARTNER: number;
 
-    static type = 'HVObject';
+    haeuser: Array<Haus> = [];
+    einheiten: Array<Einheit> = [];
+    eigentuemer: Partner | null = null;
+    mieter: Array<Person> = [];
+    weg_eigentuemer: Array<Person> = [];
+    common_details: Array<Detail> = [];
+    hinweise: Array<Detail> = [];
+    auftraege: Array<Assignment> = [];
+    wohnflaeche: number = 0;
+    gewerbeflaeche: number = 0;
+
+    static type = 'pm_object';
 
     toString(): string {
         return this.OBJEKT_KURZNAME;
@@ -168,8 +230,66 @@ export class Objekt {
         return base_url + '/objekte/' + this.OBJEKT_ID;
     }
 
-    static prototypeObjekt(objekt: Objekt) {
+    getApiBaseUrl() {
+        return base_url + '/api/v1/objects'
+    }
+
+    getMorphName() {
+        return 'OBJEKT';
+    }
+
+    getID() {
+        return this.OBJEKT_ID;
+    }
+
+    save() {
+        return axios.patch(this.getApiBaseUrl() + '/' + this.OBJEKT_ID, this);
+    }
+
+    create() {
+        return axios.post(this.getApiBaseUrl(), this);
+    }
+
+    static applyPrototype(objekt: Objekt) {
         Object.setPrototypeOf(objekt, Objekt.prototype);
+        if (objekt.haeuser) {
+            Array.prototype.forEach.call(objekt.haeuser, (haus) => {
+                Haus.applyPrototype(haus);
+            });
+        }
+        if (objekt.common_details) {
+            Array.prototype.forEach.call(objekt.common_details, (detail) => {
+                Detail.applyPrototype(detail);
+            });
+        }
+        if (objekt.hinweise) {
+            Array.prototype.forEach.call(objekt.hinweise, (detail) => {
+                Detail.applyPrototype(detail);
+            });
+        }
+        if (objekt.einheiten) {
+            Array.prototype.forEach.call(objekt.einheiten, (einheit) => {
+                Einheit.applyPrototype(einheit);
+            });
+        }
+        if (objekt.eigentuemer) {
+            Partner.applyPrototype(objekt.eigentuemer);
+        }
+        if (objekt.mieter) {
+            Array.prototype.forEach.call(objekt.mieter, (person) => {
+                Person.applyPrototype(person);
+            });
+        }
+        if (objekt.weg_eigentuemer) {
+            Array.prototype.forEach.call(objekt.weg_eigentuemer, (person) => {
+                Person.applyPrototype(person);
+            });
+        }
+        if (objekt.auftraege) {
+            Array.prototype.forEach.call(objekt.auftraege, (assignment) => {
+                Assignment.applyPrototype(assignment);
+            });
+        }
         return objekt;
     }
 }
@@ -180,8 +300,19 @@ export class Haus {
     HAUS_NUMMER: string = '';
     HAUS_PLZ: number;
     HAUS_STADT: string = '';
+    OBJEKT_ID: number;
 
-    static type = 'House';
+    objekt: Objekt;
+    mieter: Array<Person> = [];
+    weg_eigentuemer: Array<Person> = [];
+    common_details: Array<Detail> = [];
+    hinweise: Array<Detail> = [];
+    einheiten: Array<Einheit> = [];
+    auftraege: Array<Assignment> = [];
+    wohnflaeche: number = 0;
+    gewerbeflaeche: number = 0;
+
+    static type = 'house';
 
     icon: string = 'mdi-domain';
 
@@ -197,12 +328,65 @@ export class Haus {
         return 'mdi-domain';
     }
 
+    getApiBaseUrl() {
+        return base_url + '/api/v1/houses'
+    }
+
+    getMorphName() {
+        return 'HAUS';
+    }
+
+    getID(): number {
+        return this.HAUS_ID;
+    }
+
     getDetailUrl(): string {
         return base_url + '/haeuser/' + this.HAUS_ID;
     }
 
-    static prototypeHaus(haus: Haus) {
+    save() {
+        return axios.patch(this.getApiBaseUrl() + '/' + this.HAUS_ID, this);
+    }
+
+    create() {
+        return axios.post(this.getApiBaseUrl(), this);
+    }
+
+    static applyPrototype(haus: Haus) {
         Object.setPrototypeOf(haus, Haus.prototype);
+        if (haus.objekt) {
+            Objekt.applyPrototype(haus.objekt);
+        }
+        if (haus.common_details) {
+            Array.prototype.forEach.call(haus.common_details, (detail) => {
+                Detail.applyPrototype(detail);
+            });
+        }
+        if (haus.hinweise) {
+            Array.prototype.forEach.call(haus.hinweise, (detail) => {
+                Detail.applyPrototype(detail);
+            });
+        }
+        if (haus.mieter) {
+            Array.prototype.forEach.call(haus.mieter, (person) => {
+                Person.applyPrototype(person);
+            });
+        }
+        if (haus.weg_eigentuemer) {
+            Array.prototype.forEach.call(haus.weg_eigentuemer, (person) => {
+                Person.applyPrototype(person);
+            });
+        }
+        if (haus.einheiten) {
+            Array.prototype.forEach.call(haus.einheiten, (einheit) => {
+                Einheit.applyPrototype(einheit);
+            });
+        }
+        if (haus.auftraege) {
+            Array.prototype.forEach.call(haus.auftraege, (assignment) => {
+                Assignment.applyPrototype(assignment);
+            });
+        }
         return haus;
     }
 }
@@ -215,7 +399,17 @@ export class Einheit {
     HAUS_ID: number = -1;
     TYP: string = '';
 
-    static type = 'Unit';
+    common_details: Array<Detail>;
+    hinweise: Array<Detail>;
+    haus: Haus;
+    einheit: Einheit;
+    kaufvertraege: Array<RentalContract>;
+    mietvertraege: Array<PurchaseContract>;
+    mieter: Array<Person>;
+    weg_eigentuemer: Array<Person>;
+    auftraege: Array<Assignment>;
+
+    static type = 'unit';
 
     icon: string = 'mdi-cube';
 
@@ -227,12 +421,93 @@ export class Einheit {
         return 'mdi-cube';
     }
 
+    getKindIcon() {
+        switch (this.TYP) {
+            case 'Wohnraum':
+                return 'mdi-home';
+            case 'Gewerbe':
+                return 'mdi-store';
+            case 'Stellplatz':
+                return 'mdi-car';
+            case 'Garage':
+                return 'mdi-garage';
+            case 'Keller':
+                return 'mdi-ghost';
+            case 'Freiflaeche':
+                return 'mdi-nature-people';
+            case 'Wohneigentum':
+                return 'mdi-home-variant';
+            case 'Werbeflaeche':
+                return 'mdi-newspaper';
+            default:
+                return 'mdi-home';
+        }
+    }
+
     getDetailUrl(): string {
         return base_url + '/einheiten/' + this.EINHEIT_ID;
     }
 
-    static prototypeEinheit(einheit: Einheit) {
+    getApiBaseUrl() {
+        return base_url + '/api/v1/units'
+    }
+
+    getMorphName() {
+        return 'EINHEIT';
+    }
+
+    getID(): number {
+        return this.EINHEIT_ID;
+    }
+
+    save() {
+        return axios.patch('/api/v1/units/' + this.EINHEIT_ID, this);
+    }
+
+    create() {
+        return axios.post('/api/v1/units', this);
+    }
+
+    static applyPrototype(einheit: Einheit) {
         Object.setPrototypeOf(einheit, Einheit.prototype);
+        if (einheit.haus) {
+            Haus.applyPrototype(einheit.haus);
+        }
+        if (einheit.common_details) {
+            Array.prototype.forEach.call(einheit.common_details, (detail) => {
+                Detail.applyPrototype(detail);
+            });
+        }
+        if (einheit.hinweise) {
+            Array.prototype.forEach.call(einheit.hinweise, (detail) => {
+                Detail.applyPrototype(detail);
+            });
+        }
+        if (einheit.kaufvertraege) {
+            Array.prototype.forEach.call(einheit.kaufvertraege, (contract) => {
+                PurchaseContract.applyPrototype(contract);
+            });
+        }
+        if (einheit.mietvertraege) {
+            Array.prototype.forEach.call(einheit.mietvertraege, (contract) => {
+                RentalContract.applyPrototype(contract);
+            });
+        }
+        if (einheit.mieter) {
+            Array.prototype.forEach.call(einheit.mieter, (person) => {
+                Person.applyPrototype(person);
+            });
+        }
+        if (einheit.weg_eigentuemer) {
+            Array.prototype.forEach.call(einheit.weg_eigentuemer, (person) => {
+                Person.applyPrototype(person);
+            });
+        }
+        if (einheit.auftraege) {
+            Array.prototype.forEach.call(einheit.auftraege, (assignment) => {
+                Assignment.applyPrototype(assignment);
+            });
+        }
         return einheit;
     }
 }
@@ -245,7 +520,7 @@ export class Detail {
     DETAIL_ZUORDNUNG_TABELLE: string = '';
     DETAIL_ZUORDNUNG_ID: string = '';
 
-    static type = 'Detail';
+    static type = 'detail';
 
     icon: string = 'mdi-note';
 
@@ -269,7 +544,7 @@ export class Detail {
         return axios.delete('/api/v1/details/' + this.DETAIL_ID);
     }
 
-    static prototypeDetail(detail: Detail) {
+    static applyPrototype(detail: Detail) {
         Object.setPrototypeOf(detail, Detail.prototype);
         return detail;
     }
@@ -281,7 +556,9 @@ export class RentalContract {
     MIETVERTRAG_BIS: Date;
     EINHEIT_ID: number = -1;
 
-    static type = 'RentalContract';
+    einheit: Einheit;
+
+    static type = 'rental_contract';
 
     toString(): string {
         return "MV-" + this.MIETVERTRAG_ID;
@@ -298,8 +575,11 @@ export class RentalContract {
             + this.MIETVERTRAG_ID;
     }
 
-    static prototypeRentalContract(contract: RentalContract) {
+    static applyPrototype(contract: RentalContract) {
         Object.setPrototypeOf(contract, RentalContract.prototype);
+        if (contract.einheit) {
+            Einheit.applyPrototype(contract.einheit);
+        }
         return contract;
     }
 }
@@ -310,7 +590,9 @@ export class PurchaseContract {
     BIS: Date;
     EINHEIT_ID: number = -1;
 
-    static type = 'PurchaseContract';
+    einheit: Einheit;
+
+    static type = 'purchase_contract';
 
     toString(): string {
         return "KV-" + this.ID;
@@ -325,8 +607,11 @@ export class PurchaseContract {
             + this.EINHEIT_ID;
     }
 
-    static prototypePurchaseContract(contract: PurchaseContract) {
+    static applyPrototype(contract: PurchaseContract) {
         Object.setPrototypeOf(contract, PurchaseContract.prototype);
+        if (contract.einheit) {
+            Einheit.applyPrototype(contract.einheit);
+        }
         return contract;
     }
 }
@@ -344,9 +629,9 @@ export class Job {
     employee: any;
     title: any;
 
-    static type = 'Job';
+    static type = 'job';
 
-    static prototypeJob(job: Job) {
+    static applyPrototype(job: Job) {
         Object.setPrototypeOf(job, Job.prototype);
         if (job.employer) {
             Object.setPrototypeOf(job.employer, Partner.prototype);
@@ -365,7 +650,7 @@ export class JobTitle {
     id: number = -1;
     title: string = '';
 
-    static type = 'JobTitle';
+    static type = 'job_title';
 
     toString(): string {
         return this.title;
@@ -373,6 +658,11 @@ export class JobTitle {
 
     getEntityIcon(): string {
         return 'mdi-book-open-variant';
+    }
+
+    static applyPrototype(jobTitle: JobTitle) {
+        Object.setPrototypeOf(jobTitle, JobTitle.prototype);
+        return jobTitle;
     }
 }
 
@@ -386,7 +676,7 @@ export class Bankkonto {
     BIC: string = '';
     INSTITUT: string = '';
 
-    static type = 'BankAccount';
+    static type = 'bank_account';
 
 
     toString(): string {
@@ -403,5 +693,10 @@ export class Bankkonto {
 
     getDetailUrl() {
         return base_url;
+    }
+
+    static applyPrototype(bankaccount: Bankkonto) {
+        Object.setPrototypeOf(bankaccount, Bankkonto.prototype);
+        return bankaccount;
     }
 }

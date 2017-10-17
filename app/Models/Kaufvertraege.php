@@ -17,6 +17,12 @@ class Kaufvertraege extends Model implements ActiveContract
     protected $table = 'WEG_MITEIGENTUEMER';
     protected $primaryKey = 'ID';
     protected $defaultOrder = ['VON' => 'desc', 'BIS' => 'desc'];
+    protected $appends = ['type'];
+
+    static public function getTypeAttribute()
+    {
+        return 'purchase_contract';
+    }
 
     protected static function boot()
     {

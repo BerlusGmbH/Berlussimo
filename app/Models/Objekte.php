@@ -18,6 +18,12 @@ class Objekte extends Model
     protected $primaryKey = 'OBJEKT_ID';
     protected $searchableFields = ['OBJEKT_KURZNAME'];
     protected $defaultOrder = ['OBJEKT_KURZNAME' => 'asc'];
+    protected $appends = ['type'];
+
+    static public function getTypeAttribute()
+    {
+        return 'pm_object';
+    }
 
     protected static function boot()
     {

@@ -6,11 +6,16 @@
                     <app-person-card :key="key" :value="person"></app-person-card>
                 </v-flex>
                 <v-flex v-if="person && person.hinweise.length > 0" xs12 sm6>
-                    <app-notes-card headline="Hinweise" :details="person.hinweise"></app-notes-card>
+                    <app-notes-card headline="Hinweise"
+                                    :details="person.hinweise"
+                                    :parent="person"
+                    ></app-notes-card>
                 </v-flex>
                 <v-flex v-if="person && person.common_details.length > 0" xs12 sm6>
                     <app-details-card headline="Details"
-                                      :details="person.common_details"></app-details-card>
+                                      :details="person.common_details"
+                                      :parent="person"
+                    ></app-details-card>
                 </v-flex>
                 <v-flex v-if="person && person.mietvertraege.length > 0" xs12 sm6>
                     <app-rental-contracts-card headline="Mietverträge"
@@ -49,8 +54,8 @@
     import purchaseContractsCard from "../../shared/cards/PurchaseContractsCard.vue";
     import jobsCard from "../../shared/cards/JobsCard.vue";
 
-    const ShowAction = namespace('modules/personen/show', Action);
-    const ShowState = namespace('modules/personen/show', State);
+    const ShowAction = namespace('modules/person/show', Action);
+    const ShowState = namespace('modules/person/show', State);
 
     const RefreshState = namespace('shared/refresh', State);
     const RefreshMutation = namespace('shared/refresh', Mutation);

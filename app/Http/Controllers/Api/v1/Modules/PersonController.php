@@ -40,6 +40,15 @@ class PersonController extends Controller
         return response()->json($person);
     }
 
+    public function store(PersonenRequest $request)
+    {
+        $person = Person::create($request->only(['name', 'first_name', 'birthday']));
+        if ($request->exists('sex')) {
+            $person->sex = $request->input('sex');
+        }
+        return response()->json($person);
+    }
+
     public function merge(MergeRequest $request, Person $left, Person $right)
     {
         $this->dispatch(new MergePersons($request->only(['name', 'first_name', 'birthday', 'sex']), $left, $right));

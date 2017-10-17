@@ -26,7 +26,7 @@
             'default': defaultIdentifier
         }
     })
-    export default class Identifier extends Vue {
+    export default class DetailIdentifier extends Vue {
         @Prop()
         value;
 

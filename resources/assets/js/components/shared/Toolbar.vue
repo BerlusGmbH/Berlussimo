@@ -8,9 +8,9 @@
         <app-search-dialog v-if="authCheck && $vuetify.breakpoint.smAndDown" v-model="search"></app-search-dialog>
         <app-user-menu-dialog v-if="authCheck && $vuetify.breakpoint.smAndDown" :userId="user.id"
                               v-model="userMenu"></app-user-menu-dialog>
-        <app-searchbar v-if="authCheck && $vuetify.breakpoint.mdAndUp" class="pt-0"></app-searchbar>
         <v-btn icon v-if="authCheck && $vuetify.breakpoint.smAndDown" @click.stop="search = true">
             <v-icon>search</v-icon>
+            <v-icon>mdi-tag-multiple</v-icon>
         </v-btn>
         <app-notifications-toggle v-if="authCheck"></app-notifications-toggle>
         <v-menu v-if="authCheck && $vuetify.breakpoint.mdAndUp" offset-y open-on-hover>

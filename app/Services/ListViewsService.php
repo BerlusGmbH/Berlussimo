@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Services\Parser\Lexer;
 use App\Services\Parser\Parser;
 use Closure;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Relations;
 use Route;
@@ -42,25 +43,6 @@ class ListViewsService
         return $action;
     }
 
-    public function getViews($parameter, $action = null)
-    {
-        $action = $this->resolveAction($action);
-
-        if (!isset($this->views[$action][$parameter]['views']))
-            return [];
-
-        $views = $this->resolveViews($action, $parameter);
-
-        return $views;
-    }
-
-    protected function resolveViews($action, $parameter)
-    {
-        if ($this->views[$action][$parameter]['views'] instanceof Closure)
-            $this->views[$action][$parameter]['views'] = $this->views[$action][$parameter]['views']->call($this);
-        return $this->views[$action][$parameter]['views'];
-    }
-
     public function getViewNames($parameter, $action = null)
     {
         $action = $this->resolveAction($action);
@@ -68,6 +50,13 @@ class ListViewsService
         $views = $this->resolveViews($action, $parameter);
 
         return array_keys($views);
+    }
+
+    protected function resolveViews($action, $parameter)
+    {
+        if ($this->views[$action][$parameter]['views'] instanceof Closure)
+            $this->views[$action][$parameter]['views'] = $this->views[$action][$parameter]['views']->call($this);
+        return $this->views[$action][$parameter]['views'];
     }
 
     public function hasDefault($parameter, $action = null)
@@ -86,7 +75,22 @@ class ListViewsService
     public function getParameters($action = null)
     {
         $action = $this->resolveAction($action);
+        array_walk($this->views[$action], function ($v, $k) use ($action) {
+            $v['views'] = $this->getViews($k, $action);
+        });
         return $this->views[$action];
+    }
+
+    public function getViews($parameter, $action = null)
+    {
+        $action = $this->resolveAction($action);
+
+        if (!isset($this->views[$action][$parameter]['views']))
+            return [];
+
+        $views = $this->resolveViews($action, $parameter);
+
+        return $views;
     }
 
     public function calculateResponseData($request, $builder)
@@ -96,6 +100,13 @@ class ListViewsService
         $columns = $this->parseQuery($query, $builder);
 
         $entities = $builder->paginate($size);
+
+        if ($entities->lastPage() < $request->input('page')) {
+            Paginator::currentPageResolver(function () use ($entities) {
+                return $entities->lastPage();
+            });
+            $entities = $builder->paginate($size);
+        }
 
         list($index, $wantedRelations) = $this->generateIndex($entities, $columns);
 
@@ -192,7 +203,7 @@ class ListViewsService
     protected function generateIndex($entities, $columns)
     {
         if ($entities->isEmpty()) {
-            return [];
+            return [[], []];
         }
         $class = get_class($entities->first()->getModel());
         $wantedRelations = [];
@@ -292,7 +303,9 @@ class ListViewsService
                             $es = $es->reverse();
                         }
                         foreach ($es as $e) {
-                            $stack->push(['entity' => $e, 'pos' => $entry['pos'] + 1]);
+                            if (isset($e)) {
+                                $stack->push(['entity' => $e, 'pos' => $entry['pos'] + 1]);
+                            }
                         }
                     }
                 }
@@ -306,40 +319,24 @@ class ListViewsService
         $headers = [];
         foreach ($columns as $fields) {
             $column = key($fields);
-            $header = e(ucfirst($column));
+            $header = [];
+            $header['head'] = ucfirst($column);
             if (isset($fields) && isset($fields[$column]) && !$fields[$column]['fields']->isEmpty()) {
-                $header .= '<br>(';
-                $last = $fields[$column]['fields']->last()['field'];
                 foreach ($fields[$column]['fields'] as $field) {
-                    $header .= e(ucfirst($field['field']));
-                    if ($last != $field['field']) {
-                        $header .= e(', ');
-                    } elseif ($last == $field['field']) {
-                        $header .= e(')');
-                    }
+                    $header['fields'][] = ucfirst($field['field']);
                 }
             }
             if (isset($fields[$column]['columns']) && (!$fields[$column]['columns']->isEmpty() || !$fields[$column]['aggregates']->isEmpty())) {
-                $header .= '<br>[';
                 if (!$fields[$column]['aggregates']->isEmpty()) {
-                    $last = $fields[$column]['aggregates']->last();
                     foreach ($fields[$column]['aggregates'] as $col) {
-                        $header .= e(ucfirst($col));
-                        if ($last != $col || !$fields[$column]['columns']->isEmpty()) {
-                            $header .= e(', ');
-                        }
+                        $header['columns'][] = ucfirst($col);
                     }
                 }
                 if (!$fields[$column]['columns']->isEmpty()) {
-                    $last = $fields[$column]['columns']->last();
                     foreach ($fields[$column]['columns'] as $col) {
-                        $header .= e(ucfirst($col));
-                        if ($last != $col) {
-                            $header .= e(', ');
-                        }
+                        $header['columns'][] = ucfirst($col);
                     }
                 }
-                $header .= e(']');
             }
             $headers[] = $header;
         }
@@ -353,15 +350,23 @@ class ListViewsService
                 $cell = [];
                 foreach ($rs as $r) {
                     if ($wantedRelations[$key]->contains($r)) {
-                        //$c = 0;
-                        //if (isset($fields[$column]['columns'])) {
-                        //    $c = $fields[$column]['columns']->count();
-                        //}
-                        //if ($c > 1 || ($c == 0 && count($rs) > 1 && isset($entity[$r])))
-                        //    echo ucfirst(Relations::classToColumn(Relations::classRelationToMany($class, $r)[1])) . '<br>';
+                        $cellPart = [
+                            'relation' => 'unset', //ucfirst(Relations::classToColumn(Relations::classRelationToMany($class, $r)[1])),
+                            'content' => []
+                        ];
+                        $c = 0;
+                        if (isset($fields[$column]['columns'])) {
+                            $c = $fields[$column]['columns']->count();
+                        }
+                        if ($c > 1 || ($c == 0 && count($rs) > 1 && isset($entity[$r])))
+                            $cellPart['relation'] = ucfirst(Relations::classToColumn(Relations::classRelationToMany($class, $r)[1]));
                         if (isset($fields[$column]['aggregates']) && !$fields[$column]['aggregates']->isEmpty()) {
                             foreach ($fields[$column]['aggregates'] as $aggregate) {
-                                $cell[] = ['type' => 'aggregate', 'entities' => $entity[$r]];
+                                if (isset($entity[$r])) {
+                                    $cellPart['content'][] = ['type' => 'aggregate', 'entities' => $entity[$r]];
+                                } else {
+                                    $cellPart['content'][] = ['type' => 'aggregate', 'entities' => []];
+                                }
                                 //@include('shared.entities.aggregates.count', ['entities' => $entity[$r], 'aggregate' => $aggregate] )<br >
                             }
                         } else {
@@ -373,20 +378,21 @@ class ListViewsService
                                             $dbField = Relations::classFieldToField(get_class($value), $field['field']);
                                             $lines[] = e($value->{$dbField});
                                         }
-                                        $cell[] = ['type' => 'prerendered', 'lines' => $lines];
+                                        $cellPart['content'][] = ['type' => 'prerendered', 'lines' => $lines];
                                     } else {
-                                        $cell[] = ['type' => 'entity', 'entity' => $value, 'class' => get_class($value)];
+                                        $cellPart['content'][] = ['type' => 'entity', 'entity' => $value];
                                     }
                                 }
                             }
                         }
+                        $cell[] = $cellPart;
                     }
                 }
                 $row[] = $cell;
             }
             $items[] = $row;
         }
-        return ['headers' => $headers, 'items' => $items, 'total' => $paginator->total()];
+        return ['headers' => $headers, 'items' => $items, 'total' => $paginator->total(), 'last-page' => $paginator->lastPage()];
     }
 
     public function missingDependency($parameter, $request, $action = null)

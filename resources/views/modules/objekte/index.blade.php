@@ -1,10 +1,17 @@
-@extends('layouts.main')
+@extends('layouts.app')
 
 @section('breadcrumbs')
-    <i class="mdi mdi-subdirectory-arrow-right"></i>Objekte
+    <i class="mdi mdi-subdirectory-arrow-right" style="margin-right: -2px"></i>
+    <v-breadcrumbs style="display: inline-flex" icons divider="chevron_right" class="pl-0">
+        <v-breadcrumbs-item>
+            Objekte
+        </v-breadcrumbs-item>
+    </v-breadcrumbs>
 @endsection
 
 @section('content')
+    <app-object-list-view></app-object-list-view>
+    <!--
     <div class="card-panel white">
         <form id="filter-form" method="get">
             <div class="row">
@@ -35,27 +42,5 @@
         </form>
         @include('shared.tables.entities-with-paginator', ['parameters' => $listViews->getParameters('q') ,'columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Objekte::class])
     </div>
+    -->
 @endsection
-
-@push('scripts')
-<script type="text/javascript">
-    $(document).ready(function () {
-
-        var submit = function (target) {
-            target.form.submit();
-        };
-
-        $('#filter').keypress(function (e) {
-            if (e.which == KeyCode.KEY_ENTER || e.which == KeyCode.KEY_RETURN) {
-                submit(this);
-            }
-        });
-        $('#size').on('change', function (e) {
-            submit(this);
-        });
-        $('#view').on('change', function (e) {
-            submit(this);
-        });
-    });
-</script>
-@endpush

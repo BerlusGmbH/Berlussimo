@@ -6,8 +6,6 @@ use App\Models\Scopes\AktuellScope;
 use App\Models\Traits\DefaultOrder;
 use App\Models\Traits\Searchable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-use Carbon\Carbon;
 
 class Lager extends Model
 {
@@ -19,6 +17,12 @@ class Lager extends Model
     protected $primaryKey = 'LAGER_ID';
     protected $searchableFields = ['LAGER_NAME', 'LAGER_VERWALTER'];
     protected $defaultOrder = ['LAGER_NAME' => 'asc', 'LAGER_VERWALTER' => 'asc'];
+    protected $appends = ['type'];
+
+    static public function getTypeAttribute()
+    {
+        return 'warehouse';
+    }
 
     protected static function boot()
     {
@@ -31,12 +35,12 @@ class Lager extends Model
         return $this->morphMany(Auftraege::class, 'kostentraeger', 'KOS_TYP', 'KOS_ID');
     }
 
+    public function commonDetails() {
+        return $this->details()->whereNotIn('DETAIL_NAME', ['']);
+    }
+
     public function details()
     {
         return $this->morphMany('App\Models\Details', 'details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID');
-    }
-
-    public function commonDetails() {
-        return $this->details()->whereNotIn('DETAIL_NAME', ['']);
     }
 }

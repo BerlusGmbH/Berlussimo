@@ -38,15 +38,17 @@
 </div>
 
 <main class="application--dark" style="flex: 1 0 auto; z-index: 0">
-    @if($content != "")
-        <div class="berlussimo-materialize container-fluid">
-            {!!$content!!}
-        </div>
-    @endif
-    @if(Auth::check())
-        <app-notifications id="notifications" style="z-index: 1"></app-notifications>
-        <app-snackbar id="snackbar" style="z-index: 1"></app-snackbar>
-    @endif
+    <v-contnent>
+        @if($content != "")
+            <div class="berlussimo-materialize container-fluid">
+                {!!$content!!}
+            </div>
+        @endif
+        @if(Auth::check())
+            <app-notifications id="notifications" style="z-index: 1"></app-notifications>
+            <app-snackbar id="snackbar" style="z-index: 1"></app-snackbar>
+        @endif
+    </v-contnent>
 </main>
 
 <div id="bottom" class="application--dark">

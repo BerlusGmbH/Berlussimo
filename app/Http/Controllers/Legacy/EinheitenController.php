@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Legacy;
 
 use App\Http\Requests\Legacy\EinheitenRequest;
 use App\Models\Einheiten;
-use ListViews;
 
 class EinheitenController extends LegacyController
 {
@@ -19,16 +18,11 @@ class EinheitenController extends LegacyController
 
     public function index(EinheitenRequest $request)
     {
-        $builder = Einheiten::query();
-
-        list($columns, $einheiten, $index, $wantedRelations) = ListViews::calculateResponseData($request, $builder);
-
-        return view('modules.einheiten.index', ['columns' => $columns, 'entities' => $einheiten, 'index' => $index, 'wantedRelations' => $wantedRelations]);
+        return view('modules.einheiten.index');
     }
 
-    public function show($id, EinheitenRequest $request)
+    public function show(Einheiten $einheiten, EinheitenRequest $request)
     {
-        $einheit = Einheiten::find($id);
-        return view('modules.einheiten.show', ['einheit' => $einheit]);
+        return view('modules.einheiten.show', ['einheit' => $einheiten]);
     }
 }

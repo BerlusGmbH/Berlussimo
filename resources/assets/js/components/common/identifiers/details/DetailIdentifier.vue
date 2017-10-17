@@ -9,6 +9,7 @@
     import {Mutation, namespace} from "vuex-class";
     import detailEditDialog from "../../dialogs/DetailEditDialog.vue";
     import detailDeleteDialog from "../../dialogs/DetailDeleteDialog.vue";
+    import copyToClipboard from "../../../../mixins/CopyToClipboard.vue";
 
     const SnackbarMutation = namespace('shared/snackbar', Mutation);
     const RefreshMutation = namespace('shared/refresh', Mutation);
@@ -17,7 +18,10 @@
         'components': {
             'app-detail-edit-dialog': detailEditDialog,
             'app-detail-delete-dialog': detailDeleteDialog
-        }
+        },
+        'mixins': [
+            copyToClipboard
+        ]
     })
     export default class PhoneIdentifier extends Vue {
         @Prop()
@@ -38,15 +42,7 @@
         x: Number = 0;
         y: Number = 0;
 
-        copyToClipboard(value) {
-            let text = document.createElement("input");
-            document.body.appendChild(text);
-            text.value = value;
-            text.select();
-            document.execCommand('copy');
-            document.body.removeChild(text);
-            this.updateMessage('Detail in die Zwichenablage kopiert.');
-        }
+        copyToClipboard: Function;
 
         editDetail() {
             this.edit = true;

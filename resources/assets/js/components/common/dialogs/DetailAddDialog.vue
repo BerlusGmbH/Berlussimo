@@ -11,26 +11,24 @@
             @save="onSave"
     >
         <slot></slot>
-        <app-select v-model="inputValue.DETAIL_NAME"
-                    :items="categories"
-                    prepend-icon="mdi-label"
-                    label="Kategorie"
-                    slot="input"
-                    menu-z-index="10"
-                    item-text="DETAIL_KAT_NAME"
-                    item-value="DETAIL_KAT_NAME"
-                    autocomplete
-        ></app-select>
-        <app-select v-if="selectedCategory.subcategories && selectedCategory.subcategories.length > 0"
-                    v-model="inputValue.DETAIL_INHALT"
-                    :items="selectedCategory.subcategories"
-                    prepend-icon="mdi-alphabetical"
-                    :label="inputValue.DETAIL_NAME"
-                    slot="input"
-                    menu-z-index="10"
-                    item-text="UNTERKATEGORIE_NAME"
-                    item-value="UNTERKATEGORIE_NAME"
-        ></app-select>
+        <v-select v-model="inputValue.DETAIL_NAME"
+                  :items="categories"
+                  prepend-icon="mdi-label"
+                  label="Kategorie"
+                  slot="input"
+                  item-text="DETAIL_KAT_NAME"
+                  item-value="DETAIL_KAT_NAME"
+                  autocomplete
+        ></v-select>
+        <v-select v-if="selectedCategory.subcategories && selectedCategory.subcategories.length > 0"
+                  v-model="inputValue.DETAIL_INHALT"
+                  :items="selectedCategory.subcategories"
+                  prepend-icon="mdi-alphabetical"
+                  :label="inputValue.DETAIL_NAME"
+                  slot="input"
+                  item-text="UNTERKATEGORIE_NAME"
+                  item-value="UNTERKATEGORIE_NAME"
+        ></v-select>
         <v-text-field v-else
                       slot="input"
                       v-model="inputValue.DETAIL_INHALT"
@@ -54,14 +52,18 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
-    import {Detail, Person} from "../../../server/resources/models";
+    import {Detail, Einheit, Person} from "../../../server/resources/models";
     import axios from "../../../libraries/axios";
+    import {Mutation, namespace} from "vuex-class";
+
+    const SnackbarMutation = namespace('shared/snackbar', Mutation);
+    const RefreshMutation = namespace('shared/refresh', Mutation);
 
     @Component
     export default class DetailAddDialog extends Vue {
 
         @Prop({type: Object})
-        parent: Person;
+        parent: Person | Einheit;
 
         @Prop()
         large: boolean;
@@ -81,12 +83,24 @@
         @Prop({type: Boolean})
         show;
 
+        @SnackbarMutation('updateMessage')
+        updateMessage: Function;
+
+        @RefreshMutation('requestRefresh')
+        requestRefresh: Function;
+
         inputValue: Detail = new Detail();
 
         categories = [];
 
         onSave() {
             this.$emit('input', this.inputValue);
+            this.inputValue.create().then(() => {
+                this.updateMessage('Detail hinzugefügt.');
+                this.requestRefresh();
+            }).catch((error) => {
+                this.updateMessage('Fehler beim Hinzufügen des Details. Code: ' + error.response.status + ' Message: ' + error.response.statusText);
+            });
         }
 
         onOpen() {
@@ -94,12 +108,12 @@
                 this.inputValue = new Detail();
                 this.inputValue.DETAIL_ZUORDNUNG_TABELLE = this.parent.getMorphName();
                 this.inputValue.DETAIL_ZUORDNUNG_ID = String(this.parent.getID());
+                this.loadCategories(this.parent.getApiBaseUrl());
             }
-            this.loadCategories();
         }
 
-        loadCategories() {
-            axios.get('/api/v1/persons/details/categories').then((response) => {
+        loadCategories(base) {
+            axios.get(base + '/details/categories').then((response) => {
                 this.categories = response.data;
             })
         }

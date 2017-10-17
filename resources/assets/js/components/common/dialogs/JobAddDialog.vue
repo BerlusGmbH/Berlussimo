@@ -13,18 +13,17 @@
                             ></app-entity-select>
                         </v-flex>
                         <v-flex xs12>
-                            <app-select v-model="title"
-                                        label="Titel"
-                                        prepend-icon="mdi-book-open-page-variant"
-                                        :items="titles"
-                                        slot="input"
-                                        menu-z-index="10"
-                                        item-text="title"
-                                        item-value="id"
-                                        return-object
-                                        :disabled="titleDisabled"
-                                        autocomplete
-                            ></app-select>
+                            <v-select v-model="title"
+                                      label="Titel"
+                                      prepend-icon="mdi-book-open-page-variant"
+                                      :items="titles"
+                                      slot="input"
+                                      item-text="title"
+                                      item-value="id"
+                                      return-object
+                                      :disabled="titleDisabled"
+                                      autocomplete
+                            ></v-select>
                         </v-flex>
                         <v-flex xs12 sm6>
                             <v-text-field v-model="join_date"

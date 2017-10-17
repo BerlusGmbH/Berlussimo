@@ -70,7 +70,6 @@
                 'class': {'red': emphasize},
                 props: {
                     flat: !emphasize,
-                    primary: true,
                     light: false
                 },
                 on: {click: fn}

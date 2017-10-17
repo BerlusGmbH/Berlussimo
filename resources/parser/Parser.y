@@ -332,7 +332,7 @@ fterm(res) ::= NOT VERMIETET.
 
     $vermietet = $class::whereHas('mietvertraege', function($query) {
             $query->active();
-    })->get(['EINHEIT_ID']);
+    })->get(['EINHEIT_ID'])->pluck('EINHEIT_ID');
 
     res = $class::whereNotIn('EINHEIT_ID', $vermietet);
 }

@@ -1,10 +1,17 @@
-@extends('layouts.main')
+@extends('layouts.app')
 
 @section('breadcrumbs')
-    <i class="mdi mdi-subdirectory-arrow-right"></i>Aufträge
+    <i class="mdi mdi-subdirectory-arrow-right" style="margin-right: -2px"></i>
+    <v-breadcrumbs style="display: inline-flex" icons divider="chevron_right" class="pl-0">
+        <v-breadcrumbs-item>
+            Aufträge
+        </v-breadcrumbs-item>
+    </v-breadcrumbs>
 @endsection
 
 @section('content')
+    <app-assignment-list-view></app-assignment-list-view>
+    <!--
     <div class="card-panel white">
         <form id="filter-form" method="get">
             <div class="row">
@@ -39,37 +46,5 @@
         </form>
         @include('shared.tables.entities-with-paginator', ['parameters' => $listViews->getParameters('q') ,'columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Auftraege::class])
     </div>
+    -->
 @endsection
-
-@push('scripts')
-<script type="text/javascript">
-    $(document).ready(function () {
-
-        var submit = function (target) {
-            target.form.submit();
-        };
-
-        var hasChanged = false;
-
-        $('#query').keypress(function (e) {
-            if (e.which == KeyCode.KEY_ENTER || e.which == KeyCode.KEY_RETURN) {
-                submit(this);
-            }
-        });
-        $('#size').on('change', function () {
-            submit(this);
-        });
-        $('#view').on('change', function () {
-            submit(this);
-        });
-        var $filter = $('#filter');
-        $filter.on('change', function () {
-           hasChanged = true;
-        });
-        $filter.siblings('input.select-dropdown').first().on('close', function () {
-            if(hasChanged)
-                submit(this);
-        });
-    });
-</script>
-@endpush

@@ -37,9 +37,9 @@
             ></i>
         @endif
     @endif
-        <a href="{{ route('web::einheiten::show', ['id' => $entity->EINHEIT_ID]) }}">{{ $entity->EINHEIT_KURZNAME }}</>
+        <a href="{{ route('web::einheiten.show', ['id' => $entity->EINHEIT_ID]) }}">{{ $entity->EINHEIT_KURZNAME }}</a>
     @if($icons)
-        <a href="{{ route('web::personen::index', ['q' => '!person(mietvertrag(einheit(id=' . $entity->EINHEIT_ID . ')))']) }}"><i
+            <a href="{{ route('web::personen.index', ['q' => '!person(mietvertrag(einheit(id=' . $entity->EINHEIT_ID . ')))']) }}"><i
                     class="mdi mdi-view-list"></i></a>
     @endif
 </span>

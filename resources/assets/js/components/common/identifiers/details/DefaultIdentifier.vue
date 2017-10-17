@@ -11,7 +11,7 @@
             <div class="identifier" style="display: block">
                 <template v-if="value.DETAIL_BEMERKUNG">
                     <v-icon class="identifier-icon">mdi-note</v-icon>
-                    <div @click="copyToClipboard(value.DETAIL_BEMERKUNG)"
+                    <div @click="copyToClipboard(value.DETAIL_BEMERKUNG, 'Bemerkung')"
                          style="display: inline-block; cursor: pointer; vertical-align: middle"
                     >
                         {{value.DETAIL_BEMERKUNG}}
@@ -76,19 +76,3 @@
         deleteDetail: Function;
     }
 </script>
-
-<style>
-    .identifier-icon {
-        position: absolute;
-        left: 0;
-    }
-
-    .identifier i {
-        font-size: inherit;
-    }
-
-    .identifier {
-        padding-left: 1.2em;
-        position: relative;
-    }
-</style>

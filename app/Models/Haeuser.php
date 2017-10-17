@@ -18,6 +18,13 @@ class Haeuser extends Model
     protected $primaryKey = 'HAUS_ID';
     protected $searchableFields = ['HAUS_STRASSE', 'HAUS_NUMMER', 'HAUS_PLZ', 'HAUS_STADT'];
     protected $defaultOrder = ['HAUS_STRASSE' => 'asc', 'HAUS_NUMMER' => 'asc'];
+    protected $appends = ['type'];
+    protected $guarded = [];
+
+    static public function getTypeAttribute()
+    {
+        return 'house';
+    }
 
     protected static function boot()
     {

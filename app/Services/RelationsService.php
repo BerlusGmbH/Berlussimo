@@ -176,6 +176,9 @@ class RelationsService
             'arbeitgeber' => ['employer', Partner::class],
             'arbeitnehmer' => ['employee', Person::class]
 
+        ],
+        'arbeitgeber' => [
+            'arbeitgeber' => ['', Partner::class]
         ]
     ];
 
@@ -231,10 +234,10 @@ class RelationsService
 
     public function columnColumnToClass($outer, $inner)
     {
-        if (is_null($inner) || is_null($outer)) {
-            return null;
+        if (isset(self::$COLUMN_COLUMN_TO_RELATIONS[$outer][$inner])) {
+            return self::$COLUMN_COLUMN_TO_RELATIONS[$outer][$inner][1];
         }
-        return self::$COLUMN_COLUMN_TO_RELATIONS[$outer][$inner][1];
+        return null;
     }
 
     public function classFieldToField($class, $field)

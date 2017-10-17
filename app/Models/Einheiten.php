@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\DefaultOrder;
+use App\Models\Traits\HasEnum;
 use App\Models\Traits\Searchable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,12 +13,20 @@ class Einheiten extends Model
 {
     use Searchable;
     use DefaultOrder;
+    use HasEnum;
 
     public $timestamps = false;
     protected $table = 'EINHEIT';
     protected $primaryKey = 'EINHEIT_ID';
     protected $searchableFields = ['EINHEIT_KURZNAME', 'EINHEIT_LAGE'];
     protected $defaultOrder = ['EINHEIT_KURZNAME' => 'asc'];
+    protected $appends = ['type'];
+    protected $guarded = [];
+
+    static public function getTypeAttribute()
+    {
+        return 'unit';
+    }
 
     protected static function boot()
     {

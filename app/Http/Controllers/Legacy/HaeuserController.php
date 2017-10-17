@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Legacy;
 
 use App\Http\Requests\Legacy\HaeuserRequest;
 use App\Models\Haeuser;
-use ListViews;
 
 class HaeuserController extends LegacyController
 {
@@ -19,16 +18,11 @@ class HaeuserController extends LegacyController
 
     public function index(HaeuserRequest $request)
     {
-        $builder = Haeuser::query();
-
-        list($columns, $haeuser, $index, $wantedRelations) = ListViews::calculateResponseData($request, $builder);
-
-        return view('modules.haeuser.index', ['columns' => $columns, 'entities' => $haeuser, 'index' => $index, 'wantedRelations' => $wantedRelations]);
+        return view('modules.haeuser.index');
     }
 
-    public function show($id, HaeuserRequest $request)
+    public function show(Haeuser $haeuser, HaeuserRequest $request)
     {
-        $haus = Haeuser::find($id);
-        return view('modules.haeuser.show', ['haus' => $haus]);
+        return view('modules.haeuser.show', ['haus' => $haeuser]);
     }
 }

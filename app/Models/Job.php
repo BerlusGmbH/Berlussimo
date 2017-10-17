@@ -16,6 +16,12 @@ class Job extends Model implements ActiveContract
     public $timestamps = true;
     protected $table = 'jobs';
     protected $guarded = [];
+    protected $appends = ['type'];
+
+    static public function getTypeAttribute()
+    {
+        return 'job';
+    }
 
     protected static function boot()
     {

@@ -23,7 +23,12 @@ class Details extends Model
         'DETAIL_ZUORDNUNG_TABELLE',
         'DETAIL_ZUORDNUNG_ID',
     ];
+    protected $appends = ['type'];
 
+    static public function getTypeAttribute()
+    {
+        return 'detail';
+    }
 
     protected static function boot()
     {

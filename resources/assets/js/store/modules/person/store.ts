@@ -1,4 +1,3 @@
-import dialogStore from "./merge/dialog";
 import showStore from "./show";
 
 export default {
@@ -6,10 +5,7 @@ export default {
     modules: {
         show: showStore,
         merge: {
-            namespaced: true,
-            modules: {
-                dialog: dialogStore
-            }
+            namespaced: true
         }
     }
 }

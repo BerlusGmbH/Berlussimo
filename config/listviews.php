@@ -4,28 +4,7 @@
 return [
     'listviews' => [
         [
-            'action' => \App\Http\Controllers\Legacy\BenutzerController::class . '@index',
-            'parameter' => 'v',
-            'views' => [
-                '(ohne)' => '',
-                'Mitarbeiterliste' => 'mitarbeiter !mitarbeiter[name:asc] mitarbeiter[id] mitarbeiter[email] mitarbeiter[geburtstag] gewerk mitarbeiter[von bis] mitarbeiter[stundensatz] mitarbeiter[wochenstunden] mitarbeiter[urlaubstage] partner'
-            ],
-            'default' => 'Mitarbeiterliste'
-        ],
-        [
-            'action' => \App\Http\Controllers\Legacy\BenutzerController::class . '@index',
-            'parameter' => 's',
-            'views' => [
-                '5' => 5,
-                '10' => 10,
-                '20' => 20,
-                '50' => 50,
-                '100' => 100
-            ],
-            'default' => '20'
-        ],
-        [
-            'action' => \App\Http\Controllers\Legacy\EinheitenController::class . '@index',
+            'action' => \App\Http\Controllers\Api\v1\Modules\UnitController::class . '@index',
             'parameter' => 'v',
             'views' => [
                 '(ohne)' => '',
@@ -36,7 +15,7 @@ return [
             'default' => 'Listenansicht'
         ],
         [
-            'action' => \App\Http\Controllers\Legacy\EinheitenController::class . '@index',
+            'action' => \App\Http\Controllers\Api\v1\Modules\UnitController::class . '@index',
             'parameter' => 's',
             'views' => [
                 '5' => 5,
@@ -48,7 +27,7 @@ return [
             'default' => '20'
         ],
         [
-            'action' => \App\Http\Controllers\Legacy\HaeuserController::class . '@index',
+            'action' => \App\Http\Controllers\Api\v1\Modules\HouseController::class . '@index',
             'parameter' => 'v',
             'views' => [
                 '(ohne)' => '',
@@ -57,7 +36,7 @@ return [
             'default' => 'Listenansicht'
         ],
         [
-            'action' => \App\Http\Controllers\Legacy\HaeuserController::class . '@index',
+            'action' => \App\Http\Controllers\Api\v1\Modules\HouseController::class . '@index',
             'parameter' => 's',
             'views' => [
                 '5' => 5,
@@ -69,7 +48,7 @@ return [
             'default' => '20'
         ],
         [
-            'action' => \App\Http\Controllers\Legacy\ObjekteController::class . '@index',
+            'action' => \App\Http\Controllers\Api\v1\Modules\ObjectController::class . '@index',
             'parameter' => 'v',
             'views' => [
                 '(ohne)' => '',
@@ -78,7 +57,7 @@ return [
             'default' => 'Listenansicht'
         ],
         [
-            'action' => \App\Http\Controllers\Legacy\ObjekteController::class . '@index',
+            'action' => \App\Http\Controllers\Api\v1\Modules\ObjectController::class . '@index',
             'parameter' => 's',
             'views' => [
                 '5' => 5,
@@ -161,16 +140,16 @@ return [
             'default' => '20'
         ],
         [
-            'action' => \App\Http\Controllers\Legacy\ToDoController::class . '@index',
+            'action' => \App\Http\Controllers\Api\v1\Modules\AssignmentController::class . '@index',
             'parameter' => 'v',
             'views' => [
                 '(ohne)' => '',
-                'Aufgabenliste' => 'auftrag auftrag[erstellt:desc] auftrag[text] von an kostenträger'
+                'Auftragsliste' => 'auftrag auftrag[erstellt:desc] auftrag[text] von an kostenträger'
             ],
-            'default' => 'Aufgabenliste'
+            'default' => 'Auftragsliste'
         ],
         [
-            'action' => \App\Http\Controllers\Legacy\ToDoController::class . '@index',
+            'action' => \App\Http\Controllers\Api\v1\Modules\AssignmentController::class . '@index',
             'parameter' => 'f',
             'views' => [
                 'Eigene' => function () {
@@ -190,7 +169,7 @@ return [
             'default' => null
         ],
         [
-            'action' => \App\Http\Controllers\Legacy\ToDoController::class . '@index',
+            'action' => \App\Http\Controllers\Api\v1\Modules\AssignmentController::class . '@index',
             'parameter' => 's',
             'views' => [
                 '5' => 5,

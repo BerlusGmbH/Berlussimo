@@ -1,5 +1,4 @@
 @inject('locator', App\Services\PhoneLocator')
-
         <!DOCTYPE html>
 <html>
 <head>
@@ -15,7 +14,7 @@
 <body>
 
 <div id="app">
-    <v-app dark style="display: flex; min-height: 100vh; flex-direction: column;">
+    <v-app dark>
         @if(Auth::check())
             <app-user-loader :user="{{Auth::user()}}"></app-user-loader>
             <app-global-select-loader
@@ -36,12 +35,14 @@
                 @include("shared.messages")
             </div>
         </div>
-        <main style="flex: 1 0 auto; z-index: 0">
+        <main style="z-index: 0">
+            <v-content>
             @yield("content")
             @if(Auth::check())
                 <app-notifications id="notifications"></app-notifications>
                 <app-snackbar id="snackbar"></app-snackbar>
             @endif
+            </v-content>
         </main>
 
         <app-footer></app-footer>

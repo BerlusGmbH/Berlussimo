@@ -6,22 +6,54 @@
                     <v-card>
                         <v-card-text>
                             <v-layout row wrap>
-                                <v-flex xs3 sm2>
-                                    <v-btn>
-                                        <v-icon>add</v-icon>
+                                <v-flex xs12 sm2>
+                                    <v-btn @click.native.stop="addPerson">
+                                        <v-icon ref="identifier">add</v-icon>
                                         <v-icon>mdi-account</v-icon>
                                     </v-btn>
+                                    <app-person-add-dialog :position-absolutely="true"
+                                                           :show="add"
+                                                           @show="val => {add = val}"
+                                                           :position-x="x"
+                                                           :position-y="y"
+                                    ></app-person-add-dialog>
                                 </v-flex>
-                                <v-flex xs9 sm8>
+                                <v-flex xs12 sm8>
                                     <v-text-field prepend-icon="mdi-filter-variant"
                                                   label="Filter"
-                                                  v-model="q"
+                                                  v-model="parameters.q"
                                     ></v-text-field>
                                 </v-flex>
                                 <v-flex xs12 sm2>
-                                    <v-select :disabled="typeof parameters['v'] === 'undefined'"
+                                    <v-select :disabled="typeof parameterList['v'] === 'undefined'"
                                               :items="parameterItems('v')"
-                                              v-model="v"
+                                              v-model="parameters.v"
+                                              label="Ansicht"
+                                    ></v-select>
+                                </v-flex>
+                                <v-flex v-if="typeof parameterList['c'] !== 'undefined'" xs12 sm4 md2>
+                                    <v-select :items="parameterItems('c')"
+                                              v-model="parameters.c"
+                                              multiple
+                                              label="Gruppen"
+                                    ></v-select>
+                                </v-flex>
+                                <v-flex v-if="parameters.c.includes('Arbeitnehmer')" xs12 sm4 md2>
+                                    <v-select :items="parameterItems('f1')"
+                                              v-model="parameters.f1"
+                                              label="Arbeitnehmer Aktiv"
+                                    ></v-select>
+                                </v-flex>
+                                <v-flex v-if="parameters.c.includes('Arbeitnehmer')" xs12 sm4 md2>
+                                    <v-select :items="parameterItems('f2')"
+                                              v-model="parameters.f2"
+                                              label="Arbeitgeber"
+                                    ></v-select>
+                                </v-flex>
+                                <v-flex v-if="parameters.c.includes('Mieter')" xs12 sm4 md2>
+                                    <v-select :items="parameterItems('f3')"
+                                              v-model="parameters.f3"
+                                              label="Mieter Aktiv"
                                     ></v-select>
                                 </v-flex>
                             </v-layout>
@@ -32,31 +64,51 @@
                     <v-card>
                         <v-data-table :items="listItems"
                                       :headers="headers"
-                                      :pagination.sync="pagination"
+                                      :pagination.sync="parameters.pagination"
                                       :total-items="totalListItems"
                                       :loading="loading"
                         >
+                            <template slot="headers" scope="props">
+                                <tr>
+                                    <th v-for="header in props.headers">
+                                        {{ header.text }}
+                                        <template v-if="header.data['fields'] && header.data['fields'].length > 0">
+                                            <br>({{header.data['fields'].join(', ')}})
+                                        </template>
+                                        <template v-if="header.data['columns'] && header.data['columns'].length > 0">
+                                            <br>[{{header.data['columns'].join(', ')}}]
+                                        </template>
+                                    </th>
+                                </tr>
+                            </template>
                             <template slot="items" scope="props">
                                 <tr>
-                                    <td v-for="(v, k) in headers">
-                                        <template v-for="(item, i) in props.item[k]">
-                                            <template v-if="item.type === 'entity'">
-                                                <template v-if="i > 0">
-                                                    <br>
+                                    <td v-for="cell in props.item">
+                                        <template v-for="(cellPart, c) in cell">
+                                            <template v-if="cellPart.content.length > 0">
+                                                <template v-if="cell.length > 1">
+                                                    {{cellPart.relation}}<br>
                                                 </template>
-                                                <app-identifier :value="prototypeEntity(item)">
-                                                </app-identifier>
-                                            </template>
-                                            <template v-else-if="item.type === 'prerendered'">
-                                                <template v-for="(line, l) in item.lines">
-                                                    <template v-if="l > 0">
+                                                <template v-for="item in cellPart.content">
+                                                    <template v-if="item.type === 'entity' && item.entity">
+                                                        <app-identifier :value="prototypeEntity(item)">
+                                                        </app-identifier>
                                                         <br>
                                                     </template>
-                                                    {{line}}
+                                                    <template v-else-if="item.type === 'prerendered'">
+                                                        <template v-for="line in item.lines">
+                                                            <template v-if="line === ''">
+                                                                &nbsp;<br>
+                                                            </template>
+                                                            <template v-else>
+                                                                {{line}}<br>
+                                                            </template>
+                                                        </template>
+                                                    </template>
+                                                    <template v-else-if="item.type === 'aggregate'">
+                                                        Count({{item.entities.length}})
+                                                    </template>
                                                 </template>
-                                            </template>
-                                            <template v-else-if="item.type === 'aggregate'">
-                                                Count({{item.entities.length}})
                                             </template>
                                         </template>
                                     </td>
@@ -76,21 +128,19 @@
     import {Mutation, namespace, State} from "vuex-class";
     import {Watch} from "vue-property-decorator";
     import axios from "libraries/axios"
-    import {
-        Detail,
-        Einheit,
-        Haus,
-        Job,
-        Objekt,
-        Partner,
-        Person,
-        RentalContract
-    } from "../../../server/resources/models";
+    import {Model} from "server/resources/models";
+    import _ from "lodash";
+    import personAddDialog from "../../../components/common/dialogs/PersonAddDialog.vue";
 
     const RefreshState = namespace('shared/refresh', State);
     const RefreshMutation = namespace('shared/refresh', Mutation);
+    const SnackbarMutation = namespace('shared/snackbar', Mutation);
 
-    @Component
+    @Component({
+        'components': {
+            'app-person-add-dialog': personAddDialog
+        }
+    })
     export default class ListView extends Vue {
         @RefreshState('dirty')
         dirty;
@@ -98,72 +148,124 @@
         @RefreshMutation('refreshFinished')
         refreshFinished: Function;
 
-        parameters: Array<Object> = [];
+        @SnackbarMutation('updateMessage')
+        updateMessage: Function;
+
+        add: boolean = false;
+        x: number = 0;
+        y: number = 0;
+
+        parameterList: Array<Object> = [];
         listItems: Array<any> = [];
         headers: Array<Object> = [];
-        v: string | null = null;
-        q: string | null = null;
-        pagination: Object = {
-            rowsPerPage: 5,
-            page: 1,
-            descending: false,
-            sortBy: ''
+        parameters: {
+            v: string | null;
+            q: string | null;
+            c: Array<string>;
+            f1: string | null;
+            f2: string | null;
+            f3: string | null;
+            pagination: {
+                rowsPerPage: number,
+                page: number,
+                descending: boolean,
+                sortBy: string
+            }
+        } = {
+            v: null,
+            q: null,
+            c: [],
+            f1: null,
+            f2: null,
+            f3: null,
+            pagination: {
+                rowsPerPage: 5,
+                page: 1,
+                descending: false,
+                sortBy: ''
+            }
         };
         totalListItems: number = 0;
         loading: boolean = false;
+        pauseHistory: boolean = false;
+        booting: boolean = false;
 
         created() {
+            this.pauseHistory = true;
+            this.booting = true;
+            window.addEventListener('popstate', this.popState);
             this.parseQuery();
             axios.get('/api/v1/persons/parameters').then((respnose) => {
-                this.parameters = respnose.data;
-                if (!this.v) {
-                    this.v = this.parameters['v']['default'];
+                this.parameterList = respnose.data;
+                if (!this.parameters.v) {
+                    this.parameters.v = this.parameterList['v']['default'];
                 }
+                this.$nextTick(() => {
+                    this.pauseHistory = false;
+                    this.booting = false;
+                });
             });
+        }
+
+        destroyed() {
+            window.removeEventListener('popstate', this.popState);
         }
 
         @Watch('dirty')
         onDirtyChange(val) {
             if (val) {
-                this.updateList();
+                this.updateList().then(() => {
+                    this.refreshFinished();
+                });
             }
         }
 
-        @Watch('q')
-        onQChange() {
-            this.updateList();
-            this.updateHistory();
+        @Watch('parameters', {deep: true})
+        onParametersChange() {
+            this.onParametersChangeDebounced();
         }
 
-        @Watch('v')
-        onVChange() {
-            this.updateList();
+        onParametersChangeDebounced: Function = _.debounce(function (this: ListView) {
             this.updateHistory();
-        }
-
-        @Watch('pagination', {deep: true})
-        onPaginationChange() {
             this.updateList();
-            this.updateHistory();
-        }
+        }, 300);
 
         updateList() {
             this.loading = true;
-            axios.get('/api/v1/persons', {
+            let conditional: {
+                f1: string | null;
+                f2: string | null;
+                f3: string | null;
+            } = {
+                f1: null,
+                f2: null,
+                f3: null
+            };
+            if (this.parameters.c.includes('Arbeitnehmer')) {
+                conditional.f1 = this.parameters.f1;
+                conditional.f2 = this.parameters.f2;
+            }
+            if (this.parameters.c.includes('Mieter')) {
+                conditional.f3 = this.parameters.f3;
+            }
+            return axios.get('/api/v1/persons', {
                 params: {
-                    'q': this.q,
-                    'v': this.v,
-                    's': this.pagination['rowsPerPage'],
-                    'page': this.pagination['page']
+                    'q': this.parameters.q,
+                    'v': this.parameters.v,
+                    'c': this.parameters.c,
+                    's': this.parameters.pagination.rowsPerPage,
+                    'page': this.parameters.pagination.page,
+                    ...conditional
                 }
             }).then((respnose) => {
                 this.loading = false;
                 if (respnose.data.headers) {
                     this.headers = respnose.data.headers.map((val) => {
                         return {
-                            text: val,
+                            text: val['head'],
                             sortable: false,
-                            value: ''
+                            value: '',
+                            data: val
                         }
                     })
                 }
@@ -173,72 +275,118 @@
                 if (respnose.data.total) {
                     this.totalListItems = respnose.data.total
                 }
-            })
+                if (respnose.data['last-page']) {
+                    if (respnose.data['last-page'] < this.parameters.pagination.page) {
+                        this.booting = true;
+                        this.pauseHistory = true;
+                        this.parameters.pagination.page = respnose.data['last-page'];
+                        this.$nextTick(() => {
+                            this.booting = false;
+                            this.pauseHistory = false;
+                        });
+                    }
+                }
+            }).catch((error) => {
+                if (error.response.data.error.message) {
+                    this.updateMessage('Message: ' + error.response.data.error.message);
+                } else {
+                    this.updateMessage('Code: ' + error.response.status + ' Message: ' + error.response.statusText);
+                }
+                this.loading = false;
+            });
         }
 
         updateHistory() {
             let params = new URLSearchParams(window.location.search);
             params.delete('q');
-            if (this.q) {
-                params.set('q', this.q);
+            if (this.parameters.q) {
+                params.set('q', this.parameters.q);
             }
             params.delete('v');
-            if (this.v) {
-                params.set('v', this.v);
+            if (this.parameters.v) {
+                params.set('v', this.parameters.v);
+            }
+            params.delete('c');
+            if (this.parameters.c) {
+                this.parameters.c.forEach(v => {
+                    params.append('c', v);
+                });
+            }
+            params.delete('f1');
+            if (this.parameters.f1) {
+                params.set('f1', this.parameters.f1);
+            }
+            params.delete('f2');
+            if (this.parameters.f2) {
+                params.set('f2', this.parameters.f2);
+            }
+            params.delete('f3');
+            if (this.parameters.f3) {
+                params.set('f3', this.parameters.f3);
             }
             params.delete('s');
-            if (this.pagination['rowsPerPage']) {
-                params.set('s', this.pagination['rowsPerPage']);
+            if (this.parameters.pagination.rowsPerPage) {
+                params.set('s', String(this.parameters.pagination.rowsPerPage));
             }
             params.delete('page');
-            if (this.pagination['page']) {
-                params.set('page', this.pagination['page']);
+            if (this.parameters.pagination.page) {
+                params.set('page', String(this.parameters.pagination.page));
             }
-            window.history.pushState({}, document.title, '?' + params.toString());
+            if (this.booting) {
+                window.history.replaceState({}, document.title, '?' + params.toString());
+            }
+            if (!this.pauseHistory) {
+                window.history.pushState({}, document.title, '?' + params.toString());
+            }
+
         }
 
         parseQuery() {
             let params = new URLSearchParams(window.location.search);
             if (params.has('q')) {
-                this.q = params.get('q');
+                this.parameters.q = params.get('q');
             }
             if (params.has('v')) {
-                this.v = params.get('v');
+                this.parameters.v = params.get('v');
+            }
+            if (params.has('c')) {
+                this.parameters.c = params.getAll('c');
+            }
+            if (params.has('f1')) {
+                this.parameters.f1 = params.get('f1');
+            }
+            if (params.has('f2')) {
+                this.parameters.f2 = params.get('f2');
+            }
+            if (params.has('f3')) {
+                this.parameters.f3 = params.get('f3');
             }
             if (params.has('page')) {
-                this.pagination['page'] = Number(params.get('page'));
+                this.parameters.pagination.page = Number(params.get('page'));
             }
             if (params.has('s')) {
-                this.pagination['rowsPerPage'] = Number(params.get('s'));
+                this.parameters.pagination.rowsPerPage = Number(params.get('s'));
             }
+        }
+
+        popState() {
+            this.pauseHistory = true;
+            this.parseQuery();
+            this.$nextTick(() => this.pauseHistory = false)
         }
 
         parameterItems(parameter) {
-            return this.parameters[parameter] ? Object.keys(this.parameters[parameter]['views']) : [];
+            return this.parameterList[parameter] ? Object.keys(this.parameterList[parameter]['views']) : [];
         }
 
         prototypeEntity(entity) {
-            switch (entity.class) {
-                case "App\\Models\\Person":
-                    return Person.prototypePerson(entity.entity);
-                case "App\\Models\\Partner":
-                    return Partner.prototypePartner(entity.entity);
-                case "App\\Models\\Job":
-                    return Job.prototypeJob(entity.entity);
-                case "App\\Models\\Mietvertraege":
-                    return RentalContract.prototypeRentalContract(entity.entity);
-                case "App\\Models\\Kaufvertraege":
-                    return RentalContract.prototypeRentalContract(entity.entity);
-                case "App\\Models\\Objekte":
-                    return Objekt.prototypeObjekt(entity.entity);
-                case "App\\Models\\Haeuser":
-                    return Haus.prototypeHaus(entity.entity);
-                case "App\\Models\\Einheiten":
-                    return Einheit.prototypeEinheit(entity.entity);
-                case "App\\Models\\Details":
-                    return Detail.prototypeDetail(entity.entity);
-            }
-            return null;
+            return Model.applyPrototype(entity.entity);
+        }
+
+        addPerson() {
+            this.add = true;
+            this.x = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().left - 20 : this.x;
+            this.y = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().top - 20 : this.y;
         }
     }
 </script>

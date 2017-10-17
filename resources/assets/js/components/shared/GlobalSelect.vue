@@ -1,7 +1,17 @@
 <template>
-    <app-entity-select :value="selected" @input="select" hide-details :entities="['partner', 'bankkonto', 'objekt']"
-                       append-icon="" multiple class="global-select" @focusout.native="checkReload"
-                       @keydown.native.esc="checkReload" @chip-close="checkReload">
+    <app-entity-select :value="selected"
+                       @input="select"
+                       hide-details
+                       :entities="['partner', 'bankkonto', 'objekt']"
+                       append-icon=""
+                       multiple class="global-select"
+                       @focusout.native="checkReload"
+                       @keydown.native.esc="checkReload"
+                       @chip-close="checkReload"
+                       solo
+                       light
+                       style="background-color: #6ddfdb"
+    >
     </app-entity-select>
 </template>
 
@@ -94,21 +104,3 @@
         }
     }
 </script>
-
-<style>
-    .global-select .input-group__details::after {
-        background-color: #ffffff;
-    }
-
-    .global-select.input-group.input-group--focused .input-group__input .icon {
-        color: #ffffff;
-    }
-
-    .global-select.input-group--text-field input {
-        caret-color: #ffffff;
-    }
-
-    .global-select i {
-        margin-right: 0;
-    }
-</style>

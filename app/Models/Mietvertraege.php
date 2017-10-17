@@ -20,6 +20,12 @@ class Mietvertraege extends Model implements ActiveContract
     protected $primaryKey = 'MIETVERTRAG_ID';
     protected $searchableFields = ['MIETVERTRAG_VON', 'MIETVERTRAG_BIS'];
     protected $defaultOrder = ['MIETVERTRAG_VON' => 'desc', 'MIETVERTRAG_BIS' => 'desc'];
+    protected $appends = ['type'];
+
+    static public function getTypeAttribute()
+    {
+        return 'rental_contract';
+    }
 
     protected static function boot()
     {

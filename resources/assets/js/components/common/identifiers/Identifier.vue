@@ -22,8 +22,10 @@
     import objectIdentifier from "./ObjectIdentifier.vue";
     import houseIdentifier from "./HouseIdentifier.vue";
     import unitIdentifier from "./UnitIdentifier.vue";
+    import assignmentIdentifier from "./AssignmentIdentifier.vue";
     import {Prop} from "vue-property-decorator";
     import {
+        Assignment,
         Detail, Einheit,
         Haus, Job, JobTitle,
         Objekt,
@@ -43,7 +45,8 @@
             [Haus.type]: houseIdentifier,
             [Einheit.type]: unitIdentifier,
             [Job.type]: jobIdentifier,
-            [JobTitle.type]: jobTitleIdentifier
+            [JobTitle.type]: jobTitleIdentifier,
+            [Assignment.type]: assignmentIdentifier,
         }
     })
     export default class Identifier extends Vue {
@@ -51,3 +54,21 @@
         value;
     }
 </script>
+
+<style>
+    .identifier-icon {
+        position: absolute;
+        left: 0;
+        display: inline-block;
+    }
+
+    .identifier i {
+        font-size: inherit;
+        line-height: inherit;
+    }
+
+    .identifier {
+        padding-left: 1.2em;
+        position: relative;
+    }
+</style>

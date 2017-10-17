@@ -32,9 +32,12 @@
                 type="date"
                 prepend-icon="mdi-cake"
         ></v-text-field>
-        <app-select v-model="inputValue.sex" :items="gender" prepend-icon="mdi-alphabetical"
-                    label="Geschlecht" slot="input" menu-z-index="10"
-        ></app-select>
+        <v-select v-model="inputValue.sex"
+                  :items="gender"
+                  prepend-icon="mdi-alphabetical"
+                  label="Geschlecht"
+                  slot="input"
+        ></v-select>
     </app-edit-dialog>
 </template>
 
@@ -43,7 +46,11 @@
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
     import _ from "lodash";
-    import {Person} from "../../../server/resources/models";
+    import {Person} from "server/resources/models";
+    import {Mutation, namespace} from "vuex-class";
+
+    const SnackbarMutation = namespace('shared/snackbar', Mutation);
+    const RefreshMutation = namespace('shared/refresh', Mutation);
 
     @Component
     export default class PersonEditDialog extends Vue {
@@ -69,6 +76,12 @@
         @Prop({type: Boolean})
         show;
 
+        @SnackbarMutation('updateMessage')
+        updateMessage: Function;
+
+        @RefreshMutation('requestRefresh')
+        requestRefresh: Function;
+
         inputValue: Person = new Person();
 
         gender: Array<Object> = [
@@ -79,6 +92,12 @@
 
         onSave() {
             this.$emit('input', this.inputValue);
+            this.inputValue.save().then(() => {
+                this.updateMessage('Person geändert.');
+                this.requestRefresh();
+            }).catch((error) => {
+                this.updateMessage('Fehler beim Ändern der Person. Code: ' + error.response.status + ' Message: ' + error.response.statusText);
+            });
         }
 
         onOpen() {

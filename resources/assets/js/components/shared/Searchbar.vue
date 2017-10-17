@@ -1,6 +1,12 @@
 <template>
-    <app-entity-select @input="select" hide-details prepend-icon="search" append-icon=""
-                       :entities="['person', 'partner', 'objekt', 'haus', 'einheit']">
+    <app-entity-select @input="select"
+                       hide-details
+                       prepend-icon="search"
+                       append-icon=""
+                       :entities="['person', 'partner', 'objekt', 'haus', 'einheit']"
+                       solo
+                       style="background: #636363"
+    >
     </app-entity-select>
 </template>
 

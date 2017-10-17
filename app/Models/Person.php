@@ -28,10 +28,15 @@ class Person extends Authenticatable implements AuditableContract
     protected $defaultOrder = ['name' => 'asc', 'first_name' => 'asc', 'birthday' => 'asc'];
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
     protected $fillable = ['name', 'first_name', 'birthday'];
-    protected $appends = ['sex'];
+    protected $appends = ['sex', 'type'];
     protected $events = [
         'updated' => PersonUpdated::class
     ];
+
+    static public function getTypeAttribute()
+    {
+        return 'person';
+    }
 
     protected static function boot()
     {

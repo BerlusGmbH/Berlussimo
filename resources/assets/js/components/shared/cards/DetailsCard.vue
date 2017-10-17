@@ -27,6 +27,7 @@
                         <div style="display: flex">
                             <app-detail-edit-dialog :value="props.item"
                                                     @input="$emit('input', $event); saveDetail($event)"
+                                                    :parent="parent"
                                                     prepend-icon="mdi-table"
                                                     large
                             >
@@ -55,7 +56,7 @@
     import {Mutation, namespace} from "vuex-class";
     import detailDeleteDialog from "../../common/dialogs/DetailDeleteDialog.vue";
     import detailEditDialog from "../../common/dialogs/DetailEditDialog.vue";
-    import {Detail} from "../../../server/resources/models";
+    import {Detail, Einheit, Person} from "../../../server/resources/models";
 
     const SnackbarMutation = namespace('shared/snackbar', Mutation);
     const RefreshMutation = namespace('shared/refresh', Mutation);
@@ -72,6 +73,9 @@
 
         @Prop({type: String})
         headline;
+
+        @Prop({type: Object})
+        parent: Person | Einheit;
 
         models: Array<boolean> = [];
 

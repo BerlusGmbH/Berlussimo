@@ -2,7 +2,15 @@
     <v-expansion-panel v-if="authCheck" class="extension-panel__menu">
         <v-expansion-panel-content v-model="mainmenuOpen">
             <div slot="header">
-                <slot name="breadcrumbs"><i class="mdi mdi-home" style="padding-right: 14px"></i>Bereiche</slot>
+                <v-layout row align-center class="ma-0">
+                    <v-flex xs12 md4 lg6>
+                        <slot name="breadcrumbs"><i class="mdi mdi-home" style="padding-right: 14px"></i>Bereiche</slot>
+                    </v-flex>
+                    <v-flex xs12 md8 lg6 v-if="$vuetify.breakpoint.mdAndUp">
+                        <app-searchbar style="margin-top: 5px; margin-bottom: 5px"
+                        ></app-searchbar>
+                    </v-flex>
+                </v-layout>
             </div>
             <v-card>
                 <v-card-text>
@@ -17,8 +25,9 @@
                         <i class="mdi mdi-settings"></i><span style="padding-left: 14px">Tools</span>
                     </v-flex>
                     <v-flex xs9 md8 lg6>
-                        <app-global-select
-                                style="padding-top: 2px; padding-bottom: 2px">
+                        <app-global-select v-if="$vuetify.breakpoint.mdAndUp"
+                                           style="margin-top: 5px; margin-bottom: 5px"
+                        >
                         </app-global-select>
                     </v-flex>
                 </v-layout>
@@ -37,6 +46,7 @@
     import Component from 'vue-class-component';
     import {State, Getter, Mutation, namespace} from 'vuex-class';
     import globalSelect from "./GlobalSelect.vue";
+    import searchbar from "./Searchbar.vue";
 
     const AuthGetter = namespace('auth', Getter);
 
@@ -45,7 +55,8 @@
 
     @Component({
         components: {
-            'app-global-select': globalSelect
+            'app-global-select': globalSelect,
+            'app-searchbar': searchbar
         }
     })
     export default class Menu extends Vue {

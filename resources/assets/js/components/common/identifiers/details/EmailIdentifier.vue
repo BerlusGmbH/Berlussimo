@@ -3,7 +3,7 @@
         <div style="margin-right: 0.2rem; display: flex; flex-direction: column">
             <div class="identifier" style="display: block">
                 <v-icon class="identifier-icon">mdi-mail-ru</v-icon>
-                <div @click="copyToClipboard(value.DETAIL_INHALT)"
+                <div @click="copyToClipboard(value.DETAIL_INHALT, 'E-Mail-Adresse')"
                      style="display: inline-block; cursor: pointer; vertical-align: middle" ref="detail">
                     {{value.DETAIL_INHALT}}
                 </div>
@@ -11,7 +11,7 @@
             <div class="identifier" style="display: block">
                 <template v-if="value.DETAIL_BEMERKUNG">
                     <v-icon class="identifier-icon">mdi-note</v-icon>
-                    <div @click="copyToClipboard(value.DETAIL_BEMERKUNG)"
+                    <div @click="copyToClipboard(value.DETAIL_BEMERKUNG, 'Bemerkung')"
                          style="display: inline-block; cursor: pointer; vertical-align: middle"
                     >
                         {{value.DETAIL_BEMERKUNG}}
@@ -85,19 +85,3 @@
         }
     }
 </script>
-
-<style>
-    .identifier-icon {
-        position: absolute;
-        left: 0;
-    }
-
-    .identifier i {
-        font-size: inherit;
-    }
-
-    .identifier {
-        padding-left: 1.2em;
-        position: relative;
-    }
-</style>

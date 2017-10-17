@@ -1,4 +1,4 @@
-import axios, {AxiosPromise} from "axios";
+import axios from "libraries/axios";
 import {Person} from "../../../server/resources";
 
 export default {
@@ -32,17 +32,11 @@ export default {
                 });
             });
         },
-        getPerson(_context, id): AxiosPromise {
-            let token = document.head.querySelector('meta[name="csrf-token"]');
-
-            if (token) {
-                axios.defaults.headers.common['X-CSRF-TOKEN'] = token['content'];
-            }
-            axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+        getPerson(_context, id) {
             return axios.get('/api/v1/persons/' + id);
         },
         prototypePerson(_context, person: any): Person {
-            return Person.prototypePerson(person);
+            return Person.applyPrototype(person);
         }
     }
 }

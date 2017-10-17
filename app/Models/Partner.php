@@ -17,6 +17,12 @@ class Partner extends Model
     protected $primaryKey = 'PARTNER_ID';
     protected $searchableFields = ['PARTNER_NAME', 'STRASSE', 'NUMMER', 'PLZ', 'ORT'];
     protected $defaultOrder = ['PARTNER_NAME' => 'asc'];
+    protected $appends = ['type'];
+
+    static public function getTypeAttribute()
+    {
+        return 'partner';
+    }
 
     protected static function boot()
     {

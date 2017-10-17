@@ -1,9 +1,23 @@
 <template>
-    <app-select :search-input.sync="query" :value="value" :disabled="disabled"
-                @change="emit('change', $event)" @input="emit('input', $event)" :async-loading="searching"
-                :items="items" autocomplete @click.native.stop :multiple="multiple"
-                :hide-details="hideDetails" return-object :no-data-text="status" :prepend-icon="icon"
-                :append-icon="appendIcon" :filter="() => true" :solo="solo" :label="label">
+    <app-select :search-input.sync="query"
+                :value="value" :disabled="disabled"
+                @change="emit('change', $event)"
+                @input="emit('input', $event)"
+                :loading="searching"
+                :items="items" autocomplete
+                @click.native.stop
+                :multiple="multiple"
+                :hide-details="hideDetails"
+                return-object
+                :no-data-text="status"
+                :prepend-icon="icon"
+                :append-icon="appendIcon"
+                :filter="() => true"
+                :solo="solo"
+                :label="label"
+                :dark="dark"
+                :light="light"
+    >
         <template slot="selection" scope="data">
             <app-chip @input="data.parent.selectItem(data.item); $emit('chip-close', $event)"
                       :multiple="multiple" :entity="data.item" :selected="data.selected"></app-chip>
@@ -69,6 +83,12 @@
 
         @Prop({type: String})
         appendIcon;
+
+        @Prop({type: [Boolean, String]})
+        dark;
+
+        @Prop({type: [Boolean, String]})
+        light;
 
         @Watch('query')
         onQueryChanged(query: any) {

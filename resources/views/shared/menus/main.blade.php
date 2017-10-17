@@ -7,19 +7,19 @@
 
     @can(\App\Libraries\Permission::PERMISSION_MODUL_OBJEKT)
         <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
-            <a href='{{route('web::objekte::index')}}'>Objekte</a>
+            <a href='{{route('web::objekte.index')}}'>Objekte</a>
         </div>
     @endcan
 
     @can(\App\Libraries\Permission::PERMISSION_MODUL_HAUS)
         <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
-            <a href='{{route('web::haeuser::index')}}'>Häuser</a>
+            <a href='{{route('web::haeuser.index')}}'>Häuser</a>
         </div>
     @endcan
 
     @can(\App\Libraries\Permission::PERMISSION_MODUL_EINHEIT)
         <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
-            <a href='{{route('web::einheiten::index')}}'>Einheiten</a>
+            <a href='{{route('web::einheiten.index')}}'>Einheiten</a>
         </div>
     @endcan
 
@@ -31,7 +31,7 @@
 
     @can(\App\Libraries\Permission::PERMISSION_MODUL_PERSON)
         <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
-            <a href='{{route('web::personen::index')}}'>Personen</a>
+            <a href='{{route('web::personen.index')}}'>Personen</a>
         </div>
     @endcan
 

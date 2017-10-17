@@ -27,6 +27,7 @@
                             <app-detail-edit-dialog :value="props.item"
                                                     @input="$emit('input', $event); saveDetail($event)"
                                                     prepend-icon="mdi-table"
+                                                    :parent="parent"
                                                     large
                             >
                                 <v-icon style="cursor: pointer">mdi-pencil</v-icon>
@@ -54,7 +55,7 @@
     import detailDeleteDialog from "../../common/dialogs/DetailDeleteDialog.vue";
     import detailEditDialog from "../../common/dialogs/DetailEditDialog.vue";
     import {Mutation, namespace} from "vuex-class";
-    import {Detail} from "../../../server/resources/models";
+    import {Detail, Einheit, Person} from "../../../server/resources/models";
 
     const SnackbarMutation = namespace('shared/snackbar', Mutation);
     const RefreshMutation = namespace('shared/refresh', Mutation);
@@ -71,6 +72,9 @@
 
         @Prop({type: String})
         headline;
+
+        @Prop({type: Object})
+        parent: Person | Einheit;
 
         @SnackbarMutation('updateMessage')
         updateMessage: Function;

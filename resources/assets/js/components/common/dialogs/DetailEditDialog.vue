@@ -11,27 +11,27 @@
             @save="onSave"
     >
         <slot></slot>
-        <app-select v-if="subcategories.length > 0"
-                    v-model="inputValue.DETAIL_INHALT"
-                    :items="subcategories"
-                    prepend-icon="mdi-alphabetical"
-                    :label="inputValue.DETAIL_NAME"
-                    slot="input"
-                    menu-z-index="10"
-                    item-text="UNTERKATEGORIE_NAME"
-                    item-value="UNTERKATEGORIE_NAME"
-        ></app-select>
+        <v-select v-if="subcategories.length > 0"
+                  v-model="inputValue.DETAIL_INHALT"
+                  :items="subcategories"
+                  prepend-icon="mdi-alphabetical"
+                  :label="inputValue.DETAIL_NAME"
+                  slot="input"
+                  item-text="UNTERKATEGORIE_NAME"
+                  item-value="UNTERKATEGORIE_NAME"
+                  lazy
+        ></v-select>
         <v-text-field v-else
                       slot="input"
                       v-model="inputValue.DETAIL_INHALT"
-                      single-line
+                      :label="inputValue.DETAIL_NAME"
                       :type="type"
                       :prepend-icon="prependIcon"
                       :multi-line="large"
         ></v-text-field>
         <v-text-field slot="input"
                       v-model="inputValue.DETAIL_BEMERKUNG"
-                      single-line
+                      label="Bemerkung"
                       :type="type"
                       prepend-icon="note"
                       :multi-line="large"
@@ -44,7 +44,7 @@
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
     import _ from "lodash";
-    import {Detail} from "../../../server/resources/models";
+    import {Detail, Einheit, Person} from "../../../server/resources/models";
     import axios from "../../../libraries/axios";
 
     @Component
@@ -52,6 +52,9 @@
 
         @Prop({type: Object})
         value: Detail;
+
+        @Prop()
+        parent: Person | Einheit;
 
         @Prop()
         large: boolean;
@@ -87,9 +90,11 @@
         }
 
         loadCategories() {
-            axios.get('/api/v1/persons/details/categories/' + this.value.DETAIL_NAME + '/subcategories').then((response) => {
-                this.subcategories = response.data;
-            })
+            if (this.parent) {
+                axios.get(this.parent.getApiBaseUrl() + '/details/categories/' + this.value.DETAIL_NAME + '/subcategories').then((response) => {
+                    this.subcategories = response.data;
+                })
+            }
         }
     }
 </script>

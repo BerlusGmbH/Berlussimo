@@ -44,7 +44,7 @@
     const NotificationsAction = namespace('shared/notifications', Action);
     const NotificationsMutation = namespace('shared/notifications', Mutation);
     const AuthState = namespace('auth', State);
-    const PersonShowAction = namespace('modules/personen/show', Action);
+    const PersonShowAction = namespace('modules/person/show', Action);
 
     @Component
     export default class Notifications extends Vue {

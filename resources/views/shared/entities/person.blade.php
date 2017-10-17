@@ -17,7 +17,7 @@
         data-delay="50"
         data-tooltip="Person"></i>
     @endif
-    <a href="{{ route('web::personen::show', ['id' => $entity->id]) }}">{{$entity->full_name}}</a>
+        <a href="{{ route('web::personen.show', ['id' => $entity->id]) }}">{{$entity->full_name}}</a>
     @if($icons)
             @if($entity->sex == 'männlich')
             <i class="mdi mdi-gender-male"></i>

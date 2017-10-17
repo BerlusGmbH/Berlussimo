@@ -16,6 +16,12 @@ class JobTitle extends Model
     protected $searchableFields = ['title'];
     protected $defaultOrder = ['title' => 'asc'];
     protected $guarded = [];
+    protected $appends = ['type'];
+
+    static public function getTypeAttribute()
+    {
+        return 'job_title';
+    }
 
     public function employer()
     {

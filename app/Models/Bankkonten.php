@@ -17,6 +17,12 @@ class Bankkonten extends Model
     protected $primaryKey = 'KONTO_ID';
     protected $searchableFields = ['BEZEICHNUNG', 'IBAN', 'BIC', 'KONTONUMMER', 'BLZ'];
     protected $defaultOrder = ['BEZEICHNUNG' => 'asc'];
+    protected $appends = ['type'];
+
+    static public function getTypeAttribute()
+    {
+        return 'bank_account';
+    }
 
     protected static function boot()
     {

@@ -14,15 +14,14 @@
                             <app-identifier style="font-size: 24px" v-model="jobValue.employer"></app-identifier>
                         </v-flex>
                         <v-flex xs12>
-                            <app-select v-model="jobValue.job_title_id"
-                                        label="Titel"
-                                        prepend-icon="mdi-book-open-page-variant"
-                                        :items="titles"
-                                        menu-z-index="10"
-                                        item-text="title"
-                                        item-value="id"
-                                        autocomplete
-                            ></app-select>
+                            <v-select v-model="jobValue.job_title_id"
+                                      label="Titel"
+                                      prepend-icon="mdi-book-open-page-variant"
+                                      :items="titles"
+                                      item-text="title"
+                                      item-value="id"
+                                      autocomplete
+                            ></v-select>
                         </v-flex>
                         <v-flex xs12 sm6>
                             <v-text-field v-model="jobValue.join_date"
