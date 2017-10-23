@@ -1,9 +1,10 @@
 <template>
-    <div class="identifier">
+    <div class="identifier" style="display: flex">
         <v-icon class="identifier-icon">{{value.getEntityIcon()}}</v-icon>
-        <a :href="value.getDetailUrl()" ref="identifier">{{String(value)}}</a>
+        <a :href="value.getDetailUrl()" ref="identifier">{{String(value)}}</a>&nbsp;
         <v-menu offset-y v-model="show" :position-absolutely="true">
-            <v-icon slot="activator" style="font-size: inherit">mdi-arrow-down-drop-circle</v-icon>
+            <v-icon slot="activator" style="font-size: inherit; vertical-align: baseline">mdi-arrow-down-drop-circle
+            </v-icon>
             <v-list>
                 <v-list-tile @click="sendEMails('tenants')">
                     <v-list-tile-avatar>
@@ -63,16 +64,6 @@
                                 @input="$emit('input', $event)"
         >
         </app-object-edit-dialog>
-        <app-object-copy-dialog v-if="show || copy"
-                                :position-absolutely="true"
-                                :show="edit"
-                                @show="val => {copy = val}"
-                                :position-x="x"
-                                :position-y="y"
-                                :value="value"
-                                @input="$emit('input', $event)"
-        >
-        </app-object-copy-dialog>
         <app-detail-add-dialog v-if="show || add"
                                :position-absolutely="true"
                                :show="add"
@@ -83,6 +74,11 @@
                                @input="$emit('update')"
         >
         </app-detail-add-dialog>
+        <app-object-copy-dialog v-if="show || copy"
+                                :object="value"
+                                v-model="copy"
+        >
+        </app-object-copy-dialog>
     </div>
 </template>
 

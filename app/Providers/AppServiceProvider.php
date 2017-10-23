@@ -12,9 +12,11 @@ use App\Models\Objekte;
 use App\Models\Partner;
 use App\Models\Person;
 use App\Models\Wirtschaftseinheiten;
+use App\Observers\DatabaseNotificationObserver;
 use App\Services\ListViewsService;
 use App\Services\PhoneLocator;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\ServiceProvider;
 use Schema;
 
@@ -35,17 +37,25 @@ class AppServiceProvider extends ServiceProvider
             'EINHEIT' => Einheiten::class,
             'Benutzer' => Person::class,
             'Partner' => Partner::class,
+            'PARTNER' => Partner::class,
             'Einheit' => Einheiten::class,
             'Haus' => Haeuser::class,
             'Objekt' => Objekte::class,
+            'EIGENTUEMER' => Kaufvertraege::class,
             'Eigentuemer' => Kaufvertraege::class,
+            'BAUSTELLE_EXT' => BaustellenExtern::class,
             'Baustelle_ext' => BaustellenExtern::class,
+            'MIETVERTRAG' => Mietvertraege::class,
             'Mietvertrag' => Mietvertraege::class,
+            'WIRTSCHAFTSEINHEIT' => Wirtschaftseinheiten::class,
             'Wirtschaftseinheit' => Wirtschaftseinheiten::class,
+            'LAGER' => Lager::class,
             'Lager' => Lager::class
         ]);
 
         Schema::defaultStringLength(191);
+
+        DatabaseNotification::observe(DatabaseNotificationObserver::class);
     }
 
     /**

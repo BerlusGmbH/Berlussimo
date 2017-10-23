@@ -6,43 +6,6 @@ use Carbon\Carbon;
 
 trait Active
 {
-    public function isActive($comparator = '=', Carbon $date = null)
-    {
-        if (is_null($date)) {
-            $date = Carbon::today();
-        }
-        $start = $this->getStartDateFieldName();
-        $end = $this->getEndDateFieldName();
-
-        switch ($comparator) {
-            case '=':
-                return $this->{$start} <= $date
-                    && (
-                        $this->{$end} >= $date
-                        || (
-                            $this->{$end} == '0000-00-00' || is_null($this->{$end}
-                            )
-                        )
-                    );
-            case '>':
-                return $this->{$end} > $date
-                    || (
-                        $this->{$end} == '0000-00-00' || is_null($this->{$end})
-                    );
-            case '<':
-                return $this->{$start} < $date;
-            case '>=':
-                return $this->{$end} >= $date
-                    || (
-                        $this->{$end} == '0000-00-00' || is_null($this->{$end})
-                    );
-            case '<=':
-                return $this->{$start} <= $date;
-            default:
-                return false;
-        }
-    }
-
     public function scopeActive($query, $comparator = '=', $date = null)
     {
         if (is_null($date)) {
@@ -117,6 +80,47 @@ trait Active
             case '<=':
                 $query->whereDate($start, '>=', $date);
                 break;
+        }
+    }
+
+    public function getActiveAttribute()
+    {
+        return $this->isActive();
+    }
+
+    public function isActive($comparator = '=', Carbon $date = null)
+    {
+        if (is_null($date)) {
+            $date = Carbon::today();
+        }
+        $start = $this->getStartDateFieldName();
+        $end = $this->getEndDateFieldName();
+
+        switch ($comparator) {
+            case '=':
+                return $this->{$start} <= $date
+                    && (
+                        $this->{$end} >= $date
+                        || (
+                            $this->{$end} == '0000-00-00' || is_null($this->{$end})
+                        )
+                    );
+            case '>':
+                return $this->{$end} > $date
+                    || (
+                        $this->{$end} == '0000-00-00' || is_null($this->{$end})
+                    );
+            case '<':
+                return $this->{$start} < $date;
+            case '>=':
+                return $this->{$end} >= $date
+                    || (
+                        $this->{$end} == '0000-00-00' || is_null($this->{$end})
+                    );
+            case '<=':
+                return $this->{$start} <= $date;
+            default:
+                return false;
         }
     }
 }

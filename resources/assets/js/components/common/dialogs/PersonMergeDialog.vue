@@ -182,18 +182,21 @@
                         {
                             params: this.merged
                         }
-                ).then(function () {
-                    if (vm.left.id > (vm.right as Person).id) {
-                        let goto = window.location.protocol
-                                + '//'
-                                + window.location.host
-                                + '/personen/'
-                                + (vm.right as Person).id;
-                        window.location.href = goto;
+                ).then(() => {
+                    if (
+                            this.left.id > (this.right as Person).id
+                            && window.location.pathname === '/personen/' + vm.left.id
+                    ) {
+                        let goto = '/personen/'
+                                + (this.right as Person).id;
+                        window.location.assign(goto);
                     }
-                    vm.$emit('input', false);
-                    vm.loading = false;
-                    vm.right = null;
+                    this.$emit('input', false);
+                    this.loading = false;
+                    this.right = null;
+                    this.showSnack(
+                            'Personen werden zusammengeführt.'
+                    );
                 }).catch((error: AxiosError) => {
                     if (error.response) {
                         switch (error.response.status) {

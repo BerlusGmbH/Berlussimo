@@ -11,6 +11,7 @@ use App\Models\DetailCategory;
 use App\Models\DetailSubcategory;
 use App\Models\Person;
 use App\Services\ListViewsService;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class PersonController extends Controller
@@ -84,6 +85,11 @@ class PersonController extends Controller
     public function notifications(PersonenRequest $request, Person $person)
     {
         return $person->notifications;
+    }
+
+    public function notificationsMarkAllAsRead(PersonenRequest $request, Person $person)
+    {
+        return $person->notifications()->where('read_at', null)->update(['read_at' => new Carbon()]);
     }
 
     /**

@@ -1,7 +1,10 @@
 <template>
     <v-btn icon @click="toggle">
         <template v-if="unread">
-            <v-icon v-badge="{ value: unread, overlap: true}">message</v-icon>
+            <v-badge overlap>
+                <v-icon>message</v-icon>
+                <span slot="badge">{{unread}}</span>
+            </v-badge>
         </template>
         <template v-else>
             <v-icon>message</v-icon>

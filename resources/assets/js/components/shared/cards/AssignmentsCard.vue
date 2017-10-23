@@ -1,15 +1,21 @@
 <template>
     <v-card>
         <v-card-title>
-            <h3 class="headline">{{headline}} ({{assignments.length}})</h3>
-            <v-spacer></v-spacer>
-            <v-text-field
-                    append-icon="search"
-                    label="Search"
-                    single-line
-                    hide-details
-                    v-model="search"
-            ></v-text-field>
+            <v-layout row wrap>
+                <v-flex xs6>
+                    <a v-if="href" :href="href"><h3 class="headline">{{headline}} ({{assignments.length}})</h3></a>
+                    <h3 v-else class="headline">{{headline}} ({{assignments.length}})</h3>
+                </v-flex>
+                <v-flex xs6>
+                    <v-text-field
+                            append-icon="search"
+                            label="Search"
+                            single-line
+                            hide-details
+                            v-model="search"
+                    ></v-text-field>
+                </v-flex>
+            </v-layout>
         </v-card-title>
         <v-card-text>
             <v-data-table
@@ -19,7 +25,7 @@
                     :hide-actions="assignments.length <= 5"
                     class="elevation-1"
             >
-                <template slot="items" scope="props">
+                <template slot="items" slot-scope="props">
                     <td style="white-space: nowrap">
                         <app-identifier :value="props.item"></app-identifier>
                     </td>
@@ -32,7 +38,7 @@
                     </td>
                     <td>{{props.item.TEXT}}</td>
                 </template>
-                <template slot="pageText" scope="{ pageStart, pageStop }">
+                <template slot="pageText" slot-scope="{ pageStart, pageStop }">
                     Von {{ pageStart }} bis {{ pageStop }}
                 </template>
             </v-data-table>
@@ -53,13 +59,16 @@
         @Prop({type: String})
         headline: string;
 
+        @Prop({type: String, default: ''})
+        href: string;
+
         search: string = '';
         headers = [
-            {text: 'ID', value: ''},
-            {text: 'Erstellt', value: ''},
-            {text: 'Von', value: ''},
-            {text: 'An', value: ''},
-            {text: 'Auftrag', value: ''},
+            {text: 'ID', value: 'T_ID'},
+            {text: 'Erstellt', value: 'ERSTELLT'},
+            {text: 'Von', value: 'von'},
+            {text: 'An', value: 'an'},
+            {text: 'Auftrag', value: 'TEXT'},
         ];
     }
 </script>

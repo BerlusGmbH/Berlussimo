@@ -20,21 +20,25 @@
                 <v-flex v-if="object && object.haeuser.length > 0" xs12 sm6>
                     <app-houses-card headline="Häuser"
                                      :houses="object.haeuser"
+                                     :href="'/haeuser?q=!haus(objekt(id=' + object.getID() + '))'"
                     ></app-houses-card>
                 </v-flex>
                 <v-flex v-if="object && object.einheiten.length > 0" xs12 sm6>
                     <app-units-card headline="Einheiten"
                                     :units="object.einheiten"
+                                    :href="'/einheiten?q=!einheit(objekt(id=' + object.getID() + '))'"
                     ></app-units-card>
                 </v-flex>
                 <v-flex v-if="object && object.mieter.length > 0" xs12 sm6>
                     <app-persons-card headline="Mieter"
                                       :persons="object.mieter"
+                                      :href="'/personen?q=!person(mietvertrag(aktiv objekt(id=' + object.getID() + ')))'"
                     ></app-persons-card>
                 </v-flex>
                 <v-flex v-if="object && object.weg_eigentuemer.length > 0" xs12 sm6>
                     <app-persons-card headline="WEG-Eigentümer"
                                       :persons="object.weg_eigentuemer"
+                                      :href="'/personen?q=!person(kaufvertrag(aktiv objekt(id=' + object.getID() + ')))'"
                     ></app-persons-card>
                 </v-flex>
                 <v-flex xs12 sm6 v-if="object">
@@ -42,7 +46,9 @@
                 </v-flex>
                 <v-flex v-if="object" xs12>
                     <app-assignments-card headline="Aufträge"
-                                          :assignments="object.auftraege"></app-assignments-card>
+                                          :assignments="object.auftraege"
+                                          :href="'/auftraege?q=!auftrag(kostenträger(objekt(id=' + object.getID() + ')))'"
+                    ></app-assignments-card>
                 </v-flex>
             </v-layout>
         </transition>

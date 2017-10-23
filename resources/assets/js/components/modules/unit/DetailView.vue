@@ -20,11 +20,13 @@
                 <v-flex v-if="unit && unit.mieter.length > 0" xs12 sm6>
                     <app-persons-card headline="Mieter"
                                       :persons="unit.mieter"
+                                      :href="'/personen?q=!person(mietvertrag(aktiv einheit(id=' + unit.getID() + ')))'"
                     ></app-persons-card>
                 </v-flex>
                 <v-flex v-if="unit && unit.weg_eigentuemer.length > 0" xs12 sm6>
                     <app-persons-card headline="WEG-Eigentümer"
                                       :persons="unit.weg_eigentuemer"
+                                      :href="'/personen?q=!person(kaufvertrag(aktiv einheit(id=' + unit.getID() + ')))'"
                     ></app-persons-card>
                 </v-flex>
                 <v-flex v-if="unit && unit.mietvertraege.length > 0" xs12 sm6>
@@ -37,7 +39,9 @@
                 </v-flex>
                 <v-flex v-if="unit && unit.auftraege.length > 0" xs12>
                     <app-assignments-card headline="Aufträge"
-                                          :assignments="unit.auftraege"></app-assignments-card>
+                                          :assignments="unit.auftraege"
+                                          :href="'/auftraege?q=!auftrag(kostenträger(einheit(id=' + unit.getID() + ')))'"
+                    ></app-assignments-card>
                 </v-flex>
             </v-layout>
         </transition>

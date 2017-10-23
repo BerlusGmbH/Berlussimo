@@ -7,16 +7,11 @@
                         <v-card-text>
                             <v-layout row wrap>
                                 <v-flex xs12 sm2>
-                                    <v-btn>
+                                    <v-btn @click="add = true">
                                         <v-icon>add</v-icon>
                                         <v-icon>mdi-clipboard</v-icon>
-                                        <v-icon>mdi-worker</v-icon>
                                     </v-btn>
-                                    <v-btn>
-                                        <v-icon>add</v-icon>
-                                        <v-icon>mdi-clipboard</v-icon>
-                                        <v-icon>mdi-account-multiple</v-icon>
-                                    </v-btn>
+                                    <app-assignment-add-dialog v-model="add"></app-assignment-add-dialog>
                                 </v-flex>
                                 <v-flex xs12 sm5>
                                     <v-text-field prepend-icon="mdi-filter-variant"
@@ -51,7 +46,7 @@
                                       :total-items="totalListItems"
                                       :loading="loading"
                         >
-                            <template slot="headers" scope="props">
+                            <template slot="headers" slot-scope="props">
                                 <tr>
                                     <th v-for="header in props.headers">
                                         {{ header.text }}
@@ -64,7 +59,7 @@
                                     </th>
                                 </tr>
                             </template>
-                            <template slot="items" scope="props">
+                            <template slot="items" slot-scope="props">
                                 <tr>
                                     <td v-for="cell in props.item">
                                         <template v-for="(cellPart, c) in cell">
@@ -114,12 +109,17 @@
     import axios from "libraries/axios"
     import {Model} from "server/resources/models";
     import _ from "lodash";
+    import assignmentAddDialog from "../../../components/common/dialogs/AssignmentAddDialog.vue";
 
     const RefreshState = namespace('shared/refresh', State);
     const RefreshMutation = namespace('shared/refresh', Mutation);
     const SnackbarMutation = namespace('shared/snackbar', Mutation);
 
-    @Component
+    @Component({
+        'components': {
+            'app-assignment-add-dialog': assignmentAddDialog
+        }
+    })
     export default class ListView extends Vue {
         @RefreshState('dirty')
         dirty;
@@ -136,7 +136,7 @@
         parameters: {
             v: string | null;
             q: string | null;
-            f: string | null;
+            f: Array<string>;
             pagination: {
                 rowsPerPage: number,
                 page: number,
@@ -146,7 +146,7 @@
         } = {
             v: null,
             q: null,
-            f: null,
+            f: [],
             pagination: {
                 rowsPerPage: 5,
                 page: 1,
@@ -158,6 +158,7 @@
         loading: boolean = false;
         pauseHistory: boolean = false;
         booting: boolean = false;
+        add: boolean = false;
 
         created() {
             this.pauseHistory = true;
@@ -260,7 +261,9 @@
             }
             params.delete('f');
             if (this.parameters.f) {
-                params.set('f', this.parameters.f);
+                this.parameters.f.forEach(f => {
+                    params.append('f', f);
+                });
             }
             params.delete('s');
             if (this.parameters.pagination.rowsPerPage) {
@@ -288,7 +291,9 @@
                 this.parameters.v = params.get('v');
             }
             if (params.has('f')) {
-                this.parameters.f = params.get('f');
+                params.getAll('f').forEach(f => {
+                    this.parameters.f.push(f);
+                });
             }
             if (params.has('page')) {
                 this.parameters.pagination.page = Number(params.get('page'));

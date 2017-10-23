@@ -23,9 +23,12 @@
     import houseIdentifier from "./HouseIdentifier.vue";
     import unitIdentifier from "./UnitIdentifier.vue";
     import assignmentIdentifier from "./AssignmentIdentifier.vue";
+    import constructionSiteIdentifier from "./ConstructionSiteIdentifier.vue";
+    import accountingEntityIdentifier from "./AccountingEntityIdentifier.vue";
     import {Prop} from "vue-property-decorator";
     import {
-        Assignment,
+        AccountingEntity,
+        Assignment, ConstructionSite,
         Detail, Einheit,
         Haus, Job, JobTitle,
         Objekt,
@@ -47,6 +50,8 @@
             [Job.type]: jobIdentifier,
             [JobTitle.type]: jobTitleIdentifier,
             [Assignment.type]: assignmentIdentifier,
+            [AccountingEntity.type]: accountingEntityIdentifier,
+            [ConstructionSite.type]: constructionSiteIdentifier,
         }
     })
     export default class Identifier extends Vue {

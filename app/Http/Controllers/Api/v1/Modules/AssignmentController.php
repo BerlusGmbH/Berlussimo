@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Legacy\ToDoRequest;
 use App\Models\Auftraege;
 use App\Services\ListViewsService;
+use Carbon\Carbon;
 
 class AssignmentController extends Controller
 {
@@ -21,8 +22,27 @@ class AssignmentController extends Controller
 
     public function update(ToDoRequest $request, Auftraege $assignment)
     {
-        $assignment->fillable(['OBJEKT_KURZNAME', 'EIGENTUEMER_PARTNER'])->update($request->only(['OBJEKT_KURZNAME', 'EIGENTUEMER_PARTNER']));
+        $assignment->fillable([
+            'TEXT', 'BENUTZER_TYP', 'BENUTZER_ID', 'VERFASSER_ID', 'AKUT', 'KOS_TYP', 'KOS_ID', 'ERLEDIGT'
+        ])->update($request->only([
+            'TEXT', 'BENUTZER_TYP', 'BENUTZER_ID', 'VERFASSER_ID', 'AKUT', 'KOS_TYP', 'KOS_ID', 'ERLEDIGT'
+        ]));
         return response()->json($assignment);
+    }
+
+    public function store(ToDoRequest $request)
+    {
+        $params = $request->only(['TEXT', 'BENUTZER_TYP', 'BENUTZER_ID', 'VERFASSER_ID', 'AKUT', 'KOS_TYP', 'KOS_ID', 'ERLEDIGT']);
+        $params = array_merge($params, [
+            'AKTUELL' => '1',
+            'T_ID' => Auftraege::max('T_ID') + 1,
+            'ERSTELLT' => Carbon::now(),
+            'ANZEIGEN_AB' => Carbon::today()
+        ]);
+        Auftraege::unguard();
+        $object = Auftraege::create($params);
+        Auftraege::reguard();
+        return response()->json($object);
     }
 
     public function show(ToDoRequest $request, Auftraege $assignment)
@@ -34,7 +54,7 @@ class AssignmentController extends Controller
             'haeuser',
             'einheiten',
             'auftraege' => function ($query) {
-                $query->with(['von', 'an'])->orderBy('ERSTELLT', 'desc');
+                $query->with(['von', 'an', 'kostentraeger'])->orderBy('ERSTELLT', 'desc');
             }
         ]);
         $array = $assignment->toArray();

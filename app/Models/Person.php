@@ -42,8 +42,8 @@ class Person extends Authenticatable implements AuditableContract
     {
         parent::boot();
 
-        static::addGlobalScope('sex', function (Builder $builder) {
-            $builder->with('sexDetail');
+        static::addGlobalScope('appendDetails', function (Builder $builder) {
+            $builder->with(['sexDetail', 'hinweise']);
         });
     }
 

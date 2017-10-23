@@ -4,10 +4,10 @@
     <i class="mdi mdi-subdirectory-arrow-right" style="margin-right: -2px"></i>
     <v-breadcrumbs style="display: inline-flex" icons divider="chevron_right" class="pl-0">
         <v-breadcrumbs-item>
-            @if(starts_with(URL::previous(), route('web::personen.index')))
-                <a href="{{ URL::previous() }}">Personen</a>
+            @if(parse_url(URL::previous())['path'] === parse_url(route('web::personen.index'))['path'])
+                <a href="{{URL::previous()}}">Personen</a>
             @else
-                <a href="{{ route('web::personen.index') }}">Personen</a>
+                <a href="{{route('web::personen.index')}}">Personen</a>
             @endif
         </v-breadcrumbs-item>
         <v-breadcrumbs-item>

@@ -19,14 +19,14 @@
                     :hide-actions="rentalContracts.length <= 5"
                     class="elevation-1"
             >
-                <template slot="items" scope="props">
+                <template slot="items" slot-scope="props">
                     <td>
                         <app-identifier v-model="props.item"></app-identifier>
                     </td>
                     <td>{{props.item.MIETVERTRAG_VON}}</td>
                     <td>{{props.item.MIETVERTRAG_BIS}}</td>
                 </template>
-                <template slot="pageText" scope="{ pageStart, pageStop }">
+                <template slot="pageText" slot-scope="{ pageStart, pageStop }">
                     Von {{ pageStart }} bis {{ pageStop }}
                 </template>
             </v-data-table>

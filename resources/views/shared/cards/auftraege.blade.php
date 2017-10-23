@@ -14,11 +14,11 @@
                     @endif
                     <a class='waves-effect waves-light btn tooltipped'
                        data-tooltip="Auftrag an Mitarbeiter"
-                       href='{{ route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => $type, 'kos_id' => $id]) }}'>
+                       href='{{ route('web::construction::legacy', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => $type, 'kos_id' => $id]) }}'>
                         <i class="mdi mdi-plus"></i><i class="mdi mdi-clipboard"></i><i class="mdi mdi-worker"></i></a>
                     <a class='waves-effect waves-light btn tooltipped'
                        data-tooltip="Auftrag an Partner"
-                       href='{{ route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => $type, 'kos_id' => $id]) }}'>
+                       href='{{ route('web::construction::legacy', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => $type, 'kos_id' => $id]) }}'>
                         <i class="mdi mdi-plus"></i><i class="mdi mdi-clipboard"></i><i
                                 class="mdi mdi-account-multiple"></i></a>
                 </div>

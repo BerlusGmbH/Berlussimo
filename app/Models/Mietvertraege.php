@@ -11,14 +11,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Mietvertraege extends Model implements ActiveContract
 {
-    use Searchable;
+    use Searchable {
+        Searchable::scopeSearch as scopeSearchFromTrait;
+    }
     use DefaultOrder;
     use Active;
 
     public $timestamps = false;
     protected $table = 'MIETVERTRAG';
     protected $primaryKey = 'MIETVERTRAG_ID';
-    protected $searchableFields = ['MIETVERTRAG_VON', 'MIETVERTRAG_BIS'];
+    protected $searchableFields = ['MIETVERTRAG_ID', 'MIETVERTRAG_VON', 'MIETVERTRAG_BIS'];
     protected $defaultOrder = ['MIETVERTRAG_VON' => 'desc', 'MIETVERTRAG_BIS' => 'desc'];
     protected $appends = ['type'];
 
@@ -59,5 +61,17 @@ class Mietvertraege extends Model implements ActiveContract
     public function getEndDateFieldName()
     {
         return 'MIETVERTRAG_BIS';
+    }
+
+    public function scopeSearch($query, $tokens)
+    {
+        $query->with(['einheit', 'mieter'])->orWhere(function ($query) use ($tokens) {
+            $query->searchFromTrait($tokens);
+        })->orWhereHas('einheit', function ($query) use ($tokens) {
+            $query->search($tokens);
+        })->orWhereHas('mieter', function ($query) use ($tokens) {
+            $query->search($tokens);
+        });
+        return $query;
     }
 }

@@ -2,10 +2,8 @@
 
 namespace App\Notifications;
 
-use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 
 class PersonMerged extends Notification implements ShouldQueue
@@ -36,7 +34,7 @@ class PersonMerged extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['broadcast', 'database'];
+        return ['database'];
     }
 
     /**
@@ -52,21 +50,5 @@ class PersonMerged extends Notification implements ShouldQueue
             'right' => $this->right,
             'merged' => $this->merged
         ];
-    }
-
-    /**
-     * Get the broadcastable representation of the notification.
-     *
-     * @param  mixed $notifiable
-     * @return BroadcastMessage
-     */
-    public function toBroadcast($notifiable)
-    {
-        return new BroadcastMessage([
-            'created_at' => Carbon::now()->toDateTimeString(),
-            'left' => $this->left,
-            'right' => $this->right,
-            'merged' => $this->merged
-        ]);
     }
 }

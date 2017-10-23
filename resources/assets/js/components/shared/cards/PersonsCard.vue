@@ -1,7 +1,8 @@
 <template>
     <v-card>
         <v-card-title>
-            <h3 class="headline">{{headline}} ({{persons.length}})</h3>
+            <a v-if="href" :href="href"><h3 class="headline">{{headline}} ({{persons.length}})</h3></a>
+            <h3 v-else class="headline">{{headline}} ({{persons.length}})</h3>
             <v-spacer></v-spacer>
             <v-text-field
                     append-icon="search"
@@ -19,12 +20,12 @@
                     :hide-actions="persons.length <= 5"
                     class="elevation-1"
             >
-                <template slot="items" scope="props">
+                <template slot="items" slot-scope="props">
                     <td>
                         <app-identifier v-model="props.item"></app-identifier>
                     </td>
                 </template>
-                <template slot="pageText" scope="{ pageStart, pageStop }">
+                <template slot="pageText" slot-scope="{ pageStart, pageStop }">
                     Von {{ pageStart }} bis {{ pageStop }}
                 </template>
             </v-data-table>
@@ -44,6 +45,9 @@
 
         @Prop({type: String})
         headline;
+
+        @Prop({type: String, default: ''})
+        href;
 
         search: string = '';
         headers = [

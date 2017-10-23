@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v1\Modules;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Legacy\ObjekteRequest;
+use App\Jobs\CopyObject;
 use App\Models\DetailCategory;
 use App\Models\DetailSubcategory;
 use App\Models\Objekte;
@@ -124,5 +125,13 @@ class ObjectController extends Controller
             }
         }
         return $emails;
+    }
+
+    public function copy(ObjekteRequest $request, Objekte $object)
+    {
+        $this->dispatch(new CopyObject($request->only([
+            'name', 'prefix', 'opening_balance', 'opening_balance_date', 'owner'
+        ]), $object));
+        return response()->json(['status' => 'ok']);
     }
 }

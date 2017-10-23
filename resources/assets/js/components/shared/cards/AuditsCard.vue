@@ -19,7 +19,7 @@
                     :hide-actions="audits.length <= 5"
                     class="elevation-1"
             >
-                <template slot="items" scope="props">
+                <template slot="items" slot-scope="props">
                     <td class="text-xs-right">{{props.item.created_at}}</td>
                     <td class="text-xs-right">{{props.item.event}}</td>
                     <td>
@@ -37,7 +37,7 @@
                         </ul>
                     </td>
                 </template>
-                <template slot="pageText" scope="{ pageStart, pageStop }">
+                <template slot="pageText" slot-scope="{ pageStart, pageStop }">
                     Von {{ pageStart }} bis {{ pageStop }}
                 </template>
             </v-data-table>

@@ -1,5 +1,5 @@
 import axios from "../../libraries/axios";
-import PersonMerged from "../../server/resources/notifications";
+import {ObjectCopied, PersonMerged} from "../../server/resources/notifications";
 
 export default {
     namespaced: true,
@@ -15,15 +15,11 @@ export default {
             state.open = open;
         },
         toggleOpen(state) {
-            state.unread = 0;
             state.open = !state.open;
         },
-        updateNotifications(state, notifocations) {
-            state.notifications = notifocations;
-        },
-        appendNotification(state, notification) {
-            state.notifications.unshift(PersonMerged.typeOne(notification));
-            state.unread++;
+        updateNotifications(state, notifications) {
+            state.notifications = notifications;
+            state.unread = notifications.reduce((cur, val) => cur + (val.read_at ? 0 : 1), 0);
         }
     },
     actions: {
@@ -33,7 +29,17 @@ export default {
             });
         },
         typeNotifications({commit}, notifications) {
-            commit('updateNotifications', PersonMerged.type(notifications));
+            notifications.forEach(v => {
+                switch (v.type) {
+                    case 'App\\Notifications\\PersonMerged':
+                        PersonMerged.applyPrototype(v);
+                        break;
+                    case 'App\\Notifications\\ObjectCopied':
+                        ObjectCopied.applyPrototype(v);
+                        break;
+                }
+            });
+            commit('updateNotifications', notifications);
         }
     }
 }

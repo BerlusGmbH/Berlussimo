@@ -1,10 +1,10 @@
-import {Person} from "./models";
+import {Objekt, Person} from "./models";
 
-export default class PersonMerged {
+export class PersonMerged {
     icon: string = 'mdi-account-multiple';
     data: any;
 
-    static typeOne(notification) {
+    static applyPrototype(notification) {
         switch (notification.type) {
             case 'App\\Notifications\\PersonMerged':
                 notification = Object.setPrototypeOf(
@@ -23,27 +23,26 @@ export default class PersonMerged {
         }
         return notification;
     }
+}
 
-    static type(notifications) {
-        let keys = Object.keys(notifications);
-        keys.forEach(function (key) {
-            switch (notifications[key].type) {
-                case 'App\\Notifications\\PersonMerged':
-                    notifications[key] = Object.setPrototypeOf(
-                        notifications[key], PersonMerged.prototype
-                    );
-                    notifications[key].data.left = Object.setPrototypeOf(
-                        notifications[key].data.left, Person.prototype
-                    );
-                    notifications[key].data.right = Object.setPrototypeOf(
-                        notifications[key].data.right, Person.prototype
-                    );
-                    notifications[key].data.merged = Object.setPrototypeOf(
-                        notifications[key].data.merged, Person.prototype
-                    );
-                    break;
-            }
-        });
-        return notifications;
+export class ObjectCopied {
+    icon: string = 'mdi-city';
+    data: any;
+
+    static applyPrototype(notification) {
+        switch (notification.type) {
+            case 'App\\Notifications\\ObjectCopied':
+                notification = Object.setPrototypeOf(
+                    notification, ObjectCopied.prototype
+                );
+                notification.data.source = Object.setPrototypeOf(
+                    notification.data.source, Objekt.prototype
+                );
+                notification.data.target = Object.setPrototypeOf(
+                    notification.data.target, Objekt.prototype
+                );
+                break;
+        }
+        return notification;
     }
 }

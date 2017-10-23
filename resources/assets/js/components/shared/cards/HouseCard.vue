@@ -23,11 +23,13 @@
                     </v-flex>
                     <v-flex xs12 sm6>
                         <v-icon class="detail">mdi-home</v-icon>
-                        {{value.wohnflaeche}} m²
+                        <a :href="'/einheiten?q=!einheit(haus(id=' + value.HAUS_ID + ') (typ=Wohnraum or typ=Wohneigentum))'">{{value.wohnflaeche}}</a>
+                        m²
                     </v-flex>
                     <v-flex xs12 sm6>
                         <v-icon class="detail">mdi-store</v-icon>
-                        {{value.gewerbeflaeche}} m²
+                        <a :href="'/einheiten?q=!einheit(haus(id=' + value.HAUS_ID + ') typ=Gewerbe)'">{{value.gewerbeflaeche}}</a>
+                        m²
                     </v-flex>
                 </v-layout>
             </v-container>

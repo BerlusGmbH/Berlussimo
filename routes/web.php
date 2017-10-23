@@ -149,7 +149,7 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'
     });
 
     Route::group(['prefix' => 'objekte', 'as' => 'objekte::'], function () {
-        Route::match(['get', 'post'], '/', 'ObjekteController@request')->name('legacy');
+        Route::match(['get', 'post'], '/legacy', 'ObjekteController@request')->name('legacy');
     });
     Route::resource('objekte', 'ObjekteController', ['only' => ['show', 'index']]);
 
@@ -181,8 +181,11 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'
     });
 
     Route::group(['prefix' => 'auftraege', 'as' => 'todo::'], function () {
+        Route::get('/', 'ToDoController@index')->name('index');
+    });
+
+    Route::group(['prefix' => 'baustellen', 'as' => 'construction::'], function () {
         Route::match(['get', 'post'], '/', 'ToDoController@request')->name('legacy');
-        Route::get('index', 'ToDoController@index')->name('index');
     });
 
     Route::group(['prefix' => 'uebersicht', 'as' => 'uebersicht::'], function () {

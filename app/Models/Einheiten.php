@@ -20,7 +20,7 @@ class Einheiten extends Model
     protected $primaryKey = 'EINHEIT_ID';
     protected $searchableFields = ['EINHEIT_KURZNAME', 'EINHEIT_LAGE'];
     protected $defaultOrder = ['EINHEIT_KURZNAME' => 'asc'];
-    protected $appends = ['type'];
+    protected $appends = ['type', 'vermietet'];
     protected $guarded = [];
 
     static public function getTypeAttribute()

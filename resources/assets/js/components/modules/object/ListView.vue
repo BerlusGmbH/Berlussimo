@@ -43,7 +43,7 @@
                                       :total-items="totalListItems"
                                       :loading="loading"
                         >
-                            <template slot="headers" scope="props">
+                            <template slot="headers" slot-scope="props">
                                 <tr>
                                     <th v-for="header in props.headers">
                                         {{ header.text }}
@@ -56,7 +56,7 @@
                                     </th>
                                 </tr>
                             </template>
-                            <template slot="items" scope="props">
+                            <template slot="items" slot-scope="props">
                                 <tr>
                                     <td v-for="cell in props.item">
                                         <template v-for="(cellPart, c) in cell">

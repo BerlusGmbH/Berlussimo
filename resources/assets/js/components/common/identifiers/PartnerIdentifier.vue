@@ -1,7 +1,7 @@
 <template>
     <div class="identifier">
         <v-icon class="identifier-icon">{{value.getEntityIcon()}}</v-icon>
-        <a :href="value.getDetailUrl()">{{String(value)}}</a>
+        <a :href="value.getDetailUrl()">{{text}}</a>
     </div>
 </template>
 
@@ -14,5 +14,10 @@
     export default class PartnerIdentifier extends Vue {
         @Prop()
         value;
+
+        get text() {
+            let str: string = String(this.value).trim();
+            return str.length > 20 ? str.substr(0, 20) + '...' : str;
+        }
     }
 </script>

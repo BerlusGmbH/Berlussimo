@@ -18,11 +18,11 @@
                 :dark="dark"
                 :light="light"
     >
-        <template slot="selection" scope="data">
+        <template slot="selection" slot-scope="data">
             <app-chip @input="data.parent.selectItem(data.item); $emit('chip-close', $event)"
                       :multiple="multiple" :entity="data.item" :selected="data.selected"></app-chip>
         </template>
-        <template slot="item" scope="data">
+        <template slot="item" slot-scope="data">
             <template v-if="typeof data.item !== 'object'">
                 <v-list-tile-content v-text="data.item"></v-list-tile-content>
             </template>
@@ -38,7 +38,7 @@
     import $ from "jquery";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import {Bankkonto, Einheit, Haus, Objekt, Partner, Person} from "../../server/resources/models";
+    import {Model} from "../../server/resources/models";
     import VSelect from "./VSelect.vue"
 
     Vue.use(Vuetify);
@@ -154,32 +154,52 @@
                         switch (key) {
                             case 'objekt':
                                 $.each(val, function (objekt_key, objekt) {
-                                    data[key][objekt_key] = Object.setPrototypeOf(objekt, Objekt.prototype);
+                                    data[key][objekt_key] = Model.applyPrototype(objekt);
                                 });
                                 break;
                             case 'haus':
                                 $.each(val, function (haus_key, haus) {
-                                    data[key][haus_key] = Object.setPrototypeOf(haus, Haus.prototype);
+                                    data[key][haus_key] = Model.applyPrototype(haus);
                                 });
                                 break;
                             case 'einheit':
                                 $.each(val, function (einheit_key, einheit) {
-                                    data[key][einheit_key] = Object.setPrototypeOf(einheit, Einheit.prototype);
+                                    data[key][einheit_key] = Model.applyPrototype(einheit);
                                 });
                                 break;
                             case 'person':
                                 $.each(val, function (person_key, person) {
-                                    data[key][person_key] = Object.setPrototypeOf(person, Person.prototype);
+                                    data[key][person_key] = Model.applyPrototype(person);
                                 });
                                 break;
                             case 'partner':
                                 $.each(val, function (partner_key, partner) {
-                                    data[key][partner_key] = Object.setPrototypeOf(partner, Partner.prototype);
+                                    data[key][partner_key] = Model.applyPrototype(partner);
                                 });
                                 break;
                             case 'bankkonto':
-                                $.each(val, function (partner_key, partner) {
-                                    data[key][partner_key] = Object.setPrototypeOf(partner, Bankkonto.prototype);
+                                $.each(val, function (bankaccount_key, account) {
+                                    data[key][bankaccount_key] = Model.applyPrototype(account);
+                                });
+                                break;
+                            case 'mietvertrag':
+                                $.each(val, function (rental_contract_key, contract) {
+                                    data[key][rental_contract_key] = Model.applyPrototype(contract);
+                                });
+                                break;
+                            case 'kaufvertrag':
+                                $.each(val, function (purchase_contract_key, contract) {
+                                    data[key][purchase_contract_key] = Model.applyPrototype(contract);
+                                });
+                                break;
+                            case 'baustelle':
+                                $.each(val, function (construction_site_key, site) {
+                                    data[key][construction_site_key] = Model.applyPrototype(site);
+                                });
+                                break;
+                            case 'wirtschaftseinheit':
+                                $.each(val, function (accouting_entity, entity) {
+                                    data[key][accouting_entity] = Model.applyPrototype(entity);
                                 });
                                 break;
                         }

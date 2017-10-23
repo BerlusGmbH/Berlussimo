@@ -137,7 +137,7 @@ function letzte_objekt_dat_kurzname($kurzname)
 function protokollieren($tabele, $dat_neu, $dat_alt)
 {
     $wer = Auth::user()->name;
-    $ip = $_SERVER ['REMOTE_ADDR'];
+    $ip = isset($_SERVER ['REMOTE_ADDR']) ? $_SERVER ['REMOTE_ADDR'] : '';
     DB::insert("INSERT INTO PROTOKOLL VALUES (NULL,'$wer', '$ip', NULL, '$tabele', '$dat_neu', '$dat_alt', " . Auth::user()->id . ")");
 }
 

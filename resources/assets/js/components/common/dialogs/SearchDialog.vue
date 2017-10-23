@@ -43,3 +43,17 @@
         value: boolean;
     }
 </script>
+
+<style>
+    .fade-enter-active {
+        transition: all .3s ease;
+    }
+
+    .fade-leave-active {
+        transition: all .3s ease;
+    }
+
+    .fade-enter, .fade-leave-to {
+        opacity: 0;
+    }
+</style>

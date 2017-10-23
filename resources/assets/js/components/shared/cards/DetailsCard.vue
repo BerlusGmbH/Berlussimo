@@ -19,7 +19,7 @@
                     :hide-actions="details.length <= 5"
                     class="elevation-1"
             >
-                <template slot="items" scope="props">
+                <template slot="items" slot-scope="props">
                     <td>{{props.item.DETAIL_NAME}}</td>
                     <td>{{props.item.DETAIL_INHALT}}</td>
                     <td>{{props.item.DETAIL_BEMERKUNG}}</td>
@@ -41,7 +41,7 @@
                         </div>
                     </td>
                 </template>
-                <template slot="pageText" scope="{ pageStart, pageStop }">
+                <template slot="pageText" slot-scope="{ pageStart, pageStop }">
                     Von {{ pageStart }} bis {{ pageStop }}
                 </template>
             </v-data-table>

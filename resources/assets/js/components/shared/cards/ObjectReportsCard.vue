@@ -19,7 +19,7 @@
                     :hide-actions="true"
                     class="elevation-1"
             >
-                <template slot="items" scope="props">
+                <template slot="items" slot-scope="props">
                     <template v-if="Array.isArray(props.item.report)">
                         <td>
                             <div v-for="r in props.item.report" v-html="r"></div>
@@ -32,7 +32,7 @@
                     </template>
                     <td>{{props.item.summary}}</td>
                 </template>
-                <template slot="pageText" scope="{ pageStart, pageStop }">
+                <template slot="pageText" slot-scope="{ pageStart, pageStop }">
                     Von {{ pageStart }} bis {{ pageStop }}
                 </template>
             </v-data-table>

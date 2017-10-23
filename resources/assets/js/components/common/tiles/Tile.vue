@@ -11,8 +11,22 @@
     import houseTile from "./HouseTile.vue";
     import unitTile from "./UnitTile.vue";
     import bankAccountTile from "./BankAccountTile.vue";
+    import rentalContractTile from "./RentalContractTile.vue";
+    import purchaseContractTile from "./PurchaseContractTile.vue";
+    import accountingEntityTile from "./AccountingEntityTile.vue";
+    import constructionSiteTile from "./ConstructionSiteTile.vue";
     import {Prop} from "vue-property-decorator";
-    import {Bankkonto, Einheit, Haus, Objekt, Partner, Person} from "../../../server/resources/models";
+    import {
+        AccountingEntity,
+        Bankkonto, ConstructionSite,
+        Einheit,
+        Haus,
+        Objekt,
+        Partner,
+        Person,
+        PurchaseContract,
+        RentalContract
+    } from "../../../server/resources/models";
 
     @Component({
         components: {
@@ -21,7 +35,11 @@
             [Objekt.type]: objectTile,
             [Haus.type]: houseTile,
             [Einheit.type]: unitTile,
-            [Bankkonto.type]: bankAccountTile
+            [Bankkonto.type]: bankAccountTile,
+            [RentalContract.type]: rentalContractTile,
+            [PurchaseContract.type]: purchaseContractTile,
+            [AccountingEntity.type]: accountingEntityTile,
+            [ConstructionSite.type]: constructionSiteTile
         }
     })
     export default class Tile extends Vue {

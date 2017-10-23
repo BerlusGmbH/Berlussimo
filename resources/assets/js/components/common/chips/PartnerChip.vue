@@ -19,7 +19,7 @@
     import {Prop} from "vue-property-decorator";
 
     @Component
-    export default class PartnerTile extends Vue {
+    export default class PartnerChip extends Vue {
         @Prop({type: Boolean, default: false})
         multiple;
 

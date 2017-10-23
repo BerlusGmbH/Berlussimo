@@ -27,6 +27,7 @@ import tile from "./components/common/tiles/Tile.vue";
 import chip from "./components/common/chips/Chip.vue";
 import textFieldEditDialog from "./components/common/TextFieldEditDialog.vue";
 import VEditDialog from "./components/common/VEditDialog.vue";
+import entitySelect from "./components/common/EntitySelect.vue";
 import {substituteNewlineWithBr} from "./filters";
 
 Vue.use(Vuex);
@@ -36,6 +37,7 @@ Vue.component('app-tile', tile);
 Vue.component('app-chip', chip);
 Vue.component('app-text-field-edit-dialog', textFieldEditDialog);
 Vue.component('app-edit-dialog', VEditDialog);
+Vue.component('app-entity-select', entitySelect);
 Vue.filter('substituteNewlineWithBr', substituteNewlineWithBr);
 
 new Vue({

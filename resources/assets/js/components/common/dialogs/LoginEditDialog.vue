@@ -17,7 +17,7 @@
                             <v-data-table :headers="headers"
                                           :items="allRoles"
                             >
-                                <template slot="items" scope="props">
+                                <template slot="items" slot-scope="props">
                                     <td>
                                         <v-checkbox
                                                 primary

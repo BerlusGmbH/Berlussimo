@@ -12,8 +12,22 @@
     import houseChip from "./HouseChip.vue";
     import unitChip from "./UnitChip.vue";
     import bankAccountChip from "./BankAccountChip.vue";
+    import purchaseContractChip from "./PurchaseContractChip.vue";
+    import rentalContractChip from "./RentalContractChip.vue";
+    import accountingEntityChip from "./AccountingEntityChip.vue";
+    import constructionSiteChip from "./ConstructionSiteChip.vue";
     import {Prop} from "vue-property-decorator";
-    import {Bankkonto, Einheit, Haus, Objekt, Partner, Person} from "../../../server/resources/models";
+    import {
+        AccountingEntity,
+        Bankkonto, ConstructionSite,
+        Einheit,
+        Haus,
+        Objekt,
+        Partner,
+        Person,
+        PurchaseContract,
+        RentalContract
+    } from "../../../server/resources/models";
 
     @Component({
         components: {
@@ -22,7 +36,11 @@
             [Objekt.type]: objectChip,
             [Haus.type]: houseChip,
             [Einheit.type]: unitChip,
-            [Bankkonto.type]: bankAccountChip
+            [Bankkonto.type]: bankAccountChip,
+            [PurchaseContract.type]: purchaseContractChip,
+            [RentalContract.type]: rentalContractChip,
+            [AccountingEntity.type]: accountingEntityChip,
+            [ConstructionSite.type]: constructionSiteChip
         }
     })
     export default class Chip extends Vue {

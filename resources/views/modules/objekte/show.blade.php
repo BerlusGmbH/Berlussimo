@@ -4,7 +4,7 @@
     <i class="mdi mdi-subdirectory-arrow-right" style="margin-right: -2px"></i>
     <v-breadcrumbs style="display: inline-flex" icons divider="chevron_right" class="pl-0">
         <v-breadcrumbs-item>
-            @if(starts_with(URL::previous(), route('web::objekte.index')))
+            @if(parse_url(URL::previous())['path'] === parse_url(route('web::objekte.index'))['path'])
                 <a href="{{ URL::previous() }}">Objekte</a>
             @else
                 <a href="{{ route('web::objekte.index') }}">Objekte</a>

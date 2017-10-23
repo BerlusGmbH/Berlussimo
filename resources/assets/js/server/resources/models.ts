@@ -1,8 +1,13 @@
 import axios from "../../libraries/axios";
+import applyMixins from "./mixins";
+import Active from "./active";
 
 const base_url = window.location.origin;
 
-export class Model {
+export abstract class Model {
+
+    abstract getID(): number;
+
     static applyPrototype(model) {
         switch (model.type) {
             case Assignment.type:
@@ -29,20 +34,29 @@ export class Model {
                 return Partner.applyPrototype(model);
             case Person.type:
                 return Person.applyPrototype(model);
+            case AccountingEntity.type:
+                return AccountingEntity.applyPrototype(model);
+            case ConstructionSite.type:
+                return ConstructionSite.applyPrototype(model);
         }
     }
 }
 
-export class Assignment {
+export class Assignment extends Model {
     static type: string = 'assignment';
     T_ID: number;
     TEXT: string | null = null;
     ERSTELLT: string | null = null;
-    AKUT: string = '';
-    ERLEDIGT: string = '';
-    von: Person;
-    an: Person | Partner;
-    kostentraeger: any;
+    AKUT: string = 'NEIN';
+    ERLEDIGT: string = '0';
+    VERFASSER_ID: number;
+    BENUTZER_TYP: string;
+    BENUTZER_ID: number;
+    KOS_TYP: string;
+    KOS_ID: number;
+    von: Person | null = null;
+    an: Person | Partner | null = null;
+    kostentraeger: any = null;
 
     static applyPrototype(assignment) {
         Object.setPrototypeOf(assignment, Assignment.prototype);
@@ -51,6 +65,9 @@ export class Assignment {
         }
         if (assignment.an) {
             Model.applyPrototype(assignment.an);
+        }
+        if (assignment.kostentraeger) {
+            Model.applyPrototype(assignment.kostentraeger);
         }
         return assignment;
     }
@@ -64,12 +81,28 @@ export class Assignment {
         return 'mdi-clipboard';
     }
 
+    getID() {
+        return this.T_ID;
+    }
+
+    getApiBaseUrl() {
+        return base_url + '/api/v1/assignments'
+    }
+
+    save() {
+        return axios.put(this.getApiBaseUrl() + '/' + this.T_ID, this);
+    }
+
+    create() {
+        return axios.post(this.getApiBaseUrl(), this);
+    }
+
     toString() {
         return 'A-' + this.T_ID;
     }
 }
 
-export class Person {
+export class Person extends Model {
     icon: string = 'mdi-account';
     sex: string = '';
     id: number = -1;
@@ -80,6 +113,7 @@ export class Person {
     kaufvertraege: Array<PurchaseContract>;
     jobs_as_employee: Array<Job>;
     audits: Array<Object>;
+    hinweise: Array<Detail> = [];
 
     static type = 'person';
 
@@ -113,7 +147,7 @@ export class Person {
     }
 
     getApiBaseUrl() {
-        return base_url + '/api/v1/persons'
+        return base_url + '/api/v1/persons';
     }
 
     getMorphName() {
@@ -125,11 +159,15 @@ export class Person {
     }
 
     save() {
-        return axios.patch('/api/v1/persons/' + this.id, this);
+        return axios.patch(this.getApiBaseUrl() + '/' + this.id, this);
     }
 
     create() {
-        return axios.post('/api/v1/persons', this);
+        return axios.post(this.getApiBaseUrl(), this);
+    }
+
+    hasNotes(): boolean {
+        return this.hinweise && this.hinweise.length > 0;
     }
 
     static applyPrototype(person: Person): Person {
@@ -167,7 +205,7 @@ export class Person {
     }
 }
 
-export class Partner {
+export class Partner extends Model {
     PARTNER_NAME: string = '';
     PARTNER_ID: number = -1;
     STRASSE: string = '';
@@ -194,13 +232,21 @@ export class Partner {
         return base_url + '/partner?option=partner_im_detail&partner_id=' + this.PARTNER_ID;
     }
 
+    getMorphName() {
+        return 'PARTNER';
+    }
+
+    getID() {
+        return this.PARTNER_ID;
+    }
+
     static applyPrototype(partner: Partner) {
         Object.setPrototypeOf(partner, Partner.prototype);
         return partner;
     }
 }
 
-export class Objekt {
+export class Objekt extends Model {
     OBJEKT_ID: number = -1;
     OBJEKT_KURZNAME: string = '';
     EIGENTUEMER_PARTNER: number;
@@ -294,7 +340,7 @@ export class Objekt {
     }
 }
 
-export class Haus {
+export class Haus extends Model {
     HAUS_ID: number = -1;
     HAUS_STRASSE: string = '';
     HAUS_NUMMER: string = '';
@@ -391,7 +437,7 @@ export class Haus {
     }
 }
 
-export class Einheit {
+export class Einheit extends Model {
     EINHEIT_ID: number = -1;
     EINHEIT_KURZNAME: string = '';
     EINHEIT_LAGE: string = '';
@@ -408,6 +454,7 @@ export class Einheit {
     mieter: Array<Person>;
     weg_eigentuemer: Array<Person>;
     auftraege: Array<Assignment>;
+    vermietet: boolean = false;
 
     static type = 'unit';
 
@@ -418,7 +465,10 @@ export class Einheit {
     }
 
     getEntityIcon(): string {
-        return 'mdi-cube';
+        if (this.vermietet) {
+            return 'mdi-hexagon';
+        }
+        return 'mdi-cube-outline';
     }
 
     getKindIcon() {
@@ -512,7 +562,7 @@ export class Einheit {
     }
 }
 
-export class Detail {
+export class Detail extends Model {
     DETAIL_ID: number = -1;
     DETAIL_NAME: string = '';
     DETAIL_INHALT: string = '';
@@ -530,6 +580,10 @@ export class Detail {
 
     getDetailUrl(): string {
         return '';
+    }
+
+    getID() {
+        return this.DETAIL_ID;
     }
 
     save() {
@@ -550,22 +604,36 @@ export class Detail {
     }
 }
 
-export class RentalContract {
+export class RentalContract extends Model implements Active {
     MIETVERTRAG_ID: number = -1;
-    MIETVERTRAG_VON: Date;
-    MIETVERTRAG_BIS: Date;
+    MIETVERTRAG_VON: string;
+    MIETVERTRAG_BIS: string;
     EINHEIT_ID: number = -1;
 
     einheit: Einheit;
+    mieter: Array<Person>;
 
     static type = 'rental_contract';
+
+    getStartDateFieldName() {
+        return this.MIETVERTRAG_VON;
+    };
+
+    getEndDateFieldName() {
+        return this.MIETVERTRAG_BIS;
+    };
+
+    isActive: () => false;
 
     toString(): string {
         return "MV-" + this.MIETVERTRAG_ID;
     }
 
     getEntityIcon(): string {
-        return 'mdi-circle';
+        if (this.isActive()) {
+            return 'mdi-circle';
+        }
+        return 'mdi-circle-outline';
     }
 
     getDetailUrl(): string {
@@ -575,22 +643,41 @@ export class RentalContract {
             + this.MIETVERTRAG_ID;
     }
 
+    getMorphName() {
+        return 'MIETVERTRAG';
+    }
+
+    getID() {
+        return this.MIETVERTRAG_ID;
+    }
+
     static applyPrototype(contract: RentalContract) {
         Object.setPrototypeOf(contract, RentalContract.prototype);
         if (contract.einheit) {
             Einheit.applyPrototype(contract.einheit);
         }
+        if (contract.mieter) {
+            Array.prototype.forEach.call(contract.mieter, (person) => {
+                Person.applyPrototype(person);
+            });
+
+        }
         return contract;
     }
 }
 
-export class PurchaseContract {
+applyMixins(RentalContract, [Active]);
+
+export class PurchaseContract extends Model implements Active {
     ID: number = -1;
-    VON: Date;
-    BIS: Date;
+    VON: string;
+    BIS: string;
     EINHEIT_ID: number = -1;
 
     einheit: Einheit;
+    eigentuemer: Array<Person>;
+
+    isActive: () => false;
 
     static type = 'purchase_contract';
 
@@ -598,8 +685,27 @@ export class PurchaseContract {
         return "KV-" + this.ID;
     }
 
+    getMorphName() {
+        return 'EIGENTUEMER';
+    }
+
+    getID() {
+        return this.ID;
+    }
+
+    getStartDateFieldName() {
+        return this.VON;
+    };
+
+    getEndDateFieldName() {
+        return this.BIS;
+    };
+
     getEntityIcon(): string {
-        return 'mdi-checkbox-blank';
+        if (this.isActive()) {
+            return 'mdi-checkbox-blank';
+        }
+        return 'mdi-checkbox-blank-outline';
     }
 
     getDetailUrl(): string {
@@ -612,11 +718,18 @@ export class PurchaseContract {
         if (contract.einheit) {
             Einheit.applyPrototype(contract.einheit);
         }
+        if (contract.eigentuemer) {
+            Array.prototype.forEach.call(contract.eigentuemer, (person) => {
+                Person.applyPrototype(person);
+            });
+        }
         return contract;
     }
 }
 
-export class Job {
+applyMixins(PurchaseContract, [Active]);
+
+export class Job extends Model {
     id: number = -1;
     employer_id: number = -1;
     employee_id: number = -1;
@@ -630,6 +743,10 @@ export class Job {
     title: any;
 
     static type = 'job';
+
+    getID() {
+        return this.id;
+    }
 
     static applyPrototype(job: Job) {
         Object.setPrototypeOf(job, Job.prototype);
@@ -646,7 +763,7 @@ export class Job {
     }
 }
 
-export class JobTitle {
+export class JobTitle extends Model {
     id: number = -1;
     title: string = '';
 
@@ -660,13 +777,17 @@ export class JobTitle {
         return 'mdi-book-open-variant';
     }
 
+    getID() {
+        return this.id;
+    }
+
     static applyPrototype(jobTitle: JobTitle) {
         Object.setPrototypeOf(jobTitle, JobTitle.prototype);
         return jobTitle;
     }
 }
 
-export class Bankkonto {
+export class Bankkonto extends Model {
     KONTO_ID: number = -1;
     BEZEICHNUNG: string = '';
     BEGUENSTIGTER: string = '';
@@ -678,6 +799,9 @@ export class Bankkonto {
 
     static type = 'bank_account';
 
+    getID() {
+        return this.KONTO_ID;
+    }
 
     toString(): string {
         return this.BEZEICHNUNG;
@@ -698,5 +822,87 @@ export class Bankkonto {
     static applyPrototype(bankaccount: Bankkonto) {
         Object.setPrototypeOf(bankaccount, Bankkonto.prototype);
         return bankaccount;
+    }
+}
+
+export class AccountingEntity extends Model {
+    W_ID: number = -1;
+    W_NAME: string;
+
+    einheiten: Array<Einheit>;
+
+    static type = 'accounting_entity';
+
+    getID() {
+        return this.W_ID;
+    }
+
+    getMorphName() {
+        return 'WIRTSCHAFTSEINHEIT';
+    }
+
+    toString(): string {
+        return this.W_NAME;
+    }
+
+    getEntityIcon(): string {
+        return 'mdi-hexagon-multiple';
+    }
+
+    getDetailUrl() {
+        return base_url;
+    }
+
+    static applyPrototype(accounting_entity: AccountingEntity) {
+        Object.setPrototypeOf(accounting_entity, AccountingEntity.prototype);
+        if (accounting_entity.einheiten) {
+            Array.prototype.forEach.call(accounting_entity.einheiten, (unit) => {
+                Einheit.applyPrototype(unit);
+            });
+        }
+        return accounting_entity;
+    }
+}
+
+export class ConstructionSite extends Model {
+    ID: number = -1;
+    BEZ: string;
+    PARTNER_ID: number;
+    AKTIV: string;
+
+    partner: Partner;
+
+    static type = 'construction_site';
+
+    getID() {
+        return this.ID;
+    }
+
+    getMorphName() {
+        return 'BAUSTELLE_EXT';
+    }
+
+    toString(): string {
+        return this.BEZ;
+    }
+
+    getEntityIcon(): string {
+        if (this.AKTIV === '1') {
+            return 'mdi-shovel';
+        }
+        return 'mdi-shovel-off';
+
+    }
+
+    getDetailUrl() {
+        return base_url;
+    }
+
+    static applyPrototype(construction_site: ConstructionSite) {
+        Object.setPrototypeOf(construction_site, ConstructionSite.prototype);
+        if (construction_site.partner) {
+            Partner.applyPrototype(construction_site.partner);
+        }
+        return construction_site;
     }
 }

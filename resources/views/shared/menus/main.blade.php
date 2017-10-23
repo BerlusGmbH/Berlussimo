@@ -151,7 +151,13 @@
 
     @can(\App\Libraries\Permission::PERMISSION_MODUL_AUFTRAEGE)
         <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
-            <a href='{{route('web::todo::legacy')}}'>Aufträge</a>
+            <a href='{{route('web::todo::index')}}'>Aufträge</a>
+        </div>
+        @endcan
+
+        @can(\App\Libraries\Permission::PERMISSION_MODUL_AUFTRAEGE)
+            <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
+                <a href='{{route('web::construction::legacy')}}'>Baustellen</a>
         </div>
     @endcan
 

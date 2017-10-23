@@ -21,7 +21,7 @@
     import {Prop} from "vue-property-decorator";
 
     @Component
-    export default class PersonTile extends Vue {
+    export default class PersonChip extends Vue {
         @Prop({type: Boolean, default: false})
         multiple;
 

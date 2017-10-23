@@ -20,21 +20,27 @@
                 <v-flex v-if="house && house.einheiten.length > 0" xs12 sm6>
                     <app-units-card headline="Einheiten"
                                     :units="house.einheiten"
+                                    :href="'/einheiten?q=!einheit(haus(id=' + house.getID() + '))'"
                     ></app-units-card>
                 </v-flex>
                 <v-flex v-if="house && house.mieter.length > 0" xs12 sm6>
                     <app-persons-card headline="Mieter"
                                       :persons="house.mieter"
+                                      :href="'/personen?q=!person(mietvertrag(aktiv haus(id=' + house.getID() + ')))'"
                     ></app-persons-card>
                 </v-flex>
                 <v-flex v-if="house && house.weg_eigentuemer.length > 0" xs12 sm6>
                     <app-persons-card headline="WEG-Eigentümer"
                                       :persons="house.weg_eigentuemer"
+                                      :href="'/personen?q=!person(kaufvertrag(aktiv haus(id=' + house.getID() + ')))'"
                     ></app-persons-card>
                 </v-flex>
                 <v-flex v-if="house" xs12>
                     <app-assignments-card headline="Aufträge"
-                                          :assignments="house.auftraege"></app-assignments-card>
+                                          :assignments="house.auftraege"
+                                          :href="'/auftraege?q=!auftrag(kostenträger(haus(id=' + house.getID() + ')))'"
+                    >
+                    </app-assignments-card>
                 </v-flex>
             </v-layout>
         </transition>

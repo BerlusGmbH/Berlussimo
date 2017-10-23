@@ -19,7 +19,7 @@
                     :hide-actions="jobs.length <= 5"
                     class="elevation-1"
             >
-                <template slot="items" scope="props">
+                <template slot="items" slot-scope="props">
                     <td>{{props.item.title.title}}</td>
                     <td>
                         <app-identifier style="width: 9em" v-model="props.item.employer"></app-identifier>
@@ -54,7 +54,7 @@
                         </div>
                     </td>
                 </template>
-                <template slot="pageText" scope="{ pageStart, pageStop }">
+                <template slot="pageText" slot-scope="{ pageStart, pageStop }">
                     Von {{ pageStart }} bis {{ pageStop }}
                 </template>
             </v-data-table>

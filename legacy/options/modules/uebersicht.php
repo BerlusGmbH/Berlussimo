@@ -409,8 +409,8 @@ function render_unit_tasks_table($einheit_id) {
         $link_neuer_auftrag_int = '';
     }
 
-    $link_neuer_auftrag_int .= "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Mitarbeiter' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => 'Einheit', 'kos_id' => $einheit_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-worker'></i></a>";
-    $link_neuer_auftrag_ext = "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Partner' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => 'Einheit', 'kos_id' => $einheit_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-account-multiple'></i></a>";
+    $link_neuer_auftrag_int .= "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Mitarbeiter' href='" . route('web::construction::legacy', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => 'Einheit', 'kos_id' => $einheit_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-worker'></i></a>";
+    $link_neuer_auftrag_ext = "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Partner' href='" . route('web::construction::legacy', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => 'Einheit', 'kos_id' => $einheit_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-account-multiple'></i></a>";
     echo "<div class='input-field right-align'>$link_neuer_auftrag_int $link_neuer_auftrag_ext</div>";
 
     $anz_t = count($t_arr);
@@ -440,8 +440,8 @@ function render_unit_tasks_table($einheit_id) {
             $pp->get_partner_info($beteiligt_id);
             $beteiligt_name = "<b>$pp->partner_name</b>";
         }
-        $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-        $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
+        $link_pdf = "<a href='" . route('web::construction::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+        $link_txt = "<a href='" . route('web::construction::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
 
         echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
     }
@@ -476,8 +476,8 @@ function render_unit_tasks_table($einheit_id) {
             $beteiligt_name = "<b>$pp->partner_name</b>";
         }
 
-        $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-        $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
+        $link_pdf = "<a href='" . route('web::construction::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+        $link_txt = "<a href='" . route('web::construction::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
 
         echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
     }
@@ -495,8 +495,8 @@ function render_house_tasks_table($haus_id) {
         $link_neuer_auftrag_int = '';
     }
 
-    $link_neuer_auftrag_int .= "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Mitarbeiter' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => 'Haus', 'kos_id' => $haus_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-worker'></i></a>";
-    $link_neuer_auftrag_ext = "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Partner' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => 'Haus', 'kos_id' => $haus_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-account-multiple'></i></a>";
+    $link_neuer_auftrag_int .= "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Mitarbeiter' href='" . route('web::construction::legacy', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => 'Haus', 'kos_id' => $haus_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-worker'></i></a>";
+    $link_neuer_auftrag_ext = "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Partner' href='" . route('web::construction::legacy', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => 'Haus', 'kos_id' => $haus_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-account-multiple'></i></a>";
 
     echo "<div class='input-field right-align'>$link_neuer_auftrag_int $link_neuer_auftrag_ext</div>";
 
@@ -528,8 +528,8 @@ function render_house_tasks_table($haus_id) {
             $pp->get_partner_info($beteiligt_id);
             $beteiligt_name = "<b>$pp->partner_name</b>";
         }
-        $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-        $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
+        $link_pdf = "<a href='" . route('web::construction::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+        $link_txt = "<a href='" . route('web::construction::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
 
         echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
     }
@@ -564,8 +564,8 @@ function render_house_tasks_table($haus_id) {
             $beteiligt_name = "<b>$pp->partner_name</b>";
         }
 
-        $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-        $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
+        $link_pdf = "<a href='" . route('web::construction::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+        $link_txt = "<a href='" . route('web::construction::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
 
         echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
     }
@@ -582,8 +582,8 @@ function render_object_tasks_table($objekt_id) {
     } else {
         $link_neuer_auftrag_int = '';
     }
-    $link_neuer_auftrag_int .= "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Mitarbeiter' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => 'Objekt', 'kos_id' => $objekt_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-worker'></i></a>";
-    $link_neuer_auftrag_ext = "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Partner' href='" . route('web::todo::legacy', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => 'Objekt', 'kos_id' => $objekt_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-account-multiple'></i></a>";
+    $link_neuer_auftrag_int .= "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Mitarbeiter' href='" . route('web::construction::legacy', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => 'Objekt', 'kos_id' => $objekt_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-worker'></i></a>";
+    $link_neuer_auftrag_ext = "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Partner' href='" . route('web::construction::legacy', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => 'Objekt', 'kos_id' => $objekt_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-account-multiple'></i></a>";
 
     echo "<div class='input-field right-align'>$link_neuer_auftrag_int $link_neuer_auftrag_ext</div>";
 
@@ -614,8 +614,8 @@ function render_object_tasks_table($objekt_id) {
             $pp->get_partner_info($beteiligt_id);
             $beteiligt_name = "<b>$pp->partner_name</b>";
         }
-        $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-        $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
+        $link_pdf = "<a href='" . route('web::construction::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+        $link_txt = "<a href='" . route('web::construction::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
 
         echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
     }
@@ -650,8 +650,8 @@ function render_object_tasks_table($objekt_id) {
             $beteiligt_name = "<b>$pp->partner_name</b>";
         }
 
-        $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-        $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
+        $link_pdf = "<a href='" . route('web::construction::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+        $link_txt = "<a href='" . route('web::construction::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
 
         echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
     }
