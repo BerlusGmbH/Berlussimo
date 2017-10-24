@@ -3,8 +3,6 @@
 namespace App\Console;
 
 use App\Console\Commands\GenerateSearchParser;
-use App\Console\Commands\SendTestEvent;
-use App\Console\Commands\SendTestNotifycation;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -16,9 +14,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        GenerateSearchParser::class,
-        SendTestEvent::class,
-        SendTestNotifycation::class
+        GenerateSearchParser::class
     ];
 
     /**
