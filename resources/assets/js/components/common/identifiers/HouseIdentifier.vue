@@ -1,6 +1,11 @@
 <template>
     <div class="identifier">
-        <v-icon class="identifier-icon">{{value.getEntityIcon()}}</v-icon>
+        <div v-if="value.hasNotes()">
+            <v-icon color="error">mdi-alert</v-icon>
+        </div>
+        <div>
+            <v-icon class="identifier-icon">{{value.getEntityIcon()}}</v-icon>
+        </div>
         <a :href="value.getDetailUrl()" ref="identifier">{{String(value)}}</a>
         <v-menu offset-y v-model="show" :position-absolutely="true">
             <v-icon slot="activator" style="font-size: inherit">mdi-arrow-down-drop-circle</v-icon>

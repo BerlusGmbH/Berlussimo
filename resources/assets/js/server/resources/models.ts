@@ -8,6 +8,8 @@ export abstract class Model {
 
     abstract getID(): number;
 
+    type: string;
+
     static applyPrototype(model) {
         switch (model.type) {
             case Assignment.type:
@@ -268,6 +270,10 @@ export class Objekt extends Model {
         return this.OBJEKT_KURZNAME;
     }
 
+    hasNotes(): boolean {
+        return this.hinweise && this.hinweise.length > 0;
+    }
+
     getEntityIcon(): string {
         return 'mdi-city';
     }
@@ -366,6 +372,10 @@ export class Haus extends Model {
         return this.HAUS_STRASSE + ' ' + this.HAUS_NUMMER;
     }
 
+    hasNotes(): boolean {
+        return this.hinweise && this.hinweise.length > 0;
+    }
+
     getLocation() {
         return this.HAUS_PLZ + ' ' + this.HAUS_STADT;
     }
@@ -462,6 +472,10 @@ export class Einheit extends Model {
 
     toString(): string {
         return this.EINHEIT_KURZNAME;
+    }
+
+    hasNotes(): boolean {
+        return this.hinweise && this.hinweise.length > 0;
     }
 
     getEntityIcon(): string {

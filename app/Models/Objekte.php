@@ -32,6 +32,9 @@ class Objekte extends Model
         static::addGlobalScope('aktuell', function (Builder $builder) {
             $builder->where('OBJEKT_AKTUELL', '1');
         });
+        static::addGlobalScope('appendDetails', function (Builder $builder) {
+            $builder->with('hinweise');
+        });
     }
 
     public function haeuser() {

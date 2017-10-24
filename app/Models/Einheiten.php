@@ -35,6 +35,9 @@ class Einheiten extends Model
         static::addGlobalScope('aktuell', function (Builder $builder) {
             $builder->where('EINHEIT_AKTUELL', '1');
         });
+        static::addGlobalScope('appendDetails', function (Builder $builder) {
+            $builder->with('hinweise');
+        });
     }
 
     public function haus()

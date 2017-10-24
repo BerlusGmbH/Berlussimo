@@ -2,11 +2,19 @@
     <v-card>
         <v-card-title>
             <v-layout row wrap>
-                <v-flex xs6>
+                <v-flex xs8 sm4>
                     <a v-if="href" :href="href"><h3 class="headline">{{headline}} ({{assignments.length}})</h3></a>
                     <h3 v-else class="headline">{{headline}} ({{assignments.length}})</h3>
                 </v-flex>
-                <v-flex xs6>
+                <v-flex xs4 sm2 class="text-xs-right">
+                    <v-btn @click.native="add = true">
+                        <v-icon v-if="hasNotes" color="error">mdi-alert</v-icon>
+                        <v-icon>add</v-icon>
+                        <v-icon>mdi-clipboard</v-icon>
+                    </v-btn>
+                    <app-assignment-add-dialog v-model="add" :cost-unit="costUnit"></app-assignment-add-dialog>
+                </v-flex>
+                <v-flex xs12 sm6>
                     <v-text-field
                             append-icon="search"
                             label="Search"
@@ -50,8 +58,14 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
+    import {Haus, Model, Objekt, Einheit} from "../../../server/resources/models";
+    import assignmentAddDialog from "../../../components/common/dialogs/AssignmentAddDialog.vue";
 
-    @Component
+    @Component({
+        'components': {
+            'app-assignment-add-dialog': assignmentAddDialog
+        }
+    })
     export default class AssignmentsCard extends Vue {
         @Prop({type: Array})
         assignments: any;
@@ -62,6 +76,9 @@
         @Prop({type: String, default: ''})
         href: string;
 
+        @Prop({type: Object})
+        costUnit: Model;
+
         search: string = '';
         headers = [
             {text: 'ID', value: 'T_ID'},
@@ -70,5 +87,21 @@
             {text: 'An', value: 'an'},
             {text: 'Auftrag', value: 'TEXT'},
         ];
+        add: boolean = false;
+
+        get hasNotes() {
+            if (!this.costUnit) {
+                return false;
+            }
+            switch (this.costUnit.type) {
+                case Objekt.type:
+                    return (this.costUnit as Objekt).hasNotes();
+                case Haus.type:
+                    return (this.costUnit as Haus).hasNotes();
+                case Einheit.type:
+                    return (this.costUnit as Einheit).hasNotes();
+            }
+            return false;
+        }
     }
 </script>

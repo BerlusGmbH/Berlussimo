@@ -1,10 +1,12 @@
 <template>
-    <div class="identifier" style="display: flex">
-        <v-icon class="identifier-icon">{{value.getEntityIcon()}}</v-icon>
-        <template v-if="value.hasNotes()">
-            <v-icon color="error">mdi-alert</v-icon>&nbsp;
-        </template>
-        <a style="margin-right: 0.2rem" :href="value.getDetailUrl()" ref="identifier">{{String(value)}}</a>
+    <div class="identifier">
+        <div v-if="value.hasNotes()">
+            <v-icon color="error">mdi-alert</v-icon>
+        </div>
+        <div>
+            <v-icon>{{value.getEntityIcon()}}</v-icon>
+        </div>
+        <a :href="value.getDetailUrl()" ref="identifier">{{String(value)}}</a>
         <div>
             <v-icon v-if="value.getSexIcon()">{{value.getSexIcon()}}</v-icon>
         </div>

@@ -1,7 +1,7 @@
 <template>
-    <div class="identifier" style="display: flex">
+    <div class="identifier">
         <v-icon class="identifier-icon">{{value.getEntityIcon()}}</v-icon>
-        {{String(value)}}&nbsp;
+        {{String(value)}}
         <v-menu offset-y v-model="show" :position-absolutely="true">
             <v-icon slot="activator" style="font-size: inherit; vertical-align: baseline">mdi-arrow-down-drop-circle
             </v-icon>

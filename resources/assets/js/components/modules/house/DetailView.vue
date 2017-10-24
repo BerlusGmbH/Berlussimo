@@ -35,9 +35,10 @@
                                       :href="'/personen?q=!person(kaufvertrag(aktiv haus(id=' + house.getID() + ')))'"
                     ></app-persons-card>
                 </v-flex>
-                <v-flex v-if="house" xs12>
+                <v-flex xs12>
                     <app-assignments-card headline="Aufträge"
                                           :assignments="house.auftraege"
+                                          :cost-unit="house"
                                           :href="'/auftraege?q=!auftrag(kostenträger(haus(id=' + house.getID() + ')))'"
                     >
                     </app-assignments-card>

@@ -61,19 +61,12 @@
 </script>
 
 <style>
-    .identifier-icon {
-        position: absolute;
-        left: 0;
-        display: inline-block;
-    }
-
     .identifier i {
         font-size: inherit;
         line-height: inherit;
     }
 
     .identifier {
-        padding-left: 1.2em;
-        position: relative;
+        display: flex;
     }
 </style>

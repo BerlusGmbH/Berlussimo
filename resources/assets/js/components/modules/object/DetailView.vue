@@ -44,9 +44,10 @@
                 <v-flex xs12 sm6 v-if="object">
                     <app-object-reports-card :object="object"></app-object-reports-card>
                 </v-flex>
-                <v-flex v-if="object" xs12>
+                <v-flex xs12>
                     <app-assignments-card headline="Aufträge"
                                           :assignments="object.auftraege"
+                                          :cost-unit="object"
                                           :href="'/auftraege?q=!auftrag(kostenträger(objekt(id=' + object.getID() + ')))'"
                     ></app-assignments-card>
                 </v-flex>

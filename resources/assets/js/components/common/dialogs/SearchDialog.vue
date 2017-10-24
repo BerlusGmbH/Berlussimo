@@ -6,7 +6,7 @@
               transition="fade"
               :overlay="false"
     >
-        <v-card>
+        <v-card style="background-color: rgb(48,48,48)">
             <v-toolbar>
                 <v-toolbar-title>Suche</v-toolbar-title>
                 <v-spacer></v-spacer>

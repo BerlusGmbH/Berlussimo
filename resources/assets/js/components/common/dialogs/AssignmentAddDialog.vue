@@ -76,7 +76,7 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
-    import {Assignment} from "../../../server/resources/models";
+    import {Assignment, Einheit, Haus, Objekt} from "../../../server/resources/models";
     import {Getter, Mutation, namespace} from "vuex-class";
 
     const SnackbarMutation = namespace('shared/snackbar', Mutation);
@@ -88,6 +88,9 @@
 
         @Prop({type: Boolean})
         value: boolean;
+
+        @Prop({type: Object})
+        costUnit: Objekt | Haus | Einheit;
 
         @AuthGetter('user')
         user;
@@ -103,16 +106,14 @@
         akut: boolean = false;
 
         mounted() {
-            this.assignmentInput.VERFASSER_ID = this.user.id;
-            this.assignmentInput.von = this.user;
+            this.initAssignment()
         }
 
         create() {
             if (this.assignmentInput) {
                 this.assignmentInput.create().then(() => {
                     this.assignmentInput = new Assignment();
-                    this.assignmentInput.VERFASSER_ID = this.user.id;
-                    this.assignmentInput.von = this.user;
+                    this.initAssignment();
                     this.updateMessage('Auftrag erstellt.');
                     this.requestRefresh();
                 }).catch(error => {
@@ -121,6 +122,16 @@
                 });
             }
 
+        }
+
+        initAssignment() {
+            this.assignmentInput.VERFASSER_ID = this.user.id;
+            this.assignmentInput.von = this.user;
+            if (this.costUnit) {
+                this.assignmentInput.KOS_ID = this.costUnit.getID();
+                this.assignmentInput.KOS_TYP = this.costUnit.getMorphName();
+                this.assignmentInput.kostentraeger = this.costUnit;
+            }
         }
 
         setMorph(target, value) {
