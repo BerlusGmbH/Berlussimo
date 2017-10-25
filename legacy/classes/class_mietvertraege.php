@@ -55,6 +55,7 @@ class mietvertraege
     public $ls_bic;
     public $serie;
     public $ls_iban1;
+    public $einheit_zimmeranzahl;
 
     protected $namen;
 
@@ -194,6 +195,8 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
             $this->einheit_qm = $ee->einheit_qm;
             $this->einheit_qm_d = $ee->einheit_qm_d;
             $this->einheit_id = $row ['EINHEIT_ID'];
+            $d = new detail();
+            $this->einheit_zimmeranzahl = $d->finde_detail_inhalt('EINHEIT', $this->einheit_id, 'Zimmeranzahl');
             $this->mietvertrag_von = $row ['MIETVERTRAG_VON'];
             $this->mietvertrag_von_d = date_mysql2german($this->mietvertrag_von);
             $this->mietvertrag_bis = $row ['MIETVERTRAG_BIS'];

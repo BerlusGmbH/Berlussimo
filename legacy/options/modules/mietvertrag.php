@@ -389,7 +389,7 @@ switch ($mietvertrag_raus) {
         $bg->objekt_auswahl_liste();
         if (session()->has('objekt_id')) {
             $ma = new mahnungen ();
-            if (!request()->has('pdf')) {
+            if (!request()->exists('pdf')) {
                 $obj_id = session()->get('objekt_id');
                 $link_pdf = "<a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mahnliste_alle', 'objekt_id' => $obj_id, 'pdf'], false) . "'>Als PDF anzeigen</a>";
                 echo $link_pdf;
@@ -408,7 +408,7 @@ switch ($mietvertrag_raus) {
         $bg->objekt_auswahl_liste();
         if (session()->has('objekt_id')) {
             $ma = new mahnungen ();
-            if (!request()->has('pdf')) {
+            if (!request()->exists('pdf')) {
                 $obj_id = session()->get('objekt_id');
                 $link_pdf = "<a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mahnliste_ausgezogene', 'objekt_id' => $obj_id, 'pdf']) . "'>Als PDF anzeigen</a>";
                 echo $link_pdf;

@@ -352,8 +352,8 @@ class mietanpassung
                     $tab_arr ['ERHOEHUNGEN_ARR'] = $erhoehungen_arr;
                     /* Maximal möglich rechnerisch nur */
 
-                    $n_erhoehungsdatum_arr = explode('-', $o->datum_plus_tage(date("Y-m-d"), 90));
-                    $n_erhoehungsdatum = '01.' . $n_erhoehungsdatum_arr [1] . '.' . $n_erhoehungsdatum_arr [0];
+                    $erhoehungsdatum = \Carbon\Carbon::now()->addMonth(3)->day(1);
+                    $n_erhoehungsdatum = $erhoehungsdatum->format('d.m.Y');
                     if (empty ($this->m_wert_w)) {
                         $n_miete_mwert = $e->einheit_qm * $this->m_wert;
                         $n_miete_mwert_w = $e->einheit_qm * $this->m_wert;

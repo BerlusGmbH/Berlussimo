@@ -1690,8 +1690,8 @@ ORDER BY DATUM ASC ");
         echo "<div class=\"input-field\">";
         echo "<select name=\"$name\" id=\"$name\"> \n";
 
-        $jahr = date("Y") - 1;
-        $vorjahr = $jahr - 4;
+        $jahr = date("Y");
+        $vorjahr = $jahr - 5;
 
         $kostenkategorien_arr [] = 'Miete kalt';
         $kostenkategorien_arr [] = 'Heizkosten Vorauszahlung';
