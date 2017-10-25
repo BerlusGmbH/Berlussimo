@@ -7,6 +7,9 @@ trait Searchable
 {
     public function scopeSearch($query, $tokens)
     {
+        if (!is_array($tokens)) {
+            $tokens = explode(' ', $tokens);
+        }
         foreach ($tokens as $token) {
             $this->buildQuery($query, $token);
         }
