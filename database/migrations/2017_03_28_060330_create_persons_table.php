@@ -24,6 +24,7 @@ class CreatePersonsTable extends Migration
         });
 
         DB::transaction(function () {
+            Person::flushEventListeners();
             $table = DB::table('PERSON');
             if($table->exists()) {
                 $persons = $table->where('PERSON_AKTUELL', '1')->get();
