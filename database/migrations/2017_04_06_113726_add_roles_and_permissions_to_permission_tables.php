@@ -58,6 +58,7 @@ class AddRolesAndPermissionsToPermissionTables extends Migration
                 Permission::PERMISSION_MODUL_MIETVERTRAG,
                 Permission::PERMISSION_MODUL_OBJEKT,
                 Permission::PERMISSION_MODUL_PARTNER,
+                Permission::PERMISSION_MODUL_PERSON,
                 Permission::PERMISSION_MODUL_RECHNUNG,
                 Permission::PERMISSION_MODUL_SEPA,
                 Permission::PERMISSION_MODUL_AUFTRAEGE,

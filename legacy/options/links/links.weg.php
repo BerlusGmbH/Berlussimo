@@ -14,9 +14,6 @@
                 <a class="WEG" href='<?php echo route('web::weg::legacy') ?>'>E-Mail</a>
             </div>
             <div class='col-xs-6 col-sm-3 col-md-3 col-lg-2'>
-                <a href='<?php echo route('web::weg::legacy', ['option' => 'objekt_auswahl']) ?>'>WEG wechseln</a>
-            </div>
-            <div class='col-xs-6 col-sm-3 col-md-3 col-lg-2'>
                 <a href='<?php echo route('web::weg::legacy', ['option' => 'stammdaten_weg', 'lang' => 'en']) ?>'>Stammdaten</a>
             </div>
             <div class='col-xs-6 col-sm-3 col-md-3 col-lg-2'>
