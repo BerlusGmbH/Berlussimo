@@ -37,7 +37,7 @@
     </v-app>
 </div>
 
-<main class="application--dark" style="flex: 1 0 auto; z-index: 0">
+<main class="application--dark" style="flex: 1 0 auto">
     <v-contnent>
         @if($content != "")
             <div class="berlussimo-materialize container-fluid">
@@ -45,8 +45,8 @@
             </div>
         @endif
         @if(Auth::check())
-            <app-notifications id="notifications" style="z-index: 1"></app-notifications>
-            <app-snackbar id="snackbar" style="z-index: 1"></app-snackbar>
+            <app-notifications id="notifications" style="z-index: 1000"></app-notifications>
+            <app-snackbar id="snackbar" style="z-index: 1010"></app-snackbar>
         @endif
     </v-contnent>
 </main>

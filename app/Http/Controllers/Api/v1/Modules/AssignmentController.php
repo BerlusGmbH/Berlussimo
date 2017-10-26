@@ -54,8 +54,11 @@ class AssignmentController extends Controller
             'haeuser',
             'einheiten',
             'auftraege' => function ($query) {
-                $query->with(['von', 'an', 'kostentraeger'])->orderBy('ERSTELLT', 'desc');
-            }
+                $query->orderBy('ERSTELLT', 'desc');
+            },
+            'auftraege.von',
+            'auftraege.an',
+            'auftraege.kostentraeger'
         ]);
         $array = $assignment->toArray();
         $array['mieter'] = $assignment->mieter()->get();

@@ -60,8 +60,11 @@ class ObjectController extends Controller
             'haeuser',
             'einheiten',
             'auftraege' => function ($query) {
-                $query->with(['von', 'an'])->orderBy('ERSTELLT', 'desc');
-            }
+                $query->orderBy('ERSTELLT', 'desc');
+            },
+            'auftraege.von',
+            'auftraege.an',
+            'auftraege.kostentraeger'
         ]);
         $array = $object->toArray();
         $array['mieter'] = $object->mieter()->get();

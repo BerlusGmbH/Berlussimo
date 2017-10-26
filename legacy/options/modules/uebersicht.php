@@ -51,7 +51,7 @@ function uebersicht_einheit($einheit_id)
       <i class='large mdi mdi-view-list'></i>
     </a>
   </div>
-  <div id='tasks' class='modal bottom-sheet'>
+  <div id='tasks' class='modal bottom-sheet' style='background-color: #424242'>
     <div class='modal-content'>";
     echo "<div class='row'>
     <div class='col-xs-12'>
@@ -72,8 +72,8 @@ function uebersicht_einheit($einheit_id)
     echo "</div>
   </div>";
     echo "</div>
-    <div class=\"modal-footer\">
-      <a href=\"#!\" class=\"modal-action modal-close waves-effect waves-green btn-flat\">Schließen</a>
+    <div class=\"modal-footer\" style='background-color: #424242'>
+      <a href=\"#!\" class=\"modal-action modal-close waves-effect waves-green btn\">Schließen</a>
     </div>
   </div>";
 
