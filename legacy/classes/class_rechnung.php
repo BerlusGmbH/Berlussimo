@@ -3135,17 +3135,17 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
                 // echo $status_kontierung;
 
                 if ($status_kontierung == 'unvollstaendig') {
-                    echo "<tr style=\"background-color:#ff778c\">";
+                    echo "<tr class=\"red darken-2\">";
                 }
 
                 if ($status_kontierung == 'vollstaendig') {
-                    echo "<tr style=\"background-color:#bcd59f\">";
+                    echo "<tr class=\"green darken-3\">";
                 }
 
                 echo "<td id=\"td_ansehen\">$beleg_link<br>$pdf_link $pdf_link1</td><td>$r->empfaenger_eingangs_rnr</td><td>$r->rechnungsdatum</td>";
                 /* Prüfen ob die rechnung temporär zur Buchungszwecken an Rechnungsausstellr kontiert */
                 if ($this->check_kontierung_rg($belegnr, $r->rechnungs_aussteller_typ, $r->rechnungs_aussteller_id) == true) {
-                    echo "<td style=\"background-color:#f8ffbb\">$r->rechnungs_aussteller_name</td>";
+                    echo "<td class=\"green darken-4\">$r->rechnungs_aussteller_name</td>";
                 } else {
                     echo "<td>$r->rechnungs_aussteller_name</td>";
                 }
@@ -3176,14 +3176,12 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
                 $saldo_rg = $summe_weiterbelastung - $r->rechnungs_brutto;
                 $saldo_rg_a = nummer_punkt2komma($saldo_rg);
                 if ($saldo_rg >= 0) {
-                    echo "<td style=\"background-color:#bcd59f\">";
+                    echo "<td class=\"green darken-3\">";
                 } else {
-
-                    // braun ==c48b7c
                     if ($this->check_kontierung_rg($belegnr, $r->rechnungs_empfaenger_typ, $r->rechnungs_empfaenger_id) == true) {
                         echo "<td style=\"background-color:#c48b7c\">";
                     } else {
-                        echo "<td style=\"background-color:#ff778c\">";
+                        echo "<td class=\"red darken-2\">";
                     }
                 }
                 echo "$saldo_rg_a</td>";
