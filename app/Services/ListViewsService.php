@@ -99,13 +99,16 @@ class ListViewsService
 
         $columns = $this->parseQuery($query, $builder);
 
+        if ($size === "-1") {
+            $size = $builder->count();
+        }
+
         $entities = $builder->paginate($size);
 
         if ($entities->lastPage() < $request->input('page')) {
             Paginator::currentPageResolver(function () use ($entities) {
                 return $entities->lastPage();
             });
-            $entities = $builder->paginate($size);
         }
 
         list($index, $wantedRelations) = $this->generateIndex($entities, $columns);
