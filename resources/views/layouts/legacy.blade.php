@@ -13,7 +13,7 @@
 
 <body style="background: #303030; display: flex; min-height: 100vh; flex-direction: column;">
 
-<div id="top" style="position: sticky; top: 0; z-index: 1">
+<div id="top" style="position: sticky; top: 0; z-index: 2000">
     <v-app dark style="min-height: auto">
         @if(Auth::check())
             <app-user-loader :user="{{Auth::user()}}"></app-user-loader>
