@@ -38,9 +38,9 @@
 </div>
 
 <main class="application--dark" style="flex: 1 0 auto">
-    <v-contnent>
+    <div class="content">
         @if($content != "")
-            <div class="berlussimo-materialize container-fluid">
+            <div class="berlussimo-materialize container fluid">
                 {!!$content!!}
             </div>
         @endif
@@ -48,7 +48,7 @@
             <app-notifications id="notifications" style="z-index: 1000"></app-notifications>
             <app-snackbar id="snackbar" style="z-index: 1010"></app-snackbar>
         @endif
-    </v-contnent>
+    </div>
 </main>
 
 <div id="bottom" class="application--dark">
