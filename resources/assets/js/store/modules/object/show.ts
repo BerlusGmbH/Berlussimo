@@ -20,23 +20,22 @@ export default {
         },
 
         updateObject(state, object) {
+            if (object) {
+                Objekt.applyPrototype(object);
+            }
             state.object = object;
         }
     },
     actions: {
         updateObject({commit, dispatch}, id) {
             commit('updateId', id);
+            commit('updateObject', null);
             dispatch('getObject', id).then((response) => {
-                dispatch('prototypeObject', response.data).then((object) => {
-                    commit('updateObject', object);
-                });
+                commit('updateObject', response.data);
             });
         },
         getObject(_context, id) {
             return axios.get('/api/v1/objects/' + id);
         },
-        prototypeObject(_context, object): Objekt {
-            return Objekt.applyPrototype(object);
-        }
     }
 }

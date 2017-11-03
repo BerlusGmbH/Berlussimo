@@ -22,6 +22,7 @@
                            :value="value.eigentuemer"
                            append-icon=""
                            slot="input"
+                           label="Eigentümer"
                            :entities="['partner']"
         >
         </app-entity-select>

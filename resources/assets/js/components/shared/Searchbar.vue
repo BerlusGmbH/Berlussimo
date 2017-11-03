@@ -1,5 +1,6 @@
 <template>
     <app-entity-select @input="select"
+                       :value="selected"
                        hide-details
                        prepend-icon="search"
                        append-icon=""
@@ -17,8 +18,17 @@
 
     @Component({components: {'app-entity-select': Select}})
     export default class Searchbar extends Vue {
+
+        selected: Array<Object> = [];
+
         select(entity) {
-            window.location.href = entity.getDetailUrl();
+            let url = new URL(entity.getDetailUrl());
+            if (this.$router && this.$router.resolve(url.pathname + url.search).route.name) {
+                this.selected = [];
+                this.$router.push(url.pathname + url.search);
+            } else {
+                window.location.assign(entity.getDetailUrl());
+            }
         }
     }
 </script>

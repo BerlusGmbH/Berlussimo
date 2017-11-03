@@ -71,10 +71,9 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'
         Route::match(['get', 'post'], '/', 'DetailsController@request')->name('legacy');
     });
 
-    Route::group(['prefix' => 'einheiten', 'as' => 'einheiten::'], function () {
+    Route::group(['prefix' => 'units', 'as' => 'einheiten::'], function () {
         Route::match(['get', 'post'], '/legacy', 'EinheitenController@request')->name('legacy');
     });
-    Route::resource('einheiten', 'EinheitenController', ['only' => ['show', 'index']]);
 
     Route::group(['prefix' => 'einheitenform', 'as' => 'einheitenform::'], function () {
         Route::match(['get', 'post'], '/', 'EinheitenFormController@request')->name('legacy');
@@ -93,10 +92,9 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'
         Route::get('{id}/select', 'GeldkontenController@select')->name('select');
     });
 
-    Route::group(['prefix' => 'haeuser', 'as' => 'haeuser::'], function () {
+    Route::group(['prefix' => 'houses', 'as' => 'haeuser::'], function () {
         Route::match(['get', 'post'], '/legacy', 'HaeuserController@request')->name('legacy');
     });
-    Route::resource('haeuser', 'HaeuserController', ['only' => ['show', 'index']]);
 
     Route::group(['prefix' => 'kassen', 'as' => 'kassen::'], function () {
         Route::match(['get', 'post'], '/', 'KassenController@request')->name('legacy');
@@ -148,10 +146,9 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'
         Route::post('store', 'MietvertraegeController@store')->name('store');
     });
 
-    Route::group(['prefix' => 'objekte', 'as' => 'objekte::'], function () {
+    Route::group(['prefix' => 'objects', 'as' => 'objekte::'], function () {
         Route::match(['get', 'post'], '/legacy', 'ObjekteController@request')->name('legacy');
     });
-    Route::resource('objekte', 'ObjekteController', ['only' => ['show', 'index']]);
 
     Route::group(['prefix' => 'partner', 'as' => 'partner::'], function () {
         Route::match(['get', 'post'], '/', 'PartnerController@request')->name('legacy');
@@ -162,8 +159,7 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'
         Route::match(['get', 'post'], '/', 'PersonalController@request')->name('legacy');
     });
 
-    Route::resource('personen', 'PersonenController', ['only' => ['show', 'index']]);
-    Route::group(['prefix' => 'personen', 'as' => 'personen::'], function () {
+    Route::group(['prefix' => 'persons', 'as' => 'personen::'], function () {
         Route::match(['get', 'post'], '/legacy', 'PersonenController@request')->name('legacy');
     });
 
@@ -220,4 +216,26 @@ Route::group(['prefix' => 'broadcasting', 'middleware' => ['api']], function () 
 
 Route::group(['prefix' => 'storage', 'namespace' => 'Storage', 'middleware' => ['auth']], function () {
     Route::get('{path}', 'StorageController@asset')->where('path', '.+');
+});
+
+Route::get('{path}', 'Legacy\IndexController@request')->where('path', '.*');
+
+//Unreachable but still needed to generate routes for the legacy code
+Route::group(['namespace' => 'Legacy', 'as' => 'web::'], function () {
+    Route::group(['prefix' => 'persons', 'as' => 'personen'], function () {
+        Route::get('/', 'IndexController@request')->name('.index');
+        Route::get('/{id}', 'IndexController@request')->name('.show');
+    });
+    Route::group(['prefix' => 'objects', 'as' => 'objekte'], function () {
+        Route::get('/', 'IndexController@request')->name('.index');
+        Route::get('/{id}', 'IndexController@request')->name('.show');
+    });
+    Route::group(['prefix' => 'houses', 'as' => 'haeuser'], function () {
+        Route::get('/', 'IndexController@request')->name('.index');
+        Route::get('/{id}', 'IndexController@request')->name('.show');
+    });
+    Route::group(['prefix' => 'units', 'as' => 'einheiten'], function () {
+        Route::get('/', 'IndexController@request')->name('.index');
+        Route::get('/{id}', 'IndexController@request')->name('.show');
+    });
 });

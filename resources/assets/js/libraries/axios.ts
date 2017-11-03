@@ -1,4 +1,5 @@
 import axios from "axios";
+import store from "../store";
 
 let token = document.head.querySelector('meta[name="csrf-token"]');
 
@@ -11,8 +12,17 @@ axios.interceptors.response.use(function (response) {
     return response;
 }, function (error) {
     if (401 === error.response.status) {
-        window.location.assign('/login');
+        store.dispatch('auth/appLogout');
     }
+    return Promise.reject(error);
+});
+
+axios.interceptors.request.use(function (config) {
+    if (store.state['auth']['csrf']) {
+        config.headers['X-CSRF-TOKEN'] = store.state['auth']['csrf'];
+    }
+    return config;
+}, function (error) {
     return Promise.reject(error);
 });
 

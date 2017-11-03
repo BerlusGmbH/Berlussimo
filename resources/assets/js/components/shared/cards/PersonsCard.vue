@@ -1,7 +1,11 @@
 <template>
     <v-card>
         <v-card-title>
-            <a v-if="href" :href="href"><h3 class="headline">{{headline}} ({{persons.length}})</h3></a>
+            <router-link v-if="filter"
+                         :to="{name: 'web.persons.index', query: {q: filter}}"
+            >
+                <h3 class="headline">{{headline}} ({{persons.length}})</h3>
+            </router-link>
             <h3 v-else class="headline">{{headline}} ({{persons.length}})</h3>
             <v-spacer></v-spacer>
             <v-text-field
@@ -47,7 +51,7 @@
         headline;
 
         @Prop({type: String, default: ''})
-        href;
+        filter;
 
         search: string = '';
         headers = [

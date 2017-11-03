@@ -20,23 +20,22 @@ export default {
         },
 
         updateHouse(state, house) {
+            if (house) {
+                Haus.applyPrototype(house);
+            }
             state.house = house;
         }
     },
     actions: {
         updateHouse({commit, dispatch}, id) {
             commit('updateId', id);
-            dispatch('getHouse', id).then((response) => {
-                dispatch('prototypeHouse', response.data).then((house) => {
-                    commit('updateHouse', house);
-                });
+            commit('updateHouse', null);
+            dispatch('getHouse', id).then(response => {
+                commit('updateHouse', response.data);
             });
         },
         getHouse(_context, id) {
             return axios.get('/api/v1/houses/' + id);
-        },
-        prototypeHouse(_context, house): Haus {
-            return Haus.applyPrototype(house);
         }
     }
 }

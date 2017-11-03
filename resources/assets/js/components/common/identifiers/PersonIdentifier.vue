@@ -3,10 +3,14 @@
         <div v-if="value.hasNotes()">
             <v-icon color="error">mdi-alert</v-icon>
         </div>
-        <div>
+        <div ref="identifier">
             <v-icon>{{value.getEntityIcon()}}</v-icon>
         </div>
-        <a :href="value.getDetailUrl()" ref="identifier">{{String(value)}}</a>
+        <router-link v-if="$router" :to="{name: 'web.persons.show', params: { id: String(value.getID()) }}"
+        >
+            {{String(value)}}
+        </router-link>
+        <a v-else :href="value.getDetailUrl()">{{String(value)}}</a>
         <div>
             <v-icon v-if="value.getSexIcon()">{{value.getSexIcon()}}</v-icon>
         </div>

@@ -185,11 +185,9 @@
                 ).then(() => {
                     if (
                             this.left.id > (this.right as Person).id
-                            && window.location.pathname === '/personen/' + vm.left.id
+                            && window.location.pathname === '/persons/' + vm.left.id
                     ) {
-                        let goto = '/personen/'
-                                + (this.right as Person).id;
-                        window.location.assign(goto);
+                        this.$router.push({name: 'web.persons.show', params: {id: String((this.right as Person).id)}});
                     }
                     this.$emit('input', false);
                     this.loading = false;

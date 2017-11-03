@@ -3,10 +3,14 @@
         <div v-if="value.hasNotes()">
             <v-icon color="error">mdi-alert</v-icon>
         </div>
-        <div>
+        <div ref="identifier">
             <v-icon class="identifier-icon">{{value.getEntityIcon()}}</v-icon>
         </div>
-        <a :href="value.getDetailUrl()" ref="identifier">{{String(value)}}</a>&nbsp;
+        <router-link v-if="$router" :to="{name: 'web.objects.show', params: { id: String(value.getID()) }}"
+        >
+            {{String(value)}}
+        </router-link>
+        <a v-else :href="value.getDetailUrl()">{{String(value)}}</a>
         <v-menu offset-y v-model="show" :position-absolutely="true">
             <v-icon slot="activator" style="font-size: inherit; vertical-align: baseline">mdi-arrow-down-drop-circle
             </v-icon>

@@ -16,6 +16,10 @@ Route::group(['prefix' => 'v1', 'as' => 'api.v1.', 'namespace' => 'Api\v1', 'mid
     Route::get('/call/{detail}', 'CallController@call')->name('call');
 
     Route::group(['namespace' => 'Modules'], function () {
+        Route::get('/workplace', 'WorkplaceController@show')->name('workplace.show');
+
+        Route::get('/menu', 'PersonController@menu')->name('menu');
+
         Route::get('/partners/{partner}/available-job-titles', 'PartnerController@availableTitles')->name('partners.available-job-titles');
 
         Route::get('/notifications/{notification}/toggle', 'NotificationController@toggle')->name('notifications.toggle');

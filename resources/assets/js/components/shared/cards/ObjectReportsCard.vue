@@ -63,21 +63,21 @@
         get items() {
             let items: Array<Object> = [];
             items.push({
-                'report': '<a target="_blank" href="/objekte/legacy?objekte_raus=checkliste&objekt_id='
+                'report': '<a target="_blank" href="/objects/legacy?objekte_raus=checkliste&objekt_id='
                 + this.object.OBJEKT_ID + '">Hauswart Checkliste<i class="mdi mdi-file-pdf"></i></a>',
                 'summary': 'Checkliste für einen Rundgang im Objekt'
             });
             items.push({
-                'report': '<a target="_blank" href="/objekte/legacy?objekte_raus=mietaufstellung&objekt_id='
+                'report': '<a target="_blank" href="/objects/legacy?objekte_raus=mietaufstellung&objekt_id='
                 + this.object.OBJEKT_ID + '">Mietaufstellung<i class="mdi mdi-file-pdf"></i></a>',
                 'summary': 'Mietaufstellung des aktuellen Monats'
             });
             items.push({
                 'report': [
-                    '<a target="_blank" href="/objekte/legacy?objekte_raus=mietaufstellung_m_j&objekt_id='
+                    '<a target="_blank" href="/objects/legacy?objekte_raus=mietaufstellung_m_j&objekt_id='
                     + this.object.OBJEKT_ID + '&monat=' + new Date().getMonth() + '&jahr=' + new Date().getFullYear()
                     + '">Mietaufstellung Monatsjournal<i class="mdi mdi-file-pdf"></i></a>',
-                    '<a target="_blank" href="/objekte/legacy?objekte_raus=mietaufstellung_m_j&objekt_id='
+                    '<a target="_blank" href="/objects/legacy?objekte_raus=mietaufstellung_m_j&objekt_id='
                     + this.object.OBJEKT_ID + '&monat=' + new Date().getMonth() + '&jahr=' + new Date().getFullYear()
                     + '&XLS"><i class="mdi mdi-file-excel"></i></a>'
                 ],
@@ -89,19 +89,19 @@
                 'summary': 'Mietkontenblätter aller Mieter'
             });
             items.push({
-                'report': '<a target="_blank" href="/einheiten/legacy?einheit_raus=mieterliste_aktuell&objekt_id='
+                'report': '<a target="_blank" href="/units/legacy?einheit_raus=mieterliste_aktuell&objekt_id='
                 + this.object.OBJEKT_ID + '">Mieterkontakte<i class="mdi mdi-file-pdf"></i></a>',
                 'summary': 'Kontaktliste aller Mieter'
             });
             items.push({
-                'report': '<a target="_blank" href="/objekte/legacy?objekte_raus=mietaufstellung_j&objekt_id='
+                'report': '<a target="_blank" href="/objects/legacy?objekte_raus=mietaufstellung_j&objekt_id='
                 + this.object.OBJEKT_ID
                 + '&jahr=' + (new Date().getFullYear() - 1)
                 + '">SOLL/IST<i class="mdi mdi-file-pdf"></i></a>',
                 'summary': 'Mieten SOLL/IST kumuliert über das vorherige Jahr'
             });
             items.push({
-                'report': '<a target="_blank" href="/objekte/legacy?objekte_raus=stammdaten_pdf&objekt_id='
+                'report': '<a target="_blank" href="/objects/legacy?objekte_raus=stammdaten_pdf&objekt_id='
                 + this.object.OBJEKT_ID
                 + '">Stammdaten<i class="mdi mdi-file-pdf"></i></a>',
                 'summary': 'Stammdaten des Objektes'

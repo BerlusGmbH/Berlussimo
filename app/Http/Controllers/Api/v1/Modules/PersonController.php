@@ -13,6 +13,7 @@ use App\Models\Person;
 use App\Services\ListViewsService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Http\Request;
 
 class PersonController extends Controller
 {
@@ -54,6 +55,11 @@ class PersonController extends Controller
     {
         $this->dispatch(new MergePersons($request->only(['name', 'first_name', 'birthday', 'sex']), $left, $right));
         return response()->json(['status' => 'ok']);
+    }
+
+    public function menu(Request $request)
+    {
+        return view('api.menus.main');
     }
 
     public function show(PersonenRequest $request, Person $person)

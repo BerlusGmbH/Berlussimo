@@ -1,50 +1,48 @@
 <template>
-    <v-container grid-list-md fluid>
-        <transition name="fade" mode="out-in">
-            <v-layout v-if="house" :key="key" row wrap>
-                <v-flex xs12 sm6>
-                    <app-house-card :value="house"></app-house-card>
-                </v-flex>
-                <v-flex v-if="house && house.hinweise.length > 0" xs12 sm6>
-                    <app-notes-card headline="Hinweise"
-                                    :details="house.hinweise"
-                                    :parent="house"
-                    ></app-notes-card>
-                </v-flex>
-                <v-flex v-if="house && house.common_details.length > 0" xs12 sm6>
-                    <app-details-card headline="Details"
-                                      :details="house.common_details"
-                                      :parent="house"
-                    ></app-details-card>
-                </v-flex>
-                <v-flex v-if="house && house.einheiten.length > 0" xs12 sm6>
-                    <app-units-card headline="Einheiten"
-                                    :units="house.einheiten"
-                                    :href="'/einheiten?q=!einheit(haus(id=' + house.getID() + '))'"
-                    ></app-units-card>
-                </v-flex>
-                <v-flex v-if="house && house.mieter.length > 0" xs12 sm6>
-                    <app-persons-card headline="Mieter"
-                                      :persons="house.mieter"
-                                      :href="'/personen?q=!person(mietvertrag(aktiv haus(id=' + house.getID() + ')))'"
-                    ></app-persons-card>
-                </v-flex>
-                <v-flex v-if="house && house.weg_eigentuemer.length > 0" xs12 sm6>
-                    <app-persons-card headline="WEG-Eigentümer"
-                                      :persons="house.weg_eigentuemer"
-                                      :href="'/personen?q=!person(kaufvertrag(aktiv haus(id=' + house.getID() + ')))'"
-                    ></app-persons-card>
-                </v-flex>
-                <v-flex xs12>
-                    <app-assignments-card headline="Aufträge"
-                                          :assignments="house.auftraege"
-                                          :cost-unit="house"
-                                          :href="'/auftraege?q=!auftrag(kostenträger(haus(id=' + house.getID() + ')))'"
-                    >
-                    </app-assignments-card>
-                </v-flex>
-            </v-layout>
-        </transition>
+    <v-container grid-list-md fluid :key="key">
+        <v-layout v-if="house" row wrap>
+            <v-flex xs12 sm6>
+                <app-house-card :value="house"></app-house-card>
+            </v-flex>
+            <v-flex v-if="house && house.hinweise.length > 0" xs12 sm6>
+                <app-notes-card headline="Hinweise"
+                                :details="house.hinweise"
+                                :parent="house"
+                ></app-notes-card>
+            </v-flex>
+            <v-flex v-if="house && house.common_details.length > 0" xs12 sm6>
+                <app-details-card headline="Details"
+                                  :details="house.common_details"
+                                  :parent="house"
+                ></app-details-card>
+            </v-flex>
+            <v-flex v-if="house && house.einheiten.length > 0" xs12 sm6>
+                <app-units-card headline="Einheiten"
+                                :units="house.einheiten"
+                                :filter="'!einheit(haus(id=' + house.getID() + '))'"
+                ></app-units-card>
+            </v-flex>
+            <v-flex v-if="house && house.mieter.length > 0" xs12 sm6>
+                <app-persons-card headline="Mieter"
+                                  :persons="house.mieter"
+                                  :filter="'!person(mietvertrag(aktiv haus(id=' + house.getID() + ')))'"
+                ></app-persons-card>
+            </v-flex>
+            <v-flex v-if="house && house.weg_eigentuemer.length > 0" xs12 sm6>
+                <app-persons-card headline="WEG-Eigentümer"
+                                  :persons="house.weg_eigentuemer"
+                                  :filter="'!person(kaufvertrag(aktiv haus(id=' + house.getID() + ')))'"
+                ></app-persons-card>
+            </v-flex>
+            <v-flex xs12>
+                <app-assignments-card headline="Aufträge"
+                                      :assignments="house.auftraege"
+                                      :cost-unit="house"
+                                      :filter="'!auftrag(kostenträger(haus(id=' + house.getID() + ')))'"
+                >
+                </app-assignments-card>
+            </v-flex>
+        </v-layout>
     </v-container>
 </template>
 
@@ -83,7 +81,7 @@
     })
     export default class DetailView extends Vue {
         @Prop()
-        houseId: number;
+        id: string;
 
         @ShowAction('updateHouse')
         fetchHouse;
@@ -100,7 +98,7 @@
         @Watch('dirty')
         onDirtyChange(val) {
             if (val) {
-                this.fetchHouse(this.houseId).then(() => {
+                this.fetchHouse(this.id).then(() => {
                     this.refreshFinished();
                 }).catch(() => {
                     this.refreshFinished();
@@ -109,25 +107,23 @@
         }
 
         created() {
-            this.fetchHouse(this.houseId);
+            if (this.id) {
+                this.fetchHouse(this.id);
+            }
+        }
+
+        @Watch('$route')
+        onRouteChange() {
+            if (this.id) {
+                this.fetchHouse(this.id);
+            }
         }
 
         get key() {
-            return btoa('house-' + this.house.id);
+            if (this.house) {
+                return btoa('house-' + this.house.HAUS_ID);
+            }
+            return Math.random();
         }
     }
 </script>
-
-<style>
-    .fade-enter-active {
-        transition: all .3s ease;
-    }
-
-    .fade-leave-active {
-        transition: all .3s ease;
-    }
-
-    .fade-enter, .fade-leave-to {
-        opacity: 0;
-    }
-</style>

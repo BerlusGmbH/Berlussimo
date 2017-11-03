@@ -2149,16 +2149,16 @@
         },
         {
             "name": "owen-it/laravel-auditing",
-          "version": "v4.1.3",
+          "version": "v4.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/owen-it/laravel-auditing.git",
-              "reference": "6498991b15aafe8fb2eb405087713a673b63dfa9"
+              "reference": "c383fb4eb58acbb3b819ce0ff9936e7ea70ff966"
             },
             "dist": {
                 "type": "zip",
-              "url": "https://api.github.com/repos/owen-it/laravel-auditing/zipball/6498991b15aafe8fb2eb405087713a673b63dfa9",
-              "reference": "6498991b15aafe8fb2eb405087713a673b63dfa9",
+              "url": "https://api.github.com/repos/owen-it/laravel-auditing/zipball/c383fb4eb58acbb3b819ce0ff9936e7ea70ff966",
+              "reference": "c383fb4eb58acbb3b819ce0ff9936e7ea70ff966",
                 "shasum": ""
             },
             "require": {
@@ -2227,7 +2227,7 @@
               "revision",
               "tracking"
             ],
-          "time": "2017-09-17 15:45:22"
+          "time": "2017-10-29 21:34:57"
         },
         {
             "name": "paragonie/random_compat",
@@ -2802,16 +2802,16 @@
         },
         {
             "name": "spatie/laravel-permission",
-          "version": "1.14.0",
+          "version": "1.14.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-permission.git",
-              "reference": "3dc98eb6814adb1ffcb403d819f53e0e9166035b"
+              "reference": "a13cf8296df17f362063703fd7f8c18cd57bea4f"
             },
             "dist": {
                 "type": "zip",
-              "url": "https://api.github.com/repos/spatie/laravel-permission/zipball/3dc98eb6814adb1ffcb403d819f53e0e9166035b",
-              "reference": "3dc98eb6814adb1ffcb403d819f53e0e9166035b",
+              "url": "https://api.github.com/repos/spatie/laravel-permission/zipball/a13cf8296df17f362063703fd7f8c18cd57bea4f",
+              "reference": "a13cf8296df17f362063703fd7f8c18cd57bea4f",
                 "shasum": ""
             },
             "require": {
@@ -2858,7 +2858,7 @@
                 "security",
                 "spatie"
             ],
-          "time": "2017-10-19 04:04:01"
+          "time": "2017-10-26 14:06:42"
         },
         {
             "name": "swiftmailer/swiftmailer",

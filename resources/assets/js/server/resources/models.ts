@@ -145,7 +145,7 @@ export class Person extends Model {
     }
 
     getDetailUrl() {
-        return base_url + '/personen/' + this.id;
+        return base_url + '/persons/' + this.id;
     }
 
     getApiBaseUrl() {
@@ -279,7 +279,7 @@ export class Objekt extends Model {
     }
 
     getDetailUrl() {
-        return base_url + '/objekte/' + this.OBJEKT_ID;
+        return base_url + '/objects/' + this.OBJEKT_ID;
     }
 
     getApiBaseUrl() {
@@ -397,7 +397,7 @@ export class Haus extends Model {
     }
 
     getDetailUrl(): string {
-        return base_url + '/haeuser/' + this.HAUS_ID;
+        return base_url + '/houses/' + this.HAUS_ID;
     }
 
     save() {
@@ -509,7 +509,7 @@ export class Einheit extends Model {
     }
 
     getDetailUrl(): string {
-        return base_url + '/einheiten/' + this.EINHEIT_ID;
+        return base_url + '/units/' + this.EINHEIT_ID;
     }
 
     getApiBaseUrl() {

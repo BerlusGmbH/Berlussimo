@@ -4,3 +4,16 @@
 .input-group__prepend-icon.mdi:before {
   line-height: normal;
 }
+
+/* fade transition */
+.fade-enter-active {
+  transition: all .3s ease;
+}
+
+.fade-leave-active {
+  transition: all .3s ease;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}

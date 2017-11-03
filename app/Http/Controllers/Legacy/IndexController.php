@@ -8,7 +8,7 @@ class IndexController extends LegacyController
 
     public function request()
     {
-        return view('layouts.legacy');
+        return view('layouts.app');
     }
 
     public function ajax()

@@ -1,51 +1,49 @@
 <template>
-    <v-container grid-list-md fluid>
-        <transition name="fade" mode="out-in">
-            <v-layout v-if="unit" :key="key" row wrap>
-                <v-flex xs12 sm6>
-                    <app-unit-card :key="key" :value="unit"></app-unit-card>
-                </v-flex>
-                <v-flex v-if="unit && unit.hinweise.length > 0" xs12 sm6>
-                    <app-notes-card headline="Hinweise"
-                                    :details="unit.hinweise"
-                                    :parent="unit"
-                    ></app-notes-card>
-                </v-flex>
-                <v-flex v-if="unit && unit.common_details.length > 0" xs12 sm6>
-                    <app-details-card headline="Details"
-                                      :details="unit.common_details"
-                                      :parent="unit"
-                    ></app-details-card>
-                </v-flex>
-                <v-flex v-if="unit && unit.mieter.length > 0" xs12 sm6>
-                    <app-persons-card headline="Mieter"
-                                      :persons="unit.mieter"
-                                      :href="'/personen?q=!person(mietvertrag(aktiv einheit(id=' + unit.getID() + ')))'"
-                    ></app-persons-card>
-                </v-flex>
-                <v-flex v-if="unit && unit.weg_eigentuemer.length > 0" xs12 sm6>
-                    <app-persons-card headline="WEG-Eigentümer"
-                                      :persons="unit.weg_eigentuemer"
-                                      :href="'/personen?q=!person(kaufvertrag(aktiv einheit(id=' + unit.getID() + ')))'"
-                    ></app-persons-card>
-                </v-flex>
-                <v-flex v-if="unit && unit.mietvertraege.length > 0" xs12 sm6>
-                    <app-rental-contracts-card-compact headline="Mietverträge"
-                                                       :rental-contracts="unit.mietvertraege"></app-rental-contracts-card-compact>
-                </v-flex>
-                <v-flex v-if="unit && unit.kaufvertraege.length > 0" xs12 sm6>
-                    <app-purchase-contracts-card-compact headline="Kaufverträge"
-                                                         :purchase-contracts="unit.kaufvertraege"></app-purchase-contracts-card-compact>
-                </v-flex>
-                <v-flex v-if="unit && unit.auftraege.length > 0" xs12>
-                    <app-assignments-card headline="Aufträge"
-                                          :assignments="unit.auftraege"
-                                          :cost-unit="unit"
-                                          :href="'/auftraege?q=!auftrag(kostenträger(einheit(id=' + unit.getID() + ')))'"
-                    ></app-assignments-card>
-                </v-flex>
-            </v-layout>
-        </transition>
+    <v-container grid-list-md fluid :key="key">
+        <v-layout v-if="unit" row wrap>
+            <v-flex xs12 sm6>
+                <app-unit-card :value="unit"></app-unit-card>
+            </v-flex>
+            <v-flex v-if="unit && unit.hinweise.length > 0" xs12 sm6>
+                <app-notes-card headline="Hinweise"
+                                :details="unit.hinweise"
+                                :parent="unit"
+                ></app-notes-card>
+            </v-flex>
+            <v-flex v-if="unit && unit.common_details.length > 0" xs12 sm6>
+                <app-details-card headline="Details"
+                                  :details="unit.common_details"
+                                  :parent="unit"
+                ></app-details-card>
+            </v-flex>
+            <v-flex v-if="unit && unit.mieter.length > 0" xs12 sm6>
+                <app-persons-card headline="Mieter"
+                                  :persons="unit.mieter"
+                                  :filter="'!person(mietvertrag(aktiv einheit(id=' + unit.getID() + ')))'"
+                ></app-persons-card>
+            </v-flex>
+            <v-flex v-if="unit && unit.weg_eigentuemer.length > 0" xs12 sm6>
+                <app-persons-card headline="WEG-Eigentümer"
+                                  :persons="unit.weg_eigentuemer"
+                                  :filter="'!person(kaufvertrag(aktiv einheit(id=' + unit.getID() + ')))'"
+                ></app-persons-card>
+            </v-flex>
+            <v-flex v-if="unit && unit.mietvertraege.length > 0" xs12 sm6>
+                <app-rental-contracts-card-compact headline="Mietverträge"
+                                                   :rental-contracts="unit.mietvertraege"></app-rental-contracts-card-compact>
+            </v-flex>
+            <v-flex v-if="unit && unit.kaufvertraege.length > 0" xs12 sm6>
+                <app-purchase-contracts-card-compact headline="Kaufverträge"
+                                                     :purchase-contracts="unit.kaufvertraege"></app-purchase-contracts-card-compact>
+            </v-flex>
+            <v-flex v-if="unit && unit.auftraege.length > 0" xs12>
+                <app-assignments-card headline="Aufträge"
+                                      :assignments="unit.auftraege"
+                                      :cost-unit="unit"
+                                      :filter="'!auftrag(kostenträger(einheit(id=' + unit.getID() + ')))'"
+                ></app-assignments-card>
+            </v-flex>
+        </v-layout>
     </v-container>
 </template>
 
@@ -81,7 +79,7 @@
     })
     export default class DetailView extends Vue {
         @Prop()
-        unitId: number;
+        id: string;
 
         @ShowAction('updateUnit')
         fetchUnit;
@@ -98,7 +96,7 @@
         @Watch('dirty')
         onDirtyChange(val) {
             if (val) {
-                this.fetchUnit(this.unitId).then(() => {
+                this.fetchUnit(this.id).then(() => {
                     this.refreshFinished();
                 }).catch(() => {
                     this.refreshFinished();
@@ -107,25 +105,23 @@
         }
 
         created() {
-            this.fetchUnit(this.unitId);
+            if (this.id) {
+                this.fetchUnit(this.id);
+            }
+        }
+
+        @Watch('$route')
+        onRouteChange() {
+            if (this.id) {
+                this.fetchUnit(this.id);
+            }
         }
 
         get key() {
-            return btoa('unit-' + this.unit.id);
+            if (this.unit) {
+                return btoa('unit-' + this.unit.EINHEIT_ID);
+            }
+            return Math.random();
         }
     }
 </script>
-
-<style>
-    .fade-enter-active {
-        transition: all .3s ease;
-    }
-
-    .fade-leave-active {
-        transition: all .3s ease;
-    }
-
-    .fade-enter, .fade-leave-to {
-        opacity: 0;
-    }
-</style>

@@ -20,23 +20,22 @@ export default {
         },
 
         updateUnit(state, unit) {
+            if (unit) {
+                Einheit.applyPrototype(unit);
+            }
             state.unit = unit;
         }
     },
     actions: {
         updateUnit({commit, dispatch}, id) {
             commit('updateId', id);
+            commit('updateUnit', null);
             dispatch('getUnit', id).then((response) => {
-                dispatch('prototypeUnit', response.data).then((unit) => {
-                    commit('updateUnit', unit);
-                });
+                commit('updateUnit', response.data);
             });
         },
         getUnit(_context, id) {
             return axios.get('/api/v1/units/' + id);
-        },
-        prototypeUnit(_context, unit): Einheit {
-            return Einheit.applyPrototype(unit);
         }
     }
 }

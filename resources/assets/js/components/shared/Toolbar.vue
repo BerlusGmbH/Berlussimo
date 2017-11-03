@@ -13,7 +13,10 @@
             <v-icon>mdi-tag-multiple</v-icon>
         </v-btn>
         <app-notifications-toggle v-if="authCheck"></app-notifications-toggle>
-        <v-menu v-if="authCheck && $vuetify.breakpoint.mdAndUp" offset-y open-on-hover>
+        <v-menu v-if="authCheck && $vuetify.breakpoint.mdAndUp"
+                offset-y
+                open-on-hover
+        >
             <v-toolbar-title slot="activator">
                 <app-identifier v-model="user"></app-identifier>
                 <v-icon>arrow_drop_down</v-icon>

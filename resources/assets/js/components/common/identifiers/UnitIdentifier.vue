@@ -6,10 +6,15 @@
         <div>
             <v-icon class="identifier-icon">{{value.getEntityIcon()}}</v-icon>
         </div>
-        <div>
+        <div ref="identifier">
             <v-icon>{{value.getKindIcon()}}</v-icon>
         </div>
-        <a :href="value.getDetailUrl()" ref="identifier">{{String(value)}}</a>
+        <router-link v-if="$router"
+                     :to="{name: 'web.units.show', params: { id: String(value.getID()) }}"
+        >
+            {{String(value)}}
+        </router-link>
+        <a v-else :href="value.getDetailUrl()">{{String(value)}}</a>
         <v-menu offset-y v-model="show" :position-absolutely="true">
             <v-icon slot="activator" style="font-size: inherit">mdi-arrow-down-drop-circle</v-icon>
             <v-list>

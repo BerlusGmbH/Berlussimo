@@ -156,29 +156,16 @@
         };
         totalListItems: number = 0;
         loading: boolean = false;
-        pauseHistory: boolean = false;
-        booting: boolean = false;
         add: boolean = false;
 
         created() {
-            this.pauseHistory = true;
-            this.booting = true;
-            window.addEventListener('popstate', this.popState);
             this.parseQuery();
             axios.get('/api/v1/assignments/parameters').then((respnose) => {
                 this.parameterList = respnose.data;
                 if (!this.parameters.v) {
                     this.parameters.v = this.parameterList['v']['default'];
                 }
-                this.$nextTick(() => {
-                    this.pauseHistory = false;
-                    this.booting = false;
-                });
             });
-        }
-
-        destroyed() {
-            window.removeEventListener('popstate', this.popState);
         }
 
         @Watch('dirty')
@@ -192,13 +179,14 @@
 
         @Watch('parameters', {deep: true})
         onParametersChange() {
-            this.onParametersChangeDebounced();
+            this.debouncedUpdateHistory();
+            this.debouncedUpdateList();
         }
 
-        onParametersChangeDebounced: Function = _.debounce(function (this: ListView) {
-            this.updateHistory();
-            this.updateList();
-        }, 300);
+        @Watch('$route')
+        onRouteChange() {
+            this.parseQuery();
+        }
 
         updateList() {
             this.loading = true;
@@ -230,13 +218,7 @@
                 }
                 if (respnose.data['last-page']) {
                     if (respnose.data['last-page'] < this.parameters.pagination.page) {
-                        this.booting = true;
-                        this.pauseHistory = true;
                         this.parameters.pagination.page = respnose.data['last-page'];
-                        this.$nextTick(() => {
-                            this.booting = false;
-                            this.pauseHistory = false;
-                        });
                     }
                 }
             }).catch((error) => {
@@ -249,64 +231,44 @@
             });
         }
 
+        debouncedUpdateList: Function = _.debounce(this.updateList, 300);
+        debouncedUpdateHistory: Function = _.debounce(this.updateHistory, 300);
+
         updateHistory() {
-            let params = new URLSearchParams(window.location.search);
-            params.delete('q');
-            if (this.parameters.q) {
-                params.set('q', this.parameters.q);
+            let query = {};
+            ['q', 'v'].forEach(val => {
+                if (this.parameters[val]) {
+                    query[val] = this.parameters[val];
+                }
+            });
+            if (this.parameters.f.length) {
+                query['f'] = this.parameters.f.join(',');
             }
-            params.delete('v');
-            if (this.parameters.v) {
-                params.set('v', this.parameters.v);
-            }
-            params.delete('f');
-            if (this.parameters.f) {
-                this.parameters.f.forEach(f => {
-                    params.append('f', f);
+            query['page'] = String(this.parameters.pagination.page);
+            query['s'] = String(this.parameters.pagination.rowsPerPage);
+
+            if (!this.$route.query.v || !this.$route.query.s || !this.$route.query.page) {
+                this.$router.replace({
+                    name: 'web.assignments.index',
+                    query
+                });
+            } else {
+                this.$router.push({
+                    name: 'web.assignments.index',
+                    query
                 });
             }
-            params.delete('s');
-            if (this.parameters.pagination.rowsPerPage) {
-                params.set('s', String(this.parameters.pagination.rowsPerPage));
-            }
-            params.delete('page');
-            if (this.parameters.pagination.page) {
-                params.set('page', String(this.parameters.pagination.page));
-            }
-            if (this.booting) {
-                window.history.replaceState({}, document.title, '?' + params.toString());
-            }
-            if (!this.pauseHistory) {
-                window.history.pushState({}, document.title, '?' + params.toString());
-            }
-
         }
 
         parseQuery() {
-            let params = new URLSearchParams(window.location.search);
-            if (params.has('q')) {
-                this.parameters.q = params.get('q');
+            this.parameters.q = this.$route.query.q ? this.$route.query.q : null;
+            this.parameters.v = this.$route.query.v ? this.$route.query.v : null;
+            if (!this.parameters.v && this.parameterList['v']) {
+                this.parameters.v = this.parameterList['v']['default'];
             }
-            if (params.has('v')) {
-                this.parameters.v = params.get('v');
-            }
-            if (params.has('f')) {
-                params.getAll('f').forEach(f => {
-                    this.parameters.f.push(f);
-                });
-            }
-            if (params.has('page')) {
-                this.parameters.pagination.page = Number(params.get('page'));
-            }
-            if (params.has('s')) {
-                this.parameters.pagination.rowsPerPage = Number(params.get('s'));
-            }
-        }
-
-        popState() {
-            this.pauseHistory = true;
-            this.parseQuery();
-            this.$nextTick(() => this.pauseHistory = false)
+            this.parameters.f = this.$route.query.f ? this.$route.query.f.split(',') : [];
+            this.parameters.pagination.page = this.$route.query.page ? Number(this.$route.query.page) : 1;
+            this.parameters.pagination.rowsPerPage = this.$route.query.s ? Number(this.$route.query.s) : 5;
         }
 
         parameterItems(parameter) {

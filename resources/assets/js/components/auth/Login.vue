@@ -12,11 +12,7 @@
                         <v-text-field type="password" id="password" name="password" label="Passwort"
                                       v-model="parameters.password" prepend-icon="lock"></v-text-field>
                     </v-flex>
-                    <v-flex xs6>
-                        <v-switch type="checkbox" name="remember" id="remember"
-                                  v-model="parameters.remember" label="Angemeldet bleiben"></v-switch>
-                    </v-flex>
-                    <v-flex xs6 class="text-xs-right">
+                    <v-flex xs12 class="text-xs-right">
                         <a href="/password/reset">Password vergessen</a>
                         <v-btn @click.native="login">
                             Anmelden
@@ -33,32 +29,34 @@
     import Component from 'vue-class-component';
     import {} from 'vue-property-decorator';
     import axios from 'libraries/axios';
+    import {Mutation, namespace} from "vuex-class";
+
+    const AuthMutation = namespace('auth', Mutation);
 
     @Component
     export default class Login extends Vue {
         parameters: {
-            email: string;
-            password: string;
-            remember: boolean;
+            email: string,
+            password: string,
+            remember: boolean,
         } = {
             email: '',
             password: '',
             remember: false
         };
 
+        @AuthMutation('updateUser')
+        updateUser: Function;
+
+        @AuthMutation('updateCsrf')
+        updateCsrf: Function;
+
         login() {
             axios.post('/login', this.parameters).then(response => {
                 if (200 === response.status) {
-                    if (document.referrer) {
-                        let previous = new URL(document.referrer);
-                        if (previous.hostname === window.location.hostname) {
-                            window.history.back();
-                        } else {
-                            window.location.assign('/');
-                        }
-                    } else {
-                        window.location.assign('/');
-                    }
+                    this.updateUser(response.data.user);
+                    this.updateCsrf(response.data.csrf);
+                    this.$router.replace({name: 'web.dashboard.show'});
                 }
             });
         }

@@ -1,42 +1,43 @@
 <template>
-    <v-container grid-list-md fluid>
-        <transition name="fade" mode="out-in">
-            <v-layout v-if="person" :key="key" row wrap>
-                <v-flex xs12 sm6>
-                    <app-person-card :key="key" :value="person"></app-person-card>
-                </v-flex>
-                <v-flex v-if="person && person.hinweise.length > 0" xs12 sm6>
-                    <app-notes-card headline="Hinweise"
-                                    :details="person.hinweise"
-                                    :parent="person"
-                    ></app-notes-card>
-                </v-flex>
-                <v-flex v-if="person && person.common_details.length > 0" xs12 sm6>
-                    <app-details-card headline="Details"
-                                      :details="person.common_details"
-                                      :parent="person"
-                    ></app-details-card>
-                </v-flex>
-                <v-flex v-if="person && person.mietvertraege.length > 0" xs12 sm6>
-                    <app-rental-contracts-card headline="Mietverträge"
-                                               :rental-contracts="person.mietvertraege"></app-rental-contracts-card>
-                </v-flex>
-                <v-flex v-if="person && person.kaufvertraege.length > 0" xs12 sm6>
-                    <app-purchase-contracts-card headline="Kaufverträge"
-                                                 :purchase-contracts="person.kaufvertraege"></app-purchase-contracts-card>
-                </v-flex>
-                <v-flex v-if="person && person.jobs_as_employee.length > 0" xs12 sm6>
-                    <app-jobs-card headline="Anstellungen"
-                                   :jobs="person.jobs_as_employee"></app-jobs-card>
-                </v-flex>
-                <v-flex v-if="person && person.roles.length > 0" xs12 sm6>
-                    <app-roles-card headline="Rollen" :roles="person.roles"></app-roles-card>
-                </v-flex>
-                <v-flex v-if="person && person.audits.length > 0" xs12 sm6>
-                    <app-audits-card :audits="person.audits"></app-audits-card>
-                </v-flex>
-            </v-layout>
-        </transition>
+    <v-container grid-list-md fluid :key="key">
+        <v-layout v-if="person" row wrap>
+            <v-flex xs12 sm6>
+                <app-person-card :value="person"></app-person-card>
+            </v-flex>
+            <v-flex v-if="person && person.hinweise.length > 0" xs12 sm6>
+                <app-notes-card headline="Hinweise"
+                                :details="person.hinweise"
+                                :parent="person"
+                ></app-notes-card>
+            </v-flex>
+            <v-flex v-if="person && person.common_details.length > 0" xs12 sm6>
+                <app-details-card headline="Details"
+                                  :details="person.common_details"
+                                  :parent="person"
+                ></app-details-card>
+            </v-flex>
+            <v-flex v-if="person && person.mietvertraege.length > 0" xs12 sm6>
+                <app-rental-contracts-card headline="Mietverträge"
+                                           :rental-contracts="person.mietvertraege"
+                ></app-rental-contracts-card>
+            </v-flex>
+            <v-flex v-if="person && person.kaufvertraege.length > 0" xs12 sm6>
+                <app-purchase-contracts-card headline="Kaufverträge"
+                                             :purchase-contracts="person.kaufvertraege"
+                ></app-purchase-contracts-card>
+            </v-flex>
+            <v-flex v-if="person && person.jobs_as_employee.length > 0" xs12 sm6>
+                <app-jobs-card headline="Anstellungen"
+                               :jobs="person.jobs_as_employee"
+                ></app-jobs-card>
+            </v-flex>
+            <v-flex v-if="person && person.roles.length > 0" xs12 sm6>
+                <app-roles-card headline="Rollen" :roles="person.roles"></app-roles-card>
+            </v-flex>
+            <v-flex v-if="person && person.audits.length > 0" xs12 sm6>
+                <app-audits-card :audits="person.audits"></app-audits-card>
+            </v-flex>
+        </v-layout>
     </v-container>
 </template>
 
@@ -74,7 +75,7 @@
     })
     export default class DetailView extends Vue {
         @Prop()
-        personId: number;
+        id: string;
 
         @ShowAction('updatePerson')
         fetchPerson;
@@ -91,7 +92,7 @@
         @Watch('dirty')
         onDirtyChange(val) {
             if (val) {
-                this.fetchPerson(this.personId).then(() => {
+                this.fetchPerson(this.id).then(() => {
                     this.refreshFinished();
                 }).catch(() => {
                     this.refreshFinished();
@@ -100,25 +101,23 @@
         }
 
         created() {
-            this.fetchPerson(this.personId);
+            if (this.id) {
+                this.fetchPerson(this.id);
+            }
+        }
+
+        @Watch('$route')
+        onRouteChange() {
+            if (this.id) {
+                this.fetchPerson(this.id);
+            }
         }
 
         get key() {
-            return btoa('person-' + this.person.id);
+            if (this.person) {
+                return btoa('person-' + this.person.id);
+            }
+            return Math.random();
         }
     }
 </script>
-
-<style>
-    .fade-enter-active {
-        transition: all .3s ease;
-    }
-
-    .fade-leave-active {
-        transition: all .3s ease;
-    }
-
-    .fade-enter, .fade-leave-to {
-        opacity: 0;
-    }
-</style>

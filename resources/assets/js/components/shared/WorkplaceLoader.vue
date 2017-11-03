@@ -3,10 +3,15 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {Prop} from "vue-property-decorator";
-    import {Mutation, namespace} from "vuex-class";
+    import {Watch} from "vue-property-decorator";
+    import {Getter, Mutation, namespace, State} from "vuex-class";
+    import {Person} from "../../server/resources/models";
+    import axios from "libraries/axios";
 
     const WorkplaceMutation = namespace('shared/workplace', Mutation);
+
+    const AuthGetter = namespace('auth', Getter);
+    const AuthState = namespace('auth', State);
 
     @Component
     export default class WorkplaceLoader extends Vue {
@@ -14,12 +19,18 @@
         @WorkplaceMutation('updateHasPhone')
         updateHasPhone: Function;
 
-        @Prop({type: Boolean})
-        hasPhone: Boolean;
+        @AuthGetter('check')
+        check: Function;
 
-        mounted() {
-            if (this.hasPhone) {
-                this.updateHasPhone(this.hasPhone);
+        @AuthState('user')
+        user: Person | null;
+
+        @Watch('check')
+        onUserChange(check) {
+            if (check) {
+                axios.get('/api/v1/workplace').then(response => {
+                    this.updateHasPhone(response.data.has_phone);
+                });
             }
         }
     }

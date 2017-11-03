@@ -14,12 +14,18 @@
                 <v-layout row wrap>
                     <v-flex xs12 sm6>
                         <v-icon class="detail">mdi-home</v-icon>
-                        <a :href="'/einheiten?q=!einheit(objekt(id=' + value.OBJEKT_ID + ') (typ=Wohnraum or typ=Wohneigentum))'">{{value.wohnflaeche}}</a>
+                        <router-link
+                                :to="{name: 'web.units.index', query: { q: '!einheit(objekt(id=' + value.OBJEKT_ID + ') (typ=Wohnraum or typ=Wohneigentum))'}}">
+                            {{value.wohnflaeche}}
+                        </router-link>
                         m²
                     </v-flex>
                     <v-flex xs12 sm6>
                         <v-icon class="detail">mdi-store</v-icon>
-                        <a :href="'/einheiten?q=!einheit(objekt(id=' + value.OBJEKT_ID + ') typ=Gewerbe)'">{{value.gewerbeflaeche}}</a>
+                        <router-link
+                                :to="{name: 'web.units.index', query: { q: '!einheit(objekt(id=' + value.OBJEKT_ID + ') typ=Gewerbe)'}}">
+                            {{value.gewerbeflaeche}}
+                        </router-link>
                         m²
                     </v-flex>
                     <v-flex xs12 sm6 v-if="value.eigentuemer">

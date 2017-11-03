@@ -20,23 +20,22 @@ export default {
         },
 
         updatePerson(state, person) {
+            if (person) {
+                Person.applyPrototype(person);
+            }
             state.person = person;
         }
     },
     actions: {
         updatePerson({commit, dispatch}, id) {
             commit('updateId', id);
+            commit('updatePerson', null);
             dispatch('getPerson', id).then((response) => {
-                dispatch('prototypePerson', response.data).then((person) => {
-                    commit('updatePerson', person);
-                });
+                commit('updatePerson', response.data);
             });
         },
         getPerson(_context, id) {
             return axios.get('/api/v1/persons/' + id);
-        },
-        prototypePerson(_context, person: any): Person {
-            return Person.applyPrototype(person);
         }
     }
 }

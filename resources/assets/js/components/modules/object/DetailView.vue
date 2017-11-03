@@ -1,58 +1,56 @@
 <template>
-    <v-container grid-list-md fluid>
-        <transition name="fade" mode="out-in">
-            <v-layout v-if="object" :key="key" row wrap>
-                <v-flex xs12 sm6>
-                    <app-object-card :value="object"></app-object-card>
-                </v-flex>
-                <v-flex v-if="object && object.hinweise.length > 0" xs12 sm6>
-                    <app-notes-card headline="Hinweise"
-                                    :details="object.hinweise"
-                                    :parent="object"
-                    ></app-notes-card>
-                </v-flex>
-                <v-flex v-if="object && object.common_details.length > 0" xs12 sm6>
-                    <app-details-card headline="Details"
-                                      :details="object.common_details"
-                                      :parent="object"
-                    ></app-details-card>
-                </v-flex>
-                <v-flex v-if="object && object.haeuser.length > 0" xs12 sm6>
-                    <app-houses-card headline="Häuser"
-                                     :houses="object.haeuser"
-                                     :href="'/haeuser?q=!haus(objekt(id=' + object.getID() + '))'"
-                    ></app-houses-card>
-                </v-flex>
-                <v-flex v-if="object && object.einheiten.length > 0" xs12 sm6>
-                    <app-units-card headline="Einheiten"
-                                    :units="object.einheiten"
-                                    :href="'/einheiten?q=!einheit(objekt(id=' + object.getID() + '))'"
-                    ></app-units-card>
-                </v-flex>
-                <v-flex v-if="object && object.mieter.length > 0" xs12 sm6>
-                    <app-persons-card headline="Mieter"
-                                      :persons="object.mieter"
-                                      :href="'/personen?q=!person(mietvertrag(aktiv objekt(id=' + object.getID() + ')))'"
-                    ></app-persons-card>
-                </v-flex>
-                <v-flex v-if="object && object.weg_eigentuemer.length > 0" xs12 sm6>
-                    <app-persons-card headline="WEG-Eigentümer"
-                                      :persons="object.weg_eigentuemer"
-                                      :href="'/personen?q=!person(kaufvertrag(aktiv objekt(id=' + object.getID() + ')))'"
-                    ></app-persons-card>
-                </v-flex>
-                <v-flex xs12 sm6 v-if="object">
-                    <app-object-reports-card :object="object"></app-object-reports-card>
-                </v-flex>
-                <v-flex xs12>
-                    <app-assignments-card headline="Aufträge"
-                                          :assignments="object.auftraege"
-                                          :cost-unit="object"
-                                          :href="'/auftraege?q=!auftrag(kostenträger(objekt(id=' + object.getID() + ')))'"
-                    ></app-assignments-card>
-                </v-flex>
-            </v-layout>
-        </transition>
+    <v-container grid-list-md fluid :key="key">
+        <v-layout v-if="object" row wrap>
+            <v-flex xs12 sm6>
+                <app-object-card :value="object"></app-object-card>
+            </v-flex>
+            <v-flex v-if="object && object.hinweise.length > 0" xs12 sm6>
+                <app-notes-card headline="Hinweise"
+                                :details="object.hinweise"
+                                :parent="object"
+                ></app-notes-card>
+            </v-flex>
+            <v-flex v-if="object && object.common_details.length > 0" xs12 sm6>
+                <app-details-card headline="Details"
+                                  :details="object.common_details"
+                                  :parent="object"
+                ></app-details-card>
+            </v-flex>
+            <v-flex v-if="object && object.haeuser.length > 0" xs12 sm6>
+                <app-houses-card headline="Häuser"
+                                 :houses="object.haeuser"
+                                 :filter="'!haus(objekt(id=' + object.getID() + '))'"
+                ></app-houses-card>
+            </v-flex>
+            <v-flex v-if="object && object.einheiten.length > 0" xs12 sm6>
+                <app-units-card headline="Einheiten"
+                                :units="object.einheiten"
+                                :filter="'!einheit(objekt(id=' + object.getID() + '))'"
+                ></app-units-card>
+            </v-flex>
+            <v-flex v-if="object && object.mieter.length > 0" xs12 sm6>
+                <app-persons-card headline="Mieter"
+                                  :persons="object.mieter"
+                                  :filter="'!person(mietvertrag(aktiv objekt(id=' + object.getID() + ')))'"
+                ></app-persons-card>
+            </v-flex>
+            <v-flex v-if="object && object.weg_eigentuemer.length > 0" xs12 sm6>
+                <app-persons-card headline="WEG-Eigentümer"
+                                  :persons="object.weg_eigentuemer"
+                                  :filter="'!person(kaufvertrag(aktiv objekt(id=' + object.getID() + ')))'"
+                ></app-persons-card>
+            </v-flex>
+            <v-flex xs12 sm6 v-if="object">
+                <app-object-reports-card :object="object"></app-object-reports-card>
+            </v-flex>
+            <v-flex xs12>
+                <app-assignments-card headline="Aufträge"
+                                      :assignments="object.auftraege"
+                                      :cost-unit="object"
+                                      :filter="'!auftrag(kostenträger(objekt(id=' + object.getID() + ')))'"
+                ></app-assignments-card>
+            </v-flex>
+        </v-layout>
     </v-container>
 </template>
 
@@ -95,7 +93,7 @@
     })
     export default class DetailView extends Vue {
         @Prop()
-        objectId: number;
+        id: string;
 
         @ShowAction('updateObject')
         fetchObject;
@@ -112,7 +110,7 @@
         @Watch('dirty')
         onDirtyChange(val) {
             if (val) {
-                this.fetchObject(this.objectId).then(() => {
+                this.fetchObject(this.id).then(() => {
                     this.refreshFinished();
                 }).catch(() => {
                     this.refreshFinished();
@@ -121,25 +119,23 @@
         }
 
         created() {
-            this.fetchObject(this.objectId);
+            if (this.id) {
+                this.fetchObject(this.id);
+            }
+        }
+
+        @Watch('$route')
+        onRouteChange() {
+            if (this.id) {
+                this.fetchObject(this.id);
+            }
         }
 
         get key() {
-            return btoa('object-' + this.object.OBJEKT_ID);
+            if (this.object) {
+                return btoa('object-' + this.object.OBJEKT_ID);
+            }
+            return Math.random();
         }
     }
 </script>
-
-<style>
-    .fade-enter-active {
-        transition: all .3s ease;
-    }
-
-    .fade-leave-active {
-        transition: all .3s ease;
-    }
-
-    .fade-enter, .fade-leave-to {
-        opacity: 0;
-    }
-</style>

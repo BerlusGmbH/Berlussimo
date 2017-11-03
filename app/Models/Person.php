@@ -246,4 +246,11 @@ class Person extends Authenticatable implements AuditableContract
             $credential->{$this->getRememberTokenName()} = $value;
         }
     }
+
+    public function findForPassport($username)
+    {
+        return Person::whereHas('emails', function ($query) use ($username) {
+            $query->where('DETAIL_INHALT', $username);
+        })->first();
+    }
 }

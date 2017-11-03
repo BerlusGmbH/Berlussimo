@@ -3,7 +3,11 @@
         <v-card-title>
             <v-layout row wrap>
                 <v-flex xs8 sm4>
-                    <a v-if="href" :href="href"><h3 class="headline">{{headline}} ({{assignments.length}})</h3></a>
+                    <router-link v-if="filter"
+                                 :to="{name: 'web.assignments.index', query: {q: filter}}"
+                    >
+                        <h3 class="headline">{{headline}} ({{assignments.length}})</h3>
+                    </router-link>
                     <h3 v-else class="headline">{{headline}} ({{assignments.length}})</h3>
                 </v-flex>
                 <v-flex xs4 sm2 class="text-xs-right">
@@ -74,7 +78,7 @@
         headline: string;
 
         @Prop({type: String, default: ''})
-        href: string;
+        filter: string;
 
         @Prop({type: Object})
         costUnit: Model;

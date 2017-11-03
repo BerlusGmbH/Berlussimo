@@ -1,15 +1,24 @@
-import {Person} from "../server/resources";
+import {Model} from "../server/resources/models";
+import {router} from "app";
+import axios from "libraries/axios";
 
 export default {
     namespaced: true,
     state() {
         return {
-            user: null
+            user: null,
+            csrf: null
         }
     },
     mutations: {
         updateUser(state, user) {
+            if (user) {
+                Model.applyPrototype(user);
+            }
             state.user = user;
+        },
+        updateCsrf(state, csrf) {
+            state.csrf = csrf;
         }
     },
     getters: {
@@ -18,9 +27,20 @@ export default {
         },
         user(state, getters) {
             if (getters.check) {
-                return Object.assign(new Person(), state.user);
+                return Model.applyPrototype(state.user);
             }
             return state.user;
+        }
+    },
+    actions: {
+        logout(context) {
+            axios.get('/logout').then(() => {
+                context.dispatch('appLogout');
+            });
+        },
+        appLogout(context) {
+            router.push({name: 'web.login'});
+            context.commit('updateUser', null);
         }
     }
 }

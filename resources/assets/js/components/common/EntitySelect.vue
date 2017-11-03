@@ -1,6 +1,7 @@
 <template>
     <app-select :search-input.sync="query"
-                :value="value" :disabled="disabled"
+                :value="value"
+                :disabled="disabled"
                 @change="emit('change', $event)"
                 @input="emit('input', $event)"
                 :loading="searching"
@@ -17,6 +18,7 @@
                 :label="label"
                 :dark="dark"
                 :light="light"
+                :debounce-search="400"
     >
         <template slot="selection" slot-scope="data">
             <app-chip @input="data.parent.selectItem(data.item); $emit('chip-close', $event)"
@@ -40,13 +42,15 @@
     import {Prop, Watch} from "vue-property-decorator";
     import {Model} from "../../server/resources/models";
     import VSelect from "./VSelect.vue"
+    import {CancelTokenSource} from "axios";
+    import axios from "libraries/axios";
 
     Vue.use(Vuetify);
 
     @Component({components: {'app-select': VSelect}})
     export default class EntitySelect extends Vue {
 
-        request: any;
+        source: CancelTokenSource;
 
         searching: boolean = false;
 
@@ -91,7 +95,7 @@
         light;
 
         @Watch('query')
-        onQueryChanged(query: any) {
+        onQueryChanged(query) {
             if (typeof query === 'string') {
                 this.goSearch(query);
             }
@@ -132,24 +136,20 @@
         }
 
         goSearch(query) {
-            if (this.request && this.request.state() === "pending") {
-                this.request.abort();
+            if (this.source) {
+                this.source.cancel();
             }
+            this.source = axios.CancelToken.source();
             this.searching = true;
             let vm = this;
             if (query !== '') {
-                let token = document.head.querySelector('meta[name="csrf-token"]');
-                $.ajaxSetup({
-                    beforeSend: (xhr) => {
-                        if (token) {
-                            xhr.setRequestHeader('X-CSRF-TOKEN', token['content']);
-                        }
+                axios.get(vm.url, {
+                    params: {
+                        q: query,
+                        e: vm.entities
                     }
-                });
-                vm.request = $.getJSON(vm.url, {
-                    q: query,
-                    e: vm.entities
-                }).done(function (data) {
+                }).then(function (response) {
+                    let data = response.data;
                     $.each(data, function (key, val) {
                         switch (key) {
                             case 'objekt':
@@ -210,10 +210,8 @@
                     });
                     vm.items = total;
                     vm.searching = false;
-                }).fail(function (_jqxhr, textStatus) {
-                    if (textStatus !== "abort") {
-                        vm.searching = false;
-                    }
+                }).catch(function () {
+                    vm.searching = false;
                 });
             } else {
                 vm.items = [];
