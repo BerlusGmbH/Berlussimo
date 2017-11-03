@@ -176,7 +176,7 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'
         Route::match(['get', 'post'], '/', 'StatistikController@request')->name('legacy');
     });
 
-    Route::group(['prefix' => 'auftraege', 'as' => 'todo::'], function () {
+    Route::group(['prefix' => 'assignments', 'as' => 'todo::'], function () {
         Route::get('/', 'ToDoController@index')->name('index');
     });
 
