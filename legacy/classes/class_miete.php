@@ -1171,11 +1171,23 @@ ORDER BY `NEW_ENDE` ASC
 
         $zeile = 0;
         $jahr1 = 0;
+        $first = true;
         foreach ($this->daten_arr as $key => $value) {
 
             for ($b = 0; $b < count($this->daten_arr [$key] ['monate']); $b++) {
                 $jahr1++;
                 $akt_monat = sprintf("%02d", $this->daten_arr [$key] ['monate'] [$b] ['monat']);
+                $print_saldo = false;
+
+                if (!$first) {
+                    $table_arr [$zeile] ['DATUM'] = "__________";
+                    $table_arr [$zeile] ['BEMERKUNG'] = "__________________________________________________________________________";
+                    $table_arr [$zeile] ['BETRAG'] = '________________';
+                    $table_arr [$zeile] ['SALDO'] = '________________';
+                    $zeile++;
+                } else {
+                    $first = false;
+                }
 
                 if ($jahr1 == 1) {
                     $table_arr [$zeile] ['DATUM'] = "01.$akt_monat.$key";
@@ -1183,15 +1195,17 @@ ORDER BY `NEW_ENDE` ASC
                     $table_arr [$zeile] ['BEMERKUNG'] = "Saldo Vormonat";
                     $table_arr [$zeile] ['BETRAG'] = nummer_punkt2komma($this->daten_arr [$key] ['monate'] [$b] ['saldo_vormonat']);
                     $zeile++;
+                    $print_saldo = true;
                 }
 
                 /* Miete Sollzeile */
-                if ($this->daten_arr [$key] ['monate'] [$b] ['soll'] != '-') {
+                if ($this->daten_arr [$key] ['monate'] [$b] ['soll'] != '-' && $this->daten_arr [$key] ['monate'] [$b] ['soll'] != 0) {
                     $monatsname = monat2name($akt_monat);
                     $table_arr [$zeile] ['DATUM'] = "01.$akt_monat.$key";
                     $table_arr [$zeile] ['SALDO_VM'] = nummer_punkt2komma($this->daten_arr [$key] ['monate'] [$b] ['saldo_vormonat']);
                     $table_arr [$zeile] ['BEMERKUNG'] = "Soll aus Mietvertrag $monatsname $key";
                     $table_arr [$zeile] ['BETRAG'] = nummer_punkt2komma($this->daten_arr [$key] ['monate'] [$b] ['soll']);
+                    $print_saldo = true;
                 }
 
                 /* BK */
@@ -1200,6 +1214,7 @@ ORDER BY `NEW_ENDE` ASC
                     $table_arr [$zeile] ['DATUM'] = $this->daten_arr [$key] ['monate'] [$b] ['bk_abrechnung_datum'];
                     $table_arr [$zeile] ['BEMERKUNG'] = "Betriebskostenabrechnung";
                     $table_arr [$zeile] ['BETRAG'] = nummer_punkt2komma($this->daten_arr [$key] ['monate'] [$b] ['bk_abrechnung']);
+                    $print_saldo = true;
                 }
 
                 /* HK */
@@ -1208,6 +1223,7 @@ ORDER BY `NEW_ENDE` ASC
                     $table_arr [$zeile] ['DATUM'] = $this->daten_arr [$key] ['monate'] [$b] ['hk_abrechnung_datum'];
                     $table_arr [$zeile] ['BEMERKUNG'] = "Heizkostenabrechnung";
                     $table_arr [$zeile] ['BETRAG'] = nummer_punkt2komma($this->daten_arr [$key] ['monate'] [$b] ['hk_abrechnung']);
+                    $print_saldo = true;
                 }
 
                 /* Zahlungen */
@@ -1220,19 +1236,10 @@ ORDER BY `NEW_ENDE` ASC
                         $table_arr [$zeile] ['BETRAG'] = nummer_punkt2komma($this->daten_arr [$key] ['monate'] [$b] ['zahlungen'] [$c] ['BETRAG']);
                         $table_arr [$zeile] ['BEMERKUNG'] = $this->daten_arr [$key] ['monate'] [$b] ['zahlungen'] [$c] ['BEMERKUNG'];
                     }
-                } /*
-				   * else{
-				   * $zeile++;
-				   * $l_tag = letzter_tag_im_monat($b,$key);
-				   * $table_arr[$zeile]['DATUM'] = "$l_tag.$akt_monat.$key";
-				   * $table_arr[$zeile]['BETRAG'] = '0.00';
-				   * $table_arr[$zeile]['BEMERKUNG'] = 'Keine Zahlung';
-				   * }
-				   */
+                    $print_saldo = true;
+                }
 
-                // if($this->daten_arr[$key]['monate'][$b]['soll'] != '-' && isset())
-
-                if (is_array($this->daten_arr [$key] ['monate'] [$b] ['zahlungen']) or $this->daten_arr [$key] ['monate'] [$b] ['soll'] != '-' or isset ($this->daten_arr [$key] ['monate'] [$b] ['bk_abrechnung']) or isset ($this->daten_arr [$key] ['monate'] [$b] ['hk_abrechnung']) or ($akt_monat == date("m") && $key == date("Y"))) {
+                if ($print_saldo && (is_array($this->daten_arr [$key] ['monate'] [$b] ['zahlungen']) or $this->daten_arr [$key] ['monate'] [$b] ['soll'] != '-' or isset ($this->daten_arr [$key] ['monate'] [$b] ['bk_abrechnung']) or isset ($this->daten_arr [$key] ['monate'] [$b] ['hk_abrechnung']) or ($akt_monat == date("m") && $key == date("Y")))) {
                     $zeile++;
                     $l_tag = letzter_tag_im_monat($akt_monat, $key);
                     if ($akt_monat == date("m") && $key == date("Y")) {
@@ -1243,16 +1250,11 @@ ORDER BY `NEW_ENDE` ASC
                     $monatsname = monat2name($akt_monat);
                     $table_arr [$zeile] ['BEMERKUNG'] = "<b>Saldo $monatsname $key</b>";
                     $table_arr [$zeile] ['SALDO'] = '<b>' . nummer_punkt2komma($this->daten_arr [$key] ['monate'] [$b] ['erg']) . '</b>';
-
-                    /* LEER FÜR LINIE */
-                    if ("$akt_monat.$key" != date("m.Y")) {
-                        $zeile++;
-                        $table_arr [$zeile] ['DATUM'] = "__________";
-                        $table_arr [$zeile] ['BEMERKUNG'] = "__________________________________________________________________________";
-                        $table_arr [$zeile] ['BETRAG'] = '________________';
-                        $table_arr [$zeile] ['SALDO'] = '________________';
-                    }
+                } else {
+                    $zeile--;
+                    unset($table_arr [$zeile]);
                 }
+
                 $zeile++;
 
                 if ($mv->mietvertrag_bis != '0000-00-00') {
@@ -1260,14 +1262,14 @@ ORDER BY `NEW_ENDE` ASC
                     $auszugs_monat = $auszugs_datum [1];
                     $auszugs_jahr = $auszugs_datum [0];
                     if ("$akt_monat.$key" == "$auszugs_monat.$auszugs_jahr") {
-                        $table_arr [$zeile] ['DATUM'] = '<b>' . date_mysql2german($mv->mietvertrag_bis) . '</b>';
-                        $table_arr [$zeile] ['BEMERKUNG'] = "<b>Ende der Mietzeit</b>";
-                        $table_arr [$zeile] ['SALDO'] = '<b>' . nummer_punkt2komma($this->daten_arr [$key] ['monate'] [$b] ['erg']) . '</b>';
-                        $zeile++;
                         $table_arr [$zeile] ['DATUM'] = "__________";
                         $table_arr [$zeile] ['BEMERKUNG'] = "__________________________________________________________________________";
                         $table_arr [$zeile] ['BETRAG'] = '________________';
                         $table_arr [$zeile] ['SALDO'] = '________________';
+                        $zeile++;
+                        $table_arr [$zeile] ['DATUM'] = '<b>' . date_mysql2german($mv->mietvertrag_bis) . '</b>';
+                        $table_arr [$zeile] ['BEMERKUNG'] = "<b>Ende der Mietzeit</b>";
+                        $table_arr [$zeile] ['SALDO'] = '<b>' . nummer_punkt2komma($this->daten_arr [$key] ['monate'] [$b] ['erg']) . '</b>';
                         $zeile++;
                     }
                 }
