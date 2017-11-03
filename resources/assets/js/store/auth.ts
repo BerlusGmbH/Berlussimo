@@ -39,8 +39,12 @@ export default {
             });
         },
         appLogout(context) {
-            router.push({name: 'web.login'});
-            context.commit('updateUser', null);
+            if (!context.rootState.shared.legacy.isLegacy) {
+                router.push({name: 'web.login'});
+                context.commit('updateUser', null);
+            } else {
+                window.location.assign('/login')
+            }
         }
     }
 }
