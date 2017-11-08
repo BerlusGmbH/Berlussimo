@@ -2136,6 +2136,9 @@ class mietanpassung
             $pdf->ezText("Berechnung des Mietspiegelmittelwertes für Ihre Wohnung: $ber->M_WERT_A € $this->abzug_wert_a € = <b>$neuer_mw_a € pro m²</b>", 11, array(
                 'justification' => 'full'
             ));
+        } else {
+            $neuer_mw = nummer_komma2punkt($ber->M_WERT_A);
+            $neuer_mw_a = nummer_punkt2komma($neuer_mw);
         }
 
         if ($neuer_mw < $ber->M2_PREIS_NEU2) {
