@@ -2138,7 +2138,7 @@ class mietanpassung
             ));
         }
 
-        if ($neuer_mw >= $ber->M2_PREIS_NEU2) {
+        if ($neuer_mw < $ber->M2_PREIS_NEU2) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage("MIETERHÖHUNG NICHT MÖGLICH: $neuer_mw_a < $ber->M2_PREIS_NEU2_A")
             );
