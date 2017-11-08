@@ -2250,8 +2250,6 @@ class mietanpassung
             'justification' => 'full'
         ));
 
-        /* Dritte Seite */
-        $pdf->ezNewPage();
         $brief_text = "Sie schulden den erhöhten Mietzins von Beginn des dritten Monats ab, der auf den Zugang des Erhöhungsverlangens folgt, falls die Zustimmung erteilt wird oder Sie vom Gericht zur Zustimmung verurteilt werden.\n";
         $pdf->ezText("$brief_text", 11, array(
             'justification' => 'full'
@@ -2277,7 +2275,7 @@ class mietanpassung
             'justification' => 'full'
         ));
 
-        /* Vierte Seite ZUSTIMMUNG */
+        /* Dritte Seite ZUSTIMMUNG */
         $pdf->ezNewPage();
         $pdf->ezText("$p->partner_name\n$p->partner_strasse $p->partner_hausnr\n\n$p->partner_plz $p->partner_ort", 12);
         $pdf->ezSetDy(-60);
@@ -2360,7 +2358,7 @@ class mietanpassung
         $pdf->ezText("Datum", 10, array(
             'left' => '370'
         ));
-        /* Fünfte Seite ZUSTIMMUNG - Die der Mieter uterschreibt und zurücksendet */
+        /* Vierte Seite ZUSTIMMUNG - Die der Mieter uterschreibt und zurücksendet */
         $pdf->ezNewPage();
         $pdf->ezText("$p->partner_name\n$p->partner_strasse $p->partner_hausnr\n\n$p->partner_plz $p->partner_ort", 12);
         $pdf->ezSetDy(-60);
