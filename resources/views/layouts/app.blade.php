@@ -42,15 +42,13 @@
                 @include("shared.messages")
             </div>
         </div>
-        <main style="z-index: 0">
-            <v-content>
+            <v-content style="z-index: 0">
                 <transition name="fade" mode="out-in">
                     <router-view></router-view>
                 </transition>
                 <app-notifications id="notifications"></app-notifications>
                 <app-snackbar id="snackbar"></app-snackbar>
             </v-content>
-        </main>
 
         <app-footer></app-footer>
     </v-app>
