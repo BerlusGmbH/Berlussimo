@@ -1,5 +1,5 @@
-import axios from "libraries/axios";
-import {Einheit} from "server/resources/models";
+import axios from "../../../libraries/axios";
+import {Einheit} from "../../../server/resources/models";
 
 export default {
     namespaced: true,

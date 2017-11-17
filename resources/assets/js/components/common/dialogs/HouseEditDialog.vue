@@ -55,7 +55,7 @@
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
     import _ from "lodash";
-    import {Haus} from "server/resources/models";
+    import {Haus} from "../../../server/resources/models";
     import {Mutation, namespace} from "vuex-class";
     import entitySelect from "../../common/EntitySelect.vue"
 

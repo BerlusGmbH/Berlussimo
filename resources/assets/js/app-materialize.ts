@@ -1,6 +1,4 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import Vuetify from "vuetify";
+import Vue from "./imports";
 import store from "./store";
 import userLoader from "./components/auth/UserLoader.vue";
 import toolBar from "./components/shared/Toolbar.vue";
@@ -19,8 +17,6 @@ import {substituteNewlineWithBr} from "./filters";
 import VEditDialog from "./components/common/VEditDialog.vue";
 
 
-Vue.use(Vuex);
-Vue.use(Vuetify);
 Vue.component('app-identifier', identifier);
 Vue.component('app-tile', tile);
 Vue.component('app-chip', chip);

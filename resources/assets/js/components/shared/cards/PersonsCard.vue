@@ -55,7 +55,7 @@
 
         search: string = '';
         headers = [
-            {text: 'Person', value: 'ID'}
+            {text: 'Person', value: 'id'}
         ];
     }
 </script>

@@ -1,6 +1,6 @@
 import {Model} from "../server/resources/models";
-import {router} from "app";
-import axios from "libraries/axios";
+import {router} from "../app";
+import axios from "../libraries/axios";
 
 export default {
     namespaced: true,

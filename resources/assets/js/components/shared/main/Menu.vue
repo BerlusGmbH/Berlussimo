@@ -5,7 +5,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import Component from 'vue-class-component';
-    import axios from 'libraries/axios';
+    import axios from '../../../libraries/axios';
 
     @Component
     export default class Menu extends Vue {

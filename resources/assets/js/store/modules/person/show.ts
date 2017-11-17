@@ -1,4 +1,4 @@
-import axios from "libraries/axios";
+import axios from "../../../libraries/axios";
 import {Person} from "../../../server/resources";
 
 export default {

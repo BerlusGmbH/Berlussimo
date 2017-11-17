@@ -2,7 +2,7 @@
     import Component from "vue-class-component";
     import Vue from "vue";
     import {Mutation, namespace} from "vuex-class";
-    import axios from "libraries/axios";
+    import axios from "../libraries/axios";
 
     const SnackbarMutation = namespace('shared/snackbar', Mutation);
 

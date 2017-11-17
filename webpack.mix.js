@@ -13,10 +13,6 @@ const {mix} = require('laravel-mix');
 
 mix.webpackConfig({
     resolve: {
-        modules: [
-            path.resolve('./resources/assets/js'),
-            path.resolve('./node_modules')
-        ],
         alias: {
             'jquery': path.join(__dirname, 'node_modules/jquery/dist/jquery')
         }
@@ -27,7 +23,7 @@ mix.sass('resources/assets/sass/berlussimo.scss', 'public/css');
 
 mix.sass('resources/assets/sass/materialize-css.scss', 'public/css');
 
-mix.stylus('resources/assets/stylus/main.styl', 'public/css');
+mix.stylus('node_modules/vuetify/src/stylus/main.styl', 'public/css');
 
 mix.styles(
     [
@@ -101,6 +97,7 @@ mix.copyDirectory('legacy/graph/img/', 'public/images/');
 
 mix.extract(
     [
+        'axios',
         'keycode-js',
         'urijs',
         'lodash',

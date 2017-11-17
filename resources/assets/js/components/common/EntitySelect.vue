@@ -35,17 +35,14 @@
     </app-select>
 </template>
 <script lang="ts">
-    import Vue from "vue";
-    import Vuetify from "vuetify";
+    import Vue from "../../imports";
     import $ from "jquery";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import {Model} from "../../server/resources/models";
     import VSelect from "./VSelect.vue"
     import {CancelTokenSource} from "axios";
-    import axios from "libraries/axios";
-
-    Vue.use(Vuetify);
+    import axios from "../../libraries/axios";
 
     @Component({components: {'app-select': VSelect}})
     export default class EntitySelect extends Vue {

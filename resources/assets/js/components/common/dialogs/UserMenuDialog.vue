@@ -35,8 +35,8 @@
     import searchbar from "../../shared/Searchbar.vue";
     import personCard from "../../shared/cards/PersonCard.vue";
     import userMenuList from "../../shared/UserMenuList.vue";
-    import axios from "libraries/axios"
-    import {Person} from "server/resources/models";
+    import axios from "../../../libraries/axios"
+    import {Person} from "../../../server/resources/models";
 
     @Component({
         components: {

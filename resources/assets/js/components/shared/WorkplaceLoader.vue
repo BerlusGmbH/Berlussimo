@@ -6,7 +6,7 @@
     import {Watch} from "vue-property-decorator";
     import {Getter, Mutation, namespace, State} from "vuex-class";
     import {Person} from "../../server/resources/models";
-    import axios from "libraries/axios";
+    import axios from "../../libraries/axios";
 
     const WorkplaceMutation = namespace('shared/workplace', Mutation);
 

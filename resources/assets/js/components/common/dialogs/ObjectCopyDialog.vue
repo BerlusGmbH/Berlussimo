@@ -70,7 +70,7 @@
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import {Objekt} from "../../../server/resources/models";
-    import axios from "libraries/axios";
+    import axios from "../../../libraries/axios";
 
     @Component
     export default class ObjectCopyDialog extends Vue {

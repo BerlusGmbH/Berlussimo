@@ -56,9 +56,9 @@
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
     import _ from "lodash";
-    import {Einheit} from "server/resources/models";
+    import {Einheit} from "../../../server/resources/models";
     import {Mutation, namespace} from "vuex-class";
-    import axios from "libraries/axios";
+    import axios from "../../../libraries/axios";
     import entitySelect from "../../common/EntitySelect.vue"
 
     const SnackbarMutation = namespace('shared/snackbar', Mutation);

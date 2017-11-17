@@ -46,7 +46,7 @@
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
     import _ from "lodash";
-    import {Person} from "server/resources/models";
+    import {Person} from "../../../server/resources/models";
     import {Mutation, namespace} from "vuex-class";
 
     const SnackbarMutation = namespace('shared/snackbar', Mutation);

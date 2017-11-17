@@ -9,12 +9,17 @@
     <link href='{{mix('css/materialize-css.css')}}' rel='stylesheet' type='text/css'>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <style>
+        .application--wrap {
+            min-height: auto;
+        }
+    </style>
 </head>
 
-<body style="background: #303030; display: flex; min-height: 100vh; flex-direction: column;">
+<body style="display: flex; min-height: 100vh; flex-direction: column;">
 
 <div id="top" style="position: sticky; top: 0; z-index: 2">
-    <v-app dark style="min-height: auto">
+    <v-app dark>
         @if(Auth::check())
             <app-user-loader :user="{{Auth::user()}}"></app-user-loader>
             <app-global-select-loader
@@ -37,22 +42,22 @@
     </v-app>
 </div>
 
-<main class="application--dark" style="flex: 1 0 auto">
-    <div class="content">
-        @if($content != "")
-            <div class="berlussimo-materialize container fluid">
-                {!!$content!!}
-            </div>
-        @endif
-        @if(Auth::check())
-            <app-notifications id="notifications" style="z-index: 1000"></app-notifications>
-            <app-snackbar id="snackbar" style="z-index: 1010"></app-snackbar>
-        @endif
-    </div>
-</main>
+<div class="application theme--dark content" style="flex: 1 0 auto; flex-direction: column">
+    @if($content != "")
+        <div class="berlussimo-materialize container fluid">
+            {!!$content!!}
+        </div>
+    @endif
+    @if(Auth::check())
+        <app-notifications id="notifications" style="z-index: 1000"></app-notifications>
+        <app-snackbar id="snackbar" style="z-index: 1010"></app-snackbar>
+    @endif
+</div>
 
-<div id="bottom" class="application--dark">
-    <app-footer dark></app-footer>
+<div id="bottom">
+    <v-app dark>
+        <app-footer dark></app-footer>
+    </v-app>
 </div>
 
 <script type='text/javascript' src='{{mix('js/manifest.js')}}'></script>

@@ -102,8 +102,8 @@
     import Component from "vue-class-component";
     import {Mutation, namespace, State} from "vuex-class";
     import {Watch} from "vue-property-decorator";
-    import axios from "libraries/axios"
-    import {Model} from "server/resources/models";
+    import axios from "../../../libraries/axios"
+    import {Model} from "../../../server/resources/models";
     import _ from "lodash";
     import houseAddDialog from "../../../components/common/dialogs/HouseAddDialog.vue";
 

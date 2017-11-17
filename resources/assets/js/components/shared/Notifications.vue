@@ -74,7 +74,7 @@
     import {Prop, Watch} from "vue-property-decorator";
     import {Action, Mutation, namespace, State} from "vuex-class";
     import Echo from "../../libraries/Echo";
-    import axios from "libraries/axios";
+    import axios from "../../libraries/axios";
 
     const NotificationsState = namespace('shared/notifications', State);
     const NotificationsAction = namespace('shared/notifications', Action);

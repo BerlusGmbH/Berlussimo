@@ -1,10 +1,7 @@
 
 <script lang="ts">
-    import Vue from "vue";
-    import Vuetify from "vuetify";
-    import Component from "vue-class-component";
-
-    Vue.use(Vuetify);
+    import Vue from "../../imports";
+    import Component from "vue-class-component"
 
     @Component({extends: Vue.component('v-select')})
     export default class VSelect extends Vue {

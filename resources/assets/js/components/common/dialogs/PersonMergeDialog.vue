@@ -136,8 +136,8 @@
     import {Mutation, namespace} from "vuex-class";
     import {Prop, Watch} from "vue-property-decorator";
     import EntitySelect from '../EntitySelect.vue';
-    import {Person} from "server/resources/models";
-    import axios from "libraries/axios";
+    import {Person} from "../../../server/resources/models";
+    import axios from "../../../libraries/axios";
     import {AxiosError} from "axios";
 
     const SnackbarMutation = namespace('shared/snackbar', Mutation);

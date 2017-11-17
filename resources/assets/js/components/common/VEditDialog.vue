@@ -1,10 +1,7 @@
 <script lang="ts">
-    import Vue from "vue";
-    import Vuetify from "vuetify";
+    import Vue from "../../imports";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-
-    Vue.use(Vuetify);
 
     @Component({extends: Vue.component('v-edit-dialog')})
     export default class VEditDialog extends Vue {
