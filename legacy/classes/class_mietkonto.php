@@ -1379,7 +1379,7 @@ function check_zahlbetrag($kontoauszugsnr, $kostentraeger_typ, $kostentraeger_id
         if ($kostenkonto == '') {
             $ko_string = '';
         } else {
-            $ko_string = " && KONTENRAHMEN_KONTO='$kostenkonto '";
+            $ko_string = " && KONTENRAHMEN_KONTO='$kostenkonto'";
         }
 
         $laenge = strlen($monat);
@@ -1389,7 +1389,7 @@ function check_zahlbetrag($kontoauszugsnr, $kostentraeger_typ, $kostentraeger_id
         $mv = new mietvertraege ();
         $mv->get_mietvertrag_infos_aktuell($mietvertrag_id);
         $gk = new geldkonto_info ();
-        $gk->geld_konto_ermitteln('Objekt', $mv->objekt_id);
+        $gk->geld_konto_ermitteln('Objekt', $mv->objekt_id, $jahr . '-' . $monat . '-01', 'Hausgeld');
         if (!empty ($gk->geldkonto_id)) {
             $result = DB::select("SELECT DATUM, BETRAG, VERWENDUNGSZWECK AS BEMERKUNG, MWST_ANTEIL FROM GELD_KONTO_BUCHUNGEN WHERE  GELDKONTO_ID='$gk->geldkonto_id' $ko_string && KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mietvertrag_id' && AKTUELL='1' && DATE_FORMAT( DATUM, '%Y-%m' ) = '$jahr-$monat' ORDER BY DATUM ASC");
         } else {

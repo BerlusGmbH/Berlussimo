@@ -52,12 +52,6 @@ class partner extends rechnung {
         return $row ['KONTO_ID'];
     }
 
-    /* Letzte Zuweisunggeldkonto ID */
-    function letzte_zuweisung_geldkonto_id() {
-        $result = DB::select( "SELECT ZUWEISUNG_ID FROM GELD_KONTEN_ZUWEISUNG ORDER BY ZUWEISUNG_ID DESC LIMIT 0,1" );
-        $row = $result[0];
-        return $row ['ZUWEISUNG_ID'];
-    }
     function partner_rechts_anzeigen() {
         $result = DB::select( "SELECT * FROM PARTNER_LIEFERANT WHERE AKTUELL = '1' ORDER BY PARTNER_NAME" );
         if (!empty($result)) {

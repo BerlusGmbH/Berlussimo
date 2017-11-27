@@ -732,7 +732,7 @@ ORDER BY `NEW_ENDE` ASC
         if ($buchung->mietvertrag_bis == '0000-00-00' or $buchung->mietvertrag_bis >= $datum_heute) {
             $mieter_ausgezogen = '0';
         }
-        if ($buchung->mietvertrag_bis < $datum_heute) {
+        if ($buchung->mietvertrag_bis < $datum_heute && $buchung->mietvertrag_bis != '0000-00-00') {
             $mieter_ausgezogen = '1';
         }
 

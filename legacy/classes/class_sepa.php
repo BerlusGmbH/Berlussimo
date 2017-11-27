@@ -1484,7 +1484,7 @@ class sepa
 
     function dropdown_sepa_geldkonten($label, $name, $id, $kos_typ, $kos_id, $form = null)
     {
-        $my_array = DB::select("SELECT GELD_KONTEN.KONTO_ID, GELD_KONTEN.IBAN, GELD_KONTEN.BIC, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ, GELD_KONTEN.INSTITUT, GELD_KONTEN.BEZEICHNUNG FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE KOSTENTRAEGER_TYP = '$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' GROUP BY GELD_KONTEN.KONTO_ID ORDER BY GELD_KONTEN.KONTO_ID ASC");
+        $my_array = DB::select("SELECT GELD_KONTEN.KONTO_ID, GELD_KONTEN.IBAN, GELD_KONTEN.BIC, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ, GELD_KONTEN.INSTITUT, GELD_KONTEN.BEZEICHNUNG, GELD_KONTEN_ZUWEISUNG.VERWENDUNGSZWECK FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE KOSTENTRAEGER_TYP = '$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' GROUP BY GELD_KONTEN.KONTO_ID ORDER BY GELD_KONTEN_ZUWEISUNG.VERWENDUNGSZWECK ASC, GELD_KONTEN_ZUWEISUNG.VON DESC, GELD_KONTEN.KONTO_ID DESC");
         $numrows = count($my_array);
         if ($numrows) {
             echo "<div class='input-field'>";
@@ -1499,12 +1499,13 @@ class sepa
                 $konto_id = $my_array [$a] ['KONTO_ID'];
                 $bez = $my_array [$a] ['BEZEICHNUNG'];
                 $iban = $my_array [$a] ['IBAN'];
+                $vwzk = $my_array [$a] ['VERWENDUNGSZWECK'];
                 $iban1 = $this->iban_convert($iban, 0);
                 $bic = $my_array [$a] ['BIC'];
                 if ($numrows == 1) {
-                    echo "<option value=\"$konto_id\" selected>$bez - $iban1 - $bic</option>\n";
+                    echo "<option value=\"$konto_id\" selected>$bez - $vwzk - $iban1 - $bic</option>\n";
                 } else {
-                    echo "<option value=\"$konto_id\">$bez - $iban1 - $bic</option>\n";
+                    echo "<option value=\"$konto_id\">$bez - $vwzk - $iban1 - $bic</option>\n";
                 }
 
             } // end for
@@ -2312,7 +2313,7 @@ AND  `AKTUELL` =  '1'");
 
     function dropdown_sepa_geldkonten_filter($label, $name, $id, $filter_bez)
     {
-        $my_array = DB::select("SELECT GELD_KONTEN.KONTO_ID, GELD_KONTEN.IBAN, GELD_KONTEN.BIC, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ, GELD_KONTEN.INSTITUT,  GELD_KONTEN.BEZEICHNUNG FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE  GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' && GELD_KONTEN.BEZEICHNUNG LIKE '%$filter_bez%' GROUP BY GELD_KONTEN.KONTO_ID ORDER BY GELD_KONTEN.BEGUENSTIGTER ASC");
+        $my_array = DB::select("SELECT GELD_KONTEN.KONTO_ID, GELD_KONTEN.IBAN, GELD_KONTEN.BIC, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ, GELD_KONTEN.INSTITUT, GELD_KONTEN.BEZEICHNUNG, GELD_KONTEN_ZUWEISUNG.VERWENDUNGSZWECK FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE  GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' && GELD_KONTEN.BEZEICHNUNG LIKE '%$filter_bez%' ORDER BY GELD_KONTEN.BEZEICHNUNG ASC");
         $numrows = count($my_array);
         if ($numrows) {
             echo "<label for=\"$id\">$label</label>\n<select name=\"$name\" id=\"$id\" size=\"1\" >\n";
@@ -2321,9 +2322,10 @@ AND  `AKTUELL` =  '1'");
                 $konto_id = $my_array [$a] ['KONTO_ID'];
                 $bez = $my_array [$a] ['BEZEICHNUNG'];
                 $iban = $my_array [$a] ['IBAN'];
+                $vwzk = $my_array [$a] ['VERWENDUNGSZWECK'];
                 $iban1 = $this->iban_convert($iban, 0);
                 $bic = $my_array [$a] ['BIC'];
-                echo "<option value=\"$konto_id\" >$bez - $iban1 - $bic</option>\n";
+                echo "<option value=\"$konto_id\" >$bez - $vwzk - $iban1 - $bic</option>\n";
             } // end for
             echo "</select>\n";
             return true;
