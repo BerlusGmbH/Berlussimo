@@ -1135,10 +1135,6 @@ class weg
         $this->hg_saldo = '0.00';
         $this->eigentuemer_von_a = date_mysql2german($this->eigentuemer_von);
 
-        $gg = new geldkonto_info ();
-        $gg->geld_konto_ermitteln('Objekt', session()->get('objekt_id'));
-        $geldkonto_id = $gg->geldkonto_id;
-
         $datum_arr = explode('-', $this->eigentuemer_von);
         $j = $datum_arr [0]; // Jahr
         $m = $datum_arr [1]; // Monat
@@ -1199,6 +1195,10 @@ class weg
             $this->Wohngeld_soll = $this->gruppe_erg;
             $this->Wohngeld_soll_g += $this->gruppe_erg;
             $this->Wohngeld_soll_a = nummer_punkt2komma($this->gruppe_erg);
+
+            $gg = new geldkonto_info ();
+            $gg->geld_konto_ermitteln('Objekt', session()->get('objekt_id'), $jahr . '-' . $monat . '-01', 'Hausgeld');
+            $geldkonto_id = $gg->geldkonto_id;
 
             $summe_zahlungen_6 = $this->get_summe_zahlungen('Eigentuemer', $eigentuemer_id, $monat, $jahr, $geldkonto_id, 6000);
             $summe_zahlungen_hz = $this->get_summe_zahlungen('Eigentuemer', $eigentuemer_id, $monat, $jahr, $geldkonto_id, 6010);
@@ -1679,9 +1679,6 @@ class weg
         $this->hg_saldo = '0.00';
         $kos_bez = $this->get_eigentumer_id_infos($eigentuemer_id);
         $this->eigentuemer_von_a = date_mysql2german($this->eigentuemer_von);
-        $gg = new geldkonto_info ();
-        $gg->geld_konto_ermitteln('Objekt', $this->objekt_id);
-        $geldkonto_id = $gg->geldkonto_id;
 
         $datum_arr = explode('-', $this->eigentuemer_von);
         $j = $datum_arr [0]; // Jahr
@@ -1743,6 +1740,11 @@ class weg
             $monat = $soll_array [$a] ['monat'];
             $monatsname = monat2name($monat);
             $jahr = $soll_array [$a] ['jahr'];
+
+            $gg = new geldkonto_info ();
+            $gg->geld_konto_ermitteln('Objekt', $this->objekt_id, $jahr . '-' . $monat . '-01', 'Hausgeld');
+            $geldkonto_id = $gg->geldkonto_id;
+
             $this->get_wg_info($monat, $jahr, 'Einheit', $this->einheit_id, 'Hausgeld');
             $this->Wohngeld_soll_a = nummer_punkt2komma($this->gruppe_erg);
             // echo "01.$monat.$jahr Wohngeld soll $this->Wohngeld_soll_a<br>";
@@ -1918,7 +1920,7 @@ class weg
         $k = new kontenrahmen ();
         $kontenrahmen_id = $k->get_kontenrahmen('Objekt', $objekt_id);
         $gg = new geldkonto_info ();
-        $gg->geld_konto_ermitteln('Objekt', $objekt_id);
+        $gg->geld_konto_ermitteln('Objekt', $objekt_id, null, 'Hausgeld');
         $geldkonto_id = $gg->geldkonto_id;
 
         $kostenkonten_alle = $this->kostenkonten_in_array($geldkonto_id);
@@ -2122,7 +2124,7 @@ class weg
         $this->get_eigentumer_id_infos($eig);
         $this->hausgeld_kontoauszug_stand($eig);
         $g = new geldkonto_info ();
-        $g->geld_konto_ermitteln('Objekt', $this->objekt_id);
+        $g->geld_konto_ermitteln('Objekt', $this->objekt_id, null, 'Hausgeld');
         $geldkonto_id = $g->geldkonto_id;
         $e = new einheit ();
         $e->get_einheit_info($this->einheit_id);
@@ -2224,9 +2226,6 @@ class weg
         $this->hg_saldo = '0.00';
         $kos_bez = $this->get_eigentumer_id_infos2($eigentuemer_id);
         $this->eigentuemer_von_a = date_mysql2german($this->eigentuemer_von);
-        $gg = new geldkonto_info ();
-        $gg->geld_konto_ermitteln('Objekt', $this->objekt_id);
-        $geldkonto_id = $gg->geldkonto_id;
 
         $datum_arr = explode('-', $this->eigentuemer_von);
         $j = $datum_arr [0]; // Jahr
@@ -2311,6 +2310,11 @@ class weg
             $monat = $soll_array [$a] ['monat'];
             $monatsname = monat2name($monat);
             $jahr = $soll_array [$a] ['jahr'];
+
+            $gg = new geldkonto_info ();
+            $gg->geld_konto_ermitteln('Objekt', $this->objekt_id, $jahr . '-' . $monat . '-01', 'Hausgeld');
+            $geldkonto_id = $gg->geldkonto_id;
+
             $this->get_wg_info($monat, $jahr, 'Einheit', $this->einheit_id, 'Hausgeld');
             if ($this->eigentuemer_bis !== "0000-00-00") {
                 $date = new DateTime("$jahr-$monat-01");
@@ -2546,10 +2550,6 @@ class weg
             $m++;
         }
 
-        $gg = new geldkonto_info ();
-        $gg->geld_konto_ermitteln('Objekt', $this->objekt_id);
-        $geldkonto_id = $gg->geldkonto_id;
-
         $anz_monate = count($soll_array);
         $anz_defs = count($moegliche_defs);
         for ($a = 0; $a < $anz_monate; $a++) {
@@ -2562,6 +2562,11 @@ class weg
                     continue;
                 }
             }
+
+            $gg = new geldkonto_info ();
+            $gg->geld_konto_ermitteln('Objekt', $this->objekt_id, $jahr . '-' . $monat . '-01', 'Hausgeld');
+            $geldkonto_id = $gg->geldkonto_id;
+
             for ($b = 0; $b < $anz_defs; $b++) {
                 $e_konto = $moegliche_defs [$b] ['E_KONTO'];
                 $kostenkat = $moegliche_defs [$b] ['KOSTENKAT'];
@@ -2671,7 +2676,7 @@ class weg
         }
 
         $gg = new geldkonto_info ();
-        $gg->geld_konto_ermitteln('Objekt', $this->objekt_id);
+        $gg->geld_konto_ermitteln('Objekt', $this->objekt_id, null, 'Hausgeld');
         $geldkonto_id = $gg->geldkonto_id;
         if (!isset($geldkonto_id)) {
             throw new \App\Exceptions\MessageException(
@@ -2686,7 +2691,7 @@ class weg
 
         $anz = count($eigentuemer_ids);
         for ($a = 0; $a < $anz; $a++) {
-            $g_ist += $this->get_ergebnis_hga_ist($eigentuemer_ids[$a]['ID'], $jahr, $geldkonto_id, $e_konto);
+            $g_ist += $this->get_ergebnis_hga_ist($this->objekt_id, $eigentuemer_ids[$a]['ID'], $jahr, $geldkonto_id, $e_konto);
         }
 
         $ergebnisse_hga = $this->get_ergebnisse_hga_soll($this->einheit_id, $jahr, $e_konto);
@@ -2794,18 +2799,34 @@ class weg
         return $pdf;
     }
 
-    function get_ergebnis_hga_ist($kos_id_ist, $jahr, $geldkonto, $buchungskonto)
+    function get_ergebnis_hga_ist($objekt_id, $eigentuemer_id, $jahr, $geldkonto, $buchungskonto)
     {
-        $result = DB::select(
-            "SELECT IF(SUM(BETRAG) IS NULL,0,SUM(BETRAG)) AS IST
-            FROM GELD_KONTO_BUCHUNGEN 
-            WHERE DATE_FORMAT(DATUM, '%Y') <= '$jahr' 
-	          && KOSTENTRAEGER_TYP LIKE 'Eigentuemer' 
-	          && KOSTENTRAEGER_ID=$kos_id_ist
-	          && AKTUELL='1' 
-	          && GELDKONTO_ID=$geldkonto
-	          && KONTENRAHMEN_KONTO=$buchungskonto;"
-        );
+        $bankAccounts = DB::table('GELD_KONTEN_ZUWEISUNG')
+            ->where('KOSTENTRAEGER_TYP', 'Objekt')
+            ->where('KOSTENTRAEGER_ID', $objekt_id)
+            ->where('AKTUELL', '1')
+            ->where('VERWENDUNGSZWECK', 'Hausgeld')
+            ->get();
+
+        $builder = DB::table('GELD_KONTO_BUCHUNGEN')
+            ->where('KOSTENTRAEGER_TYP', 'Eigentuemer')
+            ->where('KOSTENTRAEGER_ID', $eigentuemer_id)
+            ->where('AKTUELL', '1')
+            ->where('KONTENRAHMEN_KONTO', $buchungskonto)
+            ->select(DB::raw('IF(SUM(BETRAG) IS NULL,0,SUM(BETRAG)) AS IST'));
+
+        $builder->where(function ($query) use ($bankAccounts) {
+            foreach ($bankAccounts as $bankAccount) {
+                $query->orWhere(function ($query) use ($bankAccount) {
+                    $query->where('DATUM', '>=', $bankAccount['VON'])
+                        ->where('DATUM', '<=', $bankAccount['BIS'] ?: '9999-12-31')
+                        ->where('GELDKONTO_ID', $bankAccount['KONTO_ID']);
+                });
+            }
+        });
+
+        $result = $builder->get();
+
         if (!empty($result)) {
             $row = $result[0];
             return $row['IST'];
@@ -3782,7 +3803,7 @@ ORDER BY HGA;");
 
         $this->empf_namen = bereinige_string($this->empf_namen_u);
         $gg = new geldkonto_info ();
-        $gg->geld_konto_ermitteln('Objekt', $this->objekt_id);
+        $gg->geld_konto_ermitteln('Objekt', $this->objekt_id, null, 'Hausgeld');
         $this->geldkonto_id = $gg->geldkonto_id;
         $this->OBJ_KONTONUMMER = $gg->kontonummer;
         $this->OBJ_BLZ = $gg->blz;

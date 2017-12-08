@@ -31,9 +31,7 @@ class listen
         $pdf->ezStopPageNumbers(); // seitennummerirung beenden
         $gk = new geldkonto_info ();
 
-        $gk->geld_konto_ermitteln('OBJEKT', $objekt_id);
-        echo '<pre>';
-        print_r($gk);
+        $gk->geld_konto_ermitteln('OBJEKT', $objekt_id, null, 'Hausgeld');
 
         $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT_ID`,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
 WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.OBJEKT_ID='$objekt_id' 
@@ -385,7 +383,7 @@ ORDER BY EINHEIT_KURZNAME";
         $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
         $pdf->ezStopPageNumbers(); // seitennummerirung beenden
         $gk = new geldkonto_info ();
-        $gk->geld_konto_ermitteln('OBJEKT', $objekt_id);
+        $gk->geld_konto_ermitteln('OBJEKT', $objekt_id, null, 'Hausgeld');
         echo '<pre>';
         print_r($gk);
         if (!$gk->geldkonto_id) {
@@ -777,7 +775,7 @@ ORDER BY EINHEIT_KURZNAME";
     function form_sepa_ueberweisung_anzeigen($arr)
     {
         $gk = new geldkonto_info ();
-        $gk->geld_konto_ermitteln('OBJEKT', session()->get('objekt_id'));
+        $gk->geld_konto_ermitteln('OBJEKT', session()->get('objekt_id'), null, 'Hausgeld');
         if (!$gk->geldkonto_id) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage('Geldkonto vom Objekt nicht bekannt!')
@@ -883,7 +881,7 @@ ORDER BY EINHEIT_KURZNAME";
         $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
         $pdf->ezStopPageNumbers(); // seitennummerirung beenden
         $gk = new geldkonto_info ();
-        $gk->geld_konto_ermitteln('OBJEKT', $objekt_id);
+        $gk->geld_konto_ermitteln('OBJEKT', $objekt_id, null, 'Hausgeld');
         echo '<pre>';
         // print_r($gk);
         if (!$gk->geldkonto_id) {
@@ -1972,7 +1970,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
         $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
         $pdf->ezStopPageNumbers(); // seitennummerirung beenden
         $gk = new geldkonto_info ();
-        $gk->geld_konto_ermitteln('OBJEKT', $objekt_id);
+        $gk->geld_konto_ermitteln('OBJEKT', $objekt_id, null, 'Hausgeld');
         echo '<pre>';
         // print_r($gk);
         if (!$gk->geldkonto_id) {
@@ -2996,7 +2994,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
     function inspiration_sepa_arr($ausgezogene = 0, $objekt_id, $monat, $jahr, $lang = 'de')
     {
         $gk = new geldkonto_info ();
-        $gk->geld_konto_ermitteln('OBJEKT', $objekt_id);
+        $gk->geld_konto_ermitteln('OBJEKT', $objekt_id, null, 'Hausgeld');
         if (!$gk->geldkonto_id) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage('Geldkonto zum Objekt hinzufügen.')
@@ -3410,7 +3408,7 @@ ORDER BY EINHEIT_KURZNAME";
         $e = new einheit ();
         $e->get_einheit_info($einheit_id);
         $gk = new geldkonto_info ();
-        $gk->geld_konto_ermitteln('OBJEKT', $e->objekt_id);
+        $gk->geld_konto_ermitteln('OBJEKT', $e->objekt_id, null, 'Hausgeld');
 
         /* OBJEKTDATEN */
         /* Garantiemonate Objekt */
@@ -4533,7 +4531,7 @@ ORDER BY EINHEIT_KURZNAME";
                 if (is_array($sum_konten)) {
 
                     $gki = new geldkonto_info ();
-                    $gki->geld_konto_ermitteln('OBJEKT', $objekt_id);
+                    $gki->geld_konto_ermitteln('OBJEKT', $objekt_id, null, 'Hausgeld');
                     if ($gki->geldkonto_id) {
                         $kr = new kontenrahmen ();
                         $kr_id = $kr->get_kontenrahmen('GELDKONTO', $gki->geldkonto_id);
@@ -4578,7 +4576,7 @@ ORDER BY EINHEIT_KURZNAME";
         if (isset($b_konten_arr) && is_array($b_konten_arr)) {
             $b_konten_arr1 = array_unique($b_konten_arr);
             $gki = new geldkonto_info ();
-            $gki->geld_konto_ermitteln('OBJEKT', $objekt_id);
+            $gki->geld_konto_ermitteln('OBJEKT', $objekt_id, null, 'Hausgeld');
             $string = '';
             if ($gki->geldkonto_id) {
                 $kr = new kontenrahmen ();
@@ -4619,7 +4617,7 @@ ORDER BY EINHEIT_KURZNAME";
     function form_sepa_ueberweisung_et($e_id, $betrag)
     {
         $gk = new geldkonto_info ();
-        $gk->geld_konto_ermitteln('OBJEKT', session()->get('objekt_id'));
+        $gk->geld_konto_ermitteln('OBJEKT', session()->get('objekt_id'), null, 'Hausgeld');
         if (!$gk->geldkonto_id) {
             die ('Geldkonto vom Objekt nicht bekannt!');
         }
@@ -5298,7 +5296,7 @@ ORDER BY EINHEIT_KURZNAME";
         // print_r($e);
 
         $gk = new geldkonto_info ();
-        $gk->geld_konto_ermitteln('Objekt', $weg_et->objekt_id);
+        $gk->geld_konto_ermitteln('Objekt', $weg_et->objekt_id, null, 'Hausgeld');
 
         /* OBJEKTDATEN */
         /* Garantiemonate Objekt */

@@ -374,7 +374,7 @@ OR  `LAND` LIKE  '%$suchtext%'
 
     function letzte_konto_geldkonto_id_p($partner_id)
     {
-        $result = DB::select("SELECT KONTO_ID FROM GELD_KONTEN_ZUWEISUNG WHERE KOSTENTRAEGER_TYP='Partner' && KOSTENTRAEGER_ID='$partner_id' ORDER BY ZUWEISUNG_ID DESC LIMIT 0,1");
+        $result = DB::select("SELECT KONTO_ID FROM GELD_KONTEN_ZUWEISUNG WHERE KOSTENTRAEGER_TYP='Partner' && KOSTENTRAEGER_ID='$partner_id' ORDER BY VON DESC LIMIT 0,1");
         $row = $result[0];
         return $row ['KONTO_ID'];
     }

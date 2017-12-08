@@ -25,20 +25,20 @@ switch ($option) {
             $gk = new gk ();
             $b = new buchen ();
             $g_bez = request()->input('g_bez');
-			$beguenstigter = request()->input('beguenstigter');
-			$kontonummer = request()->input('kontonummer');
-			$blz = request()->input('blz');
-			$institut = request()->input('institut');
-			$iban = request()->input('iban');
-			$bic = request()->input('bic');
-			$sep = new sepa ();
-			$iban_mysql = $sep->iban_convert($iban, 1);
-			$kostentraeger_typ = request()->input('kostentraeger_typ');
-			$kostentraeger_bez = request()->input('kostentraeger_id');
-			$kos_id = $b->kostentraeger_id_ermitteln($kostentraeger_typ, $kostentraeger_bez);
-			$gk->geldkonto_speichern($kostentraeger_typ, $kos_id, $g_bez, $beguenstigter, $kontonummer, $blz, $institut, $iban_mysql, $bic);
-			weiterleiten(route('web::geldkonten::legacy', ['option' => 'uebersicht_zuweisung'], false));
-		} else {
+            $beguenstigter = request()->input('beguenstigter');
+            $kontonummer = request()->input('kontonummer');
+            $blz = request()->input('blz');
+            $institut = request()->input('institut');
+            $iban = request()->input('iban');
+            $bic = request()->input('bic');
+            $sep = new sepa ();
+            $iban_mysql = $sep->iban_convert($iban, 1);
+            $kostentraeger_typ = request()->input('kostentraeger_typ');
+            $kostentraeger_bez = request()->input('kostentraeger_id');
+            $kos_id = $b->kostentraeger_id_ermitteln($kostentraeger_typ, $kostentraeger_bez);
+            $gk->geldkonto_speichern($kostentraeger_typ, $kos_id, $g_bez, $beguenstigter, $kontonummer, $blz, $institut, $iban_mysql, $bic);
+            weiterleiten(route('web::geldkonten::legacy', ['option' => 'uebersicht_zuweisung'], false));
+        } else {
             echo "Eingabe unvollständig Error: 621ghp";
         }
         break;
@@ -91,19 +91,50 @@ switch ($option) {
         break;
 
     case "zuweisen_gk" :
-        if (request()->has('geldkonto_id') && request()->has('kostentraeger_typ') && request()->has('kostentraeger_id')) {
+        if (request()->has('geldkonto_id')
+            && request()->has('kostentraeger_typ')
+            && request()->has('kostentraeger_id')
+            && request()->has('von')
+        ) {
             $gk = new gk ();
             $b = new buchen ();
             $geldkonto_id = request()->input('geldkonto_id');
             $kostentraeger_typ = request()->input('kostentraeger_typ');
             $kostentraeger_bez = request()->input('kostentraeger_id');
+            $von = request()->input('von');
+            $bis = request()->input('bis');
+            $vwzk = request()->input('vwzk');
             $kos_id = $b->kostentraeger_id_ermitteln($kostentraeger_typ, $kostentraeger_bez);
             if ($gk->check_zuweisung_kos($geldkonto_id, $kostentraeger_typ, $kos_id)) {
                 echo "Zuweisung existiert bereits.";
             } else {
-                $gk->zuweisung_speichern($kostentraeger_typ, $kos_id, $geldkonto_id);
+                $gk->zuweisung_speichern($kostentraeger_typ, $kos_id, $geldkonto_id, $von, $bis, $vwzk);
                 weiterleiten(route('web::geldkonten::legacy', ['option' => 'uebersicht_zuweisung'], false));
             }
+        } else {
+            echo "Eingabe unvollständig Error: 623gd";
+        }
+        break;
+
+    case "aendern_gk" :
+        if (request()->has('geldkonto_id')
+            && request()->has('kostentraeger_typ')
+            && request()->has('kostentraeger_id')
+            && request()->has('von')
+            && request()->has('zuweisung_id')
+        ) {
+            DB::table('GELD_KONTEN_ZUWEISUNG')
+                ->where('ZUWEISUNG_ID', request()->input('zuweisung_id'))
+                ->where('AKTUELL', '1')
+                ->update([
+                    'KONTO_ID' => request()->input('geldkonto_id'),
+                    'KOSTENTRAEGER_TYP' => request()->input('kostentraeger_typ'),
+                    'KOSTENTRAEGER_ID' => request()->input('kostentraeger_id'),
+                    'VERWENDUNGSZWECK' => request()->input('vwzk'),
+                    'VON' => request()->input('von'),
+                    'BIS' => (request()->input('bis') !== '' ? request()->input('bis') : null)
+                ]);
+            //weiterleiten(route('web::geldkonten::legacy', ['option' => 'uebersicht_zuweisung'], false));
         } else {
             echo "Eingabe unvollständig Error: 623gd";
         }
@@ -119,6 +150,13 @@ switch ($option) {
             weiterleiten(route('web::geldkonten::legacy', ['option' => 'uebersicht_zuweisung'], false));
         } else {
             echo "Eingabe unvollständig Error: 623gf1";
+        }
+        break;
+
+    case "zuweisung_aendern" :
+        if (request()->has('zuweisung_id')) {
+            $gk = new gk ();
+            $gk->form_geldkonto_zuweisen(request()->input('zuweisung_id'));
         }
         break;
 
