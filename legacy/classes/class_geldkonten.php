@@ -303,7 +303,7 @@ class gk
 
     function get_objekt_id($geldkonto_id)
     {
-        $result = DB::select("SELECT KOSTENTRAEGER_ID FROM GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='Objekt' LIMIT 0,1");
+        $result = DB::select("SELECT KOSTENTRAEGER_ID FROM GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='Objekt' && VERWENDUNGSZWECK='Hausgeld' ORDER BY VON DESC LIMIT 0,1");
         if (!empty($result)) {
             $row = $result[0];
             $kos_id = $row ['KOSTENTRAEGER_ID'];
