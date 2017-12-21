@@ -88,7 +88,7 @@ class serienbrief
                     $this->hausgeld_monatlich_en = $weg->get_sume_hausgeld('Einheit', $weg->einheit_id, $monat, $jahr) * -1;
 
                     $gk = new geldkonto_info ();
-                    $gk->geld_konto_ermitteln('Objekt', $weg->objekt_id);
+                    $gk->geld_konto_ermitteln('Objekt', $weg->objekt_id, null, 'Hausgeld');
 
                     $bpdf->get_texte($v_dat);
 

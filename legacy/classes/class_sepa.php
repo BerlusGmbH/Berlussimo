@@ -264,18 +264,7 @@ class sepa
 
     function alle_mandate_anzeigen($nutzungsart = 'Alle')
     {
-        if (!session()->has('geldkonto_id') && $nutzungsart != 'Alle') {
-            session()->put('last_url', route('web::sepa::legacy', ['option' => 'mandate_mieter'], false));
-            fehlermeldung_ausgeben('Geldkonto wählen');
-            return;
-        }
-        $datum_heute = date("Y-m-d");
-        if ($nutzungsart == 'Alle') {
-            $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' AND M_EDATUM>='$datum_heute' AND M_ADATUM<='$datum_heute' ORDER BY NAME ASC");
-        } else {
-            $gk_id = session()->get('geldkonto_id');
-            $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' && NUTZUNGSART='$nutzungsart' AND M_EDATUM>='$datum_heute' AND M_ADATUM<='$datum_heute' && GLAEUBIGER_GK_ID='$gk_id' ORDER BY NAME ASC");
-        }
+        $result = $this->get_mandate_arr($nutzungsart);
 
         $monat = date("m");
         $jahr = date("Y");
@@ -294,7 +283,7 @@ class sepa
                     $z++;
                     $zz++; // Zeile
 
-                    $row ['IBAN1'] = chunk_split($row ['IBAN'], 4, ' ');
+                    $iban1 = chunk_split($row ['IBAN'], 4, ' ');
 
                     // ######################
                     $mv = new mietvertraege ();
@@ -340,7 +329,7 @@ class sepa
                     $summe_saldo_alle += $mz->erg;
                     $summe_ziehen_alle += $summe_zu_ziehen;
                     $summe_diff_alle += $diff;
-                    echo "<tr class=\"zeile$z\"><td>$zz.</td><td><a href='" . route('web::sepa::legacy', ['option' => 'mandat_edit_mieter', 'mref_dat' => $row['DAT']]) . "'>$mv->einheit_kurzname</a></td><td>$row[NAME]</td><td>$row[M_REFERENZ]</td><td>$link_nutzungen</td><td>$row[EINZUGSART]</td></td><td>$summe_zu_ziehen_a</td><td>$mz->erg</td><td>$diff</td><td>$row[ANSCHRIFT]</td><td>$row[IBAN]<br>$row[IBAN1]</td><td>$row[BIC]</td></tr>";
+                    echo "<tr class=\"zeile$z\"><td>$zz.</td><td><a href='" . route('web::sepa::legacy', ['option' => 'mandat_edit_mieter', 'mref_dat' => $row['DAT']]) . "'>$mv->einheit_kurzname</a></td><td>$row[NAME]</td><td>$row[M_REFERENZ]</td><td>$link_nutzungen</td><td>$row[EINZUGSART]</td></td><td>$summe_zu_ziehen_a</td><td>$mz->erg</td><td>$diff</td><td>$row[ANSCHRIFT]</td><td>$row[IBAN]<br>$iban1</td><td>$row[BIC]</td></tr>";
                     $mz->erg = 0.00;
                     $diff = 0.00;
 
@@ -374,7 +363,7 @@ class sepa
                 foreach ($result as $row) {
                     $z++;
                     $mand = ( object )$row;
-                    $mand->IBAN1 = chunk_split($mand->IBAN, 4, ' ');
+                    $iban1 = chunk_split($mand->IBAN, 4, ' ');
                     $mandat_status = $this->get_mandat_seq_status($mand->M_REFERENZ, $mand->IBAN);
                     $link_nutzungen = "<a href='" . route('web::sepa::legacy', ['option' => 'mandat_nutzungen_anzeigen', 'm_ref' => $mand->M_REFERENZ]) . "'>$mandat_status</a>";
 
@@ -405,7 +394,7 @@ class sepa
                     $summe_ziehen_alle += $summe_zu_ziehen;
                     $summe_diff_alle += $diff;
                     $diff_a = nummer_punkt2komma($diff);
-                    echo "<tr class=\"zeile$z\"><td><a href='" . route('web::sepa::legacy', ['option' => 'mandat_edit_mieter', 'mref_dat' => $mand->DAT]) . "'>$e->einheit_kurzname</a></td><td>$mand->NAME</td><td>$mand->M_REFERENZ</td><td>$link_nutzungen</td><td>$mand->EINZUGSART</td></td><td>$summe_zu_ziehen_a</td><td>$weg->hg_erg_a</td><td>$diff_a</td><td>$mand->ANSCHRIFT</td><td>$mand->IBAN<br>$mand->IBAN1</td><td>$mand->BIC</td></tr>";
+                    echo "<tr class=\"zeile$z\"><td><a href='" . route('web::sepa::legacy', ['option' => 'mandat_edit_mieter', 'mref_dat' => $mand->DAT]) . "'>$e->einheit_kurzname</a></td><td>$mand->NAME</td><td>$mand->M_REFERENZ</td><td>$link_nutzungen</td><td>$mand->EINZUGSART</td></td><td>$summe_zu_ziehen_a</td><td>$weg->hg_erg_a</td><td>$diff_a</td><td>$mand->ANSCHRIFT</td><td>$mand->IBAN<br>$iban1</td><td>$mand->BIC</td></tr>";
                     /* Zeilenfarbetausch */
                     if ($z == 2) {
                         $z = 0;
@@ -850,18 +839,6 @@ class sepa
                     $summe_zu_ziehen = $summe_zu_ziehen_arr [0] + $summe_raten;
                 }
 
-                /*
-				 * $mv = new mietvertraege();
-				 * $mv->get_mietvertrag_infos_aktuell($kos_id);
-				 *
-				 * $mz = new miete();
-				 * $mz->mietkonto_berechnung($kos_id);
-				 *
-				 * if($mz->erg<0.00){
-				 * $mz->erg = substr($mz->erg,1);
-				 * }
-				 */
-
                 $kat = 'RENT';
                 $vzweck1 = substr($this->umlautundgross("Mieteinzug $monatsname $jahr für $mv->einheit_kurzname $name"), 0, 140);
                 $PmtInfId = substr($this->umlautundgross($mv->objekt_kurzname . " LS-MIETEN $monat/$jahr"), -30);
@@ -874,7 +851,6 @@ class sepa
                 $einheit_id = $weg->get_einheit_id_from_eigentuemer($kos_id);
                 $e = new einheit ();
                 $e->get_einheit_info($einheit_id);
-                // $weg->get_wg_info($monat, $jahr, 'Einheit', $einheit_id, 'Hausgeld');
                 $weg->get_eigentuemer_saldo($kos_id, $einheit_id);
                 $einheit_kn = $e->einheit_kurzname;
                 if ($einzugsart == 'Aktuelles Saldo komplett') {
@@ -953,16 +929,14 @@ class sepa
             }
         }
 
-        $gk = new geldkonto_info ();
-        $gk->geld_konto_details(session()->get('geldkonto_id'));
+        $gki = new geldkonto_info();
+        $gki->geld_konto_ermitteln('Objekt', session()->get('objekt_id'), \Carbon\Carbon::now()->toDateString(), 'Hausgeld');
 
-        $seps = new sepa ();
-        $seps->get_iban_bic($gk->kontonummer, $gk->blz);
         $d = new detail ();
-        $glaeubiger_id = $d->finde_detail_inhalt('GELD_KONTEN', session()->get('geldkonto_id'), 'GLAEUBIGER_ID');
+        $glaeubiger_id = $d->finde_detail_inhalt('GELD_KONTEN', $gki->geldkonto_id, 'GLAEUBIGER_ID');
         /* SEPA FILE */
         if ($pdf == 0) {
-            $xmlstring = $myKtoSepaSimple->GetXML('CORE', $dateiname_msgid, $PmtInfId, $this->umlautundgross($gk->konto_beguenstigter), $this->umlautundgross($gk->konto_beguenstigter), $seps->IBAN, $seps->BIC, $glaeubiger_id, $sammelbetrag);
+            $xmlstring = $myKtoSepaSimple->GetXML('CORE', $dateiname_msgid, $PmtInfId, $this->umlautundgross($gki->beguenstigter), $this->umlautundgross($gki->beguenstigter), $gki->IBAN, $gki->BIC, $glaeubiger_id, $sammelbetrag);
 
             /* SEPA AUSGABE */
             ob_clean();
@@ -1094,18 +1068,24 @@ class sepa
 
     function get_mandate_arr($nutzungsart = 'Alle')
     {
-        if (!session()->has('geldkonto_id') && $nutzungsart != 'Alle') {
+        if (!session()->has('objekt_id') && $nutzungsart != 'Alle') {
             session()->put('last_url', route('web::sepa::legacy', ['option' => 'mandate_mieter'], false));
             throw new \App\Exceptions\MessageException(
-                new \App\Messages\InfoMessage('Geldkonto wählen')
+                new \App\Messages\InfoMessage('Objekt wählen')
             );
         }
         $datum_heute = date("Y-m-d");
         if ($nutzungsart == 'Alle') {
             $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' AND M_EDATUM>='$datum_heute' AND M_ADATUM<='$datum_heute' ORDER BY NAME ASC");
         } else {
-            $gk_id = session()->get('geldkonto_id');
-            $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' && M_EDATUM>='$datum_heute' && M_ADATUM<='$datum_heute' && NUTZUNGSART='$nutzungsart' && GLAEUBIGER_GK_ID='$gk_id' ORDER BY NAME ASC");
+            $objekt_id = session()->get('objekt_id');
+            $result = \App\Models\SEPAMandate::whereHas('debtorRentalContract.einheit.haus.objekt', function ($query) use ($objekt_id) {
+                $query->where('OBJEKT_ID', $objekt_id);
+            })->where('NUTZUNGSART', $nutzungsart)
+                ->where('M_EDATUM', '>=', $datum_heute)
+                ->where('M_ADATUM', '<=', $datum_heute)
+                ->defaultOrder()
+                ->get();
         }
         if (!empty($result)) {
             return $result;
@@ -1484,7 +1464,7 @@ class sepa
 
     function dropdown_sepa_geldkonten($label, $name, $id, $kos_typ, $kos_id, $form = null)
     {
-        $my_array = DB::select("SELECT GELD_KONTEN.KONTO_ID, GELD_KONTEN.IBAN, GELD_KONTEN.BIC, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ, GELD_KONTEN.INSTITUT, GELD_KONTEN.BEZEICHNUNG FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE KOSTENTRAEGER_TYP = '$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' GROUP BY GELD_KONTEN.KONTO_ID ORDER BY GELD_KONTEN.KONTO_ID ASC");
+        $my_array = DB::select("SELECT GELD_KONTEN.KONTO_ID, GELD_KONTEN.IBAN, GELD_KONTEN.BIC, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ, GELD_KONTEN.INSTITUT, GELD_KONTEN.BEZEICHNUNG, GELD_KONTEN_ZUWEISUNG.VERWENDUNGSZWECK FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE KOSTENTRAEGER_TYP = '$kos_typ' && KOSTENTRAEGER_ID = '$kos_id' && GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' GROUP BY GELD_KONTEN.KONTO_ID ORDER BY GELD_KONTEN_ZUWEISUNG.VERWENDUNGSZWECK ASC, GELD_KONTEN_ZUWEISUNG.VON DESC, GELD_KONTEN.KONTO_ID DESC");
         $numrows = count($my_array);
         if ($numrows) {
             echo "<div class='input-field'>";
@@ -1499,12 +1479,13 @@ class sepa
                 $konto_id = $my_array [$a] ['KONTO_ID'];
                 $bez = $my_array [$a] ['BEZEICHNUNG'];
                 $iban = $my_array [$a] ['IBAN'];
+                $vwzk = $my_array [$a] ['VERWENDUNGSZWECK'];
                 $iban1 = $this->iban_convert($iban, 0);
                 $bic = $my_array [$a] ['BIC'];
                 if ($numrows == 1) {
-                    echo "<option value=\"$konto_id\" selected>$bez - $iban1 - $bic</option>\n";
+                    echo "<option value=\"$konto_id\" selected>$bez - $vwzk - $iban1 - $bic</option>\n";
                 } else {
-                    echo "<option value=\"$konto_id\">$bez - $iban1 - $bic</option>\n";
+                    echo "<option value=\"$konto_id\">$bez - $vwzk - $iban1 - $bic</option>\n";
                 }
 
             } // end for
@@ -2312,7 +2293,7 @@ AND  `AKTUELL` =  '1'");
 
     function dropdown_sepa_geldkonten_filter($label, $name, $id, $filter_bez)
     {
-        $my_array = DB::select("SELECT GELD_KONTEN.KONTO_ID, GELD_KONTEN.IBAN, GELD_KONTEN.BIC, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ, GELD_KONTEN.INSTITUT,  GELD_KONTEN.BEZEICHNUNG FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE  GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' && GELD_KONTEN.BEZEICHNUNG LIKE '%$filter_bez%' GROUP BY GELD_KONTEN.KONTO_ID ORDER BY GELD_KONTEN.BEGUENSTIGTER ASC");
+        $my_array = DB::select("SELECT GELD_KONTEN.KONTO_ID, GELD_KONTEN.IBAN, GELD_KONTEN.BIC, GELD_KONTEN.BEGUENSTIGTER, GELD_KONTEN.KONTONUMMER, GELD_KONTEN.BLZ, GELD_KONTEN.INSTITUT, GELD_KONTEN.BEZEICHNUNG, GELD_KONTEN_ZUWEISUNG.VERWENDUNGSZWECK FROM GELD_KONTEN_ZUWEISUNG, GELD_KONTEN WHERE  GELD_KONTEN.KONTO_ID = GELD_KONTEN_ZUWEISUNG.KONTO_ID && GELD_KONTEN_ZUWEISUNG.AKTUELL = '1' && GELD_KONTEN.AKTUELL = '1' && GELD_KONTEN.BEZEICHNUNG LIKE '%$filter_bez%' ORDER BY GELD_KONTEN.BEZEICHNUNG ASC");
         $numrows = count($my_array);
         if ($numrows) {
             echo "<label for=\"$id\">$label</label>\n<select name=\"$name\" id=\"$id\" size=\"1\" >\n";
@@ -2321,9 +2302,10 @@ AND  `AKTUELL` =  '1'");
                 $konto_id = $my_array [$a] ['KONTO_ID'];
                 $bez = $my_array [$a] ['BEZEICHNUNG'];
                 $iban = $my_array [$a] ['IBAN'];
+                $vwzk = $my_array [$a] ['VERWENDUNGSZWECK'];
                 $iban1 = $this->iban_convert($iban, 0);
                 $bic = $my_array [$a] ['BIC'];
-                echo "<option value=\"$konto_id\" >$bez - $iban1 - $bic</option>\n";
+                echo "<option value=\"$konto_id\" >$bez - $vwzk - $iban1 - $bic</option>\n";
             } // end for
             echo "</select>\n";
             return true;
@@ -2679,7 +2661,12 @@ AND  `AKTUELL` =  '1'");
 
         $vzweck = $transaction->getDescription()->getUsageText();
 
-        if (in_array($artCode, [82, 83, 104, 105, 106, 107, 108, 109, 152, 159, 166, 177, 211, 805, 808, 809])) {
+        if (in_array($artCode, [
+            51, 53, 82, 83,
+            104, 105, 106, 107, 108, 109, 117, 152, 159, 166, 177,
+            201, 211,
+            805, 808, 809, 835
+        ])) {
             $treffer = array();
             $vzweck_kurz = $vzweck;
             if (in_array($artCode, [805, 808])) {

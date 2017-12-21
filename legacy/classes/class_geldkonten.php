@@ -109,34 +109,101 @@ class gk
         return !empty($result);
     }
 
-    function zuweisung_speichern($kos_typ, $kos_id, $geldkonto_id)
+    function zuweisung_speichern($kos_typ, $kos_id, $geldkonto_id, $von, $bis, $vwzk)
     {
         $bk = new bk ();
         $last_b_id = $bk->last_id('GELD_KONTEN_ZUWEISUNG', 'ZUWEISUNG_ID') + 1;
 
-        $db_abfrage = "INSERT INTO GELD_KONTEN_ZUWEISUNG VALUES (NULL, '$last_b_id', '$geldkonto_id', '$kos_typ','$kos_id', '1')";
+        if ($bis == '' || $bis == '0000-00-00') {
+            $bis = "NULL";
+        } else {
+            $bis = "'$bis'";
+        }
+
+        $db_abfrage = "INSERT INTO GELD_KONTEN_ZUWEISUNG VALUES (NULL, '$last_b_id', '$geldkonto_id', '$kos_typ','$kos_id', '1', '$von', $bis, '$vwzk')";
         DB::insert($db_abfrage);
         return $last_b_id;
     }
 
-    function form_geldkonto_zuweisen()
+    function form_geldkonto_zuweisen($id = null)
     {
+        $konto_id = null;
+        $kostentraeger_typ = null;
+        $kostentraeger_id = null;
+        $vwzk = null;
+        $von = null;
+        $bis = null;
+        $result = null;
+        if ($id) {
+            $result = DB::table('GELD_KONTEN_ZUWEISUNG')
+                ->where('ZUWEISUNG_ID', $id)
+                ->where('AKTUELL', '1')
+                ->first();
+            if ($result) {
+                $konto_id = $result['KONTO_ID'];
+                $kostentraeger_typ = $result['KOSTENTRAEGER_TYP'];
+                $kostentraeger_id = $result['KOSTENTRAEGER_ID'];
+                $vwzk = $result['VERWENDUNGSZWECK'];
+                $von = $result['VON'];
+                $bis = $result['BIS'];
+            }
+        }
         $f = new formular ();
         $f->erstelle_formular("Geldkonto zuweisen", NULL);
-        $this->dropdown_geldkonten_alle('Geldkonto wählen', 'geldkonto_id', 'geldkonto_id');
+        $this->dropdown_geldkonten_alle('Geldkonto wählen', 'geldkonto_id', 'geldkonto_id', $konto_id);
 
         $b = new buchen ();
         $js_typ = "onchange=\"list_kostentraeger('list_kostentraeger', this.value)\"";
-        $b->dropdown_kostentreager_typen('Geldkonto zuweisen an', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ);
+        $b->dropdown_kostentreager_typen_vw('Geldkonto zuweisen an', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, $kostentraeger_typ);
         $js_id = "";
-        $b->dropdown_kostentreager_ids('Bitte Zuweisung wählen', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id);
+        $b->dropdown_kostentraeger_bez_vw('Bitte Zuweisung wählen', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id, $kostentraeger_typ, $kostentraeger_id);
 
-        $f->hidden_feld("option", "zuweisen_gk");
-        $f->send_button("submit_gk", "Zuweisen");
+        $options = [
+            '' => 'Keiner',
+            'Lohnzahlung' => 'Lohnzahlung (Benutzer)',
+            'Eigentümerentnahme' => 'Eigentümerentnahme (Partner / WEG-Eigentümer)',
+            'Hausgeld' => 'Hausgeld (Objekt)',
+            'IHR' => 'IHR (Objekt)',
+            'Kaution' => 'Kaution (Objekt)',
+            'Kreditor' => 'Kreditor (Partner)'
+        ];
+
+        echo "<div class='input-field'>";
+        echo "<select name=\"vwzk\" id=\"vwzk\" size=1>";
+        foreach ($options as $value => $name) {
+            echo "<option value=\"";
+            $v = is_numeric($value) ? $name : $value;
+            echo "$v\"";
+            echo " " . (($v === $vwzk && $vwzk) ? 'selected' : '');
+            echo ">$name</option>\n";
+        }
+        echo "</select>\n";
+        echo "<label for=\"vwzk\">Verwendungszweck</label>\n";
+        echo "</div>";
+
+        echo "<div class='input-field'>";
+        $v = $von ?: \Carbon\Carbon::now()->toDateString();
+        echo "<input name='von' id='von' type='date' value='" . $v . "'>";
+        echo "<label for='von' class='active'>Von</label>";
+        echo "</div>";
+
+        echo "<div class='input-field'>";
+        echo "<input name='bis' id='bis' type='date' value='" . $bis . "'>";
+        echo "<label for='bis' class='active'>Bis</label>";
+        echo "</div>";
+
+        if ($result) {
+            $f->hidden_feld("option", "aendern_gk");
+            $f->hidden_feld("zuweisung_id", $id);
+            $f->send_button("submit_gk", "Ändern");
+        } else {
+            $f->hidden_feld("option", "zuweisen_gk");
+            $f->send_button("submit_gk", "Zuweisen");
+        }
         $f->ende_formular();
     }
 
-    function dropdown_geldkonten_alle($label, $name, $id)
+    function dropdown_geldkonten_alle($label, $name, $id, $selected_id = null)
     {
         $my_array = DB::select("SELECT *  FROM  GELD_KONTEN WHERE GELD_KONTEN.AKTUELL = '1' ORDER BY BEZEICHNUNG ASC");
 
@@ -148,7 +215,7 @@ class gk
                 $kontonummer = $my_array [$a] ['KONTONUMMER'];
                 $blz = $my_array [$a] ['BLZ'];
                 $bez = $my_array [$a] ['BEZEICHNUNG'];
-                if (session()->has('geldkonto_id') && session()->get('geldkonto_id') == $konto_id) {
+                if (session()->get('geldkonto_id') == $konto_id || $selected_id == $konto_id) {
                     echo "<option value=\"$konto_id\" selected>$bez - Knr:$kontonummer - Blz: $blz</option>\n";
                 } else {
                     echo "<option value=\"$konto_id\" >$bez - Knr:$kontonummer - Blz: $blz</option>\n";
@@ -192,7 +259,7 @@ class gk
         $numrows = count($my_array);
         if ($numrows > 0) {
             echo "<table class=\"sortable\">";
-            echo "<tr><th>BEZEICHNUNG</th><th width=\"200\">IBAN</th><th>BIC</th><th>ZUWEISUNG</th></tr>";
+            echo "<tr><th>BEZEICHNUNG</th><th width=\"220\">IBAN</th><th>BIC</th><th>ZUWEISUNG</th></tr>";
             for ($a = 0; $a < $numrows; $a++) {
                 $konto_id = $my_array [$a] ['KONTO_ID'];
                 $iban = chunk_split($my_array [$a] ['IBAN'], 4, ' ');
@@ -210,7 +277,7 @@ class gk
 
     function check_zuweisung($geldkonto_id)
     {
-        $my_array = DB::select("SELECT *  FROM  GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id'");
+        $my_array = DB::select("SELECT * FROM GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id'");
 
         $numrows = count($my_array);
 
@@ -220,10 +287,13 @@ class gk
                 $zaehler = $a + 1;
                 $kos_typ = $my_array [$a] ['KOSTENTRAEGER_TYP'];
                 $kos_id = $my_array [$a] ['KOSTENTRAEGER_ID'];
+                $verwendungszweck = $my_array [$a] ['VERWENDUNGSZWECK'];
+                $zuweisung_id = $my_array [$a] ['ZUWEISUNG_ID'];
                 $r = new rechnung ();
                 $kos_bez = $r->kostentraeger_ermitteln($kos_typ, $kos_id);
                 $link_loeschen = "<a href='" . route('web::geldkonten::legacy', ['option' => 'zuweisung_loeschen', 'geldkonto_id' => $geldkonto_id, 'kos_typ' => $kos_typ, 'kos_id' => $kos_id]) . "'><b>Aufheben</b></a>";
-                $kos_bez_string .= "$zaehler. " . $kos_bez . "  |  $link_loeschen<br>";
+                $link_aendern = "<a href='" . route('web::geldkonten::legacy', ['option' => 'zuweisung_aendern', 'zuweisung_id' => $zuweisung_id]) . "'><b>Bearbeiten</b></a>";
+                $kos_bez_string .= "$zaehler. " . $kos_bez . " | " . $verwendungszweck . " | $link_aendern  |  $link_loeschen<br>";
             }
             return $kos_bez_string;
         } else {
@@ -233,7 +303,7 @@ class gk
 
     function get_objekt_id($geldkonto_id)
     {
-        $result = DB::select("SELECT KOSTENTRAEGER_ID FROM  GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='Objekt' LIMIT 0,1");
+        $result = DB::select("SELECT KOSTENTRAEGER_ID FROM GELD_KONTEN_ZUWEISUNG WHERE AKTUELL = '1' && KONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='Objekt' && VERWENDUNGSZWECK='Hausgeld' ORDER BY VON DESC LIMIT 0,1");
         if (!empty($result)) {
             $row = $result[0];
             $kos_id = $row ['KOSTENTRAEGER_ID'];

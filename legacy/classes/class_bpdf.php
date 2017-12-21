@@ -51,7 +51,7 @@ class b_pdf
                 }
 
                 $gk = new geldkonto_info ();
-                $gk->geld_konto_ermitteln('Objekt', $mv->objekt_id);
+                $gk->geld_konto_ermitteln('Objekt', $mv->objekt_id, null, 'Hausgeld');
 
                 $o = new objekt ();
                 $o->get_objekt_infos($mv->objekt_id);
