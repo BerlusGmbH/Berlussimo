@@ -213,12 +213,12 @@ class lager_v {
                         $zaehler ++;
                         $gesamt_lager_wert = $gesamt_lager_wert + $waren_wert;
                         if ($zaehler == '1') {
-                            $beleg_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>Rechnung</a>";
+                            $beleg_link = "<a href='" . route('web::rechnungen.show', ['id' => $beleg_nr]) . "'>Rechnung</a>";
                             echo "<tr class=\"zeile1\" align=\"right\"><td>$datum</td><td>$pp->partner_name</td><td>$beleg_link</td><td>$link_artikel_suche</td><td>$bezeichnung</td><td>$menge</td><td>$rest_menge</td><td>$preis €</td><td>$pos_mwst_satz %</td><td>$waren_wert_a €</td></tr>";
                         }
 
                         if ($zaehler == '2') {
-                            $beleg_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>Rechnung</a>";
+                            $beleg_link = "<a href='" . route('web::rechnungen.show', ['id' => $beleg_nr]) . "'>Rechnung</a>";
                             echo "<tr class=\"zeile2\" align=\"right\"><td>$datum</td><td>$pp->partner_name</td><td>$beleg_link</td><td>$link_artikel_suche</td><td>$bezeichnung</td><td>$menge</td><td>$rest_menge</td><td>$preis €</td><td>$pos_mwst_satz %</td><td>$waren_wert_a €</td></tr>";
                         }
                     }

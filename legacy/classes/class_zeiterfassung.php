@@ -1031,7 +1031,7 @@ class zeiterfassung
                         $link_zettel2beleg = "";
                         for ($g = 0; $g < $anz; $g++) {
                             $in_belegnr = $_beleg_arr [$g] ['IN_BELEG'];
-                            $link_zettel2beleg .= "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $in_belegnr]) . "'><b>BELEG ERSTELLT</b></a><br>";
+                            $link_zettel2beleg .= "<a href='" . route('web::rechnungen.show', ['id' => $in_belegnr]) . "'><b>BELEG ERSTELLT</b></a><br>";
                         }
 
                         $anzahl_pos_in_zettel = $this->anzahl_pos_zettel($zettel_id);

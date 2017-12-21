@@ -69,10 +69,7 @@
         @MenuMutation('updateSubmenuOpen') updateSubmenuOpen;
 
         get hasSubmenu() {
-            if (this.$slots.submenu) {
-                return this.$slots.submenu.length > 0;
-            }
-            return false;
+            return this.$slots.submenu && this.$slots.submenu.length > 0;
         }
 
         get mainmenuOpen(): boolean {

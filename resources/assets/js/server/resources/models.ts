@@ -40,6 +40,12 @@ export abstract class Model {
                 return AccountingEntity.applyPrototype(model);
             case ConstructionSite.type:
                 return ConstructionSite.applyPrototype(model);
+            case InvoiceItem.type:
+                return InvoiceItem.applyPrototype(model);
+            case BankAccountStandardChart.type:
+                return BankAccountStandardChart.applyPrototype(model);
+            case BookingAccount.type:
+                return BookingAccount.applyPrototype(model);
         }
     }
 }
@@ -918,5 +924,303 @@ export class ConstructionSite extends Model {
             Partner.applyPrototype(construction_site.partner);
         }
         return construction_site;
+    }
+}
+
+export class Invoice extends Model {
+    static type = 'invoice';
+    BELEG_NR: number = -1;
+    RECHNUNGSNUMMER: string;
+    AUSTELLER_AUSGANGS_RNR: number;
+    EMPFAENGER_EINGANGS_RNR: number;
+    RECHNUNGSTYP: string;
+    RECHNUNGSDATUM: string;
+    EINGANGSDATUM: string;
+    FAELLIG_AM: string;
+    BEZAHLT_AM: string;
+    NETTO: number;
+    BRUTTO: number;
+    SKONTOBETRAG: number;
+    KURZBESCHREIBUNG: string;
+    from: Partner;
+    to: Partner;
+    bank_account: Bankkonto;
+    lines: Array<InvoiceLine>;
+
+    static applyPrototype(invoice: Invoice) {
+        Object.setPrototypeOf(invoice, Invoice.prototype);
+        if (invoice.from) {
+            Partner.applyPrototype(invoice.from);
+        }
+        if (invoice.to) {
+            Partner.applyPrototype(invoice.to);
+        }
+        if (invoice.bank_account) {
+            Bankkonto.applyPrototype(invoice.bank_account);
+        }
+        if (invoice.lines) {
+            invoice.lines.forEach((v) => {
+                InvoiceLine.applyPrototype(v);
+            })
+        }
+        return invoice;
+    }
+
+    getID() {
+        return this.BELEG_NR;
+    }
+
+    toString(): string {
+        return this.RECHNUNGSNUMMER;
+    }
+
+    getEntityIcon(): string {
+        return 'mdi-receipt';
+
+    }
+
+    getDetailUrl() {
+        return base_url + '/invoices/' + this.BELEG_NR;
+    }
+}
+
+export class InvoiceLine extends Model {
+    static type = 'invoice_line';
+    RECHNUNGEN_POS_ID: number = -1;
+    POSITION: number;
+    BELEG_NR: number;
+    U_BELEG_NR: number;
+    ART_LIEFERANT: number;
+    ARTIKEL_NR: string;
+    MENGE: number;
+    PREIS: string;
+    MWST_SATZ: number;
+    RABATT_SATZ: number;
+    SKONTO: number;
+    GESAMT_NETTO: number;
+    EINHEIT: string;
+    BEZEICHNUNG: string;
+    assignments: Array<InvoiceLineAssignment>;
+
+    static applyPrototype(invoiceLine: InvoiceLine) {
+        Object.setPrototypeOf(invoiceLine, InvoiceLine.prototype);
+        if (invoiceLine.assignments) {
+            invoiceLine.assignments.forEach(v => {
+                InvoiceLineAssignment.applyPrototype(v);
+            });
+        }
+        return invoiceLine;
+    }
+
+    getID() {
+        return this.RECHNUNGEN_POS_ID;
+    }
+
+    toString(): string {
+        return this.GESAMT_NETTO + ' €';
+    }
+
+    getEntityIcon(): string {
+        return 'mdi-receipt';
+
+    }
+
+    fill(invoice: number, net: number, amount: number, item: InvoiceItem) {
+        this.BELEG_NR = invoice;
+        this.ART_LIEFERANT = Number(item.ART_LIEFERANT);
+        this.ARTIKEL_NR = item.ARTIKEL_NR;
+        this.PREIS = item.LISTENPREIS;
+        this.MENGE = amount;
+        this.GESAMT_NETTO = net;
+        this.MWST_SATZ = item.MWST_SATZ;
+        this.SKONTO = item.SKONTO;
+        this.RABATT_SATZ = item.RABATT_SATZ;
+    }
+
+    create() {
+        return axios.post(base_url + '/api/v1/invoice-lines', this);
+    }
+
+    save() {
+        return axios.put(base_url + '/api/v1/invoice-lines/' + this.RECHNUNGEN_POS_ID, this);
+    }
+
+    delete() {
+        return axios.delete(base_url + '/api/v1/invoice-lines/' + this.RECHNUNGEN_POS_ID);
+    }
+
+    getDetailUrl() {
+        return base_url;
+    }
+}
+
+export class InvoiceLineAssignment extends Model {
+    static type = 'invoice_item_assignment';
+    KONTIERUNG_ID: number = -1;
+    POSITION: number;
+    BELEG_NR: number;
+    MENGE: number;
+    ART_LIEFERANT: number;
+    ARTIKEL_NR: string;
+    EINZEL_PREIS: number;
+    MWST_SATZ: number;
+    RABATT_SATZ: number;
+    SKONTO: number;
+    GESAMT_SUMME: number;
+    KONTENRAHMEN_KONTO: string;
+    WEITER_VERWENDEN: string = '0';
+    VERWENDUNGS_JAHR: string;
+    KONTIERUNGS_DATUM: string;
+    KOSTENTRAEGER_TYP: string;
+    KOSTENTRAEGER_ID: number;
+    cost_unit: any;
+
+    static applyPrototype(invoiceLineAssignment: InvoiceLineAssignment) {
+        Object.setPrototypeOf(invoiceLineAssignment, InvoiceLineAssignment.prototype);
+        if (invoiceLineAssignment.cost_unit) {
+            Model.applyPrototype(invoiceLineAssignment.cost_unit);
+        }
+        return invoiceLineAssignment;
+    }
+
+    create() {
+        return axios.post(base_url + '/api/v1/invoice-line-assignments', this);
+    }
+
+    save() {
+        return axios.put(base_url + '/api/v1/invoice-line-assignments/' + this.getID(), this);
+    }
+
+    delete() {
+        return axios.delete(base_url + '/api/v1/invoice-line-assignments/' + this.getID());
+    }
+
+    getID() {
+        return this.KONTIERUNG_ID;
+    }
+
+    toString(): string {
+        return this.GESAMT_SUMME + ' €';
+    }
+
+    fill(filler: InvoiceLine) {
+        this.POSITION = filler.POSITION;
+        this.BELEG_NR = filler.BELEG_NR;
+        this.MENGE = filler.MENGE;
+        this.MWST_SATZ = filler.MWST_SATZ;
+        this.SKONTO = filler.SKONTO;
+        this.RABATT_SATZ = filler.RABATT_SATZ;
+        this.EINZEL_PREIS = Number(filler.PREIS);
+    }
+
+    getEntityIcon(): string {
+        return 'mdi-receipt';
+
+    }
+
+    getDetailUrl() {
+        return base_url;
+    }
+}
+
+export class InvoiceItem extends Model {
+    static type = 'invoice_item';
+    KATALOG_ID: number = -1;
+    ART_LIEFERANT: string;
+    ARTIKEL_NR: string;
+    BEZEICHNUNG: string;
+    LISTENPREIS: string;
+    MWST_SATZ: number;
+    RABATT_SATZ: number;
+    SKONTO: number;
+    EINHEIT: string;
+    supplier: Partner;
+
+    static applyPrototype(invoiceItem: InvoiceItem) {
+        Object.setPrototypeOf(invoiceItem, InvoiceItem.prototype);
+        if (invoiceItem.supplier) {
+            Model.applyPrototype(invoiceItem.supplier);
+        }
+        return invoiceItem;
+    }
+
+    getID() {
+        return this.KATALOG_ID;
+    }
+
+    toString(): string {
+        return this.BEZEICHNUNG;
+    }
+
+    getEntityIcon(): string {
+        return 'mdi-cart-outline';
+
+    }
+
+    getDetailUrl() {
+        return base_url + '/katalog?option=preisentwicklung&lieferant=' + this.ART_LIEFERANT + '&artikel_nr=' + this.ARTIKEL_NR;
+    }
+}
+
+export class BankAccountStandardChart extends Model {
+    static type = 'bank_account_standard_chart';
+    KONTENRAHMEN_ID: number = -1;
+    NAME: string = '';
+    booking_accounts: Array<BookingAccount> = [];
+
+    static applyPrototype(chart: BankAccountStandardChart) {
+        Object.setPrototypeOf(chart, BankAccountStandardChart.prototype);
+        if (chart.booking_accounts) {
+            chart.booking_accounts.forEach(v => {
+                BookingAccount.applyPrototype(v);
+            });
+        }
+        return chart;
+    }
+
+    getID() {
+        return this.KONTENRAHMEN_ID;
+    }
+
+    toString(): string {
+        return this.NAME;
+    }
+
+    getEntityIcon(): string {
+        return 'mdi-table';
+
+    }
+
+    getDetailUrl() {
+        return base_url;
+    }
+}
+
+export class BookingAccount extends Model {
+    static type = 'booking_account';
+    KONTENRAHMEN_KONTO_ID: number = -1;
+    KONTO: string = '';
+    BEZEICHNUNG: string = '';
+
+    static applyPrototype(account: BookingAccount) {
+        Object.setPrototypeOf(account, BookingAccount.prototype);
+        return account;
+    }
+
+    getID() {
+        return this.KONTENRAHMEN_KONTO_ID;
+    }
+
+    toString(): string {
+        return this.BEZEICHNUNG;
+    }
+
+    getEntityIcon(): string {
+        return 'mdi-numeric';
+
+    }
+
+    getDetailUrl() {
+        return base_url;
     }
 }

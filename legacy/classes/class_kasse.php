@@ -341,7 +341,7 @@ class kasse extends rechnung
                 $kostentraeger_typ = $my_array [$a] ['KOSTENTRAEGER_TYP'];
                 $kostentraeger_id = $my_array [$a] ['KOSTENTRAEGER_ID'];
                 if ($kostentraeger_typ == 'Rechnung') {
-                    $info_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $kostentraeger_id]) . "'>$kostentraeger_typ</a>";
+                    $info_link = "<a href='" . route('web::rechnungen.show', ['id' => $kostentraeger_id]) . "'>$kostentraeger_typ</a>";
                 } else {
                     $info_link = $this->kostentraeger_beschreibung($kostentraeger_typ, $kostentraeger_id);
                 }
@@ -443,7 +443,7 @@ class kasse extends rechnung
                 $kostentraeger_typ = $my_array [$a] ['KOSTENTRAEGER_TYP'];
                 $kostentraeger_id = $my_array [$a] ['KOSTENTRAEGER_ID'];
                 if ($kostentraeger_typ == 'Rechnung') {
-                    $info_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $kostentraeger_id]) . "'>$kostentraeger_typ</a>";
+                    $info_link = "<a href='" . route('web::rechnungen.show', ['id' => $kostentraeger_id]) . "'>$kostentraeger_typ</a>";
                 } else {
                     $info_link = $this->kostentraeger_beschreibung($kostentraeger_typ, $kostentraeger_id);
                 }
@@ -542,7 +542,7 @@ class kasse extends rechnung
                 $kostentraeger_typ = $my_array [$a] ['KOSTENTRAEGER_TYP'];
                 $kostentraeger_id = $my_array [$a] ['KOSTENTRAEGER_ID'];
                 if ($kostentraeger_typ == 'Rechnung') {
-                    $info_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $kostentraeger_id]) . "'>$kostentraeger_typ</a>";
+                    $info_link = "<a href='" . route('web::rechnungen.show', ['id' => $kostentraeger_id]) . "'>$kostentraeger_typ</a>";
                 } else {
                     $info_link = $this->kostentraeger_beschreibung($kostentraeger_typ, $kostentraeger_id);
                 }

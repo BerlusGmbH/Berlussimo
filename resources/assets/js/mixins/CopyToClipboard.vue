@@ -18,7 +18,7 @@
             text.select();
             document.execCommand('copy');
             document.body.removeChild(text);
-            this.updateMessage(type + ' in die Zwichenablage kopiert.');
+            this.updateMessage(type + ' in die Zwischenablage kopiert.');
         }
     }
 </script>

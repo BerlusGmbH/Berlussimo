@@ -118,6 +118,7 @@
                 }).catch(error => {
                     this.$emit('input', true);
                     this.updateMessage('Fehler beim Ändern des Auftrags. Code: ' + error.response.status + ' Message: ' + error.response.statusText);
+                    this.requestRefresh();
                 });
             }
 

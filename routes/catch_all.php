@@ -20,4 +20,8 @@ Route::group(['namespace' => 'Legacy', 'as' => 'web::'], function () {
         Route::get('/', 'IndexController@request')->name('.index');
         Route::get('/{id}', 'IndexController@request')->name('.show');
     });
+    Route::group(['prefix' => 'invoices', 'as' => 'rechnungen'], function () {
+        Route::get('/', 'IndexController@request')->name('.index');
+        Route::get('/{id}', 'IndexController@request')->name('.show');
+    });
 });

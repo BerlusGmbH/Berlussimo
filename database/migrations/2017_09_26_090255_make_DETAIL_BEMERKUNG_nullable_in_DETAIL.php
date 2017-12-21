@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class MakeDETAILBEMERKUNGNullableInDETAIL extends Migration
@@ -9,11 +10,19 @@ class MakeDETAILBEMERKUNGNullableInDETAIL extends Migration
      * Run the migrations.
      *
      * @return void
+     * @throws \Doctrine\DBAL\DBALException
      */
     public function up()
     {
         if (Schema::hasTable('DETAIL')) {
-            DB::statement('ALTER TABLE `DETAIL` CHANGE COLUMN `DETAIL_BEMERKUNG` `DETAIL_BEMERKUNG` VARCHAR(400) NULL;');
+            Schema::getConnection()
+                ->getDoctrineSchemaManager()
+                ->getDatabasePlatform()
+                ->registerDoctrineTypeMapping('enum', 'string');
+
+            Schema::table('DETAIL', function (Blueprint $table) {
+                $table->string('DETAIL_BEMERKUNG', 400)->nullable()->default(null)->change();
+            });
         }
     }
 
@@ -21,11 +30,19 @@ class MakeDETAILBEMERKUNGNullableInDETAIL extends Migration
      * Reverse the migrations.
      *
      * @return void
+     * @throws \Doctrine\DBAL\DBALException
      */
     public function down()
     {
         if (Schema::hasTable('DETAIL')) {
-            DB::statement('ALTER TABLE `DETAIL` CHANGE COLUMN `DETAIL_BEMERKUNG` `DETAIL_BEMERKUNG` VARCHAR(400) NOT NULL;');
+            Schema::getConnection()
+                ->getDoctrineSchemaManager()
+                ->getDatabasePlatform()
+                ->registerDoctrineTypeMapping('enum', 'string');
+
+            Schema::table('DETAIL', function (Blueprint $table) {
+                $table->string('DETAIL_BEMERKUNG', 400)->nullable(false)->default('')->change();
+            });
         }
     }
 }

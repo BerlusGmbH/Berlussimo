@@ -4,7 +4,7 @@
             @input="$emit('input', $event)"
             @click.native.stop
             :class="{'chip--select-multi': multiple}"
-            :key="'person-' + entity.id"
+            :key="'bank_account-' + entity.KONTO_ID"
     >
         <v-avatar class="grey darken-1">
             <v-icon>{{entity.getEntityIcon()}}</v-icon>
@@ -19,7 +19,7 @@
     import {Prop} from "vue-property-decorator";
 
     @Component
-    export default class BankAccountTile extends Vue {
+    export default class BankAccountChip extends Vue {
         @Prop({type: Boolean, default: false})
         multiple;
 

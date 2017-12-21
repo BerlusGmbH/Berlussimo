@@ -381,7 +381,7 @@ class rechnung
 
                 $faellig_am = date_mysql2german($my_array [$a] ['FAELLIG_AM']);
 
-                $beleg_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $belegnr]) . "'>Ansehen</a>";
+                $beleg_link = "<a href='" . route('web::rechnungen.show', ['id' => $belegnr]) . "'>Ansehen</a>";
                 $pdf_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'anzeigen_pdf', 'belegnr' => $belegnr]) . "'><img src=\"images/pdf_light.png\"></a>";
                 $pdf_link1 = "<a href='" . route('web::rechnungen::legacy', ['option' => 'anzeigen_pdf', 'belegnr' => $belegnr, 'no_logo']) . "'><img src=\"images/pdf_dark.png\"></a>";
 
@@ -422,7 +422,7 @@ GROUP BY RECHNUNGEN.BELEG_NR ORDER BY BELEG_NR DESC $navi->limit");
                 $this->rechnung_grunddaten_holen($belegnr);
 
                 $faellig_am = date_mysql2german($my_array [$a] ['FAELLIG_AM']);
-                $beleg_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $my_array [$a] ['BELEG_NR']]) . "'>" . $my_array [$a] ['BELEG_NR'] . "</>\n";
+                $beleg_link = "<a href='" . route('web::rechnungen.show', ['id' => $my_array [$a] ['BELEG_NR']]) . "'>" . $my_array [$a] ['BELEG_NR'] . "</>\n";
                 $netto = nummer_punkt2komma($my_array [$a] ['NETTO']);
                 $brutto = nummer_punkt2komma($my_array [$a] ['BRUTTO']);
                 $skonto_betrag = nummer_punkt2komma($my_array [$a] ['SKONTOBETRAG']);
@@ -457,7 +457,7 @@ GROUP BY RECHNUNGEN.BELEG_NR ORDER BY BELEG_NR DESC $navi->limit");
                 $e_datum = date_mysql2german($my_array [$a] ['EINGANGSDATUM']);
                 $r_datum = date_mysql2german($my_array [$a] ['RECHNUNGSDATUM']);
                 $faellig_am = date_mysql2german($my_array [$a] ['FAELLIG_AM']);
-                $beleg_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $my_array [$a] ['BELEG_NR']]) . "'>" . $my_array [$a] ['BELEG_NR'] . "</>\n";
+                $beleg_link = "<a href='" . route('web::rechnungen.show', ['id' => $my_array [$a] ['BELEG_NR']]) . "'>" . $my_array [$a] ['BELEG_NR'] . "</>\n";
                 $netto = nummer_punkt2komma($my_array [$a] ['NETTO']);
                 $brutto = nummer_punkt2komma($my_array [$a] ['BRUTTO']);
                 $skonto_betrag = nummer_punkt2komma($my_array [$a] ['SKONTOBETRAG']);
@@ -818,7 +818,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             $mwst_satz_in_prozent = nummer_punkt2komma($this->mwst_satz_der_position($belegnr, $position));
             $kontierung_dat = $positionen [$a] ['KONTIERUNG_DAT'];
             $f->hidden_feld("positionen[$a][kontierung_dat]", "$kontierung_dat");
-            $link_rechnung_ansehen = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $belegnr]) . "'>$this->rechnungsnummer</a>";
+            $link_rechnung_ansehen = "<a href='" . route('web::rechnungen.show', ['id' => $belegnr]) . "'>$this->rechnungsnummer</a>";
 
             echo "<tr id=\"tr_zeile.$start\"><td>";
 
@@ -1685,7 +1685,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
                     $r2 = new rechnungen ();
                     $u_rechnungsnummer = $r2->get_rechnungsnummer($u_beleg_nr);
 
-                    $u_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $u_beleg_nr]) . "'>$u_rechnungsnummer</a>";
+                    $u_link = "<a href='" . route('web::rechnungen.show', ['id' => $u_beleg_nr]) . "'>$u_rechnungsnummer</a>";
                     $ae_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'position_aendern', 'belegnr' => $belegnr, 'pos' => $position]) . "'>Ändern</a>";
                     $f_link = $this->nach_link($belegnr, $artikel_nr, $art_lieferant);
                     echo "<tr><td valign=top id=\"aus\">$ae_link $u_link</td><td valign=top id=\"aus\">$f_link</td><td valign=top>$position.</td><td valign=top>$artikel_nr&nbsp;</td><td valign=top>$bezeichnung</td>";
@@ -1871,7 +1871,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
                 $rr = new rechnungen ();
                 $rr->rechnung_grunddaten_holen($beleg_nr);
                 $rr->rechnungs_empfaenger_name = substr($rr->rechnungs_empfaenger_name, 0, 30);
-                $link .= "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'><b>$rr->rechnungstyp" . ":" . "$rr->rechnungsnummer</b></a><br>$rr->rechnungs_empfaenger_name<br>$menge = $g_netto €<hr>";
+                $link .= "<a href='" . route('web::rechnungen.show', ['id' => $beleg_nr]) . "'><b>$rr->rechnungstyp" . ":" . "$rr->rechnungsnummer</b></a><br>$rr->rechnungs_empfaenger_name<br>$menge = $g_netto €<hr>";
             }
             return $link;
         }
@@ -2551,7 +2551,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             } // end for
             /* Rechnung als vollständig markieren */
             $this->rechnung_als_vollstaendig($belegnr);
-            weiterleiten_in_sec(route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $belegnr], false), 2);
+            weiterleiten_in_sec(route('web::rechnungen.show', ['id' => $belegnr], false), 2);
         } // end else kein konto
     }
 
@@ -2661,7 +2661,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         /* Rechnung als vollständig markieren */
         $this->rechnung_als_vollstaendig($belegnr);
         $this->rechnung_als_zugewiesen($belegnr);
-        weiterleiten_in_sec(route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $belegnr], false), 2);
+        weiterleiten_in_sec(route('web::rechnungen.show', ['id' => $belegnr], false), 2);
     }
 
     // function rechnung
@@ -3008,7 +3008,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
             $r_datum = date_mysql2german($my_array [$a] ['RECHNUNGSDATUM']);
             $faellig_am = date_mysql2german($my_array [$a] ['FAELLIG_AM']);
-            $beleg_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $my_array [$a] ['BELEG_NR']]) . "'>Ansehen</a>\n";
+            $beleg_link = "<a href='" . route('web::rechnungen.show', ['id' => $my_array [$a] ['BELEG_NR']]) . "'>Ansehen</a>\n";
             $netto = nummer_punkt2komma($my_array [$a] ['NETTO']);
             $brutto = nummer_punkt2komma($my_array [$a] ['BRUTTO']);
             $rechnungstyp = $my_array [$a] ['RECHNUNGSTYP'];
@@ -3124,7 +3124,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
                 $belegnr = $arr [$a] ['BELEG_NR'];
 
                 if (!isset ($fileName)) {
-                    $beleg_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $belegnr]) . "'>Ansehen</a>";
+                    $beleg_link = "<a href='" . route('web::rechnungen.show', ['id' => $belegnr]) . "'>Ansehen</a>";
                     $pdf_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'anzeigen_pdf', 'belegnr' => $belegnr]) . "'><img src=\"images/pdf_light.png\"></a>";
                     $pdf_link1 = "<a href='" . route('web::rechnungen::legacy', ['option' => 'anzeigen_pdf', 'belegnr' => $belegnr, 'no_logo']) . "'><img src=\"images/pdf_dark.png\"></a>";
                 }
@@ -3313,7 +3313,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
                 $belegnr = $arr [$a] ['BELEG_NR'];
                 if (!isset ($fileName)) {
-                    $beleg_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $belegnr]) . "'>Ansehen</a>";
+                    $beleg_link = "<a href='" . route('web::rechnungen.show', ['id' => $belegnr]) . "'>Ansehen</a>";
                     $pdf_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'anzeigen_pdf', 'belegnr' => $belegnr]) . "'><img src=\"images/pdf_light.png\"></a>";
                     $pdf_link1 = "<a href='" . route('web::rechnungen::legacy', ['option' => 'anzeigen_pdf', 'belegnr' => $belegnr, 'no_logo']) . "'><img src=\"images/pdf_dark.png\"></a>";
                 }

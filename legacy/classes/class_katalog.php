@@ -228,7 +228,7 @@ AND RECHNUNGEN_POSITIONEN.BELEG_NR = RECHNUNGEN.BELEG_NR");
                 $skontiert = nummer_punkt2komma($row ['SKONTIERT']);
                 $mwst_satz = nummer_punkt2komma($row ['MWST_SATZ']);
 
-                $r_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>$r_nr</a>";
+                $r_link = "<a href='" . route('web::rechnungen.show', ['id' => $beleg_nr]) . "'>$r_nr</a>";
                 echo "<tr><td>$p->partner_name</td><td>$art_nr</td><td>$r_link</td><td>$position</td><td>$artikel_bez</td><td>$menge</td><td>$kontierte_menge</td><td>$rest_menge_pos</td><td>$preis</td><td>$mwst_satz</td><td>$brutto</td><td>$skonto</td><td>$skontiert</td></tr>";
             }
             $g_rest = nummer_punkt2komma($g_menge - $g_kontiert);

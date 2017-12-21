@@ -30,9 +30,9 @@
             <app-legacy-loader :is-legacy="true"></app-legacy-loader>
         @endif
         <app-toolbar></app-toolbar>
-        <app-menu>
+        <app-menu v-cloak>
             <div slot="mainmenu">@include('shared.menus.main')</div>
-            <div slot="submenu">
+            <div v-cloak slot="submenu">
                 <?php include(base_path($submenu)); ?>
             </div>
         </app-menu>
@@ -56,7 +56,7 @@
 
 <div id="bottom">
     <v-app dark>
-        <app-footer dark></app-footer>
+        <app-footer></app-footer>
     </v-app>
 </div>
 

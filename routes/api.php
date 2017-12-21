@@ -66,5 +66,14 @@ Route::group(['prefix' => 'v1', 'as' => 'api.v1.', 'namespace' => 'Api\v1', 'mid
         Route::get('/objects/{object}/tenants/emails', 'ObjectController@tenantsEmails')->name('objects.tenants.emails');
         Route::get('/objects/{object}/owners/emails', 'ObjectController@ownersEmails')->name('objects.owners.emails');
         Route::resource('objects', 'ObjectController', ['only' => ['update', 'store', 'show', 'index']]);
+
+        Route::get('/invoices/units', 'InvoiceController@units')->name('invoices.units');
+        Route::resource('invoices', 'InvoiceController', ['only' => ['show']]);
+
+        Route::match(['post', 'put', 'patch'], '/invoice-lines/update-batch', 'InvoiceLineController@updateBatch')->name('invoices.lines.batch');
+        Route::resource('invoice-lines', 'InvoiceLineController', ['only' => ['store', 'update', 'destroy']]);
+
+        Route::match(['post', 'put', 'patch'], '/invoice-line-assignments/update-batch', 'InvoiceLineAssignmentController@updateBatch')->name('invoices.assignments.batch');
+        Route::resource('invoice-line-assignments', 'InvoiceLineAssignmentController', ['only' => ['store', 'update', 'destroy']]);
     });
 });
