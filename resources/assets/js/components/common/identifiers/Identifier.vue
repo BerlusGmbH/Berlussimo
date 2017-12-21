@@ -25,12 +25,14 @@
     import assignmentIdentifier from "./AssignmentIdentifier.vue";
     import constructionSiteIdentifier from "./ConstructionSiteIdentifier.vue";
     import accountingEntityIdentifier from "./AccountingEntityIdentifier.vue";
+    import invoiceIdentifier from "./InvoiceIdentifier.vue";
+    import bankAccountIdentifier from "./BankAccountIdentifier.vue";
     import {Prop} from "vue-property-decorator";
     import {
         AccountingEntity,
-        Assignment, ConstructionSite,
+        Assignment, Bankkonto, ConstructionSite,
         Detail, Einheit,
-        Haus, Job, JobTitle,
+        Haus, Invoice, Job, JobTitle,
         Objekt,
         Partner, Person,
         PurchaseContract,
@@ -52,6 +54,8 @@
             [Assignment.type]: assignmentIdentifier,
             [AccountingEntity.type]: accountingEntityIdentifier,
             [ConstructionSite.type]: constructionSiteIdentifier,
+            [Invoice.type]: invoiceIdentifier,
+            [Bankkonto.type]: bankAccountIdentifier
         }
     })
     export default class Identifier extends Vue {

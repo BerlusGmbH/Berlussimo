@@ -11,6 +11,7 @@ import personStore from "./store/modules/person/store";
 import unitStore from "./store/modules/unit/store";
 import houseStore from "./store/modules/house/store";
 import objectStore from "./store/modules/object/store";
+import invoiceStore from "./store/modules/invoice/store";
 
 import Vue from "vue";
 import Vuex from "vuex";
@@ -24,7 +25,8 @@ const store = new Vuex.Store({
                 person: personStore,
                 unit: unitStore,
                 house: houseStore,
-                object: objectStore
+                object: objectStore,
+                invoice: invoiceStore
             }
         },
         shared: {

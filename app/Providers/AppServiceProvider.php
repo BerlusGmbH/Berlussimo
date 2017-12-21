@@ -5,6 +5,8 @@ namespace App\Providers;
 use App\Models\BaustellenExtern;
 use App\Models\Einheiten;
 use App\Models\Haeuser;
+use App\Models\Invoice;
+use App\Models\InvoiceLine;
 use App\Models\Kaufvertraege;
 use App\Models\Lager;
 use App\Models\Mietvertraege;
@@ -56,6 +58,15 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(191);
 
         DatabaseNotification::observe(DatabaseNotificationObserver::class);
+        InvoiceLine::created(function ($invoiceLine) {
+            Invoice::updateSums($invoiceLine);
+        });
+        InvoiceLine::updated(function ($invoiceLine) {
+            Invoice::updateSums($invoiceLine);
+        });
+        InvoiceLine::deleted(function ($invoiceLine) {
+            Invoice::updateSums($invoiceLine);
+        });
     }
 
     /**

@@ -17,6 +17,8 @@ import ObjectDetailView from "./components/modules/object/DetailView.vue";
 import ObjectDetailViewBreadcrumbs from "./components/modules/object/DetailViewBreadcrumbs.vue";
 import ObjectListView from "./components/modules/object/ListView.vue";
 import ObjectListViewBreadcrumbs from "./components/modules/object/ListViewBreadcrumbs.vue";
+import InvoiceDetailView from "./components/modules/invoice/DetailView.vue";
+import InvoiceDetailViewBreadcrumbs from "./components/modules/invoice/DetailViewBreadcrumbs.vue";
 import DashboardView from "./components/modules/dashboard/DetailView.vue";
 import DashboardBreadcrumbs from "./components/modules/dashboard/DetailViewBreadcrumbs.vue";
 import MainMenu from "./components/shared/main/Menu.vue";
@@ -139,6 +141,19 @@ const routes: RouteConfig[] = [
             mainmenu: MainMenu
         },
         name: 'web.objects.index'
+    },
+    {
+        path: '/invoices/:id',
+        components: {
+            default: InvoiceDetailView,
+            breadcrumbs: InvoiceDetailViewBreadcrumbs,
+            mainmenu: MainMenu
+        },
+        name: 'web.invoices.show',
+        props: {
+            default: true,
+            breadcrumbs: true
+        }
     }
 ];
 

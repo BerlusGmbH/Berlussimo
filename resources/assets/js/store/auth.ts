@@ -1,5 +1,5 @@
-import {Model} from "../server/resources/models";
-import {router} from "../app";
+import {Model} from "../server/resources";
+import router from "../router";
 import axios from "../libraries/axios";
 
 export default {

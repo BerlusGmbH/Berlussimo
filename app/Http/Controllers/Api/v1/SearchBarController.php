@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
+use App\Models\BankAccountStandardChart;
 use App\Models\Bankkonten;
 use App\Models\BaustellenExtern;
+use App\Models\BookingAccount;
 use App\Models\Einheiten;
 use App\Models\Haeuser;
+use App\Models\InvoiceItem;
 use App\Models\Kaufvertraege;
 use App\Models\Mietvertraege;
 use App\Models\Objekte;
@@ -30,7 +33,10 @@ class SearchBarController extends Controller
                 'mietvertrag',
                 'kaufvertrag',
                 'baustelle',
-                'wirtschaftseinheit'
+                'wirtschaftseinheit',
+                'artikel',
+                'kontenrahmen',
+                'buchungskonto'
             ];
             $response = [
                 'objekt' => [],
@@ -42,7 +48,10 @@ class SearchBarController extends Controller
                 'mietvertrag' => [],
                 'kaufvertrag' => [],
                 'baustelle' => [],
-                'wirtschaftseinheit' => []
+                'wirtschaftseinheit' => [],
+                'artikel' => [],
+                'kontenrahmen' => [],
+                'buchungskonto' => []
             ];
         } else {
             $response = [];
@@ -58,7 +67,8 @@ class SearchBarController extends Controller
         $tokens = explode(' ', request()->input('q'));
 
         foreach ($classes as $class) {
-            switch ($class) {
+            $parts = explode(':', $class);
+            switch ($parts[0]) {
                 case 'objekt':
                     $response['objekt'] = Objekte::defaultOrder();
                     break;
@@ -89,11 +99,24 @@ class SearchBarController extends Controller
                 case 'wirtschaftseinheit':
                     $response['wirtschaftseinheit'] = Wirtschaftseinheiten::defaultOrder();
                     break;
+                case 'artikel':
+                    $response['artikel'] = InvoiceItem::defaultOrder();
+                    $response['artikel']->with('supplier');
+                    if (isset($parts[1])) {
+                        $response['artikel']->where('ART_LIEFERANT', $parts[1]);
+                    }
+                    break;
+                case 'kontenrahmen':
+                    $response['kontenrahmen'] = BankAccountStandardChart::defaultOrder();
+                    break;
+                case 'buchungskonto':
+                    $response['buchungskonto'] = BookingAccount::defaultOrder();
+                    if (isset($parts[1])) {
+                        $response['buchungskonto']->where('KONTENRAHMEN_ID', $parts[1]);
+                    }
+                    break;
             }
-        }
-
-        foreach ($classes as $class) {
-            $response[$class] = $response[$class]->search($tokens)->get();
+            $response[$parts[0]] = $response[$parts[0]]->search($tokens)->get();
         }
 
         return Response::json($response);

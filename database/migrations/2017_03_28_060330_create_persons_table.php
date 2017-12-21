@@ -11,6 +11,7 @@ class CreatePersonsTable extends Migration
      * Run the migrations.
      *
      * @return void
+     * @throws Exception|Throwable
      */
     public function up()
     {

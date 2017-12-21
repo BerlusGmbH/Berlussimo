@@ -19,6 +19,7 @@
                 :dark="dark"
                 :light="light"
                 :debounce-search="400"
+                :clearable="clearable"
     >
         <template slot="selection" slot-scope="data">
             <app-chip @input="data.parent.selectItem(data.item); $emit('chip-close', $event)"
@@ -39,7 +40,7 @@
     import $ from "jquery";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import {Model} from "../../server/resources/models";
+    import {Model} from "../../server/resources";
     import VSelect from "./VSelect.vue"
     import {CancelTokenSource} from "axios";
     import axios from "../../libraries/axios";
@@ -90,6 +91,9 @@
 
         @Prop({type: [Boolean, String]})
         light;
+
+        @Prop({type: [Boolean, String]})
+        clearable;
 
         @Watch('query')
         onQueryChanged(query) {
@@ -197,6 +201,21 @@
                             case 'wirtschaftseinheit':
                                 $.each(val, function (accouting_entity, entity) {
                                     data[key][accouting_entity] = Model.applyPrototype(entity);
+                                });
+                                break;
+                            case 'artikel':
+                                $.each(val, function (invoice_item_entity, entity) {
+                                    data[key][invoice_item_entity] = Model.applyPrototype(entity);
+                                });
+                                break;
+                            case 'kontenrahmen':
+                                $.each(val, function (bank_account_standard_chart_entity, entity) {
+                                    data[key][bank_account_standard_chart_entity] = Model.applyPrototype(entity);
+                                });
+                                break;
+                            case 'buchungskonto':
+                                $.each(val, function (booking_account_entity, entity) {
+                                    data[key][booking_account_entity] = Model.applyPrototype(entity);
                                 });
                                 break;
                         }

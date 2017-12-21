@@ -17,3 +17,7 @@
 .fade-enter, .fade-leave-to {
   opacity: 0;
 }
+
+[v-cloak] {
+  display: none;
+}

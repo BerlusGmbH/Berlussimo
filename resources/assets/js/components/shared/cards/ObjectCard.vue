@@ -28,9 +28,9 @@
                         </router-link>
                         m²
                     </v-flex>
-                    <v-flex xs12 sm6 v-if="value.eigentuemer">
+                    <v-flex xs12 v-if="value.eigentuemer">
                         <v-icon class="detail">mdi-key</v-icon>
-                        <app-identifier :value="value.eigentuemer"></app-identifier>
+                        <app-identifier style="width: calc(100% - 18px)" :value="value.eigentuemer"></app-identifier>
                     </v-flex>
                 </v-layout>
             </v-container>
