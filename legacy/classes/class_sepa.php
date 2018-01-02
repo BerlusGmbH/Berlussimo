@@ -1077,13 +1077,30 @@ class sepa
         $datum_heute = date("Y-m-d");
         if ($nutzungsart == 'Alle') {
             $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' AND M_EDATUM>='$datum_heute' AND M_ADATUM<='$datum_heute' ORDER BY NAME ASC");
-        } else {
+        } elseif (strtolower($nutzungsart) == 'mietzahlung') {
             $objekt_id = session()->get('objekt_id');
             $result = \App\Models\SEPAMandate::whereHas('debtorRentalContract.einheit.haus.objekt', function ($query) use ($objekt_id) {
                 $query->where('OBJEKT_ID', $objekt_id);
             })->where('NUTZUNGSART', $nutzungsart)
                 ->where('M_EDATUM', '>=', $datum_heute)
                 ->where('M_ADATUM', '<=', $datum_heute)
+                ->defaultOrder()
+                ->get();
+        } elseif (strtolower($nutzungsart) == 'hausgeld') {
+            $objekt_id = session()->get('objekt_id');
+            $result = \App\Models\SEPAMandate::whereHas('debtorPurchaseContract.einheit.haus.objekt', function ($query) use ($objekt_id) {
+                $query->where('OBJEKT_ID', $objekt_id);
+            })->where('NUTZUNGSART', $nutzungsart)
+                ->where('M_EDATUM', '>=', $datum_heute)
+                ->where('M_ADATUM', '<=', $datum_heute)
+                ->defaultOrder()
+                ->get();
+        } else {
+            $gk_id = session()->get('geldkonto_id');
+            $result = \App\Models\SEPAMandate::where('NUTZUNGSART', $nutzungsart)
+                ->where('M_EDATUM', '>=', $datum_heute)
+                ->where('M_ADATUM', '<=', $datum_heute)
+                ->where('GLAEUBIGER_GK_ID', $gk_id)
                 ->defaultOrder()
                 ->get();
         }

@@ -30,4 +30,9 @@ class SEPAMandate extends Model
     {
         return BelongsToMorph::build($this, Mietvertraege::class, 'debtorRentalContract', 'M_KOS_TYP', 'M_KOS_ID');
     }
+
+    public function debtorPurchaseContract()
+    {
+        return BelongsToMorph::build($this, Kaufvertraege::class, 'debtorPurchaseContract', 'M_KOS_TYP', 'M_KOS_ID');
+    }
 }
