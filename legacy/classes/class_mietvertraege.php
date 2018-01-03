@@ -1428,9 +1428,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             unset ($e);
             return $my_array;
         } else {
-            throw new \App\Exceptions\MessageException(
-                new \App\Messages\InfoMessage("Keine Auszüge im $monat/$jahr")
-            );
+            return [];
         }
     }
 
