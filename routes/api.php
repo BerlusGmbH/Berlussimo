@@ -13,12 +13,14 @@
 
 Route::group(['prefix' => 'v1', 'as' => 'api.v1.', 'namespace' => 'Api\v1', 'middleware' => ['auth:api']], function () {
     Route::get('/search', 'SearchBarController@search')->name('search');
+
     Route::get('/call/{detail}', 'CallController@call')->name('call');
+
+    Route::get('/menu', 'IndexController@menu')->name('menu');
+    Route::get('/menu/invoice', 'IndexController@menuInvoice')->name('menu.invoice');
 
     Route::group(['namespace' => 'Modules'], function () {
         Route::get('/workplace', 'WorkplaceController@show')->name('workplace.show');
-
-        Route::get('/menu', 'PersonController@menu')->name('menu');
 
         Route::get('/partners/{partner}/available-job-titles', 'PartnerController@availableTitles')->name('partners.available-job-titles');
 
@@ -67,8 +69,9 @@ Route::group(['prefix' => 'v1', 'as' => 'api.v1.', 'namespace' => 'Api\v1', 'mid
         Route::get('/objects/{object}/owners/emails', 'ObjectController@ownersEmails')->name('objects.owners.emails');
         Route::resource('objects', 'ObjectController', ['only' => ['update', 'store', 'show', 'index']]);
 
+        Route::get('/invoices/types', 'InvoiceController@types')->name('invoices.types');
         Route::get('/invoices/units', 'InvoiceController@units')->name('invoices.units');
-        Route::resource('invoices', 'InvoiceController', ['only' => ['show']]);
+        Route::resource('invoices', 'InvoiceController', ['only' => ['show', 'update']]);
 
         Route::match(['post', 'put', 'patch'], '/invoice-lines/update-batch', 'InvoiceLineController@updateBatch')->name('invoices.lines.batch');
         Route::resource('invoice-lines', 'InvoiceLineController', ['only' => ['store', 'update', 'destroy']]);

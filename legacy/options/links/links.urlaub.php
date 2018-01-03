@@ -1,4 +1,4 @@
-<h6>Urlaub</h6>
+<h3>Urlaub</h3>
 <div class="row">
     <?php
     echo "<div class='col-xs-4 col-md-3 col-lg-2'>";

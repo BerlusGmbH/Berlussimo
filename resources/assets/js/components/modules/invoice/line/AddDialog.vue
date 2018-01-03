@@ -19,13 +19,13 @@
                         </v-flex>
                         <v-flex xs12 md10>
                             <v-text-field label="Artikelnummer"
-                                          v-model="item.ARTIKEL_NR"
+                                          v-model="lineValue.ARTIKEL_NR"
                                           type="text"
                             ></v-text-field>
                         </v-flex>
                         <v-flex xs12 md2>
                             <v-select label="Einheit"
-                                      v-model="item.EINHEIT"
+                                      v-model="lineValue.EINHEIT"
                                       :items="units"
                                       item-value="V_EINHEIT"
                                       item-text="BEZEICHNUNG"
@@ -34,7 +34,7 @@
                         </v-flex>
                         <v-flex xs12>
                             <v-text-field label="Beschreibung"
-                                          v-model="item.BEZEICHNUNG"
+                                          v-model="lineValue.BEZEICHNUNG"
                                           multi-line
                                           type="text"
                             ></v-text-field>
@@ -48,16 +48,16 @@
                         </v-flex>
                         <v-flex xs12 sm2 lg1>
                             <v-text-field label="Menge"
-                                          v-model="amount"
+                                          v-model="lineValue.MENGE"
                                           step="0.01"
                                           type="number"
-                                          :suffix="item.EINHEIT"
+                                          :suffix="lineValue.EINHEIT"
                             ></v-text-field>
                         </v-flex>
                         <v-flex xs12 sm2 lg1>
                             <v-text-field append-icon="mdi-percent"
                                           label="Rabatt"
-                                          v-model="item.RABATT_SATZ"
+                                          v-model="lineValue.RABATT_SATZ"
                                           step="0.01"
                                           type="number"
                             ></v-text-field>
@@ -72,7 +72,7 @@
                         <v-flex xs12 sm2 lg1>
                             <v-text-field append-icon="mdi-percent"
                                           label="MwSt"
-                                          v-model="item.MWST_SATZ"
+                                          v-model="lineValue.MWST_SATZ"
                                           type="number"
                                           step="1"
                             ></v-text-field>
@@ -87,7 +87,7 @@
                         <v-flex xs12 sm2 lg1>
                             <v-text-field append-icon="mdi-percent"
                                           label="Skonto"
-                                          v-model="item.SKONTO"
+                                          v-model="lineValue.SKONTO"
                                           step="0.01"
                                           type="number"
                             ></v-text-field>
@@ -129,7 +129,7 @@
     import {namespace, Mutation} from "vuex-class";
     import {Prop, Watch} from "vue-property-decorator";
     import EntitySelect from "../../../common/EntitySelect.vue"
-    import {Invoice, InvoiceItem, InvoiceLine} from "../../../../server/resources/models";
+    import {Invoice, InvoiceLine} from "../../../../server/resources";
     import axios from "../../../../libraries/axios";
 
     const SnackbarMutation = namespace('shared/snackbar', Mutation);
@@ -160,45 +160,50 @@
         @RefreshMutation('requestRefresh')
         requestRefresh: Function;
 
-        item: InvoiceItem = new InvoiceItem();
-
-        amount: number = 0;
+        lineValue: InvoiceLine = new InvoiceLine();
 
         saving: boolean = false;
 
         get price() {
-            return Number(this.item.LISTENPREIS);
+            return Number(this.lineValue.PREIS);
         }
 
         set price(val) {
-            this.item.LISTENPREIS = String(val);
+            this.lineValue.PREIS = String(val);
         }
 
         get net() {
-            let net = this.price * this.amount * ((100 - Number(this.item.RABATT_SATZ)) / 100);
-            return net ? net : 0;
+            let net = this.price * Number(this.lineValue.MENGE) * ((100 - Number(this.lineValue.RABATT_SATZ)) / 100);
+            net = net ? net : 0;
+            if (this.lineValue) {
+                this.lineValue.GESAMT_NETTO = net;
+            }
+            return net;
         }
 
         set net(val) {
-            this.price = val / ((100 - Number(this.item.RABATT_SATZ)) / 100) / this.amount;
+            if (this.lineValue) {
+                this.lineValue.GESAMT_NETTO = val;
+            }
+            this.price = val / ((100 - Number(this.lineValue.RABATT_SATZ)) / 100) / Number(this.lineValue.MENGE);
         }
 
         get gross() {
-            let gross = this.net * ((100 + Number(this.item.MWST_SATZ)) / 100);
+            let gross = this.net * ((100 + Number(this.lineValue.MWST_SATZ)) / 100);
             return gross ? gross : 0;
         }
 
         set gross(val) {
-            this.net = val / ((100 + Number(this.item.MWST_SATZ)) / 100);
+            this.net = val / ((100 + Number(this.lineValue.MWST_SATZ)) / 100);
         }
 
         get total() {
-            let total = this.gross * ((100 - Number(this.item.SKONTO)) / 100);
+            let total = this.gross * ((100 - Number(this.lineValue.SKONTO)) / 100);
             return total ? total : 0;
         }
 
         set total(val) {
-            this.gross = val / ((100 - Number(this.item.SKONTO)) / 100);
+            this.gross = val / ((100 - Number(this.lineValue.SKONTO)) / 100);
         }
 
         get entities() {
@@ -206,10 +211,10 @@
         }
 
         select(selected) {
+            this.lineValue = new InvoiceLine();
+            this.lineValue.BELEG_NR = this.invoice.BELEG_NR;
             if (selected) {
-                this.item = selected;
-            } else {
-                this.item = new InvoiceItem();
+                this.lineValue.fill(selected);
             }
         }
 
@@ -221,10 +226,8 @@
         }
 
         onSave(close: boolean = true) {
-            let line = new InvoiceLine();
-            line.fill(this.invoice.BELEG_NR, this.net, this.amount, this.item);
             this.saving = true;
-            line.create().then(() => {
+            this.lineValue.create().then(() => {
                 this.saving = false;
                 this.updateMessage('Position hinzugefügt.');
                 this.requestRefresh();

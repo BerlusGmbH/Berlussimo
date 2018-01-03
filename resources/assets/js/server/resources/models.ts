@@ -966,6 +966,10 @@ export class Invoice extends Model {
         return invoice;
     }
 
+    save() {
+        return axios.put('/api/v1/invoices/' + this.BELEG_NR, this);
+    }
+
     getID() {
         return this.BELEG_NR;
     }
@@ -992,8 +996,8 @@ export class InvoiceLine extends Model {
     U_BELEG_NR: number;
     ART_LIEFERANT: number;
     ARTIKEL_NR: string;
-    MENGE: number;
-    PREIS: string;
+    MENGE: number = 0.00;
+    PREIS: string = "0.0000";
     MWST_SATZ: number;
     RABATT_SATZ: number;
     SKONTO: number;
@@ -1025,16 +1029,15 @@ export class InvoiceLine extends Model {
 
     }
 
-    fill(invoice: number, net: number, amount: number, item: InvoiceItem) {
-        this.BELEG_NR = invoice;
+    fill(item: InvoiceItem) {
         this.ART_LIEFERANT = Number(item.ART_LIEFERANT);
         this.ARTIKEL_NR = item.ARTIKEL_NR;
         this.PREIS = item.LISTENPREIS;
-        this.MENGE = amount;
-        this.GESAMT_NETTO = net;
         this.MWST_SATZ = item.MWST_SATZ;
         this.SKONTO = item.SKONTO;
         this.RABATT_SATZ = item.RABATT_SATZ;
+        this.EINHEIT = item.EINHEIT;
+        this.BEZEICHNUNG = item.BEZEICHNUNG
     }
 
     create() {

@@ -39,6 +39,7 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
+            \App\Http\Middleware\DatabaseTransaction::class,
             'throttle:250,1',
             'bindings'
         ]

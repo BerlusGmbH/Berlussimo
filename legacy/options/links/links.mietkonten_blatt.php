@@ -1,6 +1,6 @@
 <div class="row">
     <div class='col-xs-12'>
-        <h6>Miete</h6>
+        <h3>Miete</h3>
         <div class="row">
             <?php
             echo "<div class='col-xs-6 col-md-4 col-lg-2'>";
@@ -14,7 +14,7 @@
             echo "</div>";
             ?>
         </div>
-        <h6>Listen</h6>
+        <h3>Listen</h3>
         <div class="row">
             <?php
             echo "<div class='col-xs-6 col-md-4 col-lg-2'>";
@@ -25,7 +25,7 @@
             echo "</div>";
             ?>
         </div>
-        <h6>Mietspiegel</h6>
+        <h3>Mietspiegel</h3>
         <div class="row">
             <?php
             echo "<div class='col-xs-4 col-md-3 col-lg-2'>";

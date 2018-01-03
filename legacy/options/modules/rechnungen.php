@@ -1512,7 +1512,7 @@ switch ($option) {
         if (!empty ($belegnr) && !empty ($pos)) {
             $r->position_deaktivieren($pos, $belegnr);
             echo "POSITION GELÖSCHT";
-            weiterleiten_in_sec(route('web::rechnungen::legacy', ['option' => 'positionen_erfassen', 'belegnr' => $belegnr], false), 1);
+            weiterleiten_in_sec(route('web::rechnungen.show', ['id' => $belegnr], false), 1);
         }
         break;
 

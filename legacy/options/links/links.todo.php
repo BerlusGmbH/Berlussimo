@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-xs-4">
-        <h6>Baustellen</h6>
+        <h3>Baustellen</h3>
         <div class="row">
             <div class='col-xs-12 col-sm-6 col-md-3'>
                 <a href='<?php echo route('web::construction::legacy', ['option' => 'baustellen_liste']) ?>'>Aktive</a>

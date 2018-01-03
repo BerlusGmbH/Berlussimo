@@ -122,7 +122,7 @@
                                         </thead>
                                         <tbody>
                                         <tr v-for="assignment in props.item.assignments" class="text-xs-right">
-                                            <td>{{assignment.MENGE}}</td>
+                                            <td>{{assignment.MENGE | nformat}}</td>
                                             <td>
                                                 <app-identifier :value="assignment.cost_unit">
                                                 </app-identifier>

@@ -19,13 +19,13 @@
                         </v-flex>
                         <v-flex xs12 md10>
                             <v-text-field label="Artikelnummer"
-                                          v-model="inputLine.ARTIKEL_NR"
+                                          v-model="lineValue.ARTIKEL_NR"
                                           type="text"
                             ></v-text-field>
                         </v-flex>
                         <v-flex xs12 md2>
                             <v-select label="Einheit"
-                                      v-model="inputLine.EINHEIT"
+                                      v-model="lineValue.EINHEIT"
                                       :items="units"
                                       item-value="V_EINHEIT"
                                       item-text="BEZEICHNUNG"
@@ -34,7 +34,7 @@
                         </v-flex>
                         <v-flex xs12>
                             <v-text-field label="Beschreibung"
-                                          v-model="inputLine.BEZEICHNUNG"
+                                          v-model="lineValue.BEZEICHNUNG"
                                           multi-line
                                           type="text"
                             ></v-text-field>
@@ -48,16 +48,16 @@
                         </v-flex>
                         <v-flex xs12 sm2 lg1>
                             <v-text-field label="Menge"
-                                          v-model="inputLine.MENGE"
+                                          v-model="lineValue.MENGE"
                                           step="0.01"
                                           type="number"
-                                          :suffix="inputLine.EINHEIT"
+                                          :suffix="lineValue.EINHEIT"
                             ></v-text-field>
                         </v-flex>
                         <v-flex xs12 sm2 lg1>
                             <v-text-field append-icon="mdi-percent"
                                           label="Rabatt"
-                                          v-model="inputLine.RABATT_SATZ"
+                                          v-model="lineValue.RABATT_SATZ"
                                           step="0.01"
                                           type="number"
                             ></v-text-field>
@@ -72,7 +72,7 @@
                         <v-flex xs12 sm2 lg1>
                             <v-text-field append-icon="mdi-percent"
                                           label="MwSt"
-                                          v-model="inputLine.MWST_SATZ"
+                                          v-model="lineValue.MWST_SATZ"
                                           type="number"
                                           step="1"
                             ></v-text-field>
@@ -87,7 +87,7 @@
                         <v-flex xs12 sm2 lg1>
                             <v-text-field append-icon="mdi-percent"
                                           label="Skonto"
-                                          v-model="inputLine.SKONTO"
+                                          v-model="lineValue.SKONTO"
                                           step="0.01"
                                           type="number"
                             ></v-text-field>
@@ -147,14 +147,14 @@
                 this.updateUnits();
                 this.selected = [];
                 if (this.line) {
-                    this.inputLine = _.cloneDeep(this.line);
+                    this.lineValue = _.cloneDeep(this.line);
                 } else {
-                    this.inputLine = new InvoiceLine();
+                    this.lineValue = new InvoiceLine();
                 }
             }
         }
 
-        inputLine: InvoiceLine = new InvoiceLine();
+        lineValue: InvoiceLine = new InvoiceLine();
 
         selected: Array<any> = [];
 
@@ -169,45 +169,45 @@
         saving: boolean = false;
 
         get price() {
-            return Number(this.inputLine.PREIS);
+            return Number(this.lineValue.PREIS);
         }
 
         set price(val) {
-            this.inputLine.PREIS = String(val);
+            this.lineValue.PREIS = String(val);
         }
 
         get net() {
-            let net = this.price * Number(this.inputLine.MENGE) * ((100 - Number(this.inputLine.RABATT_SATZ)) / 100);
+            let net = this.price * Number(this.lineValue.MENGE) * ((100 - Number(this.lineValue.RABATT_SATZ)) / 100);
             net = net ? net : 0;
-            if (this.inputLine) {
-                this.inputLine.GESAMT_NETTO = net;
+            if (this.lineValue) {
+                this.lineValue.GESAMT_NETTO = net;
             }
             return net;
         }
 
         set net(val) {
-            if (this.inputLine) {
-                this.inputLine.GESAMT_NETTO = val;
+            if (this.lineValue) {
+                this.lineValue.GESAMT_NETTO = val;
             }
-            this.price = val / ((100 - Number(this.inputLine.RABATT_SATZ)) / 100) / this.inputLine.MENGE;
+            this.price = val / ((100 - Number(this.lineValue.RABATT_SATZ)) / 100) / this.lineValue.MENGE;
         }
 
         get gross() {
-            let gross = this.net * ((100 + Number(this.inputLine.MWST_SATZ)) / 100);
+            let gross = this.net * ((100 + Number(this.lineValue.MWST_SATZ)) / 100);
             return gross ? gross : 0;
         }
 
         set gross(val) {
-            this.net = val / ((100 + Number(this.inputLine.MWST_SATZ)) / 100);
+            this.net = val / ((100 + Number(this.lineValue.MWST_SATZ)) / 100);
         }
 
         get total() {
-            let total = this.gross * ((100 - Number(this.inputLine.SKONTO)) / 100);
+            let total = this.gross * ((100 - Number(this.lineValue.SKONTO)) / 100);
             return total ? total : 0;
         }
 
         set total(val) {
-            this.gross = val / ((100 - Number(this.inputLine.SKONTO)) / 100);
+            this.gross = val / ((100 - Number(this.lineValue.SKONTO)) / 100);
         }
 
         get entities() {
@@ -216,14 +216,14 @@
 
         select(selected) {
             if (selected) {
-                this.inputLine.PREIS = selected.LISTENPREIS;
-                this.inputLine.SKONTO = selected.SKONTO;
-                this.inputLine.MWST_SATZ = selected.MWST_SATZ;
-                this.inputLine.RABATT_SATZ = selected.RABATT_SATZ;
-                this.inputLine.ART_LIEFERANT = selected.ART_LIEFERANT;
-                this.inputLine.ARTIKEL_NR = selected.ARTIKEL_NR;
-                this.inputLine.EINHEIT = selected.EINHEIT;
-                this.inputLine.BEZEICHNUNG = selected.BEZEICHNUNG;
+                this.lineValue.PREIS = selected.LISTENPREIS;
+                this.lineValue.SKONTO = selected.SKONTO;
+                this.lineValue.MWST_SATZ = selected.MWST_SATZ;
+                this.lineValue.RABATT_SATZ = selected.RABATT_SATZ;
+                this.lineValue.ART_LIEFERANT = selected.ART_LIEFERANT;
+                this.lineValue.ARTIKEL_NR = selected.ARTIKEL_NR;
+                this.lineValue.EINHEIT = selected.EINHEIT;
+                this.lineValue.BEZEICHNUNG = selected.BEZEICHNUNG;
             }
         }
 
@@ -235,9 +235,9 @@
         }
 
         onSave() {
-            this.inputLine.BELEG_NR = this.invoice.BELEG_NR;
+            this.lineValue.BELEG_NR = this.invoice.BELEG_NR;
             this.saving = true;
-            this.inputLine.save().then(() => {
+            this.lineValue.save().then(() => {
                 this.saving = false;
                 this.updateMessage('Position geändert.');
                 this.requestRefresh();

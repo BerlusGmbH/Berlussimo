@@ -38,16 +38,11 @@
                 </v-list-tile>
             </v-list>
         </v-menu>
-        <app-person-edit-dialog v-if="show || edit"
-                                :position-absolutely="true"
-                                :show="edit"
-                                @show="val => {edit = val}"
-                                :position-x="x"
-                                :position-y="y"
-                                :value="value"
-                                @input="$emit('input', $event)"
+        <b-invoice-edit-dialog v-if="show || edit"
+                               v-model="edit"
+                               :invoice="value"
         >
-        </app-person-edit-dialog>
+        </b-invoice-edit-dialog>
     </div>
 </template>
 
@@ -55,21 +50,13 @@
     import Component from "vue-class-component";
     import Vue from "vue";
     import {Prop} from "vue-property-decorator";
-    import personEditDialog from "../dialogs/PersonEditDialog.vue";
-    import jobAddDialog from "../dialogs/JobAddDialog.vue";
-    import detailAddDialog from "../dialogs/DetailAddDialog.vue";
-    import loginEditDialog from "../dialogs/LoginEditDialog.vue";
-    import {Invoice} from "../../../server/resources/models";
-    import personMergeDialog from "../dialogs/PersonMergeDialog.vue";
+    import EditDialog from "../../modules/invoice/dialogs/EditDialog.vue";
+    import {Invoice} from "../../../server/resources";
     import copyToClipboard from "../../../mixins/CopyToClipboard.vue";
 
     @Component({
         'components': {
-            'app-person-edit-dialog': personEditDialog,
-            'app-job-add-dialog': jobAddDialog,
-            'app-detail-add-dialog': detailAddDialog,
-            'app-person-merge-dialog': personMergeDialog,
-            'app-login-edit-dialog': loginEditDialog
+            'b-invoice-edit-dialog': EditDialog
         },
         'mixins': [
             copyToClipboard

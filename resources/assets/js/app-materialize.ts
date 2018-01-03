@@ -24,20 +24,6 @@ Vue.component('app-edit-dialog', VEditDialog);
 Vue.filter('substituteNewlineWithBr', substituteNewlineWithBr);
 
 new Vue({
-    el: '#top',
-    store,
-    components: {
-        'app-toolbar': toolBar,
-        'app-menu': menu,
-        'app-user-loader': userLoader,
-        'app-global-select-loader': globalSelectLoader,
-        'app-legacy-loader': legacyLoader,
-        'app-messages-loader': messagesLoader,
-        'app-messages': messages,
-    }
-});
-
-new Vue({
     el: 'app-notifications',
     store,
     components: {
@@ -58,5 +44,19 @@ new Vue({
     store,
     components: {
         'app-footer': footer
+    }
+});
+
+new Vue({
+    el: '#top',
+    store,
+    components: {
+        'app-toolbar': toolBar,
+        'app-menu': menu,
+        'app-user-loader': userLoader,
+        'app-global-select-loader': globalSelectLoader,
+        'app-legacy-loader': legacyLoader,
+        'app-messages-loader': messagesLoader,
+        'app-messages': messages,
     }
 });

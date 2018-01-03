@@ -15,6 +15,13 @@ trait Mergeable
         });
     }
 
+    /**
+     * @param Model $model
+     * @param array $attributes
+     * @return mixed
+     * @throws \Exception
+     * @throws \Throwable
+     */
     public function merge(Model $model, array $attributes)
     {
         return DB::transaction(function () use ($model, $attributes) {

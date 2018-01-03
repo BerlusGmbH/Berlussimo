@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Legacy\RechnungenRequest;
 use App\Models\Invoice;
 use App\Models\InvoiceItemUnit;
+use DB;
+use Illuminate\Support\Arr;
 
 class InvoiceController extends Controller
 {
@@ -19,13 +21,12 @@ class InvoiceController extends Controller
                 'to',
                 'lines' => function ($query) {
                     $query->orderBy('POSITION');
-                },
-                'assignments.costUnit'
+                }
             ]
         )->toArray();
         foreach ($invoiceArray['lines'] as $key => $item) {
-            $assignments = $invoice->assignments->where('POSITION', $item['POSITION'])->values();
-            $invoiceArray['lines'][$key]['assignments'] = $assignments ?: [];
+            $filteredAssignments = $invoice->assignments()->with('costUnit')->where('POSITION', $item['POSITION'])->get()->toArray();
+            $invoiceArray['lines'][$key]['assignments'] = $filteredAssignments ?: [];
         }
 
         unset($invoiceArray['assignments']);
@@ -33,8 +34,42 @@ class InvoiceController extends Controller
         return $invoiceArray;
     }
 
+    /**
+     * @param RechnungenRequest $request
+     * @param Invoice $invoice
+     * @return mixed
+     * @throws \Exception
+     * @throws \Throwable
+     */
+    public function update(RechnungenRequest $request, Invoice $invoice)
+    {
+        $attributes = $request->only([
+            'RECHNUNGSNUMMER',
+            'RECHNUNGSTYP',
+            'RECHNUNGSDATUM',
+            'EINGANGSDATUM',
+            'FAELLIG_AM',
+            'KURZBESCHREIBUNG'
+        ]);
+
+        if ($attributes['RECHNUNGSTYP'] === 'Buchungsbeleg') {
+            Arr::set($attributes, 'EMPFAENGER_TYP', DB::raw('AUSSTELLER_TYP'));
+            Arr::set($attributes, 'EMPFAENGER_ID', DB::raw('AUSSTELLER_ID'));
+        }
+
+        Invoice::unguarded(function () use ($attributes, $invoice) {
+            $invoice->update($attributes);
+        });
+        return response()->json(['status' => 'ok']);
+    }
+
     public function units(RechnungenRequest $request)
     {
         return InvoiceItemUnit::defaultOrder()->get();
+    }
+
+    public function types(RechnungenRequest $request)
+    {
+        return Invoice::getPossibleEnumValues('RECHNUNGSTYP');
     }
 }

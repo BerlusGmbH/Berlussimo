@@ -1417,7 +1417,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
             /* Weiterleiten auf die Rechnungserfassung */
 
-            weiterleiten_in_sec(route('web::rechnungen::legacy', ['option' => 'positionen_erfassen', 'belegnr' => $letzte_belegnr]), 2);
+            weiterleiten_in_sec(route('web::rechnungen.show', ['id' => $letzte_belegnr]), 2);
         }
     }
 

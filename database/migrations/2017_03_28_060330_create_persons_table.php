@@ -15,19 +15,18 @@ class CreatePersonsTable extends Migration
      */
     public function up()
     {
-        Schema::create('persons', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->string('first_name')->nullable()->default(null);
-            $table->date('birthday')->nullable()->default(null);
-            $table->timestamps();
-            $table->softDeletes();
-        });
-
         DB::transaction(function () {
-            $table = DB::table('PERSON');
-            if($table->exists()) {
-                $persons = $table->where('PERSON_AKTUELL', '1')->get();
+            Schema::create('persons', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('name');
+                $table->string('first_name')->nullable()->default(null);
+                $table->date('birthday')->nullable()->default(null);
+                $table->timestamps();
+                $table->softDeletes();
+            });
+
+            if (Schema::hasTable('PERSON')) {
+                $persons = DB::table('PERSON')->where('PERSON_AKTUELL', '1')->get();
                 $carbon = Carbon::parse('1900-01-01');
                 foreach ($persons as $person) {
                     $new_person = new Person();
@@ -125,6 +124,6 @@ class CreatePersonsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('persons');
+        Schema::dropIfExists('persons');
     }
 }

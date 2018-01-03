@@ -1,4 +1,4 @@
-<h6>Lager</h6>
+<h3>Lager</h3>
 <div class="row">
     <?php
     echo "<div class='col-xs-4 col-md-3 col-lg-2'>";
