@@ -1,4 +1,4 @@
-<h6>Kontenrahmen</h6>
+<h3>Kontenrahmen</h3>
 <div class="row">
     <?php
     echo "<div class='col-xs-6 col-md-4 col-lg-1'>";

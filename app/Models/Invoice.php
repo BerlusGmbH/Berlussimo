@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Scopes\AktuellScope;
 use App\Models\Traits\DefaultOrder;
+use App\Models\Traits\HasEnum;
 use App\Models\Traits\Searchable;
 use DB;
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +13,7 @@ class Invoice extends Model
 {
     use Searchable;
     use DefaultOrder;
+    use HasEnum;
 
     public $timestamps = false;
     protected $table = 'RECHNUNGEN';

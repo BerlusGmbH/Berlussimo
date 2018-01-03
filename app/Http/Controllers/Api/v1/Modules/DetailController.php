@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\v1\Modules;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Legacy\DetailsRequest;
 use App\Models\Details;
-use DB;
 use Illuminate\Http\Request;
 
 class DetailController extends Controller
@@ -17,7 +16,7 @@ class DetailController extends Controller
      */
     public function index()
     {
-        //
+        return response();
     }
 
     /**
@@ -27,7 +26,7 @@ class DetailController extends Controller
      */
     public function create()
     {
-        //
+        return response();
     }
 
     /**
@@ -38,26 +37,24 @@ class DetailController extends Controller
      */
     public function store(DetailsRequest $request)
     {
-        return DB::transaction(function () use ($request) {
-            $detail = Details::create(
-                array_merge(
-                    $request->only(
-                        [
-                            'DETAIL_INHALT',
-                            'DETAIL_BEMERKUNG',
-                            'DETAIL_NAME',
-                            'DETAIL_ZUORDNUNG_TABELLE',
-                            'DETAIL_ZUORDNUNG_ID'
-                        ]
-                    ),
+        $detail = Details::create(
+            array_merge(
+                $request->only(
                     [
-                        'DETAIL_AKTUELL' => '1',
-                        'DETAIL_ID' => Details::max('DETAIL_ID') + 1
+                        'DETAIL_INHALT',
+                        'DETAIL_BEMERKUNG',
+                        'DETAIL_NAME',
+                        'DETAIL_ZUORDNUNG_TABELLE',
+                        'DETAIL_ZUORDNUNG_ID'
                     ]
-                )
-            );
-            return response()->json($detail);
-        });
+                ),
+                [
+                    'DETAIL_AKTUELL' => '1',
+                    'DETAIL_ID' => Details::max('DETAIL_ID') + 1
+                ]
+            )
+        );
+        return response()->json($detail);
     }
 
     /**
@@ -68,6 +65,7 @@ class DetailController extends Controller
      */
     public function show(Details $details)
     {
+        return response();
     }
 
     /**
@@ -78,7 +76,7 @@ class DetailController extends Controller
      */
     public function edit(Details $details)
     {
-        //
+        return response();
     }
 
     /**
@@ -91,7 +89,7 @@ class DetailController extends Controller
     public function update(DetailsRequest $request, Details $detail)
     {
         $detail->update($request->only(['DETAIL_INHALT', 'DETAIL_BEMERKUNG']));
-        return response()->json($detail);
+        return response();
     }
 
     /**
@@ -103,6 +101,7 @@ class DetailController extends Controller
      */
     public function destroy(DetailsRequest $request, Details $detail)
     {
-        return [$detail->update(['DETAIL_AKTUELL' => '0'])];
+        $detail->update(['DETAIL_AKTUELL' => '0']);
+        return response();
     }
 }

@@ -757,7 +757,7 @@ class rechnungen
                 $d = new detail ();
                 $d->detail_speichern_2('RECHNUNGEN', $beleg_nr, 'Lieferschein', $lieferschein, Auth::user()->email);
             } else {
-                weiterleiten_in_sec(route('web::rechnungen::legacy', ['option' => 'positionen_erfassen', 'belegnr' => $beleg_nr]), 2); // Positionseingabe
+                weiterleiten_in_sec(route('web::rechnungen.show', ['id' => $beleg_nr]), 2); // Positionseingabe
             }
 
             $weiter = request()->input('weiter');
@@ -773,7 +773,7 @@ class rechnungen
             $f = new formular ();
             $f->erstelle_formular("Lieferscheine", NULL);
             $f->fieldset("Lieferschein zu Rechnung $r->rechnungsnummer hinzufügen", 'lieferschein');
-            $link_pos_erf = "<a href='" . route('web::rechnungen::legacy', ['option' => 'positionen_erfassen', 'belegnr' => $beleg_nr]) . "'>Weiter zur Positionerfassung</a>";
+            $link_pos_erf = "<a href='" . route('web::rechnungen.show', ['id' => $beleg_nr]) . "'>Weiter zur Positionerfassung</a>";
             echo $link_pos_erf;
             $f->hidden_feld('belegnr', $beleg_nr);
             $f->text_feld("Lieferschein Nr zu Rechnung $r->rechnungsnummer ", 'lieferschein', '', '20', 'lieferschein', '');

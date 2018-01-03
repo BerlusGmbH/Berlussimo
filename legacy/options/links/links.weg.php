@@ -2,11 +2,11 @@
     <div class="col-xs-12">
         <?php
         if (!session()->has('objekt_id')) {
-            echo "<h6>WEG</h6>";
+            echo "<h3>WEG</h3>";
         } else {
             $o = new objekt ();
             $o->get_objekt_infos(session()->get('objekt_id'));
-            echo "<h6>WEG: $o->objekt_kurzname</h6>";
+            echo "<h3>WEG: $o->objekt_kurzname</h3>";
         }
         ?>
         <div class="row">
@@ -34,7 +34,7 @@
         </div>
     </div>
     <div class="col-xs-6">
-        <h6>Buchen</h6>
+        <h3>Buchen</h3>
         <div class="row">
             <div class='col-xs-6 col-sm-4 col-md-4 col-lg-3'>
                 <a class="WEG"
@@ -51,7 +51,7 @@
         </div>
     </div>
     <div class="col-xs-6 col-md-4 col-lg-2">
-        <h6>Wirtschaftspläne</h6>
+        <h3>Wirtschaftspläne</h3>
         <div class="row">
             <div class='col-xs-6'>
                 <a class="WEG"
@@ -63,7 +63,7 @@
         </div>
     </div>
     <div class="col-xs-6 col-md-4 col-lg-2">
-        <h6>IHR</h6>
+        <h3>IHR</h3>
         <div class="row">
             <div class='col-xs-4'>
                 <a class="WEG" href='<?php echo route('web::weg::legacy', ['option' => 'ihr']) ?>'>IHR</a>
@@ -78,7 +78,7 @@
     $vorjahr = date("Y") - 1;
     ?>
     <div class="col-xs-6 col-md-4 col-lg-2">
-        <h6>Kontenübersicht</h6>
+        <h3>Kontenübersicht</h3>
         <div class="row">
             <div class='col-xs-6 col-md-4'>
                 <a class="WEG"
@@ -92,7 +92,7 @@
         </div>
     </div>
     <div class="col-xs-12">
-        <h6>Hausgeldabrechnung</h6>
+        <h3>Hausgeldabrechnung</h3>
         <div class="row">
             <div class='col-xs-6 col-sm-4 col-lg-2'>
                 <a class="WEG" href='<?php echo route('web::weg::legacy', ['option' => 'assistent']) ?>'>Assistent</a>

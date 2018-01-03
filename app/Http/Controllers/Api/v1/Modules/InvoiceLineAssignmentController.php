@@ -46,15 +46,13 @@ class InvoiceLineAssignmentController extends Controller
             'KONTENRAHMEN_KONTO'
         ]);
 
-        return DB::transaction(function () use ($attributes) {
-            $id = InvoiceLineAssignment::max('KONTIERUNG_ID') + 1;
-            Arr::set($attributes, 'KONTIERUNG_ID', $id);
-            Arr::set($attributes, 'AKTUELL', '1');
-            Arr::set($attributes, 'GESAMT_SUMME', $attributes['MENGE'] * $attributes['EINZEL_PREIS']);
-            Arr::set($attributes, 'KONTIERUNGS_DATUM', Carbon::now());
-            $assignment = InvoiceLineAssignment::forceCreate($attributes);
-            return response()->json($assignment);
-        });
+        $id = InvoiceLineAssignment::max('KONTIERUNG_ID') + 1;
+        Arr::set($attributes, 'KONTIERUNG_ID', $id);
+        Arr::set($attributes, 'AKTUELL', '1');
+        Arr::set($attributes, 'GESAMT_SUMME', $attributes['MENGE'] * $attributes['EINZEL_PREIS']);
+        Arr::set($attributes, 'KONTIERUNGS_DATUM', Carbon::now());
+        $assignment = InvoiceLineAssignment::forceCreate($attributes);
+        return response()->json($assignment);
     }
 
     /**
@@ -82,13 +80,12 @@ class InvoiceLineAssignmentController extends Controller
             'WEITER_VERWENDEN',
             'KONTENRAHMEN_KONTO'
         ]);
-        return DB::transaction(function () use ($attributes, $invoiceLineAssignment) {
-            $invoiceLineAssignment = InvoiceLineAssignment::unguarded(function () use ($attributes, $invoiceLineAssignment) {
-                Arr::set($attributes, 'GESAMT_SUMME', DB::raw('MENGE * EINZEL_PREIS'));
-                return $invoiceLineAssignment->update($attributes);
-            });
-            return response()->json($invoiceLineAssignment);
+
+        $invoiceLineAssignment = InvoiceLineAssignment::unguarded(function () use ($attributes, $invoiceLineAssignment) {
+            Arr::set($attributes, 'GESAMT_SUMME', DB::raw('MENGE * EINZEL_PREIS'));
+            return $invoiceLineAssignment->update($attributes);
         });
+        return response()->json($invoiceLineAssignment);
     }
 
     /**
@@ -100,10 +97,8 @@ class InvoiceLineAssignmentController extends Controller
      */
     public function destroy(RechnungenRequest $request, InvoiceLineAssignment $invoiceLineAssignment)
     {
-        return DB::transaction(function () use ($invoiceLineAssignment) {
-            $invoiceLineAssignment->delete();
-            return response()->json(['status' => 'ok']);
-        });
+        $invoiceLineAssignment->delete();
+        return response()->json(['status' => 'ok']);
     }
 
     /**

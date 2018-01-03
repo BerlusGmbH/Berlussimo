@@ -17,50 +17,52 @@ class CreateCredentialsTable extends Migration
      * Run the migrations.
      *
      * @return void
+     * @throws Exception|Throwable
      */
     public function up()
     {
-        Schema::create('credentials', function (Blueprint $table) {
-            $table->unsignedInteger('id');
-            $table->primary('id');
-            $table->foreign('id')->references('id')->on('persons')->onDelete('cascade');
-            $table->string('password');
-            $table->string('api_token', 60)->unique();
-            $table->rememberToken();
-            $table->timestamps();
-            $table->softDeletes();
-        });
-
-        Schema::create('job_titles', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('employer_id');
-            $table->string('title');
-            $table->unique(['employer_id', 'title']);
-            $table->timestamps();
-            $table->softDeletes();
-        });
-
-        Schema::create('jobs', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('employer_id');
-            $table->unsignedInteger('employee_id');
-            $table->foreign('employee_id')->references('id')->on('persons');
-            $table->unsignedInteger('job_title_id')->nullable();
-            $table->foreign('job_title_id')->references('id')->on('job_titles');
-            $table->date('join_date');
-            $table->date('leave_date')->nullable();
-            $table->decimal('hourly_rate')->nullable();
-            $table->decimal('hours_per_week')->nullable();
-            $table->decimal('holidays');
-            $table->timestamps();
-            $table->softDeletes();
-        });
-
-        Schema::table('PROTOKOLL', function (Blueprint $table) {
-            $table->unsignedInteger('person_id');
-        });
-
         DB::transaction(function () {
+            Schema::create('credentials', function (Blueprint $table) {
+                $table->unsignedInteger('id');
+                $table->primary('id');
+                $table->foreign('id')->references('id')->on('persons')->onDelete('cascade');
+                $table->string('password');
+                $table->string('api_token', 60)->unique();
+                $table->rememberToken();
+                $table->timestamps();
+                $table->softDeletes();
+            });
+
+            Schema::create('job_titles', function (Blueprint $table) {
+                $table->increments('id');
+                $table->unsignedInteger('employer_id');
+                $table->string('title');
+                $table->unique(['employer_id', 'title']);
+                $table->timestamps();
+                $table->softDeletes();
+            });
+
+            Schema::create('jobs', function (Blueprint $table) {
+                $table->increments('id');
+                $table->unsignedInteger('employer_id');
+                $table->unsignedInteger('employee_id');
+                $table->foreign('employee_id')->references('id')->on('persons');
+                $table->unsignedInteger('job_title_id')->nullable();
+                $table->foreign('job_title_id')->references('id')->on('job_titles');
+                $table->date('join_date');
+                $table->date('leave_date')->nullable();
+                $table->decimal('hourly_rate')->nullable();
+                $table->decimal('hours_per_week')->nullable();
+                $table->decimal('holidays');
+                $table->timestamps();
+                $table->softDeletes();
+            });
+
+            Schema::table('PROTOKOLL', function (Blueprint $table) {
+                $table->unsignedInteger('person_id');
+            });
+
+
             $trade_table = DB::table('GEWERKE');
             if ($trade_table->exists()) {
                 $trades = $trade_table->where('AKTUELL', '1')->get();

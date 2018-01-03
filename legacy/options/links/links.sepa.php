@@ -1,6 +1,6 @@
 <div class="row">
     <div class='col-xs-5'>
-        <h6>Mieter-Mandate</h6>
+        <h3>Mieter-Mandate</h3>
         <div class="row">
             <div class='col-xs-6 col-md-6 col-lg-2'>
                 <a href='<?php echo route('web::sepa::legacy', ['option' => 'mandat_mieter_neu']) ?>'>Neu</a>
@@ -17,7 +17,7 @@
         </div>
     </div>
     <div class='col-xs-5'>
-        <h6>Rechnungen-Mandate</h6>
+        <h3>Rechnungen-Mandate</h3>
         <div class="row">
             <div class='col-xs-12 col-md-4'>
                 <a href='<?php echo route('web::sepa::legacy', ['option' => 'mandate_rechnungen']) ?>'>Alle</a>
@@ -31,7 +31,7 @@
         </div>
     </div>
     <div class='col-xs-2'>
-        <h6>Hausgeld-Mandate</h6>
+        <h3>Hausgeld-Mandate</h3>
         <div class="row">
             <div class='col-xs-4'>
                 <a href='<?php echo route('web::sepa::legacy', ['option' => 'mandate_hausgeld']) ?>'>Alle</a>
@@ -42,7 +42,7 @@
         </div>
     </div>
     <div class='col-xs-6'>
-        <h6>Manuelle Überweisung</h6>
+        <h3>Manuelle Überweisung</h3>
         <div class="row">
             <div class='col-xs-12 col-md-6'>
                 <a href='<?php echo route('web::sepa::legacy', ['option' => 'sammel_ue']) ?>'>Sammelüberweisung</a>
@@ -54,7 +54,7 @@
         </div>
     </div>
     <div class='col-xs-6'>
-        <h6>Übersicht</h6>
+        <h3>Übersicht</h3>
         <div class="row">
             <div class='col-xs-12 col-md-4'>
                 <a href='<?php echo route('web::sepa::legacy', ['option' => 'sammler_anzeigen']) ?>'>Aktueller

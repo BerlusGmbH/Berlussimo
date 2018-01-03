@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-xs-6">
-        <h6>Buchen</h6>
+        <h3>Buchen</h3>
         <div class="row">
             <div class='col-xs-12 col-sm-6 col-md-6 col-lg-2'>
                 <a href='<?php echo route('web::miete_buchen::legacy') ?>'>Miete</a>
@@ -17,7 +17,7 @@
         </div>
     </div>
     <div class="col-xs-6">
-        <h6>Buchungsjournal</h6>
+        <h3>Buchungsjournal</h3>
         <div class="row">
             <div class='col-xs-12 col-sm-6 col-md-3 col-lg-2'>
                 <a href='<?php echo route('web::buchen::legacy', ['option' => 'buchungs_journal']) ?>'>Aktuell</a>
@@ -34,7 +34,7 @@
         </div>
     </div>
     <div class="col-xs-7">
-        <h6>Suchen & Filtern</h6>
+        <h3>Suchen & Filtern</h3>
         <div class="row">
             <div class='col-xs-6 col-lg-3'>
                 <a href='<?php echo route('web::buchen::legacy', ['option' => 'buchung_suchen']) ?>'>Buchung suchen</a>
@@ -53,7 +53,7 @@
         </div>
     </div>
     <div class="col-xs-5">
-        <h6>Sonstiges</h6>
+        <h3>Sonstiges</h3>
         <div class="row">
             <div class='col-xs-12 col-lg-4'>
                 <a href='<?php echo route('web::buchen::legacy', ['option' => 'kostenkonto_pdf', 'anzeige' => 'empfaenger_eingangs_rnr']) ?>'>Kostenkonto
@@ -66,7 +66,7 @@
         </div>
     </div>
     <div class="col-xs-6">
-        <h6>Kontoauszüge</h6>
+        <h3>Kontoauszüge</h3>
         <div class="row">
             <div class='col-xs-12 col-md-4'>
                 <a href='<?php echo route('web::buchen::legacy', ['option' => 'excel_buchen', 'upload']) ?>'>Hochladen</a>
@@ -80,7 +80,7 @@
         </div>
     </div>
     <div class="col-xs-6">
-        <h6>Berichte</h6>
+        <h3>Berichte</h3>
         <div class="row">
             <div class='col-xs-12 col-md-6 col-lg-4'>
                 <a href='<?php echo route('web::buchen::legacy', ['option' => 'monatsbericht_o_a']) ?>'>Monatsbericht o.
