@@ -2201,9 +2201,9 @@ class mietanpassung
                 $tab_arr [$nr] ['BEZ'] = "$bez seit $anfang_za";
                 $tab_arr [$nr] ['BETRAG'] = nummer_punkt2komma($betrag_za) . " €";
                 $ber->B_AKT_ENDMIETE = nummer_komma2punkt($ber->B_AKT_ENDMIETE) + $betrag_za;
-                $ber->B_NEUE_ENDMIETE = nummer_komma2punkt($ber->B_NEUE_ENDMIETE) + $betrag_za;
+                $ber->B_NEUE_ENDMIETE = $ber->B_NEUE_ENDMIETE + $betrag_za;
                 $ber->B_AKT_ENDMIETE = nummer_punkt2komma($ber->B_AKT_ENDMIETE);
-                $ber->B_NEUE_ENDMIETE = nummer_punkt2komma($ber->B_NEUE_ENDMIETE);
+                $ber->B_NEUE_ENDMIETE_A = nummer_punkt2komma($ber->B_NEUE_ENDMIETE);
             }
         }
 
