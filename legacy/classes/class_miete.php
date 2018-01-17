@@ -61,6 +61,7 @@ class miete
         if (!empty ($datum_saldo_vv)) {
             /* Saldo Vorvertrag mit 1. Zahlung vergleichen, älteres nehmen */
             /* Einen Monat nach SALDO VV */
+            $datum_saldo_vv_s = str_replace('-', '', $datum_saldo_vv);
             $anfangs_datum = $this->tage_plus($datum_saldo_vv, 30);
             $anfangs_datum_s = str_replace('-', '', $anfangs_datum);
             $datums_arr [] = $anfangs_datum_s;
@@ -144,16 +145,35 @@ class miete
                 $ford_monatlich_arr = $buchung->forderung_monatlich($mietvertrag_id, $b, $a);
                 $this->davon_umlagen = $buchung->summe_vorschuesse($ford_monatlich_arr);
 
-                // echo $mietvertrag_id.$b.$a.$this->temp_soll.' '.$this->saldo_vormonat.'<br>';
+                /* Wenn Saldo VV vorhanden und 1. zahlung vorhanden */
+                if (isset ($datum_saldo_vv_s) && isset ($datum1_zahlung_s)) {
 
-                $this->daten_arr [$a] ['monate'] [$m_zaehler] ['zahlungen'] = $buchung->zahlbetraege_im_monat_arr($mietvertrag_id, $b, $a);
-                // echo "<h1> $b $a</h1><br>";
-                /*
-				 * $this->daten_arr[$a]['monate'][$m_zaehler]['zahlungen'][0][txt]= 'zb';
-				 * $this->daten_arr[$a]['monate'][$m_zaehler]['zahlungen'][0][b]= $this->temp_zb;
-				 * $this->daten_arr[$a]['monate'][$m_zaehler]['zahlungen'][1][txt]= 'zb';
-				 * $this->daten_arr[$a]['monate'][$m_zaehler]['zahlungen'][1][b]= $this->temp_zb;
-				 */
+                    /* Wenn SaldoVV vor 1. zahlung - Regelfall */
+                    if ($datum_saldo_vv_s < $datum1_zahlung_s) {
+                        $this->daten_arr [$a] ['monate'] [$m_zaehler] ['soll'] = '-' . $buchung->summe_forderung_monatlich($mietvertrag_id, $b, $a);;
+                        $this->temp_soll = $this->daten_arr [$a] ['monate'] [$m_zaehler] ['soll'];
+                        $this->daten_arr [$a] ['monate'] [$m_zaehler] ['zahlungen'] = $buchung->zahlbetraege_im_monat_arr($mietvertrag_id, $b, $a);
+                    }
+
+                    if ($datum_saldo_vv_s >= $datum1_zahlung_s) {
+                        if (($a == $this->start_j) && ($m_zaehler == '0')) {
+                            $this->daten_arr [$a] ['monate'] [$m_zaehler] ['soll'] = '-' . '0.00';
+                            // $this->daten_arr[$a]['monate'][$m_zaehler]['soll']= '-'.$buchung->summe_forderung_monatlich($this->mietvertrag_id, $b, $a);;
+                            $this->temp_soll = $this->daten_arr [$a] ['monate'] [$m_zaehler] ['soll'];
+                            $this->daten_arr [$a] ['monate'] [$m_zaehler] ['zahlungen'] = $buchung->zahlbetraege_im_monat_arr($mietvertrag_id, $b, $a);
+                        } else {
+                            $this->daten_arr [$a] ['monate'] [$m_zaehler] ['soll'] = '-' . $buchung->summe_forderung_monatlich($mietvertrag_id, $b, $a);;
+                            $this->temp_soll = $this->daten_arr [$a] ['monate'] [$m_zaehler] ['soll'];
+                            $this->daten_arr [$a] ['monate'] [$m_zaehler] ['zahlungen'] = $buchung->zahlbetraege_im_monat_arr($mietvertrag_id, $b, $a);
+                        }
+                    }
+                } else {
+                    /* Wenn kein Saldo VV vorhanden und keine zahlung vorhanden */
+                    $this->daten_arr [$a] ['monate'] [$m_zaehler] ['soll'] = '-' . $buchung->summe_forderung_monatlich($mietvertrag_id, $b, $a);;
+                    $this->temp_soll = $this->daten_arr [$a] ['monate'] [$m_zaehler] ['soll'];
+                    $this->daten_arr [$a] ['monate'] [$m_zaehler] ['zahlungen'] = $buchung->zahlbetraege_im_monat_arr($mietvertrag_id, $b, $a);
+                }
+
                 $sum_mon = 0;
                 $sum_mwst = 0;
                 $z_arr = $this->daten_arr [$a] ['monate'] [$m_zaehler] ['zahlungen'];
@@ -433,9 +453,6 @@ class miete
                     $this->daten_arr [$a] ['monate'] [$m_zaehler] ['mahngebuehren'] = $buchung->mahngebuehr_monatlich_arr($mietvertrag_id, $b, $a);
                 }
 
-                if ($this->mietvertrag_id = '329') {
-                    // echo "$datum_saldo_vv_s<$datum1_zahlung_s<br>";
-                }
                 /* Wenn Saldo VV vorhanden und 1. zahlung vorhanden */
                 if (isset ($datum_saldo_vv_s) && isset ($datum1_zahlung_s)) {
 

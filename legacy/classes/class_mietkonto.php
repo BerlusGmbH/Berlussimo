@@ -1042,13 +1042,15 @@ function check_zahlbetrag($kontoauszugsnr, $kostentraeger_typ, $kostentraeger_id
 
     function datum_1_zahlung($mietvertrag_id)
     {
-        $mv = new mietvertraege ();
-        $mv->get_mietvertrag_infos_aktuell($mietvertrag_id);
-        $o = new objekt ();
-        $o->objekt_informationen($mv->objekt_id);
-        $geldkonto_id = $o->geld_konten_arr [0] ['KONTO_ID'];
+        $geldkonto_ids = \App\Models\Bankkonten::whereHas('objekte', function ($query) {
+            $query->where('GELD_KONTEN_ZUWEISUNG.VERWENDUNGSZWECK', 'Hausgeld');
+        })->whereHas('objekte.haeuser.einheiten.mietvertraege', function ($query) use ($mietvertrag_id) {
+            $query->where('MIETVERTRAG_ID', $mietvertrag_id);
+        })->get()->pluck('KONTO_ID')->all();
 
-        $result = DB::select("SELECT DATUM FROM GELD_KONTO_BUCHUNGEN WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && GELDKONTO_ID='$geldkonto_id' && AKTUELL = '1' ORDER BY DATUM ASC LIMIT 0,1");
+        $geldkonto_ids_string = implode(', ', $geldkonto_ids);
+
+        $result = DB::select("SELECT DATUM FROM GELD_KONTO_BUCHUNGEN WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && GELDKONTO_ID IN ($geldkonto_ids_string) && AKTUELL = '1' ORDER BY DATUM ASC LIMIT 0,1");
         return $result[0]['DATUM'];
     }
 
@@ -1393,14 +1395,12 @@ function check_zahlbetrag($kontoauszugsnr, $kostentraeger_typ, $kostentraeger_id
         if (!empty ($gk->geldkonto_id)) {
             $result = DB::select("SELECT DATUM, BETRAG, VERWENDUNGSZWECK AS BEMERKUNG, MWST_ANTEIL FROM GELD_KONTO_BUCHUNGEN WHERE  GELDKONTO_ID='$gk->geldkonto_id' $ko_string && KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mietvertrag_id' && AKTUELL='1' && DATE_FORMAT( DATUM, '%Y-%m' ) = '$jahr-$monat' ORDER BY DATUM ASC");
         } else {
-            throw new \App\Exceptions\MessageException(
-                new \App\Messages\ErrorMessage('Kein Geldkonto für das Objekt hinterlegt')
-            );
+            return [];
         }
         if (!empty($result)) {
             return $result;
         } else {
-            return false;
+            return [];
         }
     }
 
