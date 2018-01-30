@@ -747,11 +747,11 @@ class b_pdf
 
         /* Footer */
         $pdf->ezSetDy(-20); // Abstand
-        $pdf->ezText("$mv->haus_stadt, den __________________", 9, array(
+        $pdf->ezText("$mv->haus_stadt, __________________", 9, array(
             'justification' => 'left'
         ));
         $pdf->ezSetDy(-7); // Abstand
-        $pdf->addText(165, $pdf->y, 6, "Datum");
+        $pdf->addText(145, $pdf->y, 6, "Datum");
         $pdf->ezSetDy(-20); // Abstand
         $pdf->ezText("________________________________________________     ________________________________________________", 9, array(
             'justification' => 'left'
@@ -1099,11 +1099,11 @@ class b_pdf
             $pdf->addText(65, $pdf->y + 2, 9, "<b>Der Mieter hat die Auszugsbestätigung erhalten.</b>");
         }
         $pdf->ezSetDy(-10); // Abstand
-        $pdf->ezText("$mv->haus_stadt, den __________________", 9, array(
+        $pdf->ezText("$mv->haus_stadt, __________________", 9, array(
             'justification' => 'left'
         ));
         $pdf->ezSetDy(-7); // Abstand
-        $pdf->addText(165, $pdf->y, 6, "Datum");
+        $pdf->addText(145, $pdf->y, 6, "Datum");
         $pdf->ezSetDy(-5); // Abstand
         $pdf->ezText("________________________________________________     ________________________________________________", 9, array(
             'justification' => 'left'
@@ -1220,11 +1220,11 @@ class b_pdf
 
         /* Footer */
         $pdf->ezSetDy(-25); // Abstand
-        $pdf->ezText("$mv->haus_stadt, den __________________", 9, array(
+        $pdf->ezText("$mv->haus_stadt, __________________", 9, array(
             'justification' => 'left'
         ));
         $pdf->ezSetDy(-7); // Abstand
-        $pdf->addText(165, $pdf->y, 6, "Datum");
+        $pdf->addText(145, $pdf->y, 6, "Datum");
 
         $pdf->ezSetDy(-30); // Abstand
         $pdf->ezText("____________________________________________", 9, array(
