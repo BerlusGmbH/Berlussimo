@@ -1705,6 +1705,7 @@ ORDER BY DATUM ASC ");
         $kostenkategorien_arr [] = 'Saldo Vortrag Vorverwaltung';
         $kostenkategorien_arr [] = 'Mietminderung';
         $kostenkategorien_arr [] = 'Stellplatzmiete';
+        $kostenkategorien_arr [] = 'Garagenmiete';
 
         for ($a = $jahr; $a >= $vorjahr; $a--) {
             $kostenkategorien_arr [] = "Betriebskostenabrechnung $a";
