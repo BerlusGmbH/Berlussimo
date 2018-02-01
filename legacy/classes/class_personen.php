@@ -183,13 +183,13 @@ class personen
     function get_person_ids_byname_arr($vorname, $nachname)
     {
         $db_abfrage = "SELECT * FROM PERSON
-	WHERE (LTRIM( RTRIM( REPLACE( PERSON_NACHNAME, CHAR( 13, 10 ) ,  '' ) ) ) LIKE  '$nachname' && LTRIM( RTRIM( REPLACE( PERSON_VORNAME, CHAR( 13, 10 ) ,  '' ) ) ) LIKE  '$vorname'
+	WHERE (LTRIM( RTRIM( REPLACE( PERSON_NACHNAME, CHAR( 13, 10 ) ,  '' ) ) ) LIKE ? && LTRIM( RTRIM( REPLACE( PERSON_VORNAME, CHAR( 13, 10 ) ,  '' ) ) ) LIKE ?
 ) OR 
-(LTRIM( RTRIM( REPLACE( PERSON_NACHNAME, CHAR( 13, 10 ) ,  '' ) ) ) LIKE  '$vorname' && LTRIM( RTRIM( REPLACE( PERSON_VORNAME, CHAR( 13, 10 ) ,  '' ) ) ) LIKE  '$nachname'
+(LTRIM( RTRIM( REPLACE( PERSON_NACHNAME, CHAR( 13, 10 ) ,  '' ) ) ) LIKE ? && LTRIM( RTRIM( REPLACE( PERSON_VORNAME, CHAR( 13, 10 ) ,  '' ) ) ) LIKE ?
 )
 && PERSON_AKTUELL =  '1'
 LIMIT 0 , 30";
-        $resultat = DB::select($db_abfrage);
+        $resultat = DB::select($db_abfrage, [$nachname, $vorname, $vorname, $nachname]);
         return $resultat;
     }
 
