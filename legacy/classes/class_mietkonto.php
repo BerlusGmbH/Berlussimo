@@ -390,7 +390,22 @@ ORDER BY BUCHUNGSNUMMER DESC");
         if ($laenge == 1) {
             $monat = '0' . $monat;
         }
-        $result = DB::select("SELECT SUM(BETRAG) AS SUMME_FORDERUNG, SUM(MWST_ANTEIL) AS MWST_ANTEIL FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat'  && KOSTENKATEGORIE NOT LIKE '%rate%' && KOSTENKATEGORIE NOT LIKE '%abrechnung%' && KOSTENKATEGORIE NOT LIKE '%mahngebühr%' && KOSTENKATEGORIE NOT LIKE 'Saldo Vortrag Vorverwaltung' && KOSTENKATEGORIE NOT LIKE '%energie%' ORDER BY ANFANG ASC");
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME_FORDERUNG, SUM(MWST_ANTEIL) AS MWST_ANTEIL 
+        FROM MIETENTWICKLUNG 
+        WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' 
+        && KOSTENTRAEGER_ID = '$mietvertrag_id' 
+        && MIETENTWICKLUNG_AKTUELL = '1' 
+        && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') 
+        && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat'  
+        && KOSTENKATEGORIE NOT LIKE '%rate%' 
+        && KOSTENKATEGORIE NOT LIKE '%abrechnung%' 
+        && KOSTENKATEGORIE NOT LIKE '%mahngebühr%' 
+        && KOSTENKATEGORIE NOT LIKE 'Saldo Vortrag Vorverwaltung' 
+        && KOSTENKATEGORIE NOT LIKE '%energie%' 
+        && KOSTENKATEGORIE NOT LIKE 'Kabel TV %'
+        && KOSTENKATEGORIE NOT LIKE 'Nebenkosten VZ - Anteilig'
+        && KOSTENKATEGORIE NOT LIKE 'Thermenwartung %'
+        ORDER BY ANFANG ASC");
         if (empty($result)) {
             return '0.00';
         } else {
