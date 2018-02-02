@@ -212,9 +212,9 @@ class mietanpassung
                     $mk->kaltmiete_monatlich_ohne_mod($mv_id, $monat_n, $jahr_minus_3);
                     // $this->kosten_monatlich($mv_id,$monat,$jahr_minus_3, 'Miete kalt');
                     $miete_vor_3_jahren = $mk->ausgangs_kaltmiete;
-                    if ($mieter_art == 'Bruttomieter' && request()->has('nk_anteil')) {
-                        $miete_vor_3_jahren = $mk->ausgangs_kaltmiete - nummer_komma2punkt(request()->input('nk_anteil')) / 12;
-                    }
+//                    if ($mieter_art == 'Bruttomieter' && request()->has('nk_anteil')) {
+//                        $miete_vor_3_jahren = $mk->ausgangs_kaltmiete - nummer_komma2punkt(request()->input('nk_anteil')) / 12;
+//                    }
 
                     /*
 					 * Wenn MV nicht älter als 3 Jahre dann Erste Miete kalt
@@ -280,12 +280,13 @@ class mietanpassung
                             for ($s = 0; $s < $anz_sm; $s++) {
                                 $merkmal = $sondermerkmale_arr [$s] ['MERKMAL'];
                                 $wert = $sondermerkmale_arr [$s] ['WERT'];
+                                $wert_a = nummer_punkt2komma(abs($sondermerkmale_arr [$s] ['WERT']));
                                 $spalte = $sondermerkmale_arr [$s] ['A_KLASSE'];
                                 /* Wenn z.B. Erdgeschoss, dann Abzug */
                                 if ($merkmal == 'Mit SH oder Bad mit IWC') {
                                     $tab_arr ['ABZUEGE'] [$abzug_zaehler] ['MERKMAL'] = $merkmal;
-                                    $tab_arr ['ABZUEGE'] [$abzug_zaehler] ['MERKMAL_GRUND'] = "Für Wohnungen (bezugsfertig $this->objekt_baujahr) mit Sammelheizung oder mit Bad bzw. mit "
-                                        . "WC in der Wohnung (IWC) liegt die ortsübliche Vergleichsmiete $wert €/m² unter den Beträgen der ausgewiesenen Spalte $this->spalte. ";
+                                    $tab_arr ['ABZUEGE'] [$abzug_zaehler] ['MERKMAL_GRUND'] = "Für Altbauwohnungen (bezugsfertig $this->objekt_baujahr) mit Sammelheizung oder mit Bad bzw. mit "
+                                        . "WC in der Wohnung (IWC) liegt die ortsübliche Vergleichsmiete $wert_a €/m² unter den Beträgen der ausgewiesenen Spalte Nr. $this->spalte. ";
                                     $tab_arr ['ABZUEGE'] [$abzug_zaehler] ['MERKMAL_WERT'] = $wert;
                                     $this->abzug_wert = $this->abzug_wert + $wert;
                                     $abzug_zaehler++;
@@ -322,7 +323,11 @@ class mietanpassung
                     /* Berechnung */
                     $m2_mietpreis = $aktuelle_miete / $e->einheit_qm;
                     $tab_arr ['M2_AKTUELL'] = $m2_mietpreis;
-                    $anstieg_in_3_jahren = $aktuelle_miete / ($miete_vor_3_jahren / 100) - 100;
+                    if ($mieter_art == 'Bruttomieter' && request()->has('nk_anteil')) {
+                        $anstieg_in_3_jahren = $aktuelle_miete_brutto / ($miete_vor_3_jahren / 100) - 100;
+                    } else {
+                        $anstieg_in_3_jahren = $aktuelle_miete / ($miete_vor_3_jahren / 100) - 100;
+                    }
                     if ($miete_vor_3_jahren == 0.00) {
                         $ee = new einheit ();
                         $ee->get_einheit_info($einheit_id);
@@ -1314,7 +1319,7 @@ class mietanpassung
             'justification' => 'full'
         ));
 
-        $brief_text = "\nBei der Ermittlung des ortsüblichen Vergleichmietzinses aufgrund des qualifizierten Mietspiegels gemäß § 558d BGB sind hierbei folgende wohnungsbezogenen Merkmale zu berücksichtigen.\n";
+        $brief_text = "\nBei der Ermittlung des ortsüblichen Vergleichmietzinses aufgrund des qualifizierten Mietspiegels gemäß § 558d BGB sind hierbei folgende wohnungsbezogenen Merkmale zu berücksichtigen:";
         $pdf->ezText("$brief_text", 11, array(
             'justification' => 'full'
         ));
@@ -1603,7 +1608,7 @@ class mietanpassung
         ));
         /* Fünfte Seite ZUSTIMMUNG - Die der Mieter uterschreibt und zurücksendet */
         $pdf->ezNewPage();
-        $pdf->ezText("$p->partner_name\n$p->partner_strasse $p->partner_hausnr\n\n$p->partner_plz $p->partner_ort", 12);
+        $pdf->ezText("$p->partner_name\n$p->partner_strasse $p->partner_hausnr\n<b>$p->partner_plz $p->partner_ort</b>", 12);
         $pdf->ezSetDy(-60);
         $pdf->ezText("<b>ERKLÄRUNG</b>", 14, array(
             'justification' => 'center'
@@ -1836,7 +1841,7 @@ class mietanpassung
         $ber->MG_ZUSCHLAG_MAX = $ber->MG_SALDO * ($ber->EINHEIT_QM * $ber->MG_20_proz);
         $ber->MG_ZUSCHLAG_MAX_QM = $ber->MG_SALDO * $ber->MG_20_proz;
 
-        $ber->MG_MIETE_MAX = ($ber->EINHEIT_QM * $ber->M_WERT) + $ber->MG_ZUSCHLAG_MAX;
+        $ber->MG_MIETE_MAX = ($ber->EINHEIT_QM * $ber->M_WERT_W) + $ber->MG_ZUSCHLAG_MAX;
         $ber->MG_M2_PREIS = $ber->MG_MIETE_MAX / $ber->EINHEIT_QM;
         $ber->ANSTIGEN_MG_PROZ_MAX = ($ber->MG_MIETE_MAX / ($ber->MIETE_3_JAHRE / 100)) - 100;
 
@@ -1882,6 +1887,7 @@ class mietanpassung
         $ber->PROZ_ERH2_A = nummer_punkt2komma($ber->PROZ_ERH2);
         $ber->MONATLICH_MEHR2_A = nummer_punkt2komma($ber->MONATLICH_MEHR2);
         $ber->M2_PREIS_NEU2_A = nummer_punkt2komma($ber->M2_PREIS_NEU2);
+        $ber->MG_M2_PREIS_A = nummer_punkt2komma($ber->MG_M2_PREIS);
 
         $ber->B_NEUE_ENDMIETE_A = nummer_punkt2komma($ber->B_NEUE_ENDMIETE);
 
@@ -1898,7 +1904,7 @@ class mietanpassung
         $mv = new mietvertraege ();
         $mv->get_mietvertrag_infos_aktuell($ber->MV_ID);
         if ($mv->anz_zustellanschriften == '0') {
-            $pdf->ezText("$mv->personen_name_string_u\n$mv->haus_strasse $mv->haus_nr\n\n$mv->haus_plz $mv->haus_stadt", 12);
+            $pdf->ezText("$mv->personen_name_string_u\n$mv->haus_strasse $mv->haus_nr\n<b>$mv->haus_plz $mv->haus_stadt</b>", 12);
             $pdf->addText(250, $pdf->y, 6, "$mv->einheit_lage", 0);
         } else {
             /* Zustelanschrift */
@@ -1915,90 +1921,128 @@ class mietanpassung
         $pdf->setLineStyle(0.2);
         $pdf->line(5, 542, 20, 542);
         /* Anrede */
-        $pdf->ezText("$anrede", 11);
-        $pdf->ezText("$mv->mv_anrede", 11);
+        $pdf->ezText("$anrede", 10);
+        $pdf->ezText("$mv->mv_anrede", 10);
         $brief_text = "wie Ihnen bekannt ist, vertreten wir die rechtlichen Interessen der Eigentümer. Eine auf uns lautende Vollmacht ist beigefügt.";
-        $pdf->ezText("$brief_text", 11, array(
+        $pdf->ezText("$brief_text", 10, array(
             'justification' => 'full'
         ));
-        $brief_text = "Namens und in Vollmacht der Eigentümer werden Sie hiermit gebeten, der Erhöhung der Netto-Kaltmiete gemäß § 558 BGB zuzustimmen. Gemäß der mietvertraglichen Vereinbarung zahlen Sie gegenwärtig eine Nettomiete in Höhe von $ber->MIETE_AKTUELL_A €. Die jeweiligen Angaben beziehen sich auf den monatlichen Mietzins.
-	";
-        $pdf->ezText("$brief_text", 11, array(
+        $brief_text = "Namens und in Vollmacht der Eigentümer werden Sie hiermit gebeten, der Erhöhung der Netto-Kaltmiete gemäß § 558 BGB zuzustimmen.";
+        //Gemäß der mietvertraglichen Vereinbarung zahlen Sie gegenwärtig eine Nettomiete in Höhe von $ber->MIETE_AKTUELL_A €. Die jeweiligen Angaben beziehen sich auf den monatlichen Mietzins.";
+        $pdf->ezText("$brief_text", 10, array(
             'justification' => 'full'
         ));
 
-        $tab_arr [0] ['BEZ'] = '<b>Ihre derzeitige Netto-Kaltmiete beträgt:</b>';
-        $tab_arr [0] ['BETRAG'] = '<b>' . $ber->MIETE_AKTUELL_A . ' €</b>';
-        $tab_arr [1] ['BEZ'] = '<b>Erhöhungsbetrag:</b>';
-        $tab_arr [1] ['BETRAG'] = '<b>' . $ber->MONATLICH_MEHR2_A . ' €</b>';
-        $tab_arr [2] ['BEZ'] = "<b>Neue Nettokaltmiete ab $ber->N_ANSTIEG_DATUM:</b>";
-        $tab_arr [2] ['BETRAG'] = '<b>' . $ber->NEUE_MIETE_A . ' €</b>';
+        $pdf->ezSetDy(-10);
 
+        $brief_text = "Die nachfolgenden Angaben beziehen sich jeweils auf die monatlichen Beträge.";
+        $pdf->ezText("$brief_text", 10, array(
+            'justification' => 'full'
+        ));
+
+        $pdf->ezSetDy(-10);
+
+        $brief_text = "Ihre neue Gesamtmiete setzt sich wie folgt zusammen:";
+        $pdf->ezText("$brief_text", 10, array(
+            'justification' => 'full'
+        ));
+
+        $tab_arr [0] ['BEZ'] = '<b>Derzeitige Netto-Kaltmiete</b>';
+        $tab_arr [0] ['BETRAG'] = "<b>$ber->MIETE_AKTUELL_A €</b>";
+        $tab_arr [0] ['M2'] = "$ber->M2_AKTUELL_A €/m²";
+        $tab_arr [1] ['BEZ'] = '+ Erhöhungsbetrag:';
+        $tab_arr [1] ['BETRAG'] = "$ber->MONATLICH_MEHR2_A €";
+        $erh_m2 = nummer_punkt2komma($ber->MONATLICH_MEHR2 / $ber->EINHEIT_QM);
+        $tab_arr [1] ['M2'] = "$erh_m2 €/m²";
+        $tab_arr [2] ['BEZ'] = "<b>Neue Netto-Kaltmiete ab dem $ber->N_ANSTIEG_DATUM</b>";
+        $tab_arr [2] ['BETRAG'] = "<b>$ber->NEUE_MIETE_A €</b>";
+        $tab_arr [2] ['M2'] = "$ber->M2_PREIS_NEU2_A €/m²";
+        $tab_arr [3] ['BEZ'] = '+ Betriebskostenvorauszahlung';
+        $tab_arr [3] ['BETRAG'] = "$ber->B_AKT_NK €";
+        if ((double)$ber->B_AKT_HK) {
+            $tab_arr [4] ['BEZ'] = "+ Heizkostenvorauszahlung";
+            $tab_arr [4] ['BETRAG'] = "$ber->B_AKT_HK €";
+            $nr = 4;
+        } else {
+            $nr = 3;
+        }
+
+        /* Zuschläge Mietentwicklung wie MOD sonstiges */
+        $zuabschlag_arr = $this->get_zuabschlag_arr($ber->MV_ID);
+        $this->zuabschlag = 0.00;
+        if (is_array($zuabschlag_arr)) {
+            $anz_za = count($zuabschlag_arr);
+
+            for ($zz = 0; $zz < $anz_za; $zz++) {
+                $nr++;
+                $bez = $this->substituteCostCategory($zuabschlag_arr [$zz] ['KOSTENKATEGORIE']);
+                $betrag_za = $zuabschlag_arr [$zz] ['BETRAG'];
+                $anfang_za = date_mysql2german($zuabschlag_arr [$zz] ['ANFANG']);
+                $this->zuabschlag += $betrag_za;
+                $tab_arr [$nr] ['BEZ'] = "+ $bez seit $anfang_za";
+                $tab_arr [$nr] ['BETRAG'] = nummer_punkt2komma($betrag_za) . " €";
+                $ber->B_AKT_ENDMIETE = nummer_komma2punkt($ber->B_AKT_ENDMIETE) + $betrag_za;
+                $ber->B_NEUE_ENDMIETE = $ber->B_NEUE_ENDMIETE + $betrag_za;
+                $ber->B_AKT_ENDMIETE = nummer_punkt2komma($ber->B_AKT_ENDMIETE);
+                $ber->B_NEUE_ENDMIETE_A = nummer_punkt2komma($ber->B_NEUE_ENDMIETE);
+            }
+        }
+
+        $tab_arr [$nr + 1] ['BEZ'] = "<b>Neue Gesamtmiete ab $ber->N_ANSTIEG_DATUM</b>";
+        $tab_arr [$nr + 1] ['BETRAG'] = "<b>$ber->B_NEUE_ENDMIETE_A €</b>";
+
+        $pdf->ezSetDy(-3);
         $cols = array(
-            'BEZ' => "BEZ",
-            'BETRAG' => "BETRAG"
+            'BEZ' => "",
+            'BETRAG' => "Euro/monatlich",
+            'M2' => "Euro/m²"
         );
         $pdf->ezTable($tab_arr, $cols, "", array(
             'showHeadings' => 0,
             'shaded' => 0,
             'showLines' => 0,
-            'titleFontSize' => 11,
-            'fontSize' => 11,
+            'titleFontSize' => 10,
+            'fontSize' => 10,
             'xPos' => 55,
             'xOrientation' => 'right',
-            'width' => 400,
+            'width' => 470,
             'cols' => array(
                 'BEZ' => array(
                     'justification' => 'left',
-                    'width' => 350
+                    'width' => 300
                 ),
                 'BETRAG' => array(
                     'justification' => 'right',
-                    'width' => 50
+                    'width' => 100
+                ),
+                'M2' => array(
+                    'justification' => 'right',
+                    'width' => 70
                 )
             )
         ));
+
         $pdf->ezSetDy(-10);
-        $brief_text = "Gemäß § 558 BGB kann der Vermieter die Zustimmung zur Mieterhöhung von Ihnen verlangen, wenn der Mietzins, zu dem die Erhöhung eintreten soll, seit 15 Monaten unverändert und mindestens 1 Jahr nach der letzten Mieterhöhung verstrichen ist. Weiterhin darf sich der Mietzins innerhalb von 3 Jahren um nicht mehr als 15 % erhöhen.";
-        $pdf->ezText("$brief_text", 11, array(
-            'justification' => 'full'
-        ));
-        $pdf->ezSetDy(-10);
-        $brief_text = "Die mietvertraglich vereinbarte Fläche Ihrer Wohnung beträgt $ber->EINHEIT_QM_A m². Sie zahlen gegenwärtig eine Netto-Kaltmiete in Höhe von $ber->MIETE_AKTUELL_A €. Hieraus errechnet sich eine Miete netto kalt je qm in Höhe von $ber->M2_AKTUELL_A €.";
-        $pdf->ezText("$brief_text", 11, array(
+
+        $brief_text = "Die mietvertraglich vereinbarte Fläche Ihrer Wohnung beträgt $ber->EINHEIT_QM_A m². Sie zahlen gegenwärtig eine Netto-Kaltmiete in Höhe von $ber->MIETE_AKTUELL_A €, also $ber->M2_AKTUELL_A €/m². "
+            . "Dieser Betrag ist mit den Werten des Berliner Mietspiegels für $ber->MS_JAHR (in Kopie beigefügt) zu vergleichen. Die von Ihnen genutzte Wohnung ist dem Mietspiegelfeld $ber->MS_FELD zuzuordnen. "
+            . "Der Mittelwert im Mietspiegelfeld $ber->MS_FELD liegt bei $ber->M_WERT_A €/m².";
+        $pdf->ezText("$brief_text", 10, array(
             'justification' => 'full'
         ));
 
-        $brief_text = "\nBei der Berechnung der zulässigen Erhöhung gemäß § 558 BGB ist von der gezahlten Netto-Kaltmiete von vor drei Jahren auszugehen.";
-        $pdf->ezText("$brief_text", 11, array(
-            'justification' => 'full'
-        ));
-
-        // DATUM_3_JAHRE
-        $datum_vor_3_jahren_a = $ber->DATUM_3_JAHRE;
-        $datum_vor_3_jahren = date_german2mysql($datum_vor_3_jahren_a);
-        $ber->EINZUG_A = date_mysql2german($ber->EINZUG);
-        $t1 = strtotime("$datum_vor_3_jahren");
-        $t2 = strtotime("$ber->EINZUG");
-        if ($t2 > $t1) {
-            $brief_text = "\nDie Netto-Kaltmiete (ohne Umlagen und Zuschläge) betrug bei Vertragsbeginn am $ber->EINZUG_A $ber->MIETE_3_JAHRE_A €. ";
-        } else {
-            $brief_text = "\nDie Netto-Kaltmiete (ohne Umlagen und Zuschläge) betrug  am $datum_vor_3_jahren_a $ber->MIETE_3_JAHRE_A €. ";
+        $berechnung = '';
+        foreach ($ber->ABZUEGE as $abzug) {
+            $pdf->ezText($abzug['MERKMAL_GRUND'], 10, ['justification' => 'full']);
+            if ($abzug['MERKMAL_WERT'] < 0) {
+                $berechnung .= ' - ' . nummer_punkt2komma(abs($abzug['MERKMAL_WERT'])) . ' €/m²';
+            } else {
+                $berechnung .= ' + ' . nummer_punkt2komma(abs($abzug['MERKMAL_WERT'])) . ' €/m²';
+            }
         }
-        $pdf->ezText("$brief_text", 11, array(
-            'justification' => 'full'
-        ));
 
-        $brief_text = "\nAuf diesen Netto-Kaltmietzins erfolgten innerhalb der letzten drei Jahre Erhöhungen von insgesamt $ber->ANSTIEG_3J_A %.";
-        $pdf->ezText("$brief_text", 11, array(
-            'justification' => 'full'
-        ));
-
-        /* Zweite Seite */
-        $pdf->ezNewPage();
-
-        $brief_text = "\nAuf Grundlage des Berliner Mietspiegel für $ber->MS_JAHR (in Kopie beigefügt) ist eine Erhöhung unter der Berücksichtigung von Sondermerkmalen und der Kappungsgrenze nach § 558 BGB auf $ber->SG_MAX_A € / m² für Ihre Wohnung möglich.";
-        $pdf->ezText("$brief_text", 11, array(
+        $brief_text = "Bei der Ermittlung des ortsüblichen Vergleichsmietzinses aufgrund des qualifizierten Mietspiegels gemäß § 558d BGB sind noch folgende wohnungsbezogene Merkmale zu berücksichtigen:";
+        $pdf->ezText("$brief_text", 10, array(
             'justification' => 'full'
         ));
 
@@ -2024,15 +2068,10 @@ class mietanpassung
         $mg_tab [4] ['PROZ'] = $mg5_arr [2];
         /* Saldo Tabelle SM */
         $mg_tab [5] ['BEZ'] = '';
-        $mg_tab [5] ['TXT'] = 'Saldo der Merkmalgruppen';
-        $mg_tab [5] ['PROZ'] = "$ber->MG_SALDO_PROZ_A %";
+        $mg_tab [5] ['TXT'] = '<b>Ergebnis</b>';
+        $mg_tab [5] ['PROZ'] = "<b>$ber->MG_SALDO_PROZ_A %</b>";
 
-        $brief_text = "\nBei der Ermittlung des ortsüblichen Vergleichmietzinses aufgrund des qualifizierten Mietspiegels gemäß § 558d BGB sind hierbei folgende wohnungsbezogenen Merkmale zu berücksichtigen.\n";
-        $pdf->ezText("$brief_text", 11, array(
-            'justification' => 'full'
-        ));
-
-        $pdf->ezSetDy(-5);
+        $pdf->ezSetDy(-10);
         $cols = array(
             'BEZ' => "SMG",
             'TXT' => "MERKMALE",
@@ -2042,10 +2081,10 @@ class mietanpassung
             'showHeadings' => 0,
             'shaded' => 1,
             'titleFontSize' => 8,
-            'fontSize' => 9,
+            'fontSize' => 10,
             'xPos' => 55,
             'xOrientation' => 'right',
-            'width' => 525,
+            'width' => 480,
             'cols' => array(
                 'PROZ' => array(
                     'justification' => 'right',
@@ -2056,224 +2095,149 @@ class mietanpassung
 
         $pdf->ezSetDy(-10);
         if ($ber->MG_SALDO > 0) {
-            $pdf->ezText("Als Anlage erhalten Sie die Online-Berechnung der Stadtentwicklung Berlin.", 12);
-            $brief_text = "\nAufgrund dieser Merkmalsgruppen ergibt sich ein Zu-/Abschlag für Ihre Wohnung in Höhe von $ber->MG_SALDO_PROZ_A % bzw. $ber->MG_ZUSCHLAG_MAX_QM_A EUR von $ber->O_SPANNE_W_A EUR/m² -von der Differenz Mittel-/Oberwert ($ber->O_WERT_A € - $ber->M_WERT_A €).";
-            $pdf->ezText("$brief_text", 11, array(
+            $pdf->ezText("Als Anlage erhalten Sie die Orientierungshilfe für die Spanneneinordnung der Senatsverwaltung  für Stadtentwicklung Berlin.", 10);
+            $brief_text = "Das Ergebnis von $ber->MG_SALDO_PROZ_A %, bezogen auf die obere Spanne von $ber->O_SPANNE_W_A € ";
+            $brief_text .= "(Differenz aus Ober- und Mittelwert), sind (kaufmännisch gerundet) $ber->MG_ZUSCHLAG_MAX_QM_A €.";
+            $pdf->ezText($brief_text, 10, array(
                 'justification' => 'full'
             ));
+            $berechnung .= ' + ' . nummer_punkt2komma(abs($ber->MG_ZUSCHLAG_MAX_QM)) . ' €/m²';
         }
 
-        if ($ber->MG_SALDO <= 0) {
-            $brief_text = "\nAufgrund dieser Merkmalsgruppen ergibt sich ein Zu-/Abschlag für Ihre Wohnung in Höhe von $ber->MG_SALDO_PROZ_A % bzw. $ber->MG_ZUSCHLAG_MAX_QM_A EUR von $ber->U_SPANNE_W_A EUR/m² -von der Differenz Mittel-/Unterwert ($ber->M_WERT_A € - $ber->U_WERT_A €).";
-            $pdf->ezText("$brief_text", 11, array(
+        if ($ber->MG_SALDO == 0) {
+            $brief_text = "Das Ergebnis von $ber->MG_SALDO_PROZ_A %, bezogen auf die Spanneneinordung, sind " . nummer_punkt2komma(abs($ber->MG_ZUSCHLAG_MAX_QM)) . " €/m².";
+            $pdf->ezText("$brief_text", 10, array(
                 'justification' => 'full'
             ));
+            $berechnung .= ' + ' . nummer_punkt2komma(abs($ber->MG_ZUSCHLAG_MAX_QM)) . ' €/m²';
+        }
+        if ($ber->MG_SALDO < 0) {
+            $brief_text = "Das Ergebnis von $ber->MG_SALDO_PROZ_A %, bezogen auf die untere Spanne von $ber->U_SPANNE_W_A € (Differenz aus Mittel- und Unterwert), sind (kaufmännisch gerundet) " . nummer_punkt2komma(abs($ber->MG_ZUSCHLAG_MAX_QM)) . " €.";
+            $pdf->ezText("$brief_text", 10, array(
+                'justification' => 'full'
+            ));
+            $berechnung .= ' - ' . nummer_punkt2komma(abs($ber->MG_ZUSCHLAG_MAX_QM)) . ' €/m²';
         }
 
-        $brief_text = "Die von Ihnen genutzte Wohnung ist dem Mietspiegelfeld <b>$ber->MS_FELD </b>zuzuordnen.";
-        $pdf->ezText("$brief_text", 11, array(
+        if ($berechnung) {
+            $berechnung = ' (= ' . $ber->M_WERT_A . ' €/m²' . $berechnung . ')';
+        }
+
+        $brief_text = "Die Anwendung der oben genannten Faktoren ";
+        $brief_text .= "ergibt für Ihre Wohnung eine ortsübliche Vergleichsmiete von " . $ber->MG_M2_PREIS_A . " €/m²$berechnung.";
+        $pdf->ezText($brief_text, 10, ['justification' => 'full']);
+
+        $pdf->ezSetDy(-10);
+
+        $brief_text = "Gemäß § 558 BGB kann der Vermieter die Zustimmung zur Mieterhöhung von Ihnen verlangen, wenn der Mietzins, zu dem Zeitpunkt, an dem die Erhöhung eintreten soll, seit 15 Monaten unverändert ist und mindestens zwölf Monate seit der letzten Mieterhöhung verstrichen sind. "
+            . "Weiterhin darf sich der Mietzins innerhalb von drei Jahren um nicht mehr als 15 % erhöhen.";
+        $pdf->ezText("$brief_text", 10, array(
             'justification' => 'full'
         ));
-        $ber->M_WERT_A = nummer_punkt2komma($ber->M_WERT);
 
-        /* Sondermerkmale finden */
-        $sondermerkmale_arr = $this->get_sondermerkmale_arr($ber->AUSSTATTUNGSKLASSE, $ber->MS_JAHR);
-        $anz_sm = count($sondermerkmale_arr);
-        if ($anz_sm > 0) {
-            $d = new detail ();
-            $abzug_zaehler = 0;
-            $this->abzug_wert = 0;
-
-            for ($s = 0; $s < $anz_sm; $s++) {
-                $merkmal = $sondermerkmale_arr [$s] ['MERKMAL'];
-                $wert = $sondermerkmale_arr [$s] ['WERT'];
-                $a_klasse = $sondermerkmale_arr [$s] ['A_KLASSE'];
-                if ($a_klasse == NULL or $ber->AUSSTATTUNGSKLASSE == $a_klasse) {
-                    /* Wenn z.B. Erdgeschoss, dann Abzug */
-                    $sonder_abzug = $d->finde_detail_inhalt('EINHEIT', $ber->EINHEIT_ID, $merkmal);
-                    if ($sonder_abzug) {
-                        $abzuege_arr [$abzug_zaehler] ['MERKMAL'] = $merkmal;
-                        $abzuege_arr [$abzug_zaehler] ['MERKMAL_GRUND'] = $sonder_abzug;
-                        $abzuege_arr [$abzug_zaehler] ['MERKMAL_WERT'] = $wert;
-                        $this->abzug_wert = $this->abzug_wert + $wert;
-                        $abzug_zaehler++;
-                    }
-                }
-            } // end for
-        } // end wenn Sondermerkmale vorhanden
-
-        if (is_array($abzuege_arr)) {
-            $this->abzug_wert_a = nummer_punkt2komma($this->abzug_wert);
-            $brief_text = "\n<b>Bei Ihrer Wohnung wurden bei der Berechnung folgende wertmindernde Faktoren berücksichtigt:</b>\n";
-            $pdf->ezText("$brief_text", 11, array(
-                'justification' => 'full'
-            ));
-            $anz = count($abzuege_arr);
-            for ($i = 0; $i < $anz; $i++) {
-                $merkm = $abzuege_arr [$i] ['MERKMAL'];
-                $merkmw = $abzuege_arr [$i] ['MERKMAL_WERT'];
-                $merkmw_a = nummer_punkt2komma($merkmw);
-                $pdf->ezText("$merkm          $merkmw_a €/m²", 11);
-            }
-            $ber->GESAMT_ABZUG_A = nummer_punkt2komma($ber->GESAMT_ABZUG);
-            $pdf->ezText("<b>Gesamtminderung              $ber->GESAMT_ABZUG_A €/monatlich</b> (Ihre Fläche: $ber->EINHEIT_QM_A m² X Abzug pro m²: $this->abzug_wert_a €)", 11);
-            $neuer_mw = nummer_komma2punkt($ber->M_WERT_A) + $this->abzug_wert;
-            $neuer_mw_a = nummer_punkt2komma($neuer_mw);
-
-            $pdf->ezText("Berechnung des Mietspiegelmittelwertes für Ihre Wohnung: $ber->M_WERT_A € $this->abzug_wert_a € = <b>$neuer_mw_a € pro m²</b>", 11, array(
-                'justification' => 'full'
-            ));
+        $brief_text = "Bei der Berechnung der zulässigen Erhöhung gemäß § 558 BGB ist von der gezahlten Netto-Kaltmiete von vor drei Jahren auszugehen. ";
+        $datum_vor_3_jahren_a = $ber->DATUM_3_JAHRE;
+        $datum_vor_3_jahren = date_german2mysql($datum_vor_3_jahren_a);
+        $ber->EINZUG_A = date_mysql2german($ber->EINZUG);
+        $t1 = strtotime("$datum_vor_3_jahren");
+        $t2 = strtotime("$ber->EINZUG");
+        if ($t2 > $t1) {
+            $brief_text .= "Bei Mietvertragsbeginn am $ber->EINZUG_A betrug Ihre Netto-Kaltmiete $ber->MIETE_3_JAHRE_A €.";
         } else {
-            $neuer_mw = nummer_komma2punkt($ber->M_WERT_A);
-            $neuer_mw_a = nummer_punkt2komma($neuer_mw);
+            $brief_text .= "Am $datum_vor_3_jahren_a betrug Ihre Netto-Kaltmiete $ber->MIETE_3_JAHRE_A €.";
         }
-
-        if (round($neuer_mw, 2) < round($ber->M2_PREIS_NEU2, 2)) {
-            throw new \App\Exceptions\MessageException(
-                new \App\Messages\ErrorMessage("MIETERHÖHUNG NICHT MÖGLICH: $neuer_mw_a < $ber->M2_PREIS_NEU2_A")
-            );
-        }
-
-        $ber->ANSTIEG_UM_PROZENT_A = nummer_punkt2komma($ber->ANSTIEG_UM_PROZENT);
-        $ber->MONATLICH_MEHR_A = nummer_punkt2komma($ber->MONATLICH_MEHR);
-        $brief_text = "\nGemäß § 558 Absatz 3 BGB wird hiermit die Miete um $ber->PROZ_ERH2_A %, ausgehend vom Netto-Kaltmietzins, also um insgesamt $ber->MONATLICH_MEHR2_A €, erhöht.";
-        $pdf->ezText("$brief_text", 11, array(
-            'justification' => 'full'
-        ));
-        $ber->M2_PREIS_NEU_A = nummer_punkt2komma($ber->M2_PREIS_NEU);
-        $brief_text = "\nNach der Erhöhung beträgt die Nettokaltmiete <b>$ber->M2_PREIS_NEU2_A €/m²</b>. Unter Berücksichtigung der wohnungsbezogenen Merkmale ist der geforderte Mietzins ortsüblich.";
-        $pdf->ezText("$brief_text", 11, array(
+        $pdf->ezText("$brief_text", 10, array(
             'justification' => 'full'
         ));
 
-        $brief_text = "\n<b>Diese setzt sich wie folgt zusammen (EURO):</b>";
-        $pdf->ezText("$brief_text", 11, array(
+        $brief_text = "Auf diesen Netto-Kaltmietzins erfolgten innerhalb der letzten drei Jahre Erhöhungen von insgesamt $ber->ANSTIEG_3J_A %.";
+        $pdf->ezText("$brief_text", 10, array(
             'justification' => 'full'
         ));
 
-        $tab_arr [0] ['BEZ'] = 'Ihre derzeitige Netto-Kaltmiete beträgt';
-        $tab_arr [0] ['BETRAG'] = "$ber->MIETE_AKTUELL_A €";
-        $tab_arr [0] ['M2'] = "$ber->M2_AKTUELL_A €";
-        $tab_arr [1] ['BEZ'] = 'Erhöhungsbetrag:';
-        $tab_arr [1] ['BETRAG'] = "$ber->MONATLICH_MEHR2_A €";
-        $erh_m2 = nummer_punkt2komma($ber->MONATLICH_MEHR2 / $ber->EINHEIT_QM);
-        $tab_arr [1] ['M2'] = "$erh_m2 €";
-        $tab_arr [2] ['BEZ'] = "<b>Neue Nettokaltmiete ab dem $ber->N_ANSTIEG_DATUM</b>";
-        $tab_arr [2] ['BETRAG'] = "<b>$ber->NEUE_MIETE_A €</b>";
-        $tab_arr [2] ['M2'] = "$ber->M2_PREIS_NEU2_A €";
-        $tab_arr [3] ['BEZ'] = 'Betriebskostenvorauszahlung';
-        $tab_arr [3] ['BETRAG'] = "$ber->B_AKT_NK €";
-        $tab_arr [4] ['BEZ'] = 'Heizkostenvorauszahlung';
-        $tab_arr [4] ['BETRAG'] = "$ber->B_AKT_HK €";
-        $nr = 4;
-
-        /* Zuschläge Mietentwicklung wie MOD sonstiges */
-        $zuabschlag_arr = $this->get_zuabschlag_arr($ber->MV_ID);
-        $this->zuabschlag = 0.00;
-        if (is_array($zuabschlag_arr)) {
-            $anz_za = count($zuabschlag_arr);
-
-            for ($zz = 0; $zz < $anz_za; $zz++) {
-                $nr++;
-                $bez = $this->substituteCostCategory($zuabschlag_arr [$zz] ['KOSTENKATEGORIE']);
-                $betrag_za = $zuabschlag_arr [$zz] ['BETRAG'];
-                $anfang_za = date_mysql2german($zuabschlag_arr [$zz] ['ANFANG']);
-                $this->zuabschlag += $betrag_za;
-                $tab_arr [$nr] ['BEZ'] = "$bez seit $anfang_za";
-                $tab_arr [$nr] ['BETRAG'] = nummer_punkt2komma($betrag_za) . " €";
-                $ber->B_AKT_ENDMIETE = nummer_komma2punkt($ber->B_AKT_ENDMIETE) + $betrag_za;
-                $ber->B_NEUE_ENDMIETE = $ber->B_NEUE_ENDMIETE + $betrag_za;
-                $ber->B_AKT_ENDMIETE = nummer_punkt2komma($ber->B_AKT_ENDMIETE);
-                $ber->B_NEUE_ENDMIETE_A = nummer_punkt2komma($ber->B_NEUE_ENDMIETE);
-            }
+        $brief_text = "Gemäß § 558 Absatz 3 BGB wird hiermit die monatliche Miete um $ber->MONATLICH_MEHR_A € erhöht. ";
+        if ($t2 > $t1) {
+            $brief_text .= "Dies entspricht $ber->PROZ_ERH2_A % vom Netto-Kaltmietzins bei Mietvertragsbeginn am $ber->EINZUG_A. ";
+        } else {
+            $brief_text .= "Dies entspricht $ber->PROZ_ERH2_A % vom Netto-Kaltmietzins am $datum_vor_3_jahren_a. ";
         }
-
-        $tab_arr [$nr + 1] ['BEZ'] = "<b>Neue Endmiete ab $ber->N_ANSTIEG_DATUM</b>";
-        $tab_arr [$nr + 1] ['BETRAG'] = "<b>$ber->B_NEUE_ENDMIETE_A €</b>";
-
-        $pdf->ezSetDy(-3);
-        $cols = array(
-            'BEZ' => "",
-            'BETRAG' => "Euro/monatlich",
-            'M2' => "Euro/m²"
-        );
-        $pdf->ezTable($tab_arr, $cols, "", array(
-            'showHeadings' => 1,
-            'shaded' => 0,
-            'showLines' => 0,
-            'titleFontSize' => 11,
-            'fontSize' => 11,
-            'xPos' => 55,
-            'xOrientation' => 'right',
-            'width' => 500,
-            'cols' => array(
-                'BEZ' => array(
-                    'justification' => 'left',
-                    'width' => 300
-                ),
-                'BETRAG' => array(
-                    'justification' => 'right',
-                    'width' => 100
-                ),
-                'M2' => array(
-                    'justification' => 'right',
-                    'width' => 100
-                )
-            )
+        $brief_text .= "Nach der Erhöhung beträgt die Netto-Kaltmiete $ber->M2_PREIS_NEU2_A €/m². Unter Berücksichtigung der wohnungsbezogenen Merkmale ist der geforderte Mietzins ortsüblich. "
+            . "Ab dem <b>$ber->N_ANSTIEG_DATUM</b> beträgt Ihre <b>neue Netto-Kaltmiete $ber->NEUE_MIETE_A €.</b>";
+        $pdf->ezText("$brief_text", 10, array(
+            'justification' => 'full'
         ));
+
+        $pdf->ezSetDy(-10);
+
         $mysql_date_anstieg = date_german2mysql($ber->N_ANSTIEG_DATUM);
         $datum_zustimmung_frist = date_mysql2german($mysql_date_anstieg);
-        $brief_text = "\nGemäß § 558b BGB sind wir berechtigt, gegen Sie Klage auf Zustimmung zur Mieterhöhung zu erheben, falls Sie nicht bis zum Ablauf des zweiten Kalendermonats nach Zugang dieses Erhöhungsverlangens die Zustimmung erteilen. Die Klage muss hierbei innerhalb einer Frist von weiteren drei Monaten erhoben werden. Wir sehen daher Ihrer Zustimmung zur Mieterhöhung gemäß diesem Schreiben bis zum $datum_zustimmung_frist entgegen.\n";
-        $pdf->ezText("$brief_text", 11, array(
+
+        $brief_text = "Sie schulden den erhöhten Mietzins von Beginn des dritten Monats ab, der auf den Zugang des Erhöhungsverlangens folgt, falls die Zustimmung erteilt wird oder Sie vom Gericht zur Zustimmung verurteilt werden.";
+        $pdf->ezText("$brief_text", 10, array(
             'justification' => 'full'
         ));
 
-        $brief_text = "Sie schulden den erhöhten Mietzins von Beginn des dritten Monats ab, der auf den Zugang des Erhöhungsverlangens folgt, falls die Zustimmung erteilt wird oder Sie vom Gericht zur Zustimmung verurteilt werden.\n";
-        $pdf->ezText("$brief_text", 11, array(
+        $brief_text = "Gemäß § 561 BGB haben Sie ein Sonderkündigungsrecht. Sie können bis zum Ablauf des zweiten Monats nach dem Zugang der Erklärung das Mietverhältnis außerordentlich zum Ablauf des übernächsten Monats kündigen.";
+        $pdf->ezText("$brief_text", 10, array(
             'justification' => 'full'
         ));
-        $brief_text = "Gemäß § 561 BGB steht Ihnen ein Sonderkündigungsrecht für den Ablauf des zweiten Monats nach Zugang der Erklärung zu.\n";
-        $pdf->ezText("$brief_text", 11, array(
-            'justification' => 'full'
-        ));
-        $brief_text = "Wir bitten Sie, uns bis spätestens $datum_zustimmung_frist Ihre Zustimmung zu dieser Mieterhöhung schriftlich zu bestätigen und uns die letzte Seite des rechtsverbindlich unterschriebenen Exemplars der Erklärung zurückzusenden.\n";
-        $pdf->ezText("$brief_text", 11, array(
-            'justification' => 'full'
-        ));
-        $brief_text = "Dieses Schreiben wurde maschinell erstellt und ist ohne Unterschrift gültig.\n";
-        $pdf->ezText("$brief_text", 11, array(
+        $brief_text = "Wir bitten Sie, uns bis spätestens $datum_zustimmung_frist Ihre Zustimmung zu dieser Mieterhöhung schriftlich zu erklären. Hierzu senden Sie uns ein rechtsverbindlich unterschriebenes Exemplar der beigefügten Erklärung zurück.";
+        $pdf->ezText("$brief_text", 10, array(
             'justification' => 'full'
         ));
 
-        $brief_text = "\n\nAnlagen wie im Text angegeben";
+        $brief_text = "Gemäß § 558b BGB sind wir berechtigt, gegen Sie Klage auf Zustimmung zur Mieterhöhung zu erheben, falls Sie nicht bis zum Ablauf des zweiten Kalendermonats nach Zugang dieses Erhöhungsverlangens die Zustimmung erteilen. Wir sehen daher Ihrer Zustimmung zur Mieterhöhung gemäß diesem Schreiben bis zum $datum_zustimmung_frist entgegen.";
+        $pdf->ezText("$brief_text", 10, array(
+            'justification' => 'full'
+        ));
+
+        $pdf->ezSetDy(-20);
+        $brief_text = "Ihre Hausverwaltung";
+        $pdf->ezText("$brief_text", 10, array(
+            'justification' => 'full'
+        ));
+
+        $pdf->ezSetDy(-10);
+        $brief_text = "Dieses Schreiben wurde maschinell erstellt und ist ohne Unterschrift gültig.";
+        $pdf->ezText("$brief_text", 8, array(
+            'justification' => 'full'
+        ));
+
+        $brief_text = "Anlagen wie im Text angegeben";
         $pdf->ezText("$brief_text", 8, array(
             'justification' => 'full'
         ));
 
         /* Dritte Seite ZUSTIMMUNG */
         $pdf->ezNewPage();
-        $pdf->ezText("$p->partner_name\n$p->partner_strasse $p->partner_hausnr\n\n$p->partner_plz $p->partner_ort", 12);
+        $pdf->ezText("$p->partner_name\n$p->partner_strasse $p->partner_hausnr\n<b>$p->partner_plz $p->partner_ort</b>", 12);
         $pdf->ezSetDy(-60);
         $pdf->ezText("<b>ERKLÄRUNG</b>", 14, array(
             'justification' => 'center'
         ));
         $pdf->ezSetDy(-20);
-        $pdf->ezText("$mv->personen_name_string_u\n$mv->haus_strasse $mv->haus_nr\n\n$mv->haus_plz $mv->haus_stadt", 12);
+        $pdf->ezText("$mv->personen_name_string_u\n$mv->haus_strasse $mv->haus_nr\n$mv->haus_plz $mv->haus_stadt", 12);
         $pdf->ezSetDy(-20);
         $pdf->ezText("<b>Mieter-Nr.: $mv->einheit_kurzname</b>", 12);
         $pdf->ezSetDy(-20);
-        $pdf->ezText("Ihrem Mieterhöhungsverlangen für eine neue Gesamtmiete von <b>$ber->B_NEUE_ENDMIETE_A €</b>\n", 12);
+        $pdf->ezText("Ihrem Mieterhöhungsverlangen für eine neue <b>Gesamtmiete</b> von <b>$ber->B_NEUE_ENDMIETE_A €</b>\n", 12);
         unset ($tab_arr);
-        $tab_arr [0] ['BEZ'] = "Kaltmiete";
-        $tab_arr [0] ['BETRAG'] = "$ber->NEUE_MIETE_A €";
-        $tab_arr [1] ['BEZ'] = "Bisherige Zu- oder Abschläge (Moderniserung, etc..)";
+        $tab_arr [0] ['BEZ'] = "<b>Netto-Kaltmiete</b>";
+        $tab_arr [0] ['BETRAG'] = "<b>$ber->NEUE_MIETE_A €</b>";
+        $tab_arr [1] ['BEZ'] = '+ Betriebskostenvorauszahlung';
+        $tab_arr [1] ['BETRAG'] = "$ber->B_AKT_NK €";
+        if ((double)$ber->B_AKT_HK) {
+            $tab_arr [2] ['BEZ'] = "+ Heizkostenvorauszahlung";
+            $tab_arr [2] ['BETRAG'] = "$ber->B_AKT_HK €";
+            $nr = 2;
+        } else {
+            $nr = 1;
+        }
+        $tab_arr [$nr + 1] ['BEZ'] = "+ Bisherige Zu- oder Abschläge (Moderniserung, etc..)";
         $this->zuabschlag_a = nummer_punkt2komma($this->zuabschlag);
-        $tab_arr [1] ['BETRAG'] = "$this->zuabschlag_a €";
-
-        $tab_arr [2] ['BEZ'] = 'Betriebskostenvorauszahlung';
-        $tab_arr [2] ['BETRAG'] = "$ber->B_AKT_NK €";
-        $tab_arr [3] ['BEZ'] = 'Heizkostenvorauszahlung';
-        $tab_arr [3] ['BETRAG'] = "$ber->B_AKT_HK €";
+        $tab_arr [$nr + 1] ['BETRAG'] = "$this->zuabschlag_a €";
+        $tab_arr [$nr + 2] ['BEZ'] = '<b>Gesamtmiete</b>';
+        $tab_arr [$nr + 2] ['BETRAG'] = "<b>$ber->B_NEUE_ENDMIETE_A €</b>";
 
         $cols = array(
             'BEZ' => "BEZ",
@@ -2302,58 +2266,65 @@ class mietanpassung
         $pdf->ezText("\nab dem $ber->N_ANSTIEG_DATUM stimme/en ich/wir zu.\n", 12);
         $pdf->ezSetDy(-30);
         $hoehe = $pdf->y;
-        $pdf->ezText("_________________________", 11, array(
+        $pdf->ezText("____________________", 11, array(
             'aleft' => '55'
         ));
-        $pdf->ezText("Unterschrift", 10, array(
+        $pdf->ezText("Datum", 10, array(
             'aleft' => '100'
         ));
         $pdf->ezSety($hoehe);
-        $pdf->ezText("____________________", 11, array(
+        $pdf->ezText("_________________________", 11, array(
             'left' => '320'
         ));
-        $pdf->ezText("Datum", 10, array(
+        $pdf->ezText("Unterschrift", 10, array(
             'left' => '370'
         ));
         $pdf->ezSetDy(-60);
         $hoehe = $pdf->y;
-        $pdf->ezText("_________________________", 11, array(
+        $pdf->ezText("____________________", 11, array(
             'aleft' => '55'
         ));
-        $pdf->ezText("Unterschrift", 10, array(
+        $pdf->ezText("Datum", 10, array(
             'aleft' => '100'
         ));
         $pdf->ezSety($hoehe);
-        $pdf->ezText("____________________", 11, array(
+        $pdf->ezText("_________________________", 11, array(
             'left' => '320'
         ));
-        $pdf->ezText("Datum", 10, array(
+        $pdf->ezText("Unterschrift", 10, array(
             'left' => '370'
         ));
         /* Vierte Seite ZUSTIMMUNG - Die der Mieter uterschreibt und zurücksendet */
         $pdf->ezNewPage();
-        $pdf->ezText("$p->partner_name\n$p->partner_strasse $p->partner_hausnr\n\n$p->partner_plz $p->partner_ort", 12);
+        $pdf->ezText("$p->partner_name\n$p->partner_strasse $p->partner_hausnr\n<b>$p->partner_plz $p->partner_ort</b>", 12);
         $pdf->ezSetDy(-60);
         // y=ezText(text,[size],[array options])
         $pdf->ezText("<b>ERKLÄRUNG</b>", 14, array(
             'justification' => 'center'
         ));
         $pdf->ezSetDy(-20);
-        $pdf->ezText("$mv->personen_name_string_u\n$mv->haus_strasse $mv->haus_nr\n\n$mv->haus_plz $mv->haus_stadt", 12);
+        $pdf->ezText("$mv->personen_name_string_u\n$mv->haus_strasse $mv->haus_nr\n$mv->haus_plz $mv->haus_stadt", 12);
         $pdf->ezSetDy(-20);
         $pdf->ezText("<b>Mieter-Nr.: $mv->einheit_kurzname</b>", 12);
         $pdf->ezSetDy(-20);
-        $pdf->ezText("Ihrem Mieterhöhungsverlangen für eine neue Gesamtmiete von <b>$ber->B_NEUE_ENDMIETE_A €</b>\n", 12);
+        $pdf->ezText("Ihrem Mieterhöhungsverlangen für eine neue <b>Gesamtmiete</b> von <b>$ber->B_NEUE_ENDMIETE_A €</b>\n", 12);
         unset ($tab_arr);
-        $tab_arr [0] ['BEZ'] = "Kaltmiete";
-        $tab_arr [0] ['BETRAG'] = "$ber->NEUE_MIETE_A €";
-        $tab_arr [1] ['BEZ'] = 'Betriebskostenvorauszahlung';
+        $tab_arr [0] ['BEZ'] = "<b>Netto-Kaltmiete</b>";
+        $tab_arr [0] ['BETRAG'] = "<b>$ber->NEUE_MIETE_A €</b>";
+        $tab_arr [1] ['BEZ'] = '+ Betriebskostenvorauszahlung';
         $tab_arr [1] ['BETRAG'] = "$ber->B_AKT_NK €";
-        $tab_arr [2] ['BEZ'] = 'Heizkostenvorauszahlung';
-        $tab_arr [2] ['BETRAG'] = "$ber->B_AKT_HK €";
-        $tab_arr [3] ['BEZ'] = "Bisherige Zu- oder Abschläge (Moderniserung, etc..)";
+        if ((double)$ber->B_AKT_HK) {
+            $tab_arr [2] ['BEZ'] = "+ Heizkostenvorauszahlung";
+            $tab_arr [2] ['BETRAG'] = "$ber->B_AKT_HK €";
+            $nr = 2;
+        } else {
+            $nr = 1;
+        }
+        $tab_arr [$nr + 1] ['BEZ'] = "+ Bisherige Zu- oder Abschläge (Moderniserung, etc..)";
         $this->zuabschlag_a = nummer_punkt2komma($this->zuabschlag);
-        $tab_arr [3] ['BETRAG'] = "$this->zuabschlag_a €";
+        $tab_arr [$nr + 1] ['BETRAG'] = "$this->zuabschlag_a €";
+        $tab_arr [$nr + 2] ['BEZ'] = '<b>Gesamtmiete</b>';
+        $tab_arr [$nr + 2] ['BETRAG'] = "<b>$ber->B_NEUE_ENDMIETE_A €</b>";
 
         $cols = array(
             'BEZ' => "BEZ",
@@ -2382,32 +2353,32 @@ class mietanpassung
         $pdf->ezText("\nab dem $ber->N_ANSTIEG_DATUM stimme/en ich/wir zu.\n", 12);
         $pdf->ezSetDy(-30);
         $hoehe = $pdf->y;
-        $pdf->ezText("_________________________", 11, array(
+        $pdf->ezText("____________________", 11, array(
             'aleft' => '55'
         ));
-        $pdf->ezText("Unterschrift", 10, array(
+        $pdf->ezText("Datum", 10, array(
             'aleft' => '100'
         ));
         $pdf->ezSety($hoehe);
-        $pdf->ezText("____________________", 11, array(
+        $pdf->ezText("_________________________", 11, array(
             'left' => '320'
         ));
-        $pdf->ezText("Datum", 10, array(
+        $pdf->ezText("Unterschrift", 10, array(
             'left' => '370'
         ));
         $pdf->ezSetDy(-60);
         $hoehe = $pdf->y;
-        $pdf->ezText("_________________________", 11, array(
+        $pdf->ezText("____________________", 11, array(
             'aleft' => '55'
         ));
-        $pdf->ezText("Unterschrift", 10, array(
+        $pdf->ezText("Datum", 10, array(
             'aleft' => '100'
         ));
         $pdf->ezSetY($hoehe);
-        $pdf->ezText("____________________", 11, array(
+        $pdf->ezText("_________________________", 11, array(
             'left' => '320'
         ));
-        $pdf->ezText("Datum", 10, array(
+        $pdf->ezText("Unterschrift", 10, array(
             'left' => '370'
         ));
 
@@ -2528,14 +2499,14 @@ class mietanpassung
             $ber->MONATLICH_MEHR = $ber->NEUE_MIETE - $ber->MIETE_AKTUELL;
             $ber->ERH_QM2 = nummer_komma2punkt(nummer_punkt2komma($ber->M2_PREIS_NEU - $ber->M2_AKTUELL));
             $ber->SG_MAX = $ber->M2_PREIS_NEU;
-            $ber->PROZ_ERH = (($ber->NEUE_MIETE / ($ber->MIETE_3_JAHRE / 100)) - 100) - $ber->ANSTIEG_3J;
+            $ber->PROZ_ERH = ((($ber->NEUE_MIETE + $ber->TAT_KOST_M) / ($ber->MIETE_3_JAHRE / 100)) - 100) - $ber->ANSTIEG_3J;
         } else {
             $ber->M2_PREIS_NEU = $ber->MAX_M2_PREIS_KAPP;
             $ber->NEUE_MIETE = $ber->MAXIMALE_MIETE;
             $ber->MONATLICH_MEHR = $ber->NEUE_MIETE - $ber->MIETE_AKTUELL;
             $ber->ERH_QM2 = nummer_komma2punkt(nummer_punkt2komma($ber->M2_PREIS_NEU - $ber->M2_AKTUELL));
             $ber->SG_MAX = $ber->M2_PREIS_NEU;
-            $ber->PROZ_ERH = (($ber->NEUE_MIETE / ($ber->MIETE_3_JAHRE / 100)) - 100) - $ber->ANSTIEG_3J;
+            $ber->PROZ_ERH = ((($ber->NEUE_MIETE + $ber->TAT_KOST_M) / ($ber->MIETE_3_JAHRE / 100)) - 100) - $ber->ANSTIEG_3J;
         }
         $ber->NEUE_BRUTTO_MIETE = $ber->NEUE_MIETE + nummer_komma2punkt($ber->TAT_KOST_M);
 
@@ -2586,7 +2557,7 @@ class mietanpassung
         $mv = new mietvertraege ();
         $mv->get_mietvertrag_infos_aktuell($ber->MV_ID);
         if ($mv->anz_zustellanschriften == '0') {
-            $pdf->ezText("$mv->personen_name_string_u\n$mv->haus_strasse $mv->haus_nr\n\n$mv->haus_plz $mv->haus_stadt", 12);
+            $pdf->ezText("$mv->personen_name_string_u\n$mv->haus_strasse $mv->haus_nr\n<b>$mv->haus_plz $mv->haus_stadt</b>", 12);
             $pdf->addText(250, $pdf->y, 6, "$mv->einheit_lage", 0);
         } else {
             /* Zustelanschrift */
@@ -2722,12 +2693,13 @@ class mietanpassung
 
         $brief_text = "Die mietvertraglich vereinbarte Fläche Ihrer Wohnung beträgt $ber->EINHEIT_QM_A m². Sie zahlen gegenwärtig eine Nettokaltmiete in Höhe von $ber->MIETE_AKTUELL_A €, also $ber->M2_AKTUELL_A €/m². "
             . "Dieser Betrag ist mit den Werten des Berliner Mietspiegels für $ber->MS_JAHR (in Kopie beigefügt) zu vergleichen. "
-            . "Die von Ihnen genutzte Wohnung ist dem Mietspiegelfeld <b>$ber->MS_FELD</b> zuzuordnen. "
-            . "Der Mittelwert im Mietspiegelfeld $ber->MS_FELD liegt bei $ber->M_WERT €/m².";
+            . "Die von Ihnen genutzte Wohnung ist dem Mietspiegelfeld $ber->MS_FELD zuzuordnen. "
+            . "Der Mittelwert im Mietspiegelfeld $ber->MS_FELD liegt bei $ber->M_WERT_A €/m².";
         $pdf->ezText("$brief_text", 10, array(
             'justification' => 'full'
         ));
 
+        $pdf->ezSetDy(-10);
         $berechnung = '';
         foreach ($ber->ABZUEGE as $abzug) {
             $pdf->ezText($abzug['MERKMAL_GRUND'], 10, ['justification' => 'full']);
@@ -2738,7 +2710,7 @@ class mietanpassung
             }
         }
 
-        $brief_text = "Bei der Ermittlung des ortsüblichen Vergleichsmietzinses aufgrund des qualifizierten Mietspiegels gemäß § 558d BGB sind noch folgende wohnungsbezogene Merkmale zu berücksichtigen.";
+        $brief_text = "Bei der Ermittlung des ortsüblichen Vergleichsmietzinses aufgrund des qualifizierten Mietspiegels gemäß § 558d BGB sind noch folgende wohnungsbezogene Merkmale zu berücksichtigen:";
         $pdf->ezText("$brief_text", 10, array(
             'justification' => 'full'
         ));
@@ -2809,7 +2781,7 @@ class mietanpassung
             $berechnung .= ' + ' . nummer_punkt2komma(abs($ber->MG_ZUSCHLAG_MAX_QM)) . ' €/m²';
         }
         if ($ber->MG_SALDO < 0) {
-            $brief_text = "Das Ergebnis von $ber->MG_SALDO_PROZ_A %, bezogen auf die untere Spanne von $ber->U_SPANNE_W_A € (Differenz aus Mittel- und Unterwert), sind (kaufmännisch gerundet) " . nummer_punkt2komma(abs($ber->MG_ZUSCHLAG_MAX_QM)) . " €. Die Anwendung der empfohlenen Orientierungshilfe ergibt für Ihre Wohnung eine ortsübliche Vergleichsmiete von " . $ber->MG_M2_PREIS_A . " €/m².";
+            $brief_text = "Das Ergebnis von $ber->MG_SALDO_PROZ_A %, bezogen auf die untere Spanne von $ber->U_SPANNE_W_A € (Differenz aus Mittel- und Unterwert), sind (kaufmännisch gerundet) " . nummer_punkt2komma(abs($ber->MG_ZUSCHLAG_MAX_QM)) . " €.";
             $pdf->ezText("$brief_text", 10, array(
                 'justification' => 'full'
             ));
@@ -2817,13 +2789,14 @@ class mietanpassung
         }
 
         if ($berechnung) {
-            $berechnung = ' (= ' . $ber->M_WERT . ' €/m²' . $berechnung . ')';
+            $berechnung = ' (= ' . $ber->M_WERT_A . ' €/m²' . $berechnung . ')';
         }
 
         $brief_text = "Die Anwendung der oben genannten Faktoren ";
         $brief_text .= "ergibt für Ihre Wohnung eine ortsübliche Vergleichsmiete von " . $ber->MG_M2_PREIS_A . " €/m²$berechnung.";
         $pdf->ezText($brief_text, 10, ['justification' => 'full']);
 
+        $pdf->ezSetDy(-10);
         $brief_text = "Gemäß § 558 BGB kann der Vermieter die Zustimmung zur Mieterhöhung von Ihnen verlangen, wenn der Mietzins, zu dem Zeitpunkt, an dem die Erhöhung eintreten soll, seit 15 Monaten unverändert ist und mindestens zwölf Monate seit der letzten Mieterhöhung verstrichen sind. "
             . "Weiterhin darf sich der Mietzins innerhalb von drei Jahren um nicht mehr als 15 % erhöhen.";
         $pdf->ezText("$brief_text", 10, array(
@@ -2850,8 +2823,13 @@ class mietanpassung
             'justification' => 'full'
         ));
 
-        $brief_text = "Gemäß § 558 Absatz 3 BGB wird hiermit die monatliche Miete um $ber->PROZ_ERH_A %, also um $ber->MONATLICH_MEHR_A € ausgehend vom Netto-Kaltmietzins erhöht. "
-            . "Nach der Erhöhung beträgt die Netto-Kaltmiete $ber->M2_PREIS_NEU_A €/m². Unter Berücksichtigung der wohnungsbezogenen Merkmale ist der geforderte Mietzins ortsüblich. "
+        $brief_text = "Gemäß § 558 Absatz 3 BGB wird hiermit die monatliche Miete um $ber->MONATLICH_MEHR_A € erhöht. ";
+        if ($t2 > $t1) {
+            $brief_text .= "Dies entspricht $ber->PROZ_ERH_A % vom Brutto-Kaltmietzins bei Mietvertragsbeginn am $ber->EINZUG_A. ";
+        } else {
+            $brief_text .= "Dies entspricht $ber->PROZ_ERH_A % vom Brutto-Kaltmietzins am $datum_vor_3_jahren_a. ";
+        }
+        $brief_text .= "Nach der Erhöhung beträgt die Netto-Kaltmiete $ber->M2_PREIS_NEU_A €/m². Unter Berücksichtigung der wohnungsbezogenen Merkmale ist der geforderte Mietzins ortsüblich. "
             . "Ab dem <b>$ber->N_ANSTIEG_DATUM</b> beträgt Ihre <b>neue Brutto-Kaltmiete $ber->NEUE_BRUTTO_MIETE_A €.</b>";
         $pdf->ezText("$brief_text", 10, array(
             'justification' => 'full'
@@ -2860,6 +2838,7 @@ class mietanpassung
         $mysql_date_anstieg = date_german2mysql($ber->N_ANSTIEG_DATUM);
         $datum_zustimmung_frist = date_mysql2german($mysql_date_anstieg);
 
+        $pdf->ezSetDy(-10);
         $brief_text = "Sie schulden den erhöhten Mietzins von Beginn des dritten Monats ab, der auf den Zugang des Erhöhungsverlangens folgt, falls die Zustimmung erteilt wird oder Sie vom Gericht zur Zustimmung verurteilt werden.";
         $pdf->ezText("$brief_text", 10, array(
             'justification' => 'full'
@@ -2874,13 +2853,13 @@ class mietanpassung
             'justification' => 'full'
         ));
 
-        $brief_text = "Gemäß § 558b BGB sind wir berechtigt, gegen Sie Klage auf Zustimmung zur Mieterhöhung zu erheben, falls Sie nicht bis zum Ablauf des zweiten Kalendermonats nach Zugang dieses Erhöhungsverlangens die Zustimmung erteilen. Die Klage muss hierbei innerhalb einer Frist von weiteren drei Monaten erhoben werden. Wir sehen daher Ihrer Zustimmung zur Mieterhöhung gemäß diesem Schreiben bis zum $datum_zustimmung_frist entgegen.";
+        $brief_text = "Gemäß § 558b BGB sind wir berechtigt, gegen Sie Klage auf Zustimmung zur Mieterhöhung zu erheben, falls Sie nicht bis zum Ablauf des zweiten Kalendermonats nach Zugang dieses Erhöhungsverlangens die Zustimmung erteilen. Wir sehen daher Ihrer Zustimmung zur Mieterhöhung gemäß diesem Schreiben bis zum $datum_zustimmung_frist entgegen.";
         $pdf->ezText("$brief_text", 10, array(
             'justification' => 'full'
         ));
 
-        $pdf->ezSetDy(-10);
-        $brief_text = "\nIhre Hausverwaltung";
+        $pdf->ezSetDy(-20);
+        $brief_text = "Ihre Hausverwaltung";
         $pdf->ezText("$brief_text", 10, array(
             'justification' => 'full'
         ));
@@ -2898,17 +2877,17 @@ class mietanpassung
 
         /* Vierte Seite ZUSTIMMUNG */
         $pdf->ezNewPage();
-        $pdf->ezText("$p->partner_name\n$p->partner_strasse $p->partner_hausnr\n\n$p->partner_plz $p->partner_ort", 11);
+        $pdf->ezText("$p->partner_name\n$p->partner_strasse $p->partner_hausnr\n<b>$p->partner_plz $p->partner_ort</b>", 11);
         $pdf->ezSetDy(-60);
         $pdf->ezText("<b>ERKLÄRUNG</b>", 13, array(
             'justification' => 'center'
         ));
         $pdf->ezSetDy(-20);
-        $pdf->ezText("$mv->personen_name_string_u\n$mv->haus_strasse $mv->haus_nr\n\n$mv->haus_plz $mv->haus_stadt", 11);
+        $pdf->ezText("$mv->personen_name_string_u\n$mv->haus_strasse $mv->haus_nr\n$mv->haus_plz $mv->haus_stadt", 11);
         $pdf->ezSetDy(-20);
         $pdf->ezText("<b>Mieter-Nr.: $mv->einheit_kurzname</b>", 11);
         $pdf->ezSetDy(-20);
-        $pdf->ezText("Ihrem Mieterhöhungsverlangen für eine neue <b>Bruttomiete</b> von <b>$ber->NEUE_BRUTTO_MIETE_A €</b> (Gesamtmiete $neue_gesamtmiete_a €)", 10);
+        $pdf->ezText("Ihrem Mieterhöhungsverlangen für eine neue <b>Brutto-Kaltmiete</b> von <b>$ber->NEUE_BRUTTO_MIETE_A €</b> (Gesamtmiete $neue_gesamtmiete_a €)", 10);
         unset ($tab_arr);
         $tab_arr [0] ['BEZ'] = "<b>Netto-Kaltmiete</b>";
         $tab_arr [0] ['BETRAG'] = "<b>$ber->NEUE_MIETE_A €</b>";
@@ -2989,17 +2968,17 @@ class mietanpassung
         $pdf->ezNewPage();
         $pdf->ezNewPage();
 
-        $pdf->ezText("$p->partner_name\n$p->partner_strasse $p->partner_hausnr\n\n$p->partner_plz $p->partner_ort", 11);
+        $pdf->ezText("$p->partner_name\n$p->partner_strasse $p->partner_hausnr\n<b>$p->partner_plz $p->partner_ort</b>", 11);
         $pdf->ezSetDy(-60);
         $pdf->ezText("<b>ERKLÄRUNG</b>", 13, array(
             'justification' => 'center'
         ));
         $pdf->ezSetDy(-20);
-        $pdf->ezText("$mv->personen_name_string_u\n$mv->haus_strasse $mv->haus_nr\n\n$mv->haus_plz $mv->haus_stadt", 11);
+        $pdf->ezText("$mv->personen_name_string_u\n$mv->haus_strasse $mv->haus_nr\n$mv->haus_plz $mv->haus_stadt", 11);
         $pdf->ezSetDy(-20);
         $pdf->ezText("<b>Mieter-Nr.: $mv->einheit_kurzname</b>", 11);
         $pdf->ezSetDy(-20);
-        $pdf->ezText("Ihrem Mieterhöhungsverlangen für eine neue <b>Bruttomiete</b> von <b>$ber->NEUE_BRUTTO_MIETE_A €</b> (Gesamtmiete $neue_gesamtmiete_a €)", 11);
+        $pdf->ezText("Ihrem Mieterhöhungsverlangen für eine neue <b>Brutto-Kaltmiete</b> von <b>$ber->NEUE_BRUTTO_MIETE_A €</b> (Gesamtmiete $neue_gesamtmiete_a €)", 11);
         unset ($tab_arr);
         $tab_arr [0] ['BEZ'] = "<b>Netto-Kaltmiete</b>";
         $tab_arr [0] ['BETRAG'] = "<b>$ber->NEUE_MIETE_A €</b>";
