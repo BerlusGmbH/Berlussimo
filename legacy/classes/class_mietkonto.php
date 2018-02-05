@@ -390,7 +390,22 @@ ORDER BY BUCHUNGSNUMMER DESC");
         if ($laenge == 1) {
             $monat = '0' . $monat;
         }
-        $result = DB::select("SELECT SUM(BETRAG) AS SUMME_FORDERUNG, SUM(MWST_ANTEIL) AS MWST_ANTEIL FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat'  && KOSTENKATEGORIE NOT LIKE '%rate%' && KOSTENKATEGORIE NOT LIKE '%abrechnung%' && KOSTENKATEGORIE NOT LIKE '%mahngebühr%' && KOSTENKATEGORIE NOT LIKE 'Saldo Vortrag Vorverwaltung' && KOSTENKATEGORIE NOT LIKE '%energie%' ORDER BY ANFANG ASC");
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME_FORDERUNG, SUM(MWST_ANTEIL) AS MWST_ANTEIL 
+        FROM MIETENTWICKLUNG 
+        WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' 
+        && KOSTENTRAEGER_ID = '$mietvertrag_id' 
+        && MIETENTWICKLUNG_AKTUELL = '1' 
+        && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') 
+        && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat'  
+        && KOSTENKATEGORIE NOT LIKE '%rate%' 
+        && KOSTENKATEGORIE NOT LIKE '%abrechnung%' 
+        && KOSTENKATEGORIE NOT LIKE '%mahngebühr%' 
+        && KOSTENKATEGORIE NOT LIKE 'Saldo Vortrag Vorverwaltung' 
+        && KOSTENKATEGORIE NOT LIKE '%energie%' 
+        && KOSTENKATEGORIE NOT LIKE 'Kabel TV %'
+        && KOSTENKATEGORIE NOT LIKE 'Nebenkosten VZ - Anteilig'
+        && KOSTENKATEGORIE NOT LIKE 'Thermenwartung %'
+        ORDER BY ANFANG ASC");
         if (empty($result)) {
             return '0.00';
         } else {
@@ -1042,13 +1057,15 @@ ORDER BY BUCHUNGSNUMMER DESC");
 
     function datum_1_zahlung($mietvertrag_id)
     {
-        $mv = new mietvertraege ();
-        $mv->get_mietvertrag_infos_aktuell($mietvertrag_id);
-        $o = new objekt ();
-        $o->objekt_informationen($mv->objekt_id);
-        $geldkonto_id = $o->geld_konten_arr [0] ['KONTO_ID'];
+        $geldkonto_ids = \App\Models\Bankkonten::whereHas('objekte', function ($query) {
+            $query->where('GELD_KONTEN_ZUWEISUNG.VERWENDUNGSZWECK', 'Hausgeld');
+        })->whereHas('objekte.haeuser.einheiten.mietvertraege', function ($query) use ($mietvertrag_id) {
+            $query->where('MIETVERTRAG_ID', $mietvertrag_id);
+        })->get()->pluck('KONTO_ID')->all();
 
-        $result = DB::select("SELECT DATUM FROM GELD_KONTO_BUCHUNGEN WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && GELDKONTO_ID='$geldkonto_id' && AKTUELL = '1' ORDER BY DATUM ASC LIMIT 0,1");
+        $geldkonto_ids_string = implode(', ', $geldkonto_ids);
+
+        $result = DB::select("SELECT DATUM FROM GELD_KONTO_BUCHUNGEN WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && GELDKONTO_ID IN ($geldkonto_ids_string) && AKTUELL = '1' ORDER BY DATUM ASC LIMIT 0,1");
         return $result[0]['DATUM'];
     }
 
@@ -1393,14 +1410,12 @@ ORDER BY BUCHUNGSNUMMER DESC");
         if (!empty ($gk->geldkonto_id)) {
             $result = DB::select("SELECT DATUM, BETRAG, VERWENDUNGSZWECK AS BEMERKUNG, MWST_ANTEIL FROM GELD_KONTO_BUCHUNGEN WHERE  GELDKONTO_ID='$gk->geldkonto_id' $ko_string && KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mietvertrag_id' && AKTUELL='1' && DATE_FORMAT( DATUM, '%Y-%m' ) = '$jahr-$monat' ORDER BY DATUM ASC");
         } else {
-            throw new \App\Exceptions\MessageException(
-                new \App\Messages\ErrorMessage('Kein Geldkonto für das Objekt hinterlegt')
-            );
+            return [];
         }
         if (!empty($result)) {
             return $result;
         } else {
-            return false;
+            return [];
         }
     }
 
@@ -1705,6 +1720,7 @@ ORDER BY DATUM ASC ");
         $kostenkategorien_arr [] = 'Saldo Vortrag Vorverwaltung';
         $kostenkategorien_arr [] = 'Mietminderung';
         $kostenkategorien_arr [] = 'Stellplatzmiete';
+        $kostenkategorien_arr [] = 'Garagenmiete';
 
         for ($a = $jahr; $a >= $vorjahr; $a--) {
             $kostenkategorien_arr [] = "Betriebskostenabrechnung $a";

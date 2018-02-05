@@ -231,10 +231,10 @@ switch ($option) {
         break;
 
     case "ber_uebernehmen_netto" :
+        $einheit_id = request()->input('einheit_id');
         if (session()->has('ber_arr')) {
             session()->forget('ber_arr');
         }
-        $ber = request()->input('ber_array');
         if (request()->has('ber_uebernehmen_netto')) {
             if (request()->has('druckdatum')) {
                 $datum_d = request()->input('druckdatum');
@@ -242,7 +242,7 @@ switch ($option) {
                 $datum_d = date("d.m.Y");
             }
             $ma = new mietanpassung ();
-            $ma->pdf_anschreiben($ber, $datum_d);
+            $ma->pdf_anschreiben($einheit_id, $datum_d);
         }
 
         if (request()->has('ber_prozent')) {
@@ -251,7 +251,7 @@ switch ($option) {
 
             $f->text_feld('Prozent eingeben', 'prozent', '', 5, 'prozent', '');
             $f->hidden_feld('option', 'ber_prozentual');
-            session()->put('ber_arr', $ber);
+            session()->put('ber_arr', session()->get('adjust-rent-' . $einheit_id));
             $f->send_button('submit_pro', 'Berechnen -> PDF');
             $f->ende_formular();
         }
@@ -266,9 +266,9 @@ switch ($option) {
         } else {
             $datum = date("d.m.Y");
         }
-        $ber_array = request()->input('ber_array');
+        $einheit_id = request()->input('einheit_id');
         $ma = new mietanpassung ();
-        $ma->pdf_anschreiben_bruttomieter($ber_array, $datum);
+        $ma->pdf_anschreiben_bruttomieter($einheit_id, $datum);
         break;
 
     case "ber_prozentual" :

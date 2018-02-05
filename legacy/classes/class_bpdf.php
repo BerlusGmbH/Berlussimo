@@ -750,16 +750,15 @@ class b_pdf
         $pdf->ezText("$mv->haus_stadt, __________________", 9, array(
             'justification' => 'left'
         ));
-        $pdf->ezSetDy(-8); // Abstand
-        $pdf->addText(125, $pdf->y, 6, "Datum");
-
+        $pdf->ezSetDy(-7); // Abstand
+        $pdf->addText(145, $pdf->y, 6, "Datum");
         $pdf->ezSetDy(-20); // Abstand
-        $pdf->ezText("____________________________________________      _____________________________________________", 9, array(
+        $pdf->ezText("________________________________________________     ________________________________________________", 9, array(
             'justification' => 'left'
         ));
-        $pdf->ezSetDy(-8); // Abstand
-        $pdf->addText(150, $pdf->y, 6, "Mieter");
-        $pdf->addText(400, $pdf->y, 6, "Vermieter");
+        $pdf->ezSetDy(-7); // Abstand
+        $pdf->addText(165, $pdf->y, 6, "Mieter");
+        $pdf->addText(405, $pdf->y, 6, "Vermieter");
     }
 
     function pdf_abnahmeprotokoll(Cezpdf &$pdf, $mv_id, $einzug = null)
@@ -1100,13 +1099,18 @@ class b_pdf
             $pdf->addText(65, $pdf->y + 2, 9, "<b>Der Mieter hat die Auszugsbestätigung erhalten.</b>");
         }
         $pdf->ezSetDy(-10); // Abstand
-        $pdf->ezText("$mv->haus_stadt, __________________    ___________________________________    ____________________________________", 9, array(
+        $pdf->ezText("$mv->haus_stadt, __________________", 9, array(
             'justification' => 'left'
         ));
         $pdf->ezSetDy(-7); // Abstand
-        $pdf->addText(112, $pdf->y, 6, "Datum");
-        $pdf->addText(255, $pdf->y, 6, "Mieter");
-        $pdf->addText(440, $pdf->y, 6, "Vermieter");
+        $pdf->addText(145, $pdf->y, 6, "Datum");
+        $pdf->ezSetDy(-5); // Abstand
+        $pdf->ezText("________________________________________________     ________________________________________________", 9, array(
+            'justification' => 'left'
+        ));
+        $pdf->ezSetDy(-7); // Abstand
+        $pdf->addText(165, $pdf->y, 6, "Mieter");
+        $pdf->addText(405, $pdf->y, 6, "Vermieter");
     }
 
     function kasten(Cezpdf &$pdf, $anz_felder, $startx, $h, $b, $abstand_zw = null)
@@ -1220,7 +1224,7 @@ class b_pdf
             'justification' => 'left'
         ));
         $pdf->ezSetDy(-7); // Abstand
-        $pdf->addText(125, $pdf->y, 6, "Datum");
+        $pdf->addText(145, $pdf->y, 6, "Datum");
 
         $pdf->ezSetDy(-30); // Abstand
         $pdf->ezText("____________________________________________", 9, array(

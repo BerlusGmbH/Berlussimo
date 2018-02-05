@@ -2679,10 +2679,10 @@ AND  `AKTUELL` =  '1'");
         $vzweck = $transaction->getDescription()->getUsageText();
 
         if (in_array($artCode, [
-            51, 53, 82, 83,
+            20, 51, 53, 82, 83,
             104, 105, 106, 107, 108, 109, 117, 152, 159, 166, 177,
             201, 211,
-            805, 808, 809, 835
+            801, 805, 808, 809, 835
         ])) {
             $treffer = array();
             $vzweck_kurz = $vzweck;
