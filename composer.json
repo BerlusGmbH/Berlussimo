@@ -19,7 +19,7 @@
     "owen-it/laravel-auditing": "^4.0",
     "propaganistas/laravel-phone": "^2.8",
     "rospdf/pdf-php": "0.12.40",
-    "smarty/smarty-lexer": "^3.1",
+    "smarty/smarty-lexer": "3.1.29",
     "spatie/laravel-permission": "^1.4",
     "kingsquare/php-mt940": "dev-berlussimo"
   },
