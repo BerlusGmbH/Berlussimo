@@ -2234,7 +2234,7 @@ switch ($option) {
 
             $netto_betrag = $brutto_betrag / 1.19;
             $gk = new geldkonto_info ();
-            $gk->geld_konto_ermitteln('Partner', session()->get('partner_id'));
+            $gk->geld_konto_ermitteln('Partner', session()->get('partner_id'), null, 'Kreditor');
             $faellig_am = tage_plus($datum, 10);
             $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', 'Rechnung', '$datum','$datum', '$netto_betrag','$brutto_betrag','0.00', 'Partner', '" . session()->get('partner_id') . "','$empf_typ', '$empf_id','1', '1', '0', '0', '0', '0', '0', '$faellig_am', '0000-00-00', '$kurztext_neu', '$gk->geldkonto_id')";
             DB::insert($db_abfrage);
@@ -2313,7 +2313,7 @@ switch ($option) {
 
         $netto_betrag = 0.00;
         $gk = new geldkonto_info ();
-        $gk->geld_konto_ermitteln('Partner', session()->get('partner_id'));
+        $gk->geld_konto_ermitteln('Partner', session()->get('partner_id'), null, 'Kreditor');
         $faellig_am = tage_plus($datum, 10);
         $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', 'Rechnung', '$datum','$datum', '$netto_betrag','0.00','0.00', 'Partner', '" . session()->get('partner_id') . "','$empf_typ', '$empf_id','1', '1', '0', '0', '0', '0', '0', '$faellig_am', '0000-00-00', '$kurztext_neu', '$gk->geldkonto_id')";
         DB::insert($db_abfrage);

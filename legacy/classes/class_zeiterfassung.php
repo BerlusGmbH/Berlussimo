@@ -684,7 +684,7 @@ class zeiterfassung
         $clean_arr ['skonto'] = '0';
 
         $gk = new geldkonto_info ();
-        $gk->geld_konto_ermitteln('Partner', $bp_partner_id);
+        $gk->geld_konto_ermitteln('Partner', $bp_partner_id, null, 'Kreditor');
         $clean_arr ['EMPFANGS_GELD_KONTO'] = $gk->geldkonto_id;
         $l_erf_nr = $r->auto_rechnung_speichern($clean_arr);
         /* Beleg vom Arbeitgeber an Arbeitgebern gespeichert, nur Grunddaten */
