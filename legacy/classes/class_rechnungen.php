@@ -3504,7 +3504,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $clean_arr ['skonto'] = 0.00;
 
         $gk = new geldkonto_info ();
-        $gk->geld_konto_ermitteln('Partner', $bp_partner_id);
+        $gk->geld_konto_ermitteln('Partner', $bp_partner_id, null, 'Kreditor');
         $clean_arr ['EMPFANGS_GELD_KONTO'] = $gk->geldkonto_id;
         $l_erf_nr = $r->auto_rechnung_speichern($clean_arr);
 
@@ -4291,7 +4291,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
         $rechnungsnummer = $r->rechnungs_kuerzel . ' ' . $letzte_aussteller_rnr . '-' . $jahr;
         $letzte_empfaenger_rnr = $r->letzte_empfaenger_eingangs_nr($empf_p_id, 'Partner', $jahr, 'Rechnung') + 1;
         $gk = new geldkonto_info ();
-        $gk->geld_konto_ermitteln('Partner', $p_id);
+        $gk->geld_konto_ermitteln('Partner', $p_id, null, 'Kreditor');
         $faellig_am = tage_plus($datum, 10);
         $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', 'Rechnung', '$datum','$datum', '0','0.00','0.00', 'Partner', '$p_id','Partner', '$empf_p_id','1', '1', '0', '0', '1', '0', '0', '$faellig_am', '0000-00-00', '$r_org->kurzbeschreibung', '$gk->geldkonto_id')";
         DB::insert($db_abfrage);

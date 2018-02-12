@@ -1042,14 +1042,19 @@ ORDER BY `NEW_ENDE` ASC
                         $saldo_aus = number_format($a->daten_arr [$key] ['monate'] [$b] ['erg'], 2, ",", "");
                         $letzter_tag = date("t", mktime(0, 0, 0, "" . $a->daten_arr [$key] ['monate'] [$b] ['monat'] . "", 1, $key));
                         /* Letzter d.h. Aktueller Monat */
-                        if (is_array($a->daten_arr [$key] ['monate'] [$b] ['zahlungen'])) {
+                        if ($key < $auszugs_jahr
+                            || ($key == $auszugs_jahr && $akt_monat <= $auszugs_monat)
+                            || !empty($a->daten_arr [$key] ['monate'] [$b] ['zahlungen'])
+                            || !empty($bk_abrechnung)
+                            || !empty($hk_abrechnung)
+                        ) {
                             if ($a->daten_arr [$key] ['monate'] [$b] ['monat'] == date("m") && $key == date("Y")) {
                                 $tag_heute = date("d");
                                 $monat_name = monat2name($akt_monat);
                                 $pdf->ezText("<b>$tag_heute.$akt_monat.$key Saldo $monat_name $key</b>", 9);
                                 $pdf->ezSetDy(10);
                                 $pdf->ezSetCmMargins(5.0, 2.5, 2.5, 2.5);
-                                $pdf->ezText("$saldo_aus €", 9, array(
+                                $pdf->ezText("<b>$saldo_aus €</b>", 9, array(
                                     'justification' => 'right'
                                 ));
                                 $pdf->ezSetDy(-3);
@@ -1073,7 +1078,7 @@ ORDER BY `NEW_ENDE` ASC
                         if ($key == $auszugs_jahr && $akt_monat == $auszugs_monat) {
                             $auszugsdatum_a = date_mysql2german($buchung->mietvertrag_bis);
                             $pdf->setColor(1.0, 0.0, 0.0);
-                            $pdf->ezText("<b><i>$auszugsdatum_a Ende der Mietzeit</b></i>", 9);
+                            $pdf->ezText("<b><i>$auszugsdatum_a Ende der Mietzeit</i></b>", 9);
                             $pdf->ezSetDy(10);
                             $pdf->ezSetCmMargins(5.0, 2.5, 2.5, 2.5);
                             $pdf->ezText("<b>$saldo_aus €</b>", 9, array(
@@ -1113,7 +1118,7 @@ ORDER BY `NEW_ENDE` ASC
         $pdf->ezStream($pdf_opt);
         // return $pdf->Output();
     }
-    
+
     function get_monats_ergebnis($mv_id, $drucken_m, $drucken_j)
     {
         if ($drucken_m == '') {
@@ -1853,7 +1858,7 @@ ORDER BY `NEW_ENDE` ASC
         // $pdf->ezStream();
         // return $pdf->Output();
     }
-    
+
     function mkb2pdf_mahnung_letzter_nullstand($pdf, $mv_id)
     {
         $mv = new mietvertraege ();
