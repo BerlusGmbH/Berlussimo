@@ -20,16 +20,6 @@ class DetailController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        return response();
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param DetailsRequest $request
@@ -69,17 +59,6 @@ class DetailController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Details $details
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Details $details)
-    {
-        return response();
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param DetailsRequest|Request $request
@@ -89,7 +68,7 @@ class DetailController extends Controller
     public function update(DetailsRequest $request, Details $detail)
     {
         $detail->update($request->only(['DETAIL_INHALT', 'DETAIL_BEMERKUNG']));
-        return response();
+        return response()->json($detail);
     }
 
     /**
@@ -102,6 +81,6 @@ class DetailController extends Controller
     public function destroy(DetailsRequest $request, Details $detail)
     {
         $detail->update(['DETAIL_AKTUELL' => '0']);
-        return response();
+        return response()->json(['status' => 'ok']);
     }
 }
