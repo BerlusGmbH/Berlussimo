@@ -1,0 +1,22 @@
+{
+  "private": true,
+  "scripts": {
+    "prod": "gulp --production",
+    "dev": "gulp watch"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "laravel-elixir": "^5.0.0"
+  },
+  "dependencies": {
+    "acorn": "^5.1.1",
+    "async": "^2.5.0",
+    "flexboxgrid": "^6.3.1",
+    "jquery": "^2.2.4",
+    "keycode-js": "0.0.4",
+    "materialize-css": "^0.98.0",
+    "mdi": "^1.7.22",
+    "normalize.css": "^5.0.0",
+    "urijs": "^1.18.11"
+  }
+}

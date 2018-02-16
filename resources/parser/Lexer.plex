@@ -1,0 +1,185 @@
+<?php
+
+namespace App\Services\Parser;
+
+use Exception;
+use Relations;
+
+class Lexer
+{
+    public $counter;
+    public $token;
+    public $value;
+    public $node;
+    public $line;
+    private $data;
+    private $state = 1;
+    private $colstack;
+    public $yyTraceFILE;
+
+    function __construct($data, $trace = null)
+    {
+        $this->data = $data;
+        $this->counter = 0;
+        $this->line = 1;
+        $this->yyTraceFILE = $trace;
+        $this->colstack = collect();
+    }
+
+    /*!lex2php
+    %input $this->data
+    %counter $this->counter
+    %token $this->token
+    %value $this->value
+    %line $this->line
+    aggregate = ~count~
+    column = ~person|partner|mietvertrag|kaufvertrag|einheit|haus|objekt|hinweis|telefon|gewerk|detail|adresse|auftrag|an(?!d)|mitarbeiter|kostenträger|baustelle~
+    field = ~id|name|vorname|lage|str|nr|plz|ort|bis|typ|geburtstag|bemerkung|qm|inhalt|text|akut|erstellt|erledigt|urlaubstage|wochenstunden|stundensatz~
+    columnorfield = ~von|email~
+    vermietet = ~vermietet~
+    aktiv = ~aktiv~
+    comparator = /<=|>=|!=|=|<|>/
+    like = /~/
+    and = ~and~
+    or = ~or~
+    not = ~\!~
+    openp = ~\(~
+    closep = ~\)~
+    order = ~asc|desc~
+    colon = ~:~
+    openb = ~\[~
+    closeb = ~\]~
+    opencb =~\{~
+    closecb =~\}~
+    value = ~("(\pL|\pN|\pS|\pP|\pZ)+?"|(\pL|\pN|\pS|\p{Pd}|\p{Po})+)~
+    whitespace = /\pZ+/
+    */
+    /*!lex2php
+    whitespace {
+        return false;
+    }
+    column {
+        $this->token = Parser::COLUMN;
+        $this->colstate = collect();
+        $this->colstack->push($this->value);
+    }
+    columnorfield {
+        $this->token = Parser::COLUMN;
+        $this->colstate = collect();
+        $this->colstack->push($this->value);
+    }
+    and {
+        $this->token = Parser::AND;
+    }
+    or {
+        $this->token = Parser::OR;
+    }
+    openp {
+        $this->token = Parser::OPENP;
+        $this->yypushstate(self::CLAUSE);
+    }
+    openb {
+        $this->token = Parser::OPENB;
+        $this->yypushstate(self::VIEW);
+    }
+    not {
+        $this->token = Parser::NOT;
+    }
+    value {
+        $this->token = Parser::VALUE;
+        $before = strlen($this->value);
+        $this->value = trim($this->value, '"');
+        $after = strlen($this->value);
+        $this->counter += $before - $after;
+    }
+    */
+    /*!lex2php
+    %statename CLAUSE
+    whitespace {
+        return false;
+    }
+    column {
+        $this->token = Parser::COLUMN;
+        $this->colstack->push($this->value);
+    }
+    field {
+        $this->token = Parser::FIELD;
+    }
+    columnorfield {
+        if(!empty(Relations::columnColumnToRelations($this->colstack->last(), $this->value))) {
+            $this->token = Parser::COLUMN;
+            $this->colstack->push($this->value);
+        } else {
+            $this->token = Parser::FIELD;
+        }
+    }
+    not {
+        $this->token = Parser::NOT;
+    }
+    vermietet {
+        $this->token = Parser::VERMIETET;
+    }
+    aktiv {
+        $this->token = Parser::AKTIV;
+    }
+    comparator {
+        $this->token = Parser::COMPARATOR;
+    }
+    like {
+        $this->token = Parser::LIKE;
+    }
+    and {
+        $this->token = Parser::AND;
+    }
+    or {
+        $this->token = Parser::OR;
+    }
+    openp {
+        $this->token = Parser::OPENP;
+        $this->yypushstate(self::CLAUSE);
+    }
+    closep {
+        $this->token = Parser::CLOSEP;
+        $this->yypopstate();
+    }
+    value {
+        $this->token = Parser::VALUE;
+        $before = strlen($this->value);
+        $this->value = trim($this->value, '"');
+        $after = strlen($this->value);
+        $this->counter += $before - $after;
+    }
+    */
+    /*!lex2php
+    %statename VIEW
+    whitespace {
+        return false;
+    }
+    columnorfield {
+        if(!empty(Relations::columnColumnToRelations($this->colstack->first(), $this->value))) {
+            $this->token = Parser::COLUMN;
+        } else {
+            $this->token = Parser::FIELD;
+        }
+    }
+    column {
+        $this->token = Parser::COLUMN;
+    }
+    aggregate {
+        $this->token = Parser::AGGREGATE;
+    }
+    colon {
+        $this->token = Parser::COLON;
+    }
+    field {
+        $this->token = Parser::FIELD;
+    }
+    order {
+        $this->token = Parser::ORDER;
+    }
+    closeb {
+        $this->token = Parser::CLOSEB;
+        $this->yypopstate();
+    }
+    */
+}

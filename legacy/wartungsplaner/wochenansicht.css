@@ -1,0 +1,72 @@
+@CHARSET "UTF-8";
+body {
+    text-align: left;
+    font: 11px FreeSans, sans-serif;
+}
+
+table, td, th {
+    border: 1px solid green;
+}
+
+th {
+    background-color: silver;
+    color: white;
+    font: 14px FreeSans, sans-serif;
+}
+
+th {
+    vertical-align: top;
+}
+
+th:hover, tr:hover {
+    background-color: red;
+}
+
+td {
+    height: 15px;
+}
+
+zeile1 {
+    width: 100px;
+    background-color: grey;
+}
+
+zeile2 {
+    min-width: 100px;
+    background-color: yellow;
+}
+
+#zeiten td.zeile {
+    min-width: 100px;
+    max-width: 100px;
+    background-color: silver;
+    padding: 2px;
+}
+
+#zeiten td.zeile1 {
+    min-width: 100px;
+    max-width: 100px;
+    background-color: silver;
+    padding: 2px;
+}
+
+#zeiten td.zeile2 {
+    min-width: 100px;
+    max-width: 100px;
+    background-color: silver;
+    padding: 2px;
+}
+
+#zeiten td.zeile_frei {
+    min-width: 100px;
+    max-width: 100px;
+    background-color: green;
+    padding: 2px;
+}
+
+#zeiten td.zeile_belegt {
+    min-width: 100px;
+    max-width: 100px;
+    background-color: red;
+    padding: 2px;
+}

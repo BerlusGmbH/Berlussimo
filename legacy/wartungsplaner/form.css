@@ -1,0 +1,53 @@
+@CHARSET "UTF-8";
+.formbox {
+    color: #000;
+}
+
+.reihe {
+    clear: both;
+    padding: 2px 0;
+    border: 1px solid #666;
+    background-color: #fff;
+}
+
+.label {
+    float: left;
+    text-align: left;
+    padding-left: 3px;
+    padding-top: 3px;
+    padding-right: 5px;
+    font-size: 14px;
+    font-family: verdana;
+    color: white;
+
+}
+
+.feld {
+    float: right;
+    text-align: left;
+    margin-right: 2px;
+}
+
+.knopf {
+    clear: both;
+    float: right;
+}
+
+.defbreite {
+    width: 300px;
+}
+
+.defbreite input {
+    color: #fff;
+    background-color: #000;
+}
+
+input[disabled] {
+    background: #bbea78;
+    color: red;
+
+}
+
+select {
+    width: 250px;
+}
