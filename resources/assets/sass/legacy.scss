@@ -1,0 +1,83 @@
+@charset "UTF-8";
+
+@import "materialize-css/variables";
+
+@each $color_name, $colors in $berlussimo-colors {
+  $color: map-get($colors, "color");
+  @each $color_type, $color_value in $color {
+    @if $color_type == "base" {
+      .#{$color_name}-color {
+        background-color: $color_value !important;
+      }
+    } @else {
+      .#{$color_name}-color-#{$color_type} {
+        background-color: $color_value !important;
+      }
+    }
+  }
+  $text: map-get($colors, "text");
+  @each $color_type, $color_values in $text {
+    @each $color_value in $color_values {
+      @if $color_type == "base" {
+        .#{$color_name}-color.text-variation-#{index($color_values, $color_value)} {
+          color: $color_value !important;
+        }
+      } @else {
+        .#{$color_name}-color-#{$color_type}.text-variation-#{index($color_values, $color_value)} {
+          color: $color_value !important;
+        }
+      }
+    }
+  }
+}
+
+.row {
+  margin-bottom: 10px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.error-block {
+  position: absolute;
+  right: auto;
+  top: 50px;
+  margin: 0;
+  margin-left: 3rem;
+  color: #f44336;
+  opacity: 1;
+  font-size: 12px;
+}
+
+.modal.bottom-sheet {
+  max-height: 85%;
+}
+
+.yellow-page.row .col {
+  display: inline-block;
+  vertical-align: top;
+  float: none;
+}
+
+.fixed-action-btn {
+  right: 10px;
+  bottom: 80px;
+}
+
+.detail > i {
+  position: absolute;
+  left: 2px;
+}
+
+.detail {
+  padding-left: 20px;
+  position: relative;
+  display: inline-block
+}
+
+.card-expandable {
+  overflow: hidden;
+}
+
+.card-expandable > .card-content {
+  height: 100%;
+}

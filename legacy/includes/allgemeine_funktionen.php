@@ -136,9 +136,9 @@ function letzte_objekt_dat_kurzname($kurzname)
 
 function protokollieren($tabele, $dat_neu, $dat_alt)
 {
-    $wer = Auth::user()->email;
-    $ip = $_SERVER ['REMOTE_ADDR'];
-    DB::insert("INSERT INTO PROTOKOLL VALUES (NULL,'$wer', '$ip', NULL, '$tabele', '$dat_neu', '$dat_alt')");
+    $wer = Auth::user()->name;
+    $ip = isset($_SERVER ['REMOTE_ADDR']) ? $_SERVER ['REMOTE_ADDR'] : '';
+    DB::insert("INSERT INTO PROTOKOLL VALUES (NULL,'$wer', '$ip', NULL, '$tabele', '$dat_neu', '$dat_alt', " . Auth::user()->id . ")");
 }
 
 function anzahl_haeuser_im_objekt($obj_id)
@@ -229,10 +229,9 @@ function mieterids_zum_vertrag($id)
 
 function mieternamen_in_array($mieter_id)
 {
-    $result = DB::select("SELECT PERSON_NACHNAME, PERSON_VORNAME FROM PERSON where PERSON_ID='$mieter_id' order by PERSON_DAT DESC limit 0,1");
+    $result = DB::select("SELECT name, first_name FROM persons where id='$mieter_id'");
     foreach ($result as $row) {
-        $mieter = " $row[PERSON_NACHNAME] $row[PERSON_VORNAME]";
-        return $mieter;
+        return $row['name'] . " " . $row['first_name'];
     }
 }
 
@@ -310,23 +309,23 @@ function mieterid_zum_vertrag($id)
 
 function mieternamen($mieter_id)
 {
-    $result = DB::select("SELECT PERSON_NACHNAME, PERSON_VORNAME FROM PERSON where PERSON_ID='$mieter_id' && PERSON_AKTUELL='1'");
+    $result = DB::select("SELECT name, first_name FROM persons where id='$mieter_id'");
     $mycounter = 0;
     foreach ($result as $row) {
         if ($mycounter == 0) {
-            echo " $row[PERSON_NACHNAME] $row[PERSON_VORNAME] ";
+            echo " $row[name] $row[first_name] ";
             $mycounter++;
         } else {
-            echo ", $row[PERSON_NACHNAME] $row[PERSON_VORNAME] ";
+            echo ", $row[name] $row[first_name] ";
         }
     }
 }
 
 function personen_name($person_id)
 {
-    $result = DB::select("SELECT PERSON_NACHNAME, PERSON_VORNAME FROM PERSON where PERSON_ID='$person_id' && PERSON_AKTUELL='1' ORDER BY PERSON_DAT LIMIT 0,1");
+    $result = DB::select("SELECT name, first_name FROM persons where id='$person_id'");
     foreach ($result as $row) {
-        return "$row[PERSON_NACHNAME] $row[PERSON_VORNAME] ";
+        return "$row[name] $row[first_name] ";
     }
 }
 
@@ -455,11 +454,11 @@ function msort($array, $id = "id")
 
 function personen_liste_multi()
 {
-    $result = DB::select("SELECT PERSON_DAT, PERSON_ID, PERSON_NACHNAME, PERSON_VORNAME, PERSON_GEBURTSTAG FROM PERSON WHERE PERSON_AKTUELL='1' ORDER BY PERSON_NACHNAME ASC");
+    $result = DB::select("SELECT id, name, first_name, birthday FROM persons ORDER BY name ASC");
     if (!empty($result)) {
         echo "<tr><td colspan=3><select class=\"personen_mv\" NAME=\"PERSON_ID[]\" MULTIPLE SIZE=25>\n";
         foreach ($result as $row) {
-            echo "<option value=\"$row[PERSON_ID]\">$row[PERSON_NACHNAME] $row[PERSON_VORNAME] ($row[PERSON_GEBURTSTAG])</option>\n";
+            echo "<option value=\"$row[id]\">$row[name] $row[first_name] ($row[birthday])</option>\n";
         }
         echo "</select></td></tr>\n";
     }
@@ -496,9 +495,9 @@ function personen_ids_der_mieter()
 
 function mieternamen_in_string($mieter_id)
 {
-    $result = DB::select("SELECT PERSON_NACHNAME, PERSON_VORNAME FROM PERSON where PERSON_ID='$mieter_id' order by PERSON_DAT DESC limit 0,1");
+    $result = DB::select("SELECT name, first_name FROM persons where id='$mieter_id'");
     foreach ($result as $row) {
-        $mieter = "$row[PERSON_NACHNAME] $row[PERSON_VORNAME]";
+        $mieter = "$row[name] $row[first_name]";
         return $mieter;
     }
 }
@@ -517,13 +516,14 @@ function date_german2mysql($date)
 
 function letzte_person_id()
 {
-    $result = DB::select("SELECT PERSON_ID FROM PERSON ORDER BY PERSON_ID DESC LIMIT 0,1");
+    $result = DB::select("SELECT id FROM persons ORDER BY id DESC LIMIT 0,1");
     foreach ($result as $row)
-        return $row['PERSON_ID'];
+        return $row['id'];
 }
 
 function letzte_person_dat_of_person_id($person_id)
 {
+    //TODO subtitute with laravel equivalent
     $result = DB::select("SELECT PERSON_DAT FROM PERSON WHERE PERSON_ID='$person_id' ORDER BY PERSON_DAT DESC LIMIT 0,1");
     foreach ($result as $row)
         return $row['PERSON_DAT'];
@@ -588,20 +588,20 @@ function warnung_ausgeben($text)
 
 function person_pruefen($nachname, $vorname, $geburtstag)
 {
-    $db_abfrage = "SELECT PERSON_ID, PERSON_NACHNAME, PERSON_VORNAME, PERSON_GEBURTSTAG FROM PERSON WHERE PERSON_NACHNAME='$nachname' && PERSON_VORNAME='$vorname' && PERSON_GEBURTSTAG='$geburtstag' && PERSON_AKTUELL='1' ORDER BY PERSON_ID ASC";
+    $db_abfrage = "SELECT id, name, first_name, birthday FROM persons WHERE name='$nachname' && first_name='$vorname' && birthday='$geburtstag' && ORDER BY id ASC";
     $result = DB::select($db_abfrage);
     if (empty($result)) {
-        $result = DB::select("SELECT PERSON_ID, PERSON_NACHNAME, PERSON_VORNAME, PERSON_GEBURTSTAG FROM PERSON WHERE PERSON_NACHNAME='$nachname' && PERSON_VORNAME='$vorname' && PERSON_GEBURTSTAG='$geburtstag' && PERSON_AKTUELL='1' ORDER BY PERSON_ID ASC");
+        $result = DB::select("SELECT id, name, first_name, birthday FROM persons WHERE name='$nachname' && first_name='$vorname' && birthday='$geburtstag' ORDER BY id ASC");
         if (!empty($result)) {
             foreach ($result as $row) {
-                echo "$row[PERSON_ID], $row[PERSON_NACHNAME], $row[PERSON_VORNAME], $row[PERSON_GEBURTSTAG] ";
+                echo "$row[id], $row[name], $row[first_name], $row[birthday] ";
             }
             return "error";
         }
     } else {
         hinweis_ausgeben("Person existiert!!!<br>Ihre Eingaben sind 100%-ig identisch mit folgenden Datenbankeinträgen:");
         foreach ($result as $row) {
-            echo "$row[PERSON_ID], $row[PERSON_NACHNAME], $row[PERSON_VORNAME], $row[PERSON_GEBURTSTAG] <br>";
+            echo "$row[id], $row[name], $row[first_name], $row[birthday] <br>";
         }
         return "error";
     }
@@ -609,6 +609,7 @@ function person_pruefen($nachname, $vorname, $geburtstag)
 
 function person_loeschen($person_dat)
 {
+    //TODO substitute with laravel equivalent
     DB::update("UPDATE PERSON SET PERSON_AKTUELL='0' WHERE PERSON_DAT='$person_dat'");
 
     $dat_alt = $person_dat; // person wurde gelöscht DAT_ALT = DAT_NEU im Protokoll
@@ -616,11 +617,12 @@ function person_loeschen($person_dat)
     protokollieren('PERSON', $dat_neu, $dat_alt);
 
     hinweis_ausgeben("Person gelöscht!");
-    echo "<a href='" . route('web::personen::index') . "'>Zurück zu Personenliste</a>";
+    echo "<a href='" . route('web::personen.index') . "'>Zurück zu Personenliste</a>";
 }
 
 function person_aendern_in_db($person_id)
 {
+    //TODO substitute with laravel equivalent
     DB::update("UPDATE PERSON SET PERSON_AKTUELL='0' WHERE PERSON_ID='$person_id'");
     $dat_alt = letzte_person_dat_of_person_id($person_id);
 
@@ -669,6 +671,7 @@ function umbruch_entfernen($string)
 // ## Funktion zur Eintragung der Person mit Datenprüfung.
 function person_in_db_eintragen()
 {
+    //TODO substitue with laravel equivalent
     $gebdatum = request()->input('person_geburtstag');
     $gebdatum = date_german2mysql($gebdatum);
     $letzte_person_id = letzte_person_id();
@@ -692,6 +695,7 @@ function person_in_db_eintragen()
 // ## Funktion zur Eintragung der Person, obwohl gleichnamige existieren.
 function person_in_db_eintragen_direkt()
 {
+    //TODO substitute with laravel equivalent
     $gebdatum = request()->input('person_geburtstag');
     $gebdatum = date_german2mysql($gebdatum);
     $letzte_person_id = letzte_person_id();

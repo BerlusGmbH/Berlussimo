@@ -20,7 +20,7 @@ class MietvertraegeController extends LegacyController
         return $this->render();
     }
 
-    public function create()
+    public function create(MietvertraegeRequest $request)
     {
         $units = DB::select("
           SELECT EINHEIT.EINHEIT_ID, TYP, EINHEIT_KURZNAME, DETAIL_INHALT, MIETVERTRAG_AKTUELL, EINHEIT_AKTUELL,

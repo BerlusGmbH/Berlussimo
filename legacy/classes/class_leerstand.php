@@ -1222,7 +1222,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                             <input disabled value='" . $fotos_vorhanden . "' id='link_foto_" . $objekt_id . '_' . $a . "' type='text'>
                             <label class='active' for='link_foto_" . $objekt_id . '_' . $a . "'>Fotos vorhanden</label>
                       </div>";
-                $link_foto_upload = "<a class='waves-effect waves-light btn' id='link_foto_up.$objekt_id.'_'.$a' href='" . route('web::leerstand::legacy', ['option' => 'fotos_upload', 'einheit_id' => $einheit_id]) . "'><i class=\"mdi mdi-upload left\"></i>Hochladen</a>";
+                $link_foto_upload = "<a class='waves-effect waves-light btn' href='" . route('web::leerstand::legacy', ['option' => 'fotos_upload', 'einheit_id' => $einheit_id]) . "'><i class=\"mdi mdi-upload left\"></i>Hochladen</a>";
                 echo $link_foto_upload;
 
                 echo "</td>";
@@ -1259,7 +1259,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                 $jahr = $monat_array [$a] ['JAHR'];
                 $ima1 = $this->get_png($objekt_id, $monat, $jahr, 800, 600);
                 echo "<div class='col-xs-12 col-md-4 col-lg-3'>";
-                echo "<img class='materialboxed' width='100%' src=\"$ima1\" alt=\"Leerstandsübersicht $a\"></a>";
+                echo "<img class='materialboxed' width='100%' src=\"$ima1\" alt=\"Leerstandsübersicht $a\">";
                 echo "</div>";
             }
             echo "</div>";
@@ -1705,10 +1705,9 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                     }
 
                     if ($b_reservierung == '') {
-                        // #bcd59f
-                        echo "<tr style=\"background-color:#bcd59f\">";
+                        echo "<tr class=\"green darken-4\">";
                     } else {
-                        echo "<tr style=\"background-color:#ff778c\">";
+                        echo "<tr class=\"red darken-2\">";
                     }
                     echo "<td>$link_einheit<br>Ex:$l_mieter<br>$link_fotos<hr>$link_expose_pdf<hr>$link_expose_text<hr>$link_reservierung</td><td>$typ</td><td>$str</td><td>$einheit_lage</td><td sorttable_customkey=\"$zimmer_p\">$zimmer</td><td>$einheit_qm_a</td><td>$balkon</td><td>$heizungsart</td><td>$jahr_s</td><td>$fertig_bau_bem</td><td>$gereinigt<hr>$gereinigt_bem</td><td>$nk</td><td>$link_bk</td><td>$hk_s</td><td>$link_hk</td><td><b>$link_kaltmiete<hr>m²-Kalt:$kalt_qm<br>(MAX20:$netto_miete_20)</b><hr>MSM-$ms_feld:$ma->m_wert<br>MSO-$ms_feld:$ma->o_wert<br>MSO20%:$ms_20proz<hr>$kaltmiete_bem</td><td><b>$brutto_miete</b></td><td>$link_termin</td></tr>";
                 }

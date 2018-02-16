@@ -102,7 +102,10 @@ class urlaub
      */
     function mitarbeiter_arr($jahr)
     {
-        $users = \App\Models\User::whereYear('join_date', '<=', $jahr)->whereYear('leave_date', '>=', $jahr)->orWhereNull('leave_date')->orderBy('name', 'asc')->select(['id', 'name', 'holidays', 'join_date', 'leave_date'])->get();
+        $users = \App\Models\Person::whereHas('jobsAsEmployee', function ($query) use ($jahr) {
+            $query->active('>=', $jahr . '-01-01')
+                ->active('<=', $jahr . '-12-31');
+        })->select(['id', 'name'])->defaultOrder()->get();
         return $users;
     }
 
@@ -116,6 +119,9 @@ class urlaub
         $eintritt_jahr = $eintritt_arr [0];
 
         $austritt = $this->austritt;
+        if (is_null($austritt)) {
+            $austritt = '0000-00-00';
+        }
         $austritt_arr = explode("-", $austritt);
         $austritt_jahr = $austritt_arr [0];
 
@@ -234,16 +240,17 @@ class urlaub
 
     function mitarbeiter_details($benutzer_id)
     {
-        $result = \App\Models\User::find($benutzer_id);
+        $result = \App\Models\Person::find($benutzer_id);
         if (isset($result)) {
+            $job = $result->jobsAsEmployee[0];
             $this->benutzername = $result->name;
             $this->benutzer_id = $benutzer_id;
-            $this->gewerk_id = $result->trade_id;
-            $this->eintritt = $result->join_date;
-            $this->austritt = $result->leave_date;
-            $this->urlaub = $result->holidays;
-            $this->stunden_pw = $result->hours_per_week;
-            $this->stundensatz = $result->hourly_rate;
+            $this->gewerk_id = $job->trade_id;
+            $this->eintritt = $job->join_date;
+            $this->austritt = $job->leave_date;
+            $this->urlaub = $job->holidays;
+            $this->stunden_pw = $job->hours_per_week;
+            $this->stundensatz = $job->hourly_rate;
         } else {
             return false;
         }
@@ -262,30 +269,27 @@ class urlaub
     function anzahl_genommene_tage($jahr, $benutzer_id, $art = 'Urlaub')
     {
         $result = DB::select("SELECT name, holidays AS ANSPRUCH, SUM( ANTEIL )  AS GENOMMEN , holidays - SUM( ANTEIL ) AS REST
-FROM URLAUB , users
-WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? && DATE_FORMAT( DATUM, '%Y' ) = ? && DATUM<= CURDATE() && AKTUELL='1' GROUP BY URLAUB.BENUTZER_ID LIMIT 0 , 1 ", [$art, $benutzer_id, $jahr]);
+FROM URLAUB , persons, jobs
+WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = persons.id && persons.id = jobs.employee_id && URLAUB.BENUTZER_ID=? && DATE_FORMAT( DATUM, '%Y' ) = ? && DATUM<= CURDATE() && AKTUELL='1' GROUP BY URLAUB.BENUTZER_ID LIMIT 0 , 1 ", [$art, $benutzer_id, $jahr]);
         return isset($result) ? $result[0] : null;
     }
 
     function anzahl_geplanter_tage($jahr, $benutzer_id, $art = 'Urlaub')
     {
         $result = DB::select("SELECT name, holidays AS ANSPRUCH, SUM( ANTEIL ) AS GEPLANT , holidays - SUM( ANTEIL ) AS REST
-FROM URLAUB , users
-WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? && DATE_FORMAT( DATUM, '%Y' ) = ? && DATUM> CURDATE() && AKTUELL='1'  GROUP BY URLAUB.BENUTZER_ID LIMIT 0 , 1 ", [$art, $benutzer_id, $jahr]);
+FROM URLAUB , persons, jobs
+WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = persons.id && persons.id = jobs.employee_id && URLAUB.BENUTZER_ID=? && DATE_FORMAT( DATUM, '%Y' ) = ? && DATUM> CURDATE() && AKTUELL='1'  GROUP BY URLAUB.BENUTZER_ID LIMIT 0 , 1 ", [$art, $benutzer_id, $jahr]);
         return isset($result) ? $result[0] : null;
     }
 
     function rest_aus_vorjahren($jahr, $benutzer_id)
     {
         $mitarbeiter_arr = $this->mitarbeiter_info($benutzer_id);
-        $eintritt = $mitarbeiter_arr->join_date;
+        $job = $mitarbeiter_arr->jobsAsEmployee[0];
+        $eintritt = $job->join_date;
         $eintritt_arr = explode("-", $eintritt);
         $eintritt_jahr = $eintritt_arr [0];
-
-        $austritt = $mitarbeiter_arr->leave_date;
-        $austritt_arr = explode("-", $austritt);
         $vorjahr = $jahr - 1;
-
         $rest_tage = 0;
         for ($a = $eintritt_jahr; $a <= $vorjahr; $a++) {
             $rest_tage = $rest_tage + $this->rest_tage($a, $benutzer_id);
@@ -296,22 +300,26 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
 
     function mitarbeiter_info($benutzer_id)
     {
-        $result = \App\Models\User::findOrFail($benutzer_id);
+        $result = \App\Models\Person::findOrFail($benutzer_id);
         return $result;
     }
 
     function rest_tage($jahr, $benutzer_id)
     {
         $mitarbeiter_arr = $this->mitarbeiter_info($benutzer_id);
-        $eintritt = $mitarbeiter_arr->join_date;
+        $job = $mitarbeiter_arr->jobsAsEmployee[0];
+        $eintritt = $job->join_date;
         $eintritt_arr = explode("-", $eintritt);
         $eintritt_jahr = $eintritt_arr [0];
 
-        $austritt = $mitarbeiter_arr->leave_date;
+        $austritt = $job->leave_date;
+        if (is_null($austritt)) {
+            $austritt = '0000-00-00';
+        }
         $austritt_arr = explode("-", $austritt);
         $austritt_jahr = $austritt_arr [0];
 
-        $anspruch = $mitarbeiter_arr->holidays;
+        $anspruch = $job->holidays;
 
         $anspruch_pro_m = $anspruch / 12;
         $anspruch_pro_tag = $anspruch / 365;
@@ -429,19 +437,23 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
 
             $zaehler = 0;
             foreach ($mitarbeiter_arr as $user) {
+                $job = $user->jobsAsEmployee[0];
                 $zaehler++;
                 $mitarbeiter = $user->name;
                 $benutzer_id = $user->id;
 
-                $eintritt = $user->join_date;
+                $eintritt = $job->join_date;
                 $eintritt_arr = explode("-", $eintritt);
                 $eintritt_jahr = $eintritt_arr [0];
 
-                $austritt = $user->leave_date;
+                $austritt = $job->leave_date;
+                if (is_null($austritt)) {
+                    $austritt = '0000-00-00';
+                }
                 $austritt_arr = explode("-", $austritt);
                 $austritt_jahr = $austritt_arr [0];
 
-                $anspruch = $user->holidays;
+                $anspruch = $job->holidays;
                 $anspruch_pro_m = $anspruch / 12;
                 $anspruch_pro_tag = $anspruch / 365;
 
@@ -562,7 +574,7 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
 
     function jahres_ansicht($benutzer_id, $jahr)
     {
-        $result = DB::select("SELECT U_DAT, name, ANTRAG_D, DATUM, ANTEIL, ART FROM users JOIN URLAUB ON (users.id = URLAUB.BENUTZER_ID) WHERE users.id=? && DATE_FORMAT(URLAUB.DATUM, '%Y') = ? && AKTUELL='1' ORDER BY  DATUM ASC ", [$benutzer_id, $jahr]);
+        $result = DB::select("SELECT U_DAT, name, ANTRAG_D, DATUM, ANTEIL, ART FROM persons JOIN URLAUB ON (persons.id = URLAUB.BENUTZER_ID) WHERE persons.id=? && DATE_FORMAT(URLAUB.DATUM, '%Y') = ? && AKTUELL='1' ORDER BY  DATUM ASC ", [$benutzer_id, $jahr]);
         $result = collect($result);
 
         if (!$result->isEmpty()) {
@@ -637,7 +649,7 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
     {
         $this->jahresuebersicht_mitarbeiter_kurz($benutzer_id, $jahr);
 
-        $result = DB::select("SELECT U_DAT, name, ANTRAG_D, DATUM, ANTEIL, ART FROM users JOIN URLAUB ON (users.id = URLAUB.BENUTZER_ID) WHERE users.id=? && DATE_FORMAT(URLAUB.DATUM, '%Y') = ? && AKTUELL='1' ORDER BY DATUM ASC ", [$benutzer_id, $jahr]);
+        $result = DB::select("SELECT U_DAT, name, ANTRAG_D, DATUM, ANTEIL, ART FROM persons JOIN URLAUB ON (persons.id = URLAUB.BENUTZER_ID) WHERE persons.id=? && DATE_FORMAT(URLAUB.DATUM, '%Y') = ? && AKTUELL='1' ORDER BY DATUM ASC ", [$benutzer_id, $jahr]);
 
         $result = collect($result);
 
@@ -1154,8 +1166,8 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = users.id && URLAUB.BENUTZER_ID=? &&
         $datum_arr = explode("-", $datum);
         $monat = $datum_arr [1];
         $tag = $datum_arr [2];
-        
-        $user = \App\Models\User::where('id', $benutzer_id)->whereDay('birthday', '=', $tag)->whereMonth('birthday', '=', $monat)->get();
+
+        $user = \App\Models\Person::findOrFail('id', $benutzer_id)->whereDay('birthday', '=', $tag)->whereMonth('birthday', '=', $monat)->get();
 
         return !$user->isEmpty();
     }

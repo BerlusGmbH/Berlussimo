@@ -241,11 +241,11 @@ ORDER BY LPAD( EINHEIT_KURZNAME, LENGTH( EINHEIT_KURZNAME ) ,  '1' ) ASC ");
         if ($typ == 'Eigentuemer') {
             if (!session()->has('geldkonto_id')) {
                 $result = DB::select(
-                    "SELECT WEG_MITEIGENTUEMER.ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME, GROUP_CONCAT(CONCAT(PERSON.PERSON_NACHNAME, ', ', PERSON.PERSON_VORNAME) SEPARATOR '; ') AS PERSONEN 
-                    FROM PERSON JOIN WEG_EIGENTUEMER_PERSON ON(PERSON.PERSON_ID = WEG_EIGENTUEMER_PERSON.PERSON_ID) 
+                    "SELECT WEG_MITEIGENTUEMER.ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME, GROUP_CONCAT(CONCAT(persons.name, ', ', persons.first_name) SEPARATOR '; ') AS PERSONEN 
+                    FROM persons JOIN WEG_EIGENTUEMER_PERSON ON(persons.id = WEG_EIGENTUEMER_PERSON.PERSON_ID) 
 	                  JOIN WEG_MITEIGENTUEMER ON(WEG_EIGENTUEMER_PERSON.WEG_EIG_ID = WEG_MITEIGENTUEMER.ID) 
 	                  JOIN EINHEIT ON(EINHEIT.EINHEIT_ID = WEG_MITEIGENTUEMER.EINHEIT_ID) 
-                    WHERE EINHEIT.EINHEIT_AKTUELL = '1' && WEG_MITEIGENTUEMER.AKTUELL = '1'  && WEG_EIGENTUEMER_PERSON.AKTUELL = '1' && PERSON.PERSON_AKTUELL = '1'
+                    WHERE EINHEIT.EINHEIT_AKTUELL = '1' && WEG_MITEIGENTUEMER.AKTUELL = '1'  && WEG_EIGENTUEMER_PERSON.AKTUELL = '1'
                     GROUP BY WEG_MITEIGENTUEMER.ID 
                     ORDER BY EINHEIT_KURZNAME ASC"
                 );
@@ -274,7 +274,7 @@ ORDER BY LPAD( EINHEIT_KURZNAME, LENGTH( EINHEIT_KURZNAME ) ,  '1' ) ASC ");
         }
 
         if ($typ == 'Benutzer') {
-            $users = \App\Models\User::all();
+            $users = \App\Models\Person::has('jobsAsEmployee')->defaultOrder()->get();
             foreach ($users as $user) {
                 echo "$user->name*$user->id*|";
             }

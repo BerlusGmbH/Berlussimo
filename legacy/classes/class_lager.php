@@ -109,7 +109,7 @@ AND RECHNUNGEN.EMPFAENGER_TYP = '$empfaenger_typ' && RECHNUNGEN.EMPFAENGER_ID = 
 				$rest_menge_pos = nummer_punkt2komma ( $menge - nummer_komma2punkt ( $kontierte_menge ) );
 				$rdatum = date_mysql2german ( $row ['RECHNUNGSDATUM'] );
 				$preis = $row ['PREIS'];
-				$r_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>$r_nr</a>";
+                $r_link = "<a href='" . route('web::rechnungen.show', ['id' => $beleg_nr]) . "'>$r_nr</a>";
 				echo "<tr><td>$p->partner_name</td><td>$art_nr</td><td>$rdatum</td><td>$r_link</td><td>$position</td><td>$artikel_bez</td><td>$menge</td><td>$kontierte_menge</td><td>$rest_menge_pos</td><td>$preis</td></tr>";
 			}
 			$g_rest = nummer_punkt2komma ( $g_menge - $g_kontiert );
@@ -171,12 +171,12 @@ AND RECHNUNGEN.EMPFAENGER_TYP = '$empfaenger_typ' && RECHNUNGEN.EMPFAENGER_ID = 
 						$zaehler ++;
 						$gesamt_lager_wert = $gesamt_lager_wert + $waren_wert;
 						if ($zaehler == '1') {
-							$beleg_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>Rechnung</a>";
+                            $beleg_link = "<a href='" . route('web::rechnungen.show', ['id' => $beleg_nr]) . "'>Rechnung</a>";
 							echo "<tr class=\"zeile1\" align=\"right\"><td>$datum</td><td>$pp->partner_name</td><td>$beleg_link</td><td>$link_artikel_suche</td><td>$bezeichnung</td><td>$menge</td><td>$rest_menge</td><td>$preis €</td><td>$pos_mwst_satz %</td><td>$waren_wert_a €</td></tr>";
 						}
 
 						if ($zaehler == '2') {
-							$beleg_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>Rechnung</a>";
+                            $beleg_link = "<a href='" . route('web::rechnungen.show', ['id' => $beleg_nr]) . "'>Rechnung</a>";
 							echo "<tr class=\"zeile2\" align=\"right\"><td>$datum</td><td>$pp->partner_name</td><td>$beleg_link</td><td>$link_artikel_suche</td><td>$bezeichnung</td><td>$menge</td><td>$rest_menge</td><td>$preis €</td><td>$pos_mwst_satz %</td><td>$waren_wert_a €</td></tr>";
 						}
 					}

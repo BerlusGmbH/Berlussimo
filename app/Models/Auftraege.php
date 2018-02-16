@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use App\Libraries\BelongsToMorph;
 use App\Models\Scopes\AktuellScope;
 use App\Models\Traits\DefaultOrder;
 use App\Models\Traits\Searchable;
 use Illuminate\Database\Eloquent\Model;
-use App\Libraries\BelongsToMorph;
 
 class Auftraege extends Model
 {
@@ -18,6 +18,12 @@ class Auftraege extends Model
     protected $primaryKey = 'T_ID';
     protected $searchableFields = ['TEXT', 'ERSTELLT'];
     protected $defaultOrder = ['ERSTELLT' => 'desc'];
+    protected $appends = ['type'];
+
+    static public function getTypeAttribute()
+    {
+        return 'assignment';
+    }
 
     protected static function boot()
     {
@@ -28,7 +34,7 @@ class Auftraege extends Model
 
     public function von()
     {
-        return $this->belongsTo(User::class, 'VERFASSER_ID');
+        return $this->belongsTo(Person::class, 'VERFASSER_ID');
     }
 
     public function an()
@@ -36,9 +42,9 @@ class Auftraege extends Model
         return $this->morphTo('an', 'BENUTZER_TYP', 'BENUTZER_ID');
     }
 
-    public function anUser()
+    public function anPerson()
     {
-        return BelongsToMorph::build($this, User::class, 'an', 'BENUTZER_TYP', 'BENUTZER_ID');
+        return BelongsToMorph::build($this, Person::class, 'an', 'BENUTZER_TYP', 'BENUTZER_ID');
     }
 
     public function anPartner()
@@ -56,9 +62,9 @@ class Auftraege extends Model
         return BelongsToMorph::build($this, BaustellenExtern::class, 'kostentraegerBaustelle', 'KOS_TYP', 'KOS_ID');
     }
 
-    public function kostentraegerUser()
+    public function kostentraegerPerson()
     {
-        return BelongsToMorph::build($this, User::class, 'kostentraegerMitarbeiter', 'KOS_TYP', 'KOS_ID');
+        return BelongsToMorph::build($this, Person::class, 'kostentraegerMitarbeiter', 'KOS_TYP', 'KOS_ID');
     }
 
     public function kostentraegerPartner()

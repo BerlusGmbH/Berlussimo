@@ -13,27 +13,9 @@ class berlussimo_global
     function objekt_auswahl_liste()
     {
         session()->put('url.intended', URL::full());
-
-        $mieten = new mietkonto ();
-        if (session()->has('objekt_id')) {
-            $objekt_kurzname = new objekt ();
-            $objekt_kurzname->get_objekt_name(session()->get('objekt_id'));
-            $mieten->erstelle_formular("Ausgewähltes Objekt: $objekt_kurzname->objekt_name", NULL);
-        } else {
-            $mieten->erstelle_formular("Objekt auswählen...", NULL);
+        if (!session()->has('objekt_id')) {
+            session()->flash(\App\Messages\InfoMessage::TYPE, ['Bitte wählen Sie ein Objekt.']);
         }
-        echo "<div class='row'>";
-        $objekte = new objekt ();
-        $objekte_arr = $objekte->liste_aller_objekte();
-        $anzahl_objekte = count($objekte_arr);
-        for ($i = 0; $i < $anzahl_objekte; $i++) {
-            $objekt_kurzname = ltrim(rtrim(htmlspecialchars($objekte_arr [$i] ["OBJEKT_KURZNAME"])));
-            echo "<div class='col-xs-12 col-sm-6 col-md-4 col-lg-2'>";
-            echo "<a href='" . route('web::objekte::select', ['objekt_id' => $objekte_arr [$i] ['OBJEKT_ID']]) . "'>" . trim($objekt_kurzname) . "</a>&nbsp;";
-            echo "</div>";
-        }
-        echo "</div>";
-        $mieten->ende_formular();
     }
 
     function monate_jahres_links($jahr, $link)

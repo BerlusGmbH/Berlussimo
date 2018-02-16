@@ -1,4 +1,4 @@
-<h6>Mietkontenübersicht -> Darstelltungsoptionen...</h6>
+<h3>Mietkontenübersicht -> Darstelltungsoptionen...</h3>
 <div class="row">
     <?php
     echo "<div class='col-xs-4 col-md-3 col-lg-1'>";

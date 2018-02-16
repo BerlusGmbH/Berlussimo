@@ -2,16 +2,14 @@
 
 namespace App\Exceptions;
 
-use App\Exceptions\Messages\ErrorMessageException;
-use App\Exceptions\Messages\InfoMessageException;
-use App\Exceptions\Messages\WarningMessageException;
 use App\Messages\ErrorMessage;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Http\Exception\HttpResponseException;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Session\TokenMismatchException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\Debug\Exception\FlattenException;
 use Symfony\Component\HttpFoundation\JsonResponse as SymfonyResponse;
@@ -31,10 +29,12 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
+        AuthenticationException::class,
         AuthorizationException::class,
         HttpException::class,
         ModelNotFoundException::class,
-        ValidationException::class,
+        TokenMismatchException::class,
+        ValidationException::class
     ];
 
     /**
@@ -42,54 +42,50 @@ class Handler extends ExceptionHandler
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param  \Exception $e
+     * @param  \Exception $exception
      * @return void
      */
-    public function report(Exception $e)
+    public function report(Exception $exception)
     {
-        parent::report($e);
+        parent::report($exception);
     }
 
     /**
      * Render an exception into an HTTP response.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \Exception $e
+     * @param  \Exception $exception
      * @return \Illuminate\Http\Response
      */
-    public function render($request, Exception $e)
+    public function render($request, Exception $exception)
     {
         if (ob_get_status()) {
             ob_end_clean();
         }
 
         if ($this->hasMiddleware('api', $request)) {
-            if ($e instanceof HttpResponseException) {
-                return $e->getResponse();
-            } elseif ($e instanceof ModelNotFoundException) {
-                $e = new NotFoundHttpException($e->getMessage(), $e);
-            } elseif ($e instanceof AuthenticationException) {
-                return $this->unauthenticated($request, $e);
-            } elseif ($e instanceof AuthorizationException) {
-                $e = new HttpException(403, $e->getMessage());
-            } elseif ($e instanceof ValidationException && $e->getResponse()) {
-                return $e->getResponse();
+            if ($exception instanceof HttpResponseException) {
+                return $exception->getResponse();
+            } elseif ($exception instanceof ModelNotFoundException) {
+                $exception = new NotFoundHttpException($exception->getMessage(), $exception);
+            } elseif ($exception instanceof AuthenticationException) {
+                return $this->unauthenticated($request, $exception);
+            } elseif ($exception instanceof AuthorizationException) {
+                $exception = new HttpException(403, $exception->getMessage());
+            } elseif ($exception instanceof ValidationException && $exception->getResponse()) {
+                return $exception->getResponse();
             }
 
-            if ($this->isHttpException($e)) {
-                return $this->toIlluminateResponse($this->renderHttpException($e), $e);
-            } else {
-                return $this->toIlluminateResponse($this->convertExceptionToJsonResponse($e), $e);
-            }
+            return $this->toIlluminateResponse($this->convertExceptionToJsonResponse($exception), $exception);
         }
 
-        if ($e instanceof AuthorizationException) {
-            return $this->convertAuthorizationExceptionToResponse($e);
-        } elseif ($e instanceof MessageException) {
-            return $this->convertMessageExceptionToResponse($e);
+        if ($exception instanceof AuthorizationException) {
+            return $this->convertAuthorizationExceptionToResponse($exception);
+        } elseif ($exception instanceof MessageException) {
+            return $this->convertMessageExceptionToResponse($exception);
         }
 
-        return parent::render($request, $e);
+        return parent::render($request, $exception);
     }
 
     /**
@@ -106,6 +102,22 @@ class Handler extends ExceptionHandler
     }
 
     /**
+     * Convert an authentication exception into an unauthenticated response.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Illuminate\Auth\AuthenticationException $exception
+     * @return \Illuminate\Http\Response
+     */
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['error' => 'Unauthenticated.'], 401);
+        }
+
+        return redirect()->guest(route('login'));
+    }
+
+    /**
      * Create a Symfony response for the given exception.
      *
      * @param  \Exception $e
@@ -117,7 +129,7 @@ class Handler extends ExceptionHandler
 
         $json = ['error' => [
             'status' => (string)$e->getStatusCode(),
-            'title' => $e->getMessage()
+            'message' => $e->getMessage()
         ]];
 
         if (config('app.debug')) {
@@ -135,9 +147,9 @@ class Handler extends ExceptionHandler
 
     protected function redirectWithMessage($message, $messageType = ErrorMessage::TYPE, $redirectTo = null)
     {
-        if(isset($redirectTo)) {
+        if (isset($redirectTo)) {
             return redirect()->to($redirectTo)->with([$messageType => [$message]]);
-        }elseif (0 === strpos(URL::previous(), request()->root()) && URL::previous() != URL::full()) {
+        } elseif (0 === strpos(URL::previous(), request()->root()) && URL::previous() != URL::full()) {
             return redirect()->to(URL::previous())->with([$messageType => [$message]]);
         } else {
             return redirect()->to('/')->with([$messageType => [$message]]);

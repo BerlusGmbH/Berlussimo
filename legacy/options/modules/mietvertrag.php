@@ -395,7 +395,6 @@ switch ($mietvertrag_raus) {
                 echo $link_pdf;
                 $ma->finde_schuldner('');
             } else {
-
                 $ma->finde_schuldner_pdf('');
             }
         }
@@ -426,9 +425,10 @@ switch ($mietvertrag_raus) {
         $f->fieldset("Guthaben aller Mieter", 'guthabenliste');
         $bg = new berlussimo_global ();
         $bg->objekt_auswahl_liste();
-
-        $ma = new mahnungen ();
-        $ma->finde_guthaben_mvs();
+        if (session()->has('objekt_id')) {
+            $ma = new mahnungen ();
+            $ma->finde_guthaben_mvs();
+        }
         $f->fieldset_ende();
         break;
 
@@ -746,7 +746,6 @@ switch ($mietvertrag_raus) {
             $objekt_id = session()->get('objekt_id');
         }
         if (!session()->has('objekt_id')) {
-            echo 'Bitte wählen Sie ein Objekt.';
             return;
         }
 
@@ -1182,7 +1181,7 @@ function mietvertrag_aktuelle($einheit_id)
         iframe_start();
         echo "<table width=100%>\n";
         $counter = 0;
-        foreach($result as $row) {
+        foreach ($result as $row) {
             $counter++;
             $datum_heute = date("Y-m-d");
             if (($row['MIETVERTRAG_BIS'] > $datum_heute) or ($row['MIETVERTRAG_BIS'] == "0000-00-00")) {
@@ -1227,7 +1226,7 @@ function mietvertrag_objekt_links()
     $db_abfrage = "SELECT OBJEKT_DAT, OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC ";
     $result = DB::select($db_abfrage);
     echo "<b>Objekt auswählen:</b><br>\n ";
-    foreach($result as $row) {
+    foreach ($result as $row) {
         echo "<a class=\"objekt_links\" href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mietvertrag_neu', 'objekt_id' => $row['OBJEKT_ID']]) . "'>$row[OBJEKT_KURZNAME]</a><br>\n";
     }
 }

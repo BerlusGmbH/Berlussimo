@@ -2,45 +2,122 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-use App\Models\Objekte;
-use App\Models\Haeuser;
-use App\Models\Einheiten;
-use App\Models\Partner;
-use App\Models\Personen;
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Models\BankAccountStandardChart;
+use App\Models\Bankkonten;
+use App\Models\BaustellenExtern;
+use App\Models\BookingAccount;
+use App\Models\Einheiten;
+use App\Models\Haeuser;
+use App\Models\InvoiceItem;
+use App\Models\Kaufvertraege;
+use App\Models\Mietvertraege;
+use App\Models\Objekte;
+use App\Models\Partner;
+use App\Models\Person;
+use App\Models\Wirtschaftseinheiten;
 use Response;
 
 class SearchBarController extends Controller
 {
-    public function search() {
-        $response = ['objekte' => [], 'haeuser' => [], 'einheiten' => [], 'partner' => [], 'personen' => []];
+    public function search()
+    {
+        if (!request()->has('e')) {
+            $classes = [
+                'objekt',
+                'haus',
+                'einheit',
+                'person',
+                'partner',
+                'bankkonto',
+                'mietvertrag',
+                'kaufvertrag',
+                'baustelle',
+                'wirtschaftseinheit',
+                'artikel',
+                'kontenrahmen',
+                'buchungskonto'
+            ];
+            $response = [
+                'objekt' => [],
+                'haus' => [],
+                'einheit' => [],
+                'person' => [],
+                'partner' => [],
+                'bankkonto' => [],
+                'mietvertrag' => [],
+                'kaufvertrag' => [],
+                'baustelle' => [],
+                'wirtschaftseinheit' => [],
+                'artikel' => [],
+                'kontenrahmen' => [],
+                'buchungskonto' => []
+            ];
+        } else {
+            $response = [];
+            if (is_array(request()->input('e'))) {
+                $classes = request()->input('e');
+            } else {
+                $classes = [request()->input('e')];
+            }
+        }
         if (!request()->has('q')) {
             return Response::json($response);
         }
-        $tokens = explode(' ',request()->input('q'));
+        $tokens = explode(' ', request()->input('q'));
 
-        $response['objekte'] = Objekte::defaultOrder();
-        $response['haeuser'] = Haeuser::defaultOrder();
-        $response['einheiten'] = Einheiten::defaultOrder();
-        $response['partner'] = Partner::defaultOrder();
-        $response['personen'] = Personen::defaultOrder();
-
-        foreach ($tokens as $token) {
-            $response['objekte'] = $response['objekte']->search($token);
-            $response['haeuser'] = $response['haeuser']->search($token);
-            $response['einheiten'] = $response['einheiten']->search($token);
-            $response['partner'] = $response['partner']->search($token);
-            $response['personen'] = $response['personen']->search($token);
+        foreach ($classes as $class) {
+            $parts = explode(':', $class);
+            switch ($parts[0]) {
+                case 'objekt':
+                    $response['objekt'] = Objekte::defaultOrder();
+                    break;
+                case 'haus':
+                    $response['haus'] = Haeuser::defaultOrder();
+                    break;
+                case 'einheit':
+                    $response['einheit'] = Einheiten::defaultOrder();
+                    break;
+                case 'person':
+                    $response['person'] = Person::defaultOrder();
+                    break;
+                case 'partner':
+                    $response['partner'] = Partner::defaultOrder();
+                    break;
+                case 'bankkonto':
+                    $response['bankkonto'] = Bankkonten::defaultOrder();
+                    break;
+                case 'mietvertrag':
+                    $response['mietvertrag'] = Mietvertraege::defaultOrder();
+                    break;
+                case 'kaufvertrag':
+                    $response['kaufvertrag'] = Kaufvertraege::defaultOrder();
+                    break;
+                case 'baustelle':
+                    $response['baustelle'] = BaustellenExtern::defaultOrder();
+                    break;
+                case 'wirtschaftseinheit':
+                    $response['wirtschaftseinheit'] = Wirtschaftseinheiten::defaultOrder();
+                    break;
+                case 'artikel':
+                    $response['artikel'] = InvoiceItem::defaultOrder();
+                    $response['artikel']->with('supplier');
+                    if (isset($parts[1])) {
+                        $response['artikel']->where('ART_LIEFERANT', $parts[1]);
+                    }
+                    break;
+                case 'kontenrahmen':
+                    $response['kontenrahmen'] = BankAccountStandardChart::defaultOrder();
+                    break;
+                case 'buchungskonto':
+                    $response['buchungskonto'] = BookingAccount::defaultOrder();
+                    if (isset($parts[1])) {
+                        $response['buchungskonto']->where('KONTENRAHMEN_ID', $parts[1]);
+                    }
+                    break;
+            }
+            $response[$parts[0]] = $response[$parts[0]]->search($tokens)->get();
         }
-
-        $response['objekte'] = $response['objekte']->get();
-        $response['haeuser'] = $response['haeuser']->get();
-        $response['einheiten'] = $response['einheiten']->get();
-        $response['partner'] = $response['partner']->get();
-        $response['personen'] = $response['personen']->get();
 
         return Response::json($response);
     }

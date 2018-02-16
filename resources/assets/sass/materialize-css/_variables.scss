@@ -74,12 +74,18 @@ $secondary-color: map-get($secondary-colors, "base") !default;
 $secondary-color-dark: map-get($secondary-colors, "dark") !default;
 $secondary-color-light: map-get($secondary-colors, "light") !default;
 
-$link-color: $primary-color !default;
+$link-color: $secondary-color !default;
 
 // 4. Cards
 // ==========================================================================
 
+$card-bg-color: #424242 !default;
 $card-link-color: $secondary-color !default;
+
+// 6. Chips
+// ==========================================================================
+
+$chip-border-color: $primary-color !default;
 
 // 8. Dropdown
 // ==========================================================================
@@ -90,7 +96,9 @@ $dropdown-color: $primary-color !default;
 // ==========================================================================
 
 // Text Inputs + Textarea
-$input-border-color: $primary-color !default;
+$input-border-color: $secondary-color !default;
+$input-disabled-color: $secondary-color-light !default;
+$input-disabled-solid-color: $secondary-color-light !default;
 
 // 13. Navigation Bar
 // ==========================================================================
@@ -102,3 +110,9 @@ $navbar-font-color: nth(map-get($primary-colors-text, "dark"), 2) !default;
 
 $tabs-underline-color: $primary-color-dark !default;
 $tabs-text-color: $primary-color-dark !default;
+
+// 18. Tables
+// ==========================================================================
+$table-striped-color: #282828 !default;
+
+$roboto-font-path: "../../../node_modules/materialize-css/dist/fonts/roboto/" !default;

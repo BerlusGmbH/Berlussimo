@@ -18,6 +18,13 @@ class Haeuser extends Model
     protected $primaryKey = 'HAUS_ID';
     protected $searchableFields = ['HAUS_STRASSE', 'HAUS_NUMMER', 'HAUS_PLZ', 'HAUS_STADT'];
     protected $defaultOrder = ['HAUS_STRASSE' => 'asc', 'HAUS_NUMMER' => 'asc'];
+    protected $appends = ['type'];
+    protected $guarded = [];
+
+    static public function getTypeAttribute()
+    {
+        return 'house';
+    }
 
     protected static function boot()
     {
@@ -25,6 +32,9 @@ class Haeuser extends Model
 
         static::addGlobalScope('aktuell', function (Builder $builder) {
             $builder->where('HAUS_AKTUELL', '1');
+        });
+        static::addGlobalScope('appendDetails', function (Builder $builder) {
+            $builder->with('hinweise');
         });
     }
 
@@ -62,7 +72,7 @@ class Haeuser extends Model
         if(is_null($date)) {
             $date = Carbon::today();
         }
-        return Personen::whereHas('mietvertraege', function ($query) use ($date){
+        return Person::whereHas('mietvertraege', function ($query) use ($date){
             $query->whereHas('einheit.haus', function ($query) {
                     $query->where('HAUS_ID', $this->HAUS_ID);
             })->active('=', $date);
@@ -74,7 +84,7 @@ class Haeuser extends Model
         if (is_null($date)) {
             $date = Carbon::today();
         }
-        return Personen::whereHas('kaufvertraege', function ($query) use ($date) {
+        return Person::whereHas('kaufvertraege', function ($query) use ($date) {
             $query->whereHas('einheit.haus', function ($query) {
                 $query->where('HAUS_ID', $this->HAUS_ID);
             })->active('=', $date);

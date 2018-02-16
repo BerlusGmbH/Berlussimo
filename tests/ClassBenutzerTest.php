@@ -2,9 +2,9 @@
 
 namespace App;
 
-use TestCase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use benutzer;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use TestCase;
 
 
 class ClassBenutzerTest extends TestCase
@@ -24,18 +24,6 @@ class ClassBenutzerTest extends TestCase
 
         $id = $benutzer->get_benutzer_id('test');
         $this->assertNotEquals('1',$id);
-    }
-
-    /**
-     * A basic test example.
-     *
-     * @return void
-     */
-    public function testGetAllUsersArray()
-    {
-        $benutzer = new benutzer();
-        $users = $benutzer->get_all_users_arr();
-        $this->assertCount(1, $users);
     }
 
     /**

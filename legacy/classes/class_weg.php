@@ -254,7 +254,7 @@ class weg
         echo "<tr><td>HAUSGELD $v_monat_name $vorjahr</td><td>$this->Wohngeld_soll_vj_a €</td></tr>";
         echo "</table>";
 
-        $link_auftrage_im_haus_objekt = "<a href='" . route('web::todo::legacy', ['option' => 'auftrag_haus', 'haus_id' => $e->haus_id, 'einheit_id' => $einheit_id]) . "'>Aufträge im Haus - > HIER KLICKEN!!!!</a>";
+        $link_auftrage_im_haus_objekt = "<a href='" . route('web::construction::legacy', ['option' => 'auftrag_haus', 'haus_id' => $e->haus_id, 'einheit_id' => $einheit_id]) . "'>Aufträge im Haus - > HIER KLICKEN!!!!</a>";
 
         echo "<table><tr><th>$link_auftrage_im_haus_objekt</th></tr></table>";
 
@@ -288,8 +288,8 @@ class weg
                 $beteiligt_name = "<b>$pp->partner_name</b>";
             }
 
-            $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-            $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
+            $link_pdf = "<a href='" . route('web::construction::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+            $link_txt = "<a href='" . route('web::construction::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
 
             echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
         }
@@ -324,8 +324,8 @@ class weg
                 $beteiligt_name = "<b>$pp->partner_name</b>";
             }
 
-            $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-            $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
+            $link_pdf = "<a href='" . route('web::construction::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+            $link_txt = "<a href='" . route('web::construction::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
 
             echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
         }
@@ -361,8 +361,8 @@ class weg
                 $beteiligt_name = "<b>$pp->partner_name</b>";
             }
 
-            $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-            $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
+            $link_pdf = "<a href='" . route('web::construction::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+            $link_txt = "<a href='" . route('web::construction::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
 
             echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
         }
@@ -398,8 +398,8 @@ class weg
                 $beteiligt_name = "<b>$pp->partner_name</b>";
             }
 
-            $link_pdf = "<a href='" . route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-            $link_txt = "<a href='" . route('web::todo::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
+            $link_pdf = "<a href='" . route('web::construction::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+            $link_txt = "<a href='" . route('web::construction::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
 
             echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
         }
@@ -752,7 +752,8 @@ class weg
     function ausgewahlte_et_liste_aendern($label, $name, $id, $javaaction, $size, $et_arr)
     {
         $person_info = new person ();
-        echo "<label for=\"$id\">$label</label><select name=\"$name\" id=\"$id\" $javaaction size=\"$size\" style='visibility:visible;' multiple>";
+        echo "<div class='input-field'>";
+        echo "<select name=\"$name\" id=\"$id\" $javaaction size=\"$size\" style='visibility:visible;' multiple>";
         if (is_array($et_arr)) {
             for ($a = 0; $a < count($et_arr); $a++) {
                 $person_id = $et_arr [$a] ['PERSON_ID'];
@@ -760,7 +761,8 @@ class weg
                 echo "<option value=\"$person_id\">$person_info->person_nachname $person_info->person_vorname</option>";
             }
         }
-        echo "</select>";
+        echo "</select><label for=\"$id\">$label</label>";
+        echo "</div>";
     }
 
     function eigentuemer_aendern_db($et_id, $einheit_id, $eigent_arr, $eigentuemer_von, $eigentuemer_bis)

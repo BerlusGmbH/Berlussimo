@@ -24,7 +24,7 @@ if (check_user_links ( Auth::user()->id, 'mietvertrag_raus' )) {
 }
 
 if (check_user_links ( Auth::user()->id, 'person' )) {
-	echo "<a href='" . route('web::personen::index') . "'>Personen</a>&nbsp;<b>| </b>&nbsp;";
+    echo "<a href='" . route('web::personen.index') . "'>Personen</a>&nbsp;<b>| </b>&nbsp;";
 }
 
 if (check_user_links ( Auth::user()->id, 'details' )) {
@@ -100,7 +100,7 @@ if (check_user_links ( Auth::user()->id, 'weg' )) {
 }
 
 if (check_user_links ( Auth::user()->id, 'todo' )) {
-	echo "&nbsp;<a href='" . route('web::todo::legacy') . "'>Projekte und Aufgaben </a>&nbsp;<b>| </b>&nbsp;";
+    echo "&nbsp;<a href='" . route('web::construction::legacy') . "'>Projekte und Aufgaben </a>&nbsp;<b>| </b>&nbsp;";
 }
 
 if (check_user_links ( Auth::user()->id, 'Wartung' )) {

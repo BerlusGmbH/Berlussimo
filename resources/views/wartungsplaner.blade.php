@@ -1,8 +1,8 @@
 <html>
 <head>
     <title>Wartungskalender Berlussimo</title>
-    <script type="text/javascript" src="{{elixir('js/wartungsplaner.js')}}"></script>
-    <link rel="stylesheet" type="text/css" href="{{elixir('css/wartungsplaner.css')}}"/>
+    <script type="text/javascript" src="{{mix('js/wartungsplaner.js')}}"></script>
+    <link rel="stylesheet" type="text/css" href="{{mix('css/wartungsplaner.css')}}"/>
 </head>
 
 <body onload="start();">

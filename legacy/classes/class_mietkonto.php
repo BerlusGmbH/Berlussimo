@@ -45,7 +45,7 @@ class mietkonto
 
     function get_person_infos($person_id)
     {
-        $result = DB::select("SELECT * FROM PERSON WHERE PERSON_AKTUELL='1' && PERSON_ID='$person_id' ORDER BY PERSON_DAT DESC LIMIT 0,1");
+        $result = DB::select("SELECT * FROM persons WHERE id='$person_id'");
         return $result;
     }
 
@@ -141,7 +141,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         } else {
             echo "<form name=\"$name\" action=\"$action\" method=\"post\">\n";
         }
-        echo "\n";
+        echo csrf_field() . "\n";
     }
 
     /* Einheit_id aus dem MV auslesen */
@@ -950,7 +950,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         $this->insert_geldbuchung($geldkonto_id, $buchungskonto, $kontoauszugsnr, $kontoauszugsnr, $bemerkung, $buchungsdatum, $kostentraeger_typ, $kostentraeger_id, $betrag);
     }
 
-function check_zahlbetrag($kontoauszugsnr, $kostentraeger_typ, $kostentraeger_id, $buchungsdatum, $betrag, $v_zweck, $geld_konto_id, $kontenrahmen_konto)
+    function check_zahlbetrag($kontoauszugsnr, $kostentraeger_typ, $kostentraeger_id, $buchungsdatum, $betrag, $v_zweck, $geld_konto_id, $kontenrahmen_konto)
     {
         $result = DB::select("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE KONTO_AUSZUGSNUMMER = '$kontoauszugsnr' && KOSTENTRAEGER_TYP='$kostentraeger_typ' && KOSTENTRAEGER_ID='$kostentraeger_id' && DATUM= '$buchungsdatum' && BETRAG= '$betrag' && VERWENDUNGSZWECK= '$v_zweck' && AKTUELL= '1' && GELDKONTO_ID= '$geld_konto_id' && KONTENRAHMEN_KONTO='$kontenrahmen_konto'");
         return !empty($result);
@@ -958,7 +958,7 @@ function check_zahlbetrag($kontoauszugsnr, $kostentraeger_typ, $kostentraeger_id
 
     // Funktion zur Erstellung eines Arrays mit Monaten und Jahren seit Einzug bis aktuelles Jahr/Monat
 
-        function monatsabschluesse_speichern($mietvertrag_id, $betrag)
+    function monatsabschluesse_speichern($mietvertrag_id, $betrag)
     {
         $datum = $this->datum_heute;
         $db_abfrage = "INSERT INTO MONATSABSCHLUSS VALUES (NULL, '$mietvertrag_id', '$datum', '$betrag', '1', NULL)";

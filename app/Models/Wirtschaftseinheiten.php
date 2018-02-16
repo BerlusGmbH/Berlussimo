@@ -17,6 +17,12 @@ class Wirtschaftseinheiten extends Model
     protected $primaryKey = 'W_ID';
     protected $searchableFields = ['W_NAME'];
     protected $defaultOrder = ['W_NAME' => 'asc'];
+    protected $appends = ['type'];
+
+    static public function getTypeAttribute()
+    {
+        return 'accounting_entity';
+    }
 
     protected static function boot()
     {

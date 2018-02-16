@@ -2134,7 +2134,7 @@ AND  `AKTUELL` =  '1'");
             $f = new formular ();
             $f->erstelle_formular("SEPA-Überweisung FREMD", null);
             echo "<table>";
-            echo "<thead><tr><th>EMPFöNGER</th><th>DATUM</th><th>AUSZUG</th><th>VZWECK</th><th>BETRAG</th><th>KONTO<input type=\"button\" onclick=\"auswahl_alle(this.form.konto)\" value=\"Alle\"></th><th>Zuweisung</th><th></th></tr></thead>";
+            echo "<thead><tr><th>EMPFÄNGER</th><th>DATUM</th><th>AUSZUG</th><th>VZWECK</th><th>BETRAG</th><th>KONTO<input type=\"button\" onclick=\"auswahl_alle(this.form.konto)\" value=\"Alle\"></th><th>Zuweisung</th><th></th></tr></thead>";
 
             for ($a = 0; $a < $anz; $a++) {
                 $empf = $arr [$a] ['BEGUENSTIGTER'];
@@ -2482,11 +2482,11 @@ AND  `AKTUELL` =  '1'");
         $bankAccountIndex = session()->get('statements_bankaccount_index');
         $transactions = $statements[session()->get('statements_bankaccount')]->getTransactions();
         $transactionIndex = session()->get('statements_transaction');
-        echo "<span style=\"color:blue;\">Konto: " . ($bankAccountIndex + 1) . "/" . count($statements) . "</span>";
-        echo "&nbsp;|&nbsp;<span style=\"color:blue;\">Transaktion: " . ($transactionIndex + 1) . "/" . count($transactions) . "</span>";
+        echo "Konto: " . ($bankAccountIndex + 1) . "/" . count($statements);
+        echo "&nbsp;|&nbsp;Transaktion: " . ($transactionIndex + 1) . "/" . count($transactions);
 
         $link_konten = "<a href='" . route('web::buchen::legacy', ['option' => 'uebersicht_excel_konten']) . "'>Übersicht Geldkonten</a>";
-        echo "&nbsp;|&nbsp;<span style=\"color:yellow;\">$link_konten</span>";
+        echo "&nbsp;|&nbsp;$link_konten";
     }
 
     function uebersicht_excel_konten()
@@ -2510,9 +2510,9 @@ AND  `AKTUELL` =  '1'");
                 $kontostand_aktuell = nummer_punkt2komma_t($gk->geld_konto_stand($gk_id));
 
                 if ($kontostand_aktuell == $kse) {
-                    $ks_aktuell = "<span style=\"color:green;\"><b>$kontostand_aktuell €</b></span>";
+                    $ks_aktuell = "<span class=\"success--text\"><b>$kontostand_aktuell €</b></span>";
                 } else {
-                    $ks_aktuell = "<span style=\"color:red;\"><b>$kontostand_aktuell €</b></span>";
+                    $ks_aktuell = "<span class=\"error--text\"><b>$kontostand_aktuell €</b></span>";
                 }
 
                 $link_start = "<a href='" . route('web::buchen::legacy', ['option' => 'excel_buchen_session', 'gindex' => $a]) . "'>$gk->geldkonto_bez</a>";
@@ -2567,12 +2567,12 @@ AND  `AKTUELL` =  '1'");
             session()->put('temp_kontostand', '0,00');
         }
 
-        echo "&nbsp;|&nbsp;<span style=\"color:blue;\">Anfangssaldo: " . number_format($ksa_bank, 2, ',', '.') . " € | Schlusssaldo: " . number_format(session()->get('temp_kontostand'), 2, ',', '.') . " €</span>";
+        echo "&nbsp;|&nbsp;Anfangssaldo: " . number_format($ksa_bank, 2, ',', '.') . " € | Schlusssaldo: " . number_format(session()->get('temp_kontostand'), 2, ',', '.') . " €";
 
         if ($kontostand_aktuell == number_format(session()->get('temp_kontostand'), 2, ',', '.')) {
-            echo "&nbsp;|&nbsp;<span style=\"color:green;\"><b>Kontostand: $kontostand_aktuell €</b></span>";
+            echo "&nbsp;|&nbsp;<span class=\"success--text\"><b>Kontostand: $kontostand_aktuell €</b></span>";
         } else {
-            echo "&nbsp;|&nbsp;<span style=\"color:red;\"><b>Kontostand: $kontostand_aktuell €</b></span>";
+            echo "&nbsp;|&nbsp;<span class=\"error--text\"><b>Kontostand: $kontostand_aktuell €</b></span>";
         }
 
         session()->put('temp_kontoauszugsnummer', sprintf('%01d', $statement->getNumber()));

@@ -1,4 +1,4 @@
-@if(check_user_links(Auth::user()->id, 'rechnungen'))
+@can(\App\Libraries\Permission::PERMISSION_MODUL_RECHNUNG)
     @if(session()->has('partner_id'))
         <?php $p = new partners (); $p->get_partner_name(session()->get('partner_id')); ?>
         <a class="btn waves-effect primary-color text-variation-2"
@@ -11,4 +11,4 @@
             <i class="mdi mdi-account-multiple left"></i>
             Partner wählen</a>
     @endif
-@endif
+@endcan

@@ -305,9 +305,7 @@ if (isset ($option)) {
         case "sanierung" :
             $bg = new berlussimo_global();
             $bg->objekt_auswahl_liste();
-            if (!session()->has('objekt_id')) {
-                fehlermeldung_ausgeben("Objekt wählen");
-            } else {
+            if (session()->has('objekt_id')) {
                 $le = new leerstand ();
                 $le->sanierungsliste(session()->get('objekt_id'), 11, 250, 200);
             }

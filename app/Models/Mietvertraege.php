@@ -11,15 +11,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class Mietvertraege extends Model implements ActiveContract
 {
-    use Searchable;
+    use Searchable {
+        Searchable::scopeSearch as scopeSearchFromTrait;
+    }
     use DefaultOrder;
     use Active;
 
     public $timestamps = false;
     protected $table = 'MIETVERTRAG';
     protected $primaryKey = 'MIETVERTRAG_ID';
-    protected $searchableFields = ['MIETVERTRAG_VON', 'MIETVERTRAG_BIS'];
+    protected $searchableFields = ['MIETVERTRAG_ID', 'MIETVERTRAG_VON', 'MIETVERTRAG_BIS'];
     protected $defaultOrder = ['MIETVERTRAG_VON' => 'desc', 'MIETVERTRAG_BIS' => 'desc'];
+    protected $appends = ['type'];
+
+    static public function getTypeAttribute()
+    {
+        return 'rental_contract';
+    }
 
     protected static function boot()
     {
@@ -32,7 +40,7 @@ class Mietvertraege extends Model implements ActiveContract
 
     public function mieter()
     {
-        return $this->belongsToMany('App\Models\Personen', 'PERSON_MIETVERTRAG', 'PERSON_MIETVERTRAG_MIETVERTRAG_ID', 'PERSON_MIETVERTRAG_PERSON_ID')->wherePivot('PERSON_MIETVERTRAG_AKTUELL', '1');
+        return $this->belongsToMany(Person::class, 'PERSON_MIETVERTRAG', 'PERSON_MIETVERTRAG_MIETVERTRAG_ID', 'PERSON_MIETVERTRAG_PERSON_ID')->wherePivot('PERSON_MIETVERTRAG_AKTUELL', '1');
     }
 
     public function einheit()
@@ -53,5 +61,17 @@ class Mietvertraege extends Model implements ActiveContract
     public function getEndDateFieldName()
     {
         return 'MIETVERTRAG_BIS';
+    }
+
+    public function scopeSearch($query, $tokens)
+    {
+        $query->with(['einheit', 'mieter'])->orWhere(function ($query) use ($tokens) {
+            $query->searchFromTrait($tokens);
+        })->orWhereHas('einheit', function ($query) use ($tokens) {
+            $query->search($tokens);
+        })->orWhereHas('mieter', function ($query) use ($tokens) {
+            $query->search($tokens);
+        });
+        return $query;
     }
 }

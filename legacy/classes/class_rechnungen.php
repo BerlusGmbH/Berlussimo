@@ -757,7 +757,7 @@ class rechnungen
                 $d = new detail ();
                 $d->detail_speichern_2('RECHNUNGEN', $beleg_nr, 'Lieferschein', $lieferschein, Auth::user()->email);
             } else {
-                weiterleiten_in_sec(route('web::rechnungen::legacy', ['option' => 'positionen_erfassen', 'belegnr' => $beleg_nr]), 2); // Positionseingabe
+                weiterleiten_in_sec(route('web::rechnungen.show', ['id' => $beleg_nr]), 2); // Positionseingabe
             }
 
             $weiter = request()->input('weiter');
@@ -773,7 +773,7 @@ class rechnungen
             $f = new formular ();
             $f->erstelle_formular("Lieferscheine", NULL);
             $f->fieldset("Lieferschein zu Rechnung $r->rechnungsnummer hinzufügen", 'lieferschein');
-            $link_pos_erf = "<a href='" . route('web::rechnungen::legacy', ['option' => 'positionen_erfassen', 'belegnr' => $beleg_nr]) . "'>Weiter zur Positionerfassung</a>";
+            $link_pos_erf = "<a href='" . route('web::rechnungen.show', ['id' => $beleg_nr]) . "'>Weiter zur Positionerfassung</a>";
             echo $link_pos_erf;
             $f->hidden_feld('belegnr', $beleg_nr);
             $f->text_feld("Lieferschein Nr zu Rechnung $r->rechnungsnummer ", 'lieferschein', '', '20', 'lieferschein', '');
@@ -2485,8 +2485,8 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
                 $art_info = $this->get_position($u_beleg_nr, $u_pos);
                 $art_nr = $art_info ['ARTIKEL_NR'];
                 $this->get_letzen_preis_aus_rg($art_nr, $aussteller_typ, $aussteller_id, $kos_typ, $kos_id);
-                $art_nr_link = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $u_beleg_nr]) . "' target=\"_blank\">$art_nr</a>";
-                $art_nr_link1 = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $this->v_beleg_nr]) . "' target=\"_blank\">$this->v_beleg_nr</a>";
+                $art_nr_link = "<a href='" . route('web::rechnungen.show', ['id' => $u_beleg_nr]) . "' target=\"_blank\">$art_nr</a>";
+                $art_nr_link1 = "<a href='" . route('web::rechnungen.show', ['id' => $this->v_beleg_nr]) . "' target=\"_blank\">$this->v_beleg_nr</a>";
                 $art_lieferant = $art_info ['ART_LIEFERANT'];
                 $farbe = "black";
                 if (isset ($this->v_preis)) {
@@ -3430,7 +3430,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
                 $link_bearbeiten = "<a href='" . route('web::rechnungen::legacy', ['option' => 'positionen_erfassen', 'belegnr' => $beleg_id]) . "'>Bearbeiten</a>";
                 $kurzbeschreibung = "Buchungsbeleg aus Angebot $ang_nr\n$kurzinfo";
                 if ($bg = $this->check_beleg_exists($kurzbeschreibung)) {
-                    $link_2beleg = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $bg]) . "'>Beleg ansehen</a>";
+                    $link_2beleg = "<a href='" . route('web::rechnungen.show', ['belegnr' => $bg]) . "'>Beleg ansehen</a>";
                     $pdf_link3 = "<a href='" . route('web::rechnungen::legacy', ['option' => 'anzeigen_pdf', 'belegnr' => $bg]) . "'><img src=\"images/pdf_light.png\"></a>";
                     $pdf_link4 = "<a href='" . route('web::rechnungen::legacy', ['option' => 'anzeigen_pdf', 'belegnr' => $belegnr, 'no_logo']) . "'><img src=\"images/pdf_dark.png\"></a>";
                 } else {
@@ -3583,7 +3583,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         } else {
             echo "Rechnungsrabatt und Skonti identisch mit den Ursprungsrechnungen!";
         }
-        weiterleiten_in_sec(route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $belegnr]), 1);
+        weiterleiten_in_sec(route('web::rechnungen.show', ['id' => $belegnr]), 1);
     }
 
     function rechnungs_positionen_arr_99($belegnr)
@@ -4175,7 +4175,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
             $r = new rechnung ();
             $r->rechnung_grunddaten_holen($beleg_nr);
             $a_partner_name = $p->get_partner_name(session()->get('partner_id'));
-            $link_rg = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>$r->rechnungsnummer</a>";
+            $link_rg = "<a href='" . route('web::rechnungen.show', ['id' => $beleg_nr]) . "'>$r->rechnungsnummer</a>";
             $link_rg_neu = "<a href='" . route('web::rechnungen::legacy', ['option' => 'neue_rg', 'belegnr' => $beleg_nr, 't_beleg_id' => $t_beleg_id, 'empf_p_id' => $p_id]) . "'>Neue RG von $a_partner_name erstellen</a>";
             if (session()->get('partner_id') == $r->rechnungs_aussteller_id) {
                 echo "<tr><td>$partner_name</td><td>$link_rg</td><td>$r->kurzbeschreibung</td><td>$r->rechnungs_brutto</td><td>";

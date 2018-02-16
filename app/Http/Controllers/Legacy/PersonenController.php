@@ -3,17 +3,12 @@
 namespace App\Http\Controllers\Legacy;
 
 
-use App\Http\Controllers\Traits\Indexable;
+use App;
 use App\Http\Requests\Legacy\PersonenRequest;
-use App\Models\Personen;
-use App\Services\Parser\Lexer;
-use App\Services\Parser\Parser;
-use ListViews;
+use App\Models\Person;
 
 class PersonenController extends LegacyController
 {
-    use Indexable;
-
     protected $submenu = 'legacy/options/links/links.person.php';
     protected $include = 'legacy/options/modules/person.php';
 
@@ -24,37 +19,11 @@ class PersonenController extends LegacyController
 
     public function index(PersonenRequest $request)
     {
-        $builder = Personen::with(['sex']);
-        $query = "";
-        if (request()->has('q')) {
-            $query = request()->input('q');
-        }
-        if (request()->has('v')) {
-            $query .= " " . ListViews::getView('v', request()->input('v'));
-        }
-
-        $trace = null;
-        if (config('app.debug')) {
-            $trace = fopen(storage_path('logs/parser.log'), 'w');
-        }
-        $lexer = new Lexer($query, $trace);
-        $parser = new Parser($lexer, $builder);
-        $parser->Trace($trace, "\n");
-        while ($lexer->yylex()) {
-            $parser->doParse($lexer->token, $lexer->value);
-        }
-        $parser->doParse(0, 0);
-        $columns = $parser->retvalue;
-
-        $personen = $builder->paginate(request()->input('s', 20));
-
-        list($index, $wantedRelations) = $this->generateIndex($personen, $columns);
-        return view('modules.personen.index', ['columns' => $columns, 'entities' => $personen, 'index' => $index, 'wantedRelations' => $wantedRelations]);
+        return view('modules.personen.index');
     }
 
-    public function show($id, PersonenRequest $request)
+    public function show(Person $personen, PersonenRequest $request)
     {
-        $person = Personen::with(['mietvertraege.einheit.haus.objekt', 'kaufvertraege.einheit.haus.objekt', 'details'])->find($id);
-        return view('modules.personen.show', ['person' => $person]);
+        return view('modules.personen.show', ['person' => $personen]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\CopyObject;
 use App\Models\Traits\DefaultOrder;
 use App\Models\Traits\Searchable;
 use Carbon\Carbon;
@@ -10,14 +11,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Objekte extends Model
 {
-    use Searchable;
-    use DefaultOrder;
+    use Searchable, DefaultOrder, CopyObject;
 
     public $timestamps = false;
     protected $table = 'OBJEKT';
     protected $primaryKey = 'OBJEKT_ID';
     protected $searchableFields = ['OBJEKT_KURZNAME'];
     protected $defaultOrder = ['OBJEKT_KURZNAME' => 'asc'];
+    protected $appends = ['type'];
+
+    static public function getTypeAttribute()
+    {
+        return 'pm_object';
+    }
 
     protected static function boot()
     {
@@ -25,6 +31,9 @@ class Objekte extends Model
 
         static::addGlobalScope('aktuell', function (Builder $builder) {
             $builder->where('OBJEKT_AKTUELL', '1');
+        });
+        static::addGlobalScope('appendDetails', function (Builder $builder) {
+            $builder->with('hinweise');
         });
     }
 
@@ -46,7 +55,7 @@ class Objekte extends Model
         if(is_null($date)) {
             $date = Carbon::today();
         }
-        return Personen::whereHas('mietvertraege', function ($query) use ($date){
+        return Person::whereHas('mietvertraege', function ($query) use ($date){
             $query->whereHas('einheit.haus.objekt', function ($query) {
                 $query->where('OBJEKT_ID', $this->OBJEKT_ID);
             })->active('=', $date);
@@ -58,7 +67,7 @@ class Objekte extends Model
         if (is_null($date)) {
             $date = Carbon::today();
         }
-        return Personen::whereHas('kaufvertraege', function ($query) use ($date) {
+        return Person::whereHas('kaufvertraege', function ($query) use ($date) {
             $query->whereHas('einheit.haus.objekt', function ($query) {
                 $query->where('OBJEKT_ID', $this->OBJEKT_ID);
             })->active('=', $date);

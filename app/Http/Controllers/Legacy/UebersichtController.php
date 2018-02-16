@@ -12,6 +12,6 @@ class UebersichtController extends LegacyController
 
     public function request(UebersichtRequest $request)
     {
-        return $this->render('yellow-page');
+        return $this->render();
     }
 }

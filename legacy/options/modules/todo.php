@@ -10,7 +10,7 @@ switch ($option) {
 
     default :
         $t = new todo ();
-        $t->my_todo_liste(Auth::user()->id, '0');
+        $t->baustellen_liste();
         break;
 
     /* OFFEN */
@@ -128,14 +128,14 @@ switch ($option) {
         $bau_id = request()->input('bau_id');
         $t = new todo ();
         $t->baustelle_aktivieren($bau_id, '1');
-        weiterleiten(route('web::todo::legacy', ['option' => 'baustellen_liste'], false));
+        weiterleiten(route('web::construction::legacy', ['option' => 'baustellen_liste'], false));
         break;
 
     case "baustelle_deaktivieren" :
         $bau_id = request()->input('bau_id');
         $t = new todo ();
         $t->baustelle_aktivieren($bau_id, '0');
-        weiterleiten(route('web::todo::legacy', ['option' => 'baustellen_liste_inaktiv'], false));
+        weiterleiten(route('web::construction::legacy', ['option' => 'baustellen_liste_inaktiv'], false));
         break;
 
     case "verschieben" :
@@ -154,7 +154,7 @@ switch ($option) {
             $p_id = request()->input('p_id'); // projekt_id UE_ID
             $t = new todo ();
             if ($t->verschieben($t_id, $p_id)) {
-                weiterleiten(route('web::todo::legacy', [], false));
+                weiterleiten(route('web::construction::legacy', [], false));
             } else {
                 fehlermeldung_ausgeben("Verschieben gescheitert");
             }
@@ -249,7 +249,7 @@ switch ($option) {
                     $to = new todo ();
                     $to->als_erledigt_markieren($t_dat);
                 }
-                weiterleiten_in_sec(route('web::todo::legacy', [], false), 2);
+                weiterleiten_in_sec(route('web::construction::legacy', [], false), 2);
             } else {
                 fehlermeldung_ausgeben("Projekte und Aufgaben markieren!!!");
             }
@@ -288,7 +288,7 @@ switch ($option) {
         if (request()->has('benutzer_typ') && request()->has('benutzer_id')) {
             $typ = request()->input('benutzer_typ');
             $id = request()->input('benutzer_id');
-            weiterleiten(route('web::todo::legacy', ['option' => 'auftraege_an', 'typ' => $typ, 'id' => $id], false));
+            weiterleiten(route('web::construction::legacy', ['option' => 'auftraege_an', 'typ' => $typ, 'id' => $id], false));
         }
         break;
 } // end switch
