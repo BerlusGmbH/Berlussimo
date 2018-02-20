@@ -48,7 +48,7 @@ return [
         ],
         'nchan' => [
             'driver' => 'nchan',
-            'url' => env('NCHAN_URL'),
+            'url' => env('NCHAN_URL', 'http://localhost:8081/broadcasting/events'),
             'options' => [],
         ],
     ],
