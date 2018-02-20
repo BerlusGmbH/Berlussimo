@@ -1,40 +1,63 @@
-@extends('layouts.page')
-@section('page-content')
-    <div class="navbar-fixed">
-        <nav class="nav-extended">
-            <div class="nav-wrapper">
-                <a class="brand-logo primary-color-dark text-variation-2"
-                   href='/'>
-                    <img style="padding: 10px; position: absolute"
-                         src="/images/berlus_logo.svg">
-                    <span style="margin-left: 65px">berlussimo</span>
-                </a>
-                @yield('navbar')
-            </div>
-            <div class="nav-content">
-                @if(!Auth::guest())
-                    @include('shared.menus.main')
-                @endif
-            </div>
-        </nav>
-    </div>
+@inject('locator', App\Services\PhoneLocator')
+        <!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href='{{mix('css/vendor.css')}}' rel='stylesheet' type='text/css'>
+    @stack('head')
+    <link href='{{mix('css/main.css')}}' rel='stylesheet' type='text/css'>
+    <link href='{{mix('css/berlussimo.css')}}' rel='stylesheet' type='text/css'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
 
-    @yield('nav-content')
+<body>
 
-    <main>
-        <div style="margin-top: 10px" class="center-align">
-            @include("shared.messages")
+<div id="app">
+    <v-app dark>
+        @if(Auth::check())
+            <app-user-loader :user="{{Auth::user()}}"></app-user-loader>
+            <app-global-select-loader
+                    :partner="{{json_encode(\App\Models\Partner::find(session()->get('partner_id')))}}"
+                    :objekt="{{json_encode(\App\Models\Objekte::find(session()->get('objekt_id')))}}"
+                    :bankkonto="{{json_encode(\App\Models\Bankkonten::find(session()->get('geldkonto_id')))}}"
+            >
+            </app-global-select-loader>
+        @endif
+        <app-workplace-loader></app-workplace-loader>
+        <div style="position: sticky; top: 0; z-index: 1">
+            <app-toolbar></app-toolbar>
+            <app-menu>
+                <template slot="breadcrumbs">
+                    <router-view name="breadcrumbs"></router-view>
+                </template>
+                <template slot="mainmenu">
+                    <router-view name="mainmenu"></router-view>
+                </template>
+                <template slot="submenu">
+                    <router-view name="submenu"></router-view>
+                </template>
+            </app-menu>
+            <div>
+                @include("shared.messages")
+            </div>
         </div>
-        @yield("content")
-    </main>
+            <v-content style="z-index: 0">
+                <transition name="fade" mode="out-in">
+                    <router-view></router-view>
+                </transition>
+                <app-notifications id="notifications"></app-notifications>
+                <app-snackbar id="snackbar"></app-snackbar>
+            </v-content>
 
-    <footer class="page-footer">
-        <div class="footer-copyright">
-            <div class="container center">
-                <b>Berlussimo</b> wird von der <a target='_new' class="primary-color text-variation-3"
-                                                  href='http://www.berlus.de'>Berlus GmbH</a> -
-                Hausverwaltung zur Verfügung gestellt.
-            </div>
-        </div>
-    </footer>
-@endsection
+        <app-footer></app-footer>
+    </v-app>
+</div>
+
+<script type='text/javascript' src='{{mix('js/manifest.js')}}'></script>
+<script type='text/javascript' src='{{mix('js/vendor.js')}}'></script>
+<script type='text/javascript' src='{{mix('js/app.js')}}'></script>
+@stack('scripts')
+
+</body>
+</html>

@@ -17,17 +17,11 @@
         data-delay="50"
         data-tooltip="Person"></i>
     @endif
-    @php
-        $name = trim($entity->PERSON_NACHNAME);
-        if(trim($entity->PERSON_VORNAME) != '') {
-            $name .= ', ' . trim($entity->PERSON_VORNAME);
-        }
-    @endphp
-    <a href="{{ route('web::personen::show', ['id' => $entity->PERSON_ID]) }}">{{$name}}</a>
+        <a href="{{ route('web::personen.show', ['id' => $entity->id]) }}">{{$entity->full_name}}</a>
     @if($icons)
-        @if($entity->sex[0]->DETAIL_INHALT == 'männlich')
+            @if($entity->sex == 'männlich')
             <i class="mdi mdi-gender-male"></i>
-        @elseif($entity->sex[0]->DETAIL_INHALT == 'weiblich')
+            @elseif($entity->sex == 'weiblich')
             <i class="mdi mdi-gender-female"></i>
         @endif
     @endif

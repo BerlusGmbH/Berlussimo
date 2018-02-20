@@ -621,7 +621,7 @@ class buchen
         }
 
         if ($typ == 'Benutzer') {
-            $users = \App\Models\User::all();
+            $users = \App\Models\Person::has('jobsAsEmployee')->defaultOrder()->get();
             foreach ($users as $user) {
                 if ($vorwahl_bez == $user->id) {
                     echo "<option value='$user->id' selected>$user->name</option>";
@@ -1847,7 +1847,7 @@ class buchen
                 $this->summe_kontobuchungen_jahr_monat($geldkonto_id, $kostenkonto, $jahr, $monat);
                 $r = new rechnung ();
                 $kos_bez = $r->kostentraeger_ermitteln($kos_typ, $kos_id);
-                echo "<tr></td><td>$datum</td><td><a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $erfass_nr]) . "'>$erfass_nr</a></td><td>$betrag</td><td>$kos_bez</td><td>$g_buchungsnummer</td><td>$vzweck</td></tr>";
+                echo "<tr></td><td>$datum</td><td><a href='" . route('web::rechnungen.show', ['id' => $erfass_nr]) . "'>$erfass_nr</a></td><td>$betrag</td><td>$kos_bez</td><td>$g_buchungsnummer</td><td>$vzweck</td></tr>";
             }
             $this->summe_konto_buchungen = nummer_punkt2komma($this->summe_konto_buchungen);
             echo "<tfoot><tr><td></td><td><b>Summe</b></td><td><b>$this->summe_konto_buchungen €</b></td><td></td><td></td><td></td></tr></tfoot>";
@@ -1895,7 +1895,7 @@ class buchen
                 $r = new rechnung ();
                 $kos_bez = $r->kostentraeger_ermitteln($kos_typ, $kos_id);
 
-                echo "<tr></td><td>$datum</td><td><a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $erfass_nr]) . "'>$erfass_nr</a></td><td>$betrag</td><td>$kos_bez</td><td>$g_buchungsnummer</td><td>$vzweck</td></tr>";
+                echo "<tr></td><td>$datum</td><td><a href='" . route('web::rechnungen.index', ['id' => $erfass_nr]) . "'>$erfass_nr</a></td><td>$betrag</td><td>$kos_bez</td><td>$g_buchungsnummer</td><td>$vzweck</td></tr>";
             }
             $this->summe_konto_buchungen = nummer_punkt2komma($this->summe_konto_buchungen);
 
@@ -2550,8 +2550,8 @@ LIMIT 0 , 1");
                     $einheit_id = $einheiten_array [$i] ['EINHEIT_ID'];
 
                     $einheit_kurzname = $einheiten_array [$i] ['EINHEIT_KURZNAME'];
-                    $vn = rtrim(ltrim($mieter_daten_arr ['0'] ['0'] ['PERSON_VORNAME']));
-                    $nn = rtrim(ltrim($mieter_daten_arr ['0'] ['0'] ['PERSON_NACHNAME']));
+                    $vn = rtrim(ltrim($mieter_daten_arr ['0'] ['0'] ['first_name']));
+                    $nn = rtrim(ltrim($mieter_daten_arr ['0'] ['0'] ['name']));
                     $akt_gesamt_soll = $miete->sollmiete_warm - $miete->saldo_vormonat_stand;
                     $nn = $this->umlaute_anpassen($nn);
                     $vn = $this->umlaute_anpassen($vn);
@@ -2689,8 +2689,6 @@ LIMIT 0 , 1");
             // $pdf->ezTable($tab_arr);
             // ob_clean(); //ausgabepuffer leeren
             // $pdf->ezStream();
-        } else {
-            echo "Objekt auswählen";
         }
     }
 
@@ -2952,8 +2950,6 @@ LIMIT 0 , 1");
             hinweis_ausgeben("Monatsbericht ohne Vormieter für $objekt_name wurde erstellt<br>");
             echo $download_link;
             /* Falls kein Objekt ausgewählt */
-        } else {
-            echo "Objekt auswählen";
         }
     }
 

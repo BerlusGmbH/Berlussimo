@@ -1,6 +1,6 @@
 <div class="row">
     <div class='col-xs-12'>
-        <h6>Betriebskosten & Nebenkostenabrechnung</h6>
+        <h3>Betriebskosten & Nebenkostenabrechnung</h3>
         <div class="row">
             <div class='col-xs-4 col-sm-4 col-md-3 col-lg-2'>
                 <a href='<?php echo route('web::bk::legacy', ['option' => 'profile']) ?>'>Profile</a>
@@ -34,7 +34,7 @@
         </div>
     </div>
     <div class='col-xs-12 col-md-6 col-lg-4'>
-        <h6>Wirtschaftseinheiten</h6>
+        <h3>Wirtschaftseinheiten</h3>
         <div class="row">
             <div class='col-xs-6'>
                 <a href='<?php echo route('web::bk::legacy', ['option' => 'wirtschaftseinheiten']) ?>'>Alle</a>
@@ -45,7 +45,7 @@
         </div>
     </div>
     <div class='col-xs-12 col-md-6 col-lg-4'>
-        <h6>Serienbriefe</h6>
+        <h3>Serienbriefe</h3>
         <div class="row">
             <div class='col-xs-6'>
                 <a href='<?php echo route('web::bk::legacy', ['option' => 'serienbrief']) ?>'>Vorlagen</a>

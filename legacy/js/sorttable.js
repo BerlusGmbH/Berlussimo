@@ -71,7 +71,7 @@ sorttable = {
       for (var i=0; i<sortbottomrows.length; i++) {
         tfo.appendChild(sortbottomrows[i]);
       }
-      delete sortbottomrows;
+        //delete sortbottomrows;
     }
     
     // work through each column and calculate its type
@@ -156,8 +156,8 @@ sorttable = {
 	        for (var j=0; j<row_array.length; j++) {
 	          tb.appendChild(row_array[j][1]);
 	        }
-	        
-	        delete row_array;
+
+              //delete row_array;
 	      });
 	    }
     }
@@ -169,7 +169,7 @@ sorttable = {
     for (var i=0; i<table.tBodies[0].rows.length; i++) {
       text = sorttable.getInnerText(table.tBodies[0].rows[i].cells[column]);
       if (text != '') {
-        if (text.match(/^-?[£$¤]?[\d,.]+%?$/)) {
+        if (text.match(/^-?[ï¿½$ï¿½]?[\d,.]+%?$/)) {
           return sorttable.sort_numeric;
         }
         // check for a date: dd/mm/yyyy or dd/mm/yy 
@@ -250,7 +250,7 @@ sorttable = {
     for (var i=newrows.length-1; i>=0; i--) {
        tbody.appendChild(newrows[i]);
     }
-    delete newrows;
+      //delete newrows;
   },
   
   /* sort functions

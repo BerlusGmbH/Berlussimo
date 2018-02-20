@@ -102,7 +102,7 @@ switch ($option) {
                 $preis = $arr_pos [$a] ['PREIS'];
                 $ve = $art_arr [0] ['EINHEIT'];
                 $bez = $art_arr [0] ['BEZEICHNUNG'];
-                $link_rg = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $rg]) . "'>zur Rg</a>";
+                $link_rg = "<a href='" . route('web::rechnungen.show', ['id' => $rg]) . "'>zur Rg</a>";
                 $anz_bisher = $k->get_anz_bisher($art_nr, $partner_id);
                 echo "<tr><td>$link_rg</td><td>$art_nr</td><td>$bez</td><td>$menge</td><td>$ve</td><td>$anz_bisher</td><td>$preis</td></tr>";
             }
@@ -138,7 +138,7 @@ switch ($option) {
             $ka = new katalog ();
             $ka->get_preis_entwicklung_infos(session()->get('partner_id'), $art_nr);
 
-            $link_rg = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $rg]) . "'>zur Rg</a>";
+            $link_rg = "<a href='" . route('web::rechnungen.show', ['id' => $rg]) . "'>zur Rg</a>";
             echo "<tr><td>$link_rg</td><td>$art_nr</td><td>$bez</td><td>$menge</td><td>$ve</td><td>$anz_bisher</td><td>$lp</td><td>$rabatt%</td><td>$up</td><td>$ka->vorzeichen" . "$ka->preis_diff%</td></tr>";
         }
         echo "</table>";

@@ -1076,7 +1076,7 @@ switch ($option) {
                     $beleg_nr = $ergebnis [$a] ['DETAIL_ZUORDNUNG_ID'];
                     $r = new rechnungen ();
                     $r->rechnung_grunddaten_holen($beleg_nr);
-                    $link_rechnung = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]) . "'>$r->rechnungsdatum $r->rechnungs_aussteller_name Rechnungsnr: $r->rechnungsnummer WE: $r->empfaenger_eingangs_rnr WA: $r->aussteller_ausgangs_rnr</a>";
+                    $link_rechnung = "<a href='" . route('web::rechnungen.show', ['id' => $beleg_nr]) . "'>$r->rechnungsdatum $r->rechnungs_aussteller_name Rechnungsnr: $r->rechnungsnummer WE: $r->empfaenger_eingangs_rnr WA: $r->aussteller_ausgangs_rnr</a>";
                     echo "$link_rechnung<br>";
                 }
             } else {
@@ -1356,7 +1356,7 @@ switch ($option) {
         $belegnr = request()->input('belegnr');
         $r->rechnung_als_freigegeben($belegnr);
         hinweis_ausgeben("Rechnung wurde zur Zahlung freigegeben!");
-        weiterleiten_in_sec(route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $in_belegnr]), 2);
+        weiterleiten_in_sec(route('web::rechnungen.show', ['id' => $in_belegnr]), 2);
         break;
 
     case "als_bezahlt_markieren" :
@@ -1364,7 +1364,7 @@ switch ($option) {
         $belegnr = request()->input('belegnr');
         $r->rechnung_als_freigegeben($belegnr);
         hinweis_ausgeben("Rechnung wurde zur Zahlung freigegeben!");
-        weiterleiten_in_sec(route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $in_belegnr]), 2);
+        weiterleiten_in_sec(route('web::rechnungen.show', ['id' => $in_belegnr]), 2);
         break;
 
     case "partner_wechseln" :
@@ -1512,7 +1512,7 @@ switch ($option) {
         if (!empty ($belegnr) && !empty ($pos)) {
             $r->position_deaktivieren($pos, $belegnr);
             echo "POSITION GELÖSCHT";
-            weiterleiten_in_sec(route('web::rechnungen::legacy', ['option' => 'positionen_erfassen', 'belegnr' => $belegnr], false), 1);
+            weiterleiten_in_sec(route('web::rechnungen.show', ['id' => $belegnr], false), 1);
         }
         break;
 
@@ -1688,7 +1688,7 @@ switch ($option) {
         $r = new rechnungen ();
         $r->rechnung_deaktivieren($rechnung_dat);
         $r->rechnungs_aenderungen_speichern($rechnung_dat, $belegnr, $rechnungsnummer, $a_ausnr, $e_einnr, $rechnungs_typ, $r_datum, $ein_datum, $netto, $brutto, $skontobetrag, $aussteller_typ, $aussteller_id, $empfaenger_typ, $empfaenger_id, $stat_erfasst, $stat_voll, $stat_zugew, $stat_z_frei, $stat_bezahlt, $faellig_am, $bezahlt_am, $kurzb, $empfangs_gkonto);
-        weiterleiten_in_sec(route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $belegnr], false), 2);
+        weiterleiten_in_sec(route('web::rechnungen.show', ['id' => $belegnr], false), 2);
         $form->fieldset_ende();
 
         break;
@@ -2052,7 +2052,7 @@ switch ($option) {
 
                 $r->position_speichern($beleg_nr, $beleg_nr, $aussteller_id, $artikel_nr, $menge, $listenpreis, $mwst, $skonto, $rabatt1, $pos_netto);
             }
-            weiterleiten_in_sec(route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]), 3);
+            weiterleiten_in_sec(route('web::rechnungen.show', ['id' => $beleg_nr]), 3);
         }
 
         break;
@@ -2122,7 +2122,7 @@ switch ($option) {
                     $rr->insert_pool_bez_in_gruppe($pool_bez, $beleg_nr, $b_pos);
                 }
             } // end for
-            weiterleiten_in_sec(route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_nr]), 3);
+            weiterleiten_in_sec(route('web::rechnungen.show', ['id' => $beleg_nr]), 3);
         }
 
         break;

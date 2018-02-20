@@ -3,13 +3,14 @@
 namespace App\Http\Requests\Legacy;
 
 
-use App\Http\Requests\Request;
+use App\Libraries\Permission;
 use Auth;
+use Illuminate\Foundation\Http\FormRequest;
 
-class AdminRequest extends Request
+class AdminRequest extends FormRequest
 {
     public function authorize() {
-        return check_user_mod(Auth::user()->id, 'admin_panel');
+        return Auth::user()->can(Permission::PERMISSION_MODUL_DETAIL);
     }
 
     public function rules() {

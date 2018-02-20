@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\DefaultOrder;
+use App\Models\Traits\HasEnum;
 use App\Models\Traits\Searchable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,12 +13,20 @@ class Einheiten extends Model
 {
     use Searchable;
     use DefaultOrder;
+    use HasEnum;
 
     public $timestamps = false;
     protected $table = 'EINHEIT';
     protected $primaryKey = 'EINHEIT_ID';
     protected $searchableFields = ['EINHEIT_KURZNAME', 'EINHEIT_LAGE'];
     protected $defaultOrder = ['EINHEIT_KURZNAME' => 'asc'];
+    protected $appends = ['type', 'vermietet'];
+    protected $guarded = [];
+
+    static public function getTypeAttribute()
+    {
+        return 'unit';
+    }
 
     protected static function boot()
     {
@@ -25,6 +34,9 @@ class Einheiten extends Model
 
         static::addGlobalScope('aktuell', function (Builder $builder) {
             $builder->where('EINHEIT_AKTUELL', '1');
+        });
+        static::addGlobalScope('appendDetails', function (Builder $builder) {
+            $builder->with('hinweise');
         });
     }
 
@@ -55,7 +67,7 @@ class Einheiten extends Model
         if(is_null($date)) {
             $date = Carbon::today();
         }
-        return Personen::whereHas('mietvertraege', function ($query) use ($date){
+        return Person::whereHas('mietvertraege', function ($query) use ($date){
             $query->where('EINHEIT_ID', $this->EINHEIT_ID)->active('=', $date);
         });
     }
@@ -65,7 +77,7 @@ class Einheiten extends Model
         if (is_null($date)) {
             $date = Carbon::today();
         }
-        return Personen::whereHas('kaufvertraege', function ($query) use ($date) {
+        return Person::whereHas('kaufvertraege', function ($query) use ($date) {
             $query->where('EINHEIT_ID', $this->EINHEIT_ID)->active('=', $date);
         });
     }

@@ -3,16 +3,19 @@
 namespace App\Http\Requests\Legacy;
 
 
-use App\Http\Requests\Request;
+use App\Libraries\Permission;
 use Auth;
+use Illuminate\Foundation\Http\FormRequest;
 
-class EinheitenRequest extends Request
+class EinheitenRequest extends FormRequest
 {
-    public function authorize() {
-        return check_user_mod(Auth::user()->id, 'einheit_raus');
+    public function authorize()
+    {
+        return Auth::user()->can(Permission::PERMISSION_MODUL_EINHEIT);
     }
 
-    public function rules() {
+    public function rules()
+    {
         return [];
     }
 }

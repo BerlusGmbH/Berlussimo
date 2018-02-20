@@ -1,0 +1,19 @@
+# Laravel queue worker using systemd
+# ----------------------------------
+#
+# /etc/systemd/system/laravel-queue.service
+#
+# run this command to enable service:
+# systemctl enable queue.service
+
+[Unit]
+Description=Laravel queue worker
+
+[Service]
+User=www-data
+Group=www-data
+Restart=always
+ExecStart=/usr/bin/php /var/www/berlussimo/artisan queue:work
+
+[Install]
+WantedBy=multi-user.target

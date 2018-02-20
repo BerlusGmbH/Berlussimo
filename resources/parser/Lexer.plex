@@ -16,6 +16,8 @@ class Lexer
     private $state = 1;
     private $colstack;
     public $yyTraceFILE;
+    private $yyTracePrompt;
+    private $state_name;
 
     function __construct($data, $trace = null)
     {
@@ -33,7 +35,7 @@ class Lexer
     %value $this->value
     %line $this->line
     aggregate = ~count~
-    column = ~person|partner|mietvertrag|kaufvertrag|einheit|haus|objekt|hinweis|telefon|gewerk|detail|adresse|auftrag|an(?!d)|mitarbeiter|kostenträger|baustelle~
+    column = ~person|partner|mietvertrag|kaufvertrag|einheit|haus|objekt|hinweis|telefon|jobtitel|login|detail|adresse|auftrag|an(?!d)|mitarbeiter|kostenträger|baustelle|arbeitgeber|job~
     field = ~id|name|vorname|lage|str|nr|plz|ort|bis|typ|geburtstag|bemerkung|qm|inhalt|text|akut|erstellt|erledigt|urlaubstage|wochenstunden|stundensatz~
     columnorfield = ~von|email~
     vermietet = ~vermietet~

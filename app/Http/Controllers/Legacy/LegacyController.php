@@ -16,7 +16,7 @@ class LegacyController extends Controller
         error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
     }
 
-    public function render($view = 'berlussimo')
+    public function render($view = 'layouts.legacy')
     {
         $response = $this->renderResponse();
         if ($this->responseIsFile($response)) {

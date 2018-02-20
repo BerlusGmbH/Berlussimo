@@ -8,22 +8,25 @@
   "license": "MIT",
   "type": "project",
   "require": {
-    "php": ">=5.5.9",
-    "laravel/framework": "5.2.*",
-    "rospdf/pdf-php": "0.12.40",
-    "barryvdh/laravel-ide-helper": "v2.1.4",
-    "doctrine/dbal": "^2.5",
-    "spatie/laravel-permission": "^1.4",
+    "php": ">=5.6.4",
     "barryvdh/laravel-debugbar": "^2.3",
-    "smarty/smarty-lexer": "^3.1",
+    "barryvdh/laravel-ide-helper": "v2.*",
+    "doctrine/dbal": "^2.5",
+    "laravel/framework": "5.4.*",
+    "laravel/passport": "^3.0",
+    "laravel/tinker": "~1.0",
+    "mashape/unirest-php": "^3.0",
+    "owen-it/laravel-auditing": "^4.0",
+    "propaganistas/laravel-phone": "^2.8",
+    "rospdf/pdf-php": "0.12.40",
+    "smarty/smarty-lexer": "3.1.29",
+    "spatie/laravel-permission": "^1.4",
     "kingsquare/php-mt940": "dev-berlussimo"
   },
   "require-dev": {
     "fzaninotto/faker": "~1.4",
     "mockery/mockery": "0.9.*",
-    "phpunit/phpunit": "~4.0",
-    "symfony/css-selector": "2.8.*|3.0.*",
-    "symfony/dom-crawler": "2.8.*|3.0.*"
+    "phpunit/phpunit": "~5.7"
   },
   "autoload": {
     "classmap": [
@@ -42,9 +45,9 @@
     ]
   },
   "autoload-dev": {
-    "classmap": [
-      "tests/TestCase.php"
-    ]
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
   },
   "repositories": [
     {
@@ -54,25 +57,26 @@
   ],
   "scripts": {
     "post-root-package-install": [
-      "php -r \"copy('.env.example', '.env');\""
+      "php -r \"file_exists('.env') || copy('.env.example', '.env');\""
     ],
     "post-create-project-cmd": [
       "php artisan key:generate"
     ],
     "post-install-cmd": [
       "Illuminate\\Foundation\\ComposerScripts::postInstall",
-      "php artisan clear-compiled",
       "php artisan ide-helper:generate",
+      "php artisan view:clear",
       "php artisan optimize"
     ],
     "post-update-cmd": [
       "Illuminate\\Foundation\\ComposerScripts::postUpdate",
-      "php artisan clear-compiled",
       "php artisan ide-helper:generate",
+      "php artisan view:clear",
       "php artisan optimize"
     ]
   },
   "config": {
-    "preferred-install": "dist"
+    "preferred-install": "dist",
+    "sort-packages": true
   }
 }

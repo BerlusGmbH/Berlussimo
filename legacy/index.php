@@ -16,7 +16,7 @@ echo "<head>";
 ////echo "<link href=\"css/demo.css\"       rel=\"stylesheet\" type=\"text/css\" /  media=\"screen\">";
 
 ////echo "<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js'></script>";
-$legacyCss = elixir('css/legacy.css');
+$legacyCss = mix('css/legacy.css');
 echo "<link href='$legacyCss' rel='stylesheet' type='text/css'>\n";
 
 echo "</head>";
@@ -64,10 +64,10 @@ include("options/links/links.statisch.php");
 include_options();
 echo "<div  id=\"aus\"><center><b>Berlussimo</b> wurde von der <a target=\"_new\"  href=\"http://www.berlus.de\">Berlus GmbH</a> - Hausverwaltung zur Verfügung gestellt.</center></div>";
 
-$elixirJs = elixir('js/legacy.js');
-echo "<script type='text/javascript' src='$elixirJs'></script>\n";
-$elixirJs = elixir('js/lightbox-plus-jquery.js');
-echo "<script type='text/javascript' src='$elixirJs'></script>\n";
+$mixJs = mix('js/legacy.js');
+echo "<script type='text/javascript' src='$mixJs'></script>\n";
+$mixJs = mix('js/lightbox-plus-jquery.js');
+echo "<script type='text/javascript' src='$mixJs'></script>\n";
 
 echo "</body></html>";
 function include_options()

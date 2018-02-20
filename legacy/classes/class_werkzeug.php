@@ -7,8 +7,6 @@ class werkzeug
 
     function werkzeugliste($b_id = NULL)
     {
-        $link_NACH_MIT = "<a href='" . route('web::benutzer::legacy', ['option' => 'werkzeugliste_nach_mitarbeiter', 'b_id' => $b_id]) . "'>ÜBERSICHT NACH MITARBEITER</a>";
-        echo $link_NACH_MIT . '<br>';
         $f = new formular ();
         $f->fieldset('Werkzeugliste', 'wl');
         $arr = $this->werkzeugliste_arr($b_id);
@@ -35,7 +33,7 @@ class werkzeug
                 $art_info = $katalog_info [0] ['BEZEICHNUNG'];
 
                 $lieferant = $r->rechnungs_aussteller_name;
-                $link_beleg = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_id]) . "'>$lieferant</a>";
+                $link_beleg = "<a href='" . route('web::rechnungen.show', ['id' => $beleg_id]) . "'>$lieferant</a>";
                 $wb_nr = 'W-' . $w_id;
                 echo "<tr><td>$link_beleg</td><td>$wb_nr</td><td>$art_info</td><td>$kurzinfo</td><td>$menge</td>";
 
@@ -415,7 +413,7 @@ class werkzeug
                 $art_info = $katalog_info [0] ['BEZEICHNUNG'];
 
                 $lieferant = $r->rechnungs_aussteller_name;
-                $link_beleg = "<a href='" . route('web::rechnungen::legacy', ['option' => 'rechnungs_uebersicht', 'belegnr' => $beleg_id]) . "'>$lieferant</a>";
+                $link_beleg = "<a href='" . route('web::rechnungen.show', ['id' => $beleg_id]) . "'>$lieferant</a>";
                 $wb_nr = 'W-' . $w_id;
                 $b_id = $arr [$a] ['BENUTZER_ID'];
                 if ($tmp_b_id != $b_id && $a != 0) {

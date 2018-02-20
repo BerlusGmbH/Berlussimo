@@ -17,6 +17,12 @@ class Partner extends Model
     protected $primaryKey = 'PARTNER_ID';
     protected $searchableFields = ['PARTNER_NAME', 'STRASSE', 'NUMMER', 'PLZ', 'ORT'];
     protected $defaultOrder = ['PARTNER_NAME' => 'asc'];
+    protected $appends = ['type'];
+
+    static public function getTypeAttribute()
+    {
+        return 'partner';
+    }
 
     protected static function boot()
     {
@@ -25,8 +31,18 @@ class Partner extends Model
         static::addGlobalScope(new AktuellScope());
     }
 
-    public function mitarbeiter() {
-        return $this->belongsToMany(User::class, 'BENUTZER_PARTNER', 'BP_PARTNER_ID', 'BP_BENUTZER_ID')->wherePivot('AKTUELL', '1');
+    public function jobsAsEmployer()
+    {
+        return $this->hasMany(Job::class, 'employer_id');
     }
 
+    public function availableJobTitles()
+    {
+        return $this->hasMany(JobTitle::class, 'employer_id');
+    }
+
+    public function arbeitnehmer()
+    {
+        return $this->belongsToMany(Person::class, 'jobs', 'employer_id', 'employee_id');
+    }
 }

@@ -703,7 +703,18 @@ ORDER BY EINHEIT_KURZNAME ASC");
 
     function baustellen_leistung($kos_typ, $kos_id, $preis, $datum_a, $datum_e, $beschreibung = '')
     {
-        $db_abfrage = "SELECT STUNDENZETTEL.BENUTZER_ID, name, hourly_rate, SUM(DAUER_MIN)/60 AS STD, $preis*(SUM(DAUER_MIN)/60) AS LEISTUNG_EUR FROM `STUNDENZETTEL_POS` JOIN STUNDENZETTEL ON (STUNDENZETTEL.ZETTEL_ID=STUNDENZETTEL_POS.ZETTEL_ID) JOIN users ON(STUNDENZETTEL.BENUTZER_ID=users.id) WHERE  STUNDENZETTEL_POS.DATUM BETWEEN '$datum_a' AND '$datum_e' && STUNDENZETTEL.AKTUELL = '1' && STUNDENZETTEL_POS.AKTUELL = '1' && KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID='$kos_id' GROUP BY STUNDENZETTEL.BENUTZER_ID ORDER BY STD DESC";
+        $db_abfrage = "SELECT STUNDENZETTEL.BENUTZER_ID, 
+                        name, SUM(DAUER_MIN)/60 AS STD, 
+                        $preis*(SUM(DAUER_MIN)/60) AS LEISTUNG_EUR 
+                       FROM `STUNDENZETTEL_POS` 
+                        JOIN STUNDENZETTEL ON (STUNDENZETTEL.ZETTEL_ID=STUNDENZETTEL_POS.ZETTEL_ID) 
+                        JOIN persons ON(STUNDENZETTEL.BENUTZER_ID=persons.id) 
+                       WHERE  STUNDENZETTEL_POS.DATUM BETWEEN '$datum_a' 
+                        AND '$datum_e' && STUNDENZETTEL.AKTUELL = '1' 
+                        && STUNDENZETTEL_POS.AKTUELL = '1' 
+                        && KOSTENTRAEGER_TYP='$kos_typ' 
+                        && KOSTENTRAEGER_ID='$kos_id' 
+                       GROUP BY STUNDENZETTEL.BENUTZER_ID ORDER BY STD DESC";
         $resultat = DB::select($db_abfrage);
 
         $r = new rechnung ();
@@ -789,7 +800,7 @@ ORDER BY EINHEIT_KURZNAME ASC");
 
     function gesamt_stunden($kos_typ, $kos_id, $datum_a, $datum_e)
     {
-        $db_abfrage = "SELECT SUM(DAUER_MIN)/60 AS G_STD FROM `STUNDENZETTEL_POS` JOIN STUNDENZETTEL ON (STUNDENZETTEL.ZETTEL_ID=STUNDENZETTEL_POS.ZETTEL_ID) JOIN users ON(STUNDENZETTEL.BENUTZER_ID=users.id) WHERE  STUNDENZETTEL_POS.DATUM BETWEEN '$datum_a' AND '$datum_e' && STUNDENZETTEL.AKTUELL = '1' && STUNDENZETTEL_POS.AKTUELL = '1' && KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID='$kos_id'";
+        $db_abfrage = "SELECT SUM(DAUER_MIN)/60 AS G_STD FROM `STUNDENZETTEL_POS` JOIN STUNDENZETTEL ON (STUNDENZETTEL.ZETTEL_ID=STUNDENZETTEL_POS.ZETTEL_ID) JOIN persons ON(STUNDENZETTEL.BENUTZER_ID=persons.id) WHERE  STUNDENZETTEL_POS.DATUM BETWEEN '$datum_a' AND '$datum_e' && STUNDENZETTEL.AKTUELL = '1' && STUNDENZETTEL_POS.AKTUELL = '1' && KOSTENTRAEGER_TYP='$kos_typ' && KOSTENTRAEGER_ID='$kos_id'";
         $resultat = DB::select($db_abfrage);
         if (!empty($resultat)) {
             $row = $resultat[0];

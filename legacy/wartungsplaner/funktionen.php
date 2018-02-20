@@ -179,12 +179,12 @@ function kontakt_suche($target_id, $string)
     $datum_d = date("d.m.Y");
     echo "<p class=\"zeile_ueber\">Suchergebnisse, auf Datensatz klicken um zu übernehmen</p>";
     echo "<table>";
-    $db_abfrage = "SELECT * FROM PERSON WHERE (PERSON_NACHNAME LIKE '$string%' OR PERSON_VORNAME LIKE '%$string%')  && PERSON_AKTUELL='1'";
+    $db_abfrage = "SELECT * FROM persons WHERE (name LIKE '$string%' OR first_name LIKE '%$string%')";
     $result = DB::select($db_abfrage);
     $z = 0;
     if (!empty($result)) {
         foreach ($result as $row) {
-            $p_id = $row['PERSON_ID'];
+            $p_id = $row['id'];
             /*MV_IDS abfragen*/
             $db_abfrage = "SELECT PERSON_MIETVERTRAG_MIETVERTRAG_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_PERSON_ID='$p_id' && PERSON_MIETVERTRAG_AKTUELL='1'";
             $result1 = DB::select($db_abfrage);
@@ -203,8 +203,8 @@ function kontakt_suche($target_id, $string)
                         $js .= "setTimeout('daj3(\'" . route('web::wartungsplaner::ajax', ['option' => 'einheit_register', 'einheit_id' => $einheit_id, 'einheit_bez' => $EINHEIT_KURZNAME], false) . "\', \'rightBox\')', 500);";
                         $js .= "setTimeout('daj3(\'" . route('web::wartungsplaner::ajax', ['option' => 'get_partner_info'], false) . "\', \'rightBox\')', 1000);\"";
 
-                        $p_nachname = $row['PERSON_NACHNAME'];
-                        $p_vorname = $row['PERSON_VORNAME'];
+                        $p_nachname = $row['name'];
+                        $p_vorname = $row['first_name'];
                         echo "<tr class=\"zeile$z\" $js><td>MIETER</td><td>$p_nachname $p_vorname $EINHEIT_KURZNAME</td></tr>";
                         if ($z == 2) {
                             $z = 0;
@@ -295,12 +295,12 @@ function str_suche($target_id, $string)
     $datum_d = date("d.m.Y");
     echo "<p class=\"zeile_ueber\">Suchergebnisse, auf Datensatz klicken um zu übernehmen</p>";
     echo "<table>";
-    $db_abfrage = "SELECT * FROM PERSON WHERE (PERSON_NACHNAME LIKE '$string%' OR PERSON_VORNAME LIKE '%$string%')  && PERSON_AKTUELL='1'";
+    $db_abfrage = "SELECT * FROM persons WHERE (name LIKE '$string%' OR first_name LIKE '%$string%')";
     $result = DB::select($db_abfrage);
     $z = 0;
     if (!empty($result)) {
         foreach ($result as $row) {
-            $p_id = $row['PERSON_ID'];
+            $p_id = $row['id'];
             /*MV_IDS abfragen*/
             $db_abfrage = "SELECT PERSON_MIETVERTRAG_MIETVERTRAG_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_PERSON_ID='$p_id' && PERSON_MIETVERTRAG_AKTUELL='1'";
             $result1 = DB::select($db_abfrage);
@@ -316,7 +316,7 @@ function str_suche($target_id, $string)
                         $js = $js . "setTimeout('daj3(\'/wartungsplaner/ajax?option=wartungsteil_waehlen\', \'leftBox\')', 1000);";
                         $js = $js . "setTimeout('daj3(\'/wartungsplaner/ajax?option=get_partner_info\', \'rightBox\')', 1000);\"";
 
-                        echo "<tr class=\"zeile$z\" $js><td>MIETER</td><td>$row[PERSON_NACHNAME] $row[PERSON_VORNAME] $EINHEIT_KURZNAME</td></tr>";
+                        echo "<tr class=\"zeile$z\" $js><td>MIETER</td><td>$row[name] $row[first_name] $EINHEIT_KURZNAME</td></tr>";
                         if ($z == 2) {
                             $z = 0;
                         }
@@ -3594,7 +3594,7 @@ function check_str($str, $nr, $plz, $ort)
 
 function get_benutzername($benutzer_id)
 {
-    $user = \App\Models\User::find($benutzer_id);
+    $user = \App\Models\Person::find($benutzer_id);
     return isset($user) ? $user->name : '';
 }
 
@@ -4309,11 +4309,11 @@ function get_mieter_infos($mv_id)
         $person_string = '';
         foreach($result as $row) {
             $person_id = $row['PERSON_MIETVERTRAG_PERSON_ID'];
-            $result1 = DB::select("SELECT PERSON_NACHNAME, PERSON_VORNAME FROM PERSON WHERE PERSON_ID='$person_id' && PERSON_AKTUELL='1' ORDER BY PERSON_VORNAME, PERSON_VORNAME ASC");
+            $result1 = DB::select("SELECT name, first_name FROM persons WHERE id='$person_id' ORDER BY name, first_name ASC");
             if (!empty($result1)) {
                 foreach($result1 as $row1) {
-                    $p_nname = $row1['PERSON_NACHNAME'];
-                    $p_vname = $row1['PERSON_VORNAME'];
+                    $p_nname = $row1['name'];
+                    $p_vname = $row1['first_name'];
                     $person_string .= "$p_nname $p_vname\n";
                 }
             }
@@ -4875,7 +4875,7 @@ class general
 
     function get_not_team_benutzer($team_id)
     {
-        $result = DB::select("SELECT id AS BENUTZER_ID FROM users WHERE id NOT IN (SELECT BENUTZER_ID FROM W_TEAMS_BENUTZER WHERE TEAM_ID=? && AKTUELL = '1') ORDER BY name", [$team_id]);
+        $result = DB::select("SELECT id AS BENUTZER_ID FROM persons WHERE id NOT IN (SELECT BENUTZER_ID FROM W_TEAMS_BENUTZER WHERE TEAM_ID=? && AKTUELL = '1') ORDER BY name", [$team_id]);
         return $result;
     }
 
@@ -5021,7 +5021,7 @@ class general
             $datum_sql = date_german2mysql($datum_d);
             $wochentag_nr = get_wochentag($datum_d);
 
-            $abfrage = "SELECT '$datum_d' AS DATUM, DATE_FORMAT('$datum_sql','%Y%m%d') AS DATUMZ, benutzername, W_TEAMS_BENUTZER.BENUTZER_ID,  TERMINE_TAG,  (SELECT COUNT(DAT) FROM GEO_TERMINE WHERE DATUM='$datum_sql' && W_TEAMS_BENUTZER.BENUTZER_ID=GEO_TERMINE.BENUTZER_ID && AKTUELL='1') AS T_BELEGT, TERMINE_TAG-(SELECT COUNT(DAT) FROM GEO_TERMINE WHERE DATUM='$datum_sql' && W_TEAMS_BENUTZER.BENUTZER_ID=GEO_TERMINE.BENUTZER_ID && AKTUELL='1') AS FREI, START_ADRESSE  FROM BENUTZER, `W_TEAMS_BENUTZER`, W_TEAM_PROFILE, GEO_TERMINE WHERE W_TEAM_PROFILE.$wochentag_nr='1' AND `TEAM_ID` = '$TEAM_ID' AND W_TEAMS_BENUTZER.AKTUELL = '1' AND W_TEAM_PROFILE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID AND W_TEAM_PROFILE.AKTUELL='1' AND W_TEAM_PROFILE.AKTIV='1' AND TERMINE_TAG>(SELECT COUNT(*) AS ANZ FROM GEO_TERMINE WHERE GEO_TERMINE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID && GEO_TERMINE.AKTUELL='1' && DATUM='$datum_sql') && W_TEAMS_BENUTZER.BENUTZER_ID NOT IN(SELECT BENUTZER_ID FROM URLAUB WHERE URLAUB.DATUM='$datum_sql' && URLAUB.AKTUELL='1') && BENUTZER.benutzer_id=W_TEAMS_BENUTZER.BENUTZER_ID  GROUP BY  W_TEAMS_BENUTZER.BENUTZER_ID ORDER BY DATUMZ ASC, FREI ASC";
+            $abfrage = "SELECT '$datum_d' AS DATUM, DATE_FORMAT('$datum_sql','%Y%m%d') AS DATUMZ, name, W_TEAMS_BENUTZER.BENUTZER_ID,  TERMINE_TAG,  (SELECT COUNT(DAT) FROM GEO_TERMINE WHERE DATUM='$datum_sql' && W_TEAMS_BENUTZER.BENUTZER_ID=GEO_TERMINE.BENUTZER_ID && AKTUELL='1') AS T_BELEGT, TERMINE_TAG-(SELECT COUNT(DAT) FROM GEO_TERMINE WHERE DATUM='$datum_sql' && W_TEAMS_BENUTZER.BENUTZER_ID=GEO_TERMINE.BENUTZER_ID && AKTUELL='1') AS FREI, START_ADRESSE  FROM persons, `W_TEAMS_BENUTZER`, W_TEAM_PROFILE, GEO_TERMINE WHERE W_TEAM_PROFILE.$wochentag_nr='1' AND `TEAM_ID` = '$TEAM_ID' AND W_TEAMS_BENUTZER.AKTUELL = '1' AND W_TEAM_PROFILE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID AND W_TEAM_PROFILE.AKTUELL='1' AND W_TEAM_PROFILE.AKTIV='1' AND TERMINE_TAG>(SELECT COUNT(*) AS ANZ FROM GEO_TERMINE WHERE GEO_TERMINE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID && GEO_TERMINE.AKTUELL='1' && DATUM='$datum_sql') && W_TEAMS_BENUTZER.BENUTZER_ID NOT IN(SELECT BENUTZER_ID FROM URLAUB WHERE URLAUB.DATUM='$datum_sql' && URLAUB.AKTUELL='1') && persons.id=W_TEAMS_BENUTZER.BENUTZER_ID  GROUP BY  W_TEAMS_BENUTZER.BENUTZER_ID ORDER BY DATUMZ ASC, FREI ASC";
 
             $result = DB::select($abfrage);
             if (!empty($result)) {
@@ -5067,9 +5067,9 @@ class general
             $datum_sql = date_german2mysql($datum_d);
             $wochentag_nr = get_wochentag($datum_d);
             /*Mit freien Terminen*/
-            $abfrage1 = "SELECT '$datum_d' AS DATUM,  DATE_FORMAT('$datum_sql','%Y%m%d') AS DATUMZ, benutzername, W_TEAMS_BENUTZER.BENUTZER_ID,  TERMINE_TAG,  START_ADRESSE  FROM BENUTZER, `W_TEAMS_BENUTZER`, W_TEAM_PROFILE, GEO_TERMINE WHERE W_TEAM_PROFILE.$wochentag_nr='1' AND `TEAM_ID` = '$TEAM_ID' AND W_TEAMS_BENUTZER.AKTUELL = '1' AND W_TEAM_PROFILE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID AND W_TEAM_PROFILE.AKTUELL='1' AND W_TEAM_PROFILE.AKTIV='1' AND TERMINE_TAG>(SELECT COUNT(*) AS ANZ FROM GEO_TERMINE WHERE GEO_TERMINE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID && GEO_TERMINE.AKTUELL='1' && DATUM='$datum_sql') && W_TEAMS_BENUTZER.BENUTZER_ID NOT IN(SELECT BENUTZER_ID FROM URLAUB WHERE URLAUB.DATUM='$datum_sql' && URLAUB.AKTUELL='1') && BENUTZER.benutzer_id=W_TEAMS_BENUTZER.BENUTZER_ID  GROUP BY  W_TEAMS_BENUTZER.BENUTZER_ID ORDER BY DATUMZ ASC";
+            $abfrage1 = "SELECT '$datum_d' AS DATUM,  DATE_FORMAT('$datum_sql','%Y%m%d') AS DATUMZ, name, W_TEAMS_BENUTZER.BENUTZER_ID,  TERMINE_TAG,  START_ADRESSE  FROM persons, `W_TEAMS_BENUTZER`, W_TEAM_PROFILE, GEO_TERMINE WHERE W_TEAM_PROFILE.$wochentag_nr='1' AND `TEAM_ID` = '$TEAM_ID' AND W_TEAMS_BENUTZER.AKTUELL = '1' AND W_TEAM_PROFILE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID AND W_TEAM_PROFILE.AKTUELL='1' AND W_TEAM_PROFILE.AKTIV='1' AND TERMINE_TAG>(SELECT COUNT(*) AS ANZ FROM GEO_TERMINE WHERE GEO_TERMINE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID && GEO_TERMINE.AKTUELL='1' && DATUM='$datum_sql') && W_TEAMS_BENUTZER.BENUTZER_ID NOT IN(SELECT BENUTZER_ID FROM URLAUB WHERE URLAUB.DATUM='$datum_sql' && URLAUB.AKTUELL='1') && persons.id=W_TEAMS_BENUTZER.BENUTZER_ID  GROUP BY  W_TEAMS_BENUTZER.BENUTZER_ID ORDER BY DATUMZ ASC";
             /*Egal ob Termine frei, wird nachher geschaut*/
-            $abfrage = "SELECT  '$datum_d' AS DATUM,  DATE_FORMAT('$datum_sql','%Y%m%d') AS DATUMZ, benutzername, W_TEAMS_BENUTZER.BENUTZER_ID,  TERMINE_TAG,  START_ADRESSE  FROM BENUTZER, `W_TEAMS_BENUTZER`, W_TEAM_PROFILE, GEO_TERMINE WHERE W_TEAM_PROFILE.$wochentag_nr='1' AND `TEAM_ID` = '$TEAM_ID' AND W_TEAMS_BENUTZER.AKTUELL = '1' AND W_TEAM_PROFILE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID AND W_TEAM_PROFILE.AKTUELL='1' AND W_TEAM_PROFILE.AKTIV='1'  && W_TEAMS_BENUTZER.BENUTZER_ID NOT IN(SELECT BENUTZER_ID FROM URLAUB WHERE URLAUB.DATUM='$datum_sql' && URLAUB.AKTUELL='1') && BENUTZER.benutzer_id=W_TEAMS_BENUTZER.BENUTZER_ID  GROUP BY  W_TEAMS_BENUTZER.BENUTZER_ID ORDER BY DATUMZ ASC";
+            $abfrage = "SELECT  '$datum_d' AS DATUM,  DATE_FORMAT('$datum_sql','%Y%m%d') AS DATUMZ, name, W_TEAMS_BENUTZER.BENUTZER_ID,  TERMINE_TAG,  START_ADRESSE  FROM persons, `W_TEAMS_BENUTZER`, W_TEAM_PROFILE, GEO_TERMINE WHERE W_TEAM_PROFILE.$wochentag_nr='1' AND `TEAM_ID` = '$TEAM_ID' AND W_TEAMS_BENUTZER.AKTUELL = '1' AND W_TEAM_PROFILE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID AND W_TEAM_PROFILE.AKTUELL='1' AND W_TEAM_PROFILE.AKTIV='1'  && W_TEAMS_BENUTZER.BENUTZER_ID NOT IN(SELECT BENUTZER_ID FROM URLAUB WHERE URLAUB.DATUM='$datum_sql' && URLAUB.AKTUELL='1') && persons.id=W_TEAMS_BENUTZER.BENUTZER_ID  GROUP BY  W_TEAMS_BENUTZER.BENUTZER_ID ORDER BY DATUMZ ASC";
             $result = DB::select($abfrage1);
             if (!empty($result)) {
                 foreach($result as $row) {

@@ -422,7 +422,7 @@ function position_aendern() {
                         if (req.responseText) {
                             //document.getElementById('positionen').innerHTML = req.responseText;
                             //display_positionen(belegnr);
-                            document.location.href = "/rechnungen?option=positionen_erfassen&belegnr=" + belegnr;
+                            document.location.href = "/invoices/" + belegnr;
                         } else {
                             //document.getElementById('positionen').innerHTML = 'Nicht gespeichert';
                             display_positionen(belegnr);

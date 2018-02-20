@@ -3,16 +3,19 @@
 namespace App\Http\Requests\Legacy;
 
 
-use App\Http\Requests\Request;
+use App\Libraries\Permission;
 use Auth;
+use Illuminate\Foundation\Http\FormRequest;
 
-class RechnungenRequest extends Request
+class RechnungenRequest extends FormRequest
 {
-    public function authorize() {
-        return check_user_mod(Auth::user()->id, 'rechnungen');
+    public function authorize()
+    {
+        return Auth::user()->can(Permission::PERMISSION_MODUL_RECHNUNG);
     }
 
-    public function rules() {
+    public function rules()
+    {
         return [];
     }
 }

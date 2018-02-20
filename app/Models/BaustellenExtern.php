@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\AktuellScope;
 use App\Models\Traits\DefaultOrder;
 use App\Models\Traits\Searchable;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Scopes\AktuellScope;
 
 class BaustellenExtern extends Model
 {
@@ -17,6 +17,12 @@ class BaustellenExtern extends Model
     protected $primaryKey = 'DAT';
     protected $searchableFields = ['BEZ'];
     protected $defaultOrder = ['AKTIV' => 'asc', 'BEZ' => 'asc'];
+    protected $appends = ['type'];
+
+    static public function getTypeAttribute()
+    {
+        return 'construction_site';
+    }
 
     protected static function boot()
     {

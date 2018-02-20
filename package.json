@@ -1,22 +1,51 @@
 {
   "private": true,
+  "babel": {
+    "plugins": [
+      "transform-object-rest-spread"
+    ]
+  },
   "scripts": {
-    "prod": "gulp --production",
-    "dev": "gulp watch"
+    "dev": "npm run development",
+    "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch-poll": "npm run watch -- --watch-poll",
+    "hot": "cross-env NODE_OPTIONS='--max_old_space_size=8192' NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "prod": "npm run production",
+    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
   },
   "devDependencies": {
-    "gulp": "^3.9.1",
-    "laravel-elixir": "^5.0.0"
-  },
-  "dependencies": {
-    "acorn": "^5.1.1",
-    "async": "^2.5.0",
+    "@types/lodash": "^4.14.104",
+    "axios": "^0.16.2",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "cross-env": "^3.2.4",
+    "events": "^1.1.1",
     "flexboxgrid": "^6.3.1",
-    "jquery": "^2.2.4",
+    "jquery": "^3.3.1",
     "keycode-js": "0.0.4",
-    "materialize-css": "^0.98.0",
-    "mdi": "^1.7.22",
+    "laravel-echo": "github:berlusgmbh/echo",
+    "laravel-mix": "^1.7.2",
+    "lodash": "^4.17.5",
+    "materialize-css": "^0.98.2",
+    "mdi": "^2.0.46",
+    "moment": "^2.19.4",
     "normalize.css": "^5.0.0",
-    "urijs": "^1.18.11"
-  }
+    "numbro": "^1.11.1",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.1",
+    "ts-loader": "^2.3.7",
+    "typescript": "^2.7.2",
+    "urijs": "^1.19.1",
+    "velocity-animate": "^1.5.1",
+    "vue": "^2.5.2",
+    "vue-class-component": "^6.0.0",
+    "vue-property-decorator": "^6.0.0",
+    "vue-router": "^3.0.1",
+    "vue-template-compiler": "^2.5.2",
+    "vuetify": "^0.17.2",
+    "vuex": "^3.0.0",
+    "vuex-class": "^0.3.0",
+    "webpack": "^3.8.1"
+  },
+  "dependencies": {}
 }

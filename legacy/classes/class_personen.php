@@ -49,9 +49,9 @@ class personen
         $arr = $this->personen_arr();
         echo "<label for=\"$id\">$label</label><select name=\"$name\" size=\"1\" id=\"$id\">";
         for ($a = 0; $a < count($arr); $a++) {
-            $person_id = $arr [$a] ['PERSON_ID'];
-            $person_nn = $arr [$a] ['PERSON_NACHNAME'];
-            $person_vn = $arr [$a] ['PERSON_VORNAME'];
+            $person_id = $arr [$a] ['id'];
+            $person_nn = $arr [$a] ['name'];
+            $person_vn = $arr [$a] ['first_name'];
 
             if ($vorwahl == $person_id) {
                 echo "<option value=\"$person_id\" selected>$person_nn $person_vn</OPTION>\n";
@@ -64,67 +64,12 @@ class personen
 
     function personen_arr()
     {
-        $db_abfrage = "SELECT PERSON_ID, PERSON_NACHNAME, PERSON_VORNAME FROM PERSON WHERE PERSON_AKTUELL='1' ORDER BY PERSON_NACHNAME ASC, PERSON_VORNAME ASC";
+        $db_abfrage = "SELECT id, name, first_name FROM persons ORDER BY name ASC, first_name ASC";
         $result = DB::select($db_abfrage);
         if (!empty($result)) {
             return $result;
         } else {
             return false;
-        }
-    }
-
-    function save_person($nachname, $vorname, $geb_dat, $geschlecht, $telefon, $handy, $email)
-    {
-        if (!$this->person_exists($vorname, $nachname, $geb_dat)) {
-            $l_pid = $this->letzte_person_id() + 1;
-            $geb_dat_db = date_german2mysql($geb_dat);
-            $db_abfrage = "INSERT INTO PERSON VALUES (NULL, '$l_pid', '$nachname', '$vorname', '$geb_dat_db', '1')";
-            DB::insert($db_abfrage);
-
-            /* Protokollieren */
-            $last_dat = DB::getPdo()->lastInsertId();
-            protokollieren('PERSON', $last_dat, '0');
-
-            echo "Person wurde gespeichert";
-            $l_pid = $this->letzte_person_id();
-
-            $d = new detail ();
-            $stand = 'Stand ' . date("d.m.Y");
-
-            if ($geschlecht) {
-                $d->detail_speichern_2('PERSON', $l_pid, 'Geschlecht', $geschlecht, '');
-            }
-
-            if ($telefon) {
-                $d->detail_speichern_2('PERSON', $l_pid, 'Telefon', $telefon, $stand);
-            }
-            if ($handy) {
-                $d->detail_speichern_2('PERSON', $l_pid, 'Handy', $handy, $stand);
-            }
-
-            if ($email) {
-                $d->detail_speichern_2('PERSON', $l_pid, 'Email', $email, $stand);
-            }
-        } else {
-            fehlermeldung_ausgeben("Mieter mit dem selben Namen, Vornamen und Geburtsdatum exisitiert bereits");
-        }
-        return $l_pid;
-    }
-
-    function person_exists($vorname, $nachname, $geb_dat)
-    {
-        $geb_dat_db = date_german2mysql($geb_dat);
-        $db_abfrage = "SELECT * FROM PERSON WHERE  PERSON_NACHNAME='$nachname' && PERSON_VORNAME='$vorname' && PERSON_GEBURTSTAG='$geb_dat_db' &&PERSON_AKTUELL='1'";
-        $resultat = DB::select($db_abfrage);
-        return !empty($resultat);
-    }
-
-    function letzte_person_id()
-    {
-        $db_abfrage = "SELECT PERSON_ID FROM PERSON ORDER BY PERSON_ID DESC LIMIT 0,1";
-        $resultat = DB::select($db_abfrage);
-        if(!empty($resultat)) {
-            return $resultat[0]['PERSON_ID'];
         }
     }
 
@@ -136,7 +81,7 @@ class personen
             $anz_p = count($personen_ids_arr);
             for ($a = 0; $a < $anz_p; $a++) {
                 /* Mietvertraege */
-                $person_id = $personen_ids_arr [$a] ['PERSON_ID'];
+                $person_id = $personen_ids_arr [$a] ['id'];
                 $mv_arr = $this->mv_ids_von_person($person_id);
                 if (!empty($mv_arr)) {
                     $anz_mv = count($mv_arr);
@@ -175,17 +120,15 @@ class personen
 
             // print_r($treffer);
             return $treffer;
-        } else {
-            // fehlermeldung_ausgeben("KEINE PERSONEN $vorname $nachname");
         }
     }
 
     function get_person_ids_byname_arr($vorname, $nachname)
     {
-        $db_abfrage = "SELECT * FROM PERSON
-	WHERE (LTRIM( RTRIM( REPLACE( PERSON_NACHNAME, CHAR( 13, 10 ) ,  '' ) ) ) LIKE ? && LTRIM( RTRIM( REPLACE( PERSON_VORNAME, CHAR( 13, 10 ) ,  '' ) ) ) LIKE ?
+        $db_abfrage = "SELECT * FROM persons
+	WHERE (LTRIM( RTRIM( REPLACE( name, CHAR( 13, 10 ) ,  '' ) ) ) LIKE ? && LTRIM( RTRIM( REPLACE( first_name, CHAR( 13, 10 ) ,  '' ) ) ) LIKE ?
 ) OR 
-(LTRIM( RTRIM( REPLACE( PERSON_NACHNAME, CHAR( 13, 10 ) ,  '' ) ) ) LIKE ? && LTRIM( RTRIM( REPLACE( PERSON_VORNAME, CHAR( 13, 10 ) ,  '' ) ) ) LIKE ?
+(LTRIM( RTRIM( REPLACE( name, CHAR( 13, 10 ) ,  '' ) ) ) LIKE ? && LTRIM( RTRIM( REPLACE( first_name, CHAR( 13, 10 ) ,  '' ) ) ) LIKE ?
 )
 && PERSON_AKTUELL =  '1'
 LIMIT 0 , 30";
@@ -227,13 +170,13 @@ LIMIT 0 , 30";
         
         if (request()->has('person_finden')) {
             if (request()->input('suche_nach') == "Nachname") {
-                $such_tabelle = "PERSON_NACHNAME";
+                $such_tabelle = "name";
             }
             if (request()->input('suche_nach') == "Vorname") {
-                $such_tabelle = "PERSON_VORNAME";
+                $such_tabelle = "first_name";
             }
             $suchbegriff = request()->input('suchfeld');
-            $db_abfrage = "SELECT PERSON_DAT, PERSON_ID, PERSON_NACHNAME, PERSON_VORNAME, PERSON_GEBURTSTAG FROM PERSON WHERE PERSON_AKTUELL='1' && $such_tabelle LIKE '$suchbegriff%' ORDER BY PERSON_NACHNAME ASC LIMIT 0,50";
+            $db_abfrage = "SELECT id, name, first_name, birthday FROM persons WHERE $such_tabelle LIKE '$suchbegriff%' ORDER BY name ASC LIMIT 0,50";
         } else {
             return [];
         }
@@ -253,9 +196,9 @@ LIMIT 0 , 30";
         $numrows = count($personen_arr);
         for ($a = 0; $a < $numrows; $a++) {
             $zeile++;
-            $person_id = $personen_arr [$a] ['PERSON_ID'];
-            $person_nachname = $personen_arr [$a] ['PERSON_NACHNAME'];
-            $person_vorname = $personen_arr [$a] ['PERSON_VORNAME'];
+            $person_id = $personen_arr [$a] ['id'];
+            $person_nachname = $personen_arr [$a] ['name'];
+            $person_vorname = $personen_arr [$a] ['first_name'];
 
             $aendern_link = "<a class=\"table_links\" href='" . route('web::personen::legacy', ['anzeigen' => 'person_aendern', 'person_id' => $person_id]) . "'>Person ändern</a>";
 
@@ -333,11 +276,11 @@ LIMIT 0 , 30";
     function get_person_infos($person_id)
     {
         unset ($this->p_mv_ids);
-        $result = DB::select("SELECT * FROM PERSON WHERE PERSON_AKTUELL='1' && PERSON_ID='$person_id' ORDER BY PERSON_DAT DESC LIMIT 0,1");
+        $result = DB::select("SELECT * FROM persons WHERE id='$person_id'");
         $row = $result[0];
-        $this->person_nachname = ltrim(rtrim(strip_tags($row ['PERSON_NACHNAME'])));
-        $this->person_vorname = ltrim(rtrim(strip_tags($row ['PERSON_VORNAME'])));
-        $this->person_geburtstag = $row ['PERSON_GEBURTSTAG'];
+        $this->person_nachname = ltrim(rtrim(strip_tags($row ['name'])));
+        $this->person_vorname = ltrim(rtrim(strip_tags($row ['first_name'])));
+        $this->person_geburtstag = $row ['birthday'];
         $d = new detail ();
         $this->geschlecht = ltrim(rtrim($d->finde_detail_inhalt('PERSON', $person_id, 'Geschlecht')));
         $this->get_person_anzahl_mietvertraege_aktuell($person_id);
@@ -362,20 +305,20 @@ LIMIT 0 , 30";
 
     function get_person_hinweis()
     {
-        $abfrage = "SELECT PERSON_ID, PERSON_NACHNAME, PERSON_VORNAME, `DETAIL_NAME` , `DETAIL_INHALT` , `DETAIL_BEMERKUNG` , `DETAIL_ZUORDNUNG_ID`
-FROM `DETAIL` , PERSON
+        $abfrage = "SELECT persons.id, persons.name, persons.first_name, `DETAIL_NAME` , `DETAIL_INHALT` , `DETAIL_BEMERKUNG` , `DETAIL_ZUORDNUNG_ID`
+FROM `DETAIL` , persons
 WHERE `DETAIL_NAME` LIKE '%Hinweis%'
 AND `DETAIL_AKTUELL` = '1'
-AND `DETAIL_ZUORDNUNG_TABELLE` LIKE 'PERSON' && DETAIL_ZUORDNUNG_ID = PERSON_ID ORDER BY PERSON_NACHNAME ASC";
+AND `DETAIL_ZUORDNUNG_TABELLE` LIKE 'PERSON' && DETAIL_ZUORDNUNG_ID = persons.id ORDER BY persons.name ASC";
 
         $result = DB::select($abfrage);
         if (!empty($result)) {
             echo "<table class=\"sortable\">";
-            echo "<tr><th>Name</th><th>Vorname</th><th>DETAIL</th><th>Inhalt</th><th>Bemerkung</th></tr>";
+            echo "<tr><th>Mietvertrag</th><th>Name</th><th>Vorname</th><th>DETAIL</th><th>Inhalt</th><th>Bemerkung</th></tr>";
             foreach($result as $row) {
-                $pname = $row ['PERSON_NACHNAME'];
-                $person_id = $row ['PERSON_ID'];
-                $vname = $row ['PERSON_VORNAME'];
+                $pname = $row ['name'];
+                $person_id = $row ['id'];
+                $vname = $row ['first_name'];
                 $detname = $row ['DETAIL_NAME'];
                 $detinhalt = $row ['DETAIL_INHALT'];
                 $det_bem = $row ['DETAIL_BEMERKUNG'];
@@ -402,20 +345,20 @@ AND `DETAIL_ZUORDNUNG_TABELLE` LIKE 'PERSON' && DETAIL_ZUORDNUNG_ID = PERSON_ID 
 
     function get_person_anschrift()
     {
-        $abfrage = "SELECT PERSON_ID, PERSON_NACHNAME, PERSON_VORNAME, `DETAIL_NAME` , `DETAIL_INHALT` , `DETAIL_BEMERKUNG` , `DETAIL_ZUORDNUNG_ID`
-FROM `DETAIL` , PERSON
+        $abfrage = "SELECT persons.id, persons.name, persons.first_name, `DETAIL_NAME` , `DETAIL_INHALT` , `DETAIL_BEMERKUNG` , `DETAIL_ZUORDNUNG_ID`
+FROM `DETAIL` , persons
 WHERE `DETAIL_NAME` LIKE '%anschrift%'
 AND `DETAIL_AKTUELL` = '1'
-AND `DETAIL_ZUORDNUNG_TABELLE` LIKE 'PERSON' && DETAIL_ZUORDNUNG_ID = PERSON_ID ORDER BY PERSON_NACHNAME ASC";
+AND `DETAIL_ZUORDNUNG_TABELLE` LIKE 'PERSON' && DETAIL_ZUORDNUNG_ID = persons.id ORDER BY persons.name ASC";
 
         $result = DB::select($abfrage);
         if (!empty($result)) {
             echo "<table class=\"sortable\">";
-            echo "<tr><th>Name</th><th>Vorname</th><th>DETAIL</th><th>Inhalt</th><th>Bemerkung</th></tr>";
+            echo "<tr><th>Mietvertrag</th><th>Name</th><th>Vorname</th><th>DETAIL</th><th>Inhalt</th><th>Bemerkung</th></tr>";
             foreach($result as $row) {
-                $pname = $row ['PERSON_NACHNAME'];
-                $person_id = $row ['PERSON_ID'];
-                $vname = $row ['PERSON_VORNAME'];
+                $pname = $row ['name'];
+                $person_id = $row ['id'];
+                $vname = $row ['first_name'];
                 $detname = $row ['DETAIL_NAME'];
                 $detinhalt = $row ['DETAIL_INHALT'];
                 $det_bem = $row ['DETAIL_BEMERKUNG'];

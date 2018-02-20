@@ -661,8 +661,7 @@ switch ($option) {
 
     case "serienbrief" :
         if (!session()->has('objekt_id')) {
-            $weg = new weg ();
-            $weg->liste_weg_objekte();
+            session()->flash(\App\Messages\InfoMessage::TYPE, ['Bitte wählen Sie ein WEG-Objekt']);
         } else {
             $weg = new weg ();
             $weg->form_eigentuemer_checkliste(session()->get('objekt_id'));

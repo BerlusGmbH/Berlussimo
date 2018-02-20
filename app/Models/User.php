@@ -8,6 +8,7 @@ use App\Models\Traits\DefaultOrder;
 use App\Models\Traits\Searchable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * App\Models\User
@@ -19,6 +20,7 @@ class User extends Authenticatable implements ActiveContract
     use Searchable;
     use DefaultOrder;
     use Active;
+    use Notifiable;
 
     protected $searchableFields = ['name', 'email'];
     protected $defaultOrder = ['name' => 'asc'];

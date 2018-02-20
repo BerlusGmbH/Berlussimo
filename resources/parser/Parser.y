@@ -125,6 +125,7 @@ expression(res) ::= COLUMN(co) clauseexpression(cl) viewexpression(v).
     $views = v;
     foreach($relationships as $r) {
         if(isset($views['columns']) && !$views['columns']->isEmpty()) {
+            $cols = $views['columns'];
             $notWanted = true;
             foreach($cols as $col) {
                 $rs = Relations::columnColumnToRelations($this->column, $col);
@@ -138,20 +139,22 @@ expression(res) ::= COLUMN(co) clauseexpression(cl) viewexpression(v).
                 continue;
             }
         }
-        $query = $this->r[$r];
+        $query = isset($this->r[$r]) ? $this->r[$r] : null;
         if(isset($query)) {
             $query->getQuery()->mergeWheres($clause->getQuery()->wheres, $clause->getQuery()->getRawBindings()['where']);
         } else {
             $this->r[$r] = $clause;
         }
-        $query = $this->r[$r];
-        foreach($views['fields'] as $view) {
-            $class = Relations::columnColumnToClass($this->column, $column);
-            $field = Relations::classFieldToField($class, $view['field']);
-            if(isset($view['order'])) {
-                $query->orderBy($field, $view['order']);
-            } else {
-                $query->orderBy($field, 'asc');
+        $query = isset($this->r[$r]) ? $this->r[$r] : null;
+        if($views) {
+            foreach($views['fields'] as $view) {
+                $class = Relations::columnColumnToClass($this->column, $column);
+                $field = Relations::classFieldToField($class, $view['field']);
+                if(isset($view['order'])) {
+                    $query->orderBy($field, $view['order']);
+                } else {
+                    $query->orderBy($field, 'asc');
+                }
             }
         }
         $this->r[$r] = $query;
@@ -329,7 +332,7 @@ fterm(res) ::= NOT VERMIETET.
 
     $vermietet = $class::whereHas('mietvertraege', function($query) {
             $query->active();
-    })->get(['EINHEIT_ID']);
+    })->get(['EINHEIT_ID'])->pluck('EINHEIT_ID');
 
     res = $class::whereNotIn('EINHEIT_ID', $vermietet);
 }

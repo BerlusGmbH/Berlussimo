@@ -24,6 +24,9 @@
             <i class="mdi mdi-clipboard tooltipped" data-position="bottom" data-delay="50" data-tooltip="{{ $tooltip }}"></i>
         @endif
     @endif
-    <a href="{{ route('web::todo::legacy', ['option' => 'edit', 't_id' => $entity->T_ID]) }}" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="{{ trim($entity->TEXT) }}">T-{{ $entity->T_ID }}</a>
-    <a target="_blank" href="{{ route('web::todo::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $entity->T_ID]) }}" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="PDF"><i class="mdi mdi-file-pdf"></i></a>
+    <a href="{{ route('web::construction::legacy', ['option' => 'edit', 't_id' => $entity->T_ID]) }}" class="tooltipped"
+       data-position="bottom" data-delay="50" data-tooltip="{{ trim($entity->TEXT) }}">T-{{ $entity->T_ID }}</a>
+    <a target="_blank"
+       href="{{ route('web::construction::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $entity->T_ID]) }}"
+       class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="PDF"><i class="mdi mdi-file-pdf"></i></a>
 </span>

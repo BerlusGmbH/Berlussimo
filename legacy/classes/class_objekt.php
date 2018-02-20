@@ -64,7 +64,7 @@ class objekt
         $this->objekt_speichern($objekt_kurzname, $eigentuemer_id);
         $n_objekt_id = $this->get_objekt_id($objekt_kurzname);
         if (!empty ($n_objekt_id)) {
-            echo "Objekt_id NEW $n_objekt_id";
+            //echo "Objekt_id NEW $n_objekt_id";
             /* Details vom Objekt kopieren */
             $dd = new detail ();
             $o_det_arr = $dd->finde_alle_details_arr('OBJEKT', $objekt_id);
@@ -80,9 +80,7 @@ class objekt
             }
 
             $haus_arr = $this->haeuser_objekt_in_arr($objekt_id);
-            if (empty($haus_arr)) {
-                fehlermeldung_ausgeben("Keine Häuser im Objekt");
-            } else {
+            if (!empty($haus_arr)) {
                 /* Alle Häuser durchlaufen und kopieren */
                 $anz_h = count($haus_arr);
                 for ($a = 0; $a < $anz_h; $a++) {
@@ -94,7 +92,7 @@ class objekt
                     $qm = $haus_arr [$a] ['HAUS_QM'];
                     $h = new haus ();
                     $n_haus_id = $h->haus_speichern($str, $nr, $ort, $plz, $qm, $n_objekt_id);
-                    echo "$str $nr kopiert<br>";
+                    //echo "$str $nr kopiert<br>";
 
                     /* Details vom Haus kopieren */
                     $dd = new detail ();
@@ -123,7 +121,7 @@ class objekt
                             // print_r($einheit_kn_arr);
                             $l_elem = count($einheit_kn_arr) - 1;
                             $n_einheit_kurzname = $vorzeichen . '-' . $einheit_kn_arr [$l_elem];
-                            echo "$einheit_kurzname -> $n_einheit_kurzname<br>";
+                            //echo "$einheit_kurzname -> $n_einheit_kurzname<br>";
                             $n_einheit_id = $ein->einheit_speichern($n_einheit_kurzname, $einheit_lage, $einheit_qm, $n_haus_id, $einheit_typ);
 
                             /* Details von Einheiten kopieren */
@@ -229,24 +227,25 @@ class objekt
 
                                     if ($saldo_berechnen == 1) {
                                         $mzz->mietkonto_berechnung_monatsgenau($mv_id, $datum_jahr, $datum_monat);
-                                        echo "MIT SALDO<br>";
+                                        //echo "MIT SALDO<br>";
                                         $mit->me_speichern('MIETVERTRAG', $n_mv_id, 'Saldo Vortrag Vorverwaltung', $datum_saldo_vv, $datum_saldo_vv, $mzz->erg, ($mzz->erg / 119 * 19));
                                     } else {
-                                        echo "OHNE SALDO<br>";
+                                        //echo "OHNE SALDO<br>";
                                         $mit->me_speichern('MIETVERTRAG', $n_mv_id, 'Saldo Vortrag Vorverwaltung', $datum_saldo_vv, $datum_saldo_vv, '0.00', '0.00');
                                     }
 
                                     /* ME 0000-00-00 auf $datum_u setzen */
                                 } // end for alle MV'S
                             } else {
-                                echo "Mv zu $einheit_kurzname nicht gefunden - Leerstand";
+                                //echo "Mv zu $einheit_kurzname nicht gefunden - Leerstand";
                             }
                         } // end for einheit
                     } else {
-                        echo "Keine Einheiten kopiert";
+                        //echo "Keine Einheiten kopiert";
                     }
                 } // end for haus
             }
+            return $n_objekt_id;
         } else {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage('Objekt konnte nicht angelegt werden!')

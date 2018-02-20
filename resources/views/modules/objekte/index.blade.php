@@ -1,10 +1,18 @@
-@extends('layouts.main')
+@extends('layouts.app')
 
 @section('breadcrumbs')
-    <i class="mdi mdi-subdirectory-arrow-right"></i>Objekte
+    <i class="mdi mdi-subdirectory-arrow-right" style="margin-right: -2px"></i>
+    <v-breadcrumbs style="display: inline-flex" class="pl-0">
+        <v-icon slot="divider">chevron_right</v-icon>
+        <v-breadcrumbs-item>
+            Objekte
+        </v-breadcrumbs-item>
+    </v-breadcrumbs>
 @endsection
 
 @section('content')
+    <app-object-list-view></app-object-list-view>
+    <!--
     <div class="card-panel white">
         <form id="filter-form" method="get">
             <div class="row">
@@ -25,36 +33,15 @@
                 <div class="input-field col-xs-12 col-md-2">
                     @inject('listViews', "App\Services\ListViewsService")
                     @php($options = $listViews->getViewNames('v'))
-                    @include('shared.listview.views', ['id' => 'view', 'name' => 'v', 'label' => 'Ansicht', 'options' => $options])
+                    @include('shared.listview.dropdown', ['id' => 'view', 'name' => 'v', 'label' => 'Ansicht', 'options' => $options])
                 </div>
                 <div class="input-field col-xs-6 col-md-1">
-                    @include('shared.listview.resultsize', ['name' => 's', 'id' => 'size', 'label' => 'Anzahl'])
+                    @php($options = $listViews->getViewNames('s'))
+                    @include('shared.listview.dropdown', ['name' => 's', 'id' => 'size', 'label' => 'Anzahl', 'options' => $options])
                 </div>
             </div>
         </form>
-        @include('shared.tables.entities-with-paginator', ['parameters' => ['q', 's', 'v', 'f'] ,'columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Objekte::class])
+        @include('shared.tables.entities-with-paginator', ['parameters' => $listViews->getParameters('q') ,'columns' => $columns, 'entities' => $entities, 'class' => \App\Models\Objekte::class])
     </div>
+    -->
 @endsection
-
-@push('scripts')
-<script type="text/javascript">
-    $(document).ready(function () {
-
-        var submit = function (target) {
-            target.form.submit();
-        };
-
-        $('#filter').keypress(function (e) {
-            if (e.which == KeyCode.KEY_ENTER || e.which == KeyCode.KEY_RETURN) {
-                submit(this);
-            }
-        });
-        $('#size').on('change', function (e) {
-            submit(this);
-        });
-        $('#view').on('change', function (e) {
-            submit(this);
-        });
-    });
-</script>
-@endpush

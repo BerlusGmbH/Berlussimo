@@ -4,17 +4,17 @@ namespace App\Services;
 
 use App\Models\Auftraege;
 use App\Models\BaustellenExtern;
+use App\Models\Credential;
 use App\Models\Details;
 use App\Models\Einheiten;
-use App\Models\Gewerke;
 use App\Models\Haeuser;
+use App\Models\Job;
 use App\Models\Kaufvertraege;
 use App\Models\Lager;
 use App\Models\Mietvertraege;
 use App\Models\Objekte;
 use App\Models\Partner;
-use App\Models\Personen;
-use App\Models\User;
+use App\Models\Person;
 use App\Models\Wirtschaftseinheiten;
 
 
@@ -55,11 +55,11 @@ class RelationsService
             'inhalt' => 'DETAIL_INHALT',
             'bemerkung' => 'DETAIL_BEMERKUNG'
         ],
-        Personen::class => [
-            'id' => 'PERSON_ID',
-            'vorname' => 'PERSON_VORNAME',
-            'name' => 'PERSON_NACHNAME',
-            'geburtstag' => 'PERSON_GEBURTSTAG'
+        Person::class => [
+            'id' => 'id',
+            'vorname' => 'first_name',
+            'name' => 'name',
+            'geburtstag' => 'birthday',
         ],
         Auftraege::class => [
             'id' => 'T_ID',
@@ -67,17 +67,6 @@ class RelationsService
             'akut' => 'AKUT',
             'erstellt' => 'ERSTELLT',
             'erledigt' => 'ERLEDIGT'
-        ],
-        User::class => [
-            'id' => 'id',
-            'name' => 'name',
-            'geburtstag' => 'birthday',
-            'von' => 'join_date',
-            'bis' => 'leave_date',
-            'stundensatz' => 'hourly_rate',
-            'wochenstunden' => 'hours_per_week',
-            'urlaubstage' => 'holidays',
-            'email' => 'email'
         ],
         Partner::class => [
             'id' => 'PARTNER_ID',
@@ -88,6 +77,13 @@ class RelationsService
         ],
         Lager::class => [
             'id' => 'LAGER_ID'
+        ],
+        Job::class => [
+            'von' => 'join_date',
+            'bis' => 'leave_date',
+            'stundensatz' => 'hourly_rate',
+            'wochenstunden' => 'hours_per_week',
+            'urlaubstage' => 'holidays'
         ]
     ];
 
@@ -101,9 +97,12 @@ class RelationsService
             'telefon' => ['phones', Details::class],
             'email' => ['emails', Details::class],
             'hinweis' => ['hinweise', Details::class],
-            'person' => ['', Personen::class],
+            'person' => ['', Person::class],
             'detail' => ['commonDetails', Details::class],
-            'adresse' => ['adressen', Details::class]
+            'adresse' => ['adressen', Details::class],
+            'job' => ['jobsAsEmployee', Job::class],
+            'arbeitgeber' => ['arbeitgeber', Partner::class],
+            'login' => ['credential', Credential::class]
         ],
         'mietvertrag' => [
             'objekt' => ['einheit.haus.objekt', Objekte::class],
@@ -112,7 +111,7 @@ class RelationsService
             'mietvertrag' => ['', Mietvertraege::class],
             'telefon' => ['personen.phones', Details::class],
             'email' => ['personen.emails', Details::class],
-            'person' => ['mieter', Personen::class]
+            'person' => ['mieter', Person::class]
         ],
         'kaufvertrag' => [
             'objekt' => ['einheit.haus.objekt', Objekte::class],
@@ -121,7 +120,7 @@ class RelationsService
             'kaufvertrag' => ['', Kaufvertraege::class],
             'telefon' => ['personen.phones', Details::class],
             'email' => ['personen.emails', Details::class],
-            'person' => ['personen', Personen::class]
+            'person' => ['personen', Person::class]
         ],
         'einheit' => [
             'objekt' => ['haus.objekt', Objekte::class],
@@ -129,7 +128,7 @@ class RelationsService
             'einheit' => ['', Einheiten::class],
             'mietvertrag' => ['mietvertraege', Mietvertraege::class],
             'kaufvertrag' => ['kaufvertraege', Kaufvertraege::class],
-            'person' => [['mietvertraege.mieter', 'kaufvertraege.eigentuemer'], Personen::class],
+            'person' => [['mietvertraege.mieter', 'kaufvertraege.eigentuemer'], Person::class],
             'detail' => [['mietvertraege.mieter.commonDetails', 'kaufvertraege.eigentuemer.commonDetails', 'details'], Details::class],
             'telefon' => [['mietvertraege.mieter.phones', 'kaufvertraege.eigentuemer.phones'], Details::class],
             'email' => [['mietvertraege.mieter.emails', 'kaufvertraege.eigentuemer.emails'], Details::class]
@@ -140,7 +139,7 @@ class RelationsService
             'einheit' => ['einheiten', Einheiten::class],
             'mietvertrag' => ['einheiten.mietvertraege', Mietvertraege::class],
             'kaufvertrag' => ['einheiten.kaufvertraege', Kaufvertraege::class],
-            'person' => [['einheiten.mietvertraege.mieter','einheiten.kaufvertraege.eigentuemer'], Personen::class],
+            'person' => [['einheiten.mietvertraege.mieter','einheiten.kaufvertraege.eigentuemer'], Person::class],
             'detail' => ['details', Details::class]
         ],
         'objekt' => [
@@ -153,32 +152,38 @@ class RelationsService
         ],
         'auftrag' => [
             'auftrag' => ['', Auftraege::class],
-            'an' => ['an', [User::class, Partner::class]],
-            'von' => ['von', User::class],
+            'an' => ['an', [Person::class, Partner::class]],
+            'von' => ['von', Person::class],
             'kostenträger' => [
                 'kostentraeger', [
-                    BaustellenExtern::class, Partner::class, User::class,
+                    BaustellenExtern::class, Partner::class, Person::class,
                     Mietvertraege::class, Kaufvertraege::class, Objekte::class,
                     Haeuser::class, Einheiten::class, Wirtschaftseinheiten::class
                 ]
             ],
-            'mitarbeiter' => [['anUser', 'von'], User::class]
-        ],
-        'mitarbeiter' => [
-            'mitarbeiter' => ['', User::class],
-            'partner' => ['arbeitgeber', Partner::class],
-            'gewerk' => ['gewerk', Gewerke::class]
+            'person' => [['anPerson', 'von'], Person::class]
         ],
         'partner' => [
-            'partner' => ['', Partner::class]
+            'partner' => ['', Partner::class],
+            'mitarbeiter' => ['arbeitnehmer', Person::class],
+            'job' => ['jobsAsEmployer', Job::class]
         ],
         'baustelle' => [
             'baustelle' => ['', BaustellenExtern::class]
+        ],
+        'job' => [
+            'job' => ['', Job::class],
+            'arbeitgeber' => ['employer', Partner::class],
+            'arbeitnehmer' => ['employee', Person::class]
+
+        ],
+        'arbeitgeber' => [
+            'arbeitgeber' => ['', Partner::class]
         ]
     ];
 
     static $CLASS_RELATION_TO_MANY = [
-        Personen::class => [
+        Person::class => [
             'mietvertraege.einheit.haus.objekt' => [-4, Mietvertraege::class],
             'kaufvertraege.einheit.haus.objekt' => [-4, Kaufvertraege::class],
             'mietvertraege.einheit.haus' => [-3, Mietvertraege::class],
@@ -203,8 +208,8 @@ class RelationsService
             'details' => [-4, Haeuser::class]
         ],
         Auftraege::class => [
-            'anUser' => [-4, User::class],
-            'von' => [-4, User::class]
+            'anUser' => [-4, Person::class],
+            'von' => [-4, Person::class]
         ]
     ];
 
@@ -214,12 +219,12 @@ class RelationsService
         Einheiten::class => 'einheit',
         Mietvertraege::class => 'mietvertrag',
         Kaufvertraege::class => 'kaufvertrag',
-        Personen::class => 'person',
+        Person::class => 'person',
         Details::class => 'detail',
         Auftraege::class => 'auftrag',
-        User::class => 'mitarbeiter',
         Partner::class => 'partner',
-        Auftraege::class => 'auftrag'
+        Auftraege::class => 'auftrag',
+        Job::class => 'job'
     ];
 
     public function columnToClass($class)
@@ -229,10 +234,10 @@ class RelationsService
 
     public function columnColumnToClass($outer, $inner)
     {
-        if (is_null($inner) || is_null($outer)) {
-            return null;
+        if (isset(self::$COLUMN_COLUMN_TO_RELATIONS[$outer][$inner])) {
+            return self::$COLUMN_COLUMN_TO_RELATIONS[$outer][$inner][1];
         }
-        return self::$COLUMN_COLUMN_TO_RELATIONS[$outer][$inner][1];
+        return null;
     }
 
     public function classFieldToField($class, $field)
@@ -242,7 +247,8 @@ class RelationsService
 
     public function columnColumnToRelations($outer, $inner)
     {
-        $relationships = self::$COLUMN_COLUMN_TO_RELATIONS[$outer][$inner][0];
+        $relationships = isset(self::$COLUMN_COLUMN_TO_RELATIONS[$outer][$inner][0]) ?
+            self::$COLUMN_COLUMN_TO_RELATIONS[$outer][$inner][0] : null;
         if(is_null($relationships)) {
             return [];
         }

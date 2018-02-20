@@ -5,9 +5,14 @@ namespace App\Models\Traits;
 
 trait Searchable
 {
-    public function scopeSearch($query, $string)
+    public function scopeSearch($query, $tokens)
     {
-        $this->buildQuery($query, $string);
+        if (!is_array($tokens)) {
+            $tokens = explode(' ', $tokens);
+        }
+        foreach ($tokens as $token) {
+            $this->buildQuery($query, $token);
+        }
         return $query;
     }
 

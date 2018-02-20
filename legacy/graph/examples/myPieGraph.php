@@ -14,8 +14,8 @@ $desc = "Statistik $objekt " . request()->input('jahr');
 
 $graph = new PieGraph();
 
-$graph->setEcmascriptUrl(asset('/js/PieGraph.js'));
-$graph->setStylesheetUrl(asset('/css/PieGraph.css'));
+$graph->setEcmascriptUrl(mix('js/PieGraph.js'));
+$graph->setStylesheetUrl(mix('css/PieGraph.css'));
 
 $graph->setGraphTitle($desc);
 $graph->setGraphDescription($desc);

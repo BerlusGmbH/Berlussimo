@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('BROADCAST_DRIVER', 'pusher'),
+    'default' => env('BROADCAST_DRIVER', 'nchan'),
 
     /*
     |--------------------------------------------------------------------------
@@ -27,26 +27,30 @@ return [
     */
 
     'connections' => [
-
         'pusher' => [
             'driver' => 'pusher',
-            'key' => env('PUSHER_KEY'),
-            'secret' => env('PUSHER_SECRET'),
+            'key' => env('PUSHER_APP_KEY'),
+            'secret' => env('PUSHER_APP_SECRET'),
             'app_id' => env('PUSHER_APP_ID'),
             'options' => [
                 //
             ],
         ],
-
         'redis' => [
             'driver' => 'redis',
             'connection' => 'default',
         ],
-
         'log' => [
             'driver' => 'log',
         ],
-
+        'null' => [
+            'driver' => 'null',
+        ],
+        'nchan' => [
+            'driver' => 'nchan',
+            'url' => env('NCHAN_URL', 'http://localhost:8081/broadcasting/events'),
+            'options' => [],
+        ],
     ],
 
 ];
