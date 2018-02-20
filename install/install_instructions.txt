@@ -1,26 +1,30 @@
-### These instructions assume that you are running Ubuntu 16.04. After completing these instructions
+### These instructions assume that you are running Debian 9. After completing these instructions
 ### you will have a basic installation with database and webserver.
 
-### setup berlussimo web app on apache2
+### setup berlussimo web app on nginx
 
-#upgrade ubuntu
-sudo apt-get update
-sudo apt-get upgrade
-sudo apt-get dist-upgrade
+# login as root
 
-#the following command restarts the server
+# upgrade debian
+apt update
+apt upgrade
+apt dist-upgrade
+
+# the following command restarts the server
 sudo shutdown -r now
 
-#install npm
-curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
-sudo apt-get install -y nodejs
+# install npm
+apt install curl
+curl -sL https://deb.nodesource.com/setup_8.x | bash -
+apt install -y nodejs
 
-#install apache2 and dependencies
-sudo apt-get install apache2 php7.0 php7.0-gd libapache2-mod-php7.0 php7.0-mysql php7.0-xml php7.0-mbstring php7.0-bcmath php7.0-zip git
-cd /var/www/;sudo git clone https://github.com/BerlusGmbH/Berlussimo berlussimo
-cd /var/www/berlussimo/; sudo git checkout develop
+# install nginx and dependencies
+apt install nginx libnginx-mod-nchan git libpng-dev nasm
+apt install php7.0 php7.0-gd php7.0-mysql php7.0-fpm php7.0-xml php7.0-mbstring php7.0-curl php7.0-bcmath php7.0-zip
+cd /var/www/; git clone https://github.com/BerlusGmbH/Berlussimo berlussimo
+cd /var/www/berlussimo/; git checkout master
 
-#install mySQL. The setup will let you set a root password for the mySQL server. You will need this later.
+# install MySQL. The setup will let you set a root password for the mySQL server. You will need this later.
 sudo apt-get install mysql-server
 
 ### import database schema. Theese instructions will create a database named berlussimo.
@@ -46,40 +50,48 @@ mysql -u root -p berlussimo < /var/www/berlussimo/install/DB-Version-0.4.0/berlu
 #            'strict' => false,
 #            'engine' => null,
 #        ],
-sudo nano /var/www/berlussimo/app/config/database.php
+nano /var/www/berlussimo/app/config/database.php
 
 #install composer and fetch dependencies
-curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
+curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 cd /var/www/berlussimo/
 
-sudo composer install
+composer install
 
-sudo sh -c 'echo "APP_KEY=" > .env'
-sudo php artisan key:generate
+echo "APP_KEY=" > .env
+php artisan key:generate
 
-sudo php artisan migrate
-sudo php artisan optimize
-sudo php artisan route:cache
-sudo php artisan parser:generate
+php artisan migrate
+php artisan optimize
+php artisan route:cache
+php artisan parser:generate
 
-sudo npm install
-sudo npm install --global gulp-cli
-sudo gulp
+# if you setup a fresh database
+php artisan passport:install
+# else if you only setup a fresh webserver
+php artisan passport:keys
 
-#make web directory writeable by apache2
-sudo chown -R www-data:www-data /var/www/berlussimo
+# install node dependencies
+npm install
 
-sudo a2enmod rewrite
+# build javascript app
+npm run prod
 
-#edit DocumentRoot to /var/www/berlussimo/public
-#and insert the following section:
-#        <Directory "/var/www/berlussimo/public">
-#               AllowOverride all
-#        </Directory>
-sudo nano /etc/apache2/sites-enabled/000-default.conf
-sudo service apache2 restart
+#make web directory writeable by the webserver
+chown -R www-data:www-data /var/www/berlussimo
+
+# edit default (/etc/nginx/sites-available/default) site to
+# reflect settings from install/config/nginx/default
+nano /etc/nginx/sites-available/default
+systemctl restart nginx
+
+# copy install/config/systemd/laravell-queue.service to /etc/systemd/system/
+cp /var/www/berlussimo/install/config/systemd/laravel-queue.service /etc/systemd/system/
+
+# start laravel queue and enable start on startup
+systemctl start laravel-queue
+systemctl enable laravel-queue
 
 ### you should now be able to open http://<your_server>/ in your browser and login with
-
 # login: admin@berlussimo
 # password: password
