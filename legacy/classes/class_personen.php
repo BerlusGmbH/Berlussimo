@@ -130,7 +130,6 @@ class personen
 ) OR 
 (LTRIM( RTRIM( REPLACE( name, CHAR( 13, 10 ) ,  '' ) ) ) LIKE ? && LTRIM( RTRIM( REPLACE( first_name, CHAR( 13, 10 ) ,  '' ) ) ) LIKE ?
 )
-&& PERSON_AKTUELL =  '1'
 LIMIT 0 , 30";
         $resultat = DB::select($db_abfrage, [$nachname, $vorname, $vorname, $nachname]);
         return $resultat;
