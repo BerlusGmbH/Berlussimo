@@ -785,7 +785,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         $geld_konto_info->dropdown_geldkonten($aussteller_typ, $aussteller_id);
         echo "</td></tr>";
         echo "<div id=\"pool_tabelle\" $js_action>";
-        echo "<tr><th>POOL</th><th><input type=\"checkbox\" class='filled-in' id='alle' onClick=\"check_all_boxes(this.checked, 'positionen_list_')\" $js_action><label for='alle'>Alle</label></th><th>Rechnung</th><th>UPos</th><th>Pos</th><th>Menge</th><th>Bezeichnung</th><th>Einzelpreis</th><th>Netto</th><th>Rabatt %</th><th>Skonto</th><th>MWSt</th><th>Kostentraeger</th></tr>";
+        echo "<tr><th>POOL</th><th><input type=\"checkbox\" class='filled-in' id='alle' onClick=\"check_all_boxes(this.checked, 'positionen_list_')\" $js_action><label for='alle'>Alle</label></th><th>Rechnung</th><th>UPos</th><th>Pos</th><th>Bezeichnung</th><th>Menge</th><th>Einzelpreis</th><th>Netto</th><th>Rabatt %</th><th>Skonto</th><th>MWSt</th></tr>";
         $f->hidden_feld('RECHNUNG_EMPFAENGER_TYP', "$kostentraeger_typ");
         $f->hidden_feld('RECHNUNG_EMPFAENGER_ID', "$rechnungs_empfaenger_id");
         $f->hidden_feld('RECHNUNG_AUSSTELLER_TYP', "$aussteller_typ");
@@ -825,10 +825,13 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             $rrr = new rechnungen ();
             $rrr->btn_pool($kostentraeger_typ, $kostentraeger_id, $kontierung_dat, 'this');
 
-            echo "</td><td><input type=\"checkbox\" class='filled-in' name=uebernehmen[] id=\"positionen_list_$a\" value=\"$a\" $js_action><label for='positionen_list_$a'>$zeile</label></td><td>$link_rechnung_ansehen</td><td>$position</td><td>$zeile.</td><td>";
+            echo "</td><td><input type=\"checkbox\" class='filled-in' name=uebernehmen[] id=\"positionen_list_$a\" value=\"$a\" $js_action><label for='positionen_list_$a'>$zeile</label></td><td>$link_rechnung_ansehen</td><td>$position</td><td>$zeile.</td>";
+
+            echo "<td>$artikel_bezeichnung</td><td>";
 
             $f->text_feld("Menge:", "positionen[$a][menge]", "$menge", "5", "mengen_feld_" . $a, $js_action);
-            echo "</td><td>$artikel_bezeichnung</td><td>";
+
+            echo "</td><td>";
             $f->text_feld("Einzelpreis:", "positionen[$a][preis]", "$epreis", "8", "epreis_feld_" . $a, $js_action);
             echo "</td><td>";
             $f->text_feld_inaktiv("Netto:", "", "$gpreis", "8", "netto_feld_" . $a, $js_action);
@@ -841,7 +844,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             $f->text_feld("Skonto:", "positionen[$a][skonto]", "$skonto", "5", "skonto_feld_" . $a, $js_action);
             echo "</td><td>";
             $f->text_feld("Mwst:", "mwst_satz", "$mwst_satz_in_prozent", "3", "mwst_feld_" . $a, $js_action);
-            echo "</td><td valign=bottom>$kostentraeger</td></tr>";
+            echo "</td></tr>";
         }
 
         echo "<tr><td colspan=10><hr></td></tr></table>";
