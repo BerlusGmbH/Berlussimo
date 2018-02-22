@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
     <link href='{{mix('css/vendor.css')}}' rel='stylesheet' type='text/css'>
     @stack('head')
     <link href='{{mix('css/main.css')}}' rel='stylesheet' type='text/css'>
