@@ -492,7 +492,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 foreach ($result as $row) {
                     $person_id = $row ['PERSON_MIETVERTRAG_PERSON_ID'];
                     $kontaktdaten .= "<br><b>" . \App\Models\Person::find($person_id)->address_name . "</b>";
-                    $arr = $this->finde_detail_kontakt_arr('PERSON', $person_id);
+                    $arr = $this->finde_detail_kontakt_arr('Person', $person_id);
                     if (!empty($arr)) {
                         $anz = count($arr);
                         for ($a = 0; $a < $anz; $a++) {
@@ -547,8 +547,8 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             $pp->get_partner_info($this->benutzer_id);
             $this->partner_ans = "$pp->partner_strasse $pp->partner_hausnr, $pp->partner_plz $pp->partner_ort";
             $dd = new detail ();
-            $this->partner_fax = $dd->finde_detail_inhalt('PARTNER_LIEFERANT', $this->benutzer_id, 'Fax');
-            $this->partner_email = $dd->finde_detail_inhalt('PARTNER_LIEFERANT', $this->benutzer_id, 'Email');
+            $this->partner_fax = $dd->finde_detail_inhalt('Partner', $this->benutzer_id, 'Fax');
+            $this->partner_email = $dd->finde_detail_inhalt('Partner', $this->benutzer_id, 'Email');
 
             $this->mitarbeiter_name = "$pp->partner_name";
         }
@@ -1170,7 +1170,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             $p = new partners ();
             $p->get_partner_info($this->kos_id);
             $kontaktdaten_mieter = "$p->partner_name\n$p->partner_strasse $p->partner_hausnr\n$p->partner_plz $p->partner_ort\n";
-            $det_arr = $this->finde_detail_kontakt_arr('PARTNER_LIEFERANT', $this->kos_id);
+            $det_arr = $this->finde_detail_kontakt_arr('Partner', $this->kos_id);
             if (!empty($det_arr)) {
                 $anzd = count($det_arr);
                 for ($a = 0; $a < $anzd; $a++) {
@@ -1223,7 +1223,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         $pdf->Rectangle(250, 630, 305, 80);
         $pdf->addText(252, 700, 10, "Arbeitsauftrag Nr: <b>$id</b> an");
         $pdf->addText(252, 685, 9, "<b>$this->benutzer_typ</b>: $this->mitarbeiter_name $this->partner_ans");
-        if (strtolower($this->benutzer_typ) == 'partner') {
+        if ($this->benutzer_typ == 'Partner') {
             $pdf->addText(252, 675, 9, "<b>Fax: $this->partner_fax</b>");
             $pdf->addText(375, 675, 9, "<b>Email: $this->partner_email</b>");
         }
@@ -1252,7 +1252,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 for ($be = 0; $be < $anz_p; $be++) {
                     $et_p_id = $weg->eigentuemer_person_ids [$be];
                     $d_k = new detail ();
-                    $dt_arr = $d_k->finde_alle_details_grup('PERSON', $et_p_id, 'INS-Kundenbetreuer');
+                    $dt_arr = $d_k->finde_alle_details_grup('Person', $et_p_id, 'INS-Kundenbetreuer');
                     if (!empty($dt_arr)) {
                         $anz_bet = count($dt_arr);
                         for ($bet = 0; $bet < $anz_bet; $bet++) {
@@ -1331,7 +1331,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $rr->get_empfaenger_infos($this->kos_typ, $this->kos_id);
             }
             $dd = new detail ();
-            $rep_eur = $dd->finde_detail_inhalt('PARTNER_LIEFERANT', $rr->rechnungs_empfaenger_id, 'Rep-Freigabe');
+            $rep_eur = $dd->finde_detail_inhalt('Partner', $rr->rechnungs_empfaenger_id, 'Rep-Freigabe');
             $rr->get_empfaenger_info($rr->rechnungs_empfaenger_id);
             $pdf->ezSetDy(-10); // abstand
             if (empty ($rep_eur)) {
@@ -1340,9 +1340,9 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $pdf->ezText("<b>Freigabe bis: $rep_eur € Netto</b>");
             }
             $dd = new detail ();
-            $b_tel = $dd->finde_detail_inhalt('BENUTZER', Auth::user()->id, 'Telefon');
+            $b_tel = $dd->finde_detail_inhalt('Benutzer', Auth::user()->id, 'Telefon');
             if (empty ($b_tel)) {
-                $b_tel = $dd->finde_detail_inhalt('PARTNER_LIEFERANT', $partner_id, 'Telefon');
+                $b_tel = $dd->finde_detail_inhalt('Partner', $partner_id, 'Telefon');
             }
             $pdf->ezSetDy(-10); // abstand
             $pdf->ezText("<b>Bei Kosten über Freigabesumme bitten wir um Rückmeldung unter $b_tel.</b>");

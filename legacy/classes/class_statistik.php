@@ -19,7 +19,7 @@ class statistik
     {
         $b = new objekt ();
         $this->objekt_name = $b->get_objekt_name($objekt_id);
-        echo "OBJEKT $this->objekt_name im Jahr $jahr<hr>";
+        echo "Objekt $this->objekt_name im Jahr $jahr<hr>";
         $this->akt_jahr = date("Y");
         if ($jahr == $this->akt_jahr) {
             $a_bis = date("m");
@@ -252,7 +252,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
 
     function get_sollmiete_leerstand($einheit_id)
     {
-        $result = DB::select("SELECT SUM( DETAIL_INHALT ) AS SUMME FROM DETAIL WHERE DETAIL_AKTUELL = '1' && DETAIL_ZUORDNUNG_TABELLE = 'EINHEIT' && DETAIL_ZUORDNUNG_ID = '$einheit_id' && (DETAIL_NAME = 'Miete kalt' OR DETAIL_NAME = 'Nebenkosten Vorauszahlung' OR DETAIL_NAME = 'Heizkosten Vorauszahlung')  ");
+        $result = DB::select("SELECT SUM( DETAIL_INHALT ) AS SUMME FROM DETAIL WHERE DETAIL_AKTUELL = '1' && DETAIL_ZUORDNUNG_TABELLE = 'Einheit' && DETAIL_ZUORDNUNG_ID = '$einheit_id' && (DETAIL_NAME = 'Miete kalt' OR DETAIL_NAME = 'Nebenkosten Vorauszahlung' OR DETAIL_NAME = 'Heizkosten Vorauszahlung')  ");
 
         $row = $result[0];
         return $row ['SUMME'];
@@ -655,7 +655,7 @@ ORDER BY EINHEIT_KURZNAME ASC");
         for ($a = 0; $a < $anzahl_gesamt_mvs; $a++) {
             $d = new detail ();
             $id = $my_arr [$a] ['MIETVERTRAG_ID'];
-            $nutzungsart = $d->finde_detail_inhalt('MIETVERTRAG', $id, 'Nutzungsart');
+            $nutzungsart = $d->finde_detail_inhalt('Mietvertrag', $id, 'Nutzungsart');
             $nutzungs_stat [] = $nutzungsart;
         }
         // echo "<pre>";

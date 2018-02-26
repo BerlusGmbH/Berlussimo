@@ -138,13 +138,13 @@ function objekt_liste_dropdown()
 function detail_drop_down_kategorie()
 {
     echo "<tr><td>Detailzugehörigkeit:</td><td><select name=\"bereich_kategorie\" size=\"1\">\n";
-    echo "<option value=\"OBJEKT\">OBJEKT</option>\n";
-    echo "<option value=\"HAUS\">HAUS</option>\n";
-    echo "<option value=\"EINHEIT\">EINHEIT</option>\n";
-    echo "<option value=\"PERSON\">PERSON</option>\n";
-    echo "<option value=\"MIETVERTRAG\">MIETVERTRAG</option>\n";
-    echo "<option value=\"PARTNER_LIEFERANT\">PARTNER/LIEFERANT</option>\n";
-    echo "<option value=\"SEPA_UEBERWEISUNG\">SEPA_UEBERWEISUNG</option>\n";
+    echo "<option value=\"Objekt\">Objekt</option>\n";
+    echo "<option value=\"Haus\">Haus</option>\n";
+    echo "<option value=\"Einheit\">Einheit</option>\n";
+    echo "<option value=\"Person\">Person</option>\n";
+    echo "<option value=\"Mietvertrag\">Mietvertrag</option>\n";
+    echo "<option value=\"Partner\">Partner</option>\n";
+    echo "<option value=\"SEPA_UEBERWEISUNG\">Sepa Überweisung</option>\n";
     echo "</select></td></tr>";
 }
 

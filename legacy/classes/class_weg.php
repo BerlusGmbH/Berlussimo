@@ -158,7 +158,7 @@ class weg
         $e = new einheit ();
         $e->get_einheit_info($einheit_id);
         $d = new detail ();
-        $this->weg_anteile = $d->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Anteile');
+        $this->weg_anteile = $d->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-Anteile');
         $this->e = $e;
 
         /* OBJEKT DETAILS */
@@ -422,7 +422,7 @@ class weg
                 $eig_zahl = $a + 1;
                 echo "<tr><th>EIGENTÜMER $eig_zahl</th><th>$vorname $nachname</th></tr>";
                 $d = new detail ();
-                $arr = $d->finde_alle_details_arr('PERSON', $person_id);
+                $arr = $d->finde_alle_details_arr('Person', $person_id);
                 $anz_detail = count($arr);
                 for ($b = 0; $b < $anz_detail; $b++) {
                     $detail_name = $arr [$b] ['DETAIL_NAME'];
@@ -628,12 +628,12 @@ class weg
         $this->einheit_qm_d = $e->einheit_qm_d;
         $det = new detail ();
 
-        $versprochene_miete = $det->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-KaltmieteINS');
+        $versprochene_miete = $det->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-KaltmieteINS');
         if ($versprochene_miete) {
             $this->versprochene_miete = nummer_komma2punkt($versprochene_miete);
         }
 
-        $this->einheit_qm_weg_d = $det->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Fläche'); // kommt als Kommazahl
+        $this->einheit_qm_weg_d = $det->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-Fläche'); // kommt als Kommazahl
         if ($this->einheit_qm_weg_d) {
             $this->einheit_qm_weg = nummer_komma2punkt($this->einheit_qm_weg_d);
         } else {
@@ -896,8 +896,8 @@ class weg
             echo "<table class='striped'>";
             echo "<tr><th>OBJEKT</th><th>WEG</th><th></th><th>QM</th><th></th><th></th><th>GESAMTANTEILE</th><th></th><th></th><th></th></tr>";
             $d = new detail ();
-            $weg_bez = $d->finde_detail_inhalt('OBJEKT', $objekt_id, 'WEG-Bezeichnung');
-            $anteile_g = $d->finde_detail_inhalt('OBJEKT', $objekt_id, 'Gesamtanteile');
+            $weg_bez = $d->finde_detail_inhalt('Objekt', $objekt_id, 'WEG-Bezeichnung');
+            $anteile_g = $d->finde_detail_inhalt('Objekt', $objekt_id, 'Gesamtanteile');
             echo "<tr><td><b>$o->objekt_kurzname</b></td><td>$weg_bez</td><td></td><td>$qm_g m²</td><td></td><td>$anteile_g</td><td></td><td></td><td></td></tr>";
             echo "<tr><th>EINHEIT</th><th>EIGENTÜMER</th><th>STRASSE, NR, PLZ ORT</th><th>QM</th><th>QM ET</th><th>LAGE</th><th>ANTEILE</th><th>OPTIONEN</th><th>VOREIGENTÜMER</th><th>ET-OPTION</th></tr>";
             $g_qm = 0;
@@ -910,10 +910,10 @@ class weg
                 $e->get_einheit_info($einheit_id);
                 $u_link = "<a href='" . route('web::weg::legacy', ['option' => 'einheit_uebersicht', 'einheit_id' => $einheit_id]) . "'>$e->einheit_kurzname</a>";
                 $this->get_last_eigentuemer_namen($einheit_id);
-                $this->weg_anteile = $d->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Anteile');
+                $this->weg_anteile = $d->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-Anteile');
                 $e->einheit_qm_a = nummer_punkt2komma($e->einheit_qm);
                 $g_qm += $e->einheit_qm;
-                $et_qm = $d->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Fläche');
+                $et_qm = $d->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-Fläche');
                 $def_link = "<a href='" . route('web::weg::legacy', ['option' => 'wohngeld_definieren', 'einheit_id' => $einheit_id]) . "'>Wohngeld bestimmen</a>";
                 $hg_auszug_link = "<a href='" . route('web::weg::legacy', ['option' => 'hausgeld_kontoauszug', 'eigentuemer_id' => $this->eigentuemer_id]) . "'>Hausgeld Kontoauszug</a>";
                 $hg_auszug_link1 = "<a href='" . route('web::weg::legacy', ['option' => 'hg_kontoauszug', 'eigentuemer_id' => $this->eigentuemer_id, 'jahr' => date('Y')]) . "'><img src=\"images/pdf_light.png\"></a>";
@@ -1863,8 +1863,8 @@ class weg
                 }
 
                 $d = new detail ();
-                if ($d->finde_detail_inhalt('PERSON', $person_id, 'Anschrift')) {
-                    $this->postanschrift [$a] = $d->finde_detail_inhalt('PERSON', $person_id, 'Anschrift');
+                if ($d->finde_detail_inhalt('Person', $person_id, 'Anschrift')) {
+                    $this->postanschrift [$a] = $d->finde_detail_inhalt('Person', $person_id, 'Anschrift');
                 } else {
                     $this->postanschrift [$a] = "$this->haus_strasse $this->haus_nummer\n$this->haus_plz $this->haus_stadt";
                     $this->eigentuemer_name_str_u1 .= "$anrede $p->person_nachname $p->person_vorname\n";
@@ -1896,8 +1896,8 @@ class weg
 
                 $this->eigentuemer_name_str_u1 = '';
                 $d = new detail ();
-                if ($d->finde_detail_inhalt('PERSON', $person_id, 'Anschrift')) {
-                    $this->postanschrift [$a] = $d->finde_detail_inhalt('PERSON', $person_id, 'Anschrift');
+                if ($d->finde_detail_inhalt('Person', $person_id, 'Anschrift')) {
+                    $this->postanschrift [$a] = $d->finde_detail_inhalt('Person', $person_id, 'Anschrift');
                 } else {
                     $this->postanschrift [$a] = "$this->eig_namen_u_pdf$this->haus_strasse $this->haus_nummer\n$this->haus_plz $this->haus_stadt";
                     $this->eigentuemer_name_str_u1 .= "$anrede $p->person_nachname $p->person_vorname\n";
@@ -3324,7 +3324,7 @@ ORDER BY HGA;");
             $pdf->ezText("$this->haus_plz $this->haus_stadt");
 
             $d = new detail ();
-            $anteile_g = $d->finde_detail_inhalt('OBJEKT', $e->objekt_id, 'Gesamtanteile');
+            $anteile_g = $d->finde_detail_inhalt('Objekt', $e->objekt_id, 'Gesamtanteile');
             $anteile_g_a = nummer_punkt2komma_t($anteile_g);
             $pdf->addText(405, 670, 8, "Einheiten:");
             $pdf->addText(465, 670, 8, "$anz_einheiten");
@@ -3332,7 +3332,7 @@ ORDER BY HGA;");
             $pdf->addText(465, 660, 8, "$e->einheit_kurzname");
             $pdf->addText(405, 650, 8, "Gesamtanteile:");
             $pdf->addText(465, 650, 8, "$anteile_g_a");
-            $this->einheit_anteile = $d->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Anteile');
+            $this->einheit_anteile = $d->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-Anteile');
             $pdf->addText(405, 640, 8, "Ihre MEA:");
             $this->einheit_anteile_a = nummer_punkt2komma_t($this->einheit_anteile);
             $pdf->addText(465, 640, 8, "$this->einheit_anteile_a");
@@ -3389,7 +3389,7 @@ ORDER BY HGA;");
                     if ($formel == 'AUFZUG_PROZENT') {
                         /* Aufzug nach Prozent */
                         $de = new detail ();
-                        $aufzug_prozent = $de->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Aufzugprozent');
+                        $aufzug_prozent = $de->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-Aufzugprozent');
                         $wtab_arr [$c] ['AUFTEILEN_G'] = "100%";
                         $wtab_arr [$c] ['AUFTEILEN_T'] = "$aufzug_prozent%";
                         $beteiligung_ant = nummer_komma2punkt($betrag) / 100 * $aufzug_prozent;
@@ -3398,7 +3398,7 @@ ORDER BY HGA;");
                     if ($formel == 'WE-PROZENT') {
                         /* Nach Prozenten der Wohnung */
                         $de = new detail ();
-                        $we_prozent = $de->finde_detail_inhalt('EINHEIT', $einheit_id, 'WE-Prozent');
+                        $we_prozent = $de->finde_detail_inhalt('Einheit', $einheit_id, 'WE-Prozent');
                         $wtab_arr [$c] ['AUFTEILEN_G'] = "100%";
                         $wtab_arr [$c] ['AUFTEILEN_T'] = "$we_prozent%";
                         $beteiligung_ant = nummer_komma2punkt($betrag) / 100 * $we_prozent;
@@ -3442,7 +3442,7 @@ ORDER BY HGA;");
                         if ($formel == 'AUFZUG_PROZENT') {
                             /* Aufzug nach Prozent */
                             $de = new detail ();
-                            $aufzug_prozent = $de->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Aufzugprozent');
+                            $aufzug_prozent = $de->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-Aufzugprozent');
                             $wtab_arr [$c] ['AUFTEILEN_G'] = "100%";
                             $wtab_arr [$c] ['AUFTEILEN_T'] = "$aufzug_prozent%";
                             $beteiligung_ant = nummer_komma2punkt($betrag) / 100 * $aufzug_prozent;
@@ -3451,7 +3451,7 @@ ORDER BY HGA;");
                         if ($formel == 'WE-PROZENT') {
                             /* Nach Prozenten der Wohnung */
                             $de = new detail ();
-                            $we_prozent = $de->finde_detail_inhalt('EINHEIT', $einheit_id, 'WE-Prozent');
+                            $we_prozent = $de->finde_detail_inhalt('Einheit', $einheit_id, 'WE-Prozent');
                             $wtab_arr [$c] ['AUFTEILEN_G'] = "100%";
                             $wtab_arr [$c] ['AUFTEILEN_T'] = "$we_prozent%";
                             $beteiligung_ant = nummer_komma2punkt($betrag) / 100 * $we_prozent;
@@ -3693,12 +3693,12 @@ ORDER BY HGA;");
         $this->einheit_qm_d = $e->einheit_qm_d;
         $det = new detail ();
 
-        $versprochene_miete = $det->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-KaltmieteINS');
+        $versprochene_miete = $det->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-KaltmieteINS');
         if ($versprochene_miete) {
             $this->versprochene_miete = nummer_komma2punkt($versprochene_miete);
         }
 
-        $this->einheit_qm_weg_d = $det->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Fläche'); // kommt als Kommazahl
+        $this->einheit_qm_weg_d = $det->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-Fläche'); // kommt als Kommazahl
         if ($this->einheit_qm_weg_d) {
             $this->einheit_qm_weg = nummer_komma2punkt($this->einheit_qm_weg_d);
         } else {
@@ -3706,7 +3706,7 @@ ORDER BY HGA;");
             $this->einheit_qm_weg_d = $this->einheit_qm_d;
         }
 
-        $this->weg_anteile = $det->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Anteile');
+        $this->weg_anteile = $det->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-Anteile');
 
 
         $this->haus_strasse = $e->haus_strasse;
@@ -4888,7 +4888,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
 
         $this->get_hga_profil_infos($p_id);
         $d = new detail ();
-        $anteile_g = $d->finde_detail_inhalt('OBJEKT', $this->p_objekt_id, 'Gesamtanteile');
+        $anteile_g = $d->finde_detail_inhalt('Objekt', $this->p_objekt_id, 'Gesamtanteile');
 
         $einheiten_arr = $this->einheiten_weg_tabelle_arr($this->p_objekt_id);
 
@@ -4906,7 +4906,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $pdf->ezNewPage();
             $e_kn = $einheiten_arr [$a] ['EINHEIT_KURZNAME'];
             $einheit_id = $einheiten_arr [$a] ['EINHEIT_ID'];
-            $einheit_anteile = $d->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Anteile');
+            $einheit_anteile = $d->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-Anteile');
 
             $pdf->setColor(0.6, 0.6, 0.6);
             $pdf->filledRectangle(50, 690, 500, 15);
@@ -5446,7 +5446,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                     $e_anteile = 1;
                 }
                 if ($gen_key_id == 3) {
-                    $e_anteile = $d->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Anteile');
+                    $e_anteile = $d->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-Anteile');
                 }
                 if ($gen_key_id == 4) {
                     $e_anteile = 0.00;
@@ -5454,7 +5454,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 }
                 /* Aufzug nach Prozent */
                 if ($gen_key_id == 5) {
-                    $e_anteile = $d->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Aufzugprozent');
+                    $e_anteile = $d->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-Aufzugprozent');
                     $g_value = 100;
                 }
 
@@ -5634,14 +5634,14 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             }
 
             $d = new detail ();
-            $anteile_g = $d->finde_detail_inhalt('OBJEKT', $e->objekt_id, 'Gesamtanteile');
+            $anteile_g = $d->finde_detail_inhalt('Objekt', $e->objekt_id, 'Gesamtanteile');
             $pdf->addText(405, 680, 8, "Einheiten:");
             $pdf->addText(465, 680, 8, "$anz_einheiten");
             $pdf->addText(405, 670, 8, "Einheit:");
             $pdf->addText(465, 670, 8, "$e->einheit_kurzname");
             $pdf->addText(405, 660, 8, "Gesamtanteile:");
             $pdf->addText(465, 660, 8, "$anteile_g");
-            $this->einheit_anteile = $d->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Anteile');
+            $this->einheit_anteile = $d->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-Anteile');
             $pdf->addText(405, 650, 8, "Ihre MEA:");
             $pdf->addText(465, 650, 8, "$this->einheit_anteile");
 
@@ -6058,14 +6058,14 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 }
 
                 $d = new detail ();
-                $anteile_g = $d->finde_detail_inhalt('OBJEKT', $e->objekt_id, 'Gesamtanteile');
+                $anteile_g = $d->finde_detail_inhalt('Objekt', $e->objekt_id, 'Gesamtanteile');
                 $pdf->addText(405, 680, 8, "Einheiten:");
                 $pdf->addText(465, 680, 8, "$anz_einheiten");
                 $pdf->addText(405, 670, 8, "Einheit:");
                 $pdf->addText(465, 670, 8, "$e->einheit_kurzname");
                 $pdf->addText(405, 660, 8, "Gesamtanteile:");
                 $pdf->addText(465, 660, 8, "$anteile_g");
-                $this->einheit_anteile = $d->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Anteile');
+                $this->einheit_anteile = $d->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-Anteile');
                 $pdf->addText(405, 650, 8, "Ihre MEA:");
                 $pdf->addText(465, 650, 8, "$this->einheit_anteile");
 
@@ -7412,7 +7412,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
                 $csv [$a] ['EINHEIT_ID'] = $einheit_id;
                 /* Einheitdetails */
                 $det = new details ();
-                $arr [$a] ['E_DETAILS_ARR'] = $det->get_details('EINHEIT', $einheit_id);
+                $arr [$a] ['E_DETAILS_ARR'] = $det->get_details('Einheit', $einheit_id);
                 $det1 = new detail ();
                 $arr [$a] ['EINHEIT_MEA'] = $det1->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-Anteile');
                 $csv [$a] ['EINHEIT_MEA'] = $arr [$a] ['EINHEIT_MEA'];
@@ -7457,7 +7457,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
                     for ($p = 0; $p < $arr [$a] ['ET_ANZ']; $p++) {
                         $det = new details ();
                         $p_id = $arr [$a] ['P_INFO_ARR'] [$p] ['PERSON_ID'];
-                        $arr [$a] ['P_DETAILS'] [] = $det->get_details('PERSON', $p_id);
+                        $arr [$a] ['P_DETAILS'] [] = $det->get_details('Person', $p_id);
                     }
                     $det_string = "";
                     $anz_det_et = count($arr [$a] ['P_DETAILS']);

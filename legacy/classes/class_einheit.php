@@ -61,8 +61,8 @@ ORDER BY HAUS_STRASSE, HAUS_NUMMER, OBJEKT_KURZNAME, EINHEIT_LAGE";
                     for($pp = 0; $pp < $anz_p; $pp ++) {
                         $p_id = $mvs->personen_ids [$pp] ['PERSON_MIETVERTRAG_PERSON_ID'];
                         $detail = new detail ();
-                        if (($detail->finde_detail_inhalt ( 'PERSON', $p_id, 'Email' ))) {
-                            $email_arr = $detail->finde_alle_details_grup ( 'PERSON', $p_id, 'Email' );
+                        if (($detail->finde_detail_inhalt('Person', $p_id, 'Email'))) {
+                            $email_arr = $detail->finde_alle_details_grup('Person', $p_id, 'Email');
                             for($ema = 0; $ema < count ( $email_arr ); $ema ++) {
                                 $em_adr = $email_arr [$ema] ['DETAIL_INHALT'];
                                 $emails_arr [] = $em_adr;
@@ -88,7 +88,7 @@ ORDER BY HAUS_STRASSE, HAUS_NUMMER, OBJEKT_KURZNAME, EINHEIT_LAGE";
         echo "$e->haus_plz $e->haus_stadt<br/>";
         echo "Lage: $e->einheit_lage QM: $e->einheit_qm m²<hr/>";
         $details_info = new details ();
-        $einheit_details_arr = $details_info->get_details ( 'EINHEIT', $einheit_id );
+        $einheit_details_arr = $details_info->get_details('Einheit', $einheit_id);
         if (count ( $einheit_details_arr ) > 0) {
             echo "<b>AUSSTATTUNG</b><hr>";
             for($i = 0; $i < count ( $einheit_details_arr ); $i ++) {
@@ -97,15 +97,15 @@ ORDER BY HAUS_STRASSE, HAUS_NUMMER, OBJEKT_KURZNAME, EINHEIT_LAGE";
         } else {
             echo "k.A zur Ausstattung";
         }
-        $link_einheit_details = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'EINHEIT', 'detail_id' => $einheit_id]) . "'>NEUES DETAIL ZUR EINHEIT $e->einheit_kurzname</a>";
+        $link_einheit_details = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'Einheit', 'detail_id' => $einheit_id]) . "'>NEUES DETAIL ZUR EINHEIT $e->einheit_kurzname</a>";
         echo "<hr>$link_einheit_details<hr>";
         $details_info = new details ();
-        $objekt_details_arr = $details_info->get_details ( 'OBJEKT', $e->objekt_id );
+        $objekt_details_arr = $details_info->get_details('Objekt', $e->objekt_id);
         echo "<hr /><b>OBJEKT</b>: $e->objekt_name<hr/>";
         for($i = 0; $i < count ( $objekt_details_arr ); $i ++) {
             echo "<b>" . $objekt_details_arr [$i] ['DETAIL_NAME'] . "</b><br>" . $objekt_details_arr [$i] ['DETAIL_INHALT'] . "<br>";
         }
-        $link_objekt_details = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $e->objekt_id]) . "'>NEUES DETAIL ZUM OBJEKT $e->objekt_name</a>";
+        $link_objekt_details = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'Objekt', 'detail_id' => $e->objekt_id]) . "'>NEUES DETAIL ZUM OBJEKT $e->objekt_name</a>";
         echo "<hr>$link_objekt_details<hr>";
         echo "</div>";
         // #ende spalte objekt und einheit####
@@ -192,7 +192,7 @@ ORDER BY EINHEIT_KURZNAME";
             $kontaktdaten = '';
             foreach( $result as $row ) {
                 $person_id = $row ['PERSON_MIETVERTRAG_PERSON_ID'];
-                $arr = $this->finde_detail_kontakt_arr ( 'PERSON', $person_id );
+                $arr = $this->finde_detail_kontakt_arr('Person', $person_id);
                 if (!empty( $arr )) {
                     $anz = count ( $arr );
                     for($a = 0; $a < $anz; $a ++) {

@@ -33,8 +33,8 @@ switch ($option) {
                         for ($pe = 0; $pe < $anz_pp; $pe++) {
                             $et_p_id_1 = $et_p_id [$pe] ['PERSON_ID'];
                             $detail = new detail ();
-                            if (($detail->finde_detail_inhalt('PERSON', $et_p_id_1, 'Email'))) {
-                                $email_arr = $detail->finde_alle_details_grup('PERSON', $et_p_id_1, 'Email');
+                            if (($detail->finde_detail_inhalt('Person', $et_p_id_1, 'Email'))) {
+                                $email_arr = $detail->finde_alle_details_grup('Person', $et_p_id_1, 'Email');
                                 for ($ema = 0; $ema < count($email_arr); $ema++) {
                                     $em_adr = $email_arr [$ema] ['DETAIL_INHALT'];
                                     $emails_arr [] = $em_adr;

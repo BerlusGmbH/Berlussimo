@@ -400,14 +400,14 @@ switch ($option) {
                 $verbrauch_mv = nummer_komma2punkt($verbrauch [$a]);
 
                 if ($ergebnis_mv != 0) {
-                    if ($me->check_me('MIETVERTRAG', $mv_id, "Heizkostenabrechnung $jahr", $datum, $datum, 0) != true) {
-                        $me->me_speichern('MIETVERTRAG', $mv_id, "Heizkostenabrechnung $jahr", $datum, $datum, $ergebnis_mv, 0);
+                    if ($me->check_me('Mietvertrag', $mv_id, "Heizkostenabrechnung $jahr", $datum, $datum, 0) != true) {
+                        $me->me_speichern('Mietvertrag', $mv_id, "Heizkostenabrechnung $jahr", $datum, $datum, $ergebnis_mv, 0);
                     }
                 }
 
                 if ($verbrauch_mv != 0) {
-                    if ($me->check_me('MIETVERTRAG', $mv_id, "Energieverbrauch lt. Abr. $jahr", $datum, $datum, 0) != true) {
-                        $me->me_speichern('MIETVERTRAG', $mv_id, "Energieverbrauch lt. Abr. $jahr", $datum, $datum, $verbrauch_mv, 0);
+                    if ($me->check_me('Mietvertrag', $mv_id, "Energieverbrauch lt. Abr. $jahr", $datum, $datum, 0) != true) {
+                        $me->me_speichern('Mietvertrag', $mv_id, "Energieverbrauch lt. Abr. $jahr", $datum, $datum, $verbrauch_mv, 0);
                     }
                 }
             } // end for
@@ -437,7 +437,7 @@ switch ($option) {
                     $betrag_neu = nummer_komma2punkt(request()->input('vorschuss_neu')[$a]);
                     $dat = request()->input('dat')[$a];
                     $me = new mietentwicklung ();
-                    if (($me->check_me('MIETVERTRAG', $mv_id, "$kat", $anfang, $ende_neu, 0) != true) && ($betrag_neu != 0)) {
+                    if (($me->check_me('Mietvertrag', $mv_id, "$kat", $anfang, $ende_neu, 0) != true) && ($betrag_neu != 0)) {
                         if ($dat > 0) {
                             $me = new mietentwicklung ();
                             $me_dat_arr = $me->get_dat_info($dat);
@@ -446,15 +446,15 @@ switch ($option) {
                                 $kat_alt = $me_dat_arr ['KOSTENKATEGORIE'];
                                 $betrag_alt = $me_dat_arr ['BETRAG'];
                                 $mwst_alt = $me_dat_arr ['MWST_ANTEIL'];
-                                $me->me_dat_aendern2($dat, 'MIETVERTRAG', $mv_id, $anfang_alt, $ende, $kat_alt, $betrag_alt, $mwst_alt);
+                                $me->me_dat_aendern2($dat, 'Mietvertrag', $mv_id, $anfang_alt, $ende, $kat_alt, $betrag_alt, $mwst_alt);
                             }
                         }
 
                         /* Wenn Abrechnung Anfang Ende gleich */
                         if (stristr($kat, 'abrechnung') == FALSE) {
-                            $me->me_speichern('MIETVERTRAG', $mv_id, "$kat", $anfang, $ende_neu, $betrag_neu, 0);
+                            $me->me_speichern('Mietvertrag', $mv_id, "$kat", $anfang, $ende_neu, $betrag_neu, 0);
                         } else {
-                            $me->me_speichern('MIETVERTRAG', $mv_id, "$kat", $anfang, $anfang, $betrag_neu, 0);
+                            $me->me_speichern('Mietvertrag', $mv_id, "$kat", $anfang, $anfang, $betrag_neu, 0);
                         }
 
                         hinweis_ausgeben("$mv->einheit_kurzname - $mv->personen_name_string_u - $betrag_neu");

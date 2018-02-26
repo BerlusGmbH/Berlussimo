@@ -201,11 +201,11 @@ LIMIT 0 , 30";
 
             $aendern_link = "<a class=\"table_links\" href='" . route('web::personen::legacy', ['anzeigen' => 'person_aendern', 'person_id' => $person_id]) . "'>Person ändern</a>";
 
-            $detail_check = detail_check("PERSON", $person_id);
+            $detail_check = detail_check("Person", $person_id);
             if ($detail_check > 0) {
-                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'PERSON', 'detail_id' => $person_id]) . "'>Details</a>";
+                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'Person', 'detail_id' => $person_id]) . "'>Details</a>";
             } else {
-                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'PERSON', 'detail_id' => $person_id]) . "'>Neues Detail</a>";
+                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'Person', 'detail_id' => $person_id]) . "'>Neues Detail</a>";
             }
 
             $erster_buchstabe = substr($person_nachname, 0, 1);
@@ -281,17 +281,17 @@ LIMIT 0 , 30";
         $this->person_vorname = ltrim(rtrim(strip_tags($row ['first_name'])));
         $this->person_geburtstag = $row ['birthday'];
         $d = new detail ();
-        $this->geschlecht = ltrim(rtrim($d->finde_detail_inhalt('PERSON', $person_id, 'Geschlecht')));
+        $this->geschlecht = ltrim(rtrim($d->finde_detail_inhalt('Person', $person_id, 'Geschlecht')));
         $this->get_person_anzahl_mietvertraege_aktuell($person_id);
         if ($this->person_anzahl_mietvertraege > 0) {
             $this->p_mv_ids = $this->mv_ids_von_person($person_id);
         }
 
-        if ($d->finde_detail_inhalt('PERSON', $person_id, 'Anschrift')) {
-            $this->anschrift = $d->finde_detail_inhalt('PERSON', $person_id, 'Anschrift');
+        if ($d->finde_detail_inhalt('Person', $person_id, 'Anschrift')) {
+            $this->anschrift = $d->finde_detail_inhalt('Person', $person_id, 'Anschrift');
         }
-        if ($d->finde_detail_inhalt('PERSON', $person_id, 'Zustellanschrift')) {
-            $this->zustellanschrift = $d->finde_detail_inhalt('PERSON', $person_id, 'Anschrift');
+        if ($d->finde_detail_inhalt('Person', $person_id, 'Zustellanschrift')) {
+            $this->zustellanschrift = $d->finde_detail_inhalt('Person', $person_id, 'Anschrift');
         }
     }
 
@@ -308,7 +308,7 @@ LIMIT 0 , 30";
 FROM `DETAIL` , persons
 WHERE `DETAIL_NAME` LIKE '%Hinweis%'
 AND `DETAIL_AKTUELL` = '1'
-AND `DETAIL_ZUORDNUNG_TABELLE` LIKE 'PERSON' && DETAIL_ZUORDNUNG_ID = persons.id ORDER BY persons.name ASC";
+AND `DETAIL_ZUORDNUNG_TABELLE` LIKE 'Person' && DETAIL_ZUORDNUNG_ID = persons.id ORDER BY persons.name ASC";
 
         $result = DB::select($abfrage);
         if (!empty($result)) {
@@ -348,7 +348,7 @@ AND `DETAIL_ZUORDNUNG_TABELLE` LIKE 'PERSON' && DETAIL_ZUORDNUNG_ID = persons.id
 FROM `DETAIL` , persons
 WHERE `DETAIL_NAME` LIKE '%anschrift%'
 AND `DETAIL_AKTUELL` = '1'
-AND `DETAIL_ZUORDNUNG_TABELLE` LIKE 'PERSON' && DETAIL_ZUORDNUNG_ID = persons.id ORDER BY persons.name ASC";
+AND `DETAIL_ZUORDNUNG_TABELLE` LIKE 'Person' && DETAIL_ZUORDNUNG_ID = persons.id ORDER BY persons.name ASC";
 
         $result = DB::select($abfrage);
         if (!empty($result)) {

@@ -25,7 +25,7 @@ switch ($schritt) {
         if (request()->has('mietvertrag_id')) {
             /* MAHNSPERRE */
             $dd = new detail ();
-            $mahnsperre = $dd->finde_detail_inhalt('MIETVERTRAG', request()->input('mietvertrag_id'), 'Mahnsperre');
+            $mahnsperre = $dd->finde_detail_inhalt('Mietvertrag', request()->input('mietvertrag_id'), 'Mahnsperre');
             if (!empty ($mahnsperre)) {
                 hinweis_ausgeben("<h1>Mahnsperre: Grund: $mahnsperre Bitte unbedingt die Mahnungsabteilung über Zahlung mündlich informieren</h1>");
             }

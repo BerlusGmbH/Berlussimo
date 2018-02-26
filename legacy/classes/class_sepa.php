@@ -100,7 +100,7 @@ class sepa
                 $bank = $arr [$a] ['BANKNAME'];
                 $eart = $arr [$a] ['EINZUGSART'];
                 $mv_id = $arr [$a] ['MV_ID'];
-                $sql = "INSERT INTO `SEPA_MANDATE` VALUES (NULL, '$last_id', '$m_r', '$g_id', '$g_gk_id', '$beg', '$name', '$ans', '$kto', '$blz', '$iban', '$bic', '$bank', '$m_udatum', '$m_adatum', '9999-12-31', 'WIEDERKEHREND', 'MIETZAHLUNG', '$eart', 'MIETVERTRAG', '$mv_id', '1');";
+                $sql = "INSERT INTO `SEPA_MANDATE` VALUES (NULL, '$last_id', '$m_r', '$g_id', '$g_gk_id', '$beg', '$name', '$ans', '$kto', '$blz', '$iban', '$bic', '$bank', '$m_udatum', '$m_adatum', '9999-12-31', 'WIEDERKEHREND', 'MIETZAHLUNG', '$eart', 'Mietvertrag', '$mv_id', '1');";
                 echo "$sql<br>";
                 DB::insert($sql);
             }
@@ -720,10 +720,10 @@ class sepa
     function mandat_beenden($mv_id, $edatum)
     {
         $edatum = date_german2mysql($edatum);
-        $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE M_KOS_TYP LIKE 'MIETVERTRAG' AND M_KOS_ID = '$mv_id' AND AKTUELL = '1' AND M_EDATUM = '9999-12-31' LIMIT 0 , 1");
+        $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE M_KOS_TYP LIKE 'Mietvertrag' AND M_KOS_ID = '$mv_id' AND AKTUELL = '1' AND M_EDATUM = '9999-12-31' LIMIT 0 , 1");
         if (!empty($result)) {
-            DB::update("UPDATE `SEPA_MANDATE` SET AKTUELL='0' WHERE M_KOS_TYP LIKE 'MIETVERTRAG' AND M_KOS_ID = '$mv_id'");
-            $sql = "INSERT INTO `SEPA_MANDATE`(M_ID, M_REFERENZ, GLAEUBIGER_ID, GLAEUBIGER_GK_ID, BEGUENSTIGTER, NAME, ANSCHRIFT, KONTONR, BLZ, IBAN, BIC, BANKNAME, M_UDATUM, M_ADATUM, M_EDATUM, M_ART, NUTZUNGSART, EINZUGSART, M_KOS_TYP, M_KOS_ID, AKTUELL) SELECT M_ID, M_REFERENZ, GLAEUBIGER_ID, GLAEUBIGER_GK_ID, BEGUENSTIGTER, NAME, ANSCHRIFT, KONTONR, BLZ, IBAN, BIC, BANKNAME, M_UDATUM, M_ADATUM, '$edatum', M_ART, NUTZUNGSART, EINZUGSART, M_KOS_TYP, M_KOS_ID, '1' FROM SEPA_MANDATE WHERE M_KOS_TYP LIKE 'MIETVERTRAG' AND M_KOS_ID = '$mv_id' AND M_EDATUM = '9999-12-31' LIMIT 1;";
+            DB::update("UPDATE `SEPA_MANDATE` SET AKTUELL='0' WHERE M_KOS_TYP LIKE 'Mietvertrag' AND M_KOS_ID = '$mv_id'");
+            $sql = "INSERT INTO `SEPA_MANDATE`(M_ID, M_REFERENZ, GLAEUBIGER_ID, GLAEUBIGER_GK_ID, BEGUENSTIGTER, NAME, ANSCHRIFT, KONTONR, BLZ, IBAN, BIC, BANKNAME, M_UDATUM, M_ADATUM, M_EDATUM, M_ART, NUTZUNGSART, EINZUGSART, M_KOS_TYP, M_KOS_ID, AKTUELL) SELECT M_ID, M_REFERENZ, GLAEUBIGER_ID, GLAEUBIGER_GK_ID, BEGUENSTIGTER, NAME, ANSCHRIFT, KONTONR, BLZ, IBAN, BIC, BANKNAME, M_UDATUM, M_ADATUM, '$edatum', M_ART, NUTZUNGSART, EINZUGSART, M_KOS_TYP, M_KOS_ID, '1' FROM SEPA_MANDATE WHERE M_KOS_TYP LIKE 'Mietvertrag' AND M_KOS_ID = '$mv_id' AND M_EDATUM = '9999-12-31' LIMIT 1;";
             DB::insert($sql);
             return true;
         } else {

@@ -634,14 +634,14 @@ function get_navi_route($s_str, $s_nr, $s_plz, $s_ort, $z_str, $z_nr, $z_plz, $z
 
 function kos_typ_info_anzeigen($kos_typ, $kos_id)
 {
-    if ($kos_typ == 'Partner' or $kos_typ == 'PARTNER_LIEFERANT') {
+    if ($kos_typ == 'Partner') {
         $g = new general();
         $g->get_partner_info($kos_id);
         echo "<p class=\"zeile_hinweis\">";
         echo "$g->partner_name $g->partner_strasse $g->partner_hausnr $g->partner_plz $g->partner_ort";
         echo "</p>";
-        alle_details_anzeigen('PARTNER_LIEFERANT', $kos_id);
-        form_detail_hinzu('PARTNER_LIEFERANT', $kos_id);
+        alle_details_anzeigen('Partner', $kos_id);
+        form_detail_hinzu('Partner', $kos_id);
     } else {
         echo "$kos_typ $kos_id keine Details";
     }
@@ -1255,9 +1255,6 @@ function geraete_info_anzeigen($g_id)
             if ($kos_typ == 'Partner') {
                 $anschrift = get_partner_anschrift($kos_id);
                 $kos_bez = get_partner_name($kos_id);
-                $kos_typ_d = 'PARTNER_LIEFERANT';
-            } else {
-                $kos_typ_d = $kos_typ;
             }
 
             /*Rechnungsempfänger*/
@@ -1273,9 +1270,9 @@ function geraete_info_anzeigen($g_id)
                 $rech_an = 'o.g. Anschrift';
             }
             echo "<p class=\"zeile_hinweis\"><b>Rechnung an</b>: <br>$rech_an</p>";
-            alle_details_anzeigen($kos_typ_d, $kos_id);
+            alle_details_anzeigen($kos_typ, $kos_id);
             echo "<p class=\"zeile_ueber\">DETAIL ZUM KUNDEN</p>";
-            form_detail_hinzu($kos_typ_d, $kos_id);
+            form_detail_hinzu($kos_typ, $kos_id);
         }
     } else {
         echo "FEHLER 3x00f in function geraete_info_anzeigen()";
@@ -1985,7 +1982,7 @@ function kontaktdaten_anzeigen($g_id = 1)
 
 function kontaktdaten_anzeigen_kunde($kos_id)
 {
-    $arr = finde_detail_kontakt_arr('PARTNER_LIEFERANT', $kos_id);
+    $arr = finde_detail_kontakt_arr('Partner', $kos_id);
     if (!empty($arr)) {
         $kontaktdaten = '';
         foreach ($arr as $a) {
@@ -2012,7 +2009,7 @@ function kontaktdaten_anzeigen_mieter($einheit_bez, $hinweis_an = 1)
             $kontaktdaten = '';
             Foreach ($result as $row) {
                 $person_id = $row['PERSON_MIETVERTRAG_PERSON_ID'];
-                $arr = finde_detail_kontakt_arr('PERSON', $person_id, $hinweis_an);
+                $arr = finde_detail_kontakt_arr('Person', $person_id, $hinweis_an);
                 if (!empty($arr)) {
                     $anz = count($arr);
                     for ($a = 0; $a < $anz; $a++) {
@@ -3727,9 +3724,9 @@ function tages_termine($benutzer_id, $datum_d)
                         extract($geraete_info_arr['0']);
                         $freie_zeit_min = getzeitdiff_min($VON, $BIS);
                         $zeit = min_in_zeit($freie_zeit_min);
-                        $wohnlage_det = finde_detail_inhalt('PARTNER_LIEFERANT', $KOSTENTRAEGER_ID, 'Wohnlage');
+                        $wohnlage_det = finde_detail_inhalt('Partner', $KOSTENTRAEGER_ID, 'Wohnlage');
                         echo "<tr class=\"zeile_belegt\"><td valign=\"top\">$VON<BR>$BIS</b></td><td valign=\"top\"><b>Kunde:</b>$g->partner_name<br>$g->partner_strasse $g->partner_hausnr<br>$g->partner_plz $g->partner_ort<br><b>Wohnlage:</b>$wohnlage_det</b><br><b>Text:</b>$TEXT<br><b>Hinweis:</b>$HINWEIS<br><b>Hersteller:</b>$HERSTELLER<br><b>Bezeichnung:</b>$BEZEICHNUNG<br><b>Lage:</b>$LAGE_RAUM";
-                        alle_details_anzeigen('PARTNER_LIEFERANT', $KOSTENTRAEGER_ID);
+                        alle_details_anzeigen('Partner', $KOSTENTRAEGER_ID);
                         echo "</td></tr>";
                         echo "<tr class=\"zeile3\"><td valign=\"top\" colspan=\"2\">Dauer $zeit</td></tr>";
                         UNSET($KOSTENTRAEGER_TYP);
@@ -5336,7 +5333,7 @@ class general
             $name = umlaute_anpassen($g_z->partner_name);
             $anschrift = umlaute_anpassen("$g_z->partner_strasse $g_z->partner_hausnr, $g_z->partner_plz $g_z->partner_ort");
             $kontakt_info = ltrim(str_replace('\r', ' ', str_replace('\n', ' ', str_replace('<br />', ' ', str_replace('<br>', ' ', ltrim(rtrim(kontaktdaten_anzeigen_kunde($kos_id))))))));
-            $wohnlage = finde_detail_inhalt('PARTNER_LIEFERANT', $kos_id, 'Wohnlage');
+            $wohnlage = finde_detail_inhalt('Partner', $kos_id, 'Wohnlage');
         } else {
             /*Mieterinformationen holen*/
             $gr = new general();

@@ -85,7 +85,7 @@ class mahnungen
 
                         /* Mahnsperre */
                         $dd = new detail ();
-                        $mahnsperre = $dd->finde_detail_inhalt('MIETVERTRAG', $mv_id, 'Mahnsperre');
+                        $mahnsperre = $dd->finde_detail_inhalt('Mietvertrag', $mv_id, 'Mahnsperre');
                         $link_mkb = "<a href='" . route('web::mietkontenblatt::legacy', ['anzeigen' => 'mk_pdf', 'mietvertrag_id' => $mv_id]) . "'>Mietkonto</a>";
                         $link_ue = "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $mvs->einheit_id, 'mietvertrag_id' => $mv_id]) . "'>Übersicht</a>";
 
@@ -296,7 +296,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
                     $table_arr [$zaehler] ['MIETER'] = $mvs->personen_name_string_u;
 
                     $dd = new detail ();
-                    $mahnsperre = $dd->finde_detail_inhalt('MIETVERTRAG', $mv_id, 'Mahnsperre');
+                    $mahnsperre = $dd->finde_detail_inhalt('Mietvertrag', $mv_id, 'Mahnsperre');
                     $table_arr [$zaehler] ['MAHNEN'] = bereinige_string($mahnsperre);
 
                     $gesamt_verlust = $gesamt_verlust + $saldo;

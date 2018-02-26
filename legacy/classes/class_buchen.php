@@ -2577,7 +2577,7 @@ LIMIT 0 , 1");
                     $ee = new einheit ();
                     $ee->get_einheit_info($einheit_id);
                     $dd = new detail ();
-                    $optiert = $dd->finde_detail_inhalt('OBJEKT', session()->get('objekt_id'), 'Optiert');
+                    $optiert = $dd->finde_detail_inhalt('Objekt', session()->get('objekt_id'), 'Optiert');
                     if ($optiert == 'JA') {
                         if ($ee->typ == 'Gewerbe') {
                             $tab_arr [$i] ['MWST'] = nummer_punkt2komma($miete->geleistete_zahlungen_mwst);
@@ -2835,7 +2835,7 @@ LIMIT 0 , 1");
                         $tab_arr [$anz_tab] ['ZAHLUNGEN'] = nummer_punkt2komma_t($miete->geleistete_zahlungen);
 
                         $dd = new detail ();
-                        $optiert = $dd->finde_detail_inhalt('OBJEKT', session()->get('objekt_id'), 'Optiert');
+                        $optiert = $dd->finde_detail_inhalt('Objekt', session()->get('objekt_id'), 'Optiert');
                         if ($optiert == 'JA') {
                             if ($mv->einheit_typ == 'Gewerbe') {
                                 $tab_arr [$anz_tab] ['MWST'] = nummer_punkt2komma($miete->geleistete_zahlungen_mwst);

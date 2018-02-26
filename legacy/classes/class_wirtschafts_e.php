@@ -218,12 +218,12 @@ class wirt_e
 
             /* NEU aus class WEG Function ->key_daten_formel */
             $d = new detail ();
-            $anteile_g = $d->finde_detail_inhalt('WIRT_EINHEITEN', $w_id, 'Gesamtanteile');
+            $anteile_g = $d->finde_detail_inhalt('Wirtschaftseinheit', $w_id, 'Gesamtanteile');
             if (empty ($anteile_g)) {
                 $einheiten = $this->get_einheiten_from_wirte($w_id);
                 $anteile_g = 0;
                 foreach ($einheiten as $einheit) {
-                    $anteil_e = $d->finde_detail_inhalt('EINHEIT', $einheit['EINHEIT_ID'], 'WEG-Anteile');
+                    $anteil_e = $d->finde_detail_inhalt('Einheit', $einheit['EINHEIT_ID'], 'WEG-Anteile');
                     if (!empty ($anteil_e)) {
                         $anteile_g += floatval($anteil_e);
                     }

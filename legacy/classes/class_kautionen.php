@@ -14,7 +14,7 @@ class kautionen
     function get_kautionsbetrag($mietvertrag_id)
     {
         $this->kautions_betrag = 0;
-        $result = DB::select("SELECT DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE='MIETVERTRAG' && DETAIL_ZUORDNUNG_ID = '$mietvertrag_id' && DETAIL_AKTUELL = '1' && DETAIL_NAME LIKE '%Kaution%' ORDER BY DETAIL_DAT DESC LIMIT 0,1");
+        $result = DB::select("SELECT DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE='Mietvertrag' && DETAIL_ZUORDNUNG_ID = '$mietvertrag_id' && DETAIL_AKTUELL = '1' && DETAIL_NAME LIKE '%Kaution%' ORDER BY DETAIL_DAT DESC LIMIT 0,1");
         $row = $result[0];
         $this->kautions_betrag = $row ['DETAIL_INHALT'];
         if ($this->kautions_betrag == '') {
@@ -118,7 +118,7 @@ class kautionen
         $summe = 0.00;
         $summe_verzinst = 0.00;
 
-        if ($kostentraeger_typ == 'Mietvertrag' or $kostentraeger_typ == 'MIETVERTRAG') {
+        if ($kostentraeger_typ == 'Mietvertrag') {
             $mv = new mietvertraege ();
             $mv->get_mietvertrag_infos_aktuell($kostentraeger_id);
         }
@@ -476,7 +476,7 @@ class kautionen
                 $kostentraeger_id = $zahlungen_arr [$a] ['KOSTENTRAEGER_ID'];
                 $b_text = $zahlungen_arr [$a] ['VERWENDUNGSZWECK'];
 
-                if ($kostentraeger_typ == 'MIETVERTRAG' or $kostentraeger_typ == 'Mietvertrag') {
+                if ($kostentraeger_typ == 'Mietvertrag') {
                     $mv = new mietvertraege ();
                     $mv->get_mietvertrag_infos_aktuell($kostentraeger_id);
                 }
@@ -627,7 +627,7 @@ class kautionen
     function mieter_ohne_kaution_arr($geldkonto_id, $kostenkonto)
     {
         $db_abfrage = "SELECT MIETVERTRAG_ID FROM `MIETVERTRAG`
-WHERE `MIETVERTRAG_AKTUELL` = '1' && MIETVERTRAG_ID NOT IN (SELECT KOSTENTRAEGER_ID AS MIETVERTRAG_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='MIETVERTRAG')
+WHERE `MIETVERTRAG_AKTUELL` = '1' && MIETVERTRAG_ID NOT IN (SELECT KOSTENTRAEGER_ID AS MIETVERTRAG_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='Mietvertrag')
     ORDER BY EINHEIT_ID ASC,`MIETVERTRAG`.`MIETVERTRAG_BIS`  ASC";
         $result = DB::select($db_abfrage);
         return $result;

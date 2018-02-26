@@ -339,7 +339,7 @@ switch ($mietvertrag_raus) {
         /* Verzugsanschrift */
         if ($verzugsanschrift) {
             $d = new detail ();
-            $d->detail_speichern_2('MIETVERTRAG', request()->input('mietvertrag_id'), 'Verzugsanschrift', $verzugsanschrift, Auth::user()->email);
+            $d->detail_speichern_2('Mietvertrag', request()->input('mietvertrag_id'), 'Verzugsanschrift', $verzugsanschrift, Auth::user()->email);
         }
         /* Lastschrift beenden */
         $s = new sepa();
@@ -1068,16 +1068,16 @@ function mietvertrag_kurz($einheit_id)
             $MIETVERTRAG_VON = date_mysql2german($row['MIETVERTRAG_VON']);
             $mieter_im_vetrag = anzahl_mieter_im_vertrag($row['MIETVERTRAG_ID']);
             $einheit_kurzname = einheit_kurzname($row['EINHEIT_ID']);
-            $detail_check = detail_check("MIETVERTRAG", $row['MIETVERTRAG_ID']);
+            $detail_check = detail_check("Mietvertrag", $row['MIETVERTRAG_ID']);
             $mietkonto_link = "<a href='" . route('web::mietkontenblatt::legacy', ['anzeigen' => 'mietkonto_uebersicht_detailiert', 'mietvertrag_id' => $row['MIETVERTRAG_ID']]) . "'>MIETKONTO</a>";
             $miete_aendern = "<a href='" . route('web::miete_definieren::legacy', ['option' => 'miethoehe', 'mietvertrag_id' => $row['MIETVERTRAG_ID']]) . "'>MIETHÖHE</a>";
             $einheit_link = "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $row['EINHEIT_ID']]) . "'>$einheit_kurzname</a>";
             $mv_loeschen_link = "<a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mv_loeschen', 'mv_id' => $row['MIETVERTRAG_ID']]) . "'>MV löschen</a>";
 
             if ($detail_check > 0) {
-                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'MIETVERTRAG', 'detail_id' => $row['MIETVERTRAG_ID']]) . "'>Details</a>";
+                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'Mietvertrag', 'detail_id' => $row['MIETVERTRAG_ID']]) . "'>Details</a>";
             } else {
-                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'MIETVERTRAG', 'detail_id' => $row['MIETVERTRAG_ID']]) . "'>Neues Detail</a>";
+                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'Mietvertrag', 'detail_id' => $row['MIETVERTRAG_ID']]) . "'>Neues Detail</a>";
             }
             if ($counter == 1) {
                 echo "<tr class=\"zeile1\"><td width=100>$einheit_link $mietkonto_link $miete_aendern</td><td width=300>($mieter_im_vetrag)";
@@ -1131,7 +1131,7 @@ function mietvertrag_abgelaufen($einheit_id)
             $MIETVERTRAG_VON = date_mysql2german($row['MIETVERTRAG_VON']);
             $mieter_im_vetrag = anzahl_mieter_im_vertrag($row['MIETVERTRAG_ID']);
             $einheit_kurzname = einheit_kurzname($row['EINHEIT_ID']);
-            $detail_check = detail_check("MIETVERTRAG", $row['MIETVERTRAG_ID']);
+            $detail_check = detail_check("Mietvertrag", $row['MIETVERTRAG_ID']);
             $buchen_link = "<a href='" . route('web::miete_buchen::legacy', ['schritt' => 'buchungsauswahl', 'mietvertrag_id' => $row['MIETVERTRAG_ID']]) . "'>BUCHEN</a>";
             $mietkonto_link = "<a href='" . route('web::mietkontenblatt::legacy', ['anzeigen' => 'mietkonto_uebersicht_detailiert', 'mietvertrag_id' => $row['MIETVERTRAG_ID']]) . "'>MIETKONTO</a>";
             $miete_aendern = "<a href='" . route('web::miete_definieren::legacy', ['option' => 'miethoehe', 'mietvertrag_id' => $row['MIETVERTRAG_ID']]) . "'>MIETHÖHE</a>";
@@ -1139,9 +1139,9 @@ function mietvertrag_abgelaufen($einheit_id)
             $kautionen_link = "<a href='" . route('web::kautionen::legacy', ['option' => 'kautionen_buchen', 'mietvertrag_id' => $row['MIETVERTRAG_ID']]) . "'>KAUTION BUCHEN</a>";
 
             if ($detail_check > 0) {
-                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'MIETVERTRAG', 'detail_id' => $row['MIETVERTRAG_ID']]) . "'>Details</a>";
+                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'Mietvertrag', 'detail_id' => $row['MIETVERTRAG_ID']]) . "'>Details</a>";
             } else {
-                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'MIETVERTRAG', 'detail_id' => $row['MIETVERTRAG_ID']]) . "'>Neues Detail</a>";
+                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'Mietvertrag', 'detail_id' => $row['MIETVERTRAG_ID']]) . "'>Neues Detail</a>";
             }
             if ($counter == 1) {
                 echo "<tr class=\"zeile1\"><td>$einheit_link</td><td>($mieter_im_vetrag)";
@@ -1195,14 +1195,14 @@ function mietvertrag_aktuelle($einheit_id)
             $MIETVERTRAG_VON = date_mysql2german($row['MIETVERTRAG_VON']);
             $mieter_im_vetrag = anzahl_mieter_im_vertrag($row['MIETVERTRAG_ID']);
             $einheit_kurzname = einheit_kurzname($row['EINHEIT_ID']);
-            $detail_check = detail_check("MIETVERTRAG", $row['MIETVERTRAG_ID']);
+            $detail_check = detail_check("Mietvertrag", $row['MIETVERTRAG_ID']);
             $einheit_link = "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $row['EINHEIT_ID']]) . "'>$einheit_kurzname</a>";
             $kautionen_link = "<a href='" . route('web::kautionen::legacy', ['option' => 'kautionen_buchen', 'mietvertrag_id' => $row['MIETVERTRAG_ID']]) . "'>KAUTION BUCHEN</a>";
             $miete_aendern = "<a href='" . route('web::miete_definieren::legacy', ['option' => 'miethoehe', 'mietvertrag_id' => $row['MIETVERTRAG_ID']]) . "'>MIETHÖHE</a>";
             if ($detail_check > 0) {
-                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'MIETVERTRAG', 'detail_id' => $row['MIETVERTRAG_ID']]) . "'>Details</a>";
+                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'Mietvertrag', 'detail_id' => $row['MIETVERTRAG_ID']]) . "'>Details</a>";
             } else {
-                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'MIETVERTRAG', 'detail_id' => $row['MIETVERTRAG_ID']]) . "'>Neues Detail</a>";
+                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'Mietvertrag', 'detail_id' => $row['MIETVERTRAG_ID']]) . "'>Neues Detail</a>";
             }
             if ($counter == 1) {
                 echo "<tr class=\"zeile1\"><td>$einheit_link $miete_aendern $kautionen_link </td><td>($mieter_im_vetrag)";

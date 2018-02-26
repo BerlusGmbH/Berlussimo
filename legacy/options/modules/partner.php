@@ -130,7 +130,7 @@ switch ($option) {
         $partner_id = request()->input('partner_id');
         $partner->partnerdaten_anzeigen($partner_id);
         $d = new detail ();
-        $d->detailsanzeigen('PARTNER_LIEFERANT', $partner_id);
+        $d->detailsanzeigen('Partner', $partner_id);
         $form->ende_formular();
 
         break;

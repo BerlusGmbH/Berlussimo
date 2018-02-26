@@ -160,42 +160,42 @@ switch ($objekte_raus) {
         $bis = date_german2mysql($bis);
         if (request()->has('km')) {
             $km = nummer_komma2punkt(request()->input('km'));
-            $me->me_speichern('MIETVERTRAG', $mv_id, 'Miete kalt', $von, $bis, $km, '0.00');
+            $me->me_speichern('Mietvertrag', $mv_id, 'Miete kalt', $von, $bis, $km, '0.00');
         }
         if (request()->has('nk')) {
             $nk = nummer_komma2punkt(request()->input('nk'));
-            $me->me_speichern('MIETVERTRAG', $mv_id, 'Nebenkosten Vorauszahlung', $von, $bis, $nk, '0.00');
+            $me->me_speichern('Mietvertrag', $mv_id, 'Nebenkosten Vorauszahlung', $von, $bis, $nk, '0.00');
         }
         if (request()->has('hk')) {
             $hk = nummer_komma2punkt(request()->input('hk'));
-            $me->me_speichern('MIETVERTRAG', $mv_id, 'Heizkosten Vorauszahlung', $von, $bis, $hk, '0.00');
+            $me->me_speichern('Mietvertrag', $mv_id, 'Heizkosten Vorauszahlung', $von, $bis, $hk, '0.00');
         }
 
         if (request()->has('kabel_tv')) {
             $kabel_tv = nummer_komma2punkt(request()->input('kabel_tv'));
-            $me->me_speichern('MIETVERTRAG', $mv_id, 'Kabel TV', $von, $bis, $kabel_tv, '0.00');
+            $me->me_speichern('Mietvertrag', $mv_id, 'Kabel TV', $von, $bis, $kabel_tv, '0.00');
         }
         $jahr_3 = date("Y") - 3;
         $m_day = date("m-d");
         $datum_3 = "$jahr_3-$m_day";
         if (request()->has('km_3')) {
             $km_3 = nummer_komma2punkt(request()->input('km_3'));
-            $me->me_speichern('MIETVERTRAG', $mv_id, 'Miete kalt', $datum_3, $datum_3, $kabel_tv, '0.00');
+            $me->me_speichern('Mietvertrag', $mv_id, 'Miete kalt', $datum_3, $datum_3, $kabel_tv, '0.00');
         }
 
         if (request()->has('kaution')) {
             $d = new detail ();
-            $d->detail_speichern_2('MIETVERTRAG', $mv_id, 'Kautionshinweis', request()->input('kaution'), 'Importiert');
+            $d->detail_speichern_2('Mietvertrag', $mv_id, 'Kautionshinweis', request()->input('kaution'), 'Importiert');
         }
 
         if (request()->has('klein_rep')) {
             $d = new detail ();
-            $d->detail_speichern_2('MIETVERTRAG', $mv_id, 'Kleinreparaturen', request()->input('klein_rep'), 'Importiert');
+            $d->detail_speichern_2('Mietvertrag', $mv_id, 'Kleinreparaturen', request()->input('klein_rep'), 'Importiert');
         }
 
         if (request()->has('zusatzinfo')) {
             $d = new detail ();
-            $d->detail_speichern_2('MIETVERTRAG', $mv_id, 'Zusatzinfo', request()->input('zusatzinfo'), 'Importiert');
+            $d->detail_speichern_2('Mietvertrag', $mv_id, 'Zusatzinfo', request()->input('zusatzinfo'), 'Importiert');
         }
         weiterleiten(route('web::objekte::legacy', ['objekte_raus' => 'import'], false));
         break;
@@ -215,11 +215,11 @@ function objekte_kurz()
             $anzahl_einheiten = anzahl_einheiten_im_objekt($row['OBJEKT_ID']);
             $counter++;
             $flaeche = nummer_punkt2komma(objekt_flaeche($row['OBJEKT_ID']));
-            $detail_check = detail_check("OBJEKT", $row['OBJEKT_ID']);
+            $detail_check = detail_check("Objekt", $row['OBJEKT_ID']);
             if ($detail_check > 0) {
-                $detail_link = "<a  href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $row['OBJEKT_ID']]) . "'>Details</a>";
+                $detail_link = "<a  href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'Objekt', 'detail_id' => $row['OBJEKT_ID']]) . "'>Details</a>";
             } else {
-                $detail_link = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $row['OBJEKT_ID']]) . "'>Neues Detail</a>";
+                $detail_link = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'Objekt', 'detail_id' => $row['OBJEKT_ID']]) . "'>Neues Detail</a>";
             }
             $aendern_link = "<a href='" . route('web::objekte::legacy', ['objekte_raus' => 'objekt_aendern', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Ändern</a>";
             $check_liste_link = "<a href='" . route('web::objekte::legacy', ['objekte_raus' => 'checkliste', 'objekt_id' => $row['OBJEKT_ID']]) . "'>Checkliste HW</a>";

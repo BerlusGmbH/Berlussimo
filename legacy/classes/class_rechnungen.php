@@ -180,7 +180,7 @@ class rechnungen
 
     function suche_artikel_nach_kos_arr($partner_id, $kos_typ, $kos_id, $kostenkonto)
     {
-        $result = DB::select("SELECT * FROM `KONTIERUNG_POSITIONEN` JOIN RECHNUNGEN ON (KONTIERUNG_POSITIONEN.BELEG_NR=RECHNUNGEN.BELEG_NR) WHERE `KOSTENTRAEGER_TYP` = '$kos_typ' AND `KOSTENTRAEGER_ID` = '$kos_id' AND KONTIERUNG_POSITIONEN.AKTUELL = '1' AND RECHNUNGEN.AKTUELL = '1' AND RECHNUNGEN.EMPFAENGER_TYP='PARTNER' && RECHNUNGEN.EMPFAENGER_ID='$partner_id' && KONTENRAHMEN_KONTO='$kostenkonto'");
+        $result = DB::select("SELECT * FROM `KONTIERUNG_POSITIONEN` JOIN RECHNUNGEN ON (KONTIERUNG_POSITIONEN.BELEG_NR=RECHNUNGEN.BELEG_NR) WHERE `KOSTENTRAEGER_TYP` = '$kos_typ' AND `KOSTENTRAEGER_ID` = '$kos_id' AND KONTIERUNG_POSITIONEN.AKTUELL = '1' AND RECHNUNGEN.AKTUELL = '1' AND RECHNUNGEN.EMPFAENGER_TYP='Partner' && RECHNUNGEN.EMPFAENGER_ID='$partner_id' && KONTENRAHMEN_KONTO='$kostenkonto'");
         if (!empty($result)) {
             return $result;
         } else {

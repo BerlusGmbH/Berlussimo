@@ -140,7 +140,7 @@ OR  `LAND` LIKE  '%$suchtext%'
             $partner_id = $partner_arr [$a] ['PARTNER_ID'];
             $partner_name = $partner_arr [$a] ['PARTNER_NAME'];
             $partner_link_detail = "<a href='" . route('web::partner::legacy', ['option' => 'partner_im_detail', 'partner_id' => $partner_id]) . "'>$partner_name</a>";
-            $link_detail_hinzu = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'PARTNER_LIEFERANT', 'detail_id' => $partner_id]) . "'>Details</a>";
+            $link_detail_hinzu = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'Partner', 'detail_id' => $partner_id]) . "'>Details</a>";
             $partner_strasse = $partner_arr [$a] ['STRASSE'];
             $partner_nr = $partner_arr [$a] ['NUMMER'];
             $partner_plz = $partner_arr [$a] ['PLZ'];
@@ -351,13 +351,13 @@ OR  `LAND` LIKE  '%$suchtext%'
 
         $dd = new detail ();
         if (!empty ($tel)) {
-            $dd->detail_speichern_2('PARTNER_LIEFERANT', $partner_id, 'Telefon', $tel, Auth::user()->email . " " . date("d.m.Y H:i:s"));
+            $dd->detail_speichern_2('Partner', $partner_id, 'Telefon', $tel, Auth::user()->email . " " . date("d.m.Y H:i:s"));
         }
         if (!empty ($fax)) {
-            $dd->detail_speichern_2('PARTNER_LIEFERANT', $partner_id, 'Fax', $fax, Auth::user()->email . " " . date("d.m.Y H:i:s"));
+            $dd->detail_speichern_2('Partner', $partner_id, 'Fax', $fax, Auth::user()->email . " " . date("d.m.Y H:i:s"));
         }
         if (!empty ($email)) {
-            $dd->detail_speichern_2('PARTNER_LIEFERANT', $partner_id, 'Email', $email, Auth::user()->email . " " . date("d.m.Y H:i:s"));
+            $dd->detail_speichern_2('Partner', $partner_id, 'Email', $email, Auth::user()->email . " " . date("d.m.Y H:i:s"));
         }
     }
 
@@ -471,7 +471,7 @@ OR  `LAND` LIKE  '%$suchtext%'
             $partner_id = $partner_arr [$a] ['PARTNER_ID'];
             $partner_name = $partner_arr [$a] ['PARTNER_NAME'];
             $partner_link_detail = "<a href='" . route('web::partner::legacy', ['option' => 'partner_im_detail', 'partner_id' => $partner_id]) . "'>$partner_name</a>";
-            $link_detail_hinzu = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'PARTNER_LIEFERANT', 'detail_id' => $partner_id]) . "'>Details</a>";
+            $link_detail_hinzu = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'Partner', 'detail_id' => $partner_id]) . "'>Details</a>";
             $link_aendern = "<a href='" . route('web::partner::legacy', ['option' => 'partner_aendern', 'partner_id' => $partner_id]) . "'>Ändern</a>";
             $partner_strasse = $partner_arr [$a] ['STRASSE'];
             $partner_nr = $partner_arr [$a] ['NUMMER'];

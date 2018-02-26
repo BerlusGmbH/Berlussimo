@@ -159,7 +159,7 @@ export class Person extends Model {
     }
 
     getMorphName() {
-        return 'PERSON';
+        return 'Person';
     }
 
     getID() {
@@ -241,7 +241,7 @@ export class Partner extends Model {
     }
 
     getMorphName() {
-        return 'PARTNER';
+        return 'Partner';
     }
 
     getID() {
@@ -293,7 +293,7 @@ export class Objekt extends Model {
     }
 
     getMorphName() {
-        return 'OBJEKT';
+        return 'Objekt';
     }
 
     getID() {
@@ -395,7 +395,7 @@ export class Haus extends Model {
     }
 
     getMorphName() {
-        return 'HAUS';
+        return 'Haus';
     }
 
     getID(): number {
@@ -523,7 +523,7 @@ export class Einheit extends Model {
     }
 
     getMorphName() {
-        return 'EINHEIT';
+        return 'Einheit';
     }
 
     getID(): number {
@@ -664,7 +664,7 @@ export class RentalContract extends Model implements Active {
     }
 
     getMorphName() {
-        return 'MIETVERTRAG';
+        return 'Mietvertrag';
     }
 
     getID() {
@@ -706,7 +706,7 @@ export class PurchaseContract extends Model implements Active {
     }
 
     getMorphName() {
-        return 'EIGENTUEMER';
+        return 'Eigentuemer';
     }
 
     getID() {
@@ -858,7 +858,7 @@ export class AccountingEntity extends Model {
     }
 
     getMorphName() {
-        return 'WIRTSCHAFTSEINHEIT';
+        return 'Wirtschaftseinheit';
     }
 
     toString(): string {
@@ -899,7 +899,7 @@ export class ConstructionSite extends Model {
     }
 
     getMorphName() {
-        return 'BAUSTELLE_EXT';
+        return 'Baustelle_ext';
     }
 
     toString(): string {

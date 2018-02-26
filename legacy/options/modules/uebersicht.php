@@ -103,7 +103,7 @@ function uebersicht_einheit($einheit_id)
         for ($be = 0; $be < $anz_p; $be++) {
             $et_p_id = $weg->eigentuemer_person_ids [$be];
             $d_k = new detail ();
-            $dt_arr = $d_k->finde_alle_details_grup('PERSON', $et_p_id, 'INS-Kundenbetreuer');
+            $dt_arr = $d_k->finde_alle_details_grup('Person', $et_p_id, 'INS-Kundenbetreuer');
             if (!empty($dt_arr)) {
                 $anz_bet = count($dt_arr);
                 for ($bet = 0; $bet < $anz_bet; $bet++) {
@@ -126,7 +126,7 @@ function uebersicht_einheit($einheit_id)
     }
 
     $details_info = new details ();
-    $objekt_details_arr = $details_info->get_details('OBJEKT', $e->objekt_id);
+    $objekt_details_arr = $details_info->get_details('Objekt', $e->objekt_id);
     echo "<div class='yellow-page row'>";
     echo "<div class='col-xs-12 col-md-6 col-lg-3'>";
     echo "<div class='card'>";
@@ -138,7 +138,7 @@ function uebersicht_einheit($einheit_id)
     $oo = new objekt ();
     $oo->get_objekt_infos($e->objekt_id);
     echo "<b>OBJEKT-ET</b>:<br>$oo->objekt_eigentuemer";
-    $link_objekt_details = "<a href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $e->objekt_id]) . "'>Detail hinzufügen</a>";
+    $link_objekt_details = "<a href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'Objekt', 'detail_id' => $e->objekt_id]) . "'>Detail hinzufügen</a>";
     echo "</div>";
     echo "<div class='card-action'>$link_objekt_details</div>";
     echo "</div>";
@@ -160,7 +160,7 @@ function uebersicht_einheit($einheit_id)
     $war->wartungen_anzeigen($e->einheit_kurzname);
 
     $details_info = new details ();
-    $einheit_details_arr = $details_info->get_details('EINHEIT', $einheit_id);
+    $einheit_details_arr = $details_info->get_details('Einheit', $einheit_id);
     if (count($einheit_details_arr) > 0) {
         for ($i = 0; $i < count($einheit_details_arr); $i++) {
             /* Expose bzw. Vermietungsdetails filtern */
@@ -173,7 +173,7 @@ function uebersicht_einheit($einheit_id)
     } else {
         echo "k.A zur Ausstattung";
     }
-    $link_einheit_details = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'EINHEIT', 'detail_id' => $einheit_id]) . "'>Detail hinzufügen</a>";
+    $link_einheit_details = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'Einheit', 'detail_id' => $einheit_id]) . "'>Detail hinzufügen</a>";
     $link_einheit_alle_mietvertraege = "<a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mietvertrag_kurz', 'einheit_id' => $einheit_id]) . "'>Alle Mietverträge</a>";
     echo "</div>";
     echo "<div class='card-action'>$link_einheit_details<br>$link_einheit_alle_mietvertraege</div>";
@@ -205,7 +205,7 @@ function uebersicht_einheit($einheit_id)
         $alte_einheit_link = "";
         // ####DETAILS VOM MIETER
         $details_info_mieter = new details ();
-        $mieter_details_arr = $details_info_mieter->get_details('PERSON', $mv->personen_ids [$i] ['PERSON_MIETVERTRAG_PERSON_ID']);
+        $mieter_details_arr = $details_info_mieter->get_details('Person', $mv->personen_ids [$i] ['PERSON_MIETVERTRAG_PERSON_ID']);
         $mieter_details = "";
         for ($p = 0; $p < count($mieter_details_arr); $p++) {
             $mieter_details .= "<b>" . $mieter_details_arr [$p] ['DETAIL_NAME'] . "</b><br>" . $mieter_details_arr [$p] ['DETAIL_INHALT'] . "<br>";
@@ -236,7 +236,7 @@ function uebersicht_einheit($einheit_id)
             echo "$alte_einheit_link<br>";
         }
         echo "</div>";
-        $link_person_details = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'PERSON', 'detail_id' => $akt_person_id]) . "'>Detail hinzufügen</a>";
+        $link_person_details = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'Person', 'detail_id' => $akt_person_id]) . "'>Detail hinzufügen</a>";
         echo "<div class='card-action'>$link_person_details</div>";
         echo "</div>";
     }
@@ -262,7 +262,7 @@ function uebersicht_einheit($einheit_id)
 
     // ###DETAILS ZUM VERTRAG
     $mv_details_info = new details ();
-    $mv_details_arr = $mv_details_info->get_details('MIETVERTRAG', $mietvertrag_id);
+    $mv_details_arr = $mv_details_info->get_details('Mietvertrag', $mietvertrag_id);
 
     echo "<div class='col-xs-12 col-md-4 col-lg-2'>";
     echo "<div class='card'>";
@@ -287,7 +287,7 @@ function uebersicht_einheit($einheit_id)
     for ($i = 0; $i < count($mv_details_arr); $i++) {
         echo "<b>" . $mv_details_arr [$i] ['DETAIL_NAME'] . "</b>:<br>" . $mv_details_arr [$i] ['DETAIL_INHALT'] . "<br>";
     }
-    $link_mv_details = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'MIETVERTRAG', 'detail_id' => $mietvertrag_id]) . "'>Detail hinzufügen</a>";
+    $link_mv_details = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'Mietvertrag', 'detail_id' => $mietvertrag_id]) . "'>Detail hinzufügen</a>";
     echo "</div>";
     echo "<div class='card-action'>$link_mv_details<br>$link_vertrag_beenden</div>";
     echo "</div>";

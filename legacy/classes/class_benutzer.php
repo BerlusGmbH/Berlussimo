@@ -58,7 +58,7 @@ class benutzer
                 }
                 $link_ber = "<a href='" . route('web::benutzer::legacy', ['option' => 'berechtigungen', 'b_id' => $b_id]) . "'>Berechtigungen</a>";
                 $link_aendern = "<a href='" . route('web::benutzer::legacy', ['option' => 'aendern', 'b_id' => $b_id]) . "'>Ändern</a>";
-                $link_details = "<a href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'PERSON', 'detail_id' => $b_id]) . "'>Details</a>";
+                $link_details = "<a href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'Person', 'detail_id' => $b_id]) . "'>Details</a>";
                 echo "<tr class=\"zeile$z\"><td>$benutzername</td><td sorttable_customkey=\"$geb_j$geb_m$geb_t\">$geb_dat</td><td sorttable_customkey=\"$ein_j$ein_m$ein_t\">$eintritt</td><td>$p->partner_name</td><td>$link_ber $link_aendern $link_details</td></tr>";
 
                 if ($z == 2) {

@@ -31,7 +31,7 @@ class listen
         $pdf->ezStopPageNumbers(); // seitennummerirung beenden
         $gk = new geldkonto_info ();
 
-        $gk->geld_konto_ermitteln('OBJEKT', $objekt_id, null, 'Hausgeld');
+        $gk->geld_konto_ermitteln('Objekt', $objekt_id, null, 'Hausgeld');
 
         $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT_ID`,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
 WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.OBJEKT_ID='$objekt_id' 
@@ -45,7 +45,7 @@ ORDER BY EINHEIT_KURZNAME";
                 $einheit_id = $row ['EINHEIT_ID'];
                 $e = new einheit ();
                 $det = new detail ();
-                $my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Fläche'); // kommt als Kommazahl
+                $my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-Fläche'); // kommt als Kommazahl
                 $my_arr [$z] ['WEG-FLAECHE'] = nummer_komma2punkt($my_arr [$z] ['WEG-FLAECHE_A']);
                 $weg = new weg ();
                 $weg->get_last_eigentuemer($einheit_id);
@@ -86,7 +86,7 @@ ORDER BY EINHEIT_KURZNAME";
                     $my_arr [$a] ['ABGABEN'] [] ['VG'] = '30.00'; // Verwaltergebühr
 
                     /* Kosten 1023 Reparatur Einheit */
-                    $my_arr [$a] ['AUSGABEN'] = $this->get_kosten_arr('EINHEIT', $my_arr [$a] ['EINHEIT_ID'], $monat, $jahr, $gk->geldkonto_id, 1023);
+                    $my_arr [$a] ['AUSGABEN'] = $this->get_kosten_arr('Einheit', $my_arr [$a] ['EINHEIT_ID'], $monat, $jahr, $gk->geldkonto_id, 1023);
                     $anz_rep = count($my_arr [$a] ['AUSGABEN']);
                     $summe_rep = 0;
                     for ($b = 0; $b < $anz_rep; $b++) {
@@ -103,7 +103,7 @@ ORDER BY EINHEIT_KURZNAME";
                     $brutto_sollmiete = $brutto_sollmiete_arr [0];
                     $my_arr [$a] ['NETTO_SOLL'] = $mk->ausgangs_kaltmiete;
                     $my_arr [$a] ['BRUTTO_SOLL'] = $brutto_sollmiete;
-                    $my_arr [$a] ['IST_EINNAHMEN'] = $this->get_kosten_arr('MIETVERTRAG', $my_arr [$a] ['MIETVERTRAG_ID'], $monat, $jahr, $gk->geldkonto_id, 80001);
+                    $my_arr [$a] ['IST_EINNAHMEN'] = $this->get_kosten_arr('Mietvertrag', $my_arr [$a] ['MIETVERTRAG_ID'], $monat, $jahr, $gk->geldkonto_id, 80001);
                     $anz_me = count($my_arr [$a] ['IST_EINNAHMEN']);
                     $summe_einnahmen = 0;
                     for ($b = 0; $b < $anz_me; $b++) {
@@ -383,7 +383,7 @@ ORDER BY EINHEIT_KURZNAME";
         $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
         $pdf->ezStopPageNumbers(); // seitennummerirung beenden
         $gk = new geldkonto_info ();
-        $gk->geld_konto_ermitteln('OBJEKT', $objekt_id, null, 'Hausgeld');
+        $gk->geld_konto_ermitteln('Objekt', $objekt_id, null, 'Hausgeld');
         echo '<pre>';
         print_r($gk);
         if (!$gk->geldkonto_id) {
@@ -404,13 +404,13 @@ ORDER BY EINHEIT_KURZNAME";
                 $einheit_qm = $row ['EINHEIT_QM'];
                 $e = new einheit ();
                 $det = new detail ();
-                $my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Fläche'); // kommt als Kommazahl
+                $my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-Fläche'); // kommt als Kommazahl
                 if (empty ($my_arr [$z] ['WEG-FLAECHE_A'])) {
                     $my_arr [$z] ['WEG-FLAECHE_A'] = nummer_punkt2komma($einheit_qm);
                 }
                 $my_arr [$z] ['WEG-FLAECHE'] = nummer_komma2punkt($my_arr [$z] ['WEG-FLAECHE_A']);
 
-                $my_arr [$z] ['WG_NR'] = $det->finde_detail_inhalt('EINHEIT', $einheit_id, 'Alte Nr'); // kommt als Kommazahl
+                $my_arr [$z] ['WG_NR'] = $det->finde_detail_inhalt('Einheit', $einheit_id, 'Alte Nr'); // kommt als Kommazahl
 
                 $weg = new weg ();
                 $weg->get_last_eigentuemer($einheit_id);
@@ -456,7 +456,7 @@ ORDER BY EINHEIT_KURZNAME";
                     $my_arr [$a] ['ABGABEN'] [] ['VG'] = '30.00'; // Verwaltergebähr
 
                     /* Kosten 1023 Reparatur Einheit */
-                    $my_arr [$a] ['AUSGABEN'] = $this->get_kosten_arr('EINHEIT', $my_arr [$a] ['EINHEIT_ID'], $monat, $jahr, $gk->geldkonto_id, 1023);
+                    $my_arr [$a] ['AUSGABEN'] = $this->get_kosten_arr('Einheit', $my_arr [$a] ['EINHEIT_ID'], $monat, $jahr, $gk->geldkonto_id, 1023);
                     $anz_rep = count($my_arr [$a] ['AUSGABEN']);
                     $summe_rep = 0;
                     for ($b = 0; $b < $anz_rep; $b++) {
@@ -472,7 +472,7 @@ ORDER BY EINHEIT_KURZNAME";
                     $my_arr [$a] ['NETTO_SOLL_MV'] = $mk->ausgangs_kaltmiete;
 
                     /* Garantierte Miete abfragen */
-                    $net_ren_garantie_a = $det->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-KaltmieteINS'); // kommt als Kommazahl
+                    $net_ren_garantie_a = $det->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-KaltmieteINS'); // kommt als Kommazahl
                     $net_ren_garantie = nummer_komma2punkt($net_ren_garantie_a);
                     $my_arr [$a] ['NETTO_SOLL_G_A'] = $net_ren_garantie_a;
                     if ($net_ren_garantie > $mk->ausgangs_kaltmiete) {
@@ -483,7 +483,7 @@ ORDER BY EINHEIT_KURZNAME";
 
                     $my_arr [$a] ['BRUTTO_SOLL'] = $brutto_sollmiete;
                     $my_arr [$a] ['AUSZAHLUNG_ET'] = $this->get_kosten_arr('Eigentuemer', $eige_id, $monat, $jahr, $gk->geldkonto_id, 5020);
-                    $my_arr [$a] ['IST_EINNAHMEN'] = $this->get_kosten_arr('MIETVERTRAG', $my_arr [$a] ['MIETVERTRAG_ID'], $monat, $jahr, $gk->geldkonto_id, 80001);
+                    $my_arr [$a] ['IST_EINNAHMEN'] = $this->get_kosten_arr('Mietvertrag', $my_arr [$a] ['MIETVERTRAG_ID'], $monat, $jahr, $gk->geldkonto_id, 80001);
                     $anz_me = count($my_arr [$a] ['IST_EINNAHMEN']);
                     $summe_einnahmen = 0;
                     for ($b = 0; $b < $anz_me; $b++) {
@@ -775,7 +775,7 @@ ORDER BY EINHEIT_KURZNAME";
     function form_sepa_ueberweisung_anzeigen($arr)
     {
         $gk = new geldkonto_info ();
-        $gk->geld_konto_ermitteln('OBJEKT', session()->get('objekt_id'), null, 'Hausgeld');
+        $gk->geld_konto_ermitteln('Objekt', session()->get('objekt_id'), null, 'Hausgeld');
         if (!$gk->geldkonto_id) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage('Geldkonto vom Objekt nicht bekannt!')
@@ -881,7 +881,7 @@ ORDER BY EINHEIT_KURZNAME";
         $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
         $pdf->ezStopPageNumbers(); // seitennummerirung beenden
         $gk = new geldkonto_info ();
-        $gk->geld_konto_ermitteln('OBJEKT', $objekt_id, null, 'Hausgeld');
+        $gk->geld_konto_ermitteln('Objekt', $objekt_id, null, 'Hausgeld');
         echo '<pre>';
         // print_r($gk);
         if (!$gk->geldkonto_id) {
@@ -904,13 +904,13 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                 $e->get_einheit_info($einheit_id);
                 $my_arr [$z] ['ANSCHRIFT'] = "$e->haus_strasse $e->haus_nummer, $e->haus_plz $e->haus_stadt";
                 $det = new detail ();
-                $my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Fläche'); // kommt als Kommazahl
+                $my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-Fläche'); // kommt als Kommazahl
                 if (empty ($my_arr [$z] ['WEG-FLAECHE_A'])) {
                     $my_arr [$z] ['WEG-FLAECHE_A'] = nummer_punkt2komma($einheit_qm);
                 }
                 $my_arr [$z] ['WEG-FLAECHE'] = nummer_komma2punkt($my_arr [$z] ['WEG-FLAECHE_A']);
 
-                $my_arr [$z] ['WG_NR'] = $det->finde_detail_inhalt('EINHEIT', $einheit_id, 'Alte Nr'); // kommt als Kommazahl
+                $my_arr [$z] ['WG_NR'] = $det->finde_detail_inhalt('Einheit', $einheit_id, 'Alte Nr'); // kommt als Kommazahl
 
                 $weg = new weg ();
                 $weg->get_last_eigentuemer($einheit_id);
@@ -927,8 +927,8 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                             $et_p_id_1 = $et_p_id [$pe] ['PERSON_ID'];
                             // echo $et_p_id_1;
                             $detail = new detail ();
-                            if (($detail->finde_detail_inhalt('PERSON', $et_p_id_1, 'Email'))) {
-                                $email_arr = $detail->finde_alle_details_grup('PERSON', $et_p_id_1, 'Email');
+                            if (($detail->finde_detail_inhalt('Person', $et_p_id_1, 'Email'))) {
+                                $email_arr = $detail->finde_alle_details_grup('Person', $et_p_id_1, 'Email');
                                 for ($ema = 0; $ema < count($email_arr); $ema++) {
                                     $em_adr = $email_arr [$ema] ['DETAIL_INHALT'];
                                     $my_arr [$z] ['EMAILS'] [] = $em_adr;
@@ -1002,7 +1002,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                     $my_arr [$a] ['NETTO_SOLL_MV'] = $mk->ausgangs_kaltmiete;
 
                     /* Garantierte Miete abfragen */
-                    $net_ren_garantie_a = $det->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-KaltmieteINS'); // kommt als Kommazahl
+                    $net_ren_garantie_a = $det->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-KaltmieteINS'); // kommt als Kommazahl
                     $net_ren_garantie = nummer_komma2punkt($net_ren_garantie_a);
                     $my_arr [$a] ['NETTO_SOLL_G_A'] = $net_ren_garantie_a;
 
@@ -1040,7 +1040,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                     }
                     $my_arr [$a] ['5020'] = $this->get_kosten_von_bis('Eigentuemer', $eige_id, $von_a, $bis_a, $gk->geldkonto_id, 5020);
 
-                    $my_arr [$a] ['IST_EINNAHMEN'] = $this->get_kosten_arr('MIETVERTRAG', $my_arr [$a] ['MIETVERTRAG_ID'], $monat, $jahr, $gk->geldkonto_id, 80001);
+                    $my_arr [$a] ['IST_EINNAHMEN'] = $this->get_kosten_arr('Mietvertrag', $my_arr [$a] ['MIETVERTRAG_ID'], $monat, $jahr, $gk->geldkonto_id, 80001);
                     $anz_me = count($my_arr [$a] ['IST_EINNAHMEN']);
                     $summe_einnahmen = 0;
                     for ($b = 0; $b < $anz_me; $b++) {
@@ -1970,7 +1970,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
         $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
         $pdf->ezStopPageNumbers(); // seitennummerirung beenden
         $gk = new geldkonto_info ();
-        $gk->geld_konto_ermitteln('OBJEKT', $objekt_id, null, 'Hausgeld');
+        $gk->geld_konto_ermitteln('Objekt', $objekt_id, null, 'Hausgeld');
         echo '<pre>';
         // print_r($gk);
         if (!$gk->geldkonto_id) {
@@ -1993,13 +1993,13 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                 $e->get_einheit_info($einheit_id);
                 $my_arr [$z] ['ANSCHRIFT'] = "$e->haus_strasse $e->haus_nummer, $e->haus_plz $e->haus_stadt";
                 $det = new detail ();
-                $my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Fläche'); // kommt als Kommazahl
+                $my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-Fläche'); // kommt als Kommazahl
                 if (empty ($my_arr [$z] ['WEG-FLAECHE_A'])) {
                     $my_arr [$z] ['WEG-FLAECHE_A'] = nummer_punkt2komma($einheit_qm);
                 }
                 $my_arr [$z] ['WEG-FLAECHE'] = nummer_komma2punkt($my_arr [$z] ['WEG-FLAECHE_A']);
 
-                $my_arr [$z] ['WG_NR'] = $det->finde_detail_inhalt('EINHEIT', $einheit_id, 'Alte Nr'); // kommt als Kommazahl
+                $my_arr [$z] ['WG_NR'] = $det->finde_detail_inhalt('Einheit', $einheit_id, 'Alte Nr'); // kommt als Kommazahl
 
                 $weg = new weg ();
                 $weg->get_last_eigentuemer($einheit_id);
@@ -2016,8 +2016,8 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                             $et_p_id_1 = $et_p_id [$pe] ['PERSON_ID'];
                             // echo $et_p_id_1;
                             $detail = new detail ();
-                            if (($detail->finde_detail_inhalt('PERSON', $et_p_id_1, 'Email'))) {
-                                $email_arr = $detail->finde_alle_details_grup('PERSON', $et_p_id_1, 'Email');
+                            if (($detail->finde_detail_inhalt('Person', $et_p_id_1, 'Email'))) {
+                                $email_arr = $detail->finde_alle_details_grup('Person', $et_p_id_1, 'Email');
                                 for ($ema = 0; $ema < count($email_arr); $ema++) {
                                     $em_adr = $email_arr [$ema] ['DETAIL_INHALT'];
                                     $my_arr [$z] ['EMAILS'] [] = $em_adr;
@@ -2091,7 +2091,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                     $my_arr [$a] ['NETTO_SOLL_MV'] = $brutto_sollmiete;
 
                     /* Garantierte Miete abfragen */
-                    $net_ren_garantie_a = $det->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-KaltmieteINS'); // kommt als Kommazahl
+                    $net_ren_garantie_a = $det->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-KaltmieteINS'); // kommt als Kommazahl
                     $net_ren_garantie = nummer_komma2punkt($net_ren_garantie_a);
                     $my_arr [$a] ['NETTO_SOLL_G_A'] = $net_ren_garantie_a;
                     if ($net_ren_garantie > $brutto_sollmiete) {
@@ -2127,7 +2127,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                     }
                     $my_arr [$a] ['5020'] = $this->get_kosten_von_bis('Eigentuemer', $eige_id, $von_a, $bis_a, $gk->geldkonto_id, 5020);
 
-                    $my_arr [$a] ['IST_EINNAHMEN'] = $this->get_kosten_arr('MIETVERTRAG', $my_arr [$a] ['MIETVERTRAG_ID'], $monat, $jahr, $gk->geldkonto_id, 80001);
+                    $my_arr [$a] ['IST_EINNAHMEN'] = $this->get_kosten_arr('Mietvertrag', $my_arr [$a] ['MIETVERTRAG_ID'], $monat, $jahr, $gk->geldkonto_id, 80001);
                     $anz_me = count($my_arr [$a] ['IST_EINNAHMEN']);
                     $summe_einnahmen = 0;
                     for ($b = 0; $b < $anz_me; $b++) {
@@ -2994,7 +2994,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
     function inspiration_sepa_arr($ausgezogene = 0, $objekt_id, $monat, $jahr, $lang = 'de')
     {
         $gk = new geldkonto_info ();
-        $gk->geld_konto_ermitteln('OBJEKT', $objekt_id, null, 'Hausgeld');
+        $gk->geld_konto_ermitteln('Objekt', $objekt_id, null, 'Hausgeld');
         if (!$gk->geldkonto_id) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage('Geldkonto zum Objekt hinzufügen.')
@@ -3014,13 +3014,13 @@ ORDER BY EINHEIT_KURZNAME";
                 $einheit_qm = $row ['EINHEIT_QM'];
                 $e = new einheit ();
                 $det = new detail ();
-                $my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-Fläche'); // kommt als Kommazahl
+                $my_arr [$z] ['WEG-FLAECHE_A'] = $det->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-Fläche'); // kommt als Kommazahl
                 if (empty ($my_arr [$z] ['WEG-FLAECHE_A'])) {
                     $my_arr [$z] ['WEG-FLAECHE_A'] = nummer_punkt2komma($einheit_qm);
                 }
                 $my_arr [$z] ['WEG-FLAECHE'] = nummer_komma2punkt($my_arr [$z] ['WEG-FLAECHE_A']);
 
-                $my_arr [$z] ['WG_NR'] = $det->finde_detail_inhalt('EINHEIT', $einheit_id, 'Alte Nr'); // kommt als Kommazahl
+                $my_arr [$z] ['WG_NR'] = $det->finde_detail_inhalt('Einheit', $einheit_id, 'Alte Nr'); // kommt als Kommazahl
 
                 $weg = new weg ();
                 $weg->get_last_eigentuemer($einheit_id);
@@ -3065,7 +3065,7 @@ ORDER BY EINHEIT_KURZNAME";
                     $my_arr [$a] ['ABGABEN'] [] ['VG'] = '30.00'; // Verwaltergebühr
 
                     /* Kosten 1023 Reparatur Einheit */
-                    $my_arr [$a] ['AUSGABEN'] = $this->get_kosten_arr('EINHEIT', $my_arr [$a] ['EINHEIT_ID'], $monat, $jahr, $gk->geldkonto_id, 1023);
+                    $my_arr [$a] ['AUSGABEN'] = $this->get_kosten_arr('Einheit', $my_arr [$a] ['EINHEIT_ID'], $monat, $jahr, $gk->geldkonto_id, 1023);
                     $anz_rep = count($my_arr [$a] ['AUSGABEN']);
                     $summe_rep = 0;
                     for ($b = 0; $b < $anz_rep; $b++) {
@@ -3084,7 +3084,7 @@ ORDER BY EINHEIT_KURZNAME";
                     $my_arr [$a] ['NETTO_SOLL_MV'] = $mk->ausgangs_kaltmiete;
 
                     /* Garantierte Miete abfragen */
-                    $net_ren_garantie_a = $det->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-KaltmieteINS'); // kommt als Kommazahl
+                    $net_ren_garantie_a = $det->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-KaltmieteINS'); // kommt als Kommazahl
                     $net_ren_garantie = nummer_komma2punkt($net_ren_garantie_a);
                     $my_arr [$a] ['NETTO_SOLL_G_A'] = $net_ren_garantie_a;
                     if ($net_ren_garantie > $mk->ausgangs_kaltmiete) {
@@ -3095,7 +3095,7 @@ ORDER BY EINHEIT_KURZNAME";
 
                     $my_arr [$a] ['BRUTTO_SOLL'] = $brutto_sollmiete;
                     $my_arr [$a] ['AUSZAHLUNG_ET'] = $this->get_kosten_arr('Eigentuemer', $eige_id, $monat, $jahr, $gk->geldkonto_id, 5020);
-                    $my_arr [$a] ['IST_EINNAHMEN'] = $this->get_kosten_arr('MIETVERTRAG', $my_arr [$a] ['MIETVERTRAG_ID'], $monat, $jahr, $gk->geldkonto_id, 80001);
+                    $my_arr [$a] ['IST_EINNAHMEN'] = $this->get_kosten_arr('Mietvertrag', $my_arr [$a] ['MIETVERTRAG_ID'], $monat, $jahr, $gk->geldkonto_id, 80001);
                     $anz_me = count($my_arr [$a] ['IST_EINNAHMEN']);
                     $summe_einnahmen = 0;
                     for ($b = 0; $b < $anz_me; $b++) {
@@ -3241,7 +3241,7 @@ ORDER BY EINHEIT_KURZNAME";
 
                     $einheit_qm = $mv->einheit_qm;
                     $det = new detail ();
-                    $weg_qm = $det->finde_detail_inhalt('EINHEIT', $mv->einheit_id, 'WEG-Fläche'); // kommt als Kommazahl
+                    $weg_qm = $det->finde_detail_inhalt('Einheit', $mv->einheit_id, 'WEG-Fläche'); // kommt als Kommazahl
                     if (!empty ($weg_qm)) {
                         $einheit_qm = nummer_komma2punkt($weg_qm);
                     }
@@ -3408,7 +3408,7 @@ ORDER BY EINHEIT_KURZNAME";
         $e = new einheit ();
         $e->get_einheit_info($einheit_id);
         $gk = new geldkonto_info ();
-        $gk->geld_konto_ermitteln('OBJEKT', $e->objekt_id, null, 'Hausgeld');
+        $gk->geld_konto_ermitteln('Objekt', $e->objekt_id, null, 'Hausgeld');
 
         /* OBJEKTDATEN */
         /* Garantiemonate Objekt */
@@ -3422,7 +3422,7 @@ ORDER BY EINHEIT_KURZNAME";
 
         /* Garantierte Miete */
         /* Garantiemiete */
-        $garantie_miete = nummer_komma2punkt($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'WEG-KaltmieteINS'));
+        $garantie_miete = nummer_komma2punkt($d->finde_detail_inhalt('Einheit', $einheit_id, 'WEG-KaltmieteINS'));
         if (!$garantie_miete) {
             $garantie_miete = 0;
         }
@@ -4036,7 +4036,7 @@ ORDER BY EINHEIT_KURZNAME";
         $weg = new weg ();
         $m_arr_jahr = $weg->monatsarray_erstellen($datum_von, $datum_bis);
         $gk = new geldkonto_info ();
-        $gk_arr = $gk->geldkonten_arr('OBJEKT', $objekt_id);
+        $gk_arr = $gk->geldkonten_arr('Objekt', $objekt_id);
         $anz_gk = count($gk_arr);
 
         $d = new detail ();
@@ -4097,8 +4097,8 @@ ORDER BY EINHEIT_KURZNAME";
                         $et_p_id_1 = $et_p_id [$pe] ['PERSON_ID'];
                         // echo $et_p_id_1;
                         $detail = new detail ();
-                        if (($detail->finde_detail_inhalt('PERSON', $et_p_id_1, 'Email'))) {
-                            $email_arr = $detail->finde_alle_details_grup('PERSON', $et_p_id_1, 'Email');
+                        if (($detail->finde_detail_inhalt('Person', $et_p_id_1, 'Email'))) {
+                            $email_arr = $detail->finde_alle_details_grup('Person', $et_p_id_1, 'Email');
                             for ($ema = 0; $ema < count($email_arr); $ema++) {
                                 $em_adr = $email_arr [$ema] ['DETAIL_INHALT'];
                                 $email_arr_a [] = $em_adr;
@@ -4531,7 +4531,7 @@ ORDER BY EINHEIT_KURZNAME";
                 if (is_array($sum_konten)) {
 
                     $gki = new geldkonto_info ();
-                    $gki->geld_konto_ermitteln('OBJEKT', $objekt_id, null, 'Hausgeld');
+                    $gki->geld_konto_ermitteln('Objekt', $objekt_id, null, 'Hausgeld');
                     if ($gki->geldkonto_id) {
                         $kr = new kontenrahmen ();
                         $kr_id = $kr->get_kontenrahmen('GELDKONTO', $gki->geldkonto_id);
@@ -4576,7 +4576,7 @@ ORDER BY EINHEIT_KURZNAME";
         if (isset($b_konten_arr) && is_array($b_konten_arr)) {
             $b_konten_arr1 = array_unique($b_konten_arr);
             $gki = new geldkonto_info ();
-            $gki->geld_konto_ermitteln('OBJEKT', $objekt_id, null, 'Hausgeld');
+            $gki->geld_konto_ermitteln('Objekt', $objekt_id, null, 'Hausgeld');
             $string = '';
             if ($gki->geldkonto_id) {
                 $kr = new kontenrahmen ();
@@ -4617,7 +4617,7 @@ ORDER BY EINHEIT_KURZNAME";
     function form_sepa_ueberweisung_et($e_id, $betrag)
     {
         $gk = new geldkonto_info ();
-        $gk->geld_konto_ermitteln('OBJEKT', session()->get('objekt_id'), null, 'Hausgeld');
+        $gk->geld_konto_ermitteln('Objekt', session()->get('objekt_id'), null, 'Hausgeld');
         if (!$gk->geldkonto_id) {
             die ('Geldkonto vom Objekt nicht bekannt!');
         }
@@ -5038,7 +5038,7 @@ ORDER BY EINHEIT_KURZNAME";
                         $person_id = $weg1->eigentuemer_name [$g] ['person_id'];
 
                         $dd = new detail ();
-                        $email = $dd->finde_detail_inhalt('PERSON', $person_id, 'Email');
+                        $email = $dd->finde_detail_inhalt('Person', $person_id, 'Email');
                         if (!$email) {
                             $error++;
                         } else {

@@ -302,19 +302,19 @@ class leerstand
         $e->einheit_qm_d = nummer_punkt2komma($e->einheit_qm);
         $pdf->addText(510, 640, 12, "$e->einheit_qm_d qm");
         $d = new detail ();
-        $zimmer = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Zimmeranzahl'))));
+        $zimmer = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Zimmeranzahl'))));
         $pdf->addText(420, 620, 12, "Zimmer:");
         $pdf->addText(510, 620, 12, "$zimmer");
-        $balkon = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Balkon'))));
+        $balkon = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Balkon'))));
         $pdf->addText(420, 605, 12, "Balkon:");
         $pdf->addText(510, 605, 12, "$balkon");
-        $heizungsart = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Heizungsart'))));
+        $heizungsart = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Heizungsart'))));
         $pdf->addText(420, 590, 12, "Heizungsart:");
         $pdf->addText(510, 590, 12, "$heizungsart");
 
-        $expose_km = nummer_punkt2komma_t(nummer_komma2punkt($this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Vermietung-Kaltmiete'))))));
-        $expose_bk = nummer_punkt2komma_t(nummer_komma2punkt($this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Vermietung-BK'))))));
-        $expose_hk = nummer_punkt2komma_t(nummer_komma2punkt($this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Vermietung-HK'))))));
+        $expose_km = nummer_punkt2komma_t(nummer_komma2punkt($this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Vermietung-Kaltmiete'))))));
+        $expose_bk = nummer_punkt2komma_t(nummer_komma2punkt($this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Vermietung-BK'))))));
+        $expose_hk = nummer_punkt2komma_t(nummer_komma2punkt($this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Vermietung-HK'))))));
         $brutto_miete = nummer_punkt2komma_t(nummer_komma2punkt($expose_km) + nummer_komma2punkt($expose_bk) + nummer_komma2punkt($expose_hk));
 
         if (!$expose_km) {
@@ -346,10 +346,10 @@ class leerstand
         // $pdf->addText(420, 500, 12, "Zustand:");
         // $pdf->addText(510, 500, 12, "Erstbezug nach Sanierung");
         $pdf->addText(420, 500, 12, "Baujahr:");
-        $baujahr = $d->finde_detail_inhalt('OBJEKT', $e->objekt_id, 'Baujahr');
+        $baujahr = $d->finde_detail_inhalt('Objekt', $e->objekt_id, 'Baujahr');
         $pdf->addText(510, 500, 12, "$baujahr");
 
-        $expose_frei = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Expose frei ab'))));
+        $expose_frei = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Expose frei ab'))));
         if (!$expose_frei) {
             $expose_frei = 'sofort';
         }
@@ -361,7 +361,7 @@ class leerstand
         $pdf->addText(420, 455, 12, "Provision:");
         $pdf->addText(510, 455, 12, "keine");
 
-        $termin = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Besichtigungstermin'))));
+        $termin = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Besichtigungstermin'))));
 
         $pdf->setColor(255 / 255, 0 / 255, 0 / 255);
         if ($termin) {
@@ -374,7 +374,7 @@ class leerstand
 
         /* ExposeText */
         // $pdf->ezSetMargins(135,430,50,50);
-        $exposetext = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Exposetext'))));
+        $exposetext = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Exposetext'))));
         $pdf->ezText($exposetext, 10, array(
             'justification' => 'full'
         ));
@@ -582,8 +582,8 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
             $einheit_id = $arr [$a] ['EINHEIT_ID'];
             $termin = $arr [$a] ['DETAIL_INHALT'];
 
-            $zimmer = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Zimmeranzahl'))));
-            $balkon = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Balkon'))));
+            $zimmer = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Zimmeranzahl'))));
+            $balkon = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Balkon'))));
             $e->get_einheit_info($einheit_id);
             $link_einladen = "<a href='" . route('web::leerstand::legacy', ['option' => 'einladungen', 'einheit_id' => $einheit_id]) . "'>Einladen</a>";
             echo "<tr><td>$e->einheit_kurzname $e->haus_strasse $e->haus_nummer, $e->einheit_lage</td><td>$termin</td><td>$e->einheit_qm m²</td><td>$zimmer</td><td>$balkon</td>";
@@ -601,7 +601,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
     function einheiten_mit_termin_arr($objekt_id = '', $vor_nach = '>')
     {
         if (!$objekt_id) {
-            $db_abfrage = "SELECT DETAIL_ZUORDNUNG_ID AS EINHEIT_ID, DETAIL_INHALT, DETAIL_BEMERKUNG, STR_TO_DATE(DETAIL_INHALT,'%d.%m.%Y') , DATE_FORMAT(NOW(), '%Y-%m-%d')  FROM `DETAIL` WHERE `DETAIL_NAME` = 'Besichtigungstermin' AND `DETAIL_AKTUELL` = '1' AND  (STR_TO_DATE(DETAIL_INHALT,'%d.%m.%Y') $vor_nach= CURDATE()) AND `DETAIL_ZUORDNUNG_TABELLE` = 'EINHEIT' && DETAIL_ZUORDNUNG_ID IN (SELECT EINHEIT_ID FROM `EINHEIT` WHERE `EINHEIT_AKTUELL` = '1')";
+            $db_abfrage = "SELECT DETAIL_ZUORDNUNG_ID AS EINHEIT_ID, DETAIL_INHALT, DETAIL_BEMERKUNG, STR_TO_DATE(DETAIL_INHALT,'%d.%m.%Y') , DATE_FORMAT(NOW(), '%Y-%m-%d')  FROM `DETAIL` WHERE `DETAIL_NAME` = 'Besichtigungstermin' AND `DETAIL_AKTUELL` = '1' AND  (STR_TO_DATE(DETAIL_INHALT,'%d.%m.%Y') $vor_nach= CURDATE()) AND `DETAIL_ZUORDNUNG_TABELLE` = 'Einheit' && DETAIL_ZUORDNUNG_ID IN (SELECT EINHEIT_ID FROM `EINHEIT` WHERE `EINHEIT_AKTUELL` = '1')";
             $result = DB::select($db_abfrage);
             return $result;
         }
@@ -610,7 +610,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
     function einladungen($einheit_id)
     {
         $d = new detail ();
-        $zimmer = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Zimmeranzahl'))));
+        $zimmer = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Zimmeranzahl'))));
         if (!$zimmer) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage('Angaben zur Zimmeranzahl fehlen.')
@@ -726,9 +726,9 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
         $f->erstelle_formular("Exposeeinstellungen für $e->einheit_kurzname vornehmen", '');
         fehlermeldung_ausgeben("Ausstattungsklasse $ma->ausstattungsklasse");
         $f->hidden_feld('einheit_id', $einheit_id);
-        $zimmer = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Zimmeranzahl'))));
+        $zimmer = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Zimmeranzahl'))));
         $f->text_feld('Zimmeranzahl', 'zimmer', $zimmer, 4, 'zimmer', '');
-        $balkon = ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Balkon')));
+        $balkon = ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Balkon')));
         // $f->text_feld('Balkon vorhanden (ja/nein)', 'balkon', $balkon, 10, 'balkon', '');
         if (empty ($balkon)) {
             $balkon = 'nein';
@@ -736,14 +736,14 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
         // $this->dropdown_ja_nein('Balkon vorhanden', 'balkon', 'balkon', $balkon);
         $d->dropdown_optionen('Balkon', 'balkon', 'balkon', 'Balkon', $balkon);
         /* Miete */
-        $expose_km = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Expose kaltmiete'))));
-        $expose_bk = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Expose BK'))));
-        $expose_hk = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Expose HK'))));
+        $expose_km = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Expose kaltmiete'))));
+        $expose_bk = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Expose BK'))));
+        $expose_hk = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Expose HK'))));
 
         $f->text_feld("Miete kalt | MSM:$miete_nach_ms € | MAX:$miete_nach_ms_max € | MS-FELD:$ms_feld, U:$ma->u_wert, M:$ma->m_wert, O:$ma->o_wert", 'expose_km', $expose_km, 8, 'expose_km', '');
         $f->text_feld('BK', 'expose_bk', $expose_bk, 8, 'expose_bk', '');
 
-        $heizungsart = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Heizungsart'))));
+        $heizungsart = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Heizungsart'))));
         $d->dropdown_optionen('Heizungsart', 'heizungsart', 'heizungsart', 'Heizungsart', $heizungsart);
 
         if (empty ($expose_hk)) {
@@ -753,12 +753,12 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
 
         $f->hidden_feld('zustand', '');
 
-        $expose_frei = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Expose frei ab'))));
+        $expose_frei = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Expose frei ab'))));
         $f->datum_feld('Bezugsfrei ab', 'expose_frei', $expose_frei, 'expose_frei', '');
 
-        $termin = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Besichtigungstermin'))));
+        $termin = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Besichtigungstermin'))));
         $f->datum_feld('Besichtigungsdatum', 'besichtigungsdatum', $termin, 'besichtigungsdatum', '');
-        $termin_uhrzeit = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Expose Besichtigungsuhrzeit'))));
+        $termin_uhrzeit = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Expose Besichtigungsuhrzeit'))));
         $f->text_bereich('Uhrzeit und Treffpunkt', 'uhrzeit', $termin_uhrzeit, 20, 5, 'uhrzeit');
         $f->hidden_feld('option', 'expose_speichern');
         $f->send_button('btn_snd', 'Speichern');
@@ -777,15 +777,15 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
     {
         // echo "$einheit_id, $zimmer, $balkon, $expose_bk, $expose_km, $heizungsart, $expose_frei, $besichtigungsdatum, $uhrzeit";
         $d = new detail ();
-        $d->detail_aktualisieren('EINHEIT', $einheit_id, 'Zimmeranzahl', $zimmer, '');
-        $d->detail_aktualisieren('EINHEIT', $einheit_id, 'Balkon', $balkon, '');
-        $d->detail_aktualisieren('EINHEIT', $einheit_id, 'Heizungsart', $heizungsart, '');
-        $d->detail_aktualisieren('EINHEIT', $einheit_id, 'Besichtigungstermin', $besichtigungsdatum, '');
-        $d->detail_aktualisieren('EINHEIT', $einheit_id, 'Expose Besichtigungsuhrzeit', $uhrzeit, '');
-        $d->detail_aktualisieren('EINHEIT', $einheit_id, 'Expose BK', $expose_bk, '');
-        $d->detail_aktualisieren('EINHEIT', $einheit_id, 'Expose HK', $expose_hk, '');
-        $d->detail_aktualisieren('EINHEIT', $einheit_id, 'Expose frei ab', $expose_frei, '');
-        $d->detail_aktualisieren('EINHEIT', $einheit_id, 'Expose Kaltmiete', $expose_km, '');
+        $d->detail_aktualisieren('Einheit', $einheit_id, 'Zimmeranzahl', $zimmer, '');
+        $d->detail_aktualisieren('Einheit', $einheit_id, 'Balkon', $balkon, '');
+        $d->detail_aktualisieren('Einheit', $einheit_id, 'Heizungsart', $heizungsart, '');
+        $d->detail_aktualisieren('Einheit', $einheit_id, 'Besichtigungstermin', $besichtigungsdatum, '');
+        $d->detail_aktualisieren('Einheit', $einheit_id, 'Expose Besichtigungsuhrzeit', $uhrzeit, '');
+        $d->detail_aktualisieren('Einheit', $einheit_id, 'Expose BK', $expose_bk, '');
+        $d->detail_aktualisieren('Einheit', $einheit_id, 'Expose HK', $expose_hk, '');
+        $d->detail_aktualisieren('Einheit', $einheit_id, 'Expose frei ab', $expose_frei, '');
+        $d->detail_aktualisieren('Einheit', $einheit_id, 'Expose Kaltmiete', $expose_km, '');
         weiterleiten(route('web::leerstand::legacy', ['option' => 'expose_pdf', 'einheit_id' => $einheit_id], false));
     }
 
@@ -1155,18 +1155,18 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                 echo "<table class=\"details\">";
                 echo "<tr><td>";
                 $link_zimmer = "<div class=\"input-field\">
-                                    <input id=\"lnk_zimmer$objekt_id.'_'.$a\" value='$zimmer' type=\"text\" onchange=\"change_detail_no_prompt('Zimmeranzahl', this.value, '$zimmer_dat', 'EINHEIT', '$einheit_id')\">
+                                    <input id=\"lnk_zimmer$objekt_id.'_'.$a\" value='$zimmer' type=\"text\" onchange=\"change_detail_no_prompt('Zimmeranzahl', this.value, '$zimmer_dat', 'Einheit', '$einheit_id')\">
                                     <label for=\"lnk_zimmer$objekt_id.'_'.$a\">Zimmeranzahl</label>
                                 </div>";
                 echo $link_zimmer;
                 echo "</td></tr>";
                 echo "<tr><td>";
-                $js = " onchange=\"change_detail_no_prompt('Balkon', this.value, '$balkon_dat', 'EINHEIT', '$einheit_id')\"";
+                $js = " onchange=\"change_detail_no_prompt('Balkon', this.value, '$balkon_dat', 'Einheit', '$einheit_id')\"";
                 $d->dropdown_optionen('Balkon', 'dd_balkon' . $objekt_id . '_' . $a, 'dd_balkon' . $objekt_id . '_' . $a, 'Balkon', $balkon, $js);
                 echo "</td></tr>";
 
                 echo "<tr><td>";
-                $js = " onchange=\"change_detail_no_prompt('Heizungsart', this.value, '$heizart_dat', 'EINHEIT', '$einheit_id')\"";
+                $js = " onchange=\"change_detail_no_prompt('Heizungsart', this.value, '$heizart_dat', 'Einheit', '$einheit_id')\"";
                 $d->dropdown_optionen('Heizungsart', 'dd_heizart' . $objekt_id . '_' . $a, 'dd_heizart' . $objekt_id . '_' . $a, 'Heizungsart', $heizart, $js);
                 echo "</td></tr>";
 
@@ -1176,29 +1176,29 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                 $fertig_bau_dat = $arr [$a] ['FERTIG_BAU_DAT'];
                 $notiz_dat = $arr [$a] ['NOTIZ_DAT'];
                 $notiz = $arr [$a] ['NOTIZ'];
-                echo "<td width=\"200px\"><div style=\"height: 100%;\"><progress onclick=\"change_detail('Fertigstellung in Prozent', '$fertig_bau', '$fertig_bau_dat', 'EINHEIT', '$einheit_id')\" max=\"100\" value=\"";
+                echo "<td width=\"200px\"><div style=\"height: 100%;\"><progress onclick=\"change_detail('Fertigstellung in Prozent', '$fertig_bau', '$fertig_bau_dat', 'Einheit', '$einheit_id')\" max=\"100\" value=\"";
                 echo $fertig_bau;
                 echo "\"></progress>$fertig_bau</div>";
                 echo "<div class=\"input-field\">
-                        <textarea id=\"textarea1\" class=\"materialize-textarea\" onchange=\"change_detail_no_prompt('Sanierung Notiz', this . value, '$notiz_dat', 'EINHEIT', '$einheit_id')\">" . $notiz . "</textarea>
+                        <textarea id=\"textarea1\" class=\"materialize-textarea\" onchange=\"change_detail_no_prompt('Sanierung Notiz', this . value, '$notiz_dat', 'Einheit', '$einheit_id')\">" . $notiz . "</textarea>
                         <label for=\"textarea1\">Notiz</label>
                       </div>";
                 echo "</td>";
 
                 $sanierungs_jahr = $arr [$a] ['JAHR_S'];
                 $sanierungs_jahr_dat = $arr [$a] ['JAHR_S_DAT'];
-                $link_san_jahr = "<a class=\"details\" onclick=\"change_detail('Jahr der letzten Sanierung', '$sanierungs_jahr', '$sanierungs_jahr_dat', 'EINHEIT', '$einheit_id')\">&nbsp;$sanierungs_jahr</a>";
+                $link_san_jahr = "<a class=\"details\" onclick=\"change_detail('Jahr der letzten Sanierung', '$sanierungs_jahr', '$sanierungs_jahr_dat', 'Einheit', '$einheit_id')\">&nbsp;$sanierungs_jahr</a>";
                 echo "<td><center>$link_san_jahr</center></td>";
                 echo "<td>";
                 $d = new detail ();
                 $energieausweis_dat = $arr [$a] ['ENERGIEAUS_DAT'];
-                $js = " onchange=\"change_detail_no_prompt('Energieausweis vorhanden', this.value, '$energieausweis_dat', 'HAUS', '$haus_id')\"";
+                $js = " onchange=\"change_detail_no_prompt('Energieausweis vorhanden', this.value, '$energieausweis_dat', 'Haus', '$haus_id')\"";
                 $d->dropdown_optionen('Energieausweis', 'dd_ea' . $objekt_id . '_' . $a, 'dd_ea' . $objekt_id . '_' . $a, 'Energieausweis vorhanden', $energieausweis, $js);
 
                 echo "</td>";
 
                 echo "<td>";
-                $link_eausweis_bis = "<a class=\"details\" onclick=\"change_detail('Energieausweis bis', '$energieausweis_bis', '$energieausweis_bis_dat', 'HAUS', '$haus_id')\">&nbsp;$energieausweis_bis</a>";
+                $link_eausweis_bis = "<a class=\"details\" onclick=\"change_detail('Energieausweis bis', '$energieausweis_bis', '$energieausweis_bis_dat', 'Haus', '$haus_id')\">&nbsp;$energieausweis_bis</a>";
                 echo "$link_eausweis_bis";
 
                 echo "</td>";
@@ -1207,7 +1207,7 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                 $reinigen = $arr [$a] ['GEREINIGT'];
                 $reinigen_dat = $arr [$a] ['GEREINIGT_DAT'];
                 echo "<div class='input-field'>
-                            <input class='datepicker' value='" . $reinigen . "' id='link_reinigen_" . $objekt_id . '_' . $a . "' type='date' onchange=\"change_detail_no_prompt('Gereinigt am', this.value, '$reinigen_dat', 'EINHEIT', '$einheit_id')\"/>
+                            <input class='datepicker' value='" . $reinigen . "' id='link_reinigen_" . $objekt_id . '_' . $a . "' type='date' onchange=\"change_detail_no_prompt('Gereinigt am', this.value, '$reinigen_dat', 'Einheit', '$einheit_id')\"/>
                             <label for='link_reinigen_" . $objekt_id . '_' . $a . "'>Gereinigt am</label>
                       </div>";
 
@@ -1691,17 +1691,17 @@ einverstanden und sehe(n) die vorgeschriebene Benachrichtigung nach § 26 Bundes
                 }
 
                 if ($anzeigen_balkon == true && $anzeigen_zimmer == true && $anzeigen_heizung == true) {
-                    $link_kaltmiete = "<a class=\"details\" onclick=\"change_detail('Vermietung-Kaltmiete', '$kaltmiete', '$kaltmiete_dat', 'EINHEIT', '$einheit_id')\">$kaltmiete_a</a>";
-                    $link_bk = "<a class=\"details\" onclick=\"change_detail('Vermietung-BK', '$bk', '$bk_dat', 'EINHEIT', '$einheit_id')\">$bk</a>";
-                    $link_hk = "<a class=\"details\" onclick=\"change_detail('Vermietung-HK', '$hk', '$hk_dat', 'EINHEIT', '$einheit_id')\">$hk</a>";
-                    $link_termin = "<a class=\"details\" onclick=\"change_detail('Besichtigungstermin', '$b_termin', '$b_termin_dat', 'EINHEIT', '$einheit_id')\">$b_termin</a>";
+                    $link_kaltmiete = "<a class=\"details\" onclick=\"change_detail('Vermietung-Kaltmiete', '$kaltmiete', '$kaltmiete_dat', 'Einheit', '$einheit_id')\">$kaltmiete_a</a>";
+                    $link_bk = "<a class=\"details\" onclick=\"change_detail('Vermietung-BK', '$bk', '$bk_dat', 'Einheit', '$einheit_id')\">$bk</a>";
+                    $link_hk = "<a class=\"details\" onclick=\"change_detail('Vermietung-HK', '$hk', '$hk_dat', 'Einheit', '$einheit_id')\">$hk</a>";
+                    $link_termin = "<a class=\"details\" onclick=\"change_detail('Besichtigungstermin', '$b_termin', '$b_termin_dat', 'Einheit', '$einheit_id')\">$b_termin</a>";
                     $link_fotos = "<a href='" . route('web::leerstand::legacy', ['option' => 'fotos_upload', 'einheit_id' => $einheit_id]) . "'>Fotos: $anz_fotos</a>";
-                    $link_expose_text = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'EINHEIT', 'detail_id' => $einheit_id, 'vorauswahl' => 'Exposetext']) . "'>Exposetext</a>";
+                    $link_expose_text = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'Einheit', 'detail_id' => $einheit_id, 'vorauswahl' => 'Exposetext']) . "'>Exposetext</a>";
 
                     if ($b_reservierung != '') {
-                        $link_reservierung = "<a class=\"details\" onclick=\"change_detail('Vermietung-Reserviert', '$b_reservierung', '$b_reservierung_dat', 'EINHEIT', '$einheit_id')\">$b_reservierung<hr>$b_reservierung_bem</a>";
+                        $link_reservierung = "<a class=\"details\" onclick=\"change_detail('Vermietung-Reserviert', '$b_reservierung', '$b_reservierung_dat', 'Einheit', '$einheit_id')\">$b_reservierung<hr>$b_reservierung_bem</a>";
                     } else {
-                        $link_reservierung = "<a class=\"details\" onclick=\"change_detail('Vermietung-Reserviert', '$b_reservierung', '$b_reservierung_dat', 'EINHEIT', '$einheit_id')\">Reservieren</a>";
+                        $link_reservierung = "<a class=\"details\" onclick=\"change_detail('Vermietung-Reserviert', '$b_reservierung', '$b_reservierung_dat', 'Einheit', '$einheit_id')\">Reservieren</a>";
                     }
 
                     if ($b_reservierung == '') {

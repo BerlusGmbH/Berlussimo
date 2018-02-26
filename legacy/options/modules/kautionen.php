@@ -28,7 +28,7 @@ switch ($option) {
             $datum = date_german2mysql($datum);
             $text = request()->input('text');
             $k = new kautionen ();
-            $k->kaution_speichern($datum, 'MIETVERTRAG', $mv_id, $betrag, $text, '1000');
+            $k->kaution_speichern($datum, 'Mietvertrag', $mv_id, $betrag, $text, '1000');
         } else {
             echo "Mietvertrag auswählen";
         }

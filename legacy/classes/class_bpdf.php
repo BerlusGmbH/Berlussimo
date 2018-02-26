@@ -44,9 +44,9 @@ class b_pdf
                 $dets = new detail ();
                 $mv_sepa = new sepa (); // SEPA LS Infos auf leer stellen
                 // Infos nur von LS-teilnehmern
-                if ($dets->finde_detail_inhalt('MIETVERTRAG', $mv_id, 'Einzugsermächtigung') == 'JA') {
-                    $mv->ls_konto = $dets->finde_detail_inhalt('MIETVERTRAG', $mv_id, 'Kontonummer-AutoEinzug');
-                    $mv->ls_blz = $dets->finde_detail_inhalt('MIETVERTRAG', $mv_id, 'BLZ-AutoEinzug');
+                if ($dets->finde_detail_inhalt('Mietvertrag', $mv_id, 'Einzugsermächtigung') == 'JA') {
+                    $mv->ls_konto = $dets->finde_detail_inhalt('Mietvertrag', $mv_id, 'Kontonummer-AutoEinzug');
+                    $mv->ls_blz = $dets->finde_detail_inhalt('Mietvertrag', $mv_id, 'BLZ-AutoEinzug');
                     $mv_sepa->get_iban_bic($mv->ls_konto, $mv->ls_blz);
                 }
 
