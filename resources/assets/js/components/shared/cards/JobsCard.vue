@@ -24,25 +24,8 @@
                     <td>
                         <app-identifier style="width: 9em" v-model="props.item.employer"></app-identifier>
                     </td>
-                    <td style="white-space: nowrap">
-                        <app-text-field-edit-dialog large type="date" v-model="props.item.join_date">
-                            {{props.item.join_date}}
-                        </app-text-field-edit-dialog>
-                    </td>
-                    <td>
-                        <v-edit-dialog lazy>
-                            <span class="white--text" style="width: 5.3em">{{props.item.leave_date}}</span>
-                            <v-text-field
-                                    light
-                                    slot="input"
-                                    type="date"
-                                    v-bind:value="props.item.leave_date"
-                                    @change.native="event => props.item.leave_date = event.target.value"
-                                    single-line
-                                    hide-details
-                            ></v-text-field>
-                        </v-edit-dialog>
-                    </td>
+                    <td style="white-space: nowrap">{{props.item.join_date}}</td>
+                    <td style="white-space: nowrap">{{props.item.leave_date}}</td>
                     <td>{{props.item.hours_per_week}}</td>
                     <td>{{props.item.holidays}}</td>
                     <td>{{props.item.hourly_rate}}</td>
