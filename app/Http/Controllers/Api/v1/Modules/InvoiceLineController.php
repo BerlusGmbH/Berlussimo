@@ -147,15 +147,15 @@ class InvoiceLineController extends Controller
             return !$request->has($key);
         })->all();
         $lineIds = $request->input('lines');
-        $invoice = InvoiceLine::findOrFail($lineIds[0])->BELEG_NR;
-        InvoiceLine::unguarded(function () use ($attributes, $invoice) {
-            InvoiceLineAssignment::where('BELEG_NR', $invoice)->update($attributes);
+        $invoiceId = InvoiceLine::findOrFail($lineIds[0])->BELEG_NR;
+        InvoiceLine::unguarded(function () use ($attributes, $invoiceId) {
+            InvoiceLineAssignment::where('BELEG_NR', $invoiceId)->update($attributes);
         });
         Arr::set($attributes, 'GESAMT_NETTO', DB::raw('PREIS * MENGE * ((100 - RABATT_SATZ)/100)'));
         InvoiceLine::unguarded(function () use ($lineIds, $attributes) {
             InvoiceLine::whereIn('RECHNUNGEN_POS_ID', $lineIds)->update($attributes);
         });
-        Invoice::updateSums($invoice);
+        Invoice::findOrFail($invoiceId)->updateSums();
         return response()->json(['status' => 'ok']);
     }
 }

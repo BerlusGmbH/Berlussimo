@@ -1999,7 +1999,6 @@ switch ($option) {
             $kurzinfo_ugl = $r->ibm850_encode($arr ['a_nr_hw'] . ' ' . $arr ['kundentext'] . ' ' . $arr ['vorgangsnr_gh'] . ' ' . $arr ['datum_d']);
             $kurzinfo .= '\n ' . $kurzinfo_ugl;
 
-            echo "<b>$kurzinfo</b>";
             if ($arr ['a_art'] != 'PA' && $arr ['a_art'] != 'AB' && $arr ['a_art'] != 'RG' && $arr ['a_art'] != 'BE') {
                 $aart = $arr ['a_art'];
                 throw new \App\Exceptions\MessageException(
@@ -2048,11 +2047,12 @@ switch ($option) {
                 if (empty($r1->artikel_info($aussteller_id, $artikel_nr))) {
                     $r1->artikel_leistung_mit_artikelnr_speichern($aussteller_id, $bezeichnung, $listenpreis, $artikel_nr, $rabatt1, $vpe, $mwst, $skonto);
                 }
-                echo "$a. $bezeichnung<br>";
 
                 $r->position_speichern($beleg_nr, $beleg_nr, $aussteller_id, $artikel_nr, $menge, $listenpreis, $mwst, $skonto, $rabatt1, $pos_netto);
             }
-            weiterleiten_in_sec(route('web::rechnungen.show', ['id' => $beleg_nr]), 3);
+            $invoice = \App\Models\Invoice::findOrFail($beleg_nr);
+            $invoice->updateSums();
+            weiterleiten(route('web::rechnungen.show', ['id' => $beleg_nr]));
         }
 
         break;

@@ -417,7 +417,7 @@ OR  `LAND` LIKE  '%$suchtext%'
                 echo "<option value=\"$partner_id\">$partner_name</option>\n";
             }
         }
-        echo "</select><label for=\"$id\">$label</label>\n";
+        echo "</select><label for=\"$id\">$label</label></div>\n";
     }
 
     /* Dropdownfeld mit Gewerken */

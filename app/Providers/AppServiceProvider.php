@@ -49,13 +49,22 @@ class AppServiceProvider extends ServiceProvider
 
         DatabaseNotification::observe(DatabaseNotificationObserver::class);
         InvoiceLine::created(function ($invoiceLine) {
-            Invoice::updateSums($invoiceLine);
+            $invoice = Invoice::find($invoiceLine->BELEG_NR);
+            if ($invoice) {
+                $invoice->updateSums();
+            }
         });
         InvoiceLine::updated(function ($invoiceLine) {
-            Invoice::updateSums($invoiceLine);
+            $invoice = Invoice::find($invoiceLine->BELEG_NR);
+            if ($invoice) {
+                $invoice->updateSums();
+            }
         });
         InvoiceLine::deleted(function ($invoiceLine) {
-            Invoice::updateSums($invoiceLine);
+            $invoice = Invoice::find($invoiceLine->BELEG_NR);
+            if ($invoice) {
+                $invoice->updateSums();
+            }
         });
     }
 

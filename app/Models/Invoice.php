@@ -22,16 +22,18 @@ class Invoice extends Model
     protected $defaultOrder = ['RECHNUNGSDATUM' => 'desc'];
     protected $fillable = ['NETTO', 'BRUTTO', 'SKONTOBETRAG'];
 
-    public static function updateSums($invoiceLine)
+    public function updateSums()
     {
-        if ($invoiceLine instanceof InvoiceLine) {
-            $invoiceLine = $invoiceLine->BELEG_NR;
+        if ($this->BELEG_NR) {
+            $belegNr = $this->BELEG_NR;
+        } else {
+            return;
         }
-        $sums = InvoiceLine::where('BELEG_NR', $invoiceLine)
+        $sums = InvoiceLine::where('BELEG_NR', $belegNr)
             ->selectRaw('SUM(GESAMT_NETTO  * ( (100 + MWST_SATZ) /100 ) * ((100-SKONTO)/100 )) AS cashback,
             SUM(GESAMT_NETTO  * ( (100 + MWST_SATZ) /100 )) AS gross,
             SUM(GESAMT_NETTO) AS net')->first();
-        Invoice::find($invoiceLine)->update([
+        $this->update([
             'NETTO' => $sums->net,
             'BRUTTO' => $sums->gross,
             'SKONTOBETRAG' => $sums->cashback

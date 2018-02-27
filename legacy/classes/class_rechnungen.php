@@ -3841,7 +3841,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         <?php
         $f->hidden_feld('option', 'ugl_sent');
         $f->send_button('btn_send', 'Hochladen');
-        $f->ende_formular();
+        echo "</form>";
     }
 
     function form_import_csv()
