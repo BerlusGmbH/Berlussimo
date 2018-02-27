@@ -126,7 +126,7 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {namespace, Mutation} from "vuex-class";
+    import {Mutation, namespace} from "vuex-class";
     import {Prop, Watch} from "vue-property-decorator";
     import EntitySelect from "../../../common/EntitySelect.vue"
     import {Invoice, InvoiceLine} from "../../../../server/resources";
@@ -147,6 +147,8 @@
         onValueChange(val) {
             if (val) {
                 this.updateUnits();
+                this.lineValue.BELEG_NR = this.invoice.BELEG_NR;
+                this.lineValue.ART_LIEFERANT = this.invoice.from.PARTNER_ID;
             }
         }
 
