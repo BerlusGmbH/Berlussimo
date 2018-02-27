@@ -677,9 +677,9 @@ WHERE `MIETVERTRAG_AKTUELL` = '1' && MIETVERTRAG_ID NOT IN (SELECT KOSTENTRAEGER
                         $mv->get_mietvertrag_infos_aktuell($mv_id);
                         // echo "$mv->einheit_kurzname | $typ | $mv->personen_name_string_u2<br>";
                         if ($mv->mietvertrag_aktuell == '1') {
-                            echo "<tr style=\"background-color:#d5ffe5;\">";
-                        } else {
                             echo "<tr>";
+                        } else {
+                            echo "<tr class='red lighten-2'>";
                         }
                         $d1 = new DateTime ($mv->mietvertrag_von_d);
                         if ($mv->mietvertrag_bis_d == "00.00.0000") {
@@ -703,13 +703,13 @@ WHERE `MIETVERTRAG_AKTUELL` = '1' && MIETVERTRAG_ID NOT IN (SELECT KOSTENTRAEGER
                         }
                         echo "</tr>";
                     } else {
-                        echo "<tr style=\"background-color:#f88b8b;\"><td>$einheit_kn</td><td>$typ</td><td colspan=\"$cols\">IMMER LEER</td></tr>";
+                        echo "<tr class='red lighten-2'><td>$einheit_kn</td><td>$typ</td><td colspan=\"$cols\">IMMER LEER</td></tr>";
                     }
                     unset ($mv_id);
                 }
                 unset ($mv_arr);
 
-                echo "<tr><td colspan=\"$cols\" style=\"background-color:#faffc4;\"></td></tr>";
+                echo "<tr><td colspan=\"$cols\" style=\"padding: 2px; background-color: rgb(99, 99, 99);\"></td></tr>";
             }
             echo "</table>";
         }
