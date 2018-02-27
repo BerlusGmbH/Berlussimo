@@ -36,7 +36,7 @@
                 <app-purchase-contracts-card-compact headline="Kaufverträge"
                                                      :purchase-contracts="unit.kaufvertraege"></app-purchase-contracts-card-compact>
             </v-flex>
-            <v-flex v-if="unit && unit.auftraege.length > 0" xs12>
+            <v-flex xs12>
                 <app-assignments-card headline="Aufträge"
                                       :assignments="unit.auftraege"
                                       :cost-unit="unit"
