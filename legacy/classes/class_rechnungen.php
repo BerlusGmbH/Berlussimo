@@ -921,7 +921,7 @@ class rechnungen
 
                     if ($this->rechnungstyp == 'Rechnung' or $this->rechnungstyp == 'Buchungsbeleg') {
 
-                        $b->dropdown_kostenrahmen_nr('Kostenkonto', 'kostenkonto', $this->rechnungs_empfaenger_typ, $this->rechnungs_empfaenger_id, '7001');
+                        $b->dropdown_kostenrahmen_nr('Kostenkonto', 'kostenkonto', $this->rechnungs_empfaenger_typ, $this->rechnungs_empfaenger_id, '7000');
                     }
                     if ($this->rechnungstyp == 'Gutschrift') {
                         $b->dropdown_kostenrahmen_nr('Kostenkonto', 'kostenkonto', $this->rechnungs_aussteller_typ, $this->rechnungs_aussteller_id, '');
