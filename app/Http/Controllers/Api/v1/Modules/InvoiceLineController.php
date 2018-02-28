@@ -42,6 +42,12 @@ class InvoiceLineController extends Controller
         Arr::set($attributes, 'POSITION', $pos);
         $line = InvoiceLine::forceCreate($attributes);
 
+        Invoice::unguarded(function () use ($line) {
+            $line->invoice->update([
+                'STATUS_VOLLSTAENDIG' => '1'
+            ]);
+        });
+
         $itemExists = InvoiceItem::where('ART_LIEFERANT', $request->input('ART_LIEFERANT'))
             ->where('ARTIKEL_NR', $request->input('ARTIKEL_NR'))
             ->where('LISTENPREIS', $request->input('PREIS'))
@@ -96,6 +102,18 @@ class InvoiceLineController extends Controller
         InvoiceLine::unguarded(function () use ($attributes, $invoiceLine) {
             $invoiceLine->update($attributes);
         });
+        InvoiceItem::unguarded(function () use ($request) {
+            $item = InvoiceItem::where('ART_LIEFERANT', $request->input('ART_LIEFERANT'))
+                ->where('ARTIKEL_NR', $request->input('ARTIKEL_NR'))
+                ->where('AKTUELL', '1')
+                ->orderBy('KATALOG_ID', 'DESC')
+                ->first();
+            if ($item) {
+                $item->update([
+                    'BEZEICHNUNG' => $request->input('BEZEICHNUNG')
+                ]);
+            }
+        });
         InvoiceLineAssignment::unguarded(function () use ($attributes, $invoiceLine) {
             Arr::forget($attributes, 'GESAMT_NETTO');
             Arr::set($attributes, 'EINZEL_PREIS', Arr::get($attributes, 'PREIS'));
@@ -127,7 +145,15 @@ class InvoiceLineController extends Controller
         InvoiceLine::where('BELEG_NR', $invoiceLine->BELEG_NR)
             ->where('POSITION', '>', $invoiceLine->POSITION)
             ->update(['POSITION' => DB::raw('POSITION - 1')]);
+        $invoice = $invoiceLine->invoice;
         $invoiceLine->delete();
+        if (!$invoice->lines()->exists()) {
+            Invoice::unguarded(function () use ($invoiceLine) {
+                $invoiceLine->invoice->update([
+                    'STATUS_VOLLSTAENDIG' => '0'
+                ]);
+            });
+        }
         return response()->json(['status' => 'ok']);
     }
 
