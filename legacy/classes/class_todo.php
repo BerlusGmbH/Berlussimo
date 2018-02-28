@@ -349,13 +349,13 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                         $b->get_benutzer_infos($verfasser_id);
                         $verfasser_name = $b->benutzername;
                         $benutzer_typ = $row ['BENUTZER_TYP'];
-                        if (strtolower($benutzer_typ) == 'person' or empty ($benutzer_typ)) {
+                        if ($benutzer_typ == 'Person' or empty ($benutzer_typ)) {
                             $beteiligt_id = $row ['BENUTZER_ID'];
                             $b = new benutzer ();
                             $b->get_benutzer_infos($beteiligt_id);
                             $beteiligt_name = $b->benutzername;
                         }
-                        if (strtolower($benutzer_typ) == 'partner') {
+                        if ($benutzer_typ == 'Partner') {
                             $partner_id = $row ['BENUTZER_ID'];
                             $pp = new partners ();
                             $pp->get_partner_info($partner_id);
@@ -537,12 +537,12 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         $this->benutzer_id = $row ['BENUTZER_ID'];
         $this->verfasser_id = $row ['VERFASSER_ID'];
         $bb = new benutzer ();
-        if (empty ($this->benutzer_typ) or (strtolower($this->benutzer_typ) == 'person')) {
+        if (empty ($this->benutzer_typ) or ($this->benutzer_typ == 'Person')) {
             $this->benutzer_typ = 'Person';
             $bb->get_benutzer_infos($this->benutzer_id);
             $this->mitarbeiter_name = $bb->benutzername;
         }
-        if (strtolower($this->benutzer_typ) == 'partner') {
+        if ($this->benutzer_typ == 'Partner') {
             $pp = new partners ();
             $pp->get_partner_info($this->benutzer_id);
             $this->partner_ans = "$pp->partner_strasse $pp->partner_hausnr, $pp->partner_plz $pp->partner_ort";
@@ -839,13 +839,13 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $u_verfasser_name = $b->benutzername;
                 $benutzer_typ = $u_aufgaben_arr [$a] ['BENUTZER_TYP'];
                 $beteiligt_id = $u_aufgaben_arr [$a] ['BENUTZER_ID'];
-                if (strtolower($benutzer_typ) == 'person' or empty ($benutzer_typ)) {
+                if ($benutzer_typ == 'Person' or empty ($benutzer_typ)) {
 
                     $b = new benutzer ();
                     $b->get_benutzer_infos($beteiligt_id);
                     $u_beteiligt_name = $b->benutzername;
                 }
-                if (strtolower($benutzer_typ) == 'partner') {
+                if ($benutzer_typ == 'Partner') {
                     $partner_id = $u_aufgaben_arr [$a] ['BENUTZER_ID'];
                     $pp = new partners ();
                     $pp->get_partner_info($partner_id);
@@ -949,11 +949,11 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         $js_id = "";
         $bb->dropdown_kostentraeger_bez_vw('Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id, $this->kos_typ, $this->kos_id);
 
-        if (strtolower($this->benutzer_typ) == 'person' or empty ($this->benutzer_typ)) {
+        if ($this->benutzer_typ == 'Person' or empty ($this->benutzer_typ)) {
             $b = new benutzer ();
             $b->dropdown_benutzer($this->mitarbeiter_name, 1);
         }
-        if (strtolower($this->benutzer_typ) == 'partner') {
+        if ($this->benutzer_typ == 'Partner') {
             $pp = new partners ();
             $pp->partner_dropdown('Partner wählen', 'benutzer_id', 'benutzer_id', $this->benutzer_id);
         }
@@ -1284,7 +1284,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 
         $pdf->ezText($this->text);
         $pdf->ezSetDy(-10); // abstand
-        if (strtolower($this->benutzer_typ) == 'person') {
+        if ($this->benutzer_typ == 'Person') {
             $pdf->ezText("<b>Durchgeführte Arbeiten:</b>");
             $pdf->ezText("_________________________________________________________________________");
             $pdf->ezText("_________________________________________________________________________");
@@ -1322,7 +1322,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             $pdf->addText(240, $pdf->y - 18, 6, "Unterschrift Kunde");
             $pdf->addText(425, $pdf->y - 18, 6, "Unterschrift Monteur");
         }
-        if (strtolower($this->benutzer_typ) == 'partner') {
+        if ($this->benutzer_typ == 'Partner') {
 
             $rr = new rechnung ();
             if ($this->kos_typ == 'Eigentuemer') {
@@ -1397,11 +1397,11 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                     $benutzer_typ = $arr [$a] ['BENUTZER_TYP'];
                     $benutzer_id = $arr [$a] ['BENUTZER_ID'];
 
-                    if (strtolower($benutzer_typ) == 'person') {
+                    if ($benutzer_typ == 'Person') {
                         $bb->get_benutzer_infos($benutzer_id);
                         $benutzer_name = $bb->benutzername;
                     }
-                    if (strtolower($benutzer_typ) == 'partner') {
+                    if ($benutzer_typ == 'Partner') {
                         $p = new partners ();
                         $p->get_partner_info($benutzer_id);
                         $benutzer_name = "$p->partner_name";
@@ -1459,11 +1459,11 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $benutzer_typ = $arr [$a] ['BENUTZER_TYP'];
                 $benutzer_id = $arr [$a] ['BENUTZER_ID'];
 
-                if (strtolower($benutzer_typ) == 'person') {
+                if ($benutzer_typ == 'Person') {
                     $bb->get_benutzer_infos($benutzer_id);
                     $benutzer_name = $bb->benutzername;
                 }
-                if (strtolower($benutzer_typ) == 'partner') {
+                if ($benutzer_typ == 'Partner') {
                     $p = new partners ();
                     $p->get_partner_info($benutzer_id);
                     $benutzer_name = "$p->partner_name";
@@ -1506,11 +1506,11 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                     $benutzer_typ = $arr [$a] ['BENUTZER_TYP'];
                     $benutzer_id = $arr [$a] ['BENUTZER_ID'];
 
-                    if (strtolower($benutzer_typ) == 'person') {
+                    if ($benutzer_typ == 'Person') {
                         $bb->get_benutzer_infos($benutzer_id);
                         $benutzer_name = $bb->benutzername;
                     }
-                    if (strtolower($benutzer_typ) == 'partner') {
+                    if ($benutzer_typ == 'Partner') {
                         $p = new partners ();
                         $p->get_partner_info($benutzer_id);
                         $benutzer_name = "$p->partner_name";

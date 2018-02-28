@@ -109,7 +109,7 @@ class benutzer
     {
         $b = \App\Models\Person::with(['jobsAsEmployee', 'emails'])->findOrFail($b_id);;
         if (isset($b)) {
-            $this->benutzername = $b->name;
+            $this->benutzername = $b->full_name;
             $this->benutzer_id = $b->id;
             $this->geb_datum = $b->birthday;
 
