@@ -1,4 +1,4 @@
-@extends('layouts.main')
+@extends('layouts.legacy')
 
 @section('breadcrumbs')
     <a href="{{ route('web::mietvertraege::legacy') }}" class="breadcrumb">Mietverträge</a>
@@ -13,7 +13,8 @@
                     <div class="row">
                         <div class="input-field col-xs-12 col-md-6">
                             <i class="mdi mdi-account prefix"></i>
-                            <div id="tenant-autocomplete" class="chips invalid" style="margin-left: 3rem">
+                            <div id="tenant-autocomplete" class="chips invalid"
+                                 style="margin-left: 3rem; border-bottom: 1px solid #28b8b4">
                             </div>
                             <span class="error-block">{{$errors->has('tenants') ? $errors->first('tenants') : ''}}</span>
                         </div>
@@ -28,19 +29,19 @@
                         </div>
                         <div class="input-field col-xs-12 col-md-6">
                             <i class="mdi mdi-calendar-today prefix"></i>
-                            <input type="date" class="datepicker {{$errors->has('move-in-date') ? 'invalid' : ''}}"
+                            <input type="date" class="{{$errors->has('move-in-date') ? 'invalid' : ''}}"
                                    id="move-in-date" name="move-in-date"
                                    value="{{old('move-in-date')}}">
                             <span class="error-block">{{$errors->has('move-in-date') ? $errors->first('move-in-date') : ''}}</span>
-                            <label for="move-in-date">Einzugsdatum</label>
+                            <label for="move-in-date" class="active">Einzugsdatum</label>
                         </div>
                         <div class="input-field col-xs-12 col-md-6">
                             <i class="mdi mdi-calendar-range prefix"></i>
-                            <input type="date" class="datepicker {{$errors->has('move-out-date') ? 'invalid' : ''}}"
+                            <input type="date" class="{{$errors->has('move-out-date') ? 'invalid' : ''}}"
                                    id="move-out-date" name="move-out-date"
                                    value="{{old('move-out-date')}}">
                             <span class="error-block">{{$errors->has('move-out-date') ? $errors->first('move-out-date') : ''}}</span>
-                            <label for="move-out-date">Auszugsdatum</label>
+                            <label for="move-out-date" class="active">Auszugsdatum</label>
                         </div>
                         <div class="input-field col-xs-12 col-md-6">
                             <i class="mdi mdi-currency-eur prefix"></i>

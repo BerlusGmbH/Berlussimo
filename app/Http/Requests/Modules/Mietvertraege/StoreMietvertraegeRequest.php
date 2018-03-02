@@ -31,7 +31,7 @@ class StoreMietvertraegeRequest extends MietvertraegeRequest
             'tenants' => 'required|array',
             'unit' => 'required|integer',
             'move-in-date' => $move_in_date_rule,
-            'move-out-date' => 'date|after:move-in-date',
+            'move-out-date' => 'date|after:move-in-date|nullable',
             'rent' => 'required|numeric|min:0',
             'deposit' => 'numeric|min:0',
             'bk-advance' => 'numeric|min:0',

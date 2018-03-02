@@ -589,9 +589,6 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
     {
         /* Neue Zeile */
         $form = new mietkonto ();
-        $anfang = $form->date_german2mysql($anfang);
-        $ende = $form->date_german2mysql($ende);
-        $betrag = $form->nummer_komma2punkt($betrag);
         $me_id = $form->get_mietentwicklung_last_id();
         $me_id = $me_id + 1;
         if ($mwst == 1) {

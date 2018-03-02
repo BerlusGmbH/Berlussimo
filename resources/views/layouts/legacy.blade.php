@@ -47,6 +47,10 @@
         <div class="berlussimo-materialize container fluid">
             {!!$content!!}
         </div>
+    @else
+        <div class="berlussimo-materialize container fluid">
+            @yield('content')
+        </div>
     @endif
     @if(Auth::check())
         <app-notifications id="notifications" style="z-index: 1000"></app-notifications>

@@ -714,8 +714,6 @@ function mietvertrag_anlegen($von, $bis, $einheit_id)
 {
     $akt_mietvertrag_id = mietvertrag_id_letzte();
     $akt_mietvertrag_id = $akt_mietvertrag_id + 1;
-    $von = date_german2mysql($von);
-    $bis = date_german2mysql($bis);
     $dat_alt = letzte_mietvertrag_dat_of_mietvertrag_id($akt_mietvertrag_id);
     DB::insert("INSERT INTO MIETVERTRAG (`MIETVERTRAG_DAT`, `MIETVERTRAG_ID`, `MIETVERTRAG_VON`, `MIETVERTRAG_BIS`, `EINHEIT_ID`, `MIETVERTRAG_AKTUELL`) VALUES (NULL, '$akt_mietvertrag_id', '$von', '$bis', '$einheit_id', '1')");
     $dat_neu = letzte_mietvertrag_dat_of_mietvertrag_id($akt_mietvertrag_id);
