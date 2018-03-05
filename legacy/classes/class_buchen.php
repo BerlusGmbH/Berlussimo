@@ -323,17 +323,17 @@ class buchen
         $arr [5] ['typ'] = 'Partner';
         $arr [5] ['bez'] = 'Partner';
         $arr [6] ['typ'] = 'Mietvertrag';
-        $arr [6] ['bez'] = 'Mieter';
+        $arr [6] ['bez'] = 'Mietvertrag';
         $arr [7] ['typ'] = 'GELDKONTO';
         $arr [7] ['bez'] = 'Geldkonto';
         $arr [8] ['typ'] = 'Eigentuemer';
-        $arr [8] ['bez'] = 'Eigentuemer';
-        $arr [9] ['typ'] = 'Lager';
-        $arr [9] ['bez'] = 'Lager';
-        $arr [10] ['typ'] = 'ALLE';
-        $arr [10] ['bez'] = 'Alle';
-        $arr [11] ['typ'] = 'Benutzer';
-        $arr [11] ['bez'] = 'Benutzer';
+        $arr [8] ['bez'] = 'Kaufvertrag (WEG-Eigentümer)';
+        $arr [9] ['typ'] = 'Person';
+        $arr [9] ['bez'] = 'Person';
+        $arr [10] ['typ'] = 'Lager';
+        $arr [10] ['bez'] = 'Lager';
+        $arr [11] ['typ'] = 'ALLE';
+        $arr [11] ['bez'] = 'Alle';
 
         echo "<option value=\"\">Bitte wählen</option>\n";
 
