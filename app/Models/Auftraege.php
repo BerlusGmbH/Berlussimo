@@ -16,7 +16,7 @@ class Auftraege extends Model
     public $timestamps = false;
     protected $table = 'TODO_LISTE';
     protected $primaryKey = 'T_ID';
-    protected $searchableFields = ['TEXT', 'ERSTELLT'];
+    protected $searchableFields = ['TEXT', 'ERSTELLT', 'T_ID'];
     protected $defaultOrder = ['ERSTELLT' => 'desc'];
     protected $appends = ['type'];
 
