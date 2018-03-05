@@ -56,17 +56,6 @@ function uebersicht_einheit($einheit_id)
     </a>
   </div>";
 
-    echo "<div id='terminate-contract' class='modal'>
-    <div class='modal-content'>
-      <h4>Vertrag beenden</h4>
-      <p>Sind Sie sicher, dass Sie den Vertrag beenden möchten?</p>
-    </div>
-    <div class='modal-footer'>
-      <a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mietvertrag_beenden', 'mietvertrag_id' => $mietvertrag_id]) . "' class='modal-action modal-close waves-effect btn-flat white-text red'>Ja</a>
-      <a href='#!' class='modal-action modal-close waves-effect btn-flat'>Nein</a>
-    </div>
-  </div>";
-
     // ################################## BALKEN EINHEIT---->
 
     $weg = new weg ();
@@ -201,11 +190,11 @@ function uebersicht_einheit($einheit_id)
             $p_einheit_kurzname = $mietvertrag_info2->einheit_kurzname;
 
             if ($mv_status == TRUE) {
-                $aktuelle_einheit_link .= "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $p_einheit_id]) . "'>MV-$mv_id</a>"
-                    . " (<a href='" . route('web::einheiten.show', ['id' => $p_einheit_id]) . "'><b>$p_einheit_kurzname</b></a>)&nbsp;";
+                $aktuelle_einheit_link .= "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $p_einheit_id]) . "'><b>MV-$mv_id</b></a>"
+                    . " (<a href='" . route('web::einheiten.show', ['id' => $p_einheit_id]) . "'>$p_einheit_kurzname</a>)&nbsp;";
             } else {
-                $alte_einheit_link .= "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $p_einheit_id]) . "'>MV-$mv_id</a>"
-                    . " (<a href='" . route('web::einheiten.show', ['id' => $p_einheit_id]) . "'><b>$p_einheit_kurzname</b></a>)&nbsp;";
+                $alte_einheit_link .= "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $p_einheit_id]) . "'><b>MV-$mv_id</b></a>"
+                    . " (<a href='" . route('web::einheiten.show', ['id' => $p_einheit_id]) . "'>$p_einheit_kurzname</a>)&nbsp;";
             }
         }
         echo "$mieternamen_str";
@@ -232,10 +221,11 @@ function uebersicht_einheit($einheit_id)
     $vormieter_ids_array = $e->letzter_vormieter($einheit_id);
     if (!empty ($vormieter_ids_array)) {
         for ($b = 0; $b < count($vormieter_ids_array); $b++) {
-            $person_info->get_person_infos($vormieter_ids_array [$b] ['PERSON_MIETVERTRAG_PERSON_ID']);
+            $vormieter_person_id = $vormieter_ids_array [$b] ['PERSON_MIETVERTRAG_PERSON_ID'];
+            $person_info->get_person_infos($vormieter_person_id);
             $person_nachname = $person_info->person_nachname;
             $person_vorname = $person_info->person_vorname;
-            echo "$person_nachname $person_vorname<br>";
+            echo "<a href='" . route('web::personen.show', ['id' => $vormieter_person_id]) . "'>$person_nachname, $person_vorname</a><br>";
         }
     } else {
         echo "Keine Vormieter";
@@ -263,7 +253,7 @@ function uebersicht_einheit($einheit_id)
         $mietvertrag_bis_datum = date_mysql2german($mv->mietvertrag_bis);
         if ($mietvertrag_bis_datum == '00.00.0000') {
             echo "AUSZUG: <b>ungekündigt</b><br>";
-            $link_vertrag_beenden =  "<a class='modal-trigger red-text' href='#terminate-contract'>Vertrag Beenden</a><br>";
+            $link_vertrag_beenden = "<a class='red-text' href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mietvertrag_beenden', 'mietvertrag_id' => $mietvertrag_id]) . "'>Vertrag Beenden</a><br>";
         } else {
             echo "<p>AUSZUG: <span class='red-text'><b>$mietvertrag_bis_datum</b></span></p>";
         }
