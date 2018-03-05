@@ -71,7 +71,9 @@ switch ($option) {
             $weg = new weg ();
             $weg->einheiten_weg_tabelle_anzeigen(session()->get('objekt_id'));
         } else {
-            weiterleiten(route('web::weg::legacy', ['option' => 'objekt_auswahl'], false));
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Bitte wählen Sie ein Objekt.")
+            );
         }
         break;
 

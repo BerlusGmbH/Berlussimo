@@ -667,6 +667,10 @@ export class RentalContract extends Model implements Active {
         return 'Mietvertrag';
     }
 
+    getApiBaseUrl() {
+        return base_url + '/api/v1/rentalcontracts'
+    }
+
     getID() {
         return this.MIETVERTRAG_ID;
     }
@@ -731,6 +735,10 @@ export class PurchaseContract extends Model implements Active {
     getDetailUrl(): string {
         return base_url + '/weg?option=einheit_uebersicht&einheit_id='
             + this.EINHEIT_ID;
+    }
+
+    getApiBaseUrl() {
+        return base_url + '/api/v1/purchasecontracts'
     }
 
     static applyPrototype(contract: PurchaseContract) {

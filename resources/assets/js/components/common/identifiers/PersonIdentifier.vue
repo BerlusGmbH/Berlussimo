@@ -91,7 +91,7 @@
     import jobAddDialog from "../dialogs/JobAddDialog.vue";
     import detailAddDialog from "../dialogs/DetailAddDialog.vue";
     import loginEditDialog from "../dialogs/LoginEditDialog.vue";
-    import {Person} from "../../../server/resources/models";
+    import {Person} from "../../../server/resources";
     import personMergeDialog from "../dialogs/PersonMergeDialog.vue";
     import copyToClipboard from "../../../mixins/CopyToClipboard.vue";
 
