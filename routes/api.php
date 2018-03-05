@@ -78,5 +78,11 @@ Route::group(['prefix' => 'v1', 'as' => 'api.v1.', 'namespace' => 'Api\v1', 'mid
 
         Route::match(['post', 'put', 'patch'], '/invoice-line-assignments/update-batch', 'InvoiceLineAssignmentController@updateBatch')->name('invoices.assignments.batch');
         Route::resource('invoice-line-assignments', 'InvoiceLineAssignmentController', ['only' => ['store', 'update', 'destroy']]);
+
+        Route::get('/rentalcontracts/details/categories', 'RentalContractController@detailsCategories')->name('rentalcontracts.details.categories');
+        Route::get('/rentalcontracts/details/categories/{category}/subcategories', 'RentalContractController@detailsSubcategories')->name('rentalcontracts.details.subcategories');
+
+        Route::get('/purchasecontracts/details/categories', 'PurchaseContractController@detailsCategories')->name('purchasecontracts.details.categories');
+        Route::get('/purchasecontracts/details/categories/{category}/subcategories', 'PurchaseContractController@detailsSubcategories')->name('purchasecontracts.details.subcategories');
     });
 });
