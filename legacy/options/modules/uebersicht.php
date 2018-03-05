@@ -25,7 +25,6 @@ switch ($anzeigen) {
 /* Neue Version zu Einheit oder Einheit und MV */
 function uebersicht_einheit($einheit_id)
 {
-    // echo "ES WIRD BEARBEITET - Hr. Sivac";
     if (request()->has('mietvertrag_id')) {
         $mietvertrag_id = request()->input('mietvertrag_id');
         $mv = new mietvertraege ();
@@ -47,34 +46,14 @@ function uebersicht_einheit($einheit_id)
     }
 
     echo "<div class='fixed-action-btn'>
-    <a href='#tasks' data-target='tasks' class='btn-floating btn-large modal-trigger'>
+    <a href='" . route('web::todo::index', [
+            'q' => '!auftrag(kostenträger(objekt(id='
+                . $e->objekt_id . ') or haus(id='
+                . $e->haus_id . ') or einheit(id='
+                . $einheit_id . ')))[erstellt:desc]'
+        ]) . "' target='_blank' class='btn-floating btn-large modal-trigger'>
       <i class='large mdi mdi-view-list'></i>
     </a>
-  </div>
-  <div id='tasks' class='modal bottom-sheet' style='background-color: #424242'>
-    <div class='modal-content'>";
-    echo "<div class='row'>
-    <div class='col-xs-12'>
-      <ul class='tabs'>
-        <li class='tab col-xs-4'><a class='active' href='#unit'>Einheit</a></li>
-        <li class='tab col-xs-4'><a href='#house'>Haus</a></li>
-        <li class='tab col-xs-4'><a href='#object'>Objekt</a></li>
-      </ul>
-    </div>
-    <div id='unit' class='col-xs-12'>";
-    render_unit_tasks_table($einheit_id);
-    echo "</div>
-    <div id='house' class='col-xs-12'>";
-    render_house_tasks_table($e->haus_id);
-    echo"</div>
-    <div id='object' class='col-xs-12'>";
-    render_object_tasks_table($e->objekt_id);
-    echo "</div>
-  </div>";
-    echo "</div>
-    <div class=\"modal-footer\" style='background-color: #424242'>
-      <a href=\"#!\" class=\"modal-action modal-close waves-effect waves-green btn\">Schließen</a>
-    </div>
   </div>";
 
     echo "<div id='terminate-contract' class='modal'>
@@ -131,7 +110,8 @@ function uebersicht_einheit($einheit_id)
     echo "<div class='col-xs-12 col-md-6 col-lg-3'>";
     echo "<div class='card'>";
     echo "<div class='card-content'>";
-    echo "<div class='card-title'>Objekt: <b>$e->objekt_name</b></div>";
+    echo "<div class='card-title'>Objekt: <a href='" . route('web::objekte.show', ['id' => $e->objekt_id]) . "'><b>$e->objekt_name</b></a></div>";
+    echo "<div class='card-title' style='font-size: medium'>Haus: <a href='" . route('web::haeuser.show', ['id' => $e->haus_id]) . "'><b>$e->haus_strasse $e->haus_nummer</b></a></div>";
     for ($i = 0; $i < count($objekt_details_arr); $i++) {
         echo "<b>" . $objekt_details_arr [$i] ['DETAIL_NAME'] . "</b><br>" . $objekt_details_arr [$i] ['DETAIL_INHALT'] . "<br>";
     }
@@ -147,7 +127,7 @@ function uebersicht_einheit($einheit_id)
     echo "<div class='col-xs-12 col-md-6 col-lg-3'>";
     echo "<div class='card'>";
     echo "<div class='card-content'>";
-    echo "<div class='card-title'>Einheit: <b>$e->einheit_kurzname</b></div>";
+    echo "<div class='card-title'>Einheit: <a href='" . route('web::einheiten.show', ['id' => $einheit_id]) . "'><b>$e->einheit_kurzname</b></a></div>";
     echo "$miteigentuemer_namen";
     if (isset ($betreuer_str)) {
         echo "<b>Betreuer</b>:<br>$betreuer_str<br>";
@@ -200,7 +180,8 @@ function uebersicht_einheit($einheit_id)
         echo "<div class='card'>";
         echo "<div class='card-content'>";
         echo "<div class='card-title'>$zeile. Mieter</div>";
-        $mieternamen_str = "<b>$person_nachname, $person_vorname</b><br>geb. am: " . date_mysql2german($person_geburtstag);
+        $mieternamen_str = "<a href='" . route('web::personen.show', ['id' => $akt_person_id]) . "'><b>$person_nachname, $person_vorname</b></a>"
+            . "<br>geb. am: " . date_mysql2german($person_geburtstag);
         $aktuelle_einheit_link = "";
         $alte_einheit_link = "";
         // ####DETAILS VOM MIETER
@@ -213,15 +194,18 @@ function uebersicht_einheit($einheit_id)
 
         for ($a = 0; $a < count($person_mv_id_array); $a++) {
             $person_info2 = new person ();
-            $mv_status = $person_info2->get_vertrags_status($person_mv_id_array [$a] ['PERSON_MIETVERTRAG_MIETVERTRAG_ID']);
+            $mv_id = $person_mv_id_array [$a] ['PERSON_MIETVERTRAG_MIETVERTRAG_ID'];
+            $mv_status = $person_info2->get_vertrags_status($mv_id);
             $mietvertrag_info2 = new mietvertrag ();
-            $p_einheit_id = $mietvertrag_info2->get_einheit_id_von_mietvertrag($person_mv_id_array [$a] ['PERSON_MIETVERTRAG_MIETVERTRAG_ID']);
+            $p_einheit_id = $mietvertrag_info2->get_einheit_id_von_mietvertrag($mv_id);
             $p_einheit_kurzname = $mietvertrag_info2->einheit_kurzname;
 
             if ($mv_status == TRUE) {
-                $aktuelle_einheit_link .= "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $p_einheit_id]) . "'>$p_einheit_kurzname</a>&nbsp;";
+                $aktuelle_einheit_link .= "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $p_einheit_id]) . "'>MV-$mv_id</a>"
+                    . " (<a href='" . route('web::einheiten.show', ['id' => $p_einheit_id]) . "'><b>$p_einheit_kurzname</b></a>)&nbsp;";
             } else {
-                $alte_einheit_link .= "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $p_einheit_id]) . "'>$p_einheit_kurzname</a>&nbsp;";
+                $alte_einheit_link .= "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $p_einheit_id]) . "'>MV-$mv_id</a>"
+                    . " (<a href='" . route('web::einheiten.show', ['id' => $p_einheit_id]) . "'><b>$p_einheit_kurzname</b></a>)&nbsp;";
             }
         }
         echo "$mieternamen_str";
@@ -396,264 +380,4 @@ function uebersicht_einheit($einheit_id)
     echo "</div>";
     echo "</div>";
     echo "</div>";
-}
-
-function render_unit_tasks_table($einheit_id) {
-    $t = new todo ();
-    $t_arr = $t->get_auftraege_einheit('Einheit', $einheit_id, '0');
-
-    if(\App\Models\Einheiten::find($einheit_id)->hasHinweis()) {
-        $link_neuer_auftrag_int = '<i style="font-size: xx-large" class="mdi mdi-alert red-text tooltipped"
-                       data-tooltip="Hinweise beachten"></i> ';
-    } else {
-        $link_neuer_auftrag_int = '';
-    }
-
-    $link_neuer_auftrag_int .= "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Mitarbeiter' href='" . route('web::construction::legacy', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => 'Einheit', 'kos_id' => $einheit_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-worker'></i></a>";
-    $link_neuer_auftrag_ext = "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Partner' href='" . route('web::construction::legacy', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => 'Einheit', 'kos_id' => $einheit_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-account-multiple'></i></a>";
-    echo "<div class='input-field right-align'>$link_neuer_auftrag_int $link_neuer_auftrag_ext</div>";
-
-    $anz_t = count($t_arr);
-    echo "<table class='striped'>";
-    echo "<thead><tr><th>DATUM</th><th>VON/AN</th><th>AUFTRAG</th></tr></thead>";
-    for ($t = 0; $t < $anz_t; $t++) {
-        $txt = $t_arr [$t] ['TEXT'];
-        $d_erstellt = date_mysql2german($t_arr [$t] ['ANZEIGEN_AB']);
-        $t_id = $t_arr [$t] ['T_ID'];
-        $verfasser_id = $t_arr [$t] ['VERFASSER_ID'];
-        $b = new benutzer ();
-        $b->get_benutzer_infos($verfasser_id);
-        $verfasser_name = $b->benutzername;
-
-        $beteiligt_typ = $t_arr [$t] ['BENUTZER_TYP'];
-        $beteiligt_id = $t_arr [$t] ['BENUTZER_ID'];
-
-        if ($beteiligt_typ == 'Benutzer' or empty ($beteiligt_typ)) {
-
-            $b1 = new benutzer ();
-            $b1->get_benutzer_infos($beteiligt_id);
-            $beteiligt_name = "<b>$b1->benutzername</b>";
-        }
-
-        if ($beteiligt_typ == 'Partner') {
-            $pp = new partners ();
-            $pp->get_partner_info($beteiligt_id);
-            $beteiligt_name = "<b>$pp->partner_name</b>";
-        }
-        $link_pdf = "<a href='" . route('web::construction::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-        $link_txt = "<a href='" . route('web::construction::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
-
-        echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
-    }
-    echo "</table>";
-    $t = new todo ();
-    $t_arr = $t->get_auftraege_einheit('Einheit', $einheit_id, '1');
-
-    $anz_t = count($t_arr);
-
-    echo "<table class='striped'>";
-    echo "<thead><tr><th>DATUM</th><th>VON/AN</th><th>ERLEDIGT</th></tr></thead>";
-    for ($t = 0; $t < $anz_t; $t++) {
-        $txt = $t_arr [$t] ['TEXT'];
-        $d_erstellt = date_mysql2german($t_arr [$t] ['ANZEIGEN_AB']);
-        $t_id = $t_arr [$t] ['T_ID'];
-        $verfasser_id = $t_arr [$t] ['VERFASSER_ID'];
-        $b = new benutzer ();
-        $b->get_benutzer_infos($verfasser_id);
-        $verfasser_name = $b->benutzername;
-        $beteiligt_id = $t_arr [$t] ['BENUTZER_ID'];
-        $beteiligt_typ = $t_arr [$t] ['BENUTZER_TYP'];
-        if ($beteiligt_typ == 'Benutzer' or empty ($beteiligt_typ)) {
-
-            $b1 = new benutzer ();
-            $b1->get_benutzer_infos($beteiligt_id);
-            $beteiligt_name = "<b>$b1->benutzername</b>";
-        }
-
-        if ($beteiligt_typ == 'Partner') {
-            $pp = new partners ();
-            $pp->get_partner_info($beteiligt_id);
-            $beteiligt_name = "<b>$pp->partner_name</b>";
-        }
-
-        $link_pdf = "<a href='" . route('web::construction::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-        $link_txt = "<a href='" . route('web::construction::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
-
-        echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
-    }
-    echo "</table>";
-}
-
-function render_house_tasks_table($haus_id) {
-    $t = new todo ();
-    $t_arr = $t->get_auftraege_einheit('Haus', $haus_id, '0');
-
-    if(\App\Models\Haeuser::find($haus_id)->hasHinweis()) {
-        $link_neuer_auftrag_int = '<i style="font-size: xx-large" class="mdi mdi-alert red-text tooltipped"
-                       data-tooltip="Hinweise beachten"></i> ';
-    } else {
-        $link_neuer_auftrag_int = '';
-    }
-
-    $link_neuer_auftrag_int .= "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Mitarbeiter' href='" . route('web::construction::legacy', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => 'Haus', 'kos_id' => $haus_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-worker'></i></a>";
-    $link_neuer_auftrag_ext = "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Partner' href='" . route('web::construction::legacy', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => 'Haus', 'kos_id' => $haus_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-account-multiple'></i></a>";
-
-    echo "<div class='input-field right-align'>$link_neuer_auftrag_int $link_neuer_auftrag_ext</div>";
-
-
-    $anz_t = count($t_arr);
-    echo "<table class='striped'>";
-    echo "<thead><tr><th>DATUM</th><th>VON/AN</th><th>AUFTRAG</th></tr></thead>";
-    for ($t = 0; $t < $anz_t; $t++) {
-        $txt = $t_arr [$t] ['TEXT'];
-        $d_erstellt = date_mysql2german($t_arr [$t] ['ANZEIGEN_AB']);
-        $t_id = $t_arr [$t] ['T_ID'];
-        $verfasser_id = $t_arr [$t] ['VERFASSER_ID'];
-        $b = new benutzer ();
-        $b->get_benutzer_infos($verfasser_id);
-        $verfasser_name = $b->benutzername;
-
-        $beteiligt_typ = $t_arr [$t] ['BENUTZER_TYP'];
-        $beteiligt_id = $t_arr [$t] ['BENUTZER_ID'];
-
-        if ($beteiligt_typ == 'Benutzer' or empty ($beteiligt_typ)) {
-
-            $b1 = new benutzer ();
-            $b1->get_benutzer_infos($beteiligt_id);
-            $beteiligt_name = "<b>$b1->benutzername</b>";
-        }
-
-        if ($beteiligt_typ == 'Partner') {
-            $pp = new partners ();
-            $pp->get_partner_info($beteiligt_id);
-            $beteiligt_name = "<b>$pp->partner_name</b>";
-        }
-        $link_pdf = "<a href='" . route('web::construction::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-        $link_txt = "<a href='" . route('web::construction::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
-
-        echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
-    }
-    echo "</table>";
-    $t = new todo ();
-    $t_arr = $t->get_auftraege_einheit('Haus', $e->haus_id, '1');
-
-    $anz_t = count($t_arr);
-
-    echo "<table class='striped'>";
-    echo "<thead><tr><th>DATUM</th><th>VON/AN</th><th>ERLEDIGT</th></tr></thead>";
-    for ($t = 0; $t < $anz_t; $t++) {
-        $txt = $t_arr [$t] ['TEXT'];
-        $d_erstellt = date_mysql2german($t_arr [$t] ['ANZEIGEN_AB']);
-        $t_id = $t_arr [$t] ['T_ID'];
-        $verfasser_id = $t_arr [$t] ['VERFASSER_ID'];
-        $b = new benutzer ();
-        $b->get_benutzer_infos($verfasser_id);
-        $verfasser_name = $b->benutzername;
-        $beteiligt_id = $t_arr [$t] ['BENUTZER_ID'];
-        $beteiligt_typ = $t_arr [$t] ['BENUTZER_TYP'];
-        if ($beteiligt_typ == 'Benutzer' or empty ($beteiligt_typ)) {
-
-            $b1 = new benutzer ();
-            $b1->get_benutzer_infos($beteiligt_id);
-            $beteiligt_name = "<b>$b1->benutzername</b>";
-        }
-
-        if ($beteiligt_typ == 'Partner') {
-            $pp = new partners ();
-            $pp->get_partner_info($beteiligt_id);
-            $beteiligt_name = "<b>$pp->partner_name</b>";
-        }
-
-        $link_pdf = "<a href='" . route('web::construction::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-        $link_txt = "<a href='" . route('web::construction::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
-
-        echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
-    }
-    echo "</table>";
-}
-
-function render_object_tasks_table($objekt_id) {
-    $t = new todo ();
-    $t_arr = $t->get_auftraege_einheit('Objekt', $objekt_id, '0');
-
-    if(\App\Models\Objekte::find($objekt_id)->hasHinweis()) {
-        $link_neuer_auftrag_int = '<i style="font-size: xx-large" class="mdi mdi-alert red-text tooltipped"
-                       data-tooltip="Hinweise beachten"></i> ';
-    } else {
-        $link_neuer_auftrag_int = '';
-    }
-    $link_neuer_auftrag_int .= "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Mitarbeiter' href='" . route('web::construction::legacy', ['option' => 'neues_projekt', 'typ' => 'Benutzer', 'kos_typ' => 'Objekt', 'kos_id' => $objekt_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-worker'></i></a>";
-    $link_neuer_auftrag_ext = "<a class='waves-effect waves-light btn tooltipped' data-tooltip='Auftrag an Partner' href='" . route('web::construction::legacy', ['option' => 'neues_projekt', 'typ' => 'Partner', 'kos_typ' => 'Objekt', 'kos_id' => $objekt_id]) . "'><i class='mdi mdi-plus'></i><i class='mdi mdi-clipboard'></i><i class='mdi mdi-account-multiple'></i></a>";
-
-    echo "<div class='input-field right-align'>$link_neuer_auftrag_int $link_neuer_auftrag_ext</div>";
-
-    $anz_t = count($t_arr);
-    echo "<table class='striped'>";
-    echo "<thead><tr><th>DATUM</th><th>VON/AN</th><th>AUFTRAG</th></tr></thead>";
-    for ($t = 0; $t < $anz_t; $t++) {
-        $txt = $t_arr [$t] ['TEXT'];
-        $d_erstellt = date_mysql2german($t_arr [$t] ['ANZEIGEN_AB']);
-        $t_id = $t_arr [$t] ['T_ID'];
-        $verfasser_id = $t_arr [$t] ['VERFASSER_ID'];
-        $b = new benutzer ();
-        $b->get_benutzer_infos($verfasser_id);
-        $verfasser_name = $b->benutzername;
-
-        $beteiligt_typ = $t_arr [$t] ['BENUTZER_TYP'];
-        $beteiligt_id = $t_arr [$t] ['BENUTZER_ID'];
-
-        if ($beteiligt_typ == 'Benutzer' or empty ($beteiligt_typ)) {
-
-            $b1 = new benutzer ();
-            $b1->get_benutzer_infos($beteiligt_id);
-            $beteiligt_name = "<b>$b1->benutzername</b>";
-        }
-
-        if ($beteiligt_typ == 'Partner') {
-            $pp = new partners ();
-            $pp->get_partner_info($beteiligt_id);
-            $beteiligt_name = "<b>$pp->partner_name</b>";
-        }
-        $link_pdf = "<a href='" . route('web::construction::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-        $link_txt = "<a href='" . route('web::construction::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
-
-        echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
-    }
-    echo "</table>";
-    $t = new todo ();
-    $t_arr = $t->get_auftraege_einheit('Objekt', $e->objekt_id, '1');
-
-    $anz_t = count($t_arr);
-
-    echo "<table class='striped'>";
-    echo "<thead><tr><th>DATUM</th><th>VON/AN</th><th>ERLEDIGT</th></tr></thead>";
-    for ($t = 0; $t < $anz_t; $t++) {
-        $txt = $t_arr [$t] ['TEXT'];
-        $d_erstellt = date_mysql2german($t_arr [$t] ['ANZEIGEN_AB']);
-        $t_id = $t_arr [$t] ['T_ID'];
-        $verfasser_id = $t_arr [$t] ['VERFASSER_ID'];
-        $b = new benutzer ();
-        $b->get_benutzer_infos($verfasser_id);
-        $verfasser_name = $b->benutzername;
-        $beteiligt_id = $t_arr [$t] ['BENUTZER_ID'];
-        $beteiligt_typ = $t_arr [$t] ['BENUTZER_TYP'];
-        if ($beteiligt_typ == 'Benutzer' or empty ($beteiligt_typ)) {
-
-            $b1 = new benutzer ();
-            $b1->get_benutzer_infos($beteiligt_id);
-            $beteiligt_name = "<b>$b1->benutzername</b>";
-        }
-
-        if ($beteiligt_typ == 'Partner') {
-            $pp = new partners ();
-            $pp->get_partner_info($beteiligt_id);
-            $beteiligt_name = "<b>$pp->partner_name</b>";
-        }
-
-        $link_pdf = "<a href='" . route('web::construction::legacy', ['option' => 'pdf_auftrag', 'proj_id' => $t_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-        $link_txt = "<a href='" . route('web::construction::legacy', ['option' => 'edit', 't_id' => $t_id]) . "'>$txt</a>";
-
-        echo "<tr><td>$d_erstellt<br>$link_pdf</td><td>$verfasser_name<br>$beteiligt_name</td><td>$link_txt</td></tr>";
-    }
-    echo "</table>";
 }
