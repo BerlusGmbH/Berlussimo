@@ -731,7 +731,7 @@ ORDER BY EINHEIT_KURZNAME ASC");
             $gesamt_std = $this->stunden_gesamt_kostentraeger($kos_typ, $kos_id, $datum_a, $datum_e);
             $gesamt_eur = nummer_punkt2komma($gesamt_std * $preis);
 
-            foreach($resultat as $row) {
+            foreach ($resultat as $row) {
                 $benutzname = $row ['name'];
                 $std = nummer_punkt2komma($row ['STD']);
                 $leistung_eur = nummer_punkt2komma($row ['LEISTUNG_EUR']);
@@ -766,7 +766,7 @@ ORDER BY EINHEIT_KURZNAME ASC");
         if (!empty($resultat)) {
             echo "<table class=\"sortable striped\">";
             echo "<thead><tr><th>Baustelle</th><th>SOLL</th><th>GESAMT</th><th>DIFF</th><th>STATUS</th></tr></thead>";
-            foreach($resultat as $row) {
+            foreach ($resultat as $row) {
                 $kos_typ = $row ['KOSTENTRAEGER_TYP'];
                 $kos_id = $row ['KOSTENTRAEGER_ID'];
                 $datum_a = $row ['A_DATUM'];
@@ -975,8 +975,12 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
         $f->fieldset('BAU', 'bauid');
         $r = new rechnung ();
         $kos_bez = $r->kostentraeger_ermitteln($kos_typ, $kos_id);
-        echo "<h1>$kos_bez</h1>";
+        echo "<h4>$kos_bez</h4>";
         $b_arr = $this->get_bau_beleg_arr();
+        echo "Kontrollbelege: ";
+        foreach ($b_arr as $beleg) {
+            echo "<a href='" . route('web::rechnungen.show', ['id' => $beleg['BELEG_NR']]) . "' target='_blank'>" . $beleg['BELEG_NR'] . "</a> ";
+        }
         if (empty($b_arr)) {
             fehlermeldung_ausgeben("Keine Belege in BAU_BELEG DB hinterlegt");
         } else {
@@ -985,7 +989,7 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
                 $empty = true;
                 $beleg_nr = $b_arr [$a] ['BELEG_NR'];
                 $r->rechnung_grunddaten_holen($beleg_nr);
-                $table = "<h2><b>$r->kurzbeschreibung</b></h2>";
+                $table = "<h5><b>$r->kurzbeschreibung</b></h5>";
                 $pos_arr = $r->rechnungs_positionen_arr($beleg_nr);
                 if (!empty($pos_arr)) {
                     $anz_p = count($pos_arr);
@@ -1016,7 +1020,7 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
 
         $result = DB::select("SELECT BELEG_NR, POSITION, MENGE FROM `KONTIERUNG_POSITIONEN` WHERE `KOSTENTRAEGER_TYP` LIKE '$kos_typ' AND `KOSTENTRAEGER_ID` ='$kos_id' AND `AKTUELL` = '1'");
 
-        foreach($result as $row) {
+        foreach ($result as $row) {
             $beleg_nr = $row ['BELEG_NR'];
             $position = $row ['POSITION'];
             $menge_kont = $row ['MENGE'];
