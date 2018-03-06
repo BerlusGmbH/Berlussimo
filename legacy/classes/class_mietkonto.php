@@ -401,10 +401,8 @@ ORDER BY BUCHUNGSNUMMER DESC");
         && KOSTENKATEGORIE NOT LIKE '%abrechnung%' 
         && KOSTENKATEGORIE NOT LIKE '%mahngebühr%' 
         && KOSTENKATEGORIE NOT LIKE 'Saldo Vortrag Vorverwaltung' 
-        && KOSTENKATEGORIE NOT LIKE '%energie%' 
-        && KOSTENKATEGORIE NOT LIKE 'Kabel TV %'
+        && KOSTENKATEGORIE NOT LIKE '%energie%'
         && KOSTENKATEGORIE NOT LIKE 'Nebenkosten VZ - Anteilig'
-        && KOSTENKATEGORIE NOT LIKE 'Thermenwartung %'
         ORDER BY ANFANG ASC");
         if (empty($result)) {
             return '0.00';
