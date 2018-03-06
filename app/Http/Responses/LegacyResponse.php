@@ -35,7 +35,7 @@ class LegacyResponse extends Response
         for($i = 0; $i < $headers_count; $i++) {
             $head = explode(':', $headers[$i]);
             if (in_array(strtolower(trim($head[0])), $this->filter)) {
-                $headers[trim($head[0])] = trim($head[1]);
+                $headers[trim($head[0])] = trim(implode(':', array_slice($head, 1)));
             }
             unset($headers[$i]);
         }

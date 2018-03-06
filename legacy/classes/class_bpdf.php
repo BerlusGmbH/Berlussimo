@@ -179,6 +179,9 @@ class b_pdf
                 }
             }
 
+            $date = \Carbon\Carbon::today()->toDateString();
+            $file_name = "$date - $this->v_kurztext";
+
             if (request()->exists('emailsend')) {
                 /* erste packen und gz erstellen */
                 $storage = Storage::disk('serienbriefe');
@@ -188,8 +191,7 @@ class b_pdf
                 if (!$storage->exists(explode('@', Auth::user()->email)[0])) {
                     $storage->makeDirectory(explode('@', Auth::user()->email)[0]);
                 }
-
-                $tar_file_name = "Serienbrief - $mv->einheit_kurzname - $this->v_kurztext vom $datum_heute.tar.gz";
+                $tar_file_name = $file_name . ".tar.gz";
 
                 exec("cd $tar_dir_name && tar cfvz '$tar_file_name' *.pdf");
                 exec("rm $tar_dir_name/*.pdf");
@@ -197,9 +199,9 @@ class b_pdf
                 /* das Raus */
                 ob_clean(); // ausgabepuffer leeren
 
-                $file = "$tar_dir_name/Serienbrief - $mv->einheit_kurzname - $this->v_kurztext vom $datum_heute.tar.gz";
+                $file = "$tar_dir_name/$tar_file_name";
                 if (file_exists($file)) {
-                    header('Content-Disposition: attachment; filename="'.basename($file).'"');
+                    header('Content-Disposition: attachment; filename="' . $tar_file_name . '"');
                     readfile($file);
                     exec("rm '$tar_dir_name/$tar_file_name'");
                     exit;
@@ -208,7 +210,7 @@ class b_pdf
                 /* Kein Emailversand angefordert, nur ansehen */
                 /* Ausgabe */
                 ob_end_clean(); // ausgabepuffer leeren
-                $dateiname = "\"$datum_heute - Serie - $this->v_kurztext.pdf\"";
+                $dateiname = $file_name . ".pdf";
                 $pdf_opt ['Content-Disposition'] = $dateiname;
                 $pdf->ezStream($pdf_opt);
             }

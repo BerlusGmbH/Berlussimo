@@ -67,7 +67,7 @@ class serienbrief
     {
         $anz_empf = count($empf_id_arr);
         if ($anz_empf > 0) {
-
+            $date = \Carbon\Carbon::today()->toDateString();
             if ($empf_typ == 'Eigentuemer') {
 
                 $pdf = new Cezpdf ('a4', 'portrait');
@@ -133,7 +133,7 @@ class serienbrief
                     }
                 }
                 ob_end_clean(); // ausgabepuffer leeren
-                $dateiname = "$datum_heute - Serie - $bpdf->v_kurztext.pdf";
+                $dateiname = "$date - $bpdf->v_kurztext.pdf";
                 $pdf_opt ['Content-Disposition'] = $dateiname;
                 $pdf->ezStream($pdf_opt);
             }
@@ -192,7 +192,7 @@ class serienbrief
                     }
                 }
                 ob_end_clean(); // ausgabepuffer leeren
-                $dateiname = "$datum_heute - Serie - $bpdf->v_kurztext.pdf";
+                $dateiname = "$date - $bpdf->v_kurztext.pdf";
                 $pdf_opt['Content-Disposition'] = $dateiname;
                 $pdf->ezStream($pdf_opt);
             }
