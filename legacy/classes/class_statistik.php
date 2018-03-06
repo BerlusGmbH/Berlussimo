@@ -977,13 +977,13 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
         $kos_bez = $r->kostentraeger_ermitteln($kos_typ, $kos_id);
         echo "<h4>$kos_bez</h4>";
         $b_arr = $this->get_bau_beleg_arr();
-        echo "Kontrollbelege: ";
-        foreach ($b_arr as $beleg) {
-            echo "<a href='" . route('web::rechnungen.show', ['id' => $beleg['BELEG_NR']]) . "' target='_blank'>" . $beleg['BELEG_NR'] . "</a> ";
-        }
         if (empty($b_arr)) {
             fehlermeldung_ausgeben("Keine Belege in BAU_BELEG DB hinterlegt");
         } else {
+            echo "Kontrollbelege: ";
+            foreach ($b_arr as $beleg) {
+                echo "<a href='" . route('web::rechnungen.show', ['id' => $beleg['BELEG_NR']]) . "' target='_blank'>" . $beleg['BELEG_NR'] . "</a> ";
+            }
             $anz = count($b_arr);
             for ($a = 0; $a < $anz; $a++) {
                 $empty = true;
