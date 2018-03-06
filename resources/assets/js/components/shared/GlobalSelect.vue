@@ -2,7 +2,7 @@
     <app-entity-select :value="selected"
                        @input="select"
                        hide-details
-                       :entities="['partner', 'bankkonto', 'objekt']"
+                       :entities="['objekt', 'partner', 'bankkonto']"
                        append-icon=""
                        multiple class="global-select"
                        @focusout.native="checkReload"
