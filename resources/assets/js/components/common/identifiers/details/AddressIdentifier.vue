@@ -2,7 +2,7 @@
     <div style="display: flex">
         <div style="margin-right: 0.2rem; display: flex; flex-direction: column">
             <div class="identifier" style="display: block">
-                <v-icon class="identifier-icon">mdi-email</v-icon>
+                <b-icon :tooltips="['Adresse']" class="identifier-icon">mdi-email</b-icon>
                 <div @click="copyToClipboard(value.DETAIL_INHALT, 'Adresse')"
                      style="display: inline-block; cursor: pointer; vertical-align: middle" ref="detail"
                      v-html="$options.filters.substituteNewlineWithBr(value.DETAIL_INHALT)"
@@ -10,8 +10,8 @@
                 </div>
             </div>
             <div class="identifier" style="display: block">
-                <template v-if="value.DETAIL_BEMERKUNG">
-                    <v-icon class="identifier-icon">mdi-note</v-icon>
+                <template :tooltips="['Bemerkung']" v-if="value.DETAIL_BEMERKUNG">
+                    <b-icon class="identifier-icon">mdi-note</b-icon>
                     <div @click="copyToClipboard(value.DETAIL_BEMERKUNG, 'Bemerkung')"
                          style="display: inline-block; cursor: pointer; vertical-align: middle"
                     >

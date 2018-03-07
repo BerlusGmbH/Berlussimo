@@ -1,6 +1,9 @@
 <template>
     <div class="identifier">
-        <v-icon class="identifier-icon">{{value.getEntityIcon()}}</v-icon>
+        <b-icon :tooltips="value.getEntityIconTooltips()"
+                class="identifier-icon">
+            {{value.getEntityIcon()}}
+        </b-icon>
         {{String(value)}}
     </div>
 </template>

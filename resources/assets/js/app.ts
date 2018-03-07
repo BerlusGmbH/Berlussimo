@@ -21,6 +21,7 @@ import entitySelect from "./components/common/EntitySelect.vue";
 import transitionCollapse from "./components/common/transitions/Collapse.vue";
 import BNumberField from "./components/common/BNumberField.vue";
 import BYearField from "./components/common/BYearField.vue";
+import BIcon from "./components/common/BIcon.vue";
 import {nformat, substituteNewlineWithBr} from "./filters";
 
 Vue.component('app-identifier', identifier);
@@ -32,6 +33,7 @@ Vue.component('app-entity-select', entitySelect);
 Vue.component('app-transition-collapse', transitionCollapse);
 Vue.component('b-number-field', BNumberField);
 Vue.component('b-year-field', BYearField);
+Vue.component('b-icon', BIcon);
 Vue.filter('substituteNewlineWithBr', substituteNewlineWithBr);
 Vue.filter('nformat', nformat);
 

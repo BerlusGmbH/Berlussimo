@@ -2,15 +2,15 @@
     <div style="display: flex">
         <div style="margin-right: 0.2rem; display: flex; flex-direction: column">
             <div class="identifier" style="display: block">
-                <v-icon class="identifier-icon">mdi-fax</v-icon>
-                <div @click="copyToClipboard(value.DETAIL_INHALT, 'Faxnummer')"
+                <b-icon :tooltips="['Fax']" class="identifier-icon">mdi-fax</b-icon>
+                <div @click="copyToClipboard(value.DETAIL_INHALT, 'Fax')"
                      style="display: inline-block; cursor: pointer; vertical-align: middle" ref="detail">
                     {{value.DETAIL_INHALT}}
                 </div>
             </div>
             <div class="identifier" style="display: block">
                 <template v-if="value.DETAIL_BEMERKUNG">
-                    <v-icon class="identifier-icon">mdi-note</v-icon>
+                    <b-icon :tooltips="['Bemerkung']" class="identifier-icon">mdi-note</b-icon>
                     <div @click="copyToClipboard(value.DETAIL_BEMERKUNG, 'Bemerkung')"
                          style="display: inline-block; cursor: pointer; vertical-align: middle"
                     >

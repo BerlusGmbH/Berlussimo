@@ -1,6 +1,6 @@
 <template>
     <div class="identifier">
-        <v-icon>mdi-bank</v-icon>
+        <b-icon :tooltips="value.getEntityIconTooltips()">mdi-bank</b-icon>
         {{String(value)}}
     </div>
 </template>

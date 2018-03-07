@@ -1,6 +1,9 @@
 <template>
     <div class="identifier">
-        <v-icon class="identifier-icon">{{value.getEntityIcon()}}</v-icon>
+        <b-icon :tooltips="value.getEntityIconTooltips()"
+                class="identifier-icon">
+            {{value.getEntityIcon()}}
+        </b-icon>
         <a :href="value.getDetailUrl()">{{String(value)}}</a>
         <v-menu offset-y v-model="show" :position-absolutely="true">
             <v-icon slot="activator" style="font-size: inherit">mdi-arrow-down-drop-circle</v-icon>
