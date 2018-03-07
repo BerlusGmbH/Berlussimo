@@ -15,12 +15,14 @@ import tile from "./components/common/tiles/Tile.vue";
 import chip from "./components/common/chips/Chip.vue";
 import {substituteNewlineWithBr} from "./filters";
 import VEditDialog from "./components/common/VEditDialog.vue";
+import BIcon from "./components/common/BIcon.vue";
 
 
 Vue.component('app-identifier', identifier);
 Vue.component('app-tile', tile);
 Vue.component('app-chip', chip);
 Vue.component('app-edit-dialog', VEditDialog);
+Vue.component('b-icon', BIcon);
 Vue.filter('substituteNewlineWithBr', substituteNewlineWithBr);
 
 new Vue({

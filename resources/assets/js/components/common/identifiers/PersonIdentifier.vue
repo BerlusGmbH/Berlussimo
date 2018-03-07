@@ -1,10 +1,10 @@
 <template>
     <div class="identifier">
         <div v-if="value.hasNotes()">
-            <v-icon color="error">mdi-alert</v-icon>
+            <b-icon :tooltips="value.getNoteTooltips()" color="error">mdi-alert</b-icon>
         </div>
         <div ref="identifier">
-            <v-icon>{{value.getEntityIcon()}}</v-icon>
+            <b-icon :tooltips="value.getEntityIconTooltips()">{{value.getEntityIcon()}}</b-icon>
         </div>
         <router-link v-if="$router" :to="{name: 'web.persons.show', params: { id: String(value.getID()) }}"
         >
@@ -12,7 +12,7 @@
         </router-link>
         <a v-else :href="value.getDetailUrl()">{{String(value)}}</a>
         <div>
-            <v-icon v-if="value.getSexIcon()">{{value.getSexIcon()}}</v-icon>
+            <b-icon v-if="value.getSexIcon()" :tooltip="value.sex">{{value.getSexIcon()}}</b-icon>
         </div>
         <v-menu offset-y v-model="show" :position-absolutely="true">
             <v-icon slot="activator" style="font-size: inherit">mdi-arrow-down-drop-circle</v-icon>

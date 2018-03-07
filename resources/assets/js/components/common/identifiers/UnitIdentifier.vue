@@ -1,13 +1,19 @@
 <template>
     <div class="identifier">
         <div v-if="value.hasNotes()">
-            <v-icon color="error">mdi-alert</v-icon>
+            <b-icon :tooltips="value.getNoteTooltips()"
+                    color="error">
+                mdi-alert
+            </b-icon>
         </div>
         <div>
-            <v-icon class="identifier-icon">{{value.getEntityIcon()}}</v-icon>
+            <b-icon :tooltips="value.getEntityIconTooltips()"
+                    class="identifier-icon">
+                {{value.getEntityIcon()}}
+            </b-icon>
         </div>
         <div ref="identifier">
-            <v-icon>{{value.getKindIcon()}}</v-icon>
+            <b-icon :tooltips="value.getKindTooltips()">{{value.getKindIcon()}}</b-icon>
         </div>
         <router-link v-if="$router"
                      :to="{name: 'web.units.show', params: { id: String(value.getID()) }}"

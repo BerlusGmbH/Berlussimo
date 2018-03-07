@@ -1,6 +1,6 @@
 <template>
     <div class="identifier">
-        <v-icon class="identifier-icon">{{value.getEntityIcon()}}</v-icon>
+        <b-icon :tooltips="value.getEntityIconTooltips()" class="identifier-icon">{{value.getEntityIcon()}}</b-icon>
         {{String(value)}}
         <v-menu offset-y v-model="show" :position-absolutely="true">
             <v-icon slot="activator" style="font-size: inherit; vertical-align: baseline">mdi-arrow-down-drop-circle
@@ -65,7 +65,7 @@
     })
     export default class AssignmentIdentifier extends Vue {
         @Prop()
-        value;
+        value: Assignment;
 
         @RefreshMutation('requestRefresh')
         requestRefresh: Function;

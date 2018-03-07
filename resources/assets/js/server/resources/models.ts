@@ -89,6 +89,20 @@ export class Assignment extends Model {
         return 'mdi-clipboard';
     }
 
+    getEntityIconTooltips(): Array<string> {
+        let tooltips: Array<string> = [];
+        tooltips.push('Auftrag');
+        if (this.ERLEDIGT === '1') {
+            tooltips.push('Erledigt');
+        } else {
+            tooltips.push('Offen');
+        }
+        if (this.AKUT === 'JA') {
+            tooltips.push('Akut');
+        }
+        return tooltips;
+    }
+
     getID() {
         return this.T_ID;
     }
@@ -140,6 +154,10 @@ export class Person extends Model {
         return 'mdi-account';
     }
 
+    getEntityIconTooltips(): Array<string> {
+        return ['Person'];
+    }
+
     getSexIcon() {
         if (this.sex === 'männlich') {
             return 'mdi-gender-male';
@@ -148,6 +166,10 @@ export class Person extends Model {
             return 'mdi-gender-female';
         }
         return '';
+    }
+
+    getNoteTooltips() {
+        return this.hinweise.map(v => v.DETAIL_INHALT);
     }
 
     getDetailUrl() {
@@ -232,6 +254,10 @@ export class Partner extends Model {
         return 'mdi-account-multiple';
     }
 
+    getEntityIconTooltips(): Array<string> {
+        return ['Partner'];
+    }
+
     getAddress(): string {
         return this.STRASSE + ' ' + this.NUMMER + ', ' + this.PLZ + ' ' + this.ORT + ', ' + this.LAND;
     }
@@ -282,6 +308,14 @@ export class Objekt extends Model {
 
     getEntityIcon(): string {
         return 'mdi-city';
+    }
+
+    getEntityIconTooltips(): Array<string> {
+        return ['Objekt'];
+    }
+
+    getNoteTooltips() {
+        return this.hinweise.map(v => v.DETAIL_INHALT);
     }
 
     getDetailUrl() {
@@ -390,6 +424,14 @@ export class Haus extends Model {
         return 'mdi-domain';
     }
 
+    getEntityIconTooltips(): Array<string> {
+        return ['Haus'];
+    }
+
+    getNoteTooltips() {
+        return this.hinweise.map(v => v.DETAIL_INHALT);
+    }
+
     getApiBaseUrl() {
         return base_url + '/api/v1/houses'
     }
@@ -486,9 +528,24 @@ export class Einheit extends Model {
 
     getEntityIcon(): string {
         if (this.vermietet) {
-            return 'mdi-hexagon';
+            return 'mdi-cube';
         }
         return 'mdi-cube-outline';
+    }
+
+    getEntityIconTooltips(): Array<string> {
+        let tooltips: Array<string> = [];
+        tooltips.push('Einheit');
+        if (this.vermietet) {
+            tooltips.push('Vermietet')
+        } else {
+            tooltips.push('Unvermietet')
+        }
+        return tooltips;
+    }
+
+    getNoteTooltips() {
+        return this.hinweise.map(v => v.DETAIL_INHALT);
     }
 
     getKindIcon() {
@@ -511,6 +568,17 @@ export class Einheit extends Model {
                 return 'mdi-newspaper';
             default:
                 return 'mdi-home';
+        }
+    }
+
+    getKindTooltips() {
+        switch (this.TYP) {
+            case 'Freiflaeche':
+                return ['Freifläche'];
+            case 'Werbeflaeche':
+                return ['Werbefläche'];
+            default:
+                return [this.TYP];
         }
     }
 
@@ -656,6 +724,17 @@ export class RentalContract extends Model implements Active {
         return 'mdi-circle-outline';
     }
 
+    getEntityIconTooltips(): Array<string> {
+        let tooltips: Array<string> = [];
+        tooltips.push('Mietvertrag');
+        if (this.isActive()) {
+            tooltips.push('Aktiv');
+        } else {
+            tooltips.push('Inaktiv');
+        }
+        return tooltips;
+    }
+
     getDetailUrl(): string {
         return base_url + '/uebersicht?anzeigen=einheit&einheit_id='
             + this.EINHEIT_ID
@@ -732,6 +811,17 @@ export class PurchaseContract extends Model implements Active {
         return 'mdi-checkbox-blank-outline';
     }
 
+    getEntityIconTooltips(): Array<string> {
+        let tooltips: Array<string> = [];
+        tooltips.push('Kaufvertrag');
+        if (this.isActive()) {
+            tooltips.push('Aktiv');
+        } else {
+            tooltips.push('Inaktiv');
+        }
+        return tooltips;
+    }
+
     getDetailUrl(): string {
         return base_url + '/weg?option=einheit_uebersicht&einheit_id='
             + this.EINHEIT_ID;
@@ -805,6 +895,10 @@ export class JobTitle extends Model {
         return 'mdi-book-open-variant';
     }
 
+    getEntityIconTooltips(): Array<string> {
+        return ['Titel'];
+    }
+
     getID() {
         return this.id;
     }
@@ -837,6 +931,10 @@ export class Bankkonto extends Model {
 
     getEntityIcon(): string {
         return 'mdi-currency-eur';
+    }
+
+    getEntityIconTooltips(): Array<string> {
+        return ['Bankkonto'];
     }
 
     getAccount(): string {
@@ -875,6 +973,10 @@ export class AccountingEntity extends Model {
 
     getEntityIcon(): string {
         return 'mdi-hexagon-multiple';
+    }
+
+    getEntityIconTooltips(): Array<string> {
+        return ['Wirtschaftseinheit'];
     }
 
     getDetailUrl() {
@@ -919,6 +1021,18 @@ export class ConstructionSite extends Model {
             return 'mdi-shovel';
         }
         return 'mdi-shovel-off';
+
+    }
+
+    getEntityIconTooltips(): Array<string> {
+        let tooltips: Array<string> = [];
+        tooltips.push('Baustelle');
+        if (this.AKTIV === '1') {
+            tooltips.push('Aktiv');
+        } else {
+            tooltips.push('Inaktiv');
+        }
+        return tooltips;
 
     }
 
@@ -989,6 +1103,12 @@ export class Invoice extends Model {
     getEntityIcon(): string {
         return 'mdi-receipt';
 
+    }
+
+    getEntityIconTooltips(): Array<string> {
+        let tooltips: Array<string> = [];
+        tooltips.push(this.RECHNUNGSTYP);
+        return tooltips;
     }
 
     getDetailUrl() {

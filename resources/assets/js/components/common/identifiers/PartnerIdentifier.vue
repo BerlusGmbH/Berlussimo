@@ -1,6 +1,6 @@
 <template>
     <div class="identifier">
-        <v-icon class="identifier-icon">{{value.getEntityIcon()}}</v-icon>
+        <b-icon :tooltips="value.getEntityIconTooltips()" class="identifier-icon">{{value.getEntityIcon()}}</b-icon>
         <a :href="value.getDetailUrl()"
            style="display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{String(this.value).trim()}}</a>
     </div>
