@@ -110,7 +110,8 @@ class InvoiceLineController extends Controller
                 ->first();
             if ($item) {
                 $item->update([
-                    'BEZEICHNUNG' => $request->input('BEZEICHNUNG')
+                    'BEZEICHNUNG' => $request->input('BEZEICHNUNG'),
+                    'EINHEIT' => $request->input('EINHEIT')
                 ]);
             }
         });
