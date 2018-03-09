@@ -113,6 +113,19 @@ class InvoiceLineController extends Controller
                     'BEZEICHNUNG' => $request->input('BEZEICHNUNG'),
                     'EINHEIT' => $request->input('EINHEIT')
                 ]);
+            } else {
+                InvoiceItem::forceCreate([
+                    'KATALOG_ID' => InvoiceItem::max('KATALOG_ID') + 1,
+                    'ART_LIEFERANT' => $request->input('ART_LIEFERANT'),
+                    'ARTIKEL_NR' => $request->input('ARTIKEL_NR'),
+                    'LISTENPREIS' => $request->input('PREIS'),
+                    'MWST_SATZ' => $request->input('MWST_SATZ'),
+                    'RABATT_SATZ' => $request->input('RABATT_SATZ'),
+                    'SKONTO' => $request->input('SKONTO'),
+                    'EINHEIT' => $request->input('EINHEIT'),
+                    'BEZEICHNUNG' => $request->input('BEZEICHNUNG'),
+                    'AKTUELL' => '1'
+                ]);
             }
         });
         InvoiceLineAssignment::unguarded(function () use ($attributes, $invoiceLine) {
