@@ -2431,7 +2431,7 @@ switch ($option) {
             echo "<table>";
             echo "<tr><td>";
             $f->check_box_js_alle('uebernahme_alle[]', 'ue', '', 'Alle', '', '', 'uebernahme');
-            echo "</td><td colspan=\"30\">RECHNUNGEN $monat/$jahr</td></tr>";
+            echo "</td><td colspan=\"15\">RECHNUNGEN $monat/$jahr</td></tr>";
             $spalte = 0;
             echo "<tr>";
             for ($a = 0; $a < $anz; $a++) {
@@ -2442,7 +2442,7 @@ switch ($option) {
                 echo "<td>";
                 $f->check_box_js('uebernahme[]', $id, $rnr, '', 'checked');
                 echo "</td>";
-                if ($spalte == 30) {
+                if ($spalte == 15) {
                     echo "</tr><tr>";
                     $spalte = 0;
                 }

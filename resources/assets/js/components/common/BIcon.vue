@@ -1,9 +1,9 @@
 <template>
-    <v-icon :color="color" v-if="!tooltips.length && !delayedTooltips">
+    <v-icon style="font-size: inherit" :color="color" v-if="!tooltips.length && !delayedTooltips">
         <slot></slot>
     </v-icon>
     <v-tooltip v-model="show" bottom v-else>
-        <v-icon :color="color" slot="activator">
+        <v-icon style="font-size: inherit" :color="color" slot="activator">
             <slot></slot>
         </v-icon>
         <span v-if="tooltipValues.length"><template v-for="(tooltipValue, index) in tooltipValues">{{tooltipValue}}<hr

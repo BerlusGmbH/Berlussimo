@@ -22,7 +22,7 @@ import transitionCollapse from "./components/common/transitions/Collapse.vue";
 import BNumberField from "./components/common/BNumberField.vue";
 import BYearField from "./components/common/BYearField.vue";
 import BIcon from "./components/common/BIcon.vue";
-import {nformat, substituteNewlineWithBr} from "./filters";
+import {nformat, substituteNewlineWithBr, tformat} from "./filters";
 
 Vue.component('app-identifier', identifier);
 Vue.component('app-tile', tile);
@@ -36,6 +36,7 @@ Vue.component('b-year-field', BYearField);
 Vue.component('b-icon', BIcon);
 Vue.filter('substituteNewlineWithBr', substituteNewlineWithBr);
 Vue.filter('nformat', nformat);
+Vue.filter('tformat', tformat);
 
 new Vue({
     el: '#app',

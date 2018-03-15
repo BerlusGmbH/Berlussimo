@@ -13,7 +13,7 @@ import snackbar from "./components/shared/Snackbar.vue";
 import identifier from "./components/common/identifiers/Identifier.vue";
 import tile from "./components/common/tiles/Tile.vue";
 import chip from "./components/common/chips/Chip.vue";
-import {substituteNewlineWithBr} from "./filters";
+import {nformat, substituteNewlineWithBr, tformat} from "./filters";
 import VEditDialog from "./components/common/VEditDialog.vue";
 import BIcon from "./components/common/BIcon.vue";
 
@@ -24,6 +24,8 @@ Vue.component('app-chip', chip);
 Vue.component('app-edit-dialog', VEditDialog);
 Vue.component('b-icon', BIcon);
 Vue.filter('substituteNewlineWithBr', substituteNewlineWithBr);
+Vue.filter('nformat', nformat);
+Vue.filter('tformat', tformat);
 
 new Vue({
     el: 'app-notifications',

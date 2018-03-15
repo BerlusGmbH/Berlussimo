@@ -6,7 +6,7 @@
     import Component from "vue-class-component";
     import Vue from "vue";
     import personTile from "./PersonTile.vue";
-    import partnerIdentifier from "./PartnerTile.vue";
+    import partnerTile from "./PartnerTile.vue";
     import objectTile from "./ObjectTile.vue";
     import houseTile from "./HouseTile.vue";
     import unitTile from "./UnitTile.vue";
@@ -16,27 +16,31 @@
     import accountingEntityTile from "./AccountingEntityTile.vue";
     import constructionSiteTile from "./ConstructionSiteTile.vue";
     import InvoiceItemTile from "./InvoiceItemTile.vue";
+    import InvoiceTile from "./InvoiceTile.vue";
     import BankAccountStandardChartTile from "./BankAccountStandardChartTile.vue";
     import BookingAccountTile from "./BookingAccountTile.vue";
     import {Prop} from "vue-property-decorator";
     import {
         AccountingEntity,
-        Bankkonto, ConstructionSite,
+        BankAccountStandardChart,
+        Bankkonto,
+        BookingAccount,
+        ConstructionSite,
         Einheit,
-        Haus, InvoiceItem,
+        Haus,
+        Invoice,
+        InvoiceItem,
         Objekt,
         Partner,
         Person,
         PurchaseContract,
-        RentalContract,
-        BankAccountStandardChart,
-        BookingAccount
-    } from "../../../server/resources/models";
+        RentalContract
+    } from "../../../server/resources";
 
     @Component({
         components: {
             [Person.type]: personTile,
-            [Partner.type]: partnerIdentifier,
+            [Partner.type]: partnerTile,
             [Objekt.type]: objectTile,
             [Haus.type]: houseTile,
             [Einheit.type]: unitTile,
@@ -46,6 +50,7 @@
             [AccountingEntity.type]: accountingEntityTile,
             [ConstructionSite.type]: constructionSiteTile,
             [InvoiceItem.type]: InvoiceItemTile,
+            [Invoice.type]: InvoiceTile,
             [BankAccountStandardChart.type]: BankAccountStandardChartTile,
             [BookingAccount.type]: BookingAccountTile
         }

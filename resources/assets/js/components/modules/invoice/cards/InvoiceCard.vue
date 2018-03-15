@@ -20,10 +20,10 @@
                             ></app-identifier>
                         </v-flex>
                         <v-flex xs12>
-                            <v-icon style="font-size: inherit">mdi-note</v-icon>
+                            <b-icon :tooltips="['Kurzbeschreibung']">mdi-note</b-icon>
                             {{value.KURZBESCHREIBUNG}}
                         </v-flex>
-                        <v-flex xs12 md6 v-if="value.bank_account">
+                        <v-flex xs12 v-if="value.bank_account">
                             <app-identifier :value="value.bank_account"></app-identifier>
                         </v-flex>
                     </v-layout>

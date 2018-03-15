@@ -9,6 +9,7 @@ use App\Models\BaustellenExtern;
 use App\Models\BookingAccount;
 use App\Models\Einheiten;
 use App\Models\Haeuser;
+use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\Kaufvertraege;
 use App\Models\Mietvertraege;
@@ -36,7 +37,8 @@ class SearchBarController extends Controller
                 'wirtschaftseinheit',
                 'artikel',
                 'kontenrahmen',
-                'buchungskonto'
+                'buchungskonto',
+                'teilrechnung'
             ];
             $response = [
                 'objekt' => [],
@@ -51,7 +53,8 @@ class SearchBarController extends Controller
                 'wirtschaftseinheit' => [],
                 'artikel' => [],
                 'kontenrahmen' => [],
-                'buchungskonto' => []
+                'buchungskonto' => [],
+                'teilrechnung' => []
             ];
         } else {
             $response = [];
@@ -113,6 +116,24 @@ class SearchBarController extends Controller
                     $response['buchungskonto'] = BookingAccount::defaultOrder();
                     if (isset($parts[1])) {
                         $response['buchungskonto']->where('KONTENRAHMEN_ID', $parts[1]);
+                    }
+                    break;
+                case 'teilrechnung':
+                    $response['teilrechnung'] = Invoice::orderBy('RECHNUNGSDATUM', 'asc')
+                        ->whereColumn('BELEG_NR', 'advance_payment_invoice_id')
+                        ->where('RECHNUNGSTYP', 'Teilrechnung');
+                    if (isset($parts[1])) {
+                        $response['teilrechnung']->where('AUSSTELLER_TYP', 'Partner')
+                            ->where('AUSSTELLER_ID', $parts[1]);
+                    }
+                    if (isset($parts[2])) {
+                        $response['teilrechnung']->where('EMPFAENGER_TYP', 'Partner')
+                            ->where('EMPFAENGER_ID', $parts[2]);
+                    }
+                    if (isset($parts[3])) {
+                        $response['teilrechnung']
+                            ->whereDate('RECHNUNGSDATUM', '<=', $parts[3])
+                            ->has('finalAdvancePaymentInvoice', 0);
                     }
                     break;
             }
