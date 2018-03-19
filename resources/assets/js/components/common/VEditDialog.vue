@@ -68,7 +68,10 @@
                     keydown: e => {
                         const input = (this.$refs.content as HTMLElement).querySelector('input');
                         e.keyCode === 27 && this.cancel();
-                        e.keyCode === 13 && input && this.save(input.value);
+                        if (e.keyCode === 13 && input) {
+                            this.save(input.value);
+                            this.$emit('save', true);
+                        }
                     }
                 },
                 ref: 'content'
@@ -93,7 +96,7 @@
                 this.genButton(this.cancel, this.cancelText),
                 this.genButton(() => {
                     this.save(this.returnValue);
-                    this.$emit('save', true)
+                    this.$emit('save', true);
                 }, this.saveText, true)
             ])
         }
