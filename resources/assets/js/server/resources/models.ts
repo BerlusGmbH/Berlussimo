@@ -409,7 +409,9 @@ export class Haus extends Model {
     icon: string = 'mdi-domain';
 
     toString(): string {
-        return this.HAUS_STRASSE + ' ' + this.HAUS_NUMMER;
+        return this.HAUS_STRASSE
+            + ' '
+            + this.HAUS_NUMMER;
     }
 
     hasNotes(): boolean {

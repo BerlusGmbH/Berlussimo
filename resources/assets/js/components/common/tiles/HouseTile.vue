@@ -5,7 +5,11 @@
         </v-list-tile-avatar>
         <v-list-tile-content>
             <v-list-tile-title>{{String(entity)}}</v-list-tile-title>
-            <v-list-tile-sub-title>{{entity.getLocation()}}</v-list-tile-sub-title>
+            <v-list-tile-sub-title>
+                {{entity.getLocation()}}
+                <v-icon style="font-size: inherit">{{entity.objekt.getEntityIcon()}}</v-icon>
+                {{entity.objekt.OBJEKT_KURZNAME}}
+            </v-list-tile-sub-title>
         </v-list-tile-content>
         <v-list-tile-action>
             <v-btn icon @click.stop="onInfoClick">

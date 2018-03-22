@@ -73,7 +73,7 @@ class SearchBarController extends Controller
                     $response['objekt'] = Objekte::defaultOrder();
                     break;
                 case 'haus':
-                    $response['haus'] = Haeuser::defaultOrder();
+                    $response['haus'] = Haeuser::defaultOrder()->with('objekt');
                     break;
                 case 'einheit':
                     $response['einheit'] = Einheiten::defaultOrder();
