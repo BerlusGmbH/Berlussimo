@@ -2345,9 +2345,11 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
                     ->orderBy('RECHNUNGSDATUM')
                     ->get()
                     ->pluck('BELEG_NR')
-                    ->search($invoice->BELEG_NR) + 1 . '. ';
+                    ->search($invoice->BELEG_NR) + 1 . '. Abschlagsrechnung';
+            $pdf->ezText("<b>$advance_payment_pos:\n$rechnungsnummer</b>", 12);
+        } else {
+            $pdf->ezText("<b>$advance_payment_pos$this->rechnungstyp:\n$rechnungsnummer</b>", 12);
         }
-        $pdf->ezText("<b>$advance_payment_pos$this->rechnungstyp:\n$rechnungsnummer</b>", 12);
 
         $pdf->ezSetDy(-30); // abstand
         /* Kurzbeschreibung */
