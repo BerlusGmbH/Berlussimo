@@ -1960,6 +1960,15 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             ->orderBy('RECHNUNGSDATUM')
             ->get();
         if (!$invoices->isEmpty()) {
+
+            if ($print_invoice->RECHNUNGSTYP === 'Schlussrechnung') {
+                $pdf->ezSetDy(-10); // abstand
+                $pdf->ezText("<b>Abschlagszahlungen</b>", 9, array(
+                    'justification' => 'full'
+                ));
+                $pdf->ezSetDy(-10); // abstand
+            }
+
             $summe_netto = 0;
             $summe_brutto = 0;
             $summe_mwst = 0;
@@ -1981,7 +1990,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
                 $summe_skontiert += $invoice->SKONTOBETRAG;
                 $summe_skonto += $skonto;
                 $lines->push([
-                    'RDATUM' => $invoice->RECHNUNGSDATUM,
+                    'RDATUM' => date_mysql2german($invoice->RECHNUNGSDATUM),
                     'RNR' => "<b>$invoice->RECHNUNGSNUMMER</b>",
                     'NETTO' => nummer_punkt2komma_t(-1 * $invoice->NETTO) . " € ",
                     'MWST' => nummer_punkt2komma_t(-1 * ($invoice->BRUTTO - $invoice->NETTO)) . " € ",
@@ -2005,7 +2014,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
 
             if ($last_invoice->RECHNUNGSTYP == 'Schlussrechnung') {
                 $lines->prepend([
-                    'RDATUM' => "<b>Gesamt</b>",
+                    'RDATUM' => date_mysql2german($last_invoice->RECHNUNGSDATUM),
                     'RNR' => "<b>$last_invoice->RECHNUNGSNUMMER</b>",
                     'NETTO' => nummer_punkt2komma_t($last_invoice->NETTO) . " € ",
                     'MWST' => nummer_punkt2komma_t($last_invoice->BRUTTO - $last_invoice->NETTO) . " € ",
@@ -2015,7 +2024,8 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
                 ]);
             } else {
                 $lines->prepend([
-                    'RDATUM' => "<b>Gesamt</b>",
+                    'RDATUM' => date_mysql2german($last_invoice->RECHNUNGSDATUM),
+                    'RNR' => "<b>$last_invoice->RECHNUNGSNUMMER</b>",
                     'NETTO' => nummer_punkt2komma_t($summe_netto + $last_invoice->NETTO) . " € ",
                     'MWST' => nummer_punkt2komma_t($summe_mwst + ($last_invoice->BRUTTO - $last_invoice->NETTO)) . " € ",
                     'BRUTTO' => nummer_punkt2komma_t($summe_brutto + $last_invoice->BRUTTO) . " € ",
@@ -2059,9 +2069,9 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
 
             $cols = array(
                 'RDATUM' => "<b>Datum</b>",
-                'RNR' => "<b>Rechnungsnr</b>",
+                'RNR' => "<b>Rechnungsnr.</b>",
                 'NETTO' => "<b>Netto</b>",
-                'MWST' => "<b>MwSt</b>",
+                'MWST' => "<b>MwSt.</b>",
                 'BRUTTO' => "<b>Brutto</b>",
                 'SKONTO' => "<b>Skonto</b>",
                 'SKONTIERT' => "<b>Skontiert</b>"
@@ -2198,8 +2208,8 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             $tab_arr [$new_pos] ['SUMM_NETTO'] = nummer_punkt2komma_t($g_netto);
             /* Linien und Netto, Brutto usw in den Tabellenarray hinzufügen */
             if ($index == $anz - 1) {
-                $tab_arr [$new_pos + 1] ['POSITION'] = '==';
-                $tab_arr [$new_pos + 1] ['ARTIKEL_NR'] = '==============';
+                $tab_arr [$new_pos + 1] ['POSITION'] = '===';
+                $tab_arr [$new_pos + 1] ['ARTIKEL_NR'] = '=============';
                 $tab_arr [$new_pos + 1] ['BEZ'] = '==========================';
                 $tab_arr [$new_pos + 1] ['MENGE'] = '==========';
                 $tab_arr [$new_pos + 1] ['PREIS'] = '==========';
@@ -2225,15 +2235,15 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
 
         /* Spaltendefinition */
         $cols = array(
-            'POSITION' => "<b>POS.</b>",
-            'ARTIKEL_NR' => "<b>ARTIKELNR</b>",
-            'BEZ' => "<b>BEZEICHNUNG</b>",
-            'MENGE' => "<b>MENGE</b>",
-            'PREIS' => "<b>NETTO</b>",
-            'MWST_SATZ' => "<b>MWST</b>",
-            'RABATT_SATZ' => "<b>RABATT</b>",
-            'SKONTO' => "<b>SKONTO</b>",
-            'GESAMT_NETTO' => "<b>GESAMT</b>"
+            'POSITION' => "<b>Pos.</b>",
+            'ARTIKEL_NR' => "<b>Artikelnr.</b>",
+            'BEZ' => "<b>Bezeichnung</b>",
+            'MENGE' => "<b>Menge</b>",
+            'PREIS' => "<b>Netto</b>",
+            'MWST_SATZ' => "<b>MwSt.</b>",
+            'RABATT_SATZ' => "<b>Rabatt</b>",
+            'SKONTO' => "<b>Skonto</b>",
+            'GESAMT_NETTO' => "<b>Gesamt</b>"
         );
 
         /* Tabellenparameter */
@@ -2257,13 +2267,13 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             'rowGap' => 1,
             'colGap' => 1,
             'cols' => array(
-                'POS' => array(
-                    'justification' => 'left',
-                    'width' => 25
+                'POSITION' => array(
+                    'justification' => 'right',
+                    'width' => 20
                 ),
                 'ARTIKEL_NR' => array(
                     'justification' => 'left',
-                    'width' => 70
+                    'width' => 65
                 ),
                 'BEZ' => array(
                     'justification' => 'left',
@@ -2296,16 +2306,10 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             )
 
         );
-        /* Ort und Datum */
-        // $pdf->addText(474,560,10,"$p->partner_ort, $this->rechnungsdatum");
 
         /* Faltlinie */
         $pdf->setLineStyle(0.2);
         $pdf->line(5, 542, 20, 542);
-
-        /* Schiftart wählen */
-        // $pdf->selectFont("pdfclass/fonts/Courier.afm");
-        // $pdf->selectFont("schriften/TSan3___.afm");
 
         $empfaenger_name = str_replace("<br>", " ", $this->rechnungs_empfaenger_name);
         $pdf->ezText("$empfaenger_name", 10);
@@ -2322,7 +2326,19 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
                 'justification' => 'right'
             ));
         }
+
         $invoice = \App\Models\Invoice::findOrFail($beleg_nr);
+
+        if ($invoice->servicetime_from && $invoice->servicetime_to) {
+            $pdf->ezText("Leistungszeitraum: " . date_mysql2german($invoice->servicetime_from) . ' - ' . date_mysql2german($invoice->servicetime_to), 10, array(
+                'justification' => 'right'
+            ));
+        } elseif ($invoice->servicetime_from) {
+            $pdf->ezText("Leistungsdatum: " . date_mysql2german($invoice->servicetime_from), 10, array(
+                'justification' => 'right'
+            ));
+        }
+
         $advance_payment_pos = '';
         if (!$invoice->advancePaymentInvoices->isEmpty() && $invoice->RECHNUNGSTYP != 'Schlussrechnung') {
             $advance_payment_pos = $invoice->advancePaymentInvoices()
@@ -2345,15 +2361,13 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         if ($this->rechnungstyp == 'Angebot') {
             $pdf->ezText("Sehr geehrte Damen und Herren,\n\nwir bedanken uns für Ihre Anfrage und übermitteln Ihnen hiermit unser Angebot, an das wir uns für vier Wochen ab Erstellungsdatum gebunden halten.\n", 9);
         }
-        /* Tabelle ausgeben */
-        $pdf->ezTable($tab_arr, $cols, "", $tableoptions);
 
-        if (!$invoice->advancePaymentInvoices->isEmpty()) {
-            $pdf->ezSetDy(-10); // abstand
-            $pdf->ezText("<b>Rechnungsaufstellung</b>", 9, array(
-                'justification' => 'full'
-            ));
-            $pdf->ezSetDy(-5); // abstand
+        if ($invoice->RECHNUNGSTYP !== 'Teilrechnung') {
+            /* Tabelle ausgeben */
+            $pdf->ezTable($tab_arr, $cols, "", $tableoptions);
+        }
+
+        if (in_array($invoice->RECHNUNGSTYP, ['Schlussrechnung', 'Teilrechnung'])) {
             $this->rechnungsaufstellung_teil_rg($pdf, $beleg_nr);
         }
 
@@ -2529,6 +2543,9 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             echo "<tr><td colspan=\"11\">";
             $f = new formular ();
             // $js = "onclick=\"u_pool_rechnung('$kos_typ', '$kos_id', '$aussteller_typ','$aussteller_id')\"";
+            $f->datum_feld('Leistungsanfang', 'servicetime_from', "", 'servicetime_from');
+            $f->datum_feld('Leistungsende', 'servicetime_to', "", 'servicetime_to');
+
             $ge = new geldkonto_info ();
             $ge->dropdown_geldkonten_k('Empfangsgeldkonto waehlen', 'gk_id', 'gk_id', $aussteller_typ, $aussteller_id);
             // $f->button_js('r_send', 'Rechnung erstellen', $js);
@@ -2608,7 +2625,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         }
     }
 
-    function erstelle_rechnung_u_pool($kos_typ, $kos_id, $aussteller_typ, $aussteller_id, $r_datum, $f_datum, $kurzinfo, $gk_id, $pool_ids_string)
+    function erstelle_rechnung_u_pool($kos_typ, $kos_id, $aussteller_typ, $aussteller_id, $r_datum, $f_datum, $kurzinfo, $gk_id, $pool_ids_string, $servicetime_from, $servicetime_to)
     {
         $rr = new rechnung (); // aus berlussimo class
 
@@ -2637,6 +2654,9 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $datum_arr = explode('.', $r_datum);
         $jahr = $datum_arr [2];
 
+        $servicetime_from = $servicetime_from ? "'" . date_german2mysql($servicetime_from) . "'" : 'NULL';
+        $servicetime_to = $servicetime_to ? "'" . date_german2mysql($servicetime_to) . "'" : 'NULL';
+
         $r = new rechnung ();
         $letzte_aussteller_rnr = $r->letzte_aussteller_ausgangs_nr($aussteller_id, $aussteller_typ, $jahr, $rechnungstyp);
         $letzte_aussteller_rnr = $letzte_aussteller_rnr + 1;
@@ -2658,7 +2678,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             $letzte_belegnr = $r->letzte_beleg_nr();
             $letzte_belegnr = $letzte_belegnr + 1;
             $f_datum_sql = date_german2mysql($f_datum);
-            $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', '$rechnungstyp', '$rechnungsdatum_sql','$rechnungsdatum_sql', '0.00','0.00','0.00', '$aussteller_typ', '$aussteller_id','$kos_typ_n', '$kos_id_n','1', '1', '1', '0', '1', '0', '0', '$f_datum_sql', '0000-00-00', '$kurzinfo', '$gk_id')";
+            $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', '$rechnungstyp', '$rechnungsdatum_sql','$rechnungsdatum_sql', '0.00','0.00','0.00', '$aussteller_typ', '$aussteller_id','$kos_typ_n', '$kos_id_n','1', '1', '1', '0', '1', '0', '0', '$f_datum_sql', '0000-00-00', '$kurzinfo', '$gk_id', NULL, $servicetime_from, $servicetime_to)";
             DB::insert($db_abfrage);
 
             /* Protokollieren */
@@ -3301,7 +3321,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $letzte_empfaenger_rnr = $this->letzte_eingangs_ang_nr($empfaenger_typ, $empfaenger_id);
         $n_empfaenger_rnr = $letzte_empfaenger_rnr + 1;
         $rechnungsdatum = date("Y-m-d");
-        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$id', '$ang_nr', '$n_ang_nr', '$n_empfaenger_rnr', 'Angebot', '$rechnungsdatum','$rechnungsdatum', '0.00','0.0','0.00', '$aussteller_typ', '$aussteller_id','$empfaenger_typ', '$empfaenger_id','1', '1', '0', '0', '1', '0', '0', '$rechnungsdatum', '$rechnungsdatum', '$kurzinfo', '9999999')";
+        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$id', '$ang_nr', '$n_ang_nr', '$n_empfaenger_rnr', 'Angebot', '$rechnungsdatum','$rechnungsdatum', '0.00','0.0','0.00', '$aussteller_typ', '$aussteller_id','$empfaenger_typ', '$empfaenger_id','1', '1', '0', '0', '1', '0', '0', '$rechnungsdatum', '$rechnungsdatum', '$kurzinfo', '9999999', NULL, NULL, NULL)";
         DB::insert($db_abfrage);
 
         /* Protokollieren */
@@ -3325,7 +3345,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         return $row ['EMPFAENGER_EINGANGS_RNR'];
     }
 
-    function rechnung_erstellen_ugl($rnr, $r_typ, $r_datum, $eingangsdatum, $aus_typ, $aus_id, $empf_typ, $empf_id, $faellig, $kurzinfo, $netto_betrag, $brutto_betrag, $skonto_betrag)
+    function rechnung_erstellen_ugl($rnr, $r_typ, $r_datum, $eingangsdatum, $aus_typ, $aus_id, $empf_typ, $empf_id, $faellig, $kurzinfo, $netto_betrag, $brutto_betrag, $skonto_betrag, $servicetime_from, $servicetime_to)
     {
         $beleg_nr = last_id2('RECHNUNGEN', 'BELEG_NR') + 1;
         $e_dat_arr = explode('.', $eingangsdatum);
@@ -3333,6 +3353,9 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $a_dat_arr = explode('.', $r_datum);
         $a_jahr = $a_dat_arr [2];
         $r_datum_sql = date_german2mysql($r_datum);
+
+        $servicetime_from = $servicetime_from ? "'" . date_german2mysql($servicetime_from) . "'" : 'NULL';
+        $servicetime_to = $servicetime_to ? "'" . date_german2mysql($servicetime_to) . "'" : 'NULL';
 
         $l_empf_e_nr = $this->letzte_empfaenger_eingangs_nr2($empf_typ, $empf_id, $a_jahr, $r_typ) + 1;
         $l_ausg_rnr = $this->letzte_aussteller_ausgangs_nr2($aus_typ, $aus_id, $a_jahr, $r_typ) + 1;
@@ -3343,7 +3366,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $faellig = date_german2mysql($faellig);
         $eingangsdatum_sql = date_german2mysql($eingangsdatum);
 
-        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$beleg_nr', '$rnr', '$l_ausg_rnr', '$l_empf_e_nr', '$r_typ', '$r_datum_sql','$eingangsdatum_sql', '$netto_betrag','$brutto_betrag','$skonto_betrag', '$aus_typ', '$aus_id','$empf_typ', '$empf_id','1', '1', '1', '0', '1', '0', '0', '$faellig', '0000-00-00', '$kurzinfo', '$empf_gk_id')";
+        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$beleg_nr', '$rnr', '$l_ausg_rnr', '$l_empf_e_nr', '$r_typ', '$r_datum_sql','$eingangsdatum_sql', '$netto_betrag','$brutto_betrag','$skonto_betrag', '$aus_typ', '$aus_id','$empf_typ', '$empf_id','1', '1', '1', '0', '1', '0', '0', '$faellig', '0000-00-00', '$kurzinfo', '$empf_gk_id', NULL, $servicetime_from, $servicetime_to)";
         DB::insert($db_abfrage);
         /* Protokollieren */
         $last_dat = DB::getPdo()->lastInsertId();
@@ -3376,7 +3399,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         return $row ['AUSTELLER_AUSGANGS_RNR'];
     }
 
-    function rechnung_erstellen_csv($r_typ, $r_datum, $eingangsdatum, $aus_typ, $aus_id, $empf_typ, $empf_id, $faellig, $kurzinfo, $netto_betrag, $brutto_betrag, $skonto_betrag)
+    function rechnung_erstellen_csv($r_typ, $r_datum, $eingangsdatum, $aus_typ, $aus_id, $empf_typ, $empf_id, $faellig, $kurzinfo, $netto_betrag, $brutto_betrag, $skonto_betrag, $servicetime_from, $servicetime_to)
     {
         echo "$rnr, $r_typ, $r_datum, $eingangsdatum, $aus_typ, $aus_id, $empf_typ, $empf_id, $faellig, $kurzinfo, $netto_betrag,$brutto_betrag,$skonto_betrag";
         $beleg_nr = last_id2('RECHNUNGEN', 'BELEG_NR') + 1;
@@ -3405,7 +3428,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $faellig = date_german2mysql($faellig);
         $eingangsdatum_sql = date_german2mysql($eingangsdatum);
 
-        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$beleg_nr', '$rnr', '$l_ausg_rnr', '$l_empf_e_nr', '$r_typ', '$r_datum_sql','$eingangsdatum_sql', '$netto_betrag','$brutto_betrag','$skonto_betrag', '$aus_typ', '$aus_id','$empf_typ', '$empf_id','1', '1', '1', '0', '1', '0', '0', '$faellig', '0000-00-00', '$kurzinfo', '$empf_gk_id')";
+        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$beleg_nr', '$rnr', '$l_ausg_rnr', '$l_empf_e_nr', '$r_typ', '$r_datum_sql','$eingangsdatum_sql', '$netto_betrag','$brutto_betrag','$skonto_betrag', '$aus_typ', '$aus_id','$empf_typ', '$empf_id','1', '1', '1', '0', '1', '0', '0', '$faellig', '0000-00-00', '$kurzinfo', '$empf_gk_id', NULL, $servicetime_from, $servicetime_to)";
         DB::insert($db_abfrage);
         /* Protokollieren */
         $last_dat = DB::getPdo()->lastInsertId();
@@ -3828,6 +3851,9 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $f->datum_feld('Rechnungsdatum', 'r_datum', $d_h, 'r_datum');
         $f->datum_feld('Eingangsdatum', 'eingangsdatum', $d_h, 'eingangsdatum');
         $f->datum_feld('Fällig', 'faellig', $d_h, 'faellig');
+        $f->datum_feld('Leistungsanfang', 'servicetime_from', "", 'servicetime_from');
+        $f->datum_feld('Leistungsende', 'servicetime_to', "", 'servicetime_to');
+
         $f->text_bereich("Kurzbeschreibung", "kurzbeschreibung", "", "50", "10", "kb");
         ?>
         <div class="file-field input-field">
@@ -3860,6 +3886,8 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $f->datum_feld('Rechnungsdatum', 'r_datum', $d_h, 'r_datum');
         $f->datum_feld('Eingangsdatum', 'eingangsdatum', $d_h, 'eingangsdatum');
         $f->datum_feld('Fällig', 'faellig', $d_h, 'faellig');
+        $f->datum_feld('Leistungsanfang', 'servicetime_from', '', 'servicetime_from');
+        $f->datum_feld('Leistungsende', 'servicetime_to', '', 'servicetime_to');
         $f->text_bereich("Kurzbeschreibung", "kurzbeschreibung", "", "50", "10", "kb");
         ?>
         <div class="file-field input-field">
@@ -3874,7 +3902,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         <?php
         $f->hidden_feld('option', 'csv_sent');
         $f->send_button('btn_send', 'Hochladen');
-        $f->ende_formular();
+        echo "</form>";
     }
 
     function form_kosten_einkauf()
@@ -4286,6 +4314,8 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
 
         $jahr = date("Y");
         $datum = date("Y-m-d");
+        $leistung_von = (new \Carbon\Carbon('first day of this month'))->toDateString();
+        $leistung_bis = (new \Carbon\Carbon('last day of this month'))->toDateString();
         $letzte_aussteller_rnr = $r->letzte_aussteller_ausgangs_nr($p_id, 'Partner', $jahr, 'Rechnung') + 1;
         $letzte_aussteller_rnr = sprintf('%03d', $letzte_aussteller_rnr);
         $r->rechnungs_kuerzel = $r->rechnungs_kuerzel_ermitteln('Partner', $p_id, $datum);
@@ -4294,7 +4324,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
         $gk = new geldkonto_info ();
         $gk->geld_konto_ermitteln('Partner', $p_id, null, 'Kreditor');
         $faellig_am = tage_plus($datum, 10);
-        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', 'Rechnung', '$datum','$datum', '0','0.00','0.00', 'Partner', '$p_id','Partner', '$empf_p_id','1', '1', '0', '0', '1', '0', '0', '$faellig_am', '0000-00-00', '$r_org->kurzbeschreibung', '$gk->geldkonto_id')";
+        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', 'Rechnung', '$datum','$datum', '0','0.00','0.00', 'Partner', '$p_id','Partner', '$empf_p_id','1', '1', '0', '0', '1', '0', '0', '$faellig_am', '0000-00-00', '$r_org->kurzbeschreibung', '$gk->geldkonto_id', NULL, '$leistung_von', '$leistung_bis')";
         DB::insert($db_abfrage);
         /* Protokollieren */
         $last_dat = DB::getPdo()->lastInsertId();

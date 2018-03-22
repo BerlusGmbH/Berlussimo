@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddAdvancePaymentInvoiceIdToRECHNUNGENTable extends Migration
+class ChangeRECHNUNGENTable extends Migration
 {
     /**
      * Run the migrations.
@@ -22,6 +22,8 @@ class AddAdvancePaymentInvoiceIdToRECHNUNGENTable extends Migration
 
             Schema::table('RECHNUNGEN', function (Blueprint $table) {
                 $table->integer('advance_payment_invoice_id')->unsigned()->nullable()->default(null);
+                $table->date('servicetime_from')->nullable()->default(null);
+                $table->date('servicetime_to')->nullable()->default(null);
             });
 
             if (Schema::hasTable('RECHNUNGEN_SCHLUSS')) {
@@ -71,6 +73,8 @@ class AddAdvancePaymentInvoiceIdToRECHNUNGENTable extends Migration
 
             Schema::table('RECHNUNGEN', function (Blueprint $table) {
                 $table->dropColumn('advance_payment_invoice_id');
+                $table->dropColumn('servicetime_from');
+                $table->dropColumn('servicetime_to');
             });
         }
     }

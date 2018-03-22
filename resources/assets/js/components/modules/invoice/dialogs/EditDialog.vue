@@ -53,6 +53,22 @@
                                           type="date"
                             ></v-text-field>
                         </v-flex>
+                        <v-flex xs12 md6>
+                            <v-text-field label="Leistungsanfang"
+                                          prepend-icon="mdi-calendar-blank"
+                                          v-model="invoiceValue.servicetime_from"
+                                          type="date"
+                                          clearable
+                            ></v-text-field>
+                        </v-flex>
+                        <v-flex xs12 md6>
+                            <v-text-field label="Leistungsende"
+                                          prepend-icon="mdi-calendar-blank"
+                                          v-model="invoiceValue.servicetime_to"
+                                          type="date"
+                                          clearable
+                            ></v-text-field>
+                        </v-flex>
                         <v-flex xs12>
                             <v-text-field label="Beschreibung"
                                           prepend-icon="mdi-note"

@@ -834,8 +834,11 @@ WHERE (`ARTIKEL_NR` LIKE ? OR `BEZEICHNUNG` LIKE ?) ORDER BY ART_LIEFERANT ASC, 
         $gk_id = request()->input('gk_id');
         $pool_ids_string = request()->input('pool_ids_string');
 
+        $servicetime_from = request()->input('servicetime_from');
+        $servicetime_to = request()->input('servicetime_to');
+
         $r = new rechnungen ();
-        $r->erstelle_rechnung_u_pool($kos_typ, $kos_id, $aussteller_typ, $aussteller_id, $r_datum, $f_datum, $kurzinfo, $gk_id, $pool_ids_string);
+        $r->erstelle_rechnung_u_pool($kos_typ, $kos_id, $aussteller_typ, $aussteller_id, $r_datum, $f_datum, $kurzinfo, $gk_id, $pool_ids_string, $servicetime_from, $servicetime_to);
         break;
 
     case "u_pools_anzeigen" :

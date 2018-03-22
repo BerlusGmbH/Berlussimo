@@ -56,7 +56,9 @@ class InvoiceController extends Controller
             'EINGANGSDATUM',
             'FAELLIG_AM',
             'KURZBESCHREIBUNG',
-            'advance_payment_invoice_id'
+            'advance_payment_invoice_id',
+            'servicetime_from',
+            'servicetime_to'
         ]);
 
         if ($attributes['RECHNUNGSTYP'] === 'Buchungsbeleg') {
@@ -64,7 +66,7 @@ class InvoiceController extends Controller
             Arr::set($attributes, 'EMPFAENGER_ID', DB::raw('AUSSTELLER_ID'));
         }
 
-        $this->updateAdvancePaymentInvoices($invoice, $attributes);
+        $this->updateAdvancePaymentInvoices($attributes, $request);
 
         Invoice::unguarded(function () use ($attributes, $invoice) {
             $invoice->update($attributes);
@@ -72,35 +74,22 @@ class InvoiceController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
-    protected function updateAdvancePaymentInvoices($invoice, & $attributes)
+    protected function updateAdvancePaymentInvoices(& $attributes, UpdateRequest $request)
     {
-        if (!in_array($attributes['RECHNUNGSTYP'], ['Teilrechnung', 'Schlussrechnung'])) {
-            $attributes['advance_payment_invoice_id'] = null;
-        } elseif (!request()->has('advance_payment_invoice_id')) {
+        if (!$request->has('advance_payment_invoice_id')) {
             $attributes['advance_payment_invoice_id'] = DB::raw('BELEG_NR');
         }
 
-        $group_id_query = Invoice::query();
-        $update_query = Invoice::query();
         $group_id = null;
-        if ($invoice->advance_payment_invoice_id) {
-            $group_id_query->where('advance_payment_invoice_id', $invoice->advance_payment_invoice_id);
-            $update_query->where('advance_payment_invoice_id', $invoice->advance_payment_invoice_id);
-        }
-        if (is_numeric($attributes['advance_payment_invoice_id'])) {
-            $group_id_query->orWhere('advance_payment_invoice_id', $attributes['advance_payment_invoice_id']);
-            $update_query->orWhere('advance_payment_invoice_id', $attributes['advance_payment_invoice_id']);
-        } else {
-            $group_id_query->where('BELEG_NR', '<>', $invoice->BELEG_NR);
-            $update_query->where('BELEG_NR', '<>', $invoice->BELEG_NR);
-        }
 
-        if ($invoice->advance_payment_invoice_id || is_numeric($attributes['advance_payment_invoice_id'])) {
-            $group_id = $group_id_query->orderBy('RECHNUNGSDATUM')
+        if ($request->invoiceIsAssigned() || $request->invoiceWasAssigned()) {
+            $group_id = $request->advancePaymentInvoices()
+                ->orderBy('RECHNUNGSDATUM')
                 ->value('BELEG_NR');
         }
         if ($group_id) {
-            $update_query->update(['advance_payment_invoice_id' => $group_id]);
+            $request->advancePaymentInvoices()
+                ->update(['advance_payment_invoice_id' => $group_id]);
         }
 
     }

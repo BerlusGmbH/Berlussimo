@@ -1267,6 +1267,8 @@ switch ($option) {
             $uebernahme_arr ['RECHNUNG_EMPFAENGER_ID'] = request()->input('RECHNUNG_KOSTENTRAEGER_ID');
             $uebernahme_arr ['RECHNUNG_FAELLIG_AM'] = request()->input('faellig_am');
             $uebernahme_arr ['EMPFANGS_GELD_KONTO'] = request()->input('geld_konto');
+            $uebernahme_arr ['servicetime_from'] = request()->input('servicetime_from');
+            $uebernahme_arr ['servicetime_to'] = request()->input('servicetime_to');
             $uebernahme_arr ['RECHNUNGSDATUM'] = request()->input('rechnungsdatum');
 
             $partner_info = new partner ();
@@ -1286,6 +1288,8 @@ switch ($option) {
             $clean_arr ['RECHNUNG_EMPFAENGER_ID'] = $uebernahme_arr ['RECHNUNG_EMPFAENGER_ID'];
             $clean_arr ['RECHNUNG_FAELLIG_AM'] = $uebernahme_arr ['RECHNUNG_FAELLIG_AM'];
             $clean_arr ['EMPFANGS_GELD_KONTO'] = $uebernahme_arr ['EMPFANGS_GELD_KONTO'];
+            $clean_arr ['servicetime_from'] = $uebernahme_arr ['servicetime_from'];
+            $clean_arr ['servicetime_to'] = $uebernahme_arr ['servicetime_to'];
 
             $kurzbeschreibung = request()->input('kurzbeschreibung');
 
@@ -1993,6 +1997,8 @@ switch ($option) {
             $rnr = request()->input('rnr');
             $r_datum = request()->input('r_datum');
             $faellig = request()->input('faellig');
+            $servicetime_from = request()->input('servicetime_from');
+            $servicetime_to = request()->input('servicetime_to');
             $eingangsdatum = request()->input('eingangsdatum');
             $kurzinfo = request()->input('kurzbeschreibung');
             $skonto = request()->input('skonto');
@@ -2012,7 +2018,7 @@ switch ($option) {
                 $r_typ = 'Rechnung'; // Auftragsbestätigung
             }
 
-            $beleg_nr = $r->rechnung_erstellen_ugl($rnr, $r_typ, $r_datum, $eingangsdatum, $aussteller_typ, $aussteller_id, $empfaenger_typ, $empfaenger_id, $faellig, $kurzinfo, 0, 0, 0);
+            $beleg_nr = $r->rechnung_erstellen_ugl($rnr, $r_typ, $r_datum, $eingangsdatum, $aussteller_typ, $aussteller_id, $empfaenger_typ, $empfaenger_id, $faellig, $kurzinfo, 0, 0, 0, $servicetime_from, $servicetime_to);
             $anz = count($arr ['positionen_arr']);
             for ($a = 1; $a <= $anz; $a++) {
                 $pos_typ = $arr ['positionen_arr'] [$a] ['POS_TYP'];
@@ -2088,8 +2094,10 @@ switch ($option) {
             $kurzinfo = request()->input('kurzbeschreibung');
             $skonto = request()->input('skonto');
             $beleg_typ = request()->input('beleg_typ');
+            $servicetime_from = request()->input('servicetime_from') ? "'" . date_german2mysql(request()->input('servicetime_from')) . "'" : 'NULL';
+            $servicetime_to = request()->input('servicetime_to') ? "'" . date_german2mysql(request()->input('servicetime_to')) . "'" : 'NULL';
 
-            $beleg_nr = $r->rechnung_erstellen_csv($beleg_typ, $r_datum, $eingangsdatum, $aussteller_typ, $aussteller_id, $empfaenger_typ, $empfaenger_id, $faellig, $kurzinfo, 0, 0, 0);
+            $beleg_nr = $r->rechnung_erstellen_csv($beleg_typ, $r_datum, $eingangsdatum, $aussteller_typ, $aussteller_id, $empfaenger_typ, $empfaenger_id, $faellig, $kurzinfo, 0, 0, 0, $servicetime_from, $servicetime_to);
             $anz = count($arr);
             $b_pos = 1;
             for ($a = 1; $a < $anz; $a++) {
@@ -2225,6 +2233,8 @@ switch ($option) {
 
             $jahr = date("Y");
             $datum = date("Y-m-d");
+            $leistung_von = (new \Carbon\Carbon('first day of this month'))->toDateString();
+            $leistung_bis = (new \Carbon\Carbon('last day of this month'))->toDateString();
             $letzte_aussteller_rnr = $r->letzte_aussteller_ausgangs_nr(session()->get('partner_id'), 'Partner', $jahr, 'Rechnung') + 1;
             $letzte_aussteller_rnr = sprintf('%03d', $letzte_aussteller_rnr);
             $r->rechnungs_kuerzel = $r->rechnungs_kuerzel_ermitteln('Partner', session()->get('partner_id'), $datum);
@@ -2236,7 +2246,7 @@ switch ($option) {
             $gk = new geldkonto_info ();
             $gk->geld_konto_ermitteln('Partner', session()->get('partner_id'), null, 'Kreditor');
             $faellig_am = tage_plus($datum, 10);
-            $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', 'Rechnung', '$datum','$datum', '$netto_betrag','$brutto_betrag','0.00', 'Partner', '" . session()->get('partner_id') . "','$empf_typ', '$empf_id','1', '1', '0', '0', '0', '0', '0', '$faellig_am', '0000-00-00', '$kurztext_neu', '$gk->geldkonto_id')";
+            $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', 'Rechnung', '$datum','$datum', '$netto_betrag','$brutto_betrag','0.00', 'Partner', '" . session()->get('partner_id') . "','$empf_typ', '$empf_id','1', '1', '0', '0', '0', '0', '0', '$faellig_am', '0000-00-00', '$kurztext_neu', '$gk->geldkonto_id', NULL, '$leistung_von', '$leistung_bis')";
             DB::insert($db_abfrage);
             /* Protokollieren */
             $last_dat = DB::getPdo()->lastInsertId();
@@ -2304,6 +2314,8 @@ switch ($option) {
 
         $jahr = date("Y");
         $datum = date("Y-m-d");
+        $leistung_von = (new \Carbon\Carbon('first day of this month'))->toDateString();
+        $leistung_bis = (new \Carbon\Carbon('last day of this month'))->toDateString();
         $letzte_aussteller_rnr = $r->letzte_aussteller_ausgangs_nr(session()->get('partner_id'), 'Partner', $jahr, 'Rechnung') + 1;
         $letzte_aussteller_rnr = sprintf('%03d', $letzte_aussteller_rnr);
         $r->rechnungs_kuerzel = $r->rechnungs_kuerzel_ermitteln('Partner', session()->get('partner_id'), $datum);
@@ -2315,7 +2327,7 @@ switch ($option) {
         $gk = new geldkonto_info ();
         $gk->geld_konto_ermitteln('Partner', session()->get('partner_id'), null, 'Kreditor');
         $faellig_am = tage_plus($datum, 10);
-        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', 'Rechnung', '$datum','$datum', '$netto_betrag','0.00','0.00', 'Partner', '" . session()->get('partner_id') . "','$empf_typ', '$empf_id','1', '1', '0', '0', '0', '0', '0', '$faellig_am', '0000-00-00', '$kurztext_neu', '$gk->geldkonto_id')";
+        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', 'Rechnung', '$datum','$datum', '$netto_betrag','0.00','0.00', 'Partner', '" . session()->get('partner_id') . "','$empf_typ', '$empf_id','1', '1', '0', '0', '0', '0', '0', '$faellig_am', '0000-00-00', '$kurztext_neu', '$gk->geldkonto_id', NULL, '$leistung_von', '$leistung_bis')";
         DB::insert($db_abfrage);
         /* Protokollieren */
         $last_dat = DB::getPdo()->lastInsertId();

@@ -9,15 +9,29 @@
             <v-layout row wrap>
                 <v-flex xs12 md6>
                     <v-layout row wrap>
-                        <v-flex xs12 v-if="value.from">
+                        <v-flex xs9 v-if="value.from">
                             Von:
                             <app-identifier style="width: calc(100% - 40px)" :value="value.from"
                             ></app-identifier>
                         </v-flex>
-                        <v-flex xs12 v-if="value.to">
+                        <v-flex xs3>
+                            <v-tooltip bottom>
+                                <v-icon slot='activator' style="font-size: inherit">mdi-call-made</v-icon>
+                                <span>Ausgangsrechnungsnummer</span>
+                            </v-tooltip>
+                            {{value.AUSTELLER_AUSGANGS_RNR}}
+                        </v-flex>
+                        <v-flex xs9 v-if="value.to">
                             An:
                             <app-identifier style="width: calc(100% - 40px)" :value="value.to"
                             ></app-identifier>
+                        </v-flex>
+                        <v-flex xs3>
+                            <v-tooltip bottom>
+                                <v-icon slot='activator' style="font-size: inherit">mdi-call-received</v-icon>
+                                <span>Eingangsrechnungsnummer</span>
+                            </v-tooltip>
+                            {{value.EMPFAENGER_EINGANGS_RNR}}
                         </v-flex>
                         <v-flex xs12>
                             <b-icon :tooltips="['Kurzbeschreibung']">mdi-note</b-icon>
@@ -30,35 +44,46 @@
                 </v-flex>
                 <v-flex xs12 md6>
                     <v-layout row wrap>
-                        <v-flex xs4>
+                        <v-flex xs6>
                             <v-layout column>
                                 <v-flex>
-                                    <v-icon style="font-size: inherit">mdi-calendar-blank</v-icon>
+                                    <v-tooltip bottom>
+                                        <v-icon slot='activator' style="font-size: inherit">mdi-calendar-blank</v-icon>
+                                        <span>Rechnungsdatum</span>
+                                    </v-tooltip>
                                     {{value.RECHNUNGSDATUM}}
                                 </v-flex>
                                 <v-flex>
-                                    <v-icon style="font-size: inherit">mdi-calendar</v-icon>
+                                    <v-tooltip bottom>
+                                        <v-icon slot='activator' style="font-size: inherit">mdi-calendar</v-icon>
+                                        <span>Eingangsdatum</span>
+                                    </v-tooltip>
                                     {{value.EINGANGSDATUM}}
                                 </v-flex>
                                 <v-flex>
-                                    <v-icon style="font-size: inherit">mdi-calendar-clock</v-icon>
+                                    <v-tooltip bottom>
+                                        <v-icon slot='activator' style="font-size: inherit">mdi-calendar-clock</v-icon>
+                                        <span>Fälligkeitsdatum</span>
+                                    </v-tooltip>
                                     {{value.FAELLIG_AM}}
                                 </v-flex>
                                 <v-flex>
-                                    <v-icon style="font-size: inherit">mdi-calendar-check</v-icon>
+                                    <v-tooltip bottom>
+                                        <v-icon slot='activator' style="font-size: inherit">mdi-calendar-check</v-icon>
+                                        <span>Geldeingangsdatum</span>
+                                    </v-tooltip>
                                     {{value.BEZAHLT_AM}}
                                 </v-flex>
-                            </v-layout>
-                        </v-flex>
-                        <v-flex xs3 sm3>
-                            <v-layout column>
-                                <v-flex>
-                                    <v-icon style="font-size: inherit">mdi-call-received</v-icon>
-                                    {{value.EMPFAENGER_EINGANGS_RNR}}
-                                </v-flex>
-                                <v-flex>
-                                    <v-icon style="font-size: inherit">mdi-call-made</v-icon>
-                                    {{value.AUSTELLER_AUSGANGS_RNR}}
+                                <v-flex v-if="value.servicetime_from">
+                                    <v-tooltip bottom>
+                                        <v-icon slot='activator' style="font-size: inherit">mdi-calendar-range</v-icon>
+                                        <span v-if="value.servicetime_to">Leistungsdatum</span>
+                                        <span v-else>Leistungszeitraum</span>
+                                    </v-tooltip>
+                                    {{value.servicetime_from}}
+                                    <template v-if="value.servicetime_to">
+                                        - {{value.servicetime_to}}
+                                    </template>
                                 </v-flex>
                             </v-layout>
                         </v-flex>
@@ -71,11 +96,11 @@
                                     Brutto:
                                 </v-flex>
                                 <v-flex>
-                                    Skonto:
+                                    Skontiert:
                                 </v-flex>
                             </v-layout>
                         </v-flex>
-                        <v-flex xs3 sm3>
+                        <v-flex xs4 sm4>
                             <v-layout column class="text-xs-right">
                                 <v-flex>
                                     {{value.NETTO | nformat}} €

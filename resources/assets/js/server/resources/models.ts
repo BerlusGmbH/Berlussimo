@@ -1073,6 +1073,8 @@ export class Invoice extends Model {
     lines: Array<InvoiceLine>;
     advance_payment_invoice: Invoice;
     advance_payment_invoices: Array<Invoice>;
+    servicetime_from: string;
+    servicetime_to: string;
 
     static applyPrototype(invoice: Invoice) {
         Object.setPrototypeOf(invoice, Invoice.prototype);
@@ -1080,7 +1082,7 @@ export class Invoice extends Model {
             Partner.applyPrototype(invoice.from);
         }
         if (invoice.to) {
-            Partner.applyPrototype(invoice.to);
+            Model.applyPrototype(invoice.to);
         }
         if (invoice.bank_account) {
             Bankkonto.applyPrototype(invoice.bank_account);
