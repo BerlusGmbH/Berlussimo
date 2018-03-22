@@ -919,8 +919,8 @@ class zeiterfassung
         foreach ($benutzer_arr as $user) {
             $z++;
             $benutzer_id = $user['id'];
-            $benutzername = $user['name'];
-            $this->BP_PARTNER_ID = $user['BP_PARTNER_ID'];
+            $benutzername = \App\Models\Person::findOrFail($benutzer_id)->full_name;
+            $this->BP_PARTNER_ID = $user['employer_id'];
             $p = new partners ();
             $p->get_partner_name($this->BP_PARTNER_ID);
             if ($partner_name != $p->partner_name) {
@@ -957,9 +957,9 @@ class zeiterfassung
     {
         $datum_h = date("Y-m-d");
         if ($ex == 0) {
-            $result = DB::select("SELECT persons.id, persons.name, jobs.employer_id FROM persons JOIN jobs ON (persons.id=jobs.employer_id) WHERE jobs.leave_date > ? OR jobs.leave_date IS NULL GROUP BY persons.id ORDER BY jobs.employer_id, persons.name ASC", [$datum_h]);
+            $result = DB::select("SELECT persons.id, persons.name, jobs.employer_id FROM persons JOIN jobs ON (persons.id=jobs.employee_id) WHERE jobs.leave_date > ? OR jobs.leave_date IS NULL GROUP BY persons.id ORDER BY jobs.employer_id, persons.name ASC", [$datum_h]);
         } else {
-            $result = DB::select("SELECT persons.id, persons.name, jobs.employer_id FROM persons JOIN jobs ON (persons.id=jobs.employer_id) GROUP BY persons.id ORDER BY jobs.employer_id, persons.name ASC");
+            $result = DB::select("SELECT persons.id, persons.name, jobs.employer_id FROM persons JOIN jobs ON (persons.id=jobs.employee_id) GROUP BY persons.id ORDER BY jobs.employer_id, persons.name ASC");
         }
         return $result;
     }

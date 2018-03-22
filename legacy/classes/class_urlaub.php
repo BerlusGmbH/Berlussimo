@@ -243,7 +243,7 @@ class urlaub
         $result = \App\Models\Person::find($benutzer_id);
         if (isset($result)) {
             $job = $result->jobsAsEmployee[0];
-            $this->benutzername = $result->name;
+            $this->benutzername = $result->full_name;
             $this->benutzer_id = $benutzer_id;
             $this->gewerk_id = $job->trade_id;
             $this->eintritt = $job->join_date;
@@ -439,7 +439,7 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = persons.id && persons.id = jobs.emp
             foreach ($mitarbeiter_arr as $user) {
                 $job = $user->jobsAsEmployee[0];
                 $zaehler++;
-                $mitarbeiter = $user->name;
+                $mitarbeiter = $user->full_name;
                 $benutzer_id = $user->id;
 
                 $eintritt = $job->join_date;
