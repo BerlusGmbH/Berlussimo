@@ -1128,11 +1128,11 @@ export class InvoiceLine extends Model {
     ARTIKEL_NR: string;
     MENGE: number = 0.00;
     PREIS: string = "0.0000";
-    MWST_SATZ: number;
-    RABATT_SATZ: number;
-    SKONTO: number;
+    MWST_SATZ: string = "19";
+    RABATT_SATZ: string = "0.00";
+    SKONTO: string = "0.00";
     GESAMT_NETTO: number;
-    EINHEIT: string;
+    EINHEIT: string = "Stk";
     BEZEICHNUNG: string;
     assignments: Array<InvoiceLineAssignment>;
 
@@ -1163,9 +1163,9 @@ export class InvoiceLine extends Model {
         this.ART_LIEFERANT = Number(item.ART_LIEFERANT);
         this.ARTIKEL_NR = item.ARTIKEL_NR;
         this.PREIS = item.LISTENPREIS;
-        this.MWST_SATZ = item.MWST_SATZ;
-        this.SKONTO = item.SKONTO;
-        this.RABATT_SATZ = item.RABATT_SATZ;
+        this.MWST_SATZ = String(item.MWST_SATZ);
+        this.SKONTO = String(item.SKONTO);
+        this.RABATT_SATZ = String(item.RABATT_SATZ);
         this.EINHEIT = item.EINHEIT;
         this.BEZEICHNUNG = item.BEZEICHNUNG
     }
@@ -1240,9 +1240,9 @@ export class InvoiceLineAssignment extends Model {
         this.POSITION = filler.POSITION;
         this.BELEG_NR = filler.BELEG_NR;
         this.MENGE = filler.MENGE;
-        this.MWST_SATZ = filler.MWST_SATZ;
-        this.SKONTO = filler.SKONTO;
-        this.RABATT_SATZ = filler.RABATT_SATZ;
+        this.MWST_SATZ = Number(filler.MWST_SATZ);
+        this.SKONTO = Number(filler.SKONTO);
+        this.RABATT_SATZ = Number(filler.RABATT_SATZ);
         this.EINZEL_PREIS = Number(filler.PREIS);
     }
 
