@@ -202,6 +202,14 @@ class Person extends Authenticatable implements AuditableContract
         return $full_name;
     }
 
+    public function getEmailAttribute()
+    {
+        if (!$this->emails->isEmpty()) {
+            return $this->emails[0]->DETAIL_INHALT;
+        }
+        return '';
+    }
+
     /**
      * Get the password for the user.
      *
