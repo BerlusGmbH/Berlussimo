@@ -51,28 +51,28 @@
                                         <v-icon slot='activator' style="font-size: inherit">mdi-calendar-blank</v-icon>
                                         <span>Rechnungsdatum</span>
                                     </v-tooltip>
-                                    {{value.RECHNUNGSDATUM}}
+                                    {{value.RECHNUNGSDATUM|dformat}}
                                 </v-flex>
                                 <v-flex>
                                     <v-tooltip bottom>
                                         <v-icon slot='activator' style="font-size: inherit">mdi-calendar</v-icon>
                                         <span>Eingangsdatum</span>
                                     </v-tooltip>
-                                    {{value.EINGANGSDATUM}}
+                                    {{value.EINGANGSDATUM|dformat}}
                                 </v-flex>
                                 <v-flex>
                                     <v-tooltip bottom>
                                         <v-icon slot='activator' style="font-size: inherit">mdi-calendar-clock</v-icon>
                                         <span>Fälligkeitsdatum</span>
                                     </v-tooltip>
-                                    {{value.FAELLIG_AM}}
+                                    {{value.FAELLIG_AM|dformat}}
                                 </v-flex>
-                                <v-flex>
+                                <v-flex v-if="paydateIsValid">
                                     <v-tooltip bottom>
                                         <v-icon slot='activator' style="font-size: inherit">mdi-calendar-check</v-icon>
                                         <span>Geldeingangsdatum</span>
                                     </v-tooltip>
-                                    {{value.BEZAHLT_AM}}
+                                    {{value.BEZAHLT_AM|dformat}}
                                 </v-flex>
                                 <v-flex v-if="value.servicetime_from">
                                     <v-tooltip bottom>
@@ -80,9 +80,9 @@
                                         <span v-if="value.servicetime_to">Leistungsdatum</span>
                                         <span v-else>Leistungszeitraum</span>
                                     </v-tooltip>
-                                    {{value.servicetime_from}}
+                                    {{value.servicetime_from|dformat}}
                                     <template v-if="value.servicetime_to">
-                                        - {{value.servicetime_to}}
+                                        - {{value.servicetime_to|dformat}}
                                     </template>
                                 </v-flex>
                             </v-layout>
@@ -124,10 +124,15 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
+    import moment from 'moment';
 
     @Component
     export default class InvoiceCard extends Vue {
         @Prop()
         value;
+
+        get paydateIsValid() {
+            return moment(this.value.BEZAHLT_AM).isValid();
+        }
     }
 </script>

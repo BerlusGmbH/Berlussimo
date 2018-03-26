@@ -1,6 +1,6 @@
 const LENGTH = 40;
 
-export function tformat(value, format): string {
+export function sformat(value, format): string {
     if (typeof value !== 'string')
         value = String(value);
     if (!format) {

@@ -7,7 +7,7 @@
             <v-list-tile-title>
                 <b>{{String(entity)}}</b>
                 <v-icon style="font-size: inherit; vertical-align: baseline">mdi-note</v-icon>
-                {{entity.KURZBESCHREIBUNG|tformat}}
+                {{entity.KURZBESCHREIBUNG|sformat}}
             </v-list-tile-title>
             <v-list-tile-sub-title>
                 Netto:
