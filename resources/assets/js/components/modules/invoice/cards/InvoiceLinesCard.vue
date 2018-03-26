@@ -54,7 +54,7 @@
                     :pagination.sync="pagination"
                     v-model="selected"
                     select-all
-                    :rows-per-page-items="[50]"
+                    :rows-per-page-items="[5,50,100]"
             >
                 <template slot="headerCell" slot-scope="props">
                     {{ props.header.text }}
@@ -69,8 +69,8 @@
                         <td class="text-xs-right">{{props.item.POSITION}}</td>
                         <td class="text-xs-right">{{props.item.ARTIKEL_NR}}</td>
                         <td>{{props.item.BEZEICHNUNG}}</td>
-                        <td class="text-xs-right">{{props.item.PREIS | nformat('decimal-4')}}</td>
                         <td class="text-xs-right">{{props.item.MENGE | nformat}}&nbsp;{{props.item.EINHEIT}}</td>
+                        <td class="text-xs-right">{{props.item.PREIS | nformat('decimal-4')}}</td>
                         <td class="text-xs-right">{{props.item.RABATT_SATZ | nformat}}</td>
                         <td class="text-xs-right">{{props.item.GESAMT_NETTO | nformat('decimal-4')}}</td>
                         <td class="text-xs-right">{{props.item.MWST_SATZ | nformat}}</td>
@@ -179,11 +179,11 @@
     import {Prop, Watch} from "vue-property-decorator";
     import {Mutation, namespace} from "vuex-class";
     import {
+        BankAccountStandardChart,
         Detail,
         Invoice,
         InvoiceLine,
-        InvoiceLineAssignment,
-        BankAccountStandardChart
+        InvoiceLineAssignment
     } from "../../../../server/resources";
     import InvoiceLineAddDialog from "../line/AddDialog.vue";
     import InvoiceLineEditDialog from "../line/EditDialog.vue";
@@ -228,8 +228,8 @@
             {text: 'Position', value: 'POSITION', sortable: false},
             {text: 'Atrikelnummer', value: '', sortable: false},
             {text: 'Beschreibung', value: '', sortable: false},
-            {text: 'Einzelpreis', value: '', sortable: false},
             {text: 'Menge', value: '', sortable: false},
+            {text: 'Einkaufspreis', value: '', sortable: false},
             {text: 'Rabatt', value: '', sortable: false},
             {text: 'Preis', value: '', sortable: false},
             {text: 'MwSt.', value: '', sortable: false},
@@ -251,7 +251,7 @@
         } = {
             sortBy: 'POSITION',
             page: 1,
-            rowsPerPage: 50,
+            rowsPerPage: 100,
             descending: false,
             totalItems: 0
         };

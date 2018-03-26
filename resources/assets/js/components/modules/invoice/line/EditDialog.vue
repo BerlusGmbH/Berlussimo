@@ -14,90 +14,136 @@
                                                append-icon=""
                                                prepend-icon="mdi-cart-outline"
                                                label="Artikel"
-                                               :entities="entities">
+                                               :entities="entities"
+                                               tabindex="1"
+                                               ref="invoiceItemSelect"
+                            >
                             </app-entity-select>
                         </v-flex>
-                        <v-flex xs12 md10>
+                        <v-flex xs12 md2>
                             <v-text-field label="Artikelnummer"
                                           v-model="lineValue.ARTIKEL_NR"
                                           type="text"
+                                          tabindex="2"
                             ></v-text-field>
                         </v-flex>
-                        <v-flex xs12 md2>
+                        <v-flex xs12 md4>
+                            <v-text-field label="Beschreibung"
+                                          v-model="lineValue.BEZEICHNUNG"
+                                          type="text"
+                                          multi-line
+                                          tabindex="3"
+                            ></v-text-field>
+                        </v-flex>
+                        <v-flex xs6 md1>
+                            <v-text-field label="Menge"
+                                          v-model="lineValue.MENGE"
+                                          step="0.01"
+                                          type="number"
+                                          tabindex="4"
+                            ></v-text-field>
+                        </v-flex>
+                        <v-flex xs6 md1>
                             <v-select label="Einheit"
                                       v-model="lineValue.EINHEIT"
                                       :items="units"
                                       item-value="V_EINHEIT"
                                       item-text="BEZEICHNUNG"
                                       autocomplete
+                                      tabindex="5"
                             ></v-select>
                         </v-flex>
-                        <v-flex xs12>
-                            <v-text-field label="Beschreibung"
-                                          v-model="lineValue.BEZEICHNUNG"
-                                          multi-line
-                                          type="text"
-                            ></v-text-field>
+                        <v-flex xs6 md2>
+                            <v-layout column>
+                                <v-flex>
+                                    <b-number-field append-icon="mdi-currency-eur"
+                                                    label="Einkaufspreis"
+                                                    v-model="price"
+                                                    format="0.0000"
+                                                    tabindex="6"
+                                                    hide-details
+                                    ></b-number-field>
+                                </v-flex>
+                                <v-flex offset-xs4 xs8 offset-lg6 lg6>
+                                    <v-text-field append-icon="mdi-percent"
+                                                  label="Rabatt"
+                                                  v-model="lineValue.RABATT_SATZ"
+                                                  step="0.01"
+                                                  type="number"
+                                                  tabindex="8"
+                                                  hide-details
+                                    ></v-text-field>
+                                </v-flex>
+                                <v-flex offset-xs4 xs8 offset-lg6 lg6>
+                                    <v-select append-icon="mdi-percent"
+                                              label="MwSt."
+                                              :items="[19, 7]"
+                                              v-model="lineValue.MWST_SATZ"
+                                              tabindex="9"
+                                              hide-details
+                                    ></v-select>
+                                </v-flex>
+                                <v-flex offset-xs4 xs8 offset-lg6 lg6>
+                                    <v-text-field append-icon="mdi-percent"
+                                                  label="Skonto"
+                                                  v-model="lineValue.SKONTO"
+                                                  step="0.01"
+                                                  type="number"
+                                                  tabindex="10"
+                                                  hide-details
+                                    ></v-text-field>
+                                </v-flex>
+                            </v-layout>
                         </v-flex>
-                        <v-flex xs12 sm4 lg2>
-                            <b-number-field append-icon="mdi-currency-eur"
-                                            label="Preis"
-                                            v-model="price"
-                                            format="0.0000"
-                            ></b-number-field>
-                        </v-flex>
-                        <v-flex xs12 sm2 lg1>
-                            <v-text-field label="Menge"
-                                          v-model="lineValue.MENGE"
-                                          step="0.01"
-                                          type="number"
-                                          :suffix="lineValue.EINHEIT"
-                            ></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm2 lg1>
-                            <v-text-field append-icon="mdi-percent"
-                                          label="Rabatt"
-                                          v-model="lineValue.RABATT_SATZ"
-                                          step="0.01"
-                                          type="number"
-                            ></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm4 lg2>
-                            <b-number-field append-icon="mdi-currency-eur"
-                                            label="Netto-Summe"
-                                            v-model="net"
-                                            format="0.0000"
-                            ></b-number-field>
-                        </v-flex>
-                        <v-flex xs12 sm2 lg1>
-                            <v-text-field append-icon="mdi-percent"
-                                          label="MwSt"
-                                          v-model="lineValue.MWST_SATZ"
-                                          type="number"
-                                          step="1"
-                            ></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm4 lg2>
-                            <b-number-field append-icon="mdi-currency-eur"
-                                            label="Brutto-Summe"
-                                            v-model="gross"
-                                            format="0.0000"
-                            ></b-number-field>
-                        </v-flex>
-                        <v-flex xs12 sm2 lg1>
-                            <v-text-field append-icon="mdi-percent"
-                                          label="Skonto"
-                                          v-model="lineValue.SKONTO"
-                                          step="0.01"
-                                          type="number"
-                            ></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm4 lg2>
-                            <b-number-field append-icon="mdi-currency-eur"
-                                            label="Gesamt-Summe"
-                                            v-model="total"
-                                            format="0.0000"
-                            ></b-number-field>
+                        <v-flex xs6 md2>
+                            <v-layout column>
+                                <v-flex>
+                                    <b-number-field append-icon="mdi-currency-eur"
+                                                    label="Gesamtnettopreis"
+                                                    v-model="net"
+                                                    format="0.0000"
+                                                    tabindex="7"
+                                                    hide-details
+                                    ></b-number-field>
+                                </v-flex>
+                                <v-flex>
+                                    <b-number-field append-icon="mdi-currency-eur"
+                                                    prefix="-"
+                                                    v-model="discount"
+                                                    format="0.0000"
+                                                    disabled
+                                                    hide-details
+                                    ></b-number-field>
+                                </v-flex>
+                                <v-flex>
+                                    <b-number-field append-icon="mdi-currency-eur"
+                                                    prefix="+"
+                                                    v-model="tax"
+                                                    format="0.0000"
+                                                    disabled
+                                                    hide-details
+                                    ></b-number-field>
+                                </v-flex>
+                                <v-flex>
+                                    <b-number-field append-icon="mdi-currency-eur"
+                                                    prefix="-"
+                                                    v-model="promptPaymentDiscount"
+                                                    format="0.0000"
+                                                    disabled
+                                                    hide-details
+                                    ></b-number-field>
+                                </v-flex>
+                                <v-flex>
+                                    <b-number-field append-icon="mdi-currency-eur"
+                                                    label="Gesamt"
+                                                    v-model="total"
+                                                    format="0.0000"
+                                                    tabindex="11"
+                                                    style="background: rgba(255,255,255,0.1)"
+                                                    hide-details
+                                    ></b-number-field>
+                                </v-flex>
+                            </v-layout>
                         </v-flex>
                     </v-layout>
                 </v-container>
@@ -120,7 +166,7 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {namespace, Mutation} from "vuex-class";
+    import {Mutation, namespace} from "vuex-class";
     import {Prop, Watch} from "vue-property-decorator";
     import EntitySelect from "../../../common/EntitySelect.vue"
     import {Invoice, InvoiceLine} from "../../../../server/resources/models";
@@ -131,7 +177,7 @@
     const RefreshMutation = namespace('shared/refresh', Mutation);
 
     @Component({components: {'app-entity-select': EntitySelect}})
-    export default class DetailView extends Vue {
+    export default class EditDialog extends Vue {
         @Prop({type: Boolean})
         value: boolean;
 
@@ -176,42 +222,64 @@
             this.lineValue.PREIS = String(val);
         }
 
+        set net(val) {
+            let menge = Number(this.lineValue.MENGE);
+            this.price = val
+                / menge;
+        }
+
         get net() {
-            let net = this.price * Number(this.lineValue.MENGE) * ((100 - Number(this.lineValue.RABATT_SATZ)) / 100);
+            let menge = Number(this.lineValue.MENGE);
+            let net = this.price
+                * menge;
+            net = net ? net : 0;
+            return net;
+        }
+
+        get discount() {
+            let rabatt = Number(this.lineValue.RABATT_SATZ);
+            let net = this.net
+                * (rabatt / 100);
             net = net ? net : 0;
             if (this.lineValue) {
-                this.lineValue.GESAMT_NETTO = net;
+                this.lineValue.GESAMT_NETTO = this.net
+                    * this.calcPercentage(rabatt);
             }
             return net;
         }
 
-        set net(val) {
-            if (this.lineValue) {
-                this.lineValue.GESAMT_NETTO = val;
-            }
-            this.price = val / ((100 - Number(this.lineValue.RABATT_SATZ)) / 100) / this.lineValue.MENGE;
-        }
-
-        get gross() {
-            let gross = this.net * ((100 + Number(this.lineValue.MWST_SATZ)) / 100);
+        get tax() {
+            let gross = (this.net - this.discount) * this.mwst;
             return gross ? gross : 0;
         }
 
-        set gross(val) {
-            this.net = val / ((100 + Number(this.lineValue.MWST_SATZ)) / 100);
+        get promptPaymentDiscount() {
+            let gross = (this.net - this.discount + this.tax) * (Number(this.lineValue.SKONTO) / 100);
+            return gross ? gross : 0;
         }
 
         get total() {
-            let total = this.gross * ((100 - Number(this.lineValue.SKONTO)) / 100);
+            let total = this.net - this.discount + this.tax - this.promptPaymentDiscount;
             return total ? total : 0;
         }
 
         set total(val) {
-            this.gross = val / ((100 - Number(this.lineValue.SKONTO)) / 100);
+            this.price = val / this.calcPercentage(Number(this.lineValue.SKONTO))
+                / (1 + this.mwst)
+                / this.calcPercentage(Number(this.lineValue.RABATT_SATZ))
+                / Number(this.lineValue.MENGE);
+        }
+
+        get mwst() {
+            return Number(this.lineValue.MWST_SATZ) / 100;
         }
 
         get entities() {
             return this.invoice ? ['artikel:' + this.invoice.from.PARTNER_ID] : ['artikel'];
+        }
+
+        calcPercentage(val: number): number {
+            return 1 - (val / 100);
         }
 
         select(selected) {

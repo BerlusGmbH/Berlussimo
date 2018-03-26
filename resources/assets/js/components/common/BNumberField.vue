@@ -20,6 +20,11 @@
                   :append-icon="appendIcon"
                   :prepend-icon="prependIcon"
                   :label="label"
+                  :readonly="readonly"
+                  :disabled="disabled"
+                  :tabindex="tabindex"
+                  :hide-details="hideDetails"
+                  class="b-number-field"
     ></v-text-field>
 </template>
 <script lang="ts">
@@ -39,7 +44,7 @@
         @Prop()
         autoGrow;
 
-        @Prop()
+        @Prop({type: Boolean, default: false})
         box;
 
         @Prop({type: [String, Boolean]})
@@ -60,19 +65,19 @@
         @Prop()
         placeholder;
 
-        @Prop()
+        @Prop({type: String, default: ''})
         prefix;
 
         @Prop()
         rows;
 
-        @Prop()
+        @Prop({type: Boolean, default: false})
         singleLine;
 
-        @Prop()
+        @Prop({type: Boolean, default: false})
         solo;
 
-        @Prop()
+        @Prop({type: String, default: ''})
         suffix;
 
         @Prop({type: String, default: ''})
@@ -86,6 +91,18 @@
 
         @Prop({type: String, default: ''})
         format;
+
+        @Prop({type: Boolean, default: false})
+        readonly;
+
+        @Prop({type: Boolean, default: false})
+        disabled;
+
+        @Prop({type: [Number, String], default: 0})
+        tabindex;
+
+        @Prop({type: [Boolean, String], default: false})
+        hideDetails;
 
         get v() {
             return Numbro(this.value).format(this.format);
@@ -115,3 +132,8 @@
         }
     }
 </script>
+<style>
+    .b-number-field input {
+        text-align: right;
+    }
+</style>
