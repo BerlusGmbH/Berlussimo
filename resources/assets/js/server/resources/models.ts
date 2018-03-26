@@ -1128,7 +1128,7 @@ export class InvoiceLine extends Model {
     ARTIKEL_NR: string;
     MENGE: number = 0.00;
     PREIS: string = "0.0000";
-    MWST_SATZ: string = "19";
+    MWST_SATZ: number = 19;
     RABATT_SATZ: string = "0.00";
     SKONTO: string = "0.00";
     GESAMT_NETTO: number;
@@ -1163,7 +1163,7 @@ export class InvoiceLine extends Model {
         this.ART_LIEFERANT = Number(item.ART_LIEFERANT);
         this.ARTIKEL_NR = item.ARTIKEL_NR;
         this.PREIS = item.LISTENPREIS;
-        this.MWST_SATZ = String(item.MWST_SATZ);
+        this.MWST_SATZ = item.MWST_SATZ;
         this.SKONTO = String(item.SKONTO);
         this.RABATT_SATZ = String(item.RABATT_SATZ);
         this.EINHEIT = item.EINHEIT;

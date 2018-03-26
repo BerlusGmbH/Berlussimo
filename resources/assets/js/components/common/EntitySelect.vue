@@ -20,6 +20,8 @@
                 :light="light"
                 :debounce-search="400"
                 :clearable="clearable"
+                :tabindex="tabindex"
+                :autofocus="autofocus"
     >
         <template slot="selection" slot-scope="data">
             <app-chip @input="data.parent.selectItem(data.item); $emit('chip-close', $event)"
@@ -86,6 +88,9 @@
         @Prop({type: String})
         appendIcon;
 
+        @Prop({type: [Number, String], default: 0})
+        tabindex;
+
         @Prop({type: [Boolean, String]})
         dark;
 
@@ -94,6 +99,13 @@
 
         @Prop({type: [Boolean, String]})
         clearable;
+
+        @Prop({type: Boolean, default: false})
+        autofocus;
+
+        mounted() {
+            this.$refs.input = this.$children[0].$refs.input;
+        }
 
         @Watch('query')
         onQueryChanged(query) {
