@@ -54,7 +54,7 @@
                     :pagination.sync="pagination"
                     v-model="selected"
                     select-all
-                    :rows-per-page-items="[50]"
+                    :rows-per-page-items="[5,50,100]"
             >
                 <template slot="headerCell" slot-scope="props">
                     {{ props.header.text }}
@@ -251,7 +251,7 @@
         } = {
             sortBy: 'POSITION',
             page: 1,
-            rowsPerPage: 50,
+            rowsPerPage: 100,
             descending: false,
             totalItems: 0
         };
