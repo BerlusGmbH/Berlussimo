@@ -18,9 +18,15 @@ class Invoice extends Model
     public $timestamps = false;
     protected $table = 'RECHNUNGEN';
     protected $primaryKey = 'BELEG_NR';
-    protected $searchableFields = ['RECHNUNGSNUMMER', 'KURZBESCHREIBUNG'];
+    protected $searchableFields = ['BELEG_NR', 'RECHNUNGSNUMMER', 'KURZBESCHREIBUNG'];
     protected $defaultOrder = ['RECHNUNGSDATUM' => 'desc'];
     protected $fillable = ['NETTO', 'BRUTTO', 'SKONTOBETRAG'];
+    protected $appends = ['type'];
+
+    static public function getTypeAttribute()
+    {
+        return 'invoice';
+    }
 
     public function updateSums()
     {
@@ -47,11 +53,6 @@ class Invoice extends Model
         static::addGlobalScope(new AktuellScope());
     }
 
-    public function interimPool()
-    {
-        return $this->hasOne(InvoicesInterimPool::class);
-    }
-
     public function bankAccount()
     {
         return $this->belongsTo(Bankkonten::class, 'EMPFANGS_GELD_KONTO');
@@ -65,6 +66,22 @@ class Invoice extends Model
     public function from()
     {
         return $this->morphTo('from', 'AUSSTELLER_TYP', 'AUSSTELLER_ID');
+    }
+
+    public function advancePaymentInvoices()
+    {
+        return $this->hasMany(static::class, 'advance_payment_invoice_id', 'advance_payment_invoice_id')
+            ->whereIn('RECHNUNGSTYP', ['Teilrechnung', 'Schlussrechnung']);
+    }
+
+    public function finalAdvancePaymentInvoice()
+    {
+        return $this->advancePaymentInvoices()->where('RECHNUNGSTYP', 'Schlussrechnung');
+    }
+
+    public function advancePaymentInvoice()
+    {
+        return $this->belongsTo(static::class, 'advance_payment_invoice_id', 'BELEG_NR');
     }
 
     public function lines()

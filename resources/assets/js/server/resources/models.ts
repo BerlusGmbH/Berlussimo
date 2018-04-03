@@ -46,6 +46,8 @@ export abstract class Model {
                 return BankAccountStandardChart.applyPrototype(model);
             case BookingAccount.type:
                 return BookingAccount.applyPrototype(model);
+            case Invoice.type:
+                return Invoice.applyPrototype(model);
         }
     }
 }
@@ -1066,10 +1068,15 @@ export class Invoice extends Model {
     BRUTTO: number;
     SKONTOBETRAG: number;
     KURZBESCHREIBUNG: string;
+    advance_payment_invoice_id: number | null;
     from: Partner;
     to: Partner;
     bank_account: Bankkonto;
     lines: Array<InvoiceLine>;
+    advance_payment_invoice: Invoice;
+    advance_payment_invoices: Array<Invoice>;
+    servicetime_from: string;
+    servicetime_to: string;
 
     static applyPrototype(invoice: Invoice) {
         Object.setPrototypeOf(invoice, Invoice.prototype);
@@ -1077,10 +1084,18 @@ export class Invoice extends Model {
             Partner.applyPrototype(invoice.from);
         }
         if (invoice.to) {
-            Partner.applyPrototype(invoice.to);
+            Model.applyPrototype(invoice.to);
         }
         if (invoice.bank_account) {
             Bankkonto.applyPrototype(invoice.bank_account);
+        }
+        if (invoice.advance_payment_invoice) {
+            Invoice.applyPrototype(invoice.advance_payment_invoice);
+        }
+        if (invoice.advance_payment_invoices) {
+            invoice.advance_payment_invoices.forEach((v) => {
+                Invoice.applyPrototype(v);
+            })
         }
         if (invoice.lines) {
             invoice.lines.forEach((v) => {
@@ -1091,6 +1106,9 @@ export class Invoice extends Model {
     }
 
     save() {
+        if (this.RECHNUNGSTYP !== 'Teilrechnung' && this.RECHNUNGSTYP !== 'Schlussrechnung') {
+            this.advance_payment_invoice_id = null;
+        }
         return axios.put('/api/v1/invoices/' + this.BELEG_NR, this);
     }
 
@@ -1115,6 +1133,10 @@ export class Invoice extends Model {
 
     getDetailUrl() {
         return base_url + '/invoices/' + this.BELEG_NR;
+    }
+
+    isAdvancePaymentInvoice() {
+        return ['Schlussrechnung', 'Teilrechnung'].includes(this.RECHNUNGSTYP);
     }
 }
 
