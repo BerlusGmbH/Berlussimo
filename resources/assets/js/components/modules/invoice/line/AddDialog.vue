@@ -321,6 +321,8 @@
         reinit() {
             this.selected = [];
             this.lineValue = new InvoiceLine();
+            this.lineValue.BELEG_NR = this.invoice.BELEG_NR;
+            this.lineValue.ART_LIEFERANT = this.invoice.from.PARTNER_ID;
         }
     }
 </script>
