@@ -77,7 +77,7 @@
                                 <v-flex offset-xs4 xs8 offset-lg6 lg6>
                                     <v-select append-icon="mdi-percent"
                                               label="MwSt."
-                                              :items="[19, 7]"
+                                              :items="[{value: 19, text: '19'}, {value: 7, text: '7'}, {value: 0, text: '0'}]"
                                               v-model="lineValue.MWST_SATZ"
                                               tabindex="9"
                                               hide-details
