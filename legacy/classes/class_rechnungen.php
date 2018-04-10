@@ -2353,8 +2353,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
 
         $pdf->ezSetDy(-30); // abstand
         /* Kurzbeschreibung */
-        $kurzbeschreibung = str_replace(",", ", ", $this->kurzbeschreibung);
-        $kurzbeschreibung = str_replace("<br>", "\n", $kurzbeschreibung);
+        $kurzbeschreibung = str_replace("<br>", "\n", $this->kurzbeschreibung);
         $pdf->ezText("$kurzbeschreibung", 10, array(
             'justification' => 'full'
         ));
