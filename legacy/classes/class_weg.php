@@ -3232,7 +3232,6 @@ ORDER BY HGA;");
                 'KONTO' => "Konto",
                 'KONTO_BEZ' => "Bezeichnung",
                 'GRUPPEN_BEZ' => "Kostenart",
-                'KONTOART_BEZ' => "Kontoart",
                 'WIRT_E' => "Aufteilung",
                 'FORMEL' => "SCHL.",
                 'BETRAG' => "Betrag (€)"
@@ -3248,7 +3247,7 @@ ORDER BY HGA;");
                 ),
                 'titleFontSize' => 8,
                 'fontSize' => 8,
-                'xPos' => 55,
+                'xPos' => 50,
                 'xOrientation' => 'right',
                 'width' => 500,
                 'cols' => array(
@@ -3263,6 +3262,12 @@ ORDER BY HGA;");
                     'BETRAG' => array(
                         'justification' => 'right',
                         'width' => 60
+                    ),
+                    'WIRT_E' => array(
+                        'width' => 80
+                    ),
+                    'GRUPPEN_BEZ' => array(
+                        'width' => 120
                     )
                 )
             ));
@@ -3535,7 +3540,7 @@ ORDER BY HGA;");
                 ),
                 'titleFontSize' => 8,
                 'fontSize' => 7,
-                'xPos' => 55,
+                'xPos' => 50,
                 'xOrientation' => 'right',
                 'width' => 500,
                 'cols' => array(
