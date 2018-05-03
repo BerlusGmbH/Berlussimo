@@ -20,19 +20,19 @@ switch ($option) {
         break;
 
     case "konten_anzeigen" :
-        $f = new formular ();
-        $f->fieldset("Kostenkontenübersicht", 'kostenkonten');
         if (request()->has('k_id')) {
             $konten_info = new k_rahmen ();
             if (!request()->exists('pdf')) {
+                $f = new formular ();
+                $f->fieldset("Kostenkontenübersicht", 'kostenkonten');
                 $konten_info->konten_liste_anzeigen(request()->input('k_id'));
+                $f->fieldset_ende();
             } else {
                 $konten_info->konten_liste_anzeigen_pdf(request()->input('k_id'));
             }
         } else {
             echo "Keine Kostenkonten im Kontenrahmen erstellt";
         }
-        $f->fieldset_ende();
         break;
 
     case "kontenrahmen_neu" :
