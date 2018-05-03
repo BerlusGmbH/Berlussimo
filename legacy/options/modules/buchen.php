@@ -318,17 +318,16 @@ switch ($option) {
         break;
 
     case "konten_uebersicht_pdf" :
-        $link = route('web::buchen::legacy', ['option' => 'konten_uebersicht'], false);
-        $form = new formular ();
-        $form->fieldset("Buchungen -> Kostenkontenübersicht als PDF", 'kostenkonten');
         $geldkonto_id = session()->get('geldkonto_id');
         if (!empty ($geldkonto_id)) {
             $b = new buchen ();
             $b->buchungskonten_uebersicht_pdf($geldkonto_id);
         } else {
+            $form = new formular ();
+            $form->fieldset("Buchungen -> Kostenkontenübersicht als PDF", 'kostenkonten');
             echo "Geldkonto auswählen";
+            $form->fieldset_ende();
         }
-        $form->fieldset_ende();
         break;
 
     case "buchungskonto_summiert_xls" :
@@ -595,10 +594,8 @@ switch ($option) {
         break;
 
     case "buchung_suchen_1" :
-        $f = new formular ();
         $b = new buchen ();
         $b->form_buchung_suchen();
-        $f->fieldset("Suchergebnis", 'buchung_suchen');
         $geld_konto_id = request()->input('geld_konto');
         $betrag = request()->input('betrag');
         $ausdruck = request()->input('ausdruck');
@@ -699,7 +696,10 @@ switch ($option) {
             $abfrage .= " && AKTUELL='1' ORDER BY DATUM ASC, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID";
             if (request()->has('submit_php')) {
                 if ($ausdruck != '' or $betrag != '' or $kostenkonto != '') {
+                    $f = new formular ();
+                    $f->fieldset("Suchergebnis", 'buchung_suchen');
                     $b->finde_buchungen($abfrage);
+                    $f->fieldset_ende();
                 } else {
                     echo "Bitte geben Sie den gesuchten Betrag, Ausdruck oder ein Kostenkonto ein.";
                 }
@@ -714,7 +714,6 @@ switch ($option) {
             }
         }
 
-        $f->fieldset_ende();
         break;
 
     case "kostenkonto_pdf" :
