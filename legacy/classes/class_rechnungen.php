@@ -2354,7 +2354,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $pdf->ezSetDy(-30); // abstand
         /* Kurzbeschreibung */
         $kurzbeschreibung = str_replace("<br>", "\n", $this->kurzbeschreibung);
-        $pdf->ezText("$kurzbeschreibung", 10, array(
+        $pdf->ezText("$kurzbeschreibung", 8, array(
             'justification' => 'full'
         ));
 
@@ -2375,11 +2375,8 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         if ($this->rechnungstyp != 'Angebot') {
             /* Zahlungshinweis bzw mit freudlichen Grüßen usw vom Aussteller */
             $zahlungshinweis_org = str_replace("<br>", "\n", $bpdf->zahlungshinweis_org);
-            // $pdf->ezText("$zahlungshinweis_org", 10);
-            $r_hinweis = "\n\nWir danken Ihnen für Ihren Auftrag und hören gern von Ihnen. \n";
-            // $r_hinweis .= "Bitte überweisen Sie den fälligen Betrag auf das unten genannte Geldkonto. ";
-            $r_hinweis .= "Die gelieferte Ware und die erbrachte Arbeitsleistung bleibt bis zur vollständigen Bezahlung unser Eigentum. ";
-            $r_hinweis .= "Lt. Gesetzgeber sind wir zu dem Hinweis verpflichtet: Die gesetzliche Aufbewahrungspflicht für diese Rechnung beträgt für Privatpersonen 2 Jahre / Unternehmen gemäß der gesetzlichen Bestimmungen. Die Aufbewahrungsfrist beginnt mit dem Schluß dieses Kalenderjahres.";
+            $r_hinweis .= "\nWir danken Ihnen für Ihren Auftrag!\nDie gelieferte Ware und die erbrachte Arbeitsleistung bleiben bis zur vollständigen Begleichung der Rechnung unser Eigentum. ";
+            $r_hinweis .= "Die gesetzliche Aufbewahrungspflicht für diese Rechnung beträgt für Privatpersonen zwei Jahre und für Unternehmen zehn Jahre.\nDie Aufbewahrungsfrist beginnt mit dem Schluss des Kalenderjahres, in dem die Rechnung ausgestellt worden ist.";
             $r_hinweis .= "\n\n$zahlungshinweis_org";
         } else {
             $r_hinweis .= "Im Auftragsfall bitten wir um eine schriftliche Bestätigung.";
