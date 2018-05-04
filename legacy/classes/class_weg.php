@@ -6942,7 +6942,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
                 $betrag_a = nummer_punkt2komma($this->get_hga_hk_betrag($p_id, $eig_id));
                 $sum += nummer_komma2punkt($betrag_a);
                 echo "<tr><td>$z.) $einheit_kn</td><td>$this->eigentuemer_name_str</td><td>$von</td><td>$bis</td><td>$tage</td><td>";
-                $link_wert = "<a class=\"details\" onclick=\"change_hk_wert_et('Heizungsveerbrauch', '$eig_id', '$betrag_a', '$p_id')\">$betrag_a</a>";
+                $link_wert = "<a class=\"details\" onclick=\"change_hk_wert_et('Heizungsverbrauch', '$eig_id', '$betrag_a', '$p_id')\">$betrag_a</a>";
                 echo $link_wert;
                 $f->hidden_feld('eig_id[]', $eig_id);
                 echo "</td></tr>";
