@@ -328,8 +328,8 @@ class buchen
         $arr [7] ['bez'] = 'Geldkonto';
         $arr [8] ['typ'] = 'Eigentuemer';
         $arr [8] ['bez'] = 'Kaufvertrag (WEG-Eigentümer)';
-        $arr [9] ['typ'] = 'Person';
-        $arr [9] ['bez'] = 'Person';
+        $arr [9] ['typ'] = 'Mitarbeiter';
+        $arr [9] ['bez'] = 'Mitarbeiter';
         $arr [10] ['typ'] = 'Lager';
         $arr [10] ['bez'] = 'Lager';
         $arr [11] ['typ'] = 'ALLE';

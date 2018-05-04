@@ -1095,12 +1095,6 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             return $w->w_name;
         }
 
-        if ($kostentraeger_typ == 'Wirtschaftseinheit') {
-            $w = new wirt_e ();
-            $w->get_wirt_e_infos($kostentraeger_id);
-            return $w->w_name;
-        }
-
         if ($kostentraeger_typ == 'Baustelle_ext') {
             $s = new statistik ();
             $s->get_baustelle_ext_infos($kostentraeger_id);
@@ -1113,10 +1107,9 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             return $bez;
         }
 
-        if ($kostentraeger_typ == 'Benutzer') {
-            $be = new benutzer ();
-            $be->get_benutzer_infos($kostentraeger_id);
-            return $be->benutzername;
+        if ($kostentraeger_typ == 'Mitarbeiter') {
+            $p = \App\Models\Person::find($kostentraeger_id);
+            return $p->full_name;
         }
     }
 
