@@ -177,7 +177,7 @@ class wirt_e
         echo "<div class='row'>
                 <div class='col-xs-8'>";
         if ($anzahl) {
-            echo "<SELECT class='browser-default' style='height: 200px' NAME='IMPORT_AUS[]' multiple>";
+            echo "<SELECT class='browser-default secondary' style='height: 200px' NAME='IMPORT_AUS[]' multiple>";
             for ($a = 0; $a < $anzahl; $a++) {
                 $e_id = $einheiten_arr [$a] ['EINHEIT_ID'];
                 $e_name = $einheiten_arr [$a] ['EINHEIT_KURZNAME'];
