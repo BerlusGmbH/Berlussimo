@@ -2134,28 +2134,14 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         }
     }
 
-    function rechnung_anzeigen($beleg_nr)
+    function rechnung_anzeigen(& $pdf, & $bpdf, & $p, $beleg_nr)
     {
-        $this->rechnung_grunddaten_holen($beleg_nr);
         /* Prüfen ob Rechnung vorhanden */
         if (!$this->rechnungsnummer) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage("Die Rechnung exisitiert nicht.")
             );
         }
-
-        /* Partnerinformationen einholen */
-        $p = new partners ();
-        $p->get_partner_info($this->rechnung_aussteller_partner_id);
-
-        /* Eigene PDF-Klasse laden */
-        /* Neues PDF-Objekt erstellen */
-        $pdf = new Cezpdf ('a4', 'portrait');
-        /* Neue Instanz von b_pdf */
-        $bpdf = new b_pdf ();
-        /* Header und Footer des Rechnungsaustellers in alle PDF-Seiten laden */
-        $bpdf->b_header($pdf, 'Partner', $this->rechnung_aussteller_partner_id, 'portrait', 'Helvetica.afm', 6);
-
         $table_arr = $this->rechnungs_positionen_arr($beleg_nr);
         $anz = $this->anzahl_positionen;
         $g_netto = 0;
@@ -2382,19 +2368,10 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             $r_hinweis .= "Im Auftragsfall bitten wir um eine schriftliche Bestätigung.";
         }
 
-        eval ("\$r_hinweis = \"$r_hinweis\";");; // Variable ausm Text füllen
+        eval ("\$r_hinweis = \"$r_hinweis\";");
         $pdf->ezText("$r_hinweis", 8, array(
             'justification' => 'full'
         ));
-        /* Seitennummerierung beenden */
-        // $pdf->ezStopPageNumbers();
-        /* Ausgabepuffer leeren */
-
-        ob_end_clean();
-        /* PDF-Ausgabe */
-
-        $pdf_opt ['Content-Disposition'] = $rechnungsnummer . "_" . $this->rechnungstyp . "_" . str_replace(" ", "_", $this->rechnungs_aussteller_name . ".pdf");
-        $pdf->ezStream($pdf_opt);
     }
 
     function pool_liste_wahl()

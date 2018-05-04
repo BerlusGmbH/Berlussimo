@@ -1770,8 +1770,20 @@ switch ($option) {
 
     case "anzeigen_pdf" :
         if (request()->has('belegnr') && is_numeric(request()->input('belegnr'))) {
-            $r = new rechnungen ();
-            $r->rechnung_anzeigen(request()->input('belegnr'));
+            /* Neues PDF-Objekt erstellen */
+            $pdf = new Cezpdf ('a4', 'portrait');
+            $r = new rechnungen();
+            $r->rechnung_grunddaten_holen(request()->input('belegnr'));
+            /* Partnerinformationen einholen */
+            $p = new partners ();
+            $p->get_partner_info($r->rechnung_aussteller_partner_id);
+            /* Neue Instanz von b_pdf */
+            $bpdf = new b_pdf ();
+            /* Header und Footer des Rechnungsaustellers in alle PDF-Seiten laden */
+            $bpdf->b_header($pdf, 'Partner', $r->rechnung_aussteller_partner_id, 'portrait', 'Helvetica.afm', 6);
+            $r->rechnung_anzeigen($pdf, $bpdf, $p, request()->input('belegnr'));
+            $pdf_opt ['Content-Disposition'] = trim($r->rechnungsnummer) . "_" . $r->rechnungstyp . "_" . str_replace(" ", "_", $r->rechnungs_aussteller_name . ".pdf");
+            $pdf->ezStream($pdf_opt);
         } else {
             echo "Rechnung wählen " . request()->input('belegnr');
         }
@@ -2568,25 +2580,31 @@ switch ($option) {
             $anz = count(request()->input('uebernahme'));
             /* Neues PDF-Objekt erstellen */
             $pdf = new Cezpdf ('a4', 'portrait');
+            $r = new rechnungen();
+            $r->rechnung_grunddaten_holen(request()->input('uebernahme')[0]);
+            /* Partnerinformationen einholen */
+            $p = new partners ();
+            $p->get_partner_info($r->rechnung_aussteller_partner_id);
             /* Neue Instanz von b_pdf */
             $bpdf = new b_pdf ();
             /* Header und Footer des Rechnungsaustellers in alle PDF-Seiten laden */
-            $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
+            $bpdf->b_header($pdf, 'Partner', $r->rechnung_aussteller_partner_id, 'portrait', 'Helvetica.afm', 6);
 
             $pdf->ezStopPageNumbers();
 
             for ($a = 0; $a < $anz; $a++) {
                 $i = $pdf->ezStartPageNumbers(545, 715, 6, '', 'Seite {PAGENUM} von {TOTALPAGENUM}', 1);
-                $id = request()->input('uebernahme') [$a];
+                $id = request()->input('uebernahme')[$a];
                 $re = new rechnungen ();
-                $re->rechnung_2_pdf($pdf, $id);
+                $re->rechnung_grunddaten_holen($id);
+                $re->rechnung_anzeigen($pdf, $bpdf, $p, $id);
                 $pdf->ezStopPageNumbers(1, 1, $i);
-                $pdf->ezNewPage();
+                if ($a != $anz - 1) {
+                    $pdf->ezNewPage();
+                }
             }
-
-            ob_end_clean();
-            /* PDF-Ausgabe */
-            $pdf->ezStream();
+            $pdf_opt ['Content-Disposition'] = \Carbon\Carbon::now()->format('Y-m-d') . "_Pool_Rechnungen_" . str_replace(" ", "_", $r->rechnungs_aussteller_name . ".pdf");
+            $pdf->ezStream($pdf_opt);
         }
         break;
 }
