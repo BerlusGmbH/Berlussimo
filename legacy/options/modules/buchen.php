@@ -549,25 +549,25 @@ switch ($option) {
 
     case "kosten_einnahmen_pdf" :
 
-        $f = new formular ();
         $b = new buchen ();
-        $f->fieldset("Kosten & Einnahmen", 'kosten_einnahmen');
-        $arr [0] ['GELDKONTO_ID'] = '4';
+
+        $arr [0] ['GELDKONTO_ID'] = [4, 1884];
         $arr [0] ['OBJEKT_NAME'] = 'II';
-        $arr [1] ['GELDKONTO_ID'] = '5';
+        $arr [1] ['GELDKONTO_ID'] = [5, 1885];
         $arr [1] ['OBJEKT_NAME'] = 'III';
-        $arr [2] ['GELDKONTO_ID'] = '6';
+        $arr [2] ['GELDKONTO_ID'] = 6;
         $arr [2] ['OBJEKT_NAME'] = 'V';
-        $arr [3] ['GELDKONTO_ID'] = '11';
-        $arr [3] ['OBJEKT_NAME'] = 'E';
-        $arr [4] ['GELDKONTO_ID'] = '8';
-        $arr [4] ['OBJEKT_NAME'] = 'GBN';
-        $arr [5] ['GELDKONTO_ID'] = '7';
-        $arr [5] ['OBJEKT_NAME'] = 'HW';
-        $arr [6] ['GELDKONTO_ID'] = '10';
-        $arr [6] ['OBJEKT_NAME'] = 'FON';
-        $arr [7] ['GELDKONTO_ID'] = '12';
-        $arr [7] ['OBJEKT_NAME'] = 'LAGER';
+        $arr [3] ['GELDKONTO_ID'] = 8;
+        $arr [3] ['OBJEKT_NAME'] = 'GBN';
+        $arr [4] ['GELDKONTO_ID'] = 7;
+        $arr [4] ['OBJEKT_NAME'] = 'HW';
+        $arr [5] ['GELDKONTO_ID'] = 1920;
+        $arr [5] ['OBJEKT_NAME'] = 'DÜ29';
+        $arr [6] ['GELDKONTO_ID'] = 1921;
+        $arr [6] ['OBJEKT_NAME'] = 'HO190';
+
+
+
 
         if (request()->has('monat') && request()->has('jahr')) {
             if (request()->input('monat') != 'alle') {
@@ -584,7 +584,6 @@ switch ($option) {
             $jahr = date("Y");
         }
         $b->kosten_einnahmen_pdf($arr, $monat, $jahr);
-        $f->fieldset_ende();
         break;
 
     case "buchung_suchen" :

@@ -2082,39 +2082,58 @@ class buchen
         /* PDF LINK */
         echo "<a href='" . route('web::buchen::legacy', ['option' => 'kosten_einnahmen_pdf', 'monat' => $monat, 'jahr' => $jahr]) . "'>PDF ÜBERSICHT</a>";
 
-        echo "<h1>Block II</h1>";
-        $this->kosten_einnahmen($monat, $jahr, '4');
-        echo "<hr><h1>Block III</h1>";
-        $this->kosten_einnahmen($monat, $jahr, '5');
-        echo "<hr><h1>Block V</h1>";
-        $this->kosten_einnahmen($monat, $jahr, '6');
-        echo "<hr><h1>Block HW</h1>";
-        $this->kosten_einnahmen($monat, $jahr, '7');
-        echo "<hr><h1>Block GBN</h1>";
-        $this->kosten_einnahmen($monat, $jahr, '8');
-        echo "<hr><h1>FON</h1>";
-        $this->kosten_einnahmen($monat, $jahr, '10');
-        echo "<hr><h1>Block E</h1>";
-        $this->kosten_einnahmen($monat, $jahr, '11');
+        echo "<h4>Block II</h4>";
+        $this->kosten_einnahmen($monat, $jahr, [4, 1884]);
+        echo "<hr><h4>Block III</h4>";
+        $this->kosten_einnahmen($monat, $jahr, [5, 1885]);
+        echo "<hr><h4>Block V</h4>";
+        $this->kosten_einnahmen($monat, $jahr, 6);
+        echo "<hr><h4>HW</h4>";
+        $this->kosten_einnahmen($monat, $jahr, 7);
+        echo "<hr><h4>GBN</h4>";
+        $this->kosten_einnahmen($monat, $jahr, 8);
+        echo "<hr><h4>DÜ29</h4>";
+        $this->kosten_einnahmen($monat, $jahr, 1920);
+        echo "<hr><h4>HO190</h4>";
+        $this->kosten_einnahmen($monat, $jahr, 1921);
     }
 
-    function kosten_einnahmen($monat, $jahr, $geldkonto_id)
+    function kosten_einnahmen($monat, $jahr, $geldkonto_ids)
     {
+        if (!is_array($geldkonto_ids)) {
+            $geldkonto_ids = [$geldkonto_ids];
+        }
+
         $datum_jahresanfang = "01.01.$jahr";
-        $this->kontostand_tagesgenau_bis($geldkonto_id, $datum_jahresanfang);
-        $kontostand_jahresanfang = $this->summe_konto_buchungen;
+        $kontostand_jahresanfang = 0;
+        foreach ($geldkonto_ids as $geldkonto_id) {
+            $this->kontostand_tagesgenau_bis($geldkonto_id, $datum_jahresanfang);
+            $kontostand_jahresanfang += $this->summe_konto_buchungen;
+        }
 
-        $this->summe_kontobuchungen_jahr_monat($geldkonto_id, '80001', $jahr, $monat);
-        $summe_mieteinnahmen_monat = $this->summe_konto_buchungen;
+        $summe_mieteinnahmen_monat = 0;
+        foreach ($geldkonto_ids as $geldkonto_id) {
+            $this->summe_kontobuchungen_jahr_monat($geldkonto_id, '80001', $jahr, $monat);
+            $summe_mieteinnahmen_monat += $this->summe_konto_buchungen;
+        }
 
-        $this->summe_miete_jahr($geldkonto_id, '80001', $jahr, $monat);
-        $summe_mieteinnahmen_jahr = $this->summe_konto_buchungen;
+        $summe_mieteinnahmen_jahr = 0;
+        foreach ($geldkonto_ids as $geldkonto_id) {
+            $this->summe_miete_jahr($geldkonto_id, '80001', $jahr, $monat);
+            $summe_mieteinnahmen_jahr += $this->summe_konto_buchungen;
+        }
 
-        $this->summe_kosten_jahr_monat($geldkonto_id, '80001', $jahr, $monat);
-        $summe_kosten_monat = abs($this->summe_konto_buchungen);
+        $summe_kosten_monat = 0;
+        foreach ($geldkonto_ids as $geldkonto_id) {
+            $this->summe_kosten_jahr_monat($geldkonto_id, '80001', $jahr, $monat);
+            $summe_kosten_monat += $this->summe_konto_buchungen;
+        }
 
-        $this->summe_kosten_jahr($geldkonto_id, '80001', $jahr, $monat);
-        $summe_kosten_jahr = abs($this->summe_konto_buchungen);
+        $summe_kosten_jahr = 0;
+        foreach ($geldkonto_ids as $geldkonto_id) {
+            $this->summe_kosten_jahr($geldkonto_id, '80001', $jahr, $monat);
+            $summe_kosten_jahr += $this->summe_konto_buchungen;
+        }
 
         if ($monat < 12) {
             $monat_neu = $monat + 1;
@@ -2125,19 +2144,23 @@ class buchen
             $jahr_neu = $jahr + 1;
         }
         $datum_heute = "01.$monat_neu.$jahr_neu";
-        $this->kontostand_tagesgenau_bis($geldkonto_id, $datum_heute);
-        $kontostand_heute = $this->summe_konto_buchungen;
+        $kontostand_heute = 0;
+        foreach ($geldkonto_ids as $geldkonto_id) {
+            $this->kontostand_tagesgenau_bis($geldkonto_id, $datum_heute);
+            $kontostand_heute += $this->summe_konto_buchungen;
+        }
 
         $monatname = monat2name($monat);
-        echo "<h3>$monatname $jahr</h3>";
-        echo "Kontostand $datum | MietenM| MietenJ| KostenM|KostenJ|Kontostand<br><br>";
-        $kontostand_jahresanfang = nummer_punkt2komma($kontostand_jahresanfang);
-        $summe_mieteinnahmen_monat = nummer_punkt2komma($summe_mieteinnahmen_monat);
-        $summe_mieteinnahmen_jahr = nummer_punkt2komma($summe_mieteinnahmen_jahr);
-        $summe_kosten_monat = nummer_punkt2komma($summe_kosten_monat);
-        $summe_kosten_jahr = nummer_punkt2komma($summe_kosten_jahr);
-        $kontostand_heute = nummer_punkt2komma($kontostand_heute);
-        echo "<b>$kontostand_jahresanfang| $summe_mieteinnahmen_monat|$summe_mieteinnahmen_jahr|$summe_kosten_monat|$summe_kosten_jahr|$kontostand_heute</b><br>";
+        echo "<h5>$monatname $jahr</h5>";
+        echo "<table><thead><th>Kontostand $datum_jahresanfang</th><th>Mieten (Monat)</th><th>Mieten (Jahr)</th><th>Kosten (Monat)</th><th>Kosten (Jahr)</th><th>Kontostand $datum_heute</th></th></thead>";
+        $kontostand_jahresanfang = nummer_punkt2komma_t($kontostand_jahresanfang);
+        $summe_mieteinnahmen_monat = nummer_punkt2komma_t($summe_mieteinnahmen_monat);
+        $summe_mieteinnahmen_jahr = nummer_punkt2komma_t($summe_mieteinnahmen_jahr);
+        $summe_kosten_monat = nummer_punkt2komma_t($summe_kosten_monat);
+        $summe_kosten_jahr = nummer_punkt2komma_t($summe_kosten_jahr);
+        $kontostand_heute = nummer_punkt2komma_t($kontostand_heute);
+        echo "<tr><td>$kontostand_jahresanfang</td><td>$summe_mieteinnahmen_monat</td><td>$summe_mieteinnahmen_jahr</td><td>$summe_kosten_monat</td><td>$summe_kosten_jahr</td><td>$kontostand_heute</td></tr>";
+        echo "</table>";
     }
 
     function summe_miete_jahr($geldkonto_id, $mieteinnahmen_kostenkonto, $jahr, $monat)
@@ -2196,45 +2219,46 @@ class buchen
             $bpdf = new b_pdf ();
             $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
             $pdf->addInfo('Title', "Monatsbericht $objekt_name $monatname $jahr");
-            $pdf->addInfo('Author', Auth::user()->email);
 
             $g_kosten_jahr = 0.00;
 
+            $monat = sprintf('%02d', $monat);
+
+            $monatname = monat2name($monat);
+
+            $letzter_tag_m = letzter_tag_im_monat($monat, $jahr);
+
+            $datum_bis = "$letzter_tag_m.$monat.$jahr";
+
             /* Schleife für jedes Geldkonto bzw. Zeilenausgabe */
             for ($a = 0; $a < $anzahl_konten; $a++) {
-                $geldkonto_id = $geldkontos_arr [$a] ['GELDKONTO_ID'];
+                $geldkonto_ids = $geldkontos_arr [$a] ['GELDKONTO_ID'];
+                if (!is_array($geldkonto_ids)) {
+                    $geldkonto_ids = [$geldkonto_ids];
+                }
                 $objekt_name = $geldkontos_arr [$a] ['OBJEKT_NAME'];
 
-                $this->kontostand_tagesgenau_bis($geldkonto_id, $datum_jahresanfang);
-                $kontostand_jahresanfang = $this->summe_konto_buchungen;
-                $this->summe_kontobuchungen_jahr_monat($geldkonto_id, '80001', $jahr, $monat);
-                $summe_mieteinnahmen_monat = $this->summe_konto_buchungen;
-                $this->summe_miete_jahr($geldkonto_id, '80001', $jahr, $monat);
-                $summe_mieteinnahmen_jahr = $this->summe_konto_buchungen;
-                $this->summe_kosten_jahr_monat($geldkonto_id, '80001', $jahr, $monat);
-                $summe_kosten_monat = $this->summe_konto_buchungen;
-                $this->summe_kosten_jahr($geldkonto_id, '80001', $jahr, $monat);
-                $summe_kosten_jahr = $this->summe_konto_buchungen;
+                $kontostand_jahresanfang = 0;
+                $summe_mieteinnahmen_monat = 0;
+                $summe_mieteinnahmen_jahr = 0;
+                $summe_kosten_monat = 0;
+                $summe_kosten_jahr = 0;
+                $kontostand_heute = 0;
 
-                /*
-				 * if($monat < 12){
-				 * $monat_neu = $monat + 1;
-				 * $jahr_neu = $jahr;
-				 * }
-				 * if($monat == 12){
-				 * $monat_neu = 1;
-				 * $jahr_neu = $jahr +1;
-				 * }
-				 */
-                $monat = sprintf('%02d', $monat);
-
-                $letzter_tag_m = letzter_tag_im_monat($monat, $jahr);
-
-                $datum_bis = "$letzter_tag_m.$monat.$jahr";
-                $this->kontostand_tagesgenau_bis($geldkonto_id, $datum_bis);
-                $kontostand_heute = $this->summe_konto_buchungen;
-
-                $monatname = monat2name($monat);
+                foreach ($geldkonto_ids as $geldkonto_id) {
+                    $this->kontostand_tagesgenau_bis($geldkonto_id, $datum_jahresanfang);
+                    $kontostand_jahresanfang += $this->summe_konto_buchungen;
+                    $this->summe_kontobuchungen_jahr_monat($geldkonto_id, '80001', $jahr, $monat);
+                    $summe_mieteinnahmen_monat += $this->summe_konto_buchungen;
+                    $this->summe_miete_jahr($geldkonto_id, '80001', $jahr, $monat);
+                    $summe_mieteinnahmen_jahr += $this->summe_konto_buchungen;
+                    $this->summe_kosten_jahr_monat($geldkonto_id, '80001', $jahr, $monat);
+                    $summe_kosten_monat += $this->summe_konto_buchungen;
+                    $this->summe_kosten_jahr($geldkonto_id, '80001', $jahr, $monat);
+                    $summe_kosten_jahr += $this->summe_konto_buchungen;
+                    $this->kontostand_tagesgenau_bis($geldkonto_id, $datum_bis);
+                    $kontostand_heute += $this->summe_konto_buchungen;
+                }
 
                 /* Gesamtsummen bilden */
                 $g_kontostand_ja = $g_kontostand_ja + $kontostand_jahresanfang;
@@ -2244,12 +2268,12 @@ class buchen
                 $g_kosten_jahr += $summe_kosten_jahr;
                 $g_kontostand_akt = $g_kontostand_akt + $kontostand_heute;
 
-                $kontostand_jahresanfang = nummer_punkt2komma($kontostand_jahresanfang);
-                $summe_mieteinnahmen_monat = nummer_punkt2komma($summe_mieteinnahmen_monat);
-                $summe_mieteinnahmen_jahr = nummer_punkt2komma($summe_mieteinnahmen_jahr);
-                $summe_kosten_monat = nummer_punkt2komma($summe_kosten_monat);
-                $summe_kosten_jahr = nummer_punkt2komma($summe_kosten_jahr);
-                $kontostand_heute = nummer_punkt2komma($kontostand_heute);
+                $kontostand_jahresanfang = nummer_punkt2komma_t($kontostand_jahresanfang);
+                $summe_mieteinnahmen_monat = nummer_punkt2komma_t($summe_mieteinnahmen_monat);
+                $summe_mieteinnahmen_jahr = nummer_punkt2komma_t($summe_mieteinnahmen_jahr);
+                $summe_kosten_monat = nummer_punkt2komma_t($summe_kosten_monat);
+                $summe_kosten_jahr = nummer_punkt2komma_t($summe_kosten_jahr);
+                $kontostand_heute = nummer_punkt2komma_t($kontostand_heute);
                 // echo "<b>$kontostand_jahresanfang| $summe_mieteinnahmen_monat|$summe_mieteinnahmen_jahr|$summe_kosten_monat|$summe_kosten_jahr|$kontostand_heute</b><br>";
 
                 $table_arr [$a] ['OBJEKT_NAME'] = $objekt_name;
@@ -2262,13 +2286,13 @@ class buchen
             } // end for
 
             /* Summenzeile hinzufügen */
-            $table_arr [$a] ['OBJEKT_NAME'] = "<b>Summe incl. FON</b>";
-            $table_arr [$a] ['KONTOSTAND1_1'] = '<b>' . nummer_punkt2komma($g_kontostand_ja) . '</b>';
-            $table_arr [$a] ['ME_MONAT'] = '<b>' . nummer_punkt2komma($g_me_monat) . '</b>';
-            $table_arr [$a] ['ME_JAHR'] = '<b>' . nummer_punkt2komma($g_me_jahr) . '</b>';
-            $table_arr [$a] ['KOSTEN_MONAT'] = '<b>' . nummer_punkt2komma($g_kosten_monat) . '</b>';
-            $table_arr [$a] ['KOSTEN_JAHR'] = '<b>' . nummer_punkt2komma($g_kosten_jahr) . '</b>';
-            $table_arr [$a] ['KONTOSTAND_AKTUELL'] = '<b>' . nummer_punkt2komma($g_kontostand_akt) . '</b>';
+            $table_arr [$a] ['OBJEKT_NAME'] = "<b>Summe</b>";
+            $table_arr [$a] ['KONTOSTAND1_1'] = '<b>' . nummer_punkt2komma_t($g_kontostand_ja) . '</b>';
+            $table_arr [$a] ['ME_MONAT'] = '<b>' . nummer_punkt2komma_t($g_me_monat) . '</b>';
+            $table_arr [$a] ['ME_JAHR'] = '<b>' . nummer_punkt2komma_t($g_me_jahr) . '</b>';
+            $table_arr [$a] ['KOSTEN_MONAT'] = '<b>' . nummer_punkt2komma_t($g_kosten_monat) . '</b>';
+            $table_arr [$a] ['KOSTEN_JAHR'] = '<b>' . nummer_punkt2komma_t($g_kosten_jahr) . '</b>';
+            $table_arr [$a] ['KONTOSTAND_AKTUELL'] = '<b>' . nummer_punkt2komma_t($g_kontostand_akt) . '</b>';
 
             $pdf->ezTable($table_arr, array(
                 'OBJEKT_NAME' => 'Objekt',
@@ -2283,10 +2307,10 @@ class buchen
                 'width' => '500',
                 'justification' => 'right',
                 'cols' => array(
-                    'KONTOSTAND1_1' => array(
-                        'justification' => 'right'
+                    'OBJEKT_NAME' => array(
+                        'width' => 50
                     ),
-                    'ME_MONAT' => array(
+                    'KONTOSTAND1_1' => array(
                         'justification' => 'right'
                     ),
                     'ME_MONAT' => array(
