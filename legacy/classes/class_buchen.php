@@ -293,11 +293,11 @@ class buchen
             echo "<option value=\"Einheit\">Einheit</option>\n";
             // echo "<option value=\"Rechnung\">Rechnung</option>\n";
             echo "<option value=\"Partner\">Partner</option>\n";
-            echo "<option value=\"Mietvertrag\">Mieter</option>\n";
+            echo "<option value=\"Mietvertrag\">Mietvertrag</option>\n";
             echo "<option value=\"GELDKONTO\">Geldkonto</option>\n";
-            echo "<option value=\"Eigentuemer\">Eigentuemer</option>\n";
+            echo "<option value=\"Eigentuemer\">Kaufvertrag (WEG-Eigentümer)</option>\n";
             echo "<option value=\"Baustelle_ext\">Baustelle extern</option>\n";
-            echo "<option value=\"Benutzer\">Benutzer</option>\n";
+            echo "<option value=\"Mitarbeiter\">Mitarbeiter</option>\n";
             echo "<option value=\"Lager\">Lager</option>\n";
             echo "<option value=\"ALLE\">Alle</option>\n";
             echo "</select>\n";
