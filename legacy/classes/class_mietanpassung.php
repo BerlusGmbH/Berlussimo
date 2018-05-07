@@ -1855,7 +1855,7 @@ class mietanpassung
             $ber->ERH_QM2 = nummer_komma2punkt(nummer_punkt2komma($ber->M2_PREIS_NEU2 - $ber->M2_AKTUELL));
             $ber->SG_MAX = $ber->M2_PREIS_NEU2;
             $ber->B_NEUE_ENDMIETE = nummer_komma2punkt($ber->B_AKT_ENDMIETE) + $ber->MONATLICH_MEHR2;
-            $ber->PROZ_ERH2 = (($ber->NEUE_MIETE2 / ($ber->MIETE_3_JAHRE / 100)) - 100) - $ber->ANSTIEG_3J;
+            $ber->PROZ_ERH2 = ($ber->MONATLICH_MEHR2 / $ber->MIETE_3_JAHRE) * 100;
         } else {
             $ber->M2_PREIS_NEU2 = $ber->MAX_M2_PREIS_KAPP;
             $ber->NEUE_MIETE2 = $ber->MAXIMALE_MIETE;
@@ -1863,7 +1863,7 @@ class mietanpassung
             $ber->ERH_QM2 = nummer_komma2punkt(nummer_punkt2komma($ber->M2_PREIS_NEU2 - $ber->M2_AKTUELL));
             $ber->SG_MAX = $ber->M2_PREIS_NEU2;
             $ber->B_NEUE_ENDMIETE = nummer_komma2punkt($ber->B_AKT_ENDMIETE) + $ber->MONATLICH_MEHR2;
-            $ber->PROZ_ERH2 = (($ber->NEUE_MIETE2 / ($ber->MIETE_3_JAHRE / 100)) - 100) - $ber->ANSTIEG_3J;
+            $ber->PROZ_ERH2 = ($ber->MONATLICH_MEHR2 / $ber->MIETE_3_JAHRE) * 100;
         }
 
         $ber->MIETE_AKTUELL_A = nummer_punkt2komma($ber->MIETE_AKTUELL);
@@ -2499,14 +2499,14 @@ class mietanpassung
             $ber->MONATLICH_MEHR = $ber->NEUE_MIETE - $ber->MIETE_AKTUELL;
             $ber->ERH_QM2 = nummer_komma2punkt(nummer_punkt2komma($ber->M2_PREIS_NEU - $ber->M2_AKTUELL));
             $ber->SG_MAX = $ber->M2_PREIS_NEU;
-            $ber->PROZ_ERH = ((($ber->NEUE_MIETE + $ber->TAT_KOST_M) / ($ber->MIETE_3_JAHRE / 100)) - 100) - $ber->ANSTIEG_3J;
+            $ber->PROZ_ERH = ($ber->MONATLICH_MEHR / $ber->MIETE_3_JAHRE) * 100;
         } else {
             $ber->M2_PREIS_NEU = $ber->MAX_M2_PREIS_KAPP;
             $ber->NEUE_MIETE = $ber->MAXIMALE_MIETE;
             $ber->MONATLICH_MEHR = $ber->NEUE_MIETE - $ber->MIETE_AKTUELL;
             $ber->ERH_QM2 = nummer_komma2punkt(nummer_punkt2komma($ber->M2_PREIS_NEU - $ber->M2_AKTUELL));
             $ber->SG_MAX = $ber->M2_PREIS_NEU;
-            $ber->PROZ_ERH = ((($ber->NEUE_MIETE + $ber->TAT_KOST_M) / ($ber->MIETE_3_JAHRE / 100)) - 100) - $ber->ANSTIEG_3J;
+            $ber->PROZ_ERH = ($ber->MONATLICH_MEHR / $ber->MIETE_3_JAHRE) * 100;
         }
         $ber->NEUE_BRUTTO_MIETE = $ber->NEUE_MIETE + nummer_komma2punkt($ber->TAT_KOST_M);
 
