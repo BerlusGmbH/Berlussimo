@@ -2059,7 +2059,7 @@ AND  `AKTUELL` =  '1'");
                 $z = $a + 1;
                 $f->erstelle_formular("SEPA-Überweisung buchen $kos_typ $empf", null);
                 echo "<tr><td>$z. $kos_typ<br>$empf</td><td>" . session()->get('temp_datum') . "</td><td>" . session()->get('temp_kontoauszugsnummer') . "</td><td>";
-                $f->text_feld('Buchungstext', 'vzweck', "$empf, $kat, $vzweck", 100, 'vzweck', '');
+                $f->text_feld('Buchungstext', 'vzweck', "$vzweck", 100, 'vzweck', '');
                 echo "</td><td>$betrag</td><td>$konto<br>$kos_typ:$kos_bez</td><td>";
                 if ($kat == 'RECHNUNG') {
                     throw new \App\Exceptions\MessageException(
