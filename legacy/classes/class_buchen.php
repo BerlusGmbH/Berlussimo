@@ -297,7 +297,7 @@ class buchen
             echo "<option value=\"GELDKONTO\">Geldkonto</option>\n";
             echo "<option value=\"Eigentuemer\">Kaufvertrag (WEG-Eigentümer)</option>\n";
             echo "<option value=\"Baustelle_ext\">Baustelle extern</option>\n";
-            echo "<option value=\"Mitarbeiter\">Mitarbeiter</option>\n";
+            echo "<option value=\"Person\">Mitarbeiter</option>\n";
             echo "<option value=\"Lager\">Lager</option>\n";
             echo "<option value=\"ALLE\">Alle</option>\n";
             echo "</select>\n";
@@ -328,7 +328,7 @@ class buchen
         $arr [7] ['bez'] = 'Geldkonto';
         $arr [8] ['typ'] = 'Eigentuemer';
         $arr [8] ['bez'] = 'Kaufvertrag (WEG-Eigentümer)';
-        $arr [9] ['typ'] = 'Mitarbeiter';
+        $arr [9] ['typ'] = 'Person';
         $arr [9] ['bez'] = 'Mitarbeiter';
         $arr [10] ['typ'] = 'Lager';
         $arr [10] ['bez'] = 'Lager';

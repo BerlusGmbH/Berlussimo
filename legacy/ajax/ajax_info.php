@@ -273,7 +273,7 @@ ORDER BY LPAD( EINHEIT_KURZNAME, LENGTH( EINHEIT_KURZNAME ) ,  '1' ) ASC ");
             echo "ALLE|";
         }
 
-        if ($typ == 'Mitarbeiter') {
+        if ($typ == 'Person') {
             $users = \App\Models\Person::has('jobsAsEmployee')->defaultOrder()->get();
             foreach ($users as $user) {
                 echo "$user->full_name*$user->id*|";

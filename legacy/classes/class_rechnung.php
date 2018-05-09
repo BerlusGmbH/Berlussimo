@@ -1107,7 +1107,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             return $bez;
         }
 
-        if ($kostentraeger_typ == 'Mitarbeiter') {
+        if ($kostentraeger_typ == 'Person') {
             $p = \App\Models\Person::find($kostentraeger_id);
             return $p->full_name;
         }

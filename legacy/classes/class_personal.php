@@ -17,8 +17,8 @@ class personal
             foreach ($b as $index => $benutzer) {
                 $z++;
                 $b_id = $benutzer->id;
-                $b_name_g = strtoupper($benutzer->name);
-                $b_name = $benutzer->name;
+                $b_name_g = $benutzer->full_name;
+                $b_name = $benutzer->full_name;
                 $ze = new zeiterfassung ();
                 $partner_id = $ze->get_partner_id_benutzer($b_id);
                 if ($partner_id) {
