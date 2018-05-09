@@ -32,6 +32,22 @@
                                              clearable
                             ></b-entity-select>
                         </v-flex>
+                        <v-flex xs12 md6>
+                            <v-text-field label="Warenausgangsnummer"
+                                          prepend-icon="mdi-call-made"
+                                          v-model="invoiceValue.AUSTELLER_AUSGANGS_RNR"
+                                          type="number"
+                                          step="1"
+                            ></v-text-field>
+                        </v-flex>
+                        <v-flex xs12 md6>
+                            <v-text-field label="Wareneingangsnummer"
+                                          prepend-icon="mdi-call-received"
+                                          v-model="invoiceValue.EMPFAENGER_EINGANGS_RNR"
+                                          type="number"
+                                          step="1"
+                            ></v-text-field>
+                        </v-flex>
                         <v-flex xs12 md4>
                             <v-text-field label="Rechnungsdatum"
                                           prepend-icon="mdi-calendar-blank"

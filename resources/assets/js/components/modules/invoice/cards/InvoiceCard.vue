@@ -17,7 +17,7 @@
                         <v-flex xs3>
                             <v-tooltip bottom>
                                 <v-icon slot='activator' style="font-size: inherit">mdi-call-made</v-icon>
-                                <span>Ausgangsrechnungsnummer</span>
+                                <span>Warenausgangsnummer</span>
                             </v-tooltip>
                             {{value.AUSTELLER_AUSGANGS_RNR}}
                         </v-flex>
@@ -29,7 +29,7 @@
                         <v-flex xs3>
                             <v-tooltip bottom>
                                 <v-icon slot='activator' style="font-size: inherit">mdi-call-received</v-icon>
-                                <span>Eingangsrechnungsnummer</span>
+                                <span>Wareneingangsnummer</span>
                             </v-tooltip>
                             {{value.EMPFAENGER_EINGANGS_RNR}}
                         </v-flex>

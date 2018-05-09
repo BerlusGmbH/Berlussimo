@@ -56,6 +56,8 @@ class InvoiceController extends Controller
             'EINGANGSDATUM',
             'FAELLIG_AM',
             'KURZBESCHREIBUNG',
+            'AUSTELLER_AUSGANGS_RNR',
+            'EMPFAENGER_EINGANGS_RNR',
             'advance_payment_invoice_id',
             'servicetime_from',
             'servicetime_to'
