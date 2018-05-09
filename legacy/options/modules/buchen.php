@@ -565,6 +565,8 @@ switch ($option) {
         $arr [5] ['OBJEKT_NAME'] = 'DÜ29';
         $arr [6] ['GELDKONTO_ID'] = 1921;
         $arr [6] ['OBJEKT_NAME'] = 'HO190';
+        $arr [7] ['GELDKONTO_ID'] = 12;
+        $arr [7] ['OBJEKT_NAME'] = 'Lager';
 
 
 

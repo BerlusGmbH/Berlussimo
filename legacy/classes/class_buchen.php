@@ -2096,6 +2096,8 @@ class buchen
         $this->kosten_einnahmen($monat, $jahr, 1920);
         echo "<hr><h4>HO190</h4>";
         $this->kosten_einnahmen($monat, $jahr, 1921);
+        echo "<hr><h4>Lager</h4>";
+        $this->kosten_einnahmen($monat, $jahr, 12);
     }
 
     function kosten_einnahmen($monat, $jahr, $geldkonto_ids)
@@ -2302,7 +2304,7 @@ class buchen
                 'KOSTEN_MONAT' => "Kosten $monatname",
                 'KOSTEN_JAHR' => "Kosten $jahr",
                 'KONTOSTAND_AKTUELL' => "Kontostand"
-            ), '<b>Kosten & Einnahmen / Objekt (Tabellarische übersicht)</b>', array(
+            ), '<b>Kosten & Einnahmen / Objekt</b>', array(
                 'shaded' => 0,
                 'width' => '500',
                 'justification' => 'right',
