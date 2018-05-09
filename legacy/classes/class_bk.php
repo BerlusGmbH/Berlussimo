@@ -205,7 +205,7 @@ class bk
 
     function dropdown_gen_keys()
     {
-        $result = DB::select("SELECT * FROM BK_GENERAL_KEYS WHERE  AKTUELL='1'   ORDER BY GKEY_NAME ASC");
+        $result = DB::select("SELECT * FROM BK_GENERAL_KEYS WHERE  AKTUELL='1' ORDER BY GKEY_NAME ASC");
 
         if (!empty($result)) {
             echo "<div class='input-field'>";
@@ -213,8 +213,13 @@ class bk
             foreach ($result as $row) {
                 $keyid = $row ['GKEY_ID'];
                 $keyname = $row ['GKEY_NAME'];
+                $g_var = $row ['G_VAR'];
 
-                echo "<option value=\"$keyid\">$keyname</option>";
+                if ($g_var == 'g_einheit_qm') {
+                    echo "<option value=\"$keyid\" selected>$keyname</option>";
+                } else {
+                    echo "<option value=\"$keyid\">$keyname</option>";
+                }
             }
             echo "</select><label for=\"genkeys\">Verteilerschlüssel</label>";
             echo "</div>";
