@@ -681,8 +681,8 @@ class buchen
 
         $betrag1 = nummer_komma2punkt($betrag);
         $mwst1 = nummer_komma2punkt($mwst);
-        $db_abfrage = "INSERT INTO GELD_KONTO_BUCHUNGEN VALUES (NULL, '$geldbuchung_id', '$g_buchungsnummer', '$kontoauszugsnr', '$erfass_nr','$betrag1', '$mwst1', '$vzweck', '$geldkonto_id', '$kostenkonto', '$datum', '$kostentraeger_typ', '$kostentraeger_id', '1')";
-        DB::insert($db_abfrage);
+        $db_abfrage = "INSERT INTO GELD_KONTO_BUCHUNGEN VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '1')";
+        DB::insert($db_abfrage, [$geldbuchung_id, $g_buchungsnummer, $kontoauszugsnr, $erfass_nr, $betrag1, $mwst1, $vzweck, $geldkonto_id, $kostenkonto, $datum, $kostentraeger_typ, $kostentraeger_id]);
         weiterleiten(route('web::buchen::legacy', ['option' => 'buchungs_journal', 'monat' => $t_monat, 'jahr' => $t_jahr], false));
     }
 
