@@ -93,7 +93,7 @@
         }
 
         callViaServer() {
-            axios.get('/api/v1/call/' + this.value.DETAIL_ID).then(() => {
+            axios.get('/api/v1/pbx/call/' + this.value.DETAIL_ID).then(() => {
                 this.updateMessage('Nummer wird gewählt.');
             }).catch((error) => {
                 this.updateMessage('Fehler beim wählen. Code: ' + error.response.status + ' Message: ' + error.response.data);
