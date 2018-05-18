@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Api\v1;
+namespace App\Http\Requests\Api\v1\PBX;
 
 
 use Illuminate\Foundation\Http\FormRequest;
