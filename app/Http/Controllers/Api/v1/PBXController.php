@@ -29,22 +29,52 @@ class PBXController extends Controller
         }
     }
 
-    public function lookup(LookupRequest $request, $cid)
+    public function lookup(LookupRequest $request)
     {
-        $details = Details::where('DETAIL_INHALT', 'LIKE', '%' . $cid . '%')->get();
+        $cid = $request->input('cid');
+        if (strncmp($cid, '00', 2) === 0) {
+            $cid = mb_substr($cid, 4);
+        }
+        if (strncmp($cid, '+', 1) === 0) {
+            $cid = mb_substr($cid, 3);
+        }
+        $cid = ltrim($cid, '0');
+        $valid_chars = '([-|(|)| |/|]*)';
+        $regexp = '.*' . $valid_chars;
+        $digits = str_split($cid);
+        foreach ($digits as $digit) {
+            $regexp .= $digit . $valid_chars;
+        }
+        $regexp .= '.*';
+        $details = Details::where('DETAIL_INHALT', 'REGEXP', $regexp)
+            ->whereIn('DETAIL_ZUORDNUNG_TABELLE', ['Partner', 'Person'])
+            ->get();
         foreach ($details as $detail) {
-            $owner = $detail->from;
-            if ($owner) {
-                switch (get_class($owner)) {
+            if ($detail->from) {
+                $cnam = '';
+                switch (get_class($detail->from)) {
                     case Person::class:
-                        return response(
-                            mb_convert_encoding($owner->full_name, 'latin1')
-                        )->header('Content-Type', 'text/plain; charset=ISO-8859-1');
+                        $cnam = $detail->from->full_name;
+                        if (!$detail->from->mietvertraege->isEmpty()) {
+                            $cnam .= ' (';
+                            $rentalContracts = $detail->from->mietvertraege;
+                            $cnam .= $rentalContracts->first()->einheit->EINHEIT_KURZNAME;
+                            if ($rentalContracts->count() > 1) {
+                                $cnam .= ' +' . ($rentalContracts->count() - 1);
+                            }
+                            $cnam .= ')';
+                        }
+                        break;
                     case Partner::class:
-                        return response(
-                            mb_convert_encoding($owner->PARTNER_NAME, 'latin1')
-                        )->header('Content-Type', 'text/plain; charset=ISO-8859-1');
+                        $cnam = $detail->from->PARTNER_NAME;
+                        break;
                 }
+                if ($detail->DETAIL_BEMERKUNG) {
+                    $cnam .= ' [' . $detail->DETAIL_BEMERKUNG . ']';
+                }
+                return response(
+                    $cnam
+                );
             }
         }
         return response('');
