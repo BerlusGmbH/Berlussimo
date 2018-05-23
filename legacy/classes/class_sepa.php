@@ -2721,7 +2721,7 @@ AND  `AKTUELL` =  '1'");
                         $bu->dropdown_kostenrahmen_nr('Kostenkonto P', 'kostenkonto', 'GELDKONTO', $gk_id, '');
                     }
 
-                    if ($gk2->iban_kos_typ == 'Benutzer') {
+                    if ($gk2->iban_kos_typ == 'Person') {
                         $bu->dropdown_kostenrahmen_nr('Kostenkonto B', 'kostenkonto', 'GELDKONTO', $gk_id, '');
                     }
                     if ($gk2->iban_kos_typ == 'Objekt') {

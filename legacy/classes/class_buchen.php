@@ -620,7 +620,7 @@ class buchen
             }
         }
 
-        if ($typ == 'Benutzer') {
+        if ($typ == 'Person') {
             $users = \App\Models\Person::has('jobsAsEmployee')->defaultOrder()->get();
             foreach ($users as $user) {
                 if ($vorwahl_bez == $user->id) {
@@ -749,7 +749,7 @@ class buchen
             return '0';
         }
 
-        if ($kostentraeger_typ == 'Benutzer') {
+        if ($kostentraeger_typ == 'Person') {
             $be = new benutzer ();
             return $be->get_benutzer_id($kostentraeger_bez);
         }

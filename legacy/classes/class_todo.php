@@ -1340,10 +1340,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $pdf->ezText("<b>Freigabe bis: $rep_eur € Netto</b>");
             }
             $dd = new detail ();
-            $b_tel = $dd->finde_detail_inhalt('Benutzer', Auth::user()->id, 'Telefon');
-            if (empty ($b_tel)) {
-                $b_tel = $dd->finde_detail_inhalt('Partner', $partner_id, 'Telefon');
-            }
+            $b_tel = $dd->finde_detail_inhalt('Partner', $partner_id, 'Telefon');
             $pdf->ezSetDy(-10); // abstand
             $pdf->ezText("<b>Bei Kosten über Freigabesumme bitten wir um Rückmeldung unter $b_tel.</b>");
             $pdf->ezSetDy(-10); // abstand
