@@ -40,6 +40,8 @@ Route::group(['prefix' => 'api/v1', 'namespace' => 'Api\v1', 'middleware' => ['a
         Route::get('{bankaccount}/select', 'BankAccountController@select')->name('select');
         Route::get('unselect', 'BankAccountController@unselect')->name('unselect');
     });
+
+    Route::get('/reports/revenue/{object}', 'Modules\ReportController@revenue')->name('reports.revenue');
 });
 
 Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'], function () {

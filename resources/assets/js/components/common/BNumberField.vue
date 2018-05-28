@@ -122,7 +122,7 @@
                             input.dispatchEvent(evt);
                         }
                         this.$nextTick(() => {
-                            if (input) {
+                            if (input && position) {
                                 input.setSelectionRange(position, position);
                             }
                         });
