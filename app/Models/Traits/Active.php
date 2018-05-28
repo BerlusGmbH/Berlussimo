@@ -10,7 +10,7 @@ trait Active
     {
         if (is_null($date)) {
             $date = Carbon::today();
-        } else {
+        } elseif (is_string($date)) {
             $date = Carbon::parse($date);
         }
         $start = $this->getStartDateFieldName();
@@ -122,5 +122,17 @@ trait Active
             default:
                 return false;
         }
+    }
+
+    public function overlaps(Carbon $start, Carbon $end)
+    {
+        $start = Carbon::parse($this->{$this->getStartDateFieldName()})->max($start);
+        $end_field = $this->{$this->getEndDateFieldName()} === '0000-00-00' ? Carbon::maxValue()
+            : Carbon::parse($this->{$this->getEndDateFieldName()});
+        $end = $end_field->min($end);
+        if ($start->lte($end)) {
+            return $start->diffInDays($end) + 1;
+        }
+        return 0;
     }
 }
