@@ -2806,9 +2806,10 @@ AND  `AKTUELL` =  '1'");
 
                     if ($kos_typ == 'Mietvertrag') {
                         $bu->dropdown_kostenrahmen_nr('Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id, '80001');
-                    }
-                    if ($kos_typ == 'Eigentuemer') {
+                    } elseif ($kos_typ == 'Eigentuemer') {
                         $bu->dropdown_kostenrahmen_nr('Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id, '6020');
+                    } else {
+                        $bu->dropdown_kostenrahmen_nr('Kostenkonto', 'kostenkonto', 'GELDKONTO', $gk_id);
                     }
 
                     $bu->dropdown_kostentreager_typen_vw('Kostenträgertyp PERSON2', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, $kos_typ);

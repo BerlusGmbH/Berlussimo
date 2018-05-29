@@ -53,7 +53,7 @@ class personal
                         echo "<input type=\"hidden\" id=\"option\" name=\"option\" value=\"sepa_sammler_hinzu\" form=\"sepa_lg_$index\">\n";
                         echo "<input type=\"hidden\" id=\"kat\" name=\"kat\" value=\"LOHN\" form=\"sepa_lg_$index\">\n";
                         echo "<input type=\"hidden\" id=\"gk_id\" name=\"gk_id\" value=\"" . session()->get('geldkonto_id') . "\" form=\"sepa_lg_$index\">\n";
-                        echo "<input type=\"hidden\" id=\"kos_typ\" name=\"kos_typ\" value=\"Benutzer\" form=\"sepa_lg_$index\">\n";
+                        echo "<input type=\"hidden\" id=\"kos_typ\" name=\"kos_typ\" value=\"Person\" form=\"sepa_lg_$index\">\n";
                         echo "<input type=\"hidden\" id=\"kos_id\" name=\"kos_id\" value=\"$b_id\" form=\"sepa_lg_$index\">\n";
                         $kk = new kontenrahmen ();
                         $kk->dropdown_kontorahmenkonten_vorwahl('Buchungskonto', 'konto', 'konto', 'GELDKONTO', session()->get('geldkonto_id'), '', 4000, "sepa_lg_" . $index);

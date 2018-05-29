@@ -269,7 +269,7 @@ class buchen
 
     /* Funktion zur Ermittlung der Geldkonten und Rückgabe als Array */
 
-    function dropdown_kostenrahmen_nr($label, $name, $typ, $typ_id, $vorwahl_konto, $id = null)
+    function dropdown_kostenrahmen_nr($label, $name, $typ, $typ_id, $vorwahl_konto = '', $id = null)
     {
         if ($id == null) {
             $id = $name;
