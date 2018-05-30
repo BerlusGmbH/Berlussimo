@@ -495,7 +495,11 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                         for ($a = 0; $a < $anz; $a++) {
                             $dname = $arr [$a] ['DETAIL_NAME'];
                             $dinhalt = $arr [$a] ['DETAIL_INHALT'];
+                            $dbemerkung = $arr [$a] ['DETAIL_BEMERKUNG'];
                             $kontaktdaten .= "<br>    <b>$dname</b>: $dinhalt";
+                            if ($dbemerkung) {
+                                $kontaktdaten .= ", $dbemerkung";
+                            }
                         }
                     }
                 }
@@ -506,7 +510,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 
     function finde_detail_kontakt_arr($tab, $id)
     {
-        $db_abfrage = "SELECT DETAIL_NAME, DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = '$tab' && (DETAIL_NAME LIKE '%tel%'or DETAIL_NAME LIKE '%fax%' or DETAIL_NAME LIKE '%mobil%' or DETAIL_NAME LIKE '%handy%' OR DETAIL_NAME LIKE '%mail%' OR DETAIL_NAME LIKE '%anschrift%') && DETAIL_ZUORDNUNG_ID = '$id' && DETAIL_AKTUELL = '1' ORDER BY DETAIL_NAME ASC";
+        $db_abfrage = "SELECT DETAIL_NAME, DETAIL_INHALT, DETAIL_BEMERKUNG FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = '$tab' && (DETAIL_NAME LIKE '%tel%'or DETAIL_NAME LIKE '%fax%' or DETAIL_NAME LIKE '%mobil%' or DETAIL_NAME LIKE '%handy%' OR DETAIL_NAME LIKE '%mail%' OR DETAIL_NAME LIKE '%anschrift%') && DETAIL_ZUORDNUNG_ID = '$id' && DETAIL_AKTUELL = '1' ORDER BY DETAIL_NAME ASC";
         $resultat = DB::select($db_abfrage);
         return $resultat;
     }
@@ -1182,8 +1186,8 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             $weg = new weg ();
             $weg->get_eigentumer_id_infos2($this->kos_id);
             $kontaktdaten_mieter = "$weg->haus_strasse $weg->haus_nummer\n<b>$weg->haus_plz $weg->haus_stadt</b>\n\n";
-            for ($pe = 0; $pe < count($weg->eigentuemer_person_ids); $pe++) {
-                $et_p_id = $weg->eigentuemer_person_ids [$pe];
+            for ($pe = 0; $pe < count($weg->eigentuemer_name); $pe++) {
+                $et_p_id = $weg->eigentuemer_name [$pe]['person_id'];
                 $det_arr = $this->finde_detail_kontakt_arr('Person', $et_p_id);
                 $kontaktdaten_mieter .= rtrim(ltrim($weg->eigentuemer_name [$pe] ['HRFRAU'])) . " ";
                 $kontaktdaten_mieter .= rtrim(ltrim($weg->eigentuemer_name [$pe] ['Nachname'])) . " ";
@@ -1193,7 +1197,12 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                     for ($ad = 0; $ad < $anzd; $ad++) {
                         $dname = $this->html2txt($det_arr [$ad] ['DETAIL_NAME']);
                         $dinhalt = $this->html2txt($det_arr [$ad] ['DETAIL_INHALT']);
-                        $kontaktdaten_mieter .= "$dname:$dinhalt\n";
+                        $dbemerkung = $this->html2txt($det_arr [$ad] ['DETAIL_BEMERKUNG']);
+                        $kontaktdaten_mieter .= "$dname: $dinhalt";
+                        if ($dbemerkung) {
+                            $kontaktdaten_mieter .= ", $dbemerkung";
+                        }
+                        $kontaktdaten_mieter .= "\n";
                     }
                 }
                 $kontaktdaten_mieter .= "\n";

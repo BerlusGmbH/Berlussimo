@@ -477,7 +477,7 @@ class weg
 
     function get_person_id_eigentuemer_arr($id)
     {
-        $result = DB::select("SELECT PERSON_ID FROM WEG_EIGENTUEMER_PERSON WHERE WEG_EIG_ID='$id' && AKTUELL='1'");
+        $result = DB::select("SELECT PERSON_ID FROM WEG_EIGENTUEMER_PERSON WHERE WEG_EIG_ID='$id' && AKTUELL='1' ORDER BY PERSON_ID");
         return $result;
     }
 
