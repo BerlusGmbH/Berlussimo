@@ -473,17 +473,14 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
     function kontaktdaten_anzeigen_mieter($einheit_id)
     {
         $ee = new einheit ();
-        $status = $ee->get_einheit_status($einheit_id);
-        if ($status == true) {
-            $mv_id = $ee->get_last_mietvertrag_id($einheit_id);
-        } else {
-            $mv_id = null;
-        }
-        if (empty ($mv_id)) {
+        $einheit = \App\Models\Einheiten::findOrFail($einheit_id);
+        $mietvertraege = $einheit->mietvertraege()->active()->get();
+        if ($mietvertraege->isEmpty()) {
             /* Nie vermietet */
             $ee->get_einheit_info($einheit_id);
             return "$ee->haus_strasse $ee->haus_nummer, $ee->haus_plz $ee->haus_stadt\n<b>Lage:</b> $ee->einheit_lage\n<b>Leerstand</b>";
         } else {
+            $mv_id = $mietvertraege->first()->MIETVERTRAG_ID;
             $m = new mietvertraege ();
             $m->get_mietvertrag_infos_aktuell($mv_id);
             $result = DB::select("SELECT PERSON_MIETVERTRAG_PERSON_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_MIETVERTRAG_ID='$mv_id' && PERSON_MIETVERTRAG_AKTUELL='1' ORDER BY PERSON_MIETVERTRAG_ID ASC");
