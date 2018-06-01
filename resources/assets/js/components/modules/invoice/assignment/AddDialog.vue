@@ -2,13 +2,21 @@
     <v-dialog :value="value" @input="$emit('input', $event)">
         <v-card>
             <v-card-title>
-                <v-icon>add</v-icon>
-                <span class="headline">Zuweisung hinzufügen</span>
+                <span class="headline">
+                    <template v-if="line">
+                        <v-icon>add</v-icon>
+                        Zuweisung hinzufügen
+                    </template>
+                    <template v-else>
+                        <v-icon>mdi-pencil</v-icon>
+                        Zuweisung ändern
+                    </template>
+                </span>
             </v-card-title>
             <v-card-text>
                 <v-container fluid grid-list-md>
                     <v-layout row wrap>
-                        <v-flex xs12 md6 lg4>
+                        <v-flex xs12 md6 lg1>
                             <v-text-field label="Menge"
                                           v-model="assignmentValue.MENGE"
                                           prepend-icon="mdi-numeric"
@@ -16,7 +24,7 @@
                                           step="0.01"
                             ></v-text-field>
                         </v-flex>
-                        <v-flex xs12 md6 lg4>
+                        <v-flex xs12 md6 lg3>
                             <app-entity-select label="Kostenträger"
                                                @input="selectCostUnit"
                                                :value="costUnit"
@@ -34,7 +42,7 @@
                             >
                             </app-entity-select>
                         </v-flex>
-                        <v-flex xs12 md6 lg4>
+                        <v-flex xs12 md6 lg2>
                             <app-entity-select label="Kontenrahmen"
                                                :entities="['kontenrahmen']"
                                                v-model="standardChart"
@@ -43,7 +51,7 @@
                             >
                             </app-entity-select>
                         </v-flex>
-                        <v-flex xs12 md6 lg4>
+                        <v-flex xs12 md6 lg2>
                             <app-entity-select label="Buchungskonto"
                                                :entities="bookingAccountEntity"
                                                prepend-icon="mdi-numeric"
@@ -52,13 +60,13 @@
                             >
                             </app-entity-select>
                         </v-flex>
-                        <v-flex xs12 md6 lg4>
+                        <v-flex xs12 md6 lg2>
                             <v-switch label="Weiter verwenden"
                                       style="padding-top: 18px"
                                       v-model="reuse"
                             ></v-switch>
                         </v-flex>
-                        <v-flex xs12 md6 lg4>
+                        <v-flex xs12 md6 lg2>
                             <b-year-field
                                     label="Verwendungsjahr"
                                     v-model="assignmentValue.VERWENDUNGS_JAHR"
@@ -99,13 +107,13 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {namespace, Mutation} from "vuex-class";
+    import {Mutation, namespace} from "vuex-class";
     import {Prop, Watch} from "vue-property-decorator";
     import {
-        InvoiceLine,
-        InvoiceLineAssignment,
         BankAccountStandardChart,
-        BookingAccount
+        BookingAccount,
+        InvoiceLine,
+        InvoiceLineAssignment
     } from "../../../../server/resources";
     import _ from 'lodash';
 
