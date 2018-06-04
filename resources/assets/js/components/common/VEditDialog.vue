@@ -110,7 +110,6 @@
 
         render(h) {
             return h('v-menu', {
-                'class': 'small-dialog',
                 props: {
                     contentClass: 'small-dialog__content',
                     transition: this.transition,
