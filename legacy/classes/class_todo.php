@@ -510,7 +510,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 
     function finde_detail_kontakt_arr($tab, $id)
     {
-        $db_abfrage = "SELECT DETAIL_NAME, DETAIL_INHALT, DETAIL_BEMERKUNG FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = '$tab' && (DETAIL_NAME LIKE '%tel%'or DETAIL_NAME LIKE '%fax%' or DETAIL_NAME LIKE '%mobil%' or DETAIL_NAME LIKE '%handy%' OR DETAIL_NAME LIKE '%mail%' OR DETAIL_NAME LIKE '%anschrift%') && DETAIL_ZUORDNUNG_ID = '$id' && DETAIL_AKTUELL = '1' ORDER BY DETAIL_NAME ASC";
+        $db_abfrage = "SELECT DETAIL_NAME, DETAIL_INHALT, DETAIL_BEMERKUNG FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = '$tab' && (DETAIL_NAME LIKE '%tel%'or DETAIL_NAME LIKE '%fax%' or DETAIL_NAME LIKE '%mobil%' or DETAIL_NAME LIKE '%handy%') && DETAIL_ZUORDNUNG_ID = '$id' && DETAIL_AKTUELL = '1' ORDER BY DETAIL_NAME ASC";
         $resultat = DB::select($db_abfrage);
         return $resultat;
     }
@@ -1177,7 +1177,12 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 for ($a = 0; $a < $anzd; $a++) {
                     $dname = $this->html2txt($det_arr [$a] ['DETAIL_NAME']);
                     $dinhalt = $this->html2txt($det_arr [$a] ['DETAIL_INHALT']);
-                    $kontaktdaten_mieter .= "\n$dname:$dinhalt";
+                    $dbemerkung = $this->html2txt($det_arr [$a] ['DETAIL_BEMERKUNG']);
+                    $kontaktdaten_mieter .= "\n$dname: $dinhalt";
+                    if ($dbemerkung) {
+                        $kontaktdaten_mieter .= ", $dbemerkung";
+                    }
+                    $kontaktdaten_mieter .= "\n";
                 }
             }
         }
@@ -1218,8 +1223,6 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $kontaktdaten_mieter = $this->kos_bez;
             }
         }
-        //$kontaktdaten_mieter = str_replace('<br />', "\n", $kontaktdaten_mieter);
-        //$kontaktdaten_mieter = $this->html2txt($kontaktdaten_mieter);
 
         ob_clean(); // ausgabepuffer leeren
         $pdf = new Cezpdf ('a4', 'portrait');
