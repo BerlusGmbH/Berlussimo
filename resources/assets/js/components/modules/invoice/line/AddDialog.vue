@@ -41,6 +41,7 @@
                                           step="0.01"
                                           type="number"
                                           tabindex="4"
+                                          ref="amountInput"
                             ></v-text-field>
                         </v-flex>
                         <v-flex xs6 md1>
@@ -282,6 +283,10 @@
             this.lineValue.BELEG_NR = this.invoice.BELEG_NR;
             if (selected) {
                 this.lineValue.fill(selected);
+                setTimeout(() => {
+                    this.amountInput.focus();
+                    this.amountInput.select();
+                }, 200);
             }
         }
 
@@ -316,6 +321,10 @@
 
         get input() {
             return ((this.$refs.invoiceItemSelect as EntitySelect).$refs.input as HTMLInputElement);
+        }
+
+        get amountInput() {
+            return ((this.$refs.amountInput as any).$refs.input as HTMLInputElement);
         }
 
         reinit() {
