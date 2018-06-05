@@ -36,6 +36,6 @@ class Bankkonten extends Model
     }
 
     public function partner() {
-        return $this->belongsToMany(Objekte::class, 'GELD_KONTEN_ZUWEISUNG', 'KONTO_ID', 'KOSTENTRAEGER_ID')->wherePivot('KOSTENTRAEGER_TYP', 'Partner')->wherePivot('AKTUELL', '1');
+        return $this->belongsToMany(Partner::class, 'GELD_KONTEN_ZUWEISUNG', 'KONTO_ID', 'KOSTENTRAEGER_ID')->wherePivot('KOSTENTRAEGER_TYP', 'Partner')->wherePivot('AKTUELL', '1');
     }
 }

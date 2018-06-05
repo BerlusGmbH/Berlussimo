@@ -1,5 +1,6 @@
 import axios from "../../libraries/axios";
 import {AxiosPromise} from "axios";
+import {Objekt} from "../../server/resources";
 
 export default {
     namespaced: true,
@@ -58,6 +59,9 @@ export default {
             promise.then((reply) => {
                 if (reply.status === 200) {
                     commit('updateBankkonto', bankkonto);
+                    if (reply.data.object) {
+                        commit('updateObjekt', Objekt.applyPrototype(reply.data.object));
+                    }
                 }
             });
         }
