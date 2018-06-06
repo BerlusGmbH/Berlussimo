@@ -18,6 +18,8 @@ class partners
     public $partner_id;
     public $partner_land;
     public $partner_dat;
+    public $handelsregister;
+    public $rechtsvertreter;
 
     function suche_partner_in_array($suchtext)
     {
@@ -87,16 +89,22 @@ OR  `LAND` LIKE  '%$suchtext%'
 
     function get_partner_info($partner_id)
     {
-        $result = DB::select("SELECT *  FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
-        $row = $result[0];
-        if ($row) {
-            $this->partner_dat = $row ['PARTNER_DAT'];
-            $this->partner_name = $row ['PARTNER_NAME'];
-            $this->partner_strasse = $row ['STRASSE'];
-            $this->partner_hausnr = $row ['NUMMER'];
-            $this->partner_plz = $row ['PLZ'];
-            $this->partner_ort = $row ['ORT'];
-            $this->partner_land = $row ['LAND'];
+        $partner = \App\Models\Partner::with(['rechtsvertreter', 'handelsregister'])->find($partner_id);
+        if ($partner) {
+            $this->partner_dat = $partner->PARTNER_DAT;
+            $this->partner_id = $partner->PARTNER_ID;
+            $this->partner_name = $partner->PARTNER_NAME;
+            $this->partner_strasse = $partner->STRASSE;
+            $this->partner_hausnr = $partner->NUMMER;
+            $this->partner_plz = $partner->PLZ;
+            $this->partner_ort = $partner->ORT;
+            $this->partner_land = $partner->LAND;
+            if (!$partner->rechtsvertreter->isEmpty()) {
+                $this->rechtsvertreter = $partner->rechtsvertreter->first()->DETAIL_INHALT;
+            }
+            if (!$partner->handelsregister->isEmpty()) {
+                $this->handelsregister = $partner->handelsregister->first()->DETAIL_INHALT;
+            }
         }
     }
 

@@ -45,4 +45,19 @@ class Partner extends Model
     {
         return $this->belongsToMany(Person::class, 'jobs', 'employer_id', 'employee_id');
     }
+
+    public function details()
+    {
+        return $this->morphMany('App\Models\Details', 'details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID');
+    }
+
+    public function rechtsvertreter()
+    {
+        return $this->details()->where('DETAIL_NAME', 'Rechtsvertreter');
+    }
+
+    public function handelsregister()
+    {
+        return $this->details()->where('DETAIL_NAME', 'Handelsregister');
+    }
 }
