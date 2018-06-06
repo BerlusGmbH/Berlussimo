@@ -18,8 +18,8 @@ class partners
     public $partner_id;
     public $partner_land;
     public $partner_dat;
-    public $handelsregister;
-    public $rechtsvertreter;
+    public $partner_handelsregister;
+    public $partner_rechtsvertreter;
 
     function suche_partner_in_array($suchtext)
     {
@@ -100,10 +100,10 @@ OR  `LAND` LIKE  '%$suchtext%'
             $this->partner_ort = $partner->ORT;
             $this->partner_land = $partner->LAND;
             if (!$partner->rechtsvertreter->isEmpty()) {
-                $this->rechtsvertreter = $partner->rechtsvertreter->first()->DETAIL_INHALT;
+                $this->partner_rechtsvertreter = $partner->rechtsvertreter->first()->DETAIL_INHALT;
             }
             if (!$partner->handelsregister->isEmpty()) {
-                $this->handelsregister = $partner->handelsregister->first()->DETAIL_INHALT;
+                $this->partner_handelsregister = $partner->handelsregister->first()->DETAIL_INHALT;
             }
         }
     }
