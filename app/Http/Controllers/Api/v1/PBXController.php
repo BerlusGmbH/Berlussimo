@@ -66,7 +66,7 @@ class PBXController extends Controller
                         }
                         break;
                     case Partner::class:
-                        $cnam = $detail->from->PARTNER_NAME;
+                        $cnam = trim($detail->from->name_one_line);
                         break;
                 }
                 if ($detail->DETAIL_BEMERKUNG) {

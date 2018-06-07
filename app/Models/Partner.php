@@ -60,4 +60,13 @@ class Partner extends Model
     {
         return $this->details()->where('DETAIL_NAME', 'Handelsregister');
     }
+
+    public function getNameOneLineAttribute()
+    {
+        $name = $this->PARTNER_NAME;
+        $name = str_replace("\r\n", ' ', $name);
+        $name = str_replace("\r", ' ', $name);
+        $name = str_replace("\n", ' ', $name);
+        return $name;
+    }
 }
