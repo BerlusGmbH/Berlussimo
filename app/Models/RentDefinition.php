@@ -43,19 +43,25 @@ class RentDefinition extends Model
 
     public function value($from = null, $to = null)
     {
-        $definition_from = Carbon::parse($this->ANFANG);
-        $definition_to = $this->ENDE === '0000-00-00' ? Carbon::maxValue() : Carbon::parse($this->ENDE);
+        $definition_from = Carbon::parse($this->ANFANG, 'UTC');
+        $definition_to = $this->ENDE === '0000-00-00' ? Carbon::maxValue() : Carbon::parse($this->ENDE, 'UTC');
         if (is_null($from)) {
             $from = $definition_from;
         }
         if (is_null($to)) {
             $to = $definition_to;
         }
+        if ($from instanceof Carbon && $from->tzName !== 'UTC') {
+            $from = Carbon::parse($from->toDateString(), 'UTC');
+        }
+        if ($to instanceof Carbon && $to->tzName !== 'UTC') {
+            $to = Carbon::parse($to->toDateString(), 'UTC');
+        }
         if (is_string($from)) {
-            $from = Carbon::parse($from);
+            $from = Carbon::parse($from, 'UTC');
         }
         if (is_string($to)) {
-            $to = Carbon::parse($to);
+            $to = Carbon::parse($to, 'UTC');
         }
         $from = $definition_from->max($from);
         $to = $definition_to->min($to);
