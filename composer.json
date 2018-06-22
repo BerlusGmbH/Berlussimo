@@ -13,6 +13,7 @@
     "barryvdh/laravel-ide-helper": "v2.*",
     "damienlagae/xlsxwriter": "^1.0",
     "doctrine/dbal": "^2.5",
+    "fideloper/proxy": "~3.0",
     "kingsquare/php-mt940": "dev-berlussimo",
     "laravel/framework": "5.4.*",
     "laravel/passport": "^3.0",
