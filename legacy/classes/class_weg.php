@@ -5982,13 +5982,24 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 )
             ));
 
+            $today = \Carbon\Carbon::today();
+            $geldkonto = \App\Models\Objekte::findOrFail($e->objekt_id)
+                ->bankkonten()
+                ->wherePivot('VERWENDUNGSZWECK', 'Hausgeld')
+                ->wherePivot('VON', '<=', $today)
+                ->where(function ($q) use ($today) {
+                    $q->whereDate('GELD_KONTEN_ZUWEISUNG.BIS', '>=', $today)
+                        ->orWhereNull('GELD_KONTEN_ZUWEISUNG.BIS');
+                })
+                ->first();
+
             /* Zweite Seite */
             $pdf->ezSetDy(-30);
             $pdf->ezText("Sollte Ihre Abrechnung ein Guthaben ausweisen, werden wir nach der Genehmigung der Jahresabrechnung durch die Eigentümerversammlung den Guthabenbetrag auf Ihr Konto überweisen, soweit es nicht zum Ausgleich von aktuellen Rückständen benötigt wird. Wir bitten um die Mitteilung ihrer derzeitigen Kontoverbindung, auch wenn sich diese seit der letzten Abrechnung nicht geändert hat.", 10, array(
                 'justification' => 'full'
             ));
             $pdf->ezSetDy(-10);
-            $pdf->ezText("Sollte Ihre Abrechnung eine Nachzahlung ausweisen, überweisen Sie bitte den Nachzahlungsbetrag nach der Genehmigung der Jahresabrechnung durch die Eigentümerversammlung auf das Ihnen bekannte Hausgeldkonto (Inh.: $g->beguenstigter, IBAN: $g->IBAN1 bei der $g->bankname). Als <b>Verwendungszweck</b> geben Sie bitte <b>Hausgeldabrechnung $jahr $e->einheit_kurzname</b> an.", 10, array(
+            $pdf->ezText("Sollte Ihre Abrechnung eine Nachzahlung ausweisen, überweisen Sie bitte den Nachzahlungsbetrag nach der Genehmigung der Jahresabrechnung durch die Eigentümerversammlung auf das Ihnen bekannte Hausgeldkonto (Inh.: $geldkonto->BEGUENSTIGTER, IBAN: $geldkonto->chunked_IBAN bei der $geldkonto->INSTITUT). Als <b>Verwendungszweck</b> geben Sie bitte <b>Hausgeldabrechnung $jahr $e->einheit_kurzname</b> an.", 10, array(
                 'justification' => 'full'
             ));
             $pdf->ezSetDy(-10);
