@@ -1819,15 +1819,16 @@ class weg
 
     function get_eigentumer_id_infos($e_id)
     {
-        $einheit_id = $this->get_einheit_id_from_eigentuemer($e_id);
-        $this->einheit_id = $einheit_id;
+        if (!$this->einheit_id) {
+            $this->einheit_id = $this->get_einheit_id_from_eigentuemer($e_id);
+        }
         $e = new einheit ();
-        $e->get_einheit_info($einheit_id);
+        $e->get_einheit_info($this->einheit_id);
         $this->haus_strasse = $e->haus_strasse;
         $this->haus_nummer = $e->haus_nummer;
         $this->einheit_kurzname = $e->einheit_kurzname;
         $this->objekt_id = $e->objekt_id;
-        $this->get_last_eigentuemer_namen($einheit_id);
+        $this->get_last_eigentuemer_namen($this->einheit_id);
         $miteigentuemer_namen = strip_tags($this->eigentuemer_namen2);
         $this->get_anrede_eigentuemer($e_id);
         return "$e->einheit_kurzname $miteigentuemer_namen";
@@ -1842,14 +1843,21 @@ class weg
 
         $personen_id_arr = $this->get_person_id_eigentuemer_arr($this->eigentuemer_id);
         $anz_p = count($personen_id_arr);
-        if (!$anz_p) {
-        } else {
+        if ($anz_p) {
             unset ($this->eigentuemer_name);
 
             for ($a = 0; $a < $anz_p; $a++) {
                 $person_id = $personen_id_arr [$a] ['PERSON_ID'];
                 $p = new personen ();
                 $p->get_person_infos($person_id);
+                if ($this->einheit_id) {
+                    $e = new einheit();
+                    $e->get_einheit_info($this->einheit_id);
+                    $this->haus_plz = $e->haus_plz;
+                    $this->haus_stadt = $e->haus_stadt;
+                    $this->haus_strasse = $e->haus_strasse;
+                    $this->haus_nummer = $e->haus_nummer;
+                }
                 $this->eigentuemer_name [$a] ['person_id'] = $person_id;
                 $this->eigentuemer_name [$a] ['Nachname'] = $p->person_nachname;
                 $this->eigentuemer_name [$a] ['Vorname'] = $p->person_vorname;
@@ -1888,6 +1896,9 @@ class weg
             $this->eigentuemer_name = $arr;
             $this->pdf_anrede = 'Sehr ';
             for ($a = 0; $a < $anz_p; $a++) {
+                $person_id = $personen_id_arr [$a] ['PERSON_ID'];
+                $p = new personen ();
+                $p->get_person_infos($person_id);
                 if ($a == 0) {
                     $this->pdf_anrede .= $this->eigentuemer_name [$a] ['Anrede'] . ',<br>';
                 } else {
@@ -2179,7 +2190,6 @@ class weg
         $pdf->ezText("<b>Hausgeldrückstand</b>", 12);
 
         $pdf->ezSetDy(13);
-        $pdf->setColor(1.0, 0.0, 0.0);
         if ($this->hg_erg < 0.00) {
             $this->hg_erg = substr($this->hg_erg, 1);
             $this->hg_erg_a = nummer_punkt2komma($this->hg_erg);
@@ -2188,7 +2198,6 @@ class weg
             'justification' => 'right'
         ));
 
-        $pdf->setColor(0.0, 0.0, 0.0);
         $pdf->ezText("<b>zzgl. Mahngebühr</b>", 12);
         $pdf->ezSetDy(13);
 
@@ -2198,10 +2207,8 @@ class weg
         /* Linie über Gesamtrückstand */
         $pdf->ezSetDy(-5);
         $pdf->line(170, $pdf->y, 403, $pdf->y);
-        $pdf->setColor(0.0, 0.0, 0.0);
         $pdf->ezText("<b>Gesamtrückstand</b>", 12);
         $pdf->ezSetDy(13);
-        $pdf->setColor(1.0, 0.0, 0.0);
         $mahngebuehr_r = nummer_komma2punkt($mahngebuehr);
         $gesamt_rueckstand = abs($this->hg_erg) + $mahngebuehr_r;
         $gesamt_rueckstand = nummer_punkt2komma($gesamt_rueckstand);
@@ -2216,19 +2223,18 @@ class weg
         $pdf->ezText("Die konkreten Fehlbeträge entnehmen Sie bitte dem beigefügten Hausgeld-Kontoauszug.", 11);
         $pdf->ezText("Wir fordern Sie auf, den genannten Betrag unter Angabe Ihrer Eigentümernummer\n<b>$this->einheit_kurzname</b> bis zum", 11);
         $pdf->ezSetCmMargins(3, 3, 9, 3);
-        $pdf->setColor(1.0, 0.0, 0.0);
         $pdf->ezText("<b>$datum</b>\n", 11);
         $pdf->ezSetMargins(135, 70, 50, 50);
-        $pdf->ezText("<b>auf das Konto der WEG (IBAN: $g->IBAN1, BIC: $g->BIC)\nbei der $g->kredit_institut\n</b>", 11);
-        $pdf->setColor(0.0, 0.0, 0.0);
-        $pdf->ezText("zu überweisen.\n", 11);
+        $pdf->ezText("auf das Konto der WEG (IBAN: <b>$g->IBAN1</b>, BIC: <b>$g->BIC</b>) bei der $g->kredit_institut zu überweisen.\n", 11);
         $pdf->ezText("Für Rückfragen stehen wir Ihnen gerne zur Verfügung.\n", 11);
         $pdf->ezText("Mit freundlichen Grüßen\n\n\n", 11);
         $pdf->ezText("Berlus GmbH\n\n", 11);
-        $pdf->ezText("Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift gültig.\n", 11);
+        $pdf->ezText("Dieses Schreiben wurde maschinell erstellt und ist ohne Unterschrift gültig.\n", 9);
         $pdf->addInfo('Title', "Mahnung $mv->personen_name_string");
         $pdf->addInfo('Author', Auth::user()->email);
         $this->hausgeld_kontoauszug_pdf($pdf, $eig, 1);
+        $this->hg_ist_soll_pdf($pdf, $eig, date('Y'));
+        $this->hga_uebersicht_pdf($pdf, $eig);
         ob_end_clean(); // ausgabepuffer leeren
         $pdf->ezStream();
     }
@@ -2505,17 +2511,16 @@ class weg
         $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
         $this->hausgeld_kontoauszug_pdf($pdf, $eigentuemer_id, 0); // null für keine neue Seite
         if (request()->has('jahr')) {
-            $this->hg_ist_soll_pdf($pdf, $eigentuemer_id);
+            $this->hg_ist_soll_pdf($pdf, $eigentuemer_id, request()->input('jahr'));
             $this->hga_uebersicht_pdf($pdf, $eigentuemer_id);
         }
         $pdf->ezStream();
     }
 
-    function hg_ist_soll_pdf(Cezpdf $pdf, $eigentuemer_id)
+    function hg_ist_soll_pdf(Cezpdf $pdf, $eigentuemer_id, $jahr = null)
     {
         $this->get_eigentumer_id_infos($eigentuemer_id);
-        if (request()->has('jahr')) {
-            $jahr = request()->input('jahr');
+        if ($jahr) {
             if (new DateTime("$jahr-01-01") < new DateTime($this->eigentuemer_von)) {
                 $anfangsdatum = $this->eigentuemer_von;
             } else {
