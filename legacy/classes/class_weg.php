@@ -1993,7 +1993,7 @@ class weg
                 $this->get_last_eigentuemer_namen($this->einheit_id);
                 $this->get_wg_info($monat, $jahr, 'Einheit', $this->einheit_id, 'Hausgeld');
                 $this->Wohngeld_soll_a = nummer_punkt2komma($this->gruppe_erg);
-                $mahn_link = "<a href='" . route('web::weg::legacy', ['option' => 'mahnen', 'eig' => $this->eigentuemer_id]) . "'>Mahnen</a>";
+                $mahn_link = "<a href='" . route('web::weg::legacy', ['option' => 'mahnen', 'eig' => $this->eigentuemer_id, 'einh' => $this->einheit_id]) . "'>Mahnen</a>";
 
                 $this->hausgeld_kontoauszug_stand($this->eigentuemer_id);
                 echo "<tr><td>$u_link</td><td>$this->eigentuemer_namen</td><td>$this->Wohngeld_soll_a</td><td><b>$this->hg_erg_a €</b><td>$mahn_link</td></tr>";
@@ -2100,8 +2100,9 @@ class weg
         return cal_days_in_month(CAL_GREGORIAN, $monat, $jahr);
     }
 
-    function form_mahnen($eig)
+    function form_mahnen($eig, $einh)
     {
+        $this->einheit_id = $einh;
         $f = new formular ();
         $this->hausgeld_kontoauszug_stand($eig);
         $eig_bez = $this->get_eigentumer_id_infos($eig);

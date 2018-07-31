@@ -374,9 +374,9 @@ switch ($option) {
         break;
 
     case "mahnen" :
-        if (request()->has('eig')) {
+        if (request()->has('eig') && request()->has('einh')) {
             $w = new weg ();
-            $w->form_mahnen(request()->input('eig'));
+            $w->form_mahnen(request()->input('eig'), request()->input('einh'));
         } else {
             echo "Eigentümer wählen";
         }
