@@ -1206,7 +1206,19 @@ class weg
             $summe_zahlungen_hz = $this->get_summe_zahlungen('Eigentuemer', $eigentuemer_id, $monat, $jahr, $geldkonto_id, 6010);
             $summe_zahlungen_hg = $this->get_summe_zahlungen('Eigentuemer', $eigentuemer_id, $monat, $jahr, $geldkonto_id, 6020);
             $summe_zahlungen_ihr = $this->get_summe_zahlungen('Eigentuemer', $eigentuemer_id, $monat, $jahr, $geldkonto_id, 6030);
-            $summe_zahlungen = $summe_zahlungen_hz + $summe_zahlungen_hg + $summe_zahlungen_ihr + $summe_zahlungen_6;
+            $summe_zahlungen_su = \App\Models\Posting::where('KOSTENTRAEGER_TYP', 'Eigentuemer')
+                ->where('KOSTENTRAEGER_ID', $eigentuemer_id)
+                ->whereYear('DATUM', $jahr)
+                ->whereMonth('DATUM', $monat)
+                ->where('GELDKONTO_ID', $geldkonto_id)
+                ->where('KONTENRAHMEN_KONTO', '>=', 8000)
+                ->where('KONTENRAHMEN_KONTO', '<', 9000)
+                ->sum('BETRAG');
+            $summe_zahlungen = $summe_zahlungen_hz
+                + $summe_zahlungen_hg
+                + $summe_zahlungen_ihr
+                + $summe_zahlungen_6
+                + $summe_zahlungen_su;
             $this->zb_bisher += $summe_zahlungen;
 
             if ($summe_zahlungen > 0) {
