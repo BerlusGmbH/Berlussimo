@@ -486,7 +486,8 @@ class buchen
                 }]);
             if (session()->has('geldkonto_id')) {
                 $einheiten->whereHas('haus.objekt.bankkonten', function ($query) {
-                    $query->where('KONTO_ID', session()->get('geldkonto_id'));
+                    //todo check if fixed 'GELD_KONTEN.KONTO_ID' <-> 'KONTO_ID'
+                    $query->where('GELD_KONTEN.KONTO_ID', session()->get('geldkonto_id'));
                 });
             }
             $einheiten = $einheiten->get();
