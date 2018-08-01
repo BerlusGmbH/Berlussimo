@@ -44,7 +44,7 @@ class HouseController extends Controller
             'commonDetails',
             'einheiten',
             'auftraege' => function ($query) {
-                $query->with(['von', 'an'])->orderBy('ERSTELLT', 'desc');
+                $query->with(['von', 'an', 'kostentraeger'])->orderBy('ERSTELLT', 'desc');
             }
         ]);
         $array = $house->toArray();
