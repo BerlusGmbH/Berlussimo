@@ -17,7 +17,11 @@ class Haeuser extends Model
     protected $table = 'HAUS';
     protected $primaryKey = 'HAUS_ID';
     protected $searchableFields = ['HAUS_STRASSE', 'HAUS_NUMMER', 'HAUS_PLZ', 'HAUS_STADT'];
-    protected $defaultOrder = ['HAUS_STRASSE' => 'asc', 'HAUS_NUMMER' => 'asc'];
+    protected $defaultOrder = ['HAUS_STRASSE' => 'asc',
+        'CAST(HAUS_NUMMER AS UNSIGNED)' => 'asc',
+        'LENGTH(HAUS_NUMMER)' => 'asc',
+        'HAUS_NUMMER' => 'asc'
+    ];
     protected $appends = ['type'];
     protected $guarded = [];
 

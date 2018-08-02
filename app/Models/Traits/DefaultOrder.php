@@ -8,7 +8,7 @@ trait DefaultOrder
     public function scopeDefaultOrder($query) {
         if(isset($this->defaultOrder)) {
             foreach($this->defaultOrder as $field => $order) {
-                $query->orderBy($field, $order);
+                $query->orderByRaw($field . " " . $order);
             }
         }
         return $query;

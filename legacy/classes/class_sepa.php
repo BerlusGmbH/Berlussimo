@@ -122,21 +122,19 @@ class sepa
         }
         $datum_heute = date("Y-m-d");
         if ($nutzungsart == 'Alle') {
-            $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' AND M_EDATUM>='$datum_heute' AND M_ADATUM<='$datum_heute' ORDER BY NAME ASC");
+            $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' AND M_EDATUM>='$datum_heute' ORDER BY NAME ASC");
         } else {
             $gk_id = session()->get('geldkonto_id');
-            $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' && M_EDATUM>='$datum_heute' && M_ADATUM<='$datum_heute' AND NUTZUNGSART='$nutzungsart' && GLAEUBIGER_GK_ID='$gk_id' ORDER BY NAME ASC");
+            $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' && M_EDATUM>='$datum_heute' AND NUTZUNGSART='$nutzungsart' && GLAEUBIGER_GK_ID='$gk_id' ORDER BY NAME ASC");
         }
 
         if (!empty($result)) {
             if ($nutzungsart == 'MIETZAHLUNG') {
                 echo "<table class=\"sortable striped\">";
-                echo "<thead><tr><th>NR</th><th>EINHEIT</th><th>Name</th><th>REF</th><th>NUTZUNG</th><th>EINZUGSART</th><th>Anschrift</th><th>IBAN DB</th><th>BIC</th></tr></thead>";
+                echo "<thead><tr><th>Nr.</th><th>Einheit</th><th>Name</th><th>Ref.</th><th>Anfang</th><th>Ende</th><th>Nutzung</th><th>Einzugsart</th><th>Anschrift</th><th>IBAN</th><th>BIC</th></tr></thead>";
                 $z = 0;
                 $zz = 0;
                 $summe_ziehen_alle = 0.00;
-                $summe_saldo_alle = 0.00;
-                $summe_diff_alle = 0.00;
                 foreach ($result as $row) {
                     $z++;
                     $zz++; // Zeile
@@ -149,9 +147,8 @@ class sepa
 
                     $mandat_status = $this->get_mandat_seq_status($row ['M_REFERENZ'], $row ['IBAN']);
                     $link_nutzungen = "<a href='" . route('web::sepa::legacy', ['option' => 'mandat_nutzungen_anzeigen', 'm_ref' => $row['M_REFERENZ']]) . "'>$mandat_status</a>";
-                    /* Saldo berechnen */
 
-                    echo "<tr class=\"zeile$z\"><td>$zz.</td><td><a href='" . route('web::sepa::legacy', ['option' => 'mandat_edit_mieter', 'mref_dat' => $row['DAT']]) . "'>$mv->einheit_kurzname</a></td><td>$row[NAME]</td><td>$row[M_REFERENZ]</td><td>$link_nutzungen</td><td>$row[EINZUGSART]</td></td><td>$row[ANSCHRIFT]</td><td>$row[IBAN]<br>$row[IBAN1]</td><td>$row[BIC]</td></tr>";
+                    echo "<tr class=\"zeile$z\"><td>$zz.</td><td><a href='" . route('web::sepa::legacy', ['option' => 'mandat_edit_mieter', 'mref_dat' => $row['DAT']]) . "'>$mv->einheit_kurzname</a></td><td>$row[NAME]</td><td>$row[M_REFERENZ]</td><td>$row[M_ADATUM]</td><td>$row[M_EDATUM]</td><td>$link_nutzungen</td><td>$row[EINZUGSART]</td></td><td>$row[ANSCHRIFT]</td><td>$row[IBAN1]</td><td>$row[BIC]</td></tr>";
                     $diff = 0.00;
 
                     /* Zeilenfarbetausch */
@@ -171,9 +168,8 @@ class sepa
             /* ENDE RECHNUNGEN */
             /* ANFANG HAUSGELD */
             if ($nutzungsart == 'HAUSGELD') {
-                echo "Ansicht LS für Hausgeld, folgt noch!!!<br>";
-                echo "<table class=\"sortable\">";
-                echo "<thead><tr><th>EINHEIT</th><th>Name</th><th>REF</th><th>NUTZUNG</th><th>EINZUGSART</th><th>ZIEHEN</th><th>SALDO</th><th>DIFF</th><th>Anschrift</th><th>IBAN</th><th>BIC</th></tr></thead>";
+                echo "<table class=\"sortable striped\">";
+                echo "<thead><tr><th>Einheit</th><th>Name</th><th>Ref.</th><th>Anfang</th><th>Ende</th><th>Nutzung</th><th>Einzugsart</th><th>Anschrift</th><th>IBAN</th><th>BIC</th></tr></thead>";
                 $z = 0;
                 $summe_ziehen_alle = 0.00;
                 $summe_saldo_alle = 0.00;
@@ -189,30 +185,8 @@ class sepa
                     $einheit_id = $weg->get_einheit_id_from_eigentuemer($mand->M_KOS_ID);
                     $e = new einheit ();
                     $e->get_einheit_info($einheit_id);
-                    $weg->get_eigentuemer_saldo($mand->M_KOS_ID, $einheit_id);
 
-                    if ($mand->EINZUGSART == 'Aktuelles Saldo komplett') {
-                        if ($weg->hg_erg < 0) {
-                            $summe_zu_ziehen = substr($weg->hg_erg, 1);
-                            $diff = $summe_zu_ziehen + $weg->hg_erg;
-                        } else {
-                            $summe_zu_ziehen = 0.00;
-                            $diff = $summe_zu_ziehen + $weg->hg_erg;
-                        }
-                    }
-
-                    if ($mand->EINZUGSART == 'Nur die Summe aus Vertrag') {
-
-                        $summe_zu_ziehen = substr($weg->soll_aktuell, 1);
-                        $diff = $summe_zu_ziehen + $weg->hg_erg;
-                    }
-
-                    $summe_zu_ziehen_a = nummer_punkt2komma_t($summe_zu_ziehen);
-                    $summe_saldo_alle += $weg->hg_erg;
-                    $summe_ziehen_alle += $summe_zu_ziehen;
-                    $summe_diff_alle += $diff;
-                    $diff_a = nummer_punkt2komma($diff);
-                    echo "<tr class=\"zeile$z\"><td><a href='" . route('web::sepa::legacy', ['option' => 'mandat_edit_mieter', 'mref_dat' => $mand->DAT]) . "'>$e->einheit_kurzname</a></td><td>$mand->NAME</td><td>$mand->M_REFERENZ</td><td>$link_nutzungen</td><td>$mand->EINZUGSART</td></td><td>$summe_zu_ziehen_a</td><td>$weg->hg_erg_a</td><td>$diff_a</td><td>$mand->ANSCHRIFT</td><td>$mand->IBAN<br>$mand->IBAN1</td><td>$mand->BIC</td></tr>";
+                    echo "<tr class=\"zeile$z\"><td><a href='" . route('web::sepa::legacy', ['option' => 'mandat_edit_mieter', 'mref_dat' => $mand->DAT]) . "'>$e->einheit_kurzname</a></td><td>$mand->NAME</td><td>$mand->M_REFERENZ</td><td>$mand->M_ADATUM</td><td>$mand->M_EDATUM</td><td>$link_nutzungen</td><td>$mand->EINZUGSART</td></td><td>$mand->ANSCHRIFT</td><td>$mand->IBAN1</td><td>$mand->BIC</td></tr>";
                     /* Zeilenfarbetausch */
                     if ($z == 2) {
                         $z = 0;
@@ -221,7 +195,6 @@ class sepa
                 $summe_ziehen_alle_a = nummer_punkt2komma_t($summe_ziehen_alle);
                 $summe_saldo_alle_a = nummer_punkt2komma_t($summe_saldo_alle);
                 $summe_diff_alle_a = nummer_punkt2komma_t($summe_diff_alle);
-                echo "<tfoot><tr><th colspan=\"5\"><b>SUMMEN</b></th><th><b>$summe_ziehen_alle_a</b></th><th>$summe_saldo_alle_a</th><th>$summe_diff_alle_a</th><th colspan=\"3\"></th></tr></tfoot>";
                 echo "</table>";
             }
 
