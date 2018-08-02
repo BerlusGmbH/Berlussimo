@@ -35,6 +35,11 @@ switch ($option) {
         $sep->alle_mandate_anzeigen('HAUSGELD');
         break;
 
+    case "mandate_hausgeld_kurz" :
+        $sep = new sepa ();
+        $sep->alle_mandate_anzeigen_kurz('HAUSGELD');
+        break;
+
     case "mandat_mieter_neu" :
         $sep = new sepa ();
         if (session()->has('geldkonto_id')) {
