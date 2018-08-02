@@ -141,23 +141,18 @@ LIMIT 0 , 1", [$konto_id]);
         }
 
         if ($typ == 'Haus') {
-            $result = DB::select("SELECT HAUS_ID, HAUS_STRASSE, HAUS_NUMMER, OBJEKT_ID FROM HAUS WHERE HAUS_AKTUELL='1' ORDER BY HAUS_STRASSE,  0+HAUS_NUMMER, OBJEKT_ID ASC");
-            if (!empty($result)) {
-                foreach ($result as $row) {
-                    $h_id = $row['HAUS_ID'];
-                    $h_str = $row ['HAUS_STRASSE'];
-                    $h_nr = $row ['HAUS_NUMMER'];
-                    $hh = new haus ();
-                    $hh->get_haus_info($h_id);
-                    if (!session()->has('geldkonto_id')) {
-                        echo "$h_str $h_nr*$h_id*$hh->objekt_name|";
-                    } else {
-                        $gk = new gk ();
-                        if ($gk->check_zuweisung_kos_typ(session()->get('geldkonto_id'), 'Objekt', $hh->objekt_id)) {
-                            echo "$h_str $h_nr*$h_id*$hh->objekt_name|";
-                        }
-                    }
-                }
+            $haeuser = \App\Models\Haeuser::with('objekt')->defaultOrder();
+
+            if (session()->has('geldkonto_id')) {
+                $haeuser->whereHas('objekt.bankkonten', function ($query) {
+                    //todo check if fixed 'GELD_KONTEN.KONTO_ID' <-> 'KONTO_ID'
+                    $query->where('GELD_KONTEN.KONTO_ID', session()->get('geldkonto_id'));
+                });
+            }
+
+            $haeuser = $haeuser->get();
+            foreach ($haeuser as $haus) {
+                echo trim($haus->HAUS_STRASSE) . " " . trim($haus->HAUS_NUMMER) . "*$haus->HAUS_ID*" . $haus->objekt->OBJEKT_KURZNAME . "|";
             }
         }
 

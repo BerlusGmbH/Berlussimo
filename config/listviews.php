@@ -31,7 +31,7 @@ return [
             'parameter' => 'v',
             'views' => [
                 '(ohne)' => '',
-                'Listenansicht' => 'haus !haus[str:asc nr:asc] haus[plz] haus[ort] detail[count] einheit[count] objekt'
+                'Listenansicht' => 'haus haus[plz] haus[ort] detail[count] einheit[count] objekt'
             ],
             'default' => 'Listenansicht'
         ],

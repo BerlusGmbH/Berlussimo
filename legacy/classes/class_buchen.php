@@ -427,18 +427,21 @@ class buchen
         }
 
         if ($typ == 'Haus') {
-            $db_abfrage = "SELECT HAUS_ID, HAUS_STRASSE, HAUS_NUMMER, OBJEKT_ID FROM HAUS WHERE HAUS_AKTUELL='1' ORDER BY HAUS_STRASSE,  0+HAUS_NUMMER, OBJEKT_ID ASC";
-            $resultat = DB::select($db_abfrage);
-            foreach ($resultat as $row) {
-                $haus_id = $row ['HAUS_ID'];
-                print_r($row);
-                $h = new haus ();
-                $h->get_haus_info($haus_id);
+            $haeuserQuery = \App\Models\Haeuser::with('objekt')->defaultOrder();
 
-                if ($vorwahl_bez == $haus_id) {
-                    echo "<option value=\"$haus_id\" selected>$h->haus_strasse $h->haus_nummer - $h->objekt_name</option>";
+            if (session()->has('geldkonto_id')) {
+                $haeuserQuery->whereHas('objekt.bankkonten', function ($query) {
+                    //todo check if fixed 'GELD_KONTEN.KONTO_ID' <-> 'KONTO_ID'
+                    $query->where('GELD_KONTEN.KONTO_ID', session()->get('geldkonto_id'));
+                });
+            }
+
+            $haeuser = $haeuserQuery->get();
+            foreach ($haeuser as $haus) {
+                if ($vorwahl_bez == $haus->HAUS_ID) {
+                    echo "<option value=\"$haus->HAUS_ID\" selected>$haus->HAUS_STRASSE $haus->HAUS_NUMMER - $haus->objekt->OBJEKT_KURZNAME</option>";
                 } else {
-                    echo "<option value=\"$haus_id\">$h->haus_strasse $h->haus_nummer - $h->objekt_name</option>";
+                    echo "<option value=\"$haus->HAUS_ID\">$haus->HAUS_STRASSE $haus->HAUS_NUMMER - $haus->objekt->OBJEKT_KURZNAME</option>";
                 }
             }
         }
