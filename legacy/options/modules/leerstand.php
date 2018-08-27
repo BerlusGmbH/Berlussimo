@@ -102,11 +102,21 @@ if (isset ($option)) {
             $l->interessentenliste();
             break;
 
-        case "expose_pdf" :
+        case "besichtigung_pdf" :
             $einheit_id = request()->input('einheit_id');
             if ($einheit_id) {
                 $l = new leerstand ();
-                $l->pdf_expose($einheit_id);
+                $l->mieterselbstauskunft_besichtigung_pdf($einheit_id);
+            } else {
+                fehlermeldung_ausgeben('Einheit wählen');
+            }
+            break;
+
+        case "bewerbung_pdf" :
+            $einheit_id = request()->input('einheit_id');
+            if ($einheit_id) {
+                $l = new leerstand ();
+                $l->mieterselbstauskunft_bewerbung_pdf($einheit_id);
             } else {
                 fehlermeldung_ausgeben('Einheit wählen');
             }
@@ -529,8 +539,8 @@ function leerstand_objekt($objekt_id)
         $typ = $leerstand [$a] ['TYP'];
         $link_einheit = "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id]) . "'>" . $leerstand [$a] ['EINHEIT_KURZNAME'] . "</a>";
         $link_projekt_pdf = "<a href='" . route('web::leerstand::legacy', ['option' => 'projekt_pdf', 'einheit_id' => $einheit_id]) . "'><img src=\"images/pdf_light.png\"></a>";
-        $link_expose_pdf = "<a href='" . route('web::leerstand::legacy', ['option' => 'expose_pdf', 'einheit_id' => $einheit_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
-        echo "<tr><td>" . $leerstand [$a] ['OBJEKT_KURZNAME'] . "</td><td>$link_einheit</td><td>$typ</td><td>$lage</td><td>$qm m²</td><td><a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mietvertrag_neu']) . "'>Vermieten</td></td><td>" . $leerstand [$a] ['HAUS_STRASSE'] . " " . $leerstand [$a] ['HAUS_NUMMER'] . "</td><td>$link_projekt_pdf Projekt<br>$link_expose_pdf Expose</td></tr>";
+        $link_besichtigung_pdf = "<a href='" . route('web::leerstand::legacy', ['option' => 'besichtigung_pdf', 'einheit_id' => $einheit_id]) . "'><img src=\"images/pdf_dark.png\"></a>";
+        echo "<tr><td>" . $leerstand [$a] ['OBJEKT_KURZNAME'] . "</td><td>$link_einheit</td><td>$typ</td><td>$lage</td><td>$qm m²</td><td><a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mietvertrag_neu']) . "'>Vermieten</td></td><td>" . $leerstand [$a] ['HAUS_STRASSE'] . " " . $leerstand [$a] ['HAUS_NUMMER'] . "</td><td>$link_projekt_pdf Projekt<br>$link_besichtigung_pdf Expose</td></tr>";
         $summe_qm += $qm;
     }
     echo "<tr><td></td><td></td><td></td><td></td><td>$summe_qm m²</td><td></td><td></td><td></td></tr>";
