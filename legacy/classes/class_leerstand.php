@@ -302,10 +302,22 @@ class leerstand
 
         $pdf->ezSetDy(-10);
 
-        $pdf->ezText("Die monatliche Miete beträgt voraussichtlich "
-            . "$brutto_miete € (Kaltmiete: $expose_km €, Betriebskostenvorschuss: $expose_bk €). "
-            . "Im Falle einer Anmietung wird eine Kaution in Höhe von "
-            . $kaution . " € (drei Kaltmieten) fällig.", 10);
+        $text = "Die monatliche Miete beträgt voraussichtlich "
+            . "$brutto_miete € (Kaltmiete: $expose_km €";
+
+        if ($expose_bk) {
+            $text .= ", Betriebskostenvorschuss: $expose_bk €";
+        }
+
+        if ($expose_hk) {
+            $text .= ", Heizkostenvorschuss: $expose_hk €";
+        }
+
+        $text .= "). Im Falle einer Anmietung wird eine Kaution in Höhe von "
+            . $kaution . " € (drei Kaltmieten) fällig.";
+
+        $pdf->ezText($text, 10);
+
 
         $pdf->ezSetDy(-10);
 
@@ -1055,13 +1067,13 @@ class leerstand
 
         $pdf->ezText("Mit meiner Unterschrift erkläre ich, dass ich die auf Seite 1 stehenden Angaben nach Art 13 DSGVO erhalten habe und dass die von mir gemachten Angaben der Richtigkeit entsprechen.", 10, ['left' => 10]);
 
-        $pdf->ezSetDy(-30);
+        $pdf->ezSetDy(-80);
 
         $pdf->ezText("________________________________              ________________________________", 10);
         $pdf->ezSetDy(-3);
         $pdf->ezText("Ort, Datum                                                                                Unterschrift Mietinteressent", 8);
 
-        $pdf->ezSetDy(-10);
+        $pdf->ezSetDy(-40);
 
         $pdf->ezText("________________________________              ________________________________", 10);
         $pdf->ezSetDy(-3);
