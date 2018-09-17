@@ -186,90 +186,6 @@ class leerstand
         $pdf->ezStream($pdf_opt);
     }
 
-    function form_interessent()
-    {
-        $f = new formular ();
-        $f->erstelle_formular('Interessenten eingeben', '');
-        $f->text_feld('Name', 'name', '', '50', 'name', '');
-        $f->text_bereich('Anschrift', 'anschrift', '', 10, 5, 'anschrift');
-        $f->text_feld('Telefonnr', 'tel', '', '50', 'tel', '');
-        $f->text_feld('Email', 'email', '', '50', 'email', '');
-        $f->datum_feld('Wunscheinzugsdatum', 'w_datum', '', 'w_datum');
-        $f->text_feld('Zimmeranzahl', 'zimmer', '', '10', 'zimmer', '');
-        $f->text_bereich('Hinweis', 'hinweis', '', 10, 5, 'hinweis');
-        $f->hidden_feld('option', 'interessent_send');
-        $f->send_button('btn_snd', 'Eintragen');
-        $f->ende_formular();
-    }
-
-    function interessenten_speichern($name, $anschrift, $tel, $email, $w_datum, $zimmer, $hinweis)
-    {
-        $datum = date("Y-m-d");
-        $w_datum_d = date_german2mysql($w_datum);
-        $db_abfrage = "INSERT INTO LEERSTAND_INTERESSENT VALUES (NULL, '$name', '$anschrift', '$tel', '$email','$w_datum_d', '$datum', '$zimmer', '$hinweis','1')";
-        DB::insert($db_abfrage);
-        return true;
-    }
-
-    function pdf_interessentenliste($tab_arr = null)
-    {
-        $pdf = new Cezpdf ('a4', 'portrait');
-        $bpdf = new b_pdf ();
-        $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
-        if (empty ($tab_arr)) {
-            $tab_arr = $this->interessenten_tab_arr();
-        }
-        if (empty($tab_arr)) {
-            throw new \App\Exceptions\MessageException(
-                new \App\Messages\InfoMessage('Es sind keine Interessenten vorhanden.')
-            );
-        }
-        $cols = array(
-            'NAME' => "Namen",
-            'ANSCHRIFT' => "Anschrift",
-            'TEL' => "Telefon",
-            'EMAIL' => "Email",
-            'W_EINZUG' => "Wunscheinzug",
-            'ZIMMER' => "Zimmer",
-            'HINWEIS' => "Hinweise"
-        );
-        $pdf->ezTable($tab_arr, $cols, "<b>Kontaktliste Mietinteressenten</b>", array(
-            'showHeadings' => 1,
-            'shaded' => 1,
-            'titleFontSize' => 7,
-            'fontSize' => 7,
-            'xPos' => 55,
-            'xOrientation' => 'right',
-            'width' => 500,
-            'cols' => array(
-                'SEITE' => array(
-                    'justification' => 'left',
-                    'width' => 27
-                ),
-                'EINHEIT' => array(
-                    'justification' => 'left',
-                    'width' => 50
-                ),
-                'ZEITRAUM' => array(
-                    'justification' => 'left',
-                    'width' => 90
-                ),
-                'EMPF' => array(
-                    'justification' => 'left'
-                )
-            )
-        ));
-        ob_end_clean();
-        $pdf->ezStream();
-    }
-
-    function interessenten_tab_arr()
-    {
-        $db_abfrage = "SELECT *, DATE_FORMAT(EINZUG, '%d.%m.%Y') AS W_EINZUG FROM LEERSTAND_INTERESSENT WHERE EINZUG>DATE(NOW()) && AKTUELL='1' ORDER BY ZIMMER, EINZUG ASC";
-        $result = DB::select($db_abfrage);
-        return $result;
-    }
-
     function mieterselbstauskunft_besichtigung_pdf($einheit_id, $return = 0)
     {
         $e = new einheit ();
@@ -1104,12 +1020,11 @@ class leerstand
     function liste_wohnungen_mit_termin($vor_nach = '>')
     {
         $e = new einheit ();
-        // $arr = $this->einheiten_mit_termin_arr('',$vor_nach);//vor heute
         $arr = $this->einheiten_mit_termin_arr('', $vor_nach); // nach heute
         $anz = count($arr);
 
         echo "<table class=\"sortable\">";
-        echo "<tr><th>EINHEIT</th><th>TERMIN</th><th>QM</th><th>ZIMMER</th><th>BALKON</th><th>OPTIONEN</th></tr>";
+        echo "<tr><th>EINHEIT</th><th>TERMIN</th><th>QM</th><th>ZIMMER</th><th>BALKON</th></tr>";
         for ($a = 0; $a < $anz; $a++) {
             $d = new detail ();
             $einheit_id = $arr [$a] ['EINHEIT_ID'];
@@ -1118,13 +1033,7 @@ class leerstand
             $zimmer = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Zimmeranzahl'))));
             $balkon = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Balkon'))));
             $e->get_einheit_info($einheit_id);
-            $link_einladen = "<a href='" . route('web::leerstand::legacy', ['option' => 'einladungen', 'einheit_id' => $einheit_id]) . "'>Einladen</a>";
             echo "<tr><td>$e->einheit_kurzname $e->haus_strasse $e->haus_nummer, $e->einheit_lage</td><td>$termin</td><td>$e->einheit_qm m²</td><td>$zimmer</td><td>$balkon</td>";
-            if ($vor_nach == '>') {
-                echo "<td>$link_einladen</td>";
-            } else {
-                echo "<td></td>";
-            }
             echo "</tr>";
         }
 
@@ -1138,188 +1047,6 @@ class leerstand
             $result = DB::select($db_abfrage);
             return $result;
         }
-    }
-
-    function einladungen($einheit_id)
-    {
-        $d = new detail ();
-        $zimmer = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Zimmeranzahl'))));
-        if (!$zimmer) {
-            throw new \App\Exceptions\MessageException(
-                new \App\Messages\ErrorMessage('Angaben zur Zimmeranzahl fehlen.')
-            );
-        }
-        $int_arr = $this->interessenten_tab_arr();
-        $anz = count($int_arr);
-        $nz = 0;
-        for ($a = 0; $a < $anz; $a++) {
-            $zimmer_i = $int_arr [$a] ['ZIMMER'];
-            if (nummer_komma2punkt($zimmer) == nummer_komma2punkt($zimmer_i) or nummer_komma2punkt($zimmer) + 0.5 == nummer_komma2punkt($zimmer_i) or nummer_komma2punkt($zimmer) - 0.5 == nummer_komma2punkt($zimmer_i)) {
-                $name = $int_arr [$a] ['NAME'];
-                $email = $int_arr [$a] ['EMAIL'];
-                $tel = $int_arr [$a] ['TEL'];
-                $einzug = $int_arr [$a] ['W_EINZUG'];
-                $anschrift = $int_arr [$a] ['ANSCHRIFT'];
-                $hinweis = $int_arr [$a] ['HINWEIS'];
-                if (!empty ($email)) {
-                    $emails_arr [] = $email;
-                }
-
-                if (empty ($email) && !empty ($tel)) {
-                    $tel_arr [$nz] ['NAME'] = $name;
-                    $tel_arr [$nz] ['TEL'] = $tel;
-                    $tel_arr [$nz] ['ZIMMER'] = $zimmer_i;
-                    $tel_arr [$nz] ['ANSCHRIFT'] = $anschrift;
-                    $tel_arr [$nz] ['W_EINZUG'] = $einzug;
-                    $tel_arr [$nz] ['HINWEIS'] = $hinweis;
-                    $tel_arr [$nz] ['EMAIL'] = '';
-                    $nz++;
-                }
-            }
-        }
-        // echo '<pre>';
-
-        if (isset ($tel_arr)) {
-            // print_r($tel_arr);
-            // echo "<h2>Folgende Interessenten sollen per Telefon benachrichtigt werden:</h2>";
-            $this->interessentenliste(1, $tel_arr);
-            // $this->pdf_interessentenliste($tel_arr);
-        }
-
-        if (isset ($emails_arr)) {
-            // print_r($emails_arr);
-            $this->send_mails_pdf($einheit_id, $emails_arr);
-        }
-    }
-
-    function interessentenliste($aktiv = 1, $tab_arr = '')
-    {
-        $f = new formular ();
-        $f->fieldset('Interessenten Telefonliste', 'ia');
-        if (empty ($tab_arr)) {
-            echo "<a href='" . route('web::leerstand::legacy', ['option' => 'pdf_interessenten']) . "'>Interessenten PDF</a>&nbsp;";
-            $tab_arr = $this->interessenten_tab_arr();
-        }
-        if (!empty($tab_arr)) {
-            $anz = count($tab_arr);
-
-            echo "<table class=\"sortable\">";
-            echo "<tr><th>NAME</th><th>ANSCHRIFT</th><th>TEL</th><th>EMAIL</th><th>ZIMMER</th><th>WUNSCH</th><th>HINWEIS</th></tr>";
-            for ($a = 0; $a < $anz; $a++) {
-                $id = $tab_arr [$a] ['ID'];
-                $name = $tab_arr [$a] ['NAME'];
-                $link_edit = "<a href='" . route('web::leerstand::legacy', ['option' => 'interessenten_edit', 'id' => $id]) . "'>$name</a>";
-                $ans = $tab_arr [$a] ['ANSCHRIFT'];
-                $email = $tab_arr [$a] ['EMAIL'];
-                $tel = $tab_arr [$a] ['TEL'];
-                $zimmer = $tab_arr [$a] ['ZIMMER'];
-                $einzug = $tab_arr [$a] ['W_EINZUG'];
-                $hinweis = $tab_arr [$a] ['HINWEIS'];
-                echo "<tr><td>$link_edit</td><td>$ans</td><td>$tel</td><td>$email</td><td>$zimmer</td><td>$einzug</td><td>$hinweis</td></tr>";
-            }
-            echo "</table>";
-        } else {
-            echo 'Keine Interessenten';
-        }
-        $f->fieldset_ende();
-    }
-
-    function send_mails_pdf($einheit_id, $arr)
-    {
-        $f = new formular ();
-        $f->erstelle_formular('Einladungen per Email senden', '');
-        $anz = count($arr);
-        // echo "PDF-Expose wurde an folgende Emailadressen gesendet:<hr>";
-        for ($a = 0; $a < $anz; $a++) {
-            $email = $arr [$a];
-            echo "$email<br>";
-            $f->hidden_feld('emails[]', $email);
-        }
-        // print_r($arr);
-        $f->hidden_feld('einheit_id', $einheit_id);
-        $f->hidden_feld('option', 'sendpdfs');
-        echo "<hr>";
-        $f->send_button('btn_mail', 'Emails senden');
-        $f->ende_formular();
-    }
-
-    function form_exposedaten($einheit_id)
-    {
-        $e = new einheit ();
-        $e->get_einheit_info($einheit_id);
-        $ma = new mietanpassung ();
-        $ms_feld = $ma->get_ms_feld($einheit_id);
-        $ms_jahr = $ma->get_ms_jahr();
-        $ma->get_spiegel_werte($ms_jahr, $ms_feld);
-        $miete_nach_ms = nummer_punkt2komma($e->einheit_qm * $ma->m_wert);
-        $miete_nach_ms_max = nummer_punkt2komma($e->einheit_qm * $ma->o_wert);
-
-        $d = new detail ();
-        $f = new formular ();
-        $f->erstelle_formular("Exposeeinstellungen für $e->einheit_kurzname vornehmen", '');
-        fehlermeldung_ausgeben("Ausstattungsklasse $ma->ausstattungsklasse");
-        $f->hidden_feld('einheit_id', $einheit_id);
-        $zimmer = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Zimmeranzahl'))));
-        $f->text_feld('Zimmeranzahl', 'zimmer', $zimmer, 4, 'zimmer', '');
-        $balkon = ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Balkon')));
-        // $f->text_feld('Balkon vorhanden (ja/nein)', 'balkon', $balkon, 10, 'balkon', '');
-        if (empty ($balkon)) {
-            $balkon = 'nein';
-        }
-        // $this->dropdown_ja_nein('Balkon vorhanden', 'balkon', 'balkon', $balkon);
-        $d->dropdown_optionen('Balkon', 'balkon', 'balkon', 'Balkon', $balkon);
-        /* Miete */
-        $expose_km = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Expose kaltmiete'))));
-        $expose_bk = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Expose BK'))));
-        $expose_hk = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Expose HK'))));
-
-        $f->text_feld("Miete kalt | MSM:$miete_nach_ms € | MAX:$miete_nach_ms_max € | MS-FELD:$ms_feld, U:$ma->u_wert, M:$ma->m_wert, O:$ma->o_wert", 'expose_km', $expose_km, 8, 'expose_km', '');
-        $f->text_feld('BK', 'expose_bk', $expose_bk, 8, 'expose_bk', '');
-
-        $heizungsart = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Heizungsart'))));
-        $d->dropdown_optionen('Heizungsart', 'heizungsart', 'heizungsart', 'Heizungsart', $heizungsart);
-
-        if (empty ($expose_hk)) {
-            $expose_hk = '0,00';
-        }
-        $f->text_feld('HK', 'expose_hk', $expose_hk, 10, 'expose_hk', '');
-
-        $f->hidden_feld('zustand', '');
-
-        $expose_frei = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Expose frei ab'))));
-        $f->datum_feld('Bezugsfrei ab', 'expose_frei', $expose_frei, 'expose_frei', '');
-
-        $termin = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Besichtigungstermin'))));
-        $f->datum_feld('Besichtigungsdatum', 'besichtigungsdatum', $termin, 'besichtigungsdatum', '');
-        $termin_uhrzeit = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Expose Besichtigungsuhrzeit'))));
-        $f->text_bereich('Uhrzeit und Treffpunkt', 'uhrzeit', $termin_uhrzeit, 20, 5, 'uhrzeit');
-        $f->hidden_feld('option', 'expose_speichern');
-        $f->send_button('btn_snd', 'Speichern');
-        $f->ende_formular();
-        $f->fieldset('Fotos', 'fotos');
-        for ($a = 1; $a < 9; $a++) {
-            if (Storage::disk('fotos')->exists("EINHEIT/$e->einheit_kurzname/expose" . $a . ".jpg")) {
-                $filename = Storage::disk('fotos')->url("EINHEIT/$e->einheit_kurzname/expose" . $a . ".jpg");
-                echo "<img src='$filename' width='200'>";
-            }
-        }
-        $f->fieldset_ende();
-    }
-
-    function expose_aktualisieren($einheit_id, $zimmer, $balkon, $expose_bk, $expose_km, $expose_hk, $heizungsart, $expose_frei, $besichtigungsdatum, $uhrzeit)
-    {
-        // echo "$einheit_id, $zimmer, $balkon, $expose_bk, $expose_km, $heizungsart, $expose_frei, $besichtigungsdatum, $uhrzeit";
-        $d = new detail ();
-        $d->detail_aktualisieren('Einheit', $einheit_id, 'Zimmeranzahl', $zimmer, '');
-        $d->detail_aktualisieren('Einheit', $einheit_id, 'Balkon', $balkon, '');
-        $d->detail_aktualisieren('Einheit', $einheit_id, 'Heizungsart', $heizungsart, '');
-        $d->detail_aktualisieren('Einheit', $einheit_id, 'Besichtigungstermin', $besichtigungsdatum, '');
-        $d->detail_aktualisieren('Einheit', $einheit_id, 'Expose Besichtigungsuhrzeit', $uhrzeit, '');
-        $d->detail_aktualisieren('Einheit', $einheit_id, 'Expose BK', $expose_bk, '');
-        $d->detail_aktualisieren('Einheit', $einheit_id, 'Expose HK', $expose_hk, '');
-        $d->detail_aktualisieren('Einheit', $einheit_id, 'Expose frei ab', $expose_frei, '');
-        $d->detail_aktualisieren('Einheit', $einheit_id, 'Expose Kaltmiete', $expose_km, '');
-        weiterleiten(route('web::leerstand::legacy', ['option' => 'besichtigung_pdf', 'einheit_id' => $einheit_id], false));
     }
 
     /* Email mit Attachment */
@@ -1362,74 +1089,6 @@ class leerstand
         } else {
             return 0;
         }
-    }
-
-    function form_edit_interessent($id)
-    {
-        $f = new formular ();
-        $f->erstelle_formular('Daten ändern', '');
-        $this->get_interessenten_infos($id);
-        $f->text_feld('Name', 'name', $this->name, 50, 'name', '');
-        $f->text_feld('Anschrift', 'anschrift', $this->anschrift, 50, 'anschrift', '');
-        $f->text_feld('Telefon', 'tel', $this->tel, 20, 'tel', '');
-        $f->text_feld('Email', 'email', $this->email, 20, 'email', '');
-        $f->text_feld('zimmer', 'zimmer', $this->zimmer, 8, 'zimmer', '');
-        $f->datum_feld('Wunscheinzug', 'einzug', $this->einzug_d, 'einzug');
-        $f->text_bereich('Hinweis', 'hinweis', $this->hinweis, 20, 10, 'hinweis');
-        $f->check_box_js('delete', $id, 'Interessenten löschen', '', '');
-        $f->hidden_feld('option', 'interessenten_update');
-        $f->hidden_feld('id', $id);
-        $f->send_button('btn_snd', 'Änderungen vornehmen');
-        $f->ende_formular();
-    }
-
-    function get_interessenten_infos($id)
-    {
-        $db_abfrage = "SELECT * FROM `LEERSTAND_INTERESSENT` WHERE `ID` ='$id' AND `AKTUELL` = '1'";
-        $result = DB::select($db_abfrage);
-        $row = $result[0];
-        $this->name = $row ['NAME'];
-        $this->email = $row ['EMAIL'];
-        $this->anschrift = $row ['ANSCHRIFT'];
-        $this->zimmer = $row ['ZIMMER'];
-        $this->tel = $row ['TEL'];
-        $this->einzug = $row ['EINZUG'];
-        $this->einzug_d = date_mysql2german($this->einzug);
-        $this->hinweis = $row ['HINWEIS'];
-    }
-
-    function interessenten_deaktivieren($id)
-    {
-        $db_abfrage = "UPDATE `LEERSTAND_INTERESSENT` SET AKTUELL='0' WHERE `ID` ='$id'";
-        DB::update($db_abfrage);
-        return true;
-    }
-
-    function interessenten_updaten($id, $name, $anschrift, $tel, $email, $einzug, $zimmer, $hinweis)
-    {
-        $db_abfrage = "UPDATE `LEERSTAND_INTERESSENT` SET NAME='$name', ANSCHRIFT='$anschrift', TEL='$tel', EMAIL='$email', EINZUG='$einzug', ZIMMER='$zimmer', HINWEIS='$hinweis' WHERE `ID` ='$id'";
-        DB::update($db_abfrage);
-        return true;
-    }
-
-    function form_foto_upload($einheit_id)
-    {
-        echo '<form name="upload_form" method="post" enctype="multipart/form-data" action="">';
-        echo '<table>';
-        echo '<tr><td>Großfoto<input type="file" name="expose[]"></td></tr>';
-        echo '<tr><td>1. Kleinfoto<input type="file" name="expose[]"></td></tr>';
-        echo '<tr><td>2. Kleinfoto<input type="file" name="expose[]"></td></tr>';
-        echo '<tr><td>3. Kleinfoto<input type="file" name="expose[]"></td></tr>';
-        echo '<tr><td>4. Kleinfoto<input type="file" name="expose[]"></td></tr>';
-        echo '<tr><td>5. Kleinfoto<input type="file" name="expose[]"></td></tr>';
-        echo '<tr><td>6. Kleinfoto<input type="file" name="expose[]"></td></tr>';
-        echo '<tr><td>Plan/Skizze<input type="file" name="expose[]"></td></tr>';
-        echo '<tr><td><input name="btn_sbm" type="submit" value="Hochladen">';
-        echo '</td></tr>';
-        echo '</table>';
-        echo '<input type="hidden" name="option" value="expose_foto_upload_check">';
-        echo "<input type=\"hidden\" name=\"einheit_id\" value=\"$einheit_id\">";
-        echo '</form>';
     }
 
     function sanierungsliste($objekt_id = null, $monate = null, $w = 250, $h = 200)
@@ -1618,17 +1277,12 @@ class leerstand
 
             // echo "<h2>SANIERUNGSLISTE $oo->objekt_kurzname - Leerstände bis $datum_d (heute + $monate Monate)</h2>";
             echo "<table class='striped'>";
-            echo "<thead><tr><th>EINHEITEN BIS $datum_d</th><th>AUSSTATTUNG</th><th>SANIER-<br>VERLAUF</th><th>JAHR DER<br>LETZTEN<br>SANIERUNG</th><th>ENERGIE<br>AUSWEIS</th><th>ENERGIE<br>AUSWEIS<br>BIS</th><th>REINIGEN<br>FOTOS</th></tr></thead>";
+            echo "<thead><tr><th>EINHEITEN BIS $datum_d</th><th>AUSSTATTUNG</th><th>SANIER-<br>VERLAUF</th><th>JAHR DER<br>LETZTEN<br>SANIERUNG</th><th>ENERGIE<br>AUSWEIS</th><th>ENERGIE<br>AUSWEIS<br>BIS</th><th>REINIGEN</th></tr></thead>";
             $anz_e = count($arr);
             for ($a = 0; $a < $anz_e; $a++) {
                 $einheit_id = $arr [$a] ['EINHEIT_ID'];
                 $haus_id = $arr [$a] ['HAUS_ID'];
                 $einheit_kurzname = $arr [$a] ['EINHEIT_KURZNAME'];
-                /* FOTO ORDNER ANLEGEN */
-                if (!Storage::disk('fotos')->exists("EINHEIT/$einheit_kurzname/ANZEIGE")) {
-                    Storage::disk('fotos')->makeDirectory("EINHEIT/$einheit_kurzname/ANZEIGE");
-                }
-
                 $fertig_bau = ltrim(rtrim($arr [$a] ['FERTIG_BAU']));
                 $anschrift = $arr [$a] ['HAUS_STRASSE'];
                 $einheit_qm = nummer_punkt2komma($arr [$a] ['EINHEIT_QM']);
@@ -1743,21 +1397,6 @@ class leerstand
                             <input class='datepicker' value='" . $reinigen . "' id='link_reinigen_" . $objekt_id . '_' . $a . "' type='date' onchange=\"change_detail_no_prompt('Gereinigt am', this.value, '$reinigen_dat', 'Einheit', '$einheit_id')\"/>
                             <label for='link_reinigen_" . $objekt_id . '_' . $a . "'>Gereinigt am</label>
                       </div>";
-
-                $dir = Storage::disk('fotos')->fullPath("EINHEIT/$einheit_kurzname/ANZEIGE");
-                $fotos_arr = scandir($dir);
-                $anz_fotos = count($fotos_arr);
-                $anz_fotos_ok = $anz_fotos - 2;
-
-                $fotos_vorhanden = $anz_fotos_ok > 0 ? "JA" : "NEIN";
-
-                echo "<div class='input-field'>
-                            <input disabled value='" . $fotos_vorhanden . "' id='link_foto_" . $objekt_id . '_' . $a . "' type='text'>
-                            <label class='active' for='link_foto_" . $objekt_id . '_' . $a . "'>Fotos vorhanden</label>
-                      </div>";
-                $link_foto_upload = "<a class='waves-effect waves-light btn' href='" . route('web::leerstand::legacy', ['option' => 'fotos_upload', 'einheit_id' => $einheit_id]) . "'><i class=\"mdi mdi-upload left\"></i>Hochladen</a>";
-                echo $link_foto_upload;
-
                 echo "</td>";
 
                 echo "</tr>";
@@ -2184,7 +1823,6 @@ class leerstand
 
                 $brutto_miete = nummer_punkt2komma(nummer_komma2punkt($kaltmiete) + nummer_komma2punkt($bk) + nummer_komma2punkt($hk));
                 $netto_miete_20 = $einheit_qm * $ms_20proz;
-                $anz_fotos = $arr [$a] ['FOTO_ANZ'];
 
                 /* Besichtigungstermin für Vermietung aus Details */
                 $b_termin = $arr [$a] ['B_TERMIN'];
@@ -2229,8 +1867,6 @@ class leerstand
                     $link_bk = "<a class=\"details\" onclick=\"change_detail('Vermietung-BK', '$bk', '$bk_dat', 'Einheit', '$einheit_id')\">$bk</a>";
                     $link_hk = "<a class=\"details\" onclick=\"change_detail('Vermietung-HK', '$hk', '$hk_dat', 'Einheit', '$einheit_id')\">$hk</a>";
                     $link_termin = "<a class=\"details\" onclick=\"change_detail('Besichtigungstermin', '$b_termin', '$b_termin_dat', 'Einheit', '$einheit_id')\">$b_termin</a>";
-                    $link_fotos = "<a href='" . route('web::leerstand::legacy', ['option' => 'fotos_upload', 'einheit_id' => $einheit_id]) . "'>Fotos: $anz_fotos</a>";
-                    $link_expose_text = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'Einheit', 'detail_id' => $einheit_id, 'vorauswahl' => 'Exposetext']) . "'>Exposetext</a>";
 
                     if ($b_reservierung != '') {
                         $link_reservierung = "<a class=\"details\" onclick=\"change_detail('Vermietung-Reserviert', '$b_reservierung', '$b_reservierung_dat', 'Einheit', '$einheit_id')\">$b_reservierung<hr>$b_reservierung_bem</a>";
@@ -2243,7 +1879,7 @@ class leerstand
                     } else {
                         echo "<tr class=\"red darken-2\">";
                     }
-                    echo "<td>$link_einheit<br>Ex:$l_mieter<br>$link_fotos<hr>$link_besichtigung_pdf<hr>$link_bewerbung_pdf<hr>$link_expose_text<hr>$link_reservierung</td><td>$typ</td><td>$str</td><td>$einheit_lage</td><td sorttable_customkey=\"$zimmer_p\">$zimmer</td><td>$einheit_qm_a</td><td>$balkon</td><td>$heizungsart</td><td>$jahr_s</td><td>$fertig_bau_bem</td><td>$gereinigt<hr>$gereinigt_bem</td><td>$nk</td><td>$link_bk</td><td>$hk_s</td><td>$link_hk</td><td><b>$link_kaltmiete<hr>m²-Kalt:$kalt_qm<br>(MAX20:$netto_miete_20)</b><hr>MSM-$ms_feld:$ma->m_wert<br>MSO-$ms_feld:$ma->o_wert<br>MSO20%:$ms_20proz<hr>$kaltmiete_bem</td><td><b>$brutto_miete</b></td><td>$link_termin</td></tr>";
+                    echo "<td>$link_einheit<br>Ex:$l_mieter<hr>$link_besichtigung_pdf<hr>$link_bewerbung_pdf<hr>$link_reservierung</td><td>$typ</td><td>$str</td><td>$einheit_lage</td><td sorttable_customkey=\"$zimmer_p\">$zimmer</td><td>$einheit_qm_a</td><td>$balkon</td><td>$heizungsart</td><td>$jahr_s</td><td>$fertig_bau_bem</td><td>$gereinigt<hr>$gereinigt_bem</td><td>$nk</td><td>$link_bk</td><td>$hk_s</td><td>$link_hk</td><td><b>$link_kaltmiete<hr>m²-Kalt:$kalt_qm<br>(MAX20:$netto_miete_20)</b><hr>MSM-$ms_feld:$ma->m_wert<br>MSO-$ms_feld:$ma->o_wert<br>MSO20%:$ms_20proz<hr>$kaltmiete_bem</td><td><b>$brutto_miete</b></td><td>$link_termin</td></tr>";
                 }
                 // echo "$einheit_kn - $l_mieter ($typ) $str $einheit_lage Zimmer: $zimmer Balkon:$balkon Heizart:$heizungsart EA: $energieausweis JS:$jahr_s BAU:$fertig_bau ($fertig_bau_bem) REIN:$gereinigt ($gereinigt_bem) $nk € $hk €<br>";
             }
@@ -2284,16 +1920,6 @@ class leerstand
             for ($a = 0; $a < $anz_e; $a++) {
                 $einheit_id = $arr [$a] ['EINHEIT_ID'];
                 $einheit_kurzname = $arr [$a] ['EINHEIT_KURZNAME'];
-
-                $arr [$a] ['FOTO_PATH'] = Storage::disk('fotos')->fullPath("EINHEIT/$einheit_kurzname/ANZEIGE");
-                $arr [$a] ['FOTO_LINKS'] = Storage::disk('fotos')->files("EINHEIT/$einheit_kurzname/ANZEIGE");
-                // echo '<pre>';
-                $anz_fotos = count($arr [$a] ['FOTO_LINKS']);
-                $arr [$a] ['FOTO_ANZ'] = $anz_fotos;
-                /* wenn keine Fotos, Fotoarray leeren */
-                if ($anz_fotos < 1) {
-                    $arr [$a] ['FOTO_LINKS'] = null;
-                }
 
                 $d = new detail ();
                 /* Fortschritt Bauphase */
@@ -2568,69 +2194,6 @@ class leerstand
         } else {
             return '0.00';
         }
-    }
-
-    function form_fotos_upload($einheit_id)
-    {
-        echo '<style>
-		    #gallery .thumbnail{
-                width:200px;
-                height: 150px;
-                float:left;
-                margin:2px;
-            }
-            #gallery .thumbnail img{
-                width:200px;
-                height: 150px;
-            }
-        </style>';
-
-        $e = new einheit ();
-        $e->get_einheit_info($einheit_id);
-        $f = new formular ();
-        $f->fieldset("FotoUpload $e->einheit_kurzname", 'fs');
-        $f->hidden_feld("einheit_id_foto", $einheit_id);
-        //echo "<input type=\"file\" id=\"fileinput\" multiple=\"multiple\" accept=\"image/*\" />";
-        echo "<div class='row'>";
-        echo "<div class=\"file-field input-field col-xs-12 col-md-9 col-lg-9\">
-                <div class=\"btn\">
-                <span>Fotos</span>
-                    <input type=\"file\" id=\"fileinput\" accept=\"image/*\" multiple>
-                </div>
-                <div class=\"file-path-wrapper\">
-                    <input class=\"file-path validate\" type=\"text\" placeholder=\"Ein Foto oder mehrere Fotos hochladen\">
-                </div>
-            </div>";
-        echo "<div class='input-field col-xs-12 col-md-5 col-lg-3'><a class='waves-effect waves-light btn' id='BTN_UPLOAD' onclick='upload_files()'><i class='mdi mdi-upload left'></i>Hochladen</a></div>";
-        echo "</div>";
-        echo "<div id=\"gallery\" class='row input-field'></div>";
-        $f->fieldset_ende();
-    }
-
-    function fotos_anzeigen_wohnung($einheit_id, $unterordner = 'ANZEIGE', $anz_pro_zeile = '6')
-    {
-        $e = new einheit ();
-        $e->get_einheit_info($einheit_id);
-        $f = new formular ();
-        // $f->fieldset("Vorhandene Fotos $e->einheit_kurzname", 'fs');
-        $storage = Storage::disk('fotos');
-        $fotos_arr = $storage->files("EINHEIT/$e->einheit_kurzname/$unterordner/");
-
-        $anz_fotos = count($fotos_arr);
-        $f->fieldset("Vorhandene Fotos $e->einheit_kurzname ($anz_fotos)", 'fs');
-        echo "<div class='row'>";
-        $counter = 0;
-        for ($a = 0; $a < $anz_fotos; $a++) {
-            $counter++;
-            $url = $storage->url($fotos_arr[$a]);
-            $path = $storage->fullPath($fotos_arr[$a]);
-            echo "<div class='col-xs-12 col-md-6 col-lg-4'>";
-            echo "<img class='materialboxed' width='250' height='188' src='$url' alt='Wohnungsbild $a'>";
-            $url = asset('images/x.png');
-            echo "<img onclick=\"del_file('$path');reload_me();\" src='$url'></div>\n";
-        }
-        echo "</div>";
-        $f->fieldset_ende();
     }
 
     function kontrolle_preise()

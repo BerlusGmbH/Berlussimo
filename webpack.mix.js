@@ -77,8 +77,7 @@ mix.scripts(
         'legacy/ajax/ajax.js',
         'legacy/ajax/dd_kostenkonto.js',
         'legacy/js/javascript.js',
-        'legacy/js/sorttable.js',
-        'legacy/js/foto_upload.js'
+        'legacy/js/sorttable.js'
     ],
     'public/js/legacy.js'
 );
