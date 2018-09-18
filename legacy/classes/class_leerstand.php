@@ -1705,7 +1705,7 @@ class leerstand
             $f->fieldset('Suchergebnis', 'se');
 
             echo "<table class=\"sortable\">";
-            echo "<tr><th>EINHEIT</th><th>TYP</th><th>ANSCHRIFT</th><th>LAGE</th><th>ZI.</th><th>QM</th><th>BAL-<br>KON</th><th>HEI-<br>ZUNG</th><th>LETZE<br>SANIERUNG</th><th>FERTIG</th><th>REIN-<br>IGUNG</th><th>BK<br>SCHN.</th><th>BK</th><th>HK<br>SCHN.</th><th>HK</th><th>KALT</th><th>BRU-<br>TTO</th><th>VERTRAGS-<br>BEGINN</th></tr>";
+            echo "<tr><th>EINHEIT</th><th>TYP</th><th>ANSCHRIFT</th><th>LAGE</th><th>ZI.</th><th>QM</th><th>BAL-<br>KON</th><th>HEI-<br>ZUNG</th><th>LETZE<br>SANIERUNG</th><th>FERTIG</th><th>REIN-<br>IGUNG</th><th>BK<br>SCHN.</th><th>BK</th><th>HK<br>SCHN.</th><th>HK</th><th>KALT</th><th>BRU-<br>TTO</th><th>VERTRAGS-<br>BEGINN*</th></tr>";
             for ($a = 0; $a < $anz; $a++) {
                 $einheit_id = $arr [$a] ['EINHEIT_ID'];
                 $ma = new mietanpassung ();
@@ -1843,6 +1843,7 @@ class leerstand
                 }
             }
             echo "</table>";
+            echo "<span style='padding: 3px'>* <i>kursiv</i> = berechnet</span>";
             $f->fieldset_ende();
         } else {
             fehlermeldung_ausgeben("Keine fertiggestellten Einheiten im Objekt $o_name");
