@@ -305,7 +305,7 @@ class leerstand
 
         $pdf->ezText("<u>Zweck und Rechtsgrundlage der Datenverarbeitung:</u>", 9);
         $pdf->ezText("Durchführung vorvertraglicher Maßnahmen zum Abschluss eines Mietvertrages "
-            . "gem. Art. 6 Abs. 1 Satz 1 Pkt. b) der EU-Datenschutzgrundverordnung (DSGVO).\n"
+            . "gem. Art. 6 Abs. 1 Satz 1 Pkt. b) der Datenschutzgrundverordnung (DSGVO).\n"
             . "Die von Ihnen bereitgestellten Daten sind zur Durchführung vorvertraglicher "
             . "Maßnahmen erforderlich. Ohne diese Daten können wir den Vertrag "
             . "mit Ihnen nicht abschließen.", 9);
@@ -398,7 +398,7 @@ class leerstand
         $pdf->ezText("Anschrift: ______________________________________________________________", 10, ['left' => 92]);
 
         $pdf->ezSetDy(-10);
-        $pdf->ezText("Mit meiner Unterschrift erkläre ich, dass ich die auf Seite 1 stehenden Angaben nach Art. 13 EU-Datenschutzgrundverordnung (DSGVO) erhalten habe und dass die von mir gemachten Angaben der Richtigkeit entsprechen.", 10);
+        $pdf->ezText("Mit meiner Unterschrift erkläre ich, dass ich die auf Seite 1 stehenden Angaben nach Art. 13 Datenschutzgrundverordnung (DSGVO) erhalten habe und dass die von mir gemachten Angaben der Richtigkeit entsprechen.", 10);
         $pdf->ezSetDy(-30);
         $pdf->ezText("________________________________              ________________________________", 10);
         $pdf->ezSetDy(-3);
@@ -544,7 +544,7 @@ class leerstand
 
         $pdf->ezText("<u>Zweck und Rechtsgrundlage der Datenverarbeitung:</u>", 9);
         $pdf->ezText("Maßnahmen zum Abschluss und ggf. Durchführung eines Mietvertrages gem. Art. 6 Abs. 1 "
-            . "Satz 1 Pkt. b) der europäischen Datenschutzgrundverordnung (DSGVO).\nDie von Ihnen Ihnen bereitgestellten "
+            . "Satz 1 Pkt. b) der Datenschutzgrundverordnung (DSGVO).\nDie von Ihnen Ihnen bereitgestellten "
             . "Daten sind zur Durchführung vorvertraglicher Maßnahmen bzw. zur Vertragserfüllung erforderlich. "
             . "Ohne diese Daten können wir den Vertrag mit Ihnen nicht abschließen bzw. durchführen.", 9);
 
@@ -1760,8 +1760,32 @@ class leerstand
                 $brutto_miete = nummer_punkt2komma(nummer_komma2punkt($kaltmiete) + nummer_komma2punkt($bk) + nummer_komma2punkt($hk));
                 $netto_miete_20 = $einheit_qm * $ms_20proz;
 
+                $mietvertrag = \App\Models\Mietvertraege::whereHas('einheit', function ($query) use ($einheit_id) {
+                    $query->where('EINHEIT_ID', $einheit_id);
+                })->orderBy('MIETVERTRAG_VON', 'DESC')
+                    ->first();
+
+                if ($mietvertrag && $mietvertrag->MIETVERTRAG_BIS) {
+                    $mietvertragsende = '<br>Ende: ' . (new \Carbon\Carbon($mietvertrag->MIETVERTRAG_BIS))->format('d.m.Y');
+                } else {
+                    $mietvertragsende = '';
+                }
+
                 /* Besichtigungstermin für Vermietung aus Details */
-                $b_termin = $arr [$a] ['B_TERMIN'] ? $arr [$a] ['B_TERMIN'] : '------';
+                if ($arr [$a] ['B_TERMIN']) {
+                    $b_termin = $arr [$a] ['B_TERMIN'];
+                    $b_termin_text = $arr [$a] ['B_TERMIN'];
+                } else {
+                    if ($mietvertrag
+                        && $mietvertrag->MIETVERTRAG_BIS
+                        && ((new \Carbon\Carbon($mietvertrag->MIETVERTRAG_BIS)) > \Carbon\Carbon::today())
+                    ) {
+                        $b_termin = (new \Carbon\Carbon($mietvertrag->MIETVERTRAG_BIS))->addDays(1)->format('d.m.Y');
+                    } else {
+                        $b_termin = \Carbon\Carbon::today()->addMonths(1)->firstOfMonth()->format('d.m.Y');
+                    }
+                    $b_termin_text = '<i>' . $b_termin . '</i>';
+                }
                 $b_termin_dat = $arr [$a] ['B_TERMIN_DAT'];
 
                 /* Reservierung aus Details */
@@ -1802,7 +1826,7 @@ class leerstand
                     $link_kaltmiete = "<a class=\"details\" onclick=\"change_detail('Vermietung-Kaltmiete', '$kaltmiete', '$kaltmiete_dat', 'Einheit', '$einheit_id')\">$kaltmiete_a</a>";
                     $link_bk = "<a class=\"details\" onclick=\"change_detail('Vermietung-BK', '$bk', '$bk_dat', 'Einheit', '$einheit_id')\">$bk</a>";
                     $link_hk = "<a class=\"details\" onclick=\"change_detail('Vermietung-HK', '$hk', '$hk_dat', 'Einheit', '$einheit_id')\">$hk</a>";
-                    $link_termin = "<a class=\"details\" onclick=\"change_detail('Vermietung-Vertragsbeginn', '$b_termin', '$b_termin_dat', 'Einheit', '$einheit_id')\">$b_termin</a>";
+                    $link_termin = "<a class=\"details\" onclick=\"change_detail('Vermietung-Vertragsbeginn', '$b_termin', '$b_termin_dat', 'Einheit', '$einheit_id')\">$b_termin_text</a>";
 
                     if ($b_reservierung != '') {
                         $link_reservierung = "<a class=\"details\" onclick=\"change_detail('Vermietung-Reserviert', '$b_reservierung', '$b_reservierung_dat', 'Einheit', '$einheit_id')\">$b_reservierung<hr>$b_reservierung_bem</a>";
@@ -1815,7 +1839,7 @@ class leerstand
                     } else {
                         echo "<tr class=\"red darken-2\">";
                     }
-                    echo "<td>$link_einheit<br>Ex:$l_mieter<hr>$link_besichtigung_pdf<hr>$link_bewerbung_pdf<hr>$link_reservierung</td><td>$typ</td><td>$str</td><td>$einheit_lage</td><td sorttable_customkey=\"$zimmer_p\">$zimmer</td><td>$einheit_qm_a</td><td>$balkon</td><td>$heizungsart</td><td>$jahr_s</td><td>$fertig_bau_bem</td><td>$gereinigt<hr>$gereinigt_bem</td><td>$nk</td><td>$link_bk</td><td>$hk_s</td><td>$link_hk</td><td><b>$link_kaltmiete<hr>m²-Kalt:$kalt_qm<br>(MAX20:$netto_miete_20)</b><hr>MSM-$ms_feld:$ma->m_wert<br>MSO-$ms_feld:$ma->o_wert<br>MSO20%:$ms_20proz<hr>$kaltmiete_bem</td><td><b>$brutto_miete</b></td><td>$link_termin</td></tr>";
+                    echo "<td>$link_einheit<br>Ex: $l_mieter$mietvertragsende<hr>$link_besichtigung_pdf<hr>$link_bewerbung_pdf<hr>$link_reservierung</td><td>$typ</td><td>$str</td><td>$einheit_lage</td><td sorttable_customkey=\"$zimmer_p\">$zimmer</td><td>$einheit_qm_a</td><td>$balkon</td><td>$heizungsart</td><td>$jahr_s</td><td>$fertig_bau_bem</td><td>$gereinigt<hr>$gereinigt_bem</td><td>$nk</td><td>$link_bk</td><td>$hk_s</td><td>$link_hk</td><td><b>$link_kaltmiete<hr>m²-Kalt:$kalt_qm<br>(MAX20:$netto_miete_20)</b><hr>MSM-$ms_feld:$ma->m_wert<br>MSO-$ms_feld:$ma->o_wert<br>MSO20%:$ms_20proz<hr>$kaltmiete_bem</td><td><b>$brutto_miete</b></td><td>$link_termin</td></tr>";
                 }
             }
             echo "</table>";
@@ -2009,7 +2033,7 @@ class leerstand
                     $arr [$a] ['B_TERMIN_DAT'] = $arr_details [0] ['DETAIL_DAT'];
                     $arr [$a] ['B_TERMIN_BEM'] = $arr_details [0] ['DETAIL_BEMERKUNG'];
                 } else {
-                    $arr [$a] ['B_TERMIN'] = '------';
+                    $arr [$a] ['B_TERMIN'] = '';
                     $arr [$a] ['B_TERMIN_DAT'] = 0;
                     $arr [$a] ['B_TERMIN_BEM'] = '';
                 }
