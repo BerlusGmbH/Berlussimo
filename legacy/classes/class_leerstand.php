@@ -436,11 +436,35 @@ class leerstand
         $expose_hk = nummer_punkt2komma_t(nummer_komma2punkt($this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Vermietung-HK'))))));
         $brutto_miete = nummer_punkt2komma_t(nummer_komma2punkt($expose_km) + nummer_komma2punkt($expose_bk) + nummer_komma2punkt($expose_hk));
 
+        $vermietungstermin_text = "";
+
+        $vermietungstermin = \App\Models\Einheiten::findOrFail($einheit_id)
+            ->details()
+            ->where('DETAIL_NAME', 'Vermietung-Vertragsbeginn')
+            ->first();
+        if ($vermietungstermin && $vermietungstermin->DETAIL_INHALT) {
+            $vermietungstermin_text = "ab dem $vermietungstermin->DETAIL_INHALT oder bereits/erst ";
+        } else {
+            $mietvertrag = \App\Models\Mietvertraege::whereHas('einheit', function ($query) use ($einheit_id) {
+                $query->where('EINHEIT_ID', $einheit_id);
+            })->orderBy('MIETVERTRAG_VON', 'DESC')
+                ->first();
+
+            if ($mietvertrag) {
+                $vermietungstermin = (new \Carbon\Carbon($mietvertrag->MIETVERTRAG_BIS))->addDays(1);
+                if ($vermietungstermin < \Carbon\Carbon::today()) {
+                    $vermietungstermin = \Carbon\Carbon::today()->addMonths(1)->firstOfMonth();
+                }
+                $vermietungstermin_text = "ab dem " . $vermietungstermin->format('d.m.Y') . " oder bereits/erst ";
+            }
+        }
+
         $pdf->ezText("Ich/wir bin/sind an der Anmietung des Objektes in "
             . "der $e->haus_strasse $e->haus_nummer in $e->haus_plz $e->haus_stadt "
             . "(Wohnlage: $e->einheit_lage, Wohnfläche: " . nummer_punkt2komma($e->einheit_qm)
             . " m², Zimmeranzahl: $zimmer) "
-            . "ab dem 00.00.0000 oder bereits/erst ab dem __.__.____ interessiert.", 10);
+            . $vermietungstermin_text
+            . "ab dem __.__.____ interessiert.", 10);
 
         $kaution = nummer_punkt2komma_t(3 * nummer_komma2punkt($expose_km));
 
@@ -1017,38 +1041,6 @@ class leerstand
         return $string;
     }
 
-    function liste_wohnungen_mit_termin($vor_nach = '>')
-    {
-        $e = new einheit ();
-        $arr = $this->einheiten_mit_termin_arr('', $vor_nach); // nach heute
-        $anz = count($arr);
-
-        echo "<table class=\"sortable\">";
-        echo "<tr><th>EINHEIT</th><th>TERMIN</th><th>QM</th><th>ZIMMER</th><th>BALKON</th></tr>";
-        for ($a = 0; $a < $anz; $a++) {
-            $d = new detail ();
-            $einheit_id = $arr [$a] ['EINHEIT_ID'];
-            $termin = $arr [$a] ['DETAIL_INHALT'];
-
-            $zimmer = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Zimmeranzahl'))));
-            $balkon = $this->br2n(ltrim(rtrim($d->finde_detail_inhalt('Einheit', $einheit_id, 'Balkon'))));
-            $e->get_einheit_info($einheit_id);
-            echo "<tr><td>$e->einheit_kurzname $e->haus_strasse $e->haus_nummer, $e->einheit_lage</td><td>$termin</td><td>$e->einheit_qm m²</td><td>$zimmer</td><td>$balkon</td>";
-            echo "</tr>";
-        }
-
-        echo "</table>";
-    }
-
-    function einheiten_mit_termin_arr($objekt_id = '', $vor_nach = '>')
-    {
-        if (!$objekt_id) {
-            $db_abfrage = "SELECT DETAIL_ZUORDNUNG_ID AS EINHEIT_ID, DETAIL_INHALT, DETAIL_BEMERKUNG, STR_TO_DATE(DETAIL_INHALT,'%d.%m.%Y') , DATE_FORMAT(NOW(), '%Y-%m-%d')  FROM `DETAIL` WHERE `DETAIL_NAME` = 'Besichtigungstermin' AND `DETAIL_AKTUELL` = '1' AND  (STR_TO_DATE(DETAIL_INHALT,'%d.%m.%Y') $vor_nach= CURDATE()) AND `DETAIL_ZUORDNUNG_TABELLE` = 'Einheit' && DETAIL_ZUORDNUNG_ID IN (SELECT EINHEIT_ID FROM `EINHEIT` WHERE `EINHEIT_AKTUELL` = '1')";
-            $result = DB::select($db_abfrage);
-            return $result;
-        }
-    }
-
     /* Email mit Attachment */
     function multi_attach_mail($to, $files, $sendermail, $thema, $nachricht, $name)
     {
@@ -1449,10 +1441,8 @@ class leerstand
         $plot->SetImageBorderType('plain');
         $plot->SetPlotType('stackedbars');
         $plot->SetDataType('text-data');
-        // $column_names = array('LEER VM', 'LEER NEU', 'IST WM','DIFF');
         $plot->SetShading(10);
         $plot->SetLegendReverse(True);
-        // $plot->SetLegend($column_names);
 
         $oo = new objekt ();
         $oo->get_objekt_infos($objekt_id);
@@ -1464,7 +1454,6 @@ class leerstand
 
         $arr = $this->leerstand_finden_monat($objekt_id, $datum_vormonat);
         $anz_leer_vormonat = count($arr);
-        // unset($arr);
 
         $arr_leer = $this->leerstand_finden_monat($objekt_id, $datum_heute);
         $anz_leer_akt = count($arr_leer);
@@ -1482,40 +1471,15 @@ class leerstand
 
         $vermietet_akt_string = '';
         $anz__V = count($vermietete);
-        // print_r($vermietete);
         if ($anz__V > 0) {
             for ($ee = 0; $ee < $anz__V; $ee++) {
                 $vermietet_akt_string .= $vermietete [$ee] . "\n";
             }
         }
 
-        // unset($arr);
-
-        /*
-		 * $mvs = new mietvertraege;
-		 * $anz_ausgezogene = $mvs->anzahl_ausgezogene_mieter($objekt_id, $jahr, $monat);
-		 * $anz_eingezogene = $mvs->anzahl_eingezogene_mieter($objekt_id, $jahr, $monat);
-		 */
         $bilanz_akt = $anz__V - $anz__L;
 
-        // 0-1 = -1;
-
         $z = 0;
-        /*
-		 * $data[$z][] = "ALLE\nAKTUELL";
-		 * $data[$z][] = $anz_einheiten_alle;
-		 *
-		 * $data[$z][] = 0;
-		 * $data[$z][] = 0;
-		 *
-		 */
-        // $z++;
-        /*
-		 * $data[$z][] = "LEER\nVERM.";
-		 * $data[$z][] = 0;
-		 * $data[$z][] = $anz_vermietet;
-		 * $data[$z][] = $anz_leer_akt;
-		 */
 
         $data [$z] [] = "VOR-\nMONAT";
         $data [$z] [] = 0;
@@ -1553,8 +1517,6 @@ class leerstand
             $data [$z] [] = $bilanz_akt;
         }
 
-        // $z++;
-
         $plot->SetYDataLabelPos('plotstack');
 
         $plot->SetDataValues($data);
@@ -1562,15 +1524,8 @@ class leerstand
         // Main plot title:
         $plot->SetTitle("$oo->objekt_kurzname $monat/$jahr");
 
-        // No 3-D shading of the bars:
         $plot->SetShading(0);
 
-        // Make a legend for the 3 data sets plotted:
-        // $plot->SetLegend(array('Mieteinnahmen', 'Leerstand'));
-
-        // $plot->SetLegend(array('MIETE'));
-
-        // Turn off X tick labels and ticks because they don't apply here:
         $plot->SetXTickLabelPos('none');
         $plot->SetXTickPos('none');
 
@@ -1578,14 +1533,8 @@ class leerstand
         $plot->SetIsInline(true);
         $plot->DrawGraph();
 
-        // echo "<hr>$plot->img ";
-        // $plot->PrintImageFrame();
-        // $ima = $plot->PrintImage();
         $ima = $plot->EncodeImage();
-        // ob_clean();
         return $ima;
-
-        // echo "<img src=\"$ima\"></img>";
     }
 
     function array_intersect_recursive($arr_new, $arr_old, $field)
@@ -1603,11 +1552,6 @@ class leerstand
 
         $new_arr = array_merge(array_unique(array_diff($arr_new_tmp, $arr_old_tmp)), array());
         if (count($new_arr) > 0) {
-            /*
-			 * echo '<pre><hr>';
-			 * print_r($new_arr);
-			 * echo "<hr>";
-			 */
             return $new_arr;
         }
     }
@@ -1621,7 +1565,6 @@ class leerstand
         $f->fieldset("Vermietungsliste der fertiggestellten Einheiten in $o_name", 'vliste');
 
         $arr = $this->vermietungsliste_arr($objekt_id, $monate);
-        // echo '<pre>';
 
         $anz = count($arr);
         if ($anz > 0) {
@@ -1631,15 +1574,10 @@ class leerstand
                 session()->forget('filter');
             }
 
-            //session()->push('filter.zimmer', []);
-            //session()->push('filter.balkon', []);
-            //session()->push('filter.heizung', []);
-
             for ($a = 0; $a < $anz; $a++) {
                 $zimmer = $arr [$a] ['ZIMMER'];
                 $balkon = $arr [$a] ['BALKON'];
                 $heizungsart = $arr [$a] ['HEIZUNGSART'];
-                // echo "$zimmer $balkon $heizungsart";
 
                 if (!empty ($zimmer)
                     && $zimmer != '------'
@@ -1728,7 +1666,6 @@ class leerstand
                 $anz_fi = count($filter_balkon);
                 for ($fo = 0; $fo < $anz_fi; $fo++) {
                     $wert = $filter_balkon [$fo];
-                    // $name, $id, $wert, $label, $js, $checked
                     if (session()->has('aktive_filter.balkon')) {
                         if (!in_array($wert, session()->get('aktive_filter')['balkon'])) {
                             $f->check_box_js1("Balkon[]", $objekt_id . "_" . $wert, $wert, "$wert", null, null);
@@ -1747,7 +1684,6 @@ class leerstand
                 $anz_fi = count($filter_heizung);
                 for ($fo = 0; $fo < $anz_fi; $fo++) {
                     $wert = $filter_heizung [$fo];
-                    // $name, $id, $wert, $label, $js, $checked
                     if (session()->has('aktive_filter.heizung')) {
                         if (!in_array($wert, session()->get('aktive_filter')['heizung'])) {
                             $f->check_box_js1("Heizung[]", $objekt_id . "_" . $wert, $wert, "$wert", null, null);
@@ -1769,7 +1705,7 @@ class leerstand
             $f->fieldset('Suchergebnis', 'se');
 
             echo "<table class=\"sortable\">";
-            echo "<tr><th>EINHEIT</th><th>TYP</th><th>ANSCHRIFT</th><th>LAGE</th><th>ZI-<br>MM.</th><th>QM</th><th>BAL<br>KON</th><th>HEI-<br>ZUNG</th><th>LETZE\nSAN-<br>IERUNG</th><th>FERTIG</th><th>REIN-<br>IGUNG</th><th>BK<br>SCHN.</th><th>BK</th><th>HK<br>SCHN.</th><th>HK</th><th>KALT<br>m²</th><th>BRU-<br>TTO</th><th>TER-<br>MIN</th></tr>";
+            echo "<tr><th>EINHEIT</th><th>TYP</th><th>ANSCHRIFT</th><th>LAGE</th><th>ZI.</th><th>QM</th><th>BAL-<br>KON</th><th>HEI-<br>ZUNG</th><th>LETZE<br>SANIERUNG</th><th>FERTIG</th><th>REIN-<br>IGUNG</th><th>BK<br>SCHN.</th><th>BK</th><th>HK<br>SCHN.</th><th>HK</th><th>KALT</th><th>BRU-<br>TTO</th><th>VERTRAGS-<br>BEGINN</th></tr>";
             for ($a = 0; $a < $anz; $a++) {
                 $einheit_id = $arr [$a] ['EINHEIT_ID'];
                 $ma = new mietanpassung ();
@@ -1825,7 +1761,7 @@ class leerstand
                 $netto_miete_20 = $einheit_qm * $ms_20proz;
 
                 /* Besichtigungstermin für Vermietung aus Details */
-                $b_termin = $arr [$a] ['B_TERMIN'];
+                $b_termin = $arr [$a] ['B_TERMIN'] ? $arr [$a] ['B_TERMIN'] : '------';
                 $b_termin_dat = $arr [$a] ['B_TERMIN_DAT'];
 
                 /* Reservierung aus Details */
@@ -1866,7 +1802,7 @@ class leerstand
                     $link_kaltmiete = "<a class=\"details\" onclick=\"change_detail('Vermietung-Kaltmiete', '$kaltmiete', '$kaltmiete_dat', 'Einheit', '$einheit_id')\">$kaltmiete_a</a>";
                     $link_bk = "<a class=\"details\" onclick=\"change_detail('Vermietung-BK', '$bk', '$bk_dat', 'Einheit', '$einheit_id')\">$bk</a>";
                     $link_hk = "<a class=\"details\" onclick=\"change_detail('Vermietung-HK', '$hk', '$hk_dat', 'Einheit', '$einheit_id')\">$hk</a>";
-                    $link_termin = "<a class=\"details\" onclick=\"change_detail('Besichtigungstermin', '$b_termin', '$b_termin_dat', 'Einheit', '$einheit_id')\">$b_termin</a>";
+                    $link_termin = "<a class=\"details\" onclick=\"change_detail('Vermietung-Vertragsbeginn', '$b_termin', '$b_termin_dat', 'Einheit', '$einheit_id')\">$b_termin</a>";
 
                     if ($b_reservierung != '') {
                         $link_reservierung = "<a class=\"details\" onclick=\"change_detail('Vermietung-Reserviert', '$b_reservierung', '$b_reservierung_dat', 'Einheit', '$einheit_id')\">$b_reservierung<hr>$b_reservierung_bem</a>";
@@ -1881,7 +1817,6 @@ class leerstand
                     }
                     echo "<td>$link_einheit<br>Ex:$l_mieter<hr>$link_besichtigung_pdf<hr>$link_bewerbung_pdf<hr>$link_reservierung</td><td>$typ</td><td>$str</td><td>$einheit_lage</td><td sorttable_customkey=\"$zimmer_p\">$zimmer</td><td>$einheit_qm_a</td><td>$balkon</td><td>$heizungsart</td><td>$jahr_s</td><td>$fertig_bau_bem</td><td>$gereinigt<hr>$gereinigt_bem</td><td>$nk</td><td>$link_bk</td><td>$hk_s</td><td>$link_hk</td><td><b>$link_kaltmiete<hr>m²-Kalt:$kalt_qm<br>(MAX20:$netto_miete_20)</b><hr>MSM-$ms_feld:$ma->m_wert<br>MSO-$ms_feld:$ma->o_wert<br>MSO20%:$ms_20proz<hr>$kaltmiete_bem</td><td><b>$brutto_miete</b></td><td>$link_termin</td></tr>";
                 }
-                // echo "$einheit_kn - $l_mieter ($typ) $str $einheit_lage Zimmer: $zimmer Balkon:$balkon Heizart:$heizungsart EA: $energieausweis JS:$jahr_s BAU:$fertig_bau ($fertig_bau_bem) REIN:$gereinigt ($gereinigt_bem) $nk € $hk €<br>";
             }
             echo "</table>";
             $f->fieldset_ende();
@@ -1906,7 +1841,6 @@ class leerstand
 
                 $datum = $mi->tage_plus($datum_heute, $monate * 31);
                 $datum_arr = explode('-', $datum);
-                // print_r($datum_arr);
                 $jahr_neu = $datum_arr [0];
                 $monat_neu = $datum_arr [1];
 
@@ -2069,7 +2003,7 @@ class leerstand
                 unset ($arr_details);
 
                 /* Besichtigunstermin und Zeit aus Details */
-                $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Besichtigungstermin');
+                $arr_details = $d->finde_detail_inhalt_last_arr('Einheit', $einheit_id, 'Vermietung-Vertragsbeginn');
                 if (!empty($arr_details)) {
                     $arr [$a] ['B_TERMIN'] = $arr_details [0] ['DETAIL_INHALT'];
                     $arr [$a] ['B_TERMIN_DAT'] = $arr_details [0] ['DETAIL_DAT'];
@@ -2109,7 +2043,6 @@ class leerstand
                     $d1 = new DateTime ($mvs->mietvertrag_von_d);
                     $d2 = new DateTime ($mvs->mietvertrag_bis_d);
                     $diff = $d2->diff($d1);
-                    // print_r( $diff ) ;
                     $arr [$a] ['L_MIETJAHRE'] = "$diff->y";
                     $arr [$a] ['L_MIETMONATE'] = "$diff->m";
                     $arr [$a] ['L_MIETER'] = $mvs->personen_name_string;
@@ -2144,10 +2077,6 @@ class leerstand
                 $n_arr [] = $arr [$a];
             }
         }
-
-        // echo '<pre>';
-        // print_r($n_arr);
-        // print_r($arr);
         return $n_arr;
     }
 
@@ -2155,7 +2084,6 @@ class leerstand
     {
         $monat = date("m");
         $jahr = date("Y");
-        // echo '<pre>';
 
         /* Vermietete Einheiten aus objekt */
         $o = new objekt ();
@@ -2172,7 +2100,6 @@ class leerstand
 
             $e = new einheit ();
             if ($e->get_einheit_status($einheit_id) == true) {
-                // echo "$einheit_kn vermietet<br>";
                 $e->get_last_mietvertrag_id($einheit_id);
                 $mv_id = $e->mietvertrag_id;
                 $me = new mietentwicklung ();
@@ -2183,13 +2110,11 @@ class leerstand
                         $anz_einheiten++;
                         $summe_g += $me_arr ['BETRAG'];
                         $summe_qm += $einheit_qm;
-                        // print_r($me_arr);
                     }
                 }
             }
         }
         if ($summe_qm > 0) {
-            // echo "$summe_g/$summe_qm";
             return nummer_komma2punkt(nummer_punkt2komma($summe_g / $summe_qm));
         } else {
             return '0.00';
