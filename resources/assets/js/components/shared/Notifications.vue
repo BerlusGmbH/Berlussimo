@@ -72,38 +72,36 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import {Action, Mutation, namespace, State} from "vuex-class";
+    import {namespace} from "vuex-class";
     import Echo from "../../libraries/Echo";
     import axios from "../../libraries/axios";
 
-    const NotificationsState = namespace('shared/notifications', State);
-    const NotificationsAction = namespace('shared/notifications', Action);
-    const NotificationsMutation = namespace('shared/notifications', Mutation);
-    const AuthState = namespace('auth', State);
-    const PersonShowAction = namespace('modules/person/show', Action);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const NotificationsModule = namespace('shared/notifications');
+    const AuthModule = namespace('auth');
+    const PersonShowModule = namespace('modules/person/show');
+    const RefreshModule = namespace('shared/refresh');
 
     @Component
     export default class Notifications extends Vue {
-        @NotificationsState('open')
+        @NotificationsModule.State('open')
         open: boolean;
 
-        @NotificationsState('notifications')
+        @NotificationsModule.State('notifications')
         notifications: Array<Object>;
 
-        @NotificationsAction('getNotifications')
+        @NotificationsModule.Action('getNotifications')
         getNotifications: Function;
 
-        @NotificationsMutation('appendNotification')
+        @NotificationsModule.Mutation('appendNotification')
         appendNotification: Function;
 
-        @AuthState('user')
+        @AuthModule.State('user')
         user;
 
-        @PersonShowAction('updatePerson')
+        @PersonShowModule.Action('updatePerson')
         updatePerson: Function;
 
-        @RefreshMutation('requestRefresh')
+        @RefreshModule.Mutation('requestRefresh')
         requestRefresh: Function;
 
         mounted() {

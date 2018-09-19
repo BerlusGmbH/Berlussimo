@@ -27,11 +27,10 @@
 <script lang="ts">
     import Vue from 'vue';
     import Component from 'vue-class-component';
-    import {} from 'vue-property-decorator';
     import axios from '../../libraries/axios';
-    import {Mutation, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
 
-    const AuthMutation = namespace('auth', Mutation);
+    const AuthModule = namespace('auth');
 
     @Component
     export default class Login extends Vue {
@@ -45,10 +44,10 @@
             remember: false
         };
 
-        @AuthMutation('updateUser')
+        @AuthModule.Mutation('updateUser')
         updateUser: Function;
 
-        @AuthMutation('updateCsrf')
+        @AuthModule.Mutation('updateCsrf')
         updateCsrf: Function;
 
         login() {

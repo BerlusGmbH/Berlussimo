@@ -47,12 +47,12 @@
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import EntitySelect from '../../common/EntitySelect.vue';
-    import {Person} from "../../../server/resources/models";
+    import {Person} from "../../../server/resources";
     import axios from "../../../libraries/axios";
-    import {Mutation, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const SnackbarModule = namespace('shared/snackbar');
+    const RefreshModule = namespace('shared/refresh');
 
     @Component({
         components: {
@@ -67,10 +67,10 @@
         @Prop({type: Object})
         person: Person;
 
-        @SnackbarMutation('updateMessage')
+        @SnackbarModule.Mutation('updateMessage')
         updateMessage: Function;
 
-        @RefreshMutation('requestRefresh')
+        @RefreshModule.Mutation('requestRefresh')
         requestRefresh: Function;
 
         show: boolean = false;

@@ -123,16 +123,15 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {Mutation, namespace, State} from "vuex-class";
+    import {namespace} from "vuex-class";
     import {Watch} from "vue-property-decorator";
     import axios from "../../../libraries/axios";
-    import {Model} from "../../../server/resources/models";
+    import {Model} from "../../../server/resources";
     import personAddDialog from "../../../components/common/dialogs/PersonAddDialog.vue";
     import _ from "lodash";
 
-    const RefreshState = namespace('shared/refresh', State);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
+    const RefreshModule = namespace('shared/refresh');
+    const SnackbarModule = namespace('shared/snackbar');
 
     @Component({
         'components': {
@@ -140,13 +139,13 @@
         }
     })
     export default class ListView extends Vue {
-        @RefreshState('dirty')
+        @RefreshModule.State('dirty')
         dirty;
 
-        @RefreshMutation('refreshFinished')
+        @RefreshModule.Mutation('refreshFinished')
         refreshFinished: Function;
 
-        @SnackbarMutation('updateMessage')
+        @SnackbarModule.Mutation('updateMessage')
         updateMessage: Function;
 
         add: boolean = false;

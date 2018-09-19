@@ -4,10 +4,8 @@
                        hide-details
                        :entities="['objekt', 'partner', 'bankkonto']"
                        append-icon=""
-                       multiple class="global-select"
-                       solo
-                       light
-                       style="background-color: #6ddfdb"
+                       multiple
+                       solo-inverted
     >
     </app-entity-select>
 </template>
@@ -16,35 +14,34 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import Select from "../common/EntitySelect.vue"
-    import {Bankkonto, Objekt, Partner} from "../../server/resources/models";
-    import {Action, namespace, State} from "vuex-class";
+    import {Bankkonto, Objekt, Partner} from "../../server/resources";
+    import {namespace} from "vuex-class";
 
-    const GlobalSelectState = namespace('shared/globalSelect', State);
-    const GlobalSelectAction = namespace('shared/globalSelect', Action);
+    const GlobalSelectModule = namespace('shared/globalSelect');
 
-    const LegacyState = namespace('shared/legacy', State);
+    const LegacyModule = namespace('shared/legacy');
 
     @Component({components: {'app-entity-select': Select}})
     export default class GlobalSelect extends Vue {
-        @GlobalSelectState('objekt')
+        @GlobalSelectModule.State('objekt')
         objekt: Objekt | null;
 
-        @GlobalSelectState('partner')
+        @GlobalSelectModule.State('partner')
         partner: Partner | null;
 
-        @GlobalSelectState('bankkonto')
+        @GlobalSelectModule.State('bankkonto')
         bankkonto: Bankkonto | null;
 
-        @LegacyState('isLegacy')
+        @LegacyModule.State('isLegacy')
         isLegacy: boolean;
 
-        @GlobalSelectAction('updateObjekt')
+        @GlobalSelectModule.Action('updateObjekt')
         updateObjekt: Function;
 
-        @GlobalSelectAction('updatePartner')
+        @GlobalSelectModule.Action('updatePartner')
         updatePartner: Function;
 
-        @GlobalSelectAction('updateBankkonto')
+        @GlobalSelectModule.Action('updateBankkonto')
         updateBankkonto: Function;
 
         dirty: boolean = false;

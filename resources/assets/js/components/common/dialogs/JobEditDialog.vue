@@ -82,12 +82,12 @@
     import {Prop, Watch} from "vue-property-decorator";
     import _ from "lodash";
     import EntitySelect from '../../common/EntitySelect.vue';
-    import {Job} from "../../../server/resources/models";
+    import {Job} from "../../../server/resources";
     import axios from "../../../libraries/axios";
-    import {Mutation, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const SnackbarModule = namespace('shared/snackbar');
+    const RefreshModule = namespace('shared/refresh');
 
     @Component({
         components: {
@@ -102,10 +102,10 @@
         @Prop({type: Object})
         job: Job;
 
-        @SnackbarMutation('updateMessage')
+        @SnackbarModule.Mutation('updateMessage')
         updateMessage: Function;
 
-        @RefreshMutation('requestRefresh')
+        @RefreshModule.Mutation('requestRefresh')
         requestRefresh: Function;
 
         show: boolean = false;

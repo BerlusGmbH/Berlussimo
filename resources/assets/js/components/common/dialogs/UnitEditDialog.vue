@@ -56,13 +56,13 @@
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
     import _ from "lodash";
-    import {Einheit} from "../../../server/resources/models";
-    import {Mutation, namespace} from "vuex-class";
+    import {Einheit} from "../../../server/resources";
+    import {namespace} from "vuex-class";
     import axios from "../../../libraries/axios";
     import entitySelect from "../../common/EntitySelect.vue"
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const SnackbarModule = namespace('shared/snackbar');
+    const RefreshModule = namespace('shared/refresh');
 
     @Component({components: {'app-entity-select': entitySelect}})
     export default class UnitEditDialog extends Vue {
@@ -88,10 +88,10 @@
         @Prop({type: Boolean})
         show;
 
-        @SnackbarMutation('updateMessage')
+        @SnackbarModule.Mutation('updateMessage')
         updateMessage: Function;
 
-        @RefreshMutation('requestRefresh')
+        @RefreshModule.Mutation('requestRefresh')
         requestRefresh: Function;
 
         inputValue: Einheit = new Einheit();

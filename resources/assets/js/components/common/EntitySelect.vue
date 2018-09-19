@@ -1,27 +1,27 @@
 <template>
-    <app-select :search-input.sync="query"
-                :value="value"
-                :disabled="disabled"
-                @change="emit('change', $event)"
-                @input="emit('input', $event)"
-                :loading="searching"
-                :items="items" autocomplete
-                @click.native.stop
-                :multiple="multiple"
-                :hide-details="hideDetails"
-                return-object
-                :no-data-text="status"
-                :prepend-icon="icon"
-                :append-icon="appendIcon"
-                :filter="() => true"
-                :solo="solo"
-                :label="label"
-                :dark="dark"
-                :light="light"
-                :debounce-search="400"
-                :clearable="clearable"
-                :tabindex="tabindex"
-                :autofocus="autofocus"
+    <v-autocomplete :search-input.sync="query"
+                    :value="value"
+                    :disabled="disabled"
+                    @change="emit('change', $event)"
+                    @input="emit('input', $event)"
+                    :loading="searching"
+                    :items="internalItems"
+                    :multiple="multiple"
+                    :hide-details="hideDetails"
+                    return-object
+                    :no-data-text="status"
+                    :prepend-icon="icon"
+                    :append-icon="appendIcon"
+                    :filter="() => true"
+                    :solo="solo"
+                    :solo-inverted="soloInverted"
+                    :label="label"
+                    :dark="dark"
+                    :light="light"
+                    :debounce-search="400"
+                    :clearable="clearable"
+                    :tabindex="tabindex"
+                    :autofocus="autofocus"
     >
         <template slot="selection" slot-scope="data">
             <app-chip @input="data.parent.selectItem(data.item); $emit('chip-close', $event)"
@@ -35,19 +35,18 @@
                 <app-tile :entity="data.item"></app-tile>
             </template>
         </template>
-    </app-select>
+    </v-autocomplete>
 </template>
 <script lang="ts">
     import Vue from "../../imports";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import {Model} from "../../server/resources";
-    import VSelect from "./VSelect.vue"
     import {CancelTokenSource} from "axios";
     import axios from "../../libraries/axios";
     import _ from "lodash";
 
-    @Component({components: {'app-select': VSelect}})
+    @Component
     export default class EntitySelect extends Vue {
 
         source: CancelTokenSource;
@@ -63,6 +62,9 @@
 
         @Prop({type: Boolean, default: false})
         solo;
+
+        @Prop({type: Boolean, default: false})
+        soloInverted;
 
         @Prop({type: Boolean, default: false})
         disabled;
@@ -103,10 +105,6 @@
         @Prop({type: Boolean, default: false})
         autofocus;
 
-        mounted() {
-            this.$refs.input = this.$children[0].$refs.input;
-        }
-
         @Watch('query')
         onQueryChanged(query) {
             if (typeof query === 'string') {
@@ -117,6 +115,18 @@
         debouncedSearch: Function = _.debounce(function (this: EntitySelect, query) {
             this.goSearch(query);
         }, 300);
+
+        get internalItems() {
+            if (this.value) {
+                if (Array.isArray(this.value)) {
+                    return this.value.concat(this.items);
+                } else {
+                    this.items.push(this.value);
+                    return this.items;
+                }
+            }
+            return this.items;
+        }
 
         get status(): string {
             if (this.searching) {

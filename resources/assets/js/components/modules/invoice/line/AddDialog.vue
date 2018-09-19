@@ -173,14 +173,14 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {Mutation, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
     import {Prop, Watch} from "vue-property-decorator";
     import EntitySelect from "../../../common/EntitySelect.vue"
     import {Invoice, InvoiceLine} from "../../../../server/resources";
     import axios from "../../../../libraries/axios";
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const SnackbarModule = namespace('shared/snackbar');
+    const RefreshModule = namespace('shared/refresh');
 
     @Component({components: {'app-entity-select': EntitySelect}})
     export default class AddDialog extends Vue {
@@ -204,10 +204,10 @@
 
         units: Array<string> = [];
 
-        @SnackbarMutation('updateMessage')
+        @SnackbarModule.Mutation('updateMessage')
         updateMessage: Function;
 
-        @RefreshMutation('requestRefresh')
+        @RefreshModule.Mutation('requestRefresh')
         requestRefresh: Function;
 
         lineValue: InvoiceLine = new InvoiceLine();

@@ -1,6 +1,6 @@
 <template>
-    <v-expansion-panel v-if="authCheck" class="extension-panel__menu">
-        <v-expansion-panel-content v-model="mainmenuOpen">
+    <v-expansion-panel v-if="authCheck" v-model="openedMenu" class="v-extension-panel__menu">
+        <v-expansion-panel-content>
             <div slot="header">
                 <v-layout row align-center class="ma-0">
                     <v-flex xs12 md4 lg6>
@@ -18,7 +18,7 @@
                 </v-card-text>
             </v-card>
         </v-expansion-panel-content>
-        <v-expansion-panel-content class="primary" v-model="submenuOpen">
+        <v-expansion-panel-content class="primary">
             <template slot="header">
                 <v-layout row align-center class="ma-0">
                     <v-flex xs3 md4 lg6>
@@ -44,14 +44,13 @@
 <script lang="ts">
     import Vue from 'vue';
     import Component from 'vue-class-component';
-    import {State, Getter, Mutation, namespace} from 'vuex-class';
+    import {namespace} from 'vuex-class';
     import globalSelect from "./GlobalSelect.vue";
     import searchbar from "./Searchbar.vue";
 
-    const AuthGetter = namespace('auth', Getter);
+    const AuthModule = namespace('auth');
 
-    const MenuState = namespace('shared/menu', State);
-    const MenuMutation = namespace('shared/menu', Mutation);
+    const MenuModule = namespace('shared/menu');
 
     @Component({
         components: {
@@ -60,48 +59,36 @@
         }
     })
     export default class Menu extends Vue {
-        @AuthGetter('check') authCheck;
+        @AuthModule.Getter('check') authCheck;
 
-        @MenuState('mainmenuOpen') mainmenuOpenState;
-        @MenuState('submenuOpen') submenuOpenState;
+        @MenuModule.State('openedMenu') openedMenuState;
 
-        @MenuMutation('updateMainmenuOpen') updateMainmenuOpen;
-        @MenuMutation('updateSubmenuOpen') updateSubmenuOpen;
+        @MenuModule.Mutation('updateOpenedMenu') updateOpenedMenu;
 
         get hasSubmenu() {
             return this.$slots.submenu && this.$slots.submenu.length > 0;
         }
 
-        get mainmenuOpen(): boolean {
-            return this.mainmenuOpenState;
+        get openedMenu(): boolean {
+            return this.openedMenuState;
         }
 
-        set mainmenuOpen(value) {
-            this.updateMainmenuOpen(value);
-        }
-
-        get submenuOpen(): boolean {
-            return this.submenuOpenState;
-        }
-
-        set submenuOpen(value) {
-            this.updateSubmenuOpen(value);
+        set openedMenu(value) {
+            this.updateOpenedMenu(value);
         }
     }
 </script>
 
 <style>
-    .extension-panel__menu a {
+    .v-extension-panel__menu a {
         color: inherit;
     }
 
-    .extension-panel__menu .expansion-panel__header {
-        min-height: 48px;
-        height: initial;
-        padding: 0 0 0 24px;
+    .v-extension-panel__menu .v-expansion-panel__header {
+        padding-top: 0;
+        padding-bottom: 0;
     }
 
-    .extension-panel__menu .expansion-panel__header .chip i {
-        margin-right: 0;
+    .v-extension-panel__menu .v-expansion-panel__header .chip i {
     }
 </style>

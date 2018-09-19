@@ -46,13 +46,12 @@
                         </app-entity-select>
                     </v-flex>
                     <v-flex xs12>
-                        <v-text-field label="Text"
-                                      prepend-icon="mdi-alphabetical"
-                                      v-model="assignmentInput.TEXT"
-                                      multi-line
-                                      auto-grow
+                        <v-textarea label="Text"
+                                    prepend-icon="mdi-alphabetical"
+                                    v-model="assignmentInput.TEXT"
+                                    auto-grow
                         >
-                        </v-text-field>
+                        </v-textarea>
                     </v-flex>
                     <v-flex xs12>
                         <v-switch label="Akut"
@@ -76,12 +75,12 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
-    import {Assignment, Einheit, Haus, Objekt} from "../../../server/resources/models";
-    import {Getter, Mutation, namespace} from "vuex-class";
+    import {Assignment, Einheit, Haus, Objekt} from "../../../server/resources";
+    import {namespace} from "vuex-class";
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
-    const AuthGetter = namespace('auth', Getter);
+    const SnackbarModule = namespace('shared/snackbar');
+    const RefreshModule = namespace('shared/refresh');
+    const AuthModule = namespace('auth');
 
     @Component
     export default class AssignmentAddDialog extends Vue {
@@ -92,13 +91,13 @@
         @Prop({type: Object})
         costUnit: Objekt | Haus | Einheit;
 
-        @AuthGetter('user')
+        @AuthModule.Getter('user')
         user;
 
-        @SnackbarMutation('updateMessage')
+        @SnackbarModule.Mutation('updateMessage')
         updateMessage: Function;
 
-        @RefreshMutation('requestRefresh')
+        @RefreshModule.Mutation('requestRefresh')
         requestRefresh: Function;
 
         assignmentInput: Assignment = new Assignment();

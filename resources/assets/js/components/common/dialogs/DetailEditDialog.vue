@@ -21,21 +21,44 @@
                   item-value="UNTERKATEGORIE_NAME"
                   lazy
         ></v-select>
-        <v-text-field v-else
-                      slot="input"
-                      v-model="inputValue.DETAIL_INHALT"
-                      :label="inputValue.DETAIL_NAME"
-                      :type="type"
-                      :prepend-icon="prependIcon"
-                      :multi-line="large"
+        <template v-else>
+            <v-text-field
+                    v-if="!large"
+                    slot="input"
+                    v-model="inputValue.DETAIL_INHALT"
+                    :label="inputValue.DETAIL_NAME"
+                    :type="type"
+                    :prepend-icon="prependIcon"
+                    :multi-line="large"
+            ></v-text-field>
+            <v-textarea
+                    v-if="large"
+                    slot="input"
+                    v-model="inputValue.DETAIL_INHALT"
+                    :label="inputValue.DETAIL_NAME"
+                    :type="type"
+                    :prepend-icon="prependIcon"
+                    :multi-line="large"
+            ></v-textarea>
+        </template>
+        <v-text-field
+                v-if="!large"
+                slot="input"
+                v-model="inputValue.DETAIL_BEMERKUNG"
+                label="Bemerkung"
+                :type="type"
+                prepend-icon="note"
+                :multi-line="large"
         ></v-text-field>
-        <v-text-field slot="input"
-                      v-model="inputValue.DETAIL_BEMERKUNG"
-                      label="Bemerkung"
-                      :type="type"
-                      prepend-icon="note"
-                      :multi-line="large"
-        ></v-text-field>
+        <v-textarea
+                v-else
+                slot="input"
+                v-model="inputValue.DETAIL_BEMERKUNG"
+                label="Bemerkung"
+                :type="type"
+                prepend-icon="note"
+                :multi-line="large"
+        ></v-textarea>
     </app-edit-dialog>
 </template>
 

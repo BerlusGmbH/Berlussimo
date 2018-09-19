@@ -44,7 +44,7 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {Action, Mutation, namespace, State} from "vuex-class";
+    import {namespace} from "vuex-class";
     import {Prop, Watch} from "vue-property-decorator";
     import personCard from "../../shared/cards/PersonCard.vue";
     import notesCard from "../../shared/cards/NotesCard.vue";
@@ -55,11 +55,8 @@
     import purchaseContractsCard from "../../shared/cards/PurchaseContractsCard.vue";
     import jobsCard from "../../shared/cards/JobsCard.vue";
 
-    const ShowAction = namespace('modules/person/show', Action);
-    const ShowState = namespace('modules/person/show', State);
-
-    const RefreshState = namespace('shared/refresh', State);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const ShowModule = namespace('modules/person/show');
+    const RefreshModule = namespace('shared/refresh');
 
     @Component({
         components: {
@@ -77,16 +74,16 @@
         @Prop()
         id: string;
 
-        @ShowAction('updatePerson')
+        @ShowModule.Action('updatePerson')
         fetchPerson;
 
-        @ShowState('person')
+        @ShowModule.State('person')
         person;
 
-        @RefreshState('dirty')
+        @RefreshModule.State('dirty')
         dirty;
 
-        @RefreshMutation('refreshFinished')
+        @RefreshModule.Mutation('refreshFinished')
         refreshFinished: Function;
 
         @Watch('dirty')

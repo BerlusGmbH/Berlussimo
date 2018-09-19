@@ -15,17 +15,16 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {Mutation, namespace, State} from "vuex-class";
+    import {namespace} from "vuex-class";
 
-    const NotificationsMutation = namespace('shared/notifications', Mutation);
-    const NotificationsState = namespace('shared/notifications', State);
+    const NotificationsModule = namespace('shared/notifications');
 
     @Component
     export default class NotificationsToggle extends Vue {
-        @NotificationsMutation('toggleOpen')
+        @NotificationsModule.Mutation('toggleOpen')
         toggle;
 
-        @NotificationsState('unread')
+        @NotificationsModule.State('unread')
         unread: number;
     }
 </script>

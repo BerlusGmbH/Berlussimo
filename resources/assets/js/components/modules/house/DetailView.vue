@@ -49,7 +49,7 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {Action, Mutation, namespace, State} from "vuex-class";
+    import {namespace} from "vuex-class";
     import {Prop, Watch} from "vue-property-decorator";
     import houseCard from "../../shared/cards/HouseCard.vue";
     import notesCard from "../../shared/cards/NotesCard.vue";
@@ -61,11 +61,8 @@
     import unitsCard from "../../shared/cards/UnitsCard.vue";
 
 
-    const ShowAction = namespace('modules/house/show', Action);
-    const ShowState = namespace('modules/house/show', State);
-
-    const RefreshState = namespace('shared/refresh', State);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const ShowModule = namespace('modules/house/show');
+    const RefreshModule = namespace('shared/refresh');
 
     @Component({
         components: {
@@ -83,16 +80,16 @@
         @Prop()
         id: string;
 
-        @ShowAction('updateHouse')
+        @ShowModule.Action('updateHouse')
         fetchHouse;
 
-        @ShowState('house')
+        @ShowModule.State('house')
         house;
 
-        @RefreshState('dirty')
+        @RefreshModule.State('dirty')
         dirty;
 
-        @RefreshMutation('refreshFinished')
+        @RefreshModule.Mutation('refreshFinished')
         refreshFinished: Function;
 
         @Watch('dirty')

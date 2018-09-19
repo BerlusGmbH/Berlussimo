@@ -59,11 +59,11 @@
     import Component from "vue-class-component";
     import Vue from "vue";
     import {Detail} from "../../../../server/resources";
-    import {namespace, State} from "vuex-class";
+    import {namespace} from "vuex-class";
     import detailIdentifier from "./DetailIdentifier.vue"
     import axios from "../../../../libraries/axios"
 
-    const WorkplaceState = namespace('shared/workplace', State);
+    const WorkplaceModule = namespace('shared/workplace');
 
     @Component({
         extends: detailIdentifier
@@ -72,7 +72,7 @@
         value: Detail;
         updateMessage: Function;
 
-        @WorkplaceState('hasPhone')
+        @WorkplaceModule.State('hasPhone')
         workplaceHasPhone: boolean;
 
         show: boolean;

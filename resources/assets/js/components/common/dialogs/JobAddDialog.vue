@@ -83,12 +83,12 @@
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import EntitySelect from '../../common/EntitySelect.vue';
-    import {Partner, Person} from "../../../server/resources/models";
+    import {Partner, Person} from "../../../server/resources";
     import axios from "../../../libraries/axios";
-    import {Mutation, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const SnackbarModule = namespace('shared/snackbar');
+    const RefreshModule = namespace('shared/refresh');
 
     @Component({
         components: {
@@ -103,10 +103,10 @@
         @Prop({type: Object})
         employee: Person;
 
-        @SnackbarMutation('updateMessage')
+        @SnackbarModule.Mutation('updateMessage')
         updateMessage: Function;
 
-        @RefreshMutation('requestRefresh')
+        @RefreshModule.Mutation('requestRefresh')
         requestRefresh: Function;
 
         employer: Partner | null = null;

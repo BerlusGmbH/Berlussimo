@@ -2,16 +2,12 @@ export default {
     namespaced: true,
     state() {
         return {
-            mainmenuOpen: false,
-            submenuOpen: false
+            openedMenu: null,
         }
     },
     mutations: {
-        updateMainmenuOpen(state, menuState) {
-            state.mainmenuOpen = menuState;
-        },
-        updateSubmenuOpen(state, menuState) {
-            state.submenuOpen = menuState;
+        updateOpenedMenu(state, menuState) {
+            state.openedMenu = menuState;
         }
     }
 }

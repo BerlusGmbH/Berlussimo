@@ -48,12 +48,12 @@
     import {Prop} from "vue-property-decorator";
     import copyToClipboard from "../../../mixins/CopyToClipboard.vue";
     import assignmentEditDialog from "../dialogs/AssignmentEditDialog.vue";
-    import {Mutation, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
     import _ from "lodash";
-    import {Assignment} from "../../../server/resources/models";
+    import {Assignment} from "../../../server/resources";
 
-    const RefreshMutation = namespace('shared/refresh', Mutation);
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
+    const RefreshModule = namespace('shared/refresh');
+    const SnackbarModule = namespace('shared/snackbar');
 
     @Component({
         'components': {
@@ -67,10 +67,10 @@
         @Prop()
         value: Assignment;
 
-        @RefreshMutation('requestRefresh')
+        @RefreshModule.Mutation('requestRefresh')
         requestRefresh: Function;
 
-        @SnackbarMutation('updateMessage')
+        @SnackbarModule.Mutation('updateMessage')
         updateMessage: Function;
 
         show: boolean = false;

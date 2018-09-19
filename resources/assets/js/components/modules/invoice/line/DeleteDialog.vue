@@ -36,13 +36,13 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {namespace, Mutation} from "vuex-class";
+    import {namespace} from "vuex-class";
     import {Prop} from "vue-property-decorator";
     import EntitySelect from "../../../common/EntitySelect.vue"
-    import {Invoice, InvoiceLine} from "../../../../server/resources/models";
+    import {Invoice, InvoiceLine} from "../../../../server/resources";
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const SnackbarModule = namespace('shared/snackbar');
+    const RefreshModule = namespace('shared/refresh');
 
     @Component({components: {'app-entity-select': EntitySelect}})
     export default class DetailView extends Vue {
@@ -55,10 +55,10 @@
         @Prop({type: Object})
         line: InvoiceLine;
 
-        @SnackbarMutation('updateMessage')
+        @SnackbarModule.Mutation('updateMessage')
         updateMessage: Function;
 
-        @RefreshMutation('requestRefresh')
+        @RefreshModule.Mutation('requestRefresh')
         requestRefresh: Function;
 
         deleting: boolean = false;

@@ -16,14 +16,14 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {namespace, State} from "vuex-class";
-    import {Objekt} from "../../../server/resources/models";
+    import {namespace} from "vuex-class";
+    import {Objekt} from "../../../server/resources";
 
-    const ShowState = namespace('modules/object/show', State);
+    const ShowModule = namespace('modules/object/show');
 
     @Component
     export default class DeatilViewBreadcrumbs extends Vue {
-        @ShowState('object')
+        @ShowModule.State('object')
         object: Objekt;
     }
 </script>

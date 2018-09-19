@@ -3,17 +3,17 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from 'vue-class-component'
-    import {Mutation, namespace} from 'vuex-class';
+    import {namespace} from 'vuex-class';
     import {Prop} from 'vue-property-decorator';
 
-    const AuthMutation = namespace('auth', Mutation);
+    const AuthModule = namespace('auth');
 
     @Component
     export default class UserLoader extends Vue {
         @Prop({default: null})
         user: Object;
 
-        @AuthMutation('updateUser')
+        @AuthModule.Mutation('updateUser')
         updateUser;
 
         mounted() {

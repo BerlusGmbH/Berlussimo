@@ -16,14 +16,14 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {namespace, State} from "vuex-class";
-    import {Einheit} from "../../../server/resources/models";
+    import {namespace} from "vuex-class";
+    import {Einheit} from "../../../server/resources";
 
-    const ShowState = namespace('modules/unit/show', State);
+    const ShowModule = namespace('modules/unit/show');
 
     @Component
     export default class DeatilViewBreadcrumbs extends Vue {
-        @ShowState('unit')
+        @ShowModule.State('unit')
         unit: Einheit;
     }
 </script>

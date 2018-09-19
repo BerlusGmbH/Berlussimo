@@ -48,14 +48,14 @@
 <script lang="ts">
     import Vue from 'vue';
     import Component from 'vue-class-component';
-    import {Getter, namespace} from 'vuex-class';
+    import {namespace} from 'vuex-class';
     import searchbar from "./Searchbar.vue";
     import notificationsToggle from "./NotificationsToggle.vue";
     import searchDialog from "../common/dialogs/SearchDialog.vue";
     import userMenuDialog from "../common/dialogs/UserMenuDialog.vue";
     import userMenuList from "./UserMenuList.vue";
 
-    const AuthGetter = namespace('auth', Getter);
+    const AuthModule = namespace('auth');
 
     @Component({
         components: {
@@ -67,9 +67,9 @@
         }
     })
     export default class Toolbar extends Vue {
-        @AuthGetter('check')
+        @AuthModule.Getter('check')
         authCheck;
-        @AuthGetter('user')
+        @AuthModule.Getter('user')
         user;
 
         search: boolean = false;
@@ -80,7 +80,6 @@
 <style>
     .app-toolbar-logo-link {
         height: 100%;
-        margin-left: 0 !important;
         display: flex;
         align-items: center;
         color: white;
@@ -88,7 +87,6 @@
     }
     .app-toolbar-logo {
         height: calc(100% - 10px);
-        padding-left: .5em;
         padding-right: .5em;
     }
 </style>

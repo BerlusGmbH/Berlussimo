@@ -6,13 +6,13 @@
     import Vue from "vue";
     import {Prop} from "vue-property-decorator";
     import {Detail} from "../../../../server/resources";
-    import {Mutation, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
     import detailEditDialog from "../../dialogs/DetailEditDialog.vue";
     import detailDeleteDialog from "../../dialogs/DetailDeleteDialog.vue";
     import copyToClipboard from "../../../../mixins/CopyToClipboard.vue";
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const SnackbarModule = namespace('shared/snackbar');
+    const RefreshModule = namespace('shared/refresh');
 
     @Component({
         'components': {
@@ -27,10 +27,10 @@
         @Prop()
         value: Detail;
 
-        @SnackbarMutation('updateMessage')
+        @SnackbarModule.Mutation('updateMessage')
         updateMessage: Function;
 
-        @RefreshMutation('requestRefresh')
+        @RefreshModule.Mutation('requestRefresh')
         requestRefresh: Function;
 
         show: boolean = false;

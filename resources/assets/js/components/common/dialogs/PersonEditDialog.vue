@@ -46,11 +46,11 @@
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
     import _ from "lodash";
-    import {Person} from "../../../server/resources/models";
-    import {Mutation, namespace} from "vuex-class";
+    import {Person} from "../../../server/resources";
+    import {namespace} from "vuex-class";
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const SnackbarModule = namespace('shared/snackbar');
+    const RefreshModule = namespace('shared/refresh');
 
     @Component
     export default class PersonEditDialog extends Vue {
@@ -76,10 +76,10 @@
         @Prop({type: Boolean})
         show;
 
-        @SnackbarMutation('updateMessage')
+        @SnackbarModule.Mutation('updateMessage')
         updateMessage: Function;
 
-        @RefreshMutation('requestRefresh')
+        @RefreshModule.Mutation('requestRefresh')
         requestRefresh: Function;
 
         inputValue: Person = new Person();

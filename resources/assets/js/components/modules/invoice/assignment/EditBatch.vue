@@ -75,15 +75,13 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {namespace, Mutation} from "vuex-class";
+    import {namespace} from "vuex-class";
     import {Prop, Watch} from "vue-property-decorator";
-    import {
-        BankAccountStandardChart
-    } from "../../../../server/resources";
+    import {BankAccountStandardChart} from "../../../../server/resources";
     import axios from '../../../../libraries/axios';
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const SnackbarModule = namespace('shared/snackbar');
+    const RefreshModule = namespace('shared/refresh');
 
     @Component
     export default class EditBatch extends Vue {
@@ -101,10 +99,10 @@
             this.onLinesChange(this.lines);
         }
 
-        @SnackbarMutation('updateMessage')
+        @SnackbarModule.Mutation('updateMessage')
         updateMessage: Function;
 
-        @RefreshMutation('requestRefresh')
+        @RefreshModule.Mutation('requestRefresh')
         requestRefresh: Function;
 
         saving: boolean = false;

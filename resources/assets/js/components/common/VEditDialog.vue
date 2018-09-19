@@ -3,7 +3,7 @@
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
 
-    @Component({extends: Vue.component('v-edit-dialog')})
+    @Component({extends: Vue.component('VEditDialog')})
     export default class VEditDialog extends Vue {
         transition;
         isActive;
@@ -111,7 +111,7 @@
         render(h) {
             return h('v-menu', {
                 props: {
-                    contentClass: 'small-dialog__content',
+                    contentClass: 'v-small-dialog__content',
                     transition: this.transition,
                     origin: 'top right',
                     right: true,

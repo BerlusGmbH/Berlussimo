@@ -9,23 +9,22 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
-    import {Mutation, namespace, State} from "vuex-class";
+    import {namespace} from "vuex-class";
 
-    const SnackbarState = namespace('shared/snackbar', State);
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
+    const SnackbarModule = namespace('shared/snackbar');
 
     @Component
     export default class Snackbar extends Vue {
-        @SnackbarState('message')
+        @SnackbarModule.State('message')
         message: string;
 
-        @SnackbarState('show')
+        @SnackbarModule.State('show')
         show: boolean;
 
-        @SnackbarMutation('updateShow')
+        @SnackbarModule.Mutation('updateShow')
         updateShow: Function;
 
-        @SnackbarMutation('toggleShow')
+        @SnackbarModule.Mutation('toggleShow')
         toggleShow: Function;
 
         @Prop({type: String})

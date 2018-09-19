@@ -1,15 +1,15 @@
 <script lang="ts">
     import Component from "vue-class-component";
     import Vue from "vue";
-    import {Mutation, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
     import axios from "../libraries/axios";
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
+    const SnackbarModule = namespace('shared/snackbar');
 
     @Component
     export default class HasEMails extends Vue {
 
-        @SnackbarMutation('updateMessage')
+        @SnackbarModule.Mutation('updateMessage')
         updateMessage: Function;
 
         value;

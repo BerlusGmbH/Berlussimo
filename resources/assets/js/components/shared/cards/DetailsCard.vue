@@ -53,13 +53,13 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
-    import {Mutation, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
     import detailDeleteDialog from "../../common/dialogs/DetailDeleteDialog.vue";
     import detailEditDialog from "../../common/dialogs/DetailEditDialog.vue";
-    import {Detail, Einheit, Person} from "../../../server/resources/models";
+    import {Detail, Einheit, Person} from "../../../server/resources";
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const SnackbarModule = namespace('shared/snackbar');
+    const RefreshModule = namespace('shared/refresh');
 
     @Component({
         'components': {
@@ -79,10 +79,10 @@
 
         models: Array<boolean> = [];
 
-        @SnackbarMutation('updateMessage')
+        @SnackbarModule.Mutation('updateMessage')
         updateMessage: Function;
 
-        @RefreshMutation('requestRefresh')
+        @RefreshModule.Mutation('requestRefresh')
         requestRefresh: Function;
 
         deleteDialog: boolean = false;
