@@ -570,11 +570,8 @@ class zeiterfassung
 
             $r->artikel_leistung_mit_artikelnr_speichern($bp_partner_id, $leistungs_beschreibung, $artikel_preis, $artikel_nr, '0', 'Std', '19', '0.00');
 
-            // $r->artikel_leistung_speichern($bp_partner_id, $leistungs_beschreibung, $artikel_preis, '0', 'Std', '19');
-
-            $zugewiesene_l_id = $this->get_leistung_id_by_beschr($this->gewerk_id, $leistungs_beschreibung);
             $datum = date_mysql2german($datum); // weil die nachfolgende funktion deutsches datumsformat erwartet
-            $this->zettel_pos_speichern($datum, $benutzer_id, $zugewiesene_l_id, $zettel_id, $dauer_min, $kostentraeger_typ, $kostentraeger_bez, $hinweis, $beginn, $ende);
+            $this->zettel_pos_speichern($datum, $benutzer_id, $lk_id, $zettel_id, $dauer_min, $kostentraeger_typ, $kostentraeger_bez, $hinweis, $beginn, $ende);
             weiterleiten_in_sec(route('web::zeiterfassung::legacy', ['option' => 'zettel_eingabe', 'zettel_id' => $zettel_id]), 1);
         } else {
             hinweis_ausgeben("Leistungsbeschreibung zu lang, max 160 zeichen");
@@ -592,13 +589,6 @@ class zeiterfassung
     {
         $result = DB::select("SELECT hourly_rate FROM persons JOIN jobs ON (persons.id = jobs.employee_id) WHERE persons.id = ? ORDER BY persons.id DESC LIMIT 0,1", [$benutzer_id]);
         return !empty($result) ? $result[0]['hourly_rate'] : 0;
-    }
-
-    function get_leistung_id_by_beschr($gewerk_id, $beschreibung)
-    {
-        $result = DB::select("SELECT LK_ID FROM LEISTUNGSKATALOG WHERE GEWERK='$gewerk_id' && BEZEICHNUNG='$beschreibung' && AKTUELL = '1' ORDER BY LK_ID DESC LIMIT 0,1");
-        $row = $result[0];
-        return $row ['LK_ID'];
     }
 
     function zettel_pos_speichern($datum, $benutzer_id, $leistung_id, $zettel_id, $dauer_min, $kostentraeger_typ, $kostentraeger_bez, $hinweis, $beginn, $ende)
