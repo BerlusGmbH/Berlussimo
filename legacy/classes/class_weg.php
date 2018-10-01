@@ -4235,7 +4235,7 @@ WHERE KOS_TYP='$kos_typ'
             'BETRAG' => "Betrag",
 
         );
-        $bpdf->addTable($pdf, $ausgaben_tab, $cols_2, '<b>BEWIRTSCHAFTUNGSKOSTEN/-EINNAHMEN</b>', array(
+        $pdf->ezTable($ausgaben_tab, $cols_2, '<b>BEWIRTSCHAFTUNGSKOSTEN/-EINNAHMEN</b>', array(
             'rowGap' => 1.5,
             'showLines' => 1,
             'showHeadings' => 1,
@@ -5718,8 +5718,8 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $cols = array(
                 'GRUPPE' => "Kontoart",
                 'KONTO' => "Konto",
-                'BEZ' => "Kontobezeichnung",
-                'KEY_A' => "Verteilungsschlüssel (Ihr Anteil / Gesamt)",
+                'BEZ' => "Kontobezeichnung\n*) beinhaltet haushaltsnahe Dienstleistungen",
+                'KEY_A' => "Verteilungsschlüssel\n(Ihr Anteil / Gesamt)",
                 'BETRAG' => "Gesamt €",
                 'E_BETRAG' => "Ihr Anteil €"
             );
@@ -5741,11 +5741,11 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 'cols' => array(
                     'KONTO' => array(
                         'justification' => 'left',
-                        'width' => 32
+                        'width' => 34
                     ),
                     'GRUPPE' => array(
                         'justification' => 'left',
-                        'width' => 95
+                        'width' => 105
                     ),
                     'BETRAG' => array(
                         'justification' => 'right',
@@ -5764,7 +5764,6 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                     )
                 )
             ));
-            $pdf->ezText("<b> *) Kostenkonto beinhaltet haushaltsnahe Dienstleistungen</b>", 8);
 
             $g = new geldkonto_info ();
             $g->geld_konto_details($this->p_gk_id);
@@ -5937,14 +5936,11 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $zzz++;
             $pdf->ezSetDy(-5);
 
-            /* Zweite Seite */
-            $pdf->ezNewPage();
-
             $cols_4 = array(
                 'ART' => "",
                 'ANTEIL' => "Ihr Anteil €"
             );
-            $pdf->ezTable($ru_tab, $cols_4, '<b>2. Rücklagen</b>', array(
+            $bpdf->addTable($pdf, $ru_tab, $cols_4, '<b>2. Rücklagen</b>', array(
                 'rowGap' => 1.5,
                 'showLines' => 1,
                 'showHeadings' => 1,
@@ -5974,7 +5970,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
                 'ART' => "",
                 'ANTEIL' => "Ihr Anteil €"
             );
-            $pdf->ezTable($ge_tab, $cols_2, '<b>3. Gesamt</b>', array(
+            $bpdf->addTable($pdf, $ge_tab, $cols_2, '<b>3. Gesamt</b>', array(
                 'rowGap' => 1.5,
                 'showLines' => 1,
                 'showHeadings' => 1,
