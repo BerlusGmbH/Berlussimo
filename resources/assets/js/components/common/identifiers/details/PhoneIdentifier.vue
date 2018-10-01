@@ -40,18 +40,18 @@
                 </v-list-tile>
             </v-list>
         </v-menu>
-        <app-detail-edit-dialog :position-absolutely="true"
-                                :show="edit"
-                                @show="val => {edit = val}"
-                                :position-x="x"
-                                :position-y="y"
-                                :value="value"
-                                @input="$emit('input', $event); saveDetail($event)"
-                                prepend-icon="mdi-phone"
+        <b-detail-edit-dialog :position-absolutely="true"
+                              :show="edit"
+                              @show="val => {edit = val}"
+                              :position-x="x"
+                              :position-y="y"
+                              :value="value"
+                              @input="$emit('input', $event); saveDetail($event)"
+                              prepend-icon="mdi-phone"
         >
-        </app-detail-edit-dialog>
-        <app-detail-delete-dialog v-model="deleteDialog" :detail="value" @delete="deleteDetail"
-        ></app-detail-delete-dialog>
+        </b-detail-edit-dialog>
+        <b-detail-delete-dialog v-model="deleteDialog" :detail="value" @delete="deleteDetail"
+        ></b-detail-delete-dialog>
     </div>
 </template>
 

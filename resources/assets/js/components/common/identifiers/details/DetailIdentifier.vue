@@ -16,8 +16,8 @@
 
     @Component({
         'components': {
-            'app-detail-edit-dialog': detailEditDialog,
-            'app-detail-delete-dialog': detailDeleteDialog
+            'b-detail-edit-dialog': detailEditDialog,
+            'b-detail-delete-dialog': detailDeleteDialog
         },
         'mixins': [
             copyToClipboard

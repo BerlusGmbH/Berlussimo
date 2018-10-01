@@ -1,5 +1,5 @@
 <template>
-    <app-edit-dialog
+    <b-edit-dialog
             lazy
             large
             :positionAbsolutley="positionAbsolutley"
@@ -39,15 +39,15 @@
                 type="text"
                 prepend-icon="mdi-alphabetical"
         ></v-text-field>
-        <app-entity-select prepend-icon="mdi-city"
-                           @input="val => inputValue.OBJEKT_ID = val.OBJEKT_ID"
-                           :value="value.objekt"
-                           append-icon=""
-                           slot="input"
-                           :entities="['objekt']"
+        <b-entity-select prepend-icon="mdi-city"
+                         @input="val => inputValue.OBJEKT_ID = val.OBJEKT_ID"
+                         :value="value.objekt"
+                         append-icon=""
+                         slot="input"
+                         :entities="['objekt']"
         >
-        </app-entity-select>
-    </app-edit-dialog>
+        </b-entity-select>
+    </b-edit-dialog>
 </template>
 
 <script lang="ts">
@@ -62,7 +62,7 @@
     const SnackbarModule = namespace('shared/snackbar');
     const RefreshModule = namespace('shared/refresh');
 
-    @Component({components: {'app-entity-select': entitySelect}})
+    @Component({components: {'b-entity-select': entitySelect}})
     export default class HouseEditDialog extends Vue {
 
         @Prop({type: Object})

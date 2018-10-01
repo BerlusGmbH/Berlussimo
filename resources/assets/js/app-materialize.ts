@@ -18,10 +18,10 @@ import VEditDialog from "./components/common/VEditDialog.vue";
 import BIcon from "./components/common/BIcon.vue";
 
 
-Vue.component('app-identifier', identifier);
-Vue.component('app-tile', tile);
-Vue.component('app-chip', chip);
-Vue.component('app-edit-dialog', VEditDialog);
+Vue.component('b-identifier', identifier);
+Vue.component('b-tile', tile);
+Vue.component('b-chip', chip);
+Vue.component('b-edit-dialog', VEditDialog);
 Vue.component('b-icon', BIcon);
 Vue.filter('substituteNewlineWithBr', substituteNewlineWithBr);
 Vue.filter('nformat', nformat);
@@ -29,18 +29,18 @@ Vue.filter('dformat', dformat);
 Vue.filter('sformat', sformat);
 
 new Vue({
-    el: 'app-notifications',
+    el: 'b-notifications',
     store,
     components: {
-        'app-notifications': notifications
+        'b-notifications': notifications
     }
 });
 
 new Vue({
-    el: 'app-snackbar',
+    el: 'b-snackbar',
     store,
     components: {
-        'app-snackbar': snackbar
+        'b-snackbar': snackbar
     }
 });
 
@@ -48,7 +48,7 @@ new Vue({
     el: '#bottom',
     store,
     components: {
-        'app-footer': footer
+        'b-footer': footer
     }
 });
 
@@ -56,12 +56,12 @@ new Vue({
     el: '#top',
     store,
     components: {
-        'app-toolbar': toolBar,
-        'app-menu': menu,
-        'app-user-loader': userLoader,
-        'app-global-select-loader': globalSelectLoader,
-        'app-legacy-loader': legacyLoader,
-        'app-messages-loader': messagesLoader,
-        'app-messages': messages,
+        'b-toolbar': toolBar,
+        'b-menu': menu,
+        'b-user-loader': userLoader,
+        'b-global-select-loader': globalSelectLoader,
+        'b-legacy-loader': legacyLoader,
+        'b-messages-loader': messagesLoader,
+        'b-messages': messages,
     }
 });

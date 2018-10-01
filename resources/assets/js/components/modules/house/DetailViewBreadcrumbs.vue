@@ -7,7 +7,7 @@
                 <router-link @click.native.stop :to="{name: 'web.houses.index'}">Häuser</router-link>
             </v-breadcrumbs-item>
             <v-breadcrumbs-item v-if="house">
-                <app-identifier :value="house"></app-identifier>
+                <b-identifier :value="house"></b-identifier>
             </v-breadcrumbs-item>
         </v-breadcrumbs>
     </span>

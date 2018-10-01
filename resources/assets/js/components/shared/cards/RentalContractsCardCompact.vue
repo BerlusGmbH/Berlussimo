@@ -21,7 +21,7 @@
             >
                 <template slot="items" slot-scope="props">
                     <td>
-                        <app-identifier v-model="props.item"></app-identifier>
+                        <b-identifier v-model="props.item"></b-identifier>
                     </td>
                     <td>{{props.item.MIETVERTRAG_VON}}</td>
                     <td>{{props.item.MIETVERTRAG_BIS}}</td>

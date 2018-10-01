@@ -15,10 +15,10 @@
                 </v-btn>
             </v-toolbar>
             <v-toolbar color="secondary" height="initial">
-                <app-searchbar style="margin-top: 3px; margin-bottom: 3px"></app-searchbar>
+                <b-searchbar style="margin-top: 3px; margin-bottom: 3px"></b-searchbar>
             </v-toolbar>
             <v-toolbar color="primary" height="initial">
-                <app-global-select style="margin-top: 3px; margin-bottom: 3px"></app-global-select>
+                <b-global-select style="margin-top: 3px; margin-bottom: 3px"></b-global-select>
             </v-toolbar>
         </v-card>
     </v-dialog>
@@ -33,8 +33,8 @@
 
     @Component({
         components: {
-            'app-searchbar': searchbar,
-            'app-global-select': globalSelect
+            'b-searchbar': searchbar,
+            'b-global-select': globalSelect
         }
     })
     export default class SearchDialog extends Vue {

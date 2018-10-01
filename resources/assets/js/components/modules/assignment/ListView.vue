@@ -11,7 +11,7 @@
                                         <v-icon>add</v-icon>
                                         <v-icon>mdi-clipboard</v-icon>
                                     </v-btn>
-                                    <app-assignment-add-dialog v-model="add"></app-assignment-add-dialog>
+                                    <b-assignment-add-dialog v-model="add"></b-assignment-add-dialog>
                                 </v-flex>
                                 <v-flex xs12 sm5>
                                     <v-text-field prepend-icon="mdi-filter-variant"
@@ -69,9 +69,9 @@
                                                 </template>
                                                 <template v-for="item in cellPart.content">
                                                     <template v-if="item.type === 'entity' && item.entity">
-                                                        <app-identifier style="white-space: nowrap"
-                                                                        :value="prototypeEntity(item)">
-                                                        </app-identifier>
+                                                        <b-identifier style="white-space: nowrap"
+                                                                      :value="prototypeEntity(item)">
+                                                        </b-identifier>
                                                         <br>
                                                     </template>
                                                     <template v-else-if="item.type === 'prerendered'">
@@ -116,7 +116,7 @@
 
     @Component({
         'components': {
-            'app-assignment-add-dialog': assignmentAddDialog
+            'b-assignment-add-dialog': assignmentAddDialog
         }
     })
     export default class ListView extends Vue {

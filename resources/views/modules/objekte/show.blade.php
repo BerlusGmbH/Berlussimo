@@ -18,17 +18,5 @@
 @endsection
 
 @section('content')
-    <app-object-detail-view :object-id="{{$objekt->OBJEKT_ID}}"></app-object-detail-view>
-    <!--
-                        <div class="col-xs-12 col-sm-6 detail">
-                            <i class="mdi mdi-home tooltipped" data-tooltip="Wohnfläche"></i>
-                            <a href="{{ route('web::einheiten.index', ['q' => '!einheit(objekt(id=' . $objekt->OBJEKT_ID . ') (typ=Wohnraum or typ=Wohneigentum))']) }}">{{$objekt->wohnflaeche}}
-                                m²</a>
-                        </div>
-                        <div class="col-xs-12 col-sm-6 detail">
-                            <i class="mdi mdi-store tooltipped" data-tooltip="Gewerbefläche"></i>
-                            <a href="{{ route('web::einheiten.index', ['q' => '!einheit(objekt(id=' . $objekt->OBJEKT_ID . ') typ=Gewerbe)']) }}">{{$objekt->gewerbeflaeche}}
-                                m²</a>
-                        </div>
-    -->
+    <b-object-detail-view :object-id="{{$objekt->OBJEKT_ID}}"></b-object-detail-view>
 @endsection

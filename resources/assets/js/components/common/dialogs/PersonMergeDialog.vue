@@ -13,7 +13,7 @@
                 <v-card-text>
                     <v-layout row>
                         <v-flex xs12>
-                            <app-entity-select v-model="right" :entities="['person']"></app-entity-select>
+                            <b-entity-select v-model="right" :entities="['person']"></b-entity-select>
                         </v-flex>
                     </v-layout>
                     <v-layout align-center row wrap>
@@ -144,7 +144,7 @@
 
     @Component({
         components: {
-            'app-entity-select': EntitySelect
+            'b-entity-select': EntitySelect
         }
     })
     export default class PersonMergeDialog extends Vue {

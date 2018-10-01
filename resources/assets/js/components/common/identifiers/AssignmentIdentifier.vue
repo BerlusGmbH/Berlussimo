@@ -34,11 +34,11 @@
                 </v-list-tile>
             </v-list>
         </v-menu>
-        <app-assignment-edit-dialog v-if="show || edit"
-                                    :assignment="value"
-                                    v-model="edit"
+        <b-assignment-edit-dialog v-if="show || edit"
+                                  :assignment="value"
+                                  v-model="edit"
         >
-        </app-assignment-edit-dialog>
+        </b-assignment-edit-dialog>
     </div>
 </template>
 
@@ -57,7 +57,7 @@
 
     @Component({
         'components': {
-            'app-assignment-edit-dialog': assignmentEditDialog
+            'b-assignment-edit-dialog': assignmentEditDialog
         },
         'mixins': [
             copyToClipboard

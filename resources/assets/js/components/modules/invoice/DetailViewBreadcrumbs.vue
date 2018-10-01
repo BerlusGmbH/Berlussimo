@@ -7,7 +7,7 @@
                 <a href="/rechnungen?option=erfasste_rechnungen">Rechnungen</a>
             </v-breadcrumbs-item>
             <v-breadcrumbs-item v-if="invoice">
-                <app-identifier :value="invoice"></app-identifier>
+                <b-identifier :value="invoice"></b-identifier>
             </v-breadcrumbs-item>
         </v-breadcrumbs>
     </span>

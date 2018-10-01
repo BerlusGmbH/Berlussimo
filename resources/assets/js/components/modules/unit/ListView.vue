@@ -11,12 +11,12 @@
                                         <v-icon ref="identifier">add</v-icon>
                                         <v-icon>mdi-cube</v-icon>
                                     </v-btn>
-                                    <app-unit-add-dialog :position-absolutely="true"
-                                                         :show="add"
-                                                         @show="val => {add = val}"
-                                                         :position-x="x"
-                                                         :position-y="y"
-                                    ></app-unit-add-dialog>
+                                    <b-unit-add-dialog :position-absolutely="true"
+                                                       :show="add"
+                                                       @show="val => {add = val}"
+                                                       :position-x="x"
+                                                       :position-y="y"
+                                    ></b-unit-add-dialog>
                                 </v-flex>
                                 <v-flex xs12 sm8>
                                     <v-text-field prepend-icon="mdi-filter-variant"
@@ -66,8 +66,8 @@
                                                 </template>
                                                 <template v-for="item in cellPart.content">
                                                     <template v-if="item.type === 'entity' && item.entity">
-                                                        <app-identifier :value="prototypeEntity(item)">
-                                                        </app-identifier>
+                                                        <b-identifier :value="prototypeEntity(item)">
+                                                        </b-identifier>
                                                         <br>
                                                     </template>
                                                     <template v-else-if="item.type === 'prerendered'">
@@ -112,7 +112,7 @@
 
     @Component({
         'components': {
-            'app-unit-add-dialog': unitAddDialog
+            'b-unit-add-dialog': unitAddDialog
         }
     })
     export default class ListView extends Vue {

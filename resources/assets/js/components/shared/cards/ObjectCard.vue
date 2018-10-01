@@ -3,9 +3,9 @@
         <v-card-title>
             <v-layout row wrap>
                 <v-flex xs12>
-                    <app-identifier class="headline"
-                                    :value="value"
-                    ></app-identifier>
+                    <b-identifier class="headline"
+                                  :value="value"
+                    ></b-identifier>
                 </v-flex>
             </v-layout>
         </v-card-title>
@@ -30,7 +30,7 @@
                     </v-flex>
                     <v-flex xs12 v-if="value.eigentuemer">
                         <v-icon class="detail">mdi-key</v-icon>
-                        <app-identifier style="width: calc(100% - 18px)" :value="value.eigentuemer"></app-identifier>
+                        <b-identifier style="width: calc(100% - 18px)" :value="value.eigentuemer"></b-identifier>
                     </v-flex>
                 </v-layout>
             </v-container>

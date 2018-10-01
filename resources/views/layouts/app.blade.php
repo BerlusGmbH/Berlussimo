@@ -16,18 +16,18 @@
 <div id="app">
     <v-app dark>
         @if(Auth::check())
-            <app-user-loader :user="{{Auth::user()}}"></app-user-loader>
-            <app-global-select-loader
+            <b-user-loader :user="{{Auth::user()}}"></b-user-loader>
+            <b-global-select-loader
                     :partner="{{json_encode(\App\Models\Partner::find(session()->get('partner_id')))}}"
                     :objekt="{{json_encode(\App\Models\Objekte::find(session()->get('objekt_id')))}}"
                     :bankkonto="{{json_encode(\App\Models\Bankkonten::find(session()->get('geldkonto_id')))}}"
             >
-            </app-global-select-loader>
+            </b-global-select-loader>
         @endif
-        <app-workplace-loader></app-workplace-loader>
+        <b-workplace-loader></b-workplace-loader>
         <div style="position: sticky; top: 0; z-index: 1">
-            <app-toolbar></app-toolbar>
-            <app-menu>
+            <b-toolbar></b-toolbar>
+            <b-menu>
                 <template slot="breadcrumbs">
                     <router-view name="breadcrumbs"></router-view>
                 </template>
@@ -37,7 +37,7 @@
                 <template slot="submenu">
                     <router-view name="submenu"></router-view>
                 </template>
-            </app-menu>
+            </b-menu>
             <div>
                 @include("shared.messages")
             </div>
@@ -46,11 +46,11 @@
                 <transition name="fade" mode="out-in">
                     <router-view></router-view>
                 </transition>
-                <app-notifications id="notifications"></app-notifications>
-                <app-snackbar id="snackbar"></app-snackbar>
+                <b-notifications id="notifications"></b-notifications>
+                <b-snackbar id="snackbar"></b-snackbar>
             </v-content>
 
-        <app-footer></app-footer>
+        <b-footer></b-footer>
     </v-app>
 </div>
 

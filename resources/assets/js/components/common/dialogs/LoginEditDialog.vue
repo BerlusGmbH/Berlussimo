@@ -56,7 +56,7 @@
 
     @Component({
         components: {
-            'app-entity-select': EntitySelect
+            'b-entity-select': EntitySelect
         }
     })
     export default class LoginEditDialog extends Vue {

@@ -7,7 +7,7 @@
                 <router-link @click.native.stop :to="{name: 'web.units.index'}">Einheiten</router-link>
             </v-breadcrumbs-item>
             <v-breadcrumbs-item v-if="unit">
-                <app-identifier :value="unit"></app-identifier>
+                <b-identifier :value="unit"></b-identifier>
             </v-breadcrumbs-item>
         </v-breadcrumbs>
     </span>

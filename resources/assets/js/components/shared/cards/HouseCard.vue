@@ -3,13 +3,13 @@
         <v-card-title>
             <v-layout row wrap>
                 <v-flex xs12>
-                    <app-identifier class="headline"
-                                    :value="value"
-                    ></app-identifier>
+                    <b-identifier class="headline"
+                                  :value="value"
+                    ></b-identifier>
                 </v-flex>
                 <v-flex xs12>
                     <div style="font-size: small; line-height: 24px; margin-left: 6px">
-                        <app-identifier :value="value.objekt"></app-identifier>
+                        <b-identifier :value="value.objekt"></b-identifier>
                     </div>
                 </v-flex>
             </v-layout>

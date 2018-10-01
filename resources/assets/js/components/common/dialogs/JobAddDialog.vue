@@ -6,11 +6,11 @@
                 <v-container grid-list-sm>
                     <v-layout row wrap>
                         <v-flex xs12>
-                            <app-entity-select v-model="employer"
-                                               label="Arbeitgeber"
-                                               prepend-icon="mdi-account-multiple"
-                                               :entities="['partner']"
-                            ></app-entity-select>
+                            <b-entity-select v-model="employer"
+                                             label="Arbeitgeber"
+                                             prepend-icon="mdi-account-multiple"
+                                             :entities="['partner']"
+                            ></b-entity-select>
                         </v-flex>
                         <v-flex xs12>
                             <v-select v-model="title"
@@ -92,7 +92,7 @@
 
     @Component({
         components: {
-            'app-entity-select': EntitySelect
+            'b-entity-select': EntitySelect
         }
     })
     export default class JobAddDialog extends Vue {

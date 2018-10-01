@@ -7,8 +7,8 @@
                         <slot name="breadcrumbs"><i class="mdi mdi-home" style="padding-right: 14px"></i>Bereiche</slot>
                     </v-flex>
                     <v-flex xs12 md8 lg6 v-if="$vuetify.breakpoint.mdAndUp">
-                        <app-searchbar style="margin-top: 5px; margin-bottom: 5px"
-                        ></app-searchbar>
+                        <b-searchbar style="margin-top: 5px; margin-bottom: 5px"
+                        ></b-searchbar>
                     </v-flex>
                 </v-layout>
             </div>
@@ -25,10 +25,10 @@
                         <i class="mdi mdi-settings"></i><span style="padding-left: 14px">Tools</span>
                     </v-flex>
                     <v-flex xs9 md8 lg6>
-                        <app-global-select v-if="$vuetify.breakpoint.mdAndUp"
-                                           style="margin-top: 5px; margin-bottom: 5px"
+                        <b-global-select v-if="$vuetify.breakpoint.mdAndUp"
+                                         style="margin-top: 5px; margin-bottom: 5px"
                         >
-                        </app-global-select>
+                        </b-global-select>
                     </v-flex>
                 </v-layout>
             </template>
@@ -54,8 +54,8 @@
 
     @Component({
         components: {
-            'app-global-select': globalSelect,
-            'app-searchbar': searchbar
+            'b-global-select': globalSelect,
+            'b-searchbar': searchbar
         }
     })
     export default class Menu extends Vue {

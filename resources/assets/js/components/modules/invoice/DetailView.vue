@@ -2,16 +2,16 @@
     <v-container grid-list-md fluid :key="key">
         <v-layout v-if="invoice" row wrap>
             <v-flex xs12 :md9="invoice.isAdvancePaymentInvoice()">
-                <app-invoice-card :value="invoice"></app-invoice-card>
+                <b-invoice-card :value="invoice"></b-invoice-card>
             </v-flex>
             <v-flex xs12 md3>
-                <app-advance-payment-invoices-card v-if="invoice.isAdvancePaymentInvoice()"
-                                                   :invoices="invoice.advance_payment_invoices"
-                                                   headline="Abschläge"
-                ></app-advance-payment-invoices-card>
+                <b-advance-payment-invoices-card v-if="invoice.isAdvancePaymentInvoice()"
+                                                 :invoices="invoice.advance_payment_invoices"
+                                                 headline="Abschläge"
+                ></b-advance-payment-invoices-card>
             </v-flex>
             <v-flex xs12>
-                <app-invoice-lines-card headline="Artikel" :invoice="invoice"></app-invoice-lines-card>
+                <b-invoice-lines-card headline="Artikel" :invoice="invoice"></b-invoice-lines-card>
             </v-flex>
         </v-layout>
     </v-container>
@@ -31,9 +31,9 @@
 
     @Component({
         components: {
-            'app-invoice-card': invoiceCard,
-            'app-advance-payment-invoices-card': AdvancePaymentInvoicesCard,
-            'app-invoice-lines-card': invoiceLinesCard
+            'b-invoice-card': invoiceCard,
+            'b-advance-payment-invoices-card': AdvancePaymentInvoicesCard,
+            'b-invoice-lines-card': invoiceLinesCard
         }
     })
     export default class DetailView extends Vue {

@@ -18,5 +18,5 @@
 @endsection
 
 @section('content')
-    <app-unit-detail-view :unit-id="{{$einheit->EINHEIT_ID}}"></app-unit-detail-view>
+    <b-unit-detail-view :unit-id="{{$einheit->EINHEIT_ID}}"></b-unit-detail-view>
 @endsection

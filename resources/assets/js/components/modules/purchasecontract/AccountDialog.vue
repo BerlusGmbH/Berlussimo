@@ -42,7 +42,7 @@
     const SnackbarModule = namespace('shared/snackbar');
     const RefreshModule = namespace('shared/refresh');
 
-    @Component({components: {'app-entity-select': EntitySelect}})
+    @Component({components: {'b-entity-select': EntitySelect}})
     export default class AccountDialog extends Vue {
         @Prop({type: Boolean})
         value: boolean;

@@ -11,9 +11,5 @@
 @endsection
 
 @section('content')
-    <app-house-list-view></app-house-list-view>
-    <!--
-                    <a class="btn waves-effect waves-light tooltipped" data-position="bottom" data-delay="50" data-tooltip="Neues Haus"
-                       href="{{ route('web::haeuserform::legacy', ['daten_rein' => 'haus_neu']) }}"><i class="mdi mdi-plus"></i><i class="mdi mdi-domain"></i></a>
-    -->
+    <b-house-list-view></b-house-list-view>
 @endsection

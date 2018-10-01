@@ -1,10 +1,10 @@
 <template>
     <v-layout row wrap>
         <v-flex xs12 md6 lg3>
-            <app-entity-select label="Kostenträger"
-                               @input="selectCostUnit"
-                               clearable
-                               :entities="[
+            <b-entity-select label="Kostenträger"
+                             @input="selectCostUnit"
+                             clearable
+                             :entities="[
                                                    'objekt',
                                                    'haus',
                                                    'einheit',
@@ -16,25 +16,25 @@
                                                    'wirtschaftseinheit'
                                                ]"
             >
-            </app-entity-select>
+            </b-entity-select>
         </v-flex>
         <v-flex xs12 md6 lg2>
-            <app-entity-select label="Kontenrahmen"
-                               :entities="['kontenrahmen']"
-                               v-model="standardChart"
-                               prepend-icon="mdi-table"
-                               clearable
+            <b-entity-select label="Kontenrahmen"
+                             :entities="['kontenrahmen']"
+                             v-model="standardChart"
+                             prepend-icon="mdi-table"
+                             clearable
             >
-            </app-entity-select>
+            </b-entity-select>
         </v-flex>
         <v-flex xs12 md6 lg2>
-            <app-entity-select label="Buchungskonto"
-                               :entities="bookingAccountEntity"
-                               prepend-icon="mdi-numeric"
-                               @input="selectBookingAccount"
-                               clearable
+            <b-entity-select label="Buchungskonto"
+                             :entities="bookingAccountEntity"
+                             prepend-icon="mdi-numeric"
+                             @input="selectBookingAccount"
+                             clearable
             >
-            </app-entity-select>
+            </b-entity-select>
         </v-flex>
         <v-flex xs12 md3 lg2>
             <v-select label="Weiter Verwenden"

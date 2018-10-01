@@ -22,17 +22,18 @@
                     :clearable="clearable"
                     :tabindex="tabindex"
                     :autofocus="autofocus"
+                    @click.native.stop
     >
         <template slot="selection" slot-scope="data">
-            <app-chip @input="data.parent.selectItem(data.item); $emit('chip-close', $event)"
-                      :multiple="multiple" :entity="data.item" :selected="data.selected"></app-chip>
+            <b-chip @input="data.parent.selectItem(data.item); $emit('chip-close', $event)"
+                    :multiple="multiple" :entity="data.item" :selected="data.selected"></b-chip>
         </template>
         <template slot="item" slot-scope="data">
             <template v-if="typeof data.item !== 'object'">
                 <v-list-tile-content v-text="data.item"></v-list-tile-content>
             </template>
             <template v-else>
-                <app-tile :entity="data.item"></app-tile>
+                <b-tile :entity="data.item"></b-tile>
             </template>
         </template>
     </v-autocomplete>

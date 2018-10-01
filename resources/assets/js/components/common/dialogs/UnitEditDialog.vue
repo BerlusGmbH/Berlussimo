@@ -1,5 +1,5 @@
 <template>
-    <app-edit-dialog
+    <b-edit-dialog
             lazy
             large
             :positionAbsolutley="positionAbsolutley"
@@ -40,15 +40,15 @@
                   label="Art"
                   slot="input"
         ></v-select>
-        <app-entity-select prepend-icon="mdi-domain"
-                           @input="val => inputValue.HAUS_ID = val.HAUS_ID"
-                           :value="value.haus"
-                           append-icon=""
-                           slot="input"
-                           :entities="['haus']"
+        <b-entity-select prepend-icon="mdi-domain"
+                         @input="val => inputValue.HAUS_ID = val.HAUS_ID"
+                         :value="value.haus"
+                         append-icon=""
+                         slot="input"
+                         :entities="['haus']"
         >
-        </app-entity-select>
-    </app-edit-dialog>
+        </b-entity-select>
+    </b-edit-dialog>
 </template>
 
 <script lang="ts">
@@ -64,7 +64,7 @@
     const SnackbarModule = namespace('shared/snackbar');
     const RefreshModule = namespace('shared/refresh');
 
-    @Component({components: {'app-entity-select': entitySelect}})
+    @Component({components: {'b-entity-select': entitySelect}})
     export default class UnitEditDialog extends Vue {
 
         @Prop({type: Object})

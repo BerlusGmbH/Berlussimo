@@ -64,17 +64,17 @@
                 </v-list-tile>
             </v-list>
         </v-menu>
-        <app-unit-edit-dialog v-if="show || edit"
-                              :position-absolutely="true"
-                              :show="edit"
-                              @show="val => {edit = val}"
-                              :position-x="x"
-                              :position-y="y"
-                              :value="value"
-                              @input="$emit('input', $event)"
+        <b-unit-edit-dialog v-if="show || edit"
+                            :position-absolutely="true"
+                            :show="edit"
+                            @show="val => {edit = val}"
+                            :position-x="x"
+                            :position-y="y"
+                            :value="value"
+                            @input="$emit('input', $event)"
         >
-        </app-unit-edit-dialog>
-        <app-detail-add-dialog v-if="show || add"
+        </b-unit-edit-dialog>
+        <b-detail-add-dialog v-if="show || add"
                                :position-absolutely="true"
                                :show="add"
                                @show="val => {add = val}"
@@ -83,7 +83,7 @@
                                :parent="value"
                                @input="$emit('update')"
         >
-        </app-detail-add-dialog>
+        </b-detail-add-dialog>
     </div>
 </template>
 
@@ -98,8 +98,8 @@
 
     @Component({
         'components': {
-            'app-unit-edit-dialog': unitEditDialog,
-            'app-detail-add-dialog': detailAddDialog
+            'b-unit-edit-dialog': unitEditDialog,
+            'b-detail-add-dialog': detailAddDialog
         },
         'mixins': [
             copyToClipboard,

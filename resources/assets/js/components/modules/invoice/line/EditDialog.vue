@@ -9,16 +9,16 @@
                 <v-container fluid grid-list-md>
                     <v-layout row wrap>
                         <v-flex xs12>
-                            <app-entity-select @input="select"
-                                               :value="selected"
-                                               append-icon=""
-                                               prepend-icon="mdi-cart-outline"
-                                               label="Artikel"
-                                               :entities="entities"
-                                               tabindex="1"
-                                               ref="invoiceItemSelect"
+                            <b-entity-select @input="select"
+                                             :value="selected"
+                                             append-icon=""
+                                             prepend-icon="mdi-cart-outline"
+                                             label="Artikel"
+                                             :entities="entities"
+                                             tabindex="1"
+                                             ref="invoiceItemSelect"
                             >
-                            </app-entity-select>
+                            </b-entity-select>
                         </v-flex>
                         <v-flex xs12 md2>
                             <v-text-field label="Artikelnummer"
@@ -176,7 +176,7 @@
     const SnackbarModule = namespace('shared/snackbar');
     const RefreshModule = namespace('shared/refresh');
 
-    @Component({components: {'app-entity-select': EntitySelect}})
+    @Component({components: {'b-entity-select': EntitySelect}})
     export default class EditDialog extends Vue {
         @Prop({type: Boolean})
         value: boolean;

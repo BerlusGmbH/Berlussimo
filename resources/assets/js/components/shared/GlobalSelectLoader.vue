@@ -10,7 +10,7 @@
 
     const GlobalSelectModule = namespace('shared/globalSelect');
 
-    @Component({components: {'app-entity-select': Select}})
+    @Component({components: {'b-entity-select': Select}})
     export default class GlobalSelect extends Vue {
 
         @GlobalSelectModule.Mutation('updateObjekt')

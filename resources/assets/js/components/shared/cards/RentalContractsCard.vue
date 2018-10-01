@@ -21,18 +21,18 @@
             >
                 <template slot="items" slot-scope="props">
                     <td>
-                        <app-identifier v-model="props.item"></app-identifier>
+                        <b-identifier v-model="props.item"></b-identifier>
                     </td>
                     <td>{{props.item.MIETVERTRAG_VON}}</td>
                     <td>{{props.item.MIETVERTRAG_BIS}}</td>
                     <td>
-                        <app-identifier v-model="props.item.einheit"></app-identifier>
+                        <b-identifier v-model="props.item.einheit"></b-identifier>
                     </td>
                     <td>
-                        <app-identifier v-model="props.item.einheit.haus"></app-identifier>
+                        <b-identifier v-model="props.item.einheit.haus"></b-identifier>
                     </td>
                     <td>
-                        <app-identifier v-model="props.item.einheit.haus.objekt"></app-identifier>
+                        <b-identifier v-model="props.item.einheit.haus.objekt"></b-identifier>
                     </td>
                 </template>
                 <template slot="pageText" slot-scope="{ pageStart, pageStop }">

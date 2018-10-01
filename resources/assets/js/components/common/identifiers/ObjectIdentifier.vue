@@ -63,17 +63,17 @@
                 </v-list-tile>
             </v-list>
         </v-menu>
-        <app-object-edit-dialog v-if="show || edit"
-                                :position-absolutely="true"
-                                :show="edit"
-                                @show="val => {edit = val}"
-                                :position-x="x"
-                                :position-y="y"
-                                :value="value"
-                                @input="$emit('input', $event)"
+        <b-object-edit-dialog v-if="show || edit"
+                              :position-absolutely="true"
+                              :show="edit"
+                              @show="val => {edit = val}"
+                              :position-x="x"
+                              :position-y="y"
+                              :value="value"
+                              @input="$emit('input', $event)"
         >
-        </app-object-edit-dialog>
-        <app-detail-add-dialog v-if="show || add"
+        </b-object-edit-dialog>
+        <b-detail-add-dialog v-if="show || add"
                                :position-absolutely="true"
                                :show="add"
                                @show="val => {add = val}"
@@ -82,12 +82,12 @@
                                :parent="value"
                                @input="$emit('update')"
         >
-        </app-detail-add-dialog>
-        <app-object-copy-dialog v-if="show || copy"
+        </b-detail-add-dialog>
+        <b-object-copy-dialog v-if="show || copy"
                                 :object="value"
                                 v-model="copy"
         >
-        </app-object-copy-dialog>
+        </b-object-copy-dialog>
     </div>
 </template>
 
@@ -103,9 +103,9 @@
 
     @Component({
         'components': {
-            'app-object-edit-dialog': objectEditDialog,
-            'app-object-copy-dialog': objectCopyDialog,
-            'app-detail-add-dialog': detailAddDialog
+            'b-object-edit-dialog': objectEditDialog,
+            'b-object-copy-dialog': objectCopyDialog,
+            'b-detail-add-dialog': detailAddDialog
         },
         'mixins': [
             copyToClipboard,

@@ -1,5 +1,5 @@
 <template>
-    <app-edit-dialog
+    <b-edit-dialog
             lazy
             :large="large"
             :positionAbsolutley="positionAbsolutley"
@@ -18,7 +18,7 @@
                 :type="type"
                 :prepend-icon="prependIcon"
         ></v-text-field>
-    </app-edit-dialog>
+    </b-edit-dialog>
 </template>
 
 <script lang="ts">

@@ -21,21 +21,21 @@
 <div id="top" style="position: sticky; top: 0; z-index: 2">
     <v-app dark>
         @if(Auth::check())
-            <app-user-loader :user="{{Auth::user()}}"></app-user-loader>
-            <app-global-select-loader
+            <b-user-loader :user="{{Auth::user()}}"></b-user-loader>
+            <b-global-select-loader
                     :partner="{{session()->has('partner_id') ? \App\Models\Partner::find(session()->get('partner_id')) : 'null'}}"
                     :objekt="{{ session()->has('objekt_id') ? \App\Models\Objekte::find(session()->get('objekt_id')) : 'null'}}"
                     :bankkonto="{{ session()->has('geldkonto_id') ? \App\Models\Bankkonten::find(session()->get('geldkonto_id')) : 'null'}}">
-            </app-global-select-loader>
-            <app-legacy-loader :is-legacy="true"></app-legacy-loader>
+            </b-global-select-loader>
+            <b-legacy-loader :is-legacy="true"></b-legacy-loader>
         @endif
-        <app-toolbar></app-toolbar>
-        <app-menu v-cloak>
+        <b-toolbar></b-toolbar>
+        <b-menu v-cloak>
             <div slot="mainmenu">@include('shared.menus.main')</div>
             <div v-cloak slot="submenu">
                 <?php include(base_path($submenu)); ?>
             </div>
-        </app-menu>
+        </b-menu>
         <div>
             @include("shared.messages")
         </div>
@@ -53,14 +53,14 @@
         </div>
     @endif
     @if(Auth::check())
-        <app-notifications id="notifications" style="z-index: 1000"></app-notifications>
-        <app-snackbar id="snackbar" style="z-index: 1010"></app-snackbar>
+        <b-notifications id="notifications" style="z-index: 1000"></b-notifications>
+        <b-snackbar id="snackbar" style="z-index: 1010"></b-snackbar>
     @endif
 </div>
 
 <div id="bottom">
     <v-app dark>
-        <app-footer></app-footer>
+        <b-footer></b-footer>
     </v-app>
 </div>
 

@@ -1,5 +1,5 @@
 <template>
-    <app-edit-dialog
+    <b-edit-dialog
             lazy
             large
             :positionAbsolutley="positionAbsolutley"
@@ -42,7 +42,7 @@
                 label="Bemerkung"
                 prepend-icon="note"
         ></v-textarea>
-    </app-edit-dialog>
+    </b-edit-dialog>
 </template>
 
 <script lang="ts">

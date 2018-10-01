@@ -3,16 +3,16 @@
         <v-card-title>
             <v-layout row wrap>
                 <v-flex xs12>
-                    <app-identifier class="headline"
-                                    :value="value"
-                    ></app-identifier>
+                    <b-identifier class="headline"
+                                  :value="value"
+                    ></b-identifier>
                 </v-flex>
                 <v-flex xs12>
                     <div style="font-size: small; line-height: 24px; margin-left: 6px">
                         <span style="margin-right: 8px">
-                            <app-identifier :value="value.haus"></app-identifier>
+                            <b-identifier :value="value.haus"></b-identifier>
                         </span>
-                        <app-identifier :value="value.haus.objekt"></app-identifier>
+                        <b-identifier :value="value.haus.objekt"></b-identifier>
                     </div>
                 </v-flex>
             </v-layout>

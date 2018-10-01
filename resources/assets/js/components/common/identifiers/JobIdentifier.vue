@@ -1,8 +1,8 @@
 <template>
     <div class="identifier">
-        <app-identifier :value="value.title"></app-identifier>
+        <b-identifier :value="value.title"></b-identifier>
         bei
-        <app-identifier :value="value.employer"></app-identifier>
+        <b-identifier :value="value.employer"></b-identifier>
     </div>
 </template>
 

@@ -1,9 +1,9 @@
 <template>
     <v-card>
         <v-card-title>
-            <app-identifier class="headline"
-                            :value="value"
-            ></app-identifier>
+            <b-identifier class="headline"
+                          :value="value"
+            ></b-identifier>
         </v-card-title>
         <v-card-text>
             <v-layout row wrap>
@@ -11,8 +11,8 @@
                     <v-layout row wrap>
                         <v-flex xs9 v-if="value.from">
                             Von:
-                            <app-identifier style="width: calc(100% - 40px)" :value="value.from"
-                            ></app-identifier>
+                            <b-identifier style="width: calc(100% - 40px)" :value="value.from"
+                            ></b-identifier>
                         </v-flex>
                         <v-flex xs3>
                             <v-tooltip bottom>
@@ -23,8 +23,8 @@
                         </v-flex>
                         <v-flex xs9 v-if="value.to">
                             An:
-                            <app-identifier style="width: calc(100% - 40px)" :value="value.to"
-                            ></app-identifier>
+                            <b-identifier style="width: calc(100% - 40px)" :value="value.to"
+                            ></b-identifier>
                         </v-flex>
                         <v-flex xs3>
                             <v-tooltip bottom>
@@ -38,7 +38,7 @@
                             {{value.KURZBESCHREIBUNG}}
                         </v-flex>
                         <v-flex xs12 v-if="value.bank_account">
-                            <app-identifier :value="value.bank_account"></app-identifier>
+                            <b-identifier :value="value.bank_account"></b-identifier>
                         </v-flex>
                     </v-layout>
                 </v-flex>

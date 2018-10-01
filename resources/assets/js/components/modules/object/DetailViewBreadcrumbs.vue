@@ -7,7 +7,7 @@
                 <router-link @click.native.stop :to="{name: 'web.objects.index'}">Objekte</router-link>
             </v-breadcrumbs-item>
             <v-breadcrumbs-item v-if="object">
-                <app-identifier :value="object"></app-identifier>
+                <b-identifier :value="object"></b-identifier>
             </v-breadcrumbs-item>
         </v-breadcrumbs>
     </span>

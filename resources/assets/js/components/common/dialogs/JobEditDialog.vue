@@ -7,11 +7,11 @@
                     <v-layout row wrap>
                         <v-flex xs12>
                             <div style="margin-left: 35px">Arbeitnehmer</div>
-                            <app-identifier style="font-size: 24px" v-model="jobValue.employee"></app-identifier>
+                            <b-identifier style="font-size: 24px" v-model="jobValue.employee"></b-identifier>
                         </v-flex>
                         <v-flex xs12>
                             <div style="margin-left: 35px">Arbeitgeber</div>
-                            <app-identifier style="font-size: 24px" v-model="jobValue.employer"></app-identifier>
+                            <b-identifier style="font-size: 24px" v-model="jobValue.employer"></b-identifier>
                         </v-flex>
                         <v-flex xs12>
                             <v-select v-model="jobValue.job_title_id"
@@ -91,7 +91,7 @@
 
     @Component({
         components: {
-            'app-entity-select': EntitySelect
+            'b-entity-select': EntitySelect
         }
     })
     export default class JobEditDialog extends Vue {

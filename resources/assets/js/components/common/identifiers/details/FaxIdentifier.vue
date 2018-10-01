@@ -19,16 +19,16 @@
                 </template>
             </div>
         </div>
-        <app-detail-edit-dialog :position-absolutely="true"
-                                :show="edit"
-                                @show="val => {edit = val}"
-                                :position-x="x"
-                                :position-y="y"
-                                :value="value"
-                                @input="$emit('input', $event); saveDetail($event)"
-                                prepend-icon="mdi-fax"
+        <b-detail-edit-dialog :position-absolutely="true"
+                              :show="edit"
+                              @show="val => {edit = val}"
+                              :position-x="x"
+                              :position-y="y"
+                              :value="value"
+                              @input="$emit('input', $event); saveDetail($event)"
+                              prepend-icon="mdi-fax"
         >
-        </app-detail-edit-dialog>
+        </b-detail-edit-dialog>
         <v-menu offset-y v-model="show" :position-absolutely="true" style="vertical-align: top">
             <v-icon slot="activator" style="font-size: 14px">mdi-arrow-down-drop-circle</v-icon>
             <v-list>
@@ -46,8 +46,8 @@
                 </v-list-tile>
             </v-list>
         </v-menu>
-        <app-detail-delete-dialog v-model="deleteDialog" :detail="value" @delete="deleteDetail"
-        ></app-detail-delete-dialog>
+        <b-detail-delete-dialog v-model="deleteDialog" :detail="value" @delete="deleteDetail"
+        ></b-detail-delete-dialog>
     </div>
 </template>
 

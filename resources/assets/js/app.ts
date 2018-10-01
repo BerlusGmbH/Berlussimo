@@ -24,13 +24,13 @@ import BYearField from "./components/common/BYearField.vue";
 import BIcon from "./components/common/BIcon.vue";
 import {dformat, nformat, sformat, substituteNewlineWithBr} from "./filters";
 
-Vue.component('app-identifier', identifier);
-Vue.component('app-tile', tile);
-Vue.component('app-chip', chip);
-Vue.component('app-text-field-edit-dialog', textFieldEditDialog);
-Vue.component('app-edit-dialog', VEditDialog);
-Vue.component('app-entity-select', entitySelect);
-Vue.component('app-transition-collapse', transitionCollapse);
+Vue.component('b-identifier', identifier);
+Vue.component('b-tile', tile);
+Vue.component('b-chip', chip);
+Vue.component('b-text-field-edit-dialog', textFieldEditDialog);
+Vue.component('b-edit-dialog', VEditDialog);
+Vue.component('b-entity-select', entitySelect);
+Vue.component('b-transition-collapse', transitionCollapse);
 Vue.component('b-number-field', BNumberField);
 Vue.component('b-year-field', BYearField);
 Vue.component('b-icon', BIcon);
@@ -44,15 +44,15 @@ new Vue({
     store,
     router,
     components: {
-        'app-notifications': notifications,
-        'app-snackbar': snackbar,
-        'app-toolbar': toolBar,
-        'app-footer': footer,
-        'app-menu': menu,
-        'app-user-loader': userLoader,
-        'app-messages-loader': messagesLoader,
-        'app-messages': messages,
-        'app-global-select-loader': globalSelectLoader,
-        'app-workplace-loader': workplaceLoader
+        'b-notifications': notifications,
+        'b-snackbar': snackbar,
+        'b-toolbar': toolBar,
+        'b-footer': footer,
+        'b-menu': menu,
+        'b-user-loader': userLoader,
+        'b-messages-loader': messagesLoader,
+        'b-messages': messages,
+        'b-global-select-loader': globalSelectLoader,
+        'b-workplace-loader': workplaceLoader
     }
 });

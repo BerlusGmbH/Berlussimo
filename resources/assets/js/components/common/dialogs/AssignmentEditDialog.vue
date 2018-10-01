@@ -9,28 +9,28 @@
             <v-card-text>
                 <v-layout row wrap>
                     <v-flex xs12>
-                        <app-entity-select label="Von"
-                                           :value="assignmentInput.von"
-                                           @input="val => assignmentInput.VERFASSER_ID = val.id"
-                                           :entities="['person']"
-                                           prepend-icon="mdi-account"
+                        <b-entity-select label="Von"
+                                         :value="assignmentInput.von"
+                                         @input="val => assignmentInput.VERFASSER_ID = val.id"
+                                         :entities="['person']"
+                                         prepend-icon="mdi-account"
                         >
-                        </app-entity-select>
+                        </b-entity-select>
                     </v-flex>
                     <v-flex xs12>
-                        <app-entity-select label="An"
-                                           :value="assignmentInput.an"
-                                           @input="setMorph('BENUTZER', $event)"
-                                           :entities="['person', 'partner']"
-                                           prepend-icon="mdi-account"
+                        <b-entity-select label="An"
+                                         :value="assignmentInput.an"
+                                         @input="setMorph('BENUTZER', $event)"
+                                         :entities="['person', 'partner']"
+                                         prepend-icon="mdi-account"
                         >
-                        </app-entity-select>
+                        </b-entity-select>
                     </v-flex>
                     <v-flex xs12>
-                        <app-entity-select label="Kostenträger"
-                                           :value="assignmentInput.kostentraeger"
-                                           @input="setMorph('KOS', $event)"
-                                           :entities="[
+                        <b-entity-select label="Kostenträger"
+                                         :value="assignmentInput.kostentraeger"
+                                         @input="setMorph('KOS', $event)"
+                                         :entities="[
                                                'objekt',
                                                'haus',
                                                'einheit',
@@ -41,9 +41,9 @@
                                                'baustelle',
                                                'wirtschaftseinheit'
                                            ]"
-                                           prepend-icon="mdi-account"
+                                         prepend-icon="mdi-account"
                         >
-                        </app-entity-select>
+                        </b-entity-select>
                     </v-flex>
                     <v-flex xs12>
                         <v-text-field label="Text"

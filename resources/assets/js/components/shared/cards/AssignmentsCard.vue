@@ -16,7 +16,7 @@
                         <v-icon>add</v-icon>
                         <v-icon>mdi-clipboard</v-icon>
                     </v-btn>
-                    <app-assignment-add-dialog v-model="add" :cost-unit="costUnit"></app-assignment-add-dialog>
+                    <b-assignment-add-dialog v-model="add" :cost-unit="costUnit"></b-assignment-add-dialog>
                 </v-flex>
                 <v-flex xs12 sm6>
                     <v-text-field
@@ -40,14 +40,14 @@
             >
                 <template slot="items" slot-scope="props">
                     <td style="white-space: nowrap">
-                        <app-identifier :value="props.item"></app-identifier>
+                        <b-identifier :value="props.item"></b-identifier>
                     </td>
                     <td style="white-space: nowrap">{{props.item.ERSTELLT}}</td>
                     <td>
-                        <app-identifier :value="props.item.von"></app-identifier>
+                        <b-identifier :value="props.item.von"></b-identifier>
                     </td>
                     <td>
-                        <app-identifier :value="props.item.an"></app-identifier>
+                        <b-identifier :value="props.item.an"></b-identifier>
                     </td>
                     <td>{{props.item.TEXT}}</td>
                 </template>
@@ -68,7 +68,7 @@
 
     @Component({
         'components': {
-            'app-assignment-add-dialog': assignmentAddDialog
+            'b-assignment-add-dialog': assignmentAddDialog
         }
     })
     export default class AssignmentsCard extends Vue {

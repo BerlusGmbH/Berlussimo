@@ -25,19 +25,19 @@
                     <td>{{props.item.DETAIL_BEMERKUNG}}</td>
                     <td class="text-xs-right">
                         <div style="display: flex">
-                            <app-detail-edit-dialog :value="props.item"
-                                                    @input="$emit('input', $event); saveDetail($event)"
-                                                    :parent="parent"
-                                                    prepend-icon="mdi-table"
-                                                    large
+                            <b-detail-edit-dialog :value="props.item"
+                                                  @input="$emit('input', $event); saveDetail($event)"
+                                                  :parent="parent"
+                                                  prepend-icon="mdi-table"
+                                                  large
                             >
                                 <v-icon style="cursor: pointer">mdi-pencil</v-icon>
-                            </app-detail-edit-dialog>
+                            </b-detail-edit-dialog>
                             <v-icon style="cursor: pointer" @click.stop="$set(models, props.index, true)">mdi-delete
                             </v-icon>
-                            <app-detail-delete-dialog v-model="models[props.index]" @delete="deleteDetail(props.item)"
-                                                      :detail="props.item"
-                            ></app-detail-delete-dialog>
+                            <b-detail-delete-dialog v-model="models[props.index]" @delete="deleteDetail(props.item)"
+                                                    :detail="props.item"
+                            ></b-detail-delete-dialog>
                         </div>
                     </td>
                 </template>
@@ -63,8 +63,8 @@
 
     @Component({
         'components': {
-            'app-detail-delete-dialog': detailDeleteDialog,
-            'app-detail-edit-dialog': detailEditDialog
+            'b-detail-delete-dialog': detailDeleteDialog,
+            'b-detail-edit-dialog': detailEditDialog
         }
     })
     export default class DetailsCard extends Vue {

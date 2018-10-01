@@ -2,53 +2,53 @@
     <v-container grid-list-md fluid :key="key">
         <v-layout v-if="object" row wrap>
             <v-flex xs12 sm6>
-                <app-object-card :value="object"></app-object-card>
+                <b-object-card :value="object"></b-object-card>
             </v-flex>
             <v-flex v-if="object && object.hinweise.length > 0" xs12 sm6>
-                <app-notes-card headline="Hinweise"
-                                :details="object.hinweise"
-                                :parent="object"
-                ></app-notes-card>
+                <b-notes-card headline="Hinweise"
+                              :details="object.hinweise"
+                              :parent="object"
+                ></b-notes-card>
             </v-flex>
             <v-flex v-if="object && object.common_details.length > 0" xs12 sm6>
-                <app-details-card headline="Details"
-                                  :details="object.common_details"
-                                  :parent="object"
-                ></app-details-card>
+                <b-details-card headline="Details"
+                                :details="object.common_details"
+                                :parent="object"
+                ></b-details-card>
             </v-flex>
             <v-flex v-if="object && object.haeuser.length > 0" xs12 sm6>
-                <app-houses-card headline="Häuser"
-                                 :houses="object.haeuser"
-                                 :filter="'!haus(objekt(id=' + object.getID() + '))'"
-                ></app-houses-card>
+                <b-houses-card headline="Häuser"
+                               :houses="object.haeuser"
+                               :filter="'!haus(objekt(id=' + object.getID() + '))'"
+                ></b-houses-card>
             </v-flex>
             <v-flex v-if="object && object.einheiten.length > 0" xs12 sm6>
-                <app-units-card headline="Einheiten"
-                                :units="object.einheiten"
-                                :filter="'!einheit(objekt(id=' + object.getID() + '))'"
-                ></app-units-card>
+                <b-units-card headline="Einheiten"
+                              :units="object.einheiten"
+                              :filter="'!einheit(objekt(id=' + object.getID() + '))'"
+                ></b-units-card>
             </v-flex>
             <v-flex v-if="object && object.mieter.length > 0" xs12 sm6>
-                <app-persons-card headline="Mieter"
-                                  :persons="object.mieter"
-                                  :filter="'!person(mietvertrag(aktiv objekt(id=' + object.getID() + ')))'"
-                ></app-persons-card>
+                <b-persons-card headline="Mieter"
+                                :persons="object.mieter"
+                                :filter="'!person(mietvertrag(aktiv objekt(id=' + object.getID() + ')))'"
+                ></b-persons-card>
             </v-flex>
             <v-flex v-if="object && object.weg_eigentuemer.length > 0" xs12 sm6>
-                <app-persons-card headline="WEG-Eigentümer"
-                                  :persons="object.weg_eigentuemer"
-                                  :filter="'!person(kaufvertrag(aktiv objekt(id=' + object.getID() + ')))'"
-                ></app-persons-card>
+                <b-persons-card headline="WEG-Eigentümer"
+                                :persons="object.weg_eigentuemer"
+                                :filter="'!person(kaufvertrag(aktiv objekt(id=' + object.getID() + ')))'"
+                ></b-persons-card>
             </v-flex>
             <v-flex xs12 sm6 v-if="object">
-                <app-object-reports-card :object="object"></app-object-reports-card>
+                <b-object-reports-card :object="object"></b-object-reports-card>
             </v-flex>
             <v-flex xs12>
-                <app-assignments-card headline="Aufträge"
-                                      :assignments="object.auftraege"
-                                      :cost-unit="object"
-                                      :filter="'!auftrag(kostenträger(objekt(id=' + object.getID() + ')))'"
-                ></app-assignments-card>
+                <b-assignments-card headline="Aufträge"
+                                    :assignments="object.auftraege"
+                                    :cost-unit="object"
+                                    :filter="'!auftrag(kostenträger(objekt(id=' + object.getID() + ')))'"
+                ></b-assignments-card>
             </v-flex>
         </v-layout>
     </v-container>
@@ -76,16 +76,16 @@
 
     @Component({
         components: {
-            'app-object-card': objectCard,
-            'app-notes-card': notesCard,
-            'app-details-card': detailsCard,
-            'app-rental-contracts-card-compact': rentalContractsCardCompact,
-            'app-purchase-contracts-card-compact': purchaseContractsCardCompact,
-            'app-persons-card': personsCard,
-            'app-units-card': unitsCard,
-            'app-houses-card': housesCard,
-            'app-assignments-card': assignmentsCard,
-            'app-object-reports-card': objectReportsCard
+            'b-object-card': objectCard,
+            'b-notes-card': notesCard,
+            'b-details-card': detailsCard,
+            'b-rental-contracts-card-compact': rentalContractsCardCompact,
+            'b-purchase-contracts-card-compact': purchaseContractsCardCompact,
+            'b-persons-card': personsCard,
+            'b-units-card': unitsCard,
+            'b-houses-card': housesCard,
+            'b-assignments-card': assignmentsCard,
+            'b-object-reports-card': objectReportsCard
         }
     })
     export default class DetailView extends Vue {

@@ -22,7 +22,7 @@
                 <template slot="items" slot-scope="props">
                     <td>{{props.item.title.title}}</td>
                     <td>
-                        <app-identifier style="width: 9em" v-model="props.item.employer"></app-identifier>
+                        <b-identifier style="width: 9em" v-model="props.item.employer"></b-identifier>
                     </td>
                     <td style="white-space: nowrap">{{props.item.join_date}}</td>
                     <td style="white-space: nowrap">{{props.item.leave_date}}</td>
@@ -33,7 +33,7 @@
                         <div style="display: flex">
                             <v-icon style="cursor: pointer" @click.stop="$set(models, props.index, true)">mdi-pencil
                             </v-icon>
-                            <app-job-edit-dialog v-model="models[props.index]" :job="props.item"></app-job-edit-dialog>
+                            <b-job-edit-dialog v-model="models[props.index]" :job="props.item"></b-job-edit-dialog>
                         </div>
                     </td>
                 </template>
@@ -53,7 +53,7 @@
 
     @Component({
         'components': {
-            'app-job-edit-dialog': jobEditDialog
+            'b-job-edit-dialog': jobEditDialog
         }
     })
     export default class JobsCard extends Vue {

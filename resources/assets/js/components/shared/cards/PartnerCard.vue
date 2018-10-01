@@ -3,9 +3,9 @@
         <v-card-title>
             <v-layout row wrap>
                 <v-flex xs12>
-                    <app-identifier class="headline"
-                                    :value="value"
-                    ></app-identifier>
+                    <b-identifier class="headline"
+                                  :value="value"
+                    ></b-identifier>
                 </v-flex>
             </v-layout>
         </v-card-title>

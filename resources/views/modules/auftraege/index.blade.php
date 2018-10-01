@@ -11,5 +11,5 @@
 @endsection
 
 @section('content')
-    <app-assignment-list-view></app-assignment-list-view>
+    <b-assignment-list-view></b-assignment-list-view>
 @endsection

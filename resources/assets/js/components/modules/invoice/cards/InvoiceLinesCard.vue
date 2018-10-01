@@ -31,18 +31,18 @@
                     v-model="search"
             ></v-text-field>
         </v-card-title>
-        <app-transition-collapse>
+        <b-transition-collapse>
             <v-card-text v-if="toggleExpand.includes(0)">
-                <app-invoice-line-edit-batch :lines="selected.map(v => v.RECHNUNGEN_POS_ID)"
-                ></app-invoice-line-edit-batch>
+                <b-invoice-line-edit-batch :lines="selected.map(v => v.RECHNUNGEN_POS_ID)"
+                ></b-invoice-line-edit-batch>
             </v-card-text>
-        </app-transition-collapse>
-        <app-transition-collapse>
+        </b-transition-collapse>
+        <b-transition-collapse>
             <v-card-text v-if="toggleExpand.includes(1)">
-                <app-invoice-line-assignment-edit-batch :lines="selected.map(v => v.RECHNUNGEN_POS_ID)"
-                ></app-invoice-line-assignment-edit-batch>
+                <b-invoice-line-assignment-edit-batch :lines="selected.map(v => v.RECHNUNGEN_POS_ID)"
+                ></b-invoice-line-assignment-edit-batch>
             </v-card-text>
-        </app-transition-collapse>
+        </b-transition-collapse>
         <v-card-text>
             <v-data-table
                     :headers="headers"
@@ -104,7 +104,7 @@
                     </tr>
                     <tr>
                         <td colspan="100%" class="pa-0" style="height: 0">
-                            <app-transition-collapse>
+                            <b-transition-collapse>
                                 <v-card flat
                                         style="border-bottom: 1px solid rgba(255,255,255,0.12)"
                                         v-if="isExpanded(props.item)"
@@ -124,8 +124,8 @@
                                         <tr v-for="assignment in props.item.assignments" class="text-xs-right">
                                             <td>{{assignment.MENGE | nformat}}</td>
                                             <td>
-                                                <app-identifier :value="assignment.cost_unit">
-                                                </app-identifier>
+                                                <b-identifier :value="assignment.cost_unit">
+                                                </b-identifier>
                                             </td>
                                             <td>{{assignment.KONTENRAHMEN_KONTO}}
                                             </td>
@@ -152,24 +152,24 @@
                                         </tbody>
                                     </table>
                                 </v-card>
-                            </app-transition-collapse>
+                            </b-transition-collapse>
                         </td>
                     </tr>
                 </template>
             </v-data-table>
         </v-card-text>
-        <app-invoice-line-add-dialog v-model="lineAdd" :invoice="invoice"></app-invoice-line-add-dialog>
-        <app-invoice-line-edit-dialog v-model="lineEdit" :invoice="invoice" :line="line"></app-invoice-line-edit-dialog>
-        <app-invoice-line-delete-dialog v-model="lineDel" :line="line"
-                                        @deleted="onDeleted"></app-invoice-line-delete-dialog>
-        <app-invoice-lines-delete-dialog v-model="lineDels" :lines="selected"></app-invoice-lines-delete-dialog>
-        <app-invoice-line-assignment-add-dialog v-model="assignmentAddOrEdit"
+        <b-invoice-line-add-dialog v-model="lineAdd" :invoice="invoice"></b-invoice-line-add-dialog>
+        <b-invoice-line-edit-dialog v-model="lineEdit" :invoice="invoice" :line="line"></b-invoice-line-edit-dialog>
+        <b-invoice-line-delete-dialog v-model="lineDel" :line="line"
+                                      @deleted="onDeleted"></b-invoice-line-delete-dialog>
+        <b-invoice-lines-delete-dialog v-model="lineDels" :lines="selected"></b-invoice-lines-delete-dialog>
+        <b-invoice-line-assignment-add-dialog v-model="assignmentAddOrEdit"
                                                 :line="line"
                                                 :assignment="assignment"
-        ></app-invoice-line-assignment-add-dialog>
-        <app-invoice-line-assignment-delete-dialog v-model="assignmentDelete"
+        ></b-invoice-line-assignment-add-dialog>
+        <b-invoice-line-assignment-delete-dialog v-model="assignmentDelete"
                                                    :assignment="assignment"
-        ></app-invoice-line-assignment-delete-dialog>
+        ></b-invoice-line-assignment-delete-dialog>
     </v-card>
 </template>
 
@@ -199,14 +199,14 @@
 
     @Component({
         'components': {
-            'app-invoice-line-add-dialog': InvoiceLineAddDialog,
-            'app-invoice-line-edit-dialog': InvoiceLineEditDialog,
-            'app-invoice-line-delete-dialog': InvoiceLineDeleteDialog,
-            'app-invoice-lines-delete-dialog': InvoiceLinesDeleteDialog,
-            'app-invoice-line-assignment-add-dialog': InvoiceLineAssignmentAddDialog,
-            'app-invoice-line-assignment-delete-dialog': InvoiceLineAssignmentDeleteDialog,
-            'app-invoice-line-assignment-edit-batch': InvoiceLineAssignmentEditBatch,
-            'app-invoice-line-edit-batch': InvoiceLineEditBatch
+            'b-invoice-line-add-dialog': InvoiceLineAddDialog,
+            'b-invoice-line-edit-dialog': InvoiceLineEditDialog,
+            'b-invoice-line-delete-dialog': InvoiceLineDeleteDialog,
+            'b-invoice-lines-delete-dialog': InvoiceLinesDeleteDialog,
+            'b-invoice-line-assignment-add-dialog': InvoiceLineAssignmentAddDialog,
+            'b-invoice-line-assignment-delete-dialog': InvoiceLineAssignmentDeleteDialog,
+            'b-invoice-line-assignment-edit-batch': InvoiceLineAssignmentEditBatch,
+            'b-invoice-line-edit-batch': InvoiceLineEditBatch
         }
     })
     export default class InvoiceLinesCard extends Vue {

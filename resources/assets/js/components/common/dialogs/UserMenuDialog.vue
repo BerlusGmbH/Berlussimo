@@ -17,10 +17,10 @@
             <v-card-text>
                 <v-layout row wrap>
                     <v-flex xs12>
-                        <app-person-card :value="user"></app-person-card>
+                        <b-person-card :value="user"></b-person-card>
                     </v-flex>
                     <v-flex xs12>
-                        <app-user-menu-list></app-user-menu-list>
+                        <b-user-menu-list></b-user-menu-list>
                     </v-flex>
                 </v-layout>
             </v-card-text>
@@ -36,13 +36,13 @@
     import personCard from "../../shared/cards/PersonCard.vue";
     import userMenuList from "../../shared/UserMenuList.vue";
     import axios from "../../../libraries/axios"
-    import {Person} from "../../../server/resources/models";
+    import {Person} from "../../../server/resources";
 
     @Component({
         components: {
-            'app-searchbar': searchbar,
-            'app-person-card': personCard,
-            'app-user-menu-list': userMenuList
+            'b-searchbar': searchbar,
+            'b-person-card': personCard,
+            'b-user-menu-list': userMenuList
         }
     })
     export default class UserMenuDialog extends Vue {

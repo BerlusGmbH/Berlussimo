@@ -9,14 +9,14 @@
             <v-card-text>
                 <v-layout row wrap>
                     <v-flex xs12>
-                        <app-entity-select label="Quellobjekt"
-                                           :value="object"
-                                           @input="val => parameters.object = val.OBJEKT_ID"
-                                           :entities="['objekt']"
-                                           disabled
-                                           prepend-icon="mdi-city"
+                        <b-entity-select label="Quellobjekt"
+                                         :value="object"
+                                         @input="val => parameters.object = val.OBJEKT_ID"
+                                         :entities="['objekt']"
+                                         disabled
+                                         prepend-icon="mdi-city"
                         >
-                        </app-entity-select>
+                        </b-entity-select>
                     </v-flex>
                     <v-flex xs12>
                         <v-text-field label="Neuer Name"
@@ -33,12 +33,12 @@
                         </v-text-field>
                     </v-flex>
                     <v-flex xs12>
-                        <app-entity-select label="Neuer Eigentümer"
-                                           prepend-icon="mdi-account-multiple"
-                                           :entities="['partner']"
-                                           @input="val => parameters.owner = val.PARTNER_ID"
+                        <b-entity-select label="Neuer Eigentümer"
+                                         prepend-icon="mdi-account-multiple"
+                                         :entities="['partner']"
+                                         @input="val => parameters.owner = val.PARTNER_ID"
                         >
-                        </app-entity-select>
+                        </b-entity-select>
                     </v-flex>
                     <v-flex xs12>
                         <v-text-field label="Datum für Saldovortrag Vorverwaltung"

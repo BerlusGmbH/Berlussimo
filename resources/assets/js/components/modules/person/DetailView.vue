@@ -2,40 +2,40 @@
     <v-container grid-list-md fluid :key="key">
         <v-layout v-if="person" row wrap>
             <v-flex xs12 sm6>
-                <app-person-card :value="person"></app-person-card>
+                <b-person-card :value="person"></b-person-card>
             </v-flex>
             <v-flex v-if="person && person.hinweise.length > 0" xs12 sm6>
-                <app-notes-card headline="Hinweise"
-                                :details="person.hinweise"
-                                :parent="person"
-                ></app-notes-card>
+                <b-notes-card headline="Hinweise"
+                              :details="person.hinweise"
+                              :parent="person"
+                ></b-notes-card>
             </v-flex>
             <v-flex v-if="person && person.common_details.length > 0" xs12 sm6>
-                <app-details-card headline="Details"
-                                  :details="person.common_details"
-                                  :parent="person"
-                ></app-details-card>
+                <b-details-card headline="Details"
+                                :details="person.common_details"
+                                :parent="person"
+                ></b-details-card>
             </v-flex>
             <v-flex v-if="person && person.mietvertraege.length > 0" xs12 sm6>
-                <app-rental-contracts-card headline="Mietverträge"
-                                           :rental-contracts="person.mietvertraege"
-                ></app-rental-contracts-card>
+                <b-rental-contracts-card headline="Mietverträge"
+                                         :rental-contracts="person.mietvertraege"
+                ></b-rental-contracts-card>
             </v-flex>
             <v-flex v-if="person && person.kaufvertraege.length > 0" xs12 sm6>
-                <app-purchase-contracts-card headline="Kaufverträge"
-                                             :purchase-contracts="person.kaufvertraege"
-                ></app-purchase-contracts-card>
+                <b-purchase-contracts-card headline="Kaufverträge"
+                                           :purchase-contracts="person.kaufvertraege"
+                ></b-purchase-contracts-card>
             </v-flex>
             <v-flex v-if="person && person.jobs_as_employee.length > 0" xs12 sm6>
-                <app-jobs-card headline="Anstellungen"
-                               :jobs="person.jobs_as_employee"
-                ></app-jobs-card>
+                <b-jobs-card headline="Anstellungen"
+                             :jobs="person.jobs_as_employee"
+                ></b-jobs-card>
             </v-flex>
             <v-flex v-if="person && person.roles.length > 0" xs12 sm6>
-                <app-roles-card headline="Rollen" :roles="person.roles"></app-roles-card>
+                <b-roles-card headline="Rollen" :roles="person.roles"></b-roles-card>
             </v-flex>
             <v-flex v-if="person && person.audits.length > 0" xs12 sm6>
-                <app-audits-card :audits="person.audits"></app-audits-card>
+                <b-audits-card :audits="person.audits"></b-audits-card>
             </v-flex>
         </v-layout>
     </v-container>
@@ -60,14 +60,14 @@
 
     @Component({
         components: {
-            'app-person-card': personCard,
-            'app-notes-card': notesCard,
-            'app-details-card': detailsCard,
-            'app-rental-contracts-card': rentalContractsCard,
-            'app-purchase-contracts-card': purchaseContractsCard,
-            'app-jobs-card': jobsCard,
-            'app-audits-card': auditsCard,
-            'app-roles-card': rolesCard
+            'b-person-card': personCard,
+            'b-notes-card': notesCard,
+            'b-details-card': detailsCard,
+            'b-rental-contracts-card': rentalContractsCard,
+            'b-purchase-contracts-card': purchaseContractsCard,
+            'b-jobs-card': jobsCard,
+            'b-audits-card': auditsCard,
+            'b-roles-card': rolesCard
         }
     })
     export default class DetailView extends Vue {

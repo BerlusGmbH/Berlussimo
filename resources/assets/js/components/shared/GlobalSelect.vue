@@ -1,13 +1,13 @@
 <template>
-    <app-entity-select :value="selected"
-                       @input="select"
-                       hide-details
-                       :entities="['objekt', 'partner', 'bankkonto']"
-                       append-icon=""
-                       multiple
-                       solo-inverted
+    <b-entity-select :value="selected"
+                     @input="select"
+                     hide-details
+                     :entities="['objekt', 'partner', 'bankkonto']"
+                     append-icon=""
+                     multiple
+                     solo-inverted
     >
-    </app-entity-select>
+    </b-entity-select>
 </template>
 
 <script lang="ts">
@@ -21,7 +21,7 @@
 
     const LegacyModule = namespace('shared/legacy');
 
-    @Component({components: {'app-entity-select': Select}})
+    @Component({components: {'b-entity-select': Select}})
     export default class GlobalSelect extends Vue {
         @GlobalSelectModule.State('objekt')
         objekt: Objekt | null;

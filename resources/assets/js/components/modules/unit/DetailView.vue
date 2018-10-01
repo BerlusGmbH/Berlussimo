@@ -2,46 +2,46 @@
     <v-container grid-list-md fluid :key="key">
         <v-layout v-if="unit" row wrap>
             <v-flex xs12 sm6>
-                <app-unit-card :value="unit"></app-unit-card>
+                <b-unit-card :value="unit"></b-unit-card>
             </v-flex>
             <v-flex v-if="unit && unit.hinweise.length > 0" xs12 sm6>
-                <app-notes-card headline="Hinweise"
-                                :details="unit.hinweise"
-                                :parent="unit"
-                ></app-notes-card>
+                <b-notes-card headline="Hinweise"
+                              :details="unit.hinweise"
+                              :parent="unit"
+                ></b-notes-card>
             </v-flex>
             <v-flex v-if="unit && unit.common_details.length > 0" xs12 sm6>
-                <app-details-card headline="Details"
-                                  :details="unit.common_details"
-                                  :parent="unit"
-                ></app-details-card>
+                <b-details-card headline="Details"
+                                :details="unit.common_details"
+                                :parent="unit"
+                ></b-details-card>
             </v-flex>
             <v-flex v-if="unit && unit.mieter.length > 0" xs12 sm6>
-                <app-persons-card headline="Mieter"
-                                  :persons="unit.mieter"
-                                  :filter="'!person(mietvertrag(aktiv einheit(id=' + unit.getID() + ')))'"
-                ></app-persons-card>
+                <b-persons-card headline="Mieter"
+                                :persons="unit.mieter"
+                                :filter="'!person(mietvertrag(aktiv einheit(id=' + unit.getID() + ')))'"
+                ></b-persons-card>
             </v-flex>
             <v-flex v-if="unit && unit.weg_eigentuemer.length > 0" xs12 sm6>
-                <app-persons-card headline="WEG-Eigentümer"
-                                  :persons="unit.weg_eigentuemer"
-                                  :filter="'!person(kaufvertrag(aktiv einheit(id=' + unit.getID() + ')))'"
-                ></app-persons-card>
+                <b-persons-card headline="WEG-Eigentümer"
+                                :persons="unit.weg_eigentuemer"
+                                :filter="'!person(kaufvertrag(aktiv einheit(id=' + unit.getID() + ')))'"
+                ></b-persons-card>
             </v-flex>
             <v-flex v-if="unit && unit.mietvertraege.length > 0" xs12 sm6>
-                <app-rental-contracts-card-compact headline="Mietverträge"
-                                                   :rental-contracts="unit.mietvertraege"></app-rental-contracts-card-compact>
+                <b-rental-contracts-card-compact headline="Mietverträge"
+                                                 :rental-contracts="unit.mietvertraege"></b-rental-contracts-card-compact>
             </v-flex>
             <v-flex v-if="unit && unit.kaufvertraege.length > 0" xs12 sm6>
-                <app-purchase-contracts-card-compact headline="Kaufverträge"
-                                                     :purchase-contracts="unit.kaufvertraege"></app-purchase-contracts-card-compact>
+                <b-purchase-contracts-card-compact headline="Kaufverträge"
+                                                   :purchase-contracts="unit.kaufvertraege"></b-purchase-contracts-card-compact>
             </v-flex>
             <v-flex xs12>
-                <app-assignments-card headline="Aufträge"
-                                      :assignments="unit.auftraege"
-                                      :cost-unit="unit"
-                                      :filter="'!auftrag(kostenträger(einheit(id=' + unit.getID() + ')))'"
-                ></app-assignments-card>
+                <b-assignments-card headline="Aufträge"
+                                    :assignments="unit.auftraege"
+                                    :cost-unit="unit"
+                                    :filter="'!auftrag(kostenträger(einheit(id=' + unit.getID() + ')))'"
+                ></b-assignments-card>
             </v-flex>
         </v-layout>
     </v-container>
@@ -65,13 +65,13 @@
 
     @Component({
         components: {
-            'app-unit-card': unitCard,
-            'app-notes-card': notesCard,
-            'app-details-card': detailsCard,
-            'app-rental-contracts-card-compact': rentalContractsCardCompact,
-            'app-purchase-contracts-card-compact': purchaseContractsCardCompact,
-            'app-persons-card': personsCard,
-            'app-assignments-card': assignmentsCard
+            'b-unit-card': unitCard,
+            'b-notes-card': notesCard,
+            'b-details-card': detailsCard,
+            'b-rental-contracts-card-compact': rentalContractsCardCompact,
+            'b-purchase-contracts-card-compact': purchaseContractsCardCompact,
+            'b-persons-card': personsCard,
+            'b-assignments-card': assignmentsCard
         }
     })
     export default class DetailView extends Vue {

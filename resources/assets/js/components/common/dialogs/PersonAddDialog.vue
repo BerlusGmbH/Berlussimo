@@ -1,5 +1,5 @@
 <template>
-    <app-edit-dialog
+    <b-edit-dialog
             lazy
             large
             :positionAbsolutley="positionAbsolutley"
@@ -37,7 +37,7 @@
                   label="Geschlecht"
                   slot="input"
         ></v-select>
-    </app-edit-dialog>
+    </b-edit-dialog>
 </template>
 
 <script lang="ts">

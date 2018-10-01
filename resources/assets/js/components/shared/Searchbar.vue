@@ -1,13 +1,13 @@
 <template>
-    <app-entity-select @input="select"
-                       :value="selected"
-                       hide-details
-                       prepend-icon="search"
-                       append-icon=""
-                       :entities="['objekt', 'person', 'haus', 'einheit', 'partner']"
-                       solo-inverted
+    <b-entity-select @input="select"
+                     :value="selected"
+                     hide-details
+                     prepend-icon="search"
+                     append-icon=""
+                     :entities="['objekt', 'person', 'haus', 'einheit', 'partner']"
+                     solo-inverted
     >
-    </app-entity-select>
+    </b-entity-select>
 </template>
 
 <script lang="ts">
@@ -15,7 +15,7 @@
     import Component from "vue-class-component";
     import Select from "../common/EntitySelect.vue"
 
-    @Component({components: {'app-entity-select': Select}})
+    @Component({components: {'b-entity-select': Select}})
     export default class Searchbar extends Vue {
 
         selected: Array<Object> = [];

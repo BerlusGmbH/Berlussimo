@@ -35,21 +35,21 @@
                 </v-list-tile>
             </v-list>
         </v-menu>
-        <app-detail-add-dialog v-if="show || add"
-                               :position-absolutely="true"
-                               :show="add"
-                               @show="val => {add = val}"
-                               :position-x="x"
-                               :position-y="y"
-                               :parent="value"
-                               @input="$emit('update')"
+        <b-detail-add-dialog v-if="show || add"
+                             :position-absolutely="true"
+                             :show="add"
+                             @show="val => {add = val}"
+                             :position-x="x"
+                             :position-y="y"
+                             :parent="value"
+                             @input="$emit('update')"
         >
-        </app-detail-add-dialog>
-        <app-rentalcontract-account-show-dialog v-if="show || contract"
+        </b-detail-add-dialog>
+        <b-rentalcontract-account-show-dialog v-if="show || contract"
                                                 :contract="value"
                                                 v-model="contract"
         >
-        </app-rentalcontract-account-show-dialog>
+        </b-rentalcontract-account-show-dialog>
     </div>
 </template>
 
@@ -64,8 +64,8 @@
 
     @Component({
         'components': {
-            'app-detail-add-dialog': detailAddDialog,
-            'app-rentalcontract-account-show-dialog': RentalContractAccountDialog,
+            'b-detail-add-dialog': detailAddDialog,
+            'b-rentalcontract-account-show-dialog': RentalContractAccountDialog,
         },
         'mixins': [
             copyToClipboard

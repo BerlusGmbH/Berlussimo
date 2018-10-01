@@ -56,17 +56,17 @@
                 </v-list-tile>
             </v-list>
         </v-menu>
-        <app-person-edit-dialog v-if="show || edit"
-                                :position-absolutely="true"
-                                :show="edit"
-                                @show="val => {edit = val}"
-                                :position-x="x"
-                                :position-y="y"
-                                :value="value"
-                                @input="$emit('input', $event)"
+        <b-person-edit-dialog v-if="show || edit"
+                              :position-absolutely="true"
+                              :show="edit"
+                              @show="val => {edit = val}"
+                              :position-x="x"
+                              :position-y="y"
+                              :value="value"
+                              @input="$emit('input', $event)"
         >
-        </app-person-edit-dialog>
-        <app-detail-add-dialog v-if="show || add"
+        </b-person-edit-dialog>
+        <b-detail-add-dialog v-if="show || add"
                                :position-absolutely="true"
                                :show="add"
                                @show="val => {add = val}"
@@ -75,11 +75,11 @@
                                :parent="value"
                                @input="$emit('update')"
         >
-        </app-detail-add-dialog>
-        <app-person-merge-dialog v-if="show || merge" v-model="merge" :left="value"></app-person-merge-dialog>
-        <app-job-add-dialog v-if="show || job" v-model="job" :employee="value"></app-job-add-dialog>
-        <app-login-edit-dialog v-if="show || login" v-model="login" :left="value"
-                               :person="value"></app-login-edit-dialog>
+        </b-detail-add-dialog>
+        <b-person-merge-dialog v-if="show || merge" v-model="merge" :left="value"></b-person-merge-dialog>
+        <b-job-add-dialog v-if="show || job" v-model="job" :employee="value"></b-job-add-dialog>
+        <b-login-edit-dialog v-if="show || login" v-model="login" :left="value"
+                             :person="value"></b-login-edit-dialog>
     </div>
 </template>
 
@@ -97,11 +97,11 @@
 
     @Component({
         'components': {
-            'app-person-edit-dialog': personEditDialog,
-            'app-job-add-dialog': jobAddDialog,
-            'app-detail-add-dialog': detailAddDialog,
-            'app-person-merge-dialog': personMergeDialog,
-            'app-login-edit-dialog': loginEditDialog
+            'b-person-edit-dialog': personEditDialog,
+            'b-job-add-dialog': jobAddDialog,
+            'b-detail-add-dialog': detailAddDialog,
+            'b-person-merge-dialog': personMergeDialog,
+            'b-login-edit-dialog': loginEditDialog
         },
         'mixins': [
             copyToClipboard

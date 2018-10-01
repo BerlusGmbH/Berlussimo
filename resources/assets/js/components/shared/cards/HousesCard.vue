@@ -26,7 +26,7 @@
             >
                 <template slot="items" slot-scope="props">
                     <td>
-                        <app-identifier v-model="props.item"></app-identifier>
+                        <b-identifier v-model="props.item"></b-identifier>
                     </td>
                 </template>
                 <template slot="pageText" slot-scope="{ pageStart, pageStop }">

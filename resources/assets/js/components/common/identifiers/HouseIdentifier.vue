@@ -54,17 +54,17 @@
                 </v-list-tile>
             </v-list>
         </v-menu>
-        <app-house-edit-dialog v-if="show || edit"
-                               :position-absolutely="true"
-                               :show="edit"
-                               @show="val => {edit = val}"
-                               :position-x="x"
-                               :position-y="y"
-                               :value="value"
-                               @input="$emit('input', $event)"
+        <b-house-edit-dialog v-if="show || edit"
+                             :position-absolutely="true"
+                             :show="edit"
+                             @show="val => {edit = val}"
+                             :position-x="x"
+                             :position-y="y"
+                             :value="value"
+                             @input="$emit('input', $event)"
         >
-        </app-house-edit-dialog>
-        <app-detail-add-dialog v-if="show || add"
+        </b-house-edit-dialog>
+        <b-detail-add-dialog v-if="show || add"
                                :position-absolutely="true"
                                :show="add"
                                @show="val => {add = val}"
@@ -73,7 +73,7 @@
                                :parent="value"
                                @input="$emit('update')"
         >
-        </app-detail-add-dialog>
+        </b-detail-add-dialog>
     </div>
 </template>
 
@@ -88,8 +88,8 @@
 
     @Component({
         'components': {
-            'app-house-edit-dialog': houseEditDialog,
-            'app-detail-add-dialog': detailAddDialog
+            'b-house-edit-dialog': houseEditDialog,
+            'b-detail-add-dialog': detailAddDialog
         },
         'mixins': [
             copyToClipboard,

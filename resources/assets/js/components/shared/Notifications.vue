@@ -46,18 +46,18 @@
                 <td class="text-xs-right">{{ props.item.created_at }}</td>
                 <template v-if="props.item.type === 'App\\Notifications\\PersonMerged'">
                     <td class="text-xs-right">Personen (
-                        <app-identifier v-model="props.item.data.left"></app-identifier>
+                        <b-identifier v-model="props.item.data.left"></b-identifier>
                         und
-                        <app-identifier v-model="props.item.data.right"></app-identifier>
+                        <b-identifier v-model="props.item.data.right"></b-identifier>
                         ) zusammengeführt:
-                        <app-identifier v-model="props.item.data.merged"></app-identifier>
+                        <b-identifier v-model="props.item.data.merged"></b-identifier>
                     </td>
                 </template>
                 <template v-else-if="props.item.type === 'App\\Notifications\\ObjectCopied'">
                     <td class="text-xs-right">Objekt (
-                        <app-identifier v-model="props.item.data.source"></app-identifier>
+                        <b-identifier v-model="props.item.data.source"></b-identifier>
                         ) kopiert:
-                        <app-identifier v-model="props.item.data.target"></app-identifier>
+                        <b-identifier v-model="props.item.data.target"></b-identifier>
                     </td>
                 </template>
             </template>

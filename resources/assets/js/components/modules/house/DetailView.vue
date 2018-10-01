@@ -2,45 +2,45 @@
     <v-container grid-list-md fluid :key="key">
         <v-layout v-if="house" row wrap>
             <v-flex xs12 sm6>
-                <app-house-card :value="house"></app-house-card>
+                <b-house-card :value="house"></b-house-card>
             </v-flex>
             <v-flex v-if="house && house.hinweise.length > 0" xs12 sm6>
-                <app-notes-card headline="Hinweise"
-                                :details="house.hinweise"
-                                :parent="house"
-                ></app-notes-card>
+                <b-notes-card headline="Hinweise"
+                              :details="house.hinweise"
+                              :parent="house"
+                ></b-notes-card>
             </v-flex>
             <v-flex v-if="house && house.common_details.length > 0" xs12 sm6>
-                <app-details-card headline="Details"
-                                  :details="house.common_details"
-                                  :parent="house"
-                ></app-details-card>
+                <b-details-card headline="Details"
+                                :details="house.common_details"
+                                :parent="house"
+                ></b-details-card>
             </v-flex>
             <v-flex v-if="house && house.einheiten.length > 0" xs12 sm6>
-                <app-units-card headline="Einheiten"
-                                :units="house.einheiten"
-                                :filter="'!einheit(haus(id=' + house.getID() + '))'"
-                ></app-units-card>
+                <b-units-card headline="Einheiten"
+                              :units="house.einheiten"
+                              :filter="'!einheit(haus(id=' + house.getID() + '))'"
+                ></b-units-card>
             </v-flex>
             <v-flex v-if="house && house.mieter.length > 0" xs12 sm6>
-                <app-persons-card headline="Mieter"
-                                  :persons="house.mieter"
-                                  :filter="'!person(mietvertrag(aktiv haus(id=' + house.getID() + ')))'"
-                ></app-persons-card>
+                <b-persons-card headline="Mieter"
+                                :persons="house.mieter"
+                                :filter="'!person(mietvertrag(aktiv haus(id=' + house.getID() + ')))'"
+                ></b-persons-card>
             </v-flex>
             <v-flex v-if="house && house.weg_eigentuemer.length > 0" xs12 sm6>
-                <app-persons-card headline="WEG-Eigentümer"
-                                  :persons="house.weg_eigentuemer"
-                                  :filter="'!person(kaufvertrag(aktiv haus(id=' + house.getID() + ')))'"
-                ></app-persons-card>
+                <b-persons-card headline="WEG-Eigentümer"
+                                :persons="house.weg_eigentuemer"
+                                :filter="'!person(kaufvertrag(aktiv haus(id=' + house.getID() + ')))'"
+                ></b-persons-card>
             </v-flex>
             <v-flex xs12>
-                <app-assignments-card headline="Aufträge"
-                                      :assignments="house.auftraege"
-                                      :cost-unit="house"
-                                      :filter="'!auftrag(kostenträger(haus(id=' + house.getID() + ')))'"
+                <b-assignments-card headline="Aufträge"
+                                    :assignments="house.auftraege"
+                                    :cost-unit="house"
+                                    :filter="'!auftrag(kostenträger(haus(id=' + house.getID() + ')))'"
                 >
-                </app-assignments-card>
+                </b-assignments-card>
             </v-flex>
         </v-layout>
     </v-container>
@@ -66,14 +66,14 @@
 
     @Component({
         components: {
-            'app-house-card': houseCard,
-            'app-notes-card': notesCard,
-            'app-details-card': detailsCard,
-            'app-rental-contracts-card-compact': rentalContractsCardCompact,
-            'app-purchase-contracts-card-compact': purchaseContractsCardCompact,
-            'app-persons-card': personsCard,
-            'app-units-card': unitsCard,
-            'app-assignments-card': assignmentsCard
+            'b-house-card': houseCard,
+            'b-notes-card': notesCard,
+            'b-details-card': detailsCard,
+            'b-rental-contracts-card-compact': rentalContractsCardCompact,
+            'b-purchase-contracts-card-compact': purchaseContractsCardCompact,
+            'b-persons-card': personsCard,
+            'b-units-card': unitsCard,
+            'b-assignments-card': assignmentsCard
         }
     })
     export default class DetailView extends Vue {

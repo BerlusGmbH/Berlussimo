@@ -18,5 +18,5 @@
 @endsection
 
 @section('content')
-    <app-person-detail-view :person-id="{{$person->id}}"></app-person-detail-view>
+    <b-person-detail-view :person-id="{{$person->id}}"></b-person-detail-view>
 @endsection

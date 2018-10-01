@@ -25,10 +25,10 @@
                             ></v-text-field>
                         </v-flex>
                         <v-flex xs12 md6 lg3>
-                            <app-entity-select label="Kostenträger"
-                                               @input="selectCostUnit"
-                                               :value="costUnit"
-                                               :entities="[
+                            <b-entity-select label="Kostenträger"
+                                             @input="selectCostUnit"
+                                             :value="costUnit"
+                                             :entities="[
                                                    'objekt',
                                                    'haus',
                                                    'einheit',
@@ -40,25 +40,25 @@
                                                    'wirtschaftseinheit'
                                                ]"
                             >
-                            </app-entity-select>
+                            </b-entity-select>
                         </v-flex>
                         <v-flex xs12 md6 lg2>
-                            <app-entity-select label="Kontenrahmen"
-                                               :entities="['kontenrahmen']"
-                                               v-model="standardChart"
-                                               prepend-icon="mdi-table"
-                                               clearable
+                            <b-entity-select label="Kontenrahmen"
+                                             :entities="['kontenrahmen']"
+                                             v-model="standardChart"
+                                             prepend-icon="mdi-table"
+                                             clearable
                             >
-                            </app-entity-select>
+                            </b-entity-select>
                         </v-flex>
                         <v-flex xs12 md6 lg2>
-                            <app-entity-select label="Buchungskonto"
-                                               :entities="bookingAccountEntity"
-                                               prepend-icon="mdi-numeric"
-                                               @input="selectBookingAccount"
-                                               :value="bookingAccount"
+                            <b-entity-select label="Buchungskonto"
+                                             :entities="bookingAccountEntity"
+                                             prepend-icon="mdi-numeric"
+                                             @input="selectBookingAccount"
+                                             :value="bookingAccount"
                             >
-                            </app-entity-select>
+                            </b-entity-select>
                         </v-flex>
                         <v-flex xs12 md6 lg2>
                             <v-switch label="Weiter verwenden"

@@ -3,7 +3,7 @@
         <v-card>
             <v-card-title class="headline">Wollen Sie dieses Detail entfernen?</v-card-title>
             <v-card-text>
-                <app-identifier :value="detail"></app-identifier>
+                <b-identifier :value="detail"></b-identifier>
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
