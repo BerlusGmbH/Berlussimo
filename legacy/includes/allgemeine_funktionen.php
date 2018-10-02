@@ -452,18 +452,6 @@ function msort($array, $id = "id")
     return $temp_array;
 }
 
-function personen_liste_multi()
-{
-    $result = DB::select("SELECT id, name, first_name, birthday FROM persons ORDER BY name ASC");
-    if (!empty($result)) {
-        echo "<tr><td colspan=3><select class=\"personen_mv\" NAME=\"PERSON_ID[]\" MULTIPLE SIZE=25>\n";
-        foreach ($result as $row) {
-            echo "<option value=\"$row[id]\">$row[name] $row[first_name] ($row[birthday])</option>\n";
-        }
-        echo "</select></td></tr>\n";
-    }
-}
-
 function mietvertrag_liste_string()
 {
     $datum_heute = date("Y-m-d");
@@ -493,15 +481,6 @@ function personen_ids_der_mieter()
     return $mieter_ids_string;
 }
 
-function mieternamen_in_string($mieter_id)
-{
-    $result = DB::select("SELECT name, first_name FROM persons where id='$mieter_id'");
-    foreach ($result as $row) {
-        $mieter = "$row[name] $row[first_name]";
-        return $mieter;
-    }
-}
-
 function date_mysql2german($date)
 {
     $d = explode("-", $date);
@@ -512,13 +491,6 @@ function date_german2mysql($date)
 {
     $d = explode(".", $date);
     return sprintf("%04d-%02d-%02d", $d [2], $d [1], $d [0]);
-}
-
-function letzte_person_id()
-{
-    $result = DB::select("SELECT id FROM persons ORDER BY id DESC LIMIT 0,1");
-    foreach ($result as $row)
-        return $row['id'];
 }
 
 function letzte_person_dat_of_person_id($person_id)
@@ -586,27 +558,6 @@ function warnung_ausgeben($text)
     echo "<p class=\"warnung\">$text</p>\n";
 }
 
-function person_pruefen($nachname, $vorname, $geburtstag)
-{
-    $db_abfrage = "SELECT id, name, first_name, birthday FROM persons WHERE name='$nachname' && first_name='$vorname' && birthday='$geburtstag' && ORDER BY id ASC";
-    $result = DB::select($db_abfrage);
-    if (empty($result)) {
-        $result = DB::select("SELECT id, name, first_name, birthday FROM persons WHERE name='$nachname' && first_name='$vorname' && birthday='$geburtstag' ORDER BY id ASC");
-        if (!empty($result)) {
-            foreach ($result as $row) {
-                echo "$row[id], $row[name], $row[first_name], $row[birthday] ";
-            }
-            return "error";
-        }
-    } else {
-        hinweis_ausgeben("Person existiert!!!<br>Ihre Eingaben sind 100%-ig identisch mit folgenden Datenbankeinträgen:");
-        foreach ($result as $row) {
-            echo "$row[id], $row[name], $row[first_name], $row[birthday] <br>";
-        }
-        return "error";
-    }
-}
-
 function person_loeschen($person_dat)
 {
     //TODO substitute with laravel equivalent
@@ -618,21 +569,6 @@ function person_loeschen($person_dat)
 
     hinweis_ausgeben("Person gelöscht!");
     echo "<a href='" . route('web::personen.index') . "'>Zurück zu Personenliste</a>";
-}
-
-function person_aendern_in_db($person_id)
-{
-    //TODO substitute with laravel equivalent
-    DB::update("UPDATE PERSON SET PERSON_AKTUELL='0' WHERE PERSON_ID='$person_id'");
-    $dat_alt = letzte_person_dat_of_person_id($person_id);
-
-    $gebdatum = request()->input('person_geburtstag');
-    $gebdatum = date_german2mysql($gebdatum);
-    $akt_person_id = $person_id;
-    DB::insert("INSERT INTO PERSON (`PERSON_DAT`, `PERSON_ID`, `PERSON_NACHNAME`, `PERSON_VORNAME`, `PERSON_GEBURTSTAG`, `PERSON_AKTUELL`) VALUES (NULL, '$akt_person_id', '" . request()->input('person_nachname') . "', '" . request()->input('person_vorname') . "', date_format( '$gebdatum', '%Y-%m-%d' ), '1')");
-
-    $dat_neu = letzte_person_dat_of_person_id($akt_person_id);
-    protokollieren('PERSON', $dat_neu, $dat_alt);
 }
 
 function weiterleiten($ziel)
@@ -666,47 +602,6 @@ function umbruch_entfernen($string)
     $new = str_replace("<br \>", " ", $new);
     $new = str_replace("<br\>", " ", $new);
     return $new;
-}
-
-// ## Funktion zur Eintragung der Person mit Datenprüfung.
-function person_in_db_eintragen()
-{
-    //TODO substitue with laravel equivalent
-    $gebdatum = request()->input('person_geburtstag');
-    $gebdatum = date_german2mysql($gebdatum);
-    $letzte_person_id = letzte_person_id();
-    $akt_person_id = $letzte_person_id + 1;
-    // echo $gebdatum;
-    $person_status = person_pruefen(request()->input('person_nachname'), request()->input('person_vorname'), $gebdatum);
-    if ($person_status != "error") {
-        $dat_alt = letzte_person_dat_of_person_id($akt_person_id);
-        DB::insert("INSERT INTO PERSON (`PERSON_DAT`, `PERSON_ID`, `PERSON_NACHNAME`, `PERSON_VORNAME`, `PERSON_GEBURTSTAG`, `PERSON_AKTUELL`) VALUES (NULL, '$akt_person_id', '" . request()->input('person_nachname') . "', '" . request()->input('person_vorname') . "', '$gebdatum', '1')");
-        $dat_neu = letzte_person_dat_of_person_id($akt_person_id);
-        protokollieren('PERSON', $dat_neu, $dat_alt);
-        hinweis_ausgeben("Person: " . request()->input('person_nachname') . " " . request()->input('person_vorname') . " wurde eingetragen !");
-        backlink();
-    } else {
-        warnung_ausgeben("Person existiert!");
-        backlink();
-        person_hidden_form(request()->input('person_nachname'), request()->input('person_vorname'), request()->input('person_geburtstag'));
-    }
-}
-
-// ## Funktion zur Eintragung der Person, obwohl gleichnamige existieren.
-function person_in_db_eintragen_direkt()
-{
-    //TODO substitute with laravel equivalent
-    $gebdatum = request()->input('person_geburtstag');
-    $gebdatum = date_german2mysql($gebdatum);
-    $letzte_person_id = letzte_person_id();
-    $akt_person_id = $letzte_person_id + 1;
-    $dat_alt = letzte_person_dat_of_person_id($akt_person_id);
-
-    DB::insert("INSERT INTO PERSON (`PERSON_DAT`, `PERSON_ID`, `PERSON_NACHNAME`, `PERSON_VORNAME`, `PERSON_GEBURTSTAG`, `PERSON_AKTUELL`) VALUES (NULL, '$akt_person_id', '" . request()->input('person_nachname') . "', '" . request()->input('person_vorname') . "', '$gebdatum', '1')");
-    $dat_neu = letzte_person_dat_of_person_id($akt_person_id);
-    protokollieren('PERSON', $dat_neu, $dat_alt);
-    hinweis_ausgeben("Person: " . request()->input('person_nachname') . " " . request()->input('person_vorname') . " wurde eingetragen !");
-    backlink();
 }
 
 // ###mietvertrag

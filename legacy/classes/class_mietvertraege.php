@@ -125,15 +125,13 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
 
     function dropdown_personen_liste($label, $name, $id, $javaaction)
     {
-        $db_abfrage = "SELECT id, name, first_name, birthday FROM persons ORDER BY name, first_name ASC";
-        $personen = DB::select($db_abfrage);
-        $numrows = count($personen);
+        $personen = \App\Models\Person::defaultOrder()->get();
         echo "<div class='input-field'>";
         echo "<select name=\"$name\" id=\"$id\" $javaaction>";
-        for ($a = 0; $a < $numrows; $a++) {
-            $person_id = $personen [$a] ['id'];
-            $vorname = $personen [$a] ['first_name'];
-            $nachname = $personen [$a] ['name'];
+        foreach ($personen as $person) {
+            $person_id = $person['id'];
+            $vorname = $person['first_name'];
+            $nachname = $person['name'];
             echo "<option value=\"$person_id\">$nachname $vorname</option>";
         }
         echo "</select><label>$label</label>";

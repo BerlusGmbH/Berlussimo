@@ -12,42 +12,7 @@ if (request()->has('submit_person_direkt')) {
 if (request()->has('person_loeschen')) {
     $person_loeschen = request()->input('person_loeschen');
 }
-if (request()->has('person_aendern')) {
-    $person_aendern = request()->input('person_aendern');
-}
-if (request()->has('submit_person_aendern')) {
-    $submit_person_aendern = request()->input('submit_person_aendern');
-}
 switch ($anzeigen) {
-
-    case "alle_personen" :
-        erstelle_abschnitt("Liste aller vorhandenen Personen");
-        $p = new personen ();
-        $p->personen_liste_alle();
-        ende_abschnitt();
-        break;
-
-    case "person_erfassen_alt" :
-        personen_liste(); // seitlicher block
-        $form = new mietkonto ();
-        $form->erstelle_formular("Neue Person erfassen", NULL);
-
-        iframe_start();
-        if (!isset ($submit_person)) {
-            person_erfassen_form();
-        }
-        if (isset ($submit_person)) {
-            check_fields();
-        }
-        if (isset ($submit_person_direkt)) {
-            person_in_db_eintragen_direkt();
-        }
-        if (request()->exists('person_speichern')) {
-            person_in_db_eintragen();
-        }
-        iframe_end();
-        $form->ende_formular();
-        break;
 
     /* Neues Personeneingabeformular mit Geschlechteingabe in die Details */
     case "person_erfassen" :
@@ -147,32 +112,6 @@ switch ($anzeigen) {
         iframe_end();
         $form->ende_formular();
         break;
-
-    case "person_aendern" :
-        $form = new mietkonto ();
-        $form->erstelle_formular("Person ändern", NULL);
-        if (request()->has('person_id') && !isset ($submit_person_aendern) && !request()->exists('person_definitiv_speichern')) {
-            person_aendern_from(request()->input('person_id'));
-        }
-        if (isset ($submit_person_aendern)) {
-            check_fields_nach_aenderung(); // prüfen und eintragen
-        }
-        if (request()->exists('person_definitiv_speichern')) {
-            check_fields_nach_aenderung(); // Änderung anzeigen prüfen und eintragen
-        }
-        $form->ende_formular();
-        break;
-
-    case "person_hinweis" :
-        $p = new personen ();
-        $p->get_person_hinweis();
-        break;
-
-    case "person_anschrift" :
-        $p = new personen ();
-        /* Verzugs und Zustelladressen */
-        $p->get_person_anschrift();
-        break;
 }
 
 function check_fields()
@@ -233,74 +172,4 @@ function alle_mieter_arr()
     echo "<pre>";
     print_r($result);
     echo "</pre>";
-}
-
-function check_fields_nach_aenderung()
-{
-    foreach (request()->request->all() as $key => $value) {
-
-        if (($key == "person_nachname") && empty ($value)) {
-            fehlermeldung_ausgeben("Bitte tragen Sie einen Familiennamen ein!");
-            backlink();
-            $myerror = true;
-            break;
-        } elseif (($key == "person_vorname") && empty ($value)) {
-            fehlermeldung_ausgeben("Bitte tragen Sie einen Vornamen ein!");
-            backlink();
-            $myerror = true;
-            break;
-        } elseif (($key == "person_geburtstag") && empty ($value)) {
-            fehlermeldung_ausgeben("Bitte tragen Sie einen Geburtstag ein!");
-            backlink();
-            $myerror = true;
-            break;
-        } elseif (($key == "person_geburtstag") && isset ($value)) {
-            $datum = request()->input('person_geburtstag');
-
-            $tmp = explode(".", $datum);
-            if (checkdate($tmp [1], $tmp [0], $tmp [2])) {
-            } else {
-                fehlermeldung_ausgeben("Falsches Datumsformat, bitte überprüfen!");
-                backlink();
-                $myerror = true;
-                break;
-            }
-        }
-    } // end for
-    if (!isset ($myerror)) {
-        if (!request()->exists('person_definitiv_speichern')) {
-            echo "<h5>Sind Sie sicher, daß Sie die Person " . request()->input('person_nachname') . " " . request()->input('person_vorname') . " geb. am " . request()->input('person_geburtstag') . " ändern wollen?</h5>";
-            erstelle_hiddenfeld("person_nachname", request()->input('person_nachname'));
-            erstelle_hiddenfeld("person_vorname", request()->input('person_vorname'));
-            erstelle_hiddenfeld("person_geburtstag", request()->input('person_geburtstag'));
-            erstelle_submit_button("person_definitiv_speichern", "Speichern"); // name, wert
-        }
-    }
-    if (request()->has('person_definitiv_speichern')) {
-        person_aendern_in_db(request()->input('person_id'));
-        hinweis_ausgeben("Person: " . request()->input('person_nachname') . " " . request()->input('person_vorname') . " wurde geändert !");
-        hinweis_ausgeben("Sie werden weitergeleitet.");
-        weiterleiten(route('web::personen::web', [], false));
-    }
-}
-
-function personen_liste()
-{
-    $db_abfrage = "SELECT name, first_name, birthday FROM persons WHERE ORDER BY name, first_name ASC";
-    $result = DB::select($db_abfrage);
-    echo "<div class=\"tabelle_personen\"><table>\n";
-    echo "<tr class=\"feldernamen\"><td colspan=3>Personenliste</td></tr>\n";
-    echo "<tr class=\"feldernamen\"><td>Nachname</td><td>Vorname</td><td>Geb. am</td></tr>\n";
-    $counter = 0;
-    foreach ($result as $row) {
-        $counter++;
-        if ($counter == 1) {
-            echo "<tr class=\"zeile1\"><td>$row[name]</td><td>$row[first_name]</td><td>$row[birthday]</td></tr>\n";
-        }
-        if ($counter == 2) {
-            echo "<tr class=\"zeile2\"><td>$row[name]</td><td>$row[first_name]</td><td>$row[birthday]</td></tr>\n";
-            $counter = 0;
-        }
-    }
-    echo "</table></div>";
 }

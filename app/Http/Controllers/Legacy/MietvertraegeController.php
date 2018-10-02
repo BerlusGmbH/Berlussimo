@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Legacy;
 
 use App\Http\Requests\Legacy\MietvertraegeRequest;
 use App\Http\Requests\Modules\Mietvertraege\StoreMietvertraegeRequest;
+use App\Models\Person;
 use DB;
 use kautionen;
 use mietvertraege;
-use personen;
 
 class MietvertraegeController extends LegacyController
 {
@@ -33,8 +33,7 @@ class MietvertraegeController extends LegacyController
           GROUP BY EINHEIT.EINHEIT_ID 
           HAVING (MIETVERTRAG_BIS != '0000-00-00' OR MIETVERTRAG_BIS IS NULL)
         ");
-        $p = new personen();
-        $personen = $p->personen_arr();
+        $personen = Person::all(['id', 'name', 'first_name']);
         return view('modules.mietvertraege.create', ['units' => $units, 'tenants' => $personen]);
     }
 

@@ -41,15 +41,6 @@ switch ($mietvertrag_raus) {
         $form->ende_formular();
         break;
 
-    case "mietvertrag_neu_alt" :
-        $form = new mietkonto ();
-        $form->erstelle_formular("Neuen Mietvertrag erstellen", NULL);
-        iframe_start();
-        mietvertrag_form_neu();
-        iframe_end();
-        $form->ende_formular();
-        break;
-
     case "ls_teilnehmer_neu" :
         $form = new mietkonto ();
         $form->erstelle_formular("Teilnehmer am Lastschriftverfahren hinzufügen", NULL);
@@ -349,15 +340,6 @@ switch ($mietvertrag_raus) {
 
         $einheit_id = request()->input('einheit_id');
         weiterleiten_in_sec(route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id], false), 2);
-        $form->ende_formular();
-        break;
-
-    case "mietvertrag_aendern_alt" :
-        $form = new mietkonto ();
-        $form->erstelle_formular("Mietvertrag ändern", NULL);
-        iframe_start();
-        mietvertrag_aendern_form(request()->input('mietvertrag_id'));
-        iframe_end();
         $form->ende_formular();
         break;
 
@@ -915,70 +897,6 @@ function mietvertrag_beenden_form($mietvertrag_id)
 {
     $m = new mietvertraege ();
     $m->mietvertrag_beenden_form($mietvertrag_id);
-}
-
-function mietvertrag_aendern_form($mietvertrag_id)
-{
-    if (!request()->has('submit_mv_beenden') && !request()->has('submit_mv_aendern') && !request()->has('submit_mv_pruefen')) {
-        $db_abfrage = "SELECT MIETVERTRAG_DAT, MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM MIETVERTRAG where MIETVERTRAG_ID='$mietvertrag_id' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1";
-        $result = DB::select($db_abfrage);
-        erstelle_formular(NULL, NULL); // name, action
-        foreach ($result as $row) {
-            $form = new mietkonto ();
-
-            $MIETVERTRAG_VON = date_mysql2german($row['MIETVERTRAG_VON']);
-            $MIETVERTRAG_BIS = date_mysql2german($row['MIETVERTRAG_BIS']);
-            warnung_ausgeben("<tr><td colspan=2><h1>Mietvertrag ändern/korrigieren:\n</h1></td></tr>\n");
-            $form->mieter_infos_vom_mv($mietvertrag_id);
-            warnung_ausgeben("<tr><td colspan=2><b>Bitte wählen Sie die Personen aus!</b></td></tr>\n");
-            erstelle_eingabefeld("Einzugsdatum ändern", "MIETVERTRAG_VON", "$MIETVERTRAG_VON", "10");
-            erstelle_eingabefeld("Auszugsdatum ändern", "MIETVERTRAG_BIS", "$MIETVERTRAG_BIS", "10");
-            erstelle_hiddenfeld("MIETVERTRAG_DAT", $row['MIETVERTRAG_DAT']);
-            erstelle_hiddenfeld("EINHEIT_ID", $row['EINHEIT_ID']);
-        } // while end
-        personen_liste_multi();
-        erstelle_submit_button("submit_mv_aendern", "ändern"); // name, wert
-        ende_formular();
-    } // end if
-    if (request()->exists('submit_mv_aendern')) {
-        if (empty (request()->input('MIETVERTRAG_VON'))) {
-            echo "Eihnzugsdatum eingeben";
-        } elseif (empty (request()->input('MIETVERTRAG_BIS'))) {
-            echo "Auszugsdatum eingeben";
-        } elseif (empty (request()->input('PERSON_ID'))) {
-            echo "Personen zum Vetrag auswählen!";
-        } else {
-            erstelle_formular(NULL, NULL); // name, action
-            $einheit_kurzname = einheit_kurzname(request()->input('EINHEIT_ID'));
-            $MIETVERTRAG_VON = request()->input('MIETVERTRAG_VON');
-            $MIETVERTRAG_BIS = request()->input('MIETVERTRAG_BIS');
-            warnung_ausgeben("<tr><td colspan=2><h1>Der Mietvertrag für die Einheit $einheit_kurzname wird wie folgt geändert:\n</h1></td></tr>\n");
-            for ($i = 0; $i < count(request()->input('PERSON_ID')); $i++) {
-                $mietername = personen_name(request()->input('PERSON_ID')[$i]);
-                echo "<tr><td>Mieter:</td><td><b>$mietername</b></td></tr>";
-                erstelle_hiddenfeld("PERSON_ID[]", request()->input('PERSON_ID')[$i]);
-            }
-            echo "<tr><td>Einzugsdatum:</td><td><b>" . request()->input('MIETVERTRAG_VON') . "</b></td></tr>";
-            if (request()->input('MIETVERTRAG_BIS') != '00.00.0000') {
-                echo "<tr><td>Auszugsdatum:</td><td><b>" . request()->input('MIETVERTRAG_BIS') . "</b></td></tr>";
-            } else {
-                echo "<tr><td>Auszugsdatum:</td><td><b>unbefristet</td></tr>";
-            }
-
-            erstelle_hiddenfeld("MIETVERTRAG_VON", $MIETVERTRAG_VON);
-            erstelle_hiddenfeld("MIETVERTRAG_BIS", $MIETVERTRAG_BIS);
-            erstelle_hiddenfeld("MIETVERTRAG_DAT", request()->input('MIETVERTRAG_DAT'));
-            erstelle_hiddenfeld("EINHEIT_ID", request()->input('EINHEIT_ID'));
-            echo "<tr><td>";
-            hinweis_ausgeben("Möchten Sie die Vertragsänderungen übernehmen?");
-            echo "</td></tr>";
-            erstelle_submit_button("submit_mv_pruefen", "Speichern");
-        }
-    }
-    if (request()->exists('submit_mv_pruefen')) {
-        mietvertrag_aktualisieren(request()->input('MIETVERTRAG_DAT'), request()->input('MIETVERTRAG_BIS'), request()->input('MIETVERTRAG_VON'));
-        weiterleiten(route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => request()->input('EINHEIT_ID')], false));
-    }
 }
 
 function mietvertrag_beenden($mietvertrag_dat, $mietvertrag_bis)

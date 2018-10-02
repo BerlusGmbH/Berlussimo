@@ -179,7 +179,7 @@ function kontakt_suche($target_id, $string)
     $datum_d = date("d.m.Y");
     echo "<p class=\"zeile_ueber\">Suchergebnisse, auf Datensatz klicken um zu übernehmen</p>";
     echo "<table>";
-    $db_abfrage = "SELECT * FROM persons WHERE (name LIKE '$string%' OR first_name LIKE '%$string%')";
+    $db_abfrage = "SELECT * FROM persons WHERE (name LIKE '$string%' OR first_name LIKE '%$string%') AND deleted_at IS NULL";
     $result = DB::select($db_abfrage);
     $z = 0;
     if (!empty($result)) {
@@ -295,7 +295,7 @@ function str_suche($target_id, $string)
     $datum_d = date("d.m.Y");
     echo "<p class=\"zeile_ueber\">Suchergebnisse, auf Datensatz klicken um zu übernehmen</p>";
     echo "<table>";
-    $db_abfrage = "SELECT * FROM persons WHERE (name LIKE '$string%' OR first_name LIKE '%$string%')";
+    $db_abfrage = "SELECT * FROM persons WHERE (name LIKE '$string%' OR first_name LIKE '%$string%') AND deleted_at is NULL";
     $result = DB::select($db_abfrage);
     $z = 0;
     if (!empty($result)) {

@@ -276,17 +276,6 @@ function text_area($name, $breite, $hoehe)
     echo "<br>$name:<br> <textarea name=\"$name\" cols=\"$breite\" rows=\"$hoehe\"></textarea><br>\n";
 }
 
-// #### person
-function person_erfassen_form()
-{
-    erstelle_formular(NULL, NULL);
-    erstelle_eingabefeld("Nachname", "person_nachname", "", "50");
-    erstelle_eingabefeld("Vorname", "person_vorname", "", "50");
-    erstelle_eingabefeld("Geburtstag (dd.mm.jjjj)", "person_geburtstag", "", "10");
-    erstelle_submit_button("submit_person", "Eintragen");
-    ende_formular();
-}
-
 function person_hidden_form($nachname, $vorname, $geburtstag)
 {
     erstelle_formular(NULL, NULL);
@@ -295,94 +284,4 @@ function person_hidden_form($nachname, $vorname, $geburtstag)
     erstelle_hiddenfeld("person_geburtstag", "$geburtstag");
     erstelle_submit_button("submit_person_direkt", "Trotzdem eintragen");
     ende_formular();
-}
-
-function person_aendern_from($person_id)
-{
-    $result = DB::select("SELECT id, name, first_name, birthday FROM persons WHERE id='$person_id'");
-    if (!empty($result)) {
-        foreach($result as $row) {
-            erstelle_hiddenfeld("person_id", $row['id']);
-            erstelle_eingabefeld("Nachname", "person_nachname", $row['name'], "50");
-            erstelle_eingabefeld("Vorname", "person_vorname", $row['first_name'], "50");
-            $birthdate = date_format(new DateTime($row['birthday']), "d.m.Y");
-            erstelle_eingabefeld("Geburtstag (dd.mm.jjjj)", "person_geburtstag", $birthdate, "10");
-        }
-        erstelle_submit_button("submit_person_aendern", "Ändern");
-    } else {
-        hinweis_ausgeben("Person mit der Person ID $person_id existiert nicht!");
-    }
-}
-
-// #### mietvertrag
-function mietvertrag_form_neu()
-{
-    if (!request()->has('objekt_id') && !request()->has('einheit_id')) {
-        mietvertrag_objekt_links();
-    }
-    if (request()->has('objekt_id')) {
-        einheiten_ids_by_objekt(request()->input('objekt_id'));
-    }
-    if (request()->has('einheit_id') && !request()->has('submit_vertragspartner') && !request()->has('mietvertrag_speichern')) {
-        erstelle_formular(NULL, NULL);
-        erstelle_hiddenfeld("einheit_id", request()->input('einheit_id'));
-        personen_liste_multi();
-        erstelle_eingabefeld("Vertragsbeginn)", "mietvertrag_von", "", "10");
-        erstelle_eingabefeld("Vertragsende", "mietvertrag_bis", "", "10");
-        erstelle_submit_button("submit_vertragspartner", "Vertrag abschließen!");
-        ende_formular();
-    }
-    if (request()->has('submit_vertragspartner')) {
-        $anzahl_partner = count(request()->input('PERSON_ID'));
-        if ($anzahl_partner < 1) {
-            fehlermeldung_ausgeben("Wählen Sie Vertragsparteien aus");
-            $error = true;
-        } elseif (!request()->has('mietvertrag_von')) {
-            fehlermeldung_ausgeben("Vertragsbeginn eintragen");
-            $error = true;
-        }
-        echo $error;
-        if ($error != true) {
-            erstelle_formular(NULL, NULL); // name, action
-            $anzahl_partner = count(request()->input('PERSON_ID'));
-            $einheit_kurzname = einheit_kurzname(request()->input('einheit_id'));
-            echo "<tr><td><h1>Folgende Daten wurden übermittelt:\n</h1></td></tr>\n";
-            echo "<tr><td><h2>Einheitkurzname: $einheit_kurzname</h2></td></tr>\n";
-            echo "<tr><td>Vertragsparteien: ";
-            for ($a = 0; $a < $anzahl_partner; $a++) {
-                mieternamen(request()->input('PERSON_ID') [$a]);
-            }
-            echo "</td></tr>";
-            echo "<tr><td>Von: " . request()->input('mietvertrag_von') . "</td></tr>";
-            if (!request()->has('mietvertrag_bis')) {
-                $vertrag_bis = "unbefristet";
-            } else {
-                $vertrag_bis = request()->input('mietvertrag_bis');
-            }
-            echo "<tr><td>Bis: $vertrag_bis</td></tr>";
-            echo "<tr><td>";
-            warnung_ausgeben("Sind Sie sicher, daß Sie diesen Mietvertrag abschließen möchten?");
-            echo "</td></tr>";
-            erstelle_hiddenfeld("einheit_id", request()->input('einheit_id'));
-            erstelle_hiddenfeld("mietvertrag_von", request()->input('mietvertrag_von'));
-            erstelle_hiddenfeld("mietvertrag_bis", request()->input('mietvertrag_bis'));
-            for ($a = 0; $a < $anzahl_partner; $a++) {
-                erstelle_hiddenfeld("PERSON_ID[]", request()->input('PERSON_ID')[$a]);
-            }
-            erstelle_submit_button("mietvertrag_speichern", "Speichern"); // name, wert
-            ende_formular();
-        }
-    }
-    // ##vertrag eintragen
-    if (request()->has('mietvertrag_speichern')) {
-        mietvertrag_anlegen(request()->input('mietvertrag_von'), request()->input('mietvertrag_bis'), request()->input('einheit_id'));
-        $zugewiesene_vetrags_id = mietvertrag_by_einheit(request()->input('einheit_id'));
-        $anzahl_partner = count(request()->input('PERSON_ID'));
-        for ($a = 0; $a < $anzahl_partner; $a++) {
-            person_zu_mietvertrag(request()->input('PERSON_ID') [$a], $zugewiesene_vetrags_id);
-        }
-        hinweis_ausgeben("Mietvertrag wurde erstellt!");
-        hinweis_ausgeben("Sie werden zur Mietdefinition weitergeleitet!");
-        weiterleiten_in_sec(route('web::miete_definieren::legacy', ['option' => 'miethoehe', 'mietvertrag_id' => $zugewiesene_vetrags_id], false), "2");
-    }
 }
