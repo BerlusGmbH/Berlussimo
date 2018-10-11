@@ -521,47 +521,6 @@ class miete
         }
     }
 
-    function berechnen()
-    {
-        $mv_id = 3;
-        $my_arr1 = DB::select("SELECT ANFANG, ENDE, KOSTENKATEGORIE, BETRAG FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mv_id' ");
-
-        echo "<pre>";
-
-        $einzug = '2008-03-01';
-        $auszug = date("Y-m-d");
-        $monate = $this->diff_in_monaten($einzug, $auszug);
-
-        $saldo_neu = 0;
-
-        for ($index = 0; $index < count($my_arr1); $index++) {
-            $anfang = $my_arr1 [$index] ['ANFANG'];
-            $betrag = $my_arr1 [$index] ['BETRAG'];
-
-            if ($ende = '0000-00-00') {
-                $ende = '';
-            }
-            $monate_fallig_me = $this->diff_in_monaten($anfang, $ende);
-            if ($monate_fallig_me < $monate) {
-                $gesamt_betrag = $monate_fallig_me * $betrag;
-            } else {
-                $gesamt_betrag = $monate * $betrag;
-            }
-            $saldo_neu = $saldo_neu + $gesamt_betrag;
-        }
-
-        echo "<br><h1><b>$saldo_neu</b></h1><br>";
-
-        $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE AKTUELL='1' && KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mv_id' ");
-
-        if (!empty($result)) {
-            $row = $result[0];
-            $summe_eingezahlt = $row ['SUMME'];
-        }
-        $b = $summe_eingezahlt - $saldo_neu;
-        echo "<h1>$b</h1>";
-    }
-
     function diff_in_monaten($einzug, $auszug)
     {
         if ($auszug == '0000-00-00' or empty ($auszug)) {

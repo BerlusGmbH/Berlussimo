@@ -51,6 +51,21 @@ class Partner extends Model
         return $this->morphMany('App\Models\Details', 'details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID');
     }
 
+    public function emails()
+    {
+        return $this->details()->where('DETAIL_NAME', 'Email');
+    }
+
+    public function faxs()
+    {
+        return $this->details()->where('DETAIL_NAME', 'Fax');
+    }
+
+    public function phones()
+    {
+        return $this->details()->whereIn('DETAIL_NAME', ['Handy', 'Tel.', 'Telefon']);
+    }
+
     public function rechtsvertreter()
     {
         return $this->details()->where('DETAIL_NAME', 'Rechtsvertreter');

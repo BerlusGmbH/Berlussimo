@@ -1,22 +1,4 @@
 <div class="row">
-    <div class="col-xs-12 col-md-6">
-        <h3>Interessenten</h3>
-        <div class="row">
-            <div class='col-xs-6 col-lg-2'>
-                <a href='<?php echo route('web::leerstand::legacy', ['option' => 'form_interessenten']) ?>'>Erfassen</a>
-            </div>
-            <div class='col-xs-6 col-lg-2'>
-                <a href='<?php echo route('web::leerstand::legacy', ['option' => 'interessentenliste']) ?>'>Alle</a>
-            </div>
-            <div class='col-xs-6 col-lg-2'>
-                <a href='<?php echo route('web::leerstand::legacy', ['option' => 'termine']) ?>'>Termine</a>
-            </div>
-            <div class='col-xs-6'>
-                <a href='<?php echo route('web::leerstand::legacy', ['option' => 'termine', 'vergangen']) ?>'>vergangene
-                    Termine</a>
-            </div>
-        </div>
-    </div>
     <div class="col-xs-12 col-md-6 col-lg-2">
         <h3>Leerstände</h3>
         <div class="row">
