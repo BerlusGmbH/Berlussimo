@@ -693,11 +693,13 @@ class sepa
     function mandat_beenden($mv_id, $edatum)
     {
         $edatum = date_german2mysql($edatum);
-        $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE M_KOS_TYP LIKE 'Mietvertrag' AND M_KOS_ID = '$mv_id' AND AKTUELL = '1' AND M_EDATUM = '9999-12-31' LIMIT 0 , 1");
-        if (!empty($result)) {
-            DB::update("UPDATE `SEPA_MANDATE` SET AKTUELL='0' WHERE M_KOS_TYP LIKE 'Mietvertrag' AND M_KOS_ID = '$mv_id'");
-            $sql = "INSERT INTO `SEPA_MANDATE`(M_ID, M_REFERENZ, GLAEUBIGER_ID, GLAEUBIGER_GK_ID, BEGUENSTIGTER, NAME, ANSCHRIFT, KONTONR, BLZ, IBAN, BIC, BANKNAME, M_UDATUM, M_ADATUM, M_EDATUM, M_ART, NUTZUNGSART, EINZUGSART, M_KOS_TYP, M_KOS_ID, AKTUELL) SELECT M_ID, M_REFERENZ, GLAEUBIGER_ID, GLAEUBIGER_GK_ID, BEGUENSTIGTER, NAME, ANSCHRIFT, KONTONR, BLZ, IBAN, BIC, BANKNAME, M_UDATUM, M_ADATUM, '$edatum', M_ART, NUTZUNGSART, EINZUGSART, M_KOS_TYP, M_KOS_ID, '1' FROM SEPA_MANDATE WHERE M_KOS_TYP LIKE 'Mietvertrag' AND M_KOS_ID = '$mv_id' AND M_EDATUM = '9999-12-31' LIMIT 1;";
+        $results = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE M_KOS_TYP LIKE 'Mietvertrag' AND M_KOS_ID = '$mv_id' AND AKTUELL = '1' AND M_ADATUM <= '$edatum' AND M_EDATUM >= '$edatum'");
+        foreach ($results as $result) {
+            DB::update("UPDATE `SEPA_MANDATE` SET AKTUELL='0' WHERE DAT=" . $result['DAT']);
+            $sql = "INSERT INTO `SEPA_MANDATE`(M_ID, M_REFERENZ, GLAEUBIGER_ID, GLAEUBIGER_GK_ID, BEGUENSTIGTER, NAME, ANSCHRIFT, KONTONR, BLZ, IBAN, BIC, BANKNAME, M_UDATUM, M_ADATUM, M_EDATUM, M_ART, NUTZUNGSART, EINZUGSART, M_KOS_TYP, M_KOS_ID, AKTUELL) SELECT M_ID, M_REFERENZ, GLAEUBIGER_ID, GLAEUBIGER_GK_ID, BEGUENSTIGTER, NAME, ANSCHRIFT, KONTONR, BLZ, IBAN, BIC, BANKNAME, M_UDATUM, M_ADATUM, '$edatum', M_ART, NUTZUNGSART, EINZUGSART, M_KOS_TYP, M_KOS_ID, '1' FROM SEPA_MANDATE WHERE DAT = " . $result['DAT'] . " LIMIT 1;";
             DB::insert($sql);
+        }
+        if (!empty($results)) {
             return true;
         } else {
             return false;
