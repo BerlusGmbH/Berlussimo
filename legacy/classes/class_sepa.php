@@ -1616,7 +1616,7 @@ class sepa
             );
         } else {
             $myKtoSepaSimple = new KtoSepaSimple ();
-            $datum = '1999-01-01';
+            $datum = date("Y-m-d");
             $datum_h = date("dmY");
             $time_h = date("His");
 
