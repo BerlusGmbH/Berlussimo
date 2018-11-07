@@ -829,7 +829,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             $rrr = new rechnungen ();
             $rrr->btn_pool($kostentraeger_typ, $kostentraeger_id, $kontierung_dat, 'this');
 
-            echo "</td><td><input type=\"checkbox\" class='filled-in' name=uebernehmen[] id=\"positionen_list_$a\" value=\"$a\" $js_action><label for='positionen_list_$a'>$zeile</label></td><td>$link_rechnung_ansehen</td><td>$position</td><td>$zeile.</td>";
+            echo "</td><td><input type=\"checkbox\" class='filled-in' name=\"uebernehmen[]\" id=\"positionen_list_$a\" value=\"$a\" $js_action><label for='positionen_list_$a'>$zeile</label></td><td>$link_rechnung_ansehen</td><td>$position</td><td>$zeile.</td>";
 
             echo "<td>$artikel_bezeichnung</td><td>";
 
