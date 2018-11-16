@@ -41,6 +41,7 @@
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
     import {Objekt} from "../../../../server/resources";
+    import moment from "moment";
 
     @Component
     export default class RevenueReportDialog extends Vue {
@@ -50,13 +51,11 @@
         @Prop({type: Object})
         object: Objekt;
 
-        period: string = 'year';
+        period: string = 'month';
         date: string = '';
 
         mounted() {
-            let date = new Date();
-
-            this.date = (date.getFullYear() - 1) + '-01';
+            this.date = moment().date(0).format("YYYY-MM-DD");
         }
 
         allowedDates(val) {

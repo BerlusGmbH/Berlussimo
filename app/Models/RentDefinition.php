@@ -86,6 +86,15 @@ class RentDefinition extends Model
                 $value += $this->BETRAG * ($diffInMonths - 1);
             }
         }
+        //TODO one fine day get rid of this inversion inconsistency
+        return $this->invertIfDebitAndCreditAreInvertedForCostCategory($value);
+    }
+
+    private function invertIfDebitAndCreditAreInvertedForCostCategory($value)
+    {
+        if (starts_with($this->KOSTENKATEGORIE, ['Betriebskostenabrechnung', 'Kaltwasserabrechnung', 'Heizkostenabrechnung'])) {
+            return $value * -1;
+        }
         return $value;
     }
 }
