@@ -46,6 +46,11 @@ class Partner extends Model
         return $this->belongsToMany(Person::class, 'jobs', 'employer_id', 'employee_id');
     }
 
+    public function bankaccounts()
+    {
+        return $this->belongsToMany(Bankkonten::class, 'GELD_KONTEN_ZUWEISUNG', 'KOSTENTRAEGER_ID', 'KONTO_ID')->wherePivot('KOSTENTRAEGER_TYP', 'Partner')->wherePivot('AKTUELL', '1');
+    }
+
     public function details()
     {
         return $this->morphMany('App\Models\Details', 'details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID');
