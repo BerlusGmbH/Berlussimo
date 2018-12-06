@@ -55,9 +55,9 @@ class PBXController extends Controller
                 switch (get_class($detail->from)) {
                     case Person::class:
                         $cnam = $detail->from->full_name;
-                        if (!$detail->from->mietvertraege->isEmpty()) {
+                        $rentalContracts = $detail->from->mietvertraege()->defaultOrder()->get();
+                        if (!$rentalContracts->isEmpty()) {
                             $cnam .= ' (';
-                            $rentalContracts = $detail->from->mietvertraege;
                             $cnam .= $rentalContracts->first()->einheit->EINHEIT_KURZNAME;
                             if ($rentalContracts->count() > 1) {
                                 $cnam .= ' +' . ($rentalContracts->count() - 1);
