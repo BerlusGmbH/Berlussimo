@@ -346,22 +346,22 @@ switch ($mietvertrag_raus) {
     /* aktuelle Mietverträge */
     case "mahnliste" :
         set_time_limit(240);
-        $f = new formular ();
-        $f->fieldset("Mahnliste aktuell", 'mahnliste');
         $bg = new berlussimo_global ();
         $bg->objekt_auswahl_liste();
         if (session()->has('objekt_id')) {
             $ma = new mahnungen ();
             if (!request()->exists('pdf')) {
+                $f = new formular ();
+                $f->fieldset("Mahnliste aktuell", 'mahnliste');
                 $obj_id = session()->get('objekt_id');
                 $link_pdf = "<a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mahnliste', 'objekt_id' => $obj_id, 'pdf'], false) . "'>Als PDF anzeigen</a>";
                 echo $link_pdf;
                 $ma->finde_schuldner('aktuelle');
+                $f->fieldset_ende();
             } else {
                 $ma->finde_schuldner_pdf('aktuelle');
             }
         }
-        $f->fieldset_ende();
         break;
 
     case "mahnliste_alle" :

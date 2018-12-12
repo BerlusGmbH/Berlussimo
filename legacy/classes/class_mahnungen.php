@@ -342,7 +342,8 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
                 )
             ));
             ob_end_clean(); // ausgabepuffer leeren
-            $pdf->ezStream();
+            $pdf_opt ['Content-Disposition'] = \Carbon\Carbon::now()->format('Y-m-d') . " - Mahnliste für " . $mvs->objekt_kurzname . ".pdf";
+            $pdf->ezStream($pdf_opt);
         }
     }
 
