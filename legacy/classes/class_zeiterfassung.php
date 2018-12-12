@@ -341,7 +341,8 @@ class zeiterfassung
         if ($benutzer_id != Auth::user()->id) {
             if (!Auth::user()->hasAnyRole([
                 \App\Libraries\Role::ROLE_BUCHHALTER,
-                \App\Libraries\Role::ROLE_ADMINISTRATOR
+                \App\Libraries\Role::ROLE_ADMINISTRATOR,
+                \App\Libraries\Role::ROLE_BAULEITER,
             ])
             ) {
                 $fehler = 1;
