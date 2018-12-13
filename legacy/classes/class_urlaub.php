@@ -242,18 +242,20 @@ class urlaub
     {
         $result = \App\Models\Person::find($benutzer_id);
         if (isset($result)) {
-            $job = $result->jobsAsEmployee[0];
-            $this->benutzername = $result->full_name;
-            $this->benutzer_id = $benutzer_id;
-            $this->gewerk_id = $job->trade_id;
-            $this->eintritt = $job->join_date;
-            $this->austritt = $job->leave_date;
-            $this->urlaub = $job->holidays;
-            $this->stunden_pw = $job->hours_per_week;
-            $this->stundensatz = $job->hourly_rate;
-        } else {
-            return false;
+            $job = $result->jobsAsEmployee()->defaultOrder()->first();
+            if (isset($job)) {
+                $this->benutzername = $result->full_name;
+                $this->benutzer_id = $benutzer_id;
+                $this->gewerk_id = $job->trade_id;
+                $this->eintritt = $job->join_date;
+                $this->austritt = $job->leave_date;
+                $this->urlaub = $job->holidays;
+                $this->stunden_pw = $job->hours_per_week;
+                $this->stundensatz = $job->hourly_rate;
+                return true;
+            }
         }
+        return false;
     }
 
     function tage_zwischen($von, $bis)

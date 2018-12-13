@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Contracts\Active as ActiveContract;
 use App\Models\Traits\Active;
+use App\Models\Traits\DefaultOrder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,11 +13,13 @@ class Job extends Model implements ActiveContract
 {
     use SoftDeletes;
     use Active;
+    use DefaultOrder;
 
     public $timestamps = true;
     protected $table = 'jobs';
     protected $guarded = [];
     protected $appends = ['type'];
+    protected $defaultOrder = ['join_date' => 'desc', 'leave_date' => 'desc'];
 
     static public function getTypeAttribute()
     {
