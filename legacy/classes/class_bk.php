@@ -700,11 +700,11 @@ class bk
         $nachjahr = $jahr + 1;
 
         if (!session()->has('anzeigen_von') && !session()->has('anzeigen_bis')) {
-            $result = DB::select("SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` ='$geldkonto_id' AND `KONTENRAHMEN_KONTO` ='$kostenkonto' AND `AKTUELL` = '1' && DATE_FORMAT(DATUM, '%Y-%m') BETWEEN '$vorjahr-12' AND '$nachjahr-03' AND GELD_KONTO_BUCHUNGEN_ID NOT IN (SELECT BUCHUNG_ID FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE `BK_K_ID` = '$konto_id' GROUP BY BUCHUNG_ID HAVING SUM( ANTEIL ) >= '100' ) ");
+            $result = DB::select("SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` ='$geldkonto_id' AND `KONTENRAHMEN_KONTO` ='$kostenkonto' AND `AKTUELL` = '1' && DATE_FORMAT(DATUM, '%Y-%m') BETWEEN '$vorjahr-12' AND '$nachjahr-03' AND GELD_KONTO_BUCHUNGEN_ID NOT IN (SELECT BUCHUNG_ID FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE `BK_K_ID` = '$konto_id' GROUP BY BUCHUNG_ID HAVING SUM( ANTEIL ) >= '100' ) ORDER BY DATUM");
         } else {
             $von = date_german2mysql(session()->get('anzeigen_von'));
             $bis = date_german2mysql(session()->get('anzeigen_bis'));
-            $result = DB::select("SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` ='$geldkonto_id' AND `KONTENRAHMEN_KONTO` ='$kostenkonto' AND `AKTUELL` = '1' && DATE_FORMAT(DATUM, '%Y-%m-%d') BETWEEN '$von' AND '$bis' AND GELD_KONTO_BUCHUNGEN_ID NOT IN (SELECT BUCHUNG_ID FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE `BK_K_ID` = '$konto_id' GROUP BY BUCHUNG_ID HAVING SUM( ANTEIL ) >= '100' ) ");
+            $result = DB::select("SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` ='$geldkonto_id' AND `KONTENRAHMEN_KONTO` ='$kostenkonto' AND `AKTUELL` = '1' && DATE_FORMAT(DATUM, '%Y-%m-%d') BETWEEN '$von' AND '$bis' AND GELD_KONTO_BUCHUNGEN_ID NOT IN (SELECT BUCHUNG_ID FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE `BK_K_ID` = '$konto_id' GROUP BY BUCHUNG_ID HAVING SUM( ANTEIL ) >= '100' ) ORDER BY DATUM");
         }
         return $result;
     }
