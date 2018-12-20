@@ -24,7 +24,7 @@ class personal
             echo "<table class=\"sortable striped\">";
             $z = 0;
             echo "<thead><th>MITARBEITER</th><th>AG</th><th>SEPA GK</th><th>BETRAG</th><th>VZWECK</th><th>KONTO</th><th>OPTION</th></thead>";
-            foreach ($jobs as $job) {
+            foreach ($jobs as $index => $job) {
                 $z++;
                 $bankaccount = $job->employer->bankaccounts->first();
                 $employee = $job->employee;
