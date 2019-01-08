@@ -55,7 +55,24 @@ class PBXController extends Controller
                 switch (get_class($detail->from)) {
                     case Person::class:
                         $cnam = $detail->from->full_name;
-                        $rentalContracts = $detail->from->mietvertraege()->defaultOrder()->get();
+                        $rentalContracts = $detail->from->mietvertraege()
+                            ->join('EINHEIT', 'EINHEIT.EINHEIT_ID', '=', 'MIETVERTRAG.EINHEIT_ID')
+                            ->orderByRaw('CASE '
+                                . 'WHEN MIETVERTRAG.MIETVERTRAG_VON <= NOW() && (MIETVERTRAG.MIETVERTRAG_BIS >= NOW() || MIETVERTRAG.MIETVERTRAG_BIS = \'0000-00-00\') THEN 1 '
+                                . 'ELSE 2 '
+                                . 'END'
+                            )->orderByRaw('CASE EINHEIT.TYP '
+                                . 'WHEN "Gewerbe" THEN 1 '
+                                . 'WHEN "Wohnraum" THEN 2 '
+                                . 'WHEN "Wohneigentum" THEN 3 '
+                                . 'WHEN "Zimmer (möbliert)" THEN 4 '
+                                . 'WHEN "Garage" THEN 5 '
+                                . 'WHEN "Stellplatz" THEN 6 '
+                                . 'WHEN "Keller" THEN 7 '
+                                . 'ELSE 8 '
+                                . 'END'
+                            )->defaultOrder()
+                            ->get();
                         if (!$rentalContracts->isEmpty()) {
                             $cnam .= ' (';
                             $cnam .= $rentalContracts->first()->einheit->EINHEIT_KURZNAME;
