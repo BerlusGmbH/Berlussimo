@@ -82,7 +82,7 @@ mix.scripts(
     'public/js/legacy.js'
 );
 
-mix.scripts(
+mix.babel(
     [
         'legacy/js/wartungsplaner.js',
         'legacy/js/sorttable.js'
