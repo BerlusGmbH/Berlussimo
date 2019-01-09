@@ -207,13 +207,13 @@ function kontakt_suche($target_id, $string)
                     {
                         'type': 'Request',
                         'value': '/wartungsplaner/ajax?option=unset_g_id'
-                    }
-                ],
-                [
+                    },
                     {
                         'type': 'Request',
                         'value': '/wartungsplaner/ajax?option=einheit_register&einheit_id=$einheit_id&einheit_bez=$EINHEIT_KURZNAME'
-                    },
+                    }
+                ],
+                [
                     {
                         'type': 'Request',
                         'value': '/wartungsplaner/ajax?option=get_partner_info',
@@ -332,10 +332,6 @@ function kontakt_suche($target_id, $string)
                     }
                 ],
                 [
-                    {
-                        'type': 'Request',
-                        'value': '/wartungsplaner/ajax?option=einheit_register&einheit_id=Wartungsteil&einheit_bez=Bitte waehlen'
-                    },
                     {
                         'type': 'Request',
                         'value': '/wartungsplaner/ajax?option=get_partner_info',
