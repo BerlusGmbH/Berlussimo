@@ -199,7 +199,6 @@ function kontakt_suche($target_id, $string)
                         $z++;
 
                         $js = "onclick=\"transitionState([
-                [
                     {
                         'type': 'Request',
                         'value': '/wartungsplaner/ajax?option=kos_typ_register&kos_typ=Partner&kos_id=$EIGENTUEMER_PARTNER'
@@ -211,9 +210,7 @@ function kontakt_suche($target_id, $string)
                     {
                         'type': 'Request',
                         'value': '/wartungsplaner/ajax?option=einheit_register&einheit_id=$einheit_id&einheit_bez=$EINHEIT_KURZNAME'
-                    }
-                ],
-                [
+                    },
                     {
                         'type': 'Request',
                         'value': '/wartungsplaner/ajax?option=get_partner_info',
@@ -224,7 +221,6 @@ function kontakt_suche($target_id, $string)
                         'value': '/wartungsplaner/ajax?option=wartungsteil_waehlen',
                         'target': 'leftBox'
                     }
-                ]
             ])\"";
 
                         $p_nachname = $row['name'];
@@ -248,7 +244,6 @@ function kontakt_suche($target_id, $string)
             $p_id = $row['PARTNER_ID'];
 
             $js_t = "onclick=\"transitionState([
-                [
                     {
                         'type': 'Request',
                         'value': '/wartungsplaner/ajax?option=kos_typ_register&kos_typ=Partner&kos_id=$p_id'
@@ -256,9 +251,7 @@ function kontakt_suche($target_id, $string)
                     {
                         'type': 'Request',
                         'value': '/wartungsplaner/ajax?option=unset_g_id'
-                    }
-                ],
-                [
+                    },
                     {
                         'type': 'Request',
                         'value': '/wartungsplaner/ajax?option=einheit_register&einheit_id=Wartungsteil&einheit_bez=Bitte waehlen'
@@ -272,14 +265,11 @@ function kontakt_suche($target_id, $string)
                         'type': 'Request',
                         'value': '/wartungsplaner/ajax?option=wartungsteil_waehlen',
                         'target': 'leftBox'
-                    }
-                ],
-                [
+                    },
                     {
                         'type': 'Function',
                         'value': 'termin_suchen_btn1(\'$datum_d\')'
                     }
-                ]
             ])\"";
 
             $pa_name = $row['PARTNER_NAME'];
@@ -317,7 +307,6 @@ function kontakt_suche($target_id, $string)
                     $g_id = $g_id_arr[$a]['GERAETE_ID'];
 
                     $js_t = "onclick=\"transitionState([
-                [
                     {
                         'type': 'Request',
                         'value': '/wartungsplaner/ajax?option=kos_typ_register&kos_typ=Partner&kos_id=$eigentuemer_p_id'
@@ -329,9 +318,7 @@ function kontakt_suche($target_id, $string)
                     {
                         'type': 'Request',
                         'value': '/wartungsplaner/ajax?option=einheit_register&einheit_id=$einheit_id&einheit_bez=$einheit_bez'
-                    }
-                ],
-                [
+                    },
                     {
                         'type': 'Request',
                         'value': '/wartungsplaner/ajax?option=get_partner_info',
@@ -341,9 +328,7 @@ function kontakt_suche($target_id, $string)
                         'type': 'Request',
                         'value': '/wartungsplaner/ajax?option=wartungsteil_waehlen&g_id=$g_id',
                         'target': 'leftBox'
-                    }
-                ],
-                [
+                    },
                     {
                         'type': 'Request',
                         'value': '/wartungsplaner/ajax?option=get_datum_lw&g_id=$g_id',
@@ -353,7 +338,6 @@ function kontakt_suche($target_id, $string)
                         'type': 'Function',
                         'value': 'termin_suchen_btn1(\'$datum_d\')'
                     }
-                ]
             ]);\"";
 
                     echo "<tr $js_t class=\"zeile$z\"><td>Einheit</td><td>$row[EINHEIT_KURZNAME] $mietername $haus_str $haus_nr $e_lage $objekt_id Gerät:$g_id</td></tr>";

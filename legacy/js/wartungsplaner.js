@@ -417,25 +417,13 @@ function transitionPromises(transitions) {
         transitions.forEach(function (subTransitions) {
             if (previous) {
                 previous = previous.then(function () {
-                    return subTransitionPromises(subTransitions);
+                    return transitionPromises(subTransitions);
                 });
             } else {
-                first = previous = subTransitionPromises(subTransitions);
+                first = previous = transitionPromises(subTransitions);
             }
         });
         return first;
-    } else {
-        return transitionPromise(transitions);
-    }
-}
-
-function subTransitionPromises(transitions) {
-    if (Array.isArray(transitions)) {
-        let promises = [];
-        transitions.forEach(function (transition) {
-            promises.push(transitionPromise(transition));
-        });
-        return Promise.all(promises);
     } else {
         return transitionPromise(transitions);
     }
