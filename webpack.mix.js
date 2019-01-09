@@ -90,6 +90,8 @@ mix.scripts(
     'public/js/wartungsplaner.js'
 );
 
+mix.scripts(['node_modules/axios/dist/axios.min.js'], 'public/js/axios.min.js');
+
 mix.copyDirectory('legacy/images/', 'public/images/');
 mix.copy('legacy/graph/css/LineGraph.css', 'public/css/LineGraph.css');
 mix.copy('legacy/graph/css/PieGraph.css', 'public/css/PieGraph.css');
