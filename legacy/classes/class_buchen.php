@@ -439,9 +439,9 @@ class buchen
             $haeuser = $haeuserQuery->get();
             foreach ($haeuser as $haus) {
                 if ($vorwahl_bez == $haus->HAUS_ID) {
-                    echo "<option value=\"$haus->HAUS_ID\" selected>$haus->HAUS_STRASSE $haus->HAUS_NUMMER - $haus->objekt->OBJEKT_KURZNAME</option>";
+                    echo "<option value=\"$haus->HAUS_ID\" selected>$haus->HAUS_STRASSE $haus->HAUS_NUMMER | " . $haus->objekt->OBJEKT_KURZNAME . "</option>";
                 } else {
-                    echo "<option value=\"$haus->HAUS_ID\">$haus->HAUS_STRASSE $haus->HAUS_NUMMER - $haus->objekt->OBJEKT_KURZNAME</option>";
+                    echo "<option value=\"$haus->HAUS_ID\">$haus->HAUS_STRASSE $haus->HAUS_NUMMER | " . $haus->objekt->OBJEKT_KURZNAME . "</option>";
                 }
             }
         }
