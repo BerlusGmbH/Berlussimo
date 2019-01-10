@@ -553,7 +553,7 @@ function get_partner_anschrift($partner_id)
 function get_entfernung_km($start, $destination = START_ADRESSE)
 {
     echo "ENTFERNUNG wird berechnet!";
-    $url = "http://maps.google.com/maps/api/directions/xml?origin=$start &destination=$destination &sensor=false&language=de";
+    $url = "https://maps.google.com/maps/api/directions/xml?origin=$start &destination=$destination &sensor=false&language=de";
     $xml = simplexml_load_file($url);
     sleep(2);
     if ($xml === FALSE) {
@@ -617,7 +617,7 @@ function get_lat_lon_db_osm($str, $nr, $plz, $ort)
         session()->put("lon_lats.$str,$nr, $plz, $ort", $lat_lon);
         return $lat_lon;
     }
-    $url = "http://maps.google.com/maps/api/geocode/xml?address=$str+$nr+$plz+$ort&sensor=false";
+    $url = "https://maps.google.com/maps/api/geocode/xml?address=$str+$nr+$plz+$ort&sensor=false";
     $xml = simplexml_load_file("$url");
     sleep(1);
     if ($xml === FALSE) {
@@ -632,7 +632,7 @@ function get_lat_lon_db_osm($str, $nr, $plz, $ort)
         } else {
             #	echo "google NOK $xml->status<br>$url<br>";
             /*Über den Routenplaner von Google suchen*/
-            $url = "http://maps.google.com/maps/api/directions/xml?origin=" . "$str $nr, $plz $ort " . " &destination=Sansibarstr 12, 13351 Berlin&sensor=false";
+            $url = "https://maps.google.com/maps/api/directions/xml?origin=" . "$str $nr, $plz $ort " . " &destination=Sansibarstr 12, 13351 Berlin&sensor=false";
             $xml = simplexml_load_file("$url");
             if ($xml->status == 'OK') {
                 $lat = $xml->route->leg->step->start_location->lat;
@@ -1820,7 +1820,9 @@ function freie_termine_tab($arr)
             $wochentag = get_wochentag_name($DATUM);
             $wt = get_wochentag($DATUM);
             $kw = get_kw($DATUM);
-            $js_neues_teil = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $BENUTZER_ID, 'datum' => $DATUM], false) . "','rightBox1');daj3('" . route('web::wartungsplaner::ajax', ['option' => 'karte', 'b_id' => $BENUTZER_ID, 'datum_d' => $DATUM], false) . "','rightBox');\"";
+            $b_id = $arr['BENUTZER_ID'];
+            $benutzername = get_benutzername($b_id);
+            $js_neues_teil = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $b_id, 'datum' => $DATUM], false) . "','rightBox1');daj3('" . route('web::wartungsplaner::ajax', ['option' => 'karte', 'b_id' => $BENUTZER_ID, 'datum_d' => $DATUM], false) . "','rightBox');\"";
             if ($wt == 6 or $wt == 7) {
                 echo "<tr $js_neues_teil class=\"zeile$z\"><td>$kw. KW</td><td>$DATUM</td><td class=\"zeile_belegt\">$wochentag</td><td>$benutzername</td><td>$D_KM km</td><td>$FREI/$TERMINE_TAG</td></tr>";
             } else {
@@ -1893,12 +1895,13 @@ function freie_termine_tab3($arr)
 
             $anz_freie = count($arr[$a]['LUECKEN']);
 
+            $b_id = $arr[$a]['BENUTZER_ID'];
+            $benutzername = get_benutzername($b_id);
 
             if ($wt == 6 or $wt == 7) {
                 echo "<tr $js_neues_teil class=\"zeile$z\"><td>$kw. KW</td><td>$DATUM</td><td class=\"zeile_belegt\">$wochentag</td><td>$benutzername</td><td>$D_KM km</td><td>$FREI/$TERMINE_TAG</td></tr>";
             } else {
                 echo "<tr $js_neues_teil class=\"zeile$z\"><td>$kw. KW</td><td>$DATUM</td><td>";
-                $b_id = $arr[$a]['BENUTZER_ID'];
                 $ganzer_tag_arr = tages_ansicht_arr($b_id, $DATUM);
                 echo "<table>";
                 for ($cc = 0; $cc < $anz_freie; $cc++) {
@@ -3609,7 +3612,7 @@ function get_lon_lat_osm($str, $nr, $plz, $ort, $w_datum)
         return $lat_lon;
     }
 
-    $url = "http://maps.google.com/maps/api/directions/xml?origin=" . "$str $nr, $plz $ort " . " &destination=" . START_ADRESSE . "&sensor=false";
+    $url = "https://maps.google.com/maps/api/directions/xml?origin=" . "$str $nr, $plz $ort " . " &destination=" . START_ADRESSE . "&sensor=false";
     $xml = simplexml_load_file("$url");
     sleep(2);
     if ($xml === FALSE) {
@@ -4591,7 +4594,7 @@ class general
 
     function karte_anzeigen($b_id, $datum_d, $breite = 580, $hoehe = 400, $zoom = 10)
     {
-        $map_berlin = "http://maps.google.com/maps/api/staticmap?center=Berlin,%20Germany&zoom=$zoom&size=" . $breite . "x" . "$hoehe&maptype=roadmap&sensor=false";
+        $map_berlin = "https://maps.google.com/maps/api/staticmap?center=Berlin,%20Germany&zoom=$zoom&size=" . $breite . "x" . "$hoehe&maptype=roadmap&sensor=false";
         $map_markers = '';
 
 
@@ -5024,7 +5027,7 @@ class general
             $z_nr = ltrim(rtrim($ziel_arr[4]));
             $z_plz = ltrim(rtrim($ziel_arr[5]));
             $z_ort = ltrim(rtrim($ziel_arr[6]));
-            $url = "http://maps.google.com/maps/api/directions/xml?origin=$s_str+$s_nr+$s_plz+$s_ort&destination=$z_str+$z_nr+$z_plz+$z_ort&sensor=false&language=de";
+            $url = "https://maps.google.com/maps/api/directions/xml?origin=$s_str+$s_nr+$s_plz+$s_ort&destination=$z_str+$z_nr+$z_plz+$z_ort&sensor=false&language=de";
             $xml = simplexml_load_file("$url");
             sleep(1);
             if (!$xml) {
