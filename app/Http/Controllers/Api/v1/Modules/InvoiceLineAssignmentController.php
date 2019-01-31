@@ -117,10 +117,10 @@ class InvoiceLineAssignmentController extends Controller
             'KONTENRAHMEN_KONTO'
         ];
         $attributes = collect($request->only($attributeNames))->reject(function ($name, $key) use ($request) {
-            return !$request->has($key);
+            return !$request->filled($key);
         });
         $create = collect($attributeNames)->reduce(function ($carry, $name) use ($request) {
-            return $carry === false ? $carry : $request->has($name);
+            return $carry === false ? $carry : $request->filled($name);
         });
         $lines = $request->input('lines');
         return DB::transaction(function () use ($attributes, $create, $lines) {

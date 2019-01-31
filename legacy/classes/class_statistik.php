@@ -190,7 +190,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         $o1 = new objekt ();
         $objekt_name = $o1->get_objekt_name($objekt_id);
 
-        if (!request()->has('monat') && !request()->has('jahr')) {
+        if (!request()->filled('monat') && !request()->filled('jahr')) {
             $datum = date("Y-m");
             $monat = date("m");
             $jahr = date("Y");
@@ -356,7 +356,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         $f->fieldset("Verwaltergebühr für Häusergruppen", 'v_geb_haeuser');
         if (request()->isMethod('post')) {
             $anzahl_h = count(request()->input('haus'));
-            if (!request()->has('monat') && !request()->has('jahr')) {
+            if (!request()->filled('monat') && !request()->filled('jahr')) {
                 $jahr_monat = date("Y-m");
                 $jahr = date("Y");
                 $monat = date("m");
@@ -508,7 +508,7 @@ LIMIT 0 , 30 ");
         $mwst_eur = nummer_punkt2komma($mwst_eur);
         $brutto_vgeb_a = nummer_punkt2komma($brutto_vgeb);
         $v_geb_a = nummer_punkt2komma($v_geb);
-        if (!request()->has('pdf')) {
+        if (!request()->filled('pdf')) {
             echo "$gsollmiete_vermietet_a €   GESAMT SOLL VERMIETET<br>";
             echo "$gsollmiete_leer_a €   GESAMT SOLL LEER<br>";
             echo " $g_summe_a €   GESAMT SOLL<br>";

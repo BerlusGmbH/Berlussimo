@@ -1,6 +1,6 @@
 <?php
 
-if (request()->has('optionen')) {
+if (request()->filled('optionen')) {
 	$daten = request()->input('optionen');
 	switch ($daten) {
 		

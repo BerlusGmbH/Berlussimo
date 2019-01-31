@@ -8,8 +8,9 @@
                     berlussimo
                 </v-toolbar-title>
             </router-link>
-            <a class="app-toolbar-logo-link" v-else href="/"><img class="app-toolbar-logo"
-                                                                  src="/images/berlus_logo.svg">
+            <a class="app-toolbar-logo-link" href="/" v-else>
+                <img class="app-toolbar-logo"
+                     src="/images/berlus_logo.svg">
                 <v-toolbar-title class="headline" style="margin-left: 0">
                     berlussimo
                 </v-toolbar-title>
@@ -48,14 +49,14 @@
 <script lang="ts">
     import Vue from 'vue';
     import Component from 'vue-class-component';
-    import {Getter, namespace} from 'vuex-class';
+    import {namespace} from 'vuex-class';
     import searchbar from "./Searchbar.vue";
     import notificationsToggle from "./NotificationsToggle.vue";
     import searchDialog from "../common/dialogs/SearchDialog.vue";
     import userMenuDialog from "../common/dialogs/UserMenuDialog.vue";
     import userMenuList from "./UserMenuList.vue";
 
-    const AuthGetter = namespace('auth', Getter);
+    const Auth = namespace('auth');
 
     @Component({
         components: {
@@ -67,9 +68,9 @@
         }
     })
     export default class Toolbar extends Vue {
-        @AuthGetter('check')
+        @Auth.Getter('check')
         authCheck;
-        @AuthGetter('user')
+        @Auth.Getter('user')
         user;
 
         search: boolean = false;
@@ -90,5 +91,10 @@
         height: calc(100% - 10px);
         padding-left: .5em;
         padding-right: .5em;
+    }
+
+    .v-toolbar__content {
+        padding-left: 0 !important;
+        padding-right: 1px !important;
     }
 </style>

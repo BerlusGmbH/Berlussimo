@@ -43,7 +43,7 @@ switch ($option) {
 		$lager_info->lager_auswahl_liste ( $link );
 		$form = new mietkonto ();
 		$form->erstelle_formular ( "Lagerbestand ->", NULL );
-		if (request()->has('datum')) {
+        if (request()->filled('datum')) {
 			/* Class_lager) */
 			$l = new lager_v ();
 			if (!request()->exists('pdf_check')) {
@@ -99,7 +99,7 @@ switch ($option) {
 		break;
 	
 	case "artikel_suche" :
-		if (request()->has('artikel_nr')) {
+        if (request()->filled('artikel_nr')) {
 			$artikel_nr = request()->input('artikel_nr');
 			$l = new lager ();
 			$l->artikel_suche_einkauf ( $artikel_nr, 'Lager', session()->get('lager_id') );
@@ -113,7 +113,7 @@ switch ($option) {
 	
 	case "lieferschein_send" :
 		$l = new lager_v ();
-		if (request()->has('lieferant_id') && request()->has('empfaenger_id') && request()->has('l_nr') && request()->has('l_datum')) {
+        if (request()->filled('lieferant_id') && request()->filled('empfaenger_id') && request()->filled('l_nr') && request()->filled('l_datum')) {
 			$l->lieferschein_speichern ( 'Partner', request()->input('lieferant_id'), 'Partner', request()->input('empfaenger_id'), request()->input('l_datum'), request()->input('l_nr') );
 		}
 		break;

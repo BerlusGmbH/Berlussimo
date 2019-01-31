@@ -750,7 +750,7 @@ class rechnungen
 
     function form_lieferschein_erfassen($beleg_nr)
     {
-        if (request()->has('submit_lief')) {
+        if (request()->filled('submit_lief')) {
             $lieferschein = request()->input('lieferschein');
             if (!empty ($lieferschein)) {
                 echo "$lieferschein speichern";
@@ -1185,7 +1185,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $anzahl = count($arr);
         if ($anzahl) {
             echo "<span>";
-            if (!request()->has('anzeige') || request()->input('anzeige') == 'rechnungsnummer') {
+            if (!request()->filled('anzeige') || request()->input('anzeige') == 'rechnungsnummer') {
                 $anzeige_var = 'rechnungsnummer';
                 session()->put('rg_sort', $anzeige_var);
                 $link_nr = "<a href='" . route('web::buchen::legacy', ['option' => 'eingangsbuch_kurz', 'anzeige' => 'empfaenger_eingangs_rnr']) . "'>WE-NR anzeigen</a>";
@@ -4240,7 +4240,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
 
     function form_beleg2pool()
     {
-        if (request()->has('jahr')) {
+        if (request()->filled('jahr')) {
             $jahr = request()->input('jahr');
         } else {
             $jahr = date("Y");

@@ -2,7 +2,7 @@
 
 include_once('function.php');
 
-if (request()->has('option')) {
+if (request()->filled('option')) {
     switch (request()->input('option')) {
 
         default:
@@ -11,7 +11,7 @@ if (request()->has('option')) {
 
         case "tages_termine":
             $datum = request()->input('datum');
-            if (!request()->has('benutzer_id')) {
+            if (!request()->filled('benutzer_id')) {
                 $benutzer_id = session()->get('benutzer_id');
             } else {
                 $benutzer_id = request()->input('benutzer_id');

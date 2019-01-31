@@ -1,6 +1,6 @@
 <?php
 
-if (request()->has('formular')) {
+if (request()->filled('formular')) {
     switch (request()->input('formular')) {
 
         case "einheit" :

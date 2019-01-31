@@ -20,6 +20,7 @@ use App\Services\PhoneLocator;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\Passport;
 use Schema;
 
 class AppServiceProvider extends ServiceProvider
@@ -66,6 +67,7 @@ class AppServiceProvider extends ServiceProvider
                 $invoice->updateSums();
             }
         });
+        Passport::withoutCookieSerialization();
     }
 
     /**

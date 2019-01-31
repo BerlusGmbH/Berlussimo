@@ -2,11 +2,10 @@
     <app-entity-select @input="select"
                        :value="selected"
                        hide-details
-                       prepend-icon="search"
+                       prepend-inner-icon="search"
                        append-icon=""
                        :entities="['objekt', 'person', 'haus', 'einheit', 'partner']"
-                       solo
-                       style="background: #636363"
+                       solo-inverted
     >
     </app-entity-select>
 </template>

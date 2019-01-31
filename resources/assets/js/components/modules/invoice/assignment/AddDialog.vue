@@ -107,7 +107,7 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {Mutation, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
     import {Prop, Watch} from "vue-property-decorator";
     import {
         BankAccountStandardChart,
@@ -117,8 +117,8 @@
     } from "../../../../server/resources";
     import _ from 'lodash';
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const Snackbar = namespace('shared/snackbar');
+    const Refresh = namespace('shared/refresh');
 
     @Component
     export default class AddDialog extends Vue {
@@ -155,10 +155,10 @@
             this.fillAssignment();
         }
 
-        @SnackbarMutation('updateMessage')
+        @Snackbar.Mutation('updateMessage')
         updateMessage: Function;
 
-        @RefreshMutation('requestRefresh')
+        @Refresh.Mutation('requestRefresh')
         requestRefresh: Function;
 
         saving: boolean = false;

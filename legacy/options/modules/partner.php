@@ -1,6 +1,6 @@
 <?php
 
-if (request()->has('option')) {
+if (request()->filled('option')) {
     $option = request()->input('option');
 } else {
     $option = 'default';
@@ -75,7 +75,7 @@ switch ($option) {
         break;
 
     case "partner_stichwort" :
-        if (request()->has('partner_id')) {
+        if (request()->filled('partner_id')) {
             $pp = new partners ();
             $pp->form_partner_stichwort_neu(request()->input('partner_id'));
             $pp->form_partner_stichwort(request()->input('partner_id'));
@@ -83,7 +83,7 @@ switch ($option) {
         break;
 
     case "partner_stich_sent" :
-        if (request()->has('stichworte')) {
+        if (request()->filled('stichworte')) {
             $anz_stich = count(request()->input('stichworte'));
             $partner_id = request()->input('partner_id');
             $pp = new partners ();
@@ -93,7 +93,7 @@ switch ($option) {
         break;
 
     case "partner_stich_sent_neu" :
-        if (request()->has('partner_id') && request()->has('stichwort') && request()->has('stichwort')) {
+        if (request()->filled('partner_id') && request()->filled('stichwort') && request()->filled('stichwort')) {
             $stichwort = request()->input('stichwort');
             $partner_id = request()->input('partner_id');
             $pp = new partners ();
@@ -136,7 +136,7 @@ switch ($option) {
         break;
 
     case "partner_aendern" :
-        if (request()->has('partner_id')) {
+        if (request()->filled('partner_id')) {
             $partner = new partners ();
             $partner->form_partner_aendern(request()->input('partner_id'));
         } else {
@@ -146,7 +146,7 @@ switch ($option) {
 
     case "partner_aendern_send" :
         if (request()->isMethod('post')) {
-            if (request()->has('partner_dat') && request()->has('partner_id') && request()->has('partnername') && request()->has('strasse') && request()->has('hausnummer') && request()->has('plz') && request()->has('ort') && request()->has('land')) {
+            if (request()->filled('partner_dat') && request()->filled('partner_id') && request()->filled('partnername') && request()->filled('strasse') && request()->filled('hausnummer') && request()->filled('plz') && request()->filled('ort') && request()->filled('land')) {
                 echo "alles OK";
                 $p = new partners ();
                 $p->partner_aendern(request()->input('partner_dat'), request()->input('partner_id'), request()->input('partnername'), request()->input('strasse'), request()->input('hausnummer'), request()->input('plz'), request()->input('ort'), request()->input('land'));
@@ -166,7 +166,7 @@ switch ($option) {
         break;
 
     case "serien_brief_vorlagenwahl" :
-        if (request()->has('delete')) {
+        if (request()->filled('delete')) {
             session()->put('p_ids', []);
             echo "Alle gelöscht!";
             break;
@@ -174,11 +174,11 @@ switch ($option) {
         if (!session()->has('p_ids')) {
             session()->put('p_ids', []);
         }
-        if (request()->has('p_ids') && is_array(request()->input('p_ids'))) {
+        if (request()->filled('p_ids') && is_array(request()->input('p_ids'))) {
             session()->put('p_ids', array_merge(session()->get('p_ids'), request()->input('p_ids')));
             session()->put('p_ids', array_unique(session()->get('p_ids')));
             $s = new serienbrief ();
-            if (request()->has('kat')) {
+            if (request()->filled('kat')) {
                 $s->vorlage_waehlen('Partner', request()->input('kat'));
             } else {
                 $s->vorlage_waehlen('Partner');

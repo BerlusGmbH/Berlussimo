@@ -156,7 +156,7 @@ switch ($daten_rein) {
         $obj_dat = request()->input('obj_dat');
         $objekt_kurzname = objekt_kurzname_finden($obj_dat);
 
-        if (!request()->has('obj_loeschen')) {
+        if (!request()->filled('obj_loeschen')) {
             erstelle_formular(NULL, NULL); // name, action
             echo "<tr><td><h1>Objektkurzname: $objekt_kurzname</h2></td></tr>\n";
             echo "<tr><td>";
@@ -166,7 +166,7 @@ switch ($daten_rein) {
             erstelle_submit_button("obj_loeschen", "Löschen"); // name, wert
             ende_formular();
         }
-        if (request()->has('obj_loeschen')) {
+        if (request()->filled('obj_loeschen')) {
             objekt_loeschen($obj_dat);
             hinweis_ausgeben("$objekt_kurzname wurde gelöscht!");
             weiterleiten(route('web::objekte::legacy', ['objekte_raus' => 'objekte_kurz'], false));

@@ -29,7 +29,7 @@ class CredentialController extends Controller
      */
     public function store(UpdateRequest $request, Person $person)
     {
-        if ($request->has('password')) {
+        if ($request->filled('password')) {
             if ($person->credential === null) {
                 $c = new Credential();
                 $c->api_token = str_random(60);
@@ -40,14 +40,14 @@ class CredentialController extends Controller
             $c->fill(['password' => Hash::make($request->input('password'))]);
             $person->credential()->save($c);
         }
-        if ($request->has('active')) {
+        if ($request->filled('active')) {
             if ($request->input('active')) {
                 $person->credential()->restore();
             } else {
                 $person->credential()->delete();
             }
         }
-        if ($request->has('roles')) {
+        if ($request->filled('roles')) {
             $person->syncRoles($request->input('roles', []));
         }
         return response()->json(['status' => 'ok']);

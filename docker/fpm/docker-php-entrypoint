@@ -1,0 +1,18 @@
+#!/bin/sh
+set -e
+
+if [ ! -f .env ]; then
+    echo "APP_KEY=" > .env
+    php artisan key:generate
+fi
+
+if [ ! -f storage/oauth-private.key ] || [ ! -f storage/oauth-public.key ]; then
+    php artisan passport:keys --force
+fi
+
+# first arg is `-f` or `--some-option`
+if [ "${1#-}" != "$1" ]; then
+	set -- php-fpm "$@"
+fi
+
+exec "$@"

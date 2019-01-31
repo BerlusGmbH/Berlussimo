@@ -867,7 +867,7 @@ ORDER BY EINHEIT_KURZNAME";
     function inspiration_pdf_kurz_6($ausgezogene = 0, $objekt_id, $monat, $jahr, $lang = 'de')
     {
         /* Eingrenzung Kostenabragen */
-        if (!request()->has('von') or !request()->has('bis')) {
+        if (!request()->filled('von') or !request()->filled('bis')) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\InfoMessage('Abfragedatum VON BIS in die URL hinzufügen')
             );
@@ -1027,12 +1027,12 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                     $my_arr [$a] ['5081'] = $this->get_kosten_von_bis('Eigentuemer', $eige_id, $von, $bis, $gk->geldkonto_id, 5081);
                     $my_arr [$a] ['5010'] = $this->get_kosten_von_bis('Eigentuemer', $eige_id, $von, $bis, $gk->geldkonto_id, 5010);
 
-                    if (request()->has('von_a')) {
+                    if (request()->filled('von_a')) {
                         $von_a = date_german2mysql(request()->input('von_a'));
                     } else {
                         $von_a = "$jahr-$monat-01";
                     }
-                    if (!request()->has('bis_a')) {
+                    if (!request()->filled('bis_a')) {
                         $lt = letzter_tag_im_monat($monat, $jahr);
                         $bis_a = "$jahr-$monat-$lt";
                     } else {
@@ -1183,13 +1183,13 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                         $summe_nachzahler += $pdf_tab [$a] ['ENDSUMME'];
                     }
 
-                    if (request()->has('w_monat')) {
+                    if (request()->filled('w_monat')) {
                         $w_monat = request()->input('w_monat');
                     } else {
                         $w_monat = $monat;
                     }
 
-                    if (request()->has('w_jahr')) {
+                    if (request()->filled('w_jahr')) {
                         $w_jahr = request()->input('w_jahr');
                     } else {
                         $w_jahr = $jahr;
@@ -1956,7 +1956,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
     function inspiration_pdf_kurz_7($ausgezogene = 0, $objekt_id, $monat, $jahr, $lang = 'de')
     {
         /* Eingrenzung Kostenabragen */
-        if (!request()->has('von') or !request()->has('bis')) {
+        if (!request()->filled('von') or !request()->filled('bis')) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\InfoMessage('Abfragedatum VON BIS in die URL hinzufügen')
             );
@@ -2114,12 +2114,12 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                     $my_arr [$a] ['5081'] = $this->get_kosten_von_bis('Eigentuemer', $eige_id, $von, $bis, $gk->geldkonto_id, 5081);
                     $my_arr [$a] ['5010'] = $this->get_kosten_von_bis('Eigentuemer', $eige_id, $von, $bis, $gk->geldkonto_id, 5010);
 
-                    if (request()->has('von_a')) {
+                    if (request()->filled('von_a')) {
                         $von_a = date_german2mysql(request()->input('von_a'));
                     } else {
                         $von_a = "$jahr-$monat-01";
                     }
-                    if (!request()->has('bis_a')) {
+                    if (!request()->filled('bis_a')) {
                         $lt = letzter_tag_im_monat($monat, $jahr);
                         $bis_a = "$jahr-$monat-$lt";
                     } else {
@@ -2263,13 +2263,13 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                         $summe_nachzahler += $pdf_tab [$a] ['ENDSUMME'];
                     }
 
-                    if (request()->has('w_monat')) {
+                    if (request()->filled('w_monat')) {
                         $w_monat = request()->input('w_monat');
                     } else {
                         $w_monat = $monat;
                     }
 
-                    if (request()->has('w_jahr')) {
+                    if (request()->filled('w_jahr')) {
                         $w_jahr = request()->input('w_jahr');
                     } else {
                         $w_jahr = $jahr;
@@ -5094,7 +5094,7 @@ ORDER BY EINHEIT_KURZNAME";
         $gk_id = $this->gk_id;
 
         /* Eingrenzung Kostenabragen */
-        if (!request()->has('von') or !request()->has('bis')) {
+        if (!request()->filled('von') or !request()->filled('bis')) {
             $von = "01.$monat.$jahr";
             $lt = letzter_tag_im_monat($monat, $jahr);
             $bis = "$lt.$monat.$jahr";
@@ -5636,7 +5636,7 @@ ORDER BY EINHEIT_KURZNAME";
         }
         echo "</table>";
 
-        if (request()->has('pdf')) {
+        if (request()->filled('pdf')) {
             ob_clean(); // ausgabepuffer leeren
             $pdf = new Cezpdf ('a4', 'portrait');
             $bpdf = new b_pdf ();

@@ -908,7 +908,7 @@ class buchen
                 route('web::buchen::legacy', ['option' => 'geldkonto_aendern'])
             );
         }
-        if (!request()->has('submit_kostenkonto')) {
+        if (!request()->filled('submit_kostenkonto')) {
             $kr = new kontenrahmen ();
             $kontenrahmen_id = $kr->get_kontenrahmen('Geldkonto', session()->get('geldkonto_id'));
             $f = new formular ();
@@ -1096,7 +1096,7 @@ class buchen
         $datum_arr = explode('-', $datum);
         $jahr = $datum_arr [0];
         $monat = $datum_arr [1];
-        if (!request()->has('sort')) {
+        if (!request()->filled('sort')) {
             $my_array = DB::select("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, MWST_ANTEIL, GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y-%m') = '$jahr-$monat' && AKTUELL='1' ORDER BY G_BUCHUNGSNUMMER DESC");
         } else {
             $sort = request()->input('sort');
@@ -1147,7 +1147,7 @@ class buchen
         $ja = $dat_arr [0];
         $mo = $dat_arr [1];
 
-        if (!request()->has('sort')) {
+        if (!request()->filled('sort')) {
             $my_array = DB::select("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y-%m') = '$ja-$mo' && AKTUELL='1' ORDER BY G_BUCHUNGSNUMMER ASC");
         } else {
             $sort = request()->input('sort');
@@ -1278,7 +1278,7 @@ class buchen
         $mo = $dat_arr [1];
         $monatsname = monat2name($mo);
 
-        if (!request()->has('sort')) {
+        if (!request()->filled('sort')) {
             $my_array = DB::select("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, MWST_ANTEIL,GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y-%m') = '$ja-$mo' && AKTUELL='1' ORDER BY G_BUCHUNGSNUMMER ASC");
         } else {
             $sort = request()->input('sort');
@@ -1693,7 +1693,7 @@ class buchen
             }
         } else { // end if numrow
             $pdf->addText(43, 718, 50, "KEINE BUCHUNGEN");
-            if (!request()->has('xls')) {
+            if (!request()->filled('xls')) {
                 ob_end_clean();
                 $pdf->ezStream();
             } else {
@@ -1916,7 +1916,7 @@ class buchen
         $g->geld_konto_details($geldkonto_id);
 
         $jahr = request()->input('jahr');
-        if (request()->has('monat')) {
+        if (request()->filled('monat')) {
             $monat = request()->input('monat');
         }
         $link = route('web::buchen::legacy', ['option' => 'konten_uebersicht_pdf'] . false);
@@ -2067,7 +2067,7 @@ class buchen
     {
         $bg = new berlussimo_global ();
         $link = route('web::buchen::legacy', ['option' => 'kosten_einnahmen'], false);
-        if (request()->has('monat') && request()->has('jahr')) {
+        if (request()->filled('monat') && request()->filled('jahr')) {
             if (request()->input('monat') != 'alle') {
                 session()->put('monat', sprintf('%02d', request()->input('monat')));
             } else {
@@ -2768,7 +2768,7 @@ LIMIT 0 , 1");
     {
         echo "Monatsbericht Mieter - Monatsbericht Kostenkonten<br>";
         echo "<h3>Aktuelle Mieterstatistik mit ausgezogenen Mietern<br></h3>";
-        if (request()->has('jahr')) {
+        if (request()->filled('jahr')) {
             $jahr = request()->input('jahr');
         }
         if (empty ($jahr)) {
@@ -2778,7 +2778,7 @@ LIMIT 0 , 1");
                 $jahr = date("Y");
             }
         }
-        if (request()->has('monat')) {
+        if (request()->filled('monat')) {
             $monat = request()->input('monat');
         }
         if (empty ($monat)) {

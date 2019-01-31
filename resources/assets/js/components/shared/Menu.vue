@@ -1,6 +1,6 @@
 <template>
-    <v-expansion-panel v-if="authCheck" class="extension-panel__menu">
-        <v-expansion-panel-content v-model="mainmenuOpen">
+    <v-expansion-panel class="extension-panel__menu" v-if="authCheck" v-model="panels">
+        <v-expansion-panel-content class="pt-0">
             <div slot="header">
                 <v-layout row align-center class="ma-0">
                     <v-flex xs12 md4 lg6>
@@ -18,7 +18,7 @@
                 </v-card-text>
             </v-card>
         </v-expansion-panel-content>
-        <v-expansion-panel-content class="primary" v-model="submenuOpen">
+        <v-expansion-panel-content class="primary">
             <template slot="header">
                 <v-layout row align-center class="ma-0">
                     <v-flex xs3 md4 lg6>
@@ -44,14 +44,11 @@
 <script lang="ts">
     import Vue from 'vue';
     import Component from 'vue-class-component';
-    import {State, Getter, Mutation, namespace} from 'vuex-class';
+    import {namespace} from 'vuex-class';
     import globalSelect from "./GlobalSelect.vue";
     import searchbar from "./Searchbar.vue";
 
-    const AuthGetter = namespace('auth', Getter);
-
-    const MenuState = namespace('shared/menu', State);
-    const MenuMutation = namespace('shared/menu', Mutation);
+    const Auth = namespace('auth');
 
     @Component({
         components: {
@@ -60,32 +57,12 @@
         }
     })
     export default class Menu extends Vue {
-        @AuthGetter('check') authCheck;
+        @Auth.Getter('check') authCheck;
 
-        @MenuState('mainmenuOpen') mainmenuOpenState;
-        @MenuState('submenuOpen') submenuOpenState;
-
-        @MenuMutation('updateMainmenuOpen') updateMainmenuOpen;
-        @MenuMutation('updateSubmenuOpen') updateSubmenuOpen;
+        panels: Array<boolean> = [false, false];
 
         get hasSubmenu() {
             return this.$slots.submenu && this.$slots.submenu.length > 0;
-        }
-
-        get mainmenuOpen(): boolean {
-            return this.mainmenuOpenState;
-        }
-
-        set mainmenuOpen(value) {
-            this.updateMainmenuOpen(value);
-        }
-
-        get submenuOpen(): boolean {
-            return this.submenuOpenState;
-        }
-
-        set submenuOpen(value) {
-            this.updateSubmenuOpen(value);
         }
     }
 </script>
@@ -95,7 +72,7 @@
         color: inherit;
     }
 
-    .extension-panel__menu .expansion-panel__header {
+    .extension-panel__menu .v-expansion-panel__header {
         min-height: 48px;
         height: initial;
         padding: 0 0 0 24px;

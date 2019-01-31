@@ -14,14 +14,13 @@
                             <app-identifier style="font-size: 24px" v-model="jobValue.employer"></app-identifier>
                         </v-flex>
                         <v-flex xs12>
-                            <v-select v-model="jobValue.job_title_id"
-                                      label="Titel"
-                                      prepend-icon="mdi-book-open-page-variant"
-                                      :items="titles"
-                                      item-text="title"
-                                      item-value="id"
-                                      autocomplete
-                            ></v-select>
+                            <v-autocomplete v-model="jobValue.job_title_id"
+                                            label="Titel"
+                                            prepend-icon="mdi-book-open-page-variant"
+                                            :items="titles"
+                                            item-text="title"
+                                            item-value="id"
+                            ></v-autocomplete>
                         </v-flex>
                         <v-flex xs12 sm6>
                             <v-text-field v-model="jobValue.join_date"
@@ -82,12 +81,12 @@
     import {Prop, Watch} from "vue-property-decorator";
     import _ from "lodash";
     import EntitySelect from '../../common/EntitySelect.vue';
-    import {Job} from "../../../server/resources/models";
+    import {Job} from "../../../server/resources";
     import axios from "../../../libraries/axios";
-    import {Mutation, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const Snackbar = namespace('shared/snackbar');
+    const Refresh = namespace('shared/refresh');
 
     @Component({
         components: {
@@ -102,10 +101,10 @@
         @Prop({type: Object})
         job: Job;
 
-        @SnackbarMutation('updateMessage')
+        @Snackbar.Mutation('updateMessage')
         updateMessage: Function;
 
-        @RefreshMutation('requestRefresh')
+        @Refresh.Mutation('requestRefresh')
         requestRefresh: Function;
 
         show: boolean = false;

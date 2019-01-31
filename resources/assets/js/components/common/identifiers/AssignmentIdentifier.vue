@@ -1,45 +1,49 @@
 <template>
-    <div class="identifier">
-        <b-icon :tooltips="value.getEntityIconTooltips()" class="identifier-icon">{{value.getEntityIcon()}}</b-icon>
+    <b-input hide-details>
+        <b-icon :tooltips="value.getEntityIconTooltips()" class="identifier-icon" slot="prepend">
+            {{value.getEntityIcon()}}
+        </b-icon>
         {{String(value)}}
-        <v-menu offset-y v-model="show" :position-absolutely="true">
-            <v-icon slot="activator" style="font-size: inherit; vertical-align: baseline">mdi-arrow-down-drop-circle
-            </v-icon>
-            <v-list>
-                <v-list-tile @click="showAssignmentPDF">
-                    <v-list-tile-avatar>
-                        <v-icon>mdi-file-pdf</v-icon>
-                    </v-list-tile-avatar>
-                    <v-list-tile-title>PDF</v-list-tile-title>
-                </v-list-tile>
-                <v-list-tile @click="toogleMarkAsDone">
-                    <v-list-tile-avatar>
-                        <v-icon v-if="value.ERLEDIGT === '0'">mdi-checkbox-blank-outline</v-icon>
-                        <v-icon v-else="value.ERLEDIGT === '1'">mdi-checkbox-marked</v-icon>
-                    </v-list-tile-avatar>
-                    <v-list-tile-title>Erledigt</v-list-tile-title>
-                </v-list-tile>
-                <v-divider></v-divider>
-                <v-list-tile @click="copyToClipboard(String(value), 'Auftragsname')">
-                    <v-list-tile-avatar>
-                        <v-icon>mdi-content-copy</v-icon>
-                    </v-list-tile-avatar>
-                    <v-list-tile-title>Kopieren</v-list-tile-title>
-                </v-list-tile>
-                <v-list-tile @click="editAssignment">
-                    <v-list-tile-avatar>
-                        <v-icon>edit</v-icon>
-                    </v-list-tile-avatar>
-                    <v-list-tile-title>Bearbeiten</v-list-tile-title>
-                </v-list-tile>
-            </v-list>
-        </v-menu>
-        <app-assignment-edit-dialog v-if="show || edit"
-                                    :assignment="value"
-                                    v-model="edit"
-        >
-        </app-assignment-edit-dialog>
-    </div>
+        <template slot="append">
+            <v-menu :position-absolutely="true" offset-y v-model="show">
+                <v-icon slot="activator" style="font-size: inherit; vertical-align: baseline">mdi-arrow-down-drop-circle
+                </v-icon>
+                <v-list>
+                    <v-list-tile @click="showAssignmentPDF">
+                        <v-list-tile-avatar>
+                            <v-icon>mdi-file-pdf</v-icon>
+                        </v-list-tile-avatar>
+                        <v-list-tile-title>PDF</v-list-tile-title>
+                    </v-list-tile>
+                    <v-list-tile @click="toogleMarkAsDone">
+                        <v-list-tile-avatar>
+                            <v-icon v-if="value.ERLEDIGT === '0'">mdi-checkbox-blank-outline</v-icon>
+                            <v-icon v-else="value.ERLEDIGT === '1'">mdi-checkbox-marked</v-icon>
+                        </v-list-tile-avatar>
+                        <v-list-tile-title>Erledigt</v-list-tile-title>
+                    </v-list-tile>
+                    <v-divider></v-divider>
+                    <v-list-tile @click="copyToClipboard(String(value), 'Auftragsname')">
+                        <v-list-tile-avatar>
+                            <v-icon>mdi-content-copy</v-icon>
+                        </v-list-tile-avatar>
+                        <v-list-tile-title>Kopieren</v-list-tile-title>
+                    </v-list-tile>
+                    <v-list-tile @click="editAssignment">
+                        <v-list-tile-avatar>
+                            <v-icon>edit</v-icon>
+                        </v-list-tile-avatar>
+                        <v-list-tile-title>Bearbeiten</v-list-tile-title>
+                    </v-list-tile>
+                </v-list>
+            </v-menu>
+            <app-assignment-edit-dialog :assignment="value"
+                                        v-if="show || edit"
+                                        v-model="edit"
+            >
+            </app-assignment-edit-dialog>
+        </template>
+    </b-input>
 </template>
 
 <script lang="ts">
@@ -48,12 +52,12 @@
     import {Prop} from "vue-property-decorator";
     import copyToClipboard from "../../../mixins/CopyToClipboard.vue";
     import assignmentEditDialog from "../dialogs/AssignmentEditDialog.vue";
-    import {Mutation, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
     import _ from "lodash";
-    import {Assignment} from "../../../server/resources/models";
+    import {Assignment} from "../../../server/resources";
 
-    const RefreshMutation = namespace('shared/refresh', Mutation);
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
+    const Refresh = namespace('shared/refresh');
+    const Snackbar = namespace('shared/snackbar');
 
     @Component({
         'components': {
@@ -67,10 +71,10 @@
         @Prop()
         value: Assignment;
 
-        @RefreshMutation('requestRefresh')
+        @Refresh.Mutation('requestRefresh')
         requestRefresh: Function;
 
-        @SnackbarMutation('updateMessage')
+        @Snackbar.Mutation('updateMessage')
         updateMessage: Function;
 
         show: boolean = false;

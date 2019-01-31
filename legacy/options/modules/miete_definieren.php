@@ -1,7 +1,7 @@
 <?php
 
 $daten = request()->input('daten');
-if (request()->has('option')) {
+if (request()->filled('option')) {
     $schritt = request()->input('option');
 } else {
     $schritt = 'default';
@@ -18,7 +18,7 @@ if (request()->has('option')) {
 // $me->mietdefinition_zu_details();
 
 /* Mieterinformationen über die Buchungsformulare anzeigen */
-if (request()->has('mietvertrag_id')) {
+if (request()->filled('mietvertrag_id')) {
     $mieter_info = new mietkonto ();
     $mieter_info->erstelle_formular("Mieterinformationen", NULL);
     $mieter_info->mieter_informationen_anzeigen(request()->input('mietvertrag_id'));
@@ -30,7 +30,7 @@ switch ($schritt) {
     case "miethoehe" :
         $form = new mietkonto ();
         $form->erstelle_formular("Miethöhe definieren", NULL);
-        if (request()->has('mietvertrag_id')) {
+        if (request()->filled('mietvertrag_id')) {
             $mietvertrag_id = request()->input('mietvertrag_id');
             $me = new mietentwicklung ();
             $jahr = date("Y");
@@ -57,18 +57,12 @@ switch ($schritt) {
     default :
         $form = new mietkonto ();
         $form->erstelle_formular("Objekte & Einheiten", NULL);
-        if (request()->has('objekt_id')) {
+        if (request()->filled('objekt_id')) {
             session()->put('objekt_id', request()->input('objekt_id'));
-        }
-
-        if (!session()->has('objekt_id')) {
-            echo "<div class=\"info_feld_oben\">Objekt auswählen</div>";
-            objekt_auswahl();
         }
 
         if (session()->has('objekt_id')) {
             echo "<div class=\"info_feld_oben\">Einheit auswählen</div>";
-            objekt_auswahl();
             einheiten_liste();
         }
 
@@ -136,7 +130,7 @@ switch ($schritt) {
         break;
 
     case "mieterlisten_kostenkat" :
-        if (request()->has('kostenkat')) {
+        if (request()->filled('kostenkat')) {
             $me = new mietentwicklung ();
             $me->mieterlisten_kostenkat(request()->input('kostenkat'));
         } else {
@@ -144,36 +138,6 @@ switch ($schritt) {
         }
         break;
 } // end switch
-function objekt_auswahl()
-{
-    echo "<div class=\"objekt_auswahl\">";
-    $mieten = new mietkonto ();
-    $mieten->erstelle_formular("Objekt auswählen...", NULL);
-
-    if (session()->has('objekt_id')) {
-        $objekt_kurzname = new objekt ();
-        $objekt_kurzname->get_objekt_name(session()->get('objekt_id'));
-        echo "<p>&nbsp;<b>Ausgewähltes Objekt</b> -> $objekt_kurzname->objekt_name ->";
-        echo "<div class=\"info_feld_oben\">Ausgewähltes Objekt " . $objekt_kurzname->objekt_name . "<br><b>Einheit auswählen</b><br>WEISS: keine Zahlung im aktuellen Monat.<br>GRAU: Zahlungen wurden gebucht.</div>";
-    }
-
-    $objekte = new objekt ();
-    $objekte_arr = $objekte->liste_aller_objekte();
-
-    $anzahl_objekte = count($objekte_arr);
-    // print_r($objekte_arr);
-    $c = 0;
-    for ($i = 0; $i < $anzahl_objekte; $i++) {
-        echo "<a class=\"objekt_auswahl_buchung\" href='" . route('web::miete_definieren::legacy', ['objekt_id' => $objekte_arr[$i]['OBJEKT_ID']], false) . "'>" . $objekte_arr[$i]['OBJEKT_KURZNAME'] . "</a>&nbsp;";
-        $c++;
-        if ($c == 10) {
-            echo "<br>";
-            $c = 0;
-        }
-    }
-    $mieten->ende_formular();
-    echo "</div>";
-}
 
 function einheiten_liste()
 {

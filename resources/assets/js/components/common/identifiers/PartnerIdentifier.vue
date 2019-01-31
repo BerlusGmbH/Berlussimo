@@ -1,9 +1,11 @@
 <template>
-    <div class="identifier">
-        <b-icon :tooltips="value.getEntityIconTooltips()" class="identifier-icon">{{value.getEntityIcon()}}</b-icon>
+    <b-input hide-details>
+        <b-icon :tooltips="value.getEntityIconTooltips()" class="identifier-icon" slot="prepend">
+            {{value.getEntityIcon()}}
+        </b-icon>
         <a :href="value.getDetailUrl()"
            style="display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{String(this.value).trim()}}</a>
-    </div>
+    </b-input>
 </template>
 
 <script lang="ts">

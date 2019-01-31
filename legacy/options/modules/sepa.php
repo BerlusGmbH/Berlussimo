@@ -1,6 +1,6 @@
 <?php
 
-if (request()->has('option')) {
+if (request()->filled('option')) {
     $option = request()->input('option');
 } else {
     $option = 'default';
@@ -61,7 +61,7 @@ switch ($option) {
     case "mandat_mieter_neu_send" :
         echo "<hr><br><br><br><br><br><br><br><br><br><br>";
         if (request()->exists('Button')) {
-            if (request()->has('mv_id')) {
+            if (request()->filled('mv_id')) {
 
                 $kos_typ = request()->input('M_KOS_TYP');
 
@@ -78,17 +78,17 @@ switch ($option) {
                 if ($sep->check_m_ref($mref)) {
                     fehlermeldung_ausgeben("Mandat $mref existiert schon!!!");
                 } else {
-                    if (request()->has('einzugsart')
-                        && request()->has('BEGUENSTIGTER')
-                        && request()->has('NAME')
-                        && request()->has('ANSCHRIFT')
-                        && request()->has('IBAN')
-                        && request()->has('BIC')
-                        && request()->has('BANK')
-                        && request()->has('M_UDATUM')
-                        && request()->has('M_ADATUM')
-                        && request()->has('GK_ID')
-                        && request()->has('GLAEUBIGER_ID')
+                    if (request()->filled('einzugsart')
+                        && request()->filled('BEGUENSTIGTER')
+                        && request()->filled('NAME')
+                        && request()->filled('ANSCHRIFT')
+                        && request()->filled('IBAN')
+                        && request()->filled('BIC')
+                        && request()->filled('BANK')
+                        && request()->filled('M_UDATUM')
+                        && request()->filled('M_ADATUM')
+                        && request()->filled('GK_ID')
+                        && request()->filled('GLAEUBIGER_ID')
                     ) {
                         $glaeubiger_id = request()->input('GLAEUBIGER_ID');
                         $gk_id = request()->input('GK_ID');
@@ -125,11 +125,11 @@ switch ($option) {
 
     case "mandat_mieter_edit_send" :
         echo "<hr><br><br><br><br><br><br><br><br><br><br>";
-        
-        if (request()->exists('btn_edit_mieter') && request()->has('mref_dat')) {
-            if (request()->has('mv_id')) {
 
-                if (request()->has('einzugsart') && request()->has('BEGUENSTIGTER') && request()->has('NAME') && request()->has('ANSCHRIFT') && request()->has('IBAN') && request()->has('BIC') && request()->has('BANK') && request()->has('M_UDATUM') && request()->has('M_ADATUM') && request()->has('GK_ID') && request()->has('GLAEUBIGER_ID')) {
+        if (request()->exists('btn_edit_mieter') && request()->filled('mref_dat')) {
+            if (request()->filled('mv_id')) {
+
+                if (request()->filled('einzugsart') && request()->filled('BEGUENSTIGTER') && request()->filled('NAME') && request()->filled('ANSCHRIFT') && request()->filled('IBAN') && request()->filled('BIC') && request()->filled('BANK') && request()->filled('M_UDATUM') && request()->filled('M_ADATUM') && request()->filled('GK_ID') && request()->filled('GLAEUBIGER_ID')) {
 
                     $kos_typ = request()->input('M_KOS_TYP');
 
@@ -179,14 +179,14 @@ switch ($option) {
         break;
 
     case "sepa_download" :
-        if (request()->has('Btn-SEPApdf')) {
+        if (request()->filled('Btn-SEPApdf')) {
             $pdf = '1';
         } else {
             $pdf = '0';
         }
         $dateiname_msgid = session()->get('geldkonto_id') . '-' . str_limit(umlautundgross(Auth::user()->name),35) . '-' . microtime(1) . '.xml';
         $sep = new sepa ();
-        if (request()->has('sammelbetrag')) {
+        if (request()->filled('sammelbetrag')) {
             $sammelbetrag = request()->input('sammelbetrag');
             $nutzungsart = request()->input('nutzungsart');
             $sep->sepa_datei_erstellen(1, $dateiname_msgid, $nutzungsart, $pdf); // als Sammelbetrag auf dem Kontoauszug!
@@ -201,7 +201,7 @@ switch ($option) {
         break;
 
     case "mandat_nutzungen_anzeigen" :
-        if (request()->has('m_ref')) {
+        if (request()->filled('m_ref')) {
             $sep = new sepa ();
             $sep->mandat_nutzungen_anzeigen(request()->input('m_ref'));
         } else {
@@ -225,7 +225,7 @@ switch ($option) {
 
     case "sammler2sepa" :
         $sep = new sepa ();
-        if (request()->has('gk_id') && request()->has('kat')) {
+        if (request()->filled('gk_id') && request()->filled('kat')) {
             $von_gk_id = request()->input('gk_id');
             $kat = request()->input('kat');
             if ($kat == 'ET_AUSZAHLUNG') {
@@ -248,18 +248,18 @@ switch ($option) {
             echo "<b>Ausgewähltes Konto $g->geldkonto_bezeichnung_kurz</b><br>";
         }
 
-        if (request()->has('partner_wechseln')) {
+        if (request()->filled('partner_wechseln')) {
             session()->forget('partner_id');
         }
 
-        if (request()->has('partner_id')) {
+        if (request()->filled('partner_id')) {
             session()->put('partner_id', request()->input('partner_id'));
         }
 
         $r = new rechnungen ();
         $p = new partner ();
 
-        if (request()->has('monat') && request()->has('jahr')) {
+        if (request()->filled('monat') && request()->filled('jahr')) {
             if (request()->input('monat') != 'alle') {
                 session()->put('monat', sprintf('%02d', request()->input('monat')));
             } else {
@@ -279,7 +279,7 @@ switch ($option) {
                 $jahr = session()->get('jahr');
             }
 
-            if (!request()->has('belegnr')) {
+            if (!request()->filled('belegnr')) {
                 $r->rechnungseingangsbuch_kurz_zahlung_sepa('Partner', session()->get('partner_id'), $monat, $jahr, 'Rechnung');
             } else {
                 $u = new ueberweisung ();
@@ -298,18 +298,18 @@ switch ($option) {
             echo "<b>Ausgewähltes Konto $g->geldkonto_bezeichnung_kurz</b><br>";
         }
 
-        if (request()->has('partner_wechseln')) {
+        if (request()->filled('partner_wechseln')) {
             session()->forget('partner_id');
         }
 
-        if (request()->has('partner_id')) {
+        if (request()->filled('partner_id')) {
             session()->put('partner_id', request()->input('partner_id'));
         }
 
         $r = new rechnungen ();
         $p = new partner ();
 
-        if (request()->has('monat') && request()->has('jahr')) {
+        if (request()->filled('monat') && request()->filled('jahr')) {
             if (request()->input('monat') != 'alle') {
                 session()->put('monat', sprintf('%02d', request()->input('monat')));
             } else {
@@ -329,7 +329,7 @@ switch ($option) {
                 $jahr = session()->get('jahr');
             }
 
-            if (!request()->has('belegnr')) {
+            if (!request()->filled('belegnr')) {
                 $r->rechnungsausgangsbuch_kurz_zahlung_sepa('Partner', session()->get('partner_id'), $monat, $jahr, 'Rechnung');
             } else {
                 $u = new ueberweisung ();
@@ -391,7 +391,7 @@ switch ($option) {
         break;
 
     case "sepa_file_buchen_fremd" :
-        if (!request()->has('sepa_file')) {
+        if (!request()->filled('sepa_file')) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage("SEPA-DATEI wählen.")
             );
@@ -407,7 +407,7 @@ switch ($option) {
             for ($a = 0; $a < $anz; $a++) {
                 $datum = request()->input('datum');
                 $betrag = request()->input('betrag') [$a];
-                if (request()->has('mwst')) {
+                if (request()->filled('mwst')) {
                     $mwst = $betrag / 119 * 19;
                 } else {
                     $mwst = '0';
@@ -431,7 +431,7 @@ switch ($option) {
         break;
 
     case "sepa_file_anzeigen" :
-        if (!request()->has('sepa_file')) {
+        if (!request()->filled('sepa_file')) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage("SEPA-DATEI wählen")
             );
@@ -443,7 +443,7 @@ switch ($option) {
 
     /* Sepafile Inhalt in Pool schieben, als Vorlage nutzen */
     case "sepa_file_kopieren" :
-        if (!request()->has('sepa_file')) {
+        if (!request()->filled('sepa_file')) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage("SEPA-DATEI wählen.")
             );
@@ -456,7 +456,7 @@ switch ($option) {
         break;
 
     case "sepa_file_buchen" :
-        if (!request()->has('sepa_file')) {
+        if (!request()->filled('sepa_file')) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage("SEPA-DATEI wählen.")
             );
@@ -469,7 +469,7 @@ switch ($option) {
     case "sepa_ue_buchen" :
         $datum = request()->input('datum');
         $betrag = request()->input('betrag');
-        if (request()->has('mwst')) {
+        if (request()->filled('mwst')) {
             $mwst = $betrag / 119 * 19;
         } else {
             $mwst = '0';
@@ -489,7 +489,7 @@ switch ($option) {
         break;
 
     case "sepa_file_pdf" :
-        if (request()->has('sepa_file')) {
+        if (request()->filled('sepa_file')) {
             $filename = request()->input('sepa_file');
             $sep = new sepa ();
             $sep->sepa_file2pdf($filename);
@@ -582,7 +582,7 @@ switch ($option) {
         break;
 
     case "sepa_datensatz_del" :
-        if (request()->has('dat')) {
+        if (request()->filled('dat')) {
             $sep = new sepa ();
             if ($sep->datensatz_entfernen(request()->input('dat'))) {
                 weiterleiten(route('web::sepa::legacy', ['option' => 'sammler_anzeigen'], false));
@@ -617,7 +617,7 @@ switch ($option) {
         break;
 
     case "ls_auto_buchen_file" :
-        if (request()->has('datei')) {
+        if (request()->filled('datei')) {
             $datei = request()->input('datei');
             $s = new sepa ();
             $s->form_ls_datei_ab($datei);
@@ -627,7 +627,7 @@ switch ($option) {
     case "ls_zeile_buchen" :
         $datum = request()->input('datum');
         $betrag = nummer_komma2punkt(request()->input('betrag'));
-        if (request()->has('mwst')) {
+        if (request()->filled('mwst')) {
             $mwst = $betrag / 119 * 19;
         } else {
             $mwst = '0';
@@ -671,7 +671,7 @@ switch ($option) {
                     new \App\Messages\WarningMessage("Bitte geben Sie die Kontrolldaten ein.")
                 );
             }
-            if (request()->has('mwst')) {
+            if (request()->filled('mwst')) {
                 $mwst = 1;
             } else {
                 $mwst = '0';
@@ -690,13 +690,13 @@ switch ($option) {
         session()->put('temp_datum', request()->input('datum'));
         session()->put('geldkonto_id', request()->input('gk_id'));
         session()->put('temp_kontoauszugsnummer', request()->input('auszug'));
-        if (request()->has('mwst')) {
+        if (request()->filled('mwst')) {
             $mwst = 1;
         } else {
             $mwst = '0';
         }
 
-        $file = request()->has('datei');
+        $file = request()->filled('datei');
         $sep = new sepa ();
         $sep->sepa_file_autobuchen($file, session()->get('temp_datum'), session()->get('geldkonto_id'), session()->get('temp_kontoauszugsnummer'), $mwst);
         break;

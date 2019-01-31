@@ -1,27 +1,30 @@
 <template>
-    <app-select :search-input.sync="query"
-                :value="value"
-                :disabled="disabled"
-                @change="emit('change', $event)"
-                @input="emit('input', $event)"
-                :loading="searching"
-                :items="items" autocomplete
-                @click.native.stop
-                :multiple="multiple"
-                :hide-details="hideDetails"
-                return-object
-                :no-data-text="status"
-                :prepend-icon="icon"
-                :append-icon="appendIcon"
-                :filter="() => true"
-                :solo="solo"
-                :label="label"
-                :dark="dark"
-                :light="light"
-                :debounce-search="400"
-                :clearable="clearable"
-                :tabindex="tabindex"
-                :autofocus="autofocus"
+    <v-autocomplete :append-icon="appendIcon"
+                    :autofocus="autofocus"
+                    :clearable="clearable"
+                    :dark="dark"
+                    :debounce-search="400"
+                    :disabled="disabled"
+                    :filter="() => true"
+                    :flat="flat"
+                    :hide-details="hideDetails"
+                    :items="items"
+                    :label="label"
+                    :light="light"
+                    :loading="searching"
+                    :multiple="multiple"
+                    :no-data-text="status"
+                    :prepend-icon="icon"
+                    :prepend-inner-icon="innerIcon"
+                    :search-input.sync="query"
+                    :solo="solo"
+                    :solo-inverted="soloInverted"
+                    :tabindex="tabindex"
+                    :value="value"
+                    @change="emit('change', $event)"
+                    @click.native.stop
+                    @input="emit('input', $event)"
+                    return-object
     >
         <template slot="selection" slot-scope="data">
             <app-chip @input="data.parent.selectItem(data.item); $emit('chip-close', $event)"
@@ -35,34 +38,42 @@
                 <app-tile :entity="data.item"></app-tile>
             </template>
         </template>
-    </app-select>
+    </v-autocomplete>
 </template>
 <script lang="ts">
     import Vue from "../../imports";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import {Model} from "../../server/resources";
-    import VSelect from "./VSelect.vue"
     import {CancelTokenSource} from "axios";
     import axios from "../../libraries/axios";
     import _ from "lodash";
 
-    @Component({components: {'app-select': VSelect}})
+    @Component
     export default class EntitySelect extends Vue {
 
         source: CancelTokenSource;
 
         searching: boolean = false;
 
-        items: Array<any> = [];
+        searchedItems: Array<any> = [];
 
         query: string = '';
+
+        @Prop({type: Array, default: () => []})
+        selectedItems: Array<any>;
 
         @Prop({type: [Object, Array], default: () => []})
         value;
 
         @Prop({type: Boolean, default: false})
         solo;
+
+        @Prop({type: Boolean, default: false})
+        soloInverted;
+
+        @Prop({type: Boolean, default: false})
+        flat;
 
         @Prop({type: Boolean, default: false})
         disabled;
@@ -84,6 +95,9 @@
 
         @Prop({type: String})
         prependIcon;
+
+        @Prop({type: String})
+        prependInnerIcon;
 
         @Prop({type: String})
         appendIcon;
@@ -133,6 +147,13 @@
             if (this.prependIcon) {
                 return this.prependIcon;
             }
+            return '';
+        }
+
+        get innerIcon(): string {
+            if (this.prependInnerIcon) {
+                return this.prependInnerIcon;
+            }
             if (this.multiple) {
                 return 'mdi-tag-multiple';
             } else {
@@ -176,15 +197,19 @@
                     Object.keys(data).forEach((key) => {
                         total = total.concat(data[key]);
                     });
-                    vm.items = total;
+                    vm.searchedItems = total;
                     vm.searching = false;
                 }).catch(function () {
                     vm.searching = false;
                 });
             } else {
-                vm.items = [];
+                vm.searchedItems = [];
                 vm.searching = false;
             }
+        }
+
+        get items(): any[] {
+            return _.union(this.searchedItems, this.selectedItems);
         }
     }
 </script>

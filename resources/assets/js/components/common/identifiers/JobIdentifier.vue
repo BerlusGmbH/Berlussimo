@@ -1,5 +1,5 @@
 <template>
-    <div class="identifier">
+    <div>
         <app-identifier :value="value.title"></app-identifier>
         bei
         <app-identifier :value="value.employer"></app-identifier>

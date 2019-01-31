@@ -6,7 +6,7 @@ $einheit_id = request()->input('einheit_id');
 $objekt_kurzname = objekt_kurzname($objekt_id);
 $haus_kurzname = haus_strasse_nr($haus_id);
 $einheit_update = request()->input('einheit_update');
-if (request()->has('daten_rein')) {
+if (request()->filled('daten_rein')) {
     switch (request()->input('daten_rein')) {
 
         case "anlegen" :
@@ -27,13 +27,13 @@ if (request()->has('daten_rein')) {
                 $haus_kurzname = haus_strasse_nr($haus_id);
                 hinweis_ausgeben("Objekt: $objekt_kurzname");
                 hinweis_ausgeben("Haus: $haus_kurzname");
-                if (!request()->has('submit_einheit')) {
+                if (!request()->filled('submit_einheit')) {
                     einheit_eingabe_form($haus_id);
                     einheiten_liste($haus_id);
                 }
             }
 
-            if (request()->has('submit_einheit')) {
+            if (request()->filled('submit_einheit')) {
                 foreach (request()->request->all() as $key => $value) {
                     if (empty ($value)) {
                         fehlermeldung_ausgeben("FEHLER: Alle Felder müssen ausgefüllt werden!");
@@ -97,7 +97,7 @@ if (request()->has('daten_rein')) {
                 hinweis_ausgeben("Haus: $haus_kurzname");
                 einheiten_links($objekt_id, $haus_id);
             }
-            if (isset ($objekt_id) && isset ($haus_id) && isset ($einheit_id) && !request()->has('aendern_einheit')) {
+            if (isset ($objekt_id) && isset ($haus_id) && isset ($einheit_id) && !request()->filled('aendern_einheit')) {
                 $objekt_id = objekt_id_of_haus($haus_id);
                 $haus_id = haus_id_of_einheit($einheit_id);
                 $objekt_kurzname = objekt_kurzname($objekt_id);
@@ -110,7 +110,7 @@ if (request()->has('daten_rein')) {
                 einheiten_liste($haus_id);
             }
 
-            if (request()->has('aendern_einheit')) {
+            if (request()->filled('aendern_einheit')) {
                 foreach (request()->request->all() as $key => $value) {
                     if (empty ($value)) {
                         fehlermeldung_ausgeben("FEHLER: Alle Felder müssen ausgefüllt werden!");

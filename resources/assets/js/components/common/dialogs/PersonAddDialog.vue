@@ -44,11 +44,11 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
-    import {Person} from "../../../server/resources/models";
-    import {Mutation, namespace} from "vuex-class";
+    import {Person} from "../../../server/resources";
+    import {namespace} from "vuex-class";
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const Snackbar = namespace('shared/snackbar');
+    const Refresh = namespace('shared/refresh');
 
     @Component
     export default class PersonAddDialog extends Vue {
@@ -70,10 +70,10 @@
         @Prop({type: Boolean})
         show;
 
-        @SnackbarMutation('updateMessage')
+        @Snackbar.Mutation('updateMessage')
         updateMessage: Function;
 
-        @RefreshMutation('requestRefresh')
+        @Refresh.Mutation('requestRefresh')
         requestRefresh: Function;
 
         gender: Array<Object> = [

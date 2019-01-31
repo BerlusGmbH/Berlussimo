@@ -12,14 +12,14 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {Action, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
 
-    const AuthAction = namespace('auth', Action);
+    const Auth = namespace('auth');
 
     @Component
     export default class UserMenuList extends Vue {
 
-        @AuthAction('logout')
+        @Auth.Action('logout')
         logout: Function;
 
         onLogout() {

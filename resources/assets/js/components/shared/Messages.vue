@@ -13,13 +13,13 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {namespace, State} from "vuex-class";
+    import {namespace} from "vuex-class";
 
-    const MessagesState = namespace('shared/messages', State);
+    const MessagesState = namespace('shared/messages');
 
     @Component
     export default class Messages extends Vue {
-        @MessagesState('messages')
+        @MessagesState.State('messages')
         messages: Object;
 
         b: boolean = true;

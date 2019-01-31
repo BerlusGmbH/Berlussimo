@@ -1,15 +1,15 @@
 <?php
 
-if (request()->has('daten')) {
+if (request()->filled('daten')) {
     $daten = request()->input('daten');
 }
-if (request()->has('option')) {
+if (request()->filled('option')) {
     $option = request()->input('option');
 }
-if (request()->has('objekt_id')) {
+if (request()->filled('objekt_id')) {
     $objekt_id = request()->input('objekt_id');
 }
-if (request()->has('haus_id')) {
+if (request()->filled('haus_id')) {
     $haus_id = request()->input('haus_id');
 }
 
@@ -27,13 +27,13 @@ if (isset ($option)) {
         case "objekt_pdf" :
             if (session()->has('objekt_id')) {
                 $objekt_id = session()->get('objekt_id');
-                if (request()->has('monat')) {
+                if (request()->filled('monat')) {
                     $monat = request()->input('monat');
                 } else {
                     $monat = date("m");
                 }
 
-                if (request()->has('jahr')) {
+                if (request()->filled('jahr')) {
                     $jahr = request()->input('jahr');
                 } else {
                     $jahr = date("Y");
@@ -47,7 +47,7 @@ if (isset ($option)) {
             break;
 
         case "projekt_pdf" :
-            if (request()->has('einheit_id')) {
+            if (request()->filled('einheit_id')) {
                 $l = new leerstand ();
                 $l->pdf_projekt(request()->input('einheit_id'));
             } else {
@@ -117,7 +117,7 @@ if (isset ($option)) {
         case "filter_setzen" :
             session()->forget('aktive_filter');
 
-            if (request()->has('Zimmer')) {
+            if (request()->filled('Zimmer')) {
                 $anz = count(request()->input('Zimmer'));
                 for ($a = 0; $a < $anz; $a++) {
                     $wert = request()->input('Zimmer')[$a];
@@ -125,7 +125,7 @@ if (isset ($option)) {
                 }
             }
 
-            if (request()->has('Balkon')) {
+            if (request()->filled('Balkon')) {
                 $anz = count(request()->input('Balkon'));
                 for ($a = 0; $a < $anz; $a++) {
                     $wert = request()->input('Balkon')[$a];
@@ -133,7 +133,7 @@ if (isset ($option)) {
                 }
             }
 
-            if (request()->has('Heizung')) {
+            if (request()->filled('Heizung')) {
                 $anz = count(request()->input('Heizung'));
                 for ($a = 0; $a < $anz; $a++) {
                     $wert = request()->input('Heizung')[$a];
@@ -195,12 +195,12 @@ function leerstand_objekt($objekt_id)
     $b = new berlussimo_global ();
     $link = route('web::leerstand::legacy', ['option' => 'objekt', 'objekt_id' => $objekt_id], false);
 
-    if (request()->has('monat')) {
+    if (request()->filled('monat')) {
         $monat = request()->input('monat');
     } else {
         $monat = date("m");
     }
-    if (request()->has('jahr')) {
+    if (request()->filled('jahr')) {
         $jahr = request()->input('jahr');
     } else {
         $jahr = date("Y");

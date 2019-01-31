@@ -1,6 +1,6 @@
 <?php
 
-if (request()->has('option')) {
+if (request()->filled('option')) {
     $option = request()->input('option');
 } else {
     $option = 'default';
@@ -20,7 +20,7 @@ switch ($option) {
     case "mietspiegel_anzeigen" :
         $ms = new mietspiegel();
         $jahr = request()->input('jahr');
-        if (request()->has('ort')) {
+        if (request()->filled('ort')) {
             $ort = request()->input('ort');
         } else {
             $ort = null;
@@ -35,9 +35,9 @@ switch ($option) {
         break;
 
     case "ms_speichern" :
-        if (request()->has('jahr')) {
+        if (request()->filled('jahr')) {
             $jahr = request()->input('jahr');
-            if (request()->has('ort')) {
+            if (request()->filled('ort')) {
                 $ort = request()->input('ort');
                 $ms = new mietspiegel();
                 $ms->ms_speichern($jahr, $ort);
@@ -51,12 +51,12 @@ switch ($option) {
         break;
 
     case "ms_wert_speichern" :
-        if (request()->has('jahr')) {
+        if (request()->filled('jahr')) {
             $jahr = request()->input('jahr');
-            if (request()->has('ort')) {
+            if (request()->filled('ort')) {
                 $ort = request()->input('ort');
 
-                if (request()->has('feld') && request()->has('u_wert') && request()->has('m_wert') && request()->has('o_wert')) {
+                if (request()->filled('feld') && request()->filled('u_wert') && request()->filled('m_wert') && request()->filled('o_wert')) {
                     $ms = new mietspiegel();
                     $ms->ms_speichern($jahr, $ort, request()->input('feld'), request()->input('u_wert'), request()->input('m_wert'), request()->input('o_wert'));
                     weiterleiten(route('web::mietspiegel::legacy', ['option' => 'mietspiegel_anzeigen', 'jahr' => $jahr, 'ort' => $ort], false));
@@ -64,7 +64,7 @@ switch ($option) {
                     fehlermeldung_ausgeben("Alle Felder ausfüllen");
                 }
             } else {
-                if (request()->has('feld') && request()->has('u_wert') && request()->has('m_wert') && request()->has('o_wert')) {
+                if (request()->filled('feld') && request()->filled('u_wert') && request()->filled('m_wert') && request()->filled('o_wert')) {
                     $ms = new mietspiegel();
                     $ms->ms_speichern($jahr, null, request()->input('feld'), request()->input('u_wert'), request()->input('m_wert'), request()->input('o_wert'));
                 } else {
@@ -77,9 +77,9 @@ switch ($option) {
         break;
 
     case "abzug_speichern" :
-        if (request()->has('jahr') && request()->has('merkmal') && request()->has('wert') && request()->has('a_klasse')) {
+        if (request()->filled('jahr') && request()->filled('merkmal') && request()->filled('wert') && request()->filled('a_klasse')) {
             $ms = new mietspiegel();
-            if (request()->has('ort')) {
+            if (request()->filled('ort')) {
                 $betrag = nummer_komma2punkt(request()->input('wert'));
                 $ms->sonderabzug_speichern(request()->input('jahr'), request()->input('merkmal'), $betrag, request()->input('a_klasse'), request()->input('ort'));
                 $jahr = request()->input('jahr');
@@ -95,7 +95,7 @@ switch ($option) {
         break;
 
     case "ms_wert_del" :
-        if (request()->has('dat')) {
+        if (request()->filled('dat')) {
             $ms = new mietspiegel();
             $dat = request()->input('dat');
             $ms->ms_wert_loeschen($dat);
@@ -104,7 +104,7 @@ switch ($option) {
         break;
 
     case "del_sonderabzug" :
-        if (request()->has('dat')) {
+        if (request()->filled('dat')) {
             $ms = new mietspiegel();
             $dat = request()->input('dat');
             $ms->ms_sonderabzug_loeschen($dat);

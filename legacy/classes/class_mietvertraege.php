@@ -968,7 +968,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         $bg = new berlussimo_global ();
         $bg->objekt_auswahl_liste();
 
-        if (!request()->has('mietvertrag_id')) {
+        if (!request()->filled('mietvertrag_id')) {
             $this->einheiten_liste($link);
         } else {
 
@@ -2456,7 +2456,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                 )
             ));
 
-            if (!request()->has('xls')) {
+            if (!request()->filled('xls')) {
                 ob_end_clean(); // ausgabepuffer leeren
                 $pdf->ezStream();
             } else {
@@ -2809,7 +2809,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
 
     function form_mietvertrag_loeschen($mv_id)
     {
-        if (!request()->has('send_ja') && !request()->has('send_nein')) {
+        if (!request()->filled('send_ja') && !request()->filled('send_nein')) {
             $this->get_mietvertrag_infos_aktuell($mv_id);
             $f = new formular ();
             $f->fieldset('Mietvertrag löschen', 'mvl');
@@ -2826,10 +2826,10 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             echo "</div>";
             $f->fieldset_ende();
         }
-        if (request()->has('send_nein')) {
+        if (request()->filled('send_nein')) {
             weiterleiten(route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mietvertrag_kurz'], false));
         }
-        if (request()->has('send_ja')) {
+        if (request()->filled('send_ja')) {
             $this->mv_loeschen_alles($mv_id);
         }
     }

@@ -65,7 +65,7 @@ class CreatePersonsTable extends Migration
                                 $user_id = $user_id['benutzer_id'];
                             }
                             if ($user_id) {
-                                $audit->person_id = $user_id;
+                                $audit->user_id = $user_id;
                             }
                             $audit->save();
                         } else {
@@ -104,7 +104,7 @@ class CreatePersonsTable extends Migration
                             $user_id = $user_id['benutzer_id'];
                         }
                         if ($user_id) {
-                            $audit->person_id = $user_id;
+                            $audit->user_id = $user_id;
                         }
                         $audit->save();
                     } else {

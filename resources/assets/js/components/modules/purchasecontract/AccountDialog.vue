@@ -12,10 +12,9 @@
                 <v-container fluid grid-list-md>
                     <v-layout row wrap>
                         <v-flex xs12>
-                            <v-select v-model="year"
-                                      :items="years"
-                                      autocomplete
-                            ></v-select>
+                            <v-autocomplete v-model="year"
+                                            :items="years"
+                            ></v-autocomplete>
                         </v-flex>
                     </v-layout>
                 </v-container>
@@ -34,13 +33,13 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {Mutation, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
     import {Prop} from "vue-property-decorator";
     import EntitySelect from "../../common/EntitySelect.vue"
     import {PurchaseContract} from "../../../server/resources";
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const Snackbar = namespace('shared/snackbar');
+    const Refresh = namespace('shared/refresh');
 
     @Component({components: {'app-entity-select': EntitySelect}})
     export default class AccountDialog extends Vue {
@@ -50,10 +49,10 @@
         @Prop({type: Object})
         contract: PurchaseContract;
 
-        @SnackbarMutation('updateMessage')
+        @Snackbar.Mutation('updateMessage')
         updateMessage: Function;
 
-        @RefreshMutation('requestRefresh')
+        @Refresh.Mutation('requestRefresh')
         requestRefresh: Function;
 
         end: number = new Date().getFullYear();

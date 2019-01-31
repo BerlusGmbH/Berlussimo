@@ -25,7 +25,7 @@ class SearchBarController extends Controller
 {
     public function search()
     {
-        if (!request()->has('e')) {
+        if (!request()->filled('e')) {
             $classes = [
                 'objekt',
                 'haus',
@@ -66,7 +66,7 @@ class SearchBarController extends Controller
                 $classes = [request()->input('e')];
             }
         }
-        if (!request()->has('q')) {
+        if (!request()->filled('q')) {
             return Response::json($response);
         }
         $tokens = explode(' ', request()->input('q'));

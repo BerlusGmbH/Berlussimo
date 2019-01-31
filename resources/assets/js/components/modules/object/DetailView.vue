@@ -57,7 +57,7 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {Action, Mutation, namespace, State} from "vuex-class";
+    import {namespace} from "vuex-class";
     import {Prop, Watch} from "vue-property-decorator";
     import objectCard from "../../shared/cards/ObjectCard.vue";
     import notesCard from "../../shared/cards/NotesCard.vue";
@@ -71,11 +71,9 @@
     import objectReportsCard from "../../shared/cards/ObjectReportsCard.vue";
 
 
-    const ShowAction = namespace('modules/object/show', Action);
-    const ShowState = namespace('modules/object/show', State);
+    const Show = namespace('modules/object/show');
 
-    const RefreshState = namespace('shared/refresh', State);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const Refresh = namespace('shared/refresh');
 
     @Component({
         components: {
@@ -95,16 +93,16 @@
         @Prop()
         id: string;
 
-        @ShowAction('updateObject')
+        @Show.Action('updateObject')
         fetchObject;
 
-        @ShowState('object')
+        @Show.State('object')
         object;
 
-        @RefreshState('dirty')
+        @Refresh.State('dirty')
         dirty;
 
-        @RefreshMutation('refreshFinished')
+        @Refresh.Mutation('refreshFinished')
         refreshFinished: Function;
 
         @Watch('dirty')

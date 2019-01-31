@@ -62,8 +62,6 @@ echo "APP_KEY=" > .env
 php artisan key:generate
 
 php artisan migrate
-php artisan optimize
-php artisan route:cache
 php artisan parser:generate
 
 # if you setup a fresh database

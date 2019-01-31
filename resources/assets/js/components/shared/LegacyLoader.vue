@@ -4,14 +4,14 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
-    import {Mutation, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
 
-    const LegacyMutation = namespace('shared/legacy', Mutation);
+    const Legacy = namespace('shared/legacy');
 
     @Component
     export default class LegacyLoader extends Vue {
 
-        @LegacyMutation('updateIsLegacy')
+        @Legacy.Mutation('updateIsLegacy')
         updateIsLegacy: Function;
 
         @Prop({type: Boolean})

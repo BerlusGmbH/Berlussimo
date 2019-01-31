@@ -21,21 +21,19 @@
                   item-value="UNTERKATEGORIE_NAME"
                   lazy
         ></v-select>
-        <v-text-field v-else
-                      slot="input"
-                      v-model="inputValue.DETAIL_INHALT"
-                      :label="inputValue.DETAIL_NAME"
-                      :type="type"
-                      :prepend-icon="prependIcon"
-                      :multi-line="large"
-        ></v-text-field>
-        <v-text-field slot="input"
+        <v-textarea v-else
+                    slot="input"
+                    v-model="inputValue.DETAIL_INHALT"
+                    :label="inputValue.DETAIL_NAME"
+                    :type="type"
+                    :prepend-icon="prependIcon"
+        ></v-textarea>
+        <v-textarea slot="input"
                       v-model="inputValue.DETAIL_BEMERKUNG"
                       label="Bemerkung"
                       :type="type"
                       prepend-icon="note"
-                      :multi-line="large"
-        ></v-text-field>
+        ></v-textarea>
     </app-edit-dialog>
 </template>
 
@@ -44,7 +42,7 @@
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
     import _ from "lodash";
-    import {Detail, Einheit, Person} from "../../../server/resources/models";
+    import {Detail, Einheit, Person} from "../../../server/resources";
     import axios from "../../../libraries/axios";
 
     @Component

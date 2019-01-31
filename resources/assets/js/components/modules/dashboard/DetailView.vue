@@ -6,19 +6,18 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {Mutation, namespace, State} from "vuex-class";
+    import {namespace} from "vuex-class";
     import {Watch} from "vue-property-decorator";
 
-    const RefreshState = namespace('shared/refresh', State);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const Refresh = namespace('shared/refresh');
 
     @Component
     export default class DetailView extends Vue {
 
-        @RefreshState('dirty')
+        @Refresh.State('dirty')
         dirty;
 
-        @RefreshMutation('refreshFinished')
+        @Refresh.Mutation('refreshFinished')
         refreshFinished: Function;
 
         @Watch('dirty')

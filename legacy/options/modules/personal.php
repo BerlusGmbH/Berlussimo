@@ -1,6 +1,6 @@
 <?php
 
-if (request()->has('option')) {
+if (request()->filled('option')) {
     $option = request()->input('option');
 } else {
     $option = 'default';

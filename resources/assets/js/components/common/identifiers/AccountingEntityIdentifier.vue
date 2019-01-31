@@ -1,8 +1,10 @@
 <template>
-    <div class="identifier">
-        <b-icon :tooltips="value.getEntityIconTooltips()" class="identifier-icon">{{value.getEntityIcon()}}</b-icon>
+    <b-input hide-details>
+        <b-icon :tooltips="value.getEntityIconTooltips()" class="identifier-icon" slot="prepend">
+            {{value.getEntityIcon()}}
+        </b-icon>
         {{text}}
-    </div>
+    </b-input>
 </template>
 
 <script lang="ts">

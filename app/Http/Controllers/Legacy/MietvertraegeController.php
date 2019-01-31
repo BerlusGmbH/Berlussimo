@@ -48,15 +48,15 @@ class MietvertraegeController extends LegacyController
         $mv_info = new mietvertraege ();
         $mv_info->mieten_speichern($contract_id, request()->input('move-in-date'), request()->input('move-out-date'), 'Miete kalt', request()->input('rent'), 0);
 
-        if (request()->has('bk-advance')) {
+        if (request()->filled('bk-advance')) {
             $mv_info->mieten_speichern($contract_id, request()->input('move-in-date'), request()->input('move-out-date'), 'Nebenkosten Vorauszahlung', request()->input('bk-advance'), 0);
         }
 
-        if (request()->has('hk-advance')) {
+        if (request()->filled('hk-advance')) {
             $mv_info->mieten_speichern($contract_id, request()->input('move-in-date'), request()->input('move-out-date'), 'Heizkosten Vorauszahlung', request()->input('hk-advance'), 0);
         }
 
-        if (request()->has('deposit')) {
+        if (request()->filled('deposit')) {
             $k = new kautionen ();
             $k->feld_wert_speichern($contract_id, 'SOLL', request()->input('deposit'));
         }

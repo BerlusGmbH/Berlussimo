@@ -46,7 +46,7 @@ switch ($option) {
     /* Editieren von Aufgaben und Projekten */
     /* Editieren von Aufgaben und Projekten */
     case "edit" :
-        if (request()->has('t_id')) {
+        if (request()->filled('t_id')) {
             $t = new todo ();
             $t->form_edit_aufgabe(request()->input('t_id'));
         } else {
@@ -56,7 +56,7 @@ switch ($option) {
 
     /* Projekt oder Aufgabe löschen */
     case "projekt_loeschen" :
-        if (request()->has('t_id')) {
+        if (request()->filled('t_id')) {
             $t = new todo ();
             $t->projekt_aufgabe_loeschen(request()->input('t_id'));
         } else {
@@ -66,7 +66,7 @@ switch ($option) {
 
     /* Definitiv löschen */
     case "loeschen" :
-        if (request()->has('t_id')) {
+        if (request()->filled('t_id')) {
             $t = new todo ();
             $t->projekt_aufgabe_loeschen_sql(request()->input('t_id'), request()->input('art'));
         } else {
@@ -80,7 +80,7 @@ switch ($option) {
         break;
 
     case "pdf_projekt" :
-        if (request()->has('proj_id')) {
+        if (request()->filled('proj_id')) {
             $t = new todo ();
             $t->pdf_projekt(intval(request()->input('proj_id')));
         } else {
@@ -89,7 +89,7 @@ switch ($option) {
         break;
 
     case "pdf_auftrag" :
-        if (request()->has('proj_id')) {
+        if (request()->filled('proj_id')) {
             $t = new todo ();
             $t->pdf_auftrag(intval(request()->input('proj_id')));
         } else {
@@ -103,7 +103,7 @@ switch ($option) {
         break;
 
     case "neue_baustelle" :
-        if (request()->has('bau_bez') && request()->has('p_id')) {
+        if (request()->filled('bau_bez') && request()->filled('p_id')) {
             $t = new todo ();
             if ($t->neue_baustelle_speichern(request()->input('bau_bez'), request()->input('p_id'))) {
                 $bau_bez = request()->input('bau_bez');
@@ -139,7 +139,7 @@ switch ($option) {
         break;
 
     case "verschieben" :
-        if (request()->has('t_id')) {
+        if (request()->filled('t_id')) {
             $t_id = request()->input('t_id');
             $t = new todo ();
             $t->form_verschieben($t_id);
@@ -149,7 +149,7 @@ switch ($option) {
         break;
 
     case "verschieben_snd" :
-        if (request()->has('t_id') && request()->has('p_id')) {
+        if (request()->filled('t_id') && request()->filled('p_id')) {
             $t_id = request()->input('t_id'); // aufgaben_id T_ID
             $p_id = request()->input('p_id'); // projekt_id UE_ID
             $t = new todo ();
@@ -164,7 +164,7 @@ switch ($option) {
         break;
 
     case "auftrag_haus" :
-        if (request()->has('haus_id')) {
+        if (request()->filled('haus_id')) {
             $t = new todo ();
             $t->auftraege_an_haus(request()->input('haus_id'));
         } else {
@@ -241,7 +241,7 @@ switch ($option) {
         break;
 
     case "erledigt_alle" :
-        if (request()->has('t_dats')) {
+        if (request()->filled('t_dats')) {
             if (is_array(request()->input('t_dats'))) {
                 $anz_markiert = count(request()->input('t_dats'));
                 for ($a = 0; $a < $anz_markiert; $a++) {
@@ -260,7 +260,7 @@ switch ($option) {
 
     case "auftraege_an" :
 
-        if (request()->has('typ') && request()->has('id')) {
+        if (request()->filled('typ') && request()->filled('id')) {
             $typ = request()->input('typ');
             $id = request()->input('id');
             $to = new todo ();
@@ -274,7 +274,7 @@ switch ($option) {
     /* Auftragsuche Formular */
     case "auftrag_suche" :
         $t = new todo ();
-        if (request()->has('typ_int_ext')) {
+        if (request()->filled('typ_int_ext')) {
 
             $t->form_suche(request()->input('typ_int_ext'));
         } else {
@@ -285,7 +285,7 @@ switch ($option) {
     /* Auftragsuche Formular sendet Suchdaten */
     case "auftrag_suche_send" :
         $t = new todo ();
-        if (request()->has('benutzer_typ') && request()->has('benutzer_id')) {
+        if (request()->filled('benutzer_typ') && request()->filled('benutzer_id')) {
             $typ = request()->input('benutzer_typ');
             $id = request()->input('benutzer_id');
             weiterleiten(route('web::construction::legacy', ['option' => 'auftraege_an', 'typ' => $typ, 'id' => $id], false));

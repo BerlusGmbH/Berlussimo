@@ -104,16 +104,15 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {Mutation, namespace, State} from "vuex-class";
+    import {namespace} from "vuex-class";
     import {Watch} from "vue-property-decorator";
     import axios from "../../../libraries/axios"
-    import {Model} from "../../../server/resources/models";
+    import {Model} from "../../../server/resources";
     import _ from "lodash";
     import assignmentAddDialog from "../../../components/common/dialogs/AssignmentAddDialog.vue";
 
-    const RefreshState = namespace('shared/refresh', State);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
+    const Refresh = namespace('shared/refresh');
+    const Snackbar = namespace('shared/snackbar');
 
     @Component({
         'components': {
@@ -121,13 +120,13 @@
         }
     })
     export default class ListView extends Vue {
-        @RefreshState('dirty')
+        @Refresh.State('dirty')
         dirty;
 
-        @RefreshMutation('refreshFinished')
+        @Refresh.Mutation('refreshFinished')
         refreshFinished: Function;
 
-        @SnackbarMutation('updateMessage')
+        @Snackbar.Mutation('updateMessage')
         updateMessage: Function;
 
         parameterList: Array<Object> = [];
@@ -261,12 +260,15 @@
         }
 
         parseQuery() {
-            this.parameters.q = this.$route.query.q ? this.$route.query.q : null;
-            this.parameters.v = this.$route.query.v ? this.$route.query.v : null;
+            this.parameters.q = this.checkQueryParameter(this.$route.query.q);
+            this.parameters.v = this.checkQueryParameter(this.$route.query.v);
             if (!this.parameters.v && this.parameterList['v']) {
                 this.parameters.v = this.parameterList['v']['default'];
             }
-            this.parameters.f = this.$route.query.f ? this.$route.query.f.split(',') : [];
+            let f: null | string = this.checkQueryParameter(this.$route.query.f);
+            if (f && typeof f === 'string') {
+                this.parameters.f = f.split(',');
+            }
             this.parameters.pagination.page = this.$route.query.page ? Number(this.$route.query.page) : 1;
             this.parameters.pagination.rowsPerPage = this.$route.query.s ? Number(this.$route.query.s) : 5;
         }
@@ -277,6 +279,14 @@
 
         prototypeEntity(entity) {
             return Model.applyPrototype(entity.entity);
+        }
+
+        checkQueryParameter(parameter: null | string | string[]): null | string {
+            if (parameter && typeof parameter === 'string') {
+                return parameter;
+            } else {
+                return null;
+            }
         }
     }
 </script>

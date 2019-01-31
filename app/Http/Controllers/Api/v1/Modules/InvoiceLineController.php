@@ -184,7 +184,7 @@ class InvoiceLineController extends Controller
             'SKONTO'
         ];
         $attributes = collect($request->only($attributeNames))->reject(function ($name, $key) use ($request) {
-            return !$request->has($key);
+            return !$request->filled($key);
         })->all();
         $lineIds = $request->input('lines');
         $invoiceId = InvoiceLine::findOrFail($lineIds[0])->BELEG_NR;

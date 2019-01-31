@@ -11,15 +11,14 @@
             @save="onSave"
     >
         <slot></slot>
-        <v-select v-model="inputValue.DETAIL_NAME"
-                  :items="categories"
-                  prepend-icon="mdi-label"
-                  label="Kategorie"
-                  slot="input"
-                  item-text="DETAIL_KAT_NAME"
-                  item-value="DETAIL_KAT_NAME"
-                  autocomplete
-        ></v-select>
+        <v-autocomplete v-model="inputValue.DETAIL_NAME"
+                        :items="categories"
+                        prepend-icon="mdi-label"
+                        label="Kategorie"
+                        slot="input"
+                        item-text="DETAIL_KAT_NAME"
+                        item-value="DETAIL_KAT_NAME"
+        ></v-autocomplete>
         <v-select v-if="selectedCategory.subcategories && selectedCategory.subcategories.length > 0"
                   v-model="inputValue.DETAIL_INHALT"
                   :items="selectedCategory.subcategories"
@@ -29,22 +28,20 @@
                   item-text="UNTERKATEGORIE_NAME"
                   item-value="UNTERKATEGORIE_NAME"
         ></v-select>
-        <v-text-field v-else
-                      slot="input"
-                      v-model="inputValue.DETAIL_INHALT"
-                      :type="type"
-                      :label="inputValue.DETAIL_NAME"
-                      prepend-icon="mdi-alphabetical"
-                      multi-line
-        ></v-text-field>
-        <v-text-field
+        <v-textarea v-else
+                    slot="input"
+                    v-model="inputValue.DETAIL_INHALT"
+                    :type="type"
+                    :label="inputValue.DETAIL_NAME"
+                    prepend-icon="mdi-alphabetical"
+        ></v-textarea>
+        <v-textarea
                 slot="input"
                 v-model="inputValue.DETAIL_BEMERKUNG"
                 :type="type"
                 label="Bemerkung"
                 prepend-icon="note"
-                multi-line
-        ></v-text-field>
+        ></v-textarea>
     </app-edit-dialog>
 </template>
 
@@ -53,11 +50,11 @@
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
     import axios from "../../../libraries/axios";
-    import {Mutation, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
     import {Detail, Einheit, Haus, Objekt, Person, PurchaseContract, RentalContract} from "../../../server/resources";
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const Snackbar = namespace('shared/snackbar');
+    const Refresh = namespace('shared/refresh');
 
     @Component
     export default class DetailAddDialog extends Vue {
@@ -83,10 +80,10 @@
         @Prop({type: Boolean})
         show;
 
-        @SnackbarMutation('updateMessage')
+        @Snackbar.Mutation('updateMessage')
         updateMessage: Function;
 
-        @RefreshMutation('requestRefresh')
+        @Refresh.Mutation('requestRefresh')
         requestRefresh: Function;
 
         inputValue: Detail = new Detail();

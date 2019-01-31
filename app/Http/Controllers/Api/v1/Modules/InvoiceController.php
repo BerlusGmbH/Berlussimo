@@ -79,7 +79,7 @@ class InvoiceController extends Controller
 
     protected function updateAdvancePaymentInvoices(& $attributes, UpdateRequest $request)
     {
-        if (!$request->has('advance_payment_invoice_id')) {
+        if (!$request->filled('advance_payment_invoice_id')) {
             $attributes['advance_payment_invoice_id'] = DB::raw('BELEG_NR');
         }
 

@@ -1,12 +1,12 @@
 <script lang="ts">
-    import Vue from "vue";
+    import Vue from "../../imports";
     import Vuetify from "vuetify";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
 
     Vue.use(Vuetify);
 
-    @Component({extends: Vue.component('v-data-table')})
+    @Component({extends: Vue.component('VDataTable')})
     export default class VDataTable extends Vue {
         @Prop({type: Boolean})
         showExpands;

@@ -134,7 +134,7 @@ class b_pdf
                     // ##############################################################
                     $pdf->ezSetDy(-80);
                     $pdf_einzeln->ezSetDy(-80);
-                    if (!request()->has('datum')) {
+                    if (!request()->filled('datum')) {
                         $datum_heute = date("d.m.Y");
                     } else {
                         $datum_heute = request()->input('datum');
@@ -327,20 +327,20 @@ class b_pdf
     function mieter_checkboxen()
     {
         $f = new formular ();
-        if (request()->has('delete')) {
+        if (request()->filled('delete')) {
             session()->forget('serienbrief_mvs');
         }
 
-        if (request()->has('vorlage') && is_array(session()->get('serienbrief_mvs'))) {
+        if (request()->filled('vorlage') && is_array(session()->get('serienbrief_mvs'))) {
             echo "Vorlage wählen";
-            if (request()->has('kat')) {
+            if (request()->filled('kat')) {
                 $this->vorlage_waehlen(null, request()->input('kat'));
             } else {
                 $this->vorlage_waehlen();
             }
         }
 
-        if (request()->has('mv_ids') && is_array(request()->input('mv_ids'))) {
+        if (request()->filled('mv_ids') && is_array(request()->input('mv_ids'))) {
             for ($index = 0; $index < sizeof(request()->input('mv_ids')); $index++) {
                 $mv_id_add = request()->input('mv_ids')[$index];
                 if (is_array(session()->get('serienbrief_mvs'))) {

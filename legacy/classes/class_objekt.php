@@ -479,7 +479,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
             $oo = new objekt ();
             $oo->get_objekt_infos($objekt_id);
 
-            if (!request()->has('xls')) {
+            if (!request()->filled('xls')) {
                 $pdf->ezTable($arr, $cols, "$oo->objekt_kurzname - Mietaufstellung $monatsname $jahr", array(
                     'showHeadings' => 1,
                     'shaded' => 1,
@@ -613,7 +613,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
                 $oo = new objekt ();
                 $oo->get_objekt_infos($objekt_id);
 
-                if (!request()->has('xls')) {
+                if (!request()->filled('xls')) {
 
                     $anz_mo = count($arr [$mo - 1]) - 1;
                     $jtab [$mo - 1] = $arr [$mo - 1] [$anz_mo];

@@ -136,7 +136,7 @@ switch ($option) {
 	
 	case "kassenbuch" :
 		$form = new mietkonto ();
-		if (!request()->has('jahr')) {
+        if (!request()->filled('jahr')) {
 			$jahr = date ( "Y" );
 		} else {
 			$jahr = request()->input('jahr');
@@ -163,7 +163,7 @@ switch ($option) {
 	
 	case "kassenbuch_xls" :
 		$form = new mietkonto ();
-		if (!request()->has('jahr')) {
+        if (!request()->filled('jahr')) {
 			$jahr = date ( "Y" );
 		} else {
 			$jahr = request()->input('jahr');

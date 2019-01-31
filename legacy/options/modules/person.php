@@ -1,15 +1,15 @@
 <?php
 
-if (request()->has('anzeigen')) {
+if (request()->filled('anzeigen')) {
     $anzeigen = request()->input('anzeigen');
 }
-if (request()->has('submit_person')) {
+if (request()->filled('submit_person')) {
     $submit_person = request()->input('submit_person');
 }
-if (request()->has('submit_person_direkt')) {
+if (request()->filled('submit_person_direkt')) {
     $submit_person_direkt = request()->input('submit_person_direkt');
 }
-if (request()->has('person_loeschen')) {
+if (request()->filled('person_loeschen')) {
     $person_loeschen = request()->input('person_loeschen');
 }
 switch ($anzeigen) {
@@ -104,7 +104,7 @@ switch ($anzeigen) {
         $form = new mietkonto ();
         $form->erstelle_formular("Person löschen", NULL);
         iframe_start();
-        if (request()->has('person_dat')) {
+        if (request()->filled('person_dat')) {
             // person_loeschen($_REQUEST["person_dat"]);
             hinweis_ausgeben("Löschfunktion deaktiviert!!!");
             weiterleiten("javascript:history.back()");

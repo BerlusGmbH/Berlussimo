@@ -26,18 +26,18 @@ function detail_kategorie_form()
 {
     echo "<div><span>Hauptdetail / Detailgruppe erstellen</span><hr/>";
 
-    if (!request()->has('submit_detail_kat')) {
+    if (!request()->filled('submit_detail_kat')) {
         erstelle_formular(NULL, NULL);
         detail_drop_down_kategorie();
         erstelle_eingabefeld("Detail / Detailgruppe", "detail_kat_name", "", 30);
         erstelle_submit_button_nur("submit_detail_kat", "Erstellen");
         ende_formular();
     }
-    if (request()->has('submit_detail_kat')) {
-        if (!request()->has('detail_kat_name')) {
+    if (request()->filled('submit_detail_kat')) {
+        if (!request()->filled('detail_kat_name')) {
             fehlermeldung_ausgeben("Geben Sie bitte einen Kategorienamen ein!");
             erstelle_back_button();
-        } elseif (!request()->has('bereich_kategorie')) {
+        } elseif (!request()->filled('bereich_kategorie')) {
             fehlermeldung_ausgeben("Wählen Sie bitte eine Detailtabelle aus!");
             erstelle_back_button();
         } else {
@@ -61,15 +61,15 @@ function detail_unterkategorie_form()
 {
     echo "<div class=\"div balken_detail_kat_form\"><span class=\"font_balken_uberschrift\">AUSWAHLOPTIONEN</span><hr />";
 
-    if (!request()->has('submit_detail_ukat')) {
+    if (!request()->filled('submit_detail_ukat')) {
         erstelle_formular(NULL, NULL);
         detail_drop_down_kategorie_db();
         erstelle_eingabefeld("Auswahloption", "detail_kat_uname", "", 30);
         erstelle_submit_button_nur("submit_detail_ukat", "Erstellen");
         ende_formular();
     }
-    if (request()->has('submit_detail_ukat')) {
-        if (request()->has('detail_kat_uname') && empty (request()->input('detail_kat_uname'))) {
+    if (request()->filled('submit_detail_ukat')) {
+        if (request()->filled('detail_kat_uname') && empty (request()->input('detail_kat_uname'))) {
             fehlermeldung_ausgeben("Geben Sie bitte eine Option ein!");
             erstelle_back_button();
         } else {
@@ -113,7 +113,7 @@ function get_detail_kat_name($id)
 
 function liste_detail_kat()
 {
-    if (request()->has('table')) {
+    if (request()->filled('table')) {
         $result = DB::select("SELECT DETAIL_KAT_ID, DETAIL_KAT_NAME, DETAIL_KAT_KATEGORIE FROM DETAIL_KATEGORIEN WHERE DETAIL_KAT_AKTUELL='1' && DETAIL_KAT_KATEGORIE='" . request()->input('table') . "' ORDER BY DETAIL_KAT_KATEGORIE ASC ");
     } else {
         $result = DB::select("SELECT DETAIL_KAT_ID, DETAIL_KAT_NAME, DETAIL_KAT_KATEGORIE FROM DETAIL_KATEGORIEN WHERE DETAIL_KAT_AKTUELL='1' ORDER BY DETAIL_KAT_KATEGORIE ASC ");
@@ -139,7 +139,7 @@ function liste_detail_kat()
 
 function liste_udetail_kat()
 {
-    if (request()->has('table') && !empty (request()->input('table'))) {
+    if (request()->filled('table') && !empty (request()->input('table'))) {
         $result = DB::select("SELECT UKAT_DAT, KATEGORIE_ID, UNTERKATEGORIE_NAME FROM DETAIL_UNTERKATEGORIEN WHERE AKTUELL='1' ORDER BY KATEGORIE_ID ASC ");
     } else {
         $result = DB::select("SELECT UKAT_DAT, KATEGORIE_ID, UNTERKATEGORIE_NAME FROM DETAIL_UNTERKATEGORIEN WHERE AKTUELL='1' ORDER BY KATEGORIE_ID ASC ");

@@ -1069,7 +1069,7 @@ class zeiterfassung
         if ($anz) {
 
             $f = new formular ();
-            if (!request()->has('tage')) {
+            if (!request()->filled('tage')) {
                 echo "<table>";
                 echo "<tr class=\"feldernamen\"><td colspan=\"3\">$anz URLAUBSTAGE DIE NICHT EINGETRAGEN SIND</td></tr>";
                 echo "<tr class=\"feldernamen\"><td width=\"60\">TAG</td><td width=\"80\">DATUM</td><td>ANTEIL</td></tr>";
@@ -1090,13 +1090,13 @@ class zeiterfassung
                 echo "</table>";
             }
 
-            if (request()->has('tage')) {
-                if (request()->has('speichern')) {
+            if (request()->filled('tage')) {
+                if (request()->filled('speichern')) {
                     echo '<pre>';
                     $this->urlaub2zettel(request()->input('benutzer_id'), request()->input('beschreibung'), request()->input('tage'));
                     weiterleiten(route('web::zeiterfassung::legacy', ['option' => 'nachweisliste', 'mitarbeiter_id' => $benutzer_id], false));
                 }
-                if (request()->has('erstellen')) {
+                if (request()->filled('erstellen')) {
                     $f->hidden_feld('benutzer_id', $benutzer_id);
                     $anzahl = count(request()->input('tage'));
                     $f->text_feld('Beschreung Stundenzettel (z.B. KW)', 'beschreibung', '', 50, '', '');

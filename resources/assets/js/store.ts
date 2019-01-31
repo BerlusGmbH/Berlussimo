@@ -1,5 +1,4 @@
 import authStore from "./store/auth";
-import menuStore from "./store/shared/menu";
 import notificationsStore from "./store/shared/notifications";
 import globalSelectStore from "./store/shared/global_select";
 import workplaceStore from "./store/shared/workplace";
@@ -32,7 +31,6 @@ const store = new Vuex.Store({
         shared: {
             namespaced: true,
             modules: {
-                menu: menuStore,
                 notifications: notificationsStore,
                 snackbar: snackbarStore,
                 globalSelect: globalSelectStore,

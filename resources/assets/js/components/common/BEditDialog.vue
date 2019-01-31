@@ -3,16 +3,19 @@
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
 
-    @Component({extends: Vue.component('v-edit-dialog')})
-    export default class VEditDialog extends Vue {
+    @Component({extends: Vue.component('VEditDialog')})
+    export default class BEditDialog extends Vue {
         transition;
         isActive;
         lazy;
+        cancel;
         focus;
         isSaving;
-        cancel;
         save;
         large;
+        dark;
+        light;
+        themeClasses;
 
         @Prop({type: String, default: 'Speichern'})
         saveText;
@@ -48,17 +51,6 @@
             this.$emit('show', val);
             if (val) {
                 this.$emit('open', val);
-            }
-        }
-
-        genActivator() {
-            if (this.$slots.default) {
-                return this.$createElement('a', {
-                    domProps: {href: 'javascript:;'},
-                    slot: 'activator'
-                }, this.$slots.default)
-            } else {
-                return '';
             }
         }
 
@@ -101,17 +93,12 @@
             ])
         }
 
-        onKeydown(e) {
-            if (!this.large) {
-                e.keyCode === 27 && this.cancel();
-                e.keyCode === 13 && this.save();
-            }
-        }
-
         render(h) {
             return h('v-menu', {
+                staticClass: 'v-small-dialog',
+                class: this.themeClasses,
                 props: {
-                    contentClass: 'small-dialog__content',
+                    contentClass: 'v-small-dialog__content',
                     transition: this.transition,
                     origin: 'top right',
                     right: true,
@@ -119,6 +106,8 @@
                     closeOnClick: !this.persistent,
                     closeOnContentClick: false,
                     lazy: this.lazy,
+                    light: this.light,
+                    dark: this.dark,
                     positionX: this.positionX,
                     positionY: this.positionY
                 },

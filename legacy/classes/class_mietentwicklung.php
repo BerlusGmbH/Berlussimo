@@ -473,7 +473,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'Mietvertrag' && `K
         $anfang = request()->input('anfang');
         $anfang = date_german2mysql($anfang);
         $ende = request()->input('ende');
-        if (!request()->has('ende')) {
+        if (!request()->filled('ende')) {
             $ende = '00.00.0000';
         }
         $ende = date_german2mysql($ende);
@@ -550,7 +550,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'Mietvertrag' && `K
         $anfang = request()->input('anfang');
         $anfang = $form->date_german2mysql($anfang);
         $ende = request()->input('ende');
-        if (!request()->has('ende')) {
+        if (!request()->filled('ende')) {
             $ende = '00.00.0000';
         }
         $ende = $form->date_german2mysql($ende);

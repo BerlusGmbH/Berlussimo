@@ -1,5 +1,5 @@
 <template>
-    <v-card v-if="open" class="notifications-fixed">
+    <v-card class="notifications-fixed" dark="dark" v-if="open">
         <v-card-title>
             <span class="headline"><i class="mdi mdi-message"></i> Benachrichtigungen</span>
             <v-spacer></v-spacer>
@@ -72,38 +72,36 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import {Action, Mutation, namespace, State} from "vuex-class";
+    import {namespace} from "vuex-class";
     import Echo from "../../libraries/Echo";
     import axios from "../../libraries/axios";
 
-    const NotificationsState = namespace('shared/notifications', State);
-    const NotificationsAction = namespace('shared/notifications', Action);
-    const NotificationsMutation = namespace('shared/notifications', Mutation);
-    const AuthState = namespace('auth', State);
-    const PersonShowAction = namespace('modules/person/show', Action);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const NotificationsState = namespace('shared/notifications');
+    const Auth = namespace('auth');
+    const PersonShow = namespace('modules/person/show');
+    const Refresh = namespace('shared/refresh');
 
     @Component
     export default class Notifications extends Vue {
-        @NotificationsState('open')
+        @NotificationsState.State('open')
         open: boolean;
 
-        @NotificationsState('notifications')
+        @NotificationsState.State('notifications')
         notifications: Array<Object>;
 
-        @NotificationsAction('getNotifications')
+        @NotificationsState.Action('getNotifications')
         getNotifications: Function;
 
-        @NotificationsMutation('appendNotification')
+        @NotificationsState.Mutation('appendNotification')
         appendNotification: Function;
 
-        @AuthState('user')
+        @Auth.State('user')
         user;
 
-        @PersonShowAction('updatePerson')
+        @PersonShow.Action('updatePerson')
         updatePerson: Function;
 
-        @RefreshMutation('requestRefresh')
+        @Refresh.Mutation('requestRefresh')
         requestRefresh: Function;
 
         mounted() {
@@ -116,8 +114,8 @@
                 this.getNotifications(this.user.id);
                 let vm = this;
                 Echo.private('Notification.Person.' + this.user.id)
-                    .notification(function (notification) {
-                        if (notification.data.type === 'App\\Notifications\\NotificationsUpdated') {
+                    .notification(function (event) {
+                        if (event.type === 'App\\Notifications\\NotificationsUpdated') {
                             vm.getNotifications(vm.user.id);
                             vm.requestRefresh();
                         }
@@ -127,6 +125,9 @@
 
         @Prop({type: String})
         id: string;
+
+        @Prop({type: Boolean})
+        dark: boolean;
 
         search: string = '';
         headers: Array<Object> = [
@@ -156,7 +157,7 @@
     }
 
     .notifications-fixed {
-        position: sticky;
+        position: sticky !important;
         bottom: 0;
     }
 

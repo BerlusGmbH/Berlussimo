@@ -1,8 +1,8 @@
 <template>
-    <div class="identifier">
-        <b-icon :tooltips="value.getEntityIconTooltips()">mdi-bank</b-icon>
+    <b-input>
+        <b-icon :tooltips="value.getEntityIconTooltips()" slot="prepend">mdi-bank</b-icon>
         {{String(value)}}
-    </div>
+    </b-input>
 </template>
 
 <script lang="ts">

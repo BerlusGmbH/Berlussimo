@@ -1,6 +1,6 @@
 <?php
 
-if (request()->has('option')) {
+if (request()->filled('option')) {
     $option = request()->input('option');
 } else {
     $option = 'default';
@@ -111,7 +111,7 @@ switch ($option) {
     /* Nach Auswahl der Nettomieter CHECKBOX, die Stapel-PDF erstellen */
     case "nettostapel" :
 
-        if (request()->has('einheit_ids') && request()->has('druckdatum') && request()->has('BTN_Netto')) {
+        if (request()->filled('einheit_ids') && request()->filled('druckdatum') && request()->filled('BTN_Netto')) {
             $anz_e = count(request()->input('einheit_ids'));
             $druckdatum = request()->input('druckdatum');
             $man = new mietanpassung ();
@@ -220,7 +220,7 @@ switch ($option) {
         break;
 
     case "miete_anpassen_mw" :
-        if (request()->has('einheit_id')) {
+        if (request()->filled('einheit_id')) {
             $einheit_id = request()->input('einheit_id');
             $ma = new mietanpassung ();
             $ms_jahr = $ma->get_ms_jahr();
@@ -235,8 +235,8 @@ switch ($option) {
         if (session()->has('ber_arr')) {
             session()->forget('ber_arr');
         }
-        if (request()->has('ber_uebernehmen_netto')) {
-            if (request()->has('druckdatum')) {
+        if (request()->filled('ber_uebernehmen_netto')) {
+            if (request()->filled('druckdatum')) {
                 $datum_d = request()->input('druckdatum');
             } else {
                 $datum_d = date("d.m.Y");
@@ -245,7 +245,7 @@ switch ($option) {
             $ma->pdf_anschreiben($einheit_id, $datum_d);
         }
 
-        if (request()->has('ber_prozent')) {
+        if (request()->filled('ber_prozent')) {
             $f = new formular ();
             $f->erstelle_formular("Mieterhöhung um  x Prozent", null);
 
@@ -261,7 +261,7 @@ switch ($option) {
 
         echo "<legend>";
         echo "</legend>";
-        if (request()->has('druckdatum')) {
+        if (request()->filled('druckdatum')) {
             $datum = request()->input('druckdatum');
         } else {
             $datum = date("d.m.Y");
@@ -274,7 +274,7 @@ switch ($option) {
     case "ber_prozentual" :
         $ber = session()->get('ber_arr');
 
-        if (is_array(session()->get('ber_arr')) && request()->has('prozent')) {
+        if (is_array(session()->get('ber_arr')) && request()->filled('prozent')) {
             $prozent = nummer_komma2punkt(request()->input('prozent'));
             $ma = new mietanpassung ();
             $ma->pdf_anschreiben_prozent(session()->get('ber_arr'), date("d.m.Y"));

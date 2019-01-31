@@ -4,25 +4,24 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Watch} from "vue-property-decorator";
-    import {Getter, Mutation, namespace, State} from "vuex-class";
-    import {Person} from "../../server/resources/models";
+    import {namespace} from "vuex-class";
+    import {Person} from "../../server/resources";
     import axios from "../../libraries/axios";
 
-    const WorkplaceMutation = namespace('shared/workplace', Mutation);
+    const Workplace = namespace('shared/workplace');
 
-    const AuthGetter = namespace('auth', Getter);
-    const AuthState = namespace('auth', State);
+    const Auth = namespace('auth');
 
     @Component
     export default class WorkplaceLoader extends Vue {
 
-        @WorkplaceMutation('updateHasPhone')
+        @Workplace.Mutation('updateHasPhone')
         updateHasPhone: Function;
 
-        @AuthGetter('check')
+        @Auth.Getter('check')
         check: Function;
 
-        @AuthState('user')
+        @Auth.State('user')
         user: Person | null;
 
         @Watch('check')

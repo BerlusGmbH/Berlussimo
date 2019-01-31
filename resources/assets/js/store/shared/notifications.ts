@@ -1,5 +1,5 @@
 import axios from "../../libraries/axios";
-import {ObjectCopied, PersonMerged} from "../../server/resources/notifications";
+import {ObjectCopied, PersonMerged} from "../../server/resources";
 
 export default {
     namespaced: true,

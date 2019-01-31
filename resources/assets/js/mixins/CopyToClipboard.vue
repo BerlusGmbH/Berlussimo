@@ -1,14 +1,14 @@
 <script lang="ts">
     import Component from "vue-class-component";
     import Vue from "vue";
-    import {Mutation, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
+    const Snackbar = namespace('shared/snackbar');
 
     @Component
     export default class CopyToClipboard extends Vue {
 
-        @SnackbarMutation('updateMessage')
+        @Snackbar.Mutation('updateMessage')
         updateMessage: Function;
 
         copyToClipboard(value, type: string = 'Information') {

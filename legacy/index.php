@@ -26,7 +26,7 @@ $form = new mietkonto ();
 $benutzer = Auth::user()->email;
 erstelle_abschnitt("Benutzer: $benutzer");
 
-if (request()->has('partner_id')) {
+if (request()->filled('partner_id')) {
     session()->put('partner_id', request()->input('partner_id'));
 }
 

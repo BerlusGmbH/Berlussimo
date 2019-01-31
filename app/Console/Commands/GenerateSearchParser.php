@@ -50,7 +50,7 @@ class GenerateSearchParser extends Command
             new RecursiveDirectoryIterator(resource_path('parser/'), RecursiveDirectoryIterator::SKIP_DOTS)) as $file) {
             if ($file->getExtension() === 'y') {
                 $this->info('Generating Parser: ' . $file->getFilename());
-                passthru('/usr/bin/php "' . resource_path('parser' . DIRECTORY_SEPARATOR . 'script.php') . '" "' . $file->getPathname() . '" "' . base_path('vendor/smarty/smarty-lexer/LexerGenerator.php') . '" "' . base_path('vendor/smarty/smarty-lexer/ParserGenerator.php') . '" "' . $iterator->getSubPath() . '"');
+                passthru('php "' . resource_path('parser' . DIRECTORY_SEPARATOR . 'script.php') . '" "' . $file->getPathname() . '" "' . base_path('vendor/smarty/smarty-lexer/LexerGenerator.php') . '" "' . base_path('vendor/smarty/smarty-lexer/ParserGenerator.php') . '" "' . $iterator->getSubPath() . '"');
             }
         }
         foreach ($iterator = new RecursiveIteratorIterator(

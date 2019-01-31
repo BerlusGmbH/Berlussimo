@@ -53,7 +53,7 @@ class lager {
 	}
 	
 	function lager_auswahl_liste($link) {
-		if (request()->has('lager_id')) {
+        if (request()->filled('lager_id')) {
 			session()->put('lager_id', request()->input('lager_id'));
 		}
 

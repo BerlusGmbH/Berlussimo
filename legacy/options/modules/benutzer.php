@@ -1,6 +1,6 @@
 <?php
 
-if (request()->has('option') && !empty (request()->input('option'))) {
+if (request()->filled('option') && !empty (request()->input('option'))) {
     $option = request()->input('option');
 } else {
     $option = 'default';
@@ -15,7 +15,7 @@ switch ($option) {
         break;
 
     case "berechtigungen" :
-        if (request()->has('b_id')) {
+        if (request()->filled('b_id')) {
             $b_id = request()->input('b_id');
             $b = new benutzer ();
             $b->berechtigungen($b_id);
@@ -25,7 +25,7 @@ switch ($option) {
         break;
 
     case "aendern" :
-        if (request()->has('b_id')) {
+        if (request()->filled('b_id')) {
             session()->put('url.intended', URL::previous());
             $b_id = request()->input('b_id');
             $b = new benutzer ();
@@ -36,11 +36,11 @@ switch ($option) {
         break;
 
     case "benutzer_aendern_send" :
-        if (request()->has('b_id')) {
+        if (request()->filled('b_id')) {
             $benutzer_name = request()->input('benutzername');
             $b_id = request()->input('b_id');
             $passwort = null;
-            if(request()->has('passwort')) {
+            if (request()->filled('passwort')) {
                 $passwort = Hash::make(request()->input('passwort'));
             }
             $partner_id = request()->input('partner_id');
@@ -61,15 +61,15 @@ switch ($option) {
         break;
 
     case "zugriff_send" :
-        if (request()->has('b_id') && request()->has('modul_name')) {
+        if (request()->filled('b_id') && request()->filled('modul_name')) {
             $b_id = request()->input('b_id');
             $modul_name = request()->input('modul_name');
 
             $b = new benutzer ();
-            if (request()->has('submit_ja')) {
+            if (request()->filled('submit_ja')) {
                 $b->berechtigungen_speichern($b_id, $modul_name);
             }
-            if (request()->has('submit_no')) {
+            if (request()->filled('submit_no')) {
                 $b->berechtigungen_entziehen($b_id, $modul_name);
             }
             weiterleiten(route('web::benutzer::legacy', ['option' => 'berechtigungen', 'b_id' => $b_id], false));
@@ -83,7 +83,7 @@ switch ($option) {
 
     case "benutzer_send" :
         if (request()->isMethod('post')) {
-            if (request()->has('benutzername') && request()->has('passwort') && request()->has('partner_id') && request()->has('geburtstag') && request()->has('eintritt') && request()->has('urlaub') && request()->has('stunden_pw')) {
+            if (request()->filled('benutzername') && request()->filled('passwort') && request()->filled('partner_id') && request()->filled('geburtstag') && request()->filled('eintritt') && request()->filled('urlaub') && request()->filled('stunden_pw')) {
                 $b = new benutzer ();
                 $benutzername = request()->input('benutzername');
                 $passwort = request()->input('passwort');
@@ -128,7 +128,7 @@ switch ($option) {
 
     case "werkzeuge_mitarbeiter" :
         $w = new werkzeug ();
-        if (request()->has('b_id')) {
+        if (request()->filled('b_id')) {
             $b_id = request()->input('b_id');
             $w->werkzeugliste($b_id);
         } else {
@@ -140,7 +140,7 @@ switch ($option) {
         break;
 
     case "werkzeug_rueckgabe_alle_pdf" :
-        if (request()->has('b_id')) {
+        if (request()->filled('b_id')) {
             $b_id = request()->input('b_id');
             $w = new werkzeug ();
             $w->pdf_rueckgabeschein_alle($b_id, 'Werkzeugrückgabeschein ');
@@ -150,7 +150,7 @@ switch ($option) {
         break;
 
     case "werkzeug_ausgabe_alle_pdf" :
-        if (request()->has('b_id')) {
+        if (request()->filled('b_id')) {
             $b_id = request()->input('b_id');
             $w = new werkzeug ();
             $w->pdf_rueckgabeschein_alle($b_id, 'Werkzeugausgabegabeschein ');
@@ -160,7 +160,7 @@ switch ($option) {
         break;
 
     case "werkzeug_rueckgabe_alle" :
-        if (request()->has('b_id')) {
+        if (request()->filled('b_id')) {
             $b_id = request()->input('b_id');
             $w = new werkzeug ();
             $w->werkzeug_rueckgabe_alle($b_id); // änderung der DB
@@ -170,7 +170,7 @@ switch ($option) {
         break;
 
     case "werkzeug_zuweisen" :
-        if (request()->has('w_id')) {
+        if (request()->filled('w_id')) {
             $w_id = request()->input('w_id');
             $w = new werkzeug ();
             $w->form_werkzeug_zuweisen($w_id); // änderung der DB
@@ -180,7 +180,7 @@ switch ($option) {
         break;
 
     case "werkzeug_zuweisen_snd" :
-        if (request()->has('w_id') && request()->has('b_id')) {
+        if (request()->filled('w_id') && request()->filled('b_id')) {
             $w_id = request()->input('w_id');
             $b_id = request()->input('b_id');
             $w = new werkzeug ();
@@ -193,7 +193,7 @@ switch ($option) {
         break;
 
     case "werkzeug_rueckgabe" :
-        if (request()->has('w_id') && request()->has('b_id')) {
+        if (request()->filled('w_id') && request()->filled('b_id')) {
             $w_id = request()->input('w_id');
             $b_id = request()->input('b_id');
             $w = new werkzeug ();
@@ -202,7 +202,7 @@ switch ($option) {
         break;
 
     case "werkzeug_raus" :
-        if (request()->has('w_id')) {
+        if (request()->filled('w_id')) {
             $w_id = request()->input('w_id');
             $w = new werkzeug ();
             $w->werkzeug_loeschen($w_id);

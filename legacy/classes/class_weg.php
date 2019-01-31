@@ -1155,7 +1155,7 @@ class weg
         $j = $datum_arr [0]; // Jahr
         $m = $datum_arr [1]; // Monat
         $t = $datum_arr [2]; // Tag
-        if (!request()->has('jahr') || request()->input('jahr') == date("Y")) {
+        if (!request()->filled('jahr') || request()->input('jahr') == date("Y")) {
             $akt_jahr = date("Y");
             $akt_monat = date("m");
         } else {
@@ -2267,7 +2267,7 @@ class weg
         $m = $datum_arr [1]; // Monat
         $t = $datum_arr [2]; // Tag
 
-        if (!request()->has('jahr') || request()->input('jahr') == date("Y")) {
+        if (!request()->filled('jahr') || request()->input('jahr') == date("Y")) {
             $akt_jahr = date("Y");
             $akt_monat = date("m");
         } else {
@@ -2524,7 +2524,7 @@ class weg
         $bpdf = new b_pdf ();
         $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
         $this->hausgeld_kontoauszug_pdf($pdf, $eigentuemer_id, 0); // null für keine neue Seite
-        if (request()->has('jahr')) {
+        if (request()->filled('jahr')) {
             $this->hg_ist_soll_pdf($pdf, $eigentuemer_id, request()->input('jahr'));
             $this->hga_uebersicht_pdf($pdf, $eigentuemer_id);
         }
@@ -2703,7 +2703,7 @@ class weg
     {
         $e_konto = 6050;
         $this->get_eigentumer_id_infos($eigentuemer_id);
-        if (request()->has('jahr')) {
+        if (request()->filled('jahr')) {
             $jahr = request()->input('jahr');
         } else {
             $jahr = $akt_jahr = date("Y");
@@ -6570,7 +6570,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
                 new \App\Messages\InfoMessage('Bitte wählen Sie ein Geldkonto.')
             );
         }
-        if (!request()->has('schritt')) {
+        if (!request()->filled('schritt')) {
             $f = new formular ();
             $f->fieldset('Assistent für HG Abrechnung', 'ass_weg');
             $f->erstelle_formular('Schritt 1', '');
@@ -6592,10 +6592,10 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
             $f->fieldset_ende();
         }
 
-        if (request()->has('schritt')) {
+        if (request()->filled('schritt')) {
             switch (request()->input('schritt')) {
                 case "2" :
-                    if (request()->has('profil_id')) {
+                    if (request()->filled('profil_id')) {
                         session()->put('hga_profil_id', request()->input('profil_id'));
                         $this->get_hga_profil_infos(request()->input('profil_id'));
                         session()->put('objekt_id', $this->p_objekt_id);
@@ -6611,14 +6611,14 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
                     break;
 
                 case "3" :
-                    if (request()->has('profil_id')) {
+                    if (request()->filled('profil_id')) {
                         session()->put('hga_profil_id', request()->input('profil_id'));
                     }
                     $this->form_hk_verbrauch(session()->get('hga_profil_id'));
                     break;
 
                 case "4" :
-                    if (request()->has('profil_id')) {
+                    if (request()->filled('profil_id')) {
                         session()->put('hga_profil_id', request()->input('profil_id'));
                     }
                     $this->form_hg_zahlungen(session()->get('hga_profil_id'));
@@ -7243,7 +7243,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
 
     function form_hausgeldzahlungen($objekt_id)
     {
-        if (!request()->has('jahr')) {
+        if (!request()->filled('jahr')) {
             $jahr = date("Y");
         } else {
             $jahr = request()->input('jahr');
@@ -7320,7 +7320,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
 
     function form_hausgeldzahlungen_xls($objekt_id)
     {
-        if (!request()->has('jahr')) {
+        if (!request()->filled('jahr')) {
             $jahr = date("Y");
         } else {
             $jahr = request()->input('jahr');
@@ -7617,7 +7617,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
             }
             return $csv_string;
         }
-        if (request()->has('csv')) {
+        if (request()->filled('csv')) {
             ob_clean();
             header("Content-Disposition: attachment; filename='ET.CSV");
             $ueberschrift = array_keys($csv [0]);
@@ -7643,7 +7643,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
         $pdf->ezStopPageNumbers(); // seitennummerirung beenden
         $p = new partners ();
         $p->get_partner_info(session()->get('partner_id'));
-        if (request()->has('lang') && request()->input('lang') == 'en') {
+        if (request()->filled('lang') && request()->input('lang') == 'en') {
             $cols = array(
                 'EINHEIT_KURZNAME' => "AP",
                 'HAUS_STRASSE' => "STREET",

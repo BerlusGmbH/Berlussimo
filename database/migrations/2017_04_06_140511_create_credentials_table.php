@@ -138,7 +138,7 @@ class CreateCredentialsTable extends Migration
                         ]);
                     }
 
-                    Audit::where('person_id', $user['id'])->update(['person_id' => $person->id]);
+                    Audit::where('user_id', $user['id'])->update(['user_id' => $person->id]);
 
                     Details::where('DETAIL_ZUORDNUNG_TABELLE', 'Benutzer')
                         ->where('DETAIL_ZUORDNUNG_ID', $user['id'])

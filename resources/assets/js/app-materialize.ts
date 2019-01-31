@@ -14,15 +14,17 @@ import identifier from "./components/common/identifiers/Identifier.vue";
 import tile from "./components/common/tiles/Tile.vue";
 import chip from "./components/common/chips/Chip.vue";
 import {dformat, nformat, sformat, substituteNewlineWithBr} from "./filters";
-import VEditDialog from "./components/common/VEditDialog.vue";
+import BEditDialog from "./components/common/BEditDialog.vue";
 import BIcon from "./components/common/BIcon.vue";
+import BInput from "./components/common/BInput.vue";
 
 
 Vue.component('app-identifier', identifier);
 Vue.component('app-tile', tile);
 Vue.component('app-chip', chip);
-Vue.component('app-edit-dialog', VEditDialog);
+Vue.component('app-edit-dialog', BEditDialog);
 Vue.component('b-icon', BIcon);
+Vue.component('b-input', BInput);
 Vue.filter('substituteNewlineWithBr', substituteNewlineWithBr);
 Vue.filter('nformat', nformat);
 Vue.filter('dformat', dformat);
@@ -63,5 +65,11 @@ new Vue({
         'app-legacy-loader': legacyLoader,
         'app-messages-loader': messagesLoader,
         'app-messages': messages,
+    },
+    mounted() {
+        let element = document.getElementById("berlussimo-content");
+        if (element) {
+            element.style.display = 'inherit';
+        }
     }
 });

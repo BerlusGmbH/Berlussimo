@@ -28,12 +28,11 @@
                             ></v-text-field>
                         </v-flex>
                         <v-flex xs12 md4>
-                            <v-text-field label="Beschreibung"
-                                          v-model="lineValue.BEZEICHNUNG"
-                                          type="text"
-                                          multi-line
-                                          tabindex="3"
-                            ></v-text-field>
+                            <v-textarea label="Beschreibung"
+                                        v-model="lineValue.BEZEICHNUNG"
+                                        type="text"
+                                        tabindex="3"
+                            ></v-textarea>
                         </v-flex>
                         <v-flex xs6 md1>
                             <v-text-field label="Menge"
@@ -44,14 +43,13 @@
                             ></v-text-field>
                         </v-flex>
                         <v-flex xs6 md1>
-                            <v-select label="Einheit"
-                                      v-model="lineValue.EINHEIT"
-                                      :items="units"
-                                      item-value="V_EINHEIT"
-                                      item-text="BEZEICHNUNG"
-                                      autocomplete
-                                      tabindex="5"
-                            ></v-select>
+                            <v-autocomplete label="Einheit"
+                                            v-model="lineValue.EINHEIT"
+                                            :items="units"
+                                            item-value="V_EINHEIT"
+                                            item-text="BEZEICHNUNG"
+                                            tabindex="5"
+                            ></v-autocomplete>
                         </v-flex>
                         <v-flex xs6 md2>
                             <v-layout column>
@@ -166,15 +164,15 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {Mutation, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
     import {Prop, Watch} from "vue-property-decorator";
     import EntitySelect from "../../../common/EntitySelect.vue"
-    import {Invoice, InvoiceLine} from "../../../../server/resources/models";
+    import {Invoice, InvoiceLine} from "../../../../server/resources";
     import axios from "../../../../libraries/axios";
     import _ from 'lodash';
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const Snackbar = namespace('shared/snackbar');
+    const Refresh = namespace('shared/refresh');
 
     @Component({components: {'app-entity-select': EntitySelect}})
     export default class EditDialog extends Vue {
@@ -206,10 +204,10 @@
 
         units: Array<string> = [];
 
-        @SnackbarMutation('updateMessage')
+        @Snackbar.Mutation('updateMessage')
         updateMessage: Function;
 
-        @RefreshMutation('requestRefresh')
+        @Refresh.Mutation('requestRefresh')
         requestRefresh: Function;
 
         saving: boolean = false;

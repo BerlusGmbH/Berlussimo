@@ -7,13 +7,13 @@
     <link href='{{mix('css/main.css')}}' rel='stylesheet' type='text/css'>
     <link href='{{mix('css/berlussimo.css')}}' rel='stylesheet' type='text/css'>
     <link href='{{mix('css/materialize-css.css')}}' rel='stylesheet' type='text/css'>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <style>
+    <style type="text/css">
         .application--wrap {
-            min-height: auto;
+            min-height: auto !important;
         }
     </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body style="display: flex; min-height: 100vh; flex-direction: column;">
@@ -42,13 +42,14 @@
     </v-app>
 </div>
 
-<div class="application theme--dark content" style="flex: 1 0 auto; flex-direction: column">
+<div id="berlussimo-content" class="application theme--dark content"
+     style="flex: 1 0 auto; flex-direction: column; display: none">
     @if($content != "")
-        <div class="berlussimo-materialize container fluid">
+        <div class="berlussimo-materialize container fluid" style="flex: 1 0 auto">
             {!!$content!!}
         </div>
     @else
-        <div class="berlussimo-materialize container fluid">
+        <div class="berlussimo-materialize container fluid" style="flex: 1 0 auto">
             @yield('content')
         </div>
     @endif

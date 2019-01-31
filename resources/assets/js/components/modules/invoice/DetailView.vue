@@ -20,17 +20,15 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {Action, Mutation, namespace, State} from "vuex-class";
+    import {namespace} from "vuex-class";
     import {Prop, Watch} from "vue-property-decorator";
     import invoiceCard from "./cards/InvoiceCard.vue";
     import AdvancePaymentInvoicesCard from "./cards/AdvancePaymentInvoicesCard.vue";
     import invoiceLinesCard from "./cards/InvoiceLinesCard.vue";
 
-    const ShowAction = namespace('modules/invoice/show', Action);
-    const ShowState = namespace('modules/invoice/show', State);
+    const Show = namespace('modules/invoice/show');
 
-    const RefreshState = namespace('shared/refresh', State);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const Refresh = namespace('shared/refresh');
 
     @Component({
         components: {
@@ -43,16 +41,16 @@
         @Prop()
         id: string;
 
-        @ShowAction('updateInvoice')
+        @Show.Action('updateInvoice')
         fetchInvoice;
 
-        @ShowState('invoice')
+        @Show.State('invoice')
         invoice;
 
-        @RefreshState('dirty')
+        @Refresh.State('dirty')
         dirty;
 
-        @RefreshMutation('refreshFinished')
+        @Refresh.Mutation('refreshFinished')
         refreshFinished: Function;
 
         @Watch('dirty')

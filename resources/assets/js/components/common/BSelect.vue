@@ -1,10 +1,9 @@
-
 <script lang="ts">
     import Vue from "../../imports";
     import Component from "vue-class-component"
 
-    @Component({extends: Vue.component('v-select')})
-    export default class VSelect extends Vue {
+    @Component({extends: Vue.component('VAutocomplete')})
+    export default class BSelect extends Vue {
         inputValue;
         selectedItems;
 

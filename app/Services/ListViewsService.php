@@ -120,11 +120,11 @@ class ListViewsService
     {
         $size = $request->input('s', 20);
         $query = "";
-        if ($request->has('q')) {
+        if ($request->filled('q')) {
             $query = $request->input('q');
         }
         foreach ($this->getParameterNames() as $parameter) {
-            if (request()->has($parameter) && $parameter != 's') {
+            if (request()->filled($parameter) && $parameter != 's') {
                 if (is_array($request->input($parameter))) {
                     foreach ($request->input($parameter) as $subparameter) {
                         $query .= " " . $this->getView($parameter, $subparameter);
@@ -411,7 +411,7 @@ class ListViewsService
         }
 
         foreach ($dependsOn as $parameter => $value) {
-            if (!$request->has($parameter) || !in_array($value, $request->input($parameter))) {
+            if (!$request->filled($parameter) || !in_array($value, $request->input($parameter))) {
                 return true;
             }
         }

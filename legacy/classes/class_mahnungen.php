@@ -15,7 +15,7 @@ class mahnungen
         $f = new formular ();
         $f->erstelle_formular('mahnen', '');
         $f->fieldset('Mahnungen und Zahlungserinnerungen', 'mze');
-        if (request()->has('send_mahnen') or request()->has('send_erinnern')) {
+        if (request()->filled('send_mahnen') or request()->filled('send_erinnern')) {
             if (!is_array(request()->input('mahnliste'))) {
                 throw new \App\Exceptions\MessageException(
                     new \App\Messages\ErrorMessage('Bitte wählen Sie einen Mieter.')
@@ -29,12 +29,12 @@ class mahnungen
                 }
             }
             $this->form_datum_konto('Datum - Zahlungsfrist', 'datum', 'dz');
-            if (request()->has('send_mahnen')) {
+            if (request()->filled('send_mahnen')) {
                 $f->text_feld('Mahngebühr', 'mahngebuehr', '0,00', 10, 'mg', '');
                 $f->hidden_feld('mietvertrag_raus', 'mahnen_mehrere');
                 $f->send_button('send_mehrere', 'SERIENBRIEF MAHNUNGEN ERSTELLEN');
             }
-            if (request()->has('send_erinnern')) {
+            if (request()->filled('send_erinnern')) {
                 $f->hidden_feld('mietvertrag_raus', 'erinnern_mehrere');
                 echo "<br>";
                 $f->send_button('send_mehrere', 'SERIENBRIEF ZAHLUNGSERINNERUNG ERSTELLEN');

@@ -1,6 +1,6 @@
 <?php
 
-if (request()->has('einheit_id')) {
+if (request()->filled('einheit_id')) {
     $einheit_id = request()->input('einheit_id');
 } else {
     echo "Bitte Einheit wählen.";
@@ -25,7 +25,7 @@ switch ($anzeigen) {
 /* Neue Version zu Einheit oder Einheit und MV */
 function uebersicht_einheit($einheit_id)
 {
-    if (request()->has('mietvertrag_id')) {
+    if (request()->filled('mietvertrag_id')) {
         $mietvertrag_id = request()->input('mietvertrag_id');
         $mv = new mietvertraege ();
         $mv->get_mietvertrag_infos_aktuell($mietvertrag_id);

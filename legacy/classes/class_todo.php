@@ -83,8 +83,8 @@ class todo
     function form_neue_aufgabe($t_id = NULL, $typ = 'Benutzer')
     {
         $bb = new buchen ();
-        if (request()->has('submit_n')) {
-            if (request()->has('benutzer_id') && request()->has('submit_n') && request()->has('anzeigen_ab') && request()->has('text')) {
+        if (request()->filled('submit_n')) {
+            if (request()->filled('benutzer_id') && request()->filled('submit_n') && request()->filled('anzeigen_ab') && request()->filled('text')) {
                 $last_id = last_id2('TODO_LISTE', 'T_ID') + 1;
                 $anz_ab = date_german2mysql(request()->input('anzeigen_ab'));
                 $typ = request()->input('typ');
@@ -117,7 +117,7 @@ class todo
         }
         $f->text_bereich('Beschreibung', 'text', '', 5, 20, 'aufgabe');
 
-        if (request()->has('kos_typ') && request()->has('kos_id')) {
+        if (request()->filled('kos_typ') && request()->filled('kos_id')) {
             $f->hidden_feld('kostentraeger_typ', request()->input('kos_typ'));
             $f->hidden_feld('kostentraeger_id', request()->input('kos_id'));
         } else {
@@ -965,8 +965,8 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         $f->send_button('submit_n1', 'Änderungen speichern');
         $f->fieldset_ende();
         $f->ende_formular();
-        if (request()->has('submit_n1')) {
-            if (request()->has('benutzer_id') && request()->has('submit_n1') && request()->has('anzeigen_ab') && request()->has('text')) {
+        if (request()->filled('submit_n1')) {
+            if (request()->filled('benutzer_id') && request()->filled('submit_n1') && request()->filled('anzeigen_ab') && request()->filled('text')) {
                 $anz_ab = date_german2mysql(request()->input('anzeigen_ab'));
 
                 $kostentraeger_typ = request()->input('kostentraeger_typ');
@@ -1384,7 +1384,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 
     function auftraege_an_haus($haus_id)
     {
-        if (request()->has('einheit_id')) {
+        if (request()->filled('einheit_id')) {
             $arr = $this->get_auftraege_einheit('Einheit', request()->input('einheit_id'));
             $e = new einheit ();
             $e->get_einheit_info(request()->input('einheit_id'));

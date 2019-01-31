@@ -54,11 +54,11 @@
     import {Prop} from "vue-property-decorator";
     import detailDeleteDialog from "../../common/dialogs/DetailDeleteDialog.vue";
     import detailEditDialog from "../../common/dialogs/DetailEditDialog.vue";
-    import {Mutation, namespace} from "vuex-class";
-    import {Detail, Einheit, Person} from "../../../server/resources/models";
+    import {namespace} from "vuex-class";
+    import {Detail, Einheit, Person} from "../../../server/resources";
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const Snackbar = namespace('shared/snackbar');
+    const Refresh = namespace('shared/refresh');
 
     @Component({
         'components': {
@@ -76,10 +76,10 @@
         @Prop({type: Object})
         parent: Person | Einheit;
 
-        @SnackbarMutation('updateMessage')
+        @Snackbar.Mutation('updateMessage')
         updateMessage: Function;
 
-        @RefreshMutation('requestRefresh')
+        @Refresh.Mutation('requestRefresh')
         requestRefresh: Function;
 
         models: Array<boolean> = [];

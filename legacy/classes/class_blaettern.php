@@ -15,7 +15,7 @@ class blaettern {
         }
         // echo "<h3>$seiten_gesamt</h3>\n";
         /* Limit erstellung */
-        if (request()->has('position')) {
+        if (request()->filled('position')) {
             $this->limit = "LIMIT " . request()->input('position') . ",$zeilen_pro_seite";
             $aktuelle_seite = intval ( request()->input('position') / $zeilen_pro_seite );
             $this->aktuelle_seite = $aktuelle_seite + 1;

@@ -732,7 +732,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
     function rechnung_schreiben_positionen_wahl($kostentraeger_typ, $kostentraeger_id, $positionen, $aussteller_typ, $aussteller_id)
     {
-        if (request()->has('csv')) {
+        if (request()->filled('csv')) {
             $this->pool_csv($kos_typ, $kos_id, $positionen, $aussteller_typ, $aussteller_id);
             die ();
         }
@@ -2517,7 +2517,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
                 $letzte_rech_pos_id = $letzte_rech_pos_id + 1;
 
                 /* Wenn Artikelnr eingegeben */
-                if (request()->has('positionen.' . $a . '.artikel_nr')) {
+                if (request()->filled('positionen.' . $a . '.artikel_nr')) {
                     $pos_preis = nummer_komma2punkt(request()->input('positionen') [$a] ['preis']);
                     $pos_menge = nummer_komma2punkt(request()->input('positionen') [$a] ['menge']);
                     $pos_mwst_satz = nummer_komma2punkt(request()->input('positionen') [$a] ['pos_mwst_satz']);

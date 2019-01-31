@@ -1,6 +1,6 @@
 <?php
 
-if (request()->has('option') && !empty (request()->input('option'))) {
+if (request()->filled('option') && !empty (request()->input('option'))) {
     $option = request()->input('option');
 } else {
     $option = 'default';
@@ -34,7 +34,7 @@ switch ($option) {
         break;
 
     case "profil_anpassen" :
-        if (request()->has('profil_id')) {
+        if (request()->filled('profil_id')) {
             session()->put('profil_id', request()->input('profil_id'));
             $bk = new bk ();
             $bk->form_bk_profil_anpassen(session()->get('profil_id'));
@@ -62,7 +62,7 @@ switch ($option) {
         break;
 
     case "buchung_anpassen" :
-        if (request()->has('bk_be_id') && request()->has('profil_id')) {
+        if (request()->filled('bk_be_id') && request()->filled('profil_id')) {
             $bk = new bk ();
             $bk->form_buchung_anpassen(request()->input('bk_be_id'), request()->input('profil_id'));
         } else {
@@ -71,7 +71,7 @@ switch ($option) {
         break;
 
     case "buchung_aendern" :
-        if (request()->has('buchung_id') && request()->has('bk_be_id') && request()->has('umlagebetrag') && request()->has('kostentraeger_typ') && request()->has('kostentraeger_id') && request()->has('genkey') && request()->has('hndl_betrag')) {
+        if (request()->filled('buchung_id') && request()->filled('bk_be_id') && request()->filled('umlagebetrag') && request()->filled('kostentraeger_typ') && request()->filled('kostentraeger_id') && request()->filled('genkey') && request()->filled('hndl_betrag')) {
             $bk = new bk ();
             $bk->update_bk_buchung(request()->input('bk_be_id'), request()->input('umlagebetrag'), request()->input('kostentraeger_typ'), request()->input('kostentraeger_id'), request()->input('genkey'), nummer_komma2punkt(request()->input('hndl_betrag')));
             weiterleiten_in_sec(route('web::bk::legacy', ['option' => 'assistent'], false), 0);
@@ -81,7 +81,7 @@ switch ($option) {
         break;
 
     case "eig_konto_anlegen" :
-        if (request()->has('kostenkonto') && request()->has('konto_bez') && session()->has('profil_id')) {
+        if (request()->filled('kostenkonto') && request()->filled('konto_bez') && session()->has('profil_id')) {
             $bk = new bk ();
             $bk->bk_konto_speichern(session()->get('profil_id'), request()->input('kostenkonto'), request()->input('konto_bez'));
             session()->forget('genkey');
@@ -148,7 +148,7 @@ switch ($option) {
     case "new_we" :
         $wirt = new wirt_e ();
 
-        if (request()->has('w_name')) {
+        if (request()->filled('w_name')) {
             $wirt->neue_we_speichern(request()->input('w_name'));
             weiterleiten(route('web::bk::legacy', ['option' => 'wirtschaftseinheiten'],false));
         } else {
@@ -164,14 +164,14 @@ switch ($option) {
         break;
 
     case "wirt_delete" :
-        if (request()->has('submit_del_all') && request()->has('w_id')) {
+        if (request()->filled('submit_del_all') && request()->filled('w_id')) {
             $w_id = request()->input('w_id');
             $anzeigen = request()->input('anzeigen');
             $wirt = new wirt_e ();
             $wirt->del_all($w_id);
         }
 
-        if (request()->has('submit_del') && request()->has('w_id')) {
+        if (request()->filled('submit_del') && request()->filled('w_id')) {
             $w_id = request()->input('w_id');
             $anzeigen = request()->input('anzeigen');
             $wirt = new wirt_e ();
@@ -184,7 +184,7 @@ switch ($option) {
         break;
 
     case "wirt_einheiten_hinzu" :
-        if (request()->has('w_id')) {
+        if (request()->filled('w_id')) {
             $wirt = new wirt_e ();
             $wirt->form_einheit_hinzu(request()->input('w_id'));
         } else {
@@ -254,7 +254,7 @@ switch ($option) {
         break;
 
     case "anpassung_bk_hk_del" :
-        if (request()->has('an_dat')) {
+        if (request()->filled('an_dat')) {
             $bk = new bk ();
             $bk->bk_hk_anpassung_loeschen(request()->input('an_dat'));
             weiterleiten(route('web::bk::legacy', ['option' => 'anpassung_bk_hk'], false));
@@ -273,7 +273,7 @@ switch ($option) {
         $ber = new berlussimo_global ();
         $ber->objekt_auswahl_liste();
         if (session()->has('objekt_id')) {
-            if (!request()->has('empfaenger')) {
+            if (!request()->filled('empfaenger')) {
                 $bpdf->form_mieter2sess();
             } else {
                 $empfaenger = request()->input('empfaenger');
@@ -283,7 +283,7 @@ switch ($option) {
         break;
 
     case "empfaenger2sess" :
-        if (request()->has('empfaenger_typ')) {
+        if (request()->filled('empfaenger_typ')) {
             $anz = count(request()->input('empf_ids'));
             if ($anz) {
                 $arr = request()->input('empf_ids');
@@ -302,7 +302,7 @@ switch ($option) {
         break;
 
     case "serienbrief_vorlage_send" :
-        if (request()->has('kurztext') && !empty (request()->input('text'))) {
+        if (request()->filled('kurztext') && !empty (request()->input('text'))) {
             $bpdf = new b_pdf ();
             if (request()->input('kat') == 'NEU') {
                 $kat = request()->input('kat_man');
@@ -317,7 +317,7 @@ switch ($option) {
         break;
 
     case "vorlage_bearbeiten" :
-        if (request()->has('vorlagen_dat')) {
+        if (request()->filled('vorlagen_dat')) {
             $bpdf = new b_pdf ();
             $bpdf->form_vorlage_edit(request()->input('vorlagen_dat'));
         } else {
@@ -326,7 +326,7 @@ switch ($option) {
         break;
 
     case "serienbrief_vorlage_send1" :
-        if (request()->has('kurztext') && request()->has('text') && request()->input('dat')) {
+        if (request()->filled('kurztext') && request()->filled('text') && request()->input('dat')) {
             $bpdf = new b_pdf ();
             $bpdf->vorlage_update(request()->input('dat'), request()->input('kurztext'), request()->input('text'), request()->input('kat'), request()->input('empf_typ'));
             $bpdf->vorlage_waehlen('Mieter');
@@ -339,11 +339,11 @@ switch ($option) {
         break;
 
     case "profil_kopieren" :
-        if (request()->has('profil_id') && request()->has('profil_bez')) {
+        if (request()->filled('profil_id') && request()->filled('profil_bez')) {
             $bk = new bk ();
             $profil_id = request()->input('profil_id');
             $bezeichung = request()->input('profil_bez');
-            if (request()->has('buchungen_kopieren')) {
+            if (request()->filled('buchungen_kopieren')) {
                 $bk->bk_profil_kopieren($profil_id, $bezeichung, 1);
             } else {
                 $bk->bk_profil_kopieren($profil_id, $bezeichung, 0);
@@ -357,15 +357,15 @@ switch ($option) {
 
     case "buchungen_hinzu" :
         $bk = new bk ();
-        if (request()->has('genkey')) {
+        if (request()->filled('genkey')) {
             session()->put('genkey', request()->input('genkey'));
             session()->put('hndl', request()->input('hndl'));
             session()->put('kontierung', request()->input('kontierung'));
-            if (request()->has('submit_key') && request()->input('submit_key') == "Bestehende Ändern") {
+            if (request()->filled('submit_key') && request()->input('submit_key') == "Bestehende Ändern") {
                 $bk->update_genkey(session()->get('bk_konto_id'), session()->get('profil_id'), session()->get('genkey'), session()->get('hndl'));
             }
         }
-        if (request()->has('uebernahme')) {
+        if (request()->filled('uebernahme')) {
             $arr = request()->input('uebernahme');
             $anz = count($arr);
 
@@ -422,7 +422,7 @@ switch ($option) {
         break;
 
     case "me_send_hk_bk" :
-        if (request()->has('kat')) {
+        if (request()->filled('kat')) {
             if (is_array(request()->input('mvs'))) {
                 $anz = count(request()->input('mvs'));
                 $kat = request()->input('kat');

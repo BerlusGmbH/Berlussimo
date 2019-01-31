@@ -204,7 +204,7 @@ class mietanpassung
                     /* Aktuelle Miete kalt */
                     $mk->kaltmiete_monatlich_ohne_mod($mv_id, $monat, $jahr);
                     $aktuelle_miete = $mk->ausgangs_kaltmiete;
-                    if ($mieter_art == 'Bruttomieter' && request()->has('nk_anteil')) {
+                    if ($mieter_art == 'Bruttomieter' && request()->filled('nk_anteil')) {
                         $aktuelle_miete = $mk->ausgangs_kaltmiete - nummer_komma2punkt(request()->input('nk_anteil')) / 12;
                         $aktuelle_miete_brutto = $mk->ausgangs_kaltmiete;
                     }
@@ -212,7 +212,7 @@ class mietanpassung
                     $mk->kaltmiete_monatlich_ohne_mod($mv_id, $monat_n, $jahr_minus_3);
                     // $this->kosten_monatlich($mv_id,$monat,$jahr_minus_3, 'Miete kalt');
                     $miete_vor_3_jahren = $mk->ausgangs_kaltmiete;
-//                    if ($mieter_art == 'Bruttomieter' && request()->has('nk_anteil')) {
+//                    if ($mieter_art == 'Bruttomieter' && request()->filled('nk_anteil')) {
 //                        $miete_vor_3_jahren = $mk->ausgangs_kaltmiete - nummer_komma2punkt(request()->input('nk_anteil')) / 12;
 //                    }
 
@@ -251,7 +251,7 @@ class mietanpassung
                     $tab_arr ['MIETE_3_JAHRE'] = $miete_vor_3_jahren;
                     $tab_arr ['DATUM_3_JAHRE'] = $datum_miete_v_3_j_a;
                     $tab_arr ['MIETE_AKTUELL'] = $aktuelle_miete;
-                    if ($mieter_art == 'Bruttomieter' && request()->has('nk_anteil')) {
+                    if ($mieter_art == 'Bruttomieter' && request()->filled('nk_anteil')) {
                         $tab_arr ['MIETE_AKTUELL_BRUTTO'] = $aktuelle_miete_brutto;
                     }
                     // echo "$ms_jahr $mietspiegel_feld";
@@ -323,7 +323,7 @@ class mietanpassung
                     /* Berechnung */
                     $m2_mietpreis = $aktuelle_miete / $e->einheit_qm;
                     $tab_arr ['M2_AKTUELL'] = $m2_mietpreis;
-                    if ($mieter_art == 'Bruttomieter' && request()->has('nk_anteil')) {
+                    if ($mieter_art == 'Bruttomieter' && request()->filled('nk_anteil')) {
                         $anstieg_in_3_jahren = $aktuelle_miete_brutto / ($miete_vor_3_jahren / 100) - 100;
                     } else {
                         $anstieg_in_3_jahren = $aktuelle_miete / ($miete_vor_3_jahren / 100) - 100;
@@ -1107,7 +1107,7 @@ class mietanpassung
                 echo "<tr><td>Miete kalt pro m²</td><td>$m2_aktuell €</td></tr>";
                 echo "<tr><td>Kappungsgrenze für 3 Jahre in %</td><td>15,00 %</td></tr>";
                 echo "<tr><td>Mieterhöhung in den letzten 3 Jahren in %</td><td>$anstieg_3_jahre %</td></tr>";
-                if (!request()->has('nk_anteil')) {
+                if (!request()->filled('nk_anteil')) {
                     echo "<tr><td colspan=\"2\">";
                     $f = new formular ();
                     $f->hidden_feld("einheit_id", "$einheit_id");
@@ -1767,7 +1767,7 @@ class mietanpassung
         $plus = 0;
         $minus = 0;
 
-        if (request()->has('MG1')) {
+        if (request()->filled('MG1')) {
             if (request()->input('MG1') == '+') {
                 $plus++;
                 $ber->MG1 = 'Bad/WC|wohnwerterhöhende Merkmale|+20,00 %';
@@ -1779,7 +1779,7 @@ class mietanpassung
             $ber->MG1 = 'Bad/WC|keine Merkmale|0,00 %';
         }
 
-        if (request()->has('MG2')) {
+        if (request()->filled('MG2')) {
             if (request()->input('MG2') == '+') {
                 $plus++;
                 $ber->MG2 = 'Küche|wohnwerterhöhende Merkmale|+20,00 %';
@@ -1791,7 +1791,7 @@ class mietanpassung
             $ber->MG2 = 'Küche|keine Merkmale|0,00 %';
         }
 
-        if (request()->has('MG3')) {
+        if (request()->filled('MG3')) {
             if (request()->input('MG3') == '+') {
                 $plus++;
                 $ber->MG3 = 'Wohnung|wohnwerterhöhende Merkmale|+20,00 %';
@@ -1803,7 +1803,7 @@ class mietanpassung
             $ber->MG3 = 'Wohnung|keine Merkmale|0,00 %';
         }
 
-        if (request()->has('MG4')) {
+        if (request()->filled('MG4')) {
             if (request()->input('MG4') == '+') {
                 $plus++;
                 $ber->MG4 = 'Gebäude|wohnwerterhöhende Merkmale|+20,00 %';
@@ -1815,7 +1815,7 @@ class mietanpassung
             $ber->MG4 = 'Gebäude|keine Merkmale|0,00 %';
         }
 
-        if (request()->has('MG5')) {
+        if (request()->filled('MG5')) {
             if (request()->input('MG5') == '+') {
                 $plus++;
                 $ber->MG5 = 'Wohnumfeld|wohnwerterhöhende Merkmale|+20,00 %';
@@ -2412,7 +2412,7 @@ class mietanpassung
         $plus = 0;
         $minus = 0;
 
-        if (request()->has('MG1')) {
+        if (request()->filled('MG1')) {
             if (request()->input('MG1') == '+') {
                 $plus++;
                 $ber->MG1 = 'Bad/WC|wohnwerterhöhende Merkmale|+20,00 %';
@@ -2424,7 +2424,7 @@ class mietanpassung
             $ber->MG1 = 'Bad/WC|keine Merkmale|0,00 %';
         }
 
-        if (request()->has('MG2')) {
+        if (request()->filled('MG2')) {
             if (request()->input('MG2') == '+') {
                 $plus++;
                 $ber->MG2 = 'Küche|wohnwerterhöhende Merkmale|+20,00 %';
@@ -2436,7 +2436,7 @@ class mietanpassung
             $ber->MG2 = 'Küche|keine Merkmale|0,00 %';
         }
 
-        if (request()->has('MG3')) {
+        if (request()->filled('MG3')) {
             if (request()->input('MG3') == '+') {
                 $plus++;
                 $ber->MG3 = 'Wohnung|wohnwerterhöhende Merkmale|+20,00 %';
@@ -2448,7 +2448,7 @@ class mietanpassung
             $ber->MG3 = 'Wohnung|keine Merkmale|0,00 %';
         }
 
-        if (request()->has('MG4')) {
+        if (request()->filled('MG4')) {
             if (request()->input('MG4') == '+') {
                 $plus++;
                 $ber->MG4 = 'Gebäude|wohnwerterhöhende Merkmale|+20,00 %';
@@ -2460,7 +2460,7 @@ class mietanpassung
             $ber->MG4 = 'Gebäude|keine Merkmale|0,00 %';
         }
 
-        if (request()->has('MG5')) {
+        if (request()->filled('MG5')) {
             if (request()->input('MG5') == '+') {
                 $plus++;
                 $ber->MG5 = 'Wohnumfeld|wohnwerterhöhende Merkmale|+20,00 %';

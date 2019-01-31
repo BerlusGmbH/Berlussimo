@@ -1,17 +1,17 @@
 <?php
 
 $daten = request()->input('daten');
-if (request()->has('einheit_raus')) {
+if (request()->filled('einheit_raus')) {
     $einheit_raus = request()->input('einheit_raus');
 } else {
     $einheit_raus = 'default';
 }
-if (request()->has('haus_id')) {
+if (request()->filled('haus_id')) {
     $haus_id = request()->input('haus_id');
 } else {
     $haus_id = '';
 }
-if (request()->has('objekt_id')) {
+if (request()->filled('objekt_id')) {
     $objekt_id = request()->input('objekt_id');
 } else {
     $objekt_id = '';
@@ -36,7 +36,7 @@ switch ($einheit_raus) {
 
     case "einheit_neu" :
         $e = new einheit ();
-        if (request()->has('haus_id') && !empty (request()->input('haus_id'))) {
+        if (request()->filled('haus_id') && !empty (request()->input('haus_id'))) {
             $e->form_einheit_neu(request()->input('haus_id'));
         } else {
             $e->form_einheit_neu('');
@@ -44,7 +44,7 @@ switch ($einheit_raus) {
         break;
 
     case "einheit_speichern" :
-        if (request()->has('kurzname') && request()->has('lage') && request()->has('qm') && request()->has('haus_id') && request()->has('typ')) {
+        if (request()->filled('kurzname') && request()->filled('lage') && request()->filled('qm') && request()->filled('haus_id') && request()->filled('typ')) {
             $e = new einheit ();
             $kurzname = request()->input('kurzname');
             $lage = request()->input('lage');
@@ -60,7 +60,7 @@ switch ($einheit_raus) {
         break;
 
     case "einheit_aendern" :
-        if (request()->has('einheit_id')) {
+        if (request()->filled('einheit_id')) {
             $e = new einheit ();
             $e->form_einheit_aendern(request()->input('einheit_id'));
         } else {
@@ -69,7 +69,7 @@ switch ($einheit_raus) {
         break;
 
     case "einheit_speichern_ae" :
-        if (request()->has('dat') && request()->has('einheit_id') && request()->has('qm') && request()->has('kurzname') && request()->has('lage') && request()->has('haus_id') && request()->has('typ')) {
+        if (request()->filled('dat') && request()->filled('einheit_id') && request()->filled('qm') && request()->filled('kurzname') && request()->filled('lage') && request()->filled('haus_id') && request()->filled('typ')) {
             $e = new einheit ();
             $e->einheit_update(request()->input('dat'), request()->input('einheit_id'), request()->input('kurzname'), request()->input('lage'), request()->input('qm'), request()->input('haus_id'), request()->input('typ'));
             hinweis_ausgeben("Einheit aktualisiert");
@@ -80,7 +80,7 @@ switch ($einheit_raus) {
 
     case "mieterliste_aktuell" :
         $e = new einheit ();
-        if (request()->has('objekt_id') && !empty (request()->input('objekt_id'))) {
+        if (request()->filled('objekt_id') && !empty (request()->input('objekt_id'))) {
             $e->pdf_mieterliste(0, request()->input('objekt_id'));
         } else {
             $e->pdf_mieterliste(0);

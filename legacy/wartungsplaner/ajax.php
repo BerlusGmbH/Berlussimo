@@ -1,14 +1,14 @@
 <?php
 
 /*Probe*/
-if (request()->has('g_id')) {
+if (request()->filled('g_id')) {
     session()->put('g_id', request()->input('g_id'));
 }
 
 include_once("funktionen.php");
 
 #switch#####################################
-if (request()->has('option')) {
+if (request()->filled('option')) {
     switch (request()->input('option')) {
 
         default:
@@ -42,7 +42,7 @@ if (request()->has('option')) {
 
         /*Suche nach Kontakten, Partner, Mieter, USW*/
         case "suche_kontakt":
-            if (request()->has('target_id')) {
+            if (request()->filled('target_id')) {
                 $targ = '';
             } else {
                 $targ = request()->input('target_id');
@@ -56,7 +56,7 @@ if (request()->has('option')) {
 
 
         case "termin_dauer_aendern":
-            if (request()->has('termin_dauer')) {
+            if (request()->filled('termin_dauer')) {
                 session()->put('termin_dauer', request()->input('termin_dauer'));
             } else {
                 session()->put('termin_dauer', 60);
@@ -243,7 +243,7 @@ if (request()->has('option')) {
             break;
 
         case "detail_speichern2":
-            if (request()->has('detail_name') && request()->has('detail_inhalt')) {
+            if (request()->filled('detail_name') && request()->filled('detail_inhalt')) {
                 detail_speichern_2(request()->input('tab'), request()->input('tab_id'), request()->input('detail_name'), request()->input('detail_inhalt'), date("d.m.Y"));
                 echo "<p class=\"zeile_ueber\">DETAIL ZUM GERÄT</p>";
                 alle_details_anzeigen(request()->input('tab'), request()->input('tab_id'));
@@ -252,13 +252,13 @@ if (request()->has('option')) {
             break;
 
         case "get_hersteller_gruppe":
-            if (request()->has('param')) {
+            if (request()->filled('param')) {
                 get_hersteller_gruppe(request()->input('param'));
             }
             break;
 
         case "get_hersteller_modelle":
-            if (request()->has('param')) {
+            if (request()->filled('param')) {
                 get_hersteller_modelle(request()->input('param'));
             }
 
@@ -266,7 +266,7 @@ if (request()->has('option')) {
 
         case "form_wartungsvertrag":
             echo "<b>MELDUNG aus CASE form_wartungsvertrag, wenn leer dann geraete_id nicht übermittelt</b>";
-            if (request()->has('geraete_id')) {
+            if (request()->filled('geraete_id')) {
                 form_wartungsvertrag(request()->input('geraete_id'));
             }
             break;
@@ -304,7 +304,7 @@ if (request()->has('option')) {
 
         /*Bei Auswahl im DD, werden die Infos zum Gerät angezeigt*/
         case "geraete_info_anzeigen":
-            if (request()->has('g_id')) {
+            if (request()->filled('g_id')) {
                 if (request()->input('g_id') == 'Bitte wählen' or !is_numeric(request()->input('g_id'))) {
                     echo "<br><p class=\"zeile_hinweis\">Wählen Sie bitte ein Gerät aus dem Dropdownmenü aus!!!</p>";
                 } else {
@@ -318,29 +318,29 @@ if (request()->has('option')) {
 
         /*Bei Wahl eines Gerätes erfolgt TERMIN SUCHE*/
         case "termin_suchen":
-            if (request()->has('g_id')) {
+            if (request()->filled('g_id')) {
                 termin_suchen(request()->input('g_id'));
             }
             break;
 
         case "termin_suchen_neu":
-            if (request()->has('g_id')) {
+            if (request()->filled('g_id')) {
                 termin_suchen3(request()->input('g_id'));
             }
             break;
 
         case "termin_suchen4":
-            if (request()->has('g_id')) {
+            if (request()->filled('g_id')) {
                 termin_suchen4(request()->input('g_id'));
             }
             break;
 
 
         case "termine_tag_tab":
-            if (request()->has('g_id')) {
+            if (request()->filled('g_id')) {
                 session()->put('g_id', request()->input('g_id'));
             }
-            if (request()->has('b_id') && request()->has('datum')) {
+            if (request()->filled('b_id') && request()->filled('datum')) {
                 termine_tag_tab(request()->input('b_id'), request()->input('datum'));
                 session()->put('mitarbeiter_id', request()->input('b_id'));
                 session()->put('datum_d', request()->input('datum'));
@@ -350,10 +350,10 @@ if (request()->has('option')) {
             break;
 
         case "termine_tag_tab2":
-            if (request()->has('g_id')) {
+            if (request()->filled('g_id')) {
                 session()->put('g_id', request()->input('g_id'));
             }
-            if (request()->has('b_id') && request()->has('datum')) {
+            if (request()->filled('b_id') && request()->filled('datum')) {
                 termine_tag_tab2(request()->input('b_id'), request()->input('datum'));
                 session()->put('mitarbeiter_id', request()->input('b_id'));
                 session()->put('datum_d', request()->input('datum'));
@@ -378,7 +378,7 @@ if (request()->has('option')) {
             break;
 
         case "form_termin_eintragen":
-            if (request()->has('b_id') && request()->has('datum')) {
+            if (request()->filled('b_id') && request()->filled('datum')) {
                 form_termin_eintragen(request()->input('b_id'), request()->input('datum'), urldecode(request()->input('von')), urldecode(request()->input('bis')));
             } else {
                 echo "Mitarbeiter und Datum wählen!!!";
@@ -422,7 +422,7 @@ if (request()->has('option')) {
                 <script type="text/javascript" src="<?php echo mix('js/wartungsplaner.js') ?>"></script>
             </head>
             <?php
-            if (request()->has('mitarbeiter_id')) {
+            if (request()->filled('mitarbeiter_id')) {
                 session()->put('mitarbeiter_id', request()->input('mitarbeiter_id'));
             }
             if (!session()->has('mitarbeiter_id')) {
@@ -430,7 +430,7 @@ if (request()->has('option')) {
                 $link = route('web::wartungsplaner::ajax', ['option' => 'wochenkalender']);
                 $g->get_team_liste($link);
                 echo "<br>";
-                if (request()->has('team_id')) {
+                if (request()->filled('team_id')) {
                     $team_id = request()->input('team_id');
                     $g->get_wteam_info($team_id);
                     if (is_array($g->team_benutzer_ids)) {
@@ -446,7 +446,7 @@ if (request()->has('option')) {
                 }
 
             } else {
-                if (request()->has('kw')) {
+                if (request()->filled('kw')) {
                     session()->put('kw', request()->input('kw'));
                 } else {
                     $datum = date("d.m.Y");
@@ -459,7 +459,7 @@ if (request()->has('option')) {
 
 
         case "reg_team":
-            if (request()->has('team_id')) {
+            if (request()->filled('team_id')) {
                 session()->put('team_id', request()->input('team_id'));
             }
             echo "Ein anderes Team wurde gewählt!";
@@ -477,7 +477,7 @@ if (request()->has('option')) {
             if (session()->has('mitarbeiter_id')) {
                 echo "Liste der Mitarbeiter";
             } else {
-                if (request()->has('datum')) {
+                if (request()->filled('datum')) {
                     session()->put('datum', request()->input('datum'));
                 }
                 $datum = session()->get('datum');
@@ -501,7 +501,7 @@ if (request()->has('option')) {
 
         case "termin_vorschlaege_kurz":
             echo "<div id=\"main\"><div id=\"TERMIN_BOX\">";
-            if (request()->has('vorschlag_gruppe_id')) {
+            if (request()->filled('vorschlag_gruppe_id')) {
                 session()->put('vorschlag_gruppe_id', request()->input('vorschlag_gruppe_id'));
             } else {
                 session()->put('vorschlag_gruppe_id', 1);
@@ -529,7 +529,7 @@ if (request()->has('option')) {
         case "termin_vorschlaege_kurz_chrono":
 
             echo "<div id=\"main\"><div id=\"TERMIN_BOX\">";
-            if (request()->has('vorschlag_gruppe_id')) {
+            if (request()->filled('vorschlag_gruppe_id')) {
                 session()->put('vorschlag_gruppe_id', request()->input('vorschlag_gruppe_id'));
             } else {
                 session()->put('vorschlag_gruppe_id', 1);
@@ -558,7 +558,7 @@ if (request()->has('option')) {
 
         /*Datum Letzte Wartung*/
         case "get_datum_lw":
-            if (request()->has('g_id')) {
+            if (request()->filled('g_id')) {
                 session()->put('g_id', request()->input('g_id'));
                 echo get_datum_lw(request()->input('g_id'));
                 echo get_datum_nw(request()->input('g_id'));
@@ -640,7 +640,7 @@ if (request()->has('option')) {
         </head>
     <body>
         <?php
-        if (!request()->has('datum_d')) {
+        if (!request()->filled('datum_d')) {
             $datum_d = date("d.m.Y");
         } else {
             $datum_d = request()->input('datum_d');
@@ -728,7 +728,7 @@ if (request()->has('option')) {
 
         case "detail_geraet":
             echo "<p class=\"zeile_ueber\">DETAIL ZUM GERÄT</p>";
-            if (request()->has('tab') && request()->has('tab_id')) {
+            if (request()->filled('tab') && request()->filled('tab_id')) {
                 alle_details_anzeigen(request()->input('tab'), request()->input('tab_id'));
                 form_detail_hinzu2(request()->input('tab'), request()->input('tab_id'));
             }
@@ -781,7 +781,7 @@ if (request()->has('option')) {
 
 
         case "get_partner_daten":
-            if (request()->has('p_id')) {
+            if (request()->filled('p_id')) {
                 $g = new general();
                 $p_id = request()->input('p_id');
                 $g->get_partner_info($p_id);
@@ -850,7 +850,7 @@ if (request()->has('option')) {
 
         case "pdf_anschreiben":
             /*echo "HIER PDF BRIEF SERIENBRIEF BERLUSSIMO<br>";*/
-            if (request()->has('art') && request()->has('art_id')) {
+            if (request()->filled('art') && request()->filled('art_id')) {
                 $gg = new general();
                 $gg->pdf_einwurfzettel(request()->input('art'), request()->input('art_id'));
             } else {
@@ -899,7 +899,7 @@ if (request()->has('option')) {
 
         case "mitarbeiter_wahl":
             $g = new general();
-            if (request()->has('team_id')) {
+            if (request()->filled('team_id')) {
                 $team_id = request()->input('team_id');
                 $js = "onclick='daj3(\"/wartungsplaner/ajax?option=mitarbeiter_profil&b_id=\" + this.value, \"leftBox1\");'";
                 if ($g->dropdown_mitarbeiter($team_id, 'Mitarbeiter aus dem Team wählen', 'b_id', 'b_id', '', $js, $class_r = 'reihe', $class_f = 'feld') == true) {
@@ -912,7 +912,7 @@ if (request()->has('option')) {
             break;
 
         case "mitarbeiter_n_team":
-            if (request()->has('team_id')) {
+            if (request()->filled('team_id')) {
                 $team_id = request()->input('team_id');
                 $g = new general();
                 $js = "onclick='daj3(\"/wartungsplaner/ajax?option=mitarbeiter_profil&b_id=\" + this.value, \"leftBox1\");'";
@@ -926,7 +926,7 @@ if (request()->has('option')) {
             break;
 
         case "mitarbeiter_entfernen":
-            if (request()->has('team_id') && request()->has('b_id')) {
+            if (request()->filled('team_id') && request()->filled('b_id')) {
                 $g = new general();
                 $g->mitarbeiter_entfernen(request()->input('team_id'), request()->input('b_id'));
                 echo "Mitarbeiter aus dem Team entfernt!";
@@ -934,7 +934,7 @@ if (request()->has('option')) {
             break;
 
         case "mitarbeiter_hinzu":
-            if (request()->has('team_id') && request()->has('b_id')) {
+            if (request()->filled('team_id') && request()->filled('b_id')) {
                 $g = new general();
                 $g->mitarbeiter_hinzu(request()->input('team_id'), request()->input('b_id'));
                 echo "Mitarbeiter zum Team hinzugefügt!";
@@ -1077,7 +1077,7 @@ if (request()->has('option')) {
             break;
 
         case "neues_team":
-            if (request()->has('team_bez')) {
+            if (request()->filled('team_bez')) {
                 $g = new general();
                 $g->team_hinzu(request()->input('team_bez'));
             }

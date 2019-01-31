@@ -447,8 +447,8 @@ class kautionen
         $summe = 0.00;
         $summe_verzinst = 0.00;
 
-        if (request()->has('monat') && request()->has('jahr')) {
-            if (!request()->has('tag')) {
+        if (request()->filled('monat') && request()->filled('jahr')) {
+            if (!request()->filled('tag')) {
                 $l_tag = letzter_tag_im_monat(request()->input('monat'), request()->input('jahr'));
             } else {
                 $l_tag = request()->input('tag');
@@ -550,7 +550,7 @@ class kautionen
             $this->soli_g = $soli_g;
 
             echo "</table>";
-            if (request()->has('pdf')) {
+            if (request()->filled('pdf')) {
                 $pdf = new Cezpdf ('a4', 'portrait');
                 $bpdf = new b_pdf ();
                 $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);

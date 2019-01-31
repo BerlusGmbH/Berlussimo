@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Legacy;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Request;
 use App\Http\Responses\LegacyResponse;
 
 class LegacyController extends Controller
@@ -43,6 +42,6 @@ class LegacyController extends Controller
 
     protected function renderView($view, $content, $headers)
     {
-        return response()->view($view, ['content' => $content, 'submenu' => $this->submenu])->header($headers);
+        return response()->view($view, ['content' => $content, 'submenu' => $this->submenu])->withHeaders($headers);
     }
 }

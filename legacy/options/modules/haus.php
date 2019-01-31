@@ -2,7 +2,7 @@
 
 $daten = request()->input('daten');
 $haus_raus = request()->input('haus_raus');
-if (request()->has('objekt_id')) {
+if (request()->filled('objekt_id')) {
     $objekt_id = request()->input('objekt_id');
 } else {
     $objekt_id = '';
@@ -24,7 +24,7 @@ switch ($haus_raus) {
 
         $bk = new berlussimo_global ();
         $bk->objekt_auswahl_liste();
-        if (!request()->has('haus_id')) {
+        if (!request()->filled('haus_id')) {
             if (session()->has('objekt_id')) {
                 $f->fieldset('Häuser zum Ändern wählen', 'hww');
                 haus_kurz(session()->get('objekt_id'));
@@ -40,7 +40,7 @@ switch ($haus_raus) {
 
     /* Änderungen des Hauses speichern */
     case "haus_aend_speichern" :
-        if (request()->has('haus_id') && !empty(request()->input('haus_id')) && request()->has('strasse') && !empty (request()->input('strasse')) && request()->has('haus_nr') && !empty(request()->input('haus_nr')) && request()->has('ort') && !empty(request()->input('ort')) && request()->has('plz') && !empty (request()->input('plz')) && request()->has('qm') && !empty (request()->input('qm')) && request()->input('Objekt') && !empty (request()->input('Objekt'))) {
+        if (request()->filled('haus_id') && !empty(request()->input('haus_id')) && request()->filled('strasse') && !empty (request()->input('strasse')) && request()->filled('haus_nr') && !empty(request()->input('haus_nr')) && request()->filled('ort') && !empty(request()->input('ort')) && request()->filled('plz') && !empty (request()->input('plz')) && request()->filled('qm') && !empty (request()->input('qm')) && request()->input('Objekt') && !empty (request()->input('Objekt'))) {
             $haus_id = request()->input('haus_id');
             $strasse = request()->input('strasse');
             $haus_nr = request()->input('haus_nr');

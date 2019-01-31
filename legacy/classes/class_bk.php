@@ -485,13 +485,13 @@ class bk
 
     function buchungsauswahl($konto, $konto_id)
     {
-        if (request()->has('submit_anzeige')) {
-            if (request()->has('anzeigen_von') && request()->has('anzeigen_bis')) {
+        if (request()->filled('submit_anzeige')) {
+            if (request()->filled('anzeigen_von') && request()->filled('anzeigen_bis')) {
                 if (check_datum(request()->input('anzeigen_von') && check_datum(request()->input('anzeigen_bis')))) {
                     session()->put('anzeigen_von', request()->input('anzeigen_von'));
                     session()->put('anzeigen_bis', request()->input('anzeigen_bis'));
                 }
-                if (request()->has('konto_anzeigen')) {
+                if (request()->filled('konto_anzeigen')) {
                     session()->put('konto_anzeigen', request()->input('konto_anzeigen'));
                 }
             }
@@ -971,7 +971,7 @@ class bk
             session()->put('me_kostenkat', 'Nebenkosten Vorauszahlung');
         }
 
-        if (request()->has('me_kostenkat')) {
+        if (request()->filled('me_kostenkat')) {
             session()->put('me_kostenkat', request()->input('me_kostenkat'));
         }
         $me = new mietentwicklung ();
@@ -2272,7 +2272,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
             $pdf_tab [$a] ['ZEITRAUM'] = $pdf->ergebnis_tab [$key] ['ZEITRAUM'];
 
             /* Importieren in die Mietentwicklung */
-            if (request()->has('me_import')) {
+            if (request()->filled('me_import')) {
 
                 $kos_typ = $pdf->ergebnis_tab [$key] ['KOS_TYP'];
                 $kos_id = $pdf->ergebnis_tab [$key] ['KOS_ID'];

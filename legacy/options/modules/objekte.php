@@ -19,7 +19,7 @@ switch ($objekte_raus) {
 
     case "objekt_speichern" :
         if (request()->isMethod('post')) {
-            if (request()->has('objekt_kurzname') && request()->has('eigentuemer')) {
+            if (request()->filled('objekt_kurzname') && request()->filled('eigentuemer')) {
                 echo "ALLES OK";
                 $o = new objekt ();
                 $o->objekt_speichern(request()->input('objekt_kurzname'), request()->input('eigentuemer'));
@@ -37,7 +37,7 @@ switch ($objekte_raus) {
 
     case "objekt_aendern_send" :
         if (request()->isMethod('post')) {
-            if (request()->has('objekt_dat') && request()->has('objekt_id') && request()->has('objekt_kurzname') && request()->has('eigentuemer')) {
+            if (request()->filled('objekt_dat') && request()->filled('objekt_id') && request()->filled('objekt_kurzname') && request()->filled('eigentuemer')) {
                 echo "ALLES OK";
                 $o = new objekt ();
                 $o->objekt_aendern(request()->input('objekt_dat'), request()->input('objekt_id'), request()->input('objekt_kurzname'), request()->input('eigentuemer'));
@@ -49,7 +49,7 @@ switch ($objekte_raus) {
         break;
 
     case "checkliste" :
-        if (request()->has('objekt_id')) {
+        if (request()->filled('objekt_id')) {
             $o = new objekt ();
             $o->pdf_checkliste(request()->input('objekt_id'));
         } else {
@@ -58,7 +58,7 @@ switch ($objekte_raus) {
         break;
 
     case "mietaufstellung" :
-        if (request()->has('objekt_id')) {
+        if (request()->filled('objekt_id')) {
             $o = new objekt ();
             $o->pdf_mietaufstellung(request()->input('objekt_id'));
         } else {
@@ -67,9 +67,9 @@ switch ($objekte_raus) {
         break;
 
     case "mietaufstellung_m_j" :
-        if (request()->has('objekt_id')) {
+        if (request()->filled('objekt_id')) {
             $objekt_id = request()->input('objekt_id');
-            if (request()->has('monat') && request()->has('jahr')) {
+            if (request()->filled('monat') && request()->filled('jahr')) {
                 $monat = request()->input('monat');
                 $jahr = request()->input('jahr');
                 $o = new objekt ();
@@ -81,9 +81,9 @@ switch ($objekte_raus) {
         break;
 
     case "mietaufstellung_j" :
-        if (request()->has('objekt_id')) {
+        if (request()->filled('objekt_id')) {
             $objekt_id = request()->input('objekt_id');
-            if (request()->has('jahr')) {
+            if (request()->filled('jahr')) {
                 $jahr = request()->input('jahr');
                 $o = new objekt ();
                 $o->pdf_mietaufstellung_j($objekt_id, $jahr);
@@ -103,14 +103,14 @@ switch ($objekte_raus) {
          * Neues Objekt anlegen
          * alle einheiten kopieren und umbenennen mit vorzeichen
          */
-        if (request()->has('objekt_id') && request()->has('objekt_kurzname') && request()->has('vorzeichen') && request()->has('eigentuemer_id') && request()->has('datum_u')) {
+        if (request()->filled('objekt_id') && request()->filled('objekt_kurzname') && request()->filled('vorzeichen') && request()->filled('eigentuemer_id') && request()->filled('datum_u')) {
             $objekt_id = request()->input('objekt_id');
             $objekt_kurzname = request()->input('objekt_kurzname');
             $vorzeichen = request()->input('vorzeichen');
             $datum_u = request()->input('datum_u');
             $eigentuemer_id = request()->input('eigentuemer_id');
             $o = new objekt ();
-            if (request()->has('saldo_berechnen')) {
+            if (request()->filled('saldo_berechnen')) {
                 $o->objekt_kopieren($objekt_id, $eigentuemer_id, $objekt_kurzname, $vorzeichen, $datum_u, 1);
             } else {
                 $o->objekt_kopieren($objekt_id, $eigentuemer_id, $objekt_kurzname, $vorzeichen, $datum_u, 0);
@@ -121,7 +121,7 @@ switch ($objekte_raus) {
         break;
 
     case "stammdaten_pdf" :
-        if (request()->has('objekt_id')) {
+        if (request()->filled('objekt_id')) {
             session()->put('objekt_id', request()->input('objekt_id'));
             $pdf = new Cezpdf ('a4', 'portrait');
             $oo = new objekt ();
@@ -158,42 +158,42 @@ switch ($objekte_raus) {
         $me = new mietentwicklung ();
         $von = date_german2mysql($von);
         $bis = date_german2mysql($bis);
-        if (request()->has('km')) {
+        if (request()->filled('km')) {
             $km = nummer_komma2punkt(request()->input('km'));
             $me->me_speichern('Mietvertrag', $mv_id, 'Miete kalt', $von, $bis, $km, '0.00');
         }
-        if (request()->has('nk')) {
+        if (request()->filled('nk')) {
             $nk = nummer_komma2punkt(request()->input('nk'));
             $me->me_speichern('Mietvertrag', $mv_id, 'Nebenkosten Vorauszahlung', $von, $bis, $nk, '0.00');
         }
-        if (request()->has('hk')) {
+        if (request()->filled('hk')) {
             $hk = nummer_komma2punkt(request()->input('hk'));
             $me->me_speichern('Mietvertrag', $mv_id, 'Heizkosten Vorauszahlung', $von, $bis, $hk, '0.00');
         }
 
-        if (request()->has('kabel_tv')) {
+        if (request()->filled('kabel_tv')) {
             $kabel_tv = nummer_komma2punkt(request()->input('kabel_tv'));
             $me->me_speichern('Mietvertrag', $mv_id, 'Kabel TV', $von, $bis, $kabel_tv, '0.00');
         }
         $jahr_3 = date("Y") - 3;
         $m_day = date("m-d");
         $datum_3 = "$jahr_3-$m_day";
-        if (request()->has('km_3')) {
+        if (request()->filled('km_3')) {
             $km_3 = nummer_komma2punkt(request()->input('km_3'));
             $me->me_speichern('Mietvertrag', $mv_id, 'Miete kalt', $datum_3, $datum_3, $kabel_tv, '0.00');
         }
 
-        if (request()->has('kaution')) {
+        if (request()->filled('kaution')) {
             $d = new detail ();
             $d->detail_speichern_2('Mietvertrag', $mv_id, 'Kautionshinweis', request()->input('kaution'), 'Importiert');
         }
 
-        if (request()->has('klein_rep')) {
+        if (request()->filled('klein_rep')) {
             $d = new detail ();
             $d->detail_speichern_2('Mietvertrag', $mv_id, 'Kleinreparaturen', request()->input('klein_rep'), 'Importiert');
         }
 
-        if (request()->has('zusatzinfo')) {
+        if (request()->filled('zusatzinfo')) {
             $d = new detail ();
             $d->detail_speichern_2('Mietvertrag', $mv_id, 'Zusatzinfo', request()->input('zusatzinfo'), 'Importiert');
         }

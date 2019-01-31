@@ -37,7 +37,7 @@ class LoginController extends Controller
      */
     public function __construct(ApiTokenCookieFactory $cookieFactory)
     {
-        $this->middleware('guest', ['except' => 'logout']);
+        $this->middleware('guest')->except('logout');
         $this->cookieFactory = $cookieFactory;
     }
 
@@ -89,7 +89,7 @@ class LoginController extends Controller
     {
         return $this->guard()->attempt(
             $this->credentials($request),
-            $request->has('remember') ? $request->input('remember') : false
+            $request->filled('remember') ? $request->input('remember') : false
         );
     }
 }

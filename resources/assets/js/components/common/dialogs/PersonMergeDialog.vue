@@ -133,14 +133,14 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {Mutation, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
     import {Prop, Watch} from "vue-property-decorator";
     import EntitySelect from '../EntitySelect.vue';
-    import {Person} from "../../../server/resources/models";
+    import {Person} from "../../../server/resources";
     import axios from "../../../libraries/axios";
     import {AxiosError} from "axios";
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
+    const Snackbar = namespace('shared/snackbar');
 
     @Component({
         components: {
@@ -155,7 +155,7 @@
         @Prop({default: false})
         value: boolean;
 
-        @SnackbarMutation('updateMessage')
+        @Snackbar.Mutation('updateMessage')
         showSnack: Function;
 
         @Prop({type: Object, default: () => new Person()})

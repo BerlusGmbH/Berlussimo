@@ -209,7 +209,7 @@ cterm(res) ::= COLUMN(co) OPENP clauses(cl) CLOSEP.
         $class = Relations::columnToClass($this->stack(self::COLUMN, 3));
         $relatedClass = Relations::columnToClass($column);
         $query = $class::query();
-        $query->where(function($query) use ($query, $relatedClass, $relations, $clause) {
+        $query->where(function($query) use ($relatedClass, $relations, $clause) {
             foreach($relations as $relation) {
                 $short = new \ReflectionClass($relatedClass);
                 $query->whereHas($relation . $short->getShortName(), function ($query) use ($clause) {
@@ -247,7 +247,7 @@ cterm(res) ::= COLUMN(co).
         $class = Relations::columnToClass($this->stack(self::COLUMN, 3));
         $relatedClass = Relations::columnToClass($column);
         $query = $class::query();
-        $query->where(function($query) use ($query, $relatedClass, $relations) {
+        $query->where(function($query) use ($relatedClass, $relations) {
             foreach($relations as $relation) {
                 $short = new \ReflectionClass($relatedClass);
                 $query->orHas($relation . $short->getShortName());
@@ -258,7 +258,7 @@ cterm(res) ::= COLUMN(co).
         $relations = Relations::columnColumnToRelations($this->stack(self::COLUMN, 2), $column);
         $class = Relations::columnColumnToClass($this->stack(self::COLUMN, 2), $this->stack(self::COLUMN, 2));
         $query = $class::query();
-        $query->where(function($query) use ($query, $classes, $relations) {
+        $query->where(function($query) use ($classes, $relations) {
             foreach($relations as $relation) {
                 foreach($classes as $class) {
                     $short = new \ReflectionClass($class);

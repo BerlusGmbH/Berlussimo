@@ -23,11 +23,11 @@ class ReportController extends Controller
         $start = Carbon::today()->firstOfYear();
         $end = $start->copy()->lastOfYear();
 
-        if ($request->has('date')) {
+        if ($request->filled('date')) {
             $start = Carbon::parse($request->input('date'));
             $end = Carbon::parse($request->input('date'));
         }
-        if ($request->has('period')) {
+        if ($request->filled('period')) {
             $period = $request->input('period');
             switch ($period) {
                 case 'year':

@@ -2083,7 +2083,7 @@ AND  `AKTUELL` =  '1'");
         $f->send_button('btn_SepaVZ', 'Vorzeichen wechseln');
         $f->ende_formular();
 
-        if (request()->has('vorzeichen')) {
+        if (request()->filled('vorzeichen')) {
             if (session()->get('sep_vorzeichen') == '-') {
                 session()->put('sep_vorzeichen', '');
             } else {
@@ -2242,7 +2242,7 @@ AND  `AKTUELL` =  '1'");
             $f = new formular ();
             $f->erstelle_formular('SEPA-Sammelüberweisung', null);
 
-            if (request()->has('filter')) {
+            if (request()->filled('filter')) {
                 $filter = request()->input('filter');
             } else {
                 $filter = '';

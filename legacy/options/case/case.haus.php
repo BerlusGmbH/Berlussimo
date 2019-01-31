@@ -1,6 +1,6 @@
 <?php
 
-if (request()->has('daten')) {
+if (request()->filled('daten')) {
 	switch (request()->input('daten')) {
 		
 		case "haus_raus" :

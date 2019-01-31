@@ -29,7 +29,7 @@ class Person extends Authenticatable implements AuditableContract
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
     protected $fillable = ['name', 'first_name', 'birthday'];
     protected $appends = ['sex', 'type'];
-    protected $events = [
+    protected $dispatchesEvents = [
         'updated' => PersonUpdated::class
     ];
 

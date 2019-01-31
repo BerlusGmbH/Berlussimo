@@ -13,17 +13,16 @@
                             ></app-entity-select>
                         </v-flex>
                         <v-flex xs12>
-                            <v-select v-model="title"
-                                      label="Titel"
-                                      prepend-icon="mdi-book-open-page-variant"
-                                      :items="titles"
-                                      slot="input"
-                                      item-text="title"
-                                      item-value="id"
-                                      return-object
-                                      :disabled="titleDisabled"
-                                      autocomplete
-                            ></v-select>
+                            <v-autocomplete v-model="title"
+                                            label="Titel"
+                                            prepend-icon="mdi-book-open-page-variant"
+                                            :items="titles"
+                                            slot="input"
+                                            item-text="title"
+                                            item-value="id"
+                                            return-object
+                                            :disabled="titleDisabled"
+                            ></v-autocomplete>
                         </v-flex>
                         <v-flex xs12 sm6>
                             <v-text-field v-model="join_date"
@@ -83,12 +82,12 @@
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import EntitySelect from '../../common/EntitySelect.vue';
-    import {Partner, Person} from "../../../server/resources/models";
+    import {Partner, Person} from "../../../server/resources";
     import axios from "../../../libraries/axios";
-    import {Mutation, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const Snackbar = namespace('shared/snackbar');
+    const Refresh = namespace('shared/refresh');
 
     @Component({
         components: {
@@ -103,10 +102,10 @@
         @Prop({type: Object})
         employee: Person;
 
-        @SnackbarMutation('updateMessage')
+        @Snackbar.Mutation('updateMessage')
         updateMessage: Function;
 
-        @RefreshMutation('requestRefresh')
+        @Refresh.Mutation('requestRefresh')
         requestRefresh: Function;
 
         employer: Partner | null = null;

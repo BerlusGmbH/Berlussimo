@@ -1,49 +1,50 @@
 <template>
-    <div class="identifier">
-        <div ref="identifier">
-            <b-icon :tooltips="value.getEntityIconTooltips()">{{value.getEntityIcon()}}</b-icon>
-        </div>
+    <b-input hide-details>
+        <b-icon :tooltips="value.getEntityIconTooltips()" ref="identifier" slot="prepend">{{value.getEntityIcon()}}
+        </b-icon>
         <router-link v-if="$router" :to="{name: 'web.invoices.show', params: { id: String(value.getID()) }}"
         >
             {{String(value)}}
         </router-link>
         <a v-else :href="value.getDetailUrl()">{{String(value)}}</a>
-        <v-menu offset-y v-model="show" :position-absolutely="true">
-            <v-icon slot="activator" style="font-size: inherit">mdi-arrow-down-drop-circle</v-icon>
-            <v-list>
-                <v-list-tile @click="openPDF()">
-                    <v-list-tile-avatar>
-                        <v-icon>mdi-file-pdf</v-icon>
-                    </v-list-tile-avatar>
-                    <v-list-tile-title>PDF</v-list-tile-title>
-                </v-list-tile>
-                <v-list-tile @click="openPDF(true)">
-                    <v-list-tile-avatar>
-                        <v-icon style="color: #895B48;">mdi-file-pdf</v-icon>
-                    </v-list-tile-avatar>
-                    <v-list-tile-title>PDF</v-list-tile-title>
-                </v-list-tile>
-                <v-divider></v-divider>
-                <v-list-tile @click="copyToClipboard(String(value), 'Rechnungsnummer')">
-                    <v-list-tile-avatar>
-                        <v-icon>mdi-content-copy</v-icon>
-                    </v-list-tile-avatar>
-                    <v-list-tile-title>Kopieren</v-list-tile-title>
-                </v-list-tile>
-                <v-list-tile @click="editInvoice">
-                    <v-list-tile-avatar>
-                        <v-icon>edit</v-icon>
-                    </v-list-tile-avatar>
-                    <v-list-tile-title>Bearbeiten</v-list-tile-title>
-                </v-list-tile>
-            </v-list>
-        </v-menu>
-        <b-invoice-edit-dialog v-if="show || edit"
-                               v-model="edit"
-                               :invoice="value"
-        >
-        </b-invoice-edit-dialog>
-    </div>
+        <template slot="append">
+            <v-menu :position-absolutely="true" offset-y v-model="show">
+                <v-icon slot="activator" style="font-size: inherit">mdi-arrow-down-drop-circle</v-icon>
+                <v-list>
+                    <v-list-tile @click="openPDF()">
+                        <v-list-tile-avatar>
+                            <v-icon>mdi-file-pdf</v-icon>
+                        </v-list-tile-avatar>
+                        <v-list-tile-title>PDF</v-list-tile-title>
+                    </v-list-tile>
+                    <v-list-tile @click="openPDF(true)">
+                        <v-list-tile-avatar>
+                            <v-icon style="color: #895B48;">mdi-file-pdf</v-icon>
+                        </v-list-tile-avatar>
+                        <v-list-tile-title>PDF</v-list-tile-title>
+                    </v-list-tile>
+                    <v-divider></v-divider>
+                    <v-list-tile @click="copyToClipboard(String(value), 'Rechnungsnummer')">
+                        <v-list-tile-avatar>
+                            <v-icon>mdi-content-copy</v-icon>
+                        </v-list-tile-avatar>
+                        <v-list-tile-title>Kopieren</v-list-tile-title>
+                    </v-list-tile>
+                    <v-list-tile @click="editInvoice">
+                        <v-list-tile-avatar>
+                            <v-icon>edit</v-icon>
+                        </v-list-tile-avatar>
+                        <v-list-tile-title>Bearbeiten</v-list-tile-title>
+                    </v-list-tile>
+                </v-list>
+            </v-menu>
+            <b-invoice-edit-dialog :invoice="value"
+                                   v-if="show || edit"
+                                   v-model="edit"
+            >
+            </b-invoice-edit-dialog>
+        </template>
+    </b-input>
 </template>
 
 <script lang="ts">

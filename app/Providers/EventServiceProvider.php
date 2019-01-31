@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Event;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Database\Events\StatementPrepared;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use PDO;
@@ -15,7 +17,9 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'App\Events\TestEvent' => []
+        Registered::class => [
+            SendEmailVerificationNotification::class,
+        ],
     ];
 
     /**

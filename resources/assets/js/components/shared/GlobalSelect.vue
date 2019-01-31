@@ -4,10 +4,11 @@
                        hide-details
                        :entities="['objekt', 'partner', 'bankkonto']"
                        append-icon=""
-                       multiple class="global-select"
-                       solo
+                       :selected-items="selected"
+                       class="global-select"
+                       multiple
                        light
-                       style="background-color: #6ddfdb"
+                       solo-inverted
     >
     </app-entity-select>
 </template>
@@ -16,38 +17,39 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import Select from "../common/EntitySelect.vue"
-    import {Bankkonto, Objekt, Partner} from "../../server/resources/models";
-    import {Action, namespace, State} from "vuex-class";
+    import {Bankkonto, Objekt, Partner} from "../../server/resources";
+    import {namespace} from "vuex-class";
 
-    const GlobalSelectState = namespace('shared/globalSelect', State);
-    const GlobalSelectAction = namespace('shared/globalSelect', Action);
+    const GSelect = namespace('shared/globalSelect');
 
-    const LegacyState = namespace('shared/legacy', State);
+    const Legacy = namespace('shared/legacy');
 
     @Component({components: {'app-entity-select': Select}})
     export default class GlobalSelect extends Vue {
-        @GlobalSelectState('objekt')
+        @GSelect.State('objekt')
         objekt: Objekt | null;
 
-        @GlobalSelectState('partner')
+        @GSelect.State('partner')
         partner: Partner | null;
 
-        @GlobalSelectState('bankkonto')
+        @GSelect.State('bankkonto')
         bankkonto: Bankkonto | null;
 
-        @LegacyState('isLegacy')
+        @Legacy.State('isLegacy')
         isLegacy: boolean;
 
-        @GlobalSelectAction('updateObjekt')
+        @GSelect.Action('updateObjekt')
         updateObjekt: Function;
 
-        @GlobalSelectAction('updatePartner')
+        @GSelect.Action('updatePartner')
         updatePartner: Function;
 
-        @GlobalSelectAction('updateBankkonto')
+        @GSelect.Action('updateBankkonto')
         updateBankkonto: Function;
 
         dirty: boolean = false;
+
+        items: Array<any> = [];
 
         select(entities) {
             if (entities instanceof Event) return;

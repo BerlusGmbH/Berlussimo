@@ -954,18 +954,6 @@ ORDER BY BUCHUNGSNUMMER DESC");
         return !empty($result);
     }
 
-    // Funktion zur Erstellung eines Arrays mit Monaten und Jahren seit Einzug bis aktuelles Jahr/Monat
-
-    function monatsabschluesse_speichern($mietvertrag_id, $betrag)
-    {
-        $datum = $this->datum_heute;
-        $db_abfrage = "INSERT INTO MONATSABSCHLUSS VALUES (NULL, '$mietvertrag_id', '$datum', '$betrag', '1', NULL)";
-        $resultat = DB::insert($db_abfrage);
-        if (!$resultat) {
-            echo "Monatsabschluss von $betrag für MV $mietvertrag_id wurde nicht gespeichert!";
-        }
-    } // end function
-
     function mietentwicklung_speichern($kostentraeger_typ, $kostentrager_id, $kostenkategorie, $betrag, $anfang, $ende)
     {
         $me_exists = $this->check_mietentwicklung($kostentraeger_typ, $kostentrager_id, $kostenkategorie, $betrag, $anfang, $ende);

@@ -4,14 +4,14 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
-    import {Mutation, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
 
-    const MessagesMutation = namespace('shared/messages', Mutation);
+    const Messages = namespace('shared/messages');
 
     @Component
     export default class MessagesLoader extends Vue {
 
-        @MessagesMutation('updateMessages')
+        @Messages.Mutation('updateMessages')
         updateMessages: Function;
 
         @Prop({type: Array})

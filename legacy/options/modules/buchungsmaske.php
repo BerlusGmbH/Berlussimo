@@ -1,15 +1,15 @@
 <?php
 
-if (request()->has('daten')) {
+if (request()->filled('daten')) {
     $daten = request()->input('daten');
 }
-if (request()->has('schritt')) {
+if (request()->filled('schritt')) {
     $schritt = request()->input('schritt');
 } else {
     $schritt = '';
 }
 /* Mieterinformationen über die Buchungsformulare anzeigen */
-if (request()->has('mietvertrag_id') && !empty (request()->input('mietvertrag_id'))) {
+if (request()->filled('mietvertrag_id') && !empty (request()->input('mietvertrag_id'))) {
     $mieter_info = new mietkonto ();
     $mieter_info->erstelle_formular("Mieterinformationen", NULL);
     $mieter_info->mieter_informationen_anzeigen(request()->input('mietvertrag_id'));
@@ -22,7 +22,7 @@ switch ($schritt) {
     case "buchungsauswahl" :
         $form = new mietkonto ();
         $form->erstelle_formular("Buchungsart auswählen", NULL);
-        if (request()->has('mietvertrag_id')) {
+        if (request()->filled('mietvertrag_id')) {
             /* MAHNSPERRE */
             $dd = new detail ();
             $mahnsperre = $dd->finde_detail_inhalt('Mietvertrag', request()->input('mietvertrag_id'), 'Mahnsperre');
@@ -97,7 +97,7 @@ switch ($schritt) {
         $zahlbetrag = number_format($zahlbetrag, 2, ".", "");
         $summe_forderung_monatlich = $buchung->summe_forderung_monatlich($mietvertrag_id, $buchung->monat_heute, $buchung->jahr_heute);
 
-        if (!request()->has('ZAHLBETRAG')) {
+        if (!request()->filled('ZAHLBETRAG')) {
             warnung_ausgeben("Bitte geben Sie einen Betrag bzw. Zahl ein!");
             warnung_ausgeben("Sie werden um einen Schritt zurückversetzt!");
             weiterleiten_in_sec('javascript:history.back();', 5);
@@ -176,7 +176,7 @@ switch ($schritt) {
         break;
 
     default :
-        if (request()->has('objekt_id')) {
+        if (request()->filled('objekt_id')) {
             session()->put('objekt_id', request()->input('objekt_id'));
         }
         $info = new mietkonto ();
@@ -185,7 +185,7 @@ switch ($schritt) {
             echo "<div class=\"info_feld_oben\">Objekt auswählen</div>";
         }
 
-        if (request()->has('datum_setzen')) {
+        if (request()->filled('datum_setzen')) {
             session()->put('buchungsdatum', request()->input('tag') . "." . request()->input('monat') . "." . request()->input('jahr'));
             session()->put('temp_kontoauszugsnummer', request()->input('KONTOAUSZUGSNR'));
         }
@@ -225,7 +225,6 @@ switch ($schritt) {
         }
         echo "</div>";
 
-        objekt_auswahl();
         if (session()->has('objekt_id')) {
             einheiten_liste();
         }
@@ -243,12 +242,12 @@ switch ($schritt) {
         $form = new mietkonto ();
         $form->erstelle_formular("Sicherheitsabfrage", NULL);
         /* Falls NEIN gedrückt */
-        if (request()->has('submit_storno_nein')) {
+        if (request()->filled('submit_storno_nein')) {
             weiterleiten_in_sec(route('web::miete_buchen::legacy', [], false), 2);
             warnung_ausgeben(("Der Vorgang wurde vom Benutzer abgebrochen. <br> Die Buchung wurde nicht storniert. <br>Bitte warten, Sie werden weitergeleitet."));
         }
         /* Sicherheitsabfrage vor dem Absenden oder Abbrechen */
-        if (!request()->has('submit_storno_ja') && !request()->has('submit_storno_nein')) {
+        if (!request()->filled('submit_storno_ja') && !request()->filled('submit_storno_nein')) {
             warnung_ausgeben(("Sind Sie sicher, daß Sie die Buchungsnummer " . request()->input('BUCHUNGSNUMMER') . " stornieren möchten?"));
             $form->hidden_feld("BUCHUNGSNUMMER", request()->input('BUCHUNGSNUMMER'));
             for ($a = 0; $a < count(request()->input('MIETBUCHUNGEN')); $a++) {
@@ -259,7 +258,7 @@ switch ($schritt) {
             $form->send_button("submit_storno_nein", "NEIN");
         }
         /* Falls JA gedrückt */
-        if (request()->has('submit_storno_ja')) {
+        if (request()->filled('submit_storno_ja')) {
             $form->miete_zahlbetrag_stornieren(request()->input('BUCHUNGSNUMMER'));
             for ($a = 0; $a < count(request()->input('MIETBUCHUNGEN')); $a++) {
                 $form->mietbuchung_stornieren_intern(request()->input('MIETBUCHUNGEN')[$a]);
@@ -269,75 +268,9 @@ switch ($schritt) {
         }
         $form->ende_formular();
         break;
-
-    case "monatsabschluss" :
-        $mietkonto = new mietkonto ();
-
-        if (session()->has('objekt_id')) {
-            $objekt_id = session()->get('objekt_id');
-            $mein_objekt = new objekt ();
-            $liste_haeuser = $mein_objekt->haeuser_objekt_in_arr($objekt_id);
-
-            for ($i = 0; $i < count($liste_haeuser); $i++) {
-                $result = DB::select("SELECT * FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && HAUS_ID='" . $liste_haeuser [$i] ['HAUS_ID'] . "' ORDER BY EINHEIT_KURZNAME ASC");
-                foreach($result as $row)
-                    $einheiten_array [] = $row;
-            }
-
-            $einheit_info = new einheit ();
-            // ob_start(); //Ausgabepuffer Starten
-
-            $zeile = 0;
-            for ($i = 0; $i <= count($einheiten_array); $i++) {
-                $einheit_info->get_mietvertrag_id("" . $einheiten_array [$i] ['EINHEIT_ID'] . "");
-                $einheit_vermietet = $einheit_info->get_einheit_status("" . $einheiten_array [$i] ['EINHEIT_ID'] . "");
-                if ($einheit_vermietet) {
-                    $miete = new miete ();
-                    $miete->mietkonto_berechnung($einheit_info->mietvertrag_id);
-                    $zeile = $zeile + 1;
-                    echo "$zeile . $mietkonto->datum_heute Mietvertrag: $einheit_info->mietvertrag_id Saldo: $miete->erg €<br>";
-                    $mietkonto->monatsabschluesse_speichern($einheit_info->mietvertrag_id, $miete->erg);
-                    $miete->erg = '0.00';
-                }
-            }
-        }
-        break;
 } // end switch
 
 /* User Funktionen */
-function objekt_auswahl()
-{
-    echo "<div class=\"objekt_auswahl\">";
-    $mieten = new mietkonto ();
-    $mieten->erstelle_formular("Objekt auswählen...", NULL);
-
-    if (session()->has('objekt_id')) {
-        $objekt_kurzname = new objekt ();
-        $objekt_kurzname->get_objekt_name(session()->get('objekt_id'));
-        echo "<p>&nbsp;<b>Ausgewähltes Objekt</b> -> $objekt_kurzname->objekt_name ->";
-        echo "->&nbsp;<a href='" . route('web::miete_buchen::legacy', ['schritt' => 'monatsabschluss']) . "'>Monatsabschluss</a>";
-        echo " </p>";
-        echo "<div class=\"info_feld_oben\">Ausgewähltes Objekt " . $objekt_kurzname->objekt_name . "<br><b>Einheit auswählen</b><br>WEISS: keine Zahlung im aktuellen Monat.<br>GRAU: Zahlungen wurden gebucht.</div>";
-    }
-
-    $objekte = new objekt ();
-    $objekte_arr = $objekte->liste_aller_objekte();
-
-    $anzahl_objekte = count($objekte_arr);
-    // print_r($objekte_arr);
-    $c = 0;
-    for ($i = 0; $i < $anzahl_objekte; $i++) {
-        echo "<a class=\"objekt_auswahl_buchung\" href='" . route('web::miete_buchen::legacy', ['objekt_id' => $objekte_arr[$i]['OBJEKT_ID']]) . "'>" . $objekte_arr [$i] ['OBJEKT_KURZNAME'] . "</a>&nbsp;<b>|</b>&nbsp;";
-        $c++;
-        if ($c == 10) {
-            echo "<br>";
-            $c = 0;
-        }
-    }
-    $mieten->ende_formular();
-    echo "</div>";
-}
-
 function einheiten_liste()
 {
     $mieten = new mietkonto ();

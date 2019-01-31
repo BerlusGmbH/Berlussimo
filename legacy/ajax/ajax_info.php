@@ -97,7 +97,7 @@ LIMIT 0 , 1", [$konto_id]);
         break;
 
     case "finde_partner" :
-        if (request()->has('suchstring')) {
+        if (request()->filled('suchstring')) {
             $suchstring = request()->input('suchstring');
             if (strlen($suchstring) > 2) {
                 $result = DB::select("SELECT PARTNER_NAME, PARTNER_ID, STRASSE, NUMMER, PLZ, ORT, LAND FROM PARTNER_LIEFERANT WHERE AKTUELL='1' && PARTNER_NAME LIKE ? ORDER BY PARTNER_NAME ASC", ['%' . $suchstring . '%']);
@@ -698,7 +698,7 @@ WHERE (`ARTIKEL_NR` LIKE ? OR `BEZEICHNUNG` LIKE ?) ORDER BY ART_LIEFERANT ASC, 
         break;
 
     case "get_eigentuemer" :
-        if (request()->has('einheit_id')) {
+        if (request()->filled('einheit_id')) {
             echo get_eigentuemer(request()->input('einheit_id'));
         } else {
             echo "Einheit wählen - Fehler 4554as";

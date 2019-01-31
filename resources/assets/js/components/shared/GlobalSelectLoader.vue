@@ -4,22 +4,22 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import Select from "../common/EntitySelect.vue"
-    import {Bankkonto, Objekt, Partner} from "../../server/resources/models";
+    import {Bankkonto, Objekt, Partner} from "../../server/resources";
     import {Prop} from "vue-property-decorator";
-    import {Mutation, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
 
-    const GlobalSelectMutation = namespace('shared/globalSelect', Mutation);
+    const GSelect = namespace('shared/globalSelect');
 
     @Component({components: {'app-entity-select': Select}})
     export default class GlobalSelect extends Vue {
 
-        @GlobalSelectMutation('updateObjekt')
+        @GSelect.Mutation('updateObjekt')
         updateObjekt: Function;
 
-        @GlobalSelectMutation('updatePartner')
+        @GSelect.Mutation('updatePartner')
         updatePartner: Function;
 
-        @GlobalSelectMutation('updateBankkonto')
+        @GSelect.Mutation('updateBankkonto')
         updateBankkonto: Function;
 
         @Prop({type: Object, default: null})

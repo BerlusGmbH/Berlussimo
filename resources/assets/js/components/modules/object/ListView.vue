@@ -100,16 +100,15 @@
 <script lang="ts">
     import Vue from "vue";
     import Component from "vue-class-component";
-    import {Mutation, namespace, State} from "vuex-class";
+    import {namespace} from "vuex-class";
     import {Watch} from "vue-property-decorator";
     import axios from "../../../libraries/axios"
-    import {Model} from "../../../server/resources/models";
+    import {Model} from "../../../server/resources";
     import _ from "lodash";
     import objectAddDialog from "../../../components/common/dialogs/ObjectAddDialog.vue";
 
-    const RefreshState = namespace('shared/refresh', State);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
+    const Refresh = namespace('shared/refresh');
+    const Snackbar = namespace('shared/snackbar');
 
     @Component({
         'components': {
@@ -117,13 +116,13 @@
         }
     })
     export default class ListView extends Vue {
-        @RefreshState('dirty')
+        @Refresh.State('dirty')
         dirty;
 
-        @RefreshMutation('refreshFinished')
+        @Refresh.Mutation('refreshFinished')
         refreshFinished: Function;
 
-        @SnackbarMutation('updateMessage')
+        @Snackbar.Mutation('updateMessage')
         updateMessage: Function;
 
         parameterList: Array<Object> = [];
@@ -254,8 +253,8 @@
         }
 
         parseQuery() {
-            this.parameters.q = this.$route.query.q ? this.$route.query.q : null;
-            this.parameters.v = this.$route.query.v ? this.$route.query.v : null;
+            this.parameters.q = this.checkQueryParameter(this.$route.query.q);
+            this.parameters.v = this.checkQueryParameter(this.$route.query.v);
             if (!this.parameters.v && this.parameterList['v']) {
                 this.parameters.v = this.parameterList['v']['default'];
             }
@@ -275,6 +274,14 @@
             this.add = true;
             this.x = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().left - 20 : this.x;
             this.y = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().top - 20 : this.y;
+        }
+
+        checkQueryParameter(parameter: null | string | string[]): null | string {
+            if (parameter && typeof parameter === 'string') {
+                return parameter;
+            } else {
+                return null;
+            }
         }
     }
 </script>

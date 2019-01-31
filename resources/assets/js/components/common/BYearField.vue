@@ -10,7 +10,6 @@
                   :color="color"
                   :counter="counter"
                   :full-width="fullWidth"
-                  :multi-line="multiLine"
                   :placeholder="placeholder"
                   :prefix="prefix"
                   :rows="rows"
@@ -53,9 +52,6 @@
 
         @Prop()
         fullWidth;
-
-        @Prop()
-        multiLine;
 
         @Prop()
         placeholder;

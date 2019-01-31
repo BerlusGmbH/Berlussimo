@@ -211,11 +211,7 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'
     });
 });
 
-Route::group(['prefix' => 'broadcasting', 'middleware' => ['api']], function () {
-    Route::get('auth', '\\' . \Illuminate\Broadcasting\BroadcastController::class . '@authenticate')->name('auth');
-    Route::get('sub', 'Broadcasting\NchanPresenceController@subscribe')->name('subscribe');
-    Route::get('unsub', 'Broadcasting\NchanPresenceController@unsubscribe')->name('unsubscribe');
-});
+Broadcast::routes();
 
 Route::group(['prefix' => 'storage', 'namespace' => 'Storage', 'middleware' => ['auth']], function () {
     Route::get('{path}', 'StorageController@asset')->where('path', '.+');

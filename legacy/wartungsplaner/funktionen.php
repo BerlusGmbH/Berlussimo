@@ -1430,7 +1430,7 @@ function get_hersteller_modelle($hersteller)
 
 function form_abweichende_r_anschrift()
 {
-    if (request()->has('g_id')) {
+    if (request()->filled('g_id')) {
         $g_info_arr = geraete_info_arr(request()->input('g_id'));
         extract($g_info_arr[0]);
         $r_text = $RECHNUNG_AN;
@@ -1509,7 +1509,7 @@ function termin_suchen($g_id)
 
     $tt = new general();
     /*Wenn Datum gesetzt äbernehmen sonst von heute rechnen*/
-    if (request()->has('datum_ab')) {
+    if (request()->filled('datum_ab')) {
         $datum_df = request()->input('datum_ab');
     } else {
         $datum_df = date("d.m.Y");
@@ -1581,7 +1581,7 @@ function termin_suchen3($g_id)
 
     $tt = new general();
     /*Wenn Datum gesetzt äbernehmen sonst von heute rechnen*/
-    if (request()->has('datum_ab')) {
+    if (request()->filled('datum_ab')) {
         $datum_df = request()->input('datum_ab');
     } else {
         $datum_df = date("d.m.Y");
@@ -1616,7 +1616,7 @@ function termin_suchen3($g_id)
 
 function termin_suchen4($g_id, $team_id = '1')
 {
-    if (request()->has('datum_ab')) {
+    if (request()->filled('datum_ab')) {
         $datum_df = request()->input('datum_ab');
     } else {
         $datum_df = date("d.m.Y");
@@ -1658,7 +1658,7 @@ function termin_suchen2($str, $nr, $plz, $ort, $team_id = '1')
 
     $tt = new general();
     /*Wenn Datum gesetzt äbernehmen sonst von heute rechnen*/
-    if (request()->has('datum_ab')) {
+    if (request()->filled('datum_ab')) {
         $datum_df = request()->get('datum_ab');
     } else {
         $datum_df = date("d.m.Y");
@@ -4002,7 +4002,7 @@ function vorschlag_kurz($gruppe_id = '1', $gemacht = 'NOT')
         } else {
             $datum_sql = date_german2mysql(session()->get('datum_df'));
         }
-        if (!request()->has('datum_d')) {
+        if (!request()->filled('datum_d')) {
             $datum_df = date_mysql2german($datum_sql);
         } else {
             $datum_sql = date_german2mysql(request()->input('datum_d'));
@@ -4020,7 +4020,7 @@ function vorschlag_kurz($gruppe_id = '1', $gemacht = 'NOT')
         $js_suche = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termin_vorschlaege_kurz', 'datum_d' => $datum_feld, 'vorschlag_gruppe_id' => $vorschlag_gruppe_id], false) . ", 'leftBox1');\"";
         button('btn_heute', 'btn_heute', 'Erneut vorschlagen', $js_suche, '');
         $tt = 1;
-        if (request()->has('vorschlaege_anzeigen')) {
+        if (request()->filled('vorschlaege_anzeigen')) {
             $start_a = intval(request()->input('vorschlaege_anzeigen'));
         } else {
             $start_a = 0;
@@ -4178,7 +4178,7 @@ function vorschlag_kurz_chrono($gruppe_id = '1', $gemacht = 'NOT')
         } else {
             $datum_sql = date_german2mysql(session()->get('datum_df'));
         }
-        if (!request()->has('datum_d')) {
+        if (!request()->filled('datum_d')) {
             $datum_df = date_mysql2german($datum_sql);
         } else {
             $datum_sql = date_german2mysql(request()->input('datum_d'));
@@ -4196,7 +4196,7 @@ function vorschlag_kurz_chrono($gruppe_id = '1', $gemacht = 'NOT')
         $js_suche = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termin_vorschlaege_kurz', 'datum_d' => $datum_feld, 'vorschlag_gruppe_id' => $vorschlag_gruppe_id], false) . ", 'leftBox1');\"";
         button('btn_heute', 'btn_heute', 'Erneut vorschlagen', $js_suche, '');
         $tt = 1;
-        if (request()->has('vorschlaege_anzeigen')) {
+        if (request()->filled('vorschlaege_anzeigen')) {
             $start_a = intval(request()->input('vorschlaege_anzeigen'));
         } else {
             $start_a = 0;
@@ -5612,7 +5612,7 @@ class general
             exec("tar cfvz $tar_dir_name/Serienbrief.tar.gz $tar_dir_name/*.pdf");
             exec("rm $tar_dir_name/*.pdf");
 
-            if (request()->has('emailsend')) {
+            if (request()->filled('emailsend')) {
                 /*Als Email versenden*/
                 $from = 'serienbrief@berlus.de';
                 $to = 'info@berlus.de';

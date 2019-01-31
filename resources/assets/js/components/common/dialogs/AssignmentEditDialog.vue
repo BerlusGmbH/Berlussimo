@@ -46,13 +46,12 @@
                         </app-entity-select>
                     </v-flex>
                     <v-flex xs12>
-                        <v-text-field label="Text"
-                                      prepend-icon="mdi-alphabetical"
-                                      v-model="assignmentInput.TEXT"
-                                      multi-line
-                                      auto-grow
+                        <v-textarea label="Text"
+                                    prepend-icon="mdi-alphabetical"
+                                    v-model="assignmentInput.TEXT"
+                                    auto-grow
                         >
-                        </v-text-field>
+                        </v-textarea>
                     </v-flex>
                     <v-flex xs12>
                         <v-switch label="Akut"
@@ -76,12 +75,12 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
-    import {Assignment} from "../../../server/resources/models";
+    import {Assignment} from "../../../server/resources";
     import _ from "lodash";
-    import {Mutation, namespace} from "vuex-class";
+    import {namespace} from "vuex-class";
 
-    const SnackbarMutation = namespace('shared/snackbar', Mutation);
-    const RefreshMutation = namespace('shared/refresh', Mutation);
+    const Snackbar = namespace('shared/snackbar');
+    const Refresh = namespace('shared/refresh');
 
     @Component
     export default class AssignmentEditDialog extends Vue {
@@ -100,10 +99,10 @@
             }
         }
 
-        @SnackbarMutation('updateMessage')
+        @Snackbar.Mutation('updateMessage')
         updateMessage: Function;
 
-        @RefreshMutation('requestRefresh')
+        @Refresh.Mutation('requestRefresh')
         requestRefresh: Function;
 
         assignmentInput: Assignment = new Assignment();

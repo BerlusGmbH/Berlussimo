@@ -1,6 +1,6 @@
 <?php
 
-if (request()->has('formular')) {
+if (request()->filled('formular')) {
 	$formular = request()->input('formular');
 	switch ($formular) {
 		

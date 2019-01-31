@@ -20,7 +20,7 @@ switch ($option) {
         break;
 
     case "konten_anzeigen" :
-        if (request()->has('k_id')) {
+        if (request()->filled('k_id')) {
             $konten_info = new k_rahmen ();
             if (!request()->exists('pdf')) {
                 $f = new formular ();
@@ -41,7 +41,7 @@ switch ($option) {
         break;
 
     case "k_bez_neu" :
-        if (request()->has('k_bez')) {
+        if (request()->filled('k_bez')) {
             $k_bez = request()->input('k_bez');
             $k = new k_rahmen ();
             if ($k->kontenrahmen_speichern($k_bez)) {
@@ -58,15 +58,15 @@ switch ($option) {
         break;
 
     case "konto_neu" :
-        if (request()->has('konto')
-            && request()->has('bez')
-            && request()->has('kontenrahmen_id')
+        if (request()->filled('konto')
+            && request()->filled('bez')
+            && request()->filled('kontenrahmen_id')
         ) {
             $k = new k_rahmen ();
             session()->put('kontenrahmen_id', request()->input('kontenrahmen_id'));
             session()->put('k_gruppen_id', request()->input('k_gruppe'));
             session()->put('k_kontoart_id', request()->input('kontoart_id'));
-            $k->kostenkonto_speichern(request()->input('kontenrahmen_id'), request()->input('konto'), request()->input('bez'), request()->input('kontoart_id'), request()->input('k_gruppe'), request()->has('su'));
+            $k->kostenkonto_speichern(request()->input('kontenrahmen_id'), request()->input('konto'), request()->input('bez'), request()->input('kontoart_id'), request()->input('k_gruppe'), request()->filled('su'));
             weiterleiten(route('web::kontenrahmen::legacy', ['option' => 'konten_anzeigen', 'k_id' => session()->get('kontenrahmen_id')], false));
         } else {
             echo "Eingabe unvollständig. Error: S562q357";
@@ -74,23 +74,23 @@ switch ($option) {
         break;
 
     case "kostenkonto_ae" :
-        if (request()->has('k_dat')) {
+        if (request()->filled('k_dat')) {
             $k = new k_rahmen ();
             $k->form_kostenkonto_aendern(request()->input('k_dat'));
         }
         break;
 
     case "konto_ae_send" :
-        if (request()->has('dat')
-            && request()->has('konto')
-            && request()->has('bez')
+        if (request()->filled('dat')
+            && request()->filled('konto')
+            && request()->filled('bez')
             && session()->has('kontenrahmen_id')
         ) {
             $k = new k_rahmen ();
             session()->put('kontenrahmen_id', request()->input('kontenrahmen_id'));
             session()->put('k_gruppen_id', request()->input('k_gruppe'));
             session()->put('k_kontoart_id', request()->input('kontoart_id'));
-            $k->kostenkonto_aendern(request()->input('dat'), request()->input('kontenrahmen_id'), request()->input('konto'), request()->input('bez'), request()->input('kontoart_id'), request()->input('k_gruppe'), request()->has('su'));
+            $k->kostenkonto_aendern(request()->input('dat'), request()->input('kontenrahmen_id'), request()->input('konto'), request()->input('bez'), request()->input('kontoart_id'), request()->input('k_gruppe'), request()->filled('su'));
             weiterleiten(route('web::kontenrahmen::legacy', ['option' => 'konten_anzeigen', 'k_id' => session()->get('kontenrahmen_id')], false));
         } else {
             echo "Eingabe unvollständig. Error: S56sdf7";
@@ -110,7 +110,7 @@ switch ($option) {
         break;
 
     case "g_bez_neu" :
-        if (request()->has('g_bez')) {
+        if (request()->filled('g_bez')) {
             $k = new k_rahmen ();
             $k->gruppe_speichern(request()->input('g_bez'));
             weiterleiten(route('web::kontenrahmen::legacy', ['option' => 'gruppe_neu'], false));
@@ -131,7 +131,7 @@ switch ($option) {
         break;
 
     case "kontoart_neu1" :
-        if (request()->has('kontoart')) {
+        if (request()->filled('kontoart')) {
             $k = new k_rahmen ();
             $k->kontoart_speichern(request()->input('kontoart'));
             weiterleiten(route('web::kontenrahmen::legacy', ['option' => 'kontoart_neu'], false));
@@ -146,7 +146,7 @@ switch ($option) {
         break;
 
     case "zuweisen_kr" :
-        if (request()->has('kostentraeger_typ') && request()->has('kostentraeger_id') && request()->has('kontenrahmen_id')) {
+        if (request()->filled('kostentraeger_typ') && request()->filled('kostentraeger_id') && request()->filled('kontenrahmen_id')) {
             $k = new k_rahmen ();
             $k->zuweisung_speichern(request()->input('kostentraeger_typ'), request()->input('kostentraeger_id'), request()->input('kontenrahmen_id'));
             weiterleiten(route('web::kontenrahmen::legacy', [], false));
@@ -156,7 +156,7 @@ switch ($option) {
         break;
 
     case "zuweisung_del" :
-        if (request()->has('dat')) {
+        if (request()->filled('dat')) {
             $k = new k_rahmen ();
             $k->zuweisung_loeschen(request()->input('dat'));
             weiterleiten(route('web::kontenrahmen::legacy', [], false));

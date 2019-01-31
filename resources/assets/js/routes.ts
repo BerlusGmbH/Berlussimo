@@ -1,26 +1,16 @@
 import {RouteConfig} from "vue-router";
+import Breadcrumbs from "./components/modules/Breadcrumbs.vue";
 import AssignmentListView from "./components/modules/assignment/ListView.vue";
-import AssignmentListViewBreadcrumbs from "./components/modules/assignment/ListViewBreadcrumbs.vue";
 import PersonDetailView from "./components/modules/person/DetailView.vue";
-import PersonDetailViewBreadcrumbs from "./components/modules/person/DetailViewBreadcrumbs.vue";
 import PersonListView from "./components/modules/person/ListView.vue";
-import PersonListViewBreadcrumbs from "./components/modules/person/ListViewBreadcrumbs.vue";
 import UnitDetailView from "./components/modules/unit/DetailView.vue";
-import UnitDetailViewBreadcrumbs from "./components/modules/unit/DetailViewBreadcrumbs.vue";
 import UnitListView from "./components/modules/unit/ListView.vue";
-import UnitListViewBreadcrumbs from "./components/modules/unit/ListViewBreadcrumbs.vue";
 import HouseDetailView from "./components/modules/house/DetailView.vue";
-import HouseDetailViewBreadcrumbs from "./components/modules/house/DetailViewBreadcrumbs.vue";
 import HouseListView from "./components/modules/house/ListView.vue";
-import HouseListViewBreadcrumbs from "./components/modules/house/ListViewBreadcrumbs.vue";
 import ObjectDetailView from "./components/modules/object/DetailView.vue";
-import ObjectDetailViewBreadcrumbs from "./components/modules/object/DetailViewBreadcrumbs.vue";
 import ObjectListView from "./components/modules/object/ListView.vue";
-import ObjectListViewBreadcrumbs from "./components/modules/object/ListViewBreadcrumbs.vue";
 import InvoiceDetailView from "./components/modules/invoice/DetailView.vue";
-import InvoiceDetailViewBreadcrumbs from "./components/modules/invoice/DetailViewBreadcrumbs.vue";
 import DashboardView from "./components/modules/dashboard/DetailView.vue";
-import DashboardBreadcrumbs from "./components/modules/dashboard/DetailViewBreadcrumbs.vue";
 import Menu from "./components/shared/main/Menu.vue";
 import login from "./components/auth/Login.vue";
 
@@ -29,13 +19,21 @@ const routes: RouteConfig[] = [
         path: '/',
         components: {
             default: DashboardView,
-            breadcrumbs: DashboardBreadcrumbs,
+            breadcrumbs: Breadcrumbs,
             mainmenu: Menu
         },
         name: 'web.dashboard.show',
         props: {
             default: true,
-            breadcrumbs: true,
+            breadcrumbs: {
+                items: [
+                    {
+                        type: 'category',
+                        name: 'Bereiche',
+                        href: 'web.dashboard.show'
+                    }
+                ]
+            },
             mainmenu: {url: '/api/v1/menu'}
         },
     },
@@ -49,13 +47,21 @@ const routes: RouteConfig[] = [
         path: '/assignments',
         components: {
             default: AssignmentListView,
-            breadcrumbs: AssignmentListViewBreadcrumbs,
+            breadcrumbs: Breadcrumbs,
             mainmenu: Menu
         },
         name: 'web.assignments.index',
         props: {
             default: true,
-            breadcrumbs: true,
+            breadcrumbs: {
+                items: [
+                    {
+                        type: 'category',
+                        name: 'Aufträge',
+                        href: 'web.assignments.index'
+                    }
+                ]
+            },
             mainmenu: {url: '/api/v1/menu'}
         }
     },
@@ -63,13 +69,25 @@ const routes: RouteConfig[] = [
         path: '/persons/:id',
         components: {
             default: PersonDetailView,
-            breadcrumbs: PersonDetailViewBreadcrumbs,
+            breadcrumbs: Breadcrumbs,
             mainmenu: Menu
         },
         name: 'web.persons.show',
         props: {
             default: true,
-            breadcrumbs: true,
+            breadcrumbs: {
+                items: [
+                    {
+                        type: 'category',
+                        name: 'Personen',
+                        href: 'web.persons.index'
+                    },
+                    {
+                        type: 'entity'
+                    }
+                ],
+                path: 'person.show.person'
+            },
             mainmenu: {url: '/api/v1/menu'}
         }
     },
@@ -77,13 +95,21 @@ const routes: RouteConfig[] = [
         path: '/persons',
         components: {
             default: PersonListView,
-            breadcrumbs: PersonListViewBreadcrumbs,
+            breadcrumbs: Breadcrumbs,
             mainmenu: Menu
         },
         name: 'web.persons.index',
         props: {
             default: true,
-            breadcrumbs: true,
+            breadcrumbs: {
+                items: [
+                    {
+                        type: 'category',
+                        name: 'Personen',
+                        href: 'web.persons.index'
+                    }
+                ]
+            },
             mainmenu: {url: '/api/v1/menu'}
         }
     },
@@ -91,13 +117,25 @@ const routes: RouteConfig[] = [
         path: '/units/:id',
         components: {
             default: UnitDetailView,
-            breadcrumbs: UnitDetailViewBreadcrumbs,
+            breadcrumbs: Breadcrumbs,
             mainmenu: Menu
         },
         name: 'web.units.show',
         props: {
             default: true,
-            breadcrumbs: true,
+            breadcrumbs: {
+                items: [
+                    {
+                        type: 'category',
+                        name: 'Einheiten',
+                        href: 'web.units.index'
+                    },
+                    {
+                        type: 'entity'
+                    }
+                ],
+                path: 'unit.show.unit'
+            },
             mainmenu: {url: '/api/v1/menu'}
         }
     },
@@ -105,13 +143,21 @@ const routes: RouteConfig[] = [
         path: '/units',
         components: {
             default: UnitListView,
-            breadcrumbs: UnitListViewBreadcrumbs,
+            breadcrumbs: Breadcrumbs,
             mainmenu: Menu
         },
         name: 'web.units.index',
         props: {
             default: true,
-            breadcrumbs: true,
+            breadcrumbs: {
+                items: [
+                    {
+                        type: 'category',
+                        name: 'Einheiten',
+                        href: 'web.units.index'
+                    }
+                ]
+            },
             mainmenu: {url: '/api/v1/menu'}
         }
     },
@@ -119,13 +165,25 @@ const routes: RouteConfig[] = [
         path: '/houses/:id',
         components: {
             default: HouseDetailView,
-            breadcrumbs: HouseDetailViewBreadcrumbs,
+            breadcrumbs: Breadcrumbs,
             mainmenu: Menu
         },
         name: 'web.houses.show',
         props: {
             default: true,
-            breadcrumbs: true,
+            breadcrumbs: {
+                items: [
+                    {
+                        type: 'category',
+                        name: 'Häuser',
+                        href: 'web.houses.index'
+                    },
+                    {
+                        type: 'entity'
+                    }
+                ],
+                path: 'house.show.house'
+            },
             mainmenu: {url: '/api/v1/menu'}
         }
     },
@@ -133,13 +191,21 @@ const routes: RouteConfig[] = [
         path: '/houses',
         components: {
             default: HouseListView,
-            breadcrumbs: HouseListViewBreadcrumbs,
+            breadcrumbs: Breadcrumbs,
             mainmenu: Menu
         },
         name: 'web.houses.index',
         props: {
             default: true,
-            breadcrumbs: true,
+            breadcrumbs: {
+                items: [
+                    {
+                        type: 'category',
+                        name: 'Häuser',
+                        href: 'web.houses.index'
+                    }
+                ]
+            },
             mainmenu: {url: '/api/v1/menu'}
         }
     },
@@ -147,13 +213,25 @@ const routes: RouteConfig[] = [
         path: '/objects/:id',
         components: {
             default: ObjectDetailView,
-            breadcrumbs: ObjectDetailViewBreadcrumbs,
+            breadcrumbs: Breadcrumbs,
             mainmenu: Menu
         },
         name: 'web.objects.show',
         props: {
             default: true,
-            breadcrumbs: true,
+            breadcrumbs: {
+                items: [
+                    {
+                        type: 'category',
+                        name: 'Objekte',
+                        href: 'web.objects.index'
+                    },
+                    {
+                        type: 'entity'
+                    }
+                ],
+                path: 'object.show.object'
+            },
             mainmenu: {url: '/api/v1/menu'}
         }
     },
@@ -161,13 +239,21 @@ const routes: RouteConfig[] = [
         path: '/objects',
         components: {
             default: ObjectListView,
-            breadcrumbs: ObjectListViewBreadcrumbs,
+            breadcrumbs: Breadcrumbs,
             mainmenu: Menu
         },
         name: 'web.objects.index',
         props: {
             default: true,
-            breadcrumbs: true,
+            breadcrumbs: {
+                items: [
+                    {
+                        type: 'category',
+                        name: 'Objekte',
+                        href: 'web.objects.index'
+                    }
+                ]
+            },
             mainmenu: {url: '/api/v1/menu'}
         }
     },
@@ -175,14 +261,26 @@ const routes: RouteConfig[] = [
         path: '/invoices/:id',
         components: {
             default: InvoiceDetailView,
-            breadcrumbs: InvoiceDetailViewBreadcrumbs,
+            breadcrumbs: Breadcrumbs,
             mainmenu: Menu,
             submenu: Menu
         },
         name: 'web.invoices.show',
         props: {
             default: true,
-            breadcrumbs: true,
+            breadcrumbs: {
+                items: [
+                    {
+                        type: 'category',
+                        name: 'Rechnungen',
+                        href: 'web.invoices.index'
+                    },
+                    {
+                        type: 'entity'
+                    }
+                ],
+                path: 'invoice.show.invoice'
+            },
             mainmenu: {url: '/api/v1/menu'},
             submenu: {url: '/api/v1/menu/invoice'}
         }

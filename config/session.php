@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Str;
+
 return [
 
     /*
@@ -16,7 +18,7 @@ return [
     |
     */
 
-    'driver' => env('SESSION_DRIVER', 'file'),
+    'driver' => env('SESSION_DRIVER', 'redis'),
 
     /*
     |--------------------------------------------------------------------------
@@ -29,7 +31,7 @@ return [
     |
     */
 
-    'lifetime' => 720,
+    'lifetime' => env('SESSION_LIFETIME', 720),
 
     'expire_on_close' => false,
 
@@ -70,7 +72,7 @@ return [
     |
     */
 
-    'connection' => null,
+    'connection' => env('SESSION_CONNECTION', null),
 
     /*
     |--------------------------------------------------------------------------
@@ -95,7 +97,7 @@ return [
     | correspond with one of the application's configured cache stores.
     |
     */
-    'store' => null,
+    'store' => env('SESSION_STORE', null),
 
     /*
     |--------------------------------------------------------------------------
@@ -121,7 +123,10 @@ return [
     |
     */
 
-    'cookie' => 'laravel_session',
+    'cookie' => env(
+        'SESSION_COOKIE',
+        Str::slug(env('APP_NAME', 'laravel'), '_') . '_session'
+    ),
 
     /*
     |--------------------------------------------------------------------------
@@ -174,5 +179,20 @@ return [
     */
 
     'http_only' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Same-Site Cookies
+    |--------------------------------------------------------------------------
+    |
+    | This option determines how your cookies behave when cross-site requests
+    | take place, and can be used to mitigate CSRF attacks. By default, we
+    | do not enable this as other CSRF protection services are in place.
+    |
+    | Supported: "lax", "strict"
+    |
+    */
+
+    'same_site' => null,
 
 ];

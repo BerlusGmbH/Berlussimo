@@ -2,14 +2,14 @@
 
 include_once("options/links/links.form_haus.php");
 
-if (request()->has('daten_rein')) {
+if (request()->filled('daten_rein')) {
     switch (request()->input('daten_rein')) {
 
         case "anlegen" :
             $form = new mietkonto ();
             $form->erstelle_formular("Haus anlegen", NULL);
 
-            if (!request()->has("haus_objekt")) {
+            if (!request()->filled("haus_objekt")) {
                 iframe_start();
                 objekt_liste_links();
             } else {
@@ -18,7 +18,7 @@ if (request()->has('daten_rein')) {
                 haus_eingabe_formular(request()->input('haus_objekt'));
             }
 
-            if (request()->has("submit_haus")) {
+            if (request()->filled("submit_haus")) {
                 foreach (request()->request->all() as $key => $value) {
                     if (empty ($value)) {
                         fehlermeldung_ausgeben("Alle felder müssen ausgefüllt werden");
@@ -40,7 +40,7 @@ if (request()->has('daten_rein')) {
 
         case "haus_neu" :
             $h = new haus ();
-            if (request()->has('objekt_id')) {
+            if (request()->filled('objekt_id')) {
                 $h->form_haus_neu(request()->input('objekt_id'));
             } else {
                 $h->form_haus_neu('');
@@ -49,7 +49,7 @@ if (request()->has('daten_rein')) {
 
         case "haus_speichern" :
             if (request()->isMethod('post')) {
-                if (request()->has('strasse') && request()->has('haus_nr') && request()->has('ort') && request()->has('plz') && request()->has('qm') && request()->has('objekt_id')) {
+                if (request()->filled('strasse') && request()->filled('haus_nr') && request()->filled('ort') && request()->filled('plz') && request()->filled('qm') && request()->filled('objekt_id')) {
                     echo "alles ok";
                     $h = new haus ();
                     $h->haus_speichern(request()->input('strasse'), request()->input('haus_nr'), request()->input('ort'), request()->input('plz'), request()->input('qm'), request()->input('objekt_id'));
@@ -67,15 +67,15 @@ if (request()->has('daten_rein')) {
             $form->erstelle_formular("Haus ändern", NULL);
             iframe_start();
             echo "<h1>Haus ändern</h1>";
-            if (!request()->has('objekt_id')) {
+            if (!request()->filled('objekt_id')) {
                 objekt_liste_links_aenderung();
             }
-            if (!request()->has('haus_id') && request()->has('objekt_id')) {
+            if (!request()->filled('haus_id') && request()->filled('objekt_id')) {
                 $objekt_kurzname = objekt_kurzname(request()->input('objekt_id'));
                 hinweis_ausgeben("Objekt: $objekt_kurzname");
                 haus_liste_links_aenderung(request()->input('objekt_id'));
             }
-            if (request()->has('haus_id') && request()->has('objekt_id')) {
+            if (request()->filled('haus_id') && request()->filled('objekt_id')) {
                 $objekt_kurzname = objekt_kurzname(request()->input('objekt_id'));
                 $haus_kurzname = haus_strasse_nr(request()->input('haus_id'));
                 hinweis_ausgeben("Objekt: $objekt_kurzname");
@@ -104,7 +104,7 @@ if (request()->has('daten_rein')) {
                 // echo "$key $value<br>";
             }
             if (!isset ($error)) {
-                if (!request()->has('einheit_update')) {
+                if (!request()->filled('einheit_update')) {
                     erstelle_formular('haus_in_db', NULL); // name, action
                     $objekt_kurzname = objekt_kurzname(request()->input("objekt_id"));
                     echo "<tr><td><h1>Folgende Daten wurden übermittelt:\n</h1></td></tr>\n";
@@ -124,7 +124,7 @@ if (request()->has('daten_rein')) {
                     erstelle_submit_button("einheit_update", "Speichern"); // name, wert
                     ende_formular();
                 }
-                if (request()->has('einheit_update')) {
+                if (request()->filled('einheit_update')) {
                     $haus_dat = request()->input('haus_dat');
                     deaktiviere_haus_dat($haus_dat);
                     haus_geaendert_eintragen(request()->input('haus_dat'), request()->input('haus_id'), request()->input('haus_strasse'), request()->input('haus_nummer'), request()->input('haus_stadt'), request()->input('haus_plz'), request()->input('haus_qm'), request()->input('objekt_id'));
