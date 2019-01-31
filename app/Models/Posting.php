@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Posting extends Model
 {
     protected $table = 'GELD_KONTO_BUCHUNGEN';
-    protected $primaryKey = 'GELD_KONTO_BUCHUNGEN_ID';
+    protected $primaryKey = 'GELD_KONTO_BUCHUNGEN_DAT';
+    protected $externalKey = 'GELD_KONTO_BUCHUNGEN_ID';
 
     /**
      * The attributes that are not mass assignable.

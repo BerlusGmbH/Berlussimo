@@ -1,0 +1,3 @@
+mutation UpdateMessage($message: String) {
+    updateMessage(message: $message) @client
+}

@@ -4,7 +4,9 @@ namespace App\Console;
 
 use App\Console\Commands\GenerateSearchParser;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Foundation\Console\GraphQlSchemaGenerate;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Foundation\Console\PusherKeyGenerateCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -14,7 +16,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        GenerateSearchParser::class
+        PusherKeyGenerateCommand::class,
+        GraphQlSchemaGenerate::class
     ];
 
     /**
@@ -30,12 +33,14 @@ class Kernel extends ConsoleKernel
     }
 
     /**
-     * +     * Register the Closure based commands for the application.
-     * +     *
-     * +     * @return void
-     * +     */
+     * Register the commands for the application.
+     *
+     * @return void
+     */
     protected function commands()
     {
+        $this->load(__DIR__ . '/Commands');
+
         require base_path('routes/console.php');
     }
 }

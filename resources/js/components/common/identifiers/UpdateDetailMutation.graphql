@@ -1,0 +1,7 @@
+#import "../../../../graphql/DetailBaseFragment.graphql"
+
+mutation UpdateDetail($input: UpdateDetailInput!) {
+    updateDetail(input: $input) {
+        ...DetailBase
+    }
+}

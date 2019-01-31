@@ -1,0 +1,34 @@
+query Employees(
+    $search: String,
+    $first: Int!,
+    $page: Int,
+    $employedAt: [EntitySelect!],
+    $employedDuring: Date
+) @variables(
+    variables: [
+        {name: "employedAt", types: ["Employer"], label: "Angestellt bei", icon: "mdi-worker"},
+        {name: "employedDuring", label: "Angestellt während", icon: "mdi-calendar"}
+    ]
+) {
+    persons(search: $search, first: $first, page: $page, employedAt: $employedAt, employedDuring: $employedDuring) {
+        data {
+            ...PersonIdentifier @label(text: "Arbeitnehmer")
+            jobs(employer: $employedAt, active: $employedDuring) {
+                employer {
+                    ...PartnerIdentifier @label(text: "Arbeitgeber")
+                }
+                title {
+                    name @label(text: "Berufsbezeichnung")
+                }
+                joinDate @label(text: "Eintritt")
+                leaveDate @label(text: "Austritt")
+                hourlyRate @label(text: "Stundenlohn")
+                hoursPerWeek @label(text: "Wochenstunden")
+                holidays @label(text: "Urlaubstage")
+            }
+        }
+        paginatorInfo {
+            ...PaginatorInfo
+        }
+    }
+}

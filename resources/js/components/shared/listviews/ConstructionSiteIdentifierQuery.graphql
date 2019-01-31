@@ -1,0 +1,7 @@
+#import "./ConstructionSiteIdentifierFragment.graphql"
+
+query ConstructionSiteIdentifier($id: ID!) {
+    constructionSite(id: $id) {
+        ...ConstructionSiteIdentifier
+    }
+}

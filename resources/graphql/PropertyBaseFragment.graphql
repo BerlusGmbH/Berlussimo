@@ -1,0 +1,5 @@
+fragment PropertyBase on PropertyInterface {
+    __typename
+    id
+    name
+}

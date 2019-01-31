@@ -1,0 +1,6 @@
+fragment PhoneBase on Phone {
+    __typename
+    id
+    value
+    comment
+}

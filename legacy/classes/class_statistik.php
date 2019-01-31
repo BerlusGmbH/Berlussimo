@@ -63,13 +63,13 @@ class statistik
         } else {
             $m_lage = "EINHEIT_LAGE LIKE '" . $typ_lage . "%' &&";
         }
-        $result = DB::select("SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
+        $result = DB::select("SELECT OBJEKT_KURZNAME, EINHEIT.id AS EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
 
 FROM `EINHEIT`
 RIGHT JOIN (
 HAUS, OBJEKT
-) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID = '$objekt_id' )
-WHERE $m_lage  EINHEIT_AKTUELL='1' && EINHEIT_ID NOT
+) ON ( EINHEIT.HAUS_ID = HAUS.id && HAUS.OBJEKT_ID = OBJEKT.id && OBJEKT.id = '$objekt_id' )
+WHERE $m_lage  EINHEIT_AKTUELL='1' && EINHEIT.id NOT
 IN (
 
 SELECT EINHEIT_ID
@@ -91,20 +91,20 @@ ORDER BY EINHEIT_KURZNAME ASC");
         } else {
             $m_lage = '';
         }
-        $result = DB::select("SELECT EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
+        $result = DB::select("SELECT EINHEIT.id AS EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
 
 FROM `EINHEIT`
 RIGHT JOIN (
 HAUS, OBJEKT
-) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID = '$objekt_id' )
-WHERE $m_lage  EINHEIT_AKTUELL='1' && EINHEIT_ID IN (
+) ON ( EINHEIT.HAUS_ID = HAUS.id && HAUS.OBJEKT_ID = OBJEKT.id && OBJEKT.id = '$objekt_id' )
+WHERE $m_lage  EINHEIT_AKTUELL='1' && EINHEIT.id IN (
 
 SELECT EINHEIT_ID
 FROM MIETVERTRAG
 WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr_monat' && ( DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr_monat'
 OR MIETVERTRAG_BIS = '0000-00-00' )
 )
-GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
+GROUP BY EINHEIT.id ORDER BY EINHEIT_KURZNAME ASC");
 
         $this->vermietete = 0;
         $this->vermietete = count($result);
@@ -151,7 +151,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
 
     function leer_monat_jahr_haus_m2($jahr_monat, $haus_id, $typ_lage)
     {
-        $db_abfrage = "SELECT SUM(EINHEIT_QM) AS QM FROM `EINHEIT` RIGHT JOIN ( HAUS, OBJEKT ) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID) WHERE EINHEIT.EINHEIT_AKTUELL='1' && HAUS.HAUS_AKTUELL='1' && EINHEIT.HAUS_ID = '$haus_id' && (TYP='Wohnraum' OR TYP='Gewerbe') && EINHEIT_ID NOT IN ( SELECT EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr_monat' && ( DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr_monat' OR MIETVERTRAG_BIS = '0000-00-00' ) ) ORDER BY EINHEIT_KURZNAME ASC";
+        $db_abfrage = "SELECT SUM(EINHEIT_QM) AS QM FROM `EINHEIT` RIGHT JOIN ( HAUS, OBJEKT ) ON ( EINHEIT.HAUS_ID = HAUS.id && HAUS.OBJEKT_ID = OBJEKT.id) WHERE EINHEIT.EINHEIT_AKTUELL='1' && HAUS.HAUS_AKTUELL='1' && EINHEIT.HAUS_ID = '$haus_id' && (TYP='Wohnraum' OR TYP='Gewerbe') && EINHEIT.id NOT IN ( SELECT EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr_monat' && ( DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr_monat' OR MIETVERTRAG_BIS = '0000-00-00' ) ) ORDER BY EINHEIT_KURZNAME ASC";
         $resultat = DB::select($db_abfrage);
         if (!empty($resultat)) {
             $row = $resultat[0];
@@ -163,7 +163,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
 
     function vermietet_monat_jahr_haus_m2($jahr_monat, $haus_id, $typ_lage)
     {
-        $db_abfrage = "SELECT SUM(EINHEIT_QM) AS QM FROM `EINHEIT` RIGHT JOIN ( HAUS, OBJEKT ) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID) WHERE EINHEIT.EINHEIT_AKTUELL='1' && HAUS.HAUS_AKTUELL='1' && EINHEIT.HAUS_ID = '$haus_id' && (TYP='Wohnraum' OR TYP='Gewerbe') && EINHEIT_ID IN ( SELECT EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr_monat' && ( DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr_monat' OR MIETVERTRAG_BIS = '0000-00-00' ) ) ORDER BY EINHEIT_KURZNAME ASC";
+        $db_abfrage = "SELECT SUM(EINHEIT_QM) AS QM FROM `EINHEIT` RIGHT JOIN ( HAUS, OBJEKT ) ON ( EINHEIT.HAUS_ID = HAUS.id && HAUS.OBJEKT_ID = OBJEKT.id) WHERE EINHEIT.EINHEIT_AKTUELL='1' && HAUS.HAUS_AKTUELL='1' && EINHEIT.HAUS_ID = '$haus_id' && (TYP='Wohnraum' OR TYP='Gewerbe') && EINHEIT.id IN ( SELECT EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr_monat' && ( DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr_monat' OR MIETVERTRAG_BIS = '0000-00-00' ) ) ORDER BY EINHEIT_KURZNAME ASC";
         $resultat = DB::select($db_abfrage);
         if (!empty($resultat)) {
             $row = $resultat[0];
@@ -190,7 +190,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         $o1 = new objekt ();
         $objekt_name = $o1->get_objekt_name($objekt_id);
 
-        if (!request()->has('monat') && !request()->has('jahr')) {
+        if (!request()->filled('monat') && !request()->filled('jahr')) {
             $datum = date("Y-m");
             $monat = date("m");
             $jahr = date("Y");
@@ -356,7 +356,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         $f->fieldset("Verwaltergebühr für Häusergruppen", 'v_geb_haeuser');
         if (request()->isMethod('post')) {
             $anzahl_h = count(request()->input('haus'));
-            if (!request()->has('monat') && !request()->has('jahr')) {
+            if (!request()->filled('monat') && !request()->filled('jahr')) {
                 $jahr_monat = date("Y-m");
                 $jahr = date("Y");
                 $monat = date("m");
@@ -410,12 +410,12 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
 
     function vermietete_monat_jahr_haus($jahr_monat, $haus_id, $typ_lage)
     {
-        $result = DB::select(" SELECT EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
+        $result = DB::select(" SELECT EINHEIT.id AS EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
 FROM `EINHEIT`
 RIGHT JOIN (
 HAUS
-) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && EINHEIT.HAUS_ID = '$haus_id' )
-WHERE EINHEIT_AKTUELL = '1' && EINHEIT_ID
+) ON ( EINHEIT.HAUS_ID = HAUS.id && EINHEIT.HAUS_ID = '$haus_id' )
+WHERE EINHEIT_AKTUELL = '1' && EINHEIT.id
 IN (
 
 SELECT EINHEIT_ID
@@ -432,12 +432,12 @@ LIMIT 0 , 30 ");
 
     function leerstand_monat_jahr_haus($jahr_monat, $haus_id, $typ_lage)
     {
-        $result = DB::select(" SELECT EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
+        $result = DB::select(" SELECT EINHEIT.id AS EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
 FROM `EINHEIT`
 RIGHT JOIN (
 HAUS
-) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && EINHEIT.HAUS_ID = '$haus_id' )
-WHERE EINHEIT_AKTUELL = '1' && EINHEIT_ID NOT
+) ON ( EINHEIT.HAUS_ID = HAUS.id && EINHEIT.HAUS_ID = '$haus_id' )
+WHERE EINHEIT_AKTUELL = '1' && EINHEIT.id NOT
 IN (
 
 SELECT EINHEIT_ID
@@ -508,7 +508,7 @@ LIMIT 0 , 30 ");
         $mwst_eur = nummer_punkt2komma($mwst_eur);
         $brutto_vgeb_a = nummer_punkt2komma($brutto_vgeb);
         $v_geb_a = nummer_punkt2komma($v_geb);
-        if (!request()->has('pdf')) {
+        if (!request()->filled('pdf')) {
             echo "$gsollmiete_vermietet_a €   GESAMT SOLL VERMIETET<br>";
             echo "$gsollmiete_leer_a €   GESAMT SOLL LEER<br>";
             echo " $g_summe_a €   GESAMT SOLL<br>";
@@ -580,7 +580,7 @@ LIMIT 0 , 30 ");
         } else {
             $m_lage = "EINHEIT_LAGE LIKE '" . $typ_lage . "%' &&";
         }
-        $result = DB::select("SELECT EINHEIT_ID FROM `EINHEIT` WHERE $m_lage  EINHEIT_AKTUELL='1' && EINHEIT_ID NOT
+        $result = DB::select("SELECT EINHEIT.id AS EINHEIT_ID FROM `EINHEIT` WHERE $m_lage  EINHEIT_AKTUELL='1' && EINHEIT.id NOT
 IN (
 SELECT EINHEIT_ID
 FROM MIETVERTRAG
@@ -641,7 +641,7 @@ ORDER BY EINHEIT_KURZNAME ASC");
         $anzahl_alle_einheiten = count($e->liste_aller_einheiten());
         echo "Gesamt Einheiten: $anzahl_alle_einheiten<br>";
 
-        $my_arr = DB::select("SELECT EINHEIT_ID, MIETVERTRAG_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr-$monat' && ( DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr-$monat' OR MIETVERTRAG_BIS = '0000-00-00' )");
+        $my_arr = DB::select("SELECT EINHEIT_ID, id AS MIETVERTRAG_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) <= '$jahr-$monat' && ( DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) >= '$jahr-$monat' OR MIETVERTRAG_BIS = '0000-00-00' )");
 
         $anzahl_gesamt_mvs = count($my_arr);
 
@@ -810,14 +810,14 @@ ORDER BY EINHEIT_KURZNAME ASC");
 
     function get_baustelle_ext_id($bau_bez)
     {
-        $result = DB::select("SELECT ID FROM BAUSTELLEN_EXT WHERE BEZ='$bau_bez' && AKTUELL = '1' ORDER BY ID DESC LIMIT 0,1");
+        $result = DB::select("SELECT BAUSTELLEN_EXT.id AS ID FROM BAUSTELLEN_EXT WHERE BEZ='$bau_bez' && AKTUELL = '1' ORDER BY ID DESC LIMIT 0,1");
         $row = $result[0];
         return $row ['ID'];
     }
 
     function get_baustelle_ext_infos($bau_id)
     {
-        $result = DB::select("SELECT * FROM BAUSTELLEN_EXT WHERE ID='$bau_id' && AKTUELL = '1' ORDER BY ID DESC LIMIT 0,1");
+        $result = DB::select("SELECT * FROM BAUSTELLEN_EXT WHERE id='$bau_id' && AKTUELL = '1' ORDER BY id DESC LIMIT 0,1");
         $row = $result[0];
         $this->bez = $row ['BEZ'];
     }

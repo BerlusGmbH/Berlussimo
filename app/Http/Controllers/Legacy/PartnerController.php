@@ -17,10 +17,6 @@ class PartnerController extends LegacyController
         return redirect()->intended(route('web::legacy', [], false));
     }
 
-    public function serienbrief() {
-        return view('partner.serienbrief');
-    }
-
     public function request(PartnerRequest $request)
     {
         return $this->render();

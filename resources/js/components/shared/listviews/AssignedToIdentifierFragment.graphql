@@ -1,0 +1,7 @@
+#import "./PersonIdentifierFragment.graphql"
+#import "./PartnerIdentifierFragment.graphql"
+
+fragment AssignedToIdentifier on PersonOrPartner {
+    ...PersonIdentifier
+    ...PartnerIdentifier
+}

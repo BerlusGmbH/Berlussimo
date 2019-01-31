@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 
 class SetInitialPurposeInGELDKONTENZUWEISUNG extends Migration
 {
@@ -12,9 +11,8 @@ class SetInitialPurposeInGELDKONTENZUWEISUNG extends Migration
      */
     public function up()
     {
-        $table = DB::table('GELD_KONTEN_ZUWEISUNG');
-        if ($table->exists()) {
-            $table->where('KOSTENTRAEGER_TYP', 'Benutzer')
+        if (Schema::hasTable('GELD_KONTEN_ZUWEISUNG')) {
+            DB::table('GELD_KONTEN_ZUWEISUNG')->where('KOSTENTRAEGER_TYP', 'Benutzer')
                 ->update(['VERWENDUNGSZWECK' => 'Lohnzahlung']);
             DB::table('GELD_KONTEN_ZUWEISUNG')
                 ->where('KOSTENTRAEGER_TYP', 'Eigentuemer')
@@ -35,8 +33,5 @@ class SetInitialPurposeInGELDKONTENZUWEISUNG extends Migration
      */
     public function down()
     {
-        Schema::table('GELD_KONTEN_ZUWEISUNG', function (Blueprint $table) {
-            //
-        });
     }
 }

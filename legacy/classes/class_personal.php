@@ -9,7 +9,7 @@ class personal
         $jobs = \App\Models\Job::active()
             ->join('persons', 'persons.id', '=', 'jobs.employee_id')
             ->join('PARTNER_LIEFERANT', function ($join) {
-                $join->on('jobs.employer_id', '=', 'PARTNER_LIEFERANT.PARTNER_ID');
+                $join->on('jobs.employer_id', '=', 'PARTNER_LIEFERANT.id');
                 $join->on('PARTNER_LIEFERANT.AKTUELL', '=', \DB::raw('1'));
             })
             ->orderBy('PARTNER_LIEFERANT.PARTNER_NAME')

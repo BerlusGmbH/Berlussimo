@@ -1,0 +1,21 @@
+#import "./PersonIdentifierFragment.graphql"
+#import "./PartnerIdentifierFragment.graphql"
+#import "./PropertyIdentifierFragment.graphql"
+#import "./HouseIdentifierFragment.graphql"
+#import "./UnitIdentifierFragment.graphql"
+#import "./RentalContractIdentifierFragment.graphql"
+#import "./PurchaseContractIdentifierFragment.graphql"
+#import "./ConstructionSiteIdentifierFragment.graphql"
+#import "./AccountingEntityIdentifierFragment.graphql"
+
+fragment CostBearerIdentifier on CostBearer {
+    ...PersonIdentifier
+    ...PartnerIdentifier
+    ...PropertyIdentifier
+    ...HouseIdentifier
+    ...UnitIdentifier
+    ...RentalContractIdentifier
+    ...PurchaseContractIdentifier
+    ...ConstructionSiteIdentifier
+    ...AccountingEntityIdentifier
+}

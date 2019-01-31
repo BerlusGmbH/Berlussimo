@@ -1,0 +1,7 @@
+#import "../../../../../graphql/PropertyBaseFragment.graphql"
+
+mutation CreateProperty($input: CreatePropertyInput!) {
+    createProperty(input: $input) {
+        ...PropertyBase
+    }
+}

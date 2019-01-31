@@ -1,0 +1,24 @@
+#import "../../../../graphql/InvoiceBaseFragment.graphql"
+#import "../../../../graphql/PartnerBaseFragment.graphql"
+#import "../../../../graphql/BankAccountBaseFragment.graphql"
+
+query Invoice($id: ID!) {
+    invoice(id: $id) {
+        ...InvoiceBase
+        issuer {
+            ...PartnerBase
+        }
+        recipient {
+            ...PartnerBase
+        }
+        bankAccount {
+            ...BankAccountBase
+        }
+        firstAdvancePayment {
+            ...InvoiceBase
+        }
+        advancePayments {
+            ...InvoiceBase
+        }
+    }
+}

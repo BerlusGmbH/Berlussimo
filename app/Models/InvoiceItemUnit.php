@@ -13,13 +13,7 @@ class InvoiceItemUnit extends Model
     public $timestamps = false;
     protected $table = 'VERPACKUNGS_E';
     protected $primaryKey = 'V_ID';
-    protected $defaultOrder = ['V_EINHEIT' => 'asc'];
-    protected $appends = ['type'];
-
-    static public function getTypeAttribute()
-    {
-        return 'invoice_item_unit';
-    }
+    protected $defaultOrder = ['BEZEICHNUNG' => 'asc'];
 
     protected static function boot()
     {

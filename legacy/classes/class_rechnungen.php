@@ -424,14 +424,14 @@ class rechnungen
 
     function get_partner_name($partner_id)
     {
-        $result = DB::select("SELECT PARTNER_NAME FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
+        $result = DB::select("SELECT PARTNER_NAME FROM PARTNER_LIEFERANT WHERE id='$partner_id' && AKTUELL = '1'");
         $row = $result[0];
         return $row ['PARTNER_NAME'];
     }
 
     function get_aussteller_info($partner_id)
     {
-        $result = DB::select("SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
+        $result = DB::select("SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE id='$partner_id' && AKTUELL = '1'");
         $row = $result[0];
         $this->rechnungs_aussteller_name = $row ['PARTNER_NAME'];
         $this->rechnungs_aussteller_strasse = $row ['STRASSE'];
@@ -442,7 +442,7 @@ class rechnungen
 
     function get_empfaenger_info($partner_id)
     {
-        $result = DB::select("SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
+        $result = DB::select("SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE id='$partner_id' && AKTUELL = '1'");
         $row = $result[0];
         $this->rechnungs_empfaenger_name = $row ['PARTNER_NAME'];
         $this->rechnungs_empfaenger_strasse = $row ['STRASSE'];
@@ -750,7 +750,7 @@ class rechnungen
 
     function form_lieferschein_erfassen($beleg_nr)
     {
-        if (request()->has('submit_lief')) {
+        if (request()->filled('submit_lief')) {
             $lieferschein = request()->input('lieferschein');
             if (!empty ($lieferschein)) {
                 echo "$lieferschein speichern";
@@ -1185,7 +1185,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $anzahl = count($arr);
         if ($anzahl) {
             echo "<span>";
-            if (!request()->has('anzeige') || request()->input('anzeige') == 'rechnungsnummer') {
+            if (!request()->filled('anzeige') || request()->input('anzeige') == 'rechnungsnummer') {
                 $anzeige_var = 'rechnungsnummer';
                 session()->put('rg_sort', $anzeige_var);
                 $link_nr = "<a href='" . route('web::buchen::legacy', ['option' => 'eingangsbuch_kurz', 'anzeige' => 'empfaenger_eingangs_rnr']) . "'>WE-NR anzeigen</a>";
@@ -1953,7 +1953,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
 
     function rechnungsaufstellung_teil_rg($pdf, $beleg_nr)
     {
-        $print_invoice = \App\Models\Invoice::findOrFail($beleg_nr);
+        $print_invoice = \App\Models\Invoice::where('BELEG_NR', $beleg_nr)->firstOrFail();
         $invoices = $print_invoice
             ->advancePaymentInvoices()
             ->where('RECHNUNGSDATUM', '<=', $print_invoice->RECHNUNGSDATUM)
@@ -2313,7 +2313,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             ));
         }
 
-        $invoice = \App\Models\Invoice::findOrFail($beleg_nr);
+        $invoice = \App\Models\Invoice::where('BELEG_NR', $beleg_nr)->firstOrFail();
 
         if ($invoice->servicetime_from && $invoice->servicetime_to) {
             $pdf->ezText("Leistungszeitraum: " . date_mysql2german($invoice->servicetime_from) . ' - ' . date_mysql2german($invoice->servicetime_to), 10, array(
@@ -3077,7 +3077,8 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
                 $tab_arr [$a] ['RNR'] = $this->rechnungsnummer;
                 $tab_arr [$a] ['DATUM'] = $this->rechnungsdatum;
 
-                $forward = \App\Models\Invoice::findOrFail($belegnr)
+                $forward = \App\Models\Invoice::where('BELEG_NR', $belegnr)
+                    ->firstOrFail()
                     ->forwarded();
 
                 if ($forward === \App\Models\Invoice::PARTIALLY_FORWARDED) {
@@ -4240,7 +4241,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
 
     function form_beleg2pool()
     {
-        if (request()->has('jahr')) {
+        if (request()->filled('jahr')) {
             $jahr = request()->input('jahr');
         } else {
             $jahr = date("Y");

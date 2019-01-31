@@ -1,0 +1,5 @@
+fragment DetailCategoryBase on DetailCategory {
+    __typename
+    id
+    name
+}

@@ -1,0 +1,59 @@
+#import "../../../../../graphql/InvoiceLineBaseFragment.graphql"
+#import "../../../../../graphql/PartnerBaseFragment.graphql"
+#import "../../../../../graphql/InvoiceLineAssignmentBaseFragment.graphql"
+#import "../../../../../graphql/PersonBaseFragment.graphql"
+#import "../../../../../graphql/PropertyBaseFragment.graphql"
+#import "../../../../../graphql/HouseBaseFragment.graphql"
+#import "../../../../../graphql/UnitBaseFragment.graphql"
+#import "../../../../../graphql/RentalContractBaseFragment.graphql"
+#import "../../../../../graphql/PurchaseContractBaseFragment.graphql"
+#import "../../../../../graphql/ConstructionSiteBaseFragment.graphql"
+#import "../../../../../graphql/AccountingEntityBaseFragment.graphql"
+
+mutation UpdateInvoiceLines($input: UpdateInvoiceLinesInput!) {
+    updateInvoiceLines(input: $input) {
+        ...InvoiceLineBase
+        invoice {
+            __typename
+            id
+            netAmount
+            grossAmount
+            discountAmount
+        }
+        supplier {
+            ...PartnerBase
+        }
+        assignments {
+            ...InvoiceLineAssignmentBase
+            costBearer {
+                ... on Person {
+                    ...PersonBase
+                }
+                ... on Partner {
+                    ...PartnerBase
+                }
+                ... on Property {
+                    ...PropertyBase
+                }
+                ... on House {
+                    ...HouseBase
+                }
+                ... on Unit {
+                    ...UnitBase
+                }
+                ... on RentalContract {
+                    ...RentalContractBase
+                }
+                ... on PurchaseContract {
+                    ...PurchaseContractBase
+                }
+                ... on ConstructionSite {
+                    ...ConstructionSiteBase
+                }
+                ... on AccountingEntity {
+                    ...AccountingEntityBase
+                }
+            }
+        }
+    }
+}

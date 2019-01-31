@@ -5,20 +5,7 @@ $jahr = date("Y");
 <div class='row'>
     <div class='col-xs-6 col-md-3'>
         <h3>Mietverträge</h3>
-        <div class="row">
-            <div class='col-xs-12 col-sm-6'>
-                <a href='<?php echo route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mietvertrag_kurz']) ?>'>Alle</a>
-            </div>
-            <div class='col-xs-12 col-sm-6'>
-                <a href='<?php echo route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mietvertrag_aktuelle']) ?>'>Aktuelle</a>
-            </div>
-            <div class='col-xs-12 col-sm-6'>
-                <a href='<?php echo route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mietvertrag_abgelaufen']) ?>'>Abgelaufene</a>
-            </div>
-            <div class='col-xs-12 col-sm-6'>
-                <a href='<?php echo route('web::mietvertraege::create') ?>'>Neu</a>
-            </div>
-        </div>
+        <a href='/rentalcontracts'>Liste</a>
     </div>
     <div class='col-xs-6 col-md-3'>
         <h3>Ein- und Auszüge</h3>

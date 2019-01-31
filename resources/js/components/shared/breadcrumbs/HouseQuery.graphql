@@ -1,0 +1,7 @@
+#import "../../../../graphql/HouseBaseFragment.graphql"
+
+query House($id: ID!) {
+    house(id: $id) {
+        ...HouseBase
+    }
+}

@@ -2,28 +2,27 @@
 
 namespace App\Models;
 
-use App\Libraries\BelongsToMorph;
 use App\Models\Scopes\AktuellScope;
 use App\Models\Traits\DefaultOrder;
+use App\Models\Traits\ExternalKey;
 use App\Models\Traits\Searchable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Auftraege extends Model
 {
     use Searchable;
     use DefaultOrder;
+    use ExternalKey;
 
     public $timestamps = false;
     protected $table = 'TODO_LISTE';
-    protected $primaryKey = 'T_ID';
+    protected $primaryKey = 'T_DAT';
+    protected $externalKey = 'T_ID';
     protected $searchableFields = ['TEXT', 'ERSTELLT', 'T_ID'];
     protected $defaultOrder = ['ERSTELLT' => 'desc'];
-    protected $appends = ['type'];
-
-    static public function getTypeAttribute()
-    {
-        return 'assignment';
-    }
+    protected $guarded = ['T_DAT'];
 
     protected static function boot()
     {
@@ -32,74 +31,19 @@ class Auftraege extends Model
         static::addGlobalScope(new AktuellScope());
     }
 
-    public function von()
+    public function von(): BelongsTo
     {
         return $this->belongsTo(Person::class, 'VERFASSER_ID');
     }
 
-    public function an()
+    public function an(): MorphTo
     {
-        return $this->morphTo('an', 'BENUTZER_TYP', 'BENUTZER_ID');
+        return $this->morphTo('an', 'BENUTZER_TYP', 'BENUTZER_ID', 'id');
     }
 
-    public function anPerson()
+    public function kostentraeger(): MorphTo
     {
-        return BelongsToMorph::build($this, Person::class, 'an', 'BENUTZER_TYP', 'BENUTZER_ID');
-    }
-
-    public function anPartner()
-    {
-        return BelongsToMorph::build($this, Partner::class, 'an', 'BENUTZER_TYP', 'BENUTZER_ID');
-    }
-
-    public function kostentraeger()
-    {
-        return $this->morphTo('kostentraeger', 'KOS_TYP', 'KOS_ID');
-    }
-
-    public function kostentraegerBaustellenExtern()
-    {
-        return BelongsToMorph::build($this, BaustellenExtern::class, 'kostentraegerBaustelle', 'KOS_TYP', 'KOS_ID');
-    }
-
-    public function kostentraegerPerson()
-    {
-        return BelongsToMorph::build($this, Person::class, 'kostentraegerMitarbeiter', 'KOS_TYP', 'KOS_ID');
-    }
-
-    public function kostentraegerPartner()
-    {
-        return BelongsToMorph::build($this, Partner::class, 'kostentraegerPartner', 'KOS_TYP', 'KOS_ID');
-    }
-
-    public function kostentraegerKaufvertraege()
-    {
-        return BelongsToMorph::build($this, Kaufvertraege::class, 'kostentraegerKaufvertrag', 'KOS_TYP', 'KOS_ID');
-    }
-
-    public function kostentraegerMietvertraege()
-    {
-        return BelongsToMorph::build($this, Mietvertraege::class, 'kostentraegerMietvertrag', 'KOS_TYP', 'KOS_ID');
-    }
-
-    public function kostentraegerWirtschaftseinheiten()
-    {
-        return BelongsToMorph::build($this, Wirtschaftseinheiten::class, 'kostentraegerWirtschaftseinheit', 'KOS_TYP', 'KOS_ID');
-    }
-
-    public function kostentraegerObjekte()
-    {
-        return BelongsToMorph::build($this, Objekte::class, 'kostentraegerObjekt', 'KOS_TYP', 'KOS_ID');
-    }
-
-    public function kostentraegerHaeuser()
-    {
-        return BelongsToMorph::build($this, Haeuser::class, 'kostentraegerHaus', 'KOS_TYP', 'KOS_ID');
-    }
-
-    public function kostentraegerEinheiten()
-    {
-        return BelongsToMorph::build($this, Einheiten::class, 'kostentraegerEinheit', 'KOS_TYP', 'KOS_ID');
+        return $this->morphTo('kostentraeger', 'KOS_TYP', 'KOS_ID', 'id');
     }
 }
 

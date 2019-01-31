@@ -1,0 +1,13 @@
+#import "../../../../../graphql/InvoiceBaseFragment.graphql"
+
+mutation updateInvoice($input: UpdateInvoiceInput!) {
+    updateInvoice(input: $input) {
+        ...InvoiceBase
+        firstAdvancePayment {
+            ...InvoiceBase
+        }
+        advancePayments {
+            ...InvoiceBase
+        }
+    }
+}

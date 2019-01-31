@@ -1,0 +1,8 @@
+query InvoiceTypes {
+    __type(name: "InvoiceType") {
+        enumValues {
+            name
+            description
+        }
+    }
+}

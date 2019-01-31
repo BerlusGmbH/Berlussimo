@@ -1,0 +1,9 @@
+fragment JobBase on Job {
+    __typename
+    id
+    joinDate
+    leaveDate
+    hourlyRate
+    hoursPerWeek
+    holidays
+}

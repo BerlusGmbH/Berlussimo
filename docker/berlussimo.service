@@ -1,0 +1,15 @@
+[Unit]
+Description=Berlussimo
+After=network.target
+Requires=docker.service
+
+[Service]
+Type=oneshot
+Restart=no
+RemainAfterExit=yes
+EnvironmentFile=/root/berlussimo/.env
+ExecStart=/usr/local/bin/docker-compose -f /root/berlussimo/docker-compose.yml -p berlussimo up -d
+ExecStop=/usr/local/bin/docker-compose -f /root/berlussimo/docker-compose.yml -p berlussimo down
+
+[Install]
+WantedBy=multi-user.target

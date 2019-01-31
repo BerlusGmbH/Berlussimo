@@ -1,0 +1,20 @@
+#import "../../../graphql/PropertyBaseFragment.graphql"
+#import "../../../graphql/PartnerBaseFragment.graphql"
+#import "../../../graphql/BankAccountBaseFragment.graphql"
+
+mutation UpdateGlobalSelect($partnerId: ID, $propertyId: ID, $bankAccountId: ID) {
+    updateGlobalSelect(partnerId: $partnerId, propertyId: $propertyId, bankAccountId: $bankAccountId) {
+        globalSelect {
+            partner {
+                ...PartnerBase
+            }
+            property {
+                ...PropertyBase
+            }
+            bankAccount {
+                ...BankAccountBase
+            }
+        }
+        isLegacy @client
+    }
+}

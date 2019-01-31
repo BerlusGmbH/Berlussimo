@@ -1,0 +1,6 @@
+#import "./PartnerIdentifierFragment.graphql"
+
+fragment AccountingEntityIdentifier on AccountingEntity {
+    id
+    name
+}

@@ -1,0 +1,61 @@
+#import "../../../../graphql/PersonBaseFragment.graphql"
+#import "../../../../graphql/PropertyBaseFragment.graphql"
+#import "../../../../graphql/HouseBaseFragment.graphql"
+#import "../../../../graphql/UnitBaseFragment.graphql"
+#import "../../../../graphql/DetailBaseFragment.graphql"
+
+mutation CreateDetail($input: CreateDetailInput!) {
+    createDetail(input: $input) {
+        ...DetailBase
+        detailable{
+            ... on Person {
+                ...PersonBase
+                details {
+                    ...DetailBase
+                }
+                notes {
+                    ...DetailBase
+                }
+                eMails {
+                    ...DetailBase
+                }
+                faxs {
+                    ...DetailBase
+                }
+                phones {
+                    ...DetailBase
+                }
+                postalAddresses {
+                    ...DetailBase
+                }
+            }
+            ... on Property {
+                ...PropertyBase
+                details {
+                    ...DetailBase
+                }
+                notes {
+                    ...DetailBase
+                }
+            }
+            ... on House {
+                ...HouseBase
+                details {
+                    ...DetailBase
+                }
+                notes {
+                    ...DetailBase
+                }
+            }
+            ... on Unit {
+                ...UnitBase
+                details {
+                    ...DetailBase
+                }
+                notes {
+                    ...DetailBase
+                }
+            }
+        }
+    }
+}

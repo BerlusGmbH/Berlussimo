@@ -201,7 +201,7 @@ switch ($option) {
         break;
 
     case "zettel_loeschen" :
-        if (request()->has('zettel_id')) {
+        if (request()->filled('zettel_id')) {
             $z = new zeiterfassung ();
             $zettel_id = request()->input('zettel_id');
             $benutzer_id = $z->get_userid($zettel_id);
@@ -229,13 +229,13 @@ switch ($option) {
         break;
 
     case "suchen_std" :
-        if (!request()->has('adatum')) {
+        if (!request()->filled('adatum')) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage('Anfangsdatum notwendig.')
             );
         }
 
-        if (!request()->has('edatum')) {
+        if (!request()->filled('edatum')) {
             $edatum = date("d.m.Y");
         } else {
             $edatum = request()->input('edatum');

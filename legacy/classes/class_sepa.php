@@ -111,7 +111,7 @@ class sepa
 
     function check_objekt_aktiv($objekt_id)
     {
-        $result = DB::select("SELECT * FROM `OBJEKT` WHERE `OBJEKT_ID`=$objekt_id && OBJEKT_AKTUELL='1'");
+        $result = DB::select("SELECT * FROM `OBJEKT` WHERE `id`=$objekt_id && OBJEKT_AKTUELL='1'");
         return !empty($result);
     }
 
@@ -1055,7 +1055,7 @@ class sepa
         } elseif (strtolower($nutzungsart) == 'mietzahlung') {
             $objekt_id = session()->get('objekt_id');
             $result = \App\Models\SEPAMandate::whereHas('debtorRentalContract.einheit.haus.objekt', function ($query) use ($objekt_id) {
-                $query->where('OBJEKT_ID', $objekt_id);
+                $query->where('id', $objekt_id);
             })->where('NUTZUNGSART', $nutzungsart)
                 ->where('M_EDATUM', '>=', $datum_heute)
                 ->where('M_ADATUM', '<=', $datum_heute)
@@ -1064,7 +1064,7 @@ class sepa
         } elseif (strtolower($nutzungsart) == 'hausgeld') {
             $objekt_id = session()->get('objekt_id');
             $result = \App\Models\SEPAMandate::whereHas('debtorPurchaseContract.einheit.haus.objekt', function ($query) use ($objekt_id) {
-                $query->where('OBJEKT_ID', $objekt_id);
+                $query->where('id', $objekt_id);
             })->where('NUTZUNGSART', $nutzungsart)
                 ->where('M_EDATUM', '>=', $datum_heute)
                 ->where('M_ADATUM', '<=', $datum_heute)
@@ -2083,7 +2083,7 @@ AND  `AKTUELL` =  '1'");
         $f->send_button('btn_SepaVZ', 'Vorzeichen wechseln');
         $f->ende_formular();
 
-        if (request()->has('vorzeichen')) {
+        if (request()->filled('vorzeichen')) {
             if (session()->get('sep_vorzeichen') == '-') {
                 session()->put('sep_vorzeichen', '');
             } else {
@@ -2242,7 +2242,7 @@ AND  `AKTUELL` =  '1'");
             $f = new formular ();
             $f->erstelle_formular('SEPA-Sammelüberweisung', null);
 
-            if (request()->has('filter')) {
+            if (request()->filled('filter')) {
                 $filter = request()->input('filter');
             } else {
                 $filter = '';

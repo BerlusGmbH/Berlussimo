@@ -14,15 +14,10 @@ class Lager extends Model
 
     public $timestamps = false;
     protected $table = 'LAGER';
-    protected $primaryKey = 'LAGER_ID';
+    protected $primaryKey = 'LAGER_DAT';
+    protected $externalKey = 'LAGER_ID';
     protected $searchableFields = ['LAGER_NAME', 'LAGER_VERWALTER'];
     protected $defaultOrder = ['LAGER_NAME' => 'asc', 'LAGER_VERWALTER' => 'asc'];
-    protected $appends = ['type'];
-
-    static public function getTypeAttribute()
-    {
-        return 'warehouse';
-    }
 
     protected static function boot()
     {
@@ -32,7 +27,7 @@ class Lager extends Model
     }
 
     public function auftraege() {
-        return $this->morphMany(Auftraege::class, 'kostentraeger', 'KOS_TYP', 'KOS_ID');
+        return $this->morphMany(Auftraege::class, 'kostentraeger', 'KOS_TYP', 'KOS_ID', 'LAGER_ID');
     }
 
     public function commonDetails() {
@@ -41,6 +36,6 @@ class Lager extends Model
 
     public function details()
     {
-        return $this->morphMany('App\Models\Details', 'details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID');
+        return $this->morphMany('App\Models\Details', 'details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID', 'LAGER_ID');
     }
 }

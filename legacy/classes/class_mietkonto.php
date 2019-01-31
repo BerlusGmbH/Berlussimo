@@ -34,7 +34,7 @@ class mietkonto
 
     function ein_auszugsdatum_mietvertrag($mietvertrag_id)
     {
-        $result = DB::select("SELECT MIETVERTRAG_VON, MIETVERTRAG_BIS FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && MIETVERTRAG_ID='$mietvertrag_id' ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1");
+        $result = DB::select("SELECT MIETVERTRAG_VON, MIETVERTRAG_BIS FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && id='$mietvertrag_id' ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1");
         $row = $result[0];
         // Setzen von Mietvertrags Vars bzw Einzugsdatum Auszugsdatum
         $this->mietvertrag_von = $row ['MIETVERTRAG_VON'];
@@ -59,7 +59,7 @@ class mietkonto
 
     function get_einheit_id_von_mietvertrag($mietvertrag_id)
     {
-        $result = DB::select("SELECT EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && MIETVERTRAG_ID='$mietvertrag_id' ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1");
+        $result = DB::select("SELECT EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && id='$mietvertrag_id' ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1");
         $row = $result[0];
         return $row ['EINHEIT_ID'];
     }
@@ -954,18 +954,6 @@ ORDER BY BUCHUNGSNUMMER DESC");
         return !empty($result);
     }
 
-    // Funktion zur Erstellung eines Arrays mit Monaten und Jahren seit Einzug bis aktuelles Jahr/Monat
-
-    function monatsabschluesse_speichern($mietvertrag_id, $betrag)
-    {
-        $datum = $this->datum_heute;
-        $db_abfrage = "INSERT INTO MONATSABSCHLUSS VALUES (NULL, '$mietvertrag_id', '$datum', '$betrag', '1', NULL)";
-        $resultat = DB::insert($db_abfrage);
-        if (!$resultat) {
-            echo "Monatsabschluss von $betrag für MV $mietvertrag_id wurde nicht gespeichert!";
-        }
-    } // end function
-
     function mietentwicklung_speichern($kostentraeger_typ, $kostentrager_id, $kostenkategorie, $betrag, $anfang, $ende)
     {
         $me_exists = $this->check_mietentwicklung($kostentraeger_typ, $kostentrager_id, $kostenkategorie, $betrag, $anfang, $ende);
@@ -1033,7 +1021,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
 
     function mietvertrag_grunddaten_holen($mietvertrag_id)
     {
-        $result = DB::select("SELECT * FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && MIETVERTRAG_ID='$mietvertrag_id' ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1");
+        $result = DB::select("SELECT * FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && id='$mietvertrag_id' ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1");
         $row = $result[0];
         // Setzen von Mietvertrags Vars bzw Einzugsdatum Auszugsdatum
         $this->mietvertrag_von = $row ['MIETVERTRAG_VON'];
@@ -1058,7 +1046,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         $geldkonto_ids = \App\Models\Bankkonten::whereHas('objekte', function ($query) {
             $query->where('GELD_KONTEN_ZUWEISUNG.VERWENDUNGSZWECK', 'Hausgeld');
         })->whereHas('objekte.haeuser.einheiten.mietvertraege', function ($query) use ($mietvertrag_id) {
-            $query->where('MIETVERTRAG_ID', $mietvertrag_id);
+            $query->where('id', $mietvertrag_id);
         })->get()->pluck('KONTO_ID')->all();
 
         $geldkonto_ids_string = implode(', ', $geldkonto_ids);
@@ -1376,7 +1364,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
 
     function alle_zahlbetraege_arr($mietvertrag_id)
     {
-        $result = DB::select("SELECT DATUM, BETRAG, MIETVERTRAG_ID, BEMERKUNG FROM GELD_KONTO_BUCHUNGEN WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mietvertrag_id' && AKTUELL='1' ORDER BY DATUM ASC");
+        $result = DB::select("SELECT DATUM, BETRAG, KOSTENTRAEGER_ID AS MIETVERTRAG_ID, BEMERKUNG FROM GELD_KONTO_BUCHUNGEN WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mietvertrag_id' && AKTUELL='1' ORDER BY DATUM ASC");
         return $result;
     }
 
@@ -1385,7 +1373,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         if ($monat < 10) {
             $monat = "0" . $monat;
         }
-        $result = DB::select("SELECT DATUM, BETRAG, MIETVERTRAG_ID, BEMERKUNG FROM GELD_KONTO_BUCHUNGEN WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mietvertrag_id' && AKTUELL='1' && DATE_FORMAT( DATUM, '%Y-%m' ) = '$jahr-$monat' && BEMERKUNG NOT LIKE 'Saldo Vortrag Vorverwaltung' ORDER BY DATUM ASC");
+        $result = DB::select("SELECT DATUM, BETRAG, KOSTENTRAEGER_ID AS MIETVERTRAG_ID, BEMERKUNG FROM GELD_KONTO_BUCHUNGEN WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mietvertrag_id' && AKTUELL='1' && DATE_FORMAT( DATUM, '%Y-%m' ) = '$jahr-$monat' && BEMERKUNG NOT LIKE 'Saldo Vortrag Vorverwaltung' ORDER BY DATUM ASC");
         return $result;
     }
 
@@ -1567,7 +1555,7 @@ ORDER BY DATUM ASC ");
 
     function einheit_kurzname_finden($einheit_id)
     {
-        $db_abfrage = "SELECT EINHEIT_KURZNAME FROM EINHEIT where EINHEIT_ID='$einheit_id' && EINHEIT_AKTUELL='1'";
+        $db_abfrage = "SELECT EINHEIT_KURZNAME FROM EINHEIT where EINHEIT.id='$einheit_id' && EINHEIT_AKTUELL='1'";
         $resultat = DB::select($db_abfrage);
         if (!empty($resultat))
             return $resultat['EINHEIT_KURZNAME'];
@@ -1639,7 +1627,7 @@ ORDER BY DATUM ASC ");
 
     function to_do_liste()
     {
-        $mv_arr = DB::select("SELECT MIETVERTRAG_ID, EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_BIS>='$this->datum_heute' OR MIETVERTRAG_BIS='0000-00-00' && MIETVERTRAG_AKTUELL = '1' ORDER BY EINHEIT_ID ASC");
+        $mv_arr = DB::select("SELECT id AS MIETVERTRAG_ID, EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_BIS>='$this->datum_heute' OR MIETVERTRAG_BIS='0000-00-00' && MIETVERTRAG_AKTUELL = '1' ORDER BY EINHEIT_ID ASC");
         $numrows = count($mv_arr);
         for ($i = 0; $i < $numrows; $i++) {
             $mietvertrag_id = $mv_arr [$i] ['mietvertrag_id'];

@@ -15,7 +15,8 @@ class SEPAMandate extends Model
 
     public $timestamps = false;
     protected $table = 'SEPA_MANDATE';
-    protected $primaryKey = 'M_ID';
+    protected $primaryKey = 'DAT';
+    protected $externalKey = 'M_ID';
     protected $searchableFields = ['NAME', 'IBAN', 'BIC'];
     protected $defaultOrder = ['NAME' => 'asc'];
 
@@ -28,11 +29,11 @@ class SEPAMandate extends Model
 
     public function debtorRentalContract()
     {
-        return BelongsToMorph::build($this, Mietvertraege::class, 'debtorRentalContract', 'M_KOS_TYP', 'M_KOS_ID');
+        return BelongsToMorph::build($this, Mietvertraege::class, 'debtorRentalContract', 'M_KOS_TYP', 'M_KOS_ID', 'id');
     }
 
     public function debtorPurchaseContract()
     {
-        return BelongsToMorph::build($this, Kaufvertraege::class, 'debtorPurchaseContract', 'M_KOS_TYP', 'M_KOS_ID');
+        return BelongsToMorph::build($this, Kaufvertraege::class, 'debtorPurchaseContract', 'M_KOS_TYP', 'M_KOS_ID', 'id');
     }
 }

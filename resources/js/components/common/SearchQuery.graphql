@@ -1,0 +1,93 @@
+#import "../../../graphql/PropertyBaseFragment.graphql"
+#import "../../../graphql/HouseBaseFragment.graphql"
+#import "../../../graphql/UnitBaseFragment.graphql"
+#import "../../../graphql/PersonBaseFragment.graphql"
+#import "../../../graphql/PartnerBaseFragment.graphql"
+#import "../../../graphql/BankAccountBaseFragment.graphql"
+#import "../../../graphql/RentalContractBaseFragment.graphql"
+#import "../../../graphql/PurchaseContractBaseFragment.graphql"
+#import "../../../graphql/ConstructionSiteBaseFragment.graphql"
+#import "../../../graphql/AccountingEntityBaseFragment.graphql"
+#import "../../../graphql/InvoiceItemBaseFragment.graphql"
+#import "../../../graphql/BankAccountStandardChartBaseFragment.graphql"
+#import "../../../graphql/BookingAccountBaseFragment.graphql"
+#import "../../../graphql/InvoiceBaseFragment.graphql"
+
+query Search(
+    $query: String,
+    $entities: [SearchableType!],
+    $unitForRent: Boolean,
+    $bookingAccountIn: ID,
+    $invoiceItemsFrom: ID,
+    $advancePayment: FilterAdvancePaymentInput
+) {
+    search(
+        query: $query,
+        entities: $entities,
+        unitForRent: $unitForRent,
+        bookingAccountIn: $bookingAccountIn,
+        invoiceItemsFrom: $invoiceItemsFrom,
+        advancePayment: $advancePayment
+    ) {
+        ... on Property {
+            ...PropertyBase
+        }
+        ... on House {
+            ...HouseBase
+            property {
+                ...PropertyBase
+            }
+        }
+        ... on Unit {
+            ...UnitBase
+            movingOut: rentalContracts(active: {date: "today", direction: EQ}, order: MOVING_OUT) {
+                ...RentalContractBase
+            }
+            movingIn: rentalContracts(inactive: {date: "today", direction: LT}, order: MOVING_IN) {
+                ...RentalContractBase
+            }
+            house {
+                ...HouseBase
+                property {
+                    ...PropertyBase
+                }
+            }
+        }
+        ... on Person {
+            ...PersonBase
+        }
+        ... on Partner {
+            ...PartnerBase
+        }
+        ... on BankAccount {
+            ...BankAccountBase
+        }
+        ... on RentalContract {
+            ...RentalContractBase
+        }
+        ... on PurchaseContract {
+            ...PurchaseContractBase
+        }
+        ... on ConstructionSite {
+            ...ConstructionSiteBase
+        }
+        ... on AccountingEntity {
+            ...AccountingEntityBase
+        }
+        ... on InvoiceItem {
+            ...InvoiceItemBase
+            supplier {
+                ...PartnerBase
+            }
+        }
+        ... on BankAccountStandardChart {
+            ...BankAccountStandardChartBase
+        }
+        ... on BookingAccount {
+            ...BookingAccountBase
+        }
+        ... on Invoice {
+            ...InvoiceBase
+        }
+    }
+}

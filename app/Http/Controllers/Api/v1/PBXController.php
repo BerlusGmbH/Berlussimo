@@ -56,7 +56,7 @@ class PBXController extends Controller
                     case Person::class:
                         $cnam = $detail->from->full_name;
                         $rentalContracts = $detail->from->mietvertraege()
-                            ->join('EINHEIT', 'EINHEIT.EINHEIT_ID', '=', 'MIETVERTRAG.EINHEIT_ID')
+                            ->join('EINHEIT', 'EINHEIT.id', '=', 'MIETVERTRAG.EINHEIT_ID')
                             ->orderByRaw('CASE '
                                 . 'WHEN MIETVERTRAG.MIETVERTRAG_VON <= NOW() && (MIETVERTRAG.MIETVERTRAG_BIS >= NOW() || MIETVERTRAG.MIETVERTRAG_BIS = \'0000-00-00\') THEN 1 '
                                 . 'ELSE 2 '

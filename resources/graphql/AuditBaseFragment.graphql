@@ -1,0 +1,21 @@
+fragment AuditBase on Audit {
+    __typename
+    id
+    event
+    url
+    ipAddress
+    userAgent
+    old {
+        firstName
+        lastName
+        birthday
+    }
+    new {
+        firstName
+        lastName
+        birthday
+    }
+    tags
+    createdAt
+    updatedAt
+}

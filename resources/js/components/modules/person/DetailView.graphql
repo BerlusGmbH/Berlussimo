@@ -1,0 +1,81 @@
+#import "../../../../graphql/PersonBaseFragment.graphql"
+#import "../../../../graphql/PurchaseContractBaseFragment.graphql"
+#import "../../../../graphql/RentalContractBaseFragment.graphql"
+#import "../../../../graphql/UnitBaseFragment.graphql"
+#import "../../../../graphql/HouseBaseFragment.graphql"
+#import "../../../../graphql/PropertyBaseFragment.graphql"
+#import "../../../../graphql/PartnerBaseFragment.graphql"
+#import "../../../../graphql/JobBaseFragment.graphql"
+#import "../../../../graphql/JobTitleBaseFragment.graphql"
+#import "../../../../graphql/RoleBaseFragment.graphql"
+#import "../../../../graphql/AuditBaseFragment.graphql"
+#import "../../../../graphql/DetailBaseFragment.graphql"
+
+query Person($id: ID!) {
+    person(id: $id) {
+        ...PersonBase
+        notes {
+            ...DetailBase
+        }
+        details {
+            ...DetailBase
+        }
+        postalAddresses {
+            ...DetailBase
+        }
+        phones {
+            ...DetailBase
+        }
+        faxs {
+            ...DetailBase
+        }
+        eMails {
+            ...DetailBase
+        }
+        rentalContracts {
+            ...RentalContractBase
+            unit {
+                ...UnitBase
+                house {
+                    ...HouseBase
+                    property {
+                        ...PropertyBase
+                    }
+                }
+            }
+        }
+        purchaseContracts {
+            ...PurchaseContractBase
+            unit {
+                ...UnitBase
+                house {
+                    ...HouseBase
+                    property {
+                        ...PropertyBase
+                    }
+                }
+            }
+        }
+        jobs {
+            ...JobBase
+            title {
+                ...JobTitleBase
+            }
+            employer {
+                ...PartnerBase
+            }
+        }
+        roles {
+            ...RoleBase
+        }
+        audits {
+            ...AuditBase
+            user {
+                ...PersonBase
+            }
+            auditable {
+                ...PersonBase
+            }
+        }
+    }
+}

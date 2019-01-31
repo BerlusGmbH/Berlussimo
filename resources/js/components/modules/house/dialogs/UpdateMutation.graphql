@@ -1,0 +1,11 @@
+#import "../../../../../graphql/HouseBaseFragment.graphql"
+#import "../../../../../graphql/PropertyBaseFragment.graphql"
+
+mutation UpdateHouse($input: UpdateHouseInput!) {
+    updateHouse(input: $input) {
+        ...HouseBase
+        property {
+            ...PropertyBase
+        }
+    }
+}

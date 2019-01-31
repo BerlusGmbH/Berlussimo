@@ -1,0 +1,3 @@
+mutation DeleteInvoiceLine($id: ID!) {
+    deleteInvoiceLine(id: $id)
+}

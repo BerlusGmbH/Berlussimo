@@ -1,0 +1,39 @@
+query MovingIn(
+    $search: String,
+    $first: Int!,
+    $page: Int,
+    $unitPartOf: [EntitySelect!],
+    $inactive: Date = "today"
+) @variables(variables: [
+    {name: "unitPartOf", types: ["Unit", "Property", "House"], label: "Mietgegenstand", icon: "mdi-city"},
+    {name: "inactive", label: "Inaktiv vor", icon: "mdi-circle-outline"}
+]) {
+    rentalContracts(search: $search,
+        first: $first,
+        page: $page,
+        order: MOVING_IN,
+        unitPartOf: $unitPartOf,
+        inactive: {date: $inactive, direction: LT}
+    ) {
+        data {
+            ...RentalContractIdentifier @label(text: "Mietvertrag")
+            start @label(text: "von")
+            end @label(text: "bis")
+            tenants {
+                ...PersonIdentifier @label(text: "Mieter")
+            }
+            unit{
+                ...UnitIdentifier @label(text: "Einheit")
+                house {
+                    ...HouseIdentifier @label(text: "Haus")
+                    property {
+                        ...PropertyIdentifier @label(text: "Objekt")
+                    }
+                }
+            }
+        }
+        paginatorInfo {
+            ...PaginatorInfo
+        }
+    }
+}

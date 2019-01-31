@@ -36,7 +36,6 @@
         Content in right item
     </div>
 </div>
-<script type='text/javascript' src='{{mix('js/axios.min.js')}}'></script>
 <script type="text/javascript" src="{{mix('js/wartungsplaner.js')}}"></script>
 <script type='text/javascript'>
     window.addEventListener('load', function () {

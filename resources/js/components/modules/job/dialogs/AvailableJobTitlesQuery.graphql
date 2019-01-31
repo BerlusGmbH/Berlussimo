@@ -1,0 +1,11 @@
+#import "../../../../../graphql/JobTitleBaseFragment.graphql"
+
+query AvailableJobTitlesQuery($employerId: ID!) {
+    partner(id: $employerId) {
+        __typename
+        id
+        availableJobTitles {
+            ...JobTitleBase
+        }
+    }
+}

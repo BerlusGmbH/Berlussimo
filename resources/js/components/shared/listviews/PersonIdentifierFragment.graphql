@@ -1,0 +1,10 @@
+fragment PersonIdentifier on Person {
+    id
+    name
+    gender
+    notes {
+        id
+        value
+        comment
+    }
+}

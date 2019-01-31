@@ -1,0 +1,6 @@
+fragment PostalAddressBase on PostalAddress {
+    __typename
+    id
+    value
+    comment
+}

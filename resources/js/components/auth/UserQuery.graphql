@@ -1,0 +1,9 @@
+#import "../../../graphql/PersonBaseFragment.graphql"
+
+query User {
+    state @client {
+        user {
+            ...PersonBase
+        }
+    }
+}

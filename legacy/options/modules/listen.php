@@ -1,6 +1,6 @@
 <?php
 
-if (request()->has('option')) {
+if (request()->filled('option')) {
     $option = request()->input('option');
 } else {
     $option = 'default';
@@ -13,20 +13,20 @@ switch ($option) {
 
     case "inspiration_pdf" :
         $li = new listen ();
-        if (request()->has('objekt_id')) {
-            if (request()->has('monat')) {
+        if (request()->filled('objekt_id')) {
+            if (request()->filled('monat')) {
                 $monat = request()->input('monat');
             } else {
                 $monat = date("m");
             }
 
-            if (request()->has('jahr')) {
+            if (request()->filled('jahr')) {
                 $jahr = request()->input('jahr');
             } else {
                 $jahr = date("Y");
             }
 
-            if (request()->has('lang')) {
+            if (request()->filled('lang')) {
                 $lang = request()->input('lang');
             } else {
                 $lang = 'de';
@@ -40,20 +40,20 @@ switch ($option) {
 
     case "inspiration_pdf_6" :
         $li = new listen ();
-        if (request()->has('objekt_id')) {
-            if (request()->has('monat')) {
+        if (request()->filled('objekt_id')) {
+            if (request()->filled('monat')) {
                 $monat = request()->input('monat');
             } else {
                 $monat = date("m");
             }
 
-            if (request()->has('jahr')) {
+            if (request()->filled('jahr')) {
                 $jahr = request()->input('jahr');
             } else {
                 $jahr = date("Y");
             }
 
-            if (request()->has('lang')) {
+            if (request()->filled('lang')) {
                 $lang = request()->input('lang');
             } else {
                 $lang = 'de';
@@ -68,20 +68,20 @@ switch ($option) {
 
     case "inspiration_pdf_7" :
         $li = new listen ();
-        if (request()->has('objekt_id')) {
-            if (request()->has('monat')) {
+        if (request()->filled('objekt_id')) {
+            if (request()->filled('monat')) {
                 $monat = request()->input('monat');
             } else {
                 $monat = date("m");
             }
 
-            if (request()->has('jahr')) {
+            if (request()->filled('jahr')) {
                 $jahr = request()->input('jahr');
             } else {
                 $jahr = date("Y");
             }
 
-            if (request()->has('lang')) {
+            if (request()->filled('lang')) {
                 $lang = request()->input('lang');
             } else {
                 $lang = 'de';
@@ -97,19 +97,19 @@ switch ($option) {
     case "inspiration_sepa" :
         $li = new listen ();
         if (session()->has('objekt_id')) {
-            if (request()->has('monat')) {
+            if (request()->filled('monat')) {
                 $monat = request()->input('monat');
             } else {
                 $monat = date("m");
             }
 
-            if (request()->has('jahr')) {
+            if (request()->filled('jahr')) {
                 $jahr = request()->input('jahr');
             } else {
                 $jahr = date("Y");
             }
 
-            if (request()->has('lang')) {
+            if (request()->filled('lang')) {
                 $lang = request()->input('lang');
             } else {
                 $lang = 'de';
@@ -124,7 +124,7 @@ switch ($option) {
         break;
 
     case "sepa_ueberweisen" :
-        if (request()->has('eig_et') && request()->has('betrag')) {
+        if (request()->filled('eig_et') && request()->filled('betrag')) {
             $e_id = request()->input('eig_et');
             $betrag = request()->input('betrag');
             $li = new listen ();
@@ -173,20 +173,20 @@ switch ($option) {
 
     case "inspiration_pdf_kurz" :
         $li = new listen ();
-        if (request()->has('objekt_id')) {
-            if (request()->has('monat')) {
+        if (request()->filled('objekt_id')) {
+            if (request()->filled('monat')) {
                 $monat = request()->input('monat');
             } else {
                 $monat = date("m");
             }
 
-            if (request()->has('jahr')) {
+            if (request()->filled('jahr')) {
                 $jahr = request()->input('jahr');
             } else {
                 $jahr = date("Y");
             }
 
-            if (request()->has('lang')) {
+            if (request()->filled('lang')) {
                 $lang = request()->input('lang');
             } else {
                 $lang = 'de';
@@ -215,7 +215,7 @@ switch ($option) {
         $bg = new berlussimo_global();
         $bg->objekt_auswahl_liste();
 
-        if (!request()->has('jahr')) {
+        if (!request()->filled('jahr')) {
             $jahr = date("Y") - 1;
         } else {
             $jahr = request()->input('jahr');
@@ -223,7 +223,7 @@ switch ($option) {
 
         $bg->jahres_links($jahr, route('web::listen::legacy', ['option' => 'income_report'], false));
 
-        if (request()->has('objekt_id')) {
+        if (request()->filled('objekt_id')) {
             session()->put('objekt_id', request()->input('objekt_id'));
         }
         $pdf = new Cezpdf ('a4', 'landscape');
@@ -270,18 +270,18 @@ switch ($option) {
         $li = new listen ();
         $objekt_id = request()->input('objekt_id');
 
-        if (!request()->has('jahr')) {
+        if (!request()->filled('jahr')) {
             $jahr = date("Y");
         } else {
             $jahr = request()->input('jahr');
         }
 
-        if (request()->has('monat')) {
+        if (request()->filled('monat')) {
             $monat = request()->input('monat');
         } else {
             $monat = date("m");
         }
-        if (request()->has('einheit_id')) {
+        if (request()->filled('einheit_id')) {
             $einheit_id = request()->input('einheit_id');
         } else {
             //TODO: remove dependency on unit 914
@@ -302,7 +302,7 @@ switch ($option) {
         if (!request()->isMethod('post')) {
             fehlermeldung_ausgeben('Profilformular ausfüllen!!!');
         } else {
-            if (request()->has('kurz_b') && request()->has('objekt_id') && request()->has('gk_id') && request()->has('p_id')) {
+            if (request()->filled('kurz_b') && request()->filled('objekt_id') && request()->filled('gk_id') && request()->filled('p_id')) {
                 $kurz_b = request()->input('kurz_b');
                 $obj_id = request()->input('objekt_id');
                 $gk_id = request()->input('gk_id');
@@ -326,14 +326,14 @@ switch ($option) {
         break;
 
     case "profil_wahl" :
-        if (request()->has('profil_id')) {
+        if (request()->filled('profil_id')) {
             session()->put('r_profil_id', request()->input('profil_id'));
         }
         weiterleiten(route('web::listen::legacy', ['option' => 'profil_liste'], false));
         break;
 
     case "profil_edit" :
-        if (request()->has('profil_id')) {
+        if (request()->filled('profil_id')) {
             session()->put('r_profil_id', request()->input('profil_id'));
             $l = new listen ();
             $l->form_profil_step2(request()->input('profil_id'));
@@ -342,7 +342,7 @@ switch ($option) {
         break;
 
     case "konten_bearbeiten" :
-        if (request()->has('profil_id') && is_array(request()->input('b_konten'))) {
+        if (request()->filled('profil_id') && is_array(request()->input('b_konten'))) {
             $l = new listen ();
             $l->b_konten_edit(request()->input('profil_id'), request()->input('b_konten'), request()->input('bez_arr'));
             session()->put('r_profil_id', request()->input('profil_id'));
@@ -354,7 +354,7 @@ switch ($option) {
         break;
 
     case "pruefung_bericht" :
-        if (request()->has('profil_id')) {
+        if (request()->filled('profil_id')) {
             session()->put('r_profil_id', request()->input('profil_id'));
             $li = new listen ();
             $li->pruefung_bericht(request()->input('r_profil_id'));
@@ -427,7 +427,7 @@ switch ($option) {
         break;
 
     case "exp_obj" :
-        if (request()->has('objekte_arr')) {
+        if (request()->filled('objekte_arr')) {
             $weg = new weg ();
             $anz = count(request()->input('objekte_arr'));
             $string = '';

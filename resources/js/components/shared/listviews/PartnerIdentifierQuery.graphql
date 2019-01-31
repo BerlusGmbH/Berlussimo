@@ -1,0 +1,7 @@
+#import "./PartnerIdentifierFragment.graphql"
+
+query PartnerIdentifier($id: ID!) {
+    partner(id: $id) {
+        ...PartnerIdentifier
+    }
+}

@@ -11,12 +11,12 @@
  * $me->update_bk_hk_datum();
  */
 
-if (request()->has('mietvertrag_id')) {
+if (request()->filled('mietvertrag_id')) {
     $mietvertrag_id = request()->input('mietvertrag_id');
 }
 
 // ##########SWITCH ANFANG##################################
-if (request()->has('anzeigen')) {
+if (request()->filled('anzeigen')) {
     $anzeigen = request()->input('anzeigen');
 }
 if (isset ($anzeigen)) {
@@ -67,7 +67,7 @@ if (isset ($anzeigen)) {
             break;
 
         case "mietkonto_ab" :
-            if (request()->has('mietvertrag_id')) {
+            if (request()->filled('mietvertrag_id')) {
                 $f = new formular ();
                 $f->erstelle_formular('Mietkonto ausdrucken PDF ab ...', '');
                 $f->hidden_feld('anzeigen', 'show_mkb2pdf');
@@ -91,7 +91,7 @@ if (isset ($anzeigen)) {
             break;
 
         case "show_mkb2pdf" :
-            if (request()->has('mv_id')) {
+            if (request()->filled('mv_id')) {
                 $mz = new miete ();
                 $mz->mkb2pdf(request()->input('mv_id'), request()->input('monat'), request()->input('jahr'));
             } else {
@@ -913,7 +913,7 @@ if (isset ($anzeigen)) {
         // ##########################################################
         case "miete_manuell_buchen" :
             iframe_start();
-            if (request()->has('mietvertrag_id')) {
+            if (request()->filled('mietvertrag_id')) {
                 $mietvertrag_id = request()->input('mietvertrag_id');
                 echo "BUCHUNGS_FORM FÜR $mietvertrag_id";
                 $buchung = new mietkonto ();
@@ -927,7 +927,7 @@ if (isset ($anzeigen)) {
             break;
 
         case "alle_mkb" :
-            if (request()->has('objekt_id')) {
+            if (request()->filled('objekt_id')) {
                 session()->put('objekt_id', request()->input('objekt_id'));
             }
             if (!session()->has('objekt_id')) {

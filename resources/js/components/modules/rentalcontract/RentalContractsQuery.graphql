@@ -1,0 +1,33 @@
+query RentalContracts(
+    $search: String,
+    $first: Int!,
+    $page: Int,
+    $unitPartOf: [EntitySelect!]
+    $active: Date
+) @variables(variables: [
+    {name: "unitPartOf", types: ["Unit", "Property", "House"], label: "Mietgegenstand", icon: "mdi-city"},
+    {name: "active", label: "Aktiv während", icon: "mdi-circle"}
+]) {
+    rentalContracts(search: $search, first: $first, page: $page, unitPartOf: $unitPartOf, active: {direction: EQ, date: $active}) {
+        data {
+            ...RentalContractIdentifier @label(text: "Mietvertrag")
+            start @label(text: "von")
+            end @label(text: "bis")
+            tenants {
+                ...PersonIdentifier @label(text: "Mieter")
+            }
+            unit{
+                ...UnitIdentifier @label(text: "Einheit")
+                house {
+                    ...HouseIdentifier @label(text: "Haus")
+                    property {
+                        ...PropertyIdentifier @label(text: "Objekt")
+                    }
+                }
+            }
+        }
+        paginatorInfo {
+            ...PaginatorInfo
+        }
+    }
+}

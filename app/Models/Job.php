@@ -7,6 +7,7 @@ use App\Models\Traits\Active;
 use App\Models\Traits\DefaultOrder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Job extends Model implements ActiveContract
@@ -18,13 +19,7 @@ class Job extends Model implements ActiveContract
     public $timestamps = true;
     protected $table = 'jobs';
     protected $guarded = [];
-    protected $appends = ['type'];
     protected $defaultOrder = ['join_date' => 'desc', 'leave_date' => 'desc'];
-
-    static public function getTypeAttribute()
-    {
-        return 'job';
-    }
 
     protected static function boot()
     {
@@ -35,17 +30,17 @@ class Job extends Model implements ActiveContract
         });
     }
 
-    public function employer()
+    public function employer(): BelongsTo
     {
-        return $this->hasOne(Partner::class, 'PARTNER_ID', 'employer_id');
+        return $this->belongsTo(Partner::class, 'employer_id', 'id');
     }
 
-    public function employee()
+    public function employee(): BelongsTo
     {
-        return $this->hasOne(Person::class, 'id', 'employee_id');
+        return $this->belongsTo(Person::class, 'employee_id');
     }
 
-    public function title()
+    public function title(): BelongsTo
     {
         return $this->belongsTo(JobTitle::class, 'job_title_id');
     }

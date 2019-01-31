@@ -6,7 +6,7 @@ if ($bu->get_buchungen_vor(2005) != false) {
     fehlermeldung_ausgeben("Buchungen vor 2005 gefunden (DATUM FALSCH?!?: ANZAHL: " . $bu->get_buchungen_vor(2005));
 }
 
-if (request()->has('option')) {
+if (request()->filled('option')) {
     $option = request()->input('option');
 } else {
     $option = 'default';
@@ -123,7 +123,7 @@ switch ($option) {
             $datum = date_german2mysql($datum);
             $betrag = nummer_komma2punkt($betrag);
             $buchung = new buchen ();
-            if (request()->has('mwst')) {
+            if (request()->filled('mwst')) {
                 $mwst = nummer_komma2punkt(request()->input('mwst'));
             } else {
                 $mwst = '0.00';
@@ -208,7 +208,7 @@ switch ($option) {
         echo "<body onload=\"JavaScript:seite_aktualisieren(10000);\">";
         $buchung = new buchen ();
         $buchung->akt_konto_bezeichnung = $buchung->geld_konto_bezeichung(session()->get('geldkonto_id'));
-        if (request()->has('jahr') && request()->has('monat')) {
+        if (request()->filled('jahr') && request()->filled('monat')) {
             $jahr = request()->input('jahr');
             $monat = sprintf("%02d", request()->input('monat'));
             $datum = "$jahr-$monat-01";
@@ -222,7 +222,7 @@ switch ($option) {
         $link = route('web::buchen::legacy', ['option' => 'buchungs_journal'], false);
         $bg->monate_jahres_links($jahr, $link);
         echo "<a href='" . route('web::buchen::legacy', ['option' => 'buchungs_journal_druckansicht']) . "'>Druckansicht</a>&nbsp;";
-        if (request()->has('monat')) {
+        if (request()->filled('monat')) {
             $aktueller_monat = request()->input('monat');
         } else {
             $aktueller_monat = date("m");
@@ -237,7 +237,7 @@ switch ($option) {
         $form = new formular ();
         $buchung = new buchen ();
         $buchung->akt_konto_bezeichnung = $buchung->geld_konto_bezeichung(session()->get('geldkonto_id'));
-        if (request()->has('jahr') && request()->input('monat')) {
+        if (request()->filled('jahr') && request()->input('monat')) {
             $jahr = request()->input('jahr');
             $monat = sprintf("%02d", request()->input('monat'));
             $datum = "$jahr-$monat-01";
@@ -255,7 +255,7 @@ switch ($option) {
         break;
 
     case "buchungs_journal_pdf" :
-        if (request()->has('jahr') && request()->has('monat')) {
+        if (request()->filled('jahr') && request()->filled('monat')) {
             $jahr = request()->input('jahr');
             $monat = sprintf("%02d", request()->input('monat'));
             $datum = "$jahr-$monat-01";
@@ -274,7 +274,7 @@ switch ($option) {
         break;
 
     case "buchungs_journal_jahr_pdf" :
-        if (request()->has('jahr')) {
+        if (request()->filled('jahr')) {
             $jahr = request()->input('jahr');
         } else {
             $jahr = date("Y");
@@ -332,7 +332,7 @@ switch ($option) {
 
     case "buchungskonto_summiert_xls" :
         if (session()->has('geldkonto_id')) {
-            if (request()->has('jahr')) {
+            if (request()->filled('jahr')) {
                 $jahr = request()->input('jahr');
             } else {
                 $jahr = date("Y");
@@ -391,17 +391,17 @@ switch ($option) {
         break;
 
     case "eingangsbuch_kurz" :
-        if (request()->has('partner_wechseln')) {
+        if (request()->filled('partner_wechseln')) {
             session()->forget('partner_id');
         }
-        if (request()->has('partner_id')) {
+        if (request()->filled('partner_id')) {
             session()->put('partner_id', request()->input('partner_id'));
         }
         $r = new rechnungen ();
         $p = new partner ();
         $partner_id = session()->get('partner_id');
 
-        if (request()->has('monat') && request()->has('jahr')) {
+        if (request()->filled('monat') && request()->filled('jahr')) {
             if (request()->input('monat') != 'alle') {
                 session()->put('monat', sprintf('%02d', request()->input('monat')));
             } else {
@@ -428,17 +428,17 @@ switch ($option) {
         break;
 
     case "ausgangsbuch_kurz" :
-        if (request()->has('partner_wechseln')) {
+        if (request()->filled('partner_wechseln')) {
             session()->forget('partner_id');
         }
-        if (request()->has('partner_id')) {
+        if (request()->filled('partner_id')) {
             session()->put('partner_id', request()->input('partner_id'));
         }
         $r = new rechnungen ();
         $p = new partner ();
         $partner_id = session()->get('partner_id');
 
-        if (request()->has('monat') && request()->has('jahr')) {
+        if (request()->filled('monat') && request()->filled('jahr')) {
             if (request()->input('monat') != 'alle') {
                 session()->put('monat', sprintf('%02d', request()->input('monat')));
             } else {
@@ -533,7 +533,7 @@ switch ($option) {
         break;
 
     default :
-        if (request()->has('geldkonto_id')) {
+        if (request()->filled('geldkonto_id')) {
             session()->put('geldkonto_id', request()->input('geldkonto_id'));
         }
 
@@ -569,9 +569,7 @@ switch ($option) {
         $arr [7] ['OBJEKT_NAME'] = 'Lager';
 
 
-
-
-        if (request()->has('monat') && request()->has('jahr')) {
+        if (request()->filled('monat') && request()->filled('jahr')) {
             if (request()->input('monat') != 'alle') {
                 session()->put('monat', sprintf('%02d', request()->input('monat')));
             } else {
@@ -695,7 +693,7 @@ switch ($option) {
                 }
             }
             $abfrage .= " && AKTUELL='1' ORDER BY DATUM ASC, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID";
-            if (request()->has('submit_php')) {
+            if (request()->filled('submit_php')) {
                 if ($ausdruck != '' or $betrag != '' or $kostenkonto != '') {
                     $f = new formular ();
                     $f->fieldset("Suchergebnis", 'buchung_suchen');
@@ -706,7 +704,7 @@ switch ($option) {
                 }
             }
             /* PDF-Ausgabe */
-            if (request()->has('submit_pdf')) {
+            if (request()->filled('submit_pdf')) {
                 if ($ausdruck != '' or $betrag != '' or $kostenkonto != '') {
                     $b->finde_buchungen_pdf($abfrage);
                 } else {
@@ -754,7 +752,7 @@ switch ($option) {
             );
 
         }
-        if (request()->has('start')) {
+        if (request()->filled('start')) {
             $start = request()->input('start');
         } else {
             $start = 1;
@@ -912,7 +910,7 @@ switch ($option) {
             session()->put('statements_bankaccount', $bankAccounts[0]);
         }
 
-        if (request()->has('gindex')) {
+        if (request()->filled('gindex')) {
             $gindex = request()->get('gindex');
             session()->put('statements_bankaccount_index', $gindex);
             $bankAccounts = array_keys(session()->get('statements'));
@@ -923,11 +921,11 @@ switch ($option) {
         }
 
         $sepa = new sepa();
-        if (request()->has('next')) {
+        if (request()->filled('next')) {
             $sepa->select_next_statement();
         }
 
-        if (request()->has('vor')) {
+        if (request()->filled('vor')) {
             $sepa->select_previous_statement();
         }
 
@@ -955,7 +953,7 @@ switch ($option) {
         $geldkonto_id = session()->get('geldkonto_id');
         $rechnungsnr = $kto_auszugsnr;
 
-        if (request()->has('mwst')) {
+        if (request()->filled('mwst')) {
             $mwst = $betrag / 119 * 19;
         } else {
             $mwst = '0.00';
@@ -980,7 +978,7 @@ switch ($option) {
                     new \App\Messages\ErrorMessage("Bitte geben Sie die Kontrolldaten ein.")
                 );
             }
-            if (request()->has('mwst')) {
+            if (request()->filled('mwst')) {
                 $mwst = 1;
             } else {
                 $mwst = '0';

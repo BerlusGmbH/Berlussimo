@@ -1,0 +1,7 @@
+#import "../../../../graphql/UnitBaseFragment.graphql"
+
+query Unit($id: ID!) {
+    unit(id: $id) {
+        ...UnitBase
+    }
+}

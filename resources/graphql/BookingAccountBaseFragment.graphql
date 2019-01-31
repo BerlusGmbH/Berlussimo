@@ -1,0 +1,6 @@
+fragment BookingAccountBase on BookingAccount {
+    __typename
+    id
+    name
+    number
+}

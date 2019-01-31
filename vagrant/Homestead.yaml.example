@@ -1,0 +1,26 @@
+ip: 192.168.56.10
+memory: 8192
+cpus: 4
+provider: virtualbox
+authorize: ~/.ssh/id_rsa.pub
+keys:
+  - ~/.ssh/id_rsa
+folders:
+  - map: /path/to/berlussimo
+    to: /home/vagrant/code
+  - map: /path/to/composer/profile/.composer
+    to: /home/vagrant/.composer
+sites:
+  - map: berlussimo.test
+    to: /home/vagrant/code/public
+    type: berlussimo
+databases:
+  - homestead
+  - homestead_testing
+name: berlussimo
+hostname: berlussimo
+mariadb: true
+ports:
+    - send: 8080
+      to: 8080
+

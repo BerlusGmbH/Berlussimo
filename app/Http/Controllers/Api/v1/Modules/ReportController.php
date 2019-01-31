@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\v1\Modules;
 
-use App;
 use App\Http\Controllers\Controller;
 use App\Models\Einheiten;
 use App\Models\Objekte;
@@ -23,11 +22,11 @@ class ReportController extends Controller
         $start = Carbon::today()->firstOfYear();
         $end = $start->copy()->lastOfYear();
 
-        if ($request->has('date')) {
+        if ($request->filled('date')) {
             $start = Carbon::parse($request->input('date'));
             $end = Carbon::parse($request->input('date'));
         }
-        if ($request->has('period')) {
+        if ($request->filled('period')) {
             $period = $request->input('period');
             switch ($period) {
                 case 'year':
@@ -65,7 +64,7 @@ class ReportController extends Controller
         $writer->writeSheetHeader($sheet, $header);
 
         $units = Einheiten::whereHas('haus.objekt', function ($query) use ($object) {
-            $query->where('OBJEKT_ID', $object->OBJEKT_ID);
+            $query->where('id', $object->id);
         })->with(['haus.objekt', 'mietvertraege.mieter'])->defaultOrder()->get();
         $rows = 1;
 

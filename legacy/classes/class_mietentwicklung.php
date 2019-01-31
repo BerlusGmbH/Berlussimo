@@ -53,7 +53,7 @@ class mietentwicklung
 
     function get_einzugsdatum($mietvertrag_id)
     {
-        $result = DB::select("SELECT MIETVERTRAG_VON FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && MIETVERTRAG_ID='$mietvertrag_id' ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1");
+        $result = DB::select("SELECT MIETVERTRAG_VON FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && id='$mietvertrag_id' ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1");
         $row = $result[0];
         $this->mietvertrag_von = $row ['MIETVERTRAG_VON'];
     }
@@ -88,7 +88,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'Mietvertrag' && `K
         $this->nebenkosten_gesamt_jahr = 0.00;
         return $result;
     }
-    
+
     function mietentwicklung_anzeigen($mietvertrag_id)
     {
         $mvs = new mietvertraege ();
@@ -473,7 +473,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'Mietvertrag' && `K
         $anfang = request()->input('anfang');
         $anfang = date_german2mysql($anfang);
         $ende = request()->input('ende');
-        if (!request()->has('ende')) {
+        if (!request()->filled('ende')) {
             $ende = '00.00.0000';
         }
         $ende = date_german2mysql($ende);
@@ -550,7 +550,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'Mietvertrag' && `K
         $anfang = request()->input('anfang');
         $anfang = $form->date_german2mysql($anfang);
         $ende = request()->input('ende');
-        if (!request()->has('ende')) {
+        if (!request()->filled('ende')) {
             $ende = '00.00.0000';
         }
         $ende = $form->date_german2mysql($ende);
@@ -592,7 +592,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'Mietvertrag' && `K
 FROM `MIETENTWICKLUNG` , MIETVERTRAG, EINHEIT
 WHERE `KOSTENKATEGORIE` LIKE '$kosten_kat'
 AND `ENDE` = '0000-00-00'
-AND `MIETENTWICKLUNG_AKTUELL` = '1' && `MIETVERTRAG_AKTUELL` = '1' && `EINHEIT_AKTUELL` = '1' && KOSTENTRAEGER_TYP = 'Mietvertrag' && KOSTENTRAEGER_ID = MIETVERTRAG_ID && MIETVERTRAG.EINHEIT_ID = EINHEIT.EINHEIT_ID";
+AND `MIETENTWICKLUNG_AKTUELL` = '1' && `MIETVERTRAG_AKTUELL` = '1' && `EINHEIT_AKTUELL` = '1' && KOSTENTRAEGER_TYP = 'Mietvertrag' && KOSTENTRAEGER_ID = MIETVERTRAG.id && MIETVERTRAG.EINHEIT_ID = EINHEIT.id";
         $result = DB::select($db_abfrage);
         if (!empty($result)) {
             echo "<table class=\"sortable\">";
@@ -611,7 +611,7 @@ AND `MIETENTWICKLUNG_AKTUELL` = '1' && `MIETVERTRAG_AKTUELL` = '1' && `EINHEIT_A
             echo "Keine Mietdefinition zu $kosten_kat";
         }
     }
-    
+
     function check_me($kos_typ, $kos_id, $kat, $anfang, $ende)
     {
         $result = DB::select("SELECT *
@@ -652,7 +652,7 @@ AND `MIETENTWICKLUNG_AKTUELL` = '1' && `MIETVERTRAG_AKTUELL` = '1' && `EINHEIT_A
             $kostenkategorien_arr [] = "Heizkostenabrechnung $a";
             $kostenkategorien_arr [] = "Kaltwasserabrechnung $a";
         }
-        
+
         $anzahl_kats = count($kostenkategorien_arr);
         for ($a = 0; $a < $anzahl_kats; $a++) {
             $katname_value = $kostenkategorien_arr [$a];

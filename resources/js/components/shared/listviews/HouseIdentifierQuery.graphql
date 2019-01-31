@@ -1,0 +1,7 @@
+#import "./HouseIdentifierFragment.graphql"
+
+query HouseIdentifier($id: ID!) {
+    house(id: $id) {
+        ...HouseIdentifier
+    }
+}

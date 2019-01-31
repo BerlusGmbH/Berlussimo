@@ -1,0 +1,10 @@
+#import "../../../../../graphql/RoleBaseFragment.graphql"
+
+query Roles($personId: ID) {
+    person(id: $personId) {
+        id
+        roles {
+            ...RoleBase
+        }
+    }
+}

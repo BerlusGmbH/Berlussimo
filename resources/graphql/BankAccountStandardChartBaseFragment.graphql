@@ -1,0 +1,5 @@
+fragment BankAccountStandardChartBase on BankAccountStandardChart {
+    __typename
+    id
+    name
+}

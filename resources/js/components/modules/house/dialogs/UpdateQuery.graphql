@@ -1,0 +1,11 @@
+#import "../../../../../graphql/PropertyBaseFragment.graphql"
+#import "../../../../../graphql/HouseBaseFragment.graphql"
+
+query UpdateHouse($id: ID!) {
+    house(id: $id) {
+        ...HouseBase
+        property {
+            ...PropertyBase
+        }
+    }
+}

@@ -1,0 +1,10 @@
+#import "./PartnerIdentifierFragment.graphql"
+
+fragment ConstructionSiteIdentifier on ConstructionSite {
+    id
+    name
+    active
+    contractee {
+        ...PartnerIdentifier
+    }
+}

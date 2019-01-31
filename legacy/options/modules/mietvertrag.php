@@ -1,15 +1,15 @@
 <?php
 
 $daten = request()->input('daten');
-if (request()->has('mietvertrag_raus')) {
+if (request()->filled('mietvertrag_raus')) {
     $mietvertrag_raus = request()->input('mietvertrag_raus');
 }
-if (request()->has('einheit_id')) {
+if (request()->filled('einheit_id')) {
     $einheit_id = request()->input('einheit_id');
 } else {
     $einheit_id = '';
 }
-if (request()->has('mietvertrag_raus')) {
+if (request()->filled('mietvertrag_raus')) {
     $mietvertrag_raus = request()->input('mietvertrag_raus');
 } else {
     $mietvertrag_raus = 'default';
@@ -87,8 +87,8 @@ switch ($mietvertrag_raus) {
         $form = new mietkonto ();
         $form->erstelle_formular("LS-Teilnehmer - Daten prüfen", NULL);
         /* Neuer LS-Teilnehmer */
-        if (!request()->has('deaktiviere_dat')) {
-            if (!request()->has('einzugsart') or !request()->has('konto_inhaber_autoeinzug') or !request()->has('konto_nummer_autoeinzug') or !request()->has('blz_autoeinzug') or !request()->has('geld_institut')) {
+        if (!request()->filled('deaktiviere_dat')) {
+            if (!request()->filled('einzugsart') or !request()->filled('konto_inhaber_autoeinzug') or !request()->filled('konto_nummer_autoeinzug') or !request()->filled('blz_autoeinzug') or !request()->filled('geld_institut')) {
                 $error = 'Daten unvollständig<br>';
             } else {
                 if (!is_numeric(request()->input('konto_nummer_autoeinzug') or !is_numeric(request()->input('blz_autoeinzug')))) {
@@ -116,7 +116,7 @@ switch ($mietvertrag_raus) {
             }
         } else {
             /* Bearbeiten bzw. Daten ändern und vervollständigen */
-            if (!request()->has('einzugsart') or !request()->has('konto_inhaber_autoeinzug') or !request()->has('konto_nummer_autoeinzug') or !request()->has('blz_autoeinzug') or !request()->has('geld_institut')) {
+            if (!request()->filled('einzugsart') or !request()->filled('konto_inhaber_autoeinzug') or !request()->filled('konto_nummer_autoeinzug') or !request()->filled('blz_autoeinzug') or !request()->filled('geld_institut')) {
                 $error = 'Daten unvollständig<br>';
             } else {
                 if (!is_numeric(request()->input('konto_nummer_autoeinzug')) or !is_numeric(request()->input('blz_autoeinzug'))) {
@@ -186,7 +186,7 @@ switch ($mietvertrag_raus) {
             $error .= 'Einzugsdatum prüfen<br>';
         }
         /* Auszugsdatum */
-        if (request()->has('datum_auszug')) {
+        if (request()->filled('datum_auszug')) {
             if (!check_datum(request()->input('datum_auszug'))) {
                 $error .= 'Auszugsdatum prüfen<br>';
             }
@@ -194,14 +194,14 @@ switch ($mietvertrag_raus) {
             request()->request->add(['datum_auszug' => '0000-00-00']);
             //TODO: check parameter add
         }
-        if (request()->has('miete_kalt')) {
+        if (request()->filled('miete_kalt')) {
             if (is_numeric(request()->input('miete_kalt'))) {
                 $error .= 'Kaltmiete Betrag fehlerhaft<br>';
             }
         } else {
             $error .= 'Keine Kaltmiete eingegeben<br>';
         }
-        if (request()->has('sollkaution')) {
+        if (request()->filled('sollkaution')) {
             if (is_numeric(request()->input('sollkaution'))) {
                 $error .= 'Sollkaution Betrag fehlerhaft<br>';
             }
@@ -226,13 +226,13 @@ switch ($mietvertrag_raus) {
                 echo "Auszug: " . request()->input('datum_auszug') . "<br>";
             }
             echo "Miete kalt: " . request()->input('miete_kalt') . " €<br>";
-            if (request()->has('sollkaution')) {
+            if (request()->filled('sollkaution')) {
                 echo "Sollkaution: " . request()->input('sollkaution') . " €<br>";
             }
-            if (request()->has('nebenkosten')) {
+            if (request()->filled('nebenkosten')) {
                 echo "Nebenkosten Vorauszahlung: " . request()->input('nebenkosten') . " €<br>";
             }
-            if (request()->has('heizkosten')) {
+            if (request()->filled('heizkosten')) {
                 echo "Heizkosten Vorauszahlung: " . request()->input('heizkosten') . " €<br>";
             }
             $form->hidden_feld('einheit_id', request()->input('einheit_id'));
@@ -274,15 +274,15 @@ switch ($mietvertrag_raus) {
         $k = new kautionen ();
         $mv_info->mieten_speichern($zugewiesene_vertrags_id, request()->input('datum_einzug'), request()->input('datum_auszug'), 'Miete kalt', request()->input('miete_kalt'), 0);
 
-        if (request()->has('sollkaution')) {
+        if (request()->filled('sollkaution')) {
             $k->feld_wert_speichern($zugewiesene_vertrags_id, 'SOLL', request()->input('sollkaution'));
         }
 
-        if (request()->has('heizkosten')) {
+        if (request()->filled('heizkosten')) {
             $mv_info->mieten_speichern($zugewiesene_vertrags_id, request()->input('datum_einzug'), request()->input('datum_auszug'), 'Heizkosten Vorauszahlung', request()->input('heizkosten'), 0);
         }
 
-        if (request()->has('nebenkosten')) {
+        if (request()->filled('nebenkosten')) {
             $mv_info->mieten_speichern($zugewiesene_vertrags_id, request()->input('datum_einzug'), request()->input('datum_auszug'), 'Nebenkosten Vorauszahlung', request()->input('nebenkosten'), 0);
         }
 
@@ -415,7 +415,7 @@ switch ($mietvertrag_raus) {
         break;
 
     case "zahlungserinnerung" :
-        if (request()->has('mietvertrag_id') && empty (request()->input('submit'))) {
+        if (request()->filled('mietvertrag_id') && empty (request()->input('submit'))) {
             $mv_id = request()->input('mietvertrag_id');
             $f = new formular ();
             $f->erstelle_formular("Zahlungserinnerung für Mietvertrag $mv_id", '');
@@ -430,7 +430,7 @@ switch ($mietvertrag_raus) {
             // $f->fieldset_ende();
             $f->ende_formular();
         }
-        if (request()->has('submit')) {
+        if (request()->filled('submit')) {
             $mv_id = request()->input('mietvertrag_id');
             $fristdatum = request()->input('datum_zahlungsfrist');
             $geldkonto_id = request()->input('geld_konto');
@@ -440,7 +440,7 @@ switch ($mietvertrag_raus) {
         break;
 
     case "mahnung" :
-        if (request()->has('mietvertrag_id') && empty (request()->input('submit'))) {
+        if (request()->filled('mietvertrag_id') && empty (request()->input('submit'))) {
             $mv_id = request()->input('mietvertrag_id');
             $f = new formular ();
             $f->erstelle_formular("Mahnung für Mietvertrag $mv_id", '');
@@ -454,7 +454,7 @@ switch ($mietvertrag_raus) {
             $ma = new mahnungen ();
             $f->ende_formular();
         }
-        if (request()->has('submit')) {
+        if (request()->filled('submit')) {
             $mv_id = request()->input('mietvertrag_id');
             $fristdatum = request()->input('datum_zahlungsfrist');
             $geldkonto_id = request()->input('geld_konto');
@@ -467,7 +467,7 @@ switch ($mietvertrag_raus) {
     case "mietvertrag_aendern" :
         $form = new mietkonto ();
         $form->erstelle_formular("Mietvertrag ändern", NULL);
-        if (request()->has('mietvertrag_id')) {
+        if (request()->filled('mietvertrag_id')) {
             $mv_info = new mietvertraege ();
             $mv_info->mv_aendern_formular(request()->input('mietvertrag_id'));
         } else {
@@ -492,7 +492,7 @@ switch ($mietvertrag_raus) {
             // echo "Einzugsdatum OK";
         }
         /* Auszugsdatum */
-        if (request()->has('datum_auszug')) {
+        if (request()->filled('datum_auszug')) {
             if (!check_datum(request()->input('datum_auszug'))) {
                 $error .= 'Auszugsdatum prüfen<br>';
             }
@@ -612,7 +612,7 @@ switch ($mietvertrag_raus) {
         break;
 
     case "abnahmeprotokoll" :
-        if (request()->has('mv_id')) {
+        if (request()->filled('mv_id')) {
             $pdf = new Cezpdf ('a4', 'portrait');
             $bpdf = new b_pdf ();
             $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
@@ -808,7 +808,7 @@ switch ($mietvertrag_raus) {
         break;
 
     case "mv_loeschen" :
-        if (request()->has('mv_id')) {
+        if (request()->filled('mv_id')) {
             $mv_id = request()->input('mv_id');
             $mv = new mietvertraege ();
             $mv->form_mietvertrag_loeschen($mv_id);
@@ -836,7 +836,7 @@ switch ($mietvertrag_raus) {
 } // end switch
 function objekt_auswahl_liste($link)
 {
-    if (request()->has('objekt_id')) {
+    if (request()->filled('objekt_id')) {
         session()->put('objekt_id', request()->input('objekt_id'));
     }
 
@@ -864,14 +864,13 @@ function objekt_auswahl_liste($link)
 
 function leerstand_finden($objekt_id)
 {
-    $result = DB::select("SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
+    $result = DB::select("SELECT OBJEKT_KURZNAME, EINHEIT.id AS EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
 FROM `EINHEIT`
 RIGHT JOIN (
 HAUS, OBJEKT
-) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID='$objekt_id' )
-WHERE EINHEIT_ID NOT
+) ON ( EINHEIT.HAUS_ID = HAUS.id && HAUS.OBJEKT_ID = OBJEKT.id && OBJEKT.id='$objekt_id' )
+WHERE EINHEIT.id NOT
 IN (
-
 SELECT EINHEIT_ID
 FROM MIETVERTRAG
 WHERE MIETVERTRAG_AKTUELL = '1' && ( MIETVERTRAG_BIS > CURdate( )
@@ -907,10 +906,10 @@ function mietvertrag_beenden($mietvertrag_dat, $mietvertrag_bis)
     $db_abfrage = "UPDATE MIETVERTRAG SET MIETVERTRAG_AKTUELL='0' where MIETVERTRAG_DAT='$mietvertrag_dat'";
     DB::update($db_abfrage); // aktuell auf 0 gesetzt
 
-    $db_abfrage = "SELECT MIETVERTRAG_ID, MIETVERTRAG_VON, EINHEIT_ID FROM MIETVERTRAG where MIETVERTRAG_DAT='$mietvertrag_dat' LIMIT 0,1";
+    $db_abfrage = "SELECT id AS MIETVERTRAG_ID, MIETVERTRAG_VON, EINHEIT_ID FROM MIETVERTRAG where MIETVERTRAG_DAT='$mietvertrag_dat' LIMIT 0,1";
     $result = DB::select($db_abfrage);
     foreach ($result as $row) {
-        DB::insert("INSERT INTO MIETVERTRAG (`MIETVERTRAG_DAT`, `MIETVERTRAG_ID`, `MIETVERTRAG_VON`, `MIETVERTRAG_BIS`, `EINHEIT_ID`, `MIETVERTRAG_AKTUELL`) VALUES (NULL, '$row[MIETVERTRAG_ID]', '$row[MIETVERTRAG_VON]', '$mietvertrag_bis', '$row[EINHEIT_ID]', '1')");
+        DB::insert("INSERT INTO MIETVERTRAG (`MIETVERTRAG_DAT`, `id`, `MIETVERTRAG_VON`, `MIETVERTRAG_BIS`, `EINHEIT_ID`, `MIETVERTRAG_AKTUELL`) VALUES (NULL, '$row[MIETVERTRAG_ID]', '$row[MIETVERTRAG_VON]', '$mietvertrag_bis', '$row[EINHEIT_ID]', '1')");
     } // while end
     // protokollieren
     $result = DB::select("SELECT MIETVERTRAG_DAT FROM MIETVERTRAG where MIETVERTRAG_BIS='$mietvertrag_bis' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_DAT DESC");
@@ -932,10 +931,10 @@ function mietvertrag_aktualisieren($mietvertrag_dat, $mietvertrag_bis, $mietvert
     $mietvertrag_id_alt = mietvertrag_id_by_dat($mietvertrag_dat);
     DB::update("UPDATE PERSON_MIETVERTRAG SET PERSON_MIETVERTRAG_AKTUELL='0' where PERSON_MIETVERTRAG_MIETVERTRAG_ID='$mietvertrag_id_alt'");
 
-    $db_abfrage = "SELECT MIETVERTRAG_ID, MIETVERTRAG_VON, EINHEIT_ID FROM MIETVERTRAG where MIETVERTRAG_DAT='$mietvertrag_dat' LIMIT 0,1";
+    $db_abfrage = "SELECT id AS MIETVERTRAG_ID, MIETVERTRAG_VON, EINHEIT_ID FROM MIETVERTRAG where MIETVERTRAG_DAT='$mietvertrag_dat' LIMIT 0,1";
     $result = DB::select($db_abfrage);
     foreach ($result as $row) {
-        DB::insert("INSERT INTO MIETVERTRAG (`MIETVERTRAG_DAT`, `MIETVERTRAG_ID`, `MIETVERTRAG_VON`, `MIETVERTRAG_BIS`, `EINHEIT_ID`, `MIETVERTRAG_AKTUELL`) VALUES (NULL, '$mietvertrag_id_alt', '$mietvertrag_von', '$mietvertrag_bis', '$row[EINHEIT_ID]', '1')");
+        DB::insert("INSERT INTO MIETVERTRAG (`MIETVERTRAG_DAT`, `id`, `MIETVERTRAG_VON`, `MIETVERTRAG_BIS`, `EINHEIT_ID`, `MIETVERTRAG_AKTUELL`) VALUES (NULL, '$mietvertrag_id_alt', '$mietvertrag_von', '$mietvertrag_bis', '$row[EINHEIT_ID]', '1')");
     } // while end
     // protokollieren
     $db_abfrage = "SELECT MIETVERTRAG_DAT FROM MIETVERTRAG where MIETVERTRAG_VON='$mietvertrag_von' && MIETVERTRAG_BIS='$mietvertrag_bis' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_DAT DESC";
@@ -955,9 +954,9 @@ function mietvertrag_aktualisieren($mietvertrag_dat, $mietvertrag_bis, $mietvert
 function mietvertrag_kurz($einheit_id)
 {
     if (empty ($einheit_id)) {
-        $db_abfrage = "SELECT MIETVERTRAG.MIETVERTRAG_ID, MIETVERTRAG.MIETVERTRAG_VON, MIETVERTRAG.MIETVERTRAG_BIS, MIETVERTRAG.EINHEIT_ID, EINHEIT.EINHEIT_KURZNAME FROM MIETVERTRAG JOIN(EINHEIT) ON (EINHEIT.EINHEIT_ID = MIETVERTRAG.EINHEIT_ID) WHERE MIETVERTRAG_AKTUELL='1' && EINHEIT.EINHEIT_AKTUELL='1' ORDER BY EINHEIT.EINHEIT_KURZNAME,MIETVERTRAG.MIETVERTRAG_VON  ASC";
+        $db_abfrage = "SELECT MIETVERTRAG.id AS MIETVERTRAG_ID, MIETVERTRAG.MIETVERTRAG_VON, MIETVERTRAG.MIETVERTRAG_BIS, MIETVERTRAG.EINHEIT_ID, EINHEIT.EINHEIT_KURZNAME FROM MIETVERTRAG JOIN(EINHEIT) ON (EINHEIT.id = MIETVERTRAG.EINHEIT_ID) WHERE MIETVERTRAG_AKTUELL='1' && EINHEIT.EINHEIT_AKTUELL='1' ORDER BY EINHEIT.EINHEIT_KURZNAME,MIETVERTRAG.MIETVERTRAG_VON  ASC";
     } else {
-        $db_abfrage = "SELECT MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM MIETVERTRAG where EINHEIT_ID='$einheit_id' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_VON DESC";
+        $db_abfrage = "SELECT id AS MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM MIETVERTRAG where EINHEIT_ID='$einheit_id' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_VON DESC";
     }
 
     $result = DB::select($db_abfrage);
@@ -1018,9 +1017,9 @@ function mietvertrag_abgelaufen($einheit_id)
 {
     if (empty ($einheit_id)) {
         $datum_heute = date("Y-m-d");
-        $db_abfrage = "SELECT MIETVERTRAG.MIETVERTRAG_ID, MIETVERTRAG.MIETVERTRAG_VON, MIETVERTRAG.MIETVERTRAG_BIS, MIETVERTRAG.EINHEIT_ID, EINHEIT.EINHEIT_KURZNAME FROM MIETVERTRAG JOIN(EINHEIT) ON (EINHEIT.EINHEIT_ID = MIETVERTRAG.EINHEIT_ID) WHERE MIETVERTRAG_AKTUELL='1' && EINHEIT.EINHEIT_AKTUELL='1' && (MIETVERTRAG.MIETVERTRAG_BIS!='0000-00-00' && MIETVERTRAG.MIETVERTRAG_BIS<'$datum_heute') ORDER BY EINHEIT.EINHEIT_KURZNAME ASC,MIETVERTRAG.MIETVERTRAG_BIS  DESC";
+        $db_abfrage = "SELECT MIETVERTRAG.id AS MIETVERTRAG_ID, MIETVERTRAG.MIETVERTRAG_VON, MIETVERTRAG.MIETVERTRAG_BIS, MIETVERTRAG.EINHEIT_ID, EINHEIT.EINHEIT_KURZNAME FROM MIETVERTRAG JOIN(EINHEIT) ON (EINHEIT.id = MIETVERTRAG.EINHEIT_ID) WHERE MIETVERTRAG_AKTUELL='1' && EINHEIT.EINHEIT_AKTUELL='1' && (MIETVERTRAG.MIETVERTRAG_BIS!='0000-00-00' && MIETVERTRAG.MIETVERTRAG_BIS<'$datum_heute') ORDER BY EINHEIT.EINHEIT_KURZNAME ASC,MIETVERTRAG.MIETVERTRAG_BIS  DESC";
     } else {
-        $db_abfrage = "SELECT MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM MIETVERTRAG where EINHEIT_ID='$einheit_id' && MIETVERTRAG_AKTUELL='1'";
+        $db_abfrage = "SELECT MIETVERTRAG.id AS MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM MIETVERTRAG where EINHEIT_ID='$einheit_id' && MIETVERTRAG_AKTUELL='1'";
     }
 
     $result = DB::select($db_abfrage);
@@ -1080,11 +1079,11 @@ function mietvertrag_abgelaufen($einheit_id)
 
 function mietvertrag_aktuelle($einheit_id)
 {
-    if (!isset ($einheit_id)) {
+    if (empty($einheit_id)) {
         $datum_heute = date("Y-m-d");
-        $db_abfrage = "SELECT MIETVERTRAG.MIETVERTRAG_ID, MIETVERTRAG.MIETVERTRAG_VON, MIETVERTRAG.MIETVERTRAG_BIS, MIETVERTRAG.EINHEIT_ID, EINHEIT.EINHEIT_KURZNAME FROM MIETVERTRAG JOIN(EINHEIT) ON (EINHEIT.EINHEIT_ID = MIETVERTRAG.EINHEIT_ID) WHERE MIETVERTRAG_AKTUELL='1' && EINHEIT.EINHEIT_AKTUELL='1' && (MIETVERTRAG.MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG.MIETVERTRAG_BIS>'$datum_heute') ORDER BY EINHEIT.EINHEIT_KURZNAME ASC,MIETVERTRAG.MIETVERTRAG_BIS  DESC";
+        $db_abfrage = "SELECT MIETVERTRAG.id AS MIETVERTRAG_ID, MIETVERTRAG.MIETVERTRAG_VON, MIETVERTRAG.MIETVERTRAG_BIS, MIETVERTRAG.EINHEIT_ID, EINHEIT.EINHEIT_KURZNAME FROM MIETVERTRAG JOIN(EINHEIT) ON (EINHEIT.id = MIETVERTRAG.EINHEIT_ID) WHERE MIETVERTRAG_AKTUELL='1' && EINHEIT.EINHEIT_AKTUELL='1' && (MIETVERTRAG.MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG.MIETVERTRAG_BIS>'$datum_heute') ORDER BY EINHEIT.EINHEIT_KURZNAME ASC,MIETVERTRAG.MIETVERTRAG_BIS  DESC";
     } else {
-        $db_abfrage = "SELECT MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM MIETVERTRAG where EINHEIT_ID='$einheit_id' && MIETVERTRAG_AKTUELL='1'";
+        $db_abfrage = "SELECT MIETVERTRAG.id AS MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM MIETVERTRAG where EINHEIT_ID='$einheit_id' && MIETVERTRAG_AKTUELL='1'";
     }
 
     $result = DB::select($db_abfrage);
@@ -1141,7 +1140,7 @@ function mietvertrag_aktuelle($einheit_id)
 
 function mietvertrag_objekt_links()
 {
-    $db_abfrage = "SELECT OBJEKT_DAT, OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC ";
+    $db_abfrage = "SELECT OBJEKT_DAT, id AS OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC ";
     $result = DB::select($db_abfrage);
     echo "<b>Objekt auswählen:</b><br>\n ";
     foreach ($result as $row) {

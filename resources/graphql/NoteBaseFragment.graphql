@@ -1,0 +1,8 @@
+fragment NoteBase on Note {
+    __typename
+    id
+    detailableType
+    detailableId
+    value
+    comment
+}

@@ -1,0 +1,5 @@
+fragment AccountingEntityBase on AccountingEntity {
+    __typename
+    id
+    name
+}

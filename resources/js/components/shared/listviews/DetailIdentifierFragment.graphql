@@ -1,0 +1,6 @@
+fragment DetailIdentifier on DetailInterface {
+    id
+    value
+    comment
+    category
+}

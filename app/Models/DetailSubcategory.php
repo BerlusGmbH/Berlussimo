@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Scopes\AktuellScope;
 use App\Models\Traits\DefaultOrder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DetailSubcategory extends Model
 {
@@ -24,8 +25,8 @@ class DetailSubcategory extends Model
         static::addGlobalScope(new AktuellScope());
     }
 
-    public function category()
+    public function category(): BelongsTo
     {
-        return $this->belongsTo(DetailCategory::class, 'KATEGORIE_ID');
+        return $this->belongsTo(DetailCategory::class, 'KATEGORIE_ID', 'DETAIL_KAT_ID');
     }
 }

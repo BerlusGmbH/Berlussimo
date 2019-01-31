@@ -1,0 +1,10 @@
+fragment PartnerBase on Partner {
+    __typename
+    id
+    fullName
+    streetName
+    streetNumber
+    postalCode
+    city
+    country
+}

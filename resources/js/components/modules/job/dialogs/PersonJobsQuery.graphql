@@ -1,0 +1,11 @@
+#import "../../../../../graphql/JobBaseFragment.graphql"
+
+query PersonJobs($id: ID!) {
+    person(id: $id) {
+        __typename
+        id
+        jobs {
+            ...JobBase
+        }
+    }
+}

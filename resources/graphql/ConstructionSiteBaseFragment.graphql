@@ -1,0 +1,6 @@
+fragment ConstructionSiteBase on ConstructionSite {
+    __typename
+    id
+    name
+    active
+}

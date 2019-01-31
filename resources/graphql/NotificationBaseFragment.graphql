@@ -1,0 +1,7 @@
+fragment NotificationBase on NotificationInterface {
+    __typename
+    id
+    readAt
+    createdAt
+    updatedAt
+}

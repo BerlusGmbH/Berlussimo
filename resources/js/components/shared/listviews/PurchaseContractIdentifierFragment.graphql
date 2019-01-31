@@ -1,0 +1,10 @@
+#import "./UnitIdentifierFragment.graphql"
+
+fragment PurchaseContractIdentifier on PurchaseContract {
+    id
+    start
+    end
+    unit {
+        ...UnitIdentifier
+    }
+}

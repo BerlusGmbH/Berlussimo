@@ -2,9 +2,13 @@
 
 namespace App\Providers;
 
+use App\Listeners\AuditsSubscriptionBroadcast;
 use Event;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Database\Events\StatementPrepared;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use OwenIt\Auditing\Events\Audited;
 use PDO;
 
 class EventServiceProvider extends ServiceProvider
@@ -15,7 +19,12 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'App\Events\TestEvent' => []
+        Registered::class => [
+            SendEmailVerificationNotification::class,
+        ],
+        Audited::class => [
+            AuditsSubscriptionBroadcast::class
+        ]
     ];
 
     /**
@@ -26,6 +35,7 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         parent::boot();
+
         Event::listen(StatementPrepared::class, function ($event) {
             $event->statement->setFetchMode(PDO::FETCH_ASSOC);
         });

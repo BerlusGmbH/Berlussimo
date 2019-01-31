@@ -1,0 +1,5 @@
+fragment JobTitleBase on JobTitle {
+    __typename
+    id
+    name
+}

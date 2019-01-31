@@ -1,0 +1,19 @@
+fragment InvoiceBase on Invoice {
+    __typename
+    id
+    invoiceNumber
+    issuerInvoiceNumber
+    recipientInvoiceNumber
+    invoiceType
+    invoiceDate
+    dateOfReceipt
+    dueDate
+    payDate
+    netAmount
+    grossAmount
+    discountAmount
+    description
+    serviceTimeStart
+    serviceTimeEnd
+    costForwarded
+}

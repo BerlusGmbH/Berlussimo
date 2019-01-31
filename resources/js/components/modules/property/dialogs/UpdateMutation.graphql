@@ -1,0 +1,11 @@
+#import "../../../../../graphql/PropertyBaseFragment.graphql"
+#import "../../../../../graphql/PartnerBaseFragment.graphql"
+
+mutation UpdateProperty($input: UpdatePropertyInput!) {
+    updateProperty(input: $input) {
+        ...PropertyBase
+        owner {
+            ...PartnerBase
+        }
+    }
+}

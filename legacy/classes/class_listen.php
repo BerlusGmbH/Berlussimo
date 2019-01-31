@@ -33,8 +33,8 @@ class listen
 
         $gk->geld_konto_ermitteln('Objekt', $objekt_id, null, 'Hausgeld');
 
-        $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT_ID`,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
-WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.OBJEKT_ID='$objekt_id' 
+        $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT.id` AS EINHEIT_ID,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
+WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.id && HAUS.OBJEKT_ID=OBJEKT.id && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.id='$objekt_id' 
 ORDER BY EINHEIT_KURZNAME";
 
         $result = DB::select($db_abfrage);
@@ -95,8 +95,6 @@ ORDER BY EINHEIT_KURZNAME";
                     $my_arr [$a] ['AUSGABEN'] [$anz_rep] ['BETRAG'] = '<b>' . nummer_punkt2komma_t($summe_rep) . '</b>';
                     $my_arr [$a] ['AUSGABEN'] [$anz_rep] ['VERWENDUNGSZWECK'] = '<b>Summe</b>';
 
-                    // echo "'EINHEIT', $my_arr[$a]['EINHEIT_ID'], $monat, $jahr, $gk->geldkonto_id<br>";
-                    // print_r($arr);
                     $mk = new mietkonto ();
                     $mk->kaltmiete_monatlich($my_arr [$a] ['MIETVERTRAG_ID'], $monat, $jahr);
                     $brutto_sollmiete_arr = explode('|', $mk->summe_forderung_monatlich($my_arr [$a] ['MIETVERTRAG_ID'], $monat, $jahr));
@@ -391,8 +389,8 @@ ORDER BY EINHEIT_KURZNAME";
                 new \App\Messages\WarningMessage('Geldkonto zum Objekt hinzufügen.')
             );
         }
-        $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT_ID`,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
-WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.OBJEKT_ID='$objekt_id' 
+        $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT.id` AS EINHEIT_ID,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
+WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.id && HAUS.OBJEKT_ID=OBJEKT.id && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.id='$objekt_id' 
 ORDER BY EINHEIT_KURZNAME";
 
         $result = DB::select($db_abfrage);
@@ -867,7 +865,7 @@ ORDER BY EINHEIT_KURZNAME";
     function inspiration_pdf_kurz_6($ausgezogene = 0, $objekt_id, $monat, $jahr, $lang = 'de')
     {
         /* Eingrenzung Kostenabragen */
-        if (!request()->has('von') or !request()->has('bis')) {
+        if (!request()->filled('von') or !request()->filled('bis')) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\InfoMessage('Abfragedatum VON BIS in die URL hinzufügen')
             );
@@ -889,8 +887,8 @@ ORDER BY EINHEIT_KURZNAME";
                 new \App\Messages\ErrorMessage('Geldkonto zum Objekt hinzufügen.')
             );
         }
-        $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT_ID`,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
-WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.OBJEKT_ID='$objekt_id' 
+        $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT.id` AS EINHEIT_ID,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
+WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.id && HAUS.OBJEKT_ID=OBJEKT.id && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.id='$objekt_id' 
 GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
 
         $result = DB::select($db_abfrage);
@@ -1027,12 +1025,12 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                     $my_arr [$a] ['5081'] = $this->get_kosten_von_bis('Eigentuemer', $eige_id, $von, $bis, $gk->geldkonto_id, 5081);
                     $my_arr [$a] ['5010'] = $this->get_kosten_von_bis('Eigentuemer', $eige_id, $von, $bis, $gk->geldkonto_id, 5010);
 
-                    if (request()->has('von_a')) {
+                    if (request()->filled('von_a')) {
                         $von_a = date_german2mysql(request()->input('von_a'));
                     } else {
                         $von_a = "$jahr-$monat-01";
                     }
-                    if (!request()->has('bis_a')) {
+                    if (!request()->filled('bis_a')) {
                         $lt = letzter_tag_im_monat($monat, $jahr);
                         $bis_a = "$jahr-$monat-$lt";
                     } else {
@@ -1183,13 +1181,13 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                         $summe_nachzahler += $pdf_tab [$a] ['ENDSUMME'];
                     }
 
-                    if (request()->has('w_monat')) {
+                    if (request()->filled('w_monat')) {
                         $w_monat = request()->input('w_monat');
                     } else {
                         $w_monat = $monat;
                     }
 
-                    if (request()->has('w_jahr')) {
+                    if (request()->filled('w_jahr')) {
                         $w_jahr = request()->input('w_jahr');
                     } else {
                         $w_jahr = $jahr;
@@ -1956,7 +1954,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
     function inspiration_pdf_kurz_7($ausgezogene = 0, $objekt_id, $monat, $jahr, $lang = 'de')
     {
         /* Eingrenzung Kostenabragen */
-        if (!request()->has('von') or !request()->has('bis')) {
+        if (!request()->filled('von') or !request()->filled('bis')) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\InfoMessage('Abfragedatum VON BIS in die URL hinzufügen')
             );
@@ -1978,9 +1976,9 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                 new \App\Messages\ErrorMessage('Geldkonto zum Objekt hinzufügen.')
             );
         }
-        $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT_ID`,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
-	WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.OBJEKT_ID='$objekt_id'
-	GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
+        $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT.id` AS EINHEIT_ID,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
+	WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.id && HAUS.OBJEKT_ID=OBJEKT.id && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.id='$objekt_id'
+	GROUP BY EINHEIT.id ORDER BY EINHEIT_KURZNAME";
 
         $result = DB::select($db_abfrage);
         if (!empty($result)) {
@@ -2114,12 +2112,12 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                     $my_arr [$a] ['5081'] = $this->get_kosten_von_bis('Eigentuemer', $eige_id, $von, $bis, $gk->geldkonto_id, 5081);
                     $my_arr [$a] ['5010'] = $this->get_kosten_von_bis('Eigentuemer', $eige_id, $von, $bis, $gk->geldkonto_id, 5010);
 
-                    if (request()->has('von_a')) {
+                    if (request()->filled('von_a')) {
                         $von_a = date_german2mysql(request()->input('von_a'));
                     } else {
                         $von_a = "$jahr-$monat-01";
                     }
-                    if (!request()->has('bis_a')) {
+                    if (!request()->filled('bis_a')) {
                         $lt = letzter_tag_im_monat($monat, $jahr);
                         $bis_a = "$jahr-$monat-$lt";
                     } else {
@@ -2263,13 +2261,13 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                         $summe_nachzahler += $pdf_tab [$a] ['ENDSUMME'];
                     }
 
-                    if (request()->has('w_monat')) {
+                    if (request()->filled('w_monat')) {
                         $w_monat = request()->input('w_monat');
                     } else {
                         $w_monat = $monat;
                     }
 
-                    if (request()->has('w_jahr')) {
+                    if (request()->filled('w_jahr')) {
                         $w_jahr = request()->input('w_jahr');
                     } else {
                         $w_jahr = $jahr;
@@ -3000,8 +2998,8 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME";
                 new \App\Messages\ErrorMessage('Geldkonto zum Objekt hinzufügen.')
             );
         }
-        $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT_ID`,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
-WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.OBJEKT_ID='$objekt_id' 
+        $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` , `EINHEIT.id` AS EINHEIT_ID,  ltrim(rtrim(EINHEIT_LAGE)) AS EINHEIT_LAGE, `EINHEIT_QM` FROM EINHEIT , HAUS, OBJEKT
+WHERE `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.id && HAUS.OBJEKT_ID=OBJEKT.id && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && OBJEKT.id='$objekt_id' 
 ORDER BY EINHEIT_KURZNAME";
 
         $result = DB::select($db_abfrage);
@@ -3073,9 +3071,6 @@ ORDER BY EINHEIT_KURZNAME";
                     }
                     $my_arr [$a] ['AUSGABEN'] [$anz_rep] ['BETRAG'] = '<b>' . nummer_punkt2komma_t($summe_rep) . '</b>';
                     $my_arr [$a] ['AUSGABEN'] [$anz_rep] ['VERWENDUNGSZWECK'] = '<b>Summe</b>';
-
-                    // echo "'EINHEIT', $my_arr[$a]['EINHEIT_ID'], $monat, $jahr, $gk->geldkonto_id<br>";
-                    // print_r($arr);
 
                     $mk = new mietkonto ();
                     $mk->kaltmiete_monatlich($my_arr [$a] ['MIETVERTRAG_ID'], $monat, $jahr);
@@ -3381,7 +3376,7 @@ ORDER BY EINHEIT_KURZNAME";
 
     function get_mv_et_zeitraum_arr($einheit_id, $datum_von, $datum_bis)
     {
-        $db_abfrage = "SELECT * FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1'  && MIETVERTRAG_VON<='$datum_bis' && ( MIETVERTRAG_BIS > '$datum_von' OR MIETVERTRAG_BIS = '0000-00-00' ) ORDER BY MIETVERTRAG_VON ASC";
+        $db_abfrage = "SELECT *, id AS MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1'  && MIETVERTRAG_VON<='$datum_bis' && ( MIETVERTRAG_BIS > '$datum_von' OR MIETVERTRAG_BIS = '0000-00-00' ) ORDER BY MIETVERTRAG_VON ASC";
         $result = DB::select($db_abfrage);
         return $result;
     }
@@ -3930,7 +3925,7 @@ ORDER BY EINHEIT_KURZNAME";
             // $pdf->ezStream();
         } // end if ET exist
     }
-    
+
     function bebuchte_konten_brutto($gk_id, $einheit_id, $monat, $jahr, $et_id, $mv_arr = null)
     {
         // echo "$gk_id, $einheit_id, $et_id, $monat, $jahr, $mv_id<br>";
@@ -4613,7 +4608,7 @@ ORDER BY EINHEIT_KURZNAME";
             }
         }
     }
-    
+
     function form_sepa_ueberweisung_et($e_id, $betrag)
     {
         $gk = new geldkonto_info ();
@@ -4649,7 +4644,7 @@ ORDER BY EINHEIT_KURZNAME";
         }
         $f->ende_formular();
     }
-    
+
     function bebuchte_konten($gk_id, $einheit_id, $monat, $jahr, $et_id, $mv_id = null)
     {
         // echo "$gk_id, $einheit_id, $et_id, $monat, $jahr, $mv_id<br>";
@@ -4768,7 +4763,7 @@ ORDER BY EINHEIT_KURZNAME";
         $datum_von = "$jahr-$monat-01";
         $ltag = letzter_tag_im_monat($monat, $jahr);
         $datum_bis = "$jahr-$monat-$ltag";
-        $result = DB::select("SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1'  && MIETVERTRAG_VON<='$datum_bis' && ( MIETVERTRAG_BIS >= '$datum_von' OR MIETVERTRAG_BIS = '0000-00-00' ) ORDER BY MIETVERTRAG_VON DESC LIMIT 0 , 1 ");
+        $result = DB::select("SELECT id AS MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1'  && MIETVERTRAG_VON<='$datum_bis' && ( MIETVERTRAG_BIS >= '$datum_von' OR MIETVERTRAG_BIS = '0000-00-00' ) ORDER BY MIETVERTRAG_VON DESC LIMIT 0 , 1 ");
         if (!empty($result)) {
             $row = $result[0];
             return $row ['MIETVERTRAG_ID'];
@@ -5094,7 +5089,7 @@ ORDER BY EINHEIT_KURZNAME";
         $gk_id = $this->gk_id;
 
         /* Eingrenzung Kostenabragen */
-        if (!request()->has('von') or !request()->has('bis')) {
+        if (!request()->filled('von') or !request()->filled('bis')) {
             $von = "01.$monat.$jahr";
             $lt = letzter_tag_im_monat($monat, $jahr);
             $bis = "$lt.$monat.$jahr";
@@ -5282,7 +5277,7 @@ ORDER BY EINHEIT_KURZNAME";
             return $arr;
         }
     }
-    
+
     function auszugtest3($et_id, $von = null, $bis = null, $saldo_et = '0.00')
     {
         $this->saldo_et = $saldo_et;
@@ -5636,7 +5631,7 @@ ORDER BY EINHEIT_KURZNAME";
         }
         echo "</table>";
 
-        if (request()->has('pdf')) {
+        if (request()->filled('pdf')) {
             ob_clean(); // ausgabepuffer leeren
             $pdf = new Cezpdf ('a4', 'portrait');
             $bpdf = new b_pdf ();
@@ -5690,7 +5685,7 @@ ORDER BY EINHEIT_KURZNAME";
             $pdf->ezStream();
         }
     }
-    
+
     function parse_auszug($upload_file)
     {
         $file = file($upload_file);

@@ -1,0 +1,3 @@
+mutation Dial($id: ID!) {
+    dial(id: $id)
+}

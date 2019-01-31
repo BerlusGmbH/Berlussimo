@@ -1,0 +1,22 @@
+#import "../../../../../graphql/JobTitleBaseFragment.graphql"
+#import "../../../../../graphql/JobBaseFragment.graphql"
+#import "../../../../../graphql/PartnerBaseFragment.graphql"
+#import "../../../../../graphql/PersonBaseFragment.graphql"
+
+mutation UpdateJob($input: UpdateJobInput!) {
+    updateJob(input: $input) {
+        ...JobBase
+        employer {
+            ...PartnerBase
+            availableJobTitles {
+                ...JobTitleBase
+            }
+        }
+        title {
+            ...JobTitleBase
+        }
+        employee {
+            ...PersonBase
+        }
+    }
+}

@@ -1,0 +1,12 @@
+#import "./PropertyBaseFragment.graphql"
+
+fragment PropertyCopiedNotificationBase on PropertyCopiedNotification {
+    __typename
+    id
+    source {
+        ...PropertyBase
+    }
+    target {
+        ...PropertyBase
+    }
+}

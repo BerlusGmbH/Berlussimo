@@ -56,16 +56,8 @@ class CreatePersonsTable extends Migration
                             $audit->ip_address = $protokoll['PROTOKOLL_COMPUTER'];
                             $user_id = DB::table('BENUTZER')
                                 ->where('benutzername', $protokoll['PROTOKOLL_WER'])->select(['benutzer_id'])->first();
-                            if (!$user_id) {
-                                $user_id = \App\Models\User::where('email', $protokoll['PROTOKOLL_WER'])->select(['id'])->first();
-                                if ($user_id) {
-                                    $user_id = $user_id->id;
-                                }
-                            } else {
-                                $user_id = $user_id['benutzer_id'];
-                            }
-                            if ($user_id) {
-                                $audit->person_id = $user_id;
+                            if (isset($user_id)) {
+                                $audit->user_id = $user_id['benutzer_id'];
                             }
                             $audit->save();
                         } else {
@@ -104,7 +96,7 @@ class CreatePersonsTable extends Migration
                             $user_id = $user_id['benutzer_id'];
                         }
                         if ($user_id) {
-                            $audit->person_id = $user_id;
+                            $audit->user_id = $user_id;
                         }
                         $audit->save();
                     } else {

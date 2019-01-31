@@ -1,0 +1,11 @@
+#import "../../../../graphql/DetailCategoryBaseFragment.graphql"
+#import "../../../../graphql/DetailSubcategoryBaseFragment.graphql"
+
+query Categories($detailableType: DetailableType) {
+    detailCategories(detailableType: $detailableType) {
+        ...DetailCategoryBase
+        subcategories {
+            ...DetailSubcategoryBase
+        }
+    }
+}

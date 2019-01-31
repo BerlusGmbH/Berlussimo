@@ -8,8 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class RentDefinition extends Model
 {
+    public $timestamps = false;
     protected $table = 'MIETENTWICKLUNG';
     protected $primaryKey = 'MIETENTWICKLUNG_ID';
+    protected $externalKey = 'MIETENTWICKLUNG_DAT';
 
     /**
      * The attributes that are not mass assignable.

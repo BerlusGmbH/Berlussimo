@@ -1,0 +1,7 @@
+#import "./AccountingEntityIdentifierFragment.graphql"
+
+query AccountingEntityIdentifier($id: ID!) {
+    accountingEntity(id: $id) {
+        ...AccountingEntityIdentifier
+    }
+}

@@ -1,0 +1,7 @@
+#import "../../../../../graphql/AssignmentBaseFragment.graphql"
+
+mutation CreateAssignment($input: CreateAssignmentInput!) {
+    createAssignment(input: $input) {
+        ...AssignmentBase
+    }
+}

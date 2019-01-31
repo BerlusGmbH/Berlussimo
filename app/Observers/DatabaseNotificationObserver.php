@@ -2,14 +2,13 @@
 
 namespace App\Observers;
 
-
-use App\Notifications\NotificationsUpdated;
 use Illuminate\Notifications\DatabaseNotification;
+use Nuwave\Lighthouse\Execution\Utils\Subscription;
 
 class DatabaseNotificationObserver
 {
     public function created(DatabaseNotification $notification)
     {
-        $notification->notifiable->notify(new NotificationsUpdated());
+        Subscription::broadcast('notificationAdded', $notification);
     }
 }

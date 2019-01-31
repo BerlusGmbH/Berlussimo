@@ -1,0 +1,8 @@
+query QuantityUnits {
+    invoiceLineQuantityUnits {
+        __typename
+        id
+        name
+        description
+    }
+}

@@ -1,0 +1,9 @@
+fragment DetailBase on DetailInterface {
+    __typename
+    id
+    detailableType
+    detailableId
+    category
+    value
+    comment
+}

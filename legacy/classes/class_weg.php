@@ -470,7 +470,7 @@ class weg
 
     function get_last_eigentuemer_arr($einheit_id)
     {
-        $result = DB::select("SELECT * FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON DESC LIMIT 0,1");
+        $result = DB::select("SELECT *, WEG_MITEIGENTUEMER.id AS ID FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON DESC LIMIT 0,1");
         if (!empty($result)) {
             return $result[0];
         }
@@ -741,7 +741,7 @@ class weg
 
     function get_einheit_id_from_eigentuemer($e_id)
     {
-        $result = DB::select("SELECT EINHEIT_ID, VON, BIS FROM WEG_MITEIGENTUEMER WHERE ID='$e_id' && AKTUELL='1' ORDER BY DAT DESC LIMIT 0,1");
+        $result = DB::select("SELECT EINHEIT_ID, VON, BIS FROM WEG_MITEIGENTUEMER WHERE id='$e_id' && AKTUELL='1' ORDER BY DAT DESC LIMIT 0,1");
         if (!empty($result)) {
             $row = $result[0];
             $this->eigentuemer_von = $row ['VON'];
@@ -769,7 +769,7 @@ class weg
     function eigentuemer_aendern_db($et_id, $einheit_id, $eigent_arr, $eigentuemer_von, $eigentuemer_bis)
     {
         /* ET_ID INAKTIV */
-        $db_abfrage = "UPDATE WEG_MITEIGENTUEMER SET AKTUELL='0' where AKTUELL='1' && ID='$et_id'";
+        $db_abfrage = "UPDATE WEG_MITEIGENTUEMER SET AKTUELL='0' where AKTUELL='1' && id='$et_id'";
         DB::update($db_abfrage);
 
         /* PERSONEN von ET_ID INAKTIV */
@@ -990,7 +990,7 @@ class weg
 
     function get_eigentuemer_arr($einheit_id)
     {
-        $result = DB::select("SELECT * FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON ASC");
+        $result = DB::select("SELECT *, WEG_MITEIGENTUEMER.id AS ID FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON ASC");
         return $result;
     }
 
@@ -1053,12 +1053,12 @@ class weg
         if (isset ($alt_id) && !empty ($alt_id)) {
             $o = new objekt ();
             $akt_eigentuemer_bis = $o->datum_minus_tage($eigentuemer_von, 1);
-            $db_abfrage = "UPDATE WEG_MITEIGENTUEMER SET BIS='$akt_eigentuemer_bis' where AKTUELL='1' && ID='$alt_id'";
+            $db_abfrage = "UPDATE WEG_MITEIGENTUEMER SET BIS='$akt_eigentuemer_bis' where AKTUELL='1' && id='$alt_id'";
             DB::update($db_abfrage);
         }
 
         /* Neue Eigentümer eintragen */
-        $id = last_id2('WEG_MITEIGENTUEMER', 'ID') + 1;
+        $id = last_id2('WEG_MITEIGENTUEMER', 'id') + 1;
         $db_abfrage = "INSERT INTO WEG_MITEIGENTUEMER VALUES (NULL, '$id', '$einheit_id', '$eigentuemer_von', '$eigentuemer_bis', '1')";
         DB::insert($db_abfrage);
         /* Zugewiesene MIETBUCHUNG_DAT auslesen */
@@ -1080,7 +1080,7 @@ class weg
 
     function check_miteigentuemer($einheit_id)
     {
-        $result = DB::select("SELECT ID FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON DESC LIMIT 0,1");
+        $result = DB::select("SELECT id AS ID FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON DESC LIMIT 0,1");
         if (!empty($result)) {
             $row = $result[0];
             return $row ['ID'];
@@ -1090,7 +1090,7 @@ class weg
     function eigentuemer_neu($einheit_id, $von, $bis)
     {
         /* Neue Eigentümer eintragen */
-        $id = last_id2('WEG_MITEIGENTUEMER', 'ID') + 1;
+        $id = last_id2('WEG_MITEIGENTUEMER', 'id') + 1;
         $db_abfrage = "INSERT INTO WEG_MITEIGENTUEMER VALUES (NULL, '$id', '$einheit_id', '$von', '$bis', '1')";
         DB::insert($db_abfrage);
         /* Zugewiesene MIETBUCHUNG_DAT auslesen */
@@ -1155,7 +1155,7 @@ class weg
         $j = $datum_arr [0]; // Jahr
         $m = $datum_arr [1]; // Monat
         $t = $datum_arr [2]; // Tag
-        if (!request()->has('jahr') || request()->input('jahr') == date("Y")) {
+        if (!request()->filled('jahr') || request()->input('jahr') == date("Y")) {
             $akt_jahr = date("Y");
             $akt_monat = date("m");
         } else {
@@ -1365,7 +1365,7 @@ class weg
 
     function get_eigentuemer_arr_2($einheit_id, $sortvon = 'DESC')
     {
-        $result = DB::select("SELECT * FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON $sortvon");
+        $result = DB::select("SELECT *, WEG_MITEIGENTUEMER.id AS ID FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' ORDER BY VON $sortvon");
         return $result;
     }
 
@@ -2267,7 +2267,7 @@ class weg
         $m = $datum_arr [1]; // Monat
         $t = $datum_arr [2]; // Tag
 
-        if (!request()->has('jahr') || request()->input('jahr') == date("Y")) {
+        if (!request()->filled('jahr') || request()->input('jahr') == date("Y")) {
             $akt_jahr = date("Y");
             $akt_monat = date("m");
         } else {
@@ -2524,7 +2524,7 @@ class weg
         $bpdf = new b_pdf ();
         $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
         $this->hausgeld_kontoauszug_pdf($pdf, $eigentuemer_id, 0); // null für keine neue Seite
-        if (request()->has('jahr')) {
+        if (request()->filled('jahr')) {
             $this->hg_ist_soll_pdf($pdf, $eigentuemer_id, request()->input('jahr'));
             $this->hga_uebersicht_pdf($pdf, $eigentuemer_id);
         }
@@ -2703,7 +2703,7 @@ class weg
     {
         $e_konto = 6050;
         $this->get_eigentumer_id_infos($eigentuemer_id);
-        if (request()->has('jahr')) {
+        if (request()->filled('jahr')) {
             $jahr = request()->input('jahr');
         } else {
             $jahr = $akt_jahr = date("Y");
@@ -4804,7 +4804,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
 
         $bk = new bk ();
 
-        $result = DB::select("SELECT * FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' && (DATE_FORMAT(VON, '%Y') <='$jahr' AND BIS='0000-00-00' OR DATE_FORMAT(VON, '%Y') <='$jahr' AND DATE_FORMAT(BIS, '%Y') >='$jahr') ORDER BY VON ASC");
+        $result = DB::select("SELECT *, WEG_MITEIGENTUEMER.id AS ID FROM WEG_MITEIGENTUEMER WHERE EINHEIT_ID='$einheit_id' && AKTUELL='1' && (DATE_FORMAT(VON, '%Y') <='$jahr' AND BIS='0000-00-00' OR DATE_FORMAT(VON, '%Y') <='$jahr' AND DATE_FORMAT(BIS, '%Y') >='$jahr') ORDER BY VON ASC");
         if (!empty($result)) {
             $z = 0;
             foreach ($result as $row) {
@@ -6096,7 +6096,8 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             ));
 
             $today = \Carbon\Carbon::today();
-            $geldkonto = \App\Models\Objekte::findOrFail($e->objekt_id)
+            $geldkonto = \App\Models\Objekte::where('id', $e->objekt_id)
+                ->firstOrFail()
                 ->bankkonten()
                 ->wherePivot('VERWENDUNGSZWECK', 'Hausgeld')
                 ->wherePivot('VON', '<=', $today)
@@ -6570,7 +6571,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
                 new \App\Messages\InfoMessage('Bitte wählen Sie ein Geldkonto.')
             );
         }
-        if (!request()->has('schritt')) {
+        if (!request()->filled('schritt')) {
             $f = new formular ();
             $f->fieldset('Assistent für HG Abrechnung', 'ass_weg');
             $f->erstelle_formular('Schritt 1', '');
@@ -6592,10 +6593,10 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
             $f->fieldset_ende();
         }
 
-        if (request()->has('schritt')) {
+        if (request()->filled('schritt')) {
             switch (request()->input('schritt')) {
                 case "2" :
-                    if (request()->has('profil_id')) {
+                    if (request()->filled('profil_id')) {
                         session()->put('hga_profil_id', request()->input('profil_id'));
                         $this->get_hga_profil_infos(request()->input('profil_id'));
                         session()->put('objekt_id', $this->p_objekt_id);
@@ -6611,14 +6612,14 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
                     break;
 
                 case "3" :
-                    if (request()->has('profil_id')) {
+                    if (request()->filled('profil_id')) {
                         session()->put('hga_profil_id', request()->input('profil_id'));
                     }
                     $this->form_hk_verbrauch(session()->get('hga_profil_id'));
                     break;
 
                 case "4" :
-                    if (request()->has('profil_id')) {
+                    if (request()->filled('profil_id')) {
                         session()->put('hga_profil_id', request()->input('profil_id'));
                     }
                     $this->form_hg_zahlungen(session()->get('hga_profil_id'));
@@ -7243,7 +7244,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
 
     function form_hausgeldzahlungen($objekt_id)
     {
-        if (!request()->has('jahr')) {
+        if (!request()->filled('jahr')) {
             $jahr = date("Y");
         } else {
             $jahr = request()->input('jahr');
@@ -7320,7 +7321,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
 
     function form_hausgeldzahlungen_xls($objekt_id)
     {
-        if (!request()->has('jahr')) {
+        if (!request()->filled('jahr')) {
             $jahr = date("Y");
         } else {
             $jahr = request()->input('jahr');
@@ -7617,7 +7618,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
             }
             return $csv_string;
         }
-        if (request()->has('csv')) {
+        if (request()->filled('csv')) {
             ob_clean();
             header("Content-Disposition: attachment; filename='ET.CSV");
             $ueberschrift = array_keys($csv [0]);
@@ -7643,7 +7644,7 @@ WHERE  `GELDKONTO_ID` ='$gk_id' &&  `KOSTENTRAEGER_TYP` =  'Eigentuemer' &&  `KO
         $pdf->ezStopPageNumbers(); // seitennummerirung beenden
         $p = new partners ();
         $p->get_partner_info(session()->get('partner_id'));
-        if (request()->has('lang') && request()->input('lang') == 'en') {
+        if (request()->filled('lang') && request()->input('lang') == 'en') {
             $cols = array(
                 'EINHEIT_KURZNAME' => "AP",
                 'HAUS_STRASSE' => "STREET",

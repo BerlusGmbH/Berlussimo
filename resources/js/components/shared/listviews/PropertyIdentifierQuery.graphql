@@ -1,0 +1,7 @@
+#import "./PropertyIdentifierFragment.graphql"
+
+query PropertyIdentifier($id: ID!) {
+    property(id: $id) {
+        ...PropertyIdentifier
+    }
+}

@@ -10,7 +10,7 @@ class mietvertrag extends einheit {
     var $einheit_id_of_mietvertrag;
     function get_mietvertrag_infos_aktuell($einheit_id) {
         $datum_heute = date ( "Y-m-d" );
-        $result = DB::select( "SELECT * FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && EINHEIT_ID='$einheit_id' && ((MIETVERTRAG_BIS>='$datum_heute') OR (MIETVERTRAG_BIS = '0000-00-00')) ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1" );
+        $result = DB::select("SELECT *, id AS MIETVERTRAG_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && EINHEIT_ID='$einheit_id' && ((MIETVERTRAG_BIS>='$datum_heute') OR (MIETVERTRAG_BIS = '0000-00-00')) ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1");
 
         $row = $result[0];
 
@@ -27,13 +27,13 @@ class mietvertrag extends einheit {
         return $result;
     }
     function get_einheit_id_von_mietvertrag($mietvertrag_id) {
-        $result = DB::select( "SELECT EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && MIETVERTRAG_ID='$mietvertrag_id' ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1" );
+        $result = DB::select("SELECT EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && id='$mietvertrag_id' ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1");
         $row = $result[0];
         $this->get_einheit_info ( $row ['EINHEIT_ID'] );
         return $row ['EINHEIT_ID'];
     }
     function get_mietvertrag_einzugs_datum($mietvertrag_id) {
-        $result = DB::select( "SELECT MIETVERTRAG_VON FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && MIETVERTRAG_ID='$mietvertrag_id' ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1" );
+        $result = DB::select("SELECT MIETVERTRAG_VON FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && id='$mietvertrag_id' ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1");
         $row = $result[0];
         return $row ['MIETVERTRAG_VON'];
     }

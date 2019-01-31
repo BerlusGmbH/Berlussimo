@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\DefaultOrder;
+use App\Models\Traits\ExternalKey;
 use App\Models\Traits\Searchable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,23 +13,19 @@ class Haeuser extends Model
 {
     use Searchable;
     use DefaultOrder;
+    use ExternalKey;
 
     public $timestamps = false;
     protected $table = 'HAUS';
-    protected $primaryKey = 'HAUS_ID';
+    protected $primaryKey = 'HAUS_DAT';
+    protected $externalKey = 'id';
     protected $searchableFields = ['HAUS_STRASSE', 'HAUS_NUMMER', 'HAUS_PLZ', 'HAUS_STADT'];
     protected $defaultOrder = ['HAUS_STRASSE' => 'asc',
         'CAST(HAUS_NUMMER AS UNSIGNED)' => 'asc',
         'LENGTH(HAUS_NUMMER)' => 'asc',
         'HAUS_NUMMER' => 'asc'
     ];
-    protected $appends = ['type'];
     protected $guarded = [];
-
-    static public function getTypeAttribute()
-    {
-        return 'house';
-    }
 
     protected static function boot()
     {
@@ -44,15 +41,15 @@ class Haeuser extends Model
 
     public function objekt()
     {
-        return $this->belongsTo('App\Models\Objekte', 'OBJEKT_ID', 'OBJEKT_ID');
+        return $this->belongsTo(Objekte::class, 'OBJEKT_ID', 'id');
     }
 
     public function einheiten() {
-        return $this->hasMany('App\Models\Einheiten', 'HAUS_ID', 'HAUS_ID');
+        return $this->hasMany(Einheiten::class, 'HAUS_ID', 'id');
     }
 
     public function auftraege() {
-        return $this->morphMany(Auftraege::class, 'kostentraeger', 'KOS_TYP', 'KOS_ID');
+        return $this->morphMany(Auftraege::class, 'kostentraeger', 'KOS_TYP', 'KOS_ID', 'id');
     }
 
     public function commonDetails() {
@@ -61,7 +58,7 @@ class Haeuser extends Model
 
     public function details()
     {
-        return $this->morphMany('App\Models\Details', 'details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID');
+        return $this->morphMany('App\Models\Details', 'details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID', 'id');
     }
 
     public function hinweise() {
@@ -78,7 +75,7 @@ class Haeuser extends Model
         }
         return Person::whereHas('mietvertraege', function ($query) use ($date){
             $query->whereHas('einheit.haus', function ($query) {
-                    $query->where('HAUS_ID', $this->HAUS_ID);
+                $query->where('id', $this->id);
             })->active('=', $date);
         });
     }
@@ -90,7 +87,7 @@ class Haeuser extends Model
         }
         return Person::whereHas('kaufvertraege', function ($query) use ($date) {
             $query->whereHas('einheit.haus', function ($query) {
-                $query->where('HAUS_ID', $this->HAUS_ID);
+                $query->where('id', $this->id);
             })->active('=', $date);
         });
     }
@@ -98,7 +95,7 @@ class Haeuser extends Model
     public function getWohnflaecheAttribute()
     {
         $flaeche = Einheiten::whereHas('haus', function ($query) {
-            $query->where('HAUS_ID', $this->HAUS_ID);
+            $query->where('id', $this->id);
         })->whereIn('TYP', ['Wohnraum', 'Wohneigentum'])->sum('EINHEIT_QM');
         return isset($flaeche) ? $flaeche : 0;
     }
@@ -106,8 +103,34 @@ class Haeuser extends Model
     public function getGewerbeflaecheAttribute()
     {
         $flaeche = Einheiten::whereHas('haus', function ($query) {
-            $query->where('HAUS_ID', $this->HAUS_ID);
+            $query->where('id', $this->id);
         })->where('TYP', 'Gewerbe')->sum('EINHEIT_QM');
         return isset($flaeche) ? $flaeche : 0;
+    }
+
+    public function getHomeOwnersEMailsAttribute()
+    {
+        $emails = Details::where('DETAIL_NAME', 'Email')->whereHas('detailablePerson.kaufvertraege.einheit.haus', function ($query) {
+            $query->where('id', $this->id);
+        })->get();
+        return $emails;
+    }
+
+    public function getTenantsEMailsAttribute()
+    {
+        $emails = Details::where('DETAIL_NAME', 'Email')->whereHas('detailablePerson.mietvertraege.einheit.haus', function ($query) {
+            $query->where('id', $this->id);
+        })->get();
+        return $emails;
+    }
+
+    public function getHomeOwnersAttribute()
+    {
+        return $this->WEGEigentuemer()->get();
+    }
+
+    public function getTenantsAttribute()
+    {
+        return $this->mieter()->get();
     }
 }

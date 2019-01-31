@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Legacy;
 
 
 use App\Http\Requests\Legacy\WEGRequest;
-use App\Models\HomeownerAssociationBudget;
+use App\Models\HomeOwnerAssociationBudget;
 use DB;
 use URL;
 
@@ -30,7 +30,7 @@ class WEGController extends LegacyController
         return redirect(URL::previous());
     }
 
-    public function storeEnergyCostAdjustment(HomeownerAssociationBudget $budget)
+    public function storeEnergyCostAdjustment(HomeOwnerAssociationBudget $budget)
     {
         if (request()->has('energyCostAdjustment')) {
             $budget->ENERGIEKOSTENANPASSUNG = request()->input('energyCostAdjustment');

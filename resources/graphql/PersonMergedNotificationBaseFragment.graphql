@@ -1,0 +1,15 @@
+#import "./PersonBaseFragment.graphql"
+
+fragment PersonMergedNotificationBase on PersonMergedNotification {
+    __typename
+    id
+    left {
+        ...PersonBase
+    }
+    right {
+        ...PersonBase
+    }
+    merged {
+        ...PersonBase
+    }
+}

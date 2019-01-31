@@ -35,7 +35,7 @@ class NchanBroadcaster extends Broadcaster
      */
     public function auth($request)
     {
-        if (!$request->has('channels')) {
+        if (!$request->filled('channels')) {
             throw new HttpException(403);
         }
 

@@ -66,14 +66,14 @@ class leerstand
     function leerstand_finden_monat($objekt_id, $datum)
     {
         $result = DB::select("
-          SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME,  EINHEIT_QM,  EINHEIT.HAUS_ID,  CONCAT(HAUS_STRASSE, HAUS_NUMMER) AS HAUS_STRASSE,  EINHEIT_QM, TRIM(EINHEIT_LAGE) AS EINHEIT_LAGE, EINHEIT.TYP 
-          FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID='$objekt_id' )
-          WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID NOT IN (
+          SELECT OBJEKT_KURZNAME, EINHEIT.id AS EINHEIT_ID, EINHEIT_KURZNAME,  EINHEIT_QM,  EINHEIT.HAUS_ID,  CONCAT(HAUS_STRASSE, HAUS_NUMMER) AS HAUS_STRASSE,  EINHEIT_QM, TRIM(EINHEIT_LAGE) AS EINHEIT_LAGE, EINHEIT.TYP 
+          FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT) ON ( EINHEIT.HAUS_ID = HAUS.id && HAUS.OBJEKT_ID = OBJEKT.id && OBJEKT.id='$objekt_id' )
+          WHERE EINHEIT_AKTUELL='1' && EINHEIT.id NOT IN (
             SELECT EINHEIT_ID
             FROM MIETVERTRAG
             WHERE MIETVERTRAG_AKTUELL = '1' && DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m-%d' ) <= '$datum' && ( DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m-%d' ) >= '$datum' OR MIETVERTRAG_BIS = '0000-00-00' )
           )
-          GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC
+          GROUP BY EINHEIT.id ORDER BY EINHEIT_KURZNAME ASC
         ");
         return $result;
     }
@@ -256,7 +256,7 @@ class leerstand
         $pdf->ezSetDy(-8);
 
         if (session()->has('partner_id')) {
-            $partner = \App\Models\Partner::findOrFail(session()->get('partner_id'));
+            $partner = \App\Models\Partner::where('id', session()->get('partner_id'))->firstOrFail();
         } else {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage('Bitte wählen Sie einen Partner.')
@@ -438,7 +438,8 @@ class leerstand
 
         $vermietungstermin_text = "";
 
-        $vermietungstermin = \App\Models\Einheiten::findOrFail($einheit_id)
+        $vermietungstermin = \App\Models\Einheiten::where('id', $einheit_id)
+            ->firstOrFail()
             ->details()
             ->where('DETAIL_NAME', 'Vermietung-Vertragsbeginn')
             ->first();
@@ -446,7 +447,7 @@ class leerstand
             $vermietungstermin_text = "ab dem $vermietungstermin->DETAIL_INHALT oder bereits/erst ";
         } else {
             $mietvertrag = \App\Models\Mietvertraege::whereHas('einheit', function ($query) use ($einheit_id) {
-                $query->where('EINHEIT_ID', $einheit_id);
+                $query->where('id', $einheit_id);
             })->orderBy('MIETVERTRAG_VON', 'DESC')
                 ->first();
 
@@ -495,7 +496,7 @@ class leerstand
         $pdf->ezSetDy(-8);
 
         if (session()->has('partner_id')) {
-            $partner = \App\Models\Partner::findOrFail(session()->get('partner_id'));
+            $partner = \App\Models\Partner::where('id', session()->get('partner_id'))->firstOrFail();
         } else {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage('Bitte wählen Sie einen Partner.')
@@ -1761,7 +1762,7 @@ class leerstand
                 $netto_miete_20 = $einheit_qm * $ms_20proz;
 
                 $mietvertrag = \App\Models\Mietvertraege::whereHas('einheit', function ($query) use ($einheit_id) {
-                    $query->where('EINHEIT_ID', $einheit_id);
+                    $query->where('id', $einheit_id);
                 })->orderBy('MIETVERTRAG_VON', 'DESC')
                     ->first();
 

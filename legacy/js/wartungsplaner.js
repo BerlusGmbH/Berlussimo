@@ -81,7 +81,7 @@ function zentrieren(Lon, Lat, zoom) {
 
     map.addLayer(pois);
 
-    //Set start centrepoint and zoom    
+    //Set start centrepoint and zoom
     var lonLat = new OpenLayers.LonLat(Lon, Lat)
         .transform(
             new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
@@ -117,7 +117,7 @@ function reload() {
 
     map.addLayer(pois);
 
-    //Set start centrepoint and zoom    
+    //Set start centrepoint and zoom
     var lonLat = new OpenLayers.LonLat(13.41, 52.52)
         .transform(
             new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
@@ -346,7 +346,6 @@ function daj2(url, targ) {
             return true;
         };
         xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-        xmlhttp.setRequestHeader("Connection", "close");
         xmlhttp.send(null);
     }
 }
@@ -383,7 +382,6 @@ function daj3(url, targ) {
         return false;
     };
     xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-    xmlhttp.setRequestHeader("Connection", "close");
     xmlhttp.send(null);
 
 }
@@ -399,12 +397,14 @@ function transitionPromise(transition) {
             resolve();
         });
     } else if (transition.type === 'Request') {
-        let promise = axios.get(transition.value);
+        let promise = fetch(transition.value);
         if (transition.target) {
             let target = document.getElementById(transition.target);
             target.innerHTML = "Lade " + transition.value;
             promise.then((response) => {
-                target.innerHTML = response.data;
+                response.text().then(text => {
+                    target.innerHTML = text;
+                });
             });
         }
         return promise;
@@ -1391,4 +1391,3 @@ function termin_reservieren(datum, von, bis, b_id) {
     }
 
 }
- 

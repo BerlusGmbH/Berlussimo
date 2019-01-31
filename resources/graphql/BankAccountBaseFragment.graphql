@@ -1,0 +1,9 @@
+fragment BankAccountBase on BankAccount {
+    __typename
+    id
+    name
+    beneficiar
+    IBAN
+    BIC
+    bank
+}

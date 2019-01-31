@@ -1,0 +1,6 @@
+fragment FaxBase on Fax {
+    __typename
+    id
+    value
+    comment
+}

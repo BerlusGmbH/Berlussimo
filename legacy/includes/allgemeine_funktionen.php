@@ -143,19 +143,19 @@ function protokollieren($tabele, $dat_neu, $dat_alt)
 
 function anzahl_haeuser_im_objekt($obj_id)
 {
-    $result = DB::select("SELECT COUNT(HAUS_ID) AS ANZAHL FROM HAUS WHERE OBJEKT_ID='$obj_id' && HAUS_AKTUELL='1'");
+    $result = DB::select("SELECT COUNT(id) AS ANZAHL FROM HAUS WHERE OBJEKT_ID='$obj_id' && HAUS_AKTUELL='1'");
     return $result[0]['ANZAHL'];
 }
 
 function anzahl_einheiten_im_objekt($obj_id)
 {
-    $result = DB::select("SELECT COUNT(EINHEIT_ID) AS ANZAHL FROM HAUS JOIN EINHEIT ON(EINHEIT.HAUS_ID = HAUS.HAUS_ID) WHERE OBJEKT_ID='$obj_id' && HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1'");
+    $result = DB::select("SELECT COUNT(EINHEIT.id) AS ANZAHL FROM HAUS JOIN EINHEIT ON(EINHEIT.HAUS_ID = HAUS.id) WHERE OBJEKT_ID='$obj_id' && HAUS_AKTUELL='1' && EINHEIT_AKTUELL='1'");
     return $result[0]['ANZAHL'];
 }
 
 function objekt_kurzname($obj_id)
 {
-    $result = DB::select("SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_ID='$obj_id' && OBJEKT_AKTUELL='1' ORDER BY OBJEKT_DAT DESC LIMIT 0,1");
+    $result = DB::select("SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE id='$obj_id' && OBJEKT_AKTUELL='1' ORDER BY OBJEKT_DAT DESC LIMIT 0,1");
     foreach ($result as $row)
         return $row['OBJEKT_KURZNAME'];
 }
@@ -199,7 +199,7 @@ function check_datum($datum)
 
 function einheit_name($id)
 {
-    $result = DB::select("SELECT EINHEIT_KURZNAME FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID = '$id' order by EINHEIT_DAT DESC limit 0,1");
+    $result = DB::select("SELECT EINHEIT_KURZNAME FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT.id = '$id' order by EINHEIT_DAT DESC limit 0,1");
     foreach ($result as $row)
         return $row['EINHEIT_KURZNAME'];
 }
@@ -238,7 +238,7 @@ function mieternamen_in_array($mieter_id)
 function mieter_anzahl($einheit_id)
 {
     $datum_heute = date("Y-m-d");
-    $result = DB::select("SELECT MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM MIETVERTRAG where EINHEIT_ID='$einheit_id' && MIETVERTRAG_AKTUELL='1' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS>='$datum_heute') ORDER BY MIETVERTRAG_VON DESC LIMIT 0,1");
+    $result = DB::select("SELECT id AS MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM MIETVERTRAG where EINHEIT_ID='$einheit_id' && MIETVERTRAG_AKTUELL='1' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS>='$datum_heute') ORDER BY MIETVERTRAG_VON DESC LIMIT 0,1");
     if (empty($result)) {
         return "unvermietet";
     } else {
@@ -251,28 +251,28 @@ function mieter_anzahl($einheit_id)
 
 function einheit_kurzname($einheit_id)
 {
-    $result = DB::select("SELECT EINHEIT_KURZNAME FROM EINHEIT where EINHEIT_ID='$einheit_id' && EINHEIT_AKTUELL='1'");
+    $result = DB::select("SELECT EINHEIT_KURZNAME FROM EINHEIT where EINHEIT.id='$einheit_id' && EINHEIT_AKTUELL='1'");
     foreach ($result as $row)
         return $row['EINHEIT_KURZNAME'];
 }
 
 function einheit_id($mietvertrag_id)
 {
-    $result = DB::select("SELECT EINHEIT_ID FROM MIETVERTRAG where MIETVERTRAG_ID='$mietvertrag_id' && MIETVERTRAG_AKTUELL='1'");
+    $result = DB::select("SELECT EINHEIT_ID FROM MIETVERTRAG where id='$mietvertrag_id' && MIETVERTRAG_AKTUELL='1'");
     foreach ($result as $row)
         return $row['EINHEIT_ID'];
 }
 
 function haus_id($einheit_id)
 {
-    $result = DB::select("SELECT HAUS_ID FROM EINHEIT where EINHEIT_ID='$einheit_id' && EINHEIT_AKTUELL='1'");
+    $result = DB::select("SELECT id AS HAUS_ID FROM EINHEIT where EINHEIT.id='$einheit_id' && EINHEIT_AKTUELL='1'");
     foreach ($result as $row)
         return $row['HAUS_ID'];
 }
 
 function haus_strasse_nr($haus_id)
 {
-    $result = DB::select("SELECT HAUS_STRASSE, HAUS_NUMMER FROM HAUS where HAUS_ID='$haus_id' && HAUS_AKTUELL='1'");
+    $result = DB::select("SELECT HAUS_STRASSE, HAUS_NUMMER FROM HAUS where id='$haus_id' && HAUS_AKTUELL='1'");
     foreach ($result as $row)
         $haus_info = "$row[HAUS_STRASSE] $row[HAUS_NUMMER]";
     if (!empty ($haus_info)) {
@@ -332,7 +332,7 @@ function personen_name($person_id)
 function vertrags_id($einheit_id)
 {
     $heute = date("Y-m-d");
-    $result = DB::select("SELECT MIETVERTRAG_ID FROM MIETVERTRAG where EINHEIT_ID='$einheit_id' && MIETVERTRAG_AKTUELL='1' && (MIETVERTRAG_BIS ='0000-00-00' OR MIETVERTRAG_BIS>=$heute) ORDER BY MIETVERTRAG_VON DESC LIMIT 0,1");
+    $result = DB::select("SELECT MIETVERTRAG.id AS MIETVERTRAG_ID FROM MIETVERTRAG where EINHEIT_ID='$einheit_id' && MIETVERTRAG_AKTUELL='1' && (MIETVERTRAG_BIS ='0000-00-00' OR MIETVERTRAG_BIS>=$heute) ORDER BY MIETVERTRAG_VON DESC LIMIT 0,1");
     foreach ($result as $row) {
         return $row['MIETVERTRAG_ID'];
     }
@@ -404,10 +404,10 @@ function sprungmarken_links()
 
 function einheiten_ids_by_objekt($objekt_id)
 {
-    $result = DB::select("SELECT HAUS_ID FROM HAUS where OBJEKT_ID='$objekt_id' && HAUS_AKTUELL='1'");
+    $result = DB::select("SELECT id AS HAUS_ID FROM HAUS where OBJEKT_ID='$objekt_id' && HAUS_AKTUELL='1'");
     $einheit_ids = [];
     foreach ($result as $row) {
-        $result1 = DB::select("SELECT EINHEIT_ID, EINHEIT_KURZNAME FROM EINHEIT WHERE HAUS_ID='" . $row['HAUS_ID'] . "' && EINHEIT_AKTUELL='1' ORDER BY EINHEIT_KURZNAME ASC");
+        $result1 = DB::select("SELECT EINHEIT.id, EINHEIT.id AS EINHEIT_ID, EINHEIT_KURZNAME FROM EINHEIT WHERE HAUS_ID='" . $row['HAUS_ID'] . "' && EINHEIT_AKTUELL='1' ORDER BY EINHEIT_KURZNAME ASC");
         foreach ($result1 as $row1)
             $einheit_ids [] = $row1;
     }
@@ -455,7 +455,7 @@ function msort($array, $id = "id")
 function mietvertrag_liste_string()
 {
     $datum_heute = date("Y-m-d");
-    $result = DB::select("SELECT MIETVERTRAG_ID FROM MIETVERTRAG where MIETVERTRAG_AKTUELL='1' && ((MIETVERTRAG_BIS='0000-00-00') OR (MIETVERTRAG_BIS<'$datum_heute'))");
+    $result = DB::select("SELECT id AS MIETVERTRAG_ID FROM MIETVERTRAG where MIETVERTRAG_AKTUELL='1' && ((MIETVERTRAG_BIS='0000-00-00') OR (MIETVERTRAG_BIS<'$datum_heute'))");
     $mietervertrag_ids = array();
     foreach ($result as $row) {
         array_push($mietervertrag_ids, "$row[MIETVERTRAG_ID]");
@@ -503,7 +503,7 @@ function letzte_person_dat_of_person_id($person_id)
 
 function letzte_einheit_dat_of_einheit_id($einheit_id)
 {
-    $result = DB::select("SELECT EINHEIT_DAT FROM EINHEIT WHERE EINHEIT_ID='$einheit_id' ORDER BY EINHEIT_DAT DESC LIMIT 0,1");
+    $result = DB::select("SELECT EINHEIT_DAT FROM EINHEIT WHERE EINHEIT.id='$einheit_id' ORDER BY EINHEIT_DAT DESC LIMIT 0,1");
     foreach ($result as $row)
         return $row['EINHEIT_DAT'];
 }
@@ -517,7 +517,7 @@ function objekt_kurzname_finden($objekt_dat)
 
 function letzte_mietvertrag_dat_of_mietvertrag_id($mietvertrag_id)
 {
-    $result = DB::select("SELECT MIETVERTRAG_DAT FROM MIETVERTRAG WHERE MIETVERTRAG_ID='$mietvertrag_id' ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1");
+    $result = DB::select("SELECT MIETVERTRAG_DAT FROM MIETVERTRAG WHERE id='$mietvertrag_id' ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1");
     foreach ($result as $row)
         return $row['MIETVERTRAG_DAT'];
 }
@@ -610,7 +610,7 @@ function mietvertrag_anlegen($von, $bis, $einheit_id)
     $akt_mietvertrag_id = mietvertrag_id_letzte();
     $akt_mietvertrag_id = $akt_mietvertrag_id + 1;
     $dat_alt = letzte_mietvertrag_dat_of_mietvertrag_id($akt_mietvertrag_id);
-    DB::insert("INSERT INTO MIETVERTRAG (`MIETVERTRAG_DAT`, `MIETVERTRAG_ID`, `MIETVERTRAG_VON`, `MIETVERTRAG_BIS`, `EINHEIT_ID`, `MIETVERTRAG_AKTUELL`) VALUES (NULL, '$akt_mietvertrag_id', '$von', '$bis', '$einheit_id', '1')");
+    DB::insert("INSERT INTO MIETVERTRAG (`MIETVERTRAG_DAT`, `id`, `MIETVERTRAG_VON`, `MIETVERTRAG_BIS`, `EINHEIT_ID`, `MIETVERTRAG_AKTUELL`) VALUES (NULL, '$akt_mietvertrag_id', '$von', '$bis', '$einheit_id', '1')");
     $dat_neu = letzte_mietvertrag_dat_of_mietvertrag_id($akt_mietvertrag_id);
     protokollieren('MIETVERTRAG', $dat_neu, $dat_alt);
     return $akt_mietvertrag_id;
@@ -618,7 +618,7 @@ function mietvertrag_anlegen($von, $bis, $einheit_id)
 
 function mietvertrag_id_letzte()
 {
-    $result = DB::select("SELECT MIETVERTRAG_ID FROM MIETVERTRAG ORDER BY MIETVERTRAG_ID DESC LIMIT 0,1");
+    $result = DB::select("SELECT id AS MIETVERTRAG_ID FROM MIETVERTRAG ORDER BY MIETVERTRAG_ID DESC LIMIT 0,1");
     foreach ($result as $row) {
         return $row['MIETVERTRAG_ID'];
     }
@@ -626,7 +626,7 @@ function mietvertrag_id_letzte()
 
 function mietvertrag_id_by_dat($mietvertrag_dat)
 {
-    $result = DB::select("SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE MIETVERTRAG_DAT='$mietvertrag_dat'");
+    $result = DB::select("SELECT id AS MIETVERTRAG_ID FROM MIETVERTRAG WHERE MIETVERTRAG_DAT='$mietvertrag_dat'");
     foreach ($result as $row) {
         return $row['MIETVERTRAG_ID'];
     }
@@ -657,7 +657,7 @@ function br2n($my_str)
 
 function mietvertrag_by_einheit($einheit_id)
 {
-    $result = DB::select("SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID='$einheit_id' && MIETVERTRAG_AKTUELL='1' order by MIETVERTRAG_ID DESC limit 0,1");
+    $result = DB::select("SELECT id AS MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID='$einheit_id' && MIETVERTRAG_AKTUELL='1' order by MIETVERTRAG_ID DESC limit 0,1");
     foreach ($result as $row) {
         return $row['MIETVERTRAG_ID'];
     }
@@ -666,7 +666,7 @@ function mietvertrag_by_einheit($einheit_id)
 function mietvertrag_anzahl_einheit($einheit_id)
 {
     $datum_heute = date("Y-m-d");
-    $result = DB::select("SELECT COUNT(MIETVERTRAG_ID) AS ANZAHL FROM MIETVERTRAG WHERE EINHEIT_ID='$einheit_id' && MIETVERTRAG_AKTUELL='1' && ((MIETVERTRAG_BIS = '0000-00-00') OR (MIETVERTRAG_BIS > '$datum_heute')) order by MIETVERTRAG_ID DESC limit 0,1");
+    $result = DB::select("SELECT COUNT(id) AS ANZAHL FROM MIETVERTRAG WHERE EINHEIT_ID='$einheit_id' && MIETVERTRAG_AKTUELL='1' && ((MIETVERTRAG_BIS = '0000-00-00') OR (MIETVERTRAG_BIS > '$datum_heute')) order by MIETVERTRAG_ID DESC limit 0,1");
     return $result[0]['ANZAHL'];
 }
 

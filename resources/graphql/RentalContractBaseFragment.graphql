@@ -1,0 +1,11 @@
+#import "./UnitBaseFragment.graphql"
+
+fragment RentalContractBase on RentalContract {
+    __typename
+    id
+    start
+    end
+    unit {
+        ...UnitBase
+    }
+}

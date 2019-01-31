@@ -4,25 +4,23 @@ namespace App\Models;
 
 use App\Models\Scopes\AktuellScope;
 use App\Models\Traits\DefaultOrder;
+use App\Models\Traits\ExternalKey;
 use App\Models\Traits\Searchable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Wirtschaftseinheiten extends Model
 {
     use Searchable;
     use DefaultOrder;
+    use ExternalKey;
 
     public $timestamps = false;
     protected $table = 'WIRT_EINHEITEN';
-    protected $primaryKey = 'W_ID';
+    protected $primaryKey = 'W_DAT';
+    protected $externalKey = 'id';
     protected $searchableFields = ['W_NAME'];
     protected $defaultOrder = ['W_NAME' => 'asc'];
-    protected $appends = ['type'];
-
-    static public function getTypeAttribute()
-    {
-        return 'accounting_entity';
-    }
 
     protected static function boot()
     {
@@ -31,8 +29,15 @@ class Wirtschaftseinheiten extends Model
         static::addGlobalScope(new AktuellScope());
     }
 
-    public function einheiten()
+    public function einheiten(): BelongsToMany
     {
-        return $this->belongsToMany('App\Models\Einheiten', 'WIRT_EIN_TAB', 'W_ID', 'EINHEIT_ID')->wherePivot('AKTUELL', '1');
+        return $this->belongsToMany(
+            Einheiten::class,
+            'WIRT_EIN_TAB',
+            'W_ID',
+            'EINHEIT_ID',
+            'id',
+            'id'
+        )->wherePivot('AKTUELL', '1');
     }
 }

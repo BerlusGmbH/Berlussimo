@@ -1,0 +1,36 @@
+query TenantContacts(
+    $search: String,
+    $first: Int!,
+    $page: Int,
+    $partOf: [EntitySelect!]
+) @variables(variables: [
+    {name: "partOf", types: ["Property", "House", "Unit"], label: "Teil von", icon: "mdi-city"}
+]) {
+    units(search: $search, first: $first, page: $page, partOf: $partOf) {
+        data {
+            house {
+                property {
+                    ...PropertyIdentifier @label(text: "Objekt")
+                }
+                ...HouseIdentifier @label(text: "Haus")
+            }
+            ...UnitIdentifier @label(text: "Einheit")
+            location @label(text: "Lage")
+            rentalContracts {
+                ...RentalContractIdentifier @label(text: "Mietvertrag")
+                tenants {
+                    ...PersonIdentifier @label(text: "Mieter")
+                    phones {
+                        ...DetailIdentifier @label(text: "Telefon")
+                    }
+                    eMails {
+                        ...DetailIdentifier @label(text: "E-Mail")
+                    }
+                }
+            }
+        }
+        paginatorInfo {
+            ...PaginatorInfo
+        }
+    }
+}

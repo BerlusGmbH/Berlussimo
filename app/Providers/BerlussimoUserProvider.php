@@ -64,7 +64,7 @@ class BerlussimoUserProvider extends EloquentUserProvider
         $query = $this->createModel()->newQuery();
 
         foreach ($credentials as $key => $value) {
-            if (Str::contains($key, 'email')) {
+            if (Str::contains($key, 'username')) {
                 $query->whereHas('emails', function ($query) use ($value) {
                     $query->where('DETAIL_NAME', 'Email')
                         ->where('DETAIL_INHALT', $value);

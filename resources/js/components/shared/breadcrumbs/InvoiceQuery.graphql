@@ -1,0 +1,7 @@
+#import "../../../../graphql/InvoiceBaseFragment.graphql"
+
+query Invoice($id: ID!) {
+    invoice(id: $id) {
+        ...InvoiceBase
+    }
+}

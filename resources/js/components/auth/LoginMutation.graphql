@@ -1,0 +1,10 @@
+#import "../../../graphql/PersonBaseFragment.graphql"
+
+mutation Login($username: String, $password: String) {
+    login(username: $username, password: $password) {
+        user {
+            ... PersonBase
+        }
+        csrf
+    }
+}

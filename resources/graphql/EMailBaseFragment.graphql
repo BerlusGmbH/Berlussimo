@@ -1,0 +1,6 @@
+fragment EMailBase on EMail {
+    __typename
+    id
+    value
+    comment
+}

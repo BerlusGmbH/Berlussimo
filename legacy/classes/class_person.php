@@ -21,7 +21,7 @@ class person extends einheit {
     }
     function get_vertrags_status($mietvertrag_id) {
         $datum_heute = date ( "Y-m-d" );
-        $result = DB::select( "SELECT * FROM MIETVERTRAG WHERE MIETVERTRAG_ID = '$mietvertrag_id' && MIETVERTRAG_AKTUELL = '1' && ( (MIETVERTRAG_BIS >= '$datum_heute')
+        $result = DB::select("SELECT *, id AS MIETVERTRAG_ID FROM MIETVERTRAG WHERE id = '$mietvertrag_id' && MIETVERTRAG_AKTUELL = '1' && ( (MIETVERTRAG_BIS >= '$datum_heute')
 OR (MIETVERTRAG_BIS = '0000-00-00') ) " );
         return !empty($result);
     }

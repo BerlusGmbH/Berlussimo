@@ -1,6 +1,6 @@
 <?php
 
-if (request()->has('option') && !empty (request()->input('option'))) {
+if (request()->filled('option') && !empty (request()->input('option'))) {
     $option = request()->input('option');
 } else {
     $option = 'default';
@@ -28,11 +28,11 @@ switch ($option) {
         break;
 
     case "preisentwicklung" :
-        if (!request()->has('lieferant') && !session()->has('partner_id') && !request()->has('artikel_nr')) {
+        if (!request()->filled('lieferant') && !session()->has('partner_id') && !request()->filled('artikel_nr')) {
             weiterleiten(route('web::rechnungen::legacy', ['option' => 'partner_wechseln'], false));
             return;
         }
-        if (!request()->has('lieferant')) {
+        if (!request()->filled('lieferant')) {
             $p_id = session()->get('partner_id');
         } else {
             $p_id = request()->input('lieferant');
@@ -42,7 +42,7 @@ switch ($option) {
         $p->get_partner_info($p_id);
         echo "<h5>Preisentwicklung im Katalog von $p->partner_name</h5>";
 
-        if (!request()->has('artikel_nr')) {
+        if (!request()->filled('artikel_nr')) {
             $k = new katalog ();
             $k->form_preisentwicklung();
         } else {
@@ -58,7 +58,7 @@ switch ($option) {
         break;
 
     case "artikel_suche" :
-        if (request()->has('artikel_nr')) {
+        if (request()->filled('artikel_nr')) {
             $artikel_nr = request()->input('artikel_nr');
             $k = new katalog ();
             $k->artikel_suche_einkauf($artikel_nr);
@@ -71,7 +71,7 @@ switch ($option) {
         break;
 
     case "artikel_suche_freitext" :
-        if (request()->has('artikel_nr')) {
+        if (request()->filled('artikel_nr')) {
             $artikel_nr = request()->input('artikel_nr');
             $k = new katalog ();
             $k->artikel_suche_freitext($artikel_nr);
@@ -84,7 +84,7 @@ switch ($option) {
             $k = new katalog ();
             $k->form_zuletzt_gekauft(session()->get('partner_id'));
 
-            if (request()->has('art_anz')) {
+            if (request()->filled('art_anz')) {
                 $arr_pos = $k->get_positionen_arr(session()->get('partner_id'), request()->input('art_anz'));
             } else {
                 $arr_pos = $k->get_positionen_arr(session()->get('partner_id'), 15);

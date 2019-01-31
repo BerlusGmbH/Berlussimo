@@ -26,19 +26,22 @@ class CreateAuditsTable extends Migration
      */
     public function up()
     {
-        Schema::connection(Config::get('audit.drivers.database.connection'))
-            ->create(Config::get('audit.drivers.database.table'), function (Blueprint $table) {
-                $table->increments('id');
-                $table->unsignedInteger(Config::get('audit.user.foreign_key', 'user_id'))->nullable();
-                $table->string('event');
-                $table->morphs('auditable');
-                $table->text('old_values')->nullable();
-                $table->text('new_values')->nullable();
-                $table->string('url')->nullable();
-                $table->ipAddress('ip_address')->nullable();
-                $table->string('user_agent')->nullable();
-                $table->timestamps();
-            });
+        Schema::create('audits', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('user_type')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('event');
+            $table->morphs('auditable');
+            $table->text('old_values')->nullable();
+            $table->text('new_values')->nullable();
+            $table->text('url')->nullable();
+            $table->ipAddress('ip_address')->nullable();
+            $table->string('user_agent')->nullable();
+            $table->string('tags')->nullable();
+            $table->timestamps();
+
+            $table->index(['user_id', 'user_type']);
+        });
     }
 
     /**

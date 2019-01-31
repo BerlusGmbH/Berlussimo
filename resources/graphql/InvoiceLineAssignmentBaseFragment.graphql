@@ -1,0 +1,16 @@
+fragment InvoiceLineAssignmentBase on InvoiceLineAssignment {
+    __typename
+    id
+    position
+    invoiceId
+    quantity
+    price
+    VAT
+    rebate
+    discount
+    total
+    bookingAccountNumber
+    reassign
+    yearOfReassignment
+    accountingDate
+}

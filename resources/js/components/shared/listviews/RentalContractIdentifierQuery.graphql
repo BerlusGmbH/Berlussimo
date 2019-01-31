@@ -1,0 +1,7 @@
+#import "./RentalContractIdentifierFragment.graphql"
+
+query RentalContractIdentifier($id: ID!) {
+    rentalContract(id: $id) {
+        ...RentalContractIdentifier
+    }
+}

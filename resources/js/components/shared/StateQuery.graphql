@@ -1,0 +1,25 @@
+#import "../../../graphql/PropertyBaseFragment.graphql"
+#import "../../../graphql/PersonBaseFragment.graphql"
+#import "../../../graphql/PartnerBaseFragment.graphql"
+#import "../../../graphql/BankAccountBaseFragment.graphql"
+
+query State {
+    state {
+        globalSelect {
+            partner {
+                ...PartnerBase
+            }
+            property {
+                ...PropertyBase
+            }
+            bankAccount {
+                ...BankAccountBase
+            }
+        }
+        user {
+            ...PersonBase
+        }
+        csrf
+        phoneAtWorkplace
+    }
+}

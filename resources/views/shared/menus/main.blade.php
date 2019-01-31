@@ -25,7 +25,7 @@
 
     @can(\App\Libraries\Permission::PERMISSION_MODUL_MIETVERTRAG)
         <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
-            <a href='{{route('web::mietvertraege::legacy')}}'>Mietverträge</a>
+            <a href='/rentalcontracts'>Mietverträge</a>
         </div>
     @endcan
 

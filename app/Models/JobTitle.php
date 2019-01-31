@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\Traits\DefaultOrder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JobTitle extends Model
@@ -16,20 +18,14 @@ class JobTitle extends Model
     protected $searchableFields = ['title'];
     protected $defaultOrder = ['title' => 'asc'];
     protected $guarded = [];
-    protected $appends = ['type'];
 
-    static public function getTypeAttribute()
+    public function employer(): BelongsTo
     {
-        return 'job_title';
+        return $this->belongsTo(Partner::class, 'employer_id', 'id');
     }
 
-    public function employer()
+    public function employees(): BelongsToMany
     {
-        return $this->hasOne(Partner::class, 'employer_id');
-    }
-
-    public function employee()
-    {
-        return $this->hasOne(Person::class, 'employee_id');
+        return $this->belongsToMany(Person::class, 'jobs', 'employee_id', 'job_title_id', 'id', 'id');
     }
 }

@@ -1,0 +1,9 @@
+fragment UnitBase on Unit {
+    __typename
+    id
+    name
+    size
+    location
+    unitType
+    rented
+}

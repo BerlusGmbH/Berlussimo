@@ -14,19 +14,14 @@ class BookingAccount extends Model
 
     public $timestamps = false;
     protected $table = 'KONTENRAHMEN_KONTEN';
-    protected $primaryKey = 'KONTENRAHMEN_KONTEN_ID';
+    protected $primaryKey = 'KONTENRAHMEN_KONTEN_DAT';
+    protected $externalKey = 'KONTENRAHMEN_KONTEN_ID';
     protected $searchableFields = ['KONTO', 'BEZEICHNUNG'];
     protected $defaultOrder = [
         'KONTENRAHMEN_ID' => 'asc',
         'KONTO' => 'asc',
         'BEZEICHNUNG' => 'asc'
     ];
-    protected $appends = ['type'];
-
-    static public function getTypeAttribute()
-    {
-        return 'booking_account';
-    }
 
     protected static function boot()
     {
@@ -37,7 +32,7 @@ class BookingAccount extends Model
 
     public function bankAccountStandardChart()
     {
-        return $this->belongsTo(BankAccountStandardChart::class, 'KONTENRAHMEN_ID');
+        return $this->belongsTo(BankAccountStandardChart::class, 'KONTENRAHMEN_ID', 'KONTENRAHMEN_ID');
     }
 }
 

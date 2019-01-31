@@ -14,15 +14,10 @@ class BankAccountStandardChart extends Model
 
     public $timestamps = false;
     protected $table = 'KONTENRAHMEN';
-    protected $primaryKey = 'KONTENRAHMEN_ID';
+    protected $primaryKey = 'KONTENRAHMEN_DAT';
+    protected $externalKey = 'KONTENRAHMEN_ID';
     protected $searchableFields = ['NAME'];
     protected $defaultOrder = ['NAME' => 'asc'];
-    protected $appends = ['type'];
-
-    static public function getTypeAttribute()
-    {
-        return 'bank_account_standard_chart';
-    }
 
     protected static function boot()
     {
@@ -33,7 +28,7 @@ class BankAccountStandardChart extends Model
 
     public function bookingAccounts()
     {
-        return $this->hasMany(BookingAccount::class, 'EMPFANGS_GELD_KONTO');
+        return $this->hasMany(BookingAccount::class, 'EMPFANGS_GELD_KONTO', 'KONTENRAHMEN_ID');
     }
 }
 

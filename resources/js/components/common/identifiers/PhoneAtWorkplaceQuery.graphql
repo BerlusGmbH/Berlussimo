@@ -1,0 +1,5 @@
+query PhoneAtWorkplace {
+    state @client {
+        phoneAtWorkplace
+    }
+}

@@ -1,0 +1,4 @@
+fragment PropertyIdentifier on Property {
+    id
+    name
+}

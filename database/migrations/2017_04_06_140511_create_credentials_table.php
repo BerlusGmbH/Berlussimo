@@ -9,7 +9,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use OwenIt\Auditing\Models\Audit;
 
 class CreateCredentialsTable extends Migration
 {
@@ -27,7 +26,6 @@ class CreateCredentialsTable extends Migration
                 $table->primary('id');
                 $table->foreign('id')->references('id')->on('persons')->onDelete('cascade');
                 $table->string('password');
-                $table->string('api_token', 60)->unique();
                 $table->rememberToken();
                 $table->timestamps();
                 $table->softDeletes();
@@ -63,9 +61,8 @@ class CreateCredentialsTable extends Migration
             });
 
 
-            $trade_table = DB::table('GEWERKE');
-            if ($trade_table->exists()) {
-                $trades = $trade_table->where('AKTUELL', '1')->get();
+            if (Schema::hasTable('GEWERKE')) {
+                $trades = DB::table('GEWERKE')->where('AKTUELL', '1')->get();
                 foreach ($trades as $trade) {
                     JobTitle::create([
                         'id' => $trade['G_ID'],
@@ -75,209 +72,186 @@ class CreateCredentialsTable extends Migration
                 }
             }
 
-            $protokoll_table = DB::table('PROTOKOLL');
-            if ($protokoll_table->exists()) {
+            if (Schema::hasTable('PROTOKOLL')) {
                 DB::statement(
                     'ALTER TABLE `PROTOKOLL` 
                     CHANGE COLUMN `PROTOKOLL_WANN` `PROTOKOLL_WANN` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;'
                 );
             }
 
-            $user_table = DB::table('users');
-            if ($user_table->exists()) {
+            if (Schema::hasTable('BENUTZER')) {
                 $min_date = new Carbon('1900-01-01');
-                $users = $user_table->get();
+                $users = DB::table('BENUTZER')->get();
                 foreach ($users as $user) {
                     $person = new Person();
                     $person->timestamps = false;
-                    $person->name = $user['name'];
-                    if (Carbon::parse($user['birthday'])->lte($min_date)) {
+                    $person->name = $user['benutzername'];
+                    if (Carbon::parse($user['GEB_DAT'])->lte($min_date)) {
                         $person->birthday = null;
                     } else {
-                        $person->birthday = $user['birthday'];
+                        $person->birthday = $user['GEB_DAT'];
                     }
-                    $person->created_at = $user['created_at'];
-                    $person->updated_at = $user['updated_at'];
                     $person->save();
                     $credential = new Credential();
-                    $credential->password = $user['password'];
-                    $credential->api_token = $user['api_token'];
-                    $credential->remember_token = $user['remember_token'];
+                    $credential->password = Hash::make($user['passwort']);
                     $person->credential()->save($credential);
                     $person->details()->create([
                         'DETAIL_ID' => Details::max('DETAIL_ID') + 1,
                         'DETAIL_NAME' => 'Email',
-                        'DETAIL_INHALT' => $user['email'],
+                        'DETAIL_INHALT' => $user['benutzername'] . '@berlussimo',
                         'DETAIL_BEMERKUNG' => 'Stand: ' . Carbon::today()->toDateString(),
                         'DETAIL_AKTUELL' => '1'
                     ]);
-                    $module_table = DB::table('BENUTZER_MODULE');
-                    if ($module_table->exists()) {
-                        $module = $module_table->where('BENUTZER_ID', $user['id'])
+                    if (Schema::hasTable('BENUTZER_MODULE')) {
+                        $module = DB::table('BENUTZER_MODULE')->where('BENUTZER_ID', $user['benutzer_id'])
                             ->where('AKTUELL', '1')
                             ->first();
                         if ($module['MODUL_NAME'] == '*') {
                             $person->assignRole(Role::ROLE_ADMINISTRATOR);
                         }
                     }
-                    $benutzer_partner_table = DB::table('BENUTZER_PARTNER');
-                    if ($benutzer_partner_table->exists()) {
-                        $benutzer_partner = $benutzer_partner_table->where('BP_BENUTZER_ID', $user['id'])
+                    if (Schema::hasTable('BENUTZER_PARTNER')) {
+                        $benutzer_partner = DB::table('BENUTZER_PARTNER')->where('BP_BENUTZER_ID', $user['benutzer_id'])
                             ->where('AKTUELL', '1')->first();
                         if (is_null($benutzer_partner)) {
                             $benutzer_partner = ['BP_PARTNER_ID' => 1];
                         }
                         $person->jobsAsEmployee()->create([
-                            'join_date' => $user['join_date'],
-                            'leave_date' => $user['leave_date'] == '0000-00-00' ? null : $user['leave_date'],
-                            'hourly_rate' => $user['hourly_rate'],
-                            'hours_per_week' => $user['hours_per_week'],
-                            'holidays' => $user['holidays'],
-                            'job_title_id' => $user['trade_id'] == 0 ? null : $user['trade_id'],
+                            'join_date' => $user['EINTRITT'],
+                            'leave_date' => $user['AUSTRITT'] == '0000-00-00' ? null : $user['AUSTRITT'],
+                            'hourly_rate' => $user['STUNDENSATZ'],
+                            'hours_per_week' => $user['STUNDEN_PW'],
+                            'holidays' => $user['URLAUB'],
+                            'job_title_id' => $user['GEWERK_ID'] == 0 ? null : $user['GEWERK_ID'],
                             'employer_id' => $benutzer_partner['BP_PARTNER_ID']
                         ]);
                     }
 
-                    Audit::where('person_id', $user['id'])->update(['person_id' => $person->id]);
-
                     Details::where('DETAIL_ZUORDNUNG_TABELLE', 'Benutzer')
-                        ->where('DETAIL_ZUORDNUNG_ID', $user['id'])
+                        ->where('DETAIL_ZUORDNUNG_ID', $user['benutzer_id'])
                         ->update([
                             'DETAIL_ZUORDNUNG_TABELLE' => 'Person',
                             'DETAIL_ZUORDNUNG_ID' => $person->id
                         ]);
 
-                    $geld_konten_zuweisung_table = DB::table('GELD_KONTEN_ZUWEISUNG');
-                    if ($geld_konten_zuweisung_table->exists()) {
-                        $geld_konten_zuweisung_table->where('KOSTENTRAEGER_TYP', 'Benutzer')
-                            ->where('KOSTENTRAEGER_ID', $user['id'])
+                    if (Schema::hasTable('GELD_KONTEN_ZUWEISUNG')) {
+                        DB::table('GELD_KONTEN_ZUWEISUNG')->where('KOSTENTRAEGER_TYP', 'Benutzer')
+                            ->where('KOSTENTRAEGER_ID', $user['benutzer_id'])
                             ->update([
                                 'KOSTENTRAEGER_TYP' => 'Person',
                                 'KOSTENTRAEGER_ID' => $person->id
                             ]);
                     }
 
-                    $geld_konto_buchungen_table = DB::table('GELD_KONTO_BUCHUNGEN');
-                    if ($geld_konto_buchungen_table->exists()) {
-                        $geld_konto_buchungen_table->where('KOSTENTRAEGER_TYP', 'Benutzer')
-                            ->where('KOSTENTRAEGER_ID', $user['id'])
+                    if (Schema::hasTable('GELD_KONTO_BUCHUNGEN')) {
+                        DB::table('GELD_KONTO_BUCHUNGEN')->where('KOSTENTRAEGER_TYP', 'Benutzer')
+                            ->where('KOSTENTRAEGER_ID', $user['benutzer_id'])
                             ->update([
                                 'KOSTENTRAEGER_TYP' => 'Person',
                                 'KOSTENTRAEGER_ID' => $person->id
                             ]);
                     }
 
-                    $geo_termine_table = DB::table('GEO_TERMINE');
-                    if ($geo_termine_table->exists()) {
-                        $geo_termine_table->where('BENUTZER_ID', $user['id'])
+                    if (Schema::hasTable('GEO_TERMINE')) {
+                        DB::table('GEO_TERMINE')->where('BENUTZER_ID', $user['benutzer_id'])
                             ->update([
                                 'BENUTZER_ID' => $person->id
                             ]);
                     }
 
-                    $protokoll_table = DB::table('PROTOKOLL');
-                    if ($protokoll_table->exists()) {
-                        $protokoll_table->where('PROTOKOLL_WER', $user['name'])
+                    if (Schema::hasTable('PROTOKOLL')) {
+                        DB::table('PROTOKOLL')->where('PROTOKOLL_WER', $user['benutzername'])
                             ->update([
                                 'person_id' => $person->id
                             ]);
-                        DB::table('PROTOKOLL')->where('PROTOKOLL_WER', $user['email'])
+                        DB::table('PROTOKOLL')->where('PROTOKOLL_WER', $user['benutzername'] . '@berlussimo')
                             ->update([
                                 'person_id' => $person->id
                             ]);
                     }
 
-                    $sepa_ueberweisung_table = DB::table('SEPA_UEBERWEISUNG');
-                    if ($sepa_ueberweisung_table->exists()) {
-                        $sepa_ueberweisung_table->where('KOS_TYP', 'Benutzer')
-                            ->where('KOS_ID', $user['id'])
+                    if (Schema::hasTable('SEPA_UEBERWEISUNG')) {
+                        DB::table('SEPA_UEBERWEISUNG')->where('KOS_TYP', 'Benutzer')
+                            ->where('KOS_ID', $user['benutzer_id'])
                             ->update([
                                 'KOS_TYP' => 'Person',
                                 'KOS_ID' => $person->id
                             ]);
                     }
 
-                    $start_stop_table = DB::table('START_STOP');
-                    if ($start_stop_table->exists()) {
-                        $start_stop_table->where('BENUTZER_ID', $user['id'])
+                    if (Schema::hasTable('START_STOP')) {
+                        DB::table('START_STOP')->where('BENUTZER_ID', $user['benutzer_id'])
                             ->update([
                                 'BENUTZER_ID' => $person->id
                             ]);
                     }
 
-                    $stundenzettel_table = DB::table('STUNDENZETTEL');
-                    if ($stundenzettel_table->exists()) {
-                        $stundenzettel_table->where('BENUTZER_ID', $user['id'])
+                    if (Schema::hasTable('STUNDENZETTEL')) {
+                        DB::table('STUNDENZETTEL')->where('BENUTZER_ID', $user['benutzer_id'])
                             ->update([
                                 'BENUTZER_ID' => $person->id
                             ]);
                     }
 
-                    $stundenzettel_pos_table = DB::table('STUNDENZETTEL_POS');
-                    if ($stundenzettel_pos_table->exists()) {
-                        $stundenzettel_pos_table->where('KOSTENTRAEGER_TYP', 'Benutzer')
-                            ->where('KOSTENTRAEGER_ID', $user['id'])
+                    if (Schema::hasTable('STUNDENZETTEL_POS')) {
+                        DB::table('STUNDENZETTEL_POS')->where('KOSTENTRAEGER_TYP', 'Benutzer')
+                            ->where('KOSTENTRAEGER_ID', $user['benutzer_id'])
                             ->update([
                                 'KOSTENTRAEGER_TYP' => 'Person',
                                 'KOSTENTRAEGER_ID' => $person->id
                             ]);
                     }
 
-                    $todo_liste_table = DB::table('TODO_LISTE');
-                    if ($todo_liste_table->exists()) {
-                        $todo_liste_table->where('KOS_TYP', 'Benutzer')
-                            ->where('KOS_ID', $user['id'])
+                    if (Schema::hasTable('TODO_LISTE')) {
+                        DB::table('TODO_LISTE')->where('KOS_TYP', 'Benutzer')
+                            ->where('KOS_ID', $user['benutzer_id'])
                             ->update([
                                 'KOS_TYP' => 'Person',
                                 'KOS_ID' => $person->id
                             ]);
                         DB::table('TODO_LISTE')->where('BENUTZER_TYP', 'Benutzer')
-                            ->where('BENUTZER_ID', $user['id'])
+                            ->where('BENUTZER_ID', $user['benutzer_id'])
                             ->update([
                                 'BENUTZER_TYP' => 'Person',
                                 'BENUTZER_ID' => $person->id
                             ]);
-                        DB::table('TODO_LISTE')->where('VERFASSER_ID', $user['id'])
+                        DB::table('TODO_LISTE')->where('VERFASSER_ID', $user['benutzer_id'])
                             ->update([
                                 'VERFASSER_ID' => $person->id
                             ]);
                     }
 
-                    $urlaub_table = DB::table('URLAUB');
-                    if ($urlaub_table->exists()) {
-                        $urlaub_table->where('BENUTZER_ID', $user['id'])
+
+                    if (Schema::hasTable('URLAUB')) {
+                        DB::table('URLAUB')->where('BENUTZER_ID', $user['benutzer_id'])
                             ->update([
                                 'BENUTZER_ID' => $person->id
                             ]);
                     }
 
-                    $w_team_profile_table = DB::table('W_TEAM_PROFILE');
-                    if ($w_team_profile_table->exists()) {
-                        $w_team_profile_table->where('BENUTZER_ID', $user['id'])
+                    if (Schema::hasTable('W_TEAM_PROFILE')) {
+                        DB::table('W_TEAM_PROFILE')->where('BENUTZER_ID', $user['benutzer_id'])
                             ->update([
                                 'BENUTZER_ID' => $person->id
                             ]);
                     }
 
-                    $w_teams_benutzer_table = DB::table('W_TEAMS_BENUTZER');
-                    if ($w_teams_benutzer_table->exists()) {
-                        $w_teams_benutzer_table->where('BENUTZER_ID', $user['id'])
+                    if (Schema::hasTable('W_TEAMS_BENUTZER')) {
+                        DB::table('W_TEAMS_BENUTZER')->where('BENUTZER_ID', $user['benutzer_id'])
                             ->update([
                                 'BENUTZER_ID' => $person->id
                             ]);
                     }
 
-                    $werkzeuge_table = DB::table('WERKZEUGE');
-                    if ($werkzeuge_table->exists()) {
-                        $werkzeuge_table->where('BENUTZER_ID', $user['id'])
+                    if (Schema::hasTable('WERKZEUGE')) {
+                        DB::table('WERKZEUGE')->where('BENUTZER_ID', $user['benutzer_id'])
                             ->update([
                                 'BENUTZER_ID' => $person->id
                             ]);
                     }
 
-                    $zugriff_error_table = DB::table('ZUGRIFF_ERROR');
-                    if ($zugriff_error_table->exists()) {
-                        $zugriff_error_table->where('BENUTZER_ID', $user['id'])
+                    if (Schema::hasTable('ZUGRIFF_ERROR')) {
+                        DB::table('ZUGRIFF_ERROR')->where('BENUTZER_ID', $user['benutzer_id'])
                             ->update([
                                 'BENUTZER_ID' => $person->id
                             ]);
@@ -294,9 +268,11 @@ class CreateCredentialsTable extends Migration
      */
     public function down()
     {
-        Schema::table('PROTOKOLL', function (Blueprint $table) {
-            $table->dropColumn('person_id');
-        });
+        if (Schema::hasColumn('PROTOKOLL', 'person_id')) {
+            Schema::table('PROTOKOLL', function (Blueprint $table) {
+                $table->dropColumn('person_id');
+            });
+        }
         Schema::dropIfExists('jobs');
         Schema::dropIfExists('job_titles');
         Schema::dropIfExists('credentials');

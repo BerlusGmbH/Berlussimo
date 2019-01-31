@@ -106,12 +106,12 @@ class mietvertraege
 
     function leerstand_finden($objekt_id)
     {
-        $result = DB::select("SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
+        $result = DB::select("SELECT OBJEKT_KURZNAME, EINHEIT.id AS EINHEIT_ID, EINHEIT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER
 FROM `EINHEIT`
 RIGHT JOIN (
 HAUS, OBJEKT
-) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.objekt_id = OBJEKT.objekt_id && OBJEKT.objekt_id='$objekt_id' )
-WHERE EINHEIT_ID NOT
+) ON ( EINHEIT.HAUS_ID = HAUS.id && HAUS.OBJEKT_ID = OBJEKT.id && OBJEKT.id='$objekt_id' )
+WHERE EINHEIT.id NOT
 IN (
 
 SELECT EINHEIT_ID
@@ -119,7 +119,7 @@ FROM MIETVERTRAG
 WHERE MIETVERTRAG_AKTUELL = '1' && ( MIETVERTRAG_BIS > CURdate( )
 OR MIETVERTRAG_BIS = '0000-00-00' )
 ) && EINHEIT_AKTUELL='1'
-GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
+GROUP BY EINHEIT.id ORDER BY EINHEIT_KURZNAME ASC");
         return $result;
     }
 
@@ -181,7 +181,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
     {
         unset ($this->mietvertrag_aktuell);
         $datum_heute = date("Y-m-d");
-        $result = DB::select("SELECT MIETVERTRAG_VON, MIETVERTRAG_BIS, MIETVERTRAG_DAT, MIETVERTRAG.EINHEIT_ID, EINHEIT_KURZNAME, OBJEKT.OBJEKT_ID, OBJEKT_KURZNAME, HAUS.HAUS_ID, HAUS_STRASSE, HAUS_NUMMER, HAUS_PLZ,HAUS_STADT FROM MIETVERTRAG RIGHT JOIN(EINHEIT,HAUS,OBJEKT) ON (MIETVERTRAG.EINHEIT_ID = EINHEIT.EINHEIT_ID && EINHEIT.HAUS_ID=HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID) WHERE MIETVERTRAG_AKTUELL='1' && EINHEIT_AKTUELL='1' &&  HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERTRAG_ID='$mietvertrag_id'  ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1");
+        $result = DB::select("SELECT MIETVERTRAG_VON, MIETVERTRAG_BIS, MIETVERTRAG_DAT, EINHEIT.id AS EINHEIT_ID, EINHEIT_KURZNAME, OBJEKT.id AS OBJEKT_ID, OBJEKT_KURZNAME, HAUS.id AS HAUS_ID, HAUS_STRASSE, HAUS_NUMMER, HAUS_PLZ,HAUS_STADT FROM MIETVERTRAG RIGHT JOIN(EINHEIT,HAUS,OBJEKT) ON (MIETVERTRAG.EINHEIT_ID = EINHEIT.id && EINHEIT.HAUS_ID=HAUS.id && HAUS.OBJEKT_ID=OBJEKT.id) WHERE MIETVERTRAG_AKTUELL='1' && EINHEIT_AKTUELL='1' &&  HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' && MIETVERTRAG.id='$mietvertrag_id'  ORDER BY MIETVERTRAG_DAT DESC LIMIT 0,1");
         if (!empty($result)) {
             $row = $result[0];
 
@@ -674,7 +674,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         $von = date_german2mysql($von);
         $bis = date_german2mysql($bis);
         $dat_alt = letzte_mietvertrag_dat_of_mietvertrag_id($akt_mietvertrag_id);
-        $db_abfrage = "INSERT INTO MIETVERTRAG (`MIETVERTRAG_DAT`, `MIETVERTRAG_ID`, `MIETVERTRAG_VON`, `MIETVERTRAG_BIS`, `EINHEIT_ID`, `MIETVERTRAG_AKTUELL`) VALUES (NULL, '$akt_mietvertrag_id', '$von', '$bis', '$einheit_id', '1')";
+        $db_abfrage = "INSERT INTO MIETVERTRAG (`MIETVERTRAG_DAT`, `id`, `MIETVERTRAG_VON`, `MIETVERTRAG_BIS`, `EINHEIT_ID`, `MIETVERTRAG_AKTUELL`) VALUES (NULL, '$akt_mietvertrag_id', '$von', '$bis', '$einheit_id', '1')";
         DB::insert($db_abfrage);
         $dat_neu = letzte_mietvertrag_dat_of_mietvertrag_id($akt_mietvertrag_id);
         protokollieren('MIETVERTRAG', $dat_neu, $dat_alt);
@@ -721,7 +721,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         DB::update($db_abfrage); // personen zu MV gelöscht bzw auf 0 gesetzt
 
         // ####################ende der deaktivierung mv und person->mv############
-        $db_abfrage = "INSERT INTO MIETVERTRAG (`MIETVERTRAG_DAT`, `MIETVERTRAG_ID`, `MIETVERTRAG_VON`, `MIETVERTRAG_BIS`, `EINHEIT_ID`, `MIETVERTRAG_AKTUELL`) VALUES (NULL, '$mietvertrag_id_alt', '$mietvertrag_von', '$mietvertrag_bis', '$einheit_id', '1')";
+        $db_abfrage = "INSERT INTO MIETVERTRAG (`MIETVERTRAG_DAT`, `id`, `MIETVERTRAG_VON`, `MIETVERTRAG_BIS`, `EINHEIT_ID`, `MIETVERTRAG_AKTUELL`) VALUES (NULL, '$mietvertrag_id_alt', '$mietvertrag_von', '$mietvertrag_bis', '$einheit_id', '1')";
         DB::insert($db_abfrage);
         // protokollieren
         $last_dat = DB::getPdo()->lastInsertId();
@@ -826,7 +826,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
 
     function mietvertrag_einzugsverfahren_arr()
     {
-        $result = DB::select("SELECT DETAIL_ZUORDNUNG_ID AS MIETVERTRAG_ID FROM `DETAIL` LEFT JOIN(MIETVERTRAG) ON (DETAIL_ZUORDNUNG_ID=MIETVERTRAG_ID) 
+        $result = DB::select("SELECT DETAIL_ZUORDNUNG_ID AS MIETVERTRAG_ID FROM `DETAIL` LEFT JOIN(MIETVERTRAG) ON (DETAIL.DETAIL_ZUORDNUNG_ID=MIETVERTRAG.id) 
 WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='JA' && DETAIL_ZUORDNUNG_TABELLE = 'Mietvertrag' && DETAIL_AKTUELL = '1' && MIETVERTRAG_AKTUELL = '1' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS>=CURDATE())");
         if (!empty($result)) {
             return $result;
@@ -932,7 +932,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='JA' && DETAIL_ZUORD
 
     function mietvertrag_einzugsverfahren_arr_ausgesetzt()
     {
-        $result = DB::select("SELECT DETAIL_ZUORDNUNG_ID AS MIETVERTRAG_ID FROM `DETAIL` LEFT JOIN(MIETVERTRAG) ON (DETAIL_ZUORDNUNG_ID=MIETVERTRAG_ID) 
+        $result = DB::select("SELECT DETAIL_ZUORDNUNG_ID AS MIETVERTRAG_ID FROM `DETAIL` LEFT JOIN(MIETVERTRAG) ON (DETAIL.DETAIL_ZUORDNUNG_ID=MIETVERTRAG.id) 
 WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUORDNUNG_TABELLE = 'Mietvertrag' && DETAIL_AKTUELL = '1' && MIETVERTRAG_AKTUELL = '1' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS>=CURDATE())");
 
         if (!empty($result)) {
@@ -968,7 +968,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         $bg = new berlussimo_global ();
         $bg->objekt_auswahl_liste();
 
-        if (!request()->has('mietvertrag_id')) {
+        if (!request()->filled('mietvertrag_id')) {
             $this->einheiten_liste($link);
         } else {
 
@@ -1029,7 +1029,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             $liste_haeuser = $mein_objekt->haeuser_objekt_in_arr($objekt_id);
 
             for ($i = 0; $i < count($liste_haeuser); $i++) {
-                $result = DB::select("SELECT * FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && HAUS_ID='" . $liste_haeuser [$i] ['HAUS_ID'] . "' ORDER BY EINHEIT_KURZNAME ASC");
+                $result = DB::select("SELECT *, EINHEIT.id AS EINHEIT_ID FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && HAUS_ID='" . $liste_haeuser [$i] ['HAUS_ID'] . "' ORDER BY EINHEIT_KURZNAME ASC");
                 foreach ($result as $row)
                     $einheiten_array [] = $row;
             }
@@ -1254,10 +1254,10 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             $monat = '0' . $monat;
         }
         if (empty ($monat)) {
-            $result = DB::select("SELECT MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM `MIETVERTRAG` WHERE DATE_FORMAT( MIETVERTRAG_BIS, '%Y' ) = '$jahr' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_BIS DESC");
+            $result = DB::select("SELECT MIETVERTRAG.id AS MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM `MIETVERTRAG` WHERE DATE_FORMAT( MIETVERTRAG_BIS, '%Y' ) = '$jahr' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_BIS DESC");
         } else {
 
-            $result = DB::select("SELECT MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM `MIETVERTRAG` WHERE DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) = '$jahr-$monat' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_BIS DESC");
+            $result = DB::select("SELECT MIETVERTRAG.id AS MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM `MIETVERTRAG` WHERE DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) = '$jahr-$monat' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_BIS DESC");
         }
         $e = new einheit ();
         if (!empty($result)) {
@@ -1324,10 +1324,10 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             $monat = '0' . $monat;
         }
         if (empty ($monat)) {
-            $result = DB::select("SELECT MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM `MIETVERTRAG` WHERE DATE_FORMAT( MIETVERTRAG_VON, '%Y' ) = '$jahr' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_BIS DESC");
+            $result = DB::select("SELECT MIETVERTRAG.id AS MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM `MIETVERTRAG` WHERE DATE_FORMAT( MIETVERTRAG_VON, '%Y' ) = '$jahr' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_BIS DESC");
         } else {
 
-            $result = DB::select("SELECT MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM `MIETVERTRAG` WHERE DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) = '$jahr-$monat' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_BIS DESC");
+            $result = DB::select("SELECT MIETVERTRAG.id AS MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM `MIETVERTRAG` WHERE DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) = '$jahr-$monat' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_BIS DESC");
         }
         $e = new einheit ();
         if (!empty($result)) {
@@ -1403,10 +1403,10 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             $monat = '0' . $monat;
         }
         if (empty ($monat)) {
-            $result = DB::select("SELECT MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM `MIETVERTRAG` WHERE DATE_FORMAT( MIETVERTRAG_BIS, '%Y' ) = '$jahr' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_BIS DESC");
+            $result = DB::select("SELECT id AS MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM `MIETVERTRAG` WHERE DATE_FORMAT( MIETVERTRAG_BIS, '%Y' ) = '$jahr' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_BIS DESC");
         } else {
 
-            $result = DB::select("SELECT MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM `MIETVERTRAG` WHERE DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) = '$jahr-$monat' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_BIS DESC");
+            $result = DB::select("SELECT id AS MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM `MIETVERTRAG` WHERE DATE_FORMAT( MIETVERTRAG_BIS, '%Y-%m' ) = '$jahr-$monat' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_BIS DESC");
         }
         $e = new einheit ();
         if (!empty($result)) {
@@ -1476,10 +1476,10 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             $monat = '0' . $monat;
         }
         if (empty ($monat)) {
-            $result = DB::select("SELECT MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM `MIETVERTRAG` WHERE DATE_FORMAT( MIETVERTRAG_VON, '%Y' ) = '$jahr' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_VON DESC");
+            $result = DB::select("SELECT id AS MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM `MIETVERTRAG` WHERE DATE_FORMAT( MIETVERTRAG_VON, '%Y' ) = '$jahr' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_VON DESC");
         } else {
 
-            $result = DB::select("SELECT MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM `MIETVERTRAG` WHERE DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) = '$jahr-$monat' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_VON DESC");
+            $result = DB::select("SELECT id AS MIETVERTRAG_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS, EINHEIT_ID FROM `MIETVERTRAG` WHERE DATE_FORMAT( MIETVERTRAG_VON, '%Y-%m' ) = '$jahr-$monat' && MIETVERTRAG_AKTUELL='1' ORDER BY MIETVERTRAG_VON DESC");
         }
         $e = new einheit ();
         if (!empty($result)) {
@@ -2456,7 +2456,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                 )
             ));
 
-            if (!request()->has('xls')) {
+            if (!request()->filled('xls')) {
                 ob_end_clean(); // ausgabepuffer leeren
                 $pdf->ezStream();
             } else {
@@ -2790,7 +2790,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
 
     function mv_arr_zeitraum($objekt_id, $datum_von, $datum_bis)
     {
-        $db_abfrage = "SELECT * FROM `MIETVERTRAG` WHERE (MIETVERTRAG_VON<='$datum_bis' && (MIETVERTRAG_BIS='0000-00-00' OR (MIETVERTRAG_BIS >= '$datum_von'))) && `MIETVERTRAG_AKTUELL` = '1' && MIETVERTRAG.EINHEIT_ID IN (SELECT EINHEIT_ID FROM EINHEIT, HAUS, OBJEKT WHERE EINHEIT.HAUS_ID=HAUS.HAUS_ID && HAUS.OBJEKT_ID='$objekt_id' && EINHEIT.EINHEIT_AKTUELL='1') ORDER BY EINHEIT_ID, MIETVERTRAG_VON ASC";
+        $db_abfrage = "SELECT * FROM `MIETVERTRAG` WHERE (MIETVERTRAG_VON<='$datum_bis' && (MIETVERTRAG_BIS='0000-00-00' OR (MIETVERTRAG_BIS >= '$datum_von'))) && `MIETVERTRAG_AKTUELL` = '1' && MIETVERTRAG.EINHEIT_ID IN (SELECT EINHEIT_ID FROM EINHEIT, HAUS, OBJEKT WHERE EINHEIT.HAUS_ID=HAUS.id && HAUS.OBJEKT_ID='$objekt_id' && EINHEIT.EINHEIT_AKTUELL='1') ORDER BY EINHEIT_ID, MIETVERTRAG_VON ASC";
         $result = DB::select($db_abfrage);
         return $result;
     }
@@ -2809,7 +2809,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
 
     function form_mietvertrag_loeschen($mv_id)
     {
-        if (!request()->has('send_ja') && !request()->has('send_nein')) {
+        if (!request()->filled('send_ja') && !request()->filled('send_nein')) {
             $this->get_mietvertrag_infos_aktuell($mv_id);
             $f = new formular ();
             $f->fieldset('Mietvertrag löschen', 'mvl');
@@ -2826,17 +2826,17 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
             echo "</div>";
             $f->fieldset_ende();
         }
-        if (request()->has('send_nein')) {
+        if (request()->filled('send_nein')) {
             weiterleiten(route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'mietvertrag_kurz'], false));
         }
-        if (request()->has('send_ja')) {
+        if (request()->filled('send_ja')) {
             $this->mv_loeschen_alles($mv_id);
         }
     }
 
     function mv_loeschen_alles($mv_id)
     {
-        DB::update("UPDATE MIETVERTRAG SET MIETVERTRAG_AKTUELL='0' WHERE MIETVERTRAG_ID='$mv_id'");
+        DB::update("UPDATE MIETVERTRAG SET MIETVERTRAG_AKTUELL='0' WHERE id='$mv_id'");
         DB::update("UPDATE PERSON_MIETVERTRAG SET PERSON_MIETVERTRAG_AKTUELL='0' WHERE PERSON_MIETVERTRAG_MIETVERTRAG_ID='$mv_id'");
         DB::update("UPDATE MIETENTWICKLUNG SET MIETENTWICKLUNG_AKTUELL='0' WHERE KOSTENTRAEGER_TYP LIKE 'Mietvertrag' && KOSTENTRAEGER_ID = '$mv_id'");
         DB::update("UPDATE DETAIL SET DETAIL_AKTUELL='0' WHERE DETAIL_ZUORDNUNG_TABELLE LIKE 'Mietvertrag' && DETAIL_ZUORDNUNG_ID = '$mv_id'");

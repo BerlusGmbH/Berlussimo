@@ -5,8 +5,10 @@ namespace App\Models;
 use App\Models\Contracts\Active as ActiveContract;
 use App\Models\Traits\Active;
 use App\Models\Traits\DefaultOrder;
+use App\Models\Traits\ExternalKey;
 use App\Models\Traits\Searchable;
 use Carbon\Carbon;
+use DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,20 +17,20 @@ class Mietvertraege extends Model implements ActiveContract
     use Searchable {
         Searchable::scopeSearch as scopeSearchFromTrait;
     }
-    use DefaultOrder;
+    use DefaultOrder {
+        DefaultOrder::scopeDefaultOrder as scopeDefaultOrderFromTrait;
+    }
+
     use Active;
+    use ExternalKey;
 
     public $timestamps = false;
     protected $table = 'MIETVERTRAG';
-    protected $primaryKey = 'MIETVERTRAG_ID';
-    protected $searchableFields = ['MIETVERTRAG_ID', 'MIETVERTRAG_VON', 'MIETVERTRAG_BIS'];
-    protected $defaultOrder = ['MIETVERTRAG_VON' => 'desc', 'MIETVERTRAG_BIS' => 'desc'];
-    protected $appends = ['type'];
-
-    static public function getTypeAttribute()
-    {
-        return 'rental_contract';
-    }
+    protected $primaryKey = 'MIETVERTRAG_DAT';
+    protected $externalKey = 'id';
+    protected $searchableFields = ['id', 'MIETVERTRAG_VON', 'MIETVERTRAG_BIS'];
+    protected $defaultOrder = ['MIETVERTRAG_BIS' => 'asc', 'MIETVERTRAG_VON' => 'desc', 'id' => 'desc'];
+    protected $guarded = [];
 
     protected static function boot()
     {
@@ -41,12 +43,19 @@ class Mietvertraege extends Model implements ActiveContract
 
     public function mieter()
     {
-        return $this->belongsToMany(Person::class, 'PERSON_MIETVERTRAG', 'PERSON_MIETVERTRAG_MIETVERTRAG_ID', 'PERSON_MIETVERTRAG_PERSON_ID')->wherePivot('PERSON_MIETVERTRAG_AKTUELL', '1');
+        return $this->belongsToMany(
+            Person::class,
+            'PERSON_MIETVERTRAG',
+            'PERSON_MIETVERTRAG_MIETVERTRAG_ID',
+            'PERSON_MIETVERTRAG_PERSON_ID',
+            'id',
+            'id'
+        )->wherePivot('PERSON_MIETVERTRAG_AKTUELL', '1');
     }
 
     public function einheit()
     {
-        return $this->belongsTo('App\Models\Einheiten', 'EINHEIT_ID', 'EINHEIT_ID');
+        return $this->belongsTo(Einheiten::class, 'EINHEIT_ID', 'id');
     }
 
     public function getMieterNamenAttribute()
@@ -76,6 +85,52 @@ class Mietvertraege extends Model implements ActiveContract
         return $query;
     }
 
+    public function scopeDefaultOrder($query)
+    {
+        $query->join(
+            'EINHEIT', function ($join) {
+            $join->on('MIETVERTRAG.EINHEIT_ID', '=', 'EINHEIT.id')
+                ->where('EINHEIT.EINHEIT_AKTUELL', '1');
+        })->orderBy(
+            'EINHEIT.EINHEIT_KURZNAME'
+        )->defaultOrderFromTrait()->select(DB::raw('MIETVERTRAG.*'), DB::raw('MIETVERTRAG.id as id'));
+        return $query;
+    }
+
+    public function scopeMovingInOrder($query)
+    {
+        $query->orderBy(
+            'MIETVERTRAG_VON', 'asc'
+        );
+        return $query;
+    }
+
+    public function scopeMovedInOrder($query)
+    {
+        $query->orderBy(
+            'MIETVERTRAG_VON', 'desc'
+        );
+        return $query;
+    }
+
+    public function scopeMovingOutOrder($query)
+    {
+        $query->where(
+            'MIETVERTRAG_BIS', '<>', '0000-00-00'
+        )->orderBy(
+            'MIETVERTRAG_BIS', 'asc'
+        );
+        return $query;
+    }
+
+    public function scopeMovedOutOrder($query)
+    {
+        $query->orderBy(
+            'MIETVERTRAG_BIS', 'desc'
+        );
+        return $query;
+    }
+
     public function basicRentDefinitions($from = null, $to = null)
     {
         return $this->rentDefinitions($from, $to)
@@ -97,7 +152,7 @@ class Mietvertraege extends Model implements ActiveContract
         if (is_string($to)) {
             $to = Carbon::parse($to);
         }
-        $rentDefinitions = $this->morphMany(RentDefinition::class, 'rentDefinitions', 'KOSTENTRAEGER_TYP', 'KOSTENTRAEGER_ID');
+        $rentDefinitions = $this->morphMany(RentDefinition::class, 'rentDefinitions', 'KOSTENTRAEGER_TYP', 'KOSTENTRAEGER_ID', 'id');
         if ($from) {
             $rentDefinitions->whereDate('ANFANG', '<=', $to);
         }
@@ -145,7 +200,7 @@ class Mietvertraege extends Model implements ActiveContract
         if (is_string($to)) {
             $to = Carbon::parse($to);
         }
-        $rentDefinitions = $this->morphMany(Posting::class, 'postings', 'KOSTENTRAEGER_TYP', 'KOSTENTRAEGER_ID');
+        $rentDefinitions = $this->morphMany(Posting::class, 'postings', 'KOSTENTRAEGER_TYP', 'KOSTENTRAEGER_ID', 'id');
         if ($from) {
             $rentDefinitions->whereDate('DATUM', '>=', $from);
         }

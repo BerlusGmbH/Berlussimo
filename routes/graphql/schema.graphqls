@@ -1,0 +1,1478 @@
+## "A datetime string with format 'Y-m-d H:i:s', e.g. '2018-01-01 13:00:00'."
+scalar DateTime @scalar(class: "DateTime")
+
+# "A date string with format 'Y-m-d', e.g. '2011-05-23'."
+scalar Date @scalar(class: "Date")
+
+type Query @middleware(checks: ["auth:api"]) {
+    persons(
+        search: String @builder(method: "App\\GraphQL\\Queries\\Persons@search")
+        tenant: FilterTenantInput @builder(method: "App\\GraphQL\\Queries\\Persons@tenant")
+        homeOwner: FilterHomeOwnerInput @builder(method: "App\\GraphQL\\Queries\\Persons@homeOwner")
+        employedAt: [EntitySelect!] @builder(method: "App\\GraphQL\\Queries\\Persons@employedAt")
+        employedDuring: Date @builder(method: "App\\GraphQL\\Queries\\Persons@employedDuring")
+    ): [Person!]! @paginate(model: "App\\Models\\Person", scopes: ["defaultOrder"])
+    person(id: ID @eq): Person @find(model: "App\\Models\\Person")
+    partner(id: ID @eq(key: "id") ): Partner @find(model: "App\\Models\\Partner")
+    property(id: ID @eq(key: "id") ): Property @find(model: "App\\Models\\Objekte")
+    properties(
+        search: String @builder(method: "App\\GraphQL\\Queries\\Properties@search")
+    ): [Property!]! @paginate(model: "App\\Models\\Objekte", scopes: ["defaultOrder"])
+    house(id: ID @eq(key: "id") ): House @find(model: "App\\Models\\Haeuser")
+    houses(
+        search: String @builder(method: "App\\GraphQL\\Queries\\Houses@search")
+        partOf: [EntitySelect!] @builder(method: "App\\GraphQL\\Queries\\Houses@partOf")
+    ): [House!]! @paginate(model: "App\\Models\\Haeuser", scopes: ["defaultOrder"])
+    unit(id: ID @eq(key: "id") ): Unit @find(model: "App\\Models\\Einheiten")
+    units(
+        search: String @builder(method: "App\\GraphQL\\Queries\\Units@search")
+        rentalContracts: FilterRentalContractsInput @builder(method: "App\\GraphQL\\Queries\\Units@rentalContracts")
+        vacant: Date @builder(method: "App\\GraphQL\\Queries\\Units@vacant")
+        partOf: [EntitySelect!] @builder(method: "App\\GraphQL\\Queries\\Units@partOf")
+    ): [Unit!]! @paginate(model: "App\\Models\\Einheiten", scopes: ["defaultOrder"])
+    detail(id: ID @eq(key: "DETAIL_ID") ): DetailInterface @find(model: "App\\Models\\Details")
+    job(id: ID @eq ): Job @find(model: "App\\Models\\Job")
+    roles: [Role]!
+    search(
+        query: String,
+        entities: [SearchableType!],
+        unitForRent: Boolean,
+        bookingAccountIn: ID,
+        invoiceItemsFrom: ID,
+        advancePayment: FilterAdvancePaymentInput
+    ): [SearchResult!]!
+    menu(module: Module = MAIN): String
+    detailCategories(detailableType: DetailableType): [DetailCategory!]!
+    detailSubcategories(detailableType: DetailableType, category: String): [DetailSubcategory!]!
+    notifications: [Notification!]!
+    assignments(
+        search: String @builder(method: "App\\GraphQL\\Queries\\Assignments@search")
+        assignedTo: [EntitySelect!] @builder(method: "App\\GraphQL\\Queries\\Assignments@assignedTo")
+        author: [EntitySelect!] @builder(method: "App\\GraphQL\\Queries\\Assignments@author")
+        costBearer: [EntitySelect!] @builder(method: "App\\GraphQL\\Queries\\Assignments@costBearer")
+        highPriority: Boolean @builder(method: "App\\GraphQL\\Queries\\Assignments@highPriority")
+        done: Boolean @builder(method: "App\\GraphQL\\Queries\\Assignments@done")
+    ): [Assignment!]! @paginate(model: "App\\Models\\Auftraege", scopes: ["defaultOrder"])
+    acountingEntity(id: ID @eq(key: "id")): AccountingEntity @find(model: "App\\Models\\Wirtschaftseinheiten")
+    constructionSite(id: ID @eq(key: "id")): ConstructionSite @find(model: "App\\Models\\BaustellenExtern")
+    rentalContracts(
+        search: String @builder(method: "App\\GraphQL\\Queries\\RentalContracts@search")
+        order: PurchaseContractOrder @builder(method: "App\\GraphQL\\Queries\\RentalContracts@order")
+        unitPartOf: [EntitySelect!] @builder(method: "App\\GraphQL\\Queries\\RentalContracts@unitPartOf")
+        active: DateInfinityInterval @builder(method: "App\\GraphQL\\Queries\\RentalContracts@active")
+        inactive: DateInfinityInterval @builder(method: "App\\GraphQL\\Queries\\RentalContracts@inactive")
+    ): [RentalContract!]! @paginate(model: "App\\Models\\Mietvertraege", scopes: ["defaultOrder"])
+    invoice(id: ID @eq(key: "BELEG_NR") ): Invoice @find(model: "App\\Models\\Invoice")
+    invoiceLineQuantityUnits: [QuantityUnit]! @all(model: "App\\Models\\InvoiceItemUnit", scopes: ["defaultOrder"])
+}
+
+extend type Query {
+    state: State!  @authenticateSession @middleware(checks: ["auth:web"]) @startSession
+}
+
+type Subscription {
+    personUpdated(id: ID): Person
+    auditAdded(personId: ID): Audit
+    auditUpdated(personId: ID): AuditOrPerson
+    notificationAdded: Notification
+}
+
+type Mutation @middleware(checks: ["auth:api"]) {
+    createPerson(
+        firstName: String @rules(apply: ["max:191"])
+        lastName: String @rules(apply: ["required", "max:191"])
+        birthday: Date
+        gender: Gender
+    ): Person
+    @create(model: "App\\Models\\Person", rename: ["firstName:first_name", "lastName:name", "gender:sex"])
+    updatePerson(
+        id: ID!
+        firstName: String @rules(apply: ["max:191"])
+        lastName: String @rules(apply: ["max:191"])
+        birthday: Date
+        gender: Gender
+    ): Person
+    @update(model: "App\\Models\\Person", rename: ["firstName:first_name", "lastName:name", "gender:sex"])
+    @broadcast(subscription: ["personUpdated", "auditUpdated"])
+    deletePerson(
+        id: ID!
+    ): Person
+    @delete(model: "App\\Models\\Person")
+    syncRoles(
+        personId: ID!
+        roles: [String!]!
+    ): Person
+    updateCredential(
+        personId: ID!
+        enabled: Boolean
+        password: String
+    ): Person
+    createJob(
+        input: CreateJobInput! @spread
+    ): Job @create(rename: [
+        "employeeId:employee_id",
+        "employerId:employer_id",
+        "jobTitleId:job_title_id",
+        "joinDate:join_date",
+        "leaveDate:leave_date",
+        "hourlyRate:hourly_rate",
+        "hoursPerWeek:hours_per_week"
+    ])
+    createDetail(
+        input: CreateDetailInput! @spread
+    ): DetailInterface @create(
+        rename: [
+            "detailableType:DETAIL_ZUORDNUNG_TABELLE",
+            "detailableId:DETAIL_ZUORDNUNG_ID",
+            "category:DETAIL_NAME",
+            "value:DETAIL_INHALT",
+            "comment:DETAIL_BEMERKUNG"
+        ],
+        model: "App\\Models\\Details"
+    )
+    updateDetail(
+        input: UpdateDetailInput! @spread
+    ): DetailInterface @update(
+        rename: [
+            "value:DETAIL_INHALT",
+            "comment:DETAIL_BEMERKUNG"
+        ],
+        model: "App\\Models\\Details"
+    )
+    deleteDetail(
+        id: ID! @eq(key: "DETAIL_ID")
+    ): Int @deletePreselected(model: "App\\Models\\Details")
+    copyProperty(
+        input: CopyPropertyInput
+    ): Boolean
+    mergePersons(
+        input: MergePersonsInput! @spread
+    ): Boolean
+    createProperty(
+        input: CreatePropertyInput! @spread
+    ): Property @create(
+        rename: [
+            "name:OBJEKT_KURZNAME",
+            "ownerId:EIGENTUEMER_PARTNER"
+        ],
+        model: "App\\Models\\Objekte"
+    )
+    updateProperty(
+        input: UpdatePropertyInput! @spread
+    ): Property @update(
+        rename: [
+            "name:OBJEKT_KURZNAME",
+            "ownerId:EIGENTUEMER_PARTNER"
+        ],
+        model: "App\\Models\\Objekte"
+    )
+    createHouse(
+        input: CreateHouseInput! @spread
+    ): House @create(
+        rename: [
+            "streetName:HAUS_STRASSE",
+            "streetNumber:HAUS_NUMMER",
+            "city:HAUS_STADT",
+            "postalCode:HAUS_PLZ",
+            "propertyId:OBJEKT_ID"
+        ],
+        model: "App\\Models\\Haeuser"
+    )
+    updateHouse(
+        input: UpdateHouseInput! @spread
+    ): House @update(
+        rename: [
+            "streetName:HAUS_STRASSE",
+            "streetNumber:HAUS_NUMMER",
+            "city:HAUS_STADT",
+            "postalCode:HAUS_PLZ",
+            "propertyId:OBJEKT_ID"
+        ],
+        model: "App\\Models\\Haeuser"
+    )
+    createUnit(
+        input: CreateUnitInput! @spread
+    ): Unit @create(
+        rename: [
+            "size:EINHEIT_QM",
+            "location:EINHEIT_LAGE",
+            "name:EINHEIT_KURZNAME",
+            "unitType:TYP",
+            "houseId:HAUS_ID"
+        ],
+        model: "App\\Models\\Einheiten"
+    )
+    updateUnit(
+        input: UpdateUnitInput! @spread
+    ): Unit @update(
+        rename: [
+            "size:EINHEIT_QM",
+            "location:EINHEIT_LAGE",
+            "name:EINHEIT_KURZNAME",
+            "unitType:TYP",
+            "houseId:HAUS_ID"
+        ],
+        model: "App\\Models\\Einheiten"
+    )
+    createRentalContract(
+        input: CreateRentalContractInput! @spread
+    ): RentalContract
+    @middleware(checks: ["App\\Http\\Middleware\\DatabaseTransaction"])
+    @field(resolver: "App\\GraphQL\\Mutations\\RentalContract@create")
+    updateJob(
+        input: UpdateJobInput! @spread
+    ): Job @update(
+        rename: [
+            "joinDate:join_date",
+            "leaveDate:leave_date",
+            "hourlyRate:hourly_rate",
+            "hoursPerWeek:hours_per_week",
+            "createdAt:created_at",
+            "updatedAt:updated_at",
+            "deletedAt:deleted_at"
+        ],
+        model: "App\\Models\\Job"
+    )
+    dial(
+        id: ID!
+    ): Boolean
+    markNotificationAsUnread(
+        id: ID!
+    ): Notification @can(ability: "markAsUnread", find: "id", model: "Illuminate\\Notifications\\DatabaseNotification")
+    markNotificationAsRead(
+        id: ID!
+    ): Notification @can(ability: "markAsRead", find: "id", model: "Illuminate\\Notifications\\DatabaseNotification")
+    markAllNotificationsAsRead: [Notification!]!
+    markAllNotificationsAsUnread: [Notification!]!
+    createAssignment(
+        input: CreateAssignmentInput! @spread
+    ): Assignment @create(rename: [
+        "authorId:VERFASSER_ID",
+        "assignedToId:BENUTZER_ID",
+        "assignedToType:BENUTZER_TYP",
+        "costBearerId:KOS_ID",
+        "costBearerType:KOS_TYP",
+        "highPriority:AKUT",
+        "description:TEXT",
+    ],
+        model: "App\\Models\\Auftraege"
+    )
+    updateAssignment(
+        input: UpdateAssignmentInput! @spread
+    ): Assignment @update(
+        rename: [
+            "authorId:VERFASSER_ID",
+            "assignedToId:BENUTZER_ID",
+            "assignedToType:BENUTZER_TYP",
+            "costBearerId:KOS_ID",
+            "costBearerType:KOS_TYP",
+            "highPriority:AKUT",
+            "description:TEXT",
+            "done:ERLEDIGT"
+        ],
+        model: "App\\Models\\Auftraege"
+    )
+    updateInvoice(
+        input: UpdateInvoiceInput! @spread
+    ): Invoice @field(resolver: "App\\GraphQL\\Mutations\\Invoice@update")
+    createInvoiceLine(
+        input: CreateInvoiceLineInput! @spread
+    ): InvoiceLine @field(resolver: "App\\GraphQL\\Mutations\\InvoiceLine@create")
+    updateInvoiceLine(
+        input: UpdateInvoiceLineInput! @spread
+    ): InvoiceLine @field(resolver: "App\\GraphQL\\Mutations\\InvoiceLine@update")
+    updateInvoiceLines(
+        input: UpdateInvoiceLinesInput! @spread
+    ): [InvoiceLine]! @field(resolver: "App\\GraphQL\\Mutations\\InvoiceLine@updateBatch")
+    deleteInvoiceLine(
+        id: ID!
+    ): Int @field(resolver: "App\\GraphQL\\Mutations\\InvoiceLine@delete")
+    createInvoiceLineAssignment(
+        input: CreateInvoiceLineAssignmentInput! @spread
+    ): InvoiceLineAssignment! @field(resolver: "App\\GraphQL\\Mutations\\InvoiceLineAssignment@create")
+    updateInvoiceLineAssignment(
+        input: UpdateInvoiceLineAssignmentInput! @spread
+    ): InvoiceLineAssignment! @field(resolver: "App\\GraphQL\\Mutations\\InvoiceLineAssignment@update")
+    deleteInvoiceLineAssignment(
+        id: ID!
+    ): Int @field(resolver: "App\\GraphQL\\Mutations\\InvoiceLineAssignment@delete")
+    updateInvoiceLineAssignments(
+        input: UpdateInvoiceLineAssignmentsInput! @spread
+    ): [InvoiceLineAssignment]! @field(resolver: "App\\GraphQL\\Mutations\\InvoiceLineAssignment@updateBatch")
+}
+
+extend type Mutation {
+    logout: Boolean @authenticateSession @middleware(checks: ["auth:web"]) @startSession
+    login(
+        username: String @rules(apply: ["required"])
+        password: String @rules(apply: ["required"])
+    ): State @authenticateSession @startSession
+    updateGlobalSelect(
+        partnerId: ID,
+        propertyId: ID,
+        bankAccountId: ID
+    ): State @authenticateSession @middleware(checks: ["auth:web"]) @startSession
+}
+
+union SearchResult @union(resolveType: "App\\GraphQL\\Unions\\Model@resolveType")
+= Property
+    | House
+    | Unit
+    | Person
+    | Partner
+    | BankAccount
+    | RentalContract
+    | PurchaseContract
+    | ConstructionSite
+    | InvoiceItem
+    | BankAccountStandardChart
+    | BookingAccount
+    | AccountingEntity
+    | Invoice
+
+union Detailable @union(resolveType: "App\\GraphQL\\Unions\\Model@resolveType") =
+    Person
+    | Partner
+    | Property
+    | House
+    | Unit
+    | RentalContract
+    | PurchaseContract
+
+enum PurchaseContractOrder {
+    MOVING_IN
+    MOVED_IN
+    MOVING_OUT
+    MOVED_OUT
+}
+
+enum DetailableType {
+    Person
+    Partner
+    Property @enum(value: "Objekt")
+    House @enum(value: "Haus")
+    Unit @enum(value: "Einheit")
+    RentalContract @enum(value: "Mietvertrag")
+    PurchaseContract @enum(value: "Eigentuemer")
+}
+
+enum CostBearerType {
+    Person
+    Partner
+    Property @enum(value: "Objekt")
+    House @enum(value: "Haus")
+    Unit @enum(value: "Einheit")
+    RentalContract @enum(value: "Mietvertrag")
+    PurchaseContract @enum(value: "Eigentuemer")
+    AccountingEntity @enum(value: "Wirtschaftseinheit")
+    ConstructionSite @enum(value: "Baustelle_ext")
+}
+
+enum AssignedToType {
+    Person
+    Partner
+}
+
+enum SearchableType {
+    Property
+    House
+    Unit
+    Person
+    Employer
+    Partner
+    BankAccount
+    RentalContract
+    PurchaseContract
+    ConstructionSite
+    InvoiceItem
+    BankAccountStandardChart
+    BookingAccount
+    AccountingEntity
+    Invoice
+}
+
+input CreateJobInput {
+    employee: EmployeeRelation
+    employer: EmployerRelation
+    title: JobTitleRelation
+    joinDate: Date @rules(apply: ["required", "date"])
+    leaveDate: Date @rules(apply: ["nullable", "date", "after:input.joinDate"])
+    hourlyRate: Float @rules(apply: ["nullable", "numeric"])
+    hoursPerWeek: Float @rules(apply: ["nullable" , "numeric"])
+    holidays: Float @rules(apply: ["required", "numeric"])
+}
+
+input CopyPropertyInput {
+    id: ID @rules(apply: ["required"])
+    openingBalance: Boolean @rules(apply: ["nullable"])
+    openingBalanceDate: Date @rules(apply: ["required_if:input.openingBalance,true", "nullable", "date"])
+    name: String @rules(apply: ["required"])
+    prefix: String @rules(apply: ["required"])
+    ownerId: ID @rules(apply: ["required"])
+}
+
+input UpdatePropertyInput {
+    id: ID!
+    name: String
+    ownerId: ID
+}
+
+input CreatePropertyInput {
+    name: String @rules(apply: ["required"])
+    ownerId: ID @rules(apply: ["required"])
+}
+
+input CreateHouseInput {
+    streetName: String @rules(apply: ["required"])
+    streetNumber: String @rules(apply: ["required"])
+    city: String @rules(apply: ["required"])
+    postalCode: String @rules(apply: ["required"])
+    propertyId: ID @rules(apply: ["required"])
+}
+
+input UpdateHouseInput {
+    id: ID!
+    streetName: String
+    streetNumber: String
+    city: String
+    postalCode: String
+    propertyId: ID
+}
+
+input CreateUnitInput {
+    size: Float @rules(apply: ["required"])
+    location: String @rules(apply: ["required"])
+    name: String @rules(apply: ["required"])
+    unitType: UnitType @rules(apply: ["required"])
+    houseId: ID @rules(apply: ["required"])
+}
+
+input UpdateUnitInput {
+    id: ID!
+    size: Float @rules(apply: ["required"])
+    location: String
+    name: String @rules(apply: ["required"])
+    unitType: UnitType @rules(apply: ["required"])
+    houseId: ID @rules(apply: ["required"])
+}
+
+input CreateRentalContractInput {
+    start: Date @rules(apply: ["required", "date", "noOtherContract"])
+    end: Date @rules(apply: ["nullable", "date" "noOtherContract"])
+    unitId: ID @rules(apply: ["required", "integer", "exists:EINHEIT,id"])
+    tenants: [ID!] @rulesForArray(apply: ["min:1"]) @rules(apply: ["exists:persons,id"])
+    baseRent: Float @rules(apply: ["required", "numeric", "min:0"])
+    operatingCostAdvance: Float @rules(apply: ["nullable", "numeric", "min:0"])
+    heatingCostAdvance: Float @rules(apply: ["nullable", "numeric", "min:0"])
+    deposit: Float @rules(apply: ["nullable", "numeric", "min:0"])
+}
+
+input TenantsRelation {
+    connect: [ID!]
+}
+
+input UpdateJobInput {
+    id: ID!
+    employee: EmployeeRelation
+    employer: EmployerRelation
+    title: JobTitleRelation
+    joinDate: Date @rules(apply: ["required", "date"])
+    leaveDate: Date @rules(apply: ["nullable", "date", "after:input.joinDate"])
+    hourlyRate: Float @rules(apply: ["nullable", "numeric"])
+    hoursPerWeek: Float @rules(apply: ["nullable", "numeric"])
+    holidays: Float @rules(apply: ["required", "numeric"])
+}
+
+input CreateAssignmentInput {
+    authorId: ID @rules(apply: ["required"])
+    assignedToId: ID @rules(apply: ["required"])
+    assignedToType: AssignedToType @rules(apply: ["required"])
+    costBearerId: ID @rules(apply: ["required"])
+    costBearerType: CostBearerType @rules(apply: ["required"])
+    description: String @rules(apply: ["required"])
+    highPriority: Boolean @rules(apply: ["required"]) @remapBoolean(true: "JA", false: "NEIN")
+}
+
+input UpdateAssignmentInput {
+    id: ID!
+    authorId: ID
+    assignedToId: ID
+    assignedToType: AssignedToType
+    costBearerId: ID
+    costBearerType: CostBearerType
+    description: String
+    highPriority: Boolean @remapBoolean(true: "JA", false: "NEIN")
+    done: Boolean @remapBoolean(true: "1", false: "0")
+}
+
+input UpdateInvoiceInput {
+    id: ID @rules(apply: ["required"])
+    invoiceNumber: String @rules(apply: [
+        """
+        required_without_all:input.issuerInvoiceNumber,
+        input.recipientInvoiceNumber,
+        input.invoiceType,
+        input.invoiceDate,
+        input.dateOfReceipt,
+        input.dueDate,
+        input.description,
+        input.serviceTimeStart,
+        input.serviceTimeEnd,
+        input.costForward,
+        input.firstAdvancePaymentIvoiceId
+        """
+    ])
+    issuerInvoiceNumber: Int @rules(apply: [
+        """
+        required_without_all:input.invoiceNumber,
+        input.recipientInvoiceNumber,
+        input.invoiceType,
+        input.invoiceDate,
+        input.dateOfReceipt,
+        input.dueDate,
+        input.description,
+        input.serviceTimeStart,
+        input.serviceTimeEnd,
+        input.costForward,
+        input.firstAdvancePaymentIvoiceId
+        """
+    ])
+    recipientInvoiceNumber: Int @rules(apply: [
+        """
+        required_without_all:input.issuerInvoiceNumber,
+        input.invoiceNumber,
+        input.invoiceType,
+        input.invoiceDate,
+        input.dateOfReceipt,
+        input.dueDate,
+        input.description,
+        input.serviceTimeStart,
+        input.serviceTimeEnd,
+        input.costForward,
+        input.firstAdvancePaymentIvoiceId
+        """
+    ])
+    invoiceType: InvoiceType @rules(apply: [
+        """
+        required_without_all:input.issuerInvoiceNumber,
+        input.recipientInvoiceNumber,
+        input.invoiceNumber,
+        input.invoiceDate,
+        input.dateOfReceipt,
+        input.dueDate,
+        input.description,
+        input.serviceTimeStart,
+        input.serviceTimeEnd,
+        input.costForward,
+        input.firstAdvancePaymentIvoiceId
+        """
+    ])
+    invoiceDate: Date @rules(apply: [
+        """
+        required_without_all:input.issuerInvoiceNumber,
+        input.recipientInvoiceNumber,
+        input.invoiceType,
+        input.invoiceNumber,
+        input.dateOfReceipt,
+        input.dueDate,
+        input.description,
+        input.serviceTimeStart,
+        input.serviceTimeEnd,
+        input.costForward,
+        input.firstAdvancePaymentIvoiceId
+        """
+    ])
+    dateOfReceipt: Date @rules(apply: [
+        """
+        required_without_all:input.issuerInvoiceNumber,
+        input.recipientInvoiceNumber,
+        input.invoiceType,
+        input.invoiceDate,
+        input.invoiceNumber,
+        input.dueDate,
+        input.description,
+        input.serviceTimeStart,
+        input.serviceTimeEnd,
+        input.costForward,
+        input.firstAdvancePaymentIvoiceId
+        """
+    ])
+    dueDate: Date @rules(apply: [
+        """
+        required_without_all:input.issuerInvoiceNumber,
+        input.recipientInvoiceNumber,
+        input.invoiceType,
+        input.invoiceDate,
+        input.dateOfReceipt,
+        input.invoiceNumber,
+        input.description,
+        input.serviceTimeStart,
+        input.serviceTimeEnd,
+        input.costForward,
+        input.firstAdvancePaymentIvoiceId
+        """
+    ])
+    description: String @rules(apply: [
+        """
+        required_without_all:input.issuerInvoiceNumber,
+        input.recipientInvoiceNumber,
+        input.invoiceType,
+        input.invoiceDate,
+        input.dateOfReceipt,
+        input.dueDate,
+        input.invoiceNumber,
+        input.serviceTimeStart,
+        input.serviceTimeEnd,
+        input.costForward,
+        input.firstAdvancePaymentIvoiceId
+        """
+    ])
+    firstAdvancePaymentInvoiceId: ID @rules(apply: [
+        "nullable",
+        """
+        required_without_all:input.issuerInvoiceNumber,
+        input.recipientInvoiceNumber,
+        input.invoiceType,
+        input.invoiceDate,
+        input.dateOfReceipt,
+        input.dueDate,
+        input.invoiceNumber,
+        input.serviceTimeStart,
+        input.serviceTimeEnd,
+        input.costForward,
+        input.description
+        """
+    ])
+    serviceTimeStart: Date @rules(apply: [
+        "nullable",
+        """
+        required_without_all:input.issuerInvoiceNumber,
+        input.recipientInvoiceNumber,
+        input.invoiceType,
+        input.invoiceDate,
+        input.dateOfReceipt,
+        input.dueDate,
+        input.description,
+        input.invoiceNumber,
+        input.serviceTimeEnd,
+        input.costForward,
+        input.firstAdvancePaymentIvoiceId
+        """,
+        "required_with:input.serviceTimeEnd"
+    ])
+    serviceTimeEnd: Date @rules(apply: [
+        "nullable",
+        """
+        required_without_all:input.issuerInvoiceNumber,
+        input.recipientInvoiceNumber,
+        input.invoiceType,
+        input.invoiceDate,
+        input.dateOfReceipt,
+        input.dueDate,
+        input.description,
+        input.serviceTimeStart,
+        input.invoiceNumber,
+        input.costForward,
+        input.firstAdvancePaymentInvoiceId
+        """,
+        "after:input.serviceTimeStart"
+    ])
+    costForwarded: InvoiceCostForwarded @rules(apply: [
+        """
+        required_without_all:input.issuerInvoiceNumber,
+        input.recipientInvoiceNumber,
+        input.invoiceType,
+        input.invoiceDate,
+        input.dateOfReceipt,
+        input.dueDate,
+        input.description,
+        input.serviceTimeStart,
+        input.serviceTimeEnd,
+        input.invoiceNumber,
+        input.firstAdvancePaymentInvoiceId
+        """
+    ])
+}
+
+input CreateInvoiceLineInput {
+    invoiceId: ID @rules(apply: ["required"])
+    supplierId: ID @rules(apply: ["required"])
+    itemNumber: String @rules(apply: ["required"])
+    quantity: Float @rules(apply: ["required"])
+    price: Float @rules(apply: ["required"])
+    VAT: Float @rules(apply: ["required"])
+    rebate: Float @rules(apply: ["required"])
+    discount: Float @rules(apply: ["required"])
+    netAmount: Float @rules(apply: ["required"])
+    quantityUnit: String @rules(apply: ["required"])
+    description: String @rules(apply: ["required"])
+}
+
+input UpdateInvoiceLineInput {
+    id: ID @rules(apply: ["required"])
+    itemNumber: String
+    quantity: Float
+    price: Float
+    VAT: Float
+    rebate: Float @rules(apply: ["max:100"])
+    discount: Float @rules(apply: ["max:100"])
+    netAmount: Float
+    quantityUnit: String
+    description: String
+}
+
+input UpdateInvoiceLinesInput {
+    ids: [ID] @rules(apply: ["required"])
+    rebate: Float @rules(apply: ["max:100", "required_without:input.discount"])
+    discount: Float @rules(apply: ["max:100", "required_without:input.rebate"])
+}
+
+input CreateInvoiceLineAssignmentInput {
+    lineId: ID @rules(apply: ["required"])
+    quantity: Int @rules(apply: [
+        "assignedQuantityLessThanOrEqualToQuantity",
+        "required"
+    ])
+    costBearerType: CostBearerType @rules(apply: ["required"])
+    costBearerId: ID @rules(apply: ["required"])
+    bookingAccountNumber: String @rules(apply:["required"])
+    reassign: Boolean @rules(apply:["required"])
+    yearOfReassignment: Int @rules(apply:["required"])
+}
+
+input UpdateInvoiceLineAssignmentInput {
+    id: ID @rules(apply: ["required"])
+    quantity: Int @rules(apply:[
+        "assignedQuantityLessThanOrEqualToQuantity",
+        "required_without_all:input.yearOfReassignment,input.reassign,input.costBearerId,input.bookingAccountNumber"
+    ])
+    costBearerType: CostBearerType @rules(apply: [
+        "required_with:input.costBearerId",
+        "required_without_all:input.yearOfReassignment,input.bookingAccountNumber,input.reassign,input.quantity"
+    ])
+    costBearerId: ID @rules(apply: [
+        "required_with:input.costBearerType",
+        "required_without_all:input.yearOfReassignment,input.bookingAccountNumber,input.reassign,input.quantity"
+    ])
+    bookingAccountNumber: String @rules(apply:[
+        "required_without_all:input.yearOfReassignment,input.reassign,input.costBearerId,input.quantity"
+    ])
+    reassign: Boolean @rules(apply:[
+        "required_without_all:input.yearOfReassignment,input.bookingAccountNumber,input.costBearerId,input.quantity"
+    ])
+    yearOfReassignment: Int @rules(apply:[
+        "numeric"
+        "min:1000",
+        "max:9999",
+        "required_without_all:input.reassign,input.bookingAccountNumber,input.costBearerId,input.quantity"
+    ])
+}
+
+input UpdateInvoiceLineAssignmentsInput {
+    ids: [ID] @rules(apply: ["required"])
+    costBearerType: CostBearerType @rules(apply: [
+        "required_with:input.costBearerId",
+        "required_without_all:input.yearOfReassignment,input.bookingAccountNumber,input.reassign"
+    ])
+    costBearerId: ID @rules(apply: [
+        "required_with:input.costBearerType",
+        "required_without_all:input.yearOfReassignment,input.bookingAccountNumber,input.reassign"
+    ])
+    bookingAccountNumber: String @rules(apply:[
+        "required_without_all:input.yearOfReassignment,input.reassign,input.costBearerId"
+    ])
+    reassign: Boolean @rules(apply:[
+        "required_without_all:input.yearOfReassignment,input.bookingAccountNumber,input.costBearerId"
+    ])
+    yearOfReassignment: Int @rules(apply:[
+        "numeric"
+        "min:1000",
+        "max:9999",
+        "required_without_all:input.reassign,input.bookingAccountNumber,input.costBearerId"
+    ])
+}
+
+input EmployeeRelation {
+    connect: ID @rules(apply: ["exists:persons,id"])
+}
+
+input EmployerRelation {
+    connect: ID @rules(apply: ["exists:PARTNER_LIEFERANT,id"])
+}
+
+input JobTitleRelation {
+    connect: ID @rules(apply: ["exists:job_titles,id"])
+}
+
+enum Module {
+    MAIN
+    INVOICE
+    RENTAL_CONTRACT
+}
+
+input MergePersonsInput {
+    ids: [ID!]!
+    person: AddPersonInput!
+}
+
+input AddPersonInput {
+    firstName: String
+    lastName: String @rules(apply: ["required"])
+    birthday: Date
+    gender: Gender
+}
+
+input DateInfinityInterval {
+    date: Date
+    direction: DateInfinityIntervalDirection
+}
+
+enum DateInfinityIntervalDirection {
+    LT
+    LTE
+    GT
+    GTE
+    EQ
+}
+
+type BankAccountStandardChart {
+    id: ID! @rename(attribute: "KONTENRAHMEN_ID")
+    name: String! @rename(attribute: "NAME")
+    bookingAccounts: [BookingAccount!]!
+}
+
+type BookingAccount {
+    id: ID! @rename(attribute: "KONTENRAHMEN_KONTEN_ID")
+    number: String! @rename(attribute: "KONTO")
+    name: String! @rename(attribute: "BEZEICHNUNG")
+}
+
+type BankAccount {
+    id: ID! @rename(attribute: "KONTO_ID")
+    name: String! @rename(attribute: "BEZEICHNUNG")
+    beneficiar: String! @rename(attribute: "BEGUENSTIGTER")
+    accountNumber: String @rename(attribute: "KONTONUMMER")
+    bankCode: String @rename(attribute: "BLZ")
+    IBAN: String!
+    BIC: String!
+    bank: String! @rename(attribute: "INSTITUT")
+}
+
+type ConstructionSite {
+    id: ID!
+    name: String! @rename(attribute: "BEZ")
+    active: Boolean @rename(attribute: "AKTIV")
+    contractee: Partner! @belongsTo
+}
+
+type AccountingEntity {
+    id: ID!
+    name: String! @rename(attribute: "W_NAME")
+    units: [Unit!]! @belongsToMany(relation: "einheiten")
+}
+
+type InvoiceItem{
+    id: ID! @rename(attribute: "KATALOG_ID")
+    supplierId: Int! @rename(attribute: "ART_LIEFERANT")
+    itemNumber: String! @rename(attribute: "ARTIKEL_NR")
+    description: String @rename(attribute: "BEZEICHNUNG")
+    price: String @rename(attribute: "LISTENPREIS")
+    VAT: Float @rename(attribute: "MWST_SATZ")
+    rebate: Float @rename(attribute: "RABATT_SATZ")
+    discount: Float @rename(attribute: "SKONTO")
+    quantityUnit: String @rename(attribute: "EINHEIT")
+    supplier: Partner
+}
+
+type Invoice {
+    id: ID! @rename(attribute: "BELEG_NR")
+    invoiceNumber: String! @rename(attribute: "RECHNUNGSNUMMER")
+    issuerInvoiceNumber: Int! @rename(attribute: "AUSTELLER_AUSGANGS_RNR")
+    recipientInvoiceNumber: Int! @rename(attribute: "EMPFAENGER_EINGANGS_RNR")
+    invoiceType: InvoiceType! @rename(attribute: "RECHNUNGSTYP")
+    invoiceDate: Date! @rename(attribute: "RECHNUNGSDATUM")
+    dateOfReceipt: Date @rename(attribute: "EINGANGSDATUM")
+    dueDate: Date @rename(attribute: "FAELLIG_AM")
+    payDate: Date @rename(attribute: "BEZAHLT_AM")
+    netAmount: Float! @rename(attribute: "NETTO")
+    grossAmount: Float! @rename(attribute: "BRUTTO")
+    discountAmount: Float! @rename(attribute: "SKONTOBETRAG")
+    description: String @rename(attribute: "KURZBESCHREIBUNG")
+    issuer: Partner @morphTo(relation: "from")
+    recipient: Partner @morphTo(relation: "to")
+    bankAccount: BankAccount @belongsTo
+    lines: [InvoiceLine!]! @hasMany(relation: "linesWithProductInformation")
+    firstAdvancePayment: Invoice @hasOne(relation: "firstAdvancePaymentInvoice")
+    advancePayments: [Invoice!] @hasMany(relation: "advancePaymentInvoices" scope:"orderByInvoiceDate")
+    serviceTimeStart: Date @rename(attribute: "servicetime_from")
+    serviceTimeEnd: Date @rename(attribute: "servicetime_to")
+    costForwarded: InvoiceCostForwarded @rename(attribute: "forwarded")
+}
+
+type InvoiceLine {
+    id: ID! @rename(attribute: "RECHNUNGEN_POS_ID")
+    position: Int! @rename(attribute: "POSITION")
+    itemNumber: String! @rename(attribute: "ARTIKEL_NR")
+    quantity: Float! @rename(attribute: "MENGE")
+    price: Float! @rename(attribute: "PREIS")
+    VAT: Float! @rename(attribute: "MWST_SATZ")
+    rebate: Float! @rename(attribute: "RABATT_SATZ")
+    discount: Float! @rename(attribute: "SKONTO")
+    netAmount: Float! @rename(attribute: "GESAMT_NETTO")
+    quantityUnit: String @rename(attribute: "EINHEIT")
+    description: String! @rename(attribute: "BEZEICHNUNG")
+    assignments: [InvoiceLineAssignment!]! @field(resolver: "App\\GraphQL\\Queries\\InvoiceLine@assignments")
+    invoice: Invoice! @belongsTo
+    originatingInvoice: Invoice @belongsTo
+    supplier: Partner! @belongsTo
+}
+
+type InvoiceLineAssignment {
+    id: ID! @rename(attribute: "KONTIERUNG_ID")
+    position: Int! @rename(attribute: "POSITION")
+    invoiceId: Int! @rename(attribute: "BELEG_NR")
+    quantity: Float! @rename(attribute: "MENGE")
+    price: Float! @rename(attribute: "EINZEL_PREIS")
+    VAT: Float! @rename(attribute: "MWST_SATZ")
+    rebate: Float! @rename(attribute: "RABATT_SATZ")
+    discount: Float! @rename(attribute: "SKONTO")
+    total: Float! @rename(attribute: "GESAMT_SUMME")
+    bookingAccountNumber: String @rename(attribute: "KONTENRAHMEN_KONTO")
+    reassign: Boolean! @rename(attribute: "WEITER_VERWENDEN")
+    yearOfReassignment: Int @rename(attribute: "VERWENDUNGS_JAHR")
+    accountingDate: Date @rename(attribute: "KONTIERUNGS_DATUM")
+    costBearer: CostBearer @morphTo(relation: "costUnit")
+}
+
+enum InvoiceType {
+    """Rechnung"""
+    INVOICE @enum(value: "Rechnung")
+    """Stornorechnung"""
+    REVERSAL_INVOICE @enum(value: "Stornorechnung")
+    """Gutschrift"""
+    CREDIT_VOUCHER @enum(value: "Gutschrift")
+    """Kassenbeleg"""
+    CASH_RECEIPT @enum(value: "Kassenbeleg")
+    """Buchungsbeleg"""
+    ACCOUNTING_RECEIPT @enum(value: "Buchungsbeleg")
+    """Angebot"""
+    OFFER @enum(value: "Angebot")
+    """Teilrechnung"""
+    ADVANCE_PAYMENT_INVOICE @enum(value: "Teilrechnung")
+    """Schlussrechung"""
+    FINAL_ADVANCE_PAYMENT_INVOICE @enum(value: "Schlussrechnung")
+}
+
+enum InvoiceCostForwarded {
+    COMPLETE @enum(value: "complete")
+    NONE @enum(value: "none")
+    PARTIAL @enum(value: "partial")
+    AUTO @enum(value: "auto")
+}
+
+type QuantityUnit {
+    id: ID! @rename(attribute: "V_ID")
+    name: String! @rename(attribute: "V_EINHEIT")
+    description: String @rename(attribute: "BEZEICHNUNG")
+}
+
+type JobTitle {
+    id: ID!
+    name: String! @rename(attribute: "title")
+    createdAt: DateTime! @rename(attribute: "created_at")
+    updatedAt: DateTime @rename(attribute: "updated_at")
+    employer: Partner! @hasOne
+    employees: [Person!]! @hasMany
+}
+
+type State {
+    globalSelect: GlobalSelect! @field(resolver: "App\\GraphQL\\Queries\\GlobalSelect@resolve")
+    user: Person @auth
+    phoneAtWorkplace: Boolean @field(resolver: "App\\GraphQL\\Queries\\State@resolvePhoneAtWorkplace")
+    csrf: String @field(resolver: "App\\GraphQL\\Queries\\State@resolveCsrf")
+}
+
+type GlobalSelect {
+    partner: Partner @field(resolver: "App\\GraphQL\\Queries\\GlobalSelect@resolvePartner")
+    property: Property @field(resolver: "App\\GraphQL\\Queries\\GlobalSelect@resolveProperty")
+    bankAccount: BankAccount @field(resolver: "App\\GraphQL\\Queries\\GlobalSelect@resolveBankAccount")
+}
+
+union AuditOrPerson @union(resolveType: "App\\GraphQL\\Unions\\Model@resolveType")
+= Audit | Person
+
+type Audit {
+    id: ID!
+    user: Person
+    auditable: Person!
+    event: String!
+    url: String!
+    old: AuditValues @rename(attribute: "old_values")
+    new: AuditValues @rename(attribute: "new_values")
+    ipAddress: String! @rename(attribute: "ip_address")
+    userAgent: String! @rename(attribute: "user_agent")
+    tags: String
+    createdAt: DateTime! @rename(attribute: "created_at")
+    updatedAt: DateTime @rename(attribute: "updated_at")
+}
+
+type AuditValues {
+    firstName: String @rename(attribute: "first_name")
+    lastName: String @rename(attribute: "name")
+    birthday: Date
+}
+
+type Credential {
+    id: ID!
+    enabled: Boolean!
+    createdAt: DateTime
+    updatedAt: DateTime
+}
+
+interface PersonInterface {
+    id: ID!
+    firstName: String @rename(attribute: "first_name")
+    lastName: String! @rename(attribute: "name")
+    name: String! @rename(attribute: "full_name")
+    birthday: Date
+    createdAt: DateTime! @rename(attribute: "created_at")
+    updatedAt: DateTime @rename(attribute: "updated_at")
+    gender: Gender @rename(attribute: "sex")
+}
+
+type Person implements PersonInterface {
+    id: ID!
+    scalarTest(id: ID, int: Int, float: Float, string: String, boolean: Boolean, enum: UnitType): String @field(resolver: "App\\GraphQL\\Queries\\Persons@resolveScalarTest")
+    firstName: String @rename(attribute: "first_name")
+    lastName: String! @rename(attribute: "name")
+    name: String! @rename(attribute: "full_name")
+    fullName: String! @rename(attribute: "address_name")
+    canonicalName: String! @rename(attribute: "pretty_name")
+    birthday: Date
+    createdAt: DateTime! @rename(attribute: "created_at")
+    updatedAt: DateTime @rename(attribute: "updated_at")
+    gender: Gender @rename(attribute: "sex")
+    details: [Detail!]! @hasMany(relation: "commonDetails")
+    notifications: [Notification!]! @hasMany
+    notes: [Note!]! @hasMany(relation: "hinweise")
+    eMails: [EMail!]! @hasMany(relation: "emails")
+    faxs: [Fax!]! @hasMany(relation: "faxs")
+    phones: [Phone!]! @hasMany(relation: "phones")
+    postalAddresses: [PostalAddress!]! @hasMany(relation: "adressen")
+    rentalContracts(
+        unitPartOf: [EntitySelect!] @builder(method: "App\\GraphQL\\Queries\\RentalContracts@unitPartOf")
+        active: Date @builder(method: "App\\GraphQL\\Queries\\RentalContracts@active")
+    ): [RentalContract!]! @hasMany(relation: "mietvertraege", scopes: ["defaultOrder"])
+    purchaseContracts(
+        unitPartOf: [EntitySelect!] @builder(method: "App\\GraphQL\\Queries\\PurchaseContracts@unitPartOf")
+        active: Date @builder(method: "App\\GraphQL\\Queries\\PurchaseContracts@active")
+    ): [PurchaseContract!]! @hasMany(relation: "kaufvertraege", scopes: ["defaultOrder"])
+    jobs(
+        employer: [EntitySelect!] @builder(method: "App\\GraphQL\\Queries\\Jobs@employer")
+        active: Date @builder(method: "App\\GraphQL\\Queries\\Jobs@active")
+    ): [Job!]! @hasMany(relation: "jobsAsEmployee")
+    roles: [Role!]! @hasMany(relation: "roles")
+    audits: [Audit!]! @hasMany(relation: "audits")
+    credential: Credential @field(resolver: "App\\GraphQL\\Queries\\Credential@resolve")
+}
+
+type DetailCategory {
+    id: ID! @rename(attribute: "DETAIL_KAT_ID")
+    name: String! @rename(attribute: "DETAIL_KAT_NAME")
+    subcategories: [DetailSubcategory!]! @hasMany
+}
+
+type DetailSubcategory {
+    id: ID! @rename(attribute: "UKAT_DAT")
+    name: String! @rename(attribute: "UNTERKATEGORIE_NAME")
+    category: DetailCategory! @belongsTo
+}
+
+type PersonStub implements PersonInterface {
+    id: ID!
+    firstName: String @rename(attribute: "first_name")
+    lastName: String! @rename(attribute: "name")
+    name: String! @rename(attribute: "full_name")
+    birthday: Date
+    createdAt: DateTime! @rename(attribute: "created_at")
+    updatedAt: DateTime @rename(attribute: "updated_at")
+    gender: Gender @rename(attribute: "sex")
+}
+
+type Partner {
+    id: ID!
+    fullName: String! @rename(attribute: "PARTNER_NAME")
+    streetName: String @rename(attribute: "STRASSE")
+    streetNumber: String @rename(attribute: "NUMMER")
+    postalCode: String @rename(attribute: "PLZ")
+    city: String @rename(attribute: "ORT")
+    country: String @rename(attribute: "LAND")
+    availableJobTitles: [JobTitle] @hasMany
+}
+
+enum Gender {
+    MALE @enum(value: "männlich")
+    FEMALE @enum(value: "weiblich")
+}
+
+interface DetailInterface @interface(resolveType: "App\\GraphQL\\Interfaces\\Detail@resolveType") {
+    id: ID!
+    detailableType: DetailableType!
+    detailableId: ID!
+    category: String!
+    value: String!
+    comment: String
+    detailable: Detailable
+}
+
+type Detail implements DetailInterface {
+    id: ID! @rename(attribute: "DETAIL_ID")
+    detailableType: DetailableType! @rename(attribute: "DETAIL_ZUORDNUNG_TABELLE")
+    detailableId: ID! @rename(attribute: "DETAIL_ZUORDNUNG_ID")
+    category: String! @rename(attribute: "DETAIL_NAME")
+    value: String! @rename(attribute: "DETAIL_INHALT")
+    comment: String @rename(attribute: "DETAIL_BEMERKUNG")
+    detailable: Detailable
+}
+
+input CreateDetailInput {
+    detailableType: DetailableType @rules(apply: ["required"])
+    detailableId: ID @rules(apply: ["required"])
+    category: String @rules(apply: ["required"])
+    value: String @rules(apply: ["required"])
+    comment: String
+}
+
+input UpdateDetailInput {
+    id: ID @rules(apply: ["required"])
+    value: String @rules(apply: ["required"])
+    comment: String
+}
+
+type Note implements DetailInterface {
+    id: ID! @rename(attribute: "DETAIL_ID")
+    detailableType: DetailableType! @rename(attribute: "DETAIL_ZUORDNUNG_TABELLE")
+    detailableId: ID! @rename(attribute: "DETAIL_ZUORDNUNG_ID")
+    category: String! @rename(attribute: "DETAIL_NAME")
+    value: String! @rename(attribute: "DETAIL_INHALT")
+    comment: String @rename(attribute: "DETAIL_BEMERKUNG")
+    detailable: Detailable
+}
+
+type PostalAddress implements DetailInterface {
+    id: ID! @rename(attribute: "DETAIL_ID")
+    detailableType: DetailableType! @rename(attribute: "DETAIL_ZUORDNUNG_TABELLE")
+    detailableId: ID! @rename(attribute: "DETAIL_ZUORDNUNG_ID")
+    category: String! @rename(attribute: "DETAIL_NAME")
+    value: String! @rename(attribute: "DETAIL_INHALT")
+    comment: String @rename(attribute: "DETAIL_BEMERKUNG")
+    detailable: Detailable
+}
+
+type Phone implements DetailInterface {
+    id: ID! @rename(attribute: "DETAIL_ID")
+    detailableType: DetailableType! @rename(attribute: "DETAIL_ZUORDNUNG_TABELLE")
+    detailableId: ID! @rename(attribute: "DETAIL_ZUORDNUNG_ID")
+    category: String! @rename(attribute: "DETAIL_NAME")
+    value: String! @rename(attribute: "DETAIL_INHALT")
+    comment: String @rename(attribute: "DETAIL_BEMERKUNG")
+    detailable: Detailable
+}
+
+type Fax implements DetailInterface {
+    id: ID! @rename(attribute: "DETAIL_ID")
+    detailableType: DetailableType! @rename(attribute: "DETAIL_ZUORDNUNG_TABELLE")
+    detailableId: ID! @rename(attribute: "DETAIL_ZUORDNUNG_ID")
+    category: String! @rename(attribute: "DETAIL_NAME")
+    value: String! @rename(attribute: "DETAIL_INHALT")
+    comment: String @rename(attribute: "DETAIL_BEMERKUNG")
+    detailable: Detailable
+}
+
+type EMail implements DetailInterface {
+    id: ID! @rename(attribute: "DETAIL_ID")
+    detailableType: DetailableType! @rename(attribute: "DETAIL_ZUORDNUNG_TABELLE")
+    detailableId: ID! @rename(attribute: "DETAIL_ZUORDNUNG_ID")
+    category: String! @rename(attribute: "DETAIL_NAME")
+    value: String! @rename(attribute: "DETAIL_INHALT")
+    comment: String @rename(attribute: "DETAIL_BEMERKUNG")
+    detailable: Detailable
+}
+
+interface Contract {
+    id: ID!
+    start: Date!
+    end: Date
+}
+
+type RentalContract implements Contract {
+    id: ID!
+    start: Date! @rename(attribute: "MIETVERTRAG_VON")
+    end: Date @rename(attribute: "MIETVERTRAG_BIS")
+    unit: Unit @hasOne(relation: "einheit")
+    tenants: [Person!]! @belongsToMany(relation: "mieter")
+}
+
+type PurchaseContract implements Contract {
+    id: ID!
+    start: Date! @rename(attribute: "VON")
+    end: Date @rename(attribute: "BIS")
+    unit: Unit @hasOne(relation: "einheit")
+}
+
+interface PropertyInterface {
+    id: ID!
+    name: String! @rename(attribute: "OBJEKT_KURZNAME")
+}
+
+type Property implements PropertyInterface {
+    id: ID!
+    name: String! @rename(attribute: "OBJEKT_KURZNAME")
+    owner: Partner! @belongsTo(relation: "eigentuemer")
+    livingSpaceSize: Float @rename(attribute: "wohnflaeche")
+    commercialSpaceSize: Float @rename(attribute: "gewerbeflaeche")
+    usableSpaceSize: Float @rename(attribute: "nutzflaeche")
+    details: [Detail!]! @hasMany(relation: "commonDetails")
+    notes:  [Note!]! @hasMany(relation: "hinweise")
+    houses: [House!] @hasMany(relation: "haeuser", scopes: ["defaultOrder"])
+    homeOwnersEMails: [EMail!]!
+    tenantsEMails: [EMail!]!
+    tenants: [Person!]!
+    homeOwners: [Person!]!
+    units: [Unit!] @hasMany(relation: "einheiten", scopes: ["defaultOrder"])
+    assignments: [Assignment!]! @hasMany(relation: "auftraege", scopes: ["defaultOrder"])
+    aggregations: PropertyAggregationsRoot! @field(resolver: "App\\GraphQL\\Queries\\Properties@aggregations")
+}
+
+type PropertyAggregationsRoot {
+    houses: HouseAggregations!
+    units: UnitAggregations!
+}
+
+type HouseAggregations {
+    count: Int!
+}
+
+type UnitAggregations {
+    count: Int!
+}
+
+type PropertyStub implements PropertyInterface {
+    id: ID!
+    name: String! @rename(attribute: "OBJEKT_KURZNAME")
+}
+
+interface HouseInterface {
+    id: ID!
+    streetName: String
+    streetNumber: String
+    city: String
+    postalCode: String
+    livingSpaceSize: Float
+    commercialSpaceSize: Float
+    usableSpaceSize: Float
+    property: Property
+    units: [Unit!]!
+    assignments: [Assignment!]!
+    details: [Detail!]!
+    notes:  [Note!]!
+    tenants: [Person!]!
+    homeOwners: [Person!]!
+}
+
+type House {
+    id: ID!
+    streetName: String @rename(attribute: "HAUS_STRASSE")
+    streetNumber: String @rename(attribute: "HAUS_NUMMER")
+    city: String @rename(attribute: "HAUS_STADT")
+    postalCode: String @rename(attribute: "HAUS_PLZ")
+    livingSpaceSize: Float @rename(attribute: "wohnflaeche")
+    commercialSpaceSize: Float @rename(attribute: "gewerbeflaeche")
+    property: Property @hasOne(relation: "objekt")
+    units: [Unit!] @hasMany(relation: "einheiten")
+    assignments: [Assignment!]! @hasMany(relation: "auftraege")
+    details: [Detail!]! @hasMany(relation: "commonDetails")
+    notes:  [Note!]! @hasMany(relation: "hinweise")
+    tenants: [Person!]!
+    homeOwners: [Person!]!
+    homeOwnersEMails: [EMail!]!
+    tenantsEMails: [EMail!]!
+    aggregations: HouseAggregationsRoot! @field(resolver: "App\\GraphQL\\Queries\\Houses@aggregations")
+}
+
+type HouseAggregationsRoot {
+    units: UnitAggregations!
+}
+
+interface UnitInterface {
+    id: ID!
+    name: String!
+    size: Float
+    location: String
+    house: House!
+    unitType: UnitType!
+}
+
+type Unit {
+    id: ID!
+    name: String!  @rename(attribute: "EINHEIT_KURZNAME")
+    size: Float @rename(attribute: "EINHEIT_QM")
+    location: String @rename(attribute: "EINHEIT_LAGE")
+    house: House! @hasOne(relation: "haus")
+    unitType: UnitType! @rename(attribute: "TYP")
+    rented: Boolean! @rename(attribute: "vermietet")
+    details: [Detail!]! @hasMany(relation: "commonDetails")
+    notifications: [Notification!]! @hasMany
+    notes: [Note!]! @hasMany(relation: "hinweise")
+    details: [Detail!]! @hasMany(relation: "commonDetails")
+    rentalContracts(
+        order: PurchaseContractOrder @builder(method: "App\\GraphQL\\Queries\\RentalContracts@order")
+        active: DateInfinityInterval @builder(method: "App\\GraphQL\\Queries\\RentalContracts@active")
+        inactive: DateInfinityInterval @builder(method: "App\\GraphQL\\Queries\\RentalContracts@inactive")
+    ): [RentalContract!]! @hasMany(relation: "mietvertraege", scopes: ["defaultOrder"])
+    purchaseContracts: [PurchaseContract!]! @hasMany(relation: "kaufvertraege", scopes: ["defaultOrder"])
+    homeOwnersEMails: [EMail!]!
+    tenantsEMails: [EMail!]!
+    tenants: [Person!]!
+    homeOwners: [Person!]!
+    assignments: [Assignment!]!  @hasMany(relation: "auftraege", scopes: ["defaultOrder"])
+}
+
+enum UnitType {
+    "Wohnraum"
+    LIVING_SPACE @enum(value: "Wohnraum")
+    "Wohneigentum"
+    HOME_OWNER_LIVING_SPACE @enum(value: "Wohneigentum")
+    "Gewerbe"
+    COMMERCIAL_SPACE @enum(value: "Gewerbe")
+    "Stellplatz"
+    PARKING_SPACE @enum(value: "Stellplatz")
+    "Garage"
+    GARAGE @enum(value: "Garage")
+    "Keller"
+    CELLAR @enum(value: "Keller")
+    "Freifläche"
+    OPEN_SPACE @enum(value: "Freiflaeche")
+    "Gewerbefläche"
+    ADVERTISING_SPACE @enum(value: "Werbeflaeche")
+    "Kinderwagenbox"
+    BUGGY_SPACE @enum(value: "Kinderwagenbox")
+    "Zimmer (möbliert)"
+    ROOM @enum(value: "Zimmer (möbliert)")
+}
+
+type Job {
+    id: ID!
+    employer: Partner! @belongsTo
+    employee: Person! @belongsTo
+    title: JobTitle @belongsTo
+    joinDate: Date! @rename(attribute: "join_date")
+    leaveDate: Date @rename(attribute: "leave_date")
+    hourlyRate: Float @rename(attribute: "hourly_rate")
+    hoursPerWeek: Float @rename(attribute: "hours_per_week")
+    holidays: Float @rename(attribute: "holidays")
+    createdAt: DateTime! @rename(attribute: "created_at")
+    updatedAt: DateTime @rename(attribute: "updated_at")
+}
+
+type Assignment {
+    id: ID! @rename(attribute: "T_ID")
+    createdAt: Date  @rename(attribute: "ERSTELLT")
+    author: Person! @belongsTo(relation: "von")
+    description: String @rename(attribute: "TEXT")
+    assignedTo: PersonOrPartner @belongsTo(relation: "an")
+    highPriority: Boolean @field(resolver: "App\\GraphQL\\Queries\\Assignment@highPriority")
+    done: Boolean @field(resolver: "App\\GraphQL\\Queries\\Assignment@done")
+    costBearer: CostBearer @belongsTo(relation: "kostentraeger")
+}
+
+union CostBearer @union(resolveType: "App\\GraphQL\\Unions\\Model@resolveType")
+= Property
+    | House
+    | Unit
+    | Person
+    | Partner
+    | RentalContract
+    | PurchaseContract
+    | ConstructionSite
+    | AccountingEntity
+
+union PersonOrPartner = Person | Partner
+
+type Role {
+    id: ID!
+    name: String!
+    createdAt: DateTime! @rename(attribute: "created_at")
+    updatedAt: DateTime @rename(attribute: "updated_at")
+}
+
+interface NotificationInterface {
+    id: ID!
+    notifiable: Person! @belongsTo
+    readAt:    DateTime @rename(attribute: "read_at")
+    createdAt:    DateTime! @rename(attribute: "created_at")
+    updatedAt:    DateTime! @rename(attribute: "updated_at")
+}
+
+type PersonMergedNotification implements NotificationInterface {
+    id: ID!
+    notifiable: Person! @belongsTo
+    readAt:    DateTime @rename(attribute: "read_at")
+    createdAt:    DateTime! @rename(attribute: "created_at")
+    updatedAt:    DateTime! @rename(attribute: "updated_at")
+    left: PersonStub @rename(attribute: "data.left")
+    right: PersonStub @rename(attribute: "data.right")
+    merged: PersonStub @rename(attribute: "data.merged")
+}
+
+type PropertyCopiedNotification implements NotificationInterface {
+    id: ID!
+    notifiable: Person! @belongsTo
+    readAt:    DateTime @rename(attribute: "read_at")
+    createdAt:    DateTime! @rename(attribute: "created_at")
+    updatedAt:    DateTime! @rename(attribute: "updated_at")
+    source: PropertyStub @rename(attribute: "data.source")
+    target: PropertyStub @rename(attribute: "data.target")
+}
+
+union Notification @union(resolveType: "App\\GraphQL\\Unions\\Notification@resolveType")
+= PersonMergedNotification | PropertyCopiedNotification
+
+input EntitySelect {
+    id: ID!
+    type: String!
+}
+
+directive @variables(
+    variables: [Variable!]
+) on QUERY
+
+input Variable {
+    name: String!,
+    types: [String!],
+    label: String,
+    icon: String
+}
+
+input FilterTenantInput {
+    in: [EntitySelect!]
+    during: Date
+}
+
+input FilterHomeOwnerInput {
+    in: [EntitySelect!]
+    during: Date
+}
+
+input FilterRentalContractsInput {
+    tenants: [EntitySelect!]
+    active: Date
+}
+
+input FilterAdvancePaymentInput {
+    issuer: ID
+    recipient: ID
+    before: Date
+}
+
+directive @label(text: String!) on FIELD | FRAGMENT_SPREAD

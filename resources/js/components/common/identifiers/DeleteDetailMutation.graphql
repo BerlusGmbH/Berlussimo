@@ -1,0 +1,3 @@
+mutation DeleteDetail($id: ID!) {
+    deleteDetail(id: $id)
+}

@@ -14,33 +14,18 @@
 Route::group(['namespace' => 'Auth'], function () {
     // Authentication Routes...
     Route::get('login', 'LoginController@showLoginForm')->name('login');
-    Route::post('login', 'LoginController@login');
+    //Route::post('login', 'LoginController@login');
     Route::get('logout', 'LoginController@logout');
     // Registration Routes...
     //Route::get('register', 'AuthController@showRegistrationForm');
     //Route::post('register', 'AuthController@register');
     // Password Reset Routes...
-    Route::get('password/reset/{token?}', 'ResetPasswordController@showResetForm');
-    Route::post('password/email', 'ResetPasswordController@sendResetLinkEmail');
-    Route::post('password/reset', 'ResetPasswordController@reset');
+    //Route::get('password/reset/{token?}', 'ResetPasswordController@showResetForm');
+    //Route::post('password/email', 'ResetPasswordController@sendResetLinkEmail');
+    //Route::post('password/reset', 'ResetPasswordController@reset');
 });
 
 Route::group(['prefix' => 'api/v1', 'namespace' => 'Api\v1', 'middleware' => ['api', 'auth']], function () {
-    Route::group(['prefix' => 'partners', 'as' => 'partner::', 'namespace' => 'Modules'], function () {
-        Route::get('{partner}/select', 'PartnerController@select')->name('select');
-        Route::get('unselect', 'PartnerController@unselect')->name('unselect');
-    });
-
-    Route::group(['prefix' => 'objects', 'as' => 'object::', 'namespace' => 'Modules'], function () {
-        Route::get('{object}/select', 'ObjectController@select')->name('select');
-        Route::get('unselect', 'ObjectController@unselect')->name('unselect');
-    });
-
-    Route::group(['prefix' => 'bankaccounts', 'as' => 'bankaccount::', 'namespace' => 'Modules'], function () {
-        Route::get('{bankaccount}/select', 'BankAccountController@select')->name('select');
-        Route::get('unselect', 'BankAccountController@unselect')->name('unselect');
-    });
-
     Route::get('/reports/revenue/{object}', 'Modules\ReportController@revenue')->name('reports.revenue');
 });
 
@@ -77,25 +62,9 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'
         Route::match(['get', 'post'], '/legacy', 'EinheitenController@request')->name('legacy');
     });
 
-    Route::group(['prefix' => 'einheitenform', 'as' => 'einheitenform::'], function () {
-        Route::match(['get', 'post'], '/', 'EinheitenFormController@request')->name('legacy');
-    });
-
-    Route::group(['prefix' => 'haeuserform', 'as' => 'haeuserform::'], function () {
-        Route::match(['get', 'post'], '/', 'HaeuserFormController@request')->name('legacy');
-    });
-
-    Route::group(['prefix' => 'objekteform', 'as' => 'objekteform::'], function () {
-        Route::match(['get', 'post'], '/', 'ObjekteFormController@request')->name('legacy');
-    });
-
     Route::group(['prefix' => 'geldkonten', 'as' => 'geldkonten::'], function () {
         Route::match(['get', 'post'], '/', 'GeldkontenController@request')->name('legacy');
         Route::get('{id}/select', 'GeldkontenController@select')->name('select');
-    });
-
-    Route::group(['prefix' => 'houses', 'as' => 'haeuser::'], function () {
-        Route::match(['get', 'post'], '/legacy', 'HaeuserController@request')->name('legacy');
     });
 
     Route::group(['prefix' => 'kassen', 'as' => 'kassen::'], function () {
@@ -144,11 +113,9 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'
 
     Route::group(['prefix' => 'mietvertraege', 'as' => 'mietvertraege::'], function () {
         Route::match(['get', 'post'], '/', 'MietvertraegeController@request')->name('legacy');
-        Route::get('create', 'MietvertraegeController@create')->name('create');
-        Route::post('store', 'MietvertraegeController@store')->name('store');
     });
 
-    Route::group(['prefix' => 'objects', 'as' => 'objekte::'], function () {
+    Route::group(['prefix' => 'properties', 'as' => 'objekte::'], function () {
         Route::match(['get', 'post'], '/legacy', 'ObjekteController@request')->name('legacy');
     });
 
@@ -159,10 +126,6 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'
 
     Route::group(['prefix' => 'personal', 'as' => 'personal::'], function () {
         Route::match(['get', 'post'], '/', 'PersonalController@request')->name('legacy');
-    });
-
-    Route::group(['prefix' => 'persons', 'as' => 'personen::'], function () {
-        Route::match(['get', 'post'], '/legacy', 'PersonenController@request')->name('legacy');
     });
 
     Route::group(['prefix' => 'rechnungen', 'as' => 'rechnungen::'], function () {
@@ -176,10 +139,6 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'
 
     Route::group(['prefix' => 'statistik', 'as' => 'statistik::'], function () {
         Route::match(['get', 'post'], '/', 'StatistikController@request')->name('legacy');
-    });
-
-    Route::group(['prefix' => 'assignments', 'as' => 'todo::'], function () {
-        Route::get('/', 'ToDoController@index')->name('index');
     });
 
     Route::group(['prefix' => 'baustellen', 'as' => 'construction::'], function () {
@@ -211,11 +170,7 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'
     });
 });
 
-Route::group(['prefix' => 'broadcasting', 'middleware' => ['api']], function () {
-    Route::get('auth', '\\' . \Illuminate\Broadcasting\BroadcastController::class . '@authenticate')->name('auth');
-    Route::get('sub', 'Broadcasting\NchanPresenceController@subscribe')->name('subscribe');
-    Route::get('unsub', 'Broadcasting\NchanPresenceController@unsubscribe')->name('unsubscribe');
-});
+Broadcast::routes();
 
 Route::group(['prefix' => 'storage', 'namespace' => 'Storage', 'middleware' => ['auth']], function () {
     Route::get('{path}', 'StorageController@asset')->where('path', '.+');

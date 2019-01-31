@@ -3,16 +3,21 @@
 namespace App\Models;
 
 use App\Models\Traits\DefaultOrder;
+use App\Models\Traits\ExternalKey;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Details extends Model
 {
     use DefaultOrder;
+    use ExternalKey;
 
     public $timestamps = false;
     protected $table = 'DETAIL';
-    protected $primaryKey = 'DETAIL_ID';
+    protected $primaryKey = 'DETAIL_DAT';
+    protected $externalKey = 'DETAIL_ID';
     protected $defaultOrder = ['DETAIL_NAME' => 'asc', 'DETAIL_INHALT' => 'asc', 'DETAIL_BEMERKUNG' => 'asc'];
     protected $fillable = [
         'DETAIL_ID',
@@ -23,12 +28,6 @@ class Details extends Model
         'DETAIL_ZUORDNUNG_TABELLE',
         'DETAIL_ZUORDNUNG_ID',
     ];
-    protected $appends = ['type'];
-
-    static public function getTypeAttribute()
-    {
-        return 'detail';
-    }
 
     protected static function boot()
     {
@@ -54,8 +53,18 @@ class Details extends Model
         return strip_tags($value);
     }
 
-    public function from()
+    public function from(): MorphTo
     {
-        return $this->morphTo('details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID');
+        return $this->morphTo('details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID', 'id');
+    }
+
+    public function detailable(): MorphTo
+    {
+        return $this->from();
+    }
+
+    public function detailablePerson(): BelongsTo
+    {
+        return $this->belongsTo(Person::class, 'DETAIL_ZUORDNUNG_ID', 'id')->where('DETAIL_ZUORDNUNG_TABELLE', 'Person');
     }
 }

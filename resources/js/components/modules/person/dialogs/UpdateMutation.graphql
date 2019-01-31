@@ -1,0 +1,17 @@
+#import "../../../../../graphql/PersonBaseFragment.graphql"
+#import "../../../../../graphql/AuditBaseFragment.graphql"
+
+mutation UpdatePerson($id: ID!, $firstName: String, $lastName: String!, $gender: Gender, $birthday: Date) {
+    updatePerson(id: $id, firstName: $firstName, lastName: $lastName, gender: $gender, birthday: $birthday) {
+        ...PersonBase
+        audits {
+            ...AuditBase
+            user {
+                ...PersonBase
+            }
+            auditable {
+                ...PersonBase
+            }
+        }
+    }
+}

@@ -50,7 +50,7 @@ trait Active
         }
     }
 
-    public function scopeNotActive($query, $comparator = '=', $date = null)
+    public function scopeInactive($query, $comparator = '=', $date = null)
     {
         if (is_null($date)) {
             $date = Carbon::today();

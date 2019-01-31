@@ -21,7 +21,7 @@ trait Searchable
         $model = $query->getModel();
         $query->where(function ($q) use ($string, $model) {
             foreach ($model->searchableFields as $field) {
-                $q->orWhere($field, 'like', '%' . $string . '%');
+                $q->orWhere($model->getTable() . '.' . $field, 'like', '%' . $string . '%');
             }
         });
         return $query;

@@ -14,15 +14,10 @@ class Bankkonten extends Model
 
     public $timestamps = false;
     protected $table = 'GELD_KONTEN';
-    protected $primaryKey = 'KONTO_ID';
+    protected $primaryKey = 'KONTO_DAT';
+    protected $externalKey = 'KONTO_ID';
     protected $searchableFields = ['BEZEICHNUNG', 'IBAN', 'BIC', 'KONTONUMMER', 'BLZ'];
     protected $defaultOrder = ['BEZEICHNUNG' => 'asc'];
-    protected $appends = ['type'];
-
-    static public function getTypeAttribute()
-    {
-        return 'bank_account';
-    }
 
     protected static function boot()
     {
@@ -32,11 +27,11 @@ class Bankkonten extends Model
     }
 
     public function objekte() {
-        return $this->belongsToMany(Objekte::class, 'GELD_KONTEN_ZUWEISUNG', 'KONTO_ID', 'KOSTENTRAEGER_ID')->wherePivot('KOSTENTRAEGER_TYP', 'Objekt')->wherePivot('AKTUELL', '1');
+        return $this->belongsToMany(Objekte::class, 'GELD_KONTEN_ZUWEISUNG', 'KONTO_ID', 'KOSTENTRAEGER_ID', 'KONTO_ID', 'id')->wherePivot('KOSTENTRAEGER_TYP', 'Objekt')->wherePivot('AKTUELL', '1');
     }
 
     public function partner() {
-        return $this->belongsToMany(Partner::class, 'GELD_KONTEN_ZUWEISUNG', 'KONTO_ID', 'KOSTENTRAEGER_ID')->wherePivot('KOSTENTRAEGER_TYP', 'Partner')->wherePivot('AKTUELL', '1');
+        return $this->belongsToMany(Partner::class, 'GELD_KONTEN_ZUWEISUNG', 'KONTO_ID', 'KOSTENTRAEGER_ID', 'KONTO_ID', 'id')->wherePivot('KOSTENTRAEGER_TYP', 'Partner')->wherePivot('AKTUELL', '1');
     }
 
     public function getChunkedIBANAttribute()

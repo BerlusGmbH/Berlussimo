@@ -102,7 +102,7 @@ class serienbrief
                     // ##############################################################
                     $pdf->ezSetDy(-60);
 
-                    if (!request()->has('druckdatum')) {
+                    if (!request()->filled('druckdatum')) {
                         $datum_heute = date("d.m.Y");
                     } else {
                         $datum_heute = request()->input('druckdatum');

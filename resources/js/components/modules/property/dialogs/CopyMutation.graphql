@@ -1,0 +1,3 @@
+mutation CopyProperty($input: CopyPropertyInput!) {
+    copyProperty(input: $input)
+}

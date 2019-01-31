@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Policies\DatabaseNotificationPolicy;
 use Auth;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Notifications\DatabaseNotification;
 use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
@@ -14,7 +16,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        'App\Model' => 'App\Policies\ModelPolicy',
+        DatabaseNotification::class => DatabaseNotificationPolicy::class,
     ];
 
     /**

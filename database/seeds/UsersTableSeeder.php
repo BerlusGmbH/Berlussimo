@@ -13,7 +13,7 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         $users = array(
-            ['id' => 73, 'name' => 'Cristian Müller', 'email' => 'mueller@berlus.de', 'password' => Hash::make('mueller'), 'api_token' => str_random(60)]
+            ['id' => 73, 'name' => 'Cristian Müller', 'email' => 'mueller@berlus.de', 'password' => Hash::make('mueller')]
         );
 
         // Loop through each user above and create the record for them in the database

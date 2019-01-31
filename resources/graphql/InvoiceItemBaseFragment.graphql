@@ -1,0 +1,12 @@
+fragment InvoiceItemBase on InvoiceItem {
+    __typename
+    id
+    supplierId
+    itemNumber
+    description
+    price
+    VAT
+    rebate
+    discount
+    quantityUnit
+}

@@ -14,6 +14,6 @@ Berlussimo - Software für Hausverwaltungen (php/mysql)
  * @contact software(@)hausverwaltung.de
  * @license     http://www.gnu.org/licenses/agpl.html AGPL Version 3
  * 
- Please read the install Instructions under INSTALL/install_instructions.txt 
+ Please read the install Instructions in [INSTALL.md](INSTALL.md).
 
 Enjoy Berlussimo

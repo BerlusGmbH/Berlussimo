@@ -1,84 +1,95 @@
 {
-  "name": "laravel/laravel",
-  "description": "The Laravel Framework.",
-  "keywords": [
-    "framework",
-    "laravel"
-  ],
-  "license": "MIT",
-  "type": "project",
-  "require": {
-    "php": ">=5.6.4",
-    "barryvdh/laravel-debugbar": "^2.3",
-    "barryvdh/laravel-ide-helper": "v2.*",
-    "damienlagae/xlsxwriter": "^1.0",
-    "doctrine/dbal": "^2.5",
-    "fideloper/proxy": "~3.0",
-    "kingsquare/php-mt940": "dev-berlussimo",
-    "laravel/framework": "5.4.*",
-    "laravel/passport": "^3.0",
-    "laravel/tinker": "~1.0",
-    "mashape/unirest-php": "^3.0",
-    "owen-it/laravel-auditing": "^4.0",
-    "propaganistas/laravel-phone": "^2.8",
-    "rospdf/pdf-php": "0.12.40",
-    "smarty/smarty-lexer": "3.1.29",
-    "spatie/laravel-permission": "^1.4"
-  },
-  "require-dev": {
-    "fzaninotto/faker": "~1.4",
-    "mockery/mockery": "0.9.*",
-    "phpunit/phpunit": "~5.7"
-  },
-  "autoload": {
-    "classmap": [
-      "database",
-      "legacy/classes/"
+    "name": "laravel/laravel",
+    "type": "project",
+    "description": "The Laravel Framework.",
+    "keywords": [
+        "framework",
+        "laravel"
     ],
-    "psr-4": {
-      "App\\": "app/"
+    "license": "MIT",
+    "require": {
+        "php": "^7.2",
+        "beyondcode/laravel-websockets": "^1.1",
+        "damienlagae/xlsxwriter": "^1.0",
+        "doctrine/dbal": "^2.5",
+        "fideloper/proxy": "^4.0",
+        "kingsquare/php-mt940": "dev-berlussimo",
+        "laravel/framework": "5.8.*",
+        "laravel/passport": "^7.0",
+        "laravel/tinker": "^1.0",
+        "mashape/unirest-php": "^3.0",
+        "nuwave/lighthouse": "^4.3",
+        "owen-it/laravel-auditing": "^9.0",
+        "predis/predis": "^1.1",
+        "propaganistas/laravel-phone": "^2.8",
+        "pusher/pusher-php-server": "^3.3",
+        "rospdf/pdf-php": "0.12.40",
+        "spatie/laravel-permission": "^2.36.1",
+        "webonyx/graphql-php": "^0.13.8",
+        "ext-json": "*"
     },
-    "files": [
-      "config/phpsettings.php",
-      "legacy/includes/allgemeine_funktionen.php",
-      "legacy/includes/formular_funktionen.php",
-      "legacy/includes/haus_form_funktionen.php"
-
-    ]
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Tests\\": "tests/"
+    "require-dev": {
+        "barryvdh/laravel-ide-helper": "^v2.5",
+        "beyondcode/laravel-dump-server": "^1.0",
+        "filp/whoops": "^2.0",
+        "fzaninotto/faker": "^1.4",
+        "mockery/mockery": "^1.0",
+        "nunomaduro/collision": "^3.0",
+        "phpunit/phpunit": "^8",
+        "symfony/thanks": "^1.0"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        },
+        "classmap": [
+            "database/seeds",
+            "database/factories",
+            "legacy/classes/"
+        ],
+        "files": [
+            "config/phpsettings.php",
+            "legacy/includes/allgemeine_funktionen.php",
+            "legacy/includes/formular_funktionen.php",
+            "legacy/includes/haus_form_funktionen.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/BerlusGmbH/php-mt940.git"
+        }
+    ],
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan ide-helper:meta"
+        ]
     }
-  },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/BerlusGmbH/php-mt940.git"
-    }
-  ],
-  "scripts": {
-    "post-root-package-install": [
-      "php -r \"file_exists('.env') || copy('.env.example', '.env');\""
-    ],
-    "post-create-project-cmd": [
-      "php artisan key:generate"
-    ],
-    "post-install-cmd": [
-      "Illuminate\\Foundation\\ComposerScripts::postInstall",
-      "php artisan ide-helper:generate",
-      "php artisan view:clear",
-      "php artisan optimize"
-    ],
-    "post-update-cmd": [
-      "Illuminate\\Foundation\\ComposerScripts::postUpdate",
-      "php artisan ide-helper:generate",
-      "php artisan view:clear",
-      "php artisan optimize"
-    ]
-  },
-  "config": {
-    "preferred-install": "dist",
-    "sort-packages": true
-  }
 }

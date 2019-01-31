@@ -381,7 +381,7 @@ class buchen
         echo "<select name=\"$name\" id=\"$id\" size=1 $js_action>\n";
         echo "<option value=\"\">Bitte wählen</option>\n";
         if ($typ == 'Objekt') {
-            $db_abfrage = "SELECT OBJEKT_KURZNAME, OBJEKT_ID FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC";
+            $db_abfrage = "SELECT OBJEKT_KURZNAME, OBJEKT.id AS OBJEKT_ID FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC";
             $resultat = DB::select($db_abfrage);
             foreach ($resultat as $row) {
                 if (!session()->has('geldkonto_id')) {
@@ -405,7 +405,7 @@ class buchen
         }
 
         if ($typ == 'Wirtschaftseinheit') {
-            $db_abfrage = "SELECT W_NAME, W_ID FROM WIRT_EINHEITEN WHERE AKTUELL='1' ORDER BY W_NAME ASC";
+            $db_abfrage = "SELECT W_NAME, id AS W_ID FROM WIRT_EINHEITEN WHERE AKTUELL='1' ORDER BY W_NAME ASC";
             $resultat = DB::select($db_abfrage);
             if (is_numeric($vorwahl_bez)) {
                 foreach ($resultat as $row) {
@@ -447,33 +447,33 @@ class buchen
         }
 
         if ($typ == 'Einheit') {
-            $db_abfrage = "SELECT EINHEIT_KURZNAME, EINHEIT_ID FROM EINHEIT WHERE EINHEIT_AKTUELL='1' ORDER BY EINHEIT_KURZNAME ASC";
+            $db_abfrage = "SELECT EINHEIT_KURZNAME, id FROM EINHEIT WHERE EINHEIT_AKTUELL='1' ORDER BY EINHEIT_KURZNAME ASC";
             $resultat = DB::select($db_abfrage);
             foreach ($resultat as $row) {
-                if ($vorwahl_bez == $row['EINHEIT_ID']) {
-                    echo "<option value=\"$row[EINHEIT_ID]\" selected>$row[EINHEIT_KURZNAME]</option>";
+                if ($vorwahl_bez == $row['id']) {
+                    echo "<option value=\"$row[id]\" selected>$row[EINHEIT_KURZNAME]</option>";
                 } else {
-                    echo "<option value=\"$row[EINHEIT_ID]\">$row[EINHEIT_KURZNAME]</option>";
+                    echo "<option value=\"$row[id]\">$row[EINHEIT_KURZNAME]</option>";
                 }
             }
         }
 
         if ($typ == 'Partner') {
-            $db_abfrage = "SELECT PARTNER_NAME, PARTNER_ID FROM PARTNER_LIEFERANT WHERE AKTUELL='1' ORDER BY PARTNER_NAME ASC";
+            $db_abfrage = "SELECT PARTNER_NAME, id FROM PARTNER_LIEFERANT WHERE AKTUELL='1' ORDER BY PARTNER_NAME ASC";
             $resultat = DB::select($db_abfrage);
             foreach ($resultat as $row) {
                 $PARTNER_NAME1 = str_replace('<br>', ' ', $row['PARTNER_NAME']);
                 if (!is_numeric($vorwahl_bez)) {
                     if ($vorwahl_bez == $PARTNER_NAME1) {
-                        echo "<option value=\"$row[PARTNER_ID]\" selected>$PARTNER_NAME1</option>";
+                        echo "<option value=\"$row[id]\" selected>$PARTNER_NAME1</option>";
                     } else {
-                        echo "<option value=\"$row[PARTNER_ID]\">$PARTNER_NAME1</option>";
+                        echo "<option value=\"$row[id]\">$PARTNER_NAME1</option>";
                     }
                 } else {
-                    if ($vorwahl_bez == $row['PARTNER_ID']) {
-                        echo "<option value=\"$row[PARTNER_ID]\" selected>$PARTNER_NAME1</option>";
+                    if ($vorwahl_bez == $row['id']) {
+                        echo "<option value=\"$row[id]\" selected>$PARTNER_NAME1</option>";
                     } else {
-                        echo "<option value=\"$row[PARTNER_ID]\">$PARTNER_NAME1</option>";
+                        echo "<option value=\"$row[id]\">$PARTNER_NAME1</option>";
                     }
                 }
             }
@@ -554,7 +554,7 @@ class buchen
         }
 
         if ($typ == 'Baustelle_ext') {
-            $db_abfrage = "SELECT ID, BEZ  FROM `BAUSTELLEN_EXT`  WHERE AKTUELL='1' ORDER BY BEZ ASC";
+            $db_abfrage = "SELECT id AS ID, BEZ  FROM `BAUSTELLEN_EXT` WHERE AKTUELL='1' ORDER BY BEZ ASC";
             $resultat = DB::select($db_abfrage);
             if (is_numeric($vorwahl_bez)) {
                 foreach ($resultat as $row) {
@@ -581,7 +581,7 @@ class buchen
             $gk_arr_objekt = $this->get_objekt_arr_gk(session()->get('geldkonto_id'));
             if (!empty($gk_arr_objekt)) {
 
-                $db_abfrage = "SELECT ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT.HAUS_ID, HAUS.OBJEKT_ID FROM `WEG_MITEIGENTUEMER` , EINHEIT, HAUS WHERE EINHEIT_AKTUELL = '1' && HAUS_AKTUELL = '1' && AKTUELL = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && EINHEIT.EINHEIT_ID = WEG_MITEIGENTUEMER.EINHEIT_ID ";
+                $db_abfrage = "SELECT WEG_MITEIGENTUEMER.id AS ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT.HAUS_ID, HAUS.OBJEKT_ID FROM `WEG_MITEIGENTUEMER` , EINHEIT, HAUS WHERE EINHEIT_AKTUELL = '1' && HAUS_AKTUELL = '1' && AKTUELL = '1' && EINHEIT.HAUS_ID = HAUS.id && EINHEIT.id = WEG_MITEIGENTUEMER.EINHEIT_ID ";
 
                 $anz_gk = count($gk_arr_objekt);
                 for ($go = 0; $go < $anz_gk; $go++) {
@@ -589,10 +589,10 @@ class buchen
                     $db_abfrage .= "&& HAUS.OBJEKT_ID=$oo_id[KOSTENTRAEGER_ID] ";
                 }
 
-                $db_abfrage .= "GROUP BY ID ORDER BY  EINHEIT_KURZNAME ASC ";
+                $db_abfrage .= "GROUP BY WEG_MITEIGENTUEMER.id ORDER BY  EINHEIT_KURZNAME ASC ";
             } else {
 
-                $db_abfrage = "SELECT ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT.HAUS_ID, HAUS.OBJEKT_ID FROM `WEG_MITEIGENTUEMER` , EINHEIT, HAUS WHERE EINHEIT_AKTUELL = '1' && HAUS_AKTUELL = '1' && AKTUELL = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && EINHEIT.EINHEIT_ID = WEG_MITEIGENTUEMER.EINHEIT_ID GROUP BY ID ORDER BY  EINHEIT_KURZNAME ASC";
+                $db_abfrage = "SELECT WEG_MITEIGENTUEMER.id AS ID, EINHEIT.id AS EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT.HAUS_ID, HAUS.OBJEKT_ID FROM `WEG_MITEIGENTUEMER` , EINHEIT, HAUS WHERE EINHEIT_AKTUELL = '1' && HAUS_AKTUELL = '1' && AKTUELL = '1' && EINHEIT.HAUS_ID = HAUS.id && EINHEIT.id = WEG_MITEIGENTUEMER.EINHEIT_ID GROUP BY WEG_MITEIGENTUEMER.id ORDER BY  EINHEIT_KURZNAME ASC";
             }
 
             $result = DB::select($db_abfrage);
@@ -908,7 +908,7 @@ class buchen
                 route('web::buchen::legacy', ['option' => 'geldkonto_aendern'])
             );
         }
-        if (!request()->has('submit_kostenkonto')) {
+        if (!request()->filled('submit_kostenkonto')) {
             $kr = new kontenrahmen ();
             $kontenrahmen_id = $kr->get_kontenrahmen('Geldkonto', session()->get('geldkonto_id'));
             $f = new formular ();
@@ -1096,7 +1096,7 @@ class buchen
         $datum_arr = explode('-', $datum);
         $jahr = $datum_arr [0];
         $monat = $datum_arr [1];
-        if (!request()->has('sort')) {
+        if (!request()->filled('sort')) {
             $my_array = DB::select("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, MWST_ANTEIL, GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y-%m') = '$jahr-$monat' && AKTUELL='1' ORDER BY G_BUCHUNGSNUMMER DESC");
         } else {
             $sort = request()->input('sort');
@@ -1147,7 +1147,7 @@ class buchen
         $ja = $dat_arr [0];
         $mo = $dat_arr [1];
 
-        if (!request()->has('sort')) {
+        if (!request()->filled('sort')) {
             $my_array = DB::select("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y-%m') = '$ja-$mo' && AKTUELL='1' ORDER BY G_BUCHUNGSNUMMER ASC");
         } else {
             $sort = request()->input('sort');
@@ -1278,7 +1278,7 @@ class buchen
         $mo = $dat_arr [1];
         $monatsname = monat2name($mo);
 
-        if (!request()->has('sort')) {
+        if (!request()->filled('sort')) {
             $my_array = DB::select("SELECT DATUM, GELD_KONTO_BUCHUNGEN_DAT, MWST_ANTEIL,GELD_KONTO_BUCHUNGEN_ID, G_BUCHUNGSNUMMER, BETRAG, VERWENDUNGSZWECK, KONTO_AUSZUGSNUMMER, ERFASS_NR, KONTENRAHMEN_KONTO, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && DATE_FORMAT(DATUM, '%Y-%m') = '$ja-$mo' && AKTUELL='1' ORDER BY G_BUCHUNGSNUMMER ASC");
         } else {
             $sort = request()->input('sort');
@@ -1693,7 +1693,7 @@ class buchen
             }
         } else { // end if numrow
             $pdf->addText(43, 718, 50, "KEINE BUCHUNGEN");
-            if (!request()->has('xls')) {
+            if (!request()->filled('xls')) {
                 ob_end_clean();
                 $pdf->ezStream();
             } else {
@@ -1916,7 +1916,7 @@ class buchen
         $g->geld_konto_details($geldkonto_id);
 
         $jahr = request()->input('jahr');
-        if (request()->has('monat')) {
+        if (request()->filled('monat')) {
             $monat = request()->input('monat');
         }
         $link = route('web::buchen::legacy', ['option' => 'konten_uebersicht_pdf'] . false);
@@ -2067,7 +2067,7 @@ class buchen
     {
         $bg = new berlussimo_global ();
         $link = route('web::buchen::legacy', ['option' => 'kosten_einnahmen'], false);
-        if (request()->has('monat') && request()->has('jahr')) {
+        if (request()->filled('monat') && request()->filled('jahr')) {
             if (request()->input('monat') != 'alle') {
                 session()->put('monat', sprintf('%02d', request()->input('monat')));
             } else {
@@ -2768,7 +2768,7 @@ LIMIT 0 , 1");
     {
         echo "Monatsbericht Mieter - Monatsbericht Kostenkonten<br>";
         echo "<h3>Aktuelle Mieterstatistik mit ausgezogenen Mietern<br></h3>";
-        if (request()->has('jahr')) {
+        if (request()->filled('jahr')) {
             $jahr = request()->input('jahr');
         }
         if (empty ($jahr)) {
@@ -2778,7 +2778,7 @@ LIMIT 0 , 1");
                 $jahr = date("Y");
             }
         }
-        if (request()->has('monat')) {
+        if (request()->filled('monat')) {
             $monat = request()->input('monat');
         }
         if (empty ($monat)) {

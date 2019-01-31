@@ -1,0 +1,9 @@
+fragment PartnerIdentifier on Partner {
+    id
+    fullName
+    streetName
+    streetNumber
+    postalCode
+    city
+    country
+}

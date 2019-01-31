@@ -1,0 +1,31 @@
+query Tenants(
+    $search: String,
+    $first: Int!,
+    $page: Int,
+    $tenantIn: [EntitySelect!],
+    $tenantDuring: Date
+) @variables(variables: [
+    {name: "tenantIn", types: ["Property", "House", "Unit"], label: "Mieter in", icon: "mdi-city"},
+    {name: "tenantDuring" label: "Mieter während", icon: "mdi-calendar"}
+]) {
+    persons(search: $search, first: $first, page: $page, tenant: {in: $tenantIn, during: $tenantDuring}) {
+        data {
+            ...PersonIdentifier @label(text: "Mieter")
+            rentalContracts(unitPartOf: $tenantIn, active: $tenantDuring) {
+                ...RentalContractIdentifier @label(text: "Mietvertrag")
+                unit {
+                    ...UnitIdentifier @label(text: "Einheit")
+                    house {
+                        ...HouseIdentifier @label(text: "Haus")
+                        property {
+                            ...PropertyIdentifier @label(text: "Objekt")
+                        }
+                    }
+                }
+            }
+        }
+        paginatorInfo {
+            ...PaginatorInfo
+        }
+    }
+}

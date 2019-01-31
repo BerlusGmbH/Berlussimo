@@ -15,7 +15,7 @@ class mahnungen
         $f = new formular ();
         $f->erstelle_formular('mahnen', '');
         $f->fieldset('Mahnungen und Zahlungserinnerungen', 'mze');
-        if (request()->has('send_mahnen') or request()->has('send_erinnern')) {
+        if (request()->filled('send_mahnen') or request()->filled('send_erinnern')) {
             if (!is_array(request()->input('mahnliste'))) {
                 throw new \App\Exceptions\MessageException(
                     new \App\Messages\ErrorMessage('Bitte wählen Sie einen Mieter.')
@@ -29,12 +29,12 @@ class mahnungen
                 }
             }
             $this->form_datum_konto('Datum - Zahlungsfrist', 'datum', 'dz');
-            if (request()->has('send_mahnen')) {
+            if (request()->filled('send_mahnen')) {
                 $f->text_feld('Mahngebühr', 'mahngebuehr', '0,00', 10, 'mg', '');
                 $f->hidden_feld('mietvertrag_raus', 'mahnen_mehrere');
                 $f->send_button('send_mehrere', 'SERIENBRIEF MAHNUNGEN ERSTELLEN');
             }
-            if (request()->has('send_erinnern')) {
+            if (request()->filled('send_erinnern')) {
                 $f->hidden_feld('mietvertrag_raus', 'erinnern_mehrere');
                 echo "<br>";
                 $f->send_button('send_mehrere', 'SERIENBRIEF ZAHLUNGSERINNERUNG ERSTELLEN');
@@ -154,15 +154,15 @@ class mahnungen
     {
         if (session()->has('objekt_id')) {
             $objekt_id = session()->get('objekt_id');
-            $my_arr = DB::select("SELECT MIETVERTRAG_ID, EINHEIT.EINHEIT_ID, HAUS.HAUS_ID, OBJEKT.OBJEKT_ID FROM MIETVERTRAG 
-LEFT JOIN EINHEIT ON (MIETVERTRAG.EINHEIT_ID=EINHEIT.EINHEIT_ID)
-LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID)
-LEFT JOIN OBJEKT ON (HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID)
+            $my_arr = DB::select("SELECT MIETVERTRAG.id AS MIETVERTRAG_ID, EINHEIT.id AS EINHEIT_ID, HAUS.id AS HAUS_ID, OBJEKT.id AS OBJEKT_ID FROM MIETVERTRAG 
+LEFT JOIN EINHEIT ON (MIETVERTRAG.EINHEIT_ID=EINHEIT.id)
+LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.id)
+LEFT JOIN OBJEKT ON (HAUS.OBJEKT_ID=OBJEKT.id)
 
-WHERE MIETVERTRAG_AKTUELL = '1' && EINHEIT_AKTUELL = '1' && HAUS_AKTUELL = '1' && OBJEKT_AKTUELL = '1'  && OBJEKT.OBJEKT_ID='$objekt_id' && ( MIETVERTRAG_BIS > CURdate( )
+WHERE MIETVERTRAG_AKTUELL = '1' && EINHEIT_AKTUELL = '1' && HAUS_AKTUELL = '1' && OBJEKT_AKTUELL = '1'  && OBJEKT.id='$objekt_id' && ( MIETVERTRAG_BIS > CURdate( )
 OR MIETVERTRAG_BIS = '0000-00-00' ) ORDER BY EINHEIT_KURZNAME ASC");
         } else {
-            $my_arr = DB::select("SELECT MIETVERTRAG_ID, EINHEIT.EINHEIT_ID FROM MIETVERTRAG LEFT JOIN EINHEIT ON (MIETVERTRAG.EINHEIT_ID=EINHEIT.EINHEIT_ID)
+            $my_arr = DB::select("SELECT MIETVERTRAG.id AS MIETVERTRAG_ID, EINHEIT.id AS EINHEIT_ID FROM MIETVERTRAG LEFT JOIN EINHEIT ON (MIETVERTRAG.EINHEIT_ID=EINHEIT.id)
 WHERE MIETVERTRAG_AKTUELL = '1' && EINHEIT_AKTUELL = '1' && ( MIETVERTRAG_BIS > CURdate()
 OR MIETVERTRAG_BIS = '0000-00-00' ) ORDER BY EINHEIT_KURZNAME ASC");
         }
@@ -173,10 +173,10 @@ OR MIETVERTRAG_BIS = '0000-00-00' ) ORDER BY EINHEIT_KURZNAME ASC");
     {
         if (session()->has('objekt_id')) {
             $objekt_id = session()->get('objekt_id');
-            $result = DB::select("SELECT MIETVERTRAG_ID, EINHEIT.EINHEIT_ID, HAUS.HAUS_ID, OBJEKT.OBJEKT_ID  FROM MIETVERTRAG  LEFT JOIN EINHEIT ON (MIETVERTRAG.EINHEIT_ID=EINHEIT.EINHEIT_ID)
-LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID) WHERE MIETVERTRAG_AKTUELL = '1' && EINHEIT_AKTUELL = '1' && HAUS_AKTUELL = '1' && OBJEKT_AKTUELL = '1'  && OBJEKT.OBJEKT_ID='$objekt_id'  && MIETVERTRAG_BIS < CURdate() && MIETVERTRAG_BIS != '0000-00-00' ORDER BY EINHEIT_ID ASC");
+            $result = DB::select("SELECT MIETVERTRAG.id AS MIETVERTRAG_ID, EINHEIT.id AS EINHEIT_ID, HAUS.id AS HAUS_ID, OBJEKT.id AS OBJEKT_ID  FROM MIETVERTRAG  LEFT JOIN EINHEIT ON (MIETVERTRAG.EINHEIT_ID=EINHEIT.id)
+LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.id) LEFT JOIN OBJEKT ON (HAUS.OBJEKT_ID=OBJEKT.id) WHERE MIETVERTRAG_AKTUELL = '1' && EINHEIT_AKTUELL = '1' && HAUS_AKTUELL = '1' && OBJEKT_AKTUELL = '1'  && OBJEKT.id='$objekt_id'  && MIETVERTRAG_BIS < CURdate() && MIETVERTRAG_BIS != '0000-00-00' ORDER BY EINHEIT.id ASC");
         } else {
-            $result = DB::select("SELECT MIETVERTRAG_ID, EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' && MIETVERTRAG_BIS < CURdate() && MIETVERTRAG_BIS != '0000-00-00' ORDER BY EINHEIT_ID ASC");
+            $result = DB::select("SELECT id AS MIETVERTRAG_ID, EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' && MIETVERTRAG_BIS < CURdate() && MIETVERTRAG_BIS != '0000-00-00' ORDER BY EINHEIT_ID ASC");
         }
         return $result;
     }
@@ -185,9 +185,9 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
     {
         if (session()->has('objekt_id')) {
             $objekt_id = session()->get('objekt_id');
-            $result = DB::select("SELECT MIETVERTRAG_ID, EINHEIT.EINHEIT_ID, HAUS.HAUS_ID, OBJEKT.OBJEKT_ID  FROM MIETVERTRAG LEFT JOIN EINHEIT ON (MIETVERTRAG.EINHEIT_ID=EINHEIT.EINHEIT_ID) LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID) WHERE MIETVERTRAG_AKTUELL = '1' && EINHEIT_AKTUELL = '1' && HAUS_AKTUELL = '1' && OBJEKT_AKTUELL = '1'  && OBJEKT.OBJEKT_ID='$objekt_id'   ORDER BY EINHEIT_ID ASC");
+            $result = DB::select("SELECT MIETVERTRAG.id AS MIETVERTRAG_ID, EINHEIT.id AS EINHEIT_ID, HAUS.id AS HAUS_ID, OBJEKT.id AS OBJEKT_ID  FROM MIETVERTRAG LEFT JOIN EINHEIT ON (MIETVERTRAG.EINHEIT_ID=EINHEIT.id) LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.id) LEFT JOIN OBJEKT ON (HAUS.OBJEKT_ID=OBJEKT.id) WHERE MIETVERTRAG_AKTUELL = '1' && EINHEIT_AKTUELL = '1' && HAUS_AKTUELL = '1' && OBJEKT_AKTUELL = '1'  && OBJEKT.id='$objekt_id'   ORDER BY EINHEIT.id ASC");
         } else {
-            $result = DB::select("SELECT MIETVERTRAG_ID, EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' ORDER BY EINHEIT_ID ASC");
+            $result = DB::select("SELECT id AS MIETVERTRAG_ID, EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL = '1' ORDER BY EINHEIT_ID ASC");
         }
         return $result;
     }

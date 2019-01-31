@@ -1,0 +1,5 @@
+fragment RoleBase on Role {
+    __typename
+    id
+    name
+}

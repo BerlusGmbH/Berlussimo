@@ -20,7 +20,7 @@ class partner extends rechnung {
     public $partner_land;
 
     function get_aussteller_info($partner_id) {
-        $result = DB::select( "SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'" );
+        $result = DB::select("SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE id='$partner_id' && AKTUELL = '1'");
         $row = $result[0];
         $this->rechnungs_aussteller_name = $row ['PARTNER_NAME'];
         $this->rechnungs_aussteller_strasse = $row ['STRASSE'];
@@ -29,7 +29,7 @@ class partner extends rechnung {
         $this->rechnungs_aussteller_ort = $row ['ORT'];
     }
     function get_empfaenger_info($partner_id) {
-        $result = DB::select( "SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'" );
+        $result = DB::select("SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE id='$partner_id' && AKTUELL = '1'");
         $row = $result[0];
         $this->rechnungs_empfaenger_name = $row ['PARTNER_NAME'];
         $this->rechnungs_empfaenger_strasse = $row ['STRASSE'];
@@ -40,9 +40,9 @@ class partner extends rechnung {
 
     /* Letzte Partner ID */
     function letzte_partner_id() {
-        $result = DB::select( "SELECT PARTNER_ID FROM PARTNER_LIEFERANT  ORDER BY PARTNER_ID DESC LIMIT 0,1" );
+        $result = DB::select("SELECT id FROM PARTNER_LIEFERANT  ORDER BY PARTNER_ID DESC LIMIT 0,1");
         $row = $result[0];
-        return $row ['PARTNER_ID'];
+        return $row ['id'];
     }
 
     /* Letzte Partnergeldkonto ID */
@@ -79,7 +79,7 @@ class partner extends rechnung {
         }
     }
     function partner_grunddaten($partner_id) {
-        $result = DB::select( "SELECT * FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1' ORDER BY PARTNER_DAT DESC LIMIT 0,1" );
+        $result = DB::select("SELECT * FROM PARTNER_LIEFERANT WHERE id='$partner_id' && AKTUELL = '1' ORDER BY PARTNER_DAT DESC LIMIT 0,1");
         if (!empty($result)) {
             $row = $result[0];
             $this->partner_id = $partner_id;
@@ -94,10 +94,10 @@ class partner extends rechnung {
         }
     }
     function getpartner_id_name($partner_name) {
-        $result = DB::select( "SELECT PARTNER_ID FROM PARTNER_LIEFERANT WHERE REPLACE(PARTNER_NAME, '<br>', '') ='$partner_name' && AKTUELL = '1' ORDER BY PARTNER_DAT DESC LIMIT 0,1" );
+        $result = DB::select("SELECT id FROM PARTNER_LIEFERANT WHERE REPLACE(PARTNER_NAME, '<br>', '') ='$partner_name' && AKTUELL = '1' ORDER BY PARTNER_DAT DESC LIMIT 0,1");
         if (!empty($result)) {
             $row = $result[0];
-            $this->partner_id = $row ['PARTNER_ID'];
+            $this->partner_id = $row ['id'];
         } else {
             return false;
         }
@@ -138,7 +138,7 @@ class partner extends rechnung {
         echo "<select name=\"$name\" size=\"1\" id=\"$id\">";
         echo "<option value=\"0\">Bitte wählen</option>\n";
         for($a = 0; $a < count ( $partner_arr ); $a ++) {
-            $partner_id = $partner_arr [$a] ['PARTNER_ID'];
+            $partner_id = $partner_arr [$a] ['id'];
             $partner_name = $partner_arr [$a] ['PARTNER_NAME'];
             if ($vorwahl_id == $partner_id) {
                 echo "<option value=\"$partner_id\" selected>$partner_name</OPTION>\n";
@@ -155,31 +155,31 @@ class partner extends rechnung {
         $form = new formular ();
         $form->erstelle_formular ( "Partner wählen", NULL );
         $result = DB::select( "
-SELECT PARTNER_NAME, PARTNER_LIEFERANT.PARTNER_ID, RECHNUNGEN
+SELECT PARTNER_NAME, PARTNER_LIEFERANT.id, RECHNUNGEN
 FROM PARTNER_LIEFERANT LEFT JOIN (
-	SELECT PARTNER_ID, SUM(RECHNUNGEN) AS RECHNUNGEN
+	SELECT id, SUM(RECHNUNGEN) AS RECHNUNGEN
 	FROM ((
-			SELECT AUSSTELLER_ID AS PARTNER_ID, COUNT(*) AS RECHNUNGEN
+			SELECT AUSSTELLER_ID AS id, COUNT(*) AS RECHNUNGEN
 			FROM RECHNUNGEN
 			WHERE AKTUELL = '1'
 			GROUP BY AUSSTELLER_ID
 		)
 		UNION
 		(
-			SELECT EMPFAENGER_ID AS PARTNER_ID, COUNT(*) AS RECHNUNGEN
+			SELECT EMPFAENGER_ID AS id, COUNT(*) AS RECHNUNGEN
 			FROM RECHNUNGEN
 			WHERE AKTUELL = '1'
 			GROUP BY EMPFAENGER_ID
 	)) AS RECHNUNGEN
-	GROUP BY PARTNER_ID
-) AS RECHNUNGEN ON (RECHNUNGEN.PARTNER_ID=PARTNER_LIEFERANT.PARTNER_ID)
+	GROUP BY id
+) AS RECHNUNGEN ON (RECHNUNGEN.id=PARTNER_LIEFERANT.id)
 WHERE PARTNER_LIEFERANT.AKTUELL = '1'
 ORDER BY RECHNUNGEN DESC, PARTNER_NAME ASC;
 " );
         echo "<p class=\"objekt_auswahl\">";
         if (!empty($result)) {
             foreach( $result as $row ) {
-                $partner_link = "<a class=\"objekt_auswahl_buchung\" href='" . route('web::partner::select', [$row['PARTNER_ID']]) . "'>$row[PARTNER_NAME]</a>";
+                $partner_link = "<a class=\"objekt_auswahl_buchung\" href='" . route('web::partner::select', [$row['id']]) . "'>$row[PARTNER_NAME]</a>";
 				echo "$partner_link<hr>";
 			}
 			echo "</p>";

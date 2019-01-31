@@ -1,0 +1,60 @@
+#import "./PersonBaseFragment.graphql"
+#import "./PartnerBaseFragment.graphql"
+#import "./PropertyBaseFragment.graphql"
+#import "./HouseBaseFragment.graphql"
+#import "./UnitBaseFragment.graphql"
+#import "./RentalContractBaseFragment.graphql"
+#import "./PurchaseContractBaseFragment.graphql"
+#import "./ConstructionSiteBaseFragment.graphql"
+#import "./AccountingEntityBaseFragment.graphql"
+
+fragment AssignmentBase on Assignment {
+    __typename
+    id
+    createdAt
+    done
+    highPriority
+    description
+    author {
+        ...PersonBase
+    }
+    assignedTo {
+        ... on Person {
+            ...PersonBase
+        }
+        ... on Partner {
+            ...PartnerBase
+        }
+    }
+    costBearer {
+        ... on Person {
+            ...PersonBase
+        }
+        ... on Partner {
+            ...PartnerBase
+        }
+        ... on Property {
+            ...PropertyBase
+        }
+        ... on House {
+            ...HouseBase
+        }
+        ... on Unit {
+            ...UnitBase
+        }
+        ... on RentalContract {
+            ...RentalContractBase
+        }
+        ... on PurchaseContract {
+            ...PurchaseContractBase
+        }
+        ... on ConstructionSite {
+            ...ConstructionSiteBase
+        }
+        ... on AccountingEntity {
+            ...AccountingEntityBase
+        }
+    }
+}
+
+

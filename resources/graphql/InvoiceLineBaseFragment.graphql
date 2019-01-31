@@ -1,0 +1,14 @@
+fragment InvoiceLineBase on InvoiceLine {
+    __typename
+    id
+    position
+    itemNumber
+    quantity
+    price
+    VAT
+    rebate
+    discount
+    netAmount
+    quantityUnit
+    description
+}

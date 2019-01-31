@@ -7,7 +7,7 @@
 
     @can(\App\Libraries\Permission::PERMISSION_MODUL_OBJEKT)
         <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
-            <router-link :to="{name: 'web.objects.index'}">Objekte</router-link>
+            <router-link :to="{name: 'web.properties.index'}">Objekte</router-link>
         </div>
     @endcan
 
@@ -25,7 +25,7 @@
 
     @can(\App\Libraries\Permission::PERMISSION_MODUL_MIETVERTRAG)
         <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
-            <a href='{{route('web::mietvertraege::legacy')}}'>Mietverträge</a>
+            <router-link :to="{name: 'web.rentalcontracts.index'}">Mietverträge</router-link>
         </div>
     @endcan
 

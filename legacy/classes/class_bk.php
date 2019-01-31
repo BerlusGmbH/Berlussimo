@@ -485,13 +485,13 @@ class bk
 
     function buchungsauswahl($konto, $konto_id)
     {
-        if (request()->has('submit_anzeige')) {
-            if (request()->has('anzeigen_von') && request()->has('anzeigen_bis')) {
+        if (request()->filled('submit_anzeige')) {
+            if (request()->filled('anzeigen_von') && request()->filled('anzeigen_bis')) {
                 if (check_datum(request()->input('anzeigen_von') && check_datum(request()->input('anzeigen_bis')))) {
                     session()->put('anzeigen_von', request()->input('anzeigen_von'));
                     session()->put('anzeigen_bis', request()->input('anzeigen_bis'));
                 }
-                if (request()->has('konto_anzeigen')) {
+                if (request()->filled('konto_anzeigen')) {
                     session()->put('konto_anzeigen', request()->input('konto_anzeigen'));
                 }
             }
@@ -971,7 +971,7 @@ class bk
             session()->put('me_kostenkat', 'Nebenkosten Vorauszahlung');
         }
 
-        if (request()->has('me_kostenkat')) {
+        if (request()->filled('me_kostenkat')) {
             session()->put('me_kostenkat', request()->input('me_kostenkat'));
         }
         $me = new mietentwicklung ();
@@ -1070,7 +1070,7 @@ class bk
 
     function mvs_und_leer_jahr($einheit_id, $jahr)
     {
-        $abfrage = "SELECT 'Mietvertrag' AS KOS_TYP, MIETVERTRAG_ID AS KOS_ID ,`MIETVERTRAG_VON`,`MIETVERTRAG_BIS`,`EINHEIT_ID`,
+        $abfrage = "SELECT 'Mietvertrag' AS KOS_TYP, id AS KOS_ID ,`MIETVERTRAG_VON`,`MIETVERTRAG_BIS`,`EINHEIT_ID`,
 IF(DATE_FORMAT(MIETVERTRAG_VON, '%Y') < '$jahr', '$jahr-01-01', MIETVERTRAG_VON) AS BERECHNUNG_VON,
 IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jahr-12-31') AS BERECHNUNG_BIS,
 DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jahr-12-31'), IF(DATE_FORMAT(MIETVERTRAG_VON, '%Y') < '$jahr', '$jahr-01-01', MIETVERTRAG_VON))+1 AS TAGE FROM `MIETVERTRAG` WHERE `MIETVERTRAG_AKTUELL`='1' 
@@ -1714,11 +1714,11 @@ ORDER BY GELD_KONTO_BUCHUNGEN.KONTENRAHMEN_KONTO) as t1, BK_KONTEN WHERE BK_KONT
 
     function mvs_und_leer_jahr_1mv($mv1_id, $jahr)
     {
-        $abfrage = "SELECT 'Mietvertrag' AS KOS_TYP, MIETVERTRAG_ID AS KOS_ID ,`MIETVERTRAG_VON`,`MIETVERTRAG_BIS`,`EINHEIT_ID`,
+        $abfrage = "SELECT 'Mietvertrag' AS KOS_TYP, id AS KOS_ID ,`MIETVERTRAG_VON`,`MIETVERTRAG_BIS`,`EINHEIT_ID`,
 IF(DATE_FORMAT(MIETVERTRAG_VON, '%Y') < '$jahr', '$jahr-01-01', MIETVERTRAG_VON) AS BERECHNUNG_VON,
 IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jahr-12-31') AS BERECHNUNG_BIS,
 DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jahr-12-31'), IF(DATE_FORMAT(MIETVERTRAG_VON, '%Y') < '$jahr', '$jahr-01-01', MIETVERTRAG_VON))+1 AS TAGE FROM `MIETVERTRAG` WHERE `MIETVERTRAG_AKTUELL`='1' 
-&& DATE_FORMAT(MIETVERTRAG_VON,'%Y') <= '$jahr' && (DATE_FORMAT(MIETVERTRAG_BIS,'%Y') >='$jahr' OR DATE_FORMAT(MIETVERTRAG_BIS,'%Y') ='0000') && MIETVERTRAG_ID='$mv1_id' ORDER BY MIETVERTRAG_VON ASC";
+&& DATE_FORMAT(MIETVERTRAG_VON,'%Y') <= '$jahr' && (DATE_FORMAT(MIETVERTRAG_BIS,'%Y') >='$jahr' OR DATE_FORMAT(MIETVERTRAG_BIS,'%Y') ='0000') && id='$mv1_id' ORDER BY MIETVERTRAG_VON ASC";
 
         $my_array = DB::select($abfrage);
 
@@ -1869,7 +1869,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
 
     function mvs_und_leer_jahr_zeitraum($einheit_id, $von, $jahr)
     {
-        $abfrage = "SELECT 'Mietvertrag' AS KOS_TYP, MIETVERTRAG_ID AS KOS_ID ,`MIETVERTRAG_VON`,`MIETVERTRAG_BIS`,`EINHEIT_ID`,
+        $abfrage = "SELECT 'Mietvertrag' AS KOS_TYP, id AS KOS_ID ,`MIETVERTRAG_VON`,`MIETVERTRAG_BIS`,`EINHEIT_ID`,
 IF(DATE_FORMAT(MIETVERTRAG_VON, '%Y') < '$jahr', '$von', MIETVERTRAG_VON) AS BERECHNUNG_VON,
 IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jahr-12-31') AS BERECHNUNG_BIS,
 DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jahr-12-31'), IF(DATE_FORMAT(MIETVERTRAG_VON, '%Y') < '$jahr', '$von', MIETVERTRAG_VON))+1 AS TAGE FROM `MIETVERTRAG` WHERE `MIETVERTRAG_AKTUELL`='1' 
@@ -2272,7 +2272,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
             $pdf_tab [$a] ['ZEITRAUM'] = $pdf->ergebnis_tab [$key] ['ZEITRAUM'];
 
             /* Importieren in die Mietentwicklung */
-            if (request()->has('me_import')) {
+            if (request()->filled('me_import')) {
 
                 $kos_typ = $pdf->ergebnis_tab [$key] ['KOS_TYP'];
                 $kos_id = $pdf->ergebnis_tab [$key] ['KOS_ID'];

@@ -1,0 +1,12 @@
+#import "./PropertyIdentifierFragment.graphql"
+
+fragment HouseIdentifier on House {
+    id
+    streetName
+    streetNumber
+    postalCode
+    city
+    property {
+        ...PropertyIdentifier
+    }
+}

@@ -248,14 +248,14 @@ class rechnung
 
     function get_partner_name($partner_id)
     {
-        $result = DB::select("SELECT PARTNER_NAME FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
+        $result = DB::select("SELECT PARTNER_NAME FROM PARTNER_LIEFERANT WHERE id='$partner_id' && AKTUELL = '1'");
         $row = $result[0];
         return $row ['PARTNER_NAME'];
     }
 
     function get_aussteller_info($partner_id)
     {
-        $result = DB::select("SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
+        $result = DB::select("SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE id='$partner_id' && AKTUELL = '1'");
         $row = $result[0];
         $this->rechnungs_aussteller_name = $row ['PARTNER_NAME'];
         $this->rechnungs_aussteller_strasse = $row ['STRASSE'];
@@ -266,7 +266,7 @@ class rechnung
 
     function get_empfaenger_info($partner_id)
     {
-        $result = DB::select("SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
+        $result = DB::select("SELECT PARTNER_NAME, STRASSE, NUMMER, PLZ, ORT FROM PARTNER_LIEFERANT WHERE id='$partner_id' && AKTUELL = '1'");
         $row = $result[0];
         $this->rechnungs_empfaenger_name = $row ['PARTNER_NAME'];
         $this->rechnungs_empfaenger_strasse = $row ['STRASSE'];
@@ -732,7 +732,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
     function rechnung_schreiben_positionen_wahl($kostentraeger_typ, $kostentraeger_id, $positionen, $aussteller_typ, $aussteller_id)
     {
-        if (request()->has('csv')) {
+        if (request()->filled('csv')) {
             $this->pool_csv($kos_typ, $kos_id, $positionen, $aussteller_typ, $aussteller_id);
             die ();
         }
@@ -2517,7 +2517,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
                 $letzte_rech_pos_id = $letzte_rech_pos_id + 1;
 
                 /* Wenn Artikelnr eingegeben */
-                if (request()->has('positionen.' . $a . '.artikel_nr')) {
+                if (request()->filled('positionen.' . $a . '.artikel_nr')) {
                     $pos_preis = nummer_komma2punkt(request()->input('positionen') [$a] ['preis']);
                     $pos_menge = nummer_komma2punkt(request()->input('positionen') [$a] ['menge']);
                     $pos_mwst_satz = nummer_komma2punkt(request()->input('positionen') [$a] ['pos_mwst_satz']);
@@ -3133,7 +3133,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
                 $r->rechnungs_aussteller_name = substr($r->rechnungs_aussteller_name, 0, 48);
                 $status_kontierung = $r->rechnung_auf_kontierung_pruefen($belegnr);
 
-                $forward = \App\Models\Invoice::findOrFail($belegnr)
+                $forward = \App\Models\Invoice::where('BELEG_NR', $belegnr)->firstOrFail()
                     ->forwarded();
 
                 if ($status_kontierung !== 'vollstaendig') {

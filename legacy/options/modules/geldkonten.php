@@ -1,6 +1,6 @@
 <?php
 
-if (request()->has('option')) {
+if (request()->filled('option')) {
     $option = request()->input('option');
 } else {
     $option = 'default';
@@ -21,7 +21,7 @@ switch ($option) {
         break;
 
     case "new_gk" :
-        if (request()->has('g_bez') && request()->has('beguenstigter') && request()->has('kontonummer') && request()->has('blz') && request()->has('institut') && request()->has('kostentraeger_typ') && request()->has('kostentraeger_id')) {
+        if (request()->filled('g_bez') && request()->filled('beguenstigter') && request()->filled('kontonummer') && request()->filled('blz') && request()->filled('institut') && request()->filled('kostentraeger_typ') && request()->filled('kostentraeger_id')) {
             $gk = new gk ();
             $b = new buchen ();
             $g_bez = request()->input('g_bez');
@@ -44,7 +44,7 @@ switch ($option) {
         break;
 
     case "gk_aendern" :
-        if (request()->has('gk_id')) {
+        if (request()->filled('gk_id')) {
             $gk_id = request()->input('gk_id');
             $gk = new gk ();
             $gk->form_geldkonto_edit($gk_id);
@@ -54,7 +54,7 @@ switch ($option) {
         break;
 
     case "gk_update" :
-        if (request()->has('gk_id') && request()->has('g_bez') && request()->has('beguenstigter') && request()->has('kontonummer') && request()->has('blz') && request()->has('institut') && request()->has('iban') && request()->has('bic')) {
+        if (request()->filled('gk_id') && request()->filled('g_bez') && request()->filled('beguenstigter') && request()->filled('kontonummer') && request()->filled('blz') && request()->filled('institut') && request()->filled('iban') && request()->filled('bic')) {
             $gk = new gk ();
             $b = new buchen ();
             $gk_id = request()->input('gk_id');
@@ -91,10 +91,10 @@ switch ($option) {
         break;
 
     case "zuweisen_gk" :
-        if (request()->has('geldkonto_id')
-            && request()->has('kostentraeger_typ')
-            && request()->has('kostentraeger_id')
-            && request()->has('von')
+        if (request()->filled('geldkonto_id')
+            && request()->filled('kostentraeger_typ')
+            && request()->filled('kostentraeger_id')
+            && request()->filled('von')
         ) {
             $gk = new gk ();
             $b = new buchen ();
@@ -117,11 +117,11 @@ switch ($option) {
         break;
 
     case "aendern_gk" :
-        if (request()->has('geldkonto_id')
-            && request()->has('kostentraeger_typ')
-            && request()->has('kostentraeger_id')
-            && request()->has('von')
-            && request()->has('zuweisung_id')
+        if (request()->filled('geldkonto_id')
+            && request()->filled('kostentraeger_typ')
+            && request()->filled('kostentraeger_id')
+            && request()->filled('von')
+            && request()->filled('zuweisung_id')
         ) {
             DB::table('GELD_KONTEN_ZUWEISUNG')
                 ->where('ZUWEISUNG_ID', request()->input('zuweisung_id'))
@@ -141,7 +141,7 @@ switch ($option) {
         break;
 
     case "zuweisung_loeschen" :
-        if (request()->has('geldkonto_id') && request()->has('kos_typ') && request()->input('kos_id')) {
+        if (request()->filled('geldkonto_id') && request()->filled('kos_typ') && request()->input('kos_id')) {
             $gk = new gk ();
             $geldkonto_id = request()->input('geldkonto_id');
             $kos_typ = request()->input('kos_typ');
@@ -154,7 +154,7 @@ switch ($option) {
         break;
 
     case "zuweisung_aendern" :
-        if (request()->has('zuweisung_id')) {
+        if (request()->filled('zuweisung_id')) {
             $gk = new gk ();
             $gk->form_geldkonto_zuweisen(request()->input('zuweisung_id'));
         }

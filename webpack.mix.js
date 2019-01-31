@@ -1,4 +1,5 @@
-const {mix} = require('laravel-mix');
+const webpack = require('webpack');
+const mix = require('laravel-mix');
 
 /*
  |--------------------------------------------------------------------------
@@ -11,17 +12,44 @@ const {mix} = require('laravel-mix');
  |
  */
 
+mix.options({
+    hmrOptions: {
+        host: 'berlussimo.test',
+        port: 8080
+    }
+});
+
 mix.webpackConfig({
+    module: {
+        rules: [
+            {
+                test: /\.(graphql|gql)$/,
+                exclude: /node_modules/,
+                loader: 'graphql-tag/loader',
+            },
+            {
+                test: /\.(graphqls|gqls)$/,
+                exclude: /node_modules/,
+                loader: 'raw-loader',
+            }
+        ]
+    },
     resolve: {
         alias: {
             'jquery': path.join(__dirname, 'node_modules/jquery/dist/jquery')
         }
-    }
+    },
+    plugins: [
+        new webpack.ContextReplacementPlugin(
+            /graphql-language-service-interface[\\/]dist$/,
+            new RegExp(`^\\./.*\\.js$`)
+        )
+    ]
 });
 
-mix.sass('resources/assets/sass/berlussimo.scss', 'public/css');
+mix.sass('resources/sass/berlussimo.scss', 'public/css');
 
-mix.sass('resources/assets/sass/materialize-css.scss', 'public/css');
+mix.sass('resources/sass/materialize-css.scss', 'public/css');
 
 mix.stylus('node_modules/vuetify/src/stylus/main.styl', 'public/css');
 
@@ -50,24 +78,21 @@ mix.styles(
 
 mix.ts(
     [
-        'resources/assets/js/app.ts'
+        'resources/js/app.ts'
     ],
     'public/js/'
 );
 
 mix.ts(
     [
-        'resources/assets/js/app-materialize.ts'
+        'resources/js/app-materialize.ts'
     ],
     'public/js/'
 );
 
 mix.js(
     [
-        'resources/assets/js/materialize.js',
-        'resources/assets/js/materialize_autocomplete.js',
-        'resources/assets/js/materialize_chips_autocomplete.js',
-        'resources/assets/js/materialize_init.js'
+        'resources/js/materialize.js'
     ],
     'public/js/'
 );
@@ -90,8 +115,6 @@ mix.babel(
     'public/js/wartungsplaner.js'
 );
 
-mix.scripts(['node_modules/axios/dist/axios.min.js'], 'public/js/axios.min.js');
-
 mix.copyDirectory('legacy/images/', 'public/images/');
 mix.copy('legacy/graph/css/LineGraph.css', 'public/css/LineGraph.css');
 mix.copy('legacy/graph/css/PieGraph.css', 'public/css/PieGraph.css');
@@ -101,7 +124,6 @@ mix.copyDirectory('legacy/graph/img/', 'public/images/');
 
 mix.extract(
     [
-        'axios',
         'keycode-js',
         'urijs',
         'lodash',
@@ -112,8 +134,9 @@ mix.extract(
     'public/js/vendor.js'
 );
 
-mix.sourceMaps();
 
 if (mix.inProduction()) {
     mix.version();
+} else {
+    mix.sourceMaps();
 }

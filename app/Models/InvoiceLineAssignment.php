@@ -12,7 +12,8 @@ class InvoiceLineAssignment extends Model
 
     public $timestamps = false;
     protected $table = 'KONTIERUNG_POSITIONEN';
-    protected $primaryKey = 'KONTIERUNG_ID';
+    protected $primaryKey = 'KONTIERUNG_DAT';
+    protected $externalKey = 'KONTIERUNG_ID';
     protected $defaultOrder = ['POSITION' => 'asc'];
 
     protected static function boot()
@@ -24,7 +25,7 @@ class InvoiceLineAssignment extends Model
 
     public function costUnit()
     {
-        return $this->morphTo('costUnit', 'KOSTENTRAEGER_TYP', 'KOSTENTRAEGER_ID');
+        return $this->morphTo('costUnit', 'KOSTENTRAEGER_TYP', 'KOSTENTRAEGER_ID', 'id');
     }
 
     public function line()

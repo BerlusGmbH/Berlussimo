@@ -1,0 +1,7 @@
+#import "../../../../../graphql/RoleBaseFragment.graphql"
+
+query AllRoles {
+    roles {
+        ...RoleBase
+    }
+}

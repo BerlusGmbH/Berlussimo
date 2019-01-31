@@ -1,0 +1,7 @@
+fragment AssignmentIdentifier on Assignment {
+    id
+    createdAt
+    description
+    highPriority
+    done
+}

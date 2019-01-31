@@ -1,0 +1,17 @@
+#import "../../../graphql/NotificationBaseFragment.graphql"
+#import "../../../graphql/PersonMergedNotificationBaseFragment.graphql"
+#import "../../../graphql/PropertyCopiedNotificationBaseFragment.graphql"
+
+subscription NotificationAdded {
+    notificationAdded {
+        ... on PersonMergedNotification {
+            ...NotificationBase
+            ...PersonMergedNotificationBase
+        }
+
+        ... on PropertyCopiedNotification {
+            ...NotificationBase
+            ...PropertyCopiedNotificationBase
+        }
+    }
+}

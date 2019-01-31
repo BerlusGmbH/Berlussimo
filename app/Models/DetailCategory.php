@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Traits\DefaultOrder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DetailCategory extends Model
 {
@@ -26,8 +27,8 @@ class DetailCategory extends Model
         });
     }
 
-    public function subcategories()
+    public function subcategories(): HasMany
     {
-        return $this->hasMany(DetailSubcategory::class, 'KATEGORIE_ID');
+        return $this->hasMany(DetailSubcategory::class, 'KATEGORIE_ID', 'DETAIL_KAT_ID');
     }
 }

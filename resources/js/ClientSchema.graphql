@@ -1,0 +1,14 @@
+extend type State {
+    isLegacy: Boolean,
+    notificationsTabOpen: Boolean,
+    loading: Int,
+    message: String,
+    messages: DisplayMessages
+}
+
+type DisplayMessages {
+    info: [String!],
+    error: [String!],
+    warning: [String!],
+    success: [String!]
+}

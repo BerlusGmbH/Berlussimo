@@ -1,0 +1,6 @@
+fragment UnitIdentifier on Unit {
+    id
+    name
+    unitType
+    rented
+}

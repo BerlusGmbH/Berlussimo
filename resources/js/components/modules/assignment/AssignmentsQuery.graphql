@@ -1,0 +1,55 @@
+query Assignments(
+    $search: String,
+    $first: Int!,
+    $page: Int,
+    $assignedTo: [EntitySelect!],
+    $author: [EntitySelect!],
+    $costBearer: [EntitySelect!],
+    $done: Boolean,
+    $highPriority: Boolean
+) @variables(variables: [
+    {name: "assignedTo", types: ["Partner", "Person"], label: "An", icon: "mdi-inbox-arrow-down"},
+    {name: "author", types: ["Person"], label: "Von", icon: "mdi-inbox-arrow-up"},
+    {name: "costBearer", types:[
+        "Property",
+        "House",
+        "Unit",
+        "Person",
+        "Partner",
+        "RentalContract",
+        "PurchaseContract",
+        "ConstructionSite",
+        "AccountingEntity"
+    ], label: "Kostenträger", icon: "mdi-cash"},
+    {name: "highPriority", label: "Akut", icon: "mdi-clipboard-alert"},
+    {name: "done", label: "Erledigt", icon: "mdi-clipboard-check"},
+]) {
+    assignments(
+        search: $search,
+        first: $first,
+        page: $page,
+        assignedTo: $assignedTo,
+        author: $author,
+        costBearer: $costBearer,
+        done: $done,
+        highPriority: $highPriority
+    ) {
+        data {
+            ...AssignmentIdentifier @label(text: "Auftrag")
+            createdAt @label(text: "Erstellt")
+            description @label(text: "Beschreibung")
+            author {
+                ...PersonIdentifier @label(text: "Von")
+            }
+            assignedTo {
+                ...AssignedToIdentifier @label(text: "An")
+            }
+            costBearer {
+                ...CostBearerIdentifier @label(text: "Kostenträger")
+            }
+        }
+        paginatorInfo {
+            ...PaginatorInfo
+        }
+    }
+}

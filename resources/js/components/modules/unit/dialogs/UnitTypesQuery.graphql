@@ -1,0 +1,8 @@
+query UnitTypes {
+    __type(name: "UnitType") {
+        enumValues {
+            name
+            description
+        }
+    }
+}

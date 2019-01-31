@@ -1,0 +1,7 @@
+#import "./PersonIdentifierFragment.graphql"
+
+query PersonIdentifier($id: ID!) {
+    person(id: $id) {
+        ...PersonIdentifier
+    }
+}

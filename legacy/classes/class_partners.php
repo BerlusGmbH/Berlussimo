@@ -28,7 +28,7 @@ OR  `STRASSE` LIKE  '%$suchtext%'
 OR  `PLZ` LIKE  '%$suchtext%'
 OR  `ORT` LIKE  '%$suchtext%'
 OR  `LAND` LIKE  '%$suchtext%'
- GROUP BY PARTNER_ID ORDER BY PARTNER_NAME ASC");
+ GROUP BY id ORDER BY PARTNER_NAME ASC");
 
         if (!empty($my_array)) {
             /* Zusätzlich Stichwortsuche */
@@ -39,7 +39,7 @@ OR  `LAND` LIKE  '%$suchtext%'
                     $partner_id = $my_array_stich [$p] ['PARTNER_ID'];
                     $this->get_partner_info($partner_id);
                     $anz = count($my_array);
-                    $my_array [$anz] ['PARTNER_ID'] = $partner_id;
+                    $my_array [$anz] ['id'] = $partner_id;
                     $my_array [$anz] ['PARTNER_NAME'] = "<b>$this->partner_name</b>";
                     $my_array [$anz] ['STRASSE'] = $this->partner_strasse;
                     $my_array [$anz] ['NUMMER'] = $this->partner_hausnr;
@@ -63,7 +63,7 @@ OR  `LAND` LIKE  '%$suchtext%'
                     } else {
                         $anz = 0;
                     }
-                    $my_array [$anz] ['PARTNER_ID'] = $partner_id;
+                    $my_array [$anz] ['id'] = $partner_id;
                     $my_array [$anz] ['PARTNER_NAME'] = "<b>$this->partner_name</b>";
                     $my_array [$anz] ['STRASSE'] = $this->partner_strasse;
                     $my_array [$anz] ['NUMMER'] = $this->partner_hausnr;
@@ -89,10 +89,10 @@ OR  `LAND` LIKE  '%$suchtext%'
 
     function get_partner_info($partner_id)
     {
-        $partner = \App\Models\Partner::with(['rechtsvertreter', 'handelsregister'])->find($partner_id);
+        $partner = \App\Models\Partner::with(['rechtsvertreter', 'handelsregister'])->where('id', $partner_id)->first();
         if ($partner) {
             $this->partner_dat = $partner->PARTNER_DAT;
-            $this->partner_id = $partner->PARTNER_ID;
+            $this->partner_id = $partner->id;
             $this->partner_name = $partner->PARTNER_NAME;
             $this->partner_strasse = $partner->STRASSE;
             $this->partner_hausnr = $partner->NUMMER;
@@ -145,7 +145,7 @@ OR  `LAND` LIKE  '%$suchtext%'
         $zaehler = 0;
         for ($a = 0; $a < count($partner_arr); $a++) {
             $zaehler++;
-            $partner_id = $partner_arr [$a] ['PARTNER_ID'];
+            $partner_id = $partner_arr [$a] ['id'];
             $partner_name = $partner_arr [$a] ['PARTNER_NAME'];
             $partner_link_detail = "<a href='" . route('web::partner::legacy', ['option' => 'partner_im_detail', 'partner_id' => $partner_id]) . "'>$partner_name</a>";
             $link_detail_hinzu = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'Partner', 'detail_id' => $partner_id]) . "'>Details</a>";
@@ -199,9 +199,9 @@ OR  `LAND` LIKE  '%$suchtext%'
 
     function get_partner_id($partner_name)
     {
-        $result = DB::select("SELECT PARTNER_ID FROM PARTNER_LIEFERANT WHERE PARTNER_NAME='$partner_name' && AKTUELL = '1'");
+        $result = DB::select("SELECT id FROM PARTNER_LIEFERANT WHERE PARTNER_NAME='$partner_name' && AKTUELL = '1'");
         $row = $result[0];
-        $this->partner_id = $row ['PARTNER_ID'];
+        $this->partner_id = $row ['id'];
     }
 
     function form_partner_stichwort($partner_id)
@@ -373,9 +373,9 @@ OR  `LAND` LIKE  '%$suchtext%'
 
     function letzte_partner_id()
     {
-        $result = DB::select("SELECT PARTNER_ID FROM PARTNER_LIEFERANT  ORDER BY PARTNER_ID DESC LIMIT 0,1");
+        $result = DB::select("SELECT id FROM PARTNER_LIEFERANT  ORDER BY id DESC LIMIT 0,1");
         $row = $result[0];
-        return $row ['PARTNER_ID'];
+        return $row ['id'];
     }
 
     /* Alle Partner in ein array laden */
@@ -417,7 +417,7 @@ OR  `LAND` LIKE  '%$suchtext%'
         $partner_arr = $this->partner_in_array();
         echo "<div class=\"input-field\"><select name=\"$name\" size=\"1\" id=\"$id\">";
         for ($a = 0; $a < count($partner_arr); $a++) {
-            $partner_id = $partner_arr [$a] ['PARTNER_ID'];
+            $partner_id = $partner_arr [$a] ['id'];
             $partner_name = $partner_arr [$a] ['PARTNER_NAME'];
             if ($vorwahl == $partner_id) {
                 echo "<option value=\"$partner_id\" selected>$partner_name</option>\n";
@@ -476,7 +476,7 @@ OR  `LAND` LIKE  '%$suchtext%'
         $zaehler = 0;
         for ($a = 0; $a < count($partner_arr); $a++) {
             $zaehler++;
-            $partner_id = $partner_arr [$a] ['PARTNER_ID'];
+            $partner_id = $partner_arr [$a] ['id'];
             $partner_name = $partner_arr [$a] ['PARTNER_NAME'];
             $partner_link_detail = "<a href='" . route('web::partner::legacy', ['option' => 'partner_im_detail', 'partner_id' => $partner_id]) . "'>$partner_name</a>";
             $link_detail_hinzu = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'Partner', 'detail_id' => $partner_id]) . "'>Details</a>";
@@ -575,7 +575,7 @@ LIMIT 0 , 80");
         if (isset ($this->partner_name)) {
             unset ($this->partner_name);
         }
-        $result = DB::select("SELECT PARTNER_NAME FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
+        $result = DB::select("SELECT PARTNER_NAME FROM PARTNER_LIEFERANT WHERE id='$partner_id' && AKTUELL = '1'");
         $row = $result[0];
         if ($row) {
             $this->partner_name = $row ['PARTNER_NAME'];
@@ -612,7 +612,7 @@ LIMIT 0 , 80");
 
         $anz_p = count($partner_arr);
         for ($a = 0; $a < $anz_p; $a++) {
-            $p_id = $partner_arr [$a] ['PARTNER_ID'];
+            $p_id = $partner_arr [$a] ['id'];
             $p_name = $partner_arr [$a] ['PARTNER_NAME'];
 
             echo "<div class='col-lg-3'>";

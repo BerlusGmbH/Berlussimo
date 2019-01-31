@@ -15,11 +15,11 @@ class StoreMietvertraegeRequest extends MietvertraegeRequest
         $v = Validator::make($this->all(), ['unit' => 'required|integer']);
         if ($v->valid()) {
             $units = DB::select(
-                "SELECT EINHEIT.EINHEIT_ID, TYP, EINHEIT_KURZNAME, 
+                "SELECT EINHEIT.id, TYP, EINHEIT_KURZNAME, 
                   IF(MIN(MIETVERTRAG_BIS) = '0000-00-00', '9999-12-31', MAX(MIETVERTRAG_BIS)) AS MIETVERTRAG_BIS 
-                FROM MIETVERTRAG RIGHT JOIN EINHEIT ON (EINHEIT.EINHEIT_ID = MIETVERTRAG.EINHEIT_ID) 
+                FROM MIETVERTRAG RIGHT JOIN EINHEIT ON (EINHEIT.id = MIETVERTRAG.EINHEIT_ID) 
                 WHERE MIETVERTRAG_AKTUELL = '1' AND EINHEIT_AKTUELL = '1' 
-                  AND EINHEIT.EINHEIT_ID = ? GROUP BY EINHEIT.EINHEIT_ID",
+                  AND EINHEIT.id = ? GROUP BY EINHEIT.id",
                 [$this->get('unit')]
             );
             if (!empty($units)) {

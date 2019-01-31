@@ -11,7 +11,7 @@ class StoreRequest extends PersonenRequest
     public function rules()
     {
         return [
-            'employer_id' => ['required', Rule::exists('PARTNER_LIEFERANT', 'PARTNER_ID', function ($query) {
+            'employer_id' => ['required', Rule::exists('PARTNER_LIEFERANT', 'id', function ($query) {
                 $query->where('PARTNER_AKTUELL', '1');
             })],
             'employee_id' => 'required|exists:persons,id',

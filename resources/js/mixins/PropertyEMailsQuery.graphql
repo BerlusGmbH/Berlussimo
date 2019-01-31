@@ -1,0 +1,14 @@
+#import "../../graphql/DetailBaseFragment.graphql"
+
+query PropertyEMails($id: ID!) {
+    property(id : $id) {
+        id
+        __typename
+        tenantsEMails {
+            ...DetailBase
+        }
+        homeOwnersEMails {
+            ...DetailBase
+        }
+    }
+}

@@ -18,7 +18,7 @@ class DatabaseTransaction
     public function handle($request, Closure $next)
     {
         if (in_array(strtolower($request->method()), ['post', 'put', 'patch', 'delete'])) {
-            return DB::transaction(function () use ($request, $next) {
+            return DB::transaction(function () use ($next, $request) {
                 return $next($request);
             });
         } else {

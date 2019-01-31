@@ -62,7 +62,7 @@ function partner_in_array()
 
 function get_partner_info($partner_id)
 {
-    $result = DB::select("SELECT * FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
+    $result = DB::select("SELECT * FROM PARTNER_LIEFERANT WHERE id='$partner_id' && AKTUELL = '1'");
     if(!empty($result)) {
         $row = $result[0];
         $this->partner_dat = $row['PARTNER_DAT'];

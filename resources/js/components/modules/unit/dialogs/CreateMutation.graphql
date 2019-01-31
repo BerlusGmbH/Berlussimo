@@ -1,0 +1,7 @@
+#import "../../../../../graphql/UnitBaseFragment.graphql"
+
+mutation CreateUnit($input: CreateUnitInput!) {
+    createUnit(input: $input) {
+        ...UnitBase
+    }
+}

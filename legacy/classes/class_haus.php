@@ -12,7 +12,7 @@ class haus extends objekt {
     public $anzahl_einheiten;
 
     function get_haus_info($haus_id) {
-        $result = DB::select( "SELECT * FROM HAUS WHERE HAUS_AKTUELL='1' && HAUS_ID='$haus_id' ORDER BY HAUS_DAT DESC LIMIT 0,1" );
+        $result = DB::select("SELECT *, id AS HAUS_ID FROM HAUS WHERE HAUS_AKTUELL='1' && id='$haus_id' ORDER BY HAUS_DAT DESC LIMIT 0,1");
         $row = $result[0];
         $this->objekt_id = $row ['OBJEKT_ID'];
         $gg = new geldkonto_info ();
@@ -25,7 +25,7 @@ class haus extends objekt {
         $this->haus_qm = $row ['HAUS_QM'];
     }
     function liste_aller_haeuser() {
-        $result = DB::select( "SELECT * FROM HAUS WHERE HAUS_AKTUELL='1' ORDER BY HAUS_STRASSE, HAUS_NUMMER ASC" );
+        $result = DB::select("SELECT *, id AS HAUS_ID FROM HAUS WHERE HAUS_AKTUELL='1' ORDER BY HAUS_STRASSE, HAUS_NUMMER ASC");
         return $result;
     }
     function form_haus_aendern($haus_id) {
@@ -82,7 +82,7 @@ class haus extends objekt {
     }
     function haus_speichern($strasse, $haus_nr, $ort, $plz, $qm, $objekt_id) {
         $bk = new bk ();
-        $last_id = $bk->last_id ( 'HAUS', 'HAUS_ID' ) + 1;
+        $last_id = $bk->last_id('HAUS', 'id') + 1;
         /* Speichern */
         $db_abfrage = "INSERT INTO HAUS VALUES(NULL, '$last_id', '$strasse', '$haus_nr','$ort', '$plz', '$qm', '1', '$objekt_id')";
         DB::insert( $db_abfrage );
@@ -93,7 +93,7 @@ class haus extends objekt {
         return $last_id;
     }
     function haus_deaktivieren($haus_id) {
-        $db_abfrage = "UPDATE HAUS SET HAUS_AKTUELL='0' WHERE HAUS_ID='$haus_id'";
+        $db_abfrage = "UPDATE HAUS SET HAUS_AKTUELL='0' WHERE id='$haus_id'";
         DB::update( $db_abfrage );
         return true;
     }
@@ -171,7 +171,7 @@ class haus extends objekt {
         echo "</div>";
     }
     function liste_aller_einheiten_im_haus($haus_id) {
-        $result = DB::select( "SELECT * FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && HAUS_ID='$haus_id' ORDER BY EINHEIT_KURZNAME ASC" );
+        $result = DB::select("SELECT *, EINHEIT.id AS EINHEIT_ID FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && HAUS_ID='$haus_id' ORDER BY EINHEIT_KURZNAME ASC");
         $this->anzahl_einheiten = count ( $result );
         return $result;
     }
@@ -197,7 +197,7 @@ class haus extends objekt {
             $haus_strasse = $haus_strasse . " $haus_arr[$a]";
         }
         $haus_strasse = ltrim ( rtrim ( $haus_strasse ) );
-        $result = DB::select( "SELECT HAUS_ID FROM HAUS WHERE HAUS_AKTUELL='1' && HAUS_STRASSE='$haus_strasse' && HAUS_NUMMER='$haus_nr' ORDER BY HAUS_DAT DESC LIMIT 0,1" );
+        $result = DB::select("SELECT id AS HAUS_ID FROM HAUS WHERE HAUS_AKTUELL='1' && HAUS_STRASSE='$haus_strasse' && HAUS_NUMMER='$haus_nr' ORDER BY HAUS_DAT DESC LIMIT 0,1");
 
         $row = $result[0];
         $this->haus_id = $row ['HAUS_ID'];

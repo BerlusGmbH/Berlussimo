@@ -1,0 +1,10 @@
+query State {
+    state @client {
+        messages {
+            info
+            success
+            error
+            warning
+        }
+    }
+}

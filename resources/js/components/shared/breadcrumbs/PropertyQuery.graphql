@@ -1,0 +1,7 @@
+#import "../../../../graphql/PropertyBaseFragment.graphql"
+
+query Property($id: ID!) {
+    property(id: $id) {
+        ...PropertyBase
+    }
+}

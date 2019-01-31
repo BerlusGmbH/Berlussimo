@@ -18,15 +18,14 @@ class wirt_e
 
     function check_einheit_in_we($einheit_id, $w_id)
     {
-        // $db_abfrage ="SELECT EINHEIT.*, HAUS.* FROM `WIRT_EINHEITEN` JOIN WIRT_EIN_TAB ON (WIRT_EINHEITEN.W_ID=WIRT_EIN_TAB.W_ID) JOIN EINHEIT ON (EINHEIT.EINHEIT_ID=WIRT_EIN_TAB.EINHEIT_ID) JOIN HAUS ON (HAUS.HAUS_ID=EINHEIT.HAUS_ID) WHERE WIRT_EINHEITEN.AKTUELL='1' && WIRT_EIN_TAB.AKTUELL='1' && WIRT_EINHEITEN.W_ID='$w_id' && EINHEIT.EINHEIT_AKTUELL='1' && HAUS_AKTUELL='1' && EINHEIT.EINHEIT_ID='$einheit_id'";
-        $db_abfrage = "SELECT * FROM `WIRT_EIN_TAB` WHERE `W_ID` ='$w_id' AND `EINHEIT_ID` ='$einheit_id' AND `AKTUELL` = '1' LIMIT 0 , 1";
+        $db_abfrage = "SELECT * FROM `WIRT_EIN_TAB` WHERE `id` ='$w_id' AND `EINHEIT_ID` ='$einheit_id' AND `AKTUELL` = '1' LIMIT 0 , 1";
         $result = DB::select($db_abfrage);
         return !empty($result);
     }
 
     function get_id_from_wirte($w_name)
     {
-        $db_abfrage = "SELECT W_ID  FROM `WIRT_EINHEITEN` WHERE  WIRT_EINHEITEN.AKTUELL='1' &&  WIRT_EINHEITEN.W_NAME='$w_name' ORDER BY W_DAT DESC LIMIT 0,1 ";
+        $db_abfrage = "SELECT id AS W_ID  FROM `WIRT_EINHEITEN` WHERE  WIRT_EINHEITEN.AKTUELL='1' &&  WIRT_EINHEITEN.W_NAME='$w_name' ORDER BY W_DAT DESC LIMIT 0,1 ";
         $result = DB::select($db_abfrage);
         if (!empty($result)) {
             $row = $result[0];
@@ -60,7 +59,7 @@ class wirt_e
 
     function get_wirt_e_arr()
     {
-        $db_abfrage = "SELECT W_ID, W_NAME FROM `WIRT_EINHEITEN` WHERE `AKTUELL`='1' ORDER BY W_NAME ASC";
+        $db_abfrage = "SELECT id AS W_ID, W_NAME FROM `WIRT_EINHEITEN` WHERE `AKTUELL`='1' ORDER BY W_NAME ASC";
         $result = DB::select($db_abfrage);
         if (!empty($result)) {
             return $result;
@@ -80,7 +79,7 @@ class wirt_e
     function neue_we_speichern($w_name)
     {
         $bk = new bk ();
-        $last_w_id = $bk->last_id('WIRT_EINHEITEN', 'W_ID') + 1;
+        $last_w_id = $bk->last_id('WIRT_EINHEITEN', 'id') + 1;
 
         $db_abfrage = "INSERT INTO WIRT_EINHEITEN VALUES (NULL, '$last_w_id', '$w_name',  '1')";
         DB::insert($db_abfrage);
@@ -205,7 +204,7 @@ class wirt_e
         $this->w_name = '';
         $this->g_qm = '0.00';
         $this->g_qm_gewerbe = '0.00';
-        $db_abfrage = "SELECT W_NAME FROM `WIRT_EINHEITEN`  WHERE  WIRT_EINHEITEN.AKTUELL='1' && WIRT_EINHEITEN.W_ID='$w_id' LIMIT 0,1";
+        $db_abfrage = "SELECT W_NAME FROM `WIRT_EINHEITEN`  WHERE  WIRT_EINHEITEN.AKTUELL='1' && WIRT_EINHEITEN.id='$w_id' LIMIT 0,1";
         $result = DB::select($db_abfrage);
         if (!empty($result)) {
             $row = $result[0];
@@ -238,7 +237,7 @@ class wirt_e
 
     function get_qm_from_wirte($w_id)
     {
-        $db_abfrage = "SELECT SUM(EINHEIT_QM) AS G_QM  FROM `WIRT_EINHEITEN` JOIN WIRT_EIN_TAB ON (WIRT_EINHEITEN.W_ID=WIRT_EIN_TAB.W_ID) JOIN EINHEIT ON (EINHEIT.EINHEIT_ID=WIRT_EIN_TAB.EINHEIT_ID) JOIN HAUS ON (HAUS.HAUS_ID=EINHEIT.HAUS_ID) WHERE  WIRT_EINHEITEN.AKTUELL='1' && WIRT_EIN_TAB.AKTUELL='1' && WIRT_EINHEITEN.W_ID='$w_id' && EINHEIT.EINHEIT_AKTUELL='1' && HAUS_AKTUELL='1' ";
+        $db_abfrage = "SELECT SUM(EINHEIT_QM) AS G_QM  FROM `WIRT_EINHEITEN` JOIN WIRT_EIN_TAB ON (WIRT_EINHEITEN.id=WIRT_EIN_TAB.W_ID) JOIN EINHEIT ON (EINHEIT.id=WIRT_EIN_TAB.EINHEIT_ID) JOIN HAUS ON (HAUS.id=EINHEIT.HAUS_ID) WHERE  WIRT_EINHEITEN.AKTUELL='1' && WIRT_EIN_TAB.AKTUELL='1' && WIRT_EINHEITEN.id='$w_id' && EINHEIT.EINHEIT_AKTUELL='1' && HAUS_AKTUELL='1' ";
         $result = DB::select($db_abfrage);
         if (!empty($result)) {
             $row = $result[0];
@@ -248,7 +247,7 @@ class wirt_e
 
     function get_qm_gewerb_from_wirte($w_id)
     {
-        $db_abfrage = "SELECT SUM(EINHEIT_QM) AS G_QM  FROM `WIRT_EINHEITEN` JOIN WIRT_EIN_TAB ON (WIRT_EINHEITEN.W_ID=WIRT_EIN_TAB.W_ID) JOIN EINHEIT ON (EINHEIT.EINHEIT_ID=WIRT_EIN_TAB.EINHEIT_ID) JOIN HAUS ON (HAUS.HAUS_ID=EINHEIT.HAUS_ID) WHERE  WIRT_EINHEITEN.AKTUELL='1' && EINHEIT.TYP='Gewerbe' && WIRT_EIN_TAB.AKTUELL='1' && WIRT_EINHEITEN.W_ID='$w_id' && EINHEIT.EINHEIT_AKTUELL='1' && HAUS_AKTUELL='1'";
+        $db_abfrage = "SELECT SUM(EINHEIT_QM) AS G_QM  FROM `WIRT_EINHEITEN` JOIN WIRT_EIN_TAB ON (WIRT_EINHEITEN.id=WIRT_EIN_TAB.W_ID) JOIN EINHEIT ON (EINHEIT.id=WIRT_EIN_TAB.EINHEIT_ID) JOIN HAUS ON (HAUS.id=EINHEIT.HAUS_ID) WHERE  WIRT_EINHEITEN.AKTUELL='1' && EINHEIT.TYP='Gewerbe' && WIRT_EIN_TAB.AKTUELL='1' && WIRT_EINHEITEN.id='$w_id' && EINHEIT.EINHEIT_AKTUELL='1' && HAUS_AKTUELL='1'";
         $result = DB::select($db_abfrage);
         if (!empty($result)) {
             $row = $result[0];
@@ -258,21 +257,21 @@ class wirt_e
 
     function get_anzahl_e($w_id)
     {
-        $db_abfrage = "SELECT  WZ_DAT FROM WIRT_EIN_TAB WHERE AKTUELL='1' && W_ID='$w_id'";
+        $db_abfrage = "SELECT WZ_DAT FROM WIRT_EIN_TAB WHERE AKTUELL='1' && W_ID='$w_id'";
         $result = DB::select($db_abfrage);
         return count($result);
     }
 
     function get_anzahl_einheiten_from_wirte($w_id, $typ)
     {
-        $db_abfrage = "SELECT * FROM `WIRT_EINHEITEN` JOIN WIRT_EIN_TAB ON (WIRT_EINHEITEN.W_ID=WIRT_EIN_TAB.W_ID) JOIN EINHEIT ON (EINHEIT.EINHEIT_ID=WIRT_EIN_TAB.EINHEIT_ID) JOIN HAUS ON (HAUS.HAUS_ID=EINHEIT.HAUS_ID) WHERE  WIRT_EINHEITEN.AKTUELL='1' && WIRT_EIN_TAB.AKTUELL='1' && WIRT_EINHEITEN.W_ID='$w_id' && EINHEIT.EINHEIT_AKTUELL='1' && HAUS_AKTUELL='1' && EINHEIT.TYP='$typ' ORDER BY EINHEIT.EINHEIT_KURZNAME ASC";
+        $db_abfrage = "SELECT * FROM `WIRT_EINHEITEN` JOIN WIRT_EIN_TAB ON (WIRT_EINHEITEN.id=WIRT_EIN_TAB.W_ID) JOIN EINHEIT ON (EINHEIT.id=WIRT_EIN_TAB.EINHEIT_ID) JOIN HAUS ON (HAUS.id=EINHEIT.HAUS_ID) WHERE  WIRT_EINHEITEN.AKTUELL='1' && WIRT_EIN_TAB.AKTUELL='1' && WIRT_EINHEITEN.id='$w_id' && EINHEIT.EINHEIT_AKTUELL='1' && HAUS_AKTUELL='1' && EINHEIT.TYP='$typ' ORDER BY EINHEIT.EINHEIT_KURZNAME ASC";
         $result = DB::select($db_abfrage);
         return count($result);
     }
 
     function get_einheiten_from_wirte($w_id)
     {
-        $db_abfrage = "SELECT EINHEIT.*, HAUS.* FROM `WIRT_EINHEITEN` JOIN WIRT_EIN_TAB ON (WIRT_EINHEITEN.W_ID=WIRT_EIN_TAB.W_ID) JOIN EINHEIT ON (EINHEIT.EINHEIT_ID=WIRT_EIN_TAB.EINHEIT_ID) JOIN HAUS ON (HAUS.HAUS_ID=EINHEIT.HAUS_ID) WHERE  WIRT_EINHEITEN.AKTUELL='1' && WIRT_EIN_TAB.AKTUELL='1' && WIRT_EINHEITEN.W_ID='$w_id' && EINHEIT.EINHEIT_AKTUELL='1' && HAUS_AKTUELL='1' ORDER BY LENGTH(EINHEIT.EINHEIT_KURZNAME) ASC, EINHEIT.EINHEIT_KURZNAME ASC";
+        $db_abfrage = "SELECT EINHEIT.*, EINHEIT.id AS EINHEIT_ID, HAUS.*, HAUS.id AS HAUS_ID FROM `WIRT_EINHEITEN` JOIN WIRT_EIN_TAB ON (WIRT_EINHEITEN.id=WIRT_EIN_TAB.W_ID) JOIN EINHEIT ON (EINHEIT.id=WIRT_EIN_TAB.EINHEIT_ID) JOIN HAUS ON (HAUS.id=EINHEIT.HAUS_ID) WHERE  WIRT_EINHEITEN.AKTUELL='1' && WIRT_EIN_TAB.AKTUELL='1' && WIRT_EINHEITEN.id='$w_id' && EINHEIT.EINHEIT_AKTUELL='1' && HAUS_AKTUELL='1' ORDER BY LENGTH(EINHEIT.EINHEIT_KURZNAME) ASC, EINHEIT.EINHEIT_KURZNAME ASC";
         $result = DB::select($db_abfrage);
         if (!empty($result)) {
             return $result;
@@ -281,7 +280,7 @@ class wirt_e
 
     function liste_aller_einheiten($w_id)
     {
-        $result = DB::select("SELECT EINHEIT_ID, EINHEIT_KURZNAME  FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID NOT IN (SELECT EINHEIT_ID FROM WIRT_EIN_TAB WHERE AKTUELL='1' && W_ID='$w_id') GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
+        $result = DB::select("SELECT EINHEIT.id , EINHEIT.id AS EINHEIT_ID, EINHEIT_KURZNAME  FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT.id NOT IN (SELECT EINHEIT_ID FROM WIRT_EIN_TAB WHERE AKTUELL='1' && W_ID='$w_id') GROUP BY EINHEIT.id ORDER BY EINHEIT_KURZNAME ASC");
         foreach ($result as $row)
             $einheiten_array [] = $row;
         $this->anzahl_einheiten = count($einheiten_array);
@@ -326,7 +325,7 @@ class wirt_e
 
     function liste_aller_einheiten_haus($w_id, $haus_id)
     {
-        $result = DB::select("SELECT EINHEIT_ID, EINHEIT_KURZNAME  FROM EINHEIT WHERE HAUS_ID='$haus_id' && EINHEIT_AKTUELL='1' && EINHEIT_ID NOT IN (SELECT EINHEIT_ID FROM WIRT_EIN_TAB WHERE AKTUELL='1' && W_ID='$w_id') GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
+        $result = DB::select("SELECT EINHEIT.id, EINHEIT.id AS EINHEIT_ID, EINHEIT_KURZNAME  FROM EINHEIT WHERE HAUS_ID='$haus_id' && EINHEIT_AKTUELL='1' && EINHEIT_ID NOT IN (SELECT EINHEIT_ID FROM WIRT_EIN_TAB WHERE AKTUELL='1' && W_ID='$w_id') GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         foreach ($result as $row)
             $einheiten_array [] = $row;
         $this->anzahl_einheiten = count($einheiten_array);
@@ -335,7 +334,7 @@ class wirt_e
 
     function liste_aller_einheiten_objekt($w_id, $objekt_id)
     {
-        $result = DB::select("SELECT EINHEIT_ID, EINHEIT_KURZNAME  FROM EINHEIT JOIN HAUS ON(HAUS.HAUS_ID=EINHEIT.HAUS_ID) JOIN OBJEKT ON(HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID) WHERE OBJEKT.OBJEKT_ID='$objekt_id' && EINHEIT_AKTUELL='1' && EINHEIT_ID NOT IN (SELECT EINHEIT_ID FROM WIRT_EIN_TAB WHERE AKTUELL='1' && W_ID='$w_id') GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
+        $result = DB::select("SELECT EINHEIT.id, EINHEIT.id AS EINHEIT_ID, EINHEIT_KURZNAME  FROM EINHEIT JOIN HAUS ON(HAUS.id=EINHEIT.HAUS_ID) JOIN OBJEKT ON(HAUS.OBJEKT_ID=OBJEKT.id) WHERE OBJEKT.id='$objekt_id' && EINHEIT_AKTUELL='1' && EINHEIT_ID NOT IN (SELECT EINHEIT_ID FROM WIRT_EIN_TAB WHERE AKTUELL='1' && W_ID='$w_id') GROUP BY EINHEIT.id ORDER BY EINHEIT_KURZNAME ASC");
         foreach ($result as $row)
             $einheiten_array [] = $row;
         $this->anzahl_einheiten = count($einheiten_array);

@@ -1,0 +1,18 @@
+#import "./AssignedToIdentifierFragment.graphql"
+#import "./AssignmentIdentifierFragment.graphql"
+#import "./ConstructionSiteIdentifierFragment.graphql"
+#import "./CostBearerIdentifierFragment.graphql"
+#import "./PersonIdentifierFragment.graphql"
+#import "./PartnerIdentifierFragment.graphql"
+#import "./UnitIdentifierFragment.graphql"
+#import "./HouseIdentifierFragment.graphql"
+#import "./PropertyIdentifierFragment.graphql"
+#import "./RentalContractIdentifierFragment.graphql"
+#import "./PurchaseContractIdentifierFragment.graphql"
+#import "./DetailIdentifierFragment.graphql"
+
+fragment PaginatorInfo on PaginatorInfo {
+    currentPage
+    total
+    lastPage
+}

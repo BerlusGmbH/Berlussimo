@@ -1,0 +1,7 @@
+#import "./UnitIdentifierFragment.graphql"
+
+query UnitIdentifier($id: ID!) {
+    unit(id: $id) {
+        ...UnitIdentifier
+    }
+}

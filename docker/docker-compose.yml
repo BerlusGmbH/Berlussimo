@@ -1,0 +1,85 @@
+version: '3.7'
+services:
+  web:
+    image: berlus/berlussimo-web:${TAG}
+    depends_on:
+      - websockets
+      - fpm
+    environment:
+      PROJECT_ROOT: /var/www/berlussimo
+    volumes:
+      - web-config:/var/www/berlussimo/config
+      - web-data:/var/www/berlussimo/storage
+    networks:
+      - backend
+    ports:
+      - 80:80
+    command: /bin/sh -c "envsubst '$$PROJECT_ROOT' < /etc/nginx/conf.d/berlussimo.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
+  fpm:
+    image: berlus/berlussimo-fpm:${TAG}
+    depends_on:
+      - db
+      - redis
+    environment:
+      PROJECT_ROOT: /var/www/berlussimo
+      APP_KEY: ${APP_KEY}
+      PUSHER_APP_SECRET: ${PUSHER_APP_SECRET}
+    working_dir: /var/www/berlussimo
+    volumes:
+      - web-data:/var/www/berlussimo/storage
+    networks:
+      - backend
+  worker:
+    image: berlus/berlussimo-fpm:${TAG}
+    depends_on:
+      - db
+      - redis
+    environment:
+      APP_KEY: ${APP_KEY}
+      PUSHER_APP_SECRET: ${PUSHER_APP_SECRET}
+    working_dir: /var/www/berlussimo
+    volumes:
+      - web-data:/var/www/berlussimo/storage
+    networks:
+      - backend
+    command: ["php", "artisan", "queue:work", "--tries=3", "--timeout=600", "--env=production"]
+  websockets:
+    image: berlus/berlussimo-fpm:${TAG}
+    depends_on:
+      - db
+      - redis
+    environment:
+      APP_KEY: ${APP_KEY}
+      PUSHER_APP_SECRET: ${PUSHER_APP_SECRET}
+    working_dir: /var/www/berlussimo
+    volumes:
+      - web-data:/var/www/berlussimo/storage
+    networks:
+      - backend
+    command: ["php", "artisan", "websockets:serve", "--env=production"]
+  db:
+    image: mariadb:10.3
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-password}
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - backend
+    ports:
+      - 3306:3306
+  redis:
+    image: redis:5.0-stretch
+    volumes:
+      - redis-data:/data
+    networks:
+      - backend
+    ports:
+      - 6379:6379
+    command: ["redis-server", "--appendonly", "yes"]
+networks:
+  backend:
+volumes:
+  web-config:
+  web-data:
+  db-data:
+  redis-data:

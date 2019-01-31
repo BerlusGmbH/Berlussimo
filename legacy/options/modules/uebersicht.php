@@ -1,6 +1,6 @@
 <?php
 
-if (request()->has('einheit_id')) {
+if (request()->filled('einheit_id')) {
     $einheit_id = request()->input('einheit_id');
 } else {
     echo "Bitte Einheit wählen.";
@@ -25,7 +25,7 @@ switch ($anzeigen) {
 /* Neue Version zu Einheit oder Einheit und MV */
 function uebersicht_einheit($einheit_id)
 {
-    if (request()->has('mietvertrag_id')) {
+    if (request()->filled('mietvertrag_id')) {
         $mietvertrag_id = request()->input('mietvertrag_id');
         $mv = new mietvertraege ();
         $mv->get_mietvertrag_infos_aktuell($mietvertrag_id);
@@ -47,10 +47,13 @@ function uebersicht_einheit($einheit_id)
 
     echo "<div class='fixed-action-btn'>
     <a href='" . route('web::todo::index', [
-            'q' => '!auftrag(kostenträger(objekt(id='
-                . $e->objekt_id . ') or haus(id='
-                . $e->haus_id . ') or einheit(id='
-                . $einheit_id . ')))[erstellt:desc]'
+            'variables[costBearer][0][type]' => 'Property',
+            'variables[costBearer][0][id]' => $e->objekt_id,
+            'variables[costBearer][1][type]' => 'House',
+            'variables[costBearer][1][id]' => $e->haus_id,
+            'variables[costBearer][2][type]' => 'Unit',
+            'variables[costBearer][2][id]' => $einheit_id,
+
         ]) . "' target='_blank' class='btn-floating btn-large modal-trigger'>
       <i class='large mdi mdi-view-list'></i>
     </a>
@@ -149,10 +152,6 @@ function uebersicht_einheit($einheit_id)
     echo "</div>";
     echo "</div>";
 
-    // ######## balken 2 MIETER
-    if ($mv->anzahl_personen < 1) {
-        echo "leer";
-    }
     // ####INFOS ÜBER PERSON/MIETER
     $person_info = new person ();
     echo "<div class='col-xs-12 col-md-4 col-lg-2'>";
@@ -325,9 +324,18 @@ function uebersicht_einheit($einheit_id)
     $summe_zahlungen = $buchung->summe_zahlung_monatlich($mietvertrag_id, $buchung->monat_heute, $buchung->jahr_heute);
     echo "<b>Summe Zahlungen</b>:<br>" . $summe_zahlungen . " €<br>";
 
-    $a = new miete ();
-    $a->mietkonto_berechnung($mietvertrag_id);
-    echo "<b>Saldo</b>:<br>" . $a->erg . " €";
+    $hasBankAccount = \App\Models\Bankkonten::whereHas('objekte', function ($query) use ($mietvertrag_id) {
+        $query->where('VERWENDUNGSZWECK', "Hausgeld");
+        $query->whereHas('haeuser.einheiten.mietvertraege', function ($query) use ($mietvertrag_id) {
+            $query->where('id', $mietvertrag_id);
+        });
+    })->exists();
+
+    if ($hasBankAccount) {
+        $a = new miete ();
+        $a->mietkonto_berechnung($mietvertrag_id);
+        echo "<b>Saldo</b>:<br>" . $a->erg . " €";
+    }
 
     echo "</div>";
     if (!empty ($mietvertrag_id)) {

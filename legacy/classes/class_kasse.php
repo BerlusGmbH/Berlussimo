@@ -580,7 +580,7 @@ class kasse extends rechnung
 
     function kassen_auswahl()
     {
-        if (request()->has('kasse')) {
+        if (request()->filled('kasse')) {
             session()->put('kasse', request()->input('kasse'));
         }
 

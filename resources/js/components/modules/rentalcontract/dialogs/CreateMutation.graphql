@@ -1,0 +1,7 @@
+#import "../../../../../graphql/RentalContractBaseFragment.graphql"
+
+mutation CreateRentalContract($input: CreateRentalContractInput!) {
+    createRentalContract(input: $input) {
+        ...RentalContractBase
+    }
+}

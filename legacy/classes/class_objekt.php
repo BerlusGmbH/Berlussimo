@@ -54,7 +54,7 @@ class objekt
 
     function liste_aller_objekte()
     {
-        $objekte_array = DB::select("SELECT * FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC");
+        $objekte_array = DB::select("SELECT *, id AS OBJEKT_ID FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC");
         $this->anzahl_objekte = count($objekte_array);
         return $objekte_array;
     }
@@ -256,7 +256,7 @@ class objekt
     function objekt_speichern($objekt_kurzname, $eigentuemer_id)
     {
         $bk = new bk ();
-        $last_id = $bk->last_id('OBJEKT', 'OBJEKT_ID') + 1;
+        $last_id = $bk->last_id('OBJEKT', 'id') + 1;
         /* Speichern */
         $db_abfrage = "INSERT INTO OBJEKT VALUES(NULL, '$last_id', '1', '$objekt_kurzname','$eigentuemer_id')";
         DB::insert($db_abfrage);
@@ -268,7 +268,7 @@ class objekt
 
     function get_objekt_id($objekt_name)
     {
-        $result = DB::select("SELECT OBJEKT_ID FROM OBJEKT WHERE OBJEKT_AKTUELL='1' && OBJEKT_KURZNAME='$objekt_name' ORDER BY OBJEKT_DAT DESC LIMIT 0,1");
+        $result = DB::select("SELECT id AS OBJEKT_ID FROM OBJEKT WHERE OBJEKT_AKTUELL='1' && OBJEKT_KURZNAME='$objekt_name' ORDER BY OBJEKT_DAT DESC LIMIT 0,1");
         $row = $result[0];
         $this->objekt_id = $row ['OBJEKT_ID'];
         return $this->objekt_id;
@@ -276,7 +276,7 @@ class objekt
 
     function haeuser_objekt_in_arr($objekt_id)
     {
-        $result = DB::select("SELECT * FROM HAUS WHERE HAUS_AKTUELL='1' && OBJEKT_ID='$objekt_id' ORDER BY HAUS_STRASSE, HAUS_NUMMER ASC");
+        $result = DB::select("SELECT *, id AS HAUS_ID FROM HAUS WHERE HAUS_AKTUELL='1' && OBJEKT_ID='$objekt_id' ORDER BY HAUS_STRASSE, HAUS_NUMMER ASC");
         return $result;
     }
 
@@ -358,8 +358,8 @@ class objekt
         }
         $monat = sprintf('%02d', $monat);
         $jahr = sprintf('%02d', $jahr);
-        $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` ,EINHEIT_ID,  `EINHEIT_LAGE` , `EINHEIT_QM`, EINHEIT.TYP FROM EINHEIT , HAUS, OBJEKT
-WHERE OBJEKT.OBJEKT_ID='$objekt_id' && `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1'
+        $db_abfrage = "SELECT OBJEKT_KURZNAME, HAUS_STRASSE, HAUS_NUMMER, `EINHEIT_KURZNAME` ,EINHEIT.id AS EINHEIT_ID,  `EINHEIT_LAGE` , `EINHEIT_QM`, EINHEIT.TYP FROM EINHEIT , HAUS, OBJEKT
+WHERE OBJEKT.id='$objekt_id' && `EINHEIT_AKTUELL` = '1' && EINHEIT.HAUS_ID = HAUS.id && HAUS.OBJEKT_ID=OBJEKT.id && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1'
 ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
 
         $result = DB::select($db_abfrage);
@@ -479,7 +479,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
             $oo = new objekt ();
             $oo->get_objekt_infos($objekt_id);
 
-            if (!request()->has('xls')) {
+            if (!request()->filled('xls')) {
                 $pdf->ezTable($arr, $cols, "$oo->objekt_kurzname - Mietaufstellung $monatsname $jahr", array(
                     'showHeadings' => 1,
                     'shaded' => 1,
@@ -576,7 +576,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
 
     function get_objekt_infos($objekt_id)
     {
-        $result = DB::select("SELECT *  FROM `OBJEKT` WHERE OBJEKT_ID = '$objekt_id' && OBJEKT_AKTUELL = '1' ORDER BY OBJEKT_DAT DESC LIMIT 0 , 1 ");
+        $result = DB::select("SELECT *, id AS OBJEKT_ID  FROM `OBJEKT` WHERE id = '$objekt_id' && OBJEKT_AKTUELL = '1' ORDER BY OBJEKT_DAT DESC LIMIT 0 , 1 ");
         $row = $result[0];
         $this->objekt_dat = $row ['OBJEKT_DAT'];
         $this->objekt_id = $row ['OBJEKT_ID'];
@@ -613,7 +613,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
                 $oo = new objekt ();
                 $oo->get_objekt_infos($objekt_id);
 
-                if (!request()->has('xls')) {
+                if (!request()->filled('xls')) {
 
                     $anz_mo = count($arr [$mo - 1]) - 1;
                     $jtab [$mo - 1] = $arr [$mo - 1] [$anz_mo];
@@ -906,7 +906,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
 
     function get_objekt_eigentuemer_partner($objekt_id)
     {
-        $result = DB::select("SELECT EIGENTUEMER_PARTNER FROM OBJEKT WHERE OBJEKT_AKTUELL='1' && OBJEKT_ID='$objekt_id' ORDER BY OBJEKT_DAT DESC LIMIT 0,1");
+        $result = DB::select("SELECT EIGENTUEMER_PARTNER FROM OBJEKT WHERE OBJEKT_AKTUELL='1' && id='$objekt_id' ORDER BY OBJEKT_DAT DESC LIMIT 0,1");
         $row = $result[0];
         $this->objekt_eigentuemer_partner_id = $row ['EIGENTUEMER_PARTNER'];
     }
@@ -924,7 +924,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
 
     function get_objekt_name($objekt_id)
     {
-        $result = DB::select("SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' && OBJEKT_ID='$objekt_id' ORDER BY OBJEKT_DAT DESC LIMIT 0,1");
+        $result = DB::select("SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' && id='$objekt_id' ORDER BY OBJEKT_DAT DESC LIMIT 0,1");
         $row = $result[0];
         $this->objekt_name = $row ['OBJEKT_KURZNAME'];
         return $row ['OBJEKT_KURZNAME'];
@@ -939,7 +939,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
 
     function liste_aller_objekte_kurz()
     {
-        $objekte_array = DB::select("SELECT OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC");
+        $objekte_array = DB::select("SELECT OBJEKT.id AS OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC");
         $this->anzahl_objekte = count($objekte_array);
         return $objekte_array;
     }
@@ -965,14 +965,14 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
 
     function anzahl_haeuser_objekt($objekt_id)
     {
-        $result = DB::select("SELECT HAUS_ID FROM HAUS WHERE HAUS_AKTUELL='1' && OBJEKT_ID='$objekt_id' ORDER BY HAUS_STRASSE, HAUS_NUMMER ASC;");
+        $result = DB::select("SELECT id FROM HAUS WHERE HAUS_AKTUELL='1' && OBJEKT_ID='$objekt_id' ORDER BY HAUS_STRASSE, HAUS_NUMMER ASC;");
         $this->anzahl_haeuser = count($result);
         $this->seiten_anzahl = ceil($this->anzahl_haeuser / $this->zeilen_pro_seite);
     }
 
     function get_qm_gesamt($objekt_id)
     {
-        $result = DB::select("SELECT OBJEKT_KURZNAME, SUM(EINHEIT_QM) AS GESAMT_QM FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID = '$objekt_id' ) WHERE EINHEIT_AKTUELL='1' && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' GROUP BY OBJEKT.OBJEKT_ID ORDER BY EINHEIT_KURZNAME ASC");
+        $result = DB::select("SELECT OBJEKT_KURZNAME, SUM(EINHEIT_QM) AS GESAMT_QM FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT) ON ( EINHEIT.HAUS_ID = HAUS.id && HAUS.OBJEKT_ID = OBJEKT.id && OBJEKT.id = '$objekt_id' ) WHERE EINHEIT_AKTUELL='1' && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' GROUP BY OBJEKT.id ORDER BY EINHEIT_KURZNAME ASC");
         if (!empty($result)) {
             $row = $result[0];
             return $row ['GESAMT_QM'];
@@ -983,7 +983,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
 
     function get_qm_gesamt_gewerbe($objekt_id)
     {
-        $result = DB::select("SELECT OBJEKT_KURZNAME, SUM(EINHEIT_QM) AS GESAMT_QM FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID = '$objekt_id' ) WHERE EINHEIT_AKTUELL='1'  && EINHEIT.TYP = 'Gewerbe' GROUP BY OBJEKT.OBJEKT_ID ORDER BY EINHEIT_KURZNAME ASC");
+        $result = DB::select("SELECT OBJEKT_KURZNAME, SUM(EINHEIT_QM) AS GESAMT_QM FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT) ON ( EINHEIT.HAUS_ID = HAUS.id && HAUS.OBJEKT_ID = OBJEKT.id && OBJEKT.id = '$objekt_id' ) WHERE EINHEIT_AKTUELL='1'  && EINHEIT.TYP = 'Gewerbe' GROUP BY OBJEKT.id ORDER BY EINHEIT_KURZNAME ASC");
         if (!empty($result)) {
             $row = $result[0];
             return $row ['GESAMT_QM'];
@@ -994,17 +994,17 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
 
     function einheiten_objekt_arr($objekt_id)
     {
-        $result = DB::select("SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT_LAGE, EINHEIT_QM,  HAUS_STRASSE, HAUS_NUMMER, HAUS_PLZ, HAUS_STADT, TYP FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT
-) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID = '$objekt_id' )
-WHERE EINHEIT_AKTUELL='1' && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC");
+        $result = DB::select("SELECT OBJEKT_KURZNAME, EINHEIT.id AS EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT_LAGE, EINHEIT_QM,  HAUS_STRASSE, HAUS_NUMMER, HAUS_PLZ, HAUS_STADT, TYP FROM `EINHEIT` RIGHT JOIN (HAUS, OBJEKT
+) ON ( EINHEIT.HAUS_ID = HAUS.id && HAUS.OBJEKT_ID = OBJEKT.id && OBJEKT.id = '$objekt_id' )
+WHERE EINHEIT_AKTUELL='1' && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' GROUP BY EINHEIT.id ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC");
         return $result;
     }
 
     function anzahl_einheiten_objekt($objekt_id)
     {
-        $result = DB::select("SELECT OBJEKT_KURZNAME, EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT_LAGE, EINHEIT_QM,  HAUS_STRASSE, HAUS_NUMMER FROM `EINHEIT`
-RIGHT JOIN (HAUS, OBJEKT) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID && OBJEKT.OBJEKT_ID = '$objekt_id' )
-WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
+        $result = DB::select("SELECT OBJEKT_KURZNAME, EINHEIT.id AS EINHEIT_ID, EINHEIT_KURZNAME, EINHEIT_LAGE, EINHEIT_QM,  HAUS_STRASSE, HAUS_NUMMER FROM `EINHEIT`
+RIGHT JOIN (HAUS, OBJEKT) ON ( EINHEIT.HAUS_ID = HAUS.id && HAUS.OBJEKT_ID = OBJEKT.id && OBJEKT.id = '$objekt_id' )
+WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT.id ORDER BY EINHEIT_KURZNAME ASC");
         $anzahl = count($result);
         return $anzahl;
     }

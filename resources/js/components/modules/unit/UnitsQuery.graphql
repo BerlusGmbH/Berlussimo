@@ -1,0 +1,32 @@
+query Units(
+    $search: String,
+    $first: Int!,
+    $page: Int,
+    $partOf: [EntitySelect!]
+) @variables(variables: [
+    {name: "partOf", types: ["Property", "House", "Unit"], label: "Teil von", icon: "mdi-city"}
+]) {
+    units(search: $search, first: $first, page: $page, partOf: $partOf) {
+        data {
+            ...UnitIdentifier @label(text: "Einheit")
+            rentalContracts {
+                ...RentalContractIdentifier @label(text: "Mietvertrag")
+                tenants {
+                    ...PersonIdentifier @label(text: "Mieter")
+                }
+            }
+            unitType @label(text: "Typ")
+            size @label(text: "Fläche")
+            location @label(text: "Lage")
+            house {
+                ...HouseIdentifier @label(text: "Haus")
+                property {
+                    ...PropertyIdentifier @label(text: "Objekt")
+                }
+            }
+        }
+        paginatorInfo {
+            ...PaginatorInfo
+        }
+    }
+}

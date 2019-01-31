@@ -1,0 +1,11 @@
+#import "../../../../../graphql/PropertyBaseFragment.graphql"
+#import "../../../../../graphql/PartnerBaseFragment.graphql"
+
+query UpdateProperty($id: ID!) {
+    property(id: $id) {
+        ...PropertyBase
+        owner {
+            ...PartnerBase
+        }
+    }
+}

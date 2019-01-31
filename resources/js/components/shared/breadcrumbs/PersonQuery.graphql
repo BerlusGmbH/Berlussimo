@@ -1,0 +1,7 @@
+#import "../../../../graphql/PersonBaseFragment.graphql"
+
+query Person($id: ID!) {
+    person(id: $id) {
+        ...PersonBase
+    }
+}

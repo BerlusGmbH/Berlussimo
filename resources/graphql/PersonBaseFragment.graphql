@@ -1,0 +1,9 @@
+fragment PersonBase on PersonInterface {
+    __typename
+    id
+    firstName
+    lastName
+    name
+    gender
+    birthday
+}

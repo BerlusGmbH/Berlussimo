@@ -1,0 +1,7 @@
+#import "../../../../graphql/DetailSubcategoryBaseFragment.graphql"
+
+query Subcategories($detailableType: DetailableType!, $category: String!) {
+    detailSubcategories(detailableType: $detailableType, category: $category) {
+        ...DetailSubcategoryBase
+    }
+}

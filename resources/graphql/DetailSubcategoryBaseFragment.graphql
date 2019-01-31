@@ -1,0 +1,5 @@
+fragment DetailSubcategoryBase on DetailSubcategory {
+    __typename
+    id
+    name
+}

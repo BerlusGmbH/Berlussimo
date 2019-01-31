@@ -40,7 +40,7 @@ class kautionen
         $result = DB::select("SELECT DATUM, BETRAG, VERWENDUNGSZWECK FROM GELD_KONTO_BUCHUNGEN WHERE KOSTENTRAEGER_TYP='$kostentraeger_typ' && KOSTENTRAEGER_ID='$kostentraeger_id' && GELDKONTO_ID='$kautions_konto_id' && AKTUELL='1' ORDER BY DATUM");
         return $result;
     }
-    
+
     function form_hochrechnung_mv($mietvertrag_id)
     {
         $mv = new mietvertraege ();
@@ -422,7 +422,7 @@ class kautionen
             echo "Keine kautionszahlungen auf <b>$gk->geldkonto_bezeichnung</b> gebucht.";
         }
     }
-    
+
     function kaution_speichern($datum, $kostentraeger_typ, $kostentraeger_id, $betrag, $text, $konto)
     {
         $db_abfrage = "INSERT INTO KAUTIONS_BUCHUNGEN VALUES (NULL, '$kostentraeger_typ', '$kostentraeger_id','$datum', '$betrag','$text', '$konto')";
@@ -447,8 +447,8 @@ class kautionen
         $summe = 0.00;
         $summe_verzinst = 0.00;
 
-        if (request()->has('monat') && request()->has('jahr')) {
-            if (!request()->has('tag')) {
+        if (request()->filled('monat') && request()->filled('jahr')) {
+            if (!request()->filled('tag')) {
                 $l_tag = letzter_tag_im_monat(request()->input('monat'), request()->input('jahr'));
             } else {
                 $l_tag = request()->input('tag');
@@ -550,7 +550,7 @@ class kautionen
             $this->soli_g = $soli_g;
 
             echo "</table>";
-            if (request()->has('pdf')) {
+            if (request()->filled('pdf')) {
                 $pdf = new Cezpdf ('a4', 'portrait');
                 $bpdf = new b_pdf ();
                 $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
@@ -626,8 +626,8 @@ class kautionen
 
     function mieter_ohne_kaution_arr($geldkonto_id, $kostenkonto)
     {
-        $db_abfrage = "SELECT MIETVERTRAG_ID FROM `MIETVERTRAG`
-WHERE `MIETVERTRAG_AKTUELL` = '1' && MIETVERTRAG_ID NOT IN (SELECT KOSTENTRAEGER_ID AS MIETVERTRAG_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='Mietvertrag')
+        $db_abfrage = "SELECT id AS MIETVERTRAG_ID FROM `MIETVERTRAG`
+WHERE `MIETVERTRAG_AKTUELL` = '1' && MIETVERTRAG.id NOT IN (SELECT KOSTENTRAEGER_ID FROM GELD_KONTO_BUCHUNGEN WHERE GELDKONTO_ID='$geldkonto_id' && KOSTENTRAEGER_TYP='Mietvertrag')
     ORDER BY EINHEIT_ID ASC,`MIETVERTRAG`.`MIETVERTRAG_BIS`  ASC";
         $result = DB::select($db_abfrage);
         return $result;

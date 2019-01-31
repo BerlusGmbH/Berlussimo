@@ -1,0 +1,40 @@
+#import "../../../../graphql/PersonBaseFragment.graphql"
+#import "../../../../graphql/PurchaseContractBaseFragment.graphql"
+#import "../../../../graphql/RentalContractBaseFragment.graphql"
+#import "../../../../graphql/UnitBaseFragment.graphql"
+#import "../../../../graphql/HouseBaseFragment.graphql"
+#import "../../../../graphql/PropertyBaseFragment.graphql"
+#import "../../../../graphql/PartnerBaseFragment.graphql"
+#import "../../../../graphql/DetailBaseFragment.graphql"
+#import "../../../../graphql/UnitBaseFragment.graphql"
+#import "../../../../graphql/AssignmentBaseFragment.graphql"
+
+query House($id: ID!) {
+    house(id: $id) {
+        ...HouseBase
+        livingSpaceSize
+        commercialSpaceSize
+        notes {
+            ...DetailBase
+        }
+        details {
+            ...DetailBase
+        }
+        property {
+            ...PropertyBase
+        }
+        assignments {
+            ...AssignmentBase
+        },
+        units {
+            ...UnitBase
+        }
+        tenants {
+            ...PersonBase
+        }
+        homeOwners {
+            ...PersonBase
+        }
+
+    }
+}

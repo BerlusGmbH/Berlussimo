@@ -23,7 +23,7 @@ class Credential extends Model implements AuditableContract
      * @var array
      */
     protected $guarded = [
-        'password', 'remember_token', 'api_token'
+        'password', 'remember_token'
     ];
 
     /**
@@ -32,7 +32,7 @@ class Credential extends Model implements AuditableContract
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token', 'api_token'
+        'password', 'remember_token'
     ];
 
     public function person()

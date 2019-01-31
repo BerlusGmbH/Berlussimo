@@ -97,10 +97,10 @@ LIMIT 0 , 1", [$konto_id]);
         break;
 
     case "finde_partner" :
-        if (request()->has('suchstring')) {
+        if (request()->filled('suchstring')) {
             $suchstring = request()->input('suchstring');
             if (strlen($suchstring) > 2) {
-                $result = DB::select("SELECT PARTNER_NAME, PARTNER_ID, STRASSE, NUMMER, PLZ, ORT, LAND FROM PARTNER_LIEFERANT WHERE AKTUELL='1' && PARTNER_NAME LIKE ? ORDER BY PARTNER_NAME ASC", ['%' . $suchstring . '%']);
+                $result = DB::select("SELECT PARTNER_NAME, id, STRASSE, NUMMER, PLZ, ORT, LAND FROM PARTNER_LIEFERANT WHERE AKTUELL='1' && PARTNER_NAME LIKE ? ORDER BY PARTNER_NAME ASC", ['%' . $suchstring . '%']);
                 if (!empty($result)) {
                     echo "<h5>Bereits vorhandene ähnliche Einträge.</h5>";
                     echo "<table class='striped'>";
@@ -118,12 +118,12 @@ LIMIT 0 , 1", [$konto_id]);
         $typ = request()->input('typ');
         if ($typ == 'Objekt') {
             if (!session()->has('geldkonto_id')) {
-                $result = DB::select("SELECT OBJEKT_KURZNAME, OBJEKT_ID FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC");
+                $result = DB::select("SELECT OBJEKT_KURZNAME, OBJEKT.id AS OBJEKT_ID FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC");
                 foreach ($result as $row) {
                     echo "$row[OBJEKT_KURZNAME]*$row[OBJEKT_ID]*|";
                 }
             } else {
-                $result = DB::select("SELECT OBJEKT_KURZNAME, OBJEKT_ID FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC");
+                $result = DB::select("SELECT OBJEKT_KURZNAME, OBJEKT.id AS OBJEKT_ID FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC");
                 foreach ($result as $row) {
                     $gk = new gk ();
                     if ($gk->check_zuweisung_kos_typ(session()->get('geldkonto_id'), 'Objekt', $row['OBJEKT_ID'])) {
@@ -157,11 +157,11 @@ LIMIT 0 , 1", [$konto_id]);
         }
 
         if ($typ == 'Einheit') {
-            $result = DB::select("SELECT EINHEIT_ID, EINHEIT_KURZNAME, HAUS.OBJEKT_ID AS OBJEKT_ID
+            $result = DB::select("SELECT EINHEIT.id AS EINHEIT_ID, EINHEIT_KURZNAME, HAUS.OBJEKT_ID AS OBJEKT_ID
 FROM  `EINHEIT` 
 RIGHT JOIN (
 HAUS, OBJEKT
-) ON ( EINHEIT.HAUS_ID = HAUS.HAUS_ID && HAUS.OBJEKT_ID = OBJEKT.OBJEKT_ID ) 
+) ON ( EINHEIT.HAUS_ID = HAUS.id && HAUS.OBJEKT_ID = OBJEKT.id ) 
 WHERE EINHEIT_AKTUELL =  '1'
 GROUP BY EINHEIT_ID
 ORDER BY LPAD( EINHEIT_KURZNAME, LENGTH( EINHEIT_KURZNAME ) ,  '1' ) ASC ");
@@ -178,10 +178,10 @@ ORDER BY LPAD( EINHEIT_KURZNAME, LENGTH( EINHEIT_KURZNAME ) ,  '1' ) ASC ");
         }
 
         if ($typ == 'Partner') {
-            $result = DB::select("SELECT PARTNER_NAME, PARTNER_ID FROM PARTNER_LIEFERANT WHERE AKTUELL='1' ORDER BY PARTNER_NAME ASC");
+            $result = DB::select("SELECT PARTNER_NAME, id FROM PARTNER_LIEFERANT WHERE AKTUELL='1' ORDER BY PARTNER_NAME ASC");
             foreach ($result as $row) {
                 $PARTNER_NAME1 = str_replace('<br>', ' ', $row['PARTNER_NAME']);
-                echo "$PARTNER_NAME1*$row[PARTNER_ID]*|";
+                echo "$PARTNER_NAME1*$row[id]*|";
             }
         }
 
@@ -228,7 +228,7 @@ ORDER BY LPAD( EINHEIT_KURZNAME, LENGTH( EINHEIT_KURZNAME ) ,  '1' ) ASC ");
         }
 
         if ($typ == 'Baustelle_ext') {
-            $result = DB::select("SELECT ID, BEZ  FROM `BAUSTELLEN_EXT`  WHERE AKTUELL='1' && AKTIV='1' ORDER BY BEZ ASC");
+            $result = DB::select("SELECT id AS ID, BEZ  FROM `BAUSTELLEN_EXT`  WHERE AKTUELL='1' && AKTIV='1' ORDER BY BEZ ASC");
             foreach ($result as $row) {
                 echo "$row[BEZ]*$row[ID]*|";
             }
@@ -237,18 +237,18 @@ ORDER BY LPAD( EINHEIT_KURZNAME, LENGTH( EINHEIT_KURZNAME ) ,  '1' ) ASC ");
         if ($typ == 'Eigentuemer') {
             if (!session()->has('geldkonto_id')) {
                 $result = DB::select(
-                    "SELECT WEG_MITEIGENTUEMER.ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME, GROUP_CONCAT(CONCAT(persons.name, ', ', persons.first_name) SEPARATOR '; ') AS PERSONEN 
+                    "SELECT WEG_MITEIGENTUEMER.id AS ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME, GROUP_CONCAT(CONCAT(persons.name, ', ', persons.first_name) SEPARATOR '; ') AS PERSONEN 
                     FROM persons JOIN WEG_EIGENTUEMER_PERSON ON(persons.id = WEG_EIGENTUEMER_PERSON.PERSON_ID AND persons.deleted_at IS NULL) 
-	                  JOIN WEG_MITEIGENTUEMER ON(WEG_EIGENTUEMER_PERSON.WEG_EIG_ID = WEG_MITEIGENTUEMER.ID) 
-	                  JOIN EINHEIT ON(EINHEIT.EINHEIT_ID = WEG_MITEIGENTUEMER.EINHEIT_ID) 
+	                  JOIN WEG_MITEIGENTUEMER ON(WEG_EIGENTUEMER_PERSON.WEG_EIG_ID = WEG_MITEIGENTUEMER.id) 
+	                  JOIN EINHEIT ON(EINHEIT.id = WEG_MITEIGENTUEMER.EINHEIT_ID) 
                     WHERE EINHEIT.EINHEIT_AKTUELL = '1' && WEG_MITEIGENTUEMER.AKTUELL = '1'  && WEG_EIGENTUEMER_PERSON.AKTUELL = '1'
-                    GROUP BY WEG_MITEIGENTUEMER.ID 
+                    GROUP BY WEG_MITEIGENTUEMER.id 
                     ORDER BY EINHEIT_KURZNAME ASC"
                 );
                 foreach ($result as $row)
                     echo "$row[EINHEIT_KURZNAME]*$row[ID]*$row[PERSONEN]|";
             } else {
-                $result = DB::select("SELECT ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME FROM `WEG_MITEIGENTUEMER` , EINHEIT WHERE EINHEIT_AKTUELL = '1' && AKTUELL = '1' && EINHEIT.EINHEIT_ID = WEG_MITEIGENTUEMER.EINHEIT_ID GROUP BY ID ORDER BY EINHEIT_KURZNAME ASC");
+                $result = DB::select("SELECT WEG_MITEIGENTUEMER.id AS ID, EINHEIT.id AS EINHEIT_ID, EINHEIT_KURZNAME FROM `WEG_MITEIGENTUEMER` , EINHEIT WHERE EINHEIT_AKTUELL = '1' && AKTUELL = '1' && EINHEIT.id = WEG_MITEIGENTUEMER.EINHEIT_ID GROUP BY WEG_MITEIGENTUEMER.id ORDER BY EINHEIT_KURZNAME ASC");
                 foreach ($result as $row) {
                     $weg = new weg ();
                     $ID = $row ['ID'];
@@ -698,7 +698,7 @@ WHERE (`ARTIKEL_NR` LIKE ? OR `BEZEICHNUNG` LIKE ?) ORDER BY ART_LIEFERANT ASC, 
         break;
 
     case "get_eigentuemer" :
-        if (request()->has('einheit_id')) {
+        if (request()->filled('einheit_id')) {
             echo get_eigentuemer(request()->input('einheit_id'));
         } else {
             echo "Einheit wählen - Fehler 4554as";
@@ -1049,26 +1049,26 @@ function get_last_katalog_id()
 function get_kostentraeger_infos($typ, $id)
 {
     if ($typ == 'Objekt') {
-        $result = DB::select("SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' && OBJEKT_ID='$id'");
+        $result = DB::select("SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' && id='$id'");
         foreach ($result as $row) {
             return $row['OBJEKT_KURZNAME'];
         }
     }
 
     if ($typ == 'Haus') {
-        $result = DB::select("SELECT HAUS_STRASSE, HAUS_NUMMER FROM HAUS WHERE HAUS_AKTUELL='1' && HAUS_ID='$id'");
+        $result = DB::select("SELECT HAUS_STRASSE, HAUS_NUMMER FROM HAUS WHERE HAUS_AKTUELL='1' && id='$id'");
         foreach ($result as $row)
             return "$row[HAUS_STRASSE] $row[HAUS_NUMMER]";
     }
 
     if ($typ == 'Einheit') {
-        $result = DB::select("SELECT EINHEIT_KURZNAME FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID='$id'");
+        $result = DB::select("SELECT EINHEIT_KURZNAME FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && id='$id'");
         foreach ($result as $row)
             return "$row[EINHEIT_KURZNAME]";
     }
 
     if ($typ == 'Partner') {
-        $result = DB::select("SELECT PARTNER_NAME FROM PARTNER_LIEFERANT WHERE AKTUELL='1' && PARTNER_ID='$id'");
+        $result = DB::select("SELECT PARTNER_NAME FROM PARTNER_LIEFERANT WHERE AKTUELL='1' && id='$id'");
         $PARTNER_NAME1 = '';
         foreach ($result as $row)
             $PARTNER_NAME1 = str_replace('<br>', '', $row['PARTNER_NAME']);

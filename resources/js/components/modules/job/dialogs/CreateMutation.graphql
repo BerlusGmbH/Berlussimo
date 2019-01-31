@@ -1,0 +1,19 @@
+#import "../../../../../graphql/JobBaseFragment.graphql"
+#import "../../../../../graphql/JobTitleBaseFragment.graphql"
+#import "../../../../../graphql/PartnerBaseFragment.graphql"
+#import "../../../../../graphql/PersonBaseFragment.graphql"
+
+mutation CreateJob($input: CreateJobInput!) {
+    createJob(input: $input) {
+        ...JobBase
+        employee {
+            ...PersonBase
+        }
+        title {
+            ...JobTitleBase
+        }
+        employer {
+            ...PartnerBase
+        }
+    }
+}

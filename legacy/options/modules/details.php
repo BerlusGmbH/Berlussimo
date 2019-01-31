@@ -50,7 +50,7 @@ switch ($option) {
         $f = new formular ();
         $f->fieldset("Detail löschen", 'details');
         $d = new detail (); // class details neue, nicht berlussimo
-        if (request()->has('detail_dat')) {
+        if (request()->filled('detail_dat')) {
             $detail_dat = request()->input('detail_dat');
             echo $detail_dat;
             $d->detail_loeschen($detail_dat);

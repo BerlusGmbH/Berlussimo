@@ -3,30 +3,53 @@
 namespace App\Models;
 
 use App\Models\Traits\DefaultOrder;
+use App\Models\Traits\ExternalKey;
 use App\Models\Traits\HasEnum;
 use App\Models\Traits\Searchable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Einheiten extends Model
 {
     use Searchable;
     use DefaultOrder;
     use HasEnum;
+    use ExternalKey;
+
+    public const LIVING_SPACE = 'Wohnraum';
+    public const INDIVIDUALLY_OWNED_LIVING_SPACE = 'Wohneigentum';
+    public const COMMERCIAL_SPACE = 'Gewerbe';
+    public const PARKING_SPACE = 'Stellplatz';
+    public const GARAGE = 'Garage';
+    public const CELLAR = 'Keller';
+    public const OPEN_SPACE = 'Freiflaeche';
+    public const ADVERTISING_SPACE = 'Werbeflaeche';
+    public const BUGGY_SPACE = 'Kinderwagenbox';
+    public const ROOM = 'Zimmer (möbliert)';
+    public const TYPES = [
+        self::LIVING_SPACE,
+        self::INDIVIDUALLY_OWNED_LIVING_SPACE,
+        self::COMMERCIAL_SPACE,
+        self::PARKING_SPACE,
+        self::GARAGE,
+        self::CELLAR,
+        self::OPEN_SPACE,
+        self::ADVERTISING_SPACE,
+        self::BUGGY_SPACE,
+        self::ROOM
+    ];
 
     public $timestamps = false;
     protected $table = 'EINHEIT';
-    protected $primaryKey = 'EINHEIT_ID';
+    protected $primaryKey = 'EINHEIT_DAT';
+    protected $externalKey = 'id';
     protected $searchableFields = ['EINHEIT_KURZNAME', 'EINHEIT_LAGE'];
     protected $defaultOrder = ['EINHEIT_KURZNAME' => 'asc'];
-    protected $appends = ['type', 'vermietet'];
+    protected $appends = ['vermietet'];
     protected $guarded = [];
-
-    static public function getTypeAttribute()
-    {
-        return 'unit';
-    }
 
     protected static function boot()
     {
@@ -42,25 +65,26 @@ class Einheiten extends Model
 
     public function haus()
     {
-        return $this->belongsTo('App\Models\Haeuser', 'HAUS_ID', 'HAUS_ID');
+        return $this->belongsTo(Haeuser::class, 'HAUS_ID', 'id');
     }
 
-    public function mietvertraege()
+    public function mietvertraege(): HasMany
     {
-        return $this->hasMany('App\Models\Mietvertraege',
-            'EINHEIT_ID', 'EINHEIT_ID'
+        return $this->hasMany(Mietvertraege::class,
+            'EINHEIT_ID', 'id'
         );
     }
 
-    public function kaufvertraege()
+    public function kaufvertraege(): HasMany
     {
-        return $this->hasMany('App\Models\Kaufvertraege',
-            'EINHEIT_ID', 'EINHEIT_ID'
+        return $this->hasMany(Kaufvertraege::class,
+            'EINHEIT_ID', 'id'
         );
     }
 
-    public function auftraege() {
-        return $this->morphMany(Auftraege::class, 'kostentraeger', 'KOS_TYP', 'KOS_ID');
+    public function auftraege(): MorphMany
+    {
+        return $this->morphMany(Auftraege::class, 'kostentraeger', 'KOS_TYP', 'KOS_ID', 'id');
     }
 
     public function mieter($date = null) {
@@ -68,7 +92,7 @@ class Einheiten extends Model
             $date = Carbon::today();
         }
         return Person::whereHas('mietvertraege', function ($query) use ($date){
-            $query->where('EINHEIT_ID', $this->EINHEIT_ID)->active('=', $date);
+            $query->where('EINHEIT_ID', $this->id)->active('=', $date);
         });
     }
 
@@ -78,24 +102,27 @@ class Einheiten extends Model
             $date = Carbon::today();
         }
         return Person::whereHas('kaufvertraege', function ($query) use ($date) {
-            $query->where('EINHEIT_ID', $this->EINHEIT_ID)->active('=', $date);
+            $query->where('EINHEIT_ID', $this->id)->active('=', $date);
         });
     }
 
-    public function commonDetails() {
+    public function commonDetails(): MorphMany
+    {
         return $this->details()->whereNotIn('DETAIL_NAME', ['Hinweis_zu_Einheit']);
     }
 
-    public function details()
+    public function details(): MorphMany
     {
-        return $this->morphMany('App\Models\Details', 'details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID');
+        return $this->morphMany('App\Models\Details', 'details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID', 'id');
     }
 
-    public function hinweise() {
+    public function hinweise(): MorphMany
+    {
         return $this->details()->where('DETAIL_NAME', 'Hinweis_zu_Einheit');
     }
 
-    public function hasHinweis() {
+    public function hasHinweis()
+    {
         return $this->hinweise->count() > 0;
     }
 
@@ -107,5 +134,31 @@ class Einheiten extends Model
             }
         }
         return false;
+    }
+
+    public function getHomeOwnersAttribute()
+    {
+        return $this->WEGEigentuemer()->get();
+    }
+
+    public function getTenantsAttribute()
+    {
+        return $this->mieter()->get();
+    }
+
+    public function getHomeOwnersEMailsAttribute()
+    {
+        $emails = Details::where('DETAIL_NAME', 'Email')->whereHas('detailablePerson.kaufvertraege.einheit', function ($query) {
+            $query->where('id', $this->id);
+        })->get();
+        return $emails;
+    }
+
+    public function getTenantsEMailsAttribute()
+    {
+        $emails = Details::where('DETAIL_NAME', 'Email')->whereHas('detailablePerson.mietvertraege.einheit', function ($query) {
+            $query->where('id', $this->id);
+        })->get();
+        return $emails;
     }
 }

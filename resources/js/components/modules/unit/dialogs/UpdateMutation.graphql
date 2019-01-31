@@ -1,0 +1,15 @@
+#import "../../../../../graphql/UnitBaseFragment.graphql"
+#import "../../../../../graphql/HouseBaseFragment.graphql"
+#import "../../../../../graphql/PropertyBaseFragment.graphql"
+
+mutation UpdateUnit($input: UpdateUnitInput!) {
+    updateUnit(input: $input) {
+        ...UnitBase
+        house {
+            ...HouseBase
+            property {
+                ...PropertyBase
+            }
+        }
+    }
+}

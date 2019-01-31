@@ -2,7 +2,7 @@
 
 function objekt_liste_links()
 {
-    $result = DB::select("SELECT OBJEKT_DAT, OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC ");
+    $result = DB::select("SELECT OBJEKT_DAT, id AS OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC ");
     echo "<b>Objekt auswählen:</b><br>\n ";
     foreach($result as $row) {
         echo "<a class='objekt_links' href='" . route('web::haeuserform::legacy', ['daten_rein' => 'anlegen', 'haus_objekt' => $row['OBJEKT_ID']]) . "'>$row[OBJEKT_KURZNAME]</a><br>\n";
@@ -11,7 +11,7 @@ function objekt_liste_links()
 
 function objekt_liste_links_aenderung()
 {
-    $result = DB::select("SELECT OBJEKT_DAT, OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC ");
+    $result = DB::select("SELECT OBJEKT_DAT, id AS OBJEKT_ID, OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' ORDER BY OBJEKT_KURZNAME ASC ");
     echo "<b>Objekt auswählen:</b><br>\n ";
     foreach($result as $row) {
         echo "<a class='objekt_links' href='" . route('web::haeuserform::legacy', ['daten_rein' => 'aendern_liste', 'objekt_id' => $row['OBJEKT_ID']]) . "'>$row[OBJEKT_KURZNAME]</a><br>\n";
@@ -37,7 +37,7 @@ function haus_eingabe_formular($objekt_id)
 function haus_aendern_formular($haus_id)
 {
     erstelle_formular("haus_aendern_form", route('web::haeuserform::legacy', ['daten_rein' => 'aendern'], false));
-    $result = DB::select("SELECT HAUS_DAT, HAUS_STRASSE, HAUS_NUMMER, HAUS_STADT, HAUS_PLZ, HAUS_QM, OBJEKT_ID FROM HAUS WHERE HAUS_ID='$haus_id' && HAUS_AKTUELL='1' ORDER BY HAUS_DAT DESC LIMIT 0,1");
+    $result = DB::select("SELECT HAUS_DAT, HAUS_STRASSE, HAUS_NUMMER, HAUS_STADT, HAUS_PLZ, HAUS_QM, OBJEKT_ID FROM HAUS WHERE id='$haus_id' && HAUS_AKTUELL='1' ORDER BY HAUS_DAT DESC LIMIT 0,1");
 
     foreach($result as $row) {
         erstelle_hiddenfeld("haus_dat", $row['HAUS_DAT']);
@@ -55,7 +55,7 @@ function haus_aendern_formular($haus_id)
 
 function letzte_haus_id()
 {
-    $result = DB::select("SELECT HAUS_ID FROM HAUS ORDER BY HAUS_ID DESC LIMIT 0,1");
+    $result = DB::select("SELECT id AS HAUS_ID FROM HAUS ORDER BY HAUS_ID DESC LIMIT 0,1");
     foreach($result as $row)
         return $row['HAUS_ID'];
 }
@@ -66,7 +66,7 @@ function haus_in_db_eintragen($strasse, $nummer, $stadt, $plz, $qm, $objekt_id)
     if ($haus_existiert < 1) {
         $haus_id = letzte_haus_id();
         $haus_id = $haus_id + 1;
-        DB::insert("INSERT INTO HAUS (HAUS_DAT, HAUS_ID, HAUS_STRASSE, HAUS_NUMMER, HAUS_STADT, HAUS_PLZ, HAUS_QM, HAUS_AKTUELL, OBJEKT_ID) VALUES (NULL,'$haus_id','$strasse', '$nummer', '$stadt', '$plz', '$qm', '1', '$objekt_id')");
+        DB::insert("INSERT INTO HAUS (HAUS_DAT, id, HAUS_STRASSE, HAUS_NUMMER, HAUS_STADT, HAUS_PLZ, HAUS_QM, HAUS_AKTUELL, OBJEKT_ID) VALUES (NULL,'$haus_id','$strasse', '$nummer', '$stadt', '$plz', '$qm', '1', '$objekt_id')");
         $aktuelle_haus_dat = zugeteilte_haus_dat($strasse, $nummer, $stadt, $plz);
         protokollieren("HAUS", $aktuelle_haus_dat, 0);
         hinweis_ausgeben("Haus $haus_id wurde eingetragen");
@@ -79,7 +79,7 @@ function haus_in_db_eintragen($strasse, $nummer, $stadt, $plz, $qm, $objekt_id)
 
 function haus_geaendert_eintragen($haus_dat, $haus_id, $strasse, $nummer, $stadt, $plz, $qm, $objekt_id)
 {
-    DB::insert("INSERT INTO HAUS (HAUS_DAT, HAUS_ID, HAUS_STRASSE, HAUS_NUMMER, HAUS_STADT, HAUS_PLZ, HAUS_QM, HAUS_AKTUELL, OBJEKT_ID) VALUES (NULL, '$haus_id', '$strasse', '$nummer', '$stadt', '$plz', '$qm', '1', '$objekt_id')");
+    DB::insert("INSERT INTO HAUS (HAUS_DAT, id, HAUS_STRASSE, HAUS_NUMMER, HAUS_STADT, HAUS_PLZ, HAUS_QM, HAUS_AKTUELL, OBJEKT_ID) VALUES (NULL, '$haus_id', '$strasse', '$nummer', '$stadt', '$plz', '$qm', '1', '$objekt_id')");
     $aktuelle_haus_dat = zugeteilte_haus_dat($strasse, $nummer, $stadt, $plz);
     protokollieren("HAUS", $aktuelle_haus_dat, $haus_dat);
     hinweis_ausgeben("Haus wurde geändert");

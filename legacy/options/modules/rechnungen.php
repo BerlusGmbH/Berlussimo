@@ -1,6 +1,6 @@
 <?php
 
-if (request()->has('option')) {
+if (request()->filled('option')) {
     $option = request()->input('option');
 } else {
     $option = 'default';
@@ -323,7 +323,7 @@ switch ($option) {
         $form = new mietkonto ();
         $form->erstelle_formular("Rechnung an Objekt aus Pool", NULL);
         $rechnung = new rechnung ();
-        if (request()->has('objekt_id') && empty (request()->input('aussteller_id'))) {
+        if (request()->filled('objekt_id') && empty (request()->input('aussteller_id'))) {
             $kontierung_id_arr = $rechnung->rechnung_an_objekt_zusammenstellen(request()->input('objekt_id'));
             /* Feldernamen definieren - Überschrift Tabelle */
             if (is_array($kontierung_id_arr)) {
@@ -383,7 +383,7 @@ switch ($option) {
             /* Ende der Ausgabe der Links mit Rechnungsausteller namen */
         } // end if
 
-        if (request()->has('objekt_id') && request()->has('aussteller_id') && request()->has('aussteller_typ')) {
+        if (request()->filled('objekt_id') && request()->filled('aussteller_id') && request()->filled('aussteller_typ')) {
             $kontierung_id_arr = $rechnung->rechnung_an_objekt_zusammenstellen(request()->input('objekt_id'));
             $kontierung_id_arr_gefiltert = $rechnung->filtern_nach_austeller($kontierung_id_arr, request()->input('aussteller_typ'), request()->input('aussteller_id'));
             $rechnung->rechnung_schreiben_positionen_wahl('Objekt', request()->input('objekt_id'), $kontierung_id_arr_gefiltert, request()->input('aussteller_typ'), request()->input('aussteller_id'));
@@ -397,7 +397,7 @@ switch ($option) {
         $form = new mietkonto ();
         $form->erstelle_formular("Objektkosten in Rechnung stellen", NULL);
         $rechnung = new rechnung ();
-        if (request()->has('objekt_id')) {
+        if (request()->filled('objekt_id')) {
             $kontierung_id_arr = $rechnung->rechnung_aus_pool_zusammenstellen('Objekt', request()->input('objekt_id'));
             if ($kontierung_id_arr == false) {
                 echo "Keine Objektkosten";
@@ -460,7 +460,7 @@ switch ($option) {
             echo "</table>";
             /* Ende der Ausgabe der Links mit Rechnungsausteller namen */
         }
-        if (request()->has('objekt_id') && request()->has('aussteller_id') && request()->has('aussteller_typ')) {
+        if (request()->filled('objekt_id') && request()->filled('aussteller_id') && request()->filled('aussteller_typ')) {
             $kontierung_id_arr = $rechnung->rechnung_aus_pool_zusammenstellen('Objekt', request()->input('objekt_id'));
             $kontierung_id_arr_gefiltert = $rechnung->filtern_nach_austeller($kontierung_id_arr, request()->input('aussteller_typ'), request()->input('aussteller_id'));
             $rechnung->rechnung_schreiben_positionen_wahl('Objekt', request()->input('objekt_id'), $kontierung_id_arr_gefiltert, request()->input('aussteller_typ'), request()->input('aussteller_id'));
@@ -472,7 +472,7 @@ switch ($option) {
         $form = new mietkonto ();
         $form->erstelle_formular("Rechnung für eine Einheit erstellen", NULL);
         $rechnung = new rechnung ();
-        if (request()->has('einheit_id')) {
+        if (request()->filled('einheit_id')) {
             $kontierung_id_arr = $rechnung->rechnung_aus_pool_zusammenstellen('Einheit', request()->input('einheit_id'));
             if ($kontierung_id_arr == false) {
                 echo "Keine einheitsbezogene Kosten";
@@ -546,7 +546,7 @@ switch ($option) {
             echo "</table>";
             /* Ende der Ausgabe der Links mit Rechnungsausteller namen */
         }
-        if (request()->has('einheit_id') && request()->has('aussteller_id') && request()->has('aussteller_typ')) {
+        if (request()->filled('einheit_id') && request()->filled('aussteller_id') && request()->filled('aussteller_typ')) {
             $kontierung_id_arr = $rechnung->rechnung_aus_pool_zusammenstellen('Einheit', request()->input('einheit_id'));
             $kontierung_id_arr_gefiltert = $rechnung->filtern_nach_austeller($kontierung_id_arr, request()->input('aussteller_typ'), request()->input('aussteller_id'));
             $rechnung->rechnung_schreiben_positionen_wahl('Einheit', request()->input('einheit_id'), $kontierung_id_arr_gefiltert, request()->input('aussteller_typ'), request()->input('aussteller_id'));
@@ -559,7 +559,7 @@ switch ($option) {
         $form->erstelle_formular("Rechnung an Haus aus Pool", NULL);
         $rechnung = new rechnung ();
 
-        if (request()->has('haus_id')) {
+        if (request()->filled('haus_id')) {
             $kontierung_id_arr = $rechnung->rechnung_aus_pool_zusammenstellen('Haus', request()->input('haus_id'));
             if ($kontierung_id_arr == false) {
                 echo "Keine hausbezogenen Kosten";
@@ -634,7 +634,7 @@ switch ($option) {
         echo "</table>";
         /* Ende der Ausgabe der Links mit Rechnungsausteller namen */
 
-        if (request()->has('haus_id') && request()->has('aussteller_id') && request()->has('aussteller_typ')) {
+        if (request()->filled('haus_id') && request()->filled('aussteller_id') && request()->filled('aussteller_typ')) {
             $kontierung_id_arr = $rechnung->rechnung_aus_pool_zusammenstellen('Haus', request()->input('haus_id'));
             $kontierung_id_arr_gefiltert = $rechnung->filtern_nach_austeller($kontierung_id_arr, request()->input('aussteller_typ'), request()->input('aussteller_id'));
             $rechnung->rechnung_schreiben_positionen_wahl('Haus', request()->input('haus_id'), $kontierung_id_arr_gefiltert, request()->input('aussteller_typ'), request()->input('aussteller_id'));
@@ -647,7 +647,7 @@ switch ($option) {
         $form = new mietkonto ();
         $form->erstelle_formular("Hauskosten in Rechnung stellen", NULL);
         $rechnung = new rechnung ();
-        if (request()->has('haus_id')) {
+        if (request()->filled('haus_id')) {
             $kontierung_id_arr = $rechnung->rechnung_aus_pool_zusammenstellen('Haus', request()->input('haus_id'));
             if ($kontierung_id_arr == false) {
                 echo "Keine Hauskosten";
@@ -667,7 +667,7 @@ switch ($option) {
         $form = new mietkonto ();
         $form->erstelle_formular("Rechnung an Einheit aus Pool", NULL);
         $rechnung = new rechnung ();
-        if (request()->has('einheit_id')) {
+        if (request()->filled('einheit_id')) {
             $kontierung_id_arr = $rechnung->rechnung_aus_pool_zusammenstellen('Einheit', request()->input('einheit_id'));
 
             /* Feldernamen definieren - Überschrift Tabelle */
@@ -685,7 +685,7 @@ switch ($option) {
         $form = new mietkonto ();
         $form->erstelle_formular("Rechnung an Lager aus Pool", NULL);
         $rechnung = new rechnung ();
-        if (request()->has('lager_id')) {
+        if (request()->filled('lager_id')) {
             $kontierung_id_arr = $rechnung->rechnung_aus_pool_zusammenstellen('Lager', request()->input('lager_id'));
 
             /* Feldernamen definieren - Überschrift Tabelle */
@@ -757,7 +757,7 @@ switch ($option) {
             /* Ende der Ausgabe der Links mit Rechnungsausteller namen */
         } // end if
 
-        if (request()->has('lager_id') && request()->has('aussteller_id') && request()->has('aussteller_typ')) {
+        if (request()->filled('lager_id') && request()->filled('aussteller_id') && request()->filled('aussteller_typ')) {
             $kontierung_id_arr = $rechnung->rechnung_aus_pool_zusammenstellen('Lager', request()->input('lager_id'));
             $kontierung_id_arr_gefiltert = $rechnung->filtern_nach_austeller($kontierung_id_arr, request()->input('aussteller_typ'), request()->input('aussteller_id'));
             $rechnung->rechnung_schreiben_positionen_wahl('Lager', request()->input('lager_id'), $kontierung_id_arr_gefiltert, request()->input('aussteller_typ'), request()->input('aussteller_id'));
@@ -770,7 +770,7 @@ switch ($option) {
         $form = new mietkonto ();
         $form->erstelle_formular("Rechnung an Partner aus Pool", NULL);
         $rechnung = new rechnung ();
-        if (request()->has('partner_id')) {
+        if (request()->filled('partner_id')) {
             $kontierung_id_arr = $rechnung->rechnung_aus_pool_zusammenstellen('Partner', request()->input('partner_id'));
 
             /* Feldernamen definieren - Überschrift Tabelle */
@@ -840,7 +840,7 @@ switch ($option) {
             /* Ende der Ausgabe der Links mit Rechnungsausteller namen */
         } // end if
 
-        if (request()->has('partner_id') && request()->has('aussteller_id') && request()->has('aussteller_typ')) {
+        if (request()->filled('partner_id') && request()->filled('aussteller_id') && request()->filled('aussteller_typ')) {
             $kontierung_id_arr = $rechnung->rechnung_aus_pool_zusammenstellen('Partner', request()->input('partner_id'));
             $kontierung_id_arr_gefiltert = $rechnung->filtern_nach_austeller($kontierung_id_arr, request()->input('aussteller_typ'), request()->input('aussteller_id'));
             $rechnung->rechnung_schreiben_positionen_wahl('Partner', request()->input('partner_id'), $kontierung_id_arr_gefiltert, request()->input('aussteller_typ'), request()->input('aussteller_id'));
@@ -854,7 +854,7 @@ switch ($option) {
         $form->erstelle_formular("Rechnungsübersicht", NULL);
         $rechnung = new rechnung ();
 
-        if (request()->has('belegnr')) {
+        if (request()->filled('belegnr')) {
             $rechnung->rechnung_grunddaten_holen(request()->input('belegnr'));
             $rechnung->rechnung_inkl_positionen_anzeigen(request()->input('belegnr'));
         }
@@ -867,7 +867,7 @@ switch ($option) {
 
         $form = new mietkonto ();
         $form->erstelle_formular("Rechnung vervollständigen", NULL);
-        if (request()->has('belegnr')) {
+        if (request()->filled('belegnr')) {
             $rechnung->rechnungs_kopf(request()->input('belegnr'));
 
             /* Block mit Artikeln und Leistungen des Rechnungsaustellers */
@@ -917,7 +917,7 @@ switch ($option) {
         $rechnung = new rechnung ();
         $form = new mietkonto ();
         $form->erstelle_formular("Rechnung vervollständigen", NULL);
-        if (request()->has('belegnr')) {
+        if (request()->filled('belegnr')) {
             $rechnung->rechnungs_kopf(request()->input('belegnr'));
 
             /* Prüfen ob Bezeichnung, Preis, Menge eingetragen worden sind */
@@ -970,8 +970,8 @@ switch ($option) {
                     } else {
 
                         /* Artikel nicht in db vorhanden z.B. neues Artikel / Leistung */
-                        if (request()->has("positionen.$a.bezeichnung")) {
-                            if (request()->has("positionen.$a.artikel_nr")) {
+                        if (request()->filled("positionen.$a.bezeichnung")) {
+                            if (request()->filled("positionen.$a.artikel_nr")) {
                                 $listenpreis_neuer_artikel = nummer_komma2punkt(request()->input('positionen')[$a]['preis']);
                                 $art_nr = $rechnung->artikel_leistung_mit_artikelnr_speichern(request()->input('partner_id'), request()->input('positionen') [$a] ['bezeichnung'], $listenpreis_neuer_artikel, request()->input('positionen') [$a] ['artikel_nr'], request()->input('positionen') [$a] ['rabatt_satz']);
                             } else {
@@ -1122,8 +1122,8 @@ switch ($option) {
     case "rechnung_kontieren" :
         $form = new mietkonto ();
         $form->erstelle_formular("Rechnungsübersicht", NULL);
-        if (!request()->has('positionen_list')) {
-            if (request()->has('belegnr')) {
+        if (!request()->filled('positionen_list')) {
+            if (request()->filled('belegnr')) {
                 $rechnung = new rechnung ();
                 $rechnung->rechnung_zum_kontieren_anzeigen(request()->input('belegnr'));
             }
@@ -1135,7 +1135,7 @@ switch ($option) {
         break;
 
     case "rechnung_kontierung_aufheben" :
-        if (request()->has('belegnr')) {
+        if (request()->filled('belegnr')) {
             $r = new rechnung ();
             if ($r->rechnung_kontierung_aufheben(request()->input('belegnr'))) {
                 $belegnr = request()->input('belegnr');
@@ -1379,14 +1379,14 @@ switch ($option) {
 
     case "eingangsbuch" :
         $p = new partner ();
-        if (request()->has('partner_id')) {
+        if (request()->filled('partner_id')) {
             session()->put('partner_id', request()->input('partner_id'));
         }
         $r = new rechnung ();
 
         $partner_id = session()->get('partner_id');
 
-        if (request()->has('monat') && request()->has('jahr')) {
+        if (request()->filled('monat') && request()->filled('jahr')) {
             if (request()->input('monat') != 'alle') {
                 session()->put('monat', sprintf('%02d', request()->input('monat')));
             } else {
@@ -1431,19 +1431,19 @@ switch ($option) {
 
     case "ausgangsbuch" :
         $p = new partner ();
-        if (request()->has('partner_wechseln')) {
+        if (request()->filled('partner_wechseln')) {
             session()->forget('partner_id');
             $p->partner_auswahl();
         }
 
-        if (request()->has('partner_id')) {
+        if (request()->filled('partner_id')) {
             session()->put('partner_id', request()->input('partner_id'));
         }
         $r = new rechnung ();
 
         $partner_id = session()->get('partner_id');
 
-        if (request()->has('monat') && request()->has('jahr')) {
+        if (request()->filled('monat') && request()->filled('jahr')) {
             if (request()->input('monat') != 'alle') {
                 session()->put('monat', sprintf('%02d', request()->input('monat')));
             } else {
@@ -1769,7 +1769,7 @@ switch ($option) {
         break;
 
     case "anzeigen_pdf" :
-        if (request()->has('belegnr') && is_numeric(request()->input('belegnr'))) {
+        if (request()->filled('belegnr') && is_numeric(request()->input('belegnr'))) {
             /* Neues PDF-Objekt erstellen */
             $pdf = new Cezpdf ('a4', 'portrait');
             $r = new rechnungen();
@@ -1826,7 +1826,7 @@ switch ($option) {
         break;
 
     case "rechnungsbuch_suche1" :
-        if (request()->has('buchart') && request()->has('r_inhaber_t') && request()->has('r_inhaber') && request()->has('r_art') && request()->has('monat') && request()->has('jahr')) {
+        if (request()->filled('buchart') && request()->filled('r_inhaber_t') && request()->filled('r_inhaber') && request()->filled('r_art') && request()->filled('monat') && request()->filled('jahr')) {
             $r = new rechnungen ();
             $buchart = request()->input('buchart');
             $r_inhaber_t = request()->input('r_inhaber_t');
@@ -1865,10 +1865,10 @@ switch ($option) {
 
     case "angebot_erfassen1" : // Angebot anlegen/speichern
         $r = new rechnungen ();
-        if (request()->has('aussteller_typ')
-            && request()->has('aussteller_id')
-            && request()->has('empfaenger_typ')
-            && request()->has('empfaenger_id')
+        if (request()->filled('aussteller_typ')
+            && request()->filled('aussteller_id')
+            && request()->filled('empfaenger_typ')
+            && request()->filled('empfaenger_id')
         ) {
             $r->angebot_speichern(request()->input('aussteller_typ'),
                 request()->input('aussteller_id'),
@@ -1896,9 +1896,9 @@ switch ($option) {
         break;
 
     case "ang2beleg" :
-        if (request()->has('belegnr')) {
+        if (request()->filled('belegnr')) {
             $r = new rechnungen ();
-            $r->angebot2beleg(request()->has('belegnr'));
+            $r->angebot2beleg(request()->filled('belegnr'));
         } else {
             fehlermeldung_ausgeben("Angebot wählen!");
         }
@@ -1910,7 +1910,7 @@ switch ($option) {
 	 * Bei der Korrektur wird aus der Ursprungsrechnung der Rabatt und Skonti übernommen
 	 */
     case "autokorrektur_pos" :
-        if (request()->has('belegnr')) {
+        if (request()->filled('belegnr')) {
             $r = new rechnungen ();
             $r->autokorrektur_pos(request()->input('belegnr'));
         } else {
@@ -1919,7 +1919,7 @@ switch ($option) {
         break;
 
     case "edisnp" :
-        if (request()->has('belegnr')) {
+        if (request()->filled('belegnr')) {
             $r = new rechnungen ();
             $r->edisp(request()->input('belegnr'));
         }
@@ -1941,7 +1941,7 @@ switch ($option) {
         $f = new formular ();
         $f->fieldset('POOL', 'pool_tab');
         $r = new rechnungen ();
-        if (request()->has('kos_typ') && request()->has('kos_id')) {
+        if (request()->filled('kos_typ') && request()->filled('kos_id')) {
             $r->u_pool_edit(request()->input('kos_typ'), request()->input('kos_id'), request()->input('aussteller_typ'), request()->input('aussteller_id'));
         } else {
             echo "Rechnungsempfänger wählen";
@@ -1960,7 +1960,7 @@ switch ($option) {
     /* Verbindlichkeiten */
     case "verbindlichkeiten" :
         $r = new rechnungen ();
-        if (!request()->has('jahr')) {
+        if (!request()->filled('jahr')) {
             $jahr = date("Y");
         } else {
             $jahr = request()->input('jahr');
@@ -2064,7 +2064,7 @@ switch ($option) {
 
                 $r->position_speichern($beleg_nr, $beleg_nr, $aussteller_id, $artikel_nr, $menge, $listenpreis, $mwst, $skonto, $rabatt1, $pos_netto);
             }
-            $invoice = \App\Models\Invoice::findOrFail($beleg_nr);
+            $invoice = \App\Models\Invoice::where('BELEG_NR', $beleg_nr)->firstOrFail();
             $invoice->updateSums();
             weiterleiten(route('web::rechnungen.show', ['id' => $beleg_nr]));
         }
@@ -2149,7 +2149,7 @@ switch ($option) {
         break;
 
     case "kosten_einkauf_send" :
-        if (request()->has('kostentraeger_typ') && request()->has('kostentraeger_id') && request()->has('empf_typ') && request()->has('empf_id')) {
+        if (request()->filled('kostentraeger_typ') && request()->filled('kostentraeger_id') && request()->filled('empf_typ') && request()->filled('empf_id')) {
             $r = new rechnungen ();
             $kos_typ = request()->input('kostentraeger_typ');
             $kos_bez = request()->input('kostentraeger_id');
@@ -2165,7 +2165,7 @@ switch ($option) {
         break;
 
     case "teil_rg_hinzu" :
-        if (request()->has('beleg_id')) {
+        if (request()->filled('beleg_id')) {
             $r = new rechnungen ();
             $beleg_id = request()->input('beleg_id');
             $r->form_teil_rg_hinzu($beleg_id);
@@ -2175,7 +2175,7 @@ switch ($option) {
         break;
 
     case "send_teil_rg" :
-        if (request()->has('beleg_id') && is_array(request()->input('tr_ids'))) {
+        if (request()->filled('beleg_id') && is_array(request()->input('tr_ids'))) {
             $r = new rechnungen ();
             $r->teilrechnungen_hinzu(request()->input('beleg_id'), request()->input('tr_ids'));
             $beleg_id = request()->input('beleg_id');
@@ -2186,7 +2186,7 @@ switch ($option) {
         break;
 
     case "teil_rg_loeschen" :
-        if (request()->has('beleg_id') && request()->has('t_beleg_id')) {
+        if (request()->filled('beleg_id') && request()->filled('t_beleg_id')) {
             $r = new rechnungen ();
             $r->teilrechnungen_loeschen(request()->input('beleg_id'), request()->input('t_beleg_id'));
             $beleg_id = request()->input('beleg_id');
@@ -2211,13 +2211,13 @@ switch ($option) {
         break;
 
     case "rgg" :
-        if (!request()->has('check')) {
+        if (!request()->filled('check')) {
             echo "Bitte wählen Sie eine Einheit.";
             return;
         }
         $einheiten = request()->input('check');
 
-        if (request()->has('kostenkonto')) {
+        if (request()->filled('kostenkonto')) {
             $kostenkonto = request()->input('kostenkonto');
         } else {
             echo "Bitte wählen Sie ein Kostenkonto.";
@@ -2282,7 +2282,7 @@ switch ($option) {
             protokollieren('KONTIERUNG_POSITIONEN', $last_dat, '0');
 
             /* In SEPA ÜBERWEISUNGEN bei Häkchen */
-            if (request()->has('sepa')) {
+            if (request()->filled('sepa')) {
                 $r->rechnung_grunddaten_holen($letzte_belegnr);
                 $vzweck = "$r->rechnungs_aussteller_name, Rg. $r->rechnungsnummer " . bereinige_string($kurztext);
 
@@ -2298,7 +2298,7 @@ switch ($option) {
         break;
 
     case "rgg_ob" :
-        if (request()->has('kostenkonto')) {
+        if (request()->filled('kostenkonto')) {
             $kostenkonto = request()->input('kostenkonto');
         } else {
             throw new \App\Exceptions\MessageException(
@@ -2374,7 +2374,7 @@ switch ($option) {
         }
 
         /* In SEPA ÜBERWEISUNGEN bei Häckchen */
-        if (request()->has('sepa')) {
+        if (request()->filled('sepa')) {
             $r->rechnung_grunddaten_holen($letzte_belegnr);
             $vzweck = "$r->rechnungs_aussteller_name, Rg. $r->rechnungsnummer " . bereinige_string($kurztext_neu);
             $sep = new sepa ();
@@ -2409,13 +2409,13 @@ switch ($option) {
 
     case "beleg_sent" :
         $r = new rechnungen ();
-        if (request()->has('beleg_nr') && request()->has('empf_p_id')) {
+        if (request()->filled('beleg_nr') && request()->filled('empf_p_id')) {
             $r->beleg2rg_db(request()->input('empf_p_id'), request()->input('beleg_nr'));
         }
         break;
 
     case "neue_rg" :
-        if (request()->has('belegnr') && request()->has('empf_p_id') && session()->has('partner_id')) {
+        if (request()->filled('belegnr') && request()->filled('empf_p_id') && session()->has('partner_id')) {
             $r = new rechnungen ();
             $r->rechnung_aus_beleg(session()->get('partner_id'), request()->input('belegnr'), request()->input('empf_p_id'));
         } else {
@@ -2429,13 +2429,13 @@ switch ($option) {
             return;
         }
         $re = new rechnungen ();
-        if (!request()->has('monat')) {
+        if (!request()->filled('monat')) {
             $monat = date("m");
         } else {
             $monat = request()->input('monat');
         }
 
-        if (!request()->has('jahr')) {
+        if (!request()->filled('jahr')) {
             $jahr = date("Y");
         } else {
             $jahr = request()->input('jahr');
@@ -2491,13 +2491,13 @@ switch ($option) {
         }
 
         $re = new rechnungen ();
-        if (!request()->has('monat')) {
+        if (!request()->filled('monat')) {
             $monat = date("m");
         } else {
             $monat = request()->input('monat');
         }
 
-        if (!request()->has('jahr')) {
+        if (!request()->filled('jahr')) {
             $jahr = date("Y");
         } else {
             $jahr = request()->input('jahr');

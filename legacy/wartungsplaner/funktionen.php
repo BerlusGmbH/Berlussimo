@@ -169,7 +169,7 @@ function button_bild($name, $id, $value, $bild, $js, $class = 'knopf')
 function check_mietvertrag_aktuell($mv_id)
 {
     $datum_heute = date("Y-m-d");
-    $result = DB::select("SELECT * FROM MIETVERTRAG WHERE MIETVERTRAG_ID='$mv_id' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS='$datum_heute') && MIETVERTRAG_AKTUELL='1'");
+    $result = DB::select("SELECT * FROM MIETVERTRAG WHERE id='$mv_id' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS='$datum_heute') && MIETVERTRAG_AKTUELL='1'");
     return !empty($result);
 }
 
@@ -284,7 +284,7 @@ function kontakt_suche($target_id, $string)
         }
     }
 
-    $db_abfrage = "SELECT * FROM EINHEIT WHERE EINHEIT_KURZNAME LIKE '%$string%'  && EINHEIT_AKTUELL='1'";
+    $db_abfrage = "SELECT *, EINHEIT.id AS EINHEIT_ID FROM EINHEIT WHERE EINHEIT_KURZNAME LIKE '%$string%'  && EINHEIT_AKTUELL='1'";
     $result = DB::select($db_abfrage);
     $datum_d = date("d.m.Y");
     if (!empty($result)) {
@@ -412,7 +412,7 @@ function str_suche($target_id, $string)
         }
     }
 
-    $db_abfrage = "SELECT * FROM EINHEIT WHERE EINHEIT_KURZNAME LIKE '%$string%'  && EINHEIT_AKTUELL='1'";
+    $db_abfrage = "SELECT *, EINHEIT.id AS EINHEIT_ID FROM EINHEIT WHERE EINHEIT_KURZNAME LIKE '%$string%'  && EINHEIT_AKTUELL='1'";
     $result = DB::select($db_abfrage);
     $datum_d = date("d.m.Y");
     if (!empty($result)) {
@@ -473,7 +473,7 @@ function form_inaktiv($kos_typ, $kos_id)
 
 function get_partner_name($partner_id)
 {
-    $result = DB::select("SELECT * FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
+    $result = DB::select("SELECT * FROM PARTNER_LIEFERANT WHERE id='$partner_id' && AKTUELL = '1'");
     if (!empty($result)) {
         return $result[0]['PARTNER_NAME'];
     } else {
@@ -483,9 +483,9 @@ function get_partner_name($partner_id)
 
 function get_partner_id($partner_name, $str, $nr, $plz)
 {
-    $result = DB::select("SELECT PARTNER_ID FROM PARTNER_LIEFERANT WHERE PARTNER_NAME='$partner_name' && STRASSE='$str' && NUMMER='$nr' && PLZ='$plz' && AKTUELL = '1'");
+    $result = DB::select("SELECT id FROM PARTNER_LIEFERANT WHERE PARTNER_NAME='$partner_name' && STRASSE='$str' && NUMMER='$nr' && PLZ='$plz' && AKTUELL = '1'");
     if (!empty($result)) {
-        return $result[0]['PARTNER_ID'];
+        return $result[0]['id'];
     }
 }
 
@@ -524,7 +524,7 @@ function dropdown_partner_vorwahl($p_id, $arr, $label, $name, $id, $js, $class_r
         echo "<select name=\"$name\" size=\"1\" id=\"$id\" $js>\n";
         echo "<option value=\"\" selected>Bitte wählen</option>\n";
         for ($a = 0; $a < $anz; $a++) {
-            $partner_id = $arr[$a]['PARTNER_ID'];
+            $partner_id = $arr[$a]['id'];
             $partner_name = $arr[$a]['PARTNER_NAME'];
             if ($p_id == $partner_id) {
                 echo "<option value=\"$partner_id\" selected>$partner_name</option>\n";
@@ -540,7 +540,7 @@ function dropdown_partner_vorwahl($p_id, $arr, $label, $name, $id, $js, $class_r
 
 function get_partner_anschrift($partner_id)
 {
-    $result = DB::select("SELECT *  FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
+    $result = DB::select("SELECT *  FROM PARTNER_LIEFERANT WHERE id='$partner_id' && AKTUELL = '1'");
     if (!empty($result)) {
         $row = $result[0];
         return $row['STRASSE'] . ' ' . $row['NUMMER'] . ', ' . $row['PLZ'] . ' ' . $row['ORT'];
@@ -1430,7 +1430,7 @@ function get_hersteller_modelle($hersteller)
 
 function form_abweichende_r_anschrift()
 {
-    if (request()->has('g_id')) {
+    if (request()->filled('g_id')) {
         $g_info_arr = geraete_info_arr(request()->input('g_id'));
         extract($g_info_arr[0]);
         $r_text = $RECHNUNG_AN;
@@ -1509,7 +1509,7 @@ function termin_suchen($g_id)
 
     $tt = new general();
     /*Wenn Datum gesetzt äbernehmen sonst von heute rechnen*/
-    if (request()->has('datum_ab')) {
+    if (request()->filled('datum_ab')) {
         $datum_df = request()->input('datum_ab');
     } else {
         $datum_df = date("d.m.Y");
@@ -1581,7 +1581,7 @@ function termin_suchen3($g_id)
 
     $tt = new general();
     /*Wenn Datum gesetzt äbernehmen sonst von heute rechnen*/
-    if (request()->has('datum_ab')) {
+    if (request()->filled('datum_ab')) {
         $datum_df = request()->input('datum_ab');
     } else {
         $datum_df = date("d.m.Y");
@@ -1616,7 +1616,7 @@ function termin_suchen3($g_id)
 
 function termin_suchen4($g_id, $team_id = '1')
 {
-    if (request()->has('datum_ab')) {
+    if (request()->filled('datum_ab')) {
         $datum_df = request()->input('datum_ab');
     } else {
         $datum_df = date("d.m.Y");
@@ -1658,7 +1658,7 @@ function termin_suchen2($str, $nr, $plz, $ort, $team_id = '1')
 
     $tt = new general();
     /*Wenn Datum gesetzt äbernehmen sonst von heute rechnen*/
-    if (request()->has('datum_ab')) {
+    if (request()->filled('datum_ab')) {
         $datum_df = request()->get('datum_ab');
     } else {
         $datum_df = date("d.m.Y");
@@ -4002,7 +4002,7 @@ function vorschlag_kurz($gruppe_id = '1', $gemacht = 'NOT')
         } else {
             $datum_sql = date_german2mysql(session()->get('datum_df'));
         }
-        if (!request()->has('datum_d')) {
+        if (!request()->filled('datum_d')) {
             $datum_df = date_mysql2german($datum_sql);
         } else {
             $datum_sql = date_german2mysql(request()->input('datum_d'));
@@ -4020,7 +4020,7 @@ function vorschlag_kurz($gruppe_id = '1', $gemacht = 'NOT')
         $js_suche = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termin_vorschlaege_kurz', 'datum_d' => $datum_feld, 'vorschlag_gruppe_id' => $vorschlag_gruppe_id], false) . ", 'leftBox1');\"";
         button('btn_heute', 'btn_heute', 'Erneut vorschlagen', $js_suche, '');
         $tt = 1;
-        if (request()->has('vorschlaege_anzeigen')) {
+        if (request()->filled('vorschlaege_anzeigen')) {
             $start_a = intval(request()->input('vorschlaege_anzeigen'));
         } else {
             $start_a = 0;
@@ -4178,7 +4178,7 @@ function vorschlag_kurz_chrono($gruppe_id = '1', $gemacht = 'NOT')
         } else {
             $datum_sql = date_german2mysql(session()->get('datum_df'));
         }
-        if (!request()->has('datum_d')) {
+        if (!request()->filled('datum_d')) {
             $datum_df = date_mysql2german($datum_sql);
         } else {
             $datum_sql = date_german2mysql(request()->input('datum_d'));
@@ -4196,7 +4196,7 @@ function vorschlag_kurz_chrono($gruppe_id = '1', $gemacht = 'NOT')
         $js_suche = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termin_vorschlaege_kurz', 'datum_d' => $datum_feld, 'vorschlag_gruppe_id' => $vorschlag_gruppe_id], false) . ", 'leftBox1');\"";
         button('btn_heute', 'btn_heute', 'Erneut vorschlagen', $js_suche, '');
         $tt = 1;
-        if (request()->has('vorschlaege_anzeigen')) {
+        if (request()->filled('vorschlaege_anzeigen')) {
             $start_a = intval(request()->input('vorschlaege_anzeigen'));
         } else {
             $start_a = 0;
@@ -4345,21 +4345,21 @@ function vorschlag_kurz_chrono($gruppe_id = '1', $gemacht = 'NOT')
 
 function get_einheit_id($einheit_name)
 {
-    $result = DB::select("SELECT EINHEIT_ID FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_KURZNAME='$einheit_name' ORDER BY EINHEIT_DAT DESC LIMIT 0,1");
+    $result = DB::select("SELECT EINHEIT.id AS EINHEIT_ID FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_KURZNAME='$einheit_name' ORDER BY EINHEIT_DAT DESC LIMIT 0,1");
     return $result[0]['EINHEIT_ID'];
 }
 
 
 function get_einheit_id_vom_mv($mv_id)
 {
-    $result = DB::select("SELECT EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && MIETVERTRAG_ID='$mv_id' ORDER BY MIETVERTRAG_VON DESC LIMIT 0,1");
+    $result = DB::select("SELECT EINHEIT_ID FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && id='$mv_id' ORDER BY MIETVERTRAG_VON DESC LIMIT 0,1");
     return $result[0]['EINHEIT_ID'];
 }
 
 
 function get_last_mietvertrag_id($einheit_id)
 {
-    $result = DB::select("SELECT MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS>=DATE_FORMAT(NOW(), '%Y-%m-%d')) ORDER BY MIETVERTRAG_VON DESC LIMIT 0 , 1 ");
+    $result = DB::select("SELECT id AS MIETVERTRAG_ID FROM MIETVERTRAG WHERE EINHEIT_ID = '$einheit_id' && MIETVERTRAG_AKTUELL = '1' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS>=DATE_FORMAT(NOW(), '%Y-%m-%d')) ORDER BY MIETVERTRAG_VON DESC LIMIT 0 , 1 ");
     if (!empty($result)) {
         return $result[0]['MIETVERTRAG_ID'];
     }
@@ -4390,7 +4390,7 @@ function get_mieter_infos($mv_id)
 
 function get_einheit_info($einheit_id)
 {
-    $result = DB::select("SELECT EINHEIT_KURZNAME, EINHEIT.EINHEIT_ID, EINHEIT_QM, EINHEIT_LAGE, TYP,  HAUS.HAUS_STRASSE, HAUS_NUMMER, HAUS_STADT, HAUS_PLZ, OBJEKT.OBJEKT_ID, OBJEKT_KURZNAME, EIGENTUEMER_PARTNER FROM EINHEIT, HAUS, OBJEKT WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID='$einheit_id' && EINHEIT.HAUS_ID=HAUS.HAUS_ID && HAUS.OBJEKT_ID=OBJEKT.OBJEKT_ID && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' ORDER BY EINHEIT_DAT DESC LIMIT 0,1");
+    $result = DB::select("SELECT EINHEIT_KURZNAME, EINHEIT.id AS EINHEIT_ID, EINHEIT_QM, EINHEIT_LAGE, TYP,  HAUS.HAUS_STRASSE, HAUS_NUMMER, HAUS_STADT, HAUS_PLZ, OBJEKT.id AS OBJEKT_ID, OBJEKT_KURZNAME, EIGENTUEMER_PARTNER FROM EINHEIT, HAUS, OBJEKT WHERE EINHEIT_AKTUELL='1' && EINHEIT.id='$einheit_id' && EINHEIT.HAUS_ID=HAUS.id && HAUS.OBJEKT_ID=OBJEKT.id && HAUS_AKTUELL='1' && OBJEKT_AKTUELL='1' ORDER BY EINHEIT_DAT DESC LIMIT 0,1");
     if (!empty($result)) {
         $row = $result[0];
         $mv_id = get_last_mietvertrag_id($einheit_id);
@@ -4709,7 +4709,7 @@ class general
 
     function get_partner_info($partner_id)
     {
-        $result = DB::select("SELECT *  FROM PARTNER_LIEFERANT WHERE PARTNER_ID='$partner_id' && AKTUELL = '1'");
+        $result = DB::select("SELECT *  FROM PARTNER_LIEFERANT WHERE id='$partner_id' && AKTUELL = '1'");
         if (!empty($result)) {
             $row = $result[0];
             $this->partner_dat = $row['PARTNER_DAT'];
@@ -5612,7 +5612,7 @@ class general
             exec("tar cfvz $tar_dir_name/Serienbrief.tar.gz $tar_dir_name/*.pdf");
             exec("rm $tar_dir_name/*.pdf");
 
-            if (request()->has('emailsend')) {
+            if (request()->filled('emailsend')) {
                 /*Als Email versenden*/
                 $from = 'serienbrief@berlus.de';
                 $to = 'info@berlus.de';

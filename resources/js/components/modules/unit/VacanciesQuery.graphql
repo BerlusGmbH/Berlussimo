@@ -1,0 +1,22 @@
+query Vacancies(
+    $search: String,
+    $first: Int!,
+    $page: Int,
+    $partOf: [EntitySelect!]
+) @variables(variables: [
+    {name: "partOf", types: ["Property", "House", "Unit"], label: "Teil von", icon: "mdi-city"}
+]) {
+    units(search: $search, first: $first, page: $page, vacant: "today", partOf: $partOf) {
+        data {
+            house {
+                ...HouseIdentifier @label(text: "Haus")
+            }
+            location @label(text: "Lage")
+            ...UnitIdentifier @label(text: "Einheit")
+            size @label(text: "Fläche")
+        }
+        paginatorInfo {
+            ...PaginatorInfo
+        }
+    }
+}

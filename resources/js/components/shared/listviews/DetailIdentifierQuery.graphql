@@ -1,0 +1,7 @@
+#import "./DetailIdentifierFragment.graphql"
+
+query DetailIdentifier($id: ID!) {
+    detail(id: $id) {
+        ...DetailIdentifier
+    }
+}

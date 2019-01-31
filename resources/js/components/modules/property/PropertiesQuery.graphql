@@ -1,0 +1,22 @@
+query Properties(
+    $search: String,
+    $first: Int!,
+    $page: Int
+)  {
+    properties(search: $search, first: $first, page: $page) {
+        data {
+            ...PropertyIdentifier @label(text: "Objekt")
+            aggregations {
+                houses {
+                    count @label(text: "Häuser (Anzahl)")
+                }
+                units {
+                    count @label(text: "Einheiten (Anzahl)")
+                }
+            }
+        }
+        paginatorInfo {
+            ...PaginatorInfo
+        }
+    }
+}

@@ -1,0 +1,10 @@
+#import "../../../../../graphql/RoleBaseFragment.graphql"
+
+mutation syncRoles($personId: ID!, $roles: [String!]!) {
+    syncRoles(personId: $personId, roles: $roles) {
+        id
+        roles {
+            ...RoleBase
+        }
+    }
+}

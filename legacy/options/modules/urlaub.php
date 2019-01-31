@@ -1,6 +1,6 @@
 <?php
 
-if (request()->has('option')) {
+if (request()->filled('option')) {
     $option = request()->input('option');
 } else {
     $option = 'default';
@@ -11,7 +11,7 @@ switch ($option) {
 
     // case "uebersicht":
     default :
-        if (request()->has('jahr')) {
+        if (request()->filled('jahr')) {
             $jahr = request()->input('jahr');
         }
         if (!isset ($jahr)) {
@@ -114,10 +114,10 @@ switch ($option) {
 
     case "monatsansicht" :
         $u = new urlaub ();
-        if (request()->has('jahr')) {
+        if (request()->filled('jahr')) {
             $jahr = request()->input('jahr');
         }
-        if (request()->has('monat')) {
+        if (request()->filled('monat')) {
             $monat = request()->input('monat');
         }
         if (!isset ($monat)) {

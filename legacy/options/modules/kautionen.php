@@ -1,6 +1,6 @@
 <?php
 
-if (request()->has('option') && !empty (request()->input('option'))) {
+if (request()->filled('option') && !empty (request()->input('option'))) {
     $option = request()->input('option');
 } else {
     $option = 'default';
@@ -11,7 +11,7 @@ switch ($option) {
 
     /* Kautionseinzahlung */
     case "kautionen_buchen" :
-        if (request()->has('mietvertrag_id')) {
+        if (request()->filled('mietvertrag_id')) {
             $mv_id = request()->input('mietvertrag_id');
             $k = new kautionen ();
             $k->form_kautionsbuchung_mieter($mv_id);
@@ -21,7 +21,7 @@ switch ($option) {
         break;
 
     case "kaution_gesendet" :
-        if (request()->has('mietvertrag_id') && request()->has('datum') && request()->has('betrag') && request()->has('text')) {
+        if (request()->filled('mietvertrag_id') && request()->filled('datum') && request()->filled('betrag') && request()->filled('text')) {
             $mv_id = request()->input('mietvertrag_id');
             $betrag = nummer_komma2punkt(request()->input('betrag'));
             $datum = request()->input('datum');
@@ -36,7 +36,7 @@ switch ($option) {
 
     case "hochrechner" :
         $k = new kautionen ();
-        if (request()->has('mietvertrag_id')) {
+        if (request()->filled('mietvertrag_id')) {
             $mv_id = request()->input('mietvertrag_id');
             $k->form_hochrechnung_mv($mv_id);
         } else {
@@ -62,7 +62,7 @@ switch ($option) {
 
     case "hochrechner_pdf" :
         $k = new kautionen ();
-        if (request()->has('datum_bis') && !empty (request()->input('mietvertrag_id'))) {
+        if (request()->filled('datum_bis') && !empty (request()->input('mietvertrag_id'))) {
             $datum_bis = date_german2mysql(request()->input('datum_bis'));
             $mietvertrag_id = request()->input('mietvertrag_id');
             $k->kautionsberechnung_pdf('Mietvertrag', $mietvertrag_id, $datum_bis, 0.0025, 25, 5.5);
@@ -74,13 +74,13 @@ switch ($option) {
     case "kontohochrechnung" :
         $k = new kautionen ();
 
-        if (!request()->has('datum_bis')) {
+        if (!request()->filled('datum_bis')) {
             $datum_bis = date("Y") . "-12-31";
         } else {
             $datum_bis = date_german2mysql(request()->input('datum_bis'));
         }
 
-        if (request()->has('tag') && request()->has('monat') && request()->has('jahr')) {
+        if (request()->filled('tag') && request()->filled('monat') && request()->filled('jahr')) {
         }
 
         $k->kontohochrechnung($datum_bis, 0.0025, 25, 5.5);
@@ -104,7 +104,7 @@ switch ($option) {
             session()->forget('ansicht_k');
         }
 
-        if (request()->has('ansicht_k')) {
+        if (request()->filled('ansicht_k')) {
             session()->put('ansicht_k', 'alle');
         }
 
@@ -159,7 +159,7 @@ switch ($option) {
         break;
 
     case "feld_hinzu" :
-        if (request()->has('feld')) {
+        if (request()->filled('feld')) {
             $k = new kautionen ();
             $k->feld_speichern(request()->input('feld'));
         }
@@ -167,7 +167,7 @@ switch ($option) {
         break;
 
     case "feld_del" :
-        if (request()->has('dat')) {
+        if (request()->filled('dat')) {
             $k = new kautionen ();
             $k->feld_del(request()->input('dat'));
             weiterleiten(route('web::kautionen::legacy', ['option' => 'kautionsfelder'], false));

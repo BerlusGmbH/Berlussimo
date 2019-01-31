@@ -1,0 +1,3 @@
+mutation MergePersons($input: MergePersonsInput!) {
+    mergePersons(input: $input)
+}

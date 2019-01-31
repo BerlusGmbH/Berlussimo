@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Auditing\DateEncoder;
 use App\Events\Models\PersonUpdated;
 use App\Models\Traits\DefaultOrder;
 use App\Models\Traits\Mergeable;
@@ -9,6 +10,10 @@ use App\Models\Traits\MergePersons;
 use App\Models\Traits\Searchable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -22,21 +27,20 @@ class Person extends Authenticatable implements AuditableContract
 {
     use Searchable, DefaultOrder, SoftDeletes, Auditable, HasRoles, Notifiable, MergePersons, Mergeable, HasApiTokens;
 
+    public const MALE = "männlich";
+    public const FEMALE = "weiblich";
 
     protected $table = 'persons';
     protected $searchableFields = ['name', 'first_name'];
     protected $defaultOrder = ['name' => 'asc', 'first_name' => 'asc', 'birthday' => 'asc'];
+    protected $casts = ['birthday' => 'date:Y-m-d'];
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
-    protected $fillable = ['name', 'first_name', 'birthday'];
-    protected $appends = ['sex', 'type'];
-    protected $events = [
-        'updated' => PersonUpdated::class
-    ];
+    protected $fillable = ['name', 'first_name', 'birthday', 'sex'];
+    protected $appends = ['sex', 'full_name'];
 
-    static public function getTypeAttribute()
-    {
-        return 'person';
-    }
+    protected $attributeModifiers = [
+        'birthday' => DateEncoder::class,
+    ];
 
     protected static function boot()
     {
@@ -47,77 +51,86 @@ class Person extends Authenticatable implements AuditableContract
         });
     }
 
-    public function mietvertraege()
+    public function mietvertraege(): BelongsToMany
     {
-        return $this->belongsToMany('App\Models\Mietvertraege',
+        return $this->belongsToMany(Mietvertraege::class,
             'PERSON_MIETVERTRAG',
             'PERSON_MIETVERTRAG_PERSON_ID',
-            'PERSON_MIETVERTRAG_MIETVERTRAG_ID'
-        )->wherePivot('PERSON_MIETVERTRAG_AKTUELL', '1');
+            'PERSON_MIETVERTRAG_MIETVERTRAG_ID',
+            'id',
+            'id'
+        )->using(RentalContractsToTenants::class)->where('PERSON_MIETVERTRAG_AKTUELL', '1');
     }
 
-    public function kaufvertraege()
+    public function kaufvertraege(): BelongsToMany
     {
-        return $this->belongsToMany('App\Models\Kaufvertraege',
+        return $this->belongsToMany(Kaufvertraege::class,
             'WEG_EIGENTUEMER_PERSON',
             'PERSON_ID',
-            'WEG_EIG_ID'
+            'WEG_EIG_ID',
+            'id',
+            'id'
         )->wherePivot('AKTUELL', '1');
     }
 
-    public function emails()
+    public function emails(): MorphMany
     {
         return $this->details()->where('DETAIL_NAME', 'Email');
     }
 
-    public function details()
+    public function details(): MorphMany
     {
-        return $this->morphMany('App\Models\Details', 'details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID');
+        return $this->morphMany(
+            Details::class,
+            'details',
+            'DETAIL_ZUORDNUNG_TABELLE',
+            'DETAIL_ZUORDNUNG_ID'
+        );
     }
 
-    public function faxs()
+    public function faxs(): MorphMany
     {
         return $this->details()->where('DETAIL_NAME', 'Fax');
     }
 
-    public function phones()
+    public function phones(): MorphMany
     {
         return $this->details()->whereIn('DETAIL_NAME', ['Telefon', 'Handy']);
     }
 
-    public function sexDetail()
+    public function sexDetail(): MorphMany
     {
         return $this->details()->where('DETAIL_NAME', 'Geschlecht');
     }
 
-    public function hinweise()
+    public function hinweise(): MorphMany
     {
         return $this->details()->where('DETAIL_NAME', 'Hinweis');
     }
 
-    public function adressen()
+    public function adressen(): MorphMany
     {
         return $this->details()->whereIn('DETAIL_NAME', ['Zustellanschrift', 'Verzugsanschrift', 'Anschrift']);
     }
 
-    public function commonDetails()
+    public function commonDetails(): MorphMany
     {
         return $this->details()->whereNotIn('DETAIL_NAME', ['Geschlecht', 'Hinweis', 'Email', 'Fax', 'Telefon', 'Handy', 'Zustellanschrift', 'Verzugsanschrift', 'Anschrift']);
     }
 
-    public function credential()
+    public function credential(): HasOne
     {
         return $this->hasOne(Credential::class, 'id');
     }
 
-    public function jobsAsEmployee()
+    public function jobsAsEmployee(): HasMany
     {
         return $this->hasMany(Job::class, 'employee_id');
     }
 
-    public function arbeitgeber()
+    public function arbeitgeber(): BelongsToMany
     {
-        return $this->belongsToMany(Partner::class, 'jobs', 'employee_id', 'employer_id');
+        return $this->belongsToMany(Partner::class, 'jobs', 'employee_id', 'employer_id', 'id', 'id');
     }
 
     public function hasHinweis()
@@ -154,7 +167,7 @@ class Person extends Authenticatable implements AuditableContract
 
     public function setSexAttribute($value)
     {
-        if (!in_array($value, ['männlich', 'weiblich', null])) {
+        if (!in_array($value, [Person::MALE, Person::FEMALE, null])) {
             throw new InvalidArgumentException('Value has to be one of "männlich" or "weiblich".');
         }
 
@@ -164,12 +177,14 @@ class Person extends Authenticatable implements AuditableContract
         }
 
         if ($value) {
+            if (is_null($this->getOriginal('id'))) {
+                $this->save();
+            }
+
             $this->details()->create([
-                'DETAIL_ID' => Details::max('DETAIL_ID') + 1,
                 'DETAIL_NAME' => 'Geschlecht',
                 'DETAIL_INHALT' => $value,
-                'DETAIL_BEMERKUNG' => 'Stand: ' . Carbon::today()->toDateString(),
-                'DETAIL_AKTUELL' => '1'
+                'DETAIL_BEMERKUNG' => 'Stand: ' . Carbon::today()->toDateString()
             ]);
         }
     }
@@ -244,7 +259,7 @@ class Person extends Authenticatable implements AuditableContract
     /**
      * Set the token value for the "remember me" session.
      *
-     * @param  string $value
+     * @param string $value
      * @return void
      */
     public function setRememberToken($value)

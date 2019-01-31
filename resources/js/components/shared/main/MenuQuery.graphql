@@ -1,0 +1,3 @@
+query Menu($module: Module) {
+    menu(module: $module)
+}

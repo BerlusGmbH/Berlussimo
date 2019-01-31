@@ -3,12 +3,12 @@
 include_once('funktionen.php');
 
 echo "GOOG";
-if (request()->has('b_id')) {
+if (request()->filled('b_id')) {
     $b_id = request()->input('b_id');
 } else {
     $b_id = 34;
 }
-if (!request()->has('datum')) {
+if (!request()->filled('datum')) {
     $datum = date("Y-m-d");
 } else {
     $datum = request()->input('datum');

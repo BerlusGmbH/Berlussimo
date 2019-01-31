@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('BROADCAST_DRIVER', 'nchan'),
+    'default' => env('BROADCAST_DRIVER', 'pusher'),
 
     /*
     |--------------------------------------------------------------------------
@@ -29,11 +29,15 @@ return [
     'connections' => [
         'pusher' => [
             'driver' => 'pusher',
-            'key' => env('PUSHER_APP_KEY'),
+            'key' => env('PUSHER_APP_KEY', 'berlussimo'),
             'secret' => env('PUSHER_APP_SECRET'),
-            'app_id' => env('PUSHER_APP_ID'),
+            'app_id' => env('PUSHER_APP_ID', 'berlussimo'),
             'options' => [
-                //
+                'cluster' => env('PUSHER_APP_CLUSTER', 'mt1'),
+                'encrypted' => false,
+                'host' => env('PUSHER_APP_HOST', 'websockets'),
+                'port' => 6001,
+                'scheme' => 'http'
             ],
         ],
         'redis' => [
@@ -45,12 +49,7 @@ return [
         ],
         'null' => [
             'driver' => 'null',
-        ],
-        'nchan' => [
-            'driver' => 'nchan',
-            'url' => env('NCHAN_URL', 'http://localhost:8081/broadcasting/events'),
-            'options' => [],
-        ],
+        ]
     ],
 
 ];

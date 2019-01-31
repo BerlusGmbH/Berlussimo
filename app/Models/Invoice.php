@@ -8,6 +8,10 @@ use App\Models\Traits\HasEnum;
 use App\Models\Traits\Searchable;
 use DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Invoice extends Model
 {
@@ -22,16 +26,11 @@ class Invoice extends Model
 
     public $timestamps = false;
     protected $table = 'RECHNUNGEN';
-    protected $primaryKey = 'BELEG_NR';
+    protected $primaryKey = 'RECHNUNG_DAT';
+    protected $externalKey = 'BELEG_NR';
     protected $searchableFields = ['BELEG_NR', 'RECHNUNGSNUMMER', 'KURZBESCHREIBUNG'];
     protected $defaultOrder = ['RECHNUNGSDATUM' => 'desc'];
     protected $fillable = ['NETTO', 'BRUTTO', 'SKONTOBETRAG'];
-    protected $appends = ['type'];
-
-    static public function getTypeAttribute()
-    {
-        return 'invoice';
-    }
 
     public function updateSums()
     {
@@ -58,38 +57,44 @@ class Invoice extends Model
         static::addGlobalScope(new AktuellScope());
     }
 
-    public function bankAccount()
+    public function scopeOrderByInvoiceDate($query)
     {
-        return $this->belongsTo(Bankkonten::class, 'EMPFANGS_GELD_KONTO');
+        return $query->orderBy('RECHNUNGSDATUM', 'asc');
     }
 
-    public function to()
+    public function bankAccount(): BelongsTo
     {
-        return $this->morphTo('to', 'EMPFAENGER_TYP', 'EMPFAENGER_ID');
+        return $this->belongsTo(Bankkonten::class, 'EMPFANGS_GELD_KONTO', 'KONTO_ID');
     }
 
-    public function from()
+    public function to(): MorphTo
     {
-        return $this->morphTo('from', 'AUSSTELLER_TYP', 'AUSSTELLER_ID');
+        return $this->morphTo('to', 'EMPFAENGER_TYP', 'EMPFAENGER_ID', 'id');
     }
 
-    public function advancePaymentInvoices()
+    public function from(): MorphTo
+    {
+        return $this->morphTo('from', 'AUSSTELLER_TYP', 'AUSSTELLER_ID', 'id');
+    }
+
+    public function advancePaymentInvoices(): HasMany
     {
         return $this->hasMany(static::class, 'advance_payment_invoice_id', 'advance_payment_invoice_id')
             ->whereIn('RECHNUNGSTYP', ['Teilrechnung', 'Schlussrechnung']);
     }
 
-    public function finalAdvancePaymentInvoice()
+    public function finalAdvancePaymentInvoice(): HasOne
     {
-        return $this->advancePaymentInvoices()->where('RECHNUNGSTYP', 'Schlussrechnung');
+        return $this->hasOne(static::class, 'advance_payment_invoice_id', 'advance_payment_invoice_id')
+            ->where('RECHNUNGSTYP', 'Schlussrechnung');
     }
 
-    public function advancePaymentInvoice()
+    public function firstAdvancePaymentInvoice(): BelongsTo
     {
         return $this->belongsTo(static::class, 'advance_payment_invoice_id', 'BELEG_NR');
     }
 
-    public function linesWithProductInformation()
+    public function linesWithProductInformation(): HasMany
     {
         $itemDescriptions = 'POSITIONEN_KATALOG';
         $table = (new InvoiceLine())->getTable();
@@ -107,18 +112,18 @@ class Invoice extends Model
             })->select($table . '.*', $itemDescriptions . '.BEZEICHNUNG', $itemDescriptions . '.EINHEIT');
     }
 
-    public function lines()
+    public function lines(): HasMany
     {
         return $this->hasMany(InvoiceLine::class, 'BELEG_NR', 'BELEG_NR');
     }
 
-    public function forwardedLines()
+    public function forwardedLines(): HasMany
     {
         return $this->hasMany(InvoiceLine::class, 'U_BELEG_NR', 'BELEG_NR')
             ->where('BELEG_NR', '<>', DB::raw('U_BELEG_NR'));
     }
 
-    public function assignments()
+    public function assignments(): HasMany
     {
         return $this->hasMany(InvoiceLineAssignment::class, 'BELEG_NR', 'BELEG_NR');
     }

@@ -1,10 +1,10 @@
 <?php
 
-if (request()->has('objekt_id')) {
+if (request()->filled('objekt_id')) {
     session()->put('objekt_id', request()->input('objekt_id'));
 }
 
-if (request()->has('option')) {
+if (request()->filled('option')) {
     $option = request()->input('option');
 } else {
     $option = 'default';
@@ -78,7 +78,7 @@ switch ($option) {
         break;
 
     case "einheit_uebersicht" :
-        if (request()->has('einheit_id')) {
+        if (request()->filled('einheit_id')) {
             $weg = new weg ();
             $weg->uebersicht_einheit(request()->input('einheit_id'));
         } else {
@@ -96,7 +96,7 @@ switch ($option) {
         break;
 
     case "eigentuemer_aendern" :
-        if (request()->has('eigentuemer_id')) {
+        if (request()->filled('eigentuemer_id')) {
             $weg = new weg ();
             $weg->form_eigentuemer_aendern(request()->input('eigentuemer_id'));
         } else {
@@ -107,7 +107,7 @@ switch ($option) {
     case "eigentuemer_send_aendern" :
         $weg = new weg ();
 
-        if (request()->has('et_id')) {
+        if (request()->filled('et_id')) {
             $et_id = request()->input('et_id');
         } else {
             throw new \App\Exceptions\MessageException(
@@ -115,7 +115,7 @@ switch ($option) {
             );
         }
 
-        if (request()->has('einheit_id')) {
+        if (request()->filled('einheit_id')) {
             $einheit_id = request()->input('einheit_id');
         } else {
             throw new \App\Exceptions\MessageException(
@@ -123,7 +123,7 @@ switch ($option) {
             );
         }
 
-        if (request()->has('z_liste')) {
+        if (request()->filled('z_liste')) {
             $eigent_arr = request()->input('z_liste');
         } else {
             throw new \App\Exceptions\MessageException(
@@ -131,7 +131,7 @@ switch ($option) {
             );
         }
 
-        if (request()->has('eigentuemer_seit')) {
+        if (request()->filled('eigentuemer_seit')) {
             $eigentuemer_von = request()->input('eigentuemer_seit');
         } else {
             throw new \App\Exceptions\MessageException(
@@ -139,7 +139,7 @@ switch ($option) {
             );
         }
 
-        if (request()->has('eigentuemer_bis')) {
+        if (request()->filled('eigentuemer_bis')) {
             $eigentuemer_bis = request()->input('eigentuemer_bis');
         } else {
             throw new \App\Exceptions\MessageException(
@@ -153,7 +153,7 @@ switch ($option) {
 
     case "eigentuemer_send" :
         if (is_array(request()->input('z_liste'))) {
-            if (request()->has('einheit_id') && request()->has('eigentuemer_seit')) {
+            if (request()->filled('einheit_id') && request()->filled('eigentuemer_seit')) {
                 $einheit_id = request()->input('einheit_id');
                 $eigentuemer_seit = request()->input('eigentuemer_seit');
                 $eigentuemer_bis = request()->input('eigentuemer_bis');
@@ -175,10 +175,10 @@ switch ($option) {
     case "wohngeld_buchen_auswahl_e" :
         if (session()->has('objekt_id')) {
             $w = new weg ();
-            if (!request()->has('monat')) {
+            if (!request()->filled('monat')) {
                 $monat = date("m");
             }
-            if (!request()->has('jahr')) {
+            if (!request()->filled('jahr')) {
                 $jahr = date("Y");
             }
             $w->form_wg_einheiten($monat, $jahr, session()->get('objekt_id'));
@@ -188,14 +188,14 @@ switch ($option) {
         break;
 
     case "wohngeld_buchen_maske" :
-        if (request()->has('einheit_id')) {
+        if (request()->filled('einheit_id')) {
             $w = new weg ();
-            if (!request()->has('monat')) {
+            if (!request()->filled('monat')) {
                 $monat = date("m");
             } else {
                 $monat = request()->input('monat');
             }
-            if (!request()->has('jahr')) {
+            if (!request()->filled('jahr')) {
                 $jahr = date("Y");
             } else {
                 $jahr = request()->input('jahr');
@@ -208,7 +208,7 @@ switch ($option) {
         break;
 
     case "wohngeld_definieren" :
-        if (request()->has('einheit_id')) {
+        if (request()->filled('einheit_id')) {
             $w = new weg ();
             $w->form_wg_definition_neu(request()->input('einheit_id'));
         } else {
@@ -217,7 +217,7 @@ switch ($option) {
         break;
 
     case "wg_def_exists" :
-        if (request()->has('einheit_id') && request()->has('von') && request()->has('betrag') && request()->has('kostenart')) {
+        if (request()->filled('einheit_id') && request()->filled('von') && request()->filled('betrag') && request()->filled('kostenart')) {
             $w = new weg ();
             $von = request()->input('von');
             $bis = request()->input('bis');
@@ -233,7 +233,7 @@ switch ($option) {
         } else {
             echo "Dateneingabe unvollständig";
         }
-        if (request()->has('einheit_id')) {
+        if (request()->filled('einheit_id')) {
             $einheit_id = request()->input('einheit_id');
             weiterleiten_in_sec(route('web::weg::legacy', ['option' => 'wohngeld_definieren', 'einheit_id' => $einheit_id], false), 2);
         }
@@ -242,13 +242,13 @@ switch ($option) {
 
     case "wg_def_neu" :
 
-        if (request()->has('einheit_id')
-            && request()->has('von')
-            && request()->has('betrag')
-            && request()->has('kostenkat')
-            && request()->has('e_konto')
-            && request()->has('gruppe')
-            && request()->has('g_konto')
+        if (request()->filled('einheit_id')
+            && request()->filled('von')
+            && request()->filled('betrag')
+            && request()->filled('kostenkat')
+            && request()->filled('e_konto')
+            && request()->filled('gruppe')
+            && request()->filled('g_konto')
         ) {
             $w = new weg ();
             $von = request()->input('von');
@@ -265,23 +265,23 @@ switch ($option) {
             echo "Dateneingabe unvollständig";
         }
 
-        if (request()->has('einheit_id')) {
+        if (request()->filled('einheit_id')) {
             $einheit_id = request()->input('einheit_id');
             weiterleiten_in_sec(route('web::weg::legacy', ['option' => 'wohngeld_definieren', 'einheit_id' => $einheit_id], false), 2);
         }
         break;
 
     case "wg_buchen_send" :
-        if (request()->has('eigentuemer_id')
-            && request()->has('einheit_id')
-            && request()->has('geld_konto')
-            && request()->has('datum')
-            && request()->has('kontoauszugsnr')
+        if (request()->filled('eigentuemer_id')
+            && request()->filled('einheit_id')
+            && request()->filled('geld_konto')
+            && request()->filled('datum')
+            && request()->filled('kontoauszugsnr')
             && is_array(request()->input('def_array'))
             && is_array(request()->input('text_array'))
-            && request()->has('wohngeld')
-            && request()->has('g_konto')
-            && request()->has('b_text')
+            && request()->filled('wohngeld')
+            && request()->filled('g_konto')
+            && request()->filled('b_text')
         ) {
             $eigentuemer_id = request()->input('eigentuemer_id');
             $einheit_id = request()->input('einheit_id');
@@ -301,7 +301,7 @@ switch ($option) {
         break;
 
     case "hausgeld_kontoauszug" :
-        if (request()->has('eigentuemer_id')) {
+        if (request()->filled('eigentuemer_id')) {
             $w = new weg ();
             $w->hausgeld_kontoauszug(request()->input('eigentuemer_id'));
         } else {
@@ -310,7 +310,7 @@ switch ($option) {
         break;
 
     case "wohngeld_def_del" :
-        if (request()->has('dat') && request()->has('einheit_id')) {
+        if (request()->filled('dat') && request()->filled('einheit_id')) {
             $w = new weg ();
             $w->wohngeld_def_delete(request()->input('dat'));
             $einheit_id = request()->input('einheit_id');
@@ -321,7 +321,7 @@ switch ($option) {
         break;
 
     case "wohngeld_def_aendern" :
-        if (request()->has('dat')) {
+        if (request()->filled('dat')) {
             $w = new weg ();
             $w->form_wohngeld_def_edit(request()->input('dat'));
         } else {
@@ -330,7 +330,7 @@ switch ($option) {
         break;
 
     case "wg_def_edit" :
-        if (request()->has('dat') && request()->input('kostenart') != 'Bitte wählen') {
+        if (request()->filled('dat') && request()->input('kostenart') != 'Bitte wählen') {
             $dat = request()->input('dat');
             $id = request()->input('id');
             $kos_typ = request()->input('kos_typ');
@@ -374,7 +374,7 @@ switch ($option) {
         break;
 
     case "mahnen" :
-        if (request()->has('eig') && request()->has('einh')) {
+        if (request()->filled('eig') && request()->filled('einh')) {
             $w = new weg ();
             $w->form_mahnen(request()->input('eig'), request()->input('einh'));
         } else {
@@ -383,7 +383,7 @@ switch ($option) {
         break;
 
     case "mahnung_sent" :
-        if (request()->has('eig') && request()->has('datum') && request()->has('mahngebuehr')) {
+        if (request()->filled('eig') && request()->filled('datum') && request()->filled('mahngebuehr')) {
             $w = new weg ();
             $anschrift = request()->input('anschriften');
             $w->pdf_mahnschreiben(request()->input('eig'), request()->input('datum'), request()->input('mahngebuehr'), $anschrift);
@@ -393,7 +393,7 @@ switch ($option) {
         break;
 
     case "hg_kontoauszug" :
-        if (request()->has('eigentuemer_id')) {
+        if (request()->filled('eigentuemer_id')) {
             $w = new weg ();
             $w->hg_kontoauszug_anzeigen_pdf(request()->input('eigentuemer_id'));
         } else {
@@ -416,7 +416,7 @@ switch ($option) {
         break;
 
     case "wp_neu_send" :
-        if (request()->has('wjahr') && request()->has('objekt_id')) {
+        if (request()->filled('wjahr') && request()->filled('objekt_id')) {
             $w = new weg ();
             $w->wp_plan_speichern(request()->input('wjahr'), request()->input('objekt_id'));
         } else {
@@ -426,7 +426,7 @@ switch ($option) {
         break;
 
     case "wp_zeile_neu" :
-        if (request()->has('wp_id')) {
+        if (request()->filled('wp_id')) {
             session()->put('wp_id', request()->input('wp_id'));
             $w = new weg ();
             $w->form_wplan_zeile(session()->get('wp_id'));
@@ -435,7 +435,7 @@ switch ($option) {
         break;
 
     case "wp_zeile_send" :
-        if (request()->has('bkonto') && session()->has('wp_id') && request()->has('vsumme') && request()->has('formel') && request()->has('wirt_id')) {
+        if (request()->filled('bkonto') && session()->has('wp_id') && request()->filled('vsumme') && request()->filled('formel') && request()->filled('wirt_id')) {
             $weg = new weg ();
             $betrag_vj = request()->input('summe_vj');
             $formel = request()->input('formel');
@@ -446,7 +446,7 @@ switch ($option) {
         break;
 
     case "wplan_pdf" :
-        if (request()->has('wp_id')) {
+        if (request()->filled('wp_id')) {
             $w = new weg ();
             $w->pdf_wplan(request()->input('wp_id'));
         } else {
@@ -471,7 +471,7 @@ switch ($option) {
         break;
 
     case "grunddaten_profil" :
-        if (request()->has('profil_id')) {
+        if (request()->filled('profil_id')) {
             session()->put('hga_profil_id', request()->input('profil_id'));
             $weg = new weg ();
             $weg->form_hga_profil_grunddaten(request()->input('profil_id'));
@@ -481,16 +481,16 @@ switch ($option) {
         break;
 
     case "profil_send_gaendert" :
-        if (request()->has('profil_id')
-            && request()->has('profilbez')
-            && request()->has('objekt_id')
-            && request()->has('jahr')
-            && request()->has('geldkonto_id')
-            && request()->has('gk_id_ihr')
-            && request()->has('wp_id')
-            && request()->has('hg_konto')
-            && request()->has('hk_konto')
-            && request()->has('ihr_konto')
+        if (request()->filled('profil_id')
+            && request()->filled('profilbez')
+            && request()->filled('objekt_id')
+            && request()->filled('jahr')
+            && request()->filled('geldkonto_id')
+            && request()->filled('gk_id_ihr')
+            && request()->filled('wp_id')
+            && request()->filled('hg_konto')
+            && request()->filled('hk_konto')
+            && request()->filled('ihr_konto')
         ) {
             $weg = new weg ();
             $weg->hga_profil_aendern(request()->input('profil_id'),
@@ -565,15 +565,15 @@ switch ($option) {
         break;
 
     case "profil_send" :
-        if (request()->has('profilbez')
-            && request()->has('objekt_id')
-            && request()->has('jahr')
-            && request()->has('geldkonto_id')
-            && request()->has('gk_id_ihr')
-            && request()->has('wp_id')
-            && request()->has('hg_konto')
-            && request()->has('hk_konto')
-            && request()->has('ihr_konto')
+        if (request()->filled('profilbez')
+            && request()->filled('objekt_id')
+            && request()->filled('jahr')
+            && request()->filled('geldkonto_id')
+            && request()->filled('gk_id_ihr')
+            && request()->filled('wp_id')
+            && request()->filled('hg_konto')
+            && request()->filled('hk_konto')
+            && request()->filled('ihr_konto')
         ) {
             $w = new weg ();
             $w->hga_profil_speichern(
@@ -600,7 +600,7 @@ switch ($option) {
 
     /* Konto aus einem Profil entfernen */
     case "konto_del" :
-        if (request()->has('profil_id') && request()->has('konto')) {
+        if (request()->filled('profil_id') && request()->filled('konto')) {
             $weg = new weg ();
             $weg->konto_loeschen(request()->input('profil_id'), request()->input('konto'));
             fehlermeldung_ausgeben("Konto $konto wurde gelöscht!");
@@ -642,7 +642,7 @@ switch ($option) {
         break;
 
     case "kto_stand_send" :
-        if (request()->has('datum') && request()->has('betrag') && session()->has('geldkonto_id')) {
+        if (request()->filled('datum') && request()->filled('betrag') && session()->has('geldkonto_id')) {
             $w = new weg ();
             $datum = date_german2mysql(request()->input('datum'));
             $gk_id = session()->get('geldkonto_id');
@@ -671,7 +671,7 @@ switch ($option) {
         break;
 
     case "serien_brief_vorlagenwahl" :
-        if (request()->has('delete')) {
+        if (request()->filled('delete')) {
             session()->put('eig_ids', []);
             echo "Alle gelöscht!";
             break;
@@ -679,13 +679,13 @@ switch ($option) {
         if (!session()->has('eig_ids')) {
             session()->put('eig_ids', []);
         }
-        if (request()->has('eig_ids') && is_array(request()->input('eig_ids'))) {
+        if (request()->filled('eig_ids') && is_array(request()->input('eig_ids'))) {
             session()->put('eig_ids', array_merge(session()->get('eig_ids'), request()->input('eig_ids')));
             session()->put('eig_ids', array_unique(session()->get('eig_ids')));
         }
         if (session()->has('eig_ids')) {
             $s = new serienbrief ();
-            if (request()->has('kat')) {
+            if (request()->filled('kat')) {
                 $s->vorlage_waehlen('Eigentuemer', request()->input('kat'));
             } else {
                 $s->vorlage_waehlen('Eigentuemer');
@@ -748,7 +748,7 @@ switch ($option) {
 
     case "pdf_hausgelder" :
         $w = new weg ();
-        if (!request()->has('jahr')) {
+        if (!request()->filled('jahr')) {
             $jahr = date("Y");
         } else {
             $jahr = request()->input('jahr');
@@ -761,7 +761,7 @@ switch ($option) {
         break;
 
     case "wp_zeile_del" :
-        if (request()->has('dat')) {
+        if (request()->filled('dat')) {
             $weg = new weg ();
             if ($weg->wp_zeile_loeschen(request()->input('dat')) == true) {
                 $wp_id = session()->get('wp_id');

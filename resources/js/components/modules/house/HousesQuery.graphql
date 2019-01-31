@@ -1,0 +1,32 @@
+query Houses(
+    $search: String,
+    $first: Int!,
+    $page: Int,
+    $partOf: [EntitySelect!]
+) @variables(variables: [
+    {name: "partOf", types: ["Property"], label: "Teil von", icon: "mdi-city"}
+]) {
+    houses(
+        search: $search,
+        first: $first,
+        page: $page,
+        partOf: $partOf
+    ) {
+        data {
+            ...HouseIdentifier @label(text: "Haus")
+            postalCode @label(text: "Postleitzahl")
+            city @label(text: "Stadt")
+            aggregations {
+                units {
+                    count @label(text: "Einheiten (Anzahl)")
+                }
+            }
+            property {
+                ...PropertyIdentifier @label(text: "Objekt")
+            }
+        }
+        paginatorInfo {
+            ...PaginatorInfo
+        }
+    }
+}

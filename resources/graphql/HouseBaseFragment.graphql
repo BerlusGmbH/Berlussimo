@@ -1,0 +1,8 @@
+fragment HouseBase on House {
+    __typename
+    id
+    streetName
+    streetNumber
+    city
+    postalCode
+}

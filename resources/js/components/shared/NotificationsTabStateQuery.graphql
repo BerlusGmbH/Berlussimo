@@ -1,0 +1,7 @@
+#import "../../../graphql/PersonBaseFragment.graphql"
+
+query NotificationsState {
+    state @client {
+        notificationsTabOpen
+    }
+}

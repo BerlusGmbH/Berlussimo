@@ -90,7 +90,7 @@ class zeiterfassung
     function get_partner_id_benutzer($benutzer_id)
     {
         $result = \App\Models\Person::findOrFail($benutzer_id);
-        return isset($result->jobsAsEmployee[0]) ? $result->jobsAsEmployee[0]->employer->PARTNER_ID : null;
+        return isset($result->jobsAsEmployee[0]) ? $result->jobsAsEmployee[0]->employer->id : null;
     }
 
     function form_zeile_aendern($zettel_id, $pos_dat)
@@ -755,7 +755,7 @@ class zeiterfassung
         $this->stundenzettel_grunddaten($id);
         $this->bp_partner_id = $this->get_partner_id_benutzer($this->st_benutzer_id);
         $bpdf->b_header($pdf, 'Partner', $this->bp_partner_id, 'portrait', 'Helvetica.afm', 6);
-        
+
         $p = new partners ();
         $p->get_partner_name($this->bp_partner_id);
         $this->partner_name = $p->partner_name;
@@ -1069,7 +1069,7 @@ class zeiterfassung
         if ($anz) {
 
             $f = new formular ();
-            if (!request()->has('tage')) {
+            if (!request()->filled('tage')) {
                 echo "<table>";
                 echo "<tr class=\"feldernamen\"><td colspan=\"3\">$anz URLAUBSTAGE DIE NICHT EINGETRAGEN SIND</td></tr>";
                 echo "<tr class=\"feldernamen\"><td width=\"60\">TAG</td><td width=\"80\">DATUM</td><td>ANTEIL</td></tr>";
@@ -1090,13 +1090,13 @@ class zeiterfassung
                 echo "</table>";
             }
 
-            if (request()->has('tage')) {
-                if (request()->has('speichern')) {
+            if (request()->filled('tage')) {
+                if (request()->filled('speichern')) {
                     echo '<pre>';
                     $this->urlaub2zettel(request()->input('benutzer_id'), request()->input('beschreibung'), request()->input('tage'));
                     weiterleiten(route('web::zeiterfassung::legacy', ['option' => 'nachweisliste', 'mitarbeiter_id' => $benutzer_id], false));
                 }
-                if (request()->has('erstellen')) {
+                if (request()->filled('erstellen')) {
                     $f->hidden_feld('benutzer_id', $benutzer_id);
                     $anzahl = count(request()->input('tage'));
                     $f->text_feld('Beschreung Stundenzettel (z.B. KW)', 'beschreibung', '', 50, '', '');
@@ -1228,7 +1228,7 @@ LIMIT 0 , 1";
             $this->z_zettel_id = 'keine Infos';
         }
     }
-    
+
     function pos_loeschen($zettel_id, $pos_id)
     {
         DB::delete("DELETE FROM STUNDENZETTEL_POS WHERE ZETTEL_ID='$zettel_id' && ST_DAT='$pos_id'");
@@ -1240,7 +1240,7 @@ LIMIT 0 , 1";
     {
         DB::update("UPDATE STUNDENZETTEL_POS SET AKTUELL='0' WHERE ZETTEL_ID='$zettel_id' && ST_DAT='$pos_dat'");
     }
-    
+
     function zettel_loeschen_voll($zettel_id)
     {
         DB::update("UPDATE STUNDENZETTEL SET AKTUELL='0' WHERE ZETTEL_ID='$zettel_id'");

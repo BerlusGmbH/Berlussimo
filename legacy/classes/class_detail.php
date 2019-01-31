@@ -89,26 +89,26 @@ class detail
     function get_info_detail($tab, $id)
     {
         if ($tab == "Objekt") {
-            $db_abfrage = "SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' && OBJEKT_ID = '$id' order by OBJEKT_DAT DESC limit 0,1";
+            $db_abfrage = "SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' && id = '$id' order by OBJEKT_DAT DESC limit 0,1";
             $resultat = DB::select($db_abfrage);
             if (!empty($resultat))
                 return $resultat[0]['OBJEKT_KURZNAME'];
         }
         if ($tab == "Haus") {
-            $db_abfrage = "SELECT HAUS_STRASSE, HAUS_NUMMER FROM HAUS WHERE HAUS_AKTUELL='1' && HAUS_ID = '$id' order by HAUS_DAT DESC limit 0,1";
+            $db_abfrage = "SELECT HAUS_STRASSE, HAUS_NUMMER FROM HAUS WHERE HAUS_AKTUELL='1' && id = '$id' order by HAUS_DAT DESC limit 0,1";
             $resultat = DB::select($db_abfrage);
             if (!empty($resultat))
                 return $resultat[0]['HAUS_STRASSE'] . " " . $resultat[0]['HAUS_NUMMER'];
         }
         if ($tab == "Einheit") {
-            $db_abfrage = "SELECT EINHEIT_KURZNAME FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID = '$id' order by EINHEIT_DAT DESC limit 0,1";
+            $db_abfrage = "SELECT EINHEIT_KURZNAME FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && id = '$id' order by EINHEIT_DAT DESC limit 0,1";
             $resultat = DB::select($db_abfrage);
             if(!empty($resultat))
                 return $resultat[0]['EINHEIT_KURZNAME'];
         }
         if ($tab == "Mietvertrag") {
             $mieternamen = mieternamen_als_string($id);
-            $db_abfrage = "SELECT EINHEIT_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && MIETVERTRAG_ID = '$id' order by MIETVERTRAG_DAT DESC limit 0,1";
+            $db_abfrage = "SELECT EINHEIT_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && id = '$id' order by MIETVERTRAG_DAT DESC limit 0,1";
             $resultat = DB::select($db_abfrage);
             foreach($resultat as $row) {
                 $einheit_name = einheit_name($resultat[0]['EINHEIT_ID']);

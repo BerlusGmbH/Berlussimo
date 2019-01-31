@@ -134,7 +134,7 @@ class b_pdf
                     // ##############################################################
                     $pdf->ezSetDy(-80);
                     $pdf_einzeln->ezSetDy(-80);
-                    if (!request()->has('datum')) {
+                    if (!request()->filled('datum')) {
                         $datum_heute = date("d.m.Y");
                     } else {
                         $datum_heute = request()->input('datum');
@@ -195,7 +195,7 @@ class b_pdf
 
                 exec("cd $tar_dir_name && tar cfvz '$tar_file_name' *.pdf");
                 exec("rm $tar_dir_name/*.pdf");
-                
+
                 /* das Raus */
                 ob_clean(); // ausgabepuffer leeren
 
@@ -327,20 +327,20 @@ class b_pdf
     function mieter_checkboxen()
     {
         $f = new formular ();
-        if (request()->has('delete')) {
+        if (request()->filled('delete')) {
             session()->forget('serienbrief_mvs');
         }
 
-        if (request()->has('vorlage') && is_array(session()->get('serienbrief_mvs'))) {
+        if (request()->filled('vorlage') && is_array(session()->get('serienbrief_mvs'))) {
             echo "Vorlage wählen";
-            if (request()->has('kat')) {
+            if (request()->filled('kat')) {
                 $this->vorlage_waehlen(null, request()->input('kat'));
             } else {
                 $this->vorlage_waehlen();
             }
         }
 
-        if (request()->has('mv_ids') && is_array(request()->input('mv_ids'))) {
+        if (request()->filled('mv_ids') && is_array(request()->input('mv_ids'))) {
             for ($index = 0; $index < sizeof(request()->input('mv_ids')); $index++) {
                 $mv_id_add = request()->input('mv_ids')[$index];
                 if (is_array(session()->get('serienbrief_mvs'))) {
@@ -566,11 +566,11 @@ class b_pdf
                 for ($a = 0; $a < $anz; $a++) {
                     $p1 = ( object )$arr [$a];
                     if (is_array(session()->get('empfaenger_ids'))) {
-                        if (!in_array($p1->PARTNER_ID, session()->get('empfaenger_ids'))) {
-                            $f->check_box_js('empf_ids[]', $p1->PARTNER_ID, "$p1->PARTNER_NAME $p1->STRASSE $p1->NUMMER, $p1->PLZ $p1->ORT", '', '');
+                        if (!in_array($p1->id, session()->get('empfaenger_ids'))) {
+                            $f->check_box_js('empf_ids[]', $p1->id, "$p1->PARTNER_NAME $p1->STRASSE $p1->NUMMER, $p1->PLZ $p1->ORT", '', '');
                         }
                     } else {
-                        $f->check_box_js('empf_ids[]', $p1->PARTNER_ID, "$p1->PARTNER_NAME $p1->STRASSE $p1->NUMMER, $p1->PLZ $p1->ORT", '', '');
+                        $f->check_box_js('empf_ids[]', $p1->id, "$p1->PARTNER_NAME $p1->STRASSE $p1->NUMMER, $p1->PLZ $p1->ORT", '', '');
                     }
                 }
             } else {

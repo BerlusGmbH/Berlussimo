@@ -167,12 +167,12 @@ switch ($option) {
         $s = new statistik ();
         $bg = new berlussimo_global ();
         $link = route('web::statistik::legacy', ['option' => 'testen'], false);
-        if (request()->has('jahr')) {
+        if (request()->filled('jahr')) {
             $jahr = request()->input('jahr');
         } else {
             $jahr = date("Y");
         }
-        if (request()->has('monat')) {
+        if (request()->filled('monat')) {
             $monat = request()->input('monat');
         } else {
             $monat = date("m");
@@ -223,7 +223,7 @@ switch ($option) {
 
     case "lieferung_eingeben" :
         if (request()->exists('lsndBtn')) {
-            if (request()->has('beleg_id_l') && request()->has('pos_l')) {
+            if (request()->filled('beleg_id_l') && request()->filled('pos_l')) {
                 $s = new statistik ();
                 if ($s->lieferung_speichern(request()->input('beleg_id_l'), request()->input('pos_l'))) {
                     weiterleiten(route('web::statistik::legacy', ['option' => 'fenster'], false));
@@ -237,7 +237,7 @@ switch ($option) {
         break;
 
     case "lieferung_loeschen" :
-        if (request()->has('beleg_id') && request()->has('pos')) {
+        if (request()->filled('beleg_id') && request()->filled('pos')) {
             $s = new statistik ();
             if ($s->lieferung_loeschen(request()->input('beleg_id'), request()->input('pos'))) {
                 weiterleiten(route('web::statistik::legacy', ['option' => 'fenster'], false));
@@ -251,7 +251,7 @@ switch ($option) {
         break;
 
     case "zuweisung_loeschen" :
-        if (request()->has('beleg_id') && request()->has('pos') && request()->has('einheit_id')) {
+        if (request()->filled('beleg_id') && request()->filled('pos') && request()->filled('einheit_id')) {
             $s = new statistik ();
             if ($s->zuweisung_loeschen(request()->input('beleg_id'), request()->input('pos'), request()->input('einheit_id'))) {
                 weiterleiten(route('web::statistik::legacy', ['option' => 'fenster'], false));
@@ -270,7 +270,7 @@ switch ($option) {
         break;
 
     case "einheit_suche_bau" :
-        if (request()->has('einheit_bez')) {
+        if (request()->filled('einheit_bez')) {
             $e = new einheit ();
             $e->get_einheit_id(request()->input('einheit_bez'));
             if (isset ($e->einheit_id)) {
