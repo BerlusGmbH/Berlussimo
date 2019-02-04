@@ -8,7 +8,6 @@ services:
     environment:
       PROJECT_ROOT: /var/www/berlussimo
     volumes:
-      - ./web/berlussimo.template:/etc/nginx/conf.d/berlussimo.template
       - web-config:/var/www/berlussimo/config
       - web-data:/var/www/berlussimo/storage
     networks:

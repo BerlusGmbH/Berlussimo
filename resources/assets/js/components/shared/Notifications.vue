@@ -120,6 +120,8 @@
                             vm.requestRefresh();
                         }
                     });
+            } else {
+                Echo.disconnect();
             }
         }
 

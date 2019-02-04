@@ -16,6 +16,8 @@ RUN mkdir -p /var/www/berlussimo
 
 COPY --from=builder /dist/public /var/www/berlussimo/public
 
+COPY ./docker/web/berlussimo.template /etc/nginx/conf.d/berlussimo.template
+
 RUN chown -R www-data:www-data /var/www/berlussimo
 
 WORKDIR /var/www/berlussimo
