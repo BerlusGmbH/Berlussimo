@@ -18,7 +18,7 @@
     "@types/lodash": "^4.14.119",
     "ajv": "^6.7.0",
     "axios": "^0.18.0",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^7.0.0-beta.3",
     "cross-env": "^5.2.0",
     "events": "^1.1.1",
     "flexboxgrid": "^6.3.1",
