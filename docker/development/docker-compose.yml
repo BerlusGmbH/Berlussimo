@@ -18,7 +18,7 @@ services:
   fpm:
     build:
       context: ../fpm
-      dockerfile: ../fpm/Dockerfile-development
+      dockerfile: Dockerfile-development
     depends_on:
       - db
       - redis
@@ -32,7 +32,7 @@ services:
   worker:
     build:
       context: ../fpm
-      dockerfile: ../fpm/Dockerfile-development
+      dockerfile: Dockerfile-development
     depends_on:
       - db
       - redis
@@ -63,7 +63,9 @@ services:
       - 6379:6379
     command: ["redis-server", "--appendonly", "yes"]
   echo-server:
-    build: ../echo-server
+    build:
+      context: ../..
+      dockerfile: ./docker/echo-server/Dockerfile
     depends_on:
       - redis
     networks:

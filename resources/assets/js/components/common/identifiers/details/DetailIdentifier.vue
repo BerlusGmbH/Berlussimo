@@ -39,15 +39,10 @@
 
         deleteDialog: boolean = false;
 
-        x: Number = 0;
-        y: Number = 0;
-
         copyToClipboard: Function;
 
         editDetail() {
             this.edit = true;
-            this.x = this.$refs.detail ? (this.$refs.detail as HTMLElement).getBoundingClientRect().left - 20 : this.x;
-            this.y = this.$refs.detail ? (this.$refs.detail as HTMLElement).getBoundingClientRect().top - 20 : this.y;
         }
 
         saveDetail(detail) {

@@ -67,10 +67,7 @@
                     </v-list-tile>
                 </v-list>
             </v-menu>
-            <app-object-edit-dialog :position-absolutely="true"
-                                    :position-x="x"
-                                    :position-y="y"
-                                    :show="edit"
+            <app-object-edit-dialog :show="edit"
                                     :value="value"
                                     @input="$emit('input', $event)"
                                     @show="val => {edit = val}"
@@ -78,9 +75,6 @@
             >
             </app-object-edit-dialog>
             <app-detail-add-dialog :parent="value"
-                                   :position-absolutely="true"
-                                   :position-x="x"
-                                   :position-y="y"
                                    :show="add"
                                    @input="$emit('update')"
                                    @show="val => {add = val}"
@@ -126,9 +120,6 @@
         add: boolean = false;
         copy: boolean = false;
 
-        x: Number = 0;
-        y: Number = 0;
-
         loadEMails: Function;
 
         @Watch('show')
@@ -141,20 +132,14 @@
 
         editObject() {
             this.edit = true;
-            this.x = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().left - 20 : this.x;
-            this.y = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().top - 20 : this.y;
         }
 
         copyObject() {
             this.copy = true;
-            this.x = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().left - 20 : this.x;
-            this.y = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().top - 20 : this.y;
         }
 
         addDetail() {
             this.add = true;
-            this.x = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().left - 20 : this.x;
-            this.y = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().top - 20 : this.y;
         }
     }
 </script>

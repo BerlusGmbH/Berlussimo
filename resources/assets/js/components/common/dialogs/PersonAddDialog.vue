@@ -2,9 +2,6 @@
     <app-edit-dialog
             lazy
             large
-            :positionAbsolutley="positionAbsolutley"
-            :positionX="positionX"
-            :positionY="positionY"
             :show="show"
             @show="$emit('show', $event)"
             @save="onSave"
@@ -57,15 +54,6 @@
 
         @Prop()
         large: boolean;
-
-        @Prop({type: Boolean})
-        positionAbsolutley;
-
-        @Prop({type: Number})
-        positionX;
-
-        @Prop({type: Number})
-        positionY;
 
         @Prop({type: Boolean})
         show;

@@ -38,11 +38,8 @@
             </v-menu>
         </template>
         <app-detail-add-dialog v-if="show || add"
-                               :position-absolutely="true"
                                :show="add"
                                @show="val => {add = val}"
-                               :position-x="x"
-                               :position-y="y"
                                :parent="value"
                                @input="$emit('update')"
         >
@@ -81,13 +78,8 @@
         add: boolean = false;
         contract: boolean = false;
 
-        x: number = 0;
-        y: number = 0;
-
         addDetail() {
             this.add = true;
-            this.x = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().left - 20 : this.x;
-            this.y = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().top - 20 : this.y;
         }
 
         showAccountPDF() {

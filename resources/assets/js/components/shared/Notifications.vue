@@ -104,6 +104,8 @@
         @Refresh.Mutation('requestRefresh')
         requestRefresh: Function;
 
+        lastUserId: number;
+
         mounted() {
             this.onUserChange();
         }
@@ -111,6 +113,7 @@
         @Watch('user')
         onUserChange() {
             if (this.user) {
+                this.lastUserId = this.user.id;
                 this.getNotifications(this.user.id);
                 let vm = this;
                 Echo.private('Notification.Person.' + this.user.id)
@@ -121,7 +124,9 @@
                         }
                     });
             } else {
-                Echo.disconnect();
+                if (this.lastUserId) {
+                    Echo.leave('Notification.Person.' + this.lastUserId);
+                }
             }
         }
 

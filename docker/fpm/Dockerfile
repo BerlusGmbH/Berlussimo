@@ -1,4 +1,4 @@
-FROM node:8 as builder
+FROM node:10 as builder
 
 RUN mkdir dist
 

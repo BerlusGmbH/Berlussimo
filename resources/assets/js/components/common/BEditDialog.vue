@@ -24,15 +24,6 @@
         cancelText;
 
         @Prop({type: Boolean})
-        positionAbsolutley;
-
-        @Prop({type: Number})
-        positionX;
-
-        @Prop({type: Number})
-        positionY;
-
-        @Prop({type: Boolean})
         show;
 
         @Prop({type: Boolean})
@@ -107,9 +98,7 @@
                     closeOnContentClick: false,
                     lazy: this.lazy,
                     light: this.light,
-                    dark: this.dark,
-                    positionX: this.positionX,
-                    positionY: this.positionY
+                    dark: this.dark
                 },
                 on: {
                     input: val => (this.isActive = val)

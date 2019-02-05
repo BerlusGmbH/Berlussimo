@@ -70,15 +70,10 @@
         show: boolean = false;
         edit: boolean = false;
 
-        x: Number = 0;
-        y: Number = 0;
-
         copyToClipboard: Function;
 
         editInvoice() {
             this.edit = true;
-            this.x = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().left - 20 : this.x;
-            this.y = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().top - 20 : this.y;
         }
 
         openPDF(noLogo: boolean = false) {

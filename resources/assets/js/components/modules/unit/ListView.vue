@@ -11,11 +11,8 @@
                                         <v-icon ref="identifier">add</v-icon>
                                         <v-icon>mdi-cube</v-icon>
                                     </v-btn>
-                                    <app-unit-add-dialog :position-absolutely="true"
-                                                         :show="add"
+                                    <app-unit-add-dialog :show="add"
                                                          @show="val => {add = val}"
-                                                         :position-x="x"
-                                                         :position-y="y"
                                     ></app-unit-add-dialog>
                                 </v-flex>
                                 <v-flex xs12 sm8>
@@ -151,8 +148,6 @@
         loading: boolean = false;
 
         add: boolean = false;
-        x: number = 0;
-        y: number = 0;
 
         created() {
             this.parseQuery();
@@ -272,8 +267,6 @@
 
         addUnit() {
             this.add = true;
-            this.x = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().left - 20 : this.x;
-            this.y = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().top - 20 : this.y;
         }
 
         checkQueryParameter(parameter: null | string | string[]): null | string {

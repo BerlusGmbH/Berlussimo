@@ -36,9 +36,6 @@
                 </v-list>
             </v-menu>
             <app-detail-add-dialog :parent="value"
-                                   :position-absolutely="true"
-                                   :position-x="x"
-                                   :position-y="y"
                                    :show="add"
                                    @input="$emit('update')"
                                    @show="val => {add = val}"
@@ -80,13 +77,8 @@
         add: boolean = false;
         contract: boolean = false;
 
-        x: number = 0;
-        y: number = 0;
-
         addDetail() {
             this.add = true;
-            this.x = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().left - 20 : this.x;
-            this.y = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().top - 20 : this.y;
         }
 
         showAccountPDF() {

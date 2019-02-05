@@ -10,11 +10,8 @@
                                     <v-icon ref="identifier">add</v-icon>
                                     <v-icon>mdi-account</v-icon>
                                 </v-btn>
-                                <app-person-add-dialog :position-absolutely="true"
-                                                       :show="add"
+                                <app-person-add-dialog :show="add"
                                                        @show="val => {add = val}"
-                                                       :position-x="x"
-                                                       :position-y="y"
                                 ></app-person-add-dialog>
                             </v-flex>
                             <v-flex xs12 sm8>
@@ -149,8 +146,6 @@
         updateMessage: Function;
 
         add: boolean = false;
-        x: number = 0;
-        y: number = 0;
 
         parameterList: Array<Object> = [];
         listItems: Array<any> = [];
@@ -331,8 +326,6 @@
 
         addPerson() {
             this.add = true;
-            this.x = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().left - 20 : this.x;
-            this.y = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().top - 20 : this.y;
         }
 
         checkQueryParameter(parameter: null | string | string[]): null | string {

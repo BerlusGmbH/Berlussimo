@@ -1,4 +1,4 @@
-FROM node:8
+FROM node:10
 
 COPY ./docker/echo-server/docker-entrypoint.sh /docker-entrypoint.sh
 COPY ./docker/echo-server/laravel-echo-server.json /laravel-echo-server.json

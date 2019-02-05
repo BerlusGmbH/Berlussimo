@@ -59,10 +59,7 @@
                     </v-list-tile>
                 </v-list>
             </v-menu>
-            <app-person-edit-dialog :position-absolutely="true"
-                                    :position-x="x"
-                                    :position-y="y"
-                                    :show="edit"
+            <app-person-edit-dialog :show="edit"
                                     :value="value"
                                     @input="$emit('input', $event)"
                                     @show="val => {edit = val}"
@@ -70,9 +67,6 @@
             >
             </app-person-edit-dialog>
             <app-detail-add-dialog :parent="value"
-                                   :position-absolutely="true"
-                                   :position-x="x"
-                                   :position-y="y"
                                    :show="add"
                                    @input="$emit('update')"
                                    @show="val => {add = val}"
@@ -122,21 +116,14 @@
         login: boolean = false;
         job: boolean = false;
 
-        x: Number = 0;
-        y: Number = 0;
-
         copyToClipboard: Function;
 
         editPerson() {
             this.edit = true;
-            this.x = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().left - 20 : this.x;
-            this.y = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().top - 20 : this.y;
         }
 
         addDetail() {
             this.add = true;
-            this.x = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().left - 20 : this.x;
-            this.y = this.$refs.identifier ? (this.$refs.identifier as HTMLElement).getBoundingClientRect().top - 20 : this.y;
         }
     }
 </script>

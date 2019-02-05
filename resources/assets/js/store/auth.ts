@@ -1,6 +1,7 @@
 import {Model} from "../server/resources";
 import router from "../router";
 import axios from "../libraries/axios";
+import Echo from "../libraries/Echo";
 
 export default {
     namespaced: true,
@@ -12,6 +13,8 @@ export default {
     },
     mutations: {
         updateUser(state, user) {
+            Echo.disconnect();
+            Echo.connect();
             if (user) {
                 Model.applyPrototype(user);
             }
