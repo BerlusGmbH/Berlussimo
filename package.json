@@ -15,8 +15,8 @@
     "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.119",
-    "ajv": "^6.7.0",
+    "@types/lodash": "^4.14.120",
+    "ajv": "^6.8.1",
     "axios": "^0.18.0",
     "babel-plugin-transform-object-rest-spread": "^7.0.0-beta.3",
     "cross-env": "^5.2.0",
@@ -29,11 +29,11 @@
     "lodash": "^4.17.11",
     "materialize-css": "^0.98.2",
     "mdi": "^2.2.43",
-    "moment": "^2.23.0",
+    "moment": "^2.24.0",
     "normalize.css": "^5.0.0",
     "numbro": "^1.11.1",
     "resolve-url-loader": "2.3.1",
-    "sass": "^1.16.0",
+    "sass": "^1.17.0",
     "sass-loader": "7.*",
     "socket.io-client": "^2.2.0",
     "stylus": "^0.54.5",
@@ -42,14 +42,14 @@
     "typescript": "^2.9.2",
     "urijs": "^1.19.1",
     "velocity-animate": "^1.5.2",
-    "vue": "^2.5.22",
+    "vue": "^2.6.2",
     "vue-class-component": "^6.3.2",
     "vue-property-decorator": "^6.1.0",
     "vue-router": "^3.0.2",
-    "vue-template-compiler": "^2.5.22",
-    "vuetify": "^1.4.2",
-    "vuex": "^3.0.0",
+    "vue-template-compiler": "^2.6.2",
+    "vuetify": "^1.4.6",
+    "vuex": "^3.1.0",
     "vuex-class": "^0.3.1",
-    "webpack": "^4.28.4"
+    "webpack": "^4.29.1"
   }
 }
