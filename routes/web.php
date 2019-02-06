@@ -77,25 +77,9 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'
         Route::match(['get', 'post'], '/legacy', 'EinheitenController@request')->name('legacy');
     });
 
-    Route::group(['prefix' => 'einheitenform', 'as' => 'einheitenform::'], function () {
-        Route::match(['get', 'post'], '/', 'EinheitenFormController@request')->name('legacy');
-    });
-
-    Route::group(['prefix' => 'haeuserform', 'as' => 'haeuserform::'], function () {
-        Route::match(['get', 'post'], '/', 'HaeuserFormController@request')->name('legacy');
-    });
-
-    Route::group(['prefix' => 'objekteform', 'as' => 'objekteform::'], function () {
-        Route::match(['get', 'post'], '/', 'ObjekteFormController@request')->name('legacy');
-    });
-
     Route::group(['prefix' => 'geldkonten', 'as' => 'geldkonten::'], function () {
         Route::match(['get', 'post'], '/', 'GeldkontenController@request')->name('legacy');
         Route::get('{id}/select', 'GeldkontenController@select')->name('select');
-    });
-
-    Route::group(['prefix' => 'houses', 'as' => 'haeuser::'], function () {
-        Route::match(['get', 'post'], '/legacy', 'HaeuserController@request')->name('legacy');
     });
 
     Route::group(['prefix' => 'kassen', 'as' => 'kassen::'], function () {
@@ -161,10 +145,6 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'
         Route::match(['get', 'post'], '/', 'PersonalController@request')->name('legacy');
     });
 
-    Route::group(['prefix' => 'persons', 'as' => 'personen::'], function () {
-        Route::match(['get', 'post'], '/legacy', 'PersonenController@request')->name('legacy');
-    });
-
     Route::group(['prefix' => 'rechnungen', 'as' => 'rechnungen::'], function () {
         Route::match(['get', 'post'], '/', 'RechnungenController@request')->name('legacy');
         Route::delete('/belegpool/{id}', 'RechnungenController@belegpool_destroy')->name('belegpool.destroy');
@@ -176,10 +156,6 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'
 
     Route::group(['prefix' => 'statistik', 'as' => 'statistik::'], function () {
         Route::match(['get', 'post'], '/', 'StatistikController@request')->name('legacy');
-    });
-
-    Route::group(['prefix' => 'assignments', 'as' => 'todo::'], function () {
-        Route::get('/', 'ToDoController@index')->name('index');
     });
 
     Route::group(['prefix' => 'baustellen', 'as' => 'construction::'], function () {

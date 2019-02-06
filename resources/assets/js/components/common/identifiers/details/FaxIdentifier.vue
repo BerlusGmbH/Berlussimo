@@ -7,10 +7,7 @@
                 {{value.DETAIL_INHALT}}
             </div>
             <template slot="append">
-                <app-detail-edit-dialog :position-absolutely="true"
-                                        :position-x="x"
-                                        :position-y="y"
-                                        :show="edit"
+                <app-detail-edit-dialog :show="edit"
                                         :value="value"
                                         @input="$emit('input', $event); saveDetail($event)"
                                         @show="val => {edit = val}"
@@ -63,9 +60,6 @@
 
         show: boolean;
         edit: boolean;
-
-        x: Number;
-        y: Number;
 
         copyToClipboard: Function;
         editDetail: Function;

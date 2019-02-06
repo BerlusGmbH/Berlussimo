@@ -5,49 +5,6 @@ $objekte_raus = request()->input('objekte_raus');
 
 switch ($objekte_raus) {
 
-    case "objekte_kurz" :
-        $form = new formular ();
-        $form->erstelle_formular("Liste bestehender Objekte", NULL);
-        objekte_kurz();
-        $form->ende_formular();
-        break;
-
-    case "objekt_anlegen" :
-        $o = new objekt ();
-        $o->form_objekt_anlegen();
-        break;
-
-    case "objekt_speichern" :
-        if (request()->isMethod('post')) {
-            if (request()->filled('objekt_kurzname') && request()->filled('eigentuemer')) {
-                echo "ALLES OK";
-                $o = new objekt ();
-                $o->objekt_speichern(request()->input('objekt_kurzname'), request()->input('eigentuemer'));
-                weiterleiten(route('web::objekte::legacy', ['objekte_raus' => 'objekt_kurz'], false));
-            }
-        } else {
-            echo "DATEN UNVOLLSTÄNDIG";
-        }
-        break;
-
-    case "objekt_aendern" :
-        $o = new objekt ();
-        $o->form_objekt_aendern(request()->input('objekt_id'));
-        break;
-
-    case "objekt_aendern_send" :
-        if (request()->isMethod('post')) {
-            if (request()->filled('objekt_dat') && request()->filled('objekt_id') && request()->filled('objekt_kurzname') && request()->filled('eigentuemer')) {
-                echo "ALLES OK";
-                $o = new objekt ();
-                $o->objekt_aendern(request()->input('objekt_dat'), request()->input('objekt_id'), request()->input('objekt_kurzname'), request()->input('eigentuemer'));
-                weiterleiten(route('web::objekte::legacy', ['objekte_raus' => 'objekt_kurz'], false));
-            }
-        } else {
-            echo "DATEN UNVOLLSTÄNDIG";
-        }
-        break;
-
     case "checkliste" :
         if (request()->filled('objekt_id')) {
             $o = new objekt ();
@@ -93,33 +50,6 @@ switch ($objekte_raus) {
         }
         break;
 
-    case "objekt_kopieren" :
-        $o = new objekt ();
-        $o->form_objekt_kopieren();
-        break;
-
-    case "copy_sent" :
-        /*
-         * Neues Objekt anlegen
-         * alle einheiten kopieren und umbenennen mit vorzeichen
-         */
-        if (request()->filled('objekt_id') && request()->filled('objekt_kurzname') && request()->filled('vorzeichen') && request()->filled('eigentuemer_id') && request()->filled('datum_u')) {
-            $objekt_id = request()->input('objekt_id');
-            $objekt_kurzname = request()->input('objekt_kurzname');
-            $vorzeichen = request()->input('vorzeichen');
-            $datum_u = request()->input('datum_u');
-            $eigentuemer_id = request()->input('eigentuemer_id');
-            $o = new objekt ();
-            if (request()->filled('saldo_berechnen')) {
-                $o->objekt_kopieren($objekt_id, $eigentuemer_id, $objekt_kurzname, $vorzeichen, $datum_u, 1);
-            } else {
-                $o->objekt_kopieren($objekt_id, $eigentuemer_id, $objekt_kurzname, $vorzeichen, $datum_u, 0);
-            }
-        } else {
-            fehlermeldung_ausgeben("Bitte alle felder ausfüllen!");
-        }
-        break;
-
     case "stammdaten_pdf" :
         if (request()->filled('objekt_id')) {
             session()->put('objekt_id', request()->input('objekt_id'));
@@ -140,64 +70,6 @@ switch ($objekte_raus) {
         } else {
             fehlermeldung_ausgeben("Objekt wählen");
         }
-        break;
-
-    case "mv_speichern" :
-        $mv = new mietvertraege ();
-        $einheit_id = request()->input('einheit_id');
-        $von = request()->input('einzug');
-        $bis = request()->input('auszug');
-        $mv_id = $mv->mietvertrag_speichern($von, $bis, $einheit_id);
-
-        $anz_p = count(request()->input('person_ids'));
-        for ($a = 0; $a < $anz_p; $a++) {
-            $person_id = request()->input('person_ids') [$a];
-            $mv->person_zu_mietvertrag($person_id, $mv_id);
-        }
-
-        $me = new mietentwicklung ();
-        $von = date_german2mysql($von);
-        $bis = date_german2mysql($bis);
-        if (request()->filled('km')) {
-            $km = nummer_komma2punkt(request()->input('km'));
-            $me->me_speichern('Mietvertrag', $mv_id, 'Miete kalt', $von, $bis, $km, '0.00');
-        }
-        if (request()->filled('nk')) {
-            $nk = nummer_komma2punkt(request()->input('nk'));
-            $me->me_speichern('Mietvertrag', $mv_id, 'Nebenkosten Vorauszahlung', $von, $bis, $nk, '0.00');
-        }
-        if (request()->filled('hk')) {
-            $hk = nummer_komma2punkt(request()->input('hk'));
-            $me->me_speichern('Mietvertrag', $mv_id, 'Heizkosten Vorauszahlung', $von, $bis, $hk, '0.00');
-        }
-
-        if (request()->filled('kabel_tv')) {
-            $kabel_tv = nummer_komma2punkt(request()->input('kabel_tv'));
-            $me->me_speichern('Mietvertrag', $mv_id, 'Kabel TV', $von, $bis, $kabel_tv, '0.00');
-        }
-        $jahr_3 = date("Y") - 3;
-        $m_day = date("m-d");
-        $datum_3 = "$jahr_3-$m_day";
-        if (request()->filled('km_3')) {
-            $km_3 = nummer_komma2punkt(request()->input('km_3'));
-            $me->me_speichern('Mietvertrag', $mv_id, 'Miete kalt', $datum_3, $datum_3, $kabel_tv, '0.00');
-        }
-
-        if (request()->filled('kaution')) {
-            $d = new detail ();
-            $d->detail_speichern_2('Mietvertrag', $mv_id, 'Kautionshinweis', request()->input('kaution'), 'Importiert');
-        }
-
-        if (request()->filled('klein_rep')) {
-            $d = new detail ();
-            $d->detail_speichern_2('Mietvertrag', $mv_id, 'Kleinreparaturen', request()->input('klein_rep'), 'Importiert');
-        }
-
-        if (request()->filled('zusatzinfo')) {
-            $d = new detail ();
-            $d->detail_speichern_2('Mietvertrag', $mv_id, 'Zusatzinfo', request()->input('zusatzinfo'), 'Importiert');
-        }
-        weiterleiten(route('web::objekte::legacy', ['objekte_raus' => 'import'], false));
         break;
 }
 function objekte_kurz()
