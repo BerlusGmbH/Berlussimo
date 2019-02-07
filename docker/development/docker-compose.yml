@@ -26,6 +26,7 @@ services:
     working_dir: ${PROJECT_ROOT}
     volumes:
       - ${PROJECT_ROOT}:${PROJECT_ROOT}
+      - ${COMPOSER_CACHE}:/.composer/
       - ../fpm/zz-docker-php-ext-xdebug.ini:/usr/local/etc/php/conf.d/zz-docker-php-ext-xdebug.ini
     networks:
       - backend
