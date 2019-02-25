@@ -2526,13 +2526,15 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
         $empf_kos_id = $bk_arr ['KOS_ID'];
         $mieternummer = $bk_arr ['EINHEIT_NAME'];
         $zeitraum = $bk_arr ['ZEITRAUM'];
-        $zeitraum_arr = explode('.', $zeitraum);
-        $anzahl_monate = $zeitraum_arr [3] - $zeitraum_arr [1] + 1;
+        $zeitraum_arr = explode(' - ', $zeitraum);
+        $begin = \Carbon\Carbon::createFromFormat('d.m.Y', $zeitraum_arr[0]);
+        $end = \Carbon\Carbon::createFromFormat('d.m.Y', $zeitraum_arr[1]);
+        $anzahl_monate = round((($begin->diffInDays($end) + 1) / 365) * 12 * 2) / 2;
 
         $pdf->ergebnis_tab ["$mieternummer - $empf"] ['KOS_TYP'] = $empf_kos_typ;
         $pdf->ergebnis_tab ["$mieternummer - $empf"] ['KOS_ID'] = $empf_kos_id;
         $pdf->ergebnis_tab ["$mieternummer - $empf"] ['ZEITRAUM'] = $zeitraum;
-        $pdf->ergebnis_tab ["$mieternummer - $empf"] ['ANZ_MONATE'] = $anzahl_monate;
+        $pdf->ergebnis_tab ["$mieternummer - $empf"] ['ANZ_MONATE'] = number_format($anzahl_monate, 1, ',', '.');
 
         $einheit_typ = $bk_arr ['EINHEIT_TYP'];
         $einheit_qm = $bk_arr ['EINHEIT_QM'];
