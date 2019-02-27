@@ -96,6 +96,7 @@ class weg
     public $hausgelder_neu;
     public $wp_objekt_id;
     public $wp_objekt_name;
+    public $wp_enegiekosteninflation;
     public $einheit_anteile;
     public $einheit_anteile_a;
     public $geldkonto_id;
@@ -1001,14 +1002,27 @@ class weg
 
         if (!empty($arr)) {
             echo "<table>";
-            echo "<tr><th>Wirtschaftsjahr</th><th>OBJEKT</th><th>OPTIONEN</th></tr>";
+            echo "<tr><th>Wirtschaftsjahr</th><th>Objekt</th><th>Energiekostenanpassung</th><th>OPTIONEN</th></tr>";
             $anz = count($arr);
             for ($a = 0; $a < $anz; $a++) {
                 $plan_id = $arr [$a] ['PLAN_ID'];
                 $jahr = $arr [$a] ['JAHR'];
+                $energyCostAdjustment = $arr [$a] ['ENERGIEKOSTENANPASSUNG'];
                 $link_zeile_hinzu = "<a href='" . route('web::weg::legacy', ['option' => 'wp_zeile_neu', 'wp_id' => $plan_id]) . "'>Bearbeiten</a>";
                 $link_pdf = "<a href='" . route('web::weg::legacy', ['option' => 'wplan_pdf', 'wp_id' => $plan_id]) . "'><img src=\"images/pdf_light.png\"></a>";
-                echo "<tr><td>$jahr</td><td>$obj_name</td><td>$link_zeile_hinzu $link_pdf</td></tr>";
+                echo "<tr><td>$jahr</td><td>$obj_name</td><td class='pa-0' style='width: 300px'>
+<form name='$plan_id' method='post' action='/weg/budgets/$plan_id/energyCostAdjustment'>
+<div class='row ma-0'>
+<div class=\"input-field col s6 ma-0\">
+    <i class=\"prefix\">%</i>
+    <input value='$energyCostAdjustment' id=\"$plan_id\" name='energyCostAdjustment' type=\"number\" min='-100' max='100' step='.5'>
+</div>
+<div class='col s6 center valign-wrapper'>
+<button type='submit' class=\"waves-effect waves-light btn\">setzen</button>
+</div>
+</div>
+</form>
+</td><td>$link_zeile_hinzu $link_pdf</td></tr>";
             }
             echo "</table>\n";
         } else {
@@ -3062,6 +3076,8 @@ ORDER BY HGA;");
         $datum = date("d.m.Y");
         $pdf->addText(480, 697, 8, "$p->partner_ort, $datum");
 
+        $this->get_wplan_infos($wp_id);
+
         $this->pdf_g_wplan($pdf, $wp_id);
 
         $this->einzel_wp($pdf, $wp_id);
@@ -3112,6 +3128,21 @@ ORDER BY HGA;");
 
         ob_end_clean(); // ausgabepuffer leeren
         $pdf->ezStream();
+    }
+
+    function get_wplan_infos($wp_id)
+    {
+        unset ($this->wp_jahr);
+        unset ($this->wp_objekt_id);
+        $result = DB::select("SELECT * FROM WEG_WPLAN WHERE PLAN_ID='$wp_id' && AKTUELL='1' ORDER BY DAT DESC LIMIT 0,1");
+        if (!empty($result)) {
+            $row = $result[0];
+            $this->wp_jahr = $row ['JAHR'];
+            $this->wp_objekt_id = $row ['OBJEKT_ID'];
+            $this->wp_enegiekosteninflation = floatval($row ['ENERGIEKOSTENANPASSUNG']);
+            $o = new objekt ();
+            $this->wp_objekt_name = $o->get_objekt_name($this->wp_objekt_id);
+        }
     }
 
     function pdf_g_wplan(Cezpdf $pdf, $wplan_id)
@@ -3240,9 +3271,36 @@ ORDER BY HGA;");
             $tab_arr [$zeile_tab] ['BETRAG'] = "<b>$summe_gruppe_a</b>";
             $zeile_tab++;
 
-            $zeile_tab++;
+            $energie_alle = $this->get_summe_energie_jahr_alle(session()->get('hga_profil_id')) * -1;
+            if ($energie_alle) {
+                $this->get_hga_profil_infos(session()->get('hga_profil_id'));
+                $energie_alle_inflation = $energie_alle * ($this->wp_enegiekosteninflation / 100);
+                $energie_alle_a = nummer_punkt2komma_t($energie_alle);
+                $energie_alle_inflation_a = nummer_punkt2komma_t($energie_alle_inflation);
+
+                $tab_arr [$zeile_tab] ['KONTO_BEZ'] = 'Energiekosten lt. Abrechnung ' . $this->p_jahr;
+                $tab_arr [$zeile_tab] ['GRUPPEN_BEZ'] = 'Umlagefähige Heizungskosten';
+                $tab_arr [$zeile_tab] ['BETRAG_VJ'] = "";
+                $tab_arr [$zeile_tab] ['BETRAG'] = "$energie_alle_a";
+
+                if ($this->wp_enegiekosteninflation !== floatval(0)) {
+                    $zeile_tab++;
+                    $tab_arr [$zeile_tab] ['KONTO_BEZ'] = "Anpassung (" . number_format($this->wp_enegiekosteninflation, 1, ',', '.') . "%)";
+                    $tab_arr [$zeile_tab] ['GRUPPEN_BEZ'] = 'Umlagefähige Heizungskosten';
+                    $tab_arr [$zeile_tab] ['BETRAG_VJ'] = "";
+                    $tab_arr [$zeile_tab] ['BETRAG'] = "$energie_alle_inflation_a";
+                }
+
+                $zeile_tab++;
+                $tab_arr [$zeile_tab] ['KONTO_BEZ'] = '<b>Zwischensumme</b>';
+                $tab_arr [$zeile_tab] ['GRUPPEN_BEZ'] = '';
+                $tab_arr [$zeile_tab] ['BETRAG_VJ'] = "";
+                $tab_arr [$zeile_tab] ['BETRAG'] = '<b>' . nummer_punkt2komma_t($energie_alle + $energie_alle_inflation) . '</b>';
+
+                $summe_g += $energie_alle + $energie_alle_inflation;
+                $zeile_tab++;
+            }
             $tab_arr [$zeile_tab] ['KONTO_BEZ'] = '<b>Gesamtsumme</b>';
-            $summe_g += $energie_alle;
             $tab_arr [$zeile_tab] ['BETRAG_VJ'] = "<b>" . nummer_punkt2komma_t($summe_g_vj) . "</b>";
             $tab_arr [$zeile_tab] ['BETRAG'] = "<b>" . nummer_punkt2komma_t($summe_g) . "</b>";
             $this->summe_kosten_hg = $summe_g;
@@ -3298,11 +3356,43 @@ ORDER BY HGA;");
         return $pdf;
     }
 
+    function get_summe_energie_jahr_alle($hga_id)
+    {
+        $result = DB::select("SELECT SUM(BETRAG) AS BETRAG FROM WEG_HGA_HK WHERE AKTUELL='1' && WEG_HGA_ID='$hga_id'");
+        if (!empty($result)) {
+            return $result[0]['BETRAG'];
+        }
+    }
+
+    function get_hga_profil_infos($p_id)
+    {
+        $result = DB::select("SELECT * FROM WEG_HGA_PROFIL WHERE AKTUELL='1' && ID='$p_id' ORDER BY DAT ASC LIMIT 0,1");
+        if (!empty($result)) {
+            $row = $result[0];
+            $this->p_jahr = $row ['JAHR'];
+            $this->p_objekt_id = $row ['OBJEKT_ID'];
+            $this->p_gk_id = $row ['GELDKONTO_ID'];
+            $this->p_bez = $row ['BEZEICHNUNG'];
+            $this->p_ihr_gk_id = $row ['IHR_GK_ID'];
+            $this->p_wplan_id = $row ['WPLAN_ID'];
+            $this->hg_konto = $row ['HG_KONTO'];
+            $this->hk_konto = $row ['HK_KONTO'];
+            $this->ihr_konto = $row ['IHR_KONTO'];
+            $this->p_von = $row ['VON'];
+            $this->p_bis = $row ['BIS'];
+            $this->p_von_d = date_mysql2german($row ['VON']);
+            $this->p_bis_d = date_mysql2german($row ['BIS']);
+        } else {
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\ErrorMessage("Profil $id existiert nicht.")
+            );
+        }
+    }
+
     function einzel_wp(Cezpdf $pdf, $wp_id)
     {
         set_time_limit(0);
 
-        $this->get_wplan_infos($wp_id);
         $einheiten_arr = $this->einheiten_weg_tabelle_arr($this->wp_objekt_id);
         $anz_einheiten = count($einheiten_arr);
 
@@ -3502,6 +3592,44 @@ ORDER BY HGA;");
                         $wtab_arr [$c] ['AUFTEILEN_T'] = "";
                     }
                     if (strip_tags($wtab_arr [$c] ['KONTOART_BEZ']) == 'SALDO') {
+                        if (session()->has('hga_profil_id')) {
+                            $heizkosten_vorjahr = $this->get_summe_hk('Eigentuemer', $eig_id, session()->get('hga_profil_id')) * -1;
+                            $heizkosten_vorjahr_inflation = $heizkosten_vorjahr * ($this->wp_enegiekosteninflation / 100);
+                            $heizkosten_vorjahr_a = nummer_punkt2komma_t($heizkosten_vorjahr);
+                            $heizkosten_vorjahr_inflation_a = nummer_punkt2komma_t($heizkosten_vorjahr_inflation);
+                            $energie_alle = $this->get_summe_energie_jahr_alle(session()->get('hga_profil_id')) * -1;
+                            $energie_alle_inflation = $energie_alle * ($this->wp_enegiekosteninflation / 100);
+                            $energie_alle_a = nummer_punkt2komma_t($energie_alle);
+                            $energie_alle_inflation_a = nummer_punkt2komma_t($energie_alle_inflation);
+
+                            $this->get_hga_profil_infos(session()->get('hga_profil_id'));
+
+                            $energie_alle_a = nummer_punkt2komma_t($energie_alle);
+                            $wtab_arr [$c] ['KONTO_BEZ'] = 'Energiekosten lt. Abrechnung ' . $this->p_jahr;
+                            $wtab_arr [$c] ['BETEILIGUNG_ANT'] = "$heizkosten_vorjahr_a";
+                            $wtab_arr [$c] ['BETRAG'] = "$energie_alle_a";
+                            $wtab_arr [$c] ['AUFTEILEN_G'] = "";
+                            $wtab_arr [$c] ['AUFTEILEN_T'] = "";
+
+                            if ($this->wp_enegiekosteninflation !== floatval(0)) {
+                                $c++;
+                                $wtab_arr [$c] ['KONTO_BEZ'] = "Anpassung (" . number_format($this->wp_enegiekosteninflation, 1, ',', '.') . "%)";
+                                $wtab_arr [$c] ['BETEILIGUNG_ANT'] = "$heizkosten_vorjahr_inflation_a";
+                                $wtab_arr [$c] ['BETRAG'] = "$energie_alle_inflation_a";
+                                $wtab_arr [$c] ['AUFTEILEN_G'] = "";
+                                $wtab_arr [$c] ['AUFTEILEN_T'] = "";
+                            }
+
+                            $c++;
+                            $wtab_arr [$c] ['KONTO_BEZ'] = '<b>Zwischensumme</b>';
+                            $wtab_arr [$c] ['BETEILIGUNG_ANT'] = "<b>" . nummer_punkt2komma($heizkosten_vorjahr + $heizkosten_vorjahr_inflation) . "</b>";
+                            $wtab_arr [$c] ['BETRAG'] = "<b>" . nummer_punkt2komma_t($energie_alle + $energie_alle_inflation) . "</b>";
+                            $wtab_arr [$c] ['AUFTEILEN_G'] = "";
+                            $wtab_arr [$c] ['AUFTEILEN_T'] = "";
+                            $c++;
+
+                            $jahres_beteiligung = $jahres_beteiligung + $heizkosten_vorjahr + $heizkosten_vorjahr_inflation;
+                        }
                         $jahres_beteiligung_a = nummer_punkt2komma_t($jahres_beteiligung);
                         $wtab_arr [$c] ['KONTO_BEZ'] = "<b>Gesamtsumme</b>";
                         if ($a == 0) {
@@ -3516,16 +3644,18 @@ ORDER BY HGA;");
                 $beteiligung_ant = 0;
             }
 
-            $hausgeld_neu_genau = nummer_punkt2komma_t($jahres_beteiligung / 12);
-            $hausgeld_neu = round(($jahres_beteiligung / 12), 0, PHP_ROUND_HALF_DOWN);
-            $hausgeld_neu_a = nummer_punkt2komma_t($hausgeld_neu);
-            $wtab_arr [$c + 4] ['KONTO_BEZ'] = "<b>Hausgeld $this->wp_jahr\nGerundet auf vollen Euro-Betrag</b>";
-            $wtab_arr [$c + 4] ['BETEILIGUNG_ANT'] = "<b>$hausgeld_neu_genau\n$hausgeld_neu_a</b>";
+            $hausgeld_neu_genau = nummer_punkt2komma($jahres_beteiligung / 12);
 
             $monat = sprintf('%02d', date("m"));
             $hausgeld_aktuell_a = nummer_punkt2komma_t($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $this->wp_jahr) * -1);
-            $wtab_arr [$c + 3] ['KONTO_BEZ'] = "Hausgeld bisher";
-            $wtab_arr [$c + 3] ['BETEILIGUNG_ANT'] = "$hausgeld_aktuell_a";
+            $wtab_arr [$c] ['KONTO_BEZ'] = "Hausgeld bisher";
+            $wtab_arr [$c] ['BETEILIGUNG_ANT'] = "$hausgeld_aktuell_a";
+
+            $c++;
+            $hausgeld_neu = round(($jahres_beteiligung / 12), 0, PHP_ROUND_HALF_DOWN);
+            $hausgeld_neu_a = nummer_punkt2komma_t($hausgeld_neu);
+            $wtab_arr [$c] ['KONTO_BEZ'] = "Hausgeld $this->wp_jahr\n<b>Gerundet</b>";
+            $wtab_arr [$c] ['BETEILIGUNG_ANT'] = "$hausgeld_neu_genau\n<b>$hausgeld_neu_a</b>";
 
             $this->hausgeld_einnahmen_summe += $hausgeld_neu;
             $this->hausgelder_neu [$a] ['EINHEIT'] = "$e->einheit_kurzname";
@@ -3537,7 +3667,6 @@ ORDER BY HGA;");
             $this->hausgelder_neu [$a] ['DIFF2M'] = nummer_punkt2komma_t(($hausgeld_neu - ($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $this->wp_jahr) * -1)) * 2);
             $this->hausgelder_neu [$a] ['SE'] = nummer_punkt2komma($hausgeld_neu + ($hausgeld_neu - ($this->get_sume_hausgeld('Einheit', $einheit_id, $monat, $this->wp_jahr) * -1)) * 2);
 
-            //
             $cols = array(
                 'KONTO' => "Konto",
                 'KONTO_BEZ' => "Bezeichnung",
@@ -3581,20 +3710,6 @@ ORDER BY HGA;");
             $pdf->ezText("Verteiler: QM -  Nach Quadratmeter                         Formel: Betrag/$qm_gesamt_a*$e->einheit_qm_a");
 
             unset ($this->empf_namen_u);
-        }
-    }
-
-    function get_wplan_infos($wp_id)
-    {
-        unset ($this->wp_jahr);
-        unset ($this->wp_objekt_id);
-        $result = DB::select("SELECT * FROM WEG_WPLAN WHERE PLAN_ID='$wp_id' && AKTUELL='1' ORDER BY DAT DESC LIMIT 0,1");
-        if (!empty($result)) {
-            $row = $result[0];
-            $this->wp_jahr = $row ['JAHR'];
-            $this->wp_objekt_id = $row ['OBJEKT_ID'];
-            $o = new objekt ();
-            $this->wp_objekt_name = $o->get_objekt_name($this->wp_objekt_id);
         }
     }
 
@@ -3863,6 +3978,15 @@ ORDER BY HGA;");
             } else {
                 $this->GLAEUBIGER_ID = $glaeubiger_id;
             }
+        }
+    }
+
+    function get_summe_hk($kos_typ, $kos_id, $hga_id)
+    {
+        $result = DB::select("SELECT SUM(BETRAG) AS BETRAG FROM WEG_HGA_HK WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && WEG_HGA_ID='$hga_id'");
+        if (!empty($result)) {
+            $row = $result[0];
+            return $row ['BETRAG'];
         }
     }
 
@@ -4377,31 +4501,6 @@ WHERE KOS_TYP='$kos_typ'
 
         ob_end_clean();
         $pdf->ezStream();
-    }
-
-    function get_hga_profil_infos($p_id)
-    {
-        $result = DB::select("SELECT * FROM WEG_HGA_PROFIL WHERE AKTUELL='1' && ID='$p_id' ORDER BY DAT ASC LIMIT 0,1");
-        if (!empty($result)) {
-            $row = $result[0];
-            $this->p_jahr = $row ['JAHR'];
-            $this->p_objekt_id = $row ['OBJEKT_ID'];
-            $this->p_gk_id = $row ['GELDKONTO_ID'];
-            $this->p_bez = $row ['BEZEICHNUNG'];
-            $this->p_ihr_gk_id = $row ['IHR_GK_ID'];
-            $this->p_wplan_id = $row ['WPLAN_ID'];
-            $this->hg_konto = $row ['HG_KONTO'];
-            $this->hk_konto = $row ['HK_KONTO'];
-            $this->ihr_konto = $row ['IHR_KONTO'];
-            $this->p_von = $row ['VON'];
-            $this->p_bis = $row ['BIS'];
-            $this->p_von_d = date_mysql2german($row ['VON']);
-            $this->p_bis_d = date_mysql2german($row ['BIS']);
-        } else {
-            throw new \App\Exceptions\MessageException(
-                new \App\Messages\ErrorMessage("Profil $id existiert nicht.")
-            );
-        }
     }
 
     function get_kontostand_manuell($gk_id, $datum)
@@ -6382,15 +6481,6 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             return $result[0]['SUMME'];
         } else {
             return 0.00;
-        }
-    }
-
-    function get_summe_hk($kos_typ, $kos_id, $hga_id)
-    {
-        $result = DB::select("SELECT SUM(BETRAG) AS BETRAG FROM WEG_HGA_HK WHERE KOS_TYP='$kos_typ' && KOS_ID='$kos_id' && AKTUELL='1' && WEG_HGA_ID='$hga_id'");
-        if (!empty($result)) {
-            $row = $result[0];
-            return $row ['BETRAG'];
         }
     }
 
