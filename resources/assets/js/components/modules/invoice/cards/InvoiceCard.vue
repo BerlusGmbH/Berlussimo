@@ -33,12 +33,19 @@
                             </v-tooltip>
                             {{value.EMPFAENGER_EINGANGS_RNR}}
                         </v-flex>
+                        <v-flex v-if="value.bank_account" xs9>
+                            <app-identifier :value="value.bank_account"></app-identifier>
+                        </v-flex>
+                        <v-flex :offset-xs9="!value.bank_account" xs3>
+                            <v-tooltip bottom>
+                                <v-icon slot='activator' style="font-size: inherit">mdi-package-variant-closed</v-icon>
+                                <span>Wareneingang Kunde</span>
+                            </v-tooltip>
+                            {{value.forwardedTranslated}}
+                        </v-flex>
                         <v-flex xs12>
                             <b-icon :tooltips="['Kurzbeschreibung']">mdi-note</b-icon>
                             {{value.KURZBESCHREIBUNG}}
-                        </v-flex>
-                        <v-flex xs12 v-if="value.bank_account">
-                            <app-identifier :value="value.bank_account"></app-identifier>
                         </v-flex>
                     </v-layout>
                 </v-flex>

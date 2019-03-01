@@ -1077,6 +1077,7 @@ export class Invoice extends Model {
     advance_payment_invoices: Array<Invoice>;
     servicetime_from: string;
     servicetime_to: string;
+    forwarded: string;
 
     static applyPrototype(invoice: Invoice) {
         Object.setPrototypeOf(invoice, Invoice.prototype);
@@ -1137,6 +1138,33 @@ export class Invoice extends Model {
 
     isAdvancePaymentInvoice() {
         return ['Schlussrechnung', 'Teilrechnung'].includes(this.RECHNUNGSTYP);
+    }
+
+    get forwardedTranslated(): string {
+        switch (this.forwarded) {
+            case 'complete':
+                return 'ja';
+            case 'none':
+                return 'nein';
+            case 'partial':
+                return 'teilweise';
+        }
+        return this.forwarded;
+    }
+
+    set forwardedTranslated(v) {
+        switch (v) {
+            case 'ja':
+                this.forwarded = 'complete';
+                return;
+            case 'nein':
+                this.forwarded = 'none';
+                return;
+            case 'teilweise':
+                this.forwarded = 'partial';
+                return;
+        }
+        this.forwarded = v;
     }
 }
 

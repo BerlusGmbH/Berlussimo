@@ -1793,12 +1793,10 @@ switch ($option) {
         $r = new rechnungen ();
         if (session()->has('partner_id')) {
             $r->rechnungsausgangsbuch_pdf('Partner', session()->get('partner_id'), request()->input('monat'), request()->input('jahr'), request()->input('r_typ'), request()->input('sort'));
+        } else if (session()->has('lager_id')) {
+            $r->rechnungsausgangsbuch_pdf('Lager', session()->get('lager_id'), request()->input('monat'), request()->input('jahr'), request()->input('r_typ'), request()->input('sort'));
         } else {
-            if (session()->has('lager_id')) {
-                $r->rechnungsausgangsbuch_pdf('Lager', session()->get('lager_id'), request()->input('monat'), request()->input('jahr'), request()->input('r_typ'), request()->input('sort'));
-            } else {
-                echo "Für Lagerrechnungen Lager wählen und für Partnerrechnungen den Partner";
-            }
+            echo "Für Lagerrechnungen Lager wählen und für Partnerrechnungen den Partner";
         }
         break;
 
@@ -1806,12 +1804,10 @@ switch ($option) {
         $r = new rechnungen ();
         if (session()->has('partner_id')) {
             $r->rechnungseingangsbuch_pdf('Partner', session()->get('partner_id'), request()->input('monat'), request()->input('jahr'), request()->input('r_typ'), request()->input('sort'));
+        } else if (session()->has('lager_id')) {
+            $r->rechnungseingangsbuch_pdf('Lager', session()->get('lager_id'), request()->input('monat'), request()->input('jahr'), request()->input('r_typ'), request()->input('sort'));
         } else {
-            if (session()->has('lager_id')) {
-                $r->rechnungseingangsbuch_pdf('Lager', session()->get('lager_id'), request()->input('monat'), request()->input('jahr'), request()->input('r_typ'), request()->input('sort'));
-            } else {
-                echo "Für Lagerrechnungen Lager wählen und für Partnerrechnungen den Partner";
-            }
+            echo "Für Lagerrechnungen Lager wählen und für Partnerrechnungen den Partner";
         }
 
         break;
@@ -2278,7 +2274,7 @@ switch ($option) {
             /* Kontieren */
             $kontierung_id = $r->get_last_kontierung_id() + 1;
 
-            $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$letzte_belegnr', '1','1', '$netto_betrag', '$netto_betrag', '19', '0', '0', '$kostenkonto', '$empf_typ', '$empf_id', '$datum', '$jahr', '0', '1')";
+            $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$letzte_belegnr', '1','1', '$netto_betrag', '$netto_betrag', '19', '0', '0', '$kostenkonto', '$empf_typ', '$empf_id', '$datum', '$jahr', '0', '1', 0)";
             DB::insert($db_abfrage);
 
             /* Protokollieren */
@@ -2369,7 +2365,7 @@ switch ($option) {
 
             /* Kontieren */
             $kontierung_id = $r->get_last_kontierung_id() + 1;
-            $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$letzte_belegnr', '$pos','$menge', '$netto_betrag', '$g_netto', '19', '0', '0', '$kostenkonto', 'Objekt', '" . session()->get('objekt_id') . "', '$datum', '$jahr', '0', '1')";
+            $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$letzte_belegnr', '$pos','$menge', '$netto_betrag', '$g_netto', '19', '0', '0', '$kostenkonto', 'Objekt', '" . session()->get('objekt_id') . "', '$datum', '$jahr', '0', '1', 0)";
             $resultat = DB::insert($db_abfrage);
 
             /* Protokollieren */
@@ -2485,7 +2481,7 @@ switch ($option) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage("Partner für das RE-Buch wählen.")
             );
-            
+
         }
 
         if (!session()->has('geldkonto_id')) {

@@ -15,6 +15,11 @@ class Invoice extends Model
     use DefaultOrder;
     use HasEnum;
 
+    const PARTIALLY_FORWARDED = 'partial';
+    const COMPLETELY_FORWARDED = 'complete';
+    const NOT_FORWARDED = 'none';
+    const CALCULATE_FORWARDED = 'auto';
+
     public $timestamps = false;
     protected $table = 'RECHNUNGEN';
     protected $primaryKey = 'BELEG_NR';
@@ -102,9 +107,45 @@ class Invoice extends Model
             })->select($table . '.*', $itemDescriptions . '.BEZEICHNUNG', $itemDescriptions . '.EINHEIT');
     }
 
+    public function forwardedLines()
+    {
+        return $this->hasMany(InvoiceLine::class, 'U_BELEG_NR', 'BELEG_NR')
+            ->where('BELEG_NR', '<>', DB::raw('U_BELEG_NR'));
+    }
+
     public function assignments()
     {
         return $this->hasMany(InvoiceLineAssignment::class, 'BELEG_NR', 'BELEG_NR');
+    }
+
+    public function forwarded()
+    {
+        if ($this->forwarded !== Invoice::CALCULATE_FORWARDED) {
+            return $this->forwarded;
+        }
+        $assignments = $this->assignments;
+        $forwardedLines = $this->forwardedLines;
+        $state = Invoice::NOT_FORWARDED;
+        foreach ($this->lines as $line) {
+            $a = $assignments->where('POSITION', $line->POSITION)
+                ->where('WEITER_VERWENDEN', '1');
+            if ($a->isEmpty()) {
+                $forwardedLinesByProduct = $forwardedLines->where('ARTIKEL_NR', $line->ARTIKEL_NR)
+                    ->where('ART_LIEFERANT', $line->ART_LIEFERANT);
+                if (!$forwardedLinesByProduct->isEmpty()) {
+                    $amount = $forwardedLinesByProduct->sum('MENGE');
+                }
+                if ($amount > 0) {
+                    $state = Invoice::PARTIALLY_FORWARDED;
+                }
+                if ($amount < $line->MENGE) {
+                    return $state;
+                }
+            } else {
+                $state = Invoice::PARTIALLY_FORWARDED;
+            }
+        }
+        return $state === Invoice::PARTIALLY_FORWARDED ? Invoice::COMPLETELY_FORWARDED : Invoice::NOT_FORWARDED;
     }
 }
 

@@ -60,7 +60,8 @@ class InvoiceController extends Controller
             'EMPFAENGER_EINGANGS_RNR',
             'advance_payment_invoice_id',
             'servicetime_from',
-            'servicetime_to'
+            'servicetime_to',
+            'forwarded'
         ]);
 
         if ($attributes['RECHNUNGSTYP'] === 'Buchungsbeleg') {

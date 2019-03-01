@@ -2794,22 +2794,28 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         } else {
             $gesamt_brutto = 0;
             $gesamt_gut_retour = 0;
-            $gesamt_skonti = 0;
             $anz_zz = sizeof($rechnungen_arr);
             for ($a = 0; $a < $anz_zz; $a++) {
                 $belegnr = $rechnungen_arr [$a] ['BELEG_NR'];
                 $this->rechnung_grunddaten_holen($belegnr);
                 $tab_arr [$a] ['BELEG_NR'] = $belegnr;
                 $tab_arr [$a] ['LFDNR'] = $this->aussteller_ausgangs_rnr;
-                $tab_arr [$a] ['EMPFAENGER'] = substr($this->rechnungs_empfaenger_name, 0, 48);
-                // $r->rechnungs_empfaenger_name = substr($r->rechnungs_empfaenger_name,0,48);
+                $empfaenger_name = explode('vertreten durch', $this->rechnungs_empfaenger_name)[0];
+                $empfaenger_name = explode('vertr. d.', $empfaenger_name)[0];
+                $empfaenger_name = explode('c/o', $empfaenger_name)[0];
+                $empfaenger_name = trim($empfaenger_name);
+                $tab_arr [$a] ['EMPFAENGER'] = $empfaenger_name;
                 $kurzbeschreibung = str_replace(",", ", ", $this->kurzbeschreibung);
                 $kurzbeschreibung = str_replace("<br>", " ", $kurzbeschreibung);
+                $kurzbeschreibung = str_replace("\r\n", " ", $kurzbeschreibung);
+                $kurzbeschreibung = str_replace("\r", " ", $kurzbeschreibung);
                 $kurzbeschreibung = str_replace("\n", " ", $kurzbeschreibung);
+                $kurzbeschreibung = preg_replace("/\s+/", " ", $kurzbeschreibung);
+                $kurzbeschreibung = trim($kurzbeschreibung);
 
                 $tab_arr [$a] ['KURZTEXT'] = $kurzbeschreibung;
                 if ($this->rechnungstyp == 'Rechnung') {
-                    $tab_arr [$a] ['BRUTTO'] = nummer_punkt2komma($this->rechnungs_brutto) . '€ ';
+                    $tab_arr [$a] ['BRUTTO'] = nummer_punkt2komma_t($this->rechnungs_brutto) . '€ ';
                     $gesamt_brutto += $this->rechnungs_brutto;
                 }
 
@@ -2824,7 +2830,6 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
                     $rrr->get_sicherheitseinbehalt($belegnr);
                     if ($rrr->rg_betrag > '0.00') {
                         $rrr->rechnungs_brutto_schluss = $rrr->rechnungs_brutto_schluss - $rrr->rg_betrag;
-                        // $rrr->rechnungs_brutto_schluss_a = nummer_punkt2komma_t($rrr->rechnungs_brutto_schluss);
                     }
 
                     $tab_arr [$a] ['BRUTTO'] = nummer_punkt2komma_t($rrr->rechnungs_brutto_schluss) . '€ ';
@@ -2832,49 +2837,44 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
                 }
 
                 if ($this->rechnungstyp == 'Gutschrift' or $this->rechnungstyp == 'Stornorechnung') {
-                    $tab_arr [$a] ['GUT_RET'] = nummer_punkt2komma($this->rechnungs_brutto) . '€ ';
+                    $tab_arr [$a] ['GUT_RET'] = nummer_punkt2komma_t($this->rechnungs_brutto) . '€ ';
                     $gesamt_gut_retour += $this->rechnungs_brutto;
                 }
 
                 $tab_arr [$a] ['RNR'] = $this->rechnungsnummer;
                 $tab_arr [$a] ['DATUM'] = $this->rechnungsdatum;
 
-                $tab_arr [$a] ['SKONTO'] = nummer_punkt2komma($this->rechnungs_skontoabzug) . '€ ';
-                $gesamt_skonti += $this->rechnungs_skontoabzug;
+                $tab_arr [$a] ['SKONTO'] = nummer_punkt2komma_t($this->rechnungs_skontoabzug) . '€ ';
 
                 if ($a == sizeof($rechnungen_arr) - 1) {
                     $tab_arr [$a + 1] ['BRUTTO'] = '<b>=======</b>';
                     $tab_arr [$a + 1] ['GUT_RET'] = '<b>=======</b>';
-                    $tab_arr [$a + 1] ['SKONTO'] = '<b>=======</b>';
                     $tab_arr [$a + 2] ['KURZTEXT'] = '<b>SUMMEN:</b>';
-                    $tab_arr [$a + 2] ['BRUTTO'] = '<b>' . nummer_punkt2komma($gesamt_brutto) . '€ </b>';
-                    $tab_arr [$a + 2] ['GUT_RET'] = '<b>' . nummer_punkt2komma($gesamt_gut_retour) . '€ </b>';
-                    $tab_arr [$a + 2] ['SKONTO'] = '<b>' . nummer_punkt2komma($gesamt_skonti) . '€ </b>';
+                    $tab_arr [$a + 2] ['BRUTTO'] = '<b>' . nummer_punkt2komma_t($gesamt_brutto) . '€ </b>';
+                    $tab_arr [$a + 2] ['GUT_RET'] = '<b>' . nummer_punkt2komma_t($gesamt_gut_retour) . '€ </b>';
                 }
             }
         }
-        // echo '<pre>';
-        // print_r($tab_arr);
 
         /* Spaltendefinition */
         $cols = array(
             'LFDNR' => "<b>LFDNR.</b>",
-            'EMPFAENGER' => "<b>RECHNUNGSEMPFÄNGER</b>",
-            'KURZTEXT' => "<b>LEISTUNG/WARE</b>",
-            'BRUTTO' => "<b>BRUTTO</b>",
-            'GUT_RET' => "<b>GUTSCHRIFTEN\n RETOUREN</b>",
             'RNR' => "<b>R-NR</b>",
             'DATUM' => "<b>DATUM</b>",
-            'SKONTO' => "<b>SKONTO</b>"
+            'EMPFAENGER' => "<b>RECHNUNGSEMPFÄNGER</b>",
+            'KURZTEXT' => "<b>LEISTUNG/WARE</b>",
+            'BEM' => '<b>BEM.</b>',
+            'BRUTTO' => "<b>BRUTTO</b>",
+            'GUT_RET' => "<b>GUTSCHRIFTEN\n RETOUREN</b>"
         );
 
         /* Tabellenparameter */
         $tableoptions = array(
             'width' => 730,
             'xPos' => 410,
-            'shaded' => 0, // shaded: 0-->Zeile 1 & Zeile 2 --> weiss 1-->Zeile 1 = weiss Zeile 2= grau 2-->Zeile 1= grauA Zeile 2= grauB
+            'shaded' => 1, // shaded: 0-->Zeile 1 & Zeile 2 --> weiss 1-->Zeile 1 = weiss Zeile 2= grau 2-->Zeile 1= grauA Zeile 2= grauB
             'showHeadings' => 1, // zeig Überschriften der spalten
-            'showLines' => 0, // Mach Linien
+            'showLines' => 1, // Mach Linien
             'lineCol' => array(
                 0.0,
                 0.0,
@@ -2887,30 +2887,43 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             'protectRows' => 0,
             'innerLineThickness' => 0.5,
             'outerLineThickness' => 0.5,
-            'rowGap' => 1,
-            'colGap' => 1,
+            'rowGap' => 4,
+            'colGap' => 4,
             'cols' => array(
                 'LFDNR' => array(
-                    'justification' => 'left'
+                    'justification' => 'right',
+                    'width' => 40
                 ),
                 'EMPFAENGER' => array(
-                    'justification' => 'left'
+                    'justification' => 'left',
+                    'width' => 112
                 ),
                 'KURZTEXT' => array(
                     'justification' => 'left'
                 ),
                 'BRUTTO' => array(
-                    'justification' => 'right'
+                    'justification' => 'right',
+                    'width' => 75
                 ),
                 'GUT_RET' => array(
-                    'justification' => 'right'
+                    'justification' => 'right',
+                    'width' => 75
                 ),
-                'DATUM' => array(
+                'RNR' => array(
                     'justification' => 'left'
                 ),
-                'SKONTO' => array(
-                    'justification' => 'right'
-                )
+                'DATUM' => array(
+                    'justification' => 'right',
+                    'width' => 50
+                ),
+                'WEK' => array(
+                    'justification' => 'left',
+                    'width' => 28
+                ),
+                'BEM' => array(
+                    'justification' => 'left',
+                    'width' => 75
+                ),
             )
         );
 
@@ -3026,21 +3039,23 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         } else {
             $gesamt_brutto = 0;
             $gesamt_gut_retour = 0;
-            $gesamt_skonti = 0;
             for ($a = 0; $a < sizeof($rechnungen_arr); $a++) {
                 $belegnr = $rechnungen_arr [$a] ['BELEG_NR'];
                 $this->rechnung_grunddaten_holen($belegnr);
                 $tab_arr [$a] ['BELEG_NR'] = $belegnr;
                 $tab_arr [$a] ['LFDNR'] = $this->empfaenger_eingangs_rnr;
-                $tab_arr [$a] ['EMPFAENGER'] = substr($this->rechnungs_aussteller_name, 0, 48);
-                // $r->rechnungs_empfaenger_name = substr($r->rechnungs_empfaenger_name,0,48);
+                $tab_arr [$a] ['EMPFAENGER'] = trim($this->rechnungs_aussteller_name);
                 $kurzbeschreibung = str_replace(",", ", ", $this->kurzbeschreibung);
                 $kurzbeschreibung = str_replace("<br>", " ", $kurzbeschreibung);
+                $kurzbeschreibung = str_replace("\r\n", " ", $kurzbeschreibung);
+                $kurzbeschreibung = str_replace("\r", " ", $kurzbeschreibung);
                 $kurzbeschreibung = str_replace("\n", " ", $kurzbeschreibung);
+                $kurzbeschreibung = preg_replace("/\s+/", " ", $kurzbeschreibung);
+                $kurzbeschreibung = trim($kurzbeschreibung);
 
                 $tab_arr [$a] ['KURZTEXT'] = $kurzbeschreibung;
                 if ($this->rechnungstyp == 'Rechnung') {
-                    $tab_arr [$a] ['BRUTTO'] = nummer_punkt2komma($this->rechnungs_brutto) . '€  ';
+                    $tab_arr [$a] ['BRUTTO'] = nummer_punkt2komma_t($this->rechnungs_brutto) . '€  ';
                     $gesamt_brutto += $this->rechnungs_brutto;
                 }
 
@@ -3055,24 +3070,30 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
                 }
 
                 if ($this->rechnungstyp == 'Gutschrift' or $this->rechnungstyp == 'Stornorechnung') {
-                    $tab_arr [$a] ['GUT_RET'] = nummer_punkt2komma($this->rechnungs_brutto) . '€  ';
+                    $tab_arr [$a] ['GUT_RET'] = nummer_punkt2komma_t($this->rechnungs_brutto) . '€  ';
                     $gesamt_gut_retour += $this->rechnungs_brutto;
                 }
 
                 $tab_arr [$a] ['RNR'] = $this->rechnungsnummer;
                 $tab_arr [$a] ['DATUM'] = $this->rechnungsdatum;
 
-                $tab_arr [$a] ['SKONTO'] = nummer_punkt2komma($this->rechnungs_skontoabzug) . '€  ';
-                $gesamt_skonti += $this->rechnungs_skontoabzug;
+                $forward = \App\Models\Invoice::findOrFail($belegnr)
+                    ->forwarded();
+
+                if ($forward === \App\Models\Invoice::PARTIALLY_FORWARDED) {
+                    $tab_arr [$a] ['WEK'] = 'teilw.';
+                } elseif ($forward === \App\Models\Invoice::COMPLETELY_FORWARDED) {
+                    $tab_arr [$a] ['WEK'] = 'ja';
+                } elseif ($forward === \App\Models\Invoice::NOT_FORWARDED) {
+                    $tab_arr [$a] ['WEK'] = 'nein';
+                }
 
                 if ($a == sizeof($rechnungen_arr) - 1) {
                     $tab_arr [$a + 1] ['BRUTTO'] = '<b>=======</b>';
                     $tab_arr [$a + 1] ['GUT_RET'] = '<b>=======</b>';
-                    $tab_arr [$a + 1] ['SKONTO'] = '<b>=======</b>';
                     $tab_arr [$a + 2] ['KURZTEXT'] = '<b>SUMMEN:</b>';
-                    $tab_arr [$a + 2] ['BRUTTO'] = '<b>' . nummer_punkt2komma($gesamt_brutto) . '€  </b>';
-                    $tab_arr [$a + 2] ['GUT_RET'] = '<b>' . nummer_punkt2komma($gesamt_gut_retour) . '€  </b>';
-                    $tab_arr [$a + 2] ['SKONTO'] = '<b>' . nummer_punkt2komma($gesamt_skonti) . '€  </b>';
+                    $tab_arr [$a + 2] ['BRUTTO'] = '<b>' . nummer_punkt2komma_t($gesamt_brutto) . '€  </b>';
+                    $tab_arr [$a + 2] ['GUT_RET'] = '<b>' . nummer_punkt2komma_t($gesamt_gut_retour) . '€  </b>';
                 }
             }
         }
@@ -3082,20 +3103,21 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         /* Spaltendefinition */
         $cols = array(
             'LFDNR' => "<b>LFDNR.</b>",
-            'EMPFAENGER' => "<b>RECHNUNGSSTELLER</b>",
-            'KURZTEXT' => "<b>LEISTUNG/WARE</b>",
-            'BRUTTO' => "<b>BRUTTO</b>",
-            'GUT_RET' => "<b>GUTSCHRIFTEN\n RETOUREN</b>",
             'RNR' => "<b>R-NR</b>",
             'DATUM' => "<b>DATUM</b>",
-            'SKONTO' => "<b>SKONTO</b>"
+            'EMPFAENGER' => "<b>RECHNUNGSSTELLER</b>",
+            'KURZTEXT' => "<b>LEISTUNG/WARE</b>",
+            'WEK' => "<b>WEK</b>",
+            'BEM' => "<b>BEM.</b>",
+            'BRUTTO' => "<b>BRUTTO</b>",
+            'GUT_RET' => "<b>GUTSCHRIFTEN\n RETOUREN</b>"
         );
 
         /* Tabellenparameter */
         $tableoptions = array(
             'width' => 730,
             'xPos' => 410,
-            'shaded' => 0, // shaded: 0-->Zeile 1 & Zeile 2 --> weiss 1-->Zeile 1 = weiss Zeile 2= grau 2-->Zeile 1= grauA Zeile 2= grauB
+            'shaded' => 1, // shaded: 0-->Zeile 1 & Zeile 2 --> weiss 1-->Zeile 1 = weiss Zeile 2= grau 2-->Zeile 1= grauA Zeile 2= grauB
             'showHeadings' => 1, // zeig Überschriften der spalten
             'showLines' => 1, // Mach Linien
             'lineCol' => array(
@@ -3110,39 +3132,43 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             'protectRows' => 0,
             'innerLineThickness' => 0.5,
             'outerLineThickness' => 0.5,
-            'rowGap' => 8,
-            'colGap' => 1,
+            'rowGap' => 4,
+            'colGap' => 4,
             'cols' => array(
                 'LFDNR' => array(
-                    'justification' => 'left',
-                    'width' => 35
+                    'justification' => 'right',
+                    'width' => 40
                 ),
                 'EMPFAENGER' => array(
-                    'justification' => 'left'
+                    'justification' => 'left',
+                    'width' => 100
                 ),
                 'KURZTEXT' => array(
                     'justification' => 'left'
                 ),
                 'BRUTTO' => array(
                     'justification' => 'right',
-                    'width' => 70
+                    'width' => 75
                 ),
                 'GUT_RET' => array(
                     'justification' => 'right',
-                    'width' => 70
+                    'width' => 75
                 ),
                 'RNR' => array(
-                    'justification' => 'right',
-                    'width' => 60
+                    'justification' => 'left'
                 ),
                 'DATUM' => array(
                     'justification' => 'right',
                     'width' => 50
                 ),
-                'SKONTO' => array(
-                    'justification' => 'right',
-                    'width' => 40
-                )
+                'WEK' => array(
+                    'justification' => 'left',
+                    'width' => 28
+                ),
+                'BEM' => array(
+                    'justification' => 'left',
+                    'width' => 75
+                ),
             )
         );
         /* Neues PDF-Objekt erstellen */
@@ -4345,7 +4371,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
 
                     /* Kontieren */
                     $kontierung_id = $r->get_last_kontierung_id() + 1;
-                    $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$letzte_belegnr', '$pos','$k_menge', '$k_preis', '$k_preis_g', '$k_mwst', '$k_skonto', '$k_rabatt', '$k_konto', '$k_kos_typ', '$k_kos_id', '$datum', '$jahr', '0', '1')";
+                    $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$letzte_belegnr', '$pos','$k_menge', '$k_preis', '$k_preis_g', '$k_mwst', '$k_skonto', '$k_rabatt', '$k_konto', '$k_kos_typ', '$k_kos_id', '$datum', '$jahr', '0', '1', 0)";
                     DB::insert($db_abfrage);
 
                     /* Protokollieren */

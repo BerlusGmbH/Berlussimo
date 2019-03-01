@@ -2356,7 +2356,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             $mwst_satz = request()->input('gesendet') [$a] ['MWST_SATZ'];
             $rabatt_satz = request()->input('gesendet') [$a] ['RABATT_SATZ'];
             $skonto = nummer_komma2punkt(request()->input('gesendet') [$a] ['SKONTO']);
-            $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$beleg_nr', '$kontierungs_pos','$kontierungs_menge', '$einzel_preis', '$gesamt_preis', '$mwst_satz', '$skonto', '$rabatt_satz', '$kontenrahmen_konto', '$kostentraeger_typ', '$kostentraeger_id', '$datum', '$verwendungs_jahr', '$weiter_verwenden', '1')";
+            $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$beleg_nr', '$kontierungs_pos','$kontierungs_menge', '$einzel_preis', '$gesamt_preis', '$mwst_satz', '$skonto', '$rabatt_satz', '$kontenrahmen_konto', '$kostentraeger_typ', '$kostentraeger_id', '$datum', '$verwendungs_jahr', '$weiter_verwenden', '1', 0)";
             DB::insert($db_abfrage);
             /* Protokollieren */
             $last_dat = DB::getPdo()->lastInsertId();
@@ -2726,7 +2726,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
         $datum = date("Y-m-d");
 
-        $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$beleg_nr', '$kontierungs_pos','$kontierungs_menge', '$einzel_preis', '$gesamt_preis', '$mwst_satz', '$skonto' , '$rabatt_satz', '$kontenrahmen_konto', '$kostentraeger_typ', '$kostentraeger_id', '$datum', '$verwendungs_jahr', '$weiter_verwenden', '1')";
+        $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$beleg_nr', '$kontierungs_pos','$kontierungs_menge', '$einzel_preis', '$gesamt_preis', '$mwst_satz', '$skonto' , '$rabatt_satz', '$kontenrahmen_konto', '$kostentraeger_typ', '$kostentraeger_id', '$datum', '$verwendungs_jahr', '$weiter_verwenden', '1', 0)";
         DB::insert($db_abfrage);
         /* Protokollieren */
         $last_dat = DB::getPdo()->lastInsertId();
@@ -2771,7 +2771,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             $kontierung_id = $kontierung_id + 1;
             /* Differenzmenge / Restmenge für Pool für Weiterverwendung */
             $gesamt_preis = $diff_menge * $einzel_preis;
-            $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$beleg_nr', '$kontierungs_pos','$diff_menge', '$einzel_preis', '$gesamt_preis', '$mwst_satz', '$rabatt_satz', '$kontenrahmen_konto', '$kostentraeger_typ', '$kostentraeger_id', '$datum', '$verwendungs_jahr', '1', '1')";
+            $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$beleg_nr', '$kontierungs_pos','$diff_menge', '$einzel_preis', '$gesamt_preis', '$mwst_satz', '$rabatt_satz', '$kontenrahmen_konto', '$kostentraeger_typ', '$kostentraeger_id', '$datum', '$verwendungs_jahr', '1', '1', 0)";
             DB::insert($db_abfrage);
         } else {
             echo "KEINE DIFFERENZMENGE ERSICHTLICH";
@@ -3097,24 +3097,20 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         echo "<thead>";
         echo "<tr>";
         echo "<th id=\"tr_ansehen\">Ansehen</th>";
-        echo "<th >LFDNR</th>";
-        echo "<th >R-Datum</th>";
-        echo "<th >Rechnungssteller</th>";
-        echo "<th >RECHUNGSNR</th>";
-        echo "<th >Leistung/Ware</th>";
-        echo "<th >Brutto</th>";
-        echo "<th >Skonto</th>";
-        echo "<th >Gutschriften<br>Returen</th>";
-        echo "<th >WEITERB.</th>";
-        echo "<th >SALDO</th>";
-
+        echo "<th>LFDNR</th>";
+        echo "<th>RECHUNGSNR</th>";
+        echo "<th>R-Datum</th>";
+        echo "<th>Rechnungssteller</th>";
+        echo "<th>Leistung/Ware</th>";
+        echo "<th>WEK</th>";
+        echo "<th>Brutto</th>";
+        echo "<th>Gutschriften<br>Returen</th>";
         echo "</tr>";
         echo "</thead>";
 
         $r = new rechnung ();
 
         $anzahl = count($arr);
-        $sum_weiterberechnet = 0;
 
         $g_brutto_r = 0;
         $g_brutto_g = 0;
@@ -3136,59 +3132,48 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
                 $r->rechnung_grunddaten_holen($belegnr);
                 $r->rechnungs_aussteller_name = substr($r->rechnungs_aussteller_name, 0, 48);
                 $status_kontierung = $r->rechnung_auf_kontierung_pruefen($belegnr);
-                // echo $status_kontierung;
 
-                if ($status_kontierung == 'unvollstaendig') {
+                $forward = \App\Models\Invoice::findOrFail($belegnr)
+                    ->forwarded();
+
+                if ($status_kontierung !== 'vollstaendig') {
+                    echo "<tr>";
+                } elseif ($forward === \App\Models\Invoice::PARTIALLY_FORWARDED) {
+                    echo "<tr class=\"orange darken-2\">";
+                } elseif ($forward === \App\Models\Invoice::COMPLETELY_FORWARDED) {
+                    echo "<tr class=\"green darken-2\">";
+                } elseif ($forward === \App\Models\Invoice::NOT_FORWARDED) {
                     echo "<tr class=\"red darken-2\">";
                 }
 
-                if ($status_kontierung == 'vollstaendig') {
-                    echo "<tr class=\"green darken-3\">";
-                }
-
-                echo "<td id=\"td_ansehen\">$beleg_link<br>$pdf_link $pdf_link1</td><td>$r->empfaenger_eingangs_rnr</td><td>$r->rechnungsdatum</td>";
+                echo "<td id=\"td_ansehen\">$beleg_link<br>$pdf_link $pdf_link1</td><td style='text-align: right'>$r->empfaenger_eingangs_rnr</td><td style='text-align: right'><b>$r->rechnungsnummer</b></td><td  style='text-align: right'>$r->rechnungsdatum</td>";
                 /* Prüfen ob die rechnung temporär zur Buchungszwecken an Rechnungsausstellr kontiert */
-                if ($this->check_kontierung_rg($belegnr, $r->rechnungs_aussteller_typ, $r->rechnungs_aussteller_id) == true) {
-                    echo "<td class=\"green darken-4\">$r->rechnungs_aussteller_name</td>";
-                } else {
-                    echo "<td>$r->rechnungs_aussteller_name</td>";
-                }
+                echo "<td>$r->rechnungs_aussteller_name</td>";
 
-                echo "<td><b>$r->rechnungsnummer</b></td>";
                 echo "<td>$r->kurzbeschreibung</td>";
 
-                $r->rechnungs_skontoabzug_a = nummer_punkt2komma($r->rechnungs_skontoabzug);
+                echo "<td style='text-align: right'>";
+
+                if ($forward === \App\Models\Invoice::PARTIALLY_FORWARDED) {
+                    echo "teilw.";
+                } elseif ($forward === \App\Models\Invoice::COMPLETELY_FORWARDED) {
+                    echo "ja";
+                } elseif ($forward === \App\Models\Invoice::NOT_FORWARDED) {
+                    echo "nein";
+                }
+                echo "</td>";
 
                 if ($r->rechnungstyp == 'Rechnung' or $r->rechnungstyp == 'Teilrechnung' or $r->rechnungstyp == 'Schlussrechnung') {
                     $r->rechnungs_brutto_a = nummer_punkt2komma($r->rechnungs_brutto);
-                    echo "<td align=\"right\" valign=\"top\">$r->rechnungs_brutto_a </td><td align=\"right\" valign=\"top\">$r->rechnungs_skontoabzug_a</td><td></td>";
+                    echo "<td style='text-align: right'>$r->rechnungs_brutto_a</td><td></td>";
                     $g_brutto_r += $r->rechnungs_brutto;
-                    // $g_brutto_r= sprintf("%01.2f", $g_brutto_r);
                 }
 
                 if ($r->rechnungstyp == 'Gutschrift' or $r->rechnungstyp == 'Stornorechnung') {
                     $r->rechnungs_brutto_a = nummer_punkt2komma($r->rechnungs_brutto);
-                    echo "<td></td><td align=\"right\" valign=\"top\">$r->rechnungs_skontoabzug_a</td><td align=\"right\" valign=\"top\">$r->rechnungs_brutto_a </td>";
+                    echo "<td></td><td  style='text-align: right'>$r->rechnungs_brutto_a </td>";
                     $g_brutto_g += $r->rechnungs_brutto;
-                    // $g_brutto_g= sprintf("%01.2f", $g_brutto_g);
                 }
-
-                $summe_weiterbelastung_a = nummer_punkt2komma($this->get_weiterbelastung($belegnr));
-                $summe_weiterbelastung = nummer_komma2punkt($summe_weiterbelastung_a);
-                $sum_weiterberechnet += $summe_weiterbelastung;
-                echo "<td>$summe_weiterbelastung_a</td>";
-                $saldo_rg = $summe_weiterbelastung - $r->rechnungs_brutto;
-                $saldo_rg_a = nummer_punkt2komma($saldo_rg);
-                if ($saldo_rg >= 0) {
-                    echo "<td class=\"green darken-3\">";
-                } else {
-                    if ($this->check_kontierung_rg($belegnr, $r->rechnungs_empfaenger_typ, $r->rechnungs_empfaenger_id) == true) {
-                        echo "<td style=\"background-color:#c48b7c\">";
-                    } else {
-                        echo "<td class=\"red darken-2\">";
-                    }
-                }
-                echo "$saldo_rg_a</td>";
 
                 echo "</tr>";
 
@@ -3203,9 +3188,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             // echo "<tr><td colspan=\"9\"><hr></td></tr>";
             $g_brutto_r = nummer_punkt2komma_t($g_brutto_r);
             $g_brutto_g = nummer_punkt2komma_t($g_brutto_g);
-            $g_skonto = nummer_punkt2komma_t($g_skonto);
-            $sum_weiterberechnet_a = nummer_punkt2komma_t($sum_weiterberechnet);
-            echo "<tfoot><tr><td id=\"td_ansehen\"></td><td></td><td></td><td></td><td></td><td></td><td align=\"right\"><b>$g_brutto_r</b></td><td align=\"right\"><b>$g_skonto</b></td><td><b>$g_brutto_g</b></td><td><b>$sum_weiterberechnet_a</b></td><td align=\"right\"></td></tr></tfoot>";
+            echo "<tfoot><tr><td id=\"td_ansehen\"></td><td></td><td></td><td></td><td></td><td></td><td></td><td style='text-align: right'><b>$g_brutto_r</b></td><td style='text-align: right'><b>$g_brutto_g</b></td></tr></tfoot>";
         } else {
             echo "<tr><td colspan=9>Keine Rechnungen in diesem Monat</td></tr>";
         }
@@ -3292,17 +3275,15 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
         echo "<table class=\"sortable\" id=\"positionen_tab\">\n";
         echo "<thead>";
-        echo "<tr >";
-        echo "<th scopr=\"col\" id=\"tr_ansehen\">Ansehen</th>";
-        echo "<th >LFDNR</th>";
-        echo "<th scopr=\"col\">Rechnungsempfänger</th>";
-        echo "<th scopr=\"col\">Leistung/Ware</th>";
-        echo "<th scopr=\"col\">Brutto</th>";
-        // echo "<th scopr=\"col\">Skontobetrag</th>";
-        echo "<th scopr=\"col\">Gutschriften und Returen</th>";
-        echo "<th scopr=\"col\">R-Nr</th>";
-        echo "<th scopr=\"col\">R-Datum</th>";
-        echo "<th scopr=\"col\">Skonto</th>";
+        echo "<tr>";
+        echo "<th id=\"tr_ansehen\">Ansehen</th>";
+        echo "<th>LFDNR</th>";
+        echo "<th>R-Nr</th>";
+        echo "<th>R-Datum</th>";
+        echo "<th>Rechnungsempfänger</th>";
+        echo "<th>Leistung/Ware</th>";
+        echo "<th>Brutto</th>";
+        echo "<th>Gutschriften und Returen</th>";
         echo "</tr>";
 
         echo "</thead>";
@@ -3312,7 +3293,8 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
         $anzahl = count($arr);
 
         if ($anzahl) {
-            $g_skonto = 0;
+            $g_brutto_r = 0;
+            $g_brutto_g = 0;
             for ($a = 0; $a < $anzahl; $a++) {
 
                 $belegnr = $arr [$a] ['BELEG_NR'];
@@ -3324,36 +3306,14 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
                 $r->rechnung_grunddaten_holen($belegnr);
                 $r->rechnungs_empfaenger_name = bereinige_string($r->rechnungs_empfaenger_name);
                 $r->rechnungs_empfaenger_name = substr($r->rechnungs_empfaenger_name, 0, 48);
-                echo "<tr><td id=\"td_ansehen\">$beleg_link $pdf_link $pdf_link1</td><td valign=\"top\">$r->aussteller_ausgangs_rnr</td><td valign=\"top\">$r->rechnungs_empfaenger_name</td>";
-                // $r->kurzbeschreibung =bereinige_string($r->kurzbeschreibung);
+                echo "<tr><td id=\"td_ansehen\">$beleg_link $pdf_link $pdf_link1</td><td style='text-align: right'>$r->aussteller_ausgangs_rnr</td><td style='text-align: right'><b>$r->rechnungsnummer</b></td><td style='text-align: right'>$r->rechnungsdatum</td><td valign=\"top\">$r->rechnungs_empfaenger_name</td>";
                 echo "<td valign=\"top\">$r->kurzbeschreibung</td>";
 
-                $r->rechnungs_brutto_ausgabe = nummer_punkt2komma($r->rechnungs_brutto);
-                $r->rechnungs_skonto_ausgabe = nummer_punkt2komma($r->rechnungs_skontobetrag);
+                $r->rechnungs_brutto_ausgabe = nummer_punkt2komma_t($r->rechnungs_brutto);
 
                 if ($r->rechnungstyp == 'Rechnung' or $r->rechnungstyp == 'Teilrechnung') {
-                    // echo "<td align=\"right\">$r->rechnungs_brutto_ausgabe</td><td align=\"right\">$r->rechnungs_skonto_ausgabe</td><td></td>";
-                    echo "<td align=\"right\" valign=\"top\">$r->rechnungs_brutto_ausgabe</td><td></td>";
-                    $g_brutto_r = 0;
+                    echo "<td style='text-align: right'>$r->rechnungs_brutto_ausgabe</td><td></td>";
                     $g_brutto_r = $g_brutto_r + $r->rechnungs_brutto;
-                    $g_brutto_r = sprintf("%01.2f", $g_brutto_r);
-                    $g_skonto_rg = 0;
-                    $g_skonto_rg = $g_skonto_rg + $r->rechnungs_skontobetrag;
-                    $g_skonto_rg = sprintf("%01.2f", $g_skonto_rg);
-
-                    $g_skonto = $g_skonto + $r->rechnungs_skontoabzug;
-                    $g_skonto = sprintf("%01.2f", $g_skonto);
-
-                    $g_netto = 0;
-                    $g_netto = $g_netto + $r->rechnungs_netto;
-                    $g_netto = sprintf("%01.2f", $g_netto);
-
-                    $g_mwst = 0;
-                    $g_mwst = $g_mwst + $r->rechnungs_mwst;
-
-                    $g_brutto_g = 0;
-                    $g_brutto = $g_brutto_g + $r->rechnungs_brutto;
-                    $g_brutto = sprintf("%01.2f", $g_brutto);
                 }
 
                 if ($r->rechnungstyp == 'Schlussrechnung') {
@@ -3363,50 +3323,24 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
                     /* Sicherheitseinbehalt */
                     $rrr->get_sicherheitseinbehalt($belegnr);
                     if ($rrr->rg_betrag > '0.00') {
-                        // $this->rechnungs_brutto = ($row['BRUTTO'] - $rs->rg_betrag);
-                        // echo $this->rechnungs_brutto;
                         $rrr->rechnungs_brutto_schluss = $rrr->rechnungs_brutto_schluss - $rrr->rg_betrag;
                         $rrr->rechnungs_brutto_schluss_a = nummer_punkt2komma_t($rrr->rechnungs_brutto_schluss);
                     }
 
-                    echo "<td align=\"right\" valign=\"top\">$rrr->rechnungs_brutto_schluss_a</td><td></td>";
+                    echo "<td style='text-align: right'>$rrr->rechnungs_brutto_schluss_a</td><td></td>";
 
                     $g_brutto_r = $g_brutto_r + $rrr->rechnungs_brutto_schluss;
-                    $g_brutto_r = sprintf("%01.2f", $g_brutto_r);
-
-                    $g_skonto_rg = $g_skonto_rg + $r->rechnungs_skontobetrag;
-                    $g_skonto_rg = sprintf("%01.2f", $g_skonto_rg);
-
-                    $g_skonto = $g_skonto + $rrr->rechnungs_skontoabzug_schluss;
-                    $g_skonto = sprintf("%01.2f", $g_skonto);
-
-                    $g_netto = $g_netto + $rrr->rechnungs_netto_schluss;
-                    $g_netto = sprintf("%01.2f", $g_netto);
-
-                    $g_mwst = 0;
-                    $g_mwst = $g_mwst + $rrr->rechnungs_mwst_schluss;
-                    $g_mwst = sprintf("%01.2f", $g_mwst);
-
-                    $g_brutto_g = 0;
-                    $g_brutto = $g_brutto_g + $rrr->rechnungs_brutto_schluss;
-                    $g_brutto = sprintf("%01.2f", $g_brutto);
                 }
 
                 if ($r->rechnungstyp == 'Gutschrift' or $r->rechnungstyp == 'Stornorechnung') {
-                    // echo "<td></td><td></td><td align=\"right\">$r->rechnungs_skonto_ausgabe</td>";
-                    echo "<td></td><td align=\"right\" valign=\"top\">$r->rechnungs_brutto_ausgabe</td>";
-                    $g_brutto_g = 0;
+                    echo "<td></td><td style='text-align: right'>$r->rechnungs_brutto_ausgabe</td>";
                     $g_brutto_g = $g_brutto_g + $r->rechnungs_brutto;
-                    $g_brutto_g = sprintf("%01.2f", $g_brutto_g);
                 }
-                $r->rechnungs_skontoabzug_a = nummer_punkt2komma($r->rechnungs_skontoabzug);
-                echo "<td valign=\"top\"><b>$r->rechnungsnummer</b></td><td valign=\"top\">$r->rechnungsdatum</td><td align=\"right\" valign=\"top\">$r->rechnungs_skontoabzug_a</td></tr>";
             } // end for
-            $g_brutto = nummer_punkt2komma($g_brutto);
-            $g_brutto_g = nummer_punkt2komma($g_brutto_g);
-            $g_skonto = nummer_punkt2komma($g_skonto);
-            echo "<tfoot><tr><td colspan=\"9\"><hr></td></tr>";
-            echo "<tr><td id=\"td_ansehen\"></td><td></td><td></td><td></td><td align=\"right\"><b>$g_brutto</b></td><td align=\"right\"><b>$g_brutto_g</b></td><td></td><td></td><td align=\"right\"><b>$g_skonto</b></td></tr></tfoot>";
+            $g_brutto_g_a = nummer_punkt2komma_t($g_brutto_g);
+            $g_brutto_r_a = nummer_punkt2komma_t($g_brutto_r);
+            echo "<tfoot><tr><td colspan=\"8\"><hr></td></tr>";
+            echo "<tr><td id=\"td_ansehen\"></td><td></td><td></td><td></td><td></td><td></td><td style='text-align: right'><b>$g_brutto_r_a</b></td><td style='text-align: right'><b>$g_brutto_g_a</b></td></tr></tfoot>";
         } else {
             echo "<tr><td colspan=10>Keine Rechnungen in diesem Monat</td></tr>";
         }

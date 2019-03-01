@@ -48,26 +48,33 @@
                                           step="1"
                             ></v-text-field>
                         </v-flex>
-                        <v-flex xs12 md4>
+                        <v-flex md3 xs12>
                             <v-text-field label="Rechnungsdatum"
                                           prepend-icon="mdi-calendar-blank"
                                           v-model="invoiceValue.RECHNUNGSDATUM"
                                           type="date"
                             ></v-text-field>
                         </v-flex>
-                        <v-flex xs12 md4>
+                        <v-flex md3 xs12>
                             <v-text-field label="Eingangsdatum"
                                           prepend-icon="mdi-calendar"
                                           v-model="invoiceValue.EINGANGSDATUM"
                                           type="date"
                             ></v-text-field>
                         </v-flex>
-                        <v-flex xs12 md4>
+                        <v-flex md3 xs12>
                             <v-text-field label="Fällig am"
                                           prepend-icon="mdi-calendar-clock"
                                           v-model="invoiceValue.FAELLIG_AM"
                                           type="date"
                             ></v-text-field>
+                        </v-flex>
+                        <v-flex md3 xs12>
+                            <v-select :items="['auto', 'ja', 'nein', 'teilweise']"
+                                      label="WEK"
+                                      prepend-icon="mdi-package-variant-closed"
+                                      v-model="invoiceValue.forwardedTranslated"
+                            ></v-select>
                         </v-flex>
                         <v-flex xs12 md6>
                             <v-text-field label="Leistungsanfang"
@@ -120,12 +127,14 @@
     import _ from 'lodash';
     import axios from '../../../../libraries/axios';
     import BEntitySelect from '../../../common/EntitySelect.vue';
+    import VSelect from "../../../common/VSelect.vue";
 
     const SnackbarMutation = namespace('shared/snackbar', Mutation);
     const RefreshMutation = namespace('shared/refresh', Mutation);
 
     @Component({
         components: {
+            VSelect,
             'b-entity-select': BEntitySelect
         }
     })
