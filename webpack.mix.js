@@ -11,6 +11,13 @@ const mix = require('laravel-mix');
  |
  */
 
+mix.options({
+    hmrOptions: {
+        host: 'berlussimo.test',
+        port: 8080
+    }
+});
+
 mix.webpackConfig({
     resolve: {
         alias: {
