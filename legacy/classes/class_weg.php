@@ -3022,7 +3022,7 @@ ORDER BY HGA;");
     {
         if (!$this->check_wplan_exists($wjahr, $objekt_id)) {
             $id = last_id2('WEG_WPLAN', 'PLAN_ID') + 1;
-            $db_abfrage = "INSERT INTO WEG_WPLAN VALUES (NULL, '$id', '$wjahr', '$objekt_id', '1')";
+            $db_abfrage = "INSERT INTO WEG_WPLAN VALUES (NULL, '$id', '$wjahr', '$objekt_id', '1', 0)";
             DB::insert($db_abfrage);
 
             $last_dat = DB::getPdo()->lastInsertId();
