@@ -2254,7 +2254,7 @@ switch ($option) {
             $gk = new geldkonto_info ();
             $gk->geld_konto_ermitteln('Partner', session()->get('partner_id'), null, 'Kreditor');
             $faellig_am = tage_plus($datum, 10);
-            $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', 'Rechnung', '$datum','$datum', '$netto_betrag','$brutto_betrag','0.00', 'Partner', '" . session()->get('partner_id') . "','$empf_typ', '$empf_id','1', '1', '0', '0', '0', '0', '0', '$faellig_am', '0000-00-00', '$kurztext_neu', '$gk->geldkonto_id', NULL, '$leistung_von', '$leistung_bis')";
+            $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', 'Rechnung', '$datum','$datum', '$netto_betrag','$brutto_betrag','0.00', 'Partner', '" . session()->get('partner_id') . "','$empf_typ', '$empf_id','1', '1', '0', '0', '0', '0', '0', '$faellig_am', '0000-00-00', '$kurztext_neu', '$gk->geldkonto_id', NULL, '$leistung_von', '$leistung_bis', 'auto')";
             DB::insert($db_abfrage);
             /* Protokollieren */
             $last_dat = DB::getPdo()->lastInsertId();
@@ -2274,7 +2274,7 @@ switch ($option) {
             /* Kontieren */
             $kontierung_id = $r->get_last_kontierung_id() + 1;
 
-            $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$letzte_belegnr', '1','1', '$netto_betrag', '$netto_betrag', '19', '0', '0', '$kostenkonto', '$empf_typ', '$empf_id', '$datum', '$jahr', '0', '1', 0)";
+            $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$letzte_belegnr', '1','1', '$netto_betrag', '$netto_betrag', '19', '0', '0', '$kostenkonto', '$empf_typ', '$empf_id', '$datum', '$jahr', '0', '1')";
             DB::insert($db_abfrage);
 
             /* Protokollieren */
@@ -2335,7 +2335,7 @@ switch ($option) {
         $gk = new geldkonto_info ();
         $gk->geld_konto_ermitteln('Partner', session()->get('partner_id'), null, 'Kreditor');
         $faellig_am = tage_plus($datum, 10);
-        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', 'Rechnung', '$datum','$datum', '$netto_betrag','0.00','0.00', 'Partner', '" . session()->get('partner_id') . "','$empf_typ', '$empf_id','1', '1', '0', '0', '0', '0', '0', '$faellig_am', '0000-00-00', '$kurztext_neu', '$gk->geldkonto_id', NULL, '$leistung_von', '$leistung_bis')";
+        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', 'Rechnung', '$datum','$datum', '$netto_betrag','0.00','0.00', 'Partner', '" . session()->get('partner_id') . "','$empf_typ', '$empf_id','1', '1', '0', '0', '0', '0', '0', '$faellig_am', '0000-00-00', '$kurztext_neu', '$gk->geldkonto_id', NULL, '$leistung_von', '$leistung_bis', 'auto')";
         DB::insert($db_abfrage);
         /* Protokollieren */
         $last_dat = DB::getPdo()->lastInsertId();
@@ -2365,7 +2365,7 @@ switch ($option) {
 
             /* Kontieren */
             $kontierung_id = $r->get_last_kontierung_id() + 1;
-            $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$letzte_belegnr', '$pos','$menge', '$netto_betrag', '$g_netto', '19', '0', '0', '$kostenkonto', 'Objekt', '" . session()->get('objekt_id') . "', '$datum', '$jahr', '0', '1', 0)";
+            $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$letzte_belegnr', '$pos','$menge', '$netto_betrag', '$g_netto', '19', '0', '0', '$kostenkonto', 'Objekt', '" . session()->get('objekt_id') . "', '$datum', '$jahr', '0', '1')";
             $resultat = DB::insert($db_abfrage);
 
             /* Protokollieren */

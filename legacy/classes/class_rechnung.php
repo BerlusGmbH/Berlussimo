@@ -1401,7 +1401,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
                 $bezahlt_am = '0000-00-00';
             }
 
-            $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', '$rechnungs_typ', '$rechnungsdatum','$eingangsdatum', '$netto_betrag','$brutto_betrag','0.00', '$rechnungs_aussteller_typ', '$rechnungs_aussteller_id','$rechnungs_empfaenger_typ', '$rechnungs_empfaenger_id','1', '1', '0', '0', '1', '$status_bezahlt', '0', '$faellig_am', '$bezahlt_am', '$kurzbeschreibung', '$clean_arr[geld_konto]', NULL, $leistung_von, $leistung_bis)";
+            $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', '$rechnungs_typ', '$rechnungsdatum','$eingangsdatum', '$netto_betrag','$brutto_betrag','0.00', '$rechnungs_aussteller_typ', '$rechnungs_aussteller_id','$rechnungs_empfaenger_typ', '$rechnungs_empfaenger_id','1', '1', '0', '0', '1', '$status_bezahlt', '0', '$faellig_am', '$bezahlt_am', '$kurzbeschreibung', '$clean_arr[geld_konto]', NULL, $leistung_von, $leistung_bis, 'auto')";
             DB::insert($db_abfrage);
 
             /* Protokollieren */
@@ -1558,7 +1558,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             $letzte_belegnr = $this->letzte_beleg_nr();
             $letzte_belegnr = $letzte_belegnr + 1;
 
-            $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', '$this->rechnungs_typ_druck', '$rechnungsdatum_sql','$eingangsdatum', '$netto_betrag','$brutto_betrag','$skonto_betrag', '$this->rechnungs_aussteller_typ', '$this->rechnungs_aussteller_id','$this->rechnungs_empfaenger_typ', '$this->rechnungs_empfaenger_id','1', '1', '1', '0', '1', '0', '0', '$faellig_am', '0000-00-00', '$kurzbeschreibung', '$empfangs_geld_konto', NULL, $servicetime_from, $servicetime_to)";
+            $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', '$this->rechnungs_typ_druck', '$rechnungsdatum_sql','$eingangsdatum', '$netto_betrag','$brutto_betrag','$skonto_betrag', '$this->rechnungs_aussteller_typ', '$this->rechnungs_aussteller_id','$this->rechnungs_empfaenger_typ', '$this->rechnungs_empfaenger_id','1', '1', '1', '0', '1', '0', '0', '$faellig_am', '0000-00-00', '$kurzbeschreibung', '$empfangs_geld_konto', NULL, $servicetime_from, $servicetime_to, 'auto')";
             DB::insert($db_abfrage);
             /* Protokollieren */
             $last_dat = DB::getPdo()->lastInsertId();
@@ -2356,7 +2356,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             $mwst_satz = request()->input('gesendet') [$a] ['MWST_SATZ'];
             $rabatt_satz = request()->input('gesendet') [$a] ['RABATT_SATZ'];
             $skonto = nummer_komma2punkt(request()->input('gesendet') [$a] ['SKONTO']);
-            $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$beleg_nr', '$kontierungs_pos','$kontierungs_menge', '$einzel_preis', '$gesamt_preis', '$mwst_satz', '$skonto', '$rabatt_satz', '$kontenrahmen_konto', '$kostentraeger_typ', '$kostentraeger_id', '$datum', '$verwendungs_jahr', '$weiter_verwenden', '1', 0)";
+            $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$beleg_nr', '$kontierungs_pos','$kontierungs_menge', '$einzel_preis', '$gesamt_preis', '$mwst_satz', '$skonto', '$rabatt_satz', '$kontenrahmen_konto', '$kostentraeger_typ', '$kostentraeger_id', '$datum', '$verwendungs_jahr', '$weiter_verwenden', '1')";
             DB::insert($db_abfrage);
             /* Protokollieren */
             $last_dat = DB::getPdo()->lastInsertId();
@@ -2726,7 +2726,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
 
         $datum = date("Y-m-d");
 
-        $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$beleg_nr', '$kontierungs_pos','$kontierungs_menge', '$einzel_preis', '$gesamt_preis', '$mwst_satz', '$skonto' , '$rabatt_satz', '$kontenrahmen_konto', '$kostentraeger_typ', '$kostentraeger_id', '$datum', '$verwendungs_jahr', '$weiter_verwenden', '1', 0)";
+        $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$beleg_nr', '$kontierungs_pos','$kontierungs_menge', '$einzel_preis', '$gesamt_preis', '$mwst_satz', '$skonto' , '$rabatt_satz', '$kontenrahmen_konto', '$kostentraeger_typ', '$kostentraeger_id', '$datum', '$verwendungs_jahr', '$weiter_verwenden', '1')";
         DB::insert($db_abfrage);
         /* Protokollieren */
         $last_dat = DB::getPdo()->lastInsertId();
@@ -2771,7 +2771,7 @@ WHERE RECHNUNGEN.BELEG_NR = RECHNUNGEN_POSITIONEN.BELEG_NR && RECHNUNGEN.AKTUELL
             $kontierung_id = $kontierung_id + 1;
             /* Differenzmenge / Restmenge für Pool für Weiterverwendung */
             $gesamt_preis = $diff_menge * $einzel_preis;
-            $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$beleg_nr', '$kontierungs_pos','$diff_menge', '$einzel_preis', '$gesamt_preis', '$mwst_satz', '$rabatt_satz', '$kontenrahmen_konto', '$kostentraeger_typ', '$kostentraeger_id', '$datum', '$verwendungs_jahr', '1', '1', 0)";
+            $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$beleg_nr', '$kontierungs_pos','$diff_menge', '$einzel_preis', '$gesamt_preis', '$mwst_satz', '$rabatt_satz', '$kontenrahmen_konto', '$kostentraeger_typ', '$kostentraeger_id', '$datum', '$verwendungs_jahr', '1', '1')";
             DB::insert($db_abfrage);
         } else {
             echo "KEINE DIFFERENZMENGE ERSICHTLICH";

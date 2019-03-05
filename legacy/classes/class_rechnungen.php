@@ -2653,7 +2653,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
             $letzte_belegnr = $r->letzte_beleg_nr();
             $letzte_belegnr = $letzte_belegnr + 1;
             $f_datum_sql = date_german2mysql($f_datum);
-            $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', '$rechnungstyp', '$rechnungsdatum_sql','$rechnungsdatum_sql', '0.00','0.00','0.00', '$aussteller_typ', '$aussteller_id','$kos_typ_n', '$kos_id_n','1', '1', '1', '0', '1', '0', '0', '$f_datum_sql', '0000-00-00', '$kurzinfo', '$gk_id', NULL, $servicetime_from, $servicetime_to)";
+            $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', '$rechnungstyp', '$rechnungsdatum_sql','$rechnungsdatum_sql', '0.00','0.00','0.00', '$aussteller_typ', '$aussteller_id','$kos_typ_n', '$kos_id_n','1', '1', '1', '0', '1', '0', '0', '$f_datum_sql', '0000-00-00', '$kurzinfo', '$gk_id', NULL, $servicetime_from, $servicetime_to, 'auto')";
             DB::insert($db_abfrage);
 
             /* Protokollieren */
@@ -3322,7 +3322,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $letzte_empfaenger_rnr = $this->letzte_eingangs_ang_nr($empfaenger_typ, $empfaenger_id);
         $n_empfaenger_rnr = $letzte_empfaenger_rnr + 1;
         $rechnungsdatum = date("Y-m-d");
-        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$id', '$ang_nr', '$n_ang_nr', '$n_empfaenger_rnr', 'Angebot', '$rechnungsdatum','$rechnungsdatum', '0.00','0.0','0.00', '$aussteller_typ', '$aussteller_id','$empfaenger_typ', '$empfaenger_id','1', '1', '0', '0', '1', '0', '0', '$rechnungsdatum', '$rechnungsdatum', '$kurzinfo', '9999999', NULL, NULL, NULL)";
+        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$id', '$ang_nr', '$n_ang_nr', '$n_empfaenger_rnr', 'Angebot', '$rechnungsdatum','$rechnungsdatum', '0.00','0.0','0.00', '$aussteller_typ', '$aussteller_id','$empfaenger_typ', '$empfaenger_id','1', '1', '0', '0', '1', '0', '0', '$rechnungsdatum', '$rechnungsdatum', '$kurzinfo', '9999999', NULL, NULL, NULL, 'auto')";
         DB::insert($db_abfrage);
 
         /* Protokollieren */
@@ -3367,7 +3367,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $faellig = date_german2mysql($faellig);
         $eingangsdatum_sql = date_german2mysql($eingangsdatum);
 
-        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$beleg_nr', '$rnr', '$l_ausg_rnr', '$l_empf_e_nr', '$r_typ', '$r_datum_sql','$eingangsdatum_sql', '$netto_betrag','$brutto_betrag','$skonto_betrag', '$aus_typ', '$aus_id','$empf_typ', '$empf_id','1', '1', '1', '0', '1', '0', '0', '$faellig', '0000-00-00', '$kurzinfo', '$empf_gk_id', NULL, $servicetime_from, $servicetime_to)";
+        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$beleg_nr', '$rnr', '$l_ausg_rnr', '$l_empf_e_nr', '$r_typ', '$r_datum_sql','$eingangsdatum_sql', '$netto_betrag','$brutto_betrag','$skonto_betrag', '$aus_typ', '$aus_id','$empf_typ', '$empf_id','1', '1', '1', '0', '1', '0', '0', '$faellig', '0000-00-00', '$kurzinfo', '$empf_gk_id', NULL, $servicetime_from, $servicetime_to, 'auto')";
         DB::insert($db_abfrage);
         /* Protokollieren */
         $last_dat = DB::getPdo()->lastInsertId();
@@ -3429,7 +3429,7 @@ GROUP BY KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, KONTENRAHMEN_KONTO) as t1");
         $faellig = date_german2mysql($faellig);
         $eingangsdatum_sql = date_german2mysql($eingangsdatum);
 
-        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$beleg_nr', '$rnr', '$l_ausg_rnr', '$l_empf_e_nr', '$r_typ', '$r_datum_sql','$eingangsdatum_sql', '$netto_betrag','$brutto_betrag','$skonto_betrag', '$aus_typ', '$aus_id','$empf_typ', '$empf_id','1', '1', '1', '0', '1', '0', '0', '$faellig', '0000-00-00', '$kurzinfo', '$empf_gk_id', NULL, $servicetime_from, $servicetime_to)";
+        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$beleg_nr', '$rnr', '$l_ausg_rnr', '$l_empf_e_nr', '$r_typ', '$r_datum_sql','$eingangsdatum_sql', '$netto_betrag','$brutto_betrag','$skonto_betrag', '$aus_typ', '$aus_id','$empf_typ', '$empf_id','1', '1', '1', '0', '1', '0', '0', '$faellig', '0000-00-00', '$kurzinfo', '$empf_gk_id', NULL, $servicetime_from, $servicetime_to, 'auto')";
         DB::insert($db_abfrage);
         /* Protokollieren */
         $last_dat = DB::getPdo()->lastInsertId();
@@ -4325,7 +4325,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
         $gk = new geldkonto_info ();
         $gk->geld_konto_ermitteln('Partner', $p_id, null, 'Kreditor');
         $faellig_am = tage_plus($datum, 10);
-        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', 'Rechnung', '$datum','$datum', '0','0.00','0.00', 'Partner', '$p_id','Partner', '$empf_p_id','1', '1', '0', '0', '1', '0', '0', '$faellig_am', '0000-00-00', '$r_org->kurzbeschreibung', '$gk->geldkonto_id', NULL, '$leistung_von', '$leistung_bis')";
+        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', 'Rechnung', '$datum','$datum', '0','0.00','0.00', 'Partner', '$p_id','Partner', '$empf_p_id','1', '1', '0', '0', '1', '0', '0', '$faellig_am', '0000-00-00', '$r_org->kurzbeschreibung', '$gk->geldkonto_id', NULL, '$leistung_von', '$leistung_bis', 'auto')";
         DB::insert($db_abfrage);
         /* Protokollieren */
         $last_dat = DB::getPdo()->lastInsertId();
@@ -4371,7 +4371,7 @@ ORDER BY RECHNUNGSNUMMER, POSITION ASC";
 
                     /* Kontieren */
                     $kontierung_id = $r->get_last_kontierung_id() + 1;
-                    $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$letzte_belegnr', '$pos','$k_menge', '$k_preis', '$k_preis_g', '$k_mwst', '$k_skonto', '$k_rabatt', '$k_konto', '$k_kos_typ', '$k_kos_id', '$datum', '$jahr', '0', '1', 0)";
+                    $db_abfrage = "INSERT INTO KONTIERUNG_POSITIONEN VALUES (NULL, '$kontierung_id','$letzte_belegnr', '$pos','$k_menge', '$k_preis', '$k_preis_g', '$k_mwst', '$k_skonto', '$k_rabatt', '$k_konto', '$k_kos_typ', '$k_kos_id', '$datum', '$jahr', '0', '1')";
                     DB::insert($db_abfrage);
 
                     /* Protokollieren */
