@@ -126,14 +126,12 @@
     import _ from 'lodash';
     import axios from '../../../../libraries/axios';
     import BEntitySelect from '../../../common/EntitySelect.vue';
-    import VSelect from "../../../common/VSelect.vue";
 
     const Snackbar = namespace('shared/snackbar');
     const Refresh = namespace('shared/refresh');
 
     @Component({
         components: {
-            VSelect,
             'b-entity-select': BEntitySelect
         }
     })

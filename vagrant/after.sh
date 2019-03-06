@@ -7,3 +7,8 @@
 # If you have user-specific configurations you would like
 # to apply, you may also create user-customizations.sh,
 # which will be run after this script.
+
+ln -s /home/vagrant/code/vagrant/websockets.conf /etc/supervisor/conf.d/websockets.conf
+ln -s /home/vagrant/code/vagrant/queue.conf /etc/supervisor/conf.d/queue.conf
+
+supervisorctl update
