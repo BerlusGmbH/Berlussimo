@@ -89,11 +89,11 @@ class Invoice extends Model
         return $this->belongsTo(static::class, 'advance_payment_invoice_id', 'BELEG_NR');
     }
 
-    public function lines()
+    public function linesWithProductInformation()
     {
         $itemDescriptions = 'POSITIONEN_KATALOG';
         $table = (new InvoiceLine())->getTable();
-        return $this->hasMany(InvoiceLine::class, 'BELEG_NR', 'BELEG_NR')
+        return $this->lines()
             ->leftJoin($itemDescriptions, function ($join) use ($itemDescriptions, $table) {
                 $join->on($itemDescriptions . '.ART_LIEFERANT', '=', $table . '.ART_LIEFERANT');
                 $join->on($itemDescriptions . '.ARTIKEL_NR', '=', $table . '.ARTIKEL_NR');
@@ -105,6 +105,11 @@ class Invoice extends Model
                         ->groupBy('ART_LIEFERANT', 'ARTIKEL_NR');
                 });
             })->select($table . '.*', $itemDescriptions . '.BEZEICHNUNG', $itemDescriptions . '.EINHEIT');
+    }
+
+    public function lines()
+    {
+        return $this->hasMany(InvoiceLine::class, 'BELEG_NR', 'BELEG_NR');
     }
 
     public function forwardedLines()

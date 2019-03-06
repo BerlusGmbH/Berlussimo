@@ -20,7 +20,7 @@ class InvoiceController extends Controller
                 'bankAccount',
                 'from',
                 'to',
-                'lines' => function ($query) {
+                'linesWithProductInformation' => function ($query) {
                     $query->orderBy('POSITION');
                 },
                 'advancePaymentInvoice',
@@ -32,12 +32,12 @@ class InvoiceController extends Controller
                 'advancePaymentInvoices.advancePaymentInvoice',
             ]
         )->toArray();
+        Arr::set($invoiceArray, 'lines', $invoiceArray['lines_with_product_information']);
+        Arr::forget($invoiceArray, 'lines_with_product_information');
         foreach ($invoiceArray['lines'] as $key => $item) {
             $filteredAssignments = $invoice->assignments()->with('costUnit')->where('POSITION', $item['POSITION'])->get()->toArray();
             $invoiceArray['lines'][$key]['assignments'] = $filteredAssignments ?: [];
         }
-
-        unset($invoiceArray['assignments']);
 
         return $invoiceArray;
     }
