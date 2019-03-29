@@ -3629,6 +3629,9 @@ ORDER BY HGA;");
                             $c++;
 
                             $jahres_beteiligung = $jahres_beteiligung + $heizkosten_vorjahr + $heizkosten_vorjahr_inflation;
+                            if ($a == 0) {
+                                $betrag += $energie_alle + $energie_alle_inflation;
+                            }
                         }
                         $jahres_beteiligung_a = nummer_punkt2komma_t($jahres_beteiligung);
                         $wtab_arr [$c] ['KONTO_BEZ'] = "<b>Gesamtsumme</b>";
