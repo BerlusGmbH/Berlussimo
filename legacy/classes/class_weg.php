@@ -3594,6 +3594,16 @@ ORDER BY HGA;");
                     if (strip_tags($wtab_arr [$c] ['KONTOART_BEZ']) == 'SALDO') {
                         if (session()->has('hga_profil_id')) {
                             $heizkosten_vorjahr = $this->get_summe_hk('Eigentuemer', $eig_id, session()->get('hga_profil_id')) * -1;
+                            if ($heizkosten_vorjahr === 0) {
+                                $profile = \App\Models\HOABudgetProfile::where('ID', session()->get('hga_profil_id'))->first();
+                                $purchaseContracts = \App\Models\Kaufvertraege::whereHas('einheit', function ($query) use ($einheit_id) {
+                                    $query->where('EINHEIT_ID', $einheit_id);
+                                })->active('>=', $profile->VON)->active('<=', $profile->BIS)->get();
+                                foreach ($purchaseContracts as $purchaseContract) {
+                                    $heizkosten_vorjahr += $this->get_summe_hk('Eigentuemer', $purchaseContract->ID, session()->get('hga_profil_id'));
+                                }
+                                $heizkosten_vorjahr *= -1;
+                            }
                             $heizkosten_vorjahr_inflation = $heizkosten_vorjahr * ($this->wp_enegiekosteninflation / 100);
                             $heizkosten_vorjahr_a = nummer_punkt2komma_t($heizkosten_vorjahr);
                             $heizkosten_vorjahr_inflation_a = nummer_punkt2komma_t($heizkosten_vorjahr_inflation);
@@ -5904,7 +5914,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $inst_kosten_soll = $this->hg_tab_soll_ist_einnahmen($this->ihr_konto, 'Einheit', $this->einheit_id, $this->eigentuemer_von_t, $this->eigentuemer_bis_t);
             $ru_tab = [];
             $ru_tab [0] ['ART'] = "Zuführung zur Instandhaltungsrücklage";
-            $ru_tab [0] ['ANTEIL'] = '-' . nummer_punkt2komma($inst_kosten_soll);
+            $ru_tab [0] ['ANTEIL'] = '-' . nummer_punkt2komma_t($inst_kosten_soll);
 
             $su_im_wirtschaftsjahr = DB::table('WEG_WG_DEF')
                 ->whereIn('E_KONTO', $su_konten_im_kontenrahmen->pluck('KONTO'))
