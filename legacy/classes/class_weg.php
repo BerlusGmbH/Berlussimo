@@ -5904,7 +5904,7 @@ OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m
             $inst_kosten_soll = $this->hg_tab_soll_ist_einnahmen($this->ihr_konto, 'Einheit', $this->einheit_id, $this->eigentuemer_von_t, $this->eigentuemer_bis_t);
             $ru_tab = [];
             $ru_tab [0] ['ART'] = "Zuführung zur Instandhaltungsrücklage";
-            $ru_tab [0] ['ANTEIL'] = '-' . nummer_punkt2komma($inst_kosten_soll);
+            $ru_tab [0] ['ANTEIL'] = '-' . nummer_punkt2komma_t($inst_kosten_soll);
 
             $su_im_wirtschaftsjahr = DB::table('WEG_WG_DEF')
                 ->whereIn('E_KONTO', $su_konten_im_kontenrahmen->pluck('KONTO'))
