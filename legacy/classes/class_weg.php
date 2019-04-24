@@ -3594,6 +3594,16 @@ ORDER BY HGA;");
                     if (strip_tags($wtab_arr [$c] ['KONTOART_BEZ']) == 'SALDO') {
                         if (session()->has('hga_profil_id')) {
                             $heizkosten_vorjahr = $this->get_summe_hk('Eigentuemer', $eig_id, session()->get('hga_profil_id')) * -1;
+                            if ($heizkosten_vorjahr === 0) {
+                                $profile = \App\Models\HOABudgetProfile::where('ID', session()->get('hga_profil_id'))->first();
+                                $purchaseContracts = \App\Models\Kaufvertraege::whereHas('einheit', function ($query) use ($einheit_id) {
+                                    $query->where('EINHEIT_ID', $einheit_id);
+                                })->active('>=', $profile->VON)->active('<=', $profile->BIS)->get();
+                                foreach ($purchaseContracts as $purchaseContract) {
+                                    $heizkosten_vorjahr += $this->get_summe_hk('Eigentuemer', $purchaseContract->ID, session()->get('hga_profil_id'));
+                                }
+                                $heizkosten_vorjahr *= -1;
+                            }
                             $heizkosten_vorjahr_inflation = $heizkosten_vorjahr * ($this->wp_enegiekosteninflation / 100);
                             $heizkosten_vorjahr_a = nummer_punkt2komma_t($heizkosten_vorjahr);
                             $heizkosten_vorjahr_inflation_a = nummer_punkt2komma_t($heizkosten_vorjahr_inflation);
