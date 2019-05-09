@@ -67,6 +67,7 @@ mix.js(
         'resources/assets/js/materialize.js',
         'resources/assets/js/materialize_autocomplete.js',
         'resources/assets/js/materialize_chips_autocomplete.js',
+        'resources/assets/js/materialize_select.js',
         'resources/assets/js/materialize_init.js'
     ],
     'public/js/'
