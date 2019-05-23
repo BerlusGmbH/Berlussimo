@@ -1,5 +1,7 @@
 <?php
 
+use Carbon\Carbon;
+
 class sepa
 {
     public $mand;
@@ -117,7 +119,7 @@ class sepa
 
     function alle_mandate_anzeigen_kurz($nutzungsart = 'Alle')
     {
-        $result = $this->get_mandate_arr($nutzungsart);
+        $result = $this->get_mandate_arr($nutzungsart, true);
 
         if (!empty($result)) {
             if ($nutzungsart == 'MIETZAHLUNG') {
@@ -125,7 +127,6 @@ class sepa
                 echo "<thead><tr><th>Nr.</th><th>Einheit</th><th>Name</th><th>Ref.</th><th>Anfang</th><th>Ende</th><th>Nutzung</th><th>Einzugsart</th><th>Anschrift</th><th>IBAN</th><th>BIC</th></tr></thead>";
                 $z = 0;
                 $zz = 0;
-                $summe_ziehen_alle = 0.00;
                 foreach ($result as $row) {
                     $z++;
                     $zz++; // Zeile
@@ -139,7 +140,7 @@ class sepa
                     $mandat_status = $this->get_mandat_seq_status($row ['M_REFERENZ'], $row ['IBAN']);
                     $link_nutzungen = "<a href='" . route('web::sepa::legacy', ['option' => 'mandat_nutzungen_anzeigen', 'm_ref' => $row['M_REFERENZ']]) . "'>$mandat_status</a>";
 
-                    echo "<tr class=\"zeile$z\"><td>$zz.</td><td><a href='" . route('web::sepa::legacy', ['option' => 'mandat_edit_mieter', 'mref_dat' => $row['DAT']]) . "'>$mv->einheit_kurzname</a></td><td>$row[NAME]</td><td>$row[M_REFERENZ]</td><td>$row[M_ADATUM]</td><td>$row[M_EDATUM]</td><td>$link_nutzungen</td><td>$row[EINZUGSART]</td></td><td>$row[ANSCHRIFT]</td><td>$row[IBAN1]</td><td>$row[BIC]</td></tr>";
+                    echo "<tr class=\"zeile$z\"><td>$zz.</td><td><a href='" . route('web::sepa::legacy', ['option' => 'mandat_edit_mieter', 'mref_dat' => $row['DAT']]) . "'>$mv->einheit_kurzname</a></td><td>$row[NAME]</td><td>$row[M_REFERENZ]</td><td" . ($row->isActive() ? " class=\"green--text\"" : " class=\"red--text\"") . "> $row[M_ADATUM]</td><td" . ($row->isActive() ? " class=\"green--text\"" : " class=\"red--text\"") . ">$row[M_EDATUM]</td><td>$link_nutzungen</td><td>$row[EINZUGSART]</td></td><td>$row[ANSCHRIFT]</td><td>$row[IBAN1]</td><td>$row[BIC]</td></tr>";
                     $diff = 0.00;
 
                     /* Zeilenfarbetausch */
@@ -162,9 +163,6 @@ class sepa
                 echo "<table class=\"sortable striped\">";
                 echo "<thead><tr><th>Einheit</th><th>Name</th><th>Ref.</th><th>Anfang</th><th>Ende</th><th>Nutzung</th><th>Einzugsart</th><th>Anschrift</th><th>IBAN</th><th>BIC</th></tr></thead>";
                 $z = 0;
-                $summe_ziehen_alle = 0.00;
-                $summe_saldo_alle = 0.00;
-                $summe_diff_alle = 0.00;
                 foreach ($result as $row) {
                     $z++;
                     $mand = ( object )$row;
@@ -177,37 +175,73 @@ class sepa
                     $e = new einheit ();
                     $e->get_einheit_info($einheit_id);
 
-                    echo "<tr class=\"zeile$z\"><td><a href='" . route('web::sepa::legacy', ['option' => 'mandat_edit_mieter', 'mref_dat' => $mand->DAT]) . "'>$e->einheit_kurzname</a></td><td>$mand->NAME</td><td>$mand->M_REFERENZ</td><td>$mand->M_ADATUM</td><td>$mand->M_EDATUM</td><td>$link_nutzungen</td><td>$mand->EINZUGSART</td></td><td>$mand->ANSCHRIFT</td><td>$mand->IBAN1</td><td>$mand->BIC</td></tr>";
+                    echo "<tr class=\"zeile$z\"><td><a href='" . route('web::sepa::legacy', ['option' => 'mandat_edit_mieter', 'mref_dat' => $mand->DAT]) . "'>$e->einheit_kurzname</a></td><td>$mand->NAME</td><td>$mand->M_REFERENZ</td><td" . ($row->isActive() ? " class=\"green--text\"" : " class=\"red--text\"") . ">$mand->M_ADATUM</td><td" . ($row->isActive() ? " class=\"green--text\"" : " class=\"red--text\"") . ">$mand->M_EDATUM</td><td>$link_nutzungen</td><td>$mand->EINZUGSART</td></td><td>$mand->ANSCHRIFT</td><td>$mand->IBAN1</td><td>$mand->BIC</td></tr>";
                     /* Zeilenfarbetausch */
                     if ($z == 2) {
                         $z = 0;
                     }
                 }
-                $summe_ziehen_alle_a = nummer_punkt2komma_t($summe_ziehen_alle);
-                $summe_saldo_alle_a = nummer_punkt2komma_t($summe_saldo_alle);
-                $summe_diff_alle_a = nummer_punkt2komma_t($summe_diff_alle);
                 echo "</table>";
             }
 
             if ($nutzungsart == 'Alle') {
                 echo "Übersicht alle Mandate, in Arbeit!!!!";
             }
-
-            if (isset ($summe_ziehen_alle) && $summe_ziehen_alle > 0.00) {
-                $f = new formular ();
-                $f->erstelle_formular('SEPA-Datei', '');
-                $js = '';
-                $f->check_box_js('sammelbetrag', '1', 'Sammelbetrag', $js, 'checked');
-                $f->hidden_feld('option', 'sepa_download');
-                $f->hidden_feld('nutzungsart', $nutzungsart);
-                $f->send_button('Btn-SEPApdf', "PDF-Begleitzettell");
-                $f->send_button('Button', "SEPA-Datei für $nutzungsart erstellen");
-                $f->ende_formular();
-            }
-
-            unset ($row);
         } else {
             fehlermeldung_ausgeben("Keine Mandate für $nutzungsart in der Datenbank!");
+        }
+    }
+
+    function get_mandate_arr($nutzungsart = 'Alle', $withFuture = false)
+    {
+        if (!session()->has('objekt_id') && $nutzungsart != 'Alle') {
+            session()->put('last_url', route('web::sepa::legacy', ['option' => 'mandate_mieter'], false));
+            throw new \App\Exceptions\MessageException(
+                new \App\Messages\InfoMessage('Objekt wählen')
+            );
+        }
+        $datum_heute = date("Y-m-d");
+        if ($nutzungsart == 'Alle') {
+            $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' AND M_EDATUM>='$datum_heute' AND M_ADATUM<='$datum_heute' ORDER BY NAME ASC");
+        } elseif (strtolower($nutzungsart) == 'mietzahlung') {
+            $objekt_id = session()->get('objekt_id');
+            $sepa = \App\Models\SEPAMandate::whereHas('debtorRentalContract.einheit.haus.objekt', function ($query) use ($objekt_id) {
+                $query->where('OBJEKT_ID', $objekt_id);
+            })->where('NUTZUNGSART', $nutzungsart);
+            if ($withFuture) {
+                $date = Carbon::parse($datum_heute)->subMonths(12)->firstOfMonth();
+                $sepa->active('>=', $date);
+            } else {
+                $sepa->active('=', $datum_heute);
+            }
+            $result = $sepa->defaultOrder()
+                ->get();
+        } elseif (strtolower($nutzungsart) == 'hausgeld') {
+            $objekt_id = session()->get('objekt_id');
+            $sepa = \App\Models\SEPAMandate::whereHas('debtorPurchaseContract.einheit.haus.objekt', function ($query) use ($objekt_id) {
+                $query->where('OBJEKT_ID', $objekt_id);
+            })->where('NUTZUNGSART', $nutzungsart);
+            if ($withFuture) {
+                $date = Carbon::parse($datum_heute)->subMonths(12)->firstOfMonth();
+                $sepa->active('>=', $date);
+            } else {
+                $sepa->active('=', $datum_heute);
+            }
+            $result = $sepa->defaultOrder()
+                ->get();
+        } else {
+            $gk_id = session()->get('geldkonto_id');
+            $sepa = \App\Models\SEPAMandate::where('NUTZUNGSART', $nutzungsart)
+                ->where('M_EDATUM', '>=', $datum_heute);
+            if (!$withFuture) {
+                $sepa->where('M_ADATUM', '<=', $datum_heute);
+            }
+            $result = $sepa->where('GLAEUBIGER_GK_ID', $gk_id)
+                ->defaultOrder()
+                ->get();
+        }
+        if (!empty($result)) {
+            return $result;
         }
     }
 
@@ -697,6 +731,8 @@ class sepa
         }
     }
 
+    /* Prüfen ob mandatsreferenz existiert */
+
     function mandat_aendern($dat, $mref, $glaeubiger_id, $gk_id, $empf, $name, $anschrift, $kto, $blz, $iban, $bic, $bankname, $udatum, $adatum, $edatum, $m_art, $n_art, $e_art, $kos_typ, $kos_id)
     {
         $this->get_mandat_infos($dat);
@@ -724,8 +760,6 @@ class sepa
             protokollieren('SEPA_MANDATE', $last_dat, $dat);
         }
     }
-
-    /* Prüfen ob mandatsreferenz existiert */
 
     function mandat_dat_deaktivieren($dat)
     {
@@ -1029,49 +1063,6 @@ class sepa
             $pdf->ezText("                Erstellt am: $uhrzeit", 10);
             ob_end_clean(); // ausgabepuffer leeren
             $pdf->ezStream();
-        }
-    }
-
-    function get_mandate_arr($nutzungsart = 'Alle')
-    {
-        if (!session()->has('objekt_id') && $nutzungsart != 'Alle') {
-            session()->put('last_url', route('web::sepa::legacy', ['option' => 'mandate_mieter'], false));
-            throw new \App\Exceptions\MessageException(
-                new \App\Messages\InfoMessage('Objekt wählen')
-            );
-        }
-        $datum_heute = date("Y-m-d");
-        if ($nutzungsart == 'Alle') {
-            $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' AND M_EDATUM>='$datum_heute' AND M_ADATUM<='$datum_heute' ORDER BY NAME ASC");
-        } elseif (strtolower($nutzungsart) == 'mietzahlung') {
-            $objekt_id = session()->get('objekt_id');
-            $result = \App\Models\SEPAMandate::whereHas('debtorRentalContract.einheit.haus.objekt', function ($query) use ($objekt_id) {
-                $query->where('OBJEKT_ID', $objekt_id);
-            })->where('NUTZUNGSART', $nutzungsart)
-                ->where('M_EDATUM', '>=', $datum_heute)
-                ->where('M_ADATUM', '<=', $datum_heute)
-                ->defaultOrder()
-                ->get();
-        } elseif (strtolower($nutzungsart) == 'hausgeld') {
-            $objekt_id = session()->get('objekt_id');
-            $result = \App\Models\SEPAMandate::whereHas('debtorPurchaseContract.einheit.haus.objekt', function ($query) use ($objekt_id) {
-                $query->where('OBJEKT_ID', $objekt_id);
-            })->where('NUTZUNGSART', $nutzungsart)
-                ->where('M_EDATUM', '>=', $datum_heute)
-                ->where('M_ADATUM', '<=', $datum_heute)
-                ->defaultOrder()
-                ->get();
-        } else {
-            $gk_id = session()->get('geldkonto_id');
-            $result = \App\Models\SEPAMandate::where('NUTZUNGSART', $nutzungsart)
-                ->where('M_EDATUM', '>=', $datum_heute)
-                ->where('M_ADATUM', '<=', $datum_heute)
-                ->where('GLAEUBIGER_GK_ID', $gk_id)
-                ->defaultOrder()
-                ->get();
-        }
-        if (!empty($result)) {
-            return $result;
         }
     }
 
