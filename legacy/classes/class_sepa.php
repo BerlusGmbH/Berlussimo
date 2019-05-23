@@ -117,16 +117,7 @@ class sepa
 
     function alle_mandate_anzeigen_kurz($nutzungsart = 'Alle')
     {
-        if (!session()->has('geldkonto_id') && $nutzungsart != 'Alle') {
-            throw new \App\Exceptions\MessageException(new \App\Messages\InfoMessage('Bitte wählen Sie ein Geldkonto.'));
-        }
-        $datum_heute = date("Y-m-d");
-        if ($nutzungsart == 'Alle') {
-            $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' AND M_EDATUM>='$datum_heute' ORDER BY NAME ASC");
-        } else {
-            $gk_id = session()->get('geldkonto_id');
-            $result = DB::select("SELECT * FROM `SEPA_MANDATE` WHERE `AKTUELL` = '1' && M_EDATUM>='$datum_heute' AND NUTZUNGSART='$nutzungsart' && GLAEUBIGER_GK_ID='$gk_id' ORDER BY NAME ASC");
-        }
+        $result = $this->get_mandate_arr($nutzungsart);
 
         if (!empty($result)) {
             if ($nutzungsart == 'MIETZAHLUNG') {
