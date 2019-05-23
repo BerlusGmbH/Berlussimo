@@ -144,6 +144,7 @@ function detail_drop_down_kategorie()
     echo "<option value=\"Person\">Person</option>\n";
     echo "<option value=\"Mietvertrag\">Mietvertrag</option>\n";
     echo "<option value=\"Partner\">Partner</option>\n";
+    echo "<option value=\"GELD_KONTEN\">Bankkonto</option>\n";
     echo "<option value=\"SEPA_UEBERWEISUNG\">Sepa Überweisung</option>\n";
     echo "</select></td></tr>";
 }

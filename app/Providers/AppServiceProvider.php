@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Bankkonten;
 use App\Models\BaustellenExtern;
 use App\Models\Einheiten;
 use App\Models\Haeuser;
@@ -42,7 +43,8 @@ class AppServiceProvider extends ServiceProvider
             'Baustelle_ext' => BaustellenExtern::class,
             'Mietvertrag' => Mietvertraege::class,
             'Wirtschaftseinheit' => Wirtschaftseinheiten::class,
-            'Lager' => Lager::class
+            'Lager' => Lager::class,
+            'GELD_KONTEN' => Bankkonten::class
         ]);
 
         Schema::defaultStringLength(191);
