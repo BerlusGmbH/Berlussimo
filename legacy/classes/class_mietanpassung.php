@@ -2295,10 +2295,13 @@ class mietanpassung
             'left' => '370'
         ));
         /* Vierte Seite ZUSTIMMUNG - Die der Mieter uterschreibt und zurücksendet */
+
+        $this->widerrufsseite($pdf);
+
         $pdf->ezNewPage();
         $pdf->ezText("$p->partner_name\n$p->partner_strasse $p->partner_hausnr\n<b>$p->partner_plz $p->partner_ort</b>", 12);
         $pdf->ezSetDy(-60);
-        // y=ezText(text,[size],[array options])
+
         $pdf->ezText("<b>ERKLÄRUNG</b>", 14, array(
             'justification' => 'center'
         ));
@@ -2382,7 +2385,6 @@ class mietanpassung
             'left' => '370'
         ));
 
-        $pdf->ezNewPage();
         $this->widerrufsseite($pdf);
 
         /* Ausgabe */
@@ -3056,8 +3058,6 @@ class mietanpassung
         $pdf->ezText("Unterschrift", 9, array(
             'left' => '370'
         ));
-
-        $pdf->ezNewPage();
 
         $this->widerrufsseite($pdf);
 
