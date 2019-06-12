@@ -157,12 +157,15 @@ class mietanpassung
 
             /* Schon mal vermietet */
             if ($e->get_einheit_status($einheit_id)) {
-                $mv_id = $e->get_last_mietvertrag_id($einheit_id);
+                $mv = \App\Models\Mietvertraege::whereHas('einheit', function ($query) use ($einheit_id) {
+                    $query->where('EINHEIT_ID', $einheit_id);
+                })->active()->first(['MIETVERTRAG_ID']);
                 /*
 				 * Wenn aktuell vermietet
 				 * hier spielt sich alles ab
 				 */
-                if (!empty ($mv_id)) {
+                if (isset($mv)) {
+                    $mv_id = $mv->MIETVERTRAG_ID;
                     $ausstattungsklasse = $d->finde_detail_inhalt('Einheit', $einheit_id, 'Ausstattungsklasse');
                     if (empty ($ausstattungsklasse)) {
                         throw new \App\Exceptions\MessageException(
