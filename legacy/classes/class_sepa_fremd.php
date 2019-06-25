@@ -47,7 +47,7 @@ class PmtInf {
 			// $result.=' <BtchBookg>TRUE'."</BtchBookg>\n";
 		}
 		if ($sammelbetrag == 0) {
-			$result .= '      <BtchBookg>FALSE' . "</BtchBookg>\n";
+            $result .= '      <BtchBookg>false' . "</BtchBookg>\n";
 		}
 		$result .= '      <NbOfTxs>' . count ( $this->FBuchungen ) . "</NbOfTxs>\n";
 		$result .= '      <CtrlSum>' . sprintf ( '%.2f', $this->FSumme ) . "</CtrlSum>\n";

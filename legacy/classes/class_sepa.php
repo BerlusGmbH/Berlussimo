@@ -1627,7 +1627,7 @@ class sepa
             $gk = new geldkonto_info ();
             $gk->geld_konto_details($von_gk_id);
 
-            $xml_string = $myKtoSepaSimple->GetXML('TRF', $msg_id, $dateiname, $this->umlautundgross($gk->konto_beguenstigter), $this->umlautundgross("$gk->geldkonto_bez"), $gk->IBAN, $gk->BIC, $sammler);
+            $xml_string = $myKtoSepaSimple->GetXML('TRF', $msg_id, $dateiname, $this->umlautundgross($gk->konto_beguenstigter), $this->umlautundgross("$gk->geldkonto_bez"), $gk->IBAN, $gk->BIC, null, $sammler);
             // $xmlstring = $myKtoSepaSimple->GetXML('CORE', $dateiname_msgid , $PmtInfId, $this->umlautundgross($gk->konto_beguenstigter), $this->umlautundgross("$gk->konto_beguenstigter - $username"), $seps->IBAN, $seps->BIC, $glaeubiger_id, $sammelbetrag);
             /* SEPA AUSGABE */
             ob_clean();

@@ -228,7 +228,8 @@ switch ($option) {
         if (request()->has('gk_id') && request()->has('kat')) {
             $von_gk_id = request()->input('gk_id');
             $kat = request()->input('kat');
-            if ($kat == 'ET_AUSZAHLUNG') {
+            $d = new detail();
+            if ($kat == 'ET_AUSZAHLUNG' || $d->finde_detail_inhalt('GELD_KONTEN', $von_gk_id, 'SEPA-Einzeltransaktionen') === 'ja') {
                 $sammler = '0'; // Einzelbeträge
             } else {
                 $sammler = '1'; // Nur einen Betrag
