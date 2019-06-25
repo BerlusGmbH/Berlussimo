@@ -1696,6 +1696,8 @@ class mietanpassung
             $cable_tv = "OR `KOSTENKATEGORIE` = 'Kabel TV' ";
         }
 
+        $date = date('Y-m-d');
+
         $db_abfrage = "SELECT * 
         FROM `MIETENTWICKLUNG` 
         WHERE (`KOSTENKATEGORIE` = 'MOD' 
@@ -1705,7 +1707,10 @@ class mietanpassung
             "OR `KOSTENKATEGORIE` = 'Garagenmiete') 
         AND KOSTENTRAEGER_TYP='Mietvertrag' 
         AND KOSTENTRAEGER_ID='$mv_id' 
-        AND MIETENTWICKLUNG_AKTUELL = '1'";
+        AND MIETENTWICKLUNG_AKTUELL = '1'
+        AND ANFANG <= '$date'
+        AND (ENDE >= '$date'
+        OR ENDE = '0000-00-00')";
         $result = DB::select($db_abfrage);
         return $result;
     }
