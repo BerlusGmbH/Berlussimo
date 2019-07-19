@@ -7,6 +7,7 @@ use App\Models\Traits\Active;
 use App\Models\Traits\DefaultOrder;
 use App\Models\Traits\Searchable;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -39,29 +40,14 @@ class Mietvertraege extends Model implements ActiveContract
         });
     }
 
-    public function mieter()
-    {
-        return $this->belongsToMany(Person::class, 'PERSON_MIETVERTRAG', 'PERSON_MIETVERTRAG_MIETVERTRAG_ID', 'PERSON_MIETVERTRAG_PERSON_ID')->wherePivot('PERSON_MIETVERTRAG_AKTUELL', '1');
-    }
-
     public function einheit()
     {
         return $this->belongsTo('App\Models\Einheiten', 'EINHEIT_ID', 'EINHEIT_ID');
     }
 
-    public function getMieterNamenAttribute()
+    public function mieter()
     {
-        return $this->mieter->implode('full_name', '; ');
-    }
-
-    public function getStartDateFieldName()
-    {
-        return 'MIETVERTRAG_VON';
-    }
-
-    public function getEndDateFieldName()
-    {
-        return 'MIETVERTRAG_BIS';
+        return $this->belongsToMany(Person::class, 'PERSON_MIETVERTRAG', 'PERSON_MIETVERTRAG_MIETVERTRAG_ID', 'PERSON_MIETVERTRAG_PERSON_ID')->wherePivot('PERSON_MIETVERTRAG_AKTUELL', '1');
     }
 
     public function scopeSearch($query, $tokens)
@@ -82,10 +68,17 @@ class Mietvertraege extends Model implements ActiveContract
             ->where(function ($query) {
                 $query->where('KOSTENKATEGORIE', '=', 'Miete kalt')
                     ->orWhere('KOSTENKATEGORIE', '=', 'MHG')
-                    ->orWhere('KOSTENKATEGORIE', '=', 'Mietminderung')
                     ->orWhere('KOSTENKATEGORIE', '=', 'MOD')
                     ->orWhere('KOSTENKATEGORIE', '=', 'Stellplatzmiete')
                     ->orWhere('KOSTENKATEGORIE', '=', 'Untermieter Zuschlag');
+            });
+    }
+
+    public function basicRentDeductionDefinitions($from = null, $to = null)
+    {
+        return $this->rentDefinitions($from, $to)
+            ->where(function ($query) {
+                $query->where('KOSTENKATEGORIE', '=', 'Mietminderung');
             });
     }
 
@@ -110,23 +103,38 @@ class Mietvertraege extends Model implements ActiveContract
         return $rentDefinitions;
     }
 
-    public function heatingExpenseDefinitions($from = null, $to = null)
+    public function heatingExpenseAdvanceDefinitions($from = null, $to = null)
     {
         return $this->rentDefinitions($from, $to)
             ->where(function ($query) {
-                $query->where('KOSTENKATEGORIE', 'LIKE', 'Heizkostenabrechnung%')
-                    ->orWhere('KOSTENKATEGORIE', '=', 'Heizkosten Vorauszahlung');
+                $query->where('KOSTENKATEGORIE', '=', 'Heizkosten Vorauszahlung');
             });
     }
 
-    public function operatingCostDefinitions($from = null, $to = null)
+    public function heatingExpenseSettlementDefinitions($from = null, $to = null)
+    {
+        return $this->rentDefinitions($from, $to)
+            ->where(function ($query) {
+                $query->where('KOSTENKATEGORIE', 'LIKE', 'Heizkostenabrechnung%');
+            });
+    }
+
+    public function operatingCostAdvanceDefinitions($from = null, $to = null)
+    {
+        return $this->rentDefinitions($from, $to)
+            ->where(function ($query) {
+                $query->where('KOSTENKATEGORIE', '=', 'Kabel TV')
+                    ->orWhere('KOSTENKATEGORIE', '=', 'Nebenkosten Vorauszahlung');
+            });
+    }
+
+    public function operatingCostSettlementDefinitions($from = null, $to = null)
     {
         return $this->rentDefinitions($from, $to)
             ->where(function ($query) {
                 $query->where('KOSTENKATEGORIE', 'LIKE', 'Betriebskostenabrechnung%')
-                    ->orWhere('KOSTENKATEGORIE', 'LIKE', 'Kabel TV%')
                     ->orWhere('KOSTENKATEGORIE', 'LIKE', 'Kaltwasserabrechnung%')
-                    ->orWhere('KOSTENKATEGORIE', '=', 'Nebenkosten Vorauszahlung')
+                    ->orWhere('KOSTENKATEGORIE', 'LIKE', 'Kabel TV %')
                     ->orWhere('KOSTENKATEGORIE', 'LIKE', 'Thermenwartung%');
             });
     }
@@ -153,5 +161,71 @@ class Mietvertraege extends Model implements ActiveContract
             $rentDefinitions->whereDate('DATUM', '<=', $to);
         }
         return $rentDefinitions;
+    }
+
+    public function getMieterNamenAttribute()
+    {
+        return $this->mieter->implode('full_name', '; ');
+    }
+
+    public function getStartDateFieldName()
+    {
+        return 'MIETVERTRAG_VON';
+    }
+
+    public function getEndDateFieldName()
+    {
+        return 'MIETVERTRAG_BIS';
+    }
+
+    public function getSalutationAttribute()
+    {
+        $salutation = "Sehr geehrte Damen und Herren,";
+        $tenants = $this->mieter;
+        $tenantsWithoutGenderInformation = $tenants->filter(function ($value) {
+            return $value->sex === null;
+        });
+        if ($tenants->isEmpty() || !$tenantsWithoutGenderInformation->isEmpty()) {
+            return $salutation;
+        }
+        $tenants = $tenants->sortByDesc('sex')->values();
+        $firstKey = $tenants->keys()->first();
+        $lastKey = $tenants->keys()->last();
+        foreach ($tenants as $key => $tenant) {
+            if ($key === $firstKey) {
+                $salutation = $tenant->salutation . "\n";
+            } else {
+                $salutationWithSmallFirstLetter = $tenant->salutation;
+                if (count($salutationWithSmallFirstLetter) > 0) {
+                    $salutationWithSmallFirstLetter[0] = 's';
+                }
+                $salutation .= $salutationWithSmallFirstLetter . "\n";
+            }
+            if ($key === $lastKey)
+                $salutation = substr($salutation, 0, -1);
+        }
+        return $salutation;
+    }
+
+    public function getPostalAddressAttribute()
+    {
+        $ids = $this->mieter->pluck('id')->values()->toArray();
+        $query = Details::where('DETAIL_NAME', 'Zustellanschrift')->whereHas('fromPerson', function ($query) use ($ids) {
+            $query->whereIn('id', $ids);
+        });
+        $postalAdresses = $query->get();
+        if (!$postalAdresses->isEmpty()) {
+            return trim($postalAdresses->first()->DETAIL_INHALT);
+        }
+        try {
+            $postalAddress = "";
+            $tenants = $this->mieter->sortByDesc('sex')->values();
+            foreach ($tenants as $tenant) {
+                $postalAddress .= $tenant->addressName($this->mieter->count() === 1) . "\n";
+            }
+            return $postalAddress . $this->einheit->haus->postalAddress("\n");
+        } catch (Exception $e) {
+            return null;
+        }
     }
 }

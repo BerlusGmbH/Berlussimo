@@ -34,7 +34,6 @@ class AppServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'Person' => Person::class,
-            'Benutzer' => Person::class,
             'Partner' => Partner::class,
             'Einheit' => Einheiten::class,
             'Haus' => Haeuser::class,

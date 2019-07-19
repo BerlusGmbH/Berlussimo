@@ -8,6 +8,7 @@ use App\Models\Einheiten;
 use App\Models\Objekte;
 use App\Models\RentDefinition;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use XLSXWriter;
 
@@ -90,12 +91,15 @@ class ReportController extends Controller
             } else {
                 foreach ($rentalContracts as $index => $rentalContract) {
                     $basicRent = RentDefinition::sumDefinitions($rentalContract->basicRentDefinitions($start, $end), $start, $end);
-                    $heatingCosts = RentDefinition::sumDefinitions($rentalContract->heatingExpenseDefinitions($start, $end), $start, $end);
-                    $operatingCosts = RentDefinition::sumDefinitions($rentalContract->operatingCostDefinitions($start, $end), $start, $end);
+                    $basicRentDeduction = RentDefinition::sumDefinitions($rentalContract->basicRentDeductionDefinitions($start, $end), $start, $end);
+                    $heatingCostAdvance = RentDefinition::sumDefinitions($rentalContract->heatingExpenseAdvanceDefinitions($start, $end), $start, $end);
+                    $heatingCostSettlement = RentDefinition::sumDefinitions($rentalContract->heatingExpenseSettlementDefinitions($start, $end), $start, $end);
+                    $operatingCostAdvance = RentDefinition::sumDefinitions($rentalContract->operatingCostAdvanceDefinitions($start, $end), $start, $end);
+                    $operatingCostSettlement = RentDefinition::sumDefinitions($rentalContract->operatingCostSettlementDefinitions($start, $end), $start, $end);
                     $postings = $rentalContract->postings($start, $end)->where('KONTENRAHMEN_KONTO', 80001)->sum('BETRAG');
                     $occupantName = $rentalContract->mieter->implode('full_name', '; ');
                     $to = $rentalContract->MIETVERTRAG_BIS === '0000-00-00' ? '' : $rentalContract->MIETVERTRAG_BIS;
-                    $row = ['', '', $occupantName, $rentalContract->MIETVERTRAG_VON, $to, $rentalContract->overlaps($start, $end), $basicRent, $operatingCosts, $heatingCosts, $postings];
+                    $row = ['', '', $occupantName, $rentalContract->MIETVERTRAG_VON, $to, $rentalContract->overlaps($start, $end), $basicRent + $basicRentDeduction, $operatingCostAdvance + $operatingCostSettlement, $heatingCostAdvance + $heatingCostSettlement, $postings];
                     if ($index === 0) {
                         $row[0] = $unit->EINHEIT_KURZNAME;
                         $row[1] = $unit->EINHEIT_QM;
@@ -113,6 +117,142 @@ class ReportController extends Controller
         $writer->writeToFile($file);
 
         $filename = 'revenue_report_'
+            . $object->OBJEKT_KURZNAME . '_'
+            . $start->toDateString() . '_'
+            . $end->toDateString() . '_created_at_'
+            . Carbon::today()->toDateString();
+
+        return response()->file($file, ['Content-Disposition' => 'inline; filename="' . $filename . '.xlsx'])->deleteFileAfterSend(true);
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function mod(Request $request, Objekte $object)
+    {
+        $file = tempnam(sys_get_temp_dir(), 'mod_base_data');
+
+        if ($request->has('date')) {
+            $start = Carbon::parse($request->input('date'));
+            $end = Carbon::parse($request->input('date'));
+        } else {
+            $start = Carbon::today();
+            $end = $start->copy();
+        }
+        $start->firstOfMonth();
+        $end->lastOfMonth();
+
+        $header = [
+            'Apartment No.' => 'string',
+            'Space' => '0.00',
+            'Room Count' => 'string',
+            'House' => 'string',
+            'Property' => 'string',
+            'Occupant Name' => 'string',
+            'Salutation' => 'string',
+            'Postal Address' => 'string',
+            'Contract Start' => 'date',
+            'Contract End' => 'date',
+            'Days Occupied' => 'integer',
+            'Basic Rent' => 'euro',
+            'Basic Rent Deduction' => 'euro',
+            'Operating Cost Advance' => 'euro',
+            'Heating Cost Advance' => 'euro'
+        ];
+
+        $sheet = 'MOD';
+
+        $writer = new XLSXWriter();
+
+        $writer->writeSheetHeader($sheet, $header);
+
+        $units = Einheiten::whereHas('haus.objekt', function ($query) use ($object) {
+            $query->where('OBJEKT_ID', $object->OBJEKT_ID);
+        })->with(['haus.objekt', 'mietvertraege.mieter'])->defaultOrder()->get();
+        $rows = 1;
+
+        foreach ($units as $unit) {
+            $house = "";
+            $property = "";
+            try {
+                $house = $unit->haus->postalAddress(" in ");
+            } catch (Exception $e) {
+            }
+            try {
+                $property = trim($unit->haus->objekt->OBJEKT_KURZNAME);
+            } catch (Exception $e) {
+            }
+            $rentalContracts = $unit->mietvertraege()
+                ->where(function ($query) use ($end) {
+                    $query->where(function ($query) use ($end) {
+                        $query->active('=', $end);
+                    });
+                })->defaultOrder()->get();
+            if ($rentalContracts->isEmpty()) {
+                $writer->writeSheetRow($sheet, [
+                    $unit->EINHEIT_KURZNAME,
+                    $unit->EINHEIT_QM,
+                    $unit->room_count,
+                    $house,
+                    $property,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ]);
+                $rows++;
+            } else {
+                foreach ($rentalContracts as $index => $rentalContract) {
+                    $basicRent = RentDefinition::sumDefinitions($rentalContract->basicRentDefinitions($start, $end), $start, $end);
+                    $basicRentDeduction = RentDefinition::sumDefinitions($rentalContract->basicRentDeductionDefinitions($start, $end), $start, $end);
+                    $heatingCostAdvance = RentDefinition::sumDefinitions($rentalContract->heatingExpenseAdvanceDefinitions($start, $end), $start, $end);
+                    $operatingCostAdvance = RentDefinition::sumDefinitions($rentalContract->operatingCostAdvanceDefinitions($start, $end), $start, $end);
+                    $occupantName = $rentalContract->mieter->implode('full_name', '; ');
+                    $salutation = $rentalContract->salutation;
+                    $postalAddress = $rentalContract->postal_address;
+                    $to = $rentalContract->MIETVERTRAG_BIS === '0000-00-00' ? '' : $rentalContract->MIETVERTRAG_BIS;
+                    $row = [
+                        '',
+                        '',
+                        '',
+                        $house,
+                        $property,
+                        $occupantName,
+                        $salutation,
+                        $postalAddress,
+                        $rentalContract->MIETVERTRAG_VON,
+                        $to,
+                        $rentalContract->overlaps($start, $end),
+                        $basicRent,
+                        $basicRentDeduction,
+                        $operatingCostAdvance,
+                        $heatingCostAdvance
+                    ];
+                    if ($index === 0) {
+                        $row[0] = $unit->EINHEIT_KURZNAME;
+                        $row[1] = $unit->EINHEIT_QM;
+                        $row[2] = $unit->room_count;
+                    }
+                    $writer->writeSheetRow($sheet, $row);
+                    $rows++;
+                }
+            }
+        }
+        $row = ['Total', "=SUM(B2:B$rows)", '', '', '', '', '', '', '', '', '', "=SUM(L2:L$rows)", "=SUM(M2:M$rows)", "=SUM(N2:N$rows)", "=SUM(O2:O$rows)"];
+        $writer->writeSheetRow($sheet, $row);
+        $writer->writeSheetRow($sheet, ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+        $writer->writeSheetRow($sheet, ['', '', '', '', '', '', '', 'Query Period:', $start->toDateString(), $end->toDateString(), '', '', '', '', '']);
+
+        $writer->writeToFile($file);
+
+        $filename = 'mod_base_data_'
             . $object->OBJEKT_KURZNAME . '_'
             . $start->toDateString() . '_'
             . $end->toDateString() . '_created_at_'

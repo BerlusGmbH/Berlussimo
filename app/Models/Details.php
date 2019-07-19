@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libraries\BelongsToMorph;
 use App\Models\Traits\DefaultOrder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -57,5 +58,10 @@ class Details extends Model
     public function from()
     {
         return $this->morphTo('details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID');
+    }
+
+    public function fromPerson()
+    {
+        return BelongsToMorph::build($this, Person::class, 'from', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID');
     }
 }

@@ -42,6 +42,7 @@ Route::group(['prefix' => 'api/v1', 'namespace' => 'Api\v1', 'middleware' => ['a
     });
 
     Route::get('/reports/revenue/{object}', 'Modules\ReportController@revenue')->name('reports.revenue');
+    Route::get('/reports/mod/{object}', 'Modules\ReportController@mod')->name('reports.mod');
 });
 
 Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'], function () {

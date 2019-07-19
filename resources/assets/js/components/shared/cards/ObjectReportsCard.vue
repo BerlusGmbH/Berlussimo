@@ -45,6 +45,7 @@
             </v-data-table>
         </v-card-text>
         <b-revenue-report-dialog v-model="revenueReport" :object="object"></b-revenue-report-dialog>
+        <b-mod-base-data-report-dialog :object="object" v-model="modBaseDataReport"></b-mod-base-data-report-dialog>
     </v-card>
 </template>
 
@@ -54,10 +55,12 @@
     import {Prop} from "vue-property-decorator";
     import {Objekt} from "../../../server/resources";
     import RevenueReportDialog from "../../modules/object/dialogs/RevenueReportDialog.vue";
+    import ModBaseDataReportDialog from "../../modules/object/dialogs/ModBaseDataReportDialog.vue";
 
     @Component({
         'components': {
-            'b-revenue-report-dialog': RevenueReportDialog
+            'b-revenue-report-dialog': RevenueReportDialog,
+            'b-mod-base-data-report-dialog': ModBaseDataReportDialog
         }
     })
     export default class ObjectReportsCard extends Vue {
@@ -74,9 +77,10 @@
         ];
 
         revenueReport: boolean = false;
+        modBaseDataReport: boolean = false;
 
         get items() {
-            let items: Array<Object> = [];
+            let items: Object[] = [];
             items.push({
                 'report': '<a target="_blank" href="/objects/legacy?objekte_raus=checkliste&objekt_id='
                 + this.object.OBJEKT_ID + '">Hauswart Checkliste<i class="mdi mdi-file-pdf"></i></a>',
@@ -127,6 +131,15 @@
                     'show': 'revenueReport'
                 },
                 'summary': 'Mietumsatz kumuliert nach periodenrelevanten Mietverträgen.',
+                'html': false
+            });
+            items.push({
+                'report': {
+                    'name': 'MOD Basisdaten',
+                    'icon': 'mdi-file-excel',
+                    'show': 'modBaseDataReport'
+                },
+                'summary': 'MOD Basisdaten zum Erstellen von Serienbriefen.',
                 'html': false
             });
             return items;
