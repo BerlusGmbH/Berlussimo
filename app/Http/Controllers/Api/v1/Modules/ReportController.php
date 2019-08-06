@@ -54,8 +54,11 @@ class ReportController extends Controller
             'Contract End' => 'date',
             'Days Occupied' => 'integer',
             'Basic Rent' => 'euro',
-            'Operating Costs' => 'euro',
-            'Heating Costs' => 'euro',
+            'Basic Rent Deduction' => 'euro',
+            'Operating Cost Advances' => 'euro',
+            'Operating Cost Settlements' => 'euro',
+            'Heating Cost Advances' => 'euro',
+            'Heating Cost Settlements' => 'euro',
             'Actual Payments' => 'euro'
         ];
 
@@ -86,20 +89,20 @@ class ReportController extends Controller
                     });
                 })->defaultOrder()->get();
             if ($rentalContracts->isEmpty()) {
-                $writer->writeSheetRow($sheet, [$unit->EINHEIT_KURZNAME, $unit->EINHEIT_QM, '', '', '', 0, 0, 0, 0, 0]);
+                $writer->writeSheetRow($sheet, [$unit->EINHEIT_KURZNAME, $unit->EINHEIT_QM, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0]);
                 $rows++;
             } else {
                 foreach ($rentalContracts as $index => $rentalContract) {
                     $basicRent = RentDefinition::sumDefinitions($rentalContract->basicRentDefinitions($start, $end), $start, $end);
                     $basicRentDeduction = RentDefinition::sumDefinitions($rentalContract->basicRentDeductionDefinitions($start, $end), $start, $end);
                     $heatingCostAdvance = RentDefinition::sumDefinitions($rentalContract->heatingExpenseAdvanceDefinitions($start, $end), $start, $end);
-                    $heatingCostSettlement = RentDefinition::sumDefinitions($rentalContract->heatingExpenseSettlementDefinitions($start, $end), $start, $end);
+                    $heatingCostSettlement = -1 * RentDefinition::sumDefinitions($rentalContract->heatingExpenseSettlementDefinitions($start, $end), $start, $end);
                     $operatingCostAdvance = RentDefinition::sumDefinitions($rentalContract->operatingCostAdvanceDefinitions($start, $end), $start, $end);
-                    $operatingCostSettlement = RentDefinition::sumDefinitions($rentalContract->operatingCostSettlementDefinitions($start, $end), $start, $end);
+                    $operatingCostSettlement = -1 * RentDefinition::sumDefinitions($rentalContract->operatingCostSettlementDefinitions($start, $end), $start, $end);
                     $postings = $rentalContract->postings($start, $end)->where('KONTENRAHMEN_KONTO', 80001)->sum('BETRAG');
                     $occupantName = $rentalContract->mieter->implode('full_name', '; ');
                     $to = $rentalContract->MIETVERTRAG_BIS === '0000-00-00' ? '' : $rentalContract->MIETVERTRAG_BIS;
-                    $row = ['', '', $occupantName, $rentalContract->MIETVERTRAG_VON, $to, $rentalContract->overlaps($start, $end), $basicRent + $basicRentDeduction, $operatingCostAdvance + $operatingCostSettlement, $heatingCostAdvance + $heatingCostSettlement, $postings];
+                    $row = ['', '', $occupantName, $rentalContract->MIETVERTRAG_VON, $to, $rentalContract->overlaps($start, $end), $basicRent, $basicRentDeduction, $operatingCostAdvance, $operatingCostSettlement, $heatingCostAdvance, $heatingCostSettlement, $postings];
                     if ($index === 0) {
                         $row[0] = $unit->EINHEIT_KURZNAME;
                         $row[1] = $unit->EINHEIT_QM;
@@ -109,10 +112,10 @@ class ReportController extends Controller
                 }
             }
         }
-        $row = ['Total', "=SUM(B2:B$rows)", '', '', '', '', "=SUM(G2:G$rows)", "=SUM(H2:H$rows)", "=SUM(I2:I$rows)", "=SUM(J2:J$rows)"];
+        $row = ['Total', "=SUM(B2:B$rows)", '', '', '', '', "=SUM(G2:G$rows)", "=SUM(H2:H$rows)", "=SUM(I2:I$rows)", "=SUM(J2:J$rows)", "=SUM(K2:K$rows)", "=SUM(L2:L$rows)", "=SUM(M2:M$rows)"];
         $writer->writeSheetRow($sheet, $row);
-        $writer->writeSheetRow($sheet, ['', '', '', '', '', '', '', '', '', '']);
-        $writer->writeSheetRow($sheet, ['', '', 'Query Period:', $start->toDateString(), $end->toDateString(), '', '', '', '', '']);
+        $writer->writeSheetRow($sheet, ['', '', '', '', '', '', '', '', '', '', '', '', '']);
+        $writer->writeSheetRow($sheet, ['', '', 'Query Period:', $start->toDateString(), $end->toDateString(), '', '', '', '', '', '', '', '']);
 
         $writer->writeToFile($file);
 
