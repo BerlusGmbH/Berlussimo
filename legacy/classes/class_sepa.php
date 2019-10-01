@@ -2637,7 +2637,7 @@ AND  `AKTUELL` =  '1'");
 
         if (in_array($artCode, [
             20, 51, 53, 82, 83,
-            104, 105, 106, 107, 108, 109, 116, 117, 152, 159, 166, 168, 177,
+            104, 105, 106, 107, 108, 109, 116, 117, 152, 159, 166, 168, 171, 177,
             201, 211,
             801, 805, 808, 809, 835
         ])) {
@@ -2669,24 +2669,20 @@ AND  `AKTUELL` =  '1'");
                     session()->put('kos_id', $gk2->iban_kos_id);
                     if ($gk2->iban_kos_typ == 'Eigentuemer') {
                         $bu->dropdown_kostenrahmen_nr('Kostenkonto ET1', 'kostenkonto', 'GELDKONTO', $gk_id, '6020');
-                    }
-                    if ($gk2->iban_kos_typ == 'Mietvertrag') {
+                    } else if ($gk2->iban_kos_typ == 'Mietvertrag') {
                         $bu->dropdown_kostenrahmen_nr('Kostenkonto MV1', 'kostenkonto', 'GELDKONTO', $gk_id, '80001');
-                    }
-
-                    if ($gk2->iban_kos_typ == 'Partner') {
+                    } else if ($gk2->iban_kos_typ == 'Partner') {
                         $bu->dropdown_kostenrahmen_nr('Kostenkonto P', 'kostenkonto', 'GELDKONTO', $gk_id, '');
-                    }
-
-                    if ($gk2->iban_kos_typ == 'Person') {
+                    } else if ($gk2->iban_kos_typ == 'Person') {
                         $bu->dropdown_kostenrahmen_nr('Kostenkonto B', 'kostenkonto', 'GELDKONTO', $gk_id, '');
-                    }
-                    if ($gk2->iban_kos_typ == 'Objekt') {
+                    } else if ($gk2->iban_kos_typ == 'Objekt') {
                         $bu->dropdown_kostenrahmen_nr('Kostenkonto ET1', 'kostenkonto', 'GELDKONTO', $gk_id, '6020');
                         session()->put('kos_typ', 'Eigentuemer');
+                    } else {
+                        $bu->dropdown_kostenrahmen_nr('Kostenkonto IBAN', 'kostenkonto', 'GELDKONTO', $gk_id, '');
                     }
 
-                    $bu->dropdown_kostentreager_typen_vw('Kostenträgertyp AUTOIBAN', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, session()->get('kos_typ'));
+                    $bu->dropdown_kostentreager_typen_vw('Kostenträgertyp IBAN', 'kostentraeger_typ', 'kostentraeger_typ', $js_typ, session()->get('kos_typ'));
                     $bu->dropdown_kostentraeger_bez_vw("Kostenträger IBAN", 'kostentraeger_id', 'dd_kostentraeger_id', '', session()->get('kos_typ'), session()->get('kos_id'));
                     $treffer [] = 'GK';
                 }
