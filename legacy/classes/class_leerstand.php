@@ -237,7 +237,7 @@ class leerstand
 
         $pdf->ezSetDy(-10);
 
-        $pdf->ezText("Mir ist bekannt, dass die Entscheidung über die Vermietung der Wohnung am mich zu einem "
+        $pdf->ezText("Mir ist bekannt, dass die Entscheidung über die Vermietung der Wohnung an mich zu einem "
             . "erheblichen Teil von meinem Einkommen abhängt. <b>Mir ist bewusst, dass "
             . "eine Vermietung an mich nur aussichtsreich ist, wenn der Anteil der Miete 50% des "
             . "Haushaltsnettoeinkommens (Einkommen nach allen Abzügen) nicht übersteigt, also mindestens "
