@@ -551,12 +551,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
                 if ($this->mieter2_verzug_pruefen($mv_id)) {
                     /* Wie aktuelle Mieter behandeln, weil zur gleichen Adresse verzogen */
 
-                    if ($mv->anzahl_personen == 1) {
-                        $anschrift_pdf = ltrim($mv->postanschrift [0] ['anschrift']);
-                    } else {
-                        $anschrift_alle = $mv->postanschrift [0] ['adresse'];
-                        $anschrift_pdf = "$mv->personen_name_string_u\n$anschrift_alle";
-                    }
+                    $anschrift_pdf = ltrim($mv->postanschrift [0] ['anschrift']);
 
                     $pdf->ezSetMargins(135, 70, 50, 50);
                     $anrede = $mv->mv_anrede;
