@@ -583,15 +583,15 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
                     $g = new geldkonto_info ();
                     $g->geld_konto_details($geldkonto_id);
 
-                    $pdf->ezText("auf das Konto bei der $g->kredit_institut zu überweisen.", 12);
+                    $pdf->ezText("auf das Konto bei der <b>$g->kredit_institut</b> zu überweisen.", 12);
                     $pdf->ezSetDy(-10);
-                    $pdf->ezText("<b>IBAN</b> $g->IBAN1\n", 12);
-                    $pdf->ezText("<b>BIC</b> $g->BIC\n", 12);
+                    $pdf->ezText("IBAN: <b>$g->IBAN1</b>\n", 12);
+                    $pdf->ezText("BIC: <b>$g->BIC</b>\n", 12);
                     $pdf->ezText("Für Rückfragen stehen wir Ihnen gerne zur Verfügung.\n\n", 12);
-                    $pdf->ezText("Mit freundlichen Grüßen\n\n\n", 12);
+                    $pdf->ezText("Mit freundlichen Grüßen\n\n", 12);
                     $pdf->ezSetDy(15);
                     $pdf->ezText("Wolfgang Wehrheim\n\n", 11);
-                    $pdf->ezText("Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift gültig.\n", 12);
+                    $pdf->ezText("Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift gültig.", 12);
                     $pdf->addInfo('Title', "Zahlungserinnerung $mv->personen_name_string");
                     $pdf->addInfo('Author', Auth::user()->email);
                     $pdf->addInfo('Title', "Zahlungserinnerung $mv->personen_name_string");
@@ -650,13 +650,15 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
                         $g = new geldkonto_info ();
                         $g->geld_konto_details($geldkonto_id);
 
-                        $pdf->ezText("auf das Konto $g->kontonummer  bei der $g->kredit_institut, BLZ $g->blz\n", 12);
-                        $pdf->ezText("zu überweisen.\n", 12);
+                        $pdf->ezText("auf das Konto bei der <b>$g->kredit_institut</b> zu überweisen.", 12);
+                        $pdf->ezSetDy(-10);
+                        $pdf->ezText("IBAN: <b>$g->IBAN1</b>", 12);
+                        $pdf->ezText("BIC: <b>$g->BIC</b>\n", 12);
                         $pdf->ezText("Für Rückfragen stehen wir Ihnen gerne zur Verfügung.\n\n", 12);
-                        $pdf->ezText("Mit freundlichen Grüßen\n\n\n", 12);
+                        $pdf->ezText("Mit freundlichen Grüßen\n\n", 12);
                         $pdf->ezSetDy(15);
                         $pdf->ezText("Wolfgang Wehrheim\n\n", 11);
-                        $pdf->ezText("Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift gültig.\n", 12);
+                        $pdf->ezText("Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift gültig.", 12);
                         $pdf->addInfo('Title', "Zahlungserinnerung $mv->personen_name_string");
                         $pdf->addInfo('Author', Auth::user()->email);
                         // ### MIETKONTENBLATT####
@@ -714,13 +716,14 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
                 $g = new geldkonto_info ();
                 $g->geld_konto_details($geldkonto_id);
                 $pdf->ezSetMargins(135, 70, 50, 50);
-                $pdf->ezText("auf das Konto bei der $g->kredit_institut zu überweisen.", 11);
-                $pdf->ezText("\n<b>IBAN:</b> $g->IBAN1", 12);
-                $pdf->ezText("<b>BIC:</b>   $g->BIC\n", 12);
+                $pdf->ezText("auf das Konto bei der <b>$g->kredit_institut</b> zu überweisen.", 11);
+                $pdf->ezSetDy(-10);
+                $pdf->ezText("IBAN: <b>$g->IBAN1</b>", 12);
+                $pdf->ezText("BIC: <b>$g->BIC</b>\n", 12);
                 $pdf->ezText("Sollten Sie den Betrag in der Zwischenzeit bereits ausgegelichen haben, bitten wir Sie dieses Schreiben als gegenstandslos zu betrachten.\n\n", 11);
 
                 $pdf->ezText("Für Rückfragen stehen wir Ihnen gerne zur Verfügung.\n", 11);
-                $pdf->ezText("Mit freundlichen Grüßen\n\n\n", 11);
+                $pdf->ezText("Mit freundlichen Grüßen\n\n", 11);
 
                 if (session()->has('partner_id')) {
                     $pp = new partners ();
@@ -799,12 +802,7 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
                 if ($this->mieter2_verzug_pruefen($mv_id)) {
                     /* Wie aktuelle Mieter behandeln, weil zur gleichen Adresse verzogen */
 
-                    if ($mv->anzahl_personen == 1) {
-                        $anschrift_pdf = ltrim($mv->postanschrift [0] ['anschrift']);
-                    } else {
-                        $anschrift_alle = $mv->postanschrift [0] ['adresse'];
-                        $anschrift_pdf = "$mv->personen_name_string_u\n$anschrift_alle";
-                    }
+                    $anschrift_pdf = ltrim($mv->postanschrift [0] ['anschrift']);
 
                     $pdf->ezSetMargins(135, 70, 50, 50);
                     $anrede = $mv->mv_anrede;
@@ -870,18 +868,17 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
                     $pdf->ezSetDy(-10);
                     $pdf->ezText("<b>$fristdatum</b>\n", 11);
                     $pdf->ezSetMargins(135, 70, 50, 50);
-                    $pdf->ezText("<b>auf das Konto bei der $g->kredit_institut zu überweisen.</b>\n", 11);
+                    $pdf->ezText("auf das Konto bei der <b>$g->kredit_institut</b> zu überweisen.\n", 11);
                     $pdf->setColor(0.0, 0.0, 0.0);
-                    $pdf->ezSetDy(-10);
-                    $pdf->ezText("<b>IBAN:</b> $g->IBAN1\n", 12);
-                    $pdf->ezText("<b>BIC:</b> $g->BIC\n", 12);
+                    $pdf->ezText("IBAN: <b>$g->IBAN1</b>", 12);
+                    $pdf->ezText("BIC: <b>$g->BIC</b>\n", 12);
                     $pdf->ezText("<b>Wir weisen vorsorglich darauf hin, dass wir bei einer Nichtzahlung bis zum oben genannten Termin, berechtigt sind eine Zahlungsklage gegen Sie einzureichen.</b>\n", 12);
 
                     $pdf->ezText("Für Rückfragen stehen wir Ihnen gerne zur Verfügung\n\n", 11);
                     $pdf->ezText("Mit freundlichen Grüßen\n\n", 11);
-                    $pdf->ezSetDy(15);
+                    //$pdf->ezSetDy(15);
                     $pdf->ezText("Wolfgang Wehrheim\n\n", 11);
-                    $pdf->ezText("Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift gültig.\n", 11);
+                    $pdf->ezText("Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift gültig.", 11);
                     $pdf->addInfo('Title', "Mahnung $mv->personen_name_string");
                     $pdf->addInfo('Author', Auth::user()->email);
 
@@ -974,16 +971,15 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
                         $pdf->ezSetCmMargins(3, 3, 9, 3);
                         $pdf->ezText("<b>$fristdatum</b>\n", 11);
                         $pdf->ezSetMargins(135, 70, 50, 50);
-                        $pdf->ezText("<b>auf das Konto bei der $g->kredit_institut zu überweisen.\n", 11);
-                        $pdf->ezText("<b>IBAN</b> $g->IBAN1\n", 12);
-                        $pdf->ezText("<b>BIC</b>  $g->BIC\n", 12);
-                        $pdf->ezText("Wir weisen vorsorglich darauf hin, dass wir bei einem Rückstand von zwei Kaltmieten berechtigt sind, die Wohnung fristlos zu kündigen.\n", 11);
+                        $pdf->ezText("auf das Konto bei der <b>$g->kredit_institut</b> zu überweisen.\n", 11);
+                        $pdf->ezText("IBAN: <b>$g->IBAN1</b>", 12);
+                        $pdf->ezText("BIC:  <b>$g->BIC</b>\n", 12);
+                        $pdf->ezText("<b>Wir weisen vorsorglich darauf hin, dass wir bei einem Rückstand von zwei Kaltmieten berechtigt sind, die Wohnung fristlos zu kündigen.</b>\n", 11);
                         $pdf->setColor(0.0, 0.0, 0.0);
-                        $pdf->ezText("zu überweisen.\n", 11);
                         $pdf->ezText("Für Rückfragen stehen wir Ihnen gerne zur Verfügung.\n\n", 11);
                         $pdf->ezText("Mit freundlichen Grüßen\n\n", 11);
                         $pdf->ezText("Wolfgang Wehrheim\n\n", 11);
-                        $pdf->ezText("Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift gültig.\n", 11);
+                        $pdf->ezText("Dieses Schreiben wurde maschinell erstellt und ist daher ohne Unterschrift gültig.", 11);
                         $pdf->addInfo('Title', "Mahnung $mv->personen_name_string");
                         $pdf->addInfo('Author', Auth::user()->email);
 
@@ -1069,10 +1065,10 @@ LEFT JOIN HAUS ON (EINHEIT.HAUS_ID=HAUS.HAUS_ID) LEFT JOIN OBJEKT ON (HAUS.OBJEK
                 $pdf->ezSetCmMargins(3, 3, 9, 3);
                 $pdf->ezText("<b>$fristdatum</b>\n", 11);
                 $pdf->ezSetMargins(135, 70, 50, 50);
-                $pdf->ezText("auf das Konto bei der $g->kredit_institut zu überweisen.\n", 11);
+                $pdf->ezText("auf das Konto bei der <b>$g->kredit_institut</b> zu überweisen.\n", 11);
                 $pdf->setColor(0.0, 0.0, 0.0);
-                $pdf->ezText("<b>IBAN:</b> $g->IBAN1", 12);
-                $pdf->ezText("<b>BIC:</b>   $g->BIC\n", 12);
+                $pdf->ezText("IBAN: <b>$g->IBAN1</b>", 12);
+                $pdf->ezText("BIC: <b>$g->BIC</b>\n", 12);
                 $pdf->ezText("Wir weisen vorsorglich darauf hin, dass wir bei einem Rückstand von zwei Kaltmieten berechtigt sind, die Wohnung fristlos zu kündigen.\n", 11);
                 $pdf->ezText("Für Rückfragen stehen wir Ihnen gerne zur Verfügung.\n\n", 11);
                 $pdf->ezText("Mit freundlichen Grüßen\n\n", 11);
