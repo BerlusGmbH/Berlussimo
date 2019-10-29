@@ -17,7 +17,7 @@
   "devDependencies": {
     "@types/lodash": "^4.14.109",
     "ajv": "^6.5.0",
-    "axios": "^0.16.2",
+    "axios": "^0.18.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "cross-env": "^3.2.4",
     "events": "^1.1.1",
