@@ -2859,7 +2859,7 @@ LIMIT 0 , 1");
                         // $tab_arr[$anz_tab]['VON'] = $mv->mietvertrag_von_d;
                         // $tab_arr[$anz_tab]['BIS'] = $mv->mietvertrag_bis_d;
                         $tab_arr [$anz_tab] ['SALDO_VM'] = nummer_punkt2komma_t($miete->saldo_vormonat_stand);
-                        $tab_arr [$anz_tab] ['G_SOLL_AKT'] = nummer_punkt2komma_t($miete->saldo_vormonat_stand + $miete->sollmiete_warm);
+                        $tab_arr [$anz_tab] ['G_SOLL_AKT'] = nummer_punkt2komma_t($miete->sollmiete_warm - $miete->saldo_vormonat_stand);
                         $tab_arr [$anz_tab] ['SOLL_WM'] = nummer_punkt2komma_t($miete->sollmiete_warm);
                         $tab_arr [$anz_tab] ['UMLAGEN'] = nummer_punkt2komma_t($miete->davon_umlagen);
                         $tab_arr [$anz_tab] ['ZAHLUNGEN'] = nummer_punkt2komma_t($miete->geleistete_zahlungen);
@@ -2878,7 +2878,7 @@ LIMIT 0 , 1");
                         $tab_arr [$anz_tab] ['ERG'] = nummer_punkt2komma_t($miete->erg);
                         $anz_tab++;
 
-                        $akt_gesamt_soll = $miete->saldo_vormonat_stand + $miete->sollmiete_warm;
+                        $akt_gesamt_soll = $miete->sollmiete_warm - $miete->saldo_vormonat_stand;
                         echo "$zeile. $einheit_kurzname $mv->personen_name_string_u Saldo: VM: $miete->saldo_vormonat_stand € WM: $miete->sollmiete_warm € UM: $miete->davon_umlagen GSOLL: $akt_gesamt_soll € SALDO NEU:$miete->erg €<br>";
 
                         $summe_sv = $summe_sv + $miete->saldo_vormonat_stand;
