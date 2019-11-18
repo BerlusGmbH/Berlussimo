@@ -2844,7 +2844,7 @@ LIMIT 0 , 1");
                         $mv = new mietvertraege ();
                         $mv->get_mietvertrag_infos_aktuell($mv_id);
 
-                        $tab_arr [$i] ['MV_ID'] = $mv_id;
+                        $tab_arr [$anz_tab] ['MV_ID'] = $mv_id;
                         $miete->mietkonto_berechnung_monatsgenau($mv_id, $jahr, $monat);
                         $zeile = $zeile + 1;
 
