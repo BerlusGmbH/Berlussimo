@@ -22,7 +22,7 @@ apt install -y nodejs
 apt install nginx libnginx-mod-nchan git nasm pwgen
 apt install php7.0 php7.0-gd php7.0-mysql php7.0-fpm php7.0-xml php7.0-mbstring php7.0-curl php7.0-bcmath php7.0-zip
 cd /var/www/; git clone https://github.com/BerlusGmbH/Berlussimo berlussimo
-cd /var/www/berlussimo/; git checkout v0.7
+cd /var/www/berlussimo/; git checkout develop
 
 # install MySQL. The setup will let you set a root password for the mySQL server. You will need this later.
 apt-get install mariadb-server
