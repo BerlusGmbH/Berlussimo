@@ -1,11 +1,10 @@
 <html>
 <head>
     <title>Wartungskalender Berlussimo</title>
-    <script type="text/javascript" src="{{mix('js/wartungsplaner.js')}}"></script>
     <link rel="stylesheet" type="text/css" href="{{mix('css/wartungsplaner.css')}}"/>
 </head>
 
-<body onload="start();">
+<body>
 
 <div id="navibox">
     <input type="button" value="Start" onclick="start();"/>
@@ -37,5 +36,12 @@
         Content in right item
     </div>
 </div>
+<script type='text/javascript' src='{{mix('js/axios.min.js')}}'></script>
+<script type="text/javascript" src="{{mix('js/wartungsplaner.js')}}"></script>
+<script type='text/javascript'>
+    window.addEventListener('load', function () {
+        start();
+    })
+</script>
 </body>
 </html>

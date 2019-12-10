@@ -35,6 +35,11 @@ switch ($option) {
         $sep->alle_mandate_anzeigen('HAUSGELD');
         break;
 
+    case "mandate_hausgeld_kurz" :
+        $sep = new sepa ();
+        $sep->alle_mandate_anzeigen_kurz('HAUSGELD');
+        break;
+
     case "mandat_mieter_neu" :
         $sep = new sepa ();
         if (session()->has('geldkonto_id')) {
@@ -223,7 +228,8 @@ switch ($option) {
         if (request()->has('gk_id') && request()->has('kat')) {
             $von_gk_id = request()->input('gk_id');
             $kat = request()->input('kat');
-            if ($kat == 'ET_AUSZAHLUNG') {
+            $d = new detail();
+            if ($kat == 'ET_AUSZAHLUNG' || $d->finde_detail_inhalt('GELD_KONTEN', $von_gk_id, 'SEPA-Einzeltransaktionen') === 'ja') {
                 $sammler = '0'; // Einzelbeträge
             } else {
                 $sammler = '1'; // Nur einen Betrag

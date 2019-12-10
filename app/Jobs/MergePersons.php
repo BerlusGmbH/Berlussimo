@@ -34,6 +34,7 @@ class MergePersons extends UserJob
      * Execute the job.
      *
      * @return void
+     * @throws \Throwable
      */
     public function handleJob()
     {

@@ -10,7 +10,7 @@ trait Active
     {
         if (is_null($date)) {
             $date = Carbon::today();
-        } else {
+        } elseif (is_string($date)) {
             $date = Carbon::parse($date);
         }
         $start = $this->getStartDateFieldName();
@@ -23,6 +23,7 @@ trait Active
                         ->where(function ($query) use ($date, $end) {
                             $query->whereDate($end, '>=', $date)
                                 ->orWhereDate($end, '=', '0000-00-00')
+                                ->orWhereDate($end, '=', '9999-12-31')
                                 ->orWhereNull($end);
                         });
                 });
@@ -31,6 +32,7 @@ trait Active
                 $query->where(function ($query) use ($date, $end) {
                     $query->whereDate($end, '>', $date)
                         ->orWhereDate($end, '=', '0000-00-00')
+                        ->orWhereDate($end, '=', '9999-12-31')
                         ->orWhereNull($end);
                 });
                 break;
@@ -41,6 +43,7 @@ trait Active
                 $query->where(function ($query) use ($date, $end) {
                     $query->whereDate($end, '>=', $date)
                         ->orWhereDate($end, '=', '0000-00-00')
+                        ->orWhereDate($end, '=', '9999-12-31')
                         ->orWhereNull($end);
                 });
                 break;
@@ -102,25 +105,43 @@ trait Active
                     && (
                         $this->{$end} >= $date
                         || (
-                            $this->{$end} == '0000-00-00' || is_null($this->{$end})
+                            $this->{$end} == '0000-00-00'
+                            || is_null($this->{$end})
+                            || $this->{$end} == '9999-12-31'
                         )
                     );
             case '>':
                 return $this->{$end} > $date
                     || (
-                        $this->{$end} == '0000-00-00' || is_null($this->{$end})
+                        $this->{$end} == '0000-00-00'
+                        || is_null($this->{$end})
+                        || $this->{$end} == '9999-12-31'
                     );
             case '<':
                 return $this->{$start} < $date;
             case '>=':
                 return $this->{$end} >= $date
                     || (
-                        $this->{$end} == '0000-00-00' || is_null($this->{$end})
+                        $this->{$end} == '0000-00-00'
+                        || is_null($this->{$end})
+                        || $this->{$end} == '9999-12-31'
                     );
             case '<=':
                 return $this->{$start} <= $date;
             default:
                 return false;
         }
+    }
+
+    public function overlaps(Carbon $start, Carbon $end)
+    {
+        $start = Carbon::parse($this->{$this->getStartDateFieldName()})->max($start);
+        $end_field = ($this->{$this->getEndDateFieldName()} === '0000-00-00' || is_null($this->{$this->getEndDateFieldName()})) ? Carbon::maxValue()
+            : Carbon::parse($this->{$this->getEndDateFieldName()});
+        $end = $end_field->min($end);
+        if ($start->lte($end)) {
+            return $start->diffInDays($end) + 1;
+        }
+        return 0;
     }
 }

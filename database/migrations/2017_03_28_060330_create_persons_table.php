@@ -47,7 +47,7 @@ class CreatePersonsTable extends Migration
                         $new_person->save();
 
                         $protokoll = DB::table('PROTOKOLL')
-                            ->where('PROTOKOLL_TABELE', 'PERSON')
+                            ->where('PROTOKOLL_TABELE', 'Person')
                             ->where('PROTOKOLL_DAT_NEU', $old_person['PERSON_DAT'])
                             ->where('PROTOKOLL_DAT_ALT', $previous_dat)->first();
                         if ($protokoll) {
@@ -86,7 +86,7 @@ class CreatePersonsTable extends Migration
                     $new_person->save();
 
                     $protokoll = DB::table('PROTOKOLL')
-                        ->where('PROTOKOLL_TABELE', 'PERSON')
+                        ->where('PROTOKOLL_TABELE', 'Person')
                         ->where('PROTOKOLL_DAT_NEU', $person['PERSON_DAT'])
                         ->where('PROTOKOLL_DAT_ALT', $previous_dat)->first();
                     if ($protokoll) {

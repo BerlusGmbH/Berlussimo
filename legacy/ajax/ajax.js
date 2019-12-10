@@ -660,6 +660,7 @@ function list_detail_ukats_drop() {
 }
 
 var t_id;
+
 function autovervoll_with_delay(lieferant_id, string) {
     clearTimeout(t_id);
     t_id = setTimeout(autovervoll, 500, lieferant_id, string);
@@ -1641,10 +1642,8 @@ function down(pp_dat, virt_pos, ziel, kos_typ, kos_id, pool_id) {
 }
 
 function change_zeile(spalte, wert, pp_dat) {
-    //	alert(spalte+' '+pp_dat);
     var wert_neu = prompt(spalte, wert);
     if (wert_neu != null) {
-        //var ziel = "pool_tab";
         daj3('ajax/ajax_info.php?option=change_wert&pp_dat=' + pp_dat + '&wert=' + wert_neu + '&spalte=' + spalte, 'ohne_ziel');
         setTimeout("reload_me();", 1000);
     }
@@ -1654,9 +1653,7 @@ function change_zeile(spalte, wert, pp_dat) {
 function change_detail(anzeige_text, wert, detail_dat, kos_typ, kos_id) {
     var wert_neu = prompt(anzeige_text, wert);
     if (wert_neu != null) {
-        //var ziel = "pool_tab";
         daj3('ajax/ajax_info.php?option=change_details&dat=' + detail_dat + '&wert=' + wert_neu + '&kos_typ=' + kos_typ + '&kos_id=' + kos_id + '&det_name=' + anzeige_text, null);
-        //alert(anzeige_text+wert_neu+detail_dat);
         setTimeout("reload_me();", 500);
     }
 }
@@ -1665,10 +1662,7 @@ function change_kautionsfeld(feld, wert, mv_id) {
     var wert_neu = prompt(feld, wert);
 
     if (wert_neu != null) {
-        //alert(feld + wert_neu);
-        //var ziel = "pool_tab";
         daj3('ajax/ajax_info.php?option=change_kautionsfeld&feld=' + feld + '&wert=' + wert_neu + '&mv_id=' + mv_id, null);
-        //alert(anzeige_text+wert_neu+detail_dat);
         setTimeout("reload_me();", 1000);
     }
 }
@@ -1677,10 +1671,7 @@ function change_hk_wert_et(bez, et_id, wert, profil_id) {
     var wert_neu = prompt(bez, wert);
 
     if (wert_neu != null) {
-        //alert(feld + wert_neu);
-        //var ziel = "pool_tab";
         daj3('ajax/ajax_info.php?option=change_hk_wert_et&et_id=' + et_id + '&wert=' + wert_neu + '&profil_id=' + profil_id, null);
-        //alert(anzeige_text+wert_neu+detail_dat);
         setTimeout("reload_me();", 1000);
     }
 }
@@ -1698,12 +1689,8 @@ function change_detail_no_prompt(anzeige_text, wert, detail_dat, kos_typ, kos_id
 }
 
 function change_detail_dd(anzeige_text, wert, detail_dat, kos_typ, kos_id) {
-    //alert(anzeige_text+wert+detail_dat+kos_typ+kos_id);
-    //alert('ajax/ajax_info.php?option=change_details&dat='+detail_dat+'&wert='+wert+'&kos_typ='+kos_typ+'&kos_id='+kos_id+'&det_name='+anzeige_text);
     daj3('ajax/ajax_info.php?option=change_details&dat=' + detail_dat + '&wert=' + wert + '&kos_typ=' + kos_typ + '&kos_id=' + kos_id + '&det_name=' + anzeige_text, null);
-
     setTimeout("reload_me();", 500);
-
 }
 
 function change_text(art_nr, lieferant_id, text, sprung) {
@@ -1743,31 +1730,16 @@ function u_pool_rechnung(kos_typ, kos_id, aussteller_typ, aussteller_id, pool_id
     var wert_faellig = prompt('Fällig am (+14T)', faellig);
     var d_error = '';
 
-    /*if(!checkdate(wert_heute)){
-     d_error = 'Rechnungsdatum nicht korrekt!'+wert_heute;
-     }
-     if(!checkdate(wert_faellig)){
-     d_error = 'F�lligkeitsdatum nicht korrekt!'+wert_faellig;
-     }
-
-     if(error!=''){
-     alert('Abbruch: '+d_error);
-     }else{
-     alert('Rechnung wird erstellt');
-     }*/
     var kurzinfo = prompt('Kurzinfo zur Rechnung eingeben z.B. Bauvorhaben', '');
     var gk_liste = document.getElementById('gk_id');
     var gk_id = gk_liste.options[gk_liste.selectedIndex].value;
-    //alert(gk_id);
     if (wert_faellig != null && wert_heute != null && kurzinfo != null && wert_faellig != '' && wert_heute != '' && kurzinfo != '') {
-        //alert('ajax/ajax_info.php?option=u_pool_rechnung_erstellen&kos_typ='+kos_typ+'&kos_id='+kos_id+'&r_datum='+wert_heute+'&f_datum='+wert_faellig+'&kurzinfo='+kurzinfo+'&aussteller_typ='+aussteller_typ+'&aussteller_id='+aussteller_id+'&gk_id='+gk_id+'&pool_ids_string='+pool_ids_string);
         daj3('ajax/ajax_info.php?option=u_pool_rechnung_erstellen&kos_typ=' + kos_typ + '&kos_id=' + kos_id + '&r_datum=' + wert_heute + '&f_datum=' + wert_faellig + '&kurzinfo=' + kurzinfo + '&aussteller_typ=' + aussteller_typ + '&aussteller_id=' + aussteller_id + '&gk_id=' + gk_id + '&pool_ids_string=' + pool_ids_string, 'pool_tab');
         var url = '/rechnungen?option=ausgangsbuch&partner_id=' + aussteller_id;
         setTimeout('Redirect("' + url + '")', 2000);
     } else {
         alert('Dateneingabe unvollständig\nDATUM ODER KURZINFO prüfen!');
     }
-    //reload_me();
 }
 
 function Redirect(url) {
@@ -1787,7 +1759,6 @@ function spalte_prozent(op, spalte) {
     }
 
     if (prozent != null) {
-        //alert('eingegeben'+prozent);
         daj3('ajax/ajax_info.php?option=spalte_prozent&spalte=' + spalte + '&op=' + op + '&prozent=' + prozent, 'pool_tabff');
         setTimeout("reload_me();", 1000);
     }
@@ -1795,7 +1766,6 @@ function spalte_prozent(op, spalte) {
 }
 
 function aufpreis(spalte, pp_dat) {
-    //alert(spalte+pp_dat);
     var prozent = prompt('Prozente +/- eingeben!', 0);
     daj3('ajax/ajax_info.php?option=aufpreis&spalte=' + spalte + '&pp_dat=' + pp_dat + '&prozent=' + prozent, 'pool_tabff');
     setTimeout("reload_me();", 1000);
@@ -1805,7 +1775,6 @@ function spalte_prozent_pool(pool_id, spalte) {
     var prozent = prompt('Prozente für Poolpreise eingeben!', 0);
 
     if (prozent != null) {
-
         daj3('ajax/ajax_info.php?option=spalte_prozent_pool&spalte=' + spalte + '&prozent=' + prozent + '&pool_id=' + pool_id, 'pool_tabff');
         setTimeout("reload_me();", 1000);
     }
@@ -1815,7 +1784,6 @@ function spalte_einheitspreis_pool(pool_id, spalte) {
     var preis = prompt('Einheitspreis für den Pool eingeben!', 0);
 
     if (preis != null) {
-
         daj3('ajax/ajax_info.php?option=spalte_einheitspreis_pool&spalte=' + spalte + '&preis=' + preis + '&pool_id=' + pool_id, 'pool_tabff');
         setTimeout("reload_me();", 1000);
     }
@@ -1840,13 +1808,11 @@ function u_pool_rechnung_pool_wahl(name, kos_typ, kos_id, aussteller_typ, ausste
             alert('Pools für die Rechnung wählen');
 
         } else {
-            //	alert(pool_ids.length);
             var anz = pool_ids.length;
             var pool_ids_string = '';
             for (a = 0; a < anz; a++) {
                 pool_ids_string = pool_ids_string + pool_ids[a] + '|P|';
             }
-            //alert(pool_ids_string);
             u_pool_rechnung(kos_typ, kos_id, aussteller_typ, aussteller_id, pool_ids_string);
         }
     }
@@ -1902,15 +1868,12 @@ function back2pool(pp_dat) {
 }
 
 function wb_hinzufuegen(beleg_id, pos) {
-    //alert(beleg_id+''+ pos);
     daj3('ajax/ajax_info.php?option=wb_hinzufuegen&beleg_id=' + beleg_id + '&pos=' + pos, 'poolssss');
     alert('Position in die Werkzeugliste hinzugefügt!');
 }
 
 /*urlaubs buttons*/
 function urlaub_buttons(feld_id, benutzer_id, datum) {
-    //alert(feld_id);
-
     var buttons = '<input type="button" name=\"urlaub_butt\" value=\"Urlaub\" class=\"submit\" id=\"urlaub\" onclick=\"urlaub_eintragen(\'' + benutzer_id + '\',\'' + datum + '\',' + '\'Urlaub\');\"' + '><input type="button" name=\"urlaub_butt\" value=\"Krank\" class=\"submit\" id=\"krank\" onclick=\"urlaub_eintragen(\'' + benutzer_id + '\',\'' + datum + '\',' + '\'Krank\');\"' + '><input type="button" name=\"urlaub_butt\" value=\"oK\" class=\"submit\" id=\"oK\" onclick=\"urlaub_eintragen(\'' + benutzer_id + '\',\'' + datum + '\',' + '\'oK\');\"' + '><input type="button" name=\"urlaub_butt\" value=\"Auszahlung\" class=\"submit\" id=\"auszahlung\" onclick=\"urlaub_eintragen(\'' + benutzer_id + '\',\'' + datum + '\',' + '\'Auszahlung\');\"' + '><input type="button" name=\"urlaub_butt\" value=\"Unbezahlt\" class=\"submit\" id=\"unbezahlt\" onclick=\"urlaub_eintragen(\'' + benutzer_id + '\',\'' + datum + '\',' + '\'Unbezahlt\');\"' + '>';
     document.getElementById(feld_id).innerHTML = buttons;
 }
@@ -1919,7 +1882,6 @@ function urlaub_eintragen(benutzer_id, datum, art) {
     daj3('/urlaub?option=urlaubsantrag_check&u_vom=' + datum + '&u_bis=' + datum + '&benutzer_id=' + benutzer_id + '&art=' + art, 'nix');
     alert(art + ' wurde zum ' + datum + 'eingetragen');
     reload_me();
-
 }
 
 function urlaub_del_button(feld_id, benutzer_id, datum) {

@@ -521,47 +521,6 @@ class miete
         }
     }
 
-    function berechnen()
-    {
-        $mv_id = 3;
-        $my_arr1 = DB::select("SELECT ANFANG, ENDE, KOSTENKATEGORIE, BETRAG FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL='1' && KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$mv_id' ");
-
-        echo "<pre>";
-
-        $einzug = '2008-03-01';
-        $auszug = date("Y-m-d");
-        $monate = $this->diff_in_monaten($einzug, $auszug);
-
-        $saldo_neu = 0;
-
-        for ($index = 0; $index < count($my_arr1); $index++) {
-            $anfang = $my_arr1 [$index] ['ANFANG'];
-            $betrag = $my_arr1 [$index] ['BETRAG'];
-
-            if ($ende = '0000-00-00') {
-                $ende = '';
-            }
-            $monate_fallig_me = $this->diff_in_monaten($anfang, $ende);
-            if ($monate_fallig_me < $monate) {
-                $gesamt_betrag = $monate_fallig_me * $betrag;
-            } else {
-                $gesamt_betrag = $monate * $betrag;
-            }
-            $saldo_neu = $saldo_neu + $gesamt_betrag;
-        }
-
-        echo "<br><h1><b>$saldo_neu</b></h1><br>";
-
-        $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM GELD_KONTO_BUCHUNGEN WHERE AKTUELL='1' && KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$mv_id' ");
-
-        if (!empty($result)) {
-            $row = $result[0];
-            $summe_eingezahlt = $row ['SUMME'];
-        }
-        $b = $summe_eingezahlt - $saldo_neu;
-        echo "<h1>$b</h1>";
-    }
-
     function diff_in_monaten($einzug, $auszug)
     {
         if ($auszug == '0000-00-00' or empty ($auszug)) {
@@ -654,7 +613,7 @@ ORDER BY `NEW_ENDE` ASC
     {
         $curdate = "$jahr-$monat-28";
 
-        $db_abfrage = "SELECT KOSTENKATEGORIE, BETRAG * MJESECI AS GESAMT FROM (SELECT KOSTENKATEGORIE, BETRAG, ANFANG, ENDE, IF( ENDE = '0000-00-00' OR ENDE >= '$curdate', '$curdate', ENDE ) AS NEW_ENDE, IF( ENDE <= '$curdate' && ENDE != '0000-00-00', period_diff( concat( year( ENDE ) , if( month( ENDE ) <10, '0', '' ) , month( ENDE ) ) , concat( year( ANFANG ) , if( month( ANFANG ) <10, '0', '' ), month( ANFANG ) ) ) +1, period_diff( concat( year( '$curdate' ) , if( month( '$curdate' ) <10, '0', '' ) , month( '$curdate' ) ) , concat( year( ANFANG ) , if( month( ANFANG ) <10, '0', '' ) , month( ANFANG ) ) ) +1 ) AS MJESECI FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `KOSTENTRAEGER_ID` = '$mv_id' && ANFANG<='$curdate' && KOSTENKATEGORIE !='Ratenzahlung' && KOSTENKATEGORIE NOT LIKE 'Mahngeb%' && KOSTENKATEGORIE NOT LIKE 'Kaltwasserabr%' ORDER BY `MJESECI` ASC) AS t1 ";
+        $db_abfrage = "SELECT KOSTENKATEGORIE, BETRAG * MJESECI AS GESAMT FROM (SELECT KOSTENKATEGORIE, BETRAG, ANFANG, ENDE, IF( ENDE = '0000-00-00' OR ENDE >= '$curdate', '$curdate', ENDE ) AS NEW_ENDE, IF( ENDE <= '$curdate' && ENDE != '0000-00-00', period_diff( concat( year( ENDE ) , if( month( ENDE ) <10, '0', '' ) , month( ENDE ) ) , concat( year( ANFANG ) , if( month( ANFANG ) <10, '0', '' ), month( ANFANG ) ) ) +1, period_diff( concat( year( '$curdate' ) , if( month( '$curdate' ) <10, '0', '' ) , month( '$curdate' ) ) , concat( year( ANFANG ) , if( month( ANFANG ) <10, '0', '' ) , month( ANFANG ) ) ) +1 ) AS MJESECI FROM MIETENTWICKLUNG WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'Mietvertrag' && `KOSTENTRAEGER_ID` = '$mv_id' && ANFANG<='$curdate' && KOSTENKATEGORIE !='Ratenzahlung' && KOSTENKATEGORIE NOT LIKE 'Mahngeb%' && KOSTENKATEGORIE NOT LIKE 'Kaltwasserabr%' ORDER BY `MJESECI` ASC) AS t1 ";
 
         $resultat = DB::select($db_abfrage);
 

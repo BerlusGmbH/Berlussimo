@@ -16,6 +16,7 @@
     import rentalContractChip from "./RentalContractChip.vue";
     import accountingEntityChip from "./AccountingEntityChip.vue";
     import constructionSiteChip from "./ConstructionSiteChip.vue";
+    import InvoiceChip from "./InvoiceChip.vue";
     import InvoiceItemChip from "./InvoiceItemChip.vue";
     import BankAccountStandardChartChip from "./BankAccountStandardChartChip.vue";
     import BookingAccountChip from "./BookingAccountChip.vue";
@@ -23,16 +24,19 @@
     import {Prop} from "vue-property-decorator";
     import {
         AccountingEntity,
-        Bankkonto, ConstructionSite,
+        BankAccountStandardChart,
+        Bankkonto,
+        BookingAccount,
+        ConstructionSite,
         Einheit,
-        Haus, InvoiceItem,
+        Haus,
+        Invoice,
+        InvoiceItem,
         Objekt,
         Partner,
         Person,
         PurchaseContract,
-        RentalContract,
-        BookingAccount,
-        BankAccountStandardChart
+        RentalContract
     } from "../../../server/resources";
 
     @Component({
@@ -47,6 +51,7 @@
             [RentalContract.type]: rentalContractChip,
             [AccountingEntity.type]: accountingEntityChip,
             [ConstructionSite.type]: constructionSiteChip,
+            [Invoice.type]: InvoiceChip,
             [InvoiceItem.type]: InvoiceItemChip,
             [BankAccountStandardChart.type]: BankAccountStandardChartChip,
             [BookingAccount.type]: BookingAccountChip

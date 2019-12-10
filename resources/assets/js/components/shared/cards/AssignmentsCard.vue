@@ -35,6 +35,7 @@
                     :items="assignments"
                     :search="search"
                     :hide-actions="assignments.length <= 5"
+                    :pagination.sync="pagination"
                     class="elevation-1"
             >
                 <template slot="items" slot-scope="props">
@@ -62,7 +63,7 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
-    import {Haus, Model, Objekt, Einheit} from "../../../server/resources/models";
+    import {Einheit, Haus, Model, Objekt} from "../../../server/resources/models";
     import assignmentAddDialog from "../../../components/common/dialogs/AssignmentAddDialog.vue";
 
     @Component({
@@ -82,6 +83,14 @@
 
         @Prop({type: Object})
         costUnit: Model;
+
+        pagination: {
+            sortBy: string,
+            descending: boolean
+        } = {
+            sortBy: 'ERSTELLT',
+            descending: true
+        };
 
         search: string = '';
         headers = [

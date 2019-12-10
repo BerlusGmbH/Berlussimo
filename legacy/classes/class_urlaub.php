@@ -105,7 +105,7 @@ class urlaub
         $users = \App\Models\Person::whereHas('jobsAsEmployee', function ($query) use ($jahr) {
             $query->active('>=', $jahr . '-01-01')
                 ->active('<=', $jahr . '-12-31');
-        })->select(['id', 'name'])->defaultOrder()->get();
+        })->defaultOrder()->get();
         return $users;
     }
 
@@ -242,18 +242,20 @@ class urlaub
     {
         $result = \App\Models\Person::find($benutzer_id);
         if (isset($result)) {
-            $job = $result->jobsAsEmployee[0];
-            $this->benutzername = $result->name;
-            $this->benutzer_id = $benutzer_id;
-            $this->gewerk_id = $job->trade_id;
-            $this->eintritt = $job->join_date;
-            $this->austritt = $job->leave_date;
-            $this->urlaub = $job->holidays;
-            $this->stunden_pw = $job->hours_per_week;
-            $this->stundensatz = $job->hourly_rate;
-        } else {
-            return false;
+            $job = $result->jobsAsEmployee()->defaultOrder()->first();
+            if (isset($job)) {
+                $this->benutzername = $result->full_name;
+                $this->benutzer_id = $benutzer_id;
+                $this->gewerk_id = $job->trade_id;
+                $this->eintritt = $job->join_date;
+                $this->austritt = $job->leave_date;
+                $this->urlaub = $job->holidays;
+                $this->stunden_pw = $job->hours_per_week;
+                $this->stundensatz = $job->hourly_rate;
+                return true;
+            }
         }
+        return false;
     }
 
     function tage_zwischen($von, $bis)
@@ -439,7 +441,7 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = persons.id && persons.id = jobs.emp
             foreach ($mitarbeiter_arr as $user) {
                 $job = $user->jobsAsEmployee[0];
                 $zaehler++;
-                $mitarbeiter = $user->name;
+                $mitarbeiter = $user->full_name;
                 $benutzer_id = $user->id;
 
                 $eintritt = $job->join_date;
@@ -997,7 +999,7 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = persons.id && persons.id = jobs.emp
 
             foreach ($mitarbeiter_arr as $user) {
                 $zaehler++;
-                $mitarbeiter = $user->name;
+                $mitarbeiter = $user->full_name;
                 $benutzer_id = $user->id;
 
                 $this->jahresuebersicht_mitarbeiter_kurz($benutzer_id, $jahr);
@@ -1091,8 +1093,10 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = persons.id && persons.id = jobs.emp
 
         $mitarbeiter_arr = $this->mitarbeiter_arr($jahr);
 
+        $c = 0;
+
         foreach ($mitarbeiter_arr as $user) {
-            $mitarbeiter = $user->name;
+            $mitarbeiter = $user->full_name;
             $benutzer_id = $user->id;
 
             for ($b = 1; $b <= $anzahl_t; $b++) {
@@ -1130,6 +1134,7 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = persons.id && persons.id = jobs.emp
                 $zeichen = '';
                 unset ($geburtstag);
             } // end for 2
+            $c++;
         } // end for 1
 
         $pdf->ezTable($table_arr, $cols, "Monatsansicht $monatsname $jahr", array(
@@ -1167,7 +1172,7 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = persons.id && persons.id = jobs.emp
         $monat = $datum_arr [1];
         $tag = $datum_arr [2];
 
-        $user = \App\Models\Person::findOrFail('id', $benutzer_id)->whereDay('birthday', '=', $tag)->whereMonth('birthday', '=', $monat)->get();
+        $user = \App\Models\Person::where('id', $benutzer_id)->whereDay('birthday', '=', $tag)->whereMonth('birthday', '=', $monat)->get();
 
         return !$user->isEmpty();
     }
@@ -1199,7 +1204,7 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = persons.id && persons.id = jobs.emp
             $table_arr = [];
 
             foreach ($mitarbeiter_arr as $user) {
-                $mitarbeiter = $user->name;
+                $mitarbeiter = $user->full_name;
                 $benutzer_id = $user->id;
 
                 $row = [];
@@ -1209,7 +1214,7 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = persons.id && persons.id = jobs.emp
                     $tag = sprintf('%02d', $b);
                     $cols ["$tag"] = "$b";
 
-                    $datum_a = "$jahr-$monat-$b";
+                    $datum_a = "$jahr-$monat-$tag";
 
                     $zeichen = '';
 
@@ -1228,13 +1233,16 @@ WHERE URLAUB.ART = ? && URLAUB.BENUTZER_ID = persons.id && persons.id = jobs.emp
                         $zeichen = substr($status, 0, 1);
                     }
 
-                    $geburtstag = $this->check_geburtstag($benutzer_id, $datum_a);
-                    if ($geburtstag) {
-                        $zeichen .= "<b>*G</b>";
-                    }
-
                     $row ["$tag"] = "$zeichen";
                 } // end for 3
+
+                if ($user->birthday) {
+                    $birthday = explode('-', $user->birthday);
+                    if ($birthday[1] == $f) {
+                        $row[sprintf('%02d', $birthday[2])] .= "*G";
+                    }
+                }
+
                 $table_arr [] = $row;
             } // end for 2
             $pdf->ezTable($table_arr, $cols, "Monatsansicht $monatsname $jahr", array(

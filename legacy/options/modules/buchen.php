@@ -318,17 +318,16 @@ switch ($option) {
         break;
 
     case "konten_uebersicht_pdf" :
-        $link = route('web::buchen::legacy', ['option' => 'konten_uebersicht'], false);
-        $form = new formular ();
-        $form->fieldset("Buchungen -> Kostenkontenübersicht als PDF", 'kostenkonten');
         $geldkonto_id = session()->get('geldkonto_id');
         if (!empty ($geldkonto_id)) {
             $b = new buchen ();
             $b->buchungskonten_uebersicht_pdf($geldkonto_id);
         } else {
+            $form = new formular ();
+            $form->fieldset("Buchungen -> Kostenkontenübersicht als PDF", 'kostenkonten');
             echo "Geldkonto auswählen";
+            $form->fieldset_ende();
         }
-        $form->fieldset_ende();
         break;
 
     case "buchungskonto_summiert_xls" :
@@ -550,25 +549,27 @@ switch ($option) {
 
     case "kosten_einnahmen_pdf" :
 
-        $f = new formular ();
         $b = new buchen ();
-        $f->fieldset("Kosten & Einnahmen", 'kosten_einnahmen');
-        $arr [0] ['GELDKONTO_ID'] = '4';
+
+        $arr [0] ['GELDKONTO_ID'] = [4, 1884];
         $arr [0] ['OBJEKT_NAME'] = 'II';
-        $arr [1] ['GELDKONTO_ID'] = '5';
+        $arr [1] ['GELDKONTO_ID'] = [5, 1885];
         $arr [1] ['OBJEKT_NAME'] = 'III';
-        $arr [2] ['GELDKONTO_ID'] = '6';
+        $arr [2] ['GELDKONTO_ID'] = 6;
         $arr [2] ['OBJEKT_NAME'] = 'V';
-        $arr [3] ['GELDKONTO_ID'] = '11';
-        $arr [3] ['OBJEKT_NAME'] = 'E';
-        $arr [4] ['GELDKONTO_ID'] = '8';
-        $arr [4] ['OBJEKT_NAME'] = 'GBN';
-        $arr [5] ['GELDKONTO_ID'] = '7';
-        $arr [5] ['OBJEKT_NAME'] = 'HW';
-        $arr [6] ['GELDKONTO_ID'] = '10';
-        $arr [6] ['OBJEKT_NAME'] = 'FON';
-        $arr [7] ['GELDKONTO_ID'] = '12';
-        $arr [7] ['OBJEKT_NAME'] = 'LAGER';
+        $arr [3] ['GELDKONTO_ID'] = 8;
+        $arr [3] ['OBJEKT_NAME'] = 'GBN';
+        $arr [4] ['GELDKONTO_ID'] = 7;
+        $arr [4] ['OBJEKT_NAME'] = 'HW';
+        $arr [5] ['GELDKONTO_ID'] = 1920;
+        $arr [5] ['OBJEKT_NAME'] = 'DÜ29';
+        $arr [6] ['GELDKONTO_ID'] = 1921;
+        $arr [6] ['OBJEKT_NAME'] = 'HO190';
+        $arr [7] ['GELDKONTO_ID'] = 12;
+        $arr [7] ['OBJEKT_NAME'] = 'Lager';
+
+
+
 
         if (request()->has('monat') && request()->has('jahr')) {
             if (request()->input('monat') != 'alle') {
@@ -585,7 +586,6 @@ switch ($option) {
             $jahr = date("Y");
         }
         $b->kosten_einnahmen_pdf($arr, $monat, $jahr);
-        $f->fieldset_ende();
         break;
 
     case "buchung_suchen" :
@@ -595,10 +595,8 @@ switch ($option) {
         break;
 
     case "buchung_suchen_1" :
-        $f = new formular ();
         $b = new buchen ();
         $b->form_buchung_suchen();
-        $f->fieldset("Suchergebnis", 'buchung_suchen');
         $geld_konto_id = request()->input('geld_konto');
         $betrag = request()->input('betrag');
         $ausdruck = request()->input('ausdruck');
@@ -699,7 +697,10 @@ switch ($option) {
             $abfrage .= " && AKTUELL='1' ORDER BY DATUM ASC, KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID";
             if (request()->has('submit_php')) {
                 if ($ausdruck != '' or $betrag != '' or $kostenkonto != '') {
+                    $f = new formular ();
+                    $f->fieldset("Suchergebnis", 'buchung_suchen');
                     $b->finde_buchungen($abfrage);
+                    $f->fieldset_ende();
                 } else {
                     echo "Bitte geben Sie den gesuchten Betrag, Ausdruck oder ein Kostenkonto ein.";
                 }
@@ -714,7 +715,6 @@ switch ($option) {
             }
         }
 
-        $f->fieldset_ende();
         break;
 
     case "kostenkonto_pdf" :

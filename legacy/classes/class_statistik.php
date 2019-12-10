@@ -19,7 +19,7 @@ class statistik
     {
         $b = new objekt ();
         $this->objekt_name = $b->get_objekt_name($objekt_id);
-        echo "OBJEKT $this->objekt_name im Jahr $jahr<hr>";
+        echo "Objekt $this->objekt_name im Jahr $jahr<hr>";
         $this->akt_jahr = date("Y");
         if ($jahr == $this->akt_jahr) {
             $a_bis = date("m");
@@ -252,7 +252,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
 
     function get_sollmiete_leerstand($einheit_id)
     {
-        $result = DB::select("SELECT SUM( DETAIL_INHALT ) AS SUMME FROM DETAIL WHERE DETAIL_AKTUELL = '1' && DETAIL_ZUORDNUNG_TABELLE = 'EINHEIT' && DETAIL_ZUORDNUNG_ID = '$einheit_id' && (DETAIL_NAME = 'Miete kalt' OR DETAIL_NAME = 'Nebenkosten Vorauszahlung' OR DETAIL_NAME = 'Heizkosten Vorauszahlung')  ");
+        $result = DB::select("SELECT SUM( DETAIL_INHALT ) AS SUMME FROM DETAIL WHERE DETAIL_AKTUELL = '1' && DETAIL_ZUORDNUNG_TABELLE = 'Einheit' && DETAIL_ZUORDNUNG_ID = '$einheit_id' && (DETAIL_NAME = 'Miete kalt' OR DETAIL_NAME = 'Nebenkosten Vorauszahlung' OR DETAIL_NAME = 'Heizkosten Vorauszahlung')  ");
 
         $row = $result[0];
         return $row ['SUMME'];
@@ -655,7 +655,7 @@ ORDER BY EINHEIT_KURZNAME ASC");
         for ($a = 0; $a < $anzahl_gesamt_mvs; $a++) {
             $d = new detail ();
             $id = $my_arr [$a] ['MIETVERTRAG_ID'];
-            $nutzungsart = $d->finde_detail_inhalt('MIETVERTRAG', $id, 'Nutzungsart');
+            $nutzungsart = $d->finde_detail_inhalt('Mietvertrag', $id, 'Nutzungsart');
             $nutzungs_stat [] = $nutzungsart;
         }
         // echo "<pre>";
@@ -731,7 +731,7 @@ ORDER BY EINHEIT_KURZNAME ASC");
             $gesamt_std = $this->stunden_gesamt_kostentraeger($kos_typ, $kos_id, $datum_a, $datum_e);
             $gesamt_eur = nummer_punkt2komma($gesamt_std * $preis);
 
-            foreach($resultat as $row) {
+            foreach ($resultat as $row) {
                 $benutzname = $row ['name'];
                 $std = nummer_punkt2komma($row ['STD']);
                 $leistung_eur = nummer_punkt2komma($row ['LEISTUNG_EUR']);
@@ -766,7 +766,7 @@ ORDER BY EINHEIT_KURZNAME ASC");
         if (!empty($resultat)) {
             echo "<table class=\"sortable striped\">";
             echo "<thead><tr><th>Baustelle</th><th>SOLL</th><th>GESAMT</th><th>DIFF</th><th>STATUS</th></tr></thead>";
-            foreach($resultat as $row) {
+            foreach ($resultat as $row) {
                 $kos_typ = $row ['KOSTENTRAEGER_TYP'];
                 $kos_id = $row ['KOSTENTRAEGER_ID'];
                 $datum_a = $row ['A_DATUM'];
@@ -975,17 +975,21 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
         $f->fieldset('BAU', 'bauid');
         $r = new rechnung ();
         $kos_bez = $r->kostentraeger_ermitteln($kos_typ, $kos_id);
-        echo "<h1>$kos_bez</h1>";
+        echo "<h4>$kos_bez</h4>";
         $b_arr = $this->get_bau_beleg_arr();
         if (empty($b_arr)) {
             fehlermeldung_ausgeben("Keine Belege in BAU_BELEG DB hinterlegt");
         } else {
+            echo "Kontrollbelege: ";
+            foreach ($b_arr as $beleg) {
+                echo "<a href='" . route('web::rechnungen.show', ['id' => $beleg['BELEG_NR']]) . "' target='_blank'>" . $beleg['BELEG_NR'] . "</a> ";
+            }
             $anz = count($b_arr);
             for ($a = 0; $a < $anz; $a++) {
                 $empty = true;
                 $beleg_nr = $b_arr [$a] ['BELEG_NR'];
                 $r->rechnung_grunddaten_holen($beleg_nr);
-                $table = "<h2><b>$r->kurzbeschreibung</b></h2>";
+                $table = "<h5><b>$r->kurzbeschreibung</b></h5>";
                 $pos_arr = $r->rechnungs_positionen_arr($beleg_nr);
                 if (!empty($pos_arr)) {
                     $anz_p = count($pos_arr);
@@ -1016,7 +1020,7 @@ WHERE R_BELEG_ID=BELEG_NR && POS=POSITION");
 
         $result = DB::select("SELECT BELEG_NR, POSITION, MENGE FROM `KONTIERUNG_POSITIONEN` WHERE `KOSTENTRAEGER_TYP` LIKE '$kos_typ' AND `KOSTENTRAEGER_ID` ='$kos_id' AND `AKTUELL` = '1'");
 
-        foreach($result as $row) {
+        foreach ($result as $row) {
             $beleg_nr = $row ['BELEG_NR'];
             $position = $row ['POSITION'];
             $menge_kont = $row ['MENGE'];

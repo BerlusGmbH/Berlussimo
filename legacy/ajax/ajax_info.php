@@ -141,23 +141,18 @@ LIMIT 0 , 1", [$konto_id]);
         }
 
         if ($typ == 'Haus') {
-            $result = DB::select("SELECT HAUS_ID, HAUS_STRASSE, HAUS_NUMMER, OBJEKT_ID FROM HAUS WHERE HAUS_AKTUELL='1' ORDER BY HAUS_STRASSE,  0+HAUS_NUMMER, OBJEKT_ID ASC");
-            if (!empty($result)) {
-                foreach ($result as $row) {
-                    $h_id = $row['HAUS_ID'];
-                    $h_str = $row ['HAUS_STRASSE'];
-                    $h_nr = $row ['HAUS_NUMMER'];
-                    $hh = new haus ();
-                    $hh->get_haus_info($h_id);
-                    if (!session()->has('geldkonto_id')) {
-                        echo "$h_str $h_nr*$h_id*$hh->objekt_name|";
-                    } else {
-                        $gk = new gk ();
-                        if ($gk->check_zuweisung_kos_typ(session()->get('geldkonto_id'), 'Objekt', $hh->objekt_id)) {
-                            echo "$h_str $h_nr*$h_id*$hh->objekt_name|";
-                        }
-                    }
-                }
+            $haeuser = \App\Models\Haeuser::with('objekt')->defaultOrder();
+
+            if (session()->has('geldkonto_id')) {
+                $haeuser->whereHas('objekt.bankkonten', function ($query) {
+                    //todo check if fixed 'GELD_KONTEN.KONTO_ID' <-> 'KONTO_ID'
+                    $query->where('GELD_KONTEN.KONTO_ID', session()->get('geldkonto_id'));
+                });
+            }
+
+            $haeuser = $haeuser->get();
+            foreach ($haeuser as $haus) {
+                echo trim($haus->HAUS_STRASSE) . " " . trim($haus->HAUS_NUMMER) . "*$haus->HAUS_ID*" . $haus->objekt->OBJEKT_KURZNAME . "|";
             }
         }
 
@@ -200,7 +195,8 @@ ORDER BY LPAD( EINHEIT_KURZNAME, LENGTH( EINHEIT_KURZNAME ) ,  '1' ) ASC ");
                 }]);
             if(session()->has('geldkonto_id')) {
                 $einheiten->whereHas('haus.objekt.bankkonten', function ($query) {
-                    $query->where('KONTO_ID', session()->get('geldkonto_id'));
+                    //todo check if fixed 'GELD_KONTEN.KONTO_ID' <-> 'KONTO_ID'
+                    $query->where('GELD_KONTEN.KONTO_ID', session()->get('geldkonto_id'));
                 });
             }
             $einheiten = $einheiten->get();
@@ -242,7 +238,7 @@ ORDER BY LPAD( EINHEIT_KURZNAME, LENGTH( EINHEIT_KURZNAME ) ,  '1' ) ASC ");
             if (!session()->has('geldkonto_id')) {
                 $result = DB::select(
                     "SELECT WEG_MITEIGENTUEMER.ID, WEG_MITEIGENTUEMER.EINHEIT_ID, EINHEIT_KURZNAME, GROUP_CONCAT(CONCAT(persons.name, ', ', persons.first_name) SEPARATOR '; ') AS PERSONEN 
-                    FROM persons JOIN WEG_EIGENTUEMER_PERSON ON(persons.id = WEG_EIGENTUEMER_PERSON.PERSON_ID) 
+                    FROM persons JOIN WEG_EIGENTUEMER_PERSON ON(persons.id = WEG_EIGENTUEMER_PERSON.PERSON_ID AND persons.deleted_at IS NULL) 
 	                  JOIN WEG_MITEIGENTUEMER ON(WEG_EIGENTUEMER_PERSON.WEG_EIG_ID = WEG_MITEIGENTUEMER.ID) 
 	                  JOIN EINHEIT ON(EINHEIT.EINHEIT_ID = WEG_MITEIGENTUEMER.EINHEIT_ID) 
                     WHERE EINHEIT.EINHEIT_AKTUELL = '1' && WEG_MITEIGENTUEMER.AKTUELL = '1'  && WEG_EIGENTUEMER_PERSON.AKTUELL = '1'
@@ -273,10 +269,10 @@ ORDER BY LPAD( EINHEIT_KURZNAME, LENGTH( EINHEIT_KURZNAME ) ,  '1' ) ASC ");
             echo "ALLE|";
         }
 
-        if ($typ == 'Benutzer') {
+        if ($typ == 'Person') {
             $users = \App\Models\Person::has('jobsAsEmployee')->defaultOrder()->get();
             foreach ($users as $user) {
-                echo "$user->name*$user->id*|";
+                echo "$user->full_name*$user->id*|";
             }
         }
 
@@ -834,8 +830,11 @@ WHERE (`ARTIKEL_NR` LIKE ? OR `BEZEICHNUNG` LIKE ?) ORDER BY ART_LIEFERANT ASC, 
         $gk_id = request()->input('gk_id');
         $pool_ids_string = request()->input('pool_ids_string');
 
+        $servicetime_from = request()->input('servicetime_from');
+        $servicetime_to = request()->input('servicetime_to');
+
         $r = new rechnungen ();
-        $r->erstelle_rechnung_u_pool($kos_typ, $kos_id, $aussteller_typ, $aussteller_id, $r_datum, $f_datum, $kurzinfo, $gk_id, $pool_ids_string);
+        $r->erstelle_rechnung_u_pool($kos_typ, $kos_id, $aussteller_typ, $aussteller_id, $r_datum, $f_datum, $kurzinfo, $gk_id, $pool_ids_string, $servicetime_from, $servicetime_to);
         break;
 
     case "u_pools_anzeigen" :

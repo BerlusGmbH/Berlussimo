@@ -4,7 +4,7 @@
                        hide-details
                        prepend-icon="search"
                        append-icon=""
-                       :entities="['person', 'partner', 'objekt', 'haus', 'einheit']"
+                       :entities="['objekt', 'person', 'haus', 'einheit', 'partner']"
                        solo
                        style="background: #636363"
     >

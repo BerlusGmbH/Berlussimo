@@ -136,23 +136,23 @@ if (request()->has('option')) {
             $mobil = request()->input('mobil');
             $email = request()->input('email');
             $values = "'$partner_name','$str', '$nr', '$plz', '$ort', '$land', '1'";
-            if (save_to_db('PARTNER_LIEFERANT', $values, 'PARTNER_ID') == true) {
+            if (save_to_db('Partner', $values, 'PARTNER_ID') == true) {
                 $partner_id = get_partner_id($partner_name, $str, $nr, $plz);
                 session()->put('kos_typ', 'Partner');
                 session()->put('kos_id', $partner_id);
                 if (!empty($partner_id)) {
                     /*Telefon, Mobil, Email in Details speichern*/
                     if (!empty($tel)) {
-                        detail_speichern_2('PARTNER_LIEFERANT', $partner_id, 'Telefon', $tel, date("d.m.Y"));
+                        detail_speichern_2('Partner', $partner_id, 'Telefon', $tel, date("d.m.Y"));
                     }
                     if (!empty($mobil)) {
-                        detail_speichern_2('PARTNER_LIEFERANT', $partner_id, 'Handy', $mobil, date("d.m.Y"));
+                        detail_speichern_2('Partner', $partner_id, 'Handy', $mobil, date("d.m.Y"));
                     }
                     if (!empty($email)) {
-                        detail_speichern_2('PARTNER_LIEFERANT', $partner_id, 'Email', $email, date("d.m.Y"));
+                        detail_speichern_2('Partner', $partner_id, 'Email', $email, date("d.m.Y"));
                     }
                     if (!empty($wohnlage)) {
-                        detail_speichern_2('PARTNER_LIEFERANT', $partner_id, 'Wohnlage', $wohnlage, date("d.m.Y"));
+                        detail_speichern_2('Partner', $partner_id, 'Wohnlage', $wohnlage, date("d.m.Y"));
                     }
                     kos_typ_info_anzeigen(session()->get('kos_typ'), session()->get('kos_id'));
                     if (session()->has('reserve_lat') && session()->has('reserve_lon')) {
@@ -233,11 +233,11 @@ if (request()->has('option')) {
         /*Detail speichern*/
         case "detail_speichern":
             if (session()->has('detail_name') && session()->has('detail_inhalt')) {
-                detail_speichern_2('PARTNER_LIEFERANT', session()->get('kos_id'), request()->input('detail_name'), request()->input('detail_inhalt'), date("d.m.Y"));
+                detail_speichern_2('Partner', session()->get('kos_id'), request()->input('detail_name'), request()->input('detail_inhalt'), date("d.m.Y"));
                 if (session()->get('kos_typ') != 'Partner') {
                     kos_typ_info_anzeigen(session()->get('kos_typ'), session()->get('kos_id'));
                 } else {
-                    kos_typ_info_anzeigen('PARTNER_LIEFERANT', session()->get('kos_id'));
+                    kos_typ_info_anzeigen('Partner', session()->get('kos_id'));
                 }
             }
             break;

@@ -152,7 +152,7 @@ function einheit_kurz($haus_id)
             }
             $EINHEIT_QM = nummer_punkt2komma($row['EINHEIT_QM']);
 
-            $detail_check = detail_check("EINHEIT", $row['EINHEIT_ID']);
+            $detail_check = detail_check("Einheit", $row['EINHEIT_ID']);
             if ($detail_check > 0) {
                 $detail_link = "<a class=\"table_links\" href=\"?daten=details&option=details_anzeigen&detail_tabelle=EINHEIT&detail_id=$row[EINHEIT_ID]\">Details</a>";
             } else {
@@ -238,11 +238,11 @@ WHERE EINHEIT_AKTUELL='1' GROUP BY EINHEIT_ID ORDER BY LPAD(EINHEIT_KURZNAME, LE
 
             $link_aendern = "<a class=\"table_links\" href='" . route('web::einheiten::legacy', ['einheit_raus' => 'einheit_aendern', 'einheit_id' => $einheit_id]) . "'>Ändern</a>";
 
-            $detail_check = detail_check("EINHEIT", $einheit_id);
+            $detail_check = detail_check("Einheit", $einheit_id);
             if ($detail_check > 0) {
-                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'EINHEIT', 'detail_id' => $einheit_id]) . "'>Details</a>";
+                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'Einheit', 'detail_id' => $einheit_id]) . "'>Details</a>";
             } else {
-                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'EINHEIT', 'detail_id' => $einheit_id]) . "'>Neues Detail</a>";
+                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'Einheit', 'detail_id' => $einheit_id]) . "'>Neues Detail</a>";
             }
 
             echo "<tr><td>$einheit_link</td><td>$TYP</td><td>$mietkonto_link</td><td>";

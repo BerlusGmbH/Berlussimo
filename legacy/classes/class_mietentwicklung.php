@@ -83,7 +83,7 @@ IF( ANFANG <= '$jahr-01-01', '$jahr-01-01', ANFANG) AS NEW_ANFANG,
 
 
 FROM MIETENTWICKLUNG
-WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `KOSTENTRAEGER_ID` = '$mv_id') as t1 WHERE DATE_FORMAT(NEW_ANFANG, '%Y') = '$jahr' && DATE_FORMAT(NEW_ENDE, '%Y') = '$jahr' && NEW_ANFANG!=NEW_ENDE && KOSTENKATEGORIE = '$kostenkat'");
+WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'Mietvertrag' && `KOSTENTRAEGER_ID` = '$mv_id') as t1 WHERE DATE_FORMAT(NEW_ANFANG, '%Y') = '$jahr' && DATE_FORMAT(NEW_ENDE, '%Y') = '$jahr' && NEW_ANFANG!=NEW_ENDE && KOSTENKATEGORIE = '$kostenkat'");
 
         $this->nebenkosten_gesamt_jahr = 0.00;
         return $result;
@@ -98,7 +98,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
         echo "<tr><th style='width: 45%'>BEZEICHNUNG</th><th style='width: 10%'>Beginn</th><th style='width: 10%'>Ende</th><th style='width: 10%'>Betrag</th><th style='width: 10%'>MWST-Anteil</th><th style='width: 15%'>Optionen</th></tr></thead>";
 
         $heute = date("Y-m-d");
-        $db_abfrage1 = "SELECT * FROM `MIETENTWICKLUNG`  WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL='1' && (ENDE='0000-00-00' OR ENDE>='$heute') && ANFANG <= '$heute' ORDER BY KOSTENKATEGORIE, ANFANG, ENDE ASC";
+        $db_abfrage1 = "SELECT * FROM `MIETENTWICKLUNG`  WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL='1' && (ENDE='0000-00-00' OR ENDE>='$heute') && ANFANG <= '$heute' ORDER BY KOSTENKATEGORIE, ANFANG, ENDE ASC";
         $result1 = DB::select($db_abfrage1);
         $summe_aktuell = 0;
         $summe_mwst = 0;
@@ -140,7 +140,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
         echo "<thead><tr><th colspan=\"6\">ANSTEHEND $mvs->einheit_kurzname - $mvs->personen_name_string</th></tr>";
         echo "<tr><th style='width: 45%'>BEZEICHNUNG</th><th style='width: 10%'>Beginn</th><th style='width: 10%'>Ende</th><th style='width: 10%'>Betrag</th><th style='width: 10%'>MWST-Anteil</th><th style='width: 15%'>Optionen</th></tr></thead>";
 
-        $db_abfrage1 = "SELECT * FROM `MIETENTWICKLUNG`  WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL='1' && (ENDE='0000-00-00' OR ENDE>'$heute') && ANFANG>='$heute' ORDER BY KOSTENKATEGORIE, ANFANG, ENDE ASC";
+        $db_abfrage1 = "SELECT * FROM `MIETENTWICKLUNG`  WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL='1' && (ENDE='0000-00-00' OR ENDE>'$heute') && ANFANG>='$heute' ORDER BY KOSTENKATEGORIE, ANFANG, ENDE ASC";
         $result1 = DB::select($db_abfrage1);
 
         $temp_kat = '';
@@ -180,7 +180,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
         echo "<thead><tr><th colspan=\"6\">ABGELAUFEN $mvs->einheit_kurzname - $mvs->personen_name_string</th></tr>";
         echo "<tr><th style='width: 45%'>BEZEICHNUNG</th><th style='width: 10%'>Beginn</th><th style='width: 10%'>Ende</th><th  style='width: 10%'>Betrag</th><th style='width: 10%'>MWST-Anteil</th><th style='width: 15%'>Optionen</th></tr></thead>";
 
-        $db_abfrage1 = "SELECT * FROM `MIETENTWICKLUNG`  WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL='1' && (ENDE!='0000-00-00' && ENDE<'$heute') ORDER BY ENDE DESC";
+        $db_abfrage1 = "SELECT * FROM `MIETENTWICKLUNG`  WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL='1' && (ENDE!='0000-00-00' && ENDE<'$heute') ORDER BY ENDE DESC";
         $result1 = DB::select($db_abfrage1);
 
         $temp_kat = '';
@@ -224,7 +224,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
         echo "<tr><th>BEZEICHNUNG</th><th>Beginn</th><th>Ende</th><th align=\"right\">Betrag</th><th>MWST-Anteil</th><th>Optionen</th></tr></thead>";
 
         $heute = date("Y-m-d");
-        $db_abfrage1 = "SELECT * FROM `MIETENTWICKLUNG`  WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL='1' && (ENDE='0000-00-00' OR ENDE>='$heute') && ANFANG <= '$heute' ORDER BY KOSTENKATEGORIE, ANFANG, ENDE ASC";
+        $db_abfrage1 = "SELECT * FROM `MIETENTWICKLUNG`  WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL='1' && (ENDE='0000-00-00' OR ENDE>='$heute') && ANFANG <= '$heute' ORDER BY KOSTENKATEGORIE, ANFANG, ENDE ASC";
         // echo $db_abfrage1;
         $result1 = DB::select($db_abfrage1);
         $anz_zeilen = count($result1);
@@ -302,7 +302,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
         echo "<thead><tr><th colspan=\"6\">ANSTEHEND $mvs->einheit_kurzname - $mvs->personen_name_string</th></tr>";
         echo "<tr><th>BEZEICHNUNG</th><th>Beginn</th><th>Ende</th><th align=\"right\">Betrag</th><th>MWST-Anteil</th><th>Optionen</th></tr></thead>";
 
-        $db_abfrage1 = "SELECT * FROM `MIETENTWICKLUNG`  WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL='1' && (ENDE='0000-00-00' OR ENDE>'$heute') && ANFANG>='$heute' ORDER BY KOSTENKATEGORIE, ANFANG, ENDE ASC";
+        $db_abfrage1 = "SELECT * FROM `MIETENTWICKLUNG`  WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL='1' && (ENDE='0000-00-00' OR ENDE>'$heute') && ANFANG>='$heute' ORDER BY KOSTENKATEGORIE, ANFANG, ENDE ASC";
         $result1 = DB::select($db_abfrage1);
 
         $temp_kat = '';
@@ -370,7 +370,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
         echo "<thead><tr><th colspan=\"6\">ABGELAUFEN $mvs->einheit_kurzname - $mvs->personen_name_string</th></tr>";
         echo "<tr><th>BEZEICHNUNG</th><th>Beginn</th><th>Ende</th><th align=\"right\">Betrag</th><th>MWST-Anteil</th><th>Optionen</th></tr></thead>";
 
-        $db_abfrage1 = "SELECT * FROM `MIETENTWICKLUNG`  WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL='1' && (ENDE!='0000-00-00' && ENDE<'$heute') ORDER BY ENDE DESC";
+        $db_abfrage1 = "SELECT * FROM `MIETENTWICKLUNG`  WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL='1' && (ENDE!='0000-00-00' && ENDE<'$heute') ORDER BY ENDE DESC";
         $result1 = DB::select($db_abfrage1);
 
         $temp_kat = '';
@@ -484,7 +484,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
         $mwst_anteil = request()->input('mwst');
         $mwst_anteil = nummer_komma2punkt($mwst_anteil);
 
-        $db_abfrage = "INSERT INTO MIETENTWICKLUNG VALUES (NULL, '$me_id', 'MIETVERTRAG', '$mv_id', '$kostenkat', '$anfang', '$ende', '$mwst_anteil', '$betrag', '1')";
+        $db_abfrage = "INSERT INTO MIETENTWICKLUNG VALUES (NULL, '$me_id', 'Mietvertrag', '$mv_id', '$kostenkat', '$anfang', '$ende', '$mwst_anteil', '$betrag', '1')";
         DB::insert($db_abfrage);
         /* Zugewiesene MIETBUCHUNG_DAT auslesen */
         $last_dat = DB::getPdo()->lastInsertId();
@@ -562,7 +562,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
 
         $me_id = $form->get_mietentwicklung_last_id();
         $me_id = $me_id + 1;
-        $db_abfrage = "INSERT INTO MIETENTWICKLUNG VALUES (NULL, '$me_id', 'MIETVERTRAG', '$mv_id', '$kostenkat', '$anfang', '$ende', '$mwst_anteil', '$betrag', '1')";
+        $db_abfrage = "INSERT INTO MIETENTWICKLUNG VALUES (NULL, '$me_id', 'Mietvertrag', '$mv_id', '$kostenkat', '$anfang', '$ende', '$mwst_anteil', '$betrag', '1')";
         DB::insert($db_abfrage);
         /* Zugewiesene MIETBUCHUNG_DAT auslesen */
         $last_dat = DB::getPdo()->lastInsertId();
@@ -592,7 +592,7 @@ WHERE MIETENTWICKLUNG_AKTUELL = '1' && `KOSTENTRAEGER_TYP` = 'MIETVERTRAG' && `K
 FROM `MIETENTWICKLUNG` , MIETVERTRAG, EINHEIT
 WHERE `KOSTENKATEGORIE` LIKE '$kosten_kat'
 AND `ENDE` = '0000-00-00'
-AND `MIETENTWICKLUNG_AKTUELL` = '1' && `MIETVERTRAG_AKTUELL` = '1' && `EINHEIT_AKTUELL` = '1' && KOSTENTRAEGER_TYP = 'MIETVERTRAG' && KOSTENTRAEGER_ID = MIETVERTRAG_ID && MIETVERTRAG.EINHEIT_ID = EINHEIT.EINHEIT_ID";
+AND `MIETENTWICKLUNG_AKTUELL` = '1' && `MIETVERTRAG_AKTUELL` = '1' && `EINHEIT_AKTUELL` = '1' && KOSTENTRAEGER_TYP = 'Mietvertrag' && KOSTENTRAEGER_ID = MIETVERTRAG_ID && MIETVERTRAG.EINHEIT_ID = EINHEIT.EINHEIT_ID";
         $result = DB::select($db_abfrage);
         if (!empty($result)) {
             echo "<table class=\"sortable\">";
@@ -628,7 +628,7 @@ AND `MIETENTWICKLUNG_AKTUELL` = '1' && `MIETVERTRAG_AKTUELL` = '1' && `EINHEIT_A
 
     function get_kostenkat_info_aktuell($mietvertrag_id, $monat, $jahr, $kostenkat = 'Nebenkosten Vorauszahlung')
     {
-        $result = DB::select("SELECT * FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat'  && KOSTENKATEGORIE='$kostenkat' ORDER BY ANFANG DESC LIMIT 0,1");
+        $result = DB::select("SELECT * FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat'  && KOSTENKATEGORIE='$kostenkat' ORDER BY ANFANG DESC LIMIT 0,1");
         if (!empty($result)) {
             $row = $result[0];
             return $row;

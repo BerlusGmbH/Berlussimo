@@ -190,6 +190,24 @@ class Person extends Authenticatable implements AuditableContract
         return $full_name;
     }
 
+    public function addressName($multiline = false)
+    {
+        $full_name = '';
+        if ($this->sex == 'männlich')
+            $full_name .= 'Herr ';
+        if ($this->sex == 'weiblich')
+            $full_name .= 'Frau ';
+        if (!empty($full_name) && $multiline)
+            $full_name .= "\n";
+        if (!empty($this->first_name))
+            $full_name .= $this->first_name;
+        if (!empty($this->name) && !empty($this->first_name))
+            $full_name .= ' ';
+        if (!empty($this->name))
+            $full_name .= $this->name;
+        return $full_name;
+    }
+
     public function getPrettyNameAttribute()
     {
         $full_name = '';
@@ -200,6 +218,14 @@ class Person extends Authenticatable implements AuditableContract
         if (!empty($this->name))
             $full_name .= $this->name;
         return $full_name;
+    }
+
+    public function getEmailAttribute()
+    {
+        if (!$this->emails->isEmpty()) {
+            return $this->emails[0]->DETAIL_INHALT;
+        }
+        return '';
     }
 
     /**
@@ -252,5 +278,17 @@ class Person extends Authenticatable implements AuditableContract
         return Person::whereHas('emails', function ($query) use ($username) {
             $query->where('DETAIL_INHALT', $username);
         })->first();
+    }
+
+    public function getSalutationAttribute()
+    {
+        switch ($this->sex) {
+            case "männlich":
+                return "Sehr geehrter Herr " . trim($this->name) . ",";
+            case "weiblich":
+                return "Sehr geehrte Frau " . trim($this->name) . ",";
+            case null:
+                return "Sehr geehrte Damen und Herren,";
+        }
     }
 }

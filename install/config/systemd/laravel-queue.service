@@ -13,7 +13,7 @@ Description=Laravel queue worker
 User=www-data
 Group=www-data
 Restart=always
-ExecStart=/usr/bin/php /var/www/berlussimo/artisan queue:work
+ExecStart=/usr/bin/php /var/www/berlussimo/artisan queue:work --tries=3 --timeout=600 --env=production
 
 [Install]
 WantedBy=multi-user.target

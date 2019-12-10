@@ -341,7 +341,8 @@ class zeiterfassung
         if ($benutzer_id != Auth::user()->id) {
             if (!Auth::user()->hasAnyRole([
                 \App\Libraries\Role::ROLE_BUCHHALTER,
-                \App\Libraries\Role::ROLE_ADMINISTRATOR
+                \App\Libraries\Role::ROLE_ADMINISTRATOR,
+                \App\Libraries\Role::ROLE_BAULEITER,
             ])
             ) {
                 $fehler = 1;
@@ -570,11 +571,8 @@ class zeiterfassung
 
             $r->artikel_leistung_mit_artikelnr_speichern($bp_partner_id, $leistungs_beschreibung, $artikel_preis, $artikel_nr, '0', 'Std', '19', '0.00');
 
-            // $r->artikel_leistung_speichern($bp_partner_id, $leistungs_beschreibung, $artikel_preis, '0', 'Std', '19');
-
-            $zugewiesene_l_id = $this->get_leistung_id_by_beschr($this->gewerk_id, $leistungs_beschreibung);
             $datum = date_mysql2german($datum); // weil die nachfolgende funktion deutsches datumsformat erwartet
-            $this->zettel_pos_speichern($datum, $benutzer_id, $zugewiesene_l_id, $zettel_id, $dauer_min, $kostentraeger_typ, $kostentraeger_bez, $hinweis, $beginn, $ende);
+            $this->zettel_pos_speichern($datum, $benutzer_id, $lk_id, $zettel_id, $dauer_min, $kostentraeger_typ, $kostentraeger_bez, $hinweis, $beginn, $ende);
             weiterleiten_in_sec(route('web::zeiterfassung::legacy', ['option' => 'zettel_eingabe', 'zettel_id' => $zettel_id]), 1);
         } else {
             hinweis_ausgeben("Leistungsbeschreibung zu lang, max 160 zeichen");
@@ -592,13 +590,6 @@ class zeiterfassung
     {
         $result = DB::select("SELECT hourly_rate FROM persons JOIN jobs ON (persons.id = jobs.employee_id) WHERE persons.id = ? ORDER BY persons.id DESC LIMIT 0,1", [$benutzer_id]);
         return !empty($result) ? $result[0]['hourly_rate'] : 0;
-    }
-
-    function get_leistung_id_by_beschr($gewerk_id, $beschreibung)
-    {
-        $result = DB::select("SELECT LK_ID FROM LEISTUNGSKATALOG WHERE GEWERK='$gewerk_id' && BEZEICHNUNG='$beschreibung' && AKTUELL = '1' ORDER BY LK_ID DESC LIMIT 0,1");
-        $row = $result[0];
-        return $row ['LK_ID'];
     }
 
     function zettel_pos_speichern($datum, $benutzer_id, $leistung_id, $zettel_id, $dauer_min, $kostentraeger_typ, $kostentraeger_bez, $hinweis, $beginn, $ende)
@@ -919,8 +910,8 @@ class zeiterfassung
         foreach ($benutzer_arr as $user) {
             $z++;
             $benutzer_id = $user['id'];
-            $benutzername = $user['name'];
-            $this->BP_PARTNER_ID = $user['BP_PARTNER_ID'];
+            $benutzername = \App\Models\Person::findOrFail($benutzer_id)->full_name;
+            $this->BP_PARTNER_ID = $user['employer_id'];
             $p = new partners ();
             $p->get_partner_name($this->BP_PARTNER_ID);
             if ($partner_name != $p->partner_name) {
@@ -957,9 +948,9 @@ class zeiterfassung
     {
         $datum_h = date("Y-m-d");
         if ($ex == 0) {
-            $result = DB::select("SELECT persons.id, persons.name, jobs.employer_id FROM persons JOIN jobs ON (persons.id=jobs.employer_id) WHERE jobs.leave_date > ? OR jobs.leave_date IS NULL GROUP BY persons.id ORDER BY jobs.employer_id, persons.name ASC", [$datum_h]);
+            $result = DB::select("SELECT persons.id, persons.name, jobs.employer_id FROM persons JOIN jobs ON (persons.id=jobs.employee_id) WHERE (jobs.leave_date > ? OR jobs.leave_date IS NULL) AND persons.deleted_at IS NULL GROUP BY persons.id ORDER BY jobs.employer_id, persons.name ASC", [$datum_h]);
         } else {
-            $result = DB::select("SELECT persons.id, persons.name, jobs.employer_id FROM persons JOIN jobs ON (persons.id=jobs.employer_id) GROUP BY persons.id ORDER BY jobs.employer_id, persons.name ASC");
+            $result = DB::select("SELECT persons.id, persons.name, jobs.employer_id FROM persons JOIN jobs ON (persons.id=jobs.employee_id) WHERE persons.deleted_at IS NULL GROUP BY persons.id ORDER BY jobs.employer_id, persons.name ASC");
         }
         return $result;
     }
@@ -1308,7 +1299,7 @@ LIMIT 0 , 1";
 SELECT KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, STUNDENZETTEL.BENUTZER_ID, name, hourly_rate, SUM( DAUER_MIN ) /60 AS STD, hourly_rate * ( SUM( DAUER_MIN ) /60 ) AS LEISTUNG_EUR
 FROM STUNDENZETTEL_POS 
   JOIN STUNDENZETTEL ON ( STUNDENZETTEL.ZETTEL_ID = STUNDENZETTEL_POS.ZETTEL_ID )
-  JOIN persons ON ( STUNDENZETTEL.BENUTZER_ID = persons.id )
+  JOIN persons ON ( STUNDENZETTEL.BENUTZER_ID = persons.id AND persons.deleted_at IS NULL)
   JOIN jobs ON (persons.id = jobs.employee_id)
 WHERE STUNDENZETTEL.AKTUELL = '1' && STUNDENZETTEL_POS.AKTUELL = '1' $kos_typ_db $kos_id_db && DATUM BETWEEN ? AND ?
 GROUP BY STUNDENZETTEL.BENUTZER_ID
@@ -1347,7 +1338,7 @@ ORDER BY GEWERK_ID ASC, STD DESC", [$von, $bis]);
 SELECT job_titles.title, SUM( DAUER_MIN /60) AS STD, SUM(jobs.hourly_rate * DAUER_MIN / 60) AS LEISTUNG_EUR
 FROM STUNDENZETTEL_POS
 JOIN STUNDENZETTEL ON ( STUNDENZETTEL.ZETTEL_ID = STUNDENZETTEL_POS.ZETTEL_ID )
-JOIN persons ON ( STUNDENZETTEL.BENUTZER_ID = persons.id )
+JOIN persons ON ( STUNDENZETTEL.BENUTZER_ID = persons.id AND persons.deleted_at IS NULL)
 JOIN jobs ON (persons.id = jobs.employee_id)
 JOIN job_titles ON ( jobs.job_title_id = job_titles.id)
 WHERE STUNDENZETTEL.AKTUELL = '1' && STUNDENZETTEL_POS.AKTUELL = '1' $kos_typ_db $kos_id_db && DATUM BETWEEN ? AND ?
@@ -1381,7 +1372,7 @@ ORDER BY STD DESC
 SELECT KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, persons.id, name, DATUM, BEGINN, ENDE, DAUER_MIN, DAUER_MIN/60 AS STUNDEN, LEISTUNG_ID, BEZEICHNUNG FROM STUNDENZETTEL_POS 
 JOIN STUNDENZETTEL ON 
 (STUNDENZETTEL_POS.ZETTEL_ID=STUNDENZETTEL.ZETTEL_ID)
-JOIN persons ON (STUNDENZETTEL.BENUTZER_ID=persons.id)
+JOIN persons ON (STUNDENZETTEL.BENUTZER_ID=persons.id AND persons.deleted_at IS NULL)
 JOIN LEISTUNGSKATALOG ON (LEISTUNG_ID=LK_ID)
 WHERE STUNDENZETTEL_POS.AKTUELL = '1'  && STUNDENZETTEL.AKTUELL = '1' && DATUM BETWEEN ? AND ? && STUNDENZETTEL.BENUTZER_ID=? $kos_typ_db $kos_id_db  ORDER BY DATUM", [$von, $bis, $m_id]);
                     if (!empty($result)) {
@@ -1420,7 +1411,7 @@ WHERE STUNDENZETTEL_POS.AKTUELL = '1'  && STUNDENZETTEL.AKTUELL = '1' && DATUM B
             $result = DB::select("SELECT KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, STUNDENZETTEL.BENUTZER_ID, name, jobs.hourly_rate, SUM( DAUER_MIN ) /60 AS STD, jobs.hourly_rate * ( SUM( DAUER_MIN ) /60 ) AS LEISTUNG_EUR
 FROM `STUNDENZETTEL_POS`
 JOIN STUNDENZETTEL ON ( STUNDENZETTEL.ZETTEL_ID = STUNDENZETTEL_POS.ZETTEL_ID )
-JOIN persons ON ( STUNDENZETTEL.BENUTZER_ID = persons.id )
+JOIN persons ON ( STUNDENZETTEL.BENUTZER_ID = persons.id AND persons.deleted_at IS NULL)
 JOIN jobs ON (persons.id = jobs.employee_id)
 WHERE STUNDENZETTEL.AKTUELL = '1' && STUNDENZETTEL_POS.AKTUELL = '1' && STUNDENZETTEL.BENUTZER_ID = ?
 && DATUM BETWEEN ? AND ? $kos_typ_db $kos_id_db 
@@ -1445,7 +1436,7 @@ GROUP BY STUNDENZETTEL.BENUTZER_ID LIMIT 0 , 1", [$benutzer_id, $von, $bis]);
             $result = DB::select("
 SELECT KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, persons.id, persons.name, DATUM, BEGINN, ENDE, DAUER_MIN, DAUER_MIN/60 AS STUNDEN, LEISTUNG_ID, BEZEICHNUNG FROM `STUNDENZETTEL_POS` 
 JOIN STUNDENZETTEL ON (STUNDENZETTEL_POS.ZETTEL_ID=STUNDENZETTEL.ZETTEL_ID)
-JOIN persons ON (STUNDENZETTEL.BENUTZER_ID=persons.id)
+JOIN persons ON (STUNDENZETTEL.BENUTZER_ID=persons.id AND persons.deleted_at IS NULL)
 JOIN LEISTUNGSKATALOG ON (LEISTUNG_ID=LK_ID)
 WHERE STUNDENZETTEL_POS.AKTUELL = '1' 
   && STUNDENZETTEL.AKTUELL = '1' 
@@ -1481,7 +1472,7 @@ ORDER BY DATUM", [$von, $bis, $benutzer_id]);
 SELECT job_titles.title, SUM( DAUER_MIN /60 ) AS STD, SUM( jobs.hourly_rate * DAUER_MIN /60 ) AS LEISTUNG_EUR
 FROM `STUNDENZETTEL_POS`
 JOIN STUNDENZETTEL ON ( STUNDENZETTEL.ZETTEL_ID = STUNDENZETTEL_POS.ZETTEL_ID )
-JOIN persons ON ( STUNDENZETTEL.BENUTZER_ID = persons.id )
+JOIN persons ON ( STUNDENZETTEL.BENUTZER_ID = persons.id AND persons.deleted_at IS NULL)
 JOIN jobs ON (persons.id = jobs.employee_id)
 JOIN job_titles ON ( jobs.job_title_id = job_titles.id)
 WHERE STUNDENZETTEL.AKTUELL = '1' 
@@ -1516,7 +1507,7 @@ ORDER BY STD DESC, DATUM", [$kos_typ, $kos_id, $gewerk_id, $von, $bis]);
 
                 $result = DB::select("SELECT KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, STUNDENZETTEL.BENUTZER_ID, name, jobs.hourly_rate, SUM( DAUER_MIN ) /60 AS STD, jobs.hourly_rate * ( SUM( DAUER_MIN ) /60 ) AS LEISTUNG_EUR
 FROM `STUNDENZETTEL_POS` JOIN STUNDENZETTEL ON ( STUNDENZETTEL.ZETTEL_ID = STUNDENZETTEL_POS.ZETTEL_ID )
-JOIN persons ON ( STUNDENZETTEL.BENUTZER_ID = persons.id )
+JOIN persons ON ( STUNDENZETTEL.BENUTZER_ID = persons.id AND persons.deleted_at IS NULL)
 JOIN jobs ON (persons.id = jobs.employee_id)
 WHERE STUNDENZETTEL.AKTUELL = '1' && STUNDENZETTEL_POS.AKTUELL = '1' && DATUM BETWEEN ? AND ? $kos_typ_db $kos_id_db 
 GROUP BY STUNDENZETTEL.BENUTZER_ID ORDER BY DATUM ASC, STD DESC, jobs.job_title_id ASC", [$von, $bis]);
@@ -1545,7 +1536,7 @@ GROUP BY STUNDENZETTEL.BENUTZER_ID ORDER BY DATUM ASC, STD DESC, jobs.job_title_
                     $result = DB::select("SELECT KOSTENTRAEGER_TYP, KOSTENTRAEGER_ID, persons.id, name, DATUM, BEGINN, ENDE, DAUER_MIN, DAUER_MIN/60 AS STUNDEN, LEISTUNG_ID, BEZEICHNUNG FROM STUNDENZETTEL_POS 
 JOIN STUNDENZETTEL ON 
 (STUNDENZETTEL_POS.ZETTEL_ID=STUNDENZETTEL.ZETTEL_ID)
-JOIN persons ON (STUNDENZETTEL.BENUTZER_ID=persons.id)
+JOIN persons ON (STUNDENZETTEL.BENUTZER_ID=persons.id AND persons.deleted_at IS NULL)
 JOIN LEISTUNGSKATALOG ON (LEISTUNG_ID=LK_ID)
 WHERE STUNDENZETTEL_POS.AKTUELL = '1' && STUNDENZETTEL.AKTUELL = '1' && 
 DATUM BETWEEN ? AND ? && STUNDENZETTEL.BENUTZER_ID=? $kos_typ_db $kos_id_db ORDER BY DATUM", [$von, $bis, $m_id]);

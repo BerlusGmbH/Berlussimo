@@ -359,22 +359,23 @@ CREATE TABLE `DETAIL` (
 -- Daten für Tabelle `DETAIL`
 -- 
 
-INSERT INTO `DETAIL` (`DETAIL_DAT`, `DETAIL_ID`, `DETAIL_NAME`, `DETAIL_INHALT`, `DETAIL_BEMERKUNG`, `DETAIL_AKTUELL`, `DETAIL_ZUORDNUNG_TABELLE`, `DETAIL_ZUORDNUNG_ID`) VALUES (1, 0, 'Geschlecht', 'männlich', '', '1', 'PERSON', '1'),
-(2, 1, 'Telefon', '030 89784477', 'Stand 02.11.2010', '1', 'PERSON', '1'),
-(3, 2, 'Handy', '030 89784479', 'Stand 02.11.2010', '1', 'PERSON', '1'),
-(4, 3, 'Geschlecht', 'weiblich', '', '1', 'PERSON', '2'),
-(5, 4, 'Telefon', '11111111', 'Stand 02.11.2010', '1', 'PERSON', '2'),
-(6, 5, 'Handy', '22222222', 'Stand 02.11.2010', '1', 'PERSON', '2'),
-(7, 6, 'Einzugsermächtigung', 'JA', '', '1', 'MIETVERTRAG', '2'),
-(8, 7, 'Autoeinzugsart', 'Aktuelles Saldo komplett', '', '1', 'MIETVERTRAG', '2'),
-(9, 8, 'Kontoinhaber-AutoEinzug', 'Melanie Mustermann', '', '1', 'MIETVERTRAG', '2'),
-(10, 9, 'Kontonummer-AutoEinzug', '1234567', '', '1', 'MIETVERTRAG', '2'),
-(11, 10, 'BLZ-AutoEinzug', '1234321', '', '1', 'MIETVERTRAG', '2'),
-(12, 11, 'Bankname-AutoEinzug', 'Melanies Bank', '', '1', 'MIETVERTRAG', '2'),
-(13, 12, 'Baujahr', '1919', '', '1', 'OBJEKT', '1'),
-(14, 13, 'Wohnlage', 'gut', '', '1', 'HAUS', '1'),
-(15, 14, 'Ausstattungsklasse', '1', 'Feld aus dem Mietspiegel', '1', 'EINHEIT', '1'),
-(16, 15, 'Ausstattungsklasse', '1', 'Feld aus dem Mietspiegel', '1', 'EINHEIT', '2');
+INSERT INTO `DETAIL` (`DETAIL_DAT`, `DETAIL_ID`, `DETAIL_NAME`, `DETAIL_INHALT`, `DETAIL_BEMERKUNG`, `DETAIL_AKTUELL`, `DETAIL_ZUORDNUNG_TABELLE`, `DETAIL_ZUORDNUNG_ID`)
+VALUES (1, 0, 'Geschlecht', 'männlich', '', '1', 'Person', '1'),
+  (2, 1, 'Telefon', '030 89784477', 'Stand 02.11.2010', '1', 'Person', '1'),
+  (3, 2, 'Handy', '030 89784479', 'Stand 02.11.2010', '1', 'Person', '1'),
+  (4, 3, 'Geschlecht', 'weiblich', '', '1', 'Person', '2'),
+  (5, 4, 'Telefon', '11111111', 'Stand 02.11.2010', '1', 'Person', '2'),
+  (6, 5, 'Handy', '22222222', 'Stand 02.11.2010', '1', 'Person', '2'),
+  (7, 6, 'Einzugsermächtigung', 'JA', '', '1', 'Mietvertrag', '2'),
+  (8, 7, 'Autoeinzugsart', 'Aktuelles Saldo komplett', '', '1', 'Mietvertrag', '2'),
+  (9, 8, 'Kontoinhaber-AutoEinzug', 'Melanie Mustermann', '', '1', 'Mietvertrag', '2'),
+  (10, 9, 'Kontonummer-AutoEinzug', '1234567', '', '1', 'Mietvertrag', '2'),
+  (11, 10, 'BLZ-AutoEinzug', '1234321', '', '1', 'Mietvertrag', '2'),
+  (12, 11, 'Bankname-AutoEinzug', 'Melanies Bank', '', '1', 'Mietvertrag', '2'),
+  (13, 12, 'Baujahr', '1919', '', '1', 'Objekt', '1'),
+  (14, 13, 'Wohnlage', 'gut', '', '1', 'Haus', '1'),
+  (15, 14, 'Ausstattungsklasse', '1', 'Feld aus dem Mietspiegel', '1', 'Einheit', '1'),
+  (16, 15, 'Ausstattungsklasse', '1', 'Feld aus dem Mietspiegel', '1', 'Einheit', '2');
 
 -- --------------------------------------------------------
 
@@ -394,67 +395,68 @@ CREATE TABLE `DETAIL_KATEGORIEN` (
 -- Daten für Tabelle `DETAIL_KATEGORIEN`
 -- 
 
-INSERT INTO `DETAIL_KATEGORIEN` (`DETAIL_KAT_ID`, `DETAIL_KAT_NAME`, `DETAIL_KAT_KATEGORIE`, `DETAIL_KAT_AKTUELL`) VALUES (1, 'Heizungsart', 'EINHEIT', '1'),
-(2, 'Warmwasser', 'EINHEIT', '1'),
-(3, 'Zimmeranzahl', 'EINHEIT', '1'),
-(4, 'Eigentümer', 'OBJEKT', '1'),
-(5, 'Baujahr', 'OBJEKT', '1'),
-(6, 'Garage', 'OBJEKT', '1'),
-(7, 'Fussboden', 'EINHEIT', '1'),
-(8, 'Etagenanzahl', 'HAUS', '1'),
-(9, 'Kabelfernsehen', 'HAUS', '1'),
-(10, 'Aufzug', 'HAUS', '1'),
-(11, 'Fenstertyp', 'EINHEIT', '1'),
-(12, 'Tiere', 'MIETVERTRAG', '1'),
-(13, 'Vereinbarung', 'MIETVERTRAG', '1'),
-(14, 'Telefon', 'PERSON', '1'),
-(15, 'Fax', 'PERSON', '1'),
-(16, 'Handy', 'PERSON', '1'),
-(17, 'Strasse / Nr', 'PERSON', '1'),
-(18, 'PLZ', 'PERSON', '1'),
-(19, 'Geschlecht', 'PERSON', '1'),
-(20, 'Bauherr', 'OBJEKT', '1'),
-(25, 'Keller', 'MIETVERTRAG', '1'),
-(26, 'BK', 'MIETVERTRAG', '1'),
-(27, 'HK', 'MIETVERTRAG', '1'),
-(28, 'KALTMIETE', 'MIETVERTRAG', '1'),
-(29, 'Fensteranzahl', 'EINHEIT', '1'),
-(30, 'Balkon', 'EINHEIT', '1'),
-(31, 'Parkplatz', 'HAUS', '1'),
-(32, 'Parkplatzanzahl', 'HAUS', '1'),
-(34, 'Bauherrin', 'OBJEKT', '1'),
-(35, 'Sanierungsjahr', 'OBJEKT', '1'),
-(36, 'Zaun', 'OBJEKT', '1'),
-(37, 'MGF', 'MIETVERTRAG', '1'),
-(38, 'ME', 'MIETVERTRAG', '1'),
-(39, 'Geld Konto Nummer', 'OBJEKT', '1'),
-(40, 'Geld Konto Bankleitzahl', 'OBJEKT', '1'),
-(41, 'Geld Konto Institut', 'OBJEKT', '1'),
-(42, 'Geld Konto Bankleitzahl	', 'HAUS', '1'),
-(43, 'gekündigt am', 'MIETVERTRAG', '1'),
-(44, 'gekündigt zum', 'MIETVERTRAG', '1'),
-(45, 'Kontonummer', 'MIETVERTRAG', '1'),
-(46, 'BLZ', 'MIETVERTRAG', '1'),
-(52, 'Bemerkung', 'EINHEIT', '1'),
-(54, 'Kaution', 'MIETVERTRAG', '1'),
-(55, 'Miete kalt', 'EINHEIT', '1'),
-(56, 'Heizkosten Vorauszahlung', 'EINHEIT', '1'),
-(57, 'Nebenkosten Vorauszahlung', 'EINHEIT', '1'),
-(58, 'Hinweis', 'PERSON', '1'),
-(59, 'Verzugsanschrift', 'PERSON', '1'),
-(60, 'Aushangtafel', 'HAUS', '1'),
-(61, 'Mandanten-Nr', 'PARTNER_LIEFERANT', '1'),
-(62, 'Anrede', 'PERSON', '1'),
-(63, 'Kontoinhaber-AutoEinzug', 'MIETVERTRAG', '0'),
-(64, 'Bankname', 'MIETVERTRAG', '1'),
+INSERT INTO `DETAIL_KATEGORIEN` (`DETAIL_KAT_ID`, `DETAIL_KAT_NAME`, `DETAIL_KAT_KATEGORIE`, `DETAIL_KAT_AKTUELL`)
+VALUES (1, 'Heizungsart', 'Einheit', '1'),
+  (2, 'Warmwasser', 'Einheit', '1'),
+  (3, 'Zimmeranzahl', 'Einheit', '1'),
+  (4, 'Eigentümer', 'Objekt', '1'),
+  (5, 'Baujahr', 'Objekt', '1'),
+  (6, 'Garage', 'Objekt', '1'),
+  (7, 'Fussboden', 'Einheit', '1'),
+  (8, 'Etagenanzahl', 'Haus', '1'),
+  (9, 'Kabelfernsehen', 'Haus', '1'),
+  (10, 'Aufzug', 'Haus', '1'),
+  (11, 'Fenstertyp', 'Einheit', '1'),
+  (12, 'Tiere', 'Mietvertrag', '1'),
+  (13, 'Vereinbarung', 'Mietvertrag', '1'),
+  (14, 'Telefon', 'Person', '1'),
+  (15, 'Fax', 'Person', '1'),
+  (16, 'Handy', 'Person', '1'),
+  (17, 'Strasse / Nr', 'Person', '1'),
+  (18, 'PLZ', 'Person', '1'),
+  (19, 'Geschlecht', 'Person', '1'),
+  (20, 'Bauherr', 'Objekt', '1'),
+  (25, 'Keller', 'Mietvertrag', '1'),
+  (26, 'BK', 'Mietvertrag', '1'),
+  (27, 'HK', 'Mietvertrag', '1'),
+  (28, 'KALTMIETE', 'Mietvertrag', '1'),
+  (29, 'Fensteranzahl', 'Einheit', '1'),
+  (30, 'Balkon', 'Einheit', '1'),
+  (31, 'Parkplatz', 'Haus', '1'),
+  (32, 'Parkplatzanzahl', 'Haus', '1'),
+  (34, 'Bauherrin', 'Objekt', '1'),
+  (35, 'Sanierungsjahr', 'Objekt', '1'),
+  (36, 'Zaun', 'Objekt', '1'),
+  (37, 'MGF', 'Mietvertrag', '1'),
+  (38, 'ME', 'Mietvertrag', '1'),
+  (39, 'Geld Konto Nummer', 'Objekt', '1'),
+  (40, 'Geld Konto Bankleitzahl', 'Objekt', '1'),
+  (41, 'Geld Konto Institut', 'Objekt', '1'),
+  (42, 'Geld Konto Bankleitzahl	', 'Haus', '1'),
+  (43, 'gekündigt am', 'Mietvertrag', '1'),
+  (44, 'gekündigt zum', 'Mietvertrag', '1'),
+  (45, 'Kontonummer', 'Mietvertrag', '1'),
+  (46, 'BLZ', 'Mietvertrag', '1'),
+  (52, 'Bemerkung', 'Einheit', '1'),
+  (54, 'Kaution', 'Mietvertrag', '1'),
+  (55, 'Miete kalt', 'Einheit', '1'),
+  (56, 'Heizkosten Vorauszahlung', 'Einheit', '1'),
+  (57, 'Nebenkosten Vorauszahlung', 'Einheit', '1'),
+  (58, 'Hinweis', 'Person', '1'),
+  (59, 'Verzugsanschrift', 'Person', '1'),
+  (60, 'Aushangtafel', 'Haus', '1'),
+  (61, 'Mandanten-Nr', 'Partner', '1'),
+  (62, 'Anrede', 'Person', '1'),
+  (63, 'Kontoinhaber-AutoEinzug', 'Mietvertrag', '0'),
+  (64, 'Bankname', 'Mietvertrag', '1'),
 (65, 'Lieferschein', 'RECHNUNGEN', '1'),
-(66, 'Geschlecht', 'PARTNER_LIEFERANT', '1'),
-(67, 'Wohnlage', 'HAUS', '1'),
-(68, 'Ausstattungsklasse', 'EINHEIT', '1'),
-(69, 'Erdgeschosswohnung', 'EINHEIT', '1'),
-(70, 'Ohne SH, ohne Bad, mit IWC', 'EINHEIT', '1'),
-(71, 'Sondermerkmal', 'EINHEIT', '1'),
-(72, 'NB mit SH oder Bad und mit IWC', 'EINHEIT', '1');
+  (66, 'Geschlecht', 'Partner', '1'),
+  (67, 'Wohnlage', 'Haus', '1'),
+  (68, 'Ausstattungsklasse', 'Einheit', '1'),
+  (69, 'Erdgeschosswohnung', 'Einheit', '1'),
+  (70, 'Ohne SH, ohne Bad, mit IWC', 'Einheit', '1'),
+  (71, 'Sondermerkmal', 'Einheit', '1'),
+  (72, 'NB mit SH oder Bad und mit IWC', 'Einheit', '1');
 
 -- --------------------------------------------------------
 
@@ -595,7 +597,12 @@ CREATE TABLE `FOOTER_ZEILE` (
 -- Daten für Tabelle `FOOTER_ZEILE`
 -- 
 
-INSERT INTO `FOOTER_ZEILE` (`FOOTER_DAT`, `FOOTER_ID`, `FOOTER_TYP`, `FOOTER_TYP_ID`, `ZAHLUNGSHINWEIS`, `ZEILE1`, `ZEILE2`, `HEADER`, `AKTUELL`) VALUES (1, 1, 'PARTNER', 1, 'Mit freundlichen Grüßen\r\n<br>\r\n<br>\r\nIhre Hausverwaltung', 'Muster Hausverwaltung Berlus GmbH - Fontanestr. 1 - 14193 Berlin - Geschäftsführer: xxx xxxx  -', 'Bankverbindung: Berlussimo Bank Berlin - BLZ: 100 xx 00 - Konto-Nr.: xxxx - Steuernummer: xxxx', 'Musterhausverwaltung Berlus GmbH * Fontanestr. 1 * 14193 Berlin * Inhaber xxx xxxxxxxxx * Telefon: 89784477 * Fax: 89784479 * Email: info@berlus.de', '1');
+INSERT INTO `FOOTER_ZEILE` (`FOOTER_DAT`, `FOOTER_ID`, `FOOTER_TYP`, `FOOTER_TYP_ID`, `ZAHLUNGSHINWEIS`, `ZEILE1`, `ZEILE2`, `HEADER`, `AKTUELL`)
+VALUES (1, 1, 'Partner', 1, 'Mit freundlichen Grüßen\r\n<br>\r\n<br>\r\nIhre Hausverwaltung',
+        'Muster Hausverwaltung Berlus GmbH - Fontanestr. 1 - 14193 Berlin - Geschäftsführer: xxx xxxx  -',
+        'Bankverbindung: Berlussimo Bank Berlin - BLZ: 100 xx 00 - Konto-Nr.: xxxx - Steuernummer: xxxx',
+        'Musterhausverwaltung Berlus GmbH * Fontanestr. 1 * 14193 Berlin * Inhaber xxx xxxxxxxxx * Telefon: 89784477 * Fax: 89784479 * Email: info@berlus.de',
+        '1');
 
 -- --------------------------------------------------------
 
@@ -1209,12 +1216,13 @@ CREATE TABLE `MIETENTWICKLUNG` (
 -- Daten für Tabelle `MIETENTWICKLUNG`
 -- 
 
-INSERT INTO `MIETENTWICKLUNG` (`MIETENTWICKLUNG_DAT`, `MIETENTWICKLUNG_ID`, `KOSTENTRAEGER_TYP`, `KOSTENTRAEGER_ID`, `KOSTENKATEGORIE`, `ANFANG`, `ENDE`, `BETRAG`, `MIETENTWICKLUNG_AKTUELL`) VALUES (1, 1, 'MIETVERTRAG', 1, 'Miete kalt', '2010-11-01', '0000-00-00', 250.00, '1'),
-(2, 2, 'MIETVERTRAG', 1, 'Heizkosten Vorauszahlung', '2010-11-01', '0000-00-00', 50.00, '1'),
-(3, 3, 'MIETVERTRAG', 1, 'Nebenkosten Vorauszahlung', '2010-11-01', '0000-00-00', 100.00, '1'),
-(4, 4, 'MIETVERTRAG', 2, 'Miete kalt', '2010-11-01', '0000-00-00', 500.00, '1'),
-(5, 5, 'MIETVERTRAG', 2, 'Heizkosten Vorauszahlung', '2010-11-01', '0000-00-00', 100.00, '1'),
-(6, 6, 'MIETVERTRAG', 2, 'Nebenkosten Vorauszahlung', '2010-11-01', '0000-00-00', 100.00, '1');
+INSERT INTO `MIETENTWICKLUNG` (`MIETENTWICKLUNG_DAT`, `MIETENTWICKLUNG_ID`, `KOSTENTRAEGER_TYP`, `KOSTENTRAEGER_ID`, `KOSTENKATEGORIE`, `ANFANG`, `ENDE`, `BETRAG`, `MIETENTWICKLUNG_AKTUELL`)
+VALUES (1, 1, 'Mietvertrag', 1, 'Miete kalt', '2010-11-01', '0000-00-00', 250.00, '1'),
+  (2, 2, 'Mietvertrag', 1, 'Heizkosten Vorauszahlung', '2010-11-01', '0000-00-00', 50.00, '1'),
+  (3, 3, 'Mietvertrag', 1, 'Nebenkosten Vorauszahlung', '2010-11-01', '0000-00-00', 100.00, '1'),
+  (4, 4, 'Mietvertrag', 2, 'Miete kalt', '2010-11-01', '0000-00-00', 500.00, '1'),
+  (5, 5, 'Mietvertrag', 2, 'Heizkosten Vorauszahlung', '2010-11-01', '0000-00-00', 100.00, '1'),
+  (6, 6, 'Mietvertrag', 2, 'Nebenkosten Vorauszahlung', '2010-11-01', '0000-00-00', 100.00, '1');
 
 -- --------------------------------------------------------
 

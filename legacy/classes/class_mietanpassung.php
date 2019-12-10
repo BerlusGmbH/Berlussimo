@@ -75,7 +75,7 @@ class mietanpassung
         $e->get_einheit_info($einheit_id);
         $this->einheit_qm = $e->einheit_qm;
         $d = new detail ();
-        $this->objekt_baujahr = $d->finde_detail_inhalt('OBJEKT', $e->objekt_id, 'Baujahr');
+        $this->objekt_baujahr = $d->finde_detail_inhalt('Objekt', $e->objekt_id, 'Baujahr');
         if (empty ($this->objekt_baujahr)) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage("ABBRUCH: Einheit: $e->einheit_kurzname<br>Detail Baujahr zum Objekt $e->objekt_name hinzufügen")
@@ -92,10 +92,10 @@ class mietanpassung
             $this->objekt_bauart = 'Neubau';
         }
 
-        $this->haus_wohnlage = $d->finde_detail_inhalt('HAUS', $e->haus_id, 'Wohnlage');
+        $this->haus_wohnlage = $d->finde_detail_inhalt('Haus', $e->haus_id, 'Wohnlage');
         /* Wenn keine, dann bei Objekt schauen */
         if (!$this->haus_wohnlage) {
-            $this->haus_wohnlage = $d->finde_detail_inhalt('OBJEKT', $e->objekt_id, 'Wohnlage');
+            $this->haus_wohnlage = $d->finde_detail_inhalt('Objekt', $e->objekt_id, 'Wohnlage');
         }
         if (!$this->haus_wohnlage) {
             throw new \App\Exceptions\MessageException(
@@ -157,13 +157,16 @@ class mietanpassung
 
             /* Schon mal vermietet */
             if ($e->get_einheit_status($einheit_id)) {
-                $mv_id = $e->get_last_mietvertrag_id($einheit_id);
+                $mv = \App\Models\Mietvertraege::whereHas('einheit', function ($query) use ($einheit_id) {
+                    $query->where('EINHEIT_ID', $einheit_id);
+                })->active()->first(['MIETVERTRAG_ID']);
                 /*
 				 * Wenn aktuell vermietet
 				 * hier spielt sich alles ab
 				 */
-                if (!empty ($mv_id)) {
-                    $ausstattungsklasse = $d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Ausstattungsklasse');
+                if (isset($mv)) {
+                    $mv_id = $mv->MIETVERTRAG_ID;
+                    $ausstattungsklasse = $d->finde_detail_inhalt('Einheit', $einheit_id, 'Ausstattungsklasse');
                     if (empty ($ausstattungsklasse)) {
                         throw new \App\Exceptions\MessageException(
                             new \App\Messages\ErrorMessage("ABBRUCH - Einheit: $e->einheit_kurzname hat keine Ausstattungsklasse in den Details.")
@@ -176,7 +179,7 @@ class mietanpassung
                     $mv = new mietvertraege ();
                     $mv->get_mietvertrag_infos_aktuell($mv_id);
                     /* Prüfen ob Bruttomieter */
-                    if ($this->check_bruttomieter('MIETVERTRAG', $mv_id) == true) {
+                    if ($this->check_bruttomieter('Mietvertrag', $mv_id) == true) {
                         $tab_arr ['MIETER_ART'] = 'Bruttomieter';
                         $mieter_art = 'Bruttomieter';
                         // echo "$mv_id $einheit_id $mieter_art<br>";
@@ -351,7 +354,7 @@ class mietanpassung
                     $tab_arr ['L_ANSTIEG_BETRAG'] = $this->erhoehungsbetrag;
 
                     $datum_vor_3_jahren = $datum_miete_v_3_j;
-                    $erhoehungen_arr = $this->get_erhoehungen_arr($datum_vor_3_jahren, 'MIETVERTRAG', $mv_id);
+                    $erhoehungen_arr = $this->get_erhoehungen_arr($datum_vor_3_jahren, 'Mietvertrag', $mv_id);
                     $tab_arr ['ERHOEHUNGEN_ARR'] = $erhoehungen_arr;
                     /* Maximal möglich rechnerisch nur */
 
@@ -426,7 +429,7 @@ class mietanpassung
         $e->get_einheit_info($einheit_id);
         $this->einheit_qm = $e->einheit_qm;
         $d = new detail ();
-        $this->objekt_baujahr = $d->finde_detail_inhalt('OBJEKT', $e->objekt_id, 'Baujahr');
+        $this->objekt_baujahr = $d->finde_detail_inhalt('Objekt', $e->objekt_id, 'Baujahr');
         if (empty ($this->objekt_baujahr)) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage("<b>ABBRUCH: Einheit: $e->einheit_kurzname <br>Detail Baujahr zum Objekt $e->objekt_name hinzufügen</b>")
@@ -443,10 +446,10 @@ class mietanpassung
             $this->objekt_bauart = 'Neubau';
         }
 
-        $this->haus_wohnlage = ltrim(rtrim($d->finde_detail_inhalt('HAUS', $e->haus_id, 'Wohnlage')));
+        $this->haus_wohnlage = ltrim(rtrim($d->finde_detail_inhalt('Haus', $e->haus_id, 'Wohnlage')));
         /* Wenn keine, dann bei Objekt schauen */
         if (!$this->haus_wohnlage) {
-            $this->haus_wohnlage = $d->finde_detail_inhalt('OBJEKT', $e->objekt_id, 'Wohnlage');
+            $this->haus_wohnlage = $d->finde_detail_inhalt('Objekt', $e->objekt_id, 'Wohnlage');
         }
         if (!$this->haus_wohnlage) {
             throw new \App\Exceptions\MessageException(
@@ -551,7 +554,7 @@ class mietanpassung
     function check_objekt_ost($objekt_id)
     {
         $d = new detail ();
-        $this->objekt_ost = $d->finde_detail_inhalt('OBJEKT', $objekt_id, 'MS-Objekt-OST');
+        $this->objekt_ost = $d->finde_detail_inhalt('Objekt', $objekt_id, 'MS-Objekt-OST');
     }
 
     function check_bruttomieter($kos_typ, $kos_id)
@@ -631,7 +634,7 @@ class mietanpassung
         unset ($this->erhoehungsdatum);
         $jahr = date("Y");
         $monat = date("m");
-        $result = DB::select("SELECT ANFANG, BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mv_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && (KOSTENKATEGORIE LIKE 'Miete kalt%' or KOSTENKATEGORIE LIKE 'MHG%') ORDER BY ANFANG DESC LIMIT 0,1");
+        $result = DB::select("SELECT ANFANG, BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mv_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && (KOSTENKATEGORIE LIKE 'Miete kalt%' or KOSTENKATEGORIE LIKE 'MHG%') ORDER BY ANFANG DESC LIMIT 0,1");
         $row = $result[0];
         $this->erhoehungsbetrag = $row ['BETRAG'];
         $this->erhoehungsdatum = date_mysql2german($row ['ANFANG']);
@@ -651,7 +654,7 @@ class mietanpassung
         $jahr = date("Y");
         $monat = date("m");
 
-        $db_abfrage = "SELECT ANFANG, BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mv_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') && DATE_FORMAT( ANFANG, '%Y-%m' ) >= '$jahr-$monat'  && (KOSTENKATEGORIE LIKE 'MHG' or KOSTENKATEGORIE LIKE 'Miete kalt') ORDER BY ANFANG ASC LIMIT 0,1";
+        $db_abfrage = "SELECT ANFANG, BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mv_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') && DATE_FORMAT( ANFANG, '%Y-%m' ) >= '$jahr-$monat'  && (KOSTENKATEGORIE LIKE 'MHG' or KOSTENKATEGORIE LIKE 'Miete kalt') ORDER BY ANFANG ASC LIMIT 0,1";
         $result = DB::select($db_abfrage);
         if (!empty($result)) {
             $row = $result[0];
@@ -824,7 +827,7 @@ class mietanpassung
 
     function kosten_monatlich($mietvertrag_id, $monat, $jahr, $kostenkat)
     {
-        $result = DB::select("SELECT SUM(BETRAG) AS SUMME_RATE FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && KOSTENKATEGORIE LIKE '$kostenkat' ORDER BY ANFANG ASC");
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME_RATE FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && KOSTENKATEGORIE LIKE '$kostenkat' ORDER BY ANFANG ASC");
         $row = $result[0];
         $summe = $row ['SUMME_RATE'];
         return $summe;
@@ -839,8 +842,8 @@ class mietanpassung
         for ($a = 0; $a < $anzahl; $a++) {
             $einheit_id = $einheiten_arr [$a] ['EINHEIT_ID'];
             $d = new detail ();
-            if (!$d->check_detail_exist('EINHEIT', $einheit_id, 'Ausstattungsklasse')) {
-                $d->detail_speichern_2('EINHEIT', $einheit_id, 'Ausstattungsklasse', '4', 'mit SH, Bad und IWC');
+            if (!$d->check_detail_exist('Einheit', $einheit_id, 'Ausstattungsklasse')) {
+                $d->detail_speichern_2('Einheit', $einheit_id, 'Ausstattungsklasse', '4', 'mit SH, Bad und IWC');
                 echo "$einheit_id - AK4<br>";
             } else {
                 echo "$einheit_id - AK existiert!<br>";
@@ -903,7 +906,7 @@ class mietanpassung
             echo "<tr><td>Wohnlage</td><td>$wohnlage</td></tr>";
             echo "<tr><td>Ausstattungsklasse</td><td>";
             $d = new detail ();
-            echo $d->finde_detail_inhalt('EINHEIT', $einheit_id, 'Ausstattungsklasse');
+            echo $d->finde_detail_inhalt('Einheit', $einheit_id, 'Ausstattungsklasse');
             echo "</td></tr>";
 
             $e = new einheit ();
@@ -1370,7 +1373,7 @@ class mietanpassung
                 $a_klasse = $sondermerkmale_arr [$s] ['A_KLASSE'];
                 if ($a_klasse == NULL or $ber->AUSSTATTUNGSKLASSE == $a_klasse) {
                     /* Wenn z.B. Erdgeschoss, dann Abzug */
-                    $sonder_abzug = $d->finde_detail_inhalt('EINHEIT', $ber->EINHEIT_ID, $merkmal);
+                    $sonder_abzug = $d->finde_detail_inhalt('Einheit', $ber->EINHEIT_ID, $merkmal);
                     if ($sonder_abzug) {
                         $abzuege_arr [$abzug_zaehler] ['MERKMAL'] = $merkmal;
                         $abzuege_arr [$abzug_zaehler] ['MERKMAL_GRUND'] = $sonder_abzug;
@@ -1696,6 +1699,8 @@ class mietanpassung
             $cable_tv = "OR `KOSTENKATEGORIE` = 'Kabel TV' ";
         }
 
+        $date = date('Y-m-d');
+
         $db_abfrage = "SELECT * 
         FROM `MIETENTWICKLUNG` 
         WHERE (`KOSTENKATEGORIE` = 'MOD' 
@@ -1703,9 +1708,12 @@ class mietanpassung
         OR `KOSTENKATEGORIE` = 'Stellplatzmiete' "
             . $cable_tv .
             "OR `KOSTENKATEGORIE` = 'Garagenmiete') 
-        AND KOSTENTRAEGER_TYP='MIETVERTRAG' 
+        AND KOSTENTRAEGER_TYP='Mietvertrag' 
         AND KOSTENTRAEGER_ID='$mv_id' 
-        AND MIETENTWICKLUNG_AKTUELL = '1'";
+        AND MIETENTWICKLUNG_AKTUELL = '1'
+        AND ANFANG <= '$date'
+        AND (ENDE >= '$date'
+        OR ENDE = '0000-00-00')";
         $result = DB::select($db_abfrage);
         return $result;
     }
@@ -1855,7 +1863,7 @@ class mietanpassung
             $ber->ERH_QM2 = nummer_komma2punkt(nummer_punkt2komma($ber->M2_PREIS_NEU2 - $ber->M2_AKTUELL));
             $ber->SG_MAX = $ber->M2_PREIS_NEU2;
             $ber->B_NEUE_ENDMIETE = nummer_komma2punkt($ber->B_AKT_ENDMIETE) + $ber->MONATLICH_MEHR2;
-            $ber->PROZ_ERH2 = (($ber->NEUE_MIETE2 / ($ber->MIETE_3_JAHRE / 100)) - 100) - $ber->ANSTIEG_3J;
+            $ber->PROZ_ERH2 = ($ber->MONATLICH_MEHR2 / $ber->MIETE_3_JAHRE) * 100;
         } else {
             $ber->M2_PREIS_NEU2 = $ber->MAX_M2_PREIS_KAPP;
             $ber->NEUE_MIETE2 = $ber->MAXIMALE_MIETE;
@@ -1863,7 +1871,7 @@ class mietanpassung
             $ber->ERH_QM2 = nummer_komma2punkt(nummer_punkt2komma($ber->M2_PREIS_NEU2 - $ber->M2_AKTUELL));
             $ber->SG_MAX = $ber->M2_PREIS_NEU2;
             $ber->B_NEUE_ENDMIETE = nummer_komma2punkt($ber->B_AKT_ENDMIETE) + $ber->MONATLICH_MEHR2;
-            $ber->PROZ_ERH2 = (($ber->NEUE_MIETE2 / ($ber->MIETE_3_JAHRE / 100)) - 100) - $ber->ANSTIEG_3J;
+            $ber->PROZ_ERH2 = ($ber->MONATLICH_MEHR2 / $ber->MIETE_3_JAHRE) * 100;
         }
 
         $ber->MIETE_AKTUELL_A = nummer_punkt2komma($ber->MIETE_AKTUELL);
@@ -2295,10 +2303,13 @@ class mietanpassung
             'left' => '370'
         ));
         /* Vierte Seite ZUSTIMMUNG - Die der Mieter uterschreibt und zurücksendet */
+
+        $this->widerrufsseite($pdf);
+
         $pdf->ezNewPage();
         $pdf->ezText("$p->partner_name\n$p->partner_strasse $p->partner_hausnr\n<b>$p->partner_plz $p->partner_ort</b>", 12);
         $pdf->ezSetDy(-60);
-        // y=ezText(text,[size],[array options])
+
         $pdf->ezText("<b>ERKLÄRUNG</b>", 14, array(
             'justification' => 'center'
         ));
@@ -2382,7 +2393,6 @@ class mietanpassung
             'left' => '370'
         ));
 
-        $pdf->ezNewPage();
         $this->widerrufsseite($pdf);
 
         /* Ausgabe */
@@ -2499,14 +2509,14 @@ class mietanpassung
             $ber->MONATLICH_MEHR = $ber->NEUE_MIETE - $ber->MIETE_AKTUELL;
             $ber->ERH_QM2 = nummer_komma2punkt(nummer_punkt2komma($ber->M2_PREIS_NEU - $ber->M2_AKTUELL));
             $ber->SG_MAX = $ber->M2_PREIS_NEU;
-            $ber->PROZ_ERH = ((($ber->NEUE_MIETE + $ber->TAT_KOST_M) / ($ber->MIETE_3_JAHRE / 100)) - 100) - $ber->ANSTIEG_3J;
+            $ber->PROZ_ERH = ($ber->MONATLICH_MEHR / $ber->MIETE_3_JAHRE) * 100;
         } else {
             $ber->M2_PREIS_NEU = $ber->MAX_M2_PREIS_KAPP;
             $ber->NEUE_MIETE = $ber->MAXIMALE_MIETE;
             $ber->MONATLICH_MEHR = $ber->NEUE_MIETE - $ber->MIETE_AKTUELL;
             $ber->ERH_QM2 = nummer_komma2punkt(nummer_punkt2komma($ber->M2_PREIS_NEU - $ber->M2_AKTUELL));
             $ber->SG_MAX = $ber->M2_PREIS_NEU;
-            $ber->PROZ_ERH = ((($ber->NEUE_MIETE + $ber->TAT_KOST_M) / ($ber->MIETE_3_JAHRE / 100)) - 100) - $ber->ANSTIEG_3J;
+            $ber->PROZ_ERH = ($ber->MONATLICH_MEHR / $ber->MIETE_3_JAHRE) * 100;
         }
         $ber->NEUE_BRUTTO_MIETE = $ber->NEUE_MIETE + nummer_komma2punkt($ber->TAT_KOST_M);
 
@@ -3057,8 +3067,6 @@ class mietanpassung
             'left' => '370'
         ));
 
-        $pdf->ezNewPage();
-
         $this->widerrufsseite($pdf);
 
         /* Ausgabe */
@@ -3236,7 +3244,7 @@ class mietanpassung
                 $a_klasse = $sondermerkmale_arr [$s] ['A_KLASSE'];
                 if ($a_klasse == NULL or $ber->AUSSTATTUNGSKLASSE == $a_klasse) {
                     /* Wenn z.B. Erdgeschoss, dann Abzug */
-                    $sonder_abzug = $d->finde_detail_inhalt('EINHEIT', $ber->EINHEIT_ID, $merkmal);
+                    $sonder_abzug = $d->finde_detail_inhalt('Einheit', $ber->EINHEIT_ID, $merkmal);
                     if ($sonder_abzug) {
                         $abzuege_arr [$abzug_zaehler] ['MERKMAL'] = $merkmal;
                         $abzuege_arr [$abzug_zaehler] ['MERKMAL_GRUND'] = $sonder_abzug;

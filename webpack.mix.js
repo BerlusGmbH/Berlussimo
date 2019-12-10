@@ -64,7 +64,11 @@ mix.ts(
 
 mix.js(
     [
-        'resources/assets/js/materialize.js'
+        'resources/assets/js/materialize.js',
+        'resources/assets/js/materialize_autocomplete.js',
+        'resources/assets/js/materialize_chips_autocomplete.js',
+        'resources/assets/js/materialize_select.js',
+        'resources/assets/js/materialize_init.js'
     ],
     'public/js/'
 );
@@ -74,19 +78,20 @@ mix.scripts(
         'legacy/ajax/ajax.js',
         'legacy/ajax/dd_kostenkonto.js',
         'legacy/js/javascript.js',
-        'legacy/js/sorttable.js',
-        'legacy/js/foto_upload.js'
+        'legacy/js/sorttable.js'
     ],
     'public/js/legacy.js'
 );
 
-mix.scripts(
+mix.babel(
     [
         'legacy/js/wartungsplaner.js',
         'legacy/js/sorttable.js'
     ],
     'public/js/wartungsplaner.js'
 );
+
+mix.scripts(['node_modules/axios/dist/axios.min.js'], 'public/js/axios.min.js');
 
 mix.copyDirectory('legacy/images/', 'public/images/');
 mix.copy('legacy/graph/css/LineGraph.css', 'public/css/LineGraph.css');

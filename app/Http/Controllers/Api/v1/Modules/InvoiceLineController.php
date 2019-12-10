@@ -42,6 +42,12 @@ class InvoiceLineController extends Controller
         Arr::set($attributes, 'POSITION', $pos);
         $line = InvoiceLine::forceCreate($attributes);
 
+        Invoice::unguarded(function () use ($line) {
+            $line->invoice->update([
+                'STATUS_VOLLSTAENDIG' => '1'
+            ]);
+        });
+
         $itemExists = InvoiceItem::where('ART_LIEFERANT', $request->input('ART_LIEFERANT'))
             ->where('ARTIKEL_NR', $request->input('ARTIKEL_NR'))
             ->where('LISTENPREIS', $request->input('PREIS'))
@@ -96,6 +102,32 @@ class InvoiceLineController extends Controller
         InvoiceLine::unguarded(function () use ($attributes, $invoiceLine) {
             $invoiceLine->update($attributes);
         });
+        InvoiceItem::unguarded(function () use ($request) {
+            $item = InvoiceItem::where('ART_LIEFERANT', $request->input('ART_LIEFERANT'))
+                ->where('ARTIKEL_NR', $request->input('ARTIKEL_NR'))
+                ->where('AKTUELL', '1')
+                ->orderBy('KATALOG_ID', 'DESC')
+                ->first();
+            if ($item) {
+                $item->update([
+                    'BEZEICHNUNG' => $request->input('BEZEICHNUNG'),
+                    'EINHEIT' => $request->input('EINHEIT')
+                ]);
+            } else {
+                InvoiceItem::forceCreate([
+                    'KATALOG_ID' => InvoiceItem::max('KATALOG_ID') + 1,
+                    'ART_LIEFERANT' => $request->input('ART_LIEFERANT'),
+                    'ARTIKEL_NR' => $request->input('ARTIKEL_NR'),
+                    'LISTENPREIS' => $request->input('PREIS'),
+                    'MWST_SATZ' => $request->input('MWST_SATZ'),
+                    'RABATT_SATZ' => $request->input('RABATT_SATZ'),
+                    'SKONTO' => $request->input('SKONTO'),
+                    'EINHEIT' => $request->input('EINHEIT'),
+                    'BEZEICHNUNG' => $request->input('BEZEICHNUNG'),
+                    'AKTUELL' => '1'
+                ]);
+            }
+        });
         InvoiceLineAssignment::unguarded(function () use ($attributes, $invoiceLine) {
             Arr::forget($attributes, 'GESAMT_NETTO');
             Arr::set($attributes, 'EINZEL_PREIS', Arr::get($attributes, 'PREIS'));
@@ -127,7 +159,15 @@ class InvoiceLineController extends Controller
         InvoiceLine::where('BELEG_NR', $invoiceLine->BELEG_NR)
             ->where('POSITION', '>', $invoiceLine->POSITION)
             ->update(['POSITION' => DB::raw('POSITION - 1')]);
+        $invoice = $invoiceLine->invoice;
         $invoiceLine->delete();
+        if (!$invoice->lines()->exists()) {
+            Invoice::unguarded(function () use ($invoiceLine) {
+                $invoiceLine->invoice->update([
+                    'STATUS_VOLLSTAENDIG' => '0'
+                ]);
+            });
+        }
         return response()->json(['status' => 'ok']);
     }
 
@@ -147,15 +187,15 @@ class InvoiceLineController extends Controller
             return !$request->has($key);
         })->all();
         $lineIds = $request->input('lines');
-        $invoice = InvoiceLine::findOrFail($lineIds[0])->BELEG_NR;
-        InvoiceLine::unguarded(function () use ($attributes, $invoice) {
-            InvoiceLineAssignment::where('BELEG_NR', $invoice)->update($attributes);
+        $invoiceId = InvoiceLine::findOrFail($lineIds[0])->BELEG_NR;
+        InvoiceLine::unguarded(function () use ($attributes, $invoiceId) {
+            InvoiceLineAssignment::where('BELEG_NR', $invoiceId)->update($attributes);
         });
         Arr::set($attributes, 'GESAMT_NETTO', DB::raw('PREIS * MENGE * ((100 - RABATT_SATZ)/100)'));
         InvoiceLine::unguarded(function () use ($lineIds, $attributes) {
             InvoiceLine::whereIn('RECHNUNGEN_POS_ID', $lineIds)->update($attributes);
         });
-        Invoice::updateSums($invoice);
+        Invoice::findOrFail($invoiceId)->updateSums();
         return response()->json(['status' => 'ok']);
     }
 }

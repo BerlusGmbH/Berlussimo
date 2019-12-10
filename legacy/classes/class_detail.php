@@ -62,7 +62,7 @@ class detail
         $kurzinfo = $this->get_info_detail($tab, $id);
         $form = new formular ();
         $link = '';
-        if ($tab == 'EINHEIT') {
+        if ($tab == 'Einheit') {
             $link = "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $id]) . "'>Zurück zu Einheit</a>";
         }
         $form->erstelle_formular('Detail hinzufügen', '');
@@ -88,25 +88,25 @@ class detail
 
     function get_info_detail($tab, $id)
     {
-        if ($tab == "OBJEKT") {
+        if ($tab == "Objekt") {
             $db_abfrage = "SELECT OBJEKT_KURZNAME FROM OBJEKT WHERE OBJEKT_AKTUELL='1' && OBJEKT_ID = '$id' order by OBJEKT_DAT DESC limit 0,1";
             $resultat = DB::select($db_abfrage);
             if (!empty($resultat))
                 return $resultat[0]['OBJEKT_KURZNAME'];
         }
-        if ($tab == "HAUS") {
+        if ($tab == "Haus") {
             $db_abfrage = "SELECT HAUS_STRASSE, HAUS_NUMMER FROM HAUS WHERE HAUS_AKTUELL='1' && HAUS_ID = '$id' order by HAUS_DAT DESC limit 0,1";
             $resultat = DB::select($db_abfrage);
             if (!empty($resultat))
                 return $resultat[0]['HAUS_STRASSE'] . " " . $resultat[0]['HAUS_NUMMER'];
         }
-        if ($tab == "EINHEIT") {
+        if ($tab == "Einheit") {
             $db_abfrage = "SELECT EINHEIT_KURZNAME FROM EINHEIT WHERE EINHEIT_AKTUELL='1' && EINHEIT_ID = '$id' order by EINHEIT_DAT DESC limit 0,1";
             $resultat = DB::select($db_abfrage);
             if(!empty($resultat))
                 return $resultat[0]['EINHEIT_KURZNAME'];
         }
-        if ($tab == "MIETVERTRAG") {
+        if ($tab == "Mietvertrag") {
             $mieternamen = mieternamen_als_string($id);
             $db_abfrage = "SELECT EINHEIT_ID, MIETVERTRAG_VON, MIETVERTRAG_BIS FROM MIETVERTRAG WHERE MIETVERTRAG_AKTUELL='1' && MIETVERTRAG_ID = '$id' order by MIETVERTRAG_DAT DESC limit 0,1";
             $resultat = DB::select($db_abfrage);
@@ -117,7 +117,7 @@ class detail
                 return $ausgabe;
             }
         }
-        if ($tab == "PERSON") {
+        if ($tab == "Person") {
             $p = new person ();
             $p->get_person_infos($id);
             $kurzinfo = "$p->person_nachname $p->person_vorname";
@@ -302,7 +302,7 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC");
 
     function finde_mandanten_nr($partner_id)
     {
-        $db_abfrage = "SELECT DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE='PARTNER_LIEFERANT' && DETAIL_NAME='Mandanten-Nr' && DETAIL_ZUORDNUNG_ID='$partner_id' && DETAIL_AKTUELL='1' ORDER BY DETAIL_DAT DESC limit 0,1";
+        $db_abfrage = "SELECT DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE='Partner' && DETAIL_NAME='Mandanten-Nr' && DETAIL_ZUORDNUNG_ID='$partner_id' && DETAIL_AKTUELL='1' ORDER BY DETAIL_DAT DESC limit 0,1";
         $resultat = DB::select($db_abfrage);
         foreach($resultat as $row)
             return $row['DETAIL_INHALT'];
@@ -311,7 +311,7 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC");
     /* geschlecht finden falls exisitiert */
     function finde_person_geschlecht($person_id)
     {
-        $db_abfrage = " SELECT DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = 'PERSON' && DETAIL_NAME = 'Geschlecht' && DETAIL_ZUORDNUNG_ID = '$person_id' && DETAIL_AKTUELL = '1' ORDER BY DETAIL_DAT DESC LIMIT 0 , 1 ";
+        $db_abfrage = " SELECT DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = 'Person' && DETAIL_NAME = 'Geschlecht' && DETAIL_ZUORDNUNG_ID = '$person_id' && DETAIL_AKTUELL = '1' ORDER BY DETAIL_DAT DESC LIMIT 0 , 1 ";
         $resultat = DB::select($db_abfrage);
         foreach($resultat as $row)
             return ltrim(rtrim($row['DETAIL_INHALT']));
@@ -399,7 +399,7 @@ AND `DETAIL_KAT_AKTUELL` = '1' ORDER BY DETAIL_KAT_NAME ASC");
                 if (strtolower($my_arr [$a] ['DETAIL_ZUORDNUNG_TABELLE']) == 'objekt') {
                     $o = new objekt ();
                     $o->get_objekt_infos($det_tab_id);
-                    $link_e = "<a href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'OBJEKT', 'detail_id' => $det_tab_id]) . "'>Objekt: $o->objekt_kurzname</a>";
+                    $link_e = "<a href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'Objekt', 'detail_id' => $det_tab_id]) . "'>Objekt: $o->objekt_kurzname</a>";
                 }
                 if (strtolower($my_arr [$a] ['DETAIL_ZUORDNUNG_TABELLE']) == 'einheit') {
                     $e = new einheit ();

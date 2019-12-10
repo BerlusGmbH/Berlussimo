@@ -32,6 +32,7 @@ class CredentialController extends Controller
         if ($request->has('password')) {
             if ($person->credential === null) {
                 $c = new Credential();
+                $c->api_token = str_random(60);
             } else {
                 $c = $person->credential;
             }

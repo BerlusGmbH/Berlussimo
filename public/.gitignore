@@ -5,6 +5,7 @@
 !index.php
 !robots.txt
 !web.config
+!.user.ini
 !storage
 !templates
 !templates/*

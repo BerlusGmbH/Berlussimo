@@ -6,6 +6,7 @@ use App\Models\Traits\DefaultOrder;
 use App\Models\Traits\HasEnum;
 use App\Models\Traits\Searchable;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,7 +37,7 @@ class Einheiten extends Model
             $builder->where('EINHEIT_AKTUELL', '1');
         });
         static::addGlobalScope('appendDetails', function (Builder $builder) {
-            $builder->with('hinweise');
+            $builder->with(['hinweise', 'roomCountDetail']);
         });
     }
 
@@ -95,6 +96,11 @@ class Einheiten extends Model
         return $this->details()->where('DETAIL_NAME', 'Hinweis_zu_Einheit');
     }
 
+    public function roomCountDetail()
+    {
+        return $this->details()->where('DETAIL_NAME', 'Zimmeranzahl');
+    }
+
     public function hasHinweis() {
         return $this->hinweise->count() > 0;
     }
@@ -107,5 +113,16 @@ class Einheiten extends Model
             }
         }
         return false;
+    }
+
+    public function getRoomCountAttribute()
+    {
+        if (!$this->roomCountDetail->isEmpty()) {
+            try {
+                return $this->roomCountDetail[0]->DETAIL_INHALT;
+            } catch (Exception $e) {
+                return null;
+            }
+        }
     }
 }

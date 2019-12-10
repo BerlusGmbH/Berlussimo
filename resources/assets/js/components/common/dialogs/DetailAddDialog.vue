@@ -52,9 +52,9 @@
     import Vue from "vue";
     import Component from "vue-class-component";
     import {Prop} from "vue-property-decorator";
-    import {Detail, Einheit, Person} from "../../../server/resources/models";
     import axios from "../../../libraries/axios";
     import {Mutation, namespace} from "vuex-class";
+    import {Detail, Einheit, Haus, Objekt, Person, PurchaseContract, RentalContract} from "../../../server/resources";
 
     const SnackbarMutation = namespace('shared/snackbar', Mutation);
     const RefreshMutation = namespace('shared/refresh', Mutation);
@@ -63,7 +63,7 @@
     export default class DetailAddDialog extends Vue {
 
         @Prop({type: Object})
-        parent: Person | Einheit;
+        parent: Person | Objekt | Haus | Einheit | RentalContract | PurchaseContract;
 
         @Prop()
         large: boolean;
@@ -114,7 +114,11 @@
 
         loadCategories(base) {
             axios.get(base + '/details/categories').then((response) => {
-                this.categories = response.data;
+                if (Array.isArray(response.data)) {
+                    this.categories = response.data as never[];
+                } else {
+                    this.categories = [];
+                }
             })
         }
 

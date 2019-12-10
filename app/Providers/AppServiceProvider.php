@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Bankkonten;
 use App\Models\BaustellenExtern;
 use App\Models\Einheiten;
 use App\Models\Haeuser;
@@ -33,39 +34,38 @@ class AppServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'Person' => Person::class,
-            'PERSON' => Person::class,
-            'OBJEKT' => Objekte::class,
-            'HAUS' => Haeuser::class,
-            'EINHEIT' => Einheiten::class,
-            'Benutzer' => Person::class,
             'Partner' => Partner::class,
-            'PARTNER' => Partner::class,
             'Einheit' => Einheiten::class,
             'Haus' => Haeuser::class,
             'Objekt' => Objekte::class,
-            'EIGENTUEMER' => Kaufvertraege::class,
             'Eigentuemer' => Kaufvertraege::class,
-            'BAUSTELLE_EXT' => BaustellenExtern::class,
             'Baustelle_ext' => BaustellenExtern::class,
-            'MIETVERTRAG' => Mietvertraege::class,
             'Mietvertrag' => Mietvertraege::class,
-            'WIRTSCHAFTSEINHEIT' => Wirtschaftseinheiten::class,
             'Wirtschaftseinheit' => Wirtschaftseinheiten::class,
-            'LAGER' => Lager::class,
-            'Lager' => Lager::class
+            'Lager' => Lager::class,
+            'GELD_KONTEN' => Bankkonten::class
         ]);
 
         Schema::defaultStringLength(191);
 
         DatabaseNotification::observe(DatabaseNotificationObserver::class);
         InvoiceLine::created(function ($invoiceLine) {
-            Invoice::updateSums($invoiceLine);
+            $invoice = Invoice::find($invoiceLine->BELEG_NR);
+            if ($invoice) {
+                $invoice->updateSums();
+            }
         });
         InvoiceLine::updated(function ($invoiceLine) {
-            Invoice::updateSums($invoiceLine);
+            $invoice = Invoice::find($invoiceLine->BELEG_NR);
+            if ($invoice) {
+                $invoice->updateSums();
+            }
         });
         InvoiceLine::deleted(function ($invoiceLine) {
-            Invoice::updateSums($invoiceLine);
+            $invoice = Invoice::find($invoiceLine->BELEG_NR);
+            if ($invoice) {
+                $invoice->updateSums();
+            }
         });
     }
 

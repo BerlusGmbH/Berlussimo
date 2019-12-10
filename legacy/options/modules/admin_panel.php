@@ -95,13 +95,13 @@ function detail_unterkategorie_form()
 function check_detail_kat($kat)
 {
     $result = DB::select("SELECT COUNT(DETAIL_KAT_ID) AS ANZAHL FROM DETAIL_KATEGORIEN WHERE DETAIL_KAT_NAME='$kat' && DETAIL_KAT_AKTUELL='1'");
-    return $result['ANZAHL'];
+    return $result[0]['ANZAHL'];
 }
 
 function check_detail_ukat($kat_id, $kat_name)
 {
     $result = DB::select("SELECT COUNT(*) AS ANZAHL FROM DETAIL_UNTERKATEGORIEN WHERE KATEGORIE_ID='$kat_id' && UNTERKATEGORIE_NAME='$kat_name' && AKTUELL='1'");
-    return $result['ANZAHL'];
+    return $result[0]['ANZAHL'];
 }
 
 function get_detail_kat_name($id)

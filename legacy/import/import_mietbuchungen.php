@@ -92,7 +92,7 @@ function import_me($tabelle)
                         $geldkonto_ins = new geld_konten_id_ermitteln ();
                         $geldkonto_ins->geld_konten_id_ermitteln_f('Mietvertrag', $mv_id);
                         if (!empty ($geldkonto_ins->konto_id)) {
-                            $form->import_miete_zahlbetrag_buchen('999999', 'MIETVERTRAG', $mv_id, $datum, $betrag, $bemerkung, $geldkonto_ins->konto_id, '80001');
+                            $form->import_miete_zahlbetrag_buchen('999999', 'Mietvertrag', $mv_id, $datum, $betrag, $bemerkung, $geldkonto_ins->konto_id, '80001');
                             echo "$i mv->zb gespeichert<br>";
                         } else {
                             echo "$i mv->me nicht gespeichert, kein gk<br>";

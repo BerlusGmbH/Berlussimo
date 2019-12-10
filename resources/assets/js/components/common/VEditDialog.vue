@@ -32,6 +32,12 @@
         @Prop({type: Boolean})
         show;
 
+        @Prop({type: Boolean})
+        persistent;
+
+        @Prop({default: null})
+        returnValue;
+
         @Watch('show')
         onShowChange(val) {
             this.isActive = val;
@@ -40,6 +46,9 @@
         @Watch('isActive')
         onIsActiveChange(val) {
             this.$emit('show', val);
+            if (val) {
+                this.$emit('open', val);
+            }
         }
 
         genActivator() {
@@ -56,7 +65,14 @@
         genContent() {
             return this.$createElement('div', {
                 on: {
-                    keydown: this.onKeydown
+                    keydown: e => {
+                        const input = (this.$refs.content as HTMLElement).querySelector('input');
+                        e.keyCode === 27 && this.cancel();
+                        if (e.keyCode === 13 && input) {
+                            this.save(input.value);
+                            this.$emit('save', true);
+                        }
+                    }
                 },
                 ref: 'content'
             }, [this.$slots.input])
@@ -73,16 +89,15 @@
             }, text)
         }
 
-        genActions(h: Function) {
-            return h('div', {
-                'class': 'small-dialog__actions',
-                directives: [{
-                    name: 'show',
-                    value: this.large
-                }]
+        genActions() {
+            return this.$createElement('div', {
+                'class': 'small-dialog__actions'
             }, [
                 this.genButton(this.cancel, this.cancelText),
-                this.genButton(this.save, this.saveText, true)
+                this.genButton(() => {
+                    this.save(this.returnValue);
+                    this.$emit('save', true);
+                }, this.saveText, true)
             ])
         }
 
@@ -95,16 +110,15 @@
 
         render(h) {
             return h('v-menu', {
-                'class': 'small-dialog',
                 props: {
                     contentClass: 'small-dialog__content',
                     transition: this.transition,
                     origin: 'top right',
                     right: true,
                     value: this.isActive,
+                    closeOnClick: !this.persistent,
                     closeOnContentClick: false,
                     lazy: this.lazy,
-                    positionAbsolutely: this.positionAbsolutley,
                     positionX: this.positionX,
                     positionY: this.positionY
                 },
@@ -112,9 +126,11 @@
                     input: val => (this.isActive = val)
                 }
             }, [
-                this.genActivator(),
+                h('a', {
+                    slot: 'activator'
+                }, this.$slots.default),
                 this.genContent(),
-                this.genActions(h)
+                this.large ? this.genActions() : null
             ])
         }
     }

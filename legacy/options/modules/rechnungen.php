@@ -1267,6 +1267,8 @@ switch ($option) {
             $uebernahme_arr ['RECHNUNG_EMPFAENGER_ID'] = request()->input('RECHNUNG_KOSTENTRAEGER_ID');
             $uebernahme_arr ['RECHNUNG_FAELLIG_AM'] = request()->input('faellig_am');
             $uebernahme_arr ['EMPFANGS_GELD_KONTO'] = request()->input('geld_konto');
+            $uebernahme_arr ['servicetime_from'] = request()->input('servicetime_from');
+            $uebernahme_arr ['servicetime_to'] = request()->input('servicetime_to');
             $uebernahme_arr ['RECHNUNGSDATUM'] = request()->input('rechnungsdatum');
 
             $partner_info = new partner ();
@@ -1286,6 +1288,8 @@ switch ($option) {
             $clean_arr ['RECHNUNG_EMPFAENGER_ID'] = $uebernahme_arr ['RECHNUNG_EMPFAENGER_ID'];
             $clean_arr ['RECHNUNG_FAELLIG_AM'] = $uebernahme_arr ['RECHNUNG_FAELLIG_AM'];
             $clean_arr ['EMPFANGS_GELD_KONTO'] = $uebernahme_arr ['EMPFANGS_GELD_KONTO'];
+            $clean_arr ['servicetime_from'] = $uebernahme_arr ['servicetime_from'];
+            $clean_arr ['servicetime_to'] = $uebernahme_arr ['servicetime_to'];
 
             $kurzbeschreibung = request()->input('kurzbeschreibung');
 
@@ -1766,8 +1770,20 @@ switch ($option) {
 
     case "anzeigen_pdf" :
         if (request()->has('belegnr') && is_numeric(request()->input('belegnr'))) {
-            $r = new rechnungen ();
-            $r->rechnung_anzeigen(request()->input('belegnr'));
+            /* Neues PDF-Objekt erstellen */
+            $pdf = new Cezpdf ('a4', 'portrait');
+            $r = new rechnungen();
+            $r->rechnung_grunddaten_holen(request()->input('belegnr'));
+            /* Partnerinformationen einholen */
+            $p = new partners ();
+            $p->get_partner_info($r->rechnung_aussteller_partner_id);
+            /* Neue Instanz von b_pdf */
+            $bpdf = new b_pdf ();
+            /* Header und Footer des Rechnungsaustellers in alle PDF-Seiten laden */
+            $bpdf->b_header($pdf, 'Partner', $r->rechnung_aussteller_partner_id, 'portrait', 'Helvetica.afm', 6);
+            $r->rechnung_anzeigen($pdf, $bpdf, $p, request()->input('belegnr'));
+            $pdf_opt ['Content-Disposition'] = trim($r->rechnungsnummer) . "_" . $r->rechnungstyp . "_" . str_replace(" ", "_", $r->rechnungs_aussteller_name . ".pdf");
+            $pdf->ezStream($pdf_opt);
         } else {
             echo "Rechnung wählen " . request()->input('belegnr');
         }
@@ -1777,12 +1793,10 @@ switch ($option) {
         $r = new rechnungen ();
         if (session()->has('partner_id')) {
             $r->rechnungsausgangsbuch_pdf('Partner', session()->get('partner_id'), request()->input('monat'), request()->input('jahr'), request()->input('r_typ'), request()->input('sort'));
+        } else if (session()->has('lager_id')) {
+            $r->rechnungsausgangsbuch_pdf('Lager', session()->get('lager_id'), request()->input('monat'), request()->input('jahr'), request()->input('r_typ'), request()->input('sort'));
         } else {
-            if (session()->has('lager_id')) {
-                $r->rechnungsausgangsbuch_pdf('Lager', session()->get('lager_id'), request()->input('monat'), request()->input('jahr'), request()->input('r_typ'), request()->input('sort'));
-            } else {
-                echo "Für Lagerrechnungen Lager wählen und für Partnerrechnungen den Partner";
-            }
+            echo "Für Lagerrechnungen Lager wählen und für Partnerrechnungen den Partner";
         }
         break;
 
@@ -1790,12 +1804,10 @@ switch ($option) {
         $r = new rechnungen ();
         if (session()->has('partner_id')) {
             $r->rechnungseingangsbuch_pdf('Partner', session()->get('partner_id'), request()->input('monat'), request()->input('jahr'), request()->input('r_typ'), request()->input('sort'));
+        } else if (session()->has('lager_id')) {
+            $r->rechnungseingangsbuch_pdf('Lager', session()->get('lager_id'), request()->input('monat'), request()->input('jahr'), request()->input('r_typ'), request()->input('sort'));
         } else {
-            if (session()->has('lager_id')) {
-                $r->rechnungseingangsbuch_pdf('Lager', session()->get('lager_id'), request()->input('monat'), request()->input('jahr'), request()->input('r_typ'), request()->input('sort'));
-            } else {
-                echo "Für Lagerrechnungen Lager wählen und für Partnerrechnungen den Partner";
-            }
+            echo "Für Lagerrechnungen Lager wählen und für Partnerrechnungen den Partner";
         }
 
         break;
@@ -1993,13 +2005,14 @@ switch ($option) {
             $rnr = request()->input('rnr');
             $r_datum = request()->input('r_datum');
             $faellig = request()->input('faellig');
+            $servicetime_from = request()->input('servicetime_from');
+            $servicetime_to = request()->input('servicetime_to');
             $eingangsdatum = request()->input('eingangsdatum');
             $kurzinfo = request()->input('kurzbeschreibung');
             $skonto = request()->input('skonto');
             $kurzinfo_ugl = $r->ibm850_encode($arr ['a_nr_hw'] . ' ' . $arr ['kundentext'] . ' ' . $arr ['vorgangsnr_gh'] . ' ' . $arr ['datum_d']);
             $kurzinfo .= '\n ' . $kurzinfo_ugl;
 
-            echo "<b>$kurzinfo</b>";
             if ($arr ['a_art'] != 'PA' && $arr ['a_art'] != 'AB' && $arr ['a_art'] != 'RG' && $arr ['a_art'] != 'BE') {
                 $aart = $arr ['a_art'];
                 throw new \App\Exceptions\MessageException(
@@ -2013,7 +2026,7 @@ switch ($option) {
                 $r_typ = 'Rechnung'; // Auftragsbestätigung
             }
 
-            $beleg_nr = $r->rechnung_erstellen_ugl($rnr, $r_typ, $r_datum, $eingangsdatum, $aussteller_typ, $aussteller_id, $empfaenger_typ, $empfaenger_id, $faellig, $kurzinfo, 0, 0, 0);
+            $beleg_nr = $r->rechnung_erstellen_ugl($rnr, $r_typ, $r_datum, $eingangsdatum, $aussteller_typ, $aussteller_id, $empfaenger_typ, $empfaenger_id, $faellig, $kurzinfo, 0, 0, 0, $servicetime_from, $servicetime_to);
             $anz = count($arr ['positionen_arr']);
             for ($a = 1; $a <= $anz; $a++) {
                 $pos_typ = $arr ['positionen_arr'] [$a] ['POS_TYP'];
@@ -2048,11 +2061,12 @@ switch ($option) {
                 if (empty($r1->artikel_info($aussteller_id, $artikel_nr))) {
                     $r1->artikel_leistung_mit_artikelnr_speichern($aussteller_id, $bezeichnung, $listenpreis, $artikel_nr, $rabatt1, $vpe, $mwst, $skonto);
                 }
-                echo "$a. $bezeichnung<br>";
 
                 $r->position_speichern($beleg_nr, $beleg_nr, $aussteller_id, $artikel_nr, $menge, $listenpreis, $mwst, $skonto, $rabatt1, $pos_netto);
             }
-            weiterleiten_in_sec(route('web::rechnungen.show', ['id' => $beleg_nr]), 3);
+            $invoice = \App\Models\Invoice::findOrFail($beleg_nr);
+            $invoice->updateSums();
+            weiterleiten(route('web::rechnungen.show', ['id' => $beleg_nr]));
         }
 
         break;
@@ -2088,8 +2102,10 @@ switch ($option) {
             $kurzinfo = request()->input('kurzbeschreibung');
             $skonto = request()->input('skonto');
             $beleg_typ = request()->input('beleg_typ');
+            $servicetime_from = request()->input('servicetime_from') ? "'" . date_german2mysql(request()->input('servicetime_from')) . "'" : 'NULL';
+            $servicetime_to = request()->input('servicetime_to') ? "'" . date_german2mysql(request()->input('servicetime_to')) . "'" : 'NULL';
 
-            $beleg_nr = $r->rechnung_erstellen_csv($beleg_typ, $r_datum, $eingangsdatum, $aussteller_typ, $aussteller_id, $empfaenger_typ, $empfaenger_id, $faellig, $kurzinfo, 0, 0, 0);
+            $beleg_nr = $r->rechnung_erstellen_csv($beleg_typ, $r_datum, $eingangsdatum, $aussteller_typ, $aussteller_id, $empfaenger_typ, $empfaenger_id, $faellig, $kurzinfo, 0, 0, 0, $servicetime_from, $servicetime_to);
             $anz = count($arr);
             $b_pos = 1;
             for ($a = 1; $a < $anz; $a++) {
@@ -2225,6 +2241,8 @@ switch ($option) {
 
             $jahr = date("Y");
             $datum = date("Y-m-d");
+            $leistung_von = (new \Carbon\Carbon('first day of this month'))->toDateString();
+            $leistung_bis = (new \Carbon\Carbon('last day of this month'))->toDateString();
             $letzte_aussteller_rnr = $r->letzte_aussteller_ausgangs_nr(session()->get('partner_id'), 'Partner', $jahr, 'Rechnung') + 1;
             $letzte_aussteller_rnr = sprintf('%03d', $letzte_aussteller_rnr);
             $r->rechnungs_kuerzel = $r->rechnungs_kuerzel_ermitteln('Partner', session()->get('partner_id'), $datum);
@@ -2236,7 +2254,7 @@ switch ($option) {
             $gk = new geldkonto_info ();
             $gk->geld_konto_ermitteln('Partner', session()->get('partner_id'), null, 'Kreditor');
             $faellig_am = tage_plus($datum, 10);
-            $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', 'Rechnung', '$datum','$datum', '$netto_betrag','$brutto_betrag','0.00', 'Partner', '" . session()->get('partner_id') . "','$empf_typ', '$empf_id','1', '1', '0', '0', '0', '0', '0', '$faellig_am', '0000-00-00', '$kurztext_neu', '$gk->geldkonto_id')";
+            $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', 'Rechnung', '$datum','$datum', '$netto_betrag','$brutto_betrag','0.00', 'Partner', '" . session()->get('partner_id') . "','$empf_typ', '$empf_id','1', '1', '0', '0', '0', '0', '0', '$faellig_am', '0000-00-00', '$kurztext_neu', '$gk->geldkonto_id', NULL, '$leistung_von', '$leistung_bis', 'auto')";
             DB::insert($db_abfrage);
             /* Protokollieren */
             $last_dat = DB::getPdo()->lastInsertId();
@@ -2304,6 +2322,8 @@ switch ($option) {
 
         $jahr = date("Y");
         $datum = date("Y-m-d");
+        $leistung_von = (new \Carbon\Carbon('first day of this month'))->toDateString();
+        $leistung_bis = (new \Carbon\Carbon('last day of this month'))->toDateString();
         $letzte_aussteller_rnr = $r->letzte_aussteller_ausgangs_nr(session()->get('partner_id'), 'Partner', $jahr, 'Rechnung') + 1;
         $letzte_aussteller_rnr = sprintf('%03d', $letzte_aussteller_rnr);
         $r->rechnungs_kuerzel = $r->rechnungs_kuerzel_ermitteln('Partner', session()->get('partner_id'), $datum);
@@ -2315,7 +2335,7 @@ switch ($option) {
         $gk = new geldkonto_info ();
         $gk->geld_konto_ermitteln('Partner', session()->get('partner_id'), null, 'Kreditor');
         $faellig_am = tage_plus($datum, 10);
-        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', 'Rechnung', '$datum','$datum', '$netto_betrag','0.00','0.00', 'Partner', '" . session()->get('partner_id') . "','$empf_typ', '$empf_id','1', '1', '0', '0', '0', '0', '0', '$faellig_am', '0000-00-00', '$kurztext_neu', '$gk->geldkonto_id')";
+        $db_abfrage = "INSERT INTO RECHNUNGEN VALUES (NULL, '$letzte_belegnr', '$rechnungsnummer', '$letzte_aussteller_rnr', '$letzte_empfaenger_rnr', 'Rechnung', '$datum','$datum', '$netto_betrag','0.00','0.00', 'Partner', '" . session()->get('partner_id') . "','$empf_typ', '$empf_id','1', '1', '0', '0', '0', '0', '0', '$faellig_am', '0000-00-00', '$kurztext_neu', '$gk->geldkonto_id', NULL, '$leistung_von', '$leistung_bis', 'auto')";
         DB::insert($db_abfrage);
         /* Protokollieren */
         $last_dat = DB::getPdo()->lastInsertId();
@@ -2431,7 +2451,7 @@ switch ($option) {
             echo "<table>";
             echo "<tr><td>";
             $f->check_box_js_alle('uebernahme_alle[]', 'ue', '', 'Alle', '', '', 'uebernahme');
-            echo "</td><td colspan=\"30\">RECHNUNGEN $monat/$jahr</td></tr>";
+            echo "</td><td colspan=\"15\">RECHNUNGEN $monat/$jahr</td></tr>";
             $spalte = 0;
             echo "<tr>";
             for ($a = 0; $a < $anz; $a++) {
@@ -2442,7 +2462,7 @@ switch ($option) {
                 echo "<td>";
                 $f->check_box_js('uebernahme[]', $id, $rnr, '', 'checked');
                 echo "</td>";
-                if ($spalte == 30) {
+                if ($spalte == 15) {
                     echo "</tr><tr>";
                     $spalte = 0;
                 }
@@ -2461,7 +2481,7 @@ switch ($option) {
             throw new \App\Exceptions\MessageException(
                 new \App\Messages\ErrorMessage("Partner für das RE-Buch wählen.")
             );
-            
+
         }
 
         if (!session()->has('geldkonto_id')) {
@@ -2556,25 +2576,31 @@ switch ($option) {
             $anz = count(request()->input('uebernahme'));
             /* Neues PDF-Objekt erstellen */
             $pdf = new Cezpdf ('a4', 'portrait');
+            $r = new rechnungen();
+            $r->rechnung_grunddaten_holen(request()->input('uebernahme')[0]);
+            /* Partnerinformationen einholen */
+            $p = new partners ();
+            $p->get_partner_info($r->rechnung_aussteller_partner_id);
             /* Neue Instanz von b_pdf */
             $bpdf = new b_pdf ();
             /* Header und Footer des Rechnungsaustellers in alle PDF-Seiten laden */
-            $bpdf->b_header($pdf, 'Partner', session()->get('partner_id'), 'portrait', 'Helvetica.afm', 6);
+            $bpdf->b_header($pdf, 'Partner', $r->rechnung_aussteller_partner_id, 'portrait', 'Helvetica.afm', 6);
 
             $pdf->ezStopPageNumbers();
 
             for ($a = 0; $a < $anz; $a++) {
                 $i = $pdf->ezStartPageNumbers(545, 715, 6, '', 'Seite {PAGENUM} von {TOTALPAGENUM}', 1);
-                $id = request()->input('uebernahme') [$a];
+                $id = request()->input('uebernahme')[$a];
                 $re = new rechnungen ();
-                $re->rechnung_2_pdf($pdf, $id);
+                $re->rechnung_grunddaten_holen($id);
+                $re->rechnung_anzeigen($pdf, $bpdf, $p, $id);
                 $pdf->ezStopPageNumbers(1, 1, $i);
-                $pdf->ezNewPage();
+                if ($a != $anz - 1) {
+                    $pdf->ezNewPage();
+                }
             }
-
-            ob_end_clean();
-            /* PDF-Ausgabe */
-            $pdf->ezStream();
+            $pdf_opt ['Content-Disposition'] = \Carbon\Carbon::now()->format('Y-m-d') . "_Pool_Rechnungen_" . str_replace(" ", "_", $r->rechnungs_aussteller_name . ".pdf");
+            $pdf->ezStream($pdf_opt);
         }
         break;
 }

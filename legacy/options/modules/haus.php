@@ -78,11 +78,11 @@ function haus_kurz($objekt_id = '')
         echo "<tr><th>Strasse</th><th>Nr.</th><th>PLZ</th><th>m²</th><th>Em²</th><th>Einheiten</th><th>INFOS</th><th>OPTION</th></tr>";
         $counter = 0;
         foreach($result as $row) {
-            $detail_check = detail_check("HAUS", $row['HAUS_ID']);
+            $detail_check = detail_check("Haus", $row['HAUS_ID']);
             if ($detail_check > 0) {
-                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'HAUS', 'detail_id' => $row['HAUS_ID']]) . "'>Details</a>";
+                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_anzeigen', 'detail_tabelle' => 'Haus', 'detail_id' => $row['HAUS_ID']]) . "'>Details</a>";
             } else {
-                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'HAUS', 'detail_id' => $row['HAUS_ID']]) . "'>Neues Detail</a>";
+                $detail_link = "<a class=\"table_links\" href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'Haus', 'detail_id' => $row['HAUS_ID']]) . "'>Neues Detail</a>";
             }
             $einheiten_im_haus = anzahl_einheiten_im_haus($row['HAUS_ID']);
             $gesammtflaeche_einheiten = einheiten_gesamt_qm($row['HAUS_ID']);

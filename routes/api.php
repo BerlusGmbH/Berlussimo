@@ -11,10 +11,14 @@
 |
 */
 
+Route::group(['prefix' => 'v1', 'as' => 'api.v1.', 'namespace' => 'Api\v1', 'middleware' => ['auth.ip']], function () {
+    Route::get('/pbx/cid-lookup', 'PBXController@lookup')->name('lookup');
+});
+
 Route::group(['prefix' => 'v1', 'as' => 'api.v1.', 'namespace' => 'Api\v1', 'middleware' => ['auth:api']], function () {
     Route::get('/search', 'SearchBarController@search')->name('search');
 
-    Route::get('/call/{detail}', 'CallController@call')->name('call');
+    Route::get('/pbx/call/{detail}', 'PBXController@call')->name('call');
 
     Route::get('/menu', 'IndexController@menu')->name('menu');
     Route::get('/menu/invoice', 'IndexController@menuInvoice')->name('menu.invoice');
@@ -78,5 +82,11 @@ Route::group(['prefix' => 'v1', 'as' => 'api.v1.', 'namespace' => 'Api\v1', 'mid
 
         Route::match(['post', 'put', 'patch'], '/invoice-line-assignments/update-batch', 'InvoiceLineAssignmentController@updateBatch')->name('invoices.assignments.batch');
         Route::resource('invoice-line-assignments', 'InvoiceLineAssignmentController', ['only' => ['store', 'update', 'destroy']]);
+
+        Route::get('/rentalcontracts/details/categories', 'RentalContractController@detailsCategories')->name('rentalcontracts.details.categories');
+        Route::get('/rentalcontracts/details/categories/{category}/subcategories', 'RentalContractController@detailsSubcategories')->name('rentalcontracts.details.subcategories');
+
+        Route::get('/purchasecontracts/details/categories', 'PurchaseContractController@detailsCategories')->name('purchasecontracts.details.categories');
+        Route::get('/purchasecontracts/details/categories/{category}/subcategories', 'PurchaseContractController@detailsSubcategories')->name('purchasecontracts.details.subcategories');
     });
 });

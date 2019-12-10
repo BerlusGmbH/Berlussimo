@@ -45,4 +45,48 @@ class Partner extends Model
     {
         return $this->belongsToMany(Person::class, 'jobs', 'employer_id', 'employee_id');
     }
+
+    public function bankaccounts()
+    {
+        return $this->belongsToMany(Bankkonten::class, 'GELD_KONTEN_ZUWEISUNG', 'KOSTENTRAEGER_ID', 'KONTO_ID')->wherePivot('KOSTENTRAEGER_TYP', 'Partner')->wherePivot('AKTUELL', '1');
+    }
+
+    public function details()
+    {
+        return $this->morphMany('App\Models\Details', 'details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID');
+    }
+
+    public function emails()
+    {
+        return $this->details()->where('DETAIL_NAME', 'Email');
+    }
+
+    public function faxs()
+    {
+        return $this->details()->where('DETAIL_NAME', 'Fax');
+    }
+
+    public function phones()
+    {
+        return $this->details()->whereIn('DETAIL_NAME', ['Handy', 'Tel.', 'Telefon']);
+    }
+
+    public function rechtsvertreter()
+    {
+        return $this->details()->where('DETAIL_NAME', 'Rechtsvertreter');
+    }
+
+    public function handelsregister()
+    {
+        return $this->details()->where('DETAIL_NAME', 'Handelsregister');
+    }
+
+    public function getNameOneLineAttribute()
+    {
+        $name = $this->PARTNER_NAME;
+        $name = str_replace("\r\n", ' ', $name);
+        $name = str_replace("\r", ' ', $name);
+        $name = str_replace("\n", ' ', $name);
+        return $name;
+    }
 }

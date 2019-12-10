@@ -1,7 +1,7 @@
 <template>
     <div class="identifier">
         <div ref="identifier">
-            <v-icon>{{value.getEntityIcon()}}</v-icon>
+            <b-icon :tooltips="value.getEntityIconTooltips()">{{value.getEntityIcon()}}</b-icon>
         </div>
         <router-link v-if="$router" :to="{name: 'web.invoices.show', params: { id: String(value.getID()) }}"
         >

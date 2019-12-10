@@ -125,15 +125,13 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
 
     function dropdown_personen_liste($label, $name, $id, $javaaction)
     {
-        $db_abfrage = "SELECT id, name, first_name, birthday FROM persons ORDER BY name, first_name ASC";
-        $personen = DB::select($db_abfrage);
-        $numrows = count($personen);
+        $personen = \App\Models\Person::defaultOrder()->get();
         echo "<div class='input-field'>";
         echo "<select name=\"$name\" id=\"$id\" $javaaction>";
-        for ($a = 0; $a < $numrows; $a++) {
-            $person_id = $personen [$a] ['id'];
-            $vorname = $personen [$a] ['first_name'];
-            $nachname = $personen [$a] ['name'];
+        foreach ($personen as $person) {
+            $person_id = $person['id'];
+            $vorname = $person['first_name'];
+            $nachname = $person['name'];
             echo "<option value=\"$person_id\">$nachname $vorname</option>";
         }
         echo "</select><label>$label</label>";
@@ -196,7 +194,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
             $this->einheit_qm_d = $ee->einheit_qm_d;
             $this->einheit_id = $row ['EINHEIT_ID'];
             $d = new detail();
-            $this->einheit_zimmeranzahl = $d->finde_detail_inhalt('EINHEIT', $this->einheit_id, 'Zimmeranzahl');
+            $this->einheit_zimmeranzahl = $d->finde_detail_inhalt('Einheit', $this->einheit_id, 'Zimmeranzahl');
             $this->mietvertrag_von = $row ['MIETVERTRAG_VON'];
             $this->mietvertrag_von_d = date_mysql2german($this->mietvertrag_von);
             $this->mietvertrag_bis = $row ['MIETVERTRAG_BIS'];
@@ -351,14 +349,14 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
 
             /* Wenn ausgezogener Mieter, dann nach Verzugsanschrift suchen, sonst Zustellanschrift */
             if ($this->mietvertrag_aktuell == '0') {
-                if ($de->finde_detail_inhalt('PERSON', $this->personen_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID'], 'Verzugsanschrift') == true) {
-                    $this->postanschrift [$a] ['anschrift'] = str_replace('<br />', "\n", $de->finde_detail_inhalt('PERSON', $this->personen_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID'], 'Verzugsanschrift'));
-                    $this->postanschrift [$a] ['adresse'] = str_replace('<br />', "\n", $de->finde_detail_inhalt('PERSON', $this->personen_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID'], 'Verzugsanschrift'));
+                if ($de->finde_detail_inhalt('Person', $this->personen_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID'], 'Verzugsanschrift') == true) {
+                    $this->postanschrift [$a] ['anschrift'] = str_replace('<br />', "\n", $de->finde_detail_inhalt('Person', $this->personen_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID'], 'Verzugsanschrift'));
+                    $this->postanschrift [$a] ['adresse'] = str_replace('<br />', "\n", $de->finde_detail_inhalt('Person', $this->personen_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID'], 'Verzugsanschrift'));
                     $this->anz_verzugsanschriften++;
                 } else {
-                    if ($de->finde_detail_inhalt('PERSON', $this->personen_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID'], 'Zustellanschrift') == true) {
-                        $this->postanschrift [$a] ['anschrift'] = str_replace('<br />', "\n", $de->finde_detail_inhalt('PERSON', $this->personen_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID'], 'Zustellanschrift'));
-                        $this->postanschrift [$a] ['adresse'] = str_replace('<br />', "\n", $de->finde_detail_inhalt('PERSON', $this->personen_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID'], 'Zustellanschrift'));
+                    if ($de->finde_detail_inhalt('Person', $this->personen_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID'], 'Zustellanschrift') == true) {
+                        $this->postanschrift [$a] ['anschrift'] = str_replace('<br />', "\n", $de->finde_detail_inhalt('Person', $this->personen_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID'], 'Zustellanschrift'));
+                        $this->postanschrift [$a] ['adresse'] = str_replace('<br />', "\n", $de->finde_detail_inhalt('Person', $this->personen_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID'], 'Zustellanschrift'));
                         $this->anz_zustellanschriften++;
                     } else {
                         // $this->postanschrift[$a]['anschrift'] = "$namen";
@@ -366,9 +364,9 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
                 }
             } else {
 
-                if ($de->finde_detail_inhalt('PERSON', $this->personen_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID'], 'Zustellanschrift') == true) {
-                    $this->postanschrift [$a] ['anschrift'] = str_replace('<br />', "\n", $de->finde_detail_inhalt('PERSON', $this->personen_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID'], 'Zustellanschrift'));
-                    $this->postanschrift [$a] ['adresse'] = str_replace('<br />', "\n", $de->finde_detail_inhalt('PERSON', $this->personen_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID'], 'Zustellanschrift'));
+                if ($de->finde_detail_inhalt('Person', $this->personen_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID'], 'Zustellanschrift') == true) {
+                    $this->postanschrift [$a] ['anschrift'] = str_replace('<br />', "\n", $de->finde_detail_inhalt('Person', $this->personen_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID'], 'Zustellanschrift'));
+                    $this->postanschrift [$a] ['adresse'] = str_replace('<br />', "\n", $de->finde_detail_inhalt('Person', $this->personen_ids [$a] ['PERSON_MIETVERTRAG_PERSON_ID'], 'Zustellanschrift'));
                     $this->anz_zustellanschriften++;
                 } else {
                     // $this->postanschrift[$a]['anschrift'] = "$namen\n$this->haus_strasse $this->haus_nr\n<b>$this->haus_plz $this->haus_stadt</b>";
@@ -589,9 +587,6 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
     {
         /* Neue Zeile */
         $form = new mietkonto ();
-        $anfang = $form->date_german2mysql($anfang);
-        $ende = $form->date_german2mysql($ende);
-        $betrag = $form->nummer_komma2punkt($betrag);
         $me_id = $form->get_mietentwicklung_last_id();
         $me_id = $me_id + 1;
         if ($mwst == 1) {
@@ -599,7 +594,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         } else {
             $mwst_betrag = 0.00;
         }
-        $db_abfrage = "INSERT INTO MIETENTWICKLUNG VALUES (NULL, '$me_id', 'MIETVERTRAG', '$mv_id', '$kostenkat', '$anfang', '$ende', '$mwst_betrag', '$betrag', '1')";
+        $db_abfrage = "INSERT INTO MIETENTWICKLUNG VALUES (NULL, '$me_id', 'Mietvertrag', '$mv_id', '$kostenkat', '$anfang', '$ende', '$mwst_betrag', '$betrag', '1')";
         DB::insert($db_abfrage);
         /* Zugewiesene MIETBUCHUNG_DAT auslesen */
         $last_dat = DB::getPdo()->lastInsertId();
@@ -613,7 +608,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         /* Einzugsermächtigung */
         $last_id = last_id('DETAIL');
         $last_id = $last_id + 1;
-        $db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$last_id', 'Einzugsermächtigung', '$ja_nein', '', '1', 'MIETVERTRAG', '$mv_id')";
+        $db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$last_id', 'Einzugsermächtigung', '$ja_nein', '', '1', 'Mietvertrag', '$mv_id')";
         DB::insert($db_abfrage);
         $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('DETAIL', $last_dat, '0');
@@ -621,7 +616,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         /* Einzugsart */
         $last_id = last_id('DETAIL');
         $last_id = $last_id + 1;
-        $db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$last_id', 'Autoeinzugsart', '$art', '', '1', 'MIETVERTRAG', '$mv_id')";
+        $db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$last_id', 'Autoeinzugsart', '$art', '', '1', 'Mietvertrag', '$mv_id')";
         DB::insert($db_abfrage);
         $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('DETAIL', $last_dat, '0');
@@ -629,7 +624,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         /* Kontoinhaber-AutoEinzug */
         $last_id = last_id('DETAIL');
         $last_id = $last_id + 1;
-        $db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$last_id', 'Kontoinhaber-AutoEinzug', '$konto_inh', '', '1', 'MIETVERTRAG', '$mv_id')";
+        $db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$last_id', 'Kontoinhaber-AutoEinzug', '$konto_inh', '', '1', 'Mietvertrag', '$mv_id')";
         DB::insert($db_abfrage);
         $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('DETAIL', $last_dat, '0');
@@ -637,7 +632,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         /* Kontonummer-AutoEinzug */
         $last_id = last_id('DETAIL');
         $last_id = $last_id + 1;
-        $db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$last_id', 'Kontonummer-AutoEinzug', '$konto_nr', '', '1', 'MIETVERTRAG', '$mv_id')";
+        $db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$last_id', 'Kontonummer-AutoEinzug', '$konto_nr', '', '1', 'Mietvertrag', '$mv_id')";
         DB::insert($db_abfrage);
         $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('DETAIL', $last_dat, '0');
@@ -645,7 +640,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         /* BLZ-AutoEinzug */
         $last_id = last_id('DETAIL');
         $last_id = $last_id + 1;
-        $db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$last_id', 'BLZ-AutoEinzug', '$blz', '', '1', 'MIETVERTRAG', '$mv_id')";
+        $db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$last_id', 'BLZ-AutoEinzug', '$blz', '', '1', 'Mietvertrag', '$mv_id')";
         DB::insert($db_abfrage);
         $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('DETAIL', $last_dat, '0');
@@ -653,7 +648,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
         /* Bankname-AutoEinzug */
         $last_id = last_id('DETAIL');
         $last_id = $last_id + 1;
-        $db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$last_id', 'Bankname-AutoEinzug', '$bankname', '', '1', 'MIETVERTRAG', '$mv_id')";
+        $db_abfrage = "INSERT INTO DETAIL VALUES (NULL, '$last_id', 'Bankname-AutoEinzug', '$bankname', '', '1', 'Mietvertrag', '$mv_id')";
         DB::insert($db_abfrage);
         $last_dat = DB::getPdo()->lastInsertId();
         protokollieren('DETAIL', $last_dat, '0');
@@ -810,7 +805,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
                     $teilnehmer_objekt_arr [$teilnehmer_arr_z] ['MIETER_ANZAHL'] = count($teilnehmer_objekt_arr [$teilnehmer_arr_z] ['PERSONEN_IDS']);
                     for ($i = 0; $i < count($teilnehmer_objekt_arr [$teilnehmer_arr_z] ['PERSONEN_IDS']); $i++) {
                         $d = new detail ();
-                        $konto_inhaber_autoeinzug = $d->finde_detail_inhalt('MIETVERTRAG', $mietvertrag_id, 'Kontoinhaber-AutoEinzug');
+                        $konto_inhaber_autoeinzug = $d->finde_detail_inhalt('Mietvertrag', $mietvertrag_id, 'Kontoinhaber-AutoEinzug');
                         $teilnehmer_objekt_arr [$teilnehmer_arr_z] ['MIETER'] [$i] ['VORNAME'] = $konto_inhaber_autoeinzug;
                     }
                     $teilnehmer_arr_z++;
@@ -832,7 +827,7 @@ GROUP BY EINHEIT_ID ORDER BY EINHEIT_KURZNAME ASC");
     function mietvertrag_einzugsverfahren_arr()
     {
         $result = DB::select("SELECT DETAIL_ZUORDNUNG_ID AS MIETVERTRAG_ID FROM `DETAIL` LEFT JOIN(MIETVERTRAG) ON (DETAIL_ZUORDNUNG_ID=MIETVERTRAG_ID) 
-WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='JA' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG' && DETAIL_AKTUELL = '1' && MIETVERTRAG_AKTUELL = '1' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS>=CURDATE())");
+WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='JA' && DETAIL_ZUORDNUNG_TABELLE = 'Mietvertrag' && DETAIL_AKTUELL = '1' && MIETVERTRAG_AKTUELL = '1' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS>=CURDATE())");
         if (!empty($result)) {
             return $result;
         } else {
@@ -938,7 +933,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='JA' && DETAIL_ZUORD
     function mietvertrag_einzugsverfahren_arr_ausgesetzt()
     {
         $result = DB::select("SELECT DETAIL_ZUORDNUNG_ID AS MIETVERTRAG_ID FROM `DETAIL` LEFT JOIN(MIETVERTRAG) ON (DETAIL_ZUORDNUNG_ID=MIETVERTRAG_ID) 
-WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUORDNUNG_TABELLE = 'MIETVERTRAG' && DETAIL_AKTUELL = '1' && MIETVERTRAG_AKTUELL = '1' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS>=CURDATE())");
+WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUORDNUNG_TABELLE = 'Mietvertrag' && DETAIL_AKTUELL = '1' && MIETVERTRAG_AKTUELL = '1' && (MIETVERTRAG_BIS='0000-00-00' OR MIETVERTRAG_BIS>=CURDATE())");
 
         if (!empty($result)) {
             return $result;
@@ -951,7 +946,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
 
     function teilnehmer_aktivieren($mv_id)
     {
-        $db_abfrage = "UPDATE DETAIL SET DETAIL_INHALT='JA' where DETAIL_NAME='Einzugsermächtigung' && DETAIL_ZUORDNUNG_TABELLE='MIETVERTRAG' && DETAIL_ZUORDNUNG_ID='$mv_id'";
+        $db_abfrage = "UPDATE DETAIL SET DETAIL_INHALT='JA' where DETAIL_NAME='Einzugsermächtigung' && DETAIL_ZUORDNUNG_TABELLE='Mietvertrag' && DETAIL_ZUORDNUNG_ID='$mv_id'";
         DB::update($db_abfrage);
         hinweis_ausgeben("Teilnahme zum Lastschriftverfahren aufgenommen.");
     } // end function
@@ -961,7 +956,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
 
     function teilnehmer_deaktivieren($mv_id)
     {
-        $db_abfrage = "UPDATE DETAIL SET DETAIL_INHALT='NEIN' where DETAIL_NAME='Einzugsermächtigung' && DETAIL_ZUORDNUNG_TABELLE='MIETVERTRAG' && DETAIL_ZUORDNUNG_ID='$mv_id'";
+        $db_abfrage = "UPDATE DETAIL SET DETAIL_INHALT='NEIN' where DETAIL_NAME='Einzugsermächtigung' && DETAIL_ZUORDNUNG_TABELLE='Mietvertrag' && DETAIL_ZUORDNUNG_ID='$mv_id'";
         DB::update($db_abfrage);
         hinweis_ausgeben("Teilnahme zum Lastschriftverfahren ausgesetzt.");
     }
@@ -1082,7 +1077,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
 
     function ls_daten_vorhanden($mv_id)
     {
-        $result = DB::select("SELECT * FROM DETAIL WHERE DETAIL_NAME LIKE '%AutoEinzug' && DETAIL_ZUORDNUNG_TABELLE='MIETVERTRAG' && DETAIL_ZUORDNUNG_ID='$mv_id' && DETAIL_AKTUELL='1'");
+        $result = DB::select("SELECT * FROM DETAIL WHERE DETAIL_NAME LIKE '%AutoEinzug' && DETAIL_ZUORDNUNG_TABELLE='Mietvertrag' && DETAIL_ZUORDNUNG_ID='$mv_id' && DETAIL_AKTUELL='1'");
         return !empty($result);
     }
 
@@ -1117,32 +1112,32 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
         unset ($this->ls_bankname_sep_k);
 
         /* Kontoinhaber holen */
-        $result = DB::select("SELECT DETAIL_DAT, DETAIL_INHALT FROM DETAIL WHERE DETAIL_NAME='Kontoinhaber-AutoEinzug' && DETAIL_ZUORDNUNG_TABELLE='MIETVERTRAG' && DETAIL_ZUORDNUNG_ID='$mv_id' && DETAIL_AKTUELL='1'");
+        $result = DB::select("SELECT DETAIL_DAT, DETAIL_INHALT FROM DETAIL WHERE DETAIL_NAME='Kontoinhaber-AutoEinzug' && DETAIL_ZUORDNUNG_TABELLE='Mietvertrag' && DETAIL_ZUORDNUNG_ID='$mv_id' && DETAIL_AKTUELL='1'");
         $row = $result[0];
         $this->ls_konto_inhaber_dat = $row ['DETAIL_DAT'];
         $this->ls_konto_inhaber = $row ['DETAIL_INHALT'];
         /* Kontonummer holen */
-        $result = DB::select("SELECT DETAIL_DAT, DETAIL_INHALT FROM DETAIL WHERE DETAIL_NAME='Kontonummer-AutoEinzug' && DETAIL_ZUORDNUNG_TABELLE='MIETVERTRAG' && DETAIL_ZUORDNUNG_ID='$mv_id' && DETAIL_AKTUELL='1'");
+        $result = DB::select("SELECT DETAIL_DAT, DETAIL_INHALT FROM DETAIL WHERE DETAIL_NAME='Kontonummer-AutoEinzug' && DETAIL_ZUORDNUNG_TABELLE='Mietvertrag' && DETAIL_ZUORDNUNG_ID='$mv_id' && DETAIL_AKTUELL='1'");
         $row = $result[0];
         $this->ls_konto_nummer_dat = $row ['DETAIL_DAT'];
         $this->ls_konto_nummer = $row ['DETAIL_INHALT'];
         /* BLZ holen */
-        $result = DB::select("SELECT DETAIL_DAT, DETAIL_INHALT FROM DETAIL WHERE DETAIL_NAME='BLZ-AutoEinzug' && DETAIL_ZUORDNUNG_TABELLE='MIETVERTRAG' && DETAIL_ZUORDNUNG_ID='$mv_id' && DETAIL_AKTUELL='1'");
+        $result = DB::select("SELECT DETAIL_DAT, DETAIL_INHALT FROM DETAIL WHERE DETAIL_NAME='BLZ-AutoEinzug' && DETAIL_ZUORDNUNG_TABELLE='Mietvertrag' && DETAIL_ZUORDNUNG_ID='$mv_id' && DETAIL_AKTUELL='1'");
         $row = $result[0];
         $this->ls_blz_dat = $row ['DETAIL_DAT'];
         $this->ls_blz = $row ['DETAIL_INHALT'];
         /* Bankname holen */
-        $result = DB::select("SELECT DETAIL_DAT, DETAIL_INHALT FROM DETAIL WHERE DETAIL_NAME='Bankname-AutoEinzug' && DETAIL_ZUORDNUNG_TABELLE='MIETVERTRAG' && DETAIL_ZUORDNUNG_ID='$mv_id' && DETAIL_AKTUELL='1'");
+        $result = DB::select("SELECT DETAIL_DAT, DETAIL_INHALT FROM DETAIL WHERE DETAIL_NAME='Bankname-AutoEinzug' && DETAIL_ZUORDNUNG_TABELLE='Mietvertrag' && DETAIL_ZUORDNUNG_ID='$mv_id' && DETAIL_AKTUELL='1'");
         $row = $result[0];
         $this->ls_bankname_dat = $row ['DETAIL_DAT'];
         $this->ls_bankname = $row ['DETAIL_INHALT'];
         /* Autoeinzugsart holen */
-        $result = DB::select("SELECT DETAIL_DAT, DETAIL_INHALT FROM DETAIL WHERE DETAIL_NAME='Autoeinzugsart' && DETAIL_ZUORDNUNG_TABELLE='MIETVERTRAG' && DETAIL_ZUORDNUNG_ID='$mv_id' && DETAIL_AKTUELL='1'");
+        $result = DB::select("SELECT DETAIL_DAT, DETAIL_INHALT FROM DETAIL WHERE DETAIL_NAME='Autoeinzugsart' && DETAIL_ZUORDNUNG_TABELLE='Mietvertrag' && DETAIL_ZUORDNUNG_ID='$mv_id' && DETAIL_AKTUELL='1'");
         $row = $result[0];
         $this->ls_autoeinzugsart_dat = $row ['DETAIL_DAT'];
         $this->ls_autoeinzugsart = $row ['DETAIL_INHALT'];
         /* Einzugsermächtigungt holen */
-        $result = DB::select("SELECT DETAIL_DAT, DETAIL_INHALT FROM DETAIL WHERE DETAIL_NAME='Einzugsermächtigung' && DETAIL_ZUORDNUNG_TABELLE='MIETVERTRAG' && DETAIL_ZUORDNUNG_ID='$mv_id' && DETAIL_AKTUELL='1'");
+        $result = DB::select("SELECT DETAIL_DAT, DETAIL_INHALT FROM DETAIL WHERE DETAIL_NAME='Einzugsermächtigung' && DETAIL_ZUORDNUNG_TABELLE='Mietvertrag' && DETAIL_ZUORDNUNG_ID='$mv_id' && DETAIL_AKTUELL='1'");
         $row = $result[0];
         $this->ls_einzugsermaechtigung_dat = $row ['DETAIL_DAT'];
         $this->ls_einzugsermaechtigung = $row ['DETAIL_INHALT'];
@@ -1215,7 +1210,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
 
     function mietdefinition_beenden($mv_id, $mietvertrag_bis)
     {
-        DB::update("UPDATE MIETENTWICKLUNG SET ENDE='$mietvertrag_bis' WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$mv_id' && (ENDE='0000-00-00' OR ENDE>='$mietvertrag_bis') && MIETENTWICKLUNG_AKTUELL='1'");
+        DB::update("UPDATE MIETENTWICKLUNG SET ENDE='$mietvertrag_bis' WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$mv_id' && (ENDE='0000-00-00' OR ENDE>='$mietvertrag_bis') && MIETENTWICKLUNG_AKTUELL='1'");
     }
 
     function ausgezogene_mieter_anzeigen($objekt_id, $jahr, $monat)
@@ -1373,10 +1368,10 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
 
                 $link_pdf = "<a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'abnahmeprotokoll', 'einheit_id' => $einheit_id, 'mv_id' => $mv_id]) . "'><img src=\"images/pdf_light.png\"></a>";
                 $link_einheit = "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id, 'mietvertrag_id' => $mv_id]) . "'>$e->einheit_kurzname</a>";
-                $link_abnahme = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'MIETVERTRAG', 'detail_id' => $mv_id, 'vorauswahl' => 'Abnahmetermin']) . "'><b>Termin eingeben</b></a>";
+                $link_abnahme = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'Mietvertrag', 'detail_id' => $mv_id, 'vorauswahl' => 'Abnahmetermin']) . "'><b>Termin eingeben</b></a>";
 
                 $det = new detail ();
-                $abnahme_termin = $det->finde_detail_inhalt('MIETVERTRAG', $mv_id, 'Abnahmetermin');
+                $abnahme_termin = $det->finde_detail_inhalt('Mietvertrag', $mv_id, 'Abnahmetermin');
                 $auszug = date_mysql2german($auszug_arr [$a] ['MIETVERTRAG_BIS']);
 
                 $personen_arr = $m->get_personen_ids_mietvertrag($mv_id);
@@ -1447,9 +1442,9 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
 
                 $link_pdf = "<a href='" . route('web::mietvertraege::legacy', ['mietvertrag_raus' => 'abnahmeprotokoll', 'einheit_id' => $einheit_id, 'mv_id' => $mv_id, 'einzug' => 'JA']) . "'><img src=\"images/pdf_light.png\"></a>";
                 $link_einheit = "<a href='" . route('web::uebersicht::legacy', ['anzeigen' => 'einheit', 'einheit_id' => $einheit_id, 'mietvertrag_id' => $mv_id]) . "'>$e->einheit_kurzname</a>";
-                $link_abnahme = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'MIETVERTRAG', 'detail_id' => $mv_id, 'vorauswahl' => 'Abnahmetermin']) . "'><b>Termin eingeben</b></a>";
+                $link_abnahme = "<a href='" . route('web::details::legacy', ['option' => 'details_hinzu', 'detail_tabelle' => 'Mietvertrag', 'detail_id' => $mv_id, 'vorauswahl' => 'Abnahmetermin']) . "'><b>Termin eingeben</b></a>";
                 $det = new detail ();
-                $abnahme_termin = $det->finde_detail_inhalt('MIETVERTRAG', $mv_id, 'Abnahmetermin');
+                $abnahme_termin = $det->finde_detail_inhalt('Mietvertrag', $mv_id, 'Abnahmetermin');
                 $einzug = date_mysql2german($auszug_arr [$a] ['MIETVERTRAG_VON']);
 
                 $personen_arr = $m->get_personen_ids_mietvertrag($mv_id);
@@ -1524,7 +1519,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                 $personen_string = str_replace("\n", " ", htmlspecialchars($personen_string));
                 $ka->get_kautionsbetrag($mv_id);
                 $det = new detail ();
-                $abnahme_termin = bereinige_string($det->finde_detail_inhalt('MIETVERTRAG', $mv_id, 'Abnahmetermin'));
+                $abnahme_termin = bereinige_string($det->finde_detail_inhalt('Mietvertrag', $mv_id, 'Abnahmetermin'));
                 $pdf_tab [$a] ['EINHEIT'] = $e->einheit_kurzname;
                 $pdf_tab [$a] ['MIETER'] = $personen_string;
                 $pdf_tab [$a] ['AUSZUG'] = $auszug;
@@ -1602,7 +1597,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                 $personen_string = str_replace("\n", " ", htmlspecialchars($personen_string));
                 $ka->get_kautionsbetrag($mv_id);
                 $det = new detail ();
-                $abnahme_termin = bereinige_string($det->finde_detail_inhalt('MIETVERTRAG', $mv_id, 'Abnahmetermin'));
+                $abnahme_termin = bereinige_string($det->finde_detail_inhalt('Mietvertrag', $mv_id, 'Abnahmetermin'));
 
                 $pdf_tab [$a] ['EINHEIT'] = $e->einheit_kurzname;
                 $pdf_tab [$a] ['MIETER'] = $personen_string;
@@ -2054,8 +2049,8 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                     $mv = new mietvertraege ();
                     $mv->get_mietvertrag_infos_aktuell($mv_id);
                     $mz = new miete ();
-                    $summe_nebenkosten_jahr = $mz->summe_nebenkosten_im_jahr('MIETVERTRAG', $mv_id, $jahr);
-                    $summe_hk_jahr = $mz->summe_heizkosten_im_jahr('MIETVERTRAG', $mv_id, $jahr);
+                    $summe_nebenkosten_jahr = $mz->summe_nebenkosten_im_jahr('Mietvertrag', $mv_id, $jahr);
+                    $summe_hk_jahr = $mz->summe_heizkosten_im_jahr('Mietvertrag', $mv_id, $jahr);
 
                     /* Kaltmiete */
                     $li = new listen ();
@@ -2127,8 +2122,8 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                 if ($mv_id != 'Leerstand') {
                     $mv = new mietvertraege ();
                     $mv->get_mietvertrag_infos_aktuell($mv_id);
-                    $summe_nebenkosten_jahr = $mz->summe_nebenkosten_im_jahr('MIETVERTRAG', $mv_id, $jahr);
-                    $summe_hk_jahr = $mz->summe_heizkosten_im_jahr('MIETVERTRAG', $mv_id, $jahr);
+                    $summe_nebenkosten_jahr = $mz->summe_nebenkosten_im_jahr('Mietvertrag', $mv_id, $jahr);
+                    $summe_hk_jahr = $mz->summe_heizkosten_im_jahr('Mietvertrag', $mv_id, $jahr);
                     $summe_nebenkosten_jahr_a = nummer_punkt2komma_t($summe_nebenkosten_jahr);
                     $summe_hk_jahr_a = nummer_punkt2komma_t($summe_hk_jahr);
 
@@ -2186,9 +2181,9 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                     $table_arr [$z] ['QM'] = $arr [$a] ['EINHEIT_QM'];
                     $table_arr [$z] ['EINZUG'] = "<u><b>$b_von</b></u>";
                     $table_arr [$z] ['AUSZUG'] = "<u><b>$b_bis</b></u>";
-                    $summe_nebenkosten_jahr = $mz->summe_nebenkosten_im_jahr('MIETVERTRAG', $mv_id, $jahr);
+                    $summe_nebenkosten_jahr = $mz->summe_nebenkosten_im_jahr('Mietvertrag', $mv_id, $jahr);
                     $summe_nebenkosten_jahr_a = nummer_punkt2komma_t($summe_nebenkosten_jahr);
-                    $summe_hk_jahr = $mz->summe_heizkosten_im_jahr('MIETVERTRAG', $mv_id, $jahr);
+                    $summe_hk_jahr = $mz->summe_heizkosten_im_jahr('Mietvertrag', $mv_id, $jahr);
                     $summe_hk_jahr_a = nummer_punkt2komma_t($summe_hk_jahr);
                     $table_arr [$z] ['BETRIEBSKOSTEN'] = "<u><b>$summe_nebenkosten_jahr_a</b></u>";
                     $table_arr [$z] ['HEIZKOSTEN'] = "<u><b>$summe_hk_jahr_a</b></u>";
@@ -2575,8 +2570,8 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                 if ($mv_id != 'Leerstand') {
                     $mv = new mietvertraege ();
                     $mv->get_mietvertrag_infos_aktuell($mv_id);
-                    $summe_nebenkosten_jahr = $mz->summe_nebenkosten_im_jahr('MIETVERTRAG', $mv_id, $jahr);
-                    $summe_hk_jahr = $mz->summe_heizkosten_im_jahr('MIETVERTRAG', $mv_id, $jahr);
+                    $summe_nebenkosten_jahr = $mz->summe_nebenkosten_im_jahr('Mietvertrag', $mv_id, $jahr);
+                    $summe_hk_jahr = $mz->summe_heizkosten_im_jahr('Mietvertrag', $mv_id, $jahr);
                     $summe_nebenkosten_jahr_a = nummer_punkt2komma_t($summe_nebenkosten_jahr);
                     $summe_hk_jahr_a = nummer_punkt2komma_t($summe_hk_jahr);
 
@@ -2633,9 +2628,9 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
                     $table_arr [$z] ['MIETER'] = "<u><b>LEERSTAND</b></u>";
                     $table_arr [$z] ['EINZUG'] = "<u><b>$b_von</b></u>";
                     $table_arr [$z] ['AUSZUG'] = "<u><b>$b_bis</b></u>";
-                    $summe_nebenkosten_jahr = $mz->summe_nebenkosten_im_jahr('MIETVERTRAG', $mv_id, $jahr);
+                    $summe_nebenkosten_jahr = $mz->summe_nebenkosten_im_jahr('Mietvertrag', $mv_id, $jahr);
                     $summe_nebenkosten_jahr_a = nummer_punkt2komma_t($summe_nebenkosten_jahr);
-                    $summe_hk_jahr = $mz->summe_heizkosten_im_jahr('MIETVERTRAG', $mv_id, $jahr);
+                    $summe_hk_jahr = $mz->summe_heizkosten_im_jahr('Mietvertrag', $mv_id, $jahr);
                     $summe_hk_jahr_a = nummer_punkt2komma_t($summe_hk_jahr);
                     $table_arr [$z] ['BETRIEBSKOSTEN'] = "<u><b>$summe_nebenkosten_jahr_a</b></u>";
                     $table_arr [$z] ['HEIZKOSTEN'] = "<u><b>$summe_hk_jahr_a</b></u>";
@@ -2803,7 +2798,7 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
     function summe_forderung_monatlich($mietvertrag_id, $monat, $jahr)
     {
         $monat = sprintf('%02d', $monat);
-        $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat'  && (KOSTENKATEGORIE = 'Miete kalt' OR KOSTENKATEGORIE = 'MOD' OR KOSTENKATEGORIE = 'MHG')");
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat'  && (KOSTENKATEGORIE = 'Miete kalt' OR KOSTENKATEGORIE = 'MOD' OR KOSTENKATEGORIE = 'MHG')");
         if (empty($result)) {
             return false;
         } else {
@@ -2843,8 +2838,8 @@ WHERE DETAIL_NAME = 'Einzugsermächtigung' && DETAIL_INHALT='NEIN' && DETAIL_ZUO
     {
         DB::update("UPDATE MIETVERTRAG SET MIETVERTRAG_AKTUELL='0' WHERE MIETVERTRAG_ID='$mv_id'");
         DB::update("UPDATE PERSON_MIETVERTRAG SET PERSON_MIETVERTRAG_AKTUELL='0' WHERE PERSON_MIETVERTRAG_MIETVERTRAG_ID='$mv_id'");
-        DB::update("UPDATE MIETENTWICKLUNG SET MIETENTWICKLUNG_AKTUELL='0' WHERE KOSTENTRAEGER_TYP LIKE 'MIETVERTRAG' && KOSTENTRAEGER_ID = '$mv_id'");
-        DB::update("UPDATE DETAIL SET DETAIL_AKTUELL='0' WHERE DETAIL_ZUORDNUNG_TABELLE LIKE 'MIETVERTRAG' && DETAIL_ZUORDNUNG_ID = '$mv_id'");
+        DB::update("UPDATE MIETENTWICKLUNG SET MIETENTWICKLUNG_AKTUELL='0' WHERE KOSTENTRAEGER_TYP LIKE 'Mietvertrag' && KOSTENTRAEGER_ID = '$mv_id'");
+        DB::update("UPDATE DETAIL SET DETAIL_AKTUELL='0' WHERE DETAIL_ZUORDNUNG_TABELLE LIKE 'Mietvertrag' && DETAIL_ZUORDNUNG_ID = '$mv_id'");
         echo "Mietvertrag wurde gelöscht!";
     }
 } // end classs

@@ -17,7 +17,11 @@ class Haeuser extends Model
     protected $table = 'HAUS';
     protected $primaryKey = 'HAUS_ID';
     protected $searchableFields = ['HAUS_STRASSE', 'HAUS_NUMMER', 'HAUS_PLZ', 'HAUS_STADT'];
-    protected $defaultOrder = ['HAUS_STRASSE' => 'asc', 'HAUS_NUMMER' => 'asc'];
+    protected $defaultOrder = ['HAUS_STRASSE' => 'asc',
+        'CAST(HAUS_NUMMER AS UNSIGNED)' => 'asc',
+        'LENGTH(HAUS_NUMMER)' => 'asc',
+        'HAUS_NUMMER' => 'asc'
+    ];
     protected $appends = ['type'];
     protected $guarded = [];
 
@@ -43,15 +47,18 @@ class Haeuser extends Model
         return $this->belongsTo('App\Models\Objekte', 'OBJEKT_ID', 'OBJEKT_ID');
     }
 
-    public function einheiten() {
+    public function einheiten()
+    {
         return $this->hasMany('App\Models\Einheiten', 'HAUS_ID', 'HAUS_ID');
     }
 
-    public function auftraege() {
+    public function auftraege()
+    {
         return $this->morphMany(Auftraege::class, 'kostentraeger', 'KOS_TYP', 'KOS_ID');
     }
 
-    public function commonDetails() {
+    public function commonDetails()
+    {
         return $this->details()->whereNotIn('DETAIL_NAME', ['Hinweis_zum_Haus']);
     }
 
@@ -60,21 +67,24 @@ class Haeuser extends Model
         return $this->morphMany('App\Models\Details', 'details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID');
     }
 
-    public function hinweise() {
+    public function hinweise()
+    {
         return $this->details()->where('DETAIL_NAME', 'Hinweis_zum_Haus');
     }
 
-    public function hasHinweis() {
+    public function hasHinweis()
+    {
         return $this->hinweise->count() > 0;
     }
 
-    public function mieter($date = null) {
-        if(is_null($date)) {
+    public function mieter($date = null)
+    {
+        if (is_null($date)) {
             $date = Carbon::today();
         }
-        return Person::whereHas('mietvertraege', function ($query) use ($date){
+        return Person::whereHas('mietvertraege', function ($query) use ($date) {
             $query->whereHas('einheit.haus', function ($query) {
-                    $query->where('HAUS_ID', $this->HAUS_ID);
+                $query->where('HAUS_ID', $this->HAUS_ID);
             })->active('=', $date);
         });
     }
@@ -105,5 +115,39 @@ class Haeuser extends Model
             $query->where('HAUS_ID', $this->HAUS_ID);
         })->where('TYP', 'Gewerbe')->sum('EINHEIT_QM');
         return isset($flaeche) ? $flaeche : 0;
+    }
+
+    public function getNameAttribute()
+    {
+        $line1 = "";
+        if ($this->HAUS_STRASSE !== "") {
+            $line1 .= trim($this->HAUS_STRASSE);
+        }
+        if ($this->HAUS_STRASSE !== "" && $this->HAUS_NUMMER !== "") {
+            $line1 .= " " . trim($this->HAUS_NUMMER);
+        } elseif ($this->HAUS_NUMMER !== "") {
+            $line1 .= trim($this->HAUS_NUMMER);
+        }
+        return $line1;
+    }
+
+    public function postalAddress($separator = "\n")
+    {
+        $line1 = $this->getNameAttribute();
+        $line2 = "";
+        if ($this->HAUS_PLZ !== "") {
+            $line2 .= trim($this->HAUS_PLZ);
+        }
+        if ($this->HAUS_PLZ !== "" && $this->HAUS_STADT !== "") {
+            $line2 .= " " . trim($this->HAUS_STADT);
+        } elseif ($this->HAUS_STADT !== "") {
+            $line2 .= trim($this->HAUS_STADT);
+        }
+        if ($line1 !== "" && $line2 !== "") {
+            return $line1 . $separator . $line2;
+        } elseif ($line2 !== "") {
+            return $line2;
+        }
+        return $line1;
     }
 }

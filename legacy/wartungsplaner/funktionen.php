@@ -179,7 +179,7 @@ function kontakt_suche($target_id, $string)
     $datum_d = date("d.m.Y");
     echo "<p class=\"zeile_ueber\">Suchergebnisse, auf Datensatz klicken um zu übernehmen</p>";
     echo "<table>";
-    $db_abfrage = "SELECT * FROM persons WHERE (name LIKE '$string%' OR first_name LIKE '%$string%')";
+    $db_abfrage = "SELECT * FROM persons WHERE (name LIKE '$string%' OR first_name LIKE '%$string%') AND deleted_at IS NULL";
     $result = DB::select($db_abfrage);
     $z = 0;
     if (!empty($result)) {
@@ -197,11 +197,31 @@ function kontakt_suche($target_id, $string)
 
                         extract($einheit_info_arr);
                         $z++;
-                        $js = "onclick=\"setTimeout('daj3(\'" . route('web::wartungsplaner::ajax', ['option' => 'kos_typ_register', 'kos_typ' => 'Partner', 'kos_id' => $EIGENTUEMER_PARTNER], false) . "\', \'leftBox1\')', 100);";
-                        $js .= "setTimeout('daj3(\'" . route('web::wartungsplaner::ajax', ['option' => 'unset_g_id'], false) . "\', \'rightBox\')', 100);";
-                        $js .= "setTimeout('daj3(\'" . route('web::wartungsplaner::ajax', ['option' => 'wartungsteil_waehlen'], false) . "\', \'leftBox\')', 1000);";
-                        $js .= "setTimeout('daj3(\'" . route('web::wartungsplaner::ajax', ['option' => 'einheit_register', 'einheit_id' => $einheit_id, 'einheit_bez' => $EINHEIT_KURZNAME], false) . "\', \'rightBox\')', 500);";
-                        $js .= "setTimeout('daj3(\'" . route('web::wartungsplaner::ajax', ['option' => 'get_partner_info'], false) . "\', \'rightBox\')', 1000);\"";
+
+                        $js = "onclick=\"transitionState([
+                    {
+                        'type': 'Request',
+                        'value': '/wartungsplaner/ajax?option=kos_typ_register&kos_typ=Partner&kos_id=$EIGENTUEMER_PARTNER'
+                    },
+                    {
+                        'type': 'Request',
+                        'value': '/wartungsplaner/ajax?option=unset_g_id'
+                    },
+                    {
+                        'type': 'Request',
+                        'value': '/wartungsplaner/ajax?option=einheit_register&einheit_id=$einheit_id&einheit_bez=$EINHEIT_KURZNAME'
+                    },
+                    {
+                        'type': 'Request',
+                        'value': '/wartungsplaner/ajax?option=get_partner_info',
+                        'target': 'rightBox'
+                    },
+                    {
+                        'type': 'Request',
+                        'value': '/wartungsplaner/ajax?option=wartungsteil_waehlen',
+                        'target': 'leftBox'
+                    }
+            ])\"";
 
                         $p_nachname = $row['name'];
                         $p_vorname = $row['first_name'];
@@ -222,22 +242,41 @@ function kontakt_suche($target_id, $string)
         foreach ($result as $row) {
             $z++;
             $p_id = $row['PARTNER_ID'];
-            $js_t = "onclick=\"setTimeout('daj3(\'/wartungsplaner/ajax?option=kos_typ_register&kos_typ=Partner&kos_id=$p_id\', \'rightBox\')', 100);";
-            $js_t .= "setTimeout('daj3(\'/wartungsplaner/ajax?option=get_partner_info\', \'rightBox\')', 1000);";
-            $js_t .= "setTimeout('daj3(\'/wartungsplaner/ajax?option=unset_g_id\', \'rightBox\')', 100);";
-            $js_t .= "setTimeout('daj3(\'/wartungsplaner/ajax?option=wartungsteil_waehlen\', \'leftBox\')', 1000);";
-            $js_t .= "setTimeout('daj3(\'/wartungsplaner/ajax?option=einheit_register&einheit_id=Wartungsteil&einheit_bez=Bitte waehlen\', \'rightBox\')', 500);";
-            $js_t .= "setTimeout('termin_suchen_btn1(\'$datum_d\')', 1500);";
-            $js_tages_ansicht = $js_t . "\"";
 
-            $js_t1 = $js_tages_ansicht;
-
+            $js_t = "onclick=\"transitionState([
+                    {
+                        'type': 'Request',
+                        'value': '/wartungsplaner/ajax?option=kos_typ_register&kos_typ=Partner&kos_id=$p_id'
+                    },
+                    {
+                        'type': 'Request',
+                        'value': '/wartungsplaner/ajax?option=unset_g_id'
+                    },
+                    {
+                        'type': 'Request',
+                        'value': '/wartungsplaner/ajax?option=einheit_register&einheit_id=Wartungsteil&einheit_bez=Bitte waehlen'
+                    },
+                    {
+                        'type': 'Request',
+                        'value': '/wartungsplaner/ajax?option=get_partner_info',
+                        'target': 'rightBox'
+                    },
+                    {
+                        'type': 'Request',
+                        'value': '/wartungsplaner/ajax?option=wartungsteil_waehlen',
+                        'target': 'leftBox'
+                    },
+                    {
+                        'type': 'Function',
+                        'value': 'termin_suchen_btn1(\'$datum_d\')'
+                    }
+            ])\"";
 
             $pa_name = $row['PARTNER_NAME'];
             $pa_str = $row['STRASSE'];
             $pa_nr = $row['NUMMER'];
             $pa_ort = $row['ORT'];
-            echo "<tr class=\"zeile$z\" $js_tages_ansicht $js_t1><td>PARTNER</td><td>$pa_name $pa_str $pa_nr $pa_ort</td></tr>";
+            echo "<tr class=\"zeile$z\" $js_t><td>PARTNER</td><td>$pa_name $pa_str $pa_nr $pa_ort</td></tr>";
 
             if ($z == 2) {
                 $z = 0;
@@ -267,16 +306,41 @@ function kontakt_suche($target_id, $string)
                 for ($a = 0; $a < count($g_id_arr); $a++) {
                     $g_id = $g_id_arr[$a]['GERAETE_ID'];
 
-                    $js_t = "onclick=\"setTimeout('daj3(\'/wartungsplaner/ajax?option=kos_typ_register&kos_typ=Partner&kos_id=$eigentuemer_p_id\', \'rightBox\')', 100);";
-                    $js_t .= "setTimeout('daj3(\'/wartungsplaner/ajax?option=einheit_register&einheit_id=$einheit_id&einheit_bez=$einheit_bez\', \'rightBox\')', 850);";
-                    $js_t .= "setTimeout('daj3(\'/wartungsplaner/ajax?option=get_partner_info\', \'rightBox\')', 1000);";
-                    $js_t .= "setTimeout('daj3(\'/wartungsplaner/ajax?option=unset_g_id\', \'rightBox\')', 100);";
-                    $js_t .= "setTimeout('daj3(\'/wartungsplaner/ajax?option=wartungsteil_waehlen&g_id=$g_id\', \'leftBox\')', 1000);";
-                    $js_t .= "setTimeout('daj3(\'/wartungsplaner/ajax?option=get_datum_lw&g_id=$g_id\', \'lw_datum\')', 1500);";
-                    $js_t .= "setTimeout('termin_suchen_btn1(\'$datum_d\')', 1500);";
-                    $js_tages_ansicht = $js_t . "\"";
+                    $js_t = "onclick=\"transitionState([
+                    {
+                        'type': 'Request',
+                        'value': '/wartungsplaner/ajax?option=kos_typ_register&kos_typ=Partner&kos_id=$eigentuemer_p_id'
+                    },
+                    {
+                        'type': 'Request',
+                        'value': '/wartungsplaner/ajax?option=unset_g_id'
+                    },
+                    {
+                        'type': 'Request',
+                        'value': '/wartungsplaner/ajax?option=einheit_register&einheit_id=$einheit_id&einheit_bez=$einheit_bez'
+                    },
+                    {
+                        'type': 'Request',
+                        'value': '/wartungsplaner/ajax?option=get_partner_info',
+                        'target': 'rightBox'
+                    },
+                    {
+                        'type': 'Request',
+                        'value': '/wartungsplaner/ajax?option=wartungsteil_waehlen&g_id=$g_id',
+                        'target': 'leftBox'
+                    },
+                    {
+                        'type': 'Request',
+                        'value': '/wartungsplaner/ajax?option=get_datum_lw&g_id=$g_id',
+                        'target': 'lw_datum'
+                    },
+                    {
+                        'type': 'Function',
+                        'value': 'termin_suchen_btn1(\'$datum_d\')'
+                    }
+            ]);\"";
 
-                    echo "<tr $js_tages_ansicht class=\"zeile$z\"><td>Einheit</td><td>$row[EINHEIT_KURZNAME] $mietername $haus_str $haus_nr $e_lage $objekt_id Gerät:$g_id</td></tr>";
+                    echo "<tr $js_t class=\"zeile$z\"><td>Einheit</td><td>$row[EINHEIT_KURZNAME] $mietername $haus_str $haus_nr $e_lage $objekt_id Gerät:$g_id</td></tr>";
                 }
             } else {
                 echo "<tr class=\"zeile$z\"><td>Einheit</td><td>$row[EINHEIT_KURZNAME] $mietername $haus_str $haus_nr, $e_lage - Kein Gerät</td></tr>";
@@ -295,7 +359,7 @@ function str_suche($target_id, $string)
     $datum_d = date("d.m.Y");
     echo "<p class=\"zeile_ueber\">Suchergebnisse, auf Datensatz klicken um zu übernehmen</p>";
     echo "<table>";
-    $db_abfrage = "SELECT * FROM persons WHERE (name LIKE '$string%' OR first_name LIKE '%$string%')";
+    $db_abfrage = "SELECT * FROM persons WHERE (name LIKE '$string%' OR first_name LIKE '%$string%') AND deleted_at is NULL";
     $result = DB::select($db_abfrage);
     $z = 0;
     if (!empty($result)) {
@@ -489,7 +553,7 @@ function get_partner_anschrift($partner_id)
 function get_entfernung_km($start, $destination = START_ADRESSE)
 {
     echo "ENTFERNUNG wird berechnet!";
-    $url = "http://maps.google.com/maps/api/directions/xml?origin=$start &destination=$destination &sensor=false&language=de";
+    $url = "https://maps.google.com/maps/api/directions/xml?origin=$start &destination=$destination &sensor=false&language=de";
     $xml = simplexml_load_file($url);
     sleep(2);
     if ($xml === FALSE) {
@@ -553,7 +617,7 @@ function get_lat_lon_db_osm($str, $nr, $plz, $ort)
         session()->put("lon_lats.$str,$nr, $plz, $ort", $lat_lon);
         return $lat_lon;
     }
-    $url = "http://maps.google.com/maps/api/geocode/xml?address=$str+$nr+$plz+$ort&sensor=false";
+    $url = "https://maps.google.com/maps/api/geocode/xml?address=$str+$nr+$plz+$ort&sensor=false";
     $xml = simplexml_load_file("$url");
     sleep(1);
     if ($xml === FALSE) {
@@ -568,7 +632,7 @@ function get_lat_lon_db_osm($str, $nr, $plz, $ort)
         } else {
             #	echo "google NOK $xml->status<br>$url<br>";
             /*Über den Routenplaner von Google suchen*/
-            $url = "http://maps.google.com/maps/api/directions/xml?origin=" . "$str $nr, $plz $ort " . " &destination=Sansibarstr 12, 13351 Berlin&sensor=false";
+            $url = "https://maps.google.com/maps/api/directions/xml?origin=" . "$str $nr, $plz $ort " . " &destination=Sansibarstr 12, 13351 Berlin&sensor=false";
             $xml = simplexml_load_file("$url");
             if ($xml->status == 'OK') {
                 $lat = $xml->route->leg->step->start_location->lat;
@@ -634,14 +698,14 @@ function get_navi_route($s_str, $s_nr, $s_plz, $s_ort, $z_str, $z_nr, $z_plz, $z
 
 function kos_typ_info_anzeigen($kos_typ, $kos_id)
 {
-    if ($kos_typ == 'Partner' or $kos_typ == 'PARTNER_LIEFERANT') {
+    if ($kos_typ == 'Partner') {
         $g = new general();
         $g->get_partner_info($kos_id);
         echo "<p class=\"zeile_hinweis\">";
         echo "$g->partner_name $g->partner_strasse $g->partner_hausnr $g->partner_plz $g->partner_ort";
         echo "</p>";
-        alle_details_anzeigen('PARTNER_LIEFERANT', $kos_id);
-        form_detail_hinzu('PARTNER_LIEFERANT', $kos_id);
+        alle_details_anzeigen('Partner', $kos_id);
+        form_detail_hinzu('Partner', $kos_id);
     } else {
         echo "$kos_typ $kos_id keine Details";
     }
@@ -747,7 +811,7 @@ function alle_details_anzeigen($tab, $tab_id)
     $result = DB::select("SELECT * FROM DETAIL WHERE DETAIL_AKTUELL='1' && DETAIL_ZUORDNUNG_TABELLE='$tab' && DETAIL_ZUORDNUNG_ID='$tab_id' ORDER BY DETAIL_NAME ASC");
     if (!empty($result)) {
         echo "<hr>";
-        foreach($result as $row) {
+        foreach ($result as $row) {
             echo '<p class="zeile_detail"><b>' . $row['DETAIL_NAME'] . '</b>: ' . $row['DETAIL_INHALT'] . '</p>';
         }
         echo "<hr>";
@@ -759,7 +823,7 @@ function alle_details_anzeigen_br($tab, $tab_id)
     $result = DB::select("SELECT * FROM DETAIL WHERE DETAIL_AKTUELL='1' && DETAIL_ZUORDNUNG_TABELLE='$tab' && DETAIL_ZUORDNUNG_ID='$tab_id' ORDER BY DETAIL_NAME ASC");
     if (!empty($result)) {
         echo "<hr>";
-        foreach($result as $row) {
+        foreach ($result as $row) {
             echo '<b>' . $row['DETAIL_NAME'] . '</b>: ' . $row['DETAIL_INHALT'] . '<br>';
         }
         echo "<hr>";
@@ -1240,7 +1304,7 @@ function geraete_info_anzeigen($g_id)
 {
     $result = DB::select("SELECT * FROM W_GERAETE WHERE AKTUELL='1' && GERAETE_ID='$g_id' LIMIT 0,1");
     if (!empty($result)) {
-        foreach($result as $row) {
+        foreach ($result as $row) {
             $bezeichnung = $row['BEZEICHNUNG'];
             $hersteller = $row['HERSTELLER'];
             $baujahr = $row['BAUJAHR'];
@@ -1255,9 +1319,6 @@ function geraete_info_anzeigen($g_id)
             if ($kos_typ == 'Partner') {
                 $anschrift = get_partner_anschrift($kos_id);
                 $kos_bez = get_partner_name($kos_id);
-                $kos_typ_d = 'PARTNER_LIEFERANT';
-            } else {
-                $kos_typ_d = $kos_typ;
             }
 
             /*Rechnungsempfänger*/
@@ -1273,9 +1334,9 @@ function geraete_info_anzeigen($g_id)
                 $rech_an = 'o.g. Anschrift';
             }
             echo "<p class=\"zeile_hinweis\"><b>Rechnung an</b>: <br>$rech_an</p>";
-            alle_details_anzeigen($kos_typ_d, $kos_id);
+            alle_details_anzeigen($kos_typ, $kos_id);
             echo "<p class=\"zeile_ueber\">DETAIL ZUM KUNDEN</p>";
-            form_detail_hinzu($kos_typ_d, $kos_id);
+            form_detail_hinzu($kos_typ, $kos_id);
         }
     } else {
         echo "FEHLER 3x00f in function geraete_info_anzeigen()";
@@ -1759,7 +1820,9 @@ function freie_termine_tab($arr)
             $wochentag = get_wochentag_name($DATUM);
             $wt = get_wochentag($DATUM);
             $kw = get_kw($DATUM);
-            $js_neues_teil = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $BENUTZER_ID, 'datum' => $DATUM], false) . "','rightBox1');daj3('" . route('web::wartungsplaner::ajax', ['option' => 'karte', 'b_id' => $BENUTZER_ID, 'datum_d' => $DATUM], false) . "','rightBox');\"";
+            $b_id = $arr['BENUTZER_ID'];
+            $benutzername = get_benutzername($b_id);
+            $js_neues_teil = "onclick=\"daj3('" . route('web::wartungsplaner::ajax', ['option' => 'termine_tag_tab', 'b_id' => $b_id, 'datum' => $DATUM], false) . "','rightBox1');daj3('" . route('web::wartungsplaner::ajax', ['option' => 'karte', 'b_id' => $BENUTZER_ID, 'datum_d' => $DATUM], false) . "','rightBox');\"";
             if ($wt == 6 or $wt == 7) {
                 echo "<tr $js_neues_teil class=\"zeile$z\"><td>$kw. KW</td><td>$DATUM</td><td class=\"zeile_belegt\">$wochentag</td><td>$benutzername</td><td>$D_KM km</td><td>$FREI/$TERMINE_TAG</td></tr>";
             } else {
@@ -1832,12 +1895,13 @@ function freie_termine_tab3($arr)
 
             $anz_freie = count($arr[$a]['LUECKEN']);
 
+            $b_id = $arr[$a]['BENUTZER_ID'];
+            $benutzername = get_benutzername($b_id);
 
             if ($wt == 6 or $wt == 7) {
                 echo "<tr $js_neues_teil class=\"zeile$z\"><td>$kw. KW</td><td>$DATUM</td><td class=\"zeile_belegt\">$wochentag</td><td>$benutzername</td><td>$D_KM km</td><td>$FREI/$TERMINE_TAG</td></tr>";
             } else {
                 echo "<tr $js_neues_teil class=\"zeile$z\"><td>$kw. KW</td><td>$DATUM</td><td>";
-                $b_id = $arr[$a]['BENUTZER_ID'];
                 $ganzer_tag_arr = tages_ansicht_arr($b_id, $DATUM);
                 echo "<table>";
                 for ($cc = 0; $cc < $anz_freie; $cc++) {
@@ -1985,7 +2049,7 @@ function kontaktdaten_anzeigen($g_id = 1)
 
 function kontaktdaten_anzeigen_kunde($kos_id)
 {
-    $arr = finde_detail_kontakt_arr('PARTNER_LIEFERANT', $kos_id);
+    $arr = finde_detail_kontakt_arr('Partner', $kos_id);
     if (!empty($arr)) {
         $kontaktdaten = '';
         foreach ($arr as $a) {
@@ -2012,7 +2076,7 @@ function kontaktdaten_anzeigen_mieter($einheit_bez, $hinweis_an = 1)
             $kontaktdaten = '';
             Foreach ($result as $row) {
                 $person_id = $row['PERSON_MIETVERTRAG_PERSON_ID'];
-                $arr = finde_detail_kontakt_arr('PERSON', $person_id, $hinweis_an);
+                $arr = finde_detail_kontakt_arr('Person', $person_id, $hinweis_an);
                 if (!empty($arr)) {
                     $anz = count($arr);
                     for ($a = 0; $a < $anz; $a++) {
@@ -3133,7 +3197,7 @@ function get_durchschnitt_km($benutzer_id, $datum)
     if ($numrows) {
         $summe_km = 0;
 
-        foreach($result as $row) {
+        foreach ($result as $row) {
             $g_id = $row['GERAETE_ID'];
             $kos_typ = $row['KOSTENTRAEGER_TYP'];
             $kos_id = $row['KOSTENTRAEGER_ID'];
@@ -3203,7 +3267,7 @@ function get_durchschnitt_km3($benutzer_id, $datum)
     if ($numrows) {
         $summe_km = 100000;
 
-        foreach($result as $row) {
+        foreach ($result as $row) {
             $g_id = $row['GERAETE_ID'];
             $kos_typ = $row['KOSTENTRAEGER_TYP'];
             $kos_id = $row['KOSTENTRAEGER_ID'];
@@ -3281,7 +3345,7 @@ function get_durchschnitt_km2($benutzer_id, $datum, $lat_lon_db_ziel)
     if ($numrows) {
         $summe_km = 0;
 
-        foreach($result as $row) {
+        foreach ($result as $row) {
             $g_id = $row['GERAETE_ID'];
             $kos_typ = $row['KOSTENTRAEGER_TYP'];
             $kos_id = $row['KOSTENTRAEGER_ID'];
@@ -3460,7 +3524,7 @@ function get_datum_lw($g_id)
     $result = DB::select($db_abfrage);
     if (!empty($result)) {
         $link = '';
-        foreach($result as $row) {
+        foreach ($result as $row) {
             $datum = $row['DATUM'];
             $b_id = $row['BENUTZER_ID'];
             $b_name = get_benutzername($b_id);
@@ -3478,7 +3542,7 @@ function get_datum_nw($g_id)
     $result = DB::select($db_abfrage);
     if (!empty($result)) {
         $link = '';
-        foreach($result as $row) {
+        foreach ($result as $row) {
             $datum = $row['DATUM'];
             $b_id = $row['BENUTZER_ID'];
             $von = substr($row['VON'], 0, 5);
@@ -3548,7 +3612,7 @@ function get_lon_lat_osm($str, $nr, $plz, $ort, $w_datum)
         return $lat_lon;
     }
 
-    $url = "http://maps.google.com/maps/api/directions/xml?origin=" . "$str $nr, $plz $ort " . " &destination=" . START_ADRESSE . "&sensor=false";
+    $url = "https://maps.google.com/maps/api/directions/xml?origin=" . "$str $nr, $plz $ort " . " &destination=" . START_ADRESSE . "&sensor=false";
     $xml = simplexml_load_file("$url");
     sleep(2);
     if ($xml === FALSE) {
@@ -3727,9 +3791,9 @@ function tages_termine($benutzer_id, $datum_d)
                         extract($geraete_info_arr['0']);
                         $freie_zeit_min = getzeitdiff_min($VON, $BIS);
                         $zeit = min_in_zeit($freie_zeit_min);
-                        $wohnlage_det = finde_detail_inhalt('PARTNER_LIEFERANT', $KOSTENTRAEGER_ID, 'Wohnlage');
+                        $wohnlage_det = finde_detail_inhalt('Partner', $KOSTENTRAEGER_ID, 'Wohnlage');
                         echo "<tr class=\"zeile_belegt\"><td valign=\"top\">$VON<BR>$BIS</b></td><td valign=\"top\"><b>Kunde:</b>$g->partner_name<br>$g->partner_strasse $g->partner_hausnr<br>$g->partner_plz $g->partner_ort<br><b>Wohnlage:</b>$wohnlage_det</b><br><b>Text:</b>$TEXT<br><b>Hinweis:</b>$HINWEIS<br><b>Hersteller:</b>$HERSTELLER<br><b>Bezeichnung:</b>$BEZEICHNUNG<br><b>Lage:</b>$LAGE_RAUM";
-                        alle_details_anzeigen('PARTNER_LIEFERANT', $KOSTENTRAEGER_ID);
+                        alle_details_anzeigen('Partner', $KOSTENTRAEGER_ID);
                         echo "</td></tr>";
                         echo "<tr class=\"zeile3\"><td valign=\"top\" colspan=\"2\">Dauer $zeit</td></tr>";
                         UNSET($KOSTENTRAEGER_TYP);
@@ -4307,11 +4371,11 @@ function get_mieter_infos($mv_id)
     $result = DB::select("SELECT PERSON_MIETVERTRAG_PERSON_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_MIETVERTRAG_ID='$mv_id' && PERSON_MIETVERTRAG_AKTUELL='1' ORDER BY PERSON_MIETVERTRAG_ID ASC");
     if (!empty($result)) {
         $person_string = '';
-        foreach($result as $row) {
+        foreach ($result as $row) {
             $person_id = $row['PERSON_MIETVERTRAG_PERSON_ID'];
             $result1 = DB::select("SELECT name, first_name FROM persons WHERE id='$person_id' ORDER BY name, first_name ASC");
             if (!empty($result1)) {
-                foreach($result1 as $row1) {
+                foreach ($result1 as $row1) {
                     $p_nname = $row1['name'];
                     $p_vname = $row1['first_name'];
                     $person_string .= "$p_nname $p_vname\n";
@@ -4530,7 +4594,7 @@ class general
 
     function karte_anzeigen($b_id, $datum_d, $breite = 580, $hoehe = 400, $zoom = 10)
     {
-        $map_berlin = "http://maps.google.com/maps/api/staticmap?center=Berlin,%20Germany&zoom=$zoom&size=" . $breite . "x" . "$hoehe&maptype=roadmap&sensor=false";
+        $map_berlin = "https://maps.google.com/maps/api/staticmap?center=Berlin,%20Germany&zoom=$zoom&size=" . $breite . "x" . "$hoehe&maptype=roadmap&sensor=false";
         $map_markers = '';
 
 
@@ -4624,7 +4688,7 @@ class general
     function get_wteam_profil($benutzer_id)
     {
         $result = DB::select("SELECT *, DATE_FORMAT(VON, '%H:%i') AS VON, DATE_FORMAT(BIS, '%H:%i') AS BIS FROM W_TEAM_PROFILE WHERE BENUTZER_ID='$benutzer_id' && AKTUELL = '1'");
-        foreach($result as $row) {
+        foreach ($result as $row) {
             $benutzer_id = $row['BENUTZER_ID'];
             $arr['ID'] = $row['ID'];
             $arr['1'] = $row['1'];
@@ -4963,7 +5027,7 @@ class general
             $z_nr = ltrim(rtrim($ziel_arr[4]));
             $z_plz = ltrim(rtrim($ziel_arr[5]));
             $z_ort = ltrim(rtrim($ziel_arr[6]));
-            $url = "http://maps.google.com/maps/api/directions/xml?origin=$s_str+$s_nr+$s_plz+$s_ort&destination=$z_str+$z_nr+$z_plz+$z_ort&sensor=false&language=de";
+            $url = "https://maps.google.com/maps/api/directions/xml?origin=$s_str+$s_nr+$s_plz+$s_ort&destination=$z_str+$z_nr+$z_plz+$z_ort&sensor=false&language=de";
             $xml = simplexml_load_file("$url");
             sleep(1);
             if (!$xml) {
@@ -5025,7 +5089,7 @@ class general
 
             $result = DB::select($abfrage);
             if (!empty($result)) {
-                foreach($result as $row) {
+                foreach ($result as $row) {
                     $arr[] = $row;
                     $b_id = $row['BENUTZER_ID'];
                     $arr[$z]['D_KM'] = str_replace('.', ',', number_format(get_durchschnitt_km($b_id, $datum_sql), 2));
@@ -5072,7 +5136,7 @@ class general
             $abfrage = "SELECT  '$datum_d' AS DATUM,  DATE_FORMAT('$datum_sql','%Y%m%d') AS DATUMZ, name, W_TEAMS_BENUTZER.BENUTZER_ID,  TERMINE_TAG,  START_ADRESSE  FROM persons, `W_TEAMS_BENUTZER`, W_TEAM_PROFILE, GEO_TERMINE WHERE W_TEAM_PROFILE.$wochentag_nr='1' AND `TEAM_ID` = '$TEAM_ID' AND W_TEAMS_BENUTZER.AKTUELL = '1' AND W_TEAM_PROFILE.BENUTZER_ID=W_TEAMS_BENUTZER.BENUTZER_ID AND W_TEAM_PROFILE.AKTUELL='1' AND W_TEAM_PROFILE.AKTIV='1'  && W_TEAMS_BENUTZER.BENUTZER_ID NOT IN(SELECT BENUTZER_ID FROM URLAUB WHERE URLAUB.DATUM='$datum_sql' && URLAUB.AKTUELL='1') && persons.id=W_TEAMS_BENUTZER.BENUTZER_ID  GROUP BY  W_TEAMS_BENUTZER.BENUTZER_ID ORDER BY DATUMZ ASC";
             $result = DB::select($abfrage1);
             if (!empty($result)) {
-                foreach($result as $row) {
+                foreach ($result as $row) {
                     $b_id = $row['BENUTZER_ID'];
                     if (is_array(get_luecken_termine1($b_id, $datum_d))) {
                         $arr[$z] = $row;
@@ -5213,7 +5277,7 @@ class general
             $bname = get_benutzername($b_id);
             echo "<tr><th colspan=\"4\">$bname</th></tr>";
             $z = 0;
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 $z++;
                 $table = $row['TAB'];
                 $tab_dat = $row['TAB_DAT'];
@@ -5336,7 +5400,7 @@ class general
             $name = umlaute_anpassen($g_z->partner_name);
             $anschrift = umlaute_anpassen("$g_z->partner_strasse $g_z->partner_hausnr, $g_z->partner_plz $g_z->partner_ort");
             $kontakt_info = ltrim(str_replace('\r', ' ', str_replace('\n', ' ', str_replace('<br />', ' ', str_replace('<br>', ' ', ltrim(rtrim(kontaktdaten_anzeigen_kunde($kos_id))))))));
-            $wohnlage = finde_detail_inhalt('PARTNER_LIEFERANT', $kos_id, 'Wohnlage');
+            $wohnlage = finde_detail_inhalt('Partner', $kos_id, 'Wohnlage');
         } else {
             /*Mieterinformationen holen*/
             $gr = new general();

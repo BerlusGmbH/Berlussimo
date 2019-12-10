@@ -40,6 +40,9 @@ Route::group(['prefix' => 'api/v1', 'namespace' => 'Api\v1', 'middleware' => ['a
         Route::get('{bankaccount}/select', 'BankAccountController@select')->name('select');
         Route::get('unselect', 'BankAccountController@unselect')->name('unselect');
     });
+
+    Route::get('/reports/revenue/{object}', 'Modules\ReportController@revenue')->name('reports.revenue');
+    Route::get('/reports/mod/{object}', 'Modules\ReportController@mod')->name('reports.mod');
 });
 
 Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'], function () {
@@ -195,6 +198,7 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'
     Route::group(['prefix' => 'weg', 'as' => 'weg::'], function () {
         Route::match(['get', 'post'], '/', 'WEGController@request')->name('legacy');
         Route::post('hga/change-su', 'WEGController@change_su')->name('hga::change-su');
+        Route::post('/budgets/{budget}/energyCostAdjustment', 'WEGController@storeEnergyCostAdjustment')->name('homeowners.budgets.energyCostInflation.store');
     });
 
     Route::group(['prefix' => 'zeiterfassung', 'as' => 'zeiterfassung::'], function () {

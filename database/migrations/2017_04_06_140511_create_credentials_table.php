@@ -140,29 +140,29 @@ class CreateCredentialsTable extends Migration
 
                     Audit::where('person_id', $user['id'])->update(['person_id' => $person->id]);
 
-                    Details::where('DETAIL_ZUORDNUNG_TABELLE', 'BENUTZER')
+                    Details::where('DETAIL_ZUORDNUNG_TABELLE', 'Benutzer')
                         ->where('DETAIL_ZUORDNUNG_ID', $user['id'])
                         ->update([
-                            'DETAIL_ZUORDNUNG_TABELLE' => 'PERSON',
+                            'DETAIL_ZUORDNUNG_TABELLE' => 'Person',
                             'DETAIL_ZUORDNUNG_ID' => $person->id
                         ]);
 
                     $geld_konten_zuweisung_table = DB::table('GELD_KONTEN_ZUWEISUNG');
                     if ($geld_konten_zuweisung_table->exists()) {
-                        $geld_konten_zuweisung_table->where('KOSTENTRAEGER_TYP', 'BENUTZER')
+                        $geld_konten_zuweisung_table->where('KOSTENTRAEGER_TYP', 'Benutzer')
                             ->where('KOSTENTRAEGER_ID', $user['id'])
                             ->update([
-                                'KOSTENTRAEGER_TYP' => 'PERSON',
+                                'KOSTENTRAEGER_TYP' => 'Person',
                                 'KOSTENTRAEGER_ID' => $person->id
                             ]);
                     }
 
                     $geld_konto_buchungen_table = DB::table('GELD_KONTO_BUCHUNGEN');
                     if ($geld_konto_buchungen_table->exists()) {
-                        $geld_konto_buchungen_table->where('KOSTENTRAEGER_TYP', 'BENUTZER')
+                        $geld_konto_buchungen_table->where('KOSTENTRAEGER_TYP', 'Benutzer')
                             ->where('KOSTENTRAEGER_ID', $user['id'])
                             ->update([
-                                'KOSTENTRAEGER_TYP' => 'PERSON',
+                                'KOSTENTRAEGER_TYP' => 'Person',
                                 'KOSTENTRAEGER_ID' => $person->id
                             ]);
                     }
@@ -189,7 +189,7 @@ class CreateCredentialsTable extends Migration
 
                     $sepa_ueberweisung_table = DB::table('SEPA_UEBERWEISUNG');
                     if ($sepa_ueberweisung_table->exists()) {
-                        $sepa_ueberweisung_table->where('KOS_TYP', 'BENUTZER')
+                        $sepa_ueberweisung_table->where('KOS_TYP', 'Benutzer')
                             ->where('KOS_ID', $user['id'])
                             ->update([
                                 'KOS_TYP' => 'Person',
@@ -215,7 +215,7 @@ class CreateCredentialsTable extends Migration
 
                     $stundenzettel_pos_table = DB::table('STUNDENZETTEL_POS');
                     if ($stundenzettel_pos_table->exists()) {
-                        $stundenzettel_pos_table->where('KOSTENTRAEGER_TYP', 'BENUTZER')
+                        $stundenzettel_pos_table->where('KOSTENTRAEGER_TYP', 'Benutzer')
                             ->where('KOSTENTRAEGER_ID', $user['id'])
                             ->update([
                                 'KOSTENTRAEGER_TYP' => 'Person',
@@ -225,13 +225,13 @@ class CreateCredentialsTable extends Migration
 
                     $todo_liste_table = DB::table('TODO_LISTE');
                     if ($todo_liste_table->exists()) {
-                        $todo_liste_table->where('KOS_TYP', 'BENUTZER')
+                        $todo_liste_table->where('KOS_TYP', 'Benutzer')
                             ->where('KOS_ID', $user['id'])
                             ->update([
                                 'KOS_TYP' => 'Person',
                                 'KOS_ID' => $person->id
                             ]);
-                        DB::table('TODO_LISTE')->where('BENUTZER_TYP', 'BENUTZER')
+                        DB::table('TODO_LISTE')->where('BENUTZER_TYP', 'Benutzer')
                             ->where('BENUTZER_ID', $user['id'])
                             ->update([
                                 'BENUTZER_TYP' => 'Person',

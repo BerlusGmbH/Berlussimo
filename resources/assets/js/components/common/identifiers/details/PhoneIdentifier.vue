@@ -1,34 +1,22 @@
 <template>
     <div style="display: flex">
-        <div style="margin-right: 0.2rem; display: flex; flex-direction: column">
+        <div style="margin-right: 0.2rem">
             <div class="identifier">
-                <v-icon class="identifier-icon">mdi-phone</v-icon>
-                <div @click="copyToClipboard(value.DETAIL_INHALT, 'Telefonnummer')"
-                     style="display: inline-block; cursor: pointer; vertical-align: middle" ref="detail">
+                <b-icon :tooltips="['Telefon']" class="identifier-icon">mdi-phone</b-icon>
+                <div @click="copyToClipboard(value.DETAIL_INHALT, 'Telefon')"
+                     style="cursor: pointer" ref="detail">
                     {{value.DETAIL_INHALT}}
                 </div>
             </div>
-            <div class="identifier">
-                <template v-if="value.DETAIL_BEMERKUNG">
-                    <v-icon class="identifier-icon">mdi-note</v-icon>
-                    <div @click="copyToClipboard(value.DETAIL_BEMERKUNG, 'Bemerkung')"
-                         style="display: inline-block; cursor: pointer; vertical-align: middle"
-                    >
-                        {{value.DETAIL_BEMERKUNG}}
-                    </div>
-                </template>
+            <div class="identifier" v-if="value.DETAIL_BEMERKUNG">
+                <b-icon :tooltips="['Bemerkung']" class="identifier-icon">mdi-note</b-icon>
+                <div @click="copyToClipboard(value.DETAIL_BEMERKUNG, 'Bemerkung')"
+                     style="cursor: pointer"
+                >
+                    {{value.DETAIL_BEMERKUNG}}
+                </div>
             </div>
         </div>
-        <app-detail-edit-dialog :position-absolutely="true"
-                                :show="edit"
-                                @show="val => {edit = val}"
-                                :position-x="x"
-                                :position-y="y"
-                                :value="value"
-                                @input="$emit('input', $event); saveDetail($event)"
-                                prepend-icon="mdi-phone"
-        >
-        </app-detail-edit-dialog>
         <v-menu offset-y v-model="show" :position-absolutely="true" style="vertical-align: top">
             <v-icon slot="activator" style="font-size: 14px">mdi-arrow-down-drop-circle</v-icon>
             <v-list>
@@ -52,6 +40,16 @@
                 </v-list-tile>
             </v-list>
         </v-menu>
+        <app-detail-edit-dialog :position-absolutely="true"
+                                :show="edit"
+                                @show="val => {edit = val}"
+                                :position-x="x"
+                                :position-y="y"
+                                :value="value"
+                                @input="$emit('input', $event); saveDetail($event)"
+                                prepend-icon="mdi-phone"
+        >
+        </app-detail-edit-dialog>
         <app-detail-delete-dialog v-model="deleteDialog" :detail="value" @delete="deleteDetail"
         ></app-detail-delete-dialog>
     </div>
@@ -93,7 +91,7 @@
         }
 
         callViaServer() {
-            axios.get('/api/v1/call/' + this.value.DETAIL_ID).then(() => {
+            axios.get('/api/v1/pbx/call/' + this.value.DETAIL_ID).then(() => {
                 this.updateMessage('Nummer wird gewählt.');
             }).catch((error) => {
                 this.updateMessage('Fehler beim wählen. Code: ' + error.response.status + ' Message: ' + error.response.data);

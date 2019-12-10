@@ -46,6 +46,8 @@ export abstract class Model {
                 return BankAccountStandardChart.applyPrototype(model);
             case BookingAccount.type:
                 return BookingAccount.applyPrototype(model);
+            case Invoice.type:
+                return Invoice.applyPrototype(model);
         }
     }
 }
@@ -87,6 +89,20 @@ export class Assignment extends Model {
             return 'mdi-clipboard-alert';
         }
         return 'mdi-clipboard';
+    }
+
+    getEntityIconTooltips(): Array<string> {
+        let tooltips: Array<string> = [];
+        tooltips.push('Auftrag');
+        if (this.ERLEDIGT === '1') {
+            tooltips.push('Erledigt');
+        } else {
+            tooltips.push('Offen');
+        }
+        if (this.AKUT === 'JA') {
+            tooltips.push('Akut');
+        }
+        return tooltips;
     }
 
     getID() {
@@ -140,6 +156,10 @@ export class Person extends Model {
         return 'mdi-account';
     }
 
+    getEntityIconTooltips(): Array<string> {
+        return ['Person'];
+    }
+
     getSexIcon() {
         if (this.sex === 'männlich') {
             return 'mdi-gender-male';
@@ -148,6 +168,10 @@ export class Person extends Model {
             return 'mdi-gender-female';
         }
         return '';
+    }
+
+    getNoteTooltips() {
+        return this.hinweise.map(v => v.DETAIL_INHALT);
     }
 
     getDetailUrl() {
@@ -159,7 +183,7 @@ export class Person extends Model {
     }
 
     getMorphName() {
-        return 'PERSON';
+        return 'Person';
     }
 
     getID() {
@@ -232,6 +256,10 @@ export class Partner extends Model {
         return 'mdi-account-multiple';
     }
 
+    getEntityIconTooltips(): Array<string> {
+        return ['Partner'];
+    }
+
     getAddress(): string {
         return this.STRASSE + ' ' + this.NUMMER + ', ' + this.PLZ + ' ' + this.ORT + ', ' + this.LAND;
     }
@@ -241,7 +269,7 @@ export class Partner extends Model {
     }
 
     getMorphName() {
-        return 'PARTNER';
+        return 'Partner';
     }
 
     getID() {
@@ -284,6 +312,14 @@ export class Objekt extends Model {
         return 'mdi-city';
     }
 
+    getEntityIconTooltips(): Array<string> {
+        return ['Objekt'];
+    }
+
+    getNoteTooltips() {
+        return this.hinweise.map(v => v.DETAIL_INHALT);
+    }
+
     getDetailUrl() {
         return base_url + '/objects/' + this.OBJEKT_ID;
     }
@@ -293,7 +329,7 @@ export class Objekt extends Model {
     }
 
     getMorphName() {
-        return 'OBJEKT';
+        return 'Objekt';
     }
 
     getID() {
@@ -375,7 +411,9 @@ export class Haus extends Model {
     icon: string = 'mdi-domain';
 
     toString(): string {
-        return this.HAUS_STRASSE + ' ' + this.HAUS_NUMMER;
+        return this.HAUS_STRASSE
+            + ' '
+            + this.HAUS_NUMMER;
     }
 
     hasNotes(): boolean {
@@ -390,12 +428,20 @@ export class Haus extends Model {
         return 'mdi-domain';
     }
 
+    getEntityIconTooltips(): Array<string> {
+        return ['Haus'];
+    }
+
+    getNoteTooltips() {
+        return this.hinweise.map(v => v.DETAIL_INHALT);
+    }
+
     getApiBaseUrl() {
         return base_url + '/api/v1/houses'
     }
 
     getMorphName() {
-        return 'HAUS';
+        return 'Haus';
     }
 
     getID(): number {
@@ -486,9 +532,24 @@ export class Einheit extends Model {
 
     getEntityIcon(): string {
         if (this.vermietet) {
-            return 'mdi-hexagon';
+            return 'mdi-cube';
         }
         return 'mdi-cube-outline';
+    }
+
+    getEntityIconTooltips(): Array<string> {
+        let tooltips: Array<string> = [];
+        tooltips.push('Einheit');
+        if (this.vermietet) {
+            tooltips.push('Vermietet')
+        } else {
+            tooltips.push('Unvermietet')
+        }
+        return tooltips;
+    }
+
+    getNoteTooltips() {
+        return this.hinweise.map(v => v.DETAIL_INHALT);
     }
 
     getKindIcon() {
@@ -514,6 +575,17 @@ export class Einheit extends Model {
         }
     }
 
+    getKindTooltips() {
+        switch (this.TYP) {
+            case 'Freiflaeche':
+                return ['Freifläche'];
+            case 'Werbeflaeche':
+                return ['Werbefläche'];
+            default:
+                return [this.TYP];
+        }
+    }
+
     getDetailUrl(): string {
         return base_url + '/units/' + this.EINHEIT_ID;
     }
@@ -523,7 +595,7 @@ export class Einheit extends Model {
     }
 
     getMorphName() {
-        return 'EINHEIT';
+        return 'Einheit';
     }
 
     getID(): number {
@@ -656,6 +728,17 @@ export class RentalContract extends Model implements Active {
         return 'mdi-circle-outline';
     }
 
+    getEntityIconTooltips(): Array<string> {
+        let tooltips: Array<string> = [];
+        tooltips.push('Mietvertrag');
+        if (this.isActive()) {
+            tooltips.push('Aktiv');
+        } else {
+            tooltips.push('Inaktiv');
+        }
+        return tooltips;
+    }
+
     getDetailUrl(): string {
         return base_url + '/uebersicht?anzeigen=einheit&einheit_id='
             + this.EINHEIT_ID
@@ -664,7 +747,11 @@ export class RentalContract extends Model implements Active {
     }
 
     getMorphName() {
-        return 'MIETVERTRAG';
+        return 'Mietvertrag';
+    }
+
+    getApiBaseUrl() {
+        return base_url + '/api/v1/rentalcontracts'
     }
 
     getID() {
@@ -706,7 +793,7 @@ export class PurchaseContract extends Model implements Active {
     }
 
     getMorphName() {
-        return 'EIGENTUEMER';
+        return 'Eigentuemer';
     }
 
     getID() {
@@ -728,9 +815,24 @@ export class PurchaseContract extends Model implements Active {
         return 'mdi-checkbox-blank-outline';
     }
 
+    getEntityIconTooltips(): Array<string> {
+        let tooltips: Array<string> = [];
+        tooltips.push('Kaufvertrag');
+        if (this.isActive()) {
+            tooltips.push('Aktiv');
+        } else {
+            tooltips.push('Inaktiv');
+        }
+        return tooltips;
+    }
+
     getDetailUrl(): string {
         return base_url + '/weg?option=einheit_uebersicht&einheit_id='
             + this.EINHEIT_ID;
+    }
+
+    getApiBaseUrl() {
+        return base_url + '/api/v1/purchasecontracts'
     }
 
     static applyPrototype(contract: PurchaseContract) {
@@ -797,6 +899,10 @@ export class JobTitle extends Model {
         return 'mdi-book-open-variant';
     }
 
+    getEntityIconTooltips(): Array<string> {
+        return ['Titel'];
+    }
+
     getID() {
         return this.id;
     }
@@ -831,6 +937,10 @@ export class Bankkonto extends Model {
         return 'mdi-currency-eur';
     }
 
+    getEntityIconTooltips(): Array<string> {
+        return ['Bankkonto'];
+    }
+
     getAccount(): string {
         return 'IBAN: ' + this.IBAN + ' BIC: ' + this.BIC;
     }
@@ -858,7 +968,7 @@ export class AccountingEntity extends Model {
     }
 
     getMorphName() {
-        return 'WIRTSCHAFTSEINHEIT';
+        return 'Wirtschaftseinheit';
     }
 
     toString(): string {
@@ -867,6 +977,10 @@ export class AccountingEntity extends Model {
 
     getEntityIcon(): string {
         return 'mdi-hexagon-multiple';
+    }
+
+    getEntityIconTooltips(): Array<string> {
+        return ['Wirtschaftseinheit'];
     }
 
     getDetailUrl() {
@@ -899,7 +1013,7 @@ export class ConstructionSite extends Model {
     }
 
     getMorphName() {
-        return 'BAUSTELLE_EXT';
+        return 'Baustelle_ext';
     }
 
     toString(): string {
@@ -911,6 +1025,18 @@ export class ConstructionSite extends Model {
             return 'mdi-shovel';
         }
         return 'mdi-shovel-off';
+
+    }
+
+    getEntityIconTooltips(): Array<string> {
+        let tooltips: Array<string> = [];
+        tooltips.push('Baustelle');
+        if (this.AKTIV === '1') {
+            tooltips.push('Aktiv');
+        } else {
+            tooltips.push('Inaktiv');
+        }
+        return tooltips;
 
     }
 
@@ -942,10 +1068,16 @@ export class Invoice extends Model {
     BRUTTO: number;
     SKONTOBETRAG: number;
     KURZBESCHREIBUNG: string;
+    advance_payment_invoice_id: number | null;
     from: Partner;
     to: Partner;
     bank_account: Bankkonto;
     lines: Array<InvoiceLine>;
+    advance_payment_invoice: Invoice;
+    advance_payment_invoices: Array<Invoice>;
+    servicetime_from: string;
+    servicetime_to: string;
+    forwarded: string;
 
     static applyPrototype(invoice: Invoice) {
         Object.setPrototypeOf(invoice, Invoice.prototype);
@@ -953,10 +1085,18 @@ export class Invoice extends Model {
             Partner.applyPrototype(invoice.from);
         }
         if (invoice.to) {
-            Partner.applyPrototype(invoice.to);
+            Model.applyPrototype(invoice.to);
         }
         if (invoice.bank_account) {
             Bankkonto.applyPrototype(invoice.bank_account);
+        }
+        if (invoice.advance_payment_invoice) {
+            Invoice.applyPrototype(invoice.advance_payment_invoice);
+        }
+        if (invoice.advance_payment_invoices) {
+            invoice.advance_payment_invoices.forEach((v) => {
+                Invoice.applyPrototype(v);
+            })
         }
         if (invoice.lines) {
             invoice.lines.forEach((v) => {
@@ -967,6 +1107,9 @@ export class Invoice extends Model {
     }
 
     save() {
+        if (this.RECHNUNGSTYP !== 'Teilrechnung' && this.RECHNUNGSTYP !== 'Schlussrechnung') {
+            this.advance_payment_invoice_id = null;
+        }
         return axios.put('/api/v1/invoices/' + this.BELEG_NR, this);
     }
 
@@ -983,8 +1126,45 @@ export class Invoice extends Model {
 
     }
 
+    getEntityIconTooltips(): Array<string> {
+        let tooltips: Array<string> = [];
+        tooltips.push(this.RECHNUNGSTYP);
+        return tooltips;
+    }
+
     getDetailUrl() {
         return base_url + '/invoices/' + this.BELEG_NR;
+    }
+
+    isAdvancePaymentInvoice() {
+        return ['Schlussrechnung', 'Teilrechnung'].includes(this.RECHNUNGSTYP);
+    }
+
+    get forwardedTranslated(): string {
+        switch (this.forwarded) {
+            case 'complete':
+                return 'ja';
+            case 'none':
+                return 'nein';
+            case 'partial':
+                return 'teilweise';
+        }
+        return this.forwarded;
+    }
+
+    set forwardedTranslated(v) {
+        switch (v) {
+            case 'ja':
+                this.forwarded = 'complete';
+                return;
+            case 'nein':
+                this.forwarded = 'none';
+                return;
+            case 'teilweise':
+                this.forwarded = 'partial';
+                return;
+        }
+        this.forwarded = v;
     }
 }
 
@@ -998,11 +1178,11 @@ export class InvoiceLine extends Model {
     ARTIKEL_NR: string;
     MENGE: number = 0.00;
     PREIS: string = "0.0000";
-    MWST_SATZ: number;
-    RABATT_SATZ: number;
-    SKONTO: number;
+    MWST_SATZ: number = 19;
+    RABATT_SATZ: string = "0.00";
+    SKONTO: string = "0.00";
     GESAMT_NETTO: number;
-    EINHEIT: string;
+    EINHEIT: string = "Stk";
     BEZEICHNUNG: string;
     assignments: Array<InvoiceLineAssignment>;
 
@@ -1034,8 +1214,8 @@ export class InvoiceLine extends Model {
         this.ARTIKEL_NR = item.ARTIKEL_NR;
         this.PREIS = item.LISTENPREIS;
         this.MWST_SATZ = item.MWST_SATZ;
-        this.SKONTO = item.SKONTO;
-        this.RABATT_SATZ = item.RABATT_SATZ;
+        this.SKONTO = String(item.SKONTO);
+        this.RABATT_SATZ = String(item.RABATT_SATZ);
         this.EINHEIT = item.EINHEIT;
         this.BEZEICHNUNG = item.BEZEICHNUNG
     }
@@ -1110,9 +1290,9 @@ export class InvoiceLineAssignment extends Model {
         this.POSITION = filler.POSITION;
         this.BELEG_NR = filler.BELEG_NR;
         this.MENGE = filler.MENGE;
-        this.MWST_SATZ = filler.MWST_SATZ;
-        this.SKONTO = filler.SKONTO;
-        this.RABATT_SATZ = filler.RABATT_SATZ;
+        this.MWST_SATZ = Number(filler.MWST_SATZ);
+        this.SKONTO = Number(filler.SKONTO);
+        this.RABATT_SATZ = Number(filler.RABATT_SATZ);
         this.EINZEL_PREIS = Number(filler.PREIS);
     }
 

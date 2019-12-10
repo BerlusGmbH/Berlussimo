@@ -205,7 +205,7 @@ class bk
 
     function dropdown_gen_keys()
     {
-        $result = DB::select("SELECT * FROM BK_GENERAL_KEYS WHERE  AKTUELL='1'   ORDER BY GKEY_NAME ASC");
+        $result = DB::select("SELECT * FROM BK_GENERAL_KEYS WHERE  AKTUELL='1' ORDER BY GKEY_NAME ASC");
 
         if (!empty($result)) {
             echo "<div class='input-field'>";
@@ -213,8 +213,13 @@ class bk
             foreach ($result as $row) {
                 $keyid = $row ['GKEY_ID'];
                 $keyname = $row ['GKEY_NAME'];
+                $g_var = $row ['G_VAR'];
 
-                echo "<option value=\"$keyid\">$keyname</option>";
+                if ($g_var == 'g_einheit_qm') {
+                    echo "<option value=\"$keyid\" selected>$keyname</option>";
+                } else {
+                    echo "<option value=\"$keyid\">$keyname</option>";
+                }
             }
             echo "</select><label for=\"genkeys\">Verteilerschlüssel</label>";
             echo "</div>";
@@ -695,11 +700,11 @@ class bk
         $nachjahr = $jahr + 1;
 
         if (!session()->has('anzeigen_von') && !session()->has('anzeigen_bis')) {
-            $result = DB::select("SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` ='$geldkonto_id' AND `KONTENRAHMEN_KONTO` ='$kostenkonto' AND `AKTUELL` = '1' && DATE_FORMAT(DATUM, '%Y-%m') BETWEEN '$vorjahr-12' AND '$nachjahr-03' AND GELD_KONTO_BUCHUNGEN_ID NOT IN (SELECT BUCHUNG_ID FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE `BK_K_ID` = '$konto_id' GROUP BY BUCHUNG_ID HAVING SUM( ANTEIL ) >= '100' ) ");
+            $result = DB::select("SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` ='$geldkonto_id' AND `KONTENRAHMEN_KONTO` ='$kostenkonto' AND `AKTUELL` = '1' && DATE_FORMAT(DATUM, '%Y-%m') BETWEEN '$vorjahr-12' AND '$nachjahr-03' AND GELD_KONTO_BUCHUNGEN_ID NOT IN (SELECT BUCHUNG_ID FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE `BK_K_ID` = '$konto_id' GROUP BY BUCHUNG_ID HAVING SUM( ANTEIL ) >= '100' ) ORDER BY DATUM");
         } else {
             $von = date_german2mysql(session()->get('anzeigen_von'));
             $bis = date_german2mysql(session()->get('anzeigen_bis'));
-            $result = DB::select("SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` ='$geldkonto_id' AND `KONTENRAHMEN_KONTO` ='$kostenkonto' AND `AKTUELL` = '1' && DATE_FORMAT(DATUM, '%Y-%m-%d') BETWEEN '$von' AND '$bis' AND GELD_KONTO_BUCHUNGEN_ID NOT IN (SELECT BUCHUNG_ID FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE `BK_K_ID` = '$konto_id' GROUP BY BUCHUNG_ID HAVING SUM( ANTEIL ) >= '100' ) ");
+            $result = DB::select("SELECT * FROM `GELD_KONTO_BUCHUNGEN` WHERE `GELDKONTO_ID` ='$geldkonto_id' AND `KONTENRAHMEN_KONTO` ='$kostenkonto' AND `AKTUELL` = '1' && DATE_FORMAT(DATUM, '%Y-%m-%d') BETWEEN '$von' AND '$bis' AND GELD_KONTO_BUCHUNGEN_ID NOT IN (SELECT BUCHUNG_ID FROM `BK_BERECHNUNG_BUCHUNGEN` WHERE `BK_K_ID` = '$konto_id' GROUP BY BUCHUNG_ID HAVING SUM( ANTEIL ) >= '100' ) ORDER BY DATUM");
         }
         return $result;
     }
@@ -1065,7 +1070,7 @@ class bk
 
     function mvs_und_leer_jahr($einheit_id, $jahr)
     {
-        $abfrage = "SELECT 'MIETVERTRAG' AS KOS_TYP, MIETVERTRAG_ID AS KOS_ID ,`MIETVERTRAG_VON`,`MIETVERTRAG_BIS`,`EINHEIT_ID`,
+        $abfrage = "SELECT 'Mietvertrag' AS KOS_TYP, MIETVERTRAG_ID AS KOS_ID ,`MIETVERTRAG_VON`,`MIETVERTRAG_BIS`,`EINHEIT_ID`,
 IF(DATE_FORMAT(MIETVERTRAG_VON, '%Y') < '$jahr', '$jahr-01-01', MIETVERTRAG_VON) AS BERECHNUNG_VON,
 IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jahr-12-31') AS BERECHNUNG_BIS,
 DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jahr-12-31'), IF(DATE_FORMAT(MIETVERTRAG_VON, '%Y') < '$jahr', '$jahr-01-01', MIETVERTRAG_VON))+1 AS TAGE FROM `MIETVERTRAG` WHERE `MIETVERTRAG_AKTUELL`='1' 
@@ -1145,7 +1150,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     $tage_vermietet = $my_array [$a] ['TAGE'];
                     $mv_id = $my_array [$a] ['KOS_ID'];
                     $my_array_neu [] = array(
-                        'KOS_TYP' => 'MIETVERTRAG',
+                        'KOS_TYP' => 'Mietvertrag',
                         'KOS_ID' => $mv_id,
                         'BERECHNUNG_VON' => $berechnung_von,
                         'BERECHNUNG_BIS' => $berechnung_bis,
@@ -1288,7 +1293,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     $mv = new mietvertraege ();
                     $mv->get_mietvertrag_infos_aktuell($mv_id);
                     $mz = new miete ();
-                    $summe_hk_jahr = $mz->summe_heizkosten_im_jahr('MIETVERTRAG', $mv_id, $jahr);
+                    $summe_hk_jahr = $mz->summe_heizkosten_im_jahr('Mietvertrag', $mv_id, $jahr);
 
                     if ($tage < 365) {
                         echo "<tr><td class=\"rot\">$mv->einheit_kurzname</td><td class=\"rot\">$mv->personen_name_string</td><td class=\"rot\">$b_von</td><td class=\"rot\">$b_bis</td><td class=\"rot\">$tage</td><td class=\"rot\">";
@@ -1297,7 +1302,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                         echo "</td><td class=\"rot\">";
                         $js = " onkeyup=\"hk_diff('vorschuss$z', 'hk_verbrauch$z', 'hk_ergebnis$z');\"";
                         $me = new mietentwicklung ();
-                        if ($me->check_me('MIETVERTRAG', $mv_id, "Energieverbrauch lt. Abr. $jahr", $this->bk_verrechnungs_datum, $this->bk_verrechnungs_datum) != true) {
+                        if ($me->check_me('Mietvertrag', $mv_id, "Energieverbrauch lt. Abr. $jahr", $this->bk_verrechnungs_datum, $this->bk_verrechnungs_datum) != true) {
                             $f->text_feld($mv->einheit_kurzname, "verbrauch[]", '', 7, "hk_verbrauch$z", " $js");
                         } else {
                             echo "erfasst";
@@ -1305,7 +1310,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                         }
                         echo "</td><td>";
                         $me = new mietentwicklung ();
-                        if ($me->check_me('MIETVERTRAG', $mv_id, "Heizkostenabrechnung $jahr", $this->bk_verrechnungs_datum, $this->bk_verrechnungs_datum) != true) {
+                        if ($me->check_me('Mietvertrag', $mv_id, "Heizkostenabrechnung $jahr", $this->bk_verrechnungs_datum, $this->bk_verrechnungs_datum) != true) {
                             $f->text_feld('Ergebnis', 'ergebnisse[]', '', 10, "hk_ergebnis$z", null);
                         } else {
                             echo "erfasst";
@@ -1319,7 +1324,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                         echo "</td><td>";
                         $js = " onkeyup=\"hk_diff('vorschuss$z', 'hk_verbrauch$z', 'hk_ergebnis$z');\"";
                         $me = new mietentwicklung ();
-                        if ($me->check_me('MIETVERTRAG', $mv_id, "Energieverbrauch lt. Abr. $jahr", $this->bk_verrechnungs_datum, $this->bk_verrechnungs_datum, 0) != true) {
+                        if ($me->check_me('Mietvertrag', $mv_id, "Energieverbrauch lt. Abr. $jahr", $this->bk_verrechnungs_datum, $this->bk_verrechnungs_datum, 0) != true) {
                             $f->text_feld($mv->einheit_kurzname, "verbrauch[]", '', 7, "hk_verbrauch$z", " $js");
                         } else {
                             echo "erfasst";
@@ -1327,7 +1332,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                         }
                         echo "</td><td>";
                         $me = new mietentwicklung ();
-                        if ($me->check_me('MIETVERTRAG', $mv_id, "Heizkostenabrechnung $jahr", $this->bk_verrechnungs_datum, $this->bk_verrechnungs_datum, 0) != true) {
+                        if ($me->check_me('Mietvertrag', $mv_id, "Heizkostenabrechnung $jahr", $this->bk_verrechnungs_datum, $this->bk_verrechnungs_datum, 0) != true) {
                             $f->text_feld('Ergebnis', 'ergebnisse[]', '', 10, "hk_ergebnis$z", null);
                         } else {
                             echo "erfasst";
@@ -1709,7 +1714,7 @@ ORDER BY GELD_KONTO_BUCHUNGEN.KONTENRAHMEN_KONTO) as t1, BK_KONTEN WHERE BK_KONT
 
     function mvs_und_leer_jahr_1mv($mv1_id, $jahr)
     {
-        $abfrage = "SELECT 'MIETVERTRAG' AS KOS_TYP, MIETVERTRAG_ID AS KOS_ID ,`MIETVERTRAG_VON`,`MIETVERTRAG_BIS`,`EINHEIT_ID`,
+        $abfrage = "SELECT 'Mietvertrag' AS KOS_TYP, MIETVERTRAG_ID AS KOS_ID ,`MIETVERTRAG_VON`,`MIETVERTRAG_BIS`,`EINHEIT_ID`,
 IF(DATE_FORMAT(MIETVERTRAG_VON, '%Y') < '$jahr', '$jahr-01-01', MIETVERTRAG_VON) AS BERECHNUNG_VON,
 IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jahr-12-31') AS BERECHNUNG_BIS,
 DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jahr-12-31'), IF(DATE_FORMAT(MIETVERTRAG_VON, '%Y') < '$jahr', '$jahr-01-01', MIETVERTRAG_VON))+1 AS TAGE FROM `MIETVERTRAG` WHERE `MIETVERTRAG_AKTUELL`='1' 
@@ -1787,7 +1792,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     $tage_vermietet = $my_array [$a] ['TAGE'];
                     $mv_id = $my_array [$a] ['KOS_ID'];
                     $my_array_neu [] = array(
-                        'KOS_TYP' => 'MIETVERTRAG',
+                        'KOS_TYP' => 'Mietvertrag',
                         'KOS_ID' => $mv_id,
                         'BERECHNUNG_VON' => $berechnung_von,
                         'BERECHNUNG_BIS' => $berechnung_bis,
@@ -1864,7 +1869,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
 
     function mvs_und_leer_jahr_zeitraum($einheit_id, $von, $jahr)
     {
-        $abfrage = "SELECT 'MIETVERTRAG' AS KOS_TYP, MIETVERTRAG_ID AS KOS_ID ,`MIETVERTRAG_VON`,`MIETVERTRAG_BIS`,`EINHEIT_ID`,
+        $abfrage = "SELECT 'Mietvertrag' AS KOS_TYP, MIETVERTRAG_ID AS KOS_ID ,`MIETVERTRAG_VON`,`MIETVERTRAG_BIS`,`EINHEIT_ID`,
 IF(DATE_FORMAT(MIETVERTRAG_VON, '%Y') < '$jahr', '$von', MIETVERTRAG_VON) AS BERECHNUNG_VON,
 IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jahr-12-31') AS BERECHNUNG_BIS,
 DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jahr-12-31'), IF(DATE_FORMAT(MIETVERTRAG_VON, '%Y') < '$jahr', '$von', MIETVERTRAG_VON))+1 AS TAGE FROM `MIETVERTRAG` WHERE `MIETVERTRAG_AKTUELL`='1' 
@@ -1920,7 +1925,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                     $tage_vermietet = $my_array [$a] ['TAGE'];
                     $mv_id = $my_array [$a] ['KOS_ID'];
                     $my_array_neu [] = array(
-                        'KOS_TYP' => 'MIETVERTRAG',
+                        'KOS_TYP' => 'Mietvertrag',
                         'KOS_ID' => $mv_id,
                         'BERECHNUNG_VON' => $berechnung_von,
                         'BERECHNUNG_BIS' => $berechnung_bis,
@@ -2274,7 +2279,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 $bk_ergebnis = $pdf_tab [$a] ['ERGEBNIS'];
 
                 /* Betriebskostenergebnis speichern */
-                if ($kos_typ == 'MIETVERTRAG') {
+                if ($kos_typ == 'Mietvertrag') {
                     /* Prüfen ob Betriebskostenabrechnung in Mietentwicklung vorhanden, wenn nein, speichern, also nicht doppelt */
                     if (!$this->check_me($kos_typ, $kos_id, "Betriebskostenabrechnung $this->bk_jahr", $this->bk_verrechnungs_datum, $this->bk_verrechnungs_datum)) {
 
@@ -2299,7 +2304,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                             /* Alte Nk Vorauszahlung mit Enddatum versehen */
                             $o = new objekt ();
                             $ablauf_datum = $o->datum_minus_tage($this->bk_verrechnungs_datum, '1');
-                            DB::update("UPDATE MIETENTWICKLUNG SET ENDE='$ablauf_datum' WHERE KOSTENKATEGORIE = 'Nebenkosten Vorauszahlung' && BETRAG='$nk_v_alt' && MIETENTWICKLUNG_AKTUELL='1' && KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$kos_id'");
+                            DB::update("UPDATE MIETENTWICKLUNG SET ENDE='$ablauf_datum' WHERE KOSTENKATEGORIE = 'Nebenkosten Vorauszahlung' && BETRAG='$nk_v_alt' && MIETENTWICKLUNG_AKTUELL='1' && KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$kos_id'");
                         } // end if check_me
                     } // end if $nk_anpassungs_betrag <> 0)
 
@@ -2322,7 +2327,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                             /* Alte HK Vorauszahlung mit Enddatum versehen */
                             $o = new objekt ();
                             $ablauf_datum = $o->datum_minus_tage($this->bk_verrechnungs_datum, '1');
-                            DB::update("UPDATE MIETENTWICKLUNG SET ENDE='$ablauf_datum' WHERE KOSTENKATEGORIE = 'Heizkosten Vorauszahlung' && BETRAG='$hk_v_alt' && MIETENTWICKLUNG_AKTUELL='1' && KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID='$kos_id'");
+                            DB::update("UPDATE MIETENTWICKLUNG SET ENDE='$ablauf_datum' WHERE KOSTENKATEGORIE = 'Heizkosten Vorauszahlung' && BETRAG='$hk_v_alt' && MIETENTWICKLUNG_AKTUELL='1' && KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID='$kos_id'");
                         } // end check hk vorhanden
                     } // end anpassung hk <> 0
                 } // end if MV
@@ -2521,13 +2526,15 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
         $empf_kos_id = $bk_arr ['KOS_ID'];
         $mieternummer = $bk_arr ['EINHEIT_NAME'];
         $zeitraum = $bk_arr ['ZEITRAUM'];
-        $zeitraum_arr = explode('.', $zeitraum);
-        $anzahl_monate = $zeitraum_arr [3] - $zeitraum_arr [1] + 1;
+        $zeitraum_arr = explode(' - ', $zeitraum);
+        $begin = \Carbon\Carbon::createFromFormat('d.m.Y', $zeitraum_arr[0]);
+        $end = \Carbon\Carbon::createFromFormat('d.m.Y', $zeitraum_arr[1]);
+        $anzahl_monate = round((($begin->diffInDays($end) + 1) / 365) * 12 * 2) / 2;
 
         $pdf->ergebnis_tab ["$mieternummer - $empf"] ['KOS_TYP'] = $empf_kos_typ;
         $pdf->ergebnis_tab ["$mieternummer - $empf"] ['KOS_ID'] = $empf_kos_id;
         $pdf->ergebnis_tab ["$mieternummer - $empf"] ['ZEITRAUM'] = $zeitraum;
-        $pdf->ergebnis_tab ["$mieternummer - $empf"] ['ANZ_MONATE'] = $anzahl_monate;
+        $pdf->ergebnis_tab ["$mieternummer - $empf"] ['ANZ_MONATE'] = number_format($anzahl_monate, 1, ',', '.');
 
         $einheit_typ = $bk_arr ['EINHEIT_TYP'];
         $einheit_qm = $bk_arr ['EINHEIT_QM'];
@@ -2581,7 +2588,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
         $tab [$b + 1] ['BET_G'] = '<b>' . nummer_punkt2komma($g_beteiligung) . '</b>';
         $tab [$b + 1] ['BET_HNDL'] = '<b>' . nummer_punkt2komma($g_beteiligung_hndl) . '</b>';
 
-        if ($empf_kos_typ == 'MIETVERTRAG') {
+        if ($empf_kos_typ == 'Mietvertrag') {
             $mz = new miete ();
             $summe_nebenkosten_jahr = $mz->summe_nebenkosten_im_jahr($empf_kos_typ, $empf_kos_id, $this->bk_jahr);
             $summe_hk_jahr = $mz->summe_nebenkosten_im_jahr($empf_kos_typ, $empf_kos_id, $this->bk_jahr);
@@ -2712,7 +2719,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
             )
         ));
 
-        if ($empf_kos_typ == 'MIETVERTRAG') {
+        if ($empf_kos_typ == 'Mietvertrag') {
             $mz = new miete ();
             $mk = new mietkonto ();
             $monat = date("m");
@@ -3115,7 +3122,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
             /* ENDE ANPASSUNGSBLATT */
 
             /* Anschreiben nur für Mietverträge */
-            if ($empf_kos_typ == 'MIETVERTRAG') {
+            if ($empf_kos_typ == 'Mietvertrag') {
                 $mv = new mietvertraege ();
                 $mv->get_mietvertrag_infos_aktuell($empf_kos_id);
                 /* Wenn Mietvertrag aktuell anpassen, sonst nicht (d.h. Mieter wohnt noch in der Einheit) */
@@ -3400,7 +3407,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
                 echo "<tr><td>$kostenart</td><td>$g_betrag</td><td>$anteil</td><td>$umlage</td><td>0.00</td><td>$einheit_qm</td><td>$qm_g/$genkey_id</td><td>$bet_hndl</td><td>$bet_g</td></tr>";
             }
 
-            if ($empf_kos_typ == 'MIETVERTRAG') {
+            if ($empf_kos_typ == 'Mietvertrag') {
                 $mz = new miete ();
                 $summe_nebenkosten_jahr = $mz->summe_nebenkosten_im_jahr($empf_kos_typ, $empf_kos_id, $this->bk_jahr);
             } else {
@@ -3433,7 +3440,7 @@ DATEDIFF(IF(DATE_FORMAT(MIETVERTRAG_BIS, '%Y') = '$jahr', MIETVERTRAG_BIS, '$jah
             echo "<tr><td></td><td></td><td></td><td></td><td></td><td></td><td>SUMME KOSTEN</td><td></td><td><b>$summe €</b></td></tr>";
             echo "<tr><td></td><td></td><td></td><td></td><td></td><td></td><td>Ihr Vorschuss Jahr</td><td></td><td><b>$summe_nebenkosten_jahr_a</b></td></tr>";
             echo "<tr><td></td><td></td><td></td><td></td><td></td><td></td><td><b>$txt</b></td><td></td><td><b>$ergebnis_a €</b></td></tr>";
-            if ($empf_kos_typ == 'MIETVERTRAG') {
+            if ($empf_kos_typ == 'Mietvertrag') {
                 if ($vorschuesse_aktuell > 0) {
                     $prozent_anp = nummer_punkt2komma(($vorschuesse_neu / ($vorschuesse_aktuell / 100)) - 100);
                     echo "<tr><td></td><td></td><td></td><td></td><td></td><td>ANPASSUNG VORSCHÜSSE</td><td>$vorschuesse_aktuell</td><td>$prozent_anp %</td><td><b>$vorschuesse_neu</b></td></tr>";

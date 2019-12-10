@@ -392,7 +392,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         }
         $result = DB::select("SELECT SUM(BETRAG) AS SUMME_FORDERUNG, SUM(MWST_ANTEIL) AS MWST_ANTEIL 
         FROM MIETENTWICKLUNG 
-        WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' 
+        WHERE KOSTENTRAEGER_TYP='Mietvertrag' 
         && KOSTENTRAEGER_ID = '$mietvertrag_id' 
         && MIETENTWICKLUNG_AKTUELL = '1' 
         && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') 
@@ -401,10 +401,8 @@ ORDER BY BUCHUNGSNUMMER DESC");
         && KOSTENKATEGORIE NOT LIKE '%abrechnung%' 
         && KOSTENKATEGORIE NOT LIKE '%mahngebühr%' 
         && KOSTENKATEGORIE NOT LIKE 'Saldo Vortrag Vorverwaltung' 
-        && KOSTENKATEGORIE NOT LIKE '%energie%' 
-        && KOSTENKATEGORIE NOT LIKE 'Kabel TV %'
+        && KOSTENKATEGORIE NOT LIKE '%energie%'
         && KOSTENKATEGORIE NOT LIKE 'Nebenkosten VZ - Anteilig'
-        && KOSTENKATEGORIE NOT LIKE 'Thermenwartung %'
         ORDER BY ANFANG ASC");
         if (empty($result)) {
             return '0.00';
@@ -421,7 +419,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
     function summe_forderung_aus_vertrag($mietvertrag_id)
     {
 
-        $result = DB::select("SELECT SUM(BETRAG) AS SUMME_FORDERUNG, SUM(MWST_ANTEIL) AS MWST_ANTEIL FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1'  && KOSTENKATEGORIE NOT LIKE '%rate%' && KOSTENKATEGORIE NOT LIKE '%abrechnung%' &&  KOSTENKATEGORIE NOT LIKE '%mahngebühr%' && KOSTENKATEGORIE NOT LIKE 'Saldo Vortrag Vorverwaltung'");
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME_FORDERUNG, SUM(MWST_ANTEIL) AS MWST_ANTEIL FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1'  && KOSTENKATEGORIE NOT LIKE '%rate%' && KOSTENKATEGORIE NOT LIKE '%abrechnung%' &&  KOSTENKATEGORIE NOT LIKE '%mahngebühr%' && KOSTENKATEGORIE NOT LIKE 'Saldo Vortrag Vorverwaltung'");
         if (empty($result)) {
             return false;
         } else {
@@ -470,14 +468,14 @@ ORDER BY BUCHUNGSNUMMER DESC");
         if (strlen($monat) < 2) {
             $monat = '0' . $monat;
         }
-        $result = DB::select("SELECT KOSTENTRAEGER_ID, ANFANG, ENDE, KOSTENKATEGORIE, BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat'  && KOSTENKATEGORIE NOT LIKE 'RATENZAHLUNG' ORDER BY ANFANG ASC");
+        $result = DB::select("SELECT KOSTENTRAEGER_ID, ANFANG, ENDE, KOSTENKATEGORIE, BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat'  && KOSTENKATEGORIE NOT LIKE 'RATENZAHLUNG' ORDER BY ANFANG ASC");
         return $result;
     }
 
     function forderung_aus_vertrag($mietvertrag_id)
     {
         /* Neu ohne ratenzahlung */
-        $result = DB::select("SELECT KOSTENTRAEGER_ID, ANFANG, ENDE, KOSTENKATEGORIE, BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_ID = '$mietvertrag_id' && KOSTENTRAEGER_TYP='MIETVERTRAG' && MIETENTWICKLUNG_AKTUELL = '1'  && KOSTENKATEGORIE NOT LIKE '%rate%' && KOSTENKATEGORIE NOT LIKE '%abrechnung%' ORDER BY ANFANG ASC");
+        $result = DB::select("SELECT KOSTENTRAEGER_ID, ANFANG, ENDE, KOSTENKATEGORIE, BETRAG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_ID = '$mietvertrag_id' && KOSTENTRAEGER_TYP='Mietvertrag' && MIETENTWICKLUNG_AKTUELL = '1'  && KOSTENKATEGORIE NOT LIKE '%rate%' && KOSTENKATEGORIE NOT LIKE '%abrechnung%' ORDER BY ANFANG ASC");
         return $result;
     }
 
@@ -1092,7 +1090,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
 
     function zahlungen_monatlich($mietvertrag_id, $monat, $jahr)
     {
-        $result = DB::select("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' &&  KOSTENTRAEGER_ID='$mietvertrag_id' && KONTENRAHMEN_KONTO='80001' && DATE_FORMAT( DATUM, '%Y-%m' ) = '$jahr-$monat'");
+        $result = DB::select("SELECT * FROM GELD_KONTO_BUCHUNGEN WHERE KOSTENTRAEGER_TYP='Mietvertrag' &&  KOSTENTRAEGER_ID='$mietvertrag_id' && KONTENRAHMEN_KONTO='80001' && DATE_FORMAT( DATUM, '%Y-%m' ) = '$jahr-$monat'");
         return $result;
     }
 
@@ -1172,7 +1170,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
 
     function summe_rate_monatlich($mietvertrag_id, $monat, $jahr)
     {
-        $result = DB::select("SELECT SUM(BETRAG) AS SUMME_RATE FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && KOSTENKATEGORIE LIKE 'RATENZAHLUNG' ORDER BY ANFANG ASC");
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME_RATE FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && KOSTENKATEGORIE LIKE 'RATENZAHLUNG' ORDER BY ANFANG ASC");
         $row = $result[0];
         $summe = $row ['SUMME_RATE'];
         return $summe;
@@ -1186,7 +1184,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         if ($laenge == 1) {
             $monat = '0' . $monat;
         }
-        $result = DB::select("SELECT SUM(BETRAG) SUMME_MAHNUNG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat'  && KOSTENKATEGORIE='Mahngebühr' ORDER BY ANFANG ASC");
+        $result = DB::select("SELECT SUM(BETRAG) SUMME_MAHNUNG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat'  && KOSTENKATEGORIE='Mahngebühr' ORDER BY ANFANG ASC");
         if (empty($result)) {
             return false;
         } else {
@@ -1198,7 +1196,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
 
     function mahngebuehr_monatlich_arr($mietvertrag_id, $monat, $jahr)
     {
-        $result = DB::select("SELECT * FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat'  && KOSTENKATEGORIE='Mahngebühr' ORDER BY ANFANG ASC");
+        $result = DB::select("SELECT * FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat') && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat'  && KOSTENKATEGORIE='Mahngebühr' ORDER BY ANFANG ASC");
         if (!empty($result)) {
             return $result;
         } else {
@@ -1214,7 +1212,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         if ($laenge == 1 && $monat < 10) {
             $monat = "0" . $monat;
         }
-        $result = DB::select("SELECT ANFANG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && KOSTENKATEGORIE LIKE '%Betriebskostenabrechnung%'");
+        $result = DB::select("SELECT ANFANG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && KOSTENKATEGORIE LIKE '%Betriebskostenabrechnung%'");
         if (empty($result)) {
             return false;
         } else {
@@ -1231,7 +1229,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         if ($laenge == 1 && $monat < 10) {
             $monat = "0" . $monat;
         }
-        $result = DB::select("SELECT ANFANG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && KOSTENKATEGORIE LIKE '%Heizkostenabrechnung%'");
+        $result = DB::select("SELECT ANFANG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && KOSTENKATEGORIE LIKE '%Heizkostenabrechnung%'");
         if (empty($result)) {
             return false;
         } else {
@@ -1248,7 +1246,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
         if ($laenge == 1 && $monat < 10) {
             $monat = "0" . $monat;
         }
-        $result = DB::select("SELECT ANFANG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && KOSTENKATEGORIE LIKE '%Wasserkostenabrechnung%'");
+        $result = DB::select("SELECT ANFANG FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && KOSTENKATEGORIE LIKE '%Wasserkostenabrechnung%'");
         if (empty($result)) {
             return false;
         } else {
@@ -1322,7 +1320,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
     function kaltmiete_monatlich($mietvertrag_id, $monat, $jahr)
     {
         $this->ausgangs_kaltmiete = 0.00;
-        $result = DB::select("SELECT SUM(BETRAG) AS SUMME_RATE FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && (KOSTENKATEGORIE LIKE 'Miete kalt' OR KOSTENKATEGORIE LIKE 'MOD' OR KOSTENKATEGORIE LIKE 'MHG') ORDER BY ANFANG ASC");
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME_RATE FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && (KOSTENKATEGORIE LIKE 'Miete kalt' OR KOSTENKATEGORIE LIKE 'MOD' OR KOSTENKATEGORIE LIKE 'MHG') ORDER BY ANFANG ASC");
         $summe = $result[0]['SUMME_RATE'];
         $this->ausgangs_kaltmiete = $summe;
     }
@@ -1332,7 +1330,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
     function check_vz_anteilig($mietvertrag_id, $monat, $jahr)
     {
         $monat = sprintf('%02d', $monat);
-        $result = DB::select("SELECT SUM(BETRAG) AS SUMME_RATE FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && KOSTENKATEGORIE = 'Nebenkosten VZ - Anteilig' ORDER BY ANFANG ASC");
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME_RATE FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && KOSTENKATEGORIE = 'Nebenkosten VZ - Anteilig' ORDER BY ANFANG ASC");
         if (!empty($result)) {
             $row = $result[0];
             $summe = nummer_komma2punkt(nummer_punkt2komma($row ['SUMME_RATE']));
@@ -1351,7 +1349,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
     function kaltmiete_monatlich_ink_vz($mietvertrag_id, $monat, $jahr)
     {
         $this->ausgangs_kaltmiete = 0.00;
-        $result = DB::select("SELECT SUM(BETRAG) AS SUMME_RATE FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && (KOSTENKATEGORIE LIKE 'Miete kalt' OR KOSTENKATEGORIE LIKE 'MOD' OR KOSTENKATEGORIE LIKE 'MHG' OR KOSTENKATEGORIE LIKE 'Nebenkosten VZ - Anteilig') ORDER BY ANFANG ASC");
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME_RATE FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && (KOSTENKATEGORIE LIKE 'Miete kalt' OR KOSTENKATEGORIE LIKE 'MOD' OR KOSTENKATEGORIE LIKE 'MHG' OR KOSTENKATEGORIE LIKE 'Nebenkosten VZ - Anteilig') ORDER BY ANFANG ASC");
         $summe = $result[0]['SUMME_RATE'];
         $this->ausgangs_kaltmiete = $summe;
     }
@@ -1361,7 +1359,7 @@ ORDER BY BUCHUNGSNUMMER DESC");
     function kaltmiete_monatlich_ohne_mod($mietvertrag_id, $monat, $jahr)
     {
         $this->ausgangs_kaltmiete = 0.00;
-        $result = DB::select("SELECT SUM(BETRAG) AS SUMME_RATE FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='MIETVERTRAG' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && (KOSTENKATEGORIE LIKE 'Miete kalt' OR KOSTENKATEGORIE LIKE 'MHG') ORDER BY ANFANG ASC");
+        $result = DB::select("SELECT SUM(BETRAG) AS SUMME_RATE FROM MIETENTWICKLUNG WHERE KOSTENTRAEGER_TYP='Mietvertrag' && KOSTENTRAEGER_ID = '$mietvertrag_id' && MIETENTWICKLUNG_AKTUELL = '1' && ( ENDE = '0000-00-00' OR DATE_FORMAT( ENDE, '%Y-%m' ) >= '$jahr-$monat' && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' ) && DATE_FORMAT( ANFANG, '%Y-%m' ) <= '$jahr-$monat' && (KOSTENKATEGORIE LIKE 'Miete kalt' OR KOSTENKATEGORIE LIKE 'MHG') ORDER BY ANFANG ASC");
         $summe = $result[0]['SUMME_RATE'];
         $this->ausgangs_kaltmiete = $summe;
     }

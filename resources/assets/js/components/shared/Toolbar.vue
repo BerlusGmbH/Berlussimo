@@ -1,9 +1,26 @@
 <template>
     <v-toolbar>
-        <img class="app-toolbar-logo" src="/images/berlus_logo.svg">
-        <v-toolbar-title class="headline" style="margin-left: 0">
-            berlussimo
-        </v-toolbar-title>
+        <template v-if="authCheck">
+            <router-link class="app-toolbar-logo-link" v-if="$router" :to="{name: 'web.dashboard.show'}"
+            >
+                <img class="app-toolbar-logo" src="/images/berlus_logo.svg">
+                <v-toolbar-title class="headline" style="margin-left: 0">
+                    berlussimo
+                </v-toolbar-title>
+            </router-link>
+            <a class="app-toolbar-logo-link" v-else href="/"><img class="app-toolbar-logo"
+                                                                  src="/images/berlus_logo.svg">
+                <v-toolbar-title class="headline" style="margin-left: 0">
+                    berlussimo
+                </v-toolbar-title>
+            </a>
+        </template>
+        <template v-else>
+            <img class="app-toolbar-logo" style="margin-left: 0" src="/images/berlus_logo.svg">
+            <v-toolbar-title class="headline" style="margin-left: 0">
+                berlussimo
+            </v-toolbar-title>
+        </template>
         <v-spacer></v-spacer>
         <app-search-dialog v-if="authCheck && $vuetify.breakpoint.smAndDown" v-model="search"></app-search-dialog>
         <app-user-menu-dialog v-if="authCheck && $vuetify.breakpoint.smAndDown" :userId="user.id"
@@ -61,10 +78,17 @@
 </script>
 
 <style>
-    .app-toolbar-logo {
+    .app-toolbar-logo-link {
         height: 100%;
-        padding-top: 5px;
-        padding-bottom: 5px;
         margin-left: 0 !important;
+        display: flex;
+        align-items: center;
+        color: white;
+        text-decoration: none;
+    }
+    .app-toolbar-logo {
+        height: calc(100% - 10px);
+        padding-left: .5em;
+        padding-right: .5em;
     }
 </style>

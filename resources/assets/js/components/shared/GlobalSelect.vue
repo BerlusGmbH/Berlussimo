@@ -2,12 +2,9 @@
     <app-entity-select :value="selected"
                        @input="select"
                        hide-details
-                       :entities="['partner', 'bankkonto', 'objekt']"
+                       :entities="['objekt', 'partner', 'bankkonto']"
                        append-icon=""
                        multiple class="global-select"
-                       @focusout.native="checkReload"
-                       @keydown.native.esc="checkReload"
-                       @chip-close="checkReload"
                        solo
                        light
                        style="background-color: #6ddfdb"
@@ -81,6 +78,9 @@
                 this.updateBankkonto(bankkonto);
                 this.dirty = true;
             }
+            if (this.isLegacy) {
+                setTimeout(() => window.location.reload(), 300);
+            }
         }
 
         get selected() {
@@ -95,12 +95,6 @@
                 selected.push(this.objekt);
             }
             return selected;
-        }
-
-        checkReload(event) {
-            if (this.isLegacy && this.dirty && (event === false || event.target.tagName === 'A' || event.target.tagName === 'INPUT')) {
-                setTimeout(() => window.location.reload(), 300);
-            }
         }
     }
 </script>

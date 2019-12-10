@@ -19,7 +19,7 @@
 
     @can(\App\Libraries\Permission::PERMISSION_MODUL_EINHEIT)
         <div class="col-xs-4 col-sm-3 col-md-2 col-lg-1">
-            <router-link :to="{name: 'web.units.index'}">Einhieten</router-link>
+            <router-link :to="{name: 'web.units.index'}">Einheiten</router-link>
         </div>
     @endcan
 

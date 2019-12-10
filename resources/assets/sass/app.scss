@@ -21,3 +21,16 @@
 [v-cloak] {
   display: none;
 }
+
+// materialize-css: For textarea autoresize
+.hiddendiv {
+  display: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word; /* future version of deprecated 'word-wrap' */
+  padding-top: 1.2rem; /* prevents text jump on Enter keypress */
+
+  // Reduces repaints
+  position: absolute;
+  top: 0;
+}

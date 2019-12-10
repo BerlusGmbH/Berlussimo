@@ -67,7 +67,7 @@ class objekt
             //echo "Objekt_id NEW $n_objekt_id";
             /* Details vom Objekt kopieren */
             $dd = new detail ();
-            $o_det_arr = $dd->finde_alle_details_arr('OBJEKT', $objekt_id);
+            $o_det_arr = $dd->finde_alle_details_arr('Objekt', $objekt_id);
             // print_r($o_det_arr);
             if (!empty($o_det_arr)) {
                 $anz_det = count($o_det_arr);
@@ -75,7 +75,7 @@ class objekt
                     $o_det_name = $o_det_arr [$de] ['DETAIL_NAME'];
                     $o_det_inhalt = $o_det_arr [$de] ['DETAIL_INHALT'];
                     $o_det_bemerkung = $o_det_arr [$de] ['DETAIL_BEMERKUNG'];
-                    $dd->detail_speichern_2('OBJEKT', $n_objekt_id, $o_det_name, $o_det_inhalt, $o_det_bemerkung);
+                    $dd->detail_speichern_2('Objekt', $n_objekt_id, $o_det_name, $o_det_inhalt, $o_det_bemerkung);
                 }
             }
 
@@ -96,14 +96,14 @@ class objekt
 
                     /* Details vom Haus kopieren */
                     $dd = new detail ();
-                    $h_det_arr = $dd->finde_alle_details_arr('HAUS', $haus_id);
+                    $h_det_arr = $dd->finde_alle_details_arr('Haus', $haus_id);
                     if (!empty($h_det_arr)) {
                         $anz_det_h = count($h_det_arr);
                         for ($deh = 0; $deh < $anz_det_h; $deh++) {
                             $h_det_name = $h_det_arr [$deh] ['DETAIL_NAME'];
                             $h_det_inhalt = $h_det_arr [$deh] ['DETAIL_INHALT'];
                             $h_det_bemerkung = $h_det_arr [$deh] ['DETAIL_BEMERKUNG'];
-                            $dd->detail_speichern_2('HAUS', $n_haus_id, $h_det_name, $h_det_inhalt, $h_det_bemerkung);
+                            $dd->detail_speichern_2('Haus', $n_haus_id, $h_det_name, $h_det_inhalt, $h_det_bemerkung);
                         }
                     }
 
@@ -126,14 +126,14 @@ class objekt
 
                             /* Details von Einheiten kopieren */
                             $dd = new detail ();
-                            $e_det_arr = $dd->finde_alle_details_arr('EINHEIT', $einheit_id);
+                            $e_det_arr = $dd->finde_alle_details_arr('Einheit', $einheit_id);
                             if (!empty($e_det_arr)) {
                                 $anz_det_e = count($e_det_arr);
                                 for ($dee = 0; $dee < $anz_det_e; $dee++) {
                                     $e_det_name = $e_det_arr [$dee] ['DETAIL_NAME'];
                                     $e_det_inhalt = $e_det_arr [$dee] ['DETAIL_INHALT'];
                                     $e_det_bemerkung = $e_det_arr [$dee] ['DETAIL_BEMERKUNG'];
-                                    $dd->detail_speichern_2('EINHEIT', $n_einheit_id, $e_det_name, $e_det_inhalt, $e_det_bemerkung);
+                                    $dd->detail_speichern_2('Einheit', $n_einheit_id, $e_det_name, $e_det_inhalt, $e_det_bemerkung);
                                 }
                             }
 
@@ -192,14 +192,14 @@ class objekt
 
                                     /* Details von MV's kopieren */
                                     $dd = new detail ();
-                                    $mv_det_arr = $dd->finde_alle_details_arr('MIETVERTRAG', $mv_id);
+                                    $mv_det_arr = $dd->finde_alle_details_arr('Mietvertrag', $mv_id);
                                     if (!empty($mv_det_arr)) {
                                         $anz_det_m = count($mv_det_arr);
                                         for ($dem = 0; $dem < $anz_det_m; $dem++) {
                                             $m_det_name = $mv_det_arr [$dem] ['DETAIL_NAME'];
                                             $m_det_inhalt = $mv_det_arr [$dem] ['DETAIL_INHALT'];
                                             $m_det_bemerkung = $mv_det_arr [$dem] ['DETAIL_BEMERKUNG'];
-                                            $dd->detail_speichern_2('MIETVERTRAG', $n_mv_id, $m_det_name, $m_det_inhalt, $m_det_bemerkung);
+                                            $dd->detail_speichern_2('Mietvertrag', $n_mv_id, $m_det_name, $m_det_inhalt, $m_det_bemerkung);
                                         }
                                     }
 
@@ -214,7 +214,7 @@ class objekt
                                             $ende = $mit->kostenkategorien [$ko] ['ENDE'];
                                             $betrag = $mit->kostenkategorien [$ko] ['BETRAG'];
                                             $mwst_anteil = $mit->kostenkategorien [$ko] ['MWST_ANTEIL'];
-                                            $mit->me_speichern('MIETVERTRAG', $n_mv_id, $kat, $anfang, $ende, $betrag, $mwst_anteil);
+                                            $mit->me_speichern('Mietvertrag', $n_mv_id, $kat, $anfang, $ende, $betrag, $mwst_anteil);
                                         } // end for $ko
                                     }
 
@@ -228,10 +228,10 @@ class objekt
                                     if ($saldo_berechnen == 1) {
                                         $mzz->mietkonto_berechnung_monatsgenau($mv_id, $datum_jahr, $datum_monat);
                                         //echo "MIT SALDO<br>";
-                                        $mit->me_speichern('MIETVERTRAG', $n_mv_id, 'Saldo Vortrag Vorverwaltung', $datum_saldo_vv, $datum_saldo_vv, $mzz->erg, ($mzz->erg / 119 * 19));
+                                        $mit->me_speichern('Mietvertrag', $n_mv_id, 'Saldo Vortrag Vorverwaltung', $datum_saldo_vv, $datum_saldo_vv, $mzz->erg, ($mzz->erg / 119 * 19));
                                     } else {
                                         //echo "OHNE SALDO<br>";
-                                        $mit->me_speichern('MIETVERTRAG', $n_mv_id, 'Saldo Vortrag Vorverwaltung', $datum_saldo_vv, $datum_saldo_vv, '0.00', '0.00');
+                                        $mit->me_speichern('Mietvertrag', $n_mv_id, 'Saldo Vortrag Vorverwaltung', $datum_saldo_vv, $datum_saldo_vv, '0.00', '0.00');
                                     }
 
                                     /* ME 0000-00-00 auf $datum_u setzen */
@@ -731,7 +731,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
         $pdf->ezSetMargins(0, 0, 50, 0);
         $pdf->ezText("DATUM:             ________________", 14);
         $det = new detail ();
-        $hw_name_tel = strip_tags($det->finde_detail_inhalt('OBJEKT', $objekt_id, 'Hauswart-Tel.'));
+        $hw_name_tel = strip_tags($det->finde_detail_inhalt('Objekt', $objekt_id, 'Hauswart-Tel.'));
         if (!$hw_name_tel) {
             $pdf->ezText("MITARBEITER:  _____________________________________________", 14);
         } else {
@@ -932,7 +932,7 @@ ORDER BY LPAD(EINHEIT_KURZNAME, LENGTH(EINHEIT_KURZNAME), '1') ASC ";
 
     function get_objekt_geldkonto_nr($objekt_id)
     {
-        $result = DB::select("SELECT DETAIL_INHALT FROM `DETAIL` WHERE DETAIL_NAME = 'Geld Konto Nummer' && DETAIL_ZUORDNUNG_TABELLE = 'OBJEKT' && DETAIL_ZUORDNUNG_ID = '$objekt_id' ORDER BY DETAIL_DAT DESC LIMIT 0 , 1 ");
+        $result = DB::select("SELECT DETAIL_INHALT FROM `DETAIL` WHERE DETAIL_NAME = 'Geld Konto Nummer' && DETAIL_ZUORDNUNG_TABELLE = 'Objekt' && DETAIL_ZUORDNUNG_ID = '$objekt_id' ORDER BY DETAIL_DAT DESC LIMIT 0 , 1 ");
         $row = $result[0];
         $this->objekt_kontonummer = $row ['DETAIL_INHALT'];
     }

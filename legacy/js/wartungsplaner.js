@@ -388,6 +388,47 @@ function daj3(url, targ) {
 
 }
 
+function transitionState(transitions) {
+    transitionPromises(transitions);
+}
+
+function transitionPromise(transition) {
+    if (transition.type === 'Function') {
+        return new Promise(function (resolve) {
+            new Function(transition.value)();
+            resolve();
+        });
+    } else if (transition.type === 'Request') {
+        let promise = axios.get(transition.value);
+        if (transition.target) {
+            let target = document.getElementById(transition.target);
+            target.innerHTML = "Lade " + transition.value;
+            promise.then((response) => {
+                target.innerHTML = response.data;
+            });
+        }
+        return promise;
+    }
+}
+
+function transitionPromises(transitions) {
+    if (Array.isArray(transitions)) {
+        let previous = null, first = null;
+        transitions.forEach(function (subTransitions) {
+            if (previous) {
+                previous = previous.then(function () {
+                    return transitionPromises(subTransitions);
+                });
+            } else {
+                first = previous = transitionPromises(subTransitions);
+            }
+        });
+        return first;
+    } else {
+        return transitionPromise(transitions);
+    }
+}
+
 function Pause(Zeit) {
     var Dauer = new Date();
     Dauer = Dauer.getTime() + Zeit;
@@ -398,6 +439,7 @@ function Pause(Zeit) {
     }
     while (Dauer2 <= Dauer);
 }
+
 function check_datum(id) {
 //		alert(id);
     datum = document.getElementById(id).value;
@@ -454,6 +496,7 @@ function isNum(xStr) {
     //alert(xStr.match(regEx));
     return xStr.match(regEx);
 }
+
 function isALNum(xStr) {
     var regEx = /^[a-zA-Z0-9\-]+$/;
     //alert(xStr.match(regEx));

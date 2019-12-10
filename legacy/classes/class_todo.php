@@ -349,13 +349,13 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                         $b->get_benutzer_infos($verfasser_id);
                         $verfasser_name = $b->benutzername;
                         $benutzer_typ = $row ['BENUTZER_TYP'];
-                        if (strtolower($benutzer_typ) == 'person' or empty ($benutzer_typ)) {
+                        if ($benutzer_typ == 'Person' or empty ($benutzer_typ)) {
                             $beteiligt_id = $row ['BENUTZER_ID'];
                             $b = new benutzer ();
                             $b->get_benutzer_infos($beteiligt_id);
                             $beteiligt_name = $b->benutzername;
                         }
-                        if (strtolower($benutzer_typ) == 'partner') {
+                        if ($benutzer_typ == 'Partner') {
                             $partner_id = $row ['BENUTZER_ID'];
                             $pp = new partners ();
                             $pp->get_partner_info($partner_id);
@@ -473,17 +473,14 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
     function kontaktdaten_anzeigen_mieter($einheit_id)
     {
         $ee = new einheit ();
-        $status = $ee->get_einheit_status($einheit_id);
-        if ($status == true) {
-            $mv_id = $ee->get_last_mietvertrag_id($einheit_id);
-        } else {
-            $mv_id = null;
-        }
-        if (empty ($mv_id)) {
+        $einheit = \App\Models\Einheiten::findOrFail($einheit_id);
+        $mietvertraege = $einheit->mietvertraege()->active()->get();
+        if ($mietvertraege->isEmpty()) {
             /* Nie vermietet */
             $ee->get_einheit_info($einheit_id);
             return "$ee->haus_strasse $ee->haus_nummer, $ee->haus_plz $ee->haus_stadt\n<b>Lage:</b> $ee->einheit_lage\n<b>Leerstand</b>";
         } else {
+            $mv_id = $mietvertraege->first()->MIETVERTRAG_ID;
             $m = new mietvertraege ();
             $m->get_mietvertrag_infos_aktuell($mv_id);
             $result = DB::select("SELECT PERSON_MIETVERTRAG_PERSON_ID FROM PERSON_MIETVERTRAG WHERE PERSON_MIETVERTRAG_MIETVERTRAG_ID='$mv_id' && PERSON_MIETVERTRAG_AKTUELL='1' ORDER BY PERSON_MIETVERTRAG_ID ASC");
@@ -492,13 +489,17 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 foreach ($result as $row) {
                     $person_id = $row ['PERSON_MIETVERTRAG_PERSON_ID'];
                     $kontaktdaten .= "<br><b>" . \App\Models\Person::find($person_id)->address_name . "</b>";
-                    $arr = $this->finde_detail_kontakt_arr('PERSON', $person_id);
+                    $arr = $this->finde_detail_kontakt_arr('Person', $person_id);
                     if (!empty($arr)) {
                         $anz = count($arr);
                         for ($a = 0; $a < $anz; $a++) {
                             $dname = $arr [$a] ['DETAIL_NAME'];
                             $dinhalt = $arr [$a] ['DETAIL_INHALT'];
+                            $dbemerkung = $arr [$a] ['DETAIL_BEMERKUNG'];
                             $kontaktdaten .= "<br>    <b>$dname</b>: $dinhalt";
+                            if ($dbemerkung) {
+                                $kontaktdaten .= ", $dbemerkung";
+                            }
                         }
                     }
                 }
@@ -509,7 +510,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 
     function finde_detail_kontakt_arr($tab, $id)
     {
-        $db_abfrage = "SELECT DETAIL_NAME, DETAIL_INHALT FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = '$tab' && (DETAIL_NAME LIKE '%tel%'or DETAIL_NAME LIKE '%fax%' or DETAIL_NAME LIKE '%mobil%' or DETAIL_NAME LIKE '%handy%' OR DETAIL_NAME LIKE '%mail%' OR DETAIL_NAME LIKE '%anschrift%') && DETAIL_ZUORDNUNG_ID = '$id' && DETAIL_AKTUELL = '1' ORDER BY DETAIL_NAME ASC";
+        $db_abfrage = "SELECT DETAIL_NAME, DETAIL_INHALT, DETAIL_BEMERKUNG FROM DETAIL WHERE DETAIL_ZUORDNUNG_TABELLE = '$tab' && (DETAIL_NAME LIKE 'tel%' or DETAIL_NAME LIKE '%fax%' or DETAIL_NAME LIKE '%mobil%' or DETAIL_NAME LIKE '%handy%') && DETAIL_ZUORDNUNG_ID = '$id' && DETAIL_AKTUELL = '1' ORDER BY DETAIL_NAME ASC";
         $resultat = DB::select($db_abfrage);
         return $resultat;
     }
@@ -537,18 +538,18 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         $this->benutzer_id = $row ['BENUTZER_ID'];
         $this->verfasser_id = $row ['VERFASSER_ID'];
         $bb = new benutzer ();
-        if (empty ($this->benutzer_typ) or (strtolower($this->benutzer_typ) == 'person')) {
+        if (empty ($this->benutzer_typ) or ($this->benutzer_typ == 'Person')) {
             $this->benutzer_typ = 'Person';
             $bb->get_benutzer_infos($this->benutzer_id);
             $this->mitarbeiter_name = $bb->benutzername;
         }
-        if (strtolower($this->benutzer_typ) == 'partner') {
+        if ($this->benutzer_typ == 'Partner') {
             $pp = new partners ();
             $pp->get_partner_info($this->benutzer_id);
             $this->partner_ans = "$pp->partner_strasse $pp->partner_hausnr, $pp->partner_plz $pp->partner_ort";
             $dd = new detail ();
-            $this->partner_fax = $dd->finde_detail_inhalt('PARTNER_LIEFERANT', $this->benutzer_id, 'Fax');
-            $this->partner_email = $dd->finde_detail_inhalt('PARTNER_LIEFERANT', $this->benutzer_id, 'Email');
+            $this->partner_fax = $dd->finde_detail_inhalt('Partner', $this->benutzer_id, 'Fax');
+            $this->partner_email = $dd->finde_detail_inhalt('Partner', $this->benutzer_id, 'Email');
 
             $this->mitarbeiter_name = "$pp->partner_name";
         }
@@ -839,13 +840,13 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $u_verfasser_name = $b->benutzername;
                 $benutzer_typ = $u_aufgaben_arr [$a] ['BENUTZER_TYP'];
                 $beteiligt_id = $u_aufgaben_arr [$a] ['BENUTZER_ID'];
-                if (strtolower($benutzer_typ) == 'person' or empty ($benutzer_typ)) {
+                if ($benutzer_typ == 'Person' or empty ($benutzer_typ)) {
 
                     $b = new benutzer ();
                     $b->get_benutzer_infos($beteiligt_id);
                     $u_beteiligt_name = $b->benutzername;
                 }
-                if (strtolower($benutzer_typ) == 'partner') {
+                if ($benutzer_typ == 'Partner') {
                     $partner_id = $u_aufgaben_arr [$a] ['BENUTZER_ID'];
                     $pp = new partners ();
                     $pp->get_partner_info($partner_id);
@@ -949,11 +950,11 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         $js_id = "";
         $bb->dropdown_kostentraeger_bez_vw('Kostenträger', 'kostentraeger_id', 'dd_kostentraeger_id', $js_id, $this->kos_typ, $this->kos_id);
 
-        if (strtolower($this->benutzer_typ) == 'person' or empty ($this->benutzer_typ)) {
+        if ($this->benutzer_typ == 'Person' or empty ($this->benutzer_typ)) {
             $b = new benutzer ();
             $b->dropdown_benutzer($this->mitarbeiter_name, 1);
         }
-        if (strtolower($this->benutzer_typ) == 'partner') {
+        if ($this->benutzer_typ == 'Partner') {
             $pp = new partners ();
             $pp->partner_dropdown('Partner wählen', 'benutzer_id', 'benutzer_id', $this->benutzer_id);
         }
@@ -1170,13 +1171,18 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             $p = new partners ();
             $p->get_partner_info($this->kos_id);
             $kontaktdaten_mieter = "$p->partner_name\n$p->partner_strasse $p->partner_hausnr\n$p->partner_plz $p->partner_ort\n";
-            $det_arr = $this->finde_detail_kontakt_arr('PARTNER_LIEFERANT', $this->kos_id);
+            $det_arr = $this->finde_detail_kontakt_arr('Partner', $this->kos_id);
             if (!empty($det_arr)) {
                 $anzd = count($det_arr);
                 for ($a = 0; $a < $anzd; $a++) {
                     $dname = $this->html2txt($det_arr [$a] ['DETAIL_NAME']);
                     $dinhalt = $this->html2txt($det_arr [$a] ['DETAIL_INHALT']);
-                    $kontaktdaten_mieter .= "\n$dname:$dinhalt";
+                    $dbemerkung = $this->html2txt($det_arr [$a] ['DETAIL_BEMERKUNG']);
+                    $kontaktdaten_mieter .= "\n$dname: $dinhalt";
+                    if ($dbemerkung) {
+                        $kontaktdaten_mieter .= ", $dbemerkung";
+                    }
+                    $kontaktdaten_mieter .= "\n";
                 }
             }
         }
@@ -1185,8 +1191,8 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             $weg = new weg ();
             $weg->get_eigentumer_id_infos2($this->kos_id);
             $kontaktdaten_mieter = "$weg->haus_strasse $weg->haus_nummer\n<b>$weg->haus_plz $weg->haus_stadt</b>\n\n";
-            for ($pe = 0; $pe < count($weg->eigentuemer_person_ids); $pe++) {
-                $et_p_id = $weg->eigentuemer_person_ids [$pe];
+            for ($pe = 0; $pe < count($weg->eigentuemer_name); $pe++) {
+                $et_p_id = $weg->eigentuemer_name [$pe]['person_id'];
                 $det_arr = $this->finde_detail_kontakt_arr('Person', $et_p_id);
                 $kontaktdaten_mieter .= rtrim(ltrim($weg->eigentuemer_name [$pe] ['HRFRAU'])) . " ";
                 $kontaktdaten_mieter .= rtrim(ltrim($weg->eigentuemer_name [$pe] ['Nachname'])) . " ";
@@ -1196,7 +1202,12 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                     for ($ad = 0; $ad < $anzd; $ad++) {
                         $dname = $this->html2txt($det_arr [$ad] ['DETAIL_NAME']);
                         $dinhalt = $this->html2txt($det_arr [$ad] ['DETAIL_INHALT']);
-                        $kontaktdaten_mieter .= "$dname:$dinhalt\n";
+                        $dbemerkung = $this->html2txt($det_arr [$ad] ['DETAIL_BEMERKUNG']);
+                        $kontaktdaten_mieter .= "$dname: $dinhalt";
+                        if ($dbemerkung) {
+                            $kontaktdaten_mieter .= ", $dbemerkung";
+                        }
+                        $kontaktdaten_mieter .= "\n";
                     }
                 }
                 $kontaktdaten_mieter .= "\n";
@@ -1212,8 +1223,6 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $kontaktdaten_mieter = $this->kos_bez;
             }
         }
-        //$kontaktdaten_mieter = str_replace('<br />', "\n", $kontaktdaten_mieter);
-        //$kontaktdaten_mieter = $this->html2txt($kontaktdaten_mieter);
 
         ob_clean(); // ausgabepuffer leeren
         $pdf = new Cezpdf ('a4', 'portrait');
@@ -1223,7 +1232,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
         $pdf->Rectangle(250, 630, 305, 80);
         $pdf->addText(252, 700, 10, "Arbeitsauftrag Nr: <b>$id</b> an");
         $pdf->addText(252, 685, 9, "<b>$this->benutzer_typ</b>: $this->mitarbeiter_name $this->partner_ans");
-        if (strtolower($this->benutzer_typ) == 'partner') {
+        if ($this->benutzer_typ == 'Partner') {
             $pdf->addText(252, 675, 9, "<b>Fax: $this->partner_fax</b>");
             $pdf->addText(375, 675, 9, "<b>Email: $this->partner_email</b>");
         }
@@ -1252,7 +1261,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 for ($be = 0; $be < $anz_p; $be++) {
                     $et_p_id = $weg->eigentuemer_person_ids [$be];
                     $d_k = new detail ();
-                    $dt_arr = $d_k->finde_alle_details_grup('PERSON', $et_p_id, 'INS-Kundenbetreuer');
+                    $dt_arr = $d_k->finde_alle_details_grup('Person', $et_p_id, 'INS-Kundenbetreuer');
                     if (!empty($dt_arr)) {
                         $anz_bet = count($dt_arr);
                         for ($bet = 0; $bet < $anz_bet; $bet++) {
@@ -1284,7 +1293,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
 
         $pdf->ezText($this->text);
         $pdf->ezSetDy(-10); // abstand
-        if (strtolower($this->benutzer_typ) == 'person') {
+        if ($this->benutzer_typ == 'Person') {
             $pdf->ezText("<b>Durchgeführte Arbeiten:</b>");
             $pdf->ezText("_________________________________________________________________________");
             $pdf->ezText("_________________________________________________________________________");
@@ -1322,7 +1331,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
             $pdf->addText(240, $pdf->y - 18, 6, "Unterschrift Kunde");
             $pdf->addText(425, $pdf->y - 18, 6, "Unterschrift Monteur");
         }
-        if (strtolower($this->benutzer_typ) == 'partner') {
+        if ($this->benutzer_typ == 'Partner') {
 
             $rr = new rechnung ();
             if ($this->kos_typ == 'Eigentuemer') {
@@ -1331,7 +1340,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $rr->get_empfaenger_infos($this->kos_typ, $this->kos_id);
             }
             $dd = new detail ();
-            $rep_eur = $dd->finde_detail_inhalt('PARTNER_LIEFERANT', $rr->rechnungs_empfaenger_id, 'Rep-Freigabe');
+            $rep_eur = $dd->finde_detail_inhalt('Partner', $rr->rechnungs_empfaenger_id, 'Rep-Freigabe');
             $rr->get_empfaenger_info($rr->rechnungs_empfaenger_id);
             $pdf->ezSetDy(-10); // abstand
             if (empty ($rep_eur)) {
@@ -1340,10 +1349,7 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $pdf->ezText("<b>Freigabe bis: $rep_eur € Netto</b>");
             }
             $dd = new detail ();
-            $b_tel = $dd->finde_detail_inhalt('BENUTZER', Auth::user()->id, 'Telefon');
-            if (empty ($b_tel)) {
-                $b_tel = $dd->finde_detail_inhalt('PARTNER_LIEFERANT', $partner_id, 'Telefon');
-            }
+            $b_tel = $dd->finde_detail_inhalt('Partner', $partner_id, 'Telefon');
             $pdf->ezSetDy(-10); // abstand
             $pdf->ezText("<b>Bei Kosten über Freigabesumme bitten wir um Rückmeldung unter $b_tel.</b>");
             $pdf->ezSetDy(-10); // abstand
@@ -1397,11 +1403,11 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                     $benutzer_typ = $arr [$a] ['BENUTZER_TYP'];
                     $benutzer_id = $arr [$a] ['BENUTZER_ID'];
 
-                    if (strtolower($benutzer_typ) == 'person') {
+                    if ($benutzer_typ == 'Person') {
                         $bb->get_benutzer_infos($benutzer_id);
                         $benutzer_name = $bb->benutzername;
                     }
-                    if (strtolower($benutzer_typ) == 'partner') {
+                    if ($benutzer_typ == 'Partner') {
                         $p = new partners ();
                         $p->get_partner_info($benutzer_id);
                         $benutzer_name = "$p->partner_name";
@@ -1459,11 +1465,11 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                 $benutzer_typ = $arr [$a] ['BENUTZER_TYP'];
                 $benutzer_id = $arr [$a] ['BENUTZER_ID'];
 
-                if (strtolower($benutzer_typ) == 'person') {
+                if ($benutzer_typ == 'Person') {
                     $bb->get_benutzer_infos($benutzer_id);
                     $benutzer_name = $bb->benutzername;
                 }
-                if (strtolower($benutzer_typ) == 'partner') {
+                if ($benutzer_typ == 'Partner') {
                     $p = new partners ();
                     $p->get_partner_info($benutzer_id);
                     $benutzer_name = "$p->partner_name";
@@ -1506,11 +1512,11 @@ AND `AKTUELL` = '1' && ERLEDIGT='1' && UE_ID='0'";
                     $benutzer_typ = $arr [$a] ['BENUTZER_TYP'];
                     $benutzer_id = $arr [$a] ['BENUTZER_ID'];
 
-                    if (strtolower($benutzer_typ) == 'person') {
+                    if ($benutzer_typ == 'Person') {
                         $bb->get_benutzer_infos($benutzer_id);
                         $benutzer_name = $bb->benutzername;
                     }
-                    if (strtolower($benutzer_typ) == 'partner') {
+                    if ($benutzer_typ == 'Partner') {
                         $p = new partners ();
                         $p->get_partner_info($benutzer_id);
                         $benutzer_name = "$p->partner_name";

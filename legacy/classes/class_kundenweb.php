@@ -164,22 +164,6 @@ class kundenweb
         return true;
     }
 
-    function form_neuer_benutzer()
-    {
-        $f = new formular ();
-        $f->erstelle_formular("Neuen Kundenweb-Benutzer hinzufügen", null);
-        $p = new personen ();
-        $p->dropdown_personen("Person wählen", 'person_id', 'person_id', null);
-        $pa = new partners ();
-        $pa->partner_dropdown("Partner der Person wählen - Logo im PDF", 'partner_id', 'partner_id', null);
-        $f->text_feld("Benutzername (20 Zeichen)", "username", "", 40, 'username', null);
-        $f->text_feld("Passwort (20 Zeichen)", "password", "", 40, 'password', null);
-        $f->text_feld("Email (50 Zeichen)", "email", "", 40, 'email', null);
-        $f->hidden_feld('option', 'benutzer_hinzu');
-        $f->send_button('BTN_ben', 'Benutzer hinzufügen');
-        $f->ende_formular();
-    }
-
     function berechtigung_speichern($person_id, $ber_obj, $ber_id)
     {
         /* Prüfen ob Berechtigung bereits vorhanden, wenn nicht, dann speichen */

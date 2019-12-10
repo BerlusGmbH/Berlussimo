@@ -65,11 +65,6 @@ return [
             'root' => storage_path('app/logos'),
         ],
 
-        'fotos' => [
-            'driver' => 'local',
-            'root' => storage_path('app/fotos'),
-        ],
-
         'objektberichte' => [
             'driver' => 'local',
             'root' => storage_path('app/objektberichte'),

@@ -45,7 +45,7 @@ class UnitController extends Controller
             'mietvertraege',
             'kaufvertraege',
             'auftraege' => function ($query) {
-                $query->with(['von', 'an'])->orderBy('ERSTELLT', 'desc');
+                $query->with(['von', 'an', 'kostentraeger'])->orderBy('ERSTELLT', 'desc');
             }
         ]);
         $array = $unit->toArray();

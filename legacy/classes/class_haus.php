@@ -16,7 +16,7 @@ class haus extends objekt {
         $row = $result[0];
         $this->objekt_id = $row ['OBJEKT_ID'];
         $gg = new geldkonto_info ();
-        $gg->geld_konto_ermitteln('OBJEKT', $this->objekt_id, null, 'Hausgeld');
+        $gg->geld_konto_ermitteln('Objekt', $this->objekt_id, null, 'Hausgeld');
         $this->get_objekt_name ( $this->objekt_id );
         $this->haus_strasse = $row ['HAUS_STRASSE'];
         $this->haus_nummer = $row ['HAUS_NUMMER'];

@@ -20,6 +20,8 @@
                 :light="light"
                 :debounce-search="400"
                 :clearable="clearable"
+                :tabindex="tabindex"
+                :autofocus="autofocus"
     >
         <template slot="selection" slot-scope="data">
             <app-chip @input="data.parent.selectItem(data.item); $emit('chip-close', $event)"
@@ -37,13 +39,13 @@
 </template>
 <script lang="ts">
     import Vue from "../../imports";
-    import $ from "jquery";
     import Component from "vue-class-component";
     import {Prop, Watch} from "vue-property-decorator";
     import {Model} from "../../server/resources";
     import VSelect from "./VSelect.vue"
     import {CancelTokenSource} from "axios";
     import axios from "../../libraries/axios";
+    import _ from "lodash";
 
     @Component({components: {'app-select': VSelect}})
     export default class EntitySelect extends Vue {
@@ -86,6 +88,9 @@
         @Prop({type: String})
         appendIcon;
 
+        @Prop({type: [Number, String], default: 0})
+        tabindex;
+
         @Prop({type: [Boolean, String]})
         dark;
 
@@ -95,12 +100,23 @@
         @Prop({type: [Boolean, String]})
         clearable;
 
+        @Prop({type: Boolean, default: false})
+        autofocus;
+
+        mounted() {
+            this.$refs.input = this.$children[0].$refs.input;
+        }
+
         @Watch('query')
         onQueryChanged(query) {
             if (typeof query === 'string') {
-                this.goSearch(query);
+                this.debouncedSearch(query);
             }
         }
+
+        debouncedSearch: Function = _.debounce(function (this: EntitySelect, query) {
+            this.goSearch(query);
+        }, 300);
 
         get status(): string {
             if (this.searching) {
@@ -151,74 +167,10 @@
                     }
                 }).then(function (response) {
                     let data = response.data;
-                    $.each(data, function (key, val) {
-                        switch (key) {
-                            case 'objekt':
-                                $.each(val, function (objekt_key, objekt) {
-                                    data[key][objekt_key] = Model.applyPrototype(objekt);
-                                });
-                                break;
-                            case 'haus':
-                                $.each(val, function (haus_key, haus) {
-                                    data[key][haus_key] = Model.applyPrototype(haus);
-                                });
-                                break;
-                            case 'einheit':
-                                $.each(val, function (einheit_key, einheit) {
-                                    data[key][einheit_key] = Model.applyPrototype(einheit);
-                                });
-                                break;
-                            case 'person':
-                                $.each(val, function (person_key, person) {
-                                    data[key][person_key] = Model.applyPrototype(person);
-                                });
-                                break;
-                            case 'partner':
-                                $.each(val, function (partner_key, partner) {
-                                    data[key][partner_key] = Model.applyPrototype(partner);
-                                });
-                                break;
-                            case 'bankkonto':
-                                $.each(val, function (bankaccount_key, account) {
-                                    data[key][bankaccount_key] = Model.applyPrototype(account);
-                                });
-                                break;
-                            case 'mietvertrag':
-                                $.each(val, function (rental_contract_key, contract) {
-                                    data[key][rental_contract_key] = Model.applyPrototype(contract);
-                                });
-                                break;
-                            case 'kaufvertrag':
-                                $.each(val, function (purchase_contract_key, contract) {
-                                    data[key][purchase_contract_key] = Model.applyPrototype(contract);
-                                });
-                                break;
-                            case 'baustelle':
-                                $.each(val, function (construction_site_key, site) {
-                                    data[key][construction_site_key] = Model.applyPrototype(site);
-                                });
-                                break;
-                            case 'wirtschaftseinheit':
-                                $.each(val, function (accouting_entity, entity) {
-                                    data[key][accouting_entity] = Model.applyPrototype(entity);
-                                });
-                                break;
-                            case 'artikel':
-                                $.each(val, function (invoice_item_entity, entity) {
-                                    data[key][invoice_item_entity] = Model.applyPrototype(entity);
-                                });
-                                break;
-                            case 'kontenrahmen':
-                                $.each(val, function (bank_account_standard_chart_entity, entity) {
-                                    data[key][bank_account_standard_chart_entity] = Model.applyPrototype(entity);
-                                });
-                                break;
-                            case 'buchungskonto':
-                                $.each(val, function (booking_account_entity, entity) {
-                                    data[key][booking_account_entity] = Model.applyPrototype(entity);
-                                });
-                                break;
-                        }
+                    Object.keys(data).forEach(function (val) {
+                        Object.keys(data[val]).forEach(function (objekt) {
+                            data[val][objekt] = Model.applyPrototype(data[val][objekt]);
+                        });
                     });
                     let total: Array<Object> = [];
                     Object.keys(data).forEach((key) => {
