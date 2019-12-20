@@ -46,7 +46,7 @@ Pusher application key set successfully.
 Encryption keys generated successfully.
 base64:rgtk2obQ3FwLucTFapOf1AZQm/eBkLRUWv0uWJIksHw=
 
-docker run --rm berlus/berlussimo-fpm:dev php artisan key:generate --show
+$ docker run --rm berlus/berlussimo-fpm:dev php artisan key:generate --show
 Application key set successfully.
 Pusher application key set successfully.
 Encryption keys generated successfully.
