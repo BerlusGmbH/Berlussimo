@@ -42,12 +42,22 @@ class Mietvertraege extends Model implements ActiveContract
 
     public function einheit()
     {
-        return $this->belongsTo('App\Models\Einheiten', 'EINHEIT_ID', 'EINHEIT_ID');
+        return $this->belongsTo(Einheiten::class, 'EINHEIT_ID', 'EINHEIT_ID');
     }
 
     public function mieter()
     {
-        return $this->belongsToMany(Person::class, 'PERSON_MIETVERTRAG', 'PERSON_MIETVERTRAG_MIETVERTRAG_ID', 'PERSON_MIETVERTRAG_PERSON_ID')->wherePivot('PERSON_MIETVERTRAG_AKTUELL', '1');
+        return $this->belongsToMany(
+            Person::class,
+            'PERSON_MIETVERTRAG',
+            'PERSON_MIETVERTRAG_MIETVERTRAG_ID',
+            'PERSON_MIETVERTRAG_PERSON_ID'
+        )->wherePivot('PERSON_MIETVERTRAG_AKTUELL', '1');
+    }
+
+    public function SEPAMandates()
+    {
+        return $this->morphMany(SEPAMandate::class, 'SEPAMAndates', 'M_KOS_TYP', 'M_KOS_ID');
     }
 
     public function scopeSearch($query, $tokens)
@@ -70,15 +80,8 @@ class Mietvertraege extends Model implements ActiveContract
                     ->orWhere('KOSTENKATEGORIE', '=', 'MHG')
                     ->orWhere('KOSTENKATEGORIE', '=', 'MOD')
                     ->orWhere('KOSTENKATEGORIE', '=', 'Stellplatzmiete')
+                    ->orWhere('KOSTENKATEGORIE', '=', 'Garagenmiete')
                     ->orWhere('KOSTENKATEGORIE', '=', 'Untermieter Zuschlag');
-            });
-    }
-
-    public function basicRentDeductionDefinitions($from = null, $to = null)
-    {
-        return $this->rentDefinitions($from, $to)
-            ->where(function ($query) {
-                $query->where('KOSTENKATEGORIE', '=', 'Mietminderung');
             });
     }
 
@@ -90,7 +93,12 @@ class Mietvertraege extends Model implements ActiveContract
         if (is_string($to)) {
             $to = Carbon::parse($to);
         }
-        $rentDefinitions = $this->morphMany(RentDefinition::class, 'rentDefinitions', 'KOSTENTRAEGER_TYP', 'KOSTENTRAEGER_ID');
+        $rentDefinitions = $this->morphMany(
+            RentDefinition::class,
+            'rentDefinitions',
+            'KOSTENTRAEGER_TYP',
+            'KOSTENTRAEGER_ID'
+        );
         if ($from) {
             $rentDefinitions->whereDate('ANFANG', '<=', $to);
         }
@@ -101,6 +109,14 @@ class Mietvertraege extends Model implements ActiveContract
             });
         }
         return $rentDefinitions;
+    }
+
+    public function basicRentDeductionDefinitions($from = null, $to = null)
+    {
+        return $this->rentDefinitions($from, $to)
+            ->where(function ($query) {
+                $query->where('KOSTENKATEGORIE', '=', 'Mietminderung');
+            });
     }
 
     public function heatingExpenseAdvanceDefinitions($from = null, $to = null)
@@ -153,14 +169,14 @@ class Mietvertraege extends Model implements ActiveContract
         if (is_string($to)) {
             $to = Carbon::parse($to);
         }
-        $rentDefinitions = $this->morphMany(Posting::class, 'postings', 'KOSTENTRAEGER_TYP', 'KOSTENTRAEGER_ID');
+        $postings = $this->morphMany(Posting::class, 'postings', 'KOSTENTRAEGER_TYP', 'KOSTENTRAEGER_ID');
         if ($from) {
-            $rentDefinitions->whereDate('DATUM', '>=', $from);
+            $postings->whereDate('DATUM', '>=', $from);
         }
         if ($to) {
-            $rentDefinitions->whereDate('DATUM', '<=', $to);
+            $postings->whereDate('DATUM', '<=', $to);
         }
-        return $rentDefinitions;
+        return $postings;
     }
 
     public function getMieterNamenAttribute()

@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\AktuellScope;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class RentDefinition extends Model
+class HOAFeeDefinition extends Model
 {
-    protected $table = 'MIETENTWICKLUNG';
-    protected $primaryKey = 'MIETENTWICKLUNG_ID';
+    protected $table = 'WEG_WG_DEF';
+    protected $primaryKey = 'ID';
 
     /**
      * The attributes that are not mass assignable.
@@ -36,9 +36,7 @@ class RentDefinition extends Model
     {
         parent::boot();
 
-        static::addGlobalScope('aktuell', function (Builder $builder) {
-            $builder->where('MIETENTWICKLUNG_AKTUELL', '1');
-        });
+        static::addGlobalScope(new AktuellScope());
     }
 
     public function value($from = null, $to = null)
@@ -68,14 +66,6 @@ class RentDefinition extends Model
         $diffInMonths = $from->diffInMonths($to);
         $value = $this->BETRAG * ($diffInMonths + 1);
         //TODO one fine day get rid of this inversion inconsistency
-        return $this->invertIfDebitAndCreditAreInvertedForCostCategory($value);
-    }
-
-    private function invertIfDebitAndCreditAreInvertedForCostCategory($value)
-    {
-        if (starts_with($this->KOSTENKATEGORIE, ['Betriebskostenabrechnung', 'Kaltwasserabrechnung', 'Heizkostenabrechnung'])) {
-            return $value * -1;
-        }
         return $value;
     }
 }

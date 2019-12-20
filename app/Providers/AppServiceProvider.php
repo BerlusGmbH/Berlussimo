@@ -16,6 +16,7 @@ use App\Models\Partner;
 use App\Models\Person;
 use App\Models\Wirtschaftseinheiten;
 use App\Observers\DatabaseNotificationObserver;
+use App\Services\Immoware24ExportService;
 use App\Services\ListViewsService;
 use App\Services\PhoneLocator;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -81,6 +82,9 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->singleton(ListViewsService::class, function () {
             return new ListViewsService(config('listviews'));
+        });
+        $this->app->singleton(Immoware24ExportService::class, function () {
+            return new Immoware24ExportService();
         });
     }
 }

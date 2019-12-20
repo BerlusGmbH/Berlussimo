@@ -50,6 +50,26 @@ class Details extends Model
         return $content;
     }
 
+    public function getDetailInhaltOneLineAttribute()
+    {
+        $content = $this->DETAIL_INHALT;
+        $content = str_replace("\r\n", "", $content);
+        $content = str_replace("\r", "", $content);
+        $content = str_replace("\n", "", $content);
+        $content = trim($content, "");
+        return $content;
+    }
+
+    public function getDetailBemerkungOneLineAttribute()
+    {
+        $content = $this->DETAIL_BEMERKUNG;
+        $content = str_replace("\r\n", "", $content);
+        $content = str_replace("\r", "", $content);
+        $content = str_replace("\n", "", $content);
+        $content = trim($content, "");
+        return $content;
+    }
+
     public function getDETAILINHALTAttribute($value)
     {
         return strip_tags($value);

@@ -7,6 +7,7 @@ use App\Models\Scopes\AktuellScope;
 use App\Models\Traits\Active;
 use App\Models\Traits\DefaultOrder;
 use App\Models\Traits\Searchable;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Kaufvertraege extends Model implements ActiveContract
@@ -44,6 +45,33 @@ class Kaufvertraege extends Model implements ActiveContract
     public function einheit()
     {
         return $this->belongsTo('App\Models\Einheiten', 'EINHEIT_ID', 'EINHEIT_ID');
+    }
+
+    public function SEPAMandates()
+    {
+        return $this->morphMany(SEPAMandate::class, 'SEPAMAndates', 'M_KOS_TYP', 'M_KOS_ID');
+    }
+
+    public function hoaFeeDefinitions($from = null, $to = null)
+    {
+        if (is_string($from)) {
+            $from = Carbon::parse($from);
+        }
+        if (is_string($to)) {
+            $to = Carbon::parse($to);
+        }
+        $hoaFeeDefinitions = $this->hasMany(HOAFeeDefinition::class, 'KOS_ID', 'EINHEIT_ID')
+            ->where('KOS_TYP', 'Einheit');
+        if ($from) {
+            $hoaFeeDefinitions->whereDate('ANFANG', '<=', $to);
+        }
+        if ($to) {
+            $hoaFeeDefinitions->where(function ($query) use ($from) {
+                $query->whereDate('ENDE', '>=', $from)
+                    ->orWhere('ENDE', '0000-00-00');
+            });
+        }
+        return $hoaFeeDefinitions;
     }
 
     public function getStartDateFieldName()

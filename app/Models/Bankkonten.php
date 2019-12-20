@@ -39,6 +39,16 @@ class Bankkonten extends Model
         return $this->belongsToMany(Partner::class, 'GELD_KONTEN_ZUWEISUNG', 'KONTO_ID', 'KOSTENTRAEGER_ID')->wherePivot('KOSTENTRAEGER_TYP', 'Partner')->wherePivot('AKTUELL', '1');
     }
 
+    public function purchaseContracts()
+    {
+        return $this->belongsToMany(Kaufvertraege::class, 'GELD_KONTEN_ZUWEISUNG', 'KONTO_ID', 'KOSTENTRAEGER_ID')->wherePivot('KOSTENTRAEGER_TYP', 'Eigentuemer')->wherePivot('AKTUELL', '1');
+    }
+
+    public function details()
+    {
+        return $this->morphMany(Details::class, 'details', 'DETAIL_ZUORDNUNG_TABELLE', 'DETAIL_ZUORDNUNG_ID');
+    }
+
     public function getChunkedIBANAttribute()
     {
         return trim(chunk_split($this->IBAN, 4, ' '));
