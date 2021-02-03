@@ -173,6 +173,7 @@ Route::group(['namespace' => 'Legacy', 'middleware' => ['auth'], 'as' => 'web::'
 
     Route::group(['prefix' => 'sepa', 'as' => 'sepa::'], function () {
         Route::match(['get', 'post'], '/', 'SepaController@request')->name('legacy');
+        Route::match(['get', 'post'], '/calculateIbanBic/{kto}/{blz}', 'SepaController@calculateIbanBic')->name('calculateIbanBic');
     });
 
     Route::group(['prefix' => 'statistik', 'as' => 'statistik::'], function () {

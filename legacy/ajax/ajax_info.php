@@ -1,5 +1,7 @@
 <?php
 
+require __DIR__.'/../../public/index.php';
+
 $option = request()->input('option');
 /* Optionsschalter */
 switch ($option) {
