@@ -13,7 +13,7 @@ class gk
         $f->text_feld("Kontonummer", "kontonummer", "", "50", 'kontonummer', '');
         $f->text_feld("BLZ", "blz", "", "50", 'blz', '');
         $js_iban_bic = "onclick=\"get_iban_bic('kontonummer', 'blz')\"";
-        $f->check_box_js1('chkk_ibanbic', 'chkk_ibanbic', '', 'IBAN/BIC berechnen?!', $js_iban_bic, '');
+        $f->check_box_js1('chkk_ibanbic', 'chkk_ibanbic', '', 'IBAN/BIC berechnen', $js_iban_bic, '');
         $f->text_feld("IBAN", "iban", "", "50", 'iban', '');
         $f->text_feld("BIC", "bic", "", "50", 'bic', '');
         $f->text_feld("Geldinstitut", "institut", "", "50", 'institut', '');
@@ -42,7 +42,7 @@ class gk
         $f->text_feld("Kontonummer", "kontonummer", "$gkk->kontonummer", "50", 'kontonummer', '');
         $f->text_feld("BLZ", "blz", "$gkk->blz", "50", 'blz', '');
         $js_iban_bic = "onclick=\"get_iban_bic('kontonummer', 'blz')\"";
-        $f->check_box_js1('chkk_ibanbic', 'chkk_ibanbic', '', 'IBAN/BIC berechnen?!', $js_iban_bic, '');
+        $f->check_box_js1('chkk_ibanbic', 'chkk_ibanbic', '', 'IBAN/BIC berechnen', $js_iban_bic, '');
         $f->text_feld("IBAN", "iban", "$gkk->IBAN1", "50", 'iban', '');
         $f->text_feld("BIC", "bic", "$gkk->BIC", "50", 'bic', '');
         $f->text_feld("Geldinstitut", "institut", "$gkk->institut", "50", 'institut', '');
